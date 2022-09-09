@@ -2,144 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9654ECAAD3
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 11:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4268ECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 12:26:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230392AbiIILb1 (ORCPT
+        id S231189AbiIIM0Q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Sep 2022 07:31:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56186 "EHLO
+        Fri, 9 Sep 2022 08:26:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230311AbiIILb0 (ORCPT
+        with ESMTP id S230154AbiIIM0P (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Sep 2022 07:31:26 -0400
-Received: from wnew3-smtp.messagingengine.com (wnew3-smtp.messagingengine.com [64.147.123.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BFEC12D566;
-        Fri,  9 Sep 2022 04:31:25 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 028BB2B059B4;
-        Fri,  9 Sep 2022 07:31:23 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute3.internal (MEProxy); Fri, 09 Sep 2022 07:31:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1662723083; x=
-        1662726683; bh=5R1+DzB9xgEFDOh7VH5ISCJa4USSB/0TKRv6qwq5aCg=; b=T
-        Tf1IDbyUmCDbKUYkNGUms/JSr9K9APixQZoocBSfKXoWdTOvLONAqVJBeuvTpVPj
-        604W5qI94BbXj1Qz+1XTDidt1AkjeT2BXZ8jHVPdXopgkkNgCR/2Jx5HFqEgI8Tb
-        IDAYBYybd1fzdXaPVBQ3bioIOLraspTk2Qft65sYJ7teAOlVZ0moAWJAW346m9qR
-        I5rMMIANdDLC/Br0cjaOmvzbIKIZyKwkC/sDQUO7GlhZ/ARtIZinMegR6caxCmqS
-        nFVfhY0PkPsFUpc2BlkBfCi129QPzCZu77bhT8EvV8sqj1yHN0ey4afUqq7We6VJ
-        9oxcUHdZ/Rp0KIgjoeHIQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1662723083; x=
-        1662726683; bh=5R1+DzB9xgEFDOh7VH5ISCJa4USSB/0TKRv6qwq5aCg=; b=k
-        BuWlqU4+q+x1e4kqx4F8sfl/YuKcSk/mo7hxja6co+MKhQj8QNQDDF7SiZC5A15S
-        J8E8hetQXvn7TonIzmkGjzjIcmjHmB19iYABEtxzSb4Tfo6050H8PnQbq8s4lyT5
-        LdASqRqL5es8J0Uwktw+DFUlNOzivrLTBXodYG6fo+Q4m4rt4hCB+IVnVnBlUxdj
-        V0m8rAB7pYYz74l/zfJItCwQZa8HXlrhXamnqY2j/lvz9IoX5FpYmRc4ms1TkWHE
-        dPQXDC7k40lhSPOs6IcGwmPw18+BlSuModslE1kDDUkYRnXAdg+ZlHm4A9HWg1hg
-        auXEweyXhmTgBj5TNy7pQ==
-X-ME-Sender: <xms:CiQbYyE4J5hpWHgf1_d67VINqIJPxK5JXcvFaZK3KVs0RgoyDkDo-Q>
-    <xme:CiQbYzWogqknTkRAWUzlAYTAzeno3C6_uxPHND4zx-ezsNig4m9dUku-kkLQw6Diz
-    zGhhGFqYiplR_pAuOI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedthedggedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:CiQbY8KU_Y2bpM4TB3y0WKTLRv0dy0UpHIoCwCU4J1BDc8UlZ4hoiA>
-    <xmx:CiQbY8EOWuyo7qH68WnYe1-9KRowyJVYkmA2hUFeq1k4EUffS1KYgg>
-    <xmx:CiQbY4Vyyb-4p3Odiat9bBlvEGl8Pzz8ZjArhvwdDw8XkPDuGhHDsw>
-    <xmx:CyQbY6LnxmpSbZxx0KpifBzD9yUE_hMgWUYe1Ya5eqwTZZgzROA-eIoxEE0>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id D99EBB60086; Fri,  9 Sep 2022 07:31:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-927-gf4c98c8499-fm-20220826.002-gf4c98c84
-Mime-Version: 1.0
-Message-Id: <4b33bffc-2b6d-46b4-9f1d-d18e55975a5a@www.fastmail.com>
-In-Reply-To: <2379456e-4f18-d619-10bf-022327de0463@csgroup.eu>
-References: <20220909090343.21886-1-lukas.bulwahn@gmail.com>
- <21359abe-c3c9-4aa8-8ebf-75ff64cb1935@www.fastmail.com>
- <2379456e-4f18-d619-10bf-022327de0463@csgroup.eu>
-Date:   Fri, 09 Sep 2022 13:31:02 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Christophe Leroy" <christophe.leroy@csgroup.eu>,
-        "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
-        "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Nicholas Piggin" <npiggin@gmail.com>,
-        "Damien Le Moal" <damien.lemoal@opensource.wdc.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
-Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] powerpc: select HAVE_PATA_PLATFORM in PPC instead of creating a
- PPC dependency
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        Fri, 9 Sep 2022 08:26:15 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898F912B2B1;
+        Fri,  9 Sep 2022 05:26:14 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id k17so1263079wmr.2;
+        Fri, 09 Sep 2022 05:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=HIttaRwxS/Q+PzylfGrNDChJUqTkhrFYeQ4fyU+Igeo=;
+        b=PBBru7o/5THp7coacVMSU2IXxEHhQPQSLMbTe95cwo2/6QseDKxW3H0nZUUeLEZMOS
+         2ZtlKFQ5T4lFVSZpt/Sva5e7PF65xUT8Lu6RDSYxX2OEhlBNgX6g5/kg1qUM/jZaFLFx
+         bYjHSkvgoAKjwsOpmKRw7abjdmWvs/mfkS2fcaVZLBnVC2GBMbwfU1DW/XgY9QjT9KiQ
+         RU29ZWtEQKkZWv1IMj/WE8J2+J8SqnWgCA9mwH1n1uRwzyDf4y2lt3UPr/6CksCopZO3
+         f9uwe1kZst/1R3NjYh+crcUYxV25WU0vrlszt+1XuyEEETubbKaXWQ0emZQYQQT76HMi
+         9Zkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=HIttaRwxS/Q+PzylfGrNDChJUqTkhrFYeQ4fyU+Igeo=;
+        b=UCkYQdk6YZDT6oIzUVvbtJLd3yYA3KLdcFJFDht6Nn/RSDnGQe8XCYxufkUqzOp9Mg
+         9T1ay9YkMgeR2X1ecRQIrMG9m5MwqXPBBZ5pahf6gut+AcZZCHCRoUSxImKTqU/wopnJ
+         ZVOhkx7+OzXN8cv2+puSqi1jPEb5//gbXw98pVc7WdLcpPKR2X4Ecn+NqCBwccIB05RO
+         U1YR6lWRFakG6pVtEk++UrcqBxwJ4G3azK2EZEzoTGcYlYfCN46mo33oI0oGMXo2fHed
+         erpExTR37G2YO/m9bYwiLzINt+7s268oh2yahiobmSqheerVEYdQWVR2nEp/wc05yqCd
+         2lWQ==
+X-Gm-Message-State: ACgBeo3/CXEUIzn3d45MXr+/wEcsRqQT3mgJx60kGyr6ccrV/3NFXCDX
+        MaVlkIrqKnV/xFCPDtEqVBw=
+X-Google-Smtp-Source: AA6agR5iFgxtS8kVRXgk1GWHrX0zg9ydSrrNmS/4X2uBJnOf3gOpS4jb3x0wNIuZmPnf2YfPA9Ferg==
+X-Received: by 2002:a05:600c:3d11:b0:3a5:cd9b:eb08 with SMTP id bh17-20020a05600c3d1100b003a5cd9beb08mr5465692wmb.82.1662726372865;
+        Fri, 09 Sep 2022 05:26:12 -0700 (PDT)
+Received: from felia.fritz.box (200116b8261bf1004cd87416af9987ea.dip.versatel-1u1.de. [2001:16b8:261b:f100:4cd8:7416:af99:87ea])
+        by smtp.gmail.com with ESMTPSA id iv11-20020a05600c548b00b003a84375d0d1sm544282wmb.44.2022.09.09.05.26.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Sep 2022 05:26:12 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] proc: make config PROC_CHILDREN depend on PROC_FS
+Date:   Fri,  9 Sep 2022 14:25:29 +0200
+Message-Id: <20220909122529.1941-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 9, 2022, at 1:19 PM, Christophe Leroy wrote:
-> Le 09/09/2022 =C3=A0 13:09, Arnd Bergmann a =C3=A9crit=C2=A0:
->> On Fri, Sep 9, 2022, at 11:03 AM, Lukas Bulwahn wrote:
->>=20
->> I don't see a single powerpc machine that creates a
->>   name=3D"pata_platform" platform_device. I suspect this was
->> only needed bwfore 2007 commit 9cd55be4d223 ("[POWERPC] pasemi:
->> Move electra-ide to pata_of_platform"), so the "|| PPC"
->> bit should just get removed without adding the HAVE_PATA_PLATFORM
->> bit.
->
-> But that was added in 2008 by commit 61f7162117d4 ("libata:=20
-> pata_of_platform: OF-Platform PATA device driver")
+Commit 2e13ba54a268 ("fs, proc: introduce CONFIG_PROC_CHILDREN") introduces
+the config PROC_CHILDREN to configure kernels to provide the
+/proc/<pid>/task/<tid>/children file.
 
-Ah, I see. In that case, I think we should probably just always
-allow PATA_OF_PLATFORM to be enabled regardless of
-HAVE_PATA_PLATFORM, something like
+When one deselects PROC_FS for kernel builds without /proc/, the config
+PROC_CHILDREN has no effect anymore, but is still visible in menuconfig.
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 1c9f4fb2595d..c93d97455744 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -1102,8 +1102,7 @@ config PATA_PCMCIA
- 	  If unsure, say N.
-=20
- config PATA_PLATFORM
--	tristate "Generic platform device PATA support"
--	depends on EXPERT || PPC || HAVE_PATA_PLATFORM
-+	tristate "Generic platform device PATA support" if EXPERT || HAVE_PATA=
-_PLATFORM
+Add the dependency on PROC_FS to make the PROC_CHILDREN option disappear
+for kernel builds without /proc/.
+
+Fixes: 2e13ba54a268 ("fs, proc: introduce CONFIG_PROC_CHILDREN")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ fs/proc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index c930001056f9..32b1116ae137 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -92,6 +92,7 @@ config PROC_PAGE_MONITOR
+ 
+ config PROC_CHILDREN
+ 	bool "Include /proc/<pid>/task/<tid>/children file"
++	depends on PROC_FS
+ 	default n
  	help
- 	  This option enables support for generic directly connected ATA
- 	  devices commonly found on embedded systems.
-@@ -1112,7 +1111,8 @@ config PATA_PLATFORM
-=20
- config PATA_OF_PLATFORM
- 	tristate "OpenFirmware platform device PATA support"
--	depends on PATA_PLATFORM && OF
-+	depends on OF
-+	select PATA_PLATFORM
- 	help
- 	  This option enables support for generic directly connected ATA
- 	  devices commonly found on embedded systems with OpenFirmware
+ 	  Provides a fast way to retrieve first level children pids of a task. See
+-- 
+2.17.1
 
-and then also drop the "select HAVE_PATA_PLATFORM" from
-arm64 and arm/versatile.
-
-Or we can go one step further, and either split out the
-'pata_platform_driver' into a separate file from
-'__pata_platform_probe', or merge pata_of_platform.c
-back into pata_platform.c.
-
-      Arnd
