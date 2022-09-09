@@ -2,92 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47054ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 09:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D40FEC6FA82
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 09:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232148AbiIIJch (ORCPT
+        id S231268AbiIIJnR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Sep 2022 05:32:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
+        Fri, 9 Sep 2022 05:43:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231696AbiIIJcI (ORCPT
+        with ESMTP id S230527AbiIIJnQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Sep 2022 05:32:08 -0400
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8FFA6B176;
-        Fri,  9 Sep 2022 02:29:54 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4MP9dL5r23z6S2mb;
-        Fri,  9 Sep 2022 17:27:50 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.102.38])
-        by APP2 (Coremail) with SMTP id Syh0CgA3inOBBxtjV_RbAg--.16776S4;
-        Fri, 09 Sep 2022 17:29:38 +0800 (CST)
-From:   Wei Yongjun <weiyongjun@huaweicloud.com>
-To:     Vincent Shih <vincent.sunplus@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org,
-        linux-phy@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH -next] phy: usb: sunplus: Fix return value check in update_disc_vol()
-Date:   Fri,  9 Sep 2022 09:47:09 +0000
-Message-Id: <20220909094709.1790970-1-weiyongjun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 9 Sep 2022 05:43:16 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F3B5D5737;
+        Fri,  9 Sep 2022 02:43:15 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-3450990b0aeso12396037b3.12;
+        Fri, 09 Sep 2022 02:43:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=CjOr/xVdCatVWvrfBKrHvrf5/qwfqa22a/dV5JbB6Ns=;
+        b=Wdb6x0hGfcz3f+ab9h93qPN15RUgQQOKVi2aFt+pDNe0fL0DvMs6qxRm/afiQ0zHms
+         GuHo+QHZDfWCwP3x5Nhw2KtErCDmCFGD+Ev7WiFgzoU/lsin2IQViX0UW9n5lMSDAwxy
+         Cc/xODhSz68S8kGpdq8vfRyxiYl+0hmK36cqqJt4K+oPIrs7/7flOmqVlzaq4x0fOeOR
+         2ZiFyzHdxqeYxvn/Lspa9cikJuXK91RfxdLAnT9+cFw5YJkBN3ApsZyCxfNct7Tto7/d
+         q3dFPx4BWvjN1uF+rGiWafmwO26m1yV7vi02ykBoH6Ox9jwdr+mW2/A+VZz3/WP7PmHj
+         BwHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=CjOr/xVdCatVWvrfBKrHvrf5/qwfqa22a/dV5JbB6Ns=;
+        b=MixkcJoKx4xjNN6MAIEAC2jseRhx35h14ZYHEE7v0AmOsA8poYcPw9zVtDBkQlk+k5
+         18JP6SuAmbTcxfygvMCvWYp0XgdIaBBlGrV7v53awjmx3Kv5xsHRz4fOCb3BLhMRBL5M
+         is5uD48Ug6cAUHanMgIYwCLmObzbbrfXaCoyp+Ga037zD7vi6Ha3+2nUngmckJVMKcJA
+         6gFcW74XFx39NLEEqNsF7OnKPD20Gvi7qONtcHJLH2UWIT1OUyllCg7H6H9F2LnwgpP/
+         1EGGTmn2xO61Z5Pp5THuBcFHq6Jmp+JbZ9XOBaNqFCSfDCtEpvEGhG8ZhdK+hdNtiewC
+         RZRQ==
+X-Gm-Message-State: ACgBeo1GiHvS2QeKbXXHUt0SPJzhnc+CEV7h+qcrfi3xBN9Ex+qBO6oP
+        rzwuw6hXaZXMt9Wt0V+l4qbWgoubrmZlp1CzxsjGDykh07s=
+X-Google-Smtp-Source: AA6agR6rVJh6TPlfqtSjbFfxwPrDCj6n15t/wcCkrItZvLKXf3DDre4zvFAl//4/COVWHFsukMwmkRQPTc4zgSco0pI=
+X-Received: by 2002:a0d:f701:0:b0:32a:17d3:d189 with SMTP id
+ h1-20020a0df701000000b0032a17d3d189mr11100556ywf.401.1662716594449; Fri, 09
+ Sep 2022 02:43:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-CM-TRANSID: Syh0CgA3inOBBxtjV_RbAg--.16776S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4DXF1ktF1xWFWDWF4fuFg_yoWkAFb_ur
-        yfKr17Jw4DKFnFvrWDAw4IvryIvFs8XFyFgw40qFy5AFyUtrnay3Z7uFyfuF1fZ3yUCr92
-        k3ZrZ343A34xWjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbokYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_JrC_JFWl1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-        67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
-        z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
-        AF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
-        IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s
-        0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsG
-        vfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
-X-CFilter-Loop: Reflected
+References: <20220909085505.15536-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220909085505.15536-1-lukas.bulwahn@gmail.com>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Fri, 9 Sep 2022 11:43:03 +0200
+Message-ID: <CAKXUXMzuwzE4bSmq7okPo3Y2h6q_83NeERm8P9yQ1i393vyNBg@mail.gmail.com>
+Subject: Re: [PATCH] ppc: select HAVE_PATA_PLATFORM in PPC instead of creating
+ a PPC dependency
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-ide@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Fri, Sep 9, 2022 at 10:55 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit cc18e0fea790 ("LIBATA: Add HAVE_PATA_PLATFORM to select
+> PATA_PLATFORM driver") introduces config HAVE_PATA_PLATFORM, and expects
+> that all architectures simply select this config when the architecture
+> supports using the PATA_PLATFORM driver.
+>
+> This is properly implemented already for all architectures except for the
+> powerpc architecture. Implement this for powerpc now.
+>
+> Adjust the config of the powerpc architecture to use the config
+> HAVE_PATA_PLATFORM and simplify the config PATA_PLATFORM to not mention
+> any specific architecture anymore.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-In case of error, the function nvmem_cell_read() returns ERR_PTR()
-and never returns NULL. The NULL test in the return value check
-should be replaced with IS_ERR().
+Please ignore this patch and pick:
 
-Fixes: 99d9ccd97385 ("phy: usb: Add USB2.0 phy driver for Sunplus SP7021")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/phy/sunplus/phy-sunplus-usb2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+https://lore.kernel.org/linuxppc-dev/20220909090343.21886-1-lukas.bulwahn@gmail.com/
 
-diff --git a/drivers/phy/sunplus/phy-sunplus-usb2.c b/drivers/phy/sunplus/phy-sunplus-usb2.c
-index 5269968b3060..b932087c55b2 100644
---- a/drivers/phy/sunplus/phy-sunplus-usb2.c
-+++ b/drivers/phy/sunplus/phy-sunplus-usb2.c
-@@ -92,13 +92,13 @@ static int update_disc_vol(struct sp_usbphy *usbphy)
- 	otp_v = nvmem_cell_read(cell, &otp_l);
- 	nvmem_cell_put(cell);
- 
--	if (otp_v) {
-+	if (!IS_ERR(otp_v)) {
- 		set = *(otp_v + 1);
- 		set = (set << (sizeof(char) * 8)) | *otp_v;
- 		set = (set >> usbphy->disc_vol_addr_off) & J_DISC;
- 	}
- 
--	if (!otp_v || set == 0)
-+	if (IS_ERR(otp_v) || set == 0)
- 		set = OTP_DISC_LEVEL_DEFAULT;
- 
- 	val = readl(usbphy->phy_regs + CONFIG7);
+Lukas
 
+> ---
+>  arch/powerpc/Kconfig | 1 +
+>  drivers/ata/Kconfig  | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 39d71d7701bd..2575e21b6e6b 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -237,6 +237,7 @@ config PPC
+>         select HAVE_MOD_ARCH_SPECIFIC
+>         select HAVE_NMI                         if PERF_EVENTS || (PPC64 && PPC_BOOK3S)
+>         select HAVE_OPTPROBES
+> +       select HAVE_PATA_PLATFORM
+>         select HAVE_PERF_EVENTS
+>         select HAVE_PERF_EVENTS_NMI             if PPC64
+>         select HAVE_PERF_REGS
+> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+> index 1c9f4fb2595d..ed3547165528 100644
+> --- a/drivers/ata/Kconfig
+> +++ b/drivers/ata/Kconfig
+> @@ -1103,7 +1103,7 @@ config PATA_PCMCIA
+>
+>  config PATA_PLATFORM
+>         tristate "Generic platform device PATA support"
+> -       depends on EXPERT || PPC || HAVE_PATA_PLATFORM
+> +       depends on EXPERT || HAVE_PATA_PLATFORM
+>         help
+>           This option enables support for generic directly connected ATA
+>           devices commonly found on embedded systems.
+> --
+> 2.17.1
+>
