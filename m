@@ -2,93 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4268ECAAD3
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 12:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FA8C6FA86
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 14:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231189AbiIIM0Q (ORCPT
+        id S232254AbiIIOtj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Sep 2022 08:26:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45450 "EHLO
+        Fri, 9 Sep 2022 10:49:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbiIIM0P (ORCPT
+        with ESMTP id S232123AbiIIOtf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Sep 2022 08:26:15 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898F912B2B1;
-        Fri,  9 Sep 2022 05:26:14 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id k17so1263079wmr.2;
-        Fri, 09 Sep 2022 05:26:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=HIttaRwxS/Q+PzylfGrNDChJUqTkhrFYeQ4fyU+Igeo=;
-        b=PBBru7o/5THp7coacVMSU2IXxEHhQPQSLMbTe95cwo2/6QseDKxW3H0nZUUeLEZMOS
-         2ZtlKFQ5T4lFVSZpt/Sva5e7PF65xUT8Lu6RDSYxX2OEhlBNgX6g5/kg1qUM/jZaFLFx
-         bYjHSkvgoAKjwsOpmKRw7abjdmWvs/mfkS2fcaVZLBnVC2GBMbwfU1DW/XgY9QjT9KiQ
-         RU29ZWtEQKkZWv1IMj/WE8J2+J8SqnWgCA9mwH1n1uRwzyDf4y2lt3UPr/6CksCopZO3
-         f9uwe1kZst/1R3NjYh+crcUYxV25WU0vrlszt+1XuyEEETubbKaXWQ0emZQYQQT76HMi
-         9Zkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=HIttaRwxS/Q+PzylfGrNDChJUqTkhrFYeQ4fyU+Igeo=;
-        b=UCkYQdk6YZDT6oIzUVvbtJLd3yYA3KLdcFJFDht6Nn/RSDnGQe8XCYxufkUqzOp9Mg
-         9T1ay9YkMgeR2X1ecRQIrMG9m5MwqXPBBZ5pahf6gut+AcZZCHCRoUSxImKTqU/wopnJ
-         ZVOhkx7+OzXN8cv2+puSqi1jPEb5//gbXw98pVc7WdLcpPKR2X4Ecn+NqCBwccIB05RO
-         U1YR6lWRFakG6pVtEk++UrcqBxwJ4G3azK2EZEzoTGcYlYfCN46mo33oI0oGMXo2fHed
-         erpExTR37G2YO/m9bYwiLzINt+7s268oh2yahiobmSqheerVEYdQWVR2nEp/wc05yqCd
-         2lWQ==
-X-Gm-Message-State: ACgBeo3/CXEUIzn3d45MXr+/wEcsRqQT3mgJx60kGyr6ccrV/3NFXCDX
-        MaVlkIrqKnV/xFCPDtEqVBw=
-X-Google-Smtp-Source: AA6agR5iFgxtS8kVRXgk1GWHrX0zg9ydSrrNmS/4X2uBJnOf3gOpS4jb3x0wNIuZmPnf2YfPA9Ferg==
-X-Received: by 2002:a05:600c:3d11:b0:3a5:cd9b:eb08 with SMTP id bh17-20020a05600c3d1100b003a5cd9beb08mr5465692wmb.82.1662726372865;
-        Fri, 09 Sep 2022 05:26:12 -0700 (PDT)
-Received: from felia.fritz.box (200116b8261bf1004cd87416af9987ea.dip.versatel-1u1.de. [2001:16b8:261b:f100:4cd8:7416:af99:87ea])
-        by smtp.gmail.com with ESMTPSA id iv11-20020a05600c548b00b003a84375d0d1sm544282wmb.44.2022.09.09.05.26.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Sep 2022 05:26:12 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] proc: make config PROC_CHILDREN depend on PROC_FS
-Date:   Fri,  9 Sep 2022 14:25:29 +0200
-Message-Id: <20220909122529.1941-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 9 Sep 2022 10:49:35 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A39B15A25;
+        Fri,  9 Sep 2022 07:49:32 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 6B5BA1F8FB;
+        Fri,  9 Sep 2022 14:49:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1662734971;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Gaael0CnI+T+Fan9Q5U4UOyHvyNFIkhZ/P10JsrjeEI=;
+        b=eBaVj44RJa6/uYOJaQcGuN+GeB455veuSalLKa9CdXWb61DlZmNkmPOdjAp7h/BxqNJo1j
+        JR3pjux135yPZ5HpcFD/7GwJI6kvGCn10kkdQuUefA3LOYD8JsMmil002TnfJOvlIiD8LA
+        9nASDJ1uMSierKbQYy2IbkbvrlbECCM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1662734971;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Gaael0CnI+T+Fan9Q5U4UOyHvyNFIkhZ/P10JsrjeEI=;
+        b=/EtFrOEaMAZ/BxSlQLZKa8Uc9B5qDPUq1+Yp/qqqoOiTcoWHqMgOzMT06GSco9X51B3xCO
+        Ea9o8Am2mZBUU9DA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3A7E813A93;
+        Fri,  9 Sep 2022 14:49:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Nhs+DXtSG2P3YwAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Fri, 09 Sep 2022 14:49:31 +0000
+Date:   Fri, 9 Sep 2022 16:44:06 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH] btrfs: qgroup: Fix a typo in a comment
+Message-ID: <20220909144406.GA32411@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <c81a4f359ff8a1443168b9c308dcd621ba24e5c5.1659814948.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c81a4f359ff8a1443168b9c308dcd621ba24e5c5.1659814948.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 2e13ba54a268 ("fs, proc: introduce CONFIG_PROC_CHILDREN") introduces
-the config PROC_CHILDREN to configure kernels to provide the
-/proc/<pid>/task/<tid>/children file.
+On Sat, Aug 06, 2022 at 09:42:34PM +0200, Christophe JAILLET wrote:
+> Add a missing 'r'.
+> s/qgoup/qgroup/
 
-When one deselects PROC_FS for kernel builds without /proc/, the config
-PROC_CHILDREN has no effect anymore, but is still visible in menuconfig.
-
-Add the dependency on PROC_FS to make the PROC_CHILDREN option disappear
-for kernel builds without /proc/.
-
-Fixes: 2e13ba54a268 ("fs, proc: introduce CONFIG_PROC_CHILDREN")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- fs/proc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index c930001056f9..32b1116ae137 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -92,6 +92,7 @@ config PROC_PAGE_MONITOR
- 
- config PROC_CHILDREN
- 	bool "Include /proc/<pid>/task/<tid>/children file"
-+	depends on PROC_FS
- 	default n
- 	help
- 	  Provides a fast way to retrieve first level children pids of a task. See
--- 
-2.17.1
-
+I don't know why codespell does not catch it, I don't have other typo
+fixes so I'll apply this. Thanks.
