@@ -2,121 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 453B9ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 09:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B78EECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 09:47:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230518AbiIIJni (ORCPT
+        id S231845AbiIIJrX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Sep 2022 05:43:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49374 "EHLO
+        Fri, 9 Sep 2022 05:47:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231649AbiIIJnf (ORCPT
+        with ESMTP id S230435AbiIIJrV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Sep 2022 05:43:35 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE4B5CCE13;
-        Fri,  9 Sep 2022 02:43:34 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-3378303138bso12506307b3.9;
-        Fri, 09 Sep 2022 02:43:34 -0700 (PDT)
+        Fri, 9 Sep 2022 05:47:21 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9216DFA6A7;
+        Fri,  9 Sep 2022 02:47:19 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id f131so1860867ybf.7;
+        Fri, 09 Sep 2022 02:47:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=7ZB/vFj1LBEvoFTPtCpwJzQSMMS3bz1eErTDvpmrofs=;
-        b=BWmld3ITX+giHZRWkJWwbcDCiOUpMOxQyqf6WsoI7BqlMauyRaz/ygBKpHYYcBNO+X
-         tUxzbx0oJP2PdXRc4UssH4YzjbKa/tcZH7uuybjb+cmvR5GjcY7cZ/Xsbyy+i1O+eVY/
-         5/eT+SZULnxNPSVsQc5sDf7lQCC7IoTjd1fArydNSxtxWzw2iE/Fln6qxNRm4kefwf37
-         4M6EC6OUSjfjZqTc+UWWlYsyNA3Oed/L+1/CNdtZ3ENyEEc/cmVDMI1zpmkJNfkxuGYp
-         yxVvAV/1WQPtYBsUTCvuAEcN+S8yvFEBQZDSt5Fkb86VT+ZJwOTRpUJOP8tNS5jFDDd2
-         qt1w==
+        bh=jfc5PI7vUD4Aq68rXzOdTc1GotoBc8f6RchZ+GS6IIs=;
+        b=c704vzTIEE8fD/+/yEejZ7dnnrVdpFgSizdgMZGxd8hZWJzMFgmZ5EdxpBlbOUvAiV
+         UQNGbMKvyIxj4+AF6dbyQIpPlzKw+9WRX+pf6AxZusOzuIp904FHwapLxuZWjRvIjeJf
+         ptoKp+v53gvE4UhNe8CdSyRhZfVnBoFPuZk88c09lR0b7uM3YomAA+haLBE671ddHqt9
+         5O23+VDPTnCnyUQOmnbvzeqZid4M8FkuKKCt1CKRl2K3GVKhLKLAYSATr40xRAU41ihb
+         JRU2ZscubQRTTjS6NFsUdEJv8luO2yB46THkdYNHN3FqL6Tgt4ObN2jxmU0iSe6vZW//
+         4mKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=7ZB/vFj1LBEvoFTPtCpwJzQSMMS3bz1eErTDvpmrofs=;
-        b=Pw3GAMaBKs8XttQ1mpLxwYUl+0BjVsADW018DmKvnTBzhD2OyZNBnuKvhg95aQIYQ1
-         /wXL3uOkxIdlFeK8GBMRw73AmJVwIGDnq1mjWUGeSa6I9Rp0t6d2Fr2X/xqRVJ7b2xdH
-         DYn1ynT2Keemknx+7eAMo89GDC5ejBQHCckdRYBc623a/wdOe1ojbQ9a2vRcxWbx/siB
-         2cD9CxhGvk8zcSApIKBSOJEBuHTSz88wrJCh//TXtu+gJdLyTFEf+G7kgxX1kKEjPpvJ
-         7tL/Axb6eV/7rskcL/Ttqb5ktsPS2UznXOUwyJxBTrjEsEcD6e6dU6GcXxnChBsqTpH4
-         luEA==
-X-Gm-Message-State: ACgBeo2twCqoTjlb9k2U+EE6ssPWD8aTMO1ZwxFHHClemIkU/Sk16jN4
-        6NA2cybVDX2cjmeHNdyUpEJMHXq3nQUXYn0tvxA=
-X-Google-Smtp-Source: AA6agR5jda4a3EcM5GDvNbwnprqfr/4CFDLarXT4mFEldLG0qPusFNe2TD+NpCjCIUQz5j77+wo6CNsqhSjzPuzhyYc=
-X-Received: by 2002:a81:7702:0:b0:328:297a:fdcb with SMTP id
- s2-20020a817702000000b00328297afdcbmr11117970ywc.335.1662716613820; Fri, 09
- Sep 2022 02:43:33 -0700 (PDT)
+        bh=jfc5PI7vUD4Aq68rXzOdTc1GotoBc8f6RchZ+GS6IIs=;
+        b=jK5k6/D1IU1Zjm6URqDbSEvoa8L8yRV5A5AcFjdzRNBsrclVsv256A4PdteLC24IaW
+         AD7qhpUnvdNcFF++l9EZAZn+5GsS4ac9QptOGhve8ImJVmqgtPsOYD7eAQIAD/Fvc0Mb
+         F/vfd8QNtJ0e9Ji2RJ4dRNpHkeZeJoo1LVWgQKy0i20s3HFZS1mlUxKWcCdlQhPKJ/jH
+         zekdj1kuqAz6AojX8T/rZweycriT7eQQfJDi76I0QtdGaEYTsdsDQ0ekTANeeupOCf9C
+         5c9yhxwvhWcjMoRJEkFMpcrRIizxXMxxw74m1LwibUIUM6MJXcmzaGpEveLj+FtLXZI3
+         ccsQ==
+X-Gm-Message-State: ACgBeo0mij3n7Xhh1NfzQdojZ9BIVFcqQ9ri8IJFM6Uk7LyNJXUF3yIO
+        8E0cbUHqLfquOSr9j24++dV35fPkp8zV+IVyds0=
+X-Google-Smtp-Source: AA6agR5iecDvFUTm3i7dnv6+ipXhF18SNJAuAN5Vk4ZI4UmY6mu5QedSKsbgiHyH5fdvRxxAyuv6TJXapYjUleCR1Vk=
+X-Received: by 2002:a25:d791:0:b0:6ae:2ee3:710e with SMTP id
+ o139-20020a25d791000000b006ae2ee3710emr6161116ybg.389.1662716838695; Fri, 09
+ Sep 2022 02:47:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220909090343.21886-1-lukas.bulwahn@gmail.com> <20220909090343.21886-2-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220909090343.21886-2-lukas.bulwahn@gmail.com>
+References: <20220908104337.11940-1-lukas.bulwahn@gmail.com>
+ <20220908104337.11940-7-lukas.bulwahn@gmail.com> <ca25a32d-aadb-f0d0-9e24-70fbabc4d377@csgroup.eu>
+In-Reply-To: <ca25a32d-aadb-f0d0-9e24-70fbabc4d377@csgroup.eu>
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Fri, 9 Sep 2022 11:43:23 +0200
-Message-ID: <CAKXUXMyDON2ys_bxNi07h_BOYkjd1Gidi6qTHXQ-=L5Vsu9kxA@mail.gmail.com>
-Subject: Re: [PATCH] ppc: select HAVE_PATA_PLATFORM in PPC instead of creating
- a PPC dependency
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-ide@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 9 Sep 2022 11:47:07 +0200
+Message-ID: <CAKXUXMwo-X+cM9f_K=JpnjAcPr89OKCZ4JRAFMYCaTwt85UJ5Q@mail.gmail.com>
+Subject: Re: [PATCH 6/6] init/Kconfig: remove confusing config EMBEDDED
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Peter Chen <peter.chen@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@ozlabs.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 9, 2022 at 11:04 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >   init/Kconfig | 8 --------
+> >   1 file changed, 8 deletions(-)
+> >
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index 9e3fd79b089c..d7429e0b8cae 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -1818,14 +1818,6 @@ config DEBUG_RSEQ
+> >
+> >         If unsure, say N.
+> >
+> > -config EMBEDDED
+> > -     bool "Embedded system"
+> > -     select EXPERT
+> > -     help
+> > -       This option should be enabled if compiling the kernel for
+> > -       an embedded system so certain expert options are available
+> > -       for configuration.
+> > -
+> >   config HAVE_PERF_EVENTS
+> >       bool
+> >       help
 >
-> Commit cc18e0fea790 ("LIBATA: Add HAVE_PATA_PLATFORM to select
-> PATA_PLATFORM driver") introduces config HAVE_PATA_PLATFORM, and expects
-> that all architectures simply select this config when the architecture
-> supports using the PATA_PLATFORM driver.
+> That's fine, but what happens to existing defconfigs then ?
 >
-> This is properly implemented already for all architectures except for the
-> powerpc architecture. Implement this for powerpc now.
+> $ git grep -w CONFIG_EMBEDDED arch/powerpc/
+> arch/powerpc/configs/40x/klondike_defconfig:CONFIG_EMBEDDED=y
+> arch/powerpc/configs/44x/fsp2_defconfig:CONFIG_EMBEDDED=y
+> arch/powerpc/configs/52xx/tqm5200_defconfig:CONFIG_EMBEDDED=y
+> arch/powerpc/configs/mgcoge_defconfig:CONFIG_EMBEDDED=y
+> arch/powerpc/configs/microwatt_defconfig:CONFIG_EMBEDDED=y
+> arch/powerpc/configs/ps3_defconfig:CONFIG_EMBEDDED=y
 >
-> Adjust the config of the powerpc architecture to use the config
-> HAVE_PATA_PLATFORM and simplify the config PATA_PLATFORM to not mention
-> any specific architecture anymore.
+> They need to get converted to selecting CONFIG_EXPERT instead.
 >
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> And that needs to be done before you remove CONFIG_EMBEDDED.
+>
 
-Please ignore this patch and pick:
-
-https://lore.kernel.org/linuxppc-dev/20220909090343.21886-1-lukas.bulwahn@gmail.com/
+Agree. Let us get the first five patches included. Then adjust the
+configs for all architectures and then delete the CONFIG_EMBEDDED.
 
 Lukas
-
-> ---
->  arch/powerpc/Kconfig | 1 +
->  drivers/ata/Kconfig  | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 39d71d7701bd..2575e21b6e6b 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -237,6 +237,7 @@ config PPC
->         select HAVE_MOD_ARCH_SPECIFIC
->         select HAVE_NMI                         if PERF_EVENTS || (PPC64 && PPC_BOOK3S)
->         select HAVE_OPTPROBES
-> +       select HAVE_PATA_PLATFORM
->         select HAVE_PERF_EVENTS
->         select HAVE_PERF_EVENTS_NMI             if PPC64
->         select HAVE_PERF_REGS
-> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-> index 1c9f4fb2595d..ed3547165528 100644
-> --- a/drivers/ata/Kconfig
-> +++ b/drivers/ata/Kconfig
-> @@ -1103,7 +1103,7 @@ config PATA_PCMCIA
->
->  config PATA_PLATFORM
->         tristate "Generic platform device PATA support"
-> -       depends on EXPERT || PPC || HAVE_PATA_PLATFORM
-> +       depends on EXPERT || HAVE_PATA_PLATFORM
->         help
->           This option enables support for generic directly connected ATA
->           devices commonly found on embedded systems.
-> --
-> 2.17.1
->
