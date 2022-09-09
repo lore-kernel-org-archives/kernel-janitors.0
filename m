@@ -2,78 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C57C4C6FA8B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 01:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7372FC54EE9
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 02:35:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229906AbiIIBYt (ORCPT
+        id S229917AbiIICfU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Sep 2022 21:24:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45896 "EHLO
+        Thu, 8 Sep 2022 22:35:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229730AbiIIBYr (ORCPT
+        with ESMTP id S229852AbiIICfS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Sep 2022 21:24:47 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC1220F75;
-        Thu,  8 Sep 2022 18:24:47 -0700 (PDT)
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MNypk2wnxzZcPT;
-        Fri,  9 Sep 2022 09:20:14 +0800 (CST)
+        Thu, 8 Sep 2022 22:35:18 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFF716B647;
+        Thu,  8 Sep 2022 19:35:16 -0700 (PDT)
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MP0Nr1qkfzlVrZ;
+        Fri,  9 Sep 2022 10:31:24 +0800 (CST)
 Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 9 Sep 2022 09:24:45 +0800
+ 15.1.2375.24; Fri, 9 Sep 2022 10:35:15 +0800
 Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
  (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 9 Sep
- 2022 09:24:44 +0800
+ 2022 10:35:14 +0800
 From:   Sun Ke <sunke32@huawei.com>
-To:     <vincent.sunplus@gmail.com>, <kishon@ti.com>, <vkoul@kernel.org>,
-        <p.zabel@pengutronix.de>
-CC:     <linux-usb@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>, <sunke32@huawei.com>
-Subject: [PATCH 2/2] phy: usb: Fix return value check in sp_usb_phy_probe()
-Date:   Fri, 9 Sep 2022 09:35:46 +0800
-Message-ID: <20220909013546.2259545-3-sunke32@huawei.com>
+To:     <joyce.ooi@intel.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <linux@armlinux.org.uk>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <sunke32@huawei.com>
+Subject: [PATCH v2] net: ethernet: altera: TSE: fix error return code in altera_tse_probe()
+Date:   Fri, 9 Sep 2022 10:46:17 +0800
+Message-ID: <20220909024617.2584200-1-sunke32@huawei.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220909013546.2259545-1-sunke32@huawei.com>
-References: <20220909013546.2259545-1-sunke32@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
  kwepemm600010.china.huawei.com (7.193.23.86)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In case of error, the function devm_ioremap() returns NULL pointer
-not ERR_PTR(). The IS_ERR() test in the return value check
-should be replaced with NULL test.
+Fix to return a negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Fixes: 99d9ccd97385 ("phy: usb: Add USB2.0 phy driver for Sunplus SP7021")
+Fixes: fef2998203e1 ("net: altera: tse: convert to phylink")
+Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Sun Ke <sunke32@huawei.com>
 ---
- drivers/phy/sunplus/phy-sunplus-usb2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/altera/altera_tse_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/phy/sunplus/phy-sunplus-usb2.c b/drivers/phy/sunplus/phy-sunplus-usb2.c
-index d73a8a421d9c..50ad428cc55d 100644
---- a/drivers/phy/sunplus/phy-sunplus-usb2.c
-+++ b/drivers/phy/sunplus/phy-sunplus-usb2.c
-@@ -260,8 +260,8 @@ static int sp_usb_phy_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	usbphy->moon4_regs = devm_ioremap(&pdev->dev, usbphy->moon4_res_mem->start,
- 					  resource_size(usbphy->moon4_res_mem));
--	if (IS_ERR(usbphy->moon4_regs))
--		return PTR_ERR(usbphy->moon4_regs);
-+	if (!usbphy->moon4_regs)
-+		return -EINVAL;
+diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
+index 89ae6d1623aa..3cf409bdb283 100644
+--- a/drivers/net/ethernet/altera/altera_tse_main.c
++++ b/drivers/net/ethernet/altera/altera_tse_main.c
+@@ -1411,6 +1411,7 @@ static int altera_tse_probe(struct platform_device *pdev)
+ 				       priv->phy_iface, &alt_tse_phylink_ops);
+ 	if (IS_ERR(priv->phylink)) {
+ 		dev_err(&pdev->dev, "failed to create phylink\n");
++		ret = PTR_ERR(priv->phylink);
+ 		goto err_init_phy;
+ 	}
  
- 	usbphy->phy_clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(usbphy->phy_clk))
 -- 
 2.31.1
 
