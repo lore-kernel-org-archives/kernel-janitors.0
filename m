@@ -2,34 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD6AECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Sep 2022 11:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DD1C6FA83
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Sep 2022 12:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230099AbiIKL5K (ORCPT
+        id S230244AbiIKMDQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 11 Sep 2022 07:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53508 "EHLO
+        Sun, 11 Sep 2022 08:03:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229967AbiIKL5J (ORCPT
+        with ESMTP id S229981AbiIKMDP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 11 Sep 2022 07:57:09 -0400
-Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C148B2CDEB
-        for <kernel-janitors@vger.kernel.org>; Sun, 11 Sep 2022 04:57:08 -0700 (PDT)
+        Sun, 11 Sep 2022 08:03:15 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 732AA36DD1
+        for <kernel-janitors@vger.kernel.org>; Sun, 11 Sep 2022 05:03:14 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id XLaEowyOq9RnzXLaEofjBq; Sun, 11 Sep 2022 13:57:07 +0200
+        id XLg7ovwaCu8plXLg7o0FVH; Sun, 11 Sep 2022 14:03:12 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 11 Sep 2022 13:57:07 +0200
+X-ME-Date: Sun, 11 Sep 2022 14:03:12 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Sebastian Reichel <sre@kernel.org>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] headers: Remove some left-over license text in include/uapi/linux/hsi/
-Date:   Sun, 11 Sep 2022 13:56:59 +0200
-Message-Id: <4919073b3dee8ca7612989659d31b12f9c5491ba.1662897400.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: [PATCH] headers: Remove some left-over license text in include/uapi/linux/netfilter/
+Date:   Sun, 11 Sep 2022 14:03:09 +0200
+Message-Id: <e41c6fd2ed7d55b432129403d7a2bd443b759b33.1662897784.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -37,68 +40,104 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
-license identifier to uapi header files with a license")
-
 When the SPDX-License-Identifier tag has been added, the corresponding
 license text has not been removed.
 
+Remove it now.
+
+Also, in xt_connmark.h, move the copyright text at the top of the file
+which is a much more common pattern.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- include/uapi/linux/hsi/cs-protocol.h | 14 --------------
- include/uapi/linux/hsi/hsi_char.h    | 14 --------------
- 2 files changed, 28 deletions(-)
+ include/uapi/linux/netfilter/ipset/ip_set.h |  4 ----
+ include/uapi/linux/netfilter/xt_AUDIT.h     |  4 ----
+ include/uapi/linux/netfilter/xt_connmark.h  | 13 ++++---------
+ include/uapi/linux/netfilter/xt_osf.h       | 14 --------------
+ 4 files changed, 4 insertions(+), 31 deletions(-)
 
-diff --git a/include/uapi/linux/hsi/cs-protocol.h b/include/uapi/linux/hsi/cs-protocol.h
-index c7f6e7672cb5..07c3bfb67463 100644
---- a/include/uapi/linux/hsi/cs-protocol.h
-+++ b/include/uapi/linux/hsi/cs-protocol.h
-@@ -6,20 +6,6 @@
+diff --git a/include/uapi/linux/netfilter/ipset/ip_set.h b/include/uapi/linux/netfilter/ipset/ip_set.h
+index 6397d75899bc..79e5d68b87af 100644
+--- a/include/uapi/linux/netfilter/ipset/ip_set.h
++++ b/include/uapi/linux/netfilter/ipset/ip_set.h
+@@ -3,10 +3,6 @@
+  *                         Patrick Schaaf <bof@bof.de>
+  *                         Martin Josefsson <gandalf@wlug.westbo.se>
+  * Copyright (C) 2003-2011 Jozsef Kadlecsik <kadlec@netfilter.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ #ifndef _UAPI_IP_SET_H
+ #define _UAPI_IP_SET_H
+diff --git a/include/uapi/linux/netfilter/xt_AUDIT.h b/include/uapi/linux/netfilter/xt_AUDIT.h
+index 1b314e2f84ac..56a3f6092e0c 100644
+--- a/include/uapi/linux/netfilter/xt_AUDIT.h
++++ b/include/uapi/linux/netfilter/xt_AUDIT.h
+@@ -4,10 +4,6 @@
   *
-  * Contact: Kai Vehmanen <kai.vehmanen@nokia.com>
-  * Original author: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+  * (C) 2010-2011 Thomas Graf <tgraf@redhat.com>
+  * (C) 2010-2011 Red Hat, Inc.
 - *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-- * 02110-1301 USA
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
   */
  
- #ifndef _CS_PROTOCOL_H
-diff --git a/include/uapi/linux/hsi/hsi_char.h b/include/uapi/linux/hsi/hsi_char.h
-index 91623b0398b1..5ef72f0daf94 100644
---- a/include/uapi/linux/hsi/hsi_char.h
-+++ b/include/uapi/linux/hsi/hsi_char.h
-@@ -5,20 +5,6 @@
-  * Copyright (C) 2010 Nokia Corporation. All rights reserved.
-  *
-  * Contact: Andras Domokos <andras.domokos at nokia.com>
+ #ifndef _XT_AUDIT_TARGET_H
+diff --git a/include/uapi/linux/netfilter/xt_connmark.h b/include/uapi/linux/netfilter/xt_connmark.h
+index f01c19b83a2b..41b578ccd03b 100644
+--- a/include/uapi/linux/netfilter/xt_connmark.h
++++ b/include/uapi/linux/netfilter/xt_connmark.h
+@@ -1,18 +1,13 @@
+ /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
++/* Copyright (C) 2002,2004 MARA Systems AB <https://www.marasystems.com>
++ * by Henrik Nordstrom <hno@marasystems.com>
++ */
++
+ #ifndef _XT_CONNMARK_H
+ #define _XT_CONNMARK_H
+ 
+ #include <linux/types.h>
+ 
+-/* Copyright (C) 2002,2004 MARA Systems AB <https://www.marasystems.com>
+- * by Henrik Nordstrom <hno@marasystems.com>
 - *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+ enum {
+ 	XT_CONNMARK_SET = 0,
+ 	XT_CONNMARK_SAVE,
+diff --git a/include/uapi/linux/netfilter/xt_osf.h b/include/uapi/linux/netfilter/xt_osf.h
+index 6e466236ca4b..f1f097896bdf 100644
+--- a/include/uapi/linux/netfilter/xt_osf.h
++++ b/include/uapi/linux/netfilter/xt_osf.h
+@@ -1,20 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+ /*
+  * Copyright (c) 2003+ Evgeniy Polyakov <johnpol@2ka.mxt.ru>
 - *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-- * General Public License for more details.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
 - *
 - * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-- * 02110-1301 USA
+- * along with this program; if not, see <http://www.gnu.org/licenses/>.
   */
  
- #ifndef __HSI_CHAR_H
+ #ifndef _XT_OSF_H
 -- 
 2.34.1
 
