@@ -2,270 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4246EECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Sep 2022 12:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F77C54EE9
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Sep 2022 12:50:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230250AbiIKMLI (ORCPT
+        id S230152AbiIKMuw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 11 Sep 2022 08:11:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43400 "EHLO
+        Sun, 11 Sep 2022 08:50:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230037AbiIKMLG (ORCPT
+        with ESMTP id S229842AbiIKMuv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 11 Sep 2022 08:11:06 -0400
-Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AEA42EF2E
-        for <kernel-janitors@vger.kernel.org>; Sun, 11 Sep 2022 05:11:05 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id XLnjox3GD9RnzXLnjofkL5; Sun, 11 Sep 2022 14:11:03 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 11 Sep 2022 14:11:03 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] headers: Remove some left-over license text in include/uapi/linux/dvb/
-Date:   Sun, 11 Sep 2022 14:10:59 +0200
-Message-Id: <84668f75659991dc2c2fa9728badfcf918485fc1.1662898254.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 11 Sep 2022 08:50:51 -0400
+X-Greylist: delayed 557 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 11 Sep 2022 05:50:50 PDT
+Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C9E33377;
+        Sun, 11 Sep 2022 05:50:49 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 51EB85800EE;
+        Sun, 11 Sep 2022 08:41:29 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute3.internal (MEProxy); Sun, 11 Sep 2022 08:41:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1662900089; x=1662903689; bh=1GZ2u26PHV
+        wOoJDnASgBsAUd+m1Af4353JlGnsnz/f4=; b=ScXp8ztibFMeakt2Z9ENRjE97W
+        rWlIRQ6bkbR7joS+Vbf2NKoyBPIhNBgf3FgAA6XasGfcRZsc4Qpmtl0wYGzskLOv
+        t2QKQ9WIkGHhAoGCPXpKdiJuSoHQzfQOq2CQPyykRF5bn21NZKnSZhfx1dcCtuPw
+        TZY0p5XFL1yd3F0QVTwsBHv1Pdk2ViXUkaeCef7ZOZQ0VC3ptnlpaQYaE+pAXh1P
+        W3WWNV5Sn0ZkOqsepVn/ZUKtYe7Tfa5K+BVNx3clwRc81WJOSRKlnFa7Nc2HHdTg
+        RTgReauhdFlDi/QAIW34cXW9og0zFMC9woBeqx/NWgdMkFc1OqXIM3S6tMLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1662900089; x=1662903689; bh=1GZ2u26PHVwOoJDnASgBsAUd+m1A
+        f4353JlGnsnz/f4=; b=eghne2qRWd1wsuKZGpIqjrPPhv5TyGTEAyn3BSZ+x6G4
+        M4XzcnyADbsOcQmdOwxeQWZthGv/YDncqXBytBp+4bDaBkNMitnyiNCS3SL55lBc
+        BsfDIw7GKftLimJQTelRp/BdmbfZvXpws6sORj9qKlJfecOwxZl3Kr00+KGT2sNg
+        8DrPvFBLC4ZAu7BSMfKeRFe2EedkUKPvNaob0TBkznAFV3Urh70/cqjHrBgDiKE7
+        IwYOjR8fax9ahMRByFctXuWYktbg0Rn0oJZnQPcNz2w1ek6YrmeNFXHy2Oyk+qKS
+        2/ORLQVtuY8FeEGqVvIu1JUTraUmGpsVGXSti4zCGg==
+X-ME-Sender: <xms:eNcdYxpHahCVkpQvxfZE6fKxhA0gV0Mlm4hYexMSn_sV9MjOt_RUoQ>
+    <xme:eNcdYzq-D9n0nuM8lgGDZARsUsFdXS7IFVRo_ljUKU6s6FzNjgO5uNs3Pi5K9FfHp
+    v2JAsEsq5CgcCfVWa0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedutddgheejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:eNcdY-NydDEuwzokdY6-AEcFbuzVCA0GsbdMwtnVIkaTNknIQaXXIg>
+    <xmx:eNcdY85I9LUqQWafaOQxVgruPrxhWgux4pE7A5uTnpkOW7aFacNgvQ>
+    <xmx:eNcdYw7Yl_Bg8_6_8LTXEUZkOn9nR3oPOkdDWCx1RBByDjwSN_4j1A>
+    <xmx:edcdY9umv6K3ccyA9GaOn9ILqN-Eu1MM42_ih-1xLzudeaKPIYoAxQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id CB2C2B60089; Sun, 11 Sep 2022 08:41:28 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-927-gf4c98c8499-fm-20220826.002-gf4c98c84
+Mime-Version: 1.0
+Message-Id: <c4f3d527-7e70-4077-b40b-129144d79374@www.fastmail.com>
+In-Reply-To: <0ad5f339-de31-2849-34a1-928ae65cc696@opensource.wdc.com>
+References: <20220909090343.21886-1-lukas.bulwahn@gmail.com>
+ <21359abe-c3c9-4aa8-8ebf-75ff64cb1935@www.fastmail.com>
+ <2379456e-4f18-d619-10bf-022327de0463@csgroup.eu>
+ <4b33bffc-2b6d-46b4-9f1d-d18e55975a5a@www.fastmail.com>
+ <0ad5f339-de31-2849-34a1-928ae65cc696@opensource.wdc.com>
+Date:   Sun, 11 Sep 2022 14:41:08 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Damien Le Moal" <damien.lemoal@opensource.wdc.com>,
+        "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+        "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Nicholas Piggin" <npiggin@gmail.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] powerpc: select HAVE_PATA_PLATFORM in PPC instead of creating a
+ PPC dependency
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
-license identifier to uapi header files wi
+On Sun, Sep 11, 2022, at 1:54 PM, Damien Le Moal wrote:
+> On 2022/09/09 20:31, Arnd Bergmann wrote:
+>>  
+>>  config PATA_PLATFORM
+>> -	tristate "Generic platform device PATA support"
+>> -	depends on EXPERT || PPC || HAVE_PATA_PLATFORM
+>> +	tristate "Generic platform device PATA support" if EXPERT || HAVE_PATA_PLATFORM
+>
+> Shouldn't this be:
+>
+> 	tristate "Generic platform device PATA support" if EXPERT || PPC
+>
+> ?
+>
+> And while at it, it would be nice to add "|| COMPILE_TEST" too.
 
-When the SPDX-License-Identifier tag has been added, the corresponding
-license text has not been removed.
+The idea was that this can be selected by CONFIG_PATA_OF_PLATFORM
+in any configuration that has CONFIG_OF enabled. Since PPC
+has CONFIG_OF enabled unconditionally, there is no need to
+make this option visible separately.
 
-Remove it now.
+Same for compile-testing: since CONFIG_OF can be enabled on
+any architecture, PATA_OF_PLATFORM is already covered by
+allmodconfig builds anywhere. The separate HAVE_PATA_PLATFORM
+is only needed for machines that want the non-OF pata-platform
+module (sh, m68k-mac, mips-sibyte arm-s3c-simtec).
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- include/uapi/linux/dvb/audio.h    | 15 ---------------
- include/uapi/linux/dvb/ca.h       | 15 ---------------
- include/uapi/linux/dvb/dmx.h      | 15 ---------------
- include/uapi/linux/dvb/frontend.h | 15 ---------------
- include/uapi/linux/dvb/net.h      | 15 ---------------
- include/uapi/linux/dvb/osd.h      | 15 ---------------
- include/uapi/linux/dvb/version.h  | 15 ---------------
- include/uapi/linux/dvb/video.h    | 15 ---------------
- 8 files changed, 120 deletions(-)
-
-diff --git a/include/uapi/linux/dvb/audio.h b/include/uapi/linux/dvb/audio.h
-index 2f869da69171..77fb866890b4 100644
---- a/include/uapi/linux/dvb/audio.h
-+++ b/include/uapi/linux/dvb/audio.h
-@@ -7,21 +7,6 @@
-  * Copyright (C) 2000 Ralph  Metzler <ralph@convergence.de>
-  *                  & Marcus Metzler <marcus@convergence.de>
-  *                    for convergence integrated media GmbH
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Lesser Public License
-- * as published by the Free Software Foundation; either version 2.1
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU Lesser General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-- *
-  */
- 
- #ifndef _DVBAUDIO_H_
-diff --git a/include/uapi/linux/dvb/ca.h b/include/uapi/linux/dvb/ca.h
-index dffa59e95ebb..4244b187cc4d 100644
---- a/include/uapi/linux/dvb/ca.h
-+++ b/include/uapi/linux/dvb/ca.h
-@@ -5,21 +5,6 @@
-  * Copyright (C) 2000 Ralph  Metzler <ralph@convergence.de>
-  *                  & Marcus Metzler <marcus@convergence.de>
-  *                    for convergence integrated media GmbH
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Lesser Public License
-- * as published by the Free Software Foundation; either version 2.1
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU Lesser General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-- *
-  */
- 
- #ifndef _DVBCA_H_
-diff --git a/include/uapi/linux/dvb/dmx.h b/include/uapi/linux/dvb/dmx.h
-index b4112f0b6dd3..7b16375f94e2 100644
---- a/include/uapi/linux/dvb/dmx.h
-+++ b/include/uapi/linux/dvb/dmx.h
-@@ -5,21 +5,6 @@
-  * Copyright (C) 2000 Marcus Metzler <marcus@convergence.de>
-  *                  & Ralph  Metzler <ralph@convergence.de>
-  *                    for convergence integrated media GmbH
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU Lesser General Public License
-- * as published by the Free Software Foundation; either version 2.1
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU Lesser General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-- *
-  */
- 
- #ifndef _UAPI_DVBDMX_H_
-diff --git a/include/uapi/linux/dvb/frontend.h b/include/uapi/linux/dvb/frontend.h
-index 4f9b4551c534..2c5b9563804a 100644
---- a/include/uapi/linux/dvb/frontend.h
-+++ b/include/uapi/linux/dvb/frontend.h
-@@ -7,21 +7,6 @@
-  *		    Holger Waechtler <holger@convergence.de>
-  *		    Andre Draszik <ad@convergence.de>
-  *		    for convergence integrated media GmbH
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU Lesser General Public License
-- * as published by the Free Software Foundation; either version 2.1
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU Lesser General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-- *
-  */
- 
- #ifndef _DVBFRONTEND_H_
-diff --git a/include/uapi/linux/dvb/net.h b/include/uapi/linux/dvb/net.h
-index 0c550ef93f2c..7cbb47ac38ef 100644
---- a/include/uapi/linux/dvb/net.h
-+++ b/include/uapi/linux/dvb/net.h
-@@ -5,21 +5,6 @@
-  * Copyright (C) 2000 Marcus Metzler <marcus@convergence.de>
-  *                  & Ralph  Metzler <ralph@convergence.de>
-  *                    for convergence integrated media GmbH
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU Lesser General Public License
-- * as published by the Free Software Foundation; either version 2.1
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU Lesser General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-- *
-  */
- 
- #ifndef _DVBNET_H_
-diff --git a/include/uapi/linux/dvb/osd.h b/include/uapi/linux/dvb/osd.h
-index 858997c74043..6003b108ba45 100644
---- a/include/uapi/linux/dvb/osd.h
-+++ b/include/uapi/linux/dvb/osd.h
-@@ -7,21 +7,6 @@
-  * Copyright (C) 2001 Ralph  Metzler <ralph@convergence.de>
-  *                  & Marcus Metzler <marcus@convergence.de>
-  *                    for convergence integrated media GmbH
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Lesser Public License
-- * as published by the Free Software Foundation; either version 2.1
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU Lesser General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-- *
-  */
- 
- #ifndef _DVBOSD_H_
-diff --git a/include/uapi/linux/dvb/version.h b/include/uapi/linux/dvb/version.h
-index 2c5cffe6d2a0..1a8cd038aa0b 100644
---- a/include/uapi/linux/dvb/version.h
-+++ b/include/uapi/linux/dvb/version.h
-@@ -4,21 +4,6 @@
-  *
-  * Copyright (C) 2000 Holger Waechtler <holger@convergence.de>
-  *                    for convergence integrated media GmbH
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU Lesser General Public License
-- * as published by the Free Software Foundation; either version 2.1
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU Lesser General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-- *
-  */
- 
- #ifndef _DVBVERSION_H_
-diff --git a/include/uapi/linux/dvb/video.h b/include/uapi/linux/dvb/video.h
-index 179f1ec60af6..9910b73737e0 100644
---- a/include/uapi/linux/dvb/video.h
-+++ b/include/uapi/linux/dvb/video.h
-@@ -7,21 +7,6 @@
-  * Copyright (C) 2000 Marcus Metzler <marcus@convergence.de>
-  *                  & Ralph  Metzler <ralph@convergence.de>
-  *                    for convergence integrated media GmbH
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU Lesser General Public License
-- * as published by the Free Software Foundation; either version 2.1
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU Lesser General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-- *
-  */
- 
- #ifndef _UAPI_DVBVIDEO_H_
--- 
-2.34.1
-
+       Arnd
