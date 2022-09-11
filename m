@@ -2,119 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F77C54EE9
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Sep 2022 12:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788DFECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Sep 2022 13:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbiIKMuw (ORCPT
+        id S230136AbiIKNPl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 11 Sep 2022 08:50:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58758 "EHLO
+        Sun, 11 Sep 2022 09:15:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbiIKMuv (ORCPT
+        with ESMTP id S229920AbiIKNPj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 11 Sep 2022 08:50:51 -0400
-X-Greylist: delayed 557 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 11 Sep 2022 05:50:50 PDT
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C9E33377;
-        Sun, 11 Sep 2022 05:50:49 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 51EB85800EE;
-        Sun, 11 Sep 2022 08:41:29 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute3.internal (MEProxy); Sun, 11 Sep 2022 08:41:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm1; t=1662900089; x=1662903689; bh=1GZ2u26PHV
-        wOoJDnASgBsAUd+m1Af4353JlGnsnz/f4=; b=ScXp8ztibFMeakt2Z9ENRjE97W
-        rWlIRQ6bkbR7joS+Vbf2NKoyBPIhNBgf3FgAA6XasGfcRZsc4Qpmtl0wYGzskLOv
-        t2QKQ9WIkGHhAoGCPXpKdiJuSoHQzfQOq2CQPyykRF5bn21NZKnSZhfx1dcCtuPw
-        TZY0p5XFL1yd3F0QVTwsBHv1Pdk2ViXUkaeCef7ZOZQ0VC3ptnlpaQYaE+pAXh1P
-        W3WWNV5Sn0ZkOqsepVn/ZUKtYe7Tfa5K+BVNx3clwRc81WJOSRKlnFa7Nc2HHdTg
-        RTgReauhdFlDi/QAIW34cXW9og0zFMC9woBeqx/NWgdMkFc1OqXIM3S6tMLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1662900089; x=1662903689; bh=1GZ2u26PHVwOoJDnASgBsAUd+m1A
-        f4353JlGnsnz/f4=; b=eghne2qRWd1wsuKZGpIqjrPPhv5TyGTEAyn3BSZ+x6G4
-        M4XzcnyADbsOcQmdOwxeQWZthGv/YDncqXBytBp+4bDaBkNMitnyiNCS3SL55lBc
-        BsfDIw7GKftLimJQTelRp/BdmbfZvXpws6sORj9qKlJfecOwxZl3Kr00+KGT2sNg
-        8DrPvFBLC4ZAu7BSMfKeRFe2EedkUKPvNaob0TBkznAFV3Urh70/cqjHrBgDiKE7
-        IwYOjR8fax9ahMRByFctXuWYktbg0Rn0oJZnQPcNz2w1ek6YrmeNFXHy2Oyk+qKS
-        2/ORLQVtuY8FeEGqVvIu1JUTraUmGpsVGXSti4zCGg==
-X-ME-Sender: <xms:eNcdYxpHahCVkpQvxfZE6fKxhA0gV0Mlm4hYexMSn_sV9MjOt_RUoQ>
-    <xme:eNcdYzq-D9n0nuM8lgGDZARsUsFdXS7IFVRo_ljUKU6s6FzNjgO5uNs3Pi5K9FfHp
-    v2JAsEsq5CgcCfVWa0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfedutddgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:eNcdY-NydDEuwzokdY6-AEcFbuzVCA0GsbdMwtnVIkaTNknIQaXXIg>
-    <xmx:eNcdY85I9LUqQWafaOQxVgruPrxhWgux4pE7A5uTnpkOW7aFacNgvQ>
-    <xmx:eNcdYw7Yl_Bg8_6_8LTXEUZkOn9nR3oPOkdDWCx1RBByDjwSN_4j1A>
-    <xmx:edcdY9umv6K3ccyA9GaOn9ILqN-Eu1MM42_ih-1xLzudeaKPIYoAxQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id CB2C2B60089; Sun, 11 Sep 2022 08:41:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-927-gf4c98c8499-fm-20220826.002-gf4c98c84
-Mime-Version: 1.0
-Message-Id: <c4f3d527-7e70-4077-b40b-129144d79374@www.fastmail.com>
-In-Reply-To: <0ad5f339-de31-2849-34a1-928ae65cc696@opensource.wdc.com>
-References: <20220909090343.21886-1-lukas.bulwahn@gmail.com>
- <21359abe-c3c9-4aa8-8ebf-75ff64cb1935@www.fastmail.com>
- <2379456e-4f18-d619-10bf-022327de0463@csgroup.eu>
- <4b33bffc-2b6d-46b4-9f1d-d18e55975a5a@www.fastmail.com>
- <0ad5f339-de31-2849-34a1-928ae65cc696@opensource.wdc.com>
-Date:   Sun, 11 Sep 2022 14:41:08 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Damien Le Moal" <damien.lemoal@opensource.wdc.com>,
-        "Christophe Leroy" <christophe.leroy@csgroup.eu>,
-        "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
-        "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Nicholas Piggin" <npiggin@gmail.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
-Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] powerpc: select HAVE_PATA_PLATFORM in PPC instead of creating a
- PPC dependency
-Content-Type: text/plain
+        Sun, 11 Sep 2022 09:15:39 -0400
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC2D628E3B
+        for <kernel-janitors@vger.kernel.org>; Sun, 11 Sep 2022 06:15:37 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id XMoAo3G0KjJi0XMoBoWog3; Sun, 11 Sep 2022 15:15:36 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 11 Sep 2022 15:15:36 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+        Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [RFC PATCH] checkpatch: Check check for places where dev_err_probe() would likely be better than dev_err()
+Date:   Sun, 11 Sep 2022 15:15:33 +0200
+Message-Id: <3cdc2e776dea77b07c75694ba1410bd21e8ed749.1662902045.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Sep 11, 2022, at 1:54 PM, Damien Le Moal wrote:
-> On 2022/09/09 20:31, Arnd Bergmann wrote:
->>  
->>  config PATA_PLATFORM
->> -	tristate "Generic platform device PATA support"
->> -	depends on EXPERT || PPC || HAVE_PATA_PLATFORM
->> +	tristate "Generic platform device PATA support" if EXPERT || HAVE_PATA_PLATFORM
->
-> Shouldn't this be:
->
-> 	tristate "Generic platform device PATA support" if EXPERT || PPC
->
-> ?
->
-> And while at it, it would be nice to add "|| COMPILE_TEST" too.
+Some functions are known to potentially return -EPROBE_DEFER. In such a
+case, it is likely that dev_err_probe() is a better choice than err_err().
 
-The idea was that this can be selected by CONFIG_PATA_OF_PLATFORM
-in any configuration that has CONFIG_OF enabled. Since PPC
-has CONFIG_OF enabled unconditionally, there is no need to
-make this option visible separately.
+dev_err_probe():
+  - is usually less verbose
+  - generates smaller .o files
+  - handles -EPROBE_DEFER so that logs are not spammed
+  - automatically log the error code in a human readable way
 
-Same for compile-testing: since CONFIG_OF can be enabled on
-any architecture, PATA_OF_PLATFORM is already covered by
-allmodconfig builds anywhere. The separate HAVE_PATA_PLATFORM
-is only needed for machines that want the non-OF pata-platform
-module (sh, m68k-mac, mips-sibyte arm-s3c-simtec).
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is only a PoC to see if there is some interest in such a new
+check.
+The hard coded '5 lines of context' has been chosen because a typical
+pattern is:
 
-       Arnd
+	clk = devm_clk_get(dev, "clk_lcd");
+	if (IS_ERR(clk) {
+		dev_err(dev, "Error meesage\n");
+		return PTR_ERR(clk);
+	}
+---
+ scripts/checkpatch.pl | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 2737e4ced574..88365749ed2e 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2625,6 +2625,9 @@ sub process {
+ 	my $last_blank_line = 0;
+ 	my $last_coalesced_string_linenr = -1;
+ 
++	my $last_function_that_return_defer = "";
++	my $last_function_that_return_defer_linenr = 0;
++
+ 	our @report = ();
+ 	our $cnt_lines = 0;
+ 	our $cnt_error = 0;
+@@ -7459,6 +7462,17 @@ sub process {
+ 			WARN("DUPLICATED_SYSCTL_CONST",
+ 				"duplicated sysctl range checking value '$1', consider using the shared one in include/linux/sysctl.h\n" . $herecurr);
+ 		}
++
++# check for places where dev_err_probe() would likely be better than dev_err()
++		if ($line =~ /((?:devm_)?clk_get)s*\(/) {
++			$last_function_that_return_defer = $1;
++			$last_function_that_return_defer_linenr = $linenr;
++		}
++		if ($last_function_that_return_defer_linenr >= ($linenr - 5) &&
++		    $line =~ /dev_err[^_]/) {
++			WARN("LIKELY_DEV_ERR_PROBE",
++				"dev_err_probe() is likely a better choice than err_err() after a " . $last_function_that_return_defer . "() call\n" . $herecurr);
++		}
+ 	}
+ 
+ 	# If we have no input at all, then there is nothing to report on
+-- 
+2.34.1
+
