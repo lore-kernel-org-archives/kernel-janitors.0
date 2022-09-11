@@ -2,149 +2,172 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB616C6FA8B
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Sep 2022 11:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4A4C6FA83
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Sep 2022 11:54:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230235AbiIKLvD (ORCPT
+        id S229994AbiIKLy6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 11 Sep 2022 07:51:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45322 "EHLO
+        Sun, 11 Sep 2022 07:54:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230247AbiIKLvB (ORCPT
+        with ESMTP id S230001AbiIKLyz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 11 Sep 2022 07:51:01 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D588220CA
-        for <kernel-janitors@vger.kernel.org>; Sun, 11 Sep 2022 04:50:56 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id XLUDoCHEZJvOZXLUEoFLUg; Sun, 11 Sep 2022 13:50:55 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 11 Sep 2022 13:50:55 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH] headers: Remove some left-over license text
-Date:   Sun, 11 Sep 2022 13:50:30 +0200
-Message-Id: <2a15aba72497e78ff08c8b8a8bfe3cf5a3e6ee18.1662897019.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 11 Sep 2022 07:54:55 -0400
+Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EA5D13E07
+        for <kernel-janitors@vger.kernel.org>; Sun, 11 Sep 2022 04:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1662897294; x=1694433294;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nEn8hKjiKoJTls+Eq+dMQFIVcEgOZT1PN3pCw0YzqBA=;
+  b=aIvU4jRNOHPwDdCM5FVWhZfIAaAKb8BpV0C5sQB3/LhOtqoF03GJmR7q
+   ieDPqwYRe9mA+/pUEOSv77afWAYuvnb1cnP72V02PKQ+G9VAtwO8bD3/+
+   o/MAX82dj7L8cyaISHw7vcAYATCD/WMe6Ur2fJiYL9U3ts8kfhAGt1RL3
+   b04goZy9oooA05LRh0vvfFUXYpv6IMrPHw4M8tXbw5RUNqnud2Wn9VP95
+   YuWLpVM4wl8N06CxqwnRuhxctgAeINo/4qoSaaOxbhdH0ltR62iHHNVcf
+   Da0M4uaFsUcFl+MUX6+ItahvmgCibaGtO1I7Cs1xRHUFgIcXrPdImmpyf
+   g==;
+X-IronPort-AV: E=Sophos;i="5.93,307,1654531200"; 
+   d="scan'208";a="211518607"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 11 Sep 2022 19:54:52 +0800
+IronPort-SDR: ByCN545MTx89HMw/2GeTptV9niML8P51EAuGZrMw1Oe/pZL+ZmPL8ZBDvr733gM5gvW2r2dUhL
+ HjHO6oRoSS3JwyyAixSxcBiGc7LqUecz9r3UbNWAUFTz12NIDF5UYKRibASq9Me1mIPgZDRAji
+ Ve4AvfuJnIc3lKtq/oBUMe/3a9f6jf46W0dn1GaNVKLzBLHD0WPTz32ol86ujTQrLlV6eHZPg+
+ ixDZhkWVU6UQAiMN4dP6DyvqdN+h6Z5rpBwi46MT7tlBwYd87nJGhhcDOGFzLrRy214v05/dI5
+ iLLTDpiiIL+wJswC4Y76Kz4/
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2022 04:09:43 -0700
+IronPort-SDR: p72/1v4CItY/6GjdMnhASpN4ggzAcDWUF54m1IBh2GK0zjps8xY4+iQp/Z4EZfMfns6Ro5C2xx
+ XIV56leMp/kWYsxpjQMpVdREo+L2Q2a9AI6H4TqZ1wXyE9Ae1+U4sqZQ4kCDurGGg/GRmgBdgT
+ sgY38+BElA5KdMH6mjyyHRvIyqbD9vbJMv2a/Kt/+zpy+D3uUWJvKRzzwPwwH9/A91rjrCFPz4
+ oMc76GEc/nnDNZF0w7TLr2+ZVdhFbuqtsvXXyQEbNbhKglLv+yUJ6L1irD0nq0jCd6vK71d8R+
+ P6M=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2022 04:54:53 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4MQSp42n0Cz1RvTr
+        for <kernel-janitors@vger.kernel.org>; Sun, 11 Sep 2022 04:54:52 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:content-language:references:to
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1662897291; x=1665489292; bh=nEn8hKjiKoJTls+Eq+dMQFIVcEgOZT1PN3p
+        Cw0YzqBA=; b=b//d1NznLH7uqx+zxu1XKsgYvHK8cvddlO+X+BrUSrpC87lFG91
+        d3Vpv+9exCjXUjTAyd427GRKpmiNPyT2b9ve5safOQicRcqnk8seOSfw0t5vEtEG
+        uXzVFBxsWwS96iWcRmvCeD0eSxpQl3dz6I0l0JNgDulN1P1mneK+Tg87iEeoahbF
+        E0ai0CUigyfjV+fLc8Dq5u6w7HkhzulnuoiqNxFeAyrRpWhxFJ1lbpw6WH0t9g36
+        JRWFHb8gEZD/cyRGXAAGMtE9m0qpcNcteDCN8do3aa2CcnsazsuLPok4r5Iz1YQA
+        iAE/27eukv59/gckzsodmDUuzxrZPBDt0EA==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id rEszpbpswgFu for <kernel-janitors@vger.kernel.org>;
+        Sun, 11 Sep 2022 04:54:51 -0700 (PDT)
+Received: from [10.225.1.43] (unknown [10.225.1.43])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4MQSp04Wlsz1RvLy;
+        Sun, 11 Sep 2022 04:54:48 -0700 (PDT)
+Message-ID: <0ad5f339-de31-2849-34a1-928ae65cc696@opensource.wdc.com>
+Date:   Sun, 11 Sep 2022 20:54:46 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.2.2
+Subject: Re: [PATCH v2] powerpc: select HAVE_PATA_PLATFORM in PPC instead of
+ creating a PPC dependency
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20220909090343.21886-1-lukas.bulwahn@gmail.com>
+ <21359abe-c3c9-4aa8-8ebf-75ff64cb1935@www.fastmail.com>
+ <2379456e-4f18-d619-10bf-022327de0463@csgroup.eu>
+ <4b33bffc-2b6d-46b4-9f1d-d18e55975a5a@www.fastmail.com>
+Content-Language: en-US
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <4b33bffc-2b6d-46b4-9f1d-d18e55975a5a@www.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
-license identifier to uapi header files with a license")
+On 2022/09/09 20:31, Arnd Bergmann wrote:
+> On Fri, Sep 9, 2022, at 1:19 PM, Christophe Leroy wrote:
+>> Le 09/09/2022 =C3=A0 13:09, Arnd Bergmann a =C3=A9crit=C2=A0:
+>>> On Fri, Sep 9, 2022, at 11:03 AM, Lukas Bulwahn wrote:
+>>>
+>>> I don't see a single powerpc machine that creates a
+>>>   name=3D"pata_platform" platform_device. I suspect this was
+>>> only needed bwfore 2007 commit 9cd55be4d223 ("[POWERPC] pasemi:
+>>> Move electra-ide to pata_of_platform"), so the "|| PPC"
+>>> bit should just get removed without adding the HAVE_PATA_PLATFORM
+>>> bit.
+>>
+>> But that was added in 2008 by commit 61f7162117d4 ("libata:=20
+>> pata_of_platform: OF-Platform PATA device driver")
+>=20
+> Ah, I see. In that case, I think we should probably just always
+> allow PATA_OF_PLATFORM to be enabled regardless of
+> HAVE_PATA_PLATFORM, something like
+>=20
+> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+> index 1c9f4fb2595d..c93d97455744 100644
+> --- a/drivers/ata/Kconfig
+> +++ b/drivers/ata/Kconfig
+> @@ -1102,8 +1102,7 @@ config PATA_PCMCIA
+>  	  If unsure, say N.
+> =20
+>  config PATA_PLATFORM
+> -	tristate "Generic platform device PATA support"
+> -	depends on EXPERT || PPC || HAVE_PATA_PLATFORM
+> +	tristate "Generic platform device PATA support" if EXPERT || HAVE_PAT=
+A_PLATFORM
 
-When the SPDX-License-Identifier tag has been added, the corresponding
-license text has not been removed.
+Shouldn't this be:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- include/uapi/linux/tc_act/tc_bpf.h        |  5 -----
- include/uapi/linux/tc_act/tc_skbedit.h    | 13 -------------
- include/uapi/linux/tc_act/tc_skbmod.h     |  7 +------
- include/uapi/linux/tc_act/tc_tunnel_key.h |  5 -----
- include/uapi/linux/tc_act/tc_vlan.h       |  5 -----
- 5 files changed, 1 insertion(+), 34 deletions(-)
+	tristate "Generic platform device PATA support" if EXPERT || PPC
 
-diff --git a/include/uapi/linux/tc_act/tc_bpf.h b/include/uapi/linux/tc_act/tc_bpf.h
-index 653c4f94f76e..fe6c8f8f3e8c 100644
---- a/include/uapi/linux/tc_act/tc_bpf.h
-+++ b/include/uapi/linux/tc_act/tc_bpf.h
-@@ -1,11 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
- /*
-  * Copyright (c) 2015 Jiri Pirko <jiri@resnulli.us>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef __LINUX_TC_BPF_H
-diff --git a/include/uapi/linux/tc_act/tc_skbedit.h b/include/uapi/linux/tc_act/tc_skbedit.h
-index 6cb6101208d0..64032513cc4c 100644
---- a/include/uapi/linux/tc_act/tc_skbedit.h
-+++ b/include/uapi/linux/tc_act/tc_skbedit.h
-@@ -2,19 +2,6 @@
- /*
-  * Copyright (c) 2008, Intel Corporation.
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-- * Place - Suite 330, Boston, MA 02111-1307 USA.
-- *
-  * Author: Alexander Duyck <alexander.h.duyck@intel.com>
-  */
- 
-diff --git a/include/uapi/linux/tc_act/tc_skbmod.h b/include/uapi/linux/tc_act/tc_skbmod.h
-index af6ef2cfbf3d..ac62c9a993ea 100644
---- a/include/uapi/linux/tc_act/tc_skbmod.h
-+++ b/include/uapi/linux/tc_act/tc_skbmod.h
-@@ -1,12 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
- /*
-  * Copyright (c) 2016, Jamal Hadi Salim
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
--*/
-+ */
- 
- #ifndef __LINUX_TC_SKBMOD_H
- #define __LINUX_TC_SKBMOD_H
-diff --git a/include/uapi/linux/tc_act/tc_tunnel_key.h b/include/uapi/linux/tc_act/tc_tunnel_key.h
-index 3f10dc4e7a4b..49ad4033951b 100644
---- a/include/uapi/linux/tc_act/tc_tunnel_key.h
-+++ b/include/uapi/linux/tc_act/tc_tunnel_key.h
-@@ -2,11 +2,6 @@
- /*
-  * Copyright (c) 2016, Amir Vadai <amir@vadai.me>
-  * Copyright (c) 2016, Mellanox Technologies. All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef __LINUX_TC_TUNNEL_KEY_H
-diff --git a/include/uapi/linux/tc_act/tc_vlan.h b/include/uapi/linux/tc_act/tc_vlan.h
-index 5b306fe815cc..3e1f8e57cdd2 100644
---- a/include/uapi/linux/tc_act/tc_vlan.h
-+++ b/include/uapi/linux/tc_act/tc_vlan.h
-@@ -1,11 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
- /*
-  * Copyright (c) 2014 Jiri Pirko <jiri@resnulli.us>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-  */
- 
- #ifndef __LINUX_TC_VLAN_H
--- 
-2.34.1
+?
+
+And while at it, it would be nice to add "|| COMPILE_TEST" too.
+
+>  	help
+>  	  This option enables support for generic directly connected ATA
+>  	  devices commonly found on embedded systems.
+> @@ -1112,7 +1111,8 @@ config PATA_PLATFORM
+> =20
+>  config PATA_OF_PLATFORM
+>  	tristate "OpenFirmware platform device PATA support"
+> -	depends on PATA_PLATFORM && OF
+> +	depends on OF
+> +	select PATA_PLATFORM
+>  	help
+>  	  This option enables support for generic directly connected ATA
+>  	  devices commonly found on embedded systems with OpenFirmware
+>=20
+> and then also drop the "select HAVE_PATA_PLATFORM" from
+> arm64 and arm/versatile.
+>=20
+> Or we can go one step further, and either split out the
+> 'pata_platform_driver' into a separate file from
+> '__pata_platform_probe', or merge pata_of_platform.c
+> back into pata_platform.c.
+>=20
+>       Arnd
+
+--=20
+Damien Le Moal
+Western Digital Research
 
