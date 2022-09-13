@@ -2,133 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BE7C6FA83
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Sep 2022 18:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A36C54EE9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Sep 2022 09:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbiILSOt (ORCPT
+        id S231423AbiIMJnh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Sep 2022 14:14:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37294 "EHLO
+        Tue, 13 Sep 2022 05:43:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbiILSOr (ORCPT
+        with ESMTP id S231673AbiIMJnb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Sep 2022 14:14:47 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B2D76271;
-        Mon, 12 Sep 2022 11:14:46 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id u28so3720155qku.2;
-        Mon, 12 Sep 2022 11:14:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=YPKBe9B3XbC8RUfPOGArlb9dr+0GqBtfH24k5Otusrk=;
-        b=YacZ7pCFkqrvZCQtCIGbDt2MYK3i+sd3xi1qTDTf1RqY9UYfccxhJQwuo4vjytaVrV
-         LvCX0WexjcADJKv1qBmMPN/ovyIa+1a5ZV13RyU452y2Rt7Jh8lM24X5lmw701OWu1hU
-         P21rekXqi5mPPJWZ1Emm/j4CYCwUSVXdIzHVELNE4vT/TUrKmW9Hvxu69GESQ2rK3jsO
-         eaMp4Yo8i5cPA1GX+OFYToufY0+7aWTdgpnr0ALI3B+vUg7jgXHVzB1Zf81gry1D8YPH
-         MJ9NK5UXiSgdO7gj9jvgTPBxwTIHMZbOXFP68b6QZhK7o3hDKKUNptDkh2Vjcxrpo5Vn
-         5WAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=YPKBe9B3XbC8RUfPOGArlb9dr+0GqBtfH24k5Otusrk=;
-        b=zGTfv8dwjR//+61/3e4Zf/99Q+ZLuFGSlBhmGg4VtBaNpO/u+moHZGarIoGzwPbiEZ
-         qbgptA8XiYdInh5nV6tc4om424rr2a61CjJes51hd3reNIATMMfYD+S6XyiFwFflpk3g
-         O1JT2v2d0wyiKVEJGX6x23CBCfifqrr7FoHjr1OGTxzaLHtairaBlsloEjHO/09u5Lc4
-         Dy3CR+5ACo74wE6FE5gxjIJ5mqzAp945KtVGsDQZnsTc3v96ciQe9Ek+Sr+gS8AzcsIb
-         /Vf9/2Z7tDZzFA12GarAJ7cN3HH7m+A+ZXwW5hBEVDLb+ZFTs6aFjm8+W2ypw9o8GzQM
-         JWVA==
-X-Gm-Message-State: ACgBeo0ICPVOkd5shmFUptuKBoECMWyYCml9Rhnl8o9m6NPU+pON8TNJ
-        JDkmFf71+WFXCtrQEq4SX3o=
-X-Google-Smtp-Source: AA6agR7c8yiYGI7DfCu1B8qVctmxFMSXhsf+Q5RWzOlwmH2G0Mg5/eO01vwQ5HjoS3ZQmqA1jtGMaw==
-X-Received: by 2002:a05:620a:d8c:b0:6a7:91a4:2669 with SMTP id q12-20020a05620a0d8c00b006a791a42669mr20165762qkl.269.1663006485451;
-        Mon, 12 Sep 2022 11:14:45 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d5-20020a05622a15c500b0035bb6298526sm2342497qty.17.2022.09.12.11.14.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Sep 2022 11:14:44 -0700 (PDT)
-Message-ID: <2380c655-a6ba-7cdb-06d1-9c7856ff6cce@gmail.com>
-Date:   Mon, 12 Sep 2022 11:14:42 -0700
+        Tue, 13 Sep 2022 05:43:31 -0400
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7705E2BB3C;
+        Tue, 13 Sep 2022 02:43:27 -0700 (PDT)
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+        by localhost (Postfix) with ESMTP id 4MRdnT2ShQz9t0C;
+        Tue, 13 Sep 2022 11:43:25 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+        by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id wTNuIV4UJsKy; Tue, 13 Sep 2022 11:43:25 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase2.c-s.fr (Postfix) with ESMTP id 4MRdmZ39yDz9t0Y;
+        Tue, 13 Sep 2022 11:42:38 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5E0E08B77E;
+        Tue, 13 Sep 2022 11:42:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 9xEu-YDnXdMS; Tue, 13 Sep 2022 11:42:38 +0200 (CEST)
+Received: from [192.168.232.91] (unknown [192.168.232.91])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id ED4EF8B763;
+        Tue, 13 Sep 2022 11:42:37 +0200 (CEST)
+Message-ID: <449eb912-f7c7-2f79-d8bb-9449bee01986@csgroup.eu>
+Date:   Tue, 13 Sep 2022 11:42:38 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] net: broadcom: bcm4908enet: add platform_get_irq_byname
- error checking
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Yu Zhe <yuzhe@nfschina.com>
-Cc:     rafal@milecki.pl, bcm-kernel-feedback-list@broadcom.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        liqiong@nfschina.com
-References: <20220909062545.16696-1-yuzhe@nfschina.com>
- <Yx8YDUaxXBEFYyON@kadam>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <Yx8YDUaxXBEFYyON@kadam>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Subject: Re: State of RFC PATCH Remove CONFIG_DCACHE_WORD_ACCESS
+Content-Language: fr-FR
+From:   Christophe Leroy <christophe.leroy@csgroup.eu>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Joe Perches <joe@perches.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+References: <CAKXUXMzQDy-A5n8gvHaT9s21dn_ThuW0frCgm_tXMHPUhLY2zA@mail.gmail.com>
+ <91e6cf8b-f66a-3ea1-daa0-2ea875b7e7e8@csgroup.eu>
+In-Reply-To: <91e6cf8b-f66a-3ea1-daa0-2ea875b7e7e8@csgroup.eu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/12/22 04:29, Dan Carpenter wrote:
-> On Fri, Sep 09, 2022 at 02:25:45PM +0800, Yu Zhe wrote:
->> The platform_get_irq_byname() function returns negative error codes on error,
->> check it.
->>
->> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
->> ---
->>   drivers/net/ethernet/broadcom/bcm4908_enet.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/net/ethernet/broadcom/bcm4908_enet.c b/drivers/net/ethernet/broadcom/bcm4908_enet.c
->> index c131d8118489..d985056db6c2 100644
->> --- a/drivers/net/ethernet/broadcom/bcm4908_enet.c
->> +++ b/drivers/net/ethernet/broadcom/bcm4908_enet.c
->> @@ -705,6 +705,8 @@ static int bcm4908_enet_probe(struct platform_device *pdev)
->>   		return netdev->irq;
->>   
->>   	enet->irq_tx = platform_get_irq_byname(pdev, "tx");
->> +	if (enet->irq_tx < 0)
->> +		return enet->irq_tx;
->>   
+
+
+Le 12/09/2022 à 17:22, Christophe Leroy a écrit :
 > 
-> If you read the driver, then you will see that this is deliberate.
-> Search for irq_tx and read the comments.  I'm not a subsystem expert so
-> I don't know if this an ideal way to write the code, but it's done
-> deliberately so please don't change it unless you can test it.
+> 
+> Le 12/09/2022 à 15:46, Lukas Bulwahn a écrit :
+>> Hi Joe, hi Ben,
+>>
+>> While reviewing some kernel config, I came across
+>> CONFIG_DCACHE_WORD_ACCESS and tried to understand its purpose.
+>>
+>> Then, I discovered this RFC patch from 2014 that seems never to have
+>> been integrated:
+>>
+>> https://lore.kernel.org/all/1393964591.20435.58.camel@joe-AO722/
+>> [RFC] Remove CONFIG_DCACHE_WORD_ACCESS
+>>
+>> The discussion seemed to just not continue and the patch was just not
+>> integrated by anyone.
+>>
+>> In the meantime, the use of CONFIG_DCACHE_WORD_ACCESS has spread into
+>> a few more files, but replacing it with
+>> CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS still seems feasible.
+>>
+>> Are you aware of reasons that this patch from 2014 should not be 
+>> integrated?
+>>
+>> I would spend some time to move the integration of this patch further
+>> if you consider that the patch is not completely wrong.
+>>
+> 
+> As far as I can see, for the time being this is not equivalent on powerpc:
+> 
+> select HAVE_EFFICIENT_UNALIGNED_ACCESS  if !(CPU_LITTLE_ENDIAN && 
+> POWER7_CPU)
+> 
+> select DCACHE_WORD_ACCESS               if PPC64 && CPU_LITTLE_ENDIAN
+> 
+> This will need to be investigated I guess.
+> 
+> In the meantime I'll try to see if it makes any difference for ppc32.
+> 
 
-Yup, the transmit interrupt is deemed optional, or at least was up to 
-some point during the driver development. There is however a worthy bug 
-you could fix:
+Selecting DCACHE_WORD_ACCESS on powerpc32 provides an improvement of 
+approx 9% on a powerpc 8xx and about 2% on a powerpc 832x, using the 
+benchmark test in commit a75c380c7129 ("powerpc: Enable 
+DCACHE_WORD_ACCESS on ppc64le")
 
-   static int bcm4908_enet_stop(struct net_device *netdev)
-   {
-           struct bcm4908_enet *enet = netdev_priv(netdev);
-           struct bcm4908_enet_dma_ring *tx_ring = &enet->tx_ring;
-           struct bcm4908_enet_dma_ring *rx_ring = &enet->rx_ring;
-
-           netif_stop_queue(netdev);
-           netif_carrier_off(netdev);
-           napi_disable(&rx_ring->napi);
-           napi_disable(&tx_ring->napi);
-
-           bcm4908_enet_dma_rx_ring_disable(enet, &enet->rx_ring);
-           bcm4908_enet_dma_tx_ring_disable(enet, &enet->tx_ring);
-
-           bcm4908_enet_dma_uninit(enet);
-
-           free_irq(enet->irq_tx, enet);
-
-We might attempt to free an invalid interrupt here ^^
-
-           free_irq(enet->netdev->irq, enet);
-
-           return 0;
--- 
-Florian
+Christophe
