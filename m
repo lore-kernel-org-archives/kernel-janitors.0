@@ -2,115 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42116ECAAD3
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Sep 2022 08:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F55ECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Sep 2022 10:24:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbiINIip (ORCPT
+        id S229774AbiINKYO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Sep 2022 04:38:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41078 "EHLO
+        Wed, 14 Sep 2022 06:24:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229727AbiINIig (ORCPT
+        with ESMTP id S229812AbiINKYM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Sep 2022 04:38:36 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F44969F60;
-        Wed, 14 Sep 2022 01:38:35 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id bj12so32942913ejb.13;
-        Wed, 14 Sep 2022 01:38:34 -0700 (PDT)
+        Wed, 14 Sep 2022 06:24:12 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3AB97B1DC
+        for <kernel-janitors@vger.kernel.org>; Wed, 14 Sep 2022 03:24:08 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id m3so1685444eda.12
+        for <kernel-janitors@vger.kernel.org>; Wed, 14 Sep 2022 03:24:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=vRIXtyTmWownFPoHUEyYMg55UWu8236uAKX0IFKlDfI=;
-        b=ZlZqs6tGVRAPqWhtFBjp/MupoITqNBY8GWNFakDNSbXUwHRI/rGEnvBfcglXpeHr5W
-         /vets45BV7kNsS2rSe4CKwOOPKsYSFU5XUiO+SOMtG6TKR/TMeCIm46DRtk4ygg1Xnyx
-         OyKjeSUPOyxFJyqkFoDZghQEx0n8gf6ZLguqVsSBHwMg44jrldTKlBc8Uw4DJmn0R5Z3
-         /fCt5QuL/dHwgKeURkJef0MomxvRMvnjhvSS5WSggNZNUqvzuKOcyWfuTa2o6XzTXrK7
-         NJqHtKYM/XkXq6O9DxEw6zereqP2JcdclBY1G5zBGt4IfrnTKaTZhUu4nhdEvtztS0MY
-         XecQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=cEOY86r4oJ9dG+dY6gFKjMyCCLe5WdgdPOCSwvF8n+4=;
+        b=kijWTtrs6ynnic9VTdde5xeuO+1B4o2a0m7MCwMHZwPuVuTBv0UaxW9hAicCcSfqQo
+         eKJzNVrd+p8Uxh5HXVgDTjRJ9Td/kGbI2Fj+2eQPRvz1WAYAgmOcZI79MFN3LinhPURs
+         yQDCn/t3OGjLCgWIvGqlaDmI6JWaR2QtyIRS6X4oZyK8Ty8aU8dC+qcC697zbeCITDGM
+         ZxsPjY9FULL5AmVkKvxMb+ZCktAtZR1fwp2U7c9xtdtcboMJQ2b9Dh2sdWQKPNPhtG8u
+         I+BT0CkTp6Aw4IO7cGgbDrHjOy3voPVjYE0h6TMVP1jPmdKzw7TJ/Fiao4m0f5Ts1ap5
+         qe5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=vRIXtyTmWownFPoHUEyYMg55UWu8236uAKX0IFKlDfI=;
-        b=xKeVhh0161YLlqxzdXbnytLUTMChxTRKI0Em8z3Ob0xfQ8/XKVzNEl0+Xj8lYyzuGn
-         SNw2TDh2OwvRb4rtfHTxgeMaNZQeXbXO7rlRFvwECiYTCBxiD2wvse9/L18OPaQC2q6E
-         1C9tRk3fvCpUQEG7uY9pYNCh9Ou+1I7TZKShYjCtaDGeY/tZeB3Q8LgPamW4AJQYL4GQ
-         f42/kQu7LmUF552MfspEXzIF02I+tbCcOeHGqFL98CjgTq1NxVXf2KKW2kDBa34mAs1h
-         gd71nyRtVehKJm3DUGCfKjNNrciyn69e793vs5lcNr+8Ssq6p44/PxzeQ/f0wDpKeblX
-         C4Fw==
-X-Gm-Message-State: ACgBeo2vsqkBOl1U0wq1SZOaxPemTYoMGBNzY0rUrwmQU7SVy3F7sOo+
-        +OUXHg3njYZrs8widcumVbU=
-X-Google-Smtp-Source: AA6agR6NoCoUBVVgLFuXZW+2TPPz5cRhlmSs2W9X96yYw2SOOBC10J9HwDzoucb2UQVILw8CYYrlYA==
-X-Received: by 2002:a17:907:629b:b0:74f:94f3:786 with SMTP id nd27-20020a170907629b00b0074f94f30786mr25056899ejc.606.1663144713486;
-        Wed, 14 Sep 2022 01:38:33 -0700 (PDT)
-Received: from felia.fritz.box (200116b826cf470059b9799edefde240.dip.versatel-1u1.de. [2001:16b8:26cf:4700:59b9:799e:defd:e240])
-        by smtp.gmail.com with ESMTPSA id o15-20020a170906768f00b0077826b92d99sm7434978ejm.12.2022.09.14.01.38.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Sep 2022 01:38:32 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto@vger.kernel.org, Robert Elliott <elliott@hpe.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] crypto: revert unintended config addition of CRYPTO_BLAKE2S
-Date:   Wed, 14 Sep 2022 10:38:27 +0200
-Message-Id: <20220914083827.18939-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        bh=cEOY86r4oJ9dG+dY6gFKjMyCCLe5WdgdPOCSwvF8n+4=;
+        b=FIk/YX731Z5Ij2DIENjaATLRRLCLyUzxPZE8DW4nFLuvtHuuDY5DYQLqPJZkb9p+QF
+         pT6TroR/t6I8mNy32H/x3l2895jcdgIiOgGj7vUzNsvMxPsnxBr2HcPZpyR4TbIssJka
+         BtUuspNSh8rp4+4TPE4TJA5qCJVfJEjH7DNR5TAK1FA0uE/ud4ASPP5y/IUqgntlptLH
+         0oipenB+hRmjOCIodt4xuot1pMtWWmyNCntOTkykFly3NeuGyLYBwKLPlRzd5nuT6jFT
+         ksi0CtF3VW4sfeo37YDLHM8TGgdX/kbRBZOt4Ly70TcntzyRTCSwbnD2duS7cKkqUbmx
+         lKkA==
+X-Gm-Message-State: ACgBeo1eQt2BZOSYeRLbfqF+YPMgtcuFF9o8PSIU8e9KRzpKarJRvbLp
+        HsUJt2xllOWUZxQB14vphcsLoWWSr78FZuvIdzBvUw==
+X-Google-Smtp-Source: AA6agR7rCMfwCFbu7eOJQgVzPOx5xJvdUFsVLXdhChnO5WCdop5AwG82PCXBZc6QQpS6OBmvtNOELTTHheJUOo2dac0=
+X-Received: by 2002:a05:6402:f07:b0:450:bf95:59e9 with SMTP id
+ i7-20020a0564020f0700b00450bf9559e9mr25103503eda.46.1663151046746; Wed, 14
+ Sep 2022 03:24:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <3cdc2e776dea77b07c75694ba1410bd21e8ed749.1662902045.git.christophe.jaillet@wanadoo.fr>
+ <fac99d27-2e28-3c08-4cf3-c97afec99b77@wanadoo.fr>
+In-Reply-To: <fac99d27-2e28-3c08-4cf3-c97afec99b77@wanadoo.fr>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 14 Sep 2022 12:23:55 +0200
+Message-ID: <CACRpkdbA4m87swhTSGibMz9WUdpffdMkQwodZh2wknLOw9jmOQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] checkpatch: Check check for places where
+ dev_err_probe() would likely be better than dev_err()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+        Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 2d16803c562e ("crypto: blake2s - remove shash module") removes the
-config CRYPTO_BLAKE2S.
+On Sun, Sep 11, 2022 at 3:21 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> Le 11/09/2022 =C3=A0 15:15, Christophe JAILLET a =C3=A9crit :
+> > Some functions are known to potentially return -EPROBE_DEFER. In such a
+> > case, it is likely that dev_err_probe() is a better choice than err_err=
+().
+> >
+> > dev_err_probe():
+> >    - is usually less verbose
+> >    - generates smaller .o files
+> >    - handles -EPROBE_DEFER so that logs are not spammed
+> >    - automatically log the error code in a human readable way
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > This patch is only a PoC to see if there is some interest in such a new
+> > check.
+> > The hard coded '5 lines of context' has been chosen because a typical
+> > pattern is:
+> >
+> >       clk =3D devm_clk_get(dev, "clk_lcd");
+> >       if (IS_ERR(clk) {
+> >               dev_err(dev, "Error meesage\n");
+> >               return PTR_ERR(clk);
+> >       }
+>
+> (adding Linus Walleij)
+>
+>
+> I forgot to say that this patch is a try to address the comment from
+> Linus Walleij at [1].
+>
+> It would not help "fixing a gazillion dev_err_probe()", but it could
+> help not having more to fix later :)
 
-Commit 3f342a23257d ("crypto: Kconfig - simplify hash entries") makes
-various changes to the config descriptions as part of some consolidation
-and clean-up, but among all those changes, it also accidently adds back
-CRYPTO_BLAKE2S after its removal due to the original patch being based on
-a state before the CRYPTO_BLAKE2S removal.
+Needless to say I am a big fan of this patch!
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-See Link for the author's confirmation of this happening accidently.
-
-Link: https://lore.kernel.org/all/MW5PR84MB18424AB8C095BFC041AE33FDAB479@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM/
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- crypto/Kconfig | 21 ---------------------
- 1 file changed, 21 deletions(-)
-
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 1dfe0583f302..df4a29905ab0 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -917,27 +917,6 @@ config CRYPTO_BLAKE2B
- 
- 	  See https://blake2.net for further information.
- 
-- config CRYPTO_BLAKE2S
--	tristate "BLAKE2s"
--        select CRYPTO_LIB_BLAKE2S_GENERIC
--        select CRYPTO_HASH
--        help
--	  BLAKE2s cryptographic hash function (RFC 7693)
--
--	  BLAKE2s is optimized for 8 to 32-bit platforms and can produce
--	  digests of any size between 1 and 32 bytes. The keyed hash is
--	  also implemented.
--
--	  This module provides the following algorithms:
--          - blake2s-128
--          - blake2s-160
--          - blake2s-224
--          - blake2s-256
--
--	  Used by Wireguard.
--
--          See https://blake2.net for further information.
--
- config CRYPTO_CMAC
- 	tristate "CMAC (Cipher-based MAC)"
- 	select CRYPTO_HASH
--- 
-2.17.1
-
+Yours,
+Linus Walleij
