@@ -2,122 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AA5C6FA82
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Sep 2022 14:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4E4ECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Sep 2022 17:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230173AbiINOgW (ORCPT
+        id S229809AbiINRPL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Sep 2022 10:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35172 "EHLO
+        Wed, 14 Sep 2022 13:15:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230073AbiINOgC (ORCPT
+        with ESMTP id S229727AbiINRPK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Sep 2022 10:36:02 -0400
-Received: from wnew1-smtp.messagingengine.com (wnew1-smtp.messagingengine.com [64.147.123.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7DB55F132;
-        Wed, 14 Sep 2022 07:35:50 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 8BD082B05FFC;
-        Wed, 14 Sep 2022 10:30:33 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute3.internal (MEProxy); Wed, 14 Sep 2022 10:30:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm1; t=1663165833; x=1663169433; bh=Wfzkst+YiM
-        JXs5sReQh7j9lQiYxOvqzMOth3P09VD2c=; b=dtA+6ioovLXgpnsW7bHMriT+T8
-        ob6iCcULhl0DryCUFjedfRzE3xsBbdbGgadlAVQ41Et76qFRqBCEJYxqTKLHFJYl
-        0mJp3SooHmD8Ak+7kZ6osWjGt2E1ap29T1ijHM027l7852BmXlU6gJ8/CtVM6jBs
-        StaP8gavbZhPuNkxDOsOw6TvXchoXrwgU8nFCxFYpRCewlGjxOdZ+RU0NGh39qKk
-        j5pVNaEUsGKo20ThJBJF+lFh5c2oVxJcH/n6QI+HCRvCLUTI5Z446aoyLA8zyJdn
-        wGwrIVOzAiYcS+AOxNasXtqqFx4vqYQW36WPLWoKvU4mok2sBMK9oqBlZP/Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1663165833; x=1663169433; bh=Wfzkst+YiMJXs5sReQh7j9lQiYxO
-        vqzMOth3P09VD2c=; b=itBX/aQz+iZxcv3EEVV/ixil/kcm2odCbKteXE91FORJ
-        F10Q6kjN0bF7iLCWnXo8b53kIL+qiogY4SmdzaSLeCOtVhgmS9WgC8pJpvxYXb4u
-        1luiubes8aQfEci56/Tv/RYJZM5e7WYdF0+fub403CkBQck0eJqfKkqnIDUquP7X
-        uqVOr1oZdo29LEgjRysnLwNfGW5WJ0ZRQgk9HG8WAtYgoFuNwP4BwZTBJ1GshKse
-        nyXTIamtSmUlGxeaofMa/5JcY+f+fxAHPhiXnRFgzQ9dmaO+4uWz4omrQcwSpRdK
-        /8vAOWsSjAqLDrD8YU1lsMAraUppR+3uY0m91jwF1g==
-X-ME-Sender: <xms:iOUhYzgn43n6ijqzs0nu3UeRdGFedbOa0iK7sc9buC6ZmND7X0EYBQ>
-    <xme:iOUhYwAfivpNqnWCUlHFfjD0ET_yfp_Zox3wtfHK4caoT9X9BqjhIa_etaoGbrdO5
-    4E_CB5j94mCYcUqey4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeduiedgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepvefhffeltdegheeffffhtdegvdehjedtgfekueevgfduffettedtkeekueef
-    hedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:iOUhYzGLCVDNglg0bGaMDQsLRwfzSKLFHFxG_iw8WkNEm_ptpLXWKw>
-    <xmx:iOUhYwS2LbvTNBEYW8Cj_d9VuXMh1Rw5K6MUBURJ0QljjWqayMdBmw>
-    <xmx:iOUhYwzc8UN1nshGPQZzriYzYzleWIfvRniDPa8-mJMVeaDcvcULeA>
-    <xmx:iOUhYzxpua_M0Wig_41mvemz8s8eNfDmiB0qqv8bREXQMrqoJ3p7Y0J_X6M>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 4CA84B60086; Wed, 14 Sep 2022 10:30:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-934-g6274855a4c-fm-20220913.002-g6274855a
-Mime-Version: 1.0
-Message-Id: <ecd7e46c-4ed8-41b2-96b7-4f0a37f9d5df@www.fastmail.com>
-In-Reply-To: <20220914142713.29351-1-lukas.bulwahn@gmail.com>
-References: <20220914142713.29351-1-lukas.bulwahn@gmail.com>
-Date:   Wed, 14 Sep 2022 16:29:22 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Russell King" <linux@armlinux.org.uk>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>,
-        "Damien Le Moal" <damien.lemoal@opensource.wdc.com>,
-        linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org
+        Wed, 14 Sep 2022 13:15:10 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C016D27CC9;
+        Wed, 14 Sep 2022 10:15:08 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id v185-20020a1cacc2000000b003b42e4f278cso12933494wme.5;
+        Wed, 14 Sep 2022 10:15:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=MUUM7KwzU+2KZkzhKF9P1/j81tXXvszfc0LUASC7ZGA=;
+        b=bRGqzBulJ+h3aIK0GSYu1WGuD5E1GKrDaNVoqbN9x6qq2eM6+4zcGuC3IqvXqCsmPp
+         AtaoY84k3Ba73psWci1jKHZi4UD4ctih2nShAjtbpBzh37b3J3S2F/KWUwlM2374Au4g
+         lWValPIYyouOXq0gAzbd4QfdJ5DgZjShNZKtccpQzNXKrvk00h5OmDW0+S0gVgTwKvxB
+         6UBpM+Rnm4BjYMl28L2qBzq3PB4XZ7SxSMPyMo5nzU/ZgTk/EHqJ3WO/Yj75gbm7sNaz
+         4+b1lL7DBdAQTon+NMFP5Tu82E+FXIoq0oR8oW3s0mo6dYKluDTtxTsduHZTd9NuwN6K
+         w3BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=MUUM7KwzU+2KZkzhKF9P1/j81tXXvszfc0LUASC7ZGA=;
+        b=JtjtKn66sCLWsRf2n7inzGBh7xcN3Ki7xST0Sp1HTvFRScoU5HhUGYozleTvsctshb
+         tgAgHzRwM9GW+V2++M8KcE8VI4GIG1fh/TyLjLFXS5tw60hlQ93aUBb8iCERM2BkdjZ1
+         94M+jfz8+vbG4ZjtZFplDl/jzQPGtv5SvQ5yH/E5WGyr6qFfcl3eX3p3dFMKQ+e/NZ3G
+         s4qKo68kjdyCyQZQOtUTN/yfIi3YVaMF3KzEamlOPk5/1NPclgaJqQT9tEqlTtoSgnaU
+         9LQtHi9+NkVFP7kA0vrTZr09l5HOuPYJdTJ57T2WryW5UYhBu2cEXUEaUcQ82YIIazmB
+         H7IQ==
+X-Gm-Message-State: ACgBeo0jmpanKyU0obzfMfJMsu8vr8GT17OzRDy3XCmEy0Qhv5BcEbqG
+        +ESNYu6NxGFdEL/mwsGsX/k=
+X-Google-Smtp-Source: AA6agR6Rc0CCCWkOiOfheIsc8ANCtg+0ygZPaJ3PLf9IFqpYv7zMPhIFVAi0bPlzLhkr2GM/6vsOOw==
+X-Received: by 2002:a05:600c:1546:b0:3a6:a99:aa7 with SMTP id f6-20020a05600c154600b003a60a990aa7mr3738358wmg.109.1663175707237;
+        Wed, 14 Sep 2022 10:15:07 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id bv7-20020a0560001f0700b0022a53fe201fsm11769459wrb.68.2022.09.14.10.15.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Sep 2022 10:15:06 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ata: clean up how architectures enable PATA_PLATFORM and
- PATA_OF_PLATFORM
-Content-Type: text/plain
+Subject: [PATCH][next] drm/amdkfd: Fix spelling mistake "detroyed" -> "destroyed"
+Date:   Wed, 14 Sep 2022 18:15:05 +0100
+Message-Id: <20220914171505.54154-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 14, 2022, at 4:27 PM, Lukas Bulwahn wrote:
-> There are two options for platform device PATA support:
->
->   PATA_PLATFORM: Generic platform device PATA support
->   PATA_OF_PLATFORM: OpenFirmware platform device PATA support
->
-> If an architecture allows the generic platform device PATA support, it
-> shall select HAVE_PATA_PLATFORM. Then, Generic platform device PATA support
-> is available and can be selected.
->
-> If an architecture has OpenFirmware support, which it indicates by
-> selecting OF, OpenFirmware platform device PATA support is available
-> and can be selected.
-> If OpenFirmware platform device PATA support is selected, then the
-> functionality (code files) from Generic platform device PATA support needs
-> to be integrated in the kernel build for the OpenFirmware platform device
-> PATA support to work. Select PATA_PLATFORM in PATA_OF_PLATFORM to make sure
-> the needed files are added in the build.
->
-> So, architectures with OpenFirmware support, do not need to additionally
-> select HAVE_PATA_PLATFORM. It is only needed by architecture that want the
-> non-OF pata-platform module.
->
-> Reflect this way of intended use of config symbols in the ata Kconfig and
-> adjust all architecture definitions.
->
-> This follows the suggestion from Arnd Bergmann (see Link).
->
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Link: 
-> https://lore.kernel.org/all/4b33bffc-2b6d-46b4-9f1d-d18e55975a5a@www.fastmail.com/
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+There is a spelling mistake in a pr_debug message. Fix it.
 
-Thanks for the follow-up, looks good.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_migrate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+index 7522bf2d2f57..c70c026c9a93 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+@@ -898,7 +898,7 @@ static vm_fault_t svm_migrate_to_ram(struct vm_fault *vmf)
+ 		return VM_FAULT_SIGBUS;
+ 	}
+ 	if (!mmget_not_zero(svm_bo->eviction_fence->mm)) {
+-		pr_debug("addr 0x%lx of process mm is detroyed\n", addr);
++		pr_debug("addr 0x%lx of process mm is destroyed\n", addr);
+ 		return VM_FAULT_SIGBUS;
+ 	}
+ 
+-- 
+2.37.1
+
