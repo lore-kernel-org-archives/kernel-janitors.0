@@ -2,92 +2,180 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4E4ECAAD3
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Sep 2022 17:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B915C6FA92
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Sep 2022 09:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229809AbiINRPL (ORCPT
+        id S229885AbiIOJyp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Sep 2022 13:15:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34252 "EHLO
+        Thu, 15 Sep 2022 05:54:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229727AbiINRPK (ORCPT
+        with ESMTP id S230288AbiIOJxd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Sep 2022 13:15:10 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C016D27CC9;
-        Wed, 14 Sep 2022 10:15:08 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id v185-20020a1cacc2000000b003b42e4f278cso12933494wme.5;
-        Wed, 14 Sep 2022 10:15:08 -0700 (PDT)
+        Thu, 15 Sep 2022 05:53:33 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A60B0578AF;
+        Thu, 15 Sep 2022 02:50:47 -0700 (PDT)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28F8ugQZ008397;
+        Thu, 15 Sep 2022 09:49:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2022-7-12;
+ bh=+Vpyvvqfs6DiERZprshhCX/e66BD3De3BCfXPrSo/YU=;
+ b=EWPjbMuhN6ScOXoExcKQN7AZTCKVadVwOy2kucJL4r5r2sA4qMm+544W2lHbBF9j5Ot6
+ qq3il+Pv8gt4fVS9XwVSCZiJDVGKAXGCQsnbSOaGbQUC5uSCEb3bOzM0YoNpo/rhy9/M
+ LIDRk9PA9BCUCi5pMKplTjvi8k8H92puLFSqwM3YHX46Y6MgiuVIeZC885h30I378HgW
+ Df5+10Oxx3JasVznJSVPrT+EtpviJ4VStunT9GNapCgqkNQ1lkv0vTwjSlSkL81pDdTK
+ cqwUL7407VyDyVQWSU90/FmUrENPv8P5OPn0mBwEUUJqzHeNK6+rhfMCpcHE5SO/iQ4j DA== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3jjxypcv05-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Sep 2022 09:49:37 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 28F7qLoJ014535;
+        Thu, 15 Sep 2022 09:49:37 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2045.outbound.protection.outlook.com [104.47.66.45])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3jjym0w582-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Sep 2022 09:49:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CODHWEPyfbhB+c5vAGmBdmYiAvZQUPO6MN4OxGZgbtpj+C4j4N5r4O4mwAukm/vW0Rq4N6ZB0fX4eVWtxAxo99NnsEpW8WtPC1UhFT1VWHmkU5VXRIluhZAvyZxq7dN/ZdFF7QtWrQPw66im39M9xtbULYMmEug/JwGwN4b0B9qv/VTar8YvktgNmsJrgRMOf4Qxpx2+7I7PzfjsrCAB7MTteZpsxM18llXr9ptLHwaTjvERcgJS1JPKLOmll4ioudqI2n/6VH2r93t5D2XO6N93hPzyTrs5KEdcDyvnFL954cfBCBDHhrlKj8tan05CQ6UEorsPr1iIgFsuY+c4aQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+Vpyvvqfs6DiERZprshhCX/e66BD3De3BCfXPrSo/YU=;
+ b=mYLn5LS8hQ01/G2Bf7CwZqdMaKBVXxzNX9Ml78/HPtCCkXf29t8RNvy41E9D5CYh0Pjg9oDDDRIatXy65+ImNvYTGPXbFO3yEdOAK3X3omu1vqk/8OGxtPCX3HtvmgNwQ96nyU8E+5EVH6hbMp7tKn3TBzrsbnVCUCnqY6AAL+N9d57jbEosaI20O35cV+16McHouTTWzCmunDdnA/2rO/0YSn2AKmhnUot3VUpIbhFeSwEbhl2Ao9/WoYrtuR2XMjf6JJdKvMpohpSUWc631St8FEL+u4c7nD4W87Z6O3M31r4gAGfeL0SYj1L11M9BO34xsHVGMSXh36nuM2yMcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=MUUM7KwzU+2KZkzhKF9P1/j81tXXvszfc0LUASC7ZGA=;
-        b=bRGqzBulJ+h3aIK0GSYu1WGuD5E1GKrDaNVoqbN9x6qq2eM6+4zcGuC3IqvXqCsmPp
-         AtaoY84k3Ba73psWci1jKHZi4UD4ctih2nShAjtbpBzh37b3J3S2F/KWUwlM2374Au4g
-         lWValPIYyouOXq0gAzbd4QfdJ5DgZjShNZKtccpQzNXKrvk00h5OmDW0+S0gVgTwKvxB
-         6UBpM+Rnm4BjYMl28L2qBzq3PB4XZ7SxSMPyMo5nzU/ZgTk/EHqJ3WO/Yj75gbm7sNaz
-         4+b1lL7DBdAQTon+NMFP5Tu82E+FXIoq0oR8oW3s0mo6dYKluDTtxTsduHZTd9NuwN6K
-         w3BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=MUUM7KwzU+2KZkzhKF9P1/j81tXXvszfc0LUASC7ZGA=;
-        b=JtjtKn66sCLWsRf2n7inzGBh7xcN3Ki7xST0Sp1HTvFRScoU5HhUGYozleTvsctshb
-         tgAgHzRwM9GW+V2++M8KcE8VI4GIG1fh/TyLjLFXS5tw60hlQ93aUBb8iCERM2BkdjZ1
-         94M+jfz8+vbG4ZjtZFplDl/jzQPGtv5SvQ5yH/E5WGyr6qFfcl3eX3p3dFMKQ+e/NZ3G
-         s4qKo68kjdyCyQZQOtUTN/yfIi3YVaMF3KzEamlOPk5/1NPclgaJqQT9tEqlTtoSgnaU
-         9LQtHi9+NkVFP7kA0vrTZr09l5HOuPYJdTJ57T2WryW5UYhBu2cEXUEaUcQ82YIIazmB
-         H7IQ==
-X-Gm-Message-State: ACgBeo0jmpanKyU0obzfMfJMsu8vr8GT17OzRDy3XCmEy0Qhv5BcEbqG
-        +ESNYu6NxGFdEL/mwsGsX/k=
-X-Google-Smtp-Source: AA6agR6Rc0CCCWkOiOfheIsc8ANCtg+0ygZPaJ3PLf9IFqpYv7zMPhIFVAi0bPlzLhkr2GM/6vsOOw==
-X-Received: by 2002:a05:600c:1546:b0:3a6:a99:aa7 with SMTP id f6-20020a05600c154600b003a60a990aa7mr3738358wmg.109.1663175707237;
-        Wed, 14 Sep 2022 10:15:07 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bv7-20020a0560001f0700b0022a53fe201fsm11769459wrb.68.2022.09.14.10.15.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Sep 2022 10:15:06 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amdkfd: Fix spelling mistake "detroyed" -> "destroyed"
-Date:   Wed, 14 Sep 2022 18:15:05 +0100
-Message-Id: <20220914171505.54154-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+Vpyvvqfs6DiERZprshhCX/e66BD3De3BCfXPrSo/YU=;
+ b=LawHeBDyYfgJ9lIGgur244th/yStR7cVZExu86b11+/bf6AInRjqi2kyKZ9j5XTqtAR4Zyo/30CxeZ94hslLa+yczXAYe87j4kBhwE99cwWaqanT3wGCa1zDH90xne886GEu3jFjeSgqcB/xWsfbbIpaKhYx/ccFs9PWkBsLAdM=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by BLAPR10MB4980.namprd10.prod.outlook.com
+ (2603:10b6:208:334::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.15; Thu, 15 Sep
+ 2022 09:49:34 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::a493:38d9:86ee:73d6]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::a493:38d9:86ee:73d6%6]) with mapi id 15.20.5632.015; Thu, 15 Sep 2022
+ 09:49:34 +0000
+Date:   Thu, 15 Sep 2022 12:49:13 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     rafal@milecki.pl, bcm-kernel-feedback-list@broadcom.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com
+Subject: Re: [PATCH] net: broadcom: bcm4908enet: add platform_get_irq_byname
+ error checking
+Message-ID: <YyL1GSD42kib8iZM@kadam>
+References: <20220909062545.16696-1-yuzhe@nfschina.com>
+ <Yx8YDUaxXBEFYyON@kadam>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yx8YDUaxXBEFYyON@kadam>
+X-ClientProxiedBy: MR2P264CA0161.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:1::24) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWHPR1001MB2365:EE_|BLAPR10MB4980:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf36703f-406b-4c83-6676-08da96ff985a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QW0rjRixDyPQ2qkRbhHJBOc+rITfSi8ef/eHMzJuXgcXQpVbm+wb/IiSTh9tMGvURarlRwAFGlDu45kPUFSXh0Scg8if/5Nz6OYNfxNu3esx0PMdg9KQ7UN/l8KPXn5JxOIq6lfZV135D7Z2EXfKZSlyp1QgEUM49Om9vHW0nhnYTqxUp1iusYpjIhwz10qa1Bq2Ju2PqEv9b72eYEjxF/2TqjDJ95F4BV89O1IuTEZs2eT9JzeSgNwxeOYcPB4ObTiRyoRuXyHl1xWJx3P3zTB+2Q2zJJyI4maaQu0/4SEwY+bgM5NWkksy3NQ+kWyVxKTVz8pN1VS9IBNXvKISq8Yrt4wVn2030JGhzY2ey4Wliz3TkvO97dJy6kd68Xqu9QV9d85lzrlVH4GzZcMDpKVVl+/looedtfjSl3mzxmrkoKhNC6lNcJSPH4J0fGgsYTPuiEhxIoZXF7f6RPzguqI++07WJu1T7eg1JCGYLQ9ieRuIoRuVDk7h5Gf9nb4P5ewcCYm1Z+1fQEPHmZ/OVuUHvqwgl7kfttF3mo3Zl9l1aKwaYOgJFiZravUZDCmhI1awszTBO5Vha/SBI+8NCubUagr/CuEpDjfyaGuCfngQgowWNulKep1ZprhD0FctBOro7aHzVARQREX6vJFW6Fp8vZLfQtsGoZ3q0yLb8pp1HyStTV8jSHewYFJdvTIwOOHOC74r9e00xeuXYs0m2A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(39860400002)(376002)(366004)(396003)(346002)(136003)(451199015)(186003)(38100700002)(2906002)(5660300002)(7416002)(44832011)(8936002)(4326008)(33716001)(66946007)(8676002)(9686003)(478600001)(6486002)(6512007)(26005)(41300700001)(6666004)(6506007)(66556008)(66476007)(316002)(6916009)(86362001)(66899012);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VObiTfsiWlgGbQpAOhOZfmp5v+gfhxKXKFKTocsSiCn+AKLPG9+ExyJJ4QQB?=
+ =?us-ascii?Q?VKDjsVSWPT/c10utryRprWwSuMETKLQLFdbN2S4NZO6cvWCCCjEtxJd44HTY?=
+ =?us-ascii?Q?zsmnYFTIzg5ynuI0QppqOnYUsobWagvWTJDzK0gEGz8ANUQQEk04LkaMVSOk?=
+ =?us-ascii?Q?FYADIweFpzRIV0b9uz10fcpbb46j4ckyfiA1vz5DKwfmJ6adgYpGyugdcRnP?=
+ =?us-ascii?Q?RS0Z9I3i+LkOmhlvDD1TUQ+faShvW8V2i+XsuOxv8E9Crkw4p6WYZRu8xHV1?=
+ =?us-ascii?Q?uM73pRgVVmD/KXJXKv1kgfIjssDS5hUmM2/GXT0BEjC4pezr29qNobINOPYm?=
+ =?us-ascii?Q?xBWAguEmRX41ggb0jjONjzX1ZxKYcQj36avT+J/J6NzipK+0gm8Hk2MI9wJE?=
+ =?us-ascii?Q?rjBE7wjKvS+MqogWMVvLUhk/b5pRCNttXbMmwPyXejZwSnnRLr2rkJv/Bt+X?=
+ =?us-ascii?Q?I/9Z/+C26w4akguZ7A7YKZkXV2h7vOIlMybOJRSlpF2ijvJpmeZC/MzzJOH2?=
+ =?us-ascii?Q?8sMoE1Hg4kl2U3soJibRT0CmKno8ywmjK7bhezIzD3MjlK+OWCzciO3dafY/?=
+ =?us-ascii?Q?/9f74irkpbog4J4XltPL0f65aaAvuApzHA1yguT1VgPXJ4bVedjwUHh9FbdI?=
+ =?us-ascii?Q?pELExdcrFsL/MzH69S/JETUmqzHjYn0cXqj/lwF7kV33QoqK01tDEC5MrUjD?=
+ =?us-ascii?Q?+FXRS+aZsVbDJ4w71o+8p9fbLjA2MaLoRcpmjMVKljeMNJDFWnTwL80sjE1U?=
+ =?us-ascii?Q?MUzMuFMgvO9gFQ1gkiSWcCQhHD6C6BBk6Hk/+J0iZGtK0EK3WkspQch/1Sxe?=
+ =?us-ascii?Q?o1emnoONqwCH+RXBn7nOYGZfQzgbbasIMtKW37a6GppI/NhFYGIZmSmEaPhh?=
+ =?us-ascii?Q?w4IqytObVnDSxd7sONeflk1lCLHHsKGuHkqJ3xwraSF6IxNkCQL5q8OSkvZa?=
+ =?us-ascii?Q?6faFUcN1dJD6BD/OUpunFdeIJ5oYc/Ol41AxG2q4ZVvVWx4o0g1LJ1kDiuwJ?=
+ =?us-ascii?Q?XziEmAsT7ThxLo67k8ICkpnMrBabNdN8ydg1u0V/72ap4ZM1/UCVRXJmiT+Z?=
+ =?us-ascii?Q?nXw/ybr0xmtieQbWSsRvBvpgETgN/rCMJXdjeDrx1ja9bZlT+tCbL+K1X2BQ?=
+ =?us-ascii?Q?rfjHdYXF3KvwXfVeucE7A127Su9wqf4gCXWFnsQ86HQNwMP3CvPjee/U0cVn?=
+ =?us-ascii?Q?sgS5mEqg8bFxfLsq5ldbnyrtQfE2pYx6N7KMFYSQuCcl796GDTv0lciizf9d?=
+ =?us-ascii?Q?Dxc8+2mqXwJwFzbYoFTZO2k/BM+pVeRwjNE6tEPbyz789aCMSBfD6mN0n5dP?=
+ =?us-ascii?Q?KanBZEg+gsm2Pvp4efX984bFMRlJXkcNY+BvyCXnd1eGplSexa5KyEGNG0gE?=
+ =?us-ascii?Q?oBeTiLpNM8up94g6mAp8kUVgD80eJBRfALVkHC4cBsSm5ZAk9USMmW+Z3ews?=
+ =?us-ascii?Q?jX5i2x4qe7ys5B8uc1rXsvGU8Q8h1c0urETKJkRQr1ehqd5EokkF3iDSQjT0?=
+ =?us-ascii?Q?HOM4AiVdS98mIt5+rMrAa5fusJdT75iDOEyLwSsZAmvVhw17cmOolblqLZbi?=
+ =?us-ascii?Q?AtnGxLAXlsXZhqVq5r7Trm6/Bn0299PqrRHYzpzjWmhh3ytgtzZgkgdezvgo?=
+ =?us-ascii?Q?PA=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf36703f-406b-4c83-6676-08da96ff985a
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2022 09:49:34.7921
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LgDYTA6kPryvGd43W/J/wLP/BNe7FrqxT5/RXQ5jYosQ34itKOANcBjVLf8OfF5p0hhIy8s0RQ5Am1Hg8rFjPtRRa56P9PYCJRy3QFC8Csw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4980
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-15_06,2022-09-14_04,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2208220000
+ definitions=main-2209150054
+X-Proofpoint-ORIG-GUID: dIr_Ac9RMyoXh-8opiDQQeHvqfKsAOiV
+X-Proofpoint-GUID: dIr_Ac9RMyoXh-8opiDQQeHvqfKsAOiV
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a pr_debug message. Fix it.
+On Mon, Sep 12, 2022 at 02:29:17PM +0300, Dan Carpenter wrote:
+> On Fri, Sep 09, 2022 at 02:25:45PM +0800, Yu Zhe wrote:
+> > The platform_get_irq_byname() function returns negative error codes on error,
+> > check it.
+> > 
+> > Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> > ---
+> >  drivers/net/ethernet/broadcom/bcm4908_enet.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/broadcom/bcm4908_enet.c b/drivers/net/ethernet/broadcom/bcm4908_enet.c
+> > index c131d8118489..d985056db6c2 100644
+> > --- a/drivers/net/ethernet/broadcom/bcm4908_enet.c
+> > +++ b/drivers/net/ethernet/broadcom/bcm4908_enet.c
+> > @@ -705,6 +705,8 @@ static int bcm4908_enet_probe(struct platform_device *pdev)
+> >  		return netdev->irq;
+> >  
+> >  	enet->irq_tx = platform_get_irq_byname(pdev, "tx");
+> > +	if (enet->irq_tx < 0)
+> > +		return enet->irq_tx;
+> >  
+> 
+> If you read the driver, then you will see that this is deliberate.
+> Search for irq_tx and read the comments.  I'm not a subsystem expert so
+> I don't know if this an ideal way to write the code, but it's done
+> deliberately so please don't change it unless you can test it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/amd/amdkfd/kfd_migrate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Btw, my comment of "don't change it unless you can test it" only applies
+to this specific IRQ...  We constantly apply untested patches.  I have
+submitted my share of buggy patches.  I don't want to discourage you
+from your static analysis work.
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-index 7522bf2d2f57..c70c026c9a93 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-@@ -898,7 +898,7 @@ static vm_fault_t svm_migrate_to_ram(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
- 	}
- 	if (!mmget_not_zero(svm_bo->eviction_fence->mm)) {
--		pr_debug("addr 0x%lx of process mm is detroyed\n", addr);
-+		pr_debug("addr 0x%lx of process mm is destroyed\n", addr);
- 		return VM_FAULT_SIGBUS;
- 	}
- 
--- 
-2.37.1
+regards,
+dan carpenter
 
