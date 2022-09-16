@@ -2,94 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3086BECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Sep 2022 17:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B72ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Sep 2022 19:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbiIPRdx (ORCPT
+        id S229953AbiIPTcP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Sep 2022 13:33:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34288 "EHLO
+        Fri, 16 Sep 2022 15:32:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbiIPRdw (ORCPT
+        with ESMTP id S230185AbiIPTcM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Sep 2022 13:33:52 -0400
-Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B1DB5A76;
-        Fri, 16 Sep 2022 10:33:51 -0700 (PDT)
-Received: by mail-oo1-xc35.google.com with SMTP id t15-20020a4a96cf000000b0044e0142ec24so3631822ooi.8;
-        Fri, 16 Sep 2022 10:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=fBLKyH7CgKzdu0sdL+2+ttEv7QAignRvxC5/meELxsc=;
-        b=PwGUHnprOKMd9ZV8gp1ze2jZNz9YdSVYMqWrvunEtodfENazUhrdo9tAjof2a2Vxgb
-         iHTSSQ1yXzRw/pDCLSW4o31+PxpkknLNAjddJ/aHxtW3UH4Q9aRRT327eJA7jpCJkT3M
-         35DnMdN0V/3DWivocuFfcxitD1Kua1e75Y4JnV+YaaGVEGzkaqsJksfOeLjgFX/Tej1i
-         FlQEPK2POpGDawkmuTDvcUWm+gbr+n8WLsJ0dSF5cv43u2inQVCL1eSfPtBAAOXKNqTh
-         Yw/W5unoQMnwTJVzSf2mx5ekedEyUMweHKM6MeYgRN/drZhGUOn4YuZ7/1NZmhcI3TDW
-         VgBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=fBLKyH7CgKzdu0sdL+2+ttEv7QAignRvxC5/meELxsc=;
-        b=frMyCc1sOZ2OjUJvHuTmG4wWQ9L4UOObJGVsac3g9nhu4ej6dATnySrqy56EIY7VrT
-         9wi3Ruxd/smF9k9UKS4Spjx/YTIQoh9WVisZJ9ImB1+8P5n5WH80kviOVgzdOW9eQPGl
-         FLN2jwXCS5JErHrfev7qmgp7gHwtVwIMLrazB3htM96GCB77wkQeDCZVHgEHN7sv+RZ5
-         saxUcF6OYmYXMcgR5cpXFKtT9FPzpWaVCYnyHrgMYxcV4Ex0UG0Gl9WYN9UvNeRUNs6C
-         F7iR4s6yq7yQ6is4wBzMLgnPtYibOWj89MNrNN5bjKSGXpDV4+x/gnKG/SU/mo66NxsQ
-         ETyA==
-X-Gm-Message-State: ACrzQf3i4+kWUu/Dwf9BPGr0NuzoXgasrmgrpLgywEAWIYX0/2QrGcwi
-        ivRul2HJwect/cvg9v8YZweCGtNx9v8igvtcG7Y=
-X-Google-Smtp-Source: AMsMyM5dcaDQ2ebBoOCvWrT/ibg7sU42N2YPxtR4RrgQPXjfLAc8fxWJNwdyIu4G+gxuUl1pRP7DJRT4tdGdNBWvEY4=
-X-Received: by 2002:a4a:a78a:0:b0:472:a078:98d6 with SMTP id
- l10-20020a4aa78a000000b00472a07898d6mr2554260oom.97.1663349630965; Fri, 16
- Sep 2022 10:33:50 -0700 (PDT)
+        Fri, 16 Sep 2022 15:32:12 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6B42B0B18;
+        Fri, 16 Sep 2022 12:32:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8025DB82921;
+        Fri, 16 Sep 2022 19:32:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D74C433C1;
+        Fri, 16 Sep 2022 19:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663356728;
+        bh=//xoDX9kOXmkp982WJui+uOT9DeSmbvciR+NGZPx6EU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bK4Vpr7ZMnK1HS7eGhhmG9DvDRAwdhutjJR60Pa+S5R85TA3EA/BA7vIqp84S1vVZ
+         t0BcT/iSnmUpJrvRNvxR1axHAsuZJQVkYvPVE2sEMKOaiATvv9ua5bXkP9TdNvJ8VW
+         NE3R3ast7xLOagKx1tDNTrGLeYmxAtIs3DPZvjZn9elABCqhv3nqbna/HJjlUcSepc
+         7qANe6kK/vWBlH4G4NYM+6yOCAFpD+1wlhBdgAujge58I3HvRQO9Kuz2GGBPx9wx0T
+         Qagk8veUoGrQRPvTleHMgzr4IJWWeUzWfbHvdTsx38yZ91oioZ7hEDMTvwN8uD0xJP
+         /P86z9AmTEIqw==
+Date:   Fri, 16 Sep 2022 20:31:58 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kees Cook <keescook@chromium.org>, Peter Rosin <peda@axentia.se>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] i2c: mux: harden i2c_mux_alloc() against integer
+ overflows
+Message-ID: <YyTPLkOfPlgkLaxq@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Kees Cook <keescook@chromium.org>, Peter Rosin <peda@axentia.se>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <YyMM8iVSHJ4ammsg@kili>
+ <202209160046.016AC8B4@keescook>
+ <YyQxuHi2iQIvj0Lj@kadam>
 MIME-Version: 1.0
-References: <20220914171505.54154-1-colin.i.king@gmail.com>
-In-Reply-To: <20220914171505.54154-1-colin.i.king@gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 16 Sep 2022 13:33:39 -0400
-Message-ID: <CADnq5_NY+XfdjLhEf0mppF+paUVQjPP8xm_N=6=-1aG08-f54Q@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amdkfd: Fix spelling mistake "detroyed" -> "destroyed"
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LH3CZH+3vzn5Op2u"
+Content-Disposition: inline
+In-Reply-To: <YyQxuHi2iQIvj0Lj@kadam>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
 
-On Wed, Sep 14, 2022 at 1:15 PM Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> There is a spelling mistake in a pr_debug message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_migrate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> index 7522bf2d2f57..c70c026c9a93 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> @@ -898,7 +898,7 @@ static vm_fault_t svm_migrate_to_ram(struct vm_fault *vmf)
->                 return VM_FAULT_SIGBUS;
->         }
->         if (!mmget_not_zero(svm_bo->eviction_fence->mm)) {
-> -               pr_debug("addr 0x%lx of process mm is detroyed\n", addr);
-> +               pr_debug("addr 0x%lx of process mm is destroyed\n", addr);
->                 return VM_FAULT_SIGBUS;
->         }
->
-> --
-> 2.37.1
->
+--LH3CZH+3vzn5Op2u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > The new variable makes it more readable, but beyond that, do you see any
+> > reason not to just directly compose the calls?
+> >=20
+>=20
+> You could do that too.
+>=20
+> You pointed this out in your other email but the one thing that people
+> have to be careful of when assigning struct_size() is that the
+> "mux_size" variable has to be size_t.
+>=20
+> The math in submit_create() from drivers/gpu/drm/msm/msm_gem_submit.c
+> is so terribly unreadable.  It works but it's so ugly.  Unfortunately,
+> I'm the person who wrote it.
+
+I can't parse from that if the patch in question is okay or needs a
+respin? Could you kindly enlighten me?
+
+
+--LH3CZH+3vzn5Op2u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmMkzy0ACgkQFA3kzBSg
+Kbaztw/+N9X2QXwxeCMfK355UzAvNqP0fyKw/53SNJxPqJzaWafNStUjc6C3ADP2
+sKfB/I2gjBm+sAso9p1XcIDlV8Cxbdxyt5h+xCWQt1Ybm6XpUIVlapux0gNOX2ER
+Y2pc5De4V89fuIY6ZjQMvjwAm4mEsRH25zcXhpS0lVhX2JGeaGDGXc9Iv34L0CW3
+qDJOUlF78YJcIoTew5EGmz4WmExudT7Z3RwNKFQOmTuHK4Swmux6rwI18ekAbHHf
+s7Cvlc3EpxMYYFPR4ReFQg8wnsHrVbyQ6TJP8flGZ1XL59/N9xwhvPTPcQIjWVI3
+O2s7xef3USuyT0m2o+S5VsN4whdLVn3TkvxI9tLz9hEFoBOs7zPP3C5iTy8g9ds5
+dUpk+J4tC+cagZahifx4+SM8fBvGxlo6BxU+qjhZUihxE8d8kQcrp0/xQCL+lT2x
+2eEjPSuYuBLvUqJata/ccnw70VTPSgqyPiV0DeboK3trFVM+ZBOiQXcvAT4UGoyE
+egT1IozpmnunXR8bgLS1al8Bqbz0AzbGg1xB9G0fqg/F/jpixMZh6BVP8qkHTEgK
+gs8ysFdupJjLS3fIVDuY/2Jyta1QuBrULQpznjeUFld8QjA8Gy9k2XYBu5UgrcOT
+eVm8alL5rMthCrqpP138W6Mes+shwVZG6Nj7LCHx7n8ALrzdHyQ=
+=fKpo
+-----END PGP SIGNATURE-----
+
+--LH3CZH+3vzn5Op2u--
