@@ -2,108 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B72ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Sep 2022 19:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4926AC6FA86
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Sep 2022 21:31:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbiIPTcP (ORCPT
+        id S229642AbiIPVbb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Sep 2022 15:32:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46838 "EHLO
+        Fri, 16 Sep 2022 17:31:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230185AbiIPTcM (ORCPT
+        with ESMTP id S229471AbiIPVba (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Sep 2022 15:32:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6B42B0B18;
-        Fri, 16 Sep 2022 12:32:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8025DB82921;
-        Fri, 16 Sep 2022 19:32:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D74C433C1;
-        Fri, 16 Sep 2022 19:32:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663356728;
-        bh=//xoDX9kOXmkp982WJui+uOT9DeSmbvciR+NGZPx6EU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bK4Vpr7ZMnK1HS7eGhhmG9DvDRAwdhutjJR60Pa+S5R85TA3EA/BA7vIqp84S1vVZ
-         t0BcT/iSnmUpJrvRNvxR1axHAsuZJQVkYvPVE2sEMKOaiATvv9ua5bXkP9TdNvJ8VW
-         NE3R3ast7xLOagKx1tDNTrGLeYmxAtIs3DPZvjZn9elABCqhv3nqbna/HJjlUcSepc
-         7qANe6kK/vWBlH4G4NYM+6yOCAFpD+1wlhBdgAujge58I3HvRQO9Kuz2GGBPx9wx0T
-         Qagk8veUoGrQRPvTleHMgzr4IJWWeUzWfbHvdTsx38yZ91oioZ7hEDMTvwN8uD0xJP
-         /P86z9AmTEIqw==
-Date:   Fri, 16 Sep 2022 20:31:58 +0100
-From:   Wolfram Sang <wsa@kernel.org>
+        Fri, 16 Sep 2022 17:31:30 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0898B99EB
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Sep 2022 14:31:25 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id g4so21533476pgc.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Sep 2022 14:31:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=gAOpf4VaiyzuyzEgBlSDI/rb/mxIT2fGVc3O4sRyz8Q=;
+        b=ESaZCkLet+Qy6/RvuyqCTnQHokSf4VLHnPureVwo7ogYklmGP1Sztila7n66Rd4Rpx
+         p8mM7GZYSPEVPVnneskMYs3iQhwxLf9yo9KPvmptyMHSHdIHgLLpttwzX2mDEzYLLpST
+         vioqg93hpJQCo9Uc4aIg3ueQPLLjc07hHzXxk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=gAOpf4VaiyzuyzEgBlSDI/rb/mxIT2fGVc3O4sRyz8Q=;
+        b=XtDdb+CUNmDIzskTSW2dtjs8VYYVc6y57b91BYmCxM7F+EMtH6uPJz89kX60kQltdB
+         MUgnYTSJts18m6qfq7f/X72VvpBW/ebb+mu+odbjmjeda8/YAoUoStUmjcprcCIfi8Kk
+         LMuYBIPptk8WZYsC9quHLsl6uZgMKQVIVzKw0udDrYXZPTuiqoYjdIUXCnQlt0JMDiXT
+         v6FtbnCWbt8/D8ZbLsz1ZL+V/1Snk39VGro6cb6VBTkZ60zUQ0Mf5caI76KCBoLBKG3b
+         y9eLuOv4UBbqhTLtP/FrsgJU0LRZ4XfR0kbj4UCuxU+0lSKKWn3xxsPNy7ALfPf5prhz
+         lg5w==
+X-Gm-Message-State: ACrzQf193FYkR0l84vhQ73d4oi3KFOwXAuxP/9V0YDUUUIIWfCHARNk1
+        9jNtiJ5+0QWgg2bk6TiM71Vvlg==
+X-Google-Smtp-Source: AMsMyM6NXdExmvfrm3oknYIgGPotEd25We5Echz9dev/PyZDMj2iXCY/P49FQgqOgPGc3Lo0M3EjBQ==
+X-Received: by 2002:a05:6a02:309:b0:434:d151:639e with SMTP id bn9-20020a056a02030900b00434d151639emr6100944pgb.124.1663363885331;
+        Fri, 16 Sep 2022 14:31:25 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id z11-20020a170902cccb00b00173cfaed233sm15307582ple.62.2022.09.16.14.31.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Sep 2022 14:31:23 -0700 (PDT)
+Date:   Fri, 16 Sep 2022 14:31:22 -0700
+From:   Kees Cook <keescook@chromium.org>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Kees Cook <keescook@chromium.org>, Peter Rosin <peda@axentia.se>,
+Cc:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@kernel.org>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+        kernel-janitors@vger.kernel.org, linux-hardening@vger.kernel.org
 Subject: Re: [PATCH] i2c: mux: harden i2c_mux_alloc() against integer
  overflows
-Message-ID: <YyTPLkOfPlgkLaxq@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kees Cook <keescook@chromium.org>, Peter Rosin <peda@axentia.se>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Message-ID: <202209160812.2B4AB7FC@keescook>
 References: <YyMM8iVSHJ4ammsg@kili>
- <202209160046.016AC8B4@keescook>
- <YyQxuHi2iQIvj0Lj@kadam>
+ <YyMt2cWtHC2SeG62@work>
+ <YyMyKQnWgu0SL6jj@kadam>
+ <202209160101.2A240E9@keescook>
+ <YyQyfaI0WCsQ8F48@kadam>
+ <202209160630.CF7AE9708D@keescook>
+ <YySOewo2YUY+fk1l@kadam>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LH3CZH+3vzn5Op2u"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YyQxuHi2iQIvj0Lj@kadam>
+In-Reply-To: <YySOewo2YUY+fk1l@kadam>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, Sep 16, 2022 at 05:55:55PM +0300, Dan Carpenter wrote:
+> On Fri, Sep 16, 2022 at 06:31:45AM -0700, Kees Cook wrote:
+> > On Fri, Sep 16, 2022 at 11:23:25AM +0300, Dan Carpenter wrote:
+> > > [...]
+> > > net/ipv6/mcast.c:450 ip6_mc_source() saving 'size_add' to type 'int'
+> > 
+> > Interesting! Are you able to report the consumer? e.g. I think a bunch
+> > of these would be fixed by:
+> > 
+> 
+> Are you asking if I can add "passed to sock_kmalloc()" to the report?
 
---LH3CZH+3vzn5Op2u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah.
 
+> It's possible but it's kind of a headache the way this code is written.
 
-> > The new variable makes it more readable, but beyond that, do you see any
-> > reason not to just directly compose the calls?
-> >=20
->=20
-> You could do that too.
->=20
-> You pointed this out in your other email but the one thing that people
-> have to be careful of when assigning struct_size() is that the
-> "mux_size" variable has to be size_t.
->=20
-> The math in submit_create() from drivers/gpu/drm/msm/msm_gem_submit.c
-> is so terribly unreadable.  It works but it's so ugly.  Unfortunately,
-> I'm the person who wrote it.
+Okay, no worries -- I was curious if it would be "easy". I can happily
+just spit out the source line.
 
-I can't parse from that if the patch in question is okay or needs a
-respin? Could you kindly enlighten me?
-
-
---LH3CZH+3vzn5Op2u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmMkzy0ACgkQFA3kzBSg
-Kbaztw/+N9X2QXwxeCMfK355UzAvNqP0fyKw/53SNJxPqJzaWafNStUjc6C3ADP2
-sKfB/I2gjBm+sAso9p1XcIDlV8Cxbdxyt5h+xCWQt1Ybm6XpUIVlapux0gNOX2ER
-Y2pc5De4V89fuIY6ZjQMvjwAm4mEsRH25zcXhpS0lVhX2JGeaGDGXc9Iv34L0CW3
-qDJOUlF78YJcIoTew5EGmz4WmExudT7Z3RwNKFQOmTuHK4Swmux6rwI18ekAbHHf
-s7Cvlc3EpxMYYFPR4ReFQg8wnsHrVbyQ6TJP8flGZ1XL59/N9xwhvPTPcQIjWVI3
-O2s7xef3USuyT0m2o+S5VsN4whdLVn3TkvxI9tLz9hEFoBOs7zPP3C5iTy8g9ds5
-dUpk+J4tC+cagZahifx4+SM8fBvGxlo6BxU+qjhZUihxE8d8kQcrp0/xQCL+lT2x
-2eEjPSuYuBLvUqJata/ccnw70VTPSgqyPiV0DeboK3trFVM+ZBOiQXcvAT4UGoyE
-egT1IozpmnunXR8bgLS1al8Bqbz0AzbGg1xB9G0fqg/F/jpixMZh6BVP8qkHTEgK
-gs8ysFdupJjLS3fIVDuY/2Jyta1QuBrULQpznjeUFld8QjA8Gy9k2XYBu5UgrcOT
-eVm8alL5rMthCrqpP138W6Mes+shwVZG6Nj7LCHx7n8ALrzdHyQ=
-=fKpo
------END PGP SIGNATURE-----
-
---LH3CZH+3vzn5Op2u--
+-- 
+Kees Cook
