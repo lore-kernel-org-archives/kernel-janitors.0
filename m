@@ -2,102 +2,193 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC98ECAAD8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Sep 2022 13:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7CFC54EE9
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Sep 2022 14:27:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbiIPNbx (ORCPT
+        id S232087AbiIPO1I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Sep 2022 09:31:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38262 "EHLO
+        Fri, 16 Sep 2022 10:27:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231530AbiIPNbu (ORCPT
+        with ESMTP id S232135AbiIPO03 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Sep 2022 09:31:50 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8998B98A45
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Sep 2022 06:31:49 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id p18so21439550plr.8
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Sep 2022 06:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=KgBYor1Htf/vgvjRNDzZz0OSBXCS1g2qA2z8v/wMsdQ=;
-        b=duV1RS8TM2EGZ6omH4ubcEo80bgH2kyZd5qyDXZXa3PhTBC8+KG+to4g1PhL106fEN
-         2Ce5cVmi6xX3gbz38EE8qox07VoXA4Av+FZJ80wWOZ6UV6i5CZqldo0nA14gKiagdGWT
-         bAcrvdodiN1cfiDHSyxQittJvsK3g6HcGnXF8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=KgBYor1Htf/vgvjRNDzZz0OSBXCS1g2qA2z8v/wMsdQ=;
-        b=XK53NSvCqs5vG+zAASiqf7+SX7cOge0VaGYOjRly6ecIrEoM11W/KYtw0sM+6SgpQA
-         +mIPnkBzxOESjo500JkQTbwR0K1zCabltjjdx62QCRxTTva+hSYiF6nTkndDs7gk2Wqw
-         Gxqqex/gy/L2re+O1nbJVzJiP0UmnvPrclzLQkJzcbgChmdX8i8mSiXx/iRB8mP/AwZt
-         d2CKQfo8350o3h6XR9SPQtNMyfs2VtXbTLR+n+IkEhRiY5LIJUmLuZR5rPIlQ6AoVLWB
-         pCiBFVtChjmTwHPxnZGF0ncajBTHa50XbJNOYLrIRuX2qNXwOtd+cx8Uke2AzM1hF2iZ
-         kMRw==
-X-Gm-Message-State: ACrzQf05+TRO5Mx/CtEm6HH7+yf0mgBnWf36bQaWOMI6QOpxW1Gmnn1d
-        YuYHyE5zqQRFouMemxq2DsC/oA==
-X-Google-Smtp-Source: AMsMyM7bICOZH0WwwuU7fNoFf+LgOTWBrxWtoTyS+ATZwpycmOgrlRhY8fZfiOYOKBnDvxk46dEb3g==
-X-Received: by 2002:a17:903:110f:b0:178:8756:6e5e with SMTP id n15-20020a170903110f00b0017887566e5emr938412plh.12.1663335108874;
-        Fri, 16 Sep 2022 06:31:48 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s15-20020a63524f000000b00434acf7a05fsm13723090pgl.45.2022.09.16.06.31.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Sep 2022 06:31:46 -0700 (PDT)
-Date:   Fri, 16 Sep 2022 06:31:45 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] i2c: mux: harden i2c_mux_alloc() against integer
- overflows
-Message-ID: <202209160630.CF7AE9708D@keescook>
-References: <YyMM8iVSHJ4ammsg@kili>
- <YyMt2cWtHC2SeG62@work>
- <YyMyKQnWgu0SL6jj@kadam>
- <202209160101.2A240E9@keescook>
- <YyQyfaI0WCsQ8F48@kadam>
+        Fri, 16 Sep 2022 10:26:29 -0400
+Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47617B40D7
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Sep 2022 07:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1663338385; x=1694874385;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=712YwNQdrWKANR3vHtT8MY/Ny21R8h1VOwwEWwMdGyA=;
+  b=gZzuTZWYbf/x2c7muPQwRksSH+KSoEJHpMFCUBmAISodJtmk0hi0vLy5
+   itUSc+Mkq37FAz5c/7cvSVNxipAatkGJPNZqHJ+x/nFLI8z1RCc32yrSK
+   YsHQOYP5b3jk+nn/4TgVaQYXp77uFOdL3Cdk9+rg2zKTK2IRMQ+OSJVSF
+   yQe1e/gSrmbqh96KWZn7wUWYifmd0q3y+anph3RzsYZOMsk2pmKyH5D9o
+   eKDbbMAmh7+Wysbsv61QpABNBJtid9AUWgVzzkFcwmQGgfsEUr28NNCP/
+   CedCUqju1SU4SysXM8dWV7c8D12CnaJTPAYPQfFVRpPMB26w7OsMfdroi
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.93,320,1654531200"; 
+   d="scan'208";a="216707953"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Sep 2022 22:26:24 +0800
+IronPort-SDR: KilMNWvvNfWjLvjL6k4M+YqfSFrPn9bp+TKeukrbfCEb3XBXjpPa1vQlyntMc7kTT0TtQlm9S+
+ z/iOxDcRBwjlosBYs7Dd3cS45bXAM4GenvE5+yzeZdaKhmgT73EtDNG+Y4yxLQN9nwEU7VCSJM
+ RnwciVvPCPwQEAgQnbF1u8BaU2jmiB9Ua8sMnnQAU/PxaXaB6F2YiRgLfR1kw3ID/XINOnXawu
+ MxJzQYm8MEIyGOGe7OtEuN7+5mCDjyzOLUPRL0DMoEA2+tIHTaAGIJ0a9FAk7iYfH30BgwgnqI
+ 6N8X8quZ0vHqx3ldEwKIvuuF
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2022 06:46:35 -0700
+IronPort-SDR: kQhbsbQaojfjZlITKNBWHFccdcy3PbAPiYBp/qvkPiYvs30KqGCRfdn1WpcwWF6m5/zJPfA86z
+ bibwRP1Lbh1vAS4xgVXOLx9Z8mQeYraFsDOERUtimMxZd4baakoMFt6Mq0ATexQNsuCAB6Rj3H
+ wwwq9qqF2Sn2c1Y0w6yNdlRCuFXMvPsOIpviuXEbqeHJqVQyHnyPX03EikvKTzvjTIvRt82G9Y
+ i+hGMrEAUrvWm2SmoCth1hm0X21RgiHQ947ggUlf1f1/mmArd9IPjhennpV1c0QM3RpzRu1GAG
+ 4Ok=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2022 07:26:25 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4MTbwc5Yt9z1RvTr
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Sep 2022 07:26:24 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1663338383; x=1665930384; bh=712YwNQdrWKANR3vHtT8MY/Ny21R8h1VOww
+        EWwMdGyA=; b=SDry22ytjYJvvjMx3nluMVo1RXucQuw09chczhDMllGaXqA40+4
+        K+3fggtBLIPON9W5FEHzjjO9jet1Aa1WU5V7g/4YvKV3wXWWZRumQRxA+001ohVe
+        yWtw+NVJfzoLdk1DwP0hp9VwNmr+1x0jnZMuEaPY1EleTJHBhq5g/ON933TdJ4JO
+        jjH2nyfl5dDTR387QeOBJD0r6ToNDDyCkmvS4ER5W6kJH0hllyITeQTGSnIq/GyR
+        6dkOnG/8rrdnHjZMMkbDRVfsCU7/r9j5cvFSRTINkXe6A5AyUyKg/L9V2Y33xuAu
+        y6Syd74iS/g+0j4j3Eu2u7KfhMRZC/1vLqg==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id em9m00Weao22 for <kernel-janitors@vger.kernel.org>;
+        Fri, 16 Sep 2022 07:26:23 -0700 (PDT)
+Received: from [10.225.1.43] (unknown [10.225.1.43])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4MTbwX3hFkz1RvLy;
+        Fri, 16 Sep 2022 07:26:20 -0700 (PDT)
+Message-ID: <6cb1bb99-be0d-f2db-a59e-76e6b8d14aa0@opensource.wdc.com>
+Date:   Fri, 16 Sep 2022 15:26:18 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YyQyfaI0WCsQ8F48@kadam>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.2.2
+Subject: Re: [PATCH 1/2] ata: clean up how architectures enable PATA_PLATFORM
+ and PATA_OF_PLATFORM
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220914142713.29351-1-lukas.bulwahn@gmail.com>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20220914142713.29351-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 16, 2022 at 11:23:25AM +0300, Dan Carpenter wrote:
-> [...]
-> net/ipv6/mcast.c:450 ip6_mc_source() saving 'size_add' to type 'int'
+On 2022/09/14 15:27, Lukas Bulwahn wrote:
+> There are two options for platform device PATA support:
+> 
+>   PATA_PLATFORM: Generic platform device PATA support
+>   PATA_OF_PLATFORM: OpenFirmware platform device PATA support
+> 
+> If an architecture allows the generic platform device PATA support, it
+> shall select HAVE_PATA_PLATFORM. Then, Generic platform device PATA support
+> is available and can be selected.
+> 
+> If an architecture has OpenFirmware support, which it indicates by
+> selecting OF, OpenFirmware platform device PATA support is available
+> and can be selected.
+> If OpenFirmware platform device PATA support is selected, then the
+> functionality (code files) from Generic platform device PATA support needs
+> to be integrated in the kernel build for the OpenFirmware platform device
+> PATA support to work. Select PATA_PLATFORM in PATA_OF_PLATFORM to make sure
+> the needed files are added in the build.
+> 
+> So, architectures with OpenFirmware support, do not need to additionally
+> select HAVE_PATA_PLATFORM. It is only needed by architecture that want the
+> non-OF pata-platform module.
+> 
+> Reflect this way of intended use of config symbols in the ata Kconfig and
+> adjust all architecture definitions.
+> 
+> This follows the suggestion from Arnd Bergmann (see Link).
+> 
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Link: https://lore.kernel.org/all/4b33bffc-2b6d-46b4-9f1d-d18e55975a5a@www.fastmail.com/
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Interesting! Are you able to report the consumer? e.g. I think a bunch
-of these would be fixed by:
+Applied this patch and 2/2 to for-6.1. Thanks !
 
-
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 4cb957d934a2..f004c4d411e3 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -2552,10 +2552,11 @@ struct sk_buff *sock_omalloc(struct sock *sk, unsigned long size,
- /*
-  * Allocate a memory block from the socket's option memory buffer.
-  */
--void *sock_kmalloc(struct sock *sk, int size, gfp_t priority)
-+void *sock_kmalloc(struct sock *sk, size_t size, gfp_t priority)
- {
--	if ((unsigned int)size <= sysctl_optmem_max &&
--	    atomic_read(&sk->sk_omem_alloc) + size < sysctl_optmem_max) {
-+	if (size > INT_MAX || size > sysctl_optmem_max)
-+		return NULL;
-+	if (atomic_read(&sk->sk_omem_alloc) < sysctl_optmem_max - size) {
- 		void *mem;
- 		/* First do the add, to avoid the race if kmalloc
- 		 * might sleep.
-
+> ---
+>  arch/arm/mach-versatile/Kconfig | 1 -
+>  arch/arm64/Kconfig              | 1 -
+>  drivers/ata/Kconfig             | 6 +++---
+>  3 files changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm/mach-versatile/Kconfig b/arch/arm/mach-versatile/Kconfig
+> index 2ef226194c3a..b1519b4dc03a 100644
+> --- a/arch/arm/mach-versatile/Kconfig
+> +++ b/arch/arm/mach-versatile/Kconfig
+> @@ -256,7 +256,6 @@ menuconfig ARCH_VEXPRESS
+>  	select GPIOLIB
+>  	select HAVE_ARM_SCU if SMP
+>  	select HAVE_ARM_TWD if SMP
+> -	select HAVE_PATA_PLATFORM
+>  	select CLK_ICST
+>  	select NO_IOPORT_MAP
+>  	select PLAT_VERSATILE
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 51f3f07c3efd..036bd67e662e 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -194,7 +194,6 @@ config ARM64
+>  	select HAVE_IRQ_TIME_ACCOUNTING
+>  	select HAVE_KVM
+>  	select HAVE_NMI
+> -	select HAVE_PATA_PLATFORM
+>  	select HAVE_PERF_EVENTS
+>  	select HAVE_PERF_REGS
+>  	select HAVE_PERF_USER_STACK_DUMP
+> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+> index 1c9f4fb2595d..c93d97455744 100644
+> --- a/drivers/ata/Kconfig
+> +++ b/drivers/ata/Kconfig
+> @@ -1102,8 +1102,7 @@ config PATA_PCMCIA
+>  	  If unsure, say N.
+>  
+>  config PATA_PLATFORM
+> -	tristate "Generic platform device PATA support"
+> -	depends on EXPERT || PPC || HAVE_PATA_PLATFORM
+> +	tristate "Generic platform device PATA support" if EXPERT || HAVE_PATA_PLATFORM
+>  	help
+>  	  This option enables support for generic directly connected ATA
+>  	  devices commonly found on embedded systems.
+> @@ -1112,7 +1111,8 @@ config PATA_PLATFORM
+>  
+>  config PATA_OF_PLATFORM
+>  	tristate "OpenFirmware platform device PATA support"
+> -	depends on PATA_PLATFORM && OF
+> +	depends on OF
+> +	select PATA_PLATFORM
+>  	help
+>  	  This option enables support for generic directly connected ATA
+>  	  devices commonly found on embedded systems with OpenFirmware
 
 -- 
-Kees Cook
+Damien Le Moal
+Western Digital Research
+
