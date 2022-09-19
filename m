@@ -2,105 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87858C54EE9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 08:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0035DC54EE9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 08:44:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbiISISQ (ORCPT
+        id S229931AbiISIoo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Sep 2022 04:18:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33068 "EHLO
+        Mon, 19 Sep 2022 04:44:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbiISISO (ORCPT
+        with ESMTP id S229632AbiISIom (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Sep 2022 04:18:14 -0400
+        Mon, 19 Sep 2022 04:44:42 -0400
 Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32C51D316;
-        Mon, 19 Sep 2022 01:18:13 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id e16so46240591wrx.7;
-        Mon, 19 Sep 2022 01:18:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DDB17654;
+        Mon, 19 Sep 2022 01:44:39 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id z6so13873788wrq.1;
+        Mon, 19 Sep 2022 01:44:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=I4HLCm0SU2DVt/DsRYzlKugKxcj0Dff9UNyb49sz804=;
-        b=LSixgBwfLkw+IsIWyMVg/o500XR8i4dqac114uYt0GRboVmCvVHTZYR2gRIR2n0RpU
-         PKQZQoW4JRf44+lM0zUfnsuPwm20cdYeHuNBWUDbJ1s6xASKjCDNd3bOovwDIMeLFU1U
-         zSdE3dgXAlRLJeWLXziMHnjK5i4zipKkJ5WW6ruD7GTlzyTKSieKYcy3gHsdMsSu98Tp
-         Qkkexx8jfNbUqFhY99yulk4mDElmIbMJO169u/UgXv18YZUehtCuDKBcsTuJSmzksV+T
-         cRuTHrRly5QnHX5s243yNhPuKy7JdbL6+vd+KJkNT0KlwV2IwefLPhntlbgOKNJU9j69
-         jFHQ==
+        bh=sJ05nwhQyH1wMzlPk+xM6G6uKn99zlu7sIdHkCfF+5Q=;
+        b=ZKhCoRgmn8LuQoTolRKqrVMnp/EPBALX9sXITXMxrJ0YkLZ1Ep/JbSpVNuLmJ7zRlH
+         /Rq7CsikEIRctWLajFAbXvmxIhg9elZpJAjV+nJTRK5GWxNEBZw9onIgjjXnI2Lrad00
+         sgf29V/foxkRQyAz6hAGdc8Lo7gHwZ6rEsuDmbbq4AmoIPrsIs9c3crhmq7JfEoWleft
+         +A1NnpNdScTN1k8Vrwew3e9tXhBYRrZH8O7n+1EYJhTkS+1JjRQCO9Ut68sGePVB29U7
+         b1NPRiT+gH/zoNxdNXtddZNCpiQGk3N6MSd/Xc9lO60BOUo3EHQoqqAHeksNy8QkBqbx
+         TmkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=I4HLCm0SU2DVt/DsRYzlKugKxcj0Dff9UNyb49sz804=;
-        b=q2Vncw0e3fWl7v1hPZSjaX+ISXv+2dIUEPvnqCBT0NfQ57nqTEta3EWMWnFyRAw/oV
-         +fBTDppCO/DpQRwmUXARcLixvsCO2VijhuHFVNMNfIfigeAThG41Gr0sJJeTaMHf0Udk
-         yaXw/Ne+/GkOVdbC+UG19R7BZqGQo20DNKSwUDSRXGseZB8+U48ghdETSHQpd+pw1AuG
-         Nwk6DJfDvMrxSqNFXxXt6GbHhB8soMCvChTO2SPRnjNopFB5JEn0C/dAWKFL8b3ROr5p
-         CXoyMsvfJapD2qMTRLVP50OnvRBMKwE5s488ERn+sYpX5+eI6EcWc9E1aYKk/vjARhVu
-         H53g==
-X-Gm-Message-State: ACrzQf2ofnAvzct1jxQ2SA26+MHioW2eEqbJnypUdavfIklX3Hxw5vW7
-        lLq7+x4LH+MCyI6z08dqdKw=
-X-Google-Smtp-Source: AMsMyM4vJ+ZX6lE+itZlnK9wl9FVoA+jti79/ygC6vi3eTYSq6DuqLg+pgFcK24op9pMeYbt+j3Yhg==
-X-Received: by 2002:a05:6000:1090:b0:228:a963:3641 with SMTP id y16-20020a056000109000b00228a9633641mr10030816wrw.289.1663575492040;
-        Mon, 19 Sep 2022 01:18:12 -0700 (PDT)
+        bh=sJ05nwhQyH1wMzlPk+xM6G6uKn99zlu7sIdHkCfF+5Q=;
+        b=8PHIVA792/YaPWPV/OW3Kijmx4liLRPGH8LRsinpaors6JQCD/jm7Lr/gD9E0ETlrG
+         KuzwEd7bk6GJDWBFKC2ldkFo4yvam7QoB3Togaj5hWBDIObfsmKw8UJeoQasRl8EWDM4
+         yl1+rc7KAUC4Ad8cM5W5gsAmg/DES0O9hoYokWt2VZ3bSqCu0Ne4a5W1EeJcUSg5+425
+         KgUsKDolqxdD6RfSO+BXDW/UhiyytTfgF77gIpyq2ZOc6I0kOg9Z5WBcUW96gUcm/0mI
+         x2u69z9QkbG83d1lPy5Qt3tiOSIjuBZ0pE4fHtpmaQm57JYMb2dqkmDgH8vGsxF8KlaH
+         sguw==
+X-Gm-Message-State: ACrzQf2WaOv/RZ49eix879Msuxa9aBBl4OS98PrPiTKeGJuCV0CGrzag
+        eMmBA/q1+yJvvkrYH7QVgJA=
+X-Google-Smtp-Source: AMsMyM6exrwDfCfPms+cYpiKC3RUDiyPB8NFzSNHudM+h8ms8Fp4eWcDOTYIZp4OshTomZhFlZTJLA==
+X-Received: by 2002:a5d:52d0:0:b0:21e:4923:fa09 with SMTP id r16-20020a5d52d0000000b0021e4923fa09mr10302271wrv.244.1663577077539;
+        Mon, 19 Sep 2022 01:44:37 -0700 (PDT)
 Received: from felia.fritz.box (200116b826812b0018444688cfe72784.dip.versatel-1u1.de. [2001:16b8:2681:2b00:1844:4688:cfe7:2784])
-        by smtp.gmail.com with ESMTPSA id j16-20020a05600c191000b003a8434530bbsm13254007wmq.13.2022.09.19.01.18.10
+        by smtp.gmail.com with ESMTPSA id y10-20020adff6ca000000b00228cd9f6349sm12892254wrp.106.2022.09.19.01.44.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Sep 2022 01:18:11 -0700 (PDT)
+        Mon, 19 Sep 2022 01:44:37 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
+Cc:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2] MAINTAINERS: adjust ARM/INTEL IXP4XX ARM ARCHITECTURE to ixp4xx clean-up
-Date:   Mon, 19 Sep 2022 10:17:53 +0200
-Message-Id: <20220919081753.16934-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH v2] MAINTAINERS: refurbish SWIOTLB SUBSYSTEM sections after refactoring
+Date:   Mon, 19 Sep 2022 10:44:25 +0200
+Message-Id: <20220919084425.32746-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit c83227a5d05e ("irq/gpio: ixp4xx: Drop boardfile probe path") and
-commit 155e4306107f ("clocksource/drivers/ixp4xx: Drop boardfile probe
-path") remove files include/linux/irqchip/irq-ixp4xx.h and
-include/linux/platform_data/timer-ixp4xx.h, but miss to adjust MAINTAINERS.
+Commit 78013eaadf69 ("x86: remove the IOMMU table infrastructure")
+refactored the generic swiotlb/swiotlb-xen setup into pci-dma.c, but
+misses to adjust MAINTAINERS.
 
 Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
 broken references.
 
-Remove file entries for those files in ARM/INTEL IXP4XX ARM ARCHITECTURE.
+Update the SWIOTLB SUBSYSTEM to contain the architecture-independent
+pieces for swiotlb, but leave the small architecture-dependent pieces to
+the architecture maintainers.
+
+Further, update the XEN SWIOTLB SUBSYSTEM to include all swiotlb-xen
+headers and replace the pattern in drivers with the specific one file that
+matches this pattern.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Acked-by: Juergen Gross <jgross@suse.com>
 ---
-v1: https://lore.kernel.org/lkml/20220601050200.22213-1-lukas.bulwahn@gmail.com/
-
+v1: https://lore.kernel.org/lkml/20220601075613.28245-1-lukas.bulwahn@gmail.com/
 v1 -> v2:
-  added tags from v1, no other change.
+  addressed Christoph's comment, removed arch/*/kernel/pci-swiotlb.c
+  added Juergen's ack
 
-Linus, please pick this minor non-urgent clean-up patch for ixp4xx arm.
+Christoph, please pick this minor non-urgent clean-up patch for swiotlb.
 
- MAINTAINERS | 2 --
- 1 file changed, 2 deletions(-)
+ MAINTAINERS | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 46f3c706f487..babb441f7474 100644
+index babb441f7474..69d58c43bd6a 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2247,8 +2247,6 @@ F:	drivers/clocksource/timer-ixp4xx.c
- F:	drivers/crypto/ixp4xx_crypto.c
- F:	drivers/gpio/gpio-ixp4xx.c
- F:	drivers/irqchip/irq-ixp4xx.c
--F:	include/linux/irqchip/irq-ixp4xx.h
--F:	include/linux/platform_data/timer-ixp4xx.h
+@@ -19699,7 +19699,6 @@ L:	iommu@lists.linux.dev
+ S:	Supported
+ W:	http://git.infradead.org/users/hch/dma-mapping.git
+ T:	git git://git.infradead.org/users/hch/dma-mapping.git
+-F:	arch/*/kernel/pci-swiotlb.c
+ F:	include/linux/swiotlb.h
+ F:	kernel/dma/swiotlb.c
  
- ARM/INTEL KEEMBAY ARCHITECTURE
- M:	Paul J. Murphy <paul.j.murphy@intel.com>
+@@ -22403,8 +22402,10 @@ M:	Stefano Stabellini <sstabellini@kernel.org>
+ L:	xen-devel@lists.xenproject.org (moderated for non-subscribers)
+ L:	iommu@lists.linux.dev
+ S:	Supported
+-F:	arch/x86/xen/*swiotlb*
+-F:	drivers/xen/*swiotlb*
++F:	arch/*/include/asm/xen/swiotlb-xen.h
++F:	drivers/xen/swiotlb-xen.c
++F:	include/xen/arm/swiotlb-xen.h
++F:	include/xen/swiotlb-xen.h
+ 
+ XFS FILESYSTEM
+ C:	irc://irc.oftc.net/xfs
 -- 
 2.17.1
 
