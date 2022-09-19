@@ -2,99 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF508C6FA86
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 06:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C001C54EE9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 06:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbiISGCf (ORCPT
+        id S229483AbiISGD5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Sep 2022 02:02:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43054 "EHLO
+        Mon, 19 Sep 2022 02:03:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbiISGCd (ORCPT
+        with ESMTP id S229551AbiISGDz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Sep 2022 02:02:33 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7238F13E9A;
-        Sun, 18 Sep 2022 23:02:32 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id b35so39779694edf.0;
-        Sun, 18 Sep 2022 23:02:32 -0700 (PDT)
+        Mon, 19 Sep 2022 02:03:55 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B671A3B2;
+        Sun, 18 Sep 2022 23:03:54 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id z2so3712708edi.1;
+        Sun, 18 Sep 2022 23:03:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=vvDnxWxa/4IpF0mTrVEUOhaygWRJT9ag8AWxwB/A5f0=;
-        b=iPcjgjqo7NH6joxD4DrSCYNYa8T3j8M1sRcC1AzfvxMnqmpchieDty9C0eTeaL5Ugn
-         m5iWgzi63D/bK8HsL6rMH5OoCPAJH2EXbrynIisfRuIo3ExqU5mOdSHvFQtRQp09jEEJ
-         5uBEeW9opYs3WMiAx3xkGGxgtrXoGJwJNlqIwEsYheKpfs3KBKXccJw8rhu1/oeDzNLi
-         yniVS2hiKYnQ5qYEeSxDiaRrz99FyEzmx3mE1PcndnCeHUxVPGDFYGVql0H2VUQEh3Ms
-         fXSgpwdaJ19T5f/oMdoo9Lty3ZnF00KEsq9cz+UTr+foXMcSBl9HCn3ep6o02e38gvqY
-         1gdw==
+        bh=hNkWjE/9Kwd5ORgfArcfRMKxkmzooXQeBJ1ffgMnYrI=;
+        b=ONSPNefHyAbPuD0lt0We4tBQj5e0H1KXH7cf8n6tNI7HVbmeCZpjuVw6CSegwcHzLh
+         8RFHC7yjGrsBthhRORjBz5pJ1YpiA0L2X+r+i6uuwoxX6HuucZ88n7PVU3sXRoLhsP15
+         FH2HZdrsWreeQfe+XAKn0AZCtqlx0e1utY6Gs3dJB4WRGcmQ4zpZ6lY+hBWEJ/Az2oSn
+         IS3lliUBaTEyOCVX4Q8YvbH1EucjcBBd6IQK2vH3Qu6ufwG/s3NBJz+48mJVZdibrSr+
+         6WVAVZF/andqDFI09HQZNN4PJSjPJYkDfhN831Iu6av/Q1qcNlTjnO4VCTd60RtagdSQ
+         p1Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=vvDnxWxa/4IpF0mTrVEUOhaygWRJT9ag8AWxwB/A5f0=;
-        b=K0nriZ2375Sdmdnm4T/bVYNLsvbvtLK3yWtWlKqMSyuECsz5JyN2gLdP2csv2mhVNO
-         nkXoV2MoUS2ZQiz8SMcgZxNYuEQFo2H67ihCe0hVc3B6iBmmFYTrShJM8nkcYeiih/Up
-         fP0fog2Lryy2rBvb43fc7zgtbao6Rg+JU8LumeblOWTDoPERzKC+0BXyAxBQlac6NmUM
-         7/daDvBeDa1vgpwG3iM26WD+/B5CTXekxokWHvah1PeXVo3gIuzlhTLv2Wju/L4r/aXI
-         luesy8fLkdeFXB1dFRH9iyO0Z0ZIVFi+x9lGnfU5FjWkhIMvuH7r+oDd8U9pDstveAxk
-         FIDw==
-X-Gm-Message-State: ACrzQf1WNfS+TtAL1Z4E7aeF/1RopyTWXkS0tGWSohimLnhOtG484fES
-        vu579qCXRFOOdlhtNB52+GQ=
-X-Google-Smtp-Source: AMsMyM7Iy5nRkInrGFeHKFOj3c9mXsDPpHAXk4qm3cZS7A/toiyJ8OY4FEhbA0b9LGGS/LhKf8aGzg==
-X-Received: by 2002:a05:6402:298d:b0:451:5fc5:d423 with SMTP id eq13-20020a056402298d00b004515fc5d423mr14079159edb.102.1663567350851;
-        Sun, 18 Sep 2022 23:02:30 -0700 (PDT)
+        bh=hNkWjE/9Kwd5ORgfArcfRMKxkmzooXQeBJ1ffgMnYrI=;
+        b=N2RUDptZ9Ux+qjcdxWP6ZIzj0B6MPG6wWCgyEN82pvpWodfwgTDy2bD4iYw7ZwNuC5
+         +N17+lvznt9nKMLNELgNHpl0QlUXTmbcbDuUNqB/dy1mMluiuqkL3BBlADlMBCtiTAS3
+         9tSlmVEWxMlc73G8zT7m0h9mDEroavIc851Z8w/I2a/2JwivNBvBARZV+Wm5tH/RSO0t
+         hzfyS0j7m/UfC1zLDbttv7xiPbA+QHD1J1g3v1FiiQF2EWDlczKQOIfVCZL/k2VpghGO
+         zkZpry9sZPFWr51f+paeG/iqIDngGIZTFRC7VjGgXlOJKBicZV5zuPBjox96w8FCTr+u
+         YCjg==
+X-Gm-Message-State: ACrzQf1fgSCLHLwh5mFDP+ybkQehayiYLA1btoFrDFhnQ7xhfI+3IL8X
+        TokEDLD3M4Ybv7t2aNwGf3M=
+X-Google-Smtp-Source: AMsMyM7LNV2tIc76VxxWIejr7nctP8TLuA3LfJ87Rjz8csTkkDMHaoqsEi6/ROZnZk1S5Rho1xoqrA==
+X-Received: by 2002:a05:6402:440d:b0:450:de54:3fcf with SMTP id y13-20020a056402440d00b00450de543fcfmr14018826eda.312.1663567433443;
+        Sun, 18 Sep 2022 23:03:53 -0700 (PDT)
 Received: from felia.fritz.box (200116b826812b0018444688cfe72784.dip.versatel-1u1.de. [2001:16b8:2681:2b00:1844:4688:cfe7:2784])
-        by smtp.gmail.com with ESMTPSA id kv13-20020a17090778cd00b0072b33e91f96sm15045329ejc.190.2022.09.18.23.02.30
+        by smtp.gmail.com with ESMTPSA id k22-20020a17090632d600b00780982d77d1sm5639168ejk.154.2022.09.18.23.03.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Sep 2022 23:02:30 -0700 (PDT)
+        Sun, 18 Sep 2022 23:03:53 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] scsi: make SCSI_MOD depend on BLOCK for cleaner .config files
-Date:   Mon, 19 Sep 2022 08:01:12 +0200
-Message-Id: <20220919060112.24802-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] crypto: add rsize config to .config only if lib_poly1305 is set
+Date:   Mon, 19 Sep 2022 08:03:42 +0200
+Message-Id: <20220919060342.26400-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-SCSI_MOD is a helper config symbol for configuring RAID_ATTRS properly,
-i.e., RAID_ATTRS needs to be m when SCSI=m.
+The config CRYPTO_LIB_POLY1305_RSIZE should only be part of a kernel
+build configuration (.config file) when config CRYPTO_LIB_POLY1305 is set.
 
-This helper config symbol SCSI_MOD still shows up even in kernel
-configurations that do not select the block subsystem and where SCSI is
-not even a configuration option mentioned and selectable.
-
-Make this SCSI_MOD depend on BLOCK, so that it only shows up when it is
-slightly relevant in the kernel configuration.
+Add a suitable dependency for CONFIG_CRYPTO_LIB_POLY1305_RSIZE.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/scsi/Kconfig | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ lib/crypto/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 955cb69a5418..03e71e3d5e5b 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -2,9 +2,10 @@
- menu "SCSI device support"
+diff --git a/lib/crypto/Kconfig b/lib/crypto/Kconfig
+index 7e9683e9f5c6..71b90952e496 100644
+--- a/lib/crypto/Kconfig
++++ b/lib/crypto/Kconfig
+@@ -84,6 +84,7 @@ config CRYPTO_LIB_DES
  
- config SCSI_MOD
--       tristate
--       default y if SCSI=n || SCSI=y
--       default m if SCSI=m
-+	tristate
-+	default y if SCSI=n || SCSI=y
-+	default m if SCSI=m
-+	depends on BLOCK
- 
- config RAID_ATTRS
- 	tristate "RAID Transport Class"
+ config CRYPTO_LIB_POLY1305_RSIZE
+ 	int
++	depends on CRYPTO_LIB_POLY1305
+ 	default 2 if MIPS
+ 	default 11 if X86_64
+ 	default 9 if ARM || ARM64
 -- 
 2.17.1
 
