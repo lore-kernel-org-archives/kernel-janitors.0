@@ -2,64 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC3AC54EE9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 16:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 149B0ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 17:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbiISQQK (ORCPT
+        id S230135AbiISRdg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Sep 2022 12:16:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43374 "EHLO
+        Mon, 19 Sep 2022 13:33:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbiISQQG (ORCPT
+        with ESMTP id S229722AbiISRdf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Sep 2022 12:16:06 -0400
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB24530F57;
-        Mon, 19 Sep 2022 09:16:02 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 621D71BF20A;
-        Mon, 19 Sep 2022 16:15:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1663604160;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ELi8T3Bhx5dSgWmHSngNXxOBCBGwDJCNnx9M4Rl2f9Q=;
-        b=O1rc2hGHDRLJrmRNwetsfc7aOSS6r4gVAKXAW28Qkx4K77Lse+n7plCIyITsQIBSomKM+j
-        isttim8nbNqBPH2FtsMQD3e4sf5Js6nThNYqIAboqNhxOYAd6PVtgEdOOVciqK4kFenQpQ
-        LwCXN6cFXR2JLKV9iaIu/5eoeraqcGZ2YkLDDhZVq85F7uFMDEzLTV6Gh/S+DboBBmuV73
-        XMO+daKFPfY1A2PI9JFvaiZP6hHxKPSwdI/aWFw5C8oxHDqBJ3jx4X2xyIk3SEnQsmKvm5
-        KarMLFyiayGJ8F462SyLGPAbTjdPTy8qw3w4dgf4vKat+OseOumeLaFe6VNY3g==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: devices: docg3: Use correct function names in comment blocks
-Date:   Mon, 19 Sep 2022 18:15:58 +0200
-Message-Id: <20220919161558.226540-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220805175423.2374939-1-colin.i.king@gmail.com>
-References: 
+        Mon, 19 Sep 2022 13:33:35 -0400
+Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B977C3D595
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Sep 2022 10:33:33 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id aKeAoPhYzAOp2aKeAoyF6y; Mon, 19 Sep 2022 19:33:31 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 19 Sep 2022 19:33:31 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <e4914aa5-3e42-235c-fd9e-65a907a92842@wanadoo.fr>
+Date:   Mon, 19 Sep 2022 19:33:30 +0200
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'f535ca406f5400be33b9498ea8a07ffa9e744133'
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] Input: applespi - avoid wasting some memory
+Content-Language: en-US
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-input@vger.kernel.org
+References: <0db94f84920663f3bd45a73e2ae73950627a377f.1663506472.git.christophe.jaillet@wanadoo.fr>
+ <YygUFr5cSpZhYKOA@hovoldconsulting.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YygUFr5cSpZhYKOA@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2022-08-05 at 17:54:23 UTC, Colin Ian King wrote:
-> The incorrect function name is being used in the comment for functions
-> doc_set_reliable_mode, doc_read_seek and docg3_probe. Correct these
-> comments.
+Le 19/09/2022 à 09:02, Johan Hovold a écrit :
+> On Sun, Sep 18, 2022 at 03:08:17PM +0200, Christophe JAILLET wrote:
+>> When the 'struct applespi_data' structure is allocated at the beginning of
+>> applespi_probe(), 2504 bytes are allocated.
+>>
+>> Because of the way memory is allocated, it ends to a 4096 bytes allocation.
+>> So, about 1500 bytes are wasted.
+>>
+>> Later in this function, when 'tx_buffer', 'tx_status', 'rx_buffer' and
+>> 'msg_buf' are allocated, 256, 4, 256 and 512 bytes are requested (~1 ko).
+>> A devm_ memory allocation has a small overhead of 40 bytes. So, for the
+>> same reason as above, it ends to allocate 512, 64, 512 and 1024 (~2 ko).
+>>
+>> All that said, defining these 4 arrays as part of 'struct applespi_data'
+>> saves 2 ko of runtime memory.
+>>
+>> 3504 bytes are now requested, and 4096 really allocated. All these 4
+>> arrays fit in the 'wasted' memory of the first allocation.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested only.
+>> ---
+>>   drivers/input/keyboard/applespi.c | 23 ++++-------------------
+>>   1 file changed, 4 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/input/keyboard/applespi.c b/drivers/input/keyboard/applespi.c
+>> index fab5473ae5da..bee4ccfa2b05 100644
+>> --- a/drivers/input/keyboard/applespi.c
+>> +++ b/drivers/input/keyboard/applespi.c
+>> @@ -373,11 +373,11 @@ struct applespi_data {
+>>   	struct input_dev		*keyboard_input_dev;
+>>   	struct input_dev		*touchpad_input_dev;
+>>   
+>> -	u8				*tx_buffer;
+>> -	u8				*tx_status;
+>> -	u8				*rx_buffer;
+>> +	u8				tx_buffer[APPLESPI_PACKET_SIZE];
+>> +	u8				tx_status[APPLESPI_STATUS_SIZE];
+>> +	u8				rx_buffer[APPLESPI_PACKET_SIZE];
+>>   
+>> -	u8				*msg_buf;
+>> +	u8				msg_buf[MAX_PKTS_PER_MSG * APPLESPI_PACKET_SIZE];
+>>   	unsigned int			saved_msg_len;
+>>   
+>>   	struct applespi_tp_info		tp_info;
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> This kind of change is generally broken in case DMA can be involved.
+> 
+> Allocating the transfer buffers separately makes sure that alignment
+> requirements are met and avoids hard-to-debug memory corruption issues.
+> 
+> Johan
+> 
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+Got it. I'll keep away from it.
 
-Miquel
+Thanks for the feed-back and explanation.
+
+CJ
