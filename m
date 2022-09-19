@@ -2,100 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC46ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 21:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F16D5ECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 21:30:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbiISVNT (ORCPT
+        id S229996AbiISVaW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Sep 2022 17:13:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49634 "EHLO
+        Mon, 19 Sep 2022 17:30:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbiISVNS (ORCPT
+        with ESMTP id S229976AbiISVaU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Sep 2022 17:13:18 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C6F48C9A
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Sep 2022 14:13:17 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id y3so1676560ejc.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Sep 2022 14:13:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=bhPmmvgwrI1UWM0Mt5gyQZnNHupU9etq5Dz6jZIcg4M=;
-        b=mejDcyLSWZX5mTMuwttKSMZJm/QXJls6I8T91VDCeShs4ASYX1lvxUPBvTC3zrre4q
-         All/qoUAXzFIgQJ4R7mPOegXTUDzQ2Kk0QO+zGqSftVDPMFjE9rDOKC6kEtTaefrbyzJ
-         3OYEsoyVN0+wUQTC0yPVPfclgxmA9DYEAYu3amjVekoKyDfz+7Xy2OqePk1BQ2SQLcgc
-         netRXOM6oxDD1Q2oNxcEYcWljqaceOfKeLLZsF8F69hkNa4/OS/oWDkfMD2lnCXRSecH
-         MTXI2/iv2VNj3MRrI8NjCwUeyWV+xUl63IntLIyiHz0sh32s9dMbyn7M87+Y4R2oOkb3
-         ChUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=bhPmmvgwrI1UWM0Mt5gyQZnNHupU9etq5Dz6jZIcg4M=;
-        b=b6pqG7Cb4bI/A+/6sWMfa3fv5azvYibgMCh8WFXk0TcatgUbJlejJPjHBPD/5ykAl3
-         eNrUKCfwnLDxa5R/ml3NqK3awKnXK7HEmDGhWw3WhX8NYFSJNF1o9xI6h6G3210bxUK4
-         3r0bUBljV+7oUQz8Z54OtokNWEk/72yPimo5r88HP9QvCiJzCY9xJvtshh8ntRyWTmgh
-         I9V8jCz9vleSdOutSV39QnJNjCrnkyBbtXDwWq6ren4rKciP9Q/iYYFfndJGmlmyMt/W
-         95+iHA9IfKtC/pTRWI8TBLoYdn82e75dJfEoFpkSFhdb8FsZUh3RMD7pKgjQERY7wyVP
-         jeSQ==
-X-Gm-Message-State: ACrzQf1yHS0JwENk0h3gpkXHkUQTARGG/T9MZrmazkQBzlsXGurrGpaZ
-        SSzgPp1PNg+qkP05itSWjK/4oCGPm5Rjb5Ybotg=
-X-Google-Smtp-Source: AMsMyM7zA8miSzkjN6wj3Wenio+9x9e3vwc1VxojIm7Bo9m4q5oppQbWwS1UZxQZlPWbppFokj1RitvLKfh3ykEyn3E=
-X-Received: by 2002:a17:907:6d09:b0:780:aef0:694c with SMTP id
- sa9-20020a1709076d0900b00780aef0694cmr12570553ejc.717.1663621995972; Mon, 19
- Sep 2022 14:13:15 -0700 (PDT)
+        Mon, 19 Sep 2022 17:30:20 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B07212A712;
+        Mon, 19 Sep 2022 14:30:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 63055B820FE;
+        Mon, 19 Sep 2022 21:30:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 173B6C43140;
+        Mon, 19 Sep 2022 21:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663623015;
+        bh=MngFdnjKmIdrX0tcpylQpKHs77nVEBjiVQCBTwf7VTE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=c9kKUgflA8vw4EZjnKzaifY5WiuW6KG0vezCELQ/9MQQ90M577jiFhMb+hw6zOjL3
+         iRWKL+r4Lebn9NOl79alk/CFiagoNz5CxQp6rmxz1I4f8OTXPyKZI3gwK+vdNAUn+A
+         apJk8sQ5jb4yQj3tvJl7a2S2Z8Mul7Nez8kaQhbFzD+uBBuBjzSmV8x3yxYc+h03Lu
+         gHkRCoFLwyB1BukA2n6WrRDvAmv1uJaonNvs4sNCch0vuusTFEQlm2VXas01/ECND8
+         tN8apzn3VbusXvbcjcGh5PjCtsaBuhnlcnhko6/5U6Mtjla8fb1x2g/sk9LOzrFRxf
+         kJ6p4sK02JKFA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EF2EEE52536;
+        Mon, 19 Sep 2022 21:30:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <YygN7jY0GdUSQSy0@kili>
-In-Reply-To: <YygN7jY0GdUSQSy0@kili>
-From:   Chia-I Wu <olvaffe@gmail.com>
-Date:   Mon, 19 Sep 2022 14:13:04 -0700
-Message-ID: <CAPaKu7RbWXTziR0pCeqgYiq-hVdayG8gh_hd_t0gu1swZtA9uw@mail.gmail.com>
-Subject: Re: [PATCH v2] virtio-gpu: fix shift wrapping bug in virtio_gpu_fence_event_create()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Nicholas Verne <nverne@chromium.org>,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: dsa: microchip: lan937x: fix reference count leak in
+ lan937x_mdio_register()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166362301497.9084.2139476336627725965.git-patchwork-notify@kernel.org>
+Date:   Mon, 19 Sep 2022 21:30:14 +0000
+References: <20220908040226.871690-1-sunke32@huawei.com>
+In-Reply-To: <20220908040226.871690-1-sunke32@huawei.com>
+To:     Sun Ke <sunke32@huawei.com>
+Cc:     woojung.huh@microchip.com, UNGLinuxDriver@microchip.com,
+        andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
+        olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Sep 18, 2022 at 11:36 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The ->ring_idx_mask variable is a u64 so static checkers, Smatch in
-> this case, complain if the BIT() is not also a u64.
->
-> drivers/gpu/drm/virtio/virtgpu_ioctl.c:50 virtio_gpu_fence_event_create()
-> warn: should '(1 << ring_idx)' be a 64 bit type?
->
-> Fixes: cd7f5ca33585 ("drm/virtio: implement context init: add virtio_gpu_fence_event")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Style change.  Use BIT_ULL().
-Reviewed-by: Chia-I Wu <olvaffe@gmail.com>
->
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> index 3b1701607aae..5d05093014ac 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> @@ -47,7 +47,7 @@ static int virtio_gpu_fence_event_create(struct drm_device *dev,
->         struct virtio_gpu_fence_event *e = NULL;
->         int ret;
->
-> -       if (!(vfpriv->ring_idx_mask & (1 << ring_idx)))
-> +       if (!(vfpriv->ring_idx_mask & BIT_ULL(ring_idx)))
->                 return 0;
->
->         e = kzalloc(sizeof(*e), GFP_KERNEL);
-> --
-> 2.35.1
->
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 8 Sep 2022 12:02:26 +0800 you wrote:
+> This node pointer is returned by of_find_compatible_node() with
+> refcount incremented in this function. of_node_put() on it before
+> exitting this function.
+> 
+> Fixes: c9cd961c0d43 ("net: dsa: microchip: lan937x: add interrupt support for port phy link")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - net: dsa: microchip: lan937x: fix reference count leak in lan937x_mdio_register()
+    https://git.kernel.org/netdev/net-next/c/2f8a786f4724
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
