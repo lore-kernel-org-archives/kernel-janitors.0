@@ -2,108 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBE2C54EE9
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Sep 2022 13:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF508C6FA86
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 06:02:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbiIRNIX (ORCPT
+        id S229505AbiISGCf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 18 Sep 2022 09:08:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55990 "EHLO
+        Mon, 19 Sep 2022 02:02:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbiIRNIW (ORCPT
+        with ESMTP id S229551AbiISGCd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 18 Sep 2022 09:08:22 -0400
-Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C346F1E3FD
-        for <kernel-janitors@vger.kernel.org>; Sun, 18 Sep 2022 06:08:20 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id Zu1yoxokbiBgAZu1yoePn2; Sun, 18 Sep 2022 15:08:18 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 18 Sep 2022 15:08:18 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-input@vger.kernel.org
-Subject: [PATCH] Input: applespi - avoid wasting some memory
-Date:   Sun, 18 Sep 2022 15:08:17 +0200
-Message-Id: <0db94f84920663f3bd45a73e2ae73950627a377f.1663506472.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Sep 2022 02:02:33 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7238F13E9A;
+        Sun, 18 Sep 2022 23:02:32 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id b35so39779694edf.0;
+        Sun, 18 Sep 2022 23:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=vvDnxWxa/4IpF0mTrVEUOhaygWRJT9ag8AWxwB/A5f0=;
+        b=iPcjgjqo7NH6joxD4DrSCYNYa8T3j8M1sRcC1AzfvxMnqmpchieDty9C0eTeaL5Ugn
+         m5iWgzi63D/bK8HsL6rMH5OoCPAJH2EXbrynIisfRuIo3ExqU5mOdSHvFQtRQp09jEEJ
+         5uBEeW9opYs3WMiAx3xkGGxgtrXoGJwJNlqIwEsYheKpfs3KBKXccJw8rhu1/oeDzNLi
+         yniVS2hiKYnQ5qYEeSxDiaRrz99FyEzmx3mE1PcndnCeHUxVPGDFYGVql0H2VUQEh3Ms
+         fXSgpwdaJ19T5f/oMdoo9Lty3ZnF00KEsq9cz+UTr+foXMcSBl9HCn3ep6o02e38gvqY
+         1gdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=vvDnxWxa/4IpF0mTrVEUOhaygWRJT9ag8AWxwB/A5f0=;
+        b=K0nriZ2375Sdmdnm4T/bVYNLsvbvtLK3yWtWlKqMSyuECsz5JyN2gLdP2csv2mhVNO
+         nkXoV2MoUS2ZQiz8SMcgZxNYuEQFo2H67ihCe0hVc3B6iBmmFYTrShJM8nkcYeiih/Up
+         fP0fog2Lryy2rBvb43fc7zgtbao6Rg+JU8LumeblOWTDoPERzKC+0BXyAxBQlac6NmUM
+         7/daDvBeDa1vgpwG3iM26WD+/B5CTXekxokWHvah1PeXVo3gIuzlhTLv2Wju/L4r/aXI
+         luesy8fLkdeFXB1dFRH9iyO0Z0ZIVFi+x9lGnfU5FjWkhIMvuH7r+oDd8U9pDstveAxk
+         FIDw==
+X-Gm-Message-State: ACrzQf1WNfS+TtAL1Z4E7aeF/1RopyTWXkS0tGWSohimLnhOtG484fES
+        vu579qCXRFOOdlhtNB52+GQ=
+X-Google-Smtp-Source: AMsMyM7Iy5nRkInrGFeHKFOj3c9mXsDPpHAXk4qm3cZS7A/toiyJ8OY4FEhbA0b9LGGS/LhKf8aGzg==
+X-Received: by 2002:a05:6402:298d:b0:451:5fc5:d423 with SMTP id eq13-20020a056402298d00b004515fc5d423mr14079159edb.102.1663567350851;
+        Sun, 18 Sep 2022 23:02:30 -0700 (PDT)
+Received: from felia.fritz.box (200116b826812b0018444688cfe72784.dip.versatel-1u1.de. [2001:16b8:2681:2b00:1844:4688:cfe7:2784])
+        by smtp.gmail.com with ESMTPSA id kv13-20020a17090778cd00b0072b33e91f96sm15045329ejc.190.2022.09.18.23.02.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Sep 2022 23:02:30 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] scsi: make SCSI_MOD depend on BLOCK for cleaner .config files
+Date:   Mon, 19 Sep 2022 08:01:12 +0200
+Message-Id: <20220919060112.24802-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When the 'struct applespi_data' structure is allocated at the beginning of
-applespi_probe(), 2504 bytes are allocated.
+SCSI_MOD is a helper config symbol for configuring RAID_ATTRS properly,
+i.e., RAID_ATTRS needs to be m when SCSI=m.
 
-Because of the way memory is allocated, it ends to a 4096 bytes allocation.
-So, about 1500 bytes are wasted.
+This helper config symbol SCSI_MOD still shows up even in kernel
+configurations that do not select the block subsystem and where SCSI is
+not even a configuration option mentioned and selectable.
 
-Later in this function, when 'tx_buffer', 'tx_status', 'rx_buffer' and
-'msg_buf' are allocated, 256, 4, 256 and 512 bytes are requested (~1 ko).
-A devm_ memory allocation has a small overhead of 40 bytes. So, for the
-same reason as above, it ends to allocate 512, 64, 512 and 1024 (~2 ko).
+Make this SCSI_MOD depend on BLOCK, so that it only shows up when it is
+slightly relevant in the kernel configuration.
 
-All that said, defining these 4 arrays as part of 'struct applespi_data'
-saves 2 ko of runtime memory.
-
-3504 bytes are now requested, and 4096 really allocated. All these 4
-arrays fit in the 'wasted' memory of the first allocation.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Compile tested only.
----
- drivers/input/keyboard/applespi.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+ drivers/scsi/Kconfig | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/input/keyboard/applespi.c b/drivers/input/keyboard/applespi.c
-index fab5473ae5da..bee4ccfa2b05 100644
---- a/drivers/input/keyboard/applespi.c
-+++ b/drivers/input/keyboard/applespi.c
-@@ -373,11 +373,11 @@ struct applespi_data {
- 	struct input_dev		*keyboard_input_dev;
- 	struct input_dev		*touchpad_input_dev;
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index 955cb69a5418..03e71e3d5e5b 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -2,9 +2,10 @@
+ menu "SCSI device support"
  
--	u8				*tx_buffer;
--	u8				*tx_status;
--	u8				*rx_buffer;
-+	u8				tx_buffer[APPLESPI_PACKET_SIZE];
-+	u8				tx_status[APPLESPI_STATUS_SIZE];
-+	u8				rx_buffer[APPLESPI_PACKET_SIZE];
+ config SCSI_MOD
+-       tristate
+-       default y if SCSI=n || SCSI=y
+-       default m if SCSI=m
++	tristate
++	default y if SCSI=n || SCSI=y
++	default m if SCSI=m
++	depends on BLOCK
  
--	u8				*msg_buf;
-+	u8				msg_buf[MAX_PKTS_PER_MSG * APPLESPI_PACKET_SIZE];
- 	unsigned int			saved_msg_len;
- 
- 	struct applespi_tp_info		tp_info;
-@@ -1659,21 +1659,6 @@ static int applespi_probe(struct spi_device *spi)
- 	/* store the driver data */
- 	spi_set_drvdata(spi, applespi);
- 
--	/* create our buffers */
--	applespi->tx_buffer = devm_kmalloc(&spi->dev, APPLESPI_PACKET_SIZE,
--					   GFP_KERNEL);
--	applespi->tx_status = devm_kmalloc(&spi->dev, APPLESPI_STATUS_SIZE,
--					   GFP_KERNEL);
--	applespi->rx_buffer = devm_kmalloc(&spi->dev, APPLESPI_PACKET_SIZE,
--					   GFP_KERNEL);
--	applespi->msg_buf = devm_kmalloc_array(&spi->dev, MAX_PKTS_PER_MSG,
--					       APPLESPI_PACKET_SIZE,
--					       GFP_KERNEL);
--
--	if (!applespi->tx_buffer || !applespi->tx_status ||
--	    !applespi->rx_buffer || !applespi->msg_buf)
--		return -ENOMEM;
--
- 	/* set up our spi messages */
- 	applespi_setup_read_txfrs(applespi);
- 	applespi_setup_write_txfrs(applespi);
+ config RAID_ATTRS
+ 	tristate "RAID Transport Class"
 -- 
-2.34.1
+2.17.1
 
