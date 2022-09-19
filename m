@@ -2,61 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0035DC54EE9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 08:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B93C54EE9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 08:48:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229931AbiISIoo (ORCPT
+        id S230053AbiISIs2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Sep 2022 04:44:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38868 "EHLO
+        Mon, 19 Sep 2022 04:48:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbiISIom (ORCPT
+        with ESMTP id S230045AbiISIsZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Sep 2022 04:44:42 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DDB17654;
-        Mon, 19 Sep 2022 01:44:39 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id z6so13873788wrq.1;
-        Mon, 19 Sep 2022 01:44:39 -0700 (PDT)
+        Mon, 19 Sep 2022 04:48:25 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE49BE36;
+        Mon, 19 Sep 2022 01:48:21 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id t14so46399935wrx.8;
+        Mon, 19 Sep 2022 01:48:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
         bh=sJ05nwhQyH1wMzlPk+xM6G6uKn99zlu7sIdHkCfF+5Q=;
-        b=ZKhCoRgmn8LuQoTolRKqrVMnp/EPBALX9sXITXMxrJ0YkLZ1Ep/JbSpVNuLmJ7zRlH
-         /Rq7CsikEIRctWLajFAbXvmxIhg9elZpJAjV+nJTRK5GWxNEBZw9onIgjjXnI2Lrad00
-         sgf29V/foxkRQyAz6hAGdc8Lo7gHwZ6rEsuDmbbq4AmoIPrsIs9c3crhmq7JfEoWleft
-         +A1NnpNdScTN1k8Vrwew3e9tXhBYRrZH8O7n+1EYJhTkS+1JjRQCO9Ut68sGePVB29U7
-         b1NPRiT+gH/zoNxdNXtddZNCpiQGk3N6MSd/Xc9lO60BOUo3EHQoqqAHeksNy8QkBqbx
-         TmkA==
+        b=pkwi8nsN9NDMEjsY4MvvhMCnG4OoSO3psLEaN68e788BwWN6q9jdox1XHrguwF/rWf
+         0uohS/6e5t9zS0hiDt36er3Qojp0Hao0/EYZ0buUTekrv22g+IAQhXl/aD6aV0bPcH0O
+         bul1armvjAHpjbEez6cA4c3j5xQaFS5Xg5f+7itr8ZHVoms9QIXHmG7NhvqFUZeUKhMK
+         +sstfbrP2ig3wiwhnlsaJr4huN846qt5SA1qJ2R/uin97XRzvsdlV7qtEC82jzlolOKC
+         D+bwlxwPtICnlKZHxgv9NUGkUn3EiOIdrCWsFWLP6BGyzbEAF/swiXA+DuFkcjl8hw1w
+         xxIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
         bh=sJ05nwhQyH1wMzlPk+xM6G6uKn99zlu7sIdHkCfF+5Q=;
-        b=8PHIVA792/YaPWPV/OW3Kijmx4liLRPGH8LRsinpaors6JQCD/jm7Lr/gD9E0ETlrG
-         KuzwEd7bk6GJDWBFKC2ldkFo4yvam7QoB3Togaj5hWBDIObfsmKw8UJeoQasRl8EWDM4
-         yl1+rc7KAUC4Ad8cM5W5gsAmg/DES0O9hoYokWt2VZ3bSqCu0Ne4a5W1EeJcUSg5+425
-         KgUsKDolqxdD6RfSO+BXDW/UhiyytTfgF77gIpyq2ZOc6I0kOg9Z5WBcUW96gUcm/0mI
-         x2u69z9QkbG83d1lPy5Qt3tiOSIjuBZ0pE4fHtpmaQm57JYMb2dqkmDgH8vGsxF8KlaH
-         sguw==
-X-Gm-Message-State: ACrzQf2WaOv/RZ49eix879Msuxa9aBBl4OS98PrPiTKeGJuCV0CGrzag
-        eMmBA/q1+yJvvkrYH7QVgJA=
-X-Google-Smtp-Source: AMsMyM6exrwDfCfPms+cYpiKC3RUDiyPB8NFzSNHudM+h8ms8Fp4eWcDOTYIZp4OshTomZhFlZTJLA==
-X-Received: by 2002:a5d:52d0:0:b0:21e:4923:fa09 with SMTP id r16-20020a5d52d0000000b0021e4923fa09mr10302271wrv.244.1663577077539;
-        Mon, 19 Sep 2022 01:44:37 -0700 (PDT)
+        b=YhkbgDkhfvGMRjSCU5EPcx2ex9Mte+2rSI/pB54j6C5Tg/JoJT1MXlNmP6tHC0m9yH
+         /wPpUtBhLVdW+5VfxX0w/UAsyXhsnlIOAzhOOPCjOa6IXj39lzy1WQo4sbJoWNAiw4jF
+         lOdbBUTdTOVhWBJFVuwObRrHRi+L7CLCediti+H8TdxMvTO0LGXFwnCzPJk4cHxpyHIi
+         dLCBdG4hyD/T2M10ndyeVaqMhZOwgZ1ZH6kUXx6xPItMZLjc+RQ9UGer8vPu/Dn327XU
+         EM6yZ1gdA/SD5HVWOwnspdqZgWYoCwz5H02gVx4j0IMbfbWMnwIoY1WBNwtafieCawmb
+         i2bA==
+X-Gm-Message-State: ACrzQf1zm5hVOHfca0rMr7cqn7ClqUeeizWQznoi9kwklLWvN7aHkduY
+        3jG8BVi0npA2mT5kKLPrllSYje5bC7Y=
+X-Google-Smtp-Source: AMsMyM5HeTIRifF54cDZV5YELSwKmAEMfl1TCa7MzD5pz4j0ErB/1h+iX+/jTt7GGSJhH+Pt79VWsQ==
+X-Received: by 2002:a05:6000:124f:b0:228:8713:ced9 with SMTP id j15-20020a056000124f00b002288713ced9mr10175266wrx.198.1663577299621;
+        Mon, 19 Sep 2022 01:48:19 -0700 (PDT)
 Received: from felia.fritz.box (200116b826812b0018444688cfe72784.dip.versatel-1u1.de. [2001:16b8:2681:2b00:1844:4688:cfe7:2784])
-        by smtp.gmail.com with ESMTPSA id y10-20020adff6ca000000b00228cd9f6349sm12892254wrp.106.2022.09.19.01.44.36
+        by smtp.gmail.com with ESMTPSA id bn20-20020a056000061400b0022aeba020casm7540610wrb.83.2022.09.19.01.48.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Sep 2022 01:44:37 -0700 (PDT)
+        Mon, 19 Sep 2022 01:48:19 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
+To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev
 Cc:     Juergen Gross <jgross@suse.com>,
         Stefano Stabellini <sstabellini@kernel.org>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Subject: [PATCH v2] MAINTAINERS: refurbish SWIOTLB SUBSYSTEM sections after refactoring
-Date:   Mon, 19 Sep 2022 10:44:25 +0200
-Message-Id: <20220919084425.32746-1-lukas.bulwahn@gmail.com>
+Date:   Mon, 19 Sep 2022 10:47:44 +0200
+Message-Id: <20220919084744.3043-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
