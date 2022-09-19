@@ -2,108 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575C2ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 20:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F011ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 21:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229740AbiISUef (ORCPT
+        id S229640AbiISVJ6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Sep 2022 16:34:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33044 "EHLO
+        Mon, 19 Sep 2022 17:09:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiISUec (ORCPT
+        with ESMTP id S229505AbiISVJ5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Sep 2022 16:34:32 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B7031B7
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Sep 2022 13:34:27 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id d64-20020a17090a6f4600b00202ce056566so8557069pjk.4
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Sep 2022 13:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=hY1ESHzuc2YXzHNhbXEN0S/ivkwR1R1K5cJrHwLxc/w=;
-        b=CImTGElzONiSywCQVLIBEX6bjlro80T+TDvl7o8Es/GrU2DdC/4V6S55pQf9e1+E/R
-         FyPSQ/r7LgKAFTCHji0INGEPTvT/W9qjXLj6arA4vkei0kyBV/rTMZtWy5Hum4Mt/RfH
-         j5ouP2Hx64Sc3ZjnzaJcuBQcP7RFC4n7zcxudCwriED1GlLlD6AZm7Fj2AElQmju2KGj
-         FbrZf4tW+11b/WtEytr764UJ3sFO+qE5YtTPwTnMryqfcztLHGUVunhK9+M/9SoBzAlB
-         R3JReO7CYaoGyXKCF7P4rq+41JkCnkMWwyG6BPkz4EJWwVHh+r2OT90Pzo+4CxbFm+si
-         mE5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=hY1ESHzuc2YXzHNhbXEN0S/ivkwR1R1K5cJrHwLxc/w=;
-        b=5pz5tr24G9C8QdXBxkSw924K0VeIwf6uWHOA4zCAZLpmD1wfHXvGa5w4mSYbMErY3y
-         1bObvg0/bSrVFE12edKYDq7EjR/JsmjS2vwk/h7QGio0JBcELbQwNI5EfuvZguHmZNzs
-         /0SZsJJ0683AibNxIwALcsa37va3uAc+d3macEUDm2p9amIef093+90nTOHYIzXtieSG
-         JnDmQVxsLzLb0VNMz456joyv3JM94Hizj4iVJiIPFyIbOFUIwsfDH2fYjSao/a6jHa3q
-         W9JZ47vKAnMsqklGj0nqwlImT+z1FAwzU8mq5SI42BFSnCufWi0ZfkD6REID06ehTvye
-         8fng==
-X-Gm-Message-State: ACrzQf2gFDPgfjaFr33a9YWpkmKguXGCWSzlnU+MNGlfhz0x/GY3fgRY
-        FCs41nNSPvB+anxgYKTm1R1Y1A==
-X-Google-Smtp-Source: AMsMyM5NtGwlmSJVk/LVY2Ed6VYoj7JcLbYT0SfHoymeN9j/Hc20KcRTnFk77qFbm07V9PzZPLNENw==
-X-Received: by 2002:a17:90a:d485:b0:202:e6eb:4b7f with SMTP id s5-20020a17090ad48500b00202e6eb4b7fmr21482465pju.217.1663619666625;
-        Mon, 19 Sep 2022 13:34:26 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id b10-20020a17090a6aca00b001f22647cb56sm6986009pjm.27.2022.09.19.13.34.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Sep 2022 13:34:25 -0700 (PDT)
-Date:   Mon, 19 Sep 2022 14:34:23 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: harden rproc_handle_vdev() against integer
- overflow
-Message-ID: <20220919203423.GE759648@p14s>
-References: <YyMyoPoGOJUcEpZT@kili>
+        Mon, 19 Sep 2022 17:09:57 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 696B431DDC;
+        Mon, 19 Sep 2022 14:09:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 262ACB811AC;
+        Mon, 19 Sep 2022 21:09:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E398C433D6;
+        Mon, 19 Sep 2022 21:09:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663621792;
+        bh=CkhA1WhQ9MAox4VJarfJaNAZnH0Q3Tzd/AGKamCW4uw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=C5wTYjD+I2qDc3YGIGrVL85tKYbtA0PK1aKIUV3bP9UWeKrg1I6vCm/cJYi0J63k5
+         G40i3jGQlxW9zDs+8qrZqgf2WjSPGH8Apg5s83pG8C+PRnX204kiPX84ZbV8z6p/jS
+         vYdYd5aSxjCf9MJsmqb27HW3UVFsGr2+HSQaFDd1IQZ8ZA95n7NDVKZlNOl44GPi5d
+         UlRJNaMdzl5UzOvQvZm7OnvkfcaVcoji83GOTDC3nctGJ1Xlc7HxzKAB/SDCiSfLXU
+         BKhVQNhKYsWTDmKldikREypVePDcai7G07rhx2wn96EoYJJvcgH1aT6SuOgUs2Yhjg
+         kcFGXEStXD8Rw==
+Date:   Mon, 19 Sep 2022 14:09:51 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Sun Ke <sunke32@huawei.com>
+Cc:     <joyce.ooi@intel.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <pabeni@redhat.com>,
+        <linux@armlinux.org.uk>, <netdev@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] net: ethernet: altera: TSE: fix error return code in
+ altera_tse_probe()
+Message-ID: <20220919140951.3dcdcba7@kernel.org>
+In-Reply-To: <20220909024617.2584200-1-sunke32@huawei.com>
+References: <20220909024617.2584200-1-sunke32@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YyMyoPoGOJUcEpZT@kili>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 15, 2022 at 05:11:44PM +0300, Dan Carpenter wrote:
-> The struct_size() macro protects against integer overflows but adding
-> "+ rsc->config_len" introduces the risk of integer overflows again.
-> Use size_add() to be safe.
+On Fri, 9 Sep 2022 10:46:17 +0800 Sun Ke wrote:
+> Fix to return a negative error code from the error handling
+> case instead of 0, as done elsewhere in this function.
 > 
-> Fixes: c87846571587 ("remoteproc: use struct_size() helper")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> Fixes: fef2998203e1 ("net: altera: tse: convert to phylink")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
 
-Applied.
+You must CC Maxime, who authored the change under Fixes,
+and is most likely the best person to give us a review.
+Please repost with the CC fixed.
 
-Thanks,
-Mathieu
-
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index e5279ed9a8d7..4fc5ce2187ac 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -520,12 +520,13 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	struct fw_rsc_vdev *rsc = ptr;
->  	struct device *dev = &rproc->dev;
->  	struct rproc_vdev *rvdev;
-> +	size_t rsc_size;
->  	int i, ret;
->  	char name[16];
->  
->  	/* make sure resource isn't truncated */
-> -	if (struct_size(rsc, vring, rsc->num_of_vrings) + rsc->config_len >
-> -			avail) {
-> +	rsc_size = struct_size(rsc, vring, rsc->num_of_vrings);
-> +	if (size_add(rsc_size, rsc->config_len) > avail) {
->  		dev_err(dev, "vdev rsc is truncated\n");
->  		return -EINVAL;
+> diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
+> index 89ae6d1623aa..3cf409bdb283 100644
+> --- a/drivers/net/ethernet/altera/altera_tse_main.c
+> +++ b/drivers/net/ethernet/altera/altera_tse_main.c
+> @@ -1411,6 +1411,7 @@ static int altera_tse_probe(struct platform_device *pdev)
+>  				       priv->phy_iface, &alt_tse_phylink_ops);
+>  	if (IS_ERR(priv->phylink)) {
+>  		dev_err(&pdev->dev, "failed to create phylink\n");
+> +		ret = PTR_ERR(priv->phylink);
+>  		goto err_init_phy;
 >  	}
-> -- 
-> 2.35.1
-> 
+>  
+
