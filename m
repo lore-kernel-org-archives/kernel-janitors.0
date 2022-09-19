@@ -2,132 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA44C54EE9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 15:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73AA3C54EE9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 16:16:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbiISPKs (ORCPT
+        id S229778AbiISQQD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Sep 2022 11:10:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59066 "EHLO
+        Mon, 19 Sep 2022 12:16:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbiISPKr (ORCPT
+        with ESMTP id S229822AbiISQP7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Sep 2022 11:10:47 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C8592A712;
-        Mon, 19 Sep 2022 08:10:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663600246; x=1695136246;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UB13A1XuABk+pdSrOQDK5a/k2hrx2eMwac3alMLt79U=;
-  b=n3AWe4mpqo8/kMJclJ10LTgwNja+U24bRiyGC8gBclP1WbcI5yAFI+8k
-   HUgKsV9XQkQp/505QOrIVAj74mMEpYh2unEY6ihNlKXsnk1ImRjJ85pGz
-   AkQESxuh4e7BZmRa8L0QaDl9fdK859oFpjihJDaXoffDdUo/KiY+uJFQw
-   ey24kjdF/86xenrVAw1bwXwCoFMB+R7BGTRyzS7HVQwD7SlAMDLoapnub
-   SMnQ9/rH49wvLlfySFqDalT4jKxF6TFuWVP7/l8NY+PcX7hjJh815VJha
-   yeh3E1+5f6IDB36ecDDpeRSKFd2gU3jGejPKEC0sJZOlcFE+g4u1AbcEt
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10475"; a="361164046"
-X-IronPort-AV: E=Sophos;i="5.93,328,1654585200"; 
-   d="scan'208";a="361164046"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2022 08:10:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,328,1654585200"; 
-   d="scan'208";a="947257761"
-Received: from lkp-server01.sh.intel.com (HELO c0a60f19fe7e) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 19 Sep 2022 08:10:43 -0700
-Received: from kbuild by c0a60f19fe7e with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oaIPy-00023A-30;
-        Mon, 19 Sep 2022 15:10:42 +0000
-Date:   Mon, 19 Sep 2022 23:10:23 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] crypto: add rsize config to .config only if lib_poly1305
- is set
-Message-ID: <202209192252.T6IGLNqC-lkp@intel.com>
-References: <20220919060342.26400-1-lukas.bulwahn@gmail.com>
+        Mon, 19 Sep 2022 12:15:59 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD1412983A;
+        Mon, 19 Sep 2022 09:15:55 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 45FA924000B;
+        Mon, 19 Sep 2022 16:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1663604154;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=N53lFuTivYC5vBnMbOqNikz5xNoHZbhEvLvTfGv0G/w=;
+        b=S9POnKx+YNyZpCByZ5G/S08K5baSM3a17yJEk/rkmg5LJqGCOWUE8kb5ZZDDSil9mA+Oj6
+        YBU5SklxuvTR0KLDp274SvrYLV0n5FKPfdUPC/gvptwqlKBz5mdYaLgn9LGch77xaA7OIA
+        8SroGnVhtyPYLgI1YDW3ddVb7Ovk4X/JkjkYEz6nVTZ8gm9/c+lxDhdNaAQRnl+nuCLHk4
+        8VfSujnctuZiVMKKfvdJ+r7OtVMR+sQS0VMS8s9ffQ10QjE907p7+V5XWh/n8YBE12cxif
+        R4ABVY5Z6A+HDXWnKRXtDQ1cQDUpDIc2ptlgJ39onBzkmK2FWiqOhArDpGFdjA==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: Fix a typo in a comment
+Date:   Mon, 19 Sep 2022 18:15:52 +0200
+Message-Id: <20220919161552.226510-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To:  <de1b1134f056ea7563bb0a9bb2f66ede1475728d.1659816434.git.christophe.jaillet@wanadoo.fr>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220919060342.26400-1-lukas.bulwahn@gmail.com>
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'8d704c4e1ead92b6185d6aedeb08ac6a85c4a42a'
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+On Sat, 2022-08-06 at 20:07:22 UTC, Christophe JAILLET wrote:
+> o and t are swapped.
+> s/mtdpsotre/mtdpstore/
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I love your patch! Yet something to improve:
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
 
-[auto build test ERROR on herbert-cryptodev-2.6/master]
-[also build test ERROR on herbert-crypto-2.6/master linus/master v6.0-rc6 next-20220919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Lukas-Bulwahn/crypto-add-rsize-config-to-config-only-if-lib_poly1305-is-set/20220919-140531
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20220919/202209192252.T6IGLNqC-lkp@intel.com/config)
-compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 791a7ae1ba3efd6bca96338e10ffde557ba83920)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm cross compiling tool for clang build
-        # apt-get install binutils-arm-linux-gnueabi
-        # https://github.com/intel-lab-lkp/linux/commit/c1954797e493eabf02f354e290fe380ace0633e4
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Lukas-Bulwahn/crypto-add-rsize-config-to-config-only-if-lib_poly1305-is-set/20220919-140531
-        git checkout c1954797e493eabf02f354e290fe380ace0633e4
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/crypto/caam/
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/crypto/caam/ctrl.c:15:
-   In file included from drivers/crypto/caam/compat.h:41:
->> include/crypto/poly1305.h:56:32: error: use of undeclared identifier 'CONFIG_CRYPTO_LIB_POLY1305_RSIZE'
-                   struct poly1305_key opaque_r[CONFIG_CRYPTO_LIB_POLY1305_RSIZE];
-                                                ^
-   1 error generated.
-
-
-vim +/CONFIG_CRYPTO_LIB_POLY1305_RSIZE +56 include/crypto/poly1305.h
-
-878afc35cd28bc Eric Biggers       2018-11-16  40  
-2546f811ef45fc Martin Willi       2015-07-16  41  struct poly1305_desc_ctx {
-2546f811ef45fc Martin Willi       2015-07-16  42  	/* partial buffer */
-2546f811ef45fc Martin Willi       2015-07-16  43  	u8 buf[POLY1305_BLOCK_SIZE];
-2546f811ef45fc Martin Willi       2015-07-16  44  	/* bytes used in partial buffer */
-2546f811ef45fc Martin Willi       2015-07-16  45  	unsigned int buflen;
-ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  46  	/* how many keys have been set in r[] */
-ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  47  	unsigned short rset;
-ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  48  	/* whether s[] has been set */
-2546f811ef45fc Martin Willi       2015-07-16  49  	bool sset;
-ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  50  	/* finalize key */
-ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  51  	u32 s[4];
-ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  52  	/* accumulator */
-ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  53  	struct poly1305_state h;
-ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  54  	/* key */
-1c08a104360f3e Jason A. Donenfeld 2020-01-05  55  	union {
-1c08a104360f3e Jason A. Donenfeld 2020-01-05 @56  		struct poly1305_key opaque_r[CONFIG_CRYPTO_LIB_POLY1305_RSIZE];
-1c08a104360f3e Jason A. Donenfeld 2020-01-05  57  		struct poly1305_core_key core_r;
-1c08a104360f3e Jason A. Donenfeld 2020-01-05  58  	};
-2546f811ef45fc Martin Willi       2015-07-16  59  };
-2546f811ef45fc Martin Willi       2015-07-16  60  
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Miquel
