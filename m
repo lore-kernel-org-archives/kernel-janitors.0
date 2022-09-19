@@ -2,102 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1696ECAAD3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 07:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87858C54EE9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Sep 2022 08:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbiISHxa (ORCPT
+        id S229671AbiISISQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Sep 2022 03:53:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59790 "EHLO
+        Mon, 19 Sep 2022 04:18:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbiISHx2 (ORCPT
+        with ESMTP id S229587AbiISISO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Sep 2022 03:53:28 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D5D21C133;
-        Mon, 19 Sep 2022 00:53:26 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id i203-20020a1c3bd4000000b003b3df9a5ecbso4118361wma.1;
-        Mon, 19 Sep 2022 00:53:26 -0700 (PDT)
+        Mon, 19 Sep 2022 04:18:14 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32C51D316;
+        Mon, 19 Sep 2022 01:18:13 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id e16so46240591wrx.7;
+        Mon, 19 Sep 2022 01:18:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=hbZ3Uikw6GbZ2PhGrGMY6TpC+x3HmuREGF1XvXmT7e0=;
-        b=Pkp+fLiKDb29f/wOLS2m/aVunUyKVpRwQxHmZvPo+WjzF19IbqLh0cF5IeLOFk1DKo
-         5uI8IN2X7sI46aRbw8b3J+PKHimqeNMkCeQCYmmR+fFGbESCDYpjmunT0nxaPHLdSkZi
-         37DNwTOZpB11ZnmeK9qdpRLG/1e618fznvoOIjZ1aO75RXS77wE/GCluGHhe6tGYvGuY
-         dcruBvHN/lOX66gsDk+1yE/e3j80/SNNJz+nKYvjFraFOlJY8Hleas3elDK1DumXjKsH
-         WfEcb02+vorFL5z4uzqIpAB9Qoo1ZHUVfyiHiVIu6DUy8NP7mgWSdgyoXH7Y43TYrmkI
-         CZvA==
+        bh=I4HLCm0SU2DVt/DsRYzlKugKxcj0Dff9UNyb49sz804=;
+        b=LSixgBwfLkw+IsIWyMVg/o500XR8i4dqac114uYt0GRboVmCvVHTZYR2gRIR2n0RpU
+         PKQZQoW4JRf44+lM0zUfnsuPwm20cdYeHuNBWUDbJ1s6xASKjCDNd3bOovwDIMeLFU1U
+         zSdE3dgXAlRLJeWLXziMHnjK5i4zipKkJ5WW6ruD7GTlzyTKSieKYcy3gHsdMsSu98Tp
+         Qkkexx8jfNbUqFhY99yulk4mDElmIbMJO169u/UgXv18YZUehtCuDKBcsTuJSmzksV+T
+         cRuTHrRly5QnHX5s243yNhPuKy7JdbL6+vd+KJkNT0KlwV2IwefLPhntlbgOKNJU9j69
+         jFHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=hbZ3Uikw6GbZ2PhGrGMY6TpC+x3HmuREGF1XvXmT7e0=;
-        b=ptda/IhWUfrQaB4NCS27EtWMyQR1oMNmrfmJCp/DowsE7nZU1QCkrGRqKUS0UofII2
-         jUtEdh2crqUnX0580wwuBaGIWriRQfVlasZYlaebKn0HM0ni9G6I/+pgqXzYoQh4CW7d
-         k965WeS6Vu9eUKZgi4/4f2ugutlJx5NDIFNiXVUmXkz/3LgAWzLMF4xsDAO4SJhb1RwD
-         baWMl9gqkqeCLtbZAugb0PcXrNmPNGsUzIEyvoa71tj46dxQlfD6YL1WbtlaLBAwHgmR
-         VxK/GvVc8heFiHWe/GUV+0hcJ9NBlMgtqNAFoP8YymDWdshY3YVrWwrQrbmW4T9RhN1y
-         1nHg==
-X-Gm-Message-State: ACgBeo34EY3Odf9xkRbyb7LilImgF6cwBtXJNo1eY+KLv4wimBqwvMHX
-        e3EiFPSq8kMo3Np3CrmTknEMWP3x1Lk=
-X-Google-Smtp-Source: AA6agR5MA8Ch9rMWCxu5I2u8j3+yTpwy5r5r2ynaWSJbJcw9aklyJws+7L5VSHMrA78WlhWvYZVk5A==
-X-Received: by 2002:a05:600c:a05:b0:3a6:71e6:47b8 with SMTP id z5-20020a05600c0a0500b003a671e647b8mr18175245wmp.29.1663574004662;
-        Mon, 19 Sep 2022 00:53:24 -0700 (PDT)
+        bh=I4HLCm0SU2DVt/DsRYzlKugKxcj0Dff9UNyb49sz804=;
+        b=q2Vncw0e3fWl7v1hPZSjaX+ISXv+2dIUEPvnqCBT0NfQ57nqTEta3EWMWnFyRAw/oV
+         +fBTDppCO/DpQRwmUXARcLixvsCO2VijhuHFVNMNfIfigeAThG41Gr0sJJeTaMHf0Udk
+         yaXw/Ne+/GkOVdbC+UG19R7BZqGQo20DNKSwUDSRXGseZB8+U48ghdETSHQpd+pw1AuG
+         Nwk6DJfDvMrxSqNFXxXt6GbHhB8soMCvChTO2SPRnjNopFB5JEn0C/dAWKFL8b3ROr5p
+         CXoyMsvfJapD2qMTRLVP50OnvRBMKwE5s488ERn+sYpX5+eI6EcWc9E1aYKk/vjARhVu
+         H53g==
+X-Gm-Message-State: ACrzQf2ofnAvzct1jxQ2SA26+MHioW2eEqbJnypUdavfIklX3Hxw5vW7
+        lLq7+x4LH+MCyI6z08dqdKw=
+X-Google-Smtp-Source: AMsMyM4vJ+ZX6lE+itZlnK9wl9FVoA+jti79/ygC6vi3eTYSq6DuqLg+pgFcK24op9pMeYbt+j3Yhg==
+X-Received: by 2002:a05:6000:1090:b0:228:a963:3641 with SMTP id y16-20020a056000109000b00228a9633641mr10030816wrw.289.1663575492040;
+        Mon, 19 Sep 2022 01:18:12 -0700 (PDT)
 Received: from felia.fritz.box (200116b826812b0018444688cfe72784.dip.versatel-1u1.de. [2001:16b8:2681:2b00:1844:4688:cfe7:2784])
-        by smtp.gmail.com with ESMTPSA id m34-20020a05600c3b2200b003b341a2cfadsm13830630wms.17.2022.09.19.00.53.23
+        by smtp.gmail.com with ESMTPSA id j16-20020a05600c191000b003a8434530bbsm13254007wmq.13.2022.09.19.01.18.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Sep 2022 00:53:24 -0700 (PDT)
+        Mon, 19 Sep 2022 01:18:11 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH SECOND RESEND] MAINTAINERS: drop entry to removed file in ARM/RISCPC ARCHITECTURE
-Date:   Mon, 19 Sep 2022 09:52:55 +0200
-Message-Id: <20220919075255.386-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH v2] MAINTAINERS: adjust ARM/INTEL IXP4XX ARM ARCHITECTURE to ixp4xx clean-up
+Date:   Mon, 19 Sep 2022 10:17:53 +0200
+Message-Id: <20220919081753.16934-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit c1fe8d054c0a ("ARM: riscpc: use GENERIC_IRQ_MULTI_HANDLER") removes
-arch/arm/include/asm/hardware/entry-macro-iomd.S, but missed to adjust
-MAINTAINERS.
+Commit c83227a5d05e ("irq/gpio: ixp4xx: Drop boardfile probe path") and
+commit 155e4306107f ("clocksource/drivers/ixp4xx: Drop boardfile probe
+path") remove files include/linux/irqchip/irq-ixp4xx.h and
+include/linux/platform_data/timer-ixp4xx.h, but miss to adjust MAINTAINERS.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+broken references.
 
-Drop the file entry to the removed file in ARM/RISCPC ARCHITECTURE.
+Remove file entries for those files in ARM/INTEL IXP4XX ARM ARCHITECTURE.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
-PATCH v1: https://lore.kernel.org/linux-arm-kernel/20220311130957.17884-1-lukas.bulwahn@gmail.com/
-PATCH RESEND: https://lore.kernel.org/lkml/20220713041727.8087-1-lukas.bulwahn@gmail.com/
+v1: https://lore.kernel.org/lkml/20220601050200.22213-1-lukas.bulwahn@gmail.com/
 
-Andrew, please pick this minor clean-up patch for MAINTAINERS.
-The arm maintainers have not picked this up in the last six months.
+v1 -> v2:
+  added tags from v1, no other change.
 
-Thanks.
+Linus, please pick this minor non-urgent clean-up patch for ixp4xx arm.
 
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+ MAINTAINERS | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index c26a5c573a5d..46f3c706f487 100644
+index 46f3c706f487..babb441f7474 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2695,7 +2695,6 @@ M:	Russell King <linux@armlinux.org.uk>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- W:	http://www.armlinux.org.uk/
--F:	arch/arm/include/asm/hardware/entry-macro-iomd.S
- F:	arch/arm/include/asm/hardware/ioc.h
- F:	arch/arm/include/asm/hardware/iomd.h
- F:	arch/arm/include/asm/hardware/memc.h
+@@ -2247,8 +2247,6 @@ F:	drivers/clocksource/timer-ixp4xx.c
+ F:	drivers/crypto/ixp4xx_crypto.c
+ F:	drivers/gpio/gpio-ixp4xx.c
+ F:	drivers/irqchip/irq-ixp4xx.c
+-F:	include/linux/irqchip/irq-ixp4xx.h
+-F:	include/linux/platform_data/timer-ixp4xx.h
+ 
+ ARM/INTEL KEEMBAY ARCHITECTURE
+ M:	Paul J. Murphy <paul.j.murphy@intel.com>
 -- 
 2.17.1
 
