@@ -2,118 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F57C6FA82
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Sep 2022 20:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF0CC6FA8E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Sep 2022 21:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbiITUNx (ORCPT
+        id S229905AbiITVkX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Sep 2022 16:13:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
+        Tue, 20 Sep 2022 17:40:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbiITUNw (ORCPT
+        with ESMTP id S229751AbiITVkS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Sep 2022 16:13:52 -0400
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9385A7392C
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Sep 2022 13:13:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=mcagBDy+jjNclke4sqUbVPsFI/F7edwOVzn01ZHhCpk=;
-  b=cor8gbqtUkmPzOXPSrUEgeosSyyb2FmBwa0s6aPEx9FzAKHnCUjTfpMS
-   OAQxglfzspQO4+oabyEAuSffFQsTBbtsho4F8iQuEaKUMJvZYGXG/5Ipa
-   0g9GhtcxkAAvSdL1V5lL+SSUPr2rmk/Ni5+C5J89GNyFf5w+ADl2geN1z
-   g=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="5.93,331,1654552800"; 
-   d="scan'208";a="24235806"
-Received: from 51.123.68.85.rev.sfr.net (HELO hadrien) ([85.68.123.51])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2022 22:13:48 +0200
-Date:   Tue, 20 Sep 2022 22:13:48 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     Yuan Can <yuancan@huawei.com>, cocci@inria.fr,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [cocci] [PATCH v2 1/2] coccinelle: locks: add missing_mutex_init.cocci
- script
-In-Reply-To: <0896e030-5060-08e7-d0de-c63d77c9ef27@web.de>
-Message-ID: <alpine.DEB.2.22.394.2209202211430.2740@hadrien>
-References: <20220920025820.105924-1-yuancan@huawei.com> <0896e030-5060-08e7-d0de-c63d77c9ef27@web.de>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        Tue, 20 Sep 2022 17:40:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F3FE3A4B7;
+        Tue, 20 Sep 2022 14:40:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2401762E3B;
+        Tue, 20 Sep 2022 21:40:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 86414C433D7;
+        Tue, 20 Sep 2022 21:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663710016;
+        bh=4sU7ecHwWPojN4jm0SQPY2aAJq/hd8C5UTIUOCeQ6Vs=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=bQQO51Ll6adjRFnYxA55iOgIlGt53Zdluz86UuyNRahF6hHRhde/C8//ShZvHrnRA
+         bHS+BY3DnZ6VaRZ03p5tVnrpf8CbhkEsOIlJzR2irOqDIY1ZR+MZ39WKvAvQ4Zl00R
+         Fjed+WG+8RB2Xmf4cSb19532VUSxrQdYIM+Sb7w8VAGvqkInbVX2y7T38jXsTaYAai
+         0NyYAaQlmCg4qGKrh9sNQ1ytouxhgxrRImmnfkD/tOu3WbyA26MDGlfXIJ6Hca+YF/
+         f0aVlLeK58h3+leVhmxR/+ZOzjrvS1qTFMgQj5R4Efah/dz8PMmHx9oBG9X/+pt9YT
+         9v/aW5kAv2Leg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 69654E21EE2;
+        Tue, 20 Sep 2022 21:40:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1710843513-1663704828=:2740"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: make NET_(DEV|NS)_REFCNT_TRACKER depend on NET
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166371001642.7760.2082528617719201998.git-patchwork-notify@kernel.org>
+Date:   Tue, 20 Sep 2022 21:40:16 +0000
+References: <20220915124256.32512-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220915124256.32512-1-lukas.bulwahn@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello:
 
---8323329-1710843513-1663704828=:2740
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> > +mutex_init(\(&mm->fld\|&(mm->fld)\))
->
->
-> An extra SmPL disjunction is probably unnecessary because of an isomorphism.
-> https://gitlab.inria.fr/coccinelle/coccinelle/-/blob/3f7496ff9c2c5d4fadae1e585aa458e1a0037972/standard.iso#L382
-> https://github.com/coccinelle/coccinelle/blob/19ee1697bf152d37a78a20cefe148775bf4b0e0d/standard.iso#L382
+On Thu, 15 Sep 2022 14:42:56 +0200 you wrote:
+> It makes little sense to ask if networking namespace or net device refcount
+> tracking shall be enabled for debug kernel builds without network support.
+> 
+> This is similar to the commit eb0b39efb7d9 ("net: CONFIG_DEBUG_NET depends
+> on CONFIG_NET").
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> 
+> [...]
 
-This is correct.  It would be better to only have the version with the
-parentheses, because Coccinelle will consider the case without parentheses
-anyway.
+Here is the summary with links:
+  - net: make NET_(DEV|NS)_REFCNT_TRACKER depend on NET
+    https://git.kernel.org/netdev/net-next/c/caddb4e0d639
 
->
->
-> +mutex_init(&(mm->fld))
->
->
->
-> …
->
-> > +@r3@
-> > +identifier s, fld;
-> > +position p != {r2.p};
->
->
-> Why do you think that such a SmPL constraint would be required?
->
->
-> > +@@
-> > +
-> > +struct s {
-> > +  ...
-> > +  struct mutex fld@p;
-> > +  ...
-> > +};
->
->
-> Why would the source code search repetition matter here?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-He is searching for a structure that is different from the ones matched
-previously.
 
->
->
-> …
->
-> > +@r5 depends on r4@
-> > +identifier r3.s;
-> > +struct s *mm;
-> > +position p;
-> > +@@
-> > +* mm@p = \(kmalloc\|kzalloc\|devm_kmalloc\|devm_kzalloc\)(...)
->
->
-> I would expect that the usage of the asterisk in the first column should belong
-> to the operation mode “context”.
-
-This is correct.  Either the context mode should be fully supported or the
-asterisk should be removed.
-
-julia
---8323329-1710843513-1663704828=:2740--
