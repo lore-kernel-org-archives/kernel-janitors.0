@@ -2,80 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA60AECAAD8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Sep 2022 16:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F57C6FA82
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Sep 2022 20:13:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbiITQkV (ORCPT
+        id S230506AbiITUNx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Sep 2022 12:40:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54470 "EHLO
+        Tue, 20 Sep 2022 16:13:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231268AbiITQkT (ORCPT
+        with ESMTP id S229751AbiITUNw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Sep 2022 12:40:19 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1623B31DCE;
-        Tue, 20 Sep 2022 09:40:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B8666B82B04;
-        Tue, 20 Sep 2022 16:40:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 61268C433C1;
-        Tue, 20 Sep 2022 16:40:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663692015;
-        bh=2SAKmcvD2cv6AyD8mCteq4UipyHj7aUapWRkVB2CsTk=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=XD70qGcHq7fx5fDfkvf/lfr/BKLuXhyeyPPyyPl2nmlkwwy+zb7SVbIvltTmG9uPR
-         N2C6gz3HkxKdhU4YnzA/QGGfQdqQTq+FC6SEcKwQBa3s5syS6rzkneRJsFSnTkpY+b
-         QiaM0zgjNGRQV6SFFxGeyCt0HMeOEIPK60XEgcocQFLi0IjSQUzf3u6LiPECnL8pm3
-         2GQKShXHIqRAp5DFLwTs8x0ZKqQ5R02UD4YW2XqR7vnXQv7znx2fQCx74mQycBzeJX
-         Rab+qpE1js6fnok0EWyAQzWDvjmFXcBCDVFK2yTsy+X3u/oHQWD4bZF9euyZlkMRMO
-         NccVuby5ggDQA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 40C2BE21EE1;
-        Tue, 20 Sep 2022 16:40:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 20 Sep 2022 16:13:52 -0400
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9385A7392C
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 Sep 2022 13:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=mcagBDy+jjNclke4sqUbVPsFI/F7edwOVzn01ZHhCpk=;
+  b=cor8gbqtUkmPzOXPSrUEgeosSyyb2FmBwa0s6aPEx9FzAKHnCUjTfpMS
+   OAQxglfzspQO4+oabyEAuSffFQsTBbtsho4F8iQuEaKUMJvZYGXG/5Ipa
+   0g9GhtcxkAAvSdL1V5lL+SSUPr2rmk/Ni5+C5J89GNyFf5w+ADl2geN1z
+   g=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.93,331,1654552800"; 
+   d="scan'208";a="24235806"
+Received: from 51.123.68.85.rev.sfr.net (HELO hadrien) ([85.68.123.51])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2022 22:13:48 +0200
+Date:   Tue, 20 Sep 2022 22:13:48 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     Yuan Can <yuancan@huawei.com>, cocci@inria.fr,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [cocci] [PATCH v2 1/2] coccinelle: locks: add missing_mutex_init.cocci
+ script
+In-Reply-To: <0896e030-5060-08e7-d0de-c63d77c9ef27@web.de>
+Message-ID: <alpine.DEB.2.22.394.2209202211430.2740@hadrien>
+References: <20220920025820.105924-1-yuancan@huawei.com> <0896e030-5060-08e7-d0de-c63d77c9ef27@web.de>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] headers: Remove some left-over license text
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166369201525.9874.10555683654198133861.git-patchwork-notify@kernel.org>
-Date:   Tue, 20 Sep 2022 16:40:15 +0000
-References: <0e5ff727626b748238f4b78932f81572143d8f0b.1662896317.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <0e5ff727626b748238f4b78932f81572143d8f0b.1662896317.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, jchapman@katalix.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
+Content-Type: multipart/mixed; boundary="8323329-1710843513-1663704828=:2740"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+--8323329-1710843513-1663704828=:2740
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-On Sun, 11 Sep 2022 13:39:01 +0200 you wrote:
-> Remove a left-over from commit 2874c5fd2842 ("treewide: Replace GPLv2
-> boilerplate/reference with SPDX - rule 152")
-> 
-> There is no need for an empty "License:".
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+> > +mutex_init(\(&mm->fld\|&(mm->fld)\))
+>
+>
+> An extra SmPL disjunction is probably unnecessary because of an isomorphism.
+> https://gitlab.inria.fr/coccinelle/coccinelle/-/blob/3f7496ff9c2c5d4fadae1e585aa458e1a0037972/standard.iso#L382
+> https://github.com/coccinelle/coccinelle/blob/19ee1697bf152d37a78a20cefe148775bf4b0e0d/standard.iso#L382
 
-Here is the summary with links:
-  - headers: Remove some left-over license text
-    https://git.kernel.org/netdev/net-next/c/17df341d3526
+This is correct.  It would be better to only have the version with the
+parentheses, because Coccinelle will consider the case without parentheses
+anyway.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+>
+>
+> +mutex_init(&(mm->fld))
+>
+>
+>
+> …
+>
+> > +@r3@
+> > +identifier s, fld;
+> > +position p != {r2.p};
+>
+>
+> Why do you think that such a SmPL constraint would be required?
+>
+>
+> > +@@
+> > +
+> > +struct s {
+> > +  ...
+> > +  struct mutex fld@p;
+> > +  ...
+> > +};
+>
+>
+> Why would the source code search repetition matter here?
 
+He is searching for a structure that is different from the ones matched
+previously.
 
+>
+>
+> …
+>
+> > +@r5 depends on r4@
+> > +identifier r3.s;
+> > +struct s *mm;
+> > +position p;
+> > +@@
+> > +* mm@p = \(kmalloc\|kzalloc\|devm_kmalloc\|devm_kzalloc\)(...)
+>
+>
+> I would expect that the usage of the asterisk in the first column should belong
+> to the operation mode “context”.
+
+This is correct.  Either the context mode should be fully supported or the
+asterisk should be removed.
+
+julia
+--8323329-1710843513-1663704828=:2740--
