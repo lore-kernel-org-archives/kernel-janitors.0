@@ -2,86 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3254FECAAD8
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Sep 2022 12:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D7FECAAD8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Sep 2022 20:13:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230027AbiIUMiM (ORCPT
+        id S230436AbiIUUNa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Sep 2022 08:38:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40424 "EHLO
+        Wed, 21 Sep 2022 16:13:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229985AbiIUMiJ (ORCPT
+        with ESMTP id S230369AbiIUUNV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Sep 2022 08:38:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5483D97EDA;
-        Wed, 21 Sep 2022 05:38:08 -0700 (PDT)
+        Wed, 21 Sep 2022 16:13:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4177EA4B11;
+        Wed, 21 Sep 2022 13:13:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8D0E162AD6;
-        Wed, 21 Sep 2022 12:38:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76467C433D6;
-        Wed, 21 Sep 2022 12:38:03 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 48C0DB832B8;
+        Wed, 21 Sep 2022 20:13:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72058C433C1;
+        Wed, 21 Sep 2022 20:13:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663763887;
-        bh=P+mPZ/llILL7rEcJihn0JR8FNwNBVrST0YhEVDpBzBk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=As4YAFHAo0Dab3JLcs/lg26p0WOpRCXmnTEy5QkNgB2wAzvJlauQ2K9SBYLi1Kdr2
-         h4dOoFwknYwey+UDfXROHNrOlX4CViWtitRzeYG+YWZig0QsA9Y2nITOrODoEJ9G0a
-         2gf3lb5lMU4rH2b0AKgqSdJGP5q5xNvToz3YOM/K93a1mS1NdfGRKf2uCypZWOAAs7
-         rxbFbutbhF0G9nHkwEG//CNIqneqUNa0A96YzUkjWgnFXdrhitR5AaY6qzBm2OgJdD
-         i4R896e1Ol4dSzmYld5JrC98kUqCGxjVWQaQWO62z4O8EDEKVC67OQQLndr0huYnPt
-         t/ssc8w9DNFtQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <Yyq8Q/kd301wVzg8@kili>
-References: <Yyq8Q/kd301wVzg8@kili>
-Subject: Re: [PATCH] spi: omap2-mcspi: Fix probe so driver works again
-Message-Id: <166376388002.569739.11707892942114727902.b4-ty@kernel.org>
-Date:   Wed, 21 Sep 2022 13:38:00 +0100
+        s=k20201202; t=1663791194;
+        bh=PHk8LjPeryu7k1MUPuNIxIKYgvbrfFf5jF2Ymha8OMw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y+Zj2e2xh9bOFNF8lY5GZiF9WBhmU74YfQtOexO2CAWezzLePLywGmBqS+dyW1hRR
+         zbNibMjMPlTIrITo7B61npoe0kJ9ZPmI3Cho9v6xTqpaFigNJirGRiAnhx6nNMPGxg
+         vuExZEv/j8hO+5SuzxbRTQAVwyAf2qeQHdWRv1RwhjceM8ViTRBKUDUEQiuH87p6v9
+         7JlRGkmJqy5mWA/NjusOrZjuJ3a/R7HI4F/UKqwaSEukOsHds3fKbJX7DJlDqTYIR7
+         y0r6ZH7ElzzD3kjyaJ2hU2HnMgHtKGzSrqKaztNV1p6m0Oh/ovvoZUe/3dXXqSemFH
+         nMaxMfboI5xmA==
+Date:   Wed, 21 Sep 2022 22:13:10 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Peter Rosin <peda@axentia.se>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] i2c: mux: harden i2c_mux_alloc() against integer
+ overflows
+Message-ID: <YytwVuLBo4pPHKEO@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Peter Rosin <peda@axentia.se>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <YyMM8iVSHJ4ammsg@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-8af31
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3kTeK3XY50ukqv1d"
+Content-Disposition: inline
+In-Reply-To: <YyMM8iVSHJ4ammsg@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 21 Sep 2022 10:24:51 +0300, Dan Carpenter wrote:
-> This condition was accidentally changed from "if (status < 0)" to
-> "if (status)".  The platform_get_irq() function returns non-zero
-> positive values on success so, unfortunately, the driver could not be
-> used.  Change the condition back to how it was.
-> 
-> 
 
-Applied to
+--3kTeK3XY50ukqv1d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   broonie/spi.git for-next
+On Thu, Sep 15, 2022 at 02:30:58PM +0300, Dan Carpenter wrote:
+> A couple years back we went through the kernel an automatically
+> converted size calculations to use struct_size() instead.  The
+> struct_size() calculation is protected against integer overflows.
+>=20
+> However it does not make sense to use the result from struct_size()
+> for additional math operations as that would negate any safeness.
+>=20
+> Fixes: 1f3b69b6b939 ("i2c: mux: Use struct_size() in devm_kzalloc()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks!
+Applied to for-current, thanks!
 
-[1/1] spi: omap2-mcspi: Fix probe so driver works again
-      commit: e0437512081282559f5c50591f487149c31f867c
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+--3kTeK3XY50ukqv1d
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-----BEGIN PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmMrcFYACgkQFA3kzBSg
+KbYS9BAArOhtfZs76oY6YNiM8cTO3gC9ropb3iQD70LsDFM2A51OI3/HnMvJc3FO
+R4Ur9qemhhL8Xt+IGOE1EX+Yz/qctGE9AGtcEoErkUcFRArhonwtT6mcoiOgTM4X
+WzAEhqRy40j1zrE2COWGEQiID2YWl4qM1nERfsnyc6sVYbiL57wKv/VHruNFw8tY
+/VBSLUAAHFeAITvcjr1fmhNpRzHm0odQt38VkMsGQzciBqj1ygmCtqbRnt8AWa1Z
+msKTnw1AIWC4IaWUxXlH0F2WO1L/tOUu3hs2wyNPPQprzFcCWacsWNX4IEUPvxYg
+ug2X4N1qMgr3MyvSDwcsPM1qJ2X7PRVlnN8SH3PKRizm4qGJ1qGKqxwmQEbaGyQ8
+7M1CZ0cgUAB0nfuAfBoVON62d/6yo15FcRapYT4BOAp7pmsFQVJ2ipCc8rzPLvq0
+oeMyK+S/vh7z+B6ml6mf/wI9xFGME5DjwajIp/lqOAU2bcIFUfGBt8EDiz5MdFMn
+GPM5vqekW/LVGDAzc+ubTRkRSYlLfQjF469TVFgYDsbrj5HkaHmZTm0LBSGZZpQ8
+GQgi7evo5Ubu/0QzZyvgnzt2qxsvv3uJ46zLAWUXbNFAneqik/uJiJqwhHHd/VvS
+u4bUnz+GlAcHCzf5Nfbh10z8f5BxN9+10SopwPEhOnCKjYt3pB0=
+=P6VH
+-----END PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+--3kTeK3XY50ukqv1d--
