@@ -2,75 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02626C6FA82
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 10:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 421B7C6FA82
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 10:30:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229825AbiIVKC0 (ORCPT
+        id S231508AbiIVKaT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Sep 2022 06:02:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36422 "EHLO
+        Thu, 22 Sep 2022 06:30:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbiIVKCZ (ORCPT
+        with ESMTP id S230410AbiIVKaS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Sep 2022 06:02:25 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D671B7E034;
-        Thu, 22 Sep 2022 03:02:24 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id 198so12029245ybc.1;
-        Thu, 22 Sep 2022 03:02:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=46WsTnH5ccNyRkMXYOObMQszQI6d/3B1gqlNg4zGq6w=;
-        b=nVTNGq2CMW0LwvvlSXN/KOnp/37iI7xSNaFrA9XbITuGnnjmJSnnY9GDu18y1aXxOz
-         /gmR4aOUW2Gy1yNEucIiF3DIdIhi319Gui9QY2tj075u72eupvwa8JC/0QbKWkK2U/gy
-         +qGdFZh+Z4R5lTjUo6Us2d1CsZnqBgfshFftr6mozaYr8sFOlqooMO5LNfqE2Nj+b+/x
-         rgzLfatp9uV9LGufGTnO2ckk8IxtZH7SZW9w/FWWTM73SeW56DNPzk4qLAB0P4XCL2L9
-         lONZ9zOpRo/A6ezxzCTxQLiFXePdvgNueJwIoypkdb3Dt66elZ8T+nhni+QWOf5rDyZt
-         vOwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=46WsTnH5ccNyRkMXYOObMQszQI6d/3B1gqlNg4zGq6w=;
-        b=URFAktS/azlutAvAze8qmOHt9RcxyRnAaNvXCwangpG98fmihhAxx0qPVPAjKmPMUw
-         Ejf/Re7gNik4tYHJaFHg6kzf5n+DIErpl1ISompcvHj+f+o/tHm5Xcr30pZ3500Xnap3
-         /1uHgPQInScNgRdF/+JoDlit3iPusTbZVdD9MSFRp4gJh0PHdqdJ3EIT831EHEybab2q
-         a45MtBU8NMpQgWK1heSgq7tQ7a72OLAmxAhxxJMFUmKDgHtMju1i5YLXaXwOI3+cOCHE
-         Hw1I6C6YyRgzlSe/f47hvfOTgVN9baC4efQvbyj8HI3OBwpV1Ej6drCV++6T9j5z8TGH
-         PWpg==
-X-Gm-Message-State: ACrzQf1QRfyhbx1mFNZ0Q/m+cnmRNkPkA10aBBho3U8MIzWxKXbvKCPm
-        8IXdqExEONPn4QEDukYJPck1mIleRVJSAisb8yoq9Th3agg=
-X-Google-Smtp-Source: AMsMyM5LzWME31dkryngzwq4K/qwIch4VrMtIzr27XxPwONL39453ZiIwLkMDNxO2AlqITApER46nnvdEVeWEIdvmg8=
-X-Received: by 2002:a5b:842:0:b0:6a3:cf26:755d with SMTP id
- v2-20020a5b0842000000b006a3cf26755dmr2526623ybq.608.1663840943987; Thu, 22
- Sep 2022 03:02:23 -0700 (PDT)
+        Thu, 22 Sep 2022 06:30:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F3BDAE9EF;
+        Thu, 22 Sep 2022 03:30:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CC0CAB835B1;
+        Thu, 22 Sep 2022 10:30:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7C87BC433C1;
+        Thu, 22 Sep 2022 10:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663842614;
+        bh=DmUcH2oVcZ3VNoG9feN3+bAOAOPXwAkRWQY5zkCT7qM=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=dJCFjXVFu93BvAI0cryh4uu9FfoZGqi/oOvhHeqif+zR8VCJIvMNtj9PeGViCMd1L
+         uNojopag88WnEPBKwssv2tN508gkKIJxDy8SCSLf0XOwiyW3lXBagCEGkfFyOqVJXG
+         jxCweI/0Rp49JWNuxVtsvBN1JenFk/gan5A1NV3WfKOPfXLe4NsO846W/aXQ77oCu+
+         BMT+XCF829gUFGHXGgIkNrE40ERLd9PnZfJFD3mmK+be+8hyYHxYPRZH9NcPFG1jQa
+         T0igAoMC1ahPXcORwwYFv6xYbWpVsHPfiiQJVcixAPd6oVNcQcVUBNln0bXBz1GKys
+         59bumFnA5PV6A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 603A3E4D03D;
+        Thu, 22 Sep 2022 10:30:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220919084744.3043-1-lukas.bulwahn@gmail.com> <20220920064332.GA17325@lst.de>
-In-Reply-To: <20220920064332.GA17325@lst.de>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Thu, 22 Sep 2022 12:02:13 +0200
-Message-ID: <CAKXUXMx=7oonR05W0TXW+AAN5FmD86mfiTS=QGFnvUMxRWFa_w@mail.gmail.com>
-Subject: Re: [PATCH v2] MAINTAINERS: refurbish SWIOTLB SUBSYSTEM sections
- after refactoring
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux.dev, Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3] net: ethernet: altera: TSE: fix error return code in
+ altera_tse_probe()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166384261438.4637.5269022548388381069.git-patchwork-notify@kernel.org>
+Date:   Thu, 22 Sep 2022 10:30:14 +0000
+References: <20220920020041.2685948-1-sunke32@huawei.com>
+In-Reply-To: <20220920020041.2685948-1-sunke32@huawei.com>
+To:     Sun Ke <sunke32@huawei.com>
+Cc:     joyce.ooi@intel.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        maxime.chevallier@bootlin.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 8:43 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Sorry for coming up with this only now, but what about just dropping
-> the separate swiotlb entry entirely, and just add include/linux/swiotlb.h
-> to the dma-mapping entry?
+Hello:
 
-Sure, great idea. I just sent a patch v3 doing so:
+This patch was applied to netdev/net-next.git (master)
+by Paolo Abeni <pabeni@redhat.com>:
 
-https://lore.kernel.org/lkml/20220922100001.12964-1-lukas.bulwahn@gmail.com/
+On Tue, 20 Sep 2022 10:00:41 +0800 you wrote:
+> Fix to return a negative error code from the error handling
+> case instead of 0, as done elsewhere in this function.
+> 
+> Fixes: fef2998203e1 ("net: altera: tse: convert to phylink")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
+> 
+> [...]
 
-Lukas
+Here is the summary with links:
+  - [v3] net: ethernet: altera: TSE: fix error return code in altera_tse_probe()
+    https://git.kernel.org/netdev/net-next/c/9b17dbd97de7
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
