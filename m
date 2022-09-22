@@ -2,92 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB27C54EE9
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 19:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A28E0ECAAD8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 20:23:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbiIVTpH (ORCPT
+        id S230091AbiIVUX7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Sep 2022 15:45:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39938 "EHLO
+        Thu, 22 Sep 2022 16:23:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232360AbiIVTpF (ORCPT
+        with ESMTP id S229908AbiIVUX6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Sep 2022 15:45:05 -0400
-Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1028E33362
-        for <kernel-janitors@vger.kernel.org>; Thu, 22 Sep 2022 12:45:04 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id bS84oQyft94embS84oAvYz; Thu, 22 Sep 2022 21:45:02 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 22 Sep 2022 21:45:02 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH] ASoC: da7219: Fix an error handling path in da7219_register_dai_clks()
-Date:   Thu, 22 Sep 2022 21:44:57 +0200
-Message-Id: <e4acceab57a0d9e477a8d5890a45c5309e553e7c.1663875789.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Thu, 22 Sep 2022 16:23:58 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E7D3110EFF;
+        Thu, 22 Sep 2022 13:23:57 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id g3so17244756wrq.13;
+        Thu, 22 Sep 2022 13:23:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=+2wEh3WqE1UPPivBT67hsuwj5Z+xEmJEnWlrZNS8rx8=;
+        b=ikd5Szt2FhwWcMNJrGCDBjLEqoe8jIj2NTahYdL87VRwuKYQ7xOQO109lgWAwIuZKI
+         hu6acIBgwi9Ma0KIK86FeJv0iUWz1DlVGZqlGoN0/U3IFvsBKCMNbPbKMvs7zyemoDHE
+         6BfdGMN3FHIyKeqj4n5Jerg0Rxe0hTZ1BR0MVSRz88Xkx82BcaQGGbhxTCOqucPvjeBy
+         e2hiPoYDUAGUoPbdNQXrDzI0XXn0yqTrMcplQZMZFH0KmbKscuimYZi7exKTHFpOqJwM
+         hTrKfxNAEYX8gG+knfTf/7QfwfZ57ckavFcpaEqnK59gZ0noO3Snqz+f8MIA+Rq954tS
+         jOzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=+2wEh3WqE1UPPivBT67hsuwj5Z+xEmJEnWlrZNS8rx8=;
+        b=j6N8Fab+wqdqrWg6BtUIWMIx9k1Go7UtjrWf/thupUQJRg/RLK0IhvGdk3OKflaB2n
+         L3LU6nUwu4P+dPW/z6v4uUvhOfk32w3TajRIFijetsdPmZFT0WhRCXimdmMkc1mprCB6
+         eHCxK7H29pwDYcNArm/Lj+uenMrTeZBvREk0M92z8TFsEMOHOfcr+r7aWr58EsqqKLC7
+         9b3Kw4ddUnSq0GcA6muU/AYi2JIaUVlWXM2IF/qLCegVcZCB0ppBrJnQP1i8ATAgLeLr
+         OfaEHwpkBnIztqrfTPnQcEZSBUOEc9vbuJiwqU1sWpAeatE5uB0AWAvJ4Jr8w3JSVsEA
+         Ks6w==
+X-Gm-Message-State: ACrzQf3rX3Tdd+97SEsHu0Z0y92IsyaaU6uJuIfV6VnTrPUEI8HzccLb
+        b8pNHY/WXS1j8Xa+DRMzgvQ=
+X-Google-Smtp-Source: AMsMyM4a0qwhA26q6LRWbALbKOZ/AtCsNhByKmT//UDEz8gzuLR3JMTbyexpEdapXxLDTZJWzV6nqQ==
+X-Received: by 2002:adf:9795:0:b0:22a:f421:5d0f with SMTP id s21-20020adf9795000000b0022af4215d0fmr3117691wrb.644.1663878235728;
+        Thu, 22 Sep 2022 13:23:55 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id bg34-20020a05600c3ca200b003b4ff30e566sm5092355wmb.3.2022.09.22.13.23.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Sep 2022 13:23:55 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: Remove redundant assignments to variable count
+Date:   Thu, 22 Sep 2022 21:23:54 +0100
+Message-Id: <20220922202354.2465482-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If clk_hw_register() fails, the corresponding clk should not be
-unregistered.
+The variable count is assigned a value but it is never read. The
+assignment is redundant and can be removed.
 
-To handle errors from loops, clean up partial iterations before doing the
-goto.  So add a clk_hw_unregister().
-Then use a while (--i >= 0) loop in the unwind section.
+Cleans up two clang scan build warnings:
+warning: Value stored to 'count' is never read [deadcode.DeadStores]
 
-Fixes: 78013a1cf297 ("ASoC: da7219: Fix clock handling around codec level probe")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-See https://lore.kernel.org/all/4fdde55198294a07f04933f7cef937fcb654c901.1624425670.git.christophe.jaillet@wanadoo.fr/
-for an incomplete patch sent last year and Dan's comment on it.
----
- sound/soc/codecs/da7219.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_crtc_helper.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index 50ecf30e6136..4746c8700451 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -2196,6 +2196,7 @@ static int da7219_register_dai_clks(struct snd_soc_component *component)
- 			dai_clk_lookup = clkdev_hw_create(dai_clk_hw, init.name,
- 							  "%s", dev_name(dev));
- 			if (!dai_clk_lookup) {
-+				clk_hw_unregister(dai_clk_hw);
- 				ret = -ENOMEM;
- 				goto err;
- 			} else {
-@@ -2217,12 +2218,12 @@ static int da7219_register_dai_clks(struct snd_soc_component *component)
- 	return 0;
+diff --git a/drivers/gpu/drm/drm_crtc_helper.c b/drivers/gpu/drm/drm_crtc_helper.c
+index 457448cc60f7..2467df7a7a95 100644
+--- a/drivers/gpu/drm/drm_crtc_helper.c
++++ b/drivers/gpu/drm/drm_crtc_helper.c
+@@ -632,7 +632,6 @@ int drm_crtc_helper_set_config(struct drm_mode_set *set,
+ 	}
  
- err:
--	do {
-+	while (--i >= 0) {
- 		if (da7219->dai_clks_lookup[i])
- 			clkdev_drop(da7219->dai_clks_lookup[i]);
+ 	/* a) traverse passed in connector list and get encoders for them */
+-	count = 0;
+ 	drm_connector_list_iter_begin(dev, &conn_iter);
+ 	drm_for_each_connector_iter(connector, &conn_iter) {
+ 		const struct drm_connector_helper_funcs *connector_funcs =
+@@ -678,7 +677,6 @@ int drm_crtc_helper_set_config(struct drm_mode_set *set,
+ 		goto fail;
+ 	}
  
- 		clk_hw_unregister(&da7219->dai_clks_hw[i]);
--	} while (i-- > 0);
-+	}
- 
- 	if (np)
- 		kfree(da7219->clk_hw_data);
+-	count = 0;
+ 	drm_connector_list_iter_begin(dev, &conn_iter);
+ 	drm_for_each_connector_iter(connector, &conn_iter) {
+ 		if (!connector->encoder)
 -- 
-2.34.1
+2.37.1
 
