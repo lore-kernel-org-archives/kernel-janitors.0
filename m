@@ -2,91 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617DCC6FA91
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 08:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 426D4C6FA8B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 08:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbiIVIEw (ORCPT
+        id S230221AbiIVILK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Sep 2022 04:04:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40254 "EHLO
+        Thu, 22 Sep 2022 04:11:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229851AbiIVIEu (ORCPT
+        with ESMTP id S230256AbiIVIK6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Sep 2022 04:04:50 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFFE1C29;
-        Thu, 22 Sep 2022 01:04:48 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id x18so8161962wrm.7;
-        Thu, 22 Sep 2022 01:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=zi7UhzBBoawVZbsqCfFPCg7VnpB6tq6adFaLB65QOv8=;
-        b=BGHilbCbUvVM/l1cum80tSQfW2USk/eDCElhmvok5aZedIcyUE+jYwkXQK6LqDQAB1
-         zXz19u+p6p7jz4wKrFXj/vSLkXJNGvcTgXQ2hmJcdevj9SvmgknFUg67anFdjl1wiW3l
-         XR7+1R3Aw0lcAzdHg5S433i4btiQOGRczkBvaq+vws8l+un+hIcqIYSu+2wY6lSaEt2q
-         sxhf/x+OqTIR+jH/tpaP2LQgykB7hbvOnuMpMl65ArmegLp6uGOrGEyKpjOdjsqlm2kZ
-         RrdA5cWN4zjupAU/127shLVMbBMkAPhBb82CURSH8EhUsd3+GJzS7nHv7OodizEOYViV
-         Ebtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=zi7UhzBBoawVZbsqCfFPCg7VnpB6tq6adFaLB65QOv8=;
-        b=vjoSQFDP7An33x3RK0MHp2x6JHPFknhJ2Z+Ra5gZ/WpmpP9ARdQ4K+cYkQ8v8cx2So
-         9htzf13GH4t5ubSOM4uQjwcdMN7t7Tu3QHyk5zdcrEYoDy4chDq0bZc82Ao5wpMBFPYm
-         epTy5o6FXO3jrg1UMJsr/TzNRaLHjB4GYjCzacQqJE0lON3WXso2jULssDQ99/hIMkrQ
-         m2OldHGeSTxgfnS+lhLvqU8NMaupJC8K3ZX3wlYfJ6K01DXaCXqkAi/MUaCOlCR2VRhm
-         HFbwcvEpC/4nus+rPfphi9P66aitg157qnCwu7kYYsv0Hx69+WGfgVsH8rbsefQaxfw/
-         S4Yg==
-X-Gm-Message-State: ACrzQf3S93oS9Axgqcs8/jlYiwZUF6HYVK2CkyMfsRO3JaWxSmKFxhmI
-        glGEH98wSjKXkLg/QplVxD4=
-X-Google-Smtp-Source: AMsMyM66eNPo8hZsj24TA8ZIwyuPGzmdbhZrqAPWvNczWEqkWcgpbYYj0T9ssKm0bunZQ3QP9G+SNQ==
-X-Received: by 2002:adf:fa83:0:b0:205:c0cb:33c6 with SMTP id h3-20020adffa83000000b00205c0cb33c6mr1182135wrr.39.1663833887336;
-        Thu, 22 Sep 2022 01:04:47 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v125-20020a1cac83000000b003a845621c5bsm5102518wme.34.2022.09.22.01.04.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 01:04:46 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] regmap: mmio: replace return 0 with break in switch statement
-Date:   Thu, 22 Sep 2022 09:04:45 +0100
-Message-Id: <20220922080445.818020-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+        Thu, 22 Sep 2022 04:10:58 -0400
+Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C43CD1E4
+        for <kernel-janitors@vger.kernel.org>; Thu, 22 Sep 2022 01:10:57 -0700 (PDT)
+Received: by mail.fadrush.pl (Postfix, from userid 1002)
+        id C19D1227CD; Thu, 22 Sep 2022 08:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
+        t=1663834254; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
+        h=Date:From:To:Subject:From;
+        b=Ybd+JfHKLtZoQTkvii2v/Lf07iMZYOBH/4uUsAvJ+D6paBO60aIFiliQiQr+2ec4Q
+         0zHnR/SFuZEnkMu19polAHvOwB5bQ9nt7MtRf/kHjhbRcTAHiPHLJgM9NVDqGlNtYR
+         7DbPSN7vr3Ne19CkOC6DK6IVmS9Z1wQa1Cfbt4nY09clLYpadpSKKY/S7P9gkNL8nS
+         jZX6l2XF87yfztFWaYc8HihTAFpZnefCf3cB8H7D1Rvds7housEOecEBKOS/nzMnMu
+         tun5ASC7rShAcUGeG2L2L7KbCCjJnPjuLXwiCW2pEOrtX/OE+FOuxcp0Z3p4jwNq+n
+         clxSUe/ikLFnA==
+Received: by mail.fadrush.pl for <kernel-janitors@vger.kernel.org>; Thu, 22 Sep 2022 08:10:34 GMT
+Message-ID: <20220922064500-0.1.1s.gzox.0.zkl4heq9y7@fadrush.pl>
+Date:   Thu, 22 Sep 2022 08:10:34 GMT
+From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
+X-Mailer: mail.fadrush.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable min_stride is assigned a value that is never read, fix this by
-replacing the return 0 with a break statement. This also makes the case
-statement consistent with the other cases in the switch statement.
+Dzie=C5=84 dobry,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/base/regmap/regmap-mmio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
+proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
+stwa firmie stabilny rozw=C3=B3j.=20
 
-diff --git a/drivers/base/regmap/regmap-mmio.c b/drivers/base/regmap/regmap-mmio.c
-index 8bd8d42de3fe..3ccdd86a97e7 100644
---- a/drivers/base/regmap/regmap-mmio.c
-+++ b/drivers/base/regmap/regmap-mmio.c
-@@ -48,7 +48,7 @@ static int regmap_mmio_get_min_stride(size_t val_bits)
- 	case 8:
- 		/* The core treats 0 as 1 */
- 		min_stride = 0;
--		return 0;
-+		break;
- 	case 16:
- 		min_stride = 2;
- 		break;
--- 
-2.37.1
+Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
+a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
+nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
+po rozwoju firmy.
 
+Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
+nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
+adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
+j=C4=85 je innym.
+
+Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
+o=C5=9Bwiadczonego doradcy finansowego?
+
+
+Pozdrawiam
+Jakub Olejniczak
