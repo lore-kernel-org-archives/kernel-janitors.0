@@ -2,103 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28E0ECAAD8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 20:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E26BECAAD8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 22:04:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230091AbiIVUX7 (ORCPT
+        id S229930AbiIVWEv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Sep 2022 16:23:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48600 "EHLO
+        Thu, 22 Sep 2022 18:04:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229908AbiIVUX6 (ORCPT
+        with ESMTP id S229449AbiIVWEt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Sep 2022 16:23:58 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E7D3110EFF;
-        Thu, 22 Sep 2022 13:23:57 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id g3so17244756wrq.13;
-        Thu, 22 Sep 2022 13:23:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=+2wEh3WqE1UPPivBT67hsuwj5Z+xEmJEnWlrZNS8rx8=;
-        b=ikd5Szt2FhwWcMNJrGCDBjLEqoe8jIj2NTahYdL87VRwuKYQ7xOQO109lgWAwIuZKI
-         hu6acIBgwi9Ma0KIK86FeJv0iUWz1DlVGZqlGoN0/U3IFvsBKCMNbPbKMvs7zyemoDHE
-         6BfdGMN3FHIyKeqj4n5Jerg0Rxe0hTZ1BR0MVSRz88Xkx82BcaQGGbhxTCOqucPvjeBy
-         e2hiPoYDUAGUoPbdNQXrDzI0XXn0yqTrMcplQZMZFH0KmbKscuimYZi7exKTHFpOqJwM
-         hTrKfxNAEYX8gG+knfTf/7QfwfZ57ckavFcpaEqnK59gZ0noO3Snqz+f8MIA+Rq954tS
-         jOzQ==
+        Thu, 22 Sep 2022 18:04:49 -0400
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 686B1222B2;
+        Thu, 22 Sep 2022 15:04:44 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id i15-20020a17090a4b8f00b0020073b4ac27so3549298pjh.3;
+        Thu, 22 Sep 2022 15:04:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=+2wEh3WqE1UPPivBT67hsuwj5Z+xEmJEnWlrZNS8rx8=;
-        b=j6N8Fab+wqdqrWg6BtUIWMIx9k1Go7UtjrWf/thupUQJRg/RLK0IhvGdk3OKflaB2n
-         L3LU6nUwu4P+dPW/z6v4uUvhOfk32w3TajRIFijetsdPmZFT0WhRCXimdmMkc1mprCB6
-         eHCxK7H29pwDYcNArm/Lj+uenMrTeZBvREk0M92z8TFsEMOHOfcr+r7aWr58EsqqKLC7
-         9b3Kw4ddUnSq0GcA6muU/AYi2JIaUVlWXM2IF/qLCegVcZCB0ppBrJnQP1i8ATAgLeLr
-         OfaEHwpkBnIztqrfTPnQcEZSBUOEc9vbuJiwqU1sWpAeatE5uB0AWAvJ4Jr8w3JSVsEA
-         Ks6w==
-X-Gm-Message-State: ACrzQf3rX3Tdd+97SEsHu0Z0y92IsyaaU6uJuIfV6VnTrPUEI8HzccLb
-        b8pNHY/WXS1j8Xa+DRMzgvQ=
-X-Google-Smtp-Source: AMsMyM4a0qwhA26q6LRWbALbKOZ/AtCsNhByKmT//UDEz8gzuLR3JMTbyexpEdapXxLDTZJWzV6nqQ==
-X-Received: by 2002:adf:9795:0:b0:22a:f421:5d0f with SMTP id s21-20020adf9795000000b0022af4215d0fmr3117691wrb.644.1663878235728;
-        Thu, 22 Sep 2022 13:23:55 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bg34-20020a05600c3ca200b003b4ff30e566sm5092355wmb.3.2022.09.22.13.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Sep 2022 13:23:55 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: Remove redundant assignments to variable count
-Date:   Thu, 22 Sep 2022 21:23:54 +0100
-Message-Id: <20220922202354.2465482-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=h5AeR2Bv8Dmhp1ZsnQsoCSdDP4WCc012K56hRvRjwgo=;
+        b=g9xpnNhFMqFVg60cu7rBMD7xF4hPLXzbAiJ59mzWWABdXSPMVUYj26h3tqj+V4Vtu8
+         /6/XBkLMkrMw6QriCh4/FjIjlMPtGMDiTYVG/c9Smz8d2t1Tdy0LEGw5vllWPpLtL6T3
+         Vkak6r0US98QWC83s6oftEXw8oFVaYKfvKCssuLXImsQQmNSfPcyeGar7hzycjEp/AAM
+         8sXodsyZPa3WacKZPUH7RsmwVhtOGQm88n+Bu30P7M3iTakVVoinYSzWKrNpDuTJcWhv
+         3dCuYC0XX3TJb164rUbgXXnLgxZUwVAYl4nCY3QbofIdvUGwd7I3Y7ZjheNp/bFEf4nw
+         r/xw==
+X-Gm-Message-State: ACrzQf1BFwmoRKDQ/+6WF/fv4A3Jmb3xPUrEaraCkKgIPgReFvit2Gj2
+        c5ZSiDyd/CdnWzyIlnMHMW4LQNPkmUw=
+X-Google-Smtp-Source: AMsMyM6o1fHJUmnqzIYecrS7jtpvJ5Gy8wrnm+ZMJIpWig/k2WyUboNIQ9/eXx411rHD09XTWDSgiA==
+X-Received: by 2002:a17:903:284:b0:178:2a94:9b6a with SMTP id j4-20020a170903028400b001782a949b6amr5433156plr.135.1663884283829;
+        Thu, 22 Sep 2022 15:04:43 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:7c7b:f882:f26a:23ca? ([2620:15c:211:201:7c7b:f882:f26a:23ca])
+        by smtp.gmail.com with ESMTPSA id x14-20020a170902ec8e00b001780e4e1a0fsm4650634plg.125.2022.09.22.15.04.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Sep 2022 15:04:42 -0700 (PDT)
+Message-ID: <f69110ac-0be6-7e87-bf27-1d9544038910@acm.org>
+Date:   Thu, 22 Sep 2022 15:04:41 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH] scsi: make SCSI_MOD depend on BLOCK for cleaner .config
+ files
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220919060112.24802-1-lukas.bulwahn@gmail.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20220919060112.24802-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable count is assigned a value but it is never read. The
-assignment is redundant and can be removed.
+On 9/18/22 23:01, Lukas Bulwahn wrote:
+> SCSI_MOD is a helper config symbol for configuring RAID_ATTRS properly,
+> i.e., RAID_ATTRS needs to be m when SCSI=m.
+> 
+> This helper config symbol SCSI_MOD still shows up even in kernel
+> configurations that do not select the block subsystem and where SCSI is
+> not even a configuration option mentioned and selectable.
+> 
+> Make this SCSI_MOD depend on BLOCK, so that it only shows up when it is
+> slightly relevant in the kernel configuration.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>   drivers/scsi/Kconfig | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+> index 955cb69a5418..03e71e3d5e5b 100644
+> --- a/drivers/scsi/Kconfig
+> +++ b/drivers/scsi/Kconfig
+> @@ -2,9 +2,10 @@
+>   menu "SCSI device support"
+>   
+>   config SCSI_MOD
+> -       tristate
+> -       default y if SCSI=n || SCSI=y
+> -       default m if SCSI=m
+> +	tristate
+> +	default y if SCSI=n || SCSI=y
+> +	default m if SCSI=m
+> +	depends on BLOCK
 
-Cleans up two clang scan build warnings:
-warning: Value stored to 'count' is never read [deadcode.DeadStores]
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/drm_crtc_helper.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_crtc_helper.c b/drivers/gpu/drm/drm_crtc_helper.c
-index 457448cc60f7..2467df7a7a95 100644
---- a/drivers/gpu/drm/drm_crtc_helper.c
-+++ b/drivers/gpu/drm/drm_crtc_helper.c
-@@ -632,7 +632,6 @@ int drm_crtc_helper_set_config(struct drm_mode_set *set,
- 	}
- 
- 	/* a) traverse passed in connector list and get encoders for them */
--	count = 0;
- 	drm_connector_list_iter_begin(dev, &conn_iter);
- 	drm_for_each_connector_iter(connector, &conn_iter) {
- 		const struct drm_connector_helper_funcs *connector_funcs =
-@@ -678,7 +677,6 @@ int drm_crtc_helper_set_config(struct drm_mode_set *set,
- 		goto fail;
- 	}
- 
--	count = 0;
- 	drm_connector_list_iter_begin(dev, &conn_iter);
- 	drm_for_each_connector_iter(connector, &conn_iter) {
- 		if (!connector->encoder)
--- 
-2.37.1
-
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
