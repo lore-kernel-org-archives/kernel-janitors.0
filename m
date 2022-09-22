@@ -2,91 +2,171 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B87C6FA82
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 17:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09716ECAAD8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 18:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232143AbiIVRyV (ORCPT
+        id S232026AbiIVSl5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Sep 2022 13:54:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44730 "EHLO
+        Thu, 22 Sep 2022 14:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232038AbiIVRyQ (ORCPT
+        with ESMTP id S229841AbiIVSl4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Sep 2022 13:54:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3544710650D;
-        Thu, 22 Sep 2022 10:54:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B6BFE636C3;
-        Thu, 22 Sep 2022 17:54:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56B8C433C1;
-        Thu, 22 Sep 2022 17:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663869255;
-        bh=sPEfNt549leOVSeFwAMTEwbkpSUroLM7+a3d5AF/yOQ=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=OvYT0old6lhYOJhem8X36tPfmhv22eGf3e+sJH/9fHFJYf3i5es8jXKB99PO6jxpV
-         fRd8EyvusTckJGk8t3WbrXTYwbF+xBC/rTU+ZEN6XJo8CAp0UzA3S7DKKwqc8XYOHI
-         tFALL65D+D2/xDpIAOVRXKJ2jIq4xUPJT4BRyTi9xc+bZ9EHGiDpSrx4tuB/eyXp4F
-         oRA4ueKSzej39t+5y32Is7pnueaZWTancF4aTNiUq5OTykHYYnUJUg5KFEJLzslUWH
-         xcP7J7vFTi2p7QZCGIBiASP0IkgYm1LbiTTPhwzg2ji88SmtIzRIrMhSz9kVRwEcMK
-         MLro8/Fvj071g==
-From:   Mark Brown <broonie@kernel.org>
-To:     Wei Yongjun <weiyongjun@huaweicloud.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Wei Yongjun <weiyongjun1@huawei.com>
-In-Reply-To: <20220922040807.1409540-1-weiyongjun@huaweicloud.com>
-References: <20220922040807.1409540-1-weiyongjun@huaweicloud.com>
-Subject: Re: [PATCH -next] spi: meson-spicc: make symbol 'meson_spicc_pow2_clk_ops' static
-Message-Id: <166386925058.727991.8817892530350799405.b4-ty@kernel.org>
-Date:   Thu, 22 Sep 2022 18:54:10 +0100
+        Thu, 22 Sep 2022 14:41:56 -0400
+Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CD7DCE89
+        for <kernel-janitors@vger.kernel.org>; Thu, 22 Sep 2022 11:41:54 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id bR8woJNpLeT4cbR8woCJ3a; Thu, 22 Sep 2022 20:41:52 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 22 Sep 2022 20:41:52 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     yhs@fb.com, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH v2] headers: Remove some left-over license text
+Date:   Thu, 22 Sep 2022 20:41:40 +0200
+Message-Id: <88410cddd31197ea26840d7dd71612bece8c6acf.1663871981.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-8af31
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 22 Sep 2022 04:08:07 +0000, Wei Yongjun wrote:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> The sparse tool complains as follows:
-> 
-> drivers/spi/spi-meson-spicc.c:570:22: warning:
->  symbol 'meson_spicc_pow2_clk_ops' was not declared. Should it be static?
-> 
-> [...]
+Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
+license identifier to uapi header files with a license")
 
-Applied to
+When the SPDX-License-Identifier tag has been added, the corresponding
+license text has not been removed.
 
-   broonie/spi.git for-next
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Changes since v1:
+  - add tools/include/uapi/linux/tc_act/tc_bpf.h   [Yonghong Song <yhs@fb.com>]
 
-Thanks!
+v1: https://lore.kernel.org/all/2a15aba72497e78ff08c8b8a8bfe3cf5a3e6ee18.1662897019.git.christophe.jaillet@wanadoo.fr/
+---
+ include/uapi/linux/tc_act/tc_bpf.h        |  5 -----
+ include/uapi/linux/tc_act/tc_skbedit.h    | 13 -------------
+ include/uapi/linux/tc_act/tc_skbmod.h     |  7 +------
+ include/uapi/linux/tc_act/tc_tunnel_key.h |  5 -----
+ include/uapi/linux/tc_act/tc_vlan.h       |  5 -----
+ tools/include/uapi/linux/tc_act/tc_bpf.h  |  5 -----
+ 6 files changed, 1 insertion(+), 39 deletions(-)
 
-[1/1] spi: meson-spicc: make symbol 'meson_spicc_pow2_clk_ops' static
-      commit: 077dac343b54babfd56b1a52cf1f091518118957
+diff --git a/include/uapi/linux/tc_act/tc_bpf.h b/include/uapi/linux/tc_act/tc_bpf.h
+index 653c4f94f76e..fe6c8f8f3e8c 100644
+--- a/include/uapi/linux/tc_act/tc_bpf.h
++++ b/include/uapi/linux/tc_act/tc_bpf.h
+@@ -1,11 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+ /*
+  * Copyright (c) 2015 Jiri Pirko <jiri@resnulli.us>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
+ 
+ #ifndef __LINUX_TC_BPF_H
+diff --git a/include/uapi/linux/tc_act/tc_skbedit.h b/include/uapi/linux/tc_act/tc_skbedit.h
+index 6cb6101208d0..64032513cc4c 100644
+--- a/include/uapi/linux/tc_act/tc_skbedit.h
++++ b/include/uapi/linux/tc_act/tc_skbedit.h
+@@ -2,19 +2,6 @@
+ /*
+  * Copyright (c) 2008, Intel Corporation.
+  *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+- * Place - Suite 330, Boston, MA 02111-1307 USA.
+- *
+  * Author: Alexander Duyck <alexander.h.duyck@intel.com>
+  */
+ 
+diff --git a/include/uapi/linux/tc_act/tc_skbmod.h b/include/uapi/linux/tc_act/tc_skbmod.h
+index af6ef2cfbf3d..ac62c9a993ea 100644
+--- a/include/uapi/linux/tc_act/tc_skbmod.h
++++ b/include/uapi/linux/tc_act/tc_skbmod.h
+@@ -1,12 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+ /*
+  * Copyright (c) 2016, Jamal Hadi Salim
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+-*/
++ */
+ 
+ #ifndef __LINUX_TC_SKBMOD_H
+ #define __LINUX_TC_SKBMOD_H
+diff --git a/include/uapi/linux/tc_act/tc_tunnel_key.h b/include/uapi/linux/tc_act/tc_tunnel_key.h
+index 3f10dc4e7a4b..49ad4033951b 100644
+--- a/include/uapi/linux/tc_act/tc_tunnel_key.h
++++ b/include/uapi/linux/tc_act/tc_tunnel_key.h
+@@ -2,11 +2,6 @@
+ /*
+  * Copyright (c) 2016, Amir Vadai <amir@vadai.me>
+  * Copyright (c) 2016, Mellanox Technologies. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
+ 
+ #ifndef __LINUX_TC_TUNNEL_KEY_H
+diff --git a/include/uapi/linux/tc_act/tc_vlan.h b/include/uapi/linux/tc_act/tc_vlan.h
+index 5b306fe815cc..3e1f8e57cdd2 100644
+--- a/include/uapi/linux/tc_act/tc_vlan.h
++++ b/include/uapi/linux/tc_act/tc_vlan.h
+@@ -1,11 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+ /*
+  * Copyright (c) 2014 Jiri Pirko <jiri@resnulli.us>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
+ 
+ #ifndef __LINUX_TC_VLAN_H
+diff --git a/tools/include/uapi/linux/tc_act/tc_bpf.h b/tools/include/uapi/linux/tc_act/tc_bpf.h
+index 653c4f94f76e..fe6c8f8f3e8c 100644
+--- a/tools/include/uapi/linux/tc_act/tc_bpf.h
++++ b/tools/include/uapi/linux/tc_act/tc_bpf.h
+@@ -1,11 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+ /*
+  * Copyright (c) 2015 Jiri Pirko <jiri@resnulli.us>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
+ 
+ #ifndef __LINUX_TC_BPF_H
+-- 
+2.34.1
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
