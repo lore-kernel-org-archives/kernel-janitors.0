@@ -2,147 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 410BEC6FA90
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 09:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF698C6FA90
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 09:23:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbiIVJVI (ORCPT
+        id S229887AbiIVJXv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Sep 2022 05:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57736 "EHLO
+        Thu, 22 Sep 2022 05:23:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbiIVJVA (ORCPT
+        with ESMTP id S229449AbiIVJXt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Sep 2022 05:21:00 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D25611164;
-        Thu, 22 Sep 2022 02:20:58 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id 63so11887459ybq.4;
-        Thu, 22 Sep 2022 02:20:58 -0700 (PDT)
+        Thu, 22 Sep 2022 05:23:49 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1EFB863
+        for <kernel-janitors@vger.kernel.org>; Thu, 22 Sep 2022 02:23:47 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id l8so6361270wmi.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 22 Sep 2022 02:23:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=2+S7HlEBuVCJM6F80dB4f4rhA0eBwB5EJEsljjj7oEQ=;
-        b=R61FC6aLSg96pCV7GEgkVJaRSMSzV4HdLoxaGeQqb6KMHlOElwQFntvX2tiU8aHuSr
-         kuY33t90hDFNARwlj4HAGOOK/Ragw8GM1WaZ63Y/q213syPamW2RSRhyJ0uSIw2kzXPp
-         r7AshXemKH5rGdmvklR/pmijvIjz/3i1eE4EkfaPDBPQVEww4AJMw9tLMJ/7oWHs/70u
-         6JnJzh2bcBv2FFftlv2rhJfFM0G4ZsYjf0+I6q7anQT3JW6tEYYCtLcrM2do2JT2tknk
-         23glncEimVMOmnZmFtNlprQj2K/M+2dMZUf2NmXO59pcScVGS+YobiNU9Q4xL9Q00V4q
-         KVIQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:reply-to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date;
+        bh=0oW+9yt7498h+lO2a1DaBWCIJgwtJERfgviB79Lo1Y4=;
+        b=HuDw6Ts7eqn9+FpWBXdFfI+MNIEPh+9HPz7+HdbnjkBZfpVoEQddP7F2EOtfZTGjE+
+         2LkLxtbLKi5jgOUmsGj0KaYMIgu70XgDZzuO2alqnNNcm1Hub/itYoO87sIpWrD1VXnq
+         qb76RFr9VeA6Wb64HlQu2dFTI8ZHJT08fXAmWwnolzgg7Pkp/tcixNdw/NA28sQicNF2
+         ICNtwHkZNjh0+CNNvVdagVtAh2DfhJD0s6BmXLxf7pPrvXT+95LCNAfgN92A+2RbqG47
+         IPIYuvwGQ5Jr+lORDt7OQeKvUT/7omdB+kAPR90SDmEcrJUpd05yVdK4UEWuXhTTQbb5
+         G4pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=2+S7HlEBuVCJM6F80dB4f4rhA0eBwB5EJEsljjj7oEQ=;
-        b=nFOd1zpqVKsxqXeILdrwwFM1AJjhl4g58zPk5mPK4q0nz2ggSv/Xs4C6t7n2A0irEB
-         H0uQknpP6pjAaYdTpj1YWB7vmTOqSLZeIO3yXFYh/QpUqe5W1j34X2Laq0eoZ/Fmwrst
-         N2aQ5jqfD43qYhivNxT31wUz5uW/dm7bysmykvsF43lRQRPyAXKJQqSb2cdgoqVX4Ix0
-         36HPzmIXSrHaCzpLVS+7QTBTHN2wwVtM/LD/+bQZ9OBS2eKYtfJJFzb0pUG88xIntwW7
-         GtItHcdcvOX+i/MWciNS+q+BcQqNKNr+JgPEpByvtkJ71NpszbI+i4SVuaVHIspV9fe7
-         OQSw==
-X-Gm-Message-State: ACrzQf2D+4Xy+FUytauXou6zw99W5knIPZ5wG4AX/icgRMG2OSDGBE3b
-        HU7YuGcJSL/ENrCOpNKfPsjc3OxkFhO2Zwh0y28=
-X-Google-Smtp-Source: AMsMyM5EyN7u4n8EdbXrBjCRzmUqkG32AKx0gm9gp4ayEyX1apBgRrSArCx2QDVBntwIADukECOsIoP/EiUdHpNR/MM=
-X-Received: by 2002:a25:bd52:0:b0:6b4:22fa:8226 with SMTP id
- p18-20020a25bd52000000b006b422fa8226mr2621525ybm.31.1663838457943; Thu, 22
- Sep 2022 02:20:57 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:reply-to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date;
+        bh=0oW+9yt7498h+lO2a1DaBWCIJgwtJERfgviB79Lo1Y4=;
+        b=nemN9g4L5gEpeniB58j8POdkU00pwKTmb0pJ2E7AS+4PwlKwghWGpGYvtwN1E8K4ti
+         p5U8Eo75Rhi/XVPjmjE3Q8yyhkua8IiRL57FpLASVXdWS9f7xzZLgCSZXGEnaitcXmc/
+         uDlYYrk+2iev50C7jHHDVXm3sPLJwjhz5M6Cruu/tPfVxzEVWW+qKBWkV2a6ex8AxND1
+         8QedqzjR1vAJXstyakNjE7rsiL9L4zRBPnd8QD2qFJpdRv5Jo6TuttCNo8pzhrlHD97O
+         sxoU7noj0ddtZv9AK/eLeQUjVOjz0jU+Iv13HVR6Ny6wROdSUyLW+a7KkDQtBWyFq6AE
+         ttPA==
+X-Gm-Message-State: ACrzQf2SmWntPYOTJCZYSDtYQWBObY9iQ6jHcEhTGLYu+DYt4/97rO8T
+        TCC/YrWMGKMEdfL40SXMr7CQqg==
+X-Google-Smtp-Source: AMsMyM4hzQ6OpNA16zPCO4R6+e1l10Orii3c1e9BAA5rpjZ3q22Jf9I0uZigmmUKMzK54QW8tXXupg==
+X-Received: by 2002:a7b:c398:0:b0:3b4:9308:ffee with SMTP id s24-20020a7bc398000000b003b49308ffeemr8947146wmj.51.1663838626144;
+        Thu, 22 Sep 2022 02:23:46 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:6aa5:ee77:c3d6:a9d6? ([2a01:e0a:982:cbb0:6aa5:ee77:c3d6:a9d6])
+        by smtp.gmail.com with ESMTPSA id h4-20020a05600c350400b003b491f99a25sm6896559wmq.22.2022.09.22.02.23.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Sep 2022 02:23:45 -0700 (PDT)
+Message-ID: <19f10c64-efec-e2c7-a39d-0f346d6936fa@linaro.org>
+Date:   Thu, 22 Sep 2022 11:23:44 +0200
 MIME-Version: 1.0
-References: <20220919060342.26400-1-lukas.bulwahn@gmail.com> <202209192252.T6IGLNqC-lkp@intel.com>
-In-Reply-To: <202209192252.T6IGLNqC-lkp@intel.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Thu, 22 Sep 2022 11:20:47 +0200
-Message-ID: <CAKXUXMy=1_AvqwhjEzaov5jj4sCiB5vB67QsXA395-J7N2Vtqg@mail.gmail.com>
-Subject: Re: [PATCH] crypto: add rsize config to .config only if lib_poly1305
- is set
-To:     kernel test robot <lkp@intel.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, llvm@lists.linux.dev,
-        kbuild-all@lists.01.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH -next] spi: meson-spicc: make symbol
+ 'meson_spicc_pow2_clk_ops' static
+Content-Language: en-US
+To:     Wei Yongjun <weiyongjun@huaweicloud.com>,
+        Mark Brown <broonie@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org
+References: <20220922040807.1409540-1-weiyongjun@huaweicloud.com>
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Organization: Linaro Developer Services
+In-Reply-To: <20220922040807.1409540-1-weiyongjun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 19, 2022 at 5:10 PM kernel test robot <lkp@intel.com> wrote:
->
-> Hi Lukas,
->
-> I love your patch! Yet something to improve:
+On 22/09/2022 06:08, Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> The sparse tool complains as follows:
+> 
+> drivers/spi/spi-meson-spicc.c:570:22: warning:
+>   symbol 'meson_spicc_pow2_clk_ops' was not declared. Should it be static?
+> 
+> This symbol is not used outside of spi-meson-spicc.c, so marks it static.
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>   drivers/spi/spi-meson-spicc.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/spi-meson-spicc.c b/drivers/spi/spi-meson-spicc.c
+> index e4cb52e1fe26..85b4b9b267b1 100644
+> --- a/drivers/spi/spi-meson-spicc.c
+> +++ b/drivers/spi/spi-meson-spicc.c
+> @@ -567,7 +567,7 @@ static int meson_spicc_pow2_set_rate(struct clk_hw *hw, unsigned long rate,
+>   	return clk_divider_ops.set_rate(hw, rate, parent_rate);
+>   }
+>   
+> -const struct clk_ops meson_spicc_pow2_clk_ops = {
+> +static const struct clk_ops meson_spicc_pow2_clk_ops = {
+>   	.recalc_rate = meson_spicc_pow2_recalc_rate,
+>   	.determine_rate = meson_spicc_pow2_determine_rate,
+>   	.set_rate = meson_spicc_pow2_set_rate,
+> 
+> 
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
 
-Thanks, kernel test robot ;)
-
-Okay, I see that I need to reiterate on this patch. The crypto caam
-driver pulls in a number of headers without a dependency with Kconfig
-on the corresponding config symbol here. I will check if I find a good
-solution for that.
-
-For now, this patch can be ignored until I find time to send out a patch v2.
-
-Lukas
-
->
-> [auto build test ERROR on herbert-cryptodev-2.6/master]
-> [also build test ERROR on herbert-crypto-2.6/master linus/master v6.0-rc6 next-20220919]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Lukas-Bulwahn/crypto-add-rsize-config-to-config-only-if-lib_poly1305-is-set/20220919-140531
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-> config: arm-defconfig (https://download.01.org/0day-ci/archive/20220919/202209192252.T6IGLNqC-lkp@intel.com/config)
-> compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 791a7ae1ba3efd6bca96338e10ffde557ba83920)
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # install arm cross compiling tool for clang build
->         # apt-get install binutils-arm-linux-gnueabi
->         # https://github.com/intel-lab-lkp/linux/commit/c1954797e493eabf02f354e290fe380ace0633e4
->         git remote add linux-review https://github.com/intel-lab-lkp/linux
->         git fetch --no-tags linux-review Lukas-Bulwahn/crypto-add-rsize-config-to-config-only-if-lib_poly1305-is-set/20220919-140531
->         git checkout c1954797e493eabf02f354e290fe380ace0633e4
->         # save the config file
->         mkdir build_dir && cp config build_dir/.config
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/crypto/caam/
->
-> If you fix the issue, kindly add following tag where applicable
-> Reported-by: kernel test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
->    In file included from drivers/crypto/caam/ctrl.c:15:
->    In file included from drivers/crypto/caam/compat.h:41:
-> >> include/crypto/poly1305.h:56:32: error: use of undeclared identifier 'CONFIG_CRYPTO_LIB_POLY1305_RSIZE'
->                    struct poly1305_key opaque_r[CONFIG_CRYPTO_LIB_POLY1305_RSIZE];
->                                                 ^
->    1 error generated.
->
->
-> vim +/CONFIG_CRYPTO_LIB_POLY1305_RSIZE +56 include/crypto/poly1305.h
->
-> 878afc35cd28bc Eric Biggers       2018-11-16  40
-> 2546f811ef45fc Martin Willi       2015-07-16  41  struct poly1305_desc_ctx {
-> 2546f811ef45fc Martin Willi       2015-07-16  42        /* partial buffer */
-> 2546f811ef45fc Martin Willi       2015-07-16  43        u8 buf[POLY1305_BLOCK_SIZE];
-> 2546f811ef45fc Martin Willi       2015-07-16  44        /* bytes used in partial buffer */
-> 2546f811ef45fc Martin Willi       2015-07-16  45        unsigned int buflen;
-> ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  46        /* how many keys have been set in r[] */
-> ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  47        unsigned short rset;
-> ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  48        /* whether s[] has been set */
-> 2546f811ef45fc Martin Willi       2015-07-16  49        bool sset;
-> ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  50        /* finalize key */
-> ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  51        u32 s[4];
-> ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  52        /* accumulator */
-> ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  53        struct poly1305_state h;
-> ad8f5b88383ea6 Ard Biesheuvel     2019-11-08  54        /* key */
-> 1c08a104360f3e Jason A. Donenfeld 2020-01-05  55        union {
-> 1c08a104360f3e Jason A. Donenfeld 2020-01-05 @56                struct poly1305_key opaque_r[CONFIG_CRYPTO_LIB_POLY1305_RSIZE];
-> 1c08a104360f3e Jason A. Donenfeld 2020-01-05  57                struct poly1305_core_key core_r;
-> 1c08a104360f3e Jason A. Donenfeld 2020-01-05  58        };
-> 2546f811ef45fc Martin Willi       2015-07-16  59  };
-> 2546f811ef45fc Martin Willi       2015-07-16  60
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://01.org/lkp
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
