@@ -2,101 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D7FECAAD8
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Sep 2022 20:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE66C32771
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 01:53:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230436AbiIUUNa (ORCPT
+        id S230190AbiIVBxR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Sep 2022 16:13:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58360 "EHLO
+        Wed, 21 Sep 2022 21:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230369AbiIUUNV (ORCPT
+        with ESMTP id S229704AbiIVBxQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Sep 2022 16:13:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4177EA4B11;
-        Wed, 21 Sep 2022 13:13:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 48C0DB832B8;
-        Wed, 21 Sep 2022 20:13:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72058C433C1;
-        Wed, 21 Sep 2022 20:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663791194;
-        bh=PHk8LjPeryu7k1MUPuNIxIKYgvbrfFf5jF2Ymha8OMw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y+Zj2e2xh9bOFNF8lY5GZiF9WBhmU74YfQtOexO2CAWezzLePLywGmBqS+dyW1hRR
-         zbNibMjMPlTIrITo7B61npoe0kJ9ZPmI3Cho9v6xTqpaFigNJirGRiAnhx6nNMPGxg
-         vuExZEv/j8hO+5SuzxbRTQAVwyAf2qeQHdWRv1RwhjceM8ViTRBKUDUEQiuH87p6v9
-         7JlRGkmJqy5mWA/NjusOrZjuJ3a/R7HI4F/UKqwaSEukOsHds3fKbJX7DJlDqTYIR7
-         y0r6ZH7ElzzD3kjyaJ2hU2HnMgHtKGzSrqKaztNV1p6m0Oh/ovvoZUe/3dXXqSemFH
-         nMaxMfboI5xmA==
-Date:   Wed, 21 Sep 2022 22:13:10 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Peter Rosin <peda@axentia.se>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wed, 21 Sep 2022 21:53:16 -0400
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90AD6AB402;
+        Wed, 21 Sep 2022 18:53:13 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4MXytR62f7zKPcM;
+        Thu, 22 Sep 2022 09:51:11 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.102.38])
+        by APP2 (Coremail) with SMTP id Syh0CgD3SXMFwCtjbf7PBA--.33545S4;
+        Thu, 22 Sep 2022 09:53:11 +0800 (CST)
+From:   Wei Yongjun <weiyongjun@huaweicloud.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Lennart Franzen <lennart@lfdomain.com>,
+        Alexandru Tachici <alexandru.tachici@analog.com>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i2c: mux: harden i2c_mux_alloc() against integer
- overflows
-Message-ID: <YytwVuLBo4pPHKEO@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Peter Rosin <peda@axentia.se>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <YyMM8iVSHJ4ammsg@kili>
+Subject: [PATCH net-next] net: ethernet: adi: Fix return value check in adin1110_probe_netdevs()
+Date:   Thu, 22 Sep 2022 02:10:23 +0000
+Message-Id: <20220922021023.811581-1-weiyongjun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3kTeK3XY50ukqv1d"
-Content-Disposition: inline
-In-Reply-To: <YyMM8iVSHJ4ammsg@kili>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-CM-TRANSID: Syh0CgD3SXMFwCtjbf7PBA--.33545S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw43tFy7Aw1rKrWfWFykZrb_yoWkArgE9r
+        42vr1fWw4DKF12y3y2y3y5JFy2kF1kur95uF43t39xXryxWr18Xr4DW3srXry7Wrs5ZF90
+        qwnru3W7A3yaqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbokYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_JFC_Wr1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+        j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+        kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
+        bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
+        AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
+        42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s
+        1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
+        vfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
---3kTeK3XY50ukqv1d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In case of error, the function get_phy_device() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check
+should be replaced with IS_ERR().
 
-On Thu, Sep 15, 2022 at 02:30:58PM +0300, Dan Carpenter wrote:
-> A couple years back we went through the kernel an automatically
-> converted size calculations to use struct_size() instead.  The
-> struct_size() calculation is protected against integer overflows.
->=20
-> However it does not make sense to use the result from struct_size()
-> for additional math operations as that would negate any safeness.
->=20
-> Fixes: 1f3b69b6b939 ("i2c: mux: Use struct_size() in devm_kzalloc()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: bc93e19d088b ("net: ethernet: adi: Add ADIN1110 support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/adi/adin1110.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to for-current, thanks!
+diff --git a/drivers/net/ethernet/adi/adin1110.c b/drivers/net/ethernet/adi/adin1110.c
+index 4dacb98e7e0a..eac4e27719ab 100644
+--- a/drivers/net/ethernet/adi/adin1110.c
++++ b/drivers/net/ethernet/adi/adin1110.c
+@@ -1582,9 +1582,9 @@ static int adin1110_probe_netdevs(struct adin1110_priv *priv)
+ 		netdev->features |= NETIF_F_NETNS_LOCAL;
+ 
+ 		port_priv->phydev = get_phy_device(priv->mii_bus, i + 1, false);
+-		if (!port_priv->phydev) {
++		if (IS_ERR(port_priv->phydev)) {
+ 			netdev_err(netdev, "Could not find PHY with device address: %d.\n", i);
+-			return -ENODEV;
++			return PTR_ERR(port_priv->phydev);
+ 		}
+ 
+ 		port_priv->phydev = phy_connect(netdev,
 
-
---3kTeK3XY50ukqv1d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmMrcFYACgkQFA3kzBSg
-KbYS9BAArOhtfZs76oY6YNiM8cTO3gC9ropb3iQD70LsDFM2A51OI3/HnMvJc3FO
-R4Ur9qemhhL8Xt+IGOE1EX+Yz/qctGE9AGtcEoErkUcFRArhonwtT6mcoiOgTM4X
-WzAEhqRy40j1zrE2COWGEQiID2YWl4qM1nERfsnyc6sVYbiL57wKv/VHruNFw8tY
-/VBSLUAAHFeAITvcjr1fmhNpRzHm0odQt38VkMsGQzciBqj1ygmCtqbRnt8AWa1Z
-msKTnw1AIWC4IaWUxXlH0F2WO1L/tOUu3hs2wyNPPQprzFcCWacsWNX4IEUPvxYg
-ug2X4N1qMgr3MyvSDwcsPM1qJ2X7PRVlnN8SH3PKRizm4qGJ1qGKqxwmQEbaGyQ8
-7M1CZ0cgUAB0nfuAfBoVON62d/6yo15FcRapYT4BOAp7pmsFQVJ2ipCc8rzPLvq0
-oeMyK+S/vh7z+B6ml6mf/wI9xFGME5DjwajIp/lqOAU2bcIFUfGBt8EDiz5MdFMn
-GPM5vqekW/LVGDAzc+ubTRkRSYlLfQjF469TVFgYDsbrj5HkaHmZTm0LBSGZZpQ8
-GQgi7evo5Ubu/0QzZyvgnzt2qxsvv3uJ46zLAWUXbNFAneqik/uJiJqwhHHd/VvS
-u4bUnz+GlAcHCzf5Nfbh10z8f5BxN9+10SopwPEhOnCKjYt3pB0=
-=P6VH
------END PGP SIGNATURE-----
-
---3kTeK3XY50ukqv1d--
