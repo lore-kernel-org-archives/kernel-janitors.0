@@ -2,58 +2,56 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE66C32771
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 01:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9716C6FA8B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Sep 2022 03:51:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbiIVBxR (ORCPT
+        id S229788AbiIVDvB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Sep 2022 21:53:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51108 "EHLO
+        Wed, 21 Sep 2022 23:51:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbiIVBxQ (ORCPT
+        with ESMTP id S229570AbiIVDu6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Sep 2022 21:53:16 -0400
+        Wed, 21 Sep 2022 23:50:58 -0400
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90AD6AB402;
-        Wed, 21 Sep 2022 18:53:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECB6CAB40E;
+        Wed, 21 Sep 2022 20:50:56 -0700 (PDT)
 Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4MXytR62f7zKPcM;
-        Thu, 22 Sep 2022 09:51:11 +0800 (CST)
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4MY1VH4NKhzKPy1;
+        Thu, 22 Sep 2022 11:48:55 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.102.38])
-        by APP2 (Coremail) with SMTP id Syh0CgD3SXMFwCtjbf7PBA--.33545S4;
-        Thu, 22 Sep 2022 09:53:11 +0800 (CST)
+        by APP2 (Coremail) with SMTP id Syh0CgDHGXOd2ytjjvLTBA--.48717S4;
+        Thu, 22 Sep 2022 11:50:55 +0800 (CST)
 From:   Wei Yongjun <weiyongjun@huaweicloud.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Lennart Franzen <lennart@lfdomain.com>,
-        Alexandru Tachici <alexandru.tachici@analog.com>
-Cc:     Wei Yongjun <weiyongjun1@huawei.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: ethernet: adi: Fix return value check in adin1110_probe_netdevs()
-Date:   Thu, 22 Sep 2022 02:10:23 +0000
-Message-Id: <20220922021023.811581-1-weiyongjun@huaweicloud.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH -next] spi: meson-spicc: make symbol 'meson_spicc_pow2_clk_ops' static
+Date:   Thu, 22 Sep 2022 04:08:07 +0000
+Message-Id: <20220922040807.1409540-1-weiyongjun@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
-X-CM-TRANSID: Syh0CgD3SXMFwCtjbf7PBA--.33545S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw43tFy7Aw1rKrWfWFykZrb_yoWkArgE9r
-        42vr1fWw4DKF12y3y2y3y5JFy2kF1kur95uF43t39xXryxWr18Xr4DW3srXry7Wrs5ZF90
-        qwnru3W7A3yaqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbokYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+X-CM-TRANSID: Syh0CgDHGXOd2ytjjvLTBA--.48717S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4fuw48Gry5tr4DZr48Xrb_yoWkJrb_CF
+        WDGr45GF47J34xAFy3u3W7ArZFvF13uwn0vr4vgFW8Aay5Zrn8ZF1DuryxCr98u3Wj9rZ8
+        Xr97J34UCrW5CjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUboAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
         Y4v20xvaj40_JFC_Wr1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
         A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-        67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-        j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-        kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-        bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-        AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
-        42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s
-        1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
-        vfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+        67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
+        z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+        AF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
+        IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s
+        0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
+        daVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
 X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
 X-CFilter-Loop: Reflected
 Precedence: bulk
@@ -62,30 +60,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-In case of error, the function get_phy_device() returns ERR_PTR()
-and never returns NULL. The NULL test in the return value check
-should be replaced with IS_ERR().
+The sparse tool complains as follows:
 
-Fixes: bc93e19d088b ("net: ethernet: adi: Add ADIN1110 support")
+drivers/spi/spi-meson-spicc.c:570:22: warning:
+ symbol 'meson_spicc_pow2_clk_ops' was not declared. Should it be static?
+
+This symbol is not used outside of spi-meson-spicc.c, so marks it static.
+
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/net/ethernet/adi/adin1110.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-meson-spicc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/adi/adin1110.c b/drivers/net/ethernet/adi/adin1110.c
-index 4dacb98e7e0a..eac4e27719ab 100644
---- a/drivers/net/ethernet/adi/adin1110.c
-+++ b/drivers/net/ethernet/adi/adin1110.c
-@@ -1582,9 +1582,9 @@ static int adin1110_probe_netdevs(struct adin1110_priv *priv)
- 		netdev->features |= NETIF_F_NETNS_LOCAL;
+diff --git a/drivers/spi/spi-meson-spicc.c b/drivers/spi/spi-meson-spicc.c
+index e4cb52e1fe26..85b4b9b267b1 100644
+--- a/drivers/spi/spi-meson-spicc.c
++++ b/drivers/spi/spi-meson-spicc.c
+@@ -567,7 +567,7 @@ static int meson_spicc_pow2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return clk_divider_ops.set_rate(hw, rate, parent_rate);
+ }
  
- 		port_priv->phydev = get_phy_device(priv->mii_bus, i + 1, false);
--		if (!port_priv->phydev) {
-+		if (IS_ERR(port_priv->phydev)) {
- 			netdev_err(netdev, "Could not find PHY with device address: %d.\n", i);
--			return -ENODEV;
-+			return PTR_ERR(port_priv->phydev);
- 		}
- 
- 		port_priv->phydev = phy_connect(netdev,
+-const struct clk_ops meson_spicc_pow2_clk_ops = {
++static const struct clk_ops meson_spicc_pow2_clk_ops = {
+ 	.recalc_rate = meson_spicc_pow2_recalc_rate,
+ 	.determine_rate = meson_spicc_pow2_determine_rate,
+ 	.set_rate = meson_spicc_pow2_set_rate,
 
