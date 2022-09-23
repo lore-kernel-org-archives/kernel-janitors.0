@@ -2,93 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F8DECAAD8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Sep 2022 13:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88629ECAAD8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Sep 2022 14:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231994AbiIWNVJ (ORCPT
+        id S232557AbiIWOVy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Sep 2022 09:21:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53804 "EHLO
+        Fri, 23 Sep 2022 10:21:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230285AbiIWNVI (ORCPT
+        with ESMTP id S231903AbiIWOVw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Sep 2022 09:21:08 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16CCC13EE84;
-        Fri, 23 Sep 2022 06:21:06 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id g3so20363183wrq.13;
-        Fri, 23 Sep 2022 06:21:06 -0700 (PDT)
+        Fri, 23 Sep 2022 10:21:52 -0400
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80E2213B023
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Sep 2022 07:21:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=3BlIJMdluE47X3gFSDBJTgtvgj1lWndk79Vpp72Pjy0=;
-        b=MBEDfuXBdTsbV/hv3XTrJqWFYkjxxl6HISff1+YKyhS3Io6oRK3o0wiPDc3w8iUNV/
-         mJpBmbI/EOa5wXb6DzOaiER12JikN6Bkt51uICkzyJvzBDbmAuE5zP/ff3tJtp/YNO8H
-         Y4fyyujutSJxNnPmwp5yV18zma2k9h18wPK8zvjiTReP6lIwzT209kjHsIVo+K8Whyho
-         ARL3qqLNAC56fPXbpeeucpsub83JfWZx4UfbzVkW5/SyUXjKKozHOAi64GvoJBm/TCt4
-         D2fo6CLOgsQ3hobk7/CP/Mu92zMiSEAMWLU//uTgcNW5XSKbvhiJtqX5+JucmSv/VBwv
-         1/lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=3BlIJMdluE47X3gFSDBJTgtvgj1lWndk79Vpp72Pjy0=;
-        b=Ug+yLzxN9atnHT8+2ZMpAPD49gOE4K96NunKsWPqzQS0aSQsBHZ7G/JyiaDvXmcLSy
-         rzQ9cHadet9baSiuyLoSjNk7cRoXEqaHms2ne1H885AReVqy+nHfpeC2S0EfuBip5nin
-         yxQbesiGZe4Z1W87NCwiqwDmrzxNiR+72/CS4kRkdqN6iCNUwZux5KgRYzFR0T5tGiqr
-         CUH8IukE89GSt68bzS7fPVHGWyYjxUnfNUuprRNVlVrs1Q7Njr4YHGMkqLJmPFThOb/h
-         ZRNJwTMb0kk6I7ua/oninJ3a2mTsCWP8zON5DXVVEZNBOjchOm1eLA3zIRPbUK9ik7oX
-         0Dpw==
-X-Gm-Message-State: ACrzQf3hJNOcKkNCA9jmfWANrs+V91zRria+yl0bz8DAXkrjnOCbvSg7
-        k+wUueZxL2AjQyOV0SJF1jHNR3IjKtgf3g==
-X-Google-Smtp-Source: AMsMyM5cQCGvanfiRlbu19EJsO6XJhMxjmSUCKtvA4aXuWso8uKHJoxvwLgD0/hF7za3Od9NlHd2kw==
-X-Received: by 2002:a5d:5b0f:0:b0:22a:f738:acdd with SMTP id bx15-20020a5d5b0f000000b0022af738acddmr5088852wrb.234.1663939264554;
-        Fri, 23 Sep 2022 06:21:04 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bx29-20020a5d5b1d000000b0021f131de6aesm7383168wrb.34.2022.09.23.06.21.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Sep 2022 06:21:04 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        linux-s390@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] s390/dasd: Fix spelling mistake "Ivalid" -> "Invalid"
-Date:   Fri, 23 Sep 2022 14:21:03 +0100
-Message-Id: <20220923132103.2486724-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=wodYgcViYlNEgjnvpJ9FEVllkDja6PndBTGivvzh83U=;
+  b=ZJWaTX8FIaZqvknaADtCKqnzHU+oxGlk9I4Sr09hZA/rHb0+/1AnXAqs
+   gNtnNyWrCCn12PrvJRplVYKbPSjpvfG1uU3EZZliW0F+6ToHhMHQnzDgu
+   ydZM5ykvrVohU2f28g1AzCDV2lKPlt2s30EQlRhkDbc7X6O+XlttHV68h
+   A=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.93,339,1654552800"; 
+   d="scan'208";a="24536317"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2022 16:21:49 +0200
+Date:   Fri, 23 Sep 2022 16:21:49 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     Yuan Can <yuancan@huawei.com>, cocci@inria.fr,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [cocci] [PATCH v3 1/2] coccinelle: locks: add missing_mutex_init.cocci
+ script
+In-Reply-To: <3351dd3d-f55a-10b0-6b35-d5206570e687@web.de>
+Message-ID: <2274a1a9-4b13-7677-9cf7-55ea960d8be@inria.fr>
+References: <20220922115535.44132-1-yuancan@huawei.com> <20220922115535.44132-2-yuancan@huawei.com> <3351dd3d-f55a-10b0-6b35-d5206570e687@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a pr_warn message. Fix it.
+> > +@r3@
+> > +identifier s, fld;
+> > +position p != {r2.p};
+> > +@@
+> > +
+> > +struct s {
+> > +  ...
+> > +  struct mutex fld@p;
+> > +  ...
+> > +};
+>
+>
+> How many mutexes (or spin locks) should be initialised before further data
+> processing can be safely performed with corresponding structures?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/s390/block/dasd_ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I tried the semantic patch on this file:
 
-diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
-index d0ddf2cc9786..484de696839c 100644
---- a/drivers/s390/block/dasd_ioctl.c
-+++ b/drivers/s390/block/dasd_ioctl.c
-@@ -401,7 +401,7 @@ dasd_ioctl_copy_pair_swap(struct block_device *bdev, void __user *argp)
- 		return -EFAULT;
- 	}
- 	if (memchr_inv(data.reserved, 0, sizeof(data.reserved))) {
--		pr_warn("%s: Ivalid swap data specified.\n",
-+		pr_warn("%s: Invalid swap data specified.\n",
- 			dev_name(&device->cdev->dev));
- 		dasd_put_device(device);
- 		return DASD_COPYPAIRSWAP_INVALID;
--- 
-2.37.1
+struct s {
+  struct mutex fld;
+};
 
+int main () {
+  struct s *mm;
+  mm = kmalloc();
+  mutex_lock(&mm->fld);
+}
+
+and it reported the expected error message.  So what exactly is the
+concern, Markus?
+
+julia
