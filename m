@@ -2,79 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 138C7C6FA82
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Sep 2022 12:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A89B9ECAAD8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Sep 2022 13:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230415AbiIWMub (ORCPT
+        id S231685AbiIWNES (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Sep 2022 08:50:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38412 "EHLO
+        Fri, 23 Sep 2022 09:04:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230015AbiIWMua (ORCPT
+        with ESMTP id S230448AbiIWNEO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Sep 2022 08:50:30 -0400
+        Fri, 23 Sep 2022 09:04:14 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64AA51166D4;
-        Fri, 23 Sep 2022 05:50:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 317AB138F04;
+        Fri, 23 Sep 2022 06:04:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 16F98B8317C;
-        Fri, 23 Sep 2022 12:50:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B7673C433D7;
-        Fri, 23 Sep 2022 12:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663937414;
-        bh=Amqa2Q5rxGYINkTmRz3S+7GGUX2jay5F7luuA9oDrz4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=NpBx67rcaEbRExl7Rrtvvi/Rk2DXY55ms2Df41p4FU18Fm9xolS3Qh6MBtYWB+quw
-         fGU6Qz0skAj20GSoADbAil6v34L53qqqbP1xnGoL/SQvKa8dFDnQky9UQoIpFI3BZp
-         zY8uSZ8Brb15IJ54NpvUJ7igcevJjf1mpzeH/FB5GRChgYC0YNl3qMTUr5XS1aM4nT
-         1vGmorLK5Q5zLjeDC/ST7r/Ojd2QYz6qGqQ05Xk7a7YAXQ9s/7nGCY5LexsxQKyHM+
-         tgmy+RI72a3Omt31OOOFZImwQa9FtynZSOQ1BoldI3NmoQJCRh4cRyMeKi2RbfD4pO
-         9O/eRkx3a1kng==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9CC34E4D03D;
-        Fri, 23 Sep 2022 12:50:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        by ams.source.kernel.org (Postfix) with ESMTPS id E0B0FB82653;
+        Fri, 23 Sep 2022 13:04:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF145C433C1;
+        Fri, 23 Sep 2022 13:04:08 +0000 (UTC)
+Message-ID: <cca427ac-436d-9cee-d3e7-8a957a0add25@xs4all.nl>
+Date:   Fri, 23 Sep 2022 15:04:06 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 2/3] media: platform: mtk-mdp3: fix PM reference leak in
+ mdp_comp_clock_on()
+Content-Language: en-US
+To:     Sun Ke <sunke32@huawei.com>, mchehab@kernel.org,
+        matthias.bgg@gmail.com, ping-hsun.wu@mediatek.com,
+        daoyuan.huang@mediatek.com, moudy.ho@mediatek.com
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+References: <20220902085820.3777360-1-sunke32@huawei.com>
+ <20220902085820.3777360-3-sunke32@huawei.com>
+ <38c78ee6-8b7e-34fb-1dc0-8b2d28acdd3d@huawei.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <38c78ee6-8b7e-34fb-1dc0-8b2d28acdd3d@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] MAINTAINERS: rectify file entry in TEAM DRIVER
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166393741463.6856.17054212763990591343.git-patchwork-notify@kernel.org>
-Date:   Fri, 23 Sep 2022 12:50:14 +0000
-References: <20220922114053.10883-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220922114053.10883-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     bpoirier@nvidia.com, davem@davemloft.net, netdev@vger.kernel.org,
-        jiri@resnulli.us, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+It's in a pull request, waiting to be merged.
 
-This patch was applied to netdev/net.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Regards,
 
-On Thu, 22 Sep 2022 13:40:53 +0200 you wrote:
-> Commit bbb774d921e2 ("net: Add tests for bonding and team address list
-> management") adds the net team driver tests in the directory:
+	Hans
+
+On 23/09/2022 08:25, Sun Ke wrote:
+> ping...
 > 
->   tools/testing/selftests/drivers/net/team/
-> 
-> The file entry in MAINTAINERS for the TEAM DRIVER however refers to:
-> 
-> [...]
-
-Here is the summary with links:
-  - MAINTAINERS: rectify file entry in TEAM DRIVER
-    https://git.kernel.org/netdev/net/c/f8497b3e9650
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+> 在 2022/9/2 16:58, Sun Ke 写道:
+>> mdp_comp_clock_on will increase runtime PM usage counter,
+>> and mdp_comp_clock_off will decrease the runtime PM usage counter.
+>> so, if mdp_comp_clock_on failed after increment runtime PM usage
+>> counter, it should decrease it before return a error code.
+>>
+>> pm_runtime_get_sync will increment pm usage counter even it failed.
+>> Forgetting to putting operation will result in reference leak here.
+>> Fix it by replacing it with pm_runtime_resume_and_get to keep usage
+>> counter balanced.
+>>
+>> And if failed to enable clk, add pm_runtime_put() to decrease the
+>> runtime PM usage counter.
+>>
+>> Fixes: 61890ccaefaf ("media: platform: mtk-mdp3: add MediaTek MDP3 driver")
+>> Signed-off-by: Sun Ke <sunke32@huawei.com>
+>> ---
+>>   drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c
+>> index 9a6ba5851ccb..d3eaf8884412 100644
+>> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c
+>> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c
+>> @@ -682,7 +682,7 @@ int mdp_comp_clock_on(struct device *dev, struct mdp_comp *comp)
+>>       int i, ret;
+>>         if (comp->comp_dev) {
+>> -        ret = pm_runtime_get_sync(comp->comp_dev);
+>> +        ret = pm_runtime_resume_and_get(comp->comp_dev);
+>>           if (ret < 0) {
+>>               dev_err(dev,
+>>                   "Failed to get power, err %d. type:%d id:%d\n",
+>> @@ -699,6 +699,7 @@ int mdp_comp_clock_on(struct device *dev, struct mdp_comp *comp)
+>>               dev_err(dev,
+>>                   "Failed to enable clk %d. type:%d id:%d\n",
+>>                   i, comp->type, comp->id);
+>> +            pm_runtime_put(comp->comp_dev);
+>>               return ret;
+>>           }
+>>       }
+>>
 
