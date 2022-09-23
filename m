@@ -2,100 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524ACC6FA82
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Sep 2022 06:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B97C6FA86
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Sep 2022 08:58:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbiIWGZM (ORCPT
+        id S231475AbiIWI6N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Sep 2022 02:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
+        Fri, 23 Sep 2022 04:58:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbiIWGZL (ORCPT
+        with ESMTP id S231409AbiIWI6L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Sep 2022 02:25:11 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D44A9B87E;
-        Thu, 22 Sep 2022 23:25:09 -0700 (PDT)
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MYhpb5MpdzMp1N;
-        Fri, 23 Sep 2022 14:20:23 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 23 Sep 2022 14:25:06 +0800
-Received: from [10.174.178.31] (10.174.178.31) by
- kwepemm600010.china.huawei.com (7.193.23.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 23 Sep 2022 14:25:05 +0800
-Subject: Re: [PATCH 2/3] media: platform: mtk-mdp3: fix PM reference leak in
- mdp_comp_clock_on()
-To:     <mchehab@kernel.org>, <matthias.bgg@gmail.com>,
-        <hverkuil-cisco@xs4all.nl>, <ping-hsun.wu@mediatek.com>,
-        <daoyuan.huang@mediatek.com>, <moudy.ho@mediatek.com>
-CC:     <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20220902085820.3777360-1-sunke32@huawei.com>
- <20220902085820.3777360-3-sunke32@huawei.com>
-From:   Sun Ke <sunke32@huawei.com>
-Message-ID: <38c78ee6-8b7e-34fb-1dc0-8b2d28acdd3d@huawei.com>
-Date:   Fri, 23 Sep 2022 14:25:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Fri, 23 Sep 2022 04:58:11 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2C3C12C686
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Sep 2022 01:58:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id A9069CE1B5A
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Sep 2022 08:58:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE95C433C1;
+        Fri, 23 Sep 2022 08:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1663923486;
+        bh=BgKVREHg5OpngvRNOlXi5PLKFAxqE0nOa1LwtGxKtOM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=jbIsuQD8tcbhgx5o3LMD/9n5krtarNX2QFJ70ACjyF45Fe+N5gOA0mu/ysUjCKig+
+         9HdoGdYgGKrv+WHn6NJ3A+cxGZrPTnyrs8VyMstdzJeoWnMp6WSfwKbKHnR09dq99S
+         GAVQoI7+4yyts0eXfryhzdzU8FDGK3gblbm+TSTC/M9Ro5V2fUMFsTs40Yd7+06MxP
+         C8PkF/jakJhB6o1i8vA1agXh2c5rWCHxz2c8YBK7DCE66dr2bOewNTbSSmPsp54SrG
+         8hYwYQpaawW79BdzMetmx4o+8AGIn7Br2pKEGDkj/dgmfYkHakkRcF9WdcJMH4EN2j
+         FCYX8hQGbe+FQ==
+Message-ID: <d3b8754e-f888-5bef-c6c3-16c42c598421@kernel.org>
+Date:   Fri, 23 Sep 2022 11:58:01 +0300
 MIME-Version: 1.0
-In-Reply-To: <20220902085820.3777360-3-sunke32@huawei.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.178.31]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] phy: ti: phy-j721e-wiz: fix reference leaks in
+ wiz_probe()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Jyri Sarha <jsarha@ti.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Tanmay Patil <t-patil@ti.com>, linux-phy@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+References: <YyxFI8aW23IC/21U@kili>
+From:   Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <YyxFI8aW23IC/21U@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-ping...
 
-ÔÚ 2022/9/2 16:58, Sun Ke Ð´µÀ:
-> mdp_comp_clock_on will increase runtime PM usage counter,
-> and mdp_comp_clock_off will decrease the runtime PM usage counter.
-> so, if mdp_comp_clock_on failed after increment runtime PM usage
-> counter, it should decrease it before return a error code.
+
+On 22/09/2022 14:21, Dan Carpenter wrote:
+> These two error paths need to call of_node_put(child_node) before
+> returning.
 > 
-> pm_runtime_get_sync will increment pm usage counter even it failed.
-> Forgetting to putting operation will result in reference leak here.
-> Fix it by replacing it with pm_runtime_resume_and_get to keep usage
-> counter balanced.
-> 
-> And if failed to enable clk, add pm_runtime_put() to decrease the
-> runtime PM usage counter.
-> 
-> Fixes: 61890ccaefaf ("media: platform: mtk-mdp3: add MediaTek MDP3 driver")
-> Signed-off-by: Sun Ke <sunke32@huawei.com>
+> Fixes: edd473d4293a ("phy: ti: phy-j721e-wiz: add support for j7200-wiz-10g")
+> Fixes: 7ae14cf581f2 ("phy: ti: j721e-wiz: Implement DisplayPort mode to the wiz driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
+
 > ---
->   drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/phy/ti/phy-j721e-wiz.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c
-> index 9a6ba5851ccb..d3eaf8884412 100644
-> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c
-> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c
-> @@ -682,7 +682,7 @@ int mdp_comp_clock_on(struct device *dev, struct mdp_comp *comp)
->   	int i, ret;
->   
->   	if (comp->comp_dev) {
-> -		ret = pm_runtime_get_sync(comp->comp_dev);
-> +		ret = pm_runtime_resume_and_get(comp->comp_dev);
->   		if (ret < 0) {
->   			dev_err(dev,
->   				"Failed to get power, err %d. type:%d id:%d\n",
-> @@ -699,6 +699,7 @@ int mdp_comp_clock_on(struct device *dev, struct mdp_comp *comp)
->   			dev_err(dev,
->   				"Failed to enable clk %d. type:%d id:%d\n",
->   				i, comp->type, comp->id);
-> +			pm_runtime_put(comp->comp_dev);
->   			return ret;
->   		}
->   	}
-> 
+> diff --git a/drivers/phy/ti/phy-j721e-wiz.c b/drivers/phy/ti/phy-j721e-wiz.c
+> index 20af142580ad..438ccce3d1bf 100644
+> --- a/drivers/phy/ti/phy-j721e-wiz.c
+> +++ b/drivers/phy/ti/phy-j721e-wiz.c
+> @@ -1400,7 +1400,8 @@ static int wiz_probe(struct platform_device *pdev)
+>  	if (IS_ERR(wiz->scm_regmap)) {
+>  		if (wiz->type == J7200_WIZ_10G) {
+>  			dev_err(dev, "Couldn't get ti,scm regmap\n");
+> -			return -ENODEV;
+> +			ret = -ENODEV;
+> +			goto err_addr_to_resource;
+>  		}
+>  
+>  		wiz->scm_regmap = NULL;
+> @@ -1450,7 +1451,7 @@ static int wiz_probe(struct platform_device *pdev)
+>  
+>  	ret = wiz_get_lane_phy_types(dev, wiz);
+>  	if (ret)
+> -		return ret;
+> +		goto err_addr_to_resource;
+>  
+>  	wiz->dev = dev;
+>  	wiz->regmap = regmap;
+
+cheers,
+-roger
