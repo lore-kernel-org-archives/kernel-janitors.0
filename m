@@ -2,63 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E04C6FA82
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Sep 2022 13:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F8DECAAD8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Sep 2022 13:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231793AbiIWNSS (ORCPT
+        id S231994AbiIWNVJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Sep 2022 09:18:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49086 "EHLO
+        Fri, 23 Sep 2022 09:21:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbiIWNSQ (ORCPT
+        with ESMTP id S230285AbiIWNVI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Sep 2022 09:18:16 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A0513A971;
-        Fri, 23 Sep 2022 06:18:15 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id fn7-20020a05600c688700b003b4fb113b86so49592wmb.0;
-        Fri, 23 Sep 2022 06:18:15 -0700 (PDT)
+        Fri, 23 Sep 2022 09:21:08 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16CCC13EE84;
+        Fri, 23 Sep 2022 06:21:06 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id g3so20363183wrq.13;
+        Fri, 23 Sep 2022 06:21:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=UpbywYD5dZveE6j8/nHijxGGqbg9BB0wCIFvahSS3x4=;
-        b=TmiT+DqBukLmUOWRcaVJGAqi1mvaMmRRcfyPC2kj+zGmCeE71YSGoaC1nSYyhRKeRJ
-         TvMtJW0dYtwuOx2zZqV4hQF5o+x1pG3EzihMqsD0ul1SUoyF2c2JHVchsFPz9EaH3ioj
-         VzLqKWCAec7Yc9MXrH6P8CxhzUN92nTjvy3x3v3l4fW5jTMkuyutDAvjeUrSAsQ72s7Y
-         h9OaipolywBGcF82kh9eZBhnsZWfQl3J5fVTfaxZ0VCmi2ugRpWYNZlICuol+gGZGIF7
-         OiKVbB/h3p+UrtDos6OGgEPyambuITDbHVOhn8JZfzNNpqGy1zJEYgsI6EXwJcG3S3LR
-         fmgA==
+        bh=3BlIJMdluE47X3gFSDBJTgtvgj1lWndk79Vpp72Pjy0=;
+        b=MBEDfuXBdTsbV/hv3XTrJqWFYkjxxl6HISff1+YKyhS3Io6oRK3o0wiPDc3w8iUNV/
+         mJpBmbI/EOa5wXb6DzOaiER12JikN6Bkt51uICkzyJvzBDbmAuE5zP/ff3tJtp/YNO8H
+         Y4fyyujutSJxNnPmwp5yV18zma2k9h18wPK8zvjiTReP6lIwzT209kjHsIVo+K8Whyho
+         ARL3qqLNAC56fPXbpeeucpsub83JfWZx4UfbzVkW5/SyUXjKKozHOAi64GvoJBm/TCt4
+         D2fo6CLOgsQ3hobk7/CP/Mu92zMiSEAMWLU//uTgcNW5XSKbvhiJtqX5+JucmSv/VBwv
+         1/lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=UpbywYD5dZveE6j8/nHijxGGqbg9BB0wCIFvahSS3x4=;
-        b=PM/fNG+L/MfLeOTitXG4T/bUhwEhMQeMztK6Qo8+BPUqyTnDjFdI53WAB5HZCUtDGr
-         stlfjXvoUrG7p99eOzjf7octXOr+yOGl8vCvVFAO5BCagRMMLjwcnB2SzZki66th57jq
-         vkKHNUrnikztUMX3+dRjfUNTlpnI7xLVAVp4/YNIS/LHprtTcevEVtQ05AsG6jrk4SHF
-         /fF4Nzancmnu1AvhdxD3Z+/96FSCkRGCznNHbWVTLNjY8xFWrTwtMBhUTTts6TzOIHKY
-         rmHexPZXvaoRizPOcxZHMrG6ihzH90LR91kfR0LiAUMh+zdPrqL6F6EoHz83lW8jDAH3
-         0Oew==
-X-Gm-Message-State: ACrzQf3KXncFkGilXOqYMRHpTmAeR72fMhsk+uaB8Wyg/xectFZJi4Ce
-        tmDC041HGZsRK+NxQ1ZoPDqmofRmejZakg==
-X-Google-Smtp-Source: AMsMyM6couknobUEIGyWOhOEJRONDDH4qrtDHNZN8OSngygLAqRWbQIO0PFfd81+bRjj+J/D8VBh7g==
-X-Received: by 2002:a05:600c:3844:b0:3b4:becc:e43 with SMTP id s4-20020a05600c384400b003b4becc0e43mr13025633wmr.33.1663939094229;
-        Fri, 23 Sep 2022 06:18:14 -0700 (PDT)
+        bh=3BlIJMdluE47X3gFSDBJTgtvgj1lWndk79Vpp72Pjy0=;
+        b=Ug+yLzxN9atnHT8+2ZMpAPD49gOE4K96NunKsWPqzQS0aSQsBHZ7G/JyiaDvXmcLSy
+         rzQ9cHadet9baSiuyLoSjNk7cRoXEqaHms2ne1H885AReVqy+nHfpeC2S0EfuBip5nin
+         yxQbesiGZe4Z1W87NCwiqwDmrzxNiR+72/CS4kRkdqN6iCNUwZux5KgRYzFR0T5tGiqr
+         CUH8IukE89GSt68bzS7fPVHGWyYjxUnfNUuprRNVlVrs1Q7Njr4YHGMkqLJmPFThOb/h
+         ZRNJwTMb0kk6I7ua/oninJ3a2mTsCWP8zON5DXVVEZNBOjchOm1eLA3zIRPbUK9ik7oX
+         0Dpw==
+X-Gm-Message-State: ACrzQf3hJNOcKkNCA9jmfWANrs+V91zRria+yl0bz8DAXkrjnOCbvSg7
+        k+wUueZxL2AjQyOV0SJF1jHNR3IjKtgf3g==
+X-Google-Smtp-Source: AMsMyM5cQCGvanfiRlbu19EJsO6XJhMxjmSUCKtvA4aXuWso8uKHJoxvwLgD0/hF7za3Od9NlHd2kw==
+X-Received: by 2002:a5d:5b0f:0:b0:22a:f738:acdd with SMTP id bx15-20020a5d5b0f000000b0022af738acddmr5088852wrb.234.1663939264554;
+        Fri, 23 Sep 2022 06:21:04 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id t2-20020adfe102000000b0022afce9ea93sm7451388wrz.40.2022.09.23.06.18.13
+        by smtp.gmail.com with ESMTPSA id bx29-20020a5d5b1d000000b0021f131de6aesm7383168wrb.34.2022.09.23.06.21.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Sep 2022 06:18:13 -0700 (PDT)
+        Fri, 23 Sep 2022 06:21:04 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mark Gross <markgross@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org
+To:     Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-s390@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] EDAC: Fix spelling mistake "Scruber" -> "Scrubber"
-Date:   Fri, 23 Sep 2022 14:18:13 +0100
-Message-Id: <20220923131813.2486294-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] s390/dasd: Fix spelling mistake "Ivalid" -> "Invalid"
+Date:   Fri, 23 Sep 2022 14:21:03 +0100
+Message-Id: <20220923132103.2486724-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,26 +69,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a edac_mc_handle_error message. Fix it.
+There is a spelling mistake in a pr_warn message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/edac/e752x_edac.c | 2 +-
+ drivers/s390/block/dasd_ioctl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/e752x_edac.c b/drivers/edac/e752x_edac.c
-index ac7c9b42d4c7..4290b02e470c 100644
---- a/drivers/edac/e752x_edac.c
-+++ b/drivers/edac/e752x_edac.c
-@@ -429,7 +429,7 @@ static void do_process_ue(struct mem_ctl_info *mci, u16 error_one,
- 					block_page,
- 					offset_in_page(error_2b << 4), 0,
- 					row, -1, -1,
--					"e752x UE from Scruber", "");
-+					"e752x UE from Scrubber", "");
+diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
+index d0ddf2cc9786..484de696839c 100644
+--- a/drivers/s390/block/dasd_ioctl.c
++++ b/drivers/s390/block/dasd_ioctl.c
+@@ -401,7 +401,7 @@ dasd_ioctl_copy_pair_swap(struct block_device *bdev, void __user *argp)
+ 		return -EFAULT;
  	}
- }
- 
+ 	if (memchr_inv(data.reserved, 0, sizeof(data.reserved))) {
+-		pr_warn("%s: Ivalid swap data specified.\n",
++		pr_warn("%s: Invalid swap data specified.\n",
+ 			dev_name(&device->cdev->dev));
+ 		dasd_put_device(device);
+ 		return DASD_COPYPAIRSWAP_INVALID;
 -- 
 2.37.1
 
