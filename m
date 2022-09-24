@@ -2,82 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D64AC32771
-	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Sep 2022 04:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637E7C07E9D
+	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Sep 2022 06:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233190AbiIXEWY (ORCPT
+        id S233230AbiIXG3y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 24 Sep 2022 00:22:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43228 "EHLO
+        Sat, 24 Sep 2022 02:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230495AbiIXEWW (ORCPT
+        with ESMTP id S233190AbiIXG3w (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 24 Sep 2022 00:22:22 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5575C13A061;
-        Fri, 23 Sep 2022 21:22:20 -0700 (PDT)
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MZG335VqzzlVlT;
-        Sat, 24 Sep 2022 12:18:07 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sat, 24 Sep 2022 12:22:18 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
- (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Sat, 24 Sep
- 2022 12:22:17 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <sfrench@samba.org>
-CC:     <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-        <kernel-janitors@vger.kernel.org>, <lsahlber@redhat.com>,
-        <sunke32@huawei.com>
-Subject: [PATCH] cifs: use list_move instead of list_del + list_add
-Date:   Sat, 24 Sep 2022 12:32:59 +0800
-Message-ID: <20220924043259.819006-1-sunke32@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Sat, 24 Sep 2022 02:29:52 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2297028E05
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Sep 2022 23:29:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C9096B8013A
+        for <kernel-janitors@vger.kernel.org>; Sat, 24 Sep 2022 06:29:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 229C2C433D6;
+        Sat, 24 Sep 2022 06:29:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664000988;
+        bh=6bg3jfUXb8g3xzE3q/HoLtC2LRIFOYoq2MN00W1hiWs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mxh+RvDPfgvHvSdrANIsqxeFjiPiFphxpC2aIw8U4U+XySvz7hoMbwG8NHH/4VdhS
+         uZb5LEr4a+wfY9N8OyJwh0G3As+OPhWBwJ7FeyDuXOxce1ZxvE0p7Tawi0vDdXASbc
+         uaT6RMmVhvPJGhGPhqvrSZxAYaURY+CT9xAFHAZ/ALEbMHwe6GOJGDwWhMnV6vy9/z
+         8pi8cbvnAEkyz+nOK9ls3H2xPvine1rzGUdxs6wZHu/AXro/udZV/O03PNF1BCeWFz
+         XcdEopEo1we2tc4whkObNuWB+A8G6wt8C3donSHN6OWoIjhy4sPph/RsJsK7l/MNUf
+         SDrTAjdpUhRLw==
+Date:   Sat, 24 Sep 2022 11:59:44 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, Jyri Sarha <jsarha@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Tanmay Patil <t-patil@ti.com>, linux-phy@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] phy: ti: phy-j721e-wiz: fix reference leaks in
+ wiz_probe()
+Message-ID: <Yy6j2KhuQmR95JNc@matsya>
+References: <YyxFI8aW23IC/21U@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YyxFI8aW23IC/21U@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Using list_move() instead of list_del() + list_add().
+On 22-09-22, 14:21, Dan Carpenter wrote:
+> These two error paths need to call of_node_put(child_node) before
+> returning.
 
-Signed-off-by: Sun Ke <sunke32@huawei.com>
----
- fs/cifs/cached_dir.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Applied, thanks
 
-diff --git a/fs/cifs/cached_dir.c b/fs/cifs/cached_dir.c
-index b58bed63db1e..68f86f052dba 100644
---- a/fs/cifs/cached_dir.c
-+++ b/fs/cifs/cached_dir.c
-@@ -389,8 +389,7 @@ void invalidate_all_cached_dirs(struct cifs_tcon *tcon)
- 	INIT_LIST_HEAD(&entry);
- 	spin_lock(&cfids->cfid_list_lock);
- 	list_for_each_entry_safe(cfid, q, &cfids->entries, entry) {
--		list_del(&cfid->entry);
--		list_add(&cfid->entry, &entry);
-+		list_move(&cfid->entry, &entry);
- 		cfids->num_entries--;
- 		cfid->is_open = false;
- 		/* To prevent race with smb2_cached_lease_break() */
-@@ -531,8 +530,7 @@ void free_cached_dirs(struct cached_fids *cfids)
- 	list_for_each_entry_safe(cfid, q, &cfids->entries, entry) {
- 		cfid->on_list = false;
- 		cfid->is_open = false;
--		list_del(&cfid->entry);
--		list_add(&cfid->entry, &entry);
-+		list_move(&cfid->entry, &entry);
- 	}
- 	spin_unlock(&cfids->cfid_list_lock);
- 
 -- 
-2.31.1
-
+~Vinod
