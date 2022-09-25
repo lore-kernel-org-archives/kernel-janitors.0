@@ -2,36 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0ACC6FA82
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Sep 2022 13:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE081C6FA83
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Sep 2022 13:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbiIYNVD (ORCPT
+        id S231362AbiIYNkP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Sep 2022 09:21:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60796 "EHLO
+        Sun, 25 Sep 2022 09:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbiIYNVB (ORCPT
+        with ESMTP id S229915AbiIYNkN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Sep 2022 09:21:01 -0400
-Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 533152EF38
-        for <kernel-janitors@vger.kernel.org>; Sun, 25 Sep 2022 06:20:58 -0700 (PDT)
+        Sun, 25 Sep 2022 09:40:13 -0400
+Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 393CB2018D
+        for <kernel-janitors@vger.kernel.org>; Sun, 25 Sep 2022 06:40:08 -0700 (PDT)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id cRZ1oksgTtUbycRZ1oDXx4; Sun, 25 Sep 2022 15:20:56 +0200
+        id cRrYohKCbeT4ccRrYoJ6lU; Sun, 25 Sep 2022 15:40:06 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 25 Sep 2022 15:20:56 +0200
+X-ME-Date: Sun, 25 Sep 2022 15:40:06 +0200
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Vinod Koul <vkoul@kernel.org>
+To:     Selvin Xavier <selvin.xavier@broadcom.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Potnuri Bharat Teja <bharat@chelsio.com>,
+        Yishai Hadas <yishaih@nvidia.com>,
+        Michal Kalderon <mkalderon@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
+        Zhu Yanjun <zyjzyj2000@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH] headers: Remove some left-over license text in include/uapi/sound/
-Date:   Sun, 25 Sep 2022 15:20:46 +0200
-Message-Id: <203c1db92c470925f31e361f6e7d180812501f2e.1664112023.git.christophe.jaillet@wanadoo.fr>
+        linux-rdma@vger.kernel.org
+Subject: [PATCH] headers: Remove some left-over license text in include/uapi/rdma/
+Date:   Sun, 25 Sep 2022 15:39:58 +0200
+Message-Id: <6b2b69c1eb89a37b95d17a1e866c2e8173c6fd15.1664113175.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,398 +50,791 @@ license text can be removed.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Note: include/uapi/sound/compress_params.h has a slight modification in the
-wording.
----
- include/uapi/sound/asequencer.h       | 16 -----------
- include/uapi/sound/asoc.h             |  4 ---
- include/uapi/sound/asound.h           | 16 -----------
- include/uapi/sound/asound_fm.h        | 15 -----------
- include/uapi/sound/compress_offload.h | 17 ------------
- include/uapi/sound/compress_params.h  | 38 ++-------------------------
- include/uapi/sound/emu10k1.h          | 16 -----------
- include/uapi/sound/hdsp.h             | 14 ----------
- include/uapi/sound/hdspm.h            | 15 -----------
- include/uapi/sound/sb16_csp.h         | 15 -----------
- include/uapi/sound/sfnt_info.h        | 15 -----------
- include/uapi/sound/snd_sst_tokens.h   | 10 -------
- include/uapi/sound/tlv.h              | 11 --------
- include/uapi/sound/usb_stream.h       | 14 ----------
- 14 files changed, 2 insertions(+), 214 deletions(-)
+Changes in the 2 files under rdma/hfi/ is a bit more than just removing
+the license text. There were some Copyright(c) for GPL and BSD licence.
+I have simplified it to what look logical to me.
+But in case it matters, review with care.
 
-diff --git a/include/uapi/sound/asequencer.h b/include/uapi/sound/asequencer.h
-index a75e14edc957..6d4a2c60808d 100644
---- a/include/uapi/sound/asequencer.h
-+++ b/include/uapi/sound/asequencer.h
-@@ -3,22 +3,6 @@
-  *  Main header file for the ALSA sequencer
-  *  Copyright (c) 1998-1999 by Frank van de Pol <fvdpol@coil.demon.nl>
-  *            (c) 1998-1999 by Jaroslav Kysela <perex@perex.cz>
-- *
-- *
-- *   This program is free software; you can redistribute it and/or modify
-- *   it under the terms of the GNU General Public License as published by
-- *   the Free Software Foundation; either version 2 of the License, or
-- *   (at your option) any later version.
-- *
-- *   This program is distributed in the hope that it will be useful,
-- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *   GNU General Public License for more details.
-- *
-- *   You should have received a copy of the GNU General Public License
-- *   along with this program; if not, write to the Free Software
-- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- *
-  */
- #ifndef _UAPI__SOUND_ASEQUENCER_H
- #define _UAPI__SOUND_ASEQUENCER_H
-diff --git a/include/uapi/sound/asoc.h b/include/uapi/sound/asoc.h
-index 053949287ce8..9f35bedafcff 100644
---- a/include/uapi/sound/asoc.h
-+++ b/include/uapi/sound/asoc.h
-@@ -5,10 +5,6 @@
-  * Copyright (C) 2012 Texas Instruments Inc.
-  * Copyright (C) 2015 Intel Corporation.
+In include/uapi/rdma/qedr-abi.h, an extar line has been added at the top
+of the file to improve style.
+---
+ include/uapi/rdma/bnxt_re-abi.h         | 29 ---------------
+ include/uapi/rdma/cxgb4-abi.h           | 28 ---------------
+ include/uapi/rdma/hfi/hfi1_ioctl.h      | 46 ------------------------
+ include/uapi/rdma/hfi/hfi1_user.h       | 48 -------------------------
+ include/uapi/rdma/hns-abi.h             | 28 ---------------
+ include/uapi/rdma/ib_user_ioctl_verbs.h | 28 ---------------
+ include/uapi/rdma/ib_user_mad.h         | 28 ---------------
+ include/uapi/rdma/ib_user_sa.h          | 28 ---------------
+ include/uapi/rdma/ib_user_verbs.h       | 28 ---------------
+ include/uapi/rdma/mlx4-abi.h            | 28 ---------------
+ include/uapi/rdma/mlx5-abi.h            | 28 ---------------
+ include/uapi/rdma/mthca-abi.h           | 28 ---------------
+ include/uapi/rdma/ocrdma-abi.h          | 28 ---------------
+ include/uapi/rdma/qedr-abi.h            | 31 ++--------------
+ include/uapi/rdma/rdma_user_cm.h        | 28 ---------------
+ include/uapi/rdma/rdma_user_ioctl.h     | 28 ---------------
+ include/uapi/rdma/rdma_user_rxe.h       | 28 ---------------
+ include/uapi/rdma/vmw_pvrdma-abi.h      | 41 ---------------------
+ 18 files changed, 2 insertions(+), 557 deletions(-)
+
+diff --git a/include/uapi/rdma/bnxt_re-abi.h b/include/uapi/rdma/bnxt_re-abi.h
+index b1de99bf56ce..1ef44e80050b 100644
+--- a/include/uapi/rdma/bnxt_re-abi.h
++++ b/include/uapi/rdma/bnxt_re-abi.h
+@@ -5,35 +5,6 @@
+  * Copyright (c) 2016 - 2017, Broadcom. All rights reserved.  The term
+  * Broadcom refers to Broadcom Limited and/or its subsidiaries.
   *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * BSD license below:
 - *
-  * Simple file API to load FW that includes mixers, coefficients, DAPM graphs,
-  * algorithms, equalisers, DAIs, widgets etc.
- */
-diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
-index 3974a2a911cc..de6810e94abe 100644
---- a/include/uapi/sound/asound.h
-+++ b/include/uapi/sound/asound.h
-@@ -3,22 +3,6 @@
-  *  Advanced Linux Sound Architecture - ALSA - Driver
-  *  Copyright (c) 1994-2003 by Jaroslav Kysela <perex@perex.cz>,
-  *                             Abramo Bagnara <abramo@alsa-project.org>
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions
+- * are met:
 - *
+- * 1. Redistributions of source code must retain the above copyright
+- *    notice, this list of conditions and the following disclaimer.
+- * 2. Redistributions in binary form must reproduce the above copyright
+- *    notice, this list of conditions and the following disclaimer in
+- *    the documentation and/or other materials provided with the
+- *    distribution.
 - *
-- *   This program is free software; you can redistribute it and/or modify
-- *   it under the terms of the GNU General Public License as published by
-- *   the Free Software Foundation; either version 2 of the License, or
-- *   (at your option) any later version.
+- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS''
+- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS
+- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+- * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - *
-- *   This program is distributed in the hope that it will be useful,
-- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *   GNU General Public License for more details.
-- *
-- *   You should have received a copy of the GNU General Public License
-- *   along with this program; if not, write to the Free Software
-- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- *
+  * Description: Uverbs ABI header file
   */
  
- #ifndef _UAPI__SOUND_ASOUND_H
-diff --git a/include/uapi/sound/asound_fm.h b/include/uapi/sound/asound_fm.h
-index 8471f404ff0b..25ec5e38af5c 100644
---- a/include/uapi/sound/asound_fm.h
-+++ b/include/uapi/sound/asound_fm.h
-@@ -10,21 +10,6 @@
-  *                           4Front Technologies
-  *
-  *  Direct FM control
-- *
-- *   This program is free software; you can redistribute it and/or modify
-- *   it under the terms of the GNU General Public License as published by
-- *   the Free Software Foundation; either version 2 of the License, or
-- *   (at your option) any later version.
-- *
-- *   This program is distributed in the hope that it will be useful,
-- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *   GNU General Public License for more details.
-- *
-- *   You should have received a copy of the GNU General Public License
-- *   along with this program; if not, write to the Free Software
-- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- *
-  */
- 
- #define SNDRV_DM_FM_MODE_OPL2	0x00
-diff --git a/include/uapi/sound/compress_offload.h b/include/uapi/sound/compress_offload.h
-index 3aef123dbd7f..d185957f3fe0 100644
---- a/include/uapi/sound/compress_offload.h
-+++ b/include/uapi/sound/compress_offload.h
-@@ -5,23 +5,6 @@
-  *  Copyright (C) 2011 Intel Corporation
-  *  Authors:	Vinod Koul <vinod.koul@linux.intel.com>
-  *		Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License as published by
-- *  the Free Software Foundation; version 2 of the License.
-- *
-- *  This program is distributed in the hope that it will be useful, but
-- *  WITHOUT ANY WARRANTY; without even the implied warranty of
-- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- *  General Public License for more details.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-- *
-- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- *
-  */
- #ifndef __COMPRESS_OFFLOAD_H
- #define __COMPRESS_OFFLOAD_H
-diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/compress_params.h
-index 726361716919..ddc77322d571 100644
---- a/include/uapi/sound/compress_params.h
-+++ b/include/uapi/sound/compress_params.h
-@@ -7,47 +7,13 @@
-  *  Authors:	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-  *              Vinod Koul <vinod.koul@linux.intel.com>
-  *
-- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License as published by
-- *  the Free Software Foundation; version 2 of the License.
-- *
-- *  This program is distributed in the hope that it will be useful, but
-- *  WITHOUT ANY WARRANTY; without even the implied warranty of
-- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- *  General Public License for more details.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-- *
-  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  *
-  * The definitions in this file are derived from the OpenMAX AL version 1.1
-- * and OpenMAX IL v 1.1.2 header files which contain the copyright notice below.
-+ * and OpenMAX IL v 1.1.2 header files which contain the copyright notice below
-+ * and are licensed under the MIT license.
-  *
-  * Copyright (c) 2007-2010 The Khronos Group Inc.
-- *
-- * Permission is hereby granted, free of charge, to any person obtaining
-- * a copy of this software and/or associated documentation files (the
-- * "Materials "), to deal in the Materials without restriction, including
-- * without limitation the rights to use, copy, modify, merge, publish,
-- * distribute, sublicense, and/or sell copies of the Materials, and to
-- * permit persons to whom the Materials are furnished to do so, subject to
-- * the following conditions:
-- *
-- * The above copyright notice and this permission notice shall be included
-- * in all copies or substantial portions of the Materials.
-- *
-- * THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-- * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
-- *
-  */
- #ifndef __SND_COMPRESS_PARAMS_H
- #define __SND_COMPRESS_PARAMS_H
-diff --git a/include/uapi/sound/emu10k1.h b/include/uapi/sound/emu10k1.h
-index 88609cc0524c..1c1f1dd44611 100644
---- a/include/uapi/sound/emu10k1.h
-+++ b/include/uapi/sound/emu10k1.h
-@@ -3,22 +3,6 @@
-  *  Copyright (c) by Jaroslav Kysela <perex@perex.cz>,
-  *		     Creative Labs, Inc.
-  *  Definitions for EMU10K1 (SB Live!) chips
-- *
-- *
-- *   This program is free software; you can redistribute it and/or modify
-- *   it under the terms of the GNU General Public License as published by
-- *   the Free Software Foundation; either version 2 of the License, or
-- *   (at your option) any later version.
-- *
-- *   This program is distributed in the hope that it will be useful,
-- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *   GNU General Public License for more details.
-- *
-- *   You should have received a copy of the GNU General Public License
-- *   along with this program; if not, write to the Free Software
-- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- *
-  */
- #ifndef _UAPI__SOUND_EMU10K1_H
- #define _UAPI__SOUND_EMU10K1_H
-diff --git a/include/uapi/sound/hdsp.h b/include/uapi/sound/hdsp.h
-index b8df62b60f4d..0961954658d6 100644
---- a/include/uapi/sound/hdsp.h
-+++ b/include/uapi/sound/hdsp.h
-@@ -4,20 +4,6 @@
- 
+diff --git a/include/uapi/rdma/cxgb4-abi.h b/include/uapi/rdma/cxgb4-abi.h
+index f85ec1a3f727..d560b45c1222 100644
+--- a/include/uapi/rdma/cxgb4-abi.h
++++ b/include/uapi/rdma/cxgb4-abi.h
+@@ -1,34 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR Linux-OpenIB) */
  /*
-  *   Copyright (C) 2003 Thomas Charbonnel (thomas@undata.org)
-- *    
-- *   This program is free software; you can redistribute it and/or modify
-- *   it under the terms of the GNU General Public License as published by
-- *   the Free Software Foundation; either version 2 of the License, or
-- *   (at your option) any later version.
+  * Copyright (c) 2009-2010 Chelsio, Inc. All rights reserved.
 - *
-- *   This program is distributed in the hope that it will be useful,
-- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *   GNU General Public License for more details.
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
 - *
-- *   You should have received a copy of the GNU General Public License
-- *   along with this program; if not, write to the Free Software
-- *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
   */
- 
- #ifdef __linux__
-diff --git a/include/uapi/sound/hdspm.h b/include/uapi/sound/hdspm.h
-index 14af3d00ea3f..7043bb3d435a 100644
---- a/include/uapi/sound/hdspm.h
-+++ b/include/uapi/sound/hdspm.h
-@@ -4,21 +4,6 @@
+ #ifndef CXGB4_ABI_USER_H
+ #define CXGB4_ABI_USER_H
+diff --git a/include/uapi/rdma/hfi/hfi1_ioctl.h b/include/uapi/rdma/hfi/hfi1_ioctl.h
+index 8f3d9fe7b141..7dda082ac151 100644
+--- a/include/uapi/rdma/hfi/hfi1_ioctl.h
++++ b/include/uapi/rdma/hfi/hfi1_ioctl.h
+@@ -1,52 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
  /*
-  *   Copyright (C) 2003 Winfried Ritsch (IEM)
-  *   based on hdsp.h from Thomas Charbonnel (thomas@undata.org)
 - *
+- * This file is provided under a dual BSD/GPLv2 license.  When using or
+- * redistributing this file, you may do so under either license.
 - *
-- *   This program is free software; you can redistribute it and/or modify
-- *   it under the terms of the GNU General Public License as published by
-- *   the Free Software Foundation; either version 2 of the License, or
-- *   (at your option) any later version.
+- * GPL LICENSE SUMMARY
 - *
-- *   This program is distributed in the hope that it will be useful,
-- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *   GNU General Public License for more details.
-- *
-- *   You should have received a copy of the GNU General Public License
-- *   along with this program; if not, write to the Free Software
-- *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
- #ifdef __linux__
-diff --git a/include/uapi/sound/sb16_csp.h b/include/uapi/sound/sb16_csp.h
-index e64851481d88..5a80f5ec02ee 100644
---- a/include/uapi/sound/sb16_csp.h
-+++ b/include/uapi/sound/sb16_csp.h
-@@ -4,21 +4,6 @@
-  *                        Takashi Iwai <tiwai@suse.de>
-  *
-  *  SB16ASP/AWE32 CSP control
-- *
-- *   This program is free software; you can redistribute it and/or modify 
-- *   it under the terms of the GNU General Public License as published by
-- *   the Free Software Foundation; either version 2 of the License, or
-- *   (at your option) any later version.
-- *
-- *   This program is distributed in the hope that it will be useful,
-- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *   GNU General Public License for more details.
-- *
-- *   You should have received a copy of the GNU General Public License
-- *   along with this program; if not, write to the Free Software
-- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- *
-  */
- #ifndef _UAPI__SOUND_SB16_CSP_H
- #define _UAPI__SOUND_SB16_CSP_H
-diff --git a/include/uapi/sound/sfnt_info.h b/include/uapi/sound/sfnt_info.h
-index c9a810a6ef48..f2b5e13fb5a7 100644
---- a/include/uapi/sound/sfnt_info.h
-+++ b/include/uapi/sound/sfnt_info.h
-@@ -6,21 +6,6 @@
-  *  Patch record compatible with AWE driver on OSS
-  *
-  *  Copyright (C) 1999-2000 Takashi Iwai
-- *
-- *   This program is free software; you can redistribute it and/or modify
-- *   it under the terms of the GNU General Public License as published by
-- *   the Free Software Foundation; either version 2 of the License, or
-- *   (at your option) any later version.
-- *
-- *   This program is distributed in the hope that it will be useful,
-- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *   GNU General Public License for more details.
-- *
-- *   You should have received a copy of the GNU General Public License
-- *   along with this program; if not, write to the Free Software
-- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- *
-  */
- 
- #include <sound/asound.h>
-diff --git a/include/uapi/sound/snd_sst_tokens.h b/include/uapi/sound/snd_sst_tokens.h
-index ff3748e9308a..defeb0c6ed20 100644
---- a/include/uapi/sound/snd_sst_tokens.h
-+++ b/include/uapi/sound/snd_sst_tokens.h
-@@ -4,16 +4,6 @@
-  *
-  * Copyright (C) 2016 Intel Corp
-  * Author: Shreyas NC <shreyas.nc@intel.com>
-- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- * Copyright(c) 2015 Intel Corporation.
 - *
 - * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as version 2, as
+- * it under the terms of version 2 of the GNU General Public License as
 - * published by the Free Software Foundation.
 - *
 - * This program is distributed in the hope that it will be useful, but
 - * WITHOUT ANY WARRANTY; without even the implied warranty of
 - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 - * General Public License for more details.
+- *
+- * BSD LICENSE
+- *
+  * Copyright(c) 2015 Intel Corporation.
+- *
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions
+- * are met:
+- *
+- *  - Redistributions of source code must retain the above copyright
+- *    notice, this list of conditions and the following disclaimer.
+- *  - Redistributions in binary form must reproduce the above copyright
+- *    notice, this list of conditions and the following disclaimer in
+- *    the documentation and/or other materials provided with the
+- *    distribution.
+- *  - Neither the name of Intel Corporation nor the names of its
+- *    contributors may be used to endorse or promote products derived
+- *    from this software without specific prior written permission.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- *
   */
- #ifndef __SND_SST_TOKENS_H__
- #define __SND_SST_TOKENS_H__
-diff --git a/include/uapi/sound/tlv.h b/include/uapi/sound/tlv.h
-index 7d6d65f60a42..b99a2414b53d 100644
---- a/include/uapi/sound/tlv.h
-+++ b/include/uapi/sound/tlv.h
-@@ -1,15 +1,4 @@
- /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
--/*
-- *   This program is free software; you can redistribute it and/or modify
-- *   it under the terms of the GNU General Public License as published by
-- *   the Free Software Foundation; either version 2 of the License, or
-- *   (at your option) any later version.
-- *
-- *   This program is distributed in the hope that it will be useful,
-- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *   GNU General Public License for more details.
-- */
  
- #ifndef __UAPI_SOUND_TLV_H
- #define __UAPI_SOUND_TLV_H
-diff --git a/include/uapi/sound/usb_stream.h b/include/uapi/sound/usb_stream.h
-index ffdd3ea1e31d..50609016185a 100644
---- a/include/uapi/sound/usb_stream.h
-+++ b/include/uapi/sound/usb_stream.h
-@@ -1,20 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+ #ifndef _LINUX__HFI1_IOCTL_H
+diff --git a/include/uapi/rdma/hfi/hfi1_user.h b/include/uapi/rdma/hfi/hfi1_user.h
+index 1106a7c90b29..fcee53aea132 100644
+--- a/include/uapi/rdma/hfi/hfi1_user.h
++++ b/include/uapi/rdma/hfi/hfi1_user.h
+@@ -1,55 +1,7 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
  /*
-  * Copyright (C) 2007, 2008 Karsten Wiese <fzu@wemgehoertderstaat.de>
 - *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License as published by the
-- * Free Software Foundation; either version 2 of the License, or (at your
-- * option) any later version.
+- * This file is provided under a dual BSD/GPLv2 license.  When using or
+- * redistributing this file, you may do so under either license.
+- *
+- * GPL LICENSE SUMMARY
+- *
+  * Copyright(c) 2015 - 2020 Intel Corporation.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of version 2 of the GNU General Public License as
+- * published by the Free Software Foundation.
 - *
 - * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-- * for more details.
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License for more details.
 - *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software Foundation,
-- * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- * BSD LICENSE
+- *
+- * Copyright(c) 2015 Intel Corporation.
+- *
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions
+- * are met:
+- *
+- *  - Redistributions of source code must retain the above copyright
+- *    notice, this list of conditions and the following disclaimer.
+- *  - Redistributions in binary form must reproduce the above copyright
+- *    notice, this list of conditions and the following disclaimer in
+- *    the documentation and/or other materials provided with the
+- *    distribution.
+- *  - Neither the name of Intel Corporation nor the names of its
+- *    contributors may be used to endorse or promote products derived
+- *    from this software without specific prior written permission.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- *
+- */
+-
+-/*
+  * This file contains defines, structures, etc. that are used
+  * to communicate between kernel and user code.
+  */
+diff --git a/include/uapi/rdma/hns-abi.h b/include/uapi/rdma/hns-abi.h
+index f6fde06db4b4..838dd4e8a442 100644
+--- a/include/uapi/rdma/hns-abi.h
++++ b/include/uapi/rdma/hns-abi.h
+@@ -1,34 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR Linux-OpenIB) */
+ /*
+  * Copyright (c) 2016 Hisilicon Limited.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
   */
  
- #ifndef _UAPI__SOUND_USB_STREAM_H
+ #ifndef HNS_ABI_USER_H
+diff --git a/include/uapi/rdma/ib_user_ioctl_verbs.h b/include/uapi/rdma/ib_user_ioctl_verbs.h
+index e0c25537fd2e..bf96df8027d5 100644
+--- a/include/uapi/rdma/ib_user_ioctl_verbs.h
++++ b/include/uapi/rdma/ib_user_ioctl_verbs.h
+@@ -1,34 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR Linux-OpenIB) */
+ /*
+  * Copyright (c) 2017-2018, Mellanox Technologies inc.  All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef IB_USER_IOCTL_VERBS_H
+diff --git a/include/uapi/rdma/ib_user_mad.h b/include/uapi/rdma/ib_user_mad.h
+index 10b5f6a4c677..dc3f1baef552 100644
+--- a/include/uapi/rdma/ib_user_mad.h
++++ b/include/uapi/rdma/ib_user_mad.h
+@@ -2,34 +2,6 @@
+ /*
+  * Copyright (c) 2004 Topspin Communications.  All rights reserved.
+  * Copyright (c) 2005 Voltaire, Inc. All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef IB_USER_MAD_H
+diff --git a/include/uapi/rdma/ib_user_sa.h b/include/uapi/rdma/ib_user_sa.h
+index 435155d6e1c6..c9fb4ab58f9a 100644
+--- a/include/uapi/rdma/ib_user_sa.h
++++ b/include/uapi/rdma/ib_user_sa.h
+@@ -1,34 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR Linux-OpenIB) */
+ /*
+  * Copyright (c) 2005 Intel Corporation.  All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef IB_USER_SA_H
+diff --git a/include/uapi/rdma/ib_user_verbs.h b/include/uapi/rdma/ib_user_verbs.h
+index 43672cb1fd57..1d7aef8f7cff 100644
+--- a/include/uapi/rdma/ib_user_verbs.h
++++ b/include/uapi/rdma/ib_user_verbs.h
+@@ -4,34 +4,6 @@
+  * Copyright (c) 2005, 2006 Cisco Systems.  All rights reserved.
+  * Copyright (c) 2005 PathScale, Inc.  All rights reserved.
+  * Copyright (c) 2006 Mellanox Technologies.  All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef IB_USER_VERBS_H
+diff --git a/include/uapi/rdma/mlx4-abi.h b/include/uapi/rdma/mlx4-abi.h
+index f74557528175..ad63e996ef24 100644
+--- a/include/uapi/rdma/mlx4-abi.h
++++ b/include/uapi/rdma/mlx4-abi.h
+@@ -2,34 +2,6 @@
+ /*
+  * Copyright (c) 2007 Cisco Systems, Inc. All rights reserved.
+  * Copyright (c) 2007, 2008 Mellanox Technologies. All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef MLX4_ABI_USER_H
+diff --git a/include/uapi/rdma/mlx5-abi.h b/include/uapi/rdma/mlx5-abi.h
+index a96b7d2770e1..7f32a865b7f5 100644
+--- a/include/uapi/rdma/mlx5-abi.h
++++ b/include/uapi/rdma/mlx5-abi.h
+@@ -1,34 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR Linux-OpenIB) */
+ /*
+  * Copyright (c) 2013-2015, Mellanox Technologies. All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef MLX5_ABI_USER_H
+diff --git a/include/uapi/rdma/mthca-abi.h b/include/uapi/rdma/mthca-abi.h
+index 91b12e1a6f43..9481b536797b 100644
+--- a/include/uapi/rdma/mthca-abi.h
++++ b/include/uapi/rdma/mthca-abi.h
+@@ -2,34 +2,6 @@
+ /*
+  * Copyright (c) 2005 Topspin Communications.  All rights reserved.
+  * Copyright (c) 2005, 2006 Cisco Systems.  All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef MTHCA_ABI_USER_H
+diff --git a/include/uapi/rdma/ocrdma-abi.h b/include/uapi/rdma/ocrdma-abi.h
+index 284d47b41f6e..59c0fb8b9b34 100644
+--- a/include/uapi/rdma/ocrdma-abi.h
++++ b/include/uapi/rdma/ocrdma-abi.h
+@@ -5,34 +5,6 @@
+  * EMULEX and SLI are trademarks of Emulex.
+  * www.emulex.com
+  *
+- * This software is available to you under a choice of one of two licenses.
+- * You may choose to be licensed under the terms of the GNU General Public
+- * License (GPL) Version 2, available from the file COPYING in the main
+- * directory of this source tree, or the BSD license below:
+- *
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions
+- * are met:
+- *
+- * - Redistributions of source code must retain the above copyright notice,
+- *   this list of conditions and the following disclaimer.
+- *
+- * - Redistributions in binary form must reproduce the above copyright
+- *   notice, this list of conditions and the following disclaimer in
+- *   the documentation and/or other materials provided with the distribution.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,THE
+- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- *
+  * Contact Information:
+  * linux-drivers@emulex.com
+  *
+diff --git a/include/uapi/rdma/qedr-abi.h b/include/uapi/rdma/qedr-abi.h
+index bf7333b2b5d7..3c372e523ad6 100644
+--- a/include/uapi/rdma/qedr-abi.h
++++ b/include/uapi/rdma/qedr-abi.h
+@@ -1,34 +1,7 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR Linux-OpenIB) */
+-/* QLogic qedr NIC Driver
++/*
++ * QLogic qedr NIC Driver
+  * Copyright (c) 2015-2016  QLogic Corporation
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and /or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ #ifndef __QEDR_USER_H__
+ #define __QEDR_USER_H__
+diff --git a/include/uapi/rdma/rdma_user_cm.h b/include/uapi/rdma/rdma_user_cm.h
+index 7cea03581f79..d2b07c2653b3 100644
+--- a/include/uapi/rdma/rdma_user_cm.h
++++ b/include/uapi/rdma/rdma_user_cm.h
+@@ -1,34 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR Linux-OpenIB) */
+ /*
+  * Copyright (c) 2005-2006 Intel Corporation.  All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef RDMA_USER_CM_H
+diff --git a/include/uapi/rdma/rdma_user_ioctl.h b/include/uapi/rdma/rdma_user_ioctl.h
+index 53c55188dd2a..a83f6e3da4fd 100644
+--- a/include/uapi/rdma/rdma_user_ioctl.h
++++ b/include/uapi/rdma/rdma_user_ioctl.h
+@@ -1,34 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR Linux-OpenIB) */
+ /*
+  * Copyright (c) 2016 Mellanox Technologies, LTD. All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef RDMA_USER_IOCTL_H
+diff --git a/include/uapi/rdma/rdma_user_rxe.h b/include/uapi/rdma/rdma_user_rxe.h
+index f09c5c9e3dd5..373530ef5d6e 100644
+--- a/include/uapi/rdma/rdma_user_rxe.h
++++ b/include/uapi/rdma/rdma_user_rxe.h
+@@ -1,34 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR Linux-OpenIB) */
+ /*
+  * Copyright (c) 2016 Mellanox Technologies Ltd. All rights reserved.
+- *
+- * This software is available to you under a choice of one of two
+- * licenses.  You may choose to be licensed under the terms of the GNU
+- * General Public License (GPL) Version 2, available from the file
+- * COPYING in the main directory of this source tree, or the
+- * OpenIB.org BSD license below:
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *	- Redistributions of source code must retain the above
+- *	  copyright notice, this list of conditions and the following
+- *	  disclaimer.
+- *
+- *	- Redistributions in binary form must reproduce the above
+- *	  copyright notice, this list of conditions and the following
+- *	  disclaimer in the documentation and/or other materials
+- *	  provided with the distribution.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+- * SOFTWARE.
+  */
+ 
+ #ifndef RDMA_USER_RXE_H
+diff --git a/include/uapi/rdma/vmw_pvrdma-abi.h b/include/uapi/rdma/vmw_pvrdma-abi.h
+index 901a4fd72c09..135a4bd61d1e 100644
+--- a/include/uapi/rdma/vmw_pvrdma-abi.h
++++ b/include/uapi/rdma/vmw_pvrdma-abi.h
+@@ -1,47 +1,6 @@
+ /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-2-Clause) */
+ /*
+  * Copyright (c) 2012-2016 VMware, Inc.  All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of EITHER the GNU General Public License
+- * version 2 as published by the Free Software Foundation or the BSD
+- * 2-Clause License. This program is distributed in the hope that it
+- * will be useful, but WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED
+- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+- * See the GNU General Public License version 2 for more details at
+- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program available in the file COPYING in the main
+- * directory of this source tree.
+- *
+- * The BSD 2-Clause License
+- *
+- *     Redistribution and use in source and binary forms, with or
+- *     without modification, are permitted provided that the following
+- *     conditions are met:
+- *
+- *      - Redistributions of source code must retain the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer.
+- *
+- *      - Redistributions in binary form must reproduce the above
+- *        copyright notice, this list of conditions and the following
+- *        disclaimer in the documentation and/or other materials
+- *        provided with the distribution.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+- * OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+ #ifndef __VMW_PVRDMA_ABI_H__
 -- 
 2.34.1
 
