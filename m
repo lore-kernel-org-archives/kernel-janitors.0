@@ -2,62 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04831C07E9D
-	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Sep 2022 08:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18660C04A95
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Sep 2022 11:12:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233859AbiIXITC (ORCPT
+        id S231705AbiIYLMb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 24 Sep 2022 04:19:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53408 "EHLO
+        Sun, 25 Sep 2022 07:12:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233878AbiIXISa (ORCPT
+        with ESMTP id S229915AbiIYLM0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 24 Sep 2022 04:18:30 -0400
-Received: from fornost.hmeau.com (helcar.hmeau.com [216.24.177.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C1521821;
-        Sat, 24 Sep 2022 01:17:12 -0700 (PDT)
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-        by fornost.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1oc0LV-007wdr-6v; Sat, 24 Sep 2022 18:17:10 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 24 Sep 2022 16:17:09 +0800
-Date:   Sat, 24 Sep 2022 16:17:09 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-crypto@vger.kernel.org, Robert Elliott <elliott@hpe.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: revert unintended config addition of
- CRYPTO_BLAKE2S
-Message-ID: <Yy69BWxyGPK5MUli@gondor.apana.org.au>
-References: <20220914083827.18939-1-lukas.bulwahn@gmail.com>
+        Sun, 25 Sep 2022 07:12:26 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7505BE5;
+        Sun, 25 Sep 2022 04:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1664104340;
+        bh=EwNoUweFLTpcmFCyNapA+75NoiwY+UAqj0hC3LTdWEU=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=WUauERvDcCQfhCuVW1zf8u6xdzLcogebMkeo7hJDT95lqGEAIVsUA4XDIZR+o+CGL
+         GtSa9zR6HwNP3hvB/EZsNCiCR/gm+9mKU6oiNbeXmH/3GL4cZxKr4blQrPKM6F+I8K
+         3iqh8h2kncMW53Po27dm3eALBfKeyva4yNJhZjZE=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.20.60] ([92.116.188.118]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MV63q-1omtAg0One-00S89Q; Sun, 25
+ Sep 2022 13:12:20 +0200
+Message-ID: <a4146b46-4936-80c9-8839-45bbe2c39cb6@gmx.de>
+Date:   Sun, 25 Sep 2022 13:12:19 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220914083827.18939-1-lukas.bulwahn@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH] fbdev: remove redundant initialization to variable
+ identical
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Bernie Thompson <bernie@plugable.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220907135056.679617-1-colin.i.king@gmail.com>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <20220907135056.679617-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mG9+uJLhs0rJ7EE5NDTStivRp3V89GlvVCbk/OupfS7Q8yElvXV
+ yXjZUtue2QzY/2HLxGdvjmtUCUeqcfaqyOgb5eZ0TwP9JR3oMC0rd/mGP5u6mUyBBcxTRsu
+ yK3m91s9iabxguFSxf/nnLdSkrRHh8uzME5n7MElYs2HAXBCpB1Fx/PQ6U6l0MnqbPwPUFw
+ rAQCZMHlmQXIGM880ASUQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6lrueAwRMV8=:AbZaT198Quszb3I2ffvjmE
+ 83olQqzOwn7O/bckw5T+FOvQSvirPlsnSol5EGp5IMN7ldujGYMh0tskMMWcGgDy+qby0zVcC
+ LJPoVtEMDd0CvBzr9lx5hRvusmBnFnrLwC+qL2UG/Qy8HZbBRPjs1lCf8jXQu5wrMaApUPsK9
+ FlRTvcC70c32fMOG/6xZElgC9aCRRv3exxanf7LNCA0KFCrKLbNOzizvl4ppYbf2cimS0i4yZ
+ BwEiq+Td3dSWc7F8iWBPUwB5mLptdo4ZykMahTQx3BYDmrLW5aFMj2gEoEZZlkc4FcDZB/Gpe
+ H0WcwEVMa+YXAQ6OAXALdmrI2NolcMVuvEW3sePTF8c8HO6hhUnzs7/R8i7K7OHh7AlwOWOff
+ 9sPIe9k/sFX9kKPs5MUM56Axh1rC68MCpT7EzRR6Ziglvs7YMPZue+t0eLH7vMaajx0ZLvBbP
+ k/K+cOnsGne4DRWOkWqbcotW+keeTwN9QylkyPf0qLjDfCa4G4M848GOt/bVQXJxf1oWva02w
+ vTdcOV6W2f3e2ZKBw2BuM1BCULl7paA9TqlYxWp1fXkyQzHrgJDOd4mrt/r0uNshebttzNIXk
+ KdzfiQIDxfxiUFMrTiTmkIgvMygb0sBrab73t2/XmoclHxGuycUQMLBawTpOnCb3YWOcMA/NV
+ S0jeIvMCWiqIW2R7qphJH//VqrvBvD3ZXOlLDsLls4P+q2h53NUEQsmzMfvtIR9PjcjW5hHim
+ 0PXytQPFNKnJwJEHoMtltGYU650VtxcCcLFp8YGWMcZOAEKYxvVFtNHhwighQSaXVzhWVIiUz
+ C3WMwLfDbTHXxuP2T4+G7HD+nZC9GMhRHeIv4yW7dyQN5E2PPBhypFIQcpr7tArBD+E0o5ppD
+ VpZNNWF/1F3ckqqznwveCfW72i7NE0j0C25yMTJYyULjSxgMCHfvLzuXmxoy4SlQO78PURew2
+ wHEtHGtsxLOq0i+jCFWiOeXiLMJ1FjR4wQzXUlmynJDlJ3FokkzPzmurfNzblCvkprxtKBIGT
+ OOhfgTfoEKC0PANR86OuXvc7IsnVsnhPHE55CA1aT6OcSypt2obKS50E4/OEX8VETVrAkce3D
+ 5smdMsQkuSfPO7mXyfWVRvoixbvLXDV9T0de/2aV/dd1EQLnGQ/RADaZRWYAr5H4V+ZtA3HFd
+ TQDhyNkfXsiDve31qAneXyyqYM
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 14, 2022 at 10:38:27AM +0200, Lukas Bulwahn wrote:
-> Commit 2d16803c562e ("crypto: blake2s - remove shash module") removes the
-> config CRYPTO_BLAKE2S.
-> 
-> Commit 3f342a23257d ("crypto: Kconfig - simplify hash entries") makes
-> various changes to the config descriptions as part of some consolidation
-> and clean-up, but among all those changes, it also accidently adds back
-> CRYPTO_BLAKE2S after its removal due to the original patch being based on
-> a state before the CRYPTO_BLAKE2S removal.
-> 
-> See Link for the author's confirmation of this happening accidently.
-> 
-> Link: https://lore.kernel.org/all/MW5PR84MB18424AB8C095BFC041AE33FDAB479@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM/
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  crypto/Kconfig | 21 ---------------------
->  1 file changed, 21 deletions(-)
+On 9/7/22 15:50, Colin Ian King wrote:
+> The variable identical is being initialized with a value that is never
+> read. The variable is being re-assigned later on. The initialization is
+> redundant and can be removed.
+>
+> Cleans up clang scan-build warning:
+> drivers/video/fbdev/udlfb.c:373:6: warning: Value stored to 'identical'
+> during its initialization is never read [deadcode.DeadStores]
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+applied.
+
+Thanks!
+Helge
+
+> ---
+>   drivers/video/fbdev/udlfb.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
+> index c863244ef12c..216d49c9d47e 100644
+> --- a/drivers/video/fbdev/udlfb.c
+> +++ b/drivers/video/fbdev/udlfb.c
+> @@ -370,7 +370,7 @@ static int dlfb_trim_hline(const u8 *bback, const u8=
+ **bfront, int *width_bytes)
+>   	const unsigned long *back =3D (const unsigned long *) bback;
+>   	const unsigned long *front =3D (const unsigned long *) *bfront;
+>   	const int width =3D *width_bytes / sizeof(unsigned long);
+> -	int identical =3D width;
+> +	int identical;
+>   	int start =3D width;
+>   	int end =3D width;
+>
+
