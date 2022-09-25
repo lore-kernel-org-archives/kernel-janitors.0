@@ -2,47 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC9EC04A95
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Sep 2022 13:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32926C04A95
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Sep 2022 14:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231698AbiIYNnW (ORCPT
+        id S232067AbiIYOo6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Sep 2022 09:43:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49932 "EHLO
+        Sun, 25 Sep 2022 10:44:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbiIYNnU (ORCPT
+        with ESMTP id S232187AbiIYOov (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Sep 2022 09:43:20 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D555E275E0
-        for <kernel-janitors@vger.kernel.org>; Sun, 25 Sep 2022 06:43:19 -0700 (PDT)
+        Sun, 25 Sep 2022 10:44:51 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD208101EB
+        for <kernel-janitors@vger.kernel.org>; Sun, 25 Sep 2022 07:44:48 -0700 (PDT)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id cRuaoxFHkPMmacRuao7pdV; Sun, 25 Sep 2022 15:43:18 +0200
+        id cSs8ofLdYr5PdcSs8o6610; Sun, 25 Sep 2022 16:44:46 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 25 Sep 2022 15:43:18 +0200
+X-ME-Date: Sun, 25 Sep 2022 16:44:46 +0200
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Russell King <linux@armlinux.org.uk>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Davidlohr Bueso <dbueso@suse.de>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] headers: Remove some left-over license text in include/uapi/drm/
-Date:   Sun, 25 Sep 2022 15:43:00 +0200
-Message-Id: <e5cacd121ddb2a595cede602036b1bdfbee020d5.1664113376.git.christophe.jaillet@wanadoo.fr>
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] locking/lock_events: Fix license version
+Date:   Sun, 25 Sep 2022 16:44:38 +0200
+Message-Id: <751d50ff1c3b30d26ba2ed4a552800906a0aca06.1664117067.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,94 +43,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is already a SPDX-License-Identifier tag, so the corresponding
-license text can be removed.
+SPDX-License-Identifier is GPL-2.0, but the license text states "either
+version 2 of the License, or (at your option) any later version."
 
+So update the SPDX-License-Identifier to GPL-2.0-or-later.
+
+Remove the license text as well. It is useless now.
+
+Fixes: ad53fa10fa9e ("locking/qspinlock_stat: Introduce generic lockevent_*() counting APIs")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- include/uapi/drm/armada_drm.h  |  4 ----
- include/uapi/drm/etnaviv_drm.h | 12 ------------
- include/uapi/drm/exynos_drm.h  |  5 -----
- include/uapi/drm/omap_drm.h    | 12 ------------
- 4 files changed, 33 deletions(-)
+ kernel/locking/lock_events.h | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/include/uapi/drm/armada_drm.h b/include/uapi/drm/armada_drm.h
-index af1c14c837c5..f711e63a9758 100644
---- a/include/uapi/drm/armada_drm.h
-+++ b/include/uapi/drm/armada_drm.h
-@@ -2,10 +2,6 @@
+diff --git a/kernel/locking/lock_events.h b/kernel/locking/lock_events.h
+index 8c7e7d25f09c..ba17c5be3c2b 100644
+--- a/kernel/locking/lock_events.h
++++ b/kernel/locking/lock_events.h
+@@ -1,15 +1,5 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++/* SPDX-License-Identifier: GPL-2.0-or-later */
  /*
-  * Copyright (C) 2012 Russell King
-  *  With inspiration from the i915 driver
-- *
 - * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #ifndef DRM_ARMADA_IOCTL_H
- #define DRM_ARMADA_IOCTL_H
-diff --git a/include/uapi/drm/etnaviv_drm.h b/include/uapi/drm/etnaviv_drm.h
-index af024d90453d..13dd1d1a9d41 100644
---- a/include/uapi/drm/etnaviv_drm.h
-+++ b/include/uapi/drm/etnaviv_drm.h
-@@ -1,18 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
- /*
-  * Copyright (C) 2015 Etnaviv Project
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
 - *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
 - *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  * Authors: Waiman Long <longman@redhat.com>
   */
  
- #ifndef __ETNAVIV_DRM_H__
-diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-index a51aa1c618c1..a96fa566433c 100644
---- a/include/uapi/drm/exynos_drm.h
-+++ b/include/uapi/drm/exynos_drm.h
-@@ -6,11 +6,6 @@
-  *	Inki Dae <inki.dae@samsung.com>
-  *	Joonyoung Shim <jy0922.shim@samsung.com>
-  *	Seung-Woo Kim <sw0312.kim@samsung.com>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-  */
- 
- #ifndef _UAPI_EXYNOS_DRM_H_
-diff --git a/include/uapi/drm/omap_drm.h b/include/uapi/drm/omap_drm.h
-index 5a142fad473c..b51dad32122d 100644
---- a/include/uapi/drm/omap_drm.h
-+++ b/include/uapi/drm/omap_drm.h
-@@ -4,18 +4,6 @@
-  *
-  * Copyright (C) 2011 Texas Instruments
-  * Author: Rob Clark <rob@ti.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef __OMAP_DRM_H__
 -- 
 2.34.1
 
