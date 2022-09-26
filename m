@@ -2,154 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62C5C07E9D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Sep 2022 19:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE16CC6FA82
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Sep 2022 19:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbiIZTcg (ORCPT
+        id S230125AbiIZTtZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Sep 2022 15:32:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49920 "EHLO
+        Mon, 26 Sep 2022 15:49:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229957AbiIZTce (ORCPT
+        with ESMTP id S230045AbiIZTtY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Sep 2022 15:32:34 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45BF79E11A
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Sep 2022 12:32:32 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id ctq8o7e69sfCIctq8ohSCv; Mon, 26 Sep 2022 21:32:30 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 26 Sep 2022 21:32:30 +0200
-X-ME-IP: 86.243.100.34
-Message-ID: <7cbe6ea7-3d05-449f-ea06-c98b9078d1df@wanadoo.fr>
-Date:   Mon, 26 Sep 2022 21:32:28 +0200
+        Mon, 26 Sep 2022 15:49:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D5CE491E4;
+        Mon, 26 Sep 2022 12:49:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B622E61245;
+        Mon, 26 Sep 2022 19:49:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D305CC433D7;
+        Mon, 26 Sep 2022 19:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664221762;
+        bh=e6QO4HH4+8yZ3ePxV7VG/fowDTzQXATJ5aLoPgc/lJU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=T+AgzlU4yVmjF8yZ5ubxXoqyVCkFjykIF43vB0z5ozK4E0GRPcUjhItmpyHjpS72H
+         Zg8cjoQwc/wYPtjJjWBbP+rwxORI5WfDl7b5ITq5s+/8IA7/HbdnY3MNV5sAcjmRQQ
+         nBoCGJQgMLQFTDl7THZfT8fdkpu30RhfOMeUmpwDRDUVGI9QbpL2S6tSTy9kxkdHq0
+         dRLdtWKDKyPwUrFbXcX/iv9CLmIsY++vrDzlp1xYon1xvW8X7KpzQd/NGxMLScTyY+
+         MUjBajcYmbPHTM5oDMp+ApnwB13d3NMsczYNicoXf1LH1P4yUnriRFeb9JRUI2iMn9
+         0qeHJ2k3ovW7A==
+Date:   Mon, 26 Sep 2022 12:49:21 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>, yhs@fb.com,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2] headers: Remove some left-over license text
+Message-ID: <20220926124921.0079c8f9@kernel.org>
+In-Reply-To: <88410cddd31197ea26840d7dd71612bece8c6acf.1663871981.git.christophe.jaillet@wanadoo.fr>
+References: <88410cddd31197ea26840d7dd71612bece8c6acf.1663871981.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] headers: Remove some left-over license text in
- include/uapi/rdma/
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     aelior@marvell.com, bharat@chelsio.com,
-        kernel-janitors@vger.kernel.org, leon@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        mkalderon@marvell.com, selvin.xavier@broadcom.com,
-        yishaih@nvidia.com, zyjzyj2000@gmail.com
-References: <6b2b69c1eb89a37b95d17a1e866c2e8173c6fd15.1664113175.git.christophe.jaillet@wanadoo.fr>
- <YzHttWsmFSMR8vCY@nvidia.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <YzHttWsmFSMR8vCY@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 26/09/2022 à 20:21, Jason Gunthorpe a écrit :
-> On Sun, Sep 25, 2022 at 03:39:58PM +0200, Christophe JAILLET wrote:
->> There is already a SPDX-License-Identifier tag, so the corresponding
->> license text can be removed.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
->> ---
->> Changes in the 2 files under rdma/hfi/ is a bit more than just removing
->> the license text. There were some Copyright(c) for GPL and BSD licence.
->> I have simplified it to what look logical to me.
->> But in case it matters, review with care.
+On Thu, 22 Sep 2022 20:41:40 +0200 Christophe JAILLET wrote:
+> Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
+> license identifier to uapi header files with a license")
 > 
-> Did you use a script or something to verify that the text being
-> removed is word for word identical to the text in LICENSES/ ?
+> When the SPDX-License-Identifier tag has been added, the corresponding
+> license text has not been removed.
 
-Hi,
-
-Short answer:
-============
-
-You are likely right, and patches for BSD like license should certainly 
-be left as-is to keep as-is.
-
-
-
-Longer answer:
-=============
-
-I spot potential candidate with:
-   grep -r --include=*.[ch] -A50 SPDX | grep -v SPDX | grep -v staging | 
-grep -v usr\/include\/ | grep -C10 License
-
-Then I manually check that the included license is consistent with the 
-SPDX-License-Identifier tag.
-
-If they don't match, I propose to change the SPDX tag (see [1] for an 
-example)
-
-My grep is not optimal. Looking for GNU or GPL or BSD or... also gives 
-some decent results. But all what is done is done.
-
-
-Honestly, I don't look word by word the text itself.
-My point is that if a file states that it is usable under a given 
-license, then it should use the term of this license. Otherwise it looks 
-pointless to refer to it, no?
-
-Moreover, in the BSD license, some parts of the text can be adjusted to 
-the context. (in red in [3]
-
-In "bnxt_re-abi.h", the BSD-2-Clause "THE COPYRIGHT HOLDER OR 
-CONTRIBUTORS" has been replaced by "THE AUTHOR AND CONTRIBUTORS".
-
-
-Giving a 2nd look at it (see [4]), when boilerplate have been removed, 
-it was mostly (only?) for GPL-2, which don't have such "red" parts in 
-the license text.
-
-
-So you are likely right, and patches for BSD like license should 
-certainly be left as-is to keep this "red places" as-is.
-
-> 
-> I had understood this was the reason the original SPDX conversion left
-> the license text around?
-
-I don't know. It looks to me that Greg has done some mass update, 
-especially in the uapi directory, only adding the 
-SPDX-License-Identifier tag.
-See [2].
-
-> 
-> It looks OK to me, but I didn't check it word for word :)
-> 
-> Is there a reason this series is coming up now around the uapi
-> headers? Are we doing them all or something?
-
-No specific reason for it to happen now.
-
-I chose uapi directory because it is .h files. This is my own 
-contribution to the Ingo Molnar's "Fast Kernel Headers".
-Smaller header files, faster compilation :)
-(even if my clean-ups should be just noise in the overall building time)
-
-I try to send patches in small hunks of related files. This avoids the 
-"please split the patch in a serie by maintainer" answer.
-
-I've send ~10 or 15 patches yet. I'll see the enthusiasms (or lack of) 
-for such patches before continuing.
-
-> 
-> Jason
-> 
-
-CJ
-
-[1]: 
-https://lore.kernel.org/all/a57505bf6c8ddbd68ff5a320aaf5922ec431e00e.1664117249.git.christophe.jaillet@wanadoo.fr/
-
-[2]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=e2be04c7f9958dde770eeb8b30e829ca969b37bb
-
-[3]: https://spdx.org/licenses/BSD-2-Clause.html
-
-[4]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?qt=grep&q=boilerplate%2Freference
+Jiri, Jamal, would you mind acking this?
