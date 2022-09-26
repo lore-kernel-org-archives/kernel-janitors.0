@@ -2,117 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F7FC04A95
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Sep 2022 19:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2555DC04A95
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Sep 2022 01:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233097AbiIYTBo (ORCPT
+        id S231895AbiIZBOq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Sep 2022 15:01:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53820 "EHLO
+        Sun, 25 Sep 2022 21:14:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbiIYTBm (ORCPT
+        with ESMTP id S231169AbiIZBOn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Sep 2022 15:01:42 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 862F52EF2F;
-        Sun, 25 Sep 2022 12:01:39 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d11so4419397pll.8;
-        Sun, 25 Sep 2022 12:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=m9ofgECn4wQJW2nxra3yB+p7Od1ax8HHQnJpAHg7WYo=;
-        b=CWp2H4vnz+6Cou0BZ9ODBck7zXwOqNE770Ukejii2ywWQkL4yvQgUzcH7uQpVc+QAd
-         wMQtdFIkzNa+sERfxMx7ydstuiTIRAXI6FD/6iiyzWHBoMfwx3V4U1TAo0zMnZ/c5XT0
-         z7q78jFw1fhOyXOSsY7L9o01vnyXiexf2Kxc4gAWJ2yYDI3DhD+zRoHWbh3R7wEwptzg
-         D1/FWQ+hKPCtREBIYwdEVOEdWyMUhkydpj42XtTvJ6F/a/tEdMk6ln4uiUb+PX/QE6vA
-         2+lr4hOwaZM9e+ymUggLW+6kRm9vXAuzsoih8Go5H6bxDAEwdzvIaLxasxBbK50bDt3R
-         1WVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=m9ofgECn4wQJW2nxra3yB+p7Od1ax8HHQnJpAHg7WYo=;
-        b=jPn4gDFn1Xq7S8PwwTb3H25sudSs5tLk1TUGtxWhQRO5BlhdmXjLzLhgHlP0LVz4/b
-         6IpooWylmGo1iGNtn+sK/kRIKwSo8ujCXbZ7orBOo2SpYUvAmZqGQH7MQY+tJ5VyWiDA
-         AsVy03/p/+hAJNhdr2yxn18AcEMkoXYyHwshTEaD9mgZh2JQFH2yVJRWBSIsmL67j1GM
-         k/90FxjmbnPp97B114HK8KQMI0LXnRojCX3X9L5EBXiyXvQZdIXAZIGh7w1EQGBiPZBf
-         XCd+ZBJl+7A/keZVZnd3Lu0TLxw0NmXwZZs2SquXfM1CKHeBhff661UJXmxZoIHGwpNe
-         /hgw==
-X-Gm-Message-State: ACrzQf0neLIETtseZ3OdHL0vSK+QKR7OgatUBXOnpMAUCfiY8+4Ky4FZ
-        jelGoJ0hVBUlv0hyxMG4hAA=
-X-Google-Smtp-Source: AMsMyM4cHpxSvCGRMuJKo9wKc/9wKbE/cJXimmPFgRJMPK/Oaoj7pvJ0weEAoD2wecHLpgH9lGnqUg==
-X-Received: by 2002:a17:90b:3e8c:b0:202:c7b1:b20b with SMTP id rj12-20020a17090b3e8c00b00202c7b1b20bmr20870000pjb.54.1664132498910;
-        Sun, 25 Sep 2022 12:01:38 -0700 (PDT)
-Received: from [172.30.1.63] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id jo18-20020a170903055200b00176a2d23d1asm9590357plb.56.2022.09.25.12.01.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Sep 2022 12:01:38 -0700 (PDT)
-Message-ID: <c5addc04-f29a-1366-6513-7d3bbc306e3b@gmail.com>
-Date:   Mon, 26 Sep 2022 04:01:33 +0900
+        Sun, 25 Sep 2022 21:14:43 -0400
+Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F22C6341;
+        Sun, 25 Sep 2022 18:14:40 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=xueshuai@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VQe-WH6_1664154876;
+Received: from 30.240.121.51(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0VQe-WH6_1664154876)
+          by smtp.aliyun-inc.com;
+          Mon, 26 Sep 2022 09:14:37 +0800
+Message-ID: <58b7485d-94fa-f333-ff14-9a4a1ce0284a@linux.alibaba.com>
+Date:   Mon, 26 Sep 2022 09:14:34 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] PM / devfreq: rockchip-dfi: Fix an error message
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.13.0
+Subject: Re: [PATCH] drivers/perf: fix return value check in
+ ali_drw_pmu_probe()
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-References: <47627a29a443aedf3b36a4f72b3e1ad89933a0ea.1662819332.git.christophe.jaillet@wanadoo.fr>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <47627a29a443aedf3b36a4f72b3e1ad89933a0ea.1662819332.git.christophe.jaillet@wanadoo.fr>
+To:     Sun Ke <sunke32@huawei.com>, will@kernel.org, mark.rutland@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20220924032127.313156-1-sunke32@huawei.com>
+From:   Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20220924032127.313156-1-sunke32@huawei.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
 
-On 22. 9. 10. 23:15, Christophe JAILLET wrote:
-> There is a typo in the message. The clock name should be 'pclk_ddr_mon'.
-> Fix it.
+
+在 2022/9/24 AM11:21, Sun Ke 写道:
+> In case of error, devm_ioremap_resource() returns ERR_PTR(),
+> and never returns NULL. The NULL test in the return value
+> check should be replaced with IS_ERR().
 > 
-> While at it, switch to dev_err_probe() which is less verbose, filters
-> -EPROBE_DEFER, and log the error code in a human readable way.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: cf7b61073e45 ("drivers/perf: add DDR Sub-System Driveway PMU driver for Yitian 710 SoC")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
+
+Good catch, thank you for fixing.
+
+Reviewed-by: Shuai Xue <xueshuai@linux.alibaba.com>
+
+Cheers,
+Shuai
+
+
+
 > ---
-> This looks like a cut'n'paste typo from drivers/devfreq/rk3399_dmc.c
-> ---
->  drivers/devfreq/event/rockchip-dfi.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  drivers/perf/alibaba_uncore_drw_pmu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
-> index 9a88faaf8b27..39ac069cabc7 100644
-> --- a/drivers/devfreq/event/rockchip-dfi.c
-> +++ b/drivers/devfreq/event/rockchip-dfi.c
-> @@ -189,10 +189,9 @@ static int rockchip_dfi_probe(struct platform_device *pdev)
->  		return PTR_ERR(data->regs);
+> diff --git a/drivers/perf/alibaba_uncore_drw_pmu.c b/drivers/perf/alibaba_uncore_drw_pmu.c
+> index 82729b874f09..a7689fecb49d 100644
+> --- a/drivers/perf/alibaba_uncore_drw_pmu.c
+> +++ b/drivers/perf/alibaba_uncore_drw_pmu.c
+> @@ -658,8 +658,8 @@ static int ali_drw_pmu_probe(struct platform_device *pdev)
 >  
->  	data->clk = devm_clk_get(dev, "pclk_ddr_mon");
-> -	if (IS_ERR(data->clk)) {
-> -		dev_err(dev, "Cannot get the clk dmc_clk\n");
-> -		return PTR_ERR(data->clk);
-> -	}
-> +	if (IS_ERR(data->clk))
-> +		return dev_err_probe(dev, PTR_ERR(data->clk),
-> +				     "Cannot get the clk pclk_ddr_mon\n");
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	drw_pmu->cfg_base = devm_ioremap_resource(&pdev->dev, res);
+> -	if (!drw_pmu->cfg_base)
+> -		return -ENOMEM;
+> +	if (IS_ERR(drw_pmu->cfg_base))
+> +		return PTR_ERR(drw_pmu->cfg_base);
 >  
->  	/* try to find the optional reference to the pmu syscon */
->  	node = of_parse_phandle(np, "rockchip,pmu", 0);
-
-Applied it. Thanks.
-
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+>  	name = devm_kasprintf(drw_pmu->dev, GFP_KERNEL, "ali_drw_%llx",
+>  			      (u64) (res->start >> ALI_DRW_PMU_PA_SHIFT));
