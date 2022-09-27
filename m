@@ -2,154 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7C9C6FA86
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Sep 2022 10:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E55D2C6FA86
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Sep 2022 10:34:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230057AbiI0KCC (ORCPT
+        id S231640AbiI0KeV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Sep 2022 06:02:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50712 "EHLO
+        Tue, 27 Sep 2022 06:34:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229734AbiI0KCA (ORCPT
+        with ESMTP id S231626AbiI0KeR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Sep 2022 06:02:00 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C3F90C4F
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 Sep 2022 03:01:59 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1od7PL-0008JS-DY; Tue, 27 Sep 2022 12:01:43 +0200
-Message-ID: <69b833f3e386018999f258b27bef0baeb27fb256.camel@pengutronix.de>
-Subject: Re: [PATCH] headers: Remove some left-over license text in
- include/uapi/drm/
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Russell King <linux@armlinux.org.uk>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Tue, 27 Sep 2022 12:01:39 +0200
-In-Reply-To: <e5cacd121ddb2a595cede602036b1bdfbee020d5.1664113376.git.christophe.jaillet@wanadoo.fr>
-References: <e5cacd121ddb2a595cede602036b1bdfbee020d5.1664113376.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        Tue, 27 Sep 2022 06:34:17 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 421A8EB12F;
+        Tue, 27 Sep 2022 03:34:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D55D6B81ACA;
+        Tue, 27 Sep 2022 10:34:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87A89C433D6;
+        Tue, 27 Sep 2022 10:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664274854;
+        bh=lJjHanQhAo4gyBUD5O9aZXDqaj4cVWoKZzJdtxw5DuA=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=CDtX/a6mIQ2vC0NJAzaCEB64k7Ktn/nkcVfB5d+zql6b1tDS+bYsfbMxxZXV9NyiI
+         d0uaVEVow6ihw3hFu9M04xwn/rFN5+qs6+fNzlRx56SpSKmOIch0NdtgS87kRlvJeI
+         qJKIzpBRzY7Zw9c/3QkBNUtnc1dt+m+1hpzG5/tgEA3rledkpx06XAm4/PiN2+ZaeW
+         2MKQgMlbBczKEfUD9/IGt4P/wWD7kzyO8ZUoSbyBFTE8Zy2y1OiHp8hSEVky+ek4Ja
+         K7ZNP6/Ux5369gTEX41zR7cqyN/YTRD2QUQst17JwYgFOGZn3+nOt5NYWQHlcEkW9x
+         QfaWssp5X1fsw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Support Opensource <support.opensource@diasemi.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>
+Cc:     kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <e4acceab57a0d9e477a8d5890a45c5309e553e7c.1663875789.git.christophe.jaillet@wanadoo.fr>
+References: <e4acceab57a0d9e477a8d5890a45c5309e553e7c.1663875789.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: da7219: Fix an error handling path in da7219_register_dai_clks()
+Message-Id: <166427485225.60697.13131714629966036302.b4-ty@kernel.org>
+Date:   Tue, 27 Sep 2022 11:34:12 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fc921
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am Sonntag, dem 25.09.2022 um 15:43 +0200 schrieb Christophe JAILLET:
-> There is already a SPDX-License-Identifier tag, so the corresponding
-> license text can be removed.
+On Thu, 22 Sep 2022 21:44:57 +0200, Christophe JAILLET wrote:
+> If clk_hw_register() fails, the corresponding clk should not be
+> unregistered.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-For the etnaviv part:
-Acked-by: Lucas Stach <l.stach@pengutronix.de>
-
-Regards,
-Lucas
-
-> ---
->  include/uapi/drm/armada_drm.h  |  4 ----
->  include/uapi/drm/etnaviv_drm.h | 12 ------------
->  include/uapi/drm/exynos_drm.h  |  5 -----
->  include/uapi/drm/omap_drm.h    | 12 ------------
->  4 files changed, 33 deletions(-)
+> To handle errors from loops, clean up partial iterations before doing the
+> goto.  So add a clk_hw_unregister().
+> Then use a while (--i >= 0) loop in the unwind section.
 > 
-> diff --git a/include/uapi/drm/armada_drm.h b/include/uapi/drm/armada_drm.h
-> index af1c14c837c5..f711e63a9758 100644
-> --- a/include/uapi/drm/armada_drm.h
-> +++ b/include/uapi/drm/armada_drm.h
-> @@ -2,10 +2,6 @@
->  /*
->   * Copyright (C) 2012 Russell King
->   *  With inspiration from the i915 driver
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
->   */
->  #ifndef DRM_ARMADA_IOCTL_H
->  #define DRM_ARMADA_IOCTL_H
-> diff --git a/include/uapi/drm/etnaviv_drm.h b/include/uapi/drm/etnaviv_drm.h
-> index af024d90453d..13dd1d1a9d41 100644
-> --- a/include/uapi/drm/etnaviv_drm.h
-> +++ b/include/uapi/drm/etnaviv_drm.h
-> @@ -1,18 +1,6 @@
->  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->  /*
->   * Copyright (C) 2015 Etnaviv Project
-> - *
-> - * This program is free software; you can redistribute it and/or modify it
-> - * under the terms of the GNU General Public License version 2 as published by
-> - * the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful, but WITHOUT
-> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> - * more details.
-> - *
-> - * You should have received a copy of the GNU General Public License along with
-> - * this program.  If not, see <http://www.gnu.org/licenses/>.
->   */
->  
->  #ifndef __ETNAVIV_DRM_H__
-> diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-> index a51aa1c618c1..a96fa566433c 100644
-> --- a/include/uapi/drm/exynos_drm.h
-> +++ b/include/uapi/drm/exynos_drm.h
-> @@ -6,11 +6,6 @@
->   *	Inki Dae <inki.dae@samsung.com>
->   *	Joonyoung Shim <jy0922.shim@samsung.com>
->   *	Seung-Woo Kim <sw0312.kim@samsung.com>
-> - *
-> - * This program is free software; you can redistribute  it and/or modify it
-> - * under  the terms of  the GNU General  Public License as published by the
-> - * Free Software Foundation;  either version 2 of the  License, or (at your
-> - * option) any later version.
->   */
->  
->  #ifndef _UAPI_EXYNOS_DRM_H_
-> diff --git a/include/uapi/drm/omap_drm.h b/include/uapi/drm/omap_drm.h
-> index 5a142fad473c..b51dad32122d 100644
-> --- a/include/uapi/drm/omap_drm.h
-> +++ b/include/uapi/drm/omap_drm.h
-> @@ -4,18 +4,6 @@
->   *
->   * Copyright (C) 2011 Texas Instruments
->   * Author: Rob Clark <rob@ti.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify it
-> - * under the terms of the GNU General Public License version 2 as published by
-> - * the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful, but WITHOUT
-> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> - * more details.
-> - *
-> - * You should have received a copy of the GNU General Public License along with
-> - * this program.  If not, see <http://www.gnu.org/licenses/>.
->   */
->  
->  #ifndef __OMAP_DRM_H__
+> [...]
 
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: da7219: Fix an error handling path in da7219_register_dai_clks()
+      commit: abb4e4349afe7eecdb0499582f1c777031e3a7c8
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
