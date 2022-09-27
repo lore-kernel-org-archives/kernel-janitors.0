@@ -2,114 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE14C54EE9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Sep 2022 05:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA58C07E9D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Sep 2022 06:42:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbiI0FrH (ORCPT
+        id S230018AbiI0Gmn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Sep 2022 01:47:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42484 "EHLO
+        Tue, 27 Sep 2022 02:42:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbiI0FrF (ORCPT
+        with ESMTP id S229582AbiI0Gml (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Sep 2022 01:47:05 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A03F8E4F7;
-        Mon, 26 Sep 2022 22:47:04 -0700 (PDT)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28R5iTeK002319;
-        Tue, 27 Sep 2022 05:47:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=P7KrxF62RnnerM2HxZ6cCjnRG6c/qbQvf8hziWiGcMs=;
- b=mXRUKcIcFa1HhCnCGvXPvGhhYug9Lsb71+8MU1DC05mp3t+WtrO6nuY6P6w/KUu9s2Ul
- UITpPgTp2VaWlILmclxv250r8G/pZuVom3y4v2PR0Kx7wUiSlbMBFaKvnjTj8h9wmS6G
- xypCDeBf/RvD1AFhZiHrGCBMJi6gweckoJ9EaO/ov+7gBhz+pQPpovLaaEm523/EEA1O
- /ZW7ZZVa9HZ3dQlK8hb1v8GHEfXEDO6wePEfkzOUMXtQaDRSt9Ew1f6kmEK9pcJJeSl0
- VTmhk0OUoR7QI1yFoaP4HNJLMs/rjm8Sy0ptoFIqSdESSZKxN5yfQid6AYuFv4rv0wpM ww== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jutgthbna-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Sep 2022 05:47:03 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28R5LVG0007948;
-        Tue, 27 Sep 2022 05:47:03 GMT
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jutgthbmg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Sep 2022 05:47:03 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28R5as0R012861;
-        Tue, 27 Sep 2022 05:47:00 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma03fra.de.ibm.com with ESMTP id 3jssh92g15-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Sep 2022 05:47:00 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28R5kv1D4522616
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Sep 2022 05:46:57 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6A146A404D;
-        Tue, 27 Sep 2022 05:46:57 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1903EA4040;
-        Tue, 27 Sep 2022 05:46:57 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.239])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 27 Sep 2022 05:46:57 +0000 (GMT)
-Date:   Tue, 27 Sep 2022 07:46:55 +0200
-From:   Heiko Carstens <hca@linux.ibm.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] s390/dasd: Fix spelling mistake "Ivalid" ->
- "Invalid"
-Message-ID: <YzKOT6+oP4ckWBxh@osiris>
-References: <20220923132103.2486724-1-colin.i.king@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220923132103.2486724-1-colin.i.king@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: SmM9pHXfc0VdsYB_w49t18rK2VejN5Jm
-X-Proofpoint-ORIG-GUID: lKoNIGf49kkdRyiC-UAh010TzMUjnsSy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-26_11,2022-09-22_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 mlxscore=0 spamscore=0
- mlxlogscore=936 suspectscore=0 adultscore=0 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
- definitions=main-2209270031
+        Tue, 27 Sep 2022 02:42:41 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10DBE937AE;
+        Mon, 26 Sep 2022 23:42:41 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4173121CE8;
+        Tue, 27 Sep 2022 06:42:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1664260959; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=taICh2K620crBvOq2OQxmJu+AbXgax7CZvW2EW4pf+s=;
+        b=IU7BfWaRijmTGYASznuCYJLpc1NtCgG2tFT9IOCpNutRPu1HT4Zzthbhl3gHNgV+yTaei0
+        mj1Unnm4ssGb484xY1hfoRukTumWTRbmSNs40tkyxn4Bl3uqXH3iKHaKvEPYhkgKepgGhG
+        +Dp8Rf1hbuK8FAGJri8fBg6alIpTrFw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1664260959;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=taICh2K620crBvOq2OQxmJu+AbXgax7CZvW2EW4pf+s=;
+        b=OBwv5Lstk9sf5/mbB4uxsLqcRxUt5hnuFREsiivm0XS84rnxlFPpaZKamzMYqKUGiJHOqA
+        NlG7vghYUM5UQ0AQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 14873139BE;
+        Tue, 27 Sep 2022 06:42:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id STBCBF+bMmOYZQAAMHmgww
+        (envelope-from <tiwai@suse.de>); Tue, 27 Sep 2022 06:42:39 +0000
+Date:   Tue, 27 Sep 2022 08:42:38 +0200
+Message-ID: <87fsgdgvxd.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Clemens Ladisch <clemens@ladisch.de>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH] headers: Remove some left-over license text in sound/firewire
+In-Reply-To: <2bfe76c7eeb0f5205a1427e280bf8d9da0354a62.1664110649.git.christophe.jaillet@wanadoo.fr>
+References: <2bfe76c7eeb0f5205a1427e280bf8d9da0354a62.1664110649.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 23, 2022 at 02:21:03PM +0100, Colin Ian King wrote:
-> There is a spelling mistake in a pr_warn message. Fix it.
+On Sun, 25 Sep 2022 14:57:51 +0200,
+Christophe JAILLET wrote:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/s390/block/dasd_ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> There is alredy a SPDX-License-Identifier tag, so the corresponding license
+> text can be removed.
 > 
-> diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
-> index d0ddf2cc9786..484de696839c 100644
-> --- a/drivers/s390/block/dasd_ioctl.c
-> +++ b/drivers/s390/block/dasd_ioctl.c
-> @@ -401,7 +401,7 @@ dasd_ioctl_copy_pair_swap(struct block_device *bdev, void __user *argp)
->  		return -EFAULT;
->  	}
->  	if (memchr_inv(data.reserved, 0, sizeof(data.reserved))) {
-> -		pr_warn("%s: Ivalid swap data specified.\n",
-> +		pr_warn("%s: Invalid swap data specified.\n",
+> While at it, be more consistent and:
+>   - add a missing .c (ff-protocol-latter)
+>   - remove an empty line (motu-protocol-v1)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-While at it you could also remove the full stop at the end of the
-string, which is inconsistent to all other pr_warn() invocations
-within the dasd device driver.
+Applied with a correction of typo and subject prefix.
+
+
+thanks,
+
+Takashi
