@@ -2,113 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2D8C6FA83
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Sep 2022 12:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7E0C6FA83
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Sep 2022 15:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232260AbiI0MO2 (ORCPT
+        id S231725AbiI0PAb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Sep 2022 08:14:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54884 "EHLO
+        Tue, 27 Sep 2022 11:00:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232234AbiI0MOT (ORCPT
+        with ESMTP id S231860AbiI0PAT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Sep 2022 08:14:19 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 689FCAFAD9
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 Sep 2022 05:14:17 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id o5so6419066wms.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 Sep 2022 05:14:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=VNMJ8dAUFpnWH5my97l4aBgOKeowx7PWc9A+8a4PR10=;
-        b=Opaisrf0YyM9ixDUEygxXwqhLUcxRIYHwPrAdD1EsngI+gSnI/P5zTxmU4bHQwEbZ8
-         mLS0ZeKunZyelGY7r82jc+c5L3r/JpLt8UQpXsMKRmpz5Pz2xtF+J8jjul5+9LnuS92y
-         9cO+ajXsttOxz6Qyg3KHTsGYzFnpF84e9Jgo3zX63DixeXqh8pwgY67PmOvHafSrJixr
-         D+mGcn1nE1vTyE4IQ0J8ipqVDJDMOsusEDI+X83E2+//Hnt8lp5exKgzO+Fwqki9Obev
-         NMj8LPhCmysizM4Y+L3j8Zh1R462w6ohWMR5FQU626vJckfUGFcOznxcydQY/ogLDdnF
-         akAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=VNMJ8dAUFpnWH5my97l4aBgOKeowx7PWc9A+8a4PR10=;
-        b=U7PmoUnTDgKbDiZz6JbDb8Wyw4Pa7vg6PAwBOPiDcLhPsIiyr1xq1YU9Dl1KGKEEJa
-         3nOXyUayA9MXeCEiBzCxe66UvXKIitxXQ67JwvtHKzB8WLuTFk8b/a2rcliy6rVXbAQK
-         3rCbmPuyxQeBXnX0aSXozbDUW8iTDLHZF9+AxfQZiQv7y54mzUCvhaN71cH/+2gImkRo
-         dBNEpSzlsox2P7+BBiXtf+nszlhz2a+qjBgKvljKGbQWFqiQnIl2b8MXwQABU0+6CJNa
-         gxh0hlDqivMYEq7yltFCGfLfPK4HCMkKOmo6hJSNON36P+a60bw9+gXwPmHEekH3S/RL
-         DFGg==
-X-Gm-Message-State: ACrzQf3s06Z/cEx9vOyIv1kbBR/JghuKyFF9TCNgQsr7d9v9SHv8uXbk
-        ZtynwwSvV7T2Mu864Y5XCTNza16wAChNilcrjiJhMw==
-X-Google-Smtp-Source: AMsMyM5xwt8GtZ5GqRGo+ZWthPbEfmJgCcSjohJZ+6LcAxXTNx9DpuzY2FpP0asC0lryGBBctHMQcUWoC+0O6+WUrgk=
-X-Received: by 2002:a05:600c:4f8d:b0:3b4:9f2f:4311 with SMTP id
- n13-20020a05600c4f8d00b003b49f2f4311mr2366068wmq.17.1664280855969; Tue, 27
- Sep 2022 05:14:15 -0700 (PDT)
+        Tue, 27 Sep 2022 11:00:19 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5858A6ACA;
+        Tue, 27 Sep 2022 08:00:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 629C5B81C24;
+        Tue, 27 Sep 2022 15:00:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EA4DFC433B5;
+        Tue, 27 Sep 2022 15:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664290816;
+        bh=sFdOOobofzRSevtw276melbjxHB5ys6FHTANHXpopgw=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=WX4frANPnykC7qs55nXP80M3bAJFh2unwqwJoLJz5GoRiCR/4tA2eX3ltERmzEusN
+         ZpXEtM9u9BJrVbs1qhr1UwE7RiFjZChweNT8cHUR+K/Da1G5Bwv4myqnXY2Icqr9xI
+         Y+TgflGxjmtemWgyaqdHtM9qos4EjC72lgbpjPjAVKn4i1jfs71rlVUcro8c9WFOpe
+         2j2gI/x3ApIC6mFjV9+EQVpgraTbi1SQTdP/PG3QZQd1xTAf1tBlCOSubUA9x0eRRG
+         x276lzU3aiR3loaZeBLqb9rXPRglLOI3gTyDj4CH6NomJ2JSV4/Va7DxdApUNDxvh0
+         e7trxI6k33RRg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CE978E21EC6;
+        Tue, 27 Sep 2022 15:00:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <53fc6ffa5d1c428fefeae7d313cf4a669c3a1e98.1663873255.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <53fc6ffa5d1c428fefeae7d313cf4a669c3a1e98.1663873255.git.christophe.jaillet@wanadoo.fr>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 27 Sep 2022 14:13:39 +0200
-Message-ID: <CAPDyKFrLvXhnEgx5JjvnUnrTWsAid-2Wvgj3ypEU5AetkT+6JQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: wmt-sdmmc: Fix an error handling path in wmt_mci_probe()
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] headers: Remove some left-over license text
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166429081584.27886.14059951639048254195.git-patchwork-notify@kernel.org>
+Date:   Tue, 27 Sep 2022 15:00:15 +0000
+References: <88410cddd31197ea26840d7dd71612bece8c6acf.1663871981.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <88410cddd31197ea26840d7dd71612bece8c6acf.1663871981.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     cjb@laptop.org, dan.carpenter@oracle.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     yhs@fb.com, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
+        jiri@resnulli.us, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 22 Sept 2022 at 21:06, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> A dma_free_coherent() call is missing in the error handling path of the
-> probe, as already done in the remove function.
->
-> Fixes: 3a96dff0f828 ("mmc: SD/MMC Host Controller for Wondermedia WM8505/WM8650")
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 22 Sep 2022 20:41:40 +0200 you wrote:
+> Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
+> license identifier to uapi header files with a license")
+> 
+> When the SPDX-License-Identifier tag has been added, the corresponding
+> license text has not been removed.
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
-Applied for next, thanks!
+Here is the summary with links:
+  - [v2] headers: Remove some left-over license text
+    https://git.kernel.org/netdev/net-next/c/73dfe93ea1b3
 
-Kind regards
-Uffe
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-> ---
-> Changes since v1:
->   * Add and use the (ugly named) 'fail5_and_a_half' label   [Dan Carpenter <dan.carpenter@oracle.com>]
->
-> v1: https://lore.kernel.org/all/bf2e2e69226b20d173cce66287f59488fd47474b.1646588375.git.christophe.jaillet@wanadoo.fr/
-> ---
->  drivers/mmc/host/wmt-sdmmc.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/wmt-sdmmc.c b/drivers/mmc/host/wmt-sdmmc.c
-> index 163ac9df8cca..9b5c503e3a3f 100644
-> --- a/drivers/mmc/host/wmt-sdmmc.c
-> +++ b/drivers/mmc/host/wmt-sdmmc.c
-> @@ -846,7 +846,7 @@ static int wmt_mci_probe(struct platform_device *pdev)
->         if (IS_ERR(priv->clk_sdmmc)) {
->                 dev_err(&pdev->dev, "Error getting clock\n");
->                 ret = PTR_ERR(priv->clk_sdmmc);
-> -               goto fail5;
-> +               goto fail5_and_a_half;
->         }
->
->         ret = clk_prepare_enable(priv->clk_sdmmc);
-> @@ -863,6 +863,9 @@ static int wmt_mci_probe(struct platform_device *pdev)
->         return 0;
->  fail6:
->         clk_put(priv->clk_sdmmc);
-> +fail5_and_a_half:
-> +       dma_free_coherent(&pdev->dev, mmc->max_blk_count * 16,
-> +                         priv->dma_desc_buffer, priv->dma_desc_device_addr);
->  fail5:
->         free_irq(dma_irq, priv);
->  fail4:
-> --
-> 2.34.1
->
