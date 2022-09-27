@@ -2,78 +2,154 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EB9C54EE9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Sep 2022 08:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7C9C6FA86
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Sep 2022 10:02:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231611AbiI0IGq (ORCPT
+        id S230057AbiI0KCC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Sep 2022 04:06:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35522 "EHLO
+        Tue, 27 Sep 2022 06:02:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231609AbiI0IGZ (ORCPT
+        with ESMTP id S229734AbiI0KCA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Sep 2022 04:06:25 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 777EBD12E4
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 Sep 2022 01:00:56 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id ay36so6011089wmb.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 Sep 2022 01:00:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=8KXeAi8bLl/4xDSQHTAZUIT2rxZgkHrTv7EF2KN/kpc=;
-        b=xsUc6nbu4ykT7peSuwlcvmxlW8gH9JNmHu+I0twf4HwF1J5XzKYqpFWkj2dh8q5Ul6
-         YIyTsCwVLcVCaqmZK0bRl0knR4E+gs1g3VmYqFhJ5ISP30EzzuG67bXySPNLETE/znCh
-         1kOaxyvtrtAyp6HP8dbla4TRNZFN+GwiDeBxS7EIpqL7nzY9tGQWADkj6VBwOzLQyaFh
-         pCCi4FN8EpWc+6PH6d58eIKwaMfHegUjGc14ZwZQ0iNB6osoFANcFYIfmlYevX66Nh0Q
-         3cO3YAgQUZdtH3V7oCiZJtN3UhQPnMyOVOXCnj/NAIxf0w0TZI2pQe44Lv3U3z04foBx
-         m6Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=8KXeAi8bLl/4xDSQHTAZUIT2rxZgkHrTv7EF2KN/kpc=;
-        b=6zRCKJWrRIiARxpC68rzB/GwEhYsRY+mzYPCtSn0nYzayLGDb4ZZA1TSbxlxH1VRa2
-         N6XxrdkHdbAphQB3o8eTaFsGAW5Qar/faGkcrVa7+q03yYPgI9Q9HpvgvLqMUc30Cno8
-         I6RFLmWSVShSViQRq8TXERVoMPx9gubPZDQBfmUfcElq5sEEZeyTrMQmNQV65GoSarwC
-         KcyP0bKhkTcW26F51NeU9XTnHqTCQcaOt53zWsItDrs5ecNmwA9HJLFPVgSAUP1xMu8k
-         lsMpP6jSjBTgNlOhCBfXGkHF+xB2p9dIfUlcCSNoM6Eq4bCzmlNiPQ6L8u5Ps0hqBNpp
-         nTDA==
-X-Gm-Message-State: ACrzQf0PRHh72+qHMN0b6QYagu7CvvYZYgNhjCcazPjz1fXJmFaKjZdi
-        4lkkW+hzeviRKkkHMIGUmliqWQ==
-X-Google-Smtp-Source: AMsMyM5/TzO253ei5AMvrs8QpkYUOj/Z1fLYncdDCYmb2TsApdukWwTv9OqA0R3Kzq6LByqDgxAN9A==
-X-Received: by 2002:a05:600c:3d93:b0:3b4:c28f:6a2b with SMTP id bi19-20020a05600c3d9300b003b4c28f6a2bmr1627703wmb.121.1664265597319;
-        Tue, 27 Sep 2022 00:59:57 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id g6-20020a5d5546000000b00228aea99efcsm1099354wrw.14.2022.09.27.00.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 00:59:56 -0700 (PDT)
-Date:   Tue, 27 Sep 2022 09:59:55 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     yhs@fb.com, Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2] headers: Remove some left-over license text
-Message-ID: <YzKte9AESCrcDcWh@nanopsycho>
-References: <88410cddd31197ea26840d7dd71612bece8c6acf.1663871981.git.christophe.jaillet@wanadoo.fr>
+        Tue, 27 Sep 2022 06:02:00 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C3F90C4F
+        for <kernel-janitors@vger.kernel.org>; Tue, 27 Sep 2022 03:01:59 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1od7PL-0008JS-DY; Tue, 27 Sep 2022 12:01:43 +0200
+Message-ID: <69b833f3e386018999f258b27bef0baeb27fb256.camel@pengutronix.de>
+Subject: Re: [PATCH] headers: Remove some left-over license text in
+ include/uapi/drm/
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Russell King <linux@armlinux.org.uk>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Tue, 27 Sep 2022 12:01:39 +0200
+In-Reply-To: <e5cacd121ddb2a595cede602036b1bdfbee020d5.1664113376.git.christophe.jaillet@wanadoo.fr>
+References: <e5cacd121ddb2a595cede602036b1bdfbee020d5.1664113376.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88410cddd31197ea26840d7dd71612bece8c6acf.1663871981.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thu, Sep 22, 2022 at 08:41:40PM CEST, christophe.jaillet@wanadoo.fr wrote:
->Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
->license identifier to uapi header files with a license")
->
->When the SPDX-License-Identifier tag has been added, the corresponding
->license text has not been removed.
->
->Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Am Sonntag, dem 25.09.2022 um 15:43 +0200 schrieb Christophe JAILLET:
+> There is already a SPDX-License-Identifier tag, so the corresponding
+> license text can be removed.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Jiri Pirko <jiri@nvidia.com>
+For the etnaviv part:
+Acked-by: Lucas Stach <l.stach@pengutronix.de>
+
+Regards,
+Lucas
+
+> ---
+>  include/uapi/drm/armada_drm.h  |  4 ----
+>  include/uapi/drm/etnaviv_drm.h | 12 ------------
+>  include/uapi/drm/exynos_drm.h  |  5 -----
+>  include/uapi/drm/omap_drm.h    | 12 ------------
+>  4 files changed, 33 deletions(-)
+> 
+> diff --git a/include/uapi/drm/armada_drm.h b/include/uapi/drm/armada_drm.h
+> index af1c14c837c5..f711e63a9758 100644
+> --- a/include/uapi/drm/armada_drm.h
+> +++ b/include/uapi/drm/armada_drm.h
+> @@ -2,10 +2,6 @@
+>  /*
+>   * Copyright (C) 2012 Russell King
+>   *  With inspiration from the i915 driver
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+>   */
+>  #ifndef DRM_ARMADA_IOCTL_H
+>  #define DRM_ARMADA_IOCTL_H
+> diff --git a/include/uapi/drm/etnaviv_drm.h b/include/uapi/drm/etnaviv_drm.h
+> index af024d90453d..13dd1d1a9d41 100644
+> --- a/include/uapi/drm/etnaviv_drm.h
+> +++ b/include/uapi/drm/etnaviv_drm.h
+> @@ -1,18 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /*
+>   * Copyright (C) 2015 Etnaviv Project
+> - *
+> - * This program is free software; you can redistribute it and/or modify it
+> - * under the terms of the GNU General Public License version 2 as published by
+> - * the Free Software Foundation.
+> - *
+> - * This program is distributed in the hope that it will be useful, but WITHOUT
+> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> - * more details.
+> - *
+> - * You should have received a copy of the GNU General Public License along with
+> - * this program.  If not, see <http://www.gnu.org/licenses/>.
+>   */
+>  
+>  #ifndef __ETNAVIV_DRM_H__
+> diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
+> index a51aa1c618c1..a96fa566433c 100644
+> --- a/include/uapi/drm/exynos_drm.h
+> +++ b/include/uapi/drm/exynos_drm.h
+> @@ -6,11 +6,6 @@
+>   *	Inki Dae <inki.dae@samsung.com>
+>   *	Joonyoung Shim <jy0922.shim@samsung.com>
+>   *	Seung-Woo Kim <sw0312.kim@samsung.com>
+> - *
+> - * This program is free software; you can redistribute  it and/or modify it
+> - * under  the terms of  the GNU General  Public License as published by the
+> - * Free Software Foundation;  either version 2 of the  License, or (at your
+> - * option) any later version.
+>   */
+>  
+>  #ifndef _UAPI_EXYNOS_DRM_H_
+> diff --git a/include/uapi/drm/omap_drm.h b/include/uapi/drm/omap_drm.h
+> index 5a142fad473c..b51dad32122d 100644
+> --- a/include/uapi/drm/omap_drm.h
+> +++ b/include/uapi/drm/omap_drm.h
+> @@ -4,18 +4,6 @@
+>   *
+>   * Copyright (C) 2011 Texas Instruments
+>   * Author: Rob Clark <rob@ti.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify it
+> - * under the terms of the GNU General Public License version 2 as published by
+> - * the Free Software Foundation.
+> - *
+> - * This program is distributed in the hope that it will be useful, but WITHOUT
+> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> - * more details.
+> - *
+> - * You should have received a copy of the GNU General Public License along with
+> - * this program.  If not, see <http://www.gnu.org/licenses/>.
+>   */
+>  
+>  #ifndef __OMAP_DRM_H__
+
+
