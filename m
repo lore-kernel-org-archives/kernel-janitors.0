@@ -2,71 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB41C04A95
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A96C6FA82
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:38:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234352AbiI1VhD (ORCPT
+        id S234141AbiI1Vh7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Sep 2022 17:37:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38634 "EHLO
+        Wed, 28 Sep 2022 17:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234203AbiI1VhB (ORCPT
+        with ESMTP id S234166AbiI1Vh5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Sep 2022 17:37:01 -0400
-Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0097992F52
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Sep 2022 14:36:59 -0700 (PDT)
-Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-12803ac8113so18992848fac.8
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Sep 2022 14:36:59 -0700 (PDT)
+        Wed, 28 Sep 2022 17:37:57 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 772F78A7C6;
+        Wed, 28 Sep 2022 14:37:56 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id u16-20020a05600c211000b003b5152ebf09so2094701wml.5;
+        Wed, 28 Sep 2022 14:37:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=8OWmUn3+T5zXTPaC+bf/lvL+XUKnWGP4IeTHrEcXpWE=;
-        b=DAdkaMwy6Nx8AURbnCII/HrGRywjeRMMs43hcDL+Maxwu0ZOzhIwHK+Gtz/gpvjnSf
-         WhjzpzVpYYjVrKiPbnaylJVaKB9uYUnlPOkyCCAXZ5+ELgclwh5Ug0VSNdae7cwwlfjx
-         SqhDO2Ux6nkXy00+0QG1PJND6cXxqp+LAErK7v1I4IU7pG5d6FnTdQLRofTmvVe8tPmS
-         cJBPJOq+1qmeySCbEmzuvf8W63hr3Mhq6UdHAb+oMcy1F47MIvbkvWvSU7ijlaqmZhAq
-         CfCyOkOGx3B1uyqlaNNCO7PvczvtcjsDjNruVBFYrcyv60c+cy9zk2GT3wlp1HdUjK0+
-         tabg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=rUM2aW+DGDXanWCdc+mwoRm7T1Ng16porQzPW5bnT68=;
+        b=gCmDQHezOruhG4NU0X2rFe4/f5TI833m5vGO+Ru/0Ypx3qcgf8R83gDNHEp/KoBiyF
+         WXsySZTtMxgiQvZjrQmNb7F9p3W/V22bd35ShPx3VT8hJT7tyZoi5RP5VnG3DPdbAz3Y
+         eJERqPIx1PI9yEFi1oLlii0qh+ONZib8vwCxKttrc4K/2hogL+eisAaUeV0rZwNOH00G
+         ZzIpigJGpkhu4ZVk2GqILmRDPG+SY+VoFW6NwIfXEzfESidjdKgGE1DGeBFr34tibzds
+         oLcujW3C2b6oMG7o+q/d4ExABXZ7snEx2XC2lmm46AfZFhZWfCWV5piThVrBMcxlux0l
+         /VfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=8OWmUn3+T5zXTPaC+bf/lvL+XUKnWGP4IeTHrEcXpWE=;
-        b=hiCISXTbdkQf4NuTgkTnOBZlW45/H5hOeSu1TUL+rP/0Kza54Onsly/rgf/fjZ7yuD
-         RWpUpurULDjhSFnt7ZpzC5OZ5nCbCUJ/vcNV2nKt2LGlCnOyWnX5p5htcAdGO8Z4mG7G
-         H5ZHbpGxe8TLfcIk5qRA9rtx+HQ6NbVlEqjgqVMswQcsiFxXMFqz1pqIcrQdgaistYXM
-         qp4R42nfptKvVAE21o6oDRfgwxJHSi1dzjMu7kmhSXzEVLdwYoBTnhLC2OzlMMoRmTcb
-         JOwijxrrfLw7/xkmHgL8jmdu116xY3frZ1xt31LGZxEXyB9XYp9PFZQaHbPI9dz0rDTo
-         UI6g==
-X-Gm-Message-State: ACrzQf22rlv1i4uguPtKyhkyfTGiFiPaZvT6dtuCHS1Jmh88hXQEvS6E
-        SFa71Ne2jGPIS4DEF+aXCQT5NN/n5tze2va9zV2Phw==
-X-Google-Smtp-Source: AMsMyM4LqskWTLvxoPVhDXyAtfbGtTpAFYGl2ctvyY6tM+2CE+l2S7WyCBcSIm5xfa9I2rCoag8cFpNzF25ep1laIus=
-X-Received: by 2002:a05:6870:5250:b0:127:4360:a00b with SMTP id
- o16-20020a056870525000b001274360a00bmr6538854oai.13.1664401019207; Wed, 28
- Sep 2022 14:36:59 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=rUM2aW+DGDXanWCdc+mwoRm7T1Ng16porQzPW5bnT68=;
+        b=W8mAxY47BYkIvq+Dq9IAW4msD9GLTN4DD6KY4O19wGD73pqYZ15Cs9oEsy6qOJ9ol+
+         x+qU3lL056bUAs/y+x2SL6oybfUvm0OYIzUlnpbVrvKSGYOXwY2w3J845RfFYEUy0mPk
+         +6u9LrLEtfWwXAhngJFW8W3/Wrx2e1tYc2ScP5Tw+tD6lG3kHNBZD48FFoyROzGnjFZQ
+         1YpKuCwan0OerLTknYcrCPWAHQDjVgsOf6GEOPztU9IOtOOiosHmdhLnV74Wj8HhmNLU
+         nJ+qK7ZggzVnKjXqePV8GjLvjXT6mgwlOLkznR98SOzMjItGHJnQ5pAcfUR8V6Dks2A7
+         0j/w==
+X-Gm-Message-State: ACrzQf28R7gb02JqdziDQhdA5ZP7+UxRbbj1zNFbWgw4eHSRBoGtXqNP
+        rVI+X4TSXJRMWQzu/kJl4YU=
+X-Google-Smtp-Source: AMsMyM60Wxnr54EUrqhnbxDpHDSl2eN+WPEqNCfd39U/NxNPYyBp2DnNK2zqHZjaUT3IedG0m9aZ8A==
+X-Received: by 2002:a05:600c:4f53:b0:3b4:9aad:7845 with SMTP id m19-20020a05600c4f5300b003b49aad7845mr11844wmq.159.1664401075103;
+        Wed, 28 Sep 2022 14:37:55 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id h9-20020a1c2109000000b003b4fac020c8sm2583719wmh.16.2022.09.28.14.37.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Sep 2022 14:37:54 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bnx2: Fix spelling mistake "bufferred" -> "buffered"
+Date:   Wed, 28 Sep 2022 22:37:53 +0100
+Message-Id: <20220928213753.64396-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-References: <20220928213458.64089-1-colin.i.king@gmail.com>
-In-Reply-To: <20220928213458.64089-1-colin.i.king@gmail.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Wed, 28 Sep 2022 14:36:48 -0700
-Message-ID: <CALMp9eQJQaPbp+UrAYzwLXUGuMdOxOQVVJRs5bJOzjn02RM-_A@mail.gmail.com>
-Subject: Re: [PATCH] KVM: selftests: Fix spelling mistake "begining" -> "beginning"
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 28, 2022 at 2:35 PM Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> There is a spelling mistake in an asset message. Fix it.
+There are spelling mistakes in two literal strings. Fix these.
 
-Nit: assert :-)
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/broadcom/bnx2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2.c b/drivers/net/ethernet/broadcom/bnx2.c
+index b612781be893..6e22000074b3 100644
+--- a/drivers/net/ethernet/broadcom/bnx2.c
++++ b/drivers/net/ethernet/broadcom/bnx2.c
+@@ -176,12 +176,12 @@ static const struct flash_spec flash_table[] =
+ 	{0x19000002, 0x5b808201, 0x000500db, 0x03840253, 0xaf020406,
+ 	 NONBUFFERED_FLAGS, ST_MICRO_FLASH_PAGE_BITS, ST_MICRO_FLASH_PAGE_SIZE,
+ 	 ST_MICRO_FLASH_BYTE_ADDR_MASK, ST_MICRO_FLASH_BASE_TOTAL_SIZE*2,
+-	 "Entry 0101: ST M45PE10 (128kB non-bufferred)"},
++	 "Entry 0101: ST M45PE10 (128kB non-buffered)"},
+ 	/* Entry 0110: ST M45PE20 (non-buffered flash)*/
+ 	{0x15000001, 0x57808201, 0x000500db, 0x03840253, 0xaf020406,
+ 	 NONBUFFERED_FLAGS, ST_MICRO_FLASH_PAGE_BITS, ST_MICRO_FLASH_PAGE_SIZE,
+ 	 ST_MICRO_FLASH_BYTE_ADDR_MASK, ST_MICRO_FLASH_BASE_TOTAL_SIZE*4,
+-	 "Entry 0110: ST M45PE20 (256kB non-bufferred)"},
++	 "Entry 0110: ST M45PE20 (256kB non-buffered)"},
+ 	/* Saifun SA25F005 (non-buffered flash) */
+ 	/* strap, cfg1, & write1 need updates */
+ 	{0x1d000003, 0x5f808201, 0x00050081, 0x03840253, 0xaf020406,
+-- 
+2.37.1
+
