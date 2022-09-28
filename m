@@ -2,60 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1505DC6FA82
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7037C6FA82
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234461AbiI1VQO (ORCPT
+        id S234774AbiI1VSU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Sep 2022 17:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52408 "EHLO
+        Wed, 28 Sep 2022 17:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234428AbiI1VPw (ORCPT
+        with ESMTP id S234740AbiI1VR5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Sep 2022 17:15:52 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ABF6ECCCE;
-        Wed, 28 Sep 2022 14:10:35 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id n10so21581718wrw.12;
-        Wed, 28 Sep 2022 14:10:34 -0700 (PDT)
+        Wed, 28 Sep 2022 17:17:57 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F5176941;
+        Wed, 28 Sep 2022 14:12:44 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id n40-20020a05600c3ba800b003b49aefc35fso1668034wms.5;
+        Wed, 28 Sep 2022 14:12:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=aqILboMdnZtLPM1qTiwzF4Objpc5L4N5ZHrXfIEsftM=;
-        b=oAyo7krAjSF7ZLstZ0OikgtNA3qlrKqV+dowv98DL7jk/YILbVvywOc7echSrgzYS1
-         FLSbny/g21Tx1HS2wCHpk+/Ev2FthfUOUML6N220tD8Jv/kYxpWVTn3glKjWqN/Yn9gu
-         yys6Zp0cAazlzees/YJ3X3I7CSk3Wbf31JzLoODOIDt89tbtm/elonbNWMIP8WUErzCc
-         F1wvvZatSjRoXnilcYOnfIrE2ROXCZG3eog+GeTc1ykkUH1Bo/lRv47kn+XTGitQSKPr
-         r3LUKU1dh4SYF6lIji4jHAwtZ2q9mIz7zyIzhU31txm4s7uR2FAlGwFXNJqj6AVzhtvh
-         +amA==
+        bh=/eIyDSHf+Wvh5dWsUKZ5IxKV+5309fgN2JH2Fm4Ndz0=;
+        b=Dkdr+KJYuG66hdJb23dnHSn1DwGNUfskY7BgEqfWap3p5qgDKa4wYBWs9ld6cQub5d
+         c+Q3bDeHyKbjJo1C2v89lMnXR84Mzf8NYwu91D1NGBubnFzT8stguHfA8ca4X3oV1FMz
+         PEpqTsqW5+GjAry5FIVc75y34mPqk0HmfbnekDidYm8YXM0XNTVDI/i/2rKP5WKiJmtt
+         5YRJbw9ccb8TDKSmeGj6A9ztmkZK3Sw73Z4huTFXYpSvJoVccsTlVgQOaXNF9TMtaKeO
+         xSTu2OHBf1zJmChNfg0SPSahW9/xfCD0Yggz5OBI/oi4T2BxOn4BN4bwmc7ihfIy+dUT
+         cTEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=aqILboMdnZtLPM1qTiwzF4Objpc5L4N5ZHrXfIEsftM=;
-        b=cJEKPeSnlMgVZW4IRSWpcTiDy9cSv+L5M26+epRwg+FXN0av4YFZSs3mXcb5rRv6ma
-         5dqXf90ZbaTUO5potZYYddK5IGCtu4aLDYFtIwNkSNi8aybM1wQBxSwUMcI6VgdW1IXY
-         vU7ht4Mc4UcDMidduSlY2kapAwUGmXwm95L8aii4hofTDgAfkLb7qKKLqN8MqM3JcrNy
-         o/3g36+FpE1y4aRDEPoYiAxt1sWnsfnq9bb4hlop4+1h4AgTgXMFosHdtfpEYOSgjpz0
-         x8fdu6lhuMni8pJw4gN5G0EAGz9k0MDzLq37rMigFB9HvMszPfDexWakhELdHzHJpoIg
-         nvcQ==
-X-Gm-Message-State: ACrzQf2DlGtLbD+A1/XW44tOoHflxMv18mrfmekkaehhpAzzRiBu9oZm
-        HDhkGlX68/jL/0ml5zVt0ApX1Yb59q8OKw==
-X-Google-Smtp-Source: AMsMyM7EwOozklAGUbrwlmFG7rE/fXeq9SQVTUp+7iWGt7OYVHD5cTjCsBIpCBF2t5yd4/DeyKK9Gg==
-X-Received: by 2002:adf:bc13:0:b0:228:6d28:d489 with SMTP id s19-20020adfbc13000000b002286d28d489mr20881942wrg.668.1664399405634;
-        Wed, 28 Sep 2022 14:10:05 -0700 (PDT)
+        bh=/eIyDSHf+Wvh5dWsUKZ5IxKV+5309fgN2JH2Fm4Ndz0=;
+        b=XQhj3hkGfVcbjvMPd4a91ACt9bWSL1LQXOKaREJlEXAy7Ufje378FyVXc20zsUBIbb
+         KTSW53ICgcD0AynY87QcyczOc5VVm31yzxq4kYSocUvDnUawXzMGD/GFjDV65mje6aqA
+         bdNXQS7a+ui1pQHaniptHFbYFnK3EIGdfXerXKAAlr3rpSrLXKh7CTuoGKO98G5EMBP7
+         pDfK+WGUIn7FBX4aSNtrYpEDtjagDu5hrLquADjiDoBWHy3Vq+D9EzH+KdYYNz/mJBHp
+         JstcoUJO1TRp881qGBlZfs0fPquiEmR/JHXvrmAphAxvEc6K4BsFdztqErbbACysTat7
+         uaAQ==
+X-Gm-Message-State: ACrzQf0HBQsEV0g7Tn/KpJny6/blt7nb+tyngTrLt9zEVlBdobNFbvhE
+        qLRSr0Q0q3oKBkXJtHi+t9NqkYmkLq8WsA==
+X-Google-Smtp-Source: AMsMyM6hGAJbxH4u+WZ+7QZCK2XvJa/Vur1hu8Dj4hQ0CYgINIcC5F0dfh0i/KmyHvSGQiMUH/0xUQ==
+X-Received: by 2002:a05:600c:b42:b0:3b4:7580:a995 with SMTP id k2-20020a05600c0b4200b003b47580a995mr8498320wmr.30.1664399563194;
+        Wed, 28 Sep 2022 14:12:43 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 3-20020a05600c230300b003b4727d199asm2668946wmo.15.2022.09.28.14.10.04
+        by smtp.gmail.com with ESMTPSA id j1-20020a5d4481000000b0022ae401e9e0sm4947459wrq.78.2022.09.28.14.12.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 14:10:04 -0700 (PDT)
+        Wed, 28 Sep 2022 14:12:42 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
+To:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: ims-pcu: Fix spelling mistake "BOOLTLOADER" -> "BOOTLOADER"
-Date:   Wed, 28 Sep 2022 22:10:03 +0100
-Message-Id: <20220928211003.61872-1-colin.i.king@gmail.com>
+Subject: [PATCH] KVM: selftests: Fix spelling mistake "UFFDIO_CONINUE" -> "UFFDIO_CONTINUE"
+Date:   Wed, 28 Sep 2022 22:12:41 +0100
+Message-Id: <20220928211241.62158-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +64,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_err message. Fix it.
+There is a spelling mistake in a debug message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/input/misc/ims-pcu.c | 2 +-
+ tools/testing/selftests/kvm/demand_paging_test.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/misc/ims-pcu.c b/drivers/input/misc/ims-pcu.c
-index 6f38aa23a1ff..b2f1292e27ef 100644
---- a/drivers/input/misc/ims-pcu.c
-+++ b/drivers/input/misc/ims-pcu.c
-@@ -744,7 +744,7 @@ static int ims_pcu_switch_to_bootloader(struct ims_pcu *pcu)
- 	error = ims_pcu_execute_command(pcu, JUMP_TO_BTLDR, NULL, 0);
- 	if (error) {
- 		dev_err(pcu->dev,
--			"Failure when sending JUMP TO BOOLTLOADER command, error: %d\n",
-+			"Failure when sending JUMP TO BOOTLOADER command, error: %d\n",
- 			error);
- 		return error;
- 	}
+diff --git a/tools/testing/selftests/kvm/demand_paging_test.c b/tools/testing/selftests/kvm/demand_paging_test.c
+index 779ae54f89c4..56035d94c653 100644
+--- a/tools/testing/selftests/kvm/demand_paging_test.c
++++ b/tools/testing/selftests/kvm/demand_paging_test.c
+@@ -225,7 +225,7 @@ static void setup_demand_paging(struct kvm_vm *vm,
+ 
+ 	PER_PAGE_DEBUG("Userfaultfd %s mode, faults resolved with %s\n",
+ 		       is_minor ? "MINOR" : "MISSING",
+-		       is_minor ? "UFFDIO_CONINUE" : "UFFDIO_COPY");
++		       is_minor ? "UFFDIO_CONTINUE" : "UFFDIO_COPY");
+ 
+ 	/* In order to get minor faults, prefault via the alias. */
+ 	if (is_minor) {
 -- 
 2.37.1
 
