@@ -2,89 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B92EC32771
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D059C6FA82
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:54:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234059AbiI1VvE (ORCPT
+        id S233963AbiI1VyQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Sep 2022 17:51:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40814 "EHLO
+        Wed, 28 Sep 2022 17:54:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234809AbiI1Vuz (ORCPT
+        with ESMTP id S234367AbiI1Vxu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Sep 2022 17:50:55 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 462A68C010;
-        Wed, 28 Sep 2022 14:50:54 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id iv17so9302407wmb.4;
-        Wed, 28 Sep 2022 14:50:54 -0700 (PDT)
+        Wed, 28 Sep 2022 17:53:50 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3A09B600A;
+        Wed, 28 Sep 2022 14:53:48 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id f193so13445390pgc.0;
+        Wed, 28 Sep 2022 14:53:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=zB9rqqvbjvVxpdcrL93MXJfKb/J0urKxQpQUWhHbEsc=;
-        b=RNJzT7yVog3c8NvQJjfHBUbtrSy3WqfQCFoK5OjQ3C27DSH2m1sX9TOwybT2krTWCC
-         pPl2oa29GVrL4XAXf9FubvdnmsfzTBW5mSZcOuYAjkqz1sNxEmKkn0AxxsIpDTtpZjfd
-         Xv5IW3UD2vqw+9GF6jF6I9kFc3RUzI467D3Cr1hrHnlh8XvOV6F0SzGqUvoQ2dK1g+po
-         6+kLpZr6G3Tf7xDV8zLVI61dUaPyqWePTM/sRyAuNcZ4Q751UnVK1+Nv9dVRUX780NyK
-         3p91Saj4/nR+yUKUO86EZJX8b5ctvZk4YgVuzrJG1zv9pbYAN7bb1Zix7LYE0yx5TKK8
-         UFxQ==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=rwxTbqg7Xc3irSvqNgtb9zG62AE7Qip58l/cJQg1XlI=;
+        b=Xt698KYjpjJ84vIuRanpK/wLtkDt7DY3z7LwWCRDcyLW1odzM0rEZobjATnUl+ZIvp
+         pH9Bq5y/PGOaysVA91ZzYOC5D2qMsKSWCSceSaB42SZ6gD24F++VhKOmSSmIUpu8CBys
+         ZSRbH0gm/QCGwybjgwl6BGdCXbWrx5mIxh0ArN7HDXDdUR5/Wp8mhekydGso4ADjfzah
+         wOaJpvje/jLQhXwfhv0llWrPb25kgfkDKKby5eBBqgUYSOg2rl9qrUoxXCF8m0c3My1X
+         8mMpLfRe9dos3PNWwG34AyAinKHwvZpLF1rdQAQWMah0BVwqrq80yZQhsl4UgkZdK/fd
+         4hRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=zB9rqqvbjvVxpdcrL93MXJfKb/J0urKxQpQUWhHbEsc=;
-        b=B0PkUciUfBYSmA5pGJwym9Z8S5bVvwjYFaekWuhlStmM54hp5/VFZuSw2NAzFKyQQY
-         3rmqdkzYSv8/8k5EdUP8yV15h/OtfINNGhy1GtiTFKImpPXl2Dg/CGjHPqjDrrzjXzsw
-         pcd09htXGGRDV5Ceh9FkTIK3eI0JjGvLcbeYUTDA43u0uYNV3u85qlK4t744QsifgIhC
-         oF0nX0pw+ouCrt0UlRK52qFMrWlD7pcvg9BqwCk8DmYDFKb5e30Wehp8g62QAbmDjZQD
-         Qd9l8GU975ayZcoaOrqv7FgW7DpQrzN3kxKVdKkNGRPz5NCayZN4rvqCdYGm8TYGDuBZ
-         Ewtw==
-X-Gm-Message-State: ACrzQf1jUboq4CoEgDxIfEF6hEMjzoURCFp+kFUeXYu41+tqX8sNAY5G
-        MziEH0hlBgwHxtSwhlu8LAE=
-X-Google-Smtp-Source: AMsMyM6j5QBbGC2iAuhe51N1wLpquPlgnW5/oXFPFauihkffWdlUV2BgwefBIs/W/0nlGYvFIk4FtQ==
-X-Received: by 2002:a05:600c:4352:b0:3b4:84c0:2006 with SMTP id r18-20020a05600c435200b003b484c02006mr34776wme.205.1664401852657;
-        Wed, 28 Sep 2022 14:50:52 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j1-20020a05600c42c100b003b3401f1e24sm2579686wme.28.2022.09.28.14.50.51
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=rwxTbqg7Xc3irSvqNgtb9zG62AE7Qip58l/cJQg1XlI=;
+        b=DsLAcLbcMZ4vd+cVlLWgsJ9vU1lpLGI/cMSsEa0SXntGYpAdUPvtVcwZBQ4dbrn3eW
+         EG79nNApmbfKCW+33fjqi7XQsK9Ao6Ff9+mC1txmGHtt1AG8wcLnvBnlUkpZPn/MIo13
+         XHfxD9KGF0NqC4PLl2n6HUt0nVQ4NAjDYJ1NDoMp1LkEsXfZvoctK5EVEz/cUukC4aIS
+         5u94PXgA24MH2BDeGQwrq1GLJqrtVhfrTyboChpgocDJNEz8HfX7607I78eTEXmKFWr3
+         jZZ/ZAFjoe39b1UTiHEwKGzal3ksCXnU80mNzDBOCLpVS75t7ojrhiszp2AI9S+Xpxd9
+         ch1A==
+X-Gm-Message-State: ACrzQf2RokPbVguF/HkS6LRNHpsEIUi0n1JW4GQHs+y90GawYtAKN2n0
+        UqzMPqdrgB+sD4UmTZ8fDh7XeYcjZm8=
+X-Google-Smtp-Source: AMsMyM62WoDTbaELfdTYT6DlHU48/X79U3e3xQ+Ym4ogNXlrzZzDA8STmg9JIV8islx0iP+cGEBcwA==
+X-Received: by 2002:a05:6a00:1911:b0:554:9a8d:bb41 with SMTP id y17-20020a056a00191100b005549a8dbb41mr36426424pfi.47.1664402027447;
+        Wed, 28 Sep 2022 14:53:47 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1a91:59b8:faf:7b4f])
+        by smtp.gmail.com with ESMTPSA id f145-20020a623897000000b005366696b735sm4505950pfa.77.2022.09.28.14.53.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 14:50:52 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        David Matlack <dmatlack@google.com>, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: selftests: Fix spelling mistake "miliseconds" -> "milliseconds"
-Date:   Wed, 28 Sep 2022 22:50:51 +0100
-Message-Id: <20220928215051.65632-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+        Wed, 28 Sep 2022 14:53:47 -0700 (PDT)
+Date:   Wed, 28 Sep 2022 14:53:44 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: ims-pcu: Fix spelling mistake "BOOLTLOADER" ->
+ "BOOTLOADER"
+Message-ID: <YzTCaCuMadUC0+oh@google.com>
+References: <20220928211003.61872-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220928211003.61872-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in some help text. Fix it.
+On Wed, Sep 28, 2022 at 10:10:03PM +0100, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thank you.
 
-diff --git a/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c b/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
-index e19933ea34ca..62827d121c4f 100644
---- a/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
-@@ -211,7 +211,7 @@ static void help(char *name)
- 	puts("");
- 	printf("usage: %s [-h] [-p period_ms] [-t token]\n", name);
- 	puts("");
--	printf(" -p: The NX reclaim period in miliseconds.\n");
-+	printf(" -p: The NX reclaim period in milliseconds.\n");
- 	printf(" -t: The magic token to indicate environment setup is done.\n");
- 	printf(" -r: The test has reboot permissions and can disable NX huge pages.\n");
- 	puts("");
 -- 
-2.37.1
-
+Dmitry
