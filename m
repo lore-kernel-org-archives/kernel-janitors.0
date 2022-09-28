@@ -2,61 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E39ECC04A95
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC27AC6FA82
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232666AbiI1VXI (ORCPT
+        id S233495AbiI1Vbp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Sep 2022 17:23:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47246 "EHLO
+        Wed, 28 Sep 2022 17:31:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232166AbiI1VXF (ORCPT
+        with ESMTP id S233601AbiI1Vbo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Sep 2022 17:23:05 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B1EC1C901;
-        Wed, 28 Sep 2022 14:23:00 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id r6so4383914wru.8;
-        Wed, 28 Sep 2022 14:23:00 -0700 (PDT)
+        Wed, 28 Sep 2022 17:31:44 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B42760FE;
+        Wed, 28 Sep 2022 14:31:41 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id k3-20020a05600c1c8300b003b4fa1a85f8so1688649wms.3;
+        Wed, 28 Sep 2022 14:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=RKJihZXInDwBxEomtKl6Az8M+oPUit8VIlFYZspfnao=;
-        b=qMNAPWI5Rty507mELvN/sikxmJQpM0MJemSYkRTGaiKkpUCgex86BEQaKtftHjss0v
-         OmKQ6QYxGXXnehx5UmyPQXgD6vrM/up15PQ2liHul2gTCYom+FxXN0s1lf0euaqtnOi3
-         cs3jPy9VwaYhqAiLbhPoxYAHZxOZUXMvAz0iE81XSZGe7HA2JM6SJEvZ9rZ7dmRqmYdd
-         vrdVWVLrRQHMwtCS5ckos2GOqczowFdDbT8JBkh4mZy0zqVCbpNxpBpujPTDc7JSQ5mG
-         19fwVtXb/eyPnrOf27hhF3XxBGbT2zeMgeso135GxGeaZ1CupzwlR8osKgUVIRXpVKNW
-         51+g==
+        bh=kHtcM/ZhNIQfonSbRMlI/alAAHn24v5beci83RsPETQ=;
+        b=QcPgl9ROwUeqG6rw+McsRw+ZhRgG365ZnH4zH77hwFmLx7OXhRi2n0lCo1y2KUvo99
+         1RDlXGyiTTiei5sZYSByiYiNVgKwCiLA2oGzoZZGVUOTsIV+tdhJTjIopATrZdPUScv6
+         vTKhiPK9zzzeBKZds27pPLluyiugXqWNHBNxMBlt40c6brWNOytiw0MqbwEPnYpbjBLX
+         H2SrRN2SabMXgmokbp9OuQurISROaC9JU0MnJEeJ0vcXKLMB8WArmkcM7Gd8uIJRJFbz
+         JWVmKg1lsYzz/8qzXRWXcZ90/Ukj6uTFXve9qiW0QDAIQaAchtsflLGLc4q+aMFmH3YG
+         sejQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=RKJihZXInDwBxEomtKl6Az8M+oPUit8VIlFYZspfnao=;
-        b=j3o85ZAtg2vqglbTCOY9JrTsQajwHIi4qHmciSe//tIbU1lVwr6T7je5HliO9/gDsZ
-         U+/gy19gmeTgq0eUI7UejR0/yncUasNrRdZ0u1ql3dpMwYy5pRmHEbQvIoF57qAp7C3A
-         NLf1qtPenEGjZQCza5BNTU3U57o6tt/hFZA+QxKUXKniJXcMBdZofzsiy7OXGq+JYuCp
-         ZYvBw/hAeCYPlMSszqRWyRLxDbCK8QT9HfWy5Qf1xwfYhXsg1+Y30bZRv6+qFUY6Hto0
-         8pkC8+xyVy6qyI6w2+jKjgw6rAtd0WTts/bBL23qeDg84VWCWr6eRr4+0biV32JLSdSp
-         sx4Q==
-X-Gm-Message-State: ACrzQf1B7VdtpjsdqH3Ma7K/VPS5e/jioIEamFM7fYtD8+aiOTVw0qdB
-        K4RELqq8Iy9Vqdxzft83VKA=
-X-Google-Smtp-Source: AMsMyM4am5AztlrVRNurOLHerFO6XghKTW/DVdXKUKv1/aNV/R27JmHCjF03lBOV2jDvnAe8LolZ1w==
-X-Received: by 2002:a5d:5f0a:0:b0:228:dff9:5f7e with SMTP id cl10-20020a5d5f0a000000b00228dff95f7emr20989786wrb.601.1664400178874;
-        Wed, 28 Sep 2022 14:22:58 -0700 (PDT)
+        bh=kHtcM/ZhNIQfonSbRMlI/alAAHn24v5beci83RsPETQ=;
+        b=UdKla1kT0B4zKY/aD2yttXv6+iJh3CxZdzfGHd12CJSSRtxwAD8+CRwF53DIKDuF8Q
+         52K7eoDGrslp5cTjWJkfGM95Qww0PVXaIBuJNv6OcnVEGcjKT0TD//pljKSLf7ZkbXWX
+         DUAsDXqY88YRzpcnH/ZtAzHFoqfF9lwCR7q4Zm/XQ7/dUPWqwq8yaBfr/itSg/ceS+DD
+         4vVTBNvXSOH+gXTGc7LjNinF/q0sG6M2XXZMnbfc7y7ZcSHcTtlUEuvZ4TapFNRQBLgm
+         eMuNWTBO6q8u2Ru1UQ3Fo2mnVuvTMYN95sRc8Ut5mc8vLHcKNh4mOhAEvSgXqQnnrsmM
+         ZCMg==
+X-Gm-Message-State: ACrzQf0/RSre0JCi7HHHN77pq4iq4BQ0DheDfRR1ZffA5VEaSoBXfMyj
+        Ss5bLfHf0DpPvBNYaCMi+1I=
+X-Google-Smtp-Source: AMsMyM7aOjoYbO4hfmIPy5nzW+hPDOHiP9ssPu0Tsdkl4upfL/5kCoMwt7VCP+e4McZiUqr1nWMk2w==
+X-Received: by 2002:a05:600c:211a:b0:3b4:75ee:c63e with SMTP id u26-20020a05600c211a00b003b475eec63emr8581535wml.44.1664400700333;
+        Wed, 28 Sep 2022 14:31:40 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n2-20020a05600c4f8200b003b27f644488sm2983684wmq.29.2022.09.28.14.22.58
+        by smtp.gmail.com with ESMTPSA id d15-20020adffd8f000000b00228a6ce17b4sm5082891wrr.37.2022.09.28.14.31.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 14:22:58 -0700 (PDT)
+        Wed, 28 Sep 2022 14:31:39 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-acpi@vger.kernel.org
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Christopher Ruehl <chris.ruehl@gtsys.com.hk>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mailbox: pcc: Fix spelling mistake "Plaform" -> "Platform"
-Date:   Wed, 28 Sep 2022 22:22:57 +0100
-Message-Id: <20220928212257.63197-1-colin.i.king@gmail.com>
+Subject: [PATCH] devicetree: hwmon: shtc1: Clean up spelling mistakes and grammar
+Date:   Wed, 28 Sep 2022 22:31:39 +0100
+Message-Id: <20220928213139.63819-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,26 +68,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a pr_err message. Fix it.
+The yaml text contains some minor spelling mistakes and grammar issues,
+clean these up.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mailbox/pcc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/hwmon/sensirion,shtc1.yaml        | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-index ebfa33a40fce..3c2bc0ca454c 100644
---- a/drivers/mailbox/pcc.c
-+++ b/drivers/mailbox/pcc.c
-@@ -676,7 +676,7 @@ static int pcc_mbox_probe(struct platform_device *pdev)
+diff --git a/Documentation/devicetree/bindings/hwmon/sensirion,shtc1.yaml b/Documentation/devicetree/bindings/hwmon/sensirion,shtc1.yaml
+index 7d49478d9668..159238efa9ed 100644
+--- a/Documentation/devicetree/bindings/hwmon/sensirion,shtc1.yaml
++++ b/Documentation/devicetree/bindings/hwmon/sensirion,shtc1.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Christopher Ruehl chris.ruehl@gtsys.com.hk
  
- 		if (pcct_entry->type == ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE &&
- 		    !pcc_mbox_ctrl->txdone_irq) {
--			pr_err("Plaform Interrupt flag must be set to 1");
-+			pr_err("Platform Interrupt flag must be set to 1");
- 			rc = -EINVAL;
- 			goto err;
- 		}
+ description: |
+-  The SHTC1, SHTW1 and SHTC3 are digital humidity and temperature sensor
++  The SHTC1, SHTW1 and SHTC3 are digital humidity and temperature sensors
+   designed especially for battery-driven high-volume consumer electronics
+   applications.
+   For further information refere to Documentation/hwmon/shtc1.rst
+@@ -31,13 +31,13 @@ properties:
+   sensirion,blocking-io:
+     $ref: /schemas/types.yaml#/definitions/flag
+     description:
+-      If set, the driver hold the i2c bus until measurement is finished.
++      If set, the driver holds the i2c bus until the measurement is finished.
+ 
+   sensirion,low-precision:
+     $ref: /schemas/types.yaml#/definitions/flag
+     description:
+-      If set, the sensor aquire data with low precision (not recommended).
+-      The driver aquire data with high precision by default.
++      If set, the sensor acquires data with low precision (not recommended).
++      The driver acquires data with high precision by default.
+ 
+ required:
+   - compatible
 -- 
 2.37.1
 
