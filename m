@@ -2,60 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7037C6FA82
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E16C04A95
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234774AbiI1VSU (ORCPT
+        id S234783AbiI1VUA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Sep 2022 17:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36414 "EHLO
+        Wed, 28 Sep 2022 17:20:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234740AbiI1VR5 (ORCPT
+        with ESMTP id S233134AbiI1VTa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Sep 2022 17:17:57 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F5176941;
-        Wed, 28 Sep 2022 14:12:44 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id n40-20020a05600c3ba800b003b49aefc35fso1668034wms.5;
-        Wed, 28 Sep 2022 14:12:44 -0700 (PDT)
+        Wed, 28 Sep 2022 17:19:30 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A69785582;
+        Wed, 28 Sep 2022 14:16:41 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id r7so21678191wrm.2;
+        Wed, 28 Sep 2022 14:16:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=/eIyDSHf+Wvh5dWsUKZ5IxKV+5309fgN2JH2Fm4Ndz0=;
-        b=Dkdr+KJYuG66hdJb23dnHSn1DwGNUfskY7BgEqfWap3p5qgDKa4wYBWs9ld6cQub5d
-         c+Q3bDeHyKbjJo1C2v89lMnXR84Mzf8NYwu91D1NGBubnFzT8stguHfA8ca4X3oV1FMz
-         PEpqTsqW5+GjAry5FIVc75y34mPqk0HmfbnekDidYm8YXM0XNTVDI/i/2rKP5WKiJmtt
-         5YRJbw9ccb8TDKSmeGj6A9ztmkZK3Sw73Z4huTFXYpSvJoVccsTlVgQOaXNF9TMtaKeO
-         xSTu2OHBf1zJmChNfg0SPSahW9/xfCD0Yggz5OBI/oi4T2BxOn4BN4bwmc7ihfIy+dUT
-         cTEg==
+        bh=KbUksbEUwkdX2NhnUCKgEZ96/Pa9xod4mMzph0sIkew=;
+        b=MB6DUE6Z1pbZBZQWRg12iw7/eJH0afuIVeJG/Vomrhz6Cw2CNSBCYK01OEAVCr821v
+         447MW6Q6wCY4WpDNfp1l3oEyV7b4EMlQLfk8c0iBsW0Ym78AcwqonPjD+l7hhVZgxPKl
+         MK8pTyreW5jX1ZSzWhq4f2pvyO+ybEw1Uhg65Q+mWqglBTCx8k8as0V8QV4trxkB9Wlj
+         XGIOGwhN5rlEwOH9B4VnQZF9VbMOLnnUMtIVLnYXdARTyTfKiAvs6/MjEkJ2h8qB8Cyx
+         dsmNvMEIEH8OPR59OXRETpBBFXZsr4Lniq0Rim535RKUKvD4KJvgaWoKxiCp5DSLlf6S
+         oLkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=/eIyDSHf+Wvh5dWsUKZ5IxKV+5309fgN2JH2Fm4Ndz0=;
-        b=XQhj3hkGfVcbjvMPd4a91ACt9bWSL1LQXOKaREJlEXAy7Ufje378FyVXc20zsUBIbb
-         KTSW53ICgcD0AynY87QcyczOc5VVm31yzxq4kYSocUvDnUawXzMGD/GFjDV65mje6aqA
-         bdNXQS7a+ui1pQHaniptHFbYFnK3EIGdfXerXKAAlr3rpSrLXKh7CTuoGKO98G5EMBP7
-         pDfK+WGUIn7FBX4aSNtrYpEDtjagDu5hrLquADjiDoBWHy3Vq+D9EzH+KdYYNz/mJBHp
-         JstcoUJO1TRp881qGBlZfs0fPquiEmR/JHXvrmAphAxvEc6K4BsFdztqErbbACysTat7
-         uaAQ==
-X-Gm-Message-State: ACrzQf0HBQsEV0g7Tn/KpJny6/blt7nb+tyngTrLt9zEVlBdobNFbvhE
-        qLRSr0Q0q3oKBkXJtHi+t9NqkYmkLq8WsA==
-X-Google-Smtp-Source: AMsMyM6hGAJbxH4u+WZ+7QZCK2XvJa/Vur1hu8Dj4hQ0CYgINIcC5F0dfh0i/KmyHvSGQiMUH/0xUQ==
-X-Received: by 2002:a05:600c:b42:b0:3b4:7580:a995 with SMTP id k2-20020a05600c0b4200b003b47580a995mr8498320wmr.30.1664399563194;
-        Wed, 28 Sep 2022 14:12:43 -0700 (PDT)
+        bh=KbUksbEUwkdX2NhnUCKgEZ96/Pa9xod4mMzph0sIkew=;
+        b=zKnJxOD6vVzhuUxgu5rCYESFBsSIi2GU35J8Q33u62kdSDS7USzogzNC1U+Uk7OQR+
+         bVxQSSmj9SL12GLkGZJHdLKeJrOel+1rHwL4JoQ4KqvVKYnloSaWW2X5hFto3B2w+Jx5
+         hWlabLBuHN3Y8Q1Bm/GtZ5Zn+9EQlw2PE6jbqhJq2F7itDndxRJOM3iQpL6CyOCs9CTb
+         V8O6+fSnkvmKvP9COnJIhht64+R5NmXDght+TfXVM4hZNOreVnp+WCvseD/iAq/aniFF
+         eGHgqz+XmGCPiPH4o1dQwuLrBjhu/isnUklGN5CQWC3uV+Zdkq9wTza33ShVf5AONdvx
+         4DcA==
+X-Gm-Message-State: ACrzQf3mVSzPlmQyzTau+ihdYjcIJRY7y4BOij/bVVYtOGDFcWu4NWFB
+        fNUvqvtjMB3Y2YdBz6dSkDPTpC5vdthWMQ==
+X-Google-Smtp-Source: AMsMyM5e2z6OYNLnDKUfR1SLlvL8nt9nVFKr/qZxSeIi2L4QFKABeJYl/tRmTBN6qVT75OzCxeP5aA==
+X-Received: by 2002:a5d:4610:0:b0:22c:c2c9:bb33 with SMTP id t16-20020a5d4610000000b0022cc2c9bb33mr6486428wrq.355.1664399798960;
+        Wed, 28 Sep 2022 14:16:38 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j1-20020a5d4481000000b0022ae401e9e0sm4947459wrq.78.2022.09.28.14.12.42
+        by smtp.gmail.com with ESMTPSA id bx31-20020a5d5b1f000000b0022a2bacabbasm5191622wrb.31.2022.09.28.14.16.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 14:12:42 -0700 (PDT)
+        Wed, 28 Sep 2022 14:16:38 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Russ Weight <russell.h.weight@intel.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: selftests: Fix spelling mistake "UFFDIO_CONINUE" -> "UFFDIO_CONTINUE"
-Date:   Wed, 28 Sep 2022 22:12:41 +0100
-Message-Id: <20220928211241.62158-1-colin.i.king@gmail.com>
+Subject: [PATCH] test_firmware: Fix spelling mistake "EMTPY" -> "EMPTY"
+Date:   Wed, 28 Sep 2022 22:16:37 +0100
+Message-Id: <20220928211637.62529-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +65,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a debug message. Fix it.
+There are spelling mistakes in config show text. Fix these.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- tools/testing/selftests/kvm/demand_paging_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/test_firmware.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/demand_paging_test.c b/tools/testing/selftests/kvm/demand_paging_test.c
-index 779ae54f89c4..56035d94c653 100644
---- a/tools/testing/selftests/kvm/demand_paging_test.c
-+++ b/tools/testing/selftests/kvm/demand_paging_test.c
-@@ -225,7 +225,7 @@ static void setup_demand_paging(struct kvm_vm *vm,
+diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+index c82b65947ce6..0c714cdd51ef 100644
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -284,7 +284,7 @@ static ssize_t config_show(struct device *dev,
+ 				test_fw_config->name);
+ 	else
+ 		len += scnprintf(buf + len, PAGE_SIZE - len,
+-				"name:\tEMTPY\n");
++				"name:\tEMPTY\n");
  
- 	PER_PAGE_DEBUG("Userfaultfd %s mode, faults resolved with %s\n",
- 		       is_minor ? "MINOR" : "MISSING",
--		       is_minor ? "UFFDIO_CONINUE" : "UFFDIO_COPY");
-+		       is_minor ? "UFFDIO_CONTINUE" : "UFFDIO_COPY");
+ 	len += scnprintf(buf + len, PAGE_SIZE - len,
+ 			"num_requests:\t%u\n", test_fw_config->num_requests);
+@@ -315,7 +315,7 @@ static ssize_t config_show(struct device *dev,
+ 				test_fw_config->upload_name);
+ 	else
+ 		len += scnprintf(buf + len, PAGE_SIZE - len,
+-				"upload_name:\tEMTPY\n");
++				"upload_name:\tEMPTY\n");
  
- 	/* In order to get minor faults, prefault via the alias. */
- 	if (is_minor) {
+ 	mutex_unlock(&test_fw_mutex);
+ 
 -- 
 2.37.1
 
