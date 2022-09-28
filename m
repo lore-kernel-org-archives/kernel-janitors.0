@@ -2,60 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CEEDC32771
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13B1C32771
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 22:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233350AbiI1V6f (ORCPT
+        id S233775AbiI1WEW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Sep 2022 17:58:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52548 "EHLO
+        Wed, 28 Sep 2022 18:04:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234100AbiI1V6b (ORCPT
+        with ESMTP id S229486AbiI1WEV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Sep 2022 17:58:31 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C26B0AF0D8;
-        Wed, 28 Sep 2022 14:58:30 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id x18so21777401wrm.7;
-        Wed, 28 Sep 2022 14:58:30 -0700 (PDT)
+        Wed, 28 Sep 2022 18:04:21 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A0F7696EC;
+        Wed, 28 Sep 2022 15:04:20 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id e18so9324394wmq.3;
+        Wed, 28 Sep 2022 15:04:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=1ZM1xivpgRrEvA+BtygIUXZXEYNOT83pkKY0ZX950F0=;
-        b=D/mZDxTrHQm1U498H52oaCkB6vHmG09pTcmIXtz4Yc4y+OL4JiOeVIS19CDNB+z72F
-         ENnAsuths80YMGX2pgfV7QN4sHZ+8isL4UtFj0/WZqbxur0Bj+J3ciFtieCA5rph3yKM
-         gpIWYbXq5aLriNpo7gYU6OlBtdQOQ45zAqJllvjNjctNezhGs+i7NkVDOF0Q/Jy2hg2E
-         kZA4RMNsN/Ta5VfcC9uJ3MGuO85spB96V1eigomQki+laqYozmlCSN/aV6OcrOEAFLyc
-         1oIvVsBX5eHmMZr5kp36rBuqWLLQRLFmqwtbwxsxTuJYgdMw3MXuHdhW5OquHMWKPr0b
-         BqJw==
+        bh=2wqVo0aD55CNjK+hEjl9Jhtj7J/Tr6/AA4pMGSEV/1g=;
+        b=KU1oYI3X0FsdCE4047IjtG+VQWOsp23dQ1ziNPvW9YTUtXJgabEeqWTqAfXnORtk7Q
+         EgXtEwk7lbwjqPFgg+cMC4IgeJbda9fq7SzSgYlCFtfPJMX7NuKM+LFQ+pTHNQ3MeFK9
+         jgS88jZoYJlre/fYBan0YOURD6Scp5FEFXjLTzFVPlQhmsyEJYk0Tff9Bsut8aew+9hx
+         L5WKAeV7f/VMlkXKEVA1qoXAx7ml8wcjhgpA+5bZrRzw2vf2ETSiFReCmZWh1M3Cirtq
+         Gff1LMaLcri9HXdR38v1ZbHtBO0e61ybtU4mAW21b1ayAXZsjKUmnJ2k3Nl0iX/fbqxt
+         uPsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=1ZM1xivpgRrEvA+BtygIUXZXEYNOT83pkKY0ZX950F0=;
-        b=Pbkcy/I0gSoXyg+P7ToFNDRX7aAy7bU24XGIAlnt7zFK8iWws7xDzfbXWZ/xS76pQ3
-         /ipK0PQ9BcwdPjohfcBdcsEV8UiwRuzctG/Cd3UXIa7c2FzJO8THkwOGEjI1vEV2pYrw
-         uROmHxdPLTjedj2DWJRQOoojm71Z8ra1q1CgUb6rZBuR95luyhK0JBCOvOsoO/m6gO16
-         7AilUFCF+/K55EFRhKL/ps58fDh45tzUq5C+wbPLBWLqHbgJmkRox7HZGi55/VFqX8Gz
-         us9B4kR8u9WijLde3xwLJ/Y68/cuvB3AZ6Tj4e+vKfBq9BNkndqI/rc2KuS/2rX0VK5D
-         VC9Q==
-X-Gm-Message-State: ACrzQf2wGKUXI/I4/9YePKjPDWGXdLNQlAosLv4EfPo6IRmzJaR65HNH
-        LgjR5B8lFDcR2lHORx3ouGk=
-X-Google-Smtp-Source: AMsMyM6UfiR5TxXOe/PqBn+GlHxQWrQNdmh5uRki3ac6QqVLyvtRj09mmiy9/wBlzhx0jIrBQJZpHA==
-X-Received: by 2002:a05:6000:144b:b0:22c:9161:76b4 with SMTP id v11-20020a056000144b00b0022c916176b4mr15335724wrx.145.1664402309256;
-        Wed, 28 Sep 2022 14:58:29 -0700 (PDT)
+        bh=2wqVo0aD55CNjK+hEjl9Jhtj7J/Tr6/AA4pMGSEV/1g=;
+        b=R4By1O2vzNRzI7YlTO/ursrDCJECXxNoP1vRcD7CDpPjvl17Tq2XP5wgMTYQVXotJQ
+         kdHm2HKYzmkajgILSuLswSG1IAmBc6kUDbvW+A54/cYLDnGFeC/Uctjs+bcotKx3C3wD
+         S5dpkn9PneuECf4uR2fVhhe22ZnDo+Wa3u2xBDfXCGJURdoWwzmUvRmUWMj5L7pmS0FD
+         VnF59eOX6zu0eO3cyIUBWxlgZ0OHH1ap1jspPc7Bn7Uxkle9gdgfuOojFS1meg4/+D8F
+         K3JUenokXRmK/0Sufih9N0V0Rv09yjvCy4wOhtaTIdpaDaqe4iT20Z6Xn1wCDmE5kIGK
+         bZEA==
+X-Gm-Message-State: ACrzQf1d8CKdC75/IvyFKQ3VMXGeNVv52+y2fCnVJPI1JBbrzn8gpQGA
+        4m8S9zSQGfXtpwDg2rT55jY=
+X-Google-Smtp-Source: AMsMyM5C5bvoufyf0RMPrn0G1wm8CeA8ImmPUYZ3eH2K2m1PZUZoa1b7sFlsXXS6Dva1sReyJbuqKQ==
+X-Received: by 2002:a05:600c:310b:b0:3b4:c618:180d with SMTP id g11-20020a05600c310b00b003b4c618180dmr76898wmo.25.1664402658808;
+        Wed, 28 Sep 2022 15:04:18 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d22-20020a05600c34d600b003b49ab8ff53sm2790158wmq.8.2022.09.28.14.58.28
+        by smtp.gmail.com with ESMTPSA id n3-20020a5d4203000000b0022acb7195aesm5121019wrq.33.2022.09.28.15.04.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 14:58:28 -0700 (PDT)
+        Wed, 28 Sep 2022 15:04:18 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tracing: Fix spelling mistake "preapre" -> "prepare"
-Date:   Wed, 28 Sep 2022 22:58:28 +0100
-Message-Id: <20220928215828.66325-1-colin.i.king@gmail.com>
+Subject: [PATCH] ASoC: mediatek: mt8186: Fix spelling mistake "slect" -> "select"
+Date:   Wed, 28 Sep 2022 23:04:17 +0100
+Message-Id: <20220928220417.66799-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +69,47 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the trace text. Fix it.
+There are some spelling mistakes in dev_err messages. Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- kernel/trace/trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/mediatek/mt8186/mt8186-afe-gpio.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index d3005279165d..623c5691ab21 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -10091,7 +10091,7 @@ __init static int tracer_alloc_buffers(void)
- 	 * buffer. The memory will be removed once the "instance" is removed.
- 	 */
- 	ret = cpuhp_setup_state_multi(CPUHP_TRACE_RB_PREPARE,
--				      "trace/RB:preapre", trace_rb_cpu_prepare,
-+				      "trace/RB:prepare", trace_rb_cpu_prepare,
- 				      NULL);
- 	if (ret < 0)
- 		goto out_free_cpumask;
+diff --git a/sound/soc/mediatek/mt8186/mt8186-afe-gpio.c b/sound/soc/mediatek/mt8186/mt8186-afe-gpio.c
+index 274c0c8ec2f2..eda913fa147a 100644
+--- a/sound/soc/mediatek/mt8186/mt8186-afe-gpio.c
++++ b/sound/soc/mediatek/mt8186/mt8186-afe-gpio.c
+@@ -170,25 +170,25 @@ static int mt8186_afe_gpio_adda_ul(struct device *dev, bool enable)
+ 	if (enable) {
+ 		ret = mt8186_afe_gpio_select(dev, MT8186_AFE_GPIO_CLK_MISO_ON);
+ 		if (ret) {
+-			dev_err(dev, "%s(), MISO CLK ON slect fail!\n", __func__);
++			dev_err(dev, "%s(), MISO CLK ON select fail!\n", __func__);
+ 			return ret;
+ 		}
+ 
+ 		ret = mt8186_afe_gpio_select(dev, MT8186_AFE_GPIO_DAT_MISO_ON);
+ 		if (ret) {
+-			dev_err(dev, "%s(), MISO DAT ON slect fail!\n", __func__);
++			dev_err(dev, "%s(), MISO DAT ON select fail!\n", __func__);
+ 			return ret;
+ 		}
+ 	} else {
+ 		ret = mt8186_afe_gpio_select(dev, MT8186_AFE_GPIO_DAT_MISO_OFF);
+ 		if (ret) {
+-			dev_err(dev, "%s(), MISO DAT OFF slect fail!\n", __func__);
++			dev_err(dev, "%s(), MISO DAT OFF select fail!\n", __func__);
+ 			return ret;
+ 		}
+ 
+ 		ret = mt8186_afe_gpio_select(dev, MT8186_AFE_GPIO_CLK_MISO_OFF);
+ 		if (ret) {
+-			dev_err(dev, "%s(), MISO CLK OFF slect fail!\n", __func__);
++			dev_err(dev, "%s(), MISO CLK OFF select fail!\n", __func__);
+ 			return ret;
+ 		}
+ 	}
 -- 
 2.37.1
 
