@@ -2,59 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16685C6FA90
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 745FDC04A95
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:47:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234469AbiI1VoH (ORCPT
+        id S234495AbiI1Vr3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Sep 2022 17:44:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51998 "EHLO
+        Wed, 28 Sep 2022 17:47:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233495AbiI1VoF (ORCPT
+        with ESMTP id S232958AbiI1Vr2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Sep 2022 17:44:05 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D66B1B8E;
-        Wed, 28 Sep 2022 14:44:03 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id c11so21680838wrp.11;
-        Wed, 28 Sep 2022 14:44:03 -0700 (PDT)
+        Wed, 28 Sep 2022 17:47:28 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEA602B636;
+        Wed, 28 Sep 2022 14:47:27 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id d12-20020a05600c3acc00b003b4c12e47f3so1702804wms.4;
+        Wed, 28 Sep 2022 14:47:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=NEf7j7EJd9P7Df5FtSbX7lR7Htq5MRqRWoMxVQ8r/K0=;
-        b=mcMEtCVzb5e/UNPsvKpP/kA3Zv0FHQTnKq8fkvaUTRh/jQ3wOQC/k6TzyV1QQZRr04
-         FZetlkE6L2s++NItfZsH5t0EfIL4DeLdPTxWk76J8F0lY0IjrbGm5SV8Eoc1qxlCA2l3
-         f4JdRpr7XJqUZ73JRnNyj+t6IDi2DN+uzSWTl1uqfwAMj0JLSNEgymakk7UwgtyiLM9D
-         G1wEbrIk9uzbw5D85L3SZLXLkyFW8rLRmFle8+aJO+EVvN1Obs0wBBcNqTVVQaBHLb7D
-         QhCCnBabyUDhR1pWzieBQLvGhFKuE1FKrO0mPciZrymEXeCmrJxT0+NJC4MSJXExmykR
-         kzZA==
+        bh=Y8BhmZH5AcD5sR0X65fMe7O7Q8DdK6Jv1JPYl8VWFjc=;
+        b=aFgpKSSMgo3BcTcIbuO1zVk6bjzrs432caB8kYplv5HZeO7e/hfLgujSDZYlmgjnEX
+         R84AGDVWlib/vLG64I7H3KtFOQzABh7H3iNXl+XvuF0QvlmrPe7L0/nYpOlAlYrMwnai
+         7jTVU49PE3fZ7jdk3vgLFc1BeaOAPcWT8DT/cf0qJ/VR+yURysrXCmdYL6Pg9Nc1qNJ8
+         zAtdzZUueZTyMia3bOKcC+8cqPzPryYb5zACq1Tz+0gSXjJOxVsPo8fSrS+4KVc2MLSK
+         4SL9Lda8/bQdVE0zkvmoEzslvLVn9fyGXkUfDpLB7fi1uwt9oX+OLEM/Cf1NdBmTkXCF
+         LaLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=NEf7j7EJd9P7Df5FtSbX7lR7Htq5MRqRWoMxVQ8r/K0=;
-        b=FluT1e34t3pXwW27MkswOqgBA5zBD7j+HA5oPRph6zMZ1oZGdYRcrhKU81umnyJWBn
-         Ldql1Guo/Q+2fJJ5SdZt2+dMxXPJ0TFP0aSrGAzvIoLHsTR6hx3OUUW8mjtNlZBki4QH
-         S4mM5Dk/JQs7qupq2SLJSVMmQqQTI/+SD4+Zkc0xuCwt8XjxStNtGPsQ12Zzmx1ghbo1
-         Uw4y3QG8orqDYS5p409RAdbyKKAMuvZqMwfILAu+nuP5t/ddOi3FpdaPGF2bixDsxZ5p
-         pp5FlSoW3eAdCU+dDYiQzLe1uxxRSGCMKTdrz54qS4VrAQZ783MeDnJgAObjpCXgo0+V
-         g8bw==
-X-Gm-Message-State: ACrzQf1XIPJm3X6pBYlFwBduMRBNZkJpzfL5J37IEroJ/J7r4wrABDil
-        fH3wHP83kSKEyVV65S2+LOouLF2CHtY0Sg==
-X-Google-Smtp-Source: AMsMyM4EHjrO6EmYQnkxuhCygfBZhpQtYATiFRD/Hey0yrkbhfX4F3ekZQea4aSuY22ZKQH0sYevbw==
-X-Received: by 2002:a5d:5644:0:b0:22a:6b69:27f0 with SMTP id j4-20020a5d5644000000b0022a6b6927f0mr22600896wrw.650.1664401442018;
-        Wed, 28 Sep 2022 14:44:02 -0700 (PDT)
+        bh=Y8BhmZH5AcD5sR0X65fMe7O7Q8DdK6Jv1JPYl8VWFjc=;
+        b=b69VDFatrpfS6/AdZ3/AbW1v0k9aBat11XA0oU6aiRdHKiS5jIp7hTcSqgO5mmDoZP
+         uxNrjaKwdd0sGCNFNu06RPgXkIJXltuY2tiFs/WjK6ips/uSjAK2sSVpAJVSLsqtymJs
+         r5Z6+514fg9mckpPToguIrygncBXlqIPmLD+wPuXUFIzagEG873XZ8l8lAfJ+hKyhIcZ
+         /D7/fMXWDLgJ9WJMEop0TW6dgmlleNBZNIeG40aHJkvT47wZqYl9T/pACQTYkZRKNWYE
+         Z6PlnVTBYFckDFDttafYpjHoEQaE51JG0490b83mjggyFZJzS8n2LGSqm7gfomrhqk2L
+         Toww==
+X-Gm-Message-State: ACrzQf1bzDRIRbwjspsvB02wajWXXT+zd3SzsM1hoFFtV/ZnebedTzQX
+        kjaZBXq7G6y1BZiVxuHSo/M=
+X-Google-Smtp-Source: AMsMyM7G4H2NtzDKbo7S+PKWD54yHhOPk2DvlxWMTKeD9KUECeVw+ku6w7fmHsgjCTICsVqppObneQ==
+X-Received: by 2002:a05:600c:42d4:b0:3b3:3de1:7564 with SMTP id j20-20020a05600c42d400b003b33de17564mr45388wme.152.1664401646296;
+        Wed, 28 Sep 2022 14:47:26 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d22-20020a05600c34d600b003b49ab8ff53sm2766952wmq.8.2022.09.28.14.44.01
+        by smtp.gmail.com with ESMTPSA id d15-20020adffd8f000000b00228a6ce17b4sm5103333wrr.37.2022.09.28.14.47.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 14:44:01 -0700 (PDT)
+        Wed, 28 Sep 2022 14:47:25 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+To:     Christoph Hellwig <hch@infradead.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kselftests/sched: Fix spelling mistake "hiearchy" -> "hierarchy"
-Date:   Wed, 28 Sep 2022 22:44:00 +0100
-Message-Id: <20220928214400.64970-1-colin.i.king@gmail.com>
+Subject: [PATCH] freevxfs: Fix spelling mistake "ivalid" -> "invalid"
+Date:   Wed, 28 Sep 2022 22:47:25 +0100
+Message-Id: <20220928214725.65284-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,26 +63,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a printed message. Fix it.
+There is a spelling mistake in a kernel message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- tools/testing/selftests/sched/cs_prctl_test.c | 2 +-
+ fs/freevxfs/vxfs_olt.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
-index 8109b17dc764..62b579b601bf 100644
---- a/tools/testing/selftests/sched/cs_prctl_test.c
-+++ b/tools/testing/selftests/sched/cs_prctl_test.c
-@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
- 	if (setpgid(0, 0) != 0)
- 		handle_error("process group");
+diff --git a/fs/freevxfs/vxfs_olt.c b/fs/freevxfs/vxfs_olt.c
+index 23f35187c289..48027a421fa3 100644
+--- a/fs/freevxfs/vxfs_olt.c
++++ b/fs/freevxfs/vxfs_olt.c
+@@ -63,7 +63,7 @@ vxfs_read_olt(struct super_block *sbp, u_long bsize)
  
--	printf("\n## Create a thread/process/process group hiearchy\n");
-+	printf("\n## Create a thread/process/process group hierarchy\n");
- 	create_processes(num_processes, num_threads, procs);
- 	need_cleanup = 1;
- 	disp_processes(num_processes, procs);
+ 	op = (struct vxfs_olt *)bp->b_data;
+ 	if (fs32_to_cpu(infp, op->olt_magic) != VXFS_OLT_MAGIC) {
+-		printk(KERN_NOTICE "vxfs: ivalid olt magic number\n");
++		printk(KERN_NOTICE "vxfs: invalid olt magic number\n");
+ 		goto fail;
+ 	}
+ 
 -- 
 2.37.1
 
