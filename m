@@ -2,89 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49132C32771
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5F2C32771
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Sep 2022 21:36:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229901AbiI1VfE (ORCPT
+        id S233015AbiI1Vgb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Sep 2022 17:35:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35024 "EHLO
+        Wed, 28 Sep 2022 17:36:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233894AbiI1VfD (ORCPT
+        with ESMTP id S232784AbiI1Vga (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Sep 2022 17:35:03 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 711FE70E53;
-        Wed, 28 Sep 2022 14:35:01 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id n10so21657808wrw.12;
-        Wed, 28 Sep 2022 14:35:01 -0700 (PDT)
+        Wed, 28 Sep 2022 17:36:30 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 754377CAA3
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Sep 2022 14:36:28 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id z2so18986897edi.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Sep 2022 14:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=3onp3j8O2xht1Mn4NDZtmGhylm5ZELoh+VBn79WckKM=;
-        b=hdoMugaoQMvP1hdqmaZ0Nt4Bj8W9qu3RhmgcUzMzot1DmZLmoqa2+vZoylgk3mggYB
-         52onF5RKkVEmlVS+fUI6pa/3r82rnngpQZCIHUFPNgmsQ5UJXzO1ejBCYSR6gTNMpavZ
-         LVFz6ejUPP+PxuON2zSrL0P1nWJPO1lCIV6XU+3nXxyXbgoJB8szOpRHZJES0nN7qrih
-         3yjPTFj3bTPAJASYUxZsuW4GH39GS0dh+YHhs3vTyeUF6Sxzr7bL9ta0xHQ9PhUqUeb5
-         kSnCqswb/ZUnfsDA9Y9G4BEcFyYnjo963DvhXTkHjCsLIrHigEZvWHZWsXBVudNJ8JqN
-         dD1A==
+        bh=yZ5jnLcw8peGxM/ajQkPwsoRi6wSNXlV4d95WWjjKSI=;
+        b=TJaiQudU7/UflGcgNFkElAzy5NaII8aqcOvSKlM3QPc3JD3sHlVC9GnC7AmpJtjVgb
+         9ALliWWYbFKfMTq1cHIWzsM5lM6OA5zDUWm6qe4W4ojkv2QpLlG9C5YOi1bTdGKh3h4c
+         D59OHEElOb4hqta8NzMy4IgCapYg9aL/IoMjW3I9ujlLQPRDjY2zdz7JsOKgbEi821rI
+         +O+BD23GvWh9OTBWN77GW7wSx1863ci69fKF4CpxA2QF1RdOv+5/3a8oihqEZQf8nyI1
+         BbOK7sEKvAGZJENgupIqJWzReM0hL+0ZfRgaDNB0iM8f6N9pEkoLcGkkBfc9Igrv1g4p
+         nq9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=3onp3j8O2xht1Mn4NDZtmGhylm5ZELoh+VBn79WckKM=;
-        b=JCx4V1jJG3i/QcCEbLnwC/IAY1VczGgowRnxTQDq/VUhXYfKz3hl7SdHSXESKTwJvv
-         ZTd2wV76wefRri7VIlxIJGU2Dh8jSKvIg+BL2pi8xfLTXerXnnyk6XuD6j6tCpQNwQ0m
-         jRgUB04YPku+SS1fzc80Y/Uz5jOk8Pu6/ZgRb8c73EQtqpnlUZQ/hsHvZXzy4H4cVcTt
-         g1qi4le5GAv/Dt047xdtXbgDzMFo9h0xPT5Ngvh3NOtPwS4t5siMD+U74lhTLx9Rw3jZ
-         gIfZ6ZzaNsUjSxDkEcK6p02uqti7E4DappdURWm3ePno4lpshqzd92qr/FmJPy0BrgMJ
-         rP+Q==
-X-Gm-Message-State: ACrzQf16Sx1n7LM5zyJYAK3y5KhloLjmyLRp8+WfzgLE4ix6/teWBRYJ
-        ZYdiu5ouxdRbmKDkydI6k/s=
-X-Google-Smtp-Source: AMsMyM7J1n538cpmBb5QEIDVGw+kZAFUdOZB41vWk5QER5yj5NJSPlHhJSWjHcx3bokkGA1GkoA9QQ==
-X-Received: by 2002:a05:6000:1546:b0:22a:b31f:6c8d with SMTP id 6-20020a056000154600b0022ab31f6c8dmr23846315wry.275.1664400899966;
-        Wed, 28 Sep 2022 14:34:59 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p16-20020adfe610000000b00225239d9265sm5269517wrm.74.2022.09.28.14.34.59
+        bh=yZ5jnLcw8peGxM/ajQkPwsoRi6wSNXlV4d95WWjjKSI=;
+        b=2iN0ZU3a/eohBCUCYodkor8xUYHC1NulTGFnjPNv8J3kTHSw+K/irLEkdsF4p1RHGw
+         U93HXvpNYoDrBaCkM1tY3UY7wvG24dtzi2BF/q7gDf5WP8Ss9iclSnzcboWeMNPsKtCg
+         lu9kZqkkmGhMTpWHhmYFNxAPTOMT4sbVhplH3yz1kXBZXR9XZ4b2Ebsgvf4eAj5Ht7wC
+         +wP3C2G4no1KzOeWy0axsmaZkV38JF6g5zVkNxhe0LAYUHmXXW5VsRb83GgbCJnkCGt3
+         /viJeFrgTCl+NSNCwqhBwmcwXMps4sstIsvZQoNXDhd4ssB3+t9quuLwPsCICh9LJEuR
+         sz6w==
+X-Gm-Message-State: ACrzQf3rszMsX+JbGS+pQsfPqKUWwYlfCWbwBONi9f5+XXdwEemmHoKl
+        4d2kYcxzDy2NroZd0DHvW/FbAo7g908=
+X-Google-Smtp-Source: AMsMyM4GU9aiGpg8t0NzuAr5Uoimx8jONs+vsZ3iZqLaG1IsrRFmOVQgXHw8b/Z7o9Q+halHW2vzuA==
+X-Received: by 2002:aa7:d3d9:0:b0:458:16a9:5811 with SMTP id o25-20020aa7d3d9000000b0045816a95811mr33725edr.286.1664400986991;
+        Wed, 28 Sep 2022 14:36:26 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:810d:6e40:e18:7e7c:1993:f196:df58])
+        by smtp.gmail.com with ESMTPSA id ty27-20020a170907c71b00b0074ae59d85a4sm2828715ejc.20.2022.09.28.14.36.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 14:34:59 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: selftests: Fix spelling mistake "begining" -> "beginning"
-Date:   Wed, 28 Sep 2022 22:34:58 +0100
-Message-Id: <20220928213458.64089-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+        Wed, 28 Sep 2022 14:36:26 -0700 (PDT)
+From:   Markus Fuchs <mklntf@gmail.com>
+To:     kernel-janitors@vger.kernel.org
+Cc:     Markus Fuchs <mklntf@gmail.com>
+Subject: [PATCH] scsi: ufs: Remove unneeded casts from void *
+Date:   Wed, 28 Sep 2022 23:36:16 +0200
+Message-Id: <20220928213616.127269-1-mklntf@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an asset message. Fix it.
+The end_io_data member of the "struct request" type has type "void *", so no
+cast is necessary.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Markus Fuchs <mklntf@gmail.com>
 ---
- tools/testing/selftests/kvm/lib/elf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hello,
 
-diff --git a/tools/testing/selftests/kvm/lib/elf.c b/tools/testing/selftests/kvm/lib/elf.c
-index 9f54c098d9d0..d71a9a5974de 100644
---- a/tools/testing/selftests/kvm/lib/elf.c
-+++ b/tools/testing/selftests/kvm/lib/elf.c
-@@ -138,7 +138,7 @@ void kvm_vm_elf_load(struct kvm_vm *vm, const char *filename)
- 		offset = hdr.e_phoff + (n1 * hdr.e_phentsize);
- 		offset_rv = lseek(fd, offset, SEEK_SET);
- 		TEST_ASSERT(offset_rv == offset,
--			"Failed to seek to begining of program header %u,\n"
-+			"Failed to seek to beginning of program header %u,\n"
- 			"  filename: %s\n"
- 			"  rv: %jd errno: %i",
- 			n1, filename, (intmax_t) offset_rv, errno);
+I try to follow the guide on https://kernelnewbies.org/KernelJanitors/Todo and
+therefor send this patch.
+
+Regards,
+Markus
+
+ drivers/ufs/core/ufshpb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ufs/core/ufshpb.c b/drivers/ufs/core/ufshpb.c
+index a1a7a1175a5a..0ce5063bedc5 100644
+--- a/drivers/ufs/core/ufshpb.c
++++ b/drivers/ufs/core/ufshpb.c
+@@ -615,14 +615,14 @@ static void ufshpb_activate_subregion(struct ufshpb_lu *hpb,
+ 
+ static void ufshpb_umap_req_compl_fn(struct request *req, blk_status_t error)
+ {
+-	struct ufshpb_req *umap_req = (struct ufshpb_req *)req->end_io_data;
++	struct ufshpb_req *umap_req = req->end_io_data;
+ 
+ 	ufshpb_put_req(umap_req->hpb, umap_req);
+ }
+ 
+ static void ufshpb_map_req_compl_fn(struct request *req, blk_status_t error)
+ {
+-	struct ufshpb_req *map_req = (struct ufshpb_req *) req->end_io_data;
++	struct ufshpb_req *map_req = req->end_io_data;
+ 	struct ufshpb_lu *hpb = map_req->hpb;
+ 	struct ufshpb_subregion *srgn;
+ 	unsigned long flags;
 -- 
-2.37.1
+2.37.3
 
