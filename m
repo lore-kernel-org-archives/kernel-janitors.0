@@ -2,66 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10962C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 10:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E47C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 10:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234904AbiI2KUP (ORCPT
+        id S234515AbiI2KmL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 06:20:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50592 "EHLO
+        Thu, 29 Sep 2022 06:42:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235415AbiI2KTm (ORCPT
+        with ESMTP id S230341AbiI2KmJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 06:19:42 -0400
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38FB2EE0F;
-        Thu, 29 Sep 2022 03:19:39 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id g23so475748qtu.2;
-        Thu, 29 Sep 2022 03:19:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=8GLG7G2DpP05n4xk1niTNKCRQjlEFDZ0ccIwrCXFgQA=;
-        b=k2vqzLW/HsoWhWIq/V2jZO8/HE7h7dLgTYzJuIi0vNvME7lCpX5rgPXMgYwHjsxqss
-         jmcxMth+GEonyN12lSCx+/Nj7LHSPWx6Ir1FgnPUwsicZQ3fDCiACvkAqVSoOxlN9Q+I
-         xQMdidjl0NQOaLFayVE98NnHm/kvrjnx6TQUNl48plEBwfc8Nt3clZxIwIXhAhERp3UF
-         IcRR38Ga5QFbevStQCj7Pux7mhi3pIOPDh7lzf0BBcu9w7EKNvf+VIURIN1gMIGEl5gA
-         eWWGN7bI9y8suPzU5DghLmtDePaFL37hNN9u4Vu+xA2ssOYeZS63wizgFqbfO9Ry5LNX
-         Llfg==
-X-Gm-Message-State: ACrzQf0qgrRHm9qJDsWqRTBIXAxPjMbvt0Ba+NPX+XrmjZFLVbQwxroD
-        6xl/3hFREj7sujBd5SxiuWsyp260ChxgNw==
-X-Google-Smtp-Source: AMsMyM7ZHy3F6fA0JxaZxnbWD4g7bd/3nDAM4SaBww9vvEKZ4p2h7X7WgYB3MV4/1qmTdvoAhJO+PQ==
-X-Received: by 2002:a05:622a:1a01:b0:35b:a454:dd01 with SMTP id f1-20020a05622a1a0100b0035ba454dd01mr1704917qtb.350.1664446778653;
-        Thu, 29 Sep 2022 03:19:38 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id y123-20020a379681000000b006aedb35d8a1sm5506595qkd.74.2022.09.29.03.19.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Sep 2022 03:19:38 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-349c4310cf7so9811867b3.3;
-        Thu, 29 Sep 2022 03:19:38 -0700 (PDT)
-X-Received: by 2002:a81:5a57:0:b0:353:6de6:3263 with SMTP id
- o84-20020a815a57000000b003536de63263mr2384552ywb.358.1664446777926; Thu, 29
- Sep 2022 03:19:37 -0700 (PDT)
+        Thu, 29 Sep 2022 06:42:09 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8599BF8FB1;
+        Thu, 29 Sep 2022 03:42:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 44025B823EE;
+        Thu, 29 Sep 2022 10:42:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D36E8C43470;
+        Thu, 29 Sep 2022 10:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664448125;
+        bh=UX6F5JaSgdh8DRHxfcjhKJy1RLXU9YsBvv2vTzpPVM8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=kzU1ZrtGrAK8NJ6HnoBJhey4y/GdilTJ1bsV9MuRpbl36FsmshescEe0hoSyI0F+R
+         oq+EY612FKGXtBqjNoVVRUYQeI/0ENap7eumxNTueiPT5/Likzad62v0AKjUR0SF27
+         QSNVRTxVA3p4P1WCS+YuSdITR2y9kZ4tdw1H7XMy7VwyQOBxAIlgEjkZ8zDTnNTRjv
+         humjPH05Nhr+dGT6Cu1MGpptZj/STSOH9UcEDTlnlrgsqJQvE/j3pPgNLe4/2VituP
+         M7DBCPRte7vBLq77c8Pte9cAwRJLYOiGfxdc8nRUN2vadVbGutN8QT4H5UV0pjUO7N
+         NcwTrAj533U4w==
+Received: by mail-ua1-f45.google.com with SMTP id p89so336254uap.12;
+        Thu, 29 Sep 2022 03:42:05 -0700 (PDT)
+X-Gm-Message-State: ACrzQf24tJ8u7XaIjGyqnum9JXiWExBS/GFEP8iyBL1Bw8kzo7KD0ic/
+        dibzMITdmD5RBk28XKusDHbwRQmmswJ/ga28Yi8=
+X-Google-Smtp-Source: AMsMyM7NSDSfn86kitr0d70mZwbZa7orK8H30PiB54tA6KPsmV8su+U4TUaBbU63hJXeVxIA8j8mNk8Wv/zFyE7iAX0=
+X-Received: by 2002:a05:6130:c13:b0:39f:58bb:d51c with SMTP id
+ cg19-20020a0561300c1300b0039f58bbd51cmr1248782uab.104.1664448124801; Thu, 29
+ Sep 2022 03:42:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220929101448.32177-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220929101448.32177-1-lukas.bulwahn@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 29 Sep 2022 12:19:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWwrUKc-o1i85n=BWDutYBS1LSwhZdkXME6hWw+7bmhsw@mail.gmail.com>
-Message-ID: <CAMuHMdWwrUKc-o1i85n=BWDutYBS1LSwhZdkXME6hWw+7bmhsw@mail.gmail.com>
-Subject: Re: [PATCH] m68k: update config files
+References: <20220929101445.32124-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220929101445.32124-1-lukas.bulwahn@gmail.com>
+From:   Huacai Chen <chenhuacai@kernel.org>
+Date:   Thu, 29 Sep 2022 18:41:54 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6xe4o0upxcQTN=8BeDdcDipmoRp+QQNiakJJZ_eneTxg@mail.gmail.com>
+Message-ID: <CAAhV-H6xe4o0upxcQTN=8BeDdcDipmoRp+QQNiakJJZ_eneTxg@mail.gmail.com>
+Subject: Re: [PATCH] loongarch: update config files
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, Greg Ungerer <gerg@linux-m68k.org>
+        WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-CC Greg, as these are all coldfire or nommu defconfigs
+Hi, Lukas,
 
-On Thu, Sep 29, 2022 at 12:14 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+Thank you for your patch, it is queued for loongarch-next, and may be
+squashed to another patch with your S-o-B if you have no objections.
+
+Huacai
+
+On Thu, Sep 29, 2022 at 6:14 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
 > Clean up config files by:
 >   - removing configs that were deleted in the past
@@ -74,120 +77,68 @@ On Thu, Sep 29, 2022 at 12:14 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  arch/m68k/configs/amcore_defconfig   | 4 ----
->  arch/m68k/configs/m5208evb_defconfig | 3 ---
->  arch/m68k/configs/m5249evb_defconfig | 3 ---
->  arch/m68k/configs/m5272c3_defconfig  | 3 ---
->  arch/m68k/configs/m5275evb_defconfig | 3 ---
->  arch/m68k/configs/m5307c3_defconfig  | 3 ---
->  arch/m68k/configs/m5407c3_defconfig  | 3 ---
->  7 files changed, 22 deletions(-)
+>  arch/loongarch/configs/loongson3_defconfig | 7 -------
+>  1 file changed, 7 deletions(-)
 >
-> diff --git a/arch/m68k/configs/amcore_defconfig b/arch/m68k/configs/amcore_defconfig
-> index 6d9ed2198170..041adcf6ecfc 100644
-> --- a/arch/m68k/configs/amcore_defconfig
-> +++ b/arch/m68k/configs/amcore_defconfig
-> @@ -27,9 +27,6 @@ CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
->  CONFIG_SYN_COOKIES=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_IPV6 is not set
->  # CONFIG_WIRELESS is not set
->  # CONFIG_UEVENT_HELPER is not set
-> @@ -85,7 +82,6 @@ CONFIG_ROMFS_FS=y
->  CONFIG_ROMFS_BACKED_BY_BOTH=y
->  # CONFIG_NETWORK_FILESYSTEMS is not set
->  CONFIG_PRINTK_TIME=y
-> -# CONFIG_ENABLE_MUST_CHECK is not set
->  # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
->  CONFIG_PANIC_ON_OOPS=y
->  # CONFIG_SCHED_DEBUG is not set
-> diff --git a/arch/m68k/configs/m5208evb_defconfig b/arch/m68k/configs/m5208evb_defconfig
-> index 0ee3079f6ca9..31035a0b9247 100644
-> --- a/arch/m68k/configs/m5208evb_defconfig
-> +++ b/arch/m68k/configs/m5208evb_defconfig
-> @@ -21,9 +21,6 @@ CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_INET_DIAG is not set
->  # CONFIG_IPV6 is not set
->  # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5249evb_defconfig b/arch/m68k/configs/m5249evb_defconfig
-> index f84f68c04065..5706d7a1daba 100644
-> --- a/arch/m68k/configs/m5249evb_defconfig
-> +++ b/arch/m68k/configs/m5249evb_defconfig
-> @@ -22,9 +22,6 @@ CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_INET_DIAG is not set
->  # CONFIG_IPV6 is not set
->  # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5272c3_defconfig b/arch/m68k/configs/m5272c3_defconfig
-> index eca65020aae3..f02fe144f4ad 100644
-> --- a/arch/m68k/configs/m5272c3_defconfig
-> +++ b/arch/m68k/configs/m5272c3_defconfig
-> @@ -22,9 +22,6 @@ CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_INET_DIAG is not set
->  # CONFIG_IPV6 is not set
->  # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5275evb_defconfig b/arch/m68k/configs/m5275evb_defconfig
-> index 9402c7a3e9c7..781f307ff330 100644
-> --- a/arch/m68k/configs/m5275evb_defconfig
-> +++ b/arch/m68k/configs/m5275evb_defconfig
-> @@ -22,9 +22,6 @@ CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_INET_DIAG is not set
->  # CONFIG_IPV6 is not set
->  # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5307c3_defconfig b/arch/m68k/configs/m5307c3_defconfig
-> index bb8b0eb4bdfc..6eac482356ca 100644
-> --- a/arch/m68k/configs/m5307c3_defconfig
-> +++ b/arch/m68k/configs/m5307c3_defconfig
-> @@ -22,9 +22,6 @@ CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_INET_DIAG is not set
->  # CONFIG_IPV6 is not set
->  # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5407c3_defconfig b/arch/m68k/configs/m5407c3_defconfig
-> index ce9ccf13c7c0..496dcccb1c18 100644
-> --- a/arch/m68k/configs/m5407c3_defconfig
-> +++ b/arch/m68k/configs/m5407c3_defconfig
-> @@ -23,9 +23,6 @@ CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_INET_DIAG is not set
->  # CONFIG_IPV6 is not set
->  # CONFIG_FW_LOADER is not set
+> diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
+> index 3712552e18d3..2b4220778b66 100644
+> --- a/arch/loongarch/configs/loongson3_defconfig
+> +++ b/arch/loongarch/configs/loongson3_defconfig
+> @@ -108,14 +108,12 @@ CONFIG_NETFILTER=y
+>  CONFIG_BRIDGE_NETFILTER=m
+>  CONFIG_NETFILTER_NETLINK_LOG=m
+>  CONFIG_NF_CONNTRACK=m
+> -CONFIG_NF_LOG_NETDEV=m
+>  CONFIG_NF_CONNTRACK_AMANDA=m
+>  CONFIG_NF_CONNTRACK_FTP=m
+>  CONFIG_NF_CONNTRACK_NETBIOS_NS=m
+>  CONFIG_NF_CONNTRACK_TFTP=m
+>  CONFIG_NF_CT_NETLINK=m
+>  CONFIG_NF_TABLES=m
+> -CONFIG_NFT_COUNTER=m
+>  CONFIG_NFT_CONNLIMIT=m
+>  CONFIG_NFT_LOG=m
+>  CONFIG_NFT_LIMIT=m
+> @@ -329,7 +327,6 @@ CONFIG_PARPORT_PC_FIFO=y
+>  CONFIG_ZRAM=m
+>  CONFIG_ZRAM_DEF_COMP_ZSTD=y
+>  CONFIG_BLK_DEV_LOOP=y
+> -CONFIG_BLK_DEV_CRYPTOLOOP=y
+>  CONFIG_BLK_DEV_NBD=m
+>  CONFIG_BLK_DEV_RAM=y
+>  CONFIG_BLK_DEV_RAM_SIZE=8192
+> @@ -505,7 +502,6 @@ CONFIG_ATH9K_HTC=m
+>  CONFIG_IWLWIFI=m
+>  CONFIG_IWLDVM=m
+>  CONFIG_IWLMVM=m
+> -CONFIG_IWLWIFI_BCAST_FILTERING=y
+>  CONFIG_HOSTAP=m
+>  CONFIG_MT7601U=m
+>  CONFIG_RT2X00=m
+> @@ -688,7 +684,6 @@ CONFIG_COMEDI_NI_PCIDIO=m
+>  CONFIG_COMEDI_NI_PCIMIO=m
+>  CONFIG_STAGING=y
+>  CONFIG_R8188EU=m
+> -# CONFIG_88EU_AP_MODE is not set
+>  CONFIG_PM_DEVFREQ=y
+>  CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
+>  CONFIG_DEVFREQ_GOV_PERFORMANCE=y
+> @@ -772,14 +767,12 @@ CONFIG_CRYPTO_CRYPTD=m
+>  CONFIG_CRYPTO_CHACHA20POLY1305=m
+>  CONFIG_CRYPTO_HMAC=y
+>  CONFIG_CRYPTO_VMAC=m
+> -CONFIG_CRYPTO_TGR192=m
+>  CONFIG_CRYPTO_WP512=m
+>  CONFIG_CRYPTO_ANUBIS=m
+>  CONFIG_CRYPTO_BLOWFISH=m
+>  CONFIG_CRYPTO_CAST5=m
+>  CONFIG_CRYPTO_CAST6=m
+>  CONFIG_CRYPTO_KHAZAD=m
+> -CONFIG_CRYPTO_SALSA20=m
+>  CONFIG_CRYPTO_SEED=m
+>  CONFIG_CRYPTO_SERPENT=m
+>  CONFIG_CRYPTO_TEA=m
 > --
 > 2.17.1
+>
+>
