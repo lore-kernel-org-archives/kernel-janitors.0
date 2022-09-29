@@ -2,69 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADE2C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 09:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF63C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 10:14:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234987AbiI2JZd (ORCPT
+        id S235056AbiI2KOY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 05:25:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45222 "EHLO
+        Thu, 29 Sep 2022 06:14:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234886AbiI2JZ1 (ORCPT
+        with ESMTP id S233587AbiI2KOX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 05:25:27 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A0C676971;
-        Thu, 29 Sep 2022 02:25:24 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8446366022B4;
-        Thu, 29 Sep 2022 10:25:22 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664443523;
-        bh=qCJlWCzZUOjlbWhUBr+CjY4sGdMeJ1qenSLOO28pr3Y=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=LO/GFqKuGCASvKu0rA1gy3hLof1Q7Ud3Oy1HSNPRtfDtnfSyP/cg6zkjBtI9uJJmH
-         b0+rhEmqlTR36W5AeatLZSTYpKtwXueOCXLuX2OCLIV6oF2I7GwcUi+G5tPxzSS96P
-         X7mnXMU766MFUsCwZSXr/IUjvD++RJy3h4EtWX+2K7AMjNX4az3cd5GuhTF7dHv4aj
-         Me9R0v8J2MdFArLgh928AQzFcfbf8owpK8jUFt1AWSWmubcK6NIolsse3jgVf2cUiX
-         ETRIdFG9wb7rkFWn3sEj+7ar2mJAf+iVYgSPt9o5dF/tQnrhB/GzzNabNSLeAMRXgZ
-         5Q0ICPrtRx1Zw==
-Message-ID: <aed50d17-3010-a5ee-a19d-14bfe5e6ac3d@collabora.com>
-Date:   Thu, 29 Sep 2022 11:25:20 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] ASoC: mediatek: mt8186: Fix spelling mistake "slect" ->
- "select"
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220928220417.66799-1-colin.i.king@gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220928220417.66799-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Sep 2022 06:14:23 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A42251497BB;
+        Thu, 29 Sep 2022 03:14:22 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id n10so1378644wrw.12;
+        Thu, 29 Sep 2022 03:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=+1jb+nfNrrfT47twFWxXKdVM9Wqmz0pwBbN3bVcD7Sc=;
+        b=RMlq4j0v9c9V68QmGp8qPZAxlNF0r+I8ps9TEAfWeSlPwqYQmFZOHMNm9WKzaZpiqP
+         BUIhBp8izAt+eC5a4STiG0cb+/G7vOoeb0iyb2Kc6HXq+NQ7fsfD3meT+CNgHhFWM89i
+         wPpn6fiZC9ftYmg1ZuNZ2V5Bb260mXiEg6zuV/iSW0KpUXVX8UCOE/fj6PpAGFm3qRyb
+         PjzHirM3LoRUVT1kiX87w9n0TzKpEnR0zqVwtve1amKwIDotfT2hVPcF3Z44+WAteO3u
+         +M3stm9d/ZbwwsJ2ePE0FIy16K8mjCNT8L8Gm2+tR73iP6wUUoZhfVTTXna89fl+DPe8
+         j7Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=+1jb+nfNrrfT47twFWxXKdVM9Wqmz0pwBbN3bVcD7Sc=;
+        b=0D6p9Rkw/g8p48h6R6xJeqdQ1rSWoknkWqBInLMNr8C9+WYJ6lcELIN2otdHvUf3ht
+         /x+GctBTexScldit9LEUoD4vEU19nib0QzbbqxN39gt/Ui7xpZH59D6o8eQLktauC2Tm
+         7fMd0kNClHkG5Z1kfhB45v8nyHfpE9Ml/4m0q+hyION4jKI3CGDgEoX+k4gsaYM/jTM/
+         aasrUgMJgZ1gRzombccRl3tR1qwvib+jIJr3APNpy7WBu6NWLPKAZubCWnXjrx5oLoIY
+         lYuKnUcC1aaTIJF01z8pBHrR0Sya9Lzfc9gMyO5wkC7bU/nwB0d933pIzJ0/SKwQ64w9
+         IiQA==
+X-Gm-Message-State: ACrzQf1WFb9UUrjgQMVPi24yzjLd/sSD5ArPToBNUkEAkExT7zEINK6G
+        c5dPrDdHCIn+Mr/Nl/BUzGy29mJQFD4=
+X-Google-Smtp-Source: AMsMyM4a1ThGMdCDyv5qN2IGEoba4iQiJVnd/J0gYcyaFj6lXbzwvbWw0eoSyfdTgL9jGkocyMNbVg==
+X-Received: by 2002:a05:6000:1c1c:b0:228:de40:986f with SMTP id ba28-20020a0560001c1c00b00228de40986fmr1688955wrb.212.1664446460813;
+        Thu, 29 Sep 2022 03:14:20 -0700 (PDT)
+Received: from felia.fritz.box (200116b826e11200b190ebfd45660ea6.dip.versatel-1u1.de. [2001:16b8:26e1:1200:b190:ebfd:4566:ea6])
+        by smtp.gmail.com with ESMTPSA id g14-20020adfe40e000000b0022ae8b862a7sm6233187wrm.35.2022.09.29.03.14.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Sep 2022 03:14:20 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] alpha: update config files
+Date:   Thu, 29 Sep 2022 12:13:29 +0200
+Message-Id: <20220929101329.31036-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 29/09/22 00:04, Colin Ian King ha scritto:
-> There are some spelling mistakes in dev_err messages. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Clean up config files by:
+  - removing configs that were deleted in the past
+  - removing configs not in tree and without recently pending patches
+  - adding new configs that are replacements for old configs in the file
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+For some detailed information, see Link.
 
+Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ arch/alpha/configs/defconfig | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/alpha/configs/defconfig b/arch/alpha/configs/defconfig
+index 6a39fe8ce9e5..1816c1dc22b1 100644
+--- a/arch/alpha/configs/defconfig
++++ b/arch/alpha/configs/defconfig
+@@ -39,14 +39,12 @@ CONFIG_PATA_CYPRESS=y
+ CONFIG_ATA_GENERIC=y
+ CONFIG_NETDEVICES=y
+ CONFIG_DUMMY=m
+-CONFIG_NET_ETHERNET=y
+ CONFIG_NET_VENDOR_3COM=y
+ CONFIG_VORTEX=y
+ CONFIG_NET_TULIP=y
+ CONFIG_DE2104X=m
+ CONFIG_TULIP=y
+ CONFIG_TULIP_MMIO=y
+-CONFIG_NET_PCI=y
+ CONFIG_YELLOWFIN=y
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+-- 
+2.17.1
 
