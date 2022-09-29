@@ -2,57 +2,57 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD2AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 23:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4F9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 23:39:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbiI2Xgc (ORCPT
+        id S229712AbiI2XjX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 19:36:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46352 "EHLO
+        Thu, 29 Sep 2022 19:39:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbiI2Xgb (ORCPT
+        with ESMTP id S229506AbiI2XjW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 19:36:31 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C16914D338
-        for <kernel-janitors@vger.kernel.org>; Thu, 29 Sep 2022 16:36:30 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id f193so2780257pgc.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 29 Sep 2022 16:36:30 -0700 (PDT)
+        Thu, 29 Sep 2022 19:39:22 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A29114F8E7
+        for <kernel-janitors@vger.kernel.org>; Thu, 29 Sep 2022 16:39:21 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id x32-20020a17090a38a300b00209dced49cfso192412pjb.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 29 Sep 2022 16:39:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=Xbz67oZK82CtGclYCJkU8C5apLwvJO6ocDW2GQnKsP0=;
-        b=AUn3kZDM5lNvy5m2+3Ts9Kl9mS+Bt4VFAtsVryc4ezGL1WMAmzOAlrP87i9nHVp7A5
-         VZZypx1I4Z/tOJTTDsGmlHyxag27HLBJi+gMYjZEt7Tg9PggmlXUdJpR0sRwSOp2Ab7O
-         cqN4IvhgOSoj5j1zwMctOnj01LrTNiFVO6lJo=
+        bh=406PHi1E3zQxmMChBF9K8IG+zjCzhZM2d2hHmY4Q4BA=;
+        b=cgJgHsUAGCFMQ3CFDi3AgcrQiOvlEV35DecVLMmwLMl3Mdex18zzkKu24C3g+oYUwQ
+         ukCPFcotbaV/BQzlbkBhRM+bc9mGQ6dyCFZWcSLWR25OPAR8PrOXVwhT+RUET4sjXMF0
+         nw7RCJvzf1x3Ti9JDeG3d3bCcjISPfBUfs/vU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=Xbz67oZK82CtGclYCJkU8C5apLwvJO6ocDW2GQnKsP0=;
-        b=X7tQwuKxrGdeUFObUrOJ4bxz/O3aoHUrMAbqq4jDYhb2y490g0M/9hor9+gZOEX0vG
-         9o/fNQpZPb5jXtg0hmwaj1UHT3YbsRPPY9cqU2tiXFT8yRBhhfbf85GYV5IrhxQGnfR5
-         Rv/77SLbc/71Yh9R7o9PTS5r/48pGyETohxXwzZBh9xixtATMoVycWWblYifExFmhmIg
-         ndfNpI+0v860uBldP4dNh5ctC62uQ8a/6R+JVaYfmfpU7JUWhBf2udT27l6I+s5LtD41
-         a+YFN2fotS+WiVvtF0D39A145tJiTe4TrCb5xymyG46bWJhzuIcRDrf2vc9+RCKbNRi6
-         9yiQ==
-X-Gm-Message-State: ACrzQf2KE+fITkekdmNFn291Ru+UxG1oxfhaKXtR8yYnJtw+bzh3bNt2
-        GPTGAeAAub4/qizCROAVdXw/Nw==
-X-Google-Smtp-Source: AMsMyM5unEH1nAScJeckvDRNethcxnyDUrHMMmmroXgAknht8ekkwWtouSRGGxJA4MKsFbroz9alPw==
-X-Received: by 2002:a63:f518:0:b0:43c:403:9833 with SMTP id w24-20020a63f518000000b0043c04039833mr4829720pgh.461.1664494589889;
-        Thu, 29 Sep 2022 16:36:29 -0700 (PDT)
+        bh=406PHi1E3zQxmMChBF9K8IG+zjCzhZM2d2hHmY4Q4BA=;
+        b=aZFfWhgG1Ms7FU/3Inm40wlM9kMRTPCXJd9wqIBi+VLJhVwZraX0HjiAZv4jDS6Kzy
+         eTPNOy6x1KXe+7kh/lNIBCpedyZnasKtgOhH/b7Efa8saiyVqz8O/T477jSX1jF/U1ZG
+         EljZ4QwxH9/wRa3IsqYh+C2wA3+WYV8jINV7mMnBxMc7DsZK6b2TuEf7a55lk21VjYTa
+         hzEAUxk77tDB+G3E42YWmb4yGJknqhiW9Gi5GAYebpIWDufuZwMvvcdKbOVlCIFjjTBd
+         yRoulcumFyEVvWWtbBoEA/mqxqhPv6s56Nbdia7yul4CS9T8O7Uyqy+p3lJROYb0vJjj
+         9TBg==
+X-Gm-Message-State: ACrzQf0tw4xfucuVTGytY7Rk0c9sKFYis+1/xn4LHaSRqtuNt+O8fot8
+        u8pZPj9i1Ji0UHS7j75wj7FGPQ==
+X-Google-Smtp-Source: AMsMyM4zpLGflr4v7oe8USvwOdE1CTEZ8QnadhucyD+2vGwk217VqucBLy0urdyL+4oHeHdsyaYTrg==
+X-Received: by 2002:a17:902:a606:b0:178:57e4:a0c1 with SMTP id u6-20020a170902a60600b0017857e4a0c1mr5805722plq.83.1664494760865;
+        Thu, 29 Sep 2022 16:39:20 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id ij28-20020a170902ab5c00b00178af82a000sm452969plb.122.2022.09.29.16.36.28
+        by smtp.gmail.com with ESMTPSA id s13-20020a17090302cd00b00172dc6e1916sm427601plk.220.2022.09.29.16.39.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 16:36:29 -0700 (PDT)
-Date:   Thu, 29 Sep 2022 16:36:28 -0700
+        Thu, 29 Sep 2022 16:39:20 -0700 (PDT)
+Date:   Thu, 29 Sep 2022 16:39:19 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-mm@kvack.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] binfmt: remove taso from linux_binprm struct
-Message-ID: <202209291635.EA24FCEA@keescook>
+Message-ID: <202209291638.BD0B8639@keescook>
 References: <20220929203903.9475-1-lukas.bulwahn@gmail.com>
  <87tu4p3jwn.fsf@email.froward.int.ebiederm.org>
 MIME-Version: 1.0
@@ -79,7 +79,8 @@ On Thu, Sep 29, 2022 at 05:17:28PM -0500, Eric W. Biederman wrote:
 > Alphas binfmt_loader is the only use I can find of that variable
 > so let's kill it as well.
 
-I can't find anything using "taso". Where are you looking?
+Ah, sorry, misparsed this -- you mean, alpha's use (now removed) was the
+only place it was accessed. Agreed. :)
 
 -- 
 Kees Cook
