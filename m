@@ -2,86 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66375C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 12:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E99EAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 12:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234880AbiI2MaY (ORCPT
+        id S235236AbiI2MfE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 08:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44724 "EHLO
+        Thu, 29 Sep 2022 08:35:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234300AbiI2MaP (ORCPT
+        with ESMTP id S235025AbiI2MfB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 08:30:15 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 852BA67165;
-        Thu, 29 Sep 2022 05:30:13 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id e18so1762626edj.3;
-        Thu, 29 Sep 2022 05:30:13 -0700 (PDT)
+        Thu, 29 Sep 2022 08:35:01 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B8FF8589;
+        Thu, 29 Sep 2022 05:34:59 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id x92so1753509ede.9;
+        Thu, 29 Sep 2022 05:34:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=doOtCXgO4NsKO2q8zCE4t9lVhtNbFd/oRmxWEjStvkw=;
-        b=VFDzQSmojqh3HVvwqpRJZly3/YPdl2l4AYyEHz/A9cGT3M79EQm2oJpYxpu23VX3VP
-         SNKfu26dq4lf/DfAnyruBhFqYoW7E2zFuPwYu4v+m4bgnVWgXAKtMVJwXLo/vdGmsntR
-         gBCI3Qy1j4Rp7NaA/scg9Z0VF+/YWUvAsabls25dQYi7pHc0L2roMMUhiFkwNaUENOAn
-         pCVyb0sQhPfiK8KQRM/KivTGE8jnS3Aw4Sl733vsJclcduCtfo0noPrpt93Tmo3rKTiX
-         yV4qYweM7pr0KKwTk9fJsb8SLHYS50V6A8MbWbggurRA1ORekqHPWldEGRijcms1VTRO
-         7QTQ==
+        bh=G1eJs3Mljaulp10lM3s9KZwUJhSiD5Z54QoCFft9nj0=;
+        b=QjlvRE6HJ+8CONd62XKDkJ/YO+eolaQgiqltwxHKFo55/Sn56h5/VJVJsVTfyNXPo/
+         VpHg5bIlPfbFcPbx7tiVYP4w/SxBbyP8/L+TBnn28aD/wkwxId9Ndxz4lbSIqivrz1wG
+         KeBXVklYXhyTTHZCjMIghKCDJISc0R4H2dP/Q/d4CJIWgUzDhrXJehlxPCJiNB9nKPUy
+         00z0h7tJ3Bs93OlpkQ6PsiMZfrSTJxYtwfPGwDGawvgIOkp+VOLilccvdAB0SCM6RGD5
+         ESBqJjqzMPPiPmuHj5FTt/9vPN2FW70qWJRQD+/PshqhyJEh15thqc59WBK3d7atlBm9
+         +Fcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=doOtCXgO4NsKO2q8zCE4t9lVhtNbFd/oRmxWEjStvkw=;
-        b=sQGnOPEYDrLTG6qdbzDKuuOkt9XZv0kcdSFZRA9EGsc/lLmky4Hrs5o2icktQ4L8yr
-         K3wSI4v3QgHLzLSfNvONsBMQZxHh3RDoeJBqxoZPba8SfQLHzJv7HaiXMDBoKETOeTG2
-         2ku4PwXe3itcZ33TqQvLcxVP3rTA/1nhWrBOd+0DOFB9wzU/rPVG9/X2ysKgA+NnWzhl
-         l8FgZVOrxFzTq+g1PW7OtObDNcJjcoWog1NJwgaEXQFWbHuwhzkWtiYssG+5u8Di/vtc
-         qiq4vIPGZM5/DC7wnOQ1HtbMb/Mggm0FDtuRGctUXUGVqTF271T5ueYrN0T2fNfemCAq
-         iBGQ==
-X-Gm-Message-State: ACrzQf1lQOFw1w14mIMEiKZ+6U0iVm3vMzXwfq7MjNCmBdUEWqgnDItB
-        +W7+Le7/YjJBk3yjs9Zje1nJ5q5knT8WXw==
-X-Google-Smtp-Source: AMsMyM4ZRTK1JaIi4w8rn1jAqV6lVPGsm4oqpmZO5OroujYNHOBruXG9Vk2lwxIQe2At8h5wigoPDA==
-X-Received: by 2002:a05:6402:34cf:b0:454:53ae:6e83 with SMTP id w15-20020a05640234cf00b0045453ae6e83mr3101158edc.80.1664454611978;
-        Thu, 29 Sep 2022 05:30:11 -0700 (PDT)
+        bh=G1eJs3Mljaulp10lM3s9KZwUJhSiD5Z54QoCFft9nj0=;
+        b=yv5T0m9X1X929mkhzTbO2A72383yrB7hFjNZjgqCiOG5RYFfngX86o1mHrFEGHskxO
+         orNj9N9VvOuyiXaq2ZZ8woLPtOsiECcdELcjbH/Y+77HxZwRpr+3LamvOzvyyQ2nPIgr
+         lToQtQ8kVlhY1B42Y1WghuaiPVV7oEV6ECSgA+ZgKigd+F2sKm2+Wvu8tq9gx5rLNPWW
+         B35/iux+2AzJUhQgPmS+nB+RHAP4TsrPBOkZrO0mowLKCSt4IMVUEpxhn8aZRTxb48tV
+         9WPJ/536c8kNSoyz7HN4sjGl172IK/nCUlpgdkFynDhc7+S5DAMwQqSU9/wya3sGUX6r
+         BPhg==
+X-Gm-Message-State: ACrzQf26Uvv74MSsk1fUowY7NdSL5sghvkIyhSlTl+myXrhovomylpvW
+        Q4pqvG6UMpOWH0wgNZxT/78=
+X-Google-Smtp-Source: AMsMyM7ML/RyoD8oE90RBpNhAwROpSdGmW5R4R5Fdokjsu3StGo9bExGOLdoXvYBGAVhLFTZ6A9SAQ==
+X-Received: by 2002:a05:6402:2549:b0:452:8292:b610 with SMTP id l9-20020a056402254900b004528292b610mr3142739edb.199.1664454898120;
+        Thu, 29 Sep 2022 05:34:58 -0700 (PDT)
 Received: from felia.fritz.box (200116b826e11200b190ebfd45660ea6.dip.versatel-1u1.de. [2001:16b8:26e1:1200:b190:ebfd:4566:ea6])
-        by smtp.gmail.com with ESMTPSA id jp19-20020a170906f75300b007826c0a05ecsm3764186ejb.209.2022.09.29.05.30.11
+        by smtp.gmail.com with ESMTPSA id g1-20020a17090604c100b00787cb1de743sm763435eja.38.2022.09.29.05.34.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 05:30:11 -0700 (PDT)
+        Thu, 29 Sep 2022 05:34:57 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Shuai Xue <xueshuai@linux.alibaba.com>,
-        Hongbo Yao <yaohongbo@linux.alibaba.com>,
-        Neng Chen <nengchen@linux.alibaba.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
+To:     Liang Yang <liang.yang@amlogic.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify file entry in ALIBABA PMU DRIVER
-Date:   Thu, 29 Sep 2022 14:29:37 +0200
-Message-Id: <20220929122937.20132-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
+Date:   Thu, 29 Sep 2022 14:34:31 +0200
+Message-Id: <20220929123431.23180-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit cf7b61073e45 ("drivers/perf: add DDR Sub-System Driveway PMU driver
-for Yitian 710 SoC") adds the DDR Sub-System Driveway PMU driver here:
-
-  drivers/perf/alibaba_uncore_drw_pmu.c
-
-The file entry in MAINTAINERS for the ALIBABA PMU DRIVER, introduced with
-commit d813a19e7d2e ("MAINTAINERS: add maintainers for Alibaba' T-Head PMU
-driver"), however refers to:
-
-  drivers/perf/alibaba_uncore_dwr_pmu.c
-
-Note the swapping of characters.
+Commit fbc00b5e746f ("dt-bindings: nand: meson: convert txt to yaml")
+converts amlogic,meson-nand.txt to yaml, but misses to adjust its reference
+in MAINTAINERS.
 
 Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken file pattern.
+broken reference.
 
-Repair this file entry in ALIBABA PMU DRIVER.
+Repair this file reference in MESON NAND CONTROLLER DRIVER FOR AMLOGIC
+SOCS.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
@@ -89,18 +80,18 @@ Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 485d66af5c9a..e14e37c7c734 100644
+index e14e37c7c734..95caae5c2bb9 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -754,7 +754,7 @@ ALIBABA PMU DRIVER
- M:	Shuai Xue <xueshuai@linux.alibaba.com>
- S:	Supported
- F:	Documentation/admin-guide/perf/alibaba_pmu.rst
--F:	drivers/perf/alibaba_uncore_dwr_pmu.c
-+F:	drivers/perf/alibaba_uncore_drw_pmu.c
+@@ -13360,7 +13360,7 @@ MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
+ M:	Liang Yang <liang.yang@amlogic.com>
+ L:	linux-mtd@lists.infradead.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
++F:	Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yaml
+ F:	drivers/mtd/nand/raw/meson_*
  
- ALIENWARE WMI DRIVER
- L:	Dell.Client.Kernel@dell.com
+ MESON VIDEO DECODER DRIVER FOR AMLOGIC SOCS
 -- 
 2.17.1
 
