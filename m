@@ -2,155 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E6FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 10:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66375C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 12:30:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234946AbiI2KoX (ORCPT
+        id S234880AbiI2MaY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 06:44:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53550 "EHLO
+        Thu, 29 Sep 2022 08:30:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbiI2KoV (ORCPT
+        with ESMTP id S234300AbiI2MaP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 06:44:21 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 277E4147A12;
-        Thu, 29 Sep 2022 03:44:20 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id 135so1031478ybl.9;
-        Thu, 29 Sep 2022 03:44:20 -0700 (PDT)
+        Thu, 29 Sep 2022 08:30:15 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 852BA67165;
+        Thu, 29 Sep 2022 05:30:13 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id e18so1762626edj.3;
+        Thu, 29 Sep 2022 05:30:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=eVyC2om8iRoc+83iT4ksvNh32e+purWPgzjisBjHf1E=;
-        b=XUrDyfJfsz4U7znQLZEvfXt8cEYHbg3TbLkWorTXz3GRClA4xqJZExeqhFyfcLZMD0
-         qlXGoGmqxoS37LqldIfgGzotYC8plIDksSsKU6wap32qxE6lw9uCe896QbkWy39myt9e
-         RT9mCaJQMcrLxJVNGYldQXrkxQ5RF9Pzoeme3/LFRzTAlu5wiifHa6y3WyuILT7IjNEt
-         ALcoMQKpbCNC4NTpzJ9IF4+1LXpQb6e/HzUHQKf3cYbOfViphd81T6LsI3i/kfgRlmeZ
-         lRWiTLPyYQcqgqXSY2WGpYMDgpQDC+hM0flQn7diMbrACijdU9o2cL65EahRRoiQeaL/
-         qo6g==
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=doOtCXgO4NsKO2q8zCE4t9lVhtNbFd/oRmxWEjStvkw=;
+        b=VFDzQSmojqh3HVvwqpRJZly3/YPdl2l4AYyEHz/A9cGT3M79EQm2oJpYxpu23VX3VP
+         SNKfu26dq4lf/DfAnyruBhFqYoW7E2zFuPwYu4v+m4bgnVWgXAKtMVJwXLo/vdGmsntR
+         gBCI3Qy1j4Rp7NaA/scg9Z0VF+/YWUvAsabls25dQYi7pHc0L2roMMUhiFkwNaUENOAn
+         pCVyb0sQhPfiK8KQRM/KivTGE8jnS3Aw4Sl733vsJclcduCtfo0noPrpt93Tmo3rKTiX
+         yV4qYweM7pr0KKwTk9fJsb8SLHYS50V6A8MbWbggurRA1ORekqHPWldEGRijcms1VTRO
+         7QTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=eVyC2om8iRoc+83iT4ksvNh32e+purWPgzjisBjHf1E=;
-        b=rhREJXnE7e8d+Bdp6yrV5UnXXuLNljR7aZdBKULw00xLARJwKoAmeisYNYuaCCGiWH
-         7bswx+2QOBf9cTQ3Y+MHuqCkrKo7EfSTBN6s2JUb5jBZvT2W7IVq8z5AnIyF93gesgsU
-         s/tZ1XPNE4ZdK3CvmzD7aYEIXyYaPlb3/D3jegLH1Qsf6MinHIQA6jm12BlAS0Xx7f8x
-         NFMaLF32XzNQeP77lil+9g0e88hfp50QByjn7oA4dRTm9szaABCmW2E0Q5LWao8SnZ4N
-         rMFTRgiA7Ul3Ek/TaqSJm/UvNcNKVJIYn14q0F605iLqZBWlHI5kZxgcxFrDNhc6ai9e
-         GfBw==
-X-Gm-Message-State: ACrzQf3mIEmyr+rWMTbx+c6fnjl1I+mt9bVnQF9bKBpnbDtr01b2nxzu
-        paGBzLUNOV/0fVHcBSdN+je9Q5rP7Ih1hdWoaXtEQRzSYQ4=
-X-Google-Smtp-Source: AMsMyM6PYClyn52CoVXC0dXvBu4NXduY1WxQbcZaJsVZl+aqoBY12GbZ7shAI5oyE6urDGJcnZNGSgY17CFRG7+Z01E=
-X-Received: by 2002:a25:37d8:0:b0:6bc:99af:2991 with SMTP id
- e207-20020a2537d8000000b006bc99af2991mr2316477yba.389.1664448259243; Thu, 29
- Sep 2022 03:44:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220929101445.32124-1-lukas.bulwahn@gmail.com> <CAAhV-H6xe4o0upxcQTN=8BeDdcDipmoRp+QQNiakJJZ_eneTxg@mail.gmail.com>
-In-Reply-To: <CAAhV-H6xe4o0upxcQTN=8BeDdcDipmoRp+QQNiakJJZ_eneTxg@mail.gmail.com>
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=doOtCXgO4NsKO2q8zCE4t9lVhtNbFd/oRmxWEjStvkw=;
+        b=sQGnOPEYDrLTG6qdbzDKuuOkt9XZv0kcdSFZRA9EGsc/lLmky4Hrs5o2icktQ4L8yr
+         K3wSI4v3QgHLzLSfNvONsBMQZxHh3RDoeJBqxoZPba8SfQLHzJv7HaiXMDBoKETOeTG2
+         2ku4PwXe3itcZ33TqQvLcxVP3rTA/1nhWrBOd+0DOFB9wzU/rPVG9/X2ysKgA+NnWzhl
+         l8FgZVOrxFzTq+g1PW7OtObDNcJjcoWog1NJwgaEXQFWbHuwhzkWtiYssG+5u8Di/vtc
+         qiq4vIPGZM5/DC7wnOQ1HtbMb/Mggm0FDtuRGctUXUGVqTF271T5ueYrN0T2fNfemCAq
+         iBGQ==
+X-Gm-Message-State: ACrzQf1lQOFw1w14mIMEiKZ+6U0iVm3vMzXwfq7MjNCmBdUEWqgnDItB
+        +W7+Le7/YjJBk3yjs9Zje1nJ5q5knT8WXw==
+X-Google-Smtp-Source: AMsMyM4ZRTK1JaIi4w8rn1jAqV6lVPGsm4oqpmZO5OroujYNHOBruXG9Vk2lwxIQe2At8h5wigoPDA==
+X-Received: by 2002:a05:6402:34cf:b0:454:53ae:6e83 with SMTP id w15-20020a05640234cf00b0045453ae6e83mr3101158edc.80.1664454611978;
+        Thu, 29 Sep 2022 05:30:11 -0700 (PDT)
+Received: from felia.fritz.box (200116b826e11200b190ebfd45660ea6.dip.versatel-1u1.de. [2001:16b8:26e1:1200:b190:ebfd:4566:ea6])
+        by smtp.gmail.com with ESMTPSA id jp19-20020a170906f75300b007826c0a05ecsm3764186ejb.209.2022.09.29.05.30.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Sep 2022 05:30:11 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Thu, 29 Sep 2022 12:44:08 +0200
-Message-ID: <CAKXUXMwhF4V1=oNq1XaTmQpk_Tt7ZXfZEmK_r_GT6wz7=vVx2g@mail.gmail.com>
-Subject: Re: [PATCH] loongarch: update config files
-To:     Huacai Chen <chenhuacai@kernel.org>
+To:     Shuai Xue <xueshuai@linux.alibaba.com>,
+        Hongbo Yao <yaohongbo@linux.alibaba.com>,
+        Neng Chen <nengchen@linux.alibaba.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify file entry in ALIBABA PMU DRIVER
+Date:   Thu, 29 Sep 2022 14:29:37 +0200
+Message-Id: <20220929122937.20132-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 12:42 PM Huacai Chen <chenhuacai@kernel.org> wrote:
->
-> Hi, Lukas,
->
-> Thank you for your patch, it is queued for loongarch-next, and may be
-> squashed to another patch with your S-o-B if you have no objections.
->
-> Huacai
->
+Commit cf7b61073e45 ("drivers/perf: add DDR Sub-System Driveway PMU driver
+for Yitian 710 SoC") adds the DDR Sub-System Driveway PMU driver here:
 
-Feel free to squash as you see fit. I cannot recall sending something
-specific for loongarch-next, though.
+  drivers/perf/alibaba_uncore_drw_pmu.c
 
-Lukas
+The file entry in MAINTAINERS for the ALIBABA PMU DRIVER, introduced with
+commit d813a19e7d2e ("MAINTAINERS: add maintainers for Alibaba' T-Head PMU
+driver"), however refers to:
 
-> On Thu, Sep 29, 2022 at 6:14 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
-> > Clean up config files by:
-> >   - removing configs that were deleted in the past
-> >   - removing configs not in tree and without recently pending patches
-> >   - adding new configs that are replacements for old configs in the file
-> >
-> > For some detailed information, see Link.
-> >
-> > Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> >  arch/loongarch/configs/loongson3_defconfig | 7 -------
-> >  1 file changed, 7 deletions(-)
-> >
-> > diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
-> > index 3712552e18d3..2b4220778b66 100644
-> > --- a/arch/loongarch/configs/loongson3_defconfig
-> > +++ b/arch/loongarch/configs/loongson3_defconfig
-> > @@ -108,14 +108,12 @@ CONFIG_NETFILTER=y
-> >  CONFIG_BRIDGE_NETFILTER=m
-> >  CONFIG_NETFILTER_NETLINK_LOG=m
-> >  CONFIG_NF_CONNTRACK=m
-> > -CONFIG_NF_LOG_NETDEV=m
-> >  CONFIG_NF_CONNTRACK_AMANDA=m
-> >  CONFIG_NF_CONNTRACK_FTP=m
-> >  CONFIG_NF_CONNTRACK_NETBIOS_NS=m
-> >  CONFIG_NF_CONNTRACK_TFTP=m
-> >  CONFIG_NF_CT_NETLINK=m
-> >  CONFIG_NF_TABLES=m
-> > -CONFIG_NFT_COUNTER=m
-> >  CONFIG_NFT_CONNLIMIT=m
-> >  CONFIG_NFT_LOG=m
-> >  CONFIG_NFT_LIMIT=m
-> > @@ -329,7 +327,6 @@ CONFIG_PARPORT_PC_FIFO=y
-> >  CONFIG_ZRAM=m
-> >  CONFIG_ZRAM_DEF_COMP_ZSTD=y
-> >  CONFIG_BLK_DEV_LOOP=y
-> > -CONFIG_BLK_DEV_CRYPTOLOOP=y
-> >  CONFIG_BLK_DEV_NBD=m
-> >  CONFIG_BLK_DEV_RAM=y
-> >  CONFIG_BLK_DEV_RAM_SIZE=8192
-> > @@ -505,7 +502,6 @@ CONFIG_ATH9K_HTC=m
-> >  CONFIG_IWLWIFI=m
-> >  CONFIG_IWLDVM=m
-> >  CONFIG_IWLMVM=m
-> > -CONFIG_IWLWIFI_BCAST_FILTERING=y
-> >  CONFIG_HOSTAP=m
-> >  CONFIG_MT7601U=m
-> >  CONFIG_RT2X00=m
-> > @@ -688,7 +684,6 @@ CONFIG_COMEDI_NI_PCIDIO=m
-> >  CONFIG_COMEDI_NI_PCIMIO=m
-> >  CONFIG_STAGING=y
-> >  CONFIG_R8188EU=m
-> > -# CONFIG_88EU_AP_MODE is not set
-> >  CONFIG_PM_DEVFREQ=y
-> >  CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
-> >  CONFIG_DEVFREQ_GOV_PERFORMANCE=y
-> > @@ -772,14 +767,12 @@ CONFIG_CRYPTO_CRYPTD=m
-> >  CONFIG_CRYPTO_CHACHA20POLY1305=m
-> >  CONFIG_CRYPTO_HMAC=y
-> >  CONFIG_CRYPTO_VMAC=m
-> > -CONFIG_CRYPTO_TGR192=m
-> >  CONFIG_CRYPTO_WP512=m
-> >  CONFIG_CRYPTO_ANUBIS=m
-> >  CONFIG_CRYPTO_BLOWFISH=m
-> >  CONFIG_CRYPTO_CAST5=m
-> >  CONFIG_CRYPTO_CAST6=m
-> >  CONFIG_CRYPTO_KHAZAD=m
-> > -CONFIG_CRYPTO_SALSA20=m
-> >  CONFIG_CRYPTO_SEED=m
-> >  CONFIG_CRYPTO_SERPENT=m
-> >  CONFIG_CRYPTO_TEA=m
-> > --
-> > 2.17.1
-> >
-> >
+  drivers/perf/alibaba_uncore_dwr_pmu.c
+
+Note the swapping of characters.
+
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken file pattern.
+
+Repair this file entry in ALIBABA PMU DRIVER.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 485d66af5c9a..e14e37c7c734 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -754,7 +754,7 @@ ALIBABA PMU DRIVER
+ M:	Shuai Xue <xueshuai@linux.alibaba.com>
+ S:	Supported
+ F:	Documentation/admin-guide/perf/alibaba_pmu.rst
+-F:	drivers/perf/alibaba_uncore_dwr_pmu.c
++F:	drivers/perf/alibaba_uncore_drw_pmu.c
+ 
+ ALIENWARE WMI DRIVER
+ L:	Dell.Client.Kernel@dell.com
+-- 
+2.17.1
+
