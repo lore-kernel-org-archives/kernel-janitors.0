@@ -2,88 +2,135 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC98C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 15:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D2CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 16:29:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235388AbiI2Pfe (ORCPT
+        id S236413AbiI2Q2s (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 11:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51060 "EHLO
+        Thu, 29 Sep 2022 12:28:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235303AbiI2Pdz (ORCPT
+        with ESMTP id S236227AbiI2Q1W (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 11:33:55 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DD801B263F;
-        Thu, 29 Sep 2022 08:33:35 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id c9so1984617ybf.5;
-        Thu, 29 Sep 2022 08:33:35 -0700 (PDT)
+        Thu, 29 Sep 2022 12:27:22 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB0A11181FC;
+        Thu, 29 Sep 2022 09:27:10 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id d12-20020a05600c3acc00b003b4c12e47f3so985340wms.4;
+        Thu, 29 Sep 2022 09:27:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=aXaeQFl7WeBGM1OGQQKe5SOEmDdnmC4Z6lKLU12QUBw=;
-        b=g6RhftYXeZcYpBxrpOfyc4VefrqsfhcLmEVqC8sATZDdsTl9waWQlqIg7pTBDmTAhs
-         8rEV62yD1c8833Fk/ymXMAoLLb7EcbXJA+npk34Rk0WnQz07h+Blva3s5QnvtEBN5G/9
-         Po/I6b5uquQK9gfIr5StbAWqv1RzkI2KRcq/VAo34sQVBn34/xEeKKe/wBNoW+ssRkk8
-         wsk61DM1mHjJ0lKxe4NQQv/j4vwXjIv9CROt5jCStZAMhlX+wn6qIW//nxazrOjl8wRt
-         +f6CW/pO7kyEmQVVHVNAq0NgJizggmiS9JJJbAUQd5mROQOjHQjn2IkS/Gsh4D3eub7i
-         cNug==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=icV6cxvXLdy/u1P61WPyBZFENlozm8iS3OoyNfd2f5Q=;
+        b=Lqili1lHrpn0yuYSaYBPZxkVMnlBUFLeI2TVXfPPNP8+mAlJOLfQ5y6B2JArvg6zAf
+         BrBgP5YflGzmsZ4Im+u5YXxPC5njXfyUnYblj/z7eRcveVKot+tjr4IWqGEFmb3mjKIi
+         PbQtxa6iPVUlYXtZkzWlKUyUUYWDHgTQ5hrMagrEAgYsnjDRoiSct9ajfXr1wnbdHgwN
+         sSs9cF+Xxv6widRyjBMBlHGUk0QhbE3uGr1UKQEW+KVZNOlImKX28x82tubE1YAFLrd1
+         vduscc6FbrQZ1q1El5KSptqIGMhAj9aYJju/iJD4EO9TV8/UsNyxPAV2EL6MyV40x0ra
+         4uDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=aXaeQFl7WeBGM1OGQQKe5SOEmDdnmC4Z6lKLU12QUBw=;
-        b=GhjiyKYk+dLjmLA2FQF5yrQlT5eVNHIeggBmOAAGbkNaTth9O6O8tpvJSnonTVtFPo
-         3bR/qveAiEGVY28QOhM6PuoUs+5nA7eyJDnmoeJ1gjByLaBqB7hYZPryJnXtaqgU/RXp
-         kRM9klpBaYfVSTeuQYi9QDnn/ToYd/Nr1De5iH2ujkmRqtCF2BdSHs8zmJwm8yrL2pDc
-         6TNZdeM1Jjk/m6wyZspg6U2zdzywK6JN7MvHIPJNeLSFES8mDaeFwUFUozkTpQF/R/eg
-         d7tc5PSdD7C/5sPmVkCIUGADowwR4Qs7ADHPq8cHcpb98THfh8/IGNIgkjWwvGfs9Ug+
-         V2/g==
-X-Gm-Message-State: ACrzQf298m1JQDKiIgsDH9GUpySdJjBQHkXEmfEtr8GBs1ZNp0CC7ZNN
-        1p6YWbbd03hE+DQ5qA8ue7/cmQ2cJPzau80kgYg=
-X-Google-Smtp-Source: AMsMyM4Sdv0hIIfsBVFD5fjzLKQMsYtCX9dgkbEmSQRlCy0yCX0lUGRJa0EMdijIOlrV6c6c/UR3kKaykbj3FB+Q5kg=
-X-Received: by 2002:a25:9b43:0:b0:6b3:9cc2:a651 with SMTP id
- u3-20020a259b43000000b006b39cc2a651mr3606130ybo.485.1664465614724; Thu, 29
- Sep 2022 08:33:34 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=icV6cxvXLdy/u1P61WPyBZFENlozm8iS3OoyNfd2f5Q=;
+        b=2bKn71mVt63Rog4iA6Ouvu6Ml2cdV4nzE/+B52UGx35ves09C/182rZVi9Zmx+SzaW
+         RhkyZUc4PTuS0QaV0eOq1wepn6Mf1CIHeq7gBgp1OeZ6nUQHeuAs4BNXm+TzRiouHJjl
+         qHpmdPzk0vx7Q2Hk67qWkTQgN7Gj+054qZGh8B7RNAi7fdc10ExS/ahSK91uueewSzRD
+         dSuQemxkd6CN9qMZI3myZAVOB4wiEiNYgSUfqIg2k+31WGkIlW3EuhH+O7e+jo7Z5Uw7
+         e8v0AhgR9pHLX2UPgAEaDxNSlSkrDF3oteRDxc8Qyjic2ZJCwgiico+CMuyGe3F6TGB0
+         hmMw==
+X-Gm-Message-State: ACrzQf3TQag+RBjBWQiERzylLT9QlEola0t6HgpEzDNsRAe0YfAydP3L
+        UsMv0QzveYv0h44LZm/POKE=
+X-Google-Smtp-Source: AMsMyM7WsNBU8dNmdrnrV6FryYuT3bRv7UJ5WDgSBEi2W+cfzeMgqEXo5xk+WrXjvI9JpkAwxAEiKQ==
+X-Received: by 2002:a05:600c:4f46:b0:3b4:fed8:331e with SMTP id m6-20020a05600c4f4600b003b4fed8331emr11585833wmq.198.1664468829288;
+        Thu, 29 Sep 2022 09:27:09 -0700 (PDT)
+Received: from localhost ([2a03:b0c0:1:d0::dee:c001])
+        by smtp.gmail.com with ESMTPSA id d22-20020a05600c34d600b003b49ab8ff53sm4987940wmq.8.2022.09.29.09.27.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Sep 2022 09:27:07 -0700 (PDT)
+Date:   Thu, 29 Sep 2022 16:27:06 +0000
+From:   Stafford Horne <shorne@gmail.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>, openrisc@lists.librecores.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] openrisc: update config files
+Message-ID: <YzXHWteIFh2kUOXY@oscomms1>
+References: <20220929101458.32434-1-lukas.bulwahn@gmail.com>
+ <YzWp+p+1V1UmCAb3@oscomms1>
+ <YzWr+mmtLy2DRYEA@oscomms1>
+ <CAMuHMdWx5RKP8WfNAyOofGFTGQNfOtDYMOJmvPgPhtyvRPG1Bw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20220929101515.354-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220929101515.354-1-lukas.bulwahn@gmail.com>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Thu, 29 Sep 2022 08:33:23 -0700
-Message-ID: <CAMo8Bf+MHVLOh-U0EyP1DoJPDSHscC=st0TYZ9L76+xgfBxaOQ@mail.gmail.com>
-Subject: Re: [PATCH] xtensa: update config files
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Zankel <chris@zankel.net>, linux-xtensa@linux-xtensa.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWx5RKP8WfNAyOofGFTGQNfOtDYMOJmvPgPhtyvRPG1Bw@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 3:15 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Clean up config files by:
->   - removing configs that were deleted in the past
->   - removing configs not in tree and without recently pending patches
->   - adding new configs that are replacements for old configs in the file
->
-> For some detailed information, see Link.
->
-> Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  arch/xtensa/configs/audio_kc705_defconfig   | 1 -
->  arch/xtensa/configs/cadence_csp_defconfig   | 4 ----
->  arch/xtensa/configs/generic_kc705_defconfig | 1 -
->  arch/xtensa/configs/nommu_kc705_defconfig   | 1 -
->  arch/xtensa/configs/smp_lx200_defconfig     | 1 -
->  arch/xtensa/configs/xip_kc705_defconfig     | 1 -
->  6 files changed, 9 deletions(-)
+Hi Geert,
 
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+On Thu, Sep 29, 2022 at 05:07:40PM +0200, Geert Uytterhoeven wrote:
+> Hi Stafford,
+> 
+> On Thu, Sep 29, 2022 at 4:30 PM Stafford Horne <shorne@gmail.com> wrote:
+> > On Thu, Sep 29, 2022 at 02:21:46PM +0000, Stafford Horne wrote:
+> > > On Thu, Sep 29, 2022 at 12:14:58PM +0200, Lukas Bulwahn wrote:
+> > > > Clean up config files by:
+> > > >   - removing configs that were deleted in the past
+> > > >   - removing configs not in tree and without recently pending patches
+> > > >   - adding new configs that are replacements for old configs in the file
+> 
+> > > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > >
+> > > Thanks for the patch this looks fine to me.  Usually I just generate this
+> > > defcnfigs using make savedefconfig.  If there is some better way which
+> > > doesn't generate the file with the # comment's I haven't found it.
+> > >
+> > > I will queue this.
+> >
+> > Actually..
+> >
+> > About the subject 'openrisc: update config files' and description.  Can you be
+> > more specific about what updates you are making for this patch?
+> >
+> > For example: remove comments from config files.
+> 
+> These are not comments, but options that default to y or m, and
+> are overriden to n by "commenting them out".
+> 
+> This syntax dates back to the days Kconfig was a collection of
+> shell scripts. Nowadays, switching to "CONFIG_<FOO>=n" would
+> perhaps make sense, as Kconfig already recognizes that syntax.
 
--- 
-Thanks.
--- Max
+Right, I remember the *comment's* do actually are material to the config files.
+In this patch not everything is removed, just old non-existent configs.
+
+I sill prefer having a more descriptive subject.
+
+-Stafford
+
+> > > > --- a/arch/openrisc/configs/or1ksim_defconfig
+> > > > +++ b/arch/openrisc/configs/or1ksim_defconfig
+> > > > @@ -19,9 +19,6 @@ CONFIG_NET=y
+> > > >  CONFIG_PACKET=y
+> > > >  CONFIG_UNIX=y
+> > > >  CONFIG_INET=y
+> > > > -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
+> > > > -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
+> > > > -# CONFIG_INET_XFRM_MODE_BEET is not set
+> > > >  # CONFIG_INET_DIAG is not set
+> > > >  CONFIG_TCP_CONG_ADVANCED=y
+> > > >  # CONFIG_TCP_CONG_BIC is not set
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
