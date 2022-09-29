@@ -2,96 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E99EAC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 12:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FB1C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 13:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235236AbiI2MfE (ORCPT
+        id S235619AbiI2NCE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 08:35:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58320 "EHLO
+        Thu, 29 Sep 2022 09:02:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235025AbiI2MfB (ORCPT
+        with ESMTP id S235670AbiI2NBx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 08:35:01 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B8FF8589;
-        Thu, 29 Sep 2022 05:34:59 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id x92so1753509ede.9;
-        Thu, 29 Sep 2022 05:34:59 -0700 (PDT)
+        Thu, 29 Sep 2022 09:01:53 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83934161CFB;
+        Thu, 29 Sep 2022 06:01:50 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id h7so2062786wru.10;
+        Thu, 29 Sep 2022 06:01:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=G1eJs3Mljaulp10lM3s9KZwUJhSiD5Z54QoCFft9nj0=;
-        b=QjlvRE6HJ+8CONd62XKDkJ/YO+eolaQgiqltwxHKFo55/Sn56h5/VJVJsVTfyNXPo/
-         VpHg5bIlPfbFcPbx7tiVYP4w/SxBbyP8/L+TBnn28aD/wkwxId9Ndxz4lbSIqivrz1wG
-         KeBXVklYXhyTTHZCjMIghKCDJISc0R4H2dP/Q/d4CJIWgUzDhrXJehlxPCJiNB9nKPUy
-         00z0h7tJ3Bs93OlpkQ6PsiMZfrSTJxYtwfPGwDGawvgIOkp+VOLilccvdAB0SCM6RGD5
-         ESBqJjqzMPPiPmuHj5FTt/9vPN2FW70qWJRQD+/PshqhyJEh15thqc59WBK3d7atlBm9
-         +Fcg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=QKIpHGs3LeinzeIaUGKa0ICPFZL+uew+WBou+/qEEMs=;
+        b=AgFahVNBMPAdTt6Hji1RhoPcnR8MCGZgvz/2UE5Q1CTjXVo9CW0ak/uSx1R+Vq8LPI
+         U6nGupIT3g1fujwOUBuemHE58YZu1E5MiLno/O/luh9m6dchtkEs62VjfDkZkPxImpQA
+         t3sDG+ehBpLP3dFCgjV6xQP4qBUYtyfshdD8TVIkwAD9om7bLf7WSEghDLkQ/L7diKJ1
+         FlGMrf6Q1kFxxEen86Qbwl+o5C+b2T31ZgQ1bDX51wzN6PbMuKltWkFJzQFr7U4esERu
+         sFe7Y3tiwEuE+2Vh2+uoJvCbR72J69DxTNPMuukHXoVFQr5x+LCQg0dtMPRiWgK8Hchp
+         HWLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=G1eJs3Mljaulp10lM3s9KZwUJhSiD5Z54QoCFft9nj0=;
-        b=yv5T0m9X1X929mkhzTbO2A72383yrB7hFjNZjgqCiOG5RYFfngX86o1mHrFEGHskxO
-         orNj9N9VvOuyiXaq2ZZ8woLPtOsiECcdELcjbH/Y+77HxZwRpr+3LamvOzvyyQ2nPIgr
-         lToQtQ8kVlhY1B42Y1WghuaiPVV7oEV6ECSgA+ZgKigd+F2sKm2+Wvu8tq9gx5rLNPWW
-         B35/iux+2AzJUhQgPmS+nB+RHAP4TsrPBOkZrO0mowLKCSt4IMVUEpxhn8aZRTxb48tV
-         9WPJ/536c8kNSoyz7HN4sjGl172IK/nCUlpgdkFynDhc7+S5DAMwQqSU9/wya3sGUX6r
-         BPhg==
-X-Gm-Message-State: ACrzQf26Uvv74MSsk1fUowY7NdSL5sghvkIyhSlTl+myXrhovomylpvW
-        Q4pqvG6UMpOWH0wgNZxT/78=
-X-Google-Smtp-Source: AMsMyM7ML/RyoD8oE90RBpNhAwROpSdGmW5R4R5Fdokjsu3StGo9bExGOLdoXvYBGAVhLFTZ6A9SAQ==
-X-Received: by 2002:a05:6402:2549:b0:452:8292:b610 with SMTP id l9-20020a056402254900b004528292b610mr3142739edb.199.1664454898120;
-        Thu, 29 Sep 2022 05:34:58 -0700 (PDT)
-Received: from felia.fritz.box (200116b826e11200b190ebfd45660ea6.dip.versatel-1u1.de. [2001:16b8:26e1:1200:b190:ebfd:4566:ea6])
-        by smtp.gmail.com with ESMTPSA id g1-20020a17090604c100b00787cb1de743sm763435eja.38.2022.09.29.05.34.57
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=QKIpHGs3LeinzeIaUGKa0ICPFZL+uew+WBou+/qEEMs=;
+        b=ObDIcc2y5pWVqHIxyrRc703fyuwoS9Xai4xk47GLLkk+L9ul8xJU/0C7S1YjZoKAeH
+         UHhUAMeBeBFtlvZCZ1mLvRlxd5RgJcS7f8NouFAtLDeCfvAgSwOLjGHSVz9hX+MNesSQ
+         b/bWowHj//pI1O6VBFQjPLnUfBVvL0GtZTxUu/heV3/BXUm7bA1NtdnnPwzkVz35swmE
+         /U1BQqHdGhn1vrhXCF0vdQopiC1PoT5pfT7t9tA2YnIH9pLchSn9NmrqyOW968QSiSGw
+         D80BuKf5zvgTBqJw20y2sn8mz+tT1zsXSijoAOqA3YeADDfYF4mByN5556DAWllWAUZR
+         lEcA==
+X-Gm-Message-State: ACrzQf1VtYJSuyxcYVaFI4JWTDQDNUezp2KgtrYfs4KMoUmZlkArtiYP
+        tihJzX/1lIooyeA601lVKag=
+X-Google-Smtp-Source: AMsMyM5vXaXH5fZ3dIbmRJWeClvpwWiO6Y9sSQYzNl6JW42LcFYRMSzFHH58H6hdJJTPcWhcyowbbQ==
+X-Received: by 2002:a05:6000:1051:b0:228:e1a0:7221 with SMTP id c17-20020a056000105100b00228e1a07221mr2213671wrx.165.1664456508569;
+        Thu, 29 Sep 2022 06:01:48 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m13-20020a5d4a0d000000b0021e43b4edf0sm6555454wrq.20.2022.09.29.06.01.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 05:34:57 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Liang Yang <liang.yang@amlogic.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entry for MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
-Date:   Thu, 29 Sep 2022 14:34:31 +0200
-Message-Id: <20220929123431.23180-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 29 Sep 2022 06:01:48 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: phy-mtk-dp: make array driving_params static const
+Date:   Thu, 29 Sep 2022 14:01:47 +0100
+Message-Id: <20220929130147.97375-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit fbc00b5e746f ("dt-bindings: nand: meson: convert txt to yaml")
-converts amlogic,meson-nand.txt to yaml, but misses to adjust its reference
-in MAINTAINERS.
+Don't populate the read-only array driving_params on the stack but instead
+make it static const. Also makes the object code a little smaller.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
-
-Repair this file reference in MESON NAND CONTROLLER DRIVER FOR AMLOGIC
-SOCS.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- MAINTAINERS | 2 +-
+ drivers/phy/mediatek/phy-mtk-dp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e14e37c7c734..95caae5c2bb9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13360,7 +13360,7 @@ MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
- M:	Liang Yang <liang.yang@amlogic.com>
- L:	linux-mtd@lists.infradead.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-+F:	Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yaml
- F:	drivers/mtd/nand/raw/meson_*
- 
- MESON VIDEO DECODER DRIVER FOR AMLOGIC SOCS
+diff --git a/drivers/phy/mediatek/phy-mtk-dp.c b/drivers/phy/mediatek/phy-mtk-dp.c
+index 31266e7ca324..232fd3f1ff1b 100644
+--- a/drivers/phy/mediatek/phy-mtk-dp.c
++++ b/drivers/phy/mediatek/phy-mtk-dp.c
+@@ -85,7 +85,7 @@ struct mtk_dp_phy {
+ static int mtk_dp_phy_init(struct phy *phy)
+ {
+ 	struct mtk_dp_phy *dp_phy = phy_get_drvdata(phy);
+-	u32 driving_params[] = {
++	static const u32 driving_params[] = {
+ 		DRIVING_PARAM_3_DEFAULT,
+ 		DRIVING_PARAM_4_DEFAULT,
+ 		DRIVING_PARAM_5_DEFAULT,
 -- 
-2.17.1
+2.37.1
 
