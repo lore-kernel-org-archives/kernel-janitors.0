@@ -2,88 +2,145 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 018B5C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 13:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B37C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 14:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235476AbiI2NIF (ORCPT
+        id S234485AbiI2OVx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 09:08:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43744 "EHLO
+        Thu, 29 Sep 2022 10:21:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235315AbiI2NIC (ORCPT
+        with ESMTP id S232180AbiI2OVw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 09:08:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 797C2155649;
-        Thu, 29 Sep 2022 06:07:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2AFE8B823A5;
-        Thu, 29 Sep 2022 13:07:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F72C433C1;
-        Thu, 29 Sep 2022 13:07:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664456875;
-        bh=sj+OdEAtykHcBziJ2ilGZDg/T4fIfEtsnxrbhj4A+U0=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=s3E375LbnG4eXybX2ENtevXcY20C0PZdCx3Q3e6yp/kZXN7zNECGzVmHl32719qh/
-         raW4MuWEJZvdJiJQCVTlE7KErEZv8Lk215c1IvjuZmAhYY1SqupUdapxcZ+ofl+rrQ
-         oqA2Dm1oqRfXid7alPVTyIDylj18xPf+x6sss1RJJcz6uR53Lzldb3Qp4/q5LMtMpG
-         yt6W2CcQiS9OIxn4Fj9N3/CpN5LnqlhsGUrSZqOkAYAQVjnDP/pPag0RU/iSlH7ULl
-         qIDu7AewPCAFjTtOCm27Coc+pVraVBWFzSPD3Ro6umAKSEGWBtRTJVpjPR2dtSNJGq
-         sP2+Bn4vk7bIQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        linux-mediatek@lists.infradead.org, alsa-devel@alsa-project.org,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20220928220417.66799-1-colin.i.king@gmail.com>
-References: <20220928220417.66799-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] ASoC: mediatek: mt8186: Fix spelling mistake "slect" -> "select"
-Message-Id: <166445687286.114358.7172094686592004129.b4-ty@kernel.org>
-Date:   Thu, 29 Sep 2022 14:07:52 +0100
+        Thu, 29 Sep 2022 10:21:52 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BDB58E469;
+        Thu, 29 Sep 2022 07:21:49 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id l18so2439443wrw.9;
+        Thu, 29 Sep 2022 07:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=6/3S4SqDN7s02eu32dMD8zSI0cpG/EMn6+nA5mGI7Ig=;
+        b=fohR4TTWFo+aKaHOU80z8jlxlGze8JyK+FrBc031T77KQZjIKD1kcmlEfNLLQNy7sJ
+         jn2LrXu1f+AoDZ+Yu/xeKVa/kCtmmoLudUJnRNawU4you7Rcx/9qKudGs+Nr98N83all
+         g1AKVIpjsD5zcWDt1G5WOARNrDPde4Y4CPAL9XL+MW2SPguZbGEL6a3bfNseR3Q0oBK0
+         4MsLhSRQB7tKe7xv6SajZ2mKlS+liv05/aAU9BSN5Du07jR+fLACrr7EO5TBoAoxyLx8
+         DVwVdErCAmq4op/49bnX3LTJeZNqYe7wdYYh3NrwA8L4gAD/K292M4249UM+a2AhC8bP
+         5kjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=6/3S4SqDN7s02eu32dMD8zSI0cpG/EMn6+nA5mGI7Ig=;
+        b=FcjBlZz4BbneiFmakQtTJUFVgfN72f1WbI6nPrhNfFbHB8x7LRTuZ7CUE657I9UvVj
+         aDEapFg94tBHRcCgHIU1LZu/N3F2IXpOC0xiSW9YFBDyLSaJHv6Zidu5I0HKYe2xc1r6
+         PnCnzbZ/Ge7i+VToBHjhMbiXsiK8pF+Ts2aksk9sWHT7a3/OghD1SxaoKkLkJwL8p7kT
+         dgleDfLHin6J09IGsDyCyc8vhk8sNWj2KPj8nkwcQaaq68lr2Ckcy5j/QiG6zEMwXAzg
+         rJoBYiB60IKM0fuNzBaaBkzwM2Z9LTRUNV8xdDp3ebLaSrgKUX5jx/xV5E8znQcCBFhr
+         q8mg==
+X-Gm-Message-State: ACrzQf0jcs0PWIre37tdpXOw924rYANl7iqj5VR/+8cL5HmUxiiTNUYy
+        daT/ZR3OF5SHdk1N7N7JhNg=
+X-Google-Smtp-Source: AMsMyM5uPhqI7tGH6OtYXpZMFPVOnRLcTvo3E6MDWHWjwFtaNwwoHyK6OOkdOq6PXfjMjY2YrxcDag==
+X-Received: by 2002:a05:6000:78e:b0:22a:7e99:da93 with SMTP id bu14-20020a056000078e00b0022a7e99da93mr2484830wrb.20.1664461307820;
+        Thu, 29 Sep 2022 07:21:47 -0700 (PDT)
+Received: from localhost ([2a03:b0c0:1:d0::dee:c001])
+        by smtp.gmail.com with ESMTPSA id z14-20020adff74e000000b002205a5de337sm3856422wrp.102.2022.09.29.07.21.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Sep 2022 07:21:47 -0700 (PDT)
+Date:   Thu, 29 Sep 2022 14:21:46 +0000
+From:   Stafford Horne <shorne@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        openrisc@lists.librecores.org
+Subject: Re: [PATCH] openrisc: update config files
+Message-ID: <YzWp+p+1V1UmCAb3@oscomms1>
+References: <20220929101458.32434-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fc921
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220929101458.32434-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 28 Sep 2022 23:04:17 +0100, Colin Ian King wrote:
-> There are some spelling mistakes in dev_err messages. Fix them.
+On Thu, Sep 29, 2022 at 12:14:58PM +0200, Lukas Bulwahn wrote:
+> Clean up config files by:
+>   - removing configs that were deleted in the past
+>   - removing configs not in tree and without recently pending patches
+>   - adding new configs that are replacements for old configs in the file
 > 
+> For some detailed information, see Link.
 > 
+> Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Applied to
+Hello,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Thanks for the patch this looks fine to me.  Usually I just generate this
+defcnfigs using make savedefconfig.  If there is some better way which
+doesn't generate the file with the # comment's I haven't found it.
 
-Thanks!
+I will queue this.
 
-[1/1] ASoC: mediatek: mt8186: Fix spelling mistake "slect" -> "select"
-      commit: 65c94e4d15830406a31a55085887e97bacd25434
+-Stafford
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> ---
+>  arch/openrisc/configs/or1ksim_defconfig    | 5 -----
+>  arch/openrisc/configs/simple_smp_defconfig | 4 ----
+>  2 files changed, 9 deletions(-)
+> 
+> diff --git a/arch/openrisc/configs/or1ksim_defconfig b/arch/openrisc/configs/or1ksim_defconfig
+> index 6e1e004047c7..af1164807206 100644
+> --- a/arch/openrisc/configs/or1ksim_defconfig
+> +++ b/arch/openrisc/configs/or1ksim_defconfig
+> @@ -19,9 +19,6 @@ CONFIG_NET=y
+>  CONFIG_PACKET=y
+>  CONFIG_UNIX=y
+>  CONFIG_INET=y
+> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
+> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
+> -# CONFIG_INET_XFRM_MODE_BEET is not set
+>  # CONFIG_INET_DIAG is not set
+>  CONFIG_TCP_CONG_ADVANCED=y
+>  # CONFIG_TCP_CONG_BIC is not set
+> @@ -34,7 +31,6 @@ CONFIG_DEVTMPFS=y
+>  CONFIG_DEVTMPFS_MOUNT=y
+>  # CONFIG_PREVENT_FIRMWARE_BUILD is not set
+>  # CONFIG_FW_LOADER is not set
+> -CONFIG_PROC_DEVICETREE=y
+>  CONFIG_NETDEVICES=y
+>  CONFIG_ETHOC=y
+>  CONFIG_MICREL_PHY=y
+> @@ -52,4 +48,3 @@ CONFIG_SERIAL_OF_PLATFORM=y
+>  # CONFIG_DNOTIFY is not set
+>  CONFIG_TMPFS=y
+>  CONFIG_NFS_FS=y
+> -# CONFIG_ENABLE_MUST_CHECK is not set
+> diff --git a/arch/openrisc/configs/simple_smp_defconfig b/arch/openrisc/configs/simple_smp_defconfig
+> index ff49d868e040..84ca3203af9c 100644
+> --- a/arch/openrisc/configs/simple_smp_defconfig
+> +++ b/arch/openrisc/configs/simple_smp_defconfig
+> @@ -27,9 +27,6 @@ CONFIG_NET=y
+>  CONFIG_PACKET=y
+>  CONFIG_UNIX=y
+>  CONFIG_INET=y
+> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
+> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
+> -# CONFIG_INET_XFRM_MODE_BEET is not set
+>  # CONFIG_INET_DIAG is not set
+>  CONFIG_TCP_CONG_ADVANCED=y
+>  # CONFIG_TCP_CONG_BIC is not set
+> @@ -60,5 +57,4 @@ CONFIG_SERIAL_OF_PLATFORM=y
+>  CONFIG_TMPFS=y
+>  CONFIG_NFS_FS=y
+>  CONFIG_XZ_DEC=y
+> -# CONFIG_ENABLE_MUST_CHECK is not set
+>  # CONFIG_RCU_TRACE is not set
+> -- 
+> 2.17.1
+> 
