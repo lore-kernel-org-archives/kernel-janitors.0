@@ -2,86 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EF8C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 22:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD2AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 23:36:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229896AbiI2WRk (ORCPT
+        id S229712AbiI2Xgc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 18:17:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56858 "EHLO
+        Thu, 29 Sep 2022 19:36:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiI2WRi (ORCPT
+        with ESMTP id S229538AbiI2Xgb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 18:17:38 -0400
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE10FCA6D;
-        Thu, 29 Sep 2022 15:17:37 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:56266)
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oe1qa-002lKm-T6; Thu, 29 Sep 2022 16:17:36 -0600
-Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:57822 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oe1qY-000QBy-Up; Thu, 29 Sep 2022 16:17:35 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
+        Thu, 29 Sep 2022 19:36:31 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C16914D338
+        for <kernel-janitors@vger.kernel.org>; Thu, 29 Sep 2022 16:36:30 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id f193so2780257pgc.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 29 Sep 2022 16:36:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=Xbz67oZK82CtGclYCJkU8C5apLwvJO6ocDW2GQnKsP0=;
+        b=AUn3kZDM5lNvy5m2+3Ts9Kl9mS+Bt4VFAtsVryc4ezGL1WMAmzOAlrP87i9nHVp7A5
+         VZZypx1I4Z/tOJTTDsGmlHyxag27HLBJi+gMYjZEt7Tg9PggmlXUdJpR0sRwSOp2Ab7O
+         cqN4IvhgOSoj5j1zwMctOnj01LrTNiFVO6lJo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=Xbz67oZK82CtGclYCJkU8C5apLwvJO6ocDW2GQnKsP0=;
+        b=X7tQwuKxrGdeUFObUrOJ4bxz/O3aoHUrMAbqq4jDYhb2y490g0M/9hor9+gZOEX0vG
+         9o/fNQpZPb5jXtg0hmwaj1UHT3YbsRPPY9cqU2tiXFT8yRBhhfbf85GYV5IrhxQGnfR5
+         Rv/77SLbc/71Yh9R7o9PTS5r/48pGyETohxXwzZBh9xixtATMoVycWWblYifExFmhmIg
+         ndfNpI+0v860uBldP4dNh5ctC62uQ8a/6R+JVaYfmfpU7JUWhBf2udT27l6I+s5LtD41
+         a+YFN2fotS+WiVvtF0D39A145tJiTe4TrCb5xymyG46bWJhzuIcRDrf2vc9+RCKbNRi6
+         9yiQ==
+X-Gm-Message-State: ACrzQf2KE+fITkekdmNFn291Ru+UxG1oxfhaKXtR8yYnJtw+bzh3bNt2
+        GPTGAeAAub4/qizCROAVdXw/Nw==
+X-Google-Smtp-Source: AMsMyM5unEH1nAScJeckvDRNethcxnyDUrHMMmmroXgAknht8ekkwWtouSRGGxJA4MKsFbroz9alPw==
+X-Received: by 2002:a63:f518:0:b0:43c:403:9833 with SMTP id w24-20020a63f518000000b0043c04039833mr4829720pgh.461.1664494589889;
+        Thu, 29 Sep 2022 16:36:29 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id ij28-20020a170902ab5c00b00178af82a000sm452969plb.122.2022.09.29.16.36.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Sep 2022 16:36:29 -0700 (PDT)
+Date:   Thu, 29 Sep 2022 16:36:28 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-mm@kvack.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220929203903.9475-1-lukas.bulwahn@gmail.com>
-Date:   Thu, 29 Sep 2022 17:17:28 -0500
-In-Reply-To: <20220929203903.9475-1-lukas.bulwahn@gmail.com> (Lukas Bulwahn's
-        message of "Thu, 29 Sep 2022 22:39:03 +0200")
-Message-ID: <87tu4p3jwn.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1oe1qY-000QBy-Up;;;mid=<87tu4p3jwn.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX19PmXCMvq3dJ4UVR1Zc7W458rz2Nb6AWpM=
-X-SA-Exim-Connect-IP: 68.110.29.46
-X-SA-Exim-Mail-From: ebiederm@xmission.com
 Subject: Re: [PATCH] binfmt: remove taso from linux_binprm struct
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Message-ID: <202209291635.EA24FCEA@keescook>
+References: <20220929203903.9475-1-lukas.bulwahn@gmail.com>
+ <87tu4p3jwn.fsf@email.froward.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tu4p3jwn.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+On Thu, Sep 29, 2022 at 05:17:28PM -0500, Eric W. Biederman wrote:
+> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+> 
+> > With commit 987f20a9dcce ("a.out: Remove the a.out implementation"), the
+> > use of the special taso flag for alpha architectures in the linux_binprm
+> > struct is gone.
+> >
+> > Remove the definition of taso in the linux_binprm struct.
+> >
+> > No functional change.
+> 
+> Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> 
+> Alphas binfmt_loader is the only use I can find of that variable
+> so let's kill it as well.
 
-> With commit 987f20a9dcce ("a.out: Remove the a.out implementation"), the
-> use of the special taso flag for alpha architectures in the linux_binprm
-> struct is gone.
->
-> Remove the definition of taso in the linux_binprm struct.
->
-> No functional change.
+I can't find anything using "taso". Where are you looking?
 
-Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
-Alphas binfmt_loader is the only use I can find of that variable
-so let's kill it as well.
-
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Kees, please pick this patch on top of the commit above.
->
->  include/linux/binfmts.h | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index 3dc20c4f394c..8d51f69f9f5e 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -43,9 +43,6 @@ struct linux_binprm {
->  		 * original userspace.
->  		 */
->  		point_of_no_return:1;
-> -#ifdef __alpha__
-> -	unsigned int taso:1;
-> -#endif
->  	struct file *executable; /* Executable to pass to the interpreter */
->  	struct file *interpreter;
->  	struct file *file;
+-- 
+Kees Cook
