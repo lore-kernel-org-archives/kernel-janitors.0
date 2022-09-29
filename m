@@ -2,117 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B617C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 15:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FD3C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 15:34:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235724AbiI2PIS (ORCPT
+        id S235621AbiI2Pes (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 11:08:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44942 "EHLO
+        Thu, 29 Sep 2022 11:34:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235579AbiI2PH7 (ORCPT
+        with ESMTP id S235556AbiI2Pc6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 11:07:59 -0400
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF3713F70F;
-        Thu, 29 Sep 2022 08:07:54 -0700 (PDT)
-Received: by mail-qk1-f169.google.com with SMTP id d17so995809qko.13;
-        Thu, 29 Sep 2022 08:07:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=Rzp0lh/K2FX3N+ufpgYNPH83ze92e9mULF1gMbtZpQs=;
-        b=1RlzDOhSRVJ5JNShA75XKxhg2kBoqwv9zsgi/9BDjwSyMPSQ8Mn4mFzH7eqRJd5LkX
-         Pn91rMtXGJvhYEfAy9j1PPw9delLElhypErhHiEbOsknMIwag+EB/o/6yzLb8PnoawvM
-         /NG9nlhRBjIW8hbwzSM8zA8KZTRhKK1n9k07A3zUkZGpLWooY32eGkn5ZdkIcERB3PEf
-         uunw1BlHbCivWJlSSr2Snqr+6STdX9/0TqRit5GDq3xmzN08xfvy+cOI5chERAgZEG9u
-         4iqL0DTluhHdPZ4SATySuhQMJgq3fBDZwsZdMlh7pIa4jtiPZ0Q+rXMSZmXo7/GHkQWm
-         wV+w==
-X-Gm-Message-State: ACrzQf020AGib2d/uGpS2wHYk0r8uautqHA8FZouk6uPvcNuIeL+Oei9
-        XbDiWWHlaCmFMTDAu4ElSJxFEdiSYYH4ow==
-X-Google-Smtp-Source: AMsMyM6M2S5mBsgRualO6cSP4fO+x34xG2qIP15XNStfFnOKTYBPk6Sg2ppuZYhZ3UU5cphCKOL+7w==
-X-Received: by 2002:a37:8dc6:0:b0:6cf:33cd:2c4f with SMTP id p189-20020a378dc6000000b006cf33cd2c4fmr2512631qkd.372.1664464072865;
-        Thu, 29 Sep 2022 08:07:52 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id cb20-20020a05622a1f9400b0035a7070e909sm5772184qtb.38.2022.09.29.08.07.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Sep 2022 08:07:52 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id c9so1889651ybf.5;
-        Thu, 29 Sep 2022 08:07:52 -0700 (PDT)
-X-Received: by 2002:a5b:506:0:b0:6af:ffac:4459 with SMTP id
- o6-20020a5b0506000000b006afffac4459mr3378572ybp.365.1664464072203; Thu, 29
- Sep 2022 08:07:52 -0700 (PDT)
+        Thu, 29 Sep 2022 11:32:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A637217A5DB;
+        Thu, 29 Sep 2022 08:32:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3489C61952;
+        Thu, 29 Sep 2022 15:32:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA6FEC433C1;
+        Thu, 29 Sep 2022 15:32:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664465521;
+        bh=atja4xkXu+uR+lUBfnZv2ZFe2oiFXJBckvWkbvvGdiM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bjknexfIwz9R9IwpMjTpPtg2HUEN2U4sf2JRVvV/cSckiyxHYUXlv0reJpi/Jn4L1
+         HCR730m3yXNu5qYsZeia7arZw9+KQbizyoLds/mTE8fpXPIN4WebBrHaIVH+x9yanU
+         Zev/t9Xrg7jbqqNMLig6dMiZJfuOX4NDVpmRmQ3TaSU67CIxTQo4FHfByhaSrFiDy2
+         7MgsFoCVEjWk7teyzRjCrbibDV/dEl2hEokDaQCbUdEaaRTZdPybmvMs5EhEwzyv1w
+         Z67/0wYv+2itqT2qM2D6ZwAogCjPjqqnwi4uWBX3aFG/OSJNWSPRWS3jBz/JyRFz0E
+         ZDnKqMZLyFIEg==
+Date:   Thu, 29 Sep 2022 21:01:56 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: phy-mtk-dp: make array driving_params static const
+Message-ID: <YzW6bABCoDzTaIBD@matsya>
+References: <20220929130147.97375-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-References: <20220929101458.32434-1-lukas.bulwahn@gmail.com>
- <YzWp+p+1V1UmCAb3@oscomms1> <YzWr+mmtLy2DRYEA@oscomms1>
-In-Reply-To: <YzWr+mmtLy2DRYEA@oscomms1>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 29 Sep 2022 17:07:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWx5RKP8WfNAyOofGFTGQNfOtDYMOJmvPgPhtyvRPG1Bw@mail.gmail.com>
-Message-ID: <CAMuHMdWx5RKP8WfNAyOofGFTGQNfOtDYMOJmvPgPhtyvRPG1Bw@mail.gmail.com>
-Subject: Re: [PATCH] openrisc: update config files
-To:     Stafford Horne <shorne@gmail.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jonas Bonn <jonas@southpole.se>, openrisc@lists.librecores.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220929130147.97375-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Stafford,
+On 29-09-22, 14:01, Colin Ian King wrote:
+> Don't populate the read-only array driving_params on the stack but instead
+> make it static const. Also makes the object code a little smaller.
 
-On Thu, Sep 29, 2022 at 4:30 PM Stafford Horne <shorne@gmail.com> wrote:
-> On Thu, Sep 29, 2022 at 02:21:46PM +0000, Stafford Horne wrote:
-> > On Thu, Sep 29, 2022 at 12:14:58PM +0200, Lukas Bulwahn wrote:
-> > > Clean up config files by:
-> > >   - removing configs that were deleted in the past
-> > >   - removing configs not in tree and without recently pending patches
-> > >   - adding new configs that are replacements for old configs in the file
+Applied, thanks
 
-> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> >
-> > Thanks for the patch this looks fine to me.  Usually I just generate this
-> > defcnfigs using make savedefconfig.  If there is some better way which
-> > doesn't generate the file with the # comment's I haven't found it.
-> >
-> > I will queue this.
->
-> Actually..
->
-> About the subject 'openrisc: update config files' and description.  Can you be
-> more specific about what updates you are making for this patch?
->
-> For example: remove comments from config files.
-
-These are not comments, but options that default to y or m, and
-are overriden to n by "commenting them out".
-
-This syntax dates back to the days Kconfig was a collection of
-shell scripts. Nowadays, switching to "CONFIG_<FOO>=n" would
-perhaps make sense, as Kconfig already recognizes that syntax.
-
-> > > --- a/arch/openrisc/configs/or1ksim_defconfig
-> > > +++ b/arch/openrisc/configs/or1ksim_defconfig
-> > > @@ -19,9 +19,6 @@ CONFIG_NET=y
-> > >  CONFIG_PACKET=y
-> > >  CONFIG_UNIX=y
-> > >  CONFIG_INET=y
-> > > -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> > > -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> > > -# CONFIG_INET_XFRM_MODE_BEET is not set
-> > >  # CONFIG_INET_DIAG is not set
-> > >  CONFIG_TCP_CONG_ADVANCED=y
-> > >  # CONFIG_TCP_CONG_BIC is not set
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+~Vinod
