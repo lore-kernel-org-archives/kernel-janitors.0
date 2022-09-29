@@ -2,66 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FD3C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 15:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC98C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 15:35:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235621AbiI2Pes (ORCPT
+        id S235388AbiI2Pfe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 11:34:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45880 "EHLO
+        Thu, 29 Sep 2022 11:35:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235556AbiI2Pc6 (ORCPT
+        with ESMTP id S235303AbiI2Pdz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 11:32:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A637217A5DB;
-        Thu, 29 Sep 2022 08:32:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3489C61952;
-        Thu, 29 Sep 2022 15:32:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA6FEC433C1;
-        Thu, 29 Sep 2022 15:32:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664465521;
-        bh=atja4xkXu+uR+lUBfnZv2ZFe2oiFXJBckvWkbvvGdiM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bjknexfIwz9R9IwpMjTpPtg2HUEN2U4sf2JRVvV/cSckiyxHYUXlv0reJpi/Jn4L1
-         HCR730m3yXNu5qYsZeia7arZw9+KQbizyoLds/mTE8fpXPIN4WebBrHaIVH+x9yanU
-         Zev/t9Xrg7jbqqNMLig6dMiZJfuOX4NDVpmRmQ3TaSU67CIxTQo4FHfByhaSrFiDy2
-         7MgsFoCVEjWk7teyzRjCrbibDV/dEl2hEokDaQCbUdEaaRTZdPybmvMs5EhEwzyv1w
-         Z67/0wYv+2itqT2qM2D6ZwAogCjPjqqnwi4uWBX3aFG/OSJNWSPRWS3jBz/JyRFz0E
-         ZDnKqMZLyFIEg==
-Date:   Thu, 29 Sep 2022 21:01:56 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-phy@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: phy-mtk-dp: make array driving_params static const
-Message-ID: <YzW6bABCoDzTaIBD@matsya>
-References: <20220929130147.97375-1-colin.i.king@gmail.com>
+        Thu, 29 Sep 2022 11:33:55 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DD801B263F;
+        Thu, 29 Sep 2022 08:33:35 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id c9so1984617ybf.5;
+        Thu, 29 Sep 2022 08:33:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=aXaeQFl7WeBGM1OGQQKe5SOEmDdnmC4Z6lKLU12QUBw=;
+        b=g6RhftYXeZcYpBxrpOfyc4VefrqsfhcLmEVqC8sATZDdsTl9waWQlqIg7pTBDmTAhs
+         8rEV62yD1c8833Fk/ymXMAoLLb7EcbXJA+npk34Rk0WnQz07h+Blva3s5QnvtEBN5G/9
+         Po/I6b5uquQK9gfIr5StbAWqv1RzkI2KRcq/VAo34sQVBn34/xEeKKe/wBNoW+ssRkk8
+         wsk61DM1mHjJ0lKxe4NQQv/j4vwXjIv9CROt5jCStZAMhlX+wn6qIW//nxazrOjl8wRt
+         +f6CW/pO7kyEmQVVHVNAq0NgJizggmiS9JJJbAUQd5mROQOjHQjn2IkS/Gsh4D3eub7i
+         cNug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=aXaeQFl7WeBGM1OGQQKe5SOEmDdnmC4Z6lKLU12QUBw=;
+        b=GhjiyKYk+dLjmLA2FQF5yrQlT5eVNHIeggBmOAAGbkNaTth9O6O8tpvJSnonTVtFPo
+         3bR/qveAiEGVY28QOhM6PuoUs+5nA7eyJDnmoeJ1gjByLaBqB7hYZPryJnXtaqgU/RXp
+         kRM9klpBaYfVSTeuQYi9QDnn/ToYd/Nr1De5iH2ujkmRqtCF2BdSHs8zmJwm8yrL2pDc
+         6TNZdeM1Jjk/m6wyZspg6U2zdzywK6JN7MvHIPJNeLSFES8mDaeFwUFUozkTpQF/R/eg
+         d7tc5PSdD7C/5sPmVkCIUGADowwR4Qs7ADHPq8cHcpb98THfh8/IGNIgkjWwvGfs9Ug+
+         V2/g==
+X-Gm-Message-State: ACrzQf298m1JQDKiIgsDH9GUpySdJjBQHkXEmfEtr8GBs1ZNp0CC7ZNN
+        1p6YWbbd03hE+DQ5qA8ue7/cmQ2cJPzau80kgYg=
+X-Google-Smtp-Source: AMsMyM4Sdv0hIIfsBVFD5fjzLKQMsYtCX9dgkbEmSQRlCy0yCX0lUGRJa0EMdijIOlrV6c6c/UR3kKaykbj3FB+Q5kg=
+X-Received: by 2002:a25:9b43:0:b0:6b3:9cc2:a651 with SMTP id
+ u3-20020a259b43000000b006b39cc2a651mr3606130ybo.485.1664465614724; Thu, 29
+ Sep 2022 08:33:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220929130147.97375-1-colin.i.king@gmail.com>
+References: <20220929101515.354-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220929101515.354-1-lukas.bulwahn@gmail.com>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Thu, 29 Sep 2022 08:33:23 -0700
+Message-ID: <CAMo8Bf+MHVLOh-U0EyP1DoJPDSHscC=st0TYZ9L76+xgfBxaOQ@mail.gmail.com>
+Subject: Re: [PATCH] xtensa: update config files
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Zankel <chris@zankel.net>, linux-xtensa@linux-xtensa.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 29-09-22, 14:01, Colin Ian King wrote:
-> Don't populate the read-only array driving_params on the stack but instead
-> make it static const. Also makes the object code a little smaller.
+On Thu, Sep 29, 2022 at 3:15 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Clean up config files by:
+>   - removing configs that were deleted in the past
+>   - removing configs not in tree and without recently pending patches
+>   - adding new configs that are replacements for old configs in the file
+>
+> For some detailed information, see Link.
+>
+> Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/xtensa/configs/audio_kc705_defconfig   | 1 -
+>  arch/xtensa/configs/cadence_csp_defconfig   | 4 ----
+>  arch/xtensa/configs/generic_kc705_defconfig | 1 -
+>  arch/xtensa/configs/nommu_kc705_defconfig   | 1 -
+>  arch/xtensa/configs/smp_lx200_defconfig     | 1 -
+>  arch/xtensa/configs/xip_kc705_defconfig     | 1 -
+>  6 files changed, 9 deletions(-)
 
-Applied, thanks
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
 
 -- 
-~Vinod
+Thanks.
+-- Max
