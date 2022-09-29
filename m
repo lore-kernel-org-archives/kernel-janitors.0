@@ -2,96 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FB1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 13:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 018B5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 13:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235619AbiI2NCE (ORCPT
+        id S235476AbiI2NIF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 09:02:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60492 "EHLO
+        Thu, 29 Sep 2022 09:08:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235670AbiI2NBx (ORCPT
+        with ESMTP id S235315AbiI2NIC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 09:01:53 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83934161CFB;
-        Thu, 29 Sep 2022 06:01:50 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id h7so2062786wru.10;
-        Thu, 29 Sep 2022 06:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=QKIpHGs3LeinzeIaUGKa0ICPFZL+uew+WBou+/qEEMs=;
-        b=AgFahVNBMPAdTt6Hji1RhoPcnR8MCGZgvz/2UE5Q1CTjXVo9CW0ak/uSx1R+Vq8LPI
-         U6nGupIT3g1fujwOUBuemHE58YZu1E5MiLno/O/luh9m6dchtkEs62VjfDkZkPxImpQA
-         t3sDG+ehBpLP3dFCgjV6xQP4qBUYtyfshdD8TVIkwAD9om7bLf7WSEghDLkQ/L7diKJ1
-         FlGMrf6Q1kFxxEen86Qbwl+o5C+b2T31ZgQ1bDX51wzN6PbMuKltWkFJzQFr7U4esERu
-         sFe7Y3tiwEuE+2Vh2+uoJvCbR72J69DxTNPMuukHXoVFQr5x+LCQg0dtMPRiWgK8Hchp
-         HWLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=QKIpHGs3LeinzeIaUGKa0ICPFZL+uew+WBou+/qEEMs=;
-        b=ObDIcc2y5pWVqHIxyrRc703fyuwoS9Xai4xk47GLLkk+L9ul8xJU/0C7S1YjZoKAeH
-         UHhUAMeBeBFtlvZCZ1mLvRlxd5RgJcS7f8NouFAtLDeCfvAgSwOLjGHSVz9hX+MNesSQ
-         b/bWowHj//pI1O6VBFQjPLnUfBVvL0GtZTxUu/heV3/BXUm7bA1NtdnnPwzkVz35swmE
-         /U1BQqHdGhn1vrhXCF0vdQopiC1PoT5pfT7t9tA2YnIH9pLchSn9NmrqyOW968QSiSGw
-         D80BuKf5zvgTBqJw20y2sn8mz+tT1zsXSijoAOqA3YeADDfYF4mByN5556DAWllWAUZR
-         lEcA==
-X-Gm-Message-State: ACrzQf1VtYJSuyxcYVaFI4JWTDQDNUezp2KgtrYfs4KMoUmZlkArtiYP
-        tihJzX/1lIooyeA601lVKag=
-X-Google-Smtp-Source: AMsMyM5vXaXH5fZ3dIbmRJWeClvpwWiO6Y9sSQYzNl6JW42LcFYRMSzFHH58H6hdJJTPcWhcyowbbQ==
-X-Received: by 2002:a05:6000:1051:b0:228:e1a0:7221 with SMTP id c17-20020a056000105100b00228e1a07221mr2213671wrx.165.1664456508569;
-        Thu, 29 Sep 2022 06:01:48 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m13-20020a5d4a0d000000b0021e43b4edf0sm6555454wrq.20.2022.09.29.06.01.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 06:01:48 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
+        Thu, 29 Sep 2022 09:08:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 797C2155649;
+        Thu, 29 Sep 2022 06:07:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2AFE8B823A5;
+        Thu, 29 Sep 2022 13:07:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F72C433C1;
+        Thu, 29 Sep 2022 13:07:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664456875;
+        bh=sj+OdEAtykHcBziJ2ilGZDg/T4fIfEtsnxrbhj4A+U0=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=s3E375LbnG4eXybX2ENtevXcY20C0PZdCx3Q3e6yp/kZXN7zNECGzVmHl32719qh/
+         raW4MuWEJZvdJiJQCVTlE7KErEZv8Lk215c1IvjuZmAhYY1SqupUdapxcZ+ofl+rrQ
+         oqA2Dm1oqRfXid7alPVTyIDylj18xPf+x6sss1RJJcz6uR53Lzldb3Qp4/q5LMtMpG
+         yt6W2CcQiS9OIxn4Fj9N3/CpN5LnqlhsGUrSZqOkAYAQVjnDP/pPag0RU/iSlH7ULl
+         qIDu7AewPCAFjTtOCm27Coc+pVraVBWFzSPD3Ro6umAKSEGWBtRTJVpjPR2dtSNJGq
+         sP2+Bn4vk7bIQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        linux-mediatek@lists.infradead.org, alsa-devel@alsa-project.org,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org
+        Jaroslav Kysela <perex@perex.cz>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] phy: phy-mtk-dp: make array driving_params static const
-Date:   Thu, 29 Sep 2022 14:01:47 +0100
-Message-Id: <20220929130147.97375-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20220928220417.66799-1-colin.i.king@gmail.com>
+References: <20220928220417.66799-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] ASoC: mediatek: mt8186: Fix spelling mistake "slect" -> "select"
+Message-Id: <166445687286.114358.7172094686592004129.b4-ty@kernel.org>
+Date:   Thu, 29 Sep 2022 14:07:52 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fc921
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array driving_params on the stack but instead
-make it static const. Also makes the object code a little smaller.
+On Wed, 28 Sep 2022 23:04:17 +0100, Colin Ian King wrote:
+> There are some spelling mistakes in dev_err messages. Fix them.
+> 
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/phy/mediatek/phy-mtk-dp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to
 
-diff --git a/drivers/phy/mediatek/phy-mtk-dp.c b/drivers/phy/mediatek/phy-mtk-dp.c
-index 31266e7ca324..232fd3f1ff1b 100644
---- a/drivers/phy/mediatek/phy-mtk-dp.c
-+++ b/drivers/phy/mediatek/phy-mtk-dp.c
-@@ -85,7 +85,7 @@ struct mtk_dp_phy {
- static int mtk_dp_phy_init(struct phy *phy)
- {
- 	struct mtk_dp_phy *dp_phy = phy_get_drvdata(phy);
--	u32 driving_params[] = {
-+	static const u32 driving_params[] = {
- 		DRIVING_PARAM_3_DEFAULT,
- 		DRIVING_PARAM_4_DEFAULT,
- 		DRIVING_PARAM_5_DEFAULT,
--- 
-2.37.1
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
+Thanks!
+
+[1/1] ASoC: mediatek: mt8186: Fix spelling mistake "slect" -> "select"
+      commit: 65c94e4d15830406a31a55085887e97bacd25434
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
