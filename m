@@ -2,54 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B37C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 14:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874DFC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 14:30:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234485AbiI2OVx (ORCPT
+        id S235035AbiI2OaX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 10:21:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49064 "EHLO
+        Thu, 29 Sep 2022 10:30:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232180AbiI2OVw (ORCPT
+        with ESMTP id S234535AbiI2OaW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 10:21:52 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BDB58E469;
-        Thu, 29 Sep 2022 07:21:49 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id l18so2439443wrw.9;
-        Thu, 29 Sep 2022 07:21:49 -0700 (PDT)
+        Thu, 29 Sep 2022 10:30:22 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C543AB06;
+        Thu, 29 Sep 2022 07:30:21 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id cc5so2492015wrb.6;
+        Thu, 29 Sep 2022 07:30:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=6/3S4SqDN7s02eu32dMD8zSI0cpG/EMn6+nA5mGI7Ig=;
-        b=fohR4TTWFo+aKaHOU80z8jlxlGze8JyK+FrBc031T77KQZjIKD1kcmlEfNLLQNy7sJ
-         jn2LrXu1f+AoDZ+Yu/xeKVa/kCtmmoLudUJnRNawU4you7Rcx/9qKudGs+Nr98N83all
-         g1AKVIpjsD5zcWDt1G5WOARNrDPde4Y4CPAL9XL+MW2SPguZbGEL6a3bfNseR3Q0oBK0
-         4MsLhSRQB7tKe7xv6SajZ2mKlS+liv05/aAU9BSN5Du07jR+fLACrr7EO5TBoAoxyLx8
-         DVwVdErCAmq4op/49bnX3LTJeZNqYe7wdYYh3NrwA8L4gAD/K292M4249UM+a2AhC8bP
-         5kjA==
+        bh=D2lkRQCuHF3ThWvs1mxiesV0wdVCquhCSxFRRCWyCv0=;
+        b=iMALSbyky95yHXp5C/DMlsV0O/oQPXNZBMo/IcK0/Hu+vb1V0jE0irnly5s9LEo9ZC
+         lYLkIWwy2IlSL27z8W/8QsUtcaRDmnuXiOWgChnGkeY5GZe5yvPsyKMxyDWaJqhpiTH/
+         QBN5B4lbCkfddf2xAtX5T2LnzAHp31Z35TU6vV0ALXQek3/xf/FdScfzVkdA1GQd5SkQ
+         ifYYRcaIZsR6F8KG0MW1wWNIdyX/ik9HGMA7t9zSNofmZWM8ZvHM65FgBAsj8YCbkCkc
+         uYozeYwDg9Kef2PpcUxOS0UxNOsQmFB81/8x5llU2k1TIW6PF+fCZTtEKu+eGecCGvpQ
+         PSlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=6/3S4SqDN7s02eu32dMD8zSI0cpG/EMn6+nA5mGI7Ig=;
-        b=FcjBlZz4BbneiFmakQtTJUFVgfN72f1WbI6nPrhNfFbHB8x7LRTuZ7CUE657I9UvVj
-         aDEapFg94tBHRcCgHIU1LZu/N3F2IXpOC0xiSW9YFBDyLSaJHv6Zidu5I0HKYe2xc1r6
-         PnCnzbZ/Ge7i+VToBHjhMbiXsiK8pF+Ts2aksk9sWHT7a3/OghD1SxaoKkLkJwL8p7kT
-         dgleDfLHin6J09IGsDyCyc8vhk8sNWj2KPj8nkwcQaaq68lr2Ckcy5j/QiG6zEMwXAzg
-         rJoBYiB60IKM0fuNzBaaBkzwM2Z9LTRUNV8xdDp3ebLaSrgKUX5jx/xV5E8znQcCBFhr
-         q8mg==
-X-Gm-Message-State: ACrzQf0jcs0PWIre37tdpXOw924rYANl7iqj5VR/+8cL5HmUxiiTNUYy
-        daT/ZR3OF5SHdk1N7N7JhNg=
-X-Google-Smtp-Source: AMsMyM5uPhqI7tGH6OtYXpZMFPVOnRLcTvo3E6MDWHWjwFtaNwwoHyK6OOkdOq6PXfjMjY2YrxcDag==
-X-Received: by 2002:a05:6000:78e:b0:22a:7e99:da93 with SMTP id bu14-20020a056000078e00b0022a7e99da93mr2484830wrb.20.1664461307820;
-        Thu, 29 Sep 2022 07:21:47 -0700 (PDT)
+        bh=D2lkRQCuHF3ThWvs1mxiesV0wdVCquhCSxFRRCWyCv0=;
+        b=Wt1VRyD0Xq4YHEH/PReMXs5/VDZgDsnglBh9Z6sW8WhfD23AAyUVlfcYfPL1fXvqu9
+         tX5ZUzl+EKc3jc6hcEn3zeZV3HbCGWBgqBDHRjqgPX/IEZXGSqdQk0PWYDEIts9Mgz7S
+         o/rHsebJIT3cyRgdcM5L2TWrLpygOeoUUYTriP5tAL6wWVTH07tMEweDMFMyp/7SaCwI
+         OSjDit2MABC/1KEZSeEZoGS6uPHDQUJvSHtsOvZGdlRRjY+cj3UZqxXB61Dn1Sq7N5U8
+         1NX9eIjGukXNcpN/O1CESpn/C4R4m+J36Myh7RigcCoZie0G7pO1lToNSPvpYm5uJa1x
+         w0Tg==
+X-Gm-Message-State: ACrzQf0tR1RM679SNPdDvVX75MRL0x5AT5AOSflRdBFLzI9N19M5McAt
+        Pk7kZydIcjw6ds6U7h+5hKc=
+X-Google-Smtp-Source: AMsMyM6xPtQOGyS1GcMriCqoY1+CKok3+WbriymFW3pwIEfpIfR3XLIuCYZ3t85p9ZgVut5Wa/Bfyw==
+X-Received: by 2002:a5d:4bc3:0:b0:22a:4b7a:6f60 with SMTP id l3-20020a5d4bc3000000b0022a4b7a6f60mr2572401wrt.549.1664461819743;
+        Thu, 29 Sep 2022 07:30:19 -0700 (PDT)
 Received: from localhost ([2a03:b0c0:1:d0::dee:c001])
-        by smtp.gmail.com with ESMTPSA id z14-20020adff74e000000b002205a5de337sm3856422wrp.102.2022.09.29.07.21.47
+        by smtp.gmail.com with ESMTPSA id hg6-20020a05600c538600b003b4e009deb2sm5127754wmb.41.2022.09.29.07.30.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 07:21:47 -0700 (PDT)
-Date:   Thu, 29 Sep 2022 14:21:46 +0000
+        Thu, 29 Sep 2022 07:30:19 -0700 (PDT)
+Date:   Thu, 29 Sep 2022 14:30:18 +0000
 From:   Stafford Horne <shorne@gmail.com>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -57,90 +57,108 @@ Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
         openrisc@lists.librecores.org
 Subject: Re: [PATCH] openrisc: update config files
-Message-ID: <YzWp+p+1V1UmCAb3@oscomms1>
+Message-ID: <YzWr+mmtLy2DRYEA@oscomms1>
 References: <20220929101458.32434-1-lukas.bulwahn@gmail.com>
+ <YzWp+p+1V1UmCAb3@oscomms1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220929101458.32434-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <YzWp+p+1V1UmCAb3@oscomms1>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 12:14:58PM +0200, Lukas Bulwahn wrote:
-> Clean up config files by:
->   - removing configs that were deleted in the past
->   - removing configs not in tree and without recently pending patches
->   - adding new configs that are replacements for old configs in the file
-> 
-> For some detailed information, see Link.
-> 
-> Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
 Hello,
 
-Thanks for the patch this looks fine to me.  Usually I just generate this
-defcnfigs using make savedefconfig.  If there is some better way which
-doesn't generate the file with the # comment's I haven't found it.
 
-I will queue this.
+On Thu, Sep 29, 2022 at 02:21:46PM +0000, Stafford Horne wrote:
+> On Thu, Sep 29, 2022 at 12:14:58PM +0200, Lukas Bulwahn wrote:
+> > Clean up config files by:
+> >   - removing configs that were deleted in the past
+> >   - removing configs not in tree and without recently pending patches
+> >   - adding new configs that are replacements for old configs in the file
+
+Not all of these apply to this patch.  Can you on mention what you changes you
+are doing here?
+
+> > For some detailed information, see Link.
+> > 
+> > Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
+> > 
+
+This extra newline is not need.
+
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> 
+> Hello,
+> 
+> Thanks for the patch this looks fine to me.  Usually I just generate this
+> defcnfigs using make savedefconfig.  If there is some better way which
+> doesn't generate the file with the # comment's I haven't found it.
+> 
+> I will queue this.
+
+Actually..
+
+About the subject 'openrisc: update config files' and description.  Can you be
+more specific about what updates you are making for this patch?
+
+For example: remove comments from config files.
 
 -Stafford
 
-> ---
->  arch/openrisc/configs/or1ksim_defconfig    | 5 -----
->  arch/openrisc/configs/simple_smp_defconfig | 4 ----
->  2 files changed, 9 deletions(-)
-> 
-> diff --git a/arch/openrisc/configs/or1ksim_defconfig b/arch/openrisc/configs/or1ksim_defconfig
-> index 6e1e004047c7..af1164807206 100644
-> --- a/arch/openrisc/configs/or1ksim_defconfig
-> +++ b/arch/openrisc/configs/or1ksim_defconfig
-> @@ -19,9 +19,6 @@ CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_INET_DIAG is not set
->  CONFIG_TCP_CONG_ADVANCED=y
->  # CONFIG_TCP_CONG_BIC is not set
-> @@ -34,7 +31,6 @@ CONFIG_DEVTMPFS=y
->  CONFIG_DEVTMPFS_MOUNT=y
->  # CONFIG_PREVENT_FIRMWARE_BUILD is not set
->  # CONFIG_FW_LOADER is not set
-> -CONFIG_PROC_DEVICETREE=y
->  CONFIG_NETDEVICES=y
->  CONFIG_ETHOC=y
->  CONFIG_MICREL_PHY=y
-> @@ -52,4 +48,3 @@ CONFIG_SERIAL_OF_PLATFORM=y
->  # CONFIG_DNOTIFY is not set
->  CONFIG_TMPFS=y
->  CONFIG_NFS_FS=y
-> -# CONFIG_ENABLE_MUST_CHECK is not set
-> diff --git a/arch/openrisc/configs/simple_smp_defconfig b/arch/openrisc/configs/simple_smp_defconfig
-> index ff49d868e040..84ca3203af9c 100644
-> --- a/arch/openrisc/configs/simple_smp_defconfig
-> +++ b/arch/openrisc/configs/simple_smp_defconfig
-> @@ -27,9 +27,6 @@ CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_INET_DIAG is not set
->  CONFIG_TCP_CONG_ADVANCED=y
->  # CONFIG_TCP_CONG_BIC is not set
-> @@ -60,5 +57,4 @@ CONFIG_SERIAL_OF_PLATFORM=y
->  CONFIG_TMPFS=y
->  CONFIG_NFS_FS=y
->  CONFIG_XZ_DEC=y
-> -# CONFIG_ENABLE_MUST_CHECK is not set
->  # CONFIG_RCU_TRACE is not set
-> -- 
-> 2.17.1
-> 
+> > ---
+> >  arch/openrisc/configs/or1ksim_defconfig    | 5 -----
+> >  arch/openrisc/configs/simple_smp_defconfig | 4 ----
+> >  2 files changed, 9 deletions(-)
+> > 
+> > diff --git a/arch/openrisc/configs/or1ksim_defconfig b/arch/openrisc/configs/or1ksim_defconfig
+> > index 6e1e004047c7..af1164807206 100644
+> > --- a/arch/openrisc/configs/or1ksim_defconfig
+> > +++ b/arch/openrisc/configs/or1ksim_defconfig
+> > @@ -19,9 +19,6 @@ CONFIG_NET=y
+> >  CONFIG_PACKET=y
+> >  CONFIG_UNIX=y
+> >  CONFIG_INET=y
+> > -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
+> > -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
+> > -# CONFIG_INET_XFRM_MODE_BEET is not set
+> >  # CONFIG_INET_DIAG is not set
+> >  CONFIG_TCP_CONG_ADVANCED=y
+> >  # CONFIG_TCP_CONG_BIC is not set
+> > @@ -34,7 +31,6 @@ CONFIG_DEVTMPFS=y
+> >  CONFIG_DEVTMPFS_MOUNT=y
+> >  # CONFIG_PREVENT_FIRMWARE_BUILD is not set
+> >  # CONFIG_FW_LOADER is not set
+> > -CONFIG_PROC_DEVICETREE=y
+> >  CONFIG_NETDEVICES=y
+> >  CONFIG_ETHOC=y
+> >  CONFIG_MICREL_PHY=y
+> > @@ -52,4 +48,3 @@ CONFIG_SERIAL_OF_PLATFORM=y
+> >  # CONFIG_DNOTIFY is not set
+> >  CONFIG_TMPFS=y
+> >  CONFIG_NFS_FS=y
+> > -# CONFIG_ENABLE_MUST_CHECK is not set
+> > diff --git a/arch/openrisc/configs/simple_smp_defconfig b/arch/openrisc/configs/simple_smp_defconfig
+> > index ff49d868e040..84ca3203af9c 100644
+> > --- a/arch/openrisc/configs/simple_smp_defconfig
+> > +++ b/arch/openrisc/configs/simple_smp_defconfig
+> > @@ -27,9 +27,6 @@ CONFIG_NET=y
+> >  CONFIG_PACKET=y
+> >  CONFIG_UNIX=y
+> >  CONFIG_INET=y
+> > -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
+> > -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
+> > -# CONFIG_INET_XFRM_MODE_BEET is not set
+> >  # CONFIG_INET_DIAG is not set
+> >  CONFIG_TCP_CONG_ADVANCED=y
+> >  # CONFIG_TCP_CONG_BIC is not set
+> > @@ -60,5 +57,4 @@ CONFIG_SERIAL_OF_PLATFORM=y
+> >  CONFIG_TMPFS=y
+> >  CONFIG_NFS_FS=y
+> >  CONFIG_XZ_DEC=y
+> > -# CONFIG_ENABLE_MUST_CHECK is not set
+> >  # CONFIG_RCU_TRACE is not set
+> > -- 
+> > 2.17.1
+> > 
