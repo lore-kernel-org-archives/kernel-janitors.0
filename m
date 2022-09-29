@@ -2,60 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5ABFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 10:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB293C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Sep 2022 10:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235265AbiI2KOj (ORCPT
+        id S235364AbiI2KOt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 06:14:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35888 "EHLO
+        Thu, 29 Sep 2022 06:14:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235253AbiI2KOg (ORCPT
+        with ESMTP id S235259AbiI2KOm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 06:14:36 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F024149D22;
-        Thu, 29 Sep 2022 03:14:30 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id r6so1397140wru.8;
-        Thu, 29 Sep 2022 03:14:30 -0700 (PDT)
+        Thu, 29 Sep 2022 06:14:42 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07461C104;
+        Thu, 29 Sep 2022 03:14:39 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 130-20020a1c0288000000b003b494ffc00bso2387973wmc.0;
+        Thu, 29 Sep 2022 03:14:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=ykrnpuTEGllYEKTmGrNX9+HIF9vIBHuy8P5QqnXpQnk=;
-        b=Y6Z9r5+4cL4qCkzJ1q45Su+Or7/MFGhUlA0RYLv4Zn7nwe2eXIkKJJ3MFxpFAFpr9X
-         1SWIPATSMRTUBLicrIaN3Mt3plnsdF0T3/Wl8GXRt9JLxrQtwh1VE8WWLYOHLXxBd+Fg
-         H1601aDfLCXbrTBSKRhTkndy8iStzEj3AcEylV1rYlkuMejTazWuYfKhAtKQrpTbaFpU
-         UCsmqMFfMJoIGEiG8VUUJNknr/W/GMeBOhY1nXp/WutuVMP6+WBSuGoaBlaskRM6v2pa
-         4SPxUpZc+wUzDV00lyvs2Kkwfq60xGEw2mWbXo6wXrl0woSF6LUnTvpbMnmosZNwplbd
-         9izQ==
+        bh=12eQhE2PY0OlduRrQeOAHEPmadytun891QhnQWUKARo=;
+        b=In7gcwx2oRj7FOh5UaUT4AiM9oZqR5yhFHDZ5CxelJTZpu4ryf4yMCXHCQeE2ppI4t
+         vrYduSGEosVdvW0CCrOon3vlC/iSkfIVjHs4j3qvYmwWsRZuAYeSOlTuM6TEqr1H759a
+         YV4M8IP2uYGWvr3XIip7Bi+oqbM4pX91k/3/IuAzfJCPb2snkD2jYy7sH9Xj8gEMpVsL
+         4YiTA2dWruS5Md6VyWkMEAH4DDRSYomtXEoTnpslMI5+a0GZjM2ssse3Gc0h4H7SjaWp
+         Rp1YEr5wQHUHUCwxILffa5QBxp7NAr6IYwpnDDYWp/ee5TDm37h7vZGSpZWeotVcSzHR
+         t0MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=ykrnpuTEGllYEKTmGrNX9+HIF9vIBHuy8P5QqnXpQnk=;
-        b=eOk2BkgvP9ibAZLe3dY7gm8PajUuPBWlGB0C5o1u5STJ9r/Jid2xyC0/OD8y/5Axb1
-         qUIaBttsUkzRNxBVupRYRSrKmNK/fK0YY0qHy88815VaJ5oizxKrWhiOaGbLa3Y33cv/
-         85R+C/AzgslNczY1SWNAbdW1Khx17UfN8joHPlcBynXkv+zE8ZmhhJUvFIwTKlUbtnTn
-         if+8/PXf7soROigeZIgY4cs0Z6wxCBOSCPgtHe4lfskt/Qsr6grW1m7S9a3tcZVExsml
-         vb3J6ft9G1dY47ss+AI4Csb1fUS74BlBqfq49JohjZU0SfC6gmTyIB+TAY1fG0G4WJZZ
-         2EBA==
-X-Gm-Message-State: ACrzQf07o8XH850DCQqFom8UTFFLDdnJgL2XnwHS7h8R8VvZAY6SzWPV
-        C43lzgLVKCtDYtV5lK0bakCN0V6XQfc=
-X-Google-Smtp-Source: AMsMyM6dHzKBCbeL8s6QCcGUPZeeePXhY4nB6PwkRFWUcxJ3Q+aO+KI6VmZl7bmkmNYzL+BBaensUA==
-X-Received: by 2002:a5d:6d4e:0:b0:22c:9dfd:4159 with SMTP id k14-20020a5d6d4e000000b0022c9dfd4159mr1564699wri.307.1664446468582;
-        Thu, 29 Sep 2022 03:14:28 -0700 (PDT)
+        bh=12eQhE2PY0OlduRrQeOAHEPmadytun891QhnQWUKARo=;
+        b=M0id6lWgnb+lLgWEX4a0XsCYVV9J3Mc2pIwHox6XDXbnkDRMgHZ4DVjWzaOC7AxrBS
+         ME9s3mZ3n1RBiKh8xU4HKXTV6OscLRaAqL0+u6Lrz0P+2eyafNDfS+nD+MJhVfu8xyfl
+         zqCE+7666c2Ykk6G+WeYzlW/NDqa2dHoFX0d4U7sRn87tvUjGXQNZIcBYo04XrQ2kf+1
+         FCgI5+ITuH61lT7ekmi1LfT27r/8BEZS4gJEVnYdJpNYIVo+ZTQptaaaj9ltwNWd8Qeu
+         sCsteY6nyzEXl38bse+40lO9Bn16+dove6hoeLNwWtlW4COFwZCIFUVWwhgk54vbqCof
+         8Qhw==
+X-Gm-Message-State: ACrzQf01NwFOvIr9MZKV89jeqzZevpPpDNoBX/PEHtMaG4GZ5fSVsLoJ
+        KleGnx5SKFTvtZnJxm6zlqIG5iMtun8=
+X-Google-Smtp-Source: AMsMyM4yu7i7f21/RisYXNYU33L7DSjERybpxGpuWdGGtQo9R8DqVaTE2DucLprr6xGNff4B1yNk1g==
+X-Received: by 2002:a05:600c:5014:b0:3b5:889:58a5 with SMTP id n20-20020a05600c501400b003b5088958a5mr1660328wmr.140.1664446477349;
+        Thu, 29 Sep 2022 03:14:37 -0700 (PDT)
 Received: from felia.fritz.box (200116b826e11200b190ebfd45660ea6.dip.versatel-1u1.de. [2001:16b8:26e1:1200:b190:ebfd:4566:ea6])
-        by smtp.gmail.com with ESMTPSA id d3-20020a05600c3ac300b003a844885f88sm3856721wms.22.2022.09.29.03.14.27
+        by smtp.gmail.com with ESMTPSA id u5-20020a5d4685000000b0022a3a887ceasm6313592wrq.49.2022.09.29.03.14.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 03:14:28 -0700 (PDT)
+        Thu, 29 Sep 2022 03:14:36 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
 To:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vineet Gupta <vgupta@kernel.org>,
-        linux-snps-arc@lists.infradead.org
+        Rob Herring <robh@kernel.org>
 Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] arc: update config files
-Date:   Thu, 29 Sep 2022 12:14:21 +0200
-Message-Id: <20220929101421.31590-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] config: android: update config files
+Date:   Thu, 29 Sep 2022 12:14:33 +0200
+Message-Id: <20220929101433.31801-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -63,7 +62,7 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Clean up config files by:
   - removing configs that were deleted in the past
-  - removing configs not in tree and without recently pending patches
+  - removing configs that are not in tree withot recently pending patches
   - adding new configs that are replacements for old configs in the file
 
 For some detailed information, see Link.
@@ -72,245 +71,114 @@ Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwah
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- arch/arc/configs/axs101_defconfig          | 4 ----
- arch/arc/configs/axs103_defconfig          | 4 ----
- arch/arc/configs/axs103_smp_defconfig      | 4 ----
- arch/arc/configs/haps_hs_defconfig         | 1 -
- arch/arc/configs/haps_hs_smp_defconfig     | 1 -
- arch/arc/configs/hsdk_defconfig            | 1 -
- arch/arc/configs/nsim_700_defconfig        | 1 -
- arch/arc/configs/nsimosci_defconfig        | 1 -
- arch/arc/configs/nsimosci_hs_defconfig     | 1 -
- arch/arc/configs/nsimosci_hs_smp_defconfig | 6 +-----
- arch/arc/configs/tb10x_defconfig           | 7 +------
- arch/arc/configs/vdk_hs38_defconfig        | 3 ---
- arch/arc/configs/vdk_hs38_smp_defconfig    | 1 -
- 13 files changed, 2 insertions(+), 33 deletions(-)
+ kernel/configs/android-base.config        | 9 ---------
+ kernel/configs/android-recommended.config | 5 -----
+ 2 files changed, 14 deletions(-)
 
-diff --git a/arch/arc/configs/axs101_defconfig b/arch/arc/configs/axs101_defconfig
-index e31a8ebc3ecc..81764160451f 100644
---- a/arch/arc/configs/axs101_defconfig
-+++ b/arch/arc/configs/axs101_defconfig
-@@ -35,9 +35,6 @@ CONFIG_IP_PNP=y
- CONFIG_IP_PNP_DHCP=y
- CONFIG_IP_PNP_BOOTP=y
- CONFIG_IP_PNP_RARP=y
--# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
--# CONFIG_INET_XFRM_MODE_TUNNEL is not set
--# CONFIG_INET_XFRM_MODE_BEET is not set
- # CONFIG_IPV6 is not set
- CONFIG_DEVTMPFS=y
- # CONFIG_STANDALONE is not set
-@@ -99,7 +96,6 @@ CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_STRIP_ASM_SYMS=y
- CONFIG_SOFTLOCKUP_DETECTOR=y
- CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
-diff --git a/arch/arc/configs/axs103_defconfig b/arch/arc/configs/axs103_defconfig
-index e0e8567f0d75..d5181275490e 100644
---- a/arch/arc/configs/axs103_defconfig
-+++ b/arch/arc/configs/axs103_defconfig
-@@ -34,9 +34,6 @@ CONFIG_IP_PNP=y
- CONFIG_IP_PNP_DHCP=y
- CONFIG_IP_PNP_BOOTP=y
- CONFIG_IP_PNP_RARP=y
--# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
--# CONFIG_INET_XFRM_MODE_TUNNEL is not set
--# CONFIG_INET_XFRM_MODE_BEET is not set
- # CONFIG_IPV6 is not set
- CONFIG_DEVTMPFS=y
- # CONFIG_STANDALONE is not set
-@@ -97,7 +94,6 @@ CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_STRIP_ASM_SYMS=y
- CONFIG_SOFTLOCKUP_DETECTOR=y
- CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
-diff --git a/arch/arc/configs/axs103_smp_defconfig b/arch/arc/configs/axs103_smp_defconfig
-index fcbc952bc75b..2f336d99a8cf 100644
---- a/arch/arc/configs/axs103_smp_defconfig
-+++ b/arch/arc/configs/axs103_smp_defconfig
-@@ -35,9 +35,6 @@ CONFIG_IP_PNP=y
- CONFIG_IP_PNP_DHCP=y
- CONFIG_IP_PNP_BOOTP=y
- CONFIG_IP_PNP_RARP=y
--# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
--# CONFIG_INET_XFRM_MODE_TUNNEL is not set
--# CONFIG_INET_XFRM_MODE_BEET is not set
- # CONFIG_IPV6 is not set
- CONFIG_DEVTMPFS=y
- # CONFIG_STANDALONE is not set
-@@ -100,7 +97,6 @@ CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_STRIP_ASM_SYMS=y
- CONFIG_SOFTLOCKUP_DETECTOR=y
- CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
-diff --git a/arch/arc/configs/haps_hs_defconfig b/arch/arc/configs/haps_hs_defconfig
-index d87ad7e88d62..899b2fd5c71d 100644
---- a/arch/arc/configs/haps_hs_defconfig
-+++ b/arch/arc/configs/haps_hs_defconfig
-@@ -59,6 +59,5 @@ CONFIG_EXT2_FS_XATTR=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_DEBUG_MEMORY_INIT=y
- # CONFIG_DEBUG_PREEMPT is not set
-diff --git a/arch/arc/configs/haps_hs_smp_defconfig b/arch/arc/configs/haps_hs_smp_defconfig
-index 8d82cdb7f86a..0d32aac8069f 100644
---- a/arch/arc/configs/haps_hs_smp_defconfig
-+++ b/arch/arc/configs/haps_hs_smp_defconfig
-@@ -59,6 +59,5 @@ CONFIG_EXT2_FS_XATTR=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_SOFTLOCKUP_DETECTOR=y
- # CONFIG_DEBUG_PREEMPT is not set
-diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
-index f856b03e0fb5..d18378d2c2a6 100644
---- a/arch/arc/configs/hsdk_defconfig
-+++ b/arch/arc/configs/hsdk_defconfig
-@@ -85,7 +85,6 @@ CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_STRIP_ASM_SYMS=y
- CONFIG_SOFTLOCKUP_DETECTOR=y
- CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=10
-diff --git a/arch/arc/configs/nsim_700_defconfig b/arch/arc/configs/nsim_700_defconfig
-index a1ce12bf5b16..3e9829775992 100644
---- a/arch/arc/configs/nsim_700_defconfig
-+++ b/arch/arc/configs/nsim_700_defconfig
-@@ -56,5 +56,4 @@ CONFIG_EXT2_FS_XATTR=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- # CONFIG_DEBUG_PREEMPT is not set
-diff --git a/arch/arc/configs/nsimosci_defconfig b/arch/arc/configs/nsimosci_defconfig
-index ca10f4a2c823..502c87f351c8 100644
---- a/arch/arc/configs/nsimosci_defconfig
-+++ b/arch/arc/configs/nsimosci_defconfig
-@@ -65,4 +65,3 @@ CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
--# CONFIG_ENABLE_MUST_CHECK is not set
-diff --git a/arch/arc/configs/nsimosci_hs_defconfig b/arch/arc/configs/nsimosci_hs_defconfig
-index 31b6ec3683c6..f721cc3997d0 100644
---- a/arch/arc/configs/nsimosci_hs_defconfig
-+++ b/arch/arc/configs/nsimosci_hs_defconfig
-@@ -63,4 +63,3 @@ CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
--# CONFIG_ENABLE_MUST_CHECK is not set
-diff --git a/arch/arc/configs/nsimosci_hs_smp_defconfig b/arch/arc/configs/nsimosci_hs_smp_defconfig
-index 41a0037f48a5..1419fc946a08 100644
---- a/arch/arc/configs/nsimosci_hs_smp_defconfig
-+++ b/arch/arc/configs/nsimosci_hs_smp_defconfig
-@@ -26,9 +26,6 @@ CONFIG_UNIX=y
- CONFIG_UNIX_DIAG=y
- CONFIG_NET_KEY=y
+diff --git a/kernel/configs/android-base.config b/kernel/configs/android-base.config
+index 44b0f0146a3f..07b45571a8ff 100644
+--- a/kernel/configs/android-base.config
++++ b/kernel/configs/android-base.config
+@@ -1,7 +1,6 @@
+ #  KEEP ALPHABETICALLY SORTED
+ # CONFIG_DEVMEM is not set
+ # CONFIG_FHANDLE is not set
+-# CONFIG_INET_LRO is not set
+ # CONFIG_NFSD is not set
+ # CONFIG_NFS_FS is not set
+ # CONFIG_OABI_COMPAT is not set
+@@ -9,9 +8,7 @@
+ # CONFIG_USELIB is not set
+ CONFIG_ANDROID_BINDER_IPC=y
+ CONFIG_ANDROID_BINDER_DEVICES=binder,hwbinder,vndbinder
+-CONFIG_ANDROID_LOW_MEMORY_KILLER=y
+ CONFIG_ARMV8_DEPRECATED=y
+-CONFIG_ASHMEM=y
+ CONFIG_AUDIT=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CGROUPS=y
+@@ -34,7 +31,6 @@ CONFIG_INET6_IPCOMP=y
  CONFIG_INET=y
--# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
--# CONFIG_INET_XFRM_MODE_TUNNEL is not set
--# CONFIG_INET_XFRM_MODE_BEET is not set
- # CONFIG_IPV6 is not set
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
-@@ -37,7 +34,6 @@ CONFIG_DEVTMPFS=y
- # CONFIG_BLK_DEV is not set
+ CONFIG_INET_DIAG_DESTROY=y
+ CONFIG_INET_ESP=y
+-CONFIG_INET_XFRM_MODE_TUNNEL=y
+ CONFIG_IP6_NF_FILTER=y
+ CONFIG_IP6_NF_IPTABLES=y
+ CONFIG_IP6_NF_MANGLE=y
+@@ -71,7 +67,6 @@ CONFIG_MODVERSIONS=y
+ CONFIG_NET=y
  CONFIG_NETDEVICES=y
- # CONFIG_NET_VENDOR_ARC is not set
--# CONFIG_NET_CADENCE is not set
- # CONFIG_NET_VENDOR_BROADCOM is not set
- CONFIG_EZCHIP_NPS_MANAGEMENT_ENET=y
- # CONFIG_NET_VENDOR_INTEL is not set
-@@ -74,5 +70,5 @@ CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_FTRACE=y
-+# CONFIG_NET_VENDOR_CADENCE is not set
-diff --git a/arch/arc/configs/tb10x_defconfig b/arch/arc/configs/tb10x_defconfig
-index 4a94d1684ed6..6f0d2be9d926 100644
---- a/arch/arc/configs/tb10x_defconfig
-+++ b/arch/arc/configs/tb10x_defconfig
-@@ -35,15 +35,11 @@ CONFIG_PACKET=y
+ CONFIG_NETFILTER=y
+-CONFIG_NETFILTER_TPROXY=y
+ CONFIG_NETFILTER_XT_MATCH_COMMENT=y
+ CONFIG_NETFILTER_XT_MATCH_CONNLIMIT=y
+ CONFIG_NETFILTER_XT_MATCH_CONNMARK=y
+@@ -115,8 +110,6 @@ CONFIG_NF_CONNTRACK_AMANDA=y
+ CONFIG_NF_CONNTRACK_EVENTS=y
+ CONFIG_NF_CONNTRACK_FTP=y
+ CONFIG_NF_CONNTRACK_H323=y
+-CONFIG_NF_CONNTRACK_IPV4=y
+-CONFIG_NF_CONNTRACK_IPV6=y
+ CONFIG_NF_CONNTRACK_IRC=y
+ CONFIG_NF_CONNTRACK_NETBIOS_NS=y
+ CONFIG_NF_CONNTRACK_PPTP=y
+@@ -148,12 +141,10 @@ CONFIG_SECURITY_SELINUX=y
+ CONFIG_SETEND_EMULATION=y
+ CONFIG_STAGING=y
+ CONFIG_SWP_EMULATION=y
+-CONFIG_SYNC=y
+ CONFIG_TUN=y
  CONFIG_UNIX=y
- CONFIG_INET=y
- CONFIG_IP_MULTICAST=y
--# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
--# CONFIG_INET_XFRM_MODE_TUNNEL is not set
--# CONFIG_INET_XFRM_MODE_BEET is not set
- # CONFIG_INET_DIAG is not set
- # CONFIG_IPV6 is not set
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
- CONFIG_NETDEVICES=y
--# CONFIG_NET_CADENCE is not set
- # CONFIG_NET_VENDOR_BROADCOM is not set
- # CONFIG_NET_VENDOR_INTEL is not set
- # CONFIG_NET_VENDOR_MARVELL is not set
-@@ -94,12 +90,11 @@ CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y
- CONFIG_STRIP_ASM_SYMS=y
- CONFIG_DEBUG_FS=y
- CONFIG_HEADERS_INSTALL=y
--CONFIG_HEADERS_CHECK=y
- CONFIG_DEBUG_SECTION_MISMATCH=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DEBUG_MEMORY_INIT=y
- CONFIG_DEBUG_STACKOVERFLOW=y
- CONFIG_DETECT_HUNG_TASK=y
- CONFIG_SCHEDSTATS=y
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_CONFIGFS=y
+ CONFIG_USB_CONFIGFS_F_FS=y
+ CONFIG_USB_CONFIGFS_F_MIDI=y
+-CONFIG_USB_OTG_WAKELOCK=y
+ CONFIG_XFRM_USER=y
+diff --git a/kernel/configs/android-recommended.config b/kernel/configs/android-recommended.config
+index e400fbbc8aba..fae090812da6 100644
+--- a/kernel/configs/android-recommended.config
++++ b/kernel/configs/android-recommended.config
+@@ -7,7 +7,6 @@
+ # CONFIG_PM_WAKELOCKS_GC is not set
+ # CONFIG_VT is not set
+ CONFIG_ARM64_SW_TTBR0_PAN=y
+-CONFIG_BACKLIGHT_LCD_SUPPORT=y
+ CONFIG_BLK_DEV_DM=y
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_RAM=y
+@@ -76,7 +75,6 @@ CONFIG_HID_WIIMOTE=y
+ CONFIG_HID_ZEROPLUS=y
+ CONFIG_HID_ZYDACRON=y
+ CONFIG_INPUT_EVDEV=y
+-CONFIG_INPUT_GPIO=y
+ CONFIG_INPUT_JOYSTICK=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_TABLET=y
+@@ -96,7 +94,6 @@ CONFIG_PANIC_TIMEOUT=5
+ CONFIG_PANTHERLORD_FF=y
+ CONFIG_PERF_EVENTS=y
+ CONFIG_PM_DEBUG=y
+-CONFIG_PM_RUNTIME=y
+ CONFIG_PM_WAKELOCKS_LIMIT=0
+ CONFIG_POWER_SUPPLY=y
+ CONFIG_PSTORE=y
+@@ -107,7 +104,6 @@ CONFIG_SMARTJOYPLUS_FF=y
+ CONFIG_SND=y
+ CONFIG_SOUND=y
+ CONFIG_STRICT_KERNEL_RWX=y
+-CONFIG_SUSPEND_TIME=y
+ CONFIG_TABLET_USB_ACECAD=y
+ CONFIG_TABLET_USB_AIPTEK=y
+ CONFIG_TABLET_USB_HANWANG=y
+@@ -116,7 +112,6 @@ CONFIG_TASKSTATS=y
+ CONFIG_TASK_DELAY_ACCT=y
+ CONFIG_TASK_IO_ACCOUNTING=y
+ CONFIG_TASK_XACCT=y
 -CONFIG_TIMER_STATS=y
- # CONFIG_CRYPTO_HW is not set
-+# CONFIG_NET_VENDOR_CADENCE is not set
-diff --git a/arch/arc/configs/vdk_hs38_defconfig b/arch/arc/configs/vdk_hs38_defconfig
-index 0c3b21416819..d3ef189c75f8 100644
---- a/arch/arc/configs/vdk_hs38_defconfig
-+++ b/arch/arc/configs/vdk_hs38_defconfig
-@@ -58,8 +58,6 @@ CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
- # CONFIG_HWMON is not set
- CONFIG_FB=y
--CONFIG_ARCPGU_RGB888=y
--CONFIG_ARCPGU_DISPTYPE=0
- # CONFIG_VGA_CONSOLE is not set
- CONFIG_FRAMEBUFFER_CONSOLE=y
- CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
-@@ -87,7 +85,6 @@ CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_STRIP_ASM_SYMS=y
- CONFIG_DEBUG_SHIRQ=y
- CONFIG_SOFTLOCKUP_DETECTOR=y
-diff --git a/arch/arc/configs/vdk_hs38_smp_defconfig b/arch/arc/configs/vdk_hs38_smp_defconfig
-index f9ad9d3ee702..944b347025fd 100644
---- a/arch/arc/configs/vdk_hs38_smp_defconfig
-+++ b/arch/arc/configs/vdk_hs38_smp_defconfig
-@@ -91,7 +91,6 @@ CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
--# CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_STRIP_ASM_SYMS=y
- CONFIG_DEBUG_SHIRQ=y
- CONFIG_SOFTLOCKUP_DETECTOR=y
+ CONFIG_TMPFS=y
+ CONFIG_TMPFS_POSIX_ACL=y
+ CONFIG_UHID=y
 -- 
 2.17.1
 
