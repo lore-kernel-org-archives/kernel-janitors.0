@@ -2,78 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC73C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 12:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFBBC433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 12:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231388AbiI3MKX (ORCPT
+        id S230344AbiI3Mrj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 08:10:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48818 "EHLO
+        Fri, 30 Sep 2022 08:47:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbiI3MKU (ORCPT
+        with ESMTP id S229615AbiI3Mrh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 08:10:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEA378E4D7;
-        Fri, 30 Sep 2022 05:10:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 30 Sep 2022 08:47:37 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51F02F535C;
+        Fri, 30 Sep 2022 05:47:34 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7BAC662314;
-        Fri, 30 Sep 2022 12:10:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CDC20C433D6;
-        Fri, 30 Sep 2022 12:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664539817;
-        bh=t4MV0cXsgxNGKQwmObRrW7em92ARScSQC2qWmTjzovQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=KeV6Gh4OSEr2mXoiXetMBdO5j0Hz8yukyPXjPfV8XJg9AE5LKiLalPvL7xd9XenRI
-         qryxYNibohsCt3qgfOiAj2sWB6E/ivBaVByPqauGxi9nf4OVVwSPJgtPV/GIzOnRvP
-         WLcTtuUy3unm1OZ6n+4qCSRtR5jA6jp1xatVrFMzdisTzxAxEeFsl9HWibblSPajip
-         B/6gZd0JyVhWKWDaFJ71tIFJDJCjhOqLXK8HOKhZ17sc+9Rkfivjp+Rli16vKt255v
-         kXqBlIkV9p8KR3eia8oxJl5hK2w127wfYDcmMO/BynApvdLimR2MkprapG2UpgEnv1
-         Rk21Q4I68zczw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AB2E5E49FA5;
-        Fri, 30 Sep 2022 12:10:17 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Mf9405MRlz4xG6;
+        Fri, 30 Sep 2022 22:47:28 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1664542050;
+        bh=bHL0vqUrjIu+1JdWXaJUil0M78bFUEWVnPClNNQGSeU=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=jIpQd3O4kOlOPP8oeQ0QhASrK8jbG+oBeM8+1tbxdftK5Us2Z6A/GEIVbwSyV4EVT
+         AEI4FhiU2JgL+aYKCurG3qFEwCdHQ/S4Z0NLR5RgSavk2rn/SM76Clg0vg8SWb9msF
+         4XeyDRKpQr0DzYEZdN9E3jvpFkYXshm9v9tsdJxdAlmB66HuepZgxqBUSUPqC4Pm//
+         3Dl1kUJTIJc8kDKxNeT9po65vs0/Uey+LPNeZi92mSnydPTpX/790RzcNVf63gYP7L
+         caWvnupEthnbrV1Ts/8dXE/ymoQo13SB+Ew7ugqE5vlDefmbi83if1s+j8O2VEe45U
+         /Lg6uQlklzJhg==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc: update config files
+In-Reply-To: <CAKXUXMxe5EagwsQVyt_WLf2mMXZbUqzaEaiUjBj9ZwRRZywx0g@mail.gmail.com>
+References: <20220929101502.32527-1-lukas.bulwahn@gmail.com>
+ <87pmfdpatr.fsf@mpe.ellerman.id.au>
+ <CAKXUXMxe5EagwsQVyt_WLf2mMXZbUqzaEaiUjBj9ZwRRZywx0g@mail.gmail.com>
+Date:   Fri, 30 Sep 2022 22:47:28 +1000
+Message-ID: <87k05lowpr.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net/mlx5: Fix spelling mistake "syndrom" -> "syndrome"
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166453981769.22292.1617251533762607587.git-patchwork-notify@kernel.org>
-Date:   Fri, 30 Sep 2022 12:10:17 +0000
-References: <20220928220755.67137-1-colin.i.king@gmail.com>
-In-Reply-To: <20220928220755.67137-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     saeedm@nvidia.com, leon@kernel.org, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+> On Fri, Sep 30, 2022 at 9:42 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>>
+>> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+>> > Clean up config files by:
+>> >   - removing configs that were deleted in the past
+>> >   - removing configs not in tree and without recently pending patches
+>> >   - adding new configs that are replacements for old configs in the file
+>> >
+>> > For some detailed information, see Link.
+>> >
+>> > Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
+>>
+>> Ideally I'd like a list in the change log of each symbol and why they're
+>> being removed/changed. It's pretty easy to accidentally drop something
+>> otherwise.
+>>
+>> I think this is the list in this case:
+>>
+>> Renamed:
+>>   - CONFIG_PPC_PTDUMP -> CONFIG_GENERIC_PTDUMP
+>>     e084728393a5 ("powerpc/ptdump: Convert powerpc to GENERIC_PTDUMP")
+...
+>>
+>> I'll fold that into the change log.
+>
+> Sure. Go ahead. I have provided all information I collected in the
+> linked email (and this information drove my scripts to take actions)
+> and I am happy to provide it in any form a maintainer may think is
+> good for them. But I assume you did this with a simple script
+> yourself.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+I did it manually actually - just a bunch of "git log -G <symbol>".
+A script would have been better :)
 
-On Wed, 28 Sep 2022 23:07:55 +0100 you wrote:
-> There is a spelling mistake in a devlink_health_report message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/health.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> After going through the changes of Kconfig from the last decade, it
+> seems feasible that the information on Kconfig changes is actually
+> maintained somewhere and that would allow updating of arbitrary kernel
+> configs to newer kernel versions. It is not completely out of reach at
+> least.
+>
+> And to really improve the situation, I would like to reduce all these
+> defconfigs in the repository to minimal kernel fragments that really
+> focus on what these config for specific machines intend to tell. E.g.,
+> these configs below (powerpc-configs) are about ensuring specific
+> hardware support, not about setting "CONFIG_CRYPTO_XYZ" one way or the
+> other. That is actually just "noise".
 
-Here is the summary with links:
-  - net/mlx5: Fix spelling mistake "syndrom" -> "syndrome"
-    https://git.kernel.org/netdev/net-next/c/fd01b9b5b02b
+Yes I agree. In most cases for a lot of options we just want whatever
+the default is for that subsystem.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> I do not know how to do this right yet, but with a bit of
+> experimentation and investigation, I might come with a first idea and
+> then we will see.
 
+IMHO the best solution we have at the moment is generating the configs
+with merge_config.sh.
 
+See for example the way our ppc_defconfig is generated:
+
+PHONY += ppc_defconfig
+ppc_defconfig:
+	$(call merge_into_defconfig,book3s_32.config,)
+
+$ cat arch/powerpc/configs/book3s_32.config
+CONFIG_PPC64=n
+CONFIG_PPC_BOOK3S_32=y
+
+Everything else just gets the default.
+
+We have some more fully featured examples too, see
+arch/powerpc/Makefile.
+
+There's a few drawbacks of that technique though.
+
+One is that those generated configs aren't shown in 'make help'.
+
+And the other is that there's no way to run something like savedefconfig
+on those .config files to minimise them.
+
+You have to expand them out into a full .config, run savedefconfig on
+that, and then manually grep through the .config to find any symbols
+that are no longer needed. You also need to be careful that any symbol
+that's no longer needed is no longer needed for all the generated
+configs that use that .config file.
+
+cheers
