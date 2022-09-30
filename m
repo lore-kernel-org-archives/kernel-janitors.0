@@ -2,109 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B2AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 16:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B1DC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 16:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231284AbiI3QdC (ORCPT
+        id S232138AbiI3Qfs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 12:33:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48360 "EHLO
+        Fri, 30 Sep 2022 12:35:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbiI3QdB (ORCPT
+        with ESMTP id S230375AbiI3Qfr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 12:33:01 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED4912C130
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Sep 2022 09:32:59 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id eIwYoMAPUr5PdeIwYoJg1U; Fri, 30 Sep 2022 18:32:58 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Sep 2022 18:32:58 +0200
-X-ME-IP: 86.243.100.34
-Message-ID: <cecca972-33c8-03a9-d632-c85ed06dff8b@wanadoo.fr>
-Date:   Fri, 30 Sep 2022 18:32:53 +0200
+        Fri, 30 Sep 2022 12:35:47 -0400
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5D7B10D0CD;
+        Fri, 30 Sep 2022 09:35:46 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:58642)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oeIzJ-00CyVp-Qf; Fri, 30 Sep 2022 10:35:45 -0600
+Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:47416 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1oeIzI-00Et3R-Sr; Fri, 30 Sep 2022 10:35:45 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-mm@kvack.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220929203903.9475-1-lukas.bulwahn@gmail.com>
+        <87tu4p3jwn.fsf@email.froward.int.ebiederm.org>
+        <202209291638.BD0B8639@keescook>
+Date:   Fri, 30 Sep 2022 11:35:38 -0500
+In-Reply-To: <202209291638.BD0B8639@keescook> (Kees Cook's message of "Thu, 29
+        Sep 2022 16:39:19 -0700")
+Message-ID: <87wn9kzup1.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2] crypto: cavium - prevent integer overflow loading
- firmware
-Content-Language: fr
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        George Cherian <gcherian@marvell.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Daney <david.daney@cavium.com>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <YygPj8aYTvApOQFB@kili>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <YygPj8aYTvApOQFB@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1oeIzI-00Et3R-Sr;;;mid=<87wn9kzup1.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX1+v1+HqCxxCIh/LfD/UrB7U7RKTyzEaoz0=
+X-SA-Exim-Connect-IP: 68.110.29.46
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH] binfmt: remove taso from linux_binprm struct
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 19/09/2022 à 08:43, Dan Carpenter a écrit :
-> The "code_length" value comes from the firmware file.  If your firmware
-> is untrusted realistically there is probably very little you can do to
-> protect yourself.  Still we try to limit the damage as much as possible.
-> Also Smatch marks any data read from the filesystem as untrusted and
-> prints warnings if it not capped correctly.
-> 
-> The "ntohl(ucode->code_length) * 2" multiplication can have an
-> integer overflow.
-> 
-> Fixes: 9e2c7d99941d ("crypto: cavium - Add Support for Octeon-tx CPT Engine")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: The first code removed the " * 2" so it would have caused immediate
->      memory corruption and crashes.
-> 
->      Also in version 2 I combine the "if (!mcode->code_size) {" check
->      with the overflow check for better readability.
-> 
->   drivers/crypto/cavium/cpt/cptpf_main.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/crypto/cavium/cpt/cptpf_main.c b/drivers/crypto/cavium/cpt/cptpf_main.c
-> index 8c32d0eb8fcf..6872ac344001 100644
-> --- a/drivers/crypto/cavium/cpt/cptpf_main.c
-> +++ b/drivers/crypto/cavium/cpt/cptpf_main.c
-> @@ -253,6 +253,7 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
->   	const struct firmware *fw_entry;
->   	struct device *dev = &cpt->pdev->dev;
->   	struct ucode_header *ucode;
-> +	unsigned int code_length;
->   	struct microcode *mcode;
->   	int j, ret = 0;
->   
-> @@ -263,11 +264,12 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
->   	ucode = (struct ucode_header *)fw_entry->data;
->   	mcode = &cpt->mcode[cpt->next_mc_idx];
->   	memcpy(mcode->version, (u8 *)fw_entry->data, CPT_UCODE_VERSION_SZ);
-> -	mcode->code_size = ntohl(ucode->code_length) * 2;
-> -	if (!mcode->code_size) {
-> +	code_length = ntohl(ucode->code_length);
-> +	if (code_length == 0 || code_length >= INT_MAX / 2) {
+Kees Cook <keescook@chromium.org> writes:
 
-Hi,
+> On Thu, Sep 29, 2022 at 05:17:28PM -0500, Eric W. Biederman wrote:
+>> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+>> 
+>> > With commit 987f20a9dcce ("a.out: Remove the a.out implementation"), the
+>> > use of the special taso flag for alpha architectures in the linux_binprm
+>> > struct is gone.
+>> >
+>> > Remove the definition of taso in the linux_binprm struct.
+>> >
+>> > No functional change.
+>> 
+>> Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>> 
+>> Alphas binfmt_loader is the only use I can find of that variable
+>> so let's kill it as well.
+>
+> Ah, sorry, misparsed this -- you mean, alpha's use (now removed) was the
+> only place it was accessed. Agreed. :)
 
-out of curiosity,
+Yes.  I was looking in a tree without my previous change merged.
 
-'code_length' is 'unsigned int'
-'mcode->code_size' is u32.
+The code in binfmt_loader (which is removed in the my change) was the
+only user of that variable I could find.
 
-Why not UINT_MAX / 2?
-
-CJ
-
->   		ret = -EINVAL;
->   		goto fw_release;
->   	}
-> +	mcode->code_size = code_length * 2;
->   
->   	mcode->is_ae = is_ae;
->   	mcode->core_mask = 0ULL;
-
+Eric
