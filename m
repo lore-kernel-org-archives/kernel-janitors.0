@@ -2,66 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E23C7C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 18:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48918C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 20:46:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231639AbiI3SEl (ORCPT
+        id S231517AbiI3UqZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 14:04:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
+        Fri, 30 Sep 2022 16:46:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231426AbiI3SEj (ORCPT
+        with ESMTP id S231622AbiI3UqX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 14:04:39 -0400
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BAD21CC;
-        Fri, 30 Sep 2022 11:04:33 -0700 (PDT)
-Received: by mail-pj1-f41.google.com with SMTP id a5-20020a17090aa50500b002008eeb040eso7426625pjq.1;
-        Fri, 30 Sep 2022 11:04:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=z6h56ttOnD5XpiV4jB5m9Kwfr3sY8gjzhabJaOrR6dk=;
-        b=6RXCanBf+JIIWJ4c8cjX1g2ywy8h4Cqwo2Sh8ifUhhpx9h/f6TWVh0ff9BMth7SUIe
-         Rdsc8A01/a0QRoL/uowFTr9prYBjcWOSDFT7RM5jvVBhh0qZMRUSVEl3LQgUo1cJ3HPm
-         YGtvghzTQTf5Ct6A4wJ+zjN+DsCHM0aBOO0foWfDCAD8vbuBn3eUIGX9+fYIEcL3Np4L
-         hZb9PSevqhWynMEFeyVTGscRZxxnC95qqKTV9KN0zgK7F9asmaaNMaojOqjMaCTYkizF
-         W6eN0Tpg+v4+qTb+gEvPUJkFMbKN5sUO/5QVDgCRvbV7oeAI1Wf4FWIfHzTil/Db7vio
-         Ntaw==
-X-Gm-Message-State: ACrzQf2X8edXy+e0oVjcxv9G4rDFJMwMJd02/x3i/NfgzG8fg6Mlp544
-        qisCVXmkZ6KOCQBYEJ3xjFw=
-X-Google-Smtp-Source: AMsMyM4WIeGABb8iJNPkzRr2/j6sqiBPmdHl8F9XRdpsSZ2yo1kNNX0KrvvG7O80njFyHid7yqe0PA==
-X-Received: by 2002:a17:90b:3c02:b0:205:fb96:1779 with SMTP id pb2-20020a17090b3c0200b00205fb961779mr14025622pjb.168.1664561072548;
-        Fri, 30 Sep 2022 11:04:32 -0700 (PDT)
-Received: from ?IPV6:2620:15c:211:201:56f2:482f:20c2:1d35? ([2620:15c:211:201:56f2:482f:20c2:1d35])
-        by smtp.gmail.com with ESMTPSA id n16-20020a170902f61000b0017691eb7e17sm2151417plg.239.2022.09.30.11.04.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Sep 2022 11:04:31 -0700 (PDT)
-Message-ID: <8754e66c-d696-75a7-dca3-770dd7e2030b@acm.org>
-Date:   Fri, 30 Sep 2022 11:04:29 -0700
+        Fri, 30 Sep 2022 16:46:23 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4E17E00B;
+        Fri, 30 Sep 2022 13:46:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C8AE6B82A01;
+        Fri, 30 Sep 2022 20:46:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 891BFC433C1;
+        Fri, 30 Sep 2022 20:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664570764;
+        bh=I1/gS0JlirI7nfxeveJPESvWNaj3A/j9Ok35hZQRkH4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=pYuVONRDldbd2KWgJJF6Pz6XkBY327uAbE9hAUswQ60/+i7SGA8+Sxg2pOdr7/z/y
+         uKaa+OHa0z9gQQtgDdbcnkmjCwt4re4C3QUajFjqaPBJb4o3mTN8PQdFZvYYOMrJ0X
+         oHAoFfGxcHA8+n4S5dyuW7R/62CYRl+ktpIWQlYKgXbmWExNxWMBewiGDmTSr44I15
+         pqlvU1GJQKAdo5qEEs6/Rmjg3CoitShqWHMXRUPZVBjFz6tsB9ccwQ+KkFpMtbRD3z
+         z6k0L5QCEi+ttNlNvbad7GldQr64HpolW5rTDRMKAWwNz+SQxVAqyEffA7befn7UBq
+         cgn5KDEb3BeIQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH] scsi: ufs: Remove unneeded casts from void *
-Content-Language: en-US
-To:     Markus Fuchs <mklntf@gmail.com>, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     alim.akhtar@samsung.com, avri.altman@wdc.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20220928222241.131334-1-mklntf@gmail.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20220928222241.131334-1-mklntf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220720110026.9173-1-lukas.bulwahn@gmail.com>
+References: <20220720110026.9173-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add header file to TI DAVINCI SERIES CLOCK DRIVER
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     David Lechner <david@lechnology.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org
+Date:   Fri, 30 Sep 2022 13:46:02 -0700
+User-Agent: alot/0.10
+Message-Id: <20220930204604.891BFC433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/28/22 15:22, Markus Fuchs wrote:
-> The end_io_data member of the "struct request" type has type "void *", so no
-> cast is necessary.
+Quoting Lukas Bulwahn (2022-07-20 04:00:26)
+> While creating a patch submission on the davinci clock drivers, I noticed
+> that the header file include/linux/clk/davinci.h belongs to the section
+> TI DAVINCI SERIES CLOCK DRIVER.
+>=20
+> Add a file entry for this header file in TI DAVINCI SERIES CLOCK DRIVER.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Applied to clk-next
