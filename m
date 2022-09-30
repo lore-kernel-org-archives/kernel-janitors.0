@@ -2,68 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999D6C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 06:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5273C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 07:22:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230213AbiI3GO2 (ORCPT
+        id S230258AbiI3HWc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 02:14:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44676 "EHLO
+        Fri, 30 Sep 2022 03:22:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbiI3GOY (ORCPT
+        with ESMTP id S229663AbiI3HWb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 02:14:24 -0400
-Received: from fornost.hmeau.com (helcar.hmeau.com [216.24.177.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99F40139402;
-        Thu, 29 Sep 2022 23:14:23 -0700 (PDT)
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-        by fornost.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1oe9Hd-00A54M-Ue; Fri, 30 Sep 2022 16:14:03 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 30 Sep 2022 14:14:01 +0800
-Date:   Fri, 30 Sep 2022 14:14:01 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Boris Brezillon <bbrezillon@kernel.org>,
-        Arnaud Ebalard <arno@natisbad.org>,
-        Srujana Challa <schalla@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lukasz Bartosik <lbartosik@marvell.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] crypto: marvell/octeontx - prevent integer overflows
-Message-ID: <YzaJKX686KiMteCe@gondor.apana.org.au>
-References: <YygPh/RTMxucazLl@kili>
+        Fri, 30 Sep 2022 03:22:31 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A9112647E;
+        Fri, 30 Sep 2022 00:22:29 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id 126so4256382ybw.3;
+        Fri, 30 Sep 2022 00:22:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=XGGLlua7GXMuc36QzLfRv6BdbYRPzApkiA3VNvmfEWQ=;
+        b=I+9KmAvj3PdBEA50JYR+BLHn6puwGXK07eiZIFqlVSPPQyLOJqIZa5l5eaCGQQhQrT
+         zTtCn7+n83Svcn8Wc8sghJNuqwciTIHfgN8fDmLjdWwahcXOjhaSVhg4u4vNSAc+kMjx
+         HpGuvg7xVWGl1RaEdOeU9r4FLE8xDupjK3cnBsI+nM1QZmyGvhWUI+54plU+DfKFOaB3
+         6yFwMR4m2K8MWWNx7mKmma8kgR7++t7bu0Bag032oKL57qWHVunhN68EDxGYdp9j0wAh
+         c1b+GfjCadysQMS0dZLV2D2R5uj+9uTOH/3Dm2D3yzz1nvYxmA6z5H9/iFqnyvCX0bJR
+         kGvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=XGGLlua7GXMuc36QzLfRv6BdbYRPzApkiA3VNvmfEWQ=;
+        b=SX1qT4krNLfAlv5HVjTFr+OqxOfq6tK9gk19R7k1+ZSp/zhqDBahWOCiLpLr89E30H
+         McTgQct2qqyzNYKxZkTBvh94d/3bBWqWIppq0LbMRqgZ0YQFDU4604S5BvbVRl7XSaDq
+         X6zFRS4pQVW8oqOUACwPXsXhIl0d8RXt5q1pjZgwmS69U32ffu1zZwBJahzARbkoD+JW
+         zSQE20grZCYfNGVbs24MPbLbPh7dpV9tNcW90yofU6QGZ/MOV4a5nm3KjOXngZgHBKRm
+         J2z1IfFyU+wO/Vjdm5oafihon17uCl2hrlT4G6cAPFpc3hLPv9erV90A4sG27PTcICPz
+         tylA==
+X-Gm-Message-State: ACrzQf3Wc/6Sn8y9/Zs/M/QJSexi0T7yUhr/NX+dFldmd/udM9StWVCd
+        4tBjYJHEznSmuzyxv5cQwLXH1duvu0dfHaYN5kE=
+X-Google-Smtp-Source: AMsMyM6xWjPtwK06Sz1UuC19YFA2WThQGHUIYDVfOu6dW3rkut9e/g3MtFcNOAglopyzlzz+n9OWctNEtOoCRd5YQwQ=
+X-Received: by 2002:a25:d0a:0:b0:6bc:f7a4:b982 with SMTP id
+ 10-20020a250d0a000000b006bcf7a4b982mr1223442ybn.77.1664522548389; Fri, 30 Sep
+ 2022 00:22:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YygPh/RTMxucazLl@kili>
+References: <20220929101445.32124-1-lukas.bulwahn@gmail.com>
+ <CAAhV-H6xe4o0upxcQTN=8BeDdcDipmoRp+QQNiakJJZ_eneTxg@mail.gmail.com>
+ <CAKXUXMwhF4V1=oNq1XaTmQpk_Tt7ZXfZEmK_r_GT6wz7=vVx2g@mail.gmail.com> <CAAhV-H4dExTGW7=pSPmunFVBK6YYjj-wo0ZKgfi9A=yHf2qV9g@mail.gmail.com>
+In-Reply-To: <CAAhV-H4dExTGW7=pSPmunFVBK6YYjj-wo0ZKgfi9A=yHf2qV9g@mail.gmail.com>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Fri, 30 Sep 2022 09:22:17 +0200
+Message-ID: <CAKXUXMw731xNrqUzrCE1jRd25vfWdYFf-donLosOYOTqcm9JiQ@mail.gmail.com>
+Subject: Re: [PATCH] loongarch: update config files
+To:     Huacai Chen <chenhuacai@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 19, 2022 at 09:43:19AM +0300, Dan Carpenter wrote:
-> The "code_length" value comes from the firmware file.  If your firmware
-> is untrusted realistically there is probably very little you can do to
-> protect yourself.  Still we try to limit the damage as much as possible.
-> Also Smatch marks any data read from the filesystem as untrusted and
-> prints warnings if it not capped correctly.
-> 
-> The "code_length * 2" can overflow.  The round_up(ucode_size, 16) +
-> sizeof() expression can overflow too.  Prevent these overflows.
-> 
-> Fixes: d9110b0b01ff ("crypto: marvell - add support for OCTEON TX CPT engine")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: In the first commit, I accidentally added some unnecessary checks.
->     Those were only drafts and I sent them uninitentionally.  Sorry!
-> 
->  .../crypto/marvell/octeontx/otx_cptpf_ucode.c  | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
+On Fri, Sep 30, 2022 at 4:46 AM Huacai Chen <chenhuacai@kernel.org> wrote:
+>
+> On Thu, Sep 29, 2022 at 6:44 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >
+> > On Thu, Sep 29, 2022 at 12:42 PM Huacai Chen <chenhuacai@kernel.org> wrote:
+> > >
+> > > Hi, Lukas,
+> > >
+> > > Thank you for your patch, it is queued for loongarch-next, and may be
+> > > squashed to another patch with your S-o-B if you have no objections.
+> > >
+> > > Huacai
+> > >
+> >
+> > Feel free to squash as you see fit. I cannot recall sending something
+> > specific for loongarch-next, though.
+> Emmm, my meaning is squash your patch to mine and keep a S-o-B in that
+> patch [1]. :)
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/commit/?h=loongarch-next
+>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Process-wise that seems a bit strange (i.e., just mixing S-o-B by
+multiple people, how do you bisect which individual change broke
+something [you would need a second manual step of investigation],
+etc.), but sure go ahead.
+
+No objections.
+
+Lukas
