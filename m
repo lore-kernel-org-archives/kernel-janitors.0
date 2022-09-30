@@ -2,463 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F86C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 07:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6973C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 08:03:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230360AbiI3HyL (ORCPT
+        id S231159AbiI3IDs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 03:54:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34424 "EHLO
+        Fri, 30 Sep 2022 04:03:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231222AbiI3HyF (ORCPT
+        with ESMTP id S229677AbiI3IDr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 03:54:05 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CDDA15ED0F;
-        Fri, 30 Sep 2022 00:54:04 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-351cee25568so37172457b3.1;
-        Fri, 30 Sep 2022 00:54:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=+DPmC9HGrxyWVOvuIfYhJcdnRJHGFY3DQuvHfCTpW3E=;
-        b=KPvMDbthihCGrWQvuWrM9AtuWIM/OklMJMhddG7ibfStcBEDi47Y+025W4ZyKgLgwC
-         v0vh6m61ddwRptMFk43Ssjz7U51PJ4tetWpMjJWyWSJDYndad1eo9v8NTLz2glMjoyLi
-         W/cS72g9xtNkPydsYF8770TB7OQDHFb4WuF5DWXkJ3UWOq3H9j25L7essqzfEoqALX4i
-         CP/6NqUOjpBbArhNIXFDzmqLvkf4dr5Lv8u8146f/evQfcBVJjFcsxjA+Dqs5xomcGlz
-         3IBThGWwo44PKm6zvAgTbXQ9g6CsNXfVeRdy0oF9OgoBbg7j95SrumBee0Cj5oJrJTTx
-         K10w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=+DPmC9HGrxyWVOvuIfYhJcdnRJHGFY3DQuvHfCTpW3E=;
-        b=zW+GeHS9qitX7kgPsF385N+VKAjBCIywrIXWlJaj1nmQ0E202gJuUvmhT8REsDlMoj
-         bFtCL3aIOgGlTy196uxUA90WPy5wdSNnvkAjm8r1VELjuaZjGkGbXmCJE+CD2Gux/H8g
-         OGSppbLwinPijVqLVedDGakMGHwxpm+lHrDRcGcSnXWr64krLwWnE+26ZIz6kCIERfAw
-         hlUuDN1x8EW39tmK2o+sBl9+nIV9n4aOHh5VJYIOHXldiTZqaU6+KKNxarMKN17PdE+/
-         UxfHu1B47GhiOq+kZ0CZlf8Qrt5W/LzwNEc1dQlIq574rfhppPq7+AmZPllbl9DR+u2D
-         yVFg==
-X-Gm-Message-State: ACrzQf0M3Yt72ad2ac90qnGfUdW5rW4JA6k4klhas0c7B5ztdDwhWICW
-        VZjcoCCHjdCCfUcGEO9JVcwty/wu4fVqRx71wDeNQ82W9Dv2hA==
-X-Google-Smtp-Source: AMsMyM6nWP/YKahyME6/s++e0muG7M4L0C2OH6h/KC0/kolceUAS4xpt9MbVbehMHTUqK4Kc67LXlPOC4b2V1vYLrYA=
-X-Received: by 2002:a0d:f905:0:b0:345:3b1b:a00d with SMTP id
- j5-20020a0df905000000b003453b1ba00dmr7318289ywf.510.1664524443665; Fri, 30
- Sep 2022 00:54:03 -0700 (PDT)
+        Fri, 30 Sep 2022 04:03:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE42A1F7EE2;
+        Fri, 30 Sep 2022 01:03:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D74562271;
+        Fri, 30 Sep 2022 08:03:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF25C433B5;
+        Fri, 30 Sep 2022 08:03:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664525024;
+        bh=gcOUTgiHQKpl/JYONfzkMXDJJbeBVkcS2bX8718fyrY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=A2EVGkdJq6mLOEmq0BeaB+JjAEci9/bHEZtVrEK0Ri9a0n3JAdOoAawxzNTEt3MvO
+         DJS+TocFCexLhpK+Kp/BM2A+mjNKWdw7fgLysSNC3BSVnuqjkQvx31uPITPmCFqq4G
+         ecOkcKmMlsCcoz/FFNlYCO60cXt0twgJmSE+0wCP4hIdzX6QGnsqAMhT+fdUtP/Voc
+         tRc/9x17oBk1WHPFO72O23li79G5EEhxwUvUuWQgFNYS7rEipfr+eS+xSYjS66420+
+         UMCI9ZGWP4jwpY/y9vRQlAUbhUhJBRrWhbQBBiLnag+kC7Gu9Yak9XJljCKJf8Ncwb
+         ftbdJYsEoEK0A==
+Received: by mail-vs1-f46.google.com with SMTP id 63so4004603vse.2;
+        Fri, 30 Sep 2022 01:03:44 -0700 (PDT)
+X-Gm-Message-State: ACrzQf2reVOcT9nbc0mJBnliCMOGtWmrqV6gqix4nDTiGcbls6vgE69m
+        mIHQWvKbuvtSAV2XRHyzxR2y27E7oU0A5ifcrOo=
+X-Google-Smtp-Source: AMsMyM7ZR61+OWq80j7WRQOHCCqaTWXzrOM+2VEzOyslVf03Wcxq7Rav4q6FzLGvJ3FxAGYPHky3V4VEeCjnit4pJNc=
+X-Received: by 2002:a05:6102:2755:b0:398:4f71:86e with SMTP id
+ p21-20020a056102275500b003984f71086emr3804732vsu.84.1664525023562; Fri, 30
+ Sep 2022 01:03:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220929101502.32527-1-lukas.bulwahn@gmail.com> <87pmfdpatr.fsf@mpe.ellerman.id.au>
-In-Reply-To: <87pmfdpatr.fsf@mpe.ellerman.id.au>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Fri, 30 Sep 2022 09:53:52 +0200
-Message-ID: <CAKXUXMxe5EagwsQVyt_WLf2mMXZbUqzaEaiUjBj9ZwRRZywx0g@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: update config files
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org
+References: <20220929101445.32124-1-lukas.bulwahn@gmail.com>
+ <CAAhV-H6xe4o0upxcQTN=8BeDdcDipmoRp+QQNiakJJZ_eneTxg@mail.gmail.com>
+ <CAKXUXMwhF4V1=oNq1XaTmQpk_Tt7ZXfZEmK_r_GT6wz7=vVx2g@mail.gmail.com>
+ <CAAhV-H4dExTGW7=pSPmunFVBK6YYjj-wo0ZKgfi9A=yHf2qV9g@mail.gmail.com>
+ <CAKXUXMw731xNrqUzrCE1jRd25vfWdYFf-donLosOYOTqcm9JiQ@mail.gmail.com> <c6f23ba9-b92f-a518-25ec-44f5f188b840@microchip.com>
+In-Reply-To: <c6f23ba9-b92f-a518-25ec-44f5f188b840@microchip.com>
+From:   Huacai Chen <chenhuacai@kernel.org>
+Date:   Fri, 30 Sep 2022 16:03:32 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4ivkPPU2eQBSv1M8q0gT6M3X0po_9-yYGML7WfCVYBZg@mail.gmail.com>
+Message-ID: <CAAhV-H4ivkPPU2eQBSv1M8q0gT6M3X0po_9-yYGML7WfCVYBZg@mail.gmail.com>
+Subject: Re: [PATCH] loongarch: update config files
+To:     Conor.Dooley@microchip.com
+Cc:     lukas.bulwahn@gmail.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@xen0n.name,
+        loongarch@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 9:42 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+On Fri, Sep 30, 2022 at 3:39 PM <Conor.Dooley@microchip.com> wrote:
 >
-> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
-> > Clean up config files by:
-> >   - removing configs that were deleted in the past
-> >   - removing configs not in tree and without recently pending patches
-> >   - adding new configs that are replacements for old configs in the file
+> On 30/09/2022 08:22, Lukas Bulwahn wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > >
-> > For some detailed information, see Link.
+> > On Fri, Sep 30, 2022 at 4:46 AM Huacai Chen <chenhuacai@kernel.org> wrote:
+> >>
+> >> On Thu, Sep 29, 2022 at 6:44 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >>>
+> >>> On Thu, Sep 29, 2022 at 12:42 PM Huacai Chen <chenhuacai@kernel.org> wrote:
+> >>>>
+> >>>> Hi, Lukas,
+> >>>>
+> >>>> Thank you for your patch, it is queued for loongarch-next, and may be
+> >>>> squashed to another patch with your S-o-B if you have no objections.
+> >>>>
+> >>>> Huacai
+> >>>>
+> >>>
+> >>> Feel free to squash as you see fit. I cannot recall sending something
+> >>> specific for loongarch-next, though.
+> >> Emmm, my meaning is squash your patch to mine and keep a S-o-B in that
+> >> patch [1]. :)
+> >>
+> >> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/commit/?h=loongarch-next
+> >>
 > >
-> > Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
+> > Process-wise that seems a bit strange (i.e., just mixing S-o-B by
+> > multiple people, how do you bisect which individual change broke
+> > something [you would need a second manual step of investigation],
+> > etc.), but sure go ahead.
 >
-> Ideally I'd like a list in the change log of each symbol and why they're
-> being removed/changed. It's pretty easy to accidentally drop something
-> otherwise.
->
-> I think this is the list in this case:
->
-> Renamed:
->   - CONFIG_PPC_PTDUMP -> CONFIG_GENERIC_PTDUMP
->     e084728393a5 ("powerpc/ptdump: Convert powerpc to GENERIC_PTDUMP")
->
-> Removed:
->   - CONFIG_BLK_DEV_CRYPTOLOOP
->     47e9624616c8 ("block: remove support for cryptoloop and the xor transfer")
->
->   - CONFIG_CRYPTO_RMD128
->     b21b9a5e0aef ("crypto: rmd128 - remove RIPE-MD 128 hash algorithm")
->
->   - CONFIG_CRYPTO_RMD256
->     c15d4167f0b0 ("crypto: rmd256 - remove RIPE-MD 256 hash algorithm")
->
->   - CONFIG_CRYPTO_RMD320
->     93f64202926f ("crypto: rmd320 - remove RIPE-MD 320 hash algorithm")
->
->   - CONFIG_CRYPTO_SALSA20
->     663f63ee6d9c ("crypto: salsa20 - remove Salsa20 stream cipher algorithm")
->
->   - CONFIG_CRYPTO_TGR192
->     87cd723f8978 ("crypto: tgr192 - remove Tiger 128/160/192 hash algorithms")
->
->   - CONFIG_HARDENED_USERCOPY_PAGESPAN
->     1109a5d90701 ("usercopy: Remove HARDENED_USERCOPY_PAGESPAN")
->
->   - CONFIG_RAPIDIO_TSI568, CONFIG_RAPIDIO_TSI57X
->     612d4904191f ("rapidio: remove not used code about RIO_VID_TUNDRA")
->
->   - CONFIG_RAW_DRIVER
->     603e4922f1c8 ("remove the raw driver")
->
->   - CONFIG_ROCKETPORT
->     3b00b6af7a5b ("tty: rocket, remove the driver")
->
->   - CONFIG_ENABLE_MUST_CHECK
->     196793946264 ("Compiler Attributes: remove CONFIG_ENABLE_MUST_CHECK")
->
->
-> I'll fold that into the change log.
->
+> Looks like each of yourself, Youling and Tiezhu should also have
+> Co-developed-by tags, no?
+Yes, that is needed.
 
-Sure. Go ahead. I have provided all information I collected in the
-linked email (and this information drove my scripts to take actions)
-and I am happy to provide it in any form a maintainer may think is
-good for them. But I assume you did this with a simple script
-yourself.
-
-After going through the changes of Kconfig from the last decade, it
-seems feasible that the information on Kconfig changes is actually
-maintained somewhere and that would allow updating of arbitrary kernel
-configs to newer kernel versions. It is not completely out of reach at
-least.
-
-And to really improve the situation, I would like to reduce all these
-defconfigs in the repository to minimal kernel fragments that really
-focus on what these config for specific machines intend to tell. E.g.,
-these configs below (powerpc-configs) are about ensuring specific
-hardware support, not about setting "CONFIG_CRYPTO_XYZ" one way or the
-other. That is actually just "noise". I do not know how to do this
-right yet, but with a bit of experimentation and investigation, I
-might come with a first idea and then we will see.
-
-Lukas
-
-> cheers
+Huacai
 >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> >  arch/powerpc/configs/83xx/mpc837x_rdb_defconfig | 1 -
-> >  arch/powerpc/configs/85xx/ge_imp3a_defconfig    | 1 -
-> >  arch/powerpc/configs/85xx/ppa8548_defconfig     | 2 --
-> >  arch/powerpc/configs/cell_defconfig             | 1 -
-> >  arch/powerpc/configs/g5_defconfig               | 1 -
-> >  arch/powerpc/configs/mpc512x_defconfig          | 1 -
-> >  arch/powerpc/configs/mpc885_ads_defconfig       | 2 +-
-> >  arch/powerpc/configs/pasemi_defconfig           | 1 -
-> >  arch/powerpc/configs/pmac32_defconfig           | 1 -
-> >  arch/powerpc/configs/powernv_defconfig          | 3 ---
-> >  arch/powerpc/configs/ppc64_defconfig            | 3 ---
-> >  arch/powerpc/configs/ppc64e_defconfig           | 3 ---
-> >  arch/powerpc/configs/ppc6xx_defconfig           | 7 -------
-> >  arch/powerpc/configs/ps3_defconfig              | 1 -
-> >  arch/powerpc/configs/pseries_defconfig          | 3 ---
-> >  arch/powerpc/configs/skiroot_defconfig          | 2 --
-> >  arch/powerpc/configs/storcenter_defconfig       | 1 -
-> >  17 files changed, 1 insertion(+), 33 deletions(-)
-> >
-> > diff --git a/arch/powerpc/configs/83xx/mpc837x_rdb_defconfig b/arch/powerpc/configs/83xx/mpc837x_rdb_defconfig
-> > index cbcae2a927e9..4e3373381ab6 100644
-> > --- a/arch/powerpc/configs/83xx/mpc837x_rdb_defconfig
-> > +++ b/arch/powerpc/configs/83xx/mpc837x_rdb_defconfig
-> > @@ -77,6 +77,5 @@ CONFIG_NFS_FS=y
-> >  CONFIG_NFS_V4=y
-> >  CONFIG_ROOT_NFS=y
-> >  CONFIG_CRC_T10DIF=y
-> > -# CONFIG_ENABLE_MUST_CHECK is not set
-> >  CONFIG_CRYPTO_ECB=m
-> >  CONFIG_CRYPTO_PCBC=m
-> > diff --git a/arch/powerpc/configs/85xx/ge_imp3a_defconfig b/arch/powerpc/configs/85xx/ge_imp3a_defconfig
-> > index e7672c186325..ea719898b581 100644
-> > --- a/arch/powerpc/configs/85xx/ge_imp3a_defconfig
-> > +++ b/arch/powerpc/configs/85xx/ge_imp3a_defconfig
-> > @@ -74,7 +74,6 @@ CONFIG_MTD_PHYSMAP_OF=y
-> >  CONFIG_MTD_RAW_NAND=y
-> >  CONFIG_MTD_NAND_FSL_ELBC=y
-> >  CONFIG_BLK_DEV_LOOP=m
-> > -CONFIG_BLK_DEV_CRYPTOLOOP=m
-> >  CONFIG_BLK_DEV_NBD=m
-> >  CONFIG_BLK_DEV_RAM=y
-> >  CONFIG_BLK_DEV_RAM_SIZE=131072
-> > diff --git a/arch/powerpc/configs/85xx/ppa8548_defconfig b/arch/powerpc/configs/85xx/ppa8548_defconfig
-> > index 190978a5b7d5..4bd5f993d26a 100644
-> > --- a/arch/powerpc/configs/85xx/ppa8548_defconfig
-> > +++ b/arch/powerpc/configs/85xx/ppa8548_defconfig
-> > @@ -7,9 +7,7 @@ CONFIG_RAPIDIO=y
-> >  CONFIG_FSL_RIO=y
-> >  CONFIG_RAPIDIO_DMA_ENGINE=y
-> >  CONFIG_RAPIDIO_ENUM_BASIC=y
-> > -CONFIG_RAPIDIO_TSI57X=y
-> >  CONFIG_RAPIDIO_CPS_XX=y
-> > -CONFIG_RAPIDIO_TSI568=y
-> >  CONFIG_RAPIDIO_CPS_GEN2=y
-> >  CONFIG_ADVANCED_OPTIONS=y
-> >  CONFIG_LOWMEM_SIZE_BOOL=y
-> > diff --git a/arch/powerpc/configs/cell_defconfig b/arch/powerpc/configs/cell_defconfig
-> > index 7fd9e596ea33..06391cc2af3a 100644
-> > --- a/arch/powerpc/configs/cell_defconfig
-> > +++ b/arch/powerpc/configs/cell_defconfig
-> > @@ -195,7 +195,6 @@ CONFIG_NLS_ISO8859_9=m
-> >  CONFIG_NLS_ISO8859_13=m
-> >  CONFIG_NLS_ISO8859_14=m
-> >  CONFIG_NLS_ISO8859_15=m
-> > -# CONFIG_ENABLE_MUST_CHECK is not set
-> >  CONFIG_MAGIC_SYSRQ=y
-> >  CONFIG_DEBUG_KERNEL=y
-> >  CONFIG_DEBUG_MUTEXES=y
-> > diff --git a/arch/powerpc/configs/g5_defconfig b/arch/powerpc/configs/g5_defconfig
-> > index 9d6212a8b195..71d9d112c0b6 100644
-> > --- a/arch/powerpc/configs/g5_defconfig
-> > +++ b/arch/powerpc/configs/g5_defconfig
-> > @@ -119,7 +119,6 @@ CONFIG_INPUT_EVDEV=y
-> >  # CONFIG_SERIO_I8042 is not set
-> >  # CONFIG_SERIO_SERPORT is not set
-> >  # CONFIG_HW_RANDOM is not set
-> > -CONFIG_RAW_DRIVER=y
-> >  CONFIG_I2C_CHARDEV=y
-> >  CONFIG_AGP=m
-> >  CONFIG_AGP_UNINORTH=m
-> > diff --git a/arch/powerpc/configs/mpc512x_defconfig b/arch/powerpc/configs/mpc512x_defconfig
-> > index e75d3f3060c9..10fe061c5e6d 100644
-> > --- a/arch/powerpc/configs/mpc512x_defconfig
-> > +++ b/arch/powerpc/configs/mpc512x_defconfig
-> > @@ -114,5 +114,4 @@ CONFIG_NFS_FS=y
-> >  CONFIG_ROOT_NFS=y
-> >  CONFIG_NLS_CODEPAGE_437=y
-> >  CONFIG_NLS_ISO8859_1=y
-> > -# CONFIG_ENABLE_MUST_CHECK is not set
-> >  # CONFIG_CRYPTO_HW is not set
-> > diff --git a/arch/powerpc/configs/mpc885_ads_defconfig b/arch/powerpc/configs/mpc885_ads_defconfig
-> > index 700115d85d6f..56b876e418e9 100644
-> > --- a/arch/powerpc/configs/mpc885_ads_defconfig
-> > +++ b/arch/powerpc/configs/mpc885_ads_defconfig
-> > @@ -78,4 +78,4 @@ CONFIG_DEBUG_VM_PGTABLE=y
-> >  CONFIG_DETECT_HUNG_TASK=y
-> >  CONFIG_BDI_SWITCH=y
-> >  CONFIG_PPC_EARLY_DEBUG=y
-> > -CONFIG_PPC_PTDUMP=y
-> > +CONFIG_GENERIC_PTDUMP=y
-> > diff --git a/arch/powerpc/configs/pasemi_defconfig b/arch/powerpc/configs/pasemi_defconfig
-> > index e00a703581c3..96aa5355911f 100644
-> > --- a/arch/powerpc/configs/pasemi_defconfig
-> > +++ b/arch/powerpc/configs/pasemi_defconfig
-> > @@ -92,7 +92,6 @@ CONFIG_LEGACY_PTY_COUNT=4
-> >  CONFIG_SERIAL_8250=y
-> >  CONFIG_SERIAL_8250_CONSOLE=y
-> >  CONFIG_HW_RANDOM=y
-> > -CONFIG_RAW_DRIVER=y
-> >  CONFIG_I2C_CHARDEV=y
-> >  CONFIG_I2C_PASEMI=y
-> >  CONFIG_SENSORS_LM85=y
-> > diff --git a/arch/powerpc/configs/pmac32_defconfig b/arch/powerpc/configs/pmac32_defconfig
-> > index 13885ec563d1..019163c2571e 100644
-> > --- a/arch/powerpc/configs/pmac32_defconfig
-> > +++ b/arch/powerpc/configs/pmac32_defconfig
-> > @@ -284,7 +284,6 @@ CONFIG_BOOTX_TEXT=y
-> >  CONFIG_CRYPTO_PCBC=m
-> >  CONFIG_CRYPTO_MD4=m
-> >  CONFIG_CRYPTO_SHA512=m
-> > -CONFIG_CRYPTO_TGR192=m
-> >  CONFIG_CRYPTO_WP512=m
-> >  CONFIG_CRYPTO_ANUBIS=m
-> >  CONFIG_CRYPTO_BLOWFISH=m
-> > diff --git a/arch/powerpc/configs/powernv_defconfig b/arch/powerpc/configs/powernv_defconfig
-> > index 4acca5263404..e1213973d858 100644
-> > --- a/arch/powerpc/configs/powernv_defconfig
-> > +++ b/arch/powerpc/configs/powernv_defconfig
-> > @@ -251,7 +251,6 @@ CONFIG_RTC_CLASS=y
-> >  CONFIG_RTC_DRV_GENERIC=y
-> >  # CONFIG_VIRTIO_MENU is not set
-> >  CONFIG_LIBNVDIMM=y
-> > -# CONFIG_ND_BLK is not set
-> >  CONFIG_EXT2_FS=y
-> >  CONFIG_EXT2_FS_XATTR=y
-> >  CONFIG_EXT2_FS_POSIX_ACL=y
-> > @@ -324,13 +323,11 @@ CONFIG_CRYPTO_MD5_PPC=m
-> >  CONFIG_CRYPTO_MICHAEL_MIC=m
-> >  CONFIG_CRYPTO_SHA1_PPC=m
-> >  CONFIG_CRYPTO_SHA256=y
-> > -CONFIG_CRYPTO_TGR192=m
-> >  CONFIG_CRYPTO_WP512=m
-> >  CONFIG_CRYPTO_ANUBIS=m
-> >  CONFIG_CRYPTO_BLOWFISH=m
-> >  CONFIG_CRYPTO_CAST6=m
-> >  CONFIG_CRYPTO_KHAZAD=m
-> > -CONFIG_CRYPTO_SALSA20=m
-> >  CONFIG_CRYPTO_SERPENT=m
-> >  CONFIG_CRYPTO_TEA=m
-> >  CONFIG_CRYPTO_TWOFISH=m
-> > diff --git a/arch/powerpc/configs/ppc64_defconfig b/arch/powerpc/configs/ppc64_defconfig
-> > index 6be0c43397b4..d6949a6c5b2b 100644
-> > --- a/arch/powerpc/configs/ppc64_defconfig
-> > +++ b/arch/powerpc/configs/ppc64_defconfig
-> > @@ -215,7 +215,6 @@ CONFIG_HVC_RTAS=y
-> >  CONFIG_HVCS=m
-> >  CONFIG_VIRTIO_CONSOLE=m
-> >  CONFIG_IBM_BSR=m
-> > -CONFIG_RAW_DRIVER=y
-> >  CONFIG_I2C_CHARDEV=y
-> >  CONFIG_I2C_AMD8111=y
-> >  CONFIG_I2C_PASEMI=y
-> > @@ -344,13 +343,11 @@ CONFIG_CRYPTO_MD5_PPC=m
-> >  CONFIG_CRYPTO_MICHAEL_MIC=m
-> >  CONFIG_CRYPTO_SHA1_PPC=m
-> >  CONFIG_CRYPTO_SHA256=y
-> > -CONFIG_CRYPTO_TGR192=m
-> >  CONFIG_CRYPTO_WP512=m
-> >  CONFIG_CRYPTO_ANUBIS=m
-> >  CONFIG_CRYPTO_BLOWFISH=m
-> >  CONFIG_CRYPTO_CAST6=m
-> >  CONFIG_CRYPTO_KHAZAD=m
-> > -CONFIG_CRYPTO_SALSA20=m
-> >  CONFIG_CRYPTO_SERPENT=m
-> >  CONFIG_CRYPTO_TEA=m
-> >  CONFIG_CRYPTO_TWOFISH=m
-> > diff --git a/arch/powerpc/configs/ppc64e_defconfig b/arch/powerpc/configs/ppc64e_defconfig
-> > index 5cf49a515f8e..f97a2d31bbf7 100644
-> > --- a/arch/powerpc/configs/ppc64e_defconfig
-> > +++ b/arch/powerpc/configs/ppc64e_defconfig
-> > @@ -118,7 +118,6 @@ CONFIG_INPUT_MISC=y
-> >  CONFIG_SERIAL_8250=y
-> >  CONFIG_SERIAL_8250_CONSOLE=y
-> >  # CONFIG_HW_RANDOM is not set
-> > -CONFIG_RAW_DRIVER=y
-> >  CONFIG_I2C_CHARDEV=y
-> >  CONFIG_I2C_AMD8111=y
-> >  CONFIG_FB=y
-> > @@ -234,13 +233,11 @@ CONFIG_CRYPTO_PCBC=m
-> >  CONFIG_CRYPTO_HMAC=y
-> >  CONFIG_CRYPTO_MICHAEL_MIC=m
-> >  CONFIG_CRYPTO_SHA512=m
-> > -CONFIG_CRYPTO_TGR192=m
-> >  CONFIG_CRYPTO_WP512=m
-> >  CONFIG_CRYPTO_ANUBIS=m
-> >  CONFIG_CRYPTO_BLOWFISH=m
-> >  CONFIG_CRYPTO_CAST6=m
-> >  CONFIG_CRYPTO_KHAZAD=m
-> > -CONFIG_CRYPTO_SALSA20=m
-> >  CONFIG_CRYPTO_SERPENT=m
-> >  CONFIG_CRYPTO_TEA=m
-> >  CONFIG_CRYPTO_TWOFISH=m
-> > diff --git a/arch/powerpc/configs/ppc6xx_defconfig b/arch/powerpc/configs/ppc6xx_defconfig
-> > index a24f484bfbd2..d23deb94b36e 100644
-> > --- a/arch/powerpc/configs/ppc6xx_defconfig
-> > +++ b/arch/powerpc/configs/ppc6xx_defconfig
-> > @@ -321,7 +321,6 @@ CONFIG_PNP=y
-> >  CONFIG_ISAPNP=y
-> >  CONFIG_MAC_FLOPPY=m
-> >  CONFIG_BLK_DEV_LOOP=m
-> > -CONFIG_BLK_DEV_CRYPTOLOOP=m
-> >  CONFIG_BLK_DEV_NBD=m
-> >  CONFIG_BLK_DEV_RAM=y
-> >  CONFIG_BLK_DEV_RAM_SIZE=16384
-> > @@ -590,7 +589,6 @@ CONFIG_GAMEPORT_EMU10K1=m
-> >  CONFIG_GAMEPORT_FM801=m
-> >  # CONFIG_LEGACY_PTYS is not set
-> >  CONFIG_SERIAL_NONSTANDARD=y
-> > -CONFIG_ROCKETPORT=m
-> >  CONFIG_SYNCLINK_GT=m
-> >  CONFIG_NOZOMI=m
-> >  CONFIG_N_HDLC=m
-> > @@ -1107,13 +1105,9 @@ CONFIG_CRYPTO_XTS=m
-> >  CONFIG_CRYPTO_HMAC=y
-> >  CONFIG_CRYPTO_XCBC=m
-> >  CONFIG_CRYPTO_MICHAEL_MIC=m
-> > -CONFIG_CRYPTO_RMD128=m
-> >  CONFIG_CRYPTO_RMD160=m
-> > -CONFIG_CRYPTO_RMD256=m
-> > -CONFIG_CRYPTO_RMD320=m
-> >  CONFIG_CRYPTO_SHA1=y
-> >  CONFIG_CRYPTO_SHA512=m
-> > -CONFIG_CRYPTO_TGR192=m
-> >  CONFIG_CRYPTO_WP512=m
-> >  CONFIG_CRYPTO_ANUBIS=m
-> >  CONFIG_CRYPTO_BLOWFISH=m
-> > @@ -1121,7 +1115,6 @@ CONFIG_CRYPTO_CAMELLIA=m
-> >  CONFIG_CRYPTO_CAST6=m
-> >  CONFIG_CRYPTO_FCRYPT=m
-> >  CONFIG_CRYPTO_KHAZAD=m
-> > -CONFIG_CRYPTO_SALSA20=m
-> >  CONFIG_CRYPTO_SEED=m
-> >  CONFIG_CRYPTO_SERPENT=m
-> >  CONFIG_CRYPTO_TEA=m
-> > diff --git a/arch/powerpc/configs/ps3_defconfig b/arch/powerpc/configs/ps3_defconfig
-> > index 2d9ac233da68..0a1b42c4f26a 100644
-> > --- a/arch/powerpc/configs/ps3_defconfig
-> > +++ b/arch/powerpc/configs/ps3_defconfig
-> > @@ -165,6 +165,5 @@ CONFIG_RCU_CPU_STALL_TIMEOUT=60
-> >  # CONFIG_FTRACE is not set
-> >  CONFIG_CRYPTO_PCBC=m
-> >  CONFIG_CRYPTO_MICHAEL_MIC=m
-> > -CONFIG_CRYPTO_SALSA20=m
-> >  CONFIG_CRYPTO_LZO=m
-> >  CONFIG_PRINTK_TIME=y
-> > diff --git a/arch/powerpc/configs/pseries_defconfig b/arch/powerpc/configs/pseries_defconfig
-> > index 44c0e6e5f546..7497e17ea657 100644
-> > --- a/arch/powerpc/configs/pseries_defconfig
-> > +++ b/arch/powerpc/configs/pseries_defconfig
-> > @@ -189,7 +189,6 @@ CONFIG_HVC_RTAS=y
-> >  CONFIG_HVCS=m
-> >  CONFIG_VIRTIO_CONSOLE=m
-> >  CONFIG_IBM_BSR=m
-> > -CONFIG_RAW_DRIVER=y
-> >  CONFIG_I2C_CHARDEV=y
-> >  CONFIG_FB=y
-> >  CONFIG_FIRMWARE_EDID=y
-> > @@ -304,13 +303,11 @@ CONFIG_CRYPTO_MD5_PPC=m
-> >  CONFIG_CRYPTO_MICHAEL_MIC=m
-> >  CONFIG_CRYPTO_SHA1_PPC=m
-> >  CONFIG_CRYPTO_SHA256=y
-> > -CONFIG_CRYPTO_TGR192=m
-> >  CONFIG_CRYPTO_WP512=m
-> >  CONFIG_CRYPTO_ANUBIS=m
-> >  CONFIG_CRYPTO_BLOWFISH=m
-> >  CONFIG_CRYPTO_CAST6=m
-> >  CONFIG_CRYPTO_KHAZAD=m
-> > -CONFIG_CRYPTO_SALSA20=m
-> >  CONFIG_CRYPTO_SERPENT=m
-> >  CONFIG_CRYPTO_TEA=m
-> >  CONFIG_CRYPTO_TWOFISH=m
-> > diff --git a/arch/powerpc/configs/skiroot_defconfig b/arch/powerpc/configs/skiroot_defconfig
-> > index f491875700e8..e0964210f259 100644
-> > --- a/arch/powerpc/configs/skiroot_defconfig
-> > +++ b/arch/powerpc/configs/skiroot_defconfig
-> > @@ -133,7 +133,6 @@ CONFIG_ACENIC_OMIT_TIGON_I=y
-> >  # CONFIG_NET_VENDOR_AQUANTIA is not set
-> >  # CONFIG_NET_VENDOR_ARC is not set
-> >  # CONFIG_NET_VENDOR_ATHEROS is not set
-> > -# CONFIG_NET_VENDOR_AURORA is not set
-> >  CONFIG_TIGON3=m
-> >  CONFIG_BNX2X=m
-> >  # CONFIG_NET_VENDOR_BROCADE is not set
-> > @@ -274,7 +273,6 @@ CONFIG_NLS_UTF8=y
-> >  CONFIG_ENCRYPTED_KEYS=y
-> >  CONFIG_SECURITY=y
-> >  CONFIG_HARDENED_USERCOPY=y
-> > -CONFIG_HARDENED_USERCOPY_PAGESPAN=y
-> >  CONFIG_FORTIFY_SOURCE=y
-> >  CONFIG_SECURITY_LOCKDOWN_LSM=y
-> >  CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=y
-> > diff --git a/arch/powerpc/configs/storcenter_defconfig b/arch/powerpc/configs/storcenter_defconfig
-> > index 47dcfaddc1ac..7a978d396991 100644
-> > --- a/arch/powerpc/configs/storcenter_defconfig
-> > +++ b/arch/powerpc/configs/storcenter_defconfig
-> > @@ -76,4 +76,3 @@ CONFIG_NLS_CODEPAGE_437=y
-> >  CONFIG_NLS_ISO8859_1=y
-> >  CONFIG_NLS_UTF8=y
-> >  CONFIG_CRC_T10DIF=y
-> > -# CONFIG_ENABLE_MUST_CHECK is not set
-> > --
-> > 2.17.1
