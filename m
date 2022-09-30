@@ -2,191 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D6FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 00:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF60EC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 02:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229526AbiI3Ai3 (ORCPT
+        id S229548AbiI3COn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 20:38:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58362 "EHLO
+        Thu, 29 Sep 2022 22:14:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229588AbiI3Ai0 (ORCPT
+        with ESMTP id S229449AbiI3COl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 20:38:26 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E77C21D9822;
-        Thu, 29 Sep 2022 17:38:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A24D2B826C9;
-        Fri, 30 Sep 2022 00:38:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2D7C433D6;
-        Fri, 30 Sep 2022 00:38:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664498303;
-        bh=eU4L7PpXX0M+N7vOLovMrw1kW+0pbNNaUk/kAugx0lY=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=aXeY1/5QGh2ysUWtDRd/lqvuK9FocRnFmvZarKSN2qocsDdj2ypvk/uU3D7QENEJq
-         ic6gnPLKyUZOqQKwe8cN/WQj10ldumfcGkY0r6FaClkvaYewby14wWqcvMeIPpJviN
-         TYeiC9Wx7B9BVN8vBRtICsAnKrHO4hRHGegE48KE6g1+MuyziW/LwwzYMJkEC8/vrx
-         JFdqS0qpTOdiVJsAUasxn3Wjo4eg4NeESOPkuecFloShpcG7TGLLrIbC+5YLh7yHQT
-         TYj+Opohj+4VyXKgD6uO40E4E5IT/iAV4Qr+QJlGdn18sPaaYf+ppITocEsSWZupC0
-         d1cruMiIrvYdg==
-Message-ID: <140c7366-10e7-06a9-9a87-c6670a65e0d1@kernel.org>
-Date:   Fri, 30 Sep 2022 10:38:20 +1000
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] m68k: update config files
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org
-References: <20220929101448.32177-1-lukas.bulwahn@gmail.com>
-From:   Greg Ungerer <gerg@kernel.org>
-In-Reply-To: <20220929101448.32177-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Thu, 29 Sep 2022 22:14:41 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA5481BEB9;
+        Thu, 29 Sep 2022 19:14:39 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id bh13so2992382pgb.4;
+        Thu, 29 Sep 2022 19:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date;
+        bh=lLC8K4nRnsl5U/vNrB7tvUjtP1pEP3tJzxbKNOWOaa0=;
+        b=l80gBuNO60aUcg0AEH+KBH1V+DmyxQ6FIQQ+f4pKfftJ5tZBNxgRmgrEpPZIG0bHZw
+         sy+nWTKx7WoXrJ6REJjTVYUZt4981cNjM7LYUnIOHuP1ei89Z6hGxXe3eN1BKh00xY+O
+         5BbxBCnn2DwuY+YI70waBPkLssQehPR4s3rKOqeUCiJFkUCyxIJwTxr+ie47NeNyn9m1
+         ZV9uz5djRecQX8k2xfIqrng4/LHAmxBgwPzlWPWRK5jKhy7Y44odgpI4NfarQuWUEohP
+         ZDwOx4Uhq5kHn0a2kbmZt9R++DyMfirfxlpBIYokNZEzfhzCfj5ZSKBqxdFW1PtngdxQ
+         gchA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date;
+        bh=lLC8K4nRnsl5U/vNrB7tvUjtP1pEP3tJzxbKNOWOaa0=;
+        b=Irbgn8R1ayAgWhGIqD8w8GNGeJKYnKcc6fhHCZ8+gfWaDamvmcqiLYRfAK2zUdLlIi
+         rV5wiI1CdZLoa7Y5frkt4YrvhlMhb3AercljTc6fsLQvOUycTZeD3WWCI0nbvKOWrlZa
+         plwFnwyDMC4a+RpUNaTYCyUDOCEBp01sUU5zJotsC0U3DoTzBe3YjJpqUI4xGq022cs1
+         4i5DX+VxcUxCzg3zZhyQAdmFi6zneC3YSjQRprOLmx3KzzhccruIQkzUCkQawziyV7F3
+         9ype5/GwGn2YwxkuWVwZyWvj653SKZBCKF4tskUqyeY1XPezLtAQSDSl+uIeUP1PqUQY
+         7Y4w==
+X-Gm-Message-State: ACrzQf2so9SZ5kjHa169CqFKm+dkZpaGAt9X+l9SP1PQEbGy5s34MeFS
+        3Bu6OQymNXEzwULr2LtgTsOkdkJB+3A=
+X-Google-Smtp-Source: AMsMyM4fpQEOKdgBJ/cptg5aRnU4TIPbMdcG7339U+6wxrvVI03Rn1XUFC8eWe+5iVdfRHiS5I3DSw==
+X-Received: by 2002:a63:1a51:0:b0:43b:e496:f2f4 with SMTP id a17-20020a631a51000000b0043be496f2f4mr5703738pgm.99.1664504079257;
+        Thu, 29 Sep 2022 19:14:39 -0700 (PDT)
+Received: from localhost ([98.97.42.14])
+        by smtp.gmail.com with ESMTPSA id 193-20020a6304ca000000b00438c0571456sm608904pge.24.2022.09.29.19.14.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Sep 2022 19:14:38 -0700 (PDT)
+Date:   Thu, 29 Sep 2022 19:14:37 -0700
+From:   John Fastabend <john.fastabend@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <6336510da9fe_233df20894@john.notmuch>
+In-Reply-To: <20220928221555.67873-1-colin.i.king@gmail.com>
+References: <20220928221555.67873-1-colin.i.king@gmail.com>
+Subject: RE: [PATCH] selftests/bpf: Fix spelling mistake "unpriviledged" ->
+ "unprivileged"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
-
-On 29/9/22 20:14, Lukas Bulwahn wrote:
-> Clean up config files by:
->    - removing configs that were deleted in the past
->    - removing configs not in tree and without recently pending patches
->    - adding new configs that are replacements for old configs in the file
+Colin Ian King wrote:
+> There a couple of spelling mistakes, one in a literal string and one
+> in a comment. Fix them.
 > 
-> For some detailed information, see Link.
-> 
-> Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Thanks, looks good to me.
-I have pushed this into the m68knommu git tree, for-next branch.
-
-Regards
-Greg
-
-
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   arch/m68k/configs/amcore_defconfig   | 4 ----
->   arch/m68k/configs/m5208evb_defconfig | 3 ---
->   arch/m68k/configs/m5249evb_defconfig | 3 ---
->   arch/m68k/configs/m5272c3_defconfig  | 3 ---
->   arch/m68k/configs/m5275evb_defconfig | 3 ---
->   arch/m68k/configs/m5307c3_defconfig  | 3 ---
->   arch/m68k/configs/m5407c3_defconfig  | 3 ---
->   7 files changed, 22 deletions(-)
+>  tools/testing/selftests/bpf/verifier/calls.c   | 2 +-
+>  tools/testing/selftests/bpf/verifier/var_off.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/m68k/configs/amcore_defconfig b/arch/m68k/configs/amcore_defconfig
-> index 6d9ed2198170..041adcf6ecfc 100644
-> --- a/arch/m68k/configs/amcore_defconfig
-> +++ b/arch/m68k/configs/amcore_defconfig
-> @@ -27,9 +27,6 @@ CONFIG_PACKET=y
->   CONFIG_UNIX=y
->   CONFIG_INET=y
->   CONFIG_SYN_COOKIES=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->   # CONFIG_IPV6 is not set
->   # CONFIG_WIRELESS is not set
->   # CONFIG_UEVENT_HELPER is not set
-> @@ -85,7 +82,6 @@ CONFIG_ROMFS_FS=y
->   CONFIG_ROMFS_BACKED_BY_BOTH=y
->   # CONFIG_NETWORK_FILESYSTEMS is not set
->   CONFIG_PRINTK_TIME=y
-> -# CONFIG_ENABLE_MUST_CHECK is not set
->   # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
->   CONFIG_PANIC_ON_OOPS=y
->   # CONFIG_SCHED_DEBUG is not set
-> diff --git a/arch/m68k/configs/m5208evb_defconfig b/arch/m68k/configs/m5208evb_defconfig
-> index 0ee3079f6ca9..31035a0b9247 100644
-> --- a/arch/m68k/configs/m5208evb_defconfig
-> +++ b/arch/m68k/configs/m5208evb_defconfig
-> @@ -21,9 +21,6 @@ CONFIG_NET=y
->   CONFIG_PACKET=y
->   CONFIG_UNIX=y
->   CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->   # CONFIG_INET_DIAG is not set
->   # CONFIG_IPV6 is not set
->   # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5249evb_defconfig b/arch/m68k/configs/m5249evb_defconfig
-> index f84f68c04065..5706d7a1daba 100644
-> --- a/arch/m68k/configs/m5249evb_defconfig
-> +++ b/arch/m68k/configs/m5249evb_defconfig
-> @@ -22,9 +22,6 @@ CONFIG_NET=y
->   CONFIG_PACKET=y
->   CONFIG_UNIX=y
->   CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->   # CONFIG_INET_DIAG is not set
->   # CONFIG_IPV6 is not set
->   # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5272c3_defconfig b/arch/m68k/configs/m5272c3_defconfig
-> index eca65020aae3..f02fe144f4ad 100644
-> --- a/arch/m68k/configs/m5272c3_defconfig
-> +++ b/arch/m68k/configs/m5272c3_defconfig
-> @@ -22,9 +22,6 @@ CONFIG_NET=y
->   CONFIG_PACKET=y
->   CONFIG_UNIX=y
->   CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->   # CONFIG_INET_DIAG is not set
->   # CONFIG_IPV6 is not set
->   # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5275evb_defconfig b/arch/m68k/configs/m5275evb_defconfig
-> index 9402c7a3e9c7..781f307ff330 100644
-> --- a/arch/m68k/configs/m5275evb_defconfig
-> +++ b/arch/m68k/configs/m5275evb_defconfig
-> @@ -22,9 +22,6 @@ CONFIG_NET=y
->   CONFIG_PACKET=y
->   CONFIG_UNIX=y
->   CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->   # CONFIG_INET_DIAG is not set
->   # CONFIG_IPV6 is not set
->   # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5307c3_defconfig b/arch/m68k/configs/m5307c3_defconfig
-> index bb8b0eb4bdfc..6eac482356ca 100644
-> --- a/arch/m68k/configs/m5307c3_defconfig
-> +++ b/arch/m68k/configs/m5307c3_defconfig
-> @@ -22,9 +22,6 @@ CONFIG_NET=y
->   CONFIG_PACKET=y
->   CONFIG_UNIX=y
->   CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->   # CONFIG_INET_DIAG is not set
->   # CONFIG_IPV6 is not set
->   # CONFIG_FW_LOADER is not set
-> diff --git a/arch/m68k/configs/m5407c3_defconfig b/arch/m68k/configs/m5407c3_defconfig
-> index ce9ccf13c7c0..496dcccb1c18 100644
-> --- a/arch/m68k/configs/m5407c3_defconfig
-> +++ b/arch/m68k/configs/m5407c3_defconfig
-> @@ -23,9 +23,6 @@ CONFIG_NET=y
->   CONFIG_PACKET=y
->   CONFIG_UNIX=y
->   CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->   # CONFIG_INET_DIAG is not set
->   # CONFIG_IPV6 is not set
->   # CONFIG_FW_LOADER is not set
+> diff --git a/tools/testing/selftests/bpf/verifier/calls.c b/tools/testing/selftests/bpf/verifier/calls.c
+> index 3fb4f69b1962..e1a937277b54 100644
+> --- a/tools/testing/selftests/bpf/verifier/calls.c
+> +++ b/tools/testing/selftests/bpf/verifier/calls.c
+> @@ -284,7 +284,7 @@
+>  	.result = ACCEPT,
+>  },
+>  {
+> -	"calls: not on unpriviledged",
+> +	"calls: not on unprivileged",
+>  	.insns = {
+>  	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 1, 0, 2),
+>  	BPF_MOV64_IMM(BPF_REG_0, 1),
+> diff --git a/tools/testing/selftests/bpf/verifier/var_off.c b/tools/testing/selftests/bpf/verifier/var_off.c
+> index 187c6f6e32bc..d37f512fad16 100644
+> --- a/tools/testing/selftests/bpf/verifier/var_off.c
+> +++ b/tools/testing/selftests/bpf/verifier/var_off.c
+> @@ -121,7 +121,7 @@
+>  	BPF_EXIT_INSN(),
+>  	},
+>  	.fixup_map_hash_8b = { 1 },
+> -	/* The unpriviledged case is not too interesting; variable
+> +	/* The unprivileged case is not too interesting; variable
+>  	 * stack access is rejected.
+>  	 */
+>  	.errstr_unpriv = "R2 variable stack access prohibited for !root",
+> -- 
+> 2.37.1
+> 
+
+Sure, but bpf-next.
+
+Acked-by: John Fastabend <john.fastabend@gmail.com>
