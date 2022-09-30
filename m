@@ -2,113 +2,161 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF60EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 02:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A43C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 02:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbiI3COn (ORCPT
+        id S229720AbiI3Cqy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Sep 2022 22:14:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58114 "EHLO
+        Thu, 29 Sep 2022 22:46:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbiI3COl (ORCPT
+        with ESMTP id S229479AbiI3Cqx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Sep 2022 22:14:41 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA5481BEB9;
-        Thu, 29 Sep 2022 19:14:39 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id bh13so2992382pgb.4;
-        Thu, 29 Sep 2022 19:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date;
-        bh=lLC8K4nRnsl5U/vNrB7tvUjtP1pEP3tJzxbKNOWOaa0=;
-        b=l80gBuNO60aUcg0AEH+KBH1V+DmyxQ6FIQQ+f4pKfftJ5tZBNxgRmgrEpPZIG0bHZw
-         sy+nWTKx7WoXrJ6REJjTVYUZt4981cNjM7LYUnIOHuP1ei89Z6hGxXe3eN1BKh00xY+O
-         5BbxBCnn2DwuY+YI70waBPkLssQehPR4s3rKOqeUCiJFkUCyxIJwTxr+ie47NeNyn9m1
-         ZV9uz5djRecQX8k2xfIqrng4/LHAmxBgwPzlWPWRK5jKhy7Y44odgpI4NfarQuWUEohP
-         ZDwOx4Uhq5kHn0a2kbmZt9R++DyMfirfxlpBIYokNZEzfhzCfj5ZSKBqxdFW1PtngdxQ
-         gchA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date;
-        bh=lLC8K4nRnsl5U/vNrB7tvUjtP1pEP3tJzxbKNOWOaa0=;
-        b=Irbgn8R1ayAgWhGIqD8w8GNGeJKYnKcc6fhHCZ8+gfWaDamvmcqiLYRfAK2zUdLlIi
-         rV5wiI1CdZLoa7Y5frkt4YrvhlMhb3AercljTc6fsLQvOUycTZeD3WWCI0nbvKOWrlZa
-         plwFnwyDMC4a+RpUNaTYCyUDOCEBp01sUU5zJotsC0U3DoTzBe3YjJpqUI4xGq022cs1
-         4i5DX+VxcUxCzg3zZhyQAdmFi6zneC3YSjQRprOLmx3KzzhccruIQkzUCkQawziyV7F3
-         9ype5/GwGn2YwxkuWVwZyWvj653SKZBCKF4tskUqyeY1XPezLtAQSDSl+uIeUP1PqUQY
-         7Y4w==
-X-Gm-Message-State: ACrzQf2so9SZ5kjHa169CqFKm+dkZpaGAt9X+l9SP1PQEbGy5s34MeFS
-        3Bu6OQymNXEzwULr2LtgTsOkdkJB+3A=
-X-Google-Smtp-Source: AMsMyM4fpQEOKdgBJ/cptg5aRnU4TIPbMdcG7339U+6wxrvVI03Rn1XUFC8eWe+5iVdfRHiS5I3DSw==
-X-Received: by 2002:a63:1a51:0:b0:43b:e496:f2f4 with SMTP id a17-20020a631a51000000b0043be496f2f4mr5703738pgm.99.1664504079257;
-        Thu, 29 Sep 2022 19:14:39 -0700 (PDT)
-Received: from localhost ([98.97.42.14])
-        by smtp.gmail.com with ESMTPSA id 193-20020a6304ca000000b00438c0571456sm608904pge.24.2022.09.29.19.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Sep 2022 19:14:38 -0700 (PDT)
-Date:   Thu, 29 Sep 2022 19:14:37 -0700
-From:   John Fastabend <john.fastabend@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <6336510da9fe_233df20894@john.notmuch>
-In-Reply-To: <20220928221555.67873-1-colin.i.king@gmail.com>
-References: <20220928221555.67873-1-colin.i.king@gmail.com>
-Subject: RE: [PATCH] selftests/bpf: Fix spelling mistake "unpriviledged" ->
- "unprivileged"
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Sep 2022 22:46:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC4D1F11E4;
+        Thu, 29 Sep 2022 19:46:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7981762223;
+        Fri, 30 Sep 2022 02:46:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D35BEC433C1;
+        Fri, 30 Sep 2022 02:46:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664506011;
+        bh=7uHs5ffuQbKGyXNDulGC3t0jRBhSu2WNu5pcQA2muxQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Qiq8UKdTUUWZVfxy0VUmiZIOdnUEiAIC5EqAC0xVMaH8MHTHwInvuJPbvceH06AwR
+         haD5EXdYG3YEgi08IJeOohRxQtWu2Nomkzdah82tv6Ht8ZFDoVxFb4WhjaFS9H9NoY
+         opZ5yIr+yxaiza3Q+X22Sppfigp/aYbN91L0zMHeusywiEBsf6AnSsQHzInWvx6mZT
+         1bPIyVkd4rZtMc2TL2355pu+OLK59aAo52cgl3odoMJs1lOLv2BJhReufSxasEFjUw
+         M3Yy71p0Hty5hsmXvdD/Q2kNtQpbbw8miMwbLW6hrjeZLD3nlbvZWwnqJ9d2T0zILC
+         iuqim8+02JLGw==
+Received: by mail-ua1-f41.google.com with SMTP id a4so1255102uao.0;
+        Thu, 29 Sep 2022 19:46:51 -0700 (PDT)
+X-Gm-Message-State: ACrzQf1iPd5lcQ1BlPiK9ob/17L81OMGlWaHKDiefgL3BE4Qpt0f9cwd
+        tYYd4E0BL/ZBM5QV+UihLlqAXrCSzRWqZynhVGc=
+X-Google-Smtp-Source: AMsMyM5qttjkPyZyc+M5lKc8jOKOUC/sz9KoJYFj+hYTRZzNIcvARyEZYSIvXCe2triYyhAEwIYNWyf+Hd0Lz0aqPkA=
+X-Received: by 2002:ab0:25d3:0:b0:3ae:6580:2adc with SMTP id
+ y19-20020ab025d3000000b003ae65802adcmr3655719uan.23.1664506010802; Thu, 29
+ Sep 2022 19:46:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220929101445.32124-1-lukas.bulwahn@gmail.com>
+ <CAAhV-H6xe4o0upxcQTN=8BeDdcDipmoRp+QQNiakJJZ_eneTxg@mail.gmail.com> <CAKXUXMwhF4V1=oNq1XaTmQpk_Tt7ZXfZEmK_r_GT6wz7=vVx2g@mail.gmail.com>
+In-Reply-To: <CAKXUXMwhF4V1=oNq1XaTmQpk_Tt7ZXfZEmK_r_GT6wz7=vVx2g@mail.gmail.com>
+From:   Huacai Chen <chenhuacai@kernel.org>
+Date:   Fri, 30 Sep 2022 10:46:39 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4dExTGW7=pSPmunFVBK6YYjj-wo0ZKgfi9A=yHf2qV9g@mail.gmail.com>
+Message-ID: <CAAhV-H4dExTGW7=pSPmunFVBK6YYjj-wo0ZKgfi9A=yHf2qV9g@mail.gmail.com>
+Subject: Re: [PATCH] loongarch: update config files
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King wrote:
-> There a couple of spelling mistakes, one in a literal string and one
-> in a comment. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/bpf/verifier/calls.c   | 2 +-
->  tools/testing/selftests/bpf/verifier/var_off.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/bpf/verifier/calls.c b/tools/testing/selftests/bpf/verifier/calls.c
-> index 3fb4f69b1962..e1a937277b54 100644
-> --- a/tools/testing/selftests/bpf/verifier/calls.c
-> +++ b/tools/testing/selftests/bpf/verifier/calls.c
-> @@ -284,7 +284,7 @@
->  	.result = ACCEPT,
->  },
->  {
-> -	"calls: not on unpriviledged",
-> +	"calls: not on unprivileged",
->  	.insns = {
->  	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 1, 0, 2),
->  	BPF_MOV64_IMM(BPF_REG_0, 1),
-> diff --git a/tools/testing/selftests/bpf/verifier/var_off.c b/tools/testing/selftests/bpf/verifier/var_off.c
-> index 187c6f6e32bc..d37f512fad16 100644
-> --- a/tools/testing/selftests/bpf/verifier/var_off.c
-> +++ b/tools/testing/selftests/bpf/verifier/var_off.c
-> @@ -121,7 +121,7 @@
->  	BPF_EXIT_INSN(),
->  	},
->  	.fixup_map_hash_8b = { 1 },
-> -	/* The unpriviledged case is not too interesting; variable
-> +	/* The unprivileged case is not too interesting; variable
->  	 * stack access is rejected.
->  	 */
->  	.errstr_unpriv = "R2 variable stack access prohibited for !root",
-> -- 
-> 2.37.1
-> 
+On Thu, Sep 29, 2022 at 6:44 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> On Thu, Sep 29, 2022 at 12:42 PM Huacai Chen <chenhuacai@kernel.org> wrote:
+> >
+> > Hi, Lukas,
+> >
+> > Thank you for your patch, it is queued for loongarch-next, and may be
+> > squashed to another patch with your S-o-B if you have no objections.
+> >
+> > Huacai
+> >
+>
+> Feel free to squash as you see fit. I cannot recall sending something
+> specific for loongarch-next, though.
+Emmm, my meaning is squash your patch to mine and keep a S-o-B in that
+patch [1]. :)
 
-Sure, but bpf-next.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/commit/?h=loongarch-next
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+Huacai
+
+>
+> Lukas
+>
+> > On Thu, Sep 29, 2022 at 6:14 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > >
+> > > Clean up config files by:
+> > >   - removing configs that were deleted in the past
+> > >   - removing configs not in tree and without recently pending patches
+> > >   - adding new configs that are replacements for old configs in the file
+> > >
+> > > For some detailed information, see Link.
+> > >
+> > > Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
+> > >
+> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > > ---
+> > >  arch/loongarch/configs/loongson3_defconfig | 7 -------
+> > >  1 file changed, 7 deletions(-)
+> > >
+> > > diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
+> > > index 3712552e18d3..2b4220778b66 100644
+> > > --- a/arch/loongarch/configs/loongson3_defconfig
+> > > +++ b/arch/loongarch/configs/loongson3_defconfig
+> > > @@ -108,14 +108,12 @@ CONFIG_NETFILTER=y
+> > >  CONFIG_BRIDGE_NETFILTER=m
+> > >  CONFIG_NETFILTER_NETLINK_LOG=m
+> > >  CONFIG_NF_CONNTRACK=m
+> > > -CONFIG_NF_LOG_NETDEV=m
+> > >  CONFIG_NF_CONNTRACK_AMANDA=m
+> > >  CONFIG_NF_CONNTRACK_FTP=m
+> > >  CONFIG_NF_CONNTRACK_NETBIOS_NS=m
+> > >  CONFIG_NF_CONNTRACK_TFTP=m
+> > >  CONFIG_NF_CT_NETLINK=m
+> > >  CONFIG_NF_TABLES=m
+> > > -CONFIG_NFT_COUNTER=m
+> > >  CONFIG_NFT_CONNLIMIT=m
+> > >  CONFIG_NFT_LOG=m
+> > >  CONFIG_NFT_LIMIT=m
+> > > @@ -329,7 +327,6 @@ CONFIG_PARPORT_PC_FIFO=y
+> > >  CONFIG_ZRAM=m
+> > >  CONFIG_ZRAM_DEF_COMP_ZSTD=y
+> > >  CONFIG_BLK_DEV_LOOP=y
+> > > -CONFIG_BLK_DEV_CRYPTOLOOP=y
+> > >  CONFIG_BLK_DEV_NBD=m
+> > >  CONFIG_BLK_DEV_RAM=y
+> > >  CONFIG_BLK_DEV_RAM_SIZE=8192
+> > > @@ -505,7 +502,6 @@ CONFIG_ATH9K_HTC=m
+> > >  CONFIG_IWLWIFI=m
+> > >  CONFIG_IWLDVM=m
+> > >  CONFIG_IWLMVM=m
+> > > -CONFIG_IWLWIFI_BCAST_FILTERING=y
+> > >  CONFIG_HOSTAP=m
+> > >  CONFIG_MT7601U=m
+> > >  CONFIG_RT2X00=m
+> > > @@ -688,7 +684,6 @@ CONFIG_COMEDI_NI_PCIDIO=m
+> > >  CONFIG_COMEDI_NI_PCIMIO=m
+> > >  CONFIG_STAGING=y
+> > >  CONFIG_R8188EU=m
+> > > -# CONFIG_88EU_AP_MODE is not set
+> > >  CONFIG_PM_DEVFREQ=y
+> > >  CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
+> > >  CONFIG_DEVFREQ_GOV_PERFORMANCE=y
+> > > @@ -772,14 +767,12 @@ CONFIG_CRYPTO_CRYPTD=m
+> > >  CONFIG_CRYPTO_CHACHA20POLY1305=m
+> > >  CONFIG_CRYPTO_HMAC=y
+> > >  CONFIG_CRYPTO_VMAC=m
+> > > -CONFIG_CRYPTO_TGR192=m
+> > >  CONFIG_CRYPTO_WP512=m
+> > >  CONFIG_CRYPTO_ANUBIS=m
+> > >  CONFIG_CRYPTO_BLOWFISH=m
+> > >  CONFIG_CRYPTO_CAST5=m
+> > >  CONFIG_CRYPTO_CAST6=m
+> > >  CONFIG_CRYPTO_KHAZAD=m
+> > > -CONFIG_CRYPTO_SALSA20=m
+> > >  CONFIG_CRYPTO_SEED=m
+> > >  CONFIG_CRYPTO_SERPENT=m
+> > >  CONFIG_CRYPTO_TEA=m
+> > > --
+> > > 2.17.1
+> > >
+> > >
