@@ -2,86 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0590FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 10:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE42C4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 11:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230095AbiI3KJX (ORCPT
+        id S231860AbiI3LpW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 06:09:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39612 "EHLO
+        Fri, 30 Sep 2022 07:45:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbiI3KJW (ORCPT
+        with ESMTP id S231468AbiI3Lor (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 06:09:22 -0400
-Received: from mailbox.box.xen0n.name (mail.xen0n.name [115.28.160.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2199210D672;
-        Fri, 30 Sep 2022 03:09:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xen0n.name; s=mail;
-        t=1664532557; bh=nc5YauIG/pmD3GkaEWFU9ypZGUQcPHtwSFN4m2xVqLU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=YU0jExXrVyE9e3xeNrBCLuwAyYJU/84yfA1SGLMiic4CQDiiEWkIJHeTetZuVSx70
-         EweaSKSHikh4sgBpZvaKgMrPuVP/wFlkOciBJxtTScEfnPQL7zL1JIlAnw1mhejaA/
-         wehI3Or7eXr/HaCooYm3RrFeyiY8MWCXuYple3yY=
-Received: from [192.168.9.172] (unknown [101.228.138.200])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Fri, 30 Sep 2022 07:44:47 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F0D597ECA;
+        Fri, 30 Sep 2022 04:40:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mailbox.box.xen0n.name (Postfix) with ESMTPSA id A7D2B60094;
-        Fri, 30 Sep 2022 18:09:17 +0800 (CST)
-Message-ID: <7761305a-0fc8-8f32-230a-599087d16758@xen0n.name>
-Date:   Fri, 30 Sep 2022 18:09:16 +0800
+        by ams.source.kernel.org (Postfix) with ESMTPS id 70A15B8283D;
+        Fri, 30 Sep 2022 11:40:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 28F96C433C1;
+        Fri, 30 Sep 2022 11:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664538018;
+        bh=Z6RXl0HRHfczjUwX9S9z2ImtaFz1bZwRRi/GsGwvGfQ=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=pckuA5oED7g+6G9XXmBAcS5Bb8pigeR92fo2FoOShGOV/pknY1amgWTb9nLHvNvnZ
+         g7idw1rEZiawOpj/uJ6lPwc3K1gd/4UbRqF/MFiNnKIxCofnervuNhMYiEZuyBZlng
+         tKy6LYKT8zlH8qFFOFPrN8eImTqA5udyh+wmMY92W6rHTIBvJz6JycjaRz+mW2/Jnw
+         uzyATxwkA4mfiOwpBrQZNaG9ZhWChSnN13l1v0vbQat3SwRAf/Re+Ot1QhLvgL8dTQ
+         FPdL4BzJm8RA5zt4C3B++QJmLOVeyrJz9DfKvuSlfzONm5tIE0AmzoNTHGGsF4SjMH
+         nZOOqHmNVZO1Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 14B4AC395DA;
+        Fri, 30 Sep 2022 11:40:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101
- Thunderbird/107.0a1
-Subject: Re: [PATCH] loongarch: update config files
-To:     Huacai Chen <chenhuacai@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        loongarch@lists.linux.dev
-References: <20220929101445.32124-1-lukas.bulwahn@gmail.com>
- <CAAhV-H6xe4o0upxcQTN=8BeDdcDipmoRp+QQNiakJJZ_eneTxg@mail.gmail.com>
- <CAKXUXMwhF4V1=oNq1XaTmQpk_Tt7ZXfZEmK_r_GT6wz7=vVx2g@mail.gmail.com>
- <CAAhV-H4dExTGW7=pSPmunFVBK6YYjj-wo0ZKgfi9A=yHf2qV9g@mail.gmail.com>
-Content-Language: en-US
-From:   WANG Xuerui <kernel@xen0n.name>
-In-Reply-To: <CAAhV-H4dExTGW7=pSPmunFVBK6YYjj-wo0ZKgfi9A=yHf2qV9g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] bnx2: Fix spelling mistake "bufferred" -> "buffered"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166453801807.4225.16891835315380023791.git-patchwork-notify@kernel.org>
+Date:   Fri, 30 Sep 2022 11:40:18 +0000
+References: <20220928213753.64396-1-colin.i.king@gmail.com>
+In-Reply-To: <20220928213753.64396-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     rmody@marvell.com, GR-Linux-NIC-Dev@marvell.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/30/22 10:46, Huacai Chen wrote:
-> On Thu, Sep 29, 2022 at 6:44 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->> On Thu, Sep 29, 2022 at 12:42 PM Huacai Chen <chenhuacai@kernel.org> wrote:
->>> Hi, Lukas,
->>>
->>> Thank you for your patch, it is queued for loongarch-next, and may be
->>> squashed to another patch with your S-o-B if you have no objections.
->>>
->>> Huacai
->>>
->> Feel free to squash as you see fit. I cannot recall sending something
->> specific for loongarch-next, though.
-> Emmm, my meaning is squash your patch to mine and keep a S-o-B in that
-> patch [1]. :)
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/commit/?h=loongarch-next
->
-Hi, I have to disagree with you in this case, you are mixing multiple 
-logical changes into one commit. Although all the commits are touching 
-the same Kconfig defaults file it doesn't mean they can be 
-unconditionally squashed. Especially when you have apparently dropped 
-Lukas' detailed explanation regarding the cleanups with one single 
-"Remove obsolete config options" sentence...
+Hello:
 
-As you haven't created the tag and PR'd yet, I'd suggest you fix the 
-branch and just make the commits separate. At the very least please 
-don't delete Lukas' link reference regarding this round of overall 
-Kconfig cleanup effort.
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
+On Wed, 28 Sep 2022 22:37:53 +0100 you wrote:
+> There are spelling mistakes in two literal strings. Fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/broadcom/bnx2.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Here is the summary with links:
+  - bnx2: Fix spelling mistake "bufferred" -> "buffered"
+    https://git.kernel.org/netdev/net-next/c/ea9b9a985d58
+
+You are awesome, thank you!
 -- 
-WANG "xen0n" Xuerui
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Linux/LoongArch mailing list: https://lore.kernel.org/loongarch/
 
