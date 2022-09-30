@@ -2,101 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6973C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 08:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0590FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 10:09:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231159AbiI3IDs (ORCPT
+        id S230095AbiI3KJX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 04:03:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54116 "EHLO
+        Fri, 30 Sep 2022 06:09:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbiI3IDr (ORCPT
+        with ESMTP id S229644AbiI3KJW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 04:03:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE42A1F7EE2;
-        Fri, 30 Sep 2022 01:03:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 30 Sep 2022 06:09:22 -0400
+Received: from mailbox.box.xen0n.name (mail.xen0n.name [115.28.160.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2199210D672;
+        Fri, 30 Sep 2022 03:09:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xen0n.name; s=mail;
+        t=1664532557; bh=nc5YauIG/pmD3GkaEWFU9ypZGUQcPHtwSFN4m2xVqLU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=YU0jExXrVyE9e3xeNrBCLuwAyYJU/84yfA1SGLMiic4CQDiiEWkIJHeTetZuVSx70
+         EweaSKSHikh4sgBpZvaKgMrPuVP/wFlkOciBJxtTScEfnPQL7zL1JIlAnw1mhejaA/
+         wehI3Or7eXr/HaCooYm3RrFeyiY8MWCXuYple3yY=
+Received: from [192.168.9.172] (unknown [101.228.138.200])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D74562271;
-        Fri, 30 Sep 2022 08:03:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF25C433B5;
-        Fri, 30 Sep 2022 08:03:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664525024;
-        bh=gcOUTgiHQKpl/JYONfzkMXDJJbeBVkcS2bX8718fyrY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=A2EVGkdJq6mLOEmq0BeaB+JjAEci9/bHEZtVrEK0Ri9a0n3JAdOoAawxzNTEt3MvO
-         DJS+TocFCexLhpK+Kp/BM2A+mjNKWdw7fgLysSNC3BSVnuqjkQvx31uPITPmCFqq4G
-         ecOkcKmMlsCcoz/FFNlYCO60cXt0twgJmSE+0wCP4hIdzX6QGnsqAMhT+fdUtP/Voc
-         tRc/9x17oBk1WHPFO72O23li79G5EEhxwUvUuWQgFNYS7rEipfr+eS+xSYjS66420+
-         UMCI9ZGWP4jwpY/y9vRQlAUbhUhJBRrWhbQBBiLnag+kC7Gu9Yak9XJljCKJf8Ncwb
-         ftbdJYsEoEK0A==
-Received: by mail-vs1-f46.google.com with SMTP id 63so4004603vse.2;
-        Fri, 30 Sep 2022 01:03:44 -0700 (PDT)
-X-Gm-Message-State: ACrzQf2reVOcT9nbc0mJBnliCMOGtWmrqV6gqix4nDTiGcbls6vgE69m
-        mIHQWvKbuvtSAV2XRHyzxR2y27E7oU0A5ifcrOo=
-X-Google-Smtp-Source: AMsMyM7ZR61+OWq80j7WRQOHCCqaTWXzrOM+2VEzOyslVf03Wcxq7Rav4q6FzLGvJ3FxAGYPHky3V4VEeCjnit4pJNc=
-X-Received: by 2002:a05:6102:2755:b0:398:4f71:86e with SMTP id
- p21-20020a056102275500b003984f71086emr3804732vsu.84.1664525023562; Fri, 30
- Sep 2022 01:03:43 -0700 (PDT)
+        by mailbox.box.xen0n.name (Postfix) with ESMTPSA id A7D2B60094;
+        Fri, 30 Sep 2022 18:09:17 +0800 (CST)
+Message-ID: <7761305a-0fc8-8f32-230a-599087d16758@xen0n.name>
+Date:   Fri, 30 Sep 2022 18:09:16 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101
+ Thunderbird/107.0a1
+Subject: Re: [PATCH] loongarch: update config files
+To:     Huacai Chen <chenhuacai@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        loongarch@lists.linux.dev
 References: <20220929101445.32124-1-lukas.bulwahn@gmail.com>
  <CAAhV-H6xe4o0upxcQTN=8BeDdcDipmoRp+QQNiakJJZ_eneTxg@mail.gmail.com>
  <CAKXUXMwhF4V1=oNq1XaTmQpk_Tt7ZXfZEmK_r_GT6wz7=vVx2g@mail.gmail.com>
  <CAAhV-H4dExTGW7=pSPmunFVBK6YYjj-wo0ZKgfi9A=yHf2qV9g@mail.gmail.com>
- <CAKXUXMw731xNrqUzrCE1jRd25vfWdYFf-donLosOYOTqcm9JiQ@mail.gmail.com> <c6f23ba9-b92f-a518-25ec-44f5f188b840@microchip.com>
-In-Reply-To: <c6f23ba9-b92f-a518-25ec-44f5f188b840@microchip.com>
-From:   Huacai Chen <chenhuacai@kernel.org>
-Date:   Fri, 30 Sep 2022 16:03:32 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4ivkPPU2eQBSv1M8q0gT6M3X0po_9-yYGML7WfCVYBZg@mail.gmail.com>
-Message-ID: <CAAhV-H4ivkPPU2eQBSv1M8q0gT6M3X0po_9-yYGML7WfCVYBZg@mail.gmail.com>
-Subject: Re: [PATCH] loongarch: update config files
-To:     Conor.Dooley@microchip.com
-Cc:     lukas.bulwahn@gmail.com, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@xen0n.name,
-        loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+From:   WANG Xuerui <kernel@xen0n.name>
+In-Reply-To: <CAAhV-H4dExTGW7=pSPmunFVBK6YYjj-wo0ZKgfi9A=yHf2qV9g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 3:39 PM <Conor.Dooley@microchip.com> wrote:
+On 9/30/22 10:46, Huacai Chen wrote:
+> On Thu, Sep 29, 2022 at 6:44 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>> On Thu, Sep 29, 2022 at 12:42 PM Huacai Chen <chenhuacai@kernel.org> wrote:
+>>> Hi, Lukas,
+>>>
+>>> Thank you for your patch, it is queued for loongarch-next, and may be
+>>> squashed to another patch with your S-o-B if you have no objections.
+>>>
+>>> Huacai
+>>>
+>> Feel free to squash as you see fit. I cannot recall sending something
+>> specific for loongarch-next, though.
+> Emmm, my meaning is squash your patch to mine and keep a S-o-B in that
+> patch [1]. :)
 >
-> On 30/09/2022 08:22, Lukas Bulwahn wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> >
-> > On Fri, Sep 30, 2022 at 4:46 AM Huacai Chen <chenhuacai@kernel.org> wrote:
-> >>
-> >> On Thu, Sep 29, 2022 at 6:44 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >>>
-> >>> On Thu, Sep 29, 2022 at 12:42 PM Huacai Chen <chenhuacai@kernel.org> wrote:
-> >>>>
-> >>>> Hi, Lukas,
-> >>>>
-> >>>> Thank you for your patch, it is queued for loongarch-next, and may be
-> >>>> squashed to another patch with your S-o-B if you have no objections.
-> >>>>
-> >>>> Huacai
-> >>>>
-> >>>
-> >>> Feel free to squash as you see fit. I cannot recall sending something
-> >>> specific for loongarch-next, though.
-> >> Emmm, my meaning is squash your patch to mine and keep a S-o-B in that
-> >> patch [1]. :)
-> >>
-> >> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/commit/?h=loongarch-next
-> >>
-> >
-> > Process-wise that seems a bit strange (i.e., just mixing S-o-B by
-> > multiple people, how do you bisect which individual change broke
-> > something [you would need a second manual step of investigation],
-> > etc.), but sure go ahead.
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/commit/?h=loongarch-next
 >
-> Looks like each of yourself, Youling and Tiezhu should also have
-> Co-developed-by tags, no?
-Yes, that is needed.
+Hi, I have to disagree with you in this case, you are mixing multiple 
+logical changes into one commit. Although all the commits are touching 
+the same Kconfig defaults file it doesn't mean they can be 
+unconditionally squashed. Especially when you have apparently dropped 
+Lukas' detailed explanation regarding the cleanups with one single 
+"Remove obsolete config options" sentence...
 
-Huacai
->
+As you haven't created the tag and PR'd yet, I'd suggest you fix the 
+branch and just make the commits separate. At the very least please 
+don't delete Lukas' link reference regarding this round of overall 
+Kconfig cleanup effort.
+
+-- 
+WANG "xen0n" Xuerui
+
+Linux/LoongArch mailing list: https://lore.kernel.org/loongarch/
+
