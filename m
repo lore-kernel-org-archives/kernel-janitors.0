@@ -2,79 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B1DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 16:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E23C7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 18:04:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232138AbiI3Qfs (ORCPT
+        id S231639AbiI3SEl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 12:35:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55484 "EHLO
+        Fri, 30 Sep 2022 14:04:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbiI3Qfr (ORCPT
+        with ESMTP id S231426AbiI3SEj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 12:35:47 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5D7B10D0CD;
-        Fri, 30 Sep 2022 09:35:46 -0700 (PDT)
-Received: from in01.mta.xmission.com ([166.70.13.51]:58642)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oeIzJ-00CyVp-Qf; Fri, 30 Sep 2022 10:35:45 -0600
-Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:47416 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1oeIzI-00Et3R-Sr; Fri, 30 Sep 2022 10:35:45 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-mm@kvack.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220929203903.9475-1-lukas.bulwahn@gmail.com>
-        <87tu4p3jwn.fsf@email.froward.int.ebiederm.org>
-        <202209291638.BD0B8639@keescook>
-Date:   Fri, 30 Sep 2022 11:35:38 -0500
-In-Reply-To: <202209291638.BD0B8639@keescook> (Kees Cook's message of "Thu, 29
-        Sep 2022 16:39:19 -0700")
-Message-ID: <87wn9kzup1.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Fri, 30 Sep 2022 14:04:39 -0400
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BAD21CC;
+        Fri, 30 Sep 2022 11:04:33 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id a5-20020a17090aa50500b002008eeb040eso7426625pjq.1;
+        Fri, 30 Sep 2022 11:04:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=z6h56ttOnD5XpiV4jB5m9Kwfr3sY8gjzhabJaOrR6dk=;
+        b=6RXCanBf+JIIWJ4c8cjX1g2ywy8h4Cqwo2Sh8ifUhhpx9h/f6TWVh0ff9BMth7SUIe
+         Rdsc8A01/a0QRoL/uowFTr9prYBjcWOSDFT7RM5jvVBhh0qZMRUSVEl3LQgUo1cJ3HPm
+         YGtvghzTQTf5Ct6A4wJ+zjN+DsCHM0aBOO0foWfDCAD8vbuBn3eUIGX9+fYIEcL3Np4L
+         hZb9PSevqhWynMEFeyVTGscRZxxnC95qqKTV9KN0zgK7F9asmaaNMaojOqjMaCTYkizF
+         W6eN0Tpg+v4+qTb+gEvPUJkFMbKN5sUO/5QVDgCRvbV7oeAI1Wf4FWIfHzTil/Db7vio
+         Ntaw==
+X-Gm-Message-State: ACrzQf2X8edXy+e0oVjcxv9G4rDFJMwMJd02/x3i/NfgzG8fg6Mlp544
+        qisCVXmkZ6KOCQBYEJ3xjFw=
+X-Google-Smtp-Source: AMsMyM4WIeGABb8iJNPkzRr2/j6sqiBPmdHl8F9XRdpsSZ2yo1kNNX0KrvvG7O80njFyHid7yqe0PA==
+X-Received: by 2002:a17:90b:3c02:b0:205:fb96:1779 with SMTP id pb2-20020a17090b3c0200b00205fb961779mr14025622pjb.168.1664561072548;
+        Fri, 30 Sep 2022 11:04:32 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:56f2:482f:20c2:1d35? ([2620:15c:211:201:56f2:482f:20c2:1d35])
+        by smtp.gmail.com with ESMTPSA id n16-20020a170902f61000b0017691eb7e17sm2151417plg.239.2022.09.30.11.04.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Sep 2022 11:04:31 -0700 (PDT)
+Message-ID: <8754e66c-d696-75a7-dca3-770dd7e2030b@acm.org>
+Date:   Fri, 30 Sep 2022 11:04:29 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1oeIzI-00Et3R-Sr;;;mid=<87wn9kzup1.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX1+v1+HqCxxCIh/LfD/UrB7U7RKTyzEaoz0=
-X-SA-Exim-Connect-IP: 68.110.29.46
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH] binfmt: remove taso from linux_binprm struct
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH] scsi: ufs: Remove unneeded casts from void *
+Content-Language: en-US
+To:     Markus Fuchs <mklntf@gmail.com>, jejb@linux.ibm.com,
+        martin.petersen@oracle.com
+Cc:     alim.akhtar@samsung.com, avri.altman@wdc.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20220928222241.131334-1-mklntf@gmail.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20220928222241.131334-1-mklntf@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+On 9/28/22 15:22, Markus Fuchs wrote:
+> The end_io_data member of the "struct request" type has type "void *", so no
+> cast is necessary.
 
-> On Thu, Sep 29, 2022 at 05:17:28PM -0500, Eric W. Biederman wrote:
->> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
->> 
->> > With commit 987f20a9dcce ("a.out: Remove the a.out implementation"), the
->> > use of the special taso flag for alpha architectures in the linux_binprm
->> > struct is gone.
->> >
->> > Remove the definition of taso in the linux_binprm struct.
->> >
->> > No functional change.
->> 
->> Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> 
->> Alphas binfmt_loader is the only use I can find of that variable
->> so let's kill it as well.
->
-> Ah, sorry, misparsed this -- you mean, alpha's use (now removed) was the
-> only place it was accessed. Agreed. :)
-
-Yes.  I was looking in a tree without my previous change merged.
-
-The code in binfmt_loader (which is removed in the my change) was the
-only user of that variable I could find.
-
-Eric
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
