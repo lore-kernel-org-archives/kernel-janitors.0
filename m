@@ -2,100 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0956BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 16:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B2AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 16:33:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231816AbiI3QN5 (ORCPT
+        id S231284AbiI3QdC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 12:13:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43718 "EHLO
+        Fri, 30 Sep 2022 12:33:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbiI3QNz (ORCPT
+        with ESMTP id S230375AbiI3QdB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 12:13:55 -0400
-X-Greylist: delayed 377 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 30 Sep 2022 09:13:54 PDT
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78021C3DF2
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Sep 2022 09:13:54 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 2A1EB21F9;
-        Fri, 30 Sep 2022 16:05:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1664553920;
-        bh=nuTiP5RQ7QlDNzZTBO6J9R76mnMHB0PA9hPDdswRpGE=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=tyZmy0LbwFCT31/WMxDKy/cdYn8DGZq/kleN8mIb8tKvbFX/9J4BFYtbSlreh/C70
-         iUM2jvAgUOH6W9mRylcHXzOQcEO20Uf5bDnkXb3YvwRD+/laWQLnQRDBl42KI3cFpA
-         +VGYYr0dZ7tq4EFNLjKe66WasUNK5zQG0zDPRA3E=
-Received: from [172.30.8.65] (172.30.8.65) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 30 Sep 2022 19:07:34 +0300
-Message-ID: <97ee7bbe-652f-e0f5-1ffe-06eb3a32d1aa@paragon-software.com>
-Date:   Fri, 30 Sep 2022 19:07:34 +0300
+        Fri, 30 Sep 2022 12:33:01 -0400
+Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED4912C130
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Sep 2022 09:32:59 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id eIwYoMAPUr5PdeIwYoJg1U; Fri, 30 Sep 2022 18:32:58 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 30 Sep 2022 18:32:58 +0200
+X-ME-IP: 86.243.100.34
+Message-ID: <cecca972-33c8-03a9-d632-c85ed06dff8b@wanadoo.fr>
+Date:   Fri, 30 Sep 2022 18:32:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH] ntfs3: harden against integer overflows
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     <ntfs3@lists.linux.dev>, <kernel-janitors@vger.kernel.org>
-References: <YxIGoOgUtaUP59FK@kili>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <YxIGoOgUtaUP59FK@kili>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.30.8.65]
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Subject: Re: [PATCH v2] crypto: cavium - prevent integer overflow loading
+ firmware
+Content-Language: fr
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        George Cherian <gcherian@marvell.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Daney <david.daney@cavium.com>,
+        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YygPj8aYTvApOQFB@kili>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YygPj8aYTvApOQFB@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 9/12/22 18:08, Dan Carpenter wrote:
-> Smatch complains that the "add_bytes" is not to be trusted.  Use
-> size_add() to prevent an integer overflow.
+Le 19/09/2022 à 08:43, Dan Carpenter a écrit :
+> The "code_length" value comes from the firmware file.  If your firmware
+> is untrusted realistically there is probably very little you can do to
+> protect yourself.  Still we try to limit the damage as much as possible.
+> Also Smatch marks any data read from the filesystem as untrusted and
+> prints warnings if it not capped correctly.
 > 
-> Fixes: be71b5cba2e6 ("fs/ntfs3: Add attrib operations")
+> The "ntohl(ucode->code_length) * 2" multiplication can have an
+> integer overflow.
+> 
+> Fixes: 9e2c7d99941d ("crypto: cavium - Add Support for Octeon-tx CPT Engine")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> The add_bytes variable comes from:
+> v2: The first code removed the " * 2" so it would have caused immediate
+>      memory corruption and crashes.
 > 
-> 	add = ALIGN(struct_size(ea_all, name, 1 + name_len + val_size), 4);
+>      Also in version 2 I combine the "if (!mcode->code_size) {" check
+>      with the overflow check for better readability.
 > 
-> This is problematic and has inspired a new static checker warning:
+>   drivers/crypto/cavium/cpt/cptpf_main.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> fs/ntfs3/xattr.c:26 unpacked_ea_size() warn: using integer overflow function 'size_add()' for math
-> fs/ntfs3/xattr.c:290 ntfs_set_ea() warn: using integer overflow function 'size_add()' for math
-> 
-> The issue is that the struct_size() has an integer overflow and we call
-> ALIGN() on it, then "add" becomes zero.  Is there a bounds check that
-> we could use here?
-> 
-> 	add = struct_size(ea_all, name, 1 + name_len + val_size);
-> 	if (add > SOMETHING_MAX)
-> 		return -EINVAL;
-> 
-> Otherwise the limit would have to be if (add > ULONG_MAX - 3) { which
-> is ugly.
-> 
->   fs/ntfs3/xattr.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-> index 7de8718c68a9..ea582b4fe1d9 100644
-> --- a/fs/ntfs3/xattr.c
-> +++ b/fs/ntfs3/xattr.c
-> @@ -107,7 +107,7 @@ static int ntfs_read_ea(struct ntfs_inode *ni, struct EA_FULL **ea,
->   		return -EFBIG;
+> diff --git a/drivers/crypto/cavium/cpt/cptpf_main.c b/drivers/crypto/cavium/cpt/cptpf_main.c
+> index 8c32d0eb8fcf..6872ac344001 100644
+> --- a/drivers/crypto/cavium/cpt/cptpf_main.c
+> +++ b/drivers/crypto/cavium/cpt/cptpf_main.c
+> @@ -253,6 +253,7 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
+>   	const struct firmware *fw_entry;
+>   	struct device *dev = &cpt->pdev->dev;
+>   	struct ucode_header *ucode;
+> +	unsigned int code_length;
+>   	struct microcode *mcode;
+>   	int j, ret = 0;
 >   
->   	/* Allocate memory for packed Ea. */
-> -	ea_p = kmalloc(size + add_bytes, GFP_NOFS);
-> +	ea_p = kmalloc(size_add(size, add_bytes), GFP_NOFS);
->   	if (!ea_p)
->   		return -ENOMEM;
->   
+> @@ -263,11 +264,12 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
+>   	ucode = (struct ucode_header *)fw_entry->data;
+>   	mcode = &cpt->mcode[cpt->next_mc_idx];
+>   	memcpy(mcode->version, (u8 *)fw_entry->data, CPT_UCODE_VERSION_SZ);
+> -	mcode->code_size = ntohl(ucode->code_length) * 2;
+> -	if (!mcode->code_size) {
+> +	code_length = ntohl(ucode->code_length);
+> +	if (code_length == 0 || code_length >= INT_MAX / 2) {
 
-Applied, thanks!
+Hi,
+
+out of curiosity,
+
+'code_length' is 'unsigned int'
+'mcode->code_size' is u32.
+
+Why not UINT_MAX / 2?
+
+CJ
+
+>   		ret = -EINVAL;
+>   		goto fw_release;
+>   	}
+> +	mcode->code_size = code_length * 2;
+>   
+>   	mcode->is_ae = is_ae;
+>   	mcode->core_mask = 0ULL;
+
