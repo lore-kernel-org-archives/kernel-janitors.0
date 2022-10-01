@@ -2,80 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4E3C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Sep 2022 22:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C721C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Oct 2022 03:46:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232583AbiI3WKZ (ORCPT
+        id S231939AbiJADq4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Sep 2022 18:10:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35708 "EHLO
+        Fri, 30 Sep 2022 23:46:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232554AbiI3WKW (ORCPT
+        with ESMTP id S229548AbiJADqx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Sep 2022 18:10:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A88416612C;
-        Fri, 30 Sep 2022 15:10:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 63EECB82A4E;
-        Fri, 30 Sep 2022 22:10:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1B4FBC433D6;
-        Fri, 30 Sep 2022 22:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664575816;
-        bh=boq1adV3v7czYDdvsiNNB+DcHejVYZg49b8utNbjG7U=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ac4/sGRk0ooX/FZ6e5s74h3+JG4E9dRVF1p1LuBwUGsi/mSkm6EXUkaHGuJT4w82O
-         HQvF+hYsowmadEy6s1cCDMWzo+2DaL4SknhXPgR0cfg1BLNyqpX7PAqw1CnPS+t2hh
-         rGIJgUZcRmoZW6VeTqu+cOoog+EBGp2TLQcEHFprtUEsd9TMga/Lg/DmYWkqripDem
-         VNenx6FiL/UjKdCDTDwQBxXDIiY1KEPL+vHpx0y9DFVD2p/sXSTvW8k+UYEHqdGdx+
-         /nmkkG5H3WtuNPqcstImVmD09SSYoHVH6I5mbMuR2r4TOROGUjYyv/tyrHVsm+GoZm
-         ilONQwqGV54oQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 03751E50D64;
-        Fri, 30 Sep 2022 22:10:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 30 Sep 2022 23:46:53 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EC5C128480;
+        Fri, 30 Sep 2022 20:46:53 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id jo24so4907816plb.13;
+        Fri, 30 Sep 2022 20:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=lBzA4B/TYsozerdKcB4bgC9z78yNHBixXdc+yAYw69M=;
+        b=KsVJ9LVSupF/UjzMVjNCt3Gx2MVlWgNmY6JkgBSI5uLNUc5agx3TIBB1OJvn01vUwE
+         73iOTo6M/XlJuatgldflzAEPcAl/TjyFOlNJXoWC6RC+O6lgZonGaYSPQu7L9666cMce
+         lolhsi5+QjmVNpS97IZexX5NOrhNY+UvRxvOxzRcyWNlrHVEiT/okbfTcZl0h6WSpweF
+         VRAov+MZOrGZc6uthfBevOjVUy2OpDNIjiTagR2fco6RTzvaSPmqg5ZWvsOIvDHP4+Rh
+         X/yGDgB3Qzl/RjrE3djJzhHfJ3bQ7092sG2gnwQ4CGYKf4TtmTq2v6bg31jkToAc/SFk
+         XgSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=lBzA4B/TYsozerdKcB4bgC9z78yNHBixXdc+yAYw69M=;
+        b=rZYTHRPBIvFme2FRKiKHn+0rjiEBz/v1r+yMXVhLqB8xLkWtx1wOD6WGKwQQTZchLJ
+         pYZ97IU4rS5dA8k6/Tgz1/ctD6r8MHduRhPignTb/Ni41Wmy6YJLIYIL41hxpZDTeNCm
+         cZnUEwDRyxm3Jp5DPBxxRbD3jVeC3DRjfUjY2gArWTg04/n2JeT+dcuIMXZrXkJxuH/S
+         D/N0Llw0Reg4211XQihgQIMWDI/xn2aW0M2aAGAxjCnx7lS8YTrZnUpUMMpyLll002Tq
+         Z2zVaM1t88kJjh+wpbg4KUHIg5rO5wkILxCmAvVVPNg38bs4EY4f1dOhpq/dTaddt8Td
+         +rBg==
+X-Gm-Message-State: ACrzQf2n9iUlmgSCPXLHg1DLWyL4DSB+JYDINZOxBVgu4NZS5FHXijny
+        Fum74G0OFBo4yH0+kGnvb4o=
+X-Google-Smtp-Source: AMsMyM7Xb03Z+AgRjWKJRSf7RVCsqto4/oUQ/FYiK09yUSUZuVzST89CWHz75Jnnta0WPzhSkVjI7A==
+X-Received: by 2002:a17:902:b907:b0:178:2898:8084 with SMTP id bf7-20020a170902b90700b0017828988084mr11871814plb.140.1664596012532;
+        Fri, 30 Sep 2022 20:46:52 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:63e7:415:943b:4707])
+        by smtp.gmail.com with ESMTPSA id l6-20020a6542c6000000b004277f43b736sm2405422pgp.92.2022.09.30.20.46.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Sep 2022 20:46:51 -0700 (PDT)
+Date:   Fri, 30 Sep 2022 20:46:49 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] input: Drop empty comment
+Message-ID: <Yze4KUiUvcnt+jh5@google.com>
+References: <26a2b905b259bfffaf2de5b26f2007b8606970ed.1664478665.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] selftests/bpf: Fix spelling mistake "unpriviledged" ->
- "unprivileged"
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166457581601.30660.11490951795183636093.git-patchwork-notify@kernel.org>
-Date:   Fri, 30 Sep 2022 22:10:16 +0000
-References: <20220928221555.67873-1-colin.i.king@gmail.com>
-In-Reply-To: <20220928221555.67873-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     ast@kernel.org, bpf@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26a2b905b259bfffaf2de5b26f2007b8606970ed.1664478665.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
-
-On Wed, 28 Sep 2022 23:15:55 +0100 you wrote:
-> There a couple of spelling mistakes, one in a literal string and one
-> in a comment. Fix them.
+On Thu, Sep 29, 2022 at 09:11:36PM +0200, Christophe JAILLET wrote:
+> Commit 1a59d1b8e05e ("treewide: Replace GPLv2 boilerplate/reference with
+> SPDX - rule 156") has left some empty comment blocks.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/bpf/verifier/calls.c   | 2 +-
->  tools/testing/selftests/bpf/verifier/var_off.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Remove them to save a few lines of code.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Here is the summary with links:
-  - selftests/bpf: Fix spelling mistake "unpriviledged" -> "unprivileged"
-    https://git.kernel.org/bpf/bpf-next/c/2efcf695bfc0
+Applied, thank you.
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Dmitry
