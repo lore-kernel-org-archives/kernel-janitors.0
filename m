@@ -2,101 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA31C4332F
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Oct 2022 12:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCBAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Oct 2022 14:38:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbiJBMUm (ORCPT
+        id S229816AbiJBOid (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Oct 2022 08:20:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54618 "EHLO
+        Sun, 2 Oct 2022 10:38:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229882AbiJBMUk (ORCPT
+        with ESMTP id S229640AbiJBOib (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Oct 2022 08:20:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D96C1C12D;
-        Sun,  2 Oct 2022 05:20:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C89760EAA;
-        Sun,  2 Oct 2022 12:20:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90D22C433C1;
-        Sun,  2 Oct 2022 12:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664713238;
-        bh=fhWqrDjJnZcxrV0/bumyzoTKxFfcdByj9ZkQrhL4KKs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nfooSx8JVW9ir/raXrESI24CV959vfVbMWcr/lUAys7wnIZ7CNafnfVza6PW6GVxy
-         JPWLB9QhMD94z9k14tKO23LjqvGdFWbFx6rFf91WKAGgmPWotkud2ljMayhfEdu6c0
-         752ifXBpPiF101DoDG6j+bFq5q4Cp7sEIuDdsBRR6RRUDsI1lns6zwUsrrepFnoIno
-         uulIp+4lUfn+NrUC6zKHIGdnjXMHRylmBxKBAbtGLqSxTjoobVzas5x5Ilvw2j2KQE
-         803ykGwyj/WqduNzTdvQJVGknHD0ImUeLt2UO8oZ79PjPY3U9dBmt/oQ0FjP2hb8Cq
-         L/V9IBb4VGKew==
-Date:   Sun, 2 Oct 2022 13:20:53 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Kent Gustavsson <kent@minoris.se>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: mcp3911: fix sizeof() vs ARRAY_SIZE() bug
-Message-ID: <20221002132053.113f595f@jic23-huawei>
-In-Reply-To: <YzGKolEWAZ0Z/fQf@gmail.com>
-References: <YzFsjY3xLHUQMjVr@kili>
-        <YzGKolEWAZ0Z/fQf@gmail.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
+        Sun, 2 Oct 2022 10:38:31 -0400
+Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26CE842AE6
+        for <kernel-janitors@vger.kernel.org>; Sun,  2 Oct 2022 07:38:30 -0700 (PDT)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id f06toNPoWUoLVf06to0bsI; Sun, 02 Oct 2022 16:38:28 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 Oct 2022 16:38:28 +0200
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-input@vger.kernel.org
+Subject: [PATCH] HID: alps: Simplify the .remove function
+Date:   Sun,  2 Oct 2022 16:38:26 +0200
+Message-Id: <33cf94ec234b88ffc79eb4496c640093aa8c5e70.1664721476.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 26 Sep 2022 13:18:58 +0200
-Marcus Folkesson <marcus.folkesson@gmail.com> wrote:
+If the .remove function of a 'hid_driver' is NULL, the default behavior is
+to call hid_hw_stop().
 
-> Hi,
-> 
-> Good catch.
-> Too bad I missed it.
-> 
-> /Marcus
-> 
-> On Mon, Sep 26, 2022 at 12:10:37PM +0300, Dan Carpenter wrote:
-> > This code uses sizeof() instead of ARRAY_SIZE() so it reads beyond the
-> > end of the mcp3911_osr_table[] array.
-> > 
-> > Fixes: 6d965885f4ea ("iio: adc: mcp3911: add support for oversampling ratio")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>  
-> 
-> Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-Applied to the fixes-togreg branch of iio.git, but I'm not going to push that
-tree out until Linus takes the char-misc-next pull request as otherwise I'll make
-a mess of linux-next as the trees will effectively merge out of normal order.
+So alps_remove() can be removed here, it is just hand-writing what
+already exists.
 
-Jonathan
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hid/hid-alps.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-> 
-> > ---
-> >  drivers/iio/adc/mcp3911.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/adc/mcp3911.c b/drivers/iio/adc/mcp3911.c
-> > index b35fd2c9c3c0..015a9ffdb26a 100644
-> > --- a/drivers/iio/adc/mcp3911.c
-> > +++ b/drivers/iio/adc/mcp3911.c
-> > @@ -248,7 +248,7 @@ static int mcp3911_write_raw(struct iio_dev *indio_dev,
-> >  		break;
-> >  
-> >  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-> > -		for (int i = 0; i < sizeof(mcp3911_osr_table); i++) {
-> > +		for (int i = 0; i < ARRAY_SIZE(mcp3911_osr_table); i++) {
-> >  			if (val == mcp3911_osr_table[i]) {
-> >  				val = FIELD_PREP(MCP3911_CONFIG_OSR, i);
-> >  				ret = mcp3911_update(adc, MCP3911_REG_CONFIG, MCP3911_CONFIG_OSR,
-> > -- 
-> > 2.35.1
-> >   
+diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
+index db146d0f7937..669d769ea1dc 100644
+--- a/drivers/hid/hid-alps.c
++++ b/drivers/hid/hid-alps.c
+@@ -820,11 +820,6 @@ static int alps_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	return 0;
+ }
+ 
+-static void alps_remove(struct hid_device *hdev)
+-{
+-	hid_hw_stop(hdev);
+-}
+-
+ static const struct hid_device_id alps_id[] = {
+ 	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY,
+ 		USB_VENDOR_ID_ALPS_JP, HID_DEVICE_ID_ALPS_U1_DUAL) },
+@@ -842,7 +837,6 @@ static struct hid_driver alps_driver = {
+ 	.name = "hid-alps",
+ 	.id_table		= alps_id,
+ 	.probe			= alps_probe,
+-	.remove			= alps_remove,
+ 	.raw_event		= alps_raw_event,
+ 	.input_mapping		= alps_input_mapping,
+ 	.input_configured	= alps_input_configured,
+-- 
+2.34.1
 
