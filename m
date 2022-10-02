@@ -2,132 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE28C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Oct 2022 10:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA31C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Oct 2022 12:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbiJBJ77 (ORCPT
+        id S229889AbiJBMUm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Oct 2022 05:59:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51184 "EHLO
+        Sun, 2 Oct 2022 08:20:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbiJBJ75 (ORCPT
+        with ESMTP id S229882AbiJBMUk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Oct 2022 05:59:57 -0400
-Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2946EDE8F
-        for <kernel-janitors@vger.kernel.org>; Sun,  2 Oct 2022 02:59:54 -0700 (PDT)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id evlFoljJdC5LCevlFowjLR; Sun, 02 Oct 2022 11:59:51 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 02 Oct 2022 11:59:51 +0200
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     James Smart <james.smart@broadcom.com>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-nvme@lists.infradead.org
-Subject: [PATCH] nvme-fc: Improve memory usage in nvme_fc_rcv_ls_req()
-Date:   Sun,  2 Oct 2022 11:59:45 +0200
-Message-Id: <87a93f5fadd6e3cba2bb263b8853a5d33f589287.1664704751.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 2 Oct 2022 08:20:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D96C1C12D;
+        Sun,  2 Oct 2022 05:20:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C89760EAA;
+        Sun,  2 Oct 2022 12:20:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90D22C433C1;
+        Sun,  2 Oct 2022 12:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664713238;
+        bh=fhWqrDjJnZcxrV0/bumyzoTKxFfcdByj9ZkQrhL4KKs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nfooSx8JVW9ir/raXrESI24CV959vfVbMWcr/lUAys7wnIZ7CNafnfVza6PW6GVxy
+         JPWLB9QhMD94z9k14tKO23LjqvGdFWbFx6rFf91WKAGgmPWotkud2ljMayhfEdu6c0
+         752ifXBpPiF101DoDG6j+bFq5q4Cp7sEIuDdsBRR6RRUDsI1lns6zwUsrrepFnoIno
+         uulIp+4lUfn+NrUC6zKHIGdnjXMHRylmBxKBAbtGLqSxTjoobVzas5x5Ilvw2j2KQE
+         803ykGwyj/WqduNzTdvQJVGknHD0ImUeLt2UO8oZ79PjPY3U9dBmt/oQ0FjP2hb8Cq
+         L/V9IBb4VGKew==
+Date:   Sun, 2 Oct 2022 13:20:53 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Kent Gustavsson <kent@minoris.se>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: mcp3911: fix sizeof() vs ARRAY_SIZE() bug
+Message-ID: <20221002132053.113f595f@jic23-huawei>
+In-Reply-To: <YzGKolEWAZ0Z/fQf@gmail.com>
+References: <YzFsjY3xLHUQMjVr@kili>
+        <YzGKolEWAZ0Z/fQf@gmail.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-sizeof( struct nvmefc_ls_rcv_op ) = 64
-sizeof( union nvmefc_ls_requests ) = 1024
-sizeof( union nvmefc_ls_responses ) = 128
+On Mon, 26 Sep 2022 13:18:58 +0200
+Marcus Folkesson <marcus.folkesson@gmail.com> wrote:
 
-So, in nvme_fc_rcv_ls_req(), 1216 bytes of memory are requested when
-kzalloc() is called.
+> Hi,
+> 
+> Good catch.
+> Too bad I missed it.
+> 
+> /Marcus
+> 
+> On Mon, Sep 26, 2022 at 12:10:37PM +0300, Dan Carpenter wrote:
+> > This code uses sizeof() instead of ARRAY_SIZE() so it reads beyond the
+> > end of the mcp3911_osr_table[] array.
+> > 
+> > Fixes: 6d965885f4ea ("iio: adc: mcp3911: add support for oversampling ratio")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>  
+> 
+> Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+Applied to the fixes-togreg branch of iio.git, but I'm not going to push that
+tree out until Linus takes the char-misc-next pull request as otherwise I'll make
+a mess of linux-next as the trees will effectively merge out of normal order.
 
-Because of the way memory allocations are performed, 2048 bytes are
-allocated. So about 800 bytes are wasted for each request.
+Jonathan
 
-Switch to 3 distinct memory allocations, in order to:
-   - save these 800 bytes
-   - avoid zeroing this extra memory
-   - make sure that memory is properly aligned in case of DMA access
-    ("fc_dma_map_single(lsop->rspbuf)" just a few lines below)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is only a RFC to see if this kind of approach makes sense or
-not.
-I've not checked all paths, so it is likely that it is incomplete.
-
-Anyway, it is just a trade-of between memory footprint and CPU usage (3
-kzalloc() instead of 1)
-
-I don't know if it is a slow path or not, nor if the "rport->ls_rcv_list"
-list can get big (each item overuses these 800 bytes of memory)
-
-3 kzalloc is more than just 1 (sic!), but with this patch, 800 bytes are
-not zeroed anymore. Moreover, maybe the zeroing of rqstbuf and/or rspbuf
-can be saved as well.
-So, it could balance the impact of the 3 kzalloc().
-
-So, if it looks promising, s.o. with the corresponding hardware should
-make some measurements on memory and CPU usage.
----
- drivers/nvme/host/fc.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index 5d57a042dbca..2d3c54838496 100644
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -1475,6 +1475,8 @@ nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
- 	fc_dma_unmap_single(lport->dev, lsop->rspdma,
- 			sizeof(*lsop->rspbuf), DMA_TO_DEVICE);
- 
-+	kfree(lsop->rspbuf);
-+	kfree(lsop->rqstbuf);
- 	kfree(lsop);
- 
- 	nvme_fc_rport_put(rport);
-@@ -1751,20 +1753,17 @@ nvme_fc_rcv_ls_req(struct nvme_fc_remote_port *portptr,
- 		goto out_put;
- 	}
- 
--	lsop = kzalloc(sizeof(*lsop) +
--			sizeof(union nvmefc_ls_requests) +
--			sizeof(union nvmefc_ls_responses),
--			GFP_KERNEL);
--	if (!lsop) {
-+	lsop = kzalloc(sizeof(*lsop), GFP_KERNEL);
-+	lsop->rqstbuf = kzalloc(sizeof(*lsop->rqstbuf), GFP_KERNEL);
-+	lsop->rspbuf = kzalloc(sizeof(*lsop->rspbuf), GFP_KERNEL);
-+	if (!lsop || !lsop->rqstbuf || !lsop->rspbuf) {
- 		dev_info(lport->dev,
- 			"RCV %s LS failed: No memory\n",
- 			(w0->ls_cmd <= NVME_FC_LAST_LS_CMD_VALUE) ?
- 				nvmefc_ls_names[w0->ls_cmd] : "");
- 		ret = -ENOMEM;
--		goto out_put;
-+		goto out_free;
- 	}
--	lsop->rqstbuf = (union nvmefc_ls_requests *)&lsop[1];
--	lsop->rspbuf = (union nvmefc_ls_responses *)&lsop->rqstbuf[1];
- 
- 	lsop->rspdma = fc_dma_map_single(lport->dev, lsop->rspbuf,
- 					sizeof(*lsop->rspbuf),
-@@ -1801,6 +1800,8 @@ nvme_fc_rcv_ls_req(struct nvme_fc_remote_port *portptr,
- 	fc_dma_unmap_single(lport->dev, lsop->rspdma,
- 			sizeof(*lsop->rspbuf), DMA_TO_DEVICE);
- out_free:
-+	kfree(lsop->rspbuf);
-+	kfree(lsop->rqstbuf);
- 	kfree(lsop);
- out_put:
- 	nvme_fc_rport_put(rport);
--- 
-2.34.1
+> 
+> > ---
+> >  drivers/iio/adc/mcp3911.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iio/adc/mcp3911.c b/drivers/iio/adc/mcp3911.c
+> > index b35fd2c9c3c0..015a9ffdb26a 100644
+> > --- a/drivers/iio/adc/mcp3911.c
+> > +++ b/drivers/iio/adc/mcp3911.c
+> > @@ -248,7 +248,7 @@ static int mcp3911_write_raw(struct iio_dev *indio_dev,
+> >  		break;
+> >  
+> >  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> > -		for (int i = 0; i < sizeof(mcp3911_osr_table); i++) {
+> > +		for (int i = 0; i < ARRAY_SIZE(mcp3911_osr_table); i++) {
+> >  			if (val == mcp3911_osr_table[i]) {
+> >  				val = FIELD_PREP(MCP3911_CONFIG_OSR, i);
+> >  				ret = mcp3911_update(adc, MCP3911_REG_CONFIG, MCP3911_CONFIG_OSR,
+> > -- 
+> > 2.35.1
+> >   
 
