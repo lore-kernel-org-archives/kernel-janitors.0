@@ -2,108 +2,132 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF20C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Oct 2022 20:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE28C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Oct 2022 10:00:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229598AbiJAUP4 (ORCPT
+        id S229648AbiJBJ77 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 Oct 2022 16:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41410 "EHLO
+        Sun, 2 Oct 2022 05:59:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbiJAUPy (ORCPT
+        with ESMTP id S229540AbiJBJ75 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 Oct 2022 16:15:54 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31C68349AA;
-        Sat,  1 Oct 2022 13:15:53 -0700 (PDT)
-Received: from mercury (unknown [185.209.196.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 57E3C6601F54;
-        Sat,  1 Oct 2022 21:15:51 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664655351;
-        bh=4VYYmA7fzG9OwRycPX/DaxU4t0NjzNha7dATmLtyZd0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HW+8Ymemi2irys0+qXIFZmFLvLoD88W7eVL4SXoBNHjUQ29Qc6ouvdHtXxLOQp+nc
-         mJgIJ6t4JmPu/vN1zNcnhN0/dNPnXTYs+ss6P18oGYFGnhXo06MUDl+BI1eBpKIMjO
-         HWGe8FIRljbXUXXKMZNnEIrVpdFL2y7h6747EN13oHHpv+njg9Xu8loNq7rzIZR07T
-         FXeVXm37odSXEieZkXTWdprIdF+VrxX95RlkFIqM8eNDt7N2C81mx/aXl5fN1vyoxU
-         eew4jxC7Oeh1m0uvG3X1pHFftN0qHmGbbTdrC/NeqOJk1ZDqgF6Ptm3Hm/tZ2rK8jZ
-         kO2AiSv7UsL9w==
-Received: by mercury (Postfix, from userid 1000)
-        id D8041106090C; Sat,  1 Oct 2022 22:15:48 +0200 (CEST)
-Date:   Sat, 1 Oct 2022 22:15:48 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: max1721x: Fix spelling mistake "Gauage"
- -> "Gauge"
-Message-ID: <20221001201548.xxezxgtsdtwpbe5i@mercury.elektranox.org>
-References: <20220928211926.62818-1-colin.i.king@gmail.com>
+        Sun, 2 Oct 2022 05:59:57 -0400
+Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2946EDE8F
+        for <kernel-janitors@vger.kernel.org>; Sun,  2 Oct 2022 02:59:54 -0700 (PDT)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id evlFoljJdC5LCevlFowjLR; Sun, 02 Oct 2022 11:59:51 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 Oct 2022 11:59:51 +0200
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     James Smart <james.smart@broadcom.com>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-nvme@lists.infradead.org
+Subject: [PATCH] nvme-fc: Improve memory usage in nvme_fc_rcv_ls_req()
+Date:   Sun,  2 Oct 2022 11:59:45 +0200
+Message-Id: <87a93f5fadd6e3cba2bb263b8853a5d33f589287.1664704751.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3rklnxsuc5paghr6"
-Content-Disposition: inline
-In-Reply-To: <20220928211926.62818-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+sizeof( struct nvmefc_ls_rcv_op ) = 64
+sizeof( union nvmefc_ls_requests ) = 1024
+sizeof( union nvmefc_ls_responses ) = 128
 
---3rklnxsuc5paghr6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So, in nvme_fc_rcv_ls_req(), 1216 bytes of memory are requested when
+kzalloc() is called.
 
-Hi,
+Because of the way memory allocations are performed, 2048 bytes are
+allocated. So about 800 bytes are wasted for each request.
 
-On Wed, Sep 28, 2022 at 10:19:26PM +0100, Colin Ian King wrote:
-> There is a spelling mistake in the module description. Fix it.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/power/supply/max1721x_battery.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/max1721x_battery.c b/drivers/power/supp=
-ly/max1721x_battery.c
-> index 473e53cd2801..d8d52e09da7b 100644
-> --- a/drivers/power/supply/max1721x_battery.c
-> +++ b/drivers/power/supply/max1721x_battery.c
-> @@ -444,5 +444,5 @@ module_w1_family(w1_max1721x_family);
-> =20
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Alex A. Mihaylov <minimumlaw@rambler.ru>");
-> -MODULE_DESCRIPTION("Maxim MAX17211/MAX17215 Fuel Gauage IC driver");
-> +MODULE_DESCRIPTION("Maxim MAX17211/MAX17215 Fuel Gauge IC driver");
->  MODULE_ALIAS("w1-family-" __stringify(W1_MAX1721X_FAMILY_ID));
+Switch to 3 distinct memory allocations, in order to:
+   - save these 800 bytes
+   - avoid zeroing this extra memory
+   - make sure that memory is properly aligned in case of DMA access
+    ("fc_dma_map_single(lsop->rspbuf)" just a few lines below)
 
-Thanks, queued.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is only a RFC to see if this kind of approach makes sense or
+not.
+I've not checked all paths, so it is likely that it is incomplete.
 
--- Sebastian
+Anyway, it is just a trade-of between memory footprint and CPU usage (3
+kzalloc() instead of 1)
 
---3rklnxsuc5paghr6
-Content-Type: application/pgp-signature; name="signature.asc"
+I don't know if it is a slow path or not, nor if the "rport->ls_rcv_list"
+list can get big (each item overuses these 800 bytes of memory)
 
------BEGIN PGP SIGNATURE-----
+3 kzalloc is more than just 1 (sic!), but with this patch, 800 bytes are
+not zeroed anymore. Moreover, maybe the zeroing of rqstbuf and/or rspbuf
+can be saved as well.
+So, it could balance the impact of the 3 kzalloc().
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmM4n+4ACgkQ2O7X88g7
-+ppEZg/8DviDAuBQ0jzaES+WYps3+xftStP5fhPDBit6KxSWKewybdbhHr0PtQoX
-HR8JqEe79WgWDplR2lf3rJ1XMOueu3hJU2aH0xtQqLTFCaJvlatZbH+UeGgrWGss
-FNeMpnhhxleOwUdh2m5XusCPwVY5RKEgmecPifHEj1D81uEPLZ0K/5jjsbtEyOe8
-TWpetTLarQ8GzwFK+CbFC2qB8lezNSUQMsJbXv+rc7ZIyLzjTSW69gGF9BAjFOLC
-1yGohFuRZhGe5YGk+cjnwlaSjop33bbQZAy9iq3az+4i4SWRTxkCty1ftcyUzvPC
-Q7HE4u4ouanLp/gF1bD9nMl9s3LK97u7ICQF828GJhW57D5rtQx3bvGbiNveD1og
-B2fNgb+CzaS6egx9mx1yY2dYXbloi452UajVOAC160c4elPJUsr1VSLIw3klv2nZ
-L7jSsgppbJcKJzEKLsnECurjs9LxIELjGf5KrI2ZC5X3g9sGEoO47XGTubOT80lH
-e/fO1aTtvGusUx1D8LhX78GtUF+hqE8cSTQxjrkpodi7C6oTMcGE9+pfdiAoTXIA
-Tw1Y+fpg06q+Hq/cRuRnroRqRnJEE0JGhhDhPkXQFhlTr/NlvQh/QwOcu/qax21r
-P2Nbo3hdbyj1sn7sMvazR9BxFxgJZgmTo03A8kXX6FJ0Kf7Tob8=
-=pxoI
------END PGP SIGNATURE-----
+So, if it looks promising, s.o. with the corresponding hardware should
+make some measurements on memory and CPU usage.
+---
+ drivers/nvme/host/fc.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
---3rklnxsuc5paghr6--
+diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+index 5d57a042dbca..2d3c54838496 100644
+--- a/drivers/nvme/host/fc.c
++++ b/drivers/nvme/host/fc.c
+@@ -1475,6 +1475,8 @@ nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
+ 	fc_dma_unmap_single(lport->dev, lsop->rspdma,
+ 			sizeof(*lsop->rspbuf), DMA_TO_DEVICE);
+ 
++	kfree(lsop->rspbuf);
++	kfree(lsop->rqstbuf);
+ 	kfree(lsop);
+ 
+ 	nvme_fc_rport_put(rport);
+@@ -1751,20 +1753,17 @@ nvme_fc_rcv_ls_req(struct nvme_fc_remote_port *portptr,
+ 		goto out_put;
+ 	}
+ 
+-	lsop = kzalloc(sizeof(*lsop) +
+-			sizeof(union nvmefc_ls_requests) +
+-			sizeof(union nvmefc_ls_responses),
+-			GFP_KERNEL);
+-	if (!lsop) {
++	lsop = kzalloc(sizeof(*lsop), GFP_KERNEL);
++	lsop->rqstbuf = kzalloc(sizeof(*lsop->rqstbuf), GFP_KERNEL);
++	lsop->rspbuf = kzalloc(sizeof(*lsop->rspbuf), GFP_KERNEL);
++	if (!lsop || !lsop->rqstbuf || !lsop->rspbuf) {
+ 		dev_info(lport->dev,
+ 			"RCV %s LS failed: No memory\n",
+ 			(w0->ls_cmd <= NVME_FC_LAST_LS_CMD_VALUE) ?
+ 				nvmefc_ls_names[w0->ls_cmd] : "");
+ 		ret = -ENOMEM;
+-		goto out_put;
++		goto out_free;
+ 	}
+-	lsop->rqstbuf = (union nvmefc_ls_requests *)&lsop[1];
+-	lsop->rspbuf = (union nvmefc_ls_responses *)&lsop->rqstbuf[1];
+ 
+ 	lsop->rspdma = fc_dma_map_single(lport->dev, lsop->rspbuf,
+ 					sizeof(*lsop->rspbuf),
+@@ -1801,6 +1800,8 @@ nvme_fc_rcv_ls_req(struct nvme_fc_remote_port *portptr,
+ 	fc_dma_unmap_single(lport->dev, lsop->rspdma,
+ 			sizeof(*lsop->rspbuf), DMA_TO_DEVICE);
+ out_free:
++	kfree(lsop->rspbuf);
++	kfree(lsop->rqstbuf);
+ 	kfree(lsop);
+ out_put:
+ 	nvme_fc_rport_put(rport);
+-- 
+2.34.1
+
