@@ -2,91 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EF6C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Oct 2022 15:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CF6C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Oct 2022 15:40:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbiJCPhk (ORCPT
+        id S229525AbiJCPkt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Oct 2022 11:37:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37332 "EHLO
+        Mon, 3 Oct 2022 11:40:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230196AbiJCPhd (ORCPT
+        with ESMTP id S229516AbiJCPkq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Oct 2022 11:37:33 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F71C264A5;
-        Mon,  3 Oct 2022 08:37:15 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id fn7-20020a05600c688700b003b4fb113b86so6064736wmb.0;
-        Mon, 03 Oct 2022 08:37:14 -0700 (PDT)
+        Mon, 3 Oct 2022 11:40:46 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F9EB248CA;
+        Mon,  3 Oct 2022 08:40:43 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id a10so12283316ljq.0;
+        Mon, 03 Oct 2022 08:40:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=zDHcYPcOC2g3KclLx05LA/SZnsMR7jUou6D7oCqcQG4=;
-        b=bqCG8C1gegQxpKi32inG/zloXBNcwnTao4VCmCc/6bOGoRbbkW3hVvXFz6jkbElbr1
-         0W8s/AuBrC3vW1/EwRssE8RPMAOsUWWGpsiCjWNFM9eXSFU/x7vvwagT0jzbOPn6SS3G
-         1GprrtxlUxD5KBawFvvbrsUf9LtEX9hd7IBwXdRah9l+8gjIgQrV7pG9RYYJ7a3XCaXV
-         6Yw3S2zF8/sN8T8Q6/8ueeM2BBNMQSokr5GxDFeDIb6EdtshX9S0brOW+c+SbsiXxscs
-         Fqxpky7EPB1bGFrhTkZnmEFjQ1K54UDbOL/sWLgnnrl7kbsn1MmihBwUd7v8l8Q9oXKB
-         5Erw==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=7azzMhvCWlbBUnWsIL8gKYMDz75tdp+9lfOKf1YegqY=;
+        b=BCoE7qaaF8gcAkgXdo9llnjy+CplurWz+WJ7fEq3i6ncsmjpIVX8dJIqvRgX/K3UIm
+         AXTpr2IUBmDKd0kJfVKnLjEJyF6KbR4IUFKhpENUPlBc3R2NIv1+2g76Dma0v8lef6oQ
+         vaT5tyKuhkAErqRxXuyh0qgcj3OPM0Nz429/oOJhu9F3aE73pDXhDQzE8bR/58Lu3Bhv
+         dlQLClfNXrPnL1dV0Lptd1tYbQVsyBGafcmof+4W1yCsSFCsTJGI4sRxezZnHq0W3H95
+         MlxmUQZ2o97WF+Aa1KnuryvplzmTPIjeb5FEz7vMj6TuQQ9wTcJsiOIbmk3WIQ+7Vele
+         nGew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=zDHcYPcOC2g3KclLx05LA/SZnsMR7jUou6D7oCqcQG4=;
-        b=h1nkR2n9MpZPqrzZ9gDQ2kFP7kOsCo5KjWBCk1tTEk+UrwLLe/4eeJF4WRKC4N4IsA
-         7+flQTxLpj/61Iso/afregxKREdmg8f7ws+sbPiIL8SswOHZ/mor8I3PMYDBqfAzQhpR
-         Xz6kVJ1vWFIEzQ84o2x99qU5ziJKcSNgqF475/qV+/vYrMdyCoPSSR1rSTK2TqgMS9IU
-         itMFXGNkTk6ogwqJXxEkiS1079wAAHjWClYJYjHdxb4FG4SXLoWXbNkg5lilN/guyadk
-         26/6U3Spl0EW830Hf2bGq5zmje+QHwp9jVocPiwEG+Vyyxn9aVSmL4kAhH11WN9TnUBe
-         vE1w==
-X-Gm-Message-State: ACrzQf1RCMu2IDJJx5QVbyZPOq85H2b/WDf/kWvGKdlFg8+11EDBWqiu
-        xmbJyVfOmUDzktC+riS6aI0=
-X-Google-Smtp-Source: AMsMyM45QL3qALRDKsu2WvfGfjxNqRla9U2vr20LwILz2wh5e+BUktInAYMCquTP+n+TW+60Shj4vg==
-X-Received: by 2002:a1c:f008:0:b0:3b4:fd2e:3ede with SMTP id a8-20020a1cf008000000b003b4fd2e3edemr7386844wmb.133.1664811432876;
-        Mon, 03 Oct 2022 08:37:12 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bs11-20020a056000070b00b0022a2bacabbasm10355788wrb.31.2022.10.03.08.37.12
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=7azzMhvCWlbBUnWsIL8gKYMDz75tdp+9lfOKf1YegqY=;
+        b=hUDji2tO8BjFZ+AXckx1QXiftwVIGgj0hC8vOuSTfsNH1YvkMCo8nrG9G/yhJOLwbt
+         uFO7Dy9CYu+eGIaTVOVehFl6TABQC8ciP48HVsXX4h2ZHIakYEghbcAjXw6YBvcweoYG
+         lTomqDYwiRH0YJ2sb+D5/efrXtwrLOirVMTf31dLStf2LHV+Ey2E+KG5b8Vr6r06h+vb
+         j0TSvev+QF2EwnitRd2elajmTjy7EgSa8avSLEtYkI0N3y5KjimvbFsaEt/4t+i9nv9k
+         jtMoeUEw5OKFUaUHJWGx+Ypno44WJ4yHExam1jEwfP31zrIrsAl7sHnjo224j1tW8cmS
+         IV5Q==
+X-Gm-Message-State: ACrzQf3Av6kRIbxIaIl622ioPTsbQg8gTkrODqXul0f5EqlpF2GLv7rU
+        YjE4EKKlTDcHj1mu3yDBjCU=
+X-Google-Smtp-Source: AMsMyM59dfGDUkV2+ocD6JuR7+SaBlHxhfiHOrUacInEY6KjeVKJMUzjQ6QCGi/cOKeT159XKvRmCg==
+X-Received: by 2002:a2e:924e:0:b0:26c:5dbc:2d80 with SMTP id v14-20020a2e924e000000b0026c5dbc2d80mr7158689ljg.290.1664811642111;
+        Mon, 03 Oct 2022 08:40:42 -0700 (PDT)
+Received: from gmail.com (82-209-154-112.cust.bredband2.com. [82.209.154.112])
+        by smtp.gmail.com with ESMTPSA id x20-20020a2e9c94000000b00261ca0f940esm889238lji.62.2022.10.03.08.40.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Oct 2022 08:37:12 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Joshua Kinard <kumba@gentoo.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtc: ds1685: Fix spelling of function name in comment block
-Date:   Mon,  3 Oct 2022 16:37:11 +0100
-Message-Id: <20221003153711.271630-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+        Mon, 03 Oct 2022 08:40:41 -0700 (PDT)
+Date:   Mon, 3 Oct 2022 17:40:39 +0200
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] HID: alps: Simplify the .remove function
+Message-ID: <YzsCdyPxrNcHE3XF@gmail.com>
+References: <33cf94ec234b88ffc79eb4496c640093aa8c5e70.1664721476.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pXKocOg+64y1zuMP"
+Content-Disposition: inline
+In-Reply-To: <33cf94ec234b88ffc79eb4496c640093aa8c5e70.1664721476.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The function name is missing the letter 'd' in the comment block.
-Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/rtc/rtc-ds1685.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--pXKocOg+64y1zuMP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/rtc/rtc-ds1685.c b/drivers/rtc/rtc-ds1685.c
-index a24331ba8a5f..5db9c737c022 100644
---- a/drivers/rtc/rtc-ds1685.c
-+++ b/drivers/rtc/rtc-ds1685.c
-@@ -132,7 +132,7 @@ ds1685_rtc_bin2bcd(struct ds1685_priv *rtc, u8 val, u8 bin_mask, u8 bcd_mask)
- }
- 
- /**
-- * s1685_rtc_check_mday - check validity of the day of month.
-+ * ds1685_rtc_check_mday - check validity of the day of month.
-  * @rtc: pointer to the ds1685 rtc structure.
-  * @mday: day of month.
-  *
--- 
-2.37.1
+Hi Christophe!
 
+On Sun, Oct 02, 2022 at 04:38:26PM +0200, Christophe JAILLET wrote:
+> If the .remove function of a 'hid_driver' is NULL, the default behavior is
+> to call hid_hw_stop().
+>=20
+> So alps_remove() can be removed here, it is just hand-writing what
+> already exists.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+
+
+There is already a patch out there :-)
+
+https://lore.kernel.org/all/20220915123438.520775-1-marcus.folkesson@gmail.=
+com/
+
+Best regards,
+Marcus Folkesson
+
+--pXKocOg+64y1zuMP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmM7AnIACgkQiIBOb1ld
+UjIH0g//Z+V4vf54jymsYpa+FtywfIyaRAaBXn4lJkD9THAzS8MgtwRlRqdkuZWz
+NdqRPwqeBuoOwjh0iOfwFyesw7JFqeVpNKi91R1hP03v+1hS3e2kM7o9exvP0YQX
+Kp1vnPnMBkB/LC6lUFpjIeZ3OLI5tY99nqxKeNY3TLbPylQUFYtQav9/ajhippky
+5uN1MpAQcs7B6OKKp+GB2n0BfaRI1xKe9AlF1BoIhYTA7j59E/FJ74SQQYih5qLx
+LA9U6iZ4Euj2FEq0BT5vYGjkRwnJkxCqoZMccsQXm21rQZSik2lwRUynK+D+Enec
+aqKIsuZoIpA6dZqv0gkQ+fwv8OqE+A7/A8/1Y00WMAB3CHW1uMYBd28I+HWgQsRj
+I7BBfxTk50v2q07SGH0bclApRIQFlAWPjb/VQPAS0qhdgkNXJufAPgoEm1Io1Esx
+aC6L2gMQWizc2xlco9k1sXC/rSyBs8g2HVsgoU3yLo03GJaWgtGZC8QjsYh+yFiB
+RZVdsHuVYEK5l7ZW9SxVgBmEFWeGPRE3cl1JUyOUHnvFU91Asii0B7L9gbxaAx7o
+T9oDsWZKR9eOL+ufy3omcFtcjMabKI1Jhj7Qdm5+AfeVirTkFWZVHj2XKvDtChUA
+T3n2+GC+/J8w5RWRX7qreQc5f7NKJwTM+Y+gcljtOJFRiPX2KDs=
+=9TRx
+-----END PGP SIGNATURE-----
+
+--pXKocOg+64y1zuMP--
