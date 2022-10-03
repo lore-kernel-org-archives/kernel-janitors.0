@@ -2,106 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB20C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Oct 2022 21:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76400C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Oct 2022 13:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229620AbiJBVLP (ORCPT
+        id S229779AbiJCNE5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Oct 2022 17:11:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53040 "EHLO
+        Mon, 3 Oct 2022 09:04:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbiJBVLN (ORCPT
+        with ESMTP id S229446AbiJCNEz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Oct 2022 17:11:13 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D380D2ED61
-        for <kernel-janitors@vger.kernel.org>; Sun,  2 Oct 2022 14:11:11 -0700 (PDT)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id f6Evo1J2RsfCIf6EvozjHg; Sun, 02 Oct 2022 23:11:09 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 02 Oct 2022 23:11:09 +0200
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] lib: Drop some empty comment blocks
-Date:   Sun,  2 Oct 2022 20:40:23 +0200
-Message-Id: <5bcc0f7840594afa540be450bca3159a2c616bd3.1664736011.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 3 Oct 2022 09:04:55 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E9221C118;
+        Mon,  3 Oct 2022 06:04:50 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2938p6Za026051;
+        Mon, 3 Oct 2022 15:04:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=date : from : to :
+ cc : subject : in-reply-to : message-id : references : mime-version :
+ content-type; s=selector1;
+ bh=n2dod6jOO9mn4/av9Xj9sPyCVY0WZR1VS0HeSNd5cvc=;
+ b=VzYkUzBClM6TJ5XnlWb3vQVm9B1+kS6SeKoDnOCx8Y2+QDEixG+9Kyh4TLp1+Xb7RKCB
+ 98bpLrdHSZwNcGch8cQOgSnWRGsY0a6+XnsI57jN12mnCaBcUyupiy8++tyUC6tEwR0i
+ pGGj/DBTj6ivljsVB3XRNEati5gKcvnuvmAO2a411sZWLv/ZvbFu+DPRezboOhT8MAzr
+ luiqTwP7Uaxz/4TY1zMyU0iziEj9qRXAGrhtGAgj0FKlL4zqXd9ZtYVpc+sqqipo2qpZ
+ dtarAHGoA+CeO3Yi8nBmDfZRKJhyWi7rCWp9Pjo+fEyF7LALKzkHgBLn7IQ95VJMWl8a 4Q== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3jxcehtc68-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Oct 2022 15:04:27 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3C2FF10002A;
+        Mon,  3 Oct 2022 15:04:20 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F13B722A6E8;
+        Mon,  3 Oct 2022 15:04:19 +0200 (CEST)
+Received: from gnbcxd0088.gnb.st.com (10.75.127.118) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2375.31; Mon, 3 Oct
+ 2022 15:04:17 +0200
+Date:   Mon, 3 Oct 2022 15:03:55 +0200
+From:   Nicolas Toromanoff <nicolas.toromanoff@foss.st.com>
+X-X-Sender: toromano@gnbcxd0088.gnb.st.com
+To:     Colin Ian King <colin.i.king@gmail.com>
+CC:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Nicolas Toromanoff <nicolas.toromanoff@foss.st.com>,
+        <linux-crypto@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: stm32 - Fix spelling mistake "wite" -> "write"
+In-Reply-To: <20220928222443.68705-1-colin.i.king@gmail.com>
+Message-ID: <alpine.DEB.2.21.2210031455360.10257@gnbcxd0088.gnb.st.com>
+References: <20220928222443.68705-1-colin.i.king@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset="US-ASCII"; format=flowed
+X-Originating-IP: [10.75.127.118]
+X-ClientProxiedBy: GPXDAG2NODE4.st.com (10.75.127.68) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-10-03_02,2022-09-29_03,2022-06-22_01
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 588cb88cedd5 ("treewide: Replace GPLv2 boilerplate/reference with
-SPDX - rule 120") has left some empty comment blocks.
+On Thu, 29 Sep 2022, Colin Ian King wrote:
 
-Remove them to save a few lines of code.
+> There are a couple of spelling mistakes in dev_err messages. Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Also remove some useless empty lines between some #include.
+Hello Colin,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- lib/ashldi3.c | 3 ---
- lib/cmpdi2.c  | 3 ---
- lib/muldi3.c  | 2 --
- lib/ucmpdi2.c | 2 --
- 4 files changed, 10 deletions(-)
+Thanks for the patch.
 
-diff --git a/lib/ashldi3.c b/lib/ashldi3.c
-index 8e6a69d59180..5dcaf1c89a9d 100644
---- a/lib/ashldi3.c
-+++ b/lib/ashldi3.c
-@@ -1,9 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- */
- 
- #include <linux/export.h>
--
- #include <linux/libgcc.h>
- 
- long long notrace __ashldi3(long long u, word_type b)
-diff --git a/lib/cmpdi2.c b/lib/cmpdi2.c
-index f7cebd52bd68..37e435f0d0ef 100644
---- a/lib/cmpdi2.c
-+++ b/lib/cmpdi2.c
-@@ -1,9 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- */
- 
- #include <linux/export.h>
--
- #include <linux/libgcc.h>
- 
- word_type notrace __cmpdi2(long long a, long long b)
-diff --git a/lib/muldi3.c b/lib/muldi3.c
-index 9150ac13050e..34cf53e45ca9 100644
---- a/lib/muldi3.c
-+++ b/lib/muldi3.c
-@@ -1,6 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- */
- 
- #include <linux/export.h>
- #include <linux/libgcc.h>
-diff --git a/lib/ucmpdi2.c b/lib/ucmpdi2.c
-index 726e394c9fcc..fc001a8f76cd 100644
---- a/lib/ucmpdi2.c
-+++ b/lib/ucmpdi2.c
-@@ -1,6 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- */
- 
- #include <linux/module.h>
- #include <linux/libgcc.h>
+Acked-by: nicolas.toromanoff@foss.st.com
+
 -- 
-2.34.1
-
+Nicolas.
