@@ -2,62 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34040C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Oct 2022 19:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC60C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Oct 2022 20:48:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229814AbiJCTet (ORCPT
+        id S229536AbiJCUsk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Oct 2022 15:34:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44216 "EHLO
+        Mon, 3 Oct 2022 16:48:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229802AbiJCTep (ORCPT
+        with ESMTP id S230099AbiJCUsV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Oct 2022 15:34:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12948BF53;
-        Mon,  3 Oct 2022 12:34:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3EED7611D0;
-        Mon,  3 Oct 2022 19:34:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96285C433C1;
-        Mon,  3 Oct 2022 19:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664825681;
-        bh=YTRCQYS5gwiLBwDfHgyeyCgWl/i616lUexzsbqfs9SY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=F+CxN7j0pcNRA9YSRo2BZuksk3YmOqbog0BGXwm8mpF/GyzItQy/rRNpBkKqaGhjI
-         5+uDhAcYozhwWOzM4mhe01CSUMUvMQiRMaijHrcAOtKUT7C26paF8FYcop8Xdhr2OE
-         xrPDu2mQoAOUTC8gdzC3scL1xShjgI7y9bOisJ5sViHs1Rd3NnPXpIb0XiHbHwIAX2
-         HGcddXetXi9iXg01/INAyBMfHF1ENfn/MVifwZEVzCQCAwrQ+tK54t05cqKgQJ7WPI
-         qG+W6uNgW9utC6TXALgdq0EWBDGOMfooiNTogA+GN114auoaXsKK0wzd52KRJE9V6D
-         H0hcs31NbSLuQ==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 3 Oct 2022 16:48:21 -0400
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [IPv6:2001:470:ea4a:1:5054:ff:fec7:86e4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7829A4C629;
+        Mon,  3 Oct 2022 13:48:01 -0700 (PDT)
+Message-ID: <1a9f797c-e11f-a60b-8b3f-9e229c17fe64@gentoo.org>
+Date:   Mon, 3 Oct 2022 16:47:56 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220521111145.81697-42-Julia.Lawall@inria.fr>
-References: <20220521111145.81697-42-Julia.Lawall@inria.fr>
-Subject: Re: [PATCH] clk: nxp: fix typo in comment
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 03 Oct 2022 12:34:39 -0700
-User-Agent: alot/0.10
-Message-Id: <20221003193441.96285C433C1@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.3.0
+Subject: Re: [PATCH] rtc: ds1685: Fix spelling of function name in comment
+ block
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221003153711.271630-1-colin.i.king@gmail.com>
+From:   Joshua Kinard <kumba@gentoo.org>
+In-Reply-To: <20221003153711.271630-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Julia Lawall (2022-05-21 04:10:52)
-> Spelling mistake (triple letters) in comment.
-> Detected with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->=20
+On 10/3/2022 11:37, Colin Ian King wrote:
+> The function name is missing the letter 'd' in the comment block.
+> Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
+>   drivers/rtc/rtc-ds1685.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rtc/rtc-ds1685.c b/drivers/rtc/rtc-ds1685.c
+> index a24331ba8a5f..5db9c737c022 100644
+> --- a/drivers/rtc/rtc-ds1685.c
+> +++ b/drivers/rtc/rtc-ds1685.c
+> @@ -132,7 +132,7 @@ ds1685_rtc_bin2bcd(struct ds1685_priv *rtc, u8 val, u8 bin_mask, u8 bcd_mask)
+>   }
+>   
+>   /**
+> - * s1685_rtc_check_mday - check validity of the day of month.
+> + * ds1685_rtc_check_mday - check validity of the day of month.
+>    * @rtc: pointer to the ds1685 rtc structure.
+>    * @mday: day of month.
+>    *
 
-Applied to clk-next
+Acked-by: Joshua Kinard <kumba@gentoo.org>
+
