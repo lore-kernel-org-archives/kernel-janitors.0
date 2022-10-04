@@ -2,102 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D604C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 14:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB10C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 15:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229535AbiJDOXL (ORCPT
+        id S229968AbiJDPJx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 10:23:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42172 "EHLO
+        Tue, 4 Oct 2022 11:09:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbiJDOXK (ORCPT
+        with ESMTP id S229967AbiJDPJt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 10:23:10 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA7930F6B;
-        Tue,  4 Oct 2022 07:23:10 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 08A432198D;
-        Tue,  4 Oct 2022 14:23:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1664893389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5gUUNgEDhizGEpFxKtQMBGFV8uYs1I5bUDwiFyCdJPs=;
-        b=Zt/OhUS5ydTQ9UGifRGK41t6GwEwC9hWteg+uA6BanmdxcmrHSUmnRwaax6muvmAzKKREl
-        HvCVf6R1AOho0RNxtGGq8BX7drQ5X+U22DhcXFne3NLKWdoz22LRBr9nP61FvgBdh/CnD2
-        lrLR8nF+sDF1Wgk/6b85JyPAcKbmAGw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1664893389;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5gUUNgEDhizGEpFxKtQMBGFV8uYs1I5bUDwiFyCdJPs=;
-        b=nnwkZhu5TLtAve4z+S1eE5DR29Ezv4gT6tG61WizYluhc4rs1VB3OA9gmZrHP6yk89nLJM
-        fz5UHGvz5kGnMFBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 80A1D139EF;
-        Tue,  4 Oct 2022 14:23:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Ds5VEcxBPGPpdAAAMHmgww
-        (envelope-from <ematsumiya@suse.de>); Tue, 04 Oct 2022 14:23:08 +0000
-Date:   Tue, 4 Oct 2022 11:23:06 -0300
-From:   Enzo Matsumiya <ematsumiya@suse.de>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] cifs: remove initialization value
-Message-ID: <20221004142306.ysgh45nhgdo4z3ok@suse.de>
-References: <20221004062333.416225-1-usama.anjum@collabora.com>
+        Tue, 4 Oct 2022 11:09:49 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5118013DC2;
+        Tue,  4 Oct 2022 08:09:48 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id bq9so21801172wrb.4;
+        Tue, 04 Oct 2022 08:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=701Ck6g0QIE4xfCqkzTh43wU8sP3WgE0ebhz4dRse7I=;
+        b=NGxUdAlmvvXWbf3Csp+CZ4s5zWfCS7LroYp3XrCNtoPNjOY86HinhBRq9Yd/izp9wo
+         +8XexC/kRU80vPXel1zYMeIRk7MPkI+BmzuaOd9dSrf/k2/y/kcj2qgnbw1j8yZ1pUsp
+         2sOmFT51r/ZrsF/zJJ/LgHEuw33Oyas0z5llkZIzpybFZogz+pHgChgl1K+gAKeVfQyn
+         iI2z+t3n0pISsDomkATFyjgTg3UrVztALvZEXc5qr1o51pSh0mwdtkH32KdUplMW/PTq
+         5V2mCOnRk+D62xyU0zX7/zymS7qz2lE7v2ejSG5vnI1aNAdzd900CbTvzLl8wZv8j3td
+         eZSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=701Ck6g0QIE4xfCqkzTh43wU8sP3WgE0ebhz4dRse7I=;
+        b=vy7/aSN1VgyItbaaZ5oXrwBKSKOvMlgALBrpEgZLkBY4YiVFJlgeKAIboL0Kp7pznB
+         8mJOx+UawuUEflnembUS9rWUka0hZDu/GYt18ZBCKFbPGoS/pxJWIDnG9IMbK8jcWTs7
+         fFw3vAjsUlseiQDLRiYM2BY0uImls0KCVj0rldJ/TmxL8fadH9n1Hipjf5d8ppmX2ULc
+         T81OPjO0d31aVoECtpJauvlrwUlK5GUOpCFKCmHB/EUYpyFDAasA8D/THmbcAY6J2bhL
+         mKmWZZ6ZgnC7qzBSHL1PYeT9DQfb5U+WqiLDroSkHSVq4zcqZQgeOToaQhoLcseQg5uF
+         8Rjw==
+X-Gm-Message-State: ACrzQf22yeKhRn93Rti06bcELtj5y9hQ6YSIUUcduYBR3mKO4/v0DZMQ
+        P/WNj1+vRdBky+FDG8+cZgZlZKjkyUG4LlSY
+X-Google-Smtp-Source: AMsMyM79kJkKnS9UZ7s/T5VFKVsgAHzLaUMWBOgve1YQihaYLsMCgz+9SgHaZ5aqsceJ02e3rc06KQ==
+X-Received: by 2002:a5d:64c2:0:b0:22e:41b0:42ca with SMTP id f2-20020a5d64c2000000b0022e41b042camr5546530wri.411.1664896186238;
+        Tue, 04 Oct 2022 08:09:46 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id h18-20020a05600c2cb200b003b51a4c61aasm20434812wmc.40.2022.10.04.08.09.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Oct 2022 08:09:45 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8192u: Fix spelling mistake athros -> Atheros and fix grammer
+Date:   Tue,  4 Oct 2022 16:09:44 +0100
+Message-Id: <20221004150944.148157-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20221004062333.416225-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Usama,
+There is a spellig mistake, correct it and fix capital letter on the
+proper noun. Also fix the grammar.
 
-On 10/04, Muhammad Usama Anjum wrote:
->Don't initialize the rc as its value is being overwritten before its
->use.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Being bitten by an unitialized variable bug as recent as 2 days ago, I'd
-say this is a step backwards from the "best practices" POV.
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
+index b58e75932ecd..f142d0986990 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
+@@ -1806,7 +1806,7 @@ int ieee80211_parse_info_param(struct ieee80211_device *ieee,
+ 				info_element->data[0] == 0x00 &&
+ 				info_element->data[1] == 0x13 &&
+ 				info_element->data[2] == 0x74)) {
+-				netdev_dbg(ieee->dev, "========> athros AP is exist\n");
++				netdev_dbg(ieee->dev, "========> Atheros AP exists\n");
+ 				network->atheros_cap_exist = true;
+ 			} else
+ 				network->atheros_cap_exist = false;
+-- 
+2.37.1
 
->Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->---
-> fs/cifs/smb2pdu.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
->index 0600f0a07628..2bf43c892ae6 100644
->--- a/fs/cifs/smb2pdu.c
->+++ b/fs/cifs/smb2pdu.c
->@@ -879,7 +879,7 @@ SMB2_negotiate(const unsigned int xid,
-> 	struct smb2_negotiate_rsp *rsp;
-> 	struct kvec iov[1];
-> 	struct kvec rsp_iov;
->-	int rc = 0;
->+	int rc;
-> 	int resp_buftype;
-> 	int blob_offset, blob_length;
-> 	char *security_blob;
->-- 
->2.30.2
-
-Cheers,
-
-Enzo
