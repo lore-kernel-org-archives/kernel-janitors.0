@@ -2,82 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD43CC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 07:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 293F5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 07:52:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229843AbiJDHhK (ORCPT
+        id S229538AbiJDHwt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 03:37:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33752 "EHLO
+        Tue, 4 Oct 2022 03:52:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbiJDHhH (ORCPT
+        with ESMTP id S229643AbiJDHwr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 03:37:07 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAB2726122;
-        Tue,  4 Oct 2022 00:37:05 -0700 (PDT)
-Received: from lenovo.Home (unknown [39.45.148.204])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+        Tue, 4 Oct 2022 03:52:47 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ED412B629;
+        Tue,  4 Oct 2022 00:52:46 -0700 (PDT)
+Received: from [192.168.10.9] (unknown [39.45.148.204])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 35BD86602294;
-        Tue,  4 Oct 2022 08:37:03 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 01F2D6602294;
+        Tue,  4 Oct 2022 08:52:42 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664869024;
-        bh=Ow0BfW79bfpNtlYiCN2hlVpzCFIfLUidy8OnfpB1IZs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hGB5On3HW21LEikg0ZG0iqbpKg+UAdl0V3K6IeTSbBKEnj1PZG/02yhPjaClt3BOW
-         evZoILYqvR1zDPdRaLuv86Gbww1bwj7Bll3E1V4p8wD/mFb7Iy4DmtUCfw5YGHl4+u
-         m+cLArG9GRftOiAxXpf1PEenMT2pC/f+nwCu+VPbsuo98ispMGNBnwNLAukido+U+5
-         Tcf68kSjaq7xFMDifj9S+xNxXKkv4Evc6H0ZmlR8shQtvQgfJLL3YlbYYrKzyHTjkA
-         W8YZFo+xo5SuzyN4JQnJaFrJSwwmHRrJ9AgClX7c2LzX4B8ycT6XFPjwFgrIxRVvez
-         ocA6tIhzDp7Jg==
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] power: supply: remove dead code
-Date:   Tue,  4 Oct 2022 12:36:51 +0500
-Message-Id: <20221004073652.568681-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.30.2
+        s=mail; t=1664869964;
+        bh=R6l9T5BM52dcR1rvtAnSOR0sTeiXruJN2cxHdJAe5ZY=;
+        h=Date:Cc:To:From:Subject:From;
+        b=CkBj9peD5/eQeSHFXfLAg/YLU/jvMp4CukTv+9PnxQpjqFUwXRkWWUMmXzvVma8cb
+         Oa9tRZOjBQGdgRkIkDekKrU4ttcqMxz+C3oInmjV49bq+OJPZht98sLxBFfdi7j+uZ
+         tcizwg1nkwuLyUEd1mzlCAI8LvWZH9Gmq8xZD0Oay/4GPNwcvBY2kMbjyD+uZwRUI3
+         l9oVdntpezgHbu0iWtGr++TJoY5R7PmjoI0RCR/9ASfOB8PVWkW43des2E+Z9F1w0P
+         k61e+iUcci6hhEo8kLXZg3gfhrLZJd/6iVVgbk6CpRaB9L9gdfS3QOYym/KjlA9Vhd
+         5iENahn47BRHg==
+Message-ID: <28270724-1c20-5b28-e5cf-ffe29a85ce4c@collabora.com>
+Date:   Tue, 4 Oct 2022 12:52:38 +0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Cc:     usama.anjum@collabora.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Language: en-US
+To:     =?UTF-8?Q?Tomislav_Po=c5=beega?= <pozega.tomislav@gmail.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Kalle Valo <kvalo@kernel.org>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+Subject: [Bug report] Probably variable is being overwritten
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-tmp is an unsigned variable. It can never be less than zero. Remove the
-dead code.
+Hi,
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- drivers/power/supply/rk817_charger.c | 4 ----
- 1 file changed, 4 deletions(-)
+A bit in rfb0r1 is being cleared and result is stored in rfval. Then the
+first bit is being set without reusing the rfval. It is probably bug or
+dead code? The same pattern can be seen repeated below as well.
 
-diff --git a/drivers/power/supply/rk817_charger.c b/drivers/power/supply/rk817_charger.c
-index aa4b33f1bb83..ba3f5ccaeacd 100644
---- a/drivers/power/supply/rk817_charger.c
-+++ b/drivers/power/supply/rk817_charger.c
-@@ -785,8 +785,6 @@ rk817_read_or_set_full_charge_on_boot(struct rk817_charger *charger,
- 		regmap_bulk_read(rk808->regmap, RK817_GAS_GAUGE_Q_PRES_H3,
- 				 bulk_reg, 4);
- 		tmp = get_unaligned_be32(bulk_reg);
--		if (tmp < 0)
--			tmp = 0;
- 		boot_charge_mah = ADC_TO_CHARGE_UAH(tmp,
- 						    charger->res_div) / 1000;
- 		/*
-@@ -825,8 +823,6 @@ rk817_read_or_set_full_charge_on_boot(struct rk817_charger *charger,
- 	regmap_bulk_read(rk808->regmap, RK817_GAS_GAUGE_Q_PRES_H3,
- 			 bulk_reg, 4);
- 	tmp = get_unaligned_be32(bulk_reg);
--	if (tmp < 0)
--		tmp = 0;
- 	boot_charge_mah = ADC_TO_CHARGE_UAH(tmp, charger->res_div) / 1000;
- 	regmap_bulk_read(rk808->regmap, RK817_GAS_GAUGE_OCV_VOL_H,
- 			 bulk_reg, 2);
+
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+index cbbb1a4849cf..4857e3818418 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+@@ -8844,7 +8844,7 @@ static void rt2800_rxiq_calibration(struct
+rt2x00_dev *rt2x00dev)
+        for (ch_idx = 0; ch_idx < 2; ch_idx = ch_idx + 1) {
+                if (ch_idx == 0) {
+                        rfval = rfb0r1 & (~0x3);
+-                       rfval = rfb0r1 | 0x1;
++                       rfval = rfval | 0x1;
+                        rt2800_rfcsr_write_bank(rt2x00dev, 0, 1, rfval);
+                        rfval = rfb0r2 & (~0x33);
+                        rfval = rfb0r2 | 0x11;
+
+
 -- 
-2.30.2
-
+Muhammad Usama Anjum
