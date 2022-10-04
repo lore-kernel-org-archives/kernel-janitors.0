@@ -2,62 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDECC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 16:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBD8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 16:09:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbiJDQGr (ORCPT
+        id S229950AbiJDQJR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 12:06:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33778 "EHLO
+        Tue, 4 Oct 2022 12:09:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbiJDQGn (ORCPT
+        with ESMTP id S229905AbiJDQJQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 12:06:43 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34EF25F7C2;
-        Tue,  4 Oct 2022 09:06:42 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id iv17so9219329wmb.4;
-        Tue, 04 Oct 2022 09:06:42 -0700 (PDT)
+        Tue, 4 Oct 2022 12:09:16 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F03885AC4B;
+        Tue,  4 Oct 2022 09:09:15 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id r13so590566wrj.11;
+        Tue, 04 Oct 2022 09:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=JzOBFqoHQk5sbb88IXGYAWyLYnuSbnvMiffX2ln7ZwY=;
-        b=Rj+l6U3nNSIFywr93jeVy56CN03wRC/7817IVultzoSms9L4uKB4b9B3NUnPUdvHNc
-         TAG6ZDXEbSAui9n/gh8ZI28TiiieT5QyzZVc8StuRCmy/LkNZ7NrGxGhc8i0G7BtGWB0
-         CdOet/pA8zkgMSUZEPq8GL9aaN5873fNruP3i1cTkZemSNUn8kLZJB60Zc+LgQcbHxqe
-         5oAyQeHqyQ9Pz3Ujnw6+14hSRXfo9auNVrnjUOtFr6BbwwcPTeTS8zZgkXjcx4r67zoz
-         9DvuNUA4JVHiAKgutltgWA0zE/0lXbQrN2ayZ7/xjc2/Wr8wTkdRzhU4QMg5+FJjr4ZD
-         +7Hw==
+        bh=Hp8lb9LNUEjxKTnwJHF8rLkRYlGGlRrTvDi1FIM2Zvc=;
+        b=j0U9rwRRSDQB7YDWzunD6M/etGelaZu8X+O0jd3R5f8FIewDu2T96w1VNNG/ZEaZdW
+         poEOMFNV/9WeVvCAHC/seukhzJDnsv2MeiB9ruMllZFtWb11i8R0o07t85qfdT1GaNc5
+         x+XadsVvo/X87mMHkY/CrmNvBOdqc5x7QpUO9vYn3uGCClk8M+oxWqGU35tKeL99gqQl
+         1szAKHljjSz/pBLCySdbEjJ7V95Gf0VDZ3SBHFBnvmxEjnPUaqbpCN9Ff3iG3ZDlOW7Q
+         +Vh1xqBI2zE7I9YEngak123bSw0UbBVbgTqXJ34qfE+ETwCjTZnUJ3ehdTB9TwLeN9lE
+         aQZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=JzOBFqoHQk5sbb88IXGYAWyLYnuSbnvMiffX2ln7ZwY=;
-        b=5McoL6CjtRwuFzPV6dHYodQ3lzBmaxx0dWBcLL8rJl7QNYP6TL09WBbns8PWcQJ8Pw
-         II+96q/D21RpknkcDRNcLz3YiK0yaBEkLylTvfJpR5hMy3/j9c6pmSubduHEYpYGUKC9
-         FehGiXLU6SRNzHVf3hAVbOla+e8cAG84WOFpiLaPZcVtbKNqkKdXKI4XY7VAji7dmyU5
-         uCRLubbU5Vdlwn9Ay0wDJ4C5FaixiBtpAJ3rdzpCMmkv87BXSf51q8SfBFEUALH4bVH3
-         ZvN0Pb3oNR0z9EGcczAF/Et6T6GK5iewtoApUNqaop6gPd/ox60Rc87HHAnkB43q2W3e
-         fGvA==
-X-Gm-Message-State: ACrzQf3qlpXHwpWySXW9TRfcBxSaWwDrpHI0gN4iGz49ul53MmiM7XTI
-        Lws+Iu+fNC6BloX650OK+XA=
-X-Google-Smtp-Source: AMsMyM6gRgaGAOCdkIrXOwLoGfT92j7KLM0C3wI+tKqR71EzYZ/Ko/ncz8DXmsZlQVl7c3hMCAbu3g==
-X-Received: by 2002:a7b:c4c2:0:b0:3b4:fdc4:6df9 with SMTP id g2-20020a7bc4c2000000b003b4fdc46df9mr332508wmk.123.1664899600743;
-        Tue, 04 Oct 2022 09:06:40 -0700 (PDT)
+        bh=Hp8lb9LNUEjxKTnwJHF8rLkRYlGGlRrTvDi1FIM2Zvc=;
+        b=t2dEmuY0jmSSZhaTFJzX2KCE+IGVp5dK3mdEADtS/gFoqR2jKQNYoTMB0H31yyK+WU
+         SmBrZOaRs9F6lOwy91bEOa1UgLe7HfBIz/ntphvA5ll70STpyfcVwoPQ6BG6K6Cvm9/6
+         dUuVk6eqZkm7QO4WRdMkB8fJLuDcYLBrhSAgDvYA2r4QtlTwoU14TKleteoawpMuRLh+
+         7fmaUXQDJG4jYWwqoewfdTHMqSJL0EctmTld54EHnPskw+xP+gGeopBDm2hQs4dP8eci
+         hMVp3WyjwxyoYZEGpqRYnM28SDRyFfrI8/D8nOFqQ4AGjB1hpoYEgfMClglGXeMuM77e
+         xuuA==
+X-Gm-Message-State: ACrzQf3o8RnM7KjlhyTlkoa8jNHrRxG0QXukULM4A5Oqv1k4iXgW5CGC
+        qxlhfryFT4x9B11KGLDbi68=
+X-Google-Smtp-Source: AMsMyM7YaciASkj4eSwgrzc0+S5/9x4rUKLbrNao+kbesZ5L5FALlzLQJnA4xtTjBUjhFu5yOk2mYw==
+X-Received: by 2002:adf:ef43:0:b0:22d:c507:dd48 with SMTP id c3-20020adfef43000000b0022dc507dd48mr12756478wrp.416.1664899754525;
+        Tue, 04 Oct 2022 09:09:14 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j14-20020a5d464e000000b0022e38c93195sm6420254wrs.34.2022.10.04.09.06.39
+        by smtp.gmail.com with ESMTPSA id m7-20020a05600c3b0700b003a1980d55c4sm21708298wms.47.2022.10.04.09.09.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Oct 2022 09:06:40 -0700 (PDT)
+        Tue, 04 Oct 2022 09:09:14 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-        xen-devel@lists.xenproject.org
+To:     Vinod Koul <vkoul@kernel.org>, Dave Jiang <dave.jiang@intel.com>,
+        dmaengine@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] xen/xenbus: Fix spelling mistake "hardward" -> "hardware"
-Date:   Tue,  4 Oct 2022 17:06:39 +0100
-Message-Id: <20221004160639.154421-1-colin.i.king@gmail.com>
+Subject: [PATCH] dmaengine: ioat: Fix spelling mistake "idel" -> "idle"
+Date:   Tue,  4 Oct 2022 17:09:13 +0100
+Message-Id: <20221004160913.154739-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -70,22 +68,22 @@ There is a spelling mistake in the module description. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/xen/xen-pciback/xenbus.c | 2 +-
+ drivers/dma/ioat/dma.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/xen/xen-pciback/xenbus.c b/drivers/xen/xen-pciback/xenbus.c
-index bde63ef677b8..d171091eec12 100644
---- a/drivers/xen/xen-pciback/xenbus.c
-+++ b/drivers/xen/xen-pciback/xenbus.c
-@@ -31,7 +31,7 @@ MODULE_PARM_DESC(passthrough,
- 	"   frontend (for example, a device at 06:01.b will still appear at\n"\
- 	"   06:01.b to the frontend). This is similar to how Xen 2.0.x\n"\
- 	"   exposed PCI devices to its driver domains. This may be required\n"\
--	"   for drivers which depend on finding their hardward in certain\n"\
-+	"   for drivers which depend on finding their hardware in certain\n"\
- 	"   bus/slot locations.");
+diff --git a/drivers/dma/ioat/dma.c b/drivers/dma/ioat/dma.c
+index e2070df6cad2..79d244011093 100644
+--- a/drivers/dma/ioat/dma.c
++++ b/drivers/dma/ioat/dma.c
+@@ -33,7 +33,7 @@ MODULE_PARM_DESC(completion_timeout,
+ static int idle_timeout = 2000;
+ module_param(idle_timeout, int, 0644);
+ MODULE_PARM_DESC(idle_timeout,
+-		"set ioat idel timeout [msec] (default 2000 [msec])");
++		"set ioat idle timeout [msec] (default 2000 [msec])");
  
- static struct xen_pcibk_device *alloc_pdev(struct xenbus_device *xdev)
+ #define IDLE_TIMEOUT msecs_to_jiffies(idle_timeout)
+ #define COMPLETION_TIMEOUT msecs_to_jiffies(completion_timeout)
 -- 
 2.37.1
 
