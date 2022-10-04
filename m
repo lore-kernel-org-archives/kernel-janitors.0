@@ -2,87 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D594C43217
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 06:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15646C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 06:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229695AbiJDGYq (ORCPT
+        id S229535AbiJDGpf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 02:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51274 "EHLO
+        Tue, 4 Oct 2022 02:45:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbiJDGYm (ORCPT
+        with ESMTP id S229468AbiJDGpe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 02:24:42 -0400
+        Tue, 4 Oct 2022 02:45:34 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8452F2ACE;
-        Mon,  3 Oct 2022 23:24:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57ADB252B9;
+        Mon,  3 Oct 2022 23:45:31 -0700 (PDT)
 Received: from lenovo.Home (unknown [39.45.148.204])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0C351660226B;
-        Tue,  4 Oct 2022 07:24:37 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id BC0A0660225F;
+        Tue,  4 Oct 2022 07:45:28 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664864680;
-        bh=nsD45MICY1/StpyRVxzsvj75lhf0v0C421rqzuUFNa4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CEnZSOFoQ2rnZp7yXzHzzaqbX7xsDO5IUpE35W2lVt65jBHeiyKmRZ2CmskD0Zhee
-         0CndLFDxCMO8jXVKgYX9isnMY42PrJyktpyNIV28Tpi2qr4JW1D3A+3PpFCFrFBUCi
-         wUxO5TufnwWktwIIPITbA4v2Z7T556mLJqtfjOYaeNthSQuZIVO3FOjUyGhMwLKkiZ
-         OPD1acL16lv8wnoeemwpR4X1/3vAL4yQQPWtDrvPxwoNLDu2iBcmQOhUZS/Hr+RXyX
-         R257m1Vc+H5BH4s91sb2eKkzq4q/PQbEpuWN1tZYP4iDrBLXsqoJhkDC335DB4bcYj
-         dPPB4RiVCwuiA==
+        s=mail; t=1664865930;
+        bh=22jFsalhNwXYUDUi3MSy6myd6rIR0j2CZtZOcnwFfos=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jeQDHB4eBbeeKdzLx87y71kw8Bm35Rj69kZ7eNtMEGiZvaDRhufRyclqWgkP5tZ2Z
+         m2ewGZ9ljOy4DQfs8Bdt8y+l9Qv/+m28HloUNVCYVPmc+M1lWK4gijtazAUsDdHq3N
+         YgG7/ASfh5H2KfvrszV1Hu4C7sD+UTZbRUSktSGiiwRnp5eGurMid+2H58RF9obNQJ
+         CbGaGilsfqcnWxsURpdc36EJU4E2rS9S6IMgjA+895E0bO0mCWoGrZ3jo+wc4yXGfw
+         ehZV/BQCS807ngkwDqaiuNs6yUtlOjAsqlw3aOe1tYBgXdGaZ0Smea8wZuDixjwc/o
+         Zyf5azNIoMMrQ==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>
+To:     Sebastian Reichel <sre@kernel.org>
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] cifs: check returned value for error
-Date:   Tue,  4 Oct 2022 11:23:33 +0500
-Message-Id: <20221004062333.416225-2-usama.anjum@collabora.com>
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] power: supply: remove less-than-zero comparison of unsigned variables
+Date:   Tue,  4 Oct 2022 11:45:21 +0500
+Message-Id: <20221004064521.498510-1-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20221004062333.416225-1-usama.anjum@collabora.com>
-References: <20221004062333.416225-1-usama.anjum@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-smb311_decode_neg_context() can return error. Its return value should be
-checked for errors.
+max_chg_vol_reg and max_chg_cur_reg are unsigned variables. The
+less-than-zero comparison of an unsigned value is never true. Remove
+these checks.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- fs/cifs/smb2pdu.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/power/supply/rk817_charger.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index 2bf43c892ae6..c6e37352dbe1 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -1089,11 +1089,14 @@ SMB2_negotiate(const unsigned int xid,
- 		server->signing_algorithm = SIGNING_ALG_AES_CMAC;
- 		server->signing_negotiated = false;
+diff --git a/drivers/power/supply/rk817_charger.c b/drivers/power/supply/rk817_charger.c
+index 635f051b0821..aa4b33f1bb83 100644
+--- a/drivers/power/supply/rk817_charger.c
++++ b/drivers/power/supply/rk817_charger.c
+@@ -951,12 +951,12 @@ static int rk817_battery_init(struct rk817_charger *charger,
  
--		if (rsp->NegotiateContextCount)
-+		if (rsp->NegotiateContextCount) {
- 			rc = smb311_decode_neg_context(rsp, server,
- 						       rsp_iov.iov_len);
--		else
-+			if (rc)
-+				goto neg_exit;
-+		} else {
- 			cifs_server_dbg(VFS, "Missing expected negotiate contexts\n");
-+		}
+ 	max_chg_cur_reg = rk817_chg_cur_to_reg(max_chg_cur_ma);
  
- 		/*
- 		 * Some servers will not send a SMB2_SIGNING_CAPABILITIES context response (*),
+-	if (max_chg_vol_reg < 0 || max_chg_vol_reg > 7) {
++	if (max_chg_vol_reg > 7) {
+ 		return dev_err_probe(charger->dev, -EINVAL,
+ 		       "invalid max charger voltage, value %u unsupported\n",
+ 		       max_chg_vol_mv * 1000);
+ 	}
+-	if (max_chg_cur_reg < 0 || max_chg_cur_reg > 7) {
++	if (max_chg_cur_reg > 7) {
+ 		return dev_err_probe(charger->dev, -EINVAL,
+ 		       "invalid max charger current, value %u unsupported\n",
+ 		       max_chg_cur_ma * 1000);
 -- 
 2.30.2
 
