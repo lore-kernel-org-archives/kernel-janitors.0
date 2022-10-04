@@ -2,145 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164F2C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 16:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DC4C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 17:19:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbiJDQcl (ORCPT
+        id S230146AbiJDRTe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 12:32:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50506 "EHLO
+        Tue, 4 Oct 2022 13:19:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbiJDQcj (ORCPT
+        with ESMTP id S229886AbiJDRTb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 12:32:39 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A22952825;
-        Tue,  4 Oct 2022 09:32:38 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id b4so15223983wrs.1;
-        Tue, 04 Oct 2022 09:32:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=KkyjHkIVAxjkk7zn0+JItE+iFfNARRnB8aGnYrfZaWI=;
-        b=o4Mdjf7R+FfV4456WLzSZG+eiAvS8pbuSRTf8aXIvDYA6fAKWnpCRIJgYoYqcny7p5
-         wPdmbxopI9WzdrELpeWjljB2HQ7wJl8z+2aKDlANPna5QQlxph/aZKXjRQqMKfapQnkz
-         Ex7URCgEJ7eilLFSASfkY2d846IRvjZAxp12SgFbGLSaybLRGjArei9yn26GjPIOsL0Z
-         II1D0rP5eC22yC8iCfTYRm14CJkp5m+6q6sxWgMKMH3a8LnmfhDpnXsv3gphkm97Cj+C
-         SEmPtyWLersQbKJLE7FOUzZZHOf65t8EwfMGrrYorETutKYiiqry95pZwCsxQmUkF1x7
-         EwNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=KkyjHkIVAxjkk7zn0+JItE+iFfNARRnB8aGnYrfZaWI=;
-        b=mnd5tNpVN1oGVWPHiea9ie+9PqmYbtJee6MpwwUX+LSD8pFnnSYZfkGxCqD0lDUp1t
-         Qamka/oeSV9mCnCKKUPcI3QFT0LMfiA2NSVwhRwrZx8MfcToaM/5FR0T0rne6QkvF9++
-         l2aDNg6qp4DiG1UIZzMA0SSDctu1grSv4O5JBTXogemeGCS7W5yCYRJCdx5CsIP5mfua
-         XozUgtd/FDKFgDo9fgv02HdFpUU/JS79/MVBcsyShXzipUcm9cH2NCZApwAipj15/MRC
-         wP2bBeCfNtxu+SzfZDBmtG7ks8xPVMUqaEFovVGCtJHXEHwHRbhiLf4m4LmjPpsqdY42
-         0Bxw==
-X-Gm-Message-State: ACrzQf2CoWw6ogn887H6yh5vSXG6gBD+Udv2LpIz/iNj/UMBxQUbqKFd
-        K+UtS17y5ZJzh6r8g8Uwa6A=
-X-Google-Smtp-Source: AMsMyM4w7JGL4GZbCEs0/CeC+ym6VteG1jUa730B6JnJs2MLFPNY2IvxyUSWoklrLjZaaGL8apfn4Q==
-X-Received: by 2002:a05:6000:1a8f:b0:228:e3c3:679 with SMTP id f15-20020a0560001a8f00b00228e3c30679mr16606635wry.281.1664901156708;
-        Tue, 04 Oct 2022 09:32:36 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b17-20020adfee91000000b0022865038308sm12563744wro.93.2022.10.04.09.32.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Oct 2022 09:32:36 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Ariel Elior <aelior@marvell.com>,
-        Sudarsana Kalluru <skalluru@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: bnx2x: Fix spelling mistake "tupple" -> "tuple"
-Date:   Tue,  4 Oct 2022 17:32:35 +0100
-Message-Id: <20221004163235.157485-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+        Tue, 4 Oct 2022 13:19:31 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A204D5F133;
+        Tue,  4 Oct 2022 10:19:30 -0700 (PDT)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 294GHr3Y016325;
+        Tue, 4 Oct 2022 17:19:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=vf+odzlmoDUyIdjb+isG/QhQ2gJ91ocADZn/u9Tew+Y=;
+ b=YsWT6FPFxaK2W5FllWUki+j0H0ddgdVQ3A6A1gBhwaANSwVyOpOo316vFSPGwFoPnjFQ
+ 4lcZrtTZ9on06hqw3xirg0jVIiFNgUfArojAnqbLpCRKaTclSlJAfXH3SCUcaY6sH97X
+ 4mKoI0Y/hL4wk3ues2/WYKKlZB6A6Cm4b+8KmUuvcMcQB4MfELFQTuhGNW7SmBBTaHM6
+ 9ZLgCDWfcsQRVQSahmFOOQNqrFCMwcPdOZJPzyIKsNzUxUY6e1nV6hvLcqWhqPOU4zIU
+ rSq6w4GY/g3SnH6NtI8wgabnKIQA3sODTYbbqm8o6Tw9FfmK2D3U9cFcOjq2UsVcinPR Aw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3k0bdsrefa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 Oct 2022 17:19:27 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 294FjRRv020177;
+        Tue, 4 Oct 2022 17:19:27 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3k0bdsreea-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 Oct 2022 17:19:27 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 294H5wq1030419;
+        Tue, 4 Oct 2022 17:19:25 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06ams.nl.ibm.com with ESMTP id 3jxctj4gsf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 Oct 2022 17:19:25 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 294HJNXf59179436
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Oct 2022 17:19:23 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5CC8211C04C;
+        Tue,  4 Oct 2022 17:19:23 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9866311C04A;
+        Tue,  4 Oct 2022 17:19:21 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.28.148])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  4 Oct 2022 17:19:21 +0000 (GMT)
+Date:   Tue, 4 Oct 2022 22:49:18 +0530
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ext4: remove unused string "deprecated_msg"
+Message-ID: <Yzxq/pGpMxz2CRj8@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20221004112114.101799-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221004112114.101799-1-colin.i.king@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: atK1SsYVzz3aUWMvYXU829hZ3raR-31I
+X-Proofpoint-GUID: kWybiqWaUv9WeRnYytwAkaDEh0xa86TI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-10-04_08,2022-09-29_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ clxscore=1011 spamscore=0 mlxscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2210040111
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are several spelling mistakes of tuple in comments and messages.
-Fix them.
+On Tue, Oct 04, 2022 at 12:21:14PM +0100, Colin Ian King wrote:
+> The string deprecated_msg is no longer being used, remove it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c | 10 +++++-----
- fs/freevxfs/vxfs_olt.c                              |  2 +-
- 2 files changed, 6 insertions(+), 6 deletions(-)
+So if IIUC we use this string as a standard message whenever we use any
+mount options about to be deprecated. We don't seem to have any
+deprecated mount options right now but we might want to keep the string
+around for future?
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-index bda3ccc28eca..49f2a0b45b20 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-@@ -3388,7 +3388,7 @@ static int bnx2x_set_rss_flags(struct bnx2x *bp, struct ethtool_rxnfc *info)
- 	switch (info->flow_type) {
- 	case TCP_V4_FLOW:
- 	case TCP_V6_FLOW:
--		/* For TCP only 4-tupple hash is supported */
-+		/* For TCP only 4-tuple hash is supported */
- 		if (info->data ^ (RXH_IP_SRC | RXH_IP_DST |
- 				  RXH_L4_B_0_1 | RXH_L4_B_2_3)) {
- 			DP(BNX2X_MSG_ETHTOOL,
-@@ -3399,7 +3399,7 @@ static int bnx2x_set_rss_flags(struct bnx2x *bp, struct ethtool_rxnfc *info)
- 
- 	case UDP_V4_FLOW:
- 	case UDP_V6_FLOW:
--		/* For UDP either 2-tupple hash or 4-tupple hash is supported */
-+		/* For UDP either 2-tuple hash or 4-tuple hash is supported */
- 		if (info->data == (RXH_IP_SRC | RXH_IP_DST |
- 				   RXH_L4_B_0_1 | RXH_L4_B_2_3))
- 			udp_rss_requested = 1;
-@@ -3418,7 +3418,7 @@ static int bnx2x_set_rss_flags(struct bnx2x *bp, struct ethtool_rxnfc *info)
- 		    (bp->rss_conf_obj.udp_rss_v4 != udp_rss_requested)) {
- 			bp->rss_conf_obj.udp_rss_v4 = udp_rss_requested;
- 			DP(BNX2X_MSG_ETHTOOL,
--			   "rss re-configured, UDP 4-tupple %s\n",
-+			   "rss re-configured, UDP 4-tuple %s\n",
- 			   udp_rss_requested ? "enabled" : "disabled");
- 			if (bp->state == BNX2X_STATE_OPEN)
- 				return bnx2x_rss(bp, &bp->rss_conf_obj, false,
-@@ -3427,7 +3427,7 @@ static int bnx2x_set_rss_flags(struct bnx2x *bp, struct ethtool_rxnfc *info)
- 			   (bp->rss_conf_obj.udp_rss_v6 != udp_rss_requested)) {
- 			bp->rss_conf_obj.udp_rss_v6 = udp_rss_requested;
- 			DP(BNX2X_MSG_ETHTOOL,
--			   "rss re-configured, UDP 4-tupple %s\n",
-+			   "rss re-configured, UDP 4-tuple %s\n",
- 			   udp_rss_requested ? "enabled" : "disabled");
- 			if (bp->state == BNX2X_STATE_OPEN)
- 				return bnx2x_rss(bp, &bp->rss_conf_obj, false,
-@@ -3437,7 +3437,7 @@ static int bnx2x_set_rss_flags(struct bnx2x *bp, struct ethtool_rxnfc *info)
- 
- 	case IPV4_FLOW:
- 	case IPV6_FLOW:
--		/* For IP only 2-tupple hash is supported */
-+		/* For IP only 2-tuple hash is supported */
- 		if (info->data ^ (RXH_IP_SRC | RXH_IP_DST)) {
- 			DP(BNX2X_MSG_ETHTOOL,
- 			   "Command parameters not supported\n");
-diff --git a/fs/freevxfs/vxfs_olt.c b/fs/freevxfs/vxfs_olt.c
-index 23f35187c289..48027a421fa3 100644
---- a/fs/freevxfs/vxfs_olt.c
-+++ b/fs/freevxfs/vxfs_olt.c
-@@ -63,7 +63,7 @@ vxfs_read_olt(struct super_block *sbp, u_long bsize)
- 
- 	op = (struct vxfs_olt *)bp->b_data;
- 	if (fs32_to_cpu(infp, op->olt_magic) != VXFS_OLT_MAGIC) {
--		printk(KERN_NOTICE "vxfs: ivalid olt magic number\n");
-+		printk(KERN_NOTICE "vxfs: invalid olt magic number\n");
- 		goto fail;
- 	}
- 
--- 
-2.37.1
-
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  fs/ext4/super.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 2335452efed0..981563c8245e 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1740,10 +1740,6 @@ static const struct fs_parameter_spec ext4_param_specs[] = {
+>  
+>  #define DEFAULT_JOURNAL_IOPRIO (IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 3))
+>  
+> -static const char deprecated_msg[] =
+> -	"Mount option \"%s\" will be removed by %s\n"
+> -	"Contact linux-ext4@vger.kernel.org if you think we should keep it.\n";
+> -
+>  #define MOPT_SET	0x0001
+>  #define MOPT_CLEAR	0x0002
+>  #define MOPT_NOSUPPORT	0x0004
+> -- 
+> 2.37.1
+> 
