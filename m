@@ -2,120 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DC4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 17:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B1AC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 19:08:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbiJDRTe (ORCPT
+        id S229522AbiJDTI5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 13:19:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56880 "EHLO
+        Tue, 4 Oct 2022 15:08:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbiJDRTb (ORCPT
+        with ESMTP id S229436AbiJDTI4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 13:19:31 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A204D5F133;
-        Tue,  4 Oct 2022 10:19:30 -0700 (PDT)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 294GHr3Y016325;
-        Tue, 4 Oct 2022 17:19:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=vf+odzlmoDUyIdjb+isG/QhQ2gJ91ocADZn/u9Tew+Y=;
- b=YsWT6FPFxaK2W5FllWUki+j0H0ddgdVQ3A6A1gBhwaANSwVyOpOo316vFSPGwFoPnjFQ
- 4lcZrtTZ9on06hqw3xirg0jVIiFNgUfArojAnqbLpCRKaTclSlJAfXH3SCUcaY6sH97X
- 4mKoI0Y/hL4wk3ues2/WYKKlZB6A6Cm4b+8KmUuvcMcQB4MfELFQTuhGNW7SmBBTaHM6
- 9ZLgCDWfcsQRVQSahmFOOQNqrFCMwcPdOZJPzyIKsNzUxUY6e1nV6hvLcqWhqPOU4zIU
- rSq6w4GY/g3SnH6NtI8wgabnKIQA3sODTYbbqm8o6Tw9FfmK2D3U9cFcOjq2UsVcinPR Aw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3k0bdsrefa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Oct 2022 17:19:27 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 294FjRRv020177;
-        Tue, 4 Oct 2022 17:19:27 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3k0bdsreea-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Oct 2022 17:19:27 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 294H5wq1030419;
-        Tue, 4 Oct 2022 17:19:25 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06ams.nl.ibm.com with ESMTP id 3jxctj4gsf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Oct 2022 17:19:25 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 294HJNXf59179436
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 4 Oct 2022 17:19:23 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5CC8211C04C;
-        Tue,  4 Oct 2022 17:19:23 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9866311C04A;
-        Tue,  4 Oct 2022 17:19:21 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.28.148])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  4 Oct 2022 17:19:21 +0000 (GMT)
-Date:   Tue, 4 Oct 2022 22:49:18 +0530
-From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Tue, 4 Oct 2022 15:08:56 -0400
+X-Greylist: delayed 484 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 04 Oct 2022 12:08:55 PDT
+Received: from mx.cjr.nz (mx.cjr.nz [51.158.111.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 768E2558E0;
+        Tue,  4 Oct 2022 12:08:55 -0700 (PDT)
+Received: from authenticated-user (mx.cjr.nz [51.158.111.142])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: pc)
+        by mx.cjr.nz (Postfix) with ESMTPSA id CAACC8079F;
+        Tue,  4 Oct 2022 18:59:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjr.nz; s=dkim;
+        t=1664909946;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=myIGBnfBacIG2+HWik5iZ7600MHQKUlDlQPLoFbcxX8=;
+        b=Z+jJ47GsoCRk3wbcpVcQrV8XfZWlkR8lL3oB+/fogM5z1dR3mNRIGwP6ReWz4Lk0YeX36e
+        oGdtEMAT8m0M6/KP5Eauwre+fIEIQy7QlUOqvW0PnlZU0P+sIYADe+5Ww2ypWiMEIdeLFc
+        HfJPAl6ItKbFOw2BLBfqyDCRVhtVonxNbHSdqyZA115hohF29tSGJgiaiXgSd9CU678qUs
+        a4G8tdM2eaNljBM+NjnoW4vpJFVt8snRqpZ2Mqx4pfoJ+UCGk0agmC+MaITtN2QRuWA7dn
+        vOZZqOBdquVN5yEHr5AF3Un+bhHl1GbTIMdqC4QECmYOhknIIypGzvL6CUzzTg==
+From:   Paulo Alcantara <pc@cjr.nz>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Steve French <sfrench@samba.org>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ext4: remove unused string "deprecated_msg"
-Message-ID: <Yzxq/pGpMxz2CRj8@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20221004112114.101799-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH 1/2] cifs: remove initialization value
+In-Reply-To: <20221004062333.416225-1-usama.anjum@collabora.com>
+References: <20221004062333.416225-1-usama.anjum@collabora.com>
+Date:   Tue, 04 Oct 2022 15:59:55 -0300
+Message-ID: <87o7ur4dp0.fsf@cjr.nz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221004112114.101799-1-colin.i.king@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: atK1SsYVzz3aUWMvYXU829hZ3raR-31I
-X-Proofpoint-GUID: kWybiqWaUv9WeRnYytwAkaDEh0xa86TI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-10-04_08,2022-09-29_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxlogscore=999 impostorscore=0 suspectscore=0 lowpriorityscore=0
- clxscore=1011 spamscore=0 mlxscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2210040111
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 04, 2022 at 12:21:14PM +0100, Colin Ian King wrote:
-> The string deprecated_msg is no longer being used, remove it.
+Muhammad Usama Anjum <usama.anjum@collabora.com> writes:
 
-So if IIUC we use this string as a standard message whenever we use any
-mount options about to be deprecated. We don't seem to have any
-deprecated mount options right now but we might want to keep the string
-around for future?
-
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Don't initialize the rc as its value is being overwritten before its
+> use.
+>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 > ---
->  fs/ext4/super.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 2335452efed0..981563c8245e 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1740,10 +1740,6 @@ static const struct fs_parameter_spec ext4_param_specs[] = {
->  
->  #define DEFAULT_JOURNAL_IOPRIO (IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 3))
->  
-> -static const char deprecated_msg[] =
-> -	"Mount option \"%s\" will be removed by %s\n"
-> -	"Contact linux-ext4@vger.kernel.org if you think we should keep it.\n";
-> -
->  #define MOPT_SET	0x0001
->  #define MOPT_CLEAR	0x0002
->  #define MOPT_NOSUPPORT	0x0004
-> -- 
-> 2.37.1
-> 
+>  fs/cifs/smb2pdu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Reviewed-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
