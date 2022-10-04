@@ -2,84 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F71EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 10:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A8BC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 11:10:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbiJDKVs (ORCPT
+        id S229824AbiJDLKh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 06:21:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48240 "EHLO
+        Tue, 4 Oct 2022 07:10:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbiJDKVl (ORCPT
+        with ESMTP id S229810AbiJDLKG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 06:21:41 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 518592CE14;
-        Tue,  4 Oct 2022 03:21:39 -0700 (PDT)
+        Tue, 4 Oct 2022 07:10:06 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D784B13CDA;
+        Tue,  4 Oct 2022 04:10:02 -0700 (PDT)
 Received: from [192.168.10.9] (unknown [39.45.148.204])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C775D660225F;
-        Tue,  4 Oct 2022 11:21:34 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 89FA1660225F;
+        Tue,  4 Oct 2022 12:09:59 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664878897;
-        bh=kCRfJ9AaObCTjuMjz/60HoCPWoad2V9bCCyPAOpjvdw=;
-        h=Date:Cc:To:From:Subject:From;
-        b=MHjFcUDlBvTz76+UUO+VE8j0qQs95Z2vH5n9LKMosEviQfegqNYyh7iKn8LBzH8df
-         w81mgNZzNP8KWWMjsZPy7CuntUVZSUdwBneEBwEGU+vjiD3+SCGmyFsqQEDy3aMAFK
-         QKmt/4ym7sJrNZq0XP9PNZ2Q8Xr2NKwZq5gsDfxTY/d9K8Vs13c7TnlmVQrRJtapgX
-         G0MKNEuUNTg4tCJa3qete5UujYXHAob7JotlR+UdBt6vHQ7fX3mwY2V3s27lPfSYI1
-         FdDD+1X4DSQBqNrisJoTYUpfDYbVRC7NPRYU9zFeq3ffKbjwrJlX30TVfpy4u7sCTW
-         YF7m2iSEhharg==
-Message-ID: <6ffc4718-afb3-883e-418c-79376082ec7a@collabora.com>
-Date:   Tue, 4 Oct 2022 15:21:30 +0500
+        s=mail; t=1664881800;
+        bh=AvdV9cCb9MyFUjPM+yXgi5qVq0iERQTeijLa2X2YNUE=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=bIUzx4Itf+luuKI3l69mI+QwJDdTse1Gehqbh9UIsH/HbZ93+iBxy7q+u8MxqkfYg
+         Bnrlp8tZs5nplFmwrrv6/51r6ujXdW8lAiJuXBVHI40hFK901o+vZxDwKR+JMWNFmT
+         bQFk4PUlGAR1uqV4w4b4C/BLCyl2tYU8l1ub2tK0I1Zu/L3TnGjY9H9V7CCeZeVKQI
+         cgf0GZPJm+1gqNMmRvkO097YhplUpOx7IC0z9EfwLDbm0Qu3qGl9/6mKJuImoa/hWe
+         pIKNm0a4QhoGnPKS7yCZ60KNXXUwEq86RP6j8bruZDPOhNBNQrqwiUM/e3886T0SGZ
+         wiQLqqBtC8Zjw==
+Message-ID: <01ae2244-99cd-e96d-1bb7-6082da017cc8@collabora.com>
+Date:   Tue, 4 Oct 2022 16:09:55 +0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.0
-Cc:     usama.anjum@collabora.com, LKML <linux-kernel@vger.kernel.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org
+Cc:     usama.anjum@collabora.com, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: Remove the dead code
 Content-Language: en-US
-To:     Hawking Zhang <Hawking.Zhang@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
+To:     Mark Brown <broonie@kernel.org>
+References: <20221004055620.371732-1-usama.anjum@collabora.com>
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: [Bug report] Possible wrong condition
+In-Reply-To: <20221004055620.371732-1-usama.anjum@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello,
+Please disregard this patch. This is wrong and not needed.
 
-It seems there is some dead or not-needed code. Either the if condition
-isn't needed or condition is wrong. As this
-greater-than-or-equal-to-zero comparison of an unsigned value is always
-true. "version_minor >= 0". Please have a look at it.
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_rlc.c
-b/drivers/gpu/drm/amd/amdgpu/amdgpu_rlc.c
-index 012b72d00e04..be9a6aad8541 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_rlc.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_rlc.c
-@@ -526,6 +526,8 @@ int amdgpu_gfx_rlc_init_microcode(struct
-amdgpu_device *adev,
-        if (version_major == 2 && version_minor == 1)
-                adev->gfx.rlc.is_rlc_v2_1 = true;
-
-+       // The following condition is always true as version_minor is
-unsigned.
-+       // Why is this condition needed at all?
-        if (version_minor >= 0) {
-                err = amdgpu_gfx_rlc_init_microcode_v2_0(adev);
-                if (err) {
+On 10/4/22 10:56 AM, Muhammad Usama Anjum wrote:
+> The vmallocated_buf is being checked if it is true inside the body of a
+> if condition which has already checked if it is true. Remove the
+> duplication and dead code as a result.
+> 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  drivers/spi/spi.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index 44e4352d948b..4c51cd4e4ab0 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -1057,10 +1057,7 @@ static int spi_map_buf_attrs(struct spi_controller *ctlr, struct device *dev,
+>  			min = min_t(size_t, desc_len,
+>  				    min_t(size_t, len,
+>  					  PAGE_SIZE - offset_in_page(buf)));
+> -			if (vmalloced_buf)
+> -				vm_page = vmalloc_to_page(buf);
+> -			else
+> -				vm_page = kmap_to_page(buf);
+> +			vm_page = vmalloc_to_page(buf);
+>  			if (!vm_page) {
+>  				sg_free_table(sgt);
+>  				return -ENOMEM;
 
 -- 
 Muhammad Usama Anjum
-
