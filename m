@@ -2,91 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5CBC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 10:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F71EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 10:21:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230038AbiJDKM0 (ORCPT
+        id S229698AbiJDKVs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 06:12:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
+        Tue, 4 Oct 2022 06:21:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbiJDKMY (ORCPT
+        with ESMTP id S229774AbiJDKVl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 06:12:24 -0400
+        Tue, 4 Oct 2022 06:21:41 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD9AC28711;
-        Tue,  4 Oct 2022 03:12:23 -0700 (PDT)
-Received: from lenovo.Home (unknown [39.45.148.204])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 518592CE14;
+        Tue,  4 Oct 2022 03:21:39 -0700 (PDT)
+Received: from [192.168.10.9] (unknown [39.45.148.204])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 713DC6601A43;
-        Tue,  4 Oct 2022 11:12:17 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C775D660225F;
+        Tue,  4 Oct 2022 11:21:34 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664878342;
-        bh=i0FOyOJitjB3rivlOUVsPgHHrU9fXSmrQW1VoDwnAqk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LGloIE8hXSiui08//z5wEic2e+LZAD8ZPaHHFGl6eL4NpDKnSc2Ce0vKDoJ8ko6QP
-         yI+SXxdH9JGKcWbunxKhdBonWb9nf2oE3XmmCbl1K8EJU/v6JNyVsQFgTJk//jafLf
-         vRsYOpTvivWUNIS0nhD4XInIZynwBBeTXa8jV/7zzcr+MCsQTnTtQ1jMLWujkq5FZY
-         D6IAIFoUhNADowuBLyNdyjHqASBzg9q4W2H74Y4B28TlJ4ZclAiwHmrGBxVrbAaOI7
-         99bGMV6OgaRdx5019SZw7hC7sFSmIO+cqI0pfczgEv5kyqOQHBOHFy0Z2t1qqFJJIx
-         0TOM37dCXltRg==
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Long Li <longli@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Ajay Sharma <sharmaajay@microsoft.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] net: mana: store return status in signed variable
-Date:   Tue,  4 Oct 2022 15:11:57 +0500
-Message-Id: <20221004101200.758009-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.30.2
+        s=mail; t=1664878897;
+        bh=kCRfJ9AaObCTjuMjz/60HoCPWoad2V9bCCyPAOpjvdw=;
+        h=Date:Cc:To:From:Subject:From;
+        b=MHjFcUDlBvTz76+UUO+VE8j0qQs95Z2vH5n9LKMosEviQfegqNYyh7iKn8LBzH8df
+         w81mgNZzNP8KWWMjsZPy7CuntUVZSUdwBneEBwEGU+vjiD3+SCGmyFsqQEDy3aMAFK
+         QKmt/4ym7sJrNZq0XP9PNZ2Q8Xr2NKwZq5gsDfxTY/d9K8Vs13c7TnlmVQrRJtapgX
+         G0MKNEuUNTg4tCJa3qete5UujYXHAob7JotlR+UdBt6vHQ7fX3mwY2V3s27lPfSYI1
+         FdDD+1X4DSQBqNrisJoTYUpfDYbVRC7NPRYU9zFeq3ffKbjwrJlX30TVfpy4u7sCTW
+         YF7m2iSEhharg==
+Message-ID: <6ffc4718-afb3-883e-418c-79376082ec7a@collabora.com>
+Date:   Tue, 4 Oct 2022 15:21:30 +0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Cc:     usama.anjum@collabora.com, LKML <linux-kernel@vger.kernel.org>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org
+Content-Language: en-US
+To:     Hawking Zhang <Hawking.Zhang@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+Subject: [Bug report] Possible wrong condition
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The mana_adev_idx_alloc() can return negative value. Save its return
-value in ret which is signed variable and check if it is correct value.
+Hello,
 
-Fixes: ee928282bfa7 ("net: mana: Add support for auxiliary device")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- drivers/net/ethernet/microsoft/mana/mana_en.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+It seems there is some dead or not-needed code. Either the if condition
+isn't needed or condition is wrong. As this
+greater-than-or-equal-to-zero comparison of an unsigned value is always
+true. "version_minor >= 0". Please have a look at it.
 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 7ca313c7b7b3..1c59502d34b5 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -2203,11 +2203,10 @@ static int add_adev(struct gdma_dev *gd)
- 		return -ENOMEM;
- 
- 	adev = &madev->adev;
--	adev->id = mana_adev_idx_alloc();
--	if (adev->id < 0) {
--		ret = adev->id;
-+	ret = mana_adev_idx_alloc();
-+	if (ret < 0)
- 		goto idx_fail;
--	}
-+	adev->id = ret;
- 
- 	adev->name = "rdma";
- 	adev->dev.parent = gd->gdma_context->dev;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_rlc.c
+b/drivers/gpu/drm/amd/amdgpu/amdgpu_rlc.c
+index 012b72d00e04..be9a6aad8541 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_rlc.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_rlc.c
+@@ -526,6 +526,8 @@ int amdgpu_gfx_rlc_init_microcode(struct
+amdgpu_device *adev,
+        if (version_major == 2 && version_minor == 1)
+                adev->gfx.rlc.is_rlc_v2_1 = true;
+
++       // The following condition is always true as version_minor is
+unsigned.
++       // Why is this condition needed at all?
+        if (version_minor >= 0) {
+                err = amdgpu_gfx_rlc_init_microcode_v2_0(adev);
+                if (err) {
+
 -- 
-2.30.2
+Muhammad Usama Anjum
 
