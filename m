@@ -2,90 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DF7C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 16:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53656C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 16:15:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230043AbiJDQNu (ORCPT
+        id S229978AbiJDQPJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 12:13:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41490 "EHLO
+        Tue, 4 Oct 2022 12:15:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230018AbiJDQNl (ORCPT
+        with ESMTP id S229616AbiJDQPH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 12:13:41 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724515F9AE;
-        Tue,  4 Oct 2022 09:13:39 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id ay36so9234996wmb.0;
-        Tue, 04 Oct 2022 09:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=l1KZpUgo00G/5L4dmMW5myayn4Zqd7m3fQ8mEVKtoi0=;
-        b=ZaacCWCIe0ILL/+CwFEyO4+MxyQwkhPj6wNUBHx/wY4ZSIzoXw4ecmNJOCYM57Sv4C
-         vAKGjElpFDakNao2KI3c0I4dTS6XTzz9EdDBu4z6927BruzU1CtKm0bGl6fqAAPedpWu
-         rs9UhjZUc+EkaoCEK0EPc1b6mleAaw9jkD1D7kWIukyTJsSoHj62KTP2QbDa29qn0DbJ
-         xfCx+buSmZrf+YOJ1UGmr8xU0RirEDs1zTa+MSMsO1WHfU3JFF69FvHqeFEQESkLk3gm
-         xhZI9jtNNZosaQaWVWXG6aBvzdd9kzda2Aflh3/OeAt5CCrh80FRIDwGbkbvD/Kq4VQv
-         WWqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=l1KZpUgo00G/5L4dmMW5myayn4Zqd7m3fQ8mEVKtoi0=;
-        b=JI/2jx9d5V1FImLPmgYfaKZnNrnmAUeBjQMFCiD1ChP3asl/cY3HKecQrOCVthmiPX
-         nildcd8NVQ/vQJ24Zw0gYepL2RrigaEc/1ipELSlUnrSzgRv4gQlLvfeCcNbbI1n14eq
-         A9DptgMhqM5Vm8CRhxW6fV0GRE4lCYPx/o+oU4yr3IxVw81tOZIldgUhrL12EhnpbRnZ
-         wv07IdfO/g9x9I0d6vKVQZKd5/ud1ABGz42ol10KkOIJxDlIsN/1x9qVJu9yBc8eBznj
-         TKo5LiZxfgYVySdV7i2zOS3HLhgWHE9dt3scvNrXoDuXmbDv0Zf5wWUlan1lNvthahrV
-         AbSw==
-X-Gm-Message-State: ACrzQf2Vky1XsNOiKaMciVsYL06Qg3pVxLtcPElPn09egbeHW2ZTMv2L
-        W4S2jMgfK+V7NG43uNhQBrk=
-X-Google-Smtp-Source: AMsMyM5fuTuElVWbTJBd+GRRwB0eIy4mOiqZXTScu7eYqYNWJ4h3qgVk9rHIVmD1F/k1NAZEMaOc0Q==
-X-Received: by 2002:a05:600c:3b13:b0:3b4:757d:93a5 with SMTP id m19-20020a05600c3b1300b003b4757d93a5mr354003wms.183.1664900018064;
-        Tue, 04 Oct 2022 09:13:38 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h9-20020a1c2109000000b003b4fac020c8sm19116073wmh.16.2022.10.04.09.13.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Oct 2022 09:13:37 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, linux-staging@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: atomisp: Fix spelling mistake "modee" -> "mode"
-Date:   Tue,  4 Oct 2022 17:13:36 +0100
-Message-Id: <20221004161336.155337-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+        Tue, 4 Oct 2022 12:15:07 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47A8ADDB;
+        Tue,  4 Oct 2022 09:15:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1664900105; x=1696436105;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4PqAkzVq1o2WfBKu7Js2HTHmGzzYQDqt7v8Of/Mnc/4=;
+  b=bSnIjH0OvBcXQIkMdcHejrMNTicQu4ZcSmlqozwivaU8Gamq1zt2vyEa
+   vG03xjG3iVnT9saF0L+7iOdwkV0ojP6WpfoeffhX4gBIgkrPHLBzDXMRG
+   qdQx4JCcIKlwWpgvtJMbeQ2eGya6FGQXudj4BUA4UUByWM5B++7Nch1vk
+   bkmtJwsJbTK4c1rje0FhK1h2EhEbZ16+6WmSuwPi/M850jwtSggPt18Iq
+   83eEIBdv1ghurQM0FbYCvd60omhyQrivFZGedrxFR3FDcFennDJYNt8mu
+   tmRn++dpGYKiISGPjTQYg4w23XbzZ5hDwca2mAz6rW2sT6pmRIPcZJ+V6
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10490"; a="302930163"
+X-IronPort-AV: E=Sophos;i="5.95,158,1661842800"; 
+   d="scan'208";a="302930163"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2022 09:15:03 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10490"; a="626235135"
+X-IronPort-AV: E=Sophos;i="5.95,158,1661842800"; 
+   d="scan'208";a="626235135"
+Received: from djiang5-mobl2.amr.corp.intel.com (HELO [10.212.127.31]) ([10.212.127.31])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2022 09:15:03 -0700
+Message-ID: <737bb9da-4979-f0bf-1627-c662f57e5d74@intel.com>
+Date:   Tue, 4 Oct 2022 09:15:02 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.3.1
+Subject: Re: [PATCH] dmaengine: ioat: Fix spelling mistake "idel" -> "idle"
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221004160913.154739-1-colin.i.king@gmail.com>
+From:   Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20221004160913.154739-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a literal string. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .../media/atomisp/pci/css_2401_system/host/pixelgen_private.h   | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 10/4/2022 9:09 AM, Colin Ian King wrote:
+> There is a spelling mistake in the module description. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-diff --git a/drivers/staging/media/atomisp/pci/css_2401_system/host/pixelgen_private.h b/drivers/staging/media/atomisp/pci/css_2401_system/host/pixelgen_private.h
-index 1c7938d8ccb5..8f79424bedb2 100644
---- a/drivers/staging/media/atomisp/pci/css_2401_system/host/pixelgen_private.h
-+++ b/drivers/staging/media/atomisp/pci/css_2401_system/host/pixelgen_private.h
-@@ -161,7 +161,7 @@ STORAGE_CLASS_PIXELGEN_C void pixelgen_ctrl_dump_state(
- 		     state->syng_stat_fcnt);
- 	ia_css_print("Pixel Generator ID %d syng stat done  0x%x\n", ID,
- 		     state->syng_stat_done);
--	ia_css_print("Pixel Generator ID %d tpg modee  0x%x\n", ID, state->tpg_mode);
-+	ia_css_print("Pixel Generator ID %d tpg mode  0x%x\n", ID, state->tpg_mode);
- 	ia_css_print("Pixel Generator ID %d tpg hcnt mask  0x%x\n", ID,
- 		     state->tpg_hcnt_mask);
- 	ia_css_print("Pixel Generator ID %d tpg hcnt mask  0x%x\n", ID,
--- 
-2.37.1
+Acked-by: Dave Jiang <dave.jiang@intel.com>
 
+Thanks Colin. Guess no one noticed for almost 2 decades. :)
+
+> ---
+>   drivers/dma/ioat/dma.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/dma/ioat/dma.c b/drivers/dma/ioat/dma.c
+> index e2070df6cad2..79d244011093 100644
+> --- a/drivers/dma/ioat/dma.c
+> +++ b/drivers/dma/ioat/dma.c
+> @@ -33,7 +33,7 @@ MODULE_PARM_DESC(completion_timeout,
+>   static int idle_timeout = 2000;
+>   module_param(idle_timeout, int, 0644);
+>   MODULE_PARM_DESC(idle_timeout,
+> -		"set ioat idel timeout [msec] (default 2000 [msec])");
+> +		"set ioat idle timeout [msec] (default 2000 [msec])");
+>   
+>   #define IDLE_TIMEOUT msecs_to_jiffies(idle_timeout)
+>   #define COMPLETION_TIMEOUT msecs_to_jiffies(completion_timeout)
