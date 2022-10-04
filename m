@@ -2,64 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC60C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Oct 2022 20:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B788C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 05:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbiJCUsk (ORCPT
+        id S229633AbiJDF4h (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Oct 2022 16:48:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49002 "EHLO
+        Tue, 4 Oct 2022 01:56:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbiJCUsV (ORCPT
+        with ESMTP id S229453AbiJDF4g (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Oct 2022 16:48:21 -0400
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [IPv6:2001:470:ea4a:1:5054:ff:fec7:86e4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7829A4C629;
-        Mon,  3 Oct 2022 13:48:01 -0700 (PDT)
-Message-ID: <1a9f797c-e11f-a60b-8b3f-9e229c17fe64@gentoo.org>
-Date:   Mon, 3 Oct 2022 16:47:56 -0400
+        Tue, 4 Oct 2022 01:56:36 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA3311F9EB;
+        Mon,  3 Oct 2022 22:56:35 -0700 (PDT)
+Received: from lenovo.Home (unknown [39.45.148.204])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B9C07660225F;
+        Tue,  4 Oct 2022 06:56:32 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1664862994;
+        bh=f5Z8WG3ZUTCNEZp4bLoVlduba3LPHIynOslY10NmbPU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eXEp/RGDrO4ptD0wWxshIrv2xLq+1oYDvfIkZsRSBI1JEUmZ/wKEcO8keYGq5tmt+
+         GAM23VjYdwMQIeRqoSY+rq74gyw+Abrh35s3iUxqU0gVNmbDt0OF7AegXFkjD35UgQ
+         cStYjy5awtCqAKV2vDdpuArmzT/2ObvKgrsjwpZgMfoLdc1aEaYuRyP0DccXpg/BbE
+         tahmBYKdlYMgXB2+dpIe+QMod7ca0CS3d4c/qh/4TEKLYt7N0wZPtwE2j+FYoD4cxY
+         ah4rZvvSqsF//AtludgcK8R/Jbj8ygTZKFaVdzeDRKK1NXSUyCdzgSQz5dPw06c73X
+         UGcpUVD8vIIkQ==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: Remove the dead code
+Date:   Tue,  4 Oct 2022 10:56:20 +0500
+Message-Id: <20221004055620.371732-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.3.0
-Subject: Re: [PATCH] rtc: ds1685: Fix spelling of function name in comment
- block
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221003153711.271630-1-colin.i.king@gmail.com>
-From:   Joshua Kinard <kumba@gentoo.org>
-In-Reply-To: <20221003153711.271630-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/3/2022 11:37, Colin Ian King wrote:
-> The function name is missing the letter 'd' in the comment block.
-> Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/rtc/rtc-ds1685.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-ds1685.c b/drivers/rtc/rtc-ds1685.c
-> index a24331ba8a5f..5db9c737c022 100644
-> --- a/drivers/rtc/rtc-ds1685.c
-> +++ b/drivers/rtc/rtc-ds1685.c
-> @@ -132,7 +132,7 @@ ds1685_rtc_bin2bcd(struct ds1685_priv *rtc, u8 val, u8 bin_mask, u8 bcd_mask)
->   }
->   
->   /**
-> - * s1685_rtc_check_mday - check validity of the day of month.
-> + * ds1685_rtc_check_mday - check validity of the day of month.
->    * @rtc: pointer to the ds1685 rtc structure.
->    * @mday: day of month.
->    *
+The vmallocated_buf is being checked if it is true inside the body of a
+if condition which has already checked if it is true. Remove the
+duplication and dead code as a result.
 
-Acked-by: Joshua Kinard <kumba@gentoo.org>
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ drivers/spi/spi.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 44e4352d948b..4c51cd4e4ab0 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1057,10 +1057,7 @@ static int spi_map_buf_attrs(struct spi_controller *ctlr, struct device *dev,
+ 			min = min_t(size_t, desc_len,
+ 				    min_t(size_t, len,
+ 					  PAGE_SIZE - offset_in_page(buf)));
+-			if (vmalloced_buf)
+-				vm_page = vmalloc_to_page(buf);
+-			else
+-				vm_page = kmap_to_page(buf);
++			vm_page = vmalloc_to_page(buf);
+ 			if (!vm_page) {
+ 				sg_free_table(sgt);
+ 				return -ENOMEM;
+-- 
+2.30.2
 
