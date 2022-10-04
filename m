@@ -2,85 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A8BC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 11:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60810C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 11:21:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbiJDLKh (ORCPT
+        id S229588AbiJDLVT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 07:10:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60312 "EHLO
+        Tue, 4 Oct 2022 07:21:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbiJDLKG (ORCPT
+        with ESMTP id S229555AbiJDLVS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 07:10:06 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D784B13CDA;
-        Tue,  4 Oct 2022 04:10:02 -0700 (PDT)
-Received: from [192.168.10.9] (unknown [39.45.148.204])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 89FA1660225F;
-        Tue,  4 Oct 2022 12:09:59 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664881800;
-        bh=AvdV9cCb9MyFUjPM+yXgi5qVq0iERQTeijLa2X2YNUE=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=bIUzx4Itf+luuKI3l69mI+QwJDdTse1Gehqbh9UIsH/HbZ93+iBxy7q+u8MxqkfYg
-         Bnrlp8tZs5nplFmwrrv6/51r6ujXdW8lAiJuXBVHI40hFK901o+vZxDwKR+JMWNFmT
-         bQFk4PUlGAR1uqV4w4b4C/BLCyl2tYU8l1ub2tK0I1Zu/L3TnGjY9H9V7CCeZeVKQI
-         cgf0GZPJm+1gqNMmRvkO097YhplUpOx7IC0z9EfwLDbm0Qu3qGl9/6mKJuImoa/hWe
-         pIKNm0a4QhoGnPKS7yCZ60KNXXUwEq86RP6j8bruZDPOhNBNQrqwiUM/e3886T0SGZ
-         wiQLqqBtC8Zjw==
-Message-ID: <01ae2244-99cd-e96d-1bb7-6082da017cc8@collabora.com>
-Date:   Tue, 4 Oct 2022 16:09:55 +0500
+        Tue, 4 Oct 2022 07:21:18 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79AF72528C;
+        Tue,  4 Oct 2022 04:21:17 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id b4so13857833wrs.1;
+        Tue, 04 Oct 2022 04:21:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=1QAq0ZB7d697dN0IELqCuGwbuQ5Z9A2pkxg2ywRmtdE=;
+        b=jM323eB2g5fAgVAWEO1hWaRRCadCPBnaVxmK05FjpCjF4ZfLFAC780ab8ZIuiUx+7c
+         rNZSpRoGuGTJKJ9fCMtaakzI4SAT1Mrcp9+lNVf4EK2KIMrBDv2yVp+kWCo7io1q5M6I
+         tFaFUFjM9ynXQMvHbsvJx+XRbNBg/1oApBVWeT29mnZZ0yqZbeCUq/3x6thVvhwE5Yjs
+         m4p8LQbmACB/rd/x1hBf5bKEfsonMhKG7q/0/p0FOC5ilxIpmamPpxAkC5YpfIixThvl
+         ncFLZOenIrCLL4qOlOauuM3c/JdR/WE1S+MA7e7sMU8gdtd148PT3h3sX+9FIN/njJZn
+         42Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=1QAq0ZB7d697dN0IELqCuGwbuQ5Z9A2pkxg2ywRmtdE=;
+        b=Y1et7jsrE7xQF2REsVFhWJJRaybrXBVqJzoQsu5WwlSnXPZgTNNHCpm9X81Dh5gupW
+         8dM01J9Oqrc1zZ52eJwzH81gxp9uDzVKYMKsCpabMTNGlajR1lqU5GYflshM0MMRIslZ
+         1TfMseeIievl0PUe/k0UHT5nldP/jsuSiNTEXkBqrrGZ9leOUCS8efCF9MPY/0KQZ2QZ
+         i5RfkOlzd0KPk2bpUrQzOnCe+J791GrYwDP52t6H1xzE6SNfETxw/8NugE6lvkaYYa8P
+         od5OV9DtN+Fe9iMv6lEscMcvTluVBv5FAVAicmcA9O5XXSPJVZsHEqMbPFeXJ/BbFeYU
+         rXEQ==
+X-Gm-Message-State: ACrzQf0I+dEfQT3ozp4MZQbwF1Ive182IXRihy/iXyg0/oACC8I/PH8k
+        rKGJKkWpePtKG4nL8O/q2JtfQVSvztVjnDtx
+X-Google-Smtp-Source: AMsMyM4oBKuoBytdgFMbR9qvtjAtRFcdKPN7/YAAA6qgcfyTQrzQ/cClTaJUauazxwnYt84GNNED6g==
+X-Received: by 2002:a5d:5b18:0:b0:22b:1c7:6f8 with SMTP id bx24-20020a5d5b18000000b0022b01c706f8mr15885925wrb.502.1664882475880;
+        Tue, 04 Oct 2022 04:21:15 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p8-20020a05600c358800b003b4868eb71bsm20648240wmq.25.2022.10.04.04.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Oct 2022 04:21:15 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ext4: remove unused string "deprecated_msg"
+Date:   Tue,  4 Oct 2022 12:21:14 +0100
+Message-Id: <20221004112114.101799-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Cc:     usama.anjum@collabora.com, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: Remove the dead code
-Content-Language: en-US
-To:     Mark Brown <broonie@kernel.org>
-References: <20221004055620.371732-1-usama.anjum@collabora.com>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20221004055620.371732-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Please disregard this patch. This is wrong and not needed.
+The string deprecated_msg is no longer being used, remove it.
 
-On 10/4/22 10:56 AM, Muhammad Usama Anjum wrote:
-> The vmallocated_buf is being checked if it is true inside the body of a
-> if condition which has already checked if it is true. Remove the
-> duplication and dead code as a result.
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  drivers/spi/spi.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> index 44e4352d948b..4c51cd4e4ab0 100644
-> --- a/drivers/spi/spi.c
-> +++ b/drivers/spi/spi.c
-> @@ -1057,10 +1057,7 @@ static int spi_map_buf_attrs(struct spi_controller *ctlr, struct device *dev,
->  			min = min_t(size_t, desc_len,
->  				    min_t(size_t, len,
->  					  PAGE_SIZE - offset_in_page(buf)));
-> -			if (vmalloced_buf)
-> -				vm_page = vmalloc_to_page(buf);
-> -			else
-> -				vm_page = kmap_to_page(buf);
-> +			vm_page = vmalloc_to_page(buf);
->  			if (!vm_page) {
->  				sg_free_table(sgt);
->  				return -ENOMEM;
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/ext4/super.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 2335452efed0..981563c8245e 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1740,10 +1740,6 @@ static const struct fs_parameter_spec ext4_param_specs[] = {
+ 
+ #define DEFAULT_JOURNAL_IOPRIO (IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 3))
+ 
+-static const char deprecated_msg[] =
+-	"Mount option \"%s\" will be removed by %s\n"
+-	"Contact linux-ext4@vger.kernel.org if you think we should keep it.\n";
+-
+ #define MOPT_SET	0x0001
+ #define MOPT_CLEAR	0x0002
+ #define MOPT_NOSUPPORT	0x0004
 -- 
-Muhammad Usama Anjum
+2.37.1
+
