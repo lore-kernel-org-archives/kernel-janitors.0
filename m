@@ -2,57 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0186EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 13:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D604C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 14:23:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229461AbiJDNjK (ORCPT
+        id S229535AbiJDOXL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 09:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55626 "EHLO
+        Tue, 4 Oct 2022 10:23:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230348AbiJDNjB (ORCPT
+        with ESMTP id S229468AbiJDOXK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 09:39:01 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 816DE4CA0F;
-        Tue,  4 Oct 2022 06:38:59 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        Tue, 4 Oct 2022 10:23:10 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA7930F6B;
+        Tue,  4 Oct 2022 07:23:10 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Mhf1Y4xQCz4xGR;
-        Wed,  5 Oct 2022 00:38:57 +1100 (AEDT)
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-To:     Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>
-In-Reply-To: <20220929101502.32527-1-lukas.bulwahn@gmail.com>
-References: <20220929101502.32527-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] powerpc: update config files
-Message-Id: <166488998096.779920.14977787717573960548.b4-ty@ellerman.id.au>
-Date:   Wed, 05 Oct 2022 00:26:20 +1100
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 08A432198D;
+        Tue,  4 Oct 2022 14:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1664893389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5gUUNgEDhizGEpFxKtQMBGFV8uYs1I5bUDwiFyCdJPs=;
+        b=Zt/OhUS5ydTQ9UGifRGK41t6GwEwC9hWteg+uA6BanmdxcmrHSUmnRwaax6muvmAzKKREl
+        HvCVf6R1AOho0RNxtGGq8BX7drQ5X+U22DhcXFne3NLKWdoz22LRBr9nP61FvgBdh/CnD2
+        lrLR8nF+sDF1Wgk/6b85JyPAcKbmAGw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1664893389;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5gUUNgEDhizGEpFxKtQMBGFV8uYs1I5bUDwiFyCdJPs=;
+        b=nnwkZhu5TLtAve4z+S1eE5DR29Ezv4gT6tG61WizYluhc4rs1VB3OA9gmZrHP6yk89nLJM
+        fz5UHGvz5kGnMFBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 80A1D139EF;
+        Tue,  4 Oct 2022 14:23:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Ds5VEcxBPGPpdAAAMHmgww
+        (envelope-from <ematsumiya@suse.de>); Tue, 04 Oct 2022 14:23:08 +0000
+Date:   Tue, 4 Oct 2022 11:23:06 -0300
+From:   Enzo Matsumiya <ematsumiya@suse.de>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] cifs: remove initialization value
+Message-ID: <20221004142306.ysgh45nhgdo4z3ok@suse.de>
+References: <20221004062333.416225-1-usama.anjum@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20221004062333.416225-1-usama.anjum@collabora.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 29 Sep 2022 12:15:02 +0200, Lukas Bulwahn wrote:
-> Clean up config files by:
->   - removing configs that were deleted in the past
->   - removing configs not in tree and without recently pending patches
->   - adding new configs that are replacements for old configs in the file
-> 
-> For some detailed information, see Link.
-> 
-> [...]
+Hi Usama,
 
-Applied to powerpc/next.
+On 10/04, Muhammad Usama Anjum wrote:
+>Don't initialize the rc as its value is being overwritten before its
+>use.
 
-[1/1] powerpc: update config files
-      https://git.kernel.org/powerpc/c/d210ee3fdfe8584f84f8fdd0ac4a9895d023325b
+Being bitten by an unitialized variable bug as recent as 2 days ago, I'd
+say this is a step backwards from the "best practices" POV.
 
-cheers
+>Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>---
+> fs/cifs/smb2pdu.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+>index 0600f0a07628..2bf43c892ae6 100644
+>--- a/fs/cifs/smb2pdu.c
+>+++ b/fs/cifs/smb2pdu.c
+>@@ -879,7 +879,7 @@ SMB2_negotiate(const unsigned int xid,
+> 	struct smb2_negotiate_rsp *rsp;
+> 	struct kvec iov[1];
+> 	struct kvec rsp_iov;
+>-	int rc = 0;
+>+	int rc;
+> 	int resp_buftype;
+> 	int blob_offset, blob_length;
+> 	char *security_blob;
+>-- 
+>2.30.2
+
+Cheers,
+
+Enzo
