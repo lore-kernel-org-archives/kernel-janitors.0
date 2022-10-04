@@ -2,45 +2,49 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B788C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 05:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5BEC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 06:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbiJDF4h (ORCPT
+        id S229681AbiJDGYo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 01:56:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50462 "EHLO
+        Tue, 4 Oct 2022 02:24:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbiJDF4g (ORCPT
+        with ESMTP id S229489AbiJDGYm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 01:56:36 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA3311F9EB;
-        Mon,  3 Oct 2022 22:56:35 -0700 (PDT)
+        Tue, 4 Oct 2022 02:24:42 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD4741120;
+        Mon,  3 Oct 2022 23:24:38 -0700 (PDT)
 Received: from lenovo.Home (unknown [39.45.148.204])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B9C07660225F;
-        Tue,  4 Oct 2022 06:56:32 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 037C0660225F;
+        Tue,  4 Oct 2022 07:24:34 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664862994;
-        bh=f5Z8WG3ZUTCNEZp4bLoVlduba3LPHIynOslY10NmbPU=;
+        s=mail; t=1664864677;
+        bh=e7N33XmmW7DJXwdVzcj7bT09AaYcxc7AS55NGR1APok=;
         h=From:To:Cc:Subject:Date:From;
-        b=eXEp/RGDrO4ptD0wWxshIrv2xLq+1oYDvfIkZsRSBI1JEUmZ/wKEcO8keYGq5tmt+
-         GAM23VjYdwMQIeRqoSY+rq74gyw+Abrh35s3iUxqU0gVNmbDt0OF7AegXFkjD35UgQ
-         cStYjy5awtCqAKV2vDdpuArmzT/2ObvKgrsjwpZgMfoLdc1aEaYuRyP0DccXpg/BbE
-         tahmBYKdlYMgXB2+dpIe+QMod7ca0CS3d4c/qh/4TEKLYt7N0wZPtwE2j+FYoD4cxY
-         ah4rZvvSqsF//AtludgcK8R/Jbj8ygTZKFaVdzeDRKK1NXSUyCdzgSQz5dPw06c73X
-         UGcpUVD8vIIkQ==
+        b=jw/oCwLcKbVwJb24RT2XEeOQkE80heVoZsJoWzwUFbWARHXH+VzQL3lp7cFYjXo0L
+         Ami50vmN1nhLy103aTWy4uqEyJNnQtx4PJqyAHWHiNbck7uX9eGoBV3tIaxx5frDlN
+         tI3bV02fFATt+1F8qjNcPQT6vgH874VOehWH6YYtAWh248AgcjoXZ5daWBY7hXAaKd
+         DUcDDJlAeNmWsPPgKdrhYrmaxQu75CHSNf/G+fRd312j8Cid2LkFw2pT6YmM1oA5D8
+         WPEmMZrZTaBHsfZrKe6JxBrprfpnZ0cb5F+dCQz+LOjLpp36CRRwGtmyrgVv++qhVQ
+         POBS/BhDIZzZg==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Mark Brown <broonie@kernel.org>
+To:     Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: Remove the dead code
-Date:   Tue,  4 Oct 2022 10:56:20 +0500
-Message-Id: <20221004055620.371732-1-usama.anjum@collabora.com>
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] cifs: remove initialization value
+Date:   Tue,  4 Oct 2022 11:23:32 +0500
+Message-Id: <20221004062333.416225-1-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -48,31 +52,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The vmallocated_buf is being checked if it is true inside the body of a
-if condition which has already checked if it is true. Remove the
-duplication and dead code as a result.
+Don't initialize the rc as its value is being overwritten before its
+use.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- drivers/spi/spi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/cifs/smb2pdu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 44e4352d948b..4c51cd4e4ab0 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1057,10 +1057,7 @@ static int spi_map_buf_attrs(struct spi_controller *ctlr, struct device *dev,
- 			min = min_t(size_t, desc_len,
- 				    min_t(size_t, len,
- 					  PAGE_SIZE - offset_in_page(buf)));
--			if (vmalloced_buf)
--				vm_page = vmalloc_to_page(buf);
--			else
--				vm_page = kmap_to_page(buf);
-+			vm_page = vmalloc_to_page(buf);
- 			if (!vm_page) {
- 				sg_free_table(sgt);
- 				return -ENOMEM;
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 0600f0a07628..2bf43c892ae6 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -879,7 +879,7 @@ SMB2_negotiate(const unsigned int xid,
+ 	struct smb2_negotiate_rsp *rsp;
+ 	struct kvec iov[1];
+ 	struct kvec rsp_iov;
+-	int rc = 0;
++	int rc;
+ 	int resp_buftype;
+ 	int blob_offset, blob_length;
+ 	char *security_blob;
 -- 
 2.30.2
 
