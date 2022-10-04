@@ -2,47 +2,49 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AEBC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 08:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C05C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 08:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbiJDIMG (ORCPT
+        id S230285AbiJDIpz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 04:12:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51338 "EHLO
+        Tue, 4 Oct 2022 04:45:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229805AbiJDILm (ORCPT
+        with ESMTP id S230331AbiJDIph (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 04:11:42 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB9B4F3B5;
-        Tue,  4 Oct 2022 01:10:33 -0700 (PDT)
+        Tue, 4 Oct 2022 04:45:37 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD36F4DF04;
+        Tue,  4 Oct 2022 01:45:27 -0700 (PDT)
 Received: from lenovo.Home (unknown [39.45.148.204])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D66356602294;
-        Tue,  4 Oct 2022 09:10:29 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id AAF186602294;
+        Tue,  4 Oct 2022 09:45:23 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664871031;
-        bh=ZvCAm6tas1NrY/vnDxW7QcXzurXuLfu0ajhNiV8HyBo=;
+        s=mail; t=1664873125;
+        bh=DDe39PfAYSVpLkDZAiTg9JOc4VmntwqihIfPrL/dtsE=;
         h=From:To:Cc:Subject:Date:From;
-        b=OENs02aLbgUG9m6QjlhFfKDqMp+ilEYLoY0r3wugU0XeJy8Icn0iO3l5C7/XI3zjx
-         jAYPdXsgEro4ygwgSfohgyAG6T/EMb0lBcwRUFazBBxjGmciJ0Fz9HzyBRbgyMEaB2
-         egkVhUf3ppvzp7jQi5jbgxorPfS81jaOQCVO1frQxPj4WucKFyNSffK3V2EMvQt1U3
-         /WKBFWoQPOUadY4Zyi8+9sSjb9tyXjYGlAcXAsPxU5Ar0PLlWw5562Errkkjzkow0G
-         EOY0giDeRQ8tNFS0mDuxIulZbpny9953JuWYcONTkc6oe1DcAu7bU5GtEY0FoGYcF4
-         ASgdb7nODtDBw==
+        b=iqud63xj3L9NEwYkQSdqmyuuhYoiWK7t9kIVINO06950UrVH/UdZSvc5c/6aeTDHI
+         npwvlS4ueiA2+FBzGnCfV0LWnZYzWwkwFp6bwSAM4UQLCoi6jeD8kQmVf4sRWEzQ/k
+         y0+zbEoyBi31N3RxX19Y2d96qGOhkMjOebWE5WpMuLr42l+ctQyIi1r6AhWOZtLdTN
+         gH8B7MkYZw8lS1ruSB8UDRAxRnsfuJDcl6yoqqZmTESMzGUyb2neEYovX3av4u7Tey
+         HtjHuwLGOIExwjZHGA1MG172ZnFIbpMPcavlKH9z6aafh6QHvA0tYBpP+hST07A+pT
+         bqlgNGiTgK/Lg==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>
+To:     John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86/amd/pmf: pass the struct by reference
-Date:   Tue,  4 Oct 2022 13:10:19 +0500
-Message-Id: <20221004081019.619193-1-usama.anjum@collabora.com>
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: store return value of unpack_perms_table() to signed variable
+Date:   Tue,  4 Oct 2022 13:45:15 +0500
+Message-Id: <20221004084515.659441-1-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,175 +52,43 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The out structure should be passed by reference instead of passing by
-value. This saves the extra copy of the structure.
+The unpack_perms_table() can return error which is negative value. Store
+the return value to a signed variable. policy->size is unsigned
+variable. It shouldn't be used to store the return status.
 
-Fixes: 1738061c9ec8 ("platform/x86/amd/pmf: Add support for CnQF")
+Fixes: 2d6b2dea7f3c ("apparmor: add the ability for policy to specify a permission table")
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- drivers/platform/x86/amd/pmf/cnqf.c | 92 ++++++++++++++---------------
- 1 file changed, 46 insertions(+), 46 deletions(-)
+ security/apparmor/policy_unpack.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/platform/x86/amd/pmf/cnqf.c b/drivers/platform/x86/amd/pmf/cnqf.c
-index 668c7c0fea83..3f9731a2ac28 100644
---- a/drivers/platform/x86/amd/pmf/cnqf.c
-+++ b/drivers/platform/x86/amd/pmf/cnqf.c
-@@ -158,100 +158,100 @@ int amd_pmf_trans_cnqf(struct amd_pmf_dev *dev, int socket_power, ktime_t time_l
- 	return 0;
- }
- 
--static void amd_pmf_update_trans_data(int idx, struct apmf_dyn_slider_output out)
-+static void amd_pmf_update_trans_data(int idx, struct apmf_dyn_slider_output *out)
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index 45c9dfdc8e0d..09f316943951 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -734,14 +734,18 @@ static int unpack_pdb(struct aa_ext *e, struct aa_policydb *policy,
  {
- 	struct cnqf_tran_params *tp;
+ 	void *pos = e->pos;
+ 	int i, flags, error = -EPROTO;
++	ssize_t size;
  
- 	tp = &config_store.trans_param[idx][CNQF_TRANSITION_TO_QUIET];
--	tp->time_constant = out.t_balanced_to_quiet;
-+	tp->time_constant = out->t_balanced_to_quiet;
- 	tp->target_mode = CNQF_MODE_QUIET;
- 	tp->shifting_up = false;
- 
- 	tp = &config_store.trans_param[idx][CNQF_TRANSITION_FROM_BALANCE_TO_PERFORMANCE];
--	tp->time_constant = out.t_balanced_to_perf;
-+	tp->time_constant = out->t_balanced_to_perf;
- 	tp->target_mode = CNQF_MODE_PERFORMANCE;
- 	tp->shifting_up = true;
- 
- 	tp = &config_store.trans_param[idx][CNQF_TRANSITION_FROM_QUIET_TO_BALANCE];
--	tp->time_constant = out.t_quiet_to_balanced;
-+	tp->time_constant = out->t_quiet_to_balanced;
- 	tp->target_mode = CNQF_MODE_BALANCE;
- 	tp->shifting_up = true;
- 
- 	tp = &config_store.trans_param[idx][CNQF_TRANSITION_FROM_PERFORMANCE_TO_BALANCE];
--	tp->time_constant = out.t_perf_to_balanced;
-+	tp->time_constant = out->t_perf_to_balanced;
- 	tp->target_mode = CNQF_MODE_BALANCE;
- 	tp->shifting_up = false;
- 
- 	tp = &config_store.trans_param[idx][CNQF_TRANSITION_FROM_TURBO_TO_PERFORMANCE];
--	tp->time_constant = out.t_turbo_to_perf;
-+	tp->time_constant = out->t_turbo_to_perf;
- 	tp->target_mode = CNQF_MODE_PERFORMANCE;
- 	tp->shifting_up = false;
- 
- 	tp = &config_store.trans_param[idx][CNQF_TRANSITION_TO_TURBO];
--	tp->time_constant = out.t_perf_to_turbo;
-+	tp->time_constant = out->t_perf_to_turbo;
- 	tp->target_mode = CNQF_MODE_TURBO;
- 	tp->shifting_up = true;
- }
- 
--static void amd_pmf_update_mode_set(int idx, struct apmf_dyn_slider_output out)
-+static void amd_pmf_update_mode_set(int idx, struct apmf_dyn_slider_output *out)
- {
- 	struct cnqf_mode_settings *ms;
- 
- 	/* Quiet Mode */
- 	ms = &config_store.mode_set[idx][CNQF_MODE_QUIET];
--	ms->power_floor = out.ps[APMF_CNQF_QUIET].pfloor;
--	ms->power_control.fppt = out.ps[APMF_CNQF_QUIET].fppt;
--	ms->power_control.sppt = out.ps[APMF_CNQF_QUIET].sppt;
--	ms->power_control.sppt_apu_only = out.ps[APMF_CNQF_QUIET].sppt_apu_only;
--	ms->power_control.spl = out.ps[APMF_CNQF_QUIET].spl;
--	ms->power_control.stt_min = out.ps[APMF_CNQF_QUIET].stt_min_limit;
-+	ms->power_floor = out->ps[APMF_CNQF_QUIET].pfloor;
-+	ms->power_control.fppt = out->ps[APMF_CNQF_QUIET].fppt;
-+	ms->power_control.sppt = out->ps[APMF_CNQF_QUIET].sppt;
-+	ms->power_control.sppt_apu_only = out->ps[APMF_CNQF_QUIET].sppt_apu_only;
-+	ms->power_control.spl = out->ps[APMF_CNQF_QUIET].spl;
-+	ms->power_control.stt_min = out->ps[APMF_CNQF_QUIET].stt_min_limit;
- 	ms->power_control.stt_skin_temp[STT_TEMP_APU] =
--		out.ps[APMF_CNQF_QUIET].stt_skintemp[STT_TEMP_APU];
-+		out->ps[APMF_CNQF_QUIET].stt_skintemp[STT_TEMP_APU];
- 	ms->power_control.stt_skin_temp[STT_TEMP_HS2] =
--		out.ps[APMF_CNQF_QUIET].stt_skintemp[STT_TEMP_HS2];
--	ms->fan_control.fan_id = out.ps[APMF_CNQF_QUIET].fan_id;
-+		out->ps[APMF_CNQF_QUIET].stt_skintemp[STT_TEMP_HS2];
-+	ms->fan_control.fan_id = out->ps[APMF_CNQF_QUIET].fan_id;
- 
- 	/* Balance Mode */
- 	ms = &config_store.mode_set[idx][CNQF_MODE_BALANCE];
--	ms->power_floor = out.ps[APMF_CNQF_BALANCE].pfloor;
--	ms->power_control.fppt = out.ps[APMF_CNQF_BALANCE].fppt;
--	ms->power_control.sppt = out.ps[APMF_CNQF_BALANCE].sppt;
--	ms->power_control.sppt_apu_only = out.ps[APMF_CNQF_BALANCE].sppt_apu_only;
--	ms->power_control.spl = out.ps[APMF_CNQF_BALANCE].spl;
--	ms->power_control.stt_min = out.ps[APMF_CNQF_BALANCE].stt_min_limit;
-+	ms->power_floor = out->ps[APMF_CNQF_BALANCE].pfloor;
-+	ms->power_control.fppt = out->ps[APMF_CNQF_BALANCE].fppt;
-+	ms->power_control.sppt = out->ps[APMF_CNQF_BALANCE].sppt;
-+	ms->power_control.sppt_apu_only = out->ps[APMF_CNQF_BALANCE].sppt_apu_only;
-+	ms->power_control.spl = out->ps[APMF_CNQF_BALANCE].spl;
-+	ms->power_control.stt_min = out->ps[APMF_CNQF_BALANCE].stt_min_limit;
- 	ms->power_control.stt_skin_temp[STT_TEMP_APU] =
--		out.ps[APMF_CNQF_BALANCE].stt_skintemp[STT_TEMP_APU];
-+		out->ps[APMF_CNQF_BALANCE].stt_skintemp[STT_TEMP_APU];
- 	ms->power_control.stt_skin_temp[STT_TEMP_HS2] =
--		out.ps[APMF_CNQF_BALANCE].stt_skintemp[STT_TEMP_HS2];
--	ms->fan_control.fan_id = out.ps[APMF_CNQF_BALANCE].fan_id;
-+		out->ps[APMF_CNQF_BALANCE].stt_skintemp[STT_TEMP_HS2];
-+	ms->fan_control.fan_id = out->ps[APMF_CNQF_BALANCE].fan_id;
- 
- 	/* Performance Mode */
- 	ms = &config_store.mode_set[idx][CNQF_MODE_PERFORMANCE];
--	ms->power_floor = out.ps[APMF_CNQF_PERFORMANCE].pfloor;
--	ms->power_control.fppt = out.ps[APMF_CNQF_PERFORMANCE].fppt;
--	ms->power_control.sppt = out.ps[APMF_CNQF_PERFORMANCE].sppt;
--	ms->power_control.sppt_apu_only = out.ps[APMF_CNQF_PERFORMANCE].sppt_apu_only;
--	ms->power_control.spl = out.ps[APMF_CNQF_PERFORMANCE].spl;
--	ms->power_control.stt_min = out.ps[APMF_CNQF_PERFORMANCE].stt_min_limit;
-+	ms->power_floor = out->ps[APMF_CNQF_PERFORMANCE].pfloor;
-+	ms->power_control.fppt = out->ps[APMF_CNQF_PERFORMANCE].fppt;
-+	ms->power_control.sppt = out->ps[APMF_CNQF_PERFORMANCE].sppt;
-+	ms->power_control.sppt_apu_only = out->ps[APMF_CNQF_PERFORMANCE].sppt_apu_only;
-+	ms->power_control.spl = out->ps[APMF_CNQF_PERFORMANCE].spl;
-+	ms->power_control.stt_min = out->ps[APMF_CNQF_PERFORMANCE].stt_min_limit;
- 	ms->power_control.stt_skin_temp[STT_TEMP_APU] =
--		out.ps[APMF_CNQF_PERFORMANCE].stt_skintemp[STT_TEMP_APU];
-+		out->ps[APMF_CNQF_PERFORMANCE].stt_skintemp[STT_TEMP_APU];
- 	ms->power_control.stt_skin_temp[STT_TEMP_HS2] =
--		out.ps[APMF_CNQF_PERFORMANCE].stt_skintemp[STT_TEMP_HS2];
--	ms->fan_control.fan_id = out.ps[APMF_CNQF_PERFORMANCE].fan_id;
-+		out->ps[APMF_CNQF_PERFORMANCE].stt_skintemp[STT_TEMP_HS2];
-+	ms->fan_control.fan_id = out->ps[APMF_CNQF_PERFORMANCE].fan_id;
- 
- 	/* Turbo Mode */
- 	ms = &config_store.mode_set[idx][CNQF_MODE_TURBO];
--	ms->power_floor = out.ps[APMF_CNQF_TURBO].pfloor;
--	ms->power_control.fppt = out.ps[APMF_CNQF_TURBO].fppt;
--	ms->power_control.sppt = out.ps[APMF_CNQF_TURBO].sppt;
--	ms->power_control.sppt_apu_only = out.ps[APMF_CNQF_TURBO].sppt_apu_only;
--	ms->power_control.spl = out.ps[APMF_CNQF_TURBO].spl;
--	ms->power_control.stt_min = out.ps[APMF_CNQF_TURBO].stt_min_limit;
-+	ms->power_floor = out->ps[APMF_CNQF_TURBO].pfloor;
-+	ms->power_control.fppt = out->ps[APMF_CNQF_TURBO].fppt;
-+	ms->power_control.sppt = out->ps[APMF_CNQF_TURBO].sppt;
-+	ms->power_control.sppt_apu_only = out->ps[APMF_CNQF_TURBO].sppt_apu_only;
-+	ms->power_control.spl = out->ps[APMF_CNQF_TURBO].spl;
-+	ms->power_control.stt_min = out->ps[APMF_CNQF_TURBO].stt_min_limit;
- 	ms->power_control.stt_skin_temp[STT_TEMP_APU] =
--		out.ps[APMF_CNQF_TURBO].stt_skintemp[STT_TEMP_APU];
-+		out->ps[APMF_CNQF_TURBO].stt_skintemp[STT_TEMP_APU];
- 	ms->power_control.stt_skin_temp[STT_TEMP_HS2] =
--		out.ps[APMF_CNQF_TURBO].stt_skintemp[STT_TEMP_HS2];
--	ms->fan_control.fan_id = out.ps[APMF_CNQF_TURBO].fan_id;
-+		out->ps[APMF_CNQF_TURBO].stt_skintemp[STT_TEMP_HS2];
-+	ms->fan_control.fan_id = out->ps[APMF_CNQF_TURBO].fan_id;
- }
- 
- static int amd_pmf_check_flags(struct amd_pmf_dev *dev)
-@@ -284,8 +284,8 @@ static int amd_pmf_load_defaults_cnqf(struct amd_pmf_dev *dev)
- 			return ret;
- 		}
- 
--		amd_pmf_update_mode_set(i, out);
--		amd_pmf_update_trans_data(i, out);
-+		amd_pmf_update_mode_set(i, &out);
-+		amd_pmf_update_trans_data(i, &out);
- 		amd_pmf_update_power_threshold(i);
- 
- 		for (j = 0; j < CNQF_MODE_MAX; j++) {
+-	policy->size = unpack_perms_table(e, &policy->perms);
+-	if (policy->size < 0) {
+-		error = policy->size;
++	size = unpack_perms_table(e, &policy->perms);
++	if (size < 0) {
++		error = size;
+ 		policy->perms = NULL;
+ 		*info = "failed to unpack - perms";
+ 		goto fail;
+-	} else if (policy->perms) {
++	}
++	policy->size = size;
++
++	if (policy->perms) {
+ 		/* perms table present accept is index */
+ 		flags = TO_ACCEPT1_FLAG(YYTD_DATA32);
+ 	} else {
 -- 
 2.30.2
 
