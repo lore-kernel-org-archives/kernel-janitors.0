@@ -2,47 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB53C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 07:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD43CC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Oct 2022 07:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229573AbiJDH0b (ORCPT
+        id S229843AbiJDHhK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Oct 2022 03:26:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47118 "EHLO
+        Tue, 4 Oct 2022 03:37:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiJDH0a (ORCPT
+        with ESMTP id S229779AbiJDHhH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Oct 2022 03:26:30 -0400
+        Tue, 4 Oct 2022 03:37:07 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F5D525C61;
-        Tue,  4 Oct 2022 00:26:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAB2726122;
+        Tue,  4 Oct 2022 00:37:05 -0700 (PDT)
 Received: from lenovo.Home (unknown [39.45.148.204])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6DF82660204D;
-        Tue,  4 Oct 2022 08:26:25 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 35BD86602294;
+        Tue,  4 Oct 2022 08:37:03 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664868387;
-        bh=GFzXf+m70wr+G4QMp+9uqvVswRK2mvuCz/ZYiGRrNgU=;
+        s=mail; t=1664869024;
+        bh=Ow0BfW79bfpNtlYiCN2hlVpzCFIfLUidy8OnfpB1IZs=;
         h=From:To:Cc:Subject:Date:From;
-        b=Qvq1di7KMTRjVGaxniBxNrJHC8crKgP4AQ0A2Enu148GC2E9yXcrYhGONO9m96/GN
-         EZEboTTqWy5u8D2FlJaoJfrbyV/bdLOy7NSnllXlh6yCHA3Fil5Zf36EQvNsYsXVE1
-         XC8Em5OHRmrVv3P5gGltxElCxdpPMbAELrPaUJHqB9Ox+EFoefV/koIQLyaTBgPxQ6
-         Pk2iIVSjslJtxjkvm5wkrn53+Z89a2yj458uHDMix3W9tCcesA/70KYKlXXbQAyuDo
-         yA0Vt2Zcd4hYuMKj7w4lr3Kv2zP4292eo+0uNeOeAzxn8rltKVzW4BKdv9VlNPGq86
-         Dhw81iBgB36TQ==
+        b=hGB5On3HW21LEikg0ZG0iqbpKg+UAdl0V3K6IeTSbBKEnj1PZG/02yhPjaClt3BOW
+         evZoILYqvR1zDPdRaLuv86Gbww1bwj7Bll3E1V4p8wD/mFb7Iy4DmtUCfw5YGHl4+u
+         m+cLArG9GRftOiAxXpf1PEenMT2pC/f+nwCu+VPbsuo98ispMGNBnwNLAukido+U+5
+         Tcf68kSjaq7xFMDifj9S+xNxXKkv4Evc6H0ZmlR8shQtvQgfJLL3YlbYYrKzyHTjkA
+         W8YZFo+xo5SuzyN4JQnJaFrJSwwmHRrJ9AgClX7c2LzX4B8ycT6XFPjwFgrIxRVvez
+         ocA6tIhzDp7Jg==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-        Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
+To:     Sebastian Reichel <sre@kernel.org>
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] i2c: microchip: pci1xxxx: Use signed variable
-Date:   Tue,  4 Oct 2022 12:26:15 +0500
-Message-Id: <20221004072615.550797-1-usama.anjum@collabora.com>
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] power: supply: remove dead code
+Date:   Tue,  4 Oct 2022 12:36:51 +0500
+Message-Id: <20221004073652.568681-1-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,27 +48,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use signed variable to store the negative values correctly to compare
-them later with negative values.
+tmp is an unsigned variable. It can never be less than zero. Remove the
+dead code.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- drivers/i2c/busses/i2c-mchp-pci1xxxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/power/supply/rk817_charger.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-mchp-pci1xxxx.c b/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
-index b2b7dbff5ef4..f3c497391d13 100644
---- a/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
-+++ b/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
-@@ -708,7 +708,7 @@ static void pci1xxxx_i2c_init(struct pci1xxxx_i2c *i2c)
- 	void __iomem *p2 = i2c->i2c_base + SMBUS_STATUS_REG_OFF;
- 	void __iomem *p1 = i2c->i2c_base + SMB_GPR_REG;
- 	u8 regval;
--	u8 ret;
-+	s8 ret;
- 
- 	ret = set_sys_lock(i2c);
- 	if (ret == -EPERM) {
+diff --git a/drivers/power/supply/rk817_charger.c b/drivers/power/supply/rk817_charger.c
+index aa4b33f1bb83..ba3f5ccaeacd 100644
+--- a/drivers/power/supply/rk817_charger.c
++++ b/drivers/power/supply/rk817_charger.c
+@@ -785,8 +785,6 @@ rk817_read_or_set_full_charge_on_boot(struct rk817_charger *charger,
+ 		regmap_bulk_read(rk808->regmap, RK817_GAS_GAUGE_Q_PRES_H3,
+ 				 bulk_reg, 4);
+ 		tmp = get_unaligned_be32(bulk_reg);
+-		if (tmp < 0)
+-			tmp = 0;
+ 		boot_charge_mah = ADC_TO_CHARGE_UAH(tmp,
+ 						    charger->res_div) / 1000;
+ 		/*
+@@ -825,8 +823,6 @@ rk817_read_or_set_full_charge_on_boot(struct rk817_charger *charger,
+ 	regmap_bulk_read(rk808->regmap, RK817_GAS_GAUGE_Q_PRES_H3,
+ 			 bulk_reg, 4);
+ 	tmp = get_unaligned_be32(bulk_reg);
+-	if (tmp < 0)
+-		tmp = 0;
+ 	boot_charge_mah = ADC_TO_CHARGE_UAH(tmp, charger->res_div) / 1000;
+ 	regmap_bulk_read(rk808->regmap, RK817_GAS_GAUGE_OCV_VOL_H,
+ 			 bulk_reg, 2);
 -- 
 2.30.2
 
