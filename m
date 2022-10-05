@@ -2,82 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A22DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 05:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AFBC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 07:05:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229829AbiJEFRr (ORCPT
+        id S229817AbiJEHFR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Oct 2022 01:17:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33514 "EHLO
+        Wed, 5 Oct 2022 03:05:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbiJEFRq (ORCPT
+        with ESMTP id S229462AbiJEHFP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Oct 2022 01:17:46 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 068CC66A68;
-        Tue,  4 Oct 2022 22:17:44 -0700 (PDT)
-Received: from [192.168.10.9] (unknown [39.45.36.108])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4B77B66022AB;
-        Wed,  5 Oct 2022 06:17:41 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664947063;
-        bh=Addv98tABUtrkD/Cgnp+ahnU5GCS4OSD2Wq6YkM6lXw=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=G6yezMwaGIsWK6qDr+RtFaaTZLyc75nn9QOHRd3Yf6pHvsol9rAZcBLfdTpUT82Pv
-         IYY4pfb9a/jAvaBXuY0kGlz49M+Ow0um46SAWm7HZtMEw7EfdJD6qaZMs4RZddO+5R
-         ABCLgqAi7v+awY4eMVzCRBHQb0EV7FYyy8HMbOYt3KGmQv+Lx0aeFswmM4VthwGfcT
-         06wSeYjgIZuKXb+QF0CM2eXhde3QJB995b1Ss/8RxdqZE+bmGA1coQMTeuXLX6npWd
-         bT7I/sHJhj307G5g7ER643GL70sFFwY3lIic5Gwr15vopov22Sz0HoYTVVHaUsg6yi
-         8qA1fNTpyKkpg==
-Message-ID: <1f5c25d6-ca8f-1e6d-b451-9f9074056cb0@collabora.com>
-Date:   Wed, 5 Oct 2022 10:17:36 +0500
+        Wed, 5 Oct 2022 03:05:15 -0400
+Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3E51C10A;
+        Wed,  5 Oct 2022 00:05:14 -0700 (PDT)
+Received: by mail-ua1-x936.google.com with SMTP id i16so2472358uak.1;
+        Wed, 05 Oct 2022 00:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=8aT3ZVpi5WeAj43kYZJ6xwt+SqgOLzhjx0HSFYp6E1U=;
+        b=Qgf5yxKs8Ufa3XvUUjpFVmVaScX6P5zg0PaPZfg2UkFPKzQMy9+ebsYVcIuo5j3XVN
+         YdrAhsNlWvZruFT09ZwO+YlB3OoWPnTe5eN0tUyamBmkVZYabg2q+Y/IHQmpI/Ggtznu
+         kc8AV2u0DVeaFB4W2ak1l/2hmJnv5228EYgcAotyzKHMSfsISM7ns4xUu8OTpFjeFsdQ
+         0qRKnFyzHqAYPn56bej8b9HgEihss94SCwi+pY3Kzufupbqc5hCU+FsiWaq4kohkvd3e
+         Wyr8+QeUo9wvTalZEkq9B77Jak0EigB6XKBzMDQLToBZnzyh3548iJI1smucYO/Pl0GE
+         sC+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=8aT3ZVpi5WeAj43kYZJ6xwt+SqgOLzhjx0HSFYp6E1U=;
+        b=6rPuZbYJdDiMdGEIcv5l2fpCHDjGDOuq6Cw4jsdEguNnwgP0fZlehZWjqFEQNr+sIY
+         AZjh3RRoj07MPw7DTzKOBnzwcZpkEpH+CqZHjQMH1aXVLN+og9h8uGdghyEccaywFNBp
+         b3SEPSPfsdcnMnj8o+yeCii3J6+tfVbAOZjlVoREPJrnhCVdDTAvXdnrH7DbhAMKbO4V
+         Pty0dZTY4fer0/inD09qHTb9G74lrIM5GPsp+9kb0gzC8hDH/qj9LrXvZamGs4fILXeW
+         4iUIEHpH+dDpLwJA8qBJVRK2ySOnlcg36KIm/4KoEJPr4YI5nXZojJJtOHSa/THXopnE
+         dVmQ==
+X-Gm-Message-State: ACrzQf3hw6HpJi+2cPhSBrDQwnmVRNlFev89nVfrwcuG0+fqIt4Cw2bM
+        dAHkiTOusrEXxejWWoEZbnFU/nSWqY03ErjBsXA=
+X-Google-Smtp-Source: AMsMyM6KJdauMwanSUvHPSoa4YkBRKhlgG89W21dmwlM5F57Hud76dok8V9eod/8ydcKlGMaNup60GQ/R+vy6oAniJk=
+X-Received: by 2002:ab0:6494:0:b0:3da:7cac:c48d with SMTP id
+ p20-20020ab06494000000b003da7cacc48dmr3458773uam.96.1664953513845; Wed, 05
+ Oct 2022 00:05:13 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH 2/2] cifs: check returned value for error
-Content-Language: en-US
-To:     Paulo Alcantara <pc@cjr.nz>, Steve French <sfrench@samba.org>,
+References: <20221004062333.416225-1-usama.anjum@collabora.com> <87o7ur4dp0.fsf@cjr.nz>
+In-Reply-To: <87o7ur4dp0.fsf@cjr.nz>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 5 Oct 2022 02:05:03 -0500
+Message-ID: <CAH2r5mu5p4f3XqscGNPjXa7L+rrcfKHzhg4F7Zf=S_cFdbWTjA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cifs: remove initialization value
+To:     Paulo Alcantara <pc@cjr.nz>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Steve French <sfrench@samba.org>,
         Ronnie Sahlberg <lsahlber@redhat.com>,
         Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>
-Cc:     kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org
-References: <20221004062333.416225-1-usama.anjum@collabora.com>
- <20221004062333.416225-2-usama.anjum@collabora.com> <87lepv4dm3.fsf@cjr.nz>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <87lepv4dm3.fsf@cjr.nz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Tom Talpey <tom@talpey.com>, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/5/22 12:01 AM, Paulo Alcantara wrote:
-> Muhammad Usama Anjum <usama.anjum@collabora.com> writes:
-> 
->> smb311_decode_neg_context() can return error. Its return value should be
->> checked for errors.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>   fs/cifs/smb2pdu.c | 7 +++++--
->>   1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
->> index 2bf43c892ae6..c6e37352dbe1 100644
-> 
-> This patch doesn't apply in Steve's for-next branch[1].  If it still
-> makes sense, please rebase and resend.
-> 
-> [1] git://git.samba.org/sfrench/cifs-2.6.git
-I've just applied on the latest next next-20221004 tag. This patch 
-doesn't apply. It seems some other patch has merged and this patch isn't 
-needed.
+merged into cifs-2.6.git for-next
 
-Can you apply only the first patch "[PATCH 1/2] cifs: remove 
-initialization value" from this series? Or should I send that only as v2?
+On Tue, Oct 4, 2022 at 2:09 PM Paulo Alcantara <pc@cjr.nz> wrote:
+>
+> Muhammad Usama Anjum <usama.anjum@collabora.com> writes:
+>
+> > Don't initialize the rc as its value is being overwritten before its
+> > use.
+> >
+> > Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> > ---
+> >  fs/cifs/smb2pdu.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Reviewed-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
+
+
+
+-- 
+Thanks,
+
+Steve
