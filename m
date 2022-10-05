@@ -2,60 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C26C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 15:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE55C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 15:34:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230029AbiJEP2D (ORCPT
+        id S230392AbiJEPeg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Oct 2022 11:28:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38388 "EHLO
+        Wed, 5 Oct 2022 11:34:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230166AbiJEP15 (ORCPT
+        with ESMTP id S229819AbiJEPef (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Oct 2022 11:27:57 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985871B9DB;
-        Wed,  5 Oct 2022 08:27:55 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id o20-20020a05600c4fd400b003b4a516c479so1237640wmq.1;
-        Wed, 05 Oct 2022 08:27:55 -0700 (PDT)
+        Wed, 5 Oct 2022 11:34:35 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE441A078;
+        Wed,  5 Oct 2022 08:34:32 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id j7so21151740wrr.3;
+        Wed, 05 Oct 2022 08:34:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=C7yvq5LaxDRVj3NEoiYSWWej3JSDSWFXj9nJXuRBqoc=;
-        b=YZ798TqbwpLOO6C28mdHIbZElgraed18HA55DIqLKNEFshX3QhR2+OVzWCC9eCMmXM
-         6XxKwfWCwo3XNO+I2K1xbigOL8lvDMCT7elaubtjjBINqjlPheG6ZXUMvwQtwOQJ8SXY
-         ekOfNhRCpnVpRrx5wdEzz2qpXVx/DAXu3sZ6d0d6+2PI7K+QLLapeHUFNe4iDhO2lWct
-         A55+e879ushKEX6lbrQycLk2FVYUVVvDthZN1ndBzTgFIt1Gf+gcgxscFaTBUys9KQ/S
-         wf6EtDRxY6lfzKr5gNH1NuGTUHyN2sWjE9xeFavwT0BMkkEU3EEZDBgwq2jHm3nV5YZr
-         tGwA==
+        bh=OVjZbIf3Mp+GOHIGoOYCGgXAfUIt0XSmtAjlxqfb9Aw=;
+        b=Iv+S92b8kXmVh6LQOeBspA+kWuuAOLNCSZMTcLFvdNwC3W9IzYzfguhbxlUdnFg2dc
+         znB9B4MRckpRW8U2fi+5KPZOjK/eJCwGmA+ZuadhiatUfMPthuZyimMVJzydQoZgpJhz
+         6wBr+tXu95QhUnPwUBMKRnLuC6q3i57hzDnYhzl3FAozpg6ueoIJY9vc8WmIw1bGoyV8
+         q/oUjDm5Lw3+wx7K6kW4WVnTZa7iVSOrWEn6KXnNwhtI50xuWRdoJmhvzyDH79xnLPGY
+         aCdhZLqeanlDE/SfwR+fY6Y0RiVXc4nuMQnnGaFAqJLHlLHG1Ged/zMknA93dGzXYO1Y
+         XeVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=C7yvq5LaxDRVj3NEoiYSWWej3JSDSWFXj9nJXuRBqoc=;
-        b=M4zaacqyA+lgxPGFwLPSfZx9U9rRCUtooGGhY6l2kiy3KL7sXrQ70u8QkgHtpLwETI
-         uU0di21tF5MGi9brEEDtf1IRhBovsr90GN0Heva1M/HVBPsn5mDwUmuGG5JMRYMSc1HO
-         QspyGipZp2Z2zAy5PbMVOEn3iMxUkIcZn20iXfjC/Zqgw9j71xWTZmQrO7cq+rRQuYgP
-         Rjm0ux+uV3QPlN/mIXUQEXwaFjrWCv+KNF9lwd7Npa5vE3h2dRxcCJRKRrSSzj10hEZt
-         BshYE9kECMebv+3hgOevMb1nOgocZOUqJ9aEnth6bju39egw2v7qVoLjasPoaWorAntK
-         sunA==
-X-Gm-Message-State: ACrzQf21CDgyDWuiAZsfN+64JcGjEPbK2ieKec5C6+i6wqncwkrj6ze0
-        o/MXaAFzE/RBPu9Z2Cp1+TQ=
-X-Google-Smtp-Source: AMsMyM6xK2SSnjDn/YKWGJKsL61fVXSPWob9GQtiMk/14t8FGXGByZN41Og7RAceclSnHyt9997YYg==
-X-Received: by 2002:a05:600c:1f15:b0:3b4:8600:fd7e with SMTP id bd21-20020a05600c1f1500b003b48600fd7emr3867225wmb.40.1664983674091;
-        Wed, 05 Oct 2022 08:27:54 -0700 (PDT)
+        bh=OVjZbIf3Mp+GOHIGoOYCGgXAfUIt0XSmtAjlxqfb9Aw=;
+        b=PWSkmr4Vun8i80TsYvTW78GOlxENTsQ1g2uBxm70dAYUZeuyRbI8VG5tA7ULEc3xzg
+         cxYkJ0nWmg1LuBldF0Nw8dJ1BmocPACwIH3oufjYQNIZ7/p8TESgZ4Zozd9MeVQHHU+8
+         vOqA3JbCwJoUXmq+Y4kp8TJbjQvCVmgnJsUsG9RXdcG6Z3xlD3CxNGxQUeSHVtTi/NZy
+         r14YAWpd0kEAoM2bZZSbr8y4CMgHWn30Oc3LSuDKs9OcCV1gI48mlIuUiFxS5k0riD2L
+         whWWON46XQX/9GYtaGNiZob9QggLW7IsmCQtczgazC/5dGbYT0O4C7fEvxmkAMWDYf6Q
+         MClQ==
+X-Gm-Message-State: ACrzQf0cAsLY1UscsuMmGtxwsptgNnN3j+OgPGl3t78H+URpsl5mWqav
+        xETFUwjSPOB+tEAtJ2kfLyMozUJySgxfbaya
+X-Google-Smtp-Source: AMsMyM5+cpjtpkWkPVBAo6t/HoKn0NeJkpqnivHRNu1f2aQCJPeb0WQNMbReOUqC9BQxIsqHFEgFDw==
+X-Received: by 2002:a05:6000:1acd:b0:22a:a047:2533 with SMTP id i13-20020a0560001acd00b0022aa0472533mr212051wry.69.1664984071276;
+        Wed, 05 Oct 2022 08:34:31 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r6-20020a5d4986000000b0022ccae2fa62sm3369480wrq.22.2022.10.05.08.27.53
+        by smtp.gmail.com with ESMTPSA id p16-20020a1c5450000000b003c00203fb81sm1094996wmi.7.2022.10.05.08.34.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Oct 2022 08:27:53 -0700 (PDT)
+        Wed, 05 Oct 2022 08:34:30 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (fschmd) Make const arrays static const
-Date:   Wed,  5 Oct 2022 16:27:52 +0100
-Message-Id: <20221005152752.318493-1-colin.i.king@gmail.com>
+Subject: [PATCH] HID: lenovo: Make array tp10ubkbd_led static const
+Date:   Wed,  5 Oct 2022 16:34:30 +0100
+Message-Id: <20221005153430.319148-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,30 +65,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only const arrays names and watchdog_minors
-on the stack but instead make them static const. Also makes the
-object code a little smaller.
+Don't populate the read-onlyAtp10ubkbd_led on the stack but instead
+make it static const. Also makes the object code a little smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hwmon/fschmd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/hid-lenovo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/fschmd.c b/drivers/hwmon/fschmd.c
-index 0a77d6161928..e1f426e86f36 100644
---- a/drivers/hwmon/fschmd.c
-+++ b/drivers/hwmon/fschmd.c
-@@ -1083,9 +1083,9 @@ static int fschmd_detect(struct i2c_client *client,
- static int fschmd_probe(struct i2c_client *client)
- {
- 	struct fschmd_data *data;
--	const char * const names[7] = { "Poseidon", "Hermes", "Scylla",
-+	static const char * const names[7] = { "Poseidon", "Hermes", "Scylla",
- 				"Heracles", "Heimdall", "Hades", "Syleus" };
--	const int watchdog_minors[] = { WATCHDOG_MINOR, 212, 213, 214, 215 };
-+	static const int watchdog_minors[] = { WATCHDOG_MINOR, 212, 213, 214, 215 };
- 	int i, err;
- 	enum chips kind = i2c_match_id(fschmd_id, client)->driver_data;
+diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
+index 9dabd6323234..44763c0da444 100644
+--- a/drivers/hid/hid-lenovo.c
++++ b/drivers/hid/hid-lenovo.c
+@@ -985,7 +985,7 @@ static int lenovo_led_brightness_set(struct led_classdev *led_cdev,
+ 	struct device *dev = led_cdev->dev->parent;
+ 	struct hid_device *hdev = to_hid_device(dev);
+ 	struct lenovo_drvdata *data_pointer = hid_get_drvdata(hdev);
+-	u8 tp10ubkbd_led[] = { TP10UBKBD_MUTE_LED, TP10UBKBD_MICMUTE_LED };
++	static const u8 tp10ubkbd_led[] = { TP10UBKBD_MUTE_LED, TP10UBKBD_MICMUTE_LED };
+ 	int led_nr = 0;
+ 	int ret = 0;
  
 -- 
 2.37.3
