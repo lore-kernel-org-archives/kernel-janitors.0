@@ -2,60 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B786C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 16:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0390DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 16:13:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230206AbiJEQGI (ORCPT
+        id S230150AbiJEQNy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Oct 2022 12:06:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39952 "EHLO
+        Wed, 5 Oct 2022 12:13:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbiJEQGH (ORCPT
+        with ESMTP id S229944AbiJEQNw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Oct 2022 12:06:07 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB985C35E;
-        Wed,  5 Oct 2022 09:06:06 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id e10-20020a05600c4e4a00b003b4eff4ab2cso1277245wmq.4;
-        Wed, 05 Oct 2022 09:06:06 -0700 (PDT)
+        Wed, 5 Oct 2022 12:13:52 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5E2A2ED43;
+        Wed,  5 Oct 2022 09:13:51 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id a10so14335135wrm.12;
+        Wed, 05 Oct 2022 09:13:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=pwSoe76/9sXHlthLlGvZI3z8LwisXO4XEQ5zMXLYIi4=;
-        b=BpiZOY5qoInatS2yLzXnvi6Pjkam8b8Z1vfnW8uDgXuqxF1Yp2XN8rMYz/2v2VorHj
-         Zw/KcYt7iPALUfJ2Bt78PA/UeYQMQiG4OVqRboIlrl4Pto9pTknD6ed0GmcFU4L7kS0c
-         xHGzeFo50d2hMRm8X+LurDsaQPdd0LKnp8yBEnYNXttGKfeMJpoNsUv8rjjiYJKEvn8U
-         tcaSbYUItsIi2Icq0LmjptCvK9Bwir7Z3W+5rxW682zSFFMnvNXPF0YYLAhEErZVx5fK
-         Ls7A+uNThcC5siK7vi1hIGv16R+YRyvroBzXl3wjFp/IcboqwSZMFNL22tqbyXWzUD29
-         GbKQ==
+        bh=EiPAkr/jQo8yOa0N4lixzv4uq38NGMwa1PpH2KlTzQ4=;
+        b=orhaGvaUGpNQhy8UcEuI4KSgAUcmCXuFsvTGp8hIuwbn+s9rPWhj/3vIWVzhWURYRW
+         YVuFctm6BokimJNUz4TSifQrkkzs876ZF+3yRGOniiulzlxllPQsCxTuuGC4CJWl0N3O
+         8O5eEEhHe17Z3mp5HItyS2MYmRvoPYPDj7jJJY2fGIfqKWRExlhzzoO3vzwU2kp/CvBu
+         kl1/Yhr9NLrKASbC0nB1yRq4ShRCqSGvfW52ToUuSpI7/VTOJRP32QfdHZDXpI3sIDeZ
+         lGEykJuiLAfP5X1bVHk4ixoVG5sks9rI/sgLRyvUNuIKJUEhA48Z1Hdt1QiEa6Poa9Qz
+         T0TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=pwSoe76/9sXHlthLlGvZI3z8LwisXO4XEQ5zMXLYIi4=;
-        b=RTmkCqJL9dgbpdA1IrKsotBa5fnIu7sIRj4iYFanLfZhwRCAl5GaYGAn349R0Dja8b
-         3HMaTj9rjYibXUjtH71yggQMypOhbBuAfhX0tXeU32jSDbAApOEnz+oFocsPs1JqVkpo
-         L3BYpdX3tAMFZAoTMKeuU2WnPlnucJxK2EBGiw/aD7G/lO/gQnSFycMYdHxEbWU6264j
-         xTWgm/LyZZK+/LvtPglRRqVCJjK14KFrau+ejnuY1iY2y335ASkJG2KXENANtfXOv8yg
-         7c2lOuKNlAJ+Me8n0xDqM8L8W9P5Ub+BFdsywn5Be+3Pyv/gW9tM0UElsnqPZ8Ng7J7s
-         r+iA==
-X-Gm-Message-State: ACrzQf0UXSafWOmuY9FAgIxFzqcaC1mV58Q0Fdwl2Bc6UwPyDArdrgXr
-        uQOBW6qE+GPBi7AfSzdQaGE6yD7UGcn70RxX
-X-Google-Smtp-Source: AMsMyM4UWs5s2tWICWcVCZmWsRQhUm89CoHX5AtLtAuCy42s8VJcnOgfEvPdmSE736f/zFWukd4Llg==
-X-Received: by 2002:a05:600c:1e23:b0:3c0:2cb4:49cd with SMTP id ay35-20020a05600c1e2300b003c02cb449cdmr1214556wmb.95.1664985964636;
-        Wed, 05 Oct 2022 09:06:04 -0700 (PDT)
+        bh=EiPAkr/jQo8yOa0N4lixzv4uq38NGMwa1PpH2KlTzQ4=;
+        b=Zf2MWDBcdlWhHJKbZY0ylSajIrW3AMfDePEwG1/08CHgp0S/yVaLThm53dwFoM+rzm
+         GPGy6CBlfsYpXa1ZEzFvMeeGAdGJyyw7jMPq7tnuXayVYvMDRhxpAhf4zBtSQWqaJoIm
+         cqS/8PDG4ZO+CbbtK3JkH11A8IZPjJ5c/L4L9xdEE/KmKMNA8lfY1oyqqC7uhRzvuw5l
+         VJIevYUr+uNrUOtDnosLY9/mINLBUaRaaXsgD1Gx8MUixgscvqy9KMd6Uez+pcFx0mSD
+         5UVdJaMRwNv297WPY/M2QGKL220qXIa9PkFPG2W+nH8J0Z+2vw/4Ns5EPzV0vWqDMI8y
+         RgOw==
+X-Gm-Message-State: ACrzQf3uDF1tGDCrbe4WGV8Vp0FK52sIgtWlrnWeoF1ebgq/reNU5X5+
+        HzPDvTUhitupcCQa9Xk953w=
+X-Google-Smtp-Source: AMsMyM5Ub/IqfW5rxVAxPNshantZRpALijiURltZ4lDG72ufPeawwFRGN+cTP/Bz/I7PK/0ueLpo+g==
+X-Received: by 2002:adf:f301:0:b0:22e:4479:c1ba with SMTP id i1-20020adff301000000b0022e4479c1bamr327623wro.133.1664986430168;
+        Wed, 05 Oct 2022 09:13:50 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o11-20020a05600c510b00b003a83ca67f73sm2469448wms.3.2022.10.05.09.06.03
+        by smtp.gmail.com with ESMTPSA id n16-20020a7bcbd0000000b003b483000583sm2210880wmi.48.2022.10.05.09.13.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Oct 2022 09:06:03 -0700 (PDT)
+        Wed, 05 Oct 2022 09:13:49 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+To:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: mxl5005s: Make array RegAddr static const
-Date:   Wed,  5 Oct 2022 17:06:03 +0100
-Message-Id: <20221005160603.321421-1-colin.i.king@gmail.com>
+Subject: [PATCH] power: supply: lp8788: make const array name static
+Date:   Wed,  5 Oct 2022 17:13:48 +0100
+Message-Id: <20221005161348.321971-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,27 +63,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array RegAddr on the stack but instead
-make it static const. Also makes the object code a little smaller.
+Don't populate the read-only array name on the stack but instead make
+it static. Since the data and the pointers don't change also add in
+a missing const. Also makes the object code a little smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/tuners/mxl5005s.c | 2 +-
+ drivers/power/supply/lp8788-charger.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/tuners/mxl5005s.c b/drivers/media/tuners/mxl5005s.c
-index ab4c43df9d18..cd9f225ca26c 100644
---- a/drivers/media/tuners/mxl5005s.c
-+++ b/drivers/media/tuners/mxl5005s.c
-@@ -3637,7 +3637,7 @@ static u16 MXL_GetCHRegister_ZeroIF(struct dvb_frontend *fe, u8 *RegNum,
- 	u16 status = 0;
+diff --git a/drivers/power/supply/lp8788-charger.c b/drivers/power/supply/lp8788-charger.c
+index 56c57529c228..802c9491fcdb 100644
+--- a/drivers/power/supply/lp8788-charger.c
++++ b/drivers/power/supply/lp8788-charger.c
+@@ -520,7 +520,7 @@ static int lp8788_set_irqs(struct platform_device *pdev,
+ static int lp8788_irq_register(struct platform_device *pdev,
+ 				struct lp8788_charger *pchg)
+ {
+-	const char *name[] = {
++	static const char * const name[] = {
+ 		LP8788_CHG_IRQ, LP8788_PRSW_IRQ, LP8788_BATT_IRQ
+ 	};
  	int i;
- 
--	u8 RegAddr[] = {43, 136};
-+	static const u8 RegAddr[] = {43, 136};
- 
- 	*count = ARRAY_SIZE(RegAddr);
- 
 -- 
 2.37.3
 
