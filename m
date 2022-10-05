@@ -2,89 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0390DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 16:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 406CDC4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 18:31:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230150AbiJEQNy (ORCPT
+        id S230033AbiJESbV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Oct 2022 12:13:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50588 "EHLO
+        Wed, 5 Oct 2022 14:31:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229944AbiJEQNw (ORCPT
+        with ESMTP id S229983AbiJESbU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Oct 2022 12:13:52 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5E2A2ED43;
-        Wed,  5 Oct 2022 09:13:51 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id a10so14335135wrm.12;
-        Wed, 05 Oct 2022 09:13:51 -0700 (PDT)
+        Wed, 5 Oct 2022 14:31:20 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D91AB7D1E3;
+        Wed,  5 Oct 2022 11:31:19 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id o9-20020a17090a0a0900b0020ad4e758b3so2563172pjo.4;
+        Wed, 05 Oct 2022 11:31:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=EiPAkr/jQo8yOa0N4lixzv4uq38NGMwa1PpH2KlTzQ4=;
-        b=orhaGvaUGpNQhy8UcEuI4KSgAUcmCXuFsvTGp8hIuwbn+s9rPWhj/3vIWVzhWURYRW
-         YVuFctm6BokimJNUz4TSifQrkkzs876ZF+3yRGOniiulzlxllPQsCxTuuGC4CJWl0N3O
-         8O5eEEhHe17Z3mp5HItyS2MYmRvoPYPDj7jJJY2fGIfqKWRExlhzzoO3vzwU2kp/CvBu
-         kl1/Yhr9NLrKASbC0nB1yRq4ShRCqSGvfW52ToUuSpI7/VTOJRP32QfdHZDXpI3sIDeZ
-         lGEykJuiLAfP5X1bVHk4ixoVG5sks9rI/sgLRyvUNuIKJUEhA48Z1Hdt1QiEa6Poa9Qz
-         T0TQ==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date;
+        bh=lncrKYF3dhxHA2yeuvS54Ddh1xazf36FsZjmkMxlg6w=;
+        b=bTTkW0QLjG4FZ6yAyAIASgkGRVrVz/uorbNdxH5GR7Se2mxXDRsHmPul2YVI5CXIzP
+         Wy1cB0KQ0ZSOXZyCHcUq1Y6dwoTB1E0e5P4JtW6W5w95W8vrtPASR2xuNewhKQ2Gv+nA
+         GvPFAK9cmK+0nXavBx3B5qVAU/FTQyypYKoih1od4CpelmKhcxF+OqpLU1Gt64gKJI+s
+         OlwPwko3/XxBBSQTs4nEWammEGWmJ52sOKkWFM1x35mS4vgSgLSwtpwMzEjsD+fSdpGR
+         Rb/lxMReYfeTHyPsG8AD7gy62pNZxAbErIi+bVzilUd7PR6Ytyzm1CYid+arYaULqdMB
+         TfEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=EiPAkr/jQo8yOa0N4lixzv4uq38NGMwa1PpH2KlTzQ4=;
-        b=Zf2MWDBcdlWhHJKbZY0ylSajIrW3AMfDePEwG1/08CHgp0S/yVaLThm53dwFoM+rzm
-         GPGy6CBlfsYpXa1ZEzFvMeeGAdGJyyw7jMPq7tnuXayVYvMDRhxpAhf4zBtSQWqaJoIm
-         cqS/8PDG4ZO+CbbtK3JkH11A8IZPjJ5c/L4L9xdEE/KmKMNA8lfY1oyqqC7uhRzvuw5l
-         VJIevYUr+uNrUOtDnosLY9/mINLBUaRaaXsgD1Gx8MUixgscvqy9KMd6Uez+pcFx0mSD
-         5UVdJaMRwNv297WPY/M2QGKL220qXIa9PkFPG2W+nH8J0Z+2vw/4Ns5EPzV0vWqDMI8y
-         RgOw==
-X-Gm-Message-State: ACrzQf3uDF1tGDCrbe4WGV8Vp0FK52sIgtWlrnWeoF1ebgq/reNU5X5+
-        HzPDvTUhitupcCQa9Xk953w=
-X-Google-Smtp-Source: AMsMyM5Ub/IqfW5rxVAxPNshantZRpALijiURltZ4lDG72ufPeawwFRGN+cTP/Bz/I7PK/0ueLpo+g==
-X-Received: by 2002:adf:f301:0:b0:22e:4479:c1ba with SMTP id i1-20020adff301000000b0022e4479c1bamr327623wro.133.1664986430168;
-        Wed, 05 Oct 2022 09:13:50 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n16-20020a7bcbd0000000b003b483000583sm2210880wmi.48.2022.10.05.09.13.49
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=lncrKYF3dhxHA2yeuvS54Ddh1xazf36FsZjmkMxlg6w=;
+        b=OmqagrAjF7GW8fxhUaTeMCCh/1EM5Y4hT6uXbx4fdpOtn46+ey8Coe/EVt0P9/s/Fu
+         wVXUYuGSLnX50rtNe7YAIepNkpOJ+g0hPtBzqA/ENt7J3aIVLAZrt6xcpwY8yzCqkTlF
+         rDp5LevdDWjdg7qavNooiTTYEi+FPmlp2W1cyjwqavvCKzMFm+AET5jBdKO/sSnDLzVZ
+         3ieePcms9yBohjRfYx3YGS0xQgqCcWnhCh2ZfaeXbzwMW4nQrrDSNhs4+wJN3pZrfnyR
+         URIzjma8B8Wsd1h42SRr0WyLzXDWTWJBOtngkYsgxSV5SvKMD8QrhPVIAJAPGcC3KhBr
+         3+eQ==
+X-Gm-Message-State: ACrzQf1/fjVmjZ/2BNFXRFjMDJaYgx4RXZ1t9judHJF5Rb9s24fyv3sj
+        IQhvY4PrkdYFKo94JyySE9c=
+X-Google-Smtp-Source: AMsMyM6WkxKa3ApjrVvd47ddYhDKX3KPYfV6GCvohPT+LmKBuWgfvnAiG0io+O5JvRvTyVpQ+rWmCw==
+X-Received: by 2002:a17:90a:9408:b0:20a:6d13:2b1d with SMTP id r8-20020a17090a940800b0020a6d132b1dmr6505892pjo.0.1664994678960;
+        Wed, 05 Oct 2022 11:31:18 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id y16-20020a17090264d000b001786b712bf7sm10700207pli.151.2022.10.05.11.31.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Oct 2022 09:13:49 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] power: supply: lp8788: make const array name static
-Date:   Wed,  5 Oct 2022 17:13:48 +0100
-Message-Id: <20221005161348.321971-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Wed, 05 Oct 2022 11:31:17 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Wed, 5 Oct 2022 11:31:16 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (fschmd) Make const arrays static const
+Message-ID: <20221005183116.GA2734583@roeck-us.net>
+References: <20221005152752.318493-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221005152752.318493-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array name on the stack but instead make
-it static. Since the data and the pointers don't change also add in
-a missing const. Also makes the object code a little smaller.
+On Wed, Oct 05, 2022 at 04:27:52PM +0100, Colin Ian King wrote:
+> Don't populate the read-only const arrays names and watchdog_minors
+> on the stack but instead make them static const. Also makes the
+> object code a little smaller.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/power/supply/lp8788-charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to hwmon-next.
 
-diff --git a/drivers/power/supply/lp8788-charger.c b/drivers/power/supply/lp8788-charger.c
-index 56c57529c228..802c9491fcdb 100644
---- a/drivers/power/supply/lp8788-charger.c
-+++ b/drivers/power/supply/lp8788-charger.c
-@@ -520,7 +520,7 @@ static int lp8788_set_irqs(struct platform_device *pdev,
- static int lp8788_irq_register(struct platform_device *pdev,
- 				struct lp8788_charger *pchg)
- {
--	const char *name[] = {
-+	static const char * const name[] = {
- 		LP8788_CHG_IRQ, LP8788_PRSW_IRQ, LP8788_BATT_IRQ
- 	};
- 	int i;
--- 
-2.37.3
+Thanks,
+Guenter
 
+> ---
+>  drivers/hwmon/fschmd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/fschmd.c b/drivers/hwmon/fschmd.c
+> index 0a77d6161928..e1f426e86f36 100644
+> --- a/drivers/hwmon/fschmd.c
+> +++ b/drivers/hwmon/fschmd.c
+> @@ -1083,9 +1083,9 @@ static int fschmd_detect(struct i2c_client *client,
+>  static int fschmd_probe(struct i2c_client *client)
+>  {
+>  	struct fschmd_data *data;
+> -	const char * const names[7] = { "Poseidon", "Hermes", "Scylla",
+> +	static const char * const names[7] = { "Poseidon", "Hermes", "Scylla",
+>  				"Heracles", "Heimdall", "Hades", "Syleus" };
+> -	const int watchdog_minors[] = { WATCHDOG_MINOR, 212, 213, 214, 215 };
+> +	static const int watchdog_minors[] = { WATCHDOG_MINOR, 212, 213, 214, 215 };
+>  	int i, err;
+>  	enum chips kind = i2c_match_id(fschmd_id, client)->driver_data;
+>  
