@@ -2,65 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A75D0C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 15:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B786C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 16:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229947AbiJEP4D (ORCPT
+        id S230206AbiJEQGI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Oct 2022 11:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56050 "EHLO
+        Wed, 5 Oct 2022 12:06:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbiJEP4C (ORCPT
+        with ESMTP id S229750AbiJEQGH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Oct 2022 11:56:02 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 593A4792F2;
-        Wed,  5 Oct 2022 08:56:01 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id v130-20020a1cac88000000b003bcde03bd44so1260137wme.5;
-        Wed, 05 Oct 2022 08:56:01 -0700 (PDT)
+        Wed, 5 Oct 2022 12:06:07 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB985C35E;
+        Wed,  5 Oct 2022 09:06:06 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id e10-20020a05600c4e4a00b003b4eff4ab2cso1277245wmq.4;
+        Wed, 05 Oct 2022 09:06:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=8iRyDbr2Fao2IZ/++yFwguDpgiQWqWc7nZ9QJM6w5YQ=;
-        b=K4j+mqNekxS2juIlcCqo6hEAeHhoFX/mKVwTSY0Cpz09LnVBs2VUyXrtC046TGI/71
-         V67Qpz5Htr3x5WKJqZmajZBqs6cU1c3eqpGkQQngkiLXNzXOzozr4QEd2H5HxDZqLPWc
-         4Uh9pXRkp2EgIyYH+dIZmKbE7CgP9HvH7rooZlVrizqAqkbOfvy1o9RtI17C/8tfMqCV
-         2EpSUDZP+403vRURaT2e9spnrkCnOJQvfyVYju14GDrtoLAqTypUxBYwenvTSTAsYs/h
-         drtqEdY0R1jliV5PWBt94hlfZ89z9/DZtnZUUBI7UllwoZYGAO/cihpghhhBS6NZ31RL
-         mpDg==
+        bh=pwSoe76/9sXHlthLlGvZI3z8LwisXO4XEQ5zMXLYIi4=;
+        b=BpiZOY5qoInatS2yLzXnvi6Pjkam8b8Z1vfnW8uDgXuqxF1Yp2XN8rMYz/2v2VorHj
+         Zw/KcYt7iPALUfJ2Bt78PA/UeYQMQiG4OVqRboIlrl4Pto9pTknD6ed0GmcFU4L7kS0c
+         xHGzeFo50d2hMRm8X+LurDsaQPdd0LKnp8yBEnYNXttGKfeMJpoNsUv8rjjiYJKEvn8U
+         tcaSbYUItsIi2Icq0LmjptCvK9Bwir7Z3W+5rxW682zSFFMnvNXPF0YYLAhEErZVx5fK
+         Ls7A+uNThcC5siK7vi1hIGv16R+YRyvroBzXl3wjFp/IcboqwSZMFNL22tqbyXWzUD29
+         GbKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=8iRyDbr2Fao2IZ/++yFwguDpgiQWqWc7nZ9QJM6w5YQ=;
-        b=CttBn8JZWxRGyFoqfm9fgYXcWJRNW8PJdA7FMEZljDvYwLgABRYYOTu1ZuwUz+Euk3
-         B7JX8OpMZ1I1NqtP10e00VFHgKZUnBIoLi8crTDJyC4d3QoUFqpSuNqMQQaeI2QBC8U3
-         X4FuO8sMN0o1GDZy0jr54PHfLcmM5Oheg/zvqC862gz13pr3kEeUVdoQbUjK/ia2/E8P
-         LiQVGQkw1Jvs6mFaOk9/s/3RcBpzSLN+I9EjjDmy+kV4Y8gh9J8X4FThTejgbbg2rzvY
-         COL1DbqD2z7rm7Lypizn7LkTPjvzUPYmfexHpYeYJu4wk9MikOvWhieCIgpTXoLngAnd
-         iUiA==
-X-Gm-Message-State: ACrzQf1ILMDo1SCM1VAFSKYUx+6T5kCw1Z4E3sNtClwUwCUMchQGnjuB
-        FNlya4vK+bOaBNBZKBxOppSxuMlesy1SBVeA
-X-Google-Smtp-Source: AMsMyM5GMv1gas4MsYlqj0uFvpm5cOSxzOJd3Ban7D5L/2vYhJJrYdfZzWqHR3AMmek6LvK1VGf/sw==
-X-Received: by 2002:a05:600c:4f13:b0:3b4:9a07:efdb with SMTP id l19-20020a05600c4f1300b003b49a07efdbmr177506wmq.94.1664985359918;
-        Wed, 05 Oct 2022 08:55:59 -0700 (PDT)
+        bh=pwSoe76/9sXHlthLlGvZI3z8LwisXO4XEQ5zMXLYIi4=;
+        b=RTmkCqJL9dgbpdA1IrKsotBa5fnIu7sIRj4iYFanLfZhwRCAl5GaYGAn349R0Dja8b
+         3HMaTj9rjYibXUjtH71yggQMypOhbBuAfhX0tXeU32jSDbAApOEnz+oFocsPs1JqVkpo
+         L3BYpdX3tAMFZAoTMKeuU2WnPlnucJxK2EBGiw/aD7G/lO/gQnSFycMYdHxEbWU6264j
+         xTWgm/LyZZK+/LvtPglRRqVCJjK14KFrau+ejnuY1iY2y335ASkJG2KXENANtfXOv8yg
+         7c2lOuKNlAJ+Me8n0xDqM8L8W9P5Ub+BFdsywn5Be+3Pyv/gW9tM0UElsnqPZ8Ng7J7s
+         r+iA==
+X-Gm-Message-State: ACrzQf0UXSafWOmuY9FAgIxFzqcaC1mV58Q0Fdwl2Bc6UwPyDArdrgXr
+        uQOBW6qE+GPBi7AfSzdQaGE6yD7UGcn70RxX
+X-Google-Smtp-Source: AMsMyM4UWs5s2tWICWcVCZmWsRQhUm89CoHX5AtLtAuCy42s8VJcnOgfEvPdmSE736f/zFWukd4Llg==
+X-Received: by 2002:a05:600c:1e23:b0:3c0:2cb4:49cd with SMTP id ay35-20020a05600c1e2300b003c02cb449cdmr1214556wmb.95.1664985964636;
+        Wed, 05 Oct 2022 09:06:04 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r6-20020a5d4986000000b0022ccae2fa62sm3429714wrq.22.2022.10.05.08.55.59
+        by smtp.gmail.com with ESMTPSA id o11-20020a05600c510b00b003a83ca67f73sm2469448wms.3.2022.10.05.09.06.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Oct 2022 08:55:59 -0700 (PDT)
+        Wed, 05 Oct 2022 09:06:03 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ath9k: Make arrays prof_prio and channelmap static const
-Date:   Wed,  5 Oct 2022 16:55:58 +0100
-Message-Id: <20221005155558.320556-1-colin.i.king@gmail.com>
+Subject: [PATCH] media: mxl5005s: Make array RegAddr static const
+Date:   Wed,  5 Oct 2022 17:06:03 +0100
+Message-Id: <20221005160603.321421-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,41 +64,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only arrays prof_prio and channelmap
-on the stack but instead make them static const. Also makes the
-object code a little smaller.
+Don't populate the read-only array RegAddr on the stack but instead
+make it static const. Also makes the object code a little smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/wireless/ath/ath9k/mci.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/media/tuners/mxl5005s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/mci.c b/drivers/net/wireless/ath/ath9k/mci.c
-index 039bf0c35fbe..3363fc4e8966 100644
---- a/drivers/net/wireless/ath/ath9k/mci.c
-+++ b/drivers/net/wireless/ath/ath9k/mci.c
-@@ -266,7 +266,9 @@ static void ath_mci_set_concur_txprio(struct ath_softc *sc)
- 			stomp_txprio[ATH_BTCOEX_STOMP_NONE] =
- 				ATH_MCI_INQUIRY_PRIO;
- 	} else {
--		u8 prof_prio[] = { 50, 90, 94, 52 };/* RFCOMM, A2DP, HID, PAN */
-+		static const u8 prof_prio[] = {
-+			50, 90, 94, 52
-+		}; /* RFCOMM, A2DP, HID, PAN */
- 
- 		stomp_txprio[ATH_BTCOEX_STOMP_LOW] =
- 		stomp_txprio[ATH_BTCOEX_STOMP_NONE] = 0xff;
-@@ -644,7 +646,9 @@ void ath9k_mci_update_wlan_channels(struct ath_softc *sc, bool allow_all)
- 	struct ath_hw *ah = sc->sc_ah;
- 	struct ath9k_hw_mci *mci = &ah->btcoex_hw.mci;
- 	struct ath9k_channel *chan = ah->curchan;
--	u32 channelmap[] = {0x00000000, 0xffff0000, 0xffffffff, 0x7fffffff};
-+	static const u32 channelmap[] = {
-+		0x00000000, 0xffff0000, 0xffffffff, 0x7fffffff
-+	};
+diff --git a/drivers/media/tuners/mxl5005s.c b/drivers/media/tuners/mxl5005s.c
+index ab4c43df9d18..cd9f225ca26c 100644
+--- a/drivers/media/tuners/mxl5005s.c
++++ b/drivers/media/tuners/mxl5005s.c
+@@ -3637,7 +3637,7 @@ static u16 MXL_GetCHRegister_ZeroIF(struct dvb_frontend *fe, u8 *RegNum,
+ 	u16 status = 0;
  	int i;
- 	s16 chan_start, chan_end;
- 	u16 wlan_chan;
+ 
+-	u8 RegAddr[] = {43, 136};
++	static const u8 RegAddr[] = {43, 136};
+ 
+ 	*count = ARRAY_SIZE(RegAddr);
+ 
 -- 
 2.37.3
 
