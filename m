@@ -2,100 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 406CDC4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 18:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C750C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Oct 2022 18:53:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbiJESbV (ORCPT
+        id S231379AbiJESxi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Oct 2022 14:31:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53146 "EHLO
+        Wed, 5 Oct 2022 14:53:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229983AbiJESbU (ORCPT
+        with ESMTP id S231373AbiJESxc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Oct 2022 14:31:20 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D91AB7D1E3;
-        Wed,  5 Oct 2022 11:31:19 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id o9-20020a17090a0a0900b0020ad4e758b3so2563172pjo.4;
-        Wed, 05 Oct 2022 11:31:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date;
-        bh=lncrKYF3dhxHA2yeuvS54Ddh1xazf36FsZjmkMxlg6w=;
-        b=bTTkW0QLjG4FZ6yAyAIASgkGRVrVz/uorbNdxH5GR7Se2mxXDRsHmPul2YVI5CXIzP
-         Wy1cB0KQ0ZSOXZyCHcUq1Y6dwoTB1E0e5P4JtW6W5w95W8vrtPASR2xuNewhKQ2Gv+nA
-         GvPFAK9cmK+0nXavBx3B5qVAU/FTQyypYKoih1od4CpelmKhcxF+OqpLU1Gt64gKJI+s
-         OlwPwko3/XxBBSQTs4nEWammEGWmJ52sOKkWFM1x35mS4vgSgLSwtpwMzEjsD+fSdpGR
-         Rb/lxMReYfeTHyPsG8AD7gy62pNZxAbErIi+bVzilUd7PR6Ytyzm1CYid+arYaULqdMB
-         TfEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=lncrKYF3dhxHA2yeuvS54Ddh1xazf36FsZjmkMxlg6w=;
-        b=OmqagrAjF7GW8fxhUaTeMCCh/1EM5Y4hT6uXbx4fdpOtn46+ey8Coe/EVt0P9/s/Fu
-         wVXUYuGSLnX50rtNe7YAIepNkpOJ+g0hPtBzqA/ENt7J3aIVLAZrt6xcpwY8yzCqkTlF
-         rDp5LevdDWjdg7qavNooiTTYEi+FPmlp2W1cyjwqavvCKzMFm+AET5jBdKO/sSnDLzVZ
-         3ieePcms9yBohjRfYx3YGS0xQgqCcWnhCh2ZfaeXbzwMW4nQrrDSNhs4+wJN3pZrfnyR
-         URIzjma8B8Wsd1h42SRr0WyLzXDWTWJBOtngkYsgxSV5SvKMD8QrhPVIAJAPGcC3KhBr
-         3+eQ==
-X-Gm-Message-State: ACrzQf1/fjVmjZ/2BNFXRFjMDJaYgx4RXZ1t9judHJF5Rb9s24fyv3sj
-        IQhvY4PrkdYFKo94JyySE9c=
-X-Google-Smtp-Source: AMsMyM6WkxKa3ApjrVvd47ddYhDKX3KPYfV6GCvohPT+LmKBuWgfvnAiG0io+O5JvRvTyVpQ+rWmCw==
-X-Received: by 2002:a17:90a:9408:b0:20a:6d13:2b1d with SMTP id r8-20020a17090a940800b0020a6d132b1dmr6505892pjo.0.1664994678960;
-        Wed, 05 Oct 2022 11:31:18 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id y16-20020a17090264d000b001786b712bf7sm10700207pli.151.2022.10.05.11.31.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Oct 2022 11:31:17 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Wed, 5 Oct 2022 11:31:16 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
+        Wed, 5 Oct 2022 14:53:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9A876B8E5;
+        Wed,  5 Oct 2022 11:53:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 674636178A;
+        Wed,  5 Oct 2022 18:53:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E30E5C433C1;
+        Wed,  5 Oct 2022 18:53:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664996010;
+        bh=NV4yrliRpigDhqUD/V7ZmAQ6kOkrJKhgY5byO2H/+tM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=o2cIbcYmXMRDP31lt+oPefs4igCJabJD8A2A6I0ZPZklmrnBmqpxC33Ck+WBdjdPD
+         qHKELZ7064lGKFQtT/1Z8ikRvOinUEOgE2LBTXLELKkXkXrS41D5YBt7o9HDZqURlR
+         Fsi9l8qIF8RMmVxv1Ss8z09UCLmjZSfuVfFNOCxlWDy0EAzld3kDL7QzyH9c0WZLik
+         /p4S37++YkgiUYx93CBgSaKuIrSVICF/MpUUc6XJ2I9afoi7kbYr5ptSsXmz7A6K9j
+         0RsFqxnJz9fOu55TlMDvgcEkdvzf7zwvGiqZPd+puMieULo11w7DrNN8Fu3s3wtNx6
+         f1IDtYh3/UTEg==
+Date:   Wed, 5 Oct 2022 20:53:23 +0200
+From:   Wolfram Sang <wsa@kernel.org>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (fschmd) Make const arrays static const
-Message-ID: <20221005183116.GA2734583@roeck-us.net>
-References: <20221005152752.318493-1-colin.i.king@gmail.com>
+Cc:     Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
+        Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] i2c: microchip: pci1xxxx: Fix comparison of -EPERM
+ against an unsigned variable
+Message-ID: <Yz3So27pgqX92viW@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
+        Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20221004192715.173210-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="p4lIDGwMSuwz1i1Q"
 Content-Disposition: inline
-In-Reply-To: <20221005152752.318493-1-colin.i.king@gmail.com>
+In-Reply-To: <20221004192715.173210-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 05, 2022 at 04:27:52PM +0100, Colin Ian King wrote:
-> Don't populate the read-only const arrays names and watchdog_minors
-> on the stack but instead make them static const. Also makes the
-> object code a little smaller.
-> 
+
+--p4lIDGwMSuwz1i1Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 04, 2022 at 08:27:15PM +0100, Colin Ian King wrote:
+> The comparison of variable ret with -EPERM is always false because
+> ret is an u8 type. Fix this by making ret an int.
+>=20
+> Cleans up clang warning:
+> drivers/i2c/busses/i2c-mchp-pci1xxxx.c:714:10: warning: result of compari=
+son
+> of constant -1 with expression of type 'u8' (aka 'unsigned char') is alwa=
+ys
+> false [-Wtautological-constant-out-of-range-compare]
+>=20
+> Fixes: 361693697249 ("i2c: microchip: pci1xxxx: Add driver for I2C host c=
+ontroller in multifunction endpoint of pci1xxxx switch")
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied to hwmon-next.
+Applied to for-current, thanks!
 
-Thanks,
-Guenter
 
-> ---
->  drivers/hwmon/fschmd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwmon/fschmd.c b/drivers/hwmon/fschmd.c
-> index 0a77d6161928..e1f426e86f36 100644
-> --- a/drivers/hwmon/fschmd.c
-> +++ b/drivers/hwmon/fschmd.c
-> @@ -1083,9 +1083,9 @@ static int fschmd_detect(struct i2c_client *client,
->  static int fschmd_probe(struct i2c_client *client)
->  {
->  	struct fschmd_data *data;
-> -	const char * const names[7] = { "Poseidon", "Hermes", "Scylla",
-> +	static const char * const names[7] = { "Poseidon", "Hermes", "Scylla",
->  				"Heracles", "Heimdall", "Hades", "Syleus" };
-> -	const int watchdog_minors[] = { WATCHDOG_MINOR, 212, 213, 214, 215 };
-> +	static const int watchdog_minors[] = { WATCHDOG_MINOR, 212, 213, 214, 215 };
->  	int i, err;
->  	enum chips kind = i2c_match_id(fschmd_id, client)->driver_data;
->  
+--p4lIDGwMSuwz1i1Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmM90p8ACgkQFA3kzBSg
+KbbhQg//dh10rcAonoYEgC3ZCrAy5sJPECzsGAFFnJeIGLk9p9WMP34uEV+KgOwz
+nV6SqBEiwLwSH5ZQKoHRSkQpJ5r75LAnZ0sxib16yLQXI2JgK+llh6DP0xgWqUML
+RkxkoUCORrQJAuWZ/ZV5LWltfigjXowWu++QsUHGdMPcDb+bk8sOPFiCbMLo9Y67
+PftD2tIVoFDkXuCifEHHG0B7Zi7MwnyXV6vrY07+IeyVYmquEkzoVUSCFQrWQE31
+37PHYZlZd2IS0CyZ4UNGYzlYbElzxBtbC00UZqy/ysz9FtFVqfEKwKfnF3zgPyuG
+giwnAFm9Ngjcg9pPfIvysVfoNeR6W/R8lS/gxX2H8b67Oaf+xlfQnnKI9YrrgT/9
+BGr3z7mqNO05ETaDjhRRgJZqHITH+x4mYeQc7pUSuLYqzsrOviYPAjTeJK1X1HeF
+xtnXbR/Wy3uXasbq9PZc/lGo1u+1x4n4RXRLNEjyBNBOQJKvdP8acR2sR+f2ew7o
+RB6tDHKbVlcOLgCDMq6b2n5s/IEM3GkmHAMVEGAEiVxUSAwoB95D/xNvVeujrmna
+CdtS1A528zXrrGB0w+7amKM7S7aVnabUWETWuHVbU954/L+xMZvWcS1oi8CEP6eQ
+JxN0q+e8Xh7UkhyDaoY3SIQr4NPbuwlY6wmoANXrvMYW2qcgS/I=
+=c8zC
+-----END PGP SIGNATURE-----
+
+--p4lIDGwMSuwz1i1Q--
