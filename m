@@ -2,63 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B34C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Oct 2022 03:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 392F6C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Oct 2022 07:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbiJFDd6 (ORCPT
+        id S230410AbiJFHpO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Oct 2022 23:33:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39044 "EHLO
+        Thu, 6 Oct 2022 03:45:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbiJFDdx (ORCPT
+        with ESMTP id S230390AbiJFHpD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Oct 2022 23:33:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5CBA349B4;
-        Wed,  5 Oct 2022 20:33:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 51FB26155A;
-        Thu,  6 Oct 2022 03:33:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EEA9C433D6;
-        Thu,  6 Oct 2022 03:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665027231;
-        bh=nUXGmgdB2ZKTAoeJkVxiPb49QsBHrqPiXBxyDm1FkOI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=h1/i0PYMmVNUzZCb5vAHmmaaEVfNMg6psuj+opVp4A6v09SW5x4N54YQ1ymv5QhM/
-         SpJMwLRZoar0vKiMdyi/lj0mExziSGPCxEnZylapjlNyypUpHEpmkYJxETUGuRU+19
-         LmeLOtQCBn7rrJ+yg6PSMvR4SU9R1S6zw9xVWhquDyKGWW9X9viH53TTWpjw7pUg+U
-         po6xFaXLDABxxKr41NsH8gs5egpriWIFbA6ejpWu+1OBKhVoWrWybkkYF9c5Ptxwv5
-         leMKPqrgHRUlidohnHW1p88/7wRqJaaYpDF5P+WJlE5egEmOk8IJleCHGANBc1QgsV
-         VUCOnvV5eeE/A==
-Date:   Wed, 5 Oct 2022 20:33:50 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Ariel Elior <aelior@marvell.com>,
-        Sudarsana Kalluru <skalluru@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: bnx2x: Fix spelling mistake "tupple" -> "tuple"
-Message-ID: <20221005203350.5093d954@kernel.org>
-In-Reply-To: <20221004163235.157485-1-colin.i.king@gmail.com>
-References: <20221004163235.157485-1-colin.i.king@gmail.com>
+        Thu, 6 Oct 2022 03:45:03 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86371B7F7
+        for <kernel-janitors@vger.kernel.org>; Thu,  6 Oct 2022 00:45:00 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id j7so1355695wrr.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 06 Oct 2022 00:44:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vg5fdSt27nju1YMu90IaQhVCaYqVeP3Zg+AYyVq4Pjc=;
+        b=PSc6ddZVvE790in4dRYAuLE0lPuvpcAx2b1za+kxfMbWpzp3LwLnmOqOPKnfuNulsn
+         IC9ad3UrKRaztIHCztqH9a4/s8p9iFGdTcrDf8QjSNCLOphYliA2I/gzN7ImHCM9/vh7
+         j4yOG2ZHccLYozuqez4EbJWsarkmHQHMbxUIlg45iO5ErS0C8VBxkc+3ZP+P2RmUFvH+
+         WCHyW9UzUSHdGzh7+D9wGEcZKnhgl3pucs5CXjvIlJIA/tsCzJQ+WYazOj7S8fEtkcYJ
+         nsw3UHh8GpAYBx2LhK344xNL0e2bRmYx8i0UsNc7SNup9rXXo9qBLElp3SRupMZYOtGs
+         8zRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vg5fdSt27nju1YMu90IaQhVCaYqVeP3Zg+AYyVq4Pjc=;
+        b=WaIBeAv2Mc0bQXSg6msUwnx3OYsy4T5hwOR48jYwI1nXr2++cjMsdNdb8nELJS1qkl
+         CE03S9QdlGovJoZNvU6ToOJtURFPqPTxKNZSqO7COwIveH3pPORH6wPlwU7UAe9LBO5/
+         AsPv7TZZzE0fJD2sc79CeldxZ9rFj/yfe2NLh5OT/eSD4Ivk9f0gsHneElJ697yYHnwK
+         MyxMToUbB6q3jjexetzCtjhSH/znwVWW11orZf2pwZ92Y91HIT9diqYhpHxrdpFDDlO0
+         KkuYvT64ykDvYir5N+5XcDQ3W7oJ5GdRhbS+753NWM+26tzDuCXeXYN8UmWP4HdnZXuw
+         DzYw==
+X-Gm-Message-State: ACrzQf2WKnmuqeHJ+ZSVeV2+Tq9pQkvCvOSKU/qmaXjVis+jSEqPL00Q
+        AFYsO9wNPKxoR9I9echxY7RJEDksJTIkAA==
+X-Google-Smtp-Source: AMsMyM6c3VcQe/nko6DkvyvFj6l25XRIFM2fyt+46cK+0EkLGtTUkO+EjLi3+vwckzGSwWe9WswpLg==
+X-Received: by 2002:a05:6000:154a:b0:22a:b8eb:ba53 with SMTP id 10-20020a056000154a00b0022ab8ebba53mr2115976wry.594.1665042297819;
+        Thu, 06 Oct 2022 00:44:57 -0700 (PDT)
+Received: from localhost ([82.66.159.240])
+        by smtp.gmail.com with ESMTPSA id m24-20020adfa3d8000000b0022ae401e9e0sm17535879wrb.78.2022.10.06.00.44.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Oct 2022 00:44:57 -0700 (PDT)
+From:   Mattijs Korpershoek <mkorpershoek@baylibre.com>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: dlink-dir685-touchkeys: Make array bl_data
+ static const
+In-Reply-To: <20221005154852.320056-1-colin.i.king@gmail.com>
+References: <20221005154852.320056-1-colin.i.king@gmail.com>
+Date:   Thu, 06 Oct 2022 09:44:56 +0200
+Message-ID: <87a669o0p3.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue,  4 Oct 2022 17:32:35 +0100 Colin Ian King wrote:
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c | 10 +++++-----
->  fs/freevxfs/vxfs_olt.c                              |  2 +-
+On Wed, Oct 05, 2022 at 16:48, Colin Ian King <colin.i.king@gmail.com> wrote:
 
-Looks like two unrelated subsystems?
+> Don't populate the read-only array bl_data on the stack but instead
+> make it static const. Also makes the object code a little smaller.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Please repost the netdev bits after the merge window.
+Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+
+> ---
+>  drivers/input/keyboard/dlink-dir685-touchkeys.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/input/keyboard/dlink-dir685-touchkeys.c b/drivers/input/keyboard/dlink-dir685-touchkeys.c
+> index a69dcc3bd30c..7db7fb175869 100644
+> --- a/drivers/input/keyboard/dlink-dir685-touchkeys.c
+> +++ b/drivers/input/keyboard/dlink-dir685-touchkeys.c
+> @@ -64,7 +64,7 @@ static int dir685_tk_probe(struct i2c_client *client,
+>  {
+>  	struct dir685_touchkeys *tk;
+>  	struct device *dev = &client->dev;
+> -	u8 bl_data[] = { 0xa7, 0x40 };
+> +	static const u8 bl_data[] = { 0xa7, 0x40 };
+>  	int err;
+>  	int i;
+>  
+> -- 
+> 2.37.3
