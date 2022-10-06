@@ -2,114 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5ADCC433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Oct 2022 08:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9D7C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Oct 2022 09:22:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230461AbiJFIzo convert rfc822-to-8bit (ORCPT
+        id S231373AbiJFJWU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Oct 2022 04:55:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60056 "EHLO
+        Thu, 6 Oct 2022 05:22:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229844AbiJFIzn (ORCPT
+        with ESMTP id S231153AbiJFJWS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Oct 2022 04:55:43 -0400
-X-Greylist: delayed 1199 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 06 Oct 2022 01:55:39 PDT
-Received: from ouvsmtp1.octopuce.fr (ouvsmtp1.octopuce.fr [194.36.166.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACE795E40;
-        Thu,  6 Oct 2022 01:55:39 -0700 (PDT)
-Received: from panel.vitry.ouvaton.coop (unknown [194.36.166.20])
-        by ouvsmtp1.octopuce.fr (Postfix) with ESMTPS id 7717D173;
-        Thu,  6 Oct 2022 10:17:18 +0200 (CEST)
-Received: from sm.ouvaton.coop (ouvadm.octopuce.fr [194.36.166.2])
-        by panel.vitry.ouvaton.coop (Postfix) with ESMTPSA id 376215E16F9;
-        Thu,  6 Oct 2022 10:17:18 +0200 (CEST)
+        Thu, 6 Oct 2022 05:22:18 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C4B998370
+        for <kernel-janitors@vger.kernel.org>; Thu,  6 Oct 2022 02:22:17 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id bj12so3102129ejb.13
+        for <kernel-janitors@vger.kernel.org>; Thu, 06 Oct 2022 02:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=gfZGrH7a9yUWw9GpAG6sE4j56NOjTxXoEiSUkRLAXgU=;
+        b=F6pZWBdUE40qWO/tnBW9sr4th3jm+y1J8/HuKkX4fdGpIN9XbF7bCmH29M0Vxsti0l
+         j2YTkA2j2T9HdAfYzRae+L5oak84JpC+0LQ9Zr73sEFrL+phJeyfvNKnfHP3wkRxN4SW
+         nT+DWYGYav27nltjFDv2c02TN4JeqBl+Jy7RybvLfxs3/NI8xSYAwMa1pwqdRLkztSYY
+         h2Qln+Kum7owkKCUJvVmTTCMEUjrtA57tD78yGDouZIqKYFhlwbJNmjFh/7+fdpLk7D3
+         cX4sQzBJWminktpvelda/EhNyDZDQYokIr/UXN27GQpMDsrhOsfD4tdcXVUvJ4oCIizh
+         be/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=gfZGrH7a9yUWw9GpAG6sE4j56NOjTxXoEiSUkRLAXgU=;
+        b=BOQNB7neAsI8UMmitCkd4Uw8JCV6te4IGtbOe/jzcIh6zTJ38TV4+pUvF+50rDVgo2
+         U2KEaeJL8RAGGjpyX5FKhNDyqPMjJUhlTtFQhI2VO+2ft5d6A3TQaMcMDyoGHmCMNGQB
+         SaeVTcQfAMfKRQheFJn0x5spM2ZHRmKWXDHbV6Y4wTaicS6zUhAnyJbjVLo/p4ZLvNhp
+         QZ2a67P0dbQL7p9FqyehPNk/Wa1TqsrFpNZOOczySBdw5wyN6OnlyiLljTp3L5do4vlE
+         iYcBaSYFpRXOJOHmv5vvDZ67cqhY+IBdalKO2lZnjT+NobLm/lBRBoPPkeHyX2swVwW8
+         ngVw==
+X-Gm-Message-State: ACrzQf2wAHtaTchowt0/X+IeSMU/l44Vz00pSZIY5ewFpEutgDdkaZlK
+        kbG+zrjw7SswMu3+1MYgF2/3hD8DS1ti4pZ/ubw/UTEgiKc=
+X-Google-Smtp-Source: AMsMyM5SPTgajIsbKATqyoE2FjbStcDaU4OeU6653kkHYOVryxlZ5FZCigr/jQjn168+9EHzr6leMpeY9/ibqcwYx5k=
+X-Received: by 2002:a17:907:7b9e:b0:783:10cb:2826 with SMTP id
+ ne30-20020a1709077b9e00b0078310cb2826mr3204710ejc.208.1665048135682; Thu, 06
+ Oct 2022 02:22:15 -0700 (PDT)
 MIME-Version: 1.0
-Date:   Thu, 06 Oct 2022 08:17:18 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-From:   "Yann Droneaud" <ydroneaud@opteya.com>
-Message-ID: <125581881ad4aa85b2dadfe0d7338af9901caa03@opteya.com>
-Subject: Re: [PATCH v1 0/5] treewide cleanup of random integer usage
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        "Julia Lawall" <Julia.Lawall@inria.fr>,
-        "Nicolas Palix" <nicolas.palix@imag.fr>, linux-api@vger.kernel.org,
+References: <20221005154852.320056-1-colin.i.king@gmail.com>
+In-Reply-To: <20221005154852.320056-1-colin.i.king@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 6 Oct 2022 11:22:04 +0200
+Message-ID: <CACRpkdavo3vM6rebx6QRjf43z6HwX7tJEcEGh7bmus8Qtp1Qng@mail.gmail.com>
+Subject: Re: [PATCH] Input: dlink-dir685-touchkeys: Make array bl_data static const
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20221005214844.2699-1-Jason@zx2c4.com>
-References: <20221005214844.2699-1-Jason@zx2c4.com>
-X-Originating-IP: 10.0.20.16
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+On Wed, Oct 5, 2022 at 5:48 PM Colin Ian King <colin.i.king@gmail.com> wrote:
 
-6 octobre 2022 à 04:51 "Jason A. Donenfeld" a écrit:
+> Don't populate the read-only array bl_data on the stack but instead
+> make it static const. Also makes the object code a little smaller.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-> 
-> This is a five part treewide cleanup of random integer handling. The
-> rules for random integers are:
-> 
-> - If you want a secure or an insecure random u64, use get_random_u64().
-> - If you want a secure or an insecure random u32, use get_random_u32().
->  * The old function prandom_u32() has been deprecated for a while now
->  and is just a wrapper around get_random_u32().
-> - If you want a secure or an insecure random u16, use get_random_u16().
-> - If you want a secure or an insecure random u8, use get_random_u8().
-> - If you want secure or insecure random bytes, use get_random_bytes().
->  * The old function prandom_bytes() has been deprecated for a while now
->  and has long been a wrapper around get_random_bytes().
-> - If you want a non-uniform random u32, u16, or u8 bounded by a certain
->  open interval maximum, use prandom_u32_max().
->  * I say "non-uniform", because it doesn't do any rejection sampling or
->  divisions. Hence, it stays within the prandom_* namespace.
-> 
-> These rules ought to be applied uniformly, so that we can clean up the
-> deprecated functions, and earn the benefits of using the modern
-> functions. In particular, in addition to the boring substitutions, this
-> patchset accomplishes a few nice effects:
-> 
-> - By using prandom_u32_max() with an upper-bound that the compiler can
->  prove at compile-time is ≤65536 or ≤256, internally get_random_u16()
->  or get_random_u8() is used, which wastes fewer batched random bytes,
->  and hence has higher throughput.
-> 
-> - By using prandom_u32_max() instead of %, when the upper-bound is not a
->  constant, division is still avoided, because prandom_u32_max() uses
->  a faster multiplication-based trick instead.
-> 
-> - By using get_random_u16() or get_random_u8() in cases where the return
->  value is intended to indeed be a u16 or a u8, we waste fewer batched
->  random bytes, and hence have higher throughput.
-> 
-> So, based on those rules and benefits from following them, this patchset
-> breaks down into the following five steps:
-> 
-> 1) Replace `prandom_u32() % max` and variants thereof with
->  prandom_u32_max(max).
-> 
-> 2) Replace `(type)get_random_u32()` and variants thereof with
->  get_random_u16() or get_random_u8(). I took the pains to actually
->  look and see what every lvalue type was across the entire tree.
-> 
-> 3) Replace remaining deprecated uses of prandom_u32() with
->  get_random_u32(). 
-> 
-> 4) Replace remaining deprecated uses of prandom_bytes() with
->  get_random_bytes().
-> 
-> 5) Remove the deprecated and now-unused prandom_u32() and
->  prandom_bytes() inline wrapper functions.
-> 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Did you use some coccinelle patches ? Or other semantic patch tool ?
-
-Maybe we could introduce some coccinelle patch to ensure future get_random_u{16,32,64} usages be checked and patched to use the best fit.
-
-Regards.
-
--- 
-Yann Droneaud
-OPTEYA
+Yours,
+Linus Walleij
