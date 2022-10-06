@@ -2,95 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4963C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Oct 2022 08:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5ADCC433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Oct 2022 08:55:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230481AbiJFIHS (ORCPT
+        id S230461AbiJFIzo convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Oct 2022 04:07:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54064 "EHLO
+        Thu, 6 Oct 2022 04:55:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229673AbiJFIHR (ORCPT
+        with ESMTP id S229844AbiJFIzn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Oct 2022 04:07:17 -0400
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5904D46846;
-        Thu,  6 Oct 2022 01:07:16 -0700 (PDT)
-Received: by mail-pg1-f174.google.com with SMTP id 195so1248153pga.1;
-        Thu, 06 Oct 2022 01:07:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=G+toKQpufbPMnd1NtuG1DlYOX/0SX3T7igfqYXNs3MU=;
-        b=0uD3glvCaQGTivdVrdg+fJV/vGRyaa5ZgCX5cFd34XRoQIokJW7z2bkhDdREHTXKzb
-         BFYOWT6CkQKV57ML49p+qMjGiLX5mjxEp+ObadTusRlG74u3p/8FS221RE8RvcaIPCMm
-         ykEQFzVbFXqXiZ1Az4a9NQiY9oeZ+5s/Cay9N3vN/xqYym1pDH14jDKNVr8Wa4sld1FQ
-         fLLmZRVyRkoNaUreKy2KKnKmF0vU4iSTLnMdD8EEqUomJiMZ+7DkLPmUig5rqVNQcfsv
-         UJfkTiTa94HzsoIfQsIW7c8guoYsMDIZ+tkMT2+NWCUom+ded+zuVowZGdn07vjBdw24
-         Ki4w==
-X-Gm-Message-State: ACrzQf3+8su8zYh81EJQjHOOhwKXU2Xjp3aCwhH43ZO0PZFhqwnq460R
-        0YFw2zZ6MBsjcmlb8ml3jLYdOMRbXYWJYB+9Ui0=
-X-Google-Smtp-Source: AMsMyM6iJlpRTImKb+vaNT6xzQUSY6ey2L/uvoRgGAC15I7tfMtKy8WXMIOWBMQSr+tt7auxJyTOu20/F3bMDrRmnbI=
-X-Received: by 2002:a65:6944:0:b0:43c:da07:5421 with SMTP id
- w4-20020a656944000000b0043cda075421mr3532690pgq.72.1665043635666; Thu, 06 Oct
- 2022 01:07:15 -0700 (PDT)
+        Thu, 6 Oct 2022 04:55:43 -0400
+X-Greylist: delayed 1199 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 06 Oct 2022 01:55:39 PDT
+Received: from ouvsmtp1.octopuce.fr (ouvsmtp1.octopuce.fr [194.36.166.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACE795E40;
+        Thu,  6 Oct 2022 01:55:39 -0700 (PDT)
+Received: from panel.vitry.ouvaton.coop (unknown [194.36.166.20])
+        by ouvsmtp1.octopuce.fr (Postfix) with ESMTPS id 7717D173;
+        Thu,  6 Oct 2022 10:17:18 +0200 (CEST)
+Received: from sm.ouvaton.coop (ouvadm.octopuce.fr [194.36.166.2])
+        by panel.vitry.ouvaton.coop (Postfix) with ESMTPSA id 376215E16F9;
+        Thu,  6 Oct 2022 10:17:18 +0200 (CEST)
 MIME-Version: 1.0
-References: <20221006080154.5396-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20221006080154.5396-1-lukas.bulwahn@gmail.com>
-From:   Emil Renner Berthing <kernel@esmil.dk>
-Date:   Thu, 6 Oct 2022 10:07:03 +0200
-Message-ID: <CANBLGcx5JTXDFGVBgnG=_VPMK9tXLHRF_xZcnbcmBnZWCT=sug@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust STARFIVE JH7100 PINCTRL DRIVER after
- file movement
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Jianlong Huang <jianlong.huang@starfivetech.com>,
-        Hal Feng <hal.feng@linux.starfivetech.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+Date:   Thu, 06 Oct 2022 08:17:18 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+From:   "Yann Droneaud" <ydroneaud@opteya.com>
+Message-ID: <125581881ad4aa85b2dadfe0d7338af9901caa03@opteya.com>
+Subject: Re: [PATCH v1 0/5] treewide cleanup of random integer usage
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        "Julia Lawall" <Julia.Lawall@inria.fr>,
+        "Nicolas Palix" <nicolas.palix@imag.fr>, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20221005214844.2699-1-Jason@zx2c4.com>
+References: <20221005214844.2699-1-Jason@zx2c4.com>
+X-Originating-IP: 10.0.20.16
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 6 Oct 2022 at 10:02, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit ba7fdf88e98a ("pinctrl: Create subdirectory for StarFive drivers")
-> moves pinctrl-starfive.c into its own subdirectory starfive; further,
-> commit ba99b756da17 ("pinctrl: starfive: Rename "pinctrl-starfive" to
-> "pinctrl-starfive-jh7100"") adds the suffix jh7100 to the driver and
-> dt-bindings header file name.
->
-> These commits however do not adjust the entry in MAINTAINERS. Hence,
-> ./scripts/get_maintainer.pl --self-test=patterns complains about a broken
-> reference.
->
-> Adjust the entries for STARFIVE JH7100 PINCTRL DRIVER after file movement.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Hi,
 
-Good catch.
-Reviewed-by: Emil Renner Berthing <kernel@esmil.dk>
+6 octobre 2022 à 04:51 "Jason A. Donenfeld" a écrit:
 
->  MAINTAINERS | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2a1347b5fd07..37a9f9e7f6c8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19603,8 +19603,8 @@ M:      Emil Renner Berthing <kernel@esmil.dk>
->  L:     linux-gpio@vger.kernel.org
->  S:     Maintained
->  F:     Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
-> -F:     drivers/pinctrl/pinctrl-starfive.c
-> -F:     include/dt-bindings/pinctrl/pinctrl-starfive.h
-> +F:     drivers/pinctrl/starfive/
-> +F:     include/dt-bindings/pinctrl/pinctrl-starfive-jh7100.h
->
->  STARFIVE JH7100 RESET CONTROLLER DRIVER
->  M:     Emil Renner Berthing <kernel@esmil.dk>
-> --
-> 2.17.1
->
+> 
+> This is a five part treewide cleanup of random integer handling. The
+> rules for random integers are:
+> 
+> - If you want a secure or an insecure random u64, use get_random_u64().
+> - If you want a secure or an insecure random u32, use get_random_u32().
+>  * The old function prandom_u32() has been deprecated for a while now
+>  and is just a wrapper around get_random_u32().
+> - If you want a secure or an insecure random u16, use get_random_u16().
+> - If you want a secure or an insecure random u8, use get_random_u8().
+> - If you want secure or insecure random bytes, use get_random_bytes().
+>  * The old function prandom_bytes() has been deprecated for a while now
+>  and has long been a wrapper around get_random_bytes().
+> - If you want a non-uniform random u32, u16, or u8 bounded by a certain
+>  open interval maximum, use prandom_u32_max().
+>  * I say "non-uniform", because it doesn't do any rejection sampling or
+>  divisions. Hence, it stays within the prandom_* namespace.
+> 
+> These rules ought to be applied uniformly, so that we can clean up the
+> deprecated functions, and earn the benefits of using the modern
+> functions. In particular, in addition to the boring substitutions, this
+> patchset accomplishes a few nice effects:
+> 
+> - By using prandom_u32_max() with an upper-bound that the compiler can
+>  prove at compile-time is ≤65536 or ≤256, internally get_random_u16()
+>  or get_random_u8() is used, which wastes fewer batched random bytes,
+>  and hence has higher throughput.
+> 
+> - By using prandom_u32_max() instead of %, when the upper-bound is not a
+>  constant, division is still avoided, because prandom_u32_max() uses
+>  a faster multiplication-based trick instead.
+> 
+> - By using get_random_u16() or get_random_u8() in cases where the return
+>  value is intended to indeed be a u16 or a u8, we waste fewer batched
+>  random bytes, and hence have higher throughput.
+> 
+> So, based on those rules and benefits from following them, this patchset
+> breaks down into the following five steps:
+> 
+> 1) Replace `prandom_u32() % max` and variants thereof with
+>  prandom_u32_max(max).
+> 
+> 2) Replace `(type)get_random_u32()` and variants thereof with
+>  get_random_u16() or get_random_u8(). I took the pains to actually
+>  look and see what every lvalue type was across the entire tree.
+> 
+> 3) Replace remaining deprecated uses of prandom_u32() with
+>  get_random_u32(). 
+> 
+> 4) Replace remaining deprecated uses of prandom_bytes() with
+>  get_random_bytes().
+> 
+> 5) Remove the deprecated and now-unused prandom_u32() and
+>  prandom_bytes() inline wrapper functions.
+> 
+
+Did you use some coccinelle patches ? Or other semantic patch tool ?
+
+Maybe we could introduce some coccinelle patch to ensure future get_random_u{16,32,64} usages be checked and patched to use the best fit.
+
+Regards.
+
+-- 
+Yann Droneaud
+OPTEYA
