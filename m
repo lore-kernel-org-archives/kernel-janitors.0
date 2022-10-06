@@ -2,96 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 392F6C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Oct 2022 07:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C195C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Oct 2022 08:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230410AbiJFHpO (ORCPT
+        id S230441AbiJFICY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Oct 2022 03:45:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46708 "EHLO
+        Thu, 6 Oct 2022 04:02:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230390AbiJFHpD (ORCPT
+        with ESMTP id S230442AbiJFICX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Oct 2022 03:45:03 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86371B7F7
-        for <kernel-janitors@vger.kernel.org>; Thu,  6 Oct 2022 00:45:00 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id j7so1355695wrr.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 06 Oct 2022 00:44:59 -0700 (PDT)
+        Thu, 6 Oct 2022 04:02:23 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843A9895E4;
+        Thu,  6 Oct 2022 01:02:22 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id bq9so1418885wrb.4;
+        Thu, 06 Oct 2022 01:02:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vg5fdSt27nju1YMu90IaQhVCaYqVeP3Zg+AYyVq4Pjc=;
-        b=PSc6ddZVvE790in4dRYAuLE0lPuvpcAx2b1za+kxfMbWpzp3LwLnmOqOPKnfuNulsn
-         IC9ad3UrKRaztIHCztqH9a4/s8p9iFGdTcrDf8QjSNCLOphYliA2I/gzN7ImHCM9/vh7
-         j4yOG2ZHccLYozuqez4EbJWsarkmHQHMbxUIlg45iO5ErS0C8VBxkc+3ZP+P2RmUFvH+
-         WCHyW9UzUSHdGzh7+D9wGEcZKnhgl3pucs5CXjvIlJIA/tsCzJQ+WYazOj7S8fEtkcYJ
-         nsw3UHh8GpAYBx2LhK344xNL0e2bRmYx8i0UsNc7SNup9rXXo9qBLElp3SRupMZYOtGs
-         8zRA==
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=h/CPbvBhIhAmB8BgDAWtC+ijrXo2y4m+iumWEM4mQ8I=;
+        b=IXs0zW0GLS/p3OdwRpeM+Pm/hT9vgMdrXlY96Tu7Lm05QLmaiyq2aym49owlCKLjIs
+         faCORzG4kJ9AVuhPCLqSioSt/rt1FD3kRLk/2Vuz/YklThaaojDcXqO+i1rxD8Q36ewj
+         XelJ1DkUAAUhtgoO220Up9/uMKvHAmyuKqxAWUHDG7FAehTApar9HQ+k90wlwKI0z3Un
+         VQ0Ya8fUkmRANWV2gpY9zSoED2NklTDZB57ua1WuPWB/x32QWPfuHjexwABW1vg87hjz
+         fDvI3eBE04i91OY0NhB5M4lL0HAYLrdMVv+n5WpuGCQjJbBRdJrrG9mYsIID2Fw1WFUJ
+         8uJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vg5fdSt27nju1YMu90IaQhVCaYqVeP3Zg+AYyVq4Pjc=;
-        b=WaIBeAv2Mc0bQXSg6msUwnx3OYsy4T5hwOR48jYwI1nXr2++cjMsdNdb8nELJS1qkl
-         CE03S9QdlGovJoZNvU6ToOJtURFPqPTxKNZSqO7COwIveH3pPORH6wPlwU7UAe9LBO5/
-         AsPv7TZZzE0fJD2sc79CeldxZ9rFj/yfe2NLh5OT/eSD4Ivk9f0gsHneElJ697yYHnwK
-         MyxMToUbB6q3jjexetzCtjhSH/znwVWW11orZf2pwZ92Y91HIT9diqYhpHxrdpFDDlO0
-         KkuYvT64ykDvYir5N+5XcDQ3W7oJ5GdRhbS+753NWM+26tzDuCXeXYN8UmWP4HdnZXuw
-         DzYw==
-X-Gm-Message-State: ACrzQf2WKnmuqeHJ+ZSVeV2+Tq9pQkvCvOSKU/qmaXjVis+jSEqPL00Q
-        AFYsO9wNPKxoR9I9echxY7RJEDksJTIkAA==
-X-Google-Smtp-Source: AMsMyM6c3VcQe/nko6DkvyvFj6l25XRIFM2fyt+46cK+0EkLGtTUkO+EjLi3+vwckzGSwWe9WswpLg==
-X-Received: by 2002:a05:6000:154a:b0:22a:b8eb:ba53 with SMTP id 10-20020a056000154a00b0022ab8ebba53mr2115976wry.594.1665042297819;
-        Thu, 06 Oct 2022 00:44:57 -0700 (PDT)
-Received: from localhost ([82.66.159.240])
-        by smtp.gmail.com with ESMTPSA id m24-20020adfa3d8000000b0022ae401e9e0sm17535879wrb.78.2022.10.06.00.44.57
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=h/CPbvBhIhAmB8BgDAWtC+ijrXo2y4m+iumWEM4mQ8I=;
+        b=qrmf4nDXCaPn4+JEYjnXm3iyPyAKXD6Fa+XGKWorsRvxa40/b+qZAr6+ahB67XbN+x
+         wm37D2TfC1IM6coUFPIEimprK0TqrIns/9+R2tqBDWqOf4WmlbayIALUHNBUhOWuYNvC
+         VJmLXgnqdmJ0wheKrivKbMs23lTotbfN9VH4sjb9v2zmYqzfZsAMgTQnTE4lH4EmfIdh
+         PwJnrx1jLUiRUqANdGlJZbGgj7tusKGF6JEjR6JGWxs4Aa24dWo5Zy+A5N4kwIxiKTcG
+         koioXHBXQ5uf0JyE0rok0SnG2YwF9I4bKCgOpogbrmDJRJMX8np0RAOaCCyaSgwsO3lN
+         lzFg==
+X-Gm-Message-State: ACrzQf1cMw7pCz0yuN+Zy0SUwD53RpmESdtxr9texc+ksMJcaoqCXQ+B
+        k8l/8QGoKpQ8jM1c7KxdJ814s/4sh14=
+X-Google-Smtp-Source: AMsMyM7HB9/f4IWVA2KEgdPROaQRV06J4NJ+ZjB0UMnhjpgnwDnI0RjKGCxsA+RVIarbEdz9cotQJQ==
+X-Received: by 2002:a5d:44c4:0:b0:22e:31cd:afe7 with SMTP id z4-20020a5d44c4000000b0022e31cdafe7mr2243348wrr.246.1665043340741;
+        Thu, 06 Oct 2022 01:02:20 -0700 (PDT)
+Received: from felia.fritz.box (200116b826c5b200182d609e7f0e6e89.dip.versatel-1u1.de. [2001:16b8:26c5:b200:182d:609e:7f0e:6e89])
+        by smtp.gmail.com with ESMTPSA id k2-20020a7bc402000000b003b31c560a0csm4242918wmi.12.2022.10.06.01.02.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 00:44:57 -0700 (PDT)
-From:   Mattijs Korpershoek <mkorpershoek@baylibre.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
+        Thu, 06 Oct 2022 01:02:20 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Emil Renner Berthing <kernel@esmil.dk>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        Hal Feng <hal.feng@linux.starfivetech.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: dlink-dir685-touchkeys: Make array bl_data
- static const
-In-Reply-To: <20221005154852.320056-1-colin.i.king@gmail.com>
-References: <20221005154852.320056-1-colin.i.king@gmail.com>
-Date:   Thu, 06 Oct 2022 09:44:56 +0200
-Message-ID: <87a669o0p3.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        linux-gpio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust STARFIVE JH7100 PINCTRL DRIVER after file movement
+Date:   Thu,  6 Oct 2022 10:01:54 +0200
+Message-Id: <20221006080154.5396-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 05, 2022 at 16:48, Colin Ian King <colin.i.king@gmail.com> wrote:
+Commit ba7fdf88e98a ("pinctrl: Create subdirectory for StarFive drivers")
+moves pinctrl-starfive.c into its own subdirectory starfive; further,
+commit ba99b756da17 ("pinctrl: starfive: Rename "pinctrl-starfive" to
+"pinctrl-starfive-jh7100"") adds the suffix jh7100 to the driver and
+dt-bindings header file name.
 
-> Don't populate the read-only array bl_data on the stack but instead
-> make it static const. Also makes the object code a little smaller.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+These commits however do not adjust the entry in MAINTAINERS. Hence,
+./scripts/get_maintainer.pl --self-test=patterns complains about a broken
+reference.
 
-Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+Adjust the entries for STARFIVE JH7100 PINCTRL DRIVER after file movement.
 
-> ---
->  drivers/input/keyboard/dlink-dir685-touchkeys.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/input/keyboard/dlink-dir685-touchkeys.c b/drivers/input/keyboard/dlink-dir685-touchkeys.c
-> index a69dcc3bd30c..7db7fb175869 100644
-> --- a/drivers/input/keyboard/dlink-dir685-touchkeys.c
-> +++ b/drivers/input/keyboard/dlink-dir685-touchkeys.c
-> @@ -64,7 +64,7 @@ static int dir685_tk_probe(struct i2c_client *client,
->  {
->  	struct dir685_touchkeys *tk;
->  	struct device *dev = &client->dev;
-> -	u8 bl_data[] = { 0xa7, 0x40 };
-> +	static const u8 bl_data[] = { 0xa7, 0x40 };
->  	int err;
->  	int i;
->  
-> -- 
-> 2.37.3
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2a1347b5fd07..37a9f9e7f6c8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19603,8 +19603,8 @@ M:	Emil Renner Berthing <kernel@esmil.dk>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+-F:	drivers/pinctrl/pinctrl-starfive.c
+-F:	include/dt-bindings/pinctrl/pinctrl-starfive.h
++F:	drivers/pinctrl/starfive/
++F:	include/dt-bindings/pinctrl/pinctrl-starfive-jh7100.h
+ 
+ STARFIVE JH7100 RESET CONTROLLER DRIVER
+ M:	Emil Renner Berthing <kernel@esmil.dk>
+-- 
+2.17.1
+
