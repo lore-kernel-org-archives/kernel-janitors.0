@@ -2,60 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F5BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 20:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDF6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 20:19:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230000AbiJGUQy (ORCPT
+        id S230063AbiJGUTx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Oct 2022 16:16:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47392 "EHLO
+        Fri, 7 Oct 2022 16:19:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiJGUQx (ORCPT
+        with ESMTP id S230118AbiJGUTs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Oct 2022 16:16:53 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2616312C88B;
-        Fri,  7 Oct 2022 13:16:51 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id n12so8765831wrp.10;
-        Fri, 07 Oct 2022 13:16:51 -0700 (PDT)
+        Fri, 7 Oct 2022 16:19:48 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93DDC6438;
+        Fri,  7 Oct 2022 13:19:42 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id t4so3516965wmj.5;
+        Fri, 07 Oct 2022 13:19:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GdA86H2J4kLcpG71LMOT1m1RWdu089GydfZUniA0kLY=;
-        b=bcXHkbMyR+54Z+k64xKSHfe9ZSQkZzCXYdeO3YYclr5TV4g5ymibKYFwfAZfv7fxfh
-         OQcHcfU92oCpBXsOQRndtr/Fasj9/ocBNvE4i2tOVeUEtvCEUJgUo/+uyFAxSh6CrQ9h
-         7leYsI71o5ybbDF8Yvl5i2Jh64hpHQvI8VbV6nYQHOctnccch2QvxsAxJ3WQlTEJqubx
-         /egdE01g3m3Mz9AvupxBocE7LpiJhLtsoG9kd0x5uHD9p+ZudcQrZ15Tk8HNSTNZlHFV
-         vN+a7gskH8tTqLKEWp7+BOdlbx1krswGBQ2G+D9G+OaSW0kzm+vW8KygekYeDeHmPdH8
-         P9Ig==
+        bh=dXdIo0hRN02ZPJAwNm3u1mGY1VCoQSfJnTxD1fX9Jng=;
+        b=f4Dhz3KLnMyG1se0ROB0KLgh/z01THj8Db76AcdmjTnC2uK4IxwijDA+rhdQlvWrFo
+         as2soL2VbAqCJACX/OIdD3SJGs56K3UHlbZGHvlgj9KIXkrO1marHERh0EocA2AUfV+w
+         JCjmtbQ4n42G8Y1ep2nhz/wZHf/X0vXMFGwTDmt6z1WajH3TjboaHhi04qyIx+hUxP58
+         zeocfn0T4TgS/fqrThbDUPC/yYPKzlu9DmxvYjP6CHK6f4gA6DP/oBv/LbN9k9xQKf4n
+         eLm4xTyfhdeNtKdq2w3+USV2pr+qcqW3yTduNEguZ2eeA6BxecATQ7zQ5AB6RTmJrG2p
+         A91Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GdA86H2J4kLcpG71LMOT1m1RWdu089GydfZUniA0kLY=;
-        b=xgbDMalg8PFXO4YjVilooqfcXXCfHjLdDr+ntYpy8MaatKUL5BEDQGpnd1cgcYzkXq
-         h+JswFnTUcFEAT/tlLTRn4QUtXxuRdwII0i2owv/5LeHgAcOyPSBJuyYAb2WtfYruAnx
-         jQ4T+7+OFch+/ntiR/erKyVbUnYqpSGihVDOb0UovBRDwkIklA43t1DuHAP/z4stq9Bw
-         aY0WGtEdNMObEL7zdEr0kHdQpICV6N0T6hHRjcL242YlFNxAQDctoDB+Ju0E21lfkMxp
-         f5JrbH2RGff8TuuS7z5/fVWwyzZewShZ+D1cuu0bGI1KcYwKr86TBkjzUS2SOVI/TBAS
-         C8yw==
-X-Gm-Message-State: ACrzQf0yq/w3y+WSYRywGnPCDznUlTp3Mu7J8TvRacX3t5x7JU7HNDOf
-        WKRSH84OagbscIRAzl2Mt/A=
-X-Google-Smtp-Source: AMsMyM7Sz8XPXf/QXyxR1mcsg1u32gLI0Q5z77krirAUpHhoIuVjSY1KRO8sU1vIPwuqiYkiSGZTSQ==
-X-Received: by 2002:a05:6000:1887:b0:22e:5026:42c3 with SMTP id a7-20020a056000188700b0022e502642c3mr4328554wri.687.1665173809524;
-        Fri, 07 Oct 2022 13:16:49 -0700 (PDT)
+        bh=dXdIo0hRN02ZPJAwNm3u1mGY1VCoQSfJnTxD1fX9Jng=;
+        b=U9J/oB28Qgci4Qwep790DHyIM6cz7PSOeXdDuP6/rX3sKpNKp+9G9gvuWLRmH44t7L
+         ooH//0iZLae7uBXKjVofIctzwr54HkPBXSsPjVzqL3sdhi9ZWgHi7RWFPCaRFcvd2Bsn
+         xIvDPuXVP4Bjz2RDpbKciRF1g/k92moLKS08BYmoUK+K1xtrwnINuZLZE9BKaJqbY2Ct
+         umkSAcpQw4DMaMXMDTvFIPpt9uhndIE3virSAcel6Tqra2RRHzLGvn8cwxjroqTBZGl4
+         8fx5o6pIC74qKeC1r10h52jexxkpsiCQ9qLW4mfu97mhWAch8JCXYEiI9NUBQEeF+AaH
+         WrpA==
+X-Gm-Message-State: ACrzQf0sX2zLtJq7VC3Z9JR4FeUacu3hvPsZo1FcKRjWKJcDENm3WDBz
+        uqJmzN8GAGQF1UclSVUkG2vhCQml6r1gY4Au
+X-Google-Smtp-Source: AMsMyM42GLUq87Hjpke22vTC+iqQFCJd2ggf7uv2NyWFz9XDILyVkcOiMkcSbVw0aj92CgistYZpLw==
+X-Received: by 2002:a1c:3847:0:b0:3c3:8082:a0 with SMTP id f68-20020a1c3847000000b003c3808200a0mr2653304wma.67.1665173981093;
+        Fri, 07 Oct 2022 13:19:41 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id y17-20020a5d4711000000b0022e47b57735sm2768624wrq.97.2022.10.07.13.16.48
+        by smtp.gmail.com with ESMTPSA id d16-20020adf9c90000000b0022dd3aab6bfsm2680205wre.57.2022.10.07.13.19.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 13:16:49 -0700 (PDT)
+        Fri, 07 Oct 2022 13:19:40 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
+To:     Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] csky: Kconfig: Fix spelling mistake "Meory" -> "Memory"
-Date:   Fri,  7 Oct 2022 21:16:48 +0100
-Message-Id: <20221007201648.2755133-1-colin.i.king@gmail.com>
+Subject: [PATCH] LoongArch: Kconfig: Fix spelling mistake "delibrately" -> "deliberately"
+Date:   Fri,  7 Oct 2022 21:19:39 +0100
+Message-Id: <20221007201939.2755407-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +65,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a Kconfig option description. Fix it.
+There is a spelling mistake in a commented section. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/csky/Kconfig | 2 +-
+ arch/loongarch/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-index adee6ab36862..100f5eb2313e 100644
---- a/arch/csky/Kconfig
-+++ b/arch/csky/Kconfig
-@@ -269,7 +269,7 @@ menuconfig HAVE_TCM
- 	bool "Tightly-Coupled/Sram Memory"
- 	depends on !COMPILE_TEST
- 	help
--	  The implementation are not only used by TCM (Tightly-Coupled Meory)
-+	  The implementation are not only used by TCM (Tightly-Coupled Memory)
- 	  but also used by sram on SOC bus. It follow existed linux tcm
- 	  software interface, so that old tcm application codes could be
- 	  re-used directly.
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 898263224bbc..903096bd87f8 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -171,7 +171,7 @@ config STACKTRACE_SUPPORT
+ 	bool
+ 	default y
+ 
+-# MACH_LOONGSON32 and MACH_LOONGSON64 are delibrately carried over from the
++# MACH_LOONGSON32 and MACH_LOONGSON64 are deliberately carried over from the
+ # MIPS Loongson code, to preserve Loongson-specific code paths in drivers that
+ # are shared between architectures, and specifically expecting the symbols.
+ config MACH_LOONGSON32
 -- 
 2.37.3
 
