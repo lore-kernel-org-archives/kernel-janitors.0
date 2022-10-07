@@ -2,120 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49942C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 19:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30298C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 19:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229620AbiJGTZm (ORCPT
+        id S229691AbiJGTrv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Oct 2022 15:25:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47368 "EHLO
+        Fri, 7 Oct 2022 15:47:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230203AbiJGTYf (ORCPT
+        with ESMTP id S229563AbiJGTru (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Oct 2022 15:24:35 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ECE912627;
-        Fri,  7 Oct 2022 12:23:03 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D5F6D1F7AB;
-        Fri,  7 Oct 2022 19:23:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1665170581; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5C9GlnWH2PQfTnwA7VvBSXTuKeGaXDov8qfQoZWnQ2Q=;
-        b=NSxASkEeqmb+U2+NeQXIWzIbCesMTV+RHAhMCKOr0H3s97maz0aOjrmgkX8uo1VTkNH9LI
-        Ga79KR7ZlBXfXZ7zjgDths0DLdumDHIrsU+QhB1//pQqC7Jz11kovTMzLiW95IPnQtAJjl
-        OVXDonP3zma3FKPsZDNTWzsWb+6C54I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1665170581;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5C9GlnWH2PQfTnwA7VvBSXTuKeGaXDov8qfQoZWnQ2Q=;
-        b=iT/9+zw18bGxYwbsCqYfuJcGbFRaQ+xerYjzTkrnm+/GdF2xl1NzAlIvIativFbYg7ft0K
-        yaotfZq2yfGM/GBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5999113A3D;
-        Fri,  7 Oct 2022 19:23:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id HZUFCpV8QGPCfQAAMHmgww
-        (envelope-from <ematsumiya@suse.de>); Fri, 07 Oct 2022 19:23:01 +0000
-Date:   Fri, 7 Oct 2022 16:22:59 -0300
-From:   'Enzo Matsumiya' <ematsumiya@suse.de>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        "kernel@collabora.com" <kernel@collabora.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] cifs: remove initialization value
-Message-ID: <20221007192259.lte3xpsjneg352um@suse.de>
-References: <20221004062333.416225-1-usama.anjum@collabora.com>
- <20221004142306.ysgh45nhgdo4z3ok@suse.de>
- <fbb39e4354434cb99b6f6731cab2e0c9@AcuMS.aculab.com>
+        Fri, 7 Oct 2022 15:47:50 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6112103D98;
+        Fri,  7 Oct 2022 12:47:48 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id l8so3486004wmi.2;
+        Fri, 07 Oct 2022 12:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aQIAtfxw9qFz9Hl/XRNhdWvv/WP4PsamsNA94vPOScw=;
+        b=CWEz1G2S7PpTw3YqmzToiMwiNbuD1Drf7WmIgIG8V7JJvKYsk/ZIOpnPDfjkqNtj4u
+         x30Wo/rBxvwnjxsrYw4VshH3VQRaJNJBS9dwf2gCSam8zVwT0x57jLY0PkzPhtjRvgru
+         yS4DFP4pSMkpeCuO9D5YZWKbdxEPxQ7p8LzZEf5/CVfFcZeDkP+bz6t9Ne7SGq+his84
+         FbyRlu5tBAMBVqeBr2ppFUJmG+9yQMlSq0OJ8QiwrN6HLr5Q55oU0RnQFjnA7qLh7PMq
+         udmzxQlqNKIaMlrC1eUYEpZsqX8u/rhlv+eTU/IyYY9xZmwr1rYWaF7ZqOk8eSiOY4lC
+         qaXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aQIAtfxw9qFz9Hl/XRNhdWvv/WP4PsamsNA94vPOScw=;
+        b=ydom+B/eZcyzTaVw8hKrdN8r0oiMG78R0uKMJFdEUg7Ua4lP2VV7aWZIYHbfTPNgDD
+         7HtecK0H2/9VEqP9aX0VX7mwGru79QJ/C/xQ5VXI55wH6DmW6+cgfuHQnJZ9g+FQAWop
+         Bhlf9w+DwKi3+zxkDpNhNtQYkfIqUxaSg6Y86uDAaBmH2H13xNvAusSPLp8X8MvzG8dG
+         2woRXdFEx4/buOzXj4He4vw0ku1K+ONtt2rzb/RfFNKYtYlUsyupNryFWCBf5hhhlnEo
+         w9+Mr5nAc1lcrqvLnbLMP4J2ZEs73Q3t50S0MhPx1CE60lpIwmox4/Miozh+4b6ewVDs
+         Vemg==
+X-Gm-Message-State: ACrzQf2Ar8lhB2rc0dO0BSJKY4aKkqyK063KastB3kr2KEujW5CHQj1Z
+        jxfYW1L4z5S+QlCLjYxEACw=
+X-Google-Smtp-Source: AMsMyM7/YTveBhPU+ZlmzDgp++oNS+vvRqhX5gWak6BuDVO4QseTU9T6OaWBOMN9HuEbtuNn71dvDw==
+X-Received: by 2002:a05:600c:4ed3:b0:3b4:ade9:ecf0 with SMTP id g19-20020a05600c4ed300b003b4ade9ecf0mr11769784wmq.46.1665172066974;
+        Fri, 07 Oct 2022 12:47:46 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id e17-20020adfdbd1000000b0022ae59d472esm2705304wrj.112.2022.10.07.12.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Oct 2022 12:47:46 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915/gem: remove redundant assignments to variable ret
+Date:   Fri,  7 Oct 2022 20:47:45 +0100
+Message-Id: <20221007194745.2749277-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <fbb39e4354434cb99b6f6731cab2e0c9@AcuMS.aculab.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/05, David Laight wrote:
->From: Enzo Matsumiya
->> Sent: 04 October 2022 15:23
->>
->> Hi Usama,
->>
->> On 10/04, Muhammad Usama Anjum wrote:
->> >Don't initialize the rc as its value is being overwritten before its
->> >use.
->>
->> Being bitten by an unitialized variable bug as recent as 2 days ago, I'd
->> say this is a step backwards from the "best practices" POV.
->
->Depends on your POV.
+The variable ret is being assigned with a value that is never read
+both before and after a while-loop. The variable is being re-assigned
+inside the while-loop and afterwards on the call to the function
+i915_gem_object_lock_interruptible. Remove the redundants assignments.
 
-My POV was, considering "unitialized variables" is a _whole_ class of
-security bugs, a patch to specifically deinitialize a variable is pretty
-much like saying "let's leave this to chance".
+Cleans up clang scan-build warnings:
 
-https://cwe.mitre.org/data/definitions/457.html
+warning: Although the value stored to 'ret' is used in the
+enclosing expression, the value is never actually read
+from 'ret' [deadcode.DeadStores]
 
->If you don't initialise locals there is a fair chance that the
->compiler will detect buggy code.
->
->If you initialise them you get well defined behaviour - but
->the compiler won't find bugs for you.
->
->Mostly the kernel is in the first camp.
+warning: Value stored to 'ret' is never read [deadcode.DeadStores]
 
-My money is on the smaller unfair chances that the compiler cannot catch
-even the smallest bit of complexity of uninitialized use.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/i915/gem/i915_gem_userptr.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Also, initializing something to 0/NULL will, most of the time, if at all,
-be "just" a bug, whereas an uninitialized variable bug might turn into a
-security bug and even go unnoticed for years.
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
+index d4398948f016..b7e24476a0fd 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
+@@ -292,7 +292,7 @@ int i915_gem_object_userptr_submit_init(struct drm_i915_gem_object *obj)
+ 	if (!i915_gem_object_is_readonly(obj))
+ 		gup_flags |= FOLL_WRITE;
+ 
+-	pinned = ret = 0;
++	pinned = 0;
+ 	while (pinned < num_pages) {
+ 		ret = pin_user_pages_fast(obj->userptr.ptr + pinned * PAGE_SIZE,
+ 					  num_pages - pinned, gup_flags,
+@@ -302,7 +302,6 @@ int i915_gem_object_userptr_submit_init(struct drm_i915_gem_object *obj)
+ 
+ 		pinned += ret;
+ 	}
+-	ret = 0;
+ 
+ 	ret = i915_gem_object_lock_interruptible(obj, NULL);
+ 	if (ret)
+-- 
+2.37.3
 
-Anyway, this patch got merged and I seem to be alone with this
-concern...
-
-
->	David
-
-Cheers,
-
-Enzo
