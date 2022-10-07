@@ -2,88 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2D4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 20:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA87C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 20:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229566AbiJGUno (ORCPT
+        id S229703AbiJGUuK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Oct 2022 16:43:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35660 "EHLO
+        Fri, 7 Oct 2022 16:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiJGUnn (ORCPT
+        with ESMTP id S229469AbiJGUuJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Oct 2022 16:43:43 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07D0CA8798;
-        Fri,  7 Oct 2022 13:43:42 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id bu30so8848790wrb.8;
-        Fri, 07 Oct 2022 13:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6etltRDJaMEsXq7CgGpxh6ihdfKctaGSXtyFke3/FDw=;
-        b=TndZ+muxYZ0cI2pBO/BHBtusqwEKHvBzCVDFUTKaC6imQsrzORraDPI9sULCMl2L/w
-         N6EbZeAw66GWtUt0LTMLRefgGgQzf7TDnQumotQgYlGFtvOW/32J9p0YI6HnRa4/AJrv
-         IpuIpZzMFxT3O48GESXSxbZ/veeMqERQ+feI2Gx7N+019IA7RmGroZxfKC/vEhucCA9d
-         ab1fgQ9fbTW0uu8yas1vS9+/Nj6m4NgkRVesu45yUSmUdrzgVat+1vixgtlP0Bnyh4yg
-         u2olFX9MmpiNHJiD4vZgdWfouNHmRxvqdNZQVUdCIFCI2zuYdQLp27581SpU5gp1Hoxi
-         T7vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6etltRDJaMEsXq7CgGpxh6ihdfKctaGSXtyFke3/FDw=;
-        b=ERL54xv9UBZ5FmctdrbpkMWym8jfyJGlhQMyEUwTvYZLuHjvyB+vxlJ0oSO8xlbF8x
-         nybiI2YqdwxXzSmi9LZkcWjjb5iEv7Yv0IlqRR6+xrq2LY8aritkjsBvdbVuAGOOWWsI
-         CqeHPDk6JRnniNobd9dCV7mk+panseLPXaIoASjwU8Or4BN/CShRA8wIRmej6NP7W52I
-         RA0aqK71R/wdlvVZcbnrS2BJjUEytHWtgIz735ISS1Fjah2sTwkVv+gPaLQdUebDbHWK
-         riGqNqXPZF3DYij/i91aaEVC4W1jXCYePT/GLlmPK4Q/WP+LHTLruM7edClGHvSNpzpL
-         z5Tg==
-X-Gm-Message-State: ACrzQf3Z0/I6YI6pPOKR86dzZ4lEwW1wK112UAqYssbWqkId6ITzxGfW
-        AiSmbqw0zeyTZ7nDRUxdq8k=
-X-Google-Smtp-Source: AMsMyM6OWxg7nz4QaZKt8xJN2Wb98XGb7qMQC4ayyZ2d06mFVmFv6hn/YfYezssEsO01kvTnsk0gzQ==
-X-Received: by 2002:adf:f58b:0:b0:22e:3c4:cf83 with SMTP id f11-20020adff58b000000b0022e03c4cf83mr4572862wro.379.1665175420392;
-        Fri, 07 Oct 2022 13:43:40 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id s10-20020a5d6a8a000000b0022a9246c853sm2841738wru.41.2022.10.07.13.43.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 13:43:40 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] init: Kconfig: Fix spelling mistake "satify" -> "satisfy"
-Date:   Fri,  7 Oct 2022 21:43:39 +0100
-Message-Id: <20221007204339.2757753-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Fri, 7 Oct 2022 16:50:09 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B0C58B69;
+        Fri,  7 Oct 2022 13:50:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 8EA51CE1923;
+        Fri,  7 Oct 2022 20:50:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF73CC433D6;
+        Fri,  7 Oct 2022 20:50:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665175804;
+        bh=0COepWKyJnS9dnJU4MRagprS9XKGb+mdMm+zs9Dr6HE=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=R/n6C/ZHW3VrvpAReWY3qdvA79riZ/1MusojdeFSgo0zXBaJuWF7/EsFlejjbdhbA
+         HfYNa/R/vjeOfG/cbXSRt/c/QWLPU3V9wvdIj+Wvl9FQq6g5Rm2k99ZyvUKGNKOS50
+         w2TSPMmU0MRzpxFZu/fxXw5XDLhjbB78YGRG8IOt+9TnWwAHBD6KJEItHTx8IENWFn
+         4TlrGPMGu2JRkkeI2o5Xdt0DmziV+Gb4TybLkj5whz0J+5Pniku6VSb3hsWPNtpGeT
+         zf/+7P5+ET0o/PlhsGhQzf9/LrhWMPJyBCcAgWVN6rw25vZiipnF+cWQsRxAWgENp5
+         VpRZ1Y7utai9A==
+Date:   Fri, 7 Oct 2022 13:50:01 -0700 (PDT)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
+To:     Colin Ian King <colin.i.king@gmail.com>
+cc:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+        xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xen: Kconfig: Fix spelling mistake "Maxmium" ->
+ "Maximum"
+In-Reply-To: <20221007203500.2756787-1-colin.i.king@gmail.com>
+Message-ID: <alpine.DEB.2.22.394.2210071349510.3690179@ubuntu-linux-20-04-desktop>
+References: <20221007203500.2756787-1-colin.i.king@gmail.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a Kconfig description. Fix it.
+On Fri, 7 Oct 2022, Colin Ian King wrote:
+> There is a spelling mistake in a Kconfig description. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- init/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Stefano Stabellini <sstabellini@kernel.org>
 
-diff --git a/init/Kconfig b/init/Kconfig
-index a19314933e54..645e70829441 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -72,7 +72,7 @@ config RUST_IS_AVAILABLE
- 	  This shows whether a suitable Rust toolchain is available (found).
- 
- 	  Please see Documentation/rust/quick-start.rst for instructions on how
--	  to satify the build requirements of Rust support.
-+	  to satisfy the build requirements of Rust support.
- 
- 	  In particular, the Makefile target 'rustavailable' is useful to check
- 	  why the Rust toolchain is not being detected.
--- 
-2.37.3
 
+> ---
+>  drivers/xen/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+> index a65bd92121a5..d5d7c402b651 100644
+> --- a/drivers/xen/Kconfig
+> +++ b/drivers/xen/Kconfig
+> @@ -56,7 +56,7 @@ config XEN_MEMORY_HOTPLUG_LIMIT
+>  	depends on XEN_HAVE_PVMMU
+>  	depends on MEMORY_HOTPLUG
+>  	help
+> -	  Maxmium amount of memory (in GiB) that a PV guest can be
+> +	  Maximum amount of memory (in GiB) that a PV guest can be
+>  	  expanded to when using memory hotplug.
+>  
+>  	  A PV guest can have more memory than this limit if is
+> -- 
+> 2.37.3
+> 
