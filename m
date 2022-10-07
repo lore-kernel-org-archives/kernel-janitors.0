@@ -2,124 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240ABC43217
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 09:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FDFC433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 13:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229556AbiJGJ0P (ORCPT
+        id S229852AbiJGNPm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Oct 2022 05:26:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59550 "EHLO
+        Fri, 7 Oct 2022 09:15:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbiJGJ0M (ORCPT
+        with ESMTP id S229666AbiJGNPl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Oct 2022 05:26:12 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B844F2513;
-        Fri,  7 Oct 2022 02:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665134771; x=1696670771;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YIsvu8HuZoKfT0WBNxjXL2VasbVdSxWppe8Gs3rIq6U=;
-  b=lgV+Escms5zyViBvmedV3BHNjjb3FjjYj3Vz3SzYv4k0JXq+4hjSlm7Z
-   r4wxpTH0Ri9xpOMDvtHwj7d93ePr3ndqye1fjavDVQQ+SETk4itjJWcSm
-   wa8rwMZIT/8eJXO8VmESYry5dyAie8TXc4x4yNV3pM5aWwoQPO3bkgpkS
-   5FwlBOd0Tn2PaEuo4c362qsQW98fTFbIC1/XD4vUU2g+dv369hvJQlOyO
-   kia5cm/CgIT7PszSeLeDt+YUCfvMLXWgB9lh/d1JZONjtIsUmsVYuIlsY
-   aADoUXeW7RL6U688rIGXycyhSIPVhJPCvgocB1YG8oOBtTC77bqJsmGC+
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="302414297"
-X-IronPort-AV: E=Sophos;i="5.95,166,1661842800"; 
-   d="scan'208";a="302414297"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2022 02:26:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="658277156"
-X-IronPort-AV: E=Sophos;i="5.95,166,1661842800"; 
-   d="scan'208";a="658277156"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 07 Oct 2022 02:26:03 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 6645E17E; Fri,  7 Oct 2022 12:26:23 +0300 (EEST)
-Date:   Fri, 7 Oct 2022 12:26:23 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph B??hmwalder <christoph.boehmwalder@linbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Helge Deller <deller@gmx.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Marco Elver <elver@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Graf <tgraf@suug.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>,
-        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mm@kvack.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-nvme@lists.infradead.org, linux-parisc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        loongarch@lists.linux.dev, netdev@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        Toke H??iland-J??rgensen <toke@toke.dk>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3 3/5] treewide: use get_random_u32() when possible
-Message-ID: <Yz/wv0sqBR+J+jy+@black.fi.intel.com>
-References: <20221006165346.73159-1-Jason@zx2c4.com>
- <20221006165346.73159-4-Jason@zx2c4.com>
+        Fri, 7 Oct 2022 09:15:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E73784E7E;
+        Fri,  7 Oct 2022 06:15:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ED40BB822E4;
+        Fri,  7 Oct 2022 13:15:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 311D1C433C1;
+        Fri,  7 Oct 2022 13:15:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665148537;
+        bh=qDQjV6c5Y6GnUrWjc3kbcVPC14TyP0441OSeC6p4DQg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XxoCU85jZtz70BMnbtoU6br731dgFcwenXJ8AKlCa6yCCT45HZ4emadkfwtbf0AOa
+         toktV6MSku47ocMv/Y0uiBQZAjd432DmelmNgC8IsGkan6jGhWagCf96WAt26OJlPJ
+         /jqvHud+uzHd1Wc8K6vwUT89S7HxanKgoACJ3BJo8KEKKlt7mfIi/hderJVlJa9h74
+         Wyh1SlZg/Eovvx7Rg5Kw+oopB7nChyQlGgjxasJcowMZamSizQOD71tN+nZn2azIHm
+         TrOiz5Gk2XKwGBKxo6Flgcmm2xShM9NzXht465PIBpDKwBPTiKM5LJvHhk39rx+N1/
+         +tsMloR27o6zw==
+Date:   Fri, 7 Oct 2022 14:15:32 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Sun Ke <sunke32@huawei.com>, catalin.marinas@arm.com
+Cc:     mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        xueshuai@linux.alibaba.com
+Subject: Re: [PATCH] drivers/perf: fix return value check in
+ ali_drw_pmu_probe()
+Message-ID: <20221007131531.GA26341@willie-the-truck>
+References: <20220924032127.313156-1-sunke32@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221006165346.73159-4-Jason@zx2c4.com>
+In-Reply-To: <20220924032127.313156-1-sunke32@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 06, 2022 at 10:53:44AM -0600, Jason A. Donenfeld wrote:
->  drivers/thunderbolt/xdomain.c                  |  2 +-
+On Sat, Sep 24, 2022 at 11:21:27AM +0800, Sun Ke wrote:
+> In case of error, devm_ioremap_resource() returns ERR_PTR(),
+> and never returns NULL. The NULL test in the return value
+> check should be replaced with IS_ERR().
+> 
+> Fixes: cf7b61073e45 ("drivers/perf: add DDR Sub-System Driveway PMU driver for Yitian 710 SoC")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
+> ---
+>  drivers/perf/alibaba_uncore_drw_pmu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/perf/alibaba_uncore_drw_pmu.c b/drivers/perf/alibaba_uncore_drw_pmu.c
+> index 82729b874f09..a7689fecb49d 100644
+> --- a/drivers/perf/alibaba_uncore_drw_pmu.c
+> +++ b/drivers/perf/alibaba_uncore_drw_pmu.c
+> @@ -658,8 +658,8 @@ static int ali_drw_pmu_probe(struct platform_device *pdev)
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	drw_pmu->cfg_base = devm_ioremap_resource(&pdev->dev, res);
+> -	if (!drw_pmu->cfg_base)
+> -		return -ENOMEM;
+> +	if (IS_ERR(drw_pmu->cfg_base))
+> +		return PTR_ERR(drw_pmu->cfg_base);
+>  
+>  	name = devm_kasprintf(drw_pmu->dev, GFP_KERNEL, "ali_drw_%llx",
+>  			      (u64) (res->start >> ALI_DRW_PMU_PA_SHIFT));
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Will Deacon <will@kernel.org>
+
+Catalin can pick this one up as a fix.
+
+Cheers,
+
+Will
