@@ -2,61 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 249D6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 20:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3B7C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 20:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230044AbiJGUcQ (ORCPT
+        id S229801AbiJGUfJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Oct 2022 16:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44570 "EHLO
+        Fri, 7 Oct 2022 16:35:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbiJGUcP (ORCPT
+        with ESMTP id S229559AbiJGUfG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Oct 2022 16:32:15 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B3FA127BCE;
-        Fri,  7 Oct 2022 13:32:13 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id r13so8808455wrj.11;
-        Fri, 07 Oct 2022 13:32:13 -0700 (PDT)
+        Fri, 7 Oct 2022 16:35:06 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07E84151C;
+        Fri,  7 Oct 2022 13:35:02 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id iv17so3542287wmb.4;
+        Fri, 07 Oct 2022 13:35:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gXEcZPe4bJb80xhYonDvyQ0ipj3DaBfk3EpBJ+supA=;
-        b=Cy16cL0XaMy3pgHoRHW6fH5o95pZcbgm8uOsUyfNFq5ZTA0elnT1eVh689hsyUrITw
-         vAx5d6Hm3cd6vi2QtkvpSO1QxNd6clQ9r6uv4C90jG1JBEIHgJP+oaxw+932pSgpJpI2
-         pZDwVT8fxk8FopDp1ndb8lDew9gyFZbyjY0IxHyHjzqf/LHkJug5LwLfuMdX5wMRY0KO
-         77QkzuZj25/krUrcHf3TN0oZ5XgetWOPUlGWsprzcRp1ycoB6X7FWabUhUe9NPo2xtp+
-         xFQTsS8U7hcOAiwt3hsfRJeb02M7yCm9Mopdv4/vW/rtKC0THFGVXO5XT/+Q383nH4vp
-         50xA==
+        bh=eAZ+qkXDXQxhybmpEVudKGXqy+FOYvvtvTW3/3P6xc4=;
+        b=OEH5qQ9HbftMfggzW1MXzuzAbSXlsGWSI8v2Y7HW6NJ9gyPAy+DbHUdn1YOVoE7Q2S
+         OeEwH6yXMTGDC8b998q7Lp4o9s1oMt4K6pu04HBI7G9D/XdocUnSMjVv8OGoXNWGRMBN
+         qW15Whnb5fAgQH47L/TMvxX2wMYtZZGe2uk8R8DMBv5YAhUDhOmnNk0w2/4Xw8DYE5A3
+         Oqxt2KEBMxFf+j+quLL+QW/2W3JUZoUv0SXZHZiZI+MGnLSkEZQWV8UHB6plAwQ1iIb4
+         8FI4xY2mUJjcRF6ASxESDbP6leSAmZc36/agmiv7gsD3wT8d6+DeAAxdmk9+bEz94Ffg
+         tI/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0gXEcZPe4bJb80xhYonDvyQ0ipj3DaBfk3EpBJ+supA=;
-        b=qIem4YDpPsKuqr7TVpwDNVcMrKahJvnIycbLzDZWtVJI6knHVf2/IWtQFC+KDsJIIv
-         AYy8tqAxBs5NEh4HX/9xQjmeSt9fILYc2q0e5djXarflI2611i7um3WBXNDC56cLb6NR
-         qD5hd3Ayr6uM0iymwzIGDgmBBufNQNcw+yEMwQTlMmrtf6I5aiNzDBV5JGKPNJzD4IdI
-         Jf9XkSomdl+ymfUrDiNciAEjoWSDl2GYf/jjrHwHXrPaXa18njWfjDbeatLoTzVIsC9w
-         URKQ93yxB/fEqEFoBPhkl46zubIyuhR/O0nabL+fpLWIFPuEgpHU4nghLoXlK/pFCzC1
-         ywdg==
-X-Gm-Message-State: ACrzQf0cfJ7PrFnADI+S7vH5dQoxj9KviWAxijbSD2SjHqv7aOWZmety
-        2zY7Fy7PMrXSPRl+aYPyV9E=
-X-Google-Smtp-Source: AMsMyM6SRikRdH9On/AzxVsgtx46zh57g0ejS2XRsXPzn3xpQ9EjFjIZVz9k2N/fF7yDXJ2GgvEYXA==
-X-Received: by 2002:a5d:6d08:0:b0:22c:cf20:387d with SMTP id e8-20020a5d6d08000000b0022ccf20387dmr4394903wrq.518.1665174731783;
-        Fri, 07 Oct 2022 13:32:11 -0700 (PDT)
+        bh=eAZ+qkXDXQxhybmpEVudKGXqy+FOYvvtvTW3/3P6xc4=;
+        b=BHoJItFATMXt0O6w8O39JmiHeHjE30hi1spPQA19GpjAZ/qnQia8G3XfYG5izpr77+
+         lpysOaQvixtJ2LBrn9TlOJu/mSOMU8AgQ48lsD9Iyx5DJ5T5BHo5pO+CnwceSPbcIKyu
+         cX6xWThVFkEDq/VY6f8agv9+psama9EAk9Ts6Q7egFAURvvb6/G6n+Oa36uqV3PCYEyC
+         N6QWXbq2xpNbPTTc3WvKQs/ukt1U+DByEDx64hGwSv60/3nBRRcq0cbdPC9lIlGmrDML
+         ePtQpQTJPUctdYKOf/hrt8zUj2TIXP3wFP5GJ8VKX/7oM5fAgNW7yDN06tpIW66tAzMJ
+         z+Aw==
+X-Gm-Message-State: ACrzQf1nXKgxonbBfpgV9aOXsUMimJspdoKVU3Rshk2FSgpXiuSnZ9+T
+        nvONQhJhXyjcRt0kzBtM07Q=
+X-Google-Smtp-Source: AMsMyM4CKIHDZoGddh2wMguI39VshoESTcUZatEZKQ9RPfSxxCAvYDZIiTWTWyr5m5Cyec5F076sYg==
+X-Received: by 2002:a05:600c:524b:b0:3b4:8c0c:f3b6 with SMTP id fc11-20020a05600c524b00b003b48c0cf3b6mr12110120wmb.50.1665174901421;
+        Fri, 07 Oct 2022 13:35:01 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id co11-20020a0560000a0b00b00228d52b935asm2908728wrb.71.2022.10.07.13.32.10
+        by smtp.gmail.com with ESMTPSA id q6-20020a05600c46c600b003c3c2df83ddsm1603609wmo.26.2022.10.07.13.35.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 13:32:11 -0700 (PDT)
+        Fri, 07 Oct 2022 13:35:00 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
+To:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+        xen-devel@lists.xenproject.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] USB: host: Kconfig: Fix spelling mistake "firwmare" -> "firmware"
-Date:   Fri,  7 Oct 2022 21:32:10 +0100
-Message-Id: <20221007203210.2756505-1-colin.i.king@gmail.com>
+Subject: [PATCH] xen: Kconfig: Fix spelling mistake "Maxmium" -> "Maximum"
+Date:   Fri,  7 Oct 2022 21:35:00 +0100
+Message-Id: <20221007203500.2756787-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,22 +71,22 @@ There is a spelling mistake in a Kconfig description. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/usb/host/Kconfig | 2 +-
+ drivers/xen/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 247568bc17a2..8e8db71021a5 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -47,7 +47,7 @@ config USB_XHCI_PCI_RENESAS
- 	tristate "Support for additional Renesas xHCI controller with firmware"
+diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+index a65bd92121a5..d5d7c402b651 100644
+--- a/drivers/xen/Kconfig
++++ b/drivers/xen/Kconfig
+@@ -56,7 +56,7 @@ config XEN_MEMORY_HOTPLUG_LIMIT
+ 	depends on XEN_HAVE_PVMMU
+ 	depends on MEMORY_HOTPLUG
  	help
- 	  Say 'Y' to enable the support for the Renesas xHCI controller with
--	  firmware. Make sure you have the firwmare for the device and
-+	  firmware. Make sure you have the firmware for the device and
- 	  installed on your system for this device to work.
- 	  If unsure, say 'N'.
+-	  Maxmium amount of memory (in GiB) that a PV guest can be
++	  Maximum amount of memory (in GiB) that a PV guest can be
+ 	  expanded to when using memory hotplug.
  
+ 	  A PV guest can have more memory than this limit if is
 -- 
 2.37.3
 
