@@ -2,65 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8E4C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 20:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AA9C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 20:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbiJGUXm (ORCPT
+        id S229998AbiJGU0m (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Oct 2022 16:23:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55328 "EHLO
+        Fri, 7 Oct 2022 16:26:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiJGUXl (ORCPT
+        with ESMTP id S229708AbiJGU0k (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Oct 2022 16:23:41 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F400D9AFF5;
-        Fri,  7 Oct 2022 13:23:40 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id n35-20020a05600c502300b003b4924c6868so4903515wmr.1;
-        Fri, 07 Oct 2022 13:23:40 -0700 (PDT)
+        Fri, 7 Oct 2022 16:26:40 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FA4C104516;
+        Fri,  7 Oct 2022 13:26:39 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id l8so3533225wmi.2;
+        Fri, 07 Oct 2022 13:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N4kEDyMI5UqC9ruVvmCcki1BdeOTW3NtjCIMHC3n+Jg=;
-        b=Dtu4pTRs03tYHwEXfWsls4vcDbX2kF2YLFQXzp9UFGWcai2XfQqci6d2tNVUZwl6xD
-         azA5HQvB+G8u/RfN8kPHfH6y0VlDklPDTd4eVCeCqu/1kK6x6t1I6B9fKYdZO8HvihxR
-         kQ8Zf6QiW4TsoAElwkpr2S/FdZNX65olf6ULu3i5dK9t4qC9nOXwdPKHa77xQHEq1lWy
-         CI5qr8Bau4z0eFh16/8zNPKf96etRbqvHGTkhCy0aPAs8cGDaa3Dk0ZhP6Bp/sbFZAdn
-         lyasOa/K6eVTa8X0UIcQvr/J7w2rvEC1VJnNuaz+VHLj5pqVVITI3PdPBxKDsivUWJmH
-         pLeA==
+        bh=s4nmogirtyltfQSoXR32GlJP0e7NdBgg7DXc5ypMrBU=;
+        b=W7i6uxvUcLnG2Qo8Vi0KxgphxqjWBkkhEkmOX3Gp5zOkdgsx9g/QRKry0oAx5MlhsF
+         mNhbnJ4dsYU1lya+qi+RleqbCxP9QCj9155z+Tbq6jnLiR6fuhZyk1b+4lj1klZ+gC0y
+         kAQFGLmLr1GSO2RHGWNsB3omcB/jqaF1Pu8WOl1OZ5DDJKGiuhXMJfwuFieDx+aRdVfR
+         3cq0E3O8NOmeyJsdDSWYeDiuIbuRiP3kag7wdtjPcS7Sm3kLrmfddfj7366/81U/HROo
+         Pt15k/4z6L3u16HZ3fRSFJe/ZIPjlkzhzi3I618mK0tww3lxOgeIFbXPRVo0Ckv+7TZR
+         Ftfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N4kEDyMI5UqC9ruVvmCcki1BdeOTW3NtjCIMHC3n+Jg=;
-        b=LWNCZhpBnS08LACkwCGcfb19tzsWE55fUgyW8/qNpLMXVoMkxfMG21oyZwpl2NIHbg
-         WELlerFsofRdETzUl+NWkXGStAQljyvFou9NeE0b9mLTGEFe2lgnGPsRJjpzzzjpQyhp
-         Iq+ZS7P8iGg2jl4jBT62TtH7BIiorfiEfOlaSYzWu2Zzs054hxkmKYMN/PWVySq/1IBS
-         8SpfI1hpn0ek9ufQkSM3Lrk3I6pVt0k0cYO+2hD+sLLHaPr8icR8N34C7VjyzN/ufpE/
-         wiYLt8tM2S2YL9lhzlccY5FggO5oOa9QzkGGmqTSRQs1ck/yTc8pRW+UB70KMmYzfm2L
-         Cylw==
-X-Gm-Message-State: ACrzQf1eQ/XOXj/KHNco12xMwetOKf3Zb0gY6TX6Xho5xraKs6qXykS+
-        TiPwTBLn3/7Dx8MXl98GmMA=
-X-Google-Smtp-Source: AMsMyM7FOf1VWcxEIUUoCJsxtPAhOvtPxcgbzPEoWCDXoB8cgyQj/iZHvPe5+m/QMYSmDjAAGCIoog==
-X-Received: by 2002:a05:600c:229a:b0:3c0:130d:320d with SMTP id 26-20020a05600c229a00b003c0130d320dmr9394670wmf.51.1665174219391;
-        Fri, 07 Oct 2022 13:23:39 -0700 (PDT)
+        bh=s4nmogirtyltfQSoXR32GlJP0e7NdBgg7DXc5ypMrBU=;
+        b=0WJhQHlKuhryQSUpE/m6+VhZue77bMHymc/9ZpICcXpw4qnr9pjPr8pbp7mwk8cWWw
+         npgCb3qt5+9xmAgRBuDbQVTBboqAmOjfG8s8l8CXyPeCa1/JytczoOHHxIjD0hKwYBCH
+         OoNW6gpwYm1uN77zlqwNhTfDm5hCn2eGN+tfamvG4Ndj9hXonxTv5pPAUT0+6O9kaGM+
+         hQaJvv4uVBUs1UmM7sUuY9vmx6YjLbYmxoo98DPLha7vZTyYgL0Etxq2YVUs3KMzOtEl
+         KFFm/dVX2ggccr9HxZNxv3TYwyZVKHLVEQT8WJ3mnRM9IRYvz2vZXEHDe3xz60j08z2V
+         oaFA==
+X-Gm-Message-State: ACrzQf238myo5XTxRWzrMVMrI/rRdEUNQbkTMHDVCSdaMWP7oTQdQSLG
+        wR6DHdHuURLbQwHTPGy7p+s=
+X-Google-Smtp-Source: AMsMyM6lyZn4iK7TKa0hvIyQlDAoGLbdoQJJiMswOkFgPVvPL2pNNICf+GwgOZJgrDkBfbVtkZQvUA==
+X-Received: by 2002:a05:600c:510b:b0:3b5:4a6:9a32 with SMTP id o11-20020a05600c510b00b003b504a69a32mr4377418wms.81.1665174397788;
+        Fri, 07 Oct 2022 13:26:37 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m7-20020a056000008700b00228daaa84aesm2843561wrx.25.2022.10.07.13.23.38
+        by smtp.gmail.com with ESMTPSA id k10-20020adff5ca000000b0022ed6ff3a96sm2000349wrp.39.2022.10.07.13.26.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 13:23:38 -0700 (PDT)
+        Fri, 07 Oct 2022 13:26:37 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/msm: Kconfig: Fix spelling mistake "throught" -> "through"
-Date:   Fri,  7 Oct 2022 21:23:38 +0100
-Message-Id: <20221007202338.2755731-1-colin.i.king@gmail.com>
+Subject: [PATCH] nvmem: Kconfig: Fix spelling mistake "controlls" -> "controls"
+Date:   Fri,  7 Oct 2022 21:26:36 +0100
+Message-Id: <20221007202636.2755985-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -73,22 +68,22 @@ There is a spelling mistake in a Kconfig description. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/msm/Kconfig | 2 +-
+ drivers/nvmem/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-index 4e0cbd682725..3c9dfdb0b328 100644
---- a/drivers/gpu/drm/msm/Kconfig
-+++ b/drivers/gpu/drm/msm/Kconfig
-@@ -155,7 +155,7 @@ config DRM_MSM_HDMI
- 	  Compile in support for the HDMI output MSM DRM driver. It can
- 	  be a primary or a secondary display on device. Note that this is used
- 	  only for the direct HDMI output. If the device outputs HDMI data
--	  throught some kind of DSI-to-HDMI bridge, this option can be disabled.
-+	  through some kind of DSI-to-HDMI bridge, this option can be disabled.
+diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+index ec8a49c04003..755f551426b5 100644
+--- a/drivers/nvmem/Kconfig
++++ b/drivers/nvmem/Kconfig
+@@ -164,7 +164,7 @@ config NVMEM_MICROCHIP_OTPC
+ 	depends on ARCH_AT91 || COMPILE_TEST
+ 	help
+ 	  This driver enable the OTP controller available on Microchip SAMA7G5
+-	  SoCs. It controlls the access to the OTP memory connected to it.
++	  SoCs. It controls the access to the OTP memory connected to it.
  
- config DRM_MSM_HDMI_HDCP
- 	bool "Enable HDMI HDCP support in MSM DRM driver"
+ config NVMEM_MTK_EFUSE
+ 	tristate "Mediatek SoCs EFUSE support"
 -- 
 2.37.3
 
