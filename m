@@ -2,87 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FDFC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 13:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB58C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Oct 2022 13:18:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229852AbiJGNPm (ORCPT
+        id S229514AbiJGNSs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Oct 2022 09:15:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32824 "EHLO
+        Fri, 7 Oct 2022 09:18:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbiJGNPl (ORCPT
+        with ESMTP id S229461AbiJGNSr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Oct 2022 09:15:41 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E73784E7E;
-        Fri,  7 Oct 2022 06:15:40 -0700 (PDT)
+        Fri, 7 Oct 2022 09:18:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 167DCCBFFD;
+        Fri,  7 Oct 2022 06:18:46 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ED40BB822E4;
-        Fri,  7 Oct 2022 13:15:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 311D1C433C1;
-        Fri,  7 Oct 2022 13:15:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 977C061316;
+        Fri,  7 Oct 2022 13:18:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4248DC433D6;
+        Fri,  7 Oct 2022 13:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665148537;
-        bh=qDQjV6c5Y6GnUrWjc3kbcVPC14TyP0441OSeC6p4DQg=;
+        s=k20201202; t=1665148725;
+        bh=8EM0VhfZpgIlWPgAdUMjVvdT66pVAie47ABJTZJS8mc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XxoCU85jZtz70BMnbtoU6br731dgFcwenXJ8AKlCa6yCCT45HZ4emadkfwtbf0AOa
-         toktV6MSku47ocMv/Y0uiBQZAjd432DmelmNgC8IsGkan6jGhWagCf96WAt26OJlPJ
-         /jqvHud+uzHd1Wc8K6vwUT89S7HxanKgoACJ3BJo8KEKKlt7mfIi/hderJVlJa9h74
-         Wyh1SlZg/Eovvx7Rg5Kw+oopB7nChyQlGgjxasJcowMZamSizQOD71tN+nZn2azIHm
-         TrOiz5Gk2XKwGBKxo6Flgcmm2xShM9NzXht465PIBpDKwBPTiKM5LJvHhk39rx+N1/
-         +tsMloR27o6zw==
-Date:   Fri, 7 Oct 2022 14:15:32 +0100
+        b=fmVR6gHTJt3aVmfmhR8NTy5NbikusmaylP8QASv1qiH2ojlCye56yffJ27JpbhOzB
+         bg8ts4x9TnJhC0FE53fmJiwMzeTC7ABeLRZduK05n5zR6+vNIBSj46zRf8wQrye7sl
+         AESc6Dxf+GbxFTutFztk6sLsK4IJtyqwA2jPuxHcLbrTUTxmFzu1ClfoDgwZxrBSnn
+         5Bq2kk/rF9OzvM+R7wT8IDUkJNMNhZb6S4DNkX3ksyUYDfY01zLznhrL9n3W5BYE+o
+         lbFx7facMfMBg84BicOEZAtJAIXiCJGgLAkYbYl5uRKARCVKlzcpVgxKHxtWFQZXis
+         X8L0I4BdjBEdg==
+Date:   Fri, 7 Oct 2022 14:18:39 +0100
 From:   Will Deacon <will@kernel.org>
-To:     Sun Ke <sunke32@huawei.com>, catalin.marinas@arm.com
-Cc:     mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        xueshuai@linux.alibaba.com
-Subject: Re: [PATCH] drivers/perf: fix return value check in
- ali_drw_pmu_probe()
-Message-ID: <20221007131531.GA26341@willie-the-truck>
-References: <20220924032127.313156-1-sunke32@huawei.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, catalin.marinas@arm.com
+Cc:     Shuai Xue <xueshuai@linux.alibaba.com>,
+        Hongbo Yao <yaohongbo@linux.alibaba.com>,
+        Neng Chen <nengchen@linux.alibaba.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: rectify file entry in ALIBABA PMU DRIVER
+Message-ID: <20221007131838.GC26341@willie-the-truck>
+References: <20220929122937.20132-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220924032127.313156-1-sunke32@huawei.com>
+In-Reply-To: <20220929122937.20132-1-lukas.bulwahn@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Sep 24, 2022 at 11:21:27AM +0800, Sun Ke wrote:
-> In case of error, devm_ioremap_resource() returns ERR_PTR(),
-> and never returns NULL. The NULL test in the return value
-> check should be replaced with IS_ERR().
+On Thu, Sep 29, 2022 at 02:29:37PM +0200, Lukas Bulwahn wrote:
+> Commit cf7b61073e45 ("drivers/perf: add DDR Sub-System Driveway PMU driver
+> for Yitian 710 SoC") adds the DDR Sub-System Driveway PMU driver here:
 > 
-> Fixes: cf7b61073e45 ("drivers/perf: add DDR Sub-System Driveway PMU driver for Yitian 710 SoC")
-> Signed-off-by: Sun Ke <sunke32@huawei.com>
+>   drivers/perf/alibaba_uncore_drw_pmu.c
+> 
+> The file entry in MAINTAINERS for the ALIBABA PMU DRIVER, introduced with
+> commit d813a19e7d2e ("MAINTAINERS: add maintainers for Alibaba' T-Head PMU
+> driver"), however refers to:
+> 
+>   drivers/perf/alibaba_uncore_dwr_pmu.c
+> 
+> Note the swapping of characters.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken file pattern.
+> 
+> Repair this file entry in ALIBABA PMU DRIVER.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  drivers/perf/alibaba_uncore_drw_pmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/perf/alibaba_uncore_drw_pmu.c b/drivers/perf/alibaba_uncore_drw_pmu.c
-> index 82729b874f09..a7689fecb49d 100644
-> --- a/drivers/perf/alibaba_uncore_drw_pmu.c
-> +++ b/drivers/perf/alibaba_uncore_drw_pmu.c
-> @@ -658,8 +658,8 @@ static int ali_drw_pmu_probe(struct platform_device *pdev)
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 485d66af5c9a..e14e37c7c734 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -754,7 +754,7 @@ ALIBABA PMU DRIVER
+>  M:	Shuai Xue <xueshuai@linux.alibaba.com>
+>  S:	Supported
+>  F:	Documentation/admin-guide/perf/alibaba_pmu.rst
+> -F:	drivers/perf/alibaba_uncore_dwr_pmu.c
+> +F:	drivers/perf/alibaba_uncore_drw_pmu.c
 >  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	drw_pmu->cfg_base = devm_ioremap_resource(&pdev->dev, res);
-> -	if (!drw_pmu->cfg_base)
-> -		return -ENOMEM;
-> +	if (IS_ERR(drw_pmu->cfg_base))
-> +		return PTR_ERR(drw_pmu->cfg_base);
->  
->  	name = devm_kasprintf(drw_pmu->dev, GFP_KERNEL, "ali_drw_%llx",
->  			      (u64) (res->start >> ALI_DRW_PMU_PA_SHIFT));
+>  ALIENWARE WMI DRIVER
+>  L:	Dell.Client.Kernel@dell.com
 
 Acked-by: Will Deacon <will@kernel.org>
-
-Catalin can pick this one up as a fix.
-
-Cheers,
 
 Will
