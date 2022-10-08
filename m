@@ -2,113 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495A0C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Oct 2022 11:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30287C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Oct 2022 14:58:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229699AbiJHLzg (ORCPT
+        id S229617AbiJHO61 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 Oct 2022 07:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60326 "EHLO
+        Sat, 8 Oct 2022 10:58:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbiJHLzf (ORCPT
+        with ESMTP id S229450AbiJHO60 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 Oct 2022 07:55:35 -0400
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 711F142D75
-        for <kernel-janitors@vger.kernel.org>; Sat,  8 Oct 2022 04:55:32 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id h8QOovA5ITyouh8QOoKFYq; Sat, 08 Oct 2022 13:55:27 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Oct 2022 13:55:27 +0200
-X-ME-IP: 86.243.100.34
-Message-ID: <6a57b91b-8614-6596-ae0f-acce6a31d161@wanadoo.fr>
-Date:   Sat, 8 Oct 2022 13:55:24 +0200
+        Sat, 8 Oct 2022 10:58:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE11540BCC;
+        Sat,  8 Oct 2022 07:58:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 44CD360684;
+        Sat,  8 Oct 2022 14:58:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C5E5C433D7;
+        Sat,  8 Oct 2022 14:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665241104;
+        bh=aPQLhQqDhgqtTeKKu7I6BgunfElRN0VLe4/LVpiJj8Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SJ2U+BG/re37qpGCtt3ylT+on4KjrFXyfCEuFahc5V7IeLfifDA0XOELAlPeDySsJ
+         3AsHED0Kcw3KLM0Ey2pDyesh5MYq1/DSgeMUceEf+7gi8InvmRem8uCuvT3yel+g+y
+         X/ctAd9i3bWuByZjqvZMGibtLBNGuHOf512C/GGzlxbt1JbonmV3ik4f+6VWeTK9xu
+         ORy8ieAJUrf5XMk9S07lgEzGb39APA3k1VAmNNoLaGpcIqGQnX3X6EKb5pM7As8vcG
+         Q+dcRO8RIWq1knxSL2smEIUPSObaTJMjGyyQonuCTEmgy65yEks2BQXS2XY2nD3U3F
+         m3zp/Q7kO6h0A==
+Received: by mail-ed1-f43.google.com with SMTP id m15so10491130edb.13;
+        Sat, 08 Oct 2022 07:58:24 -0700 (PDT)
+X-Gm-Message-State: ACrzQf2IPuLiNdcTk01Zy/QHjBBKfdcnrba/noLLdshByv0jaPySU/tB
+        FFYy91YUooRAaSLe/tfJnVkpZNZJiMsdWsRXBV0=
+X-Google-Smtp-Source: AMsMyM6tc39Kmj/GVcBx0J/xlI1xhKO7ntaFXB97jjzs9fTFqPC4XA07V2UJbpEf5LTfC+yYAolkU1xA83SO+5Ypajc=
+X-Received: by 2002:a05:6402:c81:b0:458:c428:173a with SMTP id
+ cm1-20020a0564020c8100b00458c428173amr9336461edb.298.1665241102794; Sat, 08
+ Oct 2022 07:58:22 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] drm/i915/perf: remove redundant variable 'taken'
-Content-Language: fr
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221007195345.2749911-1-colin.i.king@gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20221007195345.2749911-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20221007201939.2755407-1-colin.i.king@gmail.com>
+In-Reply-To: <20221007201939.2755407-1-colin.i.king@gmail.com>
+From:   Huacai Chen <chenhuacai@kernel.org>
+Date:   Sat, 8 Oct 2022 22:58:10 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H721Wfkam+_+evNRXyuaio9oGqQQaDO6t-T31UdNp8gSQ@mail.gmail.com>
+Message-ID: <CAAhV-H721Wfkam+_+evNRXyuaio9oGqQQaDO6t-T31UdNp8gSQ@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Kconfig: Fix spelling mistake "delibrately" -> "deliberately"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 07/10/2022 à 21:53, Colin Ian King a écrit :
-> The assignment to variable taken is redundant and so it can be
-> removed as well as the variable too.
-> 
-> Cleans up clang-scan build warnings:
-> warning: Although the value stored to 'taken' is used in the enclosing
-> expression, the value is never actually read from 'taken'
-> [deadcode.DeadStores]
+Queued for loongarch-next, thank you.
 
-Hi,
+Huacai
 
-#define OA_TAKEN(tail, head)	((tail - head) & (OA_BUFFER_SIZE - 1))
-
-So if the result is not used, maybe calling OA_TAKEN() can be removed as 
-well?
-It looks like a no-op in such a case.
-
-CJ
-
-> 
+On Sat, Oct 8, 2022 at 4:19 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> There is a spelling mistake in a commented section. Fix it.
+>
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   drivers/gpu/drm/i915/i915_perf.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_perf.c b/drivers/gpu/drm/i915/i915_perf.c
-> index 0defbb43ceea..15816df916c7 100644
-> --- a/drivers/gpu/drm/i915/i915_perf.c
-> +++ b/drivers/gpu/drm/i915/i915_perf.c
-> @@ -656,7 +656,6 @@ static int gen8_append_oa_reports(struct i915_perf_stream *stream,
->   	size_t start_offset = *offset;
->   	unsigned long flags;
->   	u32 head, tail;
-> -	u32 taken;
->   	int ret = 0;
->   
->   	if (drm_WARN_ON(&uncore->i915->drm, !stream->enabled))
-> @@ -692,7 +691,7 @@ static int gen8_append_oa_reports(struct i915_perf_stream *stream,
->   
->   
->   	for (/* none */;
-> -	     (taken = OA_TAKEN(tail, head));
-> +	     OA_TAKEN(tail, head);
->   	     head = (head + report_size) & mask) {
->   		u8 *report = oa_buf_base + head;
->   		u32 *report32 = (void *)report;
-> @@ -950,7 +949,6 @@ static int gen7_append_oa_reports(struct i915_perf_stream *stream,
->   	size_t start_offset = *offset;
->   	unsigned long flags;
->   	u32 head, tail;
-> -	u32 taken;
->   	int ret = 0;
->   
->   	if (drm_WARN_ON(&uncore->i915->drm, !stream->enabled))
-> @@ -984,7 +982,7 @@ static int gen7_append_oa_reports(struct i915_perf_stream *stream,
->   
->   
->   	for (/* none */;
-> -	     (taken = OA_TAKEN(tail, head));
-> +	     OA_TAKEN(tail, head);
->   	     head = (head + report_size) & mask) {
->   		u8 *report = oa_buf_base + head;
->   		u32 *report32 = (void *)report;
-
+>  arch/loongarch/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 898263224bbc..903096bd87f8 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -171,7 +171,7 @@ config STACKTRACE_SUPPORT
+>         bool
+>         default y
+>
+> -# MACH_LOONGSON32 and MACH_LOONGSON64 are delibrately carried over from the
+> +# MACH_LOONGSON32 and MACH_LOONGSON64 are deliberately carried over from the
+>  # MIPS Loongson code, to preserve Loongson-specific code paths in drivers that
+>  # are shared between architectures, and specifically expecting the symbols.
+>  config MACH_LOONGSON32
+> --
+> 2.37.3
+>
