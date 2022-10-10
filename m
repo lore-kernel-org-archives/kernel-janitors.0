@@ -2,98 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9009DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Oct 2022 14:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A95C43217
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Oct 2022 15:30:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229526AbiJJObZ (ORCPT
+        id S229648AbiJJPaJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Oct 2022 10:31:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50786 "EHLO
+        Mon, 10 Oct 2022 11:30:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiJJObZ (ORCPT
+        with ESMTP id S229507AbiJJPaI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Oct 2022 10:31:25 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18FBFB5C;
-        Mon, 10 Oct 2022 07:31:24 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id bp11so4574123wrb.9;
-        Mon, 10 Oct 2022 07:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9W6fJqaiY306Xcvj7NQVcBf2jidCS9KF6ZaE4FOoSAw=;
-        b=lFSLJNtZg7aySb11HILc8GRwsoQ8ITFGL56TkFHYScjObqvzH1OyVWcQ+IZhvj5VWn
-         g1cxvXRUOgYSbtZY5b9pEIlSBgLMZzDkqURWgjE1wmL9Cpq2u8aU0CKvmAtHoDNch0W1
-         DSloWwm4GKw/9uFpwtv4BsLLgHw98F1JMZG8yuvre9NSr6gFyjNPOfJAPfnK3EqKEjFD
-         vcXyIoww74oC3EqI7sNxNudq9xKtpVgjrpKS+eGKI9gSMtmMimrYhtcnDoenxQLLEGdm
-         Ut6NJZhcoJ/GO1cXlnVsMcF30aSVLxlqHfcAq7P8DrB700hXraCP10BUOqlr8J6lFipm
-         ZpKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9W6fJqaiY306Xcvj7NQVcBf2jidCS9KF6ZaE4FOoSAw=;
-        b=WjHA3X1XQATosKWlkiRBhRKY3FoVpbwEaGGGjliSx8Iib3wbyTqx0Pj/4euwFQLBXu
-         /pP//O5C9e+KaF1ryTPC1hvNK4BAmeQx5EHbJuzRlndfomSi2cQV/TFdJUheeskQpKkM
-         efr+EMDns3yNON074nDrji0v9jh//GtEQGbc639Q2nPO2rPlzOgWTIoCCt0kbLgq95wP
-         Y37pZZ92wGTU4VU1yiW4Geg7IUIiEfgYZ7LTDeqf2cu8IZdxu7o37yCBfmL1qoQKytPi
-         aKW3Nj3uW3N86C7QxzsASYvR776InSTti18BPgwnHkL4YlAassvQeQp8wPDu3oLXZ8Nb
-         nsSQ==
-X-Gm-Message-State: ACrzQf0mliUke/qNTaFvoYXgZX8JRDmn7iH9HjhYRXh9+85WsPx8RKmc
-        GbGR7bN0acohBm7XqtSXxRQ=
-X-Google-Smtp-Source: AMsMyM6ijEZJGwyQ7LKHbfjb62oWOOcJT2eu6knCIqMhkC/VbFM16rdd36p7YjBlYyjFpjpnzJW8PA==
-X-Received: by 2002:a05:6000:1887:b0:22e:5026:42c3 with SMTP id a7-20020a056000188700b0022e502642c3mr11667116wri.687.1665412282579;
-        Mon, 10 Oct 2022 07:31:22 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r17-20020a05600c459100b003b4a68645e9sm16223768wmo.34.2022.10.10.07.31.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Oct 2022 07:31:20 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, bllvm@lists.linux.dev
-Subject: [PATCH] xfs: remove redundant pointer lip
-Date:   Mon, 10 Oct 2022 15:31:19 +0100
-Message-Id: <20221010143119.3191249-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Mon, 10 Oct 2022 11:30:08 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8599B23BC3;
+        Mon, 10 Oct 2022 08:30:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 47750B80D84;
+        Mon, 10 Oct 2022 15:30:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D561CC433C1;
+        Mon, 10 Oct 2022 15:30:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665415801;
+        bh=xcnH61eTn1TVuj0oJVhLHyFXph2kYEMmECjczq4PB34=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PtWE8Uifv13Qudm5jiAB9FaT+Z8dSRcFMS6hElfYm/QUW3XINboR9Jn3TfZCoih/4
+         ugTiULEgK101llwSFnOZInlSwUo/tZIxyxnFBh6pHDUazv6XXJGYCaatsb0memBy/r
+         /fUoxy0ZXc49vV8oFbgZzJQaaxt8tVsT2L+X78SGdoTvYZAWnuR3ltEPsivmC2f6uy
+         QN5RhlEl0T+Vr/7cV4ddNkUEcLf0P0wTUVxhx2sJVBy8bM0AGzBrGq5aqtYaquNZtr
+         Wqwbp97+ic+TFaO7UxEbV+pGbPnnmu+OsnCjLrkG2wjYXBsi3ZHRlx/ny0oFtOd4Xj
+         c0rE2eCiQSIvQ==
+Date:   Mon, 10 Oct 2022 08:30:01 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        bllvm@lists.linux.dev
+Subject: Re: [PATCH] xfs: remove redundant pointer lip
+Message-ID: <Y0Q6eY8dYKxINS6G@magnolia>
+References: <20221010143119.3191249-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221010143119.3191249-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The assignment to pointer lip is not really required, the pointer lip
-is redundant and can be removed.
+On Mon, Oct 10, 2022 at 03:31:19PM +0100, Colin Ian King wrote:
+> The assignment to pointer lip is not really required, the pointer lip
+> is redundant and can be removed.
+> 
+> Cleans up clang-scan warning:
+> warning: Although the value stored to 'lip' is used in the enclosing
+> expression, the value is never actually read from 'lip'
+> [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  fs/xfs/xfs_trans_ail.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+> index 16fbf2a1144c..87db72758d1f 100644
+> --- a/fs/xfs/xfs_trans_ail.c
+> +++ b/fs/xfs/xfs_trans_ail.c
+> @@ -730,11 +730,10 @@ void
+>  xfs_ail_push_all_sync(
+>  	struct xfs_ail  *ailp)
+>  {
+> -	struct xfs_log_item	*lip;
+>  	DEFINE_WAIT(wait);
+>  
+>  	spin_lock(&ailp->ail_lock);
+> -	while ((lip = xfs_ail_max(ailp)) != NULL) {
+> +	while (xfs_ail_max(ailp)) {
 
-Cleans up clang-scan warning:
-warning: Although the value stored to 'lip' is used in the enclosing
-expression, the value is never actually read from 'lip'
-[deadcode.DeadStores]
+I've a slight stylistic preference for leaving the pointer comparison
+explicit here, but I agree that @lip is no longer needed.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/xfs/xfs_trans_ail.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+	while (xfs_ail_max(ailp) != NULL) {
 
-diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
-index 16fbf2a1144c..87db72758d1f 100644
---- a/fs/xfs/xfs_trans_ail.c
-+++ b/fs/xfs/xfs_trans_ail.c
-@@ -730,11 +730,10 @@ void
- xfs_ail_push_all_sync(
- 	struct xfs_ail  *ailp)
- {
--	struct xfs_log_item	*lip;
- 	DEFINE_WAIT(wait);
- 
- 	spin_lock(&ailp->ail_lock);
--	while ((lip = xfs_ail_max(ailp)) != NULL) {
-+	while (xfs_ail_max(ailp)) {
- 		prepare_to_wait(&ailp->ail_empty, &wait, TASK_UNINTERRUPTIBLE);
- 		wake_up_process(ailp->ail_task);
- 		spin_unlock(&ailp->ail_lock);
--- 
-2.37.3
+With that fixed,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
+--D
+
+>  		prepare_to_wait(&ailp->ail_empty, &wait, TASK_UNINTERRUPTIBLE);
+>  		wake_up_process(ailp->ail_task);
+>  		spin_unlock(&ailp->ail_lock);
+> -- 
+> 2.37.3
+> 
