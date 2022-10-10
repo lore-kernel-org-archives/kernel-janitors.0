@@ -2,94 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 947B4C43217
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Oct 2022 17:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 639A3C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Oct 2022 20:26:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229614AbiJJR5O (ORCPT
+        id S230054AbiJJU0b (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Oct 2022 13:57:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51486 "EHLO
+        Mon, 10 Oct 2022 16:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiJJR5M (ORCPT
+        with ESMTP id S229966AbiJJU0C (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Oct 2022 13:57:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C74F77E8C;
-        Mon, 10 Oct 2022 10:57:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B1BD760AFE;
-        Mon, 10 Oct 2022 17:57:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 124E7C433D6;
-        Mon, 10 Oct 2022 17:57:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665424631;
-        bh=M7074iTkISJ9LZPDfVJMFnThIn/SiCbzfEecQjj1gX8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iHHSQuNIjuhNfzwXDqX4y6wVGUARVjPgaMXSpcDwbQg6wd1xcBPk8tUn+23GqWF0a
-         HBRYrsSUShKP5LhuxNbclbJRMbkDTqwcYUR7xiw5Mu2JT+2z3LUCD0mUAnerLzWzLb
-         7GIVoEEQgIawZLEBtvxdk5Vs7e22tpI8HMc0XHFXMcwJiahqMpLXPSJ7Y6DXZD1U/i
-         TegnKNLRcIqr9A6Xk40RW89Dg3RQKg4f48t52B0ZcECoJa6IymRyLFHF8RshVqCMZ7
-         cXs5WgkCScM/laaRTMpOFr+UQqAeuu2LlZfo9FVLU4/bL91NekNHWvikAleJnM549y
-         vYfki7gdqcFjw==
-Date:   Mon, 10 Oct 2022 10:57:10 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2] xfs: remove redundant pointer lip
-Message-ID: <Y0Rc9ulPUJb77up6@magnolia>
-References: <20221010160515.3199641-1-colin.i.king@gmail.com>
+        Mon, 10 Oct 2022 16:26:02 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A234C20195;
+        Mon, 10 Oct 2022 13:24:55 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id fn7-20020a05600c688700b003b4fb113b86so7021583wmb.0;
+        Mon, 10 Oct 2022 13:24:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uitibauigOgCccEn2okfAVkQvelKUvNuPxyBgEXlDaY=;
+        b=et+EKQ2UH93E+D2uoLEYylnzEhMHPMcJkxCQ8Qa/drFfxI7ar+NuOEmoG2FdjVQLlw
+         RF5wo8jfcu8UzZlWh83Fcmo4HKc4GZu45be22mqPvKd9tWGz4MXbEzfB5pQ9B1CCovaW
+         H9RaLTOvsRCFcJnGUvx78D8OQGOAn3xJTIJIxwZ2EesqJEJv1RxC6yc1/c4oT8uxkQIC
+         rUd/cq/YAy50jhrgemql4uu85Nj8gP1JamZ/xUTv7A2gnQNcRgayy4b9AJtCTWjfOFu+
+         ZwGGzRL+y14SMldGbPEvL0iqqWi1liULDzAGeD5njltf0c7VWUu7HhjyiXhlp17tOd50
+         tN3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uitibauigOgCccEn2okfAVkQvelKUvNuPxyBgEXlDaY=;
+        b=FEy2WkT/q43hyp9n99Wy0qy2AZSXremelfxBmaBKsXraagZSpMPRH3Tq62dOOo6YlN
+         HVMhx1MlebhOC+ZT7/lQOwaqXeD7xeuhfWRRO6PJfCtyMV62Nz1guTJDxfLZuu2R6jhP
+         iQo/FALh/9BN572jFEKOWMcsnemxblJpOOoFK7an+ADs8BrF/QCsZGfMTuxfRcO0U431
+         v1AqstTbbloGRCCNJ52qTXbEXIN0R+jqxZar1xGHlTSwTJ9ag/8PJc9pIiOCOtHb0IWj
+         3lVsurgKfnK6t9TmIJdX5i43Y3TiuHFaQGfaEh1ZPCqb9sx58p5weQvhGN/WPmeB1Rel
+         5sLg==
+X-Gm-Message-State: ACrzQf3yAkW5Il5MAGI5hH0BXw1KC3/5VgCdVEe+vpBOGHzKcznfUSbY
+        qNFOziqgGHhCWqGupo463Hs=
+X-Google-Smtp-Source: AMsMyM7Ctoqe0b6wcneTHB7G8Dcs49YteOlWsepr5gtSZfUY+ICA0db2I9hR1ZA93IKJGc06hwuWFw==
+X-Received: by 2002:a05:600c:3492:b0:3b4:9fcc:cbb6 with SMTP id a18-20020a05600c349200b003b49fcccbb6mr21690521wmq.42.1665433465419;
+        Mon, 10 Oct 2022 13:24:25 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id u16-20020adfdd50000000b002238ea5750csm12193769wrm.72.2022.10.10.13.24.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Oct 2022 13:24:24 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] NFSD: Remove redundant assignment to variable host_err
+Date:   Mon, 10 Oct 2022 21:24:23 +0100
+Message-Id: <20221010202423.3221664-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221010160515.3199641-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 10, 2022 at 05:05:15PM +0100, Colin Ian King wrote:
-> The assignment to pointer lip is not really required, the pointer lip
-> is redundant and can be removed.
-> 
-> Cleans up clang-scan warning:
-> warning: Although the value stored to 'lip' is used in the enclosing
-> expression, the value is never actually read from 'lip'
-> [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Variable host_err is assigned a value that is never read, it is being
+re-assigned a value in every different execution path in the following
+switch statement. The assignment is redundant and can be removed.
 
-Looks good!
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Cleans up clang-scan warning:
+warning: Value stored to 'host_err' is never read [deadcode.DeadStores]
 
---D
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/nfsd/vfs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> ---
-> 
-> V2: Keep != NULL comparison for stylistic reasons, as suggested by
->     Darrick J. Wong
-> ---
->  fs/xfs/xfs_trans_ail.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
-> index 16fbf2a1144c..87db72758d1f 100644
-> --- a/fs/xfs/xfs_trans_ail.c
-> +++ b/fs/xfs/xfs_trans_ail.c
-> @@ -730,11 +730,10 @@ void
->  xfs_ail_push_all_sync(
->  	struct xfs_ail  *ailp)
->  {
-> -	struct xfs_log_item	*lip;
->  	DEFINE_WAIT(wait);
->  
->  	spin_lock(&ailp->ail_lock);
-> -	while ((lip = xfs_ail_max(ailp)) != NULL) {
-> +	while (xfs_ail_max(ailp) != NULL) {
->  		prepare_to_wait(&ailp->ail_empty, &wait, TASK_UNINTERRUPTIBLE);
->  		wake_up_process(ailp->ail_task);
->  		spin_unlock(&ailp->ail_lock);
-> -- 
-> 2.37.3
-> 
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index f650afedd67f..5093ae788f53 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1304,7 +1304,6 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 		iap->ia_mode &= ~current_umask();
+ 
+ 	err = 0;
+-	host_err = 0;
+ 	switch (type) {
+ 	case S_IFREG:
+ 		host_err = vfs_create(&init_user_ns, dirp, dchild, iap->ia_mode, true);
+-- 
+2.37.3
+
