@@ -2,148 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80085C43219
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Oct 2022 03:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D899AC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Oct 2022 09:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbiJKDAa (ORCPT
+        id S229451AbiJKJPC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Oct 2022 23:00:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35666 "EHLO
+        Tue, 11 Oct 2022 05:15:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbiJKDA1 (ORCPT
+        with ESMTP id S229453AbiJKJO7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Oct 2022 23:00:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8939C51425;
-        Mon, 10 Oct 2022 20:00:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C52046108C;
-        Tue, 11 Oct 2022 03:00:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 207E1C433D6;
-        Tue, 11 Oct 2022 03:00:18 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="HINC5krz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1665457216;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Qirw48xc/tsq9oJ9bN2wDgpC7gkOILHLI1FFvZKjy0g=;
-        b=HINC5krzVlg2RfBkI+DN4TfkkfdILG81+nGbG6H3ymULtvrDJBAAPyivNN5Ks6xLTRDgBj
-        St0npOJIqnMiQJAEsME6hn8HSGUVr7vaSgTvTLlUyVWoppp8tjC9zJyq6/W2qkBuApVnBr
-        cXYoav/TXzo4IDNClYviVzHvX/Qex3Y=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0a7ccddd (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Tue, 11 Oct 2022 03:00:16 +0000 (UTC)
-Date:   Mon, 10 Oct 2022 21:00:08 -0600
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     "Elliott, Robert (Servers)" <elliott@hpe.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "patches@lists.linux.dev" <patches@lists.linux.dev>,
-        Andreas Noever <andreas.noever@gmail.com>,
+        Tue, 11 Oct 2022 05:14:59 -0400
+Received: from mail.sf-mail.de (mail.sf-mail.de [IPv6:2a01:4f8:1c17:6fae:616d:6c69:616d:6c69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817562BB31
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Oct 2022 02:14:54 -0700 (PDT)
+Received: (qmail 3812 invoked from network); 11 Oct 2022 09:14:33 -0000
+Received: from p200300cf070e3b005801a0fffe58235d.dip0.t-ipconnect.de ([2003:cf:70e:3b00:5801:a0ff:fe58:235d]:45414 HELO eto.sf-tec.de) (auth=eike@sf-mail.de)
+        by mail.sf-mail.de (Qsmtpd 0.38dev) with (TLS_AES_256_GCM_SHA384 encrypted) ESMTPSA
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Oct 2022 11:14:33 +0200
+From:   Rolf Eike Beer <eike-kernel@sf-tec.de>
+To:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph =?utf-8?Q?B=C3=B6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Helge Deller <deller@gmx.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Marco Elver <elver@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Graf <tgraf@suug.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-Subject: Re: [PATCH v6 3/7] treewide: use get_random_{u8,u16}() when
- possible, part 1
-Message-ID: <Y0TcOH/BDfg5c1gj@zx2c4.com>
-References: <20221010230613.1076905-1-Jason@zx2c4.com>
- <20221010230613.1076905-4-Jason@zx2c4.com>
- <MW5PR84MB18421AC962BE140DDEB58A8BAB239@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
+        kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v6 5/7] treewide: use get_random_u32() when possible
+Date:   Tue, 11 Oct 2022 11:14:44 +0200
+Message-ID: <2659449.sfTDpz5f83@eto.sf-tec.de>
+In-Reply-To: <20221010230613.1076905-6-Jason@zx2c4.com>
+References: <20221010230613.1076905-1-Jason@zx2c4.com> <20221010230613.1076905-6-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <MW5PR84MB18421AC962BE140DDEB58A8BAB239@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
+Content-Type: multipart/signed; boundary="nextPart3381436.Qahr9VaOg4"; micalg="pgp-sha1"; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 11, 2022 at 01:18:40AM +0000, Elliott, Robert (Servers) wrote:
-> 
-> > diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-> ...
-> > @@ -944,7 +944,7 @@ static void generate_random_bytes(u8 *buf, size_t count)
-> >  	default:
-> >  		/* Fully random bytes */
-> >  		for (i = 0; i < count; i++)
-> > -			buf[i] = (u8)prandom_u32();
-> > +			buf[i] = get_random_u8();
-> 
-> Should that whole for loop be replaced with this?
->     get_random_bytes(buf, count);
+--nextPart3381436.Qahr9VaOg4
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Rolf Eike Beer <eike-kernel@sf-tec.de>
+Date: Tue, 11 Oct 2022 11:14:44 +0200
+Message-ID: <2659449.sfTDpz5f83@eto.sf-tec.de>
+In-Reply-To: <20221010230613.1076905-6-Jason@zx2c4.com>
+MIME-Version: 1.0
 
-Wow, that's kind of grotesque. Yea, it certainly should. But that's
-beyond the scope of this patchset. I'll send a follow-up patch just for
-this case to Herbert after this cleanup lands, though.
+Am Dienstag, 11. Oktober 2022, 01:06:11 CEST schrieb Jason A. Donenfeld:
+> The prandom_u32() function has been a deprecated inline wrapper around
+> get_random_u32() for several releases now, and compiles down to the
+> exact same code. Replace the deprecated wrapper with a direct call to
+> the real function. The same also applies to get_random_int(), which is
+> just a wrapper around get_random_u32(). This was done as a basic find
+> and replace.
 
-Jason
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pno.c
+> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pno.c index
+> d0a7465be586..3a7aded30e8e 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pno.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pno.c
+> @@ -177,7 +177,7 @@ static int brcmf_pno_set_random(struct brcmf_if *ifp,
+> struct brcmf_pno_info *pi) memcpy(pfn_mac.mac, mac_addr, ETH_ALEN);
+>  	for (i = 0; i < ETH_ALEN; i++) {
+>  		pfn_mac.mac[i] &= mac_mask[i];
+> -		pfn_mac.mac[i] |= get_random_int() & ~(mac_mask[i]);
+> +		pfn_mac.mac[i] |= get_random_u32() & ~(mac_mask[i]);
+>  	}
+>  	/* Clear multi bit */
+>  	pfn_mac.mac[0] &= 0xFE;
+
+mac is defined as u8 mac[ETH_ALEN]; in fwil_types.h.
+
+Eike
+
+P.S.: CC list trimmed because of an unrelated mailer bug
+--nextPart3381436.Qahr9VaOg4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSaYVDeqwKa3fTXNeNcpIk+abn8TgUCY0U0BAAKCRBcpIk+abn8
+TnN3AJ9qs8NaSunt7ijB2AR/P9fJUTF1VACfYISp1yW4g9+IC2YL331uQQXDH+I=
+=wPNj
+-----END PGP SIGNATURE-----
+
+--nextPart3381436.Qahr9VaOg4--
+
+
+
