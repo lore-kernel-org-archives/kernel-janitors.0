@@ -2,102 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 938B0C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Oct 2022 15:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7243C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Oct 2022 15:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbiJLPnp (ORCPT
+        id S229990AbiJLPwL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Oct 2022 11:43:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35714 "EHLO
+        Wed, 12 Oct 2022 11:52:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiJLPno (ORCPT
+        with ESMTP id S229451AbiJLPwJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Oct 2022 11:43:44 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 157A2CAE52
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Oct 2022 08:43:42 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id u10so26835769wrq.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Oct 2022 08:43:42 -0700 (PDT)
+        Wed, 12 Oct 2022 11:52:09 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62144F2520;
+        Wed, 12 Oct 2022 08:52:03 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id a5so5680490qkl.6;
+        Wed, 12 Oct 2022 08:52:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bhkgU256B/oUeYJAL3eaRMpfYWwB1CJIkfgtBEPJ4RQ=;
-        b=d/9uqGIt3Wp0b9FXKJ1FOhFYukXmV0PdcYu3zskeacDqfT4ZtQTBJ+klC8XgRboqhV
-         iCYhuzam1adXhPjlPPoyFvwt39rpOvlJpWMKQTNkMTWj4biufZLEIVdbKASoLoMNXWiB
-         V7M7P5jZecIUyTMZGpbqU5MIpI/RueK7OFPSwbII0xrLTb5DmTrDb+PeRGGly2hWnB00
-         +LZKucb//OWjJIA2NPyx06t9yIi/uBDUeBQGFZoRwcdXw63s0KGreoFq8ab2iibyR/wL
-         cn4IbOm1yUTM5bp0aGEwAmmPq9xuQGbiyxNOP2e0UnZ4TkcaCaiAuU1ykSk03A7r4fom
-         u1KQ==
+        bh=cCvqeLf3ZV6pySPAQmlmFI1gb6Z0Oqu0IwzbIvFJXOs=;
+        b=Wi94i1FaQ6yT28Hz9NIlUS2Qy2Hv4lUdEiAmQghGtGHfgTtkIufcBnzCRl5P7GPmlW
+         aREjMHguEleNyrJiix3w25TmU5AQv1180Hb96Q5gVa5WglhXnw7ydmrVlV01axywwHRq
+         OUSCi30aq3eJTDjRa8lkEune/QZxTawqJiOsRN0XS+tFJK6QZhZD5uLPMfgbVW40PvuQ
+         H05ohIofLFYqjaox0xiWXOp4OGN63OwaP6ZtDmPLAFVftYGiKGEo2bnhXjLMjPDOswdc
+         BD+YpLByDiH3+WEpROZPZsYGjpvt1l/lTZJVSmuw9gHQHBbdTOUjwnerbgW6hS2Nh6IQ
+         c09g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bhkgU256B/oUeYJAL3eaRMpfYWwB1CJIkfgtBEPJ4RQ=;
-        b=6p4aXVK54WKR0hkuIxIFoXmeRlC8rQEJQKUHk4jAliGnzlK5yAMlAye1/ucoP7GiP7
-         7Aengi2kVdpB5PXvXg5Lcl/pbnTqvheHY/TjOn4IMNvPg03UkX4g5GyhhqUTJW9DsptX
-         Q9tWpe6BBFaTNuPLBurrsbN1bSmm+aAW2ui25FTHslWeUtrv3RHV0YFy3T06jbc2POpY
-         nyabZhuIT4HzR5lzzPolZLRQD/y5Mohc4zWJohxTumGkygAUoYp2vXtQJ63/I7naMhs/
-         S3ngg1w7MIAKNjG1q/vqMX4rZvA0mJBqynOOZm6amcQEROdCPy9ybSHoXxdn24Mf4FYC
-         TpNQ==
-X-Gm-Message-State: ACrzQf05gy3lW0CohWQUIVA9eQlwj/NQJtYwNJs+AWnNDJW+5zUe37z6
-        OE4GIjpX7kb7HY3N0wnH23f9dQ==
-X-Google-Smtp-Source: AMsMyM6jty9lmeuOVljOXoUvb1UFooemPZzxQxp3ktKh/rH4Eozxog62MQWNbzmpEodRCPG2UixE7w==
-X-Received: by 2002:adf:fb10:0:b0:22a:f1d8:18d2 with SMTP id c16-20020adffb10000000b0022af1d818d2mr18473654wrr.483.1665589420658;
-        Wed, 12 Oct 2022 08:43:40 -0700 (PDT)
-Received: from [192.168.1.70] (32.31.102.84.rev.sfr.net. [84.102.31.32])
-        by smtp.gmail.com with ESMTPSA id j37-20020a05600c1c2500b003c6b874a0dfsm2642794wms.14.2022.10.12.08.43.39
+        bh=cCvqeLf3ZV6pySPAQmlmFI1gb6Z0Oqu0IwzbIvFJXOs=;
+        b=3uPf5sVATgG0TL6JQa6pwycUotswtEod2XgreslSDvp3S3OBbGnJaJj2PPkfqeXpq/
+         LazeWxqoVDH9NojM/nvDkqyTeYShEubGX7lylbtlIP/f/3GPDVtw7bmO1nhzv2T2xlq/
+         50Xc7VqPJh07PZYH3GDMXHxQJjzs+be2tjt+J3IHH8jbDX52cBzdoUa5Gp6UoDYCKDh+
+         Q1jL814poTEx6kApmKFCARnpC5ihdvnvj5VwVapFK6oTv341Px7mpP3VSNA3K/2KCgBP
+         aObONtmFLT/xndFJhX6FM6fBer2E7t13SEu9TsqHIWJ9Wk3GglLKDWyMdwje3xxUMEuk
+         u2eg==
+X-Gm-Message-State: ACrzQf33pW/Bb91NuIZ9jP9GqXiC6c6xugSMA0b2HElEPjoZXw30KeE/
+        /RJr6gIgsvRogzJdFn4YI+0=
+X-Google-Smtp-Source: AMsMyM7LtO48HZ5f2sR1NieF9+RmAyNc0iOtdYp1GqKzYWVUCGe/jb51+hIXoo3OsLPuNINYTUOI5A==
+X-Received: by 2002:a05:620a:2218:b0:6ee:1e01:b189 with SMTP id m24-20020a05620a221800b006ee1e01b189mr8908158qkh.478.1665589922344;
+        Wed, 12 Oct 2022 08:52:02 -0700 (PDT)
+Received: from [192.168.1.201] (pool-173-73-95-180.washdc.fios.verizon.net. [173.73.95.180])
+        by smtp.gmail.com with ESMTPSA id h15-20020a05620a400f00b006a6ebde4799sm16543987qko.90.2022.10.12.08.52.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Oct 2022 08:43:40 -0700 (PDT)
-Message-ID: <e845b4d0-b3e7-6b0f-fb5a-9c0d1f61aeb3@baylibre.com>
-Date:   Wed, 12 Oct 2022 17:43:38 +0200
+        Wed, 12 Oct 2022 08:52:01 -0700 (PDT)
+Message-ID: <b4a07016-081b-13b0-2cc4-546f419ad59b@gmail.com>
+Date:   Wed, 12 Oct 2022 11:52:00 -0400
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH] counter: ti-ecap-capture: fix IS_ERR() vs NULL check
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     William Breathitt Gray <william.gray@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <Y0bUbZvfDJHBG9C6@kili>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH net] sunhme: fix an IS_ERR() vs NULL check in probe
 Content-Language: en-US
-From:   Julien Panis <jpanis@baylibre.com>
-In-Reply-To: <Y0bUbZvfDJHBG9C6@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rolf Eike Beer <eike-kernel@sf-tec.de>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <Y0bWzJL8JknX8MUf@kili>
+From:   Sean Anderson <seanga2@gmail.com>
+In-Reply-To: <Y0bWzJL8JknX8MUf@kili>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Reviewed-by: Julien Panis <jpanis@baylibre.com>
-
-On 12/10/2022 16:51, Dan Carpenter wrote:
-> The devm_counter_alloc() function returns NULL on error.  It doesn't
-> return error pointers.
->
-> Fixes: 4e2f42aa00b6 ("counter: ti-ecap-capture: capture driver support for ECAP")
+On 10/12/22 11:01, Dan Carpenter wrote:
+> The devm_request_region() function does not return error pointers, it
+> returns NULL on error.
+> 
+> Fixes: 914d9b2711dd ("sunhme: switch to devres")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->   drivers/counter/ti-ecap-capture.c | 4 ++--
+>   drivers/net/ethernet/sun/sunhme.c | 4 ++--
 >   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
-> index af10de30aba5..8104d02bb5a4 100644
-> --- a/drivers/counter/ti-ecap-capture.c
-> +++ b/drivers/counter/ti-ecap-capture.c
-> @@ -479,8 +479,8 @@ static int ecap_cnt_probe(struct platform_device *pdev)
->   	int ret;
+> 
+> diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
+> index 62deed210a95..91f10f746dff 100644
+> --- a/drivers/net/ethernet/sun/sunhme.c
+> +++ b/drivers/net/ethernet/sun/sunhme.c
+> @@ -2896,8 +2896,8 @@ static int happy_meal_pci_probe(struct pci_dev *pdev,
 >   
->   	counter_dev = devm_counter_alloc(dev, sizeof(*ecap_dev));
-> -	if (IS_ERR(counter_dev))
-> -		return PTR_ERR(counter_dev);
-> +	if (!counter_dev)
-> +		return -ENOMEM;
->   
->   	counter_dev->name = ECAP_DRV_NAME;
->   	counter_dev->parent = dev;
+>   	hpreg_res = devm_request_region(&pdev->dev, pci_resource_start(pdev, 0),
+>   					pci_resource_len(pdev, 0), DRV_NAME);
+> -	if (IS_ERR(hpreg_res)) {
+> -		err = PTR_ERR(hpreg_res);
+> +	if (!hpreg_res) {
+> +		err = -EBUSY;
+>   		dev_err(&pdev->dev, "Cannot obtain PCI resources, aborting.\n");
+>   		goto err_out_clear_quattro;
+>   	}
 
+Reviewed-by: Sean Anderson <seanga2@gmail.com>
