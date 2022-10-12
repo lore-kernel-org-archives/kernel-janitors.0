@@ -2,102 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7243C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Oct 2022 15:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D32C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Oct 2022 16:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbiJLPwL (ORCPT
+        id S230049AbiJLQ1U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Oct 2022 11:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53916 "EHLO
+        Wed, 12 Oct 2022 12:27:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbiJLPwJ (ORCPT
+        with ESMTP id S229544AbiJLQ1O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Oct 2022 11:52:09 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62144F2520;
-        Wed, 12 Oct 2022 08:52:03 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id a5so5680490qkl.6;
-        Wed, 12 Oct 2022 08:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cCvqeLf3ZV6pySPAQmlmFI1gb6Z0Oqu0IwzbIvFJXOs=;
-        b=Wi94i1FaQ6yT28Hz9NIlUS2Qy2Hv4lUdEiAmQghGtGHfgTtkIufcBnzCRl5P7GPmlW
-         aREjMHguEleNyrJiix3w25TmU5AQv1180Hb96Q5gVa5WglhXnw7ydmrVlV01axywwHRq
-         OUSCi30aq3eJTDjRa8lkEune/QZxTawqJiOsRN0XS+tFJK6QZhZD5uLPMfgbVW40PvuQ
-         H05ohIofLFYqjaox0xiWXOp4OGN63OwaP6ZtDmPLAFVftYGiKGEo2bnhXjLMjPDOswdc
-         BD+YpLByDiH3+WEpROZPZsYGjpvt1l/lTZJVSmuw9gHQHBbdTOUjwnerbgW6hS2Nh6IQ
-         c09g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cCvqeLf3ZV6pySPAQmlmFI1gb6Z0Oqu0IwzbIvFJXOs=;
-        b=3uPf5sVATgG0TL6JQa6pwycUotswtEod2XgreslSDvp3S3OBbGnJaJj2PPkfqeXpq/
-         LazeWxqoVDH9NojM/nvDkqyTeYShEubGX7lylbtlIP/f/3GPDVtw7bmO1nhzv2T2xlq/
-         50Xc7VqPJh07PZYH3GDMXHxQJjzs+be2tjt+J3IHH8jbDX52cBzdoUa5Gp6UoDYCKDh+
-         Q1jL814poTEx6kApmKFCARnpC5ihdvnvj5VwVapFK6oTv341Px7mpP3VSNA3K/2KCgBP
-         aObONtmFLT/xndFJhX6FM6fBer2E7t13SEu9TsqHIWJ9Wk3GglLKDWyMdwje3xxUMEuk
-         u2eg==
-X-Gm-Message-State: ACrzQf33pW/Bb91NuIZ9jP9GqXiC6c6xugSMA0b2HElEPjoZXw30KeE/
-        /RJr6gIgsvRogzJdFn4YI+0=
-X-Google-Smtp-Source: AMsMyM7LtO48HZ5f2sR1NieF9+RmAyNc0iOtdYp1GqKzYWVUCGe/jb51+hIXoo3OsLPuNINYTUOI5A==
-X-Received: by 2002:a05:620a:2218:b0:6ee:1e01:b189 with SMTP id m24-20020a05620a221800b006ee1e01b189mr8908158qkh.478.1665589922344;
-        Wed, 12 Oct 2022 08:52:02 -0700 (PDT)
-Received: from [192.168.1.201] (pool-173-73-95-180.washdc.fios.verizon.net. [173.73.95.180])
-        by smtp.gmail.com with ESMTPSA id h15-20020a05620a400f00b006a6ebde4799sm16543987qko.90.2022.10.12.08.52.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Oct 2022 08:52:01 -0700 (PDT)
-Message-ID: <b4a07016-081b-13b0-2cc4-546f419ad59b@gmail.com>
-Date:   Wed, 12 Oct 2022 11:52:00 -0400
+        Wed, 12 Oct 2022 12:27:14 -0400
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 202C0F87FC;
+        Wed, 12 Oct 2022 09:27:08 -0700 (PDT)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 29CGR5Ap081558;
+        Wed, 12 Oct 2022 11:27:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1665592025;
+        bh=eEflHbY1KhW3sZo2AHyNqzl4B6Y/mZETpmBCk/G9yGY=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=MLMfbwnQfXO7O0lfz9NY58tmwUQtsZnhkQuVASZBmQvQadbbP5+7vZ7/mvoGWNhzG
+         yO1DmMfEqlyVppx3RQ0vcJ2bzjL0hxKRGgF8El0cJ67i4qRQkj4COP+gvMRfHXbdPg
+         IFgCAbF5NgeGS31xLBT1yCkr/zXfniFgZ5OHeRIY=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 29CGR5Df015385
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Oct 2022 11:27:05 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Wed, 12
+ Oct 2022 11:27:04 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
+ Frontend Transport; Wed, 12 Oct 2022 11:27:05 -0500
+Received: from [10.250.234.181] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 29CGR06C079753;
+        Wed, 12 Oct 2022 11:27:01 -0500
+Message-ID: <a559e9fa-b560-06fb-8555-5af22f47539e@ti.com>
+Date:   Wed, 12 Oct 2022 21:57:00 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH net] sunhme: fix an IS_ERR() vs NULL check in probe
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH] counter: ti-ecap-capture: fix IS_ERR() vs NULL check
 Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rolf Eike Beer <eike-kernel@sf-tec.de>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <Y0bWzJL8JknX8MUf@kili>
-From:   Sean Anderson <seanga2@gmail.com>
-In-Reply-To: <Y0bWzJL8JknX8MUf@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Julien Panis <jpanis@baylibre.com>
+CC:     William Breathitt Gray <william.gray@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-iio@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <Y0bUbZvfDJHBG9C6@kili>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+In-Reply-To: <Y0bUbZvfDJHBG9C6@kili>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/12/22 11:01, Dan Carpenter wrote:
-> The devm_request_region() function does not return error pointers, it
-> returns NULL on error.
-> 
-> Fixes: 914d9b2711dd ("sunhme: switch to devres")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/net/ethernet/sun/sunhme.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
-> index 62deed210a95..91f10f746dff 100644
-> --- a/drivers/net/ethernet/sun/sunhme.c
-> +++ b/drivers/net/ethernet/sun/sunhme.c
-> @@ -2896,8 +2896,8 @@ static int happy_meal_pci_probe(struct pci_dev *pdev,
->   
->   	hpreg_res = devm_request_region(&pdev->dev, pci_resource_start(pdev, 0),
->   					pci_resource_len(pdev, 0), DRV_NAME);
-> -	if (IS_ERR(hpreg_res)) {
-> -		err = PTR_ERR(hpreg_res);
-> +	if (!hpreg_res) {
-> +		err = -EBUSY;
->   		dev_err(&pdev->dev, "Cannot obtain PCI resources, aborting.\n");
->   		goto err_out_clear_quattro;
->   	}
+Hi,
 
-Reviewed-by: Sean Anderson <seanga2@gmail.com>
+On 12/10/22 8:21 pm, Dan Carpenter wrote:
+> The devm_counter_alloc() function returns NULL on error.  It doesn't
+> return error pointers.
+> 
+> Fixes: 4e2f42aa00b6 ("counter: ti-ecap-capture: capture driver support for ECAP")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Acked-by: Vignesh Raghavendra <vigneshr@ti.com>
+
+Thanks for the fix!
+
+> ---
+>  drivers/counter/ti-ecap-capture.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
+> index af10de30aba5..8104d02bb5a4 100644
+> --- a/drivers/counter/ti-ecap-capture.c
+> +++ b/drivers/counter/ti-ecap-capture.c
+> @@ -479,8 +479,8 @@ static int ecap_cnt_probe(struct platform_device *pdev)
+>  	int ret;
+>  
+>  	counter_dev = devm_counter_alloc(dev, sizeof(*ecap_dev));
+> -	if (IS_ERR(counter_dev))
+> -		return PTR_ERR(counter_dev);
+> +	if (!counter_dev)
+> +		return -ENOMEM;
+>  
+>  	counter_dev->name = ECAP_DRV_NAME;
+>  	counter_dev->parent = dev;
