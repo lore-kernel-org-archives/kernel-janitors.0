@@ -2,61 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C52CC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Oct 2022 22:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09796C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Oct 2022 22:32:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbiJMWTV (ORCPT
+        id S229704AbiJMWce (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Oct 2022 18:19:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47070 "EHLO
+        Thu, 13 Oct 2022 18:32:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbiJMWTT (ORCPT
+        with ESMTP id S229460AbiJMWcb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Oct 2022 18:19:19 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F43A18BE2C;
-        Thu, 13 Oct 2022 15:19:18 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id n12so4903577wrp.10;
-        Thu, 13 Oct 2022 15:19:18 -0700 (PDT)
+        Thu, 13 Oct 2022 18:32:31 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4214A18D822;
+        Thu, 13 Oct 2022 15:32:29 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id c7-20020a05600c0ac700b003c6cad86f38so4244937wmr.2;
+        Thu, 13 Oct 2022 15:32:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eWZO5WnwoOpM53BSawLAhm+17muuf4rDOcrXPg61DsU=;
-        b=Qqwxjd5fM+3Tl0CF42MlCBv0ZHKMLr4H3dDBr2R4Uddzo1fu8IfPXR4d6RY639jn3L
-         UniozUcSUa0tomcaB8rHCRSmxz0guNaLDq8DE0b5768+4vELuZ1a2VKZJoY7RwWdDsYp
-         /UebX1fyTIQqlc/Iohw0TjOVFZC9drQN6XQA0buhzGyZAI3orie0NR0eDS8olkWF39Zr
-         nQCk8kURKIwFN8sz8Il6nvX4hOpUdAX6Nk6FweV9BtWr5CNY1xdIGPgo4RWeF/9cFycB
-         8WM+cbV92versPcs9jGVGUwz7i6/ihDZpUYmT1TM7GehTtVtve8tRbkCe92scsTj+6Mx
-         PdrQ==
+        bh=cmLu5/VoD+O0UJu6VoLDdnrtTxKovAe8n1SjzXtC2Xs=;
+        b=b7DBr9u1eaqWEAbv5Qbg/QNyboll+gHJXOnlDd/6Sb8TT8U/oXq177K6ef9HL9aVG5
+         BHgyrWvnsWEi8CyoZp/n26mA4xSHw+GJEPPTlRnMC4tSuGw9fbTn78ZiOaAr1abfApHR
+         zHaGplBXSq2rjsdJ9dCMEhdVT70dXV+6peKRPS8dConrKaRvWemUfWGUOHFwFN+wZ4jx
+         6T9Nhf871eCwS5xD//AJxcL8R5yb5bWGtVu30oShYxJPVdiqzd8EsKWRN9tKMnMLDZ42
+         IGelHqUbnJA2+bK7zHhRlAew2xZDRAZWc4VvwGyDNJOEhY4ujRO7Ss2SHwdbk0DAXpiU
+         Z1xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eWZO5WnwoOpM53BSawLAhm+17muuf4rDOcrXPg61DsU=;
-        b=JCNzeudFJb2MtC6cqxq7ngJfDXyigoyljovCoJYecjxqN7P3/YMWnSszwujHdpG95h
-         cte+he0wh+OxnVAWE2R6YW+s5s+fMnDKH+GSuS00GgXKqIfkMo9akLfJQ5vld9c8fzvy
-         5kVC8RIF/h9Go1P4nHL9I6oW+RqDCyZzrGVIc/r3WfaWOiBsHLVHJkQVMBS2vRcJdHLY
-         yvmu7uX4/TmLcclMyiUrJsOxT7giCiHaaZn1xyooudNmYX1WIqD/M65s1UcisQULJhIk
-         oDOaFAdYJFqP7t6Qjq+DjBb04tF4x3xOMF07FyBFAUO8Vd4ZBNm0UGteKjfkxSQMSYdB
-         5wlQ==
-X-Gm-Message-State: ACrzQf36M+XAwu9Fv8c+K6TazYvpfKrRXQTPBJrhsb60puDDQqc7NJ56
-        sIMognxAuWh5gXa/xiOy2YE=
-X-Google-Smtp-Source: AMsMyM5T/Y1MImg0a4Kir6/WdNfneT469otZ9Tn10qUf9O79uLuYlnTv8o1gAsdrZYyo8Rc7pQ150g==
-X-Received: by 2002:adf:fd04:0:b0:22e:4bf6:4a08 with SMTP id e4-20020adffd04000000b0022e4bf64a08mr1402434wrr.619.1665699556688;
-        Thu, 13 Oct 2022 15:19:16 -0700 (PDT)
+        bh=cmLu5/VoD+O0UJu6VoLDdnrtTxKovAe8n1SjzXtC2Xs=;
+        b=6lmN9MGuEaxxm2hkpM86AQ5fI4OzCWiXEs9/QVyll9fenxkQOSEBDJslzB/bMdAQzR
+         Ed0D/H7jaE7avSAi0wxRjLxGcFQ99i4mWnplUW8X6InSQycX/pgoJ1LfkvblRlSX26YS
+         tfXBIRaqFZ0hPqceIvWOSaIC1LBvubWr+z70f03icdtEpT+Rydq/iKCVbW4DGAxg9Gi7
+         7mSHEa9UPPWx9k0YiNDAjyqDk5GvOIG/gWNzfKzMdrBWyGIJAXzRqsW3+rP4OTcVTKBQ
+         ean+axS0InISjBod1eJw4t/N+GFDrL6fkpF/PvYtx3Ff8eWBxlSDen6p8jyIISil4TMF
+         b0Qw==
+X-Gm-Message-State: ACrzQf3eORQdt0W0lw3MCFZW/8rmkgS78DnmL1OtAWErYrvJhpU4qp7x
+        2NE8K8F5Vn9auDr6JUU1m1Y=
+X-Google-Smtp-Source: AMsMyM77thVePWoPhfex4il6b5GCYPnvQuwIdmlHmgZi42gv3PuduqSo5xmO3eAT9zGfb65CVQdWVg==
+X-Received: by 2002:a05:600c:19ce:b0:3b9:c36f:f9e2 with SMTP id u14-20020a05600c19ce00b003b9c36ff9e2mr1394145wmq.110.1665700348341;
+        Thu, 13 Oct 2022 15:32:28 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id c16-20020a5d4cd0000000b002302dc43d77sm478674wrt.115.2022.10.13.15.19.15
+        by smtp.gmail.com with ESMTPSA id j28-20020a5d6e5c000000b0022cd27bc8c1sm726789wrz.9.2022.10.13.15.32.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Oct 2022 15:19:16 -0700 (PDT)
+        Thu, 13 Oct 2022 15:32:27 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] parisc: Fix spelling mistake "mis-match" -> "mismatch"
-Date:   Thu, 13 Oct 2022 23:19:15 +0100
-Message-Id: <20221013221915.128286-1-colin.i.king@gmail.com>
+Subject: [PATCH] media: atomisp: Fix spelling mistake "mis-match" -> "mismatch"
+Date:   Thu, 13 Oct 2022 23:32:27 +0100
+Message-Id: <20221013223227.129440-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,51 +67,49 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are several spelling mistakes in kernel error messages. Fix them.
+There are a few spelling mistakes in dev_err messages. Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/parisc/eisa_enumerator.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/media/atomisp/pci/atomisp_cmd.c          | 4 ++--
+ drivers/staging/media/atomisp/pci/atomisp_compat_css20.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/parisc/eisa_enumerator.c b/drivers/parisc/eisa_enumerator.c
-index f54a6f450391..f0cb31198a8f 100644
---- a/drivers/parisc/eisa_enumerator.c
-+++ b/drivers/parisc/eisa_enumerator.c
-@@ -393,7 +393,7 @@ static int parse_slot_config(int slot,
- 		}
- 		
- 		if (p0 + function_len < pos) {
--			printk(KERN_ERR "eisa_enumerator: function %d length mis-match "
-+			printk(KERN_ERR "eisa_enumerator: function %d length mismatch "
- 			       "got %d, expected %d\n",
- 			       num_func, pos-p0, function_len);
- 			res=-1;
-@@ -407,13 +407,13 @@ static int parse_slot_config(int slot,
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_cmd.c b/drivers/staging/media/atomisp/pci/atomisp_cmd.c
+index c72d0e344671..90f25cc22227 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_cmd.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_cmd.c
+@@ -3288,7 +3288,7 @@ int atomisp_css_cp_dvs2_coefs(struct atomisp_sub_device *asd,
+ 	if (!IS_ISP2401) {
+ 		if (sizeof(*cur) != sizeof(coefs->grid) ||
+ 		    memcmp(&coefs->grid, cur, sizeof(coefs->grid))) {
+-			dev_err(asd->isp->dev, "dvs grid mis-match!\n");
++			dev_err(asd->isp->dev, "dvs grid mismatch!\n");
+ 			/* If the grid info in the argument differs from the current
+ 			grid info, we tell the caller to reset the grid size and
+ 			try again. */
+@@ -3344,7 +3344,7 @@ int atomisp_css_cp_dvs2_coefs(struct atomisp_sub_device *asd,
+ 
+ 		if (sizeof(*cur) != sizeof(dvs2_coefs.grid) ||
+ 		    memcmp(&dvs2_coefs.grid, cur, sizeof(dvs2_coefs.grid))) {
+-			dev_err(asd->isp->dev, "dvs grid mis-match!\n");
++			dev_err(asd->isp->dev, "dvs grid mismatch!\n");
+ 			/* If the grid info in the argument differs from the current
+ 			grid info, we tell the caller to reset the grid size and
+ 			try again. */
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+index fdc05548d972..b36cbde7036a 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+@@ -3180,7 +3180,7 @@ static int atomisp_compare_dvs_grid(struct atomisp_sub_device *asd,
  	}
- 	
- 	if (pos != es->config_data_length) {
--		printk(KERN_ERR "eisa_enumerator: config data length mis-match got %d, expected %d\n",
-+		printk(KERN_ERR "eisa_enumerator: config data length mismatch got %d, expected %d\n",
- 			pos, es->config_data_length);
- 		res=-1;
+ 
+ 	if (sizeof(*cur) != sizeof(*atomgrid)) {
+-		dev_err(asd->isp->dev, "dvs grid mis-match!\n");
++		dev_err(asd->isp->dev, "dvs grid mismatch!\n");
+ 		return -EINVAL;
  	}
- 	
- 	if (num_func != es->num_functions) {
--		printk(KERN_ERR "eisa_enumerator: number of functions mis-match got %d, expected %d\n",
-+		printk(KERN_ERR "eisa_enumerator: number of functions mismatch got %d, expected %d\n",
- 			num_func, es->num_functions);
- 		res=-2;
- 	}
-@@ -451,7 +451,7 @@ static int init_slot(int slot, struct eeprom_eisa_slot_info *es)
- 		}
- 		if (es->eisa_slot_id != id) {
- 			print_eisa_id(id_string, id);
--			printk(KERN_ERR "EISA slot %d id mis-match: got %s", 
-+			printk(KERN_ERR "EISA slot %d id mismatch: got %s",
- 			       slot, id_string);
- 			
- 			print_eisa_id(id_string, es->eisa_slot_id);
+ 
 -- 
 2.37.3
 
