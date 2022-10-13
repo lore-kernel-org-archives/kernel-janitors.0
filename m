@@ -2,89 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD92EC43217
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Oct 2022 18:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4004AC433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Oct 2022 21:31:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230072AbiJMSzp convert rfc822-to-8bit (ORCPT
+        id S229807AbiJMVbd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Oct 2022 14:55:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50602 "EHLO
+        Thu, 13 Oct 2022 17:31:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231631AbiJMSzR (ORCPT
+        with ESMTP id S229537AbiJMVbc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Oct 2022 14:55:17 -0400
-X-Greylist: delayed 1228 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 13 Oct 2022 11:53:49 PDT
-Received: from mail.sch.bme.hu (mail.sch.bme.hu [152.66.208.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B05184993;
-        Thu, 13 Oct 2022 11:53:49 -0700 (PDT)
-Received: from mail-pl1-f171.google.com (209.85.214.171) by
- Exchange2016-1.sch.bme.hu (152.66.208.194) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.31; Thu, 13 Oct 2022 20:02:17 +0200
-Received: by mail-pl1-f171.google.com with SMTP id i6so2472778pli.12;
-        Thu, 13 Oct 2022 11:02:17 -0700 (PDT)
-X-Gm-Message-State: ACrzQf3kS01zibwA4g/5vMjvm7HUErvX3f1eclDuSZ5JmC+dDVDV5Nb4
-        U7gjRLY1fhj0KRtlwJj986SFapVHTSzxC/7KfFI=
-X-Google-Smtp-Source: AMsMyM44IgBxVIajuVuN849vBOtaQTtRi9JI5pBn/lbVCXgzz0gHtRN2pSQdW4FIsugzgIVVbOg6hYuJirO3NLbtl2A=
-X-Received: by 2002:a17:902:d58c:b0:17f:998a:76cd with SMTP id
- k12-20020a170902d58c00b0017f998a76cdmr1123771plh.155.1665684135865; Thu, 13
- Oct 2022 11:02:15 -0700 (PDT)
+        Thu, 13 Oct 2022 17:31:32 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 713B9155D89;
+        Thu, 13 Oct 2022 14:31:31 -0700 (PDT)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id E76B1100006;
+        Thu, 13 Oct 2022 21:31:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1665696689;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=iNJDGNcwZQZZBllRv+opgnsC0nRpqrGKRVfGP3YMRSc=;
+        b=ehpGfxwwQ9SiAztkiIgt5uMwhP/HVEyOrNIIkhSHVNOy17XPwfKww47o7R6R7g/ucgHWVY
+        FhfPNiWQiN0qreVHeohwCuPQnSemdm6/wfntMv5b7bUvGLl632NheQ/LxnZA9tWF+PC0wt
+        RKmjH5lh4tibcv8HwAhzkyfRILfHS5GNKJG07TGY3i0/IrI0mAsbTPG6v8kej3jteMUmsG
+        Ifk3sytX7O1372+mRfXZGcZQkjozW7TnlqqnO9/8Nx8ihY6sOHG7BxU5TZWfFDpg1QvXBQ
+        PuGnyo8X3klLp1z8vcoV9HgJyjMjvbjr/FlqQvhC1bY+BsjAC0muf+VhHnzMLw==
+Date:   Thu, 13 Oct 2022 23:31:28 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Joshua Kinard <kumba@gentoo.org>,
+        Colin Ian King <colin.king@intel.com>,
+        linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rtc: ds1685: Fix spelling of function name in comment
+ block
+Message-ID: <166569636076.1226796.12100183442618542450.b4-ty@bootlin.com>
+References: <20221003153711.271630-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-References: <Y0bUdt73moVmaajb@kili>
-In-Reply-To: <Y0bUdt73moVmaajb@kili>
-From:   =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence98@sch.bme.hu>
-Date:   Thu, 13 Oct 2022 20:02:04 +0200
-X-Gmail-Original-Message-ID: <CACCVKEEWr-ko9yuZZnzW6icnDesdhajKbb+KWOaVyGDPy9D4Cg@mail.gmail.com>
-Message-ID: <CACCVKEEWr-ko9yuZZnzW6icnDesdhajKbb+KWOaVyGDPy9D4Cg@mail.gmail.com>
-Subject: Re: [PATCH] i2c: cp2615: prevent buffer overflow in cp2615_i2c_master_xfer()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Wolfram Sang <wsa@kernel.org>, <linux-i2c@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [209.85.214.171]
-X-ClientProxiedBy: Exchange2016-1.sch.bme.hu (152.66.208.194) To
- Exchange2016-1.sch.bme.hu (152.66.208.194)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221003153711.271630-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> ezt írta (időpont: 2022. okt.
-12., Sze, 16:52):
->
-> The "msg->len" can be controlled by the user via the ioctl.  We need to
-> ensure that it is not too large.
+On Mon, 3 Oct 2022 16:37:11 +0100, Colin Ian King wrote:
+> The function name is missing the letter 'd' in the comment block.
+> Fix it.
+> 
+> 
 
-Does the I2C core not check that submitted msgs do not exceed maximums
-specified in `i2c_adapter_quirks`? @WSA?
-If not, other drivers may also have this issue.
+Applied, thanks!
 
-> Fixes: 4a7695429ead ("i2c: cp2615: add i2c driver for Silicon Labs' CP2615 Digital Audio Bridge")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/i2c/busses/i2c-cp2615.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/i2c/busses/i2c-cp2615.c b/drivers/i2c/busses/i2c-cp2615.c
-> index 3ded28632e4c..ad1d6e548503 100644
-> --- a/drivers/i2c/busses/i2c-cp2615.c
-> +++ b/drivers/i2c/busses/i2c-cp2615.c
-> @@ -231,6 +231,8 @@ cp2615_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
->                 } else {
->                         i2c_w.read_len = 0;
->                         i2c_w.write_len = msg->len;
-> +                       if (msg->len > sizeof(i2c_w.data))
-> +                               return -EINVAL;
+[1/1] rtc: ds1685: Fix spelling of function name in comment block
+      commit: d73d66c0e05741b35b7398e647b8c4f2aaea9b09
 
-Please move this up to line 225, as an invalid `read_len` is also an
-error and should bail out accordingly.
+Best regards,
 
->                         memcpy(&i2c_w.data, msg->buf, i2c_w.write_len);
->                 }
->                 ret = cp2615_i2c_send(usbif, &i2c_w);
-> --
-> 2.35.1
->
->
-
-Bence
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
