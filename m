@@ -2,93 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB1DC4167D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Oct 2022 11:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 593A1C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Oct 2022 14:09:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbiJMLlD (ORCPT
+        id S230082AbiJMOJV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Oct 2022 07:41:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34326 "EHLO
+        Thu, 13 Oct 2022 10:09:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbiJMLkz (ORCPT
+        with ESMTP id S229996AbiJMOJU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Oct 2022 07:40:55 -0400
-Received: from mail.sf-mail.de (mail.sf-mail.de [IPv6:2a01:4f8:1c17:6fae:616d:6c69:616d:6c69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E524B1DCC
-        for <kernel-janitors@vger.kernel.org>; Thu, 13 Oct 2022 04:40:51 -0700 (PDT)
-Received: (qmail 12515 invoked from network); 13 Oct 2022 11:40:25 -0000
-Received: from p200300cf070ada0076d435fffeb7be92.dip0.t-ipconnect.de ([2003:cf:70a:da00:76d4:35ff:feb7:be92]:49034 HELO eto.sf-tec.de) (auth=eike@sf-mail.de)
-        by mail.sf-mail.de (Qsmtpd 0.38dev) with (TLS_AES_256_GCM_SHA384 encrypted) ESMTPSA
-        for <fw@strlen.de>; Thu, 13 Oct 2022 13:40:25 +0200
-From:   Rolf Eike Beer <eike-kernel@sf-tec.de>
-To:     Florian Westphal <fw@strlen.de>
-Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Florian Westphal <fw@strlen.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Thomas Graf <tgraf@suug.ch>, kasan-dev@googlegroups.com,
+        Thu, 13 Oct 2022 10:09:20 -0400
+Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F39FE3B99C
+        for <kernel-janitors@vger.kernel.org>; Thu, 13 Oct 2022 07:09:19 -0700 (PDT)
+Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-1364357a691so2408145fac.7
+        for <kernel-janitors@vger.kernel.org>; Thu, 13 Oct 2022 07:09:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UrpocBWYkTC7PfXFYdMnjMZDwWMdGbupQiQC/ayeSR8=;
+        b=foAkrtJRaTPssxN2ki6HTIxEo37+mP1UEVmjrRGIue19xGEM7AQeZbvoE0s/p4RaQY
+         NERN+pmYWKhH7kIsuxuqzhLT/hFEyZfCnkBc4u9NfgYnNHKwvaj16F5NMgew+Iaiwfao
+         9gJf2mxgIF33zB6pmuey1zV+PMKOLVsw+57Cv7RGvMZlvNaGAI1ZjG2xUE8l11WNVs3Q
+         XRXJ25yQoPeHX+j21izAr86IdeFBCrLA+w0IL6bE4Ts+KyKxybOFGylZ9nJwgMLWwlln
+         CiWqHICmA2bAfW5l8bo/mlwojTqYXL9iIvF8HjK4PeDA33kieVd1eVwId/Eh0wcKv1y1
+         ADJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UrpocBWYkTC7PfXFYdMnjMZDwWMdGbupQiQC/ayeSR8=;
+        b=6jeQztoaBr9Bo1I6KQNQfOA+gmKo9iGHy99x0N2ELqHyIRQABXtCP4IW5xNs27tEzw
+         B+EQnp99zkxAR1lSY2SaJY7ZIVkslb9iJeSCTkdqYkbmxF4k6Zvg1BnYh7iORa2rTzUM
+         ih78v8rNrbXjLhYa5eySR2wawMpVEoIKxFQgypPUekDN9F8LWB9atGoolEKX2bft1IMS
+         uhxqYKObzkWdsE9Q0ZVCzqgE/SwAENh30iC7Lhi0caAQM2BPoM+e18TvcatH0Ny82fbE
+         Aq0pE5le3vnxwFwaiSFFxlkpK5sXrnEHZ3Di4HZ55bTU+FUcBGV2fQ/DIOX5W039eD66
+         xB4A==
+X-Gm-Message-State: ACrzQf329EhSoaEuB7HR6THQaxdJjO2siRDtxF7zA7Q1g2MIcTUHsDfi
+        Kk3QQCjUcCFeSbz+NILT92O58N/OVzdA3Q==
+X-Google-Smtp-Source: AMsMyM599AohzqrOP8fG4E4v1ld3sGzIF2kltgBMOKQ0Ba6vq/KSRrCeX+MD8fgB/kAmrUAoehQcBg==
+X-Received: by 2002:a05:6871:b06:b0:136:c445:82d0 with SMTP id fq6-20020a0568710b0600b00136c44582d0mr5531125oab.146.1665670159242;
+        Thu, 13 Oct 2022 07:09:19 -0700 (PDT)
+Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id u127-20020a4a5785000000b0047f72b6988fsm2091450ooa.45.2022.10.13.07.09.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Oct 2022 07:09:18 -0700 (PDT)
+Date:   Wed, 12 Oct 2022 20:50:38 -0400
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Julien Panis <jpanis@baylibre.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mm@kvack.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-nvme@lists.infradead.org, linux-parisc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        loongarch@lists.linux.dev, netdev@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v6 5/7] treewide: use get_random_u32() when possible
-Date:   Thu, 13 Oct 2022 13:40:40 +0200
-Message-ID: <11986571.xaOnivgMc4@eto.sf-tec.de>
-In-Reply-To: <20221013101635.GB11818@breakpoint.cc>
-References: <20221010230613.1076905-1-Jason@zx2c4.com> <3026360.ZldQQBzMgz@eto.sf-tec.de> <20221013101635.GB11818@breakpoint.cc>
+        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] counter: ti-ecap-capture: fix IS_ERR() vs NULL check
+Message-ID: <Y0dg3nsRgJHnPbmt@fedora>
+References: <Y0bUbZvfDJHBG9C6@kili>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart22512332.f9tG50R4rC"; micalg="pgp-sha1"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="0xEguAtRZ42fF1HY"
+Content-Disposition: inline
+In-Reply-To: <Y0bUbZvfDJHBG9C6@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
---nextPart22512332.f9tG50R4rC
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Rolf Eike Beer <eike-kernel@sf-tec.de>
-To: Florian Westphal <fw@strlen.de>
-Date: Thu, 13 Oct 2022 13:40:40 +0200
-Message-ID: <11986571.xaOnivgMc4@eto.sf-tec.de>
-In-Reply-To: <20221013101635.GB11818@breakpoint.cc>
-MIME-Version: 1.0
 
-Am Donnerstag, 13. Oktober 2022, 12:16:35 CEST schrieb Florian Westphal:
-> Rolf Eike Beer <eike-kernel@sf-tec.de> wrote:
-> > Florian, can you comment and maybe fix it?
-> 
-> Can't comment, do not remember -- this was 5 years ago.
-> 
-> > Or you wanted to move the variable before the loop and keep the random
-> > state between the loops and only reseed when all '1' bits have been
-> > consumed.
-> Probably.  No clue, best to NOT change it to not block Jasons series and
-> then just simplify this and remove all the useless shifts.
+--0xEguAtRZ42fF1HY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sure. Jason, just in case you are going to do a v7 this could move to u8 then.
+On Wed, Oct 12, 2022 at 05:51:25PM +0300, Dan Carpenter wrote:
+> The devm_counter_alloc() function returns NULL on error.  It doesn't
+> return error pointers.
+>=20
+> Fixes: 4e2f42aa00b6 ("counter: ti-ecap-capture: capture driver support fo=
+r ECAP")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---nextPart22512332.f9tG50R4rC
+Queued for counter-fixes.
+
+Thank you,
+
+William Breathitt Gray
+
+--0xEguAtRZ42fF1HY
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQSaYVDeqwKa3fTXNeNcpIk+abn8TgUCY0f5OAAKCRBcpIk+abn8
-TncNAKCia3h4AG/9IzqybWbLcwE6uVgTqACfRr3dPUK8JMrKIqGzYOiL96isZhg=
-=zppL
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY0dg3gAKCRC1SFbKvhIj
+Kw0yAP9G9K47RgJhiv6YlKAXlmvGOn+VhqTYBos/vT7HCFwlxgD/Q11klnu6M4sJ
+cgZIrW08boKJd03vabfGZuS2ETk+QQU=
+=GqHK
 -----END PGP SIGNATURE-----
 
---nextPart22512332.f9tG50R4rC--
-
-
-
+--0xEguAtRZ42fF1HY--
