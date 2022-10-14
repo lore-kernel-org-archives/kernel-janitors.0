@@ -2,89 +2,134 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF4AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Oct 2022 15:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C43C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Oct 2022 18:07:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229941AbiJNPRR (ORCPT
+        id S230283AbiJNSH1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Oct 2022 11:17:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51322 "EHLO
+        Fri, 14 Oct 2022 14:07:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229928AbiJNPRP (ORCPT
+        with ESMTP id S229982AbiJNSHW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Oct 2022 11:17:15 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5FD1D0D44
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Oct 2022 08:17:14 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id m19so7675483lfq.9
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Oct 2022 08:17:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwxuOfQonPyZlcMVaIzYc888hy9RbTZz1aHvp61ggEE=;
-        b=MmLd+LMxFfVeOrhyNp7/ihG+a72N/cL5j49yO4JMkaHDP1TF8wQk1BchzbxHuC+eLC
-         YOC+pZWkaCNgVlifQqHSZd3gkPf97jeYkCK/4PDxN2za/cT2V7nvzmCvsvNZri5AxQOv
-         kGDS7oo4ExmqnfhNXElEdEo6vrysQ9/8TDjUIbTBV/Twd901K5Esu+la7R6cpKLIkFAP
-         fNP1qBsI40rgX1JGnakDIAthxT3Lrh3CYlz3Vbwf9q4NY4f+pFI7mt9jQ3YlX+AolXfC
-         kRlOfUj907z2e03cfJABK27BCI9WyjIA6C8W/sTSSb8KJ08Sly9XqYotsagilHydQXl6
-         3zDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WwxuOfQonPyZlcMVaIzYc888hy9RbTZz1aHvp61ggEE=;
-        b=enxDrxmv07/4RMqgXPLLOMeCq2tXnKm1iYt5exVhmd1CQlDfcLqBkzQMBVHDAX4Cpl
-         KWcPK8hlvi1vVWV61qnKcg1LTXqdHClR59G52J88O6/+vXKwUDiT7YOocKpE7v/lbNeb
-         5ujvEQkr4Ngsdme1ay3zXEFy81XghEBJasFtnpT4H+gdStE1NPggMF39fYOME4kAD06g
-         ElKHiJILrtcHvmJjQbaTxSkPhBqg9/3sFg80wg+0iXToTDLQClWz8hBPV/mBSuFFc7Mi
-         i6nl9vBJxO6m2JHQJVT8sDgK/SYu9+X0LLtt2yzZ6wnC7vIBQ05QmktDUf9tZ1bz3s6L
-         hkfw==
-X-Gm-Message-State: ACrzQf3Fum1Qe8Ix4jZZmUMZcQ1M6+qxt9fTFnQXZ4XLWIvPsUwt7qwC
-        M6UE0CK71UV33Z0bCDzz1KA1J2OMKRHnNncV3xeR8Q==
-X-Google-Smtp-Source: AMsMyM7GA56OYnmfotbnpWCG+IXiPGMM+flkKnNgBV599ZwkwAmwY0SVoIcIWJpRHEKaZA7bpldirYRCjPi1azt20Do=
-X-Received: by 2002:a05:6512:4019:b0:4a2:f25:4214 with SMTP id
- br25-20020a056512401900b004a20f254214mr1869456lfb.94.1665760632270; Fri, 14
- Oct 2022 08:17:12 -0700 (PDT)
+        Fri, 14 Oct 2022 14:07:22 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 532201D4631;
+        Fri, 14 Oct 2022 11:07:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1665770835;
+        bh=qt6OErHWsTDKZrWmkypB7PH5kVLGo0E85ODKBQDxDhw=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=EuPkDVSc+wMkb23sZ0qt2uponSkCVabrPXK1rJGb/ZMo2pxCWwZAUjXytuZbzrEfS
+         QosL5e9DJ2FkzfRB4P5zQx22YNJv+l+DVPDS+MiE/zgj4GMPMQx2WImyPrnLnAOIOj
+         fRw1mWE+iyXtZHxM0qKNMNDNtI7y73KVFDE7VBMc=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.20.60] ([92.116.188.185]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6sn7-1pDIRo2NZv-018KNL; Fri, 14
+ Oct 2022 20:07:15 +0200
+Message-ID: <4cfd944b-2558-0b74-b976-e8b7b175428c@gmx.de>
+Date:   Fri, 14 Oct 2022 20:07:12 +0200
 MIME-Version: 1.0
-References: <Y0kt1aCTHO4r2CmL@kili>
-In-Reply-To: <Y0kt1aCTHO4r2CmL@kili>
-From:   Daniel Latypov <dlatypov@google.com>
-Date:   Fri, 14 Oct 2022 08:17:01 -0700
-Message-ID: <CAGS_qxphzSn+ixxhnb2hEhVVye9hD6qSxdJV0vC-d2pGkERhTQ@mail.gmail.com>
-Subject: Re: [PATCH] kunit: update NULL vs IS_ERR() tests
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Brendan Higgins <brendan.higgins@linux.dev>,
-        David Gow <davidgow@google.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH] parisc: Fix spelling mistake "mis-match" -> "mismatch"
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        linux-parisc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221013221915.128286-1-colin.i.king@gmail.com>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <20221013221915.128286-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SsI7+OOhrckqJ9s71RET+UmBVYmcBfG3BxtNPAnpEaaLLltYf/q
+ W76QW46tGg7oyNbFqDCU9YH4ckpIuwWLipXzrCQPWXljqpsuA3HnZIR696Oe0KmLauJwehM
+ pKzkxXhOkWFzc7BDm2BIxtuOr6565cIXP4Lwy3lYfxjx/a3GL5ec/1NSClYCfAmiyqBaq4S
+ VKQHdNQGpBqpURzgs7XTA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:36OZDcg+JL8=:D1m7yYw0u5tlw4bVmNjOz5
+ TRYljKp7WktP8mwyDJB5sbiehN54ckfgCqfjOT+wg0bTPfoSTWfE6o9Y8REPrZhOSxTAGRcyP
+ dM6Tq/eRE068MzDAJsADFzCcYkw+0WJ7CfCDI7qfoCbQKBCuSidlrM/7FOHkPc/Jbh7e1PFyD
+ GvrPwgqcU42F6IOEeFd0ppe3RzBP39NV2oAeSVe8VQHtF68jTd5ytJujAWaA8OtDyFuRCiWyd
+ A3M35SyIezb+VtjbhhC0tQU35sqhBTaSrWa8Kkcw6klNhr5erB97X9exOHwbvsfFEjF98bRuZ
+ i8eh4x0+/NGkR8KC39QSp/sDVo5NHYKerTqpi4b/oWWtenn1V7y7ViBBIiL3Z1GcWXgr8l365
+ mqft/1X4qbg7K1iDwqxqwtCCl2owixVMeAROCwpQTUHnoKwdkJYbqnn9anYxgPUgDViqT5ovx
+ X71xceSJGzn2ums8uNVtr/hu8vkzBNhfnVjtUbg7ohiLt/v1R3XZNSve39xQWGDTjEL0uAyTJ
+ S8pVAWdRPSw4d+fLHvF5Ye5wXUpOz8tjyqA/48yLxu/NkeCKshAuUUY7QZ4kjXuSv0WSMNNU9
+ h4mq7RrSA14RY2YtvVCt3cUCT4tIXcPNBG/4YCqHUu4zwdKlzPrdLjHyVyXMC/R44BG1p9one
+ zIE0o0jHf1oF5TSOByNsk41pmyV6K9MLsvnFeGz+BUbJuuaDEWd9heaNhxfSFnJD73JXShMjI
+ orMZNTOH6yLirdVcM55kb4QPMw9kXkdkr52JsLGLeBAyRKCUBD4OXUEhaU6gs/Xi/88NwjQeJ
+ fxWv7GH3T0GbK/vWjcaZTdP+VbrqPdDy8JqZb7XHaoRCuACK5KWiabCH1rRahIaNWvbj/Fija
+ IOoiRHS7+exrhnCBsHrrNH2QjWmZKGCj/Gmbz87V/z9+jq2MwlN5Am1bJy7UZjymsCEbc9AwF
+ mOj53JJMTqxfoWGGNryq+NqkJ16gVlAH43kd0Y6Z9wwBfAyNKT3ZkwOW+/VuiNLMVcxvkbxU7
+ HFjUM7QbfVv/G2igUTByTaBvX0/cGSCTOj9xV19g7MRACCZDev/Q19QbzMwTlUa7bHyqYV6P7
+ dg3kcvc3i0IIdoTnmpNDyb+B+EP9s4HhmtUJT47WVfawAAswl9oVz/4CHvwREF651MY63q0E7
+ rjuA/yifsFXq5W8/CA4F3imC8mo4jPoazlPeN2ol827+6v6/BJfdbchvE6HdsxuYE0sKrNhz+
+ Dj2i9FX+RnHcTBFm/n1AQ9GRTCYaCTKeSnx9UBkEr/JM4s4feRej/buMHxO43VwlprU0pGA0V
+ lDXH+OMbO6rUAIawBDQ3xLCQSi4MwseeAeJlZWFECNRlatGBLTMugtYflA0cw9TiTzx5Okx6Z
+ G+EVbFlyvldcIpIv5aDRqVcu4lOQe1kjbuPL72ad5TwxIXXLuRsGW6Me70zZcqqRpndjJe/3B
+ A7f3xR35zEnH7k2SaZJYgl8ChE1QEL63ipulZQD44EwYhJZ5C0Au1k3JRaW+ufLaIjft/Nqxe
+ AeFhs/SiXgq3wnyoWe4JTLHAxjRpPBH1x9Pm4266O06di
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 14, 2022 at 2:37 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On 10/14/22 00:19, Colin Ian King wrote:
+> There are several spelling mistakes in kernel error messages. Fix them.
 >
-> The alloc_string_stream() functions were changed from returning NULL on
-> error to returning error pointers so these caller needs to be updated
-> as well.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+applied to parisc tree.
+
+Thanks!
+Helge
+
+> ---
+>   drivers/parisc/eisa_enumerator.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 >
-> Fixes: 78b1c6584fce ("kunit: string-stream: Simplify resource use")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> diff --git a/drivers/parisc/eisa_enumerator.c b/drivers/parisc/eisa_enum=
+erator.c
+> index f54a6f450391..f0cb31198a8f 100644
+> --- a/drivers/parisc/eisa_enumerator.c
+> +++ b/drivers/parisc/eisa_enumerator.c
+> @@ -393,7 +393,7 @@ static int parse_slot_config(int slot,
+>   		}
+>
+>   		if (p0 + function_len < pos) {
+> -			printk(KERN_ERR "eisa_enumerator: function %d length mis-match "
+> +			printk(KERN_ERR "eisa_enumerator: function %d length mismatch "
+>   			       "got %d, expected %d\n",
+>   			       num_func, pos-p0, function_len);
+>   			res=3D-1;
+> @@ -407,13 +407,13 @@ static int parse_slot_config(int slot,
+>   	}
+>
+>   	if (pos !=3D es->config_data_length) {
+> -		printk(KERN_ERR "eisa_enumerator: config data length mis-match got %d=
+, expected %d\n",
+> +		printk(KERN_ERR "eisa_enumerator: config data length mismatch got %d,=
+ expected %d\n",
+>   			pos, es->config_data_length);
+>   		res=3D-1;
+>   	}
+>
+>   	if (num_func !=3D es->num_functions) {
+> -		printk(KERN_ERR "eisa_enumerator: number of functions mis-match got %=
+d, expected %d\n",
+> +		printk(KERN_ERR "eisa_enumerator: number of functions mismatch got %d=
+, expected %d\n",
+>   			num_func, es->num_functions);
+>   		res=3D-2;
+>   	}
+> @@ -451,7 +451,7 @@ static int init_slot(int slot, struct eeprom_eisa_sl=
+ot_info *es)
+>   		}
+>   		if (es->eisa_slot_id !=3D id) {
+>   			print_eisa_id(id_string, id);
+> -			printk(KERN_ERR "EISA slot %d id mis-match: got %s",
+> +			printk(KERN_ERR "EISA slot %d id mismatch: got %s",
+>   			       slot, id_string);
+>
+>   			print_eisa_id(id_string, es->eisa_slot_id);
 
-Reviewed-by: Daniel Latypov <dlatypov@google.com>
-
-Thanks for catching this.
-This patch seems like it updates the only (direct) callsite for each
-of the funcs, so I think we're good once it goes in.
-
-I also tested alloc_string_stream() failing, and the output looks good:
-Could not allocate stream to print failed assertion in
-lib/kunit/kunit-example-test.c:29
-...
----[ end trace 0000000000000000 ]---
-    not ok 1 - example_simple_test
-    # example_skip_test: initializing
-    # example_skip_test: You should not see a line below.
