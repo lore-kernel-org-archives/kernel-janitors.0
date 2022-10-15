@@ -2,134 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C43C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Oct 2022 18:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8CFC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Oct 2022 00:19:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230283AbiJNSH1 (ORCPT
+        id S229681AbiJOATG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Oct 2022 14:07:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37886 "EHLO
+        Fri, 14 Oct 2022 20:19:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229982AbiJNSHW (ORCPT
+        with ESMTP id S229661AbiJOATF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Oct 2022 14:07:22 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 532201D4631;
-        Fri, 14 Oct 2022 11:07:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1665770835;
-        bh=qt6OErHWsTDKZrWmkypB7PH5kVLGo0E85ODKBQDxDhw=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=EuPkDVSc+wMkb23sZ0qt2uponSkCVabrPXK1rJGb/ZMo2pxCWwZAUjXytuZbzrEfS
-         QosL5e9DJ2FkzfRB4P5zQx22YNJv+l+DVPDS+MiE/zgj4GMPMQx2WImyPrnLnAOIOj
-         fRw1mWE+iyXtZHxM0qKNMNDNtI7y73KVFDE7VBMc=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.20.60] ([92.116.188.185]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6sn7-1pDIRo2NZv-018KNL; Fri, 14
- Oct 2022 20:07:15 +0200
-Message-ID: <4cfd944b-2558-0b74-b976-e8b7b175428c@gmx.de>
-Date:   Fri, 14 Oct 2022 20:07:12 +0200
+        Fri, 14 Oct 2022 20:19:05 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D0D97EF0;
+        Fri, 14 Oct 2022 17:19:03 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id f8so3532910qkg.3;
+        Fri, 14 Oct 2022 17:19:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/alrnZ8RGuVp6j1Zrsk6QBDaasP3/xhmubHkhBRVSsA=;
+        b=AMVphJLHZ9lrDKEKh7lRVA3M2w8YEDw/iRcjZJi4l4uqd0BZ8kFXJ6zQeixuFeZMHP
+         G87iS7fpZB6tK79bknSf6a0GDBjvlUP2pN4BgXXoVhQvScEb+j388Vc7IhdtWAXbu6ek
+         zU95ZMWhc7FUi1vfacyfVmYW/VUXNcISX1ZBEDEHLCmo8vSrDCwmsk8U2FiYMgplCVcq
+         +6Gf07bq4c4d3TGPDdC2uM9WOcssXpbLj6iCJ3PamCvYRduutKIb4km6y6WWlUR2sB0z
+         XY/gTWB9H1zKfzFTv8TDQ98MK9fTtZazv83qlwtwjMOGZpVcK33p+l+qYXra3G6fC33c
+         tb3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/alrnZ8RGuVp6j1Zrsk6QBDaasP3/xhmubHkhBRVSsA=;
+        b=mAqca8cnHKuVLDiWiAzVzIKLG6hwUSHaGaXVchWLEPPDGxcDcKmKhY0Wdzl16CLcxH
+         7WRQBi2nslQRqjQPSzenII1FCdLKs2sOMT2y428eDre14/EjhhNp1c5FqcYYSPFnfu4o
+         hXGC1vds2pnWZZhu1wlWIE6UY0OwQ9I7aNcNPEATCrgvDaFNjRY3+18gDqi390iAzQ/P
+         bD8M3tUNZGJ5UF3uP4HRNajBFgteZJcS1IQanRLq6oSuCI6/hW/JX9+LZFR7qCkO4g/L
+         1JqnRB2c301EctSkRvxGkjztLvGktzAw6ve2Ize9B+hAmL8MCNvnQ1L1Rdw3w9OHkAPh
+         L0MA==
+X-Gm-Message-State: ACrzQf0DxiDmTycCqhyWrwfer/wWvrbiMoh2QtDgQgStA3+aF6KfCD90
+        N3e3MMcjWqigHVRwUMu15K6EkCY1Cb4=
+X-Google-Smtp-Source: AMsMyM6z3AyQjtw4AbKFBqX7lNUeKpxoug5KAdK4vFnqkkcSJ9SU5gFd6CgpXfEu+0DzFu6wecx2mw==
+X-Received: by 2002:a05:620a:bd4:b0:6cf:468e:e092 with SMTP id s20-20020a05620a0bd400b006cf468ee092mr332445qki.583.1665793142955;
+        Fri, 14 Oct 2022 17:19:02 -0700 (PDT)
+Received: from [192.168.1.201] (pool-173-73-95-180.washdc.fios.verizon.net. [173.73.95.180])
+        by smtp.gmail.com with ESMTPSA id i7-20020ac87647000000b0035cd6a4ba3csm3012049qtr.39.2022.10.14.17.19.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Oct 2022 17:19:02 -0700 (PDT)
+Message-ID: <fe87aff8-bb93-cea0-f05c-e72a256bdf11@gmail.com>
+Date:   Fri, 14 Oct 2022 20:19:01 -0400
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH] parisc: Fix spelling mistake "mis-match" -> "mismatch"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH net v2] sunhme: Uninitialized variable in
+ happy_meal_init()
 Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-        linux-parisc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221013221915.128286-1-colin.i.king@gmail.com>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <20221013221915.128286-1-colin.i.king@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <Y0lzHssyY3VkxuAz@kili>
+From:   Sean Anderson <seanga2@gmail.com>
+In-Reply-To: <Y0lzHssyY3VkxuAz@kili>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SsI7+OOhrckqJ9s71RET+UmBVYmcBfG3BxtNPAnpEaaLLltYf/q
- W76QW46tGg7oyNbFqDCU9YH4ckpIuwWLipXzrCQPWXljqpsuA3HnZIR696Oe0KmLauJwehM
- pKzkxXhOkWFzc7BDm2BIxtuOr6565cIXP4Lwy3lYfxjx/a3GL5ec/1NSClYCfAmiyqBaq4S
- VKQHdNQGpBqpURzgs7XTA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:36OZDcg+JL8=:D1m7yYw0u5tlw4bVmNjOz5
- TRYljKp7WktP8mwyDJB5sbiehN54ckfgCqfjOT+wg0bTPfoSTWfE6o9Y8REPrZhOSxTAGRcyP
- dM6Tq/eRE068MzDAJsADFzCcYkw+0WJ7CfCDI7qfoCbQKBCuSidlrM/7FOHkPc/Jbh7e1PFyD
- GvrPwgqcU42F6IOEeFd0ppe3RzBP39NV2oAeSVe8VQHtF68jTd5ytJujAWaA8OtDyFuRCiWyd
- A3M35SyIezb+VtjbhhC0tQU35sqhBTaSrWa8Kkcw6klNhr5erB97X9exOHwbvsfFEjF98bRuZ
- i8eh4x0+/NGkR8KC39QSp/sDVo5NHYKerTqpi4b/oWWtenn1V7y7ViBBIiL3Z1GcWXgr8l365
- mqft/1X4qbg7K1iDwqxqwtCCl2owixVMeAROCwpQTUHnoKwdkJYbqnn9anYxgPUgDViqT5ovx
- X71xceSJGzn2ums8uNVtr/hu8vkzBNhfnVjtUbg7ohiLt/v1R3XZNSve39xQWGDTjEL0uAyTJ
- S8pVAWdRPSw4d+fLHvF5Ye5wXUpOz8tjyqA/48yLxu/NkeCKshAuUUY7QZ4kjXuSv0WSMNNU9
- h4mq7RrSA14RY2YtvVCt3cUCT4tIXcPNBG/4YCqHUu4zwdKlzPrdLjHyVyXMC/R44BG1p9one
- zIE0o0jHf1oF5TSOByNsk41pmyV6K9MLsvnFeGz+BUbJuuaDEWd9heaNhxfSFnJD73JXShMjI
- orMZNTOH6yLirdVcM55kb4QPMw9kXkdkr52JsLGLeBAyRKCUBD4OXUEhaU6gs/Xi/88NwjQeJ
- fxWv7GH3T0GbK/vWjcaZTdP+VbrqPdDy8JqZb7XHaoRCuACK5KWiabCH1rRahIaNWvbj/Fija
- IOoiRHS7+exrhnCBsHrrNH2QjWmZKGCj/Gmbz87V/z9+jq2MwlN5Am1bJy7UZjymsCEbc9AwF
- mOj53JJMTqxfoWGGNryq+NqkJ16gVlAH43kd0Y6Z9wwBfAyNKT3ZkwOW+/VuiNLMVcxvkbxU7
- HFjUM7QbfVv/G2igUTByTaBvX0/cGSCTOj9xV19g7MRACCZDev/Q19QbzMwTlUa7bHyqYV6P7
- dg3kcvc3i0IIdoTnmpNDyb+B+EP9s4HhmtUJT47WVfawAAswl9oVz/4CHvwREF651MY63q0E7
- rjuA/yifsFXq5W8/CA4F3imC8mo4jPoazlPeN2ol827+6v6/BJfdbchvE6HdsxuYE0sKrNhz+
- Dj2i9FX+RnHcTBFm/n1AQ9GRTCYaCTKeSnx9UBkEr/JM4s4feRej/buMHxO43VwlprU0pGA0V
- lDXH+OMbO6rUAIawBDQ3xLCQSi4MwseeAeJlZWFECNRlatGBLTMugtYflA0cw9TiTzx5Okx6Z
- G+EVbFlyvldcIpIv5aDRqVcu4lOQe1kjbuPL72ad5TwxIXXLuRsGW6Me70zZcqqRpndjJe/3B
- A7f3xR35zEnH7k2SaZJYgl8ChE1QEL63ipulZQD44EwYhJZ5C0Au1k3JRaW+ufLaIjft/Nqxe
- AeFhs/SiXgq3wnyoWe4JTLHAxjRpPBH1x9Pm4266O06di
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/14/22 00:19, Colin Ian King wrote:
-> There are several spelling mistakes in kernel error messages. Fix them.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-applied to parisc tree.
-
-Thanks!
-Helge
-
+On 10/14/22 10:33, Dan Carpenter wrote:
+> The "burst" string is only initialized for CONFIG_SPARC.  It should be
+> set to "64" because that's what is used by PCI.
+> 
+> Fixes: 24cddbc3ef11 ("sunhme: Combine continued messages")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->   drivers/parisc/eisa_enumerator.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/parisc/eisa_enumerator.c b/drivers/parisc/eisa_enum=
-erator.c
-> index f54a6f450391..f0cb31198a8f 100644
-> --- a/drivers/parisc/eisa_enumerator.c
-> +++ b/drivers/parisc/eisa_enumerator.c
-> @@ -393,7 +393,7 @@ static int parse_slot_config(int slot,
->   		}
->
->   		if (p0 + function_len < pos) {
-> -			printk(KERN_ERR "eisa_enumerator: function %d length mis-match "
-> +			printk(KERN_ERR "eisa_enumerator: function %d length mismatch "
->   			       "got %d, expected %d\n",
->   			       num_func, pos-p0, function_len);
->   			res=3D-1;
-> @@ -407,13 +407,13 @@ static int parse_slot_config(int slot,
->   	}
->
->   	if (pos !=3D es->config_data_length) {
-> -		printk(KERN_ERR "eisa_enumerator: config data length mis-match got %d=
-, expected %d\n",
-> +		printk(KERN_ERR "eisa_enumerator: config data length mismatch got %d,=
- expected %d\n",
->   			pos, es->config_data_length);
->   		res=3D-1;
->   	}
->
->   	if (num_func !=3D es->num_functions) {
-> -		printk(KERN_ERR "eisa_enumerator: number of functions mis-match got %=
-d, expected %d\n",
-> +		printk(KERN_ERR "eisa_enumerator: number of functions mismatch got %d=
-, expected %d\n",
->   			num_func, es->num_functions);
->   		res=3D-2;
->   	}
-> @@ -451,7 +451,7 @@ static int init_slot(int slot, struct eeprom_eisa_sl=
-ot_info *es)
->   		}
->   		if (es->eisa_slot_id !=3D id) {
->   			print_eisa_id(id_string, id);
-> -			printk(KERN_ERR "EISA slot %d id mis-match: got %s",
-> +			printk(KERN_ERR "EISA slot %d id mismatch: got %s",
->   			       slot, id_string);
->
->   			print_eisa_id(id_string, es->eisa_slot_id);
+> v2: Use "64" instead of ""
+> 
+>   drivers/net/ethernet/sun/sunhme.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
+> index 62deed210a95..55f7ec836744 100644
+> --- a/drivers/net/ethernet/sun/sunhme.c
+> +++ b/drivers/net/ethernet/sun/sunhme.c
+> @@ -1328,7 +1328,7 @@ static int happy_meal_init(struct happy_meal *hp)
+>   	void __iomem *erxregs      = hp->erxregs;
+>   	void __iomem *bregs        = hp->bigmacregs;
+>   	void __iomem *tregs        = hp->tcvregs;
+> -	const char *bursts;
+> +	const char *bursts = "64";
+>   	u32 regtmp, rxcfg;
+>   
+>   	/* If auto-negotiation timer is running, kill it. */
 
+Reviewed-by: Sean Anderson <seanga2@gmail.com>
