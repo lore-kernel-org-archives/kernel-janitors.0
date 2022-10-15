@@ -2,102 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8CFC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Oct 2022 00:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7673C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Oct 2022 03:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbiJOATG (ORCPT
+        id S229540AbiJOD46 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Oct 2022 20:19:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51984 "EHLO
+        Fri, 14 Oct 2022 23:56:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbiJOATF (ORCPT
+        with ESMTP id S229542AbiJOD45 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Oct 2022 20:19:05 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D0D97EF0;
-        Fri, 14 Oct 2022 17:19:03 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id f8so3532910qkg.3;
-        Fri, 14 Oct 2022 17:19:03 -0700 (PDT)
+        Fri, 14 Oct 2022 23:56:57 -0400
+Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C717A773
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Oct 2022 20:56:55 -0700 (PDT)
+Received: by mail-ua1-x931.google.com with SMTP id x20so2603536ual.6
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Oct 2022 20:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/alrnZ8RGuVp6j1Zrsk6QBDaasP3/xhmubHkhBRVSsA=;
-        b=AMVphJLHZ9lrDKEKh7lRVA3M2w8YEDw/iRcjZJi4l4uqd0BZ8kFXJ6zQeixuFeZMHP
-         G87iS7fpZB6tK79bknSf6a0GDBjvlUP2pN4BgXXoVhQvScEb+j388Vc7IhdtWAXbu6ek
-         zU95ZMWhc7FUi1vfacyfVmYW/VUXNcISX1ZBEDEHLCmo8vSrDCwmsk8U2FiYMgplCVcq
-         +6Gf07bq4c4d3TGPDdC2uM9WOcssXpbLj6iCJ3PamCvYRduutKIb4km6y6WWlUR2sB0z
-         XY/gTWB9H1zKfzFTv8TDQ98MK9fTtZazv83qlwtwjMOGZpVcK33p+l+qYXra3G6fC33c
-         tb3Q==
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1XtuVADnAOBONC1M17shsTaGM9X/1vdcEzHMBFOcvXk=;
+        b=SICoSPjDMfDyxBWTvI7h9j4rOaw3W2JVixNlEFSxzdTf6iuhFXBogtg847ozW9ItTi
+         iDSArywWSE3DkZw1FNys8hKdxU3sUjMxau4rTklao5ix4vsIiiONwe/8BXURq//KJx+D
+         fNIo9KEwNEfqsa3Ef3Uu2pBfrzPRaF0qH7pp411E6JrQryl+ADOssJ0e+daZPOlgPxzc
+         c6My6fhbMjtQYxj/9xPLCJ6w2rXqSN0/hV6APJtyCBtdRyiUdsrwmXysPLc2a05g0+Ta
+         EkrhdH2ZpUkMlbylrfbwzXDWieqPKsHzGFeblUcz/gI9hdI6RLuvJzPwUAWxs+rigjT6
+         gNSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/alrnZ8RGuVp6j1Zrsk6QBDaasP3/xhmubHkhBRVSsA=;
-        b=mAqca8cnHKuVLDiWiAzVzIKLG6hwUSHaGaXVchWLEPPDGxcDcKmKhY0Wdzl16CLcxH
-         7WRQBi2nslQRqjQPSzenII1FCdLKs2sOMT2y428eDre14/EjhhNp1c5FqcYYSPFnfu4o
-         hXGC1vds2pnWZZhu1wlWIE6UY0OwQ9I7aNcNPEATCrgvDaFNjRY3+18gDqi390iAzQ/P
-         bD8M3tUNZGJ5UF3uP4HRNajBFgteZJcS1IQanRLq6oSuCI6/hW/JX9+LZFR7qCkO4g/L
-         1JqnRB2c301EctSkRvxGkjztLvGktzAw6ve2Ize9B+hAmL8MCNvnQ1L1Rdw3w9OHkAPh
-         L0MA==
-X-Gm-Message-State: ACrzQf0DxiDmTycCqhyWrwfer/wWvrbiMoh2QtDgQgStA3+aF6KfCD90
-        N3e3MMcjWqigHVRwUMu15K6EkCY1Cb4=
-X-Google-Smtp-Source: AMsMyM6z3AyQjtw4AbKFBqX7lNUeKpxoug5KAdK4vFnqkkcSJ9SU5gFd6CgpXfEu+0DzFu6wecx2mw==
-X-Received: by 2002:a05:620a:bd4:b0:6cf:468e:e092 with SMTP id s20-20020a05620a0bd400b006cf468ee092mr332445qki.583.1665793142955;
-        Fri, 14 Oct 2022 17:19:02 -0700 (PDT)
-Received: from [192.168.1.201] (pool-173-73-95-180.washdc.fios.verizon.net. [173.73.95.180])
-        by smtp.gmail.com with ESMTPSA id i7-20020ac87647000000b0035cd6a4ba3csm3012049qtr.39.2022.10.14.17.19.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Oct 2022 17:19:02 -0700 (PDT)
-Message-ID: <fe87aff8-bb93-cea0-f05c-e72a256bdf11@gmail.com>
-Date:   Fri, 14 Oct 2022 20:19:01 -0400
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1XtuVADnAOBONC1M17shsTaGM9X/1vdcEzHMBFOcvXk=;
+        b=OIJ7+PiDO1vNirgG7j6te7EUX0mIQe3swiBWsNkNRFIXSG7iSgy5rVmsQJwvG1jWPR
+         Jghe42I2RIlgCsMKwz/kHFv799f+cgPlwe/KFjENFdk/3Nj48f+XeU8uKuZDQvvpB/0+
+         TUixfC1PZI3DEpQ2vDK1OYGQNulJnsxfSW8NAor33AmE11tKBuK1nj11TvxQcPUWlv1A
+         kPHJqNRa3iYiGFayVGERNrcrmli5Dc8yZsmlGSFwwTuaDEePpbei8e+N/op3Pj9OnCq4
+         xlS/os8taogu7F1E64QEISBf8NJiB4LiU81vp4iqD0ywQyySHtL3R0X6MAqOwFevVlan
+         Tz5Q==
+X-Gm-Message-State: ACrzQf184bA6RvSTg1QHHdsvkqWBaj3z3SbQKchgmIg3SitClu+ArGg6
+        vpEhFG44Q/CS9quPiG1aRjCyNRnypA2WYYBewyQVXCvsC7o=
+X-Google-Smtp-Source: AMsMyM473JkJYVq3qyMVSEZ/H2A3T4g6IsXoU0uUO2ER+bROjWbRK2mptRijTTlqIqKwYqfHd0rHvvyL8dMeIHpWimw=
+X-Received: by 2002:ab0:7412:0:b0:3d1:c2f7:3250 with SMTP id
+ r18-20020ab07412000000b003d1c2f73250mr351495uap.21.1665806214170; Fri, 14 Oct
+ 2022 20:56:54 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH net v2] sunhme: Uninitialized variable in
- happy_meal_init()
-Content-Language: en-US
+References: <Y0kt1aCTHO4r2CmL@kili>
+In-Reply-To: <Y0kt1aCTHO4r2CmL@kili>
+From:   David Gow <davidgow@google.com>
+Date:   Sat, 15 Oct 2022 11:56:42 +0800
+Message-ID: <CABVgOSkrZ+ZHP6M5t3JSMetdM=WWQwiS_2k1VZUHm9t42JagOA@mail.gmail.com>
+Subject: Re: [PATCH] kunit: update NULL vs IS_ERR() tests
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+Cc:     Brendan Higgins <brendan.higgins@linux.dev>,
+        Daniel Latypov <dlatypov@google.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
         kernel-janitors@vger.kernel.org
-References: <Y0lzHssyY3VkxuAz@kili>
-From:   Sean Anderson <seanga2@gmail.com>
-In-Reply-To: <Y0lzHssyY3VkxuAz@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/14/22 10:33, Dan Carpenter wrote:
-> The "burst" string is only initialized for CONFIG_SPARC.  It should be
-> set to "64" because that's what is used by PCI.
-> 
-> Fixes: 24cddbc3ef11 ("sunhme: Combine continued messages")
+On Fri, Oct 14, 2022 at 5:37 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The alloc_string_stream() functions were changed from returning NULL on
+> error to returning error pointers so these caller needs to be updated
+> as well.
+>
+> Fixes: 78b1c6584fce ("kunit: string-stream: Simplify resource use")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> v2: Use "64" instead of ""
-> 
->   drivers/net/ethernet/sun/sunhme.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
-> index 62deed210a95..55f7ec836744 100644
-> --- a/drivers/net/ethernet/sun/sunhme.c
-> +++ b/drivers/net/ethernet/sun/sunhme.c
-> @@ -1328,7 +1328,7 @@ static int happy_meal_init(struct happy_meal *hp)
->   	void __iomem *erxregs      = hp->erxregs;
->   	void __iomem *bregs        = hp->bigmacregs;
->   	void __iomem *tregs        = hp->tcvregs;
-> -	const char *bursts;
-> +	const char *bursts = "64";
->   	u32 regtmp, rxcfg;
->   
->   	/* If auto-negotiation timer is running, kill it. */
 
-Reviewed-by: Sean Anderson <seanga2@gmail.com>
+Thanks for catching this!
+
+Reviewed-by: David Gow <davidgow@google.com>
+
+Cheers,
+-- David
+
+>  lib/kunit/string-stream.c | 4 ++--
+>  lib/kunit/test.c          | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
+> index f5ae79c37400..a608746020a9 100644
+> --- a/lib/kunit/string-stream.c
+> +++ b/lib/kunit/string-stream.c
+> @@ -56,8 +56,8 @@ int string_stream_vadd(struct string_stream *stream,
+>         frag_container = alloc_string_stream_fragment(stream->test,
+>                                                       len,
+>                                                       stream->gfp);
+> -       if (!frag_container)
+> -               return -ENOMEM;
+> +       if (IS_ERR(frag_container))
+> +               return PTR_ERR(frag_container);
+>
+>         len = vsnprintf(frag_container->fragment, len, fmt, args);
+>         spin_lock(&stream->lock);
+> diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+> index 90640a43cf62..2a6992fe7c3e 100644
+> --- a/lib/kunit/test.c
+> +++ b/lib/kunit/test.c
+> @@ -265,7 +265,7 @@ static void kunit_fail(struct kunit *test, const struct kunit_loc *loc,
+>         kunit_set_failure(test);
+>
+>         stream = alloc_string_stream(test, GFP_KERNEL);
+> -       if (!stream) {
+> +       if (IS_ERR(stream)) {
+>                 WARN(true,
+>                      "Could not allocate stream to print failed assertion in %s:%d\n",
+>                      loc->file,
+> --
+> 2.35.1
+>
