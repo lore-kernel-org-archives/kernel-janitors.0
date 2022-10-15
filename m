@@ -2,53 +2,51 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6007C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Oct 2022 10:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0861DC4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Oct 2022 10:20:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbiJOKUX (ORCPT
+        id S229740AbiJOKU0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Oct 2022 06:20:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46894 "EHLO
+        Sat, 15 Oct 2022 06:20:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbiJOKUW (ORCPT
+        with ESMTP id S229655AbiJOKUW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Sat, 15 Oct 2022 06:20:22 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ED932B19A;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF9C2B1A3;
         Sat, 15 Oct 2022 03:20:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4FAC6B80884;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 54B29B80885;
         Sat, 15 Oct 2022 10:20:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 10239C433C1;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 04A41C433D7;
         Sat, 15 Oct 2022 10:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1665829216;
-        bh=7LzI11ajSie64NWw5QlbTj7xN/wVydnL5snX5iTZpKk=;
+        bh=YKBMS0sko0ah9X9nz1vsXfEsklWkoU7vB7rsyBAGa0A=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=qVeFpQ8Q1IHRuhaCQceLOx4QkOqtCUrY8wVwu6o5hCcFwxGcolUMsG5Oh0R3FwWbF
-         ucYghCHYGLLBVwqf34JxQ3NfQovaYElCEo9rrc/E+AfYY1CxZFn7J9V8gjZq9Abbbq
-         WAnG5UU1VUrss7EclTrOJovjvJCWJf296JqBSb0gtAjHYW7XW8EPvS5jdeG5nkWnrM
-         JIYFbD1S70DyJWQ6UDwCEJEFWD4I7aq5rz5P8J64pocObnG0CLBeuwCCXvNARxT0OP
-         goQ/Vj4+TJnP2myV8h8nUuackT8aV7oZ0ZhJERB4wo+ctyxD7aMrpSosbwA5MPO0Ic
-         T6kdSHE/LXANw==
+        b=YFWKcUUYX/tQXXnlxn8v/SdD8ULBlHrreuZuxSEBiYRkwHWoPOAoBiAilpCFBYlSl
+         TCYizka6Vl4ZAfSlpISRKndoONmEeCKI9aTnLhTNrwSROKYQsMpV70Q2ux57UqnQq2
+         6IbVaFv3wc98I1o1pI6+yHbENqGVYJZ970iFco7Dl3EFLs5SQ2UGQeCAiWKKZJnMkN
+         txBZRnAaIJIv4YSCZ3H2A1qEiymm+wSn591vXfB6TcDZpB67QlgQjy82Bs6lz5Mpxs
+         ic5e7XxqXhqeyXNNKY0Y7zNWTz2BSvIqaiwbrg2qict+r2f2Bftpjgyd+ZQHeZ1WN8
+         2relG+QfNjHQA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E625AE50D91;
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DACD5E270EF;
         Sat, 15 Oct 2022 10:20:15 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: dsa: uninitialized variable in
- dsa_slave_netdevice_event()
+Subject: Re: [PATCH net v2] sunhme: Uninitialized variable in happy_meal_init()
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166582921593.1299.4105942154478484272.git-patchwork-notify@kernel.org>
+Message-Id: <166582921589.1299.4759077636776692922.git-patchwork-notify@kernel.org>
 Date:   Sat, 15 Oct 2022 10:20:15 +0000
-References: <Y0l7d6Kcs31oErzx@kili>
-In-Reply-To: <Y0l7d6Kcs31oErzx@kili>
+References: <Y0lzHssyY3VkxuAz@kili>
+In-Reply-To: <Y0lzHssyY3VkxuAz@kili>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     andrew@lunn.ch, olteanv@gmail.com, vivien.didelot@gmail.com,
-        f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
+Cc:     seanga2@gmail.com, davem@davemloft.net, edumazet@google.com,
         kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 Precedence: bulk
@@ -60,19 +58,20 @@ Hello:
 This patch was applied to netdev/net.git (master)
 by David S. Miller <davem@davemloft.net>:
 
-On Fri, 14 Oct 2022 18:08:39 +0300 you wrote:
-> Return zero if both dsa_slave_dev_check() and netdev_uses_dsa() are false.
+On Fri, 14 Oct 2022 17:33:02 +0300 you wrote:
+> The "burst" string is only initialized for CONFIG_SPARC.  It should be
+> set to "64" because that's what is used by PCI.
 > 
-> Fixes: acc43b7bf52a ("net: dsa: allow masters to join a LAG")
+> Fixes: 24cddbc3ef11 ("sunhme: Combine continued messages")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> (Vladimir helped me with this patch)
+> v2: Use "64" instead of ""
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: dsa: uninitialized variable in dsa_slave_netdevice_event()
-    https://git.kernel.org/netdev/net/c/0a6d58a70a39
+  - [net,v2] sunhme: Uninitialized variable in happy_meal_init()
+    https://git.kernel.org/netdev/net/c/9408f3d321ed
 
 You are awesome, thank you!
 -- 
