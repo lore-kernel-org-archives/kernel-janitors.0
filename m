@@ -2,60 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF890C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Oct 2022 21:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1020BC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Oct 2022 22:08:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229925AbiJQV4l (ORCPT
+        id S229976AbiJQWIO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Oct 2022 17:56:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39872 "EHLO
+        Mon, 17 Oct 2022 18:08:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229867AbiJQV4j (ORCPT
+        with ESMTP id S229770AbiJQWIN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Oct 2022 17:56:39 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6BC3C16D;
-        Mon, 17 Oct 2022 14:56:38 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id b4so20633163wrs.1;
-        Mon, 17 Oct 2022 14:56:38 -0700 (PDT)
+        Mon, 17 Oct 2022 18:08:13 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 320657696A;
+        Mon, 17 Oct 2022 15:08:12 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id bv10so20654177wrb.4;
+        Mon, 17 Oct 2022 15:08:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bls0sFpMHM96G1RM5fg41i/BvVUOqCU47KqAcUa9dcc=;
-        b=ECZW/PtHmPPhkVHfY/7jTcXy6fpoZT9bkKVg4IWJ6CeC7iRr/Lb9rr3w1+1qj9Wb2b
-         f87r+9s9E1mhdS3mlsEf5JsaJYyjmKt0UYuu/0GWxCxol2yif0IKwnPy8bOqW00K+huQ
-         lRRW7Wnfp+UG5WHVDrdmnYZ8Wg9fO8Q1dAwv/+kdJTgKZWBrYTihsuYNmQvYre+3DOIy
-         SVGWjRRgbvJ7kfUknB9yHTNETyOtMCZtd1lPtfooZnpn+887i3WdgoSeZHZpriSN+CYx
-         bpqNN59WyWYdCucbpgGoy6gfLoxSfyavkkMmliJPNuuj4CoZWHH7lgEe1fBu+GH/Q+cm
-         siKQ==
+        bh=93riG9uu1J1WTisFoALpPiFgWUkyaVzYtCZ43mZ5yrg=;
+        b=W1Ju2EFTJ2FGU2nPR7Z1V+8TcZq1Ap4M3E0lHq6CeBWtHnpy9A1bb9Vvb3dwfdM+Zs
+         3AQcMDIvxGr0lAcpBxmAPpewJYFWAn9wV2kUJaTY81ySCT6jFrZql6F1ErIq7VDx2/pS
+         Bdnc2PYpk+CoZTaOEeOdYY2k+LUh5WqME+9K9BQ42JnuJVedtLB+4J8engvQudegm0Oa
+         LbB21AaF2p0dmAm3LM4hwnApeW47fsibZVmOzuKJA03BJp8ZpanpcOazZFYVkt2oaXm5
+         doLPsmqdlDqow28TweCY9IkLeDht1lLsmp2K4lHqtigAPZAPzIizT4l3aYiwNyXKJM8K
+         ab3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Bls0sFpMHM96G1RM5fg41i/BvVUOqCU47KqAcUa9dcc=;
-        b=cXS9BLJ43srEC/BH2x+dTCr+HuL1WaPSBoWM7OK9OKe9+7rwvvp5jotLSspLbCb8Dg
-         jUDGv55ZNbnLoCcNgJ1yBOTspRt6fgw70WWUbNtVM9hMWKdjInOvxdHma5qUuKV9sKma
-         VdR2pHWymaRbEYUpHZaiCyVuhbeoRXJwH6ysZjhwxHWUz3DPsiZDBJWd6OfAdBxIMdrm
-         IX7Jfaj+CdIU6JNPaPQWbp95yxFeoJpQNkFnr8HD2Rrbv6HTHRgbJ2VntwqyBvfA9/qZ
-         eSBW4bXI5NBCdvC98tlj7ewBirOkVtuIwU/ePsg4kULjoFYoIsNU81WGeAChQpSG2CwF
-         /r8w==
-X-Gm-Message-State: ACrzQf3rKyrvz2zZPxKGtFc5htJ5znWf97KPyImu5BwomNsy+zfi7oq4
-        XIeTHFch20pAm5vnO/TJR1Q=
-X-Google-Smtp-Source: AMsMyM41tOCu+UuZ3B9X1THbfx5NNSWRkRxZ9rrx6c7KKw+tpCuM0Qbcxh0B2I48sdzKqlzwgoNALg==
-X-Received: by 2002:adf:fbc7:0:b0:220:6004:18ca with SMTP id d7-20020adffbc7000000b00220600418camr7178363wrs.632.1666043797270;
-        Mon, 17 Oct 2022 14:56:37 -0700 (PDT)
+        bh=93riG9uu1J1WTisFoALpPiFgWUkyaVzYtCZ43mZ5yrg=;
+        b=OE0Kpn56EMZY6sPyqRIE/tG8OniWkpMn+wfbs16aVk1fg29hlTtlAqzUadm9uPEpbz
+         nGl3nfZC2C7HH9nqcJYkF7dckCUSr291qIIUsUFELe9av9Oq8s3Ppji28Q+kBzGlS3uP
+         CDQiZwsjjBYmDyh9RLWlu64v8r1YVXUsO62wRw4GJz6oDNGW/G79SqpE4B8lreuGpTw2
+         Ud5HB0ZYHFuy7Pqz25yBVM1JagrH+jtPuNIYfWKH7/LQeGtCvUZ4s5F9GQwEhShlsNhR
+         sohjcG+Vs/nI1A5HAGWgOq3/72ABsJCOJOOrvr9HB0NaJV6UcR+Wp1FBaNiAQ5D8W24C
+         55rg==
+X-Gm-Message-State: ACrzQf16gDs01XHujdVal/ozeeJsUtw6x0WOYtNnH8C2vAYlNEGLNu+P
+        DhhYW9giADdCcABswSbRXwA=
+X-Google-Smtp-Source: AMsMyM76liUy6+AG1ZVa7Bt9T4aylrBn/uEOHcjsY92xLWmGtL+0dn9b630t2UvUF6obEzAXi9OkUw==
+X-Received: by 2002:a05:6000:168f:b0:22e:4c3:de09 with SMTP id y15-20020a056000168f00b0022e04c3de09mr7259250wrd.40.1666044490528;
+        Mon, 17 Oct 2022 15:08:10 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b10-20020a5d550a000000b0022860e8ae7csm9203528wrv.77.2022.10.17.14.56.36
+        by smtp.gmail.com with ESMTPSA id bd21-20020a05600c1f1500b003b95ed78275sm11754504wmb.20.2022.10.17.15.08.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 14:56:36 -0700 (PDT)
+        Mon, 17 Oct 2022 15:08:10 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dave Kleikamp <shaggy@kernel.org>
+To:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] jfs: remove redundant assignments to ipaimap and ipaimap2
-Date:   Mon, 17 Oct 2022 22:56:36 +0100
-Message-Id: <20221017215636.863916-1-colin.i.king@gmail.com>
+Subject: [PATCH] esp6: remove redundant variable err
+Date:   Mon, 17 Oct 2022 23:08:09 +0100
+Message-Id: <20221017220809.864495-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,37 +71,37 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointers ipaimap and ipaimap2 are initialized with values that are
-never read, they are re-assigned later when they are required. The
-initializations are redundant and can be removed.
+Variable err is being assigned a value that is not read, the assignment
+is redundant and so is the variable. Remove it.
 
-Cleans up two clang scan build warnings:
-fs/jfs/jfs_umount.c:42:16: warning: Value stored to 'ipaimap' during
-its initialization is never read [deadcode.DeadStores]
-
-fs/jfs/jfs_umount.c:43:16: warning: Value stored to 'ipaimap2' during
-its initialization is never read [deadcode.DeadStores]
+Cleans up clang scan warning:
+net/ipv6/esp6_offload.c:64:7: warning: Although the value stored to 'err'
+is used in the enclosing expression, the value is never actually read
+from 'err' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/jfs/jfs_umount.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv6/esp6_offload.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/jfs/jfs_umount.c b/fs/jfs/jfs_umount.c
-index 3e8b13e6aa01..cc4d7e6e8a4b 100644
---- a/fs/jfs/jfs_umount.c
-+++ b/fs/jfs/jfs_umount.c
-@@ -39,8 +39,8 @@ int jfs_umount(struct super_block *sb)
- 	struct jfs_sb_info *sbi = JFS_SBI(sb);
- 	struct inode *ipbmap = sbi->ipbmap;
- 	struct inode *ipimap = sbi->ipimap;
--	struct inode *ipaimap = sbi->ipaimap;
--	struct inode *ipaimap2 = sbi->ipaimap2;
-+	struct inode *ipaimap;
-+	struct inode *ipaimap2;
- 	struct jfs_log *log;
- 	int rc = 0;
+diff --git a/net/ipv6/esp6_offload.c b/net/ipv6/esp6_offload.c
+index 79d43548279c..97edf461bc72 100644
+--- a/net/ipv6/esp6_offload.c
++++ b/net/ipv6/esp6_offload.c
+@@ -56,12 +56,11 @@ static struct sk_buff *esp6_gro_receive(struct list_head *head,
+ 	__be32 seq;
+ 	__be32 spi;
+ 	int nhoff;
+-	int err;
  
+ 	if (!pskb_pull(skb, offset))
+ 		return NULL;
+ 
+-	if ((err = xfrm_parse_spi(skb, IPPROTO_ESP, &spi, &seq)) != 0)
++	if (xfrm_parse_spi(skb, IPPROTO_ESP, &spi, &seq) != 0)
+ 		goto out;
+ 
+ 	xo = xfrm_offload(skb);
 -- 
 2.37.3
 
