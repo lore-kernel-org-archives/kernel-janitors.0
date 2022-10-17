@@ -2,190 +2,475 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3278AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Oct 2022 11:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE834C43217
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Oct 2022 12:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229850AbiJQLLs (ORCPT
+        id S229725AbiJQMAE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Oct 2022 07:11:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52336 "EHLO
+        Mon, 17 Oct 2022 08:00:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbiJQLLr (ORCPT
+        with ESMTP id S229673AbiJQMAB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Oct 2022 07:11:47 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BE8F58DC0;
-        Mon, 17 Oct 2022 04:11:42 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id 207so12857913ybn.1;
-        Mon, 17 Oct 2022 04:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cR7RKyrnpCdX42yUtcjjGzfAur5/uF+2PLfIPET1Tlw=;
-        b=YdHqVTugx78jHxO5u8NvhOYRFr8iJDvqsMG4XFaUTx4MSbl5JC40GjWVqdC9hOQA8s
-         KaIj1LattbsGf+nvKE+0k5M+KDaKDJzt2AnLr5bSERQcuBCnrLMgLf8057/4i/nJZSl+
-         D2txtDN0THcqnUIDHQmJM/WOnbRLACb/FHn97S7PzrQeHFTOQ5PWqencCiudcarSfaK1
-         ac7U0Fbmz8FAEOL3XR/ZcrjpTZ0BTHn4nZnaq300rifosvfmGw1YgCCqGad37adQMG0w
-         3m4cekCOVw0mMkIkUnE8zcdB3IugQ1599oj0Tz6vHaXwFwhFSzkzIF+Hvrv6VokZDZ3G
-         QGpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cR7RKyrnpCdX42yUtcjjGzfAur5/uF+2PLfIPET1Tlw=;
-        b=JBPdT7Wf4OuSkfkhggx9+PyCb/hVohic21rIZKY1Novmw/3je386fACcKYgNBKpdyV
-         Pd8Z1s0QSYz9Hqj5A7YtBYo+G+xqP9BpBUBd2q4AiFLN7PkXCZ3B82vsFWhxduKYfDVi
-         Mdz2d8EKhH72DgVgoKS44mcVOrJzoQW0yeQ6uCMNornHe0xK903Gw1H209Pu03+NNIud
-         U1GWMPBPzUEbJ2/GyNg/xEU3t32rSgkWrMx5XWHCwX4vv3wUHYiLSl/xv3zPBAHGnESI
-         iC/op4UvbhVqRcoeZJaZBUIH9hp6ikGp3M0L1mBxJ2NkRMweKO25GU8wrPugOy3mnpzw
-         v7tg==
-X-Gm-Message-State: ACrzQf0B0ZlCQKTZmKhHX5hdj8r2/Nvw/C/eJpmUnEmyFpYQ0dNvgWDu
-        ZDzT1sq00Og3VJ5qhsEl0PLYe53R7W4WC7VbxIkdoEXw
-X-Google-Smtp-Source: AMsMyM4QnJl8FDbDY9WXmrWaSRdFNE3iWXQ/D7bDXNd06gKLOLWArZ2kSkfa2hTRu6akRhzLSebyE8fKe4SsNrqaQlw=
-X-Received: by 2002:a25:b95:0:b0:6c2:53a8:3711 with SMTP id
- 143-20020a250b95000000b006c253a83711mr8622318ybl.27.1666005101496; Mon, 17
- Oct 2022 04:11:41 -0700 (PDT)
-MIME-Version: 1.0
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 17 Oct 2022 13:11:30 +0200
-Message-ID: <CAKXUXMxf7OiCwbxib7MwfR4M1b5+b3cNTU7n5NV9Zm4967=FPQ@mail.gmail.com>
-Subject: Observed memory leak in hugetlb_reserve_pages
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
+        Mon, 17 Oct 2022 08:00:01 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6396E1FCDC;
+        Mon, 17 Oct 2022 04:59:57 -0700 (PDT)
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Mrb7T71GfzpW32;
+        Mon, 17 Oct 2022 19:56:37 +0800 (CST)
+Received: from kwepemm600005.china.huawei.com (7.193.23.191) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 17 Oct 2022 19:59:34 +0800
+Received: from [10.67.103.158] (10.67.103.158) by
+ kwepemm600005.china.huawei.com (7.193.23.191) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 17 Oct 2022 19:59:31 +0800
+Subject: Re: [PATCH v6 0/7] treewide cleanup of random integer usage
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
+CC:     Andreas Noever <andreas.noever@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        KP Singh <kpsingh@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Marco Elver <elver@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Richard Weinberger" <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Thomas Graf <tgraf@suug.ch>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
+        Yury Norov <yury.norov@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <kasan-dev@googlegroups.com>,
+        <kernel-janitors@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-mmc@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <linux-nvme@lists.infradead.org>,
+        <linux-parisc@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-s390@vger.kernel.org>, <linux-um@lists.infradead.org>,
+        <linux-usb@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
+        <netdev@vger.kernel.org>, <sparclinux@vger.kernel.org>,
+        <x86@kernel.org>
+References: <20221010230613.1076905-1-Jason@zx2c4.com>
+From:   liulongfang <liulongfang@huawei.com>
+Message-ID: <8dad6a2c-9ef6-086e-0fb0-cd9115d4faca@huawei.com>
+Date:   Mon, 17 Oct 2022 19:59:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20221010230613.1076905-1-Jason@zx2c4.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.103.158]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600005.china.huawei.com (7.193.23.191)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dear Mike,
+On 2022/10/11 7:06, Jason A. Donenfeld Wrote:
+> Changes v5->v6:
+> - Added a few missing conversions that weren't in my older tree, so now
+>   this should be ready to go, as well as a couple nits people had from
+>   v5. Barring something large and unforeseen, this is the "final
+>   version", as this is ready to ship. Thanks to everyone who reviewed
+>   this.
+> 
+> Hi folks,
+> 
+> This is a five part treewide cleanup of random integer handling. The
+> rules for random integers are:
+> 
+> - If you want a secure or an insecure random u64, use get_random_u64().
+> - If you want a secure or an insecure random u32, use get_random_u32().
+>   * The old function prandom_u32() has been deprecated for a while now
+>     and is just a wrapper around get_random_u32(). Same for
+>     get_random_int().
+> - If you want a secure or an insecure random u16, use get_random_u16().
+> - If you want a secure or an insecure random u8, use get_random_u8().
+> - If you want secure or insecure random bytes, use get_random_bytes().
+>   * The old function prandom_bytes() has been deprecated for a while now
+>     and has long been a wrapper around get_random_bytes().
+> - If you want a non-uniform random u32, u16, or u8 bounded by a certain
+>   open interval maximum, use prandom_u32_max().
+>   * I say "non-uniform", because it doesn't do any rejection sampling or
+>     divisions. Hence, it stays within the prandom_* namespace.
+> 
+> These rules ought to be applied uniformly, so that we can clean up the
+> deprecated functions, and earn the benefits of using the modern
+> functions. In particular, in addition to the boring substitutions, this
+> patchset accomplishes a few nice effects:
+> 
+> - By using prandom_u32_max() with an upper-bound that the compiler can
+>   prove at compile-time is ≤65536 or ≤256, internally get_random_u16()
+>   or get_random_u8() is used, which wastes fewer batched random bytes,
+>   and hence has higher throughput.
+> 
+> - By using prandom_u32_max() instead of %, when the upper-bound is not a
+>   constant, division is still avoided, because prandom_u32_max() uses
+>   a faster multiplication-based trick instead.
+> 
+> - By using get_random_u16() or get_random_u8() in cases where the return
+>   value is intended to indeed be a u16 or a u8, we waste fewer batched
+>   random bytes, and hence have higher throughput.
+> 
+> So, based on those rules and benefits from following them, this patchset
+> breaks down into the following five steps:
+> 
+> 1) Replace `prandom_u32() % max` and variants thereof with
+>    prandom_u32_max(max).
+> 
+>    * Part 1 is done with Coccinelle. Part 2 is done by hand.
+> 
+> 2) Replace `(type)get_random_u32()` and variants thereof with
+>    get_random_u16() or get_random_u8(). I took the pains to actually
+>    look and see what every lvalue type was across the entire tree.
+> 
+>    * Part 1 is done with Coccinelle. Part 2 is done by hand.
+> 
+> 3) Replace remaining deprecated uses of prandom_u32() and
+>    get_random_int() with get_random_u32(). 
+> 
+>    * A boring search and replace operation.
+> 
+> 4) Replace remaining deprecated uses of prandom_bytes() with
+>    get_random_bytes().
+> 
+>    * A boring search and replace operation.
+> 
+> 5) Remove the deprecated and now-unused prandom_u32() and
+>    prandom_bytes() inline wrapper functions.
+> 
+>    * Just deleting code and updating comments.
+> 
+> I'll be sending this toward the end of the 6.1 merge window via the
+> random.git tree.
+> 
+> Please take a look! The number of lines touched is quite small, so this
+> should be reviewable, and as much as is possible has been pushed into
+> Coccinelle scripts.
+> 
+> Thanks,
+> Jason
+> 
+> Cc: Andreas Noever <andreas.noever@gmail.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Dave Airlie <airlied@redhat.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Florian Westphal <fw@strlen.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Helge Deller <deller@gmx.de>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: Huacai Chen <chenhuacai@kernel.org>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: James E.J. Bottomley <jejb@linux.ibm.com>
+> Cc: Jan Kara <jack@suse.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
+> Cc: KP Singh <kpsingh@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Marco Elver <elver@google.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Theodore Ts'o <tytso@mit.edu>
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Thomas Graf <tgraf@suug.ch>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: WANG Xuerui <kernel@xen0n.name>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: kasan-dev@googlegroups.com
+> Cc: kernel-janitors@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-block@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-mips@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-nvme@lists.infradead.org
+> Cc: linux-parisc@vger.kernel.org
+> Cc: linux-rdma@vger.kernel.org
+> Cc: linux-s390@vger.kernel.org
+> Cc: linux-um@lists.infradead.org
+> Cc: linux-usb@vger.kernel.org
+> Cc: linux-wireless@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: loongarch@lists.linux.dev
+> Cc: netdev@vger.kernel.org
+> Cc: sparclinux@vger.kernel.org
+> Cc: x86@kernel.org
+> 
+> Jason A. Donenfeld (7):
+>   treewide: use prandom_u32_max() when possible, part 1
+>   treewide: use prandom_u32_max() when possible, part 2
+>   treewide: use get_random_{u8,u16}() when possible, part 1
+>   treewide: use get_random_{u8,u16}() when possible, part 2
+>   treewide: use get_random_u32() when possible
+>   treewide: use get_random_bytes() when possible
+>   prandom: remove unused functions
+> 
+>  Documentation/networking/filter.rst           |  2 +-
+>  arch/arm/kernel/process.c                     |  2 +-
+>  arch/arm/kernel/signal.c                      |  2 +-
+>  arch/arm64/kernel/process.c                   |  2 +-
+>  arch/arm64/kernel/syscall.c                   |  2 +-
+>  arch/loongarch/kernel/process.c               |  2 +-
+>  arch/loongarch/kernel/vdso.c                  |  2 +-
+>  arch/mips/kernel/process.c                    |  2 +-
+>  arch/mips/kernel/vdso.c                       |  2 +-
+>  arch/parisc/kernel/process.c                  |  2 +-
+>  arch/parisc/kernel/sys_parisc.c               |  4 +-
+>  arch/parisc/kernel/vdso.c                     |  2 +-
+>  arch/powerpc/crypto/crc-vpmsum_test.c         |  2 +-
+>  arch/powerpc/kernel/process.c                 |  2 +-
+>  arch/s390/kernel/process.c                    |  4 +-
+>  arch/s390/kernel/vdso.c                       |  2 +-
+>  arch/s390/mm/mmap.c                           |  2 +-
+>  arch/sparc/vdso/vma.c                         |  2 +-
+>  arch/um/kernel/process.c                      |  2 +-
+>  arch/x86/entry/vdso/vma.c                     |  2 +-
+>  arch/x86/kernel/cpu/amd.c                     |  2 +-
+>  arch/x86/kernel/module.c                      |  2 +-
+>  arch/x86/kernel/process.c                     |  2 +-
+>  arch/x86/mm/pat/cpa-test.c                    |  4 +-
+>  block/blk-crypto-fallback.c                   |  2 +-
+>  crypto/async_tx/raid6test.c                   |  2 +-
+>  crypto/testmgr.c                              | 94 +++++++++----------
+>  drivers/block/drbd/drbd_receiver.c            |  4 +-
+>  drivers/char/random.c                         | 11 +--
+>  drivers/dma/dmatest.c                         |  2 +-
+>  .../gpu/drm/i915/gem/i915_gem_execbuffer.c    |  2 +-
+>  drivers/gpu/drm/i915/i915_gem_gtt.c           |  6 +-
+>  .../gpu/drm/i915/selftests/i915_selftest.c    |  2 +-
+>  drivers/gpu/drm/tests/drm_buddy_test.c        |  2 +-
+>  drivers/gpu/drm/tests/drm_mm_test.c           |  2 +-
+>  drivers/infiniband/core/cma.c                 |  2 +-
+>  drivers/infiniband/hw/cxgb4/cm.c              |  4 +-
+>  drivers/infiniband/hw/cxgb4/id_table.c        |  4 +-
+>  drivers/infiniband/hw/hfi1/tid_rdma.c         |  2 +-
+>  drivers/infiniband/hw/hns/hns_roce_ah.c       |  5 +-
+>  drivers/infiniband/hw/mlx4/mad.c              |  2 +-
+>  drivers/infiniband/ulp/ipoib/ipoib_cm.c       |  2 +-
+>  drivers/infiniband/ulp/rtrs/rtrs-clt.c        |  3 +-
+>  drivers/md/bcache/request.c                   |  2 +-
+>  drivers/md/raid5-cache.c                      |  2 +-
+>  drivers/media/common/v4l2-tpg/v4l2-tpg-core.c |  2 +-
+>  .../media/test-drivers/vivid/vivid-radio-rx.c |  4 +-
+>  .../test-drivers/vivid/vivid-touch-cap.c      |  6 +-
+>  drivers/misc/habanalabs/gaudi2/gaudi2.c       |  2 +-
+>  drivers/mmc/core/core.c                       |  4 +-
+>  drivers/mmc/host/dw_mmc.c                     |  2 +-
+>  drivers/mtd/nand/raw/nandsim.c                |  8 +-
+>  drivers/mtd/tests/mtd_nandecctest.c           | 12 +--
+>  drivers/mtd/tests/speedtest.c                 |  2 +-
+>  drivers/mtd/tests/stresstest.c                | 19 +---
+>  drivers/mtd/ubi/debug.c                       |  2 +-
+>  drivers/mtd/ubi/debug.h                       |  6 +-
+>  drivers/net/bonding/bond_main.c               |  2 +-
+>  drivers/net/ethernet/broadcom/bnxt/bnxt.c     |  2 +-
+>  drivers/net/ethernet/broadcom/cnic.c          |  5 +-
+>  .../chelsio/inline_crypto/chtls/chtls_cm.c    |  4 +-
+>  .../chelsio/inline_crypto/chtls/chtls_io.c    |  4 +-
+>  drivers/net/ethernet/rocker/rocker_main.c     |  8 +-
+>  drivers/net/hamradio/baycom_epp.c             |  2 +-
+>  drivers/net/hamradio/hdlcdrv.c                |  2 +-
+>  drivers/net/hamradio/yam.c                    |  2 +-
+>  drivers/net/phy/at803x.c                      |  2 +-
+>  drivers/net/wireguard/selftest/allowedips.c   | 16 ++--
+>  .../broadcom/brcm80211/brcmfmac/p2p.c         |  2 +-
+>  .../broadcom/brcm80211/brcmfmac/pno.c         |  2 +-
+>  .../net/wireless/intel/iwlwifi/mvm/mac-ctxt.c |  2 +-
+>  .../net/wireless/marvell/mwifiex/cfg80211.c   |  4 +-
+>  .../wireless/microchip/wilc1000/cfg80211.c    |  2 +-
+>  .../net/wireless/quantenna/qtnfmac/cfg80211.c |  2 +-
+>  drivers/net/wireless/st/cw1200/wsm.c          |  2 +-
+>  drivers/net/wireless/ti/wlcore/main.c         |  2 +-
+>  drivers/nvme/common/auth.c                    |  2 +-
+>  drivers/scsi/cxgbi/cxgb4i/cxgb4i.c            |  4 +-
+>  drivers/scsi/fcoe/fcoe_ctlr.c                 |  4 +-
+>  drivers/scsi/lpfc/lpfc_hbadisc.c              |  6 +-
+>  drivers/scsi/qedi/qedi_main.c                 |  2 +-
+>  drivers/target/iscsi/cxgbit/cxgbit_cm.c       |  2 +-
+>  drivers/thunderbolt/xdomain.c                 |  2 +-
+>  drivers/video/fbdev/uvesafb.c                 |  2 +-
+>  fs/ceph/inode.c                               |  2 +-
+>  fs/ceph/mdsmap.c                              |  2 +-
+>  fs/exfat/inode.c                              |  2 +-
+>  fs/ext2/ialloc.c                              |  3 +-
+>  fs/ext4/ialloc.c                              |  7 +-
+>  fs/ext4/ioctl.c                               |  4 +-
+>  fs/ext4/mmp.c                                 |  2 +-
+>  fs/ext4/super.c                               |  7 +-
+>  fs/f2fs/gc.c                                  |  2 +-
+>  fs/f2fs/namei.c                               |  2 +-
+>  fs/f2fs/segment.c                             |  8 +-
+>  fs/fat/inode.c                                |  2 +-
+>  fs/nfsd/nfs4state.c                           |  4 +-
+>  fs/ntfs3/fslog.c                              |  6 +-
+>  fs/ubifs/debug.c                              | 10 +-
+>  fs/ubifs/journal.c                            |  2 +-
+>  fs/ubifs/lpt_commit.c                         | 14 +--
+>  fs/ubifs/tnc_commit.c                         |  2 +-
+>  fs/xfs/libxfs/xfs_alloc.c                     |  2 +-
+>  fs/xfs/libxfs/xfs_ialloc.c                    |  4 +-
+>  fs/xfs/xfs_error.c                            |  2 +-
+>  fs/xfs/xfs_icache.c                           |  2 +-
+>  fs/xfs/xfs_log.c                              |  2 +-
+>  include/linux/nodemask.h                      |  2 +-
+>  include/linux/prandom.h                       | 12 ---
+>  include/linux/random.h                        |  5 -
+>  include/net/netfilter/nf_queue.h              |  2 +-
+>  include/net/red.h                             |  2 +-
+>  include/net/sock.h                            |  2 +-
+>  kernel/bpf/bloom_filter.c                     |  2 +-
+>  kernel/bpf/core.c                             |  6 +-
+>  kernel/bpf/hashtab.c                          |  2 +-
+>  kernel/bpf/verifier.c                         |  2 +-
+>  kernel/kcsan/selftest.c                       |  4 +-
+>  kernel/locking/test-ww_mutex.c                |  4 +-
+>  kernel/time/clocksource.c                     |  2 +-
+>  lib/cmdline_kunit.c                           |  4 +-
+>  lib/fault-inject.c                            |  2 +-
+>  lib/find_bit_benchmark.c                      |  4 +-
+>  lib/kobject.c                                 |  2 +-
+>  lib/random32.c                                |  4 +-
+>  lib/reed_solomon/test_rslib.c                 | 12 +--
+>  lib/sbitmap.c                                 |  4 +-
+>  lib/test-string_helpers.c                     |  2 +-
+>  lib/test_fprobe.c                             |  2 +-
+>  lib/test_hexdump.c                            | 10 +-
+>  lib/test_kasan.c                              |  6 +-
+>  lib/test_kprobes.c                            |  2 +-
+>  lib/test_list_sort.c                          |  2 +-
+>  lib/test_min_heap.c                           |  6 +-
+>  lib/test_objagg.c                             |  2 +-
+>  lib/test_rhashtable.c                         |  6 +-
+>  lib/test_vmalloc.c                            | 19 +---
+>  lib/uuid.c                                    |  2 +-
+>  mm/migrate.c                                  |  2 +-
+>  mm/shmem.c                                    |  2 +-
+>  mm/slab.c                                     |  2 +-
+>  mm/slub.c                                     |  2 +-
+>  net/802/garp.c                                |  2 +-
+>  net/802/mrp.c                                 |  2 +-
+>  net/ceph/mon_client.c                         |  2 +-
+>  net/ceph/osd_client.c                         |  2 +-
+>  net/core/neighbour.c                          |  2 +-
+>  net/core/pktgen.c                             | 47 +++++-----
+>  net/core/stream.c                             |  2 +-
+>  net/dccp/ipv4.c                               |  4 +-
+>  net/ipv4/datagram.c                           |  2 +-
+>  net/ipv4/igmp.c                               |  6 +-
+>  net/ipv4/inet_connection_sock.c               |  2 +-
+>  net/ipv4/inet_hashtables.c                    |  2 +-
+>  net/ipv4/ip_output.c                          |  2 +-
+>  net/ipv4/route.c                              |  4 +-
+>  net/ipv4/tcp_cdg.c                            |  2 +-
+>  net/ipv4/tcp_ipv4.c                           |  4 +-
+>  net/ipv4/udp.c                                |  2 +-
+>  net/ipv6/addrconf.c                           |  8 +-
+>  net/ipv6/ip6_flowlabel.c                      |  2 +-
+>  net/ipv6/mcast.c                              | 10 +-
+>  net/ipv6/output_core.c                        |  2 +-
+>  net/mac80211/rc80211_minstrel_ht.c            |  2 +-
+>  net/mac80211/scan.c                           |  2 +-
+>  net/netfilter/ipvs/ip_vs_conn.c               |  2 +-
+>  net/netfilter/ipvs/ip_vs_twos.c               |  4 +-
+>  net/netfilter/nf_nat_core.c                   |  4 +-
+>  net/netfilter/xt_statistic.c                  |  2 +-
+>  net/openvswitch/actions.c                     |  2 +-
+>  net/packet/af_packet.c                        |  2 +-
+>  net/rds/bind.c                                |  2 +-
+>  net/sched/act_gact.c                          |  2 +-
+>  net/sched/act_sample.c                        |  2 +-
+>  net/sched/sch_cake.c                          |  8 +-
+>  net/sched/sch_netem.c                         | 22 ++---
+>  net/sched/sch_pie.c                           |  2 +-
+>  net/sched/sch_sfb.c                           |  2 +-
+>  net/sctp/socket.c                             |  4 +-
+>  net/sunrpc/auth_gss/gss_krb5_wrap.c           |  4 +-
+>  net/sunrpc/cache.c                            |  2 +-
+>  net/sunrpc/xprt.c                             |  2 +-
+>  net/sunrpc/xprtsock.c                         |  2 +-
+>  net/tipc/socket.c                             |  2 +-
+>  net/unix/af_unix.c                            |  2 +-
+>  net/xfrm/xfrm_state.c                         |  2 +-
+>  186 files changed, 379 insertions(+), 422 deletions(-)
+> 
 
-The reproducer for the 'memory leak in hugetlb_reserve_pages' bug (see
-https://elisa-builder-00.iol.unh.edu/syzkaller-next/report?id=3469603f4a0da86b581cc979bd6c6663b46ceb1b)
-is reproducible, it is triggering the memory leak on the current
-mainline (commit 60bb8154d1d7), and it was not triggering on v6.0. My
-build config is a x86_64 defconfig with some syzkaller-recommended
-debug options.
+Hi, Jason:
 
-I build the kernel with:
+There is a lot of code using "prandom_u32 % 4" in crypto's kernel self-test file testmgr.c,
+can you modify it together?
 
-make O=$BUILD defconfig && make O=$BUILD kvm_guest.config && \
-./scripts/kconfig/merge_config.sh -O $BUILD -r $BUILD/.config
-kernel/configs/syzkaller-recommended.config && \
-make O=$BUILD -j`nproc`
-
-My syzkaller-recommended.config is:
-
-CONFIG_KCOV=y
-CONFIG_KCOV_INSTRUMENT_ALL=y
-CONFIG_KCOV_ENABLE_COMPARISONS=y
-CONFIG_DEBUG_FS=y
-CONFIG_DEBUG_KMEMLEAK=y
-CONFIG_DEBUG_INFO=y
-CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y
-CONFIG_KALLSYMS=y
-CONFIG_KALLSYMS_ALL=y
-CONFIG_CONFIGFS_FS=y
-CONFIG_SECURITYFS=y
-# CONFIG_RANDOMIZE_BASE is not set
-CONFIG_KASAN=y
-CONFIG_KASAN_INLINE=y
-CONFIG_FAULT_INJECTION=y
-CONFIG_FAULT_INJECTION_DEBUG_FS=y
-CONFIG_FAULT_INJECTION_USERCOPY=y
-CONFIG_FAILSLAB=y
-CONFIG_FAIL_PAGE_ALLOC=y
-CONFIG_FAIL_MAKE_REQUEST=y
-CONFIG_FAIL_IO_TIMEOUT=y
-CONFIG_FAIL_FUTEX=y
-CONFIG_LOCKDEP=y
-CONFIG_PROVE_LOCKING=y
-CONFIG_DEBUG_ATOMIC_SLEEP=y
-CONFIG_PROVE_RCU=y
-CONFIG_DEBUG_VM=y
-CONFIG_FORTIFY_SOURCE=y
-CONFIG_HARDENED_USERCOPY=y
-CONFIG_LOCKUP_DETECTOR=y
-CONFIG_SOFTLOCKUP_DETECTOR=y
-CONFIG_HARDLOCKUP_DETECTOR=y
-CONFIG_BOOTPARAM_HARDLOCKUP_PANIC=y
-CONFIG_DETECT_HUNG_TASK=y
-CONFIG_WQ_WATCHDOG=y
-CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=140
-CONFIG_RCU_CPU_STALL_TIMEOUT=100
+Thanks,
+Longfang.
 
 
-My git bisection showed that the first bad commit is
-[bbff39cc6cbcb86ccfacb2dcafc79912a9f9df69] hugetlb: allocate vma lock
-for all sharable vmas.
-
-
-Full git bisect report:
-
-git bisect start
-# bad: [60bb8154d1d77042a5d43d335a68fdb202302cbe] Merge tag
-'xfs-6.1-for-linus' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux
-git bisect bad 60bb8154d1d77042a5d43d335a68fdb202302cbe
-# good: [4fe89d07dcc2804c8b562f6c7896a45643d34b2f] Linux 6.0
-git bisect good 4fe89d07dcc2804c8b562f6c7896a45643d34b2f
-# good: [ff6862c23d2e83d12d1759bf4337d41248fb4dc8] Merge tag
-'arm-drivers-6.1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
-git bisect good ff6862c23d2e83d12d1759bf4337d41248fb4dc8
-# good: [e8bc52cb8df80c31c73c726ab58ea9746e9ff734] Merge tag
-'driver-core-6.1-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core
-git bisect good e8bc52cb8df80c31c73c726ab58ea9746e9ff734
-# good: [4899a36f91a9f9b06878471096bd143e7253006d] Merge tag
-'powerpc-6.1-1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
-git bisect good 4899a36f91a9f9b06878471096bd143e7253006d
-# good: [0e0073eb1b60f4ec6faecea034a6772fe1409a88] Merge tag
-'hyperv-next-signed-20221009' of
-git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux
-git bisect good 0e0073eb1b60f4ec6faecea034a6772fe1409a88
-# good: [2f3568017268fc34eb0b6b4b3163c0f2e619fde6] kasan: move
-kasan_get_*_meta to generic.c
-git bisect good 2f3568017268fc34eb0b6b4b3163c0f2e619fde6
-# good: [a57ae9ef9e1a20b68ae841a8cab7aff3f000ed9d] mm/page_alloc:
-update comments for rmqueue()
-git bisect good a57ae9ef9e1a20b68ae841a8cab7aff3f000ed9d
-# bad: [dc914858561c424978307561492fcf3145b8b525] Merge tag
-'nfsd-6.1-1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux
-git bisect bad dc914858561c424978307561492fcf3145b8b525
-# good: [70442fc54e6889a2a77f0e9554e8188a1557f00e] Merge tag
-'x86_mm_for_v6.1_rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-git bisect good 70442fc54e6889a2a77f0e9554e8188a1557f00e
-# good: [c91bdc9358992856721ff77887202a7e80b7ab22] mm: memcontrol:
-don't allocate cgroup swap arrays when memcg is disabled
-git bisect good c91bdc9358992856721ff77887202a7e80b7ab22
-# good: [7d37539037c2fca70346fbedc219f655253d5cff] fuse: implement ->tmpfile()
-git bisect good 7d37539037c2fca70346fbedc219f655253d5cff
-# good: [131a79b474e973f023c5c75e2323a940332103be] hugetlb: fix vma
-lock handling during split vma and range unmapping
-git bisect good 131a79b474e973f023c5c75e2323a940332103be
-# bad: [27bc50fc90647bbf7b734c3fc306a5e61350da53] Merge tag
-'mm-stable-2022-10-08' of
-git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-git bisect bad 27bc50fc90647bbf7b734c3fc306a5e61350da53
-# bad: [bbff39cc6cbcb86ccfacb2dcafc79912a9f9df69] hugetlb: allocate
-vma lock for all sharable vmas
-git bisect bad bbff39cc6cbcb86ccfacb2dcafc79912a9f9df69
-# good: [ecfbd733878da48ed03a5b8a9c301366a03e3cca] hugetlb: take
-hugetlb vma_lock when clearing vma_lock->vma pointer
-git bisect good ecfbd733878da48ed03a5b8a9c301366a03e3cca
-# first bad commit: [bbff39cc6cbcb86ccfacb2dcafc79912a9f9df69]
-hugetlb: allocate vma lock for all sharable vmas
-
-
-If there is more information needed, please let me know.
-
-Best regards,
-
-Lukas
