@@ -2,61 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEA8C43217
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Oct 2022 21:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1ADC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Oct 2022 21:46:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230130AbiJQVdN (ORCPT
+        id S229972AbiJQVqg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Oct 2022 17:33:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45392 "EHLO
+        Mon, 17 Oct 2022 17:46:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230196AbiJQVdI (ORCPT
+        with ESMTP id S230180AbiJQVqU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Oct 2022 17:33:08 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9757CB60;
-        Mon, 17 Oct 2022 14:33:06 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id bk15so20461124wrb.13;
-        Mon, 17 Oct 2022 14:33:06 -0700 (PDT)
+        Mon, 17 Oct 2022 17:46:20 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F2C2537DB;
+        Mon, 17 Oct 2022 14:45:59 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id e18so9529047wmq.3;
+        Mon, 17 Oct 2022 14:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mrrqbi0ETnzpqhsWzfV/EevlRMo1cT5WVvO8a9vtxFI=;
-        b=UdHksNN5rbd+RRvD3BeLgx17CdEj+flAObUVYgo/sRpGqkAIUan5iaac3ySA8qkQkd
-         hx7QqP4GyoXDJhwSq3nVouYXs6WH+8+GTb+0iu6RVkOhL900KXB7x7y3mGx9tc3w2Cbt
-         daLkdaGHUZJo6LlVfb1DWX4A2IsthEaCLoc2LHEOzJIrcxVNXwqUC0+BWwPDjqluTxgP
-         g78+v+UbeomWaUKDZf/8J1WCBJKwbJUFE5bLuQJ4WdR0jVVIi4J5Mtsanij9uK5V8mFm
-         81nr5Won27d5y53ictdytiaZ+tJ0BWHwR8w9aA26c82fwwJ294zaE1C9DIXDqM/3av4V
-         8/WA==
+        bh=6uDQuZwzo8ELXCtlKXNYuUjmw+3bm3im788MAm8jYBs=;
+        b=Uk0tqnyb8+JwEIHf+RNdauBGjoxKVqRpH7RyAnm5PNtqwDr/3Lfy974v6M2TjJKA8n
+         Zg25S7/LnWMPgGvtaDrGEawiYH3LYzvIq6TLNeX1eWxRoJAb9ZJsYysgZJ6pO27mI3/W
+         09q971jtUU2mm6pw7RsMzS7fbIR6cul9O01Xstw0LVerNs1NmUjxS6tb/ZlxSI6FV4Pr
+         YT1mqX6VZIkZGKbaIbrgF8VkOjb0fXfTzAjK43YRSwN8pMzfb9Ktbwjp8aqKvmrGjFLZ
+         zCs5o8gJAY0oXHKPq8U4z7wSm/9xyOfIurI/9eHaOq06SlQwKovmslbMfxWZmXfvsuYu
+         LgBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Mrrqbi0ETnzpqhsWzfV/EevlRMo1cT5WVvO8a9vtxFI=;
-        b=mnBHvreezLu1JVEuQh4xOVXQR+T1jSawIS8tcPzPq6dFdtpiAYI/mxBXypZArPKxFx
-         CrUv8gWjVEFH2UokOBLeJOPl9ZVZBfbBlACahncQHRQksDqWbIyiQKq+prkYDUqkSqhQ
-         sSBUGBVU8CbHWoC8WRpjP89KB/JuKfoo3ZeIZmofp/hp44wwYEbs17UMJqDXqW2JgPxd
-         4RD4XXcgtB9gw57v5lr7gGvFWQAuhykSKmXZaGILUXjskvURBQobm59vgOBi2nEcrmr8
-         vNSCUudLDVzvRdv6d3wm0n5YpWVTF83GMRN/W8gf4ozzcPL/O1/qqSoaXtfTP0PEUMQM
-         hUVQ==
-X-Gm-Message-State: ACrzQf2421HoXUqRuJs1xlrFvxJr6LbO3HTMgsgEn5dFP/aGGmqRXRDj
-        9VggbuAgSbib0nri2HKzYmQ=
-X-Google-Smtp-Source: AMsMyM477UyaymfEn2BUTuCU3QmLWSbebTtZ9HUU9ZTvd0l6IBA7/FDwH3gmK40/MblMYKXehCNNOA==
-X-Received: by 2002:a5d:6745:0:b0:22f:ed4:65d7 with SMTP id l5-20020a5d6745000000b0022f0ed465d7mr7549035wrw.259.1666042384871;
-        Mon, 17 Oct 2022 14:33:04 -0700 (PDT)
+        bh=6uDQuZwzo8ELXCtlKXNYuUjmw+3bm3im788MAm8jYBs=;
+        b=DizHCdMXbEY0aV2cNSA+dRRWWXaXXlsmG5QFp2h2ZcqGB3NQzVrgOpoZnBnzgdGe4f
+         75GGCun9VcKz7uqgpd6b0ZwsrckHYEB68WZpDAS8zFUcRbJc25Jj6cmfoXJ/qNm7CfMc
+         qA1qkpXwRQwy40LNY1ucvT/EYTyydHRim2ctPnvzHnHFYUvIXgmk0agtd10zQI/PrSLH
+         lEjFtm2JlQQW7ENXSqcURQKzM1vWTUknPkrGNSitfJWE0PNEXlGMZvnuljHtqyXm8uEp
+         OrNkPLT5F8O4Bd/XpS/jlbFffD04yAO46wVHIfzEM8K/erkkr4LIPz0dx1IRSnnub6fO
+         GZJg==
+X-Gm-Message-State: ACrzQf15jJjcsOJTV++lPo0Opk6diFy8pc2cPSZ4sufKcoWEW1bgjHgw
+        C6ZVu/MGSfcIdX2pwBnsOw7fQwj2q8zWvA==
+X-Google-Smtp-Source: AMsMyM7EpmP3njOFcpOxsSAZjeSBjRG0tjpmFIQweEHhLba5eIp+pCO3qAlygZIwsHWlUT/fK0pVbA==
+X-Received: by 2002:a7b:c841:0:b0:3c6:ce2f:3438 with SMTP id c1-20020a7bc841000000b003c6ce2f3438mr8838231wml.51.1666043157943;
+        Mon, 17 Oct 2022 14:45:57 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j19-20020a05600c1c1300b003c6c1686b10sm18151187wms.7.2022.10.17.14.33.04
+        by smtp.gmail.com with ESMTPSA id l3-20020a5d5603000000b0022aeba020casm9270841wrv.83.2022.10.17.14.45.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 14:33:04 -0700 (PDT)
+        Mon, 17 Oct 2022 14:45:57 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Anton Altaparmakov <anton@tuxera.com>,
-        linux-ntfs-dev@lists.sourceforge.net
+To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/ntfs: remove redundant assignment to pointer m
-Date:   Mon, 17 Oct 2022 22:33:03 +0100
-Message-Id: <20221017213303.862794-1-colin.i.king@gmail.com>
+Subject: [PATCH] lib: remove redundant assignment to variable num
+Date:   Mon, 17 Oct 2022 22:45:56 +0100
+Message-Id: <20221017214556.863357-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,31 +64,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer m is being assigned a value that is never read, it
-is being re-assigned to a NULL later on. The assignment is
-redundant and can be removed.
+The variable num is being assigned a value that is never read, it
+is being re-assigned a new value in both paths if an if-statement.
+The assignment is redundant and can be removed.
 
 Cleans up clang scan build warning:
-fs/ntfs/file.c:194:3: warning: Value stored to 'm' is never
-read [deadcode.DeadStores]
+lib/oid_registry.c:149:3: warning: Value stored to 'num' is
+never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/ntfs/file.c | 1 -
+ lib/oid_registry.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
-index c481b14e4fd9..56d08374739a 100644
---- a/fs/ntfs/file.c
-+++ b/fs/ntfs/file.c
-@@ -191,7 +191,6 @@ static int ntfs_attr_extend_initialized(ntfs_inode *ni, const s64 new_init_size)
- 				err = -EIO;
- 			goto err_out;
- 		}
--		m = ctx->mrec;
- 		a = ctx->attr;
- 		BUG_ON(!a->non_resident);
- 		BUG_ON(old_i_size != (loff_t)
+diff --git a/lib/oid_registry.c b/lib/oid_registry.c
+index e592d48b1974..fe6705cfd780 100644
+--- a/lib/oid_registry.c
++++ b/lib/oid_registry.c
+@@ -146,7 +146,6 @@ int sprint_oid(const void *data, size_t datasize, char *buffer, size_t bufsize)
+ 	bufsize -= count;
+ 
+ 	while (v < end) {
+-		num = 0;
+ 		n = *v++;
+ 		if (!(n & 0x80)) {
+ 			num = n;
 -- 
 2.37.3
 
