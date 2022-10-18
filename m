@@ -2,70 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5437EC43219
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Oct 2022 09:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9FEC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Oct 2022 12:53:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230000AbiJRJEx (ORCPT
+        id S230268AbiJRMxD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Oct 2022 05:04:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35010 "EHLO
+        Tue, 18 Oct 2022 08:53:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231249AbiJRJEp (ORCPT
+        with ESMTP id S230215AbiJRMw6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Oct 2022 05:04:45 -0400
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC9E91E717;
-        Tue, 18 Oct 2022 02:04:29 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 0DA6660004;
-        Tue, 18 Oct 2022 09:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1666083868;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RL6Pm1PtqnVst262VMQ9ziU0/oxy9Za+p2F3nlrAD18=;
-        b=STdvyZIjCcaUjwvKJjxQS/ON3ZGJa05Wco8/7zUFV8AbdhWUDDLBh3VZJCOeNrVSTnHPF7
-        iTiQrLlEsNN62pcD2oiRd9HPZXN9k/B6LfSRRFJ3Ov102WDXSAlF2agjan0Q7ZLLZhWsns
-        paM6bxGLTKtLP7Rah7Edt0KEfsytxyv+9MmdyNIRIXB+DOy0IEMJ8rMuZWudNWdsZ9gM1Z
-        dyTTedX2AJW5ZaVVoCyQJobKCsIXUTPMz5In/taKHI1S/gcJfUlnsvYiAVbx4/lECRRTc2
-        X2+34cB5bMoI+ibMWGkwi3QjJQRPu7ScJbjwm2KPpRQ0suRfOgQTZCOwPZr6PA==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
-Date:   Tue, 18 Oct 2022 11:04:26 +0200
-Message-Id: <20221018090426.466380-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220929123431.23180-1-lukas.bulwahn@gmail.com>
-References: 
+        Tue, 18 Oct 2022 08:52:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24D70C4C32;
+        Tue, 18 Oct 2022 05:52:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8E5BDB81EE4;
+        Tue, 18 Oct 2022 12:52:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16F0FC433C1;
+        Tue, 18 Oct 2022 12:52:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666097574;
+        bh=k45JZFCGaCH6bFVXWQWFi0IQ5tsT/DUTSSwPS8JG8+Q=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=t3yhhXyQWo5LjUJpbS1hdoDapaoybnZweSxrbLjP0jBiMWaanI4xHeN38L1nez2l8
+         SHDg1bQbF+nXyiUkGIfeMlXdOrjMpgmANxM2Ic8ExREklVomZpqT4Zgqv/VmHOqdmU
+         8s9WypGL+HmMYuryucAtQIPscht8sGtcTHzotKe2Z50uJYWBLeKd760PQ4+8l1mfBY
+         PAMPJWlVVLZ88Tm7vtoCO4oOsKXn1dm4dQAjl9m6njU+8CLmihM/7ksVUNGHnwTE5W
+         4q8Gg1sM/I2NbJlwTSzAhm8XaPjZc/cW0uyA5h0RaUsL7Nff+/HklwqceTv2Hzz1j0
+         yWbTHqQLDiraQ==
+Date:   Tue, 18 Oct 2022 14:52:50 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] HID: lenovo: Make array tp10ubkbd_led static const
+In-Reply-To: <20221005154216.319577-1-colin.i.king@gmail.com>
+Message-ID: <nycvar.YFH.7.76.2210181452450.29912@cbobk.fhfr.pm>
+References: <20221005154216.319577-1-colin.i.king@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'd4353decd4fdec71b9f9d1ba8fa85b7e595e8924'
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 2022-09-29 at 12:34:31 UTC, Lukas Bulwahn wrote:
-> Commit fbc00b5e746f ("dt-bindings: nand: meson: convert txt to yaml")
-> converts amlogic,meson-nand.txt to yaml, but misses to adjust its reference
-> in MAINTAINERS.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> Repair this file reference in MESON NAND CONTROLLER DRIVER FOR AMLOGIC
-> SOCS.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On Wed, 5 Oct 2022, Colin Ian King wrote:
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+> Don't populate the read-only array tp10ubkbd_led on the stack but instead
+> make it static const. Also makes the object code a little smaller.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+> V2: Fix commit message, somehow I fat fingered the first one.
+> ---
+>  drivers/hid/hid-lenovo.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
+> index 9dabd6323234..44763c0da444 100644
+> --- a/drivers/hid/hid-lenovo.c
+> +++ b/drivers/hid/hid-lenovo.c
+> @@ -985,7 +985,7 @@ static int lenovo_led_brightness_set(struct led_classdev *led_cdev,
+>  	struct device *dev = led_cdev->dev->parent;
+>  	struct hid_device *hdev = to_hid_device(dev);
+>  	struct lenovo_drvdata *data_pointer = hid_get_drvdata(hdev);
+> -	u8 tp10ubkbd_led[] = { TP10UBKBD_MUTE_LED, TP10UBKBD_MICMUTE_LED };
+> +	static const u8 tp10ubkbd_led[] = { TP10UBKBD_MUTE_LED, TP10UBKBD_MICMUTE_LED };
+>  	int led_nr = 0;
+>  	int ret = 0;
 
-Miquel
+Applied, thanks.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
