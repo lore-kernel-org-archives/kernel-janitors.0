@@ -2,90 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C9EC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 08:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D2EC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 12:39:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230102AbiJSIET (ORCPT
+        id S233181AbiJSMjA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Oct 2022 04:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49942 "EHLO
+        Wed, 19 Oct 2022 08:39:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbiJSIEP (ORCPT
+        with ESMTP id S233182AbiJSMik (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Oct 2022 04:04:15 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 650347B783
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Oct 2022 01:04:13 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id n16-20020a05600c4f9000b003c17bf8ddecso458345wmq.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Oct 2022 01:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mD8mi2JszaH1k33/UBfhukYZCATUxC9PacHcwmGKqNc=;
-        b=ZrTqVkqVhFY4DL/Q15eyshVUWDd/XM5Z3ihENePjEPRfOuGyyYvXapCYD9o+EIf4lq
-         P+TmmFUKcu9hYx+rY3pQrIS8i6YwPTJTvqdjRSsOtZNaDYTNu4DbWnOzq7rkb9MsxQpj
-         SmErrUDdc/8sat+hM/0bUBhoGS6z/mUaYdD5uy0RYNo7MiGIqe+i56GRHMwDY/d06jlj
-         o2sdD1IMei0gY9cwGvlkTJANRy862e4JgUjBK8b/r5SKN8rnydTxYXKAi93N21QiUpFq
-         7mPtc6wplHmbxijqcDU1rf+M2dUNoQ+NXJckz6srLMJqVVSBTQelCTMUI8lERNR6Tnxc
-         I+YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mD8mi2JszaH1k33/UBfhukYZCATUxC9PacHcwmGKqNc=;
-        b=aX7MUWlnz1wR3Nh6g7W1CtQFdrJcFnb+tAngn346FdMPQvb/Vg2mFjl2R41nqG9HBD
-         k6R9DOeTlZbi6HPimTBp884EpkoBi2ve1UueIYT1mp1mzFXzjmc3EeIWc3Qg4P/rhTnU
-         w8di65TaDAb14Z+YcWiJoIG0FGSaieXvU7t/6CKJtyZMomzwfCMFCqMZ881gPKookBa0
-         tde+C2FcghkBg9RggtiiC4X21yAeYM49ZYmu1UZYOR0pPEZ7Ot2oMhxoJr7uvD42Vcy7
-         OZziwWKaT2Gf2u8tIzB9vkXQNqCqafDJ2+Qe6np73Vd5vF20r8MhsIzVr9HbdYA6y62P
-         s3Fw==
-X-Gm-Message-State: ACrzQf3BaoTiIwnnvCy//3XoZbYTXDCyjEGaSP4FYMs9DszK4H5+P27W
-        D+H1MWzpPbQjUTHWaL0YrUI6EBMBpidfJGVs
-X-Google-Smtp-Source: AMsMyM54GYff3yCiXQvFC+AHAJzd3YnisbrSiEZIoubPBlylWsDjFtWcR3Lbj5qC5P1aK0srzw9oGw==
-X-Received: by 2002:a7b:c00d:0:b0:3b4:6331:2fc5 with SMTP id c13-20020a7bc00d000000b003b463312fc5mr24864643wmb.11.1666166651714;
-        Wed, 19 Oct 2022 01:04:11 -0700 (PDT)
-Received: from [192.168.1.115] ([185.126.107.38])
-        by smtp.gmail.com with ESMTPSA id n4-20020adf8b04000000b00231893bfdc7sm14030545wra.2.2022.10.19.01.04.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Oct 2022 01:04:11 -0700 (PDT)
-Message-ID: <ae6c7966-2838-2e43-0455-30c69ad303b7@linaro.org>
-Date:   Wed, 19 Oct 2022 10:04:08 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.3.2
-Subject: Re: [PATCH][next][V2] ASoC: codecs: jz4725b: Fix spelling mistake
- "Sourc" -> "Source", "Routee" -> "Route"
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
+        Wed, 19 Oct 2022 08:38:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BAD2EAA;
+        Wed, 19 Oct 2022 05:19:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 11BF16174B;
+        Wed, 19 Oct 2022 12:10:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88008C433D7;
+        Wed, 19 Oct 2022 12:10:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666181454;
+        bh=GWr+pXdg4KAo4cm6ndECUvEjk2iIp9Udlw6HdytD74s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OjRgwK82xNTsABYyqlr8BKxalnQQsibfZTFAOamdK5hDwR/68+Cx2S/zX6i0MRQxp
+         T0crx1/UCoUvIBNb08r6YB6S4aOpA66cGj52RwxQ+sJvET2GGqMSuAUuvmXNiVG3s9
+         aTeXZ09DXkIm0Dzuy1OdMxVuMRQtL+f1fG1jaMUGy0nraMtyM1UNyQEaJPyahI4Rvz
+         F5IHTKOhmBdG8PqB7zX5baQBOCj/Kg/fJCl9rUVecEFATYO+YzWltUuLB1vZ9FWG7w
+         fN2ccE5iOoMFtTTcFjTAMxbjneGFbgD5mMaSvT/GYdNPn+MkRjLoedlJMPoYg6wLc3
+         j9FS/IlvurxGg==
+Date:   Wed, 19 Oct 2022 13:10:49 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>, linux-mips@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next][V2] ASoC: codecs: jz4725b: Fix spelling mistake
+ "Sourc" -> "Source", "Routee" -> "Route"
+Message-ID: <Y0/pSVbueZYXBsmA@sirena.org.uk>
 References: <20221019071639.1003730-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="RSRYBU1FRm2IiFjJ"
+Content-Disposition: inline
 In-Reply-To: <20221019071639.1003730-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Cookie: I like your SNOOPY POSTER!!
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 19/10/22 09:16, Colin Ian King wrote:
+
+--RSRYBU1FRm2IiFjJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Oct 19, 2022 at 08:16:39AM +0100, Colin Ian King wrote:
 > There are two spelling mistakes in codec routing description. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
-> V2: Fix "Routee" -> "Route" too
-> ---
->   sound/soc/codecs/jz4725b.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+Bit disappionting that people didn't notice the errors during boot
+there...
 
+--RSRYBU1FRm2IiFjJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNP6UgACgkQJNaLcl1U
+h9AMAAf/QC3eZNYr9/3n2kIr05IslQ40odVk7BW7aJxsPlGbyo3UWe9aVyLNxPFg
+ButRyaxZyFUaLjORA4747at7NxfUw6dkCBeq9WxQvLkOryJVmZIWVNhIDPDnquqP
+Ze6pexDoUZsvlEaVkJXd28PXKgQSjI6tLyQTG0y+wM4Xv5L05ISaSZtku0eZM28z
+DmG8fGdquHZFUZOVKQWu+Ny1G3sSkdrBkBUJcSkGVdn7TWIklLVqNuy4w3pq+0RF
+rviZ2Wo0NMzE5ksTXv2+t/UIYzNWjv/K0jcNVB16EnEqfI1pFDQJZyrKDrF1YyQu
+6Up7a5YP6VPCJgs3A3yWVpWcFahADw==
+=c0mZ
+-----END PGP SIGNATURE-----
+
+--RSRYBU1FRm2IiFjJ--
