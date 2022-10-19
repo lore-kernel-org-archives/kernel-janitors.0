@@ -2,71 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 987D0C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 00:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D58C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 07:15:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229795AbiJSAXZ (ORCPT
+        id S229671AbiJSHPO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Oct 2022 20:23:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53600 "EHLO
+        Wed, 19 Oct 2022 03:15:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229783AbiJSAXY (ORCPT
+        with ESMTP id S229610AbiJSHPN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Oct 2022 20:23:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0BBED7E37;
-        Tue, 18 Oct 2022 17:23:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8CF2161737;
-        Wed, 19 Oct 2022 00:23:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDBFC433C1;
-        Wed, 19 Oct 2022 00:23:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666139001;
-        bh=oASso4BIYNm9JMmqjfxz8f0HQ79E5O2lTIOHLXPL0F0=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=PDHGHS97RFLJsZTpkxwvWWCTrsmWHx4z61HucmdeKqSlwVMSnwZOdd25TOvQ6SbGh
-         Bwd0Uy/rt+3/Juw8gVXfku90/lBsoxdZjrkLEVZ9LgoIJT/IM7wNYPexqa0nIDMRqx
-         QcC6n4jxWysUwYy5bdNhisjSS3ehTtue50p4PWn4j9gfRyljFYP+8xdmgKQ9E9/Wo/
-         up2bno5VVqfQBZ9SEXTLfbxgn6msorPshxoTpWFH5wWbtdhIYsKp8n0Rdaj+OUZOzR
-         JMUFi8Uo7/LEMEKvQGYyZ3TusYgzDQelkg/kKyP5+i1q5bgs+QjQm6Lmgvq1Y5kGNq
-         wSTybumv5qSUw==
-Message-ID: <7443664d-6be2-6b3c-e211-d23636d66dfc@kernel.org>
-Date:   Tue, 18 Oct 2022 17:23:20 -0700
+        Wed, 19 Oct 2022 03:15:13 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF572604BB;
+        Wed, 19 Oct 2022 00:15:11 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id y10so12333100wma.0;
+        Wed, 19 Oct 2022 00:15:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qzG7rF/hL8AaILutgmFHP6Nzj7X2cB1iupzaPr0EybQ=;
+        b=Hd1D8RDBZUiOgSklpaiMmMXGgKPJP7htFBWoSGkCxqDPip1mFLver9vAhpI/BudG4Y
+         E6Tqf6+dOpiJwF708AlDuej6WaU/X33lqFanuH4Ic1057FwVfLFDLU/Axp5fR1g2iTZq
+         1R4nYVewDuXIqd94yGenrt33+gW8w3+sjg8UJR2KDSf+MQae9vQFhwd2cItsUHpDV+Ri
+         WXoIhFLy0ozob6V/FAmLdrX/3OqxPdrlYgUq2Zrl+z4ODNTzEMjPD+KQ1n/HueSVpg++
+         2jYi7EWi2R/y3b33RGUfhAeztps642ZGufHet6lfjUf3yRts1l1n/OC2myMtPQ8xFKyU
+         YsmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qzG7rF/hL8AaILutgmFHP6Nzj7X2cB1iupzaPr0EybQ=;
+        b=WajYvoldXuvi67UFcFp1wRZ78uarpmTUEXq7NHZVP4iD0UJfVFAFojH0ECxtzF4AMx
+         CILuPS7ZB/nZRNM2C6ZkfYW49RvSuw0S2tvG7MrlYL1pHey3ybkCsJJkEUbkdfHu6lgN
+         dixuARCN7KmIldpJtntLKVfNxkeirUBwN4zH/NDk3ZBI5wYW62QPghCH0L2nLFatje3k
+         KoYnoFojuyhJQAGD6ZSEfNr4F2NSu/ks9Jk/krJObcXvh4tq/S9+NDuRq3nCD9rWtXbw
+         NO4u4Y3nwvNnz6nK8ktcFrZlIY4/ZYG+ELs4Biuk4h6z+lI10EIfDTQP5B0msUU79Kbb
+         qZEw==
+X-Gm-Message-State: ACrzQf35J+v6Mwrn+5p9CVeuyIuqjGrEpsHjQrofk6YP/hOoRrlw6im5
+        Z0fUGNpULHUNpiqpBZWnarA=
+X-Google-Smtp-Source: AMsMyM77uAhaOzr8WSUOTle4NC05TESdssMRf6wmJL4tpYpF7Ha9ugCvBiXdebOzOSl4APveHHHK2A==
+X-Received: by 2002:a7b:c34a:0:b0:3c6:e069:d41c with SMTP id l10-20020a7bc34a000000b003c6e069d41cmr20834649wmj.180.1666163710295;
+        Wed, 19 Oct 2022 00:15:10 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id h12-20020a05600c314c00b003c6ee9e254dsm13468311wmo.32.2022.10.19.00.15.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Oct 2022 00:15:09 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-mips@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: codecs: jz4725b: Fix spelling mistake "Sourc" -> "Source"
+Date:   Wed, 19 Oct 2022 08:15:08 +0100
+Message-Id: <20221019071508.1003680-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] arc: update config files
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vineet Gupta <vgupta@kernel.org>,
-        linux-snps-arc@lists.infradead.org
-References: <20220929101421.31590-1-lukas.bulwahn@gmail.com>
-Content-Language: en-US
-From:   Vineet Gupta <vgupta@kernel.org>
-In-Reply-To: <20220929101421.31590-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+There is a spelling mistake in codec routing description. Fix it.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/jz4725b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 9/29/22 03:14, Lukas Bulwahn wrote:
-> Clean up config files by:
->    - removing configs that were deleted in the past
->    - removing configs not in tree and without recently pending patches
->    - adding new configs that are replacements for old configs in the file
->
-> For some detailed information, see Link.
->
-> Link:https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
->
-> Signed-off-by: Lukas Bulwahn<lukas.bulwahn@gmail.com>
+diff --git a/sound/soc/codecs/jz4725b.c b/sound/soc/codecs/jz4725b.c
+index 685ba1d3a644..64b14b1c74b9 100644
+--- a/sound/soc/codecs/jz4725b.c
++++ b/sound/soc/codecs/jz4725b.c
+@@ -359,7 +359,7 @@ static const struct snd_soc_dapm_route jz4725b_codec_dapm_routes[] = {
+ 
+ 	{"Mixer to ADC", NULL, "Mixer"},
+ 	{"ADC Source Capture Route", "Mixer", "Mixer to ADC"},
+-	{"ADC Sourc Capture Routee", "Line In", "Line In"},
++	{"ADC Source Capture Routee", "Line In", "Line In"},
+ 	{"ADC Source Capture Route", "Mic 1", "Mic 1"},
+ 	{"ADC Source Capture Route", "Mic 2", "Mic 2"},
+ 	{"ADC", NULL, "ADC Source Capture Route"},
+-- 
+2.37.3
 
-Thx for the fix. Added to for-curr.
-
--Vineet
