@@ -2,92 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7D9C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Oct 2022 15:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 987D0C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 00:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbiJRPsT (ORCPT
+        id S229795AbiJSAXZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Oct 2022 11:48:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51786 "EHLO
+        Tue, 18 Oct 2022 20:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229871AbiJRPsS (ORCPT
+        with ESMTP id S229783AbiJSAXY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Oct 2022 11:48:18 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85AE3C784E;
-        Tue, 18 Oct 2022 08:48:17 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id r8-20020a1c4408000000b003c47d5fd475so15334288wma.3;
-        Tue, 18 Oct 2022 08:48:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kc2UL3oN9PPfeSBBUmmfy9LYW7xOBidoFqGgLYVlKcA=;
-        b=W1EUJErqwI2NXCdtJ9Mu7EaR4VFf6TjPQL1ld7IX54YqHmGb4ktRhFl2VvKh5l0i0G
-         fiyD8pqaXTMxNddJjh612q5s9XYF8//iy/q9fLPWKNoaztcUFQ11nz8R+C3p5rpD6n7u
-         bh3VvBRmM4jfg9V84OaNrwosNYbYXNJ6aaT/wNu6OdQBruXsjssrcS1/rVtCV6hBY/OJ
-         HAGexQu+CL5joXUFsSNJW67gydLshAeuLwgWx14owa5dOyY01+qaFV9iA+XBJJbqQDjl
-         vNGUck0bkM8p6+CRimR7H9/H/F8JlEZEvBMkIm0aF9jxQm33dmb8mX+4lTiPVaKUF4GG
-         /1eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kc2UL3oN9PPfeSBBUmmfy9LYW7xOBidoFqGgLYVlKcA=;
-        b=2nhn7ty83qcYm6l7eKnL4JZiqNLNLuaLNS9tXh+Y6OR6DC1foqC/mjUgZFAfXrsmLS
-         835uu2OZ7w6iKzAaDnv1iv7kpLpaD4McbVYvKOmeYuWYIfyXovDXy+hhqVVrY9DPODCt
-         Uw0PMI34gYKGr6kEPHMYWdDdbmKBgdDf8QTy4Vltc30q1s7o1O59HC0fdryS6up9SW88
-         1V6Gdq2pFVFLiox5yPDepQhCuNpRFzCmJejNMMbGMIGijVOER39DSYQPvhNeYEe8kbKc
-         djaxdhrCs9+cBVLvty+xRZGG9h5uB60zDuW5Snp56zqcStvbSs1uak4+bfBvkI8mBIAW
-         IsIw==
-X-Gm-Message-State: ACrzQf2BCKQz+13Hb+jh2iZ6PotnX7ASACNQWOmCDo3n0dF7gfPe9RNm
-        rKDP22+ghnKH54SwEbpCBW3Ab0o/UTzhmgkj
-X-Google-Smtp-Source: AMsMyM4dTruaicUT8XNa3C6PP05o/J4zMO34InV/LERpEWhfnsNk8WiCIcj9E4p2iSMt2tAXo6neOA==
-X-Received: by 2002:a05:600c:4449:b0:3c6:fb65:2463 with SMTP id v9-20020a05600c444900b003c6fb652463mr2532149wmn.128.1666108096131;
-        Tue, 18 Oct 2022 08:48:16 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r124-20020a1c2b82000000b003bf3fe1d0c4sm14030316wmr.22.2022.10.18.08.48.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 08:48:15 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dm thin: make const array descs static
-Date:   Tue, 18 Oct 2022 16:48:15 +0100
-Message-Id: <20221018154815.943209-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Tue, 18 Oct 2022 20:23:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0BBED7E37;
+        Tue, 18 Oct 2022 17:23:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8CF2161737;
+        Wed, 19 Oct 2022 00:23:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDBFC433C1;
+        Wed, 19 Oct 2022 00:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666139001;
+        bh=oASso4BIYNm9JMmqjfxz8f0HQ79E5O2lTIOHLXPL0F0=;
+        h=Date:Subject:To:References:From:In-Reply-To:From;
+        b=PDHGHS97RFLJsZTpkxwvWWCTrsmWHx4z61HucmdeKqSlwVMSnwZOdd25TOvQ6SbGh
+         Bwd0Uy/rt+3/Juw8gVXfku90/lBsoxdZjrkLEVZ9LgoIJT/IM7wNYPexqa0nIDMRqx
+         QcC6n4jxWysUwYy5bdNhisjSS3ehTtue50p4PWn4j9gfRyljFYP+8xdmgKQ9E9/Wo/
+         up2bno5VVqfQBZ9SEXTLfbxgn6msorPshxoTpWFH5wWbtdhIYsKp8n0Rdaj+OUZOzR
+         JMUFi8Uo7/LEMEKvQGYyZ3TusYgzDQelkg/kKyP5+i1q5bgs+QjQm6Lmgvq1Y5kGNq
+         wSTybumv5qSUw==
+Message-ID: <7443664d-6be2-6b3c-e211-d23636d66dfc@kernel.org>
+Date:   Tue, 18 Oct 2022 17:23:20 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH] arc: update config files
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vineet Gupta <vgupta@kernel.org>,
+        linux-snps-arc@lists.infradead.org
+References: <20220929101421.31590-1-lukas.bulwahn@gmail.com>
+Content-Language: en-US
+From:   Vineet Gupta <vgupta@kernel.org>
+In-Reply-To: <20220929101421.31590-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only const array ramp_base on the stack but
-instead make it static. Add in a const to clean up checkpatch warning
-too since the data and the pointer are const. Also makes the object
-code a little smaller.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/md/dm-thin.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-index e76c96c760a9..d228177fdf35 100644
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -293,7 +293,7 @@ static enum pool_mode get_pool_mode(struct pool *pool)
- 
- static void notify_of_pool_mode_change(struct pool *pool)
- {
--	const char *descs[] = {
-+	static const char * const descs[] = {
- 		"write",
- 		"out-of-data-space",
- 		"read-only",
--- 
-2.37.3
+On 9/29/22 03:14, Lukas Bulwahn wrote:
+> Clean up config files by:
+>    - removing configs that were deleted in the past
+>    - removing configs not in tree and without recently pending patches
+>    - adding new configs that are replacements for old configs in the file
+>
+> For some detailed information, see Link.
+>
+> Link:https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
+>
+> Signed-off-by: Lukas Bulwahn<lukas.bulwahn@gmail.com>
 
+Thx for the fix. Added to for-curr.
+
+-Vineet
