@@ -2,86 +2,57 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA66C43217
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 13:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A71EAC4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 13:41:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232545AbiJSNVf (ORCPT
+        id S232374AbiJSNl0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Oct 2022 09:21:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59014 "EHLO
+        Wed, 19 Oct 2022 09:41:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231295AbiJSNVD (ORCPT
+        with ESMTP id S232303AbiJSNlE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Oct 2022 09:21:03 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D7CB1DB270;
-        Wed, 19 Oct 2022 06:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1666169132; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2irzQRisuQph0qVQTfrw1gD3XTb5c+6xxeX7I05Lbx8=;
-        b=jjeeum7SZmGwGhPrFwc9Kx571MNPHFw077WifZSIV7ABbqICZWqAwwtr6XpAciPJ8c8G/Y
-        GMY+yWVDuu2ZD1dAMi5x/N5nNYJP3Cnz672CN98++xJOEFmmDWtKoHAPCr4z19courTJ1a
-        uY61NBBpDo+2oB8Eydhc5FPKee34LiE=
-Date:   Wed, 19 Oct 2022 09:45:23 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH][next][V2] ASoC: codecs: jz4725b: Fix spelling mistake
- "Sourc" -> "Source", "Routee" -> "Route"
+        Wed, 19 Oct 2022 09:41:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CF51AF29;
+        Wed, 19 Oct 2022 06:28:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1BF63B822EB;
+        Wed, 19 Oct 2022 13:27:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E65AC433D6;
+        Wed, 19 Oct 2022 13:27:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666186030;
+        bh=bPyf7qhG0vZuSB+2GkOelpmW5vyhp9yjwvOWEO+3gvY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SH255SVdAXWhTmndoa93qxEnoDkV3H/+E6n76U9kVyJ8/Z8zwgTHD0DfayDmM3rc1
+         CA8THtInMWALw0vYCmN6/qG2zDSZeNdCLwp3rmC7B16od3vTq3JAXYyYXr4bR/xZOE
+         ZoN4V2tLd88DIqapNCSxX86TzsLW/3jb8IvDMj6IBoMwZveCMnWE+LnXQz0mh7ApkT
+         9RodCnfQcB8GSqYnrtSQlqmnc+zZScI4VudlF2+4c2H5NzA2T8NRVzTcE+vcR0U5Pn
+         keVzEW1SOqoLrWQ2cbATPZDDxh36/hYCBzCzx7R5KCk/i4QRgRHF9610m32nsvJf8J
+         y3oJQpQpfG3Qw==
+Date:   Wed, 19 Oct 2022 18:57:06 +0530
+From:   Vinod Koul <vkoul@kernel.org>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-mips@vger.kernel.org,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <NBSZJR.DRWYIWVJJ4H42@crapouillou.net>
-In-Reply-To: <20221019071639.1003730-1-colin.i.king@gmail.com>
-References: <20221019071639.1003730-1-colin.i.king@gmail.com>
+Cc:     Dave Jiang <dave.jiang@intel.com>, dmaengine@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: ioat: Fix spelling mistake "idel" -> "idle"
+Message-ID: <Y0/7KhJMl9eBQw99@matsya>
+References: <20221004160913.154739-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221004160913.154739-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
+On 04-10-22, 17:09, Colin Ian King wrote:
+> There is a spelling mistake in the module description. Fix it.
 
-Le mer., oct. 19 2022 at 08:16:39 +0100, Colin Ian King=20
-<colin.i.king@gmail.com> a =E9crit :
-> There are two spelling mistakes in codec routing description. Fix it.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Applied, thanks
 
-Acked-by: Paul Cercueil <paul@crapouillou.net>
-
-Cheers,
--Paul
-
-> ---
-> V2: Fix "Routee" -> "Route" too
-> ---
->  sound/soc/codecs/jz4725b.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/sound/soc/codecs/jz4725b.c b/sound/soc/codecs/jz4725b.c
-> index 685ba1d3a644..64b14b1c74b9 100644
-> --- a/sound/soc/codecs/jz4725b.c
-> +++ b/sound/soc/codecs/jz4725b.c
-> @@ -359,7 +359,7 @@ static const struct snd_soc_dapm_route=20
-> jz4725b_codec_dapm_routes[] =3D {
->=20
->  	{"Mixer to ADC", NULL, "Mixer"},
->  	{"ADC Source Capture Route", "Mixer", "Mixer to ADC"},
-> -	{"ADC Sourc Capture Routee", "Line In", "Line In"},
-> +	{"ADC Source Capture Route", "Line In", "Line In"},
->  	{"ADC Source Capture Route", "Mic 1", "Mic 1"},
->  	{"ADC Source Capture Route", "Mic 2", "Mic 2"},
->  	{"ADC", NULL, "ADC Source Capture Route"},
-> --
-> 2.37.3
->=20
-
-
+-- 
+~Vinod
