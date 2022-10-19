@@ -2,57 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A71EAC4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 13:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D1FC43219
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 15:54:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232374AbiJSNl0 (ORCPT
+        id S230159AbiJSPyZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Oct 2022 09:41:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58302 "EHLO
+        Wed, 19 Oct 2022 11:54:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232303AbiJSNlE (ORCPT
+        with ESMTP id S232592AbiJSPxr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Oct 2022 09:41:04 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CF51AF29;
-        Wed, 19 Oct 2022 06:28:32 -0700 (PDT)
+        Wed, 19 Oct 2022 11:53:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A3E18F25B;
+        Wed, 19 Oct 2022 08:51:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1BF63B822EB;
-        Wed, 19 Oct 2022 13:27:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E65AC433D6;
-        Wed, 19 Oct 2022 13:27:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B399B61943;
+        Wed, 19 Oct 2022 15:50:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EB3C433D7;
+        Wed, 19 Oct 2022 15:50:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666186030;
-        bh=bPyf7qhG0vZuSB+2GkOelpmW5vyhp9yjwvOWEO+3gvY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SH255SVdAXWhTmndoa93qxEnoDkV3H/+E6n76U9kVyJ8/Z8zwgTHD0DfayDmM3rc1
-         CA8THtInMWALw0vYCmN6/qG2zDSZeNdCLwp3rmC7B16od3vTq3JAXYyYXr4bR/xZOE
-         ZoN4V2tLd88DIqapNCSxX86TzsLW/3jb8IvDMj6IBoMwZveCMnWE+LnXQz0mh7ApkT
-         9RodCnfQcB8GSqYnrtSQlqmnc+zZScI4VudlF2+4c2H5NzA2T8NRVzTcE+vcR0U5Pn
-         keVzEW1SOqoLrWQ2cbATPZDDxh36/hYCBzCzx7R5KCk/i4QRgRHF9610m32nsvJf8J
-         y3oJQpQpfG3Qw==
-Date:   Wed, 19 Oct 2022 18:57:06 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Dave Jiang <dave.jiang@intel.com>, dmaengine@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: ioat: Fix spelling mistake "idel" -> "idle"
-Message-ID: <Y0/7KhJMl9eBQw99@matsya>
-References: <20221004160913.154739-1-colin.i.king@gmail.com>
+        s=k20201202; t=1666194615;
+        bh=wScyHxczwHL75RmoXOfql5d13NwOHcmOL0uKxW2svyU=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=D/ZLocZFqh2oVDNt4qIJijuw6psZZCGYbZq/vMqTpVdAHmJab5OKwDkNJa9FZhS+R
+         6U9yEV97Zoz/IEcwhoeRgpoyVELIlzUiofWUpEDoeO/xfuI2W+6opBwCt/2eiA8TLG
+         J1a9DdqVaTC1bmqmtJ0hkDgvAe6LBA79wEeuPfrl0em6jFFkI/z+cmjhPouDLSSs/R
+         htcs8QqrN7D7r8PspZR8YmDpa+M/VWwrBoaqVICPdvAOs1sLzRPmLKOBMWkTlCZKex
+         C+kvGspb0YsLZxErffHZPmGRcPApRb7YMk7FD6zo8S59GfxMd6L9lo8sWLVpu0kL37
+         uJEHAzB105RvQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     alsa-devel@alsa-project.org, Paul Cercueil <paul@crapouillou.net>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>, linux-mips@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20221019071639.1003730-1-colin.i.king@gmail.com>
+References: <20221019071639.1003730-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next][V2] ASoC: codecs: jz4725b: Fix spelling mistake "Sourc" -> "Source", "Routee" -> "Route"
+Message-Id: <166619461311.884966.9257209469691313865.b4-ty@kernel.org>
+Date:   Wed, 19 Oct 2022 16:50:13 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221004160913.154739-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fc921
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 04-10-22, 17:09, Colin Ian King wrote:
-> There is a spelling mistake in the module description. Fix it.
+On Wed, 19 Oct 2022 08:16:39 +0100, Colin Ian King wrote:
+> There are two spelling mistakes in codec routing description. Fix it.
+> 
+> 
 
-Applied, thanks
+Applied to
 
--- 
-~Vinod
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: codecs: jz4725b: Fix spelling mistake "Sourc" -> "Source", "Routee" -> "Route"
+      commit: df496157a5afa1b6d1f4c46ad6549c2c346d1e59
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
