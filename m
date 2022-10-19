@@ -2,87 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF31EC43219
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 12:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA66C43217
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 13:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbiJSM76 (ORCPT
+        id S232545AbiJSNVf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Oct 2022 08:59:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
+        Wed, 19 Oct 2022 09:21:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232757AbiJSM6v (ORCPT
+        with ESMTP id S231295AbiJSNVD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Oct 2022 08:58:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DFEB4F;
-        Wed, 19 Oct 2022 05:42:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F2DBCB822CE;
-        Wed, 19 Oct 2022 12:05:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3379FC433D7;
-        Wed, 19 Oct 2022 12:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666181107;
-        bh=F/vs8b7abjKQcTaqlC59wWBxEf22jzV2p9r8gJVIZGE=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=E+NPxH+NYowTYhFvZA/si/KHWYqSmzmJUZSDAPHP3oaYblp6TcgreK0gD16Sb2KuV
-         2yXfcvSM9i/vdsolg6CMdMSqygf3/mTElc7vXfEqyaOs6WCaPEOH+kQjATgDDbPMwI
-         ydvoF66VcwKUbmzxRdoEQ1iYoiaCdYfIka0gZg1dzvIR5S/n9miXjFqW/q76rQk6GT
-         JapIr8CTHoYjP8t419TzGTskGgJrRwUHXt3yM31BhZEI53aiCPe9x6iVzTTq7XkwmK
-         FdkU3nlAOoCCG881txjNg4BGmBdWMSPZsFQO52Y6V7BXAgqyJLZO38F4nEmhY25n6x
-         YPunp94YoomwQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20221018152928.942186-1-colin.i.king@gmail.com>
-References: <20221018152928.942186-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] ASoC: twl4030: make read-only array ramp_base static const
-Message-Id: <166618110593.80223.11956786873062777747.b4-ty@kernel.org>
-Date:   Wed, 19 Oct 2022 13:05:05 +0100
+        Wed, 19 Oct 2022 09:21:03 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D7CB1DB270;
+        Wed, 19 Oct 2022 06:06:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1666169132; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2irzQRisuQph0qVQTfrw1gD3XTb5c+6xxeX7I05Lbx8=;
+        b=jjeeum7SZmGwGhPrFwc9Kx571MNPHFw077WifZSIV7ABbqICZWqAwwtr6XpAciPJ8c8G/Y
+        GMY+yWVDuu2ZD1dAMi5x/N5nNYJP3Cnz672CN98++xJOEFmmDWtKoHAPCr4z19courTJ1a
+        uY61NBBpDo+2oB8Eydhc5FPKee34LiE=
+Date:   Wed, 19 Oct 2022 09:45:23 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH][next][V2] ASoC: codecs: jz4725b: Fix spelling mistake
+ "Sourc" -> "Source", "Routee" -> "Route"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-mips@vger.kernel.org,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-Id: <NBSZJR.DRWYIWVJJ4H42@crapouillou.net>
+In-Reply-To: <20221019071639.1003730-1-colin.i.king@gmail.com>
+References: <20221019071639.1003730-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fc921
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 18 Oct 2022 16:29:28 +0100, Colin Ian King wrote:
-> Don't populate the read-only array ramp_base on the stack but
-> instead make it static const. Also makes the object code a
-> little smaller.
-> 
-> 
+Hi Colin,
 
-Applied to
+Le mer., oct. 19 2022 at 08:16:39 +0100, Colin Ian King=20
+<colin.i.king@gmail.com> a =E9crit :
+> There are two spelling mistakes in codec routing description. Fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Acked-by: Paul Cercueil <paul@crapouillou.net>
 
-Thanks!
+Cheers,
+-Paul
 
-[1/1] ASoC: twl4030: make read-only array ramp_base static const
-      commit: 67860d2a8e0db7783f680f6f1c1600ed34ed3a97
+> ---
+> V2: Fix "Routee" -> "Route" too
+> ---
+>  sound/soc/codecs/jz4725b.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/sound/soc/codecs/jz4725b.c b/sound/soc/codecs/jz4725b.c
+> index 685ba1d3a644..64b14b1c74b9 100644
+> --- a/sound/soc/codecs/jz4725b.c
+> +++ b/sound/soc/codecs/jz4725b.c
+> @@ -359,7 +359,7 @@ static const struct snd_soc_dapm_route=20
+> jz4725b_codec_dapm_routes[] =3D {
+>=20
+>  	{"Mixer to ADC", NULL, "Mixer"},
+>  	{"ADC Source Capture Route", "Mixer", "Mixer to ADC"},
+> -	{"ADC Sourc Capture Routee", "Line In", "Line In"},
+> +	{"ADC Source Capture Route", "Line In", "Line In"},
+>  	{"ADC Source Capture Route", "Mic 1", "Mic 1"},
+>  	{"ADC Source Capture Route", "Mic 2", "Mic 2"},
+>  	{"ADC", NULL, "ADC Source Capture Route"},
+> --
+> 2.37.3
+>=20
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
