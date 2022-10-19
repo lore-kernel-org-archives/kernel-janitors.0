@@ -2,86 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D1FC43219
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 15:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 911C9C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 21:52:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230159AbiJSPyZ (ORCPT
+        id S230260AbiJSVwQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Oct 2022 11:54:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39260 "EHLO
+        Wed, 19 Oct 2022 17:52:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232592AbiJSPxr (ORCPT
+        with ESMTP id S229525AbiJSVwP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Oct 2022 11:53:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A3E18F25B;
-        Wed, 19 Oct 2022 08:51:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B399B61943;
-        Wed, 19 Oct 2022 15:50:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EB3C433D7;
-        Wed, 19 Oct 2022 15:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666194615;
-        bh=wScyHxczwHL75RmoXOfql5d13NwOHcmOL0uKxW2svyU=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=D/ZLocZFqh2oVDNt4qIJijuw6psZZCGYbZq/vMqTpVdAHmJab5OKwDkNJa9FZhS+R
-         6U9yEV97Zoz/IEcwhoeRgpoyVELIlzUiofWUpEDoeO/xfuI2W+6opBwCt/2eiA8TLG
-         J1a9DdqVaTC1bmqmtJ0hkDgvAe6LBA79wEeuPfrl0em6jFFkI/z+cmjhPouDLSSs/R
-         htcs8QqrN7D7r8PspZR8YmDpa+M/VWwrBoaqVICPdvAOs1sLzRPmLKOBMWkTlCZKex
-         C+kvGspb0YsLZxErffHZPmGRcPApRb7YMk7FD6zo8S59GfxMd6L9lo8sWLVpu0kL37
-         uJEHAzB105RvQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     alsa-devel@alsa-project.org, Paul Cercueil <paul@crapouillou.net>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, linux-mips@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20221019071639.1003730-1-colin.i.king@gmail.com>
-References: <20221019071639.1003730-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next][V2] ASoC: codecs: jz4725b: Fix spelling mistake "Sourc" -> "Source", "Routee" -> "Route"
-Message-Id: <166619461311.884966.9257209469691313865.b4-ty@kernel.org>
-Date:   Wed, 19 Oct 2022 16:50:13 +0100
+        Wed, 19 Oct 2022 17:52:15 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE51B317ED;
+        Wed, 19 Oct 2022 14:52:14 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id f11so31270858wrm.6;
+        Wed, 19 Oct 2022 14:52:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eApXCcN6gbSeEBoZawynJhdcd3WZewwA9ECGhchf8gc=;
+        b=TJOqUaTZM1yxHvki48bMZ1o3xH5Cycg7ZoYpjkLoeg90ylQ61Z2xKLLRYQBRqRV8nC
+         lbt9H9cj8Q5PS+IxezJUgpsownODsx547LaWqwR8mlX9fAnTuJ3qhrcW9QUbhozcbD0A
+         Vn2nMR+U3EShmMbN8ip7gUX4Xo0eFoDCzaLXCvD9XSIU5nJAFvYgkEcznIsKcVsMeUyZ
+         cCXznc/UNUCFHxOPx5Gs+9GUJEiOxg6ucydsDphfjjtuUTSa6GZzPYZVzqVW4LiktPaT
+         +3UvEIIaLXS1JkeqPXRW9lHL8DMpE+bEggBQXeSBEKjQe4QzJcGBKiRd4otwV3RcHJKT
+         BOqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eApXCcN6gbSeEBoZawynJhdcd3WZewwA9ECGhchf8gc=;
+        b=AyxlmG4OenlhY7UjBMlXYEqxUlKe0XdNIZOjo2j8blo73sz5vUBhwBa/j5VUABnMry
+         E0W/lK4bOWvyjI1ECTGaqNkvNDyh+tjJ7S3KdPaLd5nuXBPwseLD5O2721AJoAatCYXw
+         lQCl4BcXIxS0C5vbQHEPbrt+t3HWyO4vzm8Lvm8D9WGidQ1KKJ86n2u3s0HnGfX847gv
+         PEIv/vGvHdwdiCGiwbb8ReN60JTIcFn4CgEQpKbYgvbr+k5Ba1dI6uwE4Klpr8Zg0uZ4
+         /ESDZiivPEZhLKxIJLOBbyWJcshNa/wl9pZdPurnpAQ/vgb7SwVHFwuuUXkroCbWTTMx
+         3bOQ==
+X-Gm-Message-State: ACrzQf3vDD1VvhJYG3grWG3dTCnx689ktSVOuj2RS05pem9Q16i/wcG8
+        13PVFejbljGeyMCB/prb6QMDCK3QxuV2+mln
+X-Google-Smtp-Source: AMsMyM57RpsQoDL6fsHYnO9NGHs0ib7Ga/t0MaIomoZ6IXPHYz4JSXpitGHlsS1wZsMj2/d9xGTHzQ==
+X-Received: by 2002:a5d:428c:0:b0:22e:5d4e:c71e with SMTP id k12-20020a5d428c000000b0022e5d4ec71emr6271418wrq.19.1666216333341;
+        Wed, 19 Oct 2022 14:52:13 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p26-20020a1c545a000000b003c6c5a5a651sm1046313wmi.28.2022.10.19.14.52.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Oct 2022 14:52:12 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: test_drivers: remove redundant assignment to variable checksum
+Date:   Wed, 19 Oct 2022 22:52:12 +0100
+Message-Id: <20221019215212.1434808-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fc921
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 19 Oct 2022 08:16:39 +0100, Colin Ian King wrote:
-> There are two spelling mistakes in codec routing description. Fix it.
-> 
-> 
+Variable checksum is assigned a value that is never read, it is assigned
+a new value in a following for-loop. The assignment is redundant and can
+be removed.
 
-Applied to
+Cleans up clang scan build warning:
+drivers/media/test-drivers/vivid/vivid-vbi-gen.c:197:2: warning: Value
+stored to 'checksum' is never read [deadcode.DeadStores]
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/test-drivers/vivid/vivid-vbi-gen.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks!
+diff --git a/drivers/media/test-drivers/vivid/vivid-vbi-gen.c b/drivers/media/test-drivers/vivid/vivid-vbi-gen.c
+index a141369a7a63..70a4024d461e 100644
+--- a/drivers/media/test-drivers/vivid/vivid-vbi-gen.c
++++ b/drivers/media/test-drivers/vivid/vivid-vbi-gen.c
+@@ -194,7 +194,6 @@ static void vivid_vbi_gen_set_time_of_day(u8 *packet)
+ 	for (checksum = i = 0; i <= 8; i++)
+ 		checksum += packet[i] & 0x7f;
+ 	packet[9] = calc_parity(0x100 - checksum);
+-	checksum = 0;
+ 	packet[10] = calc_parity(0x07);
+ 	packet[11] = calc_parity(0x04);
+ 	if (sys_tz.tz_minuteswest >= 0)
+-- 
+2.37.3
 
-[1/1] ASoC: codecs: jz4725b: Fix spelling mistake "Sourc" -> "Source", "Routee" -> "Route"
-      commit: df496157a5afa1b6d1f4c46ad6549c2c346d1e59
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
