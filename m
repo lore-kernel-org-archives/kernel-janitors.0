@@ -2,97 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC50CC4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 22:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2319AC4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 23:43:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230195AbiJSW5N (ORCPT
+        id S231286AbiJSXni (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Oct 2022 18:57:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43104 "EHLO
+        Wed, 19 Oct 2022 19:43:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230120AbiJSW5M (ORCPT
+        with ESMTP id S229698AbiJSXnh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Oct 2022 18:57:12 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E9C1C39C4;
-        Wed, 19 Oct 2022 15:57:11 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id fn7-20020a05600c688700b003b4fb113b86so1038259wmb.0;
-        Wed, 19 Oct 2022 15:57:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PSHC7wq31eMCYA16P+fMOvgJUg3fKnJfYGKil+Kojgc=;
-        b=Ak5O3zfEs/BjkGW/RnXPe11Ts1Tbd3ZkGjSrYPELf0TpHS/VMYEoi75jE2aInSKa9b
-         uoA6TVJnRdQ2SecExllSufNQAMA6AlYfrIfN3CmLSfR/W9YOzhj/HROo/V4HRR05qmyS
-         mZe7YqXwIWmHhdUCWAUrF7NwhcFbGa9MOZR4IvV3c3XNdotMwEySAOkvRY/P/B+FbOGu
-         NeU1EidhEeW5k67cYS66frt/SwD7dwYLQpLDEvcPdo1YzaRurGjyKyYPg5A9mGBteSBr
-         QeRHerr0MMM+ptJm6iNs/Jrlrk5Klt3Xm2nioqcU/x8OBySpw2jI22KLJfMfZ6zcUjhN
-         rdcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PSHC7wq31eMCYA16P+fMOvgJUg3fKnJfYGKil+Kojgc=;
-        b=cxqRiKIcabcm5JKBIoBrq9zvzBB9OxiW3+UF8ZPShffInynf7oTirb9Smidl4DeXXc
-         wYV5y+ClrXu0AsQm9oKZAkLlRiEGDUGFEyKT/1U+x3AYFqSjRh7zqRRSBwzQHSWvPHtd
-         RJDVGdam0Bz+8pFbtdNr45XUhbuM4k4lFaMq4Hp7NgeVyP6ult5XSlAEDylDe1tm3Fmm
-         BKkX3TLNs4iSy1XGS0iwp1MvFU5EMbyIqyliEv5F/N3UHNHivp89tS2+SScoHu6j0TKs
-         hggnfkdAFBrSZwQFBNMIiZyiNYToLvDTsM3avP9UqW0grz8LM1E2B2F3RqrfyYh9zmi7
-         yl/g==
-X-Gm-Message-State: ACrzQf3T6OZuZQZXKxESielN1WX5+Y5WYXGXUuMYoOojEbLmLtZP+4fh
-        SON33cJtRSBRrGQO1s8sxUc=
-X-Google-Smtp-Source: AMsMyM6p1L/FHRRIe99iBQxDezEC6akEfzApRozl7WiRR1LTt2eRsRVPaPvWHrGTBdTwzPn9/ZotCg==
-X-Received: by 2002:a05:600c:4e0e:b0:3c6:f5b9:957a with SMTP id b14-20020a05600c4e0e00b003c6f5b9957amr7410907wmq.45.1666220230386;
-        Wed, 19 Oct 2022 15:57:10 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d12-20020a05600c34cc00b003b435c41103sm1512525wmq.0.2022.10.19.15.57.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 15:57:09 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] thunderbolt: remove redundant assignment to variable len
-Date:   Wed, 19 Oct 2022 23:57:09 +0100
-Message-Id: <20221019225709.1506515-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Wed, 19 Oct 2022 19:43:37 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F40B215383D;
+        Wed, 19 Oct 2022 16:43:35 -0700 (PDT)
+Received: from mercury (unknown [185.209.196.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 731726602377;
+        Thu, 20 Oct 2022 00:43:33 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1666223013;
+        bh=HCQRIYIvaofyh8jKLFiJ7du6EQaW1+ZfM512iugncYQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IsXpEqKb3F6Pv7nJvstkXQZSVMUsQcTqIOe8HTdt0r48PA6T00tAngmhz6cPwWCYA
+         64sAtfaXp0+AlD4GOwmSVV4sIHZQzZJKmnot3pYmq+0fanJgu/4yaXy22+KZW4za3u
+         by7VFLwhRuB/6MXMPOmG74JuZwLQa3uuvkwqsRf0cPl41LL7zqcIJsAL94MpnEzI6H
+         jUQkJ71MakP/gkW5o5rcZvBvWRzITq2aT8zrMmxpNAI+K7UlwnLTTUX1BB2bflC7+n
+         g2fH7LzjffdEXWYblnWsfW3Z4xhuBaQk0P/7NaqvYtj+uo+HE8m39JKqIbVj/rOwo1
+         JXbqFmS3dxZZA==
+Received: by mercury (Postfix, from userid 1000)
+        id F423B10607E3; Thu, 20 Oct 2022 01:43:30 +0200 (CEST)
+Date:   Thu, 20 Oct 2022 01:43:30 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Chris Morgan <macromorgan@hotmail.com>, Lee Jones <lee@kernel.org>,
+        Maya Matuszczyk <maccraft123mc@gmail.com>,
+        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] power: supply: rk817: check correct variable
+Message-ID: <20221019234330.q537ytycvfredbzz@mercury.elektranox.org>
+References: <Y0puvQLWS/rQ7hSb@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ndm23mwvjfn32yfp"
+Content-Disposition: inline
+In-Reply-To: <Y0puvQLWS/rQ7hSb@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable len is assigned a value that is never read. It is re-assigned
-a new value in the following do-while loop and never referenced after
-the loop. The assignment is redundant and can be removed.
 
-Cleans up clang scan build warning:
-drivers/thunderbolt/xdomain.c:344:2: warning: Value stored to 'len' is
-never read [deadcode.DeadStores]
+--ndm23mwvjfn32yfp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/thunderbolt/xdomain.c | 1 -
- 1 file changed, 1 deletion(-)
+Hi,
 
-diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
-index f00b2f62d8e3..5e99f93ee1a1 100644
---- a/drivers/thunderbolt/xdomain.c
-+++ b/drivers/thunderbolt/xdomain.c
-@@ -341,7 +341,6 @@ static int tb_xdp_properties_request(struct tb_ctl *ctl, u64 route,
- 	memcpy(&req.src_uuid, src_uuid, sizeof(*src_uuid));
- 	memcpy(&req.dst_uuid, dst_uuid, sizeof(*dst_uuid));
- 
--	len = 0;
- 	data_len = 0;
- 
- 	do {
--- 
-2.37.3
+On Sat, Oct 15, 2022 at 11:26:37AM +0300, Dan Carpenter wrote:
+> This code checks "->chg_ps" twice when it was supposed to check
+> "->bat_ps".
+>=20
+> Fixes: 11cb8da0189b ("power: supply: Add charger driver for Rockchip RK81=
+7")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
 
+Thanks, queued to fixes branch.
+
+-- Sebastian
+
+>  drivers/power/supply/rk817_charger.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/power/supply/rk817_charger.c b/drivers/power/supply/=
+rk817_charger.c
+> index 635f051b0821..4e9c7b191266 100644
+> --- a/drivers/power/supply/rk817_charger.c
+> +++ b/drivers/power/supply/rk817_charger.c
+> @@ -1116,14 +1116,12 @@ static int rk817_charger_probe(struct platform_de=
+vice *pdev)
+> =20
+>  	charger->bat_ps =3D devm_power_supply_register(&pdev->dev,
+>  						     &rk817_bat_desc, &pscfg);
+> -
+> -	charger->chg_ps =3D devm_power_supply_register(&pdev->dev,
+> -						     &rk817_chg_desc, &pscfg);
+> -
+> -	if (IS_ERR(charger->chg_ps))
+> +	if (IS_ERR(charger->bat_ps))
+>  		return dev_err_probe(dev, -EINVAL,
+>  				     "Battery failed to probe\n");
+> =20
+> +	charger->chg_ps =3D devm_power_supply_register(&pdev->dev,
+> +						     &rk817_chg_desc, &pscfg);
+>  	if (IS_ERR(charger->chg_ps))
+>  		return dev_err_probe(dev, -EINVAL,
+>  				     "Charger failed to probe\n");
+> --=20
+> 2.35.1
+>=20
+
+--ndm23mwvjfn32yfp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmNQi58ACgkQ2O7X88g7
++pqIDA/8Cufa9EL2N7PN83seMnZcc41WReqJXV2eZ3mEr8dhvRpbHms3jO9ME9xu
+UzIY6oBhUpYaSIFAvH5uooGZn9cuXCQDdxdpiHtm2rRdO/w/yABigeS6/JeuubIj
+u2tNyZzqByaTEQmL0LLZLrrICPJyW9baMCu0yTTwabtqE5pGvnRqoxMjuL/0HtZ9
+LG7fLINu4rznnTR/4CvLMdHgLBNmJOUldbrT2TCNbG5NsH5RT3Oue076Tq7nmBkC
+CJpb8oqJS9Nx2mJsi9qkoQScTQjt+UjIYHmp/JTQMjBQ5rnXuujeGJ9R4DItYUb9
+c/fKi7TtmpppRtRYVjHSHpuuyc+TuUrnS2OUfYA+UWIVdXfgO0QDjEQa6Qmnbv/Z
+lTpMQVAw0jhwLBtao0avqt2lT2SwsE/ZsD6I/FIMFcKFT+TL0JVChy2r//eY+rBC
+AS60pINCLyR/948tnExf5R0oo49yBCynhYMJEG6LmxPYUlRx24cJ/IA3kUWGKzzV
+6T7yooZIVpDdZAI8mnIJUyf0qeS89+HYaEGMWxomHIz9ZyPeYXXJhPQ2z6QVw4AN
+qv4C9B1c6mQLrSK7xpOgTM9VzWXgmP+xNWUPVHf8wi9Syu1odxujAdr5oYU4OLPY
+CaAChcTzS5JgAQilOuIpr3BHfi/Go9jd8+2V/IJeFbMTdylpZ2I=
+=Te2v
+-----END PGP SIGNATURE-----
+
+--ndm23mwvjfn32yfp--
