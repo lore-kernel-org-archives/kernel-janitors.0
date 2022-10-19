@@ -2,62 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 911C9C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 21:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC50CC4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 22:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230260AbiJSVwQ (ORCPT
+        id S230195AbiJSW5N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Oct 2022 17:52:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
+        Wed, 19 Oct 2022 18:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbiJSVwP (ORCPT
+        with ESMTP id S230120AbiJSW5M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Oct 2022 17:52:15 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE51B317ED;
-        Wed, 19 Oct 2022 14:52:14 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id f11so31270858wrm.6;
-        Wed, 19 Oct 2022 14:52:14 -0700 (PDT)
+        Wed, 19 Oct 2022 18:57:12 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E9C1C39C4;
+        Wed, 19 Oct 2022 15:57:11 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id fn7-20020a05600c688700b003b4fb113b86so1038259wmb.0;
+        Wed, 19 Oct 2022 15:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eApXCcN6gbSeEBoZawynJhdcd3WZewwA9ECGhchf8gc=;
-        b=TJOqUaTZM1yxHvki48bMZ1o3xH5Cycg7ZoYpjkLoeg90ylQ61Z2xKLLRYQBRqRV8nC
-         lbt9H9cj8Q5PS+IxezJUgpsownODsx547LaWqwR8mlX9fAnTuJ3qhrcW9QUbhozcbD0A
-         Vn2nMR+U3EShmMbN8ip7gUX4Xo0eFoDCzaLXCvD9XSIU5nJAFvYgkEcznIsKcVsMeUyZ
-         cCXznc/UNUCFHxOPx5Gs+9GUJEiOxg6ucydsDphfjjtuUTSa6GZzPYZVzqVW4LiktPaT
-         +3UvEIIaLXS1JkeqPXRW9lHL8DMpE+bEggBQXeSBEKjQe4QzJcGBKiRd4otwV3RcHJKT
-         BOqw==
+        bh=PSHC7wq31eMCYA16P+fMOvgJUg3fKnJfYGKil+Kojgc=;
+        b=Ak5O3zfEs/BjkGW/RnXPe11Ts1Tbd3ZkGjSrYPELf0TpHS/VMYEoi75jE2aInSKa9b
+         uoA6TVJnRdQ2SecExllSufNQAMA6AlYfrIfN3CmLSfR/W9YOzhj/HROo/V4HRR05qmyS
+         mZe7YqXwIWmHhdUCWAUrF7NwhcFbGa9MOZR4IvV3c3XNdotMwEySAOkvRY/P/B+FbOGu
+         NeU1EidhEeW5k67cYS66frt/SwD7dwYLQpLDEvcPdo1YzaRurGjyKyYPg5A9mGBteSBr
+         QeRHerr0MMM+ptJm6iNs/Jrlrk5Klt3Xm2nioqcU/x8OBySpw2jI22KLJfMfZ6zcUjhN
+         rdcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eApXCcN6gbSeEBoZawynJhdcd3WZewwA9ECGhchf8gc=;
-        b=AyxlmG4OenlhY7UjBMlXYEqxUlKe0XdNIZOjo2j8blo73sz5vUBhwBa/j5VUABnMry
-         E0W/lK4bOWvyjI1ECTGaqNkvNDyh+tjJ7S3KdPaLd5nuXBPwseLD5O2721AJoAatCYXw
-         lQCl4BcXIxS0C5vbQHEPbrt+t3HWyO4vzm8Lvm8D9WGidQ1KKJ86n2u3s0HnGfX847gv
-         PEIv/vGvHdwdiCGiwbb8ReN60JTIcFn4CgEQpKbYgvbr+k5Ba1dI6uwE4Klpr8Zg0uZ4
-         /ESDZiivPEZhLKxIJLOBbyWJcshNa/wl9pZdPurnpAQ/vgb7SwVHFwuuUXkroCbWTTMx
-         3bOQ==
-X-Gm-Message-State: ACrzQf3vDD1VvhJYG3grWG3dTCnx689ktSVOuj2RS05pem9Q16i/wcG8
-        13PVFejbljGeyMCB/prb6QMDCK3QxuV2+mln
-X-Google-Smtp-Source: AMsMyM57RpsQoDL6fsHYnO9NGHs0ib7Ga/t0MaIomoZ6IXPHYz4JSXpitGHlsS1wZsMj2/d9xGTHzQ==
-X-Received: by 2002:a5d:428c:0:b0:22e:5d4e:c71e with SMTP id k12-20020a5d428c000000b0022e5d4ec71emr6271418wrq.19.1666216333341;
-        Wed, 19 Oct 2022 14:52:13 -0700 (PDT)
+        bh=PSHC7wq31eMCYA16P+fMOvgJUg3fKnJfYGKil+Kojgc=;
+        b=cxqRiKIcabcm5JKBIoBrq9zvzBB9OxiW3+UF8ZPShffInynf7oTirb9Smidl4DeXXc
+         wYV5y+ClrXu0AsQm9oKZAkLlRiEGDUGFEyKT/1U+x3AYFqSjRh7zqRRSBwzQHSWvPHtd
+         RJDVGdam0Bz+8pFbtdNr45XUhbuM4k4lFaMq4Hp7NgeVyP6ult5XSlAEDylDe1tm3Fmm
+         BKkX3TLNs4iSy1XGS0iwp1MvFU5EMbyIqyliEv5F/N3UHNHivp89tS2+SScoHu6j0TKs
+         hggnfkdAFBrSZwQFBNMIiZyiNYToLvDTsM3avP9UqW0grz8LM1E2B2F3RqrfyYh9zmi7
+         yl/g==
+X-Gm-Message-State: ACrzQf3T6OZuZQZXKxESielN1WX5+Y5WYXGXUuMYoOojEbLmLtZP+4fh
+        SON33cJtRSBRrGQO1s8sxUc=
+X-Google-Smtp-Source: AMsMyM6p1L/FHRRIe99iBQxDezEC6akEfzApRozl7WiRR1LTt2eRsRVPaPvWHrGTBdTwzPn9/ZotCg==
+X-Received: by 2002:a05:600c:4e0e:b0:3c6:f5b9:957a with SMTP id b14-20020a05600c4e0e00b003c6f5b9957amr7410907wmq.45.1666220230386;
+        Wed, 19 Oct 2022 15:57:10 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p26-20020a1c545a000000b003c6c5a5a651sm1046313wmi.28.2022.10.19.14.52.12
+        by smtp.gmail.com with ESMTPSA id d12-20020a05600c34cc00b003b435c41103sm1512525wmq.0.2022.10.19.15.57.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 14:52:12 -0700 (PDT)
+        Wed, 19 Oct 2022 15:57:09 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+To:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        linux-usb@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: test_drivers: remove redundant assignment to variable checksum
-Date:   Wed, 19 Oct 2022 22:52:12 +0100
-Message-Id: <20221019215212.1434808-1-colin.i.king@gmail.com>
+Subject: [PATCH] thunderbolt: remove redundant assignment to variable len
+Date:   Wed, 19 Oct 2022 23:57:09 +0100
+Message-Id: <20221019225709.1506515-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,31 +68,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable checksum is assigned a value that is never read, it is assigned
-a new value in a following for-loop. The assignment is redundant and can
-be removed.
+The variable len is assigned a value that is never read. It is re-assigned
+a new value in the following do-while loop and never referenced after
+the loop. The assignment is redundant and can be removed.
 
 Cleans up clang scan build warning:
-drivers/media/test-drivers/vivid/vivid-vbi-gen.c:197:2: warning: Value
-stored to 'checksum' is never read [deadcode.DeadStores]
+drivers/thunderbolt/xdomain.c:344:2: warning: Value stored to 'len' is
+never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/test-drivers/vivid/vivid-vbi-gen.c | 1 -
+ drivers/thunderbolt/xdomain.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/test-drivers/vivid/vivid-vbi-gen.c b/drivers/media/test-drivers/vivid/vivid-vbi-gen.c
-index a141369a7a63..70a4024d461e 100644
---- a/drivers/media/test-drivers/vivid/vivid-vbi-gen.c
-+++ b/drivers/media/test-drivers/vivid/vivid-vbi-gen.c
-@@ -194,7 +194,6 @@ static void vivid_vbi_gen_set_time_of_day(u8 *packet)
- 	for (checksum = i = 0; i <= 8; i++)
- 		checksum += packet[i] & 0x7f;
- 	packet[9] = calc_parity(0x100 - checksum);
--	checksum = 0;
- 	packet[10] = calc_parity(0x07);
- 	packet[11] = calc_parity(0x04);
- 	if (sys_tz.tz_minuteswest >= 0)
+diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
+index f00b2f62d8e3..5e99f93ee1a1 100644
+--- a/drivers/thunderbolt/xdomain.c
++++ b/drivers/thunderbolt/xdomain.c
+@@ -341,7 +341,6 @@ static int tb_xdp_properties_request(struct tb_ctl *ctl, u64 route,
+ 	memcpy(&req.src_uuid, src_uuid, sizeof(*src_uuid));
+ 	memcpy(&req.dst_uuid, dst_uuid, sizeof(*dst_uuid));
+ 
+-	len = 0;
+ 	data_len = 0;
+ 
+ 	do {
 -- 
 2.37.3
 
