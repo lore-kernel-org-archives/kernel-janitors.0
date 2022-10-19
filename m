@@ -2,95 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60343C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 12:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF31EC43219
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Oct 2022 12:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbiJSM60 (ORCPT
+        id S229924AbiJSM76 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Oct 2022 08:58:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34338 "EHLO
+        Wed, 19 Oct 2022 08:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231823AbiJSM6O (ORCPT
+        with ESMTP id S232757AbiJSM6v (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Oct 2022 08:58:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE358A7E2;
-        Wed, 19 Oct 2022 05:41:31 -0700 (PDT)
+        Wed, 19 Oct 2022 08:58:51 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DFEB4F;
+        Wed, 19 Oct 2022 05:42:08 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C5E8C6186D;
-        Wed, 19 Oct 2022 12:40:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 247A9C433D6;
-        Wed, 19 Oct 2022 12:40:03 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F2DBCB822CE;
+        Wed, 19 Oct 2022 12:05:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3379FC433D7;
+        Wed, 19 Oct 2022 12:05:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666183206;
-        bh=8d6CdrccoT97cECfxO7g6a1f4262AbKj4LgQxlbZkwU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SK8O4ky0fQMSolFb3X8ZM7WVIicmqRC7UhjbaecIOdbxO+xNDylUl3MU1PJ/Di9K+
-         kcE5wyJk1zQlNK9EV98lwe9t+ZYnJCxPo5ff8moOPMCaIjhiDE+Na+XeYLfMbyvGK+
-         Gqi9JoEV1JBL7hjIMIQsTjX532US5gfOGtf4EIMfIrQj00cBxsLuAHY1D0/524sg2i
-         0xEWu1eyNZjxkU21pnwACWTN9jk+5dii9c/af14bIjb3YO2hnsDTU9Q06M0Q/I1etB
-         2d3svVuKFbybaONqrM/zas28bHssLFMgP2+kKkV3JLPeJe6LuhG1Q5s0QnVFLbRwst
-         E/MhU1I/LumDQ==
-Date:   Wed, 19 Oct 2022 13:40:00 +0100
+        s=k20201202; t=1666181107;
+        bh=F/vs8b7abjKQcTaqlC59wWBxEf22jzV2p9r8gJVIZGE=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=E+NPxH+NYowTYhFvZA/si/KHWYqSmzmJUZSDAPHP3oaYblp6TcgreK0gD16Sb2KuV
+         2yXfcvSM9i/vdsolg6CMdMSqygf3/mTElc7vXfEqyaOs6WCaPEOH+kQjATgDDbPMwI
+         ydvoF66VcwKUbmzxRdoEQ1iYoiaCdYfIka0gZg1dzvIR5S/n9miXjFqW/q76rQk6GT
+         JapIr8CTHoYjP8t419TzGTskGgJrRwUHXt3yM31BhZEI53aiCPe9x6iVzTTq7XkwmK
+         FdkU3nlAOoCCG881txjNg4BGmBdWMSPZsFQO52Y6V7BXAgqyJLZO38F4nEmhY25n6x
+         YPunp94YoomwQ==
 From:   Mark Brown <broonie@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-mips@vger.kernel.org,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next][V2] ASoC: codecs: jz4725b: Fix spelling mistake
- "Sourc" -> "Source", "Routee" -> "Route"
-Message-ID: <Y0/wIPFAWH3cLQzx@sirena.org.uk>
-References: <20221019071639.1003730-1-colin.i.king@gmail.com>
- <Y0/pSVbueZYXBsmA@sirena.org.uk>
- <S820KR.GPNPWZ8QG3PG3@crapouillou.net>
+To:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20221018152928.942186-1-colin.i.king@gmail.com>
+References: <20221018152928.942186-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] ASoC: twl4030: make read-only array ramp_base static const
+Message-Id: <166618110593.80223.11956786873062777747.b4-ty@kernel.org>
+Date:   Wed, 19 Oct 2022 13:05:05 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="BarSh9pR8ITjJrt2"
-Content-Disposition: inline
-In-Reply-To: <S820KR.GPNPWZ8QG3PG3@crapouillou.net>
-X-Cookie: I like your SNOOPY POSTER!!
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fc921
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Tue, 18 Oct 2022 16:29:28 +0100, Colin Ian King wrote:
+> Don't populate the read-only array ramp_base on the stack but
+> instead make it static const. Also makes the object code a
+> little smaller.
+> 
+> 
 
---BarSh9pR8ITjJrt2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to
 
-On Wed, Oct 19, 2022 at 01:19:40PM +0100, Paul Cercueil wrote:
-> Le mer., oct. 19 2022 at 13:10:49 +0100, Mark Brown <broonie@kernel.org> a
-> > On Wed, Oct 19, 2022 at 08:16:39AM +0100, Colin Ian King wrote:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> > >  There are two spelling mistakes in codec routing description. Fix
-> > > it.
+Thanks!
 
-> > Bit disappionting that people didn't notice the errors during boot
-> > there...
+[1/1] ASoC: twl4030: make read-only array ramp_base static const
+      commit: 67860d2a8e0db7783f680f6f1c1600ed34ed3a97
 
-> Well that's on you. You merged the patchset before anybody could review.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-That includes whoever wrote the code in the first place, and I do note
-that I applied version 3 of the series.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---BarSh9pR8ITjJrt2
-Content-Type: application/pgp-signature; name="signature.asc"
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
------BEGIN PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNP8CAACgkQJNaLcl1U
-h9Dvzgf/UwmdmQxOamn+37JPevW80uGyuE3ITBXUK9gT2Rb2ow1M8Bdm1QmlUjTx
-OImxIOYNNXJ+DZ4Tec4ybjtwlB0EaUvXRiw8TWePLZKwRDDrYoVSSyBfagTYSchD
-OUOIGJgifR/ECR15TApRJX2CyGCeoe0V31Vz0IkQD12a7xbVvdg8+3AbTp8+yQvD
-IJJTM0S/HUn07KktLl2xDFNvtSdPOekZE1Ju6sBd6i8ByNUcvOqGCp0pXUZnbTXy
-2LuOq+9qdh5PngUcDjlQ90B2sh5fIYJEu2hM+xRuLPbW0ENzS7pm9DNuvuIvTGYL
-BiboNnUF477UdJpVstIMKfqk6YIT5g==
-=fKUT
------END PGP SIGNATURE-----
-
---BarSh9pR8ITjJrt2--
+Thanks,
+Mark
