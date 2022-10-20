@@ -2,62 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA81C43217
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 13:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B185C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 13:18:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230273AbiJTNGz (ORCPT
+        id S230388AbiJTNSN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 09:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53270 "EHLO
+        Thu, 20 Oct 2022 09:18:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229898AbiJTNGy (ORCPT
+        with ESMTP id S230502AbiJTNSL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 09:06:54 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C63CA15203A;
-        Thu, 20 Oct 2022 06:06:52 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id v11so4869687wmd.1;
-        Thu, 20 Oct 2022 06:06:52 -0700 (PDT)
+        Thu, 20 Oct 2022 09:18:11 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 230571B2301;
+        Thu, 20 Oct 2022 06:17:39 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id bk15so34347876wrb.13;
+        Thu, 20 Oct 2022 06:17:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V16xoQI1tSvYN6IGg2SDhKuuEiPSYX/4oIZVHGpPsQk=;
-        b=XxJGPF6oWoNUx1PrHhLIitquoV5XTR+5mfEp8ZNQ96RoiboZJ0HQdPTHCS8mJKlhq3
-         dlHi0SVvYpeB83SCjONZYQhCvj4t1ifLdaHa2/p2gZs2tCiOtSww1MKKWCzBbBPncjO5
-         6ZKD2pekBBu/ISXZI99q63h943NNphej+86cRrSxrG/UVXVv5clpC5eCptFspOmbIyHD
-         Q19K/CR995gjFd6+v47YpKG/iedrfARYXaSbQHLAmAqUJw8KH5sOJsoKvuJbMZcBgBUd
-         lUrj6Ksq6Z9elLHDX0jBy2s/WI2UQ/dTso+AEqFu369DsJSk4v0NifTlX3eb0r2c44vW
-         CYhQ==
+        bh=pB1ESJX/kbTXjRBj9KyRdymHjlLM30GkaaeMOBkpYiw=;
+        b=ACtfuk0A0fGqABdtjv0rrhqqZFD50vnWR7DW7SsPw/XYnBiSS6PKHYTuLXjyaiaIB/
+         HWh99gDIMFWZGZyzUuFF9ix2FCm0alKmHktZ2PHZ/6v62+aOL9C0vMlabzD275JsutPr
+         VaD5bGlPYdoKaf4aIXA/EkVQhyy1fzFCIo2J/qeG23Hb6+1g2HXvadQnqEaPEGGUNo3z
+         lDGiEY3FRCer9W98q0ARbYfN/C1D6V/4xNti+rXFxw37erTkNBObgBlNEdx1Nl+heSWm
+         1eyZ4rtteQDGd/JnL7s2Y3ECr58BzFpZPDciheBoCUYr282IS8SDzDAqvqX7pUVDgNlr
+         zS5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=V16xoQI1tSvYN6IGg2SDhKuuEiPSYX/4oIZVHGpPsQk=;
-        b=OlTjwFbwzWUrIzWXj92jFuQoEQqdX6mcCRU5XLeRQD1aDqXJxCyAouQquUmjO4sphV
-         elJ5S13TsqafA3Oq0D3s+Bl15asDR4yxqmEkvNQ4R6vz4LjjBKOkxf0FOPLt0bqcxDl9
-         ojhwnMcR3/C5/qfwx6a70L9Exx6+hXINTHlLZ1CAWb+qrTr8lPtfI4b80YivihIOCjpH
-         duA++bZjnAPrmoCYdfyacsfE82aOTMRZTN+j6dBhdpaZWS5ymqsW97Z7CLx+sJz082nC
-         loTUIUNN9huG4XZZcBbBjquo0FfVlAvvkmXzhAMznxGAf+DKqAVpTICdIHFBKLvjPzKn
-         mJiA==
-X-Gm-Message-State: ACrzQf0iZNAebKt8XvttYInmr39AWi/SkIsB/9EJtZH93zhSNO3561qF
-        yl24ix2qPlO8kI0v6Z3MuJY=
-X-Google-Smtp-Source: AMsMyM7povvYGvKNerEps/8u/UNbrMtviHbs5BXU3wiXZLvxfGxznWrL3AsaVuIuopdqk+ZEVbNf1Q==
-X-Received: by 2002:a05:600c:4e50:b0:3c6:faaa:1e7d with SMTP id e16-20020a05600c4e5000b003c6faaa1e7dmr9595076wmq.9.1666271211158;
-        Thu, 20 Oct 2022 06:06:51 -0700 (PDT)
+        bh=pB1ESJX/kbTXjRBj9KyRdymHjlLM30GkaaeMOBkpYiw=;
+        b=GN5+5XJkCbrd5yVch0HpNYqORhkwYTRQ7szDdbAdJX8miTrvdPpp7qntKMrbAjP+ee
+         4Nf9j6HT4pPDHCaWzJPYUv3jeH5reXF/5oyoHDbCHvb42P1ZYnqzqzNCiiKj9KZPzfMR
+         RwaV1uItDPYyvKj+1HPbBohu8vPrdvo7AejtVjoN53HF3LkO6jYfMwJ7VvEd48x6E4sH
+         eOisDi32+bUYZgn285Bj7z3vhBc36Q8FpIuUxc/GhzvpQK3iVNCm237TXPxefSnqV1+s
+         77IbO4nK2ySG93/TDk5e7ZiJuqjLWeHHXooDuk3OIQZx+AhqoDQakzVO+G1rtU6xj3r3
+         HvHQ==
+X-Gm-Message-State: ACrzQf24j/GYq5So+tjXqHfCAEMnzrFlc6U3DfOD9qi9f1APFTU0EnX1
+        k2k02fnKuyH/cksHCfuapYo=
+X-Google-Smtp-Source: AMsMyM6iyMTy0D2qEILjPok8dwQukw7kiGAtGVtmVPMZjrE2xyShlxHjyHV2Wpa7qGW9t5oACmGxkA==
+X-Received: by 2002:a05:6000:1843:b0:22e:77b0:2e5 with SMTP id c3-20020a056000184300b0022e77b002e5mr8400914wri.215.1666271770601;
+        Thu, 20 Oct 2022 06:16:10 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r1-20020adfdc81000000b0022e3538d305sm18741769wrj.117.2022.10.20.06.06.50
+        by smtp.gmail.com with ESMTPSA id g10-20020a5d554a000000b002364c77bcacsm365525wrw.38.2022.10.20.06.16.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 06:06:50 -0700 (PDT)
+        Thu, 20 Oct 2022 06:16:10 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-        Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org
+        Arnd Bergmann <arnd@arndb.de>, linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: ftdi-elan: remove variable err_count
-Date:   Thu, 20 Oct 2022 14:06:49 +0100
-Message-Id: <20221020130649.1546112-1-colin.i.king@gmail.com>
+Subject: [PATCH] staging: octeon: remove redundant variable total_freed
+Date:   Thu, 20 Oct 2022 14:16:09 +0100
+Message-Id: <20221020131609.1546667-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,35 +65,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable err_count is just being incremented and it's never used
-anywhere else. The variable and the increment are redundant so
-remove it.
+The variable total_freed is accumulating skb_to_free however it is not
+being used after this. The use of total_freed is redundant and hence
+the variable can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/usb/misc/ftdi-elan.c | 2 --
+ drivers/staging/octeon/ethernet-tx.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/usb/misc/ftdi-elan.c b/drivers/usb/misc/ftdi-elan.c
-index b2f980409d0b..33b35788bd0b 100644
---- a/drivers/usb/misc/ftdi-elan.c
-+++ b/drivers/usb/misc/ftdi-elan.c
-@@ -1956,7 +1956,6 @@ static int ftdi_elan_synchronize(struct usb_ftdi *ftdi)
- 	int long_stop = 10;
- 	int retry_on_timeout = 5;
- 	int retry_on_empty = 10;
--	int err_count = 0;
- 	retval = ftdi_elan_flush_input_fifo(ftdi);
- 	if (retval)
- 		return retval;
-@@ -2051,7 +2050,6 @@ static int ftdi_elan_synchronize(struct usb_ftdi *ftdi)
- 					continue;
- 				}
- 			} else {
--				err_count += 1;
- 				dev_err(&ftdi->udev->dev, "error = %d\n",
- 					retval);
- 				if (read_stop-- > 0) {
+diff --git a/drivers/staging/octeon/ethernet-tx.c b/drivers/staging/octeon/ethernet-tx.c
+index a36e36701c74..bbf33b88bb7c 100644
+--- a/drivers/staging/octeon/ethernet-tx.c
++++ b/drivers/staging/octeon/ethernet-tx.c
+@@ -73,7 +73,6 @@ static void cvm_oct_free_tx_skbs(struct net_device *dev)
+ {
+ 	int skb_to_free;
+ 	int qos, queues_per_port;
+-	int total_freed = 0;
+ 	int total_remaining = 0;
+ 	unsigned long flags;
+ 	struct octeon_ethernet *priv = netdev_priv(dev);
+@@ -87,7 +86,6 @@ static void cvm_oct_free_tx_skbs(struct net_device *dev)
+ 						       MAX_SKB_TO_FREE);
+ 		skb_to_free = cvm_oct_adjust_skb_to_free(skb_to_free,
+ 							 priv->fau + qos * 4);
+-		total_freed += skb_to_free;
+ 		if (skb_to_free > 0) {
+ 			struct sk_buff *to_free_list = NULL;
+ 
 -- 
 2.37.3
 
