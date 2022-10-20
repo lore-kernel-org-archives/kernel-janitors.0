@@ -2,96 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B9EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 17:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF05C43217
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 18:07:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229638AbiJTRjb (ORCPT
+        id S230185AbiJTSHe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 13:39:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58342 "EHLO
+        Thu, 20 Oct 2022 14:07:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbiJTRja (ORCPT
+        with ESMTP id S230256AbiJTSH1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 13:39:30 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDAB7D133;
-        Thu, 20 Oct 2022 10:39:26 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id j7so177841wrr.3;
-        Thu, 20 Oct 2022 10:39:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u6QaoaC6eMyiR8pzqtN0H2lr4PQj6BJvo8PVOPWAT80=;
-        b=nj5gRdjeqwlEkMp3RMnbTzqRRzQHztj0/GhJuQZtLqXlGg4vQ9TXW9q80rAYFpS+ue
-         ALHqz1upOKkaYIpvRjYXClsUhHMhAQWA2vOldZcMHmK3j01HTxu+AjwVrTUzH+igDGYS
-         zUHQ6PV/MBcWKn2JLxIg5GbXEm5ZF+lUZi5qAnILZa7dm0ycqDeABqOB3aeVTumxmixM
-         XMyCV7mB4HcWKqEsaY1zsgsXIo6EBs6btEtRB+zskt6HY1/eh3kRhToWomSZjBm78jGd
-         xFy1Yg4S2s/vbXHbASQczJr+Qcv9SbQL//T9XgXgJmYbJzPgLIbq97J7XL7cus5TVvkC
-         VfMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u6QaoaC6eMyiR8pzqtN0H2lr4PQj6BJvo8PVOPWAT80=;
-        b=2Ye/YqtxmmbllRnuxX5A7b29AEzSbhZpWebizr89VtjoQeRD1201iZK821Du5WusLR
-         h/d/yuyiEOkdyLln0MHP9wEMtQjkDs2FNEKHpxiReFnAMQk7O/zHAMOhJhuVyVK1okzN
-         OFwtrV5Ntwe+k3nOGspfugnR/2HdvlDtlNftLjbhQ0DgRr0ozhRvBI4K6soXqaun+4GL
-         Ds0GauZigDqHOV3OShPXP83By7iyJojqEny73ZGeWEZiztCftZvwz5i0vtZCRtnR8s1/
-         UOApNqvSe1OrVPrrfsyLMhFeJl2mRdpYuxGfEx9GaDlqzMJInUj2e94sQoGIUAajiFKW
-         Z0AA==
-X-Gm-Message-State: ACrzQf1UCX6FR9LIRE5G6c5FgyBKXuqgShHB+v9SgG8kivhuBUfs8Yzt
-        RetFsr1K8lBvmhTp/7nhq/8=
-X-Google-Smtp-Source: AMsMyM6Dc4YJMAlfq8xZ/eVY4VDIz3WqWWEiknWDwjIQ46F2Fq02ftSIkrJGENjc/Nn2YvdhMGhAyQ==
-X-Received: by 2002:adf:ed91:0:b0:22e:4f88:a9fc with SMTP id c17-20020adfed91000000b0022e4f88a9fcmr9022828wro.669.1666287564899;
-        Thu, 20 Oct 2022 10:39:24 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o5-20020a5d62c5000000b00228cbac7a25sm17262443wrv.64.2022.10.20.10.39.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 10:39:24 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: remove variable nr_servers
-Date:   Thu, 20 Oct 2022 18:39:23 +0100
-Message-Id: <20221020173923.21342-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Thu, 20 Oct 2022 14:07:27 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B631B15A977;
+        Thu, 20 Oct 2022 11:07:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=pWUVsfzWDBIXyjYnhK+XoMfAyHRpezXQSqYzXKvXWzI=; b=K/TLqvaF1o6pPDVyQVhY/896cK
+        9e5z/VznvZSDHDEJgMkAoHAilNDANxyp7gGdBt9s67nQ/koZPxYcU6STAL3axsoNmqkj3+lFEtWnK
+        NWtONsKs7kxiJlG/rIg6Ooask0AkULPvwyK8nuVmvC1mQFmj9HQ/CsVgVOeq/QeahpvQXYeNSGwmC
+        Ld2kAG3nRIEMSS63yw7Zw3XedgtNQKRm/9EoMIvC8n4O9F+lTl1gVSVMAYas4VRAYdHAbG+tveG1a
+        jyYOA7uj8U5YLvQr3mjkyVGyk47t6PDknJGAs1nqLPNDd/4STXGSvEwPuqb3TYxVacpiySZKwh9Cm
+        f0w8heEA==;
+Received: from [2601:1c2:d80:3110::a2e7]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1olZwn-0012aL-LV; Thu, 20 Oct 2022 18:07:13 +0000
+Message-ID: <69d9ee66-c312-0387-1307-62fda7bd24ae@infradead.org>
+Date:   Thu, 20 Oct 2022 11:07:12 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH] tracing/hist: add in missing * in comment blocks
+Content-Language: en-US
+To:     "Colin King (gmail)" <colin.i.king@gmail.com>,
+        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221020133019.1547587-1-colin.i.king@gmail.com>
+ <20221020234423.42816821e2d09aba61db5e69@kernel.org>
+ <6005e7c0-5901-ef5a-6af7-2801975e39bc@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <6005e7c0-5901-ef5a-6af7-2801975e39bc@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable nr_servers is no longer being used, the last reference
-to it was removed in commit 45df8462730d ("afs: Fix server list handling")
-so clean up the code by removing it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/afs/volume.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/fs/afs/volume.c b/fs/afs/volume.c
-index f4937029dcd7..29d483c80281 100644
---- a/fs/afs/volume.c
-+++ b/fs/afs/volume.c
-@@ -70,11 +70,7 @@ static struct afs_volume *afs_alloc_volume(struct afs_fs_context *params,
- {
- 	struct afs_server_list *slist;
- 	struct afs_volume *volume;
--	int ret = -ENOMEM, nr_servers = 0, i;
--
--	for (i = 0; i < vldb->nr_servers; i++)
--		if (vldb->fs_mask[i] & type_mask)
--			nr_servers++;
-+	int ret = -ENOMEM;
- 
- 	volume = kzalloc(sizeof(struct afs_volume), GFP_KERNEL);
- 	if (!volume)
+On 10/20/22 08:10, Colin King (gmail) wrote:
+> On 20/10/2022 15:44, Masami Hiramatsu (Google) wrote:
+>> Hi,
+>>
+>> On Thu, 20 Oct 2022 14:30:19 +0100
+>> Colin Ian King <colin.i.king@gmail.com> wrote:
+>>
+>>> There are a couple of missing * in comment blocks. Fix these.
+>>> Cleans up two clang warnings:
+>>>
+>>> kernel/trace/trace_events_hist.c:986: warning: bad line:
+>>> kernel/trace/trace_events_hist.c:3229: warning: bad line:
+>>>
+>>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>>
+>> Thanks for the patch.
+>>
+>> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>>
+>> BTW, what version of clang are you using?
+>> I couldn't see this warning with clang 15.0.0. Maybe I need a kconfig option?
+> 
+> clang-13 and kernel W=1 for this specific case, e.g. kernel built using make  CC=clang-13 HOSTCC=clang-13 W=1
+> 
+
+but those are kernel-doc warnings, not clang (AFAIK).
+
+> 
+>>
+>> Thank you,
+>>
+>>> ---
+>>>   kernel/trace/trace_events_hist.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+>>> index 48465f7e97b4..087c19548049 100644
+>>> --- a/kernel/trace/trace_events_hist.c
+>>> +++ b/kernel/trace/trace_events_hist.c
+>>> @@ -983,7 +983,7 @@ static struct hist_field *find_any_var_ref(struct hist_trigger_data *hist_data,
+>>>    * A trigger can define one or more variables.  If any one of them is
+>>>    * currently referenced by any other trigger, this function will
+>>>    * determine that.
+>>> -
+>>> + *
+>>>    * Typically used to determine whether or not a trigger can be removed
+>>>    * - if there are any references to a trigger's variables, it cannot.
+>>>    *
+>>> @@ -3226,7 +3226,7 @@ static struct field_var *create_field_var(struct hist_trigger_data *hist_data,
+>>>    * events.  However, for convenience, users are allowed to directly
+>>>    * specify an event field in an action, which will be automatically
+>>>    * converted into a variable on their behalf.
+>>> -
+>>> + *
+>>>    * This function creates a field variable with the name var_name on
+>>>    * the hist trigger currently being defined on the target event.  If
+>>>    * subsys_name and event_name are specified, this function simply
+>>> -- 
+>>> 2.37.3
+>>>
+>>
+>>
+> 
+
 -- 
-2.37.3
-
+~Randy
