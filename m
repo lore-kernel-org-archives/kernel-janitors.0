@@ -2,120 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF05C43217
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 18:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3B9C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 18:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230185AbiJTSHe (ORCPT
+        id S230124AbiJTSQr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 14:07:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55396 "EHLO
+        Thu, 20 Oct 2022 14:16:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230256AbiJTSH1 (ORCPT
+        with ESMTP id S229615AbiJTSQq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 14:07:27 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B631B15A977;
-        Thu, 20 Oct 2022 11:07:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=pWUVsfzWDBIXyjYnhK+XoMfAyHRpezXQSqYzXKvXWzI=; b=K/TLqvaF1o6pPDVyQVhY/896cK
-        9e5z/VznvZSDHDEJgMkAoHAilNDANxyp7gGdBt9s67nQ/koZPxYcU6STAL3axsoNmqkj3+lFEtWnK
-        NWtONsKs7kxiJlG/rIg6Ooask0AkULPvwyK8nuVmvC1mQFmj9HQ/CsVgVOeq/QeahpvQXYeNSGwmC
-        Ld2kAG3nRIEMSS63yw7Zw3XedgtNQKRm/9EoMIvC8n4O9F+lTl1gVSVMAYas4VRAYdHAbG+tveG1a
-        jyYOA7uj8U5YLvQr3mjkyVGyk47t6PDknJGAs1nqLPNDd/4STXGSvEwPuqb3TYxVacpiySZKwh9Cm
-        f0w8heEA==;
-Received: from [2601:1c2:d80:3110::a2e7]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1olZwn-0012aL-LV; Thu, 20 Oct 2022 18:07:13 +0000
-Message-ID: <69d9ee66-c312-0387-1307-62fda7bd24ae@infradead.org>
-Date:   Thu, 20 Oct 2022 11:07:12 -0700
+        Thu, 20 Oct 2022 14:16:46 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A8E319A237;
+        Thu, 20 Oct 2022 11:16:45 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id bp11so302551wrb.9;
+        Thu, 20 Oct 2022 11:16:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tYS57kbtnP2/fRI2CTwvWkjaPlMYUwgmjlFT7Zs/ZZ8=;
+        b=Z7ga7HW9P3XtQeUJAm9VHZlcx5ER8rXy+Mu6Sj+WRJCboJ2eMU0FEgUV1ZSCEmJwHm
+         UkwLVrpUSO2ImZb71U9MmoZgA8YtgjlVcgl71iFZhCeVrXsrLNLfbVJ6PgJOyhX+6FbK
+         KfFQSxnlyadPPCljWSd2pJu5gzbEOHpOiy3iDE0L9zHjNuTkN+exeScMwDxaC1a+pQ1W
+         Oy5i0dcKfGdiVpftrHAh2aKP5OG/iUulNVyBdDZwOrxMgr5nDu0aP8G3/MGAmkdUNSFy
+         ym+Mx9X5URnFecDnt6tnb+0m51JCRC4nzm1EjCMXrwYx6SN2uwqBQUQReV5b4Pt0Pmqs
+         FxIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tYS57kbtnP2/fRI2CTwvWkjaPlMYUwgmjlFT7Zs/ZZ8=;
+        b=CcJwXbfGhLYYnMg55WOAvwqFu7TMw5R+VWyHT1KrxmSqfUJbesx5VPyu7hYUhN74L+
+         eonU+wFOE/eRN/zr+nRozZQcz4ZQwYjigqawKHSgG5tqYqM/ggUgzzfLRmbQUkIgKXuR
+         XsgfhjHHFSxaJbQlmpTAMJNu5OYDBnqwcK8PHJh+dGEdba6RwUb61O3P08HfOJJMimEY
+         0QpAf5YsGaQidLenY/xHVB1eTAiH1muRyXkHg0g5UXw8qSH27SGX8lquj8db8B+K0a9c
+         WPvqdCyZNCZT0NvWMftRILIbKkp999iEzjFqzXRhWNY15QkP0IqW5flIE1rMccgK9A3v
+         jl7g==
+X-Gm-Message-State: ACrzQf3iY0XcZmJJnXsY0RHo9PsIiOoy5izxHA5K8z8+VkgGVKt0sKSH
+        MT+SqzVUfd3m9MpPAe5VsKRxJlcM8XbGEEYg
+X-Google-Smtp-Source: AMsMyM7Tso9oo87DGyuobdDUbONRldLQHNzQyOTlX6prD5GyV/YlaPvggr2XUQkIFgo5ZpSUq5LbBw==
+X-Received: by 2002:a5d:6a0f:0:b0:236:39b0:1346 with SMTP id m15-20020a5d6a0f000000b0023639b01346mr2642043wru.131.1666289803806;
+        Thu, 20 Oct 2022 11:16:43 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id v21-20020a05600c15d500b003b4e009deb2sm239548wmf.41.2022.10.20.11.16.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Oct 2022 11:16:43 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: tps6507x-ts: remove variable loops
+Date:   Thu, 20 Oct 2022 19:16:42 +0100
+Message-Id: <20221020181642.24417-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH] tracing/hist: add in missing * in comment blocks
-Content-Language: en-US
-To:     "Colin King (gmail)" <colin.i.king@gmail.com>,
-        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221020133019.1547587-1-colin.i.king@gmail.com>
- <20221020234423.42816821e2d09aba61db5e69@kernel.org>
- <6005e7c0-5901-ef5a-6af7-2801975e39bc@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <6005e7c0-5901-ef5a-6af7-2801975e39bc@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+The variable loops is being incremented but is never referenced,
+it is redundant and can be removed.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/input/touchscreen/tps6507x-ts.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-On 10/20/22 08:10, Colin King (gmail) wrote:
-> On 20/10/2022 15:44, Masami Hiramatsu (Google) wrote:
->> Hi,
->>
->> On Thu, 20 Oct 2022 14:30:19 +0100
->> Colin Ian King <colin.i.king@gmail.com> wrote:
->>
->>> There are a couple of missing * in comment blocks. Fix these.
->>> Cleans up two clang warnings:
->>>
->>> kernel/trace/trace_events_hist.c:986: warning: bad line:
->>> kernel/trace/trace_events_hist.c:3229: warning: bad line:
->>>
->>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->>
->> Thanks for the patch.
->>
->> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->>
->> BTW, what version of clang are you using?
->> I couldn't see this warning with clang 15.0.0. Maybe I need a kconfig option?
-> 
-> clang-13 and kernel W=1 for this specific case, e.g. kernel built using make  CC=clang-13 HOSTCC=clang-13 W=1
-> 
-
-but those are kernel-doc warnings, not clang (AFAIK).
-
-> 
->>
->> Thank you,
->>
->>> ---
->>>   kernel/trace/trace_events_hist.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
->>> index 48465f7e97b4..087c19548049 100644
->>> --- a/kernel/trace/trace_events_hist.c
->>> +++ b/kernel/trace/trace_events_hist.c
->>> @@ -983,7 +983,7 @@ static struct hist_field *find_any_var_ref(struct hist_trigger_data *hist_data,
->>>    * A trigger can define one or more variables.  If any one of them is
->>>    * currently referenced by any other trigger, this function will
->>>    * determine that.
->>> -
->>> + *
->>>    * Typically used to determine whether or not a trigger can be removed
->>>    * - if there are any references to a trigger's variables, it cannot.
->>>    *
->>> @@ -3226,7 +3226,7 @@ static struct field_var *create_field_var(struct hist_trigger_data *hist_data,
->>>    * events.  However, for convenience, users are allowed to directly
->>>    * specify an event field in an action, which will be automatically
->>>    * converted into a variable on their behalf.
->>> -
->>> + *
->>>    * This function creates a field variable with the name var_name on
->>>    * the hist trigger currently being defined on the target event.  If
->>>    * subsys_name and event_name are specified, this function simply
->>> -- 
->>> 2.37.3
->>>
->>
->>
-> 
-
+diff --git a/drivers/input/touchscreen/tps6507x-ts.c b/drivers/input/touchscreen/tps6507x-ts.c
+index 357a3108f2e5..f48871767763 100644
+--- a/drivers/input/touchscreen/tps6507x-ts.c
++++ b/drivers/input/touchscreen/tps6507x-ts.c
+@@ -119,7 +119,6 @@ static s32 tps6507x_adc_conversion(struct tps6507x_ts *tsc,
+ static s32 tps6507x_adc_standby(struct tps6507x_ts *tsc)
+ {
+ 	s32 ret;
+-	s32 loops = 0;
+ 	u8 val;
+ 
+ 	ret = tps6507x_write_u8(tsc,  TPS6507X_REG_ADCONFIG,
+@@ -141,7 +140,6 @@ static s32 tps6507x_adc_standby(struct tps6507x_ts *tsc)
+ 		ret = tps6507x_read_u8(tsc, TPS6507X_REG_INT, &val);
+ 		if (ret)
+ 			return ret;
+-		loops++;
+ 	}
+ 
+ 	return ret;
 -- 
-~Randy
+2.37.3
+
