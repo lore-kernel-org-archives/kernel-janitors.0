@@ -2,63 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 185BAC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 21:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7E8C43217
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 21:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbiJTVCa (ORCPT
+        id S229800AbiJTVHg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 17:02:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47062 "EHLO
+        Thu, 20 Oct 2022 17:07:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbiJTVCX (ORCPT
+        with ESMTP id S229685AbiJTVHf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 17:02:23 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E56E6CABC0;
-        Thu, 20 Oct 2022 14:02:21 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id a3so1540312wrt.0;
-        Thu, 20 Oct 2022 14:02:21 -0700 (PDT)
+        Thu, 20 Oct 2022 17:07:35 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 235BA21CD55;
+        Thu, 20 Oct 2022 14:07:34 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id i9so1429338wrv.5;
+        Thu, 20 Oct 2022 14:07:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xb9OuFfShbk1zmBdU9t2whIn89Cs7N05c9hSHXwNLbg=;
-        b=Vjn+gBOxO00mhNYMVLOiGaVG772I20ExWGLjR2PfAwqYrX+NfyJ8/67fCRkI+vAo6a
-         m5dPyHI7dqCzIHM4YD0cpeUop++eoFFWehwhb0iWsx/allnct96GpJjHyfkSvp/YpXoy
-         auHGEbKFA6FEr/z0gGztBwKSTDCG6KGST93hAh+ecgQvIqXMn6CxYtmhGiS4bUpLcfPZ
-         oZD2puw+zt/6y1Fx6sxuMU7HO4UlszkEFic8hm1c7ao2fDQt+xcCmgsceuxSBm6CB7Yh
-         V8Lm3WYDwtax9aUeuM0GqvMAwig+4KRT6kL6EXcCd1Ij/IkXez29iV2Rz+8im5zAXe8u
-         DeSA==
+        bh=nE9zBK8JzzeTQnO56mRCrEv5ZzW+tKVnujwJo9Sh9lA=;
+        b=Rm6hVUuG346MeBs86eW9vmNubpAqPQbYgi96zIMxdSviyQWm7gh6RhIqOQvmaciU+m
+         93l8lsuLd2ZS3cuMgWs/NPdpWWY+znm6fiECfWnGDo3/TxVtCZ9xqUqmNrHjJSYoOBt+
+         fLQLgOmu6F+z283vZl/xR5jxA+ITlFRwBQAHKYrG0iKxF5EQaeh5PfdE3ay/p0VxDb/+
+         10Osfvx//NZ0UIUlokGU6XRHE7nf7bcfcnX+0wgDiC/z67KO7MQywZL5oWmzAnxjymKH
+         +BiGQBup5ZVxrd4LMc9muGiuC55j/Y+rFU0q9QpLmnkCGwG/Ws+riTKKnOaGpIHy6Bb2
+         xKIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xb9OuFfShbk1zmBdU9t2whIn89Cs7N05c9hSHXwNLbg=;
-        b=4sagYl5UIje8Bcq9STn5K+JKpGViR6s6rtH2bSVVtmVlnZ3Qm7dH5zOStF7H1lTQx4
-         YcpoGvsZYyqRb+GWCpC1e5ZEv2v2ldCwmZTvGIEJJ6gXeXBbN1b9O6PJvrD9/69JWjk2
-         PlMtLaXrsm4x1e0RFGYZWcUg9wZCfgjPrkC750lIkL9CUcbukdtQ2B7L6QLb4NiO7ZKi
-         3O4mCMiBQj4/v0XKOeuiEO5+6M8oWAfQnd9KVN+Pt2YFdxpwCR+VQnv4nZqh1BPMyzgn
-         S7w12eBMlckf9vw3UcPoMALHOY+xQJfBM/+chAnJbxqMl4syewJxTYfmir28KX+jlmVd
-         ZHZA==
-X-Gm-Message-State: ACrzQf1N115JgMxVIFCuWLXrWRm/bzpsylB+h1lOpydupOazMhHNSQKW
-        Mp5uvJFHmjjnybwfOMAqblQ=
-X-Google-Smtp-Source: AMsMyM5NaTQoqsewNFR9sI+PSyt9Ke9RhPVAXOTiK5PjsWmhgGLCtl3uLs5s9V/N28WheaHc80flNg==
-X-Received: by 2002:adf:f1c9:0:b0:236:49ee:8598 with SMTP id z9-20020adff1c9000000b0023649ee8598mr2243627wro.481.1666299740494;
-        Thu, 20 Oct 2022 14:02:20 -0700 (PDT)
+        bh=nE9zBK8JzzeTQnO56mRCrEv5ZzW+tKVnujwJo9Sh9lA=;
+        b=VJomjfTsofoOQrG0nZcye0gHo8ZZfSOk5CE2FexcLKGMdzdjsOq2LAXdFPK1QpxI9g
+         v/iewJrvwDLp0G0xeBCzhdXVbb8idVH4IKUArv+zqBs19F6bc5PcwdEBlxXeGjuyvHs+
+         1EHswnmSNup+F8nkOczpo9FeylDegfpvktRJEb6vkM7kIWtIbKdYwl4k2McoLhOgqR3m
+         qez5pNWlBbCBwdiptGtR4GAFIg8hX9ucoyc9ug+CppvYUGZSY6/U0XvXvNwNaTNqGcer
+         6qR9YctFlWYfvdHKH/xU+6iCDOjpFdsq9ux6Z/ks0sWbDZOnUzragpZL7BIfVcbjGgBa
+         6hKw==
+X-Gm-Message-State: ACrzQf09zFRnamAu8Z/DGBpoV+anKxTvE14FNeEpTf7prnpDNiKMYvLa
+        lpZlKS5K6bGj+vKQs9/Kw/KWbTgXgNf7v54R
+X-Google-Smtp-Source: AMsMyM5ua5LMpiHA2CUFwJhW2MIvfMvOFKxSjnN/+Y30ozTiYY72DHhLzN5FQgOv4WNgNnhg2hQeZw==
+X-Received: by 2002:a05:6000:1f04:b0:22e:5e0b:e1fb with SMTP id bv4-20020a0560001f0400b0022e5e0be1fbmr9507625wrb.222.1666300052613;
+        Thu, 20 Oct 2022 14:07:32 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bi19-20020a05600c3d9300b003c70191f267sm786923wmb.39.2022.10.20.14.02.19
+        by smtp.gmail.com with ESMTPSA id j16-20020adfea50000000b00228d6bc8450sm20576701wrn.108.2022.10.20.14.07.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 14:02:20 -0700 (PDT)
+        Thu, 20 Oct 2022 14:07:32 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Even Xu <even.xu@intel.com>, linux-input@vger.kernel.org
+To:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] hid: intel-ish-hid: ishtp: remove variable rb_count
-Date:   Thu, 20 Oct 2022 22:02:19 +0100
-Message-Id: <20221020210219.45131-1-colin.i.king@gmail.com>
+Subject: [PATCH] leds: lp55xx: remove variable j
+Date:   Thu, 20 Oct 2022 22:07:31 +0100
+Message-Id: <20221020210731.45864-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,38 +64,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable rb_count is being incremented but it
-is never referenced, it is redundant and can be removed.
+The variable j being incremented but it is never referenced,
+it is redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-V2: Fix commit message.
----
- drivers/hid/intel-ish-hid/ishtp/client.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/leds/leds-lp55xx-common.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hid/intel-ish-hid/ishtp/client.c b/drivers/hid/intel-ish-hid/ishtp/client.c
-index df0a825694f5..2d92fc129ce4 100644
---- a/drivers/hid/intel-ish-hid/ishtp/client.c
-+++ b/drivers/hid/intel-ish-hid/ishtp/client.c
-@@ -841,7 +841,6 @@ void recv_ishtp_cl_msg(struct ishtp_device *dev,
- 	unsigned char *buffer = NULL;
- 	struct ishtp_cl_rb *complete_rb = NULL;
- 	unsigned long	flags;
--	int	rb_count;
+diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+index 9fdfc1b9a1a0..ca2e28fb843f 100644
+--- a/drivers/leds/leds-lp55xx-common.c
++++ b/drivers/leds/leds-lp55xx-common.c
+@@ -166,7 +166,7 @@ static int lp55xx_init_led(struct lp55xx_led *led,
+ 	struct mc_subled *mc_led_info;
+ 	struct led_classdev *led_cdev;
+ 	char name[32];
+-	int i, j = 0;
++	int i;
+ 	int ret;
  
- 	if (ishtp_hdr->reserved) {
- 		dev_err(dev->devc, "corrupted message header.\n");
-@@ -855,9 +854,7 @@ void recv_ishtp_cl_msg(struct ishtp_device *dev,
- 	}
+ 	if (chan >= max_channel) {
+@@ -201,7 +201,6 @@ static int lp55xx_init_led(struct lp55xx_led *led,
+ 				pdata->led_config[chan].color_id[i];
+ 			mc_led_info[i].channel =
+ 					pdata->led_config[chan].output_num[i];
+-			j++;
+ 		}
  
- 	spin_lock_irqsave(&dev->read_list_spinlock, flags);
--	rb_count = -1;
- 	list_for_each_entry(rb, &dev->read_list.list, list) {
--		++rb_count;
- 		cl = rb->cl;
- 		if (!cl || !(cl->host_client_id == ishtp_hdr->host_addr &&
- 				cl->fw_client_id == ishtp_hdr->fw_addr) ||
+ 		led->mc_cdev.subled_info = mc_led_info;
 -- 
 2.37.3
 
