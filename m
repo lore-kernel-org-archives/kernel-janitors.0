@@ -2,69 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3C7C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 10:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA81C43217
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 13:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230101AbiJTK0C (ORCPT
+        id S230273AbiJTNGz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 06:26:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53080 "EHLO
+        Thu, 20 Oct 2022 09:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbiJTKZk (ORCPT
+        with ESMTP id S229898AbiJTNGy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 06:25:40 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D573ECE1;
-        Thu, 20 Oct 2022 03:24:42 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id r8-20020a1c4408000000b003c47d5fd475so1960437wma.3;
-        Thu, 20 Oct 2022 03:24:41 -0700 (PDT)
+        Thu, 20 Oct 2022 09:06:54 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C63CA15203A;
+        Thu, 20 Oct 2022 06:06:52 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id v11so4869687wmd.1;
+        Thu, 20 Oct 2022 06:06:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=338ew+i7lhPhhsRwFXebT4YiHgbE5e7sWqj7Y/pRaLI=;
-        b=pb8WX3HWaEJ0WTcDPURYIIYexJdp7jutkc+9DRribLrBrMheWwvoPTL69Kp3TgYLQU
-         /q5buwPNLNvXPYtgmbvDTRPU3Cf9rN8af39laD6hNylMLhOlUWZcdjcuSnzgCp6h22Od
-         /UuAQx1kzlARdQpq1xCwWoxDsm6WpgvcDhpEBGnxXMx7fyn+WxlJMB4yb5j7IGFpA5IY
-         JowuZeey7HLVUqI08CfxheelbkMeehuJYR+H4MMaYbpc9lOToq3WbPhuta/kpStUn9rM
-         Vs9FHcrWbF1cOoeU5N3b7QVUDeUPRpfB22qrSTrmwu6xTG2wpQ1sJ9Hb+8npd6UyRrVT
-         hFlw==
+        bh=V16xoQI1tSvYN6IGg2SDhKuuEiPSYX/4oIZVHGpPsQk=;
+        b=XxJGPF6oWoNUx1PrHhLIitquoV5XTR+5mfEp8ZNQ96RoiboZJ0HQdPTHCS8mJKlhq3
+         dlHi0SVvYpeB83SCjONZYQhCvj4t1ifLdaHa2/p2gZs2tCiOtSww1MKKWCzBbBPncjO5
+         6ZKD2pekBBu/ISXZI99q63h943NNphej+86cRrSxrG/UVXVv5clpC5eCptFspOmbIyHD
+         Q19K/CR995gjFd6+v47YpKG/iedrfARYXaSbQHLAmAqUJw8KH5sOJsoKvuJbMZcBgBUd
+         lUrj6Ksq6Z9elLHDX0jBy2s/WI2UQ/dTso+AEqFu369DsJSk4v0NifTlX3eb0r2c44vW
+         CYhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=338ew+i7lhPhhsRwFXebT4YiHgbE5e7sWqj7Y/pRaLI=;
-        b=WFZAU/VajeqpTTsXyX3Y+cIOKOiOg/24/8snLpmZoX5+4/AflJUABji6NlYfkOzMRZ
-         AIDghmIc8ljPzDLTsyDyftGfuMohKSAhsGAbzBQamvgZvhcRhpADf9vZNjPAolRoXOkF
-         /xzNqzQXG9B77q3juW+PCUSDeTTZex1z+wrXCtPWQmNTEtQi59AKIqQ/4fqt0nqiSzp/
-         lgNolY7L53CH1Ve/uRYaUUlMoK3rnrYhlgKFu9KS65r8XCfmN0yZ45xPdMThGGaBUYq1
-         nAWmcqgWc8U6SYT0jwqO8UEL9N6H/VBJdfK7KULWwPMSdMO/kOUNqhbX0oMU+Ree9vzA
-         +hsg==
-X-Gm-Message-State: ACrzQf1vMV7Bxh+vTDhypV042M78kr6ZrmSdEEsJisSKRh+0ERMqVlxN
-        Eca3/MXxFwoce3vAA91rA88=
-X-Google-Smtp-Source: AMsMyM5WmolYkONk0FMYkPzqo4dahEZcXdn77VTv+ezaYrMPOagr//Hcwc+NtW4Wt6SJLMDRMTxFKw==
-X-Received: by 2002:a05:600c:5486:b0:3b4:7e47:e19 with SMTP id iv6-20020a05600c548600b003b47e470e19mr8729825wmb.12.1666261476483;
-        Thu, 20 Oct 2022 03:24:36 -0700 (PDT)
+        bh=V16xoQI1tSvYN6IGg2SDhKuuEiPSYX/4oIZVHGpPsQk=;
+        b=OlTjwFbwzWUrIzWXj92jFuQoEQqdX6mcCRU5XLeRQD1aDqXJxCyAouQquUmjO4sphV
+         elJ5S13TsqafA3Oq0D3s+Bl15asDR4yxqmEkvNQ4R6vz4LjjBKOkxf0FOPLt0bqcxDl9
+         ojhwnMcR3/C5/qfwx6a70L9Exx6+hXINTHlLZ1CAWb+qrTr8lPtfI4b80YivihIOCjpH
+         duA++bZjnAPrmoCYdfyacsfE82aOTMRZTN+j6dBhdpaZWS5ymqsW97Z7CLx+sJz082nC
+         loTUIUNN9huG4XZZcBbBjquo0FfVlAvvkmXzhAMznxGAf+DKqAVpTICdIHFBKLvjPzKn
+         mJiA==
+X-Gm-Message-State: ACrzQf0iZNAebKt8XvttYInmr39AWi/SkIsB/9EJtZH93zhSNO3561qF
+        yl24ix2qPlO8kI0v6Z3MuJY=
+X-Google-Smtp-Source: AMsMyM7povvYGvKNerEps/8u/UNbrMtviHbs5BXU3wiXZLvxfGxznWrL3AsaVuIuopdqk+ZEVbNf1Q==
+X-Received: by 2002:a05:600c:4e50:b0:3c6:faaa:1e7d with SMTP id e16-20020a05600c4e5000b003c6faaa1e7dmr9595076wmq.9.1666271211158;
+        Thu, 20 Oct 2022 06:06:51 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n14-20020a5d67ce000000b0022da3977ec5sm16088946wrw.113.2022.10.20.03.24.35
+        by smtp.gmail.com with ESMTPSA id r1-20020adfdc81000000b0022e3538d305sm18741769wrj.117.2022.10.20.06.06.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 03:24:36 -0700 (PDT)
+        Thu, 20 Oct 2022 06:06:50 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+        Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/i915: fix incorrect function name in comment block
-Date:   Thu, 20 Oct 2022 11:24:35 +0100
-Message-Id: <20221020102435.1527436-1-colin.i.king@gmail.com>
+Subject: [PATCH] usb: ftdi-elan: remove variable err_count
+Date:   Thu, 20 Oct 2022 14:06:49 +0100
+Message-Id: <20221020130649.1546112-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -73,27 +66,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The function name in the comment block for intel_vgpu_emulate_cfg_write is
-incorrect. Fix it.
+Variable err_count is just being incremented and it's never used
+anywhere else. The variable and the increment are redundant so
+remove it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/i915/gvt/cfg_space.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/ftdi-elan.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gvt/cfg_space.c b/drivers/gpu/drm/i915/gvt/cfg_space.c
-index eef3bba8a41b..bff63babacd5 100644
---- a/drivers/gpu/drm/i915/gvt/cfg_space.c
-+++ b/drivers/gpu/drm/i915/gvt/cfg_space.c
-@@ -244,7 +244,7 @@ static void emulate_pci_bar_write(struct intel_vgpu *vgpu, unsigned int offset,
- }
- 
- /**
-- * intel_vgpu_emulate_cfg_read - emulate vGPU configuration space write
-+ * intel_vgpu_emulate_cfg_write - emulate vGPU configuration space write
-  * @vgpu: target vgpu
-  * @offset: offset
-  * @p_data: write data ptr
+diff --git a/drivers/usb/misc/ftdi-elan.c b/drivers/usb/misc/ftdi-elan.c
+index b2f980409d0b..33b35788bd0b 100644
+--- a/drivers/usb/misc/ftdi-elan.c
++++ b/drivers/usb/misc/ftdi-elan.c
+@@ -1956,7 +1956,6 @@ static int ftdi_elan_synchronize(struct usb_ftdi *ftdi)
+ 	int long_stop = 10;
+ 	int retry_on_timeout = 5;
+ 	int retry_on_empty = 10;
+-	int err_count = 0;
+ 	retval = ftdi_elan_flush_input_fifo(ftdi);
+ 	if (retval)
+ 		return retval;
+@@ -2051,7 +2050,6 @@ static int ftdi_elan_synchronize(struct usb_ftdi *ftdi)
+ 					continue;
+ 				}
+ 			} else {
+-				err_count += 1;
+ 				dev_err(&ftdi->udev->dev, "error = %d\n",
+ 					retval);
+ 				if (read_stop-- > 0) {
 -- 
 2.37.3
 
