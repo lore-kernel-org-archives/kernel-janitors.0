@@ -2,132 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E4AC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 15:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C61C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 15:11:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbiJTPKQ (ORCPT
+        id S230041AbiJTPLX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 11:10:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39874 "EHLO
+        Thu, 20 Oct 2022 11:11:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230018AbiJTPKO (ORCPT
+        with ESMTP id S230173AbiJTPLT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 11:10:14 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46F61D8F54;
-        Thu, 20 Oct 2022 08:10:13 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id bu30so35048933wrb.8;
-        Thu, 20 Oct 2022 08:10:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fQQpq6L0etG4WsZJNoc8BsJzIxOLgNyKPl0arkE7fVI=;
-        b=iZkh/1JnKPx7ySBUolSfT7kJEXRaJj+FB/5pU2Gr6AIZiILZ1zcTe/9YpqELP2qGX6
-         9ljL5Ab9PeCF/cYw7gcdpBXArRlBl0de+NRqou9zVAbHx5OKJq5EOtqaw3KiY0K9zIYt
-         DjIUuWRI6JswaVkTbU0A1zfPMteHI7lKvzJQwDQwcZicJLeQisvSXHSQErYcU5sM7xIU
-         Ozg91DhPKCeHd00Lsin7PUaeWgIWr+dMX97k2AI6h57qppOLxyAjnJHum2Yk6d47iA9u
-         B4+LJfOBSVWEsszgLplsD7c9RU7voEwEj5mkFQa8CKNVXLj2azGlBHacJ0SkD1oY0WAD
-         pjXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fQQpq6L0etG4WsZJNoc8BsJzIxOLgNyKPl0arkE7fVI=;
-        b=aNSY5dKiRsKCp3YQJ7NR26O0T7Z6KVycA8Uk23AW7seNxbWSQq5+qOxWaSuEWaeTo2
-         rtSceOO4KZaU9y3G1Uy14EMJ6AV0HkiAPFYoNYaih/2Om+54HyGJnALwlrQSdz71mEOO
-         K/5I7qGeEOFKFukz2iNjLukpJ0bIpUpmsKndCf8adz23MP48hdYvbo9Gpomm0Ows4MqD
-         +kgvhgYzQKpL1QRvitkxcx5VqQheEIrnRSD0vurWf3W4pPo3q+ocMGcgDbb0DJmnggxE
-         /cJZg1aHYI8miQnqoQi9ltUO+e/Yewz7ak+jpNPl9ddgEvNglFrJRyDEJ9BcOEf/nskb
-         tU7Q==
-X-Gm-Message-State: ACrzQf2V+XqMfuSxMQJseBMmXMze5NMVapnQJjKwx84MqDtqPqHK3V14
-        U0cClXH3g0xffzka4BYsVe0=
-X-Google-Smtp-Source: AMsMyM6mgrczjlSKxTmE0ayh8j9cS6feXrWJ5OWFEQNRc+1u3UUg4rwyvehdsIfgJDcZvgtUVL+5aQ==
-X-Received: by 2002:a5d:6d86:0:b0:22e:4049:441f with SMTP id l6-20020a5d6d86000000b0022e4049441fmr9103054wrs.198.1666278611695;
-        Thu, 20 Oct 2022 08:10:11 -0700 (PDT)
-Received: from [192.168.0.210] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.googlemail.com with ESMTPSA id s2-20020adfea82000000b002364835caacsm1308611wrm.112.2022.10.20.08.10.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Oct 2022 08:10:11 -0700 (PDT)
-Message-ID: <6005e7c0-5901-ef5a-6af7-2801975e39bc@gmail.com>
-Date:   Thu, 20 Oct 2022 16:10:10 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Subject: Re: [PATCH] tracing/hist: add in missing * in comment blocks
-Content-Language: en-US
-To:     "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Thu, 20 Oct 2022 11:11:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70BE51A045D;
+        Thu, 20 Oct 2022 08:11:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A00F561BDF;
+        Thu, 20 Oct 2022 15:11:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59ECCC433C1;
+        Thu, 20 Oct 2022 15:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666278675;
+        bh=9tJciRsKBhYoViFTQp4Jzyo6krWJs9KAQXG4IOS7utk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aibgDG8H1jmvy/0hGWGi9jBcH831JbtU5ipO+SdQWABxiVnWt70Or5gaA9y1XuFKq
+         HyXxvJjo8poBaZd2GZv+K3o+dvvHpgoRtf6Yg1tgf5+qDRjdN7CDuj1dQXYxqX4Dsa
+         5EX4SdCNEfQFny8EFXKVsSYW/UIuNN5uvuLAUNz10vgp9zaVW4YAsldw4yzp3wnUZK
+         dxbTs22eCRnmzbn78ye4IH9agTOSh0OvWArwRogj7ozQMGxKZH9k2VuW2wkarABKxx
+         ESlouU94E1riDmXadO1iPCHBUqiYVkMUxXeslfo3kAViGKokhdk8nQtcKukOmcd8jl
+         khRV9DVqIsiAw==
+Date:   Thu, 20 Oct 2022 08:11:12 -0700
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Bitterblue Smith <rtl8821cerfe2@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221020133019.1547587-1-colin.i.king@gmail.com>
- <20221020234423.42816821e2d09aba61db5e69@kernel.org>
-From:   "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <20221020234423.42816821e2d09aba61db5e69@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] wifi: rtl8xxxu: Fix reads of uninitialized
+ variables hw_ctrl_s1, sw_ctrl_s1
+Message-ID: <Y1FlEABysKCjobzu@thelio-3990X>
+References: <20221020135709.1549086-1-colin.i.king@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221020135709.1549086-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 20/10/2022 15:44, Masami Hiramatsu (Google) wrote:
-> Hi,
+On Thu, Oct 20, 2022 at 02:57:09PM +0100, Colin Ian King wrote:
+> Variables hw_ctrl_s1 and sw_ctrl_s1 are not being initialized and
+> potentially can contain any garbage value. Currently there is an if
+> statement that sets one or the other of these variables, followed
+> by an if statement that checks if any of these variables have been
+> set to a non-zero value. In the case where they may contain
+> uninitialized non-zero values, the latter if statement may be
+> taken as true when it was not expected to.
 > 
-> On Thu, 20 Oct 2022 14:30:19 +0100
-> Colin Ian King <colin.i.king@gmail.com> wrote:
+> Fix this by ensuring hw_ctrl_s1 and sw_ctrl_s1 are initialized.
 > 
->> There are a couple of missing * in comment blocks. Fix these.
->> Cleans up two clang warnings:
->>
->> kernel/trace/trace_events_hist.c:986: warning: bad line:
->> kernel/trace/trace_events_hist.c:3229: warning: bad line:
->>
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Cleans up clang warning:
+> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:7: warning:
+> variable 'hw_ctrl_s1' is used uninitialized whenever 'if' condition is
+> false [-Wsometimes-uninitialized]
+>                 if (hw_ctrl) {
+>                     ^~~~~~~
+> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:440:7: note: uninitialized
+> use occurs here
+>                 if (hw_ctrl_s1 || sw_ctrl_s1) {
+>                     ^~~~~~~~~~
+> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:3: note: remove the 'if'
+> if its condition is always true
+>                 if (hw_ctrl) {
+>                 ^~~~~~~~~~~~~
 > 
-> Thanks for the patch.
-> 
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> BTW, what version of clang are you using?
-> I couldn't see this warning with clang 15.0.0. Maybe I need a kconfig option?
+> Fixes: c888183b21f3 ("wifi: rtl8xxxu: Support new chip RTL8188FU")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-clang-13 and kernel W=1 for this specific case, e.g. kernel built using 
-make  CC=clang-13 HOSTCC=clang-13 W=1
+I was getting ready to send a similar patch.
 
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
+> ---
+>  drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Thank you,
-> 
->> ---
->>   kernel/trace/trace_events_hist.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
->> index 48465f7e97b4..087c19548049 100644
->> --- a/kernel/trace/trace_events_hist.c
->> +++ b/kernel/trace/trace_events_hist.c
->> @@ -983,7 +983,7 @@ static struct hist_field *find_any_var_ref(struct hist_trigger_data *hist_data,
->>    * A trigger can define one or more variables.  If any one of them is
->>    * currently referenced by any other trigger, this function will
->>    * determine that.
->> -
->> + *
->>    * Typically used to determine whether or not a trigger can be removed
->>    * - if there are any references to a trigger's variables, it cannot.
->>    *
->> @@ -3226,7 +3226,7 @@ static struct field_var *create_field_var(struct hist_trigger_data *hist_data,
->>    * events.  However, for convenience, users are allowed to directly
->>    * specify an event field in an action, which will be automatically
->>    * converted into a variable on their behalf.
->> -
->> + *
->>    * This function creates a field variable with the name var_name on
->>    * the hist trigger currently being defined on the target event.  If
->>    * subsys_name and event_name are specified, this function simply
->> -- 
->> 2.37.3
->>
+> diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c
+> index 99610bb2afd5..0025bb32538d 100644
+> --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c
+> +++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c
+> @@ -412,7 +412,7 @@ static void rtl8188f_spur_calibration(struct rtl8xxxu_priv *priv, u8 channel)
+>  	};
+>  
+>  	const u8 threshold = 0x16;
+> -	bool do_notch, hw_ctrl, sw_ctrl, hw_ctrl_s1, sw_ctrl_s1;
+> +	bool do_notch, hw_ctrl, sw_ctrl, hw_ctrl_s1 = 0, sw_ctrl_s1 = 0;
+>  	u32 val32, initial_gain, reg948;
+>  
+>  	val32 = rtl8xxxu_read32(priv, REG_OFDM0_RX_D_SYNC_PATH);
+> -- 
+> 2.37.3
 > 
 > 
-
