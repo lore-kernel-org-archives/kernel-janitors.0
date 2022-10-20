@@ -2,99 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D6DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 08:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3C7C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 10:26:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbiJTI0M (ORCPT
+        id S230101AbiJTK0C (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 04:26:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48728 "EHLO
+        Thu, 20 Oct 2022 06:26:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229909AbiJTI0L (ORCPT
+        with ESMTP id S230096AbiJTKZk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 04:26:11 -0400
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 78AE5BC61F;
-        Thu, 20 Oct 2022 01:26:07 -0700 (PDT)
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.77 with qID 29K8P8KM0007657, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-        by rtits2.realtek.com.tw (8.15.2/2.81/5.90) with ESMTPS id 29K8P8KM0007657
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Thu, 20 Oct 2022 16:25:08 +0800
-Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.9; Thu, 20 Oct 2022 16:25:40 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Thu, 20 Oct 2022 16:25:39 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::add3:284:fd3d:8adb]) by
- RTEXMBS04.realtek.com.tw ([fe80::add3:284:fd3d:8adb%5]) with mapi id
- 15.01.2375.007; Thu, 20 Oct 2022 16:25:39 +0800
-From:   Ping-Ke Shih <pkshih@realtek.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] wifi: rtw89: 8852b: Fix spelling mistake KIP_RESOTRE -> KIP_RESTORE
-Thread-Topic: [PATCH][next] wifi: rtw89: 8852b: Fix spelling mistake
- KIP_RESOTRE -> KIP_RESTORE
-Thread-Index: AQHY5FVYzEwt5nqXEUGEagTPXukM1q4W8X9g
-Date:   Thu, 20 Oct 2022 08:25:39 +0000
-Message-ID: <bef9e90fb8bd44eb8fc3acb26103314a@realtek.com>
-References: <20221020072646.1513307-1-colin.i.king@gmail.com>
-In-Reply-To: <20221020072646.1513307-1-colin.i.king@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.188]
-x-kse-serverinfo: RTEXDAG01.realtek.com.tw, 9
-x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
- rules found
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: =?utf-8?B?Q2xlYW4sIGJhc2VzOiAyMDIyLzEwLzIwIOS4iuWNiCAwNjozNjowMA==?=
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 20 Oct 2022 06:25:40 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D573ECE1;
+        Thu, 20 Oct 2022 03:24:42 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id r8-20020a1c4408000000b003c47d5fd475so1960437wma.3;
+        Thu, 20 Oct 2022 03:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=338ew+i7lhPhhsRwFXebT4YiHgbE5e7sWqj7Y/pRaLI=;
+        b=pb8WX3HWaEJ0WTcDPURYIIYexJdp7jutkc+9DRribLrBrMheWwvoPTL69Kp3TgYLQU
+         /q5buwPNLNvXPYtgmbvDTRPU3Cf9rN8af39laD6hNylMLhOlUWZcdjcuSnzgCp6h22Od
+         /UuAQx1kzlARdQpq1xCwWoxDsm6WpgvcDhpEBGnxXMx7fyn+WxlJMB4yb5j7IGFpA5IY
+         JowuZeey7HLVUqI08CfxheelbkMeehuJYR+H4MMaYbpc9lOToq3WbPhuta/kpStUn9rM
+         Vs9FHcrWbF1cOoeU5N3b7QVUDeUPRpfB22qrSTrmwu6xTG2wpQ1sJ9Hb+8npd6UyRrVT
+         hFlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=338ew+i7lhPhhsRwFXebT4YiHgbE5e7sWqj7Y/pRaLI=;
+        b=WFZAU/VajeqpTTsXyX3Y+cIOKOiOg/24/8snLpmZoX5+4/AflJUABji6NlYfkOzMRZ
+         AIDghmIc8ljPzDLTsyDyftGfuMohKSAhsGAbzBQamvgZvhcRhpADf9vZNjPAolRoXOkF
+         /xzNqzQXG9B77q3juW+PCUSDeTTZex1z+wrXCtPWQmNTEtQi59AKIqQ/4fqt0nqiSzp/
+         lgNolY7L53CH1Ve/uRYaUUlMoK3rnrYhlgKFu9KS65r8XCfmN0yZ45xPdMThGGaBUYq1
+         nAWmcqgWc8U6SYT0jwqO8UEL9N6H/VBJdfK7KULWwPMSdMO/kOUNqhbX0oMU+Ree9vzA
+         +hsg==
+X-Gm-Message-State: ACrzQf1vMV7Bxh+vTDhypV042M78kr6ZrmSdEEsJisSKRh+0ERMqVlxN
+        Eca3/MXxFwoce3vAA91rA88=
+X-Google-Smtp-Source: AMsMyM5WmolYkONk0FMYkPzqo4dahEZcXdn77VTv+ezaYrMPOagr//Hcwc+NtW4Wt6SJLMDRMTxFKw==
+X-Received: by 2002:a05:600c:5486:b0:3b4:7e47:e19 with SMTP id iv6-20020a05600c548600b003b47e470e19mr8729825wmb.12.1666261476483;
+        Thu, 20 Oct 2022 03:24:36 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id n14-20020a5d67ce000000b0022da3977ec5sm16088946wrw.113.2022.10.20.03.24.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Oct 2022 03:24:36 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915: fix incorrect function name in comment block
+Date:   Thu, 20 Oct 2022 11:24:35 +0100
+Message-Id: <20221020102435.1527436-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxj
-b2xpbi5pLmtpbmdAZ21haWwuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgT2N0b2JlciAyMCwgMjAy
-MiAzOjI3IFBNDQo+IFRvOiBQaW5nLUtlIFNoaWggPHBrc2hpaEByZWFsdGVrLmNvbT47IEthbGxl
-IFZhbG8gPGt2YWxvQGtlcm5lbC5vcmc+OyBEYXZpZCBTIC4gTWlsbGVyDQo+IDxkYXZlbUBkYXZl
-bWxvZnQubmV0PjsgRXJpYyBEdW1hemV0IDxlZHVtYXpldEBnb29nbGUuY29tPjsgSmFrdWIgS2lj
-aW5za2kgPGt1YmFAa2VybmVsLm9yZz47IFBhb2xvIEFiZW5pDQo+IDxwYWJlbmlAcmVkaGF0LmNv
-bT47IGxpbnV4LXdpcmVsZXNzQHZnZXIua2VybmVsLm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9y
-Zw0KPiBDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdW25leHRdIHdpZmk6IHJ0dzg5OiA4ODUy
-YjogRml4IHNwZWxsaW5nIG1pc3Rha2UgS0lQX1JFU09UUkUgLT4gS0lQX1JFU1RPUkUNCj4gDQo+
-IFRoZXIgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIGEgcnR3ODlfZGVidWcgbWVzc2FnZS4gRml4
-IGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmkua2luZ0Bn
-bWFpbC5jb20+DQoNCkFja2VkLWJ5OiBQaW5nLUtlIFNoaWggPHBrc2hpaEByZWFsdGVrLmNvbT4N
-Cg0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODkvcnR3ODg1MmJf
-cmZrLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRp
-b24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0
-dzg5L3J0dzg4NTJiX3Jmay5jDQo+IGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4
-OS9ydHc4ODUyYl9yZmsuYw0KPiBpbmRleCA4ZmQwMTUwMmFjNWIuLjcyMmFlMzRiMDljMSAxMDA2
-NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OS9ydHc4ODUyYl9y
-ZmsuYw0KPiArKysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L3J0dzg4NTJi
-X3Jmay5jDQo+IEBAIC0xNzU0LDcgKzE3NTQsNyBAQCBzdGF0aWMgdm9pZCBfZHBrX29uZV9zaG90
-KHN0cnVjdCBydHc4OV9kZXYgKnJ0d2RldiwgZW51bSBydHc4OV9waHlfaWR4IHBoeSwNCj4gIAkJ
-ICAgIGlkID09IDB4MTQgPyAiUFdSX0NBTCIgOg0KPiAgCQkgICAgaWQgPT0gMHgxNSA/ICJEUEtf
-UlhBR0MiIDoNCj4gIAkJICAgIGlkID09IDB4MTYgPyAiS0lQX1BSRVNFVCIgOg0KPiAtCQkgICAg
-aWQgPT0gMHgxNyA/ICJLSVBfUkVTT1RSRSIgOiAiRFBLX1RYQUdDIiwNCj4gKwkJICAgIGlkID09
-IDB4MTcgPyAiS0lQX1JFU1RPUkUiIDogIkRQS19UWEFHQyIsDQo+ICAJCSAgICBkcGtfY21kKTsN
-Cj4gIH0NCj4gDQo+IC0tDQo+IDIuMzcuMw0KPiANCj4gDQo+IC0tLS0tLVBsZWFzZSBjb25zaWRl
-ciB0aGUgZW52aXJvbm1lbnQgYmVmb3JlIHByaW50aW5nIHRoaXMgZS1tYWlsLg0K
+The function name in the comment block for intel_vgpu_emulate_cfg_write is
+incorrect. Fix it.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/i915/gvt/cfg_space.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/gvt/cfg_space.c b/drivers/gpu/drm/i915/gvt/cfg_space.c
+index eef3bba8a41b..bff63babacd5 100644
+--- a/drivers/gpu/drm/i915/gvt/cfg_space.c
++++ b/drivers/gpu/drm/i915/gvt/cfg_space.c
+@@ -244,7 +244,7 @@ static void emulate_pci_bar_write(struct intel_vgpu *vgpu, unsigned int offset,
+ }
+ 
+ /**
+- * intel_vgpu_emulate_cfg_read - emulate vGPU configuration space write
++ * intel_vgpu_emulate_cfg_write - emulate vGPU configuration space write
+  * @vgpu: target vgpu
+  * @offset: offset
+  * @p_data: write data ptr
+-- 
+2.37.3
+
