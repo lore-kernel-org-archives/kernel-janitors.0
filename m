@@ -2,97 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3B9C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 18:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDF6C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 19:21:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230124AbiJTSQr (ORCPT
+        id S229664AbiJTTVU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 14:16:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58050 "EHLO
+        Thu, 20 Oct 2022 15:21:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbiJTSQq (ORCPT
+        with ESMTP id S229484AbiJTTVT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 14:16:46 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A8E319A237;
-        Thu, 20 Oct 2022 11:16:45 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id bp11so302551wrb.9;
-        Thu, 20 Oct 2022 11:16:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tYS57kbtnP2/fRI2CTwvWkjaPlMYUwgmjlFT7Zs/ZZ8=;
-        b=Z7ga7HW9P3XtQeUJAm9VHZlcx5ER8rXy+Mu6Sj+WRJCboJ2eMU0FEgUV1ZSCEmJwHm
-         UkwLVrpUSO2ImZb71U9MmoZgA8YtgjlVcgl71iFZhCeVrXsrLNLfbVJ6PgJOyhX+6FbK
-         KfFQSxnlyadPPCljWSd2pJu5gzbEOHpOiy3iDE0L9zHjNuTkN+exeScMwDxaC1a+pQ1W
-         Oy5i0dcKfGdiVpftrHAh2aKP5OG/iUulNVyBdDZwOrxMgr5nDu0aP8G3/MGAmkdUNSFy
-         ym+Mx9X5URnFecDnt6tnb+0m51JCRC4nzm1EjCMXrwYx6SN2uwqBQUQReV5b4Pt0Pmqs
-         FxIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tYS57kbtnP2/fRI2CTwvWkjaPlMYUwgmjlFT7Zs/ZZ8=;
-        b=CcJwXbfGhLYYnMg55WOAvwqFu7TMw5R+VWyHT1KrxmSqfUJbesx5VPyu7hYUhN74L+
-         eonU+wFOE/eRN/zr+nRozZQcz4ZQwYjigqawKHSgG5tqYqM/ggUgzzfLRmbQUkIgKXuR
-         XsgfhjHHFSxaJbQlmpTAMJNu5OYDBnqwcK8PHJh+dGEdba6RwUb61O3P08HfOJJMimEY
-         0QpAf5YsGaQidLenY/xHVB1eTAiH1muRyXkHg0g5UXw8qSH27SGX8lquj8db8B+K0a9c
-         WPvqdCyZNCZT0NvWMftRILIbKkp999iEzjFqzXRhWNY15QkP0IqW5flIE1rMccgK9A3v
-         jl7g==
-X-Gm-Message-State: ACrzQf3iY0XcZmJJnXsY0RHo9PsIiOoy5izxHA5K8z8+VkgGVKt0sKSH
-        MT+SqzVUfd3m9MpPAe5VsKRxJlcM8XbGEEYg
-X-Google-Smtp-Source: AMsMyM7Tso9oo87DGyuobdDUbONRldLQHNzQyOTlX6prD5GyV/YlaPvggr2XUQkIFgo5ZpSUq5LbBw==
-X-Received: by 2002:a5d:6a0f:0:b0:236:39b0:1346 with SMTP id m15-20020a5d6a0f000000b0023639b01346mr2642043wru.131.1666289803806;
-        Thu, 20 Oct 2022 11:16:43 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v21-20020a05600c15d500b003b4e009deb2sm239548wmf.41.2022.10.20.11.16.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 11:16:43 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: tps6507x-ts: remove variable loops
-Date:   Thu, 20 Oct 2022 19:16:42 +0100
-Message-Id: <20221020181642.24417-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Thu, 20 Oct 2022 15:21:19 -0400
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E72A11E8B89
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Oct 2022 12:21:14 -0700 (PDT)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id lb6No437EXaJmlb6Nox20h; Thu, 20 Oct 2022 21:21:12 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 20 Oct 2022 21:21:12 +0200
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Wu Zongyong <wuzongyong@linux.alibaba.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH] vdpa: Fix an error handling path in eni_vdpa_probe()
+Date:   Thu, 20 Oct 2022 21:21:09 +0200
+Message-Id: <a7b0ef1eabd081f1c7c894e9b11de01678e85dee.1666293559.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable loops is being incremented but is never referenced,
-it is redundant and can be removed.
+After a successful vp_legacy_probe() call, vp_legacy_remove() should be
+called in the error handling path, as already done in the remove function.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Add the missing call.
+
+Fixes: e85087beedca ("eni_vdpa: add vDPA driver for Alibaba ENI")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/input/touchscreen/tps6507x-ts.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/vdpa/alibaba/eni_vdpa.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/tps6507x-ts.c b/drivers/input/touchscreen/tps6507x-ts.c
-index 357a3108f2e5..f48871767763 100644
---- a/drivers/input/touchscreen/tps6507x-ts.c
-+++ b/drivers/input/touchscreen/tps6507x-ts.c
-@@ -119,7 +119,6 @@ static s32 tps6507x_adc_conversion(struct tps6507x_ts *tsc,
- static s32 tps6507x_adc_standby(struct tps6507x_ts *tsc)
- {
- 	s32 ret;
--	s32 loops = 0;
- 	u8 val;
- 
- 	ret = tps6507x_write_u8(tsc,  TPS6507X_REG_ADCONFIG,
-@@ -141,7 +140,6 @@ static s32 tps6507x_adc_standby(struct tps6507x_ts *tsc)
- 		ret = tps6507x_read_u8(tsc, TPS6507X_REG_INT, &val);
- 		if (ret)
- 			return ret;
--		loops++;
+diff --git a/drivers/vdpa/alibaba/eni_vdpa.c b/drivers/vdpa/alibaba/eni_vdpa.c
+index 5a09a09cca70..cce3d1837104 100644
+--- a/drivers/vdpa/alibaba/eni_vdpa.c
++++ b/drivers/vdpa/alibaba/eni_vdpa.c
+@@ -497,7 +497,7 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (!eni_vdpa->vring) {
+ 		ret = -ENOMEM;
+ 		ENI_ERR(pdev, "failed to allocate virtqueues\n");
+-		goto err;
++		goto err_remove_vp_legacy;
  	}
  
+ 	for (i = 0; i < eni_vdpa->queues; i++) {
+@@ -509,11 +509,13 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	ret = vdpa_register_device(&eni_vdpa->vdpa, eni_vdpa->queues);
+ 	if (ret) {
+ 		ENI_ERR(pdev, "failed to register to vdpa bus\n");
+-		goto err;
++		goto err_remove_vp_legacy;
+ 	}
+ 
+ 	return 0;
+ 
++err_remove_vp_legacy:
++	vp_legacy_remove(&eni_vdpa->ldev);
+ err:
+ 	put_device(&eni_vdpa->vdpa.dev);
  	return ret;
 -- 
-2.37.3
+2.34.1
 
