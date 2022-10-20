@@ -2,93 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 681C7C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 07:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8540C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 08:21:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbiJTH06 (ORCPT
+        id S230161AbiJTIVo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 03:26:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42850 "EHLO
+        Thu, 20 Oct 2022 04:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229673AbiJTH04 (ORCPT
+        with ESMTP id S229621AbiJTIVn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 03:26:56 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CB78155D8C;
-        Thu, 20 Oct 2022 00:26:50 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id m29-20020a05600c3b1d00b003c6bf423c71so1683401wms.0;
-        Thu, 20 Oct 2022 00:26:50 -0700 (PDT)
+        Thu, 20 Oct 2022 04:21:43 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49435157F55;
+        Thu, 20 Oct 2022 01:21:42 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id f11so33106847wrm.6;
+        Thu, 20 Oct 2022 01:21:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eXaiXcTVxNCGgz5uJUWTatWPnJcY0pIrG4sVGhUxXlU=;
-        b=ISMsheSFMXB4SsSt1jv23NNzZvRf8mjplgctUOOaueloxupPXMBcnkM+IP0oDAZk+1
-         szxS1hkfNCiAfYLhnoQL3nwqLgHip0YAazNkNbuxkUVQfMIZYK/yeLEsC+ISaajA3vjp
-         F2D4Q0GhERkX5hHaU9v6gKU1KDiHq2LcAVMDAb7GzTudae/5dFhrCH/gXe95O65MKug3
-         lqaAahpfEMTbAhdmqX06dq4nXDCTxoeuRFWv4W0NAXatYsrm1qVC9uZdF2QoUzGSJb4F
-         92Jt81Kq6HiPcgf8nziIjvP4vcDP3rs+gZGJ/NIO2M5F2ZaJ5gByZFCofZyda5uhvZaV
-         owwg==
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QeezRGYgxj7EJWdnJplc0G+vBkrvPe7bUlDhb1HV7rU=;
+        b=bn/vU8OZnQ/Ud8EolQED7bs6Sa944BHUHZ+xXEFW/qbB+MrDyMw7hdbdMK/98IPxlZ
+         pqYufZtm/kAV5T/oxz5qFoDUQB0/3GdXiRkAqCZn8e7GtwqfWE9EjusIcsLbDEsnHAcP
+         4RYgIzJL9VIBwuB22Oz8fs5qP6IoswwT15jf36b92kX5xHRZ5E2vUVqSGkk6uGFMXCbG
+         ug1EOezbi84EnwJ7xRRVGKJGS4IHlUn8LrNk3S5KZ9Q1HCBMr7dbdze1ON0lz13K6Yh4
+         av72WVkqeqIlcFAy+rP7j/T4PI8c+8gEOMEMGrvLf5SKsb1QwtfhMk/Rt62ogkVMGRUH
+         yOVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eXaiXcTVxNCGgz5uJUWTatWPnJcY0pIrG4sVGhUxXlU=;
-        b=sQ6hQv+ENNtnrqQREiuV6MC8zDMJdo7j4tTBi0gsws6F31JQ98bEerUol+d712MqcD
-         wB0WB98C7eY7pG5co4P6YoxbB+k0UA/PLieifNuw46MdRlqGdae/AnnFSZJrBlGzOKaU
-         X5z8amTT5QbKOpi61iZWxxd/SummDSnUY4sHnvrhxSOIZFXly4MG2/9dBXHJ2mOwvrI8
-         QB40OzE7CAB/qUujOMSqKbwKZudEBLNquwX9BVE0mnN1x5W0KcYoUofjj5KoyTcWZYVc
-         mQQEwxy4S6M2F+ntOmK0GICV4wqWRuARWsRuozrJAKdRo7xzRVmrf1CBE77jZjAfpzH0
-         uxuA==
-X-Gm-Message-State: ACrzQf0Rs12navCsNbAXXHPaJqMKRQgxCMUJJodz2+V7PtTl4HYWOghJ
-        eXGcagbdlixBlQtsAatzRwE=
-X-Google-Smtp-Source: AMsMyM67Awthpe8VwSguYH9pxXV8eCkbH76VTieowah7fdT61eqDFd9iVYxzbE2Gjq9s+fIGuoMLBw==
-X-Received: by 2002:a1c:7906:0:b0:3c6:235f:5904 with SMTP id l6-20020a1c7906000000b003c6235f5904mr8547196wme.83.1666250808133;
-        Thu, 20 Oct 2022 00:26:48 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id k13-20020a5d6d4d000000b0022ac38fb20asm15651740wri.111.2022.10.20.00.26.47
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QeezRGYgxj7EJWdnJplc0G+vBkrvPe7bUlDhb1HV7rU=;
+        b=YVXD09X+pnjxa+h9O+DVLEhRGl/w3BVuhltxb6cMJWbOlpRC0hj0QEcufNYhmSvIEB
+         v04dn8vwlKMGDodzEWoEYKwRl0dN84SZ1eW1MbZckqtqUX81Q0cpIn5g2n83GyKH3Adx
+         a6DHSCNg5DiVY+5b02rW711zi1GyctzpJolBtidueb0HcBKd3CqJldZOR8rIZuthJJjg
+         S5GIKQZGXtFM6iwyoBr1WToP7Zp9zd42Z1NtIjLxkbZ9AbMc10Kv6VOSF/GrieYkhlUY
+         AlvyShpH55FeN9tvmc4VIfdqxxXQT2o2q4AysNqyqp5f+IBaeDzLEVmvZGNwiwkKatCr
+         lFAA==
+X-Gm-Message-State: ACrzQf0QKY5aK6KgYKUtGtAnZ3QiIRl+n41v6FPxzxMoZGrDE9MfKOo7
+        /DMoIcTf4SDkPhC2Z3YdB9A=
+X-Google-Smtp-Source: AMsMyM65O7j+dkaw81J0CnvRH48uMvZTbLbhDTsoL1FSsxK7tpbliqXXuQ9xlmwGCxiMoxHj2vIpDQ==
+X-Received: by 2002:a5d:6485:0:b0:230:b6db:d41c with SMTP id o5-20020a5d6485000000b00230b6dbd41cmr7362534wri.709.1666254100569;
+        Thu, 20 Oct 2022 01:21:40 -0700 (PDT)
+Received: from felia.fritz.box (200116b826709f00b540fdc83ad027eb.dip.versatel-1u1.de. [2001:16b8:2670:9f00:b540:fdc8:3ad0:27eb])
+        by smtp.gmail.com with ESMTPSA id p26-20020a1c741a000000b003c6b70a4d69sm2020989wmc.42.2022.10.20.01.21.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 00:26:47 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: rtw89: 8852b: Fix spelling mistake KIP_RESOTRE -> KIP_RESTORE
-Date:   Thu, 20 Oct 2022 08:26:46 +0100
-Message-Id: <20221020072646.1513307-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Thu, 20 Oct 2022 01:21:39 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Vinod Koul <vkoul@kernel.org>,
+        dmaengine@vger.kernel.org
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove section INTEL IOP-ADMA DMA DRIVER
+Date:   Thu, 20 Oct 2022 10:21:03 +0200
+Message-Id: <20221020082103.29218-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Ther is a spelling mistake in a rtw89_debug message. Fix it.
+Commit cd0ab43ec91a ("dmaengine: remove iop-adma driver") removes the
+driver's source code, but misses to remove the MAINTAINERS section.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken file pattern.
+
+Remove the INTEL IOP-ADMA DMA DRIVER section pointing to the removed
+driver.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/net/wireless/realtek/rtw89/rtw8852b_rfk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Arnd, please ack.
 
-diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852b_rfk.c b/drivers/net/wireless/realtek/rtw89/rtw8852b_rfk.c
-index 8fd01502ac5b..722ae34b09c1 100644
---- a/drivers/net/wireless/realtek/rtw89/rtw8852b_rfk.c
-+++ b/drivers/net/wireless/realtek/rtw89/rtw8852b_rfk.c
-@@ -1754,7 +1754,7 @@ static void _dpk_one_shot(struct rtw89_dev *rtwdev, enum rtw89_phy_idx phy,
- 		    id == 0x14 ? "PWR_CAL" :
- 		    id == 0x15 ? "DPK_RXAGC" :
- 		    id == 0x16 ? "KIP_PRESET" :
--		    id == 0x17 ? "KIP_RESOTRE" : "DPK_TXAGC",
-+		    id == 0x17 ? "KIP_RESTORE" : "DPK_TXAGC",
- 		    dpk_cmd);
- }
+Vinod, please pick this minor clean-up patch on top of the commit above.
+
+ MAINTAINERS | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8912c852d5a2..9839febf8b51 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10339,11 +10339,6 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+ F:	drivers/iommu/intel/
+ F:	include/linux/intel-svm.h
  
+-INTEL IOP-ADMA DMA DRIVER
+-R:	Dan Williams <dan.j.williams@intel.com>
+-S:	Odd fixes
+-F:	drivers/dma/iop-adma.c
+-
+ INTEL IPU3 CSI-2 CIO2 DRIVER
+ M:	Yong Zhi <yong.zhi@intel.com>
+ M:	Sakari Ailus <sakari.ailus@linux.intel.com>
 -- 
-2.37.3
+2.17.1
 
