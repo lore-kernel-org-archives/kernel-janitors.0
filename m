@@ -2,84 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDF6C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 19:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB51C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 20:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229664AbiJTTVU (ORCPT
+        id S229497AbiJTUlI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 15:21:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44874 "EHLO
+        Thu, 20 Oct 2022 16:41:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbiJTTVT (ORCPT
+        with ESMTP id S229494AbiJTUlG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 15:21:19 -0400
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E72A11E8B89
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Oct 2022 12:21:14 -0700 (PDT)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id lb6No437EXaJmlb6Nox20h; Thu, 20 Oct 2022 21:21:12 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 20 Oct 2022 21:21:12 +0200
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Wu Zongyong <wuzongyong@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH] vdpa: Fix an error handling path in eni_vdpa_probe()
-Date:   Thu, 20 Oct 2022 21:21:09 +0200
-Message-Id: <a7b0ef1eabd081f1c7c894e9b11de01678e85dee.1666293559.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Thu, 20 Oct 2022 16:41:06 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B86F1E574D;
+        Thu, 20 Oct 2022 13:40:55 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id bk15so1203279wrb.13;
+        Thu, 20 Oct 2022 13:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mkrkmZwXDzkYF9cZqoYViFYu0UrGpVfkJcqp1qpBeoo=;
+        b=a9K8k/CwhSprlmF43UJ2k22M5MSHa7rKHiWH4Nt0pNXlYmi08nQKOCCjpW8uFBbhCl
+         33Pu1CdDye7E9TGgScGq9PX5KlgahSIe7UgScicfUYAry7ygOtF2IkBEtoV35y43G65O
+         Ocr5Mt2qxuO51FrQCTiuLomFFim23vL6yi6PKyZXjHEoJzQ3PtOiKIksRSX92UEEyy/1
+         XHS4mEKAr5WIM9bu82LpZgHIXc8AXMK6BaYHB2cxfT7GVolwmgTxyu+vBaO3Nw53x5tP
+         32+mluIb/8nif83ugri58TyUimXNs3Ikg1veOmPAcZD+fpZNtK1RZpMPxqtuzX4TCdOp
+         jFBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mkrkmZwXDzkYF9cZqoYViFYu0UrGpVfkJcqp1qpBeoo=;
+        b=TsNTxEWvaBgwJtKdgr67Iu3MwJMEpoxtKjh1nZoA/cWRE3/r08ULkiL9jtgBzfMnsy
+         XuCl3HWhGAcDYToJCGAYWLBda5//qOr0T5fyHhPRbLTYnB2vESPXlcKUqxWNaX78PzqH
+         7matGCh7EXbrk4eAZe+9XTPO878NUoxQPsfWolBGtjL/bO6miVhPEvtTDrr6I9O0qXHP
+         Vn9GsBvudYglcKw3F7y+yRT3XpCA6WkXT3uyXz2r6ZbmEP2fm0GI32sBAWTS9VC1OS9F
+         +/RzqI7qxc1riptsXSf+ZsCuOgK2Om9JF7LsCH4EQbEiIGJSCKDnLp7phTT4bxv7DIu+
+         58sg==
+X-Gm-Message-State: ACrzQf0CTTQNmv/t9gKi+kIPuvoHRJK5Kss9P1ua8n8hoGL/cnxyJWfp
+        +de0AYFMqotUEtrKWSWOQkmBC/QCRXbw+EcO
+X-Google-Smtp-Source: AMsMyM67tNgAY4J1fpflkAr7KqOx6xMhtrINneS5zul20iJtySnTsSrOlOeIKXA1UNfFZBk2cGHnsA==
+X-Received: by 2002:adf:f983:0:b0:22e:3c8:27ae with SMTP id f3-20020adff983000000b0022e03c827aemr10265898wrr.16.1666298453757;
+        Thu, 20 Oct 2022 13:40:53 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id j28-20020a5d6e5c000000b0022cd27bc8c1sm21014463wrz.9.2022.10.20.13.40.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Oct 2022 13:40:53 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/qxl: remove variable num_relocs
+Date:   Thu, 20 Oct 2022 21:40:52 +0100
+Message-Id: <20221020204052.42151-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-After a successful vp_legacy_probe() call, vp_legacy_remove() should be
-called in the error handling path, as already done in the remove function.
+The variable num_relocs is being incremented but it
+is never referenced, it is redundant and can be removed.
 
-Add the missing call.
-
-Fixes: e85087beedca ("eni_vdpa: add vDPA driver for Alibaba ENI")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/vdpa/alibaba/eni_vdpa.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/qxl/qxl_ioctl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/vdpa/alibaba/eni_vdpa.c b/drivers/vdpa/alibaba/eni_vdpa.c
-index 5a09a09cca70..cce3d1837104 100644
---- a/drivers/vdpa/alibaba/eni_vdpa.c
-+++ b/drivers/vdpa/alibaba/eni_vdpa.c
-@@ -497,7 +497,7 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	if (!eni_vdpa->vring) {
- 		ret = -ENOMEM;
- 		ENI_ERR(pdev, "failed to allocate virtqueues\n");
--		goto err;
-+		goto err_remove_vp_legacy;
+diff --git a/drivers/gpu/drm/qxl/qxl_ioctl.c b/drivers/gpu/drm/qxl/qxl_ioctl.c
+index 30f58b21372a..3422206d59d4 100644
+--- a/drivers/gpu/drm/qxl/qxl_ioctl.c
++++ b/drivers/gpu/drm/qxl/qxl_ioctl.c
+@@ -146,7 +146,7 @@ static int qxl_process_single_command(struct qxl_device *qdev,
+ 	struct qxl_release *release;
+ 	struct qxl_bo *cmd_bo;
+ 	void *fb_cmd;
+-	int i, ret, num_relocs;
++	int i, ret;
+ 	int unwritten;
+ 
+ 	switch (cmd->type) {
+@@ -201,7 +201,6 @@ static int qxl_process_single_command(struct qxl_device *qdev,
  	}
  
- 	for (i = 0; i < eni_vdpa->queues; i++) {
-@@ -509,11 +509,13 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	ret = vdpa_register_device(&eni_vdpa->vdpa, eni_vdpa->queues);
- 	if (ret) {
- 		ENI_ERR(pdev, "failed to register to vdpa bus\n");
--		goto err;
-+		goto err_remove_vp_legacy;
- 	}
+ 	/* fill out reloc info structs */
+-	num_relocs = 0;
+ 	for (i = 0; i < cmd->relocs_num; ++i) {
+ 		struct drm_qxl_reloc reloc;
+ 		struct drm_qxl_reloc __user *u = u64_to_user_ptr(cmd->relocs);
+@@ -231,7 +230,6 @@ static int qxl_process_single_command(struct qxl_device *qdev,
+ 			reloc_info[i].dst_bo = cmd_bo;
+ 			reloc_info[i].dst_offset = reloc.dst_offset + release->release_offset;
+ 		}
+-		num_relocs++;
  
- 	return 0;
- 
-+err_remove_vp_legacy:
-+	vp_legacy_remove(&eni_vdpa->ldev);
- err:
- 	put_device(&eni_vdpa->vdpa.dev);
- 	return ret;
+ 		/* reserve and validate the reloc dst bo */
+ 		if (reloc.reloc_type == QXL_RELOC_TYPE_BO || reloc.src_handle) {
 -- 
-2.34.1
+2.37.3
 
