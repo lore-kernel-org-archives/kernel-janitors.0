@@ -2,135 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A229C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 14:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67D4FA373D
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 17:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229968AbiJUO2n (ORCPT
+        id S229864AbiJUR0x (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 10:28:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43174 "EHLO
+        Fri, 21 Oct 2022 13:26:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiJUO2m (ORCPT
+        with ESMTP id S230030AbiJUR0v (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 10:28:42 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BF3248C6;
-        Fri, 21 Oct 2022 07:28:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 81857B82C28;
-        Fri, 21 Oct 2022 14:28:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43263C433D6;
-        Fri, 21 Oct 2022 14:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666362519;
-        bh=oBA51cHBOey6R1BJUTUYDH4OF65S/Q7BkylN1Ppwcfo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=rutlczWOBPQN7E5aSPCOi7Xj9tMJER1qazG+NFCPnPiuZlfaWuBkQJbeT/1PGHh3p
-         nQlUdPx92DyzCxgzVzto6kz3E1LCzp/aA8QOtn1sTuA8Hm0Mbj+mFVXYvszGcsLCCm
-         I2sMuh6NpUoo4zKgrbKWK9u3Q5SN8YW24Y0gHTkitfvr0fadMMWI/0+G7TzDjHcMLw
-         EoLOGmyydm5sN0n3WomQwat+rxgNN5kXVXU5vfZuuRmMdXZiYJn8XZInL8xEsfePrz
-         qhBLkiE3yA4AAipdlbIURPScQy0Iz514tr4uk5d+hTtpLE8EBGDX7/7zMat7UBJHGz
-         VPo9c9QDeTqJA==
-Date:   Fri, 21 Oct 2022 23:28:36 +0900
-From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     "Colin King (gmail)" <colin.i.king@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/hist: add in missing * in comment blocks
-Message-Id: <20221021232836.4a4fe8140fb591edbb87a2e5@kernel.org>
-In-Reply-To: <69d9ee66-c312-0387-1307-62fda7bd24ae@infradead.org>
-References: <20221020133019.1547587-1-colin.i.king@gmail.com>
-        <20221020234423.42816821e2d09aba61db5e69@kernel.org>
-        <6005e7c0-5901-ef5a-6af7-2801975e39bc@gmail.com>
-        <69d9ee66-c312-0387-1307-62fda7bd24ae@infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Fri, 21 Oct 2022 13:26:51 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B9F8222F2D;
+        Fri, 21 Oct 2022 10:26:13 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id f11so5607869wrm.6;
+        Fri, 21 Oct 2022 10:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G1smLvhc00vFSRdt9cQe6UrqqjkSr7Vg1lie+4ZRJvM=;
+        b=gEdY+/fwPGaYwRLX2p1Ry+f9Zj352n1wHYERAWT65eInaE8Z71Q5tg0NITXQbVWc97
+         2ELglneSc7tC1fjuoE3rHTZkXaHfOOIsAn0c42dODBbT4Q2F9Culs4z1KDuLU5on/4oV
+         NkpqbcCXprEcVnpB3mo5m82dY3c8oa2dEIVqEz5Fz4Id7lc8tGOSi0V1PuJVwdAOdxSh
+         /Sj+jCkhTu081p3iuPivJv0CTeDkt30+cDlpQ/3xrZFl16GJucXDqiu9YlNmFRK7gYU+
+         Q0DJDcNrVYsD6jRABrzG32arjOT3u4XGMQrMUlPjvpe78+mRu5K57qJXF9bX6cAcRqyN
+         muzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G1smLvhc00vFSRdt9cQe6UrqqjkSr7Vg1lie+4ZRJvM=;
+        b=5Hlr7B5QR5SVHUgoygWi+vs+EV7hAt7v8Cwxij5ONgjagJOrhlfle5paNqxPzdht4y
+         CBX4h7adFQMxB1hVSxTaP72IyX/CQ0NeHeel8kCOlHgJ+6RE3k9RJP9k2Nb2kixvUaL5
+         X01I4c3otRoL/3CJxj7jo0kYPHjyc3ZVz90ljQVE39Qkx1fuda/06k2gyW0ELEZFmH9z
+         Eizk6kOJqHHNSFAhB/LeYiYkUjjjxGKuMJ0wgkx2NhVRMWxzVftWuD1g8bwVcLuokl1n
+         m0aRfe292wAAmnNCOGrEBUp8ofEx95+6jAuCC3yybYQjugg5Rcod3QFnG2HBzrUjBZ3u
+         MlDA==
+X-Gm-Message-State: ACrzQf3oHpUvEN24LPpmgQ87rlDzuPh1gwd6RgVDOVB0tPFKqtA8jeLY
+        L+gA1eWbyAAdSYvDaeKWDDEZQNgLfkvdgpb2
+X-Google-Smtp-Source: AMsMyM52nOLyNVcwIomZHFgFXumH/m4iMVhBwFwSwWc+G1mfAnrDPWTgblfPwH65bSn0giZT2YWcDQ==
+X-Received: by 2002:adf:e549:0:b0:230:6d12:fc84 with SMTP id z9-20020adfe549000000b002306d12fc84mr13066908wrm.64.1666373172479;
+        Fri, 21 Oct 2022 10:26:12 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id h10-20020a5d504a000000b0022a9246c853sm19431961wrt.41.2022.10.21.10.26.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Oct 2022 10:26:12 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] RDMA/hw/qib/qib_tx: Remove variable n
+Date:   Fri, 21 Oct 2022 18:26:11 +0100
+Message-Id: <20221021172611.26763-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 20 Oct 2022 11:07:12 -0700
-Randy Dunlap <rdunlap@infradead.org> wrote:
+The variable n being incremented but it is never referenced,
+it is redundant and can be removed.
 
-> 
-> 
-> On 10/20/22 08:10, Colin King (gmail) wrote:
-> > On 20/10/2022 15:44, Masami Hiramatsu (Google) wrote:
-> >> Hi,
-> >>
-> >> On Thu, 20 Oct 2022 14:30:19 +0100
-> >> Colin Ian King <colin.i.king@gmail.com> wrote:
-> >>
-> >>> There are a couple of missing * in comment blocks. Fix these.
-> >>> Cleans up two clang warnings:
-> >>>
-> >>> kernel/trace/trace_events_hist.c:986: warning: bad line:
-> >>> kernel/trace/trace_events_hist.c:3229: warning: bad line:
-> >>>
-> >>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> >>
-> >> Thanks for the patch.
-> >>
-> >> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> >>
-> >> BTW, what version of clang are you using?
-> >> I couldn't see this warning with clang 15.0.0. Maybe I need a kconfig option?
-> > 
-> > clang-13 and kernel W=1 for this specific case, e.g. kernel built using make  CC=clang-13 HOSTCC=clang-13 W=1
-> > 
-> 
-> but those are kernel-doc warnings, not clang (AFAIK).
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/infiniband/hw/qib/qib_tx.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Ah, I got it.
-
-Thanks!
-
-> 
-> > 
-> >>
-> >> Thank you,
-> >>
-> >>> ---
-> >>>   kernel/trace/trace_events_hist.c | 4 ++--
-> >>>   1 file changed, 2 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> >>> index 48465f7e97b4..087c19548049 100644
-> >>> --- a/kernel/trace/trace_events_hist.c
-> >>> +++ b/kernel/trace/trace_events_hist.c
-> >>> @@ -983,7 +983,7 @@ static struct hist_field *find_any_var_ref(struct hist_trigger_data *hist_data,
-> >>>    * A trigger can define one or more variables.  If any one of them is
-> >>>    * currently referenced by any other trigger, this function will
-> >>>    * determine that.
-> >>> -
-> >>> + *
-> >>>    * Typically used to determine whether or not a trigger can be removed
-> >>>    * - if there are any references to a trigger's variables, it cannot.
-> >>>    *
-> >>> @@ -3226,7 +3226,7 @@ static struct field_var *create_field_var(struct hist_trigger_data *hist_data,
-> >>>    * events.  However, for convenience, users are allowed to directly
-> >>>    * specify an event field in an action, which will be automatically
-> >>>    * converted into a variable on their behalf.
-> >>> -
-> >>> + *
-> >>>    * This function creates a field variable with the name var_name on
-> >>>    * the hist trigger currently being defined on the target event.  If
-> >>>    * subsys_name and event_name are specified, this function simply
-> >>> -- 
-> >>> 2.37.3
-> >>>
-> >>
-> >>
-> > 
-> 
-> -- 
-> ~Randy
-
-
+diff --git a/drivers/infiniband/hw/qib/qib_tx.c b/drivers/infiniband/hw/qib/qib_tx.c
+index 6a8148851f21..1325110237cd 100644
+--- a/drivers/infiniband/hw/qib/qib_tx.c
++++ b/drivers/infiniband/hw/qib/qib_tx.c
+@@ -82,7 +82,6 @@ int qib_disarm_piobufs_ifneeded(struct qib_ctxtdata *rcd)
+ 	struct qib_devdata *dd = rcd->dd;
+ 	unsigned i;
+ 	unsigned last;
+-	unsigned n = 0;
+ 
+ 	last = rcd->pio_base + rcd->piocnt;
+ 	/*
+@@ -102,10 +101,8 @@ int qib_disarm_piobufs_ifneeded(struct qib_ctxtdata *rcd)
+ 	}
+ 	spin_lock_irq(&dd->pioavail_lock);
+ 	for (i = rcd->pio_base; i < last; i++) {
+-		if (__test_and_clear_bit(i, dd->pio_need_disarm)) {
+-			n++;
++		if (__test_and_clear_bit(i, dd->pio_need_disarm))
+ 			dd->f_sendctrl(rcd->ppd, QIB_SENDCTRL_DISARM_BUF(i));
+-		}
+ 	}
+ 	spin_unlock_irq(&dd->pioavail_lock);
+ 	return 0;
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.37.3
+
