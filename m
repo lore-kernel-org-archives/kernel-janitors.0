@@ -2,63 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DD6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 08:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA69C43217
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 08:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229974AbiJUIkn (ORCPT
+        id S229999AbiJUInM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 04:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58878 "EHLO
+        Fri, 21 Oct 2022 04:43:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbiJUIkm (ORCPT
+        with ESMTP id S229728AbiJUInL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 04:40:42 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34423239222;
-        Fri, 21 Oct 2022 01:40:39 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id az22-20020a05600c601600b003c6b72797fdso1497624wmb.5;
-        Fri, 21 Oct 2022 01:40:39 -0700 (PDT)
+        Fri, 21 Oct 2022 04:43:11 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2593B2475E0;
+        Fri, 21 Oct 2022 01:43:10 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id a10so3241713wrm.12;
+        Fri, 21 Oct 2022 01:43:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IuIo8QgEpxZytSZiMkYCyIw8CLrNCmcth/q5uc8EsFM=;
-        b=UHxwHPQZYfeM6TtcZA0hz6s5eZl47HFNwIHZl2Q+0k/BynwTC1k0cxMLFTP99F/dt+
-         S274d4Fska8oBvu0BR9cJBvtSr6/lx1nkjh+rDY+BVd6+psgDOARiFwa97qp86+IYf3O
-         zkQF4rh7RUb7UsNGZmJUlwPZ78nQgWEaOtW5vuwVlcDVDX7A8z95CD9U7UQEqjggeOU0
-         wdf9Ps8UqZlCzybEHiDHZkqIj6tYVh+uwjW7TiYz5hE4CkxcXFS8ewOuJb9/7Cd3fb0Y
-         z2/f8+kXKBqxV7gX3V3DYfVj8BvIHixiaf1H0Vdp1Wxe2Wlc2vZmcAcZis01yOK0wFMM
-         ay9A==
+        bh=fHHbS7emJ7bcil9wJ91wf+rz9g+zVjFgrZmtc6DrjKw=;
+        b=VscjzTazJMHY7zL8gBmLasXCkhTdM0IN81yZKrdBIYJ1eC/0EXRVHW158yi8QMtotS
+         CYcR2WL7PgaU6CkODUHcKiCdehPy/uOY2JPcY5RKkKNU2O47ecMdeYq5r5MViAjdb27a
+         DdSrqQI55IWNabInVZcFQbcFVs6VsH2Bt9+xJe2bHEsfGnD/ejmIiG/d8GjSJG5gmAjE
+         t2YRtEO8pP4d+W1l6IY+zxvwfnVM8ekC+oVpLuoLVHSAte4c/ld4b45DfbUya2NwKRe/
+         DkaS1Va5R/e/sBZU424noYrgc0rhifbR/rH+neOLHXRXxZlA05QGkDIXR6GjlHvy8dbQ
+         yuqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IuIo8QgEpxZytSZiMkYCyIw8CLrNCmcth/q5uc8EsFM=;
-        b=R5LQtkDcKxWlR/xKJd+aIJDBwGmosMaoFXw+F5TwAdo7bWkKq1nZESJBTU5QjzLsjD
-         p6R/OJUVWPrCDwovl/pFxkOM6q8ZQ5YIla+r07d7B37ZNNVvsbQT3EBL/qj58V2G47bQ
-         5j163ZdHCvAPje22X17Le9n5gx40354qxranIJureK3gnCVEOBUr7etSwpTcyF9ztidv
-         RIZ5CpsFLC7FgaHNgENkYMirJLNfBOyza2wRzeHeNEswXgihmhcFyXg3b2FgM59NZnla
-         A8bLLMFRFalCezxJ5ecGCny7y7rpI4Y12iHlafbQfGiJMbxvSd9jrpqnXBiRyxhe/4lp
-         8xnQ==
-X-Gm-Message-State: ACrzQf3e/zGcQk8Cb3eWsT80jIQQptY8j5AqDvaxZM6s6Iyk2VwtszCS
-        j9lQIv0m7X78U4sTV5yB9ik=
-X-Google-Smtp-Source: AMsMyM77h+/1qaABrXb0HXJ77rL95cQYqKYRk18PhHLY1AAMY6D0/AHxac0gzRA3fbvGbpseDDt34g==
-X-Received: by 2002:a05:600c:3b11:b0:3c6:c02d:babb with SMTP id m17-20020a05600c3b1100b003c6c02dbabbmr32495826wms.69.1666341637633;
-        Fri, 21 Oct 2022 01:40:37 -0700 (PDT)
+        bh=fHHbS7emJ7bcil9wJ91wf+rz9g+zVjFgrZmtc6DrjKw=;
+        b=M82q4ng+kcRKHtxWbSv6CItYH/7RR/pUnfiXtgVnlWB2bpI35JOAcQY3/g7QZtzMml
+         /66UKtWE4A21TR8AVwlhMFxPdrBocIPtIaJFsANe/r5wk5h7wEKnh3+7XlCwZa1QNFGt
+         3YtOc4Kr2+O/VPMgZA55wBndspMRgwjV6zbWZ8TAO1z0XNU0FpAy+7gwsmvZ6a+hOde9
+         elysxJfSAwsh9IkgzZyIXG9tMSmXqpjUlHpqdMAwE0AQvBgdJVpr0pN1OZHPoSs17P3Y
+         xa4K60daXILlcAxbOn5pfrI2ArOun+FMnSBVbpF43D29W3wYpA76QxPuntx3I+aGrD5l
+         m9og==
+X-Gm-Message-State: ACrzQf3VezAiV7tdYRT8Japyk9xQQZRrbc1Hc7WZMPy4K3hJWJCoV/Hp
+        OIzJiJ+TM06+8Y6NWotdiWE=
+X-Google-Smtp-Source: AMsMyM6H1HA8tPJha9xPy1aZuHlCJCpgbM46trP62B3ngcPsvMcfEkI8L8YnqMjjeT/fpSrx0wyFOA==
+X-Received: by 2002:a05:6000:611:b0:22e:c347:2943 with SMTP id bn17-20020a056000061100b0022ec3472943mr11308905wrb.603.1666341788607;
+        Fri, 21 Oct 2022 01:43:08 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id ay18-20020a5d6f12000000b0022e62529888sm5166607wrb.67.2022.10.21.01.40.36
+        by smtp.gmail.com with ESMTPSA id f18-20020a05600c155200b003b3365b38f9sm2137812wmg.10.2022.10.21.01.43.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 01:40:36 -0700 (PDT)
+        Fri, 21 Oct 2022 01:43:08 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Emma Anholt <emma@anholt.net>, Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/vc4: Fix spelling mistake "mmaping" -> "mmapping"
-Date:   Fri, 21 Oct 2022 09:40:35 +0100
-Message-Id: <20221021084035.65367-1-colin.i.king@gmail.com>
+Subject: [PATCH] media: platform: s5p-mfc: Fix spelling mistake "mmaping" -> "mmapping"
+Date:   Fri, 21 Oct 2022 09:43:07 +0100
+Message-Id: <20221021084307.65696-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,32 +67,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are a couple of spelling mistakes in DRM_DEBUG messages. Fix them.
+There are a couple of spelling mistakes in mfc_debug messages. Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/vc4/vc4_bo.c | 4 ++--
+ drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_bo.c b/drivers/gpu/drm/vc4/vc4_bo.c
-index 231add8b8e12..43d9b3a6a352 100644
---- a/drivers/gpu/drm/vc4/vc4_bo.c
-+++ b/drivers/gpu/drm/vc4/vc4_bo.c
-@@ -736,12 +736,12 @@ static int vc4_gem_object_mmap(struct drm_gem_object *obj, struct vm_area_struct
- 	struct vc4_bo *bo = to_vc4_bo(obj);
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+index fca5c6405eec..8c33d09a76aa 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+@@ -1047,10 +1047,10 @@ static int s5p_mfc_mmap(struct file *file, struct vm_area_struct *vma)
+ 	int ret;
  
- 	if (bo->validated_shader && (vma->vm_flags & VM_WRITE)) {
--		DRM_DEBUG("mmaping of shader BOs for writing not allowed.\n");
-+		DRM_DEBUG("mmapping of shader BOs for writing not allowed.\n");
- 		return -EINVAL;
+ 	if (offset < DST_QUEUE_OFF_BASE) {
+-		mfc_debug(2, "mmaping source\n");
++		mfc_debug(2, "mmapping source\n");
+ 		ret = vb2_mmap(&ctx->vq_src, vma);
+ 	} else {		/* capture */
+-		mfc_debug(2, "mmaping destination\n");
++		mfc_debug(2, "mmapping destination\n");
+ 		vma->vm_pgoff -= (DST_QUEUE_OFF_BASE >> PAGE_SHIFT);
+ 		ret = vb2_mmap(&ctx->vq_dst, vma);
  	}
- 
- 	if (bo->madv != VC4_MADV_WILLNEED) {
--		DRM_DEBUG("mmaping of %s BO not allowed\n",
-+		DRM_DEBUG("mmapping of %s BO not allowed\n",
- 			  bo->madv == VC4_MADV_DONTNEED ?
- 			  "purgeable" : "purged");
- 		return -EINVAL;
 -- 
 2.37.3
 
