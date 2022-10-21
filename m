@@ -2,75 +2,135 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B320C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 13:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A229C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 14:29:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230295AbiJUNMl (ORCPT
+        id S229968AbiJUO2n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 09:12:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35628 "EHLO
+        Fri, 21 Oct 2022 10:28:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbiJUNMh (ORCPT
+        with ESMTP id S229520AbiJUO2m (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 09:12:37 -0400
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17A426CDDB;
-        Fri, 21 Oct 2022 06:12:30 -0700 (PDT)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 2978D1C09D6; Fri, 21 Oct 2022 15:12:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-        t=1666357949;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fY/ja3klDb2+M2zY6p6owNPJ2hEPPfqjIAvGs2Ei8vc=;
-        b=FJ2cvq5B/u6dLalHE3UKAF/wbLpbXqH/0B8zk5HRc+nXFQwiqDpl5CPPd1G5vVzCShovDU
-        703sMd84n64e1ePX2lSoObJ1MH6f3u7jk3EAPKD10KVMvOaWYDAszhNUGt9vmBQXh2AMGh
-        F5MpLnqLoelGZPQ/tZL/O+SMouR9yKU=
-Date:   Fri, 21 Oct 2022 15:12:28 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: lp55xx: remove variable j
-Message-ID: <20221021131228.GC16264@duo.ucw.cz>
-References: <20221020210731.45864-1-colin.i.king@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="0lnxQi9hkpPO77W3"
-Content-Disposition: inline
-In-Reply-To: <20221020210731.45864-1-colin.i.king@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 21 Oct 2022 10:28:42 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BF3248C6;
+        Fri, 21 Oct 2022 07:28:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 81857B82C28;
+        Fri, 21 Oct 2022 14:28:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43263C433D6;
+        Fri, 21 Oct 2022 14:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666362519;
+        bh=oBA51cHBOey6R1BJUTUYDH4OF65S/Q7BkylN1Ppwcfo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rutlczWOBPQN7E5aSPCOi7Xj9tMJER1qazG+NFCPnPiuZlfaWuBkQJbeT/1PGHh3p
+         nQlUdPx92DyzCxgzVzto6kz3E1LCzp/aA8QOtn1sTuA8Hm0Mbj+mFVXYvszGcsLCCm
+         I2sMuh6NpUoo4zKgrbKWK9u3Q5SN8YW24Y0gHTkitfvr0fadMMWI/0+G7TzDjHcMLw
+         EoLOGmyydm5sN0n3WomQwat+rxgNN5kXVXU5vfZuuRmMdXZiYJn8XZInL8xEsfePrz
+         qhBLkiE3yA4AAipdlbIURPScQy0Iz514tr4uk5d+hTtpLE8EBGDX7/7zMat7UBJHGz
+         VPo9c9QDeTqJA==
+Date:   Fri, 21 Oct 2022 23:28:36 +0900
+From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     "Colin King (gmail)" <colin.i.king@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing/hist: add in missing * in comment blocks
+Message-Id: <20221021232836.4a4fe8140fb591edbb87a2e5@kernel.org>
+In-Reply-To: <69d9ee66-c312-0387-1307-62fda7bd24ae@infradead.org>
+References: <20221020133019.1547587-1-colin.i.king@gmail.com>
+        <20221020234423.42816821e2d09aba61db5e69@kernel.org>
+        <6005e7c0-5901-ef5a-6af7-2801975e39bc@gmail.com>
+        <69d9ee66-c312-0387-1307-62fda7bd24ae@infradead.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Thu, 20 Oct 2022 11:07:12 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
---0lnxQi9hkpPO77W3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+> 
+> On 10/20/22 08:10, Colin King (gmail) wrote:
+> > On 20/10/2022 15:44, Masami Hiramatsu (Google) wrote:
+> >> Hi,
+> >>
+> >> On Thu, 20 Oct 2022 14:30:19 +0100
+> >> Colin Ian King <colin.i.king@gmail.com> wrote:
+> >>
+> >>> There are a couple of missing * in comment blocks. Fix these.
+> >>> Cleans up two clang warnings:
+> >>>
+> >>> kernel/trace/trace_events_hist.c:986: warning: bad line:
+> >>> kernel/trace/trace_events_hist.c:3229: warning: bad line:
+> >>>
+> >>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> >>
+> >> Thanks for the patch.
+> >>
+> >> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> >>
+> >> BTW, what version of clang are you using?
+> >> I couldn't see this warning with clang 15.0.0. Maybe I need a kconfig option?
+> > 
+> > clang-13 and kernel W=1 for this specific case, e.g. kernel built using make  CC=clang-13 HOSTCC=clang-13 W=1
+> > 
+> 
+> but those are kernel-doc warnings, not clang (AFAIK).
 
-Hi!
+Ah, I got it.
 
-> The variable j being incremented but it is never referenced,
-> it is redundant and can be removed.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Thanks!
 
-Thank you, applied.
-							Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
+> 
+> > 
+> >>
+> >> Thank you,
+> >>
+> >>> ---
+> >>>   kernel/trace/trace_events_hist.c | 4 ++--
+> >>>   1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> >>> index 48465f7e97b4..087c19548049 100644
+> >>> --- a/kernel/trace/trace_events_hist.c
+> >>> +++ b/kernel/trace/trace_events_hist.c
+> >>> @@ -983,7 +983,7 @@ static struct hist_field *find_any_var_ref(struct hist_trigger_data *hist_data,
+> >>>    * A trigger can define one or more variables.  If any one of them is
+> >>>    * currently referenced by any other trigger, this function will
+> >>>    * determine that.
+> >>> -
+> >>> + *
+> >>>    * Typically used to determine whether or not a trigger can be removed
+> >>>    * - if there are any references to a trigger's variables, it cannot.
+> >>>    *
+> >>> @@ -3226,7 +3226,7 @@ static struct field_var *create_field_var(struct hist_trigger_data *hist_data,
+> >>>    * events.  However, for convenience, users are allowed to directly
+> >>>    * specify an event field in an action, which will be automatically
+> >>>    * converted into a variable on their behalf.
+> >>> -
+> >>> + *
+> >>>    * This function creates a field variable with the name var_name on
+> >>>    * the hist trigger currently being defined on the target event.  If
+> >>>    * subsys_name and event_name are specified, this function simply
+> >>> -- 
+> >>> 2.37.3
+> >>>
+> >>
+> >>
+> > 
+> 
+> -- 
+> ~Randy
 
---0lnxQi9hkpPO77W3
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCY1KavAAKCRAw5/Bqldv6
-8rZ5AJ96BfWfC9Gp8yqE06yvEhlIvy0d0ACZAVk+hk8XCiFdDQrTPzVRKQngIr4=
-=kj7N
------END PGP SIGNATURE-----
-
---0lnxQi9hkpPO77W3--
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
