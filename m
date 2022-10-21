@@ -2,61 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84023C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 17:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C98C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 18:10:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229494AbiJURoJ (ORCPT
+        id S229902AbiJUSKH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 13:44:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37390 "EHLO
+        Fri, 21 Oct 2022 14:10:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230428AbiJURoB (ORCPT
+        with ESMTP id S229864AbiJUSKG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 13:44:01 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3583B269096;
-        Fri, 21 Oct 2022 10:43:55 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id bg9-20020a05600c3c8900b003bf249616b0so2529793wmb.3;
-        Fri, 21 Oct 2022 10:43:55 -0700 (PDT)
+        Fri, 21 Oct 2022 14:10:06 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF88558DC;
+        Fri, 21 Oct 2022 11:10:04 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id b4so6287321wrs.1;
+        Fri, 21 Oct 2022 11:10:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NEU8OndF59kbblXG+hQ+BOg2go0yv8KTNGgCVDuvgDM=;
-        b=l2zjzMuDlZJxiUXAq/qm2EIu5Vy3ixqsFB8S4piAb9a59VZm+MueK9dnMC5OkrcKcK
-         OFE7HmsgpfJyWglUAKJteDL3seJuBmMZr7rgwilcXmld4xrxhAwAmk+fSLode2a/TA2X
-         37ycOcPc5TrRX3GXZfG0jflNMe6AjVMzYnbHpnwMommSN2XzPBT2ExZxVhjVI19nKHwj
-         6nA6yYGlzrpTlZrCdlyir9Ythq0Rv4myRiHPVet4yEsTBQACJsjLV65UclxB54xLl9oy
-         zND5yc924M9Fh+67ZS6ZRpzlVgs84yJuXZaKof05xh3m0hFJaTcnN3rKyWzU42vqaQy5
-         pqFw==
+        bh=de+kk2perbv4KysWHjrNxKnJA8xDIO/vAGvbM/ll1vI=;
+        b=Y3zAXEqFcj+wHJiqU7QwFJbdFxqy8zcubpDSGTu9pVPQFf8twhnC8lqwEMMZSRxocG
+         HZmZ+41kwbN/V6S1gv+KVsnBgtarfMsXf4GvG/lRy6IF+CQQ6m1BUpvEXYR9RyB43SsH
+         RPTKbw1nfgDhFCd/pK3sNF9wI80sfqVj2VPwnb9rPq4vhzUnDVLE8biOBnnP0qx1Vdsa
+         YIEqK63fNKJFBP/yHosMwGYHLmPEBZ2U1rUOURNIKqMV8RvT7tGxKYl9e1U1KonncNjU
+         VZJtAl7E5k3e2ObsgN6MwNqy1uKPFs2NwPxhzXj75on+/F93k4w70k4eDE32osRJ0tY5
+         m0/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NEU8OndF59kbblXG+hQ+BOg2go0yv8KTNGgCVDuvgDM=;
-        b=kyw/JX+as9aE72cPrQw0UbdUF5x00YHRD0sIPkDCnRSz/pL77AaOsx27ODKBZZ3yz3
-         jmWJFL+SUwWyMUFgeZe17D3WZmZ5wQwVHH1kcTgHbVrktKHPoViEWEertaG30dm361M3
-         aGsmXgvgOez9xPq9uZK/zp4+MRQOD9xGd2rKfjLG/XgtEhpTjhKJQcJQOvsHhhyI0CIT
-         Nz5zJJ6dn/21bLQBOxPUIvFeeFxzlwJrgdGT01fDWjAsWdHqKvR822Biq9jxOCXtmNcx
-         BwT0tn0KVQCaVGtjUuwYO8oTL40Q/lstfSG5+hk1j7gJiPpwzbsf1givBtsN0b2Wtp/i
-         WRdw==
-X-Gm-Message-State: ACrzQf29OfAAJ/WAOMLCIi5103Wa2dJhKzvDb2WgQuNg3gtT7ZUN0Vyp
-        4nrJ8jq7X0JGkG3tMsj4om4=
-X-Google-Smtp-Source: AMsMyM6yiTDm+02FP3z+iQlsbay9XXQvuxmsQ+eHIDzc3K3wViQo25S1QExdZDw170PICbRhDio5YA==
-X-Received: by 2002:a05:600c:4451:b0:3c6:fb65:24cb with SMTP id v17-20020a05600c445100b003c6fb6524cbmr16192541wmn.144.1666374233622;
-        Fri, 21 Oct 2022 10:43:53 -0700 (PDT)
+        bh=de+kk2perbv4KysWHjrNxKnJA8xDIO/vAGvbM/ll1vI=;
+        b=N2S35VPjxAnV/X/Cq2zT8Lj/uAMD3ZLIAmGUKqsjx8x04jvJOkpfcLtt8+HhjAD55M
+         aKUo9oin/82JakN592O2g3TWgLctmkBql4YBoFI49wWYZWLMyxzuLPblkCkyUOx/tt0Y
+         BgEuKjs72XCldSZIpC80S2x7Ekb7g7TnaEtw251Miq018zvh9QhAamxmmohXPPGyGO4o
+         W9iQOFbroFLmOnGr2mxKAUmdQqdeg5fUDKGJcvd/pxMp6PMKsyVDBQyO1SK4zWf9NGWj
+         MaTNxZdxPWj13NhE2/Ru1MVIuLCOrT3HgfazqYpw/QCr6+d7nVuH/WMIVEJ7prvFCaMO
+         T2bQ==
+X-Gm-Message-State: ACrzQf0e4XCMZQ0Y4OV8glScfDAvmMltD4DmvUkBSoJZ3Iy9hoJxPR/N
+        lRBuzIkxKtazV2iYDBB2aseFih1aRY/0eABn
+X-Google-Smtp-Source: AMsMyM5xiytkEAXxryRE6LfVZ8R06NNlNE/a/bRfWC5q8alyb/pabJRUfgXrO6xhyLXTZk3pQPewTQ==
+X-Received: by 2002:a05:6000:1548:b0:22e:3469:b726 with SMTP id 8-20020a056000154800b0022e3469b726mr13087613wry.10.1666375792007;
+        Fri, 21 Oct 2022 11:09:52 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m8-20020adfe0c8000000b0022efc4322a9sm19481040wri.10.2022.10.21.10.43.52
+        by smtp.gmail.com with ESMTPSA id m2-20020adfe0c2000000b0022e6178bd84sm20522348wri.8.2022.10.21.11.09.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 10:43:53 -0700 (PDT)
+        Fri, 21 Oct 2022 11:09:51 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [media] radio: Remove variable p
-Date:   Fri, 21 Oct 2022 18:43:52 +0100
-Message-Id: <20221021174352.28290-1-colin.i.king@gmail.com>
+Subject: [PATCH] staging: rtl8712: Remove variable xcnt
+Date:   Fri, 21 Oct 2022 19:09:50 +0100
+Message-Id: <20221021180950.29139-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,42 +67,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable p being deccremented but it is never referenced,
+The variable xcnt being incremented but it is never referenced,
 it is redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/radio/radio-terratec.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/staging/rtl8712/rtl8712_xmit.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/radio/radio-terratec.c b/drivers/media/radio/radio-terratec.c
-index 8b8ce2b46a55..621bb8523271 100644
---- a/drivers/media/radio/radio-terratec.c
-+++ b/drivers/media/radio/radio-terratec.c
-@@ -82,7 +82,6 @@ static int terratec_s_mute_volume(struct radio_isa_card *isa, bool mute, int vol
- static int terratec_s_frequency(struct radio_isa_card *isa, u32 freq)
- {
- 	int i;
--	int p;
- 	int temp;
- 	long rest;
- 	unsigned char buffer[25];		/* we have to bit shift 25 registers */
-@@ -93,7 +92,6 @@ static int terratec_s_frequency(struct radio_isa_card *isa, u32 freq)
- 	rest = freq * 10 + 10700;	/* I once had understood what is going on here */
- 					/* maybe some wise guy (friedhelm?) can comment this stuff */
- 	i = 13;
--	p = 10;
- 	temp = 102400;
- 	while (rest != 0) {
- 		if (rest % temp  == rest)
-@@ -103,7 +101,6 @@ static int terratec_s_frequency(struct radio_isa_card *isa, u32 freq)
- 			rest = rest - temp;
- 		}
- 		i--;
--		p--;
- 		temp = temp / 2;
- 	}
+diff --git a/drivers/staging/rtl8712/rtl8712_xmit.c b/drivers/staging/rtl8712/rtl8712_xmit.c
+index 84a22eba7ebf..4cb01f590673 100644
+--- a/drivers/staging/rtl8712/rtl8712_xmit.c
++++ b/drivers/staging/rtl8712/rtl8712_xmit.c
+@@ -601,7 +601,7 @@ int r8712_xmitframe_complete(struct _adapter *padapter,
+ #ifdef CONFIG_R8712_TX_AGGR
+ 	struct xmit_frame *p2ndxmitframe = NULL;
+ #else
+-	int res = _SUCCESS, xcnt = 0;
++	int res = _SUCCESS;
+ #endif
  
+ 	phwxmits = pxmitpriv->hwxmits;
+@@ -673,7 +673,6 @@ int r8712_xmitframe_complete(struct _adapter *padapter,
+ 			dump_xframe(padapter, pxmitframe);
+ 		else
+ 			r8712_free_xmitframe_ex(pxmitpriv, pxmitframe);
+-		xcnt++;
+ #endif
+ 
+ 	} else { /* pxmitframe == NULL && p2ndxmitframe == NULL */
 -- 
 2.37.3
 
