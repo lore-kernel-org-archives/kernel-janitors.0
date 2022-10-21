@@ -2,97 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7E8C43217
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Oct 2022 21:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C41AC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 05:09:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229800AbiJTVHg (ORCPT
+        id S229788AbiJUFJy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Oct 2022 17:07:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60014 "EHLO
+        Fri, 21 Oct 2022 01:09:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229685AbiJTVHf (ORCPT
+        with ESMTP id S229587AbiJUFJo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Oct 2022 17:07:35 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 235BA21CD55;
-        Thu, 20 Oct 2022 14:07:34 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id i9so1429338wrv.5;
-        Thu, 20 Oct 2022 14:07:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nE9zBK8JzzeTQnO56mRCrEv5ZzW+tKVnujwJo9Sh9lA=;
-        b=Rm6hVUuG346MeBs86eW9vmNubpAqPQbYgi96zIMxdSviyQWm7gh6RhIqOQvmaciU+m
-         93l8lsuLd2ZS3cuMgWs/NPdpWWY+znm6fiECfWnGDo3/TxVtCZ9xqUqmNrHjJSYoOBt+
-         fLQLgOmu6F+z283vZl/xR5jxA+ITlFRwBQAHKYrG0iKxF5EQaeh5PfdE3ay/p0VxDb/+
-         10Osfvx//NZ0UIUlokGU6XRHE7nf7bcfcnX+0wgDiC/z67KO7MQywZL5oWmzAnxjymKH
-         +BiGQBup5ZVxrd4LMc9muGiuC55j/Y+rFU0q9QpLmnkCGwG/Ws+riTKKnOaGpIHy6Bb2
-         xKIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nE9zBK8JzzeTQnO56mRCrEv5ZzW+tKVnujwJo9Sh9lA=;
-        b=VJomjfTsofoOQrG0nZcye0gHo8ZZfSOk5CE2FexcLKGMdzdjsOq2LAXdFPK1QpxI9g
-         v/iewJrvwDLp0G0xeBCzhdXVbb8idVH4IKUArv+zqBs19F6bc5PcwdEBlxXeGjuyvHs+
-         1EHswnmSNup+F8nkOczpo9FeylDegfpvktRJEb6vkM7kIWtIbKdYwl4k2McoLhOgqR3m
-         qez5pNWlBbCBwdiptGtR4GAFIg8hX9ucoyc9ug+CppvYUGZSY6/U0XvXvNwNaTNqGcer
-         6qR9YctFlWYfvdHKH/xU+6iCDOjpFdsq9ux6Z/ks0sWbDZOnUzragpZL7BIfVcbjGgBa
-         6hKw==
-X-Gm-Message-State: ACrzQf09zFRnamAu8Z/DGBpoV+anKxTvE14FNeEpTf7prnpDNiKMYvLa
-        lpZlKS5K6bGj+vKQs9/Kw/KWbTgXgNf7v54R
-X-Google-Smtp-Source: AMsMyM5ua5LMpiHA2CUFwJhW2MIvfMvOFKxSjnN/+Y30ozTiYY72DHhLzN5FQgOv4WNgNnhg2hQeZw==
-X-Received: by 2002:a05:6000:1f04:b0:22e:5e0b:e1fb with SMTP id bv4-20020a0560001f0400b0022e5e0be1fbmr9507625wrb.222.1666300052613;
-        Thu, 20 Oct 2022 14:07:32 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j16-20020adfea50000000b00228d6bc8450sm20576701wrn.108.2022.10.20.14.07.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 14:07:32 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: lp55xx: remove variable j
-Date:   Thu, 20 Oct 2022 22:07:31 +0100
-Message-Id: <20221020210731.45864-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Fri, 21 Oct 2022 01:09:44 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE5C3A4B3;
+        Thu, 20 Oct 2022 22:09:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 5D55FCE2800;
+        Fri, 21 Oct 2022 05:09:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1AAC433C1;
+        Fri, 21 Oct 2022 05:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666328975;
+        bh=IMGy1JEt2HVE4gKYtafGewyM6r1bYKdalhrSjASTyfo=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=g0DDgEeQjnRi75qQiQYcmWrXptukGgIdf8FsEjJD84v6n6uPIqP90eYBHMlBWVh83
+         7/8B7tvWbwkvV74AdWaplGbH2AjcQpA7+HQlRMUJeRtVk1grfPJNQzX9lvpdO1KZ6n
+         djScNp5+0erm4MR7a6RRKovc95TttUhgyaPoSMyqGfsVxLcXfORfuSOwTOTq4SHPFl
+         Y3C4dFbf+/NlI0Pf6w4RPi3VSzKrEq8LBai8CjTIKAC7qRhrLJ8UFEBSpxu/yNuK99
+         mRsyKX51FueCsaT3nlydvDRPYH5s6tagdiaGPxLoFC+AsdyEPm4TsYNZBJYqni3UEA
+         w4JSbDiTHQKlw==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Bitterblue Smith <rtl8821cerfe2@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] wifi: rtl8xxxu: Fix reads of uninitialized variables hw_ctrl_s1, sw_ctrl_s1
+References: <20221020135709.1549086-1-colin.i.king@gmail.com>
+Date:   Fri, 21 Oct 2022 08:09:27 +0300
+In-Reply-To: <20221020135709.1549086-1-colin.i.king@gmail.com> (Colin Ian
+        King's message of "Thu, 20 Oct 2022 14:57:09 +0100")
+Message-ID: <87ilkdlq48.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable j being incremented but it is never referenced,
-it is redundant and can be removed.
+Colin Ian King <colin.i.king@gmail.com> writes:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/leds/leds-lp55xx-common.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> Variables hw_ctrl_s1 and sw_ctrl_s1 are not being initialized and
+> potentially can contain any garbage value. Currently there is an if
+> statement that sets one or the other of these variables, followed
+> by an if statement that checks if any of these variables have been
+> set to a non-zero value. In the case where they may contain
+> uninitialized non-zero values, the latter if statement may be
+> taken as true when it was not expected to.
+>
+> Fix this by ensuring hw_ctrl_s1 and sw_ctrl_s1 are initialized.
+>
+> Cleans up clang warning:
+> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:7: warning:
+> variable 'hw_ctrl_s1' is used uninitialized whenever 'if' condition is
+> false [-Wsometimes-uninitialized]
+>                 if (hw_ctrl) {
+>                     ^~~~~~~
+> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:440:7: note: uninitialized
+> use occurs here
+>                 if (hw_ctrl_s1 || sw_ctrl_s1) {
+>                     ^~~~~~~~~~
+> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:3: note: remove the 'if'
+> if its condition is always true
+>                 if (hw_ctrl) {
+>                 ^~~~~~~~~~~~~
+>
+> Fixes: c888183b21f3 ("wifi: rtl8xxxu: Support new chip RTL8188FU")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 9fdfc1b9a1a0..ca2e28fb843f 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -166,7 +166,7 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 	struct mc_subled *mc_led_info;
- 	struct led_classdev *led_cdev;
- 	char name[32];
--	int i, j = 0;
-+	int i;
- 	int ret;
- 
- 	if (chan >= max_channel) {
-@@ -201,7 +201,6 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 				pdata->led_config[chan].color_id[i];
- 			mc_led_info[i].channel =
- 					pdata->led_config[chan].output_num[i];
--			j++;
- 		}
- 
- 		led->mc_cdev.subled_info = mc_led_info;
+I'll queue this to v6.1.
+
 -- 
-2.37.3
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
