@@ -2,92 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F18C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 08:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A8FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 10:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230334AbiJUIqI (ORCPT
+        id S230139AbiJUKs2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 04:46:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43984 "EHLO
+        Fri, 21 Oct 2022 06:48:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230312AbiJUIpy (ORCPT
+        with ESMTP id S230078AbiJUKsZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 04:45:54 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6972511CB71;
-        Fri, 21 Oct 2022 01:45:48 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id bk15so3670720wrb.13;
-        Fri, 21 Oct 2022 01:45:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JxsO3aS7NjLpZUBDpCGoh/+bxorngRfIVIYvqLMlg2w=;
-        b=BySkZbgUWMqqHNxMGo1gF6+KBubryJBs8Bou3znSPFC6nKDtO3lj2HdgvK++atrWvF
-         KLvM06m+uoiRSbqpF97+wMG7+ksLIGtMuM4iLu0OHcwD3VG6WEwDLWpU7BPOXpvmcQcz
-         tPTJizRnZRsT+oPZ8smNdDYr8UPjWZuIwSaJ2EF/8lpGe7U7rqzyJzfRQQHAAMWRKyGK
-         AW9XiBX1UdY1GpjABdJRMwzWO+4h2tza1t5i/WpsGDt22rXziAge/rsTIy9mKOFflJQA
-         u3mVq0TKWU47iODMmAS7DU74odTQGEZZDzuJ+ZFu7DklJsrJA13x/0Ys4NVoC/oPR2yJ
-         gVzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JxsO3aS7NjLpZUBDpCGoh/+bxorngRfIVIYvqLMlg2w=;
-        b=Vjj498ntJ5nLUboOqkRLtUPYaQoo6CJ9mGG09C83dNTZ6sMM1t762+ymdafplhhBUU
-         Pu0B+eATI1nYvb3wlduBOV0vGvFqKSq3Idq/uRh8YILJBw1bIMFcFGbejx7cvjjzG4a2
-         4PKUnEK0VIoSfEYgm0L9OX3XT1vcO9iLptuUkm/+1Yf3ISKLOxRePDeQK2H9YUmRSOFu
-         UNbUk5VRwoortAl7rI9AGyfsZGjaGSZ3/9h+qzxhL/Uid/76PikykR7KhQXEmHvMFBn0
-         PR5M+B4PJ5Z7A6ph/IhVPAeDJZcp6gSqYs9Cz8DyhhqsrCWk2xJSOctrHoE3s6Q+Qj6y
-         2O6Q==
-X-Gm-Message-State: ACrzQf0fq7cI+iTftY0oL4dX50MbdQ6XBtDSqa+DQzn8kSDZGnD7E2/8
-        MnPkaJt2KEIM5T+Y/f2a2YPGSsnwT7Zb87tp
-X-Google-Smtp-Source: AMsMyM6XDUT6X/iWNzzTZNVgmPGxFjL4tJSmQ3m8l/mUiVDpjEDHPQrOqLtNM95ZeM+p6vHgNuqcUQ==
-X-Received: by 2002:adf:d23a:0:b0:236:467e:a3bc with SMTP id k26-20020adfd23a000000b00236467ea3bcmr4323041wrh.542.1666341946452;
-        Fri, 21 Oct 2022 01:45:46 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id t13-20020a05600c198d00b003c6c1686b10sm2352593wmq.7.2022.10.21.01.45.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 01:45:46 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/powerpc: Fix spelling mistake "mmaping" -> "mmapping"
-Date:   Fri, 21 Oct 2022 09:45:45 +0100
-Message-Id: <20221021084545.65973-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Fri, 21 Oct 2022 06:48:25 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173F525F1F4;
+        Fri, 21 Oct 2022 03:48:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5B35AB82B95;
+        Fri, 21 Oct 2022 10:48:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7943C433B5;
+        Fri, 21 Oct 2022 10:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666349301;
+        bh=Yl3qRQQpWdMPUbGxJERyNc/a/LusWFS2QJF+ezf+FSQ=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=TgA9vbS6vmkee+djXhez8XsX6q6q1k2rY96M7LgzmPrdDZPi5mQ6jF/HZBcaB7ySU
+         j8m64Y7onysoEui/gN8yxtcBzMLgXCrmYn6oRiTicigWyuHey2t6Auz21mRvYeqpS5
+         fpN/oagLoQJJi25vqOB90BmrTDzvB8MJl+/zuRLSdckp2f1e+iemccjiKzuDF9/ylz
+         rLREgmw9skT4GXZwRZSS3HUvqxq59RRVIjQGYf/7aEycG3OCnepfg1pF2lwqEkR/sO
+         fKbdssWhwxeVuoQ/Ge0+keJL7SqL0oMs9a+yj0bntYMeqVElqeHoOz+zaOoD888Khx
+         6QW13DEahU5hw==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Bitterblue Smith <rtl8821cerfe2@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] wifi: rtl8xxxu: Fix reads of uninitialized variables hw_ctrl_s1, sw_ctrl_s1
+References: <20221020135709.1549086-1-colin.i.king@gmail.com>
+        <87ilkdlq48.fsf@kernel.org>
+Date:   Fri, 21 Oct 2022 13:48:11 +0300
+In-Reply-To: <87ilkdlq48.fsf@kernel.org> (Kalle Valo's message of "Fri, 21 Oct
+        2022 08:09:27 +0300")
+Message-ID: <87bkq51mhg.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a perror message. Fix it.
+Kalle Valo <kvalo@kernel.org> writes:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/powerpc/ptrace/core-pkey.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Colin Ian King <colin.i.king@gmail.com> writes:
+>
+>> Variables hw_ctrl_s1 and sw_ctrl_s1 are not being initialized and
+>> potentially can contain any garbage value. Currently there is an if
+>> statement that sets one or the other of these variables, followed
+>> by an if statement that checks if any of these variables have been
+>> set to a non-zero value. In the case where they may contain
+>> uninitialized non-zero values, the latter if statement may be
+>> taken as true when it was not expected to.
+>>
+>> Fix this by ensuring hw_ctrl_s1 and sw_ctrl_s1 are initialized.
+>>
+>> Cleans up clang warning:
+>> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:7: warning:
+>> variable 'hw_ctrl_s1' is used uninitialized whenever 'if' condition is
+>> false [-Wsometimes-uninitialized]
+>>                 if (hw_ctrl) {
+>>                     ^~~~~~~
+>> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:440:7: note: uninitialized
+>> use occurs here
+>>                 if (hw_ctrl_s1 || sw_ctrl_s1) {
+>>                     ^~~~~~~~~~
+>> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:3: note: remove the 'if'
+>> if its condition is always true
+>>                 if (hw_ctrl) {
+>>                 ^~~~~~~~~~~~~
+>>
+>> Fixes: c888183b21f3 ("wifi: rtl8xxxu: Support new chip RTL8188FU")
+>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>
+> I'll queue this to v6.1.
 
-diff --git a/tools/testing/selftests/powerpc/ptrace/core-pkey.c b/tools/testing/selftests/powerpc/ptrace/core-pkey.c
-index bbc05ffc5860..1a70a96f0bfe 100644
---- a/tools/testing/selftests/powerpc/ptrace/core-pkey.c
-+++ b/tools/testing/selftests/powerpc/ptrace/core-pkey.c
-@@ -329,7 +329,7 @@ static int parent(struct shared_info *info, pid_t pid)
- 
- 	core = mmap(NULL, core_size, PROT_READ, MAP_PRIVATE, fd, 0);
- 	if (core == (void *) -1) {
--		perror("Error mmaping core file");
-+		perror("Error mmapping core file");
- 		ret = TEST_FAIL;
- 		goto out;
- 	}
+Actually commit c888183b21f3 is in wireless-next so this patch should go
+to wireless-next, for v6.2.
+
 -- 
-2.37.3
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
