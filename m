@@ -2,99 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C974C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 12:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6A4C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 13:04:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbiJUMza (ORCPT
+        id S230040AbiJUNEr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 08:55:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42232 "EHLO
+        Fri, 21 Oct 2022 09:04:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbiJUMz2 (ORCPT
+        with ESMTP id S230027AbiJUNEp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 08:55:28 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8940210DE70;
-        Fri, 21 Oct 2022 05:55:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CC766B82B4C;
-        Fri, 21 Oct 2022 12:55:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 458E9C433C1;
-        Fri, 21 Oct 2022 12:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666356924;
-        bh=MI0KyCnRQ27+RGF2HuHJ1TVh1JIv76zKh0XFtp71vEw=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=IhD0yQCV5q+IYm1pzsYRX9vdRw4ppRnRjaDwZYzqQNyh4v1uGNrmJ5dHUAkDwZ90D
-         ThCB0TPRNuwNwWBesx3QO37PbkdpAy/CzEL36IG0NjbC4NZyRrJ2dOOW1zga26uITM
-         sJhWWBIJeVuLOT+XC7bD4DFJzw+35XnVSX5oU9BdIICHsU2tV8pGhSjyxf6aSXRKw4
-         mQkysZ8oEcTjf9WWzkRFqUtVw9gQY7psYOYxrGg3bWQsZb76V3nqw+vROqekmxv6Ho
-         dOjBfwfdyWCZZlusuOpmISl2XtM1pyCT+SVJcsNrtRB5kKZmOHYXDwVNyx1A3CcrQu
-         +TG6vk16nHZag==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 21 Oct 2022 09:04:45 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4150D4B0D5
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Oct 2022 06:04:43 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id a14so1902596wru.5
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Oct 2022 06:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ub/Q3aGASlrAXKX6JbBno3sJc5izj2B9kHx5Vfj31no=;
+        b=gEJ6INl1uo2EhdrqvpQPhIeMhpnTp/XTU+JHgRvsZWO7q0dliF+YoqCWZGjqTDPHmV
+         NZH1YUUL4hRBFfUiUbBxtJlGJEGGhg+dCZZ5CXddKxrwdK8Y/zY35MWxxyY+6rJdfWjg
+         CnbFzh/3uiviFDfs2zHAudI3cY/42hpKZeJehUUk9xx3FSp3PBuGwS/5p4sFoknG0opI
+         gVV94ui6Y5m95IH2FzeDetax+EyO183Vv4HjyeOnWa/m0s6DKjbB4cyPxwYDCFH386sI
+         xHdi6c3J+arK/FjKtZNzt6ZtvYDD8D58x/R8xf4TT33C6TWaVCThCozrmMCQ0Arl9o/Y
+         x6Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ub/Q3aGASlrAXKX6JbBno3sJc5izj2B9kHx5Vfj31no=;
+        b=sbTiGDPGu+6mXZ8rqwN/5nt076zJExV6n/P9yeX+Zo4yF08TOz/OI8+fgy1giqo8zE
+         S7J6Es4dRXu2E3Y03WMY3vylexWxzJjJhV2JX88MmvlrvqI+Ja6qJJR/eqAY5rdSmudI
+         yRLbLzqZ9XwBwk/Vz60iGUs8E1shC8nMiPX7gtFmSb9J8aFKx8uaeEiWum4plTpRF8aY
+         Gg1wbaW6qH/4XpOMpu0YpcMx9pD2CkCSShFla4uEbfUmtV8inNWkbZ9d3Wd2eK87SsEC
+         O0lXsYYiZRIS3OgBJXEhV2cl1+u9Pm2LQLccYwx/l51jZNx1CogjCmQF+AgAjXuZqUcv
+         TZIg==
+X-Gm-Message-State: ACrzQf3Yvknr7j8USqH5i1dZqjeutjZVjSb33DFs9cpuBHJudzOWeMao
+        T97dGoQlrn4S3k/+bsWY3AYXSA==
+X-Google-Smtp-Source: AMsMyM7Upp2advF48Gmvc7xuqXWi5BXIj28tAi5l0CGstD4rPMbCg2nWp/QDAkA7mw9jbyrpjk+Z9w==
+X-Received: by 2002:adf:fa05:0:b0:22e:362a:ce57 with SMTP id m5-20020adffa05000000b0022e362ace57mr12200802wrr.96.1666357481661;
+        Fri, 21 Oct 2022 06:04:41 -0700 (PDT)
+Received: from localhost ([2a01:cb19:8b2c:5e00:becf:29f6:2774:7ce2])
+        by smtp.gmail.com with ESMTPSA id c5-20020a05600c0a4500b003bdd2add8fcsm2878337wmq.24.2022.10.21.06.04.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Oct 2022 06:04:41 -0700 (PDT)
+From:   Mattijs Korpershoek <mkorpershoek@baylibre.com>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: tps6507x-ts: remove variable loops
+In-Reply-To: <20221020181642.24417-1-colin.i.king@gmail.com>
+References: <20221020181642.24417-1-colin.i.king@gmail.com>
+Date:   Fri, 21 Oct 2022 15:04:39 +0200
+Message-ID: <87y1t9pbtk.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] wifi: rtl8xxxu: Fix reads of uninitialized
- variables
- hw_ctrl_s1, sw_ctrl_s1
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20221020135709.1549086-1-colin.i.king@gmail.com>
-References: <20221020135709.1549086-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <166635691805.25811.8540312447323133705.kvalo@kernel.org>
-Date:   Fri, 21 Oct 2022 12:55:22 +0000 (UTC)
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
+On Thu, Oct 20, 2022 at 19:16, Colin Ian King <colin.i.king@gmail.com> wrote:
 
-> Variables hw_ctrl_s1 and sw_ctrl_s1 are not being initialized and
-> potentially can contain any garbage value. Currently there is an if
-> statement that sets one or the other of these variables, followed
-> by an if statement that checks if any of these variables have been
-> set to a non-zero value. In the case where they may contain
-> uninitialized non-zero values, the latter if statement may be
-> taken as true when it was not expected to.
-> 
-> Fix this by ensuring hw_ctrl_s1 and sw_ctrl_s1 are initialized.
-> 
-> Cleans up clang warning:
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:7: warning:
-> variable 'hw_ctrl_s1' is used uninitialized whenever 'if' condition is
-> false [-Wsometimes-uninitialized]
->                 if (hw_ctrl) {
->                     ^~~~~~~
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:440:7: note: uninitialized
-> use occurs here
->                 if (hw_ctrl_s1 || sw_ctrl_s1) {
->                     ^~~~~~~~~~
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:3: note: remove the 'if'
-> if its condition is always true
->                 if (hw_ctrl) {
->                 ^~~~~~~~~~~~~
-> 
-> Fixes: c888183b21f3 ("wifi: rtl8xxxu: Support new chip RTL8188FU")
+> The variable loops is being incremented but is never referenced,
+> it is redundant and can be removed.
+>
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Patch applied to wireless-next.git, thanks.
+Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
 
-80e5acb6dd72 wifi: rtl8xxxu: Fix reads of uninitialized variables hw_ctrl_s1, sw_ctrl_s1
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20221020135709.1549086-1-colin.i.king@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+> ---
+>  drivers/input/touchscreen/tps6507x-ts.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/input/touchscreen/tps6507x-ts.c b/drivers/input/touchscreen/tps6507x-ts.c
+> index 357a3108f2e5..f48871767763 100644
+> --- a/drivers/input/touchscreen/tps6507x-ts.c
+> +++ b/drivers/input/touchscreen/tps6507x-ts.c
+> @@ -119,7 +119,6 @@ static s32 tps6507x_adc_conversion(struct tps6507x_ts *tsc,
+>  static s32 tps6507x_adc_standby(struct tps6507x_ts *tsc)
+>  {
+>  	s32 ret;
+> -	s32 loops = 0;
+>  	u8 val;
+>  
+>  	ret = tps6507x_write_u8(tsc,  TPS6507X_REG_ADCONFIG,
+> @@ -141,7 +140,6 @@ static s32 tps6507x_adc_standby(struct tps6507x_ts *tsc)
+>  		ret = tps6507x_read_u8(tsc, TPS6507X_REG_INT, &val);
+>  		if (ret)
+>  			return ret;
+> -		loops++;
+>  	}
+>  
+>  	return ret;
+> -- 
+> 2.37.3
