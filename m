@@ -2,93 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C41AC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 05:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DD6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 08:40:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbiJUFJy (ORCPT
+        id S229974AbiJUIkn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 01:09:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51920 "EHLO
+        Fri, 21 Oct 2022 04:40:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbiJUFJo (ORCPT
+        with ESMTP id S229716AbiJUIkm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 01:09:44 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE5C3A4B3;
-        Thu, 20 Oct 2022 22:09:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 5D55FCE2800;
-        Fri, 21 Oct 2022 05:09:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1AAC433C1;
-        Fri, 21 Oct 2022 05:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666328975;
-        bh=IMGy1JEt2HVE4gKYtafGewyM6r1bYKdalhrSjASTyfo=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=g0DDgEeQjnRi75qQiQYcmWrXptukGgIdf8FsEjJD84v6n6uPIqP90eYBHMlBWVh83
-         7/8B7tvWbwkvV74AdWaplGbH2AjcQpA7+HQlRMUJeRtVk1grfPJNQzX9lvpdO1KZ6n
-         djScNp5+0erm4MR7a6RRKovc95TttUhgyaPoSMyqGfsVxLcXfORfuSOwTOTq4SHPFl
-         Y3C4dFbf+/NlI0Pf6w4RPi3VSzKrEq8LBai8CjTIKAC7qRhrLJ8UFEBSpxu/yNuK99
-         mRsyKX51FueCsaT3nlydvDRPYH5s6tagdiaGPxLoFC+AsdyEPm4TsYNZBJYqni3UEA
-         w4JSbDiTHQKlw==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] wifi: rtl8xxxu: Fix reads of uninitialized variables hw_ctrl_s1, sw_ctrl_s1
-References: <20221020135709.1549086-1-colin.i.king@gmail.com>
-Date:   Fri, 21 Oct 2022 08:09:27 +0300
-In-Reply-To: <20221020135709.1549086-1-colin.i.king@gmail.com> (Colin Ian
-        King's message of "Thu, 20 Oct 2022 14:57:09 +0100")
-Message-ID: <87ilkdlq48.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 21 Oct 2022 04:40:42 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34423239222;
+        Fri, 21 Oct 2022 01:40:39 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id az22-20020a05600c601600b003c6b72797fdso1497624wmb.5;
+        Fri, 21 Oct 2022 01:40:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IuIo8QgEpxZytSZiMkYCyIw8CLrNCmcth/q5uc8EsFM=;
+        b=UHxwHPQZYfeM6TtcZA0hz6s5eZl47HFNwIHZl2Q+0k/BynwTC1k0cxMLFTP99F/dt+
+         S274d4Fska8oBvu0BR9cJBvtSr6/lx1nkjh+rDY+BVd6+psgDOARiFwa97qp86+IYf3O
+         zkQF4rh7RUb7UsNGZmJUlwPZ78nQgWEaOtW5vuwVlcDVDX7A8z95CD9U7UQEqjggeOU0
+         wdf9Ps8UqZlCzybEHiDHZkqIj6tYVh+uwjW7TiYz5hE4CkxcXFS8ewOuJb9/7Cd3fb0Y
+         z2/f8+kXKBqxV7gX3V3DYfVj8BvIHixiaf1H0Vdp1Wxe2Wlc2vZmcAcZis01yOK0wFMM
+         ay9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IuIo8QgEpxZytSZiMkYCyIw8CLrNCmcth/q5uc8EsFM=;
+        b=R5LQtkDcKxWlR/xKJd+aIJDBwGmosMaoFXw+F5TwAdo7bWkKq1nZESJBTU5QjzLsjD
+         p6R/OJUVWPrCDwovl/pFxkOM6q8ZQ5YIla+r07d7B37ZNNVvsbQT3EBL/qj58V2G47bQ
+         5j163ZdHCvAPje22X17Le9n5gx40354qxranIJureK3gnCVEOBUr7etSwpTcyF9ztidv
+         RIZ5CpsFLC7FgaHNgENkYMirJLNfBOyza2wRzeHeNEswXgihmhcFyXg3b2FgM59NZnla
+         A8bLLMFRFalCezxJ5ecGCny7y7rpI4Y12iHlafbQfGiJMbxvSd9jrpqnXBiRyxhe/4lp
+         8xnQ==
+X-Gm-Message-State: ACrzQf3e/zGcQk8Cb3eWsT80jIQQptY8j5AqDvaxZM6s6Iyk2VwtszCS
+        j9lQIv0m7X78U4sTV5yB9ik=
+X-Google-Smtp-Source: AMsMyM77h+/1qaABrXb0HXJ77rL95cQYqKYRk18PhHLY1AAMY6D0/AHxac0gzRA3fbvGbpseDDt34g==
+X-Received: by 2002:a05:600c:3b11:b0:3c6:c02d:babb with SMTP id m17-20020a05600c3b1100b003c6c02dbabbmr32495826wms.69.1666341637633;
+        Fri, 21 Oct 2022 01:40:37 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id ay18-20020a5d6f12000000b0022e62529888sm5166607wrb.67.2022.10.21.01.40.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Oct 2022 01:40:36 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Emma Anholt <emma@anholt.net>, Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/vc4: Fix spelling mistake "mmaping" -> "mmapping"
+Date:   Fri, 21 Oct 2022 09:40:35 +0100
+Message-Id: <20221021084035.65367-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.i.king@gmail.com> writes:
+There are a couple of spelling mistakes in DRM_DEBUG messages. Fix them.
 
-> Variables hw_ctrl_s1 and sw_ctrl_s1 are not being initialized and
-> potentially can contain any garbage value. Currently there is an if
-> statement that sets one or the other of these variables, followed
-> by an if statement that checks if any of these variables have been
-> set to a non-zero value. In the case where they may contain
-> uninitialized non-zero values, the latter if statement may be
-> taken as true when it was not expected to.
->
-> Fix this by ensuring hw_ctrl_s1 and sw_ctrl_s1 are initialized.
->
-> Cleans up clang warning:
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:7: warning:
-> variable 'hw_ctrl_s1' is used uninitialized whenever 'if' condition is
-> false [-Wsometimes-uninitialized]
->                 if (hw_ctrl) {
->                     ^~~~~~~
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:440:7: note: uninitialized
-> use occurs here
->                 if (hw_ctrl_s1 || sw_ctrl_s1) {
->                     ^~~~~~~~~~
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:3: note: remove the 'if'
-> if its condition is always true
->                 if (hw_ctrl) {
->                 ^~~~~~~~~~~~~
->
-> Fixes: c888183b21f3 ("wifi: rtl8xxxu: Support new chip RTL8188FU")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/vc4/vc4_bo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'll queue this to v6.1.
-
+diff --git a/drivers/gpu/drm/vc4/vc4_bo.c b/drivers/gpu/drm/vc4/vc4_bo.c
+index 231add8b8e12..43d9b3a6a352 100644
+--- a/drivers/gpu/drm/vc4/vc4_bo.c
++++ b/drivers/gpu/drm/vc4/vc4_bo.c
+@@ -736,12 +736,12 @@ static int vc4_gem_object_mmap(struct drm_gem_object *obj, struct vm_area_struct
+ 	struct vc4_bo *bo = to_vc4_bo(obj);
+ 
+ 	if (bo->validated_shader && (vma->vm_flags & VM_WRITE)) {
+-		DRM_DEBUG("mmaping of shader BOs for writing not allowed.\n");
++		DRM_DEBUG("mmapping of shader BOs for writing not allowed.\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (bo->madv != VC4_MADV_WILLNEED) {
+-		DRM_DEBUG("mmaping of %s BO not allowed\n",
++		DRM_DEBUG("mmapping of %s BO not allowed\n",
+ 			  bo->madv == VC4_MADV_DONTNEED ?
+ 			  "purgeable" : "purged");
+ 		return -EINVAL;
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.37.3
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
