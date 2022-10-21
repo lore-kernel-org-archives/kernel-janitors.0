@@ -2,101 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6A4C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 13:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B320C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 13:12:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230040AbiJUNEr (ORCPT
+        id S230295AbiJUNMl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 09:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37682 "EHLO
+        Fri, 21 Oct 2022 09:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbiJUNEp (ORCPT
+        with ESMTP id S230209AbiJUNMh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 09:04:45 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4150D4B0D5
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Oct 2022 06:04:43 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id a14so1902596wru.5
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Oct 2022 06:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ub/Q3aGASlrAXKX6JbBno3sJc5izj2B9kHx5Vfj31no=;
-        b=gEJ6INl1uo2EhdrqvpQPhIeMhpnTp/XTU+JHgRvsZWO7q0dliF+YoqCWZGjqTDPHmV
-         NZH1YUUL4hRBFfUiUbBxtJlGJEGGhg+dCZZ5CXddKxrwdK8Y/zY35MWxxyY+6rJdfWjg
-         CnbFzh/3uiviFDfs2zHAudI3cY/42hpKZeJehUUk9xx3FSp3PBuGwS/5p4sFoknG0opI
-         gVV94ui6Y5m95IH2FzeDetax+EyO183Vv4HjyeOnWa/m0s6DKjbB4cyPxwYDCFH386sI
-         xHdi6c3J+arK/FjKtZNzt6ZtvYDD8D58x/R8xf4TT33C6TWaVCThCozrmMCQ0Arl9o/Y
-         x6Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ub/Q3aGASlrAXKX6JbBno3sJc5izj2B9kHx5Vfj31no=;
-        b=sbTiGDPGu+6mXZ8rqwN/5nt076zJExV6n/P9yeX+Zo4yF08TOz/OI8+fgy1giqo8zE
-         S7J6Es4dRXu2E3Y03WMY3vylexWxzJjJhV2JX88MmvlrvqI+Ja6qJJR/eqAY5rdSmudI
-         yRLbLzqZ9XwBwk/Vz60iGUs8E1shC8nMiPX7gtFmSb9J8aFKx8uaeEiWum4plTpRF8aY
-         Gg1wbaW6qH/4XpOMpu0YpcMx9pD2CkCSShFla4uEbfUmtV8inNWkbZ9d3Wd2eK87SsEC
-         O0lXsYYiZRIS3OgBJXEhV2cl1+u9Pm2LQLccYwx/l51jZNx1CogjCmQF+AgAjXuZqUcv
-         TZIg==
-X-Gm-Message-State: ACrzQf3Yvknr7j8USqH5i1dZqjeutjZVjSb33DFs9cpuBHJudzOWeMao
-        T97dGoQlrn4S3k/+bsWY3AYXSA==
-X-Google-Smtp-Source: AMsMyM7Upp2advF48Gmvc7xuqXWi5BXIj28tAi5l0CGstD4rPMbCg2nWp/QDAkA7mw9jbyrpjk+Z9w==
-X-Received: by 2002:adf:fa05:0:b0:22e:362a:ce57 with SMTP id m5-20020adffa05000000b0022e362ace57mr12200802wrr.96.1666357481661;
-        Fri, 21 Oct 2022 06:04:41 -0700 (PDT)
-Received: from localhost ([2a01:cb19:8b2c:5e00:becf:29f6:2774:7ce2])
-        by smtp.gmail.com with ESMTPSA id c5-20020a05600c0a4500b003bdd2add8fcsm2878337wmq.24.2022.10.21.06.04.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 06:04:41 -0700 (PDT)
-From:   Mattijs Korpershoek <mkorpershoek@baylibre.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: tps6507x-ts: remove variable loops
-In-Reply-To: <20221020181642.24417-1-colin.i.king@gmail.com>
-References: <20221020181642.24417-1-colin.i.king@gmail.com>
-Date:   Fri, 21 Oct 2022 15:04:39 +0200
-Message-ID: <87y1t9pbtk.fsf@baylibre.com>
+        Fri, 21 Oct 2022 09:12:37 -0400
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17A426CDDB;
+        Fri, 21 Oct 2022 06:12:30 -0700 (PDT)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 2978D1C09D6; Fri, 21 Oct 2022 15:12:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+        t=1666357949;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fY/ja3klDb2+M2zY6p6owNPJ2hEPPfqjIAvGs2Ei8vc=;
+        b=FJ2cvq5B/u6dLalHE3UKAF/wbLpbXqH/0B8zk5HRc+nXFQwiqDpl5CPPd1G5vVzCShovDU
+        703sMd84n64e1ePX2lSoObJ1MH6f3u7jk3EAPKD10KVMvOaWYDAszhNUGt9vmBQXh2AMGh
+        F5MpLnqLoelGZPQ/tZL/O+SMouR9yKU=
+Date:   Fri, 21 Oct 2022 15:12:28 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: lp55xx: remove variable j
+Message-ID: <20221021131228.GC16264@duo.ucw.cz>
+References: <20221020210731.45864-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="0lnxQi9hkpPO77W3"
+Content-Disposition: inline
+In-Reply-To: <20221020210731.45864-1-colin.i.king@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 20, 2022 at 19:16, Colin Ian King <colin.i.king@gmail.com> wrote:
 
-> The variable loops is being incremented but is never referenced,
+--0lnxQi9hkpPO77W3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> The variable j being incremented but it is never referenced,
 > it is redundant and can be removed.
->
+>=20
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+Thank you, applied.
+							Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-> ---
->  drivers/input/touchscreen/tps6507x-ts.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/input/touchscreen/tps6507x-ts.c b/drivers/input/touchscreen/tps6507x-ts.c
-> index 357a3108f2e5..f48871767763 100644
-> --- a/drivers/input/touchscreen/tps6507x-ts.c
-> +++ b/drivers/input/touchscreen/tps6507x-ts.c
-> @@ -119,7 +119,6 @@ static s32 tps6507x_adc_conversion(struct tps6507x_ts *tsc,
->  static s32 tps6507x_adc_standby(struct tps6507x_ts *tsc)
->  {
->  	s32 ret;
-> -	s32 loops = 0;
->  	u8 val;
->  
->  	ret = tps6507x_write_u8(tsc,  TPS6507X_REG_ADCONFIG,
-> @@ -141,7 +140,6 @@ static s32 tps6507x_adc_standby(struct tps6507x_ts *tsc)
->  		ret = tps6507x_read_u8(tsc, TPS6507X_REG_INT, &val);
->  		if (ret)
->  			return ret;
-> -		loops++;
->  	}
->  
->  	return ret;
-> -- 
-> 2.37.3
+--0lnxQi9hkpPO77W3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCY1KavAAKCRAw5/Bqldv6
+8rZ5AJ96BfWfC9Gp8yqE06yvEhlIvy0d0ACZAVk+hk8XCiFdDQrTPzVRKQngIr4=
+=kj7N
+-----END PGP SIGNATURE-----
+
+--0lnxQi9hkpPO77W3--
