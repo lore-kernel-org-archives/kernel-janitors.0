@@ -2,99 +2,56 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A8FC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 10:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA54C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Oct 2022 11:35:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbiJUKs2 (ORCPT
+        id S229983AbiJULfH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 06:48:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46794 "EHLO
+        Fri, 21 Oct 2022 07:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230078AbiJUKsZ (ORCPT
+        with ESMTP id S230063AbiJULe7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 06:48:25 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173F525F1F4;
-        Fri, 21 Oct 2022 03:48:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5B35AB82B95;
-        Fri, 21 Oct 2022 10:48:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7943C433B5;
-        Fri, 21 Oct 2022 10:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666349301;
-        bh=Yl3qRQQpWdMPUbGxJERyNc/a/LusWFS2QJF+ezf+FSQ=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=TgA9vbS6vmkee+djXhez8XsX6q6q1k2rY96M7LgzmPrdDZPi5mQ6jF/HZBcaB7ySU
-         j8m64Y7onysoEui/gN8yxtcBzMLgXCrmYn6oRiTicigWyuHey2t6Auz21mRvYeqpS5
-         fpN/oagLoQJJi25vqOB90BmrTDzvB8MJl+/zuRLSdckp2f1e+iemccjiKzuDF9/ylz
-         rLREgmw9skT4GXZwRZSS3HUvqxq59RRVIjQGYf/7aEycG3OCnepfg1pF2lwqEkR/sO
-         fKbdssWhwxeVuoQ/Ge0+keJL7SqL0oMs9a+yj0bntYMeqVElqeHoOz+zaOoD888Khx
-         6QW13DEahU5hw==
-From:   Kalle Valo <kvalo@kernel.org>
+        Fri, 21 Oct 2022 07:34:59 -0400
+Received: from formenos.hmeau.com (helcar.hmeau.com [216.24.177.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9D829621D;
+        Fri, 21 Oct 2022 04:34:56 -0700 (PDT)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1olqHk-004dnJ-Da; Fri, 21 Oct 2022 19:34:33 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Oct 2022 19:34:32 +0800
+Date:   Fri, 21 Oct 2022 19:34:32 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Nicolas Toromanoff <nicolas.toromanoff@foss.st.com>,
+        linux-crypto@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] wifi: rtl8xxxu: Fix reads of uninitialized variables hw_ctrl_s1, sw_ctrl_s1
-References: <20221020135709.1549086-1-colin.i.king@gmail.com>
-        <87ilkdlq48.fsf@kernel.org>
-Date:   Fri, 21 Oct 2022 13:48:11 +0300
-In-Reply-To: <87ilkdlq48.fsf@kernel.org> (Kalle Valo's message of "Fri, 21 Oct
-        2022 08:09:27 +0300")
-Message-ID: <87bkq51mhg.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+Subject: Re: [PATCH] crypto: stm32 - Fix spelling mistake "wite" -> "write"
+Message-ID: <Y1KDyFVaMGj0/E0r@gondor.apana.org.au>
+References: <20220928222443.68705-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220928222443.68705-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Kalle Valo <kvalo@kernel.org> writes:
+On Wed, Sep 28, 2022 at 11:24:43PM +0100, Colin Ian King wrote:
+> There are a couple of spelling mistakes in dev_err messages. Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/crypto/stm32/stm32-cryp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Colin Ian King <colin.i.king@gmail.com> writes:
->
->> Variables hw_ctrl_s1 and sw_ctrl_s1 are not being initialized and
->> potentially can contain any garbage value. Currently there is an if
->> statement that sets one or the other of these variables, followed
->> by an if statement that checks if any of these variables have been
->> set to a non-zero value. In the case where they may contain
->> uninitialized non-zero values, the latter if statement may be
->> taken as true when it was not expected to.
->>
->> Fix this by ensuring hw_ctrl_s1 and sw_ctrl_s1 are initialized.
->>
->> Cleans up clang warning:
->> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:7: warning:
->> variable 'hw_ctrl_s1' is used uninitialized whenever 'if' condition is
->> false [-Wsometimes-uninitialized]
->>                 if (hw_ctrl) {
->>                     ^~~~~~~
->> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:440:7: note: uninitialized
->> use occurs here
->>                 if (hw_ctrl_s1 || sw_ctrl_s1) {
->>                     ^~~~~~~~~~
->> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_8188f.c:432:3: note: remove the 'if'
->> if its condition is always true
->>                 if (hw_ctrl) {
->>                 ^~~~~~~~~~~~~
->>
->> Fixes: c888183b21f3 ("wifi: rtl8xxxu: Support new chip RTL8188FU")
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->
-> I'll queue this to v6.1.
-
-Actually commit c888183b21f3 is in wireless-next so this patch should go
-to wireless-next, for v6.2.
-
+Patch applied.  Thanks.
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
