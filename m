@@ -2,142 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB98C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Oct 2022 03:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDBFC04A95
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Oct 2022 04:36:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbiJVDjk (ORCPT
+        id S229913AbiJVEgC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Oct 2022 23:39:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54354 "EHLO
+        Sat, 22 Oct 2022 00:36:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbiJVDji (ORCPT
+        with ESMTP id S229760AbiJVEgA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Oct 2022 23:39:38 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2013.outbound.protection.outlook.com [40.92.23.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC2692AA151;
-        Fri, 21 Oct 2022 20:39:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FMH7Dzs0Yzw7wsDEMwJLBOPHNcADXYgAONwRJaVUh2nF+tZisbRuKCx19dUSZdrxa7chfiQpO5uCikDYMhVIGM1Gx8VRgRFov/zkZ9NOBSbggYmseTwRdzShdSZkW/HS5pqHyzmvhUkbHB/yApEawDHvaoclVxEZwguLflhsxEiZBjhRjM9NnOOUcWsJrzcFEIUUSuL4jp8q+FJ9hCoQME8NrlI2Uo7VaNd89li6hBSDk3rwCTTJkWQwtpIgES9JuCKCMpAU19oFT+TJPJ1j2lKyYal7qziocNDuRB7XGDbnP1JD80SO7EgNLdXkNrUQEPvqH6+casGKWIg7URj7hQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RPXfe/g/UxymDcXAVBWFiRNo255z4leSuktDmr1fJfo=;
- b=fXLFurJmTZf1InkIKArXv7YzkvP/NeeL60vRAOszTbhsaXB/7B0Gzgm8lp9TtTB6ztXzpJD1YIIj/uCmSNnvpQ10P+uQresoYosqbzp1+TucTBiN5VO5JtTVWhEooF3KOnA9CJEAc5pNGWJD4B1I2GcQVB16QDUKW+/K6Yt0hjQw6ESOlI8mycSOCY0s8m6AG9rYQWHGOTMyxp4gkBGfE22/dbvSIAV9QqF4Zr3nC+cgxKQvgrKqQ54OG3o3mvLLIWhXVr+5SSXGYKVmgq0VgBmHvwM3SrQJ/S0a0sfeOCzKdQnIxzr9CSJOZGwTL9eo9He7wmh0eX8GMiknwGllJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RPXfe/g/UxymDcXAVBWFiRNo255z4leSuktDmr1fJfo=;
- b=U+ZGrJNHStxGI/3NgMqA936M4tLAveqTyjvY5pWVfAmPS2y6wHo/P+2JDwCk7jQlDAGHnsoWJJp7UrrqyJDJo1CFA3AsZjaL5qI1AZnHKzQQMAZAyS4QNe4WER0wmOIaGPE1P1dmPYgEEIOlwdbv13lCVqlkp1ZFeyjyWuQY6isEDyArI6GjxzWfYejWwzrmYYOmHNiq/nue+Pfxq2fn0aW2xq+dti8VDF9PVPiVQejVL6JbW83xDlQsdIkvTr1qEHCXZ9/54Ly470c64CyFeeGJaRC1FoMLwhyTIrj8I0ttBOSvEJHF9UBUf8WEBBqQv/+vMbA+13S7VCu2P5PuGw==
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com (2603:10b6:805:f9::31)
- by SJ0PR06MB7469.namprd06.prod.outlook.com (2603:10b6:a03:323::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.34; Sat, 22 Oct
- 2022 03:39:15 +0000
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::b849:682e:6222:2b2d]) by SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::b849:682e:6222:2b2d%5]) with mapi id 15.20.5723.035; Sat, 22 Oct 2022
- 03:39:15 +0000
-Date:   Fri, 21 Oct 2022 22:39:09 -0500
-From:   Chris Morgan <macromorgan@hotmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
-        Maya Matuszczyk <maccraft123mc@gmail.com>,
-        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] power: supply: rk817: check correct variable
-Message-ID: <SN6PR06MB5342BF344D2BF6D10F3B4ADEA52C9@SN6PR06MB5342.namprd06.prod.outlook.com>
-References: <Y0puvQLWS/rQ7hSb@kili>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y0puvQLWS/rQ7hSb@kili>
-X-TMN:  [S55Q1pbTv12aDLIzaDk5HIiIqbjLpSgx]
-X-ClientProxiedBy: SN7PR18CA0024.namprd18.prod.outlook.com
- (2603:10b6:806:f3::33) To SN6PR06MB5342.namprd06.prod.outlook.com
- (2603:10b6:805:f9::31)
-X-Microsoft-Original-Message-ID: <20221022033909.GA31478@wintermute.localdomain>
+        Sat, 22 Oct 2022 00:36:00 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDCAA16CA54;
+        Fri, 21 Oct 2022 21:35:57 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id t10-20020a17090a4e4a00b0020af4bcae10so4756712pjl.3;
+        Fri, 21 Oct 2022 21:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wQYm5LqzX57uwWQZcQgQcLEzWEXhv56KAAGUn4/bM1s=;
+        b=pQvvard2nxmZEuToHQCoxqKq7E+NyOPozW/OVGgcTjUXIuXUtthCc7761Sz21nK1Ck
+         Q+8eGKtasc1vPLudAPwPMPJPFstelL3PbyCrl0dSQq+DvXA8k6SlKFDmHUn/5M+b/RGz
+         W+CDlMrwQrXwHTjgmA5AfhFRGHL8ZLzIxI/QXty7DHZLWsYMOkGwH+UcfoN7vPB1wmo9
+         6WlrXsoTcwNMG3I7REK8U4MpPMoGsafYEh/PUKmO2Qi36ARLc7tQ+Eb/BUQ1buaLGjs1
+         FnX4Wplsz7wWStPIBsq/tcdrieUbUWspX769DNftAFHlJRNSrsSUjnHE9mdJl6RwN5YA
+         OR0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wQYm5LqzX57uwWQZcQgQcLEzWEXhv56KAAGUn4/bM1s=;
+        b=dd3BB8eeAO1dPh7oHz+F2Pq0FSBTsxDNYsgVLibcFxdJr34xNSEy0qXfXFOL8gnlIw
+         OFmJTzYMIKZVJo0BUDZtnyw7rvsPT9UxjBryUGk9t1ByqCJvTVJgiJHL/Hzj6Bz2DWhr
+         qcdRL0CbTj789Gec795xrGPnMnzO0xiybOjqlVtDLfXtsWZrJRGlegs9d/V0FT8J2wIK
+         UXP116x/5JDnjaKeLBoGSDcUQ4ewV0a+bwEi68GXqkRKJ4VugfMlAt7bDH2PMgXpkcIf
+         IJhOPZsGn+W7ZW9BgiM0j4Ip1aI51yh8vrAetWVnNgobaFoqoDQnbblwmYKG0KjcN410
+         Jt7w==
+X-Gm-Message-State: ACrzQf0/1yR0hY13mpslBM/w16am8vIjk/tVjyjGM1ghmZU1MRgpKiCC
+        s+JhzCyM63lmaaYxgXaOQ1k=
+X-Google-Smtp-Source: AMsMyM57V05ZKji27dZkrlNCQ2qo4WzjK3QyXijF498quz/JdHwf2kSi+mgkZ9Dg64BlKvl6JfMA6g==
+X-Received: by 2002:a17:903:40d2:b0:186:6f1d:608c with SMTP id t18-20020a17090340d200b001866f1d608cmr9815540pld.52.1666413357291;
+        Fri, 21 Oct 2022 21:35:57 -0700 (PDT)
+Received: from localhost.localdomain ([2001:8003:d90f:f801:7164:b4e6:b90b:c4d5])
+        by smtp.gmail.com with ESMTPSA id u4-20020a17090341c400b0017eb2d62bbesm402812ple.99.2022.10.21.21.35.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Oct 2022 21:35:56 -0700 (PDT)
+From:   "Scott J. Crouch" <scottjcrouch@gmail.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kernel-janitors@vger.kernel.org,
+        "Scott J. Crouch" <scottjcrouch@gmail.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: vchiq: add 'static' to function definition
+Date:   Sat, 22 Oct 2022 15:35:48 +1100
+Message-Id: <20221022043548.1671644-1-scottjcrouch@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR06MB5342:EE_|SJ0PR06MB7469:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68796291-5503-48d2-d1ab-08dab3defd9b
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WMT2eXzekpKAwyEoEkbd9+ybnLHeV6JSHRQXvtZurO7xhDmbRu5l0vwLaTces2EfVNkJZVlmjDA3uM/kSuY56C8coiP5OwI2B/gPtvFpdEOSt3KkXgleIRz69N4NDQYnSEJML46SGhLatgXGGxN40/zSAjvJChPcWz8xo4hlUmAY5ewPNdu4NC+bIXCB6J67KGSryG8l7F6kJqS2qtSRrtWvpRjZxzYE+Kta8ZnrH/5CMDLiQfQjI4Pj7QzobN3D+mYqdxtpT3WwjJ1Pe9g9Rji1GXzUnp6Z/chDQQIEVC8Hy1i7y43Cyt93neVIJwH3BVb3pztlUzNudMwX2cgS7RiEas336pSb4Bc/rEPv8AbaDPX/RWsV8ujrv6hIsM70fGYoyaIiG7XQMjPEWb3VuqQp0cytxSg2KFVn5GQ9y3tqijtdVusva3aWtcQ0eK8vzEoaneNcl7QiTDj1PTqFZydS/cA1o7W3u6RukE4H7nHjN/3jf8kuJXQm74U3rZAVJWbsv7yFdtb6XDHwqMjNPwBNPkKzStE/ErOp6JDpHLGpY9UZ3s0gxUR/Tn2FK/i9RcrspFkFQIZvz1o9oq/0csHYuTKkx8klhSAUiKGpqpqlvSUOyk5hAEATAl4uhgIQQYF51FVaqmUXg9DCL16hK3bdSdwc6UtLAzrxCJNTCrKcN+BPUdpsP2REj4gKyfLU
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?8ae3OxsGsuY5y2ofYFGuQe246WcLQIsxXIeBmt9DadMYuJgEcL6+rsrzWwse?=
- =?us-ascii?Q?RbUEm45fu2Pn7psmd6MyfnYNqTtN9iiBVFDHBxYiKcYFdOOeKojU+2t4Yds1?=
- =?us-ascii?Q?m+l8pIQg/1OL8JykBhbRiTi5S/EwC35877ShgUriSLa9GV7vFr5LH67CJpxT?=
- =?us-ascii?Q?Cd5kBzoTWQ/kCLvrN8uSFin5e2edxa/NVmxod+06g9NwY7Wg8gL0/iZqbKz2?=
- =?us-ascii?Q?HivBToU4siHAANJjlbT8bj3c9lVSKN6NA/lxbjbqQ3H5OV8UAYuarqoRzm86?=
- =?us-ascii?Q?codKBP00thK6oq7tQvHj2u5yC3Z3b1laT4x2NwNPFS9k/6KrmhDgP2Pkbp19?=
- =?us-ascii?Q?RBTL/CYOxLolknoVBDerZ+IUfXfHxEXnw0suwLSr70NTXRh3dhlZlQBQbiuH?=
- =?us-ascii?Q?siyrKPsHUqUU4JfnUJBP6E6VzIXHjESsdwobwBBx7fg7Xhdta/PhwMAe3XXf?=
- =?us-ascii?Q?SL7OoobWt+HOJcAfYm6d6mgQ+GocIVPvxgXnzHe0CY+0xpKYDIqriAoM2Rj0?=
- =?us-ascii?Q?A8yLYoo7Kd3OTtaQ7nYblpNCzMxeIP6r4P/syn10Nkwo2zyzAqd1pRsJbQ2u?=
- =?us-ascii?Q?38kQukUsTJ/zOc556U7qI4KG5yNHWtMgTMVTDpZNAq47Qr8wzgJq9Tag5sz8?=
- =?us-ascii?Q?825bKbqviv38BdIBRQMHWyP6AK7R8E/N5aljXGah141O0XeNA5RdFvn/HjTe?=
- =?us-ascii?Q?weypCoMV9kOnpnHLzDNYfsFDDsYQzJdz2KNkaox9PinxMVE9gGHBkzcnowE5?=
- =?us-ascii?Q?VUZ17JYZNjlz+Hdu3GCaaqBfsjGx2VTy6Yc5IrzhZ5mq47ej2TYjQ7LT5mYp?=
- =?us-ascii?Q?kD5kapzMpqVMy6ifTHc4wgWFtVtvGCmFYVXzQ5aro1XDKdkT1H3wOG5+j1vY?=
- =?us-ascii?Q?h0twVezVofzt5wWjOj5J5v3ckXgGSKbUTairjR2GvRCEnKdpih9nbOZSEnX8?=
- =?us-ascii?Q?xre3Nc3cmjne6rJnR7BFkiOtmxit9x6d3vskLi9maIVIzM92hG+7rBsTz1v0?=
- =?us-ascii?Q?rKfXywG453qwfkCIvF13UUO+TLWigChHbPvWJDi1x4u8EB4yMl3nlb4JqRPN?=
- =?us-ascii?Q?OaWu3RPmhrHp6c0LyzZQIZeJQjeil37IJjEPSe0/psZbhtiR3YYSbfwEIs/X?=
- =?us-ascii?Q?LS7F6aj6VuIFt/tr2IuTl+bUAgZPowadTCxY3ohZxRTFFtLrWNS0uZyK64Hi?=
- =?us-ascii?Q?1CH6CsxGe7dS8nYeJJjOt9UHIFVTtYqAPeBsyeKeEUxZx3Kyf6m7xok6UCiJ?=
- =?us-ascii?Q?CT83/xG3J/TRLy0KxPj88Dq9chWrQgTFJ0sXptCLWw=3D=3D?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-89723.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68796291-5503-48d2-d1ab-08dab3defd9b
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR06MB5342.namprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2022 03:39:15.3273
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR06MB7469
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Oct 15, 2022 at 11:26:37AM +0300, Dan Carpenter wrote:
-> This code checks "->chg_ps" twice when it was supposed to check
-> "->bat_ps".
-> 
-> Fixes: 11cb8da0189b ("power: supply: Add charger driver for Rockchip RK817")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This fixes the following sparse error:
 
-Not sure how I missed this, but good catch. Sorry I've been away all
-week doing work stuff.
+    warning: symbol 'vchiq_platform_init' was not declared. Should it be static?
 
-Tested-by: Chris Morgan <macromorgan@hotmail.com>
+Signed-off-by: Scott J. Crouch <scottjcrouch@gmail.com>
+---
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/power/supply/rk817_charger.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/power/supply/rk817_charger.c b/drivers/power/supply/rk817_charger.c
-> index 635f051b0821..4e9c7b191266 100644
-> --- a/drivers/power/supply/rk817_charger.c
-> +++ b/drivers/power/supply/rk817_charger.c
-> @@ -1116,14 +1116,12 @@ static int rk817_charger_probe(struct platform_device *pdev)
->  
->  	charger->bat_ps = devm_power_supply_register(&pdev->dev,
->  						     &rk817_bat_desc, &pscfg);
-> -
-> -	charger->chg_ps = devm_power_supply_register(&pdev->dev,
-> -						     &rk817_chg_desc, &pscfg);
-> -
-> -	if (IS_ERR(charger->chg_ps))
-> +	if (IS_ERR(charger->bat_ps))
->  		return dev_err_probe(dev, -EINVAL,
->  				     "Battery failed to probe\n");
->  
-> +	charger->chg_ps = devm_power_supply_register(&pdev->dev,
-> +						     &rk817_chg_desc, &pscfg);
->  	if (IS_ERR(charger->chg_ps))
->  		return dev_err_probe(dev, -EINVAL,
->  				     "Charger failed to probe\n");
-> -- 
-> 2.35.1
-> 
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index dc33490ba7fb..ffa517077b80 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -462,7 +462,7 @@ free_pagelist(struct vchiq_instance *instance, struct vchiq_pagelist_info *pagel
+ 	cleanup_pagelistinfo(instance, pagelistinfo);
+ }
+ 
+-int vchiq_platform_init(struct platform_device *pdev, struct vchiq_state *state)
++static int vchiq_platform_init(struct platform_device *pdev, struct vchiq_state *state)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct vchiq_drvdata *drvdata = platform_get_drvdata(pdev);
+-- 
+2.37.3
+
