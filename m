@@ -2,96 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDBFC04A95
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Oct 2022 04:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF13C04A95
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Oct 2022 06:09:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbiJVEgC (ORCPT
+        id S229793AbiJVGJE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 Oct 2022 00:36:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
+        Sat, 22 Oct 2022 02:09:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbiJVEgA (ORCPT
+        with ESMTP id S229958AbiJVGJC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 Oct 2022 00:36:00 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDCAA16CA54;
-        Fri, 21 Oct 2022 21:35:57 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id t10-20020a17090a4e4a00b0020af4bcae10so4756712pjl.3;
-        Fri, 21 Oct 2022 21:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wQYm5LqzX57uwWQZcQgQcLEzWEXhv56KAAGUn4/bM1s=;
-        b=pQvvard2nxmZEuToHQCoxqKq7E+NyOPozW/OVGgcTjUXIuXUtthCc7761Sz21nK1Ck
-         Q+8eGKtasc1vPLudAPwPMPJPFstelL3PbyCrl0dSQq+DvXA8k6SlKFDmHUn/5M+b/RGz
-         W+CDlMrwQrXwHTjgmA5AfhFRGHL8ZLzIxI/QXty7DHZLWsYMOkGwH+UcfoN7vPB1wmo9
-         6WlrXsoTcwNMG3I7REK8U4MpPMoGsafYEh/PUKmO2Qi36ARLc7tQ+Eb/BUQ1buaLGjs1
-         FnX4Wplsz7wWStPIBsq/tcdrieUbUWspX769DNftAFHlJRNSrsSUjnHE9mdJl6RwN5YA
-         OR0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wQYm5LqzX57uwWQZcQgQcLEzWEXhv56KAAGUn4/bM1s=;
-        b=dd3BB8eeAO1dPh7oHz+F2Pq0FSBTsxDNYsgVLibcFxdJr34xNSEy0qXfXFOL8gnlIw
-         OFmJTzYMIKZVJo0BUDZtnyw7rvsPT9UxjBryUGk9t1ByqCJvTVJgiJHL/Hzj6Bz2DWhr
-         qcdRL0CbTj789Gec795xrGPnMnzO0xiybOjqlVtDLfXtsWZrJRGlegs9d/V0FT8J2wIK
-         UXP116x/5JDnjaKeLBoGSDcUQ4ewV0a+bwEi68GXqkRKJ4VugfMlAt7bDH2PMgXpkcIf
-         IJhOPZsGn+W7ZW9BgiM0j4Ip1aI51yh8vrAetWVnNgobaFoqoDQnbblwmYKG0KjcN410
-         Jt7w==
-X-Gm-Message-State: ACrzQf0/1yR0hY13mpslBM/w16am8vIjk/tVjyjGM1ghmZU1MRgpKiCC
-        s+JhzCyM63lmaaYxgXaOQ1k=
-X-Google-Smtp-Source: AMsMyM57V05ZKji27dZkrlNCQ2qo4WzjK3QyXijF498quz/JdHwf2kSi+mgkZ9Dg64BlKvl6JfMA6g==
-X-Received: by 2002:a17:903:40d2:b0:186:6f1d:608c with SMTP id t18-20020a17090340d200b001866f1d608cmr9815540pld.52.1666413357291;
-        Fri, 21 Oct 2022 21:35:57 -0700 (PDT)
-Received: from localhost.localdomain ([2001:8003:d90f:f801:7164:b4e6:b90b:c4d5])
-        by smtp.gmail.com with ESMTPSA id u4-20020a17090341c400b0017eb2d62bbesm402812ple.99.2022.10.21.21.35.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 21:35:56 -0700 (PDT)
-From:   "Scott J. Crouch" <scottjcrouch@gmail.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors@vger.kernel.org,
-        "Scott J. Crouch" <scottjcrouch@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: vchiq: add 'static' to function definition
-Date:   Sat, 22 Oct 2022 15:35:48 +1100
-Message-Id: <20221022043548.1671644-1-scottjcrouch@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Sat, 22 Oct 2022 02:09:02 -0400
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F7F52B731C
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Oct 2022 23:09:01 -0700 (PDT)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id m7gmoMnOL09yum7gnoVAtL; Sat, 22 Oct 2022 08:08:58 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 22 Oct 2022 08:08:58 +0200
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] soc: imx: imx93-pd: Fix the error handling path of imx93_pd_probe()
+Date:   Sat, 22 Oct 2022 08:08:55 +0200
+Message-Id: <717cb5dee892bc01257d52b10bb9a1ee79ced87f.1666418916.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This fixes the following sparse error:
+In imx93_pd_probe(); if an error occurs, some resources need to be released
+as done in the remove function.
 
-    warning: symbol 'vchiq_platform_init' was not declared. Should it be static?
-
-Signed-off-by: Scott J. Crouch <scottjcrouch@gmail.com>
+Fixes: 0a0f7cc25d4a ("soc: imx: add i.MX93 SRC power domain driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/imx/imx93-pd.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index dc33490ba7fb..ffa517077b80 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -462,7 +462,7 @@ free_pagelist(struct vchiq_instance *instance, struct vchiq_pagelist_info *pagel
- 	cleanup_pagelistinfo(instance, pagelistinfo);
+diff --git a/drivers/soc/imx/imx93-pd.c b/drivers/soc/imx/imx93-pd.c
+index 1f3d7039c1de..4d235c8c4924 100644
+--- a/drivers/soc/imx/imx93-pd.c
++++ b/drivers/soc/imx/imx93-pd.c
+@@ -135,11 +135,24 @@ static int imx93_pd_probe(struct platform_device *pdev)
+ 
+ 	ret = pm_genpd_init(&domain->genpd, NULL, domain->init_off);
+ 	if (ret)
+-		return ret;
++		goto err_clk_unprepare;
+ 
+ 	platform_set_drvdata(pdev, domain);
+ 
+-	return of_genpd_add_provider_simple(np, &domain->genpd);
++	ret = of_genpd_add_provider_simple(np, &domain->genpd);
++	if (ret)
++		goto err_genpd_remove;
++
++	return 0;
++
++err_genpd_remove:
++	pm_genpd_remove(&domain->genpd);
++
++err_clk_unprepare:
++	if (!domain->init_off)
++		clk_bulk_disable_unprepare(domain->num_clks, domain->clks);
++
++	return ret;
  }
  
--int vchiq_platform_init(struct platform_device *pdev, struct vchiq_state *state)
-+static int vchiq_platform_init(struct platform_device *pdev, struct vchiq_state *state)
- {
- 	struct device *dev = &pdev->dev;
- 	struct vchiq_drvdata *drvdata = platform_get_drvdata(pdev);
+ static const struct of_device_id imx93_pd_ids[] = {
 -- 
-2.37.3
+2.34.1
 
