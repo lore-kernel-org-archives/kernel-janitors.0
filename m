@@ -2,66 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA27C38A2D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 18:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7C6FA3741
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 19:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232775AbiJXSsJ (ORCPT
+        id S229980AbiJXTmr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 14:48:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41136 "EHLO
+        Mon, 24 Oct 2022 15:42:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232103AbiJXSr3 (ORCPT
+        with ESMTP id S231784AbiJXTlw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 14:47:29 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D21120BF8;
-        Mon, 24 Oct 2022 10:28:57 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id y10so7023428wma.0;
-        Mon, 24 Oct 2022 10:28:57 -0700 (PDT)
+        Mon, 24 Oct 2022 15:41:52 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF32265517;
+        Mon, 24 Oct 2022 11:11:32 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id n14so2789261wmq.3;
+        Mon, 24 Oct 2022 11:11:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0vrMEaRTOwjPGYos2d/zehtmsU3IkMfRxjv+/1fbd3Q=;
-        b=VKJ1G1o7+2+SQele4larDZ/2K25UrUVVp54Nrve6h20LExDBaKHIClcbBnpbrrzvyk
-         WnWyToK5iRYdzsch3pSLsG9Hqwe8ZjdpZKvuIE33xS/WfWt+GK7OMY6gPqIJ7u/9X5es
-         KxKivLyP7x9AmhjGc8iwzBixaN4zLaD6rREhMrdm84TnLUvF1dUgQv3nHZicWWEJWrwT
-         soU1/txlsKhDtZwzOfy96JWzJn6olk6EIXZMh86SH0shMUspuBx5cS/xVRtlvye6uKiq
-         78fTBDDQfXkpdKrIZlsvgJOXcrQLaU6Nnz9OunF0l6uFeL6OR/y1cYRyclV8VLnXLK93
-         6btg==
+        bh=yvPcFlw6lM+Z4kH9nDAFT0Arkjdhr1idqjBqC9Ky3Kw=;
+        b=MUZ7iaB3iWtFgeLi5pIjcRc7HXnLWLrBmoA0lvgXcBrQWKK8HBx9ce0VYt9pVrW27H
+         09m1rykXg6YUDCQwsmeInLz/OeIdpMJ+cSMG6vx8saDiSbm+rMicQGLKcSSSP3GCrz7O
+         8YBZCGfInLxHW5y88EDyPCNxi+Bm9L1RcTLJvNXAKwVKmNQscfxX2sJecaBuHvWsiABK
+         Y4XmoJvethqru/stSjFpKykkzAqSBjIOCqnPpYU78TA+j8/zjolYKUMVeh1wXHpU5RNM
+         Gxno7Gtm5sUB24yl8zYkEhayBbSG/IgLsjIF4w3XccG4VnXx6FLNeBQAc4Sk3Ty+hNzv
+         om5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0vrMEaRTOwjPGYos2d/zehtmsU3IkMfRxjv+/1fbd3Q=;
-        b=gcuoiVl/tAvF7hVCLgPxnWAuXxLcWXrGA3ARSvq/4BPNw7TH+XdSTlXxMR4VVcQVV2
-         FU++KDQP2zwIF8UfLvFTvPK4uF/tvONcN/wEuACEQlH/94/RzwHuaapvyz56EPeuC+4h
-         d+vmrVkhN7NcJMGrFaTshyNMWuC1QYvTwVfHATaDRc94OiyV5Z92erkM7gJ5siUr+GsX
-         +0vD+NirsdRRePvnZ7LD3KfZgyuhohGf1d9sB/Izx0CIgitQci9szkfVWpcPvzHZyoQG
-         oF4eEhurFBcFiaZCnRo0NXUXp0UGvE28QqP/9H8VG4pVlnLBh5iGameVi3G74rQCRCz/
-         UjSw==
-X-Gm-Message-State: ACrzQf2jJn9/Hs6Qt5Ggky22oFjAmpssHKKdhHK7PLsmhRDRkcATgXjt
-        CQ1gbUvCoNHtm0q6/ZJUon+YVWwD77l02HD7
-X-Google-Smtp-Source: AMsMyM46DTJTSuuP9DKHEnco5O7iTBp1tIwmtk2u/tX203ZYgVIXhOZKuUbIOH6/cBGqYy2PNgPhfA==
-X-Received: by 2002:a05:600c:3b11:b0:3c6:c02d:babb with SMTP id m17-20020a05600c3b1100b003c6c02dbabbmr42613493wms.69.1666617328451;
-        Mon, 24 Oct 2022 06:15:28 -0700 (PDT)
+        bh=yvPcFlw6lM+Z4kH9nDAFT0Arkjdhr1idqjBqC9Ky3Kw=;
+        b=UzKpPOMgekmk1+Qoq1PQPEz9Tw2Q8aWpXa9tr1IE5v6UAvxZln6fvGtc61U9dB+UiM
+         vytr/k959Ktb7UpIwWorYEmVoRFmGtuKT4ke8R0A6goMbuYbrvg8/oGLSMYEPMXQ7qXE
+         LtcPB3tEQVOfRHL4QV6yEbmHV8r4e4OPqSDACgff7MozEzuAQW6BuJp/7TTqIO2Be5xD
+         gUIHWEGC/aUYE5HSvKB8HpBn2UAhbuMinEuCYvOah9xhK7aHM04xUAIwyBpdUiDY+Sgo
+         62advRbcWpLaGLw1icEB6F9KBI3l7JFmeem4l6HGRu7Ca/g1cW5y/GM8qriQmh4cqPYk
+         oxaQ==
+X-Gm-Message-State: ACrzQf2OTRhDVmExEjqz0ncAxKvqUOEU2yGsa2cIE1RGAVT+OZVGqhbz
+        JubRZBusx1j0HLQZ5EIQi/fVYgS0Q0rVm7RH
+X-Google-Smtp-Source: AMsMyM5rIEPKlhEcUBOaCv6On9SyEcsFNO7IYk+unK8cRtGodPkeczvInbtItNUIdeGmjuIUXCmz+w==
+X-Received: by 2002:a7b:c005:0:b0:3c3:6b2a:33bf with SMTP id c5-20020a7bc005000000b003c36b2a33bfmr22193340wmb.167.1666619448014;
+        Mon, 24 Oct 2022 06:50:48 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b7-20020adfe307000000b0022cbf4cda62sm32201847wrj.27.2022.10.24.06.15.27
+        by smtp.gmail.com with ESMTPSA id bj19-20020a0560001e1300b002238ea5750csm11529340wrb.72.2022.10.24.06.50.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 06:15:27 -0700 (PDT)
+        Mon, 24 Oct 2022 06:50:47 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: samsung: remove variable pin
-Date:   Mon, 24 Oct 2022 14:15:27 +0100
-Message-Id: <20221024131527.2156810-1-colin.i.king@gmail.com>
+Subject: [PATCH] net/rds: remove variable total_copied
+Date:   Mon, 24 Oct 2022 14:50:46 +0100
+Message-Id: <20221024135046.2159523-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -70,36 +69,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable pin is just being incremented and it's never used
+Variable total_copied is just being incremented and it's never used
 anywhere else. The variable and the increment are redundant so
 remove it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/rds/message.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-index 625cb1065eaf..78b7bd133566 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-@@ -509,7 +509,6 @@ static int s3c24xx_eint_init(struct samsung_pinctrl_drv_data *d)
- 		struct s3c24xx_eint_domain_data *ddata;
- 		unsigned int mask;
- 		unsigned int irq;
--		unsigned int pin;
+diff --git a/net/rds/message.c b/net/rds/message.c
+index 44dbc612ef54..b47e4f0a1639 100644
+--- a/net/rds/message.c
++++ b/net/rds/message.c
+@@ -366,7 +366,6 @@ static int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *
+ 	struct scatterlist *sg;
+ 	int ret = 0;
+ 	int length = iov_iter_count(from);
+-	int total_copied = 0;
+ 	struct rds_msg_zcopy_info *info;
  
- 		if (bank->eint_type != EINT_TYPE_WKUP)
- 			continue;
-@@ -534,7 +533,7 @@ static int s3c24xx_eint_init(struct samsung_pinctrl_drv_data *d)
- 
- 		irq = bank->eint_offset;
- 		mask = bank->eint_mask;
--		for (pin = 0; mask; ++pin, mask >>= 1) {
-+		for (; mask; mask >>= 1) {
- 			if (irq >= NUM_EINT)
- 				break;
- 			if (!(mask & 1))
+ 	rm->m_inc.i_hdr.h_len = cpu_to_be32(iov_iter_count(from));
+@@ -404,7 +403,6 @@ static int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *
+ 			ret = -EFAULT;
+ 			goto err;
+ 		}
+-		total_copied += copied;
+ 		length -= copied;
+ 		sg_set_page(sg, pages, copied, start);
+ 		rm->data.op_nents++;
 -- 
 2.37.3
 
