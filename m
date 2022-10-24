@@ -2,62 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B59D4FA373F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 16:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CEFECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 16:37:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230248AbiJXQ1g (ORCPT
+        id S234112AbiJXQhj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 12:27:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50406 "EHLO
+        Mon, 24 Oct 2022 12:37:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233294AbiJXQ1B (ORCPT
+        with ESMTP id S234306AbiJXQhL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 12:27:01 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 221F536784;
-        Mon, 24 Oct 2022 08:13:48 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id k8so8081408wrh.1;
-        Mon, 24 Oct 2022 08:13:48 -0700 (PDT)
+        Mon, 24 Oct 2022 12:37:11 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A50636879;
+        Mon, 24 Oct 2022 08:24:55 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id bs21so922108wrb.4;
+        Mon, 24 Oct 2022 08:24:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLvEf6cgm6sbQwXMxy/K8YYDKY0VqrhdGwpIdzPVH88=;
-        b=BXqxvyJx37nuxTzExYLJzUYDjNDJHiRMEWZr5/N0KD/wXa3Z8nqCIAS8Ga5wJBhmjo
-         qernecX4jmVm1Hw4o9kqWvEljFarITLtcT9Pis97MIvK3PdSs78xp6pdeEADH3f4QvYB
-         RDGUJ3dJLj4YpWwFj+woEgB59vg0EcVSzVBYuUGsfxtj8P3QtxXNcjYO1g/R+pAGQRk2
-         yz53bTms6FtOaoW0uk692Rqgcc9zdK5qJf/KKce+qma2zbAzNeUZ+lpmFZMQ6f2BIfy8
-         FLdz0q0yduzNkrCZX7ncd/Fug8Vyb278JdRvc/U1S15QXjNskQEAla4lm6MiiKWo11pv
-         +X2g==
+        bh=OLgc4/4C8v2jDtY+kMWIa5ZzBrBS7jfMBU2/F5ZQ5SM=;
+        b=B71lktSNCiRFQJrKXCWCN4QxfX/TYZNdY8OxVIsKF7q3E08na25TFcl1p34nsMRMan
+         Us3Vg9+DeUik8y0zahnES1/+u2RtqhicAQ9uLYs6A7VS1Rflhq2tGs+V39ktJag6tmix
+         Hjl/dRwIcr6w1puXUndLfmDKFOsAXmQktEt9f/NRegSFnkwFg69NMaHO82yG2EBRllXn
+         Q9biOxW3QzoHrH7EvxtZGl1wfEukyYRxVvDSsYcmXf1NE13LajLCgYTIyZSC9R5mDCws
+         CrtL6pJ5wdUDD14R6XJMfcKF4dmKAZQHbX6BPyJgtbT3T45fk5A7li5ALLXhkaadIX5+
+         vpHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HLvEf6cgm6sbQwXMxy/K8YYDKY0VqrhdGwpIdzPVH88=;
-        b=eVG+KKN5KMBboB9azDd3jy/IJ2a3nTnyIOdeA8ucANEG11dwJ+DqPoaqMtL5FUg7pH
-         eRoJi9fHF+mGhTv35TFSIkYs/FfzZ6xtnXHAQc8m/dhd8v+YNPX2pPK3YBlbXTjQRq62
-         F6WsMQV5PIU0lZIY40rqE6wO2BJLtwv1kP+NnhReUSjFJe3gbm16547mf/HCscLIWIe0
-         /HA6HinBWN9FXw7dLGSyuWpqFpV9z964747ulM4F1JpveTZWtZy/NZgexJtd1ZPU+fEy
-         6aZdRizqKseCm1C39M/k5empoRKYvzx5YxiKUlK2yYa9vk6g4jLZ1Yh17mnU1/3p4+82
-         IL5Q==
-X-Gm-Message-State: ACrzQf0WzDCFAQwv0a8yuC8VQSDr5qac2+v2bVQ3dJAdICB92crVkS4Q
-        DjwEeWZ6r9pFAZWI+KSDu08oYBwct2yQdKDQ
-X-Google-Smtp-Source: AMsMyM5u1eInNT1r9xcmMJ5uXkwfkGtcne6ly9VzSeiUg9N5Tp/rAgzc+v1zRziRe+O4HB8npZ25Qw==
-X-Received: by 2002:a5d:5503:0:b0:236:1722:845d with SMTP id b3-20020a5d5503000000b002361722845dmr15307415wrv.351.1666621795315;
-        Mon, 24 Oct 2022 07:29:55 -0700 (PDT)
+        bh=OLgc4/4C8v2jDtY+kMWIa5ZzBrBS7jfMBU2/F5ZQ5SM=;
+        b=AiXSEmtumLyTjFmGYKNAS3d98/fR7cxbzk4L1Cw9hooP5ivwNzUiB5Qdv+Uku7xgBQ
+         e8Ho6OOW2vBC2QrIXGcquJ3OlyO/QQqWUjX7AEvGwApJ2jCSPo3oqp8GAZU9gLwiRQw3
+         SBFkhtaptRX8UFWTQ0xnxyesdS517qG+JGQZRjYg42vpolGp1lAqAOSyw/MOZnjDc7hx
+         Yc1X1adjZ8HAAz+h1txmBdWi++sG5RlPpz6fgcUXSD5q0HfNscbzsVOgl5ibWcZPK/JA
+         DBFtwN7KI9fJSHZhvNFjYX2sWmJwzI1iXvCErqDSsgWLDKBIq7Gss8hKNbr6ei5rn2od
+         n4iQ==
+X-Gm-Message-State: ACrzQf2b6fJQHsCWVkGCVI0Odf6/RErU14WProTOmiEVMhrQs1COfB5D
+        OYIUR/09V0+HYNFUwy0V60eR3bVUuQnlr1ZU
+X-Google-Smtp-Source: AMsMyM74x8Xq7pcPJv3wMuHY0rzfdbCS1si0suzLihSkp26iytP0gSH5VGVeWMKinACC1WYjKtXVKA==
+X-Received: by 2002:adf:dc8a:0:b0:236:6372:551e with SMTP id r10-20020adfdc8a000000b002366372551emr7300862wrj.41.1666624436138;
+        Mon, 24 Oct 2022 08:13:56 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d12-20020adfa40c000000b0022ca921dc67sm26037895wra.88.2022.10.24.07.29.54
+        by smtp.gmail.com with ESMTPSA id az27-20020a05600c601b00b003c6c2ff7f25sm181093wmb.15.2022.10.24.08.13.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 07:29:54 -0700 (PDT)
+        Mon, 24 Oct 2022 08:13:55 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Cai Huoqing <cai.huoqing@linux.dev>,
-        linux-media@vger.kernel.org
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Slark Xiao <slark_xiao@163.com>, linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: dvb-core: remove variable n, turn for-loop to while-loop
-Date:   Mon, 24 Oct 2022 15:29:54 +0100
-Message-Id: <20221024142954.2162920-1-colin.i.king@gmail.com>
+Subject: [PATCH] media: saa7164: remove variable cnt
+Date:   Mon, 24 Oct 2022 16:13:54 +0100
+Message-Id: <20221024151354.2166343-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,38 +66,53 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable n is just being incremented and it's never used
+Variable cnt is just being incremented and it's never used
 anywhere else. The variable and the increment are redundant so
-remove it. This allows the for-loop to be replaced with a
-while-loop.
+remove it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/dvb-core/dvb_demux.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/pci/saa7164/saa7164-core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/dvb-core/dvb_demux.c b/drivers/media/dvb-core/dvb_demux.c
-index 83cc32ad7e12..398c86279b5b 100644
---- a/drivers/media/dvb-core/dvb_demux.c
-+++ b/drivers/media/dvb-core/dvb_demux.c
-@@ -233,7 +233,7 @@ static int dvb_dmx_swfilter_section_copy_dump(struct dvb_demux_feed *feed,
- {
- 	struct dvb_demux *demux = feed->demux;
- 	struct dmx_section_feed *sec = &feed->feed.sec;
--	u16 limit, seclen, n;
-+	u16 limit, seclen;
+diff --git a/drivers/media/pci/saa7164/saa7164-core.c b/drivers/media/pci/saa7164/saa7164-core.c
+index d5f32e3ff544..01d75ef2342d 100644
+--- a/drivers/media/pci/saa7164/saa7164-core.c
++++ b/drivers/media/pci/saa7164/saa7164-core.c
+@@ -352,7 +352,7 @@ static void saa7164_work_enchandler(struct work_struct *w)
+ 		container_of(w, struct saa7164_port, workenc);
+ 	struct saa7164_dev *dev = port->dev;
  
- 	if (sec->tsfeedp >= DMX_MAX_SECFEED_SIZE)
- 		return 0;
-@@ -262,7 +262,7 @@ static int dvb_dmx_swfilter_section_copy_dump(struct dvb_demux_feed *feed,
- 	/* to be sure always set secbuf */
- 	sec->secbuf = sec->secbuf_base + sec->secbufp;
+-	u32 wp, mcb, rp, cnt = 0;
++	u32 wp, mcb, rp;
  
--	for (n = 0; sec->secbufp + 2 < limit; n++) {
-+	while (sec->secbufp + 2 < limit) {
- 		seclen = section_length(sec->secbuf);
- 		if (seclen <= 0 || seclen > DMX_MAX_SECTION_SIZE
- 		    || seclen + sec->secbufp > limit)
+ 	port->last_svc_msecs_diff = port->last_svc_msecs;
+ 	port->last_svc_msecs = jiffies_to_msecs(jiffies);
+@@ -405,7 +405,6 @@ static void saa7164_work_enchandler(struct work_struct *w)
+ 
+ 		saa7164_work_enchandler_helper(port, rp);
+ 		port->last_svc_rp = rp;
+-		cnt++;
+ 
+ 		if (rp == mcb)
+ 			break;
+@@ -429,7 +428,7 @@ static void saa7164_work_vbihandler(struct work_struct *w)
+ 		container_of(w, struct saa7164_port, workenc);
+ 	struct saa7164_dev *dev = port->dev;
+ 
+-	u32 wp, mcb, rp, cnt = 0;
++	u32 wp, mcb, rp;
+ 
+ 	port->last_svc_msecs_diff = port->last_svc_msecs;
+ 	port->last_svc_msecs = jiffies_to_msecs(jiffies);
+@@ -481,7 +480,6 @@ static void saa7164_work_vbihandler(struct work_struct *w)
+ 
+ 		saa7164_work_enchandler_helper(port, rp);
+ 		port->last_svc_rp = rp;
+-		cnt++;
+ 
+ 		if (rp == mcb)
+ 			break;
 -- 
 2.37.3
 
