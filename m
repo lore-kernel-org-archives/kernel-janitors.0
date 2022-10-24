@@ -2,94 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 061E4C38A2D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 07:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76921C38A2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 11:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbiJXHbc (ORCPT
+        id S229744AbiJXLeX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 03:31:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37158 "EHLO
+        Mon, 24 Oct 2022 07:34:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbiJXHbb (ORCPT
+        with ESMTP id S230426AbiJXLeF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 03:31:31 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C00D14DB42;
-        Mon, 24 Oct 2022 00:31:10 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 7075332002F9;
-        Mon, 24 Oct 2022 03:31:06 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 24 Oct 2022 03:31:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1666596666; x=
-        1666683066; bh=Jjbu9JpIyS5CWKze1H/WOBDw+6BrnxDllrzE32pyM2A=; b=V
-        8buIz1jixNkr35PMRGseRhW44dRYrPEwOxEYO9BX2M4O9X8EBWP80wZUAPdzIhTS
-        6Z3ODm20WXMWoVDbbat6zBwSjdwOLag4fCoeoqUOwHrVvmTOvlhmftovFpDwWa+A
-        p1ci8MsyqQWs56tfrQ9xIIha5co9nOr1kVqjf0dXBdBN5x+Xu2a8d9g7tOo07FYP
-        U1gZfm7MosCZW2BNe6bYdeIF0rbH81NsOIfL7ihwlZDGr+hO3wt9DGtCDPv8h2BX
-        yzy9GfT6wfXHoWrdMGd6rXu8vxwT5qsS50pChylVtk0EiAtnwZX3jHJQnXP4as92
-        5Gppmo9kBmr2n53teijcA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1666596666; x=
-        1666683066; bh=Jjbu9JpIyS5CWKze1H/WOBDw+6BrnxDllrzE32pyM2A=; b=e
-        xqIxGFS54BYZ0dII9pSZBFttWOx9RNcCB63ydbcRqXmKBv2TM6zy0bbyAnhH1CUO
-        g3cSFmuAWmCQ0Q0iBDKvWA+6xdZp15Rv5aSf5jVL/BEVRYKxNtH/n17dPaQ1rL/0
-        9frOxLW8vGAUqbKRX4eTl5ggIOGXF8xty+9B6kvTC4+pi5dA8svuZslfQrgcUV43
-        d6od4y5GdaHsJCTeYdjqJIWCxkBNOX7PcA4IXNQHzOEsDXOzTjfXiAOa2bzFsIV9
-        zzgsbs4RRO9EsFKWOnfYa+F70U4kk3U127wFzYxoZUFv1oFMl06q8uudBhdpFjdl
-        VcE6Y1q3tOc1DeS9g3fjA==
-X-ME-Sender: <xms:OT9WY7p9AJwVQEmqn5ZXnIPgt-smgsXb5avN3HyEEYeyIyIu_if8WA>
-    <xme:OT9WY1rAmFitzlJIvgew2I13Lacg-JkZ0IqEsB5nUc_7cI1wvJo9jP6AC7XYFIspV
-    Bxw-9zc38VI4JlZLEw>
-X-ME-Received: <xmr:OT9WY4MaM0xUrkmVVKz43JUcFssysOEz7n5RSPxhNAFuATdcQMtf7STAfur48bK4fel-6w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgedtfedguddvfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvfevjghfuffkffggtgfgofesthekredtredtjeenucfhrhhomhepmhgr
-    gihimhgvsegtvghrnhhordhtvggthhenucggtffrrghtthgvrhhnpeetfeehfefgueejud
-    fhueegffelteeuuedvhfelhfefjeetjefhtdfftdfgvdejleenucevlhhushhtvghrufhi
-    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrth
-    gvtghh
-X-ME-Proxy: <xmx:OT9WY-5nO6tFm5SivglfFrYHBt0iUdGKW9Sf0SKgBPf4PbnkacQ_pg>
-    <xmx:OT9WY67YVrfPNNn-QH2hxcmL4ZV5qVkOS-8ebT7z0ZchPKNb22TTnw>
-    <xmx:OT9WY2gy9TuqChiVkvAWP3QL0Aq3Sa3kvL5KUD7sVz_6jvgkrA1_ZA>
-    <xmx:Oj9WY5TBSuMD22MflRmdFav_7arvBkIZ8u8G3268iypECFgAQjEj-g>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Oct 2022 03:31:05 -0400 (EDT)
-From:   maxime@cerno.tech
-To:     Maxime Ripard <mripard@kernel.org>,
-        dri-devel@lists.freedesktop.org,
+        Mon, 24 Oct 2022 07:34:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 619326706F;
+        Mon, 24 Oct 2022 04:33:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1B79061253;
+        Mon, 24 Oct 2022 11:32:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD4CC433D6;
+        Mon, 24 Oct 2022 11:32:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666611170;
+        bh=EkBkVpQtB/kZdOQ1nJKGX43C3dc/bTxKkYkyohDcZ/o=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=tvbIDxdrn8HHp4/NQKMkiQWJ0IP3+CcRVfuWNxVXU4+jowZPkGZDxi2824j5JhnwQ
+         jgSH5ji30+thUimi8QhgUsVv2RA+gNU1rfdcb4SKpcNRJ9D1+VyypCXU11XpSDWGnB
+         wpIcKjqHeoy4TKG++cJhVOsJzFUTi29PSyaG/S70iW0+fFK24nKmfjSm2ETHA/zKQr
+         0IiJT5oJUb6wlqnG7GOhcsHE5hj9qI6dSDH2291Cz/w68FHHGSai+z25wdyyoalpI7
+         UkO+KkmKvH+A2LQv5Ks76DUcgLC0XRJGlubZrSgXmmoQu/THsW0+XhEj01SpvPk9ly
+         CnpPXhN8NAyLg==
+From:   Leon Romanovsky <leon@kernel.org>
+To:     linux-rdma@vger.kernel.org,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
         Colin Ian King <colin.i.king@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>
+        Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20221021084035.65367-1-colin.i.king@gmail.com>
-References: <20221021084035.65367-1-colin.i.king@gmail.com>
-Subject: Re: (subset) [PATCH] drm/vc4: Fix spelling mistake "mmaping" -> "mmapping"
-Message-Id: <166659662709.12501.1270368575435453931.b4-ty@cerno.tech>
-Date:   Mon, 24 Oct 2022 09:30:27 +0200
+In-Reply-To: <20221021172611.26763-1-colin.i.king@gmail.com>
+References: <20221021172611.26763-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] RDMA/hw/qib/qib_tx: Remove variable n
+Message-Id: <166661116602.858492.5242965082224048261.b4-ty@kernel.org>
+Date:   Mon, 24 Oct 2022 14:32:46 +0300
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.1
+X-Mailer: b4 0.11.0-dev-87e0e
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 21 Oct 2022 09:40:35 +0100, Colin Ian King wrote:
-> There are a couple of spelling mistakes in DRM_DEBUG messages. Fix them.
+On Fri, 21 Oct 2022 18:26:11 +0100, Colin Ian King wrote:
+> The variable n being incremented but it is never referenced,
+> it is redundant and can be removed.
 > 
 > 
 
-Applied to drm/drm-misc (drm-misc-next).
+Applied, thanks!
 
-Thanks!
-Maxime
+[1/1] RDMA/hw/qib/qib_tx: Remove variable n
+      https://git.kernel.org/rdma/rdma/c/d0b9f28f0da280
+
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
