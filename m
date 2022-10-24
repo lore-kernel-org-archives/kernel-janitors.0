@@ -2,62 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CEFECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 16:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E83FFA3746
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 16:50:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234112AbiJXQhj (ORCPT
+        id S232227AbiJXQuW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 12:37:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41126 "EHLO
+        Mon, 24 Oct 2022 12:50:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234306AbiJXQhL (ORCPT
+        with ESMTP id S235565AbiJXQtv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 12:37:11 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A50636879;
-        Mon, 24 Oct 2022 08:24:55 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id bs21so922108wrb.4;
-        Mon, 24 Oct 2022 08:24:54 -0700 (PDT)
+        Mon, 24 Oct 2022 12:49:51 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C1A4B845;
+        Mon, 24 Oct 2022 08:33:12 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id b20-20020a05600c4e1400b003cc28585e2fso3571527wmq.1;
+        Mon, 24 Oct 2022 08:33:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OLgc4/4C8v2jDtY+kMWIa5ZzBrBS7jfMBU2/F5ZQ5SM=;
-        b=B71lktSNCiRFQJrKXCWCN4QxfX/TYZNdY8OxVIsKF7q3E08na25TFcl1p34nsMRMan
-         Us3Vg9+DeUik8y0zahnES1/+u2RtqhicAQ9uLYs6A7VS1Rflhq2tGs+V39ktJag6tmix
-         Hjl/dRwIcr6w1puXUndLfmDKFOsAXmQktEt9f/NRegSFnkwFg69NMaHO82yG2EBRllXn
-         Q9biOxW3QzoHrH7EvxtZGl1wfEukyYRxVvDSsYcmXf1NE13LajLCgYTIyZSC9R5mDCws
-         CrtL6pJ5wdUDD14R6XJMfcKF4dmKAZQHbX6BPyJgtbT3T45fk5A7li5ALLXhkaadIX5+
-         vpHg==
+        bh=h2f/Wq6hw/Zz7h01CyJIfhHfe2/k6p4+o75M8dITN0c=;
+        b=PX5nZva0lV0pnt32fzYeW2dTGOsI4CM2ZxntnUoEx0OMwo5Vx+a/05szDGQSsLlw/d
+         NgdIFIoo/5V7jrbaNK71a6S63upr3q/X/dJsUMZD8rT28OutMaizuWtrgzrthsVweccJ
+         9MT8hnSrNJw2IK2idnWDtTqxEfg5Wn5Vkab4z8qC/68fH7YjsiZhxUrzb/J+SIPG4efn
+         3NnClaiVR7R+QsVxlapoXrpLeFuElCVAQnFoY29e/TMPKIrI3SCji4c270e0fdP8wPpR
+         Giv6KD8cQWE4p2iiXOxjCmoxQIMfG6WEfT1tCBWpzGMvXjmvI93eBeUYcxOPj/p4IDJ1
+         zTPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OLgc4/4C8v2jDtY+kMWIa5ZzBrBS7jfMBU2/F5ZQ5SM=;
-        b=AiXSEmtumLyTjFmGYKNAS3d98/fR7cxbzk4L1Cw9hooP5ivwNzUiB5Qdv+Uku7xgBQ
-         e8Ho6OOW2vBC2QrIXGcquJ3OlyO/QQqWUjX7AEvGwApJ2jCSPo3oqp8GAZU9gLwiRQw3
-         SBFkhtaptRX8UFWTQ0xnxyesdS517qG+JGQZRjYg42vpolGp1lAqAOSyw/MOZnjDc7hx
-         Yc1X1adjZ8HAAz+h1txmBdWi++sG5RlPpz6fgcUXSD5q0HfNscbzsVOgl5ibWcZPK/JA
-         DBFtwN7KI9fJSHZhvNFjYX2sWmJwzI1iXvCErqDSsgWLDKBIq7Gss8hKNbr6ei5rn2od
-         n4iQ==
-X-Gm-Message-State: ACrzQf2b6fJQHsCWVkGCVI0Odf6/RErU14WProTOmiEVMhrQs1COfB5D
-        OYIUR/09V0+HYNFUwy0V60eR3bVUuQnlr1ZU
-X-Google-Smtp-Source: AMsMyM74x8Xq7pcPJv3wMuHY0rzfdbCS1si0suzLihSkp26iytP0gSH5VGVeWMKinACC1WYjKtXVKA==
-X-Received: by 2002:adf:dc8a:0:b0:236:6372:551e with SMTP id r10-20020adfdc8a000000b002366372551emr7300862wrj.41.1666624436138;
-        Mon, 24 Oct 2022 08:13:56 -0700 (PDT)
+        bh=h2f/Wq6hw/Zz7h01CyJIfhHfe2/k6p4+o75M8dITN0c=;
+        b=n13+gnGF/zr6A2G6ovmJTArrkOejb/UUDwNtB+S37b2e1Ui6Oa5y9zw3wbXqzLJ3Vm
+         dKvXu2pEnKWUQT+qznGqFs/Uj5N8Ah227qhw9Z6mUJA6mw/faBsS6TJ2fTbTLyhB/MB8
+         rIc428MWsdNeQ2UgwDNJX/Csg6l8Bc1GlSdWlPl+lPOH5F0Rwq1xmo2BWz4tFe5mYmMo
+         3hSgJ0nVCAOA00ANt7JoXV9LXPrETtQXouREQA8NLJD4t5WV8veTv6+392+7xGayPpTj
+         F5mBiE7GLPMyd4xVPemjsRJXbxcdCy326JSgrAqJDQYotXq0tvdBsnvDVEaBAozrqw5O
+         5QBg==
+X-Gm-Message-State: ACrzQf1AsWk7SSsrfEOySIQj0SIDRenqyr7awDzGjoah0zuXYMiljrTz
+        gm3sl/pANkZHeaPw5wRP/RwXwufnhuQUpYmE
+X-Google-Smtp-Source: AMsMyM4vYNbitR0d5EYNcQejuq2Bm6qAgLHpXEvE3v/gmJZw3RhGH5/7o4JA86RGgoLst3OHTYndtg==
+X-Received: by 2002:a05:600c:1906:b0:3c6:f83e:d15f with SMTP id j6-20020a05600c190600b003c6f83ed15fmr27287852wmq.205.1666621080888;
+        Mon, 24 Oct 2022 07:18:00 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id az27-20020a05600c601b00b003c6c2ff7f25sm181093wmb.15.2022.10.24.08.13.55
+        by smtp.gmail.com with ESMTPSA id d9-20020a5d6dc9000000b002364c77bc96sm10691434wrz.33.2022.10.24.07.18.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 08:13:55 -0700 (PDT)
+        Mon, 24 Oct 2022 07:18:00 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Slark Xiao <slark_xiao@163.com>, linux-media@vger.kernel.org
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        linux-ide@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: saa7164: remove variable cnt
-Date:   Mon, 24 Oct 2022 16:13:54 +0100
-Message-Id: <20221024151354.2166343-1-colin.i.king@gmail.com>
+Subject: [PATCH] ata: sata_dwc_460ex: remove variable num_processed
+Date:   Mon, 24 Oct 2022 15:17:59 +0100
+Message-Id: <20221024141759.2161963-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,53 +65,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable cnt is just being incremented and it's never used
+Variable num_processed is just being incremented and it's never used
 anywhere else. The variable and the increment are redundant so
 remove it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/pci/saa7164/saa7164-core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/ata/sata_dwc_460ex.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/media/pci/saa7164/saa7164-core.c b/drivers/media/pci/saa7164/saa7164-core.c
-index d5f32e3ff544..01d75ef2342d 100644
---- a/drivers/media/pci/saa7164/saa7164-core.c
-+++ b/drivers/media/pci/saa7164/saa7164-core.c
-@@ -352,7 +352,7 @@ static void saa7164_work_enchandler(struct work_struct *w)
- 		container_of(w, struct saa7164_port, workenc);
- 	struct saa7164_dev *dev = port->dev;
+diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
+index e3263e961045..fd699c5bfc34 100644
+--- a/drivers/ata/sata_dwc_460ex.c
++++ b/drivers/ata/sata_dwc_460ex.c
+@@ -472,7 +472,7 @@ static irqreturn_t sata_dwc_isr(int irq, void *dev_instance)
+ 	struct ata_queued_cmd *qc;
+ 	unsigned long flags;
+ 	u8 status, tag;
+-	int handled, num_processed, port = 0;
++	int handled, port = 0;
+ 	uint intpr, sactive, sactive2, tag_mask;
+ 	struct sata_dwc_device_port *hsdevp;
+ 	hsdev->sactive_issued = 0;
+@@ -618,9 +618,7 @@ static irqreturn_t sata_dwc_isr(int irq, void *dev_instance)
+ 	dev_dbg(ap->dev, "%s ATA status register=0x%x\n", __func__, status);
  
--	u32 wp, mcb, rp, cnt = 0;
-+	u32 wp, mcb, rp;
- 
- 	port->last_svc_msecs_diff = port->last_svc_msecs;
- 	port->last_svc_msecs = jiffies_to_msecs(jiffies);
-@@ -405,7 +405,6 @@ static void saa7164_work_enchandler(struct work_struct *w)
- 
- 		saa7164_work_enchandler_helper(port, rp);
- 		port->last_svc_rp = rp;
--		cnt++;
- 
- 		if (rp == mcb)
- 			break;
-@@ -429,7 +428,7 @@ static void saa7164_work_vbihandler(struct work_struct *w)
- 		container_of(w, struct saa7164_port, workenc);
- 	struct saa7164_dev *dev = port->dev;
- 
--	u32 wp, mcb, rp, cnt = 0;
-+	u32 wp, mcb, rp;
- 
- 	port->last_svc_msecs_diff = port->last_svc_msecs;
- 	port->last_svc_msecs = jiffies_to_msecs(jiffies);
-@@ -481,7 +480,6 @@ static void saa7164_work_vbihandler(struct work_struct *w)
- 
- 		saa7164_work_enchandler_helper(port, rp);
- 		port->last_svc_rp = rp;
--		cnt++;
- 
- 		if (rp == mcb)
- 			break;
+ 	tag = 0;
+-	num_processed = 0;
+ 	while (tag_mask) {
+-		num_processed++;
+ 		while (!(tag_mask & 0x00000001)) {
+ 			tag++;
+ 			tag_mask <<= 1;
 -- 
 2.37.3
 
