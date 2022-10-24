@@ -2,114 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E72C67871
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 20:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4DBC38A2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 20:23:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231938AbiJXUIG (ORCPT
+        id S234066AbiJXUXZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 16:08:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43492 "EHLO
+        Mon, 24 Oct 2022 16:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231857AbiJXUHq (ORCPT
+        with ESMTP id S233085AbiJXUWn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 16:07:46 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC58457E30;
-        Mon, 24 Oct 2022 11:27:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1666635988;
-        bh=AHsSRYOn624aglQzBbLTGeMMeK4dqdkEWBCmG0Qjo0c=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=Xb99oPI3Bv8y0+6+AzNe69kBOwgCKvpWHOeW/bYLY3GZmZukYvqliSJMnJYILnc1/
-         ReV2JzC2EHdkXqGrtPwmxCimb+JTYTMK/b2niqBb0SwtI6P8ZklMTq9KvA+hwOHpXe
-         zu+HmZt/61Z8/NgrHkacRPfShKyaD1K4yamtETfU=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.20.60] ([92.116.136.30]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MFsUv-1osH8Z1Abf-00HKCF; Mon, 24
- Oct 2022 20:21:12 +0200
-Message-ID: <703cb0e6-a98a-a8cf-880b-c86a456f57b2@gmx.de>
-Date:   Mon, 24 Oct 2022 20:21:11 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH] MAINTAINERS: adjust entry after renaming parisc serial
- driver
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-parisc@vger.kernel.org
+        Mon, 24 Oct 2022 16:22:43 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF2FCEBD;
+        Mon, 24 Oct 2022 11:38:23 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id j15so7007872wrq.3;
+        Mon, 24 Oct 2022 11:38:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dJnt2GP1pm08BDpQHAhmkmMOzHCfFoZgxhdL+wvVQI0=;
+        b=gtZvIN8K3k7r1uHwhEc7+/ToiepvXrRLoYCsg65dKsJr7+zp+7Rd4BFPZHYq6xmI/s
+         U+BDXTd/r9PFSVMu/yjZ4Sf07IW0+jlWi5BvINZdqDm7Y7z4eQR2TmQ6RwSPTAdoTQQ9
+         jlARxJ/PCtHlhQUtJC0b66o3+iM/th1/2R2yyBOOVgiXpWltxMzpg0iH2T11K9+PdsH/
+         E6CT8BeZgFfsW1cADQNx54JCen+tOKsRze5ykzfigG/1Lghwvzyt39qVHE4SUCPGAbUx
+         p2pN82oHtzogmLIxs9vJScr2XN1xZHXZYehB8JEPVtddts4gJdARWTKXjZstKe6ZfFVD
+         6Xqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dJnt2GP1pm08BDpQHAhmkmMOzHCfFoZgxhdL+wvVQI0=;
+        b=3JwS7y9uEWRqhjI6bK7MrBztLA6eyfQsKvfY9/KUpJ7wx5uSQyY/ThkqskjTFFBWhC
+         9tcHyT6Q6cOIW77HE9pU6buqxSJH9WzkpGAX7+ySP1UzRF+qmyAGeerCGi2ZpaLTCCF4
+         s5yY/6VCnXIBO4yqr+qijCmv2mDxONEi9+ZdfjYCkrLish3XsfH4nSVQq0rYgFXtu5Tp
+         KyrVrgjUXgVQPnx1d8edJcLPSAk2kZZyT86FygIzihdgi4oPoMI4XlqbTJkBvEZELco3
+         Y5ppkKyAiAFXs/Cp8rsG+ZZxWQSlRAPxR6rRSfVeT+Uqmavv0Z/H3PWMifaW5SW0Y2lH
+         4qag==
+X-Gm-Message-State: ACrzQf2eUFmVHWCjybvIqRMM+WOR3uI6egmJT63egOV4LuwMgnJQS9Vu
+        Ka3GwU7ksgQPz50FD7we7kYUL0YCm+CdEVxo
+X-Google-Smtp-Source: AMsMyM4QQftM+1SbPAw/eMbzp1P4w7OUi/TXYHqvMABQeyIe0BWWf6rzp6zV9CjBu1IrRbbVd+x63Q==
+X-Received: by 2002:adf:d843:0:b0:236:6231:113b with SMTP id k3-20020adfd843000000b002366231113bmr7525187wrl.42.1666622102639;
+        Mon, 24 Oct 2022 07:35:02 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id r2-20020adfe682000000b002366fb99cdasm3413379wrm.50.2022.10.24.07.35.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Oct 2022 07:35:02 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221024132223.9697-1-lukas.bulwahn@gmail.com>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <20221024132223.9697-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:X+RkhzcAKeJ4LaBz452qdQRxK7w7nMwo0/N8QXvkyA8rTCrO51P
- ykRVIZVpAJLLv93RHCxL/KHLh4Gh8aVPmN0BVFkgbdf6cuMI64plWRW2ZUiqJqyfaQleS8j
- m+/XwtREHojiolHMxnQo335Q/ksZ65VvtAaduvY91Mv0jvSQOTFNhxPJ8ZU+U4E18DqrHi2
- bQo2nu3DamlzL2sqXwlwA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ckw8bMAx+o0=:buDpt2fWNcjgKDH3O+qEgm
- zxBePrRCZyai4uxYvYVr/TmdkAE5uO+TV5qZfRsqjFX2xOfmTCJWlAIwWrs4ncsjqS/conkmR
- QQtzxJwo6rJ6FyEvBiNwZEsLh+OI+WyUfb+fsIH9YOC+wZhuWD+bV2qmkX2Cl0644golveWt8
- REy51jWubVH8Y1lXSyPaQcEMzo1Fiso8M4bseFnVZKgdJ8wPqvdAG/drQ0fvDxTdL0kLyv4mT
- VpAgJALpDduI2KCxicF8f89ZZg9H7MSizAWkOROqlxlOh4PpAa94e3GHv/HJa0ucTlBkvubDB
- CsNMi/FNQE8zkvdvL1PMth1KcuVceFv4qtMEuQwJeKylS07QWchZGo9y9qVQR3lMsGiJ+4olI
- 9meyWIBVOmAkrQE9Vs3oXFWukuizYu6pR78FjXvI9tB7J6KMi6n+5rLeT80F0Um3TbTv8FvmC
- 3Tev97gzjR1nmfBDS/reHi4qjkbs0pBIUtyQU5Z4JFZRRIzeMPdvj5pBLhaw0yf4iCr3h60Zc
- +xJQppc+o4x/YHGdbciF0xPBr8jf+sMksmZ7bVOFwWXrr5QIXThD/LW6S6dPZFGZvO9MF6omR
- BgEriNDTvvdzc9ceQOoEFilLS0cJs9NP5Gl7xWmXFH+kluDWQ7xqAEqtF05ZuqdgMUR+yuSXr
- s9mLaRs1KHGCek/TeX0yoPXOMAx7PjYGJCKc/UQ2oSIMXVDJWrc0C6dfzr+sfY/kDh3yxNKyb
- TaPdHBVYMVyDtn8QzLMICLzjPsetsbbE55eE2+i5LpTE10d8tf3WNaqtmILNvYSwr6+L/lc3s
- sWS2yAAIx4y8/it+Eua1gEB1rfCv8Un6ZRnzKe0Wueml4kXTgrdTkiIEs/6ia87GInnFv9Iuq
- X+daJOzuRmyt0TvmDAzxmb066G5C/xGBUb6ACyE8J4W+QO8nXb4hE07LbeoEvql+jy54AdHFL
- duC++sZB94m3AI7GM/f0oXVcQchNjgtuhAgj67sVOtE4ehMcAEhRHa0IbwiWr+DOIXNF6jEWa
- aVigZ+4U3X1HquQiXlxndUGqS+jPaJeD3fJXNdb4yQ+2GI81TzNvilhVjJthrFTUXuWx1rSMS
- IDZxX3zHleOWFV9VEwjo82HX8R0eiAqkBJdSwtunopeFMhUpi37hH3ZkLGh1RCaR6CpREn402
- WprwsTPvFxkPFTGvdqCzxmK9ro+Y8QCwE9cKOtGIVytwS454m+Adzj6t9tW+IFUPXBH6daBmC
- oZsfDX8sxeXoJciYCGqkXDUw2vB1VppMPq3rE1bYmzW7iSzh+Rmist4khJOVYPTyIm65ETP84
- afFNxCUF/xzdRMq/HF20L8E4iFSrAZxOoxDhIza9O9w/Jhv44w0cdG+d/9KB9Mrvnf5mDJpUv
- hsrNEJuXOW2Yqu9eIaRLrq8rRZX/d1QtTSZ2elZ3rNPQBj26zcoG0nd3nyiznpxTHIDTrDNLs
- 3fs2seKkapg8375H6gN7s/pZLzdOXKWtD0xj+AcCk2KqIainPX/hCtgzzgIY4kcYwVdVySIYT
- DfWcEEtyehAZolUgVAixKU5vCJKPfl/hujgcFDbMtQxBT
+Subject: [PATCH] net: dl2k: remove variable tx_use
+Date:   Mon, 24 Oct 2022 15:35:01 +0100
+Message-Id: <20221024143501.2163720-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/24/22 15:22, Lukas Bulwahn wrote:
-> Commit 9e4e2ce1a78e ("parisc/serial: Rename 8250_gsc.c to 8250_parisc.c"=
-)
-> renames the parisc serial driver file, but does not adjust the entry in
-> MAINTAINERS.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains abou=
-t a
-> broken reference.
->
-> Repair this file reference in PARISC ARCHITECTURE.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Variable tx_use is just being incremented and it's never used
+anywhere else. The variable and the increment are redundant so
+remove it.
 
-Nice catch, Lukas!
-Applied to the parisc git tree.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/dlink/dl2k.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
-Helge
-
-
-> ---
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 91d95924cff4..0c8198b3329a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15637,7 +15637,7 @@ F:	drivers/input/serio/gscps2.c
->   F:	drivers/input/serio/hp_sdc*
->   F:	drivers/parisc/
->   F:	drivers/parport/parport_gsc.*
-> -F:	drivers/tty/serial/8250/8250_gsc.c
-> +F:	drivers/tty/serial/8250/8250_parisc.c
->   F:	drivers/video/console/sti*
->   F:	drivers/video/fbdev/sti*
->   F:	drivers/video/logo/logo_parisc*
+diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
+index 2c67a857a42f..db6615aa921b 100644
+--- a/drivers/net/ethernet/dlink/dl2k.c
++++ b/drivers/net/ethernet/dlink/dl2k.c
+@@ -814,7 +814,6 @@ rio_free_tx (struct net_device *dev, int irq)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+ 	int entry = np->old_tx % TX_RING_SIZE;
+-	int tx_use = 0;
+ 	unsigned long flag = 0;
+ 
+ 	if (irq)
+@@ -839,7 +838,6 @@ rio_free_tx (struct net_device *dev, int irq)
+ 
+ 		np->tx_skbuff[entry] = NULL;
+ 		entry = (entry + 1) % TX_RING_SIZE;
+-		tx_use++;
+ 	}
+ 	if (irq)
+ 		spin_unlock(&np->tx_lock);
+-- 
+2.37.3
 
