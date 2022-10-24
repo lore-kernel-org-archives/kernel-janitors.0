@@ -2,273 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1C0ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 14:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D760BC38A2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 14:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235019AbiJXOwE (ORCPT
+        id S234607AbiJXOwm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 10:52:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43130 "EHLO
+        Mon, 24 Oct 2022 10:52:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230445AbiJXOvr (ORCPT
+        with ESMTP id S233030AbiJXOwQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 10:51:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E302615FD5
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 06:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1666618065;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dTJ78Wi/Bn4a7gXM5FhlU/stXOGbP+8r4N7PUdsa5sU=;
-        b=Mf4WMdpdV51eBlYCEeIZuxsFXVlXTS/yhxP1+PPBUq/tPkytxpcIEZ065lABhiDBFMfCfv
-        0ri3nzR8D5jYeZIOEWFI7I9dDsRmWql1kvuTp74PWTB8WL7IY8N0VFwYA8Flhjfxi3Xy6h
-        GTpdYEiwpzVEeVz55rkQpRq53Cv3kdI=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-124-2tYYGn9KMXGG3v9Fv5RZXQ-1; Mon, 24 Oct 2022 09:27:44 -0400
-X-MC-Unique: 2tYYGn9KMXGG3v9Fv5RZXQ-1
-Received: by mail-ed1-f70.google.com with SMTP id v13-20020a056402348d00b0045d36615696so9633076edc.14
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 06:27:43 -0700 (PDT)
+        Mon, 24 Oct 2022 10:52:16 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 645A9356E2;
+        Mon, 24 Oct 2022 06:29:53 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id v11so6587121wmd.1;
+        Mon, 24 Oct 2022 06:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xC70jAVieGTzMnfL7IzZSmpj/LnjOjc/7R5G039BdH4=;
+        b=cxwnRuee9VdpxGyeEmF8k/HuqMe2jOY2jNiCnas50PQCqNiw1TVLQwe1WX0v/MXQfo
+         GR5sQ0qfyKRsqghWwvF8Ly/JgwWsYP8dishLvgkaS9S986ocrhWh7uxI9ReKikKJmtAv
+         SRbJ9L7b2EmcTxOQ3dsCQk6rOSECeS4oGtbzvh74BY0KwYAh2NsJoO9km72lQ6DFkgFe
+         +8XkcNlii2xPTTxe9ni3ooxJeYRZE1Ez4YIyhJZoqE9CZm24C7IURcwz26RVQIyluF0U
+         kMibKNSnkn7u9VqdCOqq4ye/dBo3Iu/Sz4tbZA9rbJk1kRv5GAr/al/5vM0c2z7MNGcD
+         WJ3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dTJ78Wi/Bn4a7gXM5FhlU/stXOGbP+8r4N7PUdsa5sU=;
-        b=BBTA+R6RTKdeR3QvOwTghW0uniailb5pauExHW6zjhhWRvqvCVSPwHYhPP5Iuq8pzw
-         gIjFOzHbiq0AVIbgZtJxjL9rYNEXx2JwsxCB37IVMtJb++fEWzCc/Sb+FjeMTLmbg7U2
-         PqfvSyWPW8du4fyGMp1uzbfclTwxn8rlWXkUDsYbrnGACsaC3b4NG5VoI/7PPe5Ug0z6
-         J68XdyQPQtpJf1h2L7PikGBPZXpCvoZ+pCUqoH50zzursNaViM/p7OTqrAjAy/jNBb3O
-         w/JlPGacawt4zbf7FB7c0tttS3J0258jPVibrdfaRbQ0Pmrh7SxqsuoAWw6LNifZGapl
-         R0XA==
-X-Gm-Message-State: ACrzQf0i9a6hEaWWrEs6aNtNJrKnOwsH7nsorQ/XzMfnvGyldbIWBBns
-        t30LHyxNPrIEwKXoJp3gj227LEaN15NLr69Lgmc/LY3TpIASrd7+itNplJ0SlpBQViC2Cg/nyIC
-        gtdsA+kD6MTgQUY6yk28UhgjyUmYy
-X-Received: by 2002:a17:906:ef8c:b0:78d:96b9:a0ad with SMTP id ze12-20020a170906ef8c00b0078d96b9a0admr27988619ejb.529.1666618062845;
-        Mon, 24 Oct 2022 06:27:42 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM6PLjdH/SJdBXM7kRQutOhLpzW+wJVl2He++jL7fQe3kHCU8K+TJwxVcv/vyNeVOcmgxY6WUw==
-X-Received: by 2002:a17:906:ef8c:b0:78d:96b9:a0ad with SMTP id ze12-20020a170906ef8c00b0078d96b9a0admr27988610ejb.529.1666618062644;
-        Mon, 24 Oct 2022 06:27:42 -0700 (PDT)
-Received: from [10.40.98.142] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id p17-20020a05640210d100b00461c1804cdasm2100885edu.3.2022.10.24.06.27.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Oct 2022 06:27:42 -0700 (PDT)
-Message-ID: <116e3615-a0fc-3b88-18e1-c03c29bf78fd@redhat.com>
-Date:   Mon, 24 Oct 2022 15:27:41 +0200
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xC70jAVieGTzMnfL7IzZSmpj/LnjOjc/7R5G039BdH4=;
+        b=IWH6jsJ6zjM2g/WQfZoq8fphvR91YgJiIbPQugS76zy9CYwIcMPGQ1sSoY8h4PFbla
+         afg9gKDENnp56XnbA294p5pu5SxcUfZO9Wi8pOimaswU2sfKWdj3DxxxFkuorHg1wOHr
+         4TxF00lMDkYPnSQJaG0aw/fqDDSswjjFep22fqOSxpEPmXjacb/Dnmj57R74EvFUyibL
+         OEEmas2I8qImm775j+AZbn1gKZ7U1i8Cbr9z2ce/la7c8PcQGBWtBQ2zb2qS00+MjiXc
+         GO0ZrkiNTPozCCVJwaX19pVoH3X3i8EdS81X83LLFYrdSO3BFCID34vqPFq4TRod+zc+
+         UHOQ==
+X-Gm-Message-State: ACrzQf0BDwwH6OqbSrTVfg9YKzgIpIpclvBP4QrCM8bQAXfdLKwVY1dP
+        sAz2bCXpeDPkP8TtyaDbIUozj1cysLtWQQ==
+X-Google-Smtp-Source: AMsMyM6DcAgzKC/cIzaK2ZMOgz1RyVjsweCP0E7jveVudP7Itkbi3YwYgpS97bkg0E0rGV4eu1qfNg==
+X-Received: by 2002:a05:600c:4e06:b0:3c6:ce02:ece4 with SMTP id b6-20020a05600c4e0600b003c6ce02ece4mr21217981wmq.58.1666616393256;
+        Mon, 24 Oct 2022 05:59:53 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id h42-20020a05600c49aa00b003a5537bb2besm10734058wmp.25.2022.10.24.05.59.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Oct 2022 05:59:52 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Rasesh Mody <rmody@marvell.com>,
+        Sudarsana Kalluru <skalluru@marvell.com>,
+        GR-Linux-NIC-Dev@marvell.com,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bna: remove variable num_entries
+Date:   Mon, 24 Oct 2022 13:59:51 +0100
+Message-Id: <20221024125951.2155434-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH] platform/x86/amd/pmf: pass the struct by reference
-Content-Language: en-US
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Mark Gross <markgross@kernel.org>
-Cc:     kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221004081019.619193-1-usama.anjum@collabora.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20221004081019.619193-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+Variable num_entries is just being incremented and it's never used
+anywhere else. The variable and the increment are redundant so
+remove it.
 
-On 10/4/22 10:10, Muhammad Usama Anjum wrote:
-> The out structure should be passed by reference instead of passing by
-> value. This saves the extra copy of the structure.
-> 
-> Fixes: 1738061c9ec8 ("platform/x86/amd/pmf: Add support for CnQF")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/brocade/bna/bfa_msgq.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Applied (minus the fixes tag as this is not a bug-fix):
-
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
-
-> ---
->  drivers/platform/x86/amd/pmf/cnqf.c | 92 ++++++++++++++---------------
->  1 file changed, 46 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/amd/pmf/cnqf.c b/drivers/platform/x86/amd/pmf/cnqf.c
-> index 668c7c0fea83..3f9731a2ac28 100644
-> --- a/drivers/platform/x86/amd/pmf/cnqf.c
-> +++ b/drivers/platform/x86/amd/pmf/cnqf.c
-> @@ -158,100 +158,100 @@ int amd_pmf_trans_cnqf(struct amd_pmf_dev *dev, int socket_power, ktime_t time_l
->  	return 0;
->  }
->  
-> -static void amd_pmf_update_trans_data(int idx, struct apmf_dyn_slider_output out)
-> +static void amd_pmf_update_trans_data(int idx, struct apmf_dyn_slider_output *out)
->  {
->  	struct cnqf_tran_params *tp;
->  
->  	tp = &config_store.trans_param[idx][CNQF_TRANSITION_TO_QUIET];
-> -	tp->time_constant = out.t_balanced_to_quiet;
-> +	tp->time_constant = out->t_balanced_to_quiet;
->  	tp->target_mode = CNQF_MODE_QUIET;
->  	tp->shifting_up = false;
->  
->  	tp = &config_store.trans_param[idx][CNQF_TRANSITION_FROM_BALANCE_TO_PERFORMANCE];
-> -	tp->time_constant = out.t_balanced_to_perf;
-> +	tp->time_constant = out->t_balanced_to_perf;
->  	tp->target_mode = CNQF_MODE_PERFORMANCE;
->  	tp->shifting_up = true;
->  
->  	tp = &config_store.trans_param[idx][CNQF_TRANSITION_FROM_QUIET_TO_BALANCE];
-> -	tp->time_constant = out.t_quiet_to_balanced;
-> +	tp->time_constant = out->t_quiet_to_balanced;
->  	tp->target_mode = CNQF_MODE_BALANCE;
->  	tp->shifting_up = true;
->  
->  	tp = &config_store.trans_param[idx][CNQF_TRANSITION_FROM_PERFORMANCE_TO_BALANCE];
-> -	tp->time_constant = out.t_perf_to_balanced;
-> +	tp->time_constant = out->t_perf_to_balanced;
->  	tp->target_mode = CNQF_MODE_BALANCE;
->  	tp->shifting_up = false;
->  
->  	tp = &config_store.trans_param[idx][CNQF_TRANSITION_FROM_TURBO_TO_PERFORMANCE];
-> -	tp->time_constant = out.t_turbo_to_perf;
-> +	tp->time_constant = out->t_turbo_to_perf;
->  	tp->target_mode = CNQF_MODE_PERFORMANCE;
->  	tp->shifting_up = false;
->  
->  	tp = &config_store.trans_param[idx][CNQF_TRANSITION_TO_TURBO];
-> -	tp->time_constant = out.t_perf_to_turbo;
-> +	tp->time_constant = out->t_perf_to_turbo;
->  	tp->target_mode = CNQF_MODE_TURBO;
->  	tp->shifting_up = true;
->  }
->  
-> -static void amd_pmf_update_mode_set(int idx, struct apmf_dyn_slider_output out)
-> +static void amd_pmf_update_mode_set(int idx, struct apmf_dyn_slider_output *out)
->  {
->  	struct cnqf_mode_settings *ms;
->  
->  	/* Quiet Mode */
->  	ms = &config_store.mode_set[idx][CNQF_MODE_QUIET];
-> -	ms->power_floor = out.ps[APMF_CNQF_QUIET].pfloor;
-> -	ms->power_control.fppt = out.ps[APMF_CNQF_QUIET].fppt;
-> -	ms->power_control.sppt = out.ps[APMF_CNQF_QUIET].sppt;
-> -	ms->power_control.sppt_apu_only = out.ps[APMF_CNQF_QUIET].sppt_apu_only;
-> -	ms->power_control.spl = out.ps[APMF_CNQF_QUIET].spl;
-> -	ms->power_control.stt_min = out.ps[APMF_CNQF_QUIET].stt_min_limit;
-> +	ms->power_floor = out->ps[APMF_CNQF_QUIET].pfloor;
-> +	ms->power_control.fppt = out->ps[APMF_CNQF_QUIET].fppt;
-> +	ms->power_control.sppt = out->ps[APMF_CNQF_QUIET].sppt;
-> +	ms->power_control.sppt_apu_only = out->ps[APMF_CNQF_QUIET].sppt_apu_only;
-> +	ms->power_control.spl = out->ps[APMF_CNQF_QUIET].spl;
-> +	ms->power_control.stt_min = out->ps[APMF_CNQF_QUIET].stt_min_limit;
->  	ms->power_control.stt_skin_temp[STT_TEMP_APU] =
-> -		out.ps[APMF_CNQF_QUIET].stt_skintemp[STT_TEMP_APU];
-> +		out->ps[APMF_CNQF_QUIET].stt_skintemp[STT_TEMP_APU];
->  	ms->power_control.stt_skin_temp[STT_TEMP_HS2] =
-> -		out.ps[APMF_CNQF_QUIET].stt_skintemp[STT_TEMP_HS2];
-> -	ms->fan_control.fan_id = out.ps[APMF_CNQF_QUIET].fan_id;
-> +		out->ps[APMF_CNQF_QUIET].stt_skintemp[STT_TEMP_HS2];
-> +	ms->fan_control.fan_id = out->ps[APMF_CNQF_QUIET].fan_id;
->  
->  	/* Balance Mode */
->  	ms = &config_store.mode_set[idx][CNQF_MODE_BALANCE];
-> -	ms->power_floor = out.ps[APMF_CNQF_BALANCE].pfloor;
-> -	ms->power_control.fppt = out.ps[APMF_CNQF_BALANCE].fppt;
-> -	ms->power_control.sppt = out.ps[APMF_CNQF_BALANCE].sppt;
-> -	ms->power_control.sppt_apu_only = out.ps[APMF_CNQF_BALANCE].sppt_apu_only;
-> -	ms->power_control.spl = out.ps[APMF_CNQF_BALANCE].spl;
-> -	ms->power_control.stt_min = out.ps[APMF_CNQF_BALANCE].stt_min_limit;
-> +	ms->power_floor = out->ps[APMF_CNQF_BALANCE].pfloor;
-> +	ms->power_control.fppt = out->ps[APMF_CNQF_BALANCE].fppt;
-> +	ms->power_control.sppt = out->ps[APMF_CNQF_BALANCE].sppt;
-> +	ms->power_control.sppt_apu_only = out->ps[APMF_CNQF_BALANCE].sppt_apu_only;
-> +	ms->power_control.spl = out->ps[APMF_CNQF_BALANCE].spl;
-> +	ms->power_control.stt_min = out->ps[APMF_CNQF_BALANCE].stt_min_limit;
->  	ms->power_control.stt_skin_temp[STT_TEMP_APU] =
-> -		out.ps[APMF_CNQF_BALANCE].stt_skintemp[STT_TEMP_APU];
-> +		out->ps[APMF_CNQF_BALANCE].stt_skintemp[STT_TEMP_APU];
->  	ms->power_control.stt_skin_temp[STT_TEMP_HS2] =
-> -		out.ps[APMF_CNQF_BALANCE].stt_skintemp[STT_TEMP_HS2];
-> -	ms->fan_control.fan_id = out.ps[APMF_CNQF_BALANCE].fan_id;
-> +		out->ps[APMF_CNQF_BALANCE].stt_skintemp[STT_TEMP_HS2];
-> +	ms->fan_control.fan_id = out->ps[APMF_CNQF_BALANCE].fan_id;
->  
->  	/* Performance Mode */
->  	ms = &config_store.mode_set[idx][CNQF_MODE_PERFORMANCE];
-> -	ms->power_floor = out.ps[APMF_CNQF_PERFORMANCE].pfloor;
-> -	ms->power_control.fppt = out.ps[APMF_CNQF_PERFORMANCE].fppt;
-> -	ms->power_control.sppt = out.ps[APMF_CNQF_PERFORMANCE].sppt;
-> -	ms->power_control.sppt_apu_only = out.ps[APMF_CNQF_PERFORMANCE].sppt_apu_only;
-> -	ms->power_control.spl = out.ps[APMF_CNQF_PERFORMANCE].spl;
-> -	ms->power_control.stt_min = out.ps[APMF_CNQF_PERFORMANCE].stt_min_limit;
-> +	ms->power_floor = out->ps[APMF_CNQF_PERFORMANCE].pfloor;
-> +	ms->power_control.fppt = out->ps[APMF_CNQF_PERFORMANCE].fppt;
-> +	ms->power_control.sppt = out->ps[APMF_CNQF_PERFORMANCE].sppt;
-> +	ms->power_control.sppt_apu_only = out->ps[APMF_CNQF_PERFORMANCE].sppt_apu_only;
-> +	ms->power_control.spl = out->ps[APMF_CNQF_PERFORMANCE].spl;
-> +	ms->power_control.stt_min = out->ps[APMF_CNQF_PERFORMANCE].stt_min_limit;
->  	ms->power_control.stt_skin_temp[STT_TEMP_APU] =
-> -		out.ps[APMF_CNQF_PERFORMANCE].stt_skintemp[STT_TEMP_APU];
-> +		out->ps[APMF_CNQF_PERFORMANCE].stt_skintemp[STT_TEMP_APU];
->  	ms->power_control.stt_skin_temp[STT_TEMP_HS2] =
-> -		out.ps[APMF_CNQF_PERFORMANCE].stt_skintemp[STT_TEMP_HS2];
-> -	ms->fan_control.fan_id = out.ps[APMF_CNQF_PERFORMANCE].fan_id;
-> +		out->ps[APMF_CNQF_PERFORMANCE].stt_skintemp[STT_TEMP_HS2];
-> +	ms->fan_control.fan_id = out->ps[APMF_CNQF_PERFORMANCE].fan_id;
->  
->  	/* Turbo Mode */
->  	ms = &config_store.mode_set[idx][CNQF_MODE_TURBO];
-> -	ms->power_floor = out.ps[APMF_CNQF_TURBO].pfloor;
-> -	ms->power_control.fppt = out.ps[APMF_CNQF_TURBO].fppt;
-> -	ms->power_control.sppt = out.ps[APMF_CNQF_TURBO].sppt;
-> -	ms->power_control.sppt_apu_only = out.ps[APMF_CNQF_TURBO].sppt_apu_only;
-> -	ms->power_control.spl = out.ps[APMF_CNQF_TURBO].spl;
-> -	ms->power_control.stt_min = out.ps[APMF_CNQF_TURBO].stt_min_limit;
-> +	ms->power_floor = out->ps[APMF_CNQF_TURBO].pfloor;
-> +	ms->power_control.fppt = out->ps[APMF_CNQF_TURBO].fppt;
-> +	ms->power_control.sppt = out->ps[APMF_CNQF_TURBO].sppt;
-> +	ms->power_control.sppt_apu_only = out->ps[APMF_CNQF_TURBO].sppt_apu_only;
-> +	ms->power_control.spl = out->ps[APMF_CNQF_TURBO].spl;
-> +	ms->power_control.stt_min = out->ps[APMF_CNQF_TURBO].stt_min_limit;
->  	ms->power_control.stt_skin_temp[STT_TEMP_APU] =
-> -		out.ps[APMF_CNQF_TURBO].stt_skintemp[STT_TEMP_APU];
-> +		out->ps[APMF_CNQF_TURBO].stt_skintemp[STT_TEMP_APU];
->  	ms->power_control.stt_skin_temp[STT_TEMP_HS2] =
-> -		out.ps[APMF_CNQF_TURBO].stt_skintemp[STT_TEMP_HS2];
-> -	ms->fan_control.fan_id = out.ps[APMF_CNQF_TURBO].fan_id;
-> +		out->ps[APMF_CNQF_TURBO].stt_skintemp[STT_TEMP_HS2];
-> +	ms->fan_control.fan_id = out->ps[APMF_CNQF_TURBO].fan_id;
->  }
->  
->  static int amd_pmf_check_flags(struct amd_pmf_dev *dev)
-> @@ -284,8 +284,8 @@ static int amd_pmf_load_defaults_cnqf(struct amd_pmf_dev *dev)
->  			return ret;
->  		}
->  
-> -		amd_pmf_update_mode_set(i, out);
-> -		amd_pmf_update_trans_data(i, out);
-> +		amd_pmf_update_mode_set(i, &out);
-> +		amd_pmf_update_trans_data(i, &out);
->  		amd_pmf_update_power_threshold(i);
->  
->  		for (j = 0; j < CNQF_MODE_MAX; j++) {
+diff --git a/drivers/net/ethernet/brocade/bna/bfa_msgq.c b/drivers/net/ethernet/brocade/bna/bfa_msgq.c
+index 47125f419530..fa40d5ec6f1c 100644
+--- a/drivers/net/ethernet/brocade/bna/bfa_msgq.c
++++ b/drivers/net/ethernet/brocade/bna/bfa_msgq.c
+@@ -202,7 +202,6 @@ static void
+ __cmd_copy(struct bfa_msgq_cmdq *cmdq, struct bfa_msgq_cmd_entry *cmd)
+ {
+ 	size_t len = cmd->msg_size;
+-	int num_entries = 0;
+ 	size_t to_copy;
+ 	u8 *src, *dst;
+ 
+@@ -219,7 +218,6 @@ __cmd_copy(struct bfa_msgq_cmdq *cmdq, struct bfa_msgq_cmd_entry *cmd)
+ 		BFA_MSGQ_INDX_ADD(cmdq->producer_index, 1, cmdq->depth);
+ 		dst = (u8 *)cmdq->addr.kva;
+ 		dst += (cmdq->producer_index * BFI_MSGQ_CMD_ENTRY_SIZE);
+-		num_entries++;
+ 	}
+ 
+ }
+-- 
+2.37.3
 
