@@ -2,113 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE11C38A2D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 22:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAEFC38A2D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Oct 2022 01:25:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbiJXWSP (ORCPT
+        id S230395AbiJYBZY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 18:18:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50002 "EHLO
+        Mon, 24 Oct 2022 21:25:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230292AbiJXWRw (ORCPT
+        with ESMTP id S231569AbiJYBZI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 18:17:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D4B2248D3
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 13:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1666643626;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jS77JQI+Wqma8EkspvaV6jJPvhgOIi/g9VzirTrOEUM=;
-        b=RMGDuEbkJU63NNlkHvdMovl4lcX1w6+fIy1zw8kHUE4SJhXQ3h6PZoK5nj3XTdzk1R4mIy
-        MIrhTYYtYjptknuO9fIMwHRpucVmWsAs+QcivIpktgeMroewy3pozij4iCG86ESf4DejTH
-        4tp/CkRQsug0K3LhVR/chsmjveYEc+c=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-609-AeLHMkWvNRWEap6aChH1FQ-1; Mon, 24 Oct 2022 16:33:45 -0400
-X-MC-Unique: AeLHMkWvNRWEap6aChH1FQ-1
-Received: by mail-qt1-f197.google.com with SMTP id b12-20020a05622a020c00b003983950639bso7759075qtx.16
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 13:33:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jS77JQI+Wqma8EkspvaV6jJPvhgOIi/g9VzirTrOEUM=;
-        b=b6rAIAyOdfLg5j3A1hneBVxkU1d0JmwYgYrzjOZWCFNV8gOrnhNPvMEzeHemh23Y8b
-         2hluAzcdHYyARNY6rtAnzNYGfsRSdexYjVJshe0+9Hxl3WLDpmtQtE1GVKu4nE+e2485
-         r0TyeQ/Oj/zKmcdr9iKHo5ahgH4u0brU3CmRqUL9gEQg8d0PIIq9bQdIvb7kAEskODC3
-         ca0NMA1mxVaRofZwiMtvvMMnep0OCGH7DUheFd1vY5jZP8LWg+gMp6rj2IjUKTX5JcTb
-         H3IgUW1owskeKtM7IpKI4D87jUqHlR/QwJRVCMm7vqGfbj345+BQ7Phw26wiejIgGu4H
-         H0bg==
-X-Gm-Message-State: ACrzQf21Nd479w/iX3Q6GwFo1jfuwpqZkcFXUOSLESZnUvF7KkG5cnRE
-        EiXIcm8uCkTFm4rDQeZ9RwmtnC8EnlegqmooUAzqhJsz2iDL0aIIiiQbDb6IKt9Hw8Ts6GhkWfM
-        l5kI1PDk3Ha9HzlIB/zKJ1fgZAPsl
-X-Received: by 2002:a05:620a:4155:b0:6ee:e6b5:efa7 with SMTP id k21-20020a05620a415500b006eee6b5efa7mr24649747qko.54.1666643624562;
-        Mon, 24 Oct 2022 13:33:44 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM6fuJ7umxduSwho5wT/1DHDzI+eD1fRK9Z2IMS9esLQ5xAyDielh1+K8ovaXy8gI3DuPHXL2w==
-X-Received: by 2002:a05:620a:4155:b0:6ee:e6b5:efa7 with SMTP id k21-20020a05620a415500b006eee6b5efa7mr24649730qko.54.1666643624349;
-        Mon, 24 Oct 2022 13:33:44 -0700 (PDT)
-Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id y21-20020a05620a44d500b006eed75805a2sm616099qkp.126.2022.10.24.13.33.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 13:33:43 -0700 (PDT)
-Date:   Mon, 24 Oct 2022 13:33:42 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu: remove variable cnt
-Message-ID: <20221024203342.nbmqphmfbrqqtr4n@cantor>
-References: <20221024134301.2158939-1-colin.i.king@gmail.com>
+        Mon, 24 Oct 2022 21:25:08 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5308DBECC1
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 17:55:45 -0700 (PDT)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id n3Scop2yXkifIn3ScotAlr; Mon, 24 Oct 2022 21:50:11 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 24 Oct 2022 21:50:11 +0200
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dmaengine@vger.kernel.org
+Subject: [PATCH] dmaengine: mv_xor_v2: Fix a resource leak in mv_xor_v2_remove()
+Date:   Mon, 24 Oct 2022 21:50:09 +0200
+Message-Id: <e9e3837a680c9bd2438e4db2b83270c6c052d005.1666640987.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221024134301.2158939-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 24, 2022 at 02:43:01PM +0100, Colin Ian King wrote:
-> Variable cnt is just being incremented and it's never used
-> anywhere else. The variable and the increment are redundant so
-> remove it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/iommu/amd/iommu.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-> index d3b39d0416fa..3847f3bdc568 100644
-> --- a/drivers/iommu/amd/iommu.c
-> +++ b/drivers/iommu/amd/iommu.c
-> @@ -767,7 +767,7 @@ EXPORT_SYMBOL(amd_iommu_register_ga_log_notifier);
->  
->  static void iommu_poll_ga_log(struct amd_iommu *iommu)
->  {
-> -	u32 head, tail, cnt = 0;
-> +	u32 head, tail;
->  
->  	if (iommu->ga_log == NULL)
->  		return;
-> @@ -780,7 +780,6 @@ static void iommu_poll_ga_log(struct amd_iommu *iommu)
->  		u64 log_entry;
->  
->  		raw = (u64 *)(iommu->ga_log + head);
-> -		cnt++;
->  
->  		/* Avoid memcpy function-call overhead */
->  		log_entry = *raw;
-> -- 
-> 2.37.3
-> 
+A clk_prepare_enable() call in the probe is not balanced by a corresponding
+clk_disable_unprepare() in the remove function.
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Add the missing call.
+
+Fixes: 3cd2c313f1d6 ("dmaengine: mv_xor_v2: Fix clock resource by adding a register clock")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/dma/mv_xor_v2.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/dma/mv_xor_v2.c b/drivers/dma/mv_xor_v2.c
+index f629ef6fd3c2..113834e1167b 100644
+--- a/drivers/dma/mv_xor_v2.c
++++ b/drivers/dma/mv_xor_v2.c
+@@ -893,6 +893,7 @@ static int mv_xor_v2_remove(struct platform_device *pdev)
+ 	tasklet_kill(&xor_dev->irq_tasklet);
+ 
+ 	clk_disable_unprepare(xor_dev->clk);
++	clk_disable_unprepare(xor_dev->reg_clk);
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
 
