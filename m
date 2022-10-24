@@ -2,66 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF5FFA3740
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 11:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC43ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 14:36:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbiJXLev (ORCPT
+        id S237091AbiJXOgR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 07:34:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57638 "EHLO
+        Mon, 24 Oct 2022 10:36:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231183AbiJXLeW (ORCPT
+        with ESMTP id S237092AbiJXOgE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 07:34:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C0D6554E;
-        Mon, 24 Oct 2022 04:33:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A235D61257;
-        Mon, 24 Oct 2022 11:32:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78FD7C433D6;
-        Mon, 24 Oct 2022 11:32:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666611175;
-        bh=7BGHQHEyIWOIzS0pMtVWlxKJaXlGCMxezrqu+7yaTss=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=uw+hVdHKnZrYz0PuQ00ENoyyjVXg+4uc8Q3aq272bmX9jhXRbMXCygU13/ntbghJw
-         XU2Pa2Fa9nwLtVX/FaFi9zDk3DdEqB/fRwyPlAQQkRfdMwCWntyuScIAltM1RWs8qH
-         sDhzDiAYR/jn6KS3+xFyhfV4KvObCIA/E3Mg3vSoLHFSl0zg+QFJWANdB4xS9smUGN
-         RjQ2jqfKBA9mC9NWF0/nIw6uJzi5KdIcASJcmt9iNWGYa0F7o7yJqDsXEqQQkIFB16
-         gC+YfwKgt4USBsKFJPjTYwyr2MLuSgDzih+nKyE9YGt+ktpw7PHPaEJh0n8HDifmuf
-         pqggHLJDRPwQQ==
-From:   Leon Romanovsky <leon@kernel.org>
-To:     linux-rdma@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20221021173504.27546-1-colin.i.king@gmail.com>
-References: <20221021173504.27546-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] RDMA/hw/qib/qib_iba6120: Remove variable freeze_cnt
-Message-Id: <166661117102.858492.18326237882024365860.b4-ty@kernel.org>
-Date:   Mon, 24 Oct 2022 14:32:51 +0300
+        Mon, 24 Oct 2022 10:36:04 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61DFA43AD3;
+        Mon, 24 Oct 2022 06:10:57 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id l16-20020a05600c4f1000b003c6c0d2a445so6578837wmq.4;
+        Mon, 24 Oct 2022 06:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ckwP6SZrttFwr6q/sGcNYSFGy/msNDVyZpAOWEeZ8w=;
+        b=inKQ1QRQBd2kH0yamrljN5I7Tavh58rIwYt8BjFrJvvpqQnI87e5BM8m11dqOvATDX
+         O0dN7xO2ogwyzHdwfIIF/9S+5JTqPihCSDcaLTTRNaMh+rsvRYK3pxMESywxnoDdd9O3
+         Gbgvat5iOIZihcIdE5K7hGTgd9XXTmmb1P4Gq4FpQoG4Hdkx7MPWgBX+7/hacySY/7rk
+         DGJwIKStLujvhDDabIJd/RC3d6DwMrDVuu0ne2UI49WcRHy8ghSWPydJedtmkpc6ToCe
+         dujR1Bz3i65aZPdHRL27ttEwdIey8yWxuVKvKlbLE0kA8frWmyqkURU9Wzm8atEMgB6P
+         rSRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4ckwP6SZrttFwr6q/sGcNYSFGy/msNDVyZpAOWEeZ8w=;
+        b=d6ZiKU8Bhr1x9bSRkxtDJShxVUt+XjlS1u4ih/J0Myir7nldHAoK6hWLPe7ki0Z55U
+         MNs8WX1q4zCgmfF/URsn9LaBlECBEE4gjpGm/dNAXCcToszRW9VXROXoJbrToYyy6Le4
+         jOSvBjhE7/9M6oqsLtL2DTFW/Gy+EtHG3V1do1eBJ+4q4X77lNSsSfuN8GYZcbrQg5hx
+         M2sATsKMDt9SqctndSx8UesnFFtVsPkyG54Qcd8C6leBdWktgG+2ClU4PAwQpUb0TSdL
+         /KGSSr/x/XAkUCStJuhiOmxYd3jS+xAcs3wkM8ECvjh9wSiPrdWu86LcOdzIkkv47qa3
+         HIPg==
+X-Gm-Message-State: ACrzQf1LwI/qxPvu9fWlBWwVyH2sMY+YsGYW3osjS0OKskUaJtRBonJG
+        oGuiXgZpSvM742yHECsbcfQ=
+X-Google-Smtp-Source: AMsMyM4Eux5p6QGnnjdVJQNbuM9tL3KSnsNRcKXNy+skLIDyzqy4y86gJPUNpqIBsvvckFcimdUQGg==
+X-Received: by 2002:a05:600c:4618:b0:3c6:bf28:ae64 with SMTP id m24-20020a05600c461800b003c6bf28ae64mr44399479wmo.51.1666616884152;
+        Mon, 24 Oct 2022 06:08:04 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id d1-20020adff2c1000000b0022ac1be009esm27228344wrp.16.2022.10.24.06.08.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Oct 2022 06:08:03 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: asihpi: remove variable loops
+Date:   Mon, 24 Oct 2022 14:08:03 +0100
+Message-Id: <20221024130803.2156295-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-87e0e
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 21 Oct 2022 18:35:04 +0100, Colin Ian King wrote:
-> The variable freeze_cnt being incremented but it is never referenced,
-> it is redundant and can be removed.
-> 
-> 
+Variable loops is just being incremented and it's never used
+anywhere else. The variable and the increment are redundant so
+remove it.
 
-Applied, thanks!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/pci/asihpi/asihpi.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-[1/1] RDMA/hw/qib/qib_iba6120: Remove variable freeze_cnt
-      https://git.kernel.org/rdma/rdma/c/5dc1b37d75e713
-
-Best regards,
+diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
+index 8de43aaa10aa..001786e2aba1 100644
+--- a/sound/pci/asihpi/asihpi.c
++++ b/sound/pci/asihpi/asihpi.c
+@@ -725,7 +725,6 @@ static void snd_card_asihpi_timer_function(struct timer_list *t)
+ 	unsigned int pcm_buf_dma_ofs, min_buf_pos = 0;
+ 	unsigned int remdata, xfercount, next_jiffies;
+ 	int first = 1;
+-	int loops = 0;
+ 	u16 state;
+ 	u32 buffer_size, bytes_avail, samples_played, on_card_bytes;
+ 	char name[16];
+@@ -806,7 +805,6 @@ static void snd_card_asihpi_timer_function(struct timer_list *t)
+ 			(unsigned long)frames_to_bytes(runtime,
+ 						runtime->control->appl_ptr)
+ 		);
+-		loops++;
+ 	}
+ 	pcm_buf_dma_ofs = min_buf_pos;
+ 
 -- 
-Leon Romanovsky <leon@kernel.org>
+2.37.3
+
