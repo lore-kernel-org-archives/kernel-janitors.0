@@ -2,62 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5630EFA3740
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 18:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA27C38A2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 18:48:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232196AbiJXSlD (ORCPT
+        id S232775AbiJXSsJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 14:41:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59426 "EHLO
+        Mon, 24 Oct 2022 14:48:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232213AbiJXSkd (ORCPT
+        with ESMTP id S232103AbiJXSr3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 14:40:33 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0FC1759A;
-        Mon, 24 Oct 2022 10:22:23 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id k8so8624610wrh.1;
-        Mon, 24 Oct 2022 10:22:23 -0700 (PDT)
+        Mon, 24 Oct 2022 14:47:29 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D21120BF8;
+        Mon, 24 Oct 2022 10:28:57 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id y10so7023428wma.0;
+        Mon, 24 Oct 2022 10:28:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jYf7cTB4wDVQpysigBRvPC/XQ9ZNHdrnvPwPX4mSzYs=;
-        b=ZtbjaQFrkNjsUuUy2r1veI7zdJmUQBlKdcg8EY691iFQsz4/fvFVeHJL0JZ5Z5+WMe
-         8t24dv6AwIwCv71gQfgEOwq0jm9Q6LJ9rAVawleQ/KrrNErlGgEcEJkorwXT5Boy8n5c
-         GwX02Jh7vMyjQR3cF65f0siOmQUp/wcjTCzKnslrriz5psty1cJ3U5FWABv7MDzInSeY
-         ZzxH+kpCsf8c3vEcZp5nP2WfO9QfUjkBN3xt/1MQrDUTpirv82tDA8fvChKCOi4ozdoB
-         42ztCXuut/sb/17z2BhpuZ2DyGxBw/6cjHdY1aT7lKl2JlIgYIkLnl3Jxt7mV/vHXNkf
-         1o6Q==
+        bh=0vrMEaRTOwjPGYos2d/zehtmsU3IkMfRxjv+/1fbd3Q=;
+        b=VKJ1G1o7+2+SQele4larDZ/2K25UrUVVp54Nrve6h20LExDBaKHIClcbBnpbrrzvyk
+         WnWyToK5iRYdzsch3pSLsG9Hqwe8ZjdpZKvuIE33xS/WfWt+GK7OMY6gPqIJ7u/9X5es
+         KxKivLyP7x9AmhjGc8iwzBixaN4zLaD6rREhMrdm84TnLUvF1dUgQv3nHZicWWEJWrwT
+         soU1/txlsKhDtZwzOfy96JWzJn6olk6EIXZMh86SH0shMUspuBx5cS/xVRtlvye6uKiq
+         78fTBDDQfXkpdKrIZlsvgJOXcrQLaU6Nnz9OunF0l6uFeL6OR/y1cYRyclV8VLnXLK93
+         6btg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jYf7cTB4wDVQpysigBRvPC/XQ9ZNHdrnvPwPX4mSzYs=;
-        b=avGNW09O+bSG6GhzuZL+QJ4ZhIOxmdNRL/uXWf3YKK/y11CflDu4B95MaJYZhQI5Qc
-         60kBeZExamxwHid97nML6UvwOAnpJZJuflZggQBykocGssUq/aQPanOzfCNMrosjEXTe
-         3phNjgWfuJ5I5YoQch4fDi3bjii7kmDoqZI8zedP38CIsbHUe7FPB47b/xcVQ0Kw03q7
-         BBwqy4wrZFUKPP2vCDRb85LDcIQ9Byal4T+anw8bZbSE+RNfOdcWAZ6QUnscxNaFkDmL
-         gWGnLLHgNbR4K4bZw9VwTVPZTt0dajwjc7XcciejY2aDqs3Bqh2Z4OckO3mhgkcUmKqz
-         dR1g==
-X-Gm-Message-State: ACrzQf3AoFD13izflUJ7MkqBh7VP/jv7pd0WiuqSZ6HGgW9eIiETKMYr
-        b4FOosuRBYjA3aGQPprnvyzvN6wDti/DClDF
-X-Google-Smtp-Source: AMsMyM6aq2UQDlHmeTkXIJvJ9kWzInvPWV2UA72I3i2TsH9IXL+6obK98pW6NhB5zlKTxgDbROWQAg==
-X-Received: by 2002:a05:6000:788:b0:22e:412b:7959 with SMTP id bu8-20020a056000078800b0022e412b7959mr21871223wrb.491.1666627863318;
-        Mon, 24 Oct 2022 09:11:03 -0700 (PDT)
+        bh=0vrMEaRTOwjPGYos2d/zehtmsU3IkMfRxjv+/1fbd3Q=;
+        b=gcuoiVl/tAvF7hVCLgPxnWAuXxLcWXrGA3ARSvq/4BPNw7TH+XdSTlXxMR4VVcQVV2
+         FU++KDQP2zwIF8UfLvFTvPK4uF/tvONcN/wEuACEQlH/94/RzwHuaapvyz56EPeuC+4h
+         d+vmrVkhN7NcJMGrFaTshyNMWuC1QYvTwVfHATaDRc94OiyV5Z92erkM7gJ5siUr+GsX
+         +0vD+NirsdRRePvnZ7LD3KfZgyuhohGf1d9sB/Izx0CIgitQci9szkfVWpcPvzHZyoQG
+         oF4eEhurFBcFiaZCnRo0NXUXp0UGvE28QqP/9H8VG4pVlnLBh5iGameVi3G74rQCRCz/
+         UjSw==
+X-Gm-Message-State: ACrzQf2jJn9/Hs6Qt5Ggky22oFjAmpssHKKdhHK7PLsmhRDRkcATgXjt
+        CQ1gbUvCoNHtm0q6/ZJUon+YVWwD77l02HD7
+X-Google-Smtp-Source: AMsMyM46DTJTSuuP9DKHEnco5O7iTBp1tIwmtk2u/tX203ZYgVIXhOZKuUbIOH6/cBGqYy2PNgPhfA==
+X-Received: by 2002:a05:600c:3b11:b0:3c6:c02d:babb with SMTP id m17-20020a05600c3b1100b003c6c02dbabbmr42613493wms.69.1666617328451;
+        Mon, 24 Oct 2022 06:15:28 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r13-20020a05600c458d00b003c6f3f6675bsm8873808wmo.26.2022.10.24.09.11.02
+        by smtp.gmail.com with ESMTPSA id b7-20020adfe307000000b0022cbf4cda62sm32201847wrj.27.2022.10.24.06.15.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 09:11:02 -0700 (PDT)
+        Mon, 24 Oct 2022 06:15:27 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: asus: Remove variable count
-Date:   Mon, 24 Oct 2022 17:11:02 +0100
-Message-Id: <20221024161102.2171702-1-colin.i.king@gmail.com>
+Subject: [PATCH] pinctrl: samsung: remove variable pin
+Date:   Mon, 24 Oct 2022 14:15:27 +0100
+Message-Id: <20221024131527.2156810-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,43 +70,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable count is just being incremented and it's never used
+Variable pin is just being incremented and it's never used
 anywhere else. The variable and the increment are redundant so
 remove it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hid/hid-asus.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index b59c3dafa6a4..f99752b998f3 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -219,14 +219,13 @@ static void asus_report_tool_width(struct asus_drvdata *drvdat)
- {
- 	struct input_mt *mt = drvdat->input->mt;
- 	struct input_mt_slot *oldest;
--	int oldid, count, i;
-+	int oldid, i;
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+index 625cb1065eaf..78b7bd133566 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -509,7 +509,6 @@ static int s3c24xx_eint_init(struct samsung_pinctrl_drv_data *d)
+ 		struct s3c24xx_eint_domain_data *ddata;
+ 		unsigned int mask;
+ 		unsigned int irq;
+-		unsigned int pin;
  
- 	if (drvdat->tp->contact_size < 5)
- 		return;
+ 		if (bank->eint_type != EINT_TYPE_WKUP)
+ 			continue;
+@@ -534,7 +533,7 @@ static int s3c24xx_eint_init(struct samsung_pinctrl_drv_data *d)
  
- 	oldest = NULL;
- 	oldid = mt->trkid;
--	count = 0;
- 
- 	for (i = 0; i < mt->num_slots; ++i) {
- 		struct input_mt_slot *ps = &mt->slots[i];
-@@ -238,7 +237,6 @@ static void asus_report_tool_width(struct asus_drvdata *drvdat)
- 			oldest = ps;
- 			oldid = id;
- 		}
--		count++;
- 	}
- 
- 	if (oldest) {
+ 		irq = bank->eint_offset;
+ 		mask = bank->eint_mask;
+-		for (pin = 0; mask; ++pin, mask >>= 1) {
++		for (; mask; mask >>= 1) {
+ 			if (irq >= NUM_EINT)
+ 				break;
+ 			if (!(mask & 1))
 -- 
 2.37.3
 
