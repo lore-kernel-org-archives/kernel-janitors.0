@@ -2,74 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5427ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Oct 2022 06:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061E4C38A2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 07:31:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230072AbiJWGwM (ORCPT
+        id S229604AbiJXHbc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 Oct 2022 02:52:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48358 "EHLO
+        Mon, 24 Oct 2022 03:31:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbiJWGwJ (ORCPT
+        with ESMTP id S229455AbiJXHbb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 Oct 2022 02:52:09 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A37F76964;
-        Sat, 22 Oct 2022 23:52:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666507929; x=1698043929;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ABkS0NhAjDi8ntSJ5iUziEw9CbuP9xXeeAUlShM0158=;
-  b=d7l7K8XglqPq/42axHqWjQTjxt7CswOp0iEM4uKMDSTJztDvpoIG8HQ8
-   fphV8P1gSJtaJRcFTB0nl4/J8/sx9vU7Q55Ow1+AGRf6H5jkGaQnupKlA
-   eS6HNSUFMoXcd1thIRHbPStRr1TE79YcpnLtdp7HAi9RxBDXhXrVr+l0W
-   pHUCqFWLFzSwo5c2LXGwKkvCW1o0IxBGK5m9idBOjISJtBWTno0CwVazN
-   YxO4QIV+BCmirOf7PLJm5Y0m952Ttsu8LdXBS2Ru05A1PgeZl9UFaqKB+
-   o21brek933AGAuEwzAkCd7InisodSkWm2MkiinRY+pSF9JLFGeCYqvnUU
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10508"; a="308332040"
-X-IronPort-AV: E=Sophos;i="5.95,206,1661842800"; 
-   d="scan'208";a="308332040"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2022 23:52:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10508"; a="699804517"
-X-IronPort-AV: E=Sophos;i="5.95,206,1661842800"; 
-   d="scan'208";a="699804517"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 22 Oct 2022 23:52:06 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id C01F4107; Sun, 23 Oct 2022 09:52:28 +0300 (EEST)
-Date:   Sun, 23 Oct 2022 09:52:28 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] thunderbolt: remove redundant assignment to variable len
-Message-ID: <Y1TkrCZJVkQgXcAY@black.fi.intel.com>
-References: <20221019225709.1506515-1-colin.i.king@gmail.com>
+        Mon, 24 Oct 2022 03:31:31 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C00D14DB42;
+        Mon, 24 Oct 2022 00:31:10 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 7075332002F9;
+        Mon, 24 Oct 2022 03:31:06 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 24 Oct 2022 03:31:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1666596666; x=
+        1666683066; bh=Jjbu9JpIyS5CWKze1H/WOBDw+6BrnxDllrzE32pyM2A=; b=V
+        8buIz1jixNkr35PMRGseRhW44dRYrPEwOxEYO9BX2M4O9X8EBWP80wZUAPdzIhTS
+        6Z3ODm20WXMWoVDbbat6zBwSjdwOLag4fCoeoqUOwHrVvmTOvlhmftovFpDwWa+A
+        p1ci8MsyqQWs56tfrQ9xIIha5co9nOr1kVqjf0dXBdBN5x+Xu2a8d9g7tOo07FYP
+        U1gZfm7MosCZW2BNe6bYdeIF0rbH81NsOIfL7ihwlZDGr+hO3wt9DGtCDPv8h2BX
+        yzy9GfT6wfXHoWrdMGd6rXu8vxwT5qsS50pChylVtk0EiAtnwZX3jHJQnXP4as92
+        5Gppmo9kBmr2n53teijcA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1666596666; x=
+        1666683066; bh=Jjbu9JpIyS5CWKze1H/WOBDw+6BrnxDllrzE32pyM2A=; b=e
+        xqIxGFS54BYZ0dII9pSZBFttWOx9RNcCB63ydbcRqXmKBv2TM6zy0bbyAnhH1CUO
+        g3cSFmuAWmCQ0Q0iBDKvWA+6xdZp15Rv5aSf5jVL/BEVRYKxNtH/n17dPaQ1rL/0
+        9frOxLW8vGAUqbKRX4eTl5ggIOGXF8xty+9B6kvTC4+pi5dA8svuZslfQrgcUV43
+        d6od4y5GdaHsJCTeYdjqJIWCxkBNOX7PcA4IXNQHzOEsDXOzTjfXiAOa2bzFsIV9
+        zzgsbs4RRO9EsFKWOnfYa+F70U4kk3U127wFzYxoZUFv1oFMl06q8uudBhdpFjdl
+        VcE6Y1q3tOc1DeS9g3fjA==
+X-ME-Sender: <xms:OT9WY7p9AJwVQEmqn5ZXnIPgt-smgsXb5avN3HyEEYeyIyIu_if8WA>
+    <xme:OT9WY1rAmFitzlJIvgew2I13Lacg-JkZ0IqEsB5nUc_7cI1wvJo9jP6AC7XYFIspV
+    Bxw-9zc38VI4JlZLEw>
+X-ME-Received: <xmr:OT9WY4MaM0xUrkmVVKz43JUcFssysOEz7n5RSPxhNAFuATdcQMtf7STAfur48bK4fel-6w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgedtfedguddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvfevjghfuffkffggtgfgofesthekredtredtjeenucfhrhhomhepmhgr
+    gihimhgvsegtvghrnhhordhtvggthhenucggtffrrghtthgvrhhnpeetfeehfefgueejud
+    fhueegffelteeuuedvhfelhfefjeetjefhtdfftdfgvdejleenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrth
+    gvtghh
+X-ME-Proxy: <xmx:OT9WY-5nO6tFm5SivglfFrYHBt0iUdGKW9Sf0SKgBPf4PbnkacQ_pg>
+    <xmx:OT9WY67YVrfPNNn-QH2hxcmL4ZV5qVkOS-8ebT7z0ZchPKNb22TTnw>
+    <xmx:OT9WY2gy9TuqChiVkvAWP3QL0Aq3Sa3kvL5KUD7sVz_6jvgkrA1_ZA>
+    <xmx:Oj9WY5TBSuMD22MflRmdFav_7arvBkIZ8u8G3268iypECFgAQjEj-g>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Oct 2022 03:31:05 -0400 (EDT)
+From:   maxime@cerno.tech
+To:     Maxime Ripard <mripard@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        Colin Ian King <colin.i.king@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20221021084035.65367-1-colin.i.king@gmail.com>
+References: <20221021084035.65367-1-colin.i.king@gmail.com>
+Subject: Re: (subset) [PATCH] drm/vc4: Fix spelling mistake "mmaping" -> "mmapping"
+Message-Id: <166659662709.12501.1270368575435453931.b4-ty@cerno.tech>
+Date:   Mon, 24 Oct 2022 09:30:27 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221019225709.1506515-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 19, 2022 at 11:57:09PM +0100, Colin Ian King wrote:
-> The variable len is assigned a value that is never read. It is re-assigned
-> a new value in the following do-while loop and never referenced after
-> the loop. The assignment is redundant and can be removed.
+On Fri, 21 Oct 2022 09:40:35 +0100, Colin Ian King wrote:
+> There are a couple of spelling mistakes in DRM_DEBUG messages. Fix them.
 > 
-> Cleans up clang scan build warning:
-> drivers/thunderbolt/xdomain.c:344:2: warning: Value stored to 'len' is
-> never read [deadcode.DeadStores]
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied to thunderbolt.git/next, thanks!
+Applied to drm/drm-misc (drm-misc-next).
+
+Thanks!
+Maxime
