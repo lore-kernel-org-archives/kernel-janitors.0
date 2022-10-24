@@ -2,77 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A38ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 15:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2C4ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 15:39:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232447AbiJXPQI (ORCPT
+        id S229823AbiJXPjJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 11:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47638 "EHLO
+        Mon, 24 Oct 2022 11:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231699AbiJXPPo (ORCPT
+        with ESMTP id S231314AbiJXPis (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 11:15:44 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C62721E29;
-        Mon, 24 Oct 2022 06:54:41 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id u8-20020a17090a5e4800b002106dcdd4a0so13055780pji.1;
-        Mon, 24 Oct 2022 06:54:40 -0700 (PDT)
+        Mon, 24 Oct 2022 11:38:48 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131136422;
+        Mon, 24 Oct 2022 07:27:49 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id z14so3013246wrn.7;
+        Mon, 24 Oct 2022 07:27:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8lEhJhNYrJyVdV9ncTkj+ktV/kTdL2ObxQ9D4QNhvTU=;
-        b=bTuKS/c1mvo5li261XMFcNENZgJuwEYgzg97KVKYJ0dS21QtyKdjaTgOcWToSC8aO7
-         KZxWd2wUqwtWm8mkG9zQekHqUyMAhCsbSFptSGiaD+MyDkaAVCzwZcatk3pXuoqIYnN2
-         O9xk3RMtwVz9iFHV6nKOnRKM2uV8cTq9ldu9AWEBL9zfDEoPGWTOq0V9k/nur56Vkce6
-         Zig/2QN4kJkMC9UTz2mgc27mpsM/U+ENjK7lUU31UKg6ltePg0LDUBNwgbk/WVjaghGB
-         JNuDVLFbKGOc9agHYJejVEyie9aMCAQPXnkqRRia+DMK5blFCQFFkicLQL1X4klC7vMH
-         Qnrw==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PhUxSjTWxhyhzoVN8CjeIVwED4ZtcdgKG/cY+s+iZJY=;
+        b=mt6091jjQZfb8b+bV3hD5cmriQUm0Fvq6TbPxfxdXdDN8lUmwjUxMjxpjyMqoFJSuj
+         01oDJyceoEPr1mT3oiB2iD+ThpDN2CrFakO1Dd9MYcCg0Ue7VaV0WiF+dFJJyNCNan1t
+         v1EYN1CyS0Hbv6SR+622XhyBaXOLao5CX36W4t6F0NPAJ5FNtj/aW6YoX+sfr67yLhWq
+         BithXtPwSslxzzdZXdP7PmRThuR9bhhfp2F+mlPtnFhBeTJiYv8ouUbqUmxFp+C/N2RB
+         mSFHSFHsASQxwkumtlJfWFF23lLc8v5cvHufju3nBavN9AswLGvxBxF3eVswzmMW9Oxu
+         eu2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8lEhJhNYrJyVdV9ncTkj+ktV/kTdL2ObxQ9D4QNhvTU=;
-        b=NTozIYDRELTnDmjVOZ2CY/m3hMev34PaFn5L8U3y97J7ruiI6aVALBI0H3QBtDfijL
-         +MtYSnrVjrIzhwhxuHOcisc0X/i7Kieb77k0NBiJ0QRRjRmjhAvFSwNUOfjvYTDj/owb
-         Z27VHXWffXulp9sRaxaRNJmswRfxSDrSZr+hlbkk0aYSS/xIlfg6Wpb/eXnZLeDAa1AM
-         THq+3/m+6LMGUIsbQ0pEl0gVB6SyiZsVroLuaM8j4RElpBsdu7g7RZBiJlC8mjFYGFBd
-         ilgaUMcUssmgMNz6+6OeGMmVuuDf9lrYsF+J5H+aYwSiELi0d8FaDiGghblAFPaLyHX4
-         xNJg==
-X-Gm-Message-State: ACrzQf0lprxmZNqDI53cDA8JAulabgwm+vXHlVnZ7zhEABuUYv1Rt2/p
-        T26iLIKc17aAmYry6ebR9KNC8/EJKY0hDA==
-X-Google-Smtp-Source: AMsMyM6rrLGnzYSpUMpqzUHEUu978FrkEXYqX08g8cmUrmbT1TyyLxE8Jdo+56cIy5QKoDk3jkSuvA==
-X-Received: by 2002:a17:903:1112:b0:178:a030:5f72 with SMTP id n18-20020a170903111200b00178a0305f72mr33101227plh.12.1666612774369;
-        Mon, 24 Oct 2022 04:59:34 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:3698:60f8:9964:1fb4])
-        by smtp.gmail.com with ESMTPSA id o15-20020a6548cf000000b0043c22e926f8sm17238603pgs.84.2022.10.24.04.59.33
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PhUxSjTWxhyhzoVN8CjeIVwED4ZtcdgKG/cY+s+iZJY=;
+        b=p9nhVQzdOEtLiP6aZNoIBsvYgqnNm3moQP5tmqT4MwtLk6adUVZG+ihkswOjah9aKs
+         DwibsOsW9FA+OfiSNnq1jRFFDjMbzdNQcTTyvFOoiaSt2Idd12hr4UNmVoPHmVnbXeyb
+         LEnZTdI44HJFbMrpmHInKO3acaiEXpZDbT8BHNfemsT4c2tTILEfo9HX7/hVKQ5Ojv+1
+         I3WMXiJ7QNvbbHw2himaloaJ0SPX3h0slqAgqSFS3VAHYX8KVf60RfNYjLwBxtsXtX3i
+         J/D1AaasqvhuUGQACKodQZ0N0UCYHExPtY2T9RXWyASegGBo4CCGTkJqKtId7gy8wUsc
+         Prlw==
+X-Gm-Message-State: ACrzQf09D8vOv8UODnA6yEgPz8LfjXLqzEU5U0ZbNCzSLNkWqUjZW5Y/
+        WZVp2I7EzFdt9p29hZY1uwXS1RI+deWdH3P/
+X-Google-Smtp-Source: AMsMyM44vMoE3Dmn/VvKNqaYOPK26ElVURH8dDmfTZHmdTukOfAed3ywyx3xGCAIAlNTgJJYqYbb8A==
+X-Received: by 2002:a5d:6d89:0:b0:236:6e52:4fa with SMTP id l9-20020a5d6d89000000b002366e5204famr4820402wrs.395.1666620662901;
+        Mon, 24 Oct 2022 07:11:02 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id f8-20020a0560001b0800b0023677fd2657sm1551414wrz.52.2022.10.24.07.11.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 04:59:33 -0700 (PDT)
-Date:   Mon, 24 Oct 2022 04:59:31 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: tps6507x-ts: remove variable loops
-Message-ID: <Y1Z+I7EBn+P0m6wG@google.com>
-References: <20221020181642.24417-1-colin.i.king@gmail.com>
+        Mon, 24 Oct 2022 07:11:02 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: nsp_cs: remove variable i
+Date:   Mon, 24 Oct 2022 15:11:01 +0100
+Message-Id: <20221024141101.2161167-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221020181642.24417-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 20, 2022 at 07:16:42PM +0100, Colin Ian King wrote:
-> The variable loops is being incremented but is never referenced,
-> it is redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Variable i is just being incremented and it's never used
+anywhere else. The variable and the increment are redundant so
+remove it.
 
-Applied, thank you.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/scsi/pcmcia/nsp_cs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/scsi/pcmcia/nsp_cs.c b/drivers/scsi/pcmcia/nsp_cs.c
+index 48acab03a8a0..a5a1406a2bde 100644
+--- a/drivers/scsi/pcmcia/nsp_cs.c
++++ b/drivers/scsi/pcmcia/nsp_cs.c
+@@ -450,8 +450,6 @@ static int nsp_analyze_sdtr(struct scsi_cmnd *SCpnt)
+ 	sync_data	      *sync   = &(data->Sync[target]);
+ 	struct nsp_sync_table *sync_table;
+ 	unsigned int	       period, offset;
+-	int		       i;
+-
+ 
+ 	nsp_dbg(NSP_DEBUG_SYNC, "in");
+ 
+@@ -466,7 +464,7 @@ static int nsp_analyze_sdtr(struct scsi_cmnd *SCpnt)
+ 		sync_table = nsp_sync_table_40M;
+ 	}
+ 
+-	for ( i = 0; sync_table->max_period != 0; i++, sync_table++) {
++	for (; sync_table->max_period != 0; sync_table++) {
+ 		if ( period >= sync_table->min_period &&
+ 		     period <= sync_table->max_period	 ) {
+ 			break;
 -- 
-Dmitry
+2.37.3
+
