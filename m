@@ -2,100 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4DBC38A2D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 20:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE11C38A2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 22:18:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234066AbiJXUXZ (ORCPT
+        id S230008AbiJXWSP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 16:23:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38030 "EHLO
+        Mon, 24 Oct 2022 18:18:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233085AbiJXUWn (ORCPT
+        with ESMTP id S230292AbiJXWRw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 16:22:43 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF2FCEBD;
-        Mon, 24 Oct 2022 11:38:23 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id j15so7007872wrq.3;
-        Mon, 24 Oct 2022 11:38:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dJnt2GP1pm08BDpQHAhmkmMOzHCfFoZgxhdL+wvVQI0=;
-        b=gtZvIN8K3k7r1uHwhEc7+/ToiepvXrRLoYCsg65dKsJr7+zp+7Rd4BFPZHYq6xmI/s
-         U+BDXTd/r9PFSVMu/yjZ4Sf07IW0+jlWi5BvINZdqDm7Y7z4eQR2TmQ6RwSPTAdoTQQ9
-         jlARxJ/PCtHlhQUtJC0b66o3+iM/th1/2R2yyBOOVgiXpWltxMzpg0iH2T11K9+PdsH/
-         E6CT8BeZgFfsW1cADQNx54JCen+tOKsRze5ykzfigG/1Lghwvzyt39qVHE4SUCPGAbUx
-         p2pN82oHtzogmLIxs9vJScr2XN1xZHXZYehB8JEPVtddts4gJdARWTKXjZstKe6ZfFVD
-         6Xqg==
+        Mon, 24 Oct 2022 18:17:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D4B2248D3
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 13:34:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1666643626;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jS77JQI+Wqma8EkspvaV6jJPvhgOIi/g9VzirTrOEUM=;
+        b=RMGDuEbkJU63NNlkHvdMovl4lcX1w6+fIy1zw8kHUE4SJhXQ3h6PZoK5nj3XTdzk1R4mIy
+        MIrhTYYtYjptknuO9fIMwHRpucVmWsAs+QcivIpktgeMroewy3pozij4iCG86ESf4DejTH
+        4tp/CkRQsug0K3LhVR/chsmjveYEc+c=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-609-AeLHMkWvNRWEap6aChH1FQ-1; Mon, 24 Oct 2022 16:33:45 -0400
+X-MC-Unique: AeLHMkWvNRWEap6aChH1FQ-1
+Received: by mail-qt1-f197.google.com with SMTP id b12-20020a05622a020c00b003983950639bso7759075qtx.16
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 13:33:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dJnt2GP1pm08BDpQHAhmkmMOzHCfFoZgxhdL+wvVQI0=;
-        b=3JwS7y9uEWRqhjI6bK7MrBztLA6eyfQsKvfY9/KUpJ7wx5uSQyY/ThkqskjTFFBWhC
-         9tcHyT6Q6cOIW77HE9pU6buqxSJH9WzkpGAX7+ySP1UzRF+qmyAGeerCGi2ZpaLTCCF4
-         s5yY/6VCnXIBO4yqr+qijCmv2mDxONEi9+ZdfjYCkrLish3XsfH4nSVQq0rYgFXtu5Tp
-         KyrVrgjUXgVQPnx1d8edJcLPSAk2kZZyT86FygIzihdgi4oPoMI4XlqbTJkBvEZELco3
-         Y5ppkKyAiAFXs/Cp8rsG+ZZxWQSlRAPxR6rRSfVeT+Uqmavv0Z/H3PWMifaW5SW0Y2lH
-         4qag==
-X-Gm-Message-State: ACrzQf2eUFmVHWCjybvIqRMM+WOR3uI6egmJT63egOV4LuwMgnJQS9Vu
-        Ka3GwU7ksgQPz50FD7we7kYUL0YCm+CdEVxo
-X-Google-Smtp-Source: AMsMyM4QQftM+1SbPAw/eMbzp1P4w7OUi/TXYHqvMABQeyIe0BWWf6rzp6zV9CjBu1IrRbbVd+x63Q==
-X-Received: by 2002:adf:d843:0:b0:236:6231:113b with SMTP id k3-20020adfd843000000b002366231113bmr7525187wrl.42.1666622102639;
-        Mon, 24 Oct 2022 07:35:02 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r2-20020adfe682000000b002366fb99cdasm3413379wrm.50.2022.10.24.07.35.01
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jS77JQI+Wqma8EkspvaV6jJPvhgOIi/g9VzirTrOEUM=;
+        b=b6rAIAyOdfLg5j3A1hneBVxkU1d0JmwYgYrzjOZWCFNV8gOrnhNPvMEzeHemh23Y8b
+         2hluAzcdHYyARNY6rtAnzNYGfsRSdexYjVJshe0+9Hxl3WLDpmtQtE1GVKu4nE+e2485
+         r0TyeQ/Oj/zKmcdr9iKHo5ahgH4u0brU3CmRqUL9gEQg8d0PIIq9bQdIvb7kAEskODC3
+         ca0NMA1mxVaRofZwiMtvvMMnep0OCGH7DUheFd1vY5jZP8LWg+gMp6rj2IjUKTX5JcTb
+         H3IgUW1owskeKtM7IpKI4D87jUqHlR/QwJRVCMm7vqGfbj345+BQ7Phw26wiejIgGu4H
+         H0bg==
+X-Gm-Message-State: ACrzQf21Nd479w/iX3Q6GwFo1jfuwpqZkcFXUOSLESZnUvF7KkG5cnRE
+        EiXIcm8uCkTFm4rDQeZ9RwmtnC8EnlegqmooUAzqhJsz2iDL0aIIiiQbDb6IKt9Hw8Ts6GhkWfM
+        l5kI1PDk3Ha9HzlIB/zKJ1fgZAPsl
+X-Received: by 2002:a05:620a:4155:b0:6ee:e6b5:efa7 with SMTP id k21-20020a05620a415500b006eee6b5efa7mr24649747qko.54.1666643624562;
+        Mon, 24 Oct 2022 13:33:44 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM6fuJ7umxduSwho5wT/1DHDzI+eD1fRK9Z2IMS9esLQ5xAyDielh1+K8ovaXy8gI3DuPHXL2w==
+X-Received: by 2002:a05:620a:4155:b0:6ee:e6b5:efa7 with SMTP id k21-20020a05620a415500b006eee6b5efa7mr24649730qko.54.1666643624349;
+        Mon, 24 Oct 2022 13:33:44 -0700 (PDT)
+Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
+        by smtp.gmail.com with ESMTPSA id y21-20020a05620a44d500b006eed75805a2sm616099qkp.126.2022.10.24.13.33.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 07:35:02 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: dl2k: remove variable tx_use
-Date:   Mon, 24 Oct 2022 15:35:01 +0100
-Message-Id: <20221024143501.2163720-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Mon, 24 Oct 2022 13:33:43 -0700 (PDT)
+Date:   Mon, 24 Oct 2022 13:33:42 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu: remove variable cnt
+Message-ID: <20221024203342.nbmqphmfbrqqtr4n@cantor>
+References: <20221024134301.2158939-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221024134301.2158939-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable tx_use is just being incremented and it's never used
-anywhere else. The variable and the increment are redundant so
-remove it.
+On Mon, Oct 24, 2022 at 02:43:01PM +0100, Colin Ian King wrote:
+> Variable cnt is just being incremented and it's never used
+> anywhere else. The variable and the increment are redundant so
+> remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/iommu/amd/iommu.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+> index d3b39d0416fa..3847f3bdc568 100644
+> --- a/drivers/iommu/amd/iommu.c
+> +++ b/drivers/iommu/amd/iommu.c
+> @@ -767,7 +767,7 @@ EXPORT_SYMBOL(amd_iommu_register_ga_log_notifier);
+>  
+>  static void iommu_poll_ga_log(struct amd_iommu *iommu)
+>  {
+> -	u32 head, tail, cnt = 0;
+> +	u32 head, tail;
+>  
+>  	if (iommu->ga_log == NULL)
+>  		return;
+> @@ -780,7 +780,6 @@ static void iommu_poll_ga_log(struct amd_iommu *iommu)
+>  		u64 log_entry;
+>  
+>  		raw = (u64 *)(iommu->ga_log + head);
+> -		cnt++;
+>  
+>  		/* Avoid memcpy function-call overhead */
+>  		log_entry = *raw;
+> -- 
+> 2.37.3
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/dlink/dl2k.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
-index 2c67a857a42f..db6615aa921b 100644
---- a/drivers/net/ethernet/dlink/dl2k.c
-+++ b/drivers/net/ethernet/dlink/dl2k.c
-@@ -814,7 +814,6 @@ rio_free_tx (struct net_device *dev, int irq)
- {
- 	struct netdev_private *np = netdev_priv(dev);
- 	int entry = np->old_tx % TX_RING_SIZE;
--	int tx_use = 0;
- 	unsigned long flag = 0;
- 
- 	if (irq)
-@@ -839,7 +838,6 @@ rio_free_tx (struct net_device *dev, int irq)
- 
- 		np->tx_skbuff[entry] = NULL;
- 		entry = (entry + 1) % TX_RING_SIZE;
--		tx_use++;
- 	}
- 	if (irq)
- 		spin_unlock(&np->tx_lock);
--- 
-2.37.3
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
