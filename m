@@ -2,92 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6705C38A2D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 15:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A38ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 15:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230513AbiJXPEu (ORCPT
+        id S232447AbiJXPQI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 11:04:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55178 "EHLO
+        Mon, 24 Oct 2022 11:16:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231171AbiJXPEX (ORCPT
+        with ESMTP id S231699AbiJXPPo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 11:04:23 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76235B448C
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 06:41:22 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id d24so8476084pls.4
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 06:41:22 -0700 (PDT)
+        Mon, 24 Oct 2022 11:15:44 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C62721E29;
+        Mon, 24 Oct 2022 06:54:41 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id u8-20020a17090a5e4800b002106dcdd4a0so13055780pji.1;
+        Mon, 24 Oct 2022 06:54:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/Vr0nqHCGrm+b68s/C4QPay7OOdjkPPEqnfDL2I3xZ0=;
-        b=A1zile5aaiGOv1/6LYGIIS7rWZdNf/REZ+C9UBtfg9OfpCOGjXnhycbBfjdSe0JOyu
-         v5qzJjdxIPLQzNoFIOLcH8aiLZMksx3Tj6Nur9hpg9fEaWvP7WH1gT5ar8GPUQpgA5lJ
-         DioVkGo5QA/KPc7eezM0ezSfhiofM6Pb9FiueqjTZj7jQ/qNViyLM0EuJoUXoo8FQbGG
-         N7zpmFdBC9U18lnuezv9+We3fEpYv6ZvxzaOMEglGMbyGuOucIIcEoZ1vQEwbdbY0HRA
-         4C9EJiEr8dTf62+r9YQ3C5gn+n6uMmjDlqJSHPRWR60LM6ro/3Du7SUX9hoCoCevjEWv
-         qhdg==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8lEhJhNYrJyVdV9ncTkj+ktV/kTdL2ObxQ9D4QNhvTU=;
+        b=bTuKS/c1mvo5li261XMFcNENZgJuwEYgzg97KVKYJ0dS21QtyKdjaTgOcWToSC8aO7
+         KZxWd2wUqwtWm8mkG9zQekHqUyMAhCsbSFptSGiaD+MyDkaAVCzwZcatk3pXuoqIYnN2
+         O9xk3RMtwVz9iFHV6nKOnRKM2uV8cTq9ldu9AWEBL9zfDEoPGWTOq0V9k/nur56Vkce6
+         Zig/2QN4kJkMC9UTz2mgc27mpsM/U+ENjK7lUU31UKg6ltePg0LDUBNwgbk/WVjaghGB
+         JNuDVLFbKGOc9agHYJejVEyie9aMCAQPXnkqRRia+DMK5blFCQFFkicLQL1X4klC7vMH
+         Qnrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Vr0nqHCGrm+b68s/C4QPay7OOdjkPPEqnfDL2I3xZ0=;
-        b=Le2ho9hPCK3RH12XmIDQaFKBPx8ep8C4fHT/Tk4Do8wCPkPADQuRUXA7sUZbI/X2Z3
-         V1MgdRmgpAETmZDkO4e9SMpuUtZrUScQScrW6OUkuDsUlYM0jQjhFquP8gG0So+4SfoC
-         52zXpowfyS2RCQ2ZPAr8chpz3QQf3LAkuahldq+NEwpoVxxQZljDrbt4ZswO/y6JzR2G
-         yJTgzE9sBZowiQBpzi2GUL7e89zZ72AhBGyZZJ5lZJI/bDM2fo1s46DmAN0hX2OQXvX2
-         T9LB4bix8Q1zCxml2lhoXbjP1hUl0C+ean/fuxltCHidRUsat556mgpNyh66ZNFJLHem
-         yGkA==
-X-Gm-Message-State: ACrzQf2cCJWv9doc6Ugf1a0aW6uws+IvW0LYzzOJsdKRC78WOUrmjj0I
-        afIgrkF5x01HC9Mw4F27u3/MGeGZg7bg7A==
-X-Google-Smtp-Source: AMsMyM5X+kIBxudaeRFmJTdkoXGBmNzB+x8RZi8q9kq8BLojbo3cknAZE5oULo3K676hCYZUJgRcwQ==
-X-Received: by 2002:a0c:9151:0:b0:4b1:8375:46d3 with SMTP id q75-20020a0c9151000000b004b1837546d3mr28530283qvq.122.1666618142903;
-        Mon, 24 Oct 2022 06:29:02 -0700 (PDT)
-Received: from [192.168.1.8] ([64.57.193.93])
-        by smtp.gmail.com with ESMTPSA id cn15-20020a05622a248f00b0034305a91aaesm12586522qtb.83.2022.10.24.06.29.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Oct 2022 06:29:02 -0700 (PDT)
-Message-ID: <a7693e48-f16f-9577-8685-417f21706d1b@linaro.org>
-Date:   Mon, 24 Oct 2022 09:29:00 -0400
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8lEhJhNYrJyVdV9ncTkj+ktV/kTdL2ObxQ9D4QNhvTU=;
+        b=NTozIYDRELTnDmjVOZ2CY/m3hMev34PaFn5L8U3y97J7ruiI6aVALBI0H3QBtDfijL
+         +MtYSnrVjrIzhwhxuHOcisc0X/i7Kieb77k0NBiJ0QRRjRmjhAvFSwNUOfjvYTDj/owb
+         Z27VHXWffXulp9sRaxaRNJmswRfxSDrSZr+hlbkk0aYSS/xIlfg6Wpb/eXnZLeDAa1AM
+         THq+3/m+6LMGUIsbQ0pEl0gVB6SyiZsVroLuaM8j4RElpBsdu7g7RZBiJlC8mjFYGFBd
+         ilgaUMcUssmgMNz6+6OeGMmVuuDf9lrYsF+J5H+aYwSiELi0d8FaDiGghblAFPaLyHX4
+         xNJg==
+X-Gm-Message-State: ACrzQf0lprxmZNqDI53cDA8JAulabgwm+vXHlVnZ7zhEABuUYv1Rt2/p
+        T26iLIKc17aAmYry6ebR9KNC8/EJKY0hDA==
+X-Google-Smtp-Source: AMsMyM6rrLGnzYSpUMpqzUHEUu978FrkEXYqX08g8cmUrmbT1TyyLxE8Jdo+56cIy5QKoDk3jkSuvA==
+X-Received: by 2002:a17:903:1112:b0:178:a030:5f72 with SMTP id n18-20020a170903111200b00178a0305f72mr33101227plh.12.1666612774369;
+        Mon, 24 Oct 2022 04:59:34 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:3698:60f8:9964:1fb4])
+        by smtp.gmail.com with ESMTPSA id o15-20020a6548cf000000b0043c22e926f8sm17238603pgs.84.2022.10.24.04.59.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Oct 2022 04:59:33 -0700 (PDT)
+Date:   Mon, 24 Oct 2022 04:59:31 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: tps6507x-ts: remove variable loops
+Message-ID: <Y1Z+I7EBn+P0m6wG@google.com>
+References: <20221020181642.24417-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH] pinctrl: samsung: remove variable pin
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221024131527.2156810-1-colin.i.king@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221024131527.2156810-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221020181642.24417-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 24/10/2022 09:15, Colin Ian King wrote:
-> Variable pin is just being incremented and it's never used
-> anywhere else. The variable and the increment are redundant so
-> remove it.
+On Thu, Oct 20, 2022 at 07:16:42PM +0100, Colin Ian King wrote:
+> The variable loops is being incremented but is never referenced,
+> it is redundant and can be removed.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks for the patch. The file is being in process of dropping (patchset
-is being reviewed), so I think we can skip all the fixes.
+Applied, thank you.
 
-Best regards,
-Krzysztof
-
+-- 
+Dmitry
