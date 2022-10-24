@@ -2,99 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B727FECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 14:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6705C38A2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Oct 2022 15:04:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233076AbiJXO4A (ORCPT
+        id S230513AbiJXPEu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 10:56:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51158 "EHLO
+        Mon, 24 Oct 2022 11:04:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233100AbiJXOzl (ORCPT
+        with ESMTP id S231171AbiJXPEX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 10:55:41 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5025C114DDE;
-        Mon, 24 Oct 2022 06:32:48 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id t4so6569506wmj.5;
-        Mon, 24 Oct 2022 06:32:48 -0700 (PDT)
+        Mon, 24 Oct 2022 11:04:23 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76235B448C
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 06:41:22 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d24so8476084pls.4
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 06:41:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLYkpvVCOOtRmeROPQWGaXprs16SuKoBjgdo1TzDYBw=;
-        b=OidfekMQ+wgqg2Jyz1BrARw3IJY3Ql0Yv9rP1UqPRTfXq3UAP9XIu5iE9dDpR6Hgni
-         0S4Z9lf9mU81W0QdXfo56RvHtmwbC+fEtiRDAXwLor+FrTk41upfkcfBDCWzgsJav+wb
-         GYStwBKnPk16tOtkMSuPx4QYNVyaED7NIxjI9D+j8zYnxs4NhEsa0GDzYiRC0MeglRrr
-         KAW4uxcSA7kPjpZGL6SdC9/YaZ4BB2zl5sGRhPvM7Sm6ZzntNiwyYGXX0zdWWeyR8RIX
-         Pva6eh9Cdx0iykZAiubnD6erR450whWtNg8b7fuxHAbBuqDjNxDJ1+SiKOah4c+QgwXH
-         yvbQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/Vr0nqHCGrm+b68s/C4QPay7OOdjkPPEqnfDL2I3xZ0=;
+        b=A1zile5aaiGOv1/6LYGIIS7rWZdNf/REZ+C9UBtfg9OfpCOGjXnhycbBfjdSe0JOyu
+         v5qzJjdxIPLQzNoFIOLcH8aiLZMksx3Tj6Nur9hpg9fEaWvP7WH1gT5ar8GPUQpgA5lJ
+         DioVkGo5QA/KPc7eezM0ezSfhiofM6Pb9FiueqjTZj7jQ/qNViyLM0EuJoUXoo8FQbGG
+         N7zpmFdBC9U18lnuezv9+We3fEpYv6ZvxzaOMEglGMbyGuOucIIcEoZ1vQEwbdbY0HRA
+         4C9EJiEr8dTf62+r9YQ3C5gn+n6uMmjDlqJSHPRWR60LM6ro/3Du7SUX9hoCoCevjEWv
+         qhdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sLYkpvVCOOtRmeROPQWGaXprs16SuKoBjgdo1TzDYBw=;
-        b=sb2UNscYibAC5yLssJ9lKRJHU32T7D0SpjvchS1MBoGpmrZ95EOgO+OSumPnSUCTRV
-         rpvX+G92fbPQziX9SVYpSphVG8fTYU6BQHYodX3lGGjYIEMHJSv/6d7ylz0d6YBGbInu
-         6Nf6oUzSkWZbe+EdHJmz2AeALF5Uun/1bRINbsyccbWucHJpF+CjB6qCX+/+bWpJsJVT
-         D4okkMRp0sW8FuYsnS38NkuGkFPJy8sy97r5huQTh8pMUFSwjQXVogPkLkB+cwH63eRF
-         F/wwoY69i1r2M/RwH79gAoaFih5k7r0hF1lFuZuQU52sO1Gbn5Z5x/YD6Ty3YWulQjOR
-         Rblg==
-X-Gm-Message-State: ACrzQf0yxHyyk9J991D5Eoo7XyAQqc0eHSmDTXvt/pxmX7eGjysVX7s0
-        Ppoz61yxra7GKv1/TyiE+w0=
-X-Google-Smtp-Source: AMsMyM7EVVv6tLq9HYHCC0JhHbl4xrIrrfI7Mqkf7iAbNX3F9V1/zF38tt5rpXYdtcWuRgcdX3tgCA==
-X-Received: by 2002:a05:600c:5011:b0:3c6:cd93:cf24 with SMTP id n17-20020a05600c501100b003c6cd93cf24mr21905457wmr.16.1666618180452;
-        Mon, 24 Oct 2022 06:29:40 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o10-20020a1c750a000000b003b4868eb6bbsm13581511wmc.23.2022.10.24.06.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 06:29:40 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        devel@lists.orangefs.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] orangefs: remove variable i
-Date:   Mon, 24 Oct 2022 14:29:39 +0100
-Message-Id: <20221024132939.2157707-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Vr0nqHCGrm+b68s/C4QPay7OOdjkPPEqnfDL2I3xZ0=;
+        b=Le2ho9hPCK3RH12XmIDQaFKBPx8ep8C4fHT/Tk4Do8wCPkPADQuRUXA7sUZbI/X2Z3
+         V1MgdRmgpAETmZDkO4e9SMpuUtZrUScQScrW6OUkuDsUlYM0jQjhFquP8gG0So+4SfoC
+         52zXpowfyS2RCQ2ZPAr8chpz3QQf3LAkuahldq+NEwpoVxxQZljDrbt4ZswO/y6JzR2G
+         yJTgzE9sBZowiQBpzi2GUL7e89zZ72AhBGyZZJ5lZJI/bDM2fo1s46DmAN0hX2OQXvX2
+         T9LB4bix8Q1zCxml2lhoXbjP1hUl0C+ean/fuxltCHidRUsat556mgpNyh66ZNFJLHem
+         yGkA==
+X-Gm-Message-State: ACrzQf2cCJWv9doc6Ugf1a0aW6uws+IvW0LYzzOJsdKRC78WOUrmjj0I
+        afIgrkF5x01HC9Mw4F27u3/MGeGZg7bg7A==
+X-Google-Smtp-Source: AMsMyM5X+kIBxudaeRFmJTdkoXGBmNzB+x8RZi8q9kq8BLojbo3cknAZE5oULo3K676hCYZUJgRcwQ==
+X-Received: by 2002:a0c:9151:0:b0:4b1:8375:46d3 with SMTP id q75-20020a0c9151000000b004b1837546d3mr28530283qvq.122.1666618142903;
+        Mon, 24 Oct 2022 06:29:02 -0700 (PDT)
+Received: from [192.168.1.8] ([64.57.193.93])
+        by smtp.gmail.com with ESMTPSA id cn15-20020a05622a248f00b0034305a91aaesm12586522qtb.83.2022.10.24.06.29.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Oct 2022 06:29:02 -0700 (PDT)
+Message-ID: <a7693e48-f16f-9577-8685-417f21706d1b@linaro.org>
+Date:   Mon, 24 Oct 2022 09:29:00 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH] pinctrl: samsung: remove variable pin
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221024131527.2156810-1-colin.i.king@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221024131527.2156810-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable i is just being incremented and it's never used
-anywhere else. The variable and the increment are redundant so
-remove it.
+On 24/10/2022 09:15, Colin Ian King wrote:
+> Variable pin is just being incremented and it's never used
+> anywhere else. The variable and the increment are redundant so
+> remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/orangefs/inode.c | 2 --
- 1 file changed, 2 deletions(-)
+Thanks for the patch. The file is being in process of dropping (patchset
+is being reviewed), so I think we can skip all the fixes.
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 7a8c0c6e698d..eaa35a966115 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -530,7 +530,6 @@ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
- 	size_t count = iov_iter_count(iter);
- 	ssize_t total_count = 0;
- 	ssize_t ret = -EINVAL;
--	int i = 0;
- 
- 	gossip_debug(GOSSIP_FILE_DEBUG,
- 		"%s-BEGIN(%pU): count(%d) after estimate_max_iovecs.\n",
-@@ -556,7 +555,6 @@ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
- 	while (iov_iter_count(iter)) {
- 		size_t each_count = iov_iter_count(iter);
- 		size_t amt_complete;
--		i++;
- 
- 		/* how much to transfer in this loop iteration */
- 		if (each_count > orangefs_bufmap_size_query())
--- 
-2.37.3
+Best regards,
+Krzysztof
 
