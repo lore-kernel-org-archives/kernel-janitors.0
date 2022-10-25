@@ -2,41 +2,52 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C56EC38A2D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Oct 2022 19:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D4CFA373E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Oct 2022 19:25:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231363AbiJYTAF (ORCPT
+        id S231379AbiJYTZE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Oct 2022 15:00:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39320 "EHLO
+        Tue, 25 Oct 2022 15:25:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231751AbiJYTAE (ORCPT
+        with ESMTP id S229682AbiJYTZD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Oct 2022 15:00:04 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06A8286E4;
-        Tue, 25 Oct 2022 12:00:00 -0700 (PDT)
-Received: from [10.7.7.5] (unknown [182.253.183.140])
-        by gnuweeb.org (Postfix) with ESMTPSA id B519E804FD;
-        Tue, 25 Oct 2022 18:59:55 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1666724399;
-        bh=CqaYWiGYhpo0ooPSCo8Ptr71Fmqkx1RjwX744NmAy+Q=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=q0+yVgdOymkXEOQWbRij5Zui2/yBpqTRQa8U54HlQLPjwUi9Me7wPlAI/bBdsqKlE
-         5gSNo4dw0yh0+Ub6rgjowYMVQmpHqnK6kRgUiv/0OGNLgT9Ikzbz85GPSM/lj9Ig68
-         Pw2UHHbkHUTl1OKIgkr2LF3qhOC1nIY6VBwDXYLnf+av+UY4Kj7PDU5OAWHgqHKNiX
-         esqvE4S8N0Fa2bGLiz6sfRbI8pmOC0uLiYPG4KPHB5BslUaisuOfROGy18pOII9rU/
-         rushACInW7O/+j8f1A0dJ2cwamYBDr0s1ie/eUq34zo+hD4uBMmIU1EZD3oUOtuhYb
-         pPjtXoi6uDAOQ==
-Message-ID: <e3464bac-82cb-2180-74f5-448e70540190@gnuweeb.org>
-Date:   Wed, 26 Oct 2022 01:59:52 +0700
+        Tue, 25 Oct 2022 15:25:03 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7983D915E4;
+        Tue, 25 Oct 2022 12:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666725902; x=1698261902;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=y3B0Kj9Pk3p5ePYZTYgdnjn/pRmrjYtCWMmeXVW7+r8=;
+  b=HY/JtmDGfwq6oKBrJYbX8H6k1Phv52KBy6PfFO6gHQWzzEpPs0k69TtQ
+   mbtzxacWkuO0oKGBBgtxvgovs0Joyr/o9HsE1Q89dtcThK2j/a88VU/0P
+   COppMHsga2QvklZwQ6itZT6GdTncp7PAj3lC+TF1Wt2kfiS5S1Q5UKZoh
+   NEAx6HqHwRS72a65oFX54sPYruUGZdGv//dSCX652ByFTvAZoCLndHIQu
+   2S7FF5vbvnHovtcQ1zTcRSu43RnEzcbrdsF5MGaLz4RO1kIQ4YABlgY7R
+   xPd1GP7bGTDG+Ccroe+m8hUhrXxAOnTbYmUyeruZHXntZ3Ee9ugetlkMF
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10511"; a="288167035"
+X-IronPort-AV: E=Sophos;i="5.95,212,1661842800"; 
+   d="scan'208";a="288167035"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2022 12:25:02 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10511"; a="695085145"
+X-IronPort-AV: E=Sophos;i="5.95,212,1661842800"; 
+   d="scan'208";a="695085145"
+Received: from jlluce-mobl1.amr.corp.intel.com (HELO [10.212.217.182]) ([10.212.217.182])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2022 12:25:01 -0700
+Message-ID: <5329dce1-5611-bc15-7b75-4070cc991284@intel.com>
+Date:   Tue, 25 Oct 2022 12:25:00 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
+Subject: Re: [PATCH] x86/retpoline: Fix crash printing warning
 Content-Language: en-US
-To:     Dave Hansen <dave.hansen@linux.intel.com>
+To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
         Dan Carpenter <dan.carpenter@oracle.com>,
@@ -47,50 +58,18 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Song Liu <song@kernel.org>, Nadav Amit <namit@vmware.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 References: <Y1gBoUZrRK5N/lCB@kili>
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH] x86/retpoline: Fix crash printing warning
-In-Reply-To: <Y1gBoUZrRK5N/lCB@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <e3464bac-82cb-2180-74f5-448e70540190@gnuweeb.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <e3464bac-82cb-2180-74f5-448e70540190@gnuweeb.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/25/22 10:32 PM, Dan Carpenter wrote:
-> The first argument of WARN() is a condition, so this will use "addr"
-> as the format string and possibly crash.
-> 
-> Fixes: 3b6c1747da48 ("x86/retpoline: Add SKL retthunk retpolines")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 10/25/22 11:59, Ammar Faizi wrote:
+> When I visited that lkml link, it shows "message ID not found". The
+> problem seems to be coming from the tool used to pick up the patch.
 
-Hello x86 maintainers,
-
-I found this patch in the tip tree with the following commit message:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/core&id=98dcf58159365d753b54d07f85a89d61ee15e036
-
-	x86/retpoline: Fix crash printing warningx86/core
-
-	The first argument of WARN() is a condition, so this will use "addr"
-	as the format string and possibly crash.
-
-	Fixes: 3b6c1747da48 ("x86/retpoline: Add SKL retthunk retpolines")
-	Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-	Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-	Link: https://lkml.kernel.org/r/Y1gBoUZrRK5N/lCB@kili
-
-When I visited that lkml link, it shows "message ID not found". The
-problem seems to be coming from the tool used to pick up the patch.
-
-That message ID contains a URL special char '/'. Thus it should be
-URL-encoded like this:
-
-    https://lore.kernel.org/r/Y1gBoUZrRK5N%2FlCB%40kili
-
-Anyway, lkml.kernel.org doesn't work for such a message ID, even with
-URL-encoded message ID like this:
-
-    https://lkml.kernel.org/r/Y1gBoUZrRK5N%2FlCB%40kili (not found)
-
--- 
-Ammar Faizi
+Thanks for the heads-up!  That link is indeed generated by tooling.
+I'll go fix it up.
