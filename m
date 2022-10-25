@@ -2,67 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAEFC38A2D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Oct 2022 01:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB37BC04A95
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Oct 2022 08:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230395AbiJYBZY (ORCPT
+        id S232178AbiJYIX5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Oct 2022 21:25:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57926 "EHLO
+        Tue, 25 Oct 2022 04:23:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231569AbiJYBZI (ORCPT
+        with ESMTP id S230214AbiJYIX4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Oct 2022 21:25:08 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5308DBECC1
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Oct 2022 17:55:45 -0700 (PDT)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id n3Scop2yXkifIn3ScotAlr; Mon, 24 Oct 2022 21:50:11 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Oct 2022 21:50:11 +0200
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH] dmaengine: mv_xor_v2: Fix a resource leak in mv_xor_v2_remove()
-Date:   Mon, 24 Oct 2022 21:50:09 +0200
-Message-Id: <e9e3837a680c9bd2438e4db2b83270c6c052d005.1666640987.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Tue, 25 Oct 2022 04:23:56 -0400
+Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A9D1F9710;
+        Tue, 25 Oct 2022 01:23:54 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id CD49720571;
+        Tue, 25 Oct 2022 10:23:51 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id rumSf-F5yxFL; Tue, 25 Oct 2022 10:23:51 +0200 (CEST)
+Received: from mailout1.secunet.com (mailout1.secunet.com [62.96.220.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 5FB562053B;
+        Tue, 25 Oct 2022 10:23:51 +0200 (CEST)
+Received: from cas-essen-01.secunet.de (unknown [10.53.40.201])
+        by mailout1.secunet.com (Postfix) with ESMTP id 4FB2B80004A;
+        Tue, 25 Oct 2022 10:23:51 +0200 (CEST)
+Received: from mbx-essen-01.secunet.de (10.53.40.197) by
+ cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Tue, 25 Oct 2022 10:23:51 +0200
+Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-01.secunet.de
+ (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Tue, 25 Oct
+ 2022 10:23:50 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)
+        id 5CB843180D2B; Tue, 25 Oct 2022 10:23:50 +0200 (CEST)
+Date:   Tue, 25 Oct 2022 10:23:50 +0200
+From:   Steffen Klassert <steffen.klassert@secunet.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+CC:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        "David Ahern" <dsahern@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] esp6: remove redundant variable err
+Message-ID: <20221025082350.GR2602992@gauss3.secunet.de>
+References: <20221017220809.864495-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20221017220809.864495-1-colin.i.king@gmail.com>
+X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
+ mbx-essen-01.secunet.de (10.53.40.197)
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A clk_prepare_enable() call in the probe is not balanced by a corresponding
-clk_disable_unprepare() in the remove function.
+On Mon, Oct 17, 2022 at 11:08:09PM +0100, Colin Ian King wrote:
+> Variable err is being assigned a value that is not read, the assignment
+> is redundant and so is the variable. Remove it.
+> 
+> Cleans up clang scan warning:
+> net/ipv6/esp6_offload.c:64:7: warning: Although the value stored to 'err'
+> is used in the enclosing expression, the value is never actually read
+> from 'err' [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Add the missing call.
-
-Fixes: 3cd2c313f1d6 ("dmaengine: mv_xor_v2: Fix clock resource by adding a register clock")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/dma/mv_xor_v2.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/dma/mv_xor_v2.c b/drivers/dma/mv_xor_v2.c
-index f629ef6fd3c2..113834e1167b 100644
---- a/drivers/dma/mv_xor_v2.c
-+++ b/drivers/dma/mv_xor_v2.c
-@@ -893,6 +893,7 @@ static int mv_xor_v2_remove(struct platform_device *pdev)
- 	tasklet_kill(&xor_dev->irq_tasklet);
- 
- 	clk_disable_unprepare(xor_dev->clk);
-+	clk_disable_unprepare(xor_dev->reg_clk);
- 
- 	return 0;
- }
--- 
-2.34.1
-
+Applied to ipsec-next, thanks!
