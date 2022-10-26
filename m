@@ -2,207 +2,199 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AF1C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Oct 2022 14:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66436C38A2D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Oct 2022 14:25:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234279AbiJZOXh (ORCPT
+        id S234329AbiJZOZe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Oct 2022 10:23:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
+        Wed, 26 Oct 2022 10:25:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234316AbiJZOXe (ORCPT
+        with ESMTP id S234279AbiJZOZd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Oct 2022 10:23:34 -0400
+        Wed, 26 Oct 2022 10:25:33 -0400
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C4A10CFA5;
-        Wed, 26 Oct 2022 07:23:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE0C440BC9;
+        Wed, 26 Oct 2022 07:25:30 -0700 (PDT)
 Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29QECEiN009813;
-        Wed, 26 Oct 2022 14:23:23 GMT
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29QECEjR009813;
+        Wed, 26 Oct 2022 14:25:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : references : in-reply-to : content-type :
  content-id : content-transfer-encoding : mime-version; s=corp-2022-7-12;
- bh=izoERQmGu7nq7sUEgPz9n7j5wHQf0pdAX8N3SJbLIog=;
- b=w6QfTxywRGBAGfyxM9lSqNojN3CUW3xSN9fElJNBUVr37wmFQtSSGCmzoCfA/RgMbAcp
- J6O7qNR9q7nCJRGsNNNfbSRmkaIWSOhBZ6chA+vdNEsoGVEMZSojkQnGQvTxwc1t7nLr
- s1iP+uD5WE3iH8YyqQkvYJJk1CRD4sYYaBJ/ngoO4cmwgSgQSElW32Q547wdBi2BC8dT
- IMCL6rIMV1lQKCMQSpz2NAue70NwL6VHCLY4ZbgtROdBkxozGcDTGohm7fCAKB0ZA/hF
- uanDjYMl17nO79qzoofxY42XoKniPwTaNxerMHXkPkD1GRDH9lp4w9aGlh/b7RYk+i0G ow== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3kc7a36vy5-1
+ bh=v4IElr1XVSmtDQp4qrq9wsnanqdMbHLRHjqiWbwPzWk=;
+ b=EgtqblsdArmNsj8gBLf4oUjasF28gj1phLSJpPVytSGW23oq1Gf9o1XeONRR9lpRDZSX
+ QO3Q+psehGysBMZ8k4x0t8er97Nfo5u3aZHLOQQVbc8oK25uuy2Ac1y28oJtcWDTLVdZ
+ V08BzTVA4pWdExVMNt3Lb09Y6vPLyFJqvU3bU8vhneH8Jituz9PW/Kruysv+60s7IN/p
+ Cm4gA82jaV2hnwYE7vmO3ZYVW7RMtlgsj4vdTH1Lg6pUkTo0OGIt/dA9Tr6GfJn98L4c
+ LtuRD4vBNxP6xOuwUXVxJfA7qY17/JpGm3R6ENNl5rXoKYHLtoLqlI/tGi1rUp7vgFls TQ== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3kc7a36w8e-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Oct 2022 14:23:23 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 29QD1Ou1018034;
-        Wed, 26 Oct 2022 14:23:22 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3kc6y61n7e-1
+        Wed, 26 Oct 2022 14:25:25 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 29QD1KIp020785;
+        Wed, 26 Oct 2022 14:25:24 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2049.outbound.protection.outlook.com [104.47.74.49])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3kc6y5t3qm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Oct 2022 14:23:21 +0000
+        Wed, 26 Oct 2022 14:25:24 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=h1kbVjXQRhlOPegNFoFdHruv9HQrz2AhtkNgBpqQQb/Twm+XQRXvbd+s15yu8Vm97mcZ3MBEmG8vcWKmdGIAB2OFSHpVMprOndTHzdQvYR655Vado4Qg2UI0eAwqi3rr7lDk/sxCZyCONV7mvxFg4WJZhcliYTN/63ToXHghdCVPUJZYeM79QWey92uFNQ0Nb4wEtTO2r60aeUQjECjSl3bksGfIhlrRrvOKbbB5tsH1VGNqvElK3tdLwdkOXNhmd40O61pUCdUgW8qNKJIp4CP3aeNOvDEnb+iF3nJP4Gi2JwUt1CfKObo3P3RciLW6Opu0cR9nfxhC/EB2K4R5qg==
+ b=XzX5euYFCVm/ouIhmq861fEwDR4hqCKzuQlbhxj5TZ18gjN9La5Aqe1gs+br1R6bCu/ox0zy6HYSmjv8sMp3XydiSs3+mzjAIEQ1cpnmq21Lo5ct1DMlI9UMosPMObqrZAt3INDODG72HELHCDfpsVuQoE15ub3ro0HkN42ZCHwZPBD/w8kwohgVfRlTpulKDGYoa0iw5zgO2s4rS4p5BLQr2o3SrsObOPlpsvFbMzfiffKvgmaENTSJexwZPyrgNrv3XhCBfmbPZPEzoNplf4HZf5jfGVQHWFsbA1oCJad7M7gM+39QV7TlYwaQJOtQKZfU2ftvWb4GlePxYbrZEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=izoERQmGu7nq7sUEgPz9n7j5wHQf0pdAX8N3SJbLIog=;
- b=EQQWfeuo+roIhOyfyQe3VjM6cx/JOn0+zstiecb/xcVGqrZrIGkgbIISxJQwLOxH0AK3YBkOgdA80wwI7AQ9U0GN3FDWXVcq9uPLtzdYjG/knI9OHz/fuFjDkL2toqpP/cEYXUJuqxW9q5exAqhzWHPWMKZWxWUn2i9Br7mptJjhhJwgI8WcGw7SDr/9Kvfz1DDoaVIGp4CJqYoZo/fNedC7Hj1LFbBSgs/1Z3ynfVrSoBneC6aoS3VFzP2x6PMD3+wehkj7SwI/FErEL9gyj3N5nq5YyLQcUV8h57VdFGDJKcEYdpudYluIKt2s2OfMpVjJXRkemqvXwQ/Nx+LH2A==
+ bh=v4IElr1XVSmtDQp4qrq9wsnanqdMbHLRHjqiWbwPzWk=;
+ b=gQVSX9c1bauALa5ZKiBRa+7ZII1Cwn7GqPg3AvmT8dBv2JEKeyr1HeEtGpPwDq02wnW5YtbAebzeTFFi9JyJtlmkJg/m2D3cAUmyWeFAdfY2/ga67h+NKi8omNRNhJnD37hoYQM5GGTAawuJly9/CHGYSJsOwBnFj8jAIxhugmh0Txg1iGWu0lhWFgKdW+MxtKVfFbO9NRrKt01oKIyitmJSaxxvpQs2J0n5VeAC6mySBRBCg8voeAoj+i/9INHommvrC+L5m2EHj1lasicyn/5I23Pn+NLHQ7RVUktDGOeXcCJduitc9Ri3xVn2cdmz0XbijwIle9TMDdin+C2lfg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=izoERQmGu7nq7sUEgPz9n7j5wHQf0pdAX8N3SJbLIog=;
- b=tXm7azWw7ZnwO4tMdCurG3MaY5DedtEOUZqkGKA38Ffh6yIgtMkDMm7adk3LunwtG01LLG4p2DRaJKkkNa5ixdD9Np+f46qgx+a9Ixtyi17JFZboTS/flUS/VT+XjuGvuO9wf04NTMmf4sG6gUmWBtfTFTq7Z8jkQPbme5Tsi4M=
+ bh=v4IElr1XVSmtDQp4qrq9wsnanqdMbHLRHjqiWbwPzWk=;
+ b=RyFgnWbl2VT2tPNcrfKMu5Vp+AO3DEKYKXVqVTXbYiZ/k7vP3kFEU0UOWatL+qlQqmgc4boIu9Kafws82sGv89MrF3puxLeGhBpAyixv0pb/mAKX2Pp1g7DDZREc1z25S3svfeQkQKOotxC1lY7Ks0t5gIIVF8wQCMbIjMkCC9U=
 Received: from SN6PR10MB3022.namprd10.prod.outlook.com (2603:10b6:805:d8::25)
- by BLAPR10MB4977.namprd10.prod.outlook.com (2603:10b6:208:306::22) with
+ by DS7PR10MB5054.namprd10.prod.outlook.com (2603:10b6:5:38e::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.28; Wed, 26 Oct
- 2022 14:23:19 +0000
+ 2022 14:25:22 +0000
 Received: from SN6PR10MB3022.namprd10.prod.outlook.com
  ([fe80::f378:f1d0:796a:55a1]) by SN6PR10MB3022.namprd10.prod.outlook.com
  ([fe80::f378:f1d0:796a:55a1%3]) with mapi id 15.20.5746.028; Wed, 26 Oct 2022
- 14:23:19 +0000
+ 14:25:22 +0000
 From:   Liam Howlett <liam.howlett@oracle.com>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 CC:     Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>
-Subject: Re: [PATCH 0/1] Dead stores in maple-tree
-Thread-Topic: [PATCH 0/1] Dead stores in maple-tree
-Thread-Index: AQHY6TKh6tbAMlcsqU61BoheyERWyK4guoCA
-Date:   Wed, 26 Oct 2022 14:23:19 +0000
-Message-ID: <20221026142259.mvcbtmj3kde5y25g@revolver>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] lib: maple_tree: remove unneeded initialization in
+ mtree_range_walk()
+Thread-Topic: [PATCH 1/1] lib: maple_tree: remove unneeded initialization in
+ mtree_range_walk()
+Thread-Index: AQHY6TKlbfwgc8LED0+rTJD3nSzgSK4guyEA
+Date:   Wed, 26 Oct 2022 14:25:21 +0000
+Message-ID: <20221026142514.ipe6rm6ekyh2rre6@revolver>
 References: <20221026120029.12555-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20221026120029.12555-1-lukas.bulwahn@gmail.com>
+ <20221026120029.12555-2-lukas.bulwahn@gmail.com>
+In-Reply-To: <20221026120029.12555-2-lukas.bulwahn@gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR10MB3022:EE_|BLAPR10MB4977:EE_
-x-ms-office365-filtering-correlation-id: 95cc4f2c-5a93-4c5e-8fa5-08dab75da19d
+x-ms-traffictypediagnostic: SN6PR10MB3022:EE_|DS7PR10MB5054:EE_
+x-ms-office365-filtering-correlation-id: d35abe2c-6293-4a9c-c8ec-08dab75dea77
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: SoFdmVhobn/IwtN/TPJgbgi4//Dwb+YMb/N0/8FuaxAdVAYL7vnM4k4FAJHc7mx5fYcotC0BSqoOU1VUAwHwsrtbgKiBcYbEqPijM2TBYh5SaskMHLjsWfaDD8gHHf5moIOSfcoqQcOAFYsti0225zzc5CqGAA97ETr6nHFlQlOpyDrXD7Aine+i2ap5imbmXu7+xJ4Eyc6K0vHZumUbCKiC6Lf0m3G5Xr3QYo/+N61HptgQotba8mlI1hg8dliPPYqwxepZuJZ46twt6a9zPfYOTgUW/e7G2xleiEeWGEkjuNm2cZhgiBGo4k4KXJfCSiugS8XVTwZNRR47pxmFKravJ6+xsFCCoA0NIX5BKlU0fm6J1Pa+IjG2+/rlCuTUWjCofWGE88MlkN3OSbpCpVi0bh16egfeOQt+Ud4Lzvaou+0NJ63ChHFP0dXTP/9bxfm18SuAZOkG3HBYHd/xKT6v2r/JK0brVfXPk4Um//xB6rKfdT6C9FYgHKtzMT17HhSoYMYjqF59r0r6l/tsXHYGLphL7HHjWxaLh9Sj5nE+Tc95YU3URPIT+9ZpuKgoQbpYzTf7rQOyfYO58XO4SCcZ35mwA3ErZO+yW8RpAiKQ4n41oH7lGgPWy20zPNecrIV8pqN8oEF2O3pw6AtpKH1bDrtImTDIOotxwXVKfzAiIoFJonBX1OZbFtgqwreTDYmBAsEXcSHPyHs3QjHUuluwSTfc96TisR7b19v5+kvq7a+Eflxlkr+mJAwy2HPY0IBEKatnmebf5GuNAEz2NQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB3022.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(346002)(376002)(136003)(396003)(39860400002)(366004)(451199015)(41300700001)(8936002)(66946007)(66476007)(1076003)(66556008)(44832011)(5660300002)(76116006)(66446008)(6506007)(6512007)(8676002)(26005)(9686003)(91956017)(4326008)(38100700002)(38070700005)(86362001)(122000001)(64756008)(33716001)(83380400001)(186003)(2906002)(478600001)(316002)(6486002)(6916009)(54906003)(71200400001);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: z1Z5Gfdf6Ay/OKlUlKoPYC/fChDVUzhFvz46b1iQA8t1Jf/MG16RqBNSsXgnQzk2uZ0RATiGkvitqwAXl+jV02HqvxihA1dkHGnW8B0wdtw24sz5uzOL0ehWi53XDSCDmf8iw1oc1jW+cTkNVgRr+CrwcIb+b/8CuaPRt1z4fSPiEFcec101MeqPtt1Xz63aP+cKoE5rTXAbAmHZ1pQda5F11rANFcMcg1ELv2X9KkSdixhFOqFZeI8jy5OF593CGw/XYLdMzS5wmpsBg+vzMxOyRyi2oD4fo/lWxml6l7Y7Z5WnC/C+cCdzUVw6nU0ZzEnLW+ssFhDj26p4QHbW0Nu4PGZ7K9HraWUBCqlCwgUWFGtM5YqwbH+PYUs/p8dbPOgl5ys9JGmHiUJD5e6IT820b704jq1s3ITaGSSWDnUcvljX/LAz8fHQEe7O5ZtYbZgW6STD39QgQpabZnUvI5I8OJ+C9BjaYRd1NhoPjvtRUEU5cSR47NzPNR3655ag+4lNDvPljlQBANpyEHbTQf+mcDYnnLJQaT6Zh4xhrgRm8ilA8S8PA4xcoITjvP369jCz8gGMiZrmh6FuYC0VWqWuaWyypzXhfP5IuRKI7g2WC6QYM8AITly3R813sIriLHFgN5bVJx0ENeunp8233U4hh/X1evxuVGBpOLeqAtmZ9qCxTWqkMfKLUkVfaJouu8VQH7WmryVpEcG+c+g1wgfh7D0alZ5uZ6dvrEmqg6Ns9ZGL7umgSkl0J99YDW8BrkiNr0K9bG5eDzuvRFZuhg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB3022.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(396003)(136003)(376002)(346002)(366004)(39860400002)(451199015)(8936002)(33716001)(44832011)(5660300002)(71200400001)(38070700005)(6486002)(122000001)(478600001)(91956017)(4326008)(8676002)(2906002)(316002)(86362001)(38100700002)(6506007)(186003)(1076003)(26005)(6512007)(9686003)(64756008)(54906003)(6916009)(66556008)(66476007)(66446008)(41300700001)(76116006)(66946007)(83380400001);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?+l4kvnfMuMRYdqmKzOZt1l2R1nMqqafKsQtYM2HXm1qp3IKAREVhCHzdvGv9?=
- =?us-ascii?Q?rXgA8HaOET8829LVc5BV4aKjrxUfZYiU7gIASboS0r57kf9rm5hTKosWmQMm?=
- =?us-ascii?Q?yW/wcDPH7ZDpJVkZsKIO0kpr3EtOn+tnmlRr5/y8GccUz7CS9/kHU7plxPwL?=
- =?us-ascii?Q?GInKrGZVJMaYommGaOaxU9AcTGFnnmx/M2N/rSm2ErkD4WbKBEbij5AzkZ9w?=
- =?us-ascii?Q?5aTeHdb4wYSY+8QXQMg8sMNiz5276xiDZek3qcSiL3s4kxNXEs6Xu/osilTm?=
- =?us-ascii?Q?kcZwTVTGqexCdd0GWLoWXIcHTRL3siHhmma8IFvCQNImknuPmmROypY72AbC?=
- =?us-ascii?Q?C8SCFZ8BXzimtyVJ0ahlL7TCOkHdbhyCSrWMZY0FMmMUj5nRs1bvkcUF6VcZ?=
- =?us-ascii?Q?/SBdhhbM66LY+jnTOKLFlP9xLxzNqnUiMDP0fz+5io7hltFRKtaajAgjaRoX?=
- =?us-ascii?Q?lk6M7CICEVLxrKMyc8NurnHlxpdNBCodaqdGrrN5i/DD534EqiHKbhAoVmjy?=
- =?us-ascii?Q?Pm7bEXuVCUinWG3iI792cyov6FS/0RM+LSxtnEzeR8WbL2sfGCS/je4gXpY0?=
- =?us-ascii?Q?fL/oG9nPfkeIpstNNuJLY+6bsQKYijiuASi0EqjWzkLt0KBBBJXfnidg22aA?=
- =?us-ascii?Q?Pjl4YY2TUzoP6EiSFOvooMHv77FRtjo7HEX9WPNL2D5PxZgxh06dFqJlAgqL?=
- =?us-ascii?Q?Crw7IDNh8rSYObjSoMC6Ki51YHbvagRVnQynDs0byubKCT9vrlEOzHPR19ua?=
- =?us-ascii?Q?hwn/pWwr6s2pPcza/ELxGzwptiIMnp3FgjsCPzoEiRBN0zl621iZ+aEmh7ib?=
- =?us-ascii?Q?KP4CcHBVXa9L9VuUGoAJKxaDA2sEbeOq271EHiS1bhleJUM9gcED1lkvi54V?=
- =?us-ascii?Q?7odYlbPNgczTFPjzEsFTJ7/zRSEOeMJTOKf/cEx5AegUb8RELryhP+H+MmFQ?=
- =?us-ascii?Q?RPbL1/zBC9pLA4mW1w8G8zYvQg6Gi8zYRmhz2AsczqYn67PQubOlKj9p9Kwv?=
- =?us-ascii?Q?Z8BuS5kYsWNqm08Thg1CdVzzliJT8SOfuhipCj5j6S7BO7EvYTsxNHdyBN/j?=
- =?us-ascii?Q?YtWpZGkXf3VURugIbHdBY0OAPhpsNN/Y1fKMw4IQp11CNM+OAoyJOioeNoP2?=
- =?us-ascii?Q?TWbSKVuYYGkHjFoHow92hmTkjLHFKAIyCD4DE0JP4hLUG5bcbhQh+Y8XaE42?=
- =?us-ascii?Q?sbO+qA11d0YKyyzskSD8g0jIVXxEn2oYJVCtif9JAassnQj/QkhFnFRMNnRK?=
- =?us-ascii?Q?SeAV5KVgdGcPX3xbunOML7dmo3I7pf3+e1pFrt8Lf5P+xeX5/repEQEhIYwj?=
- =?us-ascii?Q?qRw4YvHIMD/5iKDqLj1u3hN7e9j/yOvg1uN59ob2tLEG+DjqDYk1Dv6Fpr+/?=
- =?us-ascii?Q?HncueebBPSTOrOdagjJiG2TJd4eNK+Mx24xDpqXErXDocJfb9F0EpEV7Mnzf?=
- =?us-ascii?Q?1vnfldzzvk1nAiuFcElJOIX8A2kXum0cF5la0yV8tFZXq3xdm1Bq1E0K4NEj?=
- =?us-ascii?Q?fpfwc+jhs/Y61w/T2TeXRghG4j/6Puv43/sbdBxUBzwGxVF4jc1u+v03TBqA?=
- =?us-ascii?Q?k6yTuoEk+5l6c75ILaviFyWGdFSbC3O4zQfxGgIHghd3nEuk/QXmZCalSCMe?=
- =?us-ascii?Q?Ew=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?NFDz2jY9XySTQjR4nOIW1uzp1Sc+rmfZ58PZXPu5P7Co5HvT8aXv6TBn3HbP?=
+ =?us-ascii?Q?gf2YmjABj7tO4eQVKhFNHkdPcqkIZFxc9hTaT4EugIv/fLiEo9Ex17J16Hnx?=
+ =?us-ascii?Q?+Y0Gvj4f1YHAq8WWKPCVNWNojGbnLY5Xwxw9myDvYQhi7+tUl013YOdnHdmj?=
+ =?us-ascii?Q?TgDXlP41PRLUWBfpZR92BW5rMHJWcyfZKzWYuhundP/0jnNIiJXFRR6PS68J?=
+ =?us-ascii?Q?cqzlRdjNKqtY5ulSZnLMj09w7m9YnjmmDWxh3GakgVgkzn00vKlQ9x9YCg9A?=
+ =?us-ascii?Q?RN7iVWFbZjI7BG0QkJ7Za+/rFhz4XAEJ+EpN2G/FD6259QeAJFpRNvD7BAMR?=
+ =?us-ascii?Q?4ZQQgw1Xa6Itche75Qyr5m+cvAAp/nwfWAUJewljxiaPzXX9VS/Pcc6hQvPE?=
+ =?us-ascii?Q?yIVrllLT4c/9XbNPegMH/ZRc+m8XIIDn/i8AH5yjGtIdLnr2qaPvD24Lsj/g?=
+ =?us-ascii?Q?RqkaHCgkGvGdoxL0qMLOPRnW19hCkTfPnmDBLF6Ehv88C1O3rJZIXbUzxteN?=
+ =?us-ascii?Q?jup+p1Kq8oDOp0WMSuQZdYaHBXrhYSzUojPnEjtdJfRkmvN/lEeHP9kPPa88?=
+ =?us-ascii?Q?K1WT74UGL1ETZhHmEEs/4xc0Q8CDaV6vgvL+DqbdTP03DtayOY1IV4ubn5PT?=
+ =?us-ascii?Q?Bkohk9ePK8Jzx4FLJkD6W6en8aH1jb6NciZdZUwxuZBgvYC3pUS4pjOyuJP8?=
+ =?us-ascii?Q?prrRCOZNUFR8VFdSH48THsPaFacAQ4Qjw3yuakJQ7iPG0mYKDXNez5FRqdRM?=
+ =?us-ascii?Q?1rS9VDJMxj4MnSrZ+6T07XKdgqI3z5ZLdebEqVV2E8b3+P4pSGIZLapkI0kz?=
+ =?us-ascii?Q?rrgeJK8TFUB2ae19JNL6olq5ZDYiinvRzwywTwk3sGThUrzotQw0JIhKtPaG?=
+ =?us-ascii?Q?T8CradMZGrFomdFPRM9kygBWLPwgpHJ1o0iOIDh7qk0e128gEb1nhnSk4Ufd?=
+ =?us-ascii?Q?gZEc7I5CWXrKmJgLeVvdX1zktffJT51G8ts0rCtVCR1UseUNACHCUcufBkLk?=
+ =?us-ascii?Q?dSlWd4xVMC+90EV9te7dn+hJW82X8MKBWL/lhZ19CoAQ98I63A8f8Km+MgAD?=
+ =?us-ascii?Q?indAk961FvESxBGj3uoSFb8j8tsacewycJIqSOST9xHBv9vGax7yKDa6xXLg?=
+ =?us-ascii?Q?aTamMcoARIzY0279lM+RzGIkdArB5eThh3jXLs8et9ZzXACLftWT1bC0WlTg?=
+ =?us-ascii?Q?0Coo8z5rEk96nArO6m5KT7nFnLiB3vzaPE2dyJC4Jwhn0f/00vimw7Up7gEG?=
+ =?us-ascii?Q?1IR698TLUKfIHYI19SCrqTrBTxfxaXLyF2mnLIMFXK7o4ukejLN29kCBYt7b?=
+ =?us-ascii?Q?ko5abjQ8DMRCd3Z0BIxvH9SOwX89bNgiw99Hzm7mseh2lUh+p4nEsRZGsWxm?=
+ =?us-ascii?Q?vHIfG9wn+sUtt1RdT7HX+XIxB0oUZ6F/IaquyJ4sGMub/WfUxIfrUxiYlwWV?=
+ =?us-ascii?Q?xwm+s01KnQb2zW//I7k7R83XPdpDpYiPQyra2wTjG9t6aCnG2VyV1Ys2ukks?=
+ =?us-ascii?Q?I1lPDb7dqZmUinPyO/NtKdLamCAyYVcn/A5ZuSRndbeJhG1g5qD8MJ2YUYAv?=
+ =?us-ascii?Q?thCXWka+qQqVaI+NHgatRECIampcT+HM4lgJ+tNsAuZEP0NwBLkj91+fYbo1?=
+ =?us-ascii?Q?Wg=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <BC7ACBC923B28846AFF8F91FF17B3ED4@namprd10.prod.outlook.com>
+Content-ID: <D3D1F52706904043A61686E1E121055E@namprd10.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: oracle.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SN6PR10MB3022.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95cc4f2c-5a93-4c5e-8fa5-08dab75da19d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2022 14:23:19.7333
+X-MS-Exchange-CrossTenant-Network-Message-Id: d35abe2c-6293-4a9c-c8ec-08dab75dea77
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2022 14:25:21.9438
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ykqwhIz2SND24gINSv177cuX3HD6adC9IASrQ26I2YSHHLGVEoceXNwPuhqpODYnT46qe7l+meU1b6bm9aG8jA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4977
+X-MS-Exchange-CrossTenant-userprincipalname: 7qTt1tWpMzh8OFZPmCr6cm2uU8ZCzCyJFTIhJz2YShlVKPam13O1oZYe29t4AG/mztZk4jjYPT3ehUmAPBkvPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5054
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-10-26_06,2022-10-26_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 phishscore=0
- mlxlogscore=438 adultscore=0 malwarescore=0 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
- definitions=main-2210260081
-X-Proofpoint-GUID: aAY6wGqzLFd9qAqF3ZhZr1fE7HyAkgEm
-X-Proofpoint-ORIG-GUID: aAY6wGqzLFd9qAqF3ZhZr1fE7HyAkgEm
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 mlxscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2210260081
+X-Proofpoint-GUID: -Ubqoq1VW7KkckeXP7wtsuc9den59WmW
+X-Proofpoint-ORIG-GUID: -Ubqoq1VW7KkckeXP7wtsuc9den59WmW
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+
+Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+
 * Lukas Bulwahn <lukas.bulwahn@gmail.com> [221026 08:01]:
-> Dear maple-tree authors, dear Liam, dear Matthew,
+> Before the do-while loop in mtree_range_walk(), the variables next, min,
+> max need to be initialized. The variables last, prev_min and prev_max are
+> set within the loop body before they are eventually used after exiting th=
+e
+> loop body.
 >=20
-> there are some Dead Stores that clang-analyzer reports:
+> As it is a do-while loop, the loop body is executed at least once, so the
+> variables last, prev_min and prev_max do not need to be initialized befor=
+e
+> the loop body.
 >=20
-> lib/maple_tree.c:2906:2: warning: Value stored to 'last' is never read [c=
-lang-analyzer-deadcode.DeadStores]
-> lib/maple_tree.c:2907:2: warning: Value stored to 'prev_min' is never rea=
-d [clang-analyzer-deadcode.DeadStores]
+> Remove unneeded initialization of last and prev_min.
 >=20
-> I addressed these two cases, which were most obvious and clear to fix;
-> see patch of this one-element series.
+> The needless initialization was reported by clang-analyzer as Dead Stores=
+.
 >=20
-> Further, clang-analyzer reports more, which I did not address:
+> As the compiler already identifies these assignments as unneeded, it
+> optimizes the assignments away. Hence:
 >=20
-> lib/maple_tree.c:332:2: warning: Value stored to 'node' is never read [cl=
-ang-analyzer-deadcode.DeadStores]
-> lib/maple_tree.c:337:2: warning: Value stored to 'node' is never read [cl=
-ang-analyzer-deadcode.DeadStores]
+> No functional change. No change in object code.
 >=20
-> Unclear to me if the tool is wrong or right in its analysis here for the =
-two functions above.
-
-The tool is correct but these aren't going anywhere.  They are compiled
-out and are needed for the future.
-
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  lib/maple_tree.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >=20
-> lib/maple_tree.c:1212:23: warning: Value stored to 'nodep' during its ini=
-tialization is never read [clang-analyzer-deadcode.DeadStores]
->=20
-> A lot of pointer magic. Unclear to me if the tool is wrong or right in it=
-s analysis here.
-
-Agreed, this is unclear.. I don't like it and it needs to be removed.
-I'll send something out shortly. This was refactoring by the looks of it.
-
->=20
-> lib/maple_tree.c:5014:5: warning: Value stored to 'count' is never read [=
-clang-analyzer-deadcode.DeadStores]
->=20
-> Unclear if the code is intended as it is now.
->=20
-> In mas_anode_descend(), the variable count is really just assigned and us=
-ed once
-> effectively. The second assignment is never read. So, the variable count =
-could
-> just be removed in mas_anode_descend().
-
-This was probably left over from refactoring as well.  I will fix this
-as well, thanks.
-
->=20
->=20
-> Maybe these further warnings are helpful to clean up the code or find an =
-issue
-> that was overlooked so far.
-
-Much appreciated,
-Liam=
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index e1743803c851..fbde494444b8 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -2903,8 +2903,8 @@ static inline void *mtree_range_walk(struct ma_stat=
+e *mas)
+>  	unsigned long max, min;
+>  	unsigned long prev_max, prev_min;
+> =20
+> -	last =3D next =3D mas->node;
+> -	prev_min =3D min =3D mas->min;
+> +	next =3D mas->node;
+> +	min =3D mas->min;
+>  	max =3D mas->max;
+>  	do {
+>  		offset =3D 0;
+> --=20
+> 2.17.1
+> =
