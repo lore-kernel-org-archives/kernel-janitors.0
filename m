@@ -2,106 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA0EC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Oct 2022 10:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F959C38A2D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Oct 2022 12:01:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231903AbiJZKrr (ORCPT
+        id S233465AbiJZMBG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Oct 2022 06:47:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33252 "EHLO
+        Wed, 26 Oct 2022 08:01:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233187AbiJZKrn (ORCPT
+        with ESMTP id S231476AbiJZMBE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Oct 2022 06:47:43 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8389CC83D
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Oct 2022 03:47:42 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id bp11so25077753wrb.9
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Oct 2022 03:47:42 -0700 (PDT)
+        Wed, 26 Oct 2022 08:01:04 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8445762900;
+        Wed, 26 Oct 2022 05:01:01 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id z97so41005332ede.8;
+        Wed, 26 Oct 2022 05:01:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=isovalent-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xwO/J6XC5u/U/KETkLvY6jk2wOmjSxeU44uWgsDknd0=;
-        b=Dh3IPko+ZGodvjmw02h3qp8SirFezR0NikFdhAqJBrDk2kH9Ikx/gMHU7O+OIzEO32
-         5jKm+m6EiQHJJYuXR8yIdVkoNiHcp2MrggnFnCB64se1BlfIRd3T+7mzEdylrW46kYsd
-         lkxkz4IiqczDA2Ph24U+v4onCwgLrJuMqTfA6Hz796H0mq3ZuBg1fJxRYU3hnWAIofCd
-         IQL34JLqKwwsZ81wL8DnpHAPlWHSo2XtqvdKMUb8Ax5g2n20Y8uho+aauGNckvGr/BN8
-         04MctORcWybLCHG+lUWtgvf3XJPS3VUcJCi5jOD6OxHBnceIbMxQ7WnUKeV5XiWA0rJ5
-         1R/w==
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bbtw+HRW2KLHl7Yg2Uo3gcNX/+9EYg5HCVoRagBLIkA=;
+        b=ggUvJA2IjkkFVR7NAfRcitqbXwBiJfMYPc/6Rxg3BC0XsP6r3isgE7h6ThIPiNlA4o
+         npPZMMp2U21fkqhALp56gPM2IEy7LfNkT/0Ir+tKimHwUuQiHMbfwG5za/rZ/WWujXIz
+         zyqTmgTYVutFLxLcrwYLC1/W4qVAJgXVlHQMWORqIqfDWNvagTGJab0wLIw7UVWN9InC
+         Zk6AAdIl/OdX7LRG8h+0HKi+BDtCJrstz6Kq58RrL6GbpOT6wZNG43JF/1BGpUmjD8ga
+         LMNZoJWlxjgWumaLkui3hBf4nXI+9Eev35RDpkFI0JgfFIvhFGm7R/qj4XOdybFWYsUZ
+         k6Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xwO/J6XC5u/U/KETkLvY6jk2wOmjSxeU44uWgsDknd0=;
-        b=dt/zxnGGUDVDg2wVJu4SEBaEVy1je3s2+4LB6kigX/1yeVMcOZnBqCcC0I7di2Y2SZ
-         rsbCtrGQv5hK9zK3MK71jXS2t+zGTxXZn+5uq47g//gESo0rVM1GAjnqsknHFhgebNIT
-         v2WLpn5CyGuPI7yqczdjwKkwGffPsKoHD/L1i8uTgTL/yYhtdtgRTejcQ4n+ept3M2/y
-         mkoLHLE0KZ1XSZZbKGD7RipaphYKVO6oHLguRPpxxTTnvXz5SwJuQjzoOESUdBUVlLfZ
-         l6eW7yTpq8ihUT0b0LA/7ASQuctcdfxIaUHGx4tVnjvdq9G2z3ZiheRO8jfNkCJZyVJY
-         IKLw==
-X-Gm-Message-State: ACrzQf0QR4OxX93bWpZTNkrNFMwoN2eoPLjk+NuVb58bmizH1KdQumX4
-        BeUOQZIbnoI05wlhsCd5vTTRCg==
-X-Google-Smtp-Source: AMsMyM4DBdS8BONnLcYygG0nChaeXJm5Wz4Xl6+2yQTblzNJXa8f7zLXecQ5aw32lK+foYOpTHkkwA==
-X-Received: by 2002:a05:6000:170b:b0:22e:44d0:6bae with SMTP id n11-20020a056000170b00b0022e44d06baemr28135803wrc.99.1666781253236;
-        Wed, 26 Oct 2022 03:47:33 -0700 (PDT)
-Received: from [192.168.178.32] ([51.155.200.13])
-        by smtp.gmail.com with ESMTPSA id ay19-20020a05600c1e1300b003a1980d55c4sm1553348wmb.47.2022.10.26.03.47.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Oct 2022 03:47:32 -0700 (PDT)
-Message-ID: <e3b415c2-351f-e2df-4a24-6fa33df7d69b@isovalent.com>
-Date:   Wed, 26 Oct 2022 11:47:31 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH][next] bpftool: Fix spelling mistake "disasembler" ->
- "disassembler"
-Content-Language: en-GB
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        bpf@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221026081645.3186878-1-colin.i.king@gmail.com>
-From:   Quentin Monnet <quentin@isovalent.com>
-In-Reply-To: <20221026081645.3186878-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bbtw+HRW2KLHl7Yg2Uo3gcNX/+9EYg5HCVoRagBLIkA=;
+        b=LWSYdvUT1kYfaMZqJRbxDq63SNqWKygyNCo5HIMEeIkCcwIk8kkMd9ujlaSWbDLZyo
+         M3l/4ThkxeowXj4W9k4/vBkFvFw8RFAyWn9Ij5zNbv7FvL59ax5Fb9cQJTOhvW4GefEZ
+         rEqsiafHV1lmXglbzeKuIpYCmmku/8StkrQKO0bJhUvXFkV4iBamA6f7WVrOrTDiuDxo
+         wZqxJgxSgMXJWIGTpeapeAH1soLsL5SBXOT7h0Wb/z/4+jOdXPi97xl9TxtMd5/KBqz1
+         PjgvGAkStVXcFXV/EHA8wK7FhA5mhUT64/m7EfzCq2U7I/jegAIuBGwzzMo4K6sp+g2E
+         wucQ==
+X-Gm-Message-State: ACrzQf0r4RsgYEgDq4pp5H/HkpMI/gDW2aaAOmmJthvJL4vJqXNEn8mE
+        zrDWCab1hjcPONrFdZ+unrw=
+X-Google-Smtp-Source: AMsMyM6cjz1cxDXxmcXl52+FSt5RnzvM6WTi/mlDsR93q4wrCLyCkB+KHz+hkJutaz5jUk7+0BAdmQ==
+X-Received: by 2002:aa7:dc10:0:b0:440:b446:c0cc with SMTP id b16-20020aa7dc10000000b00440b446c0ccmr40232509edu.34.1666785659926;
+        Wed, 26 Oct 2022 05:00:59 -0700 (PDT)
+Received: from felia.fritz.box (200116b826195000091b3ab8e8f9a156.dip.versatel-1u1.de. [2001:16b8:2619:5000:91b:3ab8:e8f9:a156])
+        by smtp.gmail.com with ESMTPSA id ky21-20020a170907779500b00788c622fa2csm2872760ejc.135.2022.10.26.05.00.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Oct 2022 05:00:58 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/1] Dead stores in maple-tree
+Date:   Wed, 26 Oct 2022 14:00:28 +0200
+Message-Id: <20221026120029.12555-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-2022-10-26 09:16 UTC+0100 ~ Colin Ian King <colin.i.king@gmail.com>
-> There is a spelling mistake in an error message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/bpf/bpftool/jit_disasm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/bpf/bpftool/jit_disasm.c b/tools/bpf/bpftool/jit_disasm.c
-> index 58a5017034a2..7b8d9ec89ebd 100644
-> --- a/tools/bpf/bpftool/jit_disasm.c
-> +++ b/tools/bpf/bpftool/jit_disasm.c
-> @@ -223,7 +223,7 @@ static int init_context(disasm_ctx_t *ctx, const char *arch,
->  
->  	memset(tpath, 0, sizeof(tpath));
->  	if (get_exec_path(tpath, sizeof(tpath))) {
-> -		p_err("failed to create disasembler (get_exec_path)");
-> +		p_err("failed to create disassembler (get_exec_path)");
->  		return -1;
->  	}
->  
+Dear maple-tree authors, dear Liam, dear Matthew,
 
-Thanks for the fix!
+there are some Dead Stores that clang-analyzer reports:
 
-Acked-by: Quentin Monnet <quentin@isovalent.com>
+lib/maple_tree.c:2906:2: warning: Value stored to 'last' is never read [clang-analyzer-deadcode.DeadStores]
+lib/maple_tree.c:2907:2: warning: Value stored to 'prev_min' is never read [clang-analyzer-deadcode.DeadStores]
+
+I addressed these two cases, which were most obvious and clear to fix;
+see patch of this one-element series.
+
+Further, clang-analyzer reports more, which I did not address:
+
+lib/maple_tree.c:332:2: warning: Value stored to 'node' is never read [clang-analyzer-deadcode.DeadStores]
+lib/maple_tree.c:337:2: warning: Value stored to 'node' is never read [clang-analyzer-deadcode.DeadStores]
+
+Unclear to me if the tool is wrong or right in its analysis here for the two functions above.
+
+lib/maple_tree.c:1212:23: warning: Value stored to 'nodep' during its initialization is never read [clang-analyzer-deadcode.DeadStores]
+
+A lot of pointer magic. Unclear to me if the tool is wrong or right in its analysis here.
+
+lib/maple_tree.c:5014:5: warning: Value stored to 'count' is never read [clang-analyzer-deadcode.DeadStores]
+
+Unclear if the code is intended as it is now.
+
+In mas_anode_descend(), the variable count is really just assigned and used once
+effectively. The second assignment is never read. So, the variable count could
+just be removed in mas_anode_descend().
+
+
+Maybe these further warnings are helpful to clean up the code or find an issue
+that was overlooked so far.
+
+
+Best regards,
+
+Lukas
+
+
+Lukas Bulwahn (1):
+  lib: maple_tree: remove unneeded initialization in mtree_range_walk()
+
+ lib/maple_tree.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
