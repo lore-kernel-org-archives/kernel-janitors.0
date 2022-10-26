@@ -2,156 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA63CC38A2D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Oct 2022 07:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4924BC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Oct 2022 08:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232926AbiJZHY7 (ORCPT
+        id S232752AbiJZIQu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Oct 2022 03:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48958 "EHLO
+        Wed, 26 Oct 2022 04:16:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231706AbiJZHY5 (ORCPT
+        with ESMTP id S232161AbiJZIQt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Oct 2022 03:24:57 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F39CDF6A
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Oct 2022 00:24:56 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id y13so9919695pfp.7
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Oct 2022 00:24:56 -0700 (PDT)
+        Wed, 26 Oct 2022 04:16:49 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E08EF8D22E;
+        Wed, 26 Oct 2022 01:16:48 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id az22-20020a05600c601600b003c6b72797fdso970070wmb.5;
+        Wed, 26 Oct 2022 01:16:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lbsIGfNdTRFI62Q4sgMBIvZMA5h+sOP1oBKSZ5ur8sg=;
-        b=pNtYy80rJqYM08OpI1tcWHi5BJehiegmf/3b81VbZwJFYi2J0V6LxLfOBGST56LYDB
-         yf1ZpcpCQWBINhlBqut6Pvft6+UgM0QGpgp3iqsdQAwlqXp2HAvFZaF3o0LhZBHFSxZv
-         4PMwaXRB/4bpixQJ60oJCAuwuAUFiYmo8hdpBb6EmbOgagTt/fpVMy2VPJ4zRogsrSem
-         xq/Ey8C89WgWQI+ErYXv2Bgxjx/SjfLjN4imGQ0rdOnXLrZLjOPmEGYFqOWxIHP2MmFZ
-         Yor9FM03SpqhhFBFhNr2YsV+pnZZg/3msxAEwEX9wQuod/l4ifb/UHSXDELucDE0xIno
-         NptQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XQrSTyfhMtQPpxxhJU/ar1JrJV7XCzKtcCQvIyVOIy8=;
+        b=jl2HFmdzLYBiS+vt9fhpdR7erCRUSVpVoy903eybZ712HPcEgrUVhxUdjNy8vjtq+a
+         mGsvt2MbaRAyEioeSN10YIGQjmYqOVLgVn3wWjX1oTI/q70ZUCwWNdo8k+QgGNFmOSoF
+         UZaChFiLIlkNUuSFDRZclzqsWhuhd6gvx6wokU8joqeWiFoZHYXv5s4xB25D6bQlvNps
+         PPWZ8pwzj0elHveJdi/vtKctM3Ew9vilspuPOZ/58gXRWxJhA412dIhpJJuxxI5erDmc
+         +TSXJVMfW5Hh3vF41JK8hLWS0wnPXKnGzYuJQlaZwTivWaOaL/3S+V2f9yHtIqYo2n00
+         IovA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lbsIGfNdTRFI62Q4sgMBIvZMA5h+sOP1oBKSZ5ur8sg=;
-        b=pCXFF2fxAUd7VQGbJCrlcTsTajK5t8zW2+Qw/UXN80qp8jICDKSiM/RYCe3CO7fEiD
-         7UUueRG2mManiQZ1CegH97CcwSkBZfuvWJ2vZiOoe+UJphkJWM76kMoMkLSPvnaPq+uU
-         KUoA6EgmtToT8cNcPRCZTcF82kJwd4r1Z+i1NEJqiaT7UX8sfdN/gfbpy2NKy/aJ6E1F
-         8AFcTUfls3+VJ3FMGhxVLZ0ro8N5Xy8oJtLWO+NnKJA0K0urCd7krWIQTNjtyphQ6UuO
-         7vW06lQ4ipK2sCGt4wFDkezpnJ5imyMCdBHDRMbZXZoI7M8CXxjShsgEu0lmEC6dtgnY
-         +eXA==
-X-Gm-Message-State: ACrzQf1MpZghtOKolVan4I5qeWqWMzkVkkAWwDuMe8EXF/yyTsUltqxT
-        G7yKbf48d4KsVGI+Ivt23Ck=
-X-Google-Smtp-Source: AMsMyM5Pgl8UXjLTT+IynrpLOReb8fQxrJOCS430MlGcU+ORFvzAO1lF4PZ8RLhm+3ZNVYQprM6ROw==
-X-Received: by 2002:a63:1a45:0:b0:439:49b4:9672 with SMTP id a5-20020a631a45000000b0043949b49672mr36078100pgm.551.1666769095629;
-        Wed, 26 Oct 2022 00:24:55 -0700 (PDT)
-Received: from cyhuang-hp-elitebook-840-g3.rt ([2402:7500:47a:8591:4c25:2ac0:9173:656f])
-        by smtp.gmail.com with ESMTPSA id k22-20020a63d116000000b00469e09532e0sm2252228pgg.18.2022.10.26.00.24.52
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Oct 2022 00:24:55 -0700 (PDT)
-Date:   Wed, 26 Oct 2022 15:24:48 +0800
-From:   ChiYuan Huang <u0084500@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Lee Jones <lee@kernel.org>, ChiYuan Huang <cy_huang@richtek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        ChiaEn Wu <chiaen_wu@richtek.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH resend] mfd: mt6370: add bounds checking to
- regmap_read/write functions
-Message-ID: <20221026072444.GA24881@cyhuang-hp-elitebook-840-g3.rt>
-References: <Y1aCiReTZDbPp/rS@kadam>
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XQrSTyfhMtQPpxxhJU/ar1JrJV7XCzKtcCQvIyVOIy8=;
+        b=Jm7aXTQiaqPXizcmohqD4OuFSCDlY3Kwb11Imd4GxDOFMxddhCGb+OvrpYK5V5klP6
+         xHz/I7JZKO/7We8SlweZwn5INm0IfnkG8PpZfsrUqK2WKs8AKbZ2hUnZMdcu2myD1TH2
+         bu+2Hu7NYYa3EC2OqVwYLNJ4hvUGqMUUfi8YFKRs1jpLnBEOF8tdlhvgGifThW/feh3N
+         fljiJ/L+dtktazNYboTpEjGo5ZUN3B9Atn1fdhHEB+oeJUoGPqNMY6/wrs8uUePAf2G9
+         oHX218fW7hptsAP6tydDnxwoI+vo59uck+hXtHM8d7Dx0GpYlHeVSe6x8AQt+dkm9uY0
+         n5Vg==
+X-Gm-Message-State: ACrzQf0+4LxDa6tDlt1Pbq68c74mIY1aDV5SrpLzzmsyRXn2+t4QyLby
+        413/nBjnl5rR+gInMRUQFF4=
+X-Google-Smtp-Source: AMsMyM7XmA1X4tNZpHNjEWs8mQT3Wq9+040EXB3IJxVuT7nU9CCPl8Q7M8NbOb/FBrVnwxXk2aORxg==
+X-Received: by 2002:a05:600c:1f08:b0:3c6:75b3:f444 with SMTP id bd8-20020a05600c1f0800b003c675b3f444mr1541407wmb.74.1666772207290;
+        Wed, 26 Oct 2022 01:16:47 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id f12-20020a05600c4e8c00b003b95ed78275sm1236938wmq.20.2022.10.26.01.16.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Oct 2022 01:16:46 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Quentin Monnet <quentin@isovalent.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        bpf@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] bpftool: Fix spelling mistake "disasembler" -> "disassembler"
+Date:   Wed, 26 Oct 2022 09:16:45 +0100
+Message-Id: <20221026081645.3186878-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y1aCiReTZDbPp/rS@kadam>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 24, 2022 at 03:18:17PM +0300, Dan Carpenter wrote:
-> It looks like there are a potential out of bounds accesses in the
-> read/write() functions.  Also can "len" be negative?  Let's check for
-> that too.
-> 
-> Fixes: ab9905c5e38e ("mfd: mt6370: Add MediaTek MT6370 support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This came from static analysis, but then I couldn't figure out the next
-> day if it was actually required or not so we dropped it.  But then
-> ChiYuan Huang did some testing and it was required.
-> 
-> There was some debate around various style questions but honestly I'm
-> pretty happy with the style the way I wrote it.  I've written a long
-> blog on why "unsigned int" is good at the user space boundary but should
-> not be the default choice as a stack variable.
-> 
-> https://staticthinking.wordpress.com/2022/06/01/unsigned-int-i-is-stupid/
-> 
-> The other style issue was wether to use ARRAY_SIZE() or MT6370_MAX_I2C
-> and I just think ARRAY_SIZE() is more obvious to the reader.
-> 
-Hi,
+There is a spelling mistake in an error message. Fix it.
 
-Before applying the patch, the test result is like as below
-1) overbound register access
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-pc : i2c_smbus_xfer+0x58/0x120
-lr : i2c_smbus_read_i2c_block_data+0x74/0xc0
-Call trace:
- i2c_smbus_xfer+0x58/0x120
- i2c_smbus_read_i2c_block_data+0x74/0xc0
- mt6370_regmap_read+0x40/0x60 [mt6370]
- _regmap_raw_read+0xe4/0x278
- regmap_raw_read+0xec/0x240a
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/bpf/bpftool/jit_disasm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-2) normal register access with negative length
-Unable to handle kernel paging request at virtual address ffffffc009cefff2
-pc : __memcpy+0x1dc/0x260
-lr : _regmap_raw_write_impl+0x6d4/0x828
-Call trace:
- __memcpy+0x1dc/0x260
- _regmap_raw_write+0xb4/0x130a
- regmap_raw_write+0x74/0xb0
+diff --git a/tools/bpf/bpftool/jit_disasm.c b/tools/bpf/bpftool/jit_disasm.c
+index 58a5017034a2..7b8d9ec89ebd 100644
+--- a/tools/bpf/bpftool/jit_disasm.c
++++ b/tools/bpf/bpftool/jit_disasm.c
+@@ -223,7 +223,7 @@ static int init_context(disasm_ctx_t *ctx, const char *arch,
+ 
+ 	memset(tpath, 0, sizeof(tpath));
+ 	if (get_exec_path(tpath, sizeof(tpath))) {
+-		p_err("failed to create disasembler (get_exec_path)");
++		p_err("failed to create disassembler (get_exec_path)");
+ 		return -1;
+ 	}
+ 
+-- 
+2.37.3
 
-
-After applying the patch, the first case is cleared.
-But for the case 2, the root cause is not the mt6370_regmap_write() size
-check. It's in __memcpy() before mt6370_regmap_write().
-
-I'm wondering 'is it reasonable to give the negative value as the size?'
-
-
->  drivers/mfd/mt6370.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/mfd/mt6370.c b/drivers/mfd/mt6370.c
-> index cf19cce2fdc0..fd5e1d6a0272 100644
-> --- a/drivers/mfd/mt6370.c
-> +++ b/drivers/mfd/mt6370.c
-> @@ -190,6 +190,9 @@ static int mt6370_regmap_read(void *context, const void *reg_buf,
->  	bank_idx = u8_buf[0];
->  	bank_addr = u8_buf[1];
->  
-> +	if (bank_idx >= ARRAY_SIZE(info->i2c))
-> +		return -EINVAL;
-> +
->  	ret = i2c_smbus_read_i2c_block_data(info->i2c[bank_idx], bank_addr,
->  					    val_size, val_buf);
->  	if (ret < 0)
-> @@ -211,6 +214,9 @@ static int mt6370_regmap_write(void *context, const void *data, size_t count)
->  	bank_idx = u8_buf[0];
->  	bank_addr = u8_buf[1];
->  
-> +	if (len < 0 || bank_idx >= ARRAY_SIZE(info->i2c))
-> +		return -EINVAL;
-> +
->  	return i2c_smbus_write_i2c_block_data(info->i2c[bank_idx], bank_addr,
->  					      len, data + MT6370_MAX_ADDRLEN);
->  }
-> -- 
-> 2.35.1
