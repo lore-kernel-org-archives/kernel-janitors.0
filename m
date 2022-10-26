@@ -2,107 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCFAC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Oct 2022 12:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A95BC38A2D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Oct 2022 14:09:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233600AbiJZMBJ (ORCPT
+        id S234145AbiJZOJy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Oct 2022 08:01:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34302 "EHLO
+        Wed, 26 Oct 2022 10:09:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233416AbiJZMBI (ORCPT
+        with ESMTP id S234134AbiJZOJy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Oct 2022 08:01:08 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EAEF62900;
-        Wed, 26 Oct 2022 05:01:07 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id a5so27941011edb.11;
-        Wed, 26 Oct 2022 05:01:07 -0700 (PDT)
+        Wed, 26 Oct 2022 10:09:54 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8447495FF;
+        Wed, 26 Oct 2022 07:09:51 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id bp11so25985763wrb.9;
+        Wed, 26 Oct 2022 07:09:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eCtqGBwRR52BjUb2Wh7FLafniFKggPInKgSqsTGAvt0=;
-        b=leGA4qoyrfWu79SeDDY1Fpo34CYPzzjLv68Ja1abwz+SMwx1nPmuvDTz1TDqpIatxk
-         3RpcqHN5wUmk14raenigd1/dCfWPgu02Mcro/BOa/EDedD2UJcYRcE+GxYpGyva10ZwX
-         JODRghr9tCLi8eWJawFMZ7+PIS19+3gyxhbPzNi+qQX3XkZboKHABroQ0h7Qiwm55U3L
-         H5gHn2nXTessOqFZxDrZ5TQYYscZBkEp15vI3ZXC3aNaS00JRD5aZrILQhUOY9WlR/0Z
-         uSR0ZIra0x4coQA9R/cBeF1uiGWGH2QlKD1/ULE44TBzkuK6u6EmR98B7xbmkYgSmmOG
-         J9xg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A0A5lCHNs+XemKP+wCfeNjxojYMmlZBo7aDpwOfQPqo=;
+        b=JZgMKUonOdMuCuKZDP+3URj+3v2wDIoYv5Pa2BVRXlYZFfVz6cKn1NLTmMjkiinWr3
+         uLdRkqt9kU061ia+Ljg1/I/bjJe923cnr6bJixLiIeQV098o4sr5q/3XWAIIsulm4m42
+         UCUcm/WO5pZzDCLauz1F99+LicIxhzQyKgtA2UYDLds1j1FGxc8bnsb+V9thGgLtTccJ
+         IyeCMjtZ510gu9ij//HRqBV13ZQrdqKnwFyfGl2uY2fLnzxsXj4iXrLvNFSa3okysGat
+         a3JvYgKMy0cglLNtQrIDwGn+doGZ9qkwY7Njx9/g+DiFE1gOBHNETfu7hrwRxxP2uyzV
+         KKYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eCtqGBwRR52BjUb2Wh7FLafniFKggPInKgSqsTGAvt0=;
-        b=dqRp6DIv114GciQxcmjftXDvwzd5JXQt+0582PPeG2Ef+VgagT5WgxoPpjaW5HqayL
-         U6iLrTkDXnJTGSHxswOGfxfqJMBPq2maUNM6QJUNGeYxoRrTWNPa+cWCT/E7+9NBdZby
-         6RcRizrzYSAzL6k6unbihvQ9IZtkkXXQOM1f2LljJ5dVtD6wUuG1fvQqK/ztyUHz9l93
-         +48Xzbop1YURKC9vfmlexcnWwSXmzSW/CfMDdy+NlahaeN6Qeg96VQ7qCzOk8kuuOaO5
-         gjG07BmLK2uBBAxhowASdrpVS4eBw7X1Fri4qywGUmkxNkimajrXtl/2k1eIqhbk5YoN
-         jRZg==
-X-Gm-Message-State: ACrzQf0MZJs9bQ6fMUrXuifiVgse5mw7/xyY0LQ28ITmCjsfwGfBw6kQ
-        3iT2ktSWYdtHNBlnZ3IA/Is=
-X-Google-Smtp-Source: AMsMyM4S2WOpYB7baEE7G/A5nEFun1gaZ1VPWURaDzAg4GG41p/l6TvGEF3Y7ZSEwi5jJcOhKde5/w==
-X-Received: by 2002:a05:6402:11ce:b0:45c:a364:2c3d with SMTP id j14-20020a05640211ce00b0045ca3642c3dmr41106701edw.204.1666785665669;
-        Wed, 26 Oct 2022 05:01:05 -0700 (PDT)
-Received: from felia.fritz.box (200116b826195000091b3ab8e8f9a156.dip.versatel-1u1.de. [2001:16b8:2619:5000:91b:3ab8:e8f9:a156])
-        by smtp.gmail.com with ESMTPSA id ky21-20020a170907779500b00788c622fa2csm2872760ejc.135.2022.10.26.05.01.04
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A0A5lCHNs+XemKP+wCfeNjxojYMmlZBo7aDpwOfQPqo=;
+        b=JmW1Gri49+uPjG0hTB49jZyrFCwssibHxT/A3Ou11CISIF/A6W2k4tQflUEA98uuVd
+         b+sNrjPqy3mrmNUY8eM3W+0CB9cZG00+rg1l+pdU40kxcBGWqxNM2MlYilmYAYTNvbww
+         zoV1Vqz9aHei5xkO2rXPvCT9YOwu6NM+/HRwjogoU6bYzGZoMjI6SUxr4x3rHuWUYoAv
+         DjpYzluEKsV5UMptdSjDxBzjQ1zaPjNtWg3/+bzaia4+/YRM7tctTXdUMO9bMiLpAZTF
+         NmMjNc/wDa+oE24W9E0J0/JHdku8H45sf2zKPNExSJzIIo48RgkQXoFKvwD67kqxfY6x
+         p5kQ==
+X-Gm-Message-State: ACrzQf1YARWPCF485klS5JdmXPO1MRoTsF04Ku2R6i6MrB8yGMzd0aLb
+        JmH9XCuT5DMQr5Gn5m5gk1a1SpMn6YTOzlXh
+X-Google-Smtp-Source: AMsMyM5e2I3HYFKRA91Hd0GiA/4DA0e6uH64qo8Oyp9bN6TLPAWiiS/WrO04T101hFNzUeY8ZCKTpw==
+X-Received: by 2002:adf:e7c7:0:b0:236:6994:a0b4 with SMTP id e7-20020adfe7c7000000b002366994a0b4mr13855199wrn.610.1666793390286;
+        Wed, 26 Oct 2022 07:09:50 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id v12-20020a05600c15cc00b003c6cd82596esm1794363wmf.43.2022.10.26.07.09.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Oct 2022 05:01:04 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 1/1] lib: maple_tree: remove unneeded initialization in mtree_range_walk()
-Date:   Wed, 26 Oct 2022 14:00:29 +0200
-Message-Id: <20221026120029.12555-2-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221026120029.12555-1-lukas.bulwahn@gmail.com>
-References: <20221026120029.12555-1-lukas.bulwahn@gmail.com>
+        Wed, 26 Oct 2022 07:09:49 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bus: fsl-mc: fsl-mc-allocator: remove variable free_count
+Date:   Wed, 26 Oct 2022 15:09:49 +0100
+Message-Id: <20221026140949.3242258-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Before the do-while loop in mtree_range_walk(), the variables next, min,
-max need to be initialized. The variables last, prev_min and prev_max are
-set within the loop body before they are eventually used after exiting the
-loop body.
+Variable free_count is just being incremented and it's never used
+anywhere else. The variable and the increment are redundant so
+remove it.
 
-As it is a do-while loop, the loop body is executed at least once, so the
-variables last, prev_min and prev_max do not need to be initialized before
-the loop body.
-
-Remove unneeded initialization of last and prev_min.
-
-The needless initialization was reported by clang-analyzer as Dead Stores.
-
-As the compiler already identifies these assignments as unneeded, it
-optimizes the assignments away. Hence:
-
-No functional change. No change in object code.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- lib/maple_tree.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/bus/fsl-mc/fsl-mc-allocator.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index e1743803c851..fbde494444b8 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -2903,8 +2903,8 @@ static inline void *mtree_range_walk(struct ma_state *mas)
- 	unsigned long max, min;
- 	unsigned long prev_max, prev_min;
+diff --git a/drivers/bus/fsl-mc/fsl-mc-allocator.c b/drivers/bus/fsl-mc/fsl-mc-allocator.c
+index dced427ca8ba..f1351237a9d5 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-allocator.c
++++ b/drivers/bus/fsl-mc/fsl-mc-allocator.c
+@@ -557,12 +557,9 @@ static void fsl_mc_cleanup_resource_pool(struct fsl_mc_device *mc_bus_dev,
+ 	struct fsl_mc_bus *mc_bus = to_fsl_mc_bus(mc_bus_dev);
+ 	struct fsl_mc_resource_pool *res_pool =
+ 					&mc_bus->resource_pools[pool_type];
+-	int free_count = 0;
  
--	last = next = mas->node;
--	prev_min = min = mas->min;
-+	next = mas->node;
-+	min = mas->min;
- 	max = mas->max;
- 	do {
- 		offset = 0;
+-	list_for_each_entry_safe(resource, next, &res_pool->free_list, node) {
+-		free_count++;
++	list_for_each_entry_safe(resource, next, &res_pool->free_list, node)
+ 		devm_kfree(&mc_bus_dev->dev, resource);
+-	}
+ }
+ 
+ void fsl_mc_cleanup_all_resource_pools(struct fsl_mc_device *mc_bus_dev)
 -- 
-2.17.1
+2.37.3
 
