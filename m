@@ -2,88 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD413C67871
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Oct 2022 08:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C19FCFA3742
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Oct 2022 11:48:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234899AbiJ0IUZ (ORCPT
+        id S235348AbiJ0Ls1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 Oct 2022 04:20:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37184 "EHLO
+        Thu, 27 Oct 2022 07:48:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234598AbiJ0IUX (ORCPT
+        with ESMTP id S235347AbiJ0LsZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 Oct 2022 04:20:23 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 538AD3687F;
-        Thu, 27 Oct 2022 01:20:20 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id o4so898092wrq.6;
-        Thu, 27 Oct 2022 01:20:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bZhAkeTE+r3qGSdf1uyZlVySOESrVW6Y6fLcnPw4YAY=;
-        b=DiIQNYyGrONs6G2AQZr+dH+U4Jsn1FBRy0IMRIDZ7JwnXFYfQfDx2nvhwWlwRS3BAO
-         eBm+2xhvAhNAoD9cFxe/7H3bUDw4fOg6AGfRjMk//F9lvQWnNzxR/R2TLWJBjnfXlOkT
-         Qb5EOia6u6jGmzYO8Gim9Lll50kq5jv/zaC7dWh1yrQeuRJ35ifdQC95/5K1tBCKLyCB
-         CDsKBeJl/YhXGwRk5QSzOibqNb4MmhBoeWN6FNofhaMmfSDYYkCgq8Yy0scM3zhYWMkk
-         PvwANTuSx6fd+fJALVH0vCJ6Gv0/pcaCdqW+cPCOCcI15EI2hNghLYUb17kALwkndbcw
-         c0UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bZhAkeTE+r3qGSdf1uyZlVySOESrVW6Y6fLcnPw4YAY=;
-        b=qgxnMUhIQMEc55Z9+Ma4Xnoot5Ghi1ZfK3Ss3/W48FOmDSno380O4syQaqEeKlcgE2
-         Y4/i68wjzGmL2AA+WqIyE4la1oHvbA1DeDzaN8/tbTWn+ge6IK3l0MtY0QKz0KYZyljA
-         ybovRnp4nO8SyyeIMWfXYebe9bire7+Awsyf8awSgthvBxbavVxiRV0eBsNQoGCGG24S
-         P+hecNk1cB26FSuruqADoiiaoQqtsvkw8qws3AMDTvxenQQVeVDRFzeoRHLKJ004w7Ba
-         6innEr7IPjYp/KtRUf80IpeBrKcFviTfDXLgGXROH/5bh/dACv9q7YtY/WW4Y2I0MOO+
-         kTOg==
-X-Gm-Message-State: ACrzQf2Xd30/Pv1YFwsUW3wn08osxn/yH4GTr00kbKJcKT9Uqbpiy1K5
-        +O3sV25aejavZHZEjWq9quY=
-X-Google-Smtp-Source: AMsMyM4fwrpf2P3XzwJoDzmjqVVVomWWxMoIdN49K5425D5uKFtKQmYX6UoderE+s+rzfRIQjOZtKg==
-X-Received: by 2002:a05:6000:10d1:b0:236:755b:e038 with SMTP id b17-20020a05600010d100b00236755be038mr12072900wrx.153.1666858818700;
-        Thu, 27 Oct 2022 01:20:18 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l17-20020a5d6751000000b00236488f62d6sm519681wrw.79.2022.10.27.01.20.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Oct 2022 01:20:18 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/watchdog: Fix spelling mistake "Temeprature" -> "Temperature"
-Date:   Thu, 27 Oct 2022 09:20:17 +0100
-Message-Id: <20221027082017.3255055-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        Thu, 27 Oct 2022 07:48:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6866F575;
+        Thu, 27 Oct 2022 04:48:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B640462289;
+        Thu, 27 Oct 2022 11:48:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD1EC433C1;
+        Thu, 27 Oct 2022 11:48:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666871304;
+        bh=s/KauLMKAD6uWTxe+fV8RZL3j/8Lst1jzS6ezNfuxGs=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=qLDT0mOZsPae7Fwh8JIAVy2mw+C0kClpjVg3AMWheLt1K3dOIgYI32nlVAstVK9Ui
+         ntd5JuZkMF39INtq2Yp2Md9jdElGbnHfl8JDQW28rXGA7LofatLXuEAdR53MfGf9bf
+         yZCMlBp4Pv+4HItPxmT72HJvvpiBiIDozl6CfIPTZZoJCSO8PyUR0u31i33d1PaVQB
+         96EEfYPzlp+q5pMYnFKXwAzl27EGLO0tK6FpFb1COpMUHoyb3kOdiCOz1zgRAdTE0R
+         0rzlv/fgJibQu+aeAs9HsIja+8AwyN0q9o4dcbkX7XONfa14NSfiIzTmkZ4Jp0QrwZ
+         MZwb3KH9LE9Uw==
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Michal Kalderon <mkalderon@marvell.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Ram Amrani <Ram.Amrani@cavium.com>,
+        kernel-janitors@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org, Ariel Elior <aelior@marvell.com>,
+        Doug Ledford <dledford@redhat.com>
+In-Reply-To: <Y1gBkDucQhhWj5YM@kili>
+References: <Y1gBkDucQhhWj5YM@kili>
+Subject: Re: [PATCH] RDMA/qedr: clean up work queue on failure in qedr_alloc_resources()
+Message-Id: <166687129991.306571.17052575958640789335.b4-ty@kernel.org>
+Date:   Thu, 27 Oct 2022 14:48:19 +0300
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.11.0-dev-87e0e
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a print statement. Fix it.
+On Tue, 25 Oct 2022 18:32:32 +0300, Dan Carpenter wrote:
+> Add a check for if create_singlethread_workqueue() fails and also destroy
+> the work queue on failure paths.
+> 
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/watchdog/watchdog-test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-index fb3ca67785c2..bc71cbca0dde 100644
---- a/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
- 			if (ret)
- 				printf("WDIOC_GETTEMP: '%s'\n", strerror(errno));
- 			else
--				printf("Temeprature: %d\n", temperature);
-+				printf("Temperature %d\n", temperature);
- 
- 			break;
- 		case 't':
+[1/1] RDMA/qedr: clean up work queue on failure in qedr_alloc_resources()
+      https://git.kernel.org/rdma/rdma/c/569ab362c3073a
+
+Best regards,
 -- 
-2.37.3
-
+Leon Romanovsky <leon@kernel.org>
