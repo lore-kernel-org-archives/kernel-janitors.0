@@ -2,96 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0E9C38A02
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Oct 2022 11:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B380FFA3740
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Oct 2022 12:25:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbiJ1L5v (ORCPT
+        id S229927AbiJ1MZx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Oct 2022 07:57:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59520 "EHLO
+        Fri, 28 Oct 2022 08:25:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbiJ1L5r (ORCPT
+        with ESMTP id S229933AbiJ1MZs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Oct 2022 07:57:47 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B9BA1D2F53;
-        Fri, 28 Oct 2022 04:57:46 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id bp11so6279399wrb.9;
-        Fri, 28 Oct 2022 04:57:46 -0700 (PDT)
+        Fri, 28 Oct 2022 08:25:48 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15EF910F882;
+        Fri, 28 Oct 2022 05:25:48 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id l14so6409953wrw.2;
+        Fri, 28 Oct 2022 05:25:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d6TXMetWnpVwYHSPTFYs3mT2fLaW0Up+55RjBCRl8KU=;
-        b=mvmaK9T8qwPNPB+J7se1Ff9zTxxeP5LLtleQPQy2l7Ig/MCTEFsrnWFwWD7izpJuDX
-         OFjdnlq66bH7TMJzIUW2jFH/t+JtAqni85de4XJRnsuyWahj4y7ZQef9hvkcilHKIwJX
-         9CBpP0OTuUDodmFUqc4VNfUlJzuzkJnzp/CTbLRQsT3Er27hbpQO7Af9jhUnpZn8Cw/7
-         O9+hK8QKIRtVOUnvAlaMaRJhuj0GNA3qbF2cR78tBUoUk8ELZCMDWTZ7clljMjsNJqT0
-         tHqkbcxREOVf0xpWkXPvJYZj63Hdx1+MxdBeJlfxIjK1ewNECpMl/LcVh+pxL0oS22N6
-         R06w==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FK1/5YPkFf1Q7P1hlST2j1TGwCKOMyfu9yX7sOPqiu4=;
+        b=dozcZ8KcZHyduxk/YDCY0FUTHezHt98S3E6zQLbDkiyXvW/vrmIxDZaqb+6/2jIpmT
+         IfERd2QCtNUTKPTu2vch65f03UPEyjfCasTvpX2w0Ti8wWwgcp6wOBOKio/msbdfXnsd
+         KNtVw0HARSmo3TDUunh/dsXcB+NbpfT9pdGToKxCEYJqf9WTyKOyc+s6tGX+Ds7T4E2F
+         +vjnlAR2/MVw5NurqhWCjpVAqKnObuyXGlgal7HTr2KQUUPreJAlhI6Xc7FGFA5eyasz
+         bOCZGkq4eTgdvvJRVzRLS7YP4E0CywS3nT8LSJIw3f8We0JJNXr00G83Ak2TDLteXqvI
+         kkcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d6TXMetWnpVwYHSPTFYs3mT2fLaW0Up+55RjBCRl8KU=;
-        b=dammCV1/erP2hD3tUesLqG+u9ixNgQnuhAt7gtGijQryAKcBJ6Hkt3jMOdIjHjYDBs
-         BQs0BQAhAWQ4WKtT5nv6N/JD2cCNnyGRX9L+sIOjCp54RjHJMkW3W88qmWnVMeyNoSXS
-         3yful2Vx2dp6LmdpNEuQD2UV+3MeiF7+0nppjcvweQj//lY7EqXrqaPYCJKsozYhE2GP
-         zPzMYslMxGDEog9rjwncpgk5a7IViu1vdIVS21Fj9SDgswUh1y50SJrYK6bZZ0p5U0+a
-         vqubpQVbxbdyu5/MChFkcXjhM7gjK/HptWH82D/azTi0rySzIFa26jDoHVPuuJNOV5T/
-         3Jbg==
-X-Gm-Message-State: ACrzQf177XCJKQUXZexTqf2kVegFnj+c6v1KdG7DWytinlVP2/bsqNAm
-        eouYfeglqfrcIdJafGXBeiQ=
-X-Google-Smtp-Source: AMsMyM5hRnYbweXL1+XX4tNLxBdLLaib/s1w7MLS8s8E1AxKI0PtEVr2IixL3tBFIsXYWvEkZo2/Mg==
-X-Received: by 2002:a5d:47a4:0:b0:230:20a1:2054 with SMTP id 4-20020a5d47a4000000b0023020a12054mr35753467wrb.299.1666958264871;
-        Fri, 28 Oct 2022 04:57:44 -0700 (PDT)
-Received: from felia.fritz.box (200116b826565c00108e11a5f898944c.dip.versatel-1u1.de. [2001:16b8:2656:5c00:108e:11a5:f898:944c])
-        by smtp.gmail.com with ESMTPSA id h8-20020adffa88000000b0023538fb27c1sm3547623wrr.85.2022.10.28.04.57.43
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FK1/5YPkFf1Q7P1hlST2j1TGwCKOMyfu9yX7sOPqiu4=;
+        b=4g3WmMDVmWavkz+BADK4FsNJTxhFuGW8kw9QvYykejYuZZRA5cdF/53JjkwaR9rHnC
+         n4ruGHIAtUqqvAL6FuXODBoMRZrdlKTn4U8A9reBzKjcvMkJ6P2PqUwQ5KIbfxPAV8dL
+         YPtamVu/dSJEPeB29GkRAg0SaqG003GZKxS4j/0D8DRon/QJWZISQKV1AGAs7NhQxjdD
+         oGq6nWAebfn7qzlH+XhWXeIPXYiiJBD39lTvXiBPPegD4e8yrcwnr0xE3ZfoCYobd2jU
+         f/5fjCOzeoiI52kI7O/eLvGxRxvaTyJ6xI2u1lj4y5vJ1NvSLs/4TWqd3CMmhE4AjnQ3
+         29Og==
+X-Gm-Message-State: ACrzQf3X8VdjiF5u7e0ptsIv7kSshlGzH2Nj2Sb0zJdE9QFi/C5ieQ0Q
+        /J1JyA9MGDGqwac//I2ZGyc=
+X-Google-Smtp-Source: AMsMyM7lv7DKYenGFEasJTH7+oVoBU4pALFMDyuloucnUJszGGYZH1IwHoOSWbsnCJqFHbvC45s3qQ==
+X-Received: by 2002:a5d:5711:0:b0:236:598d:83ed with SMTP id a17-20020a5d5711000000b00236598d83edmr24125851wrv.190.1666959946497;
+        Fri, 28 Oct 2022 05:25:46 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id l4-20020a05600c1d0400b003c7087f6ca8sm4493240wms.2.2022.10.28.05.25.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Oct 2022 04:57:43 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust entry after arm64 efi-entry.S file movement
-Date:   Fri, 28 Oct 2022 13:56:19 +0200
-Message-Id: <20221028115619.2814-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 28 Oct 2022 05:25:45 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-perf-users@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] perf: remove unused pointer task_ctx
+Date:   Fri, 28 Oct 2022 13:25:45 +0100
+Message-Id: <20221028122545.528999-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 6ed27461c9c8 ("arm64: efi: Move efi-entry.S into the libstub source
-directory") moves arch/arm64/kernel/efi-entry.S to
-drivers/firmware/efi/libstub/arm64-entry.S, but misses to adjust the
-MAINTAINERS file.
+The pointer task_ctx is being assigned a value that is not read, the
+assignment is redundant and so is the pointer. Remove it
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken file pattern.
-
-Adjust the file entry in EXTENSIBLE FIRMWARE INTERFACE (EFI) to this file
-movement.
-
-As the file drivers/firmware/efi/libstub/arm64-entry.S is already covered
-by the entry drivers/firmware/efi/, simply remove the arm64 file entry.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/events/core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f4f908c28d7e..194ae5dd952e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7806,7 +7806,6 @@ F:	Documentation/admin-guide/efi-stub.rst
- F:	arch/*/include/asm/efi.h
- F:	arch/*/kernel/efi.c
- F:	arch/arm/boot/compressed/efi-header.S
--F:	arch/arm64/kernel/efi-entry.S
- F:	arch/x86/platform/efi/
- F:	drivers/firmware/efi/
- F:	include/linux/efi*.h
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index ebd9ebd53238..e7c0df152c8f 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4215,7 +4215,6 @@ static bool perf_rotate_context(struct perf_cpu_pmu_context *cpc)
+ 	struct perf_cpu_context *cpuctx = this_cpu_ptr(&cpu_context);
+ 	struct perf_event_pmu_context *cpu_epc, *task_epc = NULL;
+ 	struct perf_event *cpu_event = NULL, *task_event = NULL;
+-	struct perf_event_context *task_ctx = NULL;
+ 	int cpu_rotate, task_rotate;
+ 	struct pmu *pmu;
+ 
+@@ -4229,7 +4228,6 @@ static bool perf_rotate_context(struct perf_cpu_pmu_context *cpc)
+ 	task_epc = cpc->task_epc;
+ 
+ 	cpu_rotate = cpu_epc->rotate_necessary;
+-	task_ctx = cpuctx->task_ctx;
+ 	task_rotate = task_epc ? task_epc->rotate_necessary : 0;
+ 
+ 	if (!(cpu_rotate || task_rotate))
 -- 
-2.17.1
+2.37.3
 
