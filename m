@@ -2,101 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA275ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Oct 2022 13:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B88ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Oct 2022 14:13:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230424AbiJ1N2U (ORCPT
+        id S229938AbiJ1ONl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Oct 2022 09:28:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47196 "EHLO
+        Fri, 28 Oct 2022 10:13:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbiJ1N2T (ORCPT
+        with ESMTP id S229587AbiJ1ONk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Oct 2022 09:28:19 -0400
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49EA41D0D44;
-        Fri, 28 Oct 2022 06:28:17 -0700 (PDT)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 29SDSAHr100896;
-        Fri, 28 Oct 2022 08:28:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1666963690;
-        bh=QkyP5J7SVUTHUOruF7vqp7qNnqtW8fIEOgyIzFof/l8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=pdezWEPsU/cRe7bfq5wAblHepMLPgUTrF4V32xg/+Sc//JKxgQdlDTUe24m/RrT/R
-         9g+8XbbJTko36BVSYUjB0BdvLHOkUeV46dVXXLA4LCvsuTOSI/RReDoyubLRTaGJgN
-         NmrMB479EekigZ5zKrEqkEX4HKFIFANn7FEJyC3I=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 29SDSAei041589
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Oct 2022 08:28:10 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Fri, 28
- Oct 2022 08:28:09 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
- Frontend Transport; Fri, 28 Oct 2022 08:28:09 -0500
-Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 29SDS957087239;
-        Fri, 28 Oct 2022 08:28:09 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>, <kristo@kernel.org>,
-        <christophe.jaillet@wanadoo.fr>
-CC:     Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] firmware: ti_sci: Use the bitmap API to allocate bitmaps
-Date:   Fri, 28 Oct 2022 08:28:08 -0500
-Message-ID: <166696365259.11507.9089493958831154682.b4-ty@ti.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <3ee11e9e83f7c1552d237f5c28f554319fcbbf1f.1657308216.git.christophe.jaillet@wanadoo.fr>
-References: <3ee11e9e83f7c1552d237f5c28f554319fcbbf1f.1657308216.git.christophe.jaillet@wanadoo.fr>
+        Fri, 28 Oct 2022 10:13:40 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7861E0463;
+        Fri, 28 Oct 2022 07:13:39 -0700 (PDT)
+Received: from mercury (unknown [37.84.150.129])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 22D2B6602925;
+        Fri, 28 Oct 2022 15:13:38 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1666966418;
+        bh=nM5tFpA0TeTXJ/Ok53S2f4MGmJ15PZ4YbuZYY3wW38c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g7tLHyZNuJV4WSuR2oKHx43F6+z47icAIob1weaSB1G4B+JWPvACyjOX13q43X5Yy
+         dlsgaiJl2FSE8zq7tQAQDEt1/x77L74W44yoQShD6XzLuwdbi8agFY5l0kczPPlGNO
+         oIYivf/bPpl2gcqyJiXXLapPqlkHRYdOUQ9XmU5Wl9o402Lqx1QZdWVEngDCFLpuSd
+         DV5fgRHvvZdU7W7D/ygyusPiEl24YMXARKDwBSDtKIL5Qay0NCPMNEEamq6uLnrji2
+         wbM4I5y488h8avMJGy8YanIH/IKZ4tdJJxuyaghq4kVhAGBGK+K7YBaMRoKkos+7+A
+         KKa/SGpssfKag==
+Received: by mercury (Postfix, from userid 1000)
+        id D918010607E8; Fri, 28 Oct 2022 16:13:35 +0200 (CEST)
+Date:   Fri, 28 Oct 2022 16:13:35 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: lp8788: make const array name static
+Message-ID: <20221028141335.zqzr5p4ludmpnxse@mercury.elektranox.org>
+References: <20221005161348.321971-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="isucbwil5mwzhop7"
+Content-Disposition: inline
+In-Reply-To: <20221005161348.321971-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe JAILLET,
 
-On Fri, 8 Jul 2022 21:23:46 +0200, Christophe JAILLET wrote:
-> Use devm_bitmap_zalloc() instead of hand-writing them.
-> 
-> It is less verbose and it improves the semantic.
-> 
-> 
+--isucbwil5mwzhop7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have applied the following to branch ti-drivers-soc-next on [1].
-Thank you!
+Hi,
 
-[1/2] firmware: ti_sci: Use the bitmap API to allocate bitmaps
-      commit: 2f9b0402755c1320420825ea8cda27a5f18e0ac4
-[2/2] firmware: ti_sci: Use the non-atomic bitmap API when applicable
-      commit: 4dc3883203736dcd979672ac8d9f086dbd4d2140
+On Wed, Oct 05, 2022 at 05:13:48PM +0100, Colin Ian King wrote:
+> Don't populate the read-only array name on the stack but instead make
+> it static. Since the data and the pointers don't change also add in
+> a missing const. Also makes the object code a little smaller.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Thanks, queued.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-- Sebastian
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+>  drivers/power/supply/lp8788-charger.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/lp8788-charger.c b/drivers/power/supply=
+/lp8788-charger.c
+> index 56c57529c228..802c9491fcdb 100644
+> --- a/drivers/power/supply/lp8788-charger.c
+> +++ b/drivers/power/supply/lp8788-charger.c
+> @@ -520,7 +520,7 @@ static int lp8788_set_irqs(struct platform_device *pd=
+ev,
+>  static int lp8788_irq_register(struct platform_device *pdev,
+>  				struct lp8788_charger *pchg)
+>  {
+> -	const char *name[] =3D {
+> +	static const char * const name[] =3D {
+>  		LP8788_CHG_IRQ, LP8788_PRSW_IRQ, LP8788_BATT_IRQ
+>  	};
+>  	int i;
+> --=20
+> 2.37.3
+>=20
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+--isucbwil5mwzhop7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmNb448ACgkQ2O7X88g7
++ppQ6xAAotyuOrN0/HRsHEJr6M3Hm2T+Ol0BItzGauQWFEYjP3N/b0eKOUL5bW4J
+RnVvwaNw9Z3BjxvCt9y3VR58oJ/zHTSzIUCAMrFs9YAMOTDfvbkFvF6kCv/iC2QP
+nwhQjOzmeA6t/FlGG5F4fITCgI068feeaTImSiL1omNYkAy3lFr1DnuYthtA3ovD
+nFlbnxf8oKT6Jet0vMhNAfnDMn2ar+TXPJpr8Mnly+LJBR0dKv6+nVEE0/Ohp8He
+gul7FTlqhsWH8XB6+k9b09fJZQz6doJF39ke0XRBr56gFwqz8P3ztCQaKKLXch7p
+sXzyCXVF1Mo6o2QPGharOf1Bo23tHKVsnx6QJBhqgwFUADdwl25MPepQzZhRQt7I
+n+Y59Yk1LuelH5fI+QFuw8VIw1shJmY3GK/ELukIfqgh1ALpu+qd4/IKzQEaqt5Z
+eG160/CCzcDLtNeCTYazdY8AItWbRZyAakBQ9xMFRde7q8w0N0g3QylM7lBWhy5D
+u9FpZWr+yhnFD9UwUIS0kHDIeVVzwv5B2BLUTqgAQPkqmVL2RivDm7OY1cv4Nq3k
+9HJFDcJtobIa9PaiYEdbYntMgB9jtm2AKlTaVEePPNaY1qDlAqSAb5LNMLwSnTzv
+7n/ZX8zQHwmMIyrmAYLvR5/2r9ukqu+znvMHvEtNBYPmFhqh97k=
+=aTzf
+-----END PGP SIGNATURE-----
+
+--isucbwil5mwzhop7--
