@@ -2,96 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A3FC38A02
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Oct 2022 17:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C90E0ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Oct 2022 18:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230478AbiJ1RF1 (ORCPT
+        id S229597AbiJ1SBQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Oct 2022 13:05:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41744 "EHLO
+        Fri, 28 Oct 2022 14:01:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230437AbiJ1RE0 (ORCPT
+        with ESMTP id S229742AbiJ1SBM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Oct 2022 13:04:26 -0400
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E806022EE13;
-        Fri, 28 Oct 2022 10:04:01 -0700 (PDT)
-Received: by mail-qk1-f182.google.com with SMTP id i10so3671318qkl.12;
-        Fri, 28 Oct 2022 10:04:01 -0700 (PDT)
+        Fri, 28 Oct 2022 14:01:12 -0400
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E762DBBC7;
+        Fri, 28 Oct 2022 11:01:11 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id f22so3956966qto.3;
+        Fri, 28 Oct 2022 11:01:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JElIA9LePDbKf27U3pzxRqWF9A+WS8s4+82DDmZaDeo=;
-        b=inMb21mBmr4Jxtt/ZegkkAknNvJgimCQDFS6/UOglO9NYXkIXcRhpVSTM5In/t0GYc
-         fyHhQqEpw57JT1ueH/l4EP/Cv9Xi4IuG/9fGL5vy3RDA41B8rYPMbl7/hUvOBC5x4k4a
-         PGtzApryszMYqAKEUXdcMpnGOPGqYjrRuDhv9lxKBoOk2BZ8FTvTjbJ2yyrCR8K2+KYC
-         1zlRFOyQkI2mjfB0r8hbSqWQckLRstLN72AFUvv3p0P/bxnT1q2Sma7dQAS8HeYqnL8j
-         B2o/5LyUm8qBxmS9WRunkSIgmS2H2PM3rOUyQC4D4WaIqU4xe4NSKdhCmnZgjb34eqof
-         6iSw==
-X-Gm-Message-State: ACrzQf2pm5AUA0PkfyDAP688H+Q6hhmaNPj6ndsiJikwnCH9Jig84W2W
-        4Koz8sZ0TXgLvUz2iIVA3A0Lhgm9h49D1wa9E6I=
-X-Google-Smtp-Source: AMsMyM7L21SPn8693hFZN1+o5PLPNqWUFkd7F0dX8sLWov8hd745AlOQQdR52EMmJc8TSOKa15IrNul6xe8t4lJkUtU=
-X-Received: by 2002:a05:620a:d89:b0:6cf:c98b:744c with SMTP id
- q9-20020a05620a0d8900b006cfc98b744cmr140154qkl.443.1666976640511; Fri, 28 Oct
- 2022 10:04:00 -0700 (PDT)
+        bh=I4MYfNUMplw8XEwkEObwKgGyaRaVzrUz7GmdYkwRcHA=;
+        b=zdfTwP6sczAAchWajWwoCb2gK87LXGibTCxWboyfa02ox7+OoDfZmk04YVq0FFF0TO
+         CfxKyybsEOb8MElkDSrS7NVQAEXTeNYfBlFESM1XuamVgzGSFR5hGoiLKi1ozzGCRgN8
+         +AQvwMa212urbD81oKC95LcUPkFYufnmocL0L5LoNBiPI/7CPCdHuUDTC1AvN00JU9J5
+         mbBQGxOhiIYsO6gh77t37aYanXeHS0j0gqazmWGpQ3Ex+vu4A1VEc3RpiBsMK4M0pmrZ
+         lJnXUuwdy52cKmSm7+D9VimkP6h2ajDkIW3gXjiKY62S+V/sHl993pJLvehfPa11F9oa
+         MafA==
+X-Gm-Message-State: ACrzQf0fP1Qv+qeBvhdpkCLPe8qIJzcJkJvHmD7mWRQxu8o8pngbS75v
+        9rpayCmaYLy+FYUb92hEg2ZCN5M1QN5T2ysVWz8=
+X-Google-Smtp-Source: AMsMyM7M0IiO5os6xQvnXwubPo2UCoPUkOsDXDODyyF/jS74if3ZD8On+VrJuTRYGFgMDVsJviRmM1wDjMXt8xPtYgg=
+X-Received: by 2002:a05:622a:44d:b0:39c:f7a4:5ee0 with SMTP id
+ o13-20020a05622a044d00b0039cf7a45ee0mr661842qtx.48.1666980070744; Fri, 28 Oct
+ 2022 11:01:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221024133258.2158083-1-colin.i.king@gmail.com>
-In-Reply-To: <20221024133258.2158083-1-colin.i.king@gmail.com>
+References: <Y1vvCrOMne0XNORj@kili>
+In-Reply-To: <Y1vvCrOMne0XNORj@kili>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 28 Oct 2022 19:03:49 +0200
-Message-ID: <CAJZ5v0jJPHrfUpY4ZxJYhNR334XZC_iUvetYgRGZW+iLgGrUzg@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: processor_throttling: remove variable count
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 28 Oct 2022 20:00:59 +0200
+Message-ID: <CAJZ5v0iORq8Fx4jXyzj1kag-SEL82odiaPyJODOEPgA2vinkOA@mail.gmail.com>
+Subject: Re: [PATCH] thermal/core: fix error code in __thermal_cooling_device_register()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 24, 2022 at 3:33 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+On Fri, Oct 28, 2022 at 5:02 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
-> Variable count is just being incremented and it's never used
-> anywhere else. The variable and the increment are redundant so
-> remove it.
+> Return an error pointer if ->get_max_state() fails.  The current code
+> returns NULL which will cause an oops in the callers.
 >
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fixes: c408b3d1d9bb ("thermal: Validate new state in cur_state_store()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/acpi/processor_throttling.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/thermal/thermal_core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-> index a822fe410dda..00d045e5f524 100644
-> --- a/drivers/acpi/processor_throttling.c
-> +++ b/drivers/acpi/processor_throttling.c
-> @@ -50,7 +50,7 @@ static int __acpi_processor_set_throttling(struct acpi_processor *pr,
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+> index 4ba7b524e5de..c4d18e462de8 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -892,7 +892,8 @@ __thermal_cooling_device_register(struct device_node *np,
+>         cdev->device.class = &thermal_class;
+>         cdev->devdata = devdata;
 >
->  static int acpi_processor_update_tsd_coord(void)
->  {
-> -       int count, count_target;
-> +       int count_target;
->         int retval = 0;
->         unsigned int i, j;
->         cpumask_var_t covered_cpus;
-> @@ -107,7 +107,6 @@ static int acpi_processor_update_tsd_coord(void)
+> -       if (cdev->ops->get_max_state(cdev, &cdev->max_state))
+> +       ret = cdev->ops->get_max_state(cdev, &cdev->max_state);
+> +       if (ret)
+>                 goto out_kfree_type;
 >
->                 /* Validate the Domain info */
->                 count_target = pdomain->num_processors;
-> -               count = 1;
->
->                 for_each_possible_cpu(j) {
->                         if (i == j)
-> @@ -140,7 +139,6 @@ static int acpi_processor_update_tsd_coord(void)
->
->                         cpumask_set_cpu(j, covered_cpus);
->                         cpumask_set_cpu(j, pthrottling->shared_cpu_map);
-> -                       count++;
->                 }
->                 for_each_possible_cpu(j) {
->                         if (i == j)
+>         thermal_cooling_device_setup_sysfs(cdev);
 > --
 
-Applied as 6.2 material, thanks!
+Applied, thanks!
