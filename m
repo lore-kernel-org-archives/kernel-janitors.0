@@ -2,84 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C90E0ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Oct 2022 18:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DF0C38A02
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Oct 2022 18:13:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbiJ1SBQ (ORCPT
+        id S230116AbiJ1SN2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Oct 2022 14:01:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35974 "EHLO
+        Fri, 28 Oct 2022 14:13:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbiJ1SBM (ORCPT
+        with ESMTP id S229671AbiJ1SN1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Oct 2022 14:01:12 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E762DBBC7;
-        Fri, 28 Oct 2022 11:01:11 -0700 (PDT)
-Received: by mail-qt1-f177.google.com with SMTP id f22so3956966qto.3;
-        Fri, 28 Oct 2022 11:01:11 -0700 (PDT)
+        Fri, 28 Oct 2022 14:13:27 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0167222ECBC
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Oct 2022 11:13:27 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id j7so6996422ybb.8
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Oct 2022 11:13:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GRcV5xqQsaOgKI1wjHQNKQ2baGNXvTvrAr7N640Ai0s=;
+        b=CrDfDlrAw515cZ1vZiX6k8IppBaUIH3QpEY2RuR7OMNwrJT1CcS5s7Vi1s0Ov3WRMM
+         xzYYTOYM5R6085EGA9/TzECH5ybIyzWrwQRXmh07SgIdKYmMpXNrL+HIOy5HXN60xN5d
+         lMbjx0IqbKUfBZKQjTaHEzixLfTbcYB0ooq+GmnoQRawc2YlaU6QXlxSTqiGy0qI6Kl+
+         AzqjkFWZMA7x2Vm8xl5WhtA7a7R0YtTJpIta4G3oURv81vVjvwHcXoFWKJhBOSwj6yqi
+         PVtKxuyTTxY+MAg6yDrjqaVosI3+dveSe/KUt4P2ig70IG7FVm8fwMS2bVjv8upQl2LB
+         fcZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=I4MYfNUMplw8XEwkEObwKgGyaRaVzrUz7GmdYkwRcHA=;
-        b=zdfTwP6sczAAchWajWwoCb2gK87LXGibTCxWboyfa02ox7+OoDfZmk04YVq0FFF0TO
-         CfxKyybsEOb8MElkDSrS7NVQAEXTeNYfBlFESM1XuamVgzGSFR5hGoiLKi1ozzGCRgN8
-         +AQvwMa212urbD81oKC95LcUPkFYufnmocL0L5LoNBiPI/7CPCdHuUDTC1AvN00JU9J5
-         mbBQGxOhiIYsO6gh77t37aYanXeHS0j0gqazmWGpQ3Ex+vu4A1VEc3RpiBsMK4M0pmrZ
-         lJnXUuwdy52cKmSm7+D9VimkP6h2ajDkIW3gXjiKY62S+V/sHl993pJLvehfPa11F9oa
-         MafA==
-X-Gm-Message-State: ACrzQf0fP1Qv+qeBvhdpkCLPe8qIJzcJkJvHmD7mWRQxu8o8pngbS75v
-        9rpayCmaYLy+FYUb92hEg2ZCN5M1QN5T2ysVWz8=
-X-Google-Smtp-Source: AMsMyM7M0IiO5os6xQvnXwubPo2UCoPUkOsDXDODyyF/jS74if3ZD8On+VrJuTRYGFgMDVsJviRmM1wDjMXt8xPtYgg=
-X-Received: by 2002:a05:622a:44d:b0:39c:f7a4:5ee0 with SMTP id
- o13-20020a05622a044d00b0039cf7a45ee0mr661842qtx.48.1666980070744; Fri, 28 Oct
- 2022 11:01:10 -0700 (PDT)
+        bh=GRcV5xqQsaOgKI1wjHQNKQ2baGNXvTvrAr7N640Ai0s=;
+        b=fE1ePDrc3pxcYT2fXZbzrXIRk1JuoVzLN59aUxWSTAGXZS1iULt6Ghn38R1M2aU2n2
+         uRNN0IxjUif0O+X5NMyU71UM77WMaXFi4wdtgZUtzHje9i6vQDOCaITTBXETk07cicor
+         f8+t5hGUAd/ExN91tRnDbVDRq/To3yeypwS9jqWiwt83PMc1/ZPZZLSC9oOAb/WDr7+j
+         UJZaO/SDNqNGxxFxCSByuX7ACGwXvH4DcthGq8xb1+zQHLGw8oVIxK9kpJ4CIUJbq1P5
+         MltGKNXgi4wnpB7WFoVAUj15qO7iKFWcz9UwvY9qWAbs0vDSesc0E4OSJyInf9R2fXM1
+         Z8iw==
+X-Gm-Message-State: ACrzQf3C0nf8qyNw+kHNkgVqZT0QwFnjUvSdknt85B0Xr9PQ7EQNIOr9
+        YrL78LOr62FzJk1aHwZGyH+QPjbJV3I5A4NwtX4Y9g==
+X-Google-Smtp-Source: AMsMyM5XvKCGwZtr2CLA9TM3XnI20xhaT2HqoTdj6+7h2t7UKjO5oo6Nk5V388Kg5i/+TnIodr5V0b7Y71x6e9YggCw=
+X-Received: by 2002:a25:aa2c:0:b0:6cc:16c2:5385 with SMTP id
+ s41-20020a25aa2c000000b006cc16c25385mr498211ybi.55.1666980805906; Fri, 28 Oct
+ 2022 11:13:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <Y1vvCrOMne0XNORj@kili>
-In-Reply-To: <Y1vvCrOMne0XNORj@kili>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 28 Oct 2022 20:00:59 +0200
-Message-ID: <CAJZ5v0iORq8Fx4jXyzj1kag-SEL82odiaPyJODOEPgA2vinkOA@mail.gmail.com>
-Subject: Re: [PATCH] thermal/core: fix error code in __thermal_cooling_device_register()
+References: <Y1vvnBnSVl976Pt3@kili>
+In-Reply-To: <Y1vvnBnSVl976Pt3@kili>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Fri, 28 Oct 2022 11:13:14 -0700
+Message-ID: <CANn89iLaHEh6fGCFChFCDSVT=hrm0v7wXd4-FR6Gw25Ertgnpw@mail.gmail.com>
+Subject: Re: [PATCH net] net: sched: Fix use after free in red_enqueue()
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Cc:     Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>,
+        Jiri Pirko <jiri@resnulli.us>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 28, 2022 at 5:02 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Fri, Oct 28, 2022 at 8:05 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
-> Return an error pointer if ->get_max_state() fails.  The current code
-> returns NULL which will cause an oops in the callers.
+> We can't use "skb" again after passing it to qdisc_enqueue().  This is
+> basically identical to commit 2f09707d0c97 ("sch_sfb: Also store skb
+> len before calling child enqueue").
 >
-> Fixes: c408b3d1d9bb ("thermal: Validate new state in cur_state_store()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/thermal/thermal_core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-> index 4ba7b524e5de..c4d18e462de8 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -892,7 +892,8 @@ __thermal_cooling_device_register(struct device_node *np,
->         cdev->device.class = &thermal_class;
->         cdev->devdata = devdata;
->
-> -       if (cdev->ops->get_max_state(cdev, &cdev->max_state))
-> +       ret = cdev->ops->get_max_state(cdev, &cdev->max_state);
-> +       if (ret)
->                 goto out_kfree_type;
->
->         thermal_cooling_device_setup_sysfs(cdev);
-> --
+> Fixes: d7f4f332f082 ("sch_red: update backlog as well")
 
-Applied, thanks!
+Reviewed-by: Eric Dumazet <edumazet@google.com>
