@@ -2,64 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814CBC38A02
-	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Oct 2022 08:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD874C38A02
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Oct 2022 15:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbiJ2IQY (ORCPT
+        id S229917AbiJ2P2E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 29 Oct 2022 04:16:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45910 "EHLO
+        Sat, 29 Oct 2022 11:28:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiJ2IQX (ORCPT
+        with ESMTP id S229476AbiJ2P2D (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 29 Oct 2022 04:16:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CAD692586;
-        Sat, 29 Oct 2022 01:16:21 -0700 (PDT)
+        Sat, 29 Oct 2022 11:28:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE9956016;
+        Sat, 29 Oct 2022 08:28:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 938E9B80936;
-        Sat, 29 Oct 2022 08:16:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FFEAC433D6;
-        Sat, 29 Oct 2022 08:16:17 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A97F60AFF;
+        Sat, 29 Oct 2022 15:28:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAA2C433D6;
+        Sat, 29 Oct 2022 15:27:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667031379;
-        bh=JoYCL88mRATAPBkCXFf8OAMPZaND6No/VZOZajC4SrA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kLwcaFFiiRXzpcoR9KUEiv7xkOJeyuoe4ATRihn4xWNzsDI/mL0hFtyaXCn7i6iSu
-         ZEceT6tv13eEuPRMBMNAoRX1CJQubz3kqPlqi7ZKn1sh4PZtvCCaPIZ9M7yyMC+kdY
-         kRRxYfdq+bSoPw0Usc+QJ0GaPrfhqYv9DdsZow8D26JQf5trRdq6ZYWJVYjy9WEUwA
-         QfEHP6tnnsvAMhe5AlMAjzRJPnre9quaSGA7XM5EkxfVvAb6TmxSDqtfbQrBNbrnmp
-         TOpYYNZ3KLv/xQ6P8Mk7VpffOgJaMR1yU6xw4NdppX3IfAKxYYwIkIBjf8vCAq47By
-         0DvPvVOJdvOhg==
-Date:   Sat, 29 Oct 2022 16:16:13 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] soc: imx: imx93-pd: Fix the error handling path of
- imx93_pd_probe()
-Message-ID: <20221029081613.GQ125525@dragon>
-References: <717cb5dee892bc01257d52b10bb9a1ee79ced87f.1666418916.git.christophe.jaillet@wanadoo.fr>
+        s=k20201202; t=1667057279;
+        bh=S4bpRu0FVsMSPhlwgV3ljsWKf3miW7HmEgml5YUYsLY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kHKzb6MBVx1mBs8xUN18pWQvn5yjlTtFF2ay+UyPLWMvTcbB7wdo2/xI1RK8C0JBI
+         dlvzjcKgif1I2kpjdnOXt/gFNo2WjV8Us5lp5DqFZrLMyLdUy/XCW6KB2twvDAH9qk
+         w7qKHme3+1E3ITueUTo/uI+qy2XPGUala65/Viskh+IyoPoDbBRn9D7P2sdRmD2fOL
+         2wINI3TbGOcgRBs44gFccrMWm0Mr+/x8BjMr19pLcUcn5FlXRn2CLwloBwucESK/pk
+         vb/rT1bBLreLacBQXGqqcBrwINlODWpRF/XuJsMtpFcVsAZTXmTGuuDgyjb8CeM4Vh
+         Cg6I0ZCgTzvig==
+Date:   Sat, 29 Oct 2022 16:39:56 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Andrea Merello <andrea.merello@iit.it>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: bno055: uninitialized variable bug in
+ bno055_trigger_handler()
+Message-ID: <20221029163956.2a70dc94@jic23-huawei>
+In-Reply-To: <20221015173359.20c7928e@jic23-huawei>
+References: <Y0kuaO9PQkSQja+A@kili>
+        <20221015173359.20c7928e@jic23-huawei>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <717cb5dee892bc01257d52b10bb9a1ee79ced87f.1666418916.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Oct 22, 2022 at 08:08:55AM +0200, Christophe JAILLET wrote:
-> In imx93_pd_probe(); if an error occurs, some resources need to be released
-> as done in the remove function.
-> 
-> Fixes: 0a0f7cc25d4a ("soc: imx: add i.MX93 SRC power domain driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Sat, 15 Oct 2022 17:33:59 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Applied, thanks!
+> On Fri, 14 Oct 2022 12:39:52 +0300
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> 
+> > This bug is basically harmless, although it will trigger a runtime warning
+> > if you use KMSan.  On the first iteration through the loop, the
+> > "best_delta" variable is uninitialized so re-order the condition to
+> > prevent reading uninitialized memory.
+> > 
+> > Fixes: 4aefe1c2bd0c ("iio: imu: add Bosch Sensortec BNO055 core driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>  
+> 
+> You reported this a while back along with a second issue (false positive)
+> with hwval.
+> 
+> I posted a patch fixing both 
+> https://lore.kernel.org/linux-iio/20221002145324.3776484-1-jic23@kernel.org/
+> 
+> I don't really care which patch goes in, but curious to reasoning to not also
+> deal with the hwval warning here?
+> 
+Meh. Rather than not applying either patch, I'll pick this one up.  We can
+deal with the hwval warning at a later date if necessary.
+
+Applied to the fixes-togreg branch of iio.git.
+
+Jonathan
+
+> Jonathan
+> 
+> > ---
+> >  drivers/iio/imu/bno055/bno055.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iio/imu/bno055/bno055.c b/drivers/iio/imu/bno055/bno055.c
+> > index 307557a609e3..52744dd98e65 100644
+> > --- a/drivers/iio/imu/bno055/bno055.c
+> > +++ b/drivers/iio/imu/bno055/bno055.c
+> > @@ -632,7 +632,7 @@ static int bno055_set_regmask(struct bno055_priv *priv, int val, int val2,
+> >  			return -EINVAL;
+> >  		}
+> >  		delta = abs(tbl_val - req_val);
+> > -		if (delta < best_delta || first) {
+> > +		if (first || delta < best_delta) {
+> >  			best_delta = delta;
+> >  			hwval = i;
+> >  			first = false;  
+> 
+
