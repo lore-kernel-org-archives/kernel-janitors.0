@@ -2,89 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AC7C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Oct 2022 20:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93D1C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Oct 2022 02:43:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbiJ2U5Y (ORCPT
+        id S229667AbiJ3Cny (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 29 Oct 2022 16:57:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36368 "EHLO
+        Sat, 29 Oct 2022 22:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiJ2U5U (ORCPT
+        with ESMTP id S229549AbiJ3Cnx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 29 Oct 2022 16:57:20 -0400
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2616B3386D
-        for <kernel-janitors@vger.kernel.org>; Sat, 29 Oct 2022 13:57:18 -0700 (PDT)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id ostGo0hePez1rostGo2ToZ; Sat, 29 Oct 2022 22:57:15 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Oct 2022 22:57:15 +0200
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Edward Cree <ecree.xilinx@gmail.com>,
-        Martin Habets <habetsm.xilinx@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jonathan Cooper <jonathan.s.cooper@amd.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] sfc: Fix an error handling path in efx_pci_probe()
-Date:   Sat, 29 Oct 2022 22:57:11 +0200
-Message-Id: <dc114193121c52c8fa3779e49bdd99d4b41344a9.1667077009.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 29 Oct 2022 22:43:53 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E0D5481D3;
+        Sat, 29 Oct 2022 19:43:53 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id o7so4549479pjj.1;
+        Sat, 29 Oct 2022 19:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2ggnKUyDGzSh8VA712RZdHnC7EeozkTTB151R7EI0vc=;
+        b=AxktH6M6HembcbtUcw2e7dm1jU4rZ4V5w1dInI2pOM7Z3MVhPI/5TE8H7ZYg7qrk4+
+         eoshHs40IrICubHsVpLVkhysyXK01MdJkh7zvVUDBTG2vJqy2S2jPKsINmWZs4Dt2tAs
+         WI1YKzKPhMGCfG/lx+hWcI+J+fW0xjcgTVXwfLRepKil45VlhXJ33wyYxYuWYqLZLHbj
+         myPurIu/gBKT/wOSOx3FhkrRwP9cfpQx2jZZu2MeurxHd7wibY6j6v1kGFiq3tNIUjL9
+         dg/piWbIbs/Vb+Kw4nFLNWwu1AIJqCKZ84Zn9RVncfaWaycGVIDlnpwexv0TmAlfabPy
+         c9fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ggnKUyDGzSh8VA712RZdHnC7EeozkTTB151R7EI0vc=;
+        b=3kqhdIm6M/ptP8f08TKOWwNipMZHoInm0biPDk752HkKIsvDzaDdBgUjw4RSlSXq0d
+         Yxpc6KWDUVlbXZo7JiozoRSSg75N3AWwPKdzf3nX4C3Nr6PzAe/zfsonZBtKvSbLl/Jy
+         8eZI6J2r1MTCBjOlvXPT2ZwlZADbKyURRehr0lh6ivVtj6VigqZzZSc+qBHYIEQXCOgo
+         2Nznf3Q7gbOc91l5DBcHBSu22sgy0LjFRvs4zm31tM7bxN0lXxBU6YTX81Oc9JnyrrWo
+         jkJaivRoSPywRPWGaBXcNKR4jMGB9dhFuXMLZujSgw8Ont1n8x3h/dxkY3fIC0IHcO8D
+         /awQ==
+X-Gm-Message-State: ACrzQf0uCUMLjzqWALHJEThCGVcfHFaKCvpywEnkG4ekcGvNGDWiRbkA
+        VhOicoh29X+s1X75hd+QXgQ=
+X-Google-Smtp-Source: AMsMyM4JhLEMjvo9skcbp6g+szVwSDHLrkiWnVSk3Y+eTN1lvn68Nr0kdADV4KGqo4Rh48PyOwgqAA==
+X-Received: by 2002:a17:902:b601:b0:186:9f20:f6a4 with SMTP id b1-20020a170902b60100b001869f20f6a4mr7380307pls.38.1667097832539;
+        Sat, 29 Oct 2022 19:43:52 -0700 (PDT)
+Received: from ?IPV6:2001:8003:d90f:f801:7164:b4e6:b90b:c4d5? ([2001:8003:d90f:f801:7164:b4e6:b90b:c4d5])
+        by smtp.gmail.com with ESMTPSA id a3-20020a170902ecc300b00186e34524e3sm1924242plh.136.2022.10.29.19.43.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Oct 2022 19:43:51 -0700 (PDT)
+Message-ID: <b874e6ff-6a19-410f-1fe8-2334a58f503a@gmail.com>
+Date:   Sun, 30 Oct 2022 13:43:46 +1100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH] staging: vchiq: add 'static' to function definition
+Content-Language: en-GB-large
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        kernel-janitors@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20221022043548.1671644-1-scottjcrouch@gmail.com>
+ <Y1Okpjbi2kKU2GFz@kroah.com>
+ <52599d6e-dc16-4186-9fb9-d17ce428fe9c@app.fastmail.com>
+From:   "Scott J. Crouch" <scottjcrouch@gmail.com>
+In-Reply-To: <52599d6e-dc16-4186-9fb9-d17ce428fe9c@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after the first kzalloc() the corresponding memory
-allocation is never freed.
+On 28/10/22 01:08, Arnd Bergmann wrote:
+> On Sat, Oct 22, 2022, at 10:07, Greg Kroah-Hartman wrote:
+>> On Sat, Oct 22, 2022 at 03:35:48PM +1100, Scott J. Crouch wrote:
+> 
+>> Nice try, but this breaks the build in a very horrible and strange way
+>> that no one has been able to figure out yet:
+> 
+> I got curious and figured out what happens:
+> 
+> Without CONFIG_OF, of_match_node() always returns NULL, so
+> vchiq_probe() returns -EINVAL unconditionally before calling
+> vchiq_platform_init(). 
+> 
+> If vchiq_platform_init() is marked 'static', gcc's dead code
+> elimination then eliminates it, which in turn means that
+> 'g_fragments_base' is never initialized and gets replaced
+> with a NULL pointer.
 
-Add the missing kfree() in the error handling path, as already done in the
-remove() function.
+Good spotting.  Actually, I was clumsily learning how to run sparse on the
+staging directory and wasn't sure what config to use that didn't involve
+enabling everything manually.  But from what I can tell, it's OF_OVERLAY (or
+something downstream of that) that gets rid of the warning.  BCM2835_VCHIQ
+requires BCM_VIDEOCORE which already depends on OF.  I'm confused because I
+don't actually know how to reproduce the gcc warning without manually enabling
+the module such that OF is enabled but OF_OVERLAY isn't, since allmodconfig
+enables both -- maybe there's a way to do that.
 
-Fixes: 7e773594dada ("sfc: Separate efx_nic memory from net_device memory")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-When 7e773594dada was merged, sfc/ef100.c had the same issue.
-But it seems to have been fixed in 98ff4c7c8ac7.
----
- drivers/net/ethernet/sfc/efx.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+I'm also confused why devm_rpi_firmware_get() doesn't have the same problem as
+of_match_node() just above it -- it returns NULL when RASPBERRYPI_FIRMWARE is
+unset, but gcc still builds without the warning.
 
-diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
-index 054d5ce6029e..0556542d7a6b 100644
---- a/drivers/net/ethernet/sfc/efx.c
-+++ b/drivers/net/ethernet/sfc/efx.c
-@@ -1059,8 +1059,10 @@ static int efx_pci_probe(struct pci_dev *pci_dev,
- 
- 	/* Allocate and initialise a struct net_device */
- 	net_dev = alloc_etherdev_mq(sizeof(probe_data), EFX_MAX_CORE_TX_QUEUES);
--	if (!net_dev)
--		return -ENOMEM;
-+	if (!net_dev) {
-+		rc = -ENOMEM;
-+		goto fail0;
-+	}
- 	probe_ptr = netdev_priv(net_dev);
- 	*probe_ptr = probe_data;
- 	efx->net_dev = net_dev;
-@@ -1132,6 +1134,8 @@ static int efx_pci_probe(struct pci_dev *pci_dev,
- 	WARN_ON(rc > 0);
- 	netif_dbg(efx, drv, efx->net_dev, "initialisation failed. rc=%d\n", rc);
- 	free_netdev(net_dev);
-+ fail0:
-+	kfree(probe_data);
- 	return rc;
- }
- 
--- 
-2.34.1
-
+Scott.
