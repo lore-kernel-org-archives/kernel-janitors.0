@@ -2,95 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EFFC38A02
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 08:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F391BFA3740
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 08:55:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbiJaIBJ (ORCPT
+        id S229978AbiJaIzF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 04:01:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36852 "EHLO
+        Mon, 31 Oct 2022 04:55:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiJaIBI (ORCPT
+        with ESMTP id S229549AbiJaIzE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 04:01:08 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A324A1B0;
-        Mon, 31 Oct 2022 01:01:07 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5so6666472wmo.1;
-        Mon, 31 Oct 2022 01:01:07 -0700 (PDT)
+        Mon, 31 Oct 2022 04:55:04 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AEEF1D3;
+        Mon, 31 Oct 2022 01:55:03 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id y69so16439727ede.5;
+        Mon, 31 Oct 2022 01:55:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8CNX8jzayop+Kti5FIqpzMp88MzE0hO8BrJ9pvHH71g=;
-        b=mNx4KRRz+pN2Gl8FenOlMLsScGrkz7en9/rFpi5F0anT38zwStUDuPbJioC6TlrMN4
-         KzSG/mJ75f9mLuKfs2E6JrPgNjFGomQ8JbvUOPLPmn3BuDLrqRAPvBEGRbHew6GrHpez
-         gZOlqD9cedonHgWzZr0W6ofwqfC6d7f61Lxc+OHwkSJnaV0PvZWAc21GYRNpTHX7eOnr
-         6Vg6Kkj/+yAzURuF+M3L6bSa7uZkTSBRmFVeDV8scCe27Ai78Y52W/dnnC3izmeYmA7U
-         GfchKLKFHv5j6m8z1ehEsRa89Lr0MIqp1sgeIErcGTnKoop1wOEfvWFWd2RnPYwrKZxz
-         m8sw==
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SaCDtOb4CC7gCLWXRM7LGCFxZ6xhFeLhKQUZBpqIEso=;
+        b=hdlOjmenZzoST2wbo4cyhw3wk4diAkv2VwDcj3K7YhHbF8sAePBzEkEYizt/IeO4oX
+         sFyXthuSgOYtzZjG2wWGXyy+ItgCH3D81+MRMmY0gqj1pBDGfCHR7D88n55g73LM0dpK
+         kBocVf2jnnFPb2H7JOmbG/EvZn2uxxKhxm2K+hPFJCX8Gf+UWQsCn9/6H5kayNRnqJ4P
+         YyOT0BYMlrgxsHx+1iYt7X+iR+xUGf4r8fW7IkwS8jgMzlFtP2ULAaZoMkqW4Sss72Bp
+         ccgpVOQZJtrjxE9XIYNU8eYD3FbZOC+USxBJS/9s3Nyahowmwmx7skTkvH3hZBq9aBue
+         kGiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8CNX8jzayop+Kti5FIqpzMp88MzE0hO8BrJ9pvHH71g=;
-        b=wEBxynen7BGaSAM9EAfAFKoJa9qIkte3oP4IQlt44AJ54pzFSj1LkiqnJTCxp0c8+G
-         TDN0qCiNuhCsEbf5F7QF7vCZ22Ruqjc2AGBOJjTGXgNHdTf46/1WKy58TYnavkZL9Hpj
-         WrQ+f5rXYWdDIgMGZlsRvoQTAXGBn0LKpL5heWyw3EbVstw/b0ugR/MxCZKi/0k2pzSX
-         +RwCQ06gpkq1I4B5j6E+6qL/49Ocf5rO73K7NNCdodSishpKLzv6pn6rTBOfV5mxv+BT
-         j3MP9+Ru/pLo16C7Glf2MhJNGT8z05f5n+qc9v5eUc93xZMjQ/Ca/o9eH1SazVn9dp7c
-         jDiw==
-X-Gm-Message-State: ACrzQf3pw4iYbt2rKBLVY9SdgEZJm3LTZ8LvgIhSqv5lYLKTgiDn95HE
-        dj99KYJbgcI2ykTL+ANLP/4=
-X-Google-Smtp-Source: AMsMyM7uSqMgve5Vo1MLvjOo6LdpW7emDVMT75NeNcMPog4+Vpyq+k2SsTtW6loczZLAdnRXsSq3Ug==
-X-Received: by 2002:a1c:3503:0:b0:3c6:fb2a:b115 with SMTP id c3-20020a1c3503000000b003c6fb2ab115mr7166768wma.10.1667203265908;
-        Mon, 31 Oct 2022 01:01:05 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 7-20020a056000154700b00236644228besm6552880wry.40.2022.10.31.01.01.05
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SaCDtOb4CC7gCLWXRM7LGCFxZ6xhFeLhKQUZBpqIEso=;
+        b=0IKVOgrruPMbb8yAaY4nZoFmb+5CXYuc0ACbzBnu2e7nSCASUHjDAdApvWH/P5HAs0
+         wUDciXwXpHS5ZUFBqNexADE/hrhKUOwqkFTC92tow/0DxmHaEf2Hp/q/DwwCVHhBUiCD
+         KnhzALtt0F6K3dOk9M3W6jL3HS/AMXEfxc6w9D+hNhHD9K9FDWj7M+MfBm5ibMkGIsMh
+         AHnesT3duRGMIC1yinnmCfex1T2IIuMg9Q3Uz78GDxb2Yu1HXzpk9dBl9BxnBsT3CTpe
+         YU3zVtof8TJdOZ+hoi+EGgVL8Behp4kpwPRg9EoAtQrBk9/i7yuJUCC/xHT70HVQWpL6
+         2yZQ==
+X-Gm-Message-State: ACrzQf0WJSYu+3pVjyNpWGQ0gkNhhJ+1NxJKLntdbvwsdhUCV54fTeM5
+        jH8+ROKkx579qhDb08dGPhU=
+X-Google-Smtp-Source: AMsMyM7zMEdcCSwHGEAdX+SK16Z1tsH6y+lkgVydYyeJF3nH2MZmfQBdDl5kEaSPxIULpqdaP4178g==
+X-Received: by 2002:a50:fc03:0:b0:461:5d8d:5811 with SMTP id i3-20020a50fc03000000b004615d8d5811mr12612570edr.351.1667206501456;
+        Mon, 31 Oct 2022 01:55:01 -0700 (PDT)
+Received: from felia.fritz.box (200116b826c494005d8b6b3bdc900ff8.dip.versatel-1u1.de. [2001:16b8:26c4:9400:5d8b:6b3b:dc90:ff8])
+        by smtp.gmail.com with ESMTPSA id w25-20020a056402129900b00463597d2c25sm1156048edv.74.2022.10.31.01.54.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Oct 2022 01:01:05 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Yevgeny Kliteynik <kliteyn@nvidia.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net/mlx5: Fix spelling mistake "destoy" -> "destroy"
-Date:   Mon, 31 Oct 2022 08:01:04 +0000
-Message-Id: <20221031080104.773325-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 31 Oct 2022 01:55:00 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] usb: musb: remove left-over after USB_TI_CPPI_DMA removal
+Date:   Mon, 31 Oct 2022 09:54:26 +0100
+Message-Id: <20221031085426.17175-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an error message. Fix it.
+Commit 32fee1df5110 ("usb: musb: remove unused davinci support") removes
+the config USB_TI_CPPI_DMA, but misses some left-over references in
+drivers/usb/musb/musb_dma.h.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Remove the left-over dependent on this removed config.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/steering/dr_table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Arnd, Bartosz, please ack.
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_table.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_table.c
-index eb81759244d5..9c3dfd68f8df 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_table.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_table.c
-@@ -292,7 +292,7 @@ int mlx5dr_table_destroy(struct mlx5dr_table *tbl)
- 	mlx5dr_dbg_tbl_del(tbl);
- 	ret = dr_table_destroy_sw_owned_tbl(tbl);
- 	if (ret)
--		mlx5dr_err(tbl->dmn, "Failed to destoy sw owned table\n");
-+		mlx5dr_err(tbl->dmn, "Failed to destroy sw owned table\n");
+Greg, please pick this patch on top of the commit above.
+
+ drivers/usb/musb/musb_dma.h | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/usb/musb/musb_dma.h b/drivers/usb/musb/musb_dma.h
+index 7d67b69df0a0..e2445ca3356d 100644
+--- a/drivers/usb/musb/musb_dma.h
++++ b/drivers/usb/musb/musb_dma.h
+@@ -61,12 +61,6 @@ struct musb_hw_ep;
+ #define musb_dma_cppi41(musb)		0
+ #endif
  
- 	dr_table_uninit(tbl);
+-#ifdef CONFIG_USB_TI_CPPI_DMA
+-#define musb_dma_cppi(musb)		(musb->ops->quirks & MUSB_DMA_CPPI)
+-#else
+-#define musb_dma_cppi(musb)		0
+-#endif
+-
+ #ifdef CONFIG_USB_TUSB_OMAP_DMA
+ #define tusb_dma_omap(musb)		(musb->ops->quirks & MUSB_DMA_TUSB_OMAP)
+ #else
+@@ -79,11 +73,10 @@ struct musb_hw_ep;
+ #define musb_dma_inventra(musb)		0
+ #endif
  
+-#if defined(CONFIG_USB_TI_CPPI_DMA) || defined(CONFIG_USB_TI_CPPI41_DMA)
+-#define	is_cppi_enabled(musb)		\
+-	(musb_dma_cppi(musb) || musb_dma_cppi41(musb))
++#if defined(CONFIG_USB_TI_CPPI41_DMA)
++#define	is_cppi_enabled(musb)		musb_dma_cppi41(musb)
+ #else
+-#define	is_cppi_enabled(musb)	0
++#define	is_cppi_enabled(musb)		0
+ #endif
+ 
+ /*
 -- 
-2.37.3
+2.17.1
 
