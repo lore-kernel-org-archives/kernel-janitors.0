@@ -2,80 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C45CFA3746
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 12:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E73FA3741
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 14:07:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230448AbiJaMAV (ORCPT
+        id S231434AbiJaOHu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 08:00:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33508 "EHLO
+        Mon, 31 Oct 2022 10:07:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230056AbiJaMAS (ORCPT
+        with ESMTP id S230056AbiJaOHt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 08:00:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FF95586;
-        Mon, 31 Oct 2022 05:00:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 31 Oct 2022 10:07:49 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C70510B44;
+        Mon, 31 Oct 2022 07:07:48 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 33230611DA;
-        Mon, 31 Oct 2022 12:00:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 72612C433D7;
-        Mon, 31 Oct 2022 12:00:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667217616;
-        bh=Lj6fOi0fH77D+aFtolDors/yRRGcoNoRxy1ro/ZWgew=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=jfFOSv0u7PNjzuBRNGyows97B9PGsR+FoB/hc2s5PeYeJiw9zTpAint30755QepRJ
-         QBaZb8EibUEUulYx+C82/ltZmQV2txnbicvboQg/fZzemJPPD+VI3rauMHWf2mWwsZ
-         UWcnIBsdv92KeRfkfMwo4d50GJo4G0mSBy4837283G81hQ88osuW8BMztOG8g07Neh
-         C2Xgjfq7bzQCR2NHQgaCaZ2uogiZn0KYMokcZs28keJuL8oCs17UrIjqtIByeXPPO8
-         XHwR+vYMkPy0Ya/eXniQK8LnuuOcM2W8HHUR3EbF/Fayd8pHTe4NGaQXkC144MYngK
-         y1LcKb5l1tfQA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5A426E270D6;
-        Mon, 31 Oct 2022 12:00:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        by smtp-out1.suse.de (Postfix) with ESMTPS id EAC7A338A9;
+        Mon, 31 Oct 2022 14:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1667225266;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DwrnfNb3Sm3mui32qBg0ljlM/3iexMemRjWpGGGpytw=;
+        b=QOm9gz2hretDm0cm7wE53QHLgV6BqPVVeeiMuBy321J50KGBF3sjT2ryCQFN86CrT/u4ui
+        nNK7C5KNd6xaXdg6RuJ5W2HbvffefG0Iew640jD3svB5F1zKXb9bceI+9MeSsWyW56xQjE
+        FnczWXh3qL+jQmIgfhW8l+jG2HKPjsw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1667225266;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DwrnfNb3Sm3mui32qBg0ljlM/3iexMemRjWpGGGpytw=;
+        b=8DmmgQRoR01I87hPFd/NnMxahMz7dycpb9TXDU01yxULkPOjvVfTvQrqwi3N71DQt2EaAo
+        50bmdXA6L82u/HBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A420413451;
+        Mon, 31 Oct 2022 14:07:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id e99yJrLWX2NIcAAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Mon, 31 Oct 2022 14:07:46 +0000
+Date:   Mon, 31 Oct 2022 15:07:29 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH] btrfs: Fix a memory allocation failure test
+Message-ID: <20221031140729.GZ5824@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <34dff6b621770b1f8078ce6c715b61c5908e1ad1.1667115312.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: sched: Fix use after free in red_enqueue()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166721761636.1563.6943148452161990990.git-patchwork-notify@kernel.org>
-Date:   Mon, 31 Oct 2022 12:00:16 +0000
-References: <Y1vvnBnSVl976Pt3@kili>
-In-Reply-To: <Y1vvnBnSVl976Pt3@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     jhs@mojatatu.com, xiyou.wangcong@gmail.com, toke@toke.dk,
-        jiri@resnulli.us, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, harshit.m.mogalapalli@oracle.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34dff6b621770b1f8078ce6c715b61c5908e1ad1.1667115312.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Fri, 28 Oct 2022 18:05:00 +0300 you wrote:
-> We can't use "skb" again after passing it to qdisc_enqueue().  This is
-> basically identical to commit 2f09707d0c97 ("sch_sfb: Also store skb
-> len before calling child enqueue").
+On Sun, Oct 30, 2022 at 08:35:28AM +0100, Christophe JAILLET wrote:
+> 'dip' is tested instead of 'dip->csums'.
+> Fix it.
 > 
-> Fixes: d7f4f332f082 ("sch_red: update backlog as well")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> [...]
+> Fixes: 642c5d34da53 ("btrfs: allocate the btrfs_dio_private as part of the iomap dio bio")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Here is the summary with links:
-  - [net] net: sched: Fix use after free in red_enqueue()
-    https://git.kernel.org/netdev/net/c/8bdc2acd420c
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Added to misc-next, thanks.
