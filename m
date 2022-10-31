@@ -2,64 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD24ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 15:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5502AECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 15:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232141AbiJaPqo (ORCPT
+        id S232116AbiJaP4z (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 11:46:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51458 "EHLO
+        Mon, 31 Oct 2022 11:56:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232111AbiJaPq0 (ORCPT
+        with ESMTP id S232080AbiJaP4o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 11:46:26 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CBC412622;
-        Mon, 31 Oct 2022 08:45:41 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id g12so16541784wrs.10;
-        Mon, 31 Oct 2022 08:45:41 -0700 (PDT)
+        Mon, 31 Oct 2022 11:56:44 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 358451262F;
+        Mon, 31 Oct 2022 08:56:40 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id a14so16605447wru.5;
+        Mon, 31 Oct 2022 08:56:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jW9IKMkrwnv8caV3EediNMrHaLVLZBieoUiYwGCU4PE=;
-        b=KKmB0DGcZWtPLN1qqTvlJ82KQk+VFukr6lTzvoP8dBu62ijXeqQ0SRZ3DryazJEOqV
-         a3EyuQ6jwnlfCRaX/NXf0amyH4mrIvqetF5ake1u1cAO7GIa1J2mpvt9WKiIALGI3+bf
-         xkJo00sJ2ZlQm5MhaNKaeuvR2RJtedV05ZcitXiIFgZck7T1COnRrRk+BwmDzPPFauu0
-         EPvUsXJnM7Vq6FeDuzCEjK+fZQkSaNSMPbuVnwWBg0IiCueWSUJRaRxu4jz8s0wPRamO
-         aXp9CAa9qO1o83/yfzDHYbXMRLFeJJ+vbUG+5GwHHudl+yeszHWKqOG/nMADEKc6gHGb
-         19Hw==
+        bh=yiIQqUgAicF1IqI0TD1/vWxeqEODaUy7zyfXvnZJius=;
+        b=B4GLhZdBSMgf4MInk9YzxaAZdPHiTWlOPOIGf29fu2Y90nYFRbsxKO2toypxwyCT7y
+         CGOGYT60OdC+G2F10/wvDJrR586+EKMUZONdyiv+Vs3AIKxD145/fOfMTmMQsDCxZ3Ot
+         S4tHjP1JavUMCfi0p80zqozsY/gRwFvR7Xrl4nA9QUvSePyWOvkRQtFl1ZrcekZGMihJ
+         sXLJiTjilWYsPTnkgRgNyMUyUAm76wI5f+FhveF0ulOIgw1QShKfo34EyFUqawJfA9Gz
+         6/oTXtnaNXp5lxc6lvH4t3lvPxJxJH6t2dP8OcNdRZ8x0JURzm0gkr1UU6gzBgnVX6tE
+         xiiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jW9IKMkrwnv8caV3EediNMrHaLVLZBieoUiYwGCU4PE=;
-        b=A19ADbhIiKA6IZAZ7Z0v2A7sRa4rUvIZJ3mtZMqRmaz8+JQuaz1gkpxwFosB4gfPWx
-         YJWtZSbSSFIn3AE8kfJhUu1ew6UKfQ090uEyI0Qj0byz+LownDPTOoRs6NEwD3OLhB2H
-         GLCVrUgBwby+KSqYcMJpbwAQ21ot8c0wisV2NiITGBwQ6F9iUe/y+EE+Cy7AR0QPwhP9
-         Cxx0+Ob+8c6nUHN6hDWqCLQTh56AsuldwUJ7VYKlFshbM87xNgVfJ604Yyg+vIs552Y9
-         pgLz16f15Gy6a6SJjr2jIPGU3JAlFr/PcVZZMVk/xx8dR08V476yFeQKTehhS45SFYJt
-         9RCg==
-X-Gm-Message-State: ACrzQf2ZE9jYu5WnphVKwYDKosqXUZQ1sSkjnhuu32dIH51BXNI0zIua
-        zzU5Eoqmi3Po3vF44P0E9mU=
-X-Google-Smtp-Source: AMsMyM7BxLgxeYDm8Qnj64xFHPvDELJnxRgCP4L09ApkN5KIkVPuyWWJ6CM7zaZrHDcZlUtN4rLHjQ==
-X-Received: by 2002:adf:f386:0:b0:236:6e8c:f5bb with SMTP id m6-20020adff386000000b002366e8cf5bbmr8279240wro.587.1667231139606;
-        Mon, 31 Oct 2022 08:45:39 -0700 (PDT)
+        bh=yiIQqUgAicF1IqI0TD1/vWxeqEODaUy7zyfXvnZJius=;
+        b=su/JP05BVcuvqoTRAXwHM8gHw9Au4P6dhfdVWF5g4SXpyLCD90CnqPEoOrkSNy9I1r
+         LSMBv1uJZs+XHG13HXXZe80mDMbEPW/HPtKsmXXXu3656AQ9Lh3H1Ql1+170Y2kYH2fq
+         IKPtg2vn//Ly6c94+QSTJMjMhZNalQZjFLvB35lhZ6LCHXXjFYPssLpHc08cl+8nCk21
+         qZGoSATXX0k32M0axUjMFWK3YoKpIwVDbj4DcgK4li5/UxM58kTBReBO7Ld6XAh2N0/j
+         ECae9XDLkxlJtKjlJyKzXoPRFw3El5QtC9xnYdmZOgu/GSFcfXkmafMQLck2C/NhycAP
+         2Xlw==
+X-Gm-Message-State: ACrzQf23IBf1kxinDtByGfr6ypjNwiTQHF5NXzD3/L1q8z7//SrG/G9H
+        icbyNUkzfCc9Pa3jOkIyOKA=
+X-Google-Smtp-Source: AMsMyM4/irtNqZnPzYVXBivUMUii0bMR2GOzaMUXE9e4uh5P3vwnckqqZANG/P8yFmPZyq7Uv3Ythw==
+X-Received: by 2002:a05:6000:2c3:b0:236:dd92:16d1 with SMTP id o3-20020a05600002c300b00236dd9216d1mr912518wry.50.1667231798642;
+        Mon, 31 Oct 2022 08:56:38 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p11-20020a05600c468b00b003cf75213bb9sm2183194wmo.8.2022.10.31.08.45.38
+        by smtp.gmail.com with ESMTPSA id n10-20020a05600c3b8a00b003cf71b1f66csm4077946wms.0.2022.10.31.08.56.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Oct 2022 08:45:39 -0700 (PDT)
+        Mon, 31 Oct 2022 08:56:37 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+To:     Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: message: fusion: remove variable 'where'
-Date:   Mon, 31 Oct 2022 15:45:38 +0000
-Message-Id: <20221031154538.870223-1-colin.i.king@gmail.com>
+Subject: [PATCH] rtlwifi: rtl8192ee: remove static variable stop_report_cnt
+Date:   Mon, 31 Oct 2022 15:56:37 +0000
+Message-Id: <20221031155637.871164-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,35 +69,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable where is just being incremented and it's never used
-anywhere else. The variable and the increment are redundant so
-remove it.
+Variable stop_report_cnt is being set or incremented but is never
+being used for anything meaningful. The variable and code relating
+to it's use is redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/message/fusion/mptctl.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
-index 52c7020c9d19..1decd09a08d8 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -2879,7 +2879,6 @@ static struct mpt_pci_driver mptctl_driver = {
- static int __init mptctl_init(void)
- {
- 	int err;
--	int where = 1;
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c
+index 8043d819fb85..a182cdeb58e2 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c
+@@ -997,7 +997,6 @@ bool rtl92ee_is_tx_desc_closed(struct ieee80211_hw *hw, u8 hw_queue, u16 index)
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ 	u16 read_point, write_point;
+ 	bool ret = false;
+-	static u8 stop_report_cnt;
+ 	struct rtl8192_tx_ring *ring = &rtlpci->tx_ring[hw_queue];
  
- 	show_mptmod_ver(my_NAME, my_VERSION);
+ 	{
+@@ -1038,13 +1037,6 @@ bool rtl92ee_is_tx_desc_closed(struct ieee80211_hw *hw, u8 hw_queue, u16 index)
+ 	    rtlpriv->psc.rfoff_reason > RF_CHANGE_BY_PS)
+ 		ret = true;
  
-@@ -2898,7 +2897,6 @@ static int __init mptctl_init(void)
- 	/*
- 	 *  Install our handler
- 	 */
--	++where;
- 	mptctl_id = mpt_register(mptctl_reply, MPTCTL_DRIVER,
- 	    "mptctl_reply");
- 	if (!mptctl_id || mptctl_id >= MPT_MAX_PROTOCOL_DRIVERS) {
+-	if (hw_queue < BEACON_QUEUE) {
+-		if (!ret)
+-			stop_report_cnt++;
+-		else
+-			stop_report_cnt = 0;
+-	}
+-
+ 	return ret;
+ }
+ 
 -- 
 2.37.3
 
