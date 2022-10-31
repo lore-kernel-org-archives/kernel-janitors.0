@@ -2,101 +2,122 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22750FA3740
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 11:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE84DC38A02
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 11:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbiJaLCq (ORCPT
+        id S230035AbiJaLK6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 07:02:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50182 "EHLO
+        Mon, 31 Oct 2022 07:10:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbiJaLCp (ORCPT
+        with ESMTP id S229477AbiJaLK5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 07:02:45 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7210C65CA;
-        Mon, 31 Oct 2022 04:02:44 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id f5so6881918ejc.5;
-        Mon, 31 Oct 2022 04:02:44 -0700 (PDT)
+        Mon, 31 Oct 2022 07:10:57 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDD87B847;
+        Mon, 31 Oct 2022 04:10:55 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id b62so22288pgc.0;
+        Mon, 31 Oct 2022 04:10:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xLN72+StQcXpBZAAYYy6O1rIIRIfs1ZDX9QoMt7mJWE=;
-        b=FOAVv7XaUC/Jy5pqBIxcF4BD2OcfNj+Six3RyYWyxWdooM0K+tT0cactwzkzGq9ZG1
-         luMTY1OgqPJdTwFqHV1kVm0ndt08/kCy1hJYVKChADFzzfglXP7zqRohvqrrx6k/8Ddg
-         M0bk77MPhsbhN0GDEn8NeOunANCBcI9QkiXMKttWc9AhmGx5bedPHIQVcsgEvslaarYf
-         H9zuvTOFMsODzbUBfywB+CTtcoAr7OExOXJ6fphiqPsn8dd3MaXXKGMBL507Wl/s+u5+
-         kbhY9fj2O01Ui4LQ9wN2TWvf9TxbPfySc/zdv6Kalc3axn1+g2cWgOKhxaJqADwc9wyV
-         0/EA==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mWOQo3IJMa6w4l4DyN4HDxOpIlWrRJ/XZKR3C/nOGs=;
+        b=lSn9Onz4PxN1cJWKkcid5fopQHGtPF7Xutp9xqdwSl58r0Hv/ReabwAK0DyQMaEvxP
+         9HbIo4HSlNM5p5zVgStKBUt1r6a9Hzni0hHIACHf4JczMhHixIFn/SeseOTMpR0u+iKs
+         K6yqUKlsmfa5jGVGnymLJ5GcuYpl1KJ9zOvAp+0JxctY7t47W5tkX/i6XFrjS8THCxzK
+         Ql/6Cqtj99XDesgAhgvb6/vShowJ16njwUndk8kwFxGrUmQRn513lmAmK+ir//078wLy
+         hhDSPx08amePjr0bzM50X5Nk+5AuSyOI60N76pnIpHyas+RwY3tS8vVFZByZBNmND6YM
+         LtZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xLN72+StQcXpBZAAYYy6O1rIIRIfs1ZDX9QoMt7mJWE=;
-        b=D4awagEXMGkumMXtGt9VQ70tl2+jHN5NXqLprPKzSS/ln/hRaqwIpoQqVvec4cTYEj
-         6HoyXHj/1KwaWNqzw1PmODzYY6qpw/1ithymD44oou2KxyEY6BNKrjyHt2QyIX83MEti
-         tV+bmxS6td5SYdlg58xU0qs52GsyyBmslp6bxoPVqY8vtlAK0sjxJagKRa+OgzBCC2ee
-         Xqluu+mZI06OefLXbEghDLPKGDICyYejKZ1PNZeVoj7NYdZwRH2b18qIXkivoaFqKS3c
-         fcW4DqrXDvLZE2rybRQXLVWtaCC62tyvbVdlG68ZAJG9xCn6yaOUrf2wfxnXyOCcGag8
-         XisA==
-X-Gm-Message-State: ACrzQf0Ae1jVXjhhTqpB9t7cKbpzwKpQBT/EXSSz8dPhdsqY6LUfRLly
-        WUGKO5BkUnU0anvNgDQSWKRFyPoQIXg=
-X-Google-Smtp-Source: AMsMyM6bo2G+XlPIE/zC7X+zKDGq7zmtTTIDAasAsYz2KnCi4Oq1fgtwNACUlNdBStWBM8Z1ZapP6Q==
-X-Received: by 2002:a17:907:9713:b0:78d:8e23:892c with SMTP id jg19-20020a170907971300b0078d8e23892cmr12437365ejc.449.1667214162776;
-        Mon, 31 Oct 2022 04:02:42 -0700 (PDT)
-Received: from felia.fritz.box (200116b826c494005d8b6b3bdc900ff8.dip.versatel-1u1.de. [2001:16b8:26c4:9400:5d8b:6b3b:dc90:ff8])
-        by smtp.gmail.com with ESMTPSA id by6-20020a170906a2c600b0078907275a44sm2820015ejb.42.2022.10.31.04.02.41
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4mWOQo3IJMa6w4l4DyN4HDxOpIlWrRJ/XZKR3C/nOGs=;
+        b=xIUjZGOcGP7HF0Zu9aJnFOyWy3m3e90VtXhlJzr79YKWuqlchsqBwcYo3zroiOvN1i
+         KzpzA98PqEqCNl43cxNoLR7Pt811d9BR+3OmHneqDih2D0O/hKQB0RKISP7fjIlaWKp6
+         oH3YWaeyA2Uu4mspig+nAkF0cy5zGaIU+PGdwDSq4LvPhXpL7P4C8cYahBgoESyysoJj
+         GjJl4RiBWo3ZTj5oYHoYuV5JnyeHUkRGgymB9rqWpWSu3NgUJbhBfg1SCHosF7lFCT7x
+         +5DFOfQ0SfEU9d6zAKduGY0TWK7LgwoEEE1jUb9LMjwi2dmM/gAV2Lpi3x6YbndtyHct
+         YbyQ==
+X-Gm-Message-State: ACrzQf2lcXWJvVFO6VYXnumd+JoCsiP3PRqQD7DKw3MMSzoFv5XxtCbH
+        C9VcCbBjaaxNbLbIIYq2qQE0tqwnhoY=
+X-Google-Smtp-Source: AMsMyM4qv86X/fOjd4pkWRvVfl5ojF09gKgeEQU8i3SCMhXgN7pSWnN+bFX5KJHGkGtnMwdtk+pPWw==
+X-Received: by 2002:a05:6a00:2446:b0:528:5f22:5b6f with SMTP id d6-20020a056a00244600b005285f225b6fmr13893404pfj.73.1667214655397;
+        Mon, 31 Oct 2022 04:10:55 -0700 (PDT)
+Received: from hyeyoo ([114.29.91.56])
+        by smtp.gmail.com with ESMTPSA id u16-20020a170902e5d000b001767f6f04efsm4234538plf.242.2022.10.31.04.10.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Oct 2022 04:02:42 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
-        devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust ARM PRIMECELL PL35X SMC DRIVER after dt-binding renaming
-Date:   Mon, 31 Oct 2022 12:02:23 +0100
-Message-Id: <20221031110223.30203-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 31 Oct 2022 04:10:54 -0700 (PDT)
+Date:   Mon, 31 Oct 2022 20:10:48 +0900
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/slab_common: repair kernel-doc for __ksize()
+Message-ID: <Y1+tOByatY9w8MKc@hyeyoo>
+References: <20221031092920.976-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221031092920.976-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit de67fa80c669 ("dt-bindings: memory-controllers: arm,pl353-smc:
-Extend to support 'arm,pl354' SMC") renames the arm,pl353-smc.yaml
-memory-controller dt-binding, but misses to adjust its reference in
-MAINTAINERS.
+On Mon, Oct 31, 2022 at 10:29:20AM +0100, Lukas Bulwahn wrote:
+> Commit 445d41d7a7c1 ("Merge branch 'slab/for-6.1/kmalloc_size_roundup' into
+> slab/for-next") resolved a conflict of two concurrent changes to __ksize().
+> 
+> However, it did not adjust the kernel-doc comment of __ksize(), while the
+> name of the argument to __ksize() was renamed.
+> 
+> Hence, ./scripts/ kernel-doc -none mm/slab_common.c warns about it.
+> 
+> Adjust the kernel-doc comment for __ksize() for make W=1 happiness.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  mm/slab_common.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 33b1886b06eb..74a991fd9d31 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1010,7 +1010,7 @@ EXPORT_SYMBOL(kfree);
+>  
+>  /**
+>   * __ksize -- Report full size of underlying allocation
+> - * @objp: pointer to the object
+> + * @object: pointer to the object
+>   *
+>   * This should only be used internally to query the true size of allocations.
+>   * It is not meant to be a way to discover the usable size of an allocation
+> @@ -1018,7 +1018,7 @@ EXPORT_SYMBOL(kfree);
+>   * the originally requested allocation size may trigger KASAN, UBSAN_BOUNDS,
+>   * and/or FORTIFY_SOURCE.
+>   *
+> - * Return: size of the actual memory used by @objp in bytes
+> + * Return: size of the actual memory used by @object in bytes
+>   */
+>  size_t __ksize(const void *object)
+>  {
+> -- 
+> 2.17.1
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken file pattern.
+Acked-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 
-Repair this file entry in ARM PRIMECELL PL35X SMC DRIVER.
+Thanks!
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Krzysztof, please pick this patch on top of the commit above. Thanks.
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 31b8c902b37a..205533d70dc6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1692,7 +1692,7 @@ M:	Miquel Raynal <miquel.raynal@bootlin.com>
- M:	Naga Sureshkumar Relli <nagasure@xilinx.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
--F:	Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml
-+F:	Documentation/devicetree/bindings/memory-controllers/arm,pl35x-smc.yaml
- F:	drivers/memory/pl353-smc.c
- 
- ARM PRIMECELL CLCD PL110 DRIVER
 -- 
-2.17.1
-
+Thanks,
+Hyeonggon
