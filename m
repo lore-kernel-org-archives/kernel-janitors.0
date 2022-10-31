@@ -2,98 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4038C38A02
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 09:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED50FA3740
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 10:11:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230155AbiJaJsz (ORCPT
+        id S230361AbiJaKLS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 05:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53702 "EHLO
+        Mon, 31 Oct 2022 06:11:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230104AbiJaJsy (ORCPT
+        with ESMTP id S230347AbiJaKLP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 05:48:54 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EB7BD57;
-        Mon, 31 Oct 2022 02:48:53 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id y14so27954715ejd.9;
-        Mon, 31 Oct 2022 02:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bNeKrNum9y97/rCawM0h98cZgfeEAleqAKTBDI1MMmM=;
-        b=Dw1Izh+o2/URx8C0/oLkEu069SDT2tF8CA4v7iXI4QHpL7nK6nMKysb6F0KoMScPKb
-         /Cy6qYyvNtDeU5Ob36bQo32tMn6Ghzt/aFsbcsRZLoJrOede5VEkJPVgO5dqv88yrZNX
-         9AB5zem8aoH8BpFnkIhs92/nE5C5k98702pAVcvMbxgcv4/GPe5FKWQAHlebWPX8v1t8
-         LHd809e0YCFyfkNW4GlYEQ4+cavTn7gn5c8E8VF+fAKLo1ua1qIdZWwS5f0KNsUlGZyr
-         5bjBaA4ma/8o6yb5DugfMLkihMIuq5zp4R/4DMTrZtTqWnqqK/BL2MW9B3yeaAShTlFJ
-         Sh9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bNeKrNum9y97/rCawM0h98cZgfeEAleqAKTBDI1MMmM=;
-        b=AgmYQTTV1GdCefh5fj9YBxUCMAKSHVXCAhTaN3BWmRH/uAAxGO6aILc8AZbtY6E/cf
-         wTwCdWYt1Y1xmIxtLQTh6ZmFawYAvH7M9zgIw7TdrLdvsBQpAZLzHGFykbXy/eWqxEGs
-         xmzrYA/ij534Pe8a0axthjFDetyadRd2CYqpTfV1aLlzeLY9oKcgSfAMf8S3M8NnS0BP
-         J9vrAwUCNEPbDoOsVoJ5arBAHjbj9RWb3attR4YYW09THcn2oPZ4a8NgEopkPZ/wKyE+
-         oVriKoQhO53FB/MGpE8VqpfsP1uqKpiVXwxyeCUhA2H5dyGXDGi3S+ICNbFtPd9UR43C
-         le2Q==
-X-Gm-Message-State: ACrzQf3M9Jv5MoiBoDzTPlSdnnE8NhWRoj8d87nJRRXAFQlbOPT2Svrl
-        eTUgm1dS+AZSFdJzjk8XcAA=
-X-Google-Smtp-Source: AMsMyM4wuFBKcYhvJf2ewm5Xr/R+f8Ue1TAWuZEdTGBSUfZ+2yPyMqePB+cx93e0R1Cf4TAgloxPkQ==
-X-Received: by 2002:a17:907:783:b0:76e:f290:8b5 with SMTP id xd3-20020a170907078300b0076ef29008b5mr12207953ejb.395.1667209731578;
-        Mon, 31 Oct 2022 02:48:51 -0700 (PDT)
-Received: from felia.fritz.box (200116b826c494005d8b6b3bdc900ff8.dip.versatel-1u1.de. [2001:16b8:26c4:9400:5d8b:6b3b:dc90:ff8])
-        by smtp.gmail.com with ESMTPSA id r17-20020a17090609d100b0078db5bddd9csm2765646eje.22.2022.10.31.02.48.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Oct 2022 02:48:50 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Borislav Petkov <bp@suse.de>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
+        Mon, 31 Oct 2022 06:11:15 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 292C6DED3;
+        Mon, 31 Oct 2022 03:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=oYiGTrq5J1dOadLc8Mo/LeUNJ8vMn/fd6dYj/vEpKvI=; b=H0OlndsHp9kAOs6Cyfv2Zzqalt
+        qyjHmVBCnPLDsNhMHikzlqDZ5Lf41z8ZRlqOLE5zS1w+ykmJ+M4nSQuv3KVuzd44z3R/TWj1C0vb+
+        Z9vGw7Zksu9Z9KQbnn3w7tVcDM5R1vPVYBFGzIFKA4tBR3g7XlyiV1KmR2KA5hptcKS9leiLBNtte
+        Q5rvM6wJy5DrEKihCgbWszuFS8gEUsndyxcpraXbKz2NrE89XIx2E6LYIbhnEaLctuqGTx6X1+xFr
+        I7Q4M3/eOxkE9ZudwcNrd+C5wwSuUE1bAFCfJAs7RWMBxFYq7Tju2i+Wk73FOfje3uojp9IxtRlks
+        kbu3biEw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1opRku-007qNr-Hs; Mon, 31 Oct 2022 10:10:56 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1BCC130013F;
+        Mon, 31 Oct 2022 11:10:56 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id F1AB62010F55F; Mon, 31 Oct 2022 11:10:55 +0100 (CET)
+Date:   Mon, 31 Oct 2022 11:10:55 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        X86 ML <x86@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Vamshi K Sthambamkadi <vamshi.k.sthambamkadi@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] x86/boot: repair kernel-doc for boot_kstrtoul()
-Date:   Mon, 31 Oct 2022 10:48:35 +0100
-Message-Id: <20221031094835.15923-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        "H. Peter Anvin" <hpa@zytor.com>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Reference to non-existing CONFIG_X86_FEATURE_CALL_DEPTH
+Message-ID: <Y1+fL4qQEIGZEEKB@hirez.programming.kicks-ass.net>
+References: <CAKXUXMx3cgTA66h_ezNTqyVo_Oa-Q0H=FeBM64zntZ4E0YCT6g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKXUXMx3cgTA66h_ezNTqyVo_Oa-Q0H=FeBM64zntZ4E0YCT6g@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 5fafbebc86a0 ("x86/boot: Add kstrtoul() from lib/") temporarily adds
-a copy of kstrtoul() to arch/x86/boot/string.c. While massaging the
-provided patch, Borislav renames the kstrtoul() to boot_kstrtoul(), but
-misses to adjust the corresponding kernel-doc comment.
+On Mon, Oct 31, 2022 at 10:14:03AM +0100, Lukas Bulwahn wrote:
+> Dear Thomas, dear Peter,
+> 
+> in your work on call depth tracking mitigation, commit 5d8213864ade
+> ("x86/retbleed: Add SKL return thunk") on linux-next references the
+> configuration symbol CONFIG_X86_FEATURE_CALL_DEPTH, which is not
+> introduced in any Kconfig file.
+> 
+> Is this just some left-over from some previous iteration of this
+> feature or is there still a patch to come that will introduce that
+> configuration symbol in some Kconfig file?
+> 
+> This issue was identified with ./scripts/checkkconfigsymbols.py.
 
-Adjust the kernel-doc comment for boot_kstrtoul() for make W=1 happiness.
+Thanks!
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Boris, please pick this quick kernel-doc cleanup patch. Thanks.
+Subject: x86: Unconfuse CONFIG_ and X86_FEATURE_ namespaces
+From: Peter Zijlstra <peterz@infradead.org>
 
- arch/x86/boot/string.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Lukas reported someone fat fingered the CONFIG_ symbol; fix er up.
 
-diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
-index 8a3fff9128bb..1c8541ae3b3a 100644
---- a/arch/x86/boot/string.c
-+++ b/arch/x86/boot/string.c
-@@ -350,7 +350,7 @@ static int _kstrtoul(const char *s, unsigned int base, unsigned long *res)
- }
+Fixes: 5d8213864ade ("x86/retbleed: Add SKL return thunk") 
+Reported-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 82580adbca4b..3ab90f23e7f7 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -285,7 +285,7 @@
+  */
+ .macro UNTRAIN_RET
+ #if defined(CONFIG_CPU_UNRET_ENTRY) || defined(CONFIG_CPU_IBPB_ENTRY) || \
+-	defined(CONFIG_X86_FEATURE_CALL_DEPTH)
++	defined(CONFIG_CALL_DEPTH_TRACKING)
+ 	ANNOTATE_UNRET_END
+ 	ALTERNATIVE_3 "",						\
+ 		      CALL_ZEN_UNTRAIN_RET, X86_FEATURE_UNRET,		\
+@@ -296,7 +296,7 @@
  
- /**
-- * kstrtoul - convert a string to an unsigned long
-+ * boot_kstrtoul - convert a string to an unsigned long
-  * @s: The start of the string. The string must be null-terminated, and may also
-  *  include a single newline before its terminating null. The first character
-  *  may also be a plus sign, but not a minus sign.
--- 
-2.17.1
-
+ .macro UNTRAIN_RET_FROM_CALL
+ #if defined(CONFIG_CPU_UNRET_ENTRY) || defined(CONFIG_CPU_IBPB_ENTRY) || \
+-	defined(CONFIG_X86_FEATURE_CALL_DEPTH)
++	defined(CONFIG_CALL_DEPTH_TRACKING)
+ 	ANNOTATE_UNRET_END
+ 	ALTERNATIVE_3 "",						\
+ 		      CALL_ZEN_UNTRAIN_RET, X86_FEATURE_UNRET,		\
