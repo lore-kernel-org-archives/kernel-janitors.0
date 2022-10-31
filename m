@@ -2,123 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D788FFA3741
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 22:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CD5ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 23:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbiJaWuT (ORCPT
+        id S229645AbiJaXKT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 18:50:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56628 "EHLO
+        Mon, 31 Oct 2022 19:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiJaWuR (ORCPT
+        with ESMTP id S229457AbiJaXKR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 18:50:17 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DBEF2DC2;
-        Mon, 31 Oct 2022 15:50:17 -0700 (PDT)
-Received: from mercury (unknown [185.209.196.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        Mon, 31 Oct 2022 19:10:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9E5F30;
+        Mon, 31 Oct 2022 16:10:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8C1516602392;
-        Mon, 31 Oct 2022 22:50:15 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1667256615;
-        bh=kVDDQeMOdM+UVteLf3u36rrJFa9xVLBf4adP3dt8wlU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=feFsJnBaq5RKiulZzAexRlfaGop5Sb05DyqHBVwWh6HcV/ctJHn/5NNwyDSuvzGMi
-         Ymj0qcAYRAEZJ41a9SidzaB2fpaOSdkBzZa33Is2naG9n0ByfFmubrIGjCB15WUuqr
-         niyy3OGiRwt6XREovnwWwQ0zfMGj3hSg34k784D8sXkQrr1iqt0BRvd8LZNJn1dQUP
-         5ERLSLmQOtjAuFNLsyCon8TsMjpV0sRUXIOi1W31RyLN/EnpM9WVhqdvqc31eKVKTA
-         blXcNjSmKtP5GE5KV5mH+lYAhJ+8XIa4idq4ZuYjeXiqFRTVsokd3fo6p+bx+5LR/u
-         ihzYy3iFxzRXA==
-Received: by mercury (Postfix, from userid 1000)
-        id 34CAC1061C6E; Mon, 31 Oct 2022 23:50:13 +0100 (CET)
-Date:   Mon, 31 Oct 2022 23:50:13 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: core: repair kernel-doc for
- power_supply_vbat2ri()
-Message-ID: <20221031225013.aax5tsvenbykzp7e@mercury.elektranox.org>
-References: <20221031151808.826-1-lukas.bulwahn@gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A9FBB614D8;
+        Mon, 31 Oct 2022 23:10:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 07A07C433D6;
+        Mon, 31 Oct 2022 23:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667257816;
+        bh=maYAtLJfToR5owGf7FOIkaJDILVb30hJrDc1P44+LZw=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=sXvGB9JyOI7wlFDVvV1pE3KwPcqoTF0E+Pb3Yg1OS/y3tqa9Uad+oPndA/EbLaimB
+         UNkNTm2iZRzsYsZ7gXfdn1VNg2Xcc/Vq/YxPle3IYHduOXaK2AooyM4UH8ZCqugOxx
+         FyURoKS2+tF+1sUnRE+oqWDHs74GZWj7ijUqSAAKdRMyHnkV/maYdCDkAm1CBMnpqk
+         WLthyiS5dO6Q4yFEWYxwJjvIEUzWtZ89c7oh7JF710dgxSAww+WN5W6+ci/PEuyUlu
+         zKn6D7PDfu5MMadK5CLgwn5+uDFvV9ieQ3StR8nVzkj/L1e9wDoVXb6loy6AkbhnB6
+         0NWSOKH0O1jFw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E0CC3E50D96;
+        Mon, 31 Oct 2022 23:10:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="umduf3gx7xxv6ica"
-Content-Disposition: inline
-In-Reply-To: <20221031151808.826-1-lukas.bulwahn@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: Fix EALREADY and ELOOP cases in bt_status()
+From:   patchwork-bot+bluetooth@kernel.org
+Message-Id: <166725781590.15466.14816541505567733815.git-patchwork-notify@kernel.org>
+Date:   Mon, 31 Oct 2022 23:10:15 +0000
+References: <9a1270540f0c2db13e81a9d69098391f1ad22107.1667113164.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <9a1270540f0c2db13e81a9d69098391f1ad22107.1667113164.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, luiz.von.dentz@intel.com,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
 
---umduf3gx7xxv6ica
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-Hi,
+On Sun, 30 Oct 2022 08:00:03 +0100 you wrote:
+> 'err' is known to be <0 at this point.
+> 
+> So, some cases can not be reached because of a missing "-".
+> Add it.
+> 
+> Fixes: ca2045e059c3 ("Bluetooth: Add bt_status")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
-On Mon, Oct 31, 2022 at 04:18:08PM +0100, Lukas Bulwahn wrote:
-> The function power_supply_vbat2ri() does not have a parameter called tabl=
-e,
-> despite it being mentioned in the kernel-doc comment. The table is actual=
-ly
-> obtained from the info parameter, the battery information container. Henc=
-e,
-> ./scripts/kernel-doc -none drivers/power/supply/power_supply_core.c warns
-> about this excess function parameter.
->=20
-> Adjust the kernel-doc comment for power_supply_vbat2ri() for make W=3D1
-> happiness.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
+Here is the summary with links:
+  - Bluetooth: Fix EALREADY and ELOOP cases in bt_status()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/8fceb58d84ab
 
-Thanks, queued.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
--- Sebastian
 
->  drivers/power/supply/power_supply_core.c | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/sup=
-ply/power_supply_core.c
-> index 4b5fb172fa99..9035e349bf53 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -870,7 +870,6 @@ EXPORT_SYMBOL_GPL(power_supply_temp2resist_simple);
->   * power_supply_vbat2ri() - find the battery internal resistance
->   * from the battery voltage
->   * @info: The battery information container
-> - * @table: Pointer to battery resistance temperature table
->   * @vbat_uv: The battery voltage in microvolt
->   * @charging: If we are charging (true) or not (false)
->   *
-> --=20
-> 2.17.1
->=20
-
---umduf3gx7xxv6ica
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmNgUSEACgkQ2O7X88g7
-+poksA//SZmYISwCudqSe/7w94/UPtbVBb9eqqoGwhGaIb99BlieQWRQcGKmgQ1J
-sjS1zna2/j5AzhkLhD3R7EqyfAb29BIOML0AtjRHH6niAdluXRakPf/ldZ7QddB0
-OvJ7RQGRio+2GXrflB9Hi6F3rbZAMN5ND2XLMdA4xcfJCncRZi1TgrsNhd67WIq5
-lShHmeuQodySfX2uIwe9dGoNpTBni8Afe0UaR7GxPIyshxDQnOwjEQbHq9BTtog2
-TKe1LWx3AEek1S5tsNPQIGvbJBK0Vjwfvi3ilTN3WHnfLK8ZwHimvUWfaksf0vmS
-eVowYLli2Zk9VmHbx9svoKkIFjmFRQ18wmucK4KBjSq/cSBnsn0xqMLcsbGqXSUV
-b0BI0HjZmIQMIufzO6Cj3J9cg/LTypzELAMYEu9m9UT0SQ+qY6cqe6+z/I9d97B3
-RdR9rFE4XpTjxSLcw/8x/btfUu2vLaFoNrj8IjZe7tH8hqs/+tJCzdA0mgYR2GEb
-MJaLXga1V7sQsGXeLnZbm4+mF+XNyLgEwole372onymfaf0bk/Yt8VK2z7bqa6m8
-s8KvFVjmUzWSQeEBb3QS/i7MiutijSz2UJyQzNGt6yGGDGULHxTRrvpPqhuWbLts
-fBZkbHhr3JnBA9Lp4k4dvrF2qT+vD467qjhPQFAWYE/Hp1G/C7c=
-=K8mD
------END PGP SIGNATURE-----
-
---umduf3gx7xxv6ica--
