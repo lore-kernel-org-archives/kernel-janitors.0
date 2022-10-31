@@ -2,94 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE9EECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 20:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D788FFA3741
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 22:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229916AbiJaUks (ORCPT
+        id S229851AbiJaWuT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 16:40:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33250 "EHLO
+        Mon, 31 Oct 2022 18:50:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbiJaUkr (ORCPT
+        with ESMTP id S229452AbiJaWuR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 16:40:47 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B15A0C39
-        for <kernel-janitors@vger.kernel.org>; Mon, 31 Oct 2022 13:40:43 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id pbaKoCMnqsfCIpbaKoU2C5; Mon, 31 Oct 2022 21:40:41 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 31 Oct 2022 21:40:41 +0100
-X-ME-IP: 86.243.100.34
-Message-ID: <788db74a-f3fd-4685-82b9-3257106c6260@wanadoo.fr>
-Date:   Mon, 31 Oct 2022 21:40:39 +0100
+        Mon, 31 Oct 2022 18:50:17 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DBEF2DC2;
+        Mon, 31 Oct 2022 15:50:17 -0700 (PDT)
+Received: from mercury (unknown [185.209.196.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8C1516602392;
+        Mon, 31 Oct 2022 22:50:15 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1667256615;
+        bh=kVDDQeMOdM+UVteLf3u36rrJFa9xVLBf4adP3dt8wlU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=feFsJnBaq5RKiulZzAexRlfaGop5Sb05DyqHBVwWh6HcV/ctJHn/5NNwyDSuvzGMi
+         Ymj0qcAYRAEZJ41a9SidzaB2fpaOSdkBzZa33Is2naG9n0ByfFmubrIGjCB15WUuqr
+         niyy3OGiRwt6XREovnwWwQ0zfMGj3hSg34k784D8sXkQrr1iqt0BRvd8LZNJn1dQUP
+         5ERLSLmQOtjAuFNLsyCon8TsMjpV0sRUXIOi1W31RyLN/EnpM9WVhqdvqc31eKVKTA
+         blXcNjSmKtP5GE5KV5mH+lYAhJ+8XIa4idq4ZuYjeXiqFRTVsokd3fo6p+bx+5LR/u
+         ihzYy3iFxzRXA==
+Received: by mercury (Postfix, from userid 1000)
+        id 34CAC1061C6E; Mon, 31 Oct 2022 23:50:13 +0100 (CET)
+Date:   Mon, 31 Oct 2022 23:50:13 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: core: repair kernel-doc for
+ power_supply_vbat2ri()
+Message-ID: <20221031225013.aax5tsvenbykzp7e@mercury.elektranox.org>
+References: <20221031151808.826-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] firmware: ti_sci: Use devm_bitmap_zalloc when applicable
-Content-Language: fr
-To:     Nishanth Menon <nm@ti.com>
-Cc:     kristo@kernel.org, ssantosh@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <1bd77909ff75f62a2228a39db208c4c6d1b3e0e2.1632659746.git.christophe.jaillet@wanadoo.fr>
- <20210927133807.rtkfjkxxlwpdqcnf@scouring>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210927133807.rtkfjkxxlwpdqcnf@scouring>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="umduf3gx7xxv6ica"
+Content-Disposition: inline
+In-Reply-To: <20221031151808.826-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 27/09/2021 à 15:38, Nishanth Menon a écrit :
-> On 14:36-20210926, Christophe JAILLET wrote:
->> 'xfer_alloc_table' is a bitmap. So use 'devm_bitmap_zalloc()' to simplify
->> code and improve the semantic of the code.
->>
->> While at it, remove a redundant 'bitmap_zero()' call.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/firmware/ti_sci.c | 8 +++-----
->>   1 file changed, 3 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
->> index 235c7e7869aa..a33eb884102f 100644
->> --- a/drivers/firmware/ti_sci.c
->> +++ b/drivers/firmware/ti_sci.c
->> @@ -3352,13 +3352,11 @@ static int ti_sci_probe(struct platform_device *pdev)
->>   	if (!minfo->xfer_block)
->>   		return -ENOMEM;
->>   
->> -	minfo->xfer_alloc_table = devm_kcalloc(dev,
->> -					       BITS_TO_LONGS(desc->max_msgs),
->> -					       sizeof(unsigned long),
->> -					       GFP_KERNEL);
->> +	minfo->xfer_alloc_table = devm_bitmap_zalloc(dev,
->> +						     desc->max_msgs,
->> +						     GFP_KERNEL);
->>   	if (!minfo->xfer_alloc_table)
->>   		return -ENOMEM;
->> -	bitmap_zero(minfo->xfer_alloc_table, desc->max_msgs);
->>   
->>   	/* Pre-initialize the buffer pointer to pre-allocated buffers */
->>   	for (i = 0, xfer = minfo->xfer_block; i < desc->max_msgs; i++, xfer++) {
->> -- 
->> 2.30.2
->>
-> 
-> Reviewed-by: Nishanth Menon <nm@ti.com>
-> 
+
+--umduf3gx7xxv6ica
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-another similar patch has been merged against 
-'drivers/firmware/ti_sci.c' just a few days ago, so this one could also 
-be applied.
+On Mon, Oct 31, 2022 at 04:18:08PM +0100, Lukas Bulwahn wrote:
+> The function power_supply_vbat2ri() does not have a parameter called tabl=
+e,
+> despite it being mentioned in the kernel-doc comment. The table is actual=
+ly
+> obtained from the info parameter, the battery information container. Henc=
+e,
+> ./scripts/kernel-doc -none drivers/power/supply/power_supply_core.c warns
+> about this excess function parameter.
+>=20
+> Adjust the kernel-doc comment for power_supply_vbat2ri() for make W=3D1
+> happiness.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-Let me know if I need to rebase and/or resend it.
+Thanks, queued.
 
-CJ
+-- Sebastian
+
+>  drivers/power/supply/power_supply_core.c | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/sup=
+ply/power_supply_core.c
+> index 4b5fb172fa99..9035e349bf53 100644
+> --- a/drivers/power/supply/power_supply_core.c
+> +++ b/drivers/power/supply/power_supply_core.c
+> @@ -870,7 +870,6 @@ EXPORT_SYMBOL_GPL(power_supply_temp2resist_simple);
+>   * power_supply_vbat2ri() - find the battery internal resistance
+>   * from the battery voltage
+>   * @info: The battery information container
+> - * @table: Pointer to battery resistance temperature table
+>   * @vbat_uv: The battery voltage in microvolt
+>   * @charging: If we are charging (true) or not (false)
+>   *
+> --=20
+> 2.17.1
+>=20
+
+--umduf3gx7xxv6ica
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmNgUSEACgkQ2O7X88g7
++poksA//SZmYISwCudqSe/7w94/UPtbVBb9eqqoGwhGaIb99BlieQWRQcGKmgQ1J
+sjS1zna2/j5AzhkLhD3R7EqyfAb29BIOML0AtjRHH6niAdluXRakPf/ldZ7QddB0
+OvJ7RQGRio+2GXrflB9Hi6F3rbZAMN5ND2XLMdA4xcfJCncRZi1TgrsNhd67WIq5
+lShHmeuQodySfX2uIwe9dGoNpTBni8Afe0UaR7GxPIyshxDQnOwjEQbHq9BTtog2
+TKe1LWx3AEek1S5tsNPQIGvbJBK0Vjwfvi3ilTN3WHnfLK8ZwHimvUWfaksf0vmS
+eVowYLli2Zk9VmHbx9svoKkIFjmFRQ18wmucK4KBjSq/cSBnsn0xqMLcsbGqXSUV
+b0BI0HjZmIQMIufzO6Cj3J9cg/LTypzELAMYEu9m9UT0SQ+qY6cqe6+z/I9d97B3
+RdR9rFE4XpTjxSLcw/8x/btfUu2vLaFoNrj8IjZe7tH8hqs/+tJCzdA0mgYR2GEb
+MJaLXga1V7sQsGXeLnZbm4+mF+XNyLgEwole372onymfaf0bk/Yt8VK2z7bqa6m8
+s8KvFVjmUzWSQeEBb3QS/i7MiutijSz2UJyQzNGt6yGGDGULHxTRrvpPqhuWbLts
+fBZkbHhr3JnBA9Lp4k4dvrF2qT+vD467qjhPQFAWYE/Hp1G/C7c=
+=K8mD
+-----END PGP SIGNATURE-----
+
+--umduf3gx7xxv6ica--
