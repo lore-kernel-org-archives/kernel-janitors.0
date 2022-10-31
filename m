@@ -2,108 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED50FA3740
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 10:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22750FA3740
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 11:02:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230361AbiJaKLS (ORCPT
+        id S229629AbiJaLCq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 06:11:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35572 "EHLO
+        Mon, 31 Oct 2022 07:02:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230347AbiJaKLP (ORCPT
+        with ESMTP id S229667AbiJaLCp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 06:11:15 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 292C6DED3;
-        Mon, 31 Oct 2022 03:11:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oYiGTrq5J1dOadLc8Mo/LeUNJ8vMn/fd6dYj/vEpKvI=; b=H0OlndsHp9kAOs6Cyfv2Zzqalt
-        qyjHmVBCnPLDsNhMHikzlqDZ5Lf41z8ZRlqOLE5zS1w+ykmJ+M4nSQuv3KVuzd44z3R/TWj1C0vb+
-        Z9vGw7Zksu9Z9KQbnn3w7tVcDM5R1vPVYBFGzIFKA4tBR3g7XlyiV1KmR2KA5hptcKS9leiLBNtte
-        Q5rvM6wJy5DrEKihCgbWszuFS8gEUsndyxcpraXbKz2NrE89XIx2E6LYIbhnEaLctuqGTx6X1+xFr
-        I7Q4M3/eOxkE9ZudwcNrd+C5wwSuUE1bAFCfJAs7RWMBxFYq7Tju2i+Wk73FOfje3uojp9IxtRlks
-        kbu3biEw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1opRku-007qNr-Hs; Mon, 31 Oct 2022 10:10:56 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1BCC130013F;
-        Mon, 31 Oct 2022 11:10:56 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F1AB62010F55F; Mon, 31 Oct 2022 11:10:55 +0100 (CET)
-Date:   Mon, 31 Oct 2022 11:10:55 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Reference to non-existing CONFIG_X86_FEATURE_CALL_DEPTH
-Message-ID: <Y1+fL4qQEIGZEEKB@hirez.programming.kicks-ass.net>
-References: <CAKXUXMx3cgTA66h_ezNTqyVo_Oa-Q0H=FeBM64zntZ4E0YCT6g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKXUXMx3cgTA66h_ezNTqyVo_Oa-Q0H=FeBM64zntZ4E0YCT6g@mail.gmail.com>
+        Mon, 31 Oct 2022 07:02:45 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7210C65CA;
+        Mon, 31 Oct 2022 04:02:44 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id f5so6881918ejc.5;
+        Mon, 31 Oct 2022 04:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xLN72+StQcXpBZAAYYy6O1rIIRIfs1ZDX9QoMt7mJWE=;
+        b=FOAVv7XaUC/Jy5pqBIxcF4BD2OcfNj+Six3RyYWyxWdooM0K+tT0cactwzkzGq9ZG1
+         luMTY1OgqPJdTwFqHV1kVm0ndt08/kCy1hJYVKChADFzzfglXP7zqRohvqrrx6k/8Ddg
+         M0bk77MPhsbhN0GDEn8NeOunANCBcI9QkiXMKttWc9AhmGx5bedPHIQVcsgEvslaarYf
+         H9zuvTOFMsODzbUBfywB+CTtcoAr7OExOXJ6fphiqPsn8dd3MaXXKGMBL507Wl/s+u5+
+         kbhY9fj2O01Ui4LQ9wN2TWvf9TxbPfySc/zdv6Kalc3axn1+g2cWgOKhxaJqADwc9wyV
+         0/EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xLN72+StQcXpBZAAYYy6O1rIIRIfs1ZDX9QoMt7mJWE=;
+        b=D4awagEXMGkumMXtGt9VQ70tl2+jHN5NXqLprPKzSS/ln/hRaqwIpoQqVvec4cTYEj
+         6HoyXHj/1KwaWNqzw1PmODzYY6qpw/1ithymD44oou2KxyEY6BNKrjyHt2QyIX83MEti
+         tV+bmxS6td5SYdlg58xU0qs52GsyyBmslp6bxoPVqY8vtlAK0sjxJagKRa+OgzBCC2ee
+         Xqluu+mZI06OefLXbEghDLPKGDICyYejKZ1PNZeVoj7NYdZwRH2b18qIXkivoaFqKS3c
+         fcW4DqrXDvLZE2rybRQXLVWtaCC62tyvbVdlG68ZAJG9xCn6yaOUrf2wfxnXyOCcGag8
+         XisA==
+X-Gm-Message-State: ACrzQf0Ae1jVXjhhTqpB9t7cKbpzwKpQBT/EXSSz8dPhdsqY6LUfRLly
+        WUGKO5BkUnU0anvNgDQSWKRFyPoQIXg=
+X-Google-Smtp-Source: AMsMyM6bo2G+XlPIE/zC7X+zKDGq7zmtTTIDAasAsYz2KnCi4Oq1fgtwNACUlNdBStWBM8Z1ZapP6Q==
+X-Received: by 2002:a17:907:9713:b0:78d:8e23:892c with SMTP id jg19-20020a170907971300b0078d8e23892cmr12437365ejc.449.1667214162776;
+        Mon, 31 Oct 2022 04:02:42 -0700 (PDT)
+Received: from felia.fritz.box (200116b826c494005d8b6b3bdc900ff8.dip.versatel-1u1.de. [2001:16b8:26c4:9400:5d8b:6b3b:dc90:ff8])
+        by smtp.gmail.com with ESMTPSA id by6-20020a170906a2c600b0078907275a44sm2820015ejb.42.2022.10.31.04.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Oct 2022 04:02:42 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
+        devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust ARM PRIMECELL PL35X SMC DRIVER after dt-binding renaming
+Date:   Mon, 31 Oct 2022 12:02:23 +0100
+Message-Id: <20221031110223.30203-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 31, 2022 at 10:14:03AM +0100, Lukas Bulwahn wrote:
-> Dear Thomas, dear Peter,
-> 
-> in your work on call depth tracking mitigation, commit 5d8213864ade
-> ("x86/retbleed: Add SKL return thunk") on linux-next references the
-> configuration symbol CONFIG_X86_FEATURE_CALL_DEPTH, which is not
-> introduced in any Kconfig file.
-> 
-> Is this just some left-over from some previous iteration of this
-> feature or is there still a patch to come that will introduce that
-> configuration symbol in some Kconfig file?
-> 
-> This issue was identified with ./scripts/checkkconfigsymbols.py.
+Commit de67fa80c669 ("dt-bindings: memory-controllers: arm,pl353-smc:
+Extend to support 'arm,pl354' SMC") renames the arm,pl353-smc.yaml
+memory-controller dt-binding, but misses to adjust its reference in
+MAINTAINERS.
 
-Thanks!
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken file pattern.
 
+Repair this file entry in ARM PRIMECELL PL35X SMC DRIVER.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Subject: x86: Unconfuse CONFIG_ and X86_FEATURE_ namespaces
-From: Peter Zijlstra <peterz@infradead.org>
+Krzysztof, please pick this patch on top of the commit above. Thanks.
 
-Lukas reported someone fat fingered the CONFIG_ symbol; fix er up.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: 5d8213864ade ("x86/retbleed: Add SKL return thunk") 
-Reported-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
-
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 82580adbca4b..3ab90f23e7f7 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -285,7 +285,7 @@
-  */
- .macro UNTRAIN_RET
- #if defined(CONFIG_CPU_UNRET_ENTRY) || defined(CONFIG_CPU_IBPB_ENTRY) || \
--	defined(CONFIG_X86_FEATURE_CALL_DEPTH)
-+	defined(CONFIG_CALL_DEPTH_TRACKING)
- 	ANNOTATE_UNRET_END
- 	ALTERNATIVE_3 "",						\
- 		      CALL_ZEN_UNTRAIN_RET, X86_FEATURE_UNRET,		\
-@@ -296,7 +296,7 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 31b8c902b37a..205533d70dc6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1692,7 +1692,7 @@ M:	Miquel Raynal <miquel.raynal@bootlin.com>
+ M:	Naga Sureshkumar Relli <nagasure@xilinx.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/memory-controllers/arm,pl353-smc.yaml
++F:	Documentation/devicetree/bindings/memory-controllers/arm,pl35x-smc.yaml
+ F:	drivers/memory/pl353-smc.c
  
- .macro UNTRAIN_RET_FROM_CALL
- #if defined(CONFIG_CPU_UNRET_ENTRY) || defined(CONFIG_CPU_IBPB_ENTRY) || \
--	defined(CONFIG_X86_FEATURE_CALL_DEPTH)
-+	defined(CONFIG_CALL_DEPTH_TRACKING)
- 	ANNOTATE_UNRET_END
- 	ALTERNATIVE_3 "",						\
- 		      CALL_ZEN_UNTRAIN_RET, X86_FEATURE_UNRET,		\
+ ARM PRIMECELL CLCD PL110 DRIVER
+-- 
+2.17.1
+
