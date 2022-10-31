@@ -2,110 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BA6FA3742
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 09:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4038C38A02
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 09:48:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbiJaJ33 (ORCPT
+        id S230155AbiJaJsz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 05:29:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59600 "EHLO
+        Mon, 31 Oct 2022 05:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229798AbiJaJ32 (ORCPT
+        with ESMTP id S230104AbiJaJsy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 05:29:28 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AC32C74;
-        Mon, 31 Oct 2022 02:29:26 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id bg9-20020a05600c3c8900b003bf249616b0so7622326wmb.3;
-        Mon, 31 Oct 2022 02:29:26 -0700 (PDT)
+        Mon, 31 Oct 2022 05:48:54 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EB7BD57;
+        Mon, 31 Oct 2022 02:48:53 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id y14so27954715ejd.9;
+        Mon, 31 Oct 2022 02:48:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wMmXwX2kZtnLFA2mGASTAOPHlqknUPuxDlQJ9/B4KI8=;
-        b=C9j5VF0dsTbD+JLT8ejZhxNJ2VoKSgpNNPcIfCl2vnV7DdWp2nZiCiP1z8hGuo1MGt
-         lK5nlV88f30ryEE5zFSWSvhCWujEobt1fmnRcFeePjt/M7aP2SVYXeYyXAMZfPfUSAGT
-         TyPSQcZcoda3c1f6mYWB5qM/6yuSnv6ObDN9G8ZS3pP4s3oUPLxIBKrxemqFblwOTz5f
-         fIWyOI1SmUp4rEn1Yzmt3iohv8jhb3Au+AFS/W0fm8S4eA0o/V6FgemjfFvmhYAhVwgP
-         +MNgrruqi2x8pHv49k8wfZTmGkgR2KsTBC+68fQEqpEyhjmilMd4iYGtQGCiB37fkSo9
-         ghJw==
+        bh=bNeKrNum9y97/rCawM0h98cZgfeEAleqAKTBDI1MMmM=;
+        b=Dw1Izh+o2/URx8C0/oLkEu069SDT2tF8CA4v7iXI4QHpL7nK6nMKysb6F0KoMScPKb
+         /Cy6qYyvNtDeU5Ob36bQo32tMn6Ghzt/aFsbcsRZLoJrOede5VEkJPVgO5dqv88yrZNX
+         9AB5zem8aoH8BpFnkIhs92/nE5C5k98702pAVcvMbxgcv4/GPe5FKWQAHlebWPX8v1t8
+         LHd809e0YCFyfkNW4GlYEQ4+cavTn7gn5c8E8VF+fAKLo1ua1qIdZWwS5f0KNsUlGZyr
+         5bjBaA4ma/8o6yb5DugfMLkihMIuq5zp4R/4DMTrZtTqWnqqK/BL2MW9B3yeaAShTlFJ
+         Sh9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wMmXwX2kZtnLFA2mGASTAOPHlqknUPuxDlQJ9/B4KI8=;
-        b=jYLCnml/7GEH5gW0E1MuUIbqZLzj+gDM9j+MlGYfeKIT5YH2rTNsPJ5Zx3NB58tPhT
-         iQU6zKRThG8roiuaeBnkYCwzlQIJRNnhdOpKoNBv+IEJe2bDQTQJ2Vwg+22gqgtQgm72
-         +C3nNXLhLF38nYrKTU5QQv3r+wWEhXJ3WWpaEYzlO1NDzjQyGBvNdQDmHF4gaMocWT3v
-         b1pyCI4gLrUP3tMKRSRIauzTEHJe1ASzbWpTm54R/YzS0FcjvJ4ae+N52mtpUqFgsMMJ
-         Im0LRbY+7r0WnopBH9G5bUeAz0CD8B+FcOM6gjcNxiIaKVV1G2eLGaBVy5vSDk6iCZdX
-         bcVw==
-X-Gm-Message-State: ACrzQf3u2SqH9QxMZGwVhahdg/dqD9Vp26Kk43wh2EZqWUKngVU82OH1
-        VfUba/ET/EAZ97HUAHsJxU0=
-X-Google-Smtp-Source: AMsMyM5NXBeV83FylCy3VTrad1d5Lus1OQZ8qbxKFQB6vAVbGLMHp+Gbg8Fgf8Wdlpsn1BMiaCahoQ==
-X-Received: by 2002:a05:600c:19ca:b0:3c6:ee5a:45fd with SMTP id u10-20020a05600c19ca00b003c6ee5a45fdmr7387764wmq.106.1667208564832;
-        Mon, 31 Oct 2022 02:29:24 -0700 (PDT)
+        bh=bNeKrNum9y97/rCawM0h98cZgfeEAleqAKTBDI1MMmM=;
+        b=AgmYQTTV1GdCefh5fj9YBxUCMAKSHVXCAhTaN3BWmRH/uAAxGO6aILc8AZbtY6E/cf
+         wTwCdWYt1Y1xmIxtLQTh6ZmFawYAvH7M9zgIw7TdrLdvsBQpAZLzHGFykbXy/eWqxEGs
+         xmzrYA/ij534Pe8a0axthjFDetyadRd2CYqpTfV1aLlzeLY9oKcgSfAMf8S3M8NnS0BP
+         J9vrAwUCNEPbDoOsVoJ5arBAHjbj9RWb3attR4YYW09THcn2oPZ4a8NgEopkPZ/wKyE+
+         oVriKoQhO53FB/MGpE8VqpfsP1uqKpiVXwxyeCUhA2H5dyGXDGi3S+ICNbFtPd9UR43C
+         le2Q==
+X-Gm-Message-State: ACrzQf3M9Jv5MoiBoDzTPlSdnnE8NhWRoj8d87nJRRXAFQlbOPT2Svrl
+        eTUgm1dS+AZSFdJzjk8XcAA=
+X-Google-Smtp-Source: AMsMyM4wuFBKcYhvJf2ewm5Xr/R+f8Ue1TAWuZEdTGBSUfZ+2yPyMqePB+cx93e0R1Cf4TAgloxPkQ==
+X-Received: by 2002:a17:907:783:b0:76e:f290:8b5 with SMTP id xd3-20020a170907078300b0076ef29008b5mr12207953ejb.395.1667209731578;
+        Mon, 31 Oct 2022 02:48:51 -0700 (PDT)
 Received: from felia.fritz.box (200116b826c494005d8b6b3bdc900ff8.dip.versatel-1u1.de. [2001:16b8:26c4:9400:5d8b:6b3b:dc90:ff8])
-        by smtp.gmail.com with ESMTPSA id e15-20020adfe7cf000000b0022cc0a2cbecsm6660833wrn.15.2022.10.31.02.29.23
+        by smtp.gmail.com with ESMTPSA id r17-20020a17090609d100b0078db5bddd9csm2765646eje.22.2022.10.31.02.48.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Oct 2022 02:29:24 -0700 (PDT)
+        Mon, 31 Oct 2022 02:48:50 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Vlastimil Babka <vbabka@suse.cz>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+To:     Borislav Petkov <bp@suse.de>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Vamshi K Sthambamkadi <vamshi.k.sthambamkadi@gmail.com>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] mm/slab_common: repair kernel-doc for __ksize()
-Date:   Mon, 31 Oct 2022 10:29:20 +0100
-Message-Id: <20221031092920.976-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] x86/boot: repair kernel-doc for boot_kstrtoul()
+Date:   Mon, 31 Oct 2022 10:48:35 +0100
+Message-Id: <20221031094835.15923-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 445d41d7a7c1 ("Merge branch 'slab/for-6.1/kmalloc_size_roundup' into
-slab/for-next") resolved a conflict of two concurrent changes to __ksize().
+Commit 5fafbebc86a0 ("x86/boot: Add kstrtoul() from lib/") temporarily adds
+a copy of kstrtoul() to arch/x86/boot/string.c. While massaging the
+provided patch, Borislav renames the kstrtoul() to boot_kstrtoul(), but
+misses to adjust the corresponding kernel-doc comment.
 
-However, it did not adjust the kernel-doc comment of __ksize(), while the
-name of the argument to __ksize() was renamed.
-
-Hence, ./scripts/ kernel-doc -none mm/slab_common.c warns about it.
-
-Adjust the kernel-doc comment for __ksize() for make W=1 happiness.
+Adjust the kernel-doc comment for boot_kstrtoul() for make W=1 happiness.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- mm/slab_common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Boris, please pick this quick kernel-doc cleanup patch. Thanks.
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 33b1886b06eb..74a991fd9d31 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1010,7 +1010,7 @@ EXPORT_SYMBOL(kfree);
+ arch/x86/boot/string.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
+index 8a3fff9128bb..1c8541ae3b3a 100644
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -350,7 +350,7 @@ static int _kstrtoul(const char *s, unsigned int base, unsigned long *res)
+ }
  
  /**
-  * __ksize -- Report full size of underlying allocation
-- * @objp: pointer to the object
-+ * @object: pointer to the object
-  *
-  * This should only be used internally to query the true size of allocations.
-  * It is not meant to be a way to discover the usable size of an allocation
-@@ -1018,7 +1018,7 @@ EXPORT_SYMBOL(kfree);
-  * the originally requested allocation size may trigger KASAN, UBSAN_BOUNDS,
-  * and/or FORTIFY_SOURCE.
-  *
-- * Return: size of the actual memory used by @objp in bytes
-+ * Return: size of the actual memory used by @object in bytes
-  */
- size_t __ksize(const void *object)
- {
+- * kstrtoul - convert a string to an unsigned long
++ * boot_kstrtoul - convert a string to an unsigned long
+  * @s: The start of the string. The string must be null-terminated, and may also
+  *  include a single newline before its terminating null. The first character
+  *  may also be a plus sign, but not a minus sign.
 -- 
 2.17.1
 
