@@ -2,65 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5502AECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 15:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE97FA3743
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 16:05:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232116AbiJaP4z (ORCPT
+        id S231701AbiJaQFS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 11:56:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59884 "EHLO
+        Mon, 31 Oct 2022 12:05:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232080AbiJaP4o (ORCPT
+        with ESMTP id S231134AbiJaQFQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 11:56:44 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 358451262F;
-        Mon, 31 Oct 2022 08:56:40 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id a14so16605447wru.5;
-        Mon, 31 Oct 2022 08:56:40 -0700 (PDT)
+        Mon, 31 Oct 2022 12:05:16 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D00E6F;
+        Mon, 31 Oct 2022 09:05:15 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id j15so16649074wrq.3;
+        Mon, 31 Oct 2022 09:05:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yiIQqUgAicF1IqI0TD1/vWxeqEODaUy7zyfXvnZJius=;
-        b=B4GLhZdBSMgf4MInk9YzxaAZdPHiTWlOPOIGf29fu2Y90nYFRbsxKO2toypxwyCT7y
-         CGOGYT60OdC+G2F10/wvDJrR586+EKMUZONdyiv+Vs3AIKxD145/fOfMTmMQsDCxZ3Ot
-         S4tHjP1JavUMCfi0p80zqozsY/gRwFvR7Xrl4nA9QUvSePyWOvkRQtFl1ZrcekZGMihJ
-         sXLJiTjilWYsPTnkgRgNyMUyUAm76wI5f+FhveF0ulOIgw1QShKfo34EyFUqawJfA9Gz
-         6/oTXtnaNXp5lxc6lvH4t3lvPxJxJH6t2dP8OcNdRZ8x0JURzm0gkr1UU6gzBgnVX6tE
-         xiiw==
+        bh=PxS8XgY58rZ4VDhvxJU0b70ZtHBRLLVJ+uq74m8Gs1k=;
+        b=hyack7EcpOyiPwyjHRIHKJLQhbUrLp0AJ0zvFdHUmhnIu1lDq9s3eCKQUGhvadB5BV
+         ciIzp2nvSz1F5UvDxW2KxqpNLj5SqNJX8SQoQpElrXCY2N7SYjwdRFl79IsJ19ekfRjv
+         /ZStuu/HNZExyVH6SclWWed1UgV/TbpIkE7i3zzXPV1aBhXwLEAqH5dJdOKp01kWmo8p
+         WamDMK/VUGacozrIBpoOkQKbb+TRLiADcsxJdlCsCX1QygqwcjaCZJG+mjEoJpvcyVWR
+         SUtyNdg2tM6VJOsFz1d4eylVu2dC1OTmnTxMY4tA6EVe6WC3zhcu+bGvf16V8CQH7NJk
+         a9GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yiIQqUgAicF1IqI0TD1/vWxeqEODaUy7zyfXvnZJius=;
-        b=su/JP05BVcuvqoTRAXwHM8gHw9Au4P6dhfdVWF5g4SXpyLCD90CnqPEoOrkSNy9I1r
-         LSMBv1uJZs+XHG13HXXZe80mDMbEPW/HPtKsmXXXu3656AQ9Lh3H1Ql1+170Y2kYH2fq
-         IKPtg2vn//Ly6c94+QSTJMjMhZNalQZjFLvB35lhZ6LCHXXjFYPssLpHc08cl+8nCk21
-         qZGoSATXX0k32M0axUjMFWK3YoKpIwVDbj4DcgK4li5/UxM58kTBReBO7Ld6XAh2N0/j
-         ECae9XDLkxlJtKjlJyKzXoPRFw3El5QtC9xnYdmZOgu/GSFcfXkmafMQLck2C/NhycAP
-         2Xlw==
-X-Gm-Message-State: ACrzQf23IBf1kxinDtByGfr6ypjNwiTQHF5NXzD3/L1q8z7//SrG/G9H
-        icbyNUkzfCc9Pa3jOkIyOKA=
-X-Google-Smtp-Source: AMsMyM4/irtNqZnPzYVXBivUMUii0bMR2GOzaMUXE9e4uh5P3vwnckqqZANG/P8yFmPZyq7Uv3Ythw==
-X-Received: by 2002:a05:6000:2c3:b0:236:dd92:16d1 with SMTP id o3-20020a05600002c300b00236dd9216d1mr912518wry.50.1667231798642;
-        Mon, 31 Oct 2022 08:56:38 -0700 (PDT)
+        bh=PxS8XgY58rZ4VDhvxJU0b70ZtHBRLLVJ+uq74m8Gs1k=;
+        b=8NrzF1iqXem0jvKcXhOYAwmnjFP5YBzZLtGfMtVIdukqmVfU40uTqmjmJHqHhV0Tk/
+         whPa8Aa82VDWn1OaCGiyxsEL7UCID0u/jDDKIqrr2vlD1YVsu37dXJY2r5v6zWnPNN/n
+         3GYAvs6HKqb+N27wgX1wXWtOPffIi5hihdJhKyhVwn3WWNEiIvn/ozJo+FOzhWC4eCFg
+         t7ag7VWiEtYrbXtQgN1BMJGXsHdwuEQRXdYHPT37D52PpERoeXQIimrt6mLNpPBRYfvw
+         8BHA/NB48EaGKBvk5LukuVl5Xso/5oRAmeOVxIxLuRLmq41ooe/FQDwxsrQxqJBY7OaA
+         euLg==
+X-Gm-Message-State: ACrzQf1aQSiSq0DKJ6mDPainxDcmDfx8mnPM3kPgFnv8DMeIWXgW/RmG
+        8jky0x90YQ0A/SSyeOAXBYU=
+X-Google-Smtp-Source: AMsMyM64PHIVLvhZ0ao1bjSFCKEssEVa+yDVwEWtssjXxawjpYqunUVt2os8vbzvf+uoeZuASHGAeQ==
+X-Received: by 2002:adf:e288:0:b0:236:bf57:c2c6 with SMTP id v8-20020adfe288000000b00236bf57c2c6mr5719911wri.192.1667232313963;
+        Mon, 31 Oct 2022 09:05:13 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n10-20020a05600c3b8a00b003cf71b1f66csm4077946wms.0.2022.10.31.08.56.37
+        by smtp.gmail.com with ESMTPSA id f7-20020adff987000000b0022e6178bd84sm7478829wrr.8.2022.10.31.09.05.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Oct 2022 08:56:37 -0700 (PDT)
+        Mon, 31 Oct 2022 09:05:13 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To:     Khalid Aziz <khalid@gonehiking.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: rtl8192ee: remove static variable stop_report_cnt
-Date:   Mon, 31 Oct 2022 15:56:37 +0000
-Message-Id: <20221031155637.871164-1-colin.i.king@gmail.com>
+Subject: [PATCH] scsi: BusLogic: remove variable adapter_count
+Date:   Mon, 31 Oct 2022 16:05:12 +0000
+Message-Id: <20221031160512.872153-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,41 +67,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable stop_report_cnt is being set or incremented but is never
-being used for anything meaningful. The variable and code relating
-to it's use is redundant and can be removed.
+Variable adapter_count is just being incremented and it's never used
+anywhere else. The variable and the increment are redundant so
+remove it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/scsi/BusLogic.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c
-index 8043d819fb85..a182cdeb58e2 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/trx.c
-@@ -997,7 +997,6 @@ bool rtl92ee_is_tx_desc_closed(struct ieee80211_hw *hw, u8 hw_queue, u16 index)
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 	u16 read_point, write_point;
- 	bool ret = false;
--	static u8 stop_report_cnt;
- 	struct rtl8192_tx_ring *ring = &rtlpci->tx_ring[hw_queue];
+diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
+index f2abffce2659..f7b7ffda1161 100644
+--- a/drivers/scsi/BusLogic.c
++++ b/drivers/scsi/BusLogic.c
+@@ -2198,7 +2198,7 @@ static int blogic_slaveconfig(struct scsi_device *dev)
  
- 	{
-@@ -1038,13 +1037,6 @@ bool rtl92ee_is_tx_desc_closed(struct ieee80211_hw *hw, u8 hw_queue, u16 index)
- 	    rtlpriv->psc.rfoff_reason > RF_CHANGE_BY_PS)
- 		ret = true;
+ static int __init blogic_init(void)
+ {
+-	int adapter_count = 0, drvr_optindex = 0, probeindex;
++	int drvr_optindex = 0, probeindex;
+ 	struct blogic_adapter *adapter;
+ 	int ret = 0;
  
--	if (hw_queue < BEACON_QUEUE) {
--		if (!ret)
--			stop_report_cnt++;
--		else
--			stop_report_cnt = 0;
--	}
--
- 	return ret;
- }
- 
+@@ -2368,10 +2368,8 @@ static int __init blogic_init(void)
+ 					list_del(&myadapter->host_list);
+ 					scsi_host_put(host);
+ 					ret = -ENODEV;
+-				} else {
++				} else
+ 					scsi_scan_host(host);
+-					adapter_count++;
+-				}
+ 			}
+ 		} else {
+ 			/*
 -- 
 2.37.3
 
