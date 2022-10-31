@@ -2,111 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B04FA3740
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 03:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54726C38A02
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 05:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229752AbiJaDy1 (ORCPT
+        id S229487AbiJaFCN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 30 Oct 2022 23:54:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51804 "EHLO
+        Mon, 31 Oct 2022 01:02:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbiJaDy0 (ORCPT
+        with ESMTP id S229529AbiJaFCM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 30 Oct 2022 23:54:26 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4DE7C33;
-        Sun, 30 Oct 2022 20:54:25 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d24so9687874pls.4;
-        Sun, 30 Oct 2022 20:54:25 -0700 (PDT)
+        Mon, 31 Oct 2022 01:02:12 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A6732DF7
+        for <kernel-janitors@vger.kernel.org>; Sun, 30 Oct 2022 22:02:11 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id u6so9756347plq.12
+        for <kernel-janitors@vger.kernel.org>; Sun, 30 Oct 2022 22:02:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vrjorLBlvDtmWtMSJKOwvcOGTL2TqDIUVSt7WPVuaGg=;
-        b=kxC/JHgD5g+3CdtjhcprQSYNsvW7ZfjvM7O8/VZrDSZ6xzM5VD1ENqgdVMAtHLpNvn
-         4Lpx9e6TFgCLM2Sv4Ujo30KCW0tjWYxRVqfdGf+xRHOCN506soQxcqBOH9P1au6xM8T3
-         bBx4ZisODvpk/FU1HMV6VMI2rGJIu0Ke/x+/RUstPdW5rcBBEUly34CUdOE2XPkD470O
-         0NJwu9xKy7cCGOHFuxEudkBQ7V9HCPVOATRBksYQuUt4TGoafbTGmo/ZZGrGptf9ZYzG
-         hwq/1s1OXs5gV6Po7eB+nlfKdVdDBx7ScvzCa4RDldzLs+coPmcr6nQ7oPaAbeph9RH4
-         kRrQ==
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uDjg4uH0r+JoOISg95SGX9XRNnfp6SD9EIvUd8ZzaWo=;
+        b=tfN27Tl/q8rno8rtytwbtBif+PjYI0c4x0xtyjnPbBJYQ1XnK8K+goMSuquKJ0/ZSp
+         RQjgCyR+NmpWwh5iyeyV75y7iJthoZLZIA/JbWWxk1JAtjH5MIri8KE8LZefJZ4WZxU0
+         18alFqQZ6zTnLB0L1f9qxi1PUAc2iHcT61tVEuY9WnFIungMgs1qw5VyrN4Wwo4ak78x
+         84mZYjxBcHm+nMyESiVbwroMpEdFFDRgapSBgUbhyhOyaZAigdSP2bf7VM5Za0BX+CGF
+         RYU/W0FUEKBfqbtMNpONfOMiCJwFdiFOExaEeVrfx+8CFUI6rzQ5WLhFB+DIs1mYta4A
+         tLuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vrjorLBlvDtmWtMSJKOwvcOGTL2TqDIUVSt7WPVuaGg=;
-        b=WYY4wDTjkVKDUB0y9U3L/uwZmfF8ooMGAm6j8PCxPNcQ40p+1Aq8tZqHUv8Ot+AdyO
-         u+jRl/Wmy7+bgs3lAGl2NyQ03Wanua/JrdLuH/KU689GyueGYpB2uys+ciH8EwUbUqFK
-         vjxw/nq3OdSs7sOmfcPBHrT2UHdHynkw849en/IQi9sMqcM+jsvqnN7LxfOLEOfMqCpX
-         fXaUrwdbkNDNeV7npsiEN57VwpRWFV/73vpKYw/7Ry9lO1NTUaN/6U4rgtwa8UewXBe4
-         Ql2i9iqDIRW5M/F4HLvTO+ye1ojy2f1Lvm4ONy2OwWlMKD1Y0ydmmSXw5uYNh1DKEx/5
-         7PHw==
-X-Gm-Message-State: ACrzQf0Cu3489koA5xy40/CTe3bKeMO/bKO8UU5t9ra6Zx/Duily4VOF
-        h/myjm01p5Khm/42IVheRT8=
-X-Google-Smtp-Source: AMsMyM5kp2e8NvsHp2XdASiuuGMQsvky9EELpwXRgZCNLWHCX16hweF8Nt6o+0Xy3gQAwzbejcE8zg==
-X-Received: by 2002:a17:902:e54e:b0:187:ba9:4305 with SMTP id n14-20020a170902e54e00b001870ba94305mr9109070plf.167.1667188465185;
-        Sun, 30 Oct 2022 20:54:25 -0700 (PDT)
-Received: from ?IPV6:2001:8003:d90f:f801:7164:b4e6:b90b:c4d5? ([2001:8003:d90f:f801:7164:b4e6:b90b:c4d5])
-        by smtp.gmail.com with ESMTPSA id z11-20020a1709027e8b00b00186f81a074fsm3332363pla.290.2022.10.30.20.54.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Oct 2022 20:54:24 -0700 (PDT)
-Message-ID: <67bef642-a301-e825-142c-afcfe8c898a1@gmail.com>
-Date:   Mon, 31 Oct 2022 14:54:18 +1100
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uDjg4uH0r+JoOISg95SGX9XRNnfp6SD9EIvUd8ZzaWo=;
+        b=X7TH2q/yEz4IeH2HUQ6rR4ga5TNqHOteJV2qctwn0AF5oyYamGVNFATYQnzScHPwnb
+         sKaZlw2nKpR3+yf2Bq2MwphirO1CtHQ1oT/8FbA/wKmd8dSsGqZoxULa4S4OyfFeaYq9
+         hU6eRN56RAJARVayUe61ddjpIFmowt0gig5fDufpNUvDD6uFrmdc4k8eGbMggy5PFnk1
+         2s9n0nEJGZYYAPPoqdqYhHK0zrBvNUd4odBeFPePGR6IJ5UsLI9bcbliUtD0RD+2naev
+         07onba94PZxLNovrI/C2PXSyMin66V6tl3nvjSHDQRB9oIP3Kv6tWwxfd6nBI7bNqe90
+         /NYA==
+X-Gm-Message-State: ACrzQf3Ik7k4m5NrFwNf8RqLSFA1YNqDh8b1N+TTgidBRxrbsblmDu9v
+        FN3bXewmRJYb+LCxCrcUD3TRWWmoaLdjrw==
+X-Google-Smtp-Source: AMsMyM71QZdODHslmMTtD01qkOXN+tVMZ4CVyl/ohABES5Mv+ZqPMnotvdT5gbDuch6LZCl6U89JCg==
+X-Received: by 2002:a17:90a:af83:b0:213:d08f:a47f with SMTP id w3-20020a17090aaf8300b00213d08fa47fmr6625567pjq.28.1667192531035;
+        Sun, 30 Oct 2022 22:02:11 -0700 (PDT)
+Received: from localhost ([122.172.84.80])
+        by smtp.gmail.com with ESMTPSA id x66-20020a623145000000b00565cf8c52c8sm3591502pfx.174.2022.10.30.22.02.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Oct 2022 22:02:10 -0700 (PDT)
+Date:   Mon, 31 Oct 2022 10:32:08 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] thermal/core: fix error code in
+ __thermal_cooling_device_register()
+Message-ID: <20221031050208.qkmfyspgfg4z6dzv@vireshk-i7>
+References: <Y1vvCrOMne0XNORj@kili>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH] staging: vchiq: add 'static' to function definition
-Content-Language: en-GB-large
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        kernel-janitors@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20221022043548.1671644-1-scottjcrouch@gmail.com>
- <Y1Okpjbi2kKU2GFz@kroah.com>
- <52599d6e-dc16-4186-9fb9-d17ce428fe9c@app.fastmail.com>
- <b874e6ff-6a19-410f-1fe8-2334a58f503a@gmail.com>
- <d64dc0b4-ba82-49f4-9a43-c50b735ad91d@app.fastmail.com>
-From:   "Scott J. Crouch" <scottjcrouch@gmail.com>
-In-Reply-To: <d64dc0b4-ba82-49f4-9a43-c50b735ad91d@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y1vvCrOMne0XNORj@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 30/10/22 21:46, Arnd Bergmann wrote:
-> Hmm, I see an of_node_put() between devm_rpi_firmware_get() and the
-> error check. With OF_DYNAMIC=y, this is an external function call, so
-> I guess gcc can no longer assume that drvdata->fw is NULL after that,
-> so it doesn't make this optimization.
+On 28-10-22, 18:02, Dan Carpenter wrote:
+> Return an error pointer if ->get_max_state() fails.  The current code
+> returns NULL which will cause an oops in the callers.
+> 
+> Fixes: c408b3d1d9bb ("thermal: Validate new state in cur_state_store()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/thermal/thermal_core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+> index 4ba7b524e5de..c4d18e462de8 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -892,7 +892,8 @@ __thermal_cooling_device_register(struct device_node *np,
+>  	cdev->device.class = &thermal_class;
+>  	cdev->devdata = devdata;
+>  
+> -	if (cdev->ops->get_max_state(cdev, &cdev->max_state))
+> +	ret = cdev->ops->get_max_state(cdev, &cdev->max_state);
+> +	if (ret)
+>  		goto out_kfree_type;
+>  
+>  	thermal_cooling_device_setup_sysfs(cdev);
 
-Ah, of course, you're right.
+Bad mistake.
 
-> Ok, I see. My best guess would be OF_DYNAMIC
-
-I checked and you are correct.
-
-> but I don't actually see how that changes anything in this file
-
-Yeah.  I had a look as well and I'm similarly puzzled.
-
-> This would mean you only get a warning when both RASPBERRYPI_FIRMWARE
-> and OF_DYNAMIC are disabled. If you can confirm that, adding a dependency
-> on RASPBERRYPI_FIRMWARE is still the correct fix.
-
-It builds ok as long as OF_DYNAMIC is set; RASPBERRYPI_FIRMWARE doesn't need
-setting (maybe since devm_rpi_firmware_get() is a static inline it's optimized
-differently?).  Perhaps RASPBERRYPI_FIRMWARE ought to be made a dependency in
-any case, but since it depends on ARCH_BCM2835, doing so will mean one is
-unable to test-compile/run sparse on x86.  Which is fine; I wouldn't expect to
-be able to; I'm not really sure what accommodations (if any) are usually made
-in this regard with respect to drivers.
-
-Scott.
-
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+-- 
+viresh
