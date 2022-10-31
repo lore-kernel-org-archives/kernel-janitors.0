@@ -2,82 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE4EC38A02
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 09:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BA6FA3742
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 09:29:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbiJaJOR (ORCPT
+        id S229983AbiJaJ33 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 05:14:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47602 "EHLO
+        Mon, 31 Oct 2022 05:29:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiJaJOQ (ORCPT
+        with ESMTP id S229798AbiJaJ32 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 05:14:16 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97773D2E8;
-        Mon, 31 Oct 2022 02:14:14 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id y72so12953643yby.13;
-        Mon, 31 Oct 2022 02:14:14 -0700 (PDT)
+        Mon, 31 Oct 2022 05:29:28 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AC32C74;
+        Mon, 31 Oct 2022 02:29:26 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id bg9-20020a05600c3c8900b003bf249616b0so7622326wmb.3;
+        Mon, 31 Oct 2022 02:29:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=S1R1fMBOKcYb7njx4Wi3wo1Rwy9OFYqjtLT3SEE+pGI=;
-        b=aFj+RELCQt0CoycGBHDtevOGPrZKfVd5l1RMxIsqbMkZFPpffzEfVFtV/yTqF44TTH
-         VyAoU0CHyX+jl674PPdWHUHD41DOwAe+ismLAZreSYyUyM2ewL5wp855Ip+NHL7j3aC9
-         uD5zBBHezXL4oXIgBh8tOJsPl3GHygDx4t1rvIuh7kTWEPYjyo+8stNbOTg5rp6vQdyO
-         8gUONfr79u/pIIMqCLBirliq/Acx1jMpp5QJuGHQK0LNDjg7qDecsqYt5Dv6yGNVcp0z
-         MoVlmqxdzZxvAKBuzmvXS49oKmG8nNHdGVpkVKZDwl28Jate5vvwccdSe2V0RLHSz0vf
-         /eVQ==
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wMmXwX2kZtnLFA2mGASTAOPHlqknUPuxDlQJ9/B4KI8=;
+        b=C9j5VF0dsTbD+JLT8ejZhxNJ2VoKSgpNNPcIfCl2vnV7DdWp2nZiCiP1z8hGuo1MGt
+         lK5nlV88f30ryEE5zFSWSvhCWujEobt1fmnRcFeePjt/M7aP2SVYXeYyXAMZfPfUSAGT
+         TyPSQcZcoda3c1f6mYWB5qM/6yuSnv6ObDN9G8ZS3pP4s3oUPLxIBKrxemqFblwOTz5f
+         fIWyOI1SmUp4rEn1Yzmt3iohv8jhb3Au+AFS/W0fm8S4eA0o/V6FgemjfFvmhYAhVwgP
+         +MNgrruqi2x8pHv49k8wfZTmGkgR2KsTBC+68fQEqpEyhjmilMd4iYGtQGCiB37fkSo9
+         ghJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S1R1fMBOKcYb7njx4Wi3wo1Rwy9OFYqjtLT3SEE+pGI=;
-        b=kAT7GFTecs1iF2/6eaRB5o34ov82PiMCVi1urSaYGb9pPBIjJe58bTslpWVRm+xTF/
-         fTX1Y7I4lhVGreIe0zQ77jpYUDAV9sFfMhHoUDdOeUKhUbPIclK5unRY+0Bze4IXoTEA
-         BlN2a+aJVALgWof0/a91/Mbok/78gQKKKotSpxmUG4GyqeUGfjXRdJPwF+jG0ryOg61t
-         gNk7FMbqJyxhmGRYSn08ZYqiEuPRcZbmsONHCikLJT/Hlk8cBLG5VXYbQb8sG5D9fqr2
-         7h+ioVPDinO9VOHEG7rrI0pNC9vTy1mp8VcRrC5z7b0CsS+MRcMAIyFiSgJRV4bp4UzL
-         55Rw==
-X-Gm-Message-State: ACrzQf3uZmD2WxHXgndtp/9y/L5uke6f8EoRVuYgS5x8Bcf+mRD+dU/B
-        38+juoquuD+lvTQpGmzKO3BI1apVsB/pQz6SMKoCkcI25+0=
-X-Google-Smtp-Source: AMsMyM7Ytg5fltw1gCmSbQTde0UToP+AHorUjvASB8eOk31HZcwZ619y/AWTaGtZJ9cSBduqwDEmKjJPqnZ9TqasDMg=
-X-Received: by 2002:a25:3407:0:b0:6ca:88e8:6f63 with SMTP id
- b7-20020a253407000000b006ca88e86f63mr11827883yba.175.1667207653726; Mon, 31
- Oct 2022 02:14:13 -0700 (PDT)
-MIME-Version: 1.0
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wMmXwX2kZtnLFA2mGASTAOPHlqknUPuxDlQJ9/B4KI8=;
+        b=jYLCnml/7GEH5gW0E1MuUIbqZLzj+gDM9j+MlGYfeKIT5YH2rTNsPJ5Zx3NB58tPhT
+         iQU6zKRThG8roiuaeBnkYCwzlQIJRNnhdOpKoNBv+IEJe2bDQTQJ2Vwg+22gqgtQgm72
+         +C3nNXLhLF38nYrKTU5QQv3r+wWEhXJ3WWpaEYzlO1NDzjQyGBvNdQDmHF4gaMocWT3v
+         b1pyCI4gLrUP3tMKRSRIauzTEHJe1ASzbWpTm54R/YzS0FcjvJ4ae+N52mtpUqFgsMMJ
+         Im0LRbY+7r0WnopBH9G5bUeAz0CD8B+FcOM6gjcNxiIaKVV1G2eLGaBVy5vSDk6iCZdX
+         bcVw==
+X-Gm-Message-State: ACrzQf3u2SqH9QxMZGwVhahdg/dqD9Vp26Kk43wh2EZqWUKngVU82OH1
+        VfUba/ET/EAZ97HUAHsJxU0=
+X-Google-Smtp-Source: AMsMyM5NXBeV83FylCy3VTrad1d5Lus1OQZ8qbxKFQB6vAVbGLMHp+Gbg8Fgf8Wdlpsn1BMiaCahoQ==
+X-Received: by 2002:a05:600c:19ca:b0:3c6:ee5a:45fd with SMTP id u10-20020a05600c19ca00b003c6ee5a45fdmr7387764wmq.106.1667208564832;
+        Mon, 31 Oct 2022 02:29:24 -0700 (PDT)
+Received: from felia.fritz.box (200116b826c494005d8b6b3bdc900ff8.dip.versatel-1u1.de. [2001:16b8:26c4:9400:5d8b:6b3b:dc90:ff8])
+        by smtp.gmail.com with ESMTPSA id e15-20020adfe7cf000000b0022cc0a2cbecsm6660833wrn.15.2022.10.31.02.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Oct 2022 02:29:24 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 31 Oct 2022 10:14:03 +0100
-Message-ID: <CAKXUXMx3cgTA66h_ezNTqyVo_Oa-Q0H=FeBM64zntZ4E0YCT6g@mail.gmail.com>
-Subject: Reference to non-existing CONFIG_X86_FEATURE_CALL_DEPTH
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Vlastimil Babka <vbabka@suse.cz>,
+        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] mm/slab_common: repair kernel-doc for __ksize()
+Date:   Mon, 31 Oct 2022 10:29:20 +0100
+Message-Id: <20221031092920.976-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dear Thomas, dear Peter,
+Commit 445d41d7a7c1 ("Merge branch 'slab/for-6.1/kmalloc_size_roundup' into
+slab/for-next") resolved a conflict of two concurrent changes to __ksize().
 
-in your work on call depth tracking mitigation, commit 5d8213864ade
-("x86/retbleed: Add SKL return thunk") on linux-next references the
-configuration symbol CONFIG_X86_FEATURE_CALL_DEPTH, which is not
-introduced in any Kconfig file.
+However, it did not adjust the kernel-doc comment of __ksize(), while the
+name of the argument to __ksize() was renamed.
 
-Is this just some left-over from some previous iteration of this
-feature or is there still a patch to come that will introduce that
-configuration symbol in some Kconfig file?
+Hence, ./scripts/ kernel-doc -none mm/slab_common.c warns about it.
 
-This issue was identified with ./scripts/checkkconfigsymbols.py.
+Adjust the kernel-doc comment for __ksize() for make W=1 happiness.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ mm/slab_common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Best regards,
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 33b1886b06eb..74a991fd9d31 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1010,7 +1010,7 @@ EXPORT_SYMBOL(kfree);
+ 
+ /**
+  * __ksize -- Report full size of underlying allocation
+- * @objp: pointer to the object
++ * @object: pointer to the object
+  *
+  * This should only be used internally to query the true size of allocations.
+  * It is not meant to be a way to discover the usable size of an allocation
+@@ -1018,7 +1018,7 @@ EXPORT_SYMBOL(kfree);
+  * the originally requested allocation size may trigger KASAN, UBSAN_BOUNDS,
+  * and/or FORTIFY_SOURCE.
+  *
+- * Return: size of the actual memory used by @objp in bytes
++ * Return: size of the actual memory used by @object in bytes
+  */
+ size_t __ksize(const void *object)
+ {
+-- 
+2.17.1
 
-Lukas
