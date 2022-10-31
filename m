@@ -2,135 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01352C38A02
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 09:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE4EC38A02
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Oct 2022 09:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbiJaJJu (ORCPT
+        id S229515AbiJaJOR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Oct 2022 05:09:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45194 "EHLO
+        Mon, 31 Oct 2022 05:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbiJaJJm (ORCPT
+        with ESMTP id S229457AbiJaJOQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Oct 2022 05:09:42 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23EEADE91;
-        Mon, 31 Oct 2022 02:09:39 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id l14so15030607wrw.2;
-        Mon, 31 Oct 2022 02:09:39 -0700 (PDT)
+        Mon, 31 Oct 2022 05:14:16 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97773D2E8;
+        Mon, 31 Oct 2022 02:14:14 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id y72so12953643yby.13;
+        Mon, 31 Oct 2022 02:14:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RJFX5ysJMUU9WDAws0OEPd7bjori/MpLo9tT2/810cY=;
-        b=BBUCHw6WDJ3qmgLw8SfYuCJNVs7j3ozexM7IOpQsNF8WquJg0ftYqJVSkDXQsV44SQ
-         LwKPbG3FJ0CyK0OJPYr9scW7DCDyB6qfSljDwWPORC+I+oeDcY6IcjMa6B2RFvkVKqME
-         zRd91Isy8HJIEqgmf6nV6wW4VDbRm/OtsGARZh5IXOeOQC3L2gH+UbXPMMK46IXxHfgz
-         Corjf/wLlgu5MEbpqzqFiw/88n+jjBGa+kXqxpucaABV4gVH+yP6eesKa/SDnF6w50Tb
-         UydEhhFnarby8y9MdS+gDSgJaNbqObqQGiktXOwP32kVCtQth3tlIacs8JLhq/6c6Yyv
-         HNBQ==
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=S1R1fMBOKcYb7njx4Wi3wo1Rwy9OFYqjtLT3SEE+pGI=;
+        b=aFj+RELCQt0CoycGBHDtevOGPrZKfVd5l1RMxIsqbMkZFPpffzEfVFtV/yTqF44TTH
+         VyAoU0CHyX+jl674PPdWHUHD41DOwAe+ismLAZreSYyUyM2ewL5wp855Ip+NHL7j3aC9
+         uD5zBBHezXL4oXIgBh8tOJsPl3GHygDx4t1rvIuh7kTWEPYjyo+8stNbOTg5rp6vQdyO
+         8gUONfr79u/pIIMqCLBirliq/Acx1jMpp5QJuGHQK0LNDjg7qDecsqYt5Dv6yGNVcp0z
+         MoVlmqxdzZxvAKBuzmvXS49oKmG8nNHdGVpkVKZDwl28Jate5vvwccdSe2V0RLHSz0vf
+         /eVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RJFX5ysJMUU9WDAws0OEPd7bjori/MpLo9tT2/810cY=;
-        b=bAT/coWyOYDvQpN6XadsKOR/6TNTUjR7cJ7xzDtPTtmGQ8rOh/oIK1RRF2+/uaBqi/
-         o5aibf2ys/f65xGqyiU2GivVN9wXhHL8NfONSWMyjiE5j3ip1mC4EGtN7y3hCrTGpv3C
-         LUXP+jDkqlQcdR+I1ZZK1KteWFCtyD6ohbUwpLyXrJa4lX1gI4Gt1cY2eo7Fe9+v0Fd6
-         aWl6IrjfwKEY3d7ajGRCY9e/FsJrILre9wGxyK6qUsO5pDFWm5jOSk+EY4Wr6T7wqNoO
-         ru51Qem9lRdIS0cPmr792Utk5krO8L5KlMWUeY4/13c4gjbsyupz696STfly4V0bOLzi
-         rf1A==
-X-Gm-Message-State: ACrzQf1hUPTKHH7xmVffzngEpic6QaqYtcAvgxcSflhE+C5zJZzb4VXU
-        w84QGwlluzMORLc6KHbHZIo=
-X-Google-Smtp-Source: AMsMyM4D67PYlZYq5V8+eJ9dmWB9GwW8V3Hb969IBAbts5yOY+OBe/UIJiHy2i22hVOi5VZUXtS5pA==
-X-Received: by 2002:adf:dd88:0:b0:236:57e3:fc86 with SMTP id x8-20020adfdd88000000b0023657e3fc86mr7165773wrl.493.1667207378460;
-        Mon, 31 Oct 2022 02:09:38 -0700 (PDT)
-Received: from gmail.com ([81.168.73.77])
-        by smtp.gmail.com with ESMTPSA id g13-20020a05600c310d00b003b4cba4ef71sm7610145wmo.41.2022.10.31.02.09.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Oct 2022 02:09:37 -0700 (PDT)
-Date:   Mon, 31 Oct 2022 09:09:35 +0000
-From:   Martin Habets <habetsm.xilinx@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Edward Cree <ecree.xilinx@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jonathan Cooper <jonathan.s.cooper@amd.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] sfc: Fix an error handling path in efx_pci_probe()
-Message-ID: <Y1+Qz9z+qy/kkW9B@gmail.com>
-Mail-Followup-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Edward Cree <ecree.xilinx@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Jonathan Cooper <jonathan.s.cooper@amd.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <dc114193121c52c8fa3779e49bdd99d4b41344a9.1667077009.git.christophe.jaillet@wanadoo.fr>
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S1R1fMBOKcYb7njx4Wi3wo1Rwy9OFYqjtLT3SEE+pGI=;
+        b=kAT7GFTecs1iF2/6eaRB5o34ov82PiMCVi1urSaYGb9pPBIjJe58bTslpWVRm+xTF/
+         fTX1Y7I4lhVGreIe0zQ77jpYUDAV9sFfMhHoUDdOeUKhUbPIclK5unRY+0Bze4IXoTEA
+         BlN2a+aJVALgWof0/a91/Mbok/78gQKKKotSpxmUG4GyqeUGfjXRdJPwF+jG0ryOg61t
+         gNk7FMbqJyxhmGRYSn08ZYqiEuPRcZbmsONHCikLJT/Hlk8cBLG5VXYbQb8sG5D9fqr2
+         7h+ioVPDinO9VOHEG7rrI0pNC9vTy1mp8VcRrC5z7b0CsS+MRcMAIyFiSgJRV4bp4UzL
+         55Rw==
+X-Gm-Message-State: ACrzQf3uZmD2WxHXgndtp/9y/L5uke6f8EoRVuYgS5x8Bcf+mRD+dU/B
+        38+juoquuD+lvTQpGmzKO3BI1apVsB/pQz6SMKoCkcI25+0=
+X-Google-Smtp-Source: AMsMyM7Ytg5fltw1gCmSbQTde0UToP+AHorUjvASB8eOk31HZcwZ619y/AWTaGtZJ9cSBduqwDEmKjJPqnZ9TqasDMg=
+X-Received: by 2002:a25:3407:0:b0:6ca:88e8:6f63 with SMTP id
+ b7-20020a253407000000b006ca88e86f63mr11827883yba.175.1667207653726; Mon, 31
+ Oct 2022 02:14:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc114193121c52c8fa3779e49bdd99d4b41344a9.1667077009.git.christophe.jaillet@wanadoo.fr>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Mon, 31 Oct 2022 10:14:03 +0100
+Message-ID: <CAKXUXMx3cgTA66h_ezNTqyVo_Oa-Q0H=FeBM64zntZ4E0YCT6g@mail.gmail.com>
+Subject: Reference to non-existing CONFIG_X86_FEATURE_CALL_DEPTH
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        X86 ML <x86@kernel.org>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Please specify a branch in the subject.
-This patch should go to net.
+Dear Thomas, dear Peter,
 
-On Sat, Oct 29, 2022 at 10:57:11PM +0200, Christophe JAILLET wrote:
-> If an error occurs after the first kzalloc() the corresponding memory
-> allocation is never freed.
-> 
-> Add the missing kfree() in the error handling path, as already done in the
-> remove() function.
-> 
-> Fixes: 7e773594dada ("sfc: Separate efx_nic memory from net_device memory")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+in your work on call depth tracking mitigation, commit 5d8213864ade
+("x86/retbleed: Add SKL return thunk") on linux-next references the
+configuration symbol CONFIG_X86_FEATURE_CALL_DEPTH, which is not
+introduced in any Kconfig file.
 
-Acked-by: Martin Habets <habetsm.xilinx@gmail.com>
+Is this just some left-over from some previous iteration of this
+feature or is there still a patch to come that will introduce that
+configuration symbol in some Kconfig file?
 
-> ---
-> When 7e773594dada was merged, sfc/ef100.c had the same issue.
-> But it seems to have been fixed in 98ff4c7c8ac7.
+This issue was identified with ./scripts/checkkconfigsymbols.py.
 
-I agree.
 
-> ---
->  drivers/net/ethernet/sfc/efx.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
-> index 054d5ce6029e..0556542d7a6b 100644
-> --- a/drivers/net/ethernet/sfc/efx.c
-> +++ b/drivers/net/ethernet/sfc/efx.c
-> @@ -1059,8 +1059,10 @@ static int efx_pci_probe(struct pci_dev *pci_dev,
->  
->  	/* Allocate and initialise a struct net_device */
->  	net_dev = alloc_etherdev_mq(sizeof(probe_data), EFX_MAX_CORE_TX_QUEUES);
-> -	if (!net_dev)
-> -		return -ENOMEM;
-> +	if (!net_dev) {
-> +		rc = -ENOMEM;
-> +		goto fail0;
-> +	}
->  	probe_ptr = netdev_priv(net_dev);
->  	*probe_ptr = probe_data;
->  	efx->net_dev = net_dev;
-> @@ -1132,6 +1134,8 @@ static int efx_pci_probe(struct pci_dev *pci_dev,
->  	WARN_ON(rc > 0);
->  	netif_dbg(efx, drv, efx->net_dev, "initialisation failed. rc=%d\n", rc);
->  	free_netdev(net_dev);
-> + fail0:
-> +	kfree(probe_data);
->  	return rc;
->  }
->  
-> -- 
-> 2.34.1
+Best regards,
+
+Lukas
