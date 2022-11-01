@@ -2,38 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 458F6C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B19EC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230229AbiKAVPp (ORCPT
+        id S230398AbiKAVPr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 17:15:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33746 "EHLO
+        Tue, 1 Nov 2022 17:15:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230136AbiKAVP0 (ORCPT
+        with ESMTP id S230274AbiKAVPb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 17:15:26 -0400
+        Tue, 1 Nov 2022 17:15:31 -0400
 Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E881EED3
-        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C7E1EEFF
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:16 -0700 (PDT)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id pyanoKD2rsfCIpybFoWfIh; Tue, 01 Nov 2022 22:15:10 +0100
+        id pyanoKD2rsfCIpybKoWfJO; Tue, 01 Nov 2022 22:15:15 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 01 Nov 2022 22:15:10 +0100
+X-ME-Date: Tue, 01 Nov 2022 22:15:15 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>
+To:     Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-nvme@lists.infradead.org
-Subject: [PATCH 06/30] nvme: Use kstrtobool() instead of strtobool()
-Date:   Tue,  1 Nov 2022 22:13:54 +0100
-Message-Id: <2e8d7f2f3cb754982f5fe99f2e13cf72db9d6dba.1667336095.git.christophe.jaillet@wanadoo.fr>
+        greybus-dev@lists.linaro.org
+Subject: [PATCH 11/30] greybus: svc: Use kstrtobool() instead of strtobool()
+Date:   Tue,  1 Nov 2022 22:13:59 +0100
+Message-Id: <ebf1e6988a53a455990230a37cf759ee542ea7ec.1667336095.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
@@ -63,115 +61,30 @@ at [1].
 
 [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
 ---
- drivers/nvme/host/pci.c        |  3 ++-
- drivers/nvme/target/configfs.c | 17 +++++++++--------
- 2 files changed, 11 insertions(+), 9 deletions(-)
+ drivers/greybus/svc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 5f1d71ac0086..7c83dfd1bca6 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -15,6 +15,7 @@
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/kstrtox.h>
- #include <linux/memremap.h>
- #include <linux/mm.h>
- #include <linux/module.h>
-@@ -2186,7 +2187,7 @@ static ssize_t hmb_store(struct device *dev, struct device_attribute *attr,
- 	bool new;
- 	int ret;
- 
--	if (strtobool(buf, &new) < 0)
-+	if (kstrtobool(buf, &new) < 0)
- 		return -EINVAL;
- 
- 	if (new == ndev->hmb)
-diff --git a/drivers/nvme/target/configfs.c b/drivers/nvme/target/configfs.c
-index 9443ee1d4ae3..3eb8bdd4d464 100644
---- a/drivers/nvme/target/configfs.c
-+++ b/drivers/nvme/target/configfs.c
-@@ -4,6 +4,7 @@
-  * Copyright (c) 2015-2016 HGST, a Western Digital Company.
+diff --git a/drivers/greybus/svc.c b/drivers/greybus/svc.c
+index 56d2b44d6fef..16cced80867a 100644
+--- a/drivers/greybus/svc.c
++++ b/drivers/greybus/svc.c
+@@ -7,6 +7,7 @@
   */
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/debugfs.h>
 +#include <linux/kstrtox.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-@@ -267,7 +268,7 @@ static ssize_t nvmet_param_pi_enable_store(struct config_item *item,
- 	struct nvmet_port *port = to_nvmet_port(item);
- 	bool val;
+ #include <linux/workqueue.h>
+ #include <linux/greybus.h>
  
--	if (strtobool(page, &val))
-+	if (kstrtobool(page, &val))
- 		return -EINVAL;
+@@ -83,7 +84,7 @@ static ssize_t watchdog_store(struct device *dev,
+ 	int retval;
+ 	bool user_request;
  
- 	if (nvmet_is_port_enabled(port, __func__))
-@@ -532,7 +533,7 @@ static ssize_t nvmet_ns_enable_store(struct config_item *item,
- 	bool enable;
- 	int ret = 0;
+-	retval = strtobool(buf, &user_request);
++	retval = kstrtobool(buf, &user_request);
+ 	if (retval)
+ 		return retval;
  
--	if (strtobool(page, &enable))
-+	if (kstrtobool(page, &enable))
- 		return -EINVAL;
- 
- 	if (enable)
-@@ -556,7 +557,7 @@ static ssize_t nvmet_ns_buffered_io_store(struct config_item *item,
- 	struct nvmet_ns *ns = to_nvmet_ns(item);
- 	bool val;
- 
--	if (strtobool(page, &val))
-+	if (kstrtobool(page, &val))
- 		return -EINVAL;
- 
- 	mutex_lock(&ns->subsys->lock);
-@@ -579,7 +580,7 @@ static ssize_t nvmet_ns_revalidate_size_store(struct config_item *item,
- 	struct nvmet_ns *ns = to_nvmet_ns(item);
- 	bool val;
- 
--	if (strtobool(page, &val))
-+	if (kstrtobool(page, &val))
- 		return -EINVAL;
- 
- 	if (!val)
-@@ -728,7 +729,7 @@ static ssize_t nvmet_passthru_enable_store(struct config_item *item,
- 	bool enable;
- 	int ret = 0;
- 
--	if (strtobool(page, &enable))
-+	if (kstrtobool(page, &enable))
- 		return -EINVAL;
- 
- 	if (enable)
-@@ -995,7 +996,7 @@ static ssize_t nvmet_subsys_attr_allow_any_host_store(struct config_item *item,
- 	bool allow_any_host;
- 	int ret = 0;
- 
--	if (strtobool(page, &allow_any_host))
-+	if (kstrtobool(page, &allow_any_host))
- 		return -EINVAL;
- 
- 	down_write(&nvmet_config_sem);
-@@ -1272,7 +1273,7 @@ static ssize_t nvmet_subsys_attr_pi_enable_store(struct config_item *item,
- 	struct nvmet_subsys *subsys = to_subsys(item);
- 	bool pi_enable;
- 
--	if (strtobool(page, &pi_enable))
-+	if (kstrtobool(page, &pi_enable))
- 		return -EINVAL;
- 
- 	subsys->pi_support = pi_enable;
-@@ -1392,7 +1393,7 @@ static ssize_t nvmet_referral_enable_store(struct config_item *item,
- 	struct nvmet_port *port = to_nvmet_port(item);
- 	bool enable;
- 
--	if (strtobool(page, &enable))
-+	if (kstrtobool(page, &enable))
- 		goto inval;
- 
- 	if (enable)
 -- 
 2.34.1
 
