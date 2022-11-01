@@ -2,65 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE0BC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 10:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CB3FA3743
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 10:47:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbiKAKlM (ORCPT
+        id S229912AbiKAKri (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 06:41:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33058 "EHLO
+        Tue, 1 Nov 2022 06:47:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229934AbiKAKlL (ORCPT
+        with ESMTP id S229531AbiKAKrh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 06:41:11 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9733618360;
-        Tue,  1 Nov 2022 03:41:07 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id l16-20020a05600c4f1000b003c6c0d2a445so9626623wmq.4;
-        Tue, 01 Nov 2022 03:41:07 -0700 (PDT)
+        Tue, 1 Nov 2022 06:47:37 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A84B3193C7;
+        Tue,  1 Nov 2022 03:47:36 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id a11-20020a05600c2d4b00b003cf6f5fd9f1so3448756wmg.2;
+        Tue, 01 Nov 2022 03:47:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Pe2nrgeiyZg8ID37Ige8MwH9qNBIQiYrCcbJSksgFI=;
-        b=Y6YrCkEQsgOc7ZDWGKxi3Wkox/e6LYXmnJtkUXGypr79o8IHyXPlONne0anADVbPeG
-         5oEMkznQDrPVzR0DQXvWvH54Ov554LfRfqdOELVQhEE0+kxcjulVOxcu7NhkrrdjVWk6
-         9LFUZcqxmHZ7Wc7xLHk/3NsiRnCPu5SPE6XNA1/34y9ChsR5cYfDJPtivp1aWpOr48JW
-         qRWfCox9pAodZfOtbvu0douBihtk1+a0W0oUZ7XF5YJSCJb2kcHY56wUmcAlPwQdxPZD
-         nMjXz8I+DhibL1w+xIb05y8Zz8mvPiJcdLM+trx9f7LkEcuhMoSG6GQZGkQLeT+JO9zE
-         3AWQ==
+        bh=/FwRGP8BwKaXmW2k8HRZR6WmbigXa5hHO418FZc4xNY=;
+        b=IYUBIIujNue24apx8G7zfTr2uVehnwGWmFGKSj8tMpOF+Ijp6Kdf9CHhtWytPZNtph
+         oUfaVr7ehmUa/xfLoMVwaMttid8d2jzeGLFBo+sWcoEyLod4ByVcdLZsCiS+99SgNUXw
+         K2M1pZvnlDDCFNfyR55CQs+Co6DK1hPAwFpbxhnxeCJsCo2a+/ChoYZJq/nWAVs4X7Cv
+         fsHnMm6cKOnkecIVJQl32CFaFdBlote6ir8KIm3rHOHwvqqfUFN7dX8VMlaI+00pA1A0
+         Kx4WC5aagh0tB6PPByiVvZeZHywxkKUGikLfoJ14Bx+vQeZ66MHwDp7Lh46KjZUbi+GF
+         +Q0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7Pe2nrgeiyZg8ID37Ige8MwH9qNBIQiYrCcbJSksgFI=;
-        b=JFRrebWwsRvMcUVWMNMGLwtMnD4ygJNejgwRRETzOI1amxWXGju8sw3X0MNixNw4ME
-         EYLjSxOfKWjF+t6qdf8nlbCrV4HRQPw5Ch2cdzY/7zhrDmSpp2xiZvd7J+PlV76ZLoGg
-         kX8QKYRugdLw9aMElGDsAfxlrNpfFMM8df242RZQqQiJyfmc8ncCCYjZ6TUhyNeoSYEK
-         9zTwNiINaAm2nTvIaJpX/Zj33Vn9d/g7Cn6FxifTYsD1Ovnx/veQaskbuxj4wkOuhZpl
-         4q7YvjgDdvS+YHXZ51ALrwON3GB0pEvR03CcjK0C+dcqstG8UsST5MZFFC5MeJH6v2IX
-         GPTQ==
-X-Gm-Message-State: ACrzQf2M9Rc9dg40KF9MN0LS3WDCSai4GSe2Sdc9BKHMNvXtghyuD/Ul
-        /DZnkqepHO8n/Bnnz7o8xTg=
-X-Google-Smtp-Source: AMsMyM7IAKYIwvuvbcyWM+yWofRtGf6bwmSRDO1+LzjepNvIn0/kw2Cu6ZZW2RuMAvkqzd3YvnAc6w==
-X-Received: by 2002:a05:600c:1c98:b0:3cf:77cc:5f65 with SMTP id k24-20020a05600c1c9800b003cf77cc5f65mr72335wms.25.1667299266115;
-        Tue, 01 Nov 2022 03:41:06 -0700 (PDT)
+        bh=/FwRGP8BwKaXmW2k8HRZR6WmbigXa5hHO418FZc4xNY=;
+        b=TLWer3gKsolbVbDTg4xikZX8+fOWC8xovJ5kuJ2xhSEqjGbGYYhhfcKvWwRzaDJFDm
+         iC+J2sI/ZW8Ld03+uzjWoZXD9v+vJC/tmShVILBbgjCJ+xO8iTJx9Ky1EH5A9IjDfyFm
+         /693EK3jty4nDLN9lNAlf0YezA1G/Cl1wKf/HonRh/9PLcLD9b8HyAMCmarwqyxwziy7
+         Y6lyqk+VFnb8d4pBtOqZEqv/NR8q7BeLDnu5sHAJlpL/Ut+LNxYKnotB/NLjuB2/53L9
+         bkZpH65ziYrD7JqhfPNdgoF7E1QK4O6m3LmPfntMWm0uZvN8IfgduS0LJu+oRtlNeEG7
+         /EWQ==
+X-Gm-Message-State: ACrzQf0ANDQm9mIiIAs4siwakd3XwP/pf6J1LIkhVlhfQTcYQw59o1HR
+        RywEnmGEBHloRde8vC4buwDmIL0qDfIPu1UP
+X-Google-Smtp-Source: AMsMyM5Vr5sdPnHnvs6v1i04Xc34hhFJ8JVAijUkr1z367YlFbXW/kgLoViWk7S/5mBU6BsCxGPBUQ==
+X-Received: by 2002:a1c:6a10:0:b0:3cf:699f:c03 with SMTP id f16-20020a1c6a10000000b003cf699f0c03mr9621554wmc.23.1667299655129;
+        Tue, 01 Nov 2022 03:47:35 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o23-20020a05600c511700b003cf54b77bfesm10436628wms.28.2022.11.01.03.41.05
+        by smtp.gmail.com with ESMTPSA id i4-20020a05600c354400b003cf4c1e211fsm10738270wmq.38.2022.11.01.03.47.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Nov 2022 03:41:05 -0700 (PDT)
+        Tue, 01 Nov 2022 03:47:34 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
+To:     Nilesh Javali <njavali@marvell.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rds: remove redundant variable total_payload_len
-Date:   Tue,  1 Nov 2022 10:41:04 +0000
-Message-Id: <20221101104104.29878-1-colin.i.king@gmail.com>
+Subject: [PATCH] scsi: qla2xxx: Remove unused variable found_devs
+Date:   Tue,  1 Nov 2022 10:47:33 +0000
+Message-Id: <20221101104733.30363-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,36 +68,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable total_payload_len is being used to accumulate payload lengths
-however it is never read or used afterwards. It is redundant and can
-be removed.
+Variable found_devs is just being incremented and it's never used
+anywhere else. The variable and the increment are redundant so
+remove it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- net/rds/send.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/net/rds/send.c b/net/rds/send.c
-index 0c5504068e3c..5e57a1581dc6 100644
---- a/net/rds/send.c
-+++ b/net/rds/send.c
-@@ -1114,7 +1114,7 @@ int rds_sendmsg(struct socket *sock, struct msghdr *msg, size_t payload_len)
- 	struct rds_conn_path *cpath;
- 	struct in6_addr daddr;
- 	__u32 scope_id = 0;
--	size_t total_payload_len = payload_len, rdma_payload_len = 0;
-+	size_t rdma_payload_len = 0;
- 	bool zcopy = ((msg->msg_flags & MSG_ZEROCOPY) &&
- 		      sock_flag(rds_rs_to_sk(rs), SOCK_ZEROCOPY));
- 	int num_sgs = DIV_ROUND_UP(payload_len, PAGE_SIZE);
-@@ -1243,7 +1243,6 @@ int rds_sendmsg(struct socket *sock, struct msghdr *msg, size_t payload_len)
- 	if (ret)
- 		goto out;
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index e12db95de688..8f737d80bce4 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -5546,7 +5546,6 @@ static int
+ qla2x00_configure_local_loop(scsi_qla_host_t *vha)
+ {
+ 	int		rval, rval2;
+-	int		found_devs;
+ 	int		found;
+ 	fc_port_t	*fcport, *new_fcport;
+ 	uint16_t	index;
+@@ -5561,7 +5560,6 @@ qla2x00_configure_local_loop(scsi_qla_host_t *vha)
+ 	if (N2N_TOPO(ha))
+ 		return qla2x00_configure_n2n_loop(vha);
  
--	total_payload_len += rdma_payload_len;
- 	if (max_t(size_t, payload_len, rdma_payload_len) > RDS_MAX_MSG_SIZE) {
- 		ret = -EMSGSIZE;
- 		goto out;
+-	found_devs = 0;
+ 	new_fcport = NULL;
+ 	entries = MAX_FIBRE_DEVICES_LOOP;
+ 
+@@ -5720,8 +5718,6 @@ qla2x00_configure_local_loop(scsi_qla_host_t *vha)
+ 
+ 		/* Base iIDMA settings on HBA port speed. */
+ 		fcport->fp_speed = ha->link_data_rate;
+-
+-		found_devs++;
+ 	}
+ 
+ 	list_for_each_entry(fcport, &vha->vp_fcports, list) {
 -- 
 2.37.3
 
