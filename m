@@ -2,74 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49759FA3743
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 09:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B361FA373D
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 09:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbiKAJ2I (ORCPT
+        id S230292AbiKAJqC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 05:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36526 "EHLO
+        Tue, 1 Nov 2022 05:46:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230046AbiKAJ2G (ORCPT
+        with ESMTP id S230243AbiKAJp7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 05:28:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 373D9183A8;
-        Tue,  1 Nov 2022 02:28:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E88AFB81C1F;
-        Tue,  1 Nov 2022 09:28:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA47C433D6;
-        Tue,  1 Nov 2022 09:27:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667294881;
-        bh=b5oMAoKP4AeMRH9vw8x8y5P2nZXivmtvSuBCcrTDKOc=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=UCwuHXOJhzGAVLFcvJ/WmfzKpfavZ6thwkEMoCqYd6Y36aiGItxz/dJy2nQbyZ72+
-         OBNzH0UgAevuH662dgcV4/dZlw+kVXO+5iJWx7VHA0Xnh2FuEaHauo6iCjwG5HImYb
-         BHE8xVMlURaqar33SfsF6qAM3gRfWqR3a6RjET6ltrHZ9fb9knjCpEneNObZC3TaNf
-         LYiA9a4IutJDkBTYNT+RWDkXC2trOn0yuD+DsjOwKW8yTu3gz/1+dTZt+I32GN9cX9
-         /0GE8UCIClWjxVylxzml1KL/iS7Ey5i/73ak/L1E71eXrER+ga+6Z10FQmSWJIQUKu
-         zVU+OG+dN8euA==
-Content-Type: text/plain; charset="utf-8"
+        Tue, 1 Nov 2022 05:45:59 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A1D5DF74;
+        Tue,  1 Nov 2022 02:45:59 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 5D63468AA6; Tue,  1 Nov 2022 10:45:56 +0100 (CET)
+Date:   Tue, 1 Nov 2022 10:45:56 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     James Smart <james.smart@broadcom.com>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH] nvme-fc: Improve memory usage in nvme_fc_rcv_ls_req()
+Message-ID: <20221101094556.GA12904@lst.de>
+References: <87a93f5fadd6e3cba2bb263b8853a5d33f589287.1664704751.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] wifi: rtw89: 8852b: Fix spelling mistake
- KIP_RESOTRE ->
- KIP_RESTORE
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20221020072646.1513307-1-colin.i.king@gmail.com>
-References: <20221020072646.1513307-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Ping-Ke Shih <pkshih@realtek.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <166729487741.21401.13126570333051605990.kvalo@kernel.org>
-Date:   Tue,  1 Nov 2022 09:27:59 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a93f5fadd6e3cba2bb263b8853a5d33f589287.1664704751.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
+Thanks,
 
-> Ther is a spelling mistake in a rtw89_debug message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
-
-Patch applied to wireless-next.git, thanks.
-
-8fa681703175 wifi: rtw89: 8852b: Fix spelling mistake KIP_RESOTRE -> KIP_RESTORE
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20221020072646.1513307-1-colin.i.king@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+applied to nvme-6.2.
