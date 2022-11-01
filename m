@@ -2,39 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C667DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3103EC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231166AbiKAVQj (ORCPT
+        id S231168AbiKAVQk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 17:16:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34116 "EHLO
+        Tue, 1 Nov 2022 17:16:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbiKAVQJ (ORCPT
+        with ESMTP id S230475AbiKAVQM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 17:16:09 -0400
+        Tue, 1 Nov 2022 17:16:12 -0400
 Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7201EED1
-        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B481EECD
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:34 -0700 (PDT)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id pyanoKD2rsfCIpybZoWfLb; Tue, 01 Nov 2022 22:15:30 +0100
+        id pyanoKD2rsfCIpybcoWfMO; Tue, 01 Nov 2022 22:15:33 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 01 Nov 2022 22:15:30 +0100
+X-ME-Date: Tue, 01 Nov 2022 22:15:33 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
+To:     Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-s390@vger.kernel.org
-Subject: [PATCH 26/30] s390/ipl: Use kstrtobool() instead of strtobool()
-Date:   Tue,  1 Nov 2022 22:14:14 +0100
-Message-Id: <7766dac5969021bf7432e8c4f038db8afc996b8a.1667336095.git.christophe.jaillet@wanadoo.fr>
+        xen-devel@lists.xenproject.org
+Subject: [PATCH 28/30] x86/xen: Use kstrtobool() instead of strtobool()
+Date:   Tue,  1 Nov 2022 22:14:16 +0100
+Message-Id: <e91af3c8708af38b1c57e0a2d7eb9765dda0e963.1667336095.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
@@ -62,54 +63,54 @@ The last patch of the serie removes the definition of strtobool().
 You may not be in copy of the cover letter. So, if needed, it is available
 at [1].
 
-
-This patch has NOT been compile tested.
-
-
 [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
 ---
- arch/s390/kernel/ipl.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/xen/enlighten_pv.c | 3 ++-
+ arch/x86/xen/setup.c        | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index 325cbf69ebbd..cdd575d7a91a 100644
---- a/arch/s390/kernel/ipl.c
-+++ b/arch/s390/kernel/ipl.c
-@@ -12,6 +12,7 @@
- #include <linux/init.h>
- #include <linux/device.h>
- #include <linux/delay.h>
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index 05170fc19083..9e1ac6a281e4 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -23,6 +23,7 @@
+ #include <linux/start_kernel.h>
+ #include <linux/sched.h>
+ #include <linux/kprobes.h>
 +#include <linux/kstrtox.h>
- #include <linux/panic_notifier.h>
- #include <linux/reboot.h>
- #include <linux/ctype.h>
-@@ -779,7 +780,7 @@ static ssize_t reipl_fcp_clear_store(struct kobject *kobj,
- 				     struct kobj_attribute *attr,
- 				     const char *buf, size_t len)
+ #include <linux/memblock.h>
+ #include <linux/export.h>
+ #include <linux/mm.h>
+@@ -113,7 +114,7 @@ static __read_mostly bool xen_msr_safe = IS_ENABLED(CONFIG_XEN_PV_MSR_SAFE);
+ static int __init parse_xen_msr_safe(char *str)
  {
--	if (strtobool(buf, &reipl_fcp_clear) < 0)
-+	if (kstrtobool(buf, &reipl_fcp_clear) < 0)
- 		return -EINVAL;
- 	return len;
+ 	if (str)
+-		return strtobool(str, &xen_msr_safe);
++		return kstrtobool(str, &xen_msr_safe);
+ 	return -EINVAL;
  }
-@@ -899,7 +900,7 @@ static ssize_t reipl_nvme_clear_store(struct kobject *kobj,
- 				      struct kobj_attribute *attr,
- 				      const char *buf, size_t len)
- {
--	if (strtobool(buf, &reipl_nvme_clear) < 0)
-+	if (kstrtobool(buf, &reipl_nvme_clear) < 0)
- 		return -EINVAL;
- 	return len;
- }
-@@ -952,7 +953,7 @@ static ssize_t reipl_ccw_clear_store(struct kobject *kobj,
- 				     struct kobj_attribute *attr,
- 				     const char *buf, size_t len)
- {
--	if (strtobool(buf, &reipl_ccw_clear) < 0)
-+	if (kstrtobool(buf, &reipl_ccw_clear) < 0)
- 		return -EINVAL;
- 	return len;
- }
+ early_param("xen_msr_safe", parse_xen_msr_safe);
+diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
+index cfa99e8f054b..0abccdab5bc6 100644
+--- a/arch/x86/xen/setup.c
++++ b/arch/x86/xen/setup.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/init.h>
+ #include <linux/sched.h>
++#include <linux/kstrtox.h>
+ #include <linux/mm.h>
+ #include <linux/pm.h>
+ #include <linux/memblock.h>
+@@ -85,7 +86,7 @@ static void __init xen_parse_512gb(void)
+ 	arg = strstr(xen_start_info->cmd_line, "xen_512gb_limit=");
+ 	if (!arg)
+ 		val = true;
+-	else if (strtobool(arg + strlen("xen_512gb_limit="), &val))
++	else if (kstrtobool(arg + strlen("xen_512gb_limit="), &val))
+ 		return;
+ 
+ 	xen_512gb_limit = val;
 -- 
 2.34.1
 
