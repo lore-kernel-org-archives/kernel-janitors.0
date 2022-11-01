@@ -2,36 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47417C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDE9C43217
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:16:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbiKAVQZ (ORCPT
+        id S230432AbiKAVQ3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 17:16:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33950 "EHLO
+        Tue, 1 Nov 2022 17:16:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230390AbiKAVPo (ORCPT
+        with ESMTP id S230435AbiKAVQF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 17:15:44 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 556041F9C5
-        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:25 -0700 (PDT)
+        Tue, 1 Nov 2022 17:16:05 -0400
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13E6E1F621
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:26 -0700 (PDT)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id pyanoKD2rsfCIpybToWfKU; Tue, 01 Nov 2022 22:15:24 +0100
+        id pyanoKD2rsfCIpybUoWfKf; Tue, 01 Nov 2022 22:15:24 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
 X-ME-Date: Tue, 01 Nov 2022 22:15:24 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     SeongJae Park <sj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
+To:     Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        damon@lists.linux.dev, linux-mm@kvack.org
-Subject: [PATCH 20/30] mm/damon: Use kstrtobool() instead of strtobool()
-Date:   Tue,  1 Nov 2022 22:14:08 +0100
-Message-Id: <ed2b46489a513988688decb53850339cc228940c.1667336095.git.christophe.jaillet@wanadoo.fr>
+        linux-mm@kvack.org, linux-hardening@vger.kernel.org
+Subject: [PATCH 21/30] mm: Use kstrtobool() instead of strtobool()
+Date:   Tue,  1 Nov 2022 22:14:09 +0100
+Message-Id: <03f9401a6c8b87a1c786a2138d16b048f8d0eb53.1667336095.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
@@ -61,52 +62,52 @@ at [1].
 
 [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
 ---
- mm/damon/lru_sort.c | 3 ++-
- mm/damon/reclaim.c  | 3 ++-
+ mm/page_table_check.c | 3 ++-
+ mm/usercopy.c         | 3 ++-
  2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
-index 2a532e3983df..7b8fce2f67a8 100644
---- a/mm/damon/lru_sort.c
-+++ b/mm/damon/lru_sort.c
-@@ -8,6 +8,7 @@
- #define pr_fmt(fmt) "damon-lru-sort: " fmt
- 
- #include <linux/damon.h>
+diff --git a/mm/page_table_check.c b/mm/page_table_check.c
+index 433dbce13fe1..93e633c1d587 100644
+--- a/mm/page_table_check.c
++++ b/mm/page_table_check.c
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2021, Google LLC.
+  * Pasha Tatashin <pasha.tatashin@soleen.com>
+  */
 +#include <linux/kstrtox.h>
- #include <linux/module.h>
+ #include <linux/mm.h>
+ #include <linux/page_table_check.h>
  
- #include "modules-common.h"
-@@ -241,7 +242,7 @@ static int damon_lru_sort_enabled_store(const char *val,
- 	bool enable;
- 	int err;
+@@ -23,7 +24,7 @@ EXPORT_SYMBOL(page_table_check_disabled);
  
--	err = strtobool(val, &enable);
-+	err = kstrtobool(val, &enable);
- 	if (err)
- 		return err;
+ static int __init early_page_table_check_param(char *buf)
+ {
+-	return strtobool(buf, &__page_table_check_enabled);
++	return kstrtobool(buf, &__page_table_check_enabled);
+ }
  
-diff --git a/mm/damon/reclaim.c b/mm/damon/reclaim.c
-index e57604bec06d..e82631f39481 100644
---- a/mm/damon/reclaim.c
-+++ b/mm/damon/reclaim.c
-@@ -8,6 +8,7 @@
- #define pr_fmt(fmt) "damon-reclaim: " fmt
+ early_param("page_table_check", early_page_table_check_param);
+diff --git a/mm/usercopy.c b/mm/usercopy.c
+index c1ee15a98633..4c3164beacec 100644
+--- a/mm/usercopy.c
++++ b/mm/usercopy.c
+@@ -12,6 +12,7 @@
  
- #include <linux/damon.h>
+ #include <linux/mm.h>
+ #include <linux/highmem.h>
 +#include <linux/kstrtox.h>
- #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task.h>
+@@ -258,7 +259,7 @@ static bool enable_checks __initdata = true;
  
- #include "modules-common.h"
-@@ -187,7 +188,7 @@ static int damon_reclaim_enabled_store(const char *val,
- 	bool enable;
- 	int err;
- 
--	err = strtobool(val, &enable);
-+	err = kstrtobool(val, &enable);
- 	if (err)
- 		return err;
- 
+ static int __init parse_hardened_usercopy(char *str)
+ {
+-	if (strtobool(str, &enable_checks))
++	if (kstrtobool(str, &enable_checks))
+ 		pr_warn("Invalid option string for hardened_usercopy: '%s'\n",
+ 			str);
+ 	return 1;
 -- 
 2.34.1
 
