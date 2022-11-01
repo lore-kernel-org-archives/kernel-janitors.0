@@ -2,40 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF01C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C667DC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:16:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230489AbiKAVQi (ORCPT
+        id S231166AbiKAVQj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 17:16:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32940 "EHLO
+        Tue, 1 Nov 2022 17:16:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbiKAVQJ (ORCPT
+        with ESMTP id S230338AbiKAVQJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Tue, 1 Nov 2022 17:16:09 -0400
 Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C271DF25
-        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7201EED1
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:31 -0700 (PDT)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id pyanoKD2rsfCIpybaoWfM8; Tue, 01 Nov 2022 22:15:31 +0100
+        id pyanoKD2rsfCIpybZoWfLb; Tue, 01 Nov 2022 22:15:30 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 01 Nov 2022 22:15:31 +0100
+X-ME-Date: Tue, 01 Nov 2022 22:15:30 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
+To:     Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        kvm@vger.kernel.org
-Subject: [PATCH 27/30] KVM: x86/mmu: Use kstrtobool() instead of strtobool()
-Date:   Tue,  1 Nov 2022 22:14:15 +0100
-Message-Id: <ae7bd1f18c6f2e2e5fe21b72b62a6ae192ef9501.1667336095.git.christophe.jaillet@wanadoo.fr>
+        linux-s390@vger.kernel.org
+Subject: [PATCH 26/30] s390/ipl: Use kstrtobool() instead of strtobool()
+Date:   Tue,  1 Nov 2022 22:14:14 +0100
+Message-Id: <7766dac5969021bf7432e8c4f038db8afc996b8a.1667336095.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
@@ -63,32 +62,54 @@ The last patch of the serie removes the definition of strtobool().
 You may not be in copy of the cover letter. So, if needed, it is available
 at [1].
 
-[1]:  https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
----
- arch/x86/kvm/mmu/mmu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 6f81539061d6..aa45abce7586 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -42,6 +42,7 @@
- #include <linux/uaccess.h>
- #include <linux/hash.h>
- #include <linux/kern_levels.h>
+This patch has NOT been compile tested.
+
+
+[1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
+---
+ arch/s390/kernel/ipl.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
+index 325cbf69ebbd..cdd575d7a91a 100644
+--- a/arch/s390/kernel/ipl.c
++++ b/arch/s390/kernel/ipl.c
+@@ -12,6 +12,7 @@
+ #include <linux/init.h>
+ #include <linux/device.h>
+ #include <linux/delay.h>
 +#include <linux/kstrtox.h>
- #include <linux/kthread.h>
- 
- #include <asm/page.h>
-@@ -6641,7 +6642,7 @@ static int set_nx_huge_pages(const char *val, const struct kernel_param *kp)
- 		new_val = 1;
- 	else if (sysfs_streq(val, "auto"))
- 		new_val = get_nx_auto_mode();
--	else if (strtobool(val, &new_val) < 0)
-+	else if (kstrtobool(val, &new_val) < 0)
+ #include <linux/panic_notifier.h>
+ #include <linux/reboot.h>
+ #include <linux/ctype.h>
+@@ -779,7 +780,7 @@ static ssize_t reipl_fcp_clear_store(struct kobject *kobj,
+ 				     struct kobj_attribute *attr,
+ 				     const char *buf, size_t len)
+ {
+-	if (strtobool(buf, &reipl_fcp_clear) < 0)
++	if (kstrtobool(buf, &reipl_fcp_clear) < 0)
  		return -EINVAL;
- 
- 	__set_nx_huge_pages(new_val);
+ 	return len;
+ }
+@@ -899,7 +900,7 @@ static ssize_t reipl_nvme_clear_store(struct kobject *kobj,
+ 				      struct kobj_attribute *attr,
+ 				      const char *buf, size_t len)
+ {
+-	if (strtobool(buf, &reipl_nvme_clear) < 0)
++	if (kstrtobool(buf, &reipl_nvme_clear) < 0)
+ 		return -EINVAL;
+ 	return len;
+ }
+@@ -952,7 +953,7 @@ static ssize_t reipl_ccw_clear_store(struct kobject *kobj,
+ 				     struct kobj_attribute *attr,
+ 				     const char *buf, size_t len)
+ {
+-	if (strtobool(buf, &reipl_ccw_clear) < 0)
++	if (kstrtobool(buf, &reipl_ccw_clear) < 0)
+ 		return -EINVAL;
+ 	return len;
+ }
 -- 
 2.34.1
 
