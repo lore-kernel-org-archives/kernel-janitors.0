@@ -2,40 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A06E2C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B584C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:16:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbiKAVQS (ORCPT
+        id S230505AbiKAVQV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 17:16:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32894 "EHLO
+        Tue, 1 Nov 2022 17:16:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230373AbiKAVPh (ORCPT
+        with ESMTP id S230307AbiKAVPi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 17:15:37 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB901F62E
-        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:23 -0700 (PDT)
+        Tue, 1 Nov 2022 17:15:38 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B720A1F638
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:15:24 -0700 (PDT)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id pyanoKD2rsfCIpybRoWfKG; Tue, 01 Nov 2022 22:15:22 +0100
+        id pyanoKD2rsfCIpybSoWfKN; Tue, 01 Nov 2022 22:15:22 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
 X-ME-Date: Tue, 01 Nov 2022 22:15:22 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Luis Chamberlain <mcgrof@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-modules@vger.kernel.org
-Subject: [PATCH 18/30] module: Use kstrtobool() instead of strtobool()
-Date:   Tue,  1 Nov 2022 22:14:06 +0100
-Message-Id: <bb37ff26b0c748d0ca883d8f301190cd1177aad2.1667336095.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 19/30] kernel/params.c: Use kstrtobool() instead of strtobool()
+Date:   Tue,  1 Nov 2022 22:14:07 +0100
+Message-Id: <2509facf7472786f1a3af0a5b9070bd5268dbc42.1667336095.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -60,30 +59,30 @@ at [1].
 
 [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
 ---
- kernel/module/main.c | 3 ++-
+ kernel/params.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index ff2dfd1f548d..79e17522e196 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -17,6 +17,7 @@
- #include <linux/fs.h>
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
-+#include <linux/kstrtox.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include <linux/elf.h>
-@@ -2649,7 +2650,7 @@ static int unknown_module_param_cb(char *param, char *val, const char *modname,
- 	int ret;
+diff --git a/kernel/params.c b/kernel/params.c
+index a06f80c56f19..96250d3e201b 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -4,6 +4,7 @@
  
- 	if (strcmp(param, "async_probe") == 0) {
--		if (strtobool(val, &mod->async_probe_requested))
-+		if (kstrtobool(val, &mod->async_probe_requested))
- 			mod->async_probe_requested = true;
- 		return 0;
- 	}
+ */
+ #include <linux/kernel.h>
++#include <linux/kstrtox.h>
+ #include <linux/string.h>
+ #include <linux/errno.h>
+ #include <linux/module.h>
+@@ -310,7 +311,7 @@ int param_set_bool(const char *val, const struct kernel_param *kp)
+ 	if (!val) val = "1";
+ 
+ 	/* One of =[yYnN01] */
+-	return strtobool(val, kp->arg);
++	return kstrtobool(val, kp->arg);
+ }
+ EXPORT_SYMBOL(param_set_bool);
+ 
 -- 
 2.34.1
 
