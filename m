@@ -2,61 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A55EFA3743
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 10:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE0BC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 10:41:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230062AbiKAK3z (ORCPT
+        id S229912AbiKAKlM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 06:29:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57146 "EHLO
+        Tue, 1 Nov 2022 06:41:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbiKAK3y (ORCPT
+        with ESMTP id S229934AbiKAKlL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 06:29:54 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD40E18B38;
-        Tue,  1 Nov 2022 03:29:50 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id z14so19480796wrn.7;
-        Tue, 01 Nov 2022 03:29:50 -0700 (PDT)
+        Tue, 1 Nov 2022 06:41:11 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9733618360;
+        Tue,  1 Nov 2022 03:41:07 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id l16-20020a05600c4f1000b003c6c0d2a445so9626623wmq.4;
+        Tue, 01 Nov 2022 03:41:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N2+PF9plcSy2ATWJiPecwWooFcxaUwfoTFa4mF3SLg4=;
-        b=o7VSw37luCk1txJUxzqGQMkFhWqPrkJ/Xe4dZxvAF9K2NLZee08637+m3uU3zEBMD8
-         bFO4nxwVEdbyrKqJly8BfZ4hWbE3+grDvZdJlZ3q9qPOcgAUJ59XiFJ3BbU149QiwV/7
-         P6oI8ORxdxlYwPKtwapsFoBp/qyk00T9LJq9ctjEF87jRgCoMec0FV3ZFXt3rNp6ANKp
-         UTLiY1KkIG6lcSKnnBfk95DYCakxEpX58/xK7SZgBaLPB0R6qV3LehugPLa+KaAv/7LJ
-         LsDY6ETq96leRawKoZTv4IjoR86J5X00p7uloSGefTQn2z3a+f60lCUKVmeRVCiwUzo8
-         t8xg==
+        bh=7Pe2nrgeiyZg8ID37Ige8MwH9qNBIQiYrCcbJSksgFI=;
+        b=Y6YrCkEQsgOc7ZDWGKxi3Wkox/e6LYXmnJtkUXGypr79o8IHyXPlONne0anADVbPeG
+         5oEMkznQDrPVzR0DQXvWvH54Ov554LfRfqdOELVQhEE0+kxcjulVOxcu7NhkrrdjVWk6
+         9LFUZcqxmHZ7Wc7xLHk/3NsiRnCPu5SPE6XNA1/34y9ChsR5cYfDJPtivp1aWpOr48JW
+         qRWfCox9pAodZfOtbvu0douBihtk1+a0W0oUZ7XF5YJSCJb2kcHY56wUmcAlPwQdxPZD
+         nMjXz8I+DhibL1w+xIb05y8Zz8mvPiJcdLM+trx9f7LkEcuhMoSG6GQZGkQLeT+JO9zE
+         3AWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N2+PF9plcSy2ATWJiPecwWooFcxaUwfoTFa4mF3SLg4=;
-        b=xeoKtjNtVT1EhgFhLPXYjMzLl/8/iFCKIc9BI8XOEVlLD5ayu/iqSTjea5wblp0mNq
-         Hc4WkYnUGsTik7v5g+1wUi4hzkvw4tAGfKsZK0k6dRVhkIvjQurINDG+IppgxzlWueFQ
-         GhIEQTf7w/85AwnemYqSsW225RCNVaNlaGZ+qJdAavdHOAiDT3HmATzuZBsCDZ/ntRY5
-         kiMWZrj/HiJ7EK82ckf2kzGWJC5CvDSAWJTqfMjnnKSmHr4imnOXVZEGV9sWzKCgK2Xz
-         Xb9rBektvOYE+4RLM5I31rP4QHPBv12Oot8AvbE1QGxRgqDl3W5ImW5oNJl/JM5+9H95
-         y5qw==
-X-Gm-Message-State: ACrzQf0DpS8hImHpcvmE53bSyEz5M8UiQByB27ceDVXfOt1vWYm9Zn9e
-        rJY+Rn/Lhb6AOyBqSGmGIdeFM0pWvpo2CYpN
-X-Google-Smtp-Source: AMsMyM6AaaZkGwEBkHo0F9rE7Xc/JyFXaDjj/Nj1mXN0rOHNFWvZVdKnRcqhCbJgXxu8mE3QnxWurg==
-X-Received: by 2002:a5d:4ecb:0:b0:236:be56:1a6 with SMTP id s11-20020a5d4ecb000000b00236be5601a6mr8691097wrv.252.1667298589374;
-        Tue, 01 Nov 2022 03:29:49 -0700 (PDT)
+        bh=7Pe2nrgeiyZg8ID37Ige8MwH9qNBIQiYrCcbJSksgFI=;
+        b=JFRrebWwsRvMcUVWMNMGLwtMnD4ygJNejgwRRETzOI1amxWXGju8sw3X0MNixNw4ME
+         EYLjSxOfKWjF+t6qdf8nlbCrV4HRQPw5Ch2cdzY/7zhrDmSpp2xiZvd7J+PlV76ZLoGg
+         kX8QKYRugdLw9aMElGDsAfxlrNpfFMM8df242RZQqQiJyfmc8ncCCYjZ6TUhyNeoSYEK
+         9zTwNiINaAm2nTvIaJpX/Zj33Vn9d/g7Cn6FxifTYsD1Ovnx/veQaskbuxj4wkOuhZpl
+         4q7YvjgDdvS+YHXZ51ALrwON3GB0pEvR03CcjK0C+dcqstG8UsST5MZFFC5MeJH6v2IX
+         GPTQ==
+X-Gm-Message-State: ACrzQf2M9Rc9dg40KF9MN0LS3WDCSai4GSe2Sdc9BKHMNvXtghyuD/Ul
+        /DZnkqepHO8n/Bnnz7o8xTg=
+X-Google-Smtp-Source: AMsMyM7IAKYIwvuvbcyWM+yWofRtGf6bwmSRDO1+LzjepNvIn0/kw2Cu6ZZW2RuMAvkqzd3YvnAc6w==
+X-Received: by 2002:a05:600c:1c98:b0:3cf:77cc:5f65 with SMTP id k24-20020a05600c1c9800b003cf77cc5f65mr72335wms.25.1667299266115;
+        Tue, 01 Nov 2022 03:41:06 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n44-20020a05600c502c00b003cf537ec2efsm132921wmr.36.2022.11.01.03.29.48
+        by smtp.gmail.com with ESMTPSA id o23-20020a05600c511700b003cf54b77bfesm10436628wms.28.2022.11.01.03.41.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Nov 2022 03:29:48 -0700 (PDT)
+        Tue, 01 Nov 2022 03:41:05 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Helge Deller <deller@gmx.de>, linux-omap@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] video: fbdev: omapfb: remove redundant variable checksum
-Date:   Tue,  1 Nov 2022 10:29:47 +0000
-Message-Id: <20221101102947.27524-1-colin.i.king@gmail.com>
+Subject: [PATCH] rds: remove redundant variable total_payload_len
+Date:   Tue,  1 Nov 2022 10:41:04 +0000
+Message-Id: <20221101104104.29878-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,35 +69,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable checksum is being used to accumulate values however
-it is never read or used afterwards. It is redundant and can
+Variable total_payload_len is being used to accumulate payload lengths
+however it is never read or used afterwards. It is redundant and can
 be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/video/fbdev/omap2/omapfb/dss/hdmi5_core.c | 2 --
- 1 file changed, 2 deletions(-)
+ net/rds/send.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi5_core.c b/drivers/video/fbdev/omap2/omapfb/dss/hdmi5_core.c
-index cb63bc0e92ca..b33f62c5cb22 100644
---- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi5_core.c
-+++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi5_core.c
-@@ -129,7 +129,6 @@ static int hdmi_core_ddc_edid(struct hdmi_core_data *core, u8 *pedid, u8 ext)
- {
- 	void __iomem *base = core->base;
- 	u8 cur_addr;
--	char checksum = 0;
- 	const int retries = 1000;
- 	u8 seg_ptr = ext / 2;
- 	u8 edidbase = ((ext % 2) * 0x80);
-@@ -178,7 +177,6 @@ static int hdmi_core_ddc_edid(struct hdmi_core_data *core, u8 *pedid, u8 ext)
- 		}
+diff --git a/net/rds/send.c b/net/rds/send.c
+index 0c5504068e3c..5e57a1581dc6 100644
+--- a/net/rds/send.c
++++ b/net/rds/send.c
+@@ -1114,7 +1114,7 @@ int rds_sendmsg(struct socket *sock, struct msghdr *msg, size_t payload_len)
+ 	struct rds_conn_path *cpath;
+ 	struct in6_addr daddr;
+ 	__u32 scope_id = 0;
+-	size_t total_payload_len = payload_len, rdma_payload_len = 0;
++	size_t rdma_payload_len = 0;
+ 	bool zcopy = ((msg->msg_flags & MSG_ZEROCOPY) &&
+ 		      sock_flag(rds_rs_to_sk(rs), SOCK_ZEROCOPY));
+ 	int num_sgs = DIV_ROUND_UP(payload_len, PAGE_SIZE);
+@@ -1243,7 +1243,6 @@ int rds_sendmsg(struct socket *sock, struct msghdr *msg, size_t payload_len)
+ 	if (ret)
+ 		goto out;
  
- 		pedid[cur_addr] = REG_GET(base, HDMI_CORE_I2CM_DATAI, 7, 0);
--		checksum += pedid[cur_addr];
- 	}
- 
- 	return 0;
+-	total_payload_len += rdma_payload_len;
+ 	if (max_t(size_t, payload_len, rdma_payload_len) > RDS_MAX_MSG_SIZE) {
+ 		ret = -EMSGSIZE;
+ 		goto out;
 -- 
 2.37.3
 
