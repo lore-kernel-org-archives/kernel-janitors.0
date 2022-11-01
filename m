@@ -2,61 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5CBFA3745
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 10:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6197CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 11:57:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbiKAKxe (ORCPT
+        id S230314AbiKAL5E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 06:53:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38190 "EHLO
+        Tue, 1 Nov 2022 07:57:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbiKAKxa (ORCPT
+        with ESMTP id S230239AbiKAL5C (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 06:53:30 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4539318344;
-        Tue,  1 Nov 2022 03:53:29 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id bk15so19532824wrb.13;
-        Tue, 01 Nov 2022 03:53:29 -0700 (PDT)
+        Tue, 1 Nov 2022 07:57:02 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3981C6387;
+        Tue,  1 Nov 2022 04:57:00 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id bk15so19739265wrb.13;
+        Tue, 01 Nov 2022 04:57:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NIlPBoCtz6QpUN1X3vooStQnsHabjk5XLtDmnofRRUw=;
-        b=OKwCSadba1pnfMQqYV7dbEnIvi4mEDYO6/IstfRqsTENnU/XmV+xYWI8unuUY7nZer
-         n9fGwVtsPo5x13rHeYFyhsJNr0BuAZb6hbsYn1pDEUIlfQHNx1V9iTzqrBNPkzz1smOJ
-         9VHP5ZLWNhQdeBnFcRM1u1Dl/P10gakdq37NIBdXie1yq08+UizKwlVDK0Li4JylWRa/
-         HjOGlQr+m8mqOAksjoeCsQRPgTtayO0Qj9FPJYj2h0gD6se78wARf7hRc3D/Jz1xSzw6
-         vUs0a0fN36USCKLSCyY7MN9tkz5RRmNRu4pqmVGkHF/oETxLTHTWidYkgoyk9WR2o6Pd
-         PVCA==
+        bh=avD7AsLYAabT4MRxA4af15kY8M1x7LqMRU8EJksJQzU=;
+        b=HcwjTt+AZwgxEXuLfGdDhzw5siB0usEMihQMMtm6COsuce+D71orrJ32ulXf+P5z6U
+         R5qPE/9LMHFAKTrGdjPQ8i0BquIGWgtCdmj1hJqmo4AaxbmNw6rtOrgFcIbuATL9zcPc
+         1VsOhsmnf4qBPor5ZtXS+SHZl/MZu5yjUJW8fUTA+4hZccSXcrtw8bMtXXLX6GGyK0Ld
+         nicXnR3INwSAyO/6Av4Tx1ERwua/HY0rclGcCSvegQa3x2BGidbZPtYP5OBhsLk3ztbT
+         s0NQBKslkRdz+mqbswM8CxFbpz3GV/RRdTjir2T1KH22PyqTKSbDO7ElT2xLsJzocd1c
+         slKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NIlPBoCtz6QpUN1X3vooStQnsHabjk5XLtDmnofRRUw=;
-        b=ZaNPGajuWrAMAfcEDK21Lz6+671X176vzwgQEq6VJRtj0URlB9sPVr0O2jbrVVuM7l
-         VsXVSAynSatnukTt7fqaT3DTMD01H2uLVUATNCWJ0CguSj+eLlPLEU6677nRC1t472RT
-         HJDW4F0hjw8I4kbCHIeg7TyKDS2Up4wJzqOS8wwfahZY+r5vEeKjiaYi/k+YWbMesf3r
-         1axjg7+25OkFQ6XgqjC6Bzv4fBPIKNan82hmxY6W+5HUl+BYpLOjmVXjK/sZT4z9w5lz
-         cWqdoYfTbBwCaxVQmlLIkonepnsjQudTxQZfEVXEfiiHf1MtJsdI9EUOBLxGFKO00NwH
-         sXag==
-X-Gm-Message-State: ACrzQf0qO238TJQr5L8xdWnNkp++SThXhVM6PqEiC5eGLt+NlfpBWU7+
-        8meNMXindj2EJctXuFtm+hK+J5VBcJlY808M
-X-Google-Smtp-Source: AMsMyM50FupETc4yErSLUoojwh+tJo45E7lFTJtjgNLvmiiDWXYDII3ozE7x7RrdbkXzvSfU2hjMNg==
-X-Received: by 2002:adf:ffc2:0:b0:236:61e8:de52 with SMTP id x2-20020adfffc2000000b0023661e8de52mr11266153wrs.59.1667300007890;
-        Tue, 01 Nov 2022 03:53:27 -0700 (PDT)
+        bh=avD7AsLYAabT4MRxA4af15kY8M1x7LqMRU8EJksJQzU=;
+        b=LxKbbqLvYQCIk4CjYm//SpWHaiGPEydr/KEIV4zYCLVBC8iEJ0Mffx1IfTbHpwlRz2
+         KDUMkCfCYUsmyAAO82ZarRWyNU9MMiXHuyWu1KOW8jYEm3Uyy+QFuqS23twl5DgH0FXZ
+         u9EiF9DQpb8+TpCCA606bz75Z9Ruu8j8hjvicr4KuVCpHwTQoQBPI8VlhCltFGsRpCEq
+         wxr0UoP0+zjj01NCNo+keFVZAx0SCCnfTMN6Y2gENzJdtpev39H/8QOERl1sWS12Ngy1
+         QB1eBMBBCq5p7WnfnIWTyD91tqMCqvcAF7RBiQBMVPcZIlzHSHQtSJhdA5TNvY1Vyjo6
+         C79A==
+X-Gm-Message-State: ACrzQf3AKz1CwcAVVETX09Q/LkVcCUkEYY1Q67qng6DDiNW/leR91Cii
+        zyXpmelaZdkBt0LO5V4ItfU=
+X-Google-Smtp-Source: AMsMyM7jxN4kNnHN2zLJV7RTLDufU+rENl6wf+klBTWoUB9yddvnX48XNBIEc5DGZIHDP37SuFuSKg==
+X-Received: by 2002:a05:6000:381:b0:232:2e1:48e9 with SMTP id u1-20020a056000038100b0023202e148e9mr11123028wrf.166.1667303818657;
+        Tue, 01 Nov 2022 04:56:58 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id e9-20020a05600c4e4900b003c452678025sm9967714wmq.4.2022.11.01.03.53.27
+        by smtp.gmail.com with ESMTPSA id x3-20020a5d4443000000b0023659925b2asm9863117wrr.51.2022.11.01.04.56.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Nov 2022 03:53:27 -0700 (PDT)
+        Tue, 01 Nov 2022 04:56:58 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+To:     James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: target: core: Remove unused variable unit_serial_len
-Date:   Tue,  1 Nov 2022 10:53:26 +0000
-Message-Id: <20221101105326.31037-1-colin.i.king@gmail.com>
+Subject: [PATCH] scsi: lpfc: remove redundant pointer lp
+Date:   Tue,  1 Nov 2022 11:56:57 +0000
+Message-Id: <20221101115657.48267-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,42 +68,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable unit_serial_len is just being assigned and it's never used
-anywhere else. The variable is redundant so remove it.
+Pointer lp is being initialized and incremented but the result
+is never read. The pointer is redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/target/target_core_spc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/scsi/lpfc/lpfc_els.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/target/target_core_spc.c b/drivers/target/target_core_spc.c
-index ffe02e195733..621a460ba234 100644
---- a/drivers/target/target_core_spc.c
-+++ b/drivers/target/target_core_spc.c
-@@ -227,7 +227,7 @@ spc_emulate_evpd_83(struct se_cmd *cmd, unsigned char *buf)
- 	struct t10_alua_tg_pt_gp *tg_pt_gp;
- 	unsigned char *prod = &dev->t10_wwn.model[0];
- 	u32 prod_len;
--	u32 unit_serial_len, off = 0;
-+	u32 off = 0;
- 	u16 len = 0, id_len;
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index 2b03210264bb..3f13fcf75fce 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -9173,14 +9173,11 @@ lpfc_els_rcv_farpr(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
+ 		   struct lpfc_nodelist  *ndlp)
+ {
+ 	struct lpfc_dmabuf *pcmd;
+-	uint32_t *lp;
+ 	uint32_t did;
  
- 	off = 4;
-@@ -272,13 +272,9 @@ spc_emulate_evpd_83(struct se_cmd *cmd, unsigned char *buf)
- 	prod_len += strlen(prod);
- 	prod_len++; /* For : */
+ 	did = get_job_els_rsp64_did(vport->phba, cmdiocb);
+ 	pcmd = cmdiocb->cmd_dmabuf;
+-	lp = (uint32_t *)pcmd->virt;
  
--	if (dev->dev_flags & DF_EMULATED_VPD_UNIT_SERIAL) {
--		unit_serial_len = strlen(&dev->t10_wwn.unit_serial[0]);
--		unit_serial_len++; /* For NULL Terminator */
--
-+	if (dev->dev_flags & DF_EMULATED_VPD_UNIT_SERIAL)
- 		id_len += sprintf(&buf[off+12], "%s:%s", prod,
- 				&dev->t10_wwn.unit_serial[0]);
--	}
- 	buf[off] = 0x2; /* ASCII */
- 	buf[off+1] = 0x1; /* T10 Vendor ID */
- 	buf[off+2] = 0x0;
+-	lp++;
+ 	/* FARP-RSP received from DID <did> */
+ 	lpfc_printf_vlog(vport, KERN_INFO, LOG_ELS,
+ 			 "0600 FARP-RSP received from DID x%x\n", did);
 -- 
 2.37.3
 
