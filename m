@@ -2,83 +2,150 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54758C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 16:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D289C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Nov 2022 21:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230163AbiKAQa1 (ORCPT
+        id S229958AbiKAVFw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 12:30:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33802 "EHLO
+        Tue, 1 Nov 2022 17:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230179AbiKAQaS (ORCPT
+        with ESMTP id S229457AbiKAVFv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 12:30:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4B81CB3C;
-        Tue,  1 Nov 2022 09:30:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9AB376168E;
-        Tue,  1 Nov 2022 16:30:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E32D0C43144;
-        Tue,  1 Nov 2022 16:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667320216;
-        bh=MqX5Xq+81ySRhF8S5eHYXE3jionRZDIjpot0OnG7gwg=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=T3/amttyDcFJPMsq7wYH74tVy/NULQPEZuncBAQspRXD688wcVD7XOQShoihLE4yO
-         JFAQX8ScJ4crTgomxNyZ2F4j4LKosvXL+joV6Utx05IiRL0DGOEzJLVTyQ2yi3MkzO
-         C+NjuI0rIokYmgNnpxsEobYUFj34RK99Q9EEH5Ud/9Y/x21Ugrs24QuPZShH+TGtE6
-         qQOqv2OfPceU7zEKPL7UbFpwXpdCCyFSCNn3IsnagBibe4QeOMmyGQnlKvNMcBFIYH
-         jTATZJg0P8XNBWi5+7l0No3py8D+Y2PX67Oinia+pgK1TiYVEL0I4YGlD4SEtHPixf
-         EZEvPlpJKeVZQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C0749E270D4;
-        Tue,  1 Nov 2022 16:30:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 1 Nov 2022 17:05:51 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 152E61DA6E
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 14:05:50 -0700 (PDT)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id pyS5o8FnJTLjwpyS5ozMvH; Tue, 01 Nov 2022 22:05:48 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 01 Nov 2022 22:05:48 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        senozhatsky@chromium.org, wangkefeng.wang@huawei.com,
+        axboe@kernel.dk, kbusch@kernel.org, sfr@canb.auug.org.au,
+        mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 00/30] Remove strtobool()
+Date:   Tue,  1 Nov 2022 22:05:37 +0100
+Message-Id: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] sfc: Fix an error handling path in efx_pci_probe()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166732021577.5316.3437690780501399004.git-patchwork-notify@kernel.org>
-Date:   Tue, 01 Nov 2022 16:30:15 +0000
-References: <dc114193121c52c8fa3779e49bdd99d4b41344a9.1667077009.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <dc114193121c52c8fa3779e49bdd99d4b41344a9.1667077009.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     ecree.xilinx@gmail.com, habetsm.xilinx@gmail.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, jonathan.s.cooper@amd.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+strtobool() is the same as kstrtobool().
+However, the latter is more used within the kernel.
 
-This patch was applied to netdev/net.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+the other function name.
 
-On Sat, 29 Oct 2022 22:57:11 +0200 you wrote:
-> If an error occurs after the first kzalloc() the corresponding memory
-> allocation is never freed.
-> 
-> Add the missing kfree() in the error handling path, as already done in the
-> remove() function.
-> 
-> Fixes: 7e773594dada ("sfc: Separate efx_nic memory from net_device memory")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+While at it, include the corresponding header file (<linux/kstrtox.h>)
 
-Here is the summary with links:
-  - sfc: Fix an error handling path in efx_pci_probe()
-    https://git.kernel.org/netdev/net/c/6c412da54c80
 
-You are awesome, thank you!
+Each patch can be applied independently from the other ones.
+The last patch of the serie removes the definition of strtobool().
+
+All patches have been compile tested, except the ones against
+arm64, s390 and irq-gic.
+
+
+Finally, this gives the opportunity to remove some <linux/kernel.h> from
+a few drivers. This will be addressed later when/if the serie is applied.
+
+
+Christophe JAILLET (30):
+  net: usb: Use kstrtobool() instead of strtobool()
+  wifi: Use kstrtobool() instead of strtobool()
+  irqchip: Use kstrtobool() instead of strtobool()
+  scsi: target: Use kstrtobool() instead of strtobool()
+  nvdimm: Use kstrtobool() instead of strtobool()
+  nvme: Use kstrtobool() instead of strtobool()
+  usb: core: Use kstrtobool() instead of strtobool()
+  usb: gadget: Use kstrtobool() instead of strtobool()
+  ACPI: sysfs: Use kstrtobool() instead of strtobool()
+  clocksource/drivers/arm_arch_timer: Use kstrtobool() instead of
+    strtobool()
+  greybus: svc: Use kstrtobool() instead of strtobool()
+  input: Use kstrtobool() instead of strtobool()
+  platform/chrome: Use kstrtobool() instead of strtobool()
+  powercap: Use kstrtobool() instead of strtobool()
+  video: fbdev: omapfb: Use kstrtobool() instead of strtobool()
+  cifs: Use kstrtobool() instead of strtobool()
+  initramfs: Use kstrtobool() instead of strtobool()
+  module: Use kstrtobool() instead of strtobool()
+  kernel/params.c: Use kstrtobool() instead of strtobool()
+  mm/damon: Use kstrtobool() instead of strtobool()
+  mm: Use kstrtobool() instead of strtobool()
+  Bluetooth: hci_debugfs:: Use kstrtobool() instead of strtobool()
+  test_firmware: Use kstrtobool() instead of strtobool()
+  arm64: cpufeature: Use kstrtobool() instead of strtobool()
+  KVM: arm64: vgic-v3: Use kstrtobool() instead of strtobool()
+  s390/ipl: Use kstrtobool() instead of strtobool()
+  KVM: x86/mmu: Use kstrtobool() instead of strtobool()
+  x86/xen: Use kstrtobool() instead of strtobool()
+  driver core: Use kstrtobool() instead of strtobool()
+  kstrtox: Remove strtobool()
+
+ arch/arm64/kernel/cpufeature.c                |  5 ++--
+ arch/arm64/kvm/vgic/vgic-v3.c                 |  9 +++---
+ arch/s390/kernel/ipl.c                        |  7 +++--
+ arch/x86/kvm/mmu/mmu.c                        |  3 +-
+ arch/x86/xen/enlighten_pv.c                   |  3 +-
+ arch/x86/xen/setup.c                          |  3 +-
+ drivers/acpi/sysfs.c                          |  3 +-
+ drivers/base/core.c                           |  7 +++--
+ drivers/clocksource/arm_arch_timer.c          |  3 +-
+ drivers/greybus/svc.c                         |  3 +-
+ drivers/input/input.c                         |  3 +-
+ drivers/irqchip/irq-gic-v3.c                  |  3 +-
+ drivers/irqchip/irq-gic.c                     |  3 +-
+ drivers/net/usb/cdc_ncm.c                     |  3 +-
+ drivers/net/usb/qmi_wwan.c                    |  5 ++--
+ drivers/net/wireless/ath/ath10k/debug.c       |  5 ++--
+ drivers/net/wireless/ath/ath9k/ath9k.h        |  1 +
+ drivers/net/wireless/ath/ath9k/tx99.c         |  2 +-
+ .../net/wireless/marvell/mwifiex/debugfs.c    |  2 +-
+ drivers/net/wireless/marvell/mwifiex/main.h   |  1 +
+ drivers/nvdimm/namespace_devs.c               |  3 +-
+ drivers/nvdimm/pmem.c                         |  3 +-
+ drivers/nvdimm/region_devs.c                  |  5 ++--
+ drivers/nvme/host/pci.c                       |  3 +-
+ drivers/nvme/target/configfs.c                | 17 ++++++-----
+ drivers/platform/chrome/cros_ec_lightbar.c    |  3 +-
+ drivers/powercap/powercap_sys.c               |  3 +-
+ drivers/target/target_core_configfs.c         | 29 ++++++++++---------
+ drivers/target/target_core_fabric_configfs.c  |  3 +-
+ drivers/usb/core/port.c                       |  3 +-
+ drivers/usb/core/sysfs.c                      |  7 +++--
+ drivers/usb/gadget/configfs.c                 |  3 +-
+ drivers/usb/gadget/function/f_mass_storage.c  |  3 +-
+ drivers/usb/gadget/function/storage_common.c  |  9 +++---
+ drivers/usb/gadget/function/u_serial.c        |  3 +-
+ drivers/usb/gadget/legacy/serial.c            |  3 +-
+ .../fbdev/omap2/omapfb/dss/display-sysfs.c    |  7 +++--
+ .../fbdev/omap2/omapfb/dss/manager-sysfs.c    |  7 +++--
+ .../fbdev/omap2/omapfb/dss/overlay-sysfs.c    |  3 +-
+ .../video/fbdev/omap2/omapfb/omapfb-sysfs.c   |  3 +-
+ fs/cifs/cifs_debug.c                          |  5 ++--
+ include/linux/kernel.h                        |  2 +-
+ init/initramfs.c                              |  8 ++++-
+ kernel/module/main.c                          |  3 +-
+ kernel/params.c                               |  3 +-
+ lib/test_firmware.c                           |  3 +-
+ mm/damon/lru_sort.c                           |  3 +-
+ mm/damon/reclaim.c                            |  3 +-
+ mm/page_table_check.c                         |  3 +-
+ mm/usercopy.c                                 |  3 +-
+ net/bluetooth/hci_debugfs.c                   |  3 +-
+ 51 files changed, 143 insertions(+), 90 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
