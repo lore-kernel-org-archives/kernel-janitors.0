@@ -2,48 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 038AEC4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 10:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B54CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 11:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbiKBK4z (ORCPT
+        id S230342AbiKBLSU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Nov 2022 06:56:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44806 "EHLO
+        Wed, 2 Nov 2022 07:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbiKBK4y (ORCPT
+        with ESMTP id S229618AbiKBLST (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Nov 2022 06:56:54 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 70F3711443;
-        Wed,  2 Nov 2022 03:56:53 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82F111FB;
-        Wed,  2 Nov 2022 03:56:59 -0700 (PDT)
-Received: from FVFF77S0Q05N (unknown [10.57.7.162])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 008E23F5A1;
-        Wed,  2 Nov 2022 03:56:51 -0700 (PDT)
-Date:   Wed, 2 Nov 2022 10:56:46 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
+        Wed, 2 Nov 2022 07:18:19 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5CEA640E;
+        Wed,  2 Nov 2022 04:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1667387898; x=1698923898;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=f6jcVDJYb7xr9ywM8Bu2rxJs57m7FJj4radheE8he5k=;
+  b=Lag1Jymfr6+yp5xX+o0YKnhHatjrbtzS3dbhpEiAOKifcEpxNqlNhcuh
+   +054/O8BVNvKS2e/NhmZoG7AKB2YRNJHB1Bc5HHU2mhWqtIHXJA4buP5o
+   BgQ9nIPL0z1axrifDVR41MvEUsjmr80myHPFIw22HSVwnqs1gr7XidHSe
+   9AlvbiETfFXUxAi0GRU1Rp9bUmU/6DY+Md7wQqCbuJikNV29k47+yYZJn
+   YeErrcL0m8paCL0A1L2X6EANuf5EwImAB3MMuTkeRNRIRJmlRC/LV4qEZ
+   7JSNrk3HgycG9FuOALPg5aJGmi56dgX6vAD8HfWkI2a7uiDksBopDJDU5
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10518"; a="373604888"
+X-IronPort-AV: E=Sophos;i="5.95,232,1661842800"; 
+   d="scan'208";a="373604888"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2022 04:18:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10518"; a="697771846"
+X-IronPort-AV: E=Sophos;i="5.95,232,1661842800"; 
+   d="scan'208";a="697771846"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga008.fm.intel.com with ESMTP; 02 Nov 2022 04:18:14 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oqBl6-0069Cu-0z;
+        Wed, 02 Nov 2022 13:18:12 +0200
+Date:   Wed, 2 Nov 2022 13:18:12 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/30] clocksource/drivers/arm_arch_timer: Use
- kstrtobool() instead of strtobool()
-Message-ID: <Y2JM7mOJwa5ilU4R@FVFF77S0Q05N>
+Cc:     akpm@linux-foundation.org, senozhatsky@chromium.org,
+        wangkefeng.wang@huawei.com, axboe@kernel.dk, kbusch@kernel.org,
+        sfr@canb.auug.org.au, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 00/30] Remove strtobool()
+Message-ID: <Y2JR9CNEWZFUAfkq@smile.fi.intel.com>
 References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
- <f430bb12e12eb225ab1206db0be64b755ddafbdc.1667336095.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f430bb12e12eb225ab1206db0be64b755ddafbdc.1667336095.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 01, 2022 at 10:13:58PM +0100, Christophe JAILLET wrote:
+On Tue, Nov 01, 2022 at 10:05:37PM +0100, Christophe JAILLET wrote:
 > strtobool() is the same as kstrtobool().
 > However, the latter is more used within the kernel.
 > 
@@ -52,47 +72,21 @@ On Tue, Nov 01, 2022 at 10:13:58PM +0100, Christophe JAILLET wrote:
 > 
 > While at it, include the corresponding header file (<linux/kstrtox.h>)
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is part of a serie that axes all usages of strtobool().
-> Each patch can be applied independently from the other ones.
 > 
+> Each patch can be applied independently from the other ones.
 > The last patch of the serie removes the definition of strtobool().
 > 
-> You may not be in copy of the cover letter. So, if needed, it is available
-> at [1].
-> 
-> [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
-> ---
->  drivers/clocksource/arm_arch_timer.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> All patches have been compile tested, except the ones against
+> arm64, s390 and irq-gic.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+I got only a cover letter...
+Luckily we have a powerful `b4` tool and available archives on lore.kernel.org :-)
 
-Mark.
+> Finally, this gives the opportunity to remove some <linux/kernel.h> from
+> a few drivers. This will be addressed later when/if the serie is applied.
 
-> 
-> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-> index a7ff77550e17..1af045b231fd 100644
-> --- a/drivers/clocksource/arm_arch_timer.c
-> +++ b/drivers/clocksource/arm_arch_timer.c
-> @@ -18,6 +18,7 @@
->  #include <linux/clocksource.h>
->  #include <linux/clocksource_ids.h>
->  #include <linux/interrupt.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/of_irq.h>
->  #include <linux/of_address.h>
->  #include <linux/io.h>
-> @@ -97,7 +98,7 @@ static bool evtstrm_enable __ro_after_init = IS_ENABLED(CONFIG_ARM_ARCH_TIMER_EV
->  
->  static int __init early_evtstrm_cfg(char *buf)
->  {
-> -	return strtobool(buf, &evtstrm_enable);
-> +	return kstrtobool(buf, &evtstrm_enable);
->  }
->  early_param("clocksource.arm_arch_timer.evtstrm", early_evtstrm_cfg);
->  
-> -- 
-> 2.34.1
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
