@@ -2,88 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B54CC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 11:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1732C43217
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 11:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230342AbiKBLSU (ORCPT
+        id S230106AbiKBL3d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Nov 2022 07:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54168 "EHLO
+        Wed, 2 Nov 2022 07:29:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229618AbiKBLST (ORCPT
+        with ESMTP id S229493AbiKBL3c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Nov 2022 07:18:19 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5CEA640E;
-        Wed,  2 Nov 2022 04:18:18 -0700 (PDT)
+        Wed, 2 Nov 2022 07:29:32 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F87C29372;
+        Wed,  2 Nov 2022 04:29:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667387898; x=1698923898;
+  t=1667388570; x=1698924570;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=f6jcVDJYb7xr9ywM8Bu2rxJs57m7FJj4radheE8he5k=;
-  b=Lag1Jymfr6+yp5xX+o0YKnhHatjrbtzS3dbhpEiAOKifcEpxNqlNhcuh
-   +054/O8BVNvKS2e/NhmZoG7AKB2YRNJHB1Bc5HHU2mhWqtIHXJA4buP5o
-   BgQ9nIPL0z1axrifDVR41MvEUsjmr80myHPFIw22HSVwnqs1gr7XidHSe
-   9AlvbiETfFXUxAi0GRU1Rp9bUmU/6DY+Md7wQqCbuJikNV29k47+yYZJn
-   YeErrcL0m8paCL0A1L2X6EANuf5EwImAB3MMuTkeRNRIRJmlRC/LV4qEZ
-   7JSNrk3HgycG9FuOALPg5aJGmi56dgX6vAD8HfWkI2a7uiDksBopDJDU5
+  bh=xHltA9cDNqr066zntg/UF56nyb2JOcr0In8V89pVlbU=;
+  b=C7SDQU7KHg5XN2Tr0qvT+lrylnk/1Ojd3MkbMOV3EueA5VoV9h1iTH2h
+   64rggZwD0fF3tIpXbWaLj9sbM20Y3gan3J1bCkoQiM5IUJOll7soDuvs1
+   hatmFMXb4NfNxUGsjFH+UgGDM0cYl+r1mOaoXN6I2MAWlyhh4C2tLveBZ
+   xF4bF0/QEiXIlY732ShhBuNDGX72W7fSSRsuWcyyTe2ot/mLwuVOFmR5d
+   ap2ns3FVtmLnTm3U6rfr73PPdAusWz4CTkFczRp+XoyPasAuxbTITuGMO
+   MtcQ5HpX+1GQw3GpPr2Up7ar30Hv0abJVjYnD+InHhaniBbt+ZIzIdxml
    w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10518"; a="373604888"
+X-IronPort-AV: E=McAfee;i="6500,9779,10518"; a="371474382"
 X-IronPort-AV: E=Sophos;i="5.95,232,1661842800"; 
-   d="scan'208";a="373604888"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2022 04:18:18 -0700
+   d="scan'208";a="371474382"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2022 04:29:30 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10518"; a="697771846"
+X-IronPort-AV: E=McAfee;i="6500,9779,10518"; a="703235434"
 X-IronPort-AV: E=Sophos;i="5.95,232,1661842800"; 
-   d="scan'208";a="697771846"
+   d="scan'208";a="703235434"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Nov 2022 04:18:14 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 02 Nov 2022 04:29:27 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1oqBl6-0069Cu-0z;
-        Wed, 02 Nov 2022 13:18:12 +0200
-Date:   Wed, 2 Nov 2022 13:18:12 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     akpm@linux-foundation.org, senozhatsky@chromium.org,
-        wangkefeng.wang@huawei.com, axboe@kernel.dk, kbusch@kernel.org,
-        sfr@canb.auug.org.au, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 00/30] Remove strtobool()
-Message-ID: <Y2JR9CNEWZFUAfkq@smile.fi.intel.com>
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1oqBvx-0069TA-1p;
+        Wed, 02 Nov 2022 13:29:25 +0200
+Date:   Wed, 2 Nov 2022 13:29:25 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-mm@kvack.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 21/30] mm: Use kstrtobool() instead of strtobool()
+Message-ID: <Y2JUlb6qzV/MqxnY@smile.fi.intel.com>
 References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <03f9401a6c8b87a1c786a2138d16b048f8d0eb53.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <202211011543.20ACBF9@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <202211011543.20ACBF9@keescook>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 01, 2022 at 10:05:37PM +0100, Christophe JAILLET wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
-> 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
-> 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
-> 
-> 
-> Each patch can be applied independently from the other ones.
-> The last patch of the serie removes the definition of strtobool().
-> 
-> All patches have been compile tested, except the ones against
-> arm64, s390 and irq-gic.
+On Tue, Nov 01, 2022 at 03:47:20PM -0700, Kees Cook wrote:
+> On Tue, Nov 01, 2022 at 10:14:09PM +0100, Christophe JAILLET wrote:
 
-I got only a cover letter...
-Luckily we have a powerful `b4` tool and available archives on lore.kernel.org :-)
+...
 
-> Finally, this gives the opportunity to remove some <linux/kernel.h> from
-> a few drivers. This will be addressed later when/if the serie is applied.
+> This seems in keeping with the removal of the simple_*str*() helpers:
+> https://docs.kernel.org/process/deprecated.html#simple-strtol-simple-strtoll-simple-strtoul-simple-strtoull
+
+That piece of the documentation is partially wrong. Nobody will going to remove
+simple_strtox() due to their convenience when it's related to parse something
+from the stream. Yes, overflow is possible, but here is a trade-off.
+
+Note, kstrtox() may not work at early boot stages when we need to parse stream
+(with mixed digits and text and symbols) without acquiring space from the heap,
+i.o.w. RO strings.
 
 -- 
 With Best Regards,
