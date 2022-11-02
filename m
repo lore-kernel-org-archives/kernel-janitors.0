@@ -2,117 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE715C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 06:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D11C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 06:47:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbiKBGgd (ORCPT
+        id S229992AbiKBGrz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Nov 2022 02:36:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44450 "EHLO
+        Wed, 2 Nov 2022 02:47:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbiKBGgc (ORCPT
+        with ESMTP id S229927AbiKBGrw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Nov 2022 02:36:32 -0400
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A079B2613B
-        for <kernel-janitors@vger.kernel.org>; Tue,  1 Nov 2022 23:36:30 -0700 (PDT)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id q7MQoir5CJ83Fq7MQoCnDe; Wed, 02 Nov 2022 07:36:28 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 02 Nov 2022 07:36:28 +0100
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Oliver Neukum <oliver@neukum.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH net-next RESEND] net: usb: Use kstrtobool() instead of strtobool()
-Date:   Wed,  2 Nov 2022 07:36:23 +0100
-Message-Id: <d4432a67b6f769cac0a9ec910ac725298b64e102.1667336095.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Wed, 2 Nov 2022 02:47:52 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A9F425EA7;
+        Tue,  1 Nov 2022 23:47:51 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 997646732D; Wed,  2 Nov 2022 07:47:47 +0100 (CET)
+Date:   Wed, 2 Nov 2022 07:47:47 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 06/30] nvme: Use kstrtobool() instead of strtobool()
+Message-ID: <20221102064747.GA8903@lst.de>
+References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr> <2e8d7f2f3cb754982f5fe99f2e13cf72db9d6dba.1667336095.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e8d7f2f3cb754982f5fe99f2e13cf72db9d6dba.1667336095.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-strtobool() is the same as kstrtobool().
-However, the latter is more used within the kernel.
-
-In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-the other function name.
-
-While at it, include the corresponding header file (<linux/kstrtox.h>).
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch was part of a serie (see [1]), patch 01/30.
-This is resent as a stand alone patch so that bots and CI can trigger.
-
-[1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
----
- drivers/net/usb/cdc_ncm.c  | 3 ++-
- drivers/net/usb/qmi_wwan.c | 5 +++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/usb/cdc_ncm.c b/drivers/net/usb/cdc_ncm.c
-index 8d5cbda33f66..6b5f24f28dd1 100644
---- a/drivers/net/usb/cdc_ncm.c
-+++ b/drivers/net/usb/cdc_ncm.c
-@@ -43,6 +43,7 @@
- #include <linux/ctype.h>
- #include <linux/etherdevice.h>
- #include <linux/ethtool.h>
-+#include <linux/kstrtox.h>
- #include <linux/workqueue.h>
- #include <linux/mii.h>
- #include <linux/crc32.h>
-@@ -318,7 +319,7 @@ static ssize_t ndp_to_end_store(struct device *d,  struct device_attribute *attr
- 	struct cdc_ncm_ctx *ctx = (struct cdc_ncm_ctx *)dev->data[0];
- 	bool enable;
- 
--	if (strtobool(buf, &enable))
-+	if (kstrtobool(buf, &enable))
- 		return -EINVAL;
- 
- 	/* no change? */
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 26c34a7c21bd..30d733c81ed8 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -13,6 +13,7 @@
- #include <linux/ethtool.h>
- #include <linux/etherdevice.h>
- #include <linux/if_arp.h>
-+#include <linux/kstrtox.h>
- #include <linux/mii.h>
- #include <linux/rtnetlink.h>
- #include <linux/usb.h>
-@@ -343,7 +344,7 @@ static ssize_t raw_ip_store(struct device *d,  struct device_attribute *attr, co
- 	bool enable;
- 	int ret;
- 
--	if (strtobool(buf, &enable))
-+	if (kstrtobool(buf, &enable))
- 		return -EINVAL;
- 
- 	/* no change? */
-@@ -492,7 +493,7 @@ static ssize_t pass_through_store(struct device *d,
- 	struct qmi_wwan_state *info;
- 	bool enable;
- 
--	if (strtobool(buf, &enable))
-+	if (kstrtobool(buf, &enable))
- 		return -EINVAL;
- 
- 	info = (void *)&dev->data;
--- 
-2.34.1
-
+What are th other 29 patches doing in this series?  Due to the lack of
+context individual patches from series have to through /dev/null here,
+sorry.
