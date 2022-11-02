@@ -2,102 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FADC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 15:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4873FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 15:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbiKBPvW (ORCPT
+        id S230495AbiKBPxY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Nov 2022 11:51:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60020 "EHLO
+        Wed, 2 Nov 2022 11:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbiKBPvV (ORCPT
+        with ESMTP id S230480AbiKBPxX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Nov 2022 11:51:21 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 060B22AC4E;
-        Wed,  2 Nov 2022 08:51:20 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id y16so25146487wrt.12;
-        Wed, 02 Nov 2022 08:51:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+b8MGxoMM7dt63fJhCwSK3LN+dkZHgo46dIEwpUZaw=;
-        b=pC2K6ewvN//7eO9Ct7Je49ZFsiMM1WDMN9bjl9f3ZOHKERloo4ZAEM8h1myLHMXtg9
-         orJsVnQiTV0NfnInGAsb8+Ocw5h3GR9uLpHAXYom0EMENPg8BNze2K0O/zAr/S6kRrss
-         Hl5qwRZuf3YnbBx4/8QS5LLOi8fGXc29tWdH13vvfMv0rFUQYwZVm4z20idmdAZwz+P9
-         izQ+yVOXyRJ0uQkoII44efV+M/iE6mmtF/rv8iU2FMjIVpMtkjVrdw3tXXos7uu+vnjh
-         N4x3yyUYKfmeUsA5knR+tihXsl4L3ZyzTATbT9I1og7ewtdA6ZxeOVr7cLA8XyWvr1O3
-         6uBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s+b8MGxoMM7dt63fJhCwSK3LN+dkZHgo46dIEwpUZaw=;
-        b=eBX1CHfx4EVSRRGaVTAJK8A9FxYEtJza/l1654JKpIZZkf2XHBoPgJlkIchfoizjr+
-         /gU7b7FVDybxqR6IRU6U13iWXpJcS4HlmvLD8ZGgt1rffD51g1hsR2S/oUKDhHUMTBD3
-         44FUPah89e9a3+za+2t6uzO7ajb4XNDk5hoN8DY8aif5+CTezy1bJsKMZqIdeQANXMI/
-         ItlXxR2Z6FXwUi90yfIkokOT2kdjWmPpGWG/KDtNrnpO/XAbWnlxVLfVISO4u48Z3JSJ
-         OasHEXcBbCPjeEE0fn+PxSVGp+fnsX8PIvlyRpjSLYnlpJF7BEnqkB+8s0PPJRptLirN
-         EXcA==
-X-Gm-Message-State: ACrzQf1KRd+WYgGb1t+dc0dJHz7EzVxpLBPp69Tf50vKIpKflv5JewaS
-        b0Os2ZyXC5YJX84qcv07jQk=
-X-Google-Smtp-Source: AMsMyM5Wwlmv2CJWkvj3LxDz4CVi/7lH8tn2cThpiZ+cLNFDmAmmJsj3Cp+SGWp6jkBZmz20okS9Aw==
-X-Received: by 2002:adf:fe85:0:b0:236:7cde:a95d with SMTP id l5-20020adffe85000000b002367cdea95dmr15769632wrr.531.1667404278413;
-        Wed, 02 Nov 2022 08:51:18 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bi19-20020a05600c3d9300b003c6f3e5ba42sm2317093wmb.46.2022.11.02.08.51.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Nov 2022 08:51:17 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dafna Hirschfeld <dafna@fastmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: rkisp1: make const arrays ae_wnd_num and hist_wnd_num static
-Date:   Wed,  2 Nov 2022 15:51:17 +0000
-Message-Id: <20221102155117.144570-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
-MIME-Version: 1.0
+        Wed, 2 Nov 2022 11:53:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F40965FF;
+        Wed,  2 Nov 2022 08:53:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F278361A3C;
+        Wed,  2 Nov 2022 15:53:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 318C6C433D7;
+        Wed,  2 Nov 2022 15:53:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667404401;
+        bh=YIMhsZZSiri86laUeio2ZJ5MI9Auku8tWuRwUZZgrU4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=vCBRfzG2osYYmCwiur2EJub3kpny7uDgdG3oyZFS2/uu2sG2QqoIuqMacbHs9w3Bm
+         DLbNgBUeVxcEvKnct2F+UVfLMw62d5nUHqyvijxTINuc1X+nvQ+xvW2CM/Bu6e5ip0
+         0EocG+ZCx9QL3sPtXA/ApRuXjeMKfs2M3nHvJt+iCfPPbGrO8+0WWHCVtriaboSlkz
+         Ukv6eQmSN8BrJWb8UX4JB8FgOVz339WQpDtdLFfLNHNFzXSM8cMp9rVSuCTieqxaAq
+         XhoH/4kI74Z66BxeL4YAGzqi0OXIj+bgZlWbO7yeYQbaFYmvxPm9sm/L9khZOz85pz
+         LWXTbSUn+1FNQ==
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ath9k: remove variable sent
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20221024153954.2168503-1-colin.i.king@gmail.com>
+References: <20221024153954.2168503-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <166740439390.20386.10524681182247555003.kvalo@kernel.org>
+Date:   Wed,  2 Nov 2022 15:53:19 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the const arrays on the stack, instead make them
-static. Also makes the object code smaller.
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/platform/rockchip/rkisp1/rkisp1-params.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Variable sent is just being incremented and it's never used
+> anywhere else. The variable and the increment are redundant so
+> remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-index d8731ebbf479..3482f7d707b7 100644
---- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
-@@ -715,7 +715,7 @@ static void rkisp1_aec_config_v12(struct rkisp1_params *params,
- 	u32 exp_ctrl;
- 	u32 block_hsize, block_vsize;
- 	u32 wnd_num_idx = 1;
--	const u32 ae_wnd_num[] = { 5, 9, 15, 15 };
-+	static const u32 ae_wnd_num[] = { 5, 9, 15, 15 };
- 
- 	/* avoid to override the old enable value */
- 	exp_ctrl = rkisp1_read(params->rkisp1, RKISP1_CIF_ISP_EXP_CTRL);
-@@ -822,7 +822,7 @@ static void rkisp1_hst_config_v12(struct rkisp1_params *params,
- 	u32 block_hsize, block_vsize;
- 	u32 wnd_num_idx, hist_weight_num, hist_ctrl, value;
- 	u8 weight15x15[RKISP1_CIF_ISP_HIST_WEIGHT_REG_SIZE_V12];
--	const u32 hist_wnd_num[] = { 5, 9, 15, 15 };
-+	static const u32 hist_wnd_num[] = { 5, 9, 15, 15 };
- 
- 	/* now we just support 9x9 window */
- 	wnd_num_idx = 1;
+Patch applied to ath-next branch of ath.git, thanks.
+
+4f6620cd6bbd wifi: ath9k: remove variable sent
+
 -- 
-2.37.3
+https://patchwork.kernel.org/project/linux-wireless/patch/20221024153954.2168503-1-colin.i.king@gmail.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
