@@ -2,69 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6304AC4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 03:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E18C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 04:30:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231138AbiKBD1r (ORCPT
+        id S229993AbiKBEad (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Nov 2022 23:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46154 "EHLO
+        Wed, 2 Nov 2022 00:30:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231127AbiKBD1p (ORCPT
+        with ESMTP id S229974AbiKBEaX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Nov 2022 23:27:45 -0400
+        Wed, 2 Nov 2022 00:30:23 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5269626109;
-        Tue,  1 Nov 2022 20:27:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6041D65E;
+        Tue,  1 Nov 2022 21:30:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F10F1B8205C;
-        Wed,  2 Nov 2022 03:27:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4174DC433D7;
-        Wed,  2 Nov 2022 03:27:41 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C3C55B820C7;
+        Wed,  2 Nov 2022 04:30:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 72E49C433B5;
+        Wed,  2 Nov 2022 04:30:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667359661;
-        bh=llALIh8Hrutu6IChgEIOcVbBiY23nBZWEke74EjmRyo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=E8zltxDPx4jS4CBkHb4TLvhUi98LbzMZ47fzvQ81O9JLJvRgYYvncnq35vFFRu8GP
-         KYKtWvjXLgAUy+BBZoDg6LdeBP5deQ1qv2Qn7PFxlVayIrm/4+BhUlaGjl7TWOiPaG
-         VB8+RawCwTIrn95Xkh54efMyIiTZh/HfLpGwYdtJEwO1YrR+ZjbzfuiwB4DdDpryTG
-         VybtagmM7BqYtWP548b1apqllyWzn42USuZN7uhZ9mZKwNDn0Q9iB0Sl70sVoGBb/+
-         vWGIqmj03DLutfZ2Xv/+Sg3l0zzRMzykYnFsFqPZe1/SQYGC9MgDewMWKz+DacTuyQ
-         Ymw1pFfXI3klA==
-Date:   Tue, 1 Nov 2022 20:27:40 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Oliver Neukum <oliver@neukum.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        =?UTF-8?B?QmrDuHJu?= Mork <bjorn@mork.no>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 01/30] net: usb: Use kstrtobool() instead of strtobool()
-Message-ID: <20221101202740.3949b091@kernel.org>
-In-Reply-To: <d4432f67b6f769cacdabec910ac723298964e302.1667336095.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
-        <d4432f67b6f769cacdabec910ac723298964e302.1667336095.git.christophe.jaillet@wanadoo.fr>
+        s=k20201202; t=1667363420;
+        bh=KLpiTLhRbosV2KBZEwmavVAw4GWa0QLwvm+v4ICJr6s=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=XAmw947T/D+9lNX3AwHBq7BhL+/+JxIVw/UWA1wLFP9Ka1pYRafZRJKTg/pIHGNJK
+         XoeoavHin7kcSkOSgSuSP4a5lCzdbhVYv17d03VYNfS1YD8bnDA+U3+GESQGsQ3sNp
+         ih9vKlWQID/51KZ6QwMM6xvmPjFWSOCylGFs+S0uvpyRABKmhJHSNyFAubNeaWQaHb
+         aHBohEqKcV7Jd4U8jkzk5rStrpkJ3hTOKXl96f8rMnQPmtvlCsG0ylkOfvWHZHZ1ls
+         NPVhRwjZMxocuXo99yt69DPrgdJfowtkXIdmT24SFR7BvUDNCfDPFt1f0WKzFUvR8S
+         Yx13KVzbA7pCg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 59CA2E270F9;
+        Wed,  2 Nov 2022 04:30:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 13/30] platform/chrome: Use kstrtobool() instead of
+ strtobool()
+From:   patchwork-bot+chrome-platform@kernel.org
+Message-Id: <166736342036.16570.18024323851962138501.git-patchwork-notify@kernel.org>
+Date:   Wed, 02 Nov 2022 04:30:20 +0000
+References: <8d66b4688c05a44b592a4d20e2660e9067163276.1667336095.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <8d66b4688c05a44b592a4d20e2660e9067163276.1667336095.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     bleung@chromium.org, groeck@chromium.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        chrome-platform@lists.linux.dev
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue,  1 Nov 2022 22:13:49 +0100 Christophe JAILLET wrote:
-> This patch is part of a serie that axes all usages of strtobool().
-> Each patch can be applied independently from the other ones.
-> 
-> The last patch of the serie removes the definition of strtobool().
-> 
-> You may not be in copy of the cover letter. So, if needed, it is available
-> at [1].
-> 
-> [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
+Hello:
 
-Please repost this patch separately. Patch bots and CIs will not test
-partially received series.
+This patch was applied to chrome-platform/linux.git (for-kernelci)
+by Tzung-Bi Shih <tzungbi@kernel.org>:
+
+On Tue,  1 Nov 2022 22:14:01 +0100 you wrote:
+> strtobool() is the same as kstrtobool().
+> However, the latter is more used within the kernel.
+> 
+> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> the other function name.
+> 
+> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> 
+> [...]
+
+Here is the summary with links:
+  - [13/30] platform/chrome: Use kstrtobool() instead of strtobool()
+    https://git.kernel.org/chrome-platform/c/58f23a6795a6
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
