@@ -2,62 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7ED8C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 15:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FADC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 15:51:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230426AbiKBP31 (ORCPT
+        id S230002AbiKBPvW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Nov 2022 11:29:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41442 "EHLO
+        Wed, 2 Nov 2022 11:51:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230489AbiKBP3I (ORCPT
+        with ESMTP id S229561AbiKBPvV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Nov 2022 11:29:08 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A871DE87;
-        Wed,  2 Nov 2022 08:29:07 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id y16so25052497wrt.12;
-        Wed, 02 Nov 2022 08:29:07 -0700 (PDT)
+        Wed, 2 Nov 2022 11:51:21 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 060B22AC4E;
+        Wed,  2 Nov 2022 08:51:20 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id y16so25146487wrt.12;
+        Wed, 02 Nov 2022 08:51:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vlDgVPwk9zxW4DatfSwtuEmtcIxF50e1Qm1Ff6dMXCM=;
-        b=Sil0QvMZ6r3C3cjkjxE0gkeyq5icakmlBmFx8brOG50r0nMfUN3s5FPmvaGCelkzQw
-         2NRVodtrXKFxQgv5Hp7HVdJgp2YcECeMOae4GyL/NA14Yx+9rdTWGmXsey9Z0662voqq
-         fCAm8Na1h9SKzXiW1A6sMHfxuGgsIlxXDexBQehHpBr9vaWbQDo0QsqaVLD0r9eNPTfp
-         gePt7iPMEq0PKgCAoyIXE4mmJ1pCN36kzpKI1aPsirzZ+VVbNspInWhO+Oecjue4Rt8L
-         BEGd+MSSOurdUScXgft5hmucTihSn/38hF0Tq+YeRynKi8Kur14T9NiQZH80B8u3km4J
-         GubQ==
+        bh=s+b8MGxoMM7dt63fJhCwSK3LN+dkZHgo46dIEwpUZaw=;
+        b=pC2K6ewvN//7eO9Ct7Je49ZFsiMM1WDMN9bjl9f3ZOHKERloo4ZAEM8h1myLHMXtg9
+         orJsVnQiTV0NfnInGAsb8+Ocw5h3GR9uLpHAXYom0EMENPg8BNze2K0O/zAr/S6kRrss
+         Hl5qwRZuf3YnbBx4/8QS5LLOi8fGXc29tWdH13vvfMv0rFUQYwZVm4z20idmdAZwz+P9
+         izQ+yVOXyRJ0uQkoII44efV+M/iE6mmtF/rv8iU2FMjIVpMtkjVrdw3tXXos7uu+vnjh
+         N4x3yyUYKfmeUsA5knR+tihXsl4L3ZyzTATbT9I1og7ewtdA6ZxeOVr7cLA8XyWvr1O3
+         6uBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vlDgVPwk9zxW4DatfSwtuEmtcIxF50e1Qm1Ff6dMXCM=;
-        b=hrX8G99NkGtywVR9VkE56yqU+492LPXIXM8OUSnzBmkM5ny5/q+kti1oJnR/aDL3xc
-         TmHpmxWN3g2MkHrt0Rh+uY0uwZlYgDkWpYHMbm7mZuBtNP0oNAPhTGVfT6FW6Nis8hxk
-         Yq9tGR6froUQ/qs+AC0IuE39iHV2tumKN++WKbiZy/K5Ihg+bz++VRiGGd79dPqT1z4H
-         gCZwwo8XUoAqQRaBtk1BMWWJYOzP48h73Evqjn5rmbGCrx+GyNP3P35oKK4mWwgVhyBp
-         5t+B8EwnHUgq2/rRF58u+n9066QnJ2Z6kwueh3LjBnpGv47YnnmQmYyT6cBocnm3Ey9/
-         kC3Q==
-X-Gm-Message-State: ACrzQf3/k+0o6rFFyStsuTp34BQrmJ47HruyDT5ysROCpsjxQCtUa3l9
-        eDDkblt7nruyPH0iaFbRgpQ=
-X-Google-Smtp-Source: AMsMyM6Ni8f8wqql/3JbnazGeYIRFQ5AjQZUyijcgg0wjBGuVv6IRKmE6UMYKT5n3af1g1mLPiYf2g==
-X-Received: by 2002:a5d:4f8d:0:b0:236:714b:29f0 with SMTP id d13-20020a5d4f8d000000b00236714b29f0mr14936530wru.145.1667402945591;
-        Wed, 02 Nov 2022 08:29:05 -0700 (PDT)
+        bh=s+b8MGxoMM7dt63fJhCwSK3LN+dkZHgo46dIEwpUZaw=;
+        b=eBX1CHfx4EVSRRGaVTAJK8A9FxYEtJza/l1654JKpIZZkf2XHBoPgJlkIchfoizjr+
+         /gU7b7FVDybxqR6IRU6U13iWXpJcS4HlmvLD8ZGgt1rffD51g1hsR2S/oUKDhHUMTBD3
+         44FUPah89e9a3+za+2t6uzO7ajb4XNDk5hoN8DY8aif5+CTezy1bJsKMZqIdeQANXMI/
+         ItlXxR2Z6FXwUi90yfIkokOT2kdjWmPpGWG/KDtNrnpO/XAbWnlxVLfVISO4u48Z3JSJ
+         OasHEXcBbCPjeEE0fn+PxSVGp+fnsX8PIvlyRpjSLYnlpJF7BEnqkB+8s0PPJRptLirN
+         EXcA==
+X-Gm-Message-State: ACrzQf1KRd+WYgGb1t+dc0dJHz7EzVxpLBPp69Tf50vKIpKflv5JewaS
+        b0Os2ZyXC5YJX84qcv07jQk=
+X-Google-Smtp-Source: AMsMyM5Wwlmv2CJWkvj3LxDz4CVi/7lH8tn2cThpiZ+cLNFDmAmmJsj3Cp+SGWp6jkBZmz20okS9Aw==
+X-Received: by 2002:adf:fe85:0:b0:236:7cde:a95d with SMTP id l5-20020adffe85000000b002367cdea95dmr15769632wrr.531.1667404278413;
+        Wed, 02 Nov 2022 08:51:18 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n188-20020a1c27c5000000b003b49ab8ff53sm2475078wmn.8.2022.11.02.08.29.04
+        by smtp.gmail.com with ESMTPSA id bi19-20020a05600c3d9300b003c6f3e5ba42sm2317093wmb.46.2022.11.02.08.51.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Nov 2022 08:29:05 -0700 (PDT)
+        Wed, 02 Nov 2022 08:51:17 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Han Xu <han.xu@nxp.com>, Haibo Chen <haibo.chen@nxp.com>,
-        Yogesh Gaur <yogeshgaur.83@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+To:     Dafna Hirschfeld <dafna@fastmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: nxp-fspi: make const array ls1028a_soc_attr static
-Date:   Wed,  2 Nov 2022 15:29:04 +0000
-Message-Id: <20221102152904.143423-1-colin.i.king@gmail.com>
+Subject: [PATCH] media: rkisp1: make const arrays ae_wnd_num and hist_wnd_num static
+Date:   Wed,  2 Nov 2022 15:51:17 +0000
+Message-Id: <20221102155117.144570-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,27 +68,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the const array ls1028a_soc_attr on the stack, instead
-make it static. Also makes the object code smaller.
+Don't populate the const arrays on the stack, instead make them
+static. Also makes the object code smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/spi/spi-nxp-fspi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/rockchip/rkisp1/rkisp1-params.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
-index d6a65a989ef8..1c1991a26c15 100644
---- a/drivers/spi/spi-nxp-fspi.c
-+++ b/drivers/spi/spi-nxp-fspi.c
-@@ -924,7 +924,7 @@ static int nxp_fspi_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
+diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
+index d8731ebbf479..3482f7d707b7 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
+@@ -715,7 +715,7 @@ static void rkisp1_aec_config_v12(struct rkisp1_params *params,
+ 	u32 exp_ctrl;
+ 	u32 block_hsize, block_vsize;
+ 	u32 wnd_num_idx = 1;
+-	const u32 ae_wnd_num[] = { 5, 9, 15, 15 };
++	static const u32 ae_wnd_num[] = { 5, 9, 15, 15 };
  
- static void erratum_err050568(struct nxp_fspi *f)
- {
--	const struct soc_device_attribute ls1028a_soc_attr[] = {
-+	static const struct soc_device_attribute ls1028a_soc_attr[] = {
- 		{ .family = "QorIQ LS1028A" },
- 		{ /* sentinel */ }
- 	};
+ 	/* avoid to override the old enable value */
+ 	exp_ctrl = rkisp1_read(params->rkisp1, RKISP1_CIF_ISP_EXP_CTRL);
+@@ -822,7 +822,7 @@ static void rkisp1_hst_config_v12(struct rkisp1_params *params,
+ 	u32 block_hsize, block_vsize;
+ 	u32 wnd_num_idx, hist_weight_num, hist_ctrl, value;
+ 	u8 weight15x15[RKISP1_CIF_ISP_HIST_WEIGHT_REG_SIZE_V12];
+-	const u32 hist_wnd_num[] = { 5, 9, 15, 15 };
++	static const u32 hist_wnd_num[] = { 5, 9, 15, 15 };
+ 
+ 	/* now we just support 9x9 window */
+ 	wnd_num_idx = 1;
 -- 
 2.37.3
 
