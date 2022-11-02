@@ -2,71 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C45FC4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 07:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE4AC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 09:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230398AbiKBHcL (ORCPT
+        id S231316AbiKBJMl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Nov 2022 03:32:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54366 "EHLO
+        Wed, 2 Nov 2022 05:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230388AbiKBHcH (ORCPT
+        with ESMTP id S231394AbiKBJLx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Nov 2022 03:32:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC602529B;
-        Wed,  2 Nov 2022 00:32:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AEB7461847;
-        Wed,  2 Nov 2022 07:32:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FD82C4347C;
-        Wed,  2 Nov 2022 07:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667374326;
-        bh=Sd6R/ym8ws6SxrD/mYxuzF8VqNqBSQDKnssEk4S3V2A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sbi8L50r+tfSWll0Znbf2IqWd2h8Jzhl89gD3gCpS+eepwf5O7zk5H2NvDyQslIyu
-         QUkiM8wM4sE/XGXyxC6Vv1ndXvpVIlAgKXiawWfIudJifZS39JoHeSH/8GuOk8BhcF
-         1HVdkqzU5as5Q5V8GY99NQupqRaJ2imXaKBz2Lkm83f9zgJ1kVOpGY4DvHs0eThWZ2
-         MjSFyu9nwUxQmeGhI9DjpNCohhP/QWZH9NHM7nEEuPbRgAxYOjHNEzlAlnJ0KyY53X
-         QbwIxF2fl95qXPekzPcjsM/1pp3UNGFE4MsICTCLfyU3C2zGQZNMsEMIZ4gFckXaHH
-         tsqresGf8fcFQ==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1oq8E1-000248-Hv; Wed, 02 Nov 2022 08:31:50 +0100
-Date:   Wed, 2 Nov 2022 08:31:49 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        greybus-dev@lists.linaro.org
-Subject: Re: [PATCH 11/30] greybus: svc: Use kstrtobool() instead of
- strtobool()
-Message-ID: <Y2Ic5U176qptH08t@hovoldconsulting.com>
-References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
- <ebf1e6988a53a455990230a37cf759ee542ea7ec.1667336095.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ebf1e6988a53a455990230a37cf759ee542ea7ec.1667336095.git.christophe.jaillet@wanadoo.fr>
+        Wed, 2 Nov 2022 05:11:53 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7287B28709;
+        Wed,  2 Nov 2022 02:11:07 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id f27so43550966eje.1;
+        Wed, 02 Nov 2022 02:11:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RAlb1kax7HoNKVQNf77d4ZzCjwa1EAZi7nCZnHO7gmQ=;
+        b=kW7Gstv8G1/BMZNg//WXpApV3OoQDMXLECH/Np0uSFWFEIR+Hx5AQdjUGBY5xCyjQS
+         UzB4TfT+lCA4pyxk0YwVFGBgCszHttKC3zL0jT+Veh5QcTaDLSPIopqCF/ccoWNvpyDo
+         IFVZY6+T5hq5DYp4Pf54JjqZuGn/jJGpB9OzwdXan3bWVJbFnvzRGi98V7vyJ+ox/k/H
+         92JlpJSDjV7qoPbT33Lj8DfCaVtDLUHUXioKMz6riDWRoi2cN7ZkzYxqRQfvkhASCSMs
+         g6vyEDVXx9JEO9ely4EiFecYNoQy6O/P7JGiHxNKYQkedOD6aFJWvZyOVI6S3zKvT+dX
+         EKFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RAlb1kax7HoNKVQNf77d4ZzCjwa1EAZi7nCZnHO7gmQ=;
+        b=lEC7KAOaMCECkhCx3/qyVYuRsuoIaMuaiwR0hfT/NFfCDMJV0PPyR4DR/4q2UFi+Nk
+         +nLusmRYwMsa4JX4mZUhQbjfWB8Wl93D8oNu/15B2xtA3A4JxPMDaV3bG/jgJCSIye7s
+         hNwl4jhaRLS409EEMWXh/c2srlCeTx/8f6rjnT95JSE/WxaoOSWmh0VHRx9KuZ83PvJg
+         gJHI0mhrAwh1ey9BXHp+w1s93dple+CfsUcym8ISqbzuyFIWS+OeLIOeC49TTLx8z6a2
+         jouING974ahhazxYAXpTA1Ztz7a7C36QVGEwd11nMaX8XyLfJthFyLlxrIQOAupZDYYD
+         oXPg==
+X-Gm-Message-State: ACrzQf1dducJHvZ64KD6rWqFY7MOmF/FyUk95p822biq1O7hsQxF5j99
+        rNPLmV0OQylimW8YiFu/eeh1IK+euMk=
+X-Google-Smtp-Source: AMsMyM5WPTsGoNprGbFwhLCPYvhspYFy6eGwpy3YhnGj8i1h1uGL7+nA0L/FuDrxByuh0ay8j2udAg==
+X-Received: by 2002:a17:907:86a0:b0:78d:df8b:4d17 with SMTP id qa32-20020a17090786a000b0078ddf8b4d17mr22146988ejc.254.1667380265806;
+        Wed, 02 Nov 2022 02:11:05 -0700 (PDT)
+Received: from felia.fritz.box (200116b826ffdf0094d0303451b23214.dip.versatel-1u1.de. [2001:16b8:26ff:df00:94d0:3034:51b2:3214])
+        by smtp.gmail.com with ESMTPSA id bx18-20020a0564020b5200b00459012e5145sm5556331edb.70.2022.11.02.02.11.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Nov 2022 02:11:05 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] clockevents: repair kernel-doc for clockevent_delta2ns()
+Date:   Wed,  2 Nov 2022 10:10:48 +0100
+Message-Id: <20221102091048.15068-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 01, 2022 at 10:13:59PM +0100, Christophe JAILLET wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
-> 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
-> 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Since the introduction of clockevents, i.e., commit d316c57ff6bf
+("clockevents: add core functionality"), there has been a mismatch between
+the function and the kernel-doc comment for clockevent_delta2ns().
 
-Sure, why not:
+Hence, ./scripts/kernel-doc -none kernel/time/clockevents.c warns about it.
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
+Adjust the kernel-doc comment for clockevent_delta2ns() for make W=1
+happiness.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ kernel/time/clockevents.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
+index 5d85014d59b5..960143b183cd 100644
+--- a/kernel/time/clockevents.c
++++ b/kernel/time/clockevents.c
+@@ -76,7 +76,7 @@ static u64 cev_delta2ns(unsigned long latch, struct clock_event_device *evt,
+ }
+ 
+ /**
+- * clockevents_delta2ns - Convert a latch value (device ticks) to nanoseconds
++ * clockevent_delta2ns - Convert a latch value (device ticks) to nanoseconds
+  * @latch:	value to convert
+  * @evt:	pointer to clock event device descriptor
+  *
+-- 
+2.17.1
+
