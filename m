@@ -2,104 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A448C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 07:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C45FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 07:32:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbiKBHFl (ORCPT
+        id S230398AbiKBHcL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Nov 2022 03:05:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33604 "EHLO
+        Wed, 2 Nov 2022 03:32:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbiKBHFg (ORCPT
+        with ESMTP id S230388AbiKBHcH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Nov 2022 03:05:36 -0400
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE2F1DDF7;
-        Wed,  2 Nov 2022 00:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=+ff4znqwIZoXohUvIKNT0EbfCtlyW/3kc/qOs3Vln9I=;
-  b=XYoxH/inCwePyGL2wNXhyAEmag8/xhSQk/q0P4Wl3tioL/4QAedmERoK
-   /p3jv/QLcgU5uVQWRM+1pjQNlRFvBY1X2JB0pxF9UpuDaeW1T/77Td9wE
-   7wFnIKqEeaO1Qe3YFtSC/gKXiVMxQFCybQOx4oBodmkshr7+qmrz53ElI
-   c=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="5.95,232,1661810400"; 
-   d="scan'208";a="72566726"
-Received: from 51.123.68.85.rev.sfr.net (HELO hadrien) ([85.68.123.51])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2022 08:05:32 +0100
-Date:   Wed, 2 Nov 2022 08:05:32 +0100 (CET)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
+        Wed, 2 Nov 2022 03:32:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC602529B;
+        Wed,  2 Nov 2022 00:32:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AEB7461847;
+        Wed,  2 Nov 2022 07:32:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FD82C4347C;
+        Wed,  2 Nov 2022 07:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667374326;
+        bh=Sd6R/ym8ws6SxrD/mYxuzF8VqNqBSQDKnssEk4S3V2A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sbi8L50r+tfSWll0Znbf2IqWd2h8Jzhl89gD3gCpS+eepwf5O7zk5H2NvDyQslIyu
+         QUkiM8wM4sE/XGXyxC6Vv1ndXvpVIlAgKXiawWfIudJifZS39JoHeSH/8GuOk8BhcF
+         1HVdkqzU5as5Q5V8GY99NQupqRaJ2imXaKBz2Lkm83f9zgJ1kVOpGY4DvHs0eThWZ2
+         MjSFyu9nwUxQmeGhI9DjpNCohhP/QWZH9NHM7nEEuPbRgAxYOjHNEzlAlnJ0KyY53X
+         QbwIxF2fl95qXPekzPcjsM/1pp3UNGFE4MsICTCLfyU3C2zGQZNMsEMIZ4gFckXaHH
+         tsqresGf8fcFQ==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1oq8E1-000248-Hv; Wed, 02 Nov 2022 08:31:50 +0100
+Date:   Wed, 2 Nov 2022 08:31:49 +0100
+From:   Johan Hovold <johan@kernel.org>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
-        Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
+Cc:     Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 06/30] nvme: Use kstrtobool() instead of strtobool()
-In-Reply-To: <a0df7655-ac8c-0834-0872-2fa97d5b8797@wanadoo.fr>
-Message-ID: <alpine.DEB.2.22.394.2211020804180.3225@hadrien>
-References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr> <2e8d7f2f3cb754982f5fe99f2e13cf72db9d6dba.1667336095.git.christophe.jaillet@wanadoo.fr> <20221102064747.GA8903@lst.de> <a0df7655-ac8c-0834-0872-2fa97d5b8797@wanadoo.fr>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        greybus-dev@lists.linaro.org
+Subject: Re: [PATCH 11/30] greybus: svc: Use kstrtobool() instead of
+ strtobool()
+Message-ID: <Y2Ic5U176qptH08t@hovoldconsulting.com>
+References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <ebf1e6988a53a455990230a37cf759ee542ea7ec.1667336095.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1625700783-1667372732=:3225"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ebf1e6988a53a455990230a37cf759ee542ea7ec.1667336095.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, Nov 01, 2022 at 10:13:59PM +0100, Christophe JAILLET wrote:
+> strtobool() is the same as kstrtobool().
+> However, the latter is more used within the kernel.
+> 
+> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> the other function name.
+> 
+> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
---8323329-1625700783-1667372732=:3225
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Sure, why not:
 
-
-
-On Wed, 2 Nov 2022, Christophe JAILLET wrote:
-
-> Le 02/11/2022 à 07:47, Christoph Hellwig a écrit :
-> > What are th other 29 patches doing in this series?  Due to the lack of
-> > context individual patches from series have to through /dev/null here,
-> > sorry.
-> >
->
-> Hi,
->
-> in each patch, in order to give some context, I wrote:
->    ---
->    This patch is part of a serie that axes all usages of strtobool().
->    Each patch can be applied independently from the other ones.
->
->    The last patch of the serie removes the definition of strtobool().
->
->    You may not be in copy of the cover letter. So, if needed, it is
->    available at [1].
->
->    [1]:
-> https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
->
->
-> What is the best strategy for sending such patches?
-
-I send the cover letter to everyone.  The problem with sending individual
-unconnected patches is that people who are looking at the patches on
-generic mailing lists can't easily see that they should just skip over all
-of them at once.  But it is hard to please everyone for this issue...
-
-julia
-
->
-> Should I send only individual patches?
-> Should everybody be in copy of all patches? Or at least of the cover letter?
->
->
-> Some patches have already been Acked or even applied. So I'll wait a bit so
-> that things stabilize before resending what is remaining.
->
-> CJ
->
---8323329-1625700783-1667372732=:3225--
+Reviewed-by: Johan Hovold <johan@kernel.org>
