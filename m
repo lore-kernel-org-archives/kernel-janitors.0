@@ -2,85 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF11BC4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 17:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C99C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 18:41:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230442AbiKBRhx (ORCPT
+        id S231262AbiKBSlJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Nov 2022 13:37:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33994 "EHLO
+        Wed, 2 Nov 2022 14:41:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230374AbiKBRhu (ORCPT
+        with ESMTP id S231211AbiKBSlI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Nov 2022 13:37:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B072E686;
-        Wed,  2 Nov 2022 10:37:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E3A6461A7E;
-        Wed,  2 Nov 2022 17:37:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F99C433D6;
-        Wed,  2 Nov 2022 17:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667410669;
-        bh=qBcuLcIPjdURuvuk20JLNusPnboz7EfavDEfGEAzt1Q=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=irEtKYzo3mT3UCtb4KYleQhSUD7Xi9uU0H7UsGUVhWuhOXXDM1cTHFVoqylD/I9bT
-         09SenWfscm1yu1IOyUZN4gJHihHgcdcdWkPPKTB+fkaO7kfQe1ccRcVidPXwAQ8G7F
-         srjRIC3QeOoObSntKkgRFH7s4Iy3mAGdQztWs8FZNQc+jhi3pzdSQ7ajSlxz9kUYYo
-         WEpvelhLAOeOX4Jq6/2ZwxLHPMJV7OHCE8AZ7qpLegl8wq21jt8B68KrPK1FtewF9j
-         ZtsZRZTq/ER5cyu1jw1k8rj+DjTyoakhEuLZLcm/wRAUFgbfufYgoXGvuVy+dAB8yC
-         HMZQRc5fZYchg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Yogesh Gaur <yogeshgaur.83@gmail.com>, Han Xu <han.xu@nxp.com>,
-        linux-spi@vger.kernel.org, Haibo Chen <haibo.chen@nxp.com>,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20221102152904.143423-1-colin.i.king@gmail.com>
-References: <20221102152904.143423-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] spi: nxp-fspi: make const array ls1028a_soc_attr static
-Message-Id: <166741066762.302937.13190941938549227127.b4-ty@kernel.org>
-Date:   Wed, 02 Nov 2022 17:37:47 +0000
+        Wed, 2 Nov 2022 14:41:08 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D97B7E0C8;
+        Wed,  2 Nov 2022 11:41:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=a0QsxHnHaVdr7Z/zTUS3MGyhibIGFKVlfjPe/j6Bv18=; b=FDUztCQqNhOyI6cGVyHvdapFKc
+        sp22jfxIEbeHnut8nwsxubwjNsuqV/UG4PoMCMcC5IxC5nU2S0yjzdvcqjazyh/3PBZB87dm/ApKT
+        10GK3hXzaZmAU0ICl7cg+UMcWrwL0MKkF7evcHjkT7E7EKiPdtU2NroepW52odmcrVi9SQp7ZpVp9
+        EcxbdWhHjvyVaPAkKPK/xpSLD8S6A+CECjdZuKXC+rrgUojTP9toiG9VR6DUMwKmlUag3NKarcQjN
+        dBAotbMFv0+MP7LCA+NWQ95GEoynflhyMU7oAOeUZisqB95dMiwawi1a5S/XXmVhzQdHtjiU5gC1h
+        zHi0PCCw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oqIff-00DBqt-TK; Wed, 02 Nov 2022 18:41:03 +0000
+Date:   Wed, 2 Nov 2022 11:41:03 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-modules@vger.kernel.org
+Subject: Re: [PATCH 18/30] module: Use kstrtobool() instead of strtobool()
+Message-ID: <Y2K5v08yIDNk7sNW@bombadil.infradead.org>
+References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <bb37ff26b0c748d0ca883d8f301190cd1177aad2.1667336095.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fc921
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb37ff26b0c748d0ca883d8f301190cd1177aad2.1667336095.git.christophe.jaillet@wanadoo.fr>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2 Nov 2022 15:29:04 +0000, Colin Ian King wrote:
-> Don't populate the const array ls1028a_soc_attr on the stack, instead
-> make it static. Also makes the object code smaller.
+On Tue, Nov 01, 2022 at 10:14:06PM +0100, Christophe JAILLET wrote:
+> strtobool() is the same as kstrtobool().
+> However, the latter is more used within the kernel.
 > 
+> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> the other function name.
 > 
+> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: nxp-fspi: make const array ls1028a_soc_attr static
-      commit: 6c6c49f2c0993ab3ea4bb71a12c800afd0c59e30
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+  Luis
