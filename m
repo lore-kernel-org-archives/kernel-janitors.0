@@ -2,103 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A741C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 18:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC98EC4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 18:48:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230427AbiKCSjn (ORCPT
+        id S231140AbiKCSse (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 14:39:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37108 "EHLO
+        Thu, 3 Nov 2022 14:48:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbiKCSjm (ORCPT
+        with ESMTP id S229992AbiKCSsb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 14:39:42 -0400
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F408100;
-        Thu,  3 Nov 2022 11:39:41 -0700 (PDT)
-Received: by mail-qk1-f169.google.com with SMTP id k4so1733834qkj.8;
-        Thu, 03 Nov 2022 11:39:41 -0700 (PDT)
+        Thu, 3 Nov 2022 14:48:31 -0400
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC4AE17048;
+        Thu,  3 Nov 2022 11:48:30 -0700 (PDT)
+Received: by mail-qv1-f50.google.com with SMTP id mi9so1752686qvb.8;
+        Thu, 03 Nov 2022 11:48:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KzoAaszO4H5feq9ifFyoUO4g382Xi213Yx0rSxYlkkk=;
-        b=zo9a38LNwQu+3Og3PUQQGnfg+OUM8ZJOzUvV8adbbZdwM5CFXa1Z9wc+b9FLQq199b
-         3HmuFX0vXmV52jdGBpjaAQoV4EfkioXiEwGGFPtYHFmIslMWvTtWgTxhro+49z1PrI9N
-         WV7N3NaL8q1I5I4+qMIa1Dcue4xQHbTXtjvXbHQBYKPyYj+Xr92NjTL+sP0QQQuzdcua
-         WNeqXQS3dQiY5T249Hkg7+o2XHuJTrx9qd0rx9dMdh8z1hFSh0Jq7OLPeRDWSFs8r1cA
-         M0K+/AVfPyzgO799cwE16dcmOf9L/PKK2O+j1y5SkXCMA9JRcgmccwAhy6v5V2UNVB+b
-         xdtg==
-X-Gm-Message-State: ACrzQf1NeCDzHfcnQCFHTDThd5Qm51J7se3JX3MuyG8lA8Q5aHQL1Fo4
-        qzcv9zI0QqKCOjU/EqQIWLgf8KkRxo8hwpO9ZaE=
-X-Google-Smtp-Source: AMsMyM6h+nd034u171sGJIo0kMJVTuQtZWkzxVeBridmsJRx5IuuFc8gdtf2RwlsqaRBnYO0BBU432GqNNR63++MGA8=
-X-Received: by 2002:a37:b1c2:0:b0:6fa:1185:4dbf with SMTP id
- a185-20020a37b1c2000000b006fa11854dbfmr22071519qkf.764.1667500780650; Thu, 03
- Nov 2022 11:39:40 -0700 (PDT)
+        bh=qFFj0YnqgTVbsW45BjHNbWg4SjPrNwZE8AOD83zKJ74=;
+        b=Ue83nvM49wxmIJpeW0OdsHD3NSvihD3GyzcevI5S7uiJNIjY+Ud+7eAp3rb+X+S0PR
+         KcAdJrR6FtS+MFBh7QuRpQ4ouO1vEKlg3cLtlQNk8cGUntKbT9y7LMuJClvOeUWGOCQg
+         gVVwUKpUnES7wma6SAPNy3srUgd4nrtt3K/PiMttvc8+4HPNgqfVWwA0hkj4dhni+LQl
+         +83k2EoB0FHv6u7xFh6V886k5VYAZWS/SflmxWB44v3TGzi79KVetJrkTKSz4cRKlFZh
+         A900vMp3zMbR7BDjgRwiNDjbUsNBr+M47xlxrKfDpTtaHhcg60K21MXJjLimqFTNSjXx
+         6l1g==
+X-Gm-Message-State: ACrzQf2SAkYYZsOgrtVdRcAk5Dv+cpiFrsUlgo5ih+YVfDFl9WKJcrLp
+        Oirq8ExSKPB2JPAYMNadb1PLF2JrvRMB2va2Qhnfrcky
+X-Google-Smtp-Source: AMsMyM5ByWBOLNaWU6upUbPGJQZXvuckz/Axld8j4XIsJqWWxPKRr6T3ZjvryDDlHqoJOyOQI58Wmx/N/Sqtel0PzrE=
+X-Received: by 2002:a0c:c684:0:b0:4bb:fc53:5ad9 with SMTP id
+ d4-20020a0cc684000000b004bbfc535ad9mr19725144qvj.3.1667501309876; Thu, 03 Nov
+ 2022 11:48:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr> <652abbd70fca17977135754901135a6dad5d636c.1667336095.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <652abbd70fca17977135754901135a6dad5d636c.1667336095.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <57396f1eacfacdb589127499f8ff64225a39e110.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <Y2JVhffdmXkkrIRN@smile.fi.intel.com>
+In-Reply-To: <Y2JVhffdmXkkrIRN@smile.fi.intel.com>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 3 Nov 2022 19:39:29 +0100
-Message-ID: <CAJZ5v0iy8UfC_9rsUGObgGQ=6_Ts17E0rTn_LSbYhbGNrvq4FQ@mail.gmail.com>
-Subject: Re: [PATCH 14/30] powercap: Use kstrtobool() instead of strtobool()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-pm@vger.kernel.org
+Date:   Thu, 3 Nov 2022 19:48:19 +0100
+Message-ID: <CAJZ5v0hdzYuiKECEdXFB0vmz=6Z697DRp0Xx5jwyqHH4SGrLCA@mail.gmail.com>
+Subject: Re: [PATCH 09/30] ACPI: sysfs: Use kstrtobool() instead of strtobool()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-acpi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 1, 2022 at 10:15 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+On Wed, Nov 2, 2022 at 12:33 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
+> On Tue, Nov 01, 2022 at 10:13:57PM +0100, Christophe JAILLET wrote:
+> > strtobool() is the same as kstrtobool().
+> > However, the latter is more used within the kernel.
+> >
+> > In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> > the other function name.
+> >
+> > While at it, include the corresponding header file (<linux/kstrtox.h>)
 >
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 >
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is part of a serie that axes all usages of strtobool().
-> Each patch can be applied independently from the other ones.
->
-> The last patch of the serie removes the definition of strtobool().
->
-> You may not be in copy of the cover letter. So, if needed, it is available
-> at [1].
->
-> [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
-> ---
->  drivers/powercap/powercap_sys.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
-> index f0654a932b37..1f968353d479 100644
-> --- a/drivers/powercap/powercap_sys.c
-> +++ b/drivers/powercap/powercap_sys.c
-> @@ -7,6 +7,7 @@
->  #include <linux/module.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/slab.h>
->  #include <linux/powercap.h>
->
-> @@ -446,7 +447,7 @@ static ssize_t enabled_store(struct device *dev,
->  {
->         bool mode;
->
-> -       if (strtobool(buf, &mode))
-> +       if (kstrtobool(buf, &mode))
->                 return -EINVAL;
->         if (dev->parent) {
->                 struct powercap_zone *power_zone = to_powercap_zone(dev);
-> --
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > This patch is part of a serie that axes all usages of strtobool().
+> > Each patch can be applied independently from the other ones.
+> >
+> > The last patch of the serie removes the definition of strtobool().
+> >
+> > You may not be in copy of the cover letter. So, if needed, it is available
+> > at [1].
+> >
+> > [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
+> > ---
+> >  drivers/acpi/sysfs.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
+> > index cc2fe0618178..2d81c742e4d2 100644
+> > --- a/drivers/acpi/sysfs.c
+> > +++ b/drivers/acpi/sysfs.c
+> > @@ -9,6 +9,7 @@
+> >  #include <linux/bitmap.h>
+> >  #include <linux/init.h>
+> >  #include <linux/kernel.h>
+> > +#include <linux/kstrtox.h>
+> >  #include <linux/moduleparam.h>
+> >
+> >  #include "internal.h"
+> > @@ -992,7 +993,7 @@ static ssize_t force_remove_store(struct kobject *kobj,
+> >       bool val;
+> >       int ret;
+> >
+> > -     ret = strtobool(buf, &val);
+> > +     ret = kstrtobool(buf, &val);
+> >       if (ret < 0)
+> >               return ret;
+> >
+> > --
 
 Applied as 6.2 material, thanks!
