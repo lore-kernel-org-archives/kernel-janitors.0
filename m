@@ -2,61 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C99C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Nov 2022 18:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B89F8C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 05:04:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231262AbiKBSlJ (ORCPT
+        id S230182AbiKCFEm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Nov 2022 14:41:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35968 "EHLO
+        Thu, 3 Nov 2022 01:04:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231211AbiKBSlI (ORCPT
+        with ESMTP id S229459AbiKCFEk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Nov 2022 14:41:08 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D97B7E0C8;
-        Wed,  2 Nov 2022 11:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=a0QsxHnHaVdr7Z/zTUS3MGyhibIGFKVlfjPe/j6Bv18=; b=FDUztCQqNhOyI6cGVyHvdapFKc
-        sp22jfxIEbeHnut8nwsxubwjNsuqV/UG4PoMCMcC5IxC5nU2S0yjzdvcqjazyh/3PBZB87dm/ApKT
-        10GK3hXzaZmAU0ICl7cg+UMcWrwL0MKkF7evcHjkT7E7EKiPdtU2NroepW52odmcrVi9SQp7ZpVp9
-        EcxbdWhHjvyVaPAkKPK/xpSLD8S6A+CECjdZuKXC+rrgUojTP9toiG9VR6DUMwKmlUag3NKarcQjN
-        dBAotbMFv0+MP7LCA+NWQ95GEoynflhyMU7oAOeUZisqB95dMiwawi1a5S/XXmVhzQdHtjiU5gC1h
-        zHi0PCCw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oqIff-00DBqt-TK; Wed, 02 Nov 2022 18:41:03 +0000
-Date:   Wed, 2 Nov 2022 11:41:03 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
+        Thu, 3 Nov 2022 01:04:40 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F9A12D3E;
+        Wed,  2 Nov 2022 22:04:38 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2A354Xm1121633;
+        Thu, 3 Nov 2022 00:04:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1667451873;
+        bh=iyDAmYDeroflNKLReuHpG9mB0WIknotKzeCIWGGdcQY=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=qGcWLGYK7q/FIT1Y0vTvTiaVjczA2SoYm/2lEb/OgEWu2VNoFzRAJIZQtDksS70uU
+         N56HTCD9kILZEqGUpxQEf5sTeHgs94xHiTIYmRcd55ALk7nNFqKQ9f/HL3MjRX7Eve
+         AlzdehCDoy1NQ7VnYKAW/MbRrVjz8+rzGNwZ1E4E=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2A354XBY054071
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 3 Nov 2022 00:04:33 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Thu, 3 Nov
+ 2022 00:04:33 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
+ Frontend Transport; Thu, 3 Nov 2022 00:04:33 -0500
+Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2A354Xuf052085;
+        Thu, 3 Nov 2022 00:04:33 -0500
+Date:   Thu, 3 Nov 2022 00:04:33 -0500
+From:   Nishanth Menon <nm@ti.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-modules@vger.kernel.org
-Subject: Re: [PATCH 18/30] module: Use kstrtobool() instead of strtobool()
-Message-ID: <Y2K5v08yIDNk7sNW@bombadil.infradead.org>
-References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
- <bb37ff26b0c748d0ca883d8f301190cd1177aad2.1667336095.git.christophe.jaillet@wanadoo.fr>
+CC:     <kristo@kernel.org>, <ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] firmware: ti_sci: Use devm_bitmap_zalloc when applicable
+Message-ID: <20221103050433.pp52c4goatd27gny@client>
+References: <1bd77909ff75f62a2228a39db208c4c6d1b3e0e2.1632659746.git.christophe.jaillet@wanadoo.fr>
+ <20210927133807.rtkfjkxxlwpdqcnf@scouring>
+ <788db74a-f3fd-4685-82b9-3257106c6260@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <bb37ff26b0c748d0ca883d8f301190cd1177aad2.1667336095.git.christophe.jaillet@wanadoo.fr>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <788db74a-f3fd-4685-82b9-3257106c6260@wanadoo.fr>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 01, 2022 at 10:14:06PM +0100, Christophe JAILLET wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
+On 21:40-20221031, Christophe JAILLET wrote:
+> Le 27/09/2021 à 15:38, Nishanth Menon a écrit :
+> > On 14:36-20210926, Christophe JAILLET wrote:
+> > > 'xfer_alloc_table' is a bitmap. So use 'devm_bitmap_zalloc()' to simplify
+> > > code and improve the semantic of the code.
+> > > 
+> > > While at it, remove a redundant 'bitmap_zero()' call.
+> > > 
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > >   drivers/firmware/ti_sci.c | 8 +++-----
+> > >   1 file changed, 3 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+> > > index 235c7e7869aa..a33eb884102f 100644
+> > > --- a/drivers/firmware/ti_sci.c
+> > > +++ b/drivers/firmware/ti_sci.c
+> > > @@ -3352,13 +3352,11 @@ static int ti_sci_probe(struct platform_device *pdev)
+> > >   	if (!minfo->xfer_block)
+> > >   		return -ENOMEM;
+> > > -	minfo->xfer_alloc_table = devm_kcalloc(dev,
+> > > -					       BITS_TO_LONGS(desc->max_msgs),
+> > > -					       sizeof(unsigned long),
+> > > -					       GFP_KERNEL);
+> > > +	minfo->xfer_alloc_table = devm_bitmap_zalloc(dev,
+> > > +						     desc->max_msgs,
+> > > +						     GFP_KERNEL);
+> > >   	if (!minfo->xfer_alloc_table)
+> > >   		return -ENOMEM;
+> > > -	bitmap_zero(minfo->xfer_alloc_table, desc->max_msgs);
+> > >   	/* Pre-initialize the buffer pointer to pre-allocated buffers */
+> > >   	for (i = 0, xfer = minfo->xfer_block; i < desc->max_msgs; i++, xfer++) {
+> > > -- 
+> > > 2.30.2
+> > > 
+> > 
+> > Reviewed-by: Nishanth Menon <nm@ti.com>
+> > 
 > 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
+> Hi,
 > 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> another similar patch has been merged against 'drivers/firmware/ti_sci.c'
+> just a few days ago, so this one could also be applied.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Let me know if I need to rebase and/or resend it.
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-  Luis
+Yes please - please rebase and resend.. wow, [1] that is over an year old..
+Sorry for letting it slip through the fingers
+
+
+[1] https://lore.kernel.org/all/1bd77909ff75f62a2228a39db208c4c6d1b3e0e2.1632659746.git.christophe.jaillet@wanadoo.fr/
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
