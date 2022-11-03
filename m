@@ -2,64 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F1FC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 13:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8140BC43217
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 13:21:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231588AbiKCNHW (ORCPT
+        id S231627AbiKCNVr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 09:07:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48454 "EHLO
+        Thu, 3 Nov 2022 09:21:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231843AbiKCNHF (ORCPT
+        with ESMTP id S231171AbiKCNVp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 09:07:05 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE7CB14D08;
-        Thu,  3 Nov 2022 06:06:22 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id cl5so2653995wrb.9;
-        Thu, 03 Nov 2022 06:06:22 -0700 (PDT)
+        Thu, 3 Nov 2022 09:21:45 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EBBB13E22;
+        Thu,  3 Nov 2022 06:21:44 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id p16so1119884wmc.3;
+        Thu, 03 Nov 2022 06:21:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fxui20KvNriC9XitvtEzDQZsPD1wh2iQuea1gk/77Mw=;
-        b=pB//Raqfkxykfv8IuPbNdoswD4V05DPzrriADnM/RRLIyHcvyN0jjiqPuRoH/dQXIL
-         Th4Y19P+XSS3Gd9UmX+ipgYtJnfClI2Y8ZFZM1xl0WD95N38b7iK9dBGzZ7oLtCWhOV8
-         o4lBfF/z8NDMC7/G1UybmUMM3mTcVRShaQ0FGyOzzAP5wQ8ICoGdM5KhfAjDtVj522jS
-         M4QnoXdKc2wIkOCETz1eQXWRN4p1krgK84w0Hj+t43sYhWxqjFDfq4TbmX1g/vSa1Ygz
-         ec5GpNt7YfIuY9jQEm66QYVh8KVaUryAyZXNio4i24MEUKvOjrEoxJ0YFHO5bUK9ZSy8
-         0ZfA==
+        bh=OY/0Zt8FwX5kTy53FzOKqmm1vtlRPaq+T8e8ZY4Q7eA=;
+        b=cgED+cyhzriZDjNBEDDn+Bf3yvyYUXqca6zfBlyWXDuH/fwDwvy6Cypk8fcRgh6WuF
+         WP8Bl4IOtJFJ42X42WO+/nwjv2kXcdPzCoOvcfMDGDb4DJGTJm/6DDfzBCBXyfSgo7pU
+         jhK11V+j61Z6W+6p9j5ccPGHMmVjr6nbI5m5Ss5C1C7twzksF8Ipg+/uFituJfnjIi52
+         PH/omYypZGZJhKknpfWvT+iHjMm2LqftX59XEgSZwmwG1ZCUR0PnHygSMAS7QEYON1Ge
+         gRuslMzkexi4WohZjS5mbKo0icfhrqby8uLT24WvSFVcfIJgCw4yOFMaNwOMDl3djkBY
+         sPBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fxui20KvNriC9XitvtEzDQZsPD1wh2iQuea1gk/77Mw=;
-        b=S4rFGSnUlrvUMJhXF6G4m8NR3QteS0VgKiJ4EtG5tZobQUmYYNntDo31LO28i3vVOc
-         CYweyI4iRd+Slq3iOYlos64EY1TQQU5W9eqy/PdzHcK1wlYZyiXoxcn5NwZwx/6zJmwT
-         TNUIoCjS0IlBsaYGE/OzBi4HS9CjVMOsRS8KOLZ2bO/US1L7v52g4D3TJZNaIn3SUnuP
-         H/NraOnEu4CnI9sPzOl1Ptb3Ju7EN10cqRVz5OKIw6Wqija9gouPdQ8m02S4FY3GZCci
-         ouncTwsHwQrQJ/a2Qn9F1hGMzpLihdJPZrVO3ECIxBmJiRd0oIjWby6pIUMyEoVqMkn2
-         C4aQ==
-X-Gm-Message-State: ACrzQf2g4LXHdtmvEfGsqvZA4fBQp3nU0h5tW0HmGa0jIKk08lNoXt2s
-        LrNLH6jS76jH543X/psb6nY=
-X-Google-Smtp-Source: AMsMyM55qyrSvfMGDqYrZzEgYnch4RFuC18ZSjNjhAWLi6kk7whlNNYZmbQFnW2jM5ixRoU4RgKOcw==
-X-Received: by 2002:a5d:4008:0:b0:235:a4c4:97c2 with SMTP id n8-20020a5d4008000000b00235a4c497c2mr19201064wrp.295.1667480781075;
-        Thu, 03 Nov 2022 06:06:21 -0700 (PDT)
+        bh=OY/0Zt8FwX5kTy53FzOKqmm1vtlRPaq+T8e8ZY4Q7eA=;
+        b=dNifVwoXFLXswseqqWmT1giECBOP06G9RVC6nPRgIIQ+lS+ZkyKZpWfAbQprASy0bC
+         sWcAhFEKI63z50hwhaBcYFZowCnX9uwJCpAFB2sfmmGR3yPSrWYZAn1LkeT0QCEFgQTV
+         iv+coxIimNMQ0J5tZL92AgIFhzi0IK/gaYhY3H8RTH0TSMQwbsHYBARWpRuNkWxK4wyC
+         FJE6LHep4iY2nMen29hBxjqMHeUK/Od6/+MGT9ioWx3j47Lz0m4aEywaLYOuf76ydlDY
+         SHnHiZ7AHALNL7ewXHI5vmJOnJlKivzt4muMGnMKEYptVinNLZQlzbm/9W5YiR9hgmCY
+         1NBQ==
+X-Gm-Message-State: ACrzQf2pWGFpHkkrhgleBnX7sMfsgTxKNNNIjjtoUMtbwhnceum4887p
+        9ChK+//10a3+O9NF35oactA=
+X-Google-Smtp-Source: AMsMyM50VA6HkdWKwSWQjiT3ABQyyDKeFVP1Vnl5uf4bNgEtruDdzrvwMWKdOfsF00ADsAPra3CcFQ==
+X-Received: by 2002:a1c:2987:0:b0:3c6:c0cc:b4c2 with SMTP id p129-20020a1c2987000000b003c6c0ccb4c2mr18877676wmp.56.1667481702566;
+        Thu, 03 Nov 2022 06:21:42 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w12-20020a05600c474c00b003b4a699ce8esm5608162wmo.6.2022.11.03.06.06.20
+        by smtp.gmail.com with ESMTPSA id e7-20020a05600c448700b003c64c186206sm1190503wmo.16.2022.11.03.06.21.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 06:06:20 -0700 (PDT)
+        Thu, 03 Nov 2022 06:21:42 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-        Aaron Lawrence <t4rmin@zohomail.com>,
-        Yogesh Hegde <yogi.kernel@gmail.com>,
-        linux-staging@lists.linux.dev
+To:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] staging: rtl8192e: rtl819x_HTProc: make arrays const and one static
-Date:   Thu,  3 Nov 2022 13:06:19 +0000
-Message-Id: <20221103130619.78413-1-colin.i.king@gmail.com>
+Subject: [PATCH] cpufreq: longhaul: Make array speeds static const
+Date:   Thu,  3 Nov 2022 13:21:41 +0000
+Message-Id: <20221103132141.79671-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,38 +66,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Make two dead-only arrays const. Make array EWC11NHTCap static const
-so it is not populated on the stack, makes the code smaller too.
+Don't populate the read-only array speeds on the stack but instead
+make it static. Also makes the object code a little smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/staging/rtl8192e/rtl819x_HTProc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/cpufreq/longhaul.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl819x_HTProc.c b/drivers/staging/rtl8192e/rtl819x_HTProc.c
-index 62aa8e893c34..84ec8df047d7 100644
---- a/drivers/staging/rtl8192e/rtl819x_HTProc.c
-+++ b/drivers/staging/rtl8192e/rtl819x_HTProc.c
-@@ -282,7 +282,7 @@ void HTConstructCapabilityElement(struct rtllib_device *ieee, u8 *posHTCap,
- 	memset(posHTCap, 0, *len);
+diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
+index 3e000e1a75c6..25f8ef7bac47 100644
+--- a/drivers/cpufreq/longhaul.c
++++ b/drivers/cpufreq/longhaul.c
+@@ -407,7 +407,7 @@ static int guess_fsb(int mult)
+ {
+ 	int speed = cpu_khz / 1000;
+ 	int i;
+-	int speeds[] = { 666, 1000, 1333, 2000 };
++	static const int speeds[] = { 666, 1000, 1333, 2000 };
+ 	int f_max, f_min;
  
- 	if ((bAssoc) && (pHT->ePeerHTSpecVer == HT_SPEC_VER_EWC)) {
--		u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};
-+		static const u8	EWC11NHTCap[] = { 0x00, 0x90, 0x4c, 0x33 };
- 
- 		memcpy(posHTCap, EWC11NHTCap, sizeof(EWC11NHTCap));
- 		pCapELE = (struct ht_capab_ele *)&posHTCap[4];
-@@ -515,8 +515,8 @@ void HTOnAssocRsp(struct rtllib_device *ieee)
- 	u16 nMaxAMSDUSize = 0;
- 	u8 *pMcsFilter = NULL;
- 
--	static u8 EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};
--	static u8 EWC11NHTInfo[] = {0x00, 0x90, 0x4c, 0x34};
-+	static const u8 EWC11NHTCap[] = { 0x00, 0x90, 0x4c, 0x33 };
-+	static const u8 EWC11NHTInfo[] = { 0x00, 0x90, 0x4c, 0x34 };
- 
- 	if (!pHTInfo->bCurrentHTSupport) {
- 		netdev_warn(ieee->dev, "%s(): HT_DISABLE\n", __func__);
+ 	for (i = 0; i < 4; i++) {
 -- 
 2.38.1
 
