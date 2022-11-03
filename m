@@ -2,103 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BC7C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 13:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B8EC4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 14:22:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231253AbiKCNvM (ORCPT
+        id S231280AbiKCOVu convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 09:51:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48476 "EHLO
+        Thu, 3 Nov 2022 10:21:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230111AbiKCNvK (ORCPT
+        with ESMTP id S231458AbiKCOVr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 09:51:10 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD08B1F0;
-        Thu,  3 Nov 2022 06:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667483469; x=1699019469;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=MdJs6GJxG+5C4y1kNW92hXKl7i8pmS2mGPoi5urTFW0=;
-  b=gYYukWFSCIP2WEt2GE4LLlQX0WK5PL94cpE6ME0vqcpKuy29OXmlI3td
-   M6DHb4T8tptA8vbhty8leC1VQR7fJHi3qVFXQP1teynuXBpL/x01uESob
-   eKDvqhRoJozew6erezuQJt39cFU0akKukROFphPCWxf0OQXjDutYTu1//
-   njMwx+I4ghwQIPpJQj6Y804jlym0cDwQusedPTIvaIy5GmH01YhodWTOz
-   1IDm8pExUSKZNuYdgcwLDi7aU6X+VmwveY5mYXjvkqrKEE5uUkt4ytqt2
-   xRS9cRgHxaf30FG6mVOtheXyOKnx9RHvdWUtg8D/NlTz5l8jeC7nV4/oM
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10520"; a="371786827"
-X-IronPort-AV: E=Sophos;i="5.96,235,1665471600"; 
-   d="scan'208";a="371786827"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2022 06:51:08 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10520"; a="667972012"
-X-IronPort-AV: E=Sophos;i="5.96,235,1665471600"; 
-   d="scan'208";a="667972012"
-Received: from jnikula-mobl4.fi.intel.com (HELO localhost) ([10.237.66.147])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2022 06:51:05 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
+        Thu, 3 Nov 2022 10:21:47 -0400
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B23811A2F;
+        Thu,  3 Nov 2022 07:21:44 -0700 (PDT)
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay01.hostedemail.com (Postfix) with ESMTP id BA2A51C6E3C;
+        Thu,  3 Nov 2022 14:15:28 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf09.hostedemail.com (Postfix) with ESMTPA id 6C49E20028;
+        Thu,  3 Nov 2022 14:15:25 +0000 (UTC)
+Message-ID: <aec9ee4b771b70d0839d51b836e6301f0a2a1276.camel@perches.com>
+Subject: Re: [PATCH] cpufreq: longhaul: Make array speeds static const
+From:   Joe Perches <joe@perches.com>
 To:     Colin Ian King <colin.i.king@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/edid: make a couple of read-only arrays static const
-In-Reply-To: <20221103133730.80940-1-colin.i.king@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20221103133730.80940-1-colin.i.king@gmail.com>
-Date:   Thu, 03 Nov 2022 15:51:01 +0200
-Message-ID: <87o7tob0ze.fsf@intel.com>
+Date:   Thu, 03 Nov 2022 07:15:24 -0700
+In-Reply-To: <20221103132141.79671-1-colin.i.king@gmail.com>
+References: <20221103132141.79671-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Stat-Signature: juf6noichzo31sn5pnmdnohcwbefk415
+X-Rspamd-Server: rspamout06
+X-Rspamd-Queue-Id: 6C49E20028
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+0rYv0RZQBQuYXkqWzGykvjJA0douUVFc=
+X-HE-Tag: 1667484925-846150
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 03 Nov 2022, Colin Ian King <colin.i.king@gmail.com> wrote:
-> Don't populate two read-only arrays on the stack but instead make
-> them static const . Also makes the object code a little smaller.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpu/drm/drm_edid.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 4671dc23abe0..50d488cc840e 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -3916,8 +3916,8 @@ static int drm_cvt_modes(struct drm_connector *connector,
->  	struct drm_display_mode *newmode;
->  	struct drm_device *dev = connector->dev;
->  	const struct cvt_timing *cvt;
-> -	const int rates[] = { 60, 85, 75, 60, 50 };
-> -	const u8 empty[3] = { 0, 0, 0 };
-> +	static const int rates[] = { 60, 85, 75, 60, 50 };
-> +	static const u8 empty[3] = { 0, 0, 0 };
-
-The change is fine per se, but I think this whole array is silly. Could
-be removed with:
-
--		if (!memcmp(cvt->code, empty, 3))
-+		if (!memchr_inv(cvt->code, 0, sizeof(cvt->code)))
-
-
-BR,
-Jani.
-
-PS. I also note that rates[0] is never used, but that's another story,
-maybe a bug.
-
-
+On Thu, 2022-11-03 at 13:21 +0000, Colin Ian King wrote:
+> Don't populate the read-only array speeds on the stack but instead
+> make it static. Also makes the object code a little smaller.
+[]
+> diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
+[]
+> @@ -407,7 +407,7 @@ static int guess_fsb(int mult)
+>  {
+>  	int speed = cpu_khz / 1000;
+>  	int i;
+> -	int speeds[] = { 666, 1000, 1333, 2000 };
+> +	static const int speeds[] = { 666, 1000, 1333, 2000 };
+>  	int f_max, f_min;
 >  
 >  	for (i = 0; i < 4; i++) {
->  		int width, height;
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+style trivia:  the loop test is probably better using ARRAY_SIZE
+
+	for (i = 0; i < ARRAY_SIZE(speeds); i++)
+
