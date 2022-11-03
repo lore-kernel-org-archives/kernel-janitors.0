@@ -2,95 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D213C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 14:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98294C43217
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 14:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231130AbiKCOiV (ORCPT
+        id S231605AbiKCOkP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 10:38:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55904 "EHLO
+        Thu, 3 Nov 2022 10:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231476AbiKCOiL (ORCPT
+        with ESMTP id S231624AbiKCOkO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 10:38:11 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3536817E3A
-        for <kernel-janitors@vger.kernel.org>; Thu,  3 Nov 2022 07:38:10 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id o7so1835422pjj.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Nov 2022 07:38:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3jW54++uxyK7o2UooQPLlMKo+gL8kv6ho/UXj8hUPhI=;
-        b=zENNyTmOQJnACganlVlNM6ScQjFQKKpReAFnE/oqWsb8Gj6Fyg4+68z47Dz8WLB9Ha
-         79niGL33xijYPthgcEtDeVKv4FJmTtEt9GMq8ey89Obt6DR6/gVyFrvd5RLKG1xyoRUa
-         21oJJ3wZyx+yrCc8oZO6leD8hVMCwhypAPY9PN1xNNzRN/cnONML/yfg4mXO/EjCBOvs
-         Nxze/d6ZdQ4OExxQTPNq5h691M4ZUcoa+tOBsXG+VRgof7s38jVAnHnfcr7lAaButfZ5
-         ULpsqZu3/wUSWmqN2IftVZH/pUBCpfbUshel9RDjKyjXiAMzPkM3l3rvdkrQZ7hx0VKV
-         Vy6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3jW54++uxyK7o2UooQPLlMKo+gL8kv6ho/UXj8hUPhI=;
-        b=PHTtfFmEMNl+ADH6gd19mQ5xHJLUeREuUsBhAPPBir4uKD0umD/OyNOONqj0OAUo1R
-         wROy2+LYzM1C5Ipjo95vHzysvfaAWzK/0shJ/VW3wX2GkEjM9aRiwKGpio2bHnTR+WCq
-         KWo+5EUefYlKG05KLWrlG4fV22szspCCXlStVKVjT+Yk0uBPwPmUhLrKX32jcjZ2+4fQ
-         pKiDlgzEs6E9bM8rFywSW/NrABpFv1uqdT+9lyOI7aQx4NJkPIVeLyNRTdmHLNuF1vfU
-         x/dt7dtLB0FACcOip0NYcFu32SY9sRPPLpy8p6fO+NNq1icqoZxK9MBU3UT86yppzhHT
-         yS/Q==
-X-Gm-Message-State: ACrzQf00uRmL8cNPYiLRVzKtYhMVeSPxhjPfox+9qoO1d3fZadfvHRzH
-        Cyq1yh2tNRAbPv/ARGLSZ8fsKw==
-X-Google-Smtp-Source: AMsMyM4wMzAK86+nYOWWWsv4WqWfzyQ2ZaZKkuC45UErEcaEryqAvX3PAA72zoWjbq1McC8sReqDMg==
-X-Received: by 2002:a17:902:f552:b0:186:cdb2:b864 with SMTP id h18-20020a170902f55200b00186cdb2b864mr30199874plf.24.1667486289741;
-        Thu, 03 Nov 2022 07:38:09 -0700 (PDT)
-Received: from localhost ([122.172.84.80])
-        by smtp.gmail.com with ESMTPSA id w4-20020aa79544000000b0056c360af4e3sm864938pfq.9.2022.11.03.07.38.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 07:38:09 -0700 (PDT)
-Date:   Thu, 3 Nov 2022 20:08:07 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
+        Thu, 3 Nov 2022 10:40:14 -0400
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A6CE025E5
+        for <kernel-janitors@vger.kernel.org>; Thu,  3 Nov 2022 07:40:11 -0700 (PDT)
+Received: from 8bytes.org (p5b00664c.dip0.t-ipconnect.de [91.0.102.76])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id 25EC3260071;
+        Thu,  3 Nov 2022 15:40:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1667486408;
+        bh=mf7OaYDXqcld8wWiThewtp/HY8K7iFfmoq1U0fGzWYo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RA9UJnn49z7YdSAgp2I3/ITuIe6U3r/qp5fYYYQl9uSVuXJ0oXXKPVvXwFIIP7hof
+         T+soRndeNz7S6wfdPlU1l8xvCdOa8XEe7++RJ45KApiY5K44K7bGxAHVysyURjIEK4
+         9/ce/q8sba0zIYjDXm5qu044uLR5yFUnQRQr+8VgUJ8ApsSGQ76WZTnUITRlUtD/h4
+         MG6QOT9yNBG13JSBCvEeIE9bIEpebJzigzTjvFM/PR0/S/7N7jhS5uEYKXQ3SEEtmp
+         Qj+fpFbC7cBGsGVG5+K5aVwPskLhhXc7pj94xXvDhImSYs/NeeY/KH+yKSMwkVkdIQ
+         A0kywvgTobOLA==
+Date:   Thu, 3 Nov 2022 15:40:06 +0100
+From:   Joerg Roedel <joro@8bytes.org>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+Cc:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: SPEAr: Make read-only array sys_clk_src static
-Message-ID: <20221103143807.tamhepos3cureoga@vireshk-i7>
-References: <20221103143654.85275-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] iommu: remove variable cnt
+Message-ID: <Y2PSxkHG2X1Vc+vN@8bytes.org>
+References: <20221024134301.2158939-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221103143654.85275-1-colin.i.king@gmail.com>
+In-Reply-To: <20221024134301.2158939-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 03-11-22, 14:36, Colin Ian King wrote:
-> Don't populate the read-only array sys_clk_src on the stack but instead
-> make it static and add in a missing const. Also makes the object code a
-> little smaller.
+On Mon, Oct 24, 2022 at 02:43:01PM +0100, Colin Ian King wrote:
+> Variable cnt is just being incremented and it's never used
+> anywhere else. The variable and the increment are redundant so
+> remove it.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/cpufreq/spear-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
-> index 7d0d62a06bf3..c6fdf019dbde 100644
-> --- a/drivers/cpufreq/spear-cpufreq.c
-> +++ b/drivers/cpufreq/spear-cpufreq.c
-> @@ -39,7 +39,7 @@ static struct clk *spear1340_cpu_get_possible_parent(unsigned long newfreq)
->  	 * In SPEAr1340, cpu clk's parent sys clk can take input from
->  	 * following sources
->  	 */
-> -	const char *sys_clk_src[] = {
-> +	static const char * const sys_clk_src[] = {
->  		"sys_syn_clk",
->  		"pll1_clk",
->  		"pll2_clk",
+>  drivers/iommu/amd/iommu.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Same questions from longhaul patch apply here too.
+Adjusted subject and applied to x86/amd branch, thanks.
 
--- 
-viresh
