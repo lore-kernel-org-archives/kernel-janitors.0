@@ -2,109 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC98EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 18:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51682C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 20:47:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231140AbiKCSse (ORCPT
+        id S231150AbiKCUrJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 14:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42168 "EHLO
+        Thu, 3 Nov 2022 16:47:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229992AbiKCSsb (ORCPT
+        with ESMTP id S230338AbiKCUrD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 14:48:31 -0400
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC4AE17048;
-        Thu,  3 Nov 2022 11:48:30 -0700 (PDT)
-Received: by mail-qv1-f50.google.com with SMTP id mi9so1752686qvb.8;
-        Thu, 03 Nov 2022 11:48:30 -0700 (PDT)
+        Thu, 3 Nov 2022 16:47:03 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A8C820BDC;
+        Thu,  3 Nov 2022 13:47:03 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so1554590pjs.4;
+        Thu, 03 Nov 2022 13:47:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zvWv7py5M+cpuNli8vw2OLBU1voxtMB9/LTt5ZmUfQU=;
+        b=JvSaRJzb7KxQBZ9I5GR60ZkQEIVeMaZ5YOYp6rdau38npwjLIJJj+uq8pTHPxyQ1zI
+         3NYz9vX7/YDfrHF2AJjI8TGJH4JEU2qFNMBM/Ua4Yei1F1L30tNQiE+Os9yGG1aCwUkW
+         c7+dIDRsbYyU+kLZtdMuK+kYlt60LGL1auM3ppfbMIoDm48ug8Pa3MS4GueeHAUj5Sul
+         Jo16wsZjueXh87EgWSuA2I/vuvxDLufPs+h+G6ZSZt/D2hTe2RAlFZ/X0beeZa7AD17q
+         ceNdX9xIyEP66zeAEc3kZPtisLxEtsMkjVpn9GxGhu+2eSObu/E0P6I1pgjq8aJnKQFq
+         Tr+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qFFj0YnqgTVbsW45BjHNbWg4SjPrNwZE8AOD83zKJ74=;
-        b=Ue83nvM49wxmIJpeW0OdsHD3NSvihD3GyzcevI5S7uiJNIjY+Ud+7eAp3rb+X+S0PR
-         KcAdJrR6FtS+MFBh7QuRpQ4ouO1vEKlg3cLtlQNk8cGUntKbT9y7LMuJClvOeUWGOCQg
-         gVVwUKpUnES7wma6SAPNy3srUgd4nrtt3K/PiMttvc8+4HPNgqfVWwA0hkj4dhni+LQl
-         +83k2EoB0FHv6u7xFh6V886k5VYAZWS/SflmxWB44v3TGzi79KVetJrkTKSz4cRKlFZh
-         A900vMp3zMbR7BDjgRwiNDjbUsNBr+M47xlxrKfDpTtaHhcg60K21MXJjLimqFTNSjXx
-         6l1g==
-X-Gm-Message-State: ACrzQf2SAkYYZsOgrtVdRcAk5Dv+cpiFrsUlgo5ih+YVfDFl9WKJcrLp
-        Oirq8ExSKPB2JPAYMNadb1PLF2JrvRMB2va2Qhnfrcky
-X-Google-Smtp-Source: AMsMyM5ByWBOLNaWU6upUbPGJQZXvuckz/Axld8j4XIsJqWWxPKRr6T3ZjvryDDlHqoJOyOQI58Wmx/N/Sqtel0PzrE=
-X-Received: by 2002:a0c:c684:0:b0:4bb:fc53:5ad9 with SMTP id
- d4-20020a0cc684000000b004bbfc535ad9mr19725144qvj.3.1667501309876; Thu, 03 Nov
- 2022 11:48:29 -0700 (PDT)
-MIME-Version: 1.0
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zvWv7py5M+cpuNli8vw2OLBU1voxtMB9/LTt5ZmUfQU=;
+        b=Xa2JK+tYidtLf8fCVtog6d/l4AO2IwQI56YIoa4ICt+gr+l3RfBvxUeQ48auBJwBCE
+         ATPjAABrt16uXf9eEWjDa8mlrYnP5Hkpscce1xSrV5I5NPm9jA/pmVkg3w189HwP2tja
+         c4qg6TTpUTDCgGykEUNCPV+qOjYSAK5yOL75kuhF/ie6BFBoD81JjbRMtY9Ef4T2jKU3
+         DIX7IHYYEl75AzmC93BCLNjT/CGijfn/OiLKzt7ActtrHjL6n8EHSw+qqMrUiEvDoTCf
+         FePtCdSUbuAFdCIHLY+u4XroKNV+hj+Xk8nQaV7H1GEQ12qU6KWKRUMXHmhLA8ffWNGk
+         yVkA==
+X-Gm-Message-State: ACrzQf0DyJTl/1jb32Vv+SqW2qq0+4MiNRmYLL3zMd5pR4PK+ofrylQE
+        4/VZg9w2pUiRObmnSyN+BB4=
+X-Google-Smtp-Source: AMsMyM50LQ7X2DdQ87M3IejBmk4+j4HCY2M2XeDa0MHv1bRjGnWJQuCM9bnPNrGymDvHzAy2Q/0wtA==
+X-Received: by 2002:a17:90a:4283:b0:214:1329:dede with SMTP id p3-20020a17090a428300b002141329dedemr15972157pjg.149.1667508422363;
+        Thu, 03 Nov 2022 13:47:02 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id c189-20020a624ec6000000b00561beff1e09sm1155143pfb.164.2022.11.03.13.47.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Nov 2022 13:47:01 -0700 (PDT)
+Date:   Thu, 3 Nov 2022 13:46:58 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH 12/30] input: Use kstrtobool() instead of strtobool()
+Message-ID: <Y2Qowvjn+7jT767t@google.com>
 References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
- <57396f1eacfacdb589127499f8ff64225a39e110.1667336095.git.christophe.jaillet@wanadoo.fr>
- <Y2JVhffdmXkkrIRN@smile.fi.intel.com>
-In-Reply-To: <Y2JVhffdmXkkrIRN@smile.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 3 Nov 2022 19:48:19 +0100
-Message-ID: <CAJZ5v0hdzYuiKECEdXFB0vmz=6Z697DRp0Xx5jwyqHH4SGrLCA@mail.gmail.com>
-Subject: Re: [PATCH 09/30] ACPI: sysfs: Use kstrtobool() instead of strtobool()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <4311e9cb62687449f4175e2b062abcd77aada059.1667336095.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4311e9cb62687449f4175e2b062abcd77aada059.1667336095.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 2, 2022 at 12:33 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Tue, Nov 01, 2022 at 10:13:57PM +0100, Christophe JAILLET wrote:
-> > strtobool() is the same as kstrtobool().
-> > However, the latter is more used within the kernel.
-> >
-> > In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> > the other function name.
-> >
-> > While at it, include the corresponding header file (<linux/kstrtox.h>)
->
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > This patch is part of a serie that axes all usages of strtobool().
-> > Each patch can be applied independently from the other ones.
-> >
-> > The last patch of the serie removes the definition of strtobool().
-> >
-> > You may not be in copy of the cover letter. So, if needed, it is available
-> > at [1].
-> >
-> > [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
-> > ---
-> >  drivers/acpi/sysfs.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
-> > index cc2fe0618178..2d81c742e4d2 100644
-> > --- a/drivers/acpi/sysfs.c
-> > +++ b/drivers/acpi/sysfs.c
-> > @@ -9,6 +9,7 @@
-> >  #include <linux/bitmap.h>
-> >  #include <linux/init.h>
-> >  #include <linux/kernel.h>
-> > +#include <linux/kstrtox.h>
-> >  #include <linux/moduleparam.h>
-> >
-> >  #include "internal.h"
-> > @@ -992,7 +993,7 @@ static ssize_t force_remove_store(struct kobject *kobj,
-> >       bool val;
-> >       int ret;
-> >
-> > -     ret = strtobool(buf, &val);
-> > +     ret = kstrtobool(buf, &val);
-> >       if (ret < 0)
-> >               return ret;
-> >
-> > --
+On Tue, Nov 01, 2022 at 10:14:00PM +0100, Christophe JAILLET wrote:
+> strtobool() is the same as kstrtobool().
+> However, the latter is more used within the kernel.
+> 
+> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> the other function name.
+> 
+> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied as 6.2 material, thanks!
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Please feel free to merge with the rest of the series. Or let me know if
+you want me to pick just this one through my tree.
+
+Thanks.
+
+-- 
+Dmitry
