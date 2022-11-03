@@ -2,94 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CFDC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 16:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E57C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 17:12:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232418AbiKCQjX (ORCPT
+        id S232141AbiKCRMW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 12:39:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34336 "EHLO
+        Thu, 3 Nov 2022 13:12:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230301AbiKCQjD (ORCPT
+        with ESMTP id S231411AbiKCRLe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 12:39:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FC3D1EC4A;
-        Thu,  3 Nov 2022 09:35:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 3 Nov 2022 13:11:34 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FFE1A23B;
+        Thu,  3 Nov 2022 10:11:06 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D5E161F5D;
-        Thu,  3 Nov 2022 16:34:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC8E7C433D6;
-        Thu,  3 Nov 2022 16:34:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667493294;
-        bh=/ccW2ZLYtie//iuE3Z0X9cbimEJCwup/DH2xpMNHLnI=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=UWukCzRGudBv919/sH+I74MEzypxqLqYpIvPo+K0bDcfXWiWyDMyD6iMuQPIhOtL0
-         j4uh5dfTRvuifo39nRCKLeELXdhbUdvDqp21GVSiXdyeYPTq93n+WF0rgsyWbgCfXD
-         SBXLEtYj4br6ie5vVw7sXYuK7VX9ER1WKdtTmoHv4fjpuDQft3x17gxRFgbtk+xi0b
-         Im+Y5+cO63sgDPY0pjSa3QvILW1IVRqPFAI4hfcCI4+l3d9bGe8h6OEh4OomJuuWoJ
-         JRp0TswL+av9oAc+vtrBb0x1OV0OrmhaqdYrH7EPDTDMHp8DMNF8tXUaLv/Ia2g7IF
-         sH9N9pR0bXD3A==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Brent Lu <brent.lu@intel.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        alsa-devel@alsa-project.org,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20221103120624.72583-1-colin.i.king@gmail.com>
-References: <20221103120624.72583-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] ASoC: Intel: cirrus-common: Make const array uid_strings static
-Message-Id: <166749329166.480833.13410330883416925257.b4-ty@kernel.org>
-Date:   Thu, 03 Nov 2022 16:34:51 +0000
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 515BE21C4A;
+        Thu,  3 Nov 2022 17:11:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1667495465; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X3iAPKntN8bwEwSZKuEYeP/9JRqwBa3SZbFPVF6pxVM=;
+        b=vR9OkHI9NPjlluxOknVMsYrw7uh/arpCvfU0ytSr/PsFpF6U/ETxnLg2UHflMUAuADAW+I
+        ycrlTizsIHpIQIZbievRSrhD34q0EctoUFu5NpadeIwhQQlWXYkzGVEn8eSA83aQU5UoBa
+        9hUN13smcE8Sdloq56qPpTViFXOWxkQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1667495465;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X3iAPKntN8bwEwSZKuEYeP/9JRqwBa3SZbFPVF6pxVM=;
+        b=Pcpy6hkqntziw2oZvSI3CC7+3FS6jLwCGOqP6YiDvIvCa/balcuTqKiSIXCBTzid2FRHHE
+        eNtlYnCDW03B35DQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2580A13AAF;
+        Thu,  3 Nov 2022 17:11:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id VFWXCCn2Y2PvWQAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Thu, 03 Nov 2022 17:11:05 +0000
+Message-ID: <fccfaa2a-07f0-7d4d-027b-ec283a1cb748@suse.cz>
+Date:   Thu, 3 Nov 2022 18:11:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fc921
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH] mm/slab_common: repair kernel-doc for __ksize()
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221031092920.976-1-lukas.bulwahn@gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20221031092920.976-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 3 Nov 2022 12:06:24 +0000, Colin Ian King wrote:
-> Don't populate the read-only const array uid_strings on the stack but
-> instead make it static. Also makes the object code a little smaller.
+On 10/31/22 10:29, Lukas Bulwahn wrote:
+> Commit 445d41d7a7c1 ("Merge branch 'slab/for-6.1/kmalloc_size_roundup' into
+> slab/for-next") resolved a conflict of two concurrent changes to __ksize().
 > 
+> However, it did not adjust the kernel-doc comment of __ksize(), while the
+> name of the argument to __ksize() was renamed.
 > 
+> Hence, ./scripts/ kernel-doc -none mm/slab_common.c warns about it.
+> 
+> Adjust the kernel-doc comment for __ksize() for make W=1 happiness.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Applied to
+Thanks! Adding to slab/for-6.1-rc4/fixes
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Vlastimil
 
-Thanks!
+> ---
+>  mm/slab_common.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 33b1886b06eb..74a991fd9d31 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1010,7 +1010,7 @@ EXPORT_SYMBOL(kfree);
+>  
+>  /**
+>   * __ksize -- Report full size of underlying allocation
+> - * @objp: pointer to the object
+> + * @object: pointer to the object
+>   *
+>   * This should only be used internally to query the true size of allocations.
+>   * It is not meant to be a way to discover the usable size of an allocation
+> @@ -1018,7 +1018,7 @@ EXPORT_SYMBOL(kfree);
+>   * the originally requested allocation size may trigger KASAN, UBSAN_BOUNDS,
+>   * and/or FORTIFY_SOURCE.
+>   *
+> - * Return: size of the actual memory used by @objp in bytes
+> + * Return: size of the actual memory used by @object in bytes
+>   */
+>  size_t __ksize(const void *object)
+>  {
 
-[1/1] ASoC: Intel: cirrus-common: Make const array uid_strings static
-      commit: b43d0c0a42b2c44da824b3de0364d73be722a8c7
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
