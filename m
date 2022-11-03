@@ -2,81 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3C5C43217
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 18:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A741C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 18:39:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231404AbiKCSRN (ORCPT
+        id S230427AbiKCSjn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 14:17:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52766 "EHLO
+        Thu, 3 Nov 2022 14:39:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230415AbiKCSRL (ORCPT
+        with ESMTP id S229523AbiKCSjm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 14:17:11 -0400
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 354057641;
-        Thu,  3 Nov 2022 11:17:11 -0700 (PDT)
-Received: by mail-qk1-f181.google.com with SMTP id v8so1676779qkg.12;
-        Thu, 03 Nov 2022 11:17:11 -0700 (PDT)
+        Thu, 3 Nov 2022 14:39:42 -0400
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F408100;
+        Thu,  3 Nov 2022 11:39:41 -0700 (PDT)
+Received: by mail-qk1-f169.google.com with SMTP id k4so1733834qkj.8;
+        Thu, 03 Nov 2022 11:39:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wwInbiQpYH0R+lv1Uxr2msjru8SH9TRKDoxjbpGyKW4=;
-        b=AKp4aMwwVdDIsIiADTHHRqHWv7tthcid9rYmx9Q8xMXLsqCCYFqAIHsXGq9b8yCsuQ
-         VVTXuDjTcObYeaiGOE9b5iPwOeuxhbfkJIt4jBMXkjwUqOtbDBKElift9uL2g6lrhvt1
-         BfvfV5P0jQudZL7M60Jola64+KzCfY/3N6l2tIB9FlRq9uHIh/HVbfvpeRXym72Hq5aR
-         dS/f5U7AiU824PjPmuEhRozPvmbGonRjCX1B3omN/M8lH5R1s2BQ8kRHVno7Tg5WWytV
-         u0s8E1NNM3VWuP+S0I2jO/Ts0Zn3ijDySe2K3y3KWudLD4g14+1S9syAqdhUCfzy3JZu
-         KIkQ==
-X-Gm-Message-State: ACrzQf2dQNaYBYhTltDWTiz0tJ/oGgmWOuPL9OiY3ZOfwVooCY1JudYU
-        o4Cu3MnBtD5Ff2h5ODt8XiiD4VjK/1X6vZlyRFU=
-X-Google-Smtp-Source: AMsMyM6tkfZXD9POFVGn74lYYhvpO+OzZF6kPvQKHvUQ/mKo3qFjTpRJL+iMMRsH1fnDuURk5k4+bn6aGfB71NXNX7E=
-X-Received: by 2002:a05:620a:d89:b0:6cf:c98b:744c with SMTP id
- q9-20020a05620a0d8900b006cfc98b744cmr22592850qkl.443.1667499430353; Thu, 03
- Nov 2022 11:17:10 -0700 (PDT)
+        bh=KzoAaszO4H5feq9ifFyoUO4g382Xi213Yx0rSxYlkkk=;
+        b=zo9a38LNwQu+3Og3PUQQGnfg+OUM8ZJOzUvV8adbbZdwM5CFXa1Z9wc+b9FLQq199b
+         3HmuFX0vXmV52jdGBpjaAQoV4EfkioXiEwGGFPtYHFmIslMWvTtWgTxhro+49z1PrI9N
+         WV7N3NaL8q1I5I4+qMIa1Dcue4xQHbTXtjvXbHQBYKPyYj+Xr92NjTL+sP0QQQuzdcua
+         WNeqXQS3dQiY5T249Hkg7+o2XHuJTrx9qd0rx9dMdh8z1hFSh0Jq7OLPeRDWSFs8r1cA
+         M0K+/AVfPyzgO799cwE16dcmOf9L/PKK2O+j1y5SkXCMA9JRcgmccwAhy6v5V2UNVB+b
+         xdtg==
+X-Gm-Message-State: ACrzQf1NeCDzHfcnQCFHTDThd5Qm51J7se3JX3MuyG8lA8Q5aHQL1Fo4
+        qzcv9zI0QqKCOjU/EqQIWLgf8KkRxo8hwpO9ZaE=
+X-Google-Smtp-Source: AMsMyM6h+nd034u171sGJIo0kMJVTuQtZWkzxVeBridmsJRx5IuuFc8gdtf2RwlsqaRBnYO0BBU432GqNNR63++MGA8=
+X-Received: by 2002:a37:b1c2:0:b0:6fa:1185:4dbf with SMTP id
+ a185-20020a37b1c2000000b006fa11854dbfmr22071519qkf.764.1667500780650; Thu, 03
+ Nov 2022 11:39:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221103143654.85275-1-colin.i.king@gmail.com>
-In-Reply-To: <20221103143654.85275-1-colin.i.king@gmail.com>
+References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr> <652abbd70fca17977135754901135a6dad5d636c.1667336095.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <652abbd70fca17977135754901135a6dad5d636c.1667336095.git.christophe.jaillet@wanadoo.fr>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 3 Nov 2022 19:16:59 +0100
-Message-ID: <CAJZ5v0hN691V+n1HbUc5J8jZCwONMFQX4exGj=M6A8eeRgLjdw@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: SPEAr: Make read-only array sys_clk_src static
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Date:   Thu, 3 Nov 2022 19:39:29 +0100
+Message-ID: <CAJZ5v0iy8UfC_9rsUGObgGQ=6_Ts17E0rTn_LSbYhbGNrvq4FQ@mail.gmail.com>
+Subject: Re: [PATCH 14/30] powercap: Use kstrtobool() instead of strtobool()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Nov 3, 2022 at 3:37 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+On Tue, Nov 1, 2022 at 10:15 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> Don't populate the read-only array sys_clk_src on the stack but instead
-> make it static and add in a missing const. Also makes the object code a
-> little smaller.
+> strtobool() is the same as kstrtobool().
+> However, the latter is more used within the kernel.
 >
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> the other function name.
+>
+> While at it, include the corresponding header file (<linux/kstrtox.h>)
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/cpufreq/spear-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch is part of a serie that axes all usages of strtobool().
+> Each patch can be applied independently from the other ones.
 >
-> diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
-> index 7d0d62a06bf3..c6fdf019dbde 100644
-> --- a/drivers/cpufreq/spear-cpufreq.c
-> +++ b/drivers/cpufreq/spear-cpufreq.c
-> @@ -39,7 +39,7 @@ static struct clk *spear1340_cpu_get_possible_parent(unsigned long newfreq)
->          * In SPEAr1340, cpu clk's parent sys clk can take input from
->          * following sources
->          */
-> -       const char *sys_clk_src[] = {
-> +       static const char * const sys_clk_src[] = {
->                 "sys_syn_clk",
->                 "pll1_clk",
->                 "pll2_clk",
+> The last patch of the serie removes the definition of strtobool().
+>
+> You may not be in copy of the cover letter. So, if needed, it is available
+> at [1].
+>
+> [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
+> ---
+>  drivers/powercap/powercap_sys.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
+> index f0654a932b37..1f968353d479 100644
+> --- a/drivers/powercap/powercap_sys.c
+> +++ b/drivers/powercap/powercap_sys.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/module.h>
+>  #include <linux/device.h>
+>  #include <linux/err.h>
+> +#include <linux/kstrtox.h>
+>  #include <linux/slab.h>
+>  #include <linux/powercap.h>
+>
+> @@ -446,7 +447,7 @@ static ssize_t enabled_store(struct device *dev,
+>  {
+>         bool mode;
+>
+> -       if (strtobool(buf, &mode))
+> +       if (kstrtobool(buf, &mode))
+>                 return -EINVAL;
+>         if (dev->parent) {
+>                 struct powercap_zone *power_zone = to_powercap_zone(dev);
 > --
 
 Applied as 6.2 material, thanks!
