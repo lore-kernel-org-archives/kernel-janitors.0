@@ -2,121 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E57C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 17:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF52C43217
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 18:14:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232141AbiKCRMW (ORCPT
+        id S230415AbiKCSOu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 13:12:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37512 "EHLO
+        Thu, 3 Nov 2022 14:14:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231411AbiKCRLe (ORCPT
+        with ESMTP id S230373AbiKCSOq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 13:11:34 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FFE1A23B;
-        Thu,  3 Nov 2022 10:11:06 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 515BE21C4A;
-        Thu,  3 Nov 2022 17:11:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1667495465; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=X3iAPKntN8bwEwSZKuEYeP/9JRqwBa3SZbFPVF6pxVM=;
-        b=vR9OkHI9NPjlluxOknVMsYrw7uh/arpCvfU0ytSr/PsFpF6U/ETxnLg2UHflMUAuADAW+I
-        ycrlTizsIHpIQIZbievRSrhD34q0EctoUFu5NpadeIwhQQlWXYkzGVEn8eSA83aQU5UoBa
-        9hUN13smcE8Sdloq56qPpTViFXOWxkQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1667495465;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=X3iAPKntN8bwEwSZKuEYeP/9JRqwBa3SZbFPVF6pxVM=;
-        b=Pcpy6hkqntziw2oZvSI3CC7+3FS6jLwCGOqP6YiDvIvCa/balcuTqKiSIXCBTzid2FRHHE
-        eNtlYnCDW03B35DQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2580A13AAF;
-        Thu,  3 Nov 2022 17:11:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id VFWXCCn2Y2PvWQAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Thu, 03 Nov 2022 17:11:05 +0000
-Message-ID: <fccfaa2a-07f0-7d4d-027b-ec283a1cb748@suse.cz>
-Date:   Thu, 3 Nov 2022 18:11:04 +0100
+        Thu, 3 Nov 2022 14:14:46 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 651CA6469;
+        Thu,  3 Nov 2022 11:14:44 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id k26so1703838qkg.2;
+        Thu, 03 Nov 2022 11:14:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hXQkmBG3ZRWtQ3X/34JIoN1SRy6ecuLj5X84hLwMjgE=;
+        b=SdYLDaz4iFloa3jzfMPNfQPDoYAI8IV4l/gOQhynoIzUtXOT8Q+GKw4OFIg25pVm+1
+         m+xmaNrWD9fXRFtVUNBqV5gEcpss28MyX+aCyVf/NUGJZBg1Y0InE0r/eJKUi+oM1dLu
+         MJbE5ndIhk3UE6YIeRjHCelmsq4SUE67cGPN1PGTMk+n70Wheq6GYS5ocRe9Rcm0l8d4
+         aBfImf2p5iQq5VuGmLxgGdqHyx5WMUJGELr3JzoOfmC+e4KAWmOXtKPhN/k9GZSLILIp
+         YhTI07r8oDAD+1NJGRKZUjHtH34KcSAMAaemsF73B3eVPCyZ2G91QUImlUfoVca6AI5y
+         vV5w==
+X-Gm-Message-State: ACrzQf0rf77WKZaVgxMCrb70J+TPVO6q+7vH2XC/Ylg0WGf8nEaO7Unu
+        61h0L7DMN/b//uxNFtf8OudS8IBn+alUupv6ml4=
+X-Google-Smtp-Source: AMsMyM7gFB4U8TgGv0uuiym4T4ZjE5E4A8JkWKAZLwnwsGi7CqEg41huTTzir4c3eE+XLrqwVwLsvvbczDNjKpBKxfY=
+X-Received: by 2002:a37:65c9:0:b0:6fa:1ef8:fa10 with SMTP id
+ z192-20020a3765c9000000b006fa1ef8fa10mr20114702qkb.648.1667499283608; Thu, 03
+ Nov 2022 11:14:43 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH] mm/slab_common: repair kernel-doc for __ksize()
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221031092920.976-1-lukas.bulwahn@gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20221031092920.976-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20221103150431.87598-1-colin.i.king@gmail.com>
+In-Reply-To: <20221103150431.87598-1-colin.i.king@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 3 Nov 2022 19:14:32 +0100
+Message-ID: <CAJZ5v0i4=m1xhVbh10jsFyuHvKBQP3pia0QdONg4bQERR3Ay2g@mail.gmail.com>
+Subject: Re: [PATCH][V2] cpufreq: longhaul: Make array speeds static const
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/31/22 10:29, Lukas Bulwahn wrote:
-> Commit 445d41d7a7c1 ("Merge branch 'slab/for-6.1/kmalloc_size_roundup' into
-> slab/for-next") resolved a conflict of two concurrent changes to __ksize().
-> 
-> However, it did not adjust the kernel-doc comment of __ksize(), while the
-> name of the argument to __ksize() was renamed.
-> 
-> Hence, ./scripts/ kernel-doc -none mm/slab_common.c warns about it.
-> 
-> Adjust the kernel-doc comment for __ksize() for make W=1 happiness.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Thanks! Adding to slab/for-6.1-rc4/fixes
-
-Vlastimil
-
+On Thu, Nov 3, 2022 at 4:04 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> Don't populate the read-only array speeds on the stack but instead
+> make it static. Also makes the object code a little smaller. Replace
+> hard-coded loop array bounds with ARRAY_SIZE.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  mm/slab_common.c | 4 ++--
+> V2: replace 4 with ARRAY_SIZE in for-loop as suggested by Joe Perches.
+> ---
+>  drivers/cpufreq/longhaul.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 33b1886b06eb..74a991fd9d31 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1010,7 +1010,7 @@ EXPORT_SYMBOL(kfree);
->  
->  /**
->   * __ksize -- Report full size of underlying allocation
-> - * @objp: pointer to the object
-> + * @object: pointer to the object
->   *
->   * This should only be used internally to query the true size of allocations.
->   * It is not meant to be a way to discover the usable size of an allocation
-> @@ -1018,7 +1018,7 @@ EXPORT_SYMBOL(kfree);
->   * the originally requested allocation size may trigger KASAN, UBSAN_BOUNDS,
->   * and/or FORTIFY_SOURCE.
->   *
-> - * Return: size of the actual memory used by @objp in bytes
-> + * Return: size of the actual memory used by @object in bytes
->   */
->  size_t __ksize(const void *object)
+>
+> diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
+> index 3e000e1a75c6..4c57c6725c13 100644
+> --- a/drivers/cpufreq/longhaul.c
+> +++ b/drivers/cpufreq/longhaul.c
+> @@ -407,10 +407,10 @@ static int guess_fsb(int mult)
 >  {
+>         int speed = cpu_khz / 1000;
+>         int i;
+> -       int speeds[] = { 666, 1000, 1333, 2000 };
+> +       static const int speeds[] = { 666, 1000, 1333, 2000 };
+>         int f_max, f_min;
+>
+> -       for (i = 0; i < 4; i++) {
+> +       for (i = 0; i < ARRAY_SIZE(speeds); i++) {
+>                 f_max = ((speeds[i] * mult) + 50) / 100;
+>                 f_max += (ROUNDING / 2);
+>                 f_min = f_max - ROUNDING;
+> --
 
+Applied as 6.2 material, thanks!
