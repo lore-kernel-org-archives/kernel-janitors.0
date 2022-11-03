@@ -2,67 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD76C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 09:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931F6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 12:06:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbiKCJI1 (ORCPT
+        id S231319AbiKCMGa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 05:08:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32820 "EHLO
+        Thu, 3 Nov 2022 08:06:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbiKCJIZ (ORCPT
+        with ESMTP id S229809AbiKCMG2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 05:08:25 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6447D96;
-        Thu,  3 Nov 2022 02:08:22 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id m29-20020a05600c3b1d00b003c6bf423c71so2864901wms.0;
-        Thu, 03 Nov 2022 02:08:22 -0700 (PDT)
+        Thu, 3 Nov 2022 08:06:28 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A24A12770;
+        Thu,  3 Nov 2022 05:06:27 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id v1so2409676wrt.11;
+        Thu, 03 Nov 2022 05:06:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xjl/DU04P6q7G02OgRrWsampoe2D2++cGahG5bY6dJA=;
-        b=ODsNAPxplqCRezAY2Pto6fEFW4mgu0km9812R6nDRFXfYLxdW2lMA6g92F6J5lqIWj
-         0lUxjMUIU2kF0AudZHDfFZLqWaxORkHDG7Lg68Javy6q/J5U9H7kmC9d/0v0rq/zLWDO
-         QYfUOgXCajmEgOK6UQOIGtzp1oxrdKHb2mh57SBYuoMy/CleWwDtte0SEnaglfYhYWEM
-         qkvmbZT/J8IJXCZMjh3B8lMwHci3vSorCb9pkEBqWwQPkUkhw8W3ktbCw5SglJf3zJy5
-         U3Q53g93VHGZt9bUoVN0e/5ky+uApC8gXDlPnitb3nqnxx1EMeEinoyPJVcS8+FE9pQw
-         K9lQ==
+        bh=DLUDsiw05g4Mq+tu60AP2NfJMNxrmmZZAuBLJdj/+ss=;
+        b=lxJmCasm1+VP1Qubc/vAFKpv97dE0no8M/PO4B/C4PRfKcBMlc2+R434KHvfFOB3/1
+         bOXTL6xQsVrDbSV7UWZIReaB+1spj/zPvxyu0nFm6y3Gah87o/5z+ACj9+jzjj3I+gxW
+         HBv+eXtPWCkBJuoaPWtGQXgdaw6hgEn3lWCrg4BqGSba68rjTD2R2AT62cDh8qa2cRrl
+         ZilBB1aOl8O7jEvXZ5trIHZLscqN9/EhHTx9BN5LpJnuomX9hBAGwihANJECLWeQjgPa
+         ffezZ8VkmQNxJGuBMrN4D9PJkosrgUp4y4CZow+9WJX32YF7E1UevLQQHTwgsMp8tec/
+         QGsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Xjl/DU04P6q7G02OgRrWsampoe2D2++cGahG5bY6dJA=;
-        b=iu0qduLVxyO3J+c1lWVUO3g7n4hb/OmTa+jiiK8W0pGbO8tK/egNDwEkjSmSJPuAd8
-         MgEiMyIpXOrtVVc+hl4CowIqd9nZfAUWnZjoLlm0H7e9Zg33y0X4LX+U1Ci3+va7z3II
-         Rp6BVGwZv3XOBpWFs2tcis98cbHYm6nujnBDVCOUBMSe2ZtDpO9o7Wl+GXhi7k0P2oU6
-         uJ50SO48eb4JmxRln0bdG8YotXRjGF6V6DvGt18Nw534RL4h/XmKKtFg0xLFeiI4SXRW
-         Y8vp0Rbms5E32TaKNqG45buGPjdSOXX9Lim9qOsVhbP1LK0zVlg2IF/0qttJEKljpDU+
-         m9aw==
-X-Gm-Message-State: ACrzQf3sP0rN8nFnZxHtYA9e6f7v9YkbREBw35RD4jJ+uPw4JkKWhjbS
-        NXTGi29wsN/wwezJw0zuNNk=
-X-Google-Smtp-Source: AMsMyM4oBeOtjDog0815cYHA2sID6hH62IdItMx8gC152AkzJUqT0hh+9RdQCSvhT/rVSZs5ZCsKAA==
-X-Received: by 2002:a05:600c:1e8b:b0:3c6:f6e5:c41d with SMTP id be11-20020a05600c1e8b00b003c6f6e5c41dmr29027173wmb.12.1667466500983;
-        Thu, 03 Nov 2022 02:08:20 -0700 (PDT)
+        bh=DLUDsiw05g4Mq+tu60AP2NfJMNxrmmZZAuBLJdj/+ss=;
+        b=kxyCWPHBLokBV385xpAUOjbvoUMqk3hedd0uBQhJ/FgOZx5fr+9G5+Ty4vT1veJXUU
+         qww3VsIkwOXbN9FeRVUsegroWMQM3T67p0Nty7LJUgYU1PidKGLKuamF+Q/5B17is/yn
+         04DNcyyFJbxtve9FeGr60ztsBAy3R7bKBbz3mQ8t1IqTAdgPuGVOjPHKqGL3odhiNNTp
+         yA41epsXnMeMfXQ1MXDiEw6UIdS/3Y8Jmdxpl62RvrsW7dfd0gGenI/7zCsI3AiBK11k
+         JhZ5r6a4bB41Kc6aKlOvDgPUDXA8si6rr7+iOu35sgalmMvRCNNLie5jyAWq6nopmS5p
+         +IsA==
+X-Gm-Message-State: ACrzQf0547ampu9xR6w3Yan4D10hFjV6fdzjKnD8JeJafF/2CrsDzmit
+        WEmCS0imonlmYGgfKEjfthksjTxeoKollhOl
+X-Google-Smtp-Source: AMsMyM40p6IC3WQf7nsrHFzJRU6pEK8D3jpJ8vv4G0tC/JBAROZCtVy4eQQpaxeZHxSQE1bKB7AnAQ==
+X-Received: by 2002:adf:feca:0:b0:236:b258:c19b with SMTP id q10-20020adffeca000000b00236b258c19bmr18014378wrs.57.1667477185703;
+        Thu, 03 Nov 2022 05:06:25 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d12-20020a5d4f8c000000b0022cdeba3f83sm274529wru.84.2022.11.03.02.08.20
+        by smtp.gmail.com with ESMTPSA id n5-20020a05600c3b8500b003b4935f04a4sm1537933wms.5.2022.11.03.05.06.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 02:08:20 -0700 (PDT)
+        Thu, 03 Nov 2022 05:06:25 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
+To:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Brent Lu <brent.lu@intel.com>,
+        alsa-devel@alsa-project.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] x86/tdx: fix spelling mistake "attibute" -> "attribute"
-Date:   Thu,  3 Nov 2022 09:08:19 +0000
-Message-Id: <20221103090819.9335-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.3
+Subject: [PATCH] ASoC: Intel: cirrus-common: Make const array uid_strings static
+Date:   Thu,  3 Nov 2022 12:06:24 +0000
+Message-Id: <20221103120624.72583-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -70,26 +74,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a kernel panic message. Fix it.
+Don't populate the read-only const array uid_strings on the stack but
+instead make it static. Also makes the object code a little smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/x86/coco/tdx/tdx.c | 2 +-
+ sound/soc/intel/boards/sof_cirrus_common.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index b8998cf0508a..63e588718c94 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -132,7 +132,7 @@ static void tdx_parse_tdinfo(u64 *cc_mask)
- 	 */
- 	td_attr = out.rdx;
- 	if (!(td_attr & ATTR_SEPT_VE_DISABLE))
--		panic("TD misconfiguration: SEPT_VE_DISABLE attibute must be set.\n");
-+		panic("TD misconfiguration: SEPT_VE_DISABLE attribute must be set.\n");
- }
- 
- /*
+diff --git a/sound/soc/intel/boards/sof_cirrus_common.c b/sound/soc/intel/boards/sof_cirrus_common.c
+index 6e39eda77385..851c516c8f5b 100644
+--- a/sound/soc/intel/boards/sof_cirrus_common.c
++++ b/sound/soc/intel/boards/sof_cirrus_common.c
+@@ -155,7 +155,7 @@ static const char * const cs35l41_name_prefixes[] = { "WL", "WR", "TL", "TR" };
+  */
+ static int cs35l41_compute_codec_conf(void)
+ {
+-	const char * const uid_strings[] = { "0", "1", "2", "3" };
++	static const char * const uid_strings[] = { "0", "1", "2", "3" };
+ 	unsigned int uid, sz = 0;
+ 	struct acpi_device *adev;
+ 	struct device *physdev;
 -- 
-2.37.3
+2.38.1
 
