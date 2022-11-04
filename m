@@ -2,110 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAC5C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Nov 2022 22:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D04DBC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 02:55:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231356AbiKCWCY (ORCPT
+        id S230111AbiKDCze (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Nov 2022 18:02:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34024 "EHLO
+        Thu, 3 Nov 2022 22:55:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231406AbiKCWCW (ORCPT
+        with ESMTP id S229481AbiKDCzc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Nov 2022 18:02:22 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17BA22B0D;
-        Thu,  3 Nov 2022 15:02:21 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id l39-20020a05600c1d2700b003cf93c8156dso583074wms.4;
-        Thu, 03 Nov 2022 15:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=baYbNDVgL1/4As3xdLgF9MW4MrHr71vL82GF0ZTz74Y=;
-        b=d3pI+FbfiZ6ZZxbbXjqC4fZZb541u7ezWW5QbfEC/S/XVTqO7Q/2qizWJhrxvZDjJx
-         LB0j7/MYYslYRLrz4AW69Cfi/M/IEVKmI30ZX1DkleTCMm9WQcj+uRpKP4vD7AHwgNXT
-         78PQbsaHzC1hVmYRr4h8GvUHYQjkNVTw+5bbZKUvu2Mmw0ciPl8Ll01ZBXkfBy7NSaS+
-         +crdVPWf1pkiNrcJSFRW78nWtGS1eJZkWMRwwQxkA0iDbGksDSyZq6MGhPe9f97HEeoI
-         LNHNZTkyuACvAvcGDCDq2eL5giPKEsmDnCPI2NVMnu8qB/hsAcBGWTDit0HpplTS0Yym
-         U6TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=baYbNDVgL1/4As3xdLgF9MW4MrHr71vL82GF0ZTz74Y=;
-        b=jd1ysUxWURerQeHNcJHFb/xGsSt6jy0bQzOL6F6EXD9+HUVD/3TakD1ftOoxkyFQRo
-         m2nVJhEg1TGtPyA6N/SMbsSMB9ncBpBfVhDPQAcoK+STqe8GOswUJ3MP36S8gnYXQZP2
-         +5S4olArssgY2wwZrM+P2d/1h1xggix/Ie/rzcJels0uOMBj8AuA/wFzHpYosAzhs1sL
-         9dCue0oDkVbvGft7y+ijTTD4M7HhCQQL7itsN6Hp2+gLm1Cni7wximDkt1smiH0O3n8g
-         exySHdjPiUtMk1TmWHvW//c6Uze80UFh5XnzEJn8FkzWcsZ3Kx8yiOjl9WMyhPD7e3by
-         XSmA==
-X-Gm-Message-State: ACrzQf0+I24MRkZMdBnJ3Uu+3J6BSdjipXlqDPxLfS/JqDXIjUSlnqbt
-        ThStcZU+n/ue5u+zeJt7bO13dJfnL80=
-X-Google-Smtp-Source: AMsMyM5uqc/izvH4hvGJUqx1Cm1f3/I59CQRLO6OVDyZTDg08OAK/Z61zynh0VcBmPWAGqJ79HljQw==
-X-Received: by 2002:a05:600c:4588:b0:3c6:f645:dad0 with SMTP id r8-20020a05600c458800b003c6f645dad0mr22077696wmo.114.1667512940198;
-        Thu, 03 Nov 2022 15:02:20 -0700 (PDT)
-Received: from [192.168.1.102] (p54a07888.dip0.t-ipconnect.de. [84.160.120.136])
-        by smtp.gmail.com with ESMTPSA id m7-20020a7bca47000000b003a83ca67f73sm1094209wml.3.2022.11.03.15.02.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Nov 2022 15:02:19 -0700 (PDT)
-Message-ID: <a497e930-00d5-b830-b29c-531c18da800a@gmail.com>
-Date:   Thu, 3 Nov 2022 23:02:19 +0100
+        Thu, 3 Nov 2022 22:55:32 -0400
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125096158;
+        Thu,  3 Nov 2022 19:55:31 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2A42tPtQ129948;
+        Thu, 3 Nov 2022 21:55:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1667530525;
+        bh=B9t7qPNCO06TJ2fCgJEfonJ1S5L5njnWZmCjfRGILCU=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=YAbbdJ8zNEoA6F3psX97SMhgxZ4FwRTSflPn+dbJB1TI6jA34PgdBWpJcFhw8vJ6O
+         x8/4EsaD52XJb6gs/v030sDKluVWGV/CcCt80rr0N+mDGfc1YDfq7f0PlCQDTy/Slk
+         CtoYMKPDCWE5yWVj0PipnJLGGfE9hJ0ZMZCzB15c=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2A42tPGG031425
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 3 Nov 2022 21:55:25 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Thu, 3 Nov
+ 2022 21:55:24 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
+ Frontend Transport; Thu, 3 Nov 2022 21:55:24 -0500
+Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2A42tO1N010780;
+        Thu, 3 Nov 2022 21:55:24 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Santosh Shilimkar <ssantosh@kernel.org>,
+        <christophe.jaillet@wanadoo.fr>, <kristo@kernel.org>
+CC:     Nishanth Menon <nm@ti.com>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] firmware: ti_sci: Use devm_bitmap_zalloc when applicable
+Date:   Thu, 3 Nov 2022 21:55:24 -0500
+Message-ID: <166753051095.28029.3739907273009158243.b4-ty@ti.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <43ab1a7dd073d0d037d5d4bbbd5f8335de605826.1667457664.git.christophe.jaillet@wanadoo.fr>
+References: <43ab1a7dd073d0d037d5d4bbbd5f8335de605826.1667457664.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH][next] staging: rtl8192e: rtl819x_HTProc: make arrays
- const and one static
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Aaron Lawrence <t4rmin@zohomail.com>,
-        Yogesh Hegde <yogi.kernel@gmail.com>,
-        linux-staging@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221103130619.78413-1-colin.i.king@gmail.com>
-From:   Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20221103130619.78413-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 11/3/22 14:06, Colin Ian King wrote:
-> Make two dead-only arrays const. Make array EWC11NHTCap static const
-> so it is not populated on the stack, makes the code smaller too.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/staging/rtl8192e/rtl819x_HTProc.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8192e/rtl819x_HTProc.c b/drivers/staging/rtl8192e/rtl819x_HTProc.c
-> index 62aa8e893c34..84ec8df047d7 100644
-> --- a/drivers/staging/rtl8192e/rtl819x_HTProc.c
-> +++ b/drivers/staging/rtl8192e/rtl819x_HTProc.c
-> @@ -282,7 +282,7 @@ void HTConstructCapabilityElement(struct rtllib_device *ieee, u8 *posHTCap,
->   	memset(posHTCap, 0, *len);
->   
->   	if ((bAssoc) && (pHT->ePeerHTSpecVer == HT_SPEC_VER_EWC)) {
-> -		u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};
-> +		static const u8	EWC11NHTCap[] = { 0x00, 0x90, 0x4c, 0x33 };
->   
->   		memcpy(posHTCap, EWC11NHTCap, sizeof(EWC11NHTCap));
->   		pCapELE = (struct ht_capab_ele *)&posHTCap[4];
-> @@ -515,8 +515,8 @@ void HTOnAssocRsp(struct rtllib_device *ieee)
->   	u16 nMaxAMSDUSize = 0;
->   	u8 *pMcsFilter = NULL;
->   
-> -	static u8 EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};
-> -	static u8 EWC11NHTInfo[] = {0x00, 0x90, 0x4c, 0x34};
-> +	static const u8 EWC11NHTCap[] = { 0x00, 0x90, 0x4c, 0x33 };
-> +	static const u8 EWC11NHTInfo[] = { 0x00, 0x90, 0x4c, 0x34 };
->   
->   	if (!pHTInfo->bCurrentHTSupport) {
->   		netdev_warn(ieee->dev, "%s(): HT_DISABLE\n", __func__);
+Hi Christophe JAILLET,
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+On Thu, 3 Nov 2022 07:41:30 +0100, Christophe JAILLET wrote:
+> 'xfer_alloc_table' is a bitmap. So use 'devm_bitmap_zalloc()' to simplify
+> code and improve the semantic of the code.
+> 
+> While at it, remove a redundant 'bitmap_zero()' call.
+> 
+> 
+
+I have applied the following to branch ti-drivers-soc-next on [1].
+Thank you!
+
+[1/1] firmware: ti_sci: Use devm_bitmap_zalloc when applicable
+      commit: 26507b033e84be6f821dc1693d667b5c809a7679
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+
