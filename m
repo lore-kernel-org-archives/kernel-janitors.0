@@ -2,81 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E78C43219
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 10:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44947C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 11:00:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231690AbiKDKUZ (ORCPT
+        id S231807AbiKDLAk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 4 Nov 2022 06:20:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46722 "EHLO
+        Fri, 4 Nov 2022 07:00:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231667AbiKDKUX (ORCPT
+        with ESMTP id S231695AbiKDLAb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 4 Nov 2022 06:20:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB58325295;
-        Fri,  4 Nov 2022 03:20:20 -0700 (PDT)
+        Fri, 4 Nov 2022 07:00:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB70F2C126;
+        Fri,  4 Nov 2022 04:00:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 478CB6213D;
-        Fri,  4 Nov 2022 10:20:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9F8AEC4347C;
-        Fri,  4 Nov 2022 10:20:19 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5BE4562159;
+        Fri,  4 Nov 2022 11:00:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2CFC433D7;
+        Fri,  4 Nov 2022 11:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667557219;
-        bh=NDQ5Mp093HyrrPYJ19MdXYRs0xi1e+NzMOuWI9ru3k4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Mxf/sGOa5fYeqXl4sIRq/Db6liwIV4tnQd+hcx3AddXyoJe7vj+OBmMAS/hlhSqz6
-         MskImR6TlA+FYt7SPEOamGyowk08c/Bx7TjB2JNp2Riz7Rn149BNMTIspqRsei7XZu
-         vvmnJGpa5VfSQmae3d1bfKdrE/wyD+shvUlcC5nh//nhv/Sie7uHUMTWtbA+P7VOa0
-         nKyCdWIgotEWQbzjwCWpZXP2LBKMP8c/5d4wwiGqLoVj7iuYs81ME3/dUd1x0Y63q4
-         OoTVMSpygvRQUYSHChe3TQrjn46vX2fzMOK+HTF98dLupYh06Lv1HOvGHSM7AhkwiD
-         k3Hrw7EOoUneg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 860DEE52509;
-        Fri,  4 Nov 2022 10:20:19 +0000 (UTC)
+        s=k20201202; t=1667559626;
+        bh=/MGecyQmJdqPsReJBSYYANujGfYMhCik3e8q0K1i5p4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=rZDLQ8p/FknkmIXRK1vRJjz6MsTjqH71aZVu+TDZUbvp3uLCM/Ym82+78mxKOMcSB
+         9iRVJAZ/hnDYwVeczGhu9Vi13ZEp7i8Wyjofo7bbW5eDPuR3RQVWVz1OK20Hfy/mhA
+         9mEmiXRLmaXGucT5u3/VvVBUudO1d71Lk23tYVhHbUi3ADbGz5oaCWi1NqxGjAkBPt
+         2AjVy6aSzWK5FayQ++S9/Jc1s4L8QnDCG/sPmGJrv9e5VJeSTaqlAy9ruAjlEs+s7N
+         8dM46hkeN8kA4UWlaIEVgw01fEAbfqO775+4IKTf+P19XRLQe4daFaAonGtEl/dxId
+         B2/b9X9GauWBQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] rds: remove redundant variable total_payload_len
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166755721954.22576.7298281566046818273.git-patchwork-notify@kernel.org>
-Date:   Fri, 04 Nov 2022 10:20:19 +0000
-References: <20221101104104.29878-1-colin.i.king@gmail.com>
-In-Reply-To: <20221101104104.29878-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: wifi: rtlwifi: rtl8192ee: remove static variable stop_report_cnt
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20221031155637.871164-1-colin.i.king@gmail.com>
+References: <20221031155637.871164-1-colin.i.king@gmail.com>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     santosh.shilimkar@oracle.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <166755962299.3283.14022973939524774032.kvalo@kernel.org>
+Date:   Fri,  4 Nov 2022 11:00:24 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Tue,  1 Nov 2022 10:41:04 +0000 you wrote:
-> Variable total_payload_len is being used to accumulate payload lengths
-> however it is never read or used afterwards. It is redundant and can
-> be removed.
+> Variable stop_report_cnt is being set or incremented but is never
+> being used for anything meaningful. The variable and code relating
+> to it's use is redundant and can be removed.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  net/rds/send.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-Here is the summary with links:
-  - rds: remove redundant variable total_payload_len
-    https://git.kernel.org/netdev/net-next/c/d28c0e73efbe
+Patch applied to wireless-next.git, thanks.
 
-You are awesome, thank you!
+cdeee8540952 wifi: rtlwifi: rtl8192ee: remove static variable stop_report_cnt
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+https://patchwork.kernel.org/project/linux-wireless/patch/20221031155637.871164-1-colin.i.king@gmail.com/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
