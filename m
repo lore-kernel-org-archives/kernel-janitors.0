@@ -2,82 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CADC43217
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 05:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99060C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 09:31:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230193AbiKDFAb (ORCPT
+        id S229995AbiKDJbx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 4 Nov 2022 01:00:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36726 "EHLO
+        Fri, 4 Nov 2022 05:31:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230001AbiKDFA3 (ORCPT
+        with ESMTP id S229770AbiKDJbw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 4 Nov 2022 01:00:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 334FA165BA;
-        Thu,  3 Nov 2022 22:00:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C1E0B6202D;
-        Fri,  4 Nov 2022 05:00:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 789D3C43155;
-        Fri,  4 Nov 2022 05:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667538027;
-        bh=ZHfBYU+UqBBWzQCD0LvBgUi3WgENgVy3SC2izp4q7l4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=G3K6QJ4DzKMuNQpDA5CwL9jjZOlepXsX8K8If1AkJHDPd4hbsxtTsGhv76izWofdB
-         ysOfH3q8ehqipKSpCTZGWzs+UA6qZhQtZMStIQnYXkm5pIw2KBfe/sbCFMLWKTtH1j
-         Hhk3aOPC2n9VPcPA79IZaoJAYIefqz9s/Tjh075T7S+Xmr4tclCQfxPijJzXTzJbUt
-         gGaZqxB2ogqadpzARPKRb2ZVISVmJrOHCbUqxGVZyzFuZTef7NWhAzOtuZfzbP4+ar
-         o2ol7Y7HEyr1s7iYuFG0uLODkA2CMyuDIl5mk1lCU6Tpsr3dIBGaaONAiY73+TeffQ
-         hlzztRIm6moLA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 13179E5250A;
-        Fri,  4 Nov 2022 05:00:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 4 Nov 2022 05:31:52 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B69E726AD7;
+        Fri,  4 Nov 2022 02:31:50 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id w14so6209253wru.8;
+        Fri, 04 Nov 2022 02:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/fQB8IWbk7Zpl1UHmIGadV3eZG5ePRYU+GVM8Es32sA=;
+        b=ftcCzy4fM3tZjnDEYhaJCVDpM/iESIxsd/rY6lUJ8PN8t5LRaHRl6TUqEGrl0FHci2
+         4hbHLqjDa6yIijEB93ZGzTu+ehlSKYGNsc1ozZGXF3BgyQoRMZqpEsiIvPIPOjqg0SYE
+         3+lsoelIiVbYAwlGtuyVascnWEEcWhB+7PyKLZh4HWrlQzCtok8uiyzs/5q9dHt9sql3
+         dFVIuJI8leukf7z3vaiY+XAZip/hU74Su2Z4ZK5SCKkK6zmlWi3MkXsdEYgXvkoiRuPL
+         0vRJ6xpX8xcC07jSI22tzoVCpSCQ6gj+XieKvjaPt4bHPw9fNKzV6acOWqN1tppPTvhf
+         sAiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/fQB8IWbk7Zpl1UHmIGadV3eZG5ePRYU+GVM8Es32sA=;
+        b=fcTNjL/WnatT8GMDmQAOufJ8tmyd0uzGChbmvxBJTOLgIZ5OHXIU/6njASp4dp5e2c
+         WvW5obLTzHN7ABmYbgYZ/9UBurB63GHfpZDNCEaejxDmGGEkGjBXidZZkHWLPiGjxXgN
+         hyygnWJ0eSoH0bU2L5vFs2elnwLb6N0NYosrkb0AR+D49sSuC49lJRa8r+nvAvlhYCgl
+         y3XVZRfCMZXXoQgM3pQNdkXfwUT5UdXGQTqEDV2NvKSmKdyzwjb+iQ/Hy5maNTOIH2NG
+         bbVLWrFyVN0+aztJKROgLaYNHmclLvcV/KFkZgQpEr+Q/VYifHEj37H1Lo9a+W9jJQTH
+         yeFA==
+X-Gm-Message-State: ACrzQf0a1bOLhZMpYhCwaBgbk3w9KEiD6cMMoilo1Y4q1lKQav6c3a2m
+        z9J6Tj14BzreP3wUQZDLJ54=
+X-Google-Smtp-Source: AMsMyM4kiDlP+Q/7u/Qj4FQMBakY1QAx2Ub4arviqJD402JdlSCoRJU73pEnW7T1wUE5DI9KR1YoFg==
+X-Received: by 2002:adf:b646:0:b0:221:76eb:b3ba with SMTP id i6-20020adfb646000000b0022176ebb3bamr21283958wre.237.1667554309206;
+        Fri, 04 Nov 2022 02:31:49 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id z3-20020a1cf403000000b003b50428cf66sm2250031wma.33.2022.11.04.02.31.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Nov 2022 02:31:48 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Cosmin Tanislav <cosmin.tanislav@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] iio: adc: ad4130: Fix spelling mistake "diffreential" -> "differential"
+Date:   Fri,  4 Nov 2022 09:31:48 +0000
+Message-Id: <20221104093148.167765-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next RESEND] net: usb: Use kstrtobool() instead of
- strtobool()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166753802707.27738.6412621287669031939.git-patchwork-notify@kernel.org>
-Date:   Fri, 04 Nov 2022 05:00:27 +0000
-References: <d4432a67b6f769cac0a9ec910ac725298b64e102.1667336095.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <d4432a67b6f769cac0a9ec910ac725298b64e102.1667336095.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     oliver@neukum.org, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, bjorn@mork.no,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+There is a spelling mistake in an error message. Fix it.
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/iio/adc/ad4130.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed,  2 Nov 2022 07:36:23 +0100 you wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
-> 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
-> 
-> While at it, include the corresponding header file (<linux/kstrtox.h>).
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,RESEND] net: usb: Use kstrtobool() instead of strtobool()
-    https://git.kernel.org/netdev/net-next/c/c2cce3a6e8eb
-
-You are awesome, thank you!
+diff --git a/drivers/iio/adc/ad4130.c b/drivers/iio/adc/ad4130.c
+index 9a4d0043d797..ae1a4dd5c40a 100644
+--- a/drivers/iio/adc/ad4130.c
++++ b/drivers/iio/adc/ad4130.c
+@@ -1480,7 +1480,7 @@ static int ad4130_validate_diff_channel(struct ad4130_state *st, u32 pin)
+ 
+ 	if (pin >= AD4130_MAX_DIFF_INPUTS)
+ 		return dev_err_probe(dev, -EINVAL,
+-				     "Invalid diffreential channel %u\n", pin);
++				     "Invalid differential channel %u\n", pin);
+ 
+ 	if (pin >= AD4130_MAX_ANALOG_PINS)
+ 		return 0;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.38.1
 
