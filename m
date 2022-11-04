@@ -2,103 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4715EC43217
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 17:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8795EC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 18:17:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231890AbiKDRm4 (ORCPT
+        id S231773AbiKDSRz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 4 Nov 2022 13:42:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50384 "EHLO
+        Fri, 4 Nov 2022 14:17:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231721AbiKDRmq (ORCPT
+        with ESMTP id S231704AbiKDSRx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 4 Nov 2022 13:42:46 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A3E4730E;
-        Fri,  4 Nov 2022 10:42:18 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id bk15so8000572wrb.13;
-        Fri, 04 Nov 2022 10:42:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKlyHrBk6uetU/GVQyEI1FfJUyJLjj13qeWJVqCWCUM=;
-        b=kedX8sosCJ5qsYkfX3RaW9LaKcF//hxYQInYXGNpWqO+5gsqpmT64lPNUv0xUdJIY3
-         Q2RbyK/Rbo04l1uKRr4b+OkpAOTZ5kovkoUqbKuX5DSASMlCmUNAuR7+pwLOvJNza/SH
-         hcqMjHo556IB+A7NiMKAok+UuBQoL1huUHEYassvFbCkfP8Mj6JrZ6LBtQINnWFM7vEw
-         hEJmN11WswX4vj4Mqgdr5SmSPIXmN8WaqMYsNFq1SeYf8mQ2i9BHBOa0v1acn9NrnvpF
-         CaD1NoUwa2bhNWy7AVrUDMoMeeLOS2we01NFiwuLoz53bvWiqValEp5IohI5jP5TJGT9
-         qTew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jKlyHrBk6uetU/GVQyEI1FfJUyJLjj13qeWJVqCWCUM=;
-        b=fkmtis8D2its74OyyCpjs+payPkTFAovx2Alzsk5+0XDCIMbETMUq+Qj04x4V5Zk/R
-         VLb2TtloFT1OExt4RunqEznnsbsKird27trIgLJtdOhUpIhDIEmPu4FBQfRakz7vfBRr
-         Wm59w64ccGpxZs7SETB387caW9elQQ1gDvypQFrc3IanKzJOLfsjGLdjxJP8PP8FjU+F
-         QsXHVvyFlI/364xfqSwxY8yDoJtBDmlxa8SszYRt0tLgbgRG/1sAGsvdsVJ7v3f9uSp1
-         gJAGeFpLYnSbZ7ZCcmPqOWMPVZdjst3xwJJYl7Kn1rfLC1F9HFKjKW8ytRGVCLJtkL+J
-         1gcQ==
-X-Gm-Message-State: ACrzQf14tQ5H5Ihe9CUJIzQJUD/Okvhk3dXFs8WFIuv5v+ya/Q5rvJ3o
-        QzBTl2DKNZFSCwfAc1IoB2U=
-X-Google-Smtp-Source: AMsMyM7jgtxsu+d5K0f8IK2VIuL73JmgFxHBkTy+pp6UiMCYdBAw9LwXNcPCOMZowPc9kYkoBSElSA==
-X-Received: by 2002:adf:e804:0:b0:236:657e:756e with SMTP id o4-20020adfe804000000b00236657e756emr23723114wrm.452.1667583736992;
-        Fri, 04 Nov 2022 10:42:16 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b3-20020a05600c150300b003c6c1686b10sm3232113wmg.7.2022.11.04.10.42.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Nov 2022 10:42:16 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jes Sorensen <jes@trained-monkey.org>,
+        Fri, 4 Nov 2022 14:17:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 182A84AF10;
+        Fri,  4 Nov 2022 11:17:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7FC6A622CF;
+        Fri,  4 Nov 2022 18:17:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82585C433D6;
+        Fri,  4 Nov 2022 18:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667585871;
+        bh=+s7AlmNkXcrzJIwGGzPCZdQ14D8AJ39RrEPQjJrIyYk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=YUWF7rkaCq/e75m/fyfFCNq0yiaFrK73pgw2ggsLo3+PYU4/CefGpboFPMZRvpNmX
+         YaZ8cIXXkWYu6pXN/y4vbm/cTSpICeCinzWfO06s2jTKgtEDuBpbsaRHHy0mHkfZQQ
+         EwZlXm2sADM3umEjqOp1qqkMCsFm4bsef4Wvc8XMWz/hqmJUlbY/xxvR7u39MaEchp
+         1zaK5lxZkPLfcIvJqGJg9WlOqP+MfZiz85g54ohKCnhGsSpYv6F6zLRs5NrrJzH9Ff
+         KACYrnRjlPd22REl3/0IRTBwnqGQQIn1Ro5vchScGt9p/rDLbmaErQ2XpLY2e1DvhG
+         xHHGyJxxkkdzw==
+Date:   Fri, 4 Nov 2022 11:17:50 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@toke.dk>,
+        Kalle Valo <kvalo@kernel.org>,
         "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-acenic@sunsite.dk,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ethernet: alteon: remove unused variable len
-Date:   Fri,  4 Nov 2022 17:42:15 +0000
-Message-Id: <20221104174215.242539-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Paolo Abeni <pabeni@redhat.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ath9k: Remove unused variable mismatch
+Message-ID: <20221104111750.2b323850@kernel.org>
+In-Reply-To: <20221104140723.226857-1-colin.i.king@gmail.com>
+References: <20221104140723.226857-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable len is being used to accumulate the skb_frag_size but it
-is never used afterwards. The variable is redundant and can be
-removed.
+On Fri,  4 Nov 2022 14:07:23 +0000 Colin Ian King wrote:
+> Variable mismatch is just being incremented and it's never used anywhere
+> else. The variable and the increment are redundant so remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/alteon/acenic.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Good sir, you don't have to CC netdev on wireless patches.
+Especially trivial ones. I'm saying this because you're a
+major contributor and I presume you send patches based on
+some scripted integration with get_maintainer so I hope
+this could nudge you to improve get_maintainer itself? :)
 
-diff --git a/drivers/net/ethernet/alteon/acenic.c b/drivers/net/ethernet/alteon/acenic.c
-index d7762da8b2c0..eafef84fe3be 100644
---- a/drivers/net/ethernet/alteon/acenic.c
-+++ b/drivers/net/ethernet/alteon/acenic.c
-@@ -2435,7 +2435,7 @@ static netdev_tx_t ace_start_xmit(struct sk_buff *skb,
- 	} else {
- 		dma_addr_t mapping;
- 		u32 vlan_tag = 0;
--		int i, len = 0;
-+		int i;
- 
- 		mapping = ace_map_tx_skb(ap, skb, NULL, idx);
- 		flagsize = (skb_headlen(skb) << 16);
-@@ -2454,7 +2454,6 @@ static netdev_tx_t ace_start_xmit(struct sk_buff *skb,
- 			const skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
- 			struct tx_ring_info *info;
- 
--			len += skb_frag_size(frag);
- 			info = ap->skb->tx_skbuff + idx;
- 			desc = ap->tx_ring + idx;
- 
--- 
-2.38.1
-
+Perhaps any entry which has a tree specified should mask
+off entries higher up?
