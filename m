@@ -2,74 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44947C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 11:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1C4C43217
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 13:50:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231807AbiKDLAk (ORCPT
+        id S231684AbiKDNul (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 4 Nov 2022 07:00:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
+        Fri, 4 Nov 2022 09:50:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231695AbiKDLAb (ORCPT
+        with ESMTP id S229950AbiKDNuk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 4 Nov 2022 07:00:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB70F2C126;
-        Fri,  4 Nov 2022 04:00:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5BE4562159;
-        Fri,  4 Nov 2022 11:00:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2CFC433D7;
-        Fri,  4 Nov 2022 11:00:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667559626;
-        bh=/MGecyQmJdqPsReJBSYYANujGfYMhCik3e8q0K1i5p4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=rZDLQ8p/FknkmIXRK1vRJjz6MsTjqH71aZVu+TDZUbvp3uLCM/Ym82+78mxKOMcSB
-         9iRVJAZ/hnDYwVeczGhu9Vi13ZEp7i8Wyjofo7bbW5eDPuR3RQVWVz1OK20Hfy/mhA
-         9mEmiXRLmaXGucT5u3/VvVBUudO1d71Lk23tYVhHbUi3ADbGz5oaCWi1NqxGjAkBPt
-         2AjVy6aSzWK5FayQ++S9/Jc1s4L8QnDCG/sPmGJrv9e5VJeSTaqlAy9ruAjlEs+s7N
-         8dM46hkeN8kA4UWlaIEVgw01fEAbfqO775+4IKTf+P19XRLQe4daFaAonGtEl/dxId
-         B2/b9X9GauWBQ==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: rtlwifi: rtl8192ee: remove static variable stop_report_cnt
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20221031155637.871164-1-colin.i.king@gmail.com>
-References: <20221031155637.871164-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        Fri, 4 Nov 2022 09:50:40 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DFFC29B;
+        Fri,  4 Nov 2022 06:50:39 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso3227665wmo.1;
+        Fri, 04 Nov 2022 06:50:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cm3BsyVvYpSeuNudkmxYNEssTxhnxpwGrC+e8qB022Q=;
+        b=NR7TLJzCPb2Z1wMhlgNcq0uSnplDtHg4xB4GGeup2S6Xc1Ve0fJXVFoCfSpEtqpMfR
+         GmKR3ZrUu8LLaKnYzfBRlq/ltFR/JitfNcXUIZB6hBiD1u0xwyJqTt/E0n6ic1wZYr1L
+         EYNwIhAKgLywM7z9kC8sUbiN5Ey8TAcXFZVwTjSqKjO/aaghluyXYUfhsiOS3JHx3XM7
+         GIj5YUnl2iFMVCVJGdXTRBL8+eXGUCuyC+0hzp5BX8oLKZU1+uH3B5FVTqXEHAh8rhwI
+         0cscXkYMEvbZymCjgY4tJYZ5ribl105etf8thyq27r5FlorxKCKYEngVSHyNuxV2qqkE
+         RvIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cm3BsyVvYpSeuNudkmxYNEssTxhnxpwGrC+e8qB022Q=;
+        b=mnXFSke4K4BU0EVAx8HDU+gm7dWqJnmxSOAc3WYMDkdDHms+KqbwlTET1hjTgbuzUS
+         +XUX7pBu+C8g6TjZGJJAsQSxb2Zr6wGBTrRe6OYsEI1cSD/3HYCeW8Waxu7LW2oXoT10
+         U5IjZVi5rMuE8HIFWSSkxFi/waEXtT5WyQapthLtbBcjddzXZS4X2dbghBx4d8hbXw1j
+         AdtydKfsqie4Z2gntxePJkYfbdZSyzEuRbb6GabM0fe0AqS8isl/YuRmSAhdxLw1gmJ3
+         e8oX1xb6VMlhm9Ae0L5tg1Qc11/fgluZcbMfSfx84GzDwaEeqdw/FuiyLZRbkNYDlGRP
+         2diw==
+X-Gm-Message-State: ACrzQf34mUWPy4UIbCb54jx+OYpYMSO4mi63JuGGR9epBP9UsaXGTlXb
+        0LU5FvQK4Alb/Ai9yBES36s=
+X-Google-Smtp-Source: AMsMyM6126QLQtqa/BlEQCAV4mdK+f0+HGOLxQHukxIVJzMus3Xva0A3wSvIXT1Qcg2lsLOnrkIxxg==
+X-Received: by 2002:a1c:2507:0:b0:3b3:3681:f774 with SMTP id l7-20020a1c2507000000b003b33681f774mr34535073wml.134.1667569838131;
+        Fri, 04 Nov 2022 06:50:38 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id l21-20020a05600c4f1500b003b4fdbb6319sm3340603wmq.21.2022.11.04.06.50.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Nov 2022 06:50:37 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Stanislaw Gruszka <stf_xl@wp.pl>, Kalle Valo <kvalo@kernel.org>,
         "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <166755962299.3283.14022973939524774032.kvalo@kernel.org>
-Date:   Fri,  4 Nov 2022 11:00:24 +0000 (UTC)
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iwlegacy: remove redundant variable len
+Date:   Fri,  4 Nov 2022 13:50:36 +0000
+Message-Id: <20221104135036.225628-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
+Variable len is being assigned and modified but it is never
+used. The variable is redundant and can be removed.
 
-> Variable stop_report_cnt is being set or incremented but is never
-> being used for anything meaningful. The variable and code relating
-> to it's use is redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Cleans up clang scan build warning:
+warning: variable 'len' set but not used [-Wunused-but-set-variable]
 
-Patch applied to wireless-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/intel/iwlegacy/3945-mac.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-cdeee8540952 wifi: rtlwifi: rtl8192ee: remove static variable stop_report_cnt
-
+diff --git a/drivers/net/wireless/intel/iwlegacy/3945-mac.c b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+index 7352d5b2095f..429952871976 100644
+--- a/drivers/net/wireless/intel/iwlegacy/3945-mac.c
++++ b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+@@ -1202,8 +1202,6 @@ il3945_rx_handle(struct il_priv *il)
+ 		D_RX("r = %d, i = %d\n", r, i);
+ 
+ 	while (i != r) {
+-		int len;
+-
+ 		rxb = rxq->queue[i];
+ 
+ 		/* If an RXB doesn't have a Rx queue slot associated with it,
+@@ -1217,10 +1215,6 @@ il3945_rx_handle(struct il_priv *il)
+ 			       PAGE_SIZE << il->hw_params.rx_page_order,
+ 			       DMA_FROM_DEVICE);
+ 		pkt = rxb_addr(rxb);
+-
+-		len = le32_to_cpu(pkt->len_n_flags) & IL_RX_FRAME_SIZE_MSK;
+-		len += sizeof(u32);	/* account for status word */
+-
+ 		reclaim = il_need_reclaim(il, pkt);
+ 
+ 		/* Based on type of command response or notification,
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20221031155637.871164-1-colin.i.king@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.38.1
 
