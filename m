@@ -2,91 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99060C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 09:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E78C43219
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Nov 2022 10:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiKDJbx (ORCPT
+        id S231690AbiKDKUZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 4 Nov 2022 05:31:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49760 "EHLO
+        Fri, 4 Nov 2022 06:20:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229770AbiKDJbw (ORCPT
+        with ESMTP id S231667AbiKDKUX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 4 Nov 2022 05:31:52 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B69E726AD7;
-        Fri,  4 Nov 2022 02:31:50 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id w14so6209253wru.8;
-        Fri, 04 Nov 2022 02:31:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/fQB8IWbk7Zpl1UHmIGadV3eZG5ePRYU+GVM8Es32sA=;
-        b=ftcCzy4fM3tZjnDEYhaJCVDpM/iESIxsd/rY6lUJ8PN8t5LRaHRl6TUqEGrl0FHci2
-         4hbHLqjDa6yIijEB93ZGzTu+ehlSKYGNsc1ozZGXF3BgyQoRMZqpEsiIvPIPOjqg0SYE
-         3+lsoelIiVbYAwlGtuyVascnWEEcWhB+7PyKLZh4HWrlQzCtok8uiyzs/5q9dHt9sql3
-         dFVIuJI8leukf7z3vaiY+XAZip/hU74Su2Z4ZK5SCKkK6zmlWi3MkXsdEYgXvkoiRuPL
-         0vRJ6xpX8xcC07jSI22tzoVCpSCQ6gj+XieKvjaPt4bHPw9fNKzV6acOWqN1tppPTvhf
-         sAiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/fQB8IWbk7Zpl1UHmIGadV3eZG5ePRYU+GVM8Es32sA=;
-        b=fcTNjL/WnatT8GMDmQAOufJ8tmyd0uzGChbmvxBJTOLgIZ5OHXIU/6njASp4dp5e2c
-         WvW5obLTzHN7ABmYbgYZ/9UBurB63GHfpZDNCEaejxDmGGEkGjBXidZZkHWLPiGjxXgN
-         hyygnWJ0eSoH0bU2L5vFs2elnwLb6N0NYosrkb0AR+D49sSuC49lJRa8r+nvAvlhYCgl
-         y3XVZRfCMZXXoQgM3pQNdkXfwUT5UdXGQTqEDV2NvKSmKdyzwjb+iQ/Hy5maNTOIH2NG
-         bbVLWrFyVN0+aztJKROgLaYNHmclLvcV/KFkZgQpEr+Q/VYifHEj37H1Lo9a+W9jJQTH
-         yeFA==
-X-Gm-Message-State: ACrzQf0a1bOLhZMpYhCwaBgbk3w9KEiD6cMMoilo1Y4q1lKQav6c3a2m
-        z9J6Tj14BzreP3wUQZDLJ54=
-X-Google-Smtp-Source: AMsMyM4kiDlP+Q/7u/Qj4FQMBakY1QAx2Ub4arviqJD402JdlSCoRJU73pEnW7T1wUE5DI9KR1YoFg==
-X-Received: by 2002:adf:b646:0:b0:221:76eb:b3ba with SMTP id i6-20020adfb646000000b0022176ebb3bamr21283958wre.237.1667554309206;
-        Fri, 04 Nov 2022 02:31:49 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z3-20020a1cf403000000b003b50428cf66sm2250031wma.33.2022.11.04.02.31.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Nov 2022 02:31:48 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Cosmin Tanislav <cosmin.tanislav@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: adc: ad4130: Fix spelling mistake "diffreential" -> "differential"
-Date:   Fri,  4 Nov 2022 09:31:48 +0000
-Message-Id: <20221104093148.167765-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
-MIME-Version: 1.0
+        Fri, 4 Nov 2022 06:20:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB58325295;
+        Fri,  4 Nov 2022 03:20:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 478CB6213D;
+        Fri,  4 Nov 2022 10:20:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9F8AEC4347C;
+        Fri,  4 Nov 2022 10:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667557219;
+        bh=NDQ5Mp093HyrrPYJ19MdXYRs0xi1e+NzMOuWI9ru3k4=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Mxf/sGOa5fYeqXl4sIRq/Db6liwIV4tnQd+hcx3AddXyoJe7vj+OBmMAS/hlhSqz6
+         MskImR6TlA+FYt7SPEOamGyowk08c/Bx7TjB2JNp2Riz7Rn149BNMTIspqRsei7XZu
+         vvmnJGpa5VfSQmae3d1bfKdrE/wyD+shvUlcC5nh//nhv/Sie7uHUMTWtbA+P7VOa0
+         nKyCdWIgotEWQbzjwCWpZXP2LBKMP8c/5d4wwiGqLoVj7iuYs81ME3/dUd1x0Y63q4
+         OoTVMSpygvRQUYSHChe3TQrjn46vX2fzMOK+HTF98dLupYh06Lv1HOvGHSM7AhkwiD
+         k3Hrw7EOoUneg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 860DEE52509;
+        Fri,  4 Nov 2022 10:20:19 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] rds: remove redundant variable total_payload_len
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166755721954.22576.7298281566046818273.git-patchwork-notify@kernel.org>
+Date:   Fri, 04 Nov 2022 10:20:19 +0000
+References: <20221101104104.29878-1-colin.i.king@gmail.com>
+In-Reply-To: <20221101104104.29878-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     santosh.shilimkar@oracle.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an error message. Fix it.
+Hello:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/iio/adc/ad4130.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/drivers/iio/adc/ad4130.c b/drivers/iio/adc/ad4130.c
-index 9a4d0043d797..ae1a4dd5c40a 100644
---- a/drivers/iio/adc/ad4130.c
-+++ b/drivers/iio/adc/ad4130.c
-@@ -1480,7 +1480,7 @@ static int ad4130_validate_diff_channel(struct ad4130_state *st, u32 pin)
- 
- 	if (pin >= AD4130_MAX_DIFF_INPUTS)
- 		return dev_err_probe(dev, -EINVAL,
--				     "Invalid diffreential channel %u\n", pin);
-+				     "Invalid differential channel %u\n", pin);
- 
- 	if (pin >= AD4130_MAX_ANALOG_PINS)
- 		return 0;
+On Tue,  1 Nov 2022 10:41:04 +0000 you wrote:
+> Variable total_payload_len is being used to accumulate payload lengths
+> however it is never read or used afterwards. It is redundant and can
+> be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  net/rds/send.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+
+Here is the summary with links:
+  - rds: remove redundant variable total_payload_len
+    https://git.kernel.org/netdev/net-next/c/d28c0e73efbe
+
+You are awesome, thank you!
 -- 
-2.38.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
