@@ -2,115 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8DDC4332F
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Nov 2022 14:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B5DC4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Nov 2022 14:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbiKEOCQ (ORCPT
+        id S229813AbiKEObY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Nov 2022 10:02:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60318 "EHLO
+        Sat, 5 Nov 2022 10:31:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbiKEOCP (ORCPT
+        with ESMTP id S229718AbiKEObX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Nov 2022 10:02:15 -0400
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C9D220BE9;
-        Sat,  5 Nov 2022 07:02:13 -0700 (PDT)
-Received: by mail-oi1-x230.google.com with SMTP id n186so7928279oih.7;
-        Sat, 05 Nov 2022 07:02:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UWKQpWV4q18oUUAJI5y05A3Qk/YN9wzpbCG2obhLtyQ=;
-        b=WZJGW3l1z10C+6EY2Vpl9D/BE2rvprjerZP/fVm6a0Lfz3ce47j6rdLjoeBrk9zwRf
-         El2g06eggeoqBRt51CGxE8LjuJPD6nF1vLwBUE1Sr4qk0rglhlQb5+O9gkZ3NjMitZMH
-         llF0MvXfOmHyhZrTQ1wAfiN/uSQ8ltVsQbD2LAVwQA0KoEDtXxG/gSH/GXDGzzs/1DzF
-         GvCVUbfdpacxYILCrY9pLYW8WmQ+01h38IZmMBflXUGJsz0l0A8FqSJ6SSLZtcMO1VA0
-         UbF/HZHSQxUv5WsLLHjHNFveTeI5ZrzXCK1n0ayNArjcOwVN+jcJqEe2OP6aXq0OiS/g
-         cmJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UWKQpWV4q18oUUAJI5y05A3Qk/YN9wzpbCG2obhLtyQ=;
-        b=qOMXauSZxjASkrZLyz13vfQGNT98T4Am7xxzg7/tS4MlwQ+40iGReqCKPhrgrf0D1G
-         hzYBGAEr7YUQDIkAZtppNAxCHePNViT8b3/yFbtmHGrlGdbB1BjZ2Q9qccBUxMUCu9K/
-         KJP9EAMMv6PkCm9YEcniHY4wWqAW2BdGku8xmXJKIpyN5paajRa+6ZEPRlt7isPB53G/
-         KQZEgR8PB9wD7wlS9gUrr1T50XOLb0iHNFRltwBjLe6G8YcriVIj5n9n90PdqfwTdAVu
-         aJF2mQM/LvDc45E42f4cgcw60qIY9we5x0MKORPrCvSaDBpu8ronnJjPq/5698JKksKm
-         8J9A==
-X-Gm-Message-State: ACrzQf2jmbpe9C+K1Lj8q/10FSUzrC3h83isf7pOoA2goBMgVpVmyq1X
-        LYB0W15YsZf/HyTusFqyiiO0M3zOgfc=
-X-Google-Smtp-Source: AMsMyM5RaWy/k+dJcmwEl4cIbvyShI1ptqjzBjNZBPpR17CbK3PAkFdqE/NSjFMUMWq60Wb4tRpZbA==
-X-Received: by 2002:a05:6808:2387:b0:354:e5a0:ec9d with SMTP id bp7-20020a056808238700b00354e5a0ec9dmr360773oib.202.1667656932512;
-        Sat, 05 Nov 2022 07:02:12 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 3-20020a4ae1a3000000b0048fb9b6dd70sm666953ooy.0.2022.11.05.07.02.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Nov 2022 07:02:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sat, 5 Nov 2022 07:02:09 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH] watchdog: Include <linux/kstrtox.h> when appropriate
-Message-ID: <20221105140209.GB1606271@roeck-us.net>
-References: <08fd5512e569558231247515c04c8596a1d11004.1667646547.git.christophe.jaillet@wanadoo.fr>
+        Sat, 5 Nov 2022 10:31:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73093DEAF;
+        Sat,  5 Nov 2022 07:31:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F34060ADB;
+        Sat,  5 Nov 2022 14:31:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F6CC433D6;
+        Sat,  5 Nov 2022 14:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667658681;
+        bh=VKza6h5mQJMpE6zmM8QdT4b9Ggv3/0ZoL+CRi6cZoWY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LqNEApwFwdAq/7RachRRV2MGYbN+3Zy8LfQKAVWGt7eoJfbE1xwBJKr49p1ewfA1o
+         0a6nWQEPbxoR2Zsrm2688wl648LzbXcvFYqv6clp4glsrKYb1uZ9I1YFhN9o9D/T5C
+         /A45D+1AxWl1hd/gpNi+JK/b1vpSnxnxPUCVGq5ejn1WrwuDvwZ/0QXbf41s93gCXk
+         1zX5ByG3xo5ra7AOtMT4CJhAiuS5J3Ppsc7RbVqrWqNzparmuaa9aP2wphclnpE23x
+         jgGCfS/IPgdRctDdKQzVuytctY2gUT89BnC41zwwHFE93CCY/LkSDTmoAKUtmNFUtH
+         QeHTykXXTfj6Q==
+Date:   Sat, 5 Nov 2022 14:31:12 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Cosmin Tanislav <cosmin.tanislav@analog.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: adc: ad4130: Fix spelling mistake
+ "diffreential" -> "differential"
+Message-ID: <20221105143112.02af0e37@jic23-huawei>
+In-Reply-To: <20221104093148.167765-1-colin.i.king@gmail.com>
+References: <20221104093148.167765-1-colin.i.king@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <08fd5512e569558231247515c04c8596a1d11004.1667646547.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Nov 05, 2022 at 12:09:34PM +0100, Christophe JAILLET wrote:
-> The kstrto<something>() functions have been moved from kernel.h to
-> kstrtox.h.
-> 
-> So, in order to eventually remove <linux/kernel.h> from <linux/watchdog.h>,
-> include the latter directly in the appropriate files.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Fri,  4 Nov 2022 09:31:48 +0000
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> There is a spelling mistake in an error message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Applied
 > ---
->  drivers/watchdog/aspeed_wdt.c   | 1 +
->  drivers/watchdog/watchdog_dev.c | 1 +
->  2 files changed, 2 insertions(+)
+>  drivers/iio/adc/ad4130.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
-> index 0cff2adfbfc9..10863d2ef924 100644
-> --- a/drivers/watchdog/aspeed_wdt.c
-> +++ b/drivers/watchdog/aspeed_wdt.c
-> @@ -8,6 +8,7 @@
->  #include <linux/delay.h>
->  #include <linux/io.h>
->  #include <linux/kernel.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-> index 55574ed42504..f31608f3e324 100644
-> --- a/drivers/watchdog/watchdog_dev.c
-> +++ b/drivers/watchdog/watchdog_dev.c
-> @@ -35,6 +35,7 @@
->  #include <linux/init.h>		/* For __init/__exit/... */
->  #include <linux/hrtimer.h>	/* For hrtimers */
->  #include <linux/kernel.h>	/* For printk/panic/... */
-> +#include <linux/kstrtox.h>	/* For kstrto* */
->  #include <linux/kthread.h>	/* For kthread_work */
->  #include <linux/miscdevice.h>	/* For handling misc devices */
->  #include <linux/module.h>	/* For module stuff/... */
-> -- 
-> 2.34.1
-> 
+> diff --git a/drivers/iio/adc/ad4130.c b/drivers/iio/adc/ad4130.c
+> index 9a4d0043d797..ae1a4dd5c40a 100644
+> --- a/drivers/iio/adc/ad4130.c
+> +++ b/drivers/iio/adc/ad4130.c
+> @@ -1480,7 +1480,7 @@ static int ad4130_validate_diff_channel(struct ad4130_state *st, u32 pin)
+>  
+>  	if (pin >= AD4130_MAX_DIFF_INPUTS)
+>  		return dev_err_probe(dev, -EINVAL,
+> -				     "Invalid diffreential channel %u\n", pin);
+> +				     "Invalid differential channel %u\n", pin);
+>  
+>  	if (pin >= AD4130_MAX_ANALOG_PINS)
+>  		return 0;
+
