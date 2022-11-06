@@ -2,117 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA54DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Nov 2022 17:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED9AC4332F
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Nov 2022 18:12:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230471AbiKFRW0 (ORCPT
+        id S230379AbiKFSMX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 6 Nov 2022 12:22:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36534 "EHLO
+        Sun, 6 Nov 2022 13:12:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbiKFRWN (ORCPT
+        with ESMTP id S229919AbiKFSMW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 6 Nov 2022 12:22:13 -0500
-Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB9EE95;
-        Sun,  6 Nov 2022 09:16:04 -0800 (PST)
-Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-13b23e29e36so10454531fac.8;
-        Sun, 06 Nov 2022 09:16:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uEv5IfnJcbTamlVtUpqiTgyx6Ij9nPLIySLxf/hjkbo=;
-        b=noua/yFqm3voDQ4vK/Xnwv2lPUhv/bjeNBEioUMO1caiY+cqjqktx+Pq+DRvesZCgA
-         d//QuwBhkaum3ZBYqfka1bjS4ugjvhz9zNrSBccZhQnCtF5iSpOiT1aqW4lzlyJCKvrV
-         dQx6PgpGJKBWIl75kdxQhvPvNmohvGiU9mjOOPYyrhjV6FiChPpKXEJGdG1Z//cOb2uy
-         YmEf79V1DwuecsFIiSRsvbyzi1fqNHa8BDzUHl5y5Pv1lOKXCOWge8VhqhweK8+mq7T6
-         oc9rMh9QUnrWGArDAbXUF3fHSqvgREeIP7GukLeCHvRT4nVTCvhAgf+vo2IbBXnnMtFo
-         +RXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uEv5IfnJcbTamlVtUpqiTgyx6Ij9nPLIySLxf/hjkbo=;
-        b=B4saOxUWObXoIeHMz4chsbVqbxLXAtrngkjK4bArT4Wryf7VgAZ1E503idW2DW8izb
-         1x5AKSJUFmOdp4iCk0rEJFAqtOmixgiGZBCZzZQfPgsIpgwi5PJ9eW7cF0kk3s1Zr4HX
-         8NvFkdF/D0opNCS8gK64qIoY+ShcNGUPveVOv3FxfjurMl+1Ck9lefykjds9zjW0LQ9O
-         +l10BSd1+3x4OEmpA4Yfn92o73f5Isb4gY5xpuMK6cEqtmpyrinDs1BBF34m7Y/HH3d9
-         lnuh9WcusIWZTZhFCiSx23hq/mCzwTB5a6DIXPEjz7zRIonhwnjNgZb4xdJqVqXL9kLe
-         l6Pw==
-X-Gm-Message-State: ACrzQf0/U6YK4tJNDrciZdq+am2cIpQKyHNHqUMmW/PThV7gwZ7ri3nf
-        ZQCMd+fo9WeJr1M2UU4e2YQ=
-X-Google-Smtp-Source: AMsMyM5bzIlrUuIFBGzNbqYQ02V6lN7ciCTOZDwHAvBLO5/YGgrsTnGI/pK4hMCO3nar5mewI1/zCg==
-X-Received: by 2002:a05:6870:4612:b0:13b:775d:511 with SMTP id z18-20020a056870461200b0013b775d0511mr37349401oao.81.1667754963323;
-        Sun, 06 Nov 2022 09:16:03 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w52-20020a9d3637000000b00668953207b2sm2022492otb.80.2022.11.06.09.16.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Nov 2022 09:16:02 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 6 Nov 2022 09:16:01 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        George Joseph <george.joseph@fairview5.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-        Juerg Haefliger <juergh@proton.me>,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        Riku Voipio <riku.voipio@iki.fi>,
-        Huang Rui <ray.huang@amd.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Guillaume Ligneul <guillaume.ligneul@gmail.com>,
-        Ibrahim Tilki <Ibrahim.Tilki@analog.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Roger Lucas <vt8231@hiddenengine.co.uk>,
-        Marc Hulsman <m.hulsman@tudelft.nl>,
-        Rudolf Marek <r.marek@assembler.cz>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH] hwmon: Include <linux/kstrtox.h> when appropriate
-Message-ID: <20221106171601.GB105056@roeck-us.net>
-References: <0e819645f8d607f7b4550c8aaf4a563b1404bf40.1667730675.git.christophe.jaillet@wanadoo.fr>
+        Sun, 6 Nov 2022 13:12:22 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADAE5BC97;
+        Sun,  6 Nov 2022 10:12:21 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 45278B8013C;
+        Sun,  6 Nov 2022 18:12:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A038C433C1;
+        Sun,  6 Nov 2022 18:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667758338;
+        bh=aeHQGGH8K9RD+oyiW65D8T6LjNNcjqBx1LiVToEJi1o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tuDFbPSKJWW+kySNWBdsgwJ2BrxsI39qnfRLW1Ehk/n1vNeTSyVSnfAHeizidsFu/
+         QNn4KnMw5dFHLBChb8Awab2PT2i3yZeObkAyj4kXlpa5Cw1O4s1JPtxHZRGpmwQYcQ
+         oZq+swURCoTODHVX2hbCZq+YoIzDSfPfzYOYeiPTHGTGhOozoLESSdrzjAVP9SRhSx
+         2TwW3qnZaqQSNyp/J+2kqS1CO8Haw+/8BXRxo/ixMgbYDvc8JpKIk0iWqMK8qWsiPR
+         twW/EkAObgWY/ORHHFPjhLBAXRuZ9dpzdFV9rrZ4M8vBHioNTSkx1EBtflZl5IyHuJ
+         OIbs16aCWj/8w==
+Date:   Sun, 6 Nov 2022 20:12:14 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Saeed Mahameed <saeedm@nvidia.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Yevgeny Kliteynik <kliteyn@nvidia.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5: Fix spelling mistake "destoy" -> "destroy"
+Message-ID: <Y2f4/ihY0cfmzSiG@unreal>
+References: <20221031080104.773325-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0e819645f8d607f7b4550c8aaf4a563b1404bf40.1667730675.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221031080104.773325-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Nov 06, 2022 at 11:31:27AM +0100, Christophe JAILLET wrote:
-> The kstrto<something>() functions have been moved from kernel.h to
-> kstrtox.h.
+On Mon, Oct 31, 2022 at 08:01:04AM +0000, Colin Ian King wrote:
+> There is a spelling mistake in an error message. Fix it.
 > 
-> So, include the latter directly in the appropriate files.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> The goal of this patch is to eventually remove <linux/kernel.h> from
-> <linux/watchdog.h>.
+>  drivers/net/ethernet/mellanox/mlx5/core/steering/dr_table.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> This patch is needed to avoid indirect inclusion, via <linux/watchdog.h>,
-> in fschmd.c, ftsteutates.c and w83793.c.
-> 
-> 
-> Maybe, just including <linux/kstrtox.h> in <linux/hwmon.h> would also do
-> the job. It is likely that this file is included in all hwmon's drivers.
-> Let me know if this less intrusive approach is preferred.
-
-Include it from <linux/hwmon-sysfs.h>. This should cover almost all
-drivers needing it. The remaining drivers (if there are any) should
-include it directly. Almost all drivers registering the hwmon device
-with [devm_]hwmon_device_register_with_info() do not need the include,
-but (almost) all drivers registering with an older API will need it.
-Those drivers will also include <linux/hwmon-sysfs.h>.
 
 Thanks,
-Guenter
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+
+BTW,
+➜  kernel git:(net-next) git grep "destoy"
+drivers/cpufreq/pasemi-cpufreq.c: * module init and destoy
+drivers/cpufreq/ppc_cbe_cpufreq.c: * module init and destoy
+drivers/hid/hid-logitech-hidpp.c:                       /* autocenter spring destoyed */
+drivers/hwtracing/coresight/coresight-tmc-etr.c:         * events are simply not used an freed as events are destoyed.  We still
+drivers/net/ethernet/mellanox/mlx5/core/steering/dr_table.c:            mlx5dr_err(tbl->dmn, "Failed to destoy sw owned table\n");
+include/net/caif/cfpkt.h: * pkt Packet to be destoyed.
+net/netfilter/nf_nat_core.c:     * Else, when the conntrack is destoyed, nf_nat_cleanup_conntrack()
+
