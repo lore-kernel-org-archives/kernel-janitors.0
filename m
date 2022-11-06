@@ -2,80 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B5DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Nov 2022 14:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906CBC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Nov 2022 00:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229813AbiKEObY (ORCPT
+        id S229529AbiKFAan (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Nov 2022 10:31:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41490 "EHLO
+        Sat, 5 Nov 2022 20:30:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbiKEObX (ORCPT
+        with ESMTP id S229499AbiKFAal (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Nov 2022 10:31:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73093DEAF;
-        Sat,  5 Nov 2022 07:31:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F34060ADB;
-        Sat,  5 Nov 2022 14:31:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F6CC433D6;
-        Sat,  5 Nov 2022 14:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667658681;
-        bh=VKza6h5mQJMpE6zmM8QdT4b9Ggv3/0ZoL+CRi6cZoWY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LqNEApwFwdAq/7RachRRV2MGYbN+3Zy8LfQKAVWGt7eoJfbE1xwBJKr49p1ewfA1o
-         0a6nWQEPbxoR2Zsrm2688wl648LzbXcvFYqv6clp4glsrKYb1uZ9I1YFhN9o9D/T5C
-         /A45D+1AxWl1hd/gpNi+JK/b1vpSnxnxPUCVGq5ejn1WrwuDvwZ/0QXbf41s93gCXk
-         1zX5ByG3xo5ra7AOtMT4CJhAiuS5J3Ppsc7RbVqrWqNzparmuaa9aP2wphclnpE23x
-         jgGCfS/IPgdRctDdKQzVuytctY2gUT89BnC41zwwHFE93CCY/LkSDTmoAKUtmNFUtH
-         QeHTykXXTfj6Q==
-Date:   Sat, 5 Nov 2022 14:31:12 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Cosmin Tanislav <cosmin.tanislav@analog.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iio: adc: ad4130: Fix spelling mistake
- "diffreential" -> "differential"
-Message-ID: <20221105143112.02af0e37@jic23-huawei>
-In-Reply-To: <20221104093148.167765-1-colin.i.king@gmail.com>
-References: <20221104093148.167765-1-colin.i.king@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-pc-linux-gnu)
+        Sat, 5 Nov 2022 20:30:41 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B8B1265B;
+        Sat,  5 Nov 2022 17:30:40 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id a27so5254866qtw.10;
+        Sat, 05 Nov 2022 17:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U7icr2ccwj4KXKIEFeiasLTFoXUPeV5GqVTWsb2ag74=;
+        b=J4HGCixsqOHqnl7wwgpKN/wpG1l5e7HZx5SRew4/3U6oI9/krShrjd2+JVmp1jcFZ9
+         zBBq1nlWov8Egp3o1UslodAR2HGZb/c4+YGJ9SUMo/TskUrwxB+s3MRm874qdBbM8xG9
+         abgQmaK8tAeU3vfvGyfU/XT3aLj1IKPgoGUwt4nmoa4IwVYKaLUKWhNVH3A8Ge5QKOr4
+         dnKhpX4XG92gCVoprWkH6ZMXs/dm6HfVEj7Mv7cGIoQaZHu/nl24reeIA3kJGPoGgsyE
+         +2U93K5MohtYCYR/GGdabIyiXZXxb6BKtoN6Fm6iOiM4VV+R9uh23vqdt+cOaNb/zv9j
+         uALA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=U7icr2ccwj4KXKIEFeiasLTFoXUPeV5GqVTWsb2ag74=;
+        b=Tro22emqKcUBfrkqZuanxWttpf4CgTB7L4f6nI9mp/l3+9CLZQcxE92j0Qm39h1QAJ
+         zc3RZR2hQJCdMYWTOeaLkymmTzY2/XXKByJJwvJv+V7Nq9zFoEk1MldmwqE2PGTxZcNe
+         GJL/VuF0ZNYUH2DKQ3MoR8Uv5XhTpB4r/gxkk2VJLmLJZwEdS0vs7Eno8LapdE/1S2T4
+         +HD9RzbKsvnLTZ4yLzD16DUh+jUNB0Ucq1nROiEBbhcsAuCwdPwGWaxxGyTYnxaTlaj2
+         bq1u+/F6JZlyzfe/2YMLGVDwtxTzd0s36FyzvbEQNewyjvKTjnEUkZ3bW42b8GcQP8m/
+         kDeQ==
+X-Gm-Message-State: ACrzQf0Rd9vPaTB0U05IDfKZ5R7efb27sq4mOXVPUdnaHm8K376uey/R
+        4ruMhiSYS6wBipuT0VstPQ==
+X-Google-Smtp-Source: AMsMyM5DO/1XqMmBZ2bNaxOTQmx8u0/IZ2EubMZ0oerO/KAUsl3l/boidddsW0tbhwz3X62yEzFqww==
+X-Received: by 2002:a05:622a:40d:b0:397:bd61:ef1d with SMTP id n13-20020a05622a040d00b00397bd61ef1dmr35514956qtx.404.1667694639370;
+        Sat, 05 Nov 2022 17:30:39 -0700 (PDT)
+Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
+        by smtp.gmail.com with ESMTPSA id o14-20020a05620a0d4e00b006eef13ef4c8sm2960643qkl.94.2022.11.05.17.30.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Nov 2022 17:30:38 -0700 (PDT)
+Sender: Corey Minyard <tcminyard@gmail.com>
+Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:56b3:6d0f:b2b0:c9a9])
+        by serve.minyard.net (Postfix) with ESMTPSA id F14E8180044;
+        Sun,  6 Nov 2022 00:30:36 +0000 (UTC)
+Date:   Sat, 5 Nov 2022 19:30:35 -0500
+From:   Corey Minyard <minyard@acm.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net
+Subject: Re: [PATCH] ipmi/watchdog: Include <linux/kstrtox.h> when appropriate
+Message-ID: <Y2cAKyqilb7v9tFi@minyard.net>
+Reply-To: minyard@acm.org
+References: <37daa028845d90ee77f1e547121a051a983fec2e.1667647002.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37daa028845d90ee77f1e547121a051a983fec2e.1667647002.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri,  4 Nov 2022 09:31:48 +0000
-Colin Ian King <colin.i.king@gmail.com> wrote:
-
-> There is a spelling mistake in an error message. Fix it.
+On Sat, Nov 05, 2022 at 12:16:54PM +0100, Christophe JAILLET wrote:
+> The kstrto<something>() functions have been moved from kernel.h to
+> kstrtox.h.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Applied
+> So, in order to eventually remove <linux/kernel.h> from <linux/watchdog.h>,
+> include the latter directly in the appropriate files.
+
+This is in my queue.  Thanks.
+
+-corey
+
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/iio/adc/ad4130.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/char/ipmi/ipmi_watchdog.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/iio/adc/ad4130.c b/drivers/iio/adc/ad4130.c
-> index 9a4d0043d797..ae1a4dd5c40a 100644
-> --- a/drivers/iio/adc/ad4130.c
-> +++ b/drivers/iio/adc/ad4130.c
-> @@ -1480,7 +1480,7 @@ static int ad4130_validate_diff_channel(struct ad4130_state *st, u32 pin)
->  
->  	if (pin >= AD4130_MAX_DIFF_INPUTS)
->  		return dev_err_probe(dev, -EINVAL,
-> -				     "Invalid diffreential channel %u\n", pin);
-> +				     "Invalid differential channel %u\n", pin);
->  
->  	if (pin >= AD4130_MAX_ANALOG_PINS)
->  		return 0;
-
+> diff --git a/drivers/char/ipmi/ipmi_watchdog.c b/drivers/char/ipmi/ipmi_watchdog.c
+> index 5b4e677929ca..47365150e431 100644
+> --- a/drivers/char/ipmi/ipmi_watchdog.c
+> +++ b/drivers/char/ipmi/ipmi_watchdog.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/init.h>
+>  #include <linux/completion.h>
+>  #include <linux/kdebug.h>
+> +#include <linux/kstrtox.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/errno.h>
+>  #include <linux/uaccess.h>
+> -- 
+> 2.34.1
+> 
