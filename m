@@ -2,103 +2,177 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143A6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 19:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D15C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 20:08:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232528AbiKGTkq (ORCPT
+        id S232489AbiKGUIb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Nov 2022 14:40:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35328 "EHLO
+        Mon, 7 Nov 2022 15:08:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232153AbiKGTkp (ORCPT
+        with ESMTP id S231586AbiKGUI2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Nov 2022 14:40:45 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D73193D9;
-        Mon,  7 Nov 2022 11:40:44 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so10814552pjs.4;
-        Mon, 07 Nov 2022 11:40:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Lr2LJh1ynsT6o7QECxrCpd8COAMFXtNJpOsEdVPq6mA=;
-        b=Jr9uTsc3hShwQ7UX2Tm2tx7F4XmAu9jfoZX9sYL1gH4GV0IK0c7jM2ADozP+FVLK3f
-         Y2Eg2BUdbWvwaNL4BCY2BOMc4a/NxJ2qn3phYseVokjP7f9+/LgaO0P1E+Hn9G+WH2wq
-         4kasZWGcR5RUgGz7bh3Yeutr9FijqrFbbRi9n+NBJPxUrANZG1Q9BJn18SJBjnxUVz3y
-         8Jy1TqwaL+Sv5q/ewqUzH0+pC6gT9KZIVdv2ACMxaPkqfzeGwNBUkP43aXSueCgRTr61
-         L04ukJ5uLTzY0cJkybksbAvC3VRHVKdb7WxfU9dvCZ3u4zO9OQtrMYIpFneaW6fx5eNB
-         dLrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lr2LJh1ynsT6o7QECxrCpd8COAMFXtNJpOsEdVPq6mA=;
-        b=M9x9l3Ws3P4KB4uvb7FGdLCKDwHd6CgBctPDNdj4XcIGSqOpGUegB0ui0n6DlaQX9D
-         1NrAe2XLMSal0mdrI9Mxp6FTBe2yQVsPPTXQKK7Kl16NhkkY5ryje7/9EnUNkWQbs//g
-         nGFG1VT9oUJb0DZijK15E0iAKklv/Yu59/nLIHUEYsEi4ikovnQbhLVC9PFOL5iZlhe4
-         ypYHeD8UhG8bPLbcsrC7Zec/RFWjL3rNqA+D5jirqPnBijnJjRwuapTXzS0g8yPbMQb9
-         ieXiqVvESuU5npDEudeQg3HVhlzx1+SieDS/QYpKmYmwOH7UG1TfXEpaiOj30hH6ui0V
-         oDiQ==
-X-Gm-Message-State: ACrzQf2Ng/dVJQA77B8yNbGR1/YUnNHbejvrL8JTRRfc4E7f2sjBzUxP
-        zd7ihnSvjdBUsWpiNLvSZCU=
-X-Google-Smtp-Source: AMsMyM4Z1WSLG/2s+85sT5YwneM/XauDZnGvse8TolrZ9Zs1DIAvczdZAQ2Z5UH9Z7fHC4PrnIbGWA==
-X-Received: by 2002:a17:902:da82:b0:186:ee5a:47c7 with SMTP id j2-20020a170902da8200b00186ee5a47c7mr52582931plx.82.1667850044133;
-        Mon, 07 Nov 2022 11:40:44 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:626:eb80:9eb9:1fd7])
-        by smtp.gmail.com with ESMTPSA id x1-20020a633101000000b00464858cf6b0sm4510500pgx.54.2022.11.07.11.40.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 11:40:43 -0800 (PST)
-Date:   Mon, 7 Nov 2022 11:40:40 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH 12/30] input: Use kstrtobool() instead of strtobool()
-Message-ID: <Y2lfOBAFo7jcpeTO@google.com>
-References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
- <4311e9cb62687449f4175e2b062abcd77aada059.1667336095.git.christophe.jaillet@wanadoo.fr>
- <Y2Qowvjn+7jT767t@google.com>
- <a0a59528-6af4-adb2-e4e2-cb4cbe15e986@wanadoo.fr>
+        Mon, 7 Nov 2022 15:08:28 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E77F328B
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Nov 2022 12:08:22 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1os8Pr-0004hl-2U; Mon, 07 Nov 2022 21:08:19 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1os8Po-002uxE-Hn; Mon, 07 Nov 2022 21:08:17 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1os8Po-00F2U1-Q7; Mon, 07 Nov 2022 21:08:16 +0100
+Date:   Mon, 7 Nov 2022 21:08:15 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     cocci@inria.fr, Julia Lawall <Julia.Lawall@inria.fr>,
+        kernel-janitors@vger.kernel.org,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [cocci] [PATCH] coccinelle: api: Don't use
+ devm_platform_get_and_ioremap_resource with res==NULL
+Message-ID: <20221107200815.u7hcwejileeabnct@pengutronix.de>
+References: <20221107114702.15706-1-u.kleine-koenig@pengutronix.de>
+ <bd13da2d-6d18-4f33-0987-a193e3c9b761@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2znbbrzwbbfnunan"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a0a59528-6af4-adb2-e4e2-cb4cbe15e986@wanadoo.fr>
+In-Reply-To: <bd13da2d-6d18-4f33-0987-a193e3c9b761@web.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Nov 03, 2022 at 10:37:19PM +0100, Christophe JAILLET wrote:
-> Le 03/11/2022 à 21:46, Dmitry Torokhov a écrit :
-> > On Tue, Nov 01, 2022 at 10:14:00PM +0100, Christophe JAILLET wrote:
-> > > strtobool() is the same as kstrtobool().
-> > > However, the latter is more used within the kernel.
-> > > 
-> > > In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> > > the other function name.
-> > > 
-> > > While at it, include the corresponding header file (<linux/kstrtox.h>)
-> > > 
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > 
-> > Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > 
-> > Please feel free to merge with the rest of the series. Or let me know if
-> > you want me to pick just this one through my tree.
-> > 
-> > Thanks.
-> > 
-> 
-> Hi,
-> 
-> the patch can go through your tree.
-> There is no plan to merge the whole serie at once, and some other
-> maintainers have asked for some patches to be re-sent as individual patches.
 
-OK, applied, thank you.
+--2znbbrzwbbfnunan
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Dmitry
+On Mon, Nov 07, 2022 at 08:00:33PM +0100, Markus Elfring wrote:
+>=20
+> > devm_platform_get_and_ioremap_resource(pdev, index, NULL) is equivalent=
+ to
+> > the shorter devm_platform_ioremap_resource(pdev, index).
+> =E2=80=A6
+> >  create mode 100644 scripts/coccinelle/api/devm_platform_ioremap_resour=
+ce.cocci
+> =E2=80=A6
+> > +@depends on patch@
+> > +expression pdev,index;
+> > +position p !=3D r1.p;
+>=20
+>=20
+> Why do you think that different source code positions would be required f=
+or
+> your transformation approach?
+
+That is important that the implementation of
+devm_platform_ioremap_resource isn't adapted.
+
+> > +@@
+> > +
+> > +-  devm_platform_get_and_ioremap_resource@p(pdev, index, NULL)
+> > ++  devm_platform_ioremap_resource(pdev, index)
+>=20
+> I suggest to use the following SmPL code variant instead.
+>=20
+> -devm_platform_get_and_ioremap_resource@p
+> +devm_platform_ioremap_resource
+> =C2=A0(pdev, index
+> - , NULL
+> =C2=A0)
+
+I don't care much, but IMHO my variant is easier to read. Might be
+subjective, though.
+=20
+> > +@r2 depends on !patch exists@
+> > +expression pdev,index;
+> > +position p;
+> > +@@
+> > +
+> > +*  devm_platform_get_and_ioremap_resource@p(pdev, index, NULL)
+>=20
+>=20
+> I doubt that the usage of the SmPL asterisk is appropriate for the operat=
+ion
+> modes =E2=80=9Corg=E2=80=9D and =E2=80=9Creport=E2=80=9D.
+
+I have no idea about org and report modes. When I try these I get a
+python2 error message:
+
+	uwe@taurus:~/gsrc/linux$ make coccicheck
+	You have not explicitly specified the mode to use. Using default "report" =
+mode.
+	Available modes are the following: patch, report, context, org, chain
+	You can specify the mode with "make coccicheck MODE=3D<mode>"
+	Note however that some modes are not implemented by some semantic patches.
+
+	Please check for false positives in the output before submitting a patch.
+	When using "patch" mode, carefully review the patch before submitting it.
+
+	/usr/bin/spatch -D report --no-show-diff --very-quiet --cocci-file ./scrip=
+ts/coccinelle/api/alloc/alloc_cast.cocci --no-includes --include-headers --=
+dir . -I ./arch/x86/include -I ./arch/x86/include/generated -I ./include -I=
+ ./arch/x86/include/uapi -I ./arch/x86/include/generated/uapi -I ./include/=
+uapi -I ./include/generated/uapi --include ./include/linux/compiler-version=
+=2Eh --include ./include/linux/kconfig.h --jobs 4 --chunksize 1
+	Py.find_library: unable to find the Python library [libpython2.7m.so retur=
+ned libpython2.7m.so: cannot open shared object file: No such file or direc=
+tory] [/usr/bin/../lib/libpython2.7m.so returned /usr/bin/../lib/libpython2=
+=2E7m.so: cannot open shared object file: No such file or directory] [libpy=
+thon2.7.so returned libpython2.7.so: cannot open shared object file: No suc=
+h file or directory] [/usr/bin/../lib/libpython2.7.so returned /usr/bin/../=
+lib/libpython2.7.so: cannot open shared object file: No such file or direct=
+ory]
+	coccicheck failed
+	make: *** [Makefile:2076: coccicheck] Error 255
+
+After uninstalling python2 this ends in:
+
+	Cannot find Python library
+	coccicheck failed
+	make: *** [Makefile:2076: coccicheck] Error 255
+
+Didn't try to debug that any further. Is that worth a bug report against
+coccinelle (which is shipped by my distribution)?
+
+I tried to adapt the org and report modes from other patches in the same
+directory. So a critical glimpse by someone more knowledgable than me is
+recommended. However I don't know how to react to "I doubt ... is
+appropriate", I'd need a more constructive feedback to act on.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--2znbbrzwbbfnunan
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmNpZawACgkQwfwUeK3K
+7Anu5Af/bCL4Ho3MLIFESvBK68u9hFLkpJHSnfsw/IgXyv4nTFjhkLKs8M2/NBJP
+OXeNBO9lptRWcG9lUswYJnppG5ffuxrDzodLORNKqGLww9lJdkjfw7OnUuD+s6jl
+m1YlOOl/GZ1uyW6kJuh1l0opoMiyoCwFybVm2tjC27aQs9c0hepcBqJft1dHYrPQ
+gkMfYlTx5Ug3df3BHg9KwQlr3QmwayF5d9bYpRz82k//PTsDL95bKMDSGjdxiCcl
+4thhdak2QFekeg4iI/tmPDOuaNtjZRJBRdD9Z6KtfmU0xiXSla/9v6nQt9v9iBWQ
+xKGrDfpuV0g5Jxi0bUqAeRZ7Au4lkA==
+=6M80
+-----END PGP SIGNATURE-----
+
+--2znbbrzwbbfnunan--
