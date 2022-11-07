@@ -2,69 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC95FC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 06:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DB9C4167E
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 10:57:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230331AbiKGGr1 (ORCPT
+        id S231879AbiKGK5f (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Nov 2022 01:47:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51262 "EHLO
+        Mon, 7 Nov 2022 05:57:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbiKGGrZ (ORCPT
+        with ESMTP id S231808AbiKGK5a (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Nov 2022 01:47:25 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 830597678;
-        Sun,  6 Nov 2022 22:47:24 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C5C0AB80D69;
-        Mon,  7 Nov 2022 06:47:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F27EC433D6;
-        Mon,  7 Nov 2022 06:47:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667803641;
-        bh=yh5fyrFAwBEmJYeBF5zKMkqvl5MweZNAs/fAoyl42dA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VVsLhfUoUTyhoQT5p8/khyDGJr6vsXaFWsfsT5AUz+saXp0r6yYqsR6MESzx/BUoI
-         27BtTLqomfJs88OrHY8DucTqsKXxDCftjZ0DyaxCk9BSyxLjR6T/HIGAoa69oAZ0JX
-         MGv5QHvuy8f6BWSy4gYjGpH75jZtDgnOBRihyGUujsjmnpWtGnDmwgA8L/tmfTdMjd
-         SRXNJTDUkIuYBGLqDAXZtNo/fPnkd9XcYM4JTtuuzO1sCvL7oeGOcZAyFhYBVGmrSf
-         pqGEE+61VDC/wPjBaw/fE/Dn6sa2oYqhyhCc9A+vCUo+P24sJpOvI2nmzisyfrV0YO
-         DHShJ1FX6s+8w==
-Date:   Mon, 7 Nov 2022 08:47:16 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Jes Sorensen <jes@trained-monkey.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-acenic@sunsite.dk,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ethernet: alteon: remove unused variable len
-Message-ID: <Y2ip9AtkfjkMtEa3@unreal>
-References: <20221104174215.242539-1-colin.i.king@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221104174215.242539-1-colin.i.king@gmail.com>
+        Mon, 7 Nov 2022 05:57:30 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0C751A061;
+        Mon,  7 Nov 2022 02:57:29 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id t25so28965164ejb.8;
+        Mon, 07 Nov 2022 02:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9+Z2+ck32GlpQgV/uBGlJrkyX3/Vf2IzJOHORrIT1MY=;
+        b=XFFyTmL7BSv4J4Wq1E+s9vtLhWCkieiq+QZhvKznof880A9tcPYTH7fnAW4IWQDkTe
+         vkPTrSTPhhq+1pOcbw0zlF6zg1prsrr2WYym5Pc58X2PY/4NjVCWx+03Yab1XvCcann+
+         O4gG7kTNce/XcWV3xi+oBITARBXYdNnH7XCqqpt8D1Wt/JT3SMRjrkf0KlcG2kRukrcj
+         WI0BsNOJu6lqQ8Qs17prqMpqyslaH0LHQFTWx6MO1d0tCZQQOGyw6PO3u3gYyVbt1Hhg
+         1BiKkaRdcomr2mNejNy17nOiy8JM0C9GyYIHSqxNAbHYOZXVzJjXG46S5uYITS8HI4UU
+         GKbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9+Z2+ck32GlpQgV/uBGlJrkyX3/Vf2IzJOHORrIT1MY=;
+        b=M9/l7DoxWM2DDPnSp2ts3HNz8mqZnDDqi05QrwnHp9rpI/0O67fI/E6y70joCFHyfN
+         tWg1SzqqRlqY34lG0ren0+sT1drXojwwAFQMQRQlIVSwixaZioiKhmancPcood6Y4vao
+         UQuiRdTuUI/cjfMqQM/UQ5KOkkpnleC2or+zARM6FY27xJmMdFGBg9+Tz3VqHy9nFmPy
+         ZSSN72x9IfFUcPZWf4C/PeDhquGt+3VOHGUqAw1R1Z0TLmLzIN5F84ESHhUtuJHduo1z
+         P0PyOlG16oqGrc5nH0aSSyhvO2189GrbGTvV72YXDvfGtSbZ5G4inw/cjvH7kHJz6Mdv
+         9ONQ==
+X-Gm-Message-State: ACrzQf316eEPkESBgOv0vl9K2sIoNPjAukT4h1Enm4cAEjU+5/hNzSrV
+        IJBagKM36JImGOYU3BtKBiyOEdsXuEQ=
+X-Google-Smtp-Source: AMsMyM4NvgfZgWsr6EjuRh9MkFgv0bBQd9NonzB5fp9eFJcOmOlXfJonMayyfIaL6OdMMGpuR07UDA==
+X-Received: by 2002:a17:906:7948:b0:7ac:d6f9:eb3e with SMTP id l8-20020a170906794800b007acd6f9eb3emr46181609ejo.350.1667818648080;
+        Mon, 07 Nov 2022 02:57:28 -0800 (PST)
+Received: from felia.fritz.box (200116b826b04a00c13f470e37e07cb6.dip.versatel-1u1.de. [2001:16b8:26b0:4a00:c13f:470e:37e0:7cb6])
+        by smtp.gmail.com with ESMTPSA id et10-20020a056402378a00b0045c47b2a800sm3949250edb.67.2022.11.07.02.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Nov 2022 02:57:27 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-pm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] notifier: repair slips in kernel-doc comments
+Date:   Mon,  7 Nov 2022 11:56:57 +0100
+Message-Id: <20221107105657.19002-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Nov 04, 2022 at 05:42:15PM +0000, Colin Ian King wrote:
-> Variable len is being used to accumulate the skb_frag_size but it
-> is never used afterwards. The variable is redundant and can be
-> removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/alteon/acenic.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+Invoking ./scripts/kernel-doc -none kernel/notifier.c warns:
 
-net patches should have target in their title "[PATCH net-next] ...".
-It is applicable to all your net patches.
+  kernel/notifier.c:71: warning: Excess function parameter 'returns' description in 'notifier_call_chain'
+  kernel/notifier.c:119: warning: Function parameter or member 'v' not described in 'notifier_call_chain_robust'
 
-Thanks
+These two warning are easy to fix, as they are just due to some minor slips
+that makes the comment not follow kernel-doc's syntactic expectation.
+
+Fix those minor slips in kernel-doc comments for make W=1 happiness.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Rafael, please pick this minor non-urgent patch for your pm tree. Thanks.
+
+ kernel/notifier.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/notifier.c b/kernel/notifier.c
+index 0d5bd62c480e..ab75637fd904 100644
+--- a/kernel/notifier.c
++++ b/kernel/notifier.c
+@@ -62,7 +62,7 @@ static int notifier_chain_unregister(struct notifier_block **nl,
+  *			value of this parameter is -1.
+  *	@nr_calls:	Records the number of notifications sent. Don't care
+  *			value of this field is NULL.
+- *	@returns:	notifier_call_chain returns the value returned by the
++ *	Return:		notifier_call_chain returns the value returned by the
+  *			last notifier function called.
+  */
+ static int notifier_call_chain(struct notifier_block **nl,
+@@ -105,13 +105,13 @@ NOKPROBE_SYMBOL(notifier_call_chain);
+  * @val_up:	Value passed unmodified to the notifier function
+  * @val_down:	Value passed unmodified to the notifier function when recovering
+  *              from an error on @val_up
+- * @v		Pointer passed unmodified to the notifier function
++ * @v:		Pointer passed unmodified to the notifier function
+  *
+  * NOTE:	It is important the @nl chain doesn't change between the two
+  *		invocations of notifier_call_chain() such that we visit the
+  *		exact same notifier callbacks; this rules out any RCU usage.
+  *
+- * Returns:	the return value of the @val_up call.
++ * Return:	the return value of the @val_up call.
+  */
+ static int notifier_call_chain_robust(struct notifier_block **nl,
+ 				     unsigned long val_up, unsigned long val_down,
+-- 
+2.17.1
+
