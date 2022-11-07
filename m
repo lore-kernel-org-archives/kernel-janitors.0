@@ -2,112 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DB9C4167E
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 10:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F4AC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 11:09:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231879AbiKGK5f (ORCPT
+        id S231863AbiKGLJp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Nov 2022 05:57:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55740 "EHLO
+        Mon, 7 Nov 2022 06:09:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231808AbiKGK5a (ORCPT
+        with ESMTP id S231587AbiKGLJZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Nov 2022 05:57:30 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0C751A061;
-        Mon,  7 Nov 2022 02:57:29 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id t25so28965164ejb.8;
-        Mon, 07 Nov 2022 02:57:29 -0800 (PST)
+        Mon, 7 Nov 2022 06:09:25 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F6C51A237;
+        Mon,  7 Nov 2022 03:08:50 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id h9so15685870wrt.0;
+        Mon, 07 Nov 2022 03:08:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9+Z2+ck32GlpQgV/uBGlJrkyX3/Vf2IzJOHORrIT1MY=;
-        b=XFFyTmL7BSv4J4Wq1E+s9vtLhWCkieiq+QZhvKznof880A9tcPYTH7fnAW4IWQDkTe
-         vkPTrSTPhhq+1pOcbw0zlF6zg1prsrr2WYym5Pc58X2PY/4NjVCWx+03Yab1XvCcann+
-         O4gG7kTNce/XcWV3xi+oBITARBXYdNnH7XCqqpt8D1Wt/JT3SMRjrkf0KlcG2kRukrcj
-         WI0BsNOJu6lqQ8Qs17prqMpqyslaH0LHQFTWx6MO1d0tCZQQOGyw6PO3u3gYyVbt1Hhg
-         1BiKkaRdcomr2mNejNy17nOiy8JM0C9GyYIHSqxNAbHYOZXVzJjXG46S5uYITS8HI4UU
-         GKbA==
+        bh=mBeWKSuUmKmFn3ZQmaWb3K1FNR9mxLjZz/vQiATbFHg=;
+        b=J2B0+AZMmfcW8H1mciRAq/WS1UoAZDBP2lnz9NbEnC8N2nmPX6lM8BqMD3bC2X5U09
+         A6DgJQA2zVtcrvS9TmyUVgxTr/sy0Ca772Z6c3+WbXXCTizyT8ahucCcribdJfegbBWk
+         pZO20Hu5bo6Yz0cnVO5Cqbd0oVy5MxLppO1+TMHHkB/MFbxrpEpMS3TURXCAtsIHkQLj
+         o/NXWr2/17p1+AChkEAO/pZVe7nRb6y9HvIKzkBhweS65T+bsN1BokX3RtHKLdMoV63S
+         YlB5ZetYywS0uG79VKrDahyoKIpYYvEoAAziLM5U1pHwNdcrrBgRYbXB3WhhDwlTaxdh
+         i0aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9+Z2+ck32GlpQgV/uBGlJrkyX3/Vf2IzJOHORrIT1MY=;
-        b=M9/l7DoxWM2DDPnSp2ts3HNz8mqZnDDqi05QrwnHp9rpI/0O67fI/E6y70joCFHyfN
-         tWg1SzqqRlqY34lG0ren0+sT1drXojwwAFQMQRQlIVSwixaZioiKhmancPcood6Y4vao
-         UQuiRdTuUI/cjfMqQM/UQ5KOkkpnleC2or+zARM6FY27xJmMdFGBg9+Tz3VqHy9nFmPy
-         ZSSN72x9IfFUcPZWf4C/PeDhquGt+3VOHGUqAw1R1Z0TLmLzIN5F84ESHhUtuJHduo1z
-         P0PyOlG16oqGrc5nH0aSSyhvO2189GrbGTvV72YXDvfGtSbZ5G4inw/cjvH7kHJz6Mdv
-         9ONQ==
-X-Gm-Message-State: ACrzQf316eEPkESBgOv0vl9K2sIoNPjAukT4h1Enm4cAEjU+5/hNzSrV
-        IJBagKM36JImGOYU3BtKBiyOEdsXuEQ=
-X-Google-Smtp-Source: AMsMyM4NvgfZgWsr6EjuRh9MkFgv0bBQd9NonzB5fp9eFJcOmOlXfJonMayyfIaL6OdMMGpuR07UDA==
-X-Received: by 2002:a17:906:7948:b0:7ac:d6f9:eb3e with SMTP id l8-20020a170906794800b007acd6f9eb3emr46181609ejo.350.1667818648080;
-        Mon, 07 Nov 2022 02:57:28 -0800 (PST)
+        bh=mBeWKSuUmKmFn3ZQmaWb3K1FNR9mxLjZz/vQiATbFHg=;
+        b=eQT3VT6Pgdq7m+/flq7Z2mrntZcSBP5WmNPQ9y7offO/i3v07hhpwYD10bvGE9tQ2O
+         A7zI2wXe5tFJaGU1OYzyPGsNR7oDq44LNoiJEMelxk0p02d6r/dMCsoCBy16nc0QCGjg
+         TsJVFYbMnbWH+to1DNu7OA3AZThfEKT80BR+ZZD1DuouC5s692eXsj+SpIQ1RvDUP+F4
+         GEyKLYjqEbjQURcLO10d3goeY55TO+19qJ0jTPNOl4BFCqtrvEQA3tXvt0i4Gi139lQW
+         pcZUDkzb4mRxg6tXCVgKnhbdIoQtFtkpU2nE9Y7eLZ66iRy5FNUL5GtIF/XnIAcmSWG2
+         uGvw==
+X-Gm-Message-State: ACrzQf2bgkMVoYDIsaiSc2zzIcYz9SmpmDc+Tl+hKbo7d4UYi6d9jOm4
+        f7g9fWZuzFDUSOLonLxIaDQ=
+X-Google-Smtp-Source: AMsMyM5+89oQ9eg5acWttsRAfr82SVh3XAUsJVni8qHvEA2docSbxKlKaNNySPNmt+E0OwjPB1arhw==
+X-Received: by 2002:adf:e785:0:b0:236:5998:67a0 with SMTP id n5-20020adfe785000000b00236599867a0mr31650481wrm.414.1667819328598;
+        Mon, 07 Nov 2022 03:08:48 -0800 (PST)
 Received: from felia.fritz.box (200116b826b04a00c13f470e37e07cb6.dip.versatel-1u1.de. [2001:16b8:26b0:4a00:c13f:470e:37e0:7cb6])
-        by smtp.gmail.com with ESMTPSA id et10-20020a056402378a00b0045c47b2a800sm3949250edb.67.2022.11.07.02.57.26
+        by smtp.gmail.com with ESMTPSA id f10-20020a05600c154a00b003a2f2bb72d5sm14947310wmg.45.2022.11.07.03.08.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 02:57:27 -0800 (PST)
+        Mon, 07 Nov 2022 03:08:47 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-pm@vger.kernel.org
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] notifier: repair slips in kernel-doc comments
-Date:   Mon,  7 Nov 2022 11:56:57 +0100
-Message-Id: <20221107105657.19002-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] nsfs: repair kernel-doc for ns_match()
+Date:   Mon,  7 Nov 2022 12:08:17 +0100
+Message-Id: <20221107110817.26398-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Invoking ./scripts/kernel-doc -none kernel/notifier.c warns:
+Commit 1e2328e76254 ("fs/nsfs.c: Added ns_match") adds the ns_match()
+function with a kernel-doc comment, but the ns parameter was referred to
+with ns_common.
 
-  kernel/notifier.c:71: warning: Excess function parameter 'returns' description in 'notifier_call_chain'
-  kernel/notifier.c:119: warning: Function parameter or member 'v' not described in 'notifier_call_chain_robust'
+Hence, ./scripts/kernel-doc -none fs/nsfs.c warns about it.
 
-These two warning are easy to fix, as they are just due to some minor slips
-that makes the comment not follow kernel-doc's syntactic expectation.
-
-Fix those minor slips in kernel-doc comments for make W=1 happiness.
+Adjust the kernel-doc comment for ns_match() for make W=1 happiness.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Rafael, please pick this minor non-urgent patch for your pm tree. Thanks.
+ fs/nsfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- kernel/notifier.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/notifier.c b/kernel/notifier.c
-index 0d5bd62c480e..ab75637fd904 100644
---- a/kernel/notifier.c
-+++ b/kernel/notifier.c
-@@ -62,7 +62,7 @@ static int notifier_chain_unregister(struct notifier_block **nl,
-  *			value of this parameter is -1.
-  *	@nr_calls:	Records the number of notifications sent. Don't care
-  *			value of this field is NULL.
-- *	@returns:	notifier_call_chain returns the value returned by the
-+ *	Return:		notifier_call_chain returns the value returned by the
-  *			last notifier function called.
-  */
- static int notifier_call_chain(struct notifier_block **nl,
-@@ -105,13 +105,13 @@ NOKPROBE_SYMBOL(notifier_call_chain);
-  * @val_up:	Value passed unmodified to the notifier function
-  * @val_down:	Value passed unmodified to the notifier function when recovering
-  *              from an error on @val_up
-- * @v		Pointer passed unmodified to the notifier function
-+ * @v:		Pointer passed unmodified to the notifier function
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 3506f6074288..f5b2a8a2f2c3 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -254,7 +254,7 @@ struct file *proc_ns_fget(int fd)
+ 
+ /**
+  * ns_match() - Returns true if current namespace matches dev/ino provided.
+- * @ns_common: current ns
++ * @ns: current namespace
+  * @dev: dev_t from nsfs that will be matched against current nsfs
+  * @ino: ino_t from nsfs that will be matched against current nsfs
   *
-  * NOTE:	It is important the @nl chain doesn't change between the two
-  *		invocations of notifier_call_chain() such that we visit the
-  *		exact same notifier callbacks; this rules out any RCU usage.
-  *
-- * Returns:	the return value of the @val_up call.
-+ * Return:	the return value of the @val_up call.
-  */
- static int notifier_call_chain_robust(struct notifier_block **nl,
- 				     unsigned long val_up, unsigned long val_down,
 -- 
 2.17.1
 
