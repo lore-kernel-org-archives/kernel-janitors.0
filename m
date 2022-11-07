@@ -2,66 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3C9C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 16:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 143A6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 19:40:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbiKGQ1b (ORCPT
+        id S232528AbiKGTkq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:27:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51476 "EHLO
+        Mon, 7 Nov 2022 14:40:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232601AbiKGQ0m (ORCPT
+        with ESMTP id S232153AbiKGTkp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Nov 2022 11:26:42 -0500
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 994C422506
-        for <kernel-janitors@vger.kernel.org>; Mon,  7 Nov 2022 08:22:54 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 5484BFF80B;
-        Mon,  7 Nov 2022 16:22:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1667838165;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PndAaPKemHvlm2tLxb20P+WzuvGUnNrFNVEmOkXku6c=;
-        b=feg9F5/mvBOx7RbnKmvlvp3aWIduN9dXsALMILBj6ARS8InNYVxk6SHpSmZ8PZmj3QLn7y
-        otFym7bEXiLIIR2/RABX0Ma547l+4JgG+4vshtWeF3C1hv2hTEters5AzVeorrGXxqi+2v
-        UCH7YYuCFCMENRKRM8f5E29+9CkK+FJE4RYZS5slQNHYRV2JQ5yMNWHGn1dC9AMhK5YOch
-        0vLvKHG14gnHXLr+tMERMvtjdt1jYhqd/87pnO5kPswM6Vm1JWulQYUYPoOhT1JsJcSuow
-        DpcYN+WCF9LQfyLQxW08DUsnadEjOaoWO+AXOwpTITFMR1IFTfD7lRLLoPz7lQ==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        =?utf-8?b?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mtd: parsers: tplink_safeloader: fix uninitialized variable bug
-Date:   Mon,  7 Nov 2022 17:22:42 +0100
-Message-Id: <20221107162242.49236-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <Y1gCALFWXYYwqV1P@kili>
-References: 
+        Mon, 7 Nov 2022 14:40:45 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D73193D9;
+        Mon,  7 Nov 2022 11:40:44 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so10814552pjs.4;
+        Mon, 07 Nov 2022 11:40:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Lr2LJh1ynsT6o7QECxrCpd8COAMFXtNJpOsEdVPq6mA=;
+        b=Jr9uTsc3hShwQ7UX2Tm2tx7F4XmAu9jfoZX9sYL1gH4GV0IK0c7jM2ADozP+FVLK3f
+         Y2Eg2BUdbWvwaNL4BCY2BOMc4a/NxJ2qn3phYseVokjP7f9+/LgaO0P1E+Hn9G+WH2wq
+         4kasZWGcR5RUgGz7bh3Yeutr9FijqrFbbRi9n+NBJPxUrANZG1Q9BJn18SJBjnxUVz3y
+         8Jy1TqwaL+Sv5q/ewqUzH0+pC6gT9KZIVdv2ACMxaPkqfzeGwNBUkP43aXSueCgRTr61
+         L04ukJ5uLTzY0cJkybksbAvC3VRHVKdb7WxfU9dvCZ3u4zO9OQtrMYIpFneaW6fx5eNB
+         dLrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lr2LJh1ynsT6o7QECxrCpd8COAMFXtNJpOsEdVPq6mA=;
+        b=M9x9l3Ws3P4KB4uvb7FGdLCKDwHd6CgBctPDNdj4XcIGSqOpGUegB0ui0n6DlaQX9D
+         1NrAe2XLMSal0mdrI9Mxp6FTBe2yQVsPPTXQKK7Kl16NhkkY5ryje7/9EnUNkWQbs//g
+         nGFG1VT9oUJb0DZijK15E0iAKklv/Yu59/nLIHUEYsEi4ikovnQbhLVC9PFOL5iZlhe4
+         ypYHeD8UhG8bPLbcsrC7Zec/RFWjL3rNqA+D5jirqPnBijnJjRwuapTXzS0g8yPbMQb9
+         ieXiqVvESuU5npDEudeQg3HVhlzx1+SieDS/QYpKmYmwOH7UG1TfXEpaiOj30hH6ui0V
+         oDiQ==
+X-Gm-Message-State: ACrzQf2Ng/dVJQA77B8yNbGR1/YUnNHbejvrL8JTRRfc4E7f2sjBzUxP
+        zd7ihnSvjdBUsWpiNLvSZCU=
+X-Google-Smtp-Source: AMsMyM4Z1WSLG/2s+85sT5YwneM/XauDZnGvse8TolrZ9Zs1DIAvczdZAQ2Z5UH9Z7fHC4PrnIbGWA==
+X-Received: by 2002:a17:902:da82:b0:186:ee5a:47c7 with SMTP id j2-20020a170902da8200b00186ee5a47c7mr52582931plx.82.1667850044133;
+        Mon, 07 Nov 2022 11:40:44 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:626:eb80:9eb9:1fd7])
+        by smtp.gmail.com with ESMTPSA id x1-20020a633101000000b00464858cf6b0sm4510500pgx.54.2022.11.07.11.40.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Nov 2022 11:40:43 -0800 (PST)
+Date:   Mon, 7 Nov 2022 11:40:40 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH 12/30] input: Use kstrtobool() instead of strtobool()
+Message-ID: <Y2lfOBAFo7jcpeTO@google.com>
+References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <4311e9cb62687449f4175e2b062abcd77aada059.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <Y2Qowvjn+7jT767t@google.com>
+ <a0a59528-6af4-adb2-e4e2-cb4cbe15e986@wanadoo.fr>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'6c0a15a3dc6b45156c5b9568c8308e3f0d802af0'
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a0a59528-6af4-adb2-e4e2-cb4cbe15e986@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 2022-10-25 at 15:34:24 UTC, Dan Carpenter wrote:
-> On 64 bit systems, the highest 32 bits of the "offset" variable are
-> not initialized.  Also the existing code is not endian safe (it will
-> fail on big endian systems).  Change the type of "offset" to a u32.
+On Thu, Nov 03, 2022 at 10:37:19PM +0100, Christophe JAILLET wrote:
+> Le 03/11/2022 ‡ 21:46, Dmitry Torokhov a Ècrit†:
+> > On Tue, Nov 01, 2022 at 10:14:00PM +0100, Christophe JAILLET wrote:
+> > > strtobool() is the same as kstrtobool().
+> > > However, the latter is more used within the kernel.
+> > > 
+> > > In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> > > the other function name.
+> > > 
+> > > While at it, include the corresponding header file (<linux/kstrtox.h>)
+> > > 
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > 
+> > Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > 
+> > Please feel free to merge with the rest of the series. Or let me know if
+> > you want me to pick just this one through my tree.
+> > 
+> > Thanks.
+> > 
 > 
-> Fixes: aec4d5f5ffd0 ("mtd: parsers: add TP-Link SafeLoader partitions table parser")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Rafa≈Ç Mi≈Çecki <rafal@milecki.pl>
+> Hi,
+> 
+> the patch can go through your tree.
+> There is no plan to merge the whole serie at once, and some other
+> maintainers have asked for some patches to be re-sent as individual patches.
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+OK, applied, thank you.
 
-Miquel
+-- 
+Dmitry
