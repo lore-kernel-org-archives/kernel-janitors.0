@@ -2,168 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 500A3C43219
-	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Nov 2022 19:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC95FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 06:47:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230080AbiKFTe1 (ORCPT
+        id S230331AbiKGGr1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 6 Nov 2022 14:34:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
+        Mon, 7 Nov 2022 01:47:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229899AbiKFTeZ (ORCPT
+        with ESMTP id S229526AbiKGGrZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 6 Nov 2022 14:34:25 -0500
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A407E02C
-        for <kernel-janitors@vger.kernel.org>; Sun,  6 Nov 2022 11:34:24 -0800 (PST)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id rlPRo1bQcsfCIrlPRomc2E; Sun, 06 Nov 2022 20:34:22 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 06 Nov 2022 20:34:22 +0100
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-hwmon@vger.kernel.org
-Subject: [PATCH v2] hwmon: Include <linux/kstrtox.h> when appropriate
-Date:   Sun,  6 Nov 2022 20:34:16 +0100
-Message-Id: <51688cf50bda44e2731381a31287c62319388783.1667763218.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 7 Nov 2022 01:47:25 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 830597678;
+        Sun,  6 Nov 2022 22:47:24 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C5C0AB80D69;
+        Mon,  7 Nov 2022 06:47:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F27EC433D6;
+        Mon,  7 Nov 2022 06:47:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667803641;
+        bh=yh5fyrFAwBEmJYeBF5zKMkqvl5MweZNAs/fAoyl42dA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VVsLhfUoUTyhoQT5p8/khyDGJr6vsXaFWsfsT5AUz+saXp0r6yYqsR6MESzx/BUoI
+         27BtTLqomfJs88OrHY8DucTqsKXxDCftjZ0DyaxCk9BSyxLjR6T/HIGAoa69oAZ0JX
+         MGv5QHvuy8f6BWSy4gYjGpH75jZtDgnOBRihyGUujsjmnpWtGnDmwgA8L/tmfTdMjd
+         SRXNJTDUkIuYBGLqDAXZtNo/fPnkd9XcYM4JTtuuzO1sCvL7oeGOcZAyFhYBVGmrSf
+         pqGEE+61VDC/wPjBaw/fE/Dn6sa2oYqhyhCc9A+vCUo+P24sJpOvI2nmzisyfrV0YO
+         DHShJ1FX6s+8w==
+Date:   Mon, 7 Nov 2022 08:47:16 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jes Sorensen <jes@trained-monkey.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-acenic@sunsite.dk,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ethernet: alteon: remove unused variable len
+Message-ID: <Y2ip9AtkfjkMtEa3@unreal>
+References: <20221104174215.242539-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221104174215.242539-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The kstrto<something>() functions have been moved from kernel.h to
-kstrtox.h.
+On Fri, Nov 04, 2022 at 05:42:15PM +0000, Colin Ian King wrote:
+> Variable len is being used to accumulate the skb_frag_size but it
+> is never used afterwards. The variable is redundant and can be
+> removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/alteon/acenic.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-So, include the latter directly in the appropriate files.
+net patches should have target in their title "[PATCH net-next] ...".
+It is applicable to all your net patches.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-The goal of this patch is to eventually remove <linux/kernel.h> from
-<linux/watchdog.h>.
-
-This patch is needed to avoid indirect inclusion, via <linux/watchdog.h>,
-in fschmd.c, ftsteutates.c and w83793.c.
-
-Changes in v2:
-   - Include <linux/kstrtox.h> in <linux/hwmon-sysfs.h> so that much less
-     drivers need to be updated   [Guenter Roeck]
-
-v1: https://lore.kernel.org/all/0e819645f8d607f7b4550c8aaf4a563b1404bf40.1667730675.git.christophe.jaillet@wanadoo.fr/
----
- drivers/hwmon/atxp1.c            | 1 +
- drivers/hwmon/gpio-fan.c         | 1 +
- drivers/hwmon/hwmon.c            | 1 +
- drivers/hwmon/lm90.c             | 1 +
- drivers/hwmon/mr75203.c          | 1 +
- drivers/hwmon/pcf8591.c          | 1 +
- drivers/hwmon/pmbus/q54sj108a2.c | 1 +
- include/linux/hwmon-sysfs.h      | 1 +
- 8 files changed, 8 insertions(+)
-
-diff --git a/drivers/hwmon/atxp1.c b/drivers/hwmon/atxp1.c
-index 4fd8de8022bc..118297ea1dcf 100644
---- a/drivers/hwmon/atxp1.c
-+++ b/drivers/hwmon/atxp1.c
-@@ -16,6 +16,7 @@
- #include <linux/hwmon.h>
- #include <linux/hwmon-vid.h>
- #include <linux/err.h>
-+#include <linux/kstrtox.h>
- #include <linux/mutex.h>
- #include <linux/sysfs.h>
- #include <linux/slab.h>
-diff --git a/drivers/hwmon/gpio-fan.c b/drivers/hwmon/gpio-fan.c
-index ba408942dbe7..e75db6f64e8c 100644
---- a/drivers/hwmon/gpio-fan.c
-+++ b/drivers/hwmon/gpio-fan.c
-@@ -14,6 +14,7 @@
- #include <linux/irq.h>
- #include <linux/platform_device.h>
- #include <linux/err.h>
-+#include <linux/kstrtox.h>
- #include <linux/mutex.h>
- #include <linux/hwmon.h>
- #include <linux/gpio/consumer.h>
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index 4218750d5a66..33edb5c02f7d 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -15,6 +15,7 @@
- #include <linux/gfp.h>
- #include <linux/hwmon.h>
- #include <linux/idr.h>
-+#include <linux/kstrtox.h>
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-index a3f95ba00dbf..6498d5acf705 100644
---- a/drivers/hwmon/lm90.c
-+++ b/drivers/hwmon/lm90.c
-@@ -103,6 +103,7 @@
- #include <linux/interrupt.h>
- #include <linux/jiffies.h>
- #include <linux/hwmon.h>
-+#include <linux/kstrtox.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of_device.h>
-diff --git a/drivers/hwmon/mr75203.c b/drivers/hwmon/mr75203.c
-index 394a4c7e46ab..50a8b9c3f94d 100644
---- a/drivers/hwmon/mr75203.c
-+++ b/drivers/hwmon/mr75203.c
-@@ -11,6 +11,7 @@
- #include <linux/clk.h>
- #include <linux/debugfs.h>
- #include <linux/hwmon.h>
-+#include <linux/kstrtox.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/mutex.h>
-diff --git a/drivers/hwmon/pcf8591.c b/drivers/hwmon/pcf8591.c
-index af9614e918a4..1dbe209ae13f 100644
---- a/drivers/hwmon/pcf8591.c
-+++ b/drivers/hwmon/pcf8591.c
-@@ -14,6 +14,7 @@
- #include <linux/mutex.h>
- #include <linux/err.h>
- #include <linux/hwmon.h>
-+#include <linux/kstrtox.h>
- 
- /* Insmod parameters */
- 
-diff --git a/drivers/hwmon/pmbus/q54sj108a2.c b/drivers/hwmon/pmbus/q54sj108a2.c
-index fa298b4265a1..d3ba12951324 100644
---- a/drivers/hwmon/pmbus/q54sj108a2.c
-+++ b/drivers/hwmon/pmbus/q54sj108a2.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/debugfs.h>
- #include <linux/i2c.h>
-+#include <linux/kstrtox.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include "pmbus.h"
-diff --git a/include/linux/hwmon-sysfs.h b/include/linux/hwmon-sysfs.h
-index cb26d02f52f3..d896713359cd 100644
---- a/include/linux/hwmon-sysfs.h
-+++ b/include/linux/hwmon-sysfs.h
-@@ -8,6 +8,7 @@
- #define _LINUX_HWMON_SYSFS_H
- 
- #include <linux/device.h>
-+#include <linux/kstrtox.h>
- 
- struct sensor_device_attribute{
- 	struct device_attribute dev_attr;
--- 
-2.34.1
-
+Thanks
