@@ -2,92 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F4AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 11:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 689D2C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Nov 2022 13:55:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231863AbiKGLJp (ORCPT
+        id S231350AbiKGNzP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Nov 2022 06:09:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32802 "EHLO
+        Mon, 7 Nov 2022 08:55:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231587AbiKGLJZ (ORCPT
+        with ESMTP id S231766AbiKGNzN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Nov 2022 06:09:25 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F6C51A237;
-        Mon,  7 Nov 2022 03:08:50 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id h9so15685870wrt.0;
-        Mon, 07 Nov 2022 03:08:50 -0800 (PST)
+        Mon, 7 Nov 2022 08:55:13 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B80321CFF7;
+        Mon,  7 Nov 2022 05:55:12 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id y16so16274767wrt.12;
+        Mon, 07 Nov 2022 05:55:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mBeWKSuUmKmFn3ZQmaWb3K1FNR9mxLjZz/vQiATbFHg=;
-        b=J2B0+AZMmfcW8H1mciRAq/WS1UoAZDBP2lnz9NbEnC8N2nmPX6lM8BqMD3bC2X5U09
-         A6DgJQA2zVtcrvS9TmyUVgxTr/sy0Ca772Z6c3+WbXXCTizyT8ahucCcribdJfegbBWk
-         pZO20Hu5bo6Yz0cnVO5Cqbd0oVy5MxLppO1+TMHHkB/MFbxrpEpMS3TURXCAtsIHkQLj
-         o/NXWr2/17p1+AChkEAO/pZVe7nRb6y9HvIKzkBhweS65T+bsN1BokX3RtHKLdMoV63S
-         YlB5ZetYywS0uG79VKrDahyoKIpYYvEoAAziLM5U1pHwNdcrrBgRYbXB3WhhDwlTaxdh
-         i0aQ==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3LAmMy16ngwzae4fSDH7FFtFnYTg6fQW31PoCf+xM+8=;
+        b=c+Lke68wfeJaKpFboAM7nyYzkOkqjt1+5fFU+2sf/HAIZjLM++4jxwM1kloBMCdZUW
+         I8N3en2IJ6rLJFbLYCRo8LXISPUjdMgXJuhM3levbiu8bQEarwnkZlTybFkQ3Pc4R186
+         ZQUfZbf/zImk90wOA76MrclPHzKrQMvCGc3XemxknZPWTo6+naVSaW/iPAwZQMMaWQ2E
+         khOePrq7DYz/+p9K0jhKneR7Dt5U5HGqBwOhcU1rm0wXfjlyD3k33FaiT1PSOmeOj2df
+         979tjgXM3tluDLCvuU2SdWMVZuEc0bSHfQda7pNp8snqyVKeBacTf2mvmy2kAhV6Kl37
+         NcVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mBeWKSuUmKmFn3ZQmaWb3K1FNR9mxLjZz/vQiATbFHg=;
-        b=eQT3VT6Pgdq7m+/flq7Z2mrntZcSBP5WmNPQ9y7offO/i3v07hhpwYD10bvGE9tQ2O
-         A7zI2wXe5tFJaGU1OYzyPGsNR7oDq44LNoiJEMelxk0p02d6r/dMCsoCBy16nc0QCGjg
-         TsJVFYbMnbWH+to1DNu7OA3AZThfEKT80BR+ZZD1DuouC5s692eXsj+SpIQ1RvDUP+F4
-         GEyKLYjqEbjQURcLO10d3goeY55TO+19qJ0jTPNOl4BFCqtrvEQA3tXvt0i4Gi139lQW
-         pcZUDkzb4mRxg6tXCVgKnhbdIoQtFtkpU2nE9Y7eLZ66iRy5FNUL5GtIF/XnIAcmSWG2
-         uGvw==
-X-Gm-Message-State: ACrzQf2bgkMVoYDIsaiSc2zzIcYz9SmpmDc+Tl+hKbo7d4UYi6d9jOm4
-        f7g9fWZuzFDUSOLonLxIaDQ=
-X-Google-Smtp-Source: AMsMyM5+89oQ9eg5acWttsRAfr82SVh3XAUsJVni8qHvEA2docSbxKlKaNNySPNmt+E0OwjPB1arhw==
-X-Received: by 2002:adf:e785:0:b0:236:5998:67a0 with SMTP id n5-20020adfe785000000b00236599867a0mr31650481wrm.414.1667819328598;
-        Mon, 07 Nov 2022 03:08:48 -0800 (PST)
-Received: from felia.fritz.box (200116b826b04a00c13f470e37e07cb6.dip.versatel-1u1.de. [2001:16b8:26b0:4a00:c13f:470e:37e0:7cb6])
-        by smtp.gmail.com with ESMTPSA id f10-20020a05600c154a00b003a2f2bb72d5sm14947310wmg.45.2022.11.07.03.08.47
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3LAmMy16ngwzae4fSDH7FFtFnYTg6fQW31PoCf+xM+8=;
+        b=LtaUTJ3NTTX2OkdkrS3cLY/duCiW74dmLrrM1rXaTcQn/KXp4wOCasbEl7uSAUvjPQ
+         qzhuF/EEyGL5QvaYz6Ri3uToCOib6PNgMEGd93KCD4a+m6RqSVhMZ/dBpSZeZ1ic6HYr
+         jLdV0fPBvJhEqgvg3YD+dTU7Y86twXGTcMfWF21DV4iabJINQD9xBmpEQ4Ci/kWnNs51
+         It90DucQcrsWTlWakjeKUPBsWtyz9lAPYTCfyYR5jG4tgCNz6GuDz/8mMgZ3eID74DbP
+         vrJf7B4hUk91c7v08AmloIMPFSw0Tae+DSzBN5AasgdX3Up+r6ho/ryN3CeEgnysjl4g
+         +h5g==
+X-Gm-Message-State: ACrzQf0RDtKJTEv6t5oNPSLwBcCx8x8RLQb+nzKMsXDvFWxK3XYhHcYI
+        7ZgspuykoERFMStHFLGOevE=
+X-Google-Smtp-Source: AMsMyM5qRiAMgBiXBgMncnurl3tPb4Iy7u6LCDEH80MFwa5vh+cDz7eYpEgB++2SNRsP5MHu6jrPag==
+X-Received: by 2002:a5d:648b:0:b0:236:6ff3:43c3 with SMTP id o11-20020a5d648b000000b002366ff343c3mr31624955wri.287.1667829311285;
+        Mon, 07 Nov 2022 05:55:11 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id t20-20020a05600c199400b003cf9bf5208esm10077387wmq.19.2022.11.07.05.55.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 03:08:47 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] nsfs: repair kernel-doc for ns_match()
-Date:   Mon,  7 Nov 2022 12:08:17 +0100
-Message-Id: <20221107110817.26398-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 07 Nov 2022 05:55:10 -0800 (PST)
+Date:   Mon, 7 Nov 2022 16:55:07 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Andrea Merello <andrea.merello@iit.it>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: bno055: uninitialized variable bug in
+ bno055_trigger_handler()
+Message-ID: <Y2kOOxSc60IBuzhk@kadam>
+References: <Y0kuaO9PQkSQja+A@kili>
+ <20221015173359.20c7928e@jic23-huawei>
+ <20221029163956.2a70dc94@jic23-huawei>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221029163956.2a70dc94@jic23-huawei>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 1e2328e76254 ("fs/nsfs.c: Added ns_match") adds the ns_match()
-function with a kernel-doc comment, but the ns parameter was referred to
-with ns_common.
+On Sat, Oct 29, 2022 at 04:39:56PM +0100, Jonathan Cameron wrote:
+> On Sat, 15 Oct 2022 17:33:59 +0100
+> Jonathan Cameron <jic23@kernel.org> wrote:
+> 
+> > On Fri, 14 Oct 2022 12:39:52 +0300
+> > Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > 
+> > > This bug is basically harmless, although it will trigger a runtime warning
+> > > if you use KMSan.  On the first iteration through the loop, the
+> > > "best_delta" variable is uninitialized so re-order the condition to
+> > > prevent reading uninitialized memory.
+> > > 
+> > > Fixes: 4aefe1c2bd0c ("iio: imu: add Bosch Sensortec BNO055 core driver")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>  
+> > 
+> > You reported this a while back along with a second issue (false positive)
+> > with hwval.
+> > 
+> > I posted a patch fixing both 
+> > https://lore.kernel.org/linux-iio/20221002145324.3776484-1-jic23@kernel.org/
+> > 
+> > I don't really care which patch goes in, but curious to reasoning to not also
+> > deal with the hwval warning here?
+> > 
+> Meh. Rather than not applying either patch, I'll pick this one up.  We can
+> deal with the hwval warning at a later date if necessary.
+> 
 
-Hence, ./scripts/kernel-doc -none fs/nsfs.c warns about it.
+Sorry, I am behind in my email.
 
-Adjust the kernel-doc comment for ns_match() for make W=1 happiness.
+There was a couple weeks in between sending the bug report and the patch
+so I forgot about it.  Also I send those bug reports from a different
+system so I don't check that as part of the QC process.  I'm moving to
+checking vger instead of grepping my outbox but I haven't automated that
+yet.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- fs/nsfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I don't get a "hwval" warning on my system so using the cross function
+DB must have silenced the false positive.
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index 3506f6074288..f5b2a8a2f2c3 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -254,7 +254,7 @@ struct file *proc_ns_fget(int fd)
- 
- /**
-  * ns_match() - Returns true if current namespace matches dev/ino provided.
-- * @ns_common: current ns
-+ * @ns: current namespace
-  * @dev: dev_t from nsfs that will be matched against current nsfs
-  * @ino: ino_t from nsfs that will be matched against current nsfs
-  *
--- 
-2.17.1
+regards,
+dan carpenter
 
