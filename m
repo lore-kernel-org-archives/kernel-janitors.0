@@ -2,103 +2,56 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F148C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Nov 2022 08:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EC7C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Nov 2022 09:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233588AbiKHIOc (ORCPT
+        id S233425AbiKHJUT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Nov 2022 03:14:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36020 "EHLO
+        Tue, 8 Nov 2022 04:20:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229843AbiKHIOa (ORCPT
+        with ESMTP id S229843AbiKHJUR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Nov 2022 03:14:30 -0500
-X-Greylist: delayed 600 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Nov 2022 00:14:28 PST
-Received: from zm-mta-out-3.u-ga.fr (zm-mta-out-3.u-ga.fr [152.77.200.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA2A20191;
-        Tue,  8 Nov 2022 00:14:28 -0800 (PST)
-Received: from mailhub.u-ga.fr (mailhub-1.u-ga.fr [129.88.178.98])
-        by zm-mta-out-3.u-ga.fr (Postfix) with ESMTP id E97F140388;
-        Tue,  8 Nov 2022 08:55:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=univ-grenoble-alpes.fr; s=2020; t=1667894104;
-        bh=CifegeMCjXZQIpdO+ZEFHnXLYSNMGD8TGBz3ntYzCk4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=M9e07P2kLBWj/+Uoas4G4ukBBAhMtEvltORoInAIUwOv/kYb7r0m/QK/mgGEbnt9L
-         vUk2yzDN6koFWiywXVim5q1+KXnXaI3SwsDnhphFBnLeHR3He9RZWBOpFuxllR6d6F
-         KPYoTM7IMOIxe/6rohzAsGdKDyQzNoV6sYgpu5YSrDvDvjuXf75fqVwKT8hqVhPWTQ
-         tHPHVDxrg4ZSrN3aymcowwu/pEADWq6afZD9djULZh5ugSKz06fWnlBOtgfpprQxXJ
-         hKZe36ejGrwuATY9jWVquT9oFF/rVlaga5W/sHWnyaAVAKpYh34DPBmLxAwUgMmIQ+
-         pRng8whQopcDg==
-Received: from smtps.univ-grenoble-alpes.fr (smtps3.u-ga.fr [195.83.24.62])
-        by mailhub.u-ga.fr (Postfix) with ESMTP id E663D10005A;
-        Tue,  8 Nov 2022 08:55:04 +0100 (CET)
-Received: from [192.168.1.50] (amontpellier-653-1-4-7.w92-145.abo.wanadoo.fr [92.145.106.7])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: palixn@univ-grenoble-alpes.fr)
-        by smtps.univ-grenoble-alpes.fr (Postfix) with ESMTPSA id 70BDD40050;
-        Tue,  8 Nov 2022 08:55:04 +0100 (CET)
-Message-ID: <2fcd7fdb-7984-a2b7-7995-d164754c5eb2@univ-grenoble-alpes.fr>
-Date:   Tue, 8 Nov 2022 08:55:04 +0100
+        Tue, 8 Nov 2022 04:20:17 -0500
+Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9456B20F7F
+        for <kernel-janitors@vger.kernel.org>; Tue,  8 Nov 2022 01:20:12 -0800 (PST)
+Received: by mail.ettrick.pl (Postfix, from userid 1002)
+        id 3EA32A2746; Tue,  8 Nov 2022 09:16:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
+        t=1667899086; bh=ChRcLNpIfKnVgp03/tSyWuRw1tWSTk/OEiEnuZMWs58=;
+        h=Date:From:To:Subject:From;
+        b=YCiBmBvesMy04S1y82Sb/9Owit2ApAroTnmO1tQHWiUSfR0NiBo0fycTLx3144xFv
+         FjFTtCotK5wgB4N5msBWt0Dn6vHoO5OOSQykWX0eGxDv85djtYdzcnJ16m1lDF5BqU
+         dAJbP4M8kXR99pCkcQ5SBWerOmTQExjKE+E5Tux/6L1yK8Hy33XbcfqMcgCQvgpF5L
+         JdQLK6d/juN0GrTP2QRCdcu5VHrs6QHwWN7We7fPioLwzrzoM/I2GY8kHlUnw15T2X
+         gTQEvzhtbnTdndrKEuRKF3zqDYOnhvJxAx2TcCueIZ5wkRLfgaUGxb80rxLIHKdNzE
+         C2zxLiXtDk/UQ==
+Received: by mail.ettrick.pl for <kernel-janitors@vger.kernel.org>; Tue,  8 Nov 2022 09:15:35 GMT
+Message-ID: <20221108074500-0.1.6v.1puep.0.ebagja6kgv@ettrick.pl>
+Date:   Tue,  8 Nov 2022 09:15:35 GMT
+From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: Wycena paneli fotowoltaicznych
+X-Mailer: mail.ettrick.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [cocci] [PATCH] coccinelle: api: Don't use
- devm_platform_get_and_ioremap_resource with res==NULL
-Content-Language: fr
-To:     Julia Lawall <julia.lawall@inria.fr>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Markus Elfring <Markus.Elfring@web.de>, cocci@inria.fr,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        nicolas palix <nicolas.palix@imag.fr>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel@pengutronix.de
-References: <20221107114702.15706-1-u.kleine-koenig@pengutronix.de>
- <bd13da2d-6d18-4f33-0987-a193e3c9b761@web.de>
- <20221107200815.u7hcwejileeabnct@pengutronix.de>
- <257596884.6156222.1667886713273.JavaMail.zimbra@inria.fr>
-From:   Nicolas Palix <nicolas.palix@univ-grenoble-alpes.fr>
-In-Reply-To: <257596884.6156222.1667886713273.JavaMail.zimbra@inria.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi all,
+Dzie=C5=84 dobry,
 
-On 08/11/2022 06:51, Julia Lawall wrote:
-> 
->> After uninstalling python2 this ends in:
->>
->> 	Cannot find Python library
->> 	coccicheck failed
->> 	make: *** [Makefile:2076: coccicheck] Error 255
->>
->> Didn't try to debug that any further. Is that worth a bug report against
->> coccinelle (which is shipped by my distribution)?
->>
->> I tried to adapt the org and report modes from other patches in the same
->> directory. So a critical glimpse by someone more knowledgable than me is
->> recommended. However I don't know how to react to "I doubt ... is
->> appropriate", I'd need a more constructive feedback to act on.
-> 
-> I'm not a python expert, so I'm not sure what to do about this python2 vs python3 problem.  Is there some strategy for printing that works in both of them?
+dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
+irm=C4=85.
 
-It sounds like a missing dependency in the package system of the 
-distribution. Coccinelle has been build with Python support, but
-some libraries are missing.
+=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
+ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
 
-Which distribution is it ?
-Can you install some packages that provide the two missing shared 
-librairies ?
+Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
+ropozycji?
 
-> 
-> julia
 
--- 
-Nicolas Palix
-+33 4 574 21538
-
+Pozdrawiam,
+Norbert Karecki
