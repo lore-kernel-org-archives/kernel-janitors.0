@@ -2,67 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4651DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Nov 2022 11:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BDAC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Nov 2022 11:21:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234040AbiKHLNz (ORCPT
+        id S234080AbiKHLVc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Nov 2022 06:13:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56236 "EHLO
+        Tue, 8 Nov 2022 06:21:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234069AbiKHLNu (ORCPT
+        with ESMTP id S233710AbiKHLVX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Nov 2022 06:13:50 -0500
+        Tue, 8 Nov 2022 06:21:23 -0500
 Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CEA186EC;
-        Tue,  8 Nov 2022 03:13:43 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id j15so20418931wrq.3;
-        Tue, 08 Nov 2022 03:13:43 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C05348765;
+        Tue,  8 Nov 2022 03:21:22 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id v1so20421282wrt.11;
+        Tue, 08 Nov 2022 03:21:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ji1uJ+VLtBXdsvcmViF94zHW4mvj6ILjubVPOBa2RGk=;
-        b=FcEGwYjCjOAWlZBOIMa7ZQ4a0r7fjKHCjXGwv6eEgRptjbks2AcaLEjE4LXrZ6/cwR
-         6fVi8OZK2w3hjePpvuZYFdSpywBj2bBLzGVnQYaqioLDYdLPmqY3peQsKsycb03l15Z8
-         ZA4yGIGnf8jjE/EK6x+qdno7S0q67sTqlm63dD4vNUYtoJTvtCB0DaylSu9tLarF2hZ0
-         Ff/DF28CFfw2W0nHpQBZyWA6x80H0IzIkILhxuH7GttHNZWRnfaRIZTXiyzwXmKjd7uw
-         n7o73pWfkqcOudywpPZwp1fiJ3Dn7HkFMpDIoqwSatAioYA2JmzgoijK9zxDvEgvSzcJ
-         n7GA==
+        bh=Z/tAWvUh3bACKS66CbafmxHuHB+RwFUoKIkb6Nnl3VI=;
+        b=pJi/X/S2VR9zzv8wA8jSY+PtBhfglW7IRRwJR5dZaE8dhCg+E4/SMK/SIXwwnkwlJV
+         NvC08LsgRkdn84L9K8hhw5Osm1me8mksiOBLQixxTIpP2+3ntwTANHVaRFrHHrHsW5XJ
+         4aAsA2fy8CjPnjASxqJ6cbEwhCy7VkASKF6TwhnXorb77CJE4E0rl7Jr0/7f299RmhCP
+         phi6INOI2Kp84LAt7SlTIwFaD5JQXpVOwqYsoBcnDgcmNAd0H+hg1R9TYBdRX2WLjz5g
+         XUyB7Ks4DeCucJjTfOSw2Z3oPGpNOHk0ZV6sPMv5mWLJBDldcdxZvEYdRV4fDmFWsPMq
+         CzJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ji1uJ+VLtBXdsvcmViF94zHW4mvj6ILjubVPOBa2RGk=;
-        b=1k5LjsQMqGbRhcqxHGpo1rTePtstXxkOv1c7/2tTA1JVbkbplpcVfYDTeOiXe8MU7c
-         RD5MEx5Y8qJ0RddO/EdmXPCvD/OcicMox86svyWig5SbN/0kKSiiSfE8BDS2fJ8bXIyV
-         eYJ2G+nTygvTKznariE29sWHeGgFkP6EZATvXe2wY8p3qoDAHJ9obJPnBfDKtw1gtXKo
-         P7gp6BylqnOZ2QtDaFclDRMWDzngAbRak6pXmLJteZtATYmch25m2WlxvU6D/UaH1i6n
-         eZHVJOBHY+iq+DVu69iS1/0VAshSfWGXljjHI8IxbWc4augprs1JCEhKfUWFoOlOUhF2
-         68ZQ==
-X-Gm-Message-State: ACrzQf2vY5QY+nrbDSpx2ZHKhuO3jKpw5PY1YAPwL+sAproNrIM4ikEu
-        43kAHaFk6k9trnmd4IWmggQ=
-X-Google-Smtp-Source: AMsMyM4l7Rfl+oM7BrNdp0vHXFkwDB6KbmzTO/A7TvXqqrdeNjv10bttLp2lz1DOqxrjbIbx1pUiEw==
-X-Received: by 2002:adf:a45a:0:b0:236:9aa8:e675 with SMTP id e26-20020adfa45a000000b002369aa8e675mr35498723wra.407.1667906022008;
-        Tue, 08 Nov 2022 03:13:42 -0800 (PST)
+        bh=Z/tAWvUh3bACKS66CbafmxHuHB+RwFUoKIkb6Nnl3VI=;
+        b=jIb1gu5nFEqje/23IFfxSKqcMCkRRjnWItSCQxXLJfSWJbUNoZwxT0hn3OHLIAJAA2
+         PPPBiaEBpmFDDjmZQwvRDa7smVLs5iUQEx97vVgzxzv3xRjCqb6uGCyEQpKtV/zNi8N5
+         MHkuN/PoUlOD2cry5CPWknn5I0mvU8vTogBYfV18nQWnZVnKK72W1zamaS7g3nh6bTkk
+         0lUFrBbtiaULDx7iSLMc4UnrskThs5GC8942qZXNeZ05GuVPtbOx6zhzKTyD6CefdXUn
+         koHkIWzuFdPcQcR2THdVqsDaneHu8SNU7ZUfr5lChRVT3B4QUy3/YQoPZcHqdInl+PhN
+         I5jg==
+X-Gm-Message-State: ACrzQf18BXjPthjEs+iMcyOhu7MU45R+KHLZMsDP8c9DOXBYkOofoDlP
+        Dd+r5JPN3AfDXusg4EvfxFU=
+X-Google-Smtp-Source: AMsMyM6H4m0SLm49k12JXPGxC7mjK+zWDsHKH/gL1FUohdfrq/1c3t7vw/LTGv8X3ZMrteA4FB2jOQ==
+X-Received: by 2002:adf:eb04:0:b0:236:dd5e:e3a2 with SMTP id s4-20020adfeb04000000b00236dd5ee3a2mr27649822wrn.94.1667906480767;
+        Tue, 08 Nov 2022 03:21:20 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n10-20020a5d420a000000b0023682011c1dsm9840843wrq.104.2022.11.08.03.13.41
+        by smtp.gmail.com with ESMTPSA id j13-20020a05600c190d00b003b47e8a5d22sm15884416wmq.23.2022.11.08.03.21.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Nov 2022 03:13:41 -0800 (PST)
+        Tue, 08 Nov 2022 03:21:20 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org
+To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Guangbin Huang <huangguangbin2@huawei.com>,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: tegra: Fix spelling mistake "fliter" -> "filter"
-Date:   Tue,  8 Nov 2022 11:13:40 +0000
-Message-Id: <20221108111340.115387-1-colin.i.king@gmail.com>
+Subject: [PATCH] net: hns3: Fix spelling mistake "fliter" -> "filter"
+Date:   Tue,  8 Nov 2022 11:21:19 +0000
+Message-Id: <20221108112119.116182-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -71,50 +71,49 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in struct member fliter_structure.
-Fix it.
+There is a spelling mistake in struct member vlan_fliter_cap. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- sound/soc/tegra/tegra210_mbdrc.c | 4 ++--
- sound/soc/tegra/tegra210_mbdrc.h | 2 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 4 ++--
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h | 2 +-
  2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra210_mbdrc.c b/sound/soc/tegra/tegra210_mbdrc.c
-index d786daa6aba6..eeacb1220268 100644
---- a/sound/soc/tegra/tegra210_mbdrc.c
-+++ b/sound/soc/tegra/tegra210_mbdrc.c
-@@ -54,7 +54,7 @@ static const struct tegra210_mbdrc_config mbdrc_init_config = {
- 	.mode			= 0, /* Bypass */
- 	.rms_off		= 48,
- 	.peak_rms_mode		= 1, /* PEAK */
--	.fliter_structure	= 0, /* All-pass tree */
-+	.filter_structure	= 0, /* All-pass tree */
- 	.shift_ctrl		= 30,
- 	.frame_size		= 32,
- 	.channel_mask		= 0x3,
-@@ -819,7 +819,7 @@ int tegra210_mbdrc_component_init(struct snd_soc_component *cmpnt)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 987271da6e9b..991452f17235 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -1341,7 +1341,7 @@ static void hclge_parse_cfg(struct hclge_cfg *cfg, struct hclge_desc *desc)
+ 					    HCLGE_CFG_SPEED_ABILITY_EXT_S);
+ 	cfg->speed_ability |= speed_ability_ext << SPEED_ABILITY_EXT_SHIFT;
  
- 	regmap_update_bits(ope->mbdrc_regmap, TEGRA210_MBDRC_CFG,
- 		TEGRA210_MBDRC_CFG_FILTER_STRUCTURE_MASK,
--		conf->fliter_structure <<
-+		conf->filter_structure <<
- 		TEGRA210_MBDRC_CFG_FILTER_STRUCTURE_SHIFT);
+-	cfg->vlan_fliter_cap = hnae3_get_field(__le32_to_cpu(req->param[1]),
++	cfg->vlan_filter_cap = hnae3_get_field(__le32_to_cpu(req->param[1]),
+ 					       HCLGE_CFG_VLAN_FLTR_CAP_M,
+ 					       HCLGE_CFG_VLAN_FLTR_CAP_S);
  
- 	regmap_update_bits(ope->mbdrc_regmap, TEGRA210_MBDRC_CFG,
-diff --git a/sound/soc/tegra/tegra210_mbdrc.h b/sound/soc/tegra/tegra210_mbdrc.h
-index 4c48da0e1dea..76e443a7934e 100644
---- a/sound/soc/tegra/tegra210_mbdrc.h
-+++ b/sound/soc/tegra/tegra210_mbdrc.h
-@@ -199,7 +199,7 @@ struct tegra210_mbdrc_config {
- 	unsigned int mode;
- 	unsigned int rms_off;
- 	unsigned int peak_rms_mode;
--	unsigned int fliter_structure;
-+	unsigned int filter_structure;
- 	unsigned int shift_ctrl;
- 	unsigned int frame_size;
- 	unsigned int channel_mask;
+@@ -1607,7 +1607,7 @@ static int hclge_configure(struct hclge_dev *hdev)
+ 		hdev->wanted_umv_size = hdev->ae_dev->dev_specs.umv_size;
+ 	hdev->tx_spare_buf_size = cfg.tx_spare_buf_size;
+ 	hdev->gro_en = true;
+-	if (cfg.vlan_fliter_cap == HCLGE_VLAN_FLTR_CAN_MDF)
++	if (cfg.vlan_filter_cap == HCLGE_VLAN_FLTR_CAN_MDF)
+ 		set_bit(HNAE3_DEV_SUPPORT_VLAN_FLTR_MDF_B, ae_dev->caps);
+ 
+ 	if (hnae3_ae_dev_fd_supported(hdev->ae_dev)) {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 495b639b0dc2..d84e0891f664 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -336,7 +336,7 @@ struct hclge_tc_info {
+ 
+ struct hclge_cfg {
+ 	u8 tc_num;
+-	u8 vlan_fliter_cap;
++	u8 vlan_filter_cap;
+ 	u16 tqp_desc_num;
+ 	u16 rx_buf_len;
+ 	u16 vf_rss_size_max;
 -- 
 2.38.1
 
