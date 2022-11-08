@@ -2,76 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78BFC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Nov 2022 07:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F148C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Nov 2022 08:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233741AbiKHHlB (ORCPT
+        id S233588AbiKHIOc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Nov 2022 02:41:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45304 "EHLO
+        Tue, 8 Nov 2022 03:14:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233584AbiKHHkb (ORCPT
+        with ESMTP id S229843AbiKHIOa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Nov 2022 02:40:31 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A783BDF1C;
-        Mon,  7 Nov 2022 23:40:30 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 8 Nov 2022 03:14:30 -0500
+X-Greylist: delayed 600 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Nov 2022 00:14:28 PST
+Received: from zm-mta-out-3.u-ga.fr (zm-mta-out-3.u-ga.fr [152.77.200.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA2A20191;
+        Tue,  8 Nov 2022 00:14:28 -0800 (PST)
+Received: from mailhub.u-ga.fr (mailhub-1.u-ga.fr [129.88.178.98])
+        by zm-mta-out-3.u-ga.fr (Postfix) with ESMTP id E97F140388;
+        Tue,  8 Nov 2022 08:55:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=univ-grenoble-alpes.fr; s=2020; t=1667894104;
+        bh=CifegeMCjXZQIpdO+ZEFHnXLYSNMGD8TGBz3ntYzCk4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=M9e07P2kLBWj/+Uoas4G4ukBBAhMtEvltORoInAIUwOv/kYb7r0m/QK/mgGEbnt9L
+         vUk2yzDN6koFWiywXVim5q1+KXnXaI3SwsDnhphFBnLeHR3He9RZWBOpFuxllR6d6F
+         KPYoTM7IMOIxe/6rohzAsGdKDyQzNoV6sYgpu5YSrDvDvjuXf75fqVwKT8hqVhPWTQ
+         tHPHVDxrg4ZSrN3aymcowwu/pEADWq6afZD9djULZh5ugSKz06fWnlBOtgfpprQxXJ
+         hKZe36ejGrwuATY9jWVquT9oFF/rVlaga5W/sHWnyaAVAKpYh34DPBmLxAwUgMmIQ+
+         pRng8whQopcDg==
+Received: from smtps.univ-grenoble-alpes.fr (smtps3.u-ga.fr [195.83.24.62])
+        by mailhub.u-ga.fr (Postfix) with ESMTP id E663D10005A;
+        Tue,  8 Nov 2022 08:55:04 +0100 (CET)
+Received: from [192.168.1.50] (amontpellier-653-1-4-7.w92-145.abo.wanadoo.fr [92.145.106.7])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5E103B818B2;
-        Tue,  8 Nov 2022 07:40:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3720C433D6;
-        Tue,  8 Nov 2022 07:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667893228;
-        bh=Hz521y2nG4i/prC8mk5q9LErTf2Or5Iuh/J+I3KecKI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=llGnFzzLNf2z2NtfspBGFXEax81GNb8LWcA5cnpX6UiJafiELVyk90/ZFIhIIbJs2
-         E37aVMlT5qrzDM7F+Ik1gQVsbHUVwFrdz3sj4OsmWNXsoyPmcGtFcUwX+PUnRAAR+k
-         0egdjOzyeHUXYq0O51QaW7tUDF2q3HFTOQ9Aao0OReoZocIziEy9wGSOiGTIAnT5P5
-         7XIKVcgPuqbBwWIBbjq2HNVvL+OlTrXbL4FqI9l/9TwTHYiIo9wMF5QAboxTAztJgn
-         o3DoyYpkACzTjRo7Ot/170SBHwPat9qKiP6hSR5q7DZq2CoofHV5q8pn+lc+TxBES2
-         5iKAv8KeIuSxw==
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: palixn@univ-grenoble-alpes.fr)
+        by smtps.univ-grenoble-alpes.fr (Postfix) with ESMTPSA id 70BDD40050;
+        Tue,  8 Nov 2022 08:55:04 +0100 (CET)
+Message-ID: <2fcd7fdb-7984-a2b7-7995-d164754c5eb2@univ-grenoble-alpes.fr>
+Date:   Tue, 8 Nov 2022 08:55:04 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [cocci] [PATCH] coccinelle: api: Don't use
+ devm_platform_get_and_ioremap_resource with res==NULL
+Content-Language: fr
+To:     Julia Lawall <julia.lawall@inria.fr>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Markus Elfring <Markus.Elfring@web.de>, cocci@inria.fr,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        nicolas palix <nicolas.palix@imag.fr>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel@pengutronix.de
+References: <20221107114702.15706-1-u.kleine-koenig@pengutronix.de>
+ <bd13da2d-6d18-4f33-0987-a193e3c9b761@web.de>
+ <20221107200815.u7hcwejileeabnct@pengutronix.de>
+ <257596884.6156222.1667886713273.JavaMail.zimbra@inria.fr>
+From:   Nicolas Palix <nicolas.palix@univ-grenoble-alpes.fr>
+In-Reply-To: <257596884.6156222.1667886713273.JavaMail.zimbra@inria.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: iwlegacy: remove redundant variable len
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20221104135036.225628-1-colin.i.king@gmail.com>
-References: <20221104135036.225628-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Stanislaw Gruszka <stf_xl@wp.pl>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <166789322416.4985.2717898272723414818.kvalo@kernel.org>
-Date:   Tue,  8 Nov 2022 07:40:25 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
+Hi all,
 
-> Variable len is being assigned and modified but it is never
-> used. The variable is redundant and can be removed.
+On 08/11/2022 06:51, Julia Lawall wrote:
 > 
-> Cleans up clang scan build warning:
-> warning: variable 'len' set but not used [-Wunused-but-set-variable]
+>> After uninstalling python2 this ends in:
+>>
+>> 	Cannot find Python library
+>> 	coccicheck failed
+>> 	make: *** [Makefile:2076: coccicheck] Error 255
+>>
+>> Didn't try to debug that any further. Is that worth a bug report against
+>> coccinelle (which is shipped by my distribution)?
+>>
+>> I tried to adapt the org and report modes from other patches in the same
+>> directory. So a critical glimpse by someone more knowledgable than me is
+>> recommended. However I don't know how to react to "I doubt ... is
+>> appropriate", I'd need a more constructive feedback to act on.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+> I'm not a python expert, so I'm not sure what to do about this python2 vs python3 problem.  Is there some strategy for printing that works in both of them?
 
-Patch applied to wireless-next.git, thanks.
+It sounds like a missing dependency in the package system of the 
+distribution. Coccinelle has been build with Python support, but
+some libraries are missing.
 
-9db485ce098f wifi: iwlegacy: remove redundant variable len
+Which distribution is it ?
+Can you install some packages that provide the two missing shared 
+librairies ?
+
+> 
+> julia
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20221104135036.225628-1-colin.i.king@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Nicolas Palix
++33 4 574 21538
 
