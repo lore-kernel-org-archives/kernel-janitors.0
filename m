@@ -2,119 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C119EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Nov 2022 08:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0007C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Nov 2022 09:02:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232571AbiKJIei (ORCPT
+        id S229603AbiKJJCV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Nov 2022 03:34:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51304 "EHLO
+        Thu, 10 Nov 2022 04:02:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232250AbiKJIeh (ORCPT
+        with ESMTP id S229562AbiKJJCT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Nov 2022 03:34:37 -0500
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51AED209A9;
-        Thu, 10 Nov 2022 00:34:34 -0800 (PST)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AA6pbfA032176;
-        Thu, 10 Nov 2022 09:34:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=hX7HLbbo5rodekMp9+mhuon+7a6goJzIM+07WNoX0AQ=;
- b=ZUjySMDmxXOd8lgpHpKQ2nni1ffHstq3crZa+10Xi/oXT8n+HoQ5ixcz+GtQIN431a66
- yvGngTIPvAQZwBzIfleXURdnEJGjxj+z/Pk/GtS3nMWizH0kVorblRA2XPjhktICL0oY
- DoaXdhEs7W8RSJHLSbQwn2f103/sg7dToiRUtpVicU6m9T5+E/9fmXTGPeteS2UEglnc
- 3g5oKC1QeXZJGbhGZL6s7Zbwwi7qiE2DgDEVa8hYCo1Li1bCr70sOwWMOb054I1dDLMS
- /ZP//0+J0kBxqKQg82yu1XmHmaHhiEaim3arWe+dyk2KkpovHh+L3+NWaVRvCXo4XuAh sQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3krvdb8s7k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Nov 2022 09:34:27 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 651D410003B;
-        Thu, 10 Nov 2022 09:34:23 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5D2262138C9;
-        Thu, 10 Nov 2022 09:34:23 +0100 (CET)
-Received: from [10.211.0.90] (10.211.0.90) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.32; Thu, 10 Nov
- 2022 09:34:23 +0100
-Message-ID: <571319ab-bdc2-a884-f462-603e213c13fb@foss.st.com>
-Date:   Thu, 10 Nov 2022 09:34:22 +0100
+        Thu, 10 Nov 2022 04:02:19 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 669C2B4B3;
+        Thu, 10 Nov 2022 01:02:18 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B994F6602A12;
+        Thu, 10 Nov 2022 09:02:16 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1668070937;
+        bh=ePBS862hPs4yf5c+mZnYpufOgVKu6Ts7nvvHguuCxDM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ndhZA3GFoHwv/PZPwd8KVeA7WW4XwA3owaNqgfUSS5k8gi8uYtm3HqCD4OxboqsXX
+         M7ydc5tijTAdmT2wPBlctu4DVMkAi+FSa7hqAB38v8Nb4j+n8WJd2/UVZPMWAZDart
+         Ib04DdwnYrW25DYgOmtfEDAuCXTTEI5luzfH4N+1Sk7PfBZk4h+FQmWDhDsZdEVtNe
+         VaooFsD30z90PnLjQrSwmS8d819tbNhiXOD9qAgnna7SY4mBN2FL3sN7hby8fBxJ/N
+         9Ntcq6hJWRwpSRhA4bQejaM15hHwU6hGcJXcLDyLxaBYpUUsXjT9hjxtaWmxq7Io74
+         2/cOMXxqfMHZw==
+Message-ID: <a430f1c9-0d25-5771-6a9f-23f47daa3759@collabora.com>
+Date:   Thu, 10 Nov 2022 10:02:14 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH][next] media: i2c: st-vgxy61: Fix spelling mistake
- "substraction" -> "subtraction"
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Sylvain Petinot <sylvain.petinot@foss.st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20221109150544.274795-1-colin.i.king@gmail.com>
+ Thunderbird/102.3.3
+Subject: Re: [PATCH] mmc: mtk-sd: fix two spelling mistakes in comment
 Content-Language: en-US
-From:   Benjamin MUGNIER <benjamin.mugnier@foss.st.com>
-In-Reply-To: <20221109150544.274795-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Yu Zhe <yuzhe@nfschina.com>, chaotian.jing@mediatek.com,
+        ulf.hansson@linaro.org, matthias.bgg@gmail.com
+Cc:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
+References: <20221110072819.11530-1-yuzhe@nfschina.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221110072819.11530-1-yuzhe@nfschina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.211.0.90]
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-10_06,2022-11-09_01,2022-06-22_01
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
-
-Thank you for your patch.
-
-On 11/9/22 16:05, Colin Ian King wrote:
-> There are a couple of spelling mistakes in a literal string and in the
-> documentation. Fix them.
+Il 10/11/22 08:28, Yu Zhe ha scritto:
+> spelling mistake fix : "alreay" -> "already"
+> 		       "checksume" -> "checksum"
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 
-Reviewed-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-> ---
->  Documentation/userspace-api/media/drivers/st-vgxy61.rst | 2 +-
->  drivers/media/i2c/st-vgxy61.c                           | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/media/drivers/st-vgxy61.rst b/Documentation/userspace-api/media/drivers/st-vgxy61.rst
-> index 213b884dcfa6..7fb5b4f60db7 100644
-> --- a/Documentation/userspace-api/media/drivers/st-vgxy61.rst
-> +++ b/Documentation/userspace-api/media/drivers/st-vgxy61.rst
-> @@ -17,7 +17,7 @@ The ST VGXY61 driver implements the following controls:
->  
->      * - HDR linearize
->        - The merger outputs a long exposure capture as long as it is not saturated.
-> -    * - HDR substraction
-> +    * - HDR subtraction
->        - This involves subtracting the short exposure frame from the long exposure frame.
->      * - "No HDR"
->        - This mode is used for standard dynamic range (SDR) exposures.
-> diff --git a/drivers/media/i2c/st-vgxy61.c b/drivers/media/i2c/st-vgxy61.c
-> index dfbf25338160..e72fc3a8a54c 100644
-> --- a/drivers/media/i2c/st-vgxy61.c
-> +++ b/drivers/media/i2c/st-vgxy61.c
-> @@ -197,7 +197,7 @@ static const char * const vgxy61_test_pattern_menu[] = {
->  
->  static const char * const vgxy61_hdr_mode_menu[] = {
->  	"HDR linearize",
-> -	"HDR substraction",
-> +	"HDR subtraction",
->  	"No HDR",
->  };
->  
 
--- 
-Regards,
-
-Benjamin
