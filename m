@@ -2,65 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0007C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Nov 2022 09:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A87C9C43217
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Nov 2022 21:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbiKJJCV (ORCPT
+        id S232375AbiKJVgW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Nov 2022 04:02:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38292 "EHLO
+        Thu, 10 Nov 2022 16:36:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbiKJJCT (ORCPT
+        with ESMTP id S232351AbiKJVgV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Nov 2022 04:02:19 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 669C2B4B3;
-        Thu, 10 Nov 2022 01:02:18 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        Thu, 10 Nov 2022 16:36:21 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2C501144A;
+        Thu, 10 Nov 2022 13:36:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B994F6602A12;
-        Thu, 10 Nov 2022 09:02:16 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1668070937;
-        bh=ePBS862hPs4yf5c+mZnYpufOgVKu6Ts7nvvHguuCxDM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ndhZA3GFoHwv/PZPwd8KVeA7WW4XwA3owaNqgfUSS5k8gi8uYtm3HqCD4OxboqsXX
-         M7ydc5tijTAdmT2wPBlctu4DVMkAi+FSa7hqAB38v8Nb4j+n8WJd2/UVZPMWAZDart
-         Ib04DdwnYrW25DYgOmtfEDAuCXTTEI5luzfH4N+1Sk7PfBZk4h+FQmWDhDsZdEVtNe
-         VaooFsD30z90PnLjQrSwmS8d819tbNhiXOD9qAgnna7SY4mBN2FL3sN7hby8fBxJ/N
-         9Ntcq6hJWRwpSRhA4bQejaM15hHwU6hGcJXcLDyLxaBYpUUsXjT9hjxtaWmxq7Io74
-         2/cOMXxqfMHZw==
-Message-ID: <a430f1c9-0d25-5771-6a9f-23f47daa3759@collabora.com>
-Date:   Thu, 10 Nov 2022 10:02:14 +0100
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7DED161E5F;
+        Thu, 10 Nov 2022 21:36:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB85C433B5;
+        Thu, 10 Nov 2022 21:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668116179;
+        bh=dxe+GIjKXtd9ZijX1nvmNwvHzd7h4ssKNL0fXojrTW0=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=byjDznbSMjGoD0JMO0wv5616TytfFIZwLfEhThsJ2DyReWalmod7txmJCU/aBWEIX
+         wZNQMEhi0WuNDexC42AmoRNNDTpdQPSpy0qLJF01BHa1GIM/sdo4IEeQ5JelMJ9AU9
+         9hcUenhI+3L5aXmZg42w9yCDiRQmEeAyX1zWHGf2NZusxafxyiWFnwuvgP7vd+IrLV
+         Dn75IPloNvZS97s/tYmYCq5q7aRIElNKa4qIv28Ibr3LhX9f5VJ1Q7fwPYADpozOdP
+         O7MQ69YbXGwsy+gLJeCF958/AcgUYP8TmUvvOEb+OftImmoY9cdtFSPI9cVwVerAkz
+         0M509VpiYmkzg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20221108111340.115387-1-colin.i.king@gmail.com>
+References: <20221108111340.115387-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] ASoC: tegra: Fix spelling mistake "fliter" -> "filter"
+Message-Id: <166811617747.1093199.5048769698185581160.b4-ty@kernel.org>
+Date:   Thu, 10 Nov 2022 21:36:17 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-Subject: Re: [PATCH] mmc: mtk-sd: fix two spelling mistakes in comment
-Content-Language: en-US
-To:     Yu Zhe <yuzhe@nfschina.com>, chaotian.jing@mediatek.com,
-        ulf.hansson@linaro.org, matthias.bgg@gmail.com
-Cc:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
-References: <20221110072819.11530-1-yuzhe@nfschina.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221110072819.11530-1-yuzhe@nfschina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fc921
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 10/11/22 08:28, Yu Zhe ha scritto:
-> spelling mistake fix : "alreay" -> "already"
-> 		       "checksume" -> "checksum"
+On Tue, 8 Nov 2022 11:13:40 +0000, Colin Ian King wrote:
+> There is a spelling mistake in struct member fliter_structure.
+> Fix it.
 > 
-> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> 
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
+Thanks!
+
+[1/1] ASoC: tegra: Fix spelling mistake "fliter" -> "filter"
+      commit: f8dc9cd92fe218aa1d8720e1105c542dcd3e58f2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
