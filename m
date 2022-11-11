@@ -2,90 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A87C9C43217
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Nov 2022 21:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AFFC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Nov 2022 07:27:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232375AbiKJVgW (ORCPT
+        id S232177AbiKKH1U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Nov 2022 16:36:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48874 "EHLO
+        Fri, 11 Nov 2022 02:27:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232351AbiKJVgV (ORCPT
+        with ESMTP id S229703AbiKKH1S (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Nov 2022 16:36:21 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2C501144A;
-        Thu, 10 Nov 2022 13:36:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7DED161E5F;
-        Thu, 10 Nov 2022 21:36:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB85C433B5;
-        Thu, 10 Nov 2022 21:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668116179;
-        bh=dxe+GIjKXtd9ZijX1nvmNwvHzd7h4ssKNL0fXojrTW0=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=byjDznbSMjGoD0JMO0wv5616TytfFIZwLfEhThsJ2DyReWalmod7txmJCU/aBWEIX
-         wZNQMEhi0WuNDexC42AmoRNNDTpdQPSpy0qLJF01BHa1GIM/sdo4IEeQ5JelMJ9AU9
-         9hcUenhI+3L5aXmZg42w9yCDiRQmEeAyX1zWHGf2NZusxafxyiWFnwuvgP7vd+IrLV
-         Dn75IPloNvZS97s/tYmYCq5q7aRIElNKa4qIv28Ibr3LhX9f5VJ1Q7fwPYADpozOdP
-         O7MQ69YbXGwsy+gLJeCF958/AcgUYP8TmUvvOEb+OftImmoY9cdtFSPI9cVwVerAkz
-         0M509VpiYmkzg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20221108111340.115387-1-colin.i.king@gmail.com>
-References: <20221108111340.115387-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] ASoC: tegra: Fix spelling mistake "fliter" -> "filter"
-Message-Id: <166811617747.1093199.5048769698185581160.b4-ty@kernel.org>
-Date:   Thu, 10 Nov 2022 21:36:17 +0000
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fc921
+        Fri, 11 Nov 2022 02:27:18 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BEB6657D9;
+        Thu, 10 Nov 2022 23:27:17 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id o4so5337171wrq.6;
+        Thu, 10 Nov 2022 23:27:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=88ryav6TjdsBnuYHNgOaRaKfsuTkckPVXqoY4uilu+s=;
+        b=pL5ImJSeUAk8JdsH1VE9cmKYRBNoP5wd5R1gm7DPnQb7kKZMfjkD4Qa7PQ7jSdQmnl
+         XcyV1uA3Ir2iK/sb8Tjh3fFqSNGHxlnZUuFgln+Q9LTf5LNOe5S+W5cryUHTu1PH6vZS
+         g6vpiNbCLS6iTaffhffTVIZzuBKcQEi2EObpdXbff0yHCgiIvRAn4PFPm/6kvmXBTbmg
+         /AxRRFTqqj4L4I41BOQA6d2QkRoqqMMgwDywATcOmV1g1lhVLjFFqAbCcO16pL4qjd//
+         Dtlt1+36ujwYXAkqaW3LIChu19NRm+viZ7NrNv3a8zxzQuw6cm9JREXWRwUVaXiZuwP5
+         8uTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=88ryav6TjdsBnuYHNgOaRaKfsuTkckPVXqoY4uilu+s=;
+        b=tXEV+ZQxsO1cp177Z2pbDgUbAsznDKp+3PY2fxheZkEc1N7vWT+d7l7NUoiNvLweOT
+         Wyw8DpNLqIN6q/Op60vrnrbkjtA/0s/nbxVl87hDW3DGTwOp6HqlX8mlwBa5h9uXSnvB
+         0dPQYWp4EfSVgjW2kDzEWTnwZwFGc64RuEoAobOR8x91wpUq/ZAVmEOOvtKB5BMSOz+1
+         qalYnZ0YZX+BCTTM6eUmWTJeOjtstjtdos7QclFzGAbWmT52I/G3JBrgw7S0mGSyiP/A
+         Uw7pTrZtLyuTJdTrDFJuhdRtf6A8I8/YcuX3wnwikchm5VkXaJL2VDrJIlYIHd4OogG2
+         CkOQ==
+X-Gm-Message-State: ANoB5pmqsnromWa0xPQO6Mm7V5zYMTgfUG97h7PSfjU9ZoL4lPTroQdz
+        GDVSTN6OQlcD2Ecaiv79rtE=
+X-Google-Smtp-Source: AA0mqf6xxlopbmCifV1vDxNwLYg89KRXWLRf6Da8Zp1T0pn5pzhTFhh3FoGdsb0EA6JDcILxxJxiBQ==
+X-Received: by 2002:a5d:4b8c:0:b0:236:e52d:b0d7 with SMTP id b12-20020a5d4b8c000000b00236e52db0d7mr421841wrt.46.1668151635760;
+        Thu, 10 Nov 2022 23:27:15 -0800 (PST)
+Received: from felia.fritz.box (200116b8262ac400710df4e5ad386bbd.dip.versatel-1u1.de. [2001:16b8:262a:c400:710d:f4e5:ad38:6bbd])
+        by smtp.gmail.com with ESMTPSA id o15-20020a05600c510f00b003c6d21a19a0sm2101690wms.29.2022.11.10.23.27.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Nov 2022 23:27:15 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ravi Bangoria <ravi.bangoria@amd.com>,
+        linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] perf: remove unneeded assignment in find_get_context()
+Date:   Fri, 11 Nov 2022 08:26:56 +0100
+Message-Id: <20221111072656.14591-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 8 Nov 2022 11:13:40 +0000, Colin Ian King wrote:
-> There is a spelling mistake in struct member fliter_structure.
-> Fix it.
-> 
-> 
+Commit bd2756811766 ("perf: Rewrite core context handling") refactors
+find_get_context() and with that, the err variable does not need to be
+initialized to -EINVAL, as it is set again before all further uses.
 
-Applied to
+Remove this unneeded assignment. No functional change.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ kernel/events/core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks!
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index c7157f8d8d2f..836f8fbb9980 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4735,7 +4735,6 @@ find_get_context(struct task_struct *task, struct perf_event *event)
+ 		return ctx;
+ 	}
+ 
+-	err = -EINVAL;
+ retry:
+ 	ctx = perf_lock_task_context(task, &flags);
+ 	if (ctx) {
+-- 
+2.17.1
 
-[1/1] ASoC: tegra: Fix spelling mistake "fliter" -> "filter"
-      commit: f8dc9cd92fe218aa1d8720e1105c542dcd3e58f2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
