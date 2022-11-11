@@ -2,96 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AFFC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Nov 2022 07:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C0BC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Nov 2022 13:00:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232177AbiKKH1U (ORCPT
+        id S233491AbiKKNAI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Nov 2022 02:27:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53992 "EHLO
+        Fri, 11 Nov 2022 08:00:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbiKKH1S (ORCPT
+        with ESMTP id S233256AbiKKNAH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Nov 2022 02:27:18 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BEB6657D9;
-        Thu, 10 Nov 2022 23:27:17 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id o4so5337171wrq.6;
-        Thu, 10 Nov 2022 23:27:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=88ryav6TjdsBnuYHNgOaRaKfsuTkckPVXqoY4uilu+s=;
-        b=pL5ImJSeUAk8JdsH1VE9cmKYRBNoP5wd5R1gm7DPnQb7kKZMfjkD4Qa7PQ7jSdQmnl
-         XcyV1uA3Ir2iK/sb8Tjh3fFqSNGHxlnZUuFgln+Q9LTf5LNOe5S+W5cryUHTu1PH6vZS
-         g6vpiNbCLS6iTaffhffTVIZzuBKcQEi2EObpdXbff0yHCgiIvRAn4PFPm/6kvmXBTbmg
-         /AxRRFTqqj4L4I41BOQA6d2QkRoqqMMgwDywATcOmV1g1lhVLjFFqAbCcO16pL4qjd//
-         Dtlt1+36ujwYXAkqaW3LIChu19NRm+viZ7NrNv3a8zxzQuw6cm9JREXWRwUVaXiZuwP5
-         8uTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=88ryav6TjdsBnuYHNgOaRaKfsuTkckPVXqoY4uilu+s=;
-        b=tXEV+ZQxsO1cp177Z2pbDgUbAsznDKp+3PY2fxheZkEc1N7vWT+d7l7NUoiNvLweOT
-         Wyw8DpNLqIN6q/Op60vrnrbkjtA/0s/nbxVl87hDW3DGTwOp6HqlX8mlwBa5h9uXSnvB
-         0dPQYWp4EfSVgjW2kDzEWTnwZwFGc64RuEoAobOR8x91wpUq/ZAVmEOOvtKB5BMSOz+1
-         qalYnZ0YZX+BCTTM6eUmWTJeOjtstjtdos7QclFzGAbWmT52I/G3JBrgw7S0mGSyiP/A
-         Uw7pTrZtLyuTJdTrDFJuhdRtf6A8I8/YcuX3wnwikchm5VkXaJL2VDrJIlYIHd4OogG2
-         CkOQ==
-X-Gm-Message-State: ANoB5pmqsnromWa0xPQO6Mm7V5zYMTgfUG97h7PSfjU9ZoL4lPTroQdz
-        GDVSTN6OQlcD2Ecaiv79rtE=
-X-Google-Smtp-Source: AA0mqf6xxlopbmCifV1vDxNwLYg89KRXWLRf6Da8Zp1T0pn5pzhTFhh3FoGdsb0EA6JDcILxxJxiBQ==
-X-Received: by 2002:a5d:4b8c:0:b0:236:e52d:b0d7 with SMTP id b12-20020a5d4b8c000000b00236e52db0d7mr421841wrt.46.1668151635760;
-        Thu, 10 Nov 2022 23:27:15 -0800 (PST)
-Received: from felia.fritz.box (200116b8262ac400710df4e5ad386bbd.dip.versatel-1u1.de. [2001:16b8:262a:c400:710d:f4e5:ad38:6bbd])
-        by smtp.gmail.com with ESMTPSA id o15-20020a05600c510f00b003c6d21a19a0sm2101690wms.29.2022.11.10.23.27.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 23:27:15 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ravi Bangoria <ravi.bangoria@amd.com>,
-        linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] perf: remove unneeded assignment in find_get_context()
-Date:   Fri, 11 Nov 2022 08:26:56 +0100
-Message-Id: <20221111072656.14591-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 11 Nov 2022 08:00:07 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 911AC3F067;
+        Fri, 11 Nov 2022 05:00:06 -0800 (PST)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2ABCAF7t012952;
+        Fri, 11 Nov 2022 13:00:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=dEUwqWDMJHr6G6XY0tzdAf8PwS50KhhgaSiQ0wwz/2s=;
+ b=S0BBG8vLfxa/qpiI6xIf2yUCavnSTqemgoRx1ARh1nyY6MAwxg/Hq+AduaheNID/wrW+
+ lJlYTzFQt70j9ia37YQrjWmIN/f+72bQvKLfwcx2NpO1uQfFfeCN3s0dcGFLoU1U4QU6
+ 2+JLDjjsVsdsZ8srAOF9+ZH8nvgGU6pGTE0mFjUZk2H3psW5eg6TOqwtcivKvo4MuNQo
+ VlpO8SUIP7f2GDNT36HLQDnHy0TjEk987xutb8uLV1P6FOxXll6phY8PRtW5HNTOJQ+7
+ vxgq87wKwCbPqqTafGjLywlHGV/zQwsBPMIsk6M0pFYdaBP8DzR2/xnH1BraVUIFqY/U Kw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ksnkt1xgg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Nov 2022 13:00:06 +0000
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2ABCoPTe020970;
+        Fri, 11 Nov 2022 13:00:05 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ksnkt1xe4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Nov 2022 13:00:05 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2ABCqTvD024946;
+        Fri, 11 Nov 2022 13:00:03 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03ams.nl.ibm.com with ESMTP id 3kngqggrjm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Nov 2022 13:00:03 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2ABCxxLF34406768
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Nov 2022 12:59:59 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C89DB52050;
+        Fri, 11 Nov 2022 12:59:59 +0000 (GMT)
+Received: from [9.171.11.51] (unknown [9.171.11.51])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 65B4E5204F;
+        Fri, 11 Nov 2022 12:59:59 +0000 (GMT)
+Message-ID: <7b57f8ee-b296-06e4-75e2-cef8eb018719@linux.ibm.com>
+Date:   Fri, 11 Nov 2022 13:59:59 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH][next] s390/dasd: Fix spelling mistake "Ivalid" ->
+ "Invalid"
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-s390@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220923132103.2486724-1-colin.i.king@gmail.com>
+From:   Stefan Haberland <sth@linux.ibm.com>
+In-Reply-To: <20220923132103.2486724-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: VBfY4wbMSIGYagy3cerF2HKmO_tJC0wL
+X-Proofpoint-ORIG-GUID: E7gBr_Z6DsQJP6qeFv6SApj5Fj38B3ge
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-11_06,2022-11-11_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 impostorscore=0 phishscore=0 mlxscore=0
+ clxscore=1011 mlxlogscore=799 spamscore=0 bulkscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211110084
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit bd2756811766 ("perf: Rewrite core context handling") refactors
-find_get_context() and with that, the err variable does not need to be
-initialized to -EINVAL, as it is set again before all further uses.
+Am 23.09.22 um 15:21 schrieb Colin Ian King:
+> There is a spelling mistake in a pr_warn message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-Remove this unneeded assignment. No functional change.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- kernel/events/core.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index c7157f8d8d2f..836f8fbb9980 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4735,7 +4735,6 @@ find_get_context(struct task_struct *task, struct perf_event *event)
- 		return ctx;
- 	}
- 
--	err = -EINVAL;
- retry:
- 	ctx = perf_lock_task_context(task, &flags);
- 	if (ctx) {
--- 
-2.17.1
+applied, thanks
 
