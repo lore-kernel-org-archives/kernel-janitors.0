@@ -2,201 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B3FC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Nov 2022 16:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 652E3C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Nov 2022 16:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233475AbiKKQTo (ORCPT
+        id S233824AbiKKQ5a (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Nov 2022 11:19:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49956 "EHLO
+        Fri, 11 Nov 2022 11:57:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232416AbiKKQTn (ORCPT
+        with ESMTP id S233180AbiKKQ52 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Nov 2022 11:19:43 -0500
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E658DE0;
-        Fri, 11 Nov 2022 08:19:41 -0800 (PST)
-Received: by mail-qv1-xf34.google.com with SMTP id w10so3648328qvr.3;
-        Fri, 11 Nov 2022 08:19:41 -0800 (PST)
+        Fri, 11 Nov 2022 11:57:28 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C33CF14083;
+        Fri, 11 Nov 2022 08:57:27 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id v7so3277943wmn.0;
+        Fri, 11 Nov 2022 08:57:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9YP1SZjbQo7XU90m5pRQJ5p+S7jKUwWZA6O51TWo4jc=;
-        b=Au2sCr94zXBY5PkQWLuEw9wtJfYMU2bc5D9rUIyN+KeZOEC5Y8qx8Uo93ZhtOJ51TM
-         aIcRXYjYhHjf9Q8AAv8kxrf8auvP5liaWbRaEwiZ5t0LTHZXtpc1rRk5GYb8CWcVvUoM
-         OmZxqaN0sxhTYq17OaA0b3ud6VLRIIS6uGuUpFi2G2hRe0jKuruY4bwTBJgWItokIuQW
-         +Eb/OmJm5FZHRga5yUy6B6BxqzraposLA+ho/s8d3bH3uEADWcRHqwvkoHf3ac0KA7/Y
-         +GlC2ZChDPZPC+TAi1ugXRczSkiEfbe0iVn0yLos2VWAWb8ynNy7KgxB10pf8LEvEE3z
-         Ncgg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mZWE3AHjm+gVGD7RjCCyAAkQNQ6fQcTinGqa03Nm0yY=;
+        b=M57CLED+h6xY1FdHDVIKLrr7HuIBw1ojq+s7RW+ZVVLFwCms6Sln9BMUam1LKX9MMZ
+         1PY3I48TtXvWDU8MoccKdaEww2T043SS1049ZnY5Vzu7N8W3JY4SXNioIt2Vk0cH8o/Z
+         oOiKodoMiJNL2SM/V4k1EmQrzdfAOAJGhq99hBquE6a9QxKHRYAbVThXwDCqjNoIeEt+
+         +hZuL3jJ2KfbZyk+NJ1ZPFdIN38C+jfyIdOSHglSgX/3RyV28hTatew3zU3g2X7JRsS3
+         aHOcjXg5SkfE3aZNTAtomPFoOp/ANaUZLPzNdKVv2jAaaPaQCoN0gNl6rAg7xUDUpXtK
+         6jWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9YP1SZjbQo7XU90m5pRQJ5p+S7jKUwWZA6O51TWo4jc=;
-        b=B8oD7lPZ3uqz3xrqtYN/F9z90dnHd+z2GpdiL3Vw/XMPy9rUJmrbvXXBBhwqdubdzX
-         TSMmK++3cOaRs2CRbJTSBpr5uPF8cOPprdUs33fUWlzcR9lcaSLv1jEoPqJWWqOxfvQy
-         HAZlTKuOGz7VgHoBJ1x10Apa8uevnITU435ymaNi6hnZeIqPvHqTkZDYtkuzTz9MH0Ky
-         78twivrPYUMMz/zcwKpcB73Im0NC6UC48ezdBLCR15ASFDZku9gNQC2cepE0j8ZbM6rf
-         4L4C0NJGL9AC43tM9WC1yIxqw2YBSzvqDwY5VHiPMHCyYvOXQtcglQG08+fNbnvGV3dE
-         L8pQ==
-X-Gm-Message-State: ANoB5pnIDg2d9VtKHWLF5jMpEWIXPKeJVicw+u/PJIt2WSsr5pw/0vDw
-        3tKh/sFYH/UwTpTM/xG75g2Cf2cXP5s=
-X-Google-Smtp-Source: AA0mqf7V+Re858Ch7eeF8ioaZqwD4ZYm8nwsnR788dM1nav4zjVEXqmAKCilSyr9Ndy+/a8xk1wCZQ==
-X-Received: by 2002:a05:6214:5906:b0:4b1:8827:adca with SMTP id lp6-20020a056214590600b004b18827adcamr2556574qvb.50.1668183580619;
-        Fri, 11 Nov 2022 08:19:40 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id u6-20020a37ab06000000b006b615cd8c13sm1583946qke.106.2022.11.11.08.19.39
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mZWE3AHjm+gVGD7RjCCyAAkQNQ6fQcTinGqa03Nm0yY=;
+        b=mAA3P7Kvy2ngqY2pbuUnwVaurHI4/noW5yQOXT9yI3jSJdKESWqxv44LebCrHB03M/
+         vytYslF6luIOuh/CqM3pHj0Wjz7htsE68XPW7cuDcW5gyQMJ+WwIwOJ8Nup5Q6CK2hvi
+         veF++qSIxHGk9ANsi37Iu1iP/Rzp8IET2UL9oqafd8PFoRIAcRsriLgzkLbItSr8hFvq
+         62ZZTGmqmDp9AjFhaHP4nyn5fmNVD3E7CqGsKnV7cCZkaIy6kR7UXPprNz+GrSQmBg8W
+         lFfnDP1coh47+hdD82VpNfXNrXcIx+X393VgjxVHNvx/QXpv9OySvLJIJU8jcUcmuAcn
+         5IXw==
+X-Gm-Message-State: ANoB5plcmL4ymT8hxmaAAQfBdIu9y8NgW4Ap/7eamU4eG/s0+a0XP3lQ
+        IL237OpUYQ60f/Us9iAAgnVMsk15n2DR8g==
+X-Google-Smtp-Source: AA0mqf7a6cJmLgQuXV2EMAULPMVyJhpIuKWjQrCUXJmxXe7mNEM/97RVv5bU3KVaJEUAGgklO6L4cA==
+X-Received: by 2002:a05:600c:3b83:b0:3cf:5d41:b74b with SMTP id n3-20020a05600c3b8300b003cf5d41b74bmr1849391wms.184.1668185846282;
+        Fri, 11 Nov 2022 08:57:26 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id f7-20020adfe907000000b0023677081f3asm2302241wrm.42.2022.11.11.08.57.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Nov 2022 08:19:40 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Fri, 11 Nov 2022 08:19:38 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v2] hwmon: Include <linux/kstrtox.h> when appropriate
-Message-ID: <20221111161938.GA202568@roeck-us.net>
-References: <51688cf50bda44e2731381a31287c62319388783.1667763218.git.christophe.jaillet@wanadoo.fr>
+        Fri, 11 Nov 2022 08:57:25 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>, linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: ftdi-elan: remove variable l
+Date:   Fri, 11 Nov 2022 16:57:24 +0000
+Message-Id: <20221111165724.557152-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <51688cf50bda44e2731381a31287c62319388783.1667763218.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Nov 06, 2022 at 08:34:16PM +0100, Christophe JAILLET wrote:
-> The kstrto<something>() functions have been moved from kernel.h to
-> kstrtox.h.
-> 
-> So, include the latter directly in the appropriate files.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Variable l is just being accumulated and it's never used
+anywhere else. The variable and the addition are redundant so
+remove it.
 
-Applied to hwmon-next.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/usb/misc/ftdi-elan.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
-Guenter
+diff --git a/drivers/usb/misc/ftdi-elan.c b/drivers/usb/misc/ftdi-elan.c
+index 33b35788bd0b..8ce191e3a4c0 100644
+--- a/drivers/usb/misc/ftdi-elan.c
++++ b/drivers/usb/misc/ftdi-elan.c
+@@ -1624,7 +1624,6 @@ wait:if (ftdi->disconnected > 0) {
+ 			char data[30 *3 + 4];
+ 			char *d = data;
+ 			int m = (sizeof(data) - 1) / 3 - 1;
+-			int l = 0;
+ 			struct u132_target *target = &ftdi->target[ed];
+ 			struct u132_command *command = &ftdi->command[
+ 				COMMAND_MASK & ftdi->command_next];
+@@ -1647,7 +1646,6 @@ wait:if (ftdi->disconnected > 0) {
+ 				} else if (i++ < m) {
+ 					int w = sprintf(d, " %02X", *b++);
+ 					d += w;
+-					l += w;
+ 				} else
+ 					d += sprintf(d, " ..");
+ 			}
+-- 
+2.38.1
 
-> ---
-> The goal of this patch is to eventually remove <linux/kernel.h> from
-> <linux/watchdog.h>.
-> 
-> This patch is needed to avoid indirect inclusion, via <linux/watchdog.h>,
-> in fschmd.c, ftsteutates.c and w83793.c.
-> 
-> Changes in v2:
->    - Include <linux/kstrtox.h> in <linux/hwmon-sysfs.h> so that much less
->      drivers need to be updated   [Guenter Roeck]
-> 
-> v1: https://lore.kernel.org/all/0e819645f8d607f7b4550c8aaf4a563b1404bf40.1667730675.git.christophe.jaillet@wanadoo.fr/
-> ---
->  drivers/hwmon/atxp1.c            | 1 +
->  drivers/hwmon/gpio-fan.c         | 1 +
->  drivers/hwmon/hwmon.c            | 1 +
->  drivers/hwmon/lm90.c             | 1 +
->  drivers/hwmon/mr75203.c          | 1 +
->  drivers/hwmon/pcf8591.c          | 1 +
->  drivers/hwmon/pmbus/q54sj108a2.c | 1 +
->  include/linux/hwmon-sysfs.h      | 1 +
->  8 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/hwmon/atxp1.c b/drivers/hwmon/atxp1.c
-> index 4fd8de8022bc..118297ea1dcf 100644
-> --- a/drivers/hwmon/atxp1.c
-> +++ b/drivers/hwmon/atxp1.c
-> @@ -16,6 +16,7 @@
->  #include <linux/hwmon.h>
->  #include <linux/hwmon-vid.h>
->  #include <linux/err.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/mutex.h>
->  #include <linux/sysfs.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/hwmon/gpio-fan.c b/drivers/hwmon/gpio-fan.c
-> index ba408942dbe7..e75db6f64e8c 100644
-> --- a/drivers/hwmon/gpio-fan.c
-> +++ b/drivers/hwmon/gpio-fan.c
-> @@ -14,6 +14,7 @@
->  #include <linux/irq.h>
->  #include <linux/platform_device.h>
->  #include <linux/err.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/mutex.h>
->  #include <linux/hwmon.h>
->  #include <linux/gpio/consumer.h>
-> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-> index 4218750d5a66..33edb5c02f7d 100644
-> --- a/drivers/hwmon/hwmon.c
-> +++ b/drivers/hwmon/hwmon.c
-> @@ -15,6 +15,7 @@
->  #include <linux/gfp.h>
->  #include <linux/hwmon.h>
->  #include <linux/idr.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/pci.h>
-> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-> index a3f95ba00dbf..6498d5acf705 100644
-> --- a/drivers/hwmon/lm90.c
-> +++ b/drivers/hwmon/lm90.c
-> @@ -103,6 +103,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/jiffies.h>
->  #include <linux/hwmon.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
->  #include <linux/of_device.h>
-> diff --git a/drivers/hwmon/mr75203.c b/drivers/hwmon/mr75203.c
-> index 394a4c7e46ab..50a8b9c3f94d 100644
-> --- a/drivers/hwmon/mr75203.c
-> +++ b/drivers/hwmon/mr75203.c
-> @@ -11,6 +11,7 @@
->  #include <linux/clk.h>
->  #include <linux/debugfs.h>
->  #include <linux/hwmon.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/mutex.h>
-> diff --git a/drivers/hwmon/pcf8591.c b/drivers/hwmon/pcf8591.c
-> index af9614e918a4..1dbe209ae13f 100644
-> --- a/drivers/hwmon/pcf8591.c
-> +++ b/drivers/hwmon/pcf8591.c
-> @@ -14,6 +14,7 @@
->  #include <linux/mutex.h>
->  #include <linux/err.h>
->  #include <linux/hwmon.h>
-> +#include <linux/kstrtox.h>
->  
->  /* Insmod parameters */
->  
-> diff --git a/drivers/hwmon/pmbus/q54sj108a2.c b/drivers/hwmon/pmbus/q54sj108a2.c
-> index fa298b4265a1..d3ba12951324 100644
-> --- a/drivers/hwmon/pmbus/q54sj108a2.c
-> +++ b/drivers/hwmon/pmbus/q54sj108a2.c
-> @@ -8,6 +8,7 @@
->  
->  #include <linux/debugfs.h>
->  #include <linux/i2c.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
->  #include "pmbus.h"
-> diff --git a/include/linux/hwmon-sysfs.h b/include/linux/hwmon-sysfs.h
-> index cb26d02f52f3..d896713359cd 100644
-> --- a/include/linux/hwmon-sysfs.h
-> +++ b/include/linux/hwmon-sysfs.h
-> @@ -8,6 +8,7 @@
->  #define _LINUX_HWMON_SYSFS_H
->  
->  #include <linux/device.h>
-> +#include <linux/kstrtox.h>
->  
->  struct sensor_device_attribute{
->  	struct device_attribute dev_attr;
