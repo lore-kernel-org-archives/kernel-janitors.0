@@ -2,100 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD94C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Nov 2022 17:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14825C43217
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Nov 2022 17:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234299AbiKKRJN (ORCPT
+        id S233674AbiKKRp1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Nov 2022 12:09:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47842 "EHLO
+        Fri, 11 Nov 2022 12:45:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234340AbiKKRIx (ORCPT
+        with ESMTP id S233344AbiKKRp0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Nov 2022 12:08:53 -0500
+        Fri, 11 Nov 2022 12:45:26 -0500
 Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8B4410C5;
-        Fri, 11 Nov 2022 09:08:26 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id t4so3275247wmj.5;
-        Fri, 11 Nov 2022 09:08:26 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B763017AA4
+        for <kernel-janitors@vger.kernel.org>; Fri, 11 Nov 2022 09:45:24 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id c3-20020a1c3503000000b003bd21e3dd7aso6055814wma.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 11 Nov 2022 09:45:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2IWLrD4C46aKmQaLw0mo+60fQZJP9UtxE6QzQixWpf0=;
-        b=Rg7o/CAwJNOUBY+WgCJx82bsbnycLUEJXepv4OfsHgtFrGyVLodrTz5vwPK6SuAdgI
-         KuUyvVDND9kjb2Ri87mvmCkF0RxUiYj9RTDxJR/p09+Qq2CQVZswlyjVZC4Qlx5MTTIy
-         EXptI8ZfrzP2uj/N6IsLkJBllo7BdpvekfN3ufwaOYCNEBn7E40DdHAHBf1/yIMvcl8Z
-         3N/dEQ9QomhQRIvfinUkPGMwUTa4jKPS/HgjE3xl/4PcTeUBIWCwqqUte01lYhk60djL
-         DWHyWSqKW1HjhgtDcvjGccp3KReIzrAAzq6rGUuRnnAfrFi36x6oXzExcuksltFgiRmo
-         7wuw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+62/H8N3qA4fF65mShzPqInsmQ2kiFkjzX/CYayZemc=;
+        b=Q7ffPBrqce2IBsKccJGRmOcJScYRhHwxyvpaRuXw1WswY+mJK8l5FrnUM7NG6Ztyvs
+         9LIqjgTCt7rEv6TjSE8Rv99fkYXb+Oz9htE78k3HgWKQD939myR1+21PmWfYQHIuA2da
+         TarQRlwXPB9+gorxFc8Qgc4AEH81jiJJ6P3buS3+Vb+LTallU8KtrTW1cx2VqloRROhr
+         7LGlFl/Lt+Ecvjv1zSobl3RaBgY0NYhsFs2uOkCD2s1Gc9aJUZeSR0JMwWkP0kpM3/VY
+         RhEYc8YqQYm7OUSPk48z1cyqz+LjES6OivohbEzfhZ0THsnqv3bf6cUEWD638B28YD5u
+         sZug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2IWLrD4C46aKmQaLw0mo+60fQZJP9UtxE6QzQixWpf0=;
-        b=j6NxtPRW2svn0bV4O6d1DbfRXGN5RVR7An2c4zBnlnhUMU8/jE1Hd0qnCzWETewh4d
-         hFQh/BP6d0c5bmGh7tu0h6J+9Ax61UcXvdmN/h8jKhE3lDKAfYI9rniw55K0t/l4liUC
-         ymXYGBDBvmeoZ3pVyHdkLCd5uiCZNl3O5FCue9utd2KW4fcKGxHMmGVsjGMGfChr9fTe
-         EMjnZiUizlejWhxYGbwr69qdoN5frzA7qTIxCckZfTKp8JE9M/ZQiENSuqHumuinb3mX
-         +H8QKIo0lyD2NsOgTNecGo1Z11Q6FXI/WIU3DSbXsINoqNlyrNEsjt2RC4S7S6fZU4U9
-         r2AA==
-X-Gm-Message-State: ANoB5pl7mr1Wc+m4Jm7LKy8TkdCRaAcJ6jyOBC4obU32g2+DRu0w1ofE
-        dYAPvwNNu47WhejPNNZEU8o=
-X-Google-Smtp-Source: AA0mqf4LJMTdCQTNJbQup7NUSrFUhZdGqyD1CMJTEdnoMr2UPl9V0WxOXCDwQkEkDM3yBCkDpIOkAw==
-X-Received: by 2002:a05:600c:3489:b0:3cf:8731:8110 with SMTP id a9-20020a05600c348900b003cf87318110mr1998435wmq.32.1668186505245;
-        Fri, 11 Nov 2022 09:08:25 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id f7-20020adfe907000000b0023677081f3asm2322425wrm.42.2022.11.11.09.08.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Nov 2022 09:08:24 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Hannes Reinecke <hare@suse.de>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: libfc: remove redundant variable ev_qual
-Date:   Fri, 11 Nov 2022 17:08:24 +0000
-Message-Id: <20221111170824.558250-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+62/H8N3qA4fF65mShzPqInsmQ2kiFkjzX/CYayZemc=;
+        b=Yag3UP8NEEETR+wTOzLC4+vpTgvXP2zR3/osWFoHTYMy583p78KzawHooGVcEyXj2J
+         zl0OA7U9R//g+RosSMVMRXieSL0ZYC1D6Q034N/asA7lcN0Jjk2XPhZJLcZK3lS/PsdV
+         83nT4nUeauQf4soopWWy6qsPHo9a9DYyM3sRMqPACsif0k61Qn3i5NxbLXE6kx6sm9sN
+         ruMHx8h4jzANSwD+jzmeeuGNgMFdJ4+ME7g2RsrCB/dIhOM+YQfacT5F7Ekn5VzNoA8M
+         1paaCvTrBjl10C251ldgs+k658KITptbvsw64Wuip++3EUT15uayYAIEQinM+S2EbMqH
+         nnVA==
+X-Gm-Message-State: ANoB5plhhzNuoAFDKTQ43/VPSVZKf7Y5S/aNa9Wa6eBuTrw2u4ytSbhp
+        GedK+JYVNdSC9MIiMyKl6+bHQA==
+X-Google-Smtp-Source: AA0mqf7hYZrT8H8lTjcIt5xrXS0ZXCF3N2oYtMw5KTeawvnJnOnE3bGHF6HHvfTOVtaWtLwXVgCA2A==
+X-Received: by 2002:a05:600c:602a:b0:3cf:b2b1:3c7 with SMTP id az42-20020a05600c602a00b003cfb2b103c7mr1987987wmb.176.1668188723319;
+        Fri, 11 Nov 2022 09:45:23 -0800 (PST)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id r8-20020a056000014800b002206203ed3dsm2496790wrx.29.2022.11.11.09.45.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Nov 2022 09:45:22 -0800 (PST)
+Message-ID: <a0fc3e13-3705-df71-e217-ddd5de4ae60a@linaro.org>
+Date:   Fri, 11 Nov 2022 17:45:21 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH] nvmem: Kconfig: Fix spelling mistake "controlls" ->
+ "controls"
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221007202636.2755985-1-colin.i.king@gmail.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20221007202636.2755985-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable ev_qual is being assigned and modified but the end result
-is never used. The variable is redundant and can be removed.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/scsi/libfc/fc_disc.c | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/scsi/libfc/fc_disc.c b/drivers/scsi/libfc/fc_disc.c
-index 942fc60f7c21..0f32ded246d0 100644
---- a/drivers/scsi/libfc/fc_disc.c
-+++ b/drivers/scsi/libfc/fc_disc.c
-@@ -75,7 +75,6 @@ static void fc_disc_recv_rscn_req(struct fc_disc *disc, struct fc_frame *fp)
- 	struct fc_seq_els_data rjt_data;
- 	unsigned int len;
- 	int redisc = 0;
--	enum fc_els_rscn_ev_qual ev_qual;
- 	enum fc_els_rscn_addr_fmt fmt;
- 	LIST_HEAD(disc_ports);
- 	struct fc_disc_port *dp, *next;
-@@ -107,8 +106,6 @@ static void fc_disc_recv_rscn_req(struct fc_disc *disc, struct fc_frame *fp)
- 		goto reject;
- 
- 	for (pp = (void *)(rp + 1); len > 0; len -= sizeof(*pp), pp++) {
--		ev_qual = pp->rscn_page_flags >> ELS_RSCN_EV_QUAL_BIT;
--		ev_qual &= ELS_RSCN_EV_QUAL_MASK;
- 		fmt = pp->rscn_page_flags >> ELS_RSCN_ADDR_FMT_BIT;
- 		fmt &= ELS_RSCN_ADDR_FMT_MASK;
- 		/*
--- 
-2.38.1
+On 07/10/2022 21:26, Colin Ian King wrote:
+> There is a spelling mistake in a Kconfig description. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
+Applied thanks,
+
+--srini
+>   drivers/nvmem/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+> index ec8a49c04003..755f551426b5 100644
+> --- a/drivers/nvmem/Kconfig
+> +++ b/drivers/nvmem/Kconfig
+> @@ -164,7 +164,7 @@ config NVMEM_MICROCHIP_OTPC
+>   	depends on ARCH_AT91 || COMPILE_TEST
+>   	help
+>   	  This driver enable the OTP controller available on Microchip SAMA7G5
+> -	  SoCs. It controlls the access to the OTP memory connected to it.
+> +	  SoCs. It controls the access to the OTP memory connected to it.
+>   
+>   config NVMEM_MTK_EFUSE
+>   	tristate "Mediatek SoCs EFUSE support"
