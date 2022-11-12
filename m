@@ -2,36 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9285C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Nov 2022 20:51:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2663C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Nov 2022 21:12:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232311AbiKLUvT (ORCPT
+        id S234989AbiKLVMY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 12 Nov 2022 15:51:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46328 "EHLO
+        Sat, 12 Nov 2022 16:12:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbiKLUvS (ORCPT
+        with ESMTP id S233832AbiKLVMX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 12 Nov 2022 15:51:18 -0500
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D879FFAE2
-        for <kernel-janitors@vger.kernel.org>; Sat, 12 Nov 2022 12:51:16 -0800 (PST)
+        Sat, 12 Nov 2022 16:12:23 -0500
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAE0611160
+        for <kernel-janitors@vger.kernel.org>; Sat, 12 Nov 2022 13:12:22 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id txT7oKjVYvd84txT7oiJKL; Sat, 12 Nov 2022 21:51:14 +0100
+        id txnUo3RPmEkSDtxnUoiQpZ; Sat, 12 Nov 2022 22:12:21 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 12 Nov 2022 21:51:14 +0100
+X-ME-Date: Sat, 12 Nov 2022 22:12:21 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: i2c: aptina-pll: Remove a useless include
-Date:   Sat, 12 Nov 2022 21:51:06 +0100
-Message-Id: <dd90ca1fb95971b63fb6216e10f1b42282455c85.1668286255.git.christophe.jaillet@wanadoo.fr>
+        alsa-devel@alsa-project.org
+Subject: [PATCH] ASoC: codecs: Remove a useless include
+Date:   Sat, 12 Nov 2022 22:12:13 +0100
+Message-Id: <875ca433849025edf8c23624cf29b0e2250bba50.1668287523.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,26 +42,52 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-<linux/lcm.h> is not needed for this driver. Remove the corresponding
+<linux/gcd.h> is not needed for these drivers. Remove the corresponding
 #include.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/i2c/aptina-pll.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/codecs/adau1372.c | 1 -
+ sound/soc/codecs/adau1373.c | 1 -
+ sound/soc/codecs/adau17x1.c | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/drivers/media/i2c/aptina-pll.c b/drivers/media/i2c/aptina-pll.c
-index 1423c04a1c90..b1f89bbf9d47 100644
---- a/drivers/media/i2c/aptina-pll.c
-+++ b/drivers/media/i2c/aptina-pll.c
+diff --git a/sound/soc/codecs/adau1372.c b/sound/soc/codecs/adau1372.c
+index a9f89e8565ec..fbb6bf6fb3cc 100644
+--- a/sound/soc/codecs/adau1372.c
++++ b/sound/soc/codecs/adau1372.c
 @@ -8,7 +8,6 @@
- #include <linux/device.h>
- #include <linux/gcd.h>
- #include <linux/kernel.h>
--#include <linux/lcm.h>
- #include <linux/module.h>
  
- #include "aptina-pll.h"
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+-#include <linux/gcd.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+diff --git a/sound/soc/codecs/adau1373.c b/sound/soc/codecs/adau1373.c
+index 7f832d00ab17..37e178e8a1d0 100644
+--- a/sound/soc/codecs/adau1373.c
++++ b/sound/soc/codecs/adau1373.c
+@@ -12,7 +12,6 @@
+ #include <linux/pm.h>
+ #include <linux/i2c.h>
+ #include <linux/slab.h>
+-#include <linux/gcd.h>
+ 
+ #include <sound/core.h>
+ #include <sound/pcm.h>
+diff --git a/sound/soc/codecs/adau17x1.c b/sound/soc/codecs/adau17x1.c
+index c0f44ecef606..634d4dbca5ec 100644
+--- a/sound/soc/codecs/adau17x1.c
++++ b/sound/soc/codecs/adau17x1.c
+@@ -16,7 +16,6 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ #include <sound/tlv.h>
+-#include <linux/gcd.h>
+ #include <linux/i2c.h>
+ #include <linux/spi/spi.h>
+ #include <linux/regmap.h>
 -- 
 2.34.1
 
