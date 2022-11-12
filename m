@@ -2,97 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE01EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Nov 2022 21:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84411C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Nov 2022 21:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235150AbiKLVnM (ORCPT
+        id S235150AbiKLVs2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 12 Nov 2022 16:43:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32884 "EHLO
+        Sat, 12 Nov 2022 16:48:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235142AbiKLVnL (ORCPT
+        with ESMTP id S229584AbiKLVs0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 12 Nov 2022 16:43:11 -0500
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E3E016591
-        for <kernel-janitors@vger.kernel.org>; Sat, 12 Nov 2022 13:43:09 -0800 (PST)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id tyHJoEBHyu8pltyHKom6SK; Sat, 12 Nov 2022 22:43:07 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 12 Nov 2022 22:43:07 +0100
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH] clk: Remove a useless include
-Date:   Sat, 12 Nov 2022 22:43:03 +0100
-Message-Id: <12dd5cb49efa7714f8e0389e4c7b3bc829e8a90e.1668289299.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 12 Nov 2022 16:48:26 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB3E6DB0;
+        Sat, 12 Nov 2022 13:48:25 -0800 (PST)
+Received: from pendragon.ideasonboard.com (d5152d7bc.static.telenet.be [81.82.215.188])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 56D338B;
+        Sat, 12 Nov 2022 22:48:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1668289704;
+        bh=3RItWUIVfXpjgdNs4eQE5Lf/E9kLBIRkgFe67VhvWMY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Szuj8PkXryWVnykDn22sDLfGZm1GKUNiG9mPtgypIvY+6OP3BrUJwawKOHK0QFIc1
+         f61lZXkyli+yOk2C+Y7aIsxP7MyrNjOxQILFcu6+J6qZwzi5FmUn2WVQyb88gUR5JR
+         gJRHVJw+CXq/tiGWOr2Ba4Xu0eGHkt460c0bGf+Y=
+Date:   Sat, 12 Nov 2022 23:48:06 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: aptina-pll: Remove a useless include
+Message-ID: <Y3AUljN3Iz04F/gK@pendragon.ideasonboard.com>
+References: <dd90ca1fb95971b63fb6216e10f1b42282455c85.1668286255.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dd90ca1fb95971b63fb6216e10f1b42282455c85.1668286255.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-<linux/rational.h> is not needed for these drivers. Remove the
-corresponding #include.
+Hi Christophe,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/clk/clk-versaclock5.c | 1 -
- drivers/clk/meson/clk-pll.c   | 1 -
- drivers/clk/rockchip/clk.c    | 1 -
- 3 files changed, 3 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 88689415aff9..e9737969170e 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -20,7 +20,6 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
--#include <linux/rational.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
- 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 9e55617bc3b4..4b96e1590224 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -32,7 +32,6 @@
- #include <linux/io.h>
- #include <linux/math64.h>
- #include <linux/module.h>
--#include <linux/rational.h>
- 
- #include "clk-regmap.h"
- #include "clk-pll.h"
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index e63d4f20b479..398c427b8e81 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -21,7 +21,6 @@
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- #include <linux/reboot.h>
--#include <linux/rational.h>
- 
- #include "../clk-fractional-divider.h"
- #include "clk.h"
+On Sat, Nov 12, 2022 at 09:51:06PM +0100, Christophe JAILLET wrote:
+> <linux/lcm.h> is not needed for this driver. Remove the corresponding
+> #include.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/i2c/aptina-pll.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/aptina-pll.c b/drivers/media/i2c/aptina-pll.c
+> index 1423c04a1c90..b1f89bbf9d47 100644
+> --- a/drivers/media/i2c/aptina-pll.c
+> +++ b/drivers/media/i2c/aptina-pll.c
+> @@ -8,7 +8,6 @@
+>  #include <linux/device.h>
+>  #include <linux/gcd.h>
+>  #include <linux/kernel.h>
+> -#include <linux/lcm.h>
+>  #include <linux/module.h>
+>  
+>  #include "aptina-pll.h"
+
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
