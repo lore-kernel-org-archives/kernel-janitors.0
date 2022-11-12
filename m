@@ -2,98 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7059BC4332F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Nov 2022 16:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED64C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Nov 2022 18:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234747AbiKLQKd (ORCPT
+        id S235055AbiKLS3n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 12 Nov 2022 11:10:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42988 "EHLO
+        Sat, 12 Nov 2022 13:29:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230257AbiKLQKc (ORCPT
+        with ESMTP id S234695AbiKLS3l (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 12 Nov 2022 11:10:32 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86148101DA;
-        Sat, 12 Nov 2022 08:10:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668269431; x=1699805431;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VwA4hY1StmPVwmTURop/V0d2syA09os0bsDOlKpgEgQ=;
-  b=VsqukZ0JAE8yhKqls0m2n4egc2VkIw5PhCsuWJqIFM3PCdVdxUGfReQg
-   R4nZzga1wWfAvt5Cv4QSgRIASTvVdxQNfnCfJbWq3oUlM/sfQC3YwAQwX
-   dY74hOMCVuhS90AyfWyhRU6S3pKE9dmCiPn6cddO6MJdCCr04MFbcHQtl
-   8kFPsL6cx9feDfTwgUIyYQv2NVhlQd8Njfmoy9PPuxBUGjZbWEqqEkxFm
-   am7EIYvpMzpzACpw+cJD53NLAZOMGFzBD0YCXbFwSsV3HDr4AZ7vQGG0K
-   junj2YWjwpuGHHHJM4e5UMf9ImJqPc+gjXtt+9omJmGymMG6kEvRbHNIL
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10529"; a="311746143"
-X-IronPort-AV: E=Sophos;i="5.96,160,1665471600"; 
-   d="scan'208";a="311746143"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2022 08:10:31 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10529"; a="637890744"
-X-IronPort-AV: E=Sophos;i="5.96,160,1665471600"; 
-   d="scan'208";a="637890744"
-Received: from shambhav-mobl.amr.corp.intel.com (HELO spandruv-desk1.amr.corp.intel.com) ([10.251.12.9])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2022 08:10:30 -0800
-Message-ID: <a37a579768310cbf57069c0ea0015ecd6ba7c569.camel@linux.intel.com>
-Subject: Re: [PATCH][V2] hid: intel-ish-hid: ishtp: remove variable rb_count
-From:   srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Even Xu <even.xu@intel.com>, linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sat, 12 Nov 2022 08:10:30 -0800
-In-Reply-To: <20221020210219.45131-1-colin.i.king@gmail.com>
-References: <20221020210219.45131-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+        Sat, 12 Nov 2022 13:29:41 -0500
+X-Greylist: delayed 326 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 12 Nov 2022 10:29:40 PST
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE32389
+        for <kernel-janitors@vger.kernel.org>; Sat, 12 Nov 2022 10:29:40 -0800 (PST)
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 789341FA3;
+        Sat, 12 Nov 2022 18:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1668277280;
+        bh=YDMmiy8TKjg1hrDs5YhNJ+iYuddd49hGLx1IrU5mUX8=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=RUuTsr5YVA0K0RMvUjjFoUkuRtn9D/0BJ49z0UYVxgQt7kucFmycISGQ/POzkESA8
+         AbC+21TFbEgqmhLFBTsT/ms9dAxnl9DObLucH3E/dsAL3Dmw/BlG2C6wBDkFOOdusu
+         +I5BKSsX3TbM3MPFG9aaSs0myUgeRWSZAPzldPXQ=
+Received: from [172.30.8.65] (172.30.8.65) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Sat, 12 Nov 2022 21:24:12 +0300
+Message-ID: <72a41efe-a196-451f-6b85-6dd944a58c5d@paragon-software.com>
+Date:   Sat, 12 Nov 2022 21:24:11 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] fs/ntfs3: delete duplicate condition in ntfs_read_mft()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     <ntfs3@lists.linux.dev>, Edward Lo <edward.lo@ambergroup.io>,
+        Hawkins Jiawei <yin31149@gmail.com>,
+        <kernel-janitors@vger.kernel.org>
+References: <Y0pvRzgu5FiGhghL@kili>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <Y0pvRzgu5FiGhghL@kili>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.30.8.65]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 2022-10-20 at 22:02 +0100, Colin Ian King wrote:
-> The variable rb_count is being incremented but it
-> is never referenced, it is redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-> ---
-> V2: Fix commit message.
-> ---
->  drivers/hid/intel-ish-hid/ishtp/client.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/hid/intel-ish-hid/ishtp/client.c
-> b/drivers/hid/intel-ish-hid/ishtp/client.c
-> index df0a825694f5..2d92fc129ce4 100644
-> --- a/drivers/hid/intel-ish-hid/ishtp/client.c
-> +++ b/drivers/hid/intel-ish-hid/ishtp/client.c
-> @@ -841,7 +841,6 @@ void recv_ishtp_cl_msg(struct ishtp_device *dev,
->         unsigned char *buffer = NULL;
->         struct ishtp_cl_rb *complete_rb = NULL;
->         unsigned long   flags;
-> -       int     rb_count;
->  
->         if (ishtp_hdr->reserved) {
->                 dev_err(dev->devc, "corrupted message header.\n");
-> @@ -855,9 +854,7 @@ void recv_ishtp_cl_msg(struct ishtp_device *dev,
->         }
->  
->         spin_lock_irqsave(&dev->read_list_spinlock, flags);
-> -       rb_count = -1;
->         list_for_each_entry(rb, &dev->read_list.list, list) {
-> -               ++rb_count;
->                 cl = rb->cl;
->                 if (!cl || !(cl->host_client_id == ishtp_hdr-
-> >host_addr &&
->                                 cl->fw_client_id == ishtp_hdr-
-> >fw_addr) ||
 
+On 10/15/22 11:28, Dan Carpenter wrote:
+> There were two patches which addressed the same bug and added the same
+> condition:
+> 
+> commit 6db620863f85 ("fs/ntfs3: Validate data run offset")
+> commit 887bfc546097 ("fs/ntfs3: Fix slab-out-of-bounds read in run_unpack")
+> 
+> Delete one condition.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I deleted this one because it was further away from the "roff = "
+> assignement.
+> 
+>   fs/ntfs3/inode.c | 6 ------
+>   1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+> index a31474d697e0..e6143da5b4d6 100644
+> --- a/fs/ntfs3/inode.c
+> +++ b/fs/ntfs3/inode.c
+> @@ -374,12 +374,6 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+>   
+>   	t64 = le64_to_cpu(attr->nres.svcn);
+>   
+> -	/* offset to packed runs is out-of-bounds */
+> -	if (roff > asize) {
+> -		err = -EINVAL;
+> -		goto out;
+> -	}
+> -
+>   	err = run_unpack_ex(run, sbi, ino, t64, le64_to_cpu(attr->nres.evcn),
+>   			    t64, Add2Ptr(attr, roff), asize - roff);
+>   	if (err < 0)
+
+I missed this situation when applying patches.
+Thanks for catching this.
