@@ -2,88 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FFEC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Nov 2022 21:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F65CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Nov 2022 08:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234973AbiKLVwH (ORCPT
+        id S235261AbiKMIsa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 12 Nov 2022 16:52:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35332 "EHLO
+        Sun, 13 Nov 2022 03:48:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbiKLVwF (ORCPT
+        with ESMTP id S235255AbiKMIs3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 12 Nov 2022 16:52:05 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D357E03F;
-        Sat, 12 Nov 2022 13:52:05 -0800 (PST)
-Received: from pendragon.ideasonboard.com (d5152d7bc.static.telenet.be [81.82.215.188])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D1188B;
-        Sat, 12 Nov 2022 22:52:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1668289923;
-        bh=z4by1LPPrBEvm+MnM3qkDhLKqex0JxEX/cFb063yd8Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OgEc2gwHV0e/dellfXFV6tbCzLsjJA+poCAcalC8Ys4Eex9g0/GUZmyiA1sbyqEqQ
-         L1ynVNuWlL5nXqiVitJi57aIsXAqpXbGFwkoZS1u//gD4TYBOW65hybPDS65C1W5hR
-         irT7+o6z1sK8wo7J6u5XgpedBfDMu9fG3F0Xs14I=
-Date:   Sat, 12 Nov 2022 23:51:45 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Rui Miguel Silva <rmfrfs@gmail.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] media: staging: media: imx: imx7-media-csi: Remove a
- useless include
-Message-ID: <Y3AVcTmPf9qmdS5N@pendragon.ideasonboard.com>
-References: <e60dea85ea3d91b6d8ccdfc061e1dd39dd52c17f.1668288266.git.christophe.jaillet@wanadoo.fr>
+        Sun, 13 Nov 2022 03:48:29 -0500
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA341B0;
+        Sun, 13 Nov 2022 00:48:26 -0800 (PST)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1ou8f6-0001bW-7E; Sun, 13 Nov 2022 09:48:20 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] clk: Remove a useless include
+Date:   Sun, 13 Nov 2022 09:48:19 +0100
+Message-ID: <3166437.e9J7NaK4W3@diego>
+In-Reply-To: <12dd5cb49efa7714f8e0389e4c7b3bc829e8a90e.1668289299.git.christophe.jaillet@wanadoo.fr>
+References: <12dd5cb49efa7714f8e0389e4c7b3bc829e8a90e.1668289299.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e60dea85ea3d91b6d8ccdfc061e1dd39dd52c17f.1668288266.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
-
-Thank you for the patch.
-
-On Sat, Nov 12, 2022 at 10:24:34PM +0100, Christophe JAILLET wrote:
-> <linux/gcd.h> is not needed for this driver. Remove the corresponding
-> #include.
+Am Samstag, 12. November 2022, 22:43:03 CET schrieb Christophe JAILLET:
+> <linux/rational.h> is not needed for these drivers. Remove the
+> corresponding #include.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
 > ---
->  drivers/staging/media/imx/imx7-media-csi.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/clk/clk-versaclock5.c | 1 -
+>  drivers/clk/meson/clk-pll.c   | 1 -
+>  drivers/clk/rockchip/clk.c    | 1 -
+
+Clock-trees for soc families normally have different sub-maintainers,
+so depending on how we want to merge this, you might need to split
+this into 3 patches.
+
+But at least for the Rockchip part, I'm also fine with the patch going
+in as a whole, so (for the Rockchip part):
+
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+
+
+Heiko
+
+>  3 files changed, 3 deletions(-)
 > 
-> diff --git a/drivers/staging/media/imx/imx7-media-csi.c b/drivers/staging/media/imx/imx7-media-csi.c
-> index e5b550ccfa22..cb7d8381f6f2 100644
-> --- a/drivers/staging/media/imx/imx7-media-csi.c
-> +++ b/drivers/staging/media/imx/imx7-media-csi.c
-> @@ -8,7 +8,6 @@
->  
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> -#include <linux/gcd.h>
->  #include <linux/interrupt.h>
+
+[...]
+
+> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+> index e63d4f20b479..398c427b8e81 100644
+> --- a/drivers/clk/rockchip/clk.c
+> +++ b/drivers/clk/rockchip/clk.c
+> @@ -21,7 +21,6 @@
 >  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
+>  #include <linux/regmap.h>
+>  #include <linux/reboot.h>
+> -#include <linux/rational.h>
+>  
+>  #include "../clk-fractional-divider.h"
+>  #include "clk.h"
+> 
 
--- 
-Regards,
 
-Laurent Pinchart
+
