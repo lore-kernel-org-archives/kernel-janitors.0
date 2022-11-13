@@ -2,91 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F65CC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Nov 2022 08:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D6EC43217
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Nov 2022 09:13:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235261AbiKMIsa (ORCPT
+        id S235289AbiKMJNX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Nov 2022 03:48:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47138 "EHLO
+        Sun, 13 Nov 2022 04:13:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235255AbiKMIs3 (ORCPT
+        with ESMTP id S232676AbiKMJNW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Nov 2022 03:48:29 -0500
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA341B0;
-        Sun, 13 Nov 2022 00:48:26 -0800 (PST)
-Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1ou8f6-0001bW-7E; Sun, 13 Nov 2022 09:48:20 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Sun, 13 Nov 2022 04:13:22 -0500
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE6C11C3A
+        for <kernel-janitors@vger.kernel.org>; Sun, 13 Nov 2022 01:13:20 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id u93FoXPbgTLjwu93FoVSdB; Sun, 13 Nov 2022 10:13:18 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 13 Nov 2022 10:13:18 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Roger Lucas <vt8231@hiddenengine.co.uk>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] clk: Remove a useless include
-Date:   Sun, 13 Nov 2022 09:48:19 +0100
-Message-ID: <3166437.e9J7NaK4W3@diego>
-In-Reply-To: <12dd5cb49efa7714f8e0389e4c7b3bc829e8a90e.1668289299.git.christophe.jaillet@wanadoo.fr>
-References: <12dd5cb49efa7714f8e0389e4c7b3bc829e8a90e.1668289299.git.christophe.jaillet@wanadoo.fr>
+        linux-hwmon@vger.kernel.org
+Subject: [PATCH] hwmon: Remove some useless #include <linux/hwmon-vid.h>
+Date:   Sun, 13 Nov 2022 10:13:16 +0100
+Message-Id: <41610f64a69bd0245ebc811fcff10ee54e93ac46.1668330765.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am Samstag, 12. November 2022, 22:43:03 CET schrieb Christophe JAILLET:
-> <linux/rational.h> is not needed for these drivers. Remove the
-> corresponding #include.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/clk/clk-versaclock5.c | 1 -
->  drivers/clk/meson/clk-pll.c   | 1 -
->  drivers/clk/rockchip/clk.c    | 1 -
+<linux/hwmon-vid.h> is not needed for these drivers. Remove the
+corresponding #include.
 
-Clock-trees for soc families normally have different sub-maintainers,
-so depending on how we want to merge this, you might need to split
-this into 3 patches.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hwmon/vt8231.c    | 1 -
+ drivers/hwmon/w83l786ng.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-But at least for the Rockchip part, I'm also fine with the patch going
-in as a whole, so (for the Rockchip part):
-
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-
-
-Heiko
-
->  3 files changed, 3 deletions(-)
-> 
-
-[...]
-
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index e63d4f20b479..398c427b8e81 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -21,7 +21,6 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
->  #include <linux/reboot.h>
-> -#include <linux/rational.h>
->  
->  #include "../clk-fractional-divider.h"
->  #include "clk.h"
-> 
-
-
+diff --git a/drivers/hwmon/vt8231.c b/drivers/hwmon/vt8231.c
+index 3b7f8922b0d5..b7c6392ba673 100644
+--- a/drivers/hwmon/vt8231.c
++++ b/drivers/hwmon/vt8231.c
+@@ -22,7 +22,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/hwmon.h>
+ #include <linux/hwmon-sysfs.h>
+-#include <linux/hwmon-vid.h>
+ #include <linux/err.h>
+ #include <linux/mutex.h>
+ #include <linux/acpi.h>
+diff --git a/drivers/hwmon/w83l786ng.c b/drivers/hwmon/w83l786ng.c
+index 2c4646fa8426..5597e1c2d95c 100644
+--- a/drivers/hwmon/w83l786ng.c
++++ b/drivers/hwmon/w83l786ng.c
+@@ -16,7 +16,6 @@
+ #include <linux/slab.h>
+ #include <linux/i2c.h>
+ #include <linux/hwmon.h>
+-#include <linux/hwmon-vid.h>
+ #include <linux/hwmon-sysfs.h>
+ #include <linux/err.h>
+ #include <linux/mutex.h>
+-- 
+2.34.1
 
