@@ -2,100 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 133F3C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Nov 2022 17:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF95C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Nov 2022 20:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237702AbiKNRDX (ORCPT
+        id S236302AbiKNUiM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Nov 2022 12:03:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44336 "EHLO
+        Mon, 14 Nov 2022 15:38:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236399AbiKNRDV (ORCPT
+        with ESMTP id S235592AbiKNUiK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Nov 2022 12:03:21 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAAE216;
-        Mon, 14 Nov 2022 09:03:20 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id p16so7915737wmc.3;
-        Mon, 14 Nov 2022 09:03:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pD8Jn9+GurJEYfPsp17CSsQyybI00eab/WVHKrv8CWo=;
-        b=MbBwljAg07T3h7qjUGqcGJp9iCgCOdI4/eXelF/C8ZVwneKKInAPiHFVNlj5Nd+xub
-         Si8/71mjU8wqlMmbgHzeD+Vya1R2XkH2j9SLIz+tHRyoIrZmpayAxumf3BfrRT5mQOoM
-         BcD3YycGtW58E3SZ81zImd1neXPA12BQCTv0J647EJkNFMaKcRL6pb+8tjWV5RYfVIO8
-         G6hYThU880TzTTA5RH5i6XkoKTNx9HHEexOqbhsG21SAe1ILNjdV+/TeHCLSidYQENnO
-         NkWSrnTvyf3Lw2c1DGZn3V5W2/fpTMME9jGcHFYZ3XdBFbLMP/POH3uTIAjTNfMxrM4j
-         ov3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pD8Jn9+GurJEYfPsp17CSsQyybI00eab/WVHKrv8CWo=;
-        b=XhAcQ45FV8pBi539oCqkRrXjfkbTDFITnF55/MnD/5qM99Q1itBiybbYUHUkCjTF+h
-         PZ2Zvp9KLZdFi6lb1Lg2tjCQ3dXZ6hADGF62JWMy/t+gC7cbOUbFh3x+WqMfMA7YBp+9
-         6QogagMI6cgP0MOfKrsjFSYrPCJI4qVGKl0FkCX2R3djUjp2tyFJ8UMFIMVpsdo8y6w/
-         JryzgbjiuuPoLIaX4yM8NJis3ROAEHlx6235i557VTVv1fMWenWf/BFD+RxT74THR/6Z
-         CPyzDzeqFS7Nmr/jilLExUiAhFbe/E2vk45hvbYspKx3HG72Im3rfFr2zurvdR8mJDvj
-         pqag==
-X-Gm-Message-State: ANoB5pkdhVH6E3vqeqjaIUqRQhV8hbCSa60j56fThbPJcNtDapG91k0+
-        hq/5CAzGWuRyLz7pAWaTRO8=
-X-Google-Smtp-Source: AA0mqf7ZsFKetwS5r8cke42/bWGUErC4VllUnL6HFvPitINnwTHOYz/kaLGWi3HH4SvMscqCwk1SKQ==
-X-Received: by 2002:a05:600c:1d11:b0:3cf:a6eb:3290 with SMTP id l17-20020a05600c1d1100b003cfa6eb3290mr8819977wms.116.1668445398637;
-        Mon, 14 Nov 2022 09:03:18 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id e12-20020adffd0c000000b00236576c8eddsm10217840wrr.12.2022.11.14.09.03.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Nov 2022 09:03:18 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: sundance: remove unused variable cnt
-Date:   Mon, 14 Nov 2022 17:03:17 +0000
-Message-Id: <20221114170317.92817-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Mon, 14 Nov 2022 15:38:10 -0500
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6254311472
+        for <kernel-janitors@vger.kernel.org>; Mon, 14 Nov 2022 12:38:08 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id ugDVoF0uQzQOKugDVozxfW; Mon, 14 Nov 2022 21:38:06 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 14 Nov 2022 21:38:06 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-usb@vger.kernel.org
+Subject: [PATCH] usb: fotg210-udc: Remove a useless assignment
+Date:   Mon, 14 Nov 2022 21:38:04 +0100
+Message-Id: <deab9696fc4000499470e7ccbca7c36fca17bd4e.1668458274.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable cnt is just being incremented and it's never used
-anywhere else. The variable and the increment are redundant so
-remove it.
+There is no need to use an intermediate array for these memory allocations,
+so, axe it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+While at it, turn a '== NULL' into a shorter '!' when testing memory
+allocation failure.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/dlink/sundance.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/usb/fotg210/fotg210-udc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/dlink/sundance.c b/drivers/net/ethernet/dlink/sundance.c
-index 43def191f26f..aaf0eda96292 100644
---- a/drivers/net/ethernet/dlink/sundance.c
-+++ b/drivers/net/ethernet/dlink/sundance.c
-@@ -1414,7 +1414,6 @@ static void refill_rx (struct net_device *dev)
+diff --git a/drivers/usb/fotg210/fotg210-udc.c b/drivers/usb/fotg210/fotg210-udc.c
+index 3c357ce42d3b..52b1d69843dd 100644
+--- a/drivers/usb/fotg210/fotg210-udc.c
++++ b/drivers/usb/fotg210/fotg210-udc.c
+@@ -1090,7 +1090,6 @@ int fotg210_udc_probe(struct platform_device *pdev)
  {
- 	struct netdev_private *np = netdev_priv(dev);
- 	int entry;
--	int cnt = 0;
+ 	struct resource *res, *ires;
+ 	struct fotg210_udc *fotg210 = NULL;
+-	struct fotg210_ep *_ep[FOTG210_MAX_NUM_EP];
+ 	int ret = 0;
+ 	int i;
  
- 	/* Refill the Rx ring buffers. */
- 	for (;(np->cur_rx - np->dirty_rx + RX_RING_SIZE) % RX_RING_SIZE > 0;
-@@ -1441,7 +1440,6 @@ static void refill_rx (struct net_device *dev)
- 		np->rx_ring[entry].frag.length =
- 			cpu_to_le32(np->rx_buf_sz | LastFrag);
- 		np->rx_ring[entry].status = 0;
--		cnt++;
+@@ -1114,10 +1113,9 @@ int fotg210_udc_probe(struct platform_device *pdev)
+ 		goto err;
+ 
+ 	for (i = 0; i < FOTG210_MAX_NUM_EP; i++) {
+-		_ep[i] = kzalloc(sizeof(struct fotg210_ep), GFP_KERNEL);
+-		if (_ep[i] == NULL)
++		fotg210->ep[i] = kzalloc(sizeof(struct fotg210_ep), GFP_KERNEL);
++		if (!fotg210->ep[i])
+ 			goto err_alloc;
+-		fotg210->ep[i] = _ep[i];
  	}
- }
- static void netdev_error(struct net_device *dev, int intr_status)
+ 
+ 	fotg210->reg = ioremap(res->start, resource_size(res));
 -- 
-2.38.1
+2.34.1
 
