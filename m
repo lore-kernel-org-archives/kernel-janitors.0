@@ -2,162 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE745C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Nov 2022 21:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14288C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Nov 2022 21:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237401AbiKNVCH (ORCPT
+        id S237624AbiKNVnm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Nov 2022 16:02:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
+        Mon, 14 Nov 2022 16:43:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237268AbiKNVCB (ORCPT
+        with ESMTP id S237644AbiKNVnh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Nov 2022 16:02:01 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B022622;
-        Mon, 14 Nov 2022 13:01:59 -0800 (PST)
-Received: from mercury (unknown [185.209.196.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 75DFC660299E;
-        Mon, 14 Nov 2022 21:01:58 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1668459718;
-        bh=Wr8DXJaBzIXXYYSptkp/QmPu4ccApmtbSiLsb9qIdzw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O4IN7hgCTJ5r2JnO4b3HCT6jlBrdLSBiLI5PLKTiAm693sETo8J8W5/gKAvX60xev
-         h0Nhu5BE1wf1gT9xkKRUuaj00OIZZYGYaP9ZvI/QxfuS2hd4N1zlAHP06tuakdqPI1
-         ign24mrx5OgcEQoJCHVdxzoojquW/TOmzXOeKC1bCQcCz0/xpT16gcMqMmpzA5zhB1
-         mwXPPMgRU8l8spKK2KXNMsu/nwXoiTkWpvkt1w85iyKk9hgJYYdTxPFWE189scmXZe
-         n8hTDszPbC6ylGc6ZII2iVKigHL2hCItsROxGtvHdKJYUX1jLPVFejlWjfrYU8fCS4
-         bO7Ip/UrV6ZYw==
-Received: by mercury (Postfix, from userid 1000)
-        id 0BE12106D194; Mon, 14 Nov 2022 22:01:56 +0100 (CET)
-Date:   Mon, 14 Nov 2022 22:01:55 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+        Mon, 14 Nov 2022 16:43:37 -0500
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADE4BDF2;
+        Mon, 14 Nov 2022 13:43:33 -0800 (PST)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id D26361C0002;
+        Mon, 14 Nov 2022 21:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1668462212;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=me0RdSJfy0GAbogzocsMoZUSm8DRysPd4wTaSa5a5fA=;
+        b=Oid0+RRzNrHRKt/r9A++VkSx3ugXlnjUxAH9BjmQzqd1USgXID4yOP5OWxb6c80MAqNVvM
+        p+1QqWTt9o3AwZBGQvY/RNTJGBCvvjGJV0p9R9pHALQxt5Vgent77h4h507kSvp4L3rnE7
+        EZpsfLTEhWrFj0O9Q5/FUhTQocNmI0dkzinMI61GTBrum+xSulQxoy4h7okKflhcSy7kVh
+        dzyV0AQGv7mzdm2rM18CgFKehh/feouyCVXV0lU6Ak9H6+83KXNxFIHDbWyUZNkoAxh6a6
+        KbNgKcNn+0jjhOaHIYwM1rKHLQvbvOz3BsvDoeNy6+8/rcBX3udTq95D9UgJog==
+Date:   Mon, 14 Nov 2022 22:43:31 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Alessandro Zummo <a.zummo@towertech.it>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Subject: Re: [PATCH] headers: Remove some left-over license text in
- include/uapi/linux/hsi/
-Message-ID: <20221114210155.anq5gkggfrvj6nki@mercury.elektranox.org>
-References: <4919073b3dee8ca7612989659d31b12f9c5491ba.1662897400.git.christophe.jaillet@wanadoo.fr>
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] rtc: Include <linux/kstrtox.h> when appropriate
+Message-ID: <166846217853.2117389.566805318530598710.b4-ty@bootlin.com>
+References: <786421fd0435a32206288904a1f879436a717529.1667721637.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3n3g2mza2t5gm3ai"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4919073b3dee8ca7612989659d31b12f9c5491ba.1662897400.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <786421fd0435a32206288904a1f879436a717529.1667721637.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Sun, 6 Nov 2022 09:00:51 +0100, Christophe JAILLET wrote:
+> The kstrto<something>() functions have been moved from kernel.h to
+> kstrtox.h.
+> 
+> So, include the latter directly in the appropriate files.
+> 
+> 
 
---3n3g2mza2t5gm3ai
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied, thanks!
 
-Hi,
+[1/1] rtc: Include <linux/kstrtox.h> when appropriate
+      commit: 81d8865e8bea9de75be02231ddb42926509b44b0
 
-On Sun, Sep 11, 2022 at 01:56:59PM +0200, Christophe JAILLET wrote:
-> Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
-> license identifier to uapi header files with a license")
->=20
-> When the SPDX-License-Identifier tag has been added, the corresponding
-> license text has not been removed.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Best regards,
 
-IIRC that was intentional, since the plan was to seek for an
-explicit Ack from the copyright holder when removing the text.
-I've added Greg for clarification and hopefully the latest
-mail address from Kai and Peter.
-
--- Sebastian
-
->  include/uapi/linux/hsi/cs-protocol.h | 14 --------------
->  include/uapi/linux/hsi/hsi_char.h    | 14 --------------
->  2 files changed, 28 deletions(-)
->=20
-> diff --git a/include/uapi/linux/hsi/cs-protocol.h b/include/uapi/linux/hs=
-i/cs-protocol.h
-> index c7f6e7672cb5..07c3bfb67463 100644
-> --- a/include/uapi/linux/hsi/cs-protocol.h
-> +++ b/include/uapi/linux/hsi/cs-protocol.h
-> @@ -6,20 +6,6 @@
->   *
->   * Contact: Kai Vehmanen <kai.vehmanen@nokia.com>
->   * Original author: Peter Ujfalusi <peter.ujfalusi@nokia.com>
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License
-> - * version 2 as published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful, but
-> - * WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> - * General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-> - * 02110-1301 USA
->   */
-> =20
->  #ifndef _CS_PROTOCOL_H
-> diff --git a/include/uapi/linux/hsi/hsi_char.h b/include/uapi/linux/hsi/h=
-si_char.h
-> index 91623b0398b1..5ef72f0daf94 100644
-> --- a/include/uapi/linux/hsi/hsi_char.h
-> +++ b/include/uapi/linux/hsi/hsi_char.h
-> @@ -5,20 +5,6 @@
->   * Copyright (C) 2010 Nokia Corporation. All rights reserved.
->   *
->   * Contact: Andras Domokos <andras.domokos at nokia.com>
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License
-> - * version 2 as published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful, but
-> - * WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-> - * General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-> - * 02110-1301 USA
->   */
-> =20
->  #ifndef __HSI_CHAR_H
-> --=20
-> 2.34.1
->=20
-
---3n3g2mza2t5gm3ai
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmNyrLsACgkQ2O7X88g7
-+prmNw//VOkEp8ZlcxfkiNuIqGZAzDKkT7pG+L24GMvuJ/aj/8Tt4owlMwih9Cbq
-FX+EaZVyroTRh8IjSmkexENMCpavULqgeRYO1N1lOXNeTanwYLc1/DkIzRgo2C6w
-0Hiap2hiWN4rM5KCUkeDUZPIx2kWr2wdvhidj1Fy2ex6IdRWKgob3TY9+M2mW8QM
-whmHsEPcVcuL2Kwuk7ZmmuhVIpKtP3waciYoMzQgHnaaIpg99x0I/TB28sN8ZXsr
-KPZ7/y87WWH3Il7WyNPMmenFDq89QBH66UgMI/cdUIbwOut5lWVgWpEUBF/WENUt
-KirnUTOHM9gX2+WLsN/8+svKCIDv2c2NcCK+TEqJa2APaYUanTZs85HWC+gJ138l
-y47hddk1MrJAK2hov7q4MOJqsL/CFeXA0WFo37SVpVhfMiZrQ/JVsWMUTRHXqqhc
-N+y4RQapZ/yDuCaNTSXkubIC/LENa+a/hNxmf8luOG9Cpc0/a3lG2SESkYKSz677
-ctYjycPTPWZSLKbp836lXrG3BXzysrfctpvBcaUDPWXy7vc9JFoO5r0Pwwi2qWtL
-1VkzEfuqMhBc9c90pq4EzFKC6AxAFfm9aOOng4NdAAG9P/iU9pRRvr4d1BvlCeHm
-lDhyWpLEp+sk8+T2myZ/CvCuUm4aG0m1o4Za2BDC98P7DKvnVeE=
-=ZL4q
------END PGP SIGNATURE-----
-
---3n3g2mza2t5gm3ai--
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
