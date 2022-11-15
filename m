@@ -2,136 +2,159 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974ABC43217
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 14:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CED6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 14:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbiKOOGC (ORCPT
+        id S230318AbiKOOOi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 09:06:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33386 "EHLO
+        Tue, 15 Nov 2022 09:14:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbiKOOFu (ORCPT
+        with ESMTP id S229485AbiKOOOh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 09:05:50 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEDC2B191
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:05:49 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id v17so21989919edc.8
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:05:48 -0800 (PST)
+        Tue, 15 Nov 2022 09:14:37 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0F292BE
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:14:36 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id bs21so24503308wrb.4
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:14:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=f7WFciVvNJW7kEDkH94rbryN71vzfH3OABZXCo397cs=;
-        b=ROtTyEPYbFH/w4ZblcsCZ+Sxy8nc+iKOmY5mKS0BFp/MGlPuoaBsfFwY2vt7ZRLqAy
-         8bVe6U94REHuHKNmJ9ckXPjlvZfQbaPfeFklKJPJjaR5188C+ZSoRbgFTe7NeP12XHx4
-         X5kkYusxFJpbKrMMKsCbbRjr7C37mNwqlwMtKCxCWj7qPNYEkePyPs7q3A24rqEwXwoC
-         KjAZ6C/L6K/1h5z1LU1EOy3Jy+pTV8xtSLtXFFcC0UvRFOQPzWryDdQNKi3+L3j/KLXm
-         xQEXg6Kp+P99RqNWLFTgEhH3W0KV9/3kq2fhwNmQzhXotFSLKjvhv0g1vGeBFok8z5mc
-         SW9A==
+        bh=sSTNXbJe7jKV8n0OFjTcddF5RhQSFJSTjTqhKMYr9Hw=;
+        b=ZZXDVsdI3gcUFz/MfSrVL8JEJ5Xz6aoe7xsunJABXUqC23xlMs+jX7sVwTQdSUCsDK
+         /LoYbEC6YdiLBDtH9ENIP+/j1kjfI8oU0Fn4t77lE6HUWnuj41W5u8iUdKtFbbrw+OuC
+         oub0AHLTsrnpogmcECdpF35mWvZGpG/VBjYJIv+fMWLB7dCAonQhRwgB3VS/7PfuHxgX
+         cEOY0Cid2bw0eHu23VotI3i5SioOx/AU3D608wu0JPMC1V+BVdTORrdU/Ys/GjqiiGAk
+         Xmg7LZkUSjpYnU7tLxCjpYfO1ns2ov817bXho0eR4vfE0rDe3vt7yB2xlMkiDptLaQoM
+         RwyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f7WFciVvNJW7kEDkH94rbryN71vzfH3OABZXCo397cs=;
-        b=d/arPHhSVdtBauX6TUpK/q5PzXI2zGlo96U5vaAZiTwJ7pyJH0kM0O4XNVPOVrxK68
-         tORzP1Ggmq4hQYlIyjTZyoKZVVqLO108P8cNdpIl2vQ8E5moOD+EsZUnal40D0d8X2uX
-         8Kh098wtZYddicTUQL+qVkRrUlnCK+JLeUnIzR7dOPWen/Z+/+0v+ofkFe4naTcCmZyE
-         6EDfJsHQe4oLrkGnXWZLurZEZCgjxj0o6UBfOuJeGB4gi0mqyNu44ZIIH2QJ7Y0zkes2
-         Xbo2CNKmPfsfSET1yOvbNySDSqhUy/XoM+BWDarZXOsOX7tf9phCoRRHL+cT0YS+scmV
-         3VGw==
-X-Gm-Message-State: ANoB5pnyEGqU7BA7RDjY6UeNdPiXpID4DjcszYRcjPNsyxq/s7Gb21VN
-        B9fn0HrRSITklnGkv9MiZb6p5w==
-X-Google-Smtp-Source: AA0mqf7oxrRdM64h8FAoN9EbCTeSOds03YFY2tUoVdCPVV0reOQy2CW6ku26YqTBbiFTvwmZuBSx1Q==
-X-Received: by 2002:aa7:da13:0:b0:461:ed76:cb42 with SMTP id r19-20020aa7da13000000b00461ed76cb42mr15587691eds.229.1668521147538;
-        Tue, 15 Nov 2022 06:05:47 -0800 (PST)
-Received: from [192.168.178.55] (h082218028181.host.wavenet.at. [82.218.28.181])
-        by smtp.gmail.com with ESMTPSA id cf6-20020a170906b2c600b007ad94fd48dfsm5509478ejb.139.2022.11.15.06.05.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Nov 2022 06:05:47 -0800 (PST)
-Message-ID: <d0ff33bf-d39b-005c-ab62-42cae97e3b8c@linbit.com>
-Date:   Tue, 15 Nov 2022 15:05:46 +0100
+        bh=sSTNXbJe7jKV8n0OFjTcddF5RhQSFJSTjTqhKMYr9Hw=;
+        b=Y3qAJ3Xx2UFmLkeb/Q1kT/acNVdbghgQ4I9V++AKmjfbokmyb88rWMceBfuVQfreSx
+         VNQXQ9yLPgYwdxl/oOvlp2tXhuDsusm5SyoVYD5jsNHu2tuX1JbIzlLMaCXywrndybg4
+         kdCDurB211vcNwcQ9VbrVrQRV5ED6Uk8JLpn38dwam2rnb+FpNBbCMbEhgiegysZld6O
+         0huXOHxOqFPp8w9YM9q7R6WTGQrY0CPkfWjuhY3ly8GEv9TLqKu4YJVrau8TIr8UA6k4
+         BzjhME6TTDpwrlTHwdXePtXRXkbkKF6AAclYKe3gD1GXjjUddmeTKP25kiU2xQ53tQ9A
+         EvSA==
+X-Gm-Message-State: ANoB5plQNTK2gmVT/C94cC/7OvK/pXg+Ru7kKwzAtUEzvOg3FEXe8V87
+        hb73sHQsxz7ZSTCNiDO0YWU=
+X-Google-Smtp-Source: AA0mqf7fbNTZB9IP7mAdFPu82holRXIu8+2GDU299sCsHmqaFnbi4mM6Kmi3CAWlHq5TpK3TunvRng==
+X-Received: by 2002:a05:6000:46:b0:236:8a38:66f1 with SMTP id k6-20020a056000004600b002368a3866f1mr11030684wrx.327.1668521675376;
+        Tue, 15 Nov 2022 06:14:35 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id g9-20020a05600c4ec900b003cfd10a33afsm16855803wmq.11.2022.11.15.06.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Nov 2022 06:14:35 -0800 (PST)
+Date:   Tue, 15 Nov 2022 17:14:32 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     steen.hegelund@microchip.com
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] net: microchip: sparx5: Match keys in configured port
+ keysets
+Message-ID: <Y3OeyMRaTybk8t7i@kili>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH] drbd: use after free in drbd_create_device()
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andreas Gruenbacher <agruen@linbit.com>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <Y3Jd5iZRbNQ9w6gm@kili>
-Content-Language: en-US
-From:   =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>
-In-Reply-To: <Y3Jd5iZRbNQ9w6gm@kili>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 15.11.22 um 14:16 schrieb Dan Carpenter:
-> The drbd_destroy_connection() frees the "connection" so use the _safe()
-> iterator to prevent a use after free.
-> 
-> Fixes: b6f85ef9538b ("drbd: Iterate over all connections")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Smatch assumes that kref_put() generally calls the free function so it
-> gets very confused by drbd_delete_device() which calls:
-> 
-> 	kref_put(&device->kref, drbd_destroy_device);
-> 
-> Four times in a row.  (Smatch has some checking for incremented
-> reference counts but even there it assumes that people are going to hold
-> one reference and not four).
-> 
-> drivers/block/drbd/drbd_main.c:2831 drbd_delete_device() error: dereferencing freed memory 'device'
-> drivers/block/drbd/drbd_main.c:2833 drbd_delete_device() warn: passing freed memory 'device'
-> drivers/block/drbd/drbd_main.c:2835 drbd_delete_device() error: dereferencing freed memory 'device'
-> 
-> The drbd_adm_get_status_all() function makes me itch as well.  It seems
-> like we drop a reference and then take it again?
-> 
-> drivers/block/drbd/drbd_nl.c:4019 drbd_adm_get_status_all() warn: 'resource' was already freed.
-> drivers/block/drbd/drbd_nl.c:4021 drbd_adm_get_status_all() warn: 'resource' was already freed.
-> 
->  drivers/block/drbd/drbd_main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-> index f3e4db16fd07..8532b839a343 100644
-> --- a/drivers/block/drbd/drbd_main.c
-> +++ b/drivers/block/drbd/drbd_main.c
-> @@ -2672,7 +2672,7 @@ static int init_submitter(struct drbd_device *device)
->  enum drbd_ret_code drbd_create_device(struct drbd_config_context *adm_ctx, unsigned int minor)
->  {
->  	struct drbd_resource *resource = adm_ctx->resource;
-> -	struct drbd_connection *connection;
-> +	struct drbd_connection *connection, *n;
->  	struct drbd_device *device;
->  	struct drbd_peer_device *peer_device, *tmp_peer_device;
->  	struct gendisk *disk;
-> @@ -2789,7 +2789,7 @@ enum drbd_ret_code drbd_create_device(struct drbd_config_context *adm_ctx, unsig
->  	return NO_ERROR;
->  
->  out_idr_remove_from_resource:
-> -	for_each_connection(connection, resource) {
-> +	for_each_connection_safe(connection, n, resource) {
->  		peer_device = idr_remove(&connection->peer_devices, vnr);
->  		if (peer_device)
->  			kref_put(&connection->kref, drbd_destroy_connection);
+Hello Steen Hegelund,
 
-Thanks!
+The patch abc4010d1f6e: "net: microchip: sparx5: Match keys in
+configured port keysets" from Nov 9, 2022, leads to the following
+Smatch static checker warning:
 
-Reviewed-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
+	drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c:598 sparx5_tc_flower_replace()
+	error: uninitialized symbol 'l3_proto'.
 
--- 
-Christoph Böhmwalder
-LINBIT | Keeping the Digital World Running
-DRBD HA —  Disaster Recovery — Software defined Storage
+drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c
+    532 static int sparx5_tc_flower_replace(struct net_device *ndev,
+    533                                     struct flow_cls_offload *fco,
+    534                                     struct vcap_admin *admin)
+    535 {
+    536         struct sparx5_port *port = netdev_priv(ndev);
+    537         struct flow_action_entry *act;
+    538         struct vcap_control *vctrl;
+    539         struct flow_rule *frule;
+    540         struct vcap_rule *vrule;
+    541         u16 l3_proto;
+    542         int err, idx;
+    543 
+    544         vctrl = port->sparx5->vcap_ctrl;
+    545 
+    546         err = sparx5_tc_flower_action_check(vctrl, fco, admin);
+    547         if (err)
+    548                 return err;
+    549 
+    550         vrule = vcap_alloc_rule(vctrl, ndev, fco->common.chain_index, VCAP_USER_TC,
+    551                                 fco->common.prio, 0);
+    552         if (IS_ERR(vrule))
+    553                 return PTR_ERR(vrule);
+    554 
+    555         vrule->cookie = fco->cookie;
+    556         sparx5_tc_use_dissectors(fco, admin, vrule, &l3_proto);
+
+Should this call to sparx5_tc_use_dissectors() have error checking?
+
+    557         frule = flow_cls_offload_flow_rule(fco);
+    558         flow_action_for_each(idx, act, &frule->action) {
+    559                 switch (act->id) {
+    560                 case FLOW_ACTION_TRAP:
+    561                         err = vcap_rule_add_action_bit(vrule,
+    562                                                        VCAP_AF_CPU_COPY_ENA,
+    563                                                        VCAP_BIT_1);
+    564                         if (err)
+    565                                 goto out;
+    566                         err = vcap_rule_add_action_u32(vrule,
+    567                                                        VCAP_AF_CPU_QUEUE_NUM, 0);
+    568                         if (err)
+    569                                 goto out;
+    570                         err = vcap_rule_add_action_u32(vrule, VCAP_AF_MASK_MODE,
+    571                                                        SPX5_PMM_REPLACE_ALL);
+    572                         if (err)
+    573                                 goto out;
+    574                         /* For now the actionset is hardcoded */
+    575                         err = vcap_set_rule_set_actionset(vrule,
+    576                                                           VCAP_AFS_BASE_TYPE);
+    577                         if (err)
+    578                                 goto out;
+    579                         break;
+    580                 case FLOW_ACTION_ACCEPT:
+    581                         /* For now the actionset is hardcoded */
+    582                         err = vcap_set_rule_set_actionset(vrule,
+    583                                                           VCAP_AFS_BASE_TYPE);
+    584                         if (err)
+    585                                 goto out;
+    586                         break;
+    587                 case FLOW_ACTION_GOTO:
+    588                         /* Links between VCAPs will be added later */
+    589                         break;
+    590                 default:
+    591                         NL_SET_ERR_MSG_MOD(fco->common.extack,
+    592                                            "Unsupported TC action");
+    593                         err = -EOPNOTSUPP;
+    594                         goto out;
+    595                 }
+    596         }
+    597         /* provide the l3 protocol to guide the keyset selection */
+--> 598         err = vcap_val_rule(vrule, l3_proto);
+    599         if (err) {
+    600                 vcap_set_tc_exterr(fco, vrule);
+    601                 goto out;
+    602         }
+    603         err = vcap_add_rule(vrule);
+    604         if (err)
+    605                 NL_SET_ERR_MSG_MOD(fco->common.extack,
+    606                                    "Could not add the filter");
+    607 out:
+    608         vcap_free_rule(vrule);
+    609         return err;
+    610 }
+
+regards,
+dan carpenter
