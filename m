@@ -2,135 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2817AC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 00:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D28C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 02:34:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236642AbiKOAb7 convert rfc822-to-8bit (ORCPT
+        id S231959AbiKOCe6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Nov 2022 19:31:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38792 "EHLO
+        Mon, 14 Nov 2022 21:34:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229865AbiKOAb6 (ORCPT
+        with ESMTP id S236320AbiKOCdb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Nov 2022 19:31:58 -0500
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 52387D2D9;
-        Mon, 14 Nov 2022 16:31:57 -0800 (PST)
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.77 with qID 2AF0UxnS6016872, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-        by rtits2.realtek.com.tw (8.15.2/2.81/5.90) with ESMTPS id 2AF0UxnS6016872
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Tue, 15 Nov 2022 08:30:59 +0800
-Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.32; Tue, 15 Nov 2022 08:31:39 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 15 Nov 2022 08:31:39 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::15b5:fc4b:72f3:424b]) by
- RTEXMBS04.realtek.com.tw ([fe80::15b5:fc4b:72f3:424b%5]) with mapi id
- 15.01.2375.007; Tue, 15 Nov 2022 08:31:38 +0800
-From:   Ping-Ke Shih <pkshih@realtek.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Timlee <timlee@realtek.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH] wifi: rtw89: Fix some error handling path in rtw89_wow_enable()
-Thread-Topic: [PATCH] wifi: rtw89: Fix some error handling path in
- rtw89_wow_enable()
-Thread-Index: AQHY93aSGfNpN1UcU0efciL+7dUV5q4/JDqg
-Date:   Tue, 15 Nov 2022 00:31:38 +0000
-Message-ID: <3e97dad2b634434abf266a17030df464@realtek.com>
-References: <32320176eeff1c635baeea25ef0e87d116859e65.1668354083.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <32320176eeff1c635baeea25ef0e87d116859e65.1668354083.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.188]
-x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
-x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
- rules found
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: =?us-ascii?Q?Clean,_bases:_2022/11/14_=3F=3F_10:23:00?=
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 14 Nov 2022 21:33:31 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA293AB;
+        Mon, 14 Nov 2022 18:33:27 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7A1AEB811FF;
+        Tue, 15 Nov 2022 02:33:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D485FC433D7;
+        Tue, 15 Nov 2022 02:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668479605;
+        bh=arWWnXNyckh53wt46pLNwjigmsa726WXb0yla1rWH2E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=lmr5It+r7k82nBnQZkLsFlM7R6e70zyPYUIJmSo+MeuBaTN3bKzWu7dtyVRJNyuN1
+         au3kioDCZwEovI3EAR63XA2Dbyou73KD7gqWSb5yAyi3NdWWeXa3IipU3ov7IzNdHG
+         GZnfEwkSjfBf47XnTP3qUgi4myRtrflpjqh0MyFHuHpoWKd7EIFT31UKPdIgAgwF66
+         gYlSH0B+ArxQJoLWnzQMa0f3dSlpfKg1STajGi0MiuKbmewphezOe2TmtqAumEaoyW
+         UVhrGFMEgzfnWQ0pnDXaIp6pedheKq6lwTn9h+sQK5r7Z16WI7fBbgoNmCsJ0xDpWX
+         uQ7qec5DQpr0w==
+Date:   Mon, 14 Nov 2022 18:33:23 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Denis Kirjanov <kda@linux-powerpc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: sundance: remove unused variable cnt
+Message-ID: <20221114183323.54d81387@kernel.org>
+In-Reply-To: <20221114170317.92817-1-colin.i.king@gmail.com>
+References: <20221114170317.92817-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Mon, 14 Nov 2022 17:03:17 +0000 Colin Ian King wrote:
+> Variable cnt is just being incremented and it's never used
+> anywhere else. The variable and the increment are redundant so
+> remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-
-> -----Original Message-----
-> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Sent: Sunday, November 13, 2022 11:42 PM
-> To: Ping-Ke Shih <pkshih@realtek.com>; Kalle Valo <kvalo@kernel.org>; David S. Miller <davem@davemloft.net>;
-> Eric Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>;
-> Timlee <timlee@realtek.com>
-> Cc: linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr>; linux-wireless@vger.kernel.org; netdev@vger.kernel.org
-> Subject: [PATCH] wifi: rtw89: Fix some error handling path in rtw89_wow_enable()
-> 
-> 'ret' is not updated after several function calls in rtw89_wow_enable().
-> This prevent error handling from working.
-> 
-> Add the missing assignments.
-> 
-> Fixes: 19e28c7fcc74 ("wifi: rtw89: add WoWLAN function support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Acked-by: Ping-Ke Shih <pkshih@realtek.com>
-
-Thanks for the fixes.
-
-> ---
->  drivers/net/wireless/realtek/rtw89/wow.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtw89/wow.c b/drivers/net/wireless/realtek/rtw89/wow.c
-> index 7de4dd047d6b..b2b826b2e09a 100644
-> --- a/drivers/net/wireless/realtek/rtw89/wow.c
-> +++ b/drivers/net/wireless/realtek/rtw89/wow.c
-> @@ -744,13 +744,13 @@ static int rtw89_wow_enable(struct rtw89_dev *rtwdev)
->  		goto out;
->  	}
-> 
-> -	rtw89_wow_swap_fw(rtwdev, true);
-> +	ret = rtw89_wow_swap_fw(rtwdev, true);
->  	if (ret) {
->  		rtw89_err(rtwdev, "wow: failed to swap to wow fw\n");
->  		goto out;
->  	}
-> 
-> -	rtw89_wow_fw_start(rtwdev);
-> +	ret = rtw89_wow_fw_start(rtwdev);
->  	if (ret) {
->  		rtw89_err(rtwdev, "wow: failed to let wow fw start\n");
->  		goto out;
-> @@ -758,7 +758,7 @@ static int rtw89_wow_enable(struct rtw89_dev *rtwdev)
-> 
->  	rtw89_wow_enter_lps(rtwdev);
-> 
-> -	rtw89_wow_enable_trx_post(rtwdev);
-> +	ret = rtw89_wow_enable_trx_post(rtwdev);
->  	if (ret) {
->  		rtw89_err(rtwdev, "wow: failed to enable trx_post\n");
->  		goto out;
-> --
-> 2.34.1
-
+Once you've noticed that I'm tossing all your networking changes from
+patchwork - the reason is that you seem to have ignored completely 
+one of my replies and also recent review comments from Leon. 
