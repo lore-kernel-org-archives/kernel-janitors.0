@@ -2,112 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A68C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 14:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F181C43219
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 14:22:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230446AbiKOOPd (ORCPT
+        id S231314AbiKOOWV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 09:15:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41112 "EHLO
+        Tue, 15 Nov 2022 09:22:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230006AbiKOOPc (ORCPT
+        with ESMTP id S230215AbiKOOWT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 09:15:32 -0500
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E09F7B67
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:15:30 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id w10so9858864qvr.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:15:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MmCortd4X07eaHsaVrw2gTAngPKvClGjD0Ma0coZZ+w=;
-        b=hA81zEgYkoCvvLzGBWtKslpJBNtJsrMzfgzLIB4SYaQ+CuNw4I540lOLF9vLU/rHmV
-         lB5oRXcJqlaWg/2HiQ7eljuCpiIfY1S7IhQAOV8DENMUqb6tUlo7o5GHynDOn7/fO+Hk
-         QmiRRcZh6o101+sWJZHp8tAg3LE+IQLQYhxrm1zMrkYkFp6Z8CsQ1FVc3N1LLMytYdgi
-         m/lIS//b5dErFBmHtvPyHxrFho0dopwHN8fwjQKvi3xfrDWRWQinIoE4z50mO+9KHQ9U
-         zZ2fGAHNLHXfTiyJ5+V90TybLmoVJSfqf9n2oG6gf+Cn3Vw9Y+vcncrUfb7mXEixnZKK
-         xh8A==
+        Tue, 15 Nov 2022 09:22:19 -0500
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F252C130;
+        Tue, 15 Nov 2022 06:22:17 -0800 (PST)
+Received: by mail-qk1-f171.google.com with SMTP id x21so9566946qkj.0;
+        Tue, 15 Nov 2022 06:22:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=MmCortd4X07eaHsaVrw2gTAngPKvClGjD0Ma0coZZ+w=;
-        b=V8M5GY67bvdOdHix/42L94R2ZZshDXkSInp4h9sZhlw8C4AjWXOV2Vopv5ycRgxYCf
-         PFCVlZgYus6BO6aBfBIrOa22sNml8j24nwt0jDFDKCUaemZV4WAUdWCT3G6FpB5K7tEh
-         JsjC7f5uKNIAh8e49PtktdYC1HrDhyboeo0jqGVg+j6RsAH3KQzIDdzaMg345vIQsYKa
-         ir6lPFHtjgZBaeWDUeL1j7VX30AGulv8vNr9Zl2Pe4ZYgzO/g4d1EY8Dw0TFaD4QQDTw
-         rB/h8HzLtHQIIK4JOWJ67QHJAPcCl0JDv82jcWmn4Mk233ym1PiiPDmEXC1w9Vk2goLT
-         UXNg==
-X-Gm-Message-State: ANoB5pk7CdSKz3uMaeh20g8FSGb1j24unT+vccnv+S9Ku4O7YpEGgaYX
-        pkAKPPJf/J0Kg3eduxgxiw==
-X-Google-Smtp-Source: AA0mqf4VpZRSL5eJUMiINzc/4a/zmp7QAJt7MIpW3sNl5VEIR1VsJrqZbd99YXHOCyF7b6C984NfDQ==
-X-Received: by 2002:a0c:f98b:0:b0:4bb:93b8:ef1c with SMTP id t11-20020a0cf98b000000b004bb93b8ef1cmr16908333qvn.103.1668521729834;
-        Tue, 15 Nov 2022 06:15:29 -0800 (PST)
-Received: from serve.minyard.net ([47.184.147.45])
-        by smtp.gmail.com with ESMTPSA id x81-20020a376354000000b006cfc9846594sm8031820qkb.93.2022.11.15.06.15.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 06:15:29 -0800 (PST)
-Sender: Corey Minyard <tcminyard@gmail.com>
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:2bd8:1330:9bfe:f1cd])
-        by serve.minyard.net (Postfix) with ESMTPSA id D9A7C180044;
-        Tue, 15 Nov 2022 14:15:27 +0000 (UTC)
-Date:   Tue, 15 Nov 2022 08:15:26 -0600
-From:   Corey Minyard <minyard@acm.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     openipmi-developer@lists.sourceforge.net,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ipmi: fix use after free in _ipmi_destroy_user()
-Message-ID: <Y3Oe6KcXabXlwdbx@minyard.net>
-Reply-To: minyard@acm.org
-References: <Y3M8xa1drZv4CToE@kili>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MRPFekI2jAh+f9nYCsghmQc07s4JZ1qJBjgZserdqEc=;
+        b=JG6/BdvXs0eYZ4n/wKAndSqNlILRYd+jyQERx0Hu+glV3ZsiJQv26+72Q3rfu9Wodj
+         Duz5qcZ0px0UsGQzv4NB5MLHyrcQBB+KJ/9t53C0CS2qmY1GF44CqkhjOwkU1tJjwyhG
+         n+7m+7NXMOzKe1URjbVMuhw65Ge7Q8PS8AgzjwHrB4vTUUNirhMsCkrnO7fs8iXxPvD/
+         XgueruusmV52h6BCgB5rQVQH5+ZzEiVCRH9MAMjehstL6hIyw2F/FwajrK88Au97L57p
+         qeN6XueHxkuULq0JJUEL0PVEi4KZYp7YiD9jev+snPEkJkiLZZfjuh17f8LTuc1Sq0kN
+         zJYw==
+X-Gm-Message-State: ANoB5plHvOZnHgvwmNlyDWKJRq0C88E0jw18YGjT3yNyIXXbHuiqqOyE
+        phy0lnAv3BJozmsyn3XbnQ4cenyi4YZDng==
+X-Google-Smtp-Source: AA0mqf7/sTbM2QX8z06HgLWFC5+0H5fYegSYZ+4+7JyYGsYDCiAbfzYsZxXsue+j7AKhnGSlqFEtGA==
+X-Received: by 2002:a37:397:0:b0:6f4:ed58:b809 with SMTP id 145-20020a370397000000b006f4ed58b809mr14940284qkd.550.1668522136818;
+        Tue, 15 Nov 2022 06:22:16 -0800 (PST)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
+        by smtp.gmail.com with ESMTPSA id q6-20020a37f706000000b006ed61f18651sm8142448qkj.16.2022.11.15.06.22.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Nov 2022 06:22:15 -0800 (PST)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-3704852322fso138032477b3.8;
+        Tue, 15 Nov 2022 06:22:14 -0800 (PST)
+X-Received: by 2002:a81:4ed2:0:b0:370:202b:f085 with SMTP id
+ c201-20020a814ed2000000b00370202bf085mr17460201ywb.502.1668522133942; Tue, 15
+ Nov 2022 06:22:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y3M8xa1drZv4CToE@kili>
+References: <Y3OPo6AOL6PTvXFU@kili>
+In-Reply-To: <Y3OPo6AOL6PTvXFU@kili>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 15 Nov 2022 15:22:02 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWqwVGYdxvMLCQ8uBLA+VoDYiMWOBMmCoKiQWqA52Uw2A@mail.gmail.com>
+Message-ID: <CAMuHMdWqwVGYdxvMLCQ8uBLA+VoDYiMWOBMmCoKiQWqA52Uw2A@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ethernet: renesas: Fix return type in rswitch_etha_wait_link_verification()
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 04:17:43PM +0300, Dan Carpenter wrote:
-> The intf_free() function frees the "intf" pointer so we cannot
-> dereference it again on the next line.
+On Tue, Nov 15, 2022 at 2:14 PM Dan Carpenter <error27@gmail.com> wrote:
+> The rswitch_etha_wait_link_verification() is supposed to return zero
+> on success or negative error codes.  Unfortunately it is declared as a
+> bool so the caller treats everything as success.
+>
+> Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.  I will request a backport for 5.5 and later.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> 
-> Fixes: cbb79863fc31 ("ipmi: Don't allow device module unload when in use")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/char/ipmi/ipmi_msghandler.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-> index f6b8ca6df9b5..186f1fee7534 100644
-> --- a/drivers/char/ipmi/ipmi_msghandler.c
-> +++ b/drivers/char/ipmi/ipmi_msghandler.c
-> @@ -1330,6 +1330,7 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
->  	unsigned long    flags;
->  	struct cmd_rcvr  *rcvr;
->  	struct cmd_rcvr  *rcvrs = NULL;
-> +	struct module    *owner;
->  
->  	if (!acquire_ipmi_user(user, &i)) {
->  		/*
-> @@ -1392,8 +1393,9 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
->  		kfree(rcvr);
->  	}
->  
-> +	owner = intf->owner;
->  	kref_put(&intf->refcount, intf_free);
-> -	module_put(intf->owner);
-> +	module_put(owner);
->  }
->  
->  int ipmi_destroy_user(struct ipmi_user *user)
-> -- 
-> 2.35.1
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
