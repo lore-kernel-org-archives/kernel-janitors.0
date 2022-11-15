@@ -2,64 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DB4C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58487C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:56:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230035AbiKOMr5 (ORCPT
+        id S237857AbiKOM4H (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 07:47:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57244 "EHLO
+        Tue, 15 Nov 2022 07:56:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230402AbiKOMrz (ORCPT
+        with ESMTP id S231178AbiKOM4G (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 07:47:55 -0500
+        Tue, 15 Nov 2022 07:56:06 -0500
 Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9906227CFA
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 04:47:54 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id y16so24062297wrt.12
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 04:47:54 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9734F2C7;
+        Tue, 15 Nov 2022 04:56:05 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id bs21so24112277wrb.4;
+        Tue, 15 Nov 2022 04:56:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:date:from
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ffyc+3Px8lcssmkzv0y9PLX2hy8kq/CMeUXykHNYY3w=;
-        b=TKaQ6SHznIORCHZi/Y66eKkDxVoWGc73sWGkOaBP1MOyhctvoRyef/iRl9OnEP7wZr
-         IFHIYqq00PxZsvtPoen7Rn99qVqicDgiOIXoagCgORk2B2n11irjGzf9NPR+/myPoiaO
-         Zt+S0apxpRdZGHbKwODpeGOA6lOkyVOBPndCm/4eHoe+PlLtju+99S2R8bykGFQ3wfR7
-         RMEEQz7Ilr3mr+KXHPzGsL5rtAn3sULFzUPtMYieZsQF0zXyC3Ur8JtgXgwAKyn/mRWI
-         lbRwvmmLKvg9bEdPrsCtGya0h3gLGMJ8D3jTcZzy5AjBlhJ8LjpHbID2Nn/0kkCzNvyp
-         RcXQ==
+        bh=8Suc+sDOw9njkbA6lorcFP1RSCMU5Z1RLuQ/KM9dn4E=;
+        b=SgaeOd/CGA1rG+IGWVCNAzIArtZKPNHDEp26333K2hiCIWuZK0fNiyXHLKeYtb5NSe
+         10CGzkbG948ccpsZdTedmzA2sHcADEuCwNlhZUEx0BCT+KLEeVC7xbaCEmuUhchv+g7p
+         CURG8lFHKQrNGkTCIcBAfBawEfwDm8HIfPLvDOuJ2B7WI9ykxg4oCdpYQSWp5r7ngKNL
+         gmfU9eSE8oAu6YDlgap9jEu1zH+dumW4dK+VjV9HV4yOfWLSGA5Zc0dhB1d1sM0URsR2
+         bIpz6szMTAkUAaSMfED0YW7eiaGY2+kfqJjK8UYI9Nk1s/42spCHNurN4pSrbWHRLi4X
+         QI+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ffyc+3Px8lcssmkzv0y9PLX2hy8kq/CMeUXykHNYY3w=;
-        b=ce2byiOlHx4u84ilKfmngOYd7K0YGdw2o/rWeHgk6exx6fostsjDWWTfHsH4hwdE5l
-         MItuNbOQARj8JMfPlHYa7x3cx4NRnzVt6NPD71qVfjf4ipDcCJjuUcqlHyAU4crqAjcR
-         LuEbOzQsqWaXgaDEVQU4OuICR8vgk5an4gSBdIC41a+iKVdKOKZ8OricDI7SnUFVaMeQ
-         1B2nitzlNTMHFV4Ek1k0c/hHhq+4VZ/uPBpBOrsFkuPpgmsugKcTqkzb7V+p2NODaHkW
-         Cj7nRRwVkEekbIuoLK0x6qQ9wZEFxa0jfyNiFB8YKE0Y/F3gZWLMehzfn0s2ilWiCPV/
-         S9Wg==
-X-Gm-Message-State: ANoB5pkp5yN9w2ffjAOxXfnHYFsRlOVlYpMfIdK1ZGTQTsMW1oMpXTX6
-        G0xack2fru6ZlYJCqdjX0sIaOIKUyb8=
-X-Google-Smtp-Source: AA0mqf74iXd/PeyF5Cq+YNknLb4ayLWL0kO+ZivQVD1ijNHwYsdNjqOSCwJPyIKS8ful/PtiHt9wuA==
-X-Received: by 2002:adf:f00a:0:b0:236:4838:515d with SMTP id j10-20020adff00a000000b002364838515dmr10320933wro.541.1668516473180;
-        Tue, 15 Nov 2022 04:47:53 -0800 (PST)
+        bh=8Suc+sDOw9njkbA6lorcFP1RSCMU5Z1RLuQ/KM9dn4E=;
+        b=E7EBgIKWmt9oew0UWDxE13xCAFGZw3pRS3L7pwmrf/XkUJUeEP8tF09mOp5WXX298j
+         PGYrX5wHhj303F1gCDn/SdXPugEPV9vVUewTgN9E9PHB0MFexnVBwN6Q1HEKFtMACxp5
+         Gg8BUl8o+8PYhgcTni9lYOP/R9mH9i3xY8SN5R5gmFEGqQyWf2dgrR+bYEZMbhqGQt4S
+         3rM2+nGjUCkvpITdkde2YL0XIXJJQ5FKUBzYIKlUVeKRrPnr65t4t5Ay2pybDGFwyK4a
+         ymTchazjNREjAD2JabNcokdOMZ0u1qbWT/cIOVQA0BIRuEIl38SS25OfkxLXN7b/jK5M
+         Tfrw==
+X-Gm-Message-State: ANoB5pk6S1nTIisNy881LKD8lGN2lOrw87PtxDY04qhkOJ/ZpPjH4O1t
+        q7yapDqHLvN0dCmDuRvN/x0=
+X-Google-Smtp-Source: AA0mqf6LXGbMOdPES8+MrqVJoYnqb/iq4AENQu0yOdbYTfhxUcPgm3h/DU8Qxhdpm2V/pYdxUVOxwA==
+X-Received: by 2002:a5d:4cd0:0:b0:236:757c:54a1 with SMTP id c16-20020a5d4cd0000000b00236757c54a1mr10665635wrt.106.1668516964004;
+        Tue, 15 Nov 2022 04:56:04 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id m23-20020a05600c3b1700b003cf47556f21sm23156088wms.2.2022.11.15.04.47.52
+        by smtp.gmail.com with ESMTPSA id v21-20020a05600c215500b003c6c3fb3cf6sm15168301wml.18.2022.11.15.04.56.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 04:47:52 -0800 (PST)
+        Tue, 15 Nov 2022 04:56:03 -0800 (PST)
 From:   Dan Carpenter <error27@gmail.com>
 X-Google-Original-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Tue, 15 Nov 2022 15:47:49 +0300
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>, iommu@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] iommufd: vfio: info leak in iommufd_vfio_unmap_dma()
-Message-ID: <Y3OKdW/WXVr1VYbc@kili>
+Date:   Tue, 15 Nov 2022 15:56:00 +0300
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next/netfilter] netfilter: nft_inner: fix IS_ERR() vs
+ NULL check
+Message-ID: <Y3OMYNmQxpgXBAMA@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -67,29 +71,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If iopt_unmap_iova() fails then "unmapped" is uninitialized.  Copying it
-to the user can leak stack information.
+The __nft_expr_type_get() function returns NULL on error.  It never
+returns error pointers.
 
-Fixes: 32c328dc9b73 ("iommufd: vfio container FD ioctl compatibility")
+Fixes: 3a07327d10a0 ("netfilter: nft_inner: support for inner tunnel header matching")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/iommu/iommufd/vfio_compat.c | 3 +++
- 1 file changed, 3 insertions(+)
+This applies to net-next but presumably it's going to go through the
+netfilter tree?
 
-diff --git a/drivers/iommu/iommufd/vfio_compat.c b/drivers/iommu/iommufd/vfio_compat.c
-index 976aa12b247d..30a13552d632 100644
---- a/drivers/iommu/iommufd/vfio_compat.c
-+++ b/drivers/iommu/iommufd/vfio_compat.c
-@@ -189,6 +189,9 @@ static int iommufd_vfio_unmap_dma(struct iommufd_ctx *ictx, unsigned int cmd,
- 		rc = iopt_unmap_iova(&ioas->iopt, unmap.iova, unmap.size,
- 				     &unmapped);
- 	}
-+	if (rc)
-+		goto err_put;
-+
- 	unmap.size = unmapped;
- 	if (copy_to_user(arg, &unmap, minsz))
- 		rc = -EFAULT;
+ net/netfilter/nf_tables_api.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 62da204eed41..6b159494c86b 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -2873,8 +2873,8 @@ int nft_expr_inner_parse(const struct nft_ctx *ctx, const struct nlattr *nla,
+ 		return -EINVAL;
+ 
+ 	type = __nft_expr_type_get(ctx->family, tb[NFTA_EXPR_NAME]);
+-	if (IS_ERR(type))
+-		return PTR_ERR(type);
++	if (!type)
++		return -ENOENT;
+ 
+ 	if (!type->inner_ops)
+ 		return -EOPNOTSUPP;
 -- 
 2.35.1
 
