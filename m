@@ -2,159 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CED6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 14:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A68C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 14:15:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230318AbiKOOOi (ORCPT
+        id S230446AbiKOOPd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 09:14:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40580 "EHLO
+        Tue, 15 Nov 2022 09:15:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbiKOOOh (ORCPT
+        with ESMTP id S230006AbiKOOPc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 09:14:37 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0F292BE
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:14:36 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id bs21so24503308wrb.4
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:14:36 -0800 (PST)
+        Tue, 15 Nov 2022 09:15:32 -0500
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E09F7B67
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:15:30 -0800 (PST)
+Received: by mail-qv1-xf2a.google.com with SMTP id w10so9858864qvr.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:15:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sSTNXbJe7jKV8n0OFjTcddF5RhQSFJSTjTqhKMYr9Hw=;
-        b=ZZXDVsdI3gcUFz/MfSrVL8JEJ5Xz6aoe7xsunJABXUqC23xlMs+jX7sVwTQdSUCsDK
-         /LoYbEC6YdiLBDtH9ENIP+/j1kjfI8oU0Fn4t77lE6HUWnuj41W5u8iUdKtFbbrw+OuC
-         oub0AHLTsrnpogmcECdpF35mWvZGpG/VBjYJIv+fMWLB7dCAonQhRwgB3VS/7PfuHxgX
-         cEOY0Cid2bw0eHu23VotI3i5SioOx/AU3D608wu0JPMC1V+BVdTORrdU/Ys/GjqiiGAk
-         Xmg7LZkUSjpYnU7tLxCjpYfO1ns2ov817bXho0eR4vfE0rDe3vt7yB2xlMkiDptLaQoM
-         RwyA==
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MmCortd4X07eaHsaVrw2gTAngPKvClGjD0Ma0coZZ+w=;
+        b=hA81zEgYkoCvvLzGBWtKslpJBNtJsrMzfgzLIB4SYaQ+CuNw4I540lOLF9vLU/rHmV
+         lB5oRXcJqlaWg/2HiQ7eljuCpiIfY1S7IhQAOV8DENMUqb6tUlo7o5GHynDOn7/fO+Hk
+         QmiRRcZh6o101+sWJZHp8tAg3LE+IQLQYhxrm1zMrkYkFp6Z8CsQ1FVc3N1LLMytYdgi
+         m/lIS//b5dErFBmHtvPyHxrFho0dopwHN8fwjQKvi3xfrDWRWQinIoE4z50mO+9KHQ9U
+         zZ2fGAHNLHXfTiyJ5+V90TybLmoVJSfqf9n2oG6gf+Cn3Vw9Y+vcncrUfb7mXEixnZKK
+         xh8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sSTNXbJe7jKV8n0OFjTcddF5RhQSFJSTjTqhKMYr9Hw=;
-        b=Y3qAJ3Xx2UFmLkeb/Q1kT/acNVdbghgQ4I9V++AKmjfbokmyb88rWMceBfuVQfreSx
-         VNQXQ9yLPgYwdxl/oOvlp2tXhuDsusm5SyoVYD5jsNHu2tuX1JbIzlLMaCXywrndybg4
-         kdCDurB211vcNwcQ9VbrVrQRV5ED6Uk8JLpn38dwam2rnb+FpNBbCMbEhgiegysZld6O
-         0huXOHxOqFPp8w9YM9q7R6WTGQrY0CPkfWjuhY3ly8GEv9TLqKu4YJVrau8TIr8UA6k4
-         BzjhME6TTDpwrlTHwdXePtXRXkbkKF6AAclYKe3gD1GXjjUddmeTKP25kiU2xQ53tQ9A
-         EvSA==
-X-Gm-Message-State: ANoB5plQNTK2gmVT/C94cC/7OvK/pXg+Ru7kKwzAtUEzvOg3FEXe8V87
-        hb73sHQsxz7ZSTCNiDO0YWU=
-X-Google-Smtp-Source: AA0mqf7fbNTZB9IP7mAdFPu82holRXIu8+2GDU299sCsHmqaFnbi4mM6Kmi3CAWlHq5TpK3TunvRng==
-X-Received: by 2002:a05:6000:46:b0:236:8a38:66f1 with SMTP id k6-20020a056000004600b002368a3866f1mr11030684wrx.327.1668521675376;
-        Tue, 15 Nov 2022 06:14:35 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id g9-20020a05600c4ec900b003cfd10a33afsm16855803wmq.11.2022.11.15.06.14.34
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=MmCortd4X07eaHsaVrw2gTAngPKvClGjD0Ma0coZZ+w=;
+        b=V8M5GY67bvdOdHix/42L94R2ZZshDXkSInp4h9sZhlw8C4AjWXOV2Vopv5ycRgxYCf
+         PFCVlZgYus6BO6aBfBIrOa22sNml8j24nwt0jDFDKCUaemZV4WAUdWCT3G6FpB5K7tEh
+         JsjC7f5uKNIAh8e49PtktdYC1HrDhyboeo0jqGVg+j6RsAH3KQzIDdzaMg345vIQsYKa
+         ir6lPFHtjgZBaeWDUeL1j7VX30AGulv8vNr9Zl2Pe4ZYgzO/g4d1EY8Dw0TFaD4QQDTw
+         rB/h8HzLtHQIIK4JOWJ67QHJAPcCl0JDv82jcWmn4Mk233ym1PiiPDmEXC1w9Vk2goLT
+         UXNg==
+X-Gm-Message-State: ANoB5pk7CdSKz3uMaeh20g8FSGb1j24unT+vccnv+S9Ku4O7YpEGgaYX
+        pkAKPPJf/J0Kg3eduxgxiw==
+X-Google-Smtp-Source: AA0mqf4VpZRSL5eJUMiINzc/4a/zmp7QAJt7MIpW3sNl5VEIR1VsJrqZbd99YXHOCyF7b6C984NfDQ==
+X-Received: by 2002:a0c:f98b:0:b0:4bb:93b8:ef1c with SMTP id t11-20020a0cf98b000000b004bb93b8ef1cmr16908333qvn.103.1668521729834;
+        Tue, 15 Nov 2022 06:15:29 -0800 (PST)
+Received: from serve.minyard.net ([47.184.147.45])
+        by smtp.gmail.com with ESMTPSA id x81-20020a376354000000b006cfc9846594sm8031820qkb.93.2022.11.15.06.15.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 06:14:35 -0800 (PST)
-Date:   Tue, 15 Nov 2022 17:14:32 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     steen.hegelund@microchip.com
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] net: microchip: sparx5: Match keys in configured port
- keysets
-Message-ID: <Y3OeyMRaTybk8t7i@kili>
+        Tue, 15 Nov 2022 06:15:29 -0800 (PST)
+Sender: Corey Minyard <tcminyard@gmail.com>
+Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:2bd8:1330:9bfe:f1cd])
+        by serve.minyard.net (Postfix) with ESMTPSA id D9A7C180044;
+        Tue, 15 Nov 2022 14:15:27 +0000 (UTC)
+Date:   Tue, 15 Nov 2022 08:15:26 -0600
+From:   Corey Minyard <minyard@acm.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     openipmi-developer@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ipmi: fix use after free in _ipmi_destroy_user()
+Message-ID: <Y3Oe6KcXabXlwdbx@minyard.net>
+Reply-To: minyard@acm.org
+References: <Y3M8xa1drZv4CToE@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Y3M8xa1drZv4CToE@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Steen Hegelund,
+On Tue, Nov 15, 2022 at 04:17:43PM +0300, Dan Carpenter wrote:
+> The intf_free() function frees the "intf" pointer so we cannot
+> dereference it again on the next line.
 
-The patch abc4010d1f6e: "net: microchip: sparx5: Match keys in
-configured port keysets" from Nov 9, 2022, leads to the following
-Smatch static checker warning:
+Thanks.  I will request a backport for 5.5 and later.
 
-	drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c:598 sparx5_tc_flower_replace()
-	error: uninitialized symbol 'l3_proto'.
-
-drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c
-    532 static int sparx5_tc_flower_replace(struct net_device *ndev,
-    533                                     struct flow_cls_offload *fco,
-    534                                     struct vcap_admin *admin)
-    535 {
-    536         struct sparx5_port *port = netdev_priv(ndev);
-    537         struct flow_action_entry *act;
-    538         struct vcap_control *vctrl;
-    539         struct flow_rule *frule;
-    540         struct vcap_rule *vrule;
-    541         u16 l3_proto;
-    542         int err, idx;
-    543 
-    544         vctrl = port->sparx5->vcap_ctrl;
-    545 
-    546         err = sparx5_tc_flower_action_check(vctrl, fco, admin);
-    547         if (err)
-    548                 return err;
-    549 
-    550         vrule = vcap_alloc_rule(vctrl, ndev, fco->common.chain_index, VCAP_USER_TC,
-    551                                 fco->common.prio, 0);
-    552         if (IS_ERR(vrule))
-    553                 return PTR_ERR(vrule);
-    554 
-    555         vrule->cookie = fco->cookie;
-    556         sparx5_tc_use_dissectors(fco, admin, vrule, &l3_proto);
-
-Should this call to sparx5_tc_use_dissectors() have error checking?
-
-    557         frule = flow_cls_offload_flow_rule(fco);
-    558         flow_action_for_each(idx, act, &frule->action) {
-    559                 switch (act->id) {
-    560                 case FLOW_ACTION_TRAP:
-    561                         err = vcap_rule_add_action_bit(vrule,
-    562                                                        VCAP_AF_CPU_COPY_ENA,
-    563                                                        VCAP_BIT_1);
-    564                         if (err)
-    565                                 goto out;
-    566                         err = vcap_rule_add_action_u32(vrule,
-    567                                                        VCAP_AF_CPU_QUEUE_NUM, 0);
-    568                         if (err)
-    569                                 goto out;
-    570                         err = vcap_rule_add_action_u32(vrule, VCAP_AF_MASK_MODE,
-    571                                                        SPX5_PMM_REPLACE_ALL);
-    572                         if (err)
-    573                                 goto out;
-    574                         /* For now the actionset is hardcoded */
-    575                         err = vcap_set_rule_set_actionset(vrule,
-    576                                                           VCAP_AFS_BASE_TYPE);
-    577                         if (err)
-    578                                 goto out;
-    579                         break;
-    580                 case FLOW_ACTION_ACCEPT:
-    581                         /* For now the actionset is hardcoded */
-    582                         err = vcap_set_rule_set_actionset(vrule,
-    583                                                           VCAP_AFS_BASE_TYPE);
-    584                         if (err)
-    585                                 goto out;
-    586                         break;
-    587                 case FLOW_ACTION_GOTO:
-    588                         /* Links between VCAPs will be added later */
-    589                         break;
-    590                 default:
-    591                         NL_SET_ERR_MSG_MOD(fco->common.extack,
-    592                                            "Unsupported TC action");
-    593                         err = -EOPNOTSUPP;
-    594                         goto out;
-    595                 }
-    596         }
-    597         /* provide the l3 protocol to guide the keyset selection */
---> 598         err = vcap_val_rule(vrule, l3_proto);
-    599         if (err) {
-    600                 vcap_set_tc_exterr(fco, vrule);
-    601                 goto out;
-    602         }
-    603         err = vcap_add_rule(vrule);
-    604         if (err)
-    605                 NL_SET_ERR_MSG_MOD(fco->common.extack,
-    606                                    "Could not add the filter");
-    607 out:
-    608         vcap_free_rule(vrule);
-    609         return err;
-    610 }
-
-regards,
-dan carpenter
+> 
+> Fixes: cbb79863fc31 ("ipmi: Don't allow device module unload when in use")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>  drivers/char/ipmi/ipmi_msghandler.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+> index f6b8ca6df9b5..186f1fee7534 100644
+> --- a/drivers/char/ipmi/ipmi_msghandler.c
+> +++ b/drivers/char/ipmi/ipmi_msghandler.c
+> @@ -1330,6 +1330,7 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
+>  	unsigned long    flags;
+>  	struct cmd_rcvr  *rcvr;
+>  	struct cmd_rcvr  *rcvrs = NULL;
+> +	struct module    *owner;
+>  
+>  	if (!acquire_ipmi_user(user, &i)) {
+>  		/*
+> @@ -1392,8 +1393,9 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
+>  		kfree(rcvr);
+>  	}
+>  
+> +	owner = intf->owner;
+>  	kref_put(&intf->refcount, intf_free);
+> -	module_put(intf->owner);
+> +	module_put(owner);
+>  }
+>  
+>  int ipmi_destroy_user(struct ipmi_user *user)
+> -- 
+> 2.35.1
+> 
