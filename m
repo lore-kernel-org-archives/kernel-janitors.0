@@ -2,78 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B87AC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 06:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C92D6C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 09:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232218AbiKOGs6 (ORCPT
+        id S232649AbiKOJbo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 01:48:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59854 "EHLO
+        Tue, 15 Nov 2022 04:31:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbiKOGs5 (ORCPT
+        with ESMTP id S232439AbiKOJbl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 01:48:57 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C48A55FBD;
-        Mon, 14 Nov 2022 22:48:56 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1CC7161553;
-        Tue, 15 Nov 2022 06:48:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07933C433D7;
-        Tue, 15 Nov 2022 06:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1668494935;
-        bh=XNUvDzdINCDghyaN5qN1SpG+kgjyEl3yUValNgB8rlQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S6GXYa0YgJxpYdi9nSImclrFT7Ybqn6KiS00FcqAT1O2zkfm5XkxKcxlk+8E4BaYB
-         Kxw+IqcjLuydCVZvWDU4bC9FCpF/TGLy43pKCDrBo3uTTLU6Ex+shXaIFp8pQ+nqCr
-         E242RBVanX8aS5bkBSYorFtp/IDBU6pIRWWQ2Q2w=
-Date:   Tue, 15 Nov 2022 07:48:51 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>
-Subject: Re: [PATCH] headers: Remove some left-over license text in
- include/uapi/linux/hsi/
-Message-ID: <Y3M2UxC+vpf9cgyU@kroah.com>
-References: <4919073b3dee8ca7612989659d31b12f9c5491ba.1662897400.git.christophe.jaillet@wanadoo.fr>
- <20221114210155.anq5gkggfrvj6nki@mercury.elektranox.org>
+        Tue, 15 Nov 2022 04:31:41 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8D0EE39;
+        Tue, 15 Nov 2022 01:31:40 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id ja4-20020a05600c556400b003cf6e77f89cso870810wmb.0;
+        Tue, 15 Nov 2022 01:31:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xxOYorO+qp/Ux5uO45kQPwW5Xbfxtuq7/VNLX14n8IY=;
+        b=lq9j8Yo+iYN2nBfXTbuHNwdedR1am7ZrPm1ovFLALugOLW9NFNvXFyvRydDoqouGce
+         QOOCE09OddSjazJ1JNfegaB91Si+aYbqsrGXTJ+dWXX2PNIk/Rt2OpWXyRZ+9RiZtzYh
+         +rGawEVIZ3s6XFJhbCvjyUQSdPJKQ3+kcbhL2rujjCIXNjjvOLrQe0Jdw4YA7OkEjXlj
+         p4aghaBrIUAqhG7c6ymUY98504BQyOWAoFCQ1GKuichT1LJ7B6GNyIV4ZlzWxUjEbxgK
+         nFjoKSMTjR79gGeCXPRSyHVUzwQg13tG6so38xlKsjRE5w2rSaNP4t2lPQAHDtaMU3ys
+         CINQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xxOYorO+qp/Ux5uO45kQPwW5Xbfxtuq7/VNLX14n8IY=;
+        b=3qLnioxfFtYikY0QiV48rUt7pprV54lxnE7flaHqYCOjZNsuvZRCVtg27OA6Slgy3w
+         x4cE+9Lhg07QbMfCJVDYSl2n6l1BkkpLlqlsUzd/iUFEcHnwy+nb6/t93OhqIXYP/BVz
+         kHyGd11UKsGyCM43l7zq53PXYXdneBUihlIBYGziOvoRa/vR3WSJBPvtQky7tMq1KVSX
+         rPowzZNpujv2VeFZfbQuJgvB40toE8RwmsIepdj3AT18Mrr8548CxYBntdhJM6GucPm6
+         y/z86xl3vwL/bldIPomA3a5yha61MUNMDyOlgvablF76UC3jxo5Ja4KURXcOz/LR86qV
+         G0/A==
+X-Gm-Message-State: ANoB5pkco1rBGT83JT3BN6FogR9ZY3b/6rlZ0+ufdjPYM1wLHunOEupv
+        Csbd/jUTCtyDDmOH7PAk+Fk=
+X-Google-Smtp-Source: AA0mqf568qIpfIQxac3Pe1jkRkBdQ5c3rksE6O0+Vmz9Szj0k+ikeq1ZEb/HZMhRgDxYmHuouJFY/A==
+X-Received: by 2002:a05:600c:a0d:b0:3cf:77a6:2c2e with SMTP id z13-20020a05600c0a0d00b003cf77a62c2emr408664wmp.179.1668504699067;
+        Tue, 15 Nov 2022 01:31:39 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id g13-20020a5d554d000000b002366e3f1497sm12078215wrw.6.2022.11.15.01.31.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Nov 2022 01:31:38 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Denis Kirjanov <kda@linux-powerpc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next][V2]: sundance: remove unused variable cnt
+Date:   Tue, 15 Nov 2022 09:31:37 +0000
+Message-Id: <20221115093137.144002-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221114210155.anq5gkggfrvj6nki@mercury.elektranox.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 10:01:55PM +0100, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Sun, Sep 11, 2022 at 01:56:59PM +0200, Christophe JAILLET wrote:
-> > Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
-> > license identifier to uapi header files with a license")
-> > 
-> > When the SPDX-License-Identifier tag has been added, the corresponding
-> > license text has not been removed.
-> > 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> 
-> IIRC that was intentional, since the plan was to seek for an
-> explicit Ack from the copyright holder when removing the text.
+Variable cnt is just being incremented and it's never used
+anywhere else. The variable and the increment are redundant so
+remove it.
 
-Did that ever happen?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
 
-> I've added Greg for clarification and hopefully the latest
-> mail address from Kai and Peter.
+V2: Use the correct net-next convention. I do hope I've got this correct,
+    apologies for being consistently incorrect in the past.
 
-It's fine to remove license "boilerplate" text like this, especially
-when it is wrong (hint, is the FSF's address correct?).
+---
+ drivers/net/ethernet/dlink/sundance.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-thanks,
+diff --git a/drivers/net/ethernet/dlink/sundance.c b/drivers/net/ethernet/dlink/sundance.c
+index 43def191f26f..aaf0eda96292 100644
+--- a/drivers/net/ethernet/dlink/sundance.c
++++ b/drivers/net/ethernet/dlink/sundance.c
+@@ -1414,7 +1414,6 @@ static void refill_rx (struct net_device *dev)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+ 	int entry;
+-	int cnt = 0;
+ 
+ 	/* Refill the Rx ring buffers. */
+ 	for (;(np->cur_rx - np->dirty_rx + RX_RING_SIZE) % RX_RING_SIZE > 0;
+@@ -1441,7 +1440,6 @@ static void refill_rx (struct net_device *dev)
+ 		np->rx_ring[entry].frag.length =
+ 			cpu_to_le32(np->rx_buf_sz | LastFrag);
+ 		np->rx_ring[entry].status = 0;
+-		cnt++;
+ 	}
+ }
+ static void netdev_error(struct net_device *dev, int intr_status)
+-- 
+2.38.1
 
-greg k-h
