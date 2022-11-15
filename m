@@ -2,59 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A99C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 13:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45534C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 13:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230054AbiKONEb (ORCPT
+        id S230307AbiKONHw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 08:04:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39182 "EHLO
+        Tue, 15 Nov 2022 08:07:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbiKONE1 (ORCPT
+        with ESMTP id S229698AbiKONHu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 08:04:27 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD62812624
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 05:04:26 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id v1so24110967wrt.11
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 05:04:26 -0800 (PST)
+        Tue, 15 Nov 2022 08:07:50 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E841312AED
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 05:07:49 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id p16so9614000wmc.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 05:07:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QV+lbJxBS0m31waE+r3dYztx5VVIeWrquKXCZD5/B6M=;
-        b=AW6HvEBfLy19nLtQg9xzhPzxVuonlgzSpSUwaAXKNE9kk7jhohUEk4BXlKbtFKM5c1
-         ZKnfgNmS181tGWyu5yvscdM64hWI+XLlGybWYFxZPKHT6eOTUc1ikqleVesGo1vDf8tN
-         cFbpmH4R/eAzNmfe/0TN8++o6itFaG7cJzafoBPWo1leUpYBaejrLhYmSthukP9W/z5U
-         3RvwksAvmE2qSteHxwHs0fVTF5TRZ7A+CpHvxiN0oZiq+GRINomLe+fexb95qM4iq/jS
-         ovY2sboFTnsgmn6j5/ga0dUMwPIDbVGrPnrouX/5Pt6k6UTT+Ul5OVNSWXdJgoQrkRyD
-         V0Ng==
+        bh=NbJTa5pyh9Ba1B+OlYlWnAWW0GhBX2I+HniHphUAYQM=;
+        b=bkblXbHKXWha6hCxomP521PDePshKL46EfYGimkDkQcffrjxOgdlnzURUD9s7qea8t
+         1lf6PIl1VZKvc80FFqF6jxTFDyVJQ64n90qhH1p7mN87N8QhqOoruPeyNSgUSmPH/0Gy
+         KB802+Sx1jJZmSo1dEo4se7nVXV21BhTkQTXy+bv2IMxSeAJiMSo5yVfArg01VuxqPbw
+         rfJ8TR4Mkuq2qvZg9ijkuZlmlKWhQrSCoGXm9OClT0Xy0a3G0ZXfnzZxuYapSnyzw/U8
+         YeLM45I/5/HO767iOa3ZNvjmGAJwg84bJIHRRSd0mfwWrp7YHXJ1+9OIdSmWlPAd20h2
+         4SWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QV+lbJxBS0m31waE+r3dYztx5VVIeWrquKXCZD5/B6M=;
-        b=CsjvzHEFo5Xc77Tom25h5BZekqNftM987LvxvyquCJz5cZ9WSue4YS5KXtY8lgRnFu
-         rQEvTiJYkE5qD5PybqpfcSiMwHzH9mDtv2ULeVNJJWX6o1TG3dwGGY1vZJYajO7yOFWW
-         sq/Z/vDyo5FmXubs9+T/B3EZJ63odpREZqKZeHl7Wg6vn4OPJYjIJTV5FChBkHKF/vBV
-         z+V+Xzq0MmTDgVNAiXJOGTuDVRttMNdCobGk7BWTRtp30km2So2rqFUhkTPUtXuAk2GX
-         8aB70EEifyoZZHDnXSFnGdC1NLfx3EdCVt3r+/QZpWXJOF7ojZ6+xem0in+a21KoT3t9
-         y35w==
-X-Gm-Message-State: ANoB5plBNEfKnsZdy8rDCPsfP54N4MOFB4XJ3vHbGncQIbmckV0zgl23
-        FQePff3zzpkTnLGGHxAC1CI=
-X-Google-Smtp-Source: AA0mqf6VHrf+QhXUZn8ccpDk3TXwLOGIpg4EuctgufaGtNinBLDPiRy5hf9cjAlEk4C+LOTZdHNepA==
-X-Received: by 2002:adf:f74d:0:b0:241:50fa:f724 with SMTP id z13-20020adff74d000000b0024150faf724mr10312136wrp.146.1668517465283;
-        Tue, 15 Nov 2022 05:04:25 -0800 (PST)
+        bh=NbJTa5pyh9Ba1B+OlYlWnAWW0GhBX2I+HniHphUAYQM=;
+        b=sv6Du05DMZZZQcLBFzxaw4J0ZLK4LE5Ff+UQnjwdE1LhTzvnFagVCW0wGMU7bnNLSp
+         JOMueuDHsa92cZTXvu3UqVaCbZqG/OvRGuEI0f7Syf/4hZXZL9TaoPGEZH84Uy0FMMB5
+         5DoUmUeGg3msehOhAay9kK/Z5pT/Uw9dam6Gl7spSMfo1rh1Y9Bd9UqwotikdANZffp+
+         0y/ILbJYk72rflQ9l9qiuM7cA+vFW0bLdVIjkBSmhZMfBDjn+QEcUCzd2NpxOAX+yC/k
+         4lL97MP/e99TjPguUA03LkKuKkSNFhu69YfpKeWaycYEhxOOYIs2W7KqSMBpNvpOKVZz
+         91RA==
+X-Gm-Message-State: ANoB5pmZLSSFaf0yn0boSwkM0nz41Ml90ghnvUZ1SzVr8PbYkkflMpYQ
+        dQ4qi6yxnWmMDB1fT3urgCn2uID7QpustQ==
+X-Google-Smtp-Source: AA0mqf48fRvauCxnjiOsSEW9RuZKYN9FYQ7x+sYKFeGvHvc8fHMHhy6qWSZmKZDbib/THfm8XXd+qQ==
+X-Received: by 2002:a1c:7501:0:b0:3b3:3084:5ddb with SMTP id o1-20020a1c7501000000b003b330845ddbmr319440wmc.108.1668517668434;
+        Tue, 15 Nov 2022 05:07:48 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a22-20020a5d4576000000b002365254ea42sm12503535wrc.1.2022.11.15.05.04.24
+        by smtp.gmail.com with ESMTPSA id s3-20020adfecc3000000b0022e653f5abbsm12391299wro.69.2022.11.15.05.07.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 05:04:24 -0800 (PST)
-Date:   Tue, 15 Nov 2022 16:04:21 +0300
+        Tue, 15 Nov 2022 05:07:48 -0800 (PST)
+Date:   Tue, 15 Nov 2022 16:07:33 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     jiawenwu@trustnetic.com
+To:     mhiramat@kernel.org
 Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] net: libwx: Implement interaction with firmware
-Message-ID: <Y3OOVco21u9wg64/@kili>
+Subject: [bug report] rethook: Add a generic return hook
+Message-ID: <Y3OPFTlqLyov9zkB@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -62,90 +62,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Jiawen Wu,
+Hello Masami Hiramatsu,
 
-The patch 1efa9bfe58c5: "net: libwx: Implement interaction with
-firmware" from Oct 31, 2022, leads to the following Smatch static
-checker warning:
+The patch 54ecbe6f1ed5: "rethook: Add a generic return hook" from Mar
+15, 2022, leads to the following Smatch static checker warning:
 
-	drivers/net/ethernet/wangxun/libwx/wx_hw.c:210 wx_host_interface_command()
-	warn: duplicate check 'status' (previous on line 206)
+	kernel/trace/rethook.c:92 rethook_alloc()
+	warn: use 'gfp' here instead of GFP_XXX?
 
-drivers/net/ethernet/wangxun/libwx/wx_hw.c
-    200         /* Setting this bit tells the ARC that a new command is pending. */
-    201         wr32m(wxhw, WX_MNG_MBOX_CTL,
-    202               WX_MNG_MBOX_CTL_SWRDY, WX_MNG_MBOX_CTL_SWRDY);
-    203 
-    204         status = read_poll_timeout(rd32, hicr, hicr & WX_MNG_MBOX_CTL_FWRDY, 1000,
-    205                                    timeout * 1000, false, wxhw, WX_MNG_MBOX_CTL);
-    206         if (status)
-                    ^^^^^^
-Checked
+kernel/trace/rethook.c
+    89 struct rethook *rethook_alloc(void *data, rethook_handler_t handler, gfp_t gfp,
+    90                               int size, int max)
+    91 {
+--> 92         struct rethook *rh = kzalloc(sizeof(struct rethook), GFP_KERNEL);
 
-    207                 goto rel_out;
-    208 
-    209         /* Check command completion */
---> 210         if (status) {
-                    ^^^^^^
-Dead code.
+"gfp" is always GFP_KERNEL so this doesn't affect runtime.
 
-    211                 wx_dbg(wxhw, "Command has failed with no status valid.\n");
-    212 
-    213                 buf[0] = rd32(wxhw, WX_MNG_MBOX);
-    214                 if ((buffer[0] & 0xff) != (~buf[0] >> 24)) {
-    215                         status = -EINVAL;
-    216                         goto rel_out;
-    217                 }
-    218                 if ((buf[0] & 0xff0000) >> 16 == 0x80) {
-    219                         wx_dbg(wxhw, "It's unknown cmd.\n");
-    220                         status = -EINVAL;
-    221                         goto rel_out;
-    222                 }
-    223 
-    224                 wx_dbg(wxhw, "write value:\n");
-    225                 for (i = 0; i < dword_len; i++)
-    226                         wx_dbg(wxhw, "%x ", buffer[i]);
-    227                 wx_dbg(wxhw, "read value:\n");
-    228                 for (i = 0; i < dword_len; i++)
-    229                         wx_dbg(wxhw, "%x ", buf[i]);
-    230         }
-    231 
-    232         if (!return_data)
-    233                 goto rel_out;
-    234 
-    235         /* Calculate length in DWORDs */
-    236         dword_len = hdr_size >> 2;
-    237 
-    238         /* first pull in the header so we know the buffer length */
-    239         for (bi = 0; bi < dword_len; bi++) {
-    240                 buffer[bi] = rd32a(wxhw, WX_MNG_MBOX, bi);
-    241                 le32_to_cpus(&buffer[bi]);
-    242         }
-    243 
-    244         /* If there is any thing in data position pull it in */
-    245         buf_len = ((struct wx_hic_hdr *)buffer)->buf_len;
-    246         if (buf_len == 0)
-    247                 goto rel_out;
-    248 
-    249         if (length < buf_len + hdr_size) {
-    250                 wx_err(wxhw, "Buffer not large enough for reply message.\n");
-    251                 status = -EFAULT;
-    252                 goto rel_out;
-    253         }
-    254 
-    255         /* Calculate length in DWORDs, add 3 for odd lengths */
-    256         dword_len = (buf_len + 3) >> 2;
-    257 
-    258         /* Pull in the rest of the buffer (bi is where we left off) */
-    259         for (; bi <= dword_len; bi++) {
-    260                 buffer[bi] = rd32a(wxhw, WX_MNG_MBOX, bi);
-    261                 le32_to_cpus(&buffer[bi]);
-    262         }
-    263 
-    264 rel_out:
-    265         wx_release_sw_sync(wxhw, WX_MNG_SWFW_SYNC_SW_MB);
-    266         return status;
-    267 }
+    93 
+    94         if (!rh || !handler)
+    95                 return NULL;
+    96 
+    97         rh->data = data;
+    98         rh->handler = handler;
+    99 
+    100         /* initialize the objpool for rethook nodes */
+    101         if (objpool_init(&rh->pool, max, max, size, gfp, rh, rethook_init_node,
+    102                         NULL)) {
+    103                 kfree(rh);
+    104                 return NULL;
+    105         }
+    106         refcount_set(&rh->ref, max + 1);
+    107         return rh;
+    108 }
 
 regards,
 dan carpenter
