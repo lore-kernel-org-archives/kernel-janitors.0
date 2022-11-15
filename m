@@ -2,100 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2620C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 10:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12130C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 10:36:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232437AbiKOKcM (ORCPT
+        id S230015AbiKOKgT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 05:32:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
+        Tue, 15 Nov 2022 05:36:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237885AbiKOKcJ (ORCPT
+        with ESMTP id S229666AbiKOKgA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 05:32:09 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B147E22BFA;
-        Tue, 15 Nov 2022 02:32:08 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id z14so23321805wrn.7;
-        Tue, 15 Nov 2022 02:32:08 -0800 (PST)
+        Tue, 15 Nov 2022 05:36:00 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6089B2611B
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 02:35:59 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id be13so23772693lfb.4
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 02:35:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u3hleG+JBlWKiyuOBiHTr/k3gF4VUiw+qWAWvRBF4c8=;
-        b=kREM6saglq8HeIc5QRINVA75AkeornAxvkaWg3odA22W+AWraA655sTtPT9UsniIW9
-         ouZ5W/R5HwMQ0atdoXyB8gfGPLrUEzoYicEDe0ELWbfdm4gVMjiRZjqFgo605z+tDNB9
-         sO2TyDHWfRmxYQuZmqkEQp5ZZf0+4Uys2QFeShUc8UIsjzvu3SZd/yvVPqJNuqj+d72m
-         Be2j8n7/yBRMPZluYE5/tndN96jWhoeafOEiZnxVtx6v1BPshmAy6SCrLz5+Q8jLDnvu
-         URZr/YhxWNVGvmg49akb0179406dsnQlagbBLFAFfs9Hs3A0gRxsgKg3WGoH40G2fL94
-         94wg==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C4UHGwxwnt4Cc6rH/RttAuD4Amllt6tSRn4Nm+z5DoY=;
+        b=cHznuR12/gE+BOW9xg+YW6XmVqpxjnb7ke+DgJambMA+vmlrRniD9930zKDtQqbU2J
+         kUOQyUJlwr7OD8BjraGTuVh6KtB+gTEcR5HtvL1IXj8QgZqfdQ+W1pxgaIrpL34yYAYg
+         zYqLIfgIFhhKzGDkFHVM2ak5CmtSuJi6KDD7FESP/tjDdhujuCcdowIoi+SMbRPGCOR1
+         l2Qu/Br1aZOwvbRod0u3n8ilsRdj/oOyLwkMwxNqGeyfKkFJqrO0egNs0zOidZg+DYNU
+         rNXlcBux6uvsa58FeOns9tK1MWVapp3zx0dxr8ZuaG9juGNM4Je796d3jQhEfjcCO/vy
+         +sbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u3hleG+JBlWKiyuOBiHTr/k3gF4VUiw+qWAWvRBF4c8=;
-        b=pmbOUPFmYud2uCW3qd0IjrfOhwsdUxwioM6vLAulSLigblPPNfN4/qN/qSTnouambk
-         cza86KmlO/Hs82jj6/ySOnSdezrK4jqM9POaWik5u5V+h8eul4PlMVaq8C45VeXBTiwk
-         ki6dJlk3wFJVq3EgwDWWxwMcqqIfZDCWch5NCUTzEH7rFeJ0gi3IK2yqSYKdQXHnHr19
-         LvPGOSB4BnpH1zUJvVqbcK/2/TOks/+6HSN8fL6fpPAtvPVC6GW7InynC34IeW0cUSI1
-         QzqivWhY/pxJWAHS78kzkupWhfEQ1igQciUuYNwemdNqWFrca59Swlq4J2Kn8gYusTz6
-         w/Hg==
-X-Gm-Message-State: ANoB5pnNVLSc5L61A4g7C8wAhyBSolP+RivgMCwjYjeIUtvnEEFO8ho/
-        smrAwh6a+8Hslscs4bIpwB8=
-X-Google-Smtp-Source: AA0mqf7SuuYyRKlOJch4Qlmd4Yoooeu9BbQHtWGy3R/vQjMgsmeMAOIHLFk0ze0X5QTotT0AkHMZqg==
-X-Received: by 2002:a5d:6407:0:b0:238:238:cae3 with SMTP id z7-20020a5d6407000000b002380238cae3mr10355518wru.685.1668508327067;
-        Tue, 15 Nov 2022 02:32:07 -0800 (PST)
-Received: from felia.fritz.box (200116b826a73f00a9cec1b8eddc8521.dip.versatel-1u1.de. [2001:16b8:26a7:3f00:a9ce:c1b8:eddc:8521])
-        by smtp.gmail.com with ESMTPSA id t5-20020adfe445000000b00236740c6e6fsm11940207wrm.100.2022.11.15.02.32.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 02:32:06 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Marek Vasut <marex@denx.de>,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C4UHGwxwnt4Cc6rH/RttAuD4Amllt6tSRn4Nm+z5DoY=;
+        b=WxsOyBCe/Yhhe2bWNEx6bHYQWuHABealyoslB8I7YBiapoaXQ77d5KNVyg1wsN4cQW
+         L6I/tF4o05e7msd6CjZ99T2cfPKHEw3ANi7abHBLZRoL7yt0l6LZPlCodqVXH19Gzmcg
+         YmM5ozYNQ+XvkKxqlOO2CUipEZ1pTYN/g9l9qPnMrA6QY9buddHPYweTU9KlOU+eeQMX
+         mwDrhRrCvw0CAm+RQa6V25+W/wGbjFgqOOTjFa1+SvPIIJr6KRRo+AHJxckAi6gTC8LH
+         NyFBr/cJzXXjYN0PZMxxCYTymtbeOOEdfvs6fuhNRz5K57asptcq6/w2fEOqfOV8s6uO
+         O3XA==
+X-Gm-Message-State: ANoB5pnZu1rs4Wy3/PUuo5/tSeUmXZIs/gwAbPlMFoBaluFlB6vT+6T1
+        9bDDfknpJUsHQhsM4Fg63b+lpQ==
+X-Google-Smtp-Source: AA0mqf5BL3d+Gx9BcXZAHwX3sxhZR5kOKFTc3DJNBiRO1IsIjv+y+PQZA406NjuyI+8pDf/3Vvi6Gg==
+X-Received: by 2002:a05:6512:12c4:b0:4a2:4df9:4cab with SMTP id p4-20020a05651212c400b004a24df94cabmr5600420lfg.56.1668508557768;
+        Tue, 15 Nov 2022 02:35:57 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id b11-20020a056512070b00b004a46a9cebe2sm2152572lfs.289.2022.11.15.02.35.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Nov 2022 02:35:57 -0800 (PST)
+Message-ID: <c21e0e3d-5970-d905-3b6f-54a1ddacd052@linaro.org>
+Date:   Tue, 15 Nov 2022 11:35:56 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] MAINTAINERS: rectify entry for MICROCHIP USB251XB DRIVER
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Marek Vasut <marex@denx.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-usb@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entry for MICROCHIP USB251XB DRIVER
-Date:   Tue, 15 Nov 2022 11:31:53 +0100
-Message-Id: <20221115103153.28502-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+Cc:     Richard Leitner <richard.leitner@skidata.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221115103153.28502-1-lukas.bulwahn@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221115103153.28502-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit fff61d4ccf3d ("dt-bindings: usb: usb251xb: Convert to YAML schema")
-converts usb251xb.txt to usb251xb.yaml, but misses to adjust its reference
-in MAINTAINERS.
+On 15/11/2022 11:31, Lukas Bulwahn wrote:
+> Commit fff61d4ccf3d ("dt-bindings: usb: usb251xb: Convert to YAML schema")
+> converts usb251xb.txt to usb251xb.yaml, but misses to adjust its reference
+> in MAINTAINERS.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> Repair this file reference in MICROCHIP USB251XB DRIVER.
+> 
+You know this could be just one sentence (instead of three paragraphs)
+with a Fixes tag...
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
-
-Repair this file reference in MICROCHIP USB251XB DRIVER.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Marek, please ack.
-
-Greg, please pick this minor non-urgent patch on top of the commit above.
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fdcf1e020a5a..43f9e2abe893 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13726,7 +13726,7 @@ MICROCHIP USB251XB DRIVER
- M:	Richard Leitner <richard.leitner@skidata.com>
- L:	linux-usb@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/usb/usb251xb.txt
-+F:	Documentation/devicetree/bindings/usb/usb251xb.yaml
- F:	drivers/usb/misc/usb251xb.c
- 
- MICROCHIP USBA UDC DRIVER
--- 
-2.17.1
+Best regards,
+Krzysztof
 
