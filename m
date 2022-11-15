@@ -2,106 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92D6C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 09:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2620C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 10:32:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232649AbiKOJbo (ORCPT
+        id S232437AbiKOKcM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 04:31:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55840 "EHLO
+        Tue, 15 Nov 2022 05:32:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232439AbiKOJbl (ORCPT
+        with ESMTP id S237885AbiKOKcJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 04:31:41 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8D0EE39;
-        Tue, 15 Nov 2022 01:31:40 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id ja4-20020a05600c556400b003cf6e77f89cso870810wmb.0;
-        Tue, 15 Nov 2022 01:31:40 -0800 (PST)
+        Tue, 15 Nov 2022 05:32:09 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B147E22BFA;
+        Tue, 15 Nov 2022 02:32:08 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id z14so23321805wrn.7;
+        Tue, 15 Nov 2022 02:32:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xxOYorO+qp/Ux5uO45kQPwW5Xbfxtuq7/VNLX14n8IY=;
-        b=lq9j8Yo+iYN2nBfXTbuHNwdedR1am7ZrPm1ovFLALugOLW9NFNvXFyvRydDoqouGce
-         QOOCE09OddSjazJ1JNfegaB91Si+aYbqsrGXTJ+dWXX2PNIk/Rt2OpWXyRZ+9RiZtzYh
-         +rGawEVIZ3s6XFJhbCvjyUQSdPJKQ3+kcbhL2rujjCIXNjjvOLrQe0Jdw4YA7OkEjXlj
-         p4aghaBrIUAqhG7c6ymUY98504BQyOWAoFCQ1GKuichT1LJ7B6GNyIV4ZlzWxUjEbxgK
-         nFjoKSMTjR79gGeCXPRSyHVUzwQg13tG6so38xlKsjRE5w2rSaNP4t2lPQAHDtaMU3ys
-         CINQ==
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u3hleG+JBlWKiyuOBiHTr/k3gF4VUiw+qWAWvRBF4c8=;
+        b=kREM6saglq8HeIc5QRINVA75AkeornAxvkaWg3odA22W+AWraA655sTtPT9UsniIW9
+         ouZ5W/R5HwMQ0atdoXyB8gfGPLrUEzoYicEDe0ELWbfdm4gVMjiRZjqFgo605z+tDNB9
+         sO2TyDHWfRmxYQuZmqkEQp5ZZf0+4Uys2QFeShUc8UIsjzvu3SZd/yvVPqJNuqj+d72m
+         Be2j8n7/yBRMPZluYE5/tndN96jWhoeafOEiZnxVtx6v1BPshmAy6SCrLz5+Q8jLDnvu
+         URZr/YhxWNVGvmg49akb0179406dsnQlagbBLFAFfs9Hs3A0gRxsgKg3WGoH40G2fL94
+         94wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xxOYorO+qp/Ux5uO45kQPwW5Xbfxtuq7/VNLX14n8IY=;
-        b=3qLnioxfFtYikY0QiV48rUt7pprV54lxnE7flaHqYCOjZNsuvZRCVtg27OA6Slgy3w
-         x4cE+9Lhg07QbMfCJVDYSl2n6l1BkkpLlqlsUzd/iUFEcHnwy+nb6/t93OhqIXYP/BVz
-         kHyGd11UKsGyCM43l7zq53PXYXdneBUihlIBYGziOvoRa/vR3WSJBPvtQky7tMq1KVSX
-         rPowzZNpujv2VeFZfbQuJgvB40toE8RwmsIepdj3AT18Mrr8548CxYBntdhJM6GucPm6
-         y/z86xl3vwL/bldIPomA3a5yha61MUNMDyOlgvablF76UC3jxo5Ja4KURXcOz/LR86qV
-         G0/A==
-X-Gm-Message-State: ANoB5pkco1rBGT83JT3BN6FogR9ZY3b/6rlZ0+ufdjPYM1wLHunOEupv
-        Csbd/jUTCtyDDmOH7PAk+Fk=
-X-Google-Smtp-Source: AA0mqf568qIpfIQxac3Pe1jkRkBdQ5c3rksE6O0+Vmz9Szj0k+ikeq1ZEb/HZMhRgDxYmHuouJFY/A==
-X-Received: by 2002:a05:600c:a0d:b0:3cf:77a6:2c2e with SMTP id z13-20020a05600c0a0d00b003cf77a62c2emr408664wmp.179.1668504699067;
-        Tue, 15 Nov 2022 01:31:39 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g13-20020a5d554d000000b002366e3f1497sm12078215wrw.6.2022.11.15.01.31.38
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u3hleG+JBlWKiyuOBiHTr/k3gF4VUiw+qWAWvRBF4c8=;
+        b=pmbOUPFmYud2uCW3qd0IjrfOhwsdUxwioM6vLAulSLigblPPNfN4/qN/qSTnouambk
+         cza86KmlO/Hs82jj6/ySOnSdezrK4jqM9POaWik5u5V+h8eul4PlMVaq8C45VeXBTiwk
+         ki6dJlk3wFJVq3EgwDWWxwMcqqIfZDCWch5NCUTzEH7rFeJ0gi3IK2yqSYKdQXHnHr19
+         LvPGOSB4BnpH1zUJvVqbcK/2/TOks/+6HSN8fL6fpPAtvPVC6GW7InynC34IeW0cUSI1
+         QzqivWhY/pxJWAHS78kzkupWhfEQ1igQciUuYNwemdNqWFrca59Swlq4J2Kn8gYusTz6
+         w/Hg==
+X-Gm-Message-State: ANoB5pnNVLSc5L61A4g7C8wAhyBSolP+RivgMCwjYjeIUtvnEEFO8ho/
+        smrAwh6a+8Hslscs4bIpwB8=
+X-Google-Smtp-Source: AA0mqf7SuuYyRKlOJch4Qlmd4Yoooeu9BbQHtWGy3R/vQjMgsmeMAOIHLFk0ze0X5QTotT0AkHMZqg==
+X-Received: by 2002:a5d:6407:0:b0:238:238:cae3 with SMTP id z7-20020a5d6407000000b002380238cae3mr10355518wru.685.1668508327067;
+        Tue, 15 Nov 2022 02:32:07 -0800 (PST)
+Received: from felia.fritz.box (200116b826a73f00a9cec1b8eddc8521.dip.versatel-1u1.de. [2001:16b8:26a7:3f00:a9ce:c1b8:eddc:8521])
+        by smtp.gmail.com with ESMTPSA id t5-20020adfe445000000b00236740c6e6fsm11940207wrm.100.2022.11.15.02.32.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 01:31:38 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next][V2]: sundance: remove unused variable cnt
-Date:   Tue, 15 Nov 2022 09:31:37 +0000
-Message-Id: <20221115093137.144002-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Tue, 15 Nov 2022 02:32:06 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Marek Vasut <marex@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for MICROCHIP USB251XB DRIVER
+Date:   Tue, 15 Nov 2022 11:31:53 +0100
+Message-Id: <20221115103153.28502-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable cnt is just being incremented and it's never used
-anywhere else. The variable and the increment are redundant so
-remove it.
+Commit fff61d4ccf3d ("dt-bindings: usb: usb251xb: Convert to YAML schema")
+converts usb251xb.txt to usb251xb.yaml, but misses to adjust its reference
+in MAINTAINERS.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
+
+Repair this file reference in MICROCHIP USB251XB DRIVER.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
+Marek, please ack.
 
-V2: Use the correct net-next convention. I do hope I've got this correct,
-    apologies for being consistently incorrect in the past.
+Greg, please pick this minor non-urgent patch on top of the commit above.
 
----
- drivers/net/ethernet/dlink/sundance.c | 2 --
- 1 file changed, 2 deletions(-)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/dlink/sundance.c b/drivers/net/ethernet/dlink/sundance.c
-index 43def191f26f..aaf0eda96292 100644
---- a/drivers/net/ethernet/dlink/sundance.c
-+++ b/drivers/net/ethernet/dlink/sundance.c
-@@ -1414,7 +1414,6 @@ static void refill_rx (struct net_device *dev)
- {
- 	struct netdev_private *np = netdev_priv(dev);
- 	int entry;
--	int cnt = 0;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fdcf1e020a5a..43f9e2abe893 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13726,7 +13726,7 @@ MICROCHIP USB251XB DRIVER
+ M:	Richard Leitner <richard.leitner@skidata.com>
+ L:	linux-usb@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/usb/usb251xb.txt
++F:	Documentation/devicetree/bindings/usb/usb251xb.yaml
+ F:	drivers/usb/misc/usb251xb.c
  
- 	/* Refill the Rx ring buffers. */
- 	for (;(np->cur_rx - np->dirty_rx + RX_RING_SIZE) % RX_RING_SIZE > 0;
-@@ -1441,7 +1440,6 @@ static void refill_rx (struct net_device *dev)
- 		np->rx_ring[entry].frag.length =
- 			cpu_to_le32(np->rx_buf_sz | LastFrag);
- 		np->rx_ring[entry].status = 0;
--		cnt++;
- 	}
- }
- static void netdev_error(struct net_device *dev, int intr_status)
+ MICROCHIP USBA UDC DRIVER
 -- 
-2.38.1
+2.17.1
 
