@@ -2,80 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A110C43217
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Nov 2022 23:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FEAC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 00:31:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237262AbiKNXU2 (ORCPT
+        id S232180AbiKOAbY convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Nov 2022 18:20:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37294 "EHLO
+        Mon, 14 Nov 2022 19:31:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235813AbiKNXU1 (ORCPT
+        with ESMTP id S229865AbiKOAbX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Nov 2022 18:20:27 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BF1310EF;
-        Mon, 14 Nov 2022 15:20:27 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id f5-20020a17090a4a8500b002131bb59d61so21838pjh.1;
-        Mon, 14 Nov 2022 15:20:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XYE+aPNNHJ7fVwVvl7/DiAZRroOufRRoYNS0OuqrPeI=;
-        b=IuE/15Ju55FoBQ+HJwIbs85VTtZM91zKA8Egi8SNlLSOu8NPKunLk7mq/YwiwSWUGh
-         lUDqxVK0A4+Bx2Z9NU3qTPsZwa1BJSOpkNtK81vImBXzAwcGzXNfm3DCwuo4e18YodNy
-         yupwPR5HoCrYgtaXSiGGJt9jKsq8UOGvuEBVLHZRbTEQKY+l5Og2cglOKG0clWyPuDgC
-         4/aqTN6pahfgMI+ta2jPdhv16W3oc1IFHaBybbmftDKWZ7z9hxiYMpdMT63CiVGQ9gr+
-         ktDG9oYr+CTnqA6p94an280aUcpSUcC9O4VI5pQykAWNn9g6o5PMhQHt4evitj2MMbjo
-         16Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XYE+aPNNHJ7fVwVvl7/DiAZRroOufRRoYNS0OuqrPeI=;
-        b=kay3UeBBtZZ1+gd6h9xF3HbwBKa7Pq7/wnh1OIkKAX3zPtfJIQXJr/zead19jCnBlK
-         Wct22HEYzY4FfNTYmx+d55s1sjvP0koLnZtbIdsz/L3PW4jPfiK10l9lbCWuzaP4Ig59
-         dW3Afk4mI1vVp+DX5jUDM6e2nw30x8QX3eo41CH3ewGqWF0zl1Nr+8trNk2fenjRvVK1
-         Zkd8xf3VWIcFff29QSgIXp143Dq8iZhn5bizqEBgxAmrCUjaa9uLuUaeShW4mElTzb9A
-         k8yBxm3CUp5mYFySrsE6iflH8XiC1J84qDQ/p9vZyfdtSOp+whRt4PYSzeQ5wlQv8mV0
-         9r9g==
-X-Gm-Message-State: ANoB5pkKoW/OCtJH5yEhJ8Aj6sB/j3zz4OB2Dj6C7KQ8kY94qPM9zYZ6
-        WKX4rQWHRjWKkW6xKjAmSsa1qZcj7ps=
-X-Google-Smtp-Source: AA0mqf6CZ+K7NCcfD9AKrzS+wqdvy+rG3oXMNSgcPQXt0qJJGPDebwK3iSladG+X3Wwm5+1dt5Br3Q==
-X-Received: by 2002:a17:902:8484:b0:185:55db:c328 with SMTP id c4-20020a170902848400b0018555dbc328mr1432521plo.71.1668468026753;
-        Mon, 14 Nov 2022 15:20:26 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id c4-20020a655a84000000b00473c36ea150sm6289908pgt.92.2022.11.14.15.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Nov 2022 15:20:26 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Mon, 14 Nov 2022 15:20:24 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Roger Lucas <vt8231@hiddenengine.co.uk>,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH] hwmon: Remove some useless #include <linux/hwmon-vid.h>
-Message-ID: <20221114232024.GA2289674@roeck-us.net>
-References: <41610f64a69bd0245ebc811fcff10ee54e93ac46.1668330765.git.christophe.jaillet@wanadoo.fr>
+        Mon, 14 Nov 2022 19:31:23 -0500
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 31F06D11D;
+        Mon, 14 Nov 2022 16:31:23 -0800 (PST)
+Authenticated-By: 
+X-SpamFilter-By: ArmorX SpamTrap 5.77 with qID 2AF0UGtF4016853, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+        by rtits2.realtek.com.tw (8.15.2/2.81/5.90) with ESMTPS id 2AF0UGtF4016853
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Tue, 15 Nov 2022 08:30:16 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.9; Tue, 15 Nov 2022 08:30:56 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Tue, 15 Nov 2022 08:30:55 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::15b5:fc4b:72f3:424b]) by
+ RTEXMBS04.realtek.com.tw ([fe80::15b5:fc4b:72f3:424b%5]) with mapi id
+ 15.01.2375.007; Tue, 15 Nov 2022 08:30:55 +0800
+From:   Ping-Ke Shih <pkshih@realtek.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: RE: [PATCH] wifi: rtw89: Fix some error handling path in rtw89_core_sta_assoc()
+Thread-Topic: [PATCH] wifi: rtw89: Fix some error handling path in
+ rtw89_core_sta_assoc()
+Thread-Index: AQHY93eI5D4TEOTQ2EmDk/3qQhZtKK4/JA5Q
+Date:   Tue, 15 Nov 2022 00:30:55 +0000
+Message-ID: <3d97dc8a2b3447e998861ab6b8fb74af@realtek.com>
+References: <7b1d82594635e4406d3438f33d8da29eaa056c5a.1668354547.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7b1d82594635e4406d3438f33d8da29eaa056c5a.1668354547.git.christophe.jaillet@wanadoo.fr>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.188]
+x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
+x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
+ rules found
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: =?us-ascii?Q?Clean,_bases:_2022/11/14_=3F=3F_10:23:00?=
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <41610f64a69bd0245ebc811fcff10ee54e93ac46.1668330765.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Nov 13, 2022 at 10:13:16AM +0100, Christophe JAILLET wrote:
-> <linux/hwmon-vid.h> is not needed for these drivers. Remove the
-> corresponding #include.
+
+
+> -----Original Message-----
+> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Sent: Sunday, November 13, 2022 11:49 PM
+> To: Ping-Ke Shih <pkshih@realtek.com>; Kalle Valo <kvalo@kernel.org>; David S. Miller <davem@davemloft.net>;
+> Eric Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>
+> Cc: linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr>; linux-wireless@vger.kernel.org; netdev@vger.kernel.org
+> Subject: [PATCH] wifi: rtw89: Fix some error handling path in rtw89_core_sta_assoc()
 > 
+> 'ret' is not updated after a function call in rtw89_core_sta_assoc().
+> This prevent error handling from working.
+> 
+> Add the missing assignment.
+> 
+> Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to hwmon-next.
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-Thanks,
-Guenter
+> ---
+>  drivers/net/wireless/realtek/rtw89/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
+> index e716b96d0f56..f30aadc41f2b 100644
+> --- a/drivers/net/wireless/realtek/rtw89/core.c
+> +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> @@ -2535,7 +2535,7 @@ int rtw89_core_sta_assoc(struct rtw89_dev *rtwdev,
+>  	}
+> 
+>  	/* update cam aid mac_id net_type */
+> -	rtw89_fw_h2c_cam(rtwdev, rtwvif, rtwsta, NULL);
+> +	ret = rtw89_fw_h2c_cam(rtwdev, rtwvif, rtwsta, NULL);
+>  	if (ret) {
+>  		rtw89_warn(rtwdev, "failed to send h2c cam\n");
+>  		return ret;
+> --
+> 2.34.1
+
