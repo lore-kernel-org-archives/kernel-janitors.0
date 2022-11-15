@@ -2,64 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD1EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 13:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0672DC4167B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 13:16:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230309AbiKONQZ (ORCPT
+        id S230420AbiKONQe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 08:16:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
+        Tue, 15 Nov 2022 08:16:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbiKONQY (ORCPT
+        with ESMTP id S230400AbiKONQd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 08:16:24 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5347228E3E
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 05:16:21 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id o30so9640766wms.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 05:16:21 -0800 (PST)
+        Tue, 15 Nov 2022 08:16:33 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41836BA
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 05:16:32 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id a11-20020a05600c2d4b00b003cf6f5fd9f1so10239052wmg.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 05:16:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pyuO5Hk4hHm9DC9pX7v9hEWX1AWbI34zrlY39Dkt8LA=;
-        b=k5xZD9EYCCiLHjTqbOSGy5SJ44glhLSSng/C7rhLuAFsoPgUk2KdN4XflzRa8X/Smm
-         Uh18mtBZHpQFN1/9KxIR2sDEh/l6ZbutwJZPMqNmVp98PTWGjiRKSOBr4w7euIUCWZR9
-         BErFAfNpFiFRPaHVH0EklNZQNNCH2B+Oq2gFhCSN7DA5DRKxATA1PtMlGQB6gzBZUKBy
-         r6tghkDmtHrPGeAfM9wMTn4+7MHG7Ukt5Giu37HzM1P64tQvq1fejmx32t+799SggifC
-         BEZLWR6erc7cAq8dPBPRw1rg7Y2tWbgFD5l3M7vR4Ai+z1jwJi+35I2YOCd5vBvpBBq+
-         2sfg==
+        bh=vauApsbc4UItGo8j86KlPEM6J2rbnw+bhzYXpI7YoWM=;
+        b=isLPesBDOxojosEmqtH37oSLsnYQ+jBvATAQRBQCEEE7sNeleCbC0h30hD94qv2TC8
+         oiNkbHcykai/3l5VZvnw3WKaReQwa3PSZ5U0oqfyKYBTMcBSkFTDfKxTXoyzwGGGNTf5
+         DSp9iZ4p1iRFcas/U1VyWFjwym52luX8ZlyM2LieSuwWGDKVd4pz6cgeq6s9ojuWqJGJ
+         1+7dfq0sPaMt27W1d3AGiBGAp1SfylFopjH3/cJoYUdRsbSn42EJ9/lVP+L62EMq7TVu
+         d6H/H+587hDQTR+PKhUTl2o6k4qFlaf6Bl0NLt3r8MekefsZFpHo0JNdsO8y8fao7zA3
+         lYKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pyuO5Hk4hHm9DC9pX7v9hEWX1AWbI34zrlY39Dkt8LA=;
-        b=bbWJJng19egkLg3BbuNo2r0yMjI2uqZWWqmTl9+5ENQNwxPJSF+4mePZ9OLjWzY7dM
-         e02WtVdbzgzOmN3hpBnDod6wjUn6dVhjQNYChdwsraE6G4s/CfyIhAWWWt09THe17b/f
-         94L9m1uAePtkZ+va/2dq0DjzeymyAVgXZxyRWOG//xNQy/Fhdc7nsfH2gTky9ew8HwX5
-         jRliNgzkVMkTCu4pW+eruYSHCMHnrHH31tgdTyB0rorO4OC++TOkpbtgDtkmMrV0nYGE
-         fI3ADk7mjqul8rTlh6t1KHA2tzKmh4fjGZbzmubHmyCt6jbhjioFHJuLJIj1fP0+49wW
-         GM7g==
-X-Gm-Message-State: ANoB5pmSrxt3ExjRgQlitO7ZNvhm0mCTYM5jstRmoqGj9YWlPnpl7GMY
-        B/gOKKUwGOAva1IQ/uNt1yw=
-X-Google-Smtp-Source: AA0mqf4HjMwos42pICW3yeahWx8vGQWgHT9rZm93eePobYAPWie2WJTR8Scy0xUWSP0haRFqMm+6XA==
-X-Received: by 2002:a05:600c:706:b0:3cf:9a6a:c72a with SMTP id i6-20020a05600c070600b003cf9a6ac72amr309994wmn.168.1668518179738;
-        Tue, 15 Nov 2022 05:16:19 -0800 (PST)
+        bh=vauApsbc4UItGo8j86KlPEM6J2rbnw+bhzYXpI7YoWM=;
+        b=03qylv8bKnvD6PsMp/sk8HWUx6FbxMKmmo99HcXwwi/ydAyKxs3AeRjFq8VBGc8/Xe
+         QW4WSUCxBeKyxK+jbNX97Kxa62Jyu4uM0i1W3t0ui+tUTcRzSwaLtFoiAY0xaz0MIpbX
+         JvLvvKdQqZiqIQYYuxWUCF2zBAG7Md8KeOb8arelxM31NQCj5GU285FbZ5OQ4nabFx+5
+         K5wQXcjMUGIUGtyhMIcuG6ZRoUFzAkw/j7rQH/hj4veT7mBv0ot1aiSVrwYAdsbJR9uK
+         9OEfyoNVzK6LklUOKkBVUh41C3+kKT+YDefzGptHZN9ES1gcNTFNtN+/Q8AHh2M9nwvm
+         8YrA==
+X-Gm-Message-State: ANoB5plHlRQrYvivht7pRvSEnb90VEAIkbx/Wv4pUjv8bSZ27GlBFzqS
+        AU0fv+Zhk6HcXZgbJ0DefNQ=
+X-Google-Smtp-Source: AA0mqf7caGDVbLS846G0EB5PU7FYFbjEvGpWyiaMSjJd8HX8o7LSMxw/oKEE2kXNf9icY5Gm3sWPQQ==
+X-Received: by 2002:a05:600c:212:b0:3cf:cfea:904c with SMTP id 18-20020a05600c021200b003cfcfea904cmr456990wmi.33.1668518190808;
+        Tue, 15 Nov 2022 05:16:30 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id f20-20020a05600c155400b003c6f3e5ba42sm25738865wmg.46.2022.11.15.05.16.18
+        by smtp.gmail.com with ESMTPSA id a11-20020a5d570b000000b0022ca921dc67sm12422379wrv.88.2022.11.15.05.16.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 05:16:19 -0800 (PST)
-Date:   Tue, 15 Nov 2022 16:16:15 +0300
+        Tue, 15 Nov 2022 05:16:30 -0800 (PST)
+Date:   Tue, 15 Nov 2022 16:16:27 +0300
 From:   Dan Carpenter <error27@gmail.com>
 To:     Ben Skeggs <bskeggs@redhat.com>
 Cc:     Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
         David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Dave Airlie <airlied@redhat.com>,
         dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/nouveau/fifo: small cleanup in nvkm_chan_cctx_get()
-Message-ID: <Y3Jdx+pFyv0CWLZm@kili>
+Subject: [PATCH] drm/nouveau/gr/gv100-: unlock on error in gf100_gr_chan_new()
+Message-ID: <Y3Jd0JYhjPe4wTXh@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -68,27 +67,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "&chan->cgrp->mutex" and "&cgrp->mutex" variables refer to the same
-thing.  Use "&cgrp->mutex" consistently.
+Drop the "gr->fecs.mutex" lock before returning on this error path.
 
+Fixes: ca081fff6ecc ("drm/nouveau/gr/gf100-: generate golden context during first object alloc")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c
-index b7c9d6115bce..790b73ee5272 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c
-@@ -105,7 +105,7 @@ nvkm_chan_cctx_get(struct nvkm_chan *chan, struct nvkm_engn *engn, struct nvkm_c
- 	if (cctx) {
- 		refcount_inc(&cctx->refs);
- 		*pcctx = cctx;
--		mutex_unlock(&chan->cgrp->mutex);
-+		mutex_unlock(&cgrp->mutex);
- 		return 0;
- 	}
- 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c
+index 5f20079c3660..24bec8f8f83e 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c
+@@ -442,6 +442,7 @@ gf100_gr_chan_new(struct nvkm_gr *base, struct nvkm_fifo_chan *fifoch,
+ 	if (gr->data == NULL) {
+ 		ret = gf100_grctx_generate(gr, chan, fifoch->inst);
+ 		if (ret) {
++			mutex_unlock(&gr->fecs.mutex);
+ 			nvkm_error(&base->engine.subdev, "failed to construct context\n");
+ 			return ret;
+ 		}
 -- 
 2.35.1
 
