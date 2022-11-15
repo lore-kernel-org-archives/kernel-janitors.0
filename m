@@ -2,101 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2A2C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 10:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE89C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230297AbiKOK4I (ORCPT
+        id S230374AbiKOMbf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 05:56:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37366 "EHLO
+        Tue, 15 Nov 2022 07:31:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231966AbiKOKzl (ORCPT
+        with ESMTP id S229629AbiKOMbe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 05:55:41 -0500
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3C962613B
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 02:54:23 -0800 (PST)
-Received: by mail-lj1-x22a.google.com with SMTP id d3so17019020ljl.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 02:54:23 -0800 (PST)
+        Tue, 15 Nov 2022 07:31:34 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4EE1F2CB;
+        Tue, 15 Nov 2022 04:31:32 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id i21so21637540edj.10;
+        Tue, 15 Nov 2022 04:31:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LcdMK6pyq6QRrGL0Z9BG95K8ZsYDf0IuGpvJl7z2gQo=;
-        b=SqiVoxqjHssIuk0phQrkPORoueZJcLR/XFveKKnHYiZEi83mz3Yv6iHgpU4fy1ye3t
-         wKV28TJiB+5gcqJFbgQLl2KdMhcaJSAyyte7nADjJR3OBwejSeTNCGE3YuKRmWr3P/BR
-         Ehnqv/13JgxdeQE4zvqdXrsWf/aajirXtBQMbLIw+m07Bt6Kopdu1MBk7C9zgWWqxkQZ
-         CiaRp+OKx9CJsmiUwnbLXZBdggjms9VdnZ887iAfvKWcuy/MgxiKEMQDS8bST53yA9/t
-         PIB6cXTFfsJ5K/IcXNg1s2D0t9BxrKrvGsctf5V5DSnvih7KCEs3HwJa00MG2riPYIe6
-         jeqg==
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LtOTHKIZ6A/I3hs7BfEXlQ0kPVymIIHZKezQdn2E0uA=;
+        b=Xfz6iaQ0fCf4t3J0J/BuCbm8zGPkJSHj/zxhbbhNado/0mO7ara5PP0cExqXn9JNLH
+         dPtQaoBSrVmitxwYbrpfwIXa1zRiT9Ws/PK4WyZeS/mRawxuHFMb3QBjdL2aD25xm39R
+         Xkj2nD+LhaeGDMqoLdfGc7yn9RKKopVenXD1HRINSIWlgonUqnp35z8Adr8rb2D17hRH
+         k/hnJ0M0vG6Vh+mQAi8BXmwxOmaYGzXLrf/tSxDY1RyUlbfnCt0l68qXPgRsLjHeeOq/
+         C3S+ctJZooG1xcErFrZp88J7bPdxfIrDBqJAWqubuxU+SiYDIm4JoTkvJMU/1fJofzJD
+         tX+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LcdMK6pyq6QRrGL0Z9BG95K8ZsYDf0IuGpvJl7z2gQo=;
-        b=c04WOW7I67xrrdtnzWROD1epzI0lZf2qLFz4JH3oQbfa1Wfyd+shc5w9n0il3JT9nX
-         JLVAWekEC0Korii0yqm4+O+8WDumDVcUdhsETdT5a0uXZSu7hGYf7RACPdzRW3+xYSR6
-         sODvZiM/8Tt7dPRr0fC2S4BzshcqdhDMqJtmuU5V+fpyCOZKNBwVNIIe4giOP5gNQ+TF
-         7BLAnTvJh6DJjNRf3ZVQCjT3eYlxmskbA0uQYP30HN9+M00s/7lTtA0VFiSIaD4EgBkj
-         tUYXEVDYtmLJnZjf8uH60gOzITNrbffRoWOSYQO4RyBUkQ2gAr3Fe7myyw2ZYAf62fWV
-         Tm2w==
-X-Gm-Message-State: ANoB5plHTg7+0AiNaZXnilh5vk/R9P9s9wXqLAmkJjOrTfujXkfPV8Rk
-        oT7J9n7OvJD2dW7EYZb3X7Zc8GDUc28lbU+B
-X-Google-Smtp-Source: AA0mqf54UoATcbcODLPVTFYROSL09YrLMVi1vrCB9iC5LjPXeUx5nxpm7ns+BmA/Ry7vjKAgLndhYQ==
-X-Received: by 2002:a05:651c:17a1:b0:277:f8b:bb4f with SMTP id bn33-20020a05651c17a100b002770f8bbb4fmr6158885ljb.161.1668509661805;
-        Tue, 15 Nov 2022 02:54:21 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id c8-20020a056512324800b0049a5a59aa68sm2182351lfr.10.2022.11.15.02.54.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Nov 2022 02:54:21 -0800 (PST)
-Message-ID: <0eb1a6a5-771c-6cc1-f95b-9708468f1d90@linaro.org>
-Date:   Tue, 15 Nov 2022 11:54:15 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for MICROCHIP USB251XB DRIVER
-Content-Language: en-US
-To:     Marek Vasut <marex@denx.de>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     Richard Leitner <richard.leitner@skidata.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221115103153.28502-1-lukas.bulwahn@gmail.com>
- <c21e0e3d-5970-d905-3b6f-54a1ddacd052@linaro.org>
- <0750d2e8-766b-3c5c-5472-4c9d6e9ec3c4@denx.de>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <0750d2e8-766b-3c5c-5472-4c9d6e9ec3c4@denx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LtOTHKIZ6A/I3hs7BfEXlQ0kPVymIIHZKezQdn2E0uA=;
+        b=OsLBqUrqZrY6KclkDg5OZFx+lG7HdKdgDpYC+PgykY7u0332iskhcvEbGYek42en/i
+         /RKxUHMAWU0I6F38Cm81yJgGOHRFwV17exXVsJXUGK6PIyUQsJHbvIDa/gD+M2mY2hlT
+         MepMb/HD/WGKKjAA4FFXbGJW8VdWrM+Dk71161TlUGl2RnnW1sK6qBTo3W8Awa4h07Qk
+         ee1NsVBYv/FFpcx4kMcdvp79tNWJvkgK0GTEbxjIPNDthP15Wce28W4UhkSYt+V20cWk
+         SrDZ/bru0qL14xNFpToLa5sAgxCD0fjLOo2xCEfHXM+D9243CbjOGOL9J3djrLOcC70V
+         A9LQ==
+X-Gm-Message-State: ANoB5pmlZ5ik92cmt10aWqZBTDJCcjr6MZs7W+ImYJjQDScQkIXvRCcf
+        Gb8nDVCpjabPgsoz0OlAklU=
+X-Google-Smtp-Source: AA0mqf7A2NRexDle89XEgIuAECuKXbb9AZrWTSaxs0rClZOqmgODazcce2pl1CGfyX+Z7NX97kAzQw==
+X-Received: by 2002:a05:6402:2407:b0:467:5e4f:591 with SMTP id t7-20020a056402240700b004675e4f0591mr14635237eda.414.1668515491135;
+        Tue, 15 Nov 2022 04:31:31 -0800 (PST)
+Received: from felia.fritz.box (200116b826a73f00b885958edf4850c0.dip.versatel-1u1.de. [2001:16b8:26a7:3f00:b885:958e:df48:50c0])
+        by smtp.gmail.com with ESMTPSA id l7-20020a170906644700b0077a8fa8ba55sm5372891ejn.210.2022.11.15.04.31.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Nov 2022 04:31:30 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH v2 RESEND] MAINTAINERS: adjust ARM/INTEL IXP4XX ARM ARCHITECTURE to ixp4xx clean-up
+Date:   Tue, 15 Nov 2022 13:31:02 +0100
+Message-Id: <20221115123102.22732-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 15/11/2022 11:52, Marek Vasut wrote:
-> On 11/15/22 11:35, Krzysztof Kozlowski wrote:
->> On 15/11/2022 11:31, Lukas Bulwahn wrote:
->>> Commit fff61d4ccf3d ("dt-bindings: usb: usb251xb: Convert to YAML schema")
->>> converts usb251xb.txt to usb251xb.yaml, but misses to adjust its reference
->>> in MAINTAINERS.
->>>
->>> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
->>> broken reference.
->>>
->>> Repair this file reference in MICROCHIP USB251XB DRIVER.
->>>
->> You know this could be just one sentence (instead of three paragraphs)
->> with a Fixes tag...
-> 
-> On the other hand, the content is educational, e.g. about the usage of 
-> get_maintainer.pl script .
+Commit c83227a5d05e ("irq/gpio: ixp4xx: Drop boardfile probe path") and
+commit 155e4306107f ("clocksource/drivers/ixp4xx: Drop boardfile probe
+path") remove files include/linux/irqchip/irq-ixp4xx.h and
+include/linux/platform_data/timer-ixp4xx.h, but miss to adjust MAINTAINERS.
 
-Education is good, but I don't see a point to grow commit log with this.
-The warning would be useful, but the command? Just store it in
-Documentation if the intention is to educate.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+broken references.
 
-Best regards,
-Krzysztof
+Remove file entries for those files in ARM/INTEL IXP4XX ARM ARCHITECTURE.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+v1: https://lore.kernel.org/lkml/20220601050200.22213-1-lukas.bulwahn@gmail.com/
+v2: https://lore.kernel.org/lkml/20220919081753.16934-1-lukas.bulwahn@gmail.com/
+
+v1 -> v2:
+  added tags from v1, no other change.
+
+Linus, please pick this minor non-urgent clean-up patch for ixp4xx arm.
+
+ MAINTAINERS | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 547ba994ea98..e057108f2709 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2290,8 +2290,6 @@ F:	drivers/clocksource/timer-ixp4xx.c
+ F:	drivers/crypto/ixp4xx_crypto.c
+ F:	drivers/gpio/gpio-ixp4xx.c
+ F:	drivers/irqchip/irq-ixp4xx.c
+-F:	include/linux/irqchip/irq-ixp4xx.h
+-F:	include/linux/platform_data/timer-ixp4xx.h
+ 
+ ARM/INTEL KEEMBAY ARCHITECTURE
+ M:	Paul J. Murphy <paul.j.murphy@intel.com>
+-- 
+2.17.1
 
