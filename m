@@ -2,102 +2,136 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1101C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 13:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 974ABC43217
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 14:06:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229981AbiKON0O (ORCPT
+        id S229990AbiKOOGC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 08:26:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
+        Tue, 15 Nov 2022 09:06:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbiKON0N (ORCPT
+        with ESMTP id S229605AbiKOOFu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 08:26:13 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAF621116B;
-        Tue, 15 Nov 2022 05:26:12 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id l14so24247849wrw.2;
-        Tue, 15 Nov 2022 05:26:12 -0800 (PST)
+        Tue, 15 Nov 2022 09:05:50 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEDC2B191
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:05:49 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id v17so21989919edc.8
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:05:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=linbit-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UkG9A5GEaL+iS91A1sP8f+OHFyccXyI/9fKl7gdZSI4=;
-        b=lYC5JBRTM5eHKD6SMbbqo7rjWAdVHt8UX8yK3yeoJdAquX9842yoOmuh6Ksj3+V2Xx
-         KVEHb/gU1xog5n1xXCS9ATcEiK4Hmw4comE9Ws9+2aiqXzujEhcuW5hTW1c1+2KeRksw
-         I7mSyYzo+jECQNfFsMeK5TLPoq9uYJC7TiA+tU9AsCIQTdSwo677tmmnZHcglrK4YYe9
-         moF5uN8rA3NdjVJo5uk6lnj7Yc6ZhoKqjx2phIGeOAlqJQLavqYKd8dSmYRFNHkz4lB+
-         BW/hjj6RYrtMdhFJoiluvtWNu9Q+z7mqc8eQ0cajwY8gP5rVQVO5grFMom3rw/qYmwen
-         VRGQ==
+        bh=f7WFciVvNJW7kEDkH94rbryN71vzfH3OABZXCo397cs=;
+        b=ROtTyEPYbFH/w4ZblcsCZ+Sxy8nc+iKOmY5mKS0BFp/MGlPuoaBsfFwY2vt7ZRLqAy
+         8bVe6U94REHuHKNmJ9ckXPjlvZfQbaPfeFklKJPJjaR5188C+ZSoRbgFTe7NeP12XHx4
+         X5kkYusxFJpbKrMMKsCbbRjr7C37mNwqlwMtKCxCWj7qPNYEkePyPs7q3A24rqEwXwoC
+         KjAZ6C/L6K/1h5z1LU1EOy3Jy+pTV8xtSLtXFFcC0UvRFOQPzWryDdQNKi3+L3j/KLXm
+         xQEXg6Kp+P99RqNWLFTgEhH3W0KV9/3kq2fhwNmQzhXotFSLKjvhv0g1vGeBFok8z5mc
+         SW9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UkG9A5GEaL+iS91A1sP8f+OHFyccXyI/9fKl7gdZSI4=;
-        b=iSFrfPKU3QKYIbyyENYOtFkTVsIpfg0EX2IwBj4L/In5fzxPUMtF5ymFG+J54jgI+a
-         CXHLeidM1KR78bOJhvl0L3RLccoIufps7MiUSHtePLGTWMrINAltS53dtryrREfuEqo1
-         XEVif2jD4tcVEIXKC2Oq0fT2q8TLmbMIGKxlsSkkhr+VNmN1FHxIhzVYYZjjahO+Ua8j
-         BoRbHD9HDLYsPChHq8sgNYRaZLjn7omvX3dXf9f+mP5pp91LdCK2EKY1AlnIK/jaKRac
-         PAWwGV/ZPK9yTRDbTcK045mYnhO9KBqpo5JsGzbcViKC76SzN1OO+YdMVVvQBUbFzcTf
-         mU+A==
-X-Gm-Message-State: ANoB5pnB8NstQwyd8BlBRFxQEYRq4FEqXZGBVqRnU74vwd4lwXtFIn3O
-        iTVKOTPWHQle4OT9xhkk3Gk=
-X-Google-Smtp-Source: AA0mqf65gfPaZvyGgF2Go0sorV/aS1Gnaa76RvR8QG13OhEGBZmfq+49ld6g7elY235WTkAGgSYn4g==
-X-Received: by 2002:adf:fc0a:0:b0:22d:6988:30de with SMTP id i10-20020adffc0a000000b0022d698830demr10613276wrr.186.1668518771269;
-        Tue, 15 Nov 2022 05:26:11 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id r2-20020a5d6942000000b0022e47b57735sm12557498wrw.97.2022.11.15.05.26.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 05:26:10 -0800 (PST)
-Date:   Tue, 15 Nov 2022 16:26:07 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next/netfilter] netfilter: nft_inner: fix IS_ERR() vs
- NULL check
-Message-ID: <Y2PTO4xIJrwhcgyM@kili>
+        bh=f7WFciVvNJW7kEDkH94rbryN71vzfH3OABZXCo397cs=;
+        b=d/arPHhSVdtBauX6TUpK/q5PzXI2zGlo96U5vaAZiTwJ7pyJH0kM0O4XNVPOVrxK68
+         tORzP1Ggmq4hQYlIyjTZyoKZVVqLO108P8cNdpIl2vQ8E5moOD+EsZUnal40D0d8X2uX
+         8Kh098wtZYddicTUQL+qVkRrUlnCK+JLeUnIzR7dOPWen/Z+/+0v+ofkFe4naTcCmZyE
+         6EDfJsHQe4oLrkGnXWZLurZEZCgjxj0o6UBfOuJeGB4gi0mqyNu44ZIIH2QJ7Y0zkes2
+         Xbo2CNKmPfsfSET1yOvbNySDSqhUy/XoM+BWDarZXOsOX7tf9phCoRRHL+cT0YS+scmV
+         3VGw==
+X-Gm-Message-State: ANoB5pnyEGqU7BA7RDjY6UeNdPiXpID4DjcszYRcjPNsyxq/s7Gb21VN
+        B9fn0HrRSITklnGkv9MiZb6p5w==
+X-Google-Smtp-Source: AA0mqf7oxrRdM64h8FAoN9EbCTeSOds03YFY2tUoVdCPVV0reOQy2CW6ku26YqTBbiFTvwmZuBSx1Q==
+X-Received: by 2002:aa7:da13:0:b0:461:ed76:cb42 with SMTP id r19-20020aa7da13000000b00461ed76cb42mr15587691eds.229.1668521147538;
+        Tue, 15 Nov 2022 06:05:47 -0800 (PST)
+Received: from [192.168.178.55] (h082218028181.host.wavenet.at. [82.218.28.181])
+        by smtp.gmail.com with ESMTPSA id cf6-20020a170906b2c600b007ad94fd48dfsm5509478ejb.139.2022.11.15.06.05.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Nov 2022 06:05:47 -0800 (PST)
+Message-ID: <d0ff33bf-d39b-005c-ab62-42cae97e3b8c@linbit.com>
+Date:   Tue, 15 Nov 2022 15:05:46 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH] drbd: use after free in drbd_create_device()
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Andreas Gruenbacher <agruen@linbit.com>,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <Y3Jd5iZRbNQ9w6gm@kili>
+Content-Language: en-US
+From:   =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>
+In-Reply-To: <Y3Jd5iZRbNQ9w6gm@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The __nft_expr_type_get() function returns NULL on error.  It never
-returns error pointers.
+Am 15.11.22 um 14:16 schrieb Dan Carpenter:
+> The drbd_destroy_connection() frees the "connection" so use the _safe()
+> iterator to prevent a use after free.
+> 
+> Fixes: b6f85ef9538b ("drbd: Iterate over all connections")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> Smatch assumes that kref_put() generally calls the free function so it
+> gets very confused by drbd_delete_device() which calls:
+> 
+> 	kref_put(&device->kref, drbd_destroy_device);
+> 
+> Four times in a row.  (Smatch has some checking for incremented
+> reference counts but even there it assumes that people are going to hold
+> one reference and not four).
+> 
+> drivers/block/drbd/drbd_main.c:2831 drbd_delete_device() error: dereferencing freed memory 'device'
+> drivers/block/drbd/drbd_main.c:2833 drbd_delete_device() warn: passing freed memory 'device'
+> drivers/block/drbd/drbd_main.c:2835 drbd_delete_device() error: dereferencing freed memory 'device'
+> 
+> The drbd_adm_get_status_all() function makes me itch as well.  It seems
+> like we drop a reference and then take it again?
+> 
+> drivers/block/drbd/drbd_nl.c:4019 drbd_adm_get_status_all() warn: 'resource' was already freed.
+> drivers/block/drbd/drbd_nl.c:4021 drbd_adm_get_status_all() warn: 'resource' was already freed.
+> 
+>  drivers/block/drbd/drbd_main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+> index f3e4db16fd07..8532b839a343 100644
+> --- a/drivers/block/drbd/drbd_main.c
+> +++ b/drivers/block/drbd/drbd_main.c
+> @@ -2672,7 +2672,7 @@ static int init_submitter(struct drbd_device *device)
+>  enum drbd_ret_code drbd_create_device(struct drbd_config_context *adm_ctx, unsigned int minor)
+>  {
+>  	struct drbd_resource *resource = adm_ctx->resource;
+> -	struct drbd_connection *connection;
+> +	struct drbd_connection *connection, *n;
+>  	struct drbd_device *device;
+>  	struct drbd_peer_device *peer_device, *tmp_peer_device;
+>  	struct gendisk *disk;
+> @@ -2789,7 +2789,7 @@ enum drbd_ret_code drbd_create_device(struct drbd_config_context *adm_ctx, unsig
+>  	return NO_ERROR;
+>  
+>  out_idr_remove_from_resource:
+> -	for_each_connection(connection, resource) {
+> +	for_each_connection_safe(connection, n, resource) {
+>  		peer_device = idr_remove(&connection->peer_devices, vnr);
+>  		if (peer_device)
+>  			kref_put(&connection->kref, drbd_destroy_connection);
 
-Fixes: 3a07327d10a0 ("netfilter: nft_inner: support for inner tunnel header matching")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-This applies to net-next but presumably it's going to go through the
-netfilter tree?
+Thanks!
 
- net/netfilter/nf_tables_api.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 62da204eed41..6b159494c86b 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -2873,8 +2873,8 @@ int nft_expr_inner_parse(const struct nft_ctx *ctx, const struct nlattr *nla,
- 		return -EINVAL;
- 
- 	type = __nft_expr_type_get(ctx->family, tb[NFTA_EXPR_NAME]);
--	if (IS_ERR(type))
--		return PTR_ERR(type);
-+	if (!type)
-+		return -ENOENT;
- 
- 	if (!type->inner_ops)
- 		return -EOPNOTSUPP;
 -- 
-2.35.1
-
+Christoph Böhmwalder
+LINBIT | Keeping the Digital World Running
+DRBD HA —  Disaster Recovery — Software defined Storage
