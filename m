@@ -2,98 +2,159 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4129C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE036C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:58:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237917AbiKOM5H (ORCPT
+        id S237825AbiKOM6w (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 07:57:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35538 "EHLO
+        Tue, 15 Nov 2022 07:58:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232253AbiKOM5E (ORCPT
+        with ESMTP id S230468AbiKOM6u (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 07:57:04 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B6A9109E
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 04:57:03 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id j15so24141300wrq.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 04:57:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l3npKNO7EdnZMJchPseofSyg8OvoZM8dnC8E9718dj4=;
-        b=SDBOJ9o8aDYmio2B7zkkXLe/1Vh/h/Iqa5PZ63quI+gZpgjuS+ZKqvuFioZeRw5lh4
-         swINKn34NNLGKfZRRFRWGGU4X3oQR8iGhKimzrVjMstpdal5MQhr8vvcjjM/vlXxRqk1
-         VB0RJUAJZ4dVUDJtjyr/Nbk0jEuAV8hWPlGp3OWFWUZW3kL/nlK2U2raRye5qUaywWee
-         sg0Op7ZpYx5yFCPfg8Zgw77JuwrR462NEkfuNmeZOZGtnjQrznz8lWkYRWKZGCMbnzzv
-         j7s/jUcRh1zI0Y6BIAgukQucOwc00yv6t5dSaoReN1lRVkBjYqrrSpm3DMZprMTlfRGd
-         /YDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l3npKNO7EdnZMJchPseofSyg8OvoZM8dnC8E9718dj4=;
-        b=3PddQDOJhwNgFPboS69JwG/UKq7A2x7oAf+eenY5wh+9Iw9GidJQLwCd5+0Gjyk35M
-         1jOYorxsYRujm7D1jpAu8XrHbzYfcPUGrx1XdHYQnXBgBE7K5EIkYlyLrI9ysB2XWbD/
-         XSOR15OJ2GzEWdasmMAN5qFQ6uKzgNxsgcV3NkLaBGakW/zBEd0MT8g+hk79tMB0p0zg
-         nu9NrGGwk07JGfRG9X6iEfdhDQu0pM+bXimreqbj60NNSkq+2twKhWEv2nhiawD14n+/
-         UCqt3k+WpNgPfGajkeqO6MWyKIheC+SGXopR9PzOtujapCkP54ZV8kvOlMaV7rJzAXnv
-         dvDg==
-X-Gm-Message-State: ANoB5pkbSiidT8btxdgHWZWvNTaNwFpt/n1qyWnE15uAxjGJmHgXTEsq
-        Z3p8jCTjFhv7q0+86LrQAOI=
-X-Google-Smtp-Source: AA0mqf5WcSOrPcctHKA15TDbRyvs6c4/8xVmIbSG+fo7UP6Z8FoZdW/9b6SQUMJFkiQPDDyDDtH99g==
-X-Received: by 2002:a05:6000:605:b0:236:6f3c:1f2f with SMTP id bn5-20020a056000060500b002366f3c1f2fmr10888123wrb.89.1668517021867;
-        Tue, 15 Nov 2022 04:57:01 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p5-20020a05600c358500b003c6b9749505sm24241770wmq.30.2022.11.15.04.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 04:57:01 -0800 (PST)
-Date:   Tue, 15 Nov 2022 15:56:57 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Evan Quan <evan.quan@amd.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Lang Yu <lang.yu@amd.com>,
-        Darren Powell <darren.powell@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] amdgpu/pm: prevent array underflow in
- vega20_odn_edit_dpm_table()
-Message-ID: <Y2ZH2FPSuX/msEL1@kili>
+        Tue, 15 Nov 2022 07:58:50 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04EC641A;
+        Tue, 15 Nov 2022 04:58:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668517129; x=1700053129;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=odcUNrpXlpwBBrvLzRHOUBZ4LFlpk63pV4O7hObhms8=;
+  b=e8rbxV4Fga81MZXD68R8SMsd+wjz1Ue6qtE+48l+9sxNZuJ83ETL9TfO
+   RXXJAy+lsDmn9zcHAVLg7/GMWDeRUoUlUG6bGTfHCEYR9fOsBRQNeqFVQ
+   Krrs0pv86WtALpBDr8M+u4n2fX5wL/KZ5mKDmkEKcEhrz7e6G0krwmL28
+   O8eCMJMq6ZJUY6xVNhjc78mK3r+tB66Tv/z5c7vKePmm/n1TQ5PvSTX4/
+   VV7xQah7s09zUR/+niK3hcF6USxR5uixBczcME22tyP37sS763WPL8/oG
+   UN7CgSWbrZs8rT5LNAT10/k0C7xx9h2S/7l0JGC0uhxfQY9thO/CDgm0+
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="398535132"
+X-IronPort-AV: E=Sophos;i="5.96,165,1665471600"; 
+   d="scan'208";a="398535132"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 04:58:49 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="641197495"
+X-IronPort-AV: E=Sophos;i="5.96,165,1665471600"; 
+   d="scan'208";a="641197495"
+Received: from jawiblin-mobl.ger.corp.intel.com (HELO [10.252.18.33]) ([10.252.18.33])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 04:58:47 -0800
+Message-ID: <16b18a0d-4921-311e-be24-1103f90a8ac2@linux.intel.com>
+Date:   Tue, 15 Nov 2022 14:59:19 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.4.2
+Subject: Re: [PATCH] headers: Remove some left-over license text in
+ include/uapi/linux/hsi/
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>
+References: <4919073b3dee8ca7612989659d31b12f9c5491ba.1662897400.git.christophe.jaillet@wanadoo.fr>
+ <20221114210155.anq5gkggfrvj6nki@mercury.elektranox.org>
+Content-Language: en-US
+From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+In-Reply-To: <20221114210155.anq5gkggfrvj6nki@mercury.elektranox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In the PP_OD_EDIT_VDDC_CURVE case the "input_index" variable is capped at
-2 but not checked for negative values so it results in an out of bounds
-read.  This value comes from the user via sysfs.
+Hi,
 
-Fixes: d5bf26539494 ("drm/amd/powerplay: added vega20 overdrive support V3")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 14/11/2022 23:01, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Sun, Sep 11, 2022 at 01:56:59PM +0200, Christophe JAILLET wrote:
+>> Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
+>> license identifier to uapi header files with a license")
+>>
+>> When the SPDX-License-Identifier tag has been added, the corresponding
+>> license text has not been removed.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+> 
+> IIRC that was intentional, since the plan was to seek for an
+> explicit Ack from the copyright holder when removing the text.
+> I've added Greg for clarification and hopefully the latest
+> mail address from Kai and Peter.
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c
-index 97b3ad369046..b30684c84e20 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c
-@@ -2961,7 +2961,8 @@ static int vega20_odn_edit_dpm_table(struct pp_hwmgr *hwmgr,
- 			data->od8_settings.od8_settings_array;
- 	OverDriveTable_t *od_table =
- 			&(data->smc_state_table.overdrive_table);
--	int32_t input_index, input_clk, input_vol, i;
-+	int32_t input_clk, input_vol, i;
-+	uint32_t input_index;
- 	int od8_id;
- 	int ret;
- 
+I'm fine with the removal of the boilerplate text, SPDX is covering that.
+
+I would appreciate if you pick my personal ack for this:
+
+Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+
+> 
+> -- Sebastian
+> 
+>>  include/uapi/linux/hsi/cs-protocol.h | 14 --------------
+>>  include/uapi/linux/hsi/hsi_char.h    | 14 --------------
+>>  2 files changed, 28 deletions(-)
+>>
+>> diff --git a/include/uapi/linux/hsi/cs-protocol.h b/include/uapi/linux/hsi/cs-protocol.h
+>> index c7f6e7672cb5..07c3bfb67463 100644
+>> --- a/include/uapi/linux/hsi/cs-protocol.h
+>> +++ b/include/uapi/linux/hsi/cs-protocol.h
+>> @@ -6,20 +6,6 @@
+>>   *
+>>   * Contact: Kai Vehmanen <kai.vehmanen@nokia.com>
+
+I don't think Kai's nokia.com mail address is valid as a contact
+information...
+
+>>   * Original author: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+
+
+
+>> - *
+>> - * This program is free software; you can redistribute it and/or
+>> - * modify it under the terms of the GNU General Public License
+>> - * version 2 as published by the Free Software Foundation.
+>> - *
+>> - * This program is distributed in the hope that it will be useful, but
+>> - * WITHOUT ANY WARRANTY; without even the implied warranty of
+>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+>> - * General Public License for more details.
+>> - *
+>> - * You should have received a copy of the GNU General Public License
+>> - * along with this program; if not, write to the Free Software
+>> - * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+>> - * 02110-1301 USA
+>>   */
+>>  
+>>  #ifndef _CS_PROTOCOL_H
+>> diff --git a/include/uapi/linux/hsi/hsi_char.h b/include/uapi/linux/hsi/hsi_char.h
+>> index 91623b0398b1..5ef72f0daf94 100644
+>> --- a/include/uapi/linux/hsi/hsi_char.h
+>> +++ b/include/uapi/linux/hsi/hsi_char.h
+>> @@ -5,20 +5,6 @@
+>>   * Copyright (C) 2010 Nokia Corporation. All rights reserved.
+>>   *
+>>   * Contact: Andras Domokos <andras.domokos at nokia.com>
+>> - *
+>> - * This program is free software; you can redistribute it and/or
+>> - * modify it under the terms of the GNU General Public License
+>> - * version 2 as published by the Free Software Foundation.
+>> - *
+>> - * This program is distributed in the hope that it will be useful, but
+>> - * WITHOUT ANY WARRANTY; without even the implied warranty of
+>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+>> - * General Public License for more details.
+>> - *
+>> - * You should have received a copy of the GNU General Public License
+>> - * along with this program; if not, write to the Free Software
+>> - * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+>> - * 02110-1301 USA
+>>   */
+>>  
+>>  #ifndef __HSI_CHAR_H
+>> -- 
+>> 2.34.1
+>>
+
 -- 
-2.35.1
-
+Péter
