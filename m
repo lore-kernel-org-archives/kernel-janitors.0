@@ -2,84 +2,166 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B0DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 21:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C39C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 23:38:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238617AbiKOVm5 (ORCPT
+        id S230260AbiKOXiF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 16:42:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33946 "EHLO
+        Tue, 15 Nov 2022 18:38:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230394AbiKOVme (ORCPT
+        with ESMTP id S231372AbiKOXiD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 16:42:34 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F7322E68C
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 13:42:15 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id ud5so39536723ejc.4
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 13:42:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Nl9X2dBBteRxXc88z+X5/Ev/rJGuG6QGv1Den2poAo=;
-        b=QwtGfdLExqGEA3JBttYR2zaNYjZe26Vt6/fFPWMuk54OnoMDs1FRgye8GpGvi457VX
-         Ehd3UvkUHaqnWVtNl5Yhok3ciBieqGeJ9smgarRrEGrMZD8wJ+RyK21O1kVfszahcKAQ
-         1JfCR6GMKLmQcAF9S1lxq4qq8ETCraVQ14j3eil805xRkwv8JB1xNJfzM70HMHId4Jt1
-         PnNeXtzsgQz4YFIlo84bs2XPdiyl8yg7hne1bsU55rk10UVgYx+/WPW3qNUlFy+MHL95
-         y6N/nWy8aDChycA4rZleL+UpFoFcldr4dg3+v8PTbq1siLVeRsRHll6eGEfTe1Mtm8Mc
-         kP6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3Nl9X2dBBteRxXc88z+X5/Ev/rJGuG6QGv1Den2poAo=;
-        b=1+nZuL5bE/BKau0l+cuSJnRX6gEhNpYhooTCGW/6bm4rGekXdSvv64wN1ivL+KmQjf
-         R8va07Dxc3Faq/BTowVthrYsVQHcEcHbENPJIP3jaajlAvIPaKrzQjYBt7uy06xbByDH
-         O8pI0Boq8RRbXIRkPRS7d9agBeiITt21RnNIIvZXl8AOjghwwc5BjLWCuCtfCaJUryUA
-         wcE9oDENlOitX/L044DE+Hlt633Wnlqx2SQq2oXPONDdQpM/z9sMEvqHuxhFpDKf+5N6
-         umb9OJUPa1OfD65wEYLIOoR7oFSZih57kdChsDHupbQcXYMUDZ14VxbiAifpzxlyHR9a
-         Fcsw==
-X-Gm-Message-State: ANoB5plQ8Tdg5KJFZOgWTXqbrxflj0nBana8oa1i1TwnyQtvCBHtRuln
-        1+sItEb3ocXtO6cK50E28WghzMNcCz0nNpESAaR02Q==
-X-Google-Smtp-Source: AA0mqf4Cv2JnITywTHhrkvL/GTP6vT4b3f6IswQJeiG7a8Mg9w83igu2bpdNd9+ZL4uYMG7Wi/gfCKeZ/s/hdK39c9A=
-X-Received: by 2002:a17:906:4911:b0:7ad:9891:8756 with SMTP id
- b17-20020a170906491100b007ad98918756mr15884330ejq.203.1668548533646; Tue, 15
- Nov 2022 13:42:13 -0800 (PST)
+        Tue, 15 Nov 2022 18:38:03 -0500
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2125.outbound.protection.outlook.com [40.107.114.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DD452A27C;
+        Tue, 15 Nov 2022 15:38:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VmM71mr1WqBYTq+RwdWEYrEShyEZfNO57dLQ8Uj/1ZXkDgmKfEzoiHQ1QaVLjdtM/WM147XCv8vZvr+Hj5RdAgJLuQKqQWXMFdLDlMi77+PQodK0VECQ2+RHWwl1CZVVfpVPO9YCoFDp6kw0tmKOX1wZ+NbyRZ2RaQLzQUyGWFOc62Ff5S/ODo8jzprJ/7tj4zfIO8dREaLJsMfhss3/QUTGB0Vi72hU3SFV6hVc/Csxh/s16wrinp4QUvmZjUi7zo++kNujSDpUVP/6bbKcnPGS/Oa0+k9XUe0RvaY5x79I/6GecoyiUeWtFueJnpIZm+mbxWNBoLDL3XZz0qwOMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GeINqwveHGAbRRt+hFZTVjobusqYaud3BE+kS2G9coo=;
+ b=DXINmqtNV9dGkhejDjMtG18HpE6dfQdcuA5Uov1Hc+l//trq+deLZjuZ49oBQmWcPPihSfXgXkKzcbC5OOQpaSIb9lTJUUXWMypXHlAaZDro9QppmCd8/L6jHUqUoONduzsDTfJxukqLh5vS8Z9jo+a3oQj3BAL5XyzgTVPyBA9tfTT5ja6xh1hQTf0B9iAkmfW7ZPo70V8JUmvy+xOchCqWv1HHiUCXsXVs2qzuyNlns9/NdyQa7Mv5m0QSal+wh5w3OTJ4kaDR300l3HJMO6wTBp9tY5zbC7qqXnsVuHHc8U4QQuwT3QRahnkFIw42gwxCuc3xVqrsyiUMBxveSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GeINqwveHGAbRRt+hFZTVjobusqYaud3BE+kS2G9coo=;
+ b=Sn/zvGAdp5eY95CcLTxHY/o82ub5a8JXtBP1aoyP4x5x5Lb6aVRzyxh+cEotuLLZkNOcKlkYZfB7K8eqSEnCvq8YkktKdCzNQUsVKvYwUS/xNmIBbjot2qtPjxpZssw+D/WEbtEW6MPS939TIXSmQiJodTNKW17qqA/GVFHflJM=
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ (2603:1096:404:8028::13) by TYCPR01MB9386.jpnprd01.prod.outlook.com
+ (2603:1096:400:196::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.18; Tue, 15 Nov
+ 2022 23:37:59 +0000
+Received: from TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::cd89:4a4b:161e:b78d]) by TYBPR01MB5341.jpnprd01.prod.outlook.com
+ ([fe80::cd89:4a4b:161e:b78d%9]) with mapi id 15.20.5813.018; Tue, 15 Nov 2022
+ 23:37:59 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Dan Carpenter <error27@gmail.com>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH net-next] net: ethernet: renesas: Fix return type in
+ rswitch_etha_wait_link_verification()
+Thread-Topic: [PATCH net-next] net: ethernet: renesas: Fix return type in
+ rswitch_etha_wait_link_verification()
+Thread-Index: AQHY+POVNLfovYqvYUSZM0oa3sYmQa5ApGSw
+Date:   Tue, 15 Nov 2022 23:37:59 +0000
+Message-ID: <TYBPR01MB5341B3E1D3FBE3E3587BB2C7D8049@TYBPR01MB5341.jpnprd01.prod.outlook.com>
+References: <Y3OPo6AOL6PTvXFU@kili>
+In-Reply-To: <Y3OPo6AOL6PTvXFU@kili>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYBPR01MB5341:EE_|TYCPR01MB9386:EE_
+x-ms-office365-filtering-correlation-id: 87102805-d127-4a7f-b3fe-08dac7626e39
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: FunfoatX8VpuW4VUPTbFHubo2tHKET5/21PesSQ2RIhjbxkN1wYn5+JZYFp6Yq9z4ywQubtGHw9LvweDOd6Y9XmrZHSxwNogZvjcSXy90iZStmnCyBySpf6obg/GjG7jGb3DJO2FUFOjHBA4FCAnQD0w0EzWpShc50shzp9HcZ54c6uWEO5VnIhqJLfLUnWw3r5ruiIC+FYGUyTqGonrKEgBIvP77+ZjV19yiwzUr03C0zeVNVkBtK7OfwzrKObQ3m4pFj9QfcrExNUpmqr0YSPSROCYuMpWFI19JM1vq7JIu1g1RsmzYAmQtAPQM+dpcVqYxqaIJmO/GqavKJtbZYezkA3ad1bNqy7jcg/NNL/cVyV5hjiqjrXXXMJ0MFkHx0OnDrSsmFOD/GLA0o1fQruqgdaOM3iR9UOhVM9yEwgT3gPkDEqLXaYTisr2diiALHWs/oy2ZdKMnsGw2cNRNpzr5vO8uZsulK3C6cCqJEteFXlR8IRUT086zc1TVN/FvfHuxz4t/Xrwi1o8uzydLr0Izo6TWHNkc2T410nIT107rGZZlvtRFJmePgDQH7GC5TZZgNSjap3uUyRd3+sDhhyfM9aqAQ9WKHYKYGoUI20XTDYWsmvmel5XM3QAY4jwUtb/KYQ724iQosPbZ4hUjSURTUl2GVwjM9ZaT35On5DhTqEoI0sjfKXkOcfk/NRv0ERBT+1g9EudZ+bbuYJDMqyTMpPhSaQiTOJySSwiFy82vN2eus2tWy7kbQbZfon0/4sD7byyAagYxX25j64+Jg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYBPR01MB5341.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(396003)(39860400002)(366004)(376002)(136003)(451199015)(7696005)(33656002)(6506007)(38100700002)(8936002)(7416002)(52536014)(38070700005)(5660300002)(478600001)(71200400001)(2906002)(83380400001)(9686003)(122000001)(86362001)(186003)(55016003)(110136005)(66946007)(64756008)(54906003)(8676002)(41300700001)(66446008)(4326008)(66476007)(66556008)(76116006)(316002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?TFXViuzCVGv22qNGT/Vho5A8GKUo5wm2VHoWMa7RuID3u2rOrp7eDYG9mhDH?=
+ =?us-ascii?Q?Ld0knKwU7pgFawK+BQOfyOYY70lPrm97+qCsGjDFZRL3uMdCaHeAx1tgDOhJ?=
+ =?us-ascii?Q?OfafFhr5ZW0kwNEbUjhtGM+3bM/TTKMqDckKjbn+8S5Py5UKmpVtSlwOHadl?=
+ =?us-ascii?Q?JE9aSCh4RMUgcZ9DufCT3eVq5RcCuYpQmNhgqJTc9ViljUwiuvSRUsNPR9X3?=
+ =?us-ascii?Q?Gjeeqq5C1s3YVORK14KtwqSu5rRtjoc2q4x5GMaizen/oEbdEQLei2q3WLqm?=
+ =?us-ascii?Q?8xAQaOlSdDSmptCSn1mas29MlI1EOzC0vGis6QRLots5PpbKKbotEtk9p5gv?=
+ =?us-ascii?Q?bIPe6FC5dJihXPnyCscwgDVCwr2ipoQZ8yG8tAjpilLZYzJNqc+QHGrDaIUJ?=
+ =?us-ascii?Q?Nuz3PBoD6cR3hL/rvxCvBAX8Wg87C1bdk4T5+OVEAbdZXzfG3Tz4CA3PnyS5?=
+ =?us-ascii?Q?3g1NyJqrTFD7TcgdJ+bzqwkBaXqrzJd2HT6SgAA2kyH/YOAv2f1mpQOwcapG?=
+ =?us-ascii?Q?tYCbWp07WXS4yEghTIYN28ft04xR5oHcb53e8nGJcem0i6cO2qozw+nwVeOp?=
+ =?us-ascii?Q?f7jmbuCGmn5cZlDbqiXrkxfATXD3s6jQiPVgz3ZorfLcEnynjkBHdNrZ0TpT?=
+ =?us-ascii?Q?B7JhPAu0/tNIyPZqYvg2HlhFOLk0qjzGh9Ea3A9KUHglU0anhJDVGF/SP57X?=
+ =?us-ascii?Q?UcvDTcuYNOKCe/COQPKGdwvZAhyrOoO+pvwOsygWk2n8WaKbhrBYzq2VLaB5?=
+ =?us-ascii?Q?A1YNnO0GS05v+0qncgYxQuAhVnT6EpDQj3SWIiTL/4UkVmwLz4bBRsGYscLR?=
+ =?us-ascii?Q?2SuZeKOfIz2NjJYCwJJ95wyB8KQ//LjiL5oc1ILZs1tzd0SY6Cf2Ck0+MuJF?=
+ =?us-ascii?Q?yWGzomN7EwoGD8E89dsXDB45v9L69HYX/LhBIb/CtFSmWPHKiKN7/3t8AUKR?=
+ =?us-ascii?Q?KQ2Y7xSRmq1WU1U1zK/OZjhMcpFrYs+S0eQcR5Iy3Er75dX/F5Z4PNzzv32P?=
+ =?us-ascii?Q?oe2lxJzZ3nuzL17LGCYaHuCPv/1cgRvDmgFYunXpaL5CNB+r58F3PBwCNAuN?=
+ =?us-ascii?Q?BxqpZSYDLmDGtjyt8LirTJuP2YBIrDDbp325ABpw9ofDouGLmrMXceuAFlZn?=
+ =?us-ascii?Q?vicjYt0N/hR4wMgPo7Y+gvfYmXhmMBLQQCpuzy03LyZKrQllAttGGuaHj57U?=
+ =?us-ascii?Q?gkjzdAIq4F+SAY2SpLuRf6mOwhnx0WKhwznSVXw8HWKO8+utNjJAmiAQXsoL?=
+ =?us-ascii?Q?PD7ESiUrCp/Y9ofqfasR7iH57zgj1qLjjiZlESSo8xTH8yEsfD778TEIEQC/?=
+ =?us-ascii?Q?hJ8xzyUmMaxSgKSmV5AGhmdPK6NyZ3/qxBdcqBSMLuLW02O6lSUpc2UOhLA6?=
+ =?us-ascii?Q?SuvBOm7dli2HCZRh0OmRob/QE8NhHCqQ0vYn2akPkZUq6gWN86CM0jKcgPGL?=
+ =?us-ascii?Q?k8kOuHGM8jr2PiafwslbuJTY+PXsvZLierWQo2eQcsHA1/wsTY3BNgX4PKr2?=
+ =?us-ascii?Q?DYCqVf7Guk3oosQmcJzBAmTDYQehAHiEHvQ75NxidKP1RLKEToIh+/DX8BGq?=
+ =?us-ascii?Q?WpfiwM2GyqmaS1kcPxmx2lQ7xzJQBK9/RE8No/aMDNno9oyiSImtK+8SWqkm?=
+ =?us-ascii?Q?FwIS8jfoWWQXLz4RNHg3NuDrYh0DxPW5agSFT0XP2SW0ZeSno1sqVwcIhcs9?=
+ =?us-ascii?Q?GdYffQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <deab9696fc4000499470e7ccbca7c36fca17bd4e.1668458274.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <deab9696fc4000499470e7ccbca7c36fca17bd4e.1668458274.git.christophe.jaillet@wanadoo.fr>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 15 Nov 2022 22:42:02 +0100
-Message-ID: <CACRpkdY4+FtRc63GY_A2Gwr-cstMfsMvojHmQ_o2UQP0ymasig@mail.gmail.com>
-Subject: Re: [PATCH] usb: fotg210-udc: Remove a useless assignment
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5341.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87102805-d127-4a7f-b3fe-08dac7626e39
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2022 23:37:59.5875
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: z3cLhzATEX4zrcKV5P68zl4zwllmS0fFp6Pijiujz8lwDN2QjqnP4/J5sbcFEF1kxZsqWu254H1ekstiASu83VtupMmDy0/EwsvxIT2g+ILMcMqmcB9Nd90ZOEWjXDuP
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9386
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 9:38 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+Hi Dan,
 
-> There is no need to use an intermediate array for these memory allocations,
-> so, axe it.
->
-> While at it, turn a '== NULL' into a shorter '!' when testing memory
-> allocation failure.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> From: Dan Carpenter, Sent: Tuesday, November 15, 2022 10:10 PM
+>=20
+> The rswitch_etha_wait_link_verification() is supposed to return zero
+> on success or negative error codes.  Unfortunately it is declared as a
+> bool so the caller treats everything as success.
+>=20
+> Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet S=
+witch"")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fair enough!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thank you for the patch!
 
-I have sent some other cleanups to this code only
-yesterday, so they might collide and they you might have
-to rebase.
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Yours,
-Linus Walleij
+Best regards,
+Yoshihiro Shimoda
+
+> ---
+>  drivers/net/ethernet/renesas/rswitch.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/etherne=
+t/renesas/rswitch.c
+> index f0168fedfef9..231e8c688b89 100644
+> --- a/drivers/net/ethernet/renesas/rswitch.c
+> +++ b/drivers/net/ethernet/renesas/rswitch.c
+> @@ -920,7 +920,7 @@ static void rswitch_etha_write_mac_address(struct rsw=
+itch_etha *etha, const u8 *
+>  		  etha->addr + MRMAC1);
+>  }
+>=20
+> -static bool rswitch_etha_wait_link_verification(struct rswitch_etha *eth=
+a)
+> +static int rswitch_etha_wait_link_verification(struct rswitch_etha *etha=
+)
+>  {
+>  	iowrite32(MLVC_PLV, etha->addr + MLVC);
+>=20
+> --
+> 2.35.1
+
