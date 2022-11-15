@@ -2,87 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F181C43219
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 14:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A20B2C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 14:49:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231314AbiKOOWV (ORCPT
+        id S230182AbiKOOtC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 09:22:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45698 "EHLO
+        Tue, 15 Nov 2022 09:49:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230215AbiKOOWT (ORCPT
+        with ESMTP id S236796AbiKOOsz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 09:22:19 -0500
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F252C130;
-        Tue, 15 Nov 2022 06:22:17 -0800 (PST)
-Received: by mail-qk1-f171.google.com with SMTP id x21so9566946qkj.0;
-        Tue, 15 Nov 2022 06:22:17 -0800 (PST)
+        Tue, 15 Nov 2022 09:48:55 -0500
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ECABFC1
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:48:53 -0800 (PST)
+Received: by mail-ot1-x336.google.com with SMTP id p27-20020a056830319b00b0066d7a348e20so4641402ots.8
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 06:48:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UFKvegKpCUAO6MgZ/qzUV5hf5B11JezYYr9cZvWjkGQ=;
+        b=lKzjf5PXGe1Bn+JDJFa1vd+nY6OQBXZFoKJXJ+Dt2SNQ7jHIw9sikj2GLcQuwqUARp
+         OgfE8JlG7I/T6As9/B6qcn6ULrr9G53J+EzyqY70Y+lhsNs4vBwf2ElG7HhNPTmXlB2j
+         67wcR/h+f6Oi56Y4TgY5iy7hBQqe2hJlVlhtznXNt7UjBnDqG05o5mA95EVX6z871MfS
+         xvH67f2miDXhEfMdz+o6DSPWDFZgoG/1VFXrMX6F+pSl8FvWBvF01uEL8yFtQxTTcDtU
+         nr6NsbpuVs8NcUm+GSRf0rXGMpQfdkqZIOfSWcwQJkCrxTvhRPEchN11fqg+AuqTZexh
+         YmhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MRPFekI2jAh+f9nYCsghmQc07s4JZ1qJBjgZserdqEc=;
-        b=JG6/BdvXs0eYZ4n/wKAndSqNlILRYd+jyQERx0Hu+glV3ZsiJQv26+72Q3rfu9Wodj
-         Duz5qcZ0px0UsGQzv4NB5MLHyrcQBB+KJ/9t53C0CS2qmY1GF44CqkhjOwkU1tJjwyhG
-         n+7m+7NXMOzKe1URjbVMuhw65Ge7Q8PS8AgzjwHrB4vTUUNirhMsCkrnO7fs8iXxPvD/
-         XgueruusmV52h6BCgB5rQVQH5+ZzEiVCRH9MAMjehstL6hIyw2F/FwajrK88Au97L57p
-         qeN6XueHxkuULq0JJUEL0PVEi4KZYp7YiD9jev+snPEkJkiLZZfjuh17f8LTuc1Sq0kN
-         zJYw==
-X-Gm-Message-State: ANoB5plHvOZnHgvwmNlyDWKJRq0C88E0jw18YGjT3yNyIXXbHuiqqOyE
-        phy0lnAv3BJozmsyn3XbnQ4cenyi4YZDng==
-X-Google-Smtp-Source: AA0mqf7/sTbM2QX8z06HgLWFC5+0H5fYegSYZ+4+7JyYGsYDCiAbfzYsZxXsue+j7AKhnGSlqFEtGA==
-X-Received: by 2002:a37:397:0:b0:6f4:ed58:b809 with SMTP id 145-20020a370397000000b006f4ed58b809mr14940284qkd.550.1668522136818;
-        Tue, 15 Nov 2022 06:22:16 -0800 (PST)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id q6-20020a37f706000000b006ed61f18651sm8142448qkj.16.2022.11.15.06.22.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Nov 2022 06:22:15 -0800 (PST)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-3704852322fso138032477b3.8;
-        Tue, 15 Nov 2022 06:22:14 -0800 (PST)
-X-Received: by 2002:a81:4ed2:0:b0:370:202b:f085 with SMTP id
- c201-20020a814ed2000000b00370202bf085mr17460201ywb.502.1668522133942; Tue, 15
- Nov 2022 06:22:13 -0800 (PST)
+        bh=UFKvegKpCUAO6MgZ/qzUV5hf5B11JezYYr9cZvWjkGQ=;
+        b=V1wAHZMaGdBhenMSTYSTlQPexdIo1WpQG420fgK7/deCrpbJFirGDbtWvL8Y/QKsiz
+         lmDJiQ4raCld3sb50yNXjgq+nL4qjk084qUhRnZUMXnJ4Hd+rWJheM7pvWexiCs/6W7w
+         /jOTfyITQgCsAT0T33Y1KO/Sr0fdjluRbDlxFTVJgUh3njStOwogjYHhWaHGuaDAJqYg
+         t2TkDztbAtE1NAQQokgiFI66YPUrAAbfIZYQHJUFXuXLdC8udYVCSTIkaJlbo8sjazwd
+         WHF/onMalMtcmn7UcplhgCpRUXZDzMZI7F36R2qhJxHQNcxrqiUUxOTBtwFaOPO62jWc
+         IjtQ==
+X-Gm-Message-State: ANoB5pl+PLUydSnb3Ear4N0EXFO4IOYyBntedQnS2fmlPN28r9VyDVO3
+        tnZR+rfRfDATuQVP7HzT+yWc5ii5mqIPMJAZet4=
+X-Google-Smtp-Source: AA0mqf6fH/OmE1T3AB8Xx8ZsS8OzjaOPOa5/oK9LHJqmJMOjs3vfJYbmREd7PWHSZrBtVST7xciWzhewYsjrOIooCFs=
+X-Received: by 2002:a9d:32f:0:b0:66c:7982:2d45 with SMTP id
+ 44-20020a9d032f000000b0066c79822d45mr8876027otv.123.1668523732619; Tue, 15
+ Nov 2022 06:48:52 -0800 (PST)
 MIME-Version: 1.0
-References: <Y3OPo6AOL6PTvXFU@kili>
-In-Reply-To: <Y3OPo6AOL6PTvXFU@kili>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 15 Nov 2022 15:22:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWqwVGYdxvMLCQ8uBLA+VoDYiMWOBMmCoKiQWqA52Uw2A@mail.gmail.com>
-Message-ID: <CAMuHMdWqwVGYdxvMLCQ8uBLA+VoDYiMWOBMmCoKiQWqA52Uw2A@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: ethernet: renesas: Fix return type in rswitch_etha_wait_link_verification()
+References: <Y2ZH2FPSuX/msEL1@kili>
+In-Reply-To: <Y2ZH2FPSuX/msEL1@kili>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 15 Nov 2022 09:48:41 -0500
+Message-ID: <CADnq5_Pmv54SoFRgYWF90GTE9vJ3PScqN2z1a=AUm_omFLo_9Q@mail.gmail.com>
+Subject: Re: [PATCH] amdgpu/pm: prevent array underflow in vega20_odn_edit_dpm_table()
 To:     Dan Carpenter <error27@gmail.com>
-Cc:     Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Cc:     Evan Quan <evan.quan@amd.com>, "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        Darren Powell <darren.powell@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Lang Yu <lang.yu@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 2:14 PM Dan Carpenter <error27@gmail.com> wrote:
-> The rswitch_etha_wait_link_verification() is supposed to return zero
-> on success or negative error codes.  Unfortunately it is declared as a
-> bool so the caller treats everything as success.
+Applied.  Thanks!
+
+Alex
+
+On Tue, Nov 15, 2022 at 7:57 AM Dan Carpenter <error27@gmail.com> wrote:
 >
-> Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> In the PP_OD_EDIT_VDDC_CURVE case the "input_index" variable is capped at
+> 2 but not checked for negative values so it results in an out of bounds
+> read.  This value comes from the user via sysfs.
+>
+> Fixes: d5bf26539494 ("drm/amd/powerplay: added vega20 overdrive support V3")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c
+> index 97b3ad369046..b30684c84e20 100644
+> --- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c
+> +++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c
+> @@ -2961,7 +2961,8 @@ static int vega20_odn_edit_dpm_table(struct pp_hwmgr *hwmgr,
+>                         data->od8_settings.od8_settings_array;
+>         OverDriveTable_t *od_table =
+>                         &(data->smc_state_table.overdrive_table);
+> -       int32_t input_index, input_clk, input_vol, i;
+> +       int32_t input_clk, input_vol, i;
+> +       uint32_t input_index;
+>         int od8_id;
+>         int ret;
+>
+> --
+> 2.35.1
+>
