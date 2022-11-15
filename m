@@ -2,105 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE89C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DB4C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:47:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230374AbiKOMbf (ORCPT
+        id S230035AbiKOMr5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 07:31:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50292 "EHLO
+        Tue, 15 Nov 2022 07:47:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbiKOMbe (ORCPT
+        with ESMTP id S230402AbiKOMrz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 07:31:34 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4EE1F2CB;
-        Tue, 15 Nov 2022 04:31:32 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id i21so21637540edj.10;
-        Tue, 15 Nov 2022 04:31:32 -0800 (PST)
+        Tue, 15 Nov 2022 07:47:55 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9906227CFA
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 04:47:54 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id y16so24062297wrt.12
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 04:47:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LtOTHKIZ6A/I3hs7BfEXlQ0kPVymIIHZKezQdn2E0uA=;
-        b=Xfz6iaQ0fCf4t3J0J/BuCbm8zGPkJSHj/zxhbbhNado/0mO7ara5PP0cExqXn9JNLH
-         dPtQaoBSrVmitxwYbrpfwIXa1zRiT9Ws/PK4WyZeS/mRawxuHFMb3QBjdL2aD25xm39R
-         Xkj2nD+LhaeGDMqoLdfGc7yn9RKKopVenXD1HRINSIWlgonUqnp35z8Adr8rb2D17hRH
-         k/hnJ0M0vG6Vh+mQAi8BXmwxOmaYGzXLrf/tSxDY1RyUlbfnCt0l68qXPgRsLjHeeOq/
-         C3S+ctJZooG1xcErFrZp88J7bPdxfIrDBqJAWqubuxU+SiYDIm4JoTkvJMU/1fJofzJD
-         tX+w==
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ffyc+3Px8lcssmkzv0y9PLX2hy8kq/CMeUXykHNYY3w=;
+        b=TKaQ6SHznIORCHZi/Y66eKkDxVoWGc73sWGkOaBP1MOyhctvoRyef/iRl9OnEP7wZr
+         IFHIYqq00PxZsvtPoen7Rn99qVqicDgiOIXoagCgORk2B2n11irjGzf9NPR+/myPoiaO
+         Zt+S0apxpRdZGHbKwODpeGOA6lOkyVOBPndCm/4eHoe+PlLtju+99S2R8bykGFQ3wfR7
+         RMEEQz7Ilr3mr+KXHPzGsL5rtAn3sULFzUPtMYieZsQF0zXyC3Ur8JtgXgwAKyn/mRWI
+         lbRwvmmLKvg9bEdPrsCtGya0h3gLGMJ8D3jTcZzy5AjBlhJ8LjpHbID2Nn/0kkCzNvyp
+         RcXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LtOTHKIZ6A/I3hs7BfEXlQ0kPVymIIHZKezQdn2E0uA=;
-        b=OsLBqUrqZrY6KclkDg5OZFx+lG7HdKdgDpYC+PgykY7u0332iskhcvEbGYek42en/i
-         /RKxUHMAWU0I6F38Cm81yJgGOHRFwV17exXVsJXUGK6PIyUQsJHbvIDa/gD+M2mY2hlT
-         MepMb/HD/WGKKjAA4FFXbGJW8VdWrM+Dk71161TlUGl2RnnW1sK6qBTo3W8Awa4h07Qk
-         ee1NsVBYv/FFpcx4kMcdvp79tNWJvkgK0GTEbxjIPNDthP15Wce28W4UhkSYt+V20cWk
-         SrDZ/bru0qL14xNFpToLa5sAgxCD0fjLOo2xCEfHXM+D9243CbjOGOL9J3djrLOcC70V
-         A9LQ==
-X-Gm-Message-State: ANoB5pmlZ5ik92cmt10aWqZBTDJCcjr6MZs7W+ImYJjQDScQkIXvRCcf
-        Gb8nDVCpjabPgsoz0OlAklU=
-X-Google-Smtp-Source: AA0mqf7A2NRexDle89XEgIuAECuKXbb9AZrWTSaxs0rClZOqmgODazcce2pl1CGfyX+Z7NX97kAzQw==
-X-Received: by 2002:a05:6402:2407:b0:467:5e4f:591 with SMTP id t7-20020a056402240700b004675e4f0591mr14635237eda.414.1668515491135;
-        Tue, 15 Nov 2022 04:31:31 -0800 (PST)
-Received: from felia.fritz.box (200116b826a73f00b885958edf4850c0.dip.versatel-1u1.de. [2001:16b8:26a7:3f00:b885:958e:df48:50c0])
-        by smtp.gmail.com with ESMTPSA id l7-20020a170906644700b0077a8fa8ba55sm5372891ejn.210.2022.11.15.04.31.29
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ffyc+3Px8lcssmkzv0y9PLX2hy8kq/CMeUXykHNYY3w=;
+        b=ce2byiOlHx4u84ilKfmngOYd7K0YGdw2o/rWeHgk6exx6fostsjDWWTfHsH4hwdE5l
+         MItuNbOQARj8JMfPlHYa7x3cx4NRnzVt6NPD71qVfjf4ipDcCJjuUcqlHyAU4crqAjcR
+         LuEbOzQsqWaXgaDEVQU4OuICR8vgk5an4gSBdIC41a+iKVdKOKZ8OricDI7SnUFVaMeQ
+         1B2nitzlNTMHFV4Ek1k0c/hHhq+4VZ/uPBpBOrsFkuPpgmsugKcTqkzb7V+p2NODaHkW
+         Cj7nRRwVkEekbIuoLK0x6qQ9wZEFxa0jfyNiFB8YKE0Y/F3gZWLMehzfn0s2ilWiCPV/
+         S9Wg==
+X-Gm-Message-State: ANoB5pkp5yN9w2ffjAOxXfnHYFsRlOVlYpMfIdK1ZGTQTsMW1oMpXTX6
+        G0xack2fru6ZlYJCqdjX0sIaOIKUyb8=
+X-Google-Smtp-Source: AA0mqf74iXd/PeyF5Cq+YNknLb4ayLWL0kO+ZivQVD1ijNHwYsdNjqOSCwJPyIKS8ful/PtiHt9wuA==
+X-Received: by 2002:adf:f00a:0:b0:236:4838:515d with SMTP id j10-20020adff00a000000b002364838515dmr10320933wro.541.1668516473180;
+        Tue, 15 Nov 2022 04:47:53 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id m23-20020a05600c3b1700b003cf47556f21sm23156088wms.2.2022.11.15.04.47.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 04:31:30 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2 RESEND] MAINTAINERS: adjust ARM/INTEL IXP4XX ARM ARCHITECTURE to ixp4xx clean-up
-Date:   Tue, 15 Nov 2022 13:31:02 +0100
-Message-Id: <20221115123102.22732-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 15 Nov 2022 04:47:52 -0800 (PST)
+From:   Dan Carpenter <error27@gmail.com>
+X-Google-Original-From: Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Tue, 15 Nov 2022 15:47:49 +0300
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Nicolin Chen <nicolinc@nvidia.com>, iommu@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] iommufd: vfio: info leak in iommufd_vfio_unmap_dma()
+Message-ID: <Y3OKdW/WXVr1VYbc@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit c83227a5d05e ("irq/gpio: ixp4xx: Drop boardfile probe path") and
-commit 155e4306107f ("clocksource/drivers/ixp4xx: Drop boardfile probe
-path") remove files include/linux/irqchip/irq-ixp4xx.h and
-include/linux/platform_data/timer-ixp4xx.h, but miss to adjust MAINTAINERS.
+If iopt_unmap_iova() fails then "unmapped" is uninitialized.  Copying it
+to the user can leak stack information.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-broken references.
-
-Remove file entries for those files in ARM/INTEL IXP4XX ARM ARCHITECTURE.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fixes: 32c328dc9b73 ("iommufd: vfio container FD ioctl compatibility")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v1: https://lore.kernel.org/lkml/20220601050200.22213-1-lukas.bulwahn@gmail.com/
-v2: https://lore.kernel.org/lkml/20220919081753.16934-1-lukas.bulwahn@gmail.com/
+ drivers/iommu/iommufd/vfio_compat.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-v1 -> v2:
-  added tags from v1, no other change.
-
-Linus, please pick this minor non-urgent clean-up patch for ixp4xx arm.
-
- MAINTAINERS | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 547ba994ea98..e057108f2709 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2290,8 +2290,6 @@ F:	drivers/clocksource/timer-ixp4xx.c
- F:	drivers/crypto/ixp4xx_crypto.c
- F:	drivers/gpio/gpio-ixp4xx.c
- F:	drivers/irqchip/irq-ixp4xx.c
--F:	include/linux/irqchip/irq-ixp4xx.h
--F:	include/linux/platform_data/timer-ixp4xx.h
- 
- ARM/INTEL KEEMBAY ARCHITECTURE
- M:	Paul J. Murphy <paul.j.murphy@intel.com>
+diff --git a/drivers/iommu/iommufd/vfio_compat.c b/drivers/iommu/iommufd/vfio_compat.c
+index 976aa12b247d..30a13552d632 100644
+--- a/drivers/iommu/iommufd/vfio_compat.c
++++ b/drivers/iommu/iommufd/vfio_compat.c
+@@ -189,6 +189,9 @@ static int iommufd_vfio_unmap_dma(struct iommufd_ctx *ictx, unsigned int cmd,
+ 		rc = iopt_unmap_iova(&ioas->iopt, unmap.iova, unmap.size,
+ 				     &unmapped);
+ 	}
++	if (rc)
++		goto err_put;
++
+ 	unmap.size = unmapped;
+ 	if (copy_to_user(arg, &unmap, minsz))
+ 		rc = -EFAULT;
 -- 
-2.17.1
+2.35.1
 
