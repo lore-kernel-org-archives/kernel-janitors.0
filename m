@@ -2,159 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE036C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD3EC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 13:03:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237825AbiKOM6w (ORCPT
+        id S229947AbiKONDb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 07:58:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36778 "EHLO
+        Tue, 15 Nov 2022 08:03:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230468AbiKOM6u (ORCPT
+        with ESMTP id S229634AbiKONDa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 07:58:50 -0500
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04EC641A;
-        Tue, 15 Nov 2022 04:58:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668517129; x=1700053129;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=odcUNrpXlpwBBrvLzRHOUBZ4LFlpk63pV4O7hObhms8=;
-  b=e8rbxV4Fga81MZXD68R8SMsd+wjz1Ue6qtE+48l+9sxNZuJ83ETL9TfO
-   RXXJAy+lsDmn9zcHAVLg7/GMWDeRUoUlUG6bGTfHCEYR9fOsBRQNeqFVQ
-   Krrs0pv86WtALpBDr8M+u4n2fX5wL/KZ5mKDmkEKcEhrz7e6G0krwmL28
-   O8eCMJMq6ZJUY6xVNhjc78mK3r+tB66Tv/z5c7vKePmm/n1TQ5PvSTX4/
-   VV7xQah7s09zUR/+niK3hcF6USxR5uixBczcME22tyP37sS763WPL8/oG
-   UN7CgSWbrZs8rT5LNAT10/k0C7xx9h2S/7l0JGC0uhxfQY9thO/CDgm0+
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="398535132"
-X-IronPort-AV: E=Sophos;i="5.96,165,1665471600"; 
-   d="scan'208";a="398535132"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 04:58:49 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="641197495"
-X-IronPort-AV: E=Sophos;i="5.96,165,1665471600"; 
-   d="scan'208";a="641197495"
-Received: from jawiblin-mobl.ger.corp.intel.com (HELO [10.252.18.33]) ([10.252.18.33])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 04:58:47 -0800
-Message-ID: <16b18a0d-4921-311e-be24-1103f90a8ac2@linux.intel.com>
-Date:   Tue, 15 Nov 2022 14:59:19 +0200
+        Tue, 15 Nov 2022 08:03:30 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A9B62FF;
+        Tue, 15 Nov 2022 05:03:28 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id i186-20020a1c3bc3000000b003cfe29a5733so3207022wma.3;
+        Tue, 15 Nov 2022 05:03:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2YXSEudsc9acCjyZ9gI8tQXstRzlGGklsZOdLPbwiNo=;
+        b=PMayZRM3eFKCloLvTyzjYH6LundInUpmC31aN3lOF2x/ELF21FR0on5O7mVTSts3wO
+         g6qm9lIbCtI8Tu8FHtJix+MBnLjKr1/rkxg/+WE9K9PKjLveqXUvHcQ85bWBsSDINlSr
+         NrpD7YfIdnWlboCxGpzoS3BzxReT2llXaselZxlKWSyqXa4VfI+0D8cdeBnK2GSvVVSi
+         6njp/YfDclStsXVecpjj6FjKKKFzw4TMCIafqnL7riRl+pFgXkts9fkurtXGeyEqTs7C
+         bmGnN9KdjMwud2LsVHKBIE3ht7urWyxIWIv5WLaXjQr2dE5th7oKBXOc0xOaz/UcvLoZ
+         ZSeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2YXSEudsc9acCjyZ9gI8tQXstRzlGGklsZOdLPbwiNo=;
+        b=xzccDxg0lfc4UGIR+vLtVzmbTlNOb8wPhpkSZAMLQnQN84D/QptpUi9GtXqq8FirIm
+         xKzxu+stbaZKHfUBwHIIwdLRmKebt8nJTECOCEhGazGjz7jyYJaf4rkWXoeExbml8KJb
+         jzo2hUVKRijm/gggWgrLXJJL7yGk2EKGMU8msldN9AXRCY0vxbDmKG2YoYiOeKfT1Wsz
+         3PRSqFXOcerXWky5Vutr7xc5xOF+iKGu9HkmS5ifuEpaO2NgckyNIc3awLotFgAog0A/
+         PqzRH/afyxW4yTZRMibZonV2e5oRaB8Jr/0epawSzbkH9cQsslH04lPpyCAYqfkmRfYc
+         /z7A==
+X-Gm-Message-State: ANoB5pmXXqAbi3jWX8azV6fBMt/ZOzaIvcHSMSu6rOZWq9rWcqa0V9nV
+        kUkJ7rGBncB+P2a+GgEOP1M=
+X-Google-Smtp-Source: AA0mqf71K83H64nJ0Vkrsq1NmTXORfV6reFULGsEXiSiBsSthy861Vt8C3VPP8OLOOHxWLuqHMIZ4Q==
+X-Received: by 2002:a1c:740c:0:b0:3cf:b49e:1638 with SMTP id p12-20020a1c740c000000b003cfb49e1638mr1449541wmc.50.1668517406464;
+        Tue, 15 Nov 2022 05:03:26 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id c2-20020a05600c0a4200b003cfd4cf0761sm13933778wmq.1.2022.11.15.05.03.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Nov 2022 05:03:26 -0800 (PST)
+Date:   Tue, 15 Nov 2022 16:03:22 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/msm/hdmi: remove unnecessary NULL check
+Message-ID: <Y2o0TKZ5WRYnQXna@kili>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.4.2
-Subject: Re: [PATCH] headers: Remove some left-over license text in
- include/uapi/linux/hsi/
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>
-References: <4919073b3dee8ca7612989659d31b12f9c5491ba.1662897400.git.christophe.jaillet@wanadoo.fr>
- <20221114210155.anq5gkggfrvj6nki@mercury.elektranox.org>
-Content-Language: en-US
-From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <20221114210155.anq5gkggfrvj6nki@mercury.elektranox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+This code was refactored in commit 69a88d8633ec ("drm/msm/hdmi: move
+resource allocation to probe function") and now the "hdmi" pointer can't
+be NULL.  Checking causes a Smatch warning:
 
-On 14/11/2022 23:01, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Sun, Sep 11, 2022 at 01:56:59PM +0200, Christophe JAILLET wrote:
->> Remove some left-over from commit e2be04c7f995 ("License cleanup: add SPDX
->> license identifier to uapi header files with a license")
->>
->> When the SPDX-License-Identifier tag has been added, the corresponding
->> license text has not been removed.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
-> 
-> IIRC that was intentional, since the plan was to seek for an
-> explicit Ack from the copyright holder when removing the text.
-> I've added Greg for clarification and hopefully the latest
-> mail address from Kai and Peter.
+    drivers/gpu/drm/msm/hdmi/hdmi.c:141 msm_hdmi_init()
+    warn: variable dereferenced before check 'hdmi' (see line 119)
 
-I'm fine with the removal of the boilerplate text, SPDX is covering that.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/gpu/drm/msm/hdmi/hdmi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I would appreciate if you pick my personal ack for this:
-
-Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
-
-> 
-> -- Sebastian
-> 
->>  include/uapi/linux/hsi/cs-protocol.h | 14 --------------
->>  include/uapi/linux/hsi/hsi_char.h    | 14 --------------
->>  2 files changed, 28 deletions(-)
->>
->> diff --git a/include/uapi/linux/hsi/cs-protocol.h b/include/uapi/linux/hsi/cs-protocol.h
->> index c7f6e7672cb5..07c3bfb67463 100644
->> --- a/include/uapi/linux/hsi/cs-protocol.h
->> +++ b/include/uapi/linux/hsi/cs-protocol.h
->> @@ -6,20 +6,6 @@
->>   *
->>   * Contact: Kai Vehmanen <kai.vehmanen@nokia.com>
-
-I don't think Kai's nokia.com mail address is valid as a contact
-information...
-
->>   * Original author: Peter Ujfalusi <peter.ujfalusi@nokia.com>
-
-
-
->> - *
->> - * This program is free software; you can redistribute it and/or
->> - * modify it under the terms of the GNU General Public License
->> - * version 2 as published by the Free Software Foundation.
->> - *
->> - * This program is distributed in the hope that it will be useful, but
->> - * WITHOUT ANY WARRANTY; without even the implied warranty of
->> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
->> - * General Public License for more details.
->> - *
->> - * You should have received a copy of the GNU General Public License
->> - * along with this program; if not, write to the Free Software
->> - * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
->> - * 02110-1301 USA
->>   */
->>  
->>  #ifndef _CS_PROTOCOL_H
->> diff --git a/include/uapi/linux/hsi/hsi_char.h b/include/uapi/linux/hsi/hsi_char.h
->> index 91623b0398b1..5ef72f0daf94 100644
->> --- a/include/uapi/linux/hsi/hsi_char.h
->> +++ b/include/uapi/linux/hsi/hsi_char.h
->> @@ -5,20 +5,6 @@
->>   * Copyright (C) 2010 Nokia Corporation. All rights reserved.
->>   *
->>   * Contact: Andras Domokos <andras.domokos at nokia.com>
->> - *
->> - * This program is free software; you can redistribute it and/or
->> - * modify it under the terms of the GNU General Public License
->> - * version 2 as published by the Free Software Foundation.
->> - *
->> - * This program is distributed in the hope that it will be useful, but
->> - * WITHOUT ANY WARRANTY; without even the implied warranty of
->> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
->> - * General Public License for more details.
->> - *
->> - * You should have received a copy of the GNU General Public License
->> - * along with this program; if not, write to the Free Software
->> - * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
->> - * 02110-1301 USA
->>   */
->>  
->>  #ifndef __HSI_CHAR_H
->> -- 
->> 2.34.1
->>
-
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+index 7001fabd0977..4d3fdc806bef 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+@@ -138,8 +138,7 @@ static int msm_hdmi_init(struct hdmi *hdmi)
+ 	return 0;
+ 
+ fail:
+-	if (hdmi)
+-		msm_hdmi_destroy(hdmi);
++	msm_hdmi_destroy(hdmi);
+ 
+ 	return ret;
+ }
 -- 
-Péter
+2.35.1
+
