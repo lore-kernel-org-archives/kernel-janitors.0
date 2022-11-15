@@ -2,68 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58487C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4129C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Nov 2022 12:57:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237857AbiKOM4H (ORCPT
+        id S237917AbiKOM5H (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Nov 2022 07:56:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34566 "EHLO
+        Tue, 15 Nov 2022 07:57:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231178AbiKOM4G (ORCPT
+        with ESMTP id S232253AbiKOM5E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Nov 2022 07:56:06 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9734F2C7;
-        Tue, 15 Nov 2022 04:56:05 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id bs21so24112277wrb.4;
-        Tue, 15 Nov 2022 04:56:05 -0800 (PST)
+        Tue, 15 Nov 2022 07:57:04 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B6A9109E
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 04:57:03 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id j15so24141300wrq.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Nov 2022 04:57:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8Suc+sDOw9njkbA6lorcFP1RSCMU5Z1RLuQ/KM9dn4E=;
-        b=SgaeOd/CGA1rG+IGWVCNAzIArtZKPNHDEp26333K2hiCIWuZK0fNiyXHLKeYtb5NSe
-         10CGzkbG948ccpsZdTedmzA2sHcADEuCwNlhZUEx0BCT+KLEeVC7xbaCEmuUhchv+g7p
-         CURG8lFHKQrNGkTCIcBAfBawEfwDm8HIfPLvDOuJ2B7WI9ykxg4oCdpYQSWp5r7ngKNL
-         gmfU9eSE8oAu6YDlgap9jEu1zH+dumW4dK+VjV9HV4yOfWLSGA5Zc0dhB1d1sM0URsR2
-         bIpz6szMTAkUAaSMfED0YW7eiaGY2+kfqJjK8UYI9Nk1s/42spCHNurN4pSrbWHRLi4X
-         QI+g==
+        bh=l3npKNO7EdnZMJchPseofSyg8OvoZM8dnC8E9718dj4=;
+        b=SDBOJ9o8aDYmio2B7zkkXLe/1Vh/h/Iqa5PZ63quI+gZpgjuS+ZKqvuFioZeRw5lh4
+         swINKn34NNLGKfZRRFRWGGU4X3oQR8iGhKimzrVjMstpdal5MQhr8vvcjjM/vlXxRqk1
+         VB0RJUAJZ4dVUDJtjyr/Nbk0jEuAV8hWPlGp3OWFWUZW3kL/nlK2U2raRye5qUaywWee
+         sg0Op7ZpYx5yFCPfg8Zgw77JuwrR462NEkfuNmeZOZGtnjQrznz8lWkYRWKZGCMbnzzv
+         j7s/jUcRh1zI0Y6BIAgukQucOwc00yv6t5dSaoReN1lRVkBjYqrrSpm3DMZprMTlfRGd
+         /YDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Suc+sDOw9njkbA6lorcFP1RSCMU5Z1RLuQ/KM9dn4E=;
-        b=E7EBgIKWmt9oew0UWDxE13xCAFGZw3pRS3L7pwmrf/XkUJUeEP8tF09mOp5WXX298j
-         PGYrX5wHhj303F1gCDn/SdXPugEPV9vVUewTgN9E9PHB0MFexnVBwN6Q1HEKFtMACxp5
-         Gg8BUl8o+8PYhgcTni9lYOP/R9mH9i3xY8SN5R5gmFEGqQyWf2dgrR+bYEZMbhqGQt4S
-         3rM2+nGjUCkvpITdkde2YL0XIXJJQ5FKUBzYIKlUVeKRrPnr65t4t5Ay2pybDGFwyK4a
-         ymTchazjNREjAD2JabNcokdOMZ0u1qbWT/cIOVQA0BIRuEIl38SS25OfkxLXN7b/jK5M
-         Tfrw==
-X-Gm-Message-State: ANoB5pk6S1nTIisNy881LKD8lGN2lOrw87PtxDY04qhkOJ/ZpPjH4O1t
-        q7yapDqHLvN0dCmDuRvN/x0=
-X-Google-Smtp-Source: AA0mqf6LXGbMOdPES8+MrqVJoYnqb/iq4AENQu0yOdbYTfhxUcPgm3h/DU8Qxhdpm2V/pYdxUVOxwA==
-X-Received: by 2002:a5d:4cd0:0:b0:236:757c:54a1 with SMTP id c16-20020a5d4cd0000000b00236757c54a1mr10665635wrt.106.1668516964004;
-        Tue, 15 Nov 2022 04:56:04 -0800 (PST)
+        bh=l3npKNO7EdnZMJchPseofSyg8OvoZM8dnC8E9718dj4=;
+        b=3PddQDOJhwNgFPboS69JwG/UKq7A2x7oAf+eenY5wh+9Iw9GidJQLwCd5+0Gjyk35M
+         1jOYorxsYRujm7D1jpAu8XrHbzYfcPUGrx1XdHYQnXBgBE7K5EIkYlyLrI9ysB2XWbD/
+         XSOR15OJ2GzEWdasmMAN5qFQ6uKzgNxsgcV3NkLaBGakW/zBEd0MT8g+hk79tMB0p0zg
+         nu9NrGGwk07JGfRG9X6iEfdhDQu0pM+bXimreqbj60NNSkq+2twKhWEv2nhiawD14n+/
+         UCqt3k+WpNgPfGajkeqO6MWyKIheC+SGXopR9PzOtujapCkP54ZV8kvOlMaV7rJzAXnv
+         dvDg==
+X-Gm-Message-State: ANoB5pkbSiidT8btxdgHWZWvNTaNwFpt/n1qyWnE15uAxjGJmHgXTEsq
+        Z3p8jCTjFhv7q0+86LrQAOI=
+X-Google-Smtp-Source: AA0mqf5WcSOrPcctHKA15TDbRyvs6c4/8xVmIbSG+fo7UP6Z8FoZdW/9b6SQUMJFkiQPDDyDDtH99g==
+X-Received: by 2002:a05:6000:605:b0:236:6f3c:1f2f with SMTP id bn5-20020a056000060500b002366f3c1f2fmr10888123wrb.89.1668517021867;
+        Tue, 15 Nov 2022 04:57:01 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v21-20020a05600c215500b003c6c3fb3cf6sm15168301wml.18.2022.11.15.04.56.02
+        by smtp.gmail.com with ESMTPSA id p5-20020a05600c358500b003c6b9749505sm24241770wmq.30.2022.11.15.04.57.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 04:56:03 -0800 (PST)
+        Tue, 15 Nov 2022 04:57:01 -0800 (PST)
+Date:   Tue, 15 Nov 2022 15:56:57 +0300
 From:   Dan Carpenter <error27@gmail.com>
-X-Google-Original-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Tue, 15 Nov 2022 15:56:00 +0300
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next/netfilter] netfilter: nft_inner: fix IS_ERR() vs
- NULL check
-Message-ID: <Y3OMYNmQxpgXBAMA@kili>
+To:     Evan Quan <evan.quan@amd.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Lang Yu <lang.yu@amd.com>,
+        Darren Powell <darren.powell@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] amdgpu/pm: prevent array underflow in
+ vega20_odn_edit_dpm_table()
+Message-ID: <Y2ZH2FPSuX/msEL1@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -71,33 +70,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The __nft_expr_type_get() function returns NULL on error.  It never
-returns error pointers.
+In the PP_OD_EDIT_VDDC_CURVE case the "input_index" variable is capped at
+2 but not checked for negative values so it results in an out of bounds
+read.  This value comes from the user via sysfs.
 
-Fixes: 3a07327d10a0 ("netfilter: nft_inner: support for inner tunnel header matching")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: d5bf26539494 ("drm/amd/powerplay: added vega20 overdrive support V3")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
-This applies to net-next but presumably it's going to go through the
-netfilter tree?
+ drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- net/netfilter/nf_tables_api.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 62da204eed41..6b159494c86b 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -2873,8 +2873,8 @@ int nft_expr_inner_parse(const struct nft_ctx *ctx, const struct nlattr *nla,
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c
+index 97b3ad369046..b30684c84e20 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_hwmgr.c
+@@ -2961,7 +2961,8 @@ static int vega20_odn_edit_dpm_table(struct pp_hwmgr *hwmgr,
+ 			data->od8_settings.od8_settings_array;
+ 	OverDriveTable_t *od_table =
+ 			&(data->smc_state_table.overdrive_table);
+-	int32_t input_index, input_clk, input_vol, i;
++	int32_t input_clk, input_vol, i;
++	uint32_t input_index;
+ 	int od8_id;
+ 	int ret;
  
- 	type = __nft_expr_type_get(ctx->family, tb[NFTA_EXPR_NAME]);
--	if (IS_ERR(type))
--		return PTR_ERR(type);
-+	if (!type)
-+		return -ENOENT;
- 
- 	if (!type->inner_ops)
- 		return -EOPNOTSUPP;
 -- 
 2.35.1
 
