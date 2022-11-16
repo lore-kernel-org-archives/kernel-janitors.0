@@ -2,97 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E606C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 09:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A10C43219
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 10:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238856AbiKPJkr (ORCPT
+        id S233587AbiKPK3c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 04:40:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57474 "EHLO
+        Wed, 16 Nov 2022 05:29:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238756AbiKPJk2 (ORCPT
+        with ESMTP id S233650AbiKPK2t (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 04:40:28 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C9702A26A;
-        Wed, 16 Nov 2022 01:40:27 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id ja4-20020a05600c556400b003cf6e77f89cso2715518wmb.0;
-        Wed, 16 Nov 2022 01:40:27 -0800 (PST)
+        Wed, 16 Nov 2022 05:28:49 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D56392F3AD;
+        Wed, 16 Nov 2022 02:25:16 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id f18so9932832ejz.5;
+        Wed, 16 Nov 2022 02:25:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bRVEplC+7j6A14IZcqWB9f97UNzmakJtqB171khWs5c=;
-        b=hrtIVynRsFTFAfwFj68ESejr8oNfwyFLMiOUQWmxyZ7gARsphmolR5UEOref/f8sA0
-         hD/ikkxUruJf/IkSGsWzmzf7U3uRj23YfiSKt1zzI4u7KN9B6SnyJLyCYz1VU6M35rCy
-         CAa3WKWdBlF50kpVZu1fAjSLXMaqA/9of20hrSubL7kbMXwMeQ+XGWLIAkKqIWcC5YzJ
-         UDlqOE3XT//98ZqARV0eKNkxHoKkanLQ0VbOdWA31yHkYtJpgzWJiXL3cmctF7PkqMpC
-         NbmjZ5FmdSgwsXo+zjpFEow4j8U3TUY3pJJE9K8UZGYr8Ltu0aRhmyawa+ooHXbax/Zd
-         92yQ==
+        bh=QE2rgR+SD3txu2X9qQrvuHMcKPW65HWDIVU0aZ4LzFk=;
+        b=iazRd6Fc4IJ8oSDNINndacd3WHizzJeIn0H+QfH3Of74DJw/qQ5uW6KWaKgH0nTiz1
+         Ip1vrLgbFD15IY5QqSwGmrcWwWUrXp9mtg/uc93K2BCOiW9YCc7EsmWiNZ27CSCdv2tK
+         DddMA/Qyalqljtfry5/e4DsmcJcGszv3HhoWnWDLKe12AA9FaCGlIp6KShAsgoGxYQ1m
+         vRYY+91MO0cEX/mpzSEM/0+nYxGF7XCwOQVW1msRkKmy1ma9EYPT7GZg0licXKjEROoq
+         0IyQHcg8R3A9pj4qq0K1aciDy02Y5WN9STTcdoenN9xjJQANUIz47kJtJQo2rx98PuKV
+         BDCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bRVEplC+7j6A14IZcqWB9f97UNzmakJtqB171khWs5c=;
-        b=4UxVk/BUiHoKxF5nZXYe0xVQUG9BvVLvNdZPYCUnePkJT2VSBgZTAfPk5IXY4yVHVc
-         c2INSxRJRDnLh1GbTlBkqtj8Liay2LQSENGg+A2ZJD/t9hPrk8mpB2uuq/DYJUomP74A
-         kZLlnEgP/Dm8hZ+UkmMGaiQESinyVyL5bvel39uQDT/jm1kXf1jAOUjxxAp1YQB95P6w
-         BrT/x2uEKycEkKt+zmcomrKkFx/Rv7w1Ct8p5EbHSMDX3Gbgv+/wfhbuS22ObyAvr5DR
-         dx/sHCU1MP1SZUoXGBdaG5Eu3e4ZUk5XdVzDjm1kh/+oV7QajgJDfWs8RfSv7QucWofs
-         +tzA==
-X-Gm-Message-State: ANoB5plpH2ysAF0nPYw/0d0iE51HP4flnQfF4Srnvq6gjbGDdUsLI7hv
-        S4CJVnzG+o3GMk10gfgS0EQ=
-X-Google-Smtp-Source: AA0mqf4RcK2BTsxFpnj9xspSpvctbxaD3ERJeZpeXbiOGYQZpl50PSOp6G+zqMd6zdzjw6/ulmZdPQ==
-X-Received: by 2002:a05:600c:19d1:b0:3cf:ca1a:332a with SMTP id u17-20020a05600c19d100b003cfca1a332amr1538043wmq.118.1668591625860;
-        Wed, 16 Nov 2022 01:40:25 -0800 (PST)
+        bh=QE2rgR+SD3txu2X9qQrvuHMcKPW65HWDIVU0aZ4LzFk=;
+        b=0j/YXgw2D9Bf9Z0xMxf1SLevQQ2hxjLIU3iUG7WS1XXPhpxZDiddY0nTnlEPXNZl6Q
+         fL9ym1ag41zyZwjyHveiivy3ZHBVcepieHVAWCQP/QF/6wGOYH2jPn940mv4+TNAMkZ5
+         PwAQDZDsLZqs/zPAp24ZmGh6KFR84X7E0CJ5Vv4pY3HjK7Ez0T+dxhvJJdwW9arA28vv
+         lKA5QlEf6vrS79IWPlE160yNnPyddCvydnwb/DpuimRgy4rw6vAaOc1RBqDL0hWayNTS
+         U/gtaTSUu1M9qvlcsqS5UWDma8VqAzjS8PToJLx6s3veH6zjwxEn0tLmZM4cT6Vi65BX
+         mvSA==
+X-Gm-Message-State: ANoB5pn6wNZINGN8G3SlU3khyuBtVYFEpl/5HmZY69sGtuIWTNrbcDla
+        hp2giK8V90kNJTtXJsuHTFk=
+X-Google-Smtp-Source: AA0mqf4DxIr6lOh7UFZ8iVcc8DpYOp554VDVImChrKKz+ZA0VeEk13y/0Jljbf1po8KOTTxuR3d7rg==
+X-Received: by 2002:a17:907:76d2:b0:78d:8c6b:397b with SMTP id kf18-20020a17090776d200b0078d8c6b397bmr16610397ejc.364.1668594314896;
+        Wed, 16 Nov 2022 02:25:14 -0800 (PST)
 Received: from felia.fritz.box (200116b826c55000c59461cca0b9a159.dip.versatel-1u1.de. [2001:16b8:26c5:5000:c594:61cc:a0b9:a159])
-        by smtp.gmail.com with ESMTPSA id l13-20020a5d674d000000b0022e3538d305sm17223547wrw.117.2022.11.16.01.40.24
+        by smtp.gmail.com with ESMTPSA id s5-20020a05640217c500b0045c010d0584sm7294352edy.47.2022.11.16.02.25.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 01:40:25 -0800 (PST)
+        Wed, 16 Nov 2022 02:25:14 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Shawn Tu <shawnx.tu@intel.com>,
-        Jason Chen <jason.z.chen@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+To:     Sean Anderson <sean.anderson@seco.com>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] media: i2c: refer to config VIDEO_DEV to make ov08x40 image sensor driver usable
-Date:   Wed, 16 Nov 2022 10:40:06 +0100
-Message-Id: <20221116094006.16054-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] net: fman: remove reference to non-existing config PCS
+Date:   Wed, 16 Nov 2022 11:24:50 +0100
+Message-Id: <20221116102450.13928-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 9958d30f38b9 ("media: Kconfig: cleanup VIDEO_DEV dependencies")
-removes the config VIDEO_V4L2 as it is merged with config VIDEO_DEV.
+Commit a7c2a32e7f22 ("net: fman: memac: Use lynx pcs driver") makes the
+Freescale Data-Path Acceleration Architecture Frame Manager use lynx pcs
+driver by selecting PCS_LYNX.
 
-Long after this change, commit 38fc5136ac16 ("media: i2c: Add ov08x40 image
-sensor driver") introduces and refers to the removed config VIDEO_V4L2,
-basically making this driver impossible to build, test and use due to
-dependencies that cannot be met.
+It also selects the non-existing config PCS as well, which has no effect.
 
-Refer to config VIDEO_DEV instead to make this driver usable.
+Remove this select to a non-existing config.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/media/i2c/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/fman/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 49c1c27afdc1..4a4ae9c20119 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -366,7 +366,7 @@ config VIDEO_OV08D10
- 
- config VIDEO_OV08X40
- 	tristate "OmniVision OV08X40 sensor support"
--	depends on VIDEO_V4L2 && I2C
-+	depends on VIDEO_DEV && I2C
- 	select MEDIA_CONTROLLER
- 	select VIDEO_V4L2_SUBDEV_API
- 	select V4L2_FWNODE
+diff --git a/drivers/net/ethernet/freescale/fman/Kconfig b/drivers/net/ethernet/freescale/fman/Kconfig
+index e76a3d262b2b..a55542c1ad65 100644
+--- a/drivers/net/ethernet/freescale/fman/Kconfig
++++ b/drivers/net/ethernet/freescale/fman/Kconfig
+@@ -4,7 +4,6 @@ config FSL_FMAN
+ 	depends on FSL_SOC || ARCH_LAYERSCAPE || COMPILE_TEST
+ 	select GENERIC_ALLOCATOR
+ 	select PHYLINK
+-	select PCS
+ 	select PCS_LYNX
+ 	select CRC32
+ 	default n
 -- 
 2.17.1
 
