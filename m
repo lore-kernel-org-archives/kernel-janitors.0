@@ -2,112 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F35C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 10:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B76ECC43217
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 11:17:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238909AbiKPKp5 (ORCPT
+        id S239123AbiKPLRW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 05:45:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51190 "EHLO
+        Wed, 16 Nov 2022 06:17:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238906AbiKPKpK (ORCPT
+        with ESMTP id S239232AbiKPLRE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 05:45:10 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BF5E31F82
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 02:32:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668594734;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=EUFIXYNzk8yDs3KImNG3AOVj6XZ3qyNFB3i2C1O73aQ=;
-        b=S0KEC+c92ZXfFv8u0m85OaibTBOaAcCExzjgG0JaK442JxYxvaH5pKmL7raKcxB0lfK3qL
-        Z+OL7EjeNbQGzt6/fwyW4q18CTNyIcTCO8woTXE2hDzs8QOhqG7nLk2wvg7Mr+XNXDYOSO
-        EG7VCXIgnyAmHveUwtxgBxwlpmtrXGg=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-613-h_b7t0GzNoWbcKZ7dRCpSg-1; Wed, 16 Nov 2022 05:32:12 -0500
-X-MC-Unique: h_b7t0GzNoWbcKZ7dRCpSg-1
-Received: by mail-io1-f70.google.com with SMTP id bx19-20020a056602419300b006bcbf3b91fdso8481738iob.13
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 02:32:12 -0800 (PST)
+        Wed, 16 Nov 2022 06:17:04 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0553549B6F;
+        Wed, 16 Nov 2022 03:05:09 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id m7-20020a05600c090700b003cf8a105d9eso1185512wmp.5;
+        Wed, 16 Nov 2022 03:05:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nt8q54IUjG8fYZGllQ5PibnFEuFeXBcb2ZdQ9kqflsc=;
+        b=NqMS/k9x7OCLXkiVB/M6SRtzbLqnvSefXDCcNF4681VtRicjMHUZdDb467XItyzKPk
+         AfpTcuAuyapgKR057L39vb4DCZz+QOOv4bQ0ZrX4Agj09RArmsW+JgMURhqP08BrcHY8
+         +29zTda1y5S8FNUH0rznaNQfBMeb0oyicLmRQ+Aw0U4rpxgldnPoPmejkJv2K2QZnACX
+         yhsv7x5BuWkuaFwiChUcjETiF/V4JS3WcEZYltst/i6C3FAe82B4z59yTWC8grfewC0w
+         lZgBpAzZx5YHxUiTJFfrNEpPMmddA+0vp22AHYfQd97mwSiX5Y2ePbDm2PZnJt42C9gY
+         qhOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EUFIXYNzk8yDs3KImNG3AOVj6XZ3qyNFB3i2C1O73aQ=;
-        b=7hLwLmMciqJ/jJ7PmfazXdaboZNcVxWdR6FZtON2htEsS1accQY+ZV8IK2P79i607c
-         paJTe5r3MuJ2cfr2mewSbQMPjCPzbkyfULTqpbg4/w2e6FT6A877CCuj91f9PMrHk/R1
-         LaMCb6SXQRgpy+Pu/8GB3G851fH7OpYNTIosNNTLjBTs5xnYy3aX8jsXTkrqD5LGOsYC
-         RO5b0TT3mOj2V+K67ReWnPPicYc+YYgRfheR2xq1Wtq5FRMcpV3yksUjlTqSJoz614Gp
-         0u16WhWE5CW/5AdALBPMYBjhHGK9PStZwKP485WdqpzbmpFho3dz5p5XNpGvqIzwbNQS
-         hINw==
-X-Gm-Message-State: ANoB5pnZNmkeyPUIcgb1bBIjj8NmMlfgoc2Y3L1aVOq605Diede3MLGO
-        JeJbVyr8SpbVbjBfuXWA2Cf1iEfA+1A8nMXVJiYCZw+H8/UwbXD1KXqtncxpBc35KBPNkbc/Hub
-        RB8Dnka2Uc2zMvR/uj1Zn9gzdeAcb/kQpJ081WAF6XUPu
-X-Received: by 2002:a92:d281:0:b0:302:4a3a:f480 with SMTP id p1-20020a92d281000000b003024a3af480mr8236516ilp.61.1668594732271;
-        Wed, 16 Nov 2022 02:32:12 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf6mDl6NLRXK3YUpDUDuMeH6TsB9CuSDyqczVUpHLVsgCk66OVWh+1FvOcD/MF7WRurpXNijbn91pIu0F/lzRq8=
-X-Received: by 2002:a92:d281:0:b0:302:4a3a:f480 with SMTP id
- p1-20020a92d281000000b003024a3af480mr8236510ilp.61.1668594732003; Wed, 16 Nov
- 2022 02:32:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20221116093943.597572-1-colin.i.king@gmail.com>
-In-Reply-To: <20221116093943.597572-1-colin.i.king@gmail.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Wed, 16 Nov 2022 11:32:00 +0100
-Message-ID: <CAO-hwJK4fn6eqMDdt7ZPe3e1tc54vQXQk9L6F7gY_QZCmGobGA@mail.gmail.com>
-Subject: Re: [PATCH][next] samples/hid: Fix spelling mistake "wihout" -> "without"
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nt8q54IUjG8fYZGllQ5PibnFEuFeXBcb2ZdQ9kqflsc=;
+        b=huCkGSZsAJ3w+Df09756gYhtUheAuDtg9PoNd9t9lgmYw/JWXuCt4OkXGzmhRJ+emI
+         BZS1S3F3PFPzdsi2HRQtrmqE4Whkl08U86yggXye3nR0foafDQ/M8E7Bol01dxPGwryW
+         x2tOQD0oOpIc5T/ZR5/XbMzmfz01qiIP1NxWBbEZfSgjBtIxUWk9JRCgnkzPEzZeSLKh
+         JEM5bZsuZB84m+DibmbZf+lBdobwyxoomg1q0Mj5faFWDZ1gNbDL4zexT7AdD9gjfOGR
+         fn402nOXGjefB+dsoi7QRcSa3GYFMLAodo6iKeoowZ+TfHUMonkuPB4rAabanF8rB79J
+         yHNA==
+X-Gm-Message-State: ANoB5pmYFKw15Pi+nLB3PlkuXr7oVHE5v+dHFmfG0ghA9Vl3JKSHUAfK
+        gR+tqY8jIqtkV7MZ+VZAsJyni+xkiHQ=
+X-Google-Smtp-Source: AA0mqf5vxmmcTH1fH17jwPxcH/8LGgjrFM8xrkw7QSUdiXmyDyzdHIII54vZlYmnyQVMhLrZrl/2cQ==
+X-Received: by 2002:a1c:29c5:0:b0:3cf:6263:bfc5 with SMTP id p188-20020a1c29c5000000b003cf6263bfc5mr1807409wmp.137.1668596707374;
+        Wed, 16 Nov 2022 03:05:07 -0800 (PST)
+Received: from felia.fritz.box (200116b826c55000c59461cca0b9a159.dip.versatel-1u1.de. [2001:16b8:26c5:5000:c594:61cc:a0b9:a159])
+        by smtp.gmail.com with ESMTPSA id h14-20020a05600c2cae00b003cfd0bd8c0asm1841370wmc.30.2022.11.16.03.05.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 03:05:06 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] usb: dwc3: improve the config dependency of USB_DWC3_XILINX
+Date:   Wed, 16 Nov 2022 12:04:44 +0100
+Message-Id: <20221116110444.8340-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 10:39 AM Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> There is a spelling mistake in a comment and a usage message. Fix them.
+A request to Manish Narani (see Link) asked for clarification of the
+reference to the config ARCH_VERSAL in the support of Xilinx SoCs with
+DesignWare Core USB3 IP.
 
-Good catch
+As there is no response, clean up the reference to the non-existing config
+symbol. While at it, follow up on Felipe Balbi's request to add the
+alternative COMPILE_TEST dependency.
 
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Link: https://lore.kernel.org/all/CAKXUXMwgWfX8+OvY0aCwRNukencwJERAZzU7p4eOLXQ2zv6rAg@mail.gmail.com/
 
-Cheers,
-Benjamin
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/usb/dwc3/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  samples/hid/hid_surface_dial.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/samples/hid/hid_surface_dial.c b/samples/hid/hid_surface_dial.c
-> index bceea53d39b0..4bc97373a708 100644
-> --- a/samples/hid/hid_surface_dial.c
-> +++ b/samples/hid/hid_surface_dial.c
-> @@ -4,7 +4,7 @@
->   * This program will morph the Microsoft Surface Dial into a mouse,
->   * and depending on the chosen resolution enable or not the haptic feedback:
->   * - a resolution (-r) of 3600 will report 3600 "ticks" in one full rotation
-> - *   wihout haptic feedback
-> + *   without haptic feedback
->   * - any other resolution will report N "ticks" in a full rotation with haptic
->   *   feedback
->   *
-> @@ -57,7 +57,7 @@ static void usage(const char *prog)
->                 "This program will morph the Microsoft Surface Dial into a mouse,\n"
->                 "and depending on the chosen resolution enable or not the haptic feedback:\n"
->                 "- a resolution (-r) of 3600 will report 3600 'ticks' in one full rotation\n"
-> -               "  wihout haptic feedback\n"
-> +               "  without haptic feedback\n"
->                 "- any other resolution will report N 'ticks' in a full rotation with haptic\n"
->                 "  feedback\n"
->                 "\n"
-> --
-> 2.38.1
->
+diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
+index 03ededa86da1..b2f72b0e75c6 100644
+--- a/drivers/usb/dwc3/Kconfig
++++ b/drivers/usb/dwc3/Kconfig
+@@ -152,11 +152,11 @@ config USB_DWC3_IMX8MP
+ 
+ config USB_DWC3_XILINX
+ 	tristate "Xilinx Platforms"
+-	depends on (ARCH_ZYNQMP || ARCH_VERSAL) && OF
++	depends on (ARCH_ZYNQMP || COMPILE_TEST) && OF
+ 	default USB_DWC3
+ 	help
+ 	  Support Xilinx SoCs with DesignWare Core USB3 IP.
+-	  This driver handles both ZynqMP and Versal SoC operations.
++	  This driver handles ZynqMP SoC operations.
+ 	  Say 'Y' or 'M' if you have one such device.
+ 
+ config USB_DWC3_AM62
+-- 
+2.17.1
 
