@@ -2,85 +2,155 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08ABFC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 13:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2531C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 13:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233781AbiKPNfg (ORCPT
+        id S237884AbiKPNiT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 08:35:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50236 "EHLO
+        Wed, 16 Nov 2022 08:38:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238294AbiKPNf2 (ORCPT
+        with ESMTP id S237831AbiKPNiQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 08:35:28 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B8D3F07E;
-        Wed, 16 Nov 2022 05:35:16 -0800 (PST)
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C274749C;
-        Wed, 16 Nov 2022 14:35:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1668605714;
-        bh=Sys0rARy8J8jP/a46/LNXBCNgBu8UjwvelC2PQ7N1z4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=CMucZLEkB7PjzR3s2w/0Moz6WaXvsCfSbDbnEMYdJDs6B1RpB+vqWMFWPhPodBAU7
-         naMnG1Bpkpr4F7ZbK3KSP9zv/uIs5Ei3cOxQUw8IyN/sIAb39HxtIxUlZI/Adn1rUC
-         zO3IzpQLHz00jaelSiu/Xe/clZXSdilgXTfvJ+pE=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221116094006.16054-1-lukas.bulwahn@gmail.com>
-References: <20221116094006.16054-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] media: i2c: refer to config VIDEO_DEV to make ov08x40 image sensor driver usable
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wed, 16 Nov 2022 08:38:16 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA734429AA;
+        Wed, 16 Nov 2022 05:38:14 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id ft34so44045390ejc.12;
+        Wed, 16 Nov 2022 05:38:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4wIDFtoQcxM4v9BSbkXANKUxT6C+d890LN3a0zTsJxA=;
+        b=Vr3x0gTvOeZDCKekWYV9fzA8t5IzU6556bd+oUIKmGCAYwjc4GLIlYpkxHKU0vti4h
+         2zxxSV3A09jjeFsBVAMlhjk4ftpNNJ4qnbQwCO+rK0vIgmXHz9D4KqhUxw85jhDC0mMR
+         eO157reViF9/Hg/c6tgdHtiecbTJw3YA4/ySoBAbm96hSahWOQWH0Fpu+WofM3HkhVHo
+         oG24UOx5pPpOrlrCmCngtboRMTcG4mCHSHIj/RpiVhUCgAToGHIgVcKW1bj7v5cZE5/9
+         uLSk/ZrcwTExiPKqYtcOCmyAlCRg3Hr+QlpSRuyjztIZQqh9DCW0FF86ELPdqZSl+64f
+         evDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4wIDFtoQcxM4v9BSbkXANKUxT6C+d890LN3a0zTsJxA=;
+        b=vKo4019M5/8N1jAXmasiJNcwnI3U6GqrU2xObxwBBeo62bUqMMOPwYirK8G6TEHekp
+         gKw9TMVXwZV4EchxfpD2VMXUvvWA8cJO1U+7efst6YCEma/Qof3FyIilDaFypQxIzAFJ
+         1OxmCABlLDu8AMOoomXlWbnXe9G+QkTDUFz995642l2jS/ayNCAlojzoGDjVM9dkrBIw
+         0qjPbDH/lmd0P2XdEtosFa6FZ1QFVE1ZJsGxjykEArw1ZTKNxnqsBxA59VkJf0n7i/3c
+         q62hf+Ip8bbbP+Uc19vHnueqAIEa70+o2F5wwJxSKJ6g8shXeCZibSaeLHJx5jGCZDze
+         B80A==
+X-Gm-Message-State: ANoB5pm8QJJd/eBx316/bygKVe1stywDykewDttn54kWTv8iLuGyyKlF
+        b78u4lqn1ciUOcUbk/UhwOc=
+X-Google-Smtp-Source: AA0mqf6pqA6SMZnHgw4Ph5CBksVUnO0C2CJ2/eWeAQKHc9RvBitMa9WSOVlLbeDTf8kSJrqH0Z0tVA==
+X-Received: by 2002:a17:907:6f17:b0:791:9801:e48a with SMTP id sy23-20020a1709076f1700b007919801e48amr16926157ejc.738.1668605893180;
+        Wed, 16 Nov 2022 05:38:13 -0800 (PST)
+Received: from felia.fritz.box (200116b826c55000c59461cca0b9a159.dip.versatel-1u1.de. [2001:16b8:26c5:5000:c594:61cc:a0b9:a159])
+        by smtp.gmail.com with ESMTPSA id c1-20020a17090618a100b0078b03d57fa7sm6869628ejf.34.2022.11.16.05.38.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 05:38:12 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jason Chen <jason.z.chen@intel.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Shawn Tu <shawnx.tu@intel.com>, linux-media@vger.kernel.org
-Date:   Wed, 16 Nov 2022 13:35:12 +0000
-Message-ID: <166860571228.50677.2036444260575403904@Monstersaurus>
-User-Agent: alot/0.10
+Subject: [PATCH v2] x86: make config X86_FEATURE_NAMES visible with EXPERT
+Date:   Wed, 16 Nov 2022 14:37:53 +0100
+Message-Id: <20221116133753.5615-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Lukas Bulwahn (2022-11-16 09:40:06)
-> Commit 9958d30f38b9 ("media: Kconfig: cleanup VIDEO_DEV dependencies")
-> removes the config VIDEO_V4L2 as it is merged with config VIDEO_DEV.
->=20
-> Long after this change, commit 38fc5136ac16 ("media: i2c: Add ov08x40 ima=
-ge
-> sensor driver") introduces and refers to the removed config VIDEO_V4L2,
-> basically making this driver impossible to build, test and use due to
-> dependencies that cannot be met.
->=20
-> Refer to config VIDEO_DEV instead to make this driver usable.
+Commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to CONFIG_EXPERT")
+introduces CONFIG_EXPERT to carry the previous intent of CONFIG_EMBEDDED
+and just gives that intent a much better name. That has been clearly a good
+and long overdue renaming, and it is clearly an improvement to the kernel
+build configuration that has shown to help managing the kernel build
+configuration in the last decade.
 
+However, rather than bravely and radically just deleting CONFIG_EMBEDDED,
+this commit gives CONFIG_EMBEDDED a new intended semantics, but keeps it
+open for future contributors to implement that intended semantics:
 
-Fixes: 38fc5136ac16 ("media: i2c: Add ov08x40 image sensor driver")
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+    A new CONFIG_EMBEDDED option is added that automatically selects
+    CONFIG_EXPERT when enabled and can be used in the future to isolate
+    options that should only be considered for embedded systems (RISC
+    architectures, SLOB, etc).
 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  drivers/media/i2c/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index 49c1c27afdc1..4a4ae9c20119 100644
-> --- a/drivers/media/i2c/Kconfig
-> +++ b/drivers/media/i2c/Kconfig
-> @@ -366,7 +366,7 @@ config VIDEO_OV08D10
-> =20
->  config VIDEO_OV08X40
->         tristate "OmniVision OV08X40 sensor support"
-> -       depends on VIDEO_V4L2 && I2C
-> +       depends on VIDEO_DEV && I2C
->         select MEDIA_CONTROLLER
->         select VIDEO_V4L2_SUBDEV_API
->         select V4L2_FWNODE
-> --=20
-> 2.17.1
->
+Since then, this CONFIG_EMBEDDED implicitly had two purposes:
+
+  - It can make even more options visible beyond what CONFIG_EXPERT makes
+    visible. In other words, it may introduce another level of enabling the
+    visibility of configuration options: always visible, visible with
+    CONFIG_EXPERT and visible with CONFIG_EMBEDDED.
+
+  - Set certain default values of some configurations differently,
+    following the assumption that configuring a kernel build for an
+    embedded system generally starts with a different set of default values
+    compared to kernel builds for all other kind of systems.
+
+Considering the first purpose, at the point in time where CONFIG_EMBEDDED
+was renamed to CONFIG_EXPERT, CONFIG_EXPERT already made 130 more options
+become visible throughout all different menus for the kernel configuration.
+Over the last decade, this has gradually increased, so that currently, with
+CONFIG_EXPERT, roughly 170 more options become visible throughout all
+different menus for the kernel configuration. In comparison, currently with
+CONFIG_EMBEDDED enabled, just seven more options are visible, one in x86,
+one in arm, and five for the ChipIdea Highspeed Dual Role Controller.
+
+As the numbers suggest, these two levels of enabling the visibility of even
+more configuration options---beyond what CONFIG_EXPERT enables---never
+evolved to a good solution in the last decade. In other words, this
+additional level of visibility of configuration option with CONFIG_EMBEDDED
+compared to CONFIG_EXPERT has since its introduction never become really
+valuable. It requires quite some investigation to actually understand what
+is additionally visible and it does not differ significantly in complexity
+compared to just enabling CONFIG_EXPERT. This CONFIG_EMBEDDED---or any
+other config to show more detailed options beyond CONFIG_EXPERT---is
+unlikely to be valuable unless somebody puts significant effort in
+identifying how such visibility options can be properly split and creating
+clear criteria, when some config option is visible with CONFIG_EXPERT and
+when some config option is visible only with some further option enabled
+beyond CONFIG_EXPERT, such as CONFIG_EMBEDDED attempted to do. For now, it
+is much more reasonable to simply make those additional seven options that
+are visible with CONFIG_EMBEDDED visible with CONFIG_EXPERT, and then
+remove CONFIG_EMBEDDED. If anyone spends significant effort in structuring
+the visibility of config options, they may re-introduce suitable new
+config options simply as they see fit.
+
+Make the config X86_FEATURE_NAMES visible when CONFIG_EXPERT is enabled.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+---
+v1:
+  https://lore.kernel.org/lkml/20220908104337.11940-3-lukas.bulwahn@gmail.com/
+v1 -> v2:
+  - fixed some omitted words in the commit message
+  - added tags from Masahiro-san and Arnd
+
+ arch/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index cef0107e4260..4555ca4601e3 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -439,7 +439,7 @@ config SMP
+ 	  If you don't know what to do here, say N.
+ 
+ config X86_FEATURE_NAMES
+-	bool "Processor feature human-readable names" if EMBEDDED
++	bool "Processor feature human-readable names" if EXPERT
+ 	default y
+ 	help
+ 	  This option compiles in a table of x86 feature bits and corresponding
+-- 
+2.17.1
+
