@@ -2,99 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BF3C43219
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 09:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E606C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 09:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238371AbiKPJju (ORCPT
+        id S238856AbiKPJkr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 04:39:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56496 "EHLO
+        Wed, 16 Nov 2022 04:40:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231806AbiKPJjr (ORCPT
+        with ESMTP id S238756AbiKPJk2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 04:39:47 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCB7F26489;
-        Wed, 16 Nov 2022 01:39:45 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso1034415wmo.1;
-        Wed, 16 Nov 2022 01:39:45 -0800 (PST)
+        Wed, 16 Nov 2022 04:40:28 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C9702A26A;
+        Wed, 16 Nov 2022 01:40:27 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id ja4-20020a05600c556400b003cf6e77f89cso2715518wmb.0;
+        Wed, 16 Nov 2022 01:40:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8+VhJIT56E3eyqauVp2za8R6dR/zAfRqC25svBjA2II=;
-        b=gL7KASVfMY7yKpFvv4CgNTMJMNncFBVfLkz96aQRcU/bjdkksCfmvgS0rinIkpt3OW
-         sdLJyAjRuJyREdrMmLBINLLpBTHzrPOYZGenei3C1oCEJqvvi5jaS9t3psKRHuoUyxs1
-         te3QCEHFDgr4yabNxKm5zFkk/jloW8yJaSxJ657HVjPsTPeMRxTwb9sq85wytgB9cizx
-         y93FaSoibF/FhV6jwHhi4XH3QVo9C3nKn0cINmXpcIiCKjgF83CeMIPlrcCYw1jsZrKH
-         yjO7WLFYiNsJ21Nif1l4TJZoyEutqx9ezmq2Kons8f0yHfrdGpEgRp0qkD+NfqnX0od6
-         7m0w==
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bRVEplC+7j6A14IZcqWB9f97UNzmakJtqB171khWs5c=;
+        b=hrtIVynRsFTFAfwFj68ESejr8oNfwyFLMiOUQWmxyZ7gARsphmolR5UEOref/f8sA0
+         hD/ikkxUruJf/IkSGsWzmzf7U3uRj23YfiSKt1zzI4u7KN9B6SnyJLyCYz1VU6M35rCy
+         CAa3WKWdBlF50kpVZu1fAjSLXMaqA/9of20hrSubL7kbMXwMeQ+XGWLIAkKqIWcC5YzJ
+         UDlqOE3XT//98ZqARV0eKNkxHoKkanLQ0VbOdWA31yHkYtJpgzWJiXL3cmctF7PkqMpC
+         NbmjZ5FmdSgwsXo+zjpFEow4j8U3TUY3pJJE9K8UZGYr8Ltu0aRhmyawa+ooHXbax/Zd
+         92yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8+VhJIT56E3eyqauVp2za8R6dR/zAfRqC25svBjA2II=;
-        b=xIzHNdfkBqATPuAKakDbsPUe87hEy640nIjWWUW1uv2nsQWkNEUrQ5pK+To7vxfduF
-         TDmIBlIL+WfyzEql5G0KuOSZCmah2KddJZlN+1jkvFsHCO9msERncNc/l4+rQ9BhCUcU
-         TjIe6/jIjf1UZtDQKPVap7cZ3PMVXy7BRlJ2Qie9EoTHMFqQqzqDydgEzJo/l+dbCMKT
-         iccDnoA2dr790BRswI9ZtZKEda5nDQ5QQA8nJG8B6tX3sU8GW9Ha6560e+GCVjjr9XY/
-         Ft6SMZNPHJ7seoy4F5JhGfvx4NHa6rBG5HO2CU2V0GV7HwCKXYAWuNzVqUeTEngKyPiL
-         O62g==
-X-Gm-Message-State: ANoB5pke3eyS4N+lofhkpQCbO8l/fxx5WxMFHJ7RHHGUcB+/vgm93M9o
-        zTJNsZJzfRd66vVZBzDztaQ=
-X-Google-Smtp-Source: AA0mqf4sk015FT734mG6coyeEbpO+oFWeDewcyacn59OPoYlwasoeOwPsCRbs37SJd7D6KWGY+z7Tw==
-X-Received: by 2002:a05:600c:4fc3:b0:3cf:7d3e:f985 with SMTP id o3-20020a05600c4fc300b003cf7d3ef985mr1636855wmq.7.1668591584286;
-        Wed, 16 Nov 2022 01:39:44 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n1-20020a05600c4f8100b003cf78aafdd7sm1607050wmq.39.2022.11.16.01.39.43
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bRVEplC+7j6A14IZcqWB9f97UNzmakJtqB171khWs5c=;
+        b=4UxVk/BUiHoKxF5nZXYe0xVQUG9BvVLvNdZPYCUnePkJT2VSBgZTAfPk5IXY4yVHVc
+         c2INSxRJRDnLh1GbTlBkqtj8Liay2LQSENGg+A2ZJD/t9hPrk8mpB2uuq/DYJUomP74A
+         kZLlnEgP/Dm8hZ+UkmMGaiQESinyVyL5bvel39uQDT/jm1kXf1jAOUjxxAp1YQB95P6w
+         BrT/x2uEKycEkKt+zmcomrKkFx/Rv7w1Ct8p5EbHSMDX3Gbgv+/wfhbuS22ObyAvr5DR
+         dx/sHCU1MP1SZUoXGBdaG5Eu3e4ZUk5XdVzDjm1kh/+oV7QajgJDfWs8RfSv7QucWofs
+         +tzA==
+X-Gm-Message-State: ANoB5plpH2ysAF0nPYw/0d0iE51HP4flnQfF4Srnvq6gjbGDdUsLI7hv
+        S4CJVnzG+o3GMk10gfgS0EQ=
+X-Google-Smtp-Source: AA0mqf4RcK2BTsxFpnj9xspSpvctbxaD3ERJeZpeXbiOGYQZpl50PSOp6G+zqMd6zdzjw6/ulmZdPQ==
+X-Received: by 2002:a05:600c:19d1:b0:3cf:ca1a:332a with SMTP id u17-20020a05600c19d100b003cfca1a332amr1538043wmq.118.1668591625860;
+        Wed, 16 Nov 2022 01:40:25 -0800 (PST)
+Received: from felia.fritz.box (200116b826c55000c59461cca0b9a159.dip.versatel-1u1.de. [2001:16b8:26c5:5000:c594:61cc:a0b9:a159])
+        by smtp.gmail.com with ESMTPSA id l13-20020a5d674d000000b0022e3538d305sm17223547wrw.117.2022.11.16.01.40.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 01:39:43 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] samples/hid: Fix spelling mistake "wihout" -> "without"
-Date:   Wed, 16 Nov 2022 09:39:43 +0000
-Message-Id: <20221116093943.597572-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 16 Nov 2022 01:40:25 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Shawn Tu <shawnx.tu@intel.com>,
+        Jason Chen <jason.z.chen@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] media: i2c: refer to config VIDEO_DEV to make ov08x40 image sensor driver usable
+Date:   Wed, 16 Nov 2022 10:40:06 +0100
+Message-Id: <20221116094006.16054-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a comment and a usage message. Fix them.
+Commit 9958d30f38b9 ("media: Kconfig: cleanup VIDEO_DEV dependencies")
+removes the config VIDEO_V4L2 as it is merged with config VIDEO_DEV.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Long after this change, commit 38fc5136ac16 ("media: i2c: Add ov08x40 image
+sensor driver") introduces and refers to the removed config VIDEO_V4L2,
+basically making this driver impossible to build, test and use due to
+dependencies that cannot be met.
+
+Refer to config VIDEO_DEV instead to make this driver usable.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- samples/hid/hid_surface_dial.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/i2c/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/samples/hid/hid_surface_dial.c b/samples/hid/hid_surface_dial.c
-index bceea53d39b0..4bc97373a708 100644
---- a/samples/hid/hid_surface_dial.c
-+++ b/samples/hid/hid_surface_dial.c
-@@ -4,7 +4,7 @@
-  * This program will morph the Microsoft Surface Dial into a mouse,
-  * and depending on the chosen resolution enable or not the haptic feedback:
-  * - a resolution (-r) of 3600 will report 3600 "ticks" in one full rotation
-- *   wihout haptic feedback
-+ *   without haptic feedback
-  * - any other resolution will report N "ticks" in a full rotation with haptic
-  *   feedback
-  *
-@@ -57,7 +57,7 @@ static void usage(const char *prog)
- 		"This program will morph the Microsoft Surface Dial into a mouse,\n"
- 		"and depending on the chosen resolution enable or not the haptic feedback:\n"
- 		"- a resolution (-r) of 3600 will report 3600 'ticks' in one full rotation\n"
--		"  wihout haptic feedback\n"
-+		"  without haptic feedback\n"
- 		"- any other resolution will report N 'ticks' in a full rotation with haptic\n"
- 		"  feedback\n"
- 		"\n"
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index 49c1c27afdc1..4a4ae9c20119 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -366,7 +366,7 @@ config VIDEO_OV08D10
+ 
+ config VIDEO_OV08X40
+ 	tristate "OmniVision OV08X40 sensor support"
+-	depends on VIDEO_V4L2 && I2C
++	depends on VIDEO_DEV && I2C
+ 	select MEDIA_CONTROLLER
+ 	select VIDEO_V4L2_SUBDEV_API
+ 	select V4L2_FWNODE
 -- 
-2.38.1
+2.17.1
 
