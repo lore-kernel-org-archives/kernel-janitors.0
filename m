@@ -2,78 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AA4C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 09:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BF3C43219
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 09:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233589AbiKPJd4 (ORCPT
+        id S238371AbiKPJju (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 04:33:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53588 "EHLO
+        Wed, 16 Nov 2022 04:39:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231985AbiKPJdr (ORCPT
+        with ESMTP id S231806AbiKPJjr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 04:33:47 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E28D425FD;
-        Wed, 16 Nov 2022 01:33:46 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7A414B81C21;
-        Wed, 16 Nov 2022 09:33:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED18C433D6;
-        Wed, 16 Nov 2022 09:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668591224;
-        bh=LJFi6Ma1wzYiDa5KLD8RjmUBaaBhQpd9Xx8w7okLL/0=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=EJiPSar9fvYC8gxWIGNiU+SsZZ4gALbqU+ctlrwbqFlvFTAg49j5d5rebYCOq7eMh
-         gHL2BUnvPCavqP+szIAv9HWDFrFGby4a35IKJ89s9lrBLLUOagDLTxbxbZ5LD5oe1y
-         xvJ+DA+yWSohkqAM0Hv6H2gRr6RoBOmkSnb5aV5HpIkCGN5O03cA1DaazSNJZwds4m
-         /2QMLb7ywnQtlXMLoLjH2jCCnzUMD5ORDn8ytoMHr1h42COptFk9Q1ap5XVY50G3Rh
-         tZcW7hE3wOHMav2vqPQcIfVyXCHn3Zpwij88EGFveOGfPbe0uQM84U98TcfpFsy1/k
-         5PaEB2i1656AA==
-Content-Type: text/plain; charset="utf-8"
+        Wed, 16 Nov 2022 04:39:47 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCB7F26489;
+        Wed, 16 Nov 2022 01:39:45 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso1034415wmo.1;
+        Wed, 16 Nov 2022 01:39:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8+VhJIT56E3eyqauVp2za8R6dR/zAfRqC25svBjA2II=;
+        b=gL7KASVfMY7yKpFvv4CgNTMJMNncFBVfLkz96aQRcU/bjdkksCfmvgS0rinIkpt3OW
+         sdLJyAjRuJyREdrMmLBINLLpBTHzrPOYZGenei3C1oCEJqvvi5jaS9t3psKRHuoUyxs1
+         te3QCEHFDgr4yabNxKm5zFkk/jloW8yJaSxJ657HVjPsTPeMRxTwb9sq85wytgB9cizx
+         y93FaSoibF/FhV6jwHhi4XH3QVo9C3nKn0cINmXpcIiCKjgF83CeMIPlrcCYw1jsZrKH
+         yjO7WLFYiNsJ21Nif1l4TJZoyEutqx9ezmq2Kons8f0yHfrdGpEgRp0qkD+NfqnX0od6
+         7m0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8+VhJIT56E3eyqauVp2za8R6dR/zAfRqC25svBjA2II=;
+        b=xIzHNdfkBqATPuAKakDbsPUe87hEy640nIjWWUW1uv2nsQWkNEUrQ5pK+To7vxfduF
+         TDmIBlIL+WfyzEql5G0KuOSZCmah2KddJZlN+1jkvFsHCO9msERncNc/l4+rQ9BhCUcU
+         TjIe6/jIjf1UZtDQKPVap7cZ3PMVXy7BRlJ2Qie9EoTHMFqQqzqDydgEzJo/l+dbCMKT
+         iccDnoA2dr790BRswI9ZtZKEda5nDQ5QQA8nJG8B6tX3sU8GW9Ha6560e+GCVjjr9XY/
+         Ft6SMZNPHJ7seoy4F5JhGfvx4NHa6rBG5HO2CU2V0GV7HwCKXYAWuNzVqUeTEngKyPiL
+         O62g==
+X-Gm-Message-State: ANoB5pke3eyS4N+lofhkpQCbO8l/fxx5WxMFHJ7RHHGUcB+/vgm93M9o
+        zTJNsZJzfRd66vVZBzDztaQ=
+X-Google-Smtp-Source: AA0mqf4sk015FT734mG6coyeEbpO+oFWeDewcyacn59OPoYlwasoeOwPsCRbs37SJd7D6KWGY+z7Tw==
+X-Received: by 2002:a05:600c:4fc3:b0:3cf:7d3e:f985 with SMTP id o3-20020a05600c4fc300b003cf7d3ef985mr1636855wmq.7.1668591584286;
+        Wed, 16 Nov 2022 01:39:44 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id n1-20020a05600c4f8100b003cf78aafdd7sm1607050wmq.39.2022.11.16.01.39.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 01:39:43 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] samples/hid: Fix spelling mistake "wihout" -> "without"
+Date:   Wed, 16 Nov 2022 09:39:43 +0000
+Message-Id: <20221116093943.597572-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wifi: rtw89: Fix some error handling path in
- rtw89_core_sta_assoc()
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <7b1d82594635e4406d3438f33d8da29eaa056c5a.1668354547.git.christophe.jaillet@wanadoo.fr>
-References: <7b1d82594635e4406d3438f33d8da29eaa056c5a.1668354547.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Ping-Ke Shih <pkshih@realtek.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <166859121959.16887.13694175362892729527.kvalo@kernel.org>
-Date:   Wed, 16 Nov 2022 09:33:41 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+There is a spelling mistake in a comment and a usage message. Fix them.
 
-> 'ret' is not updated after a function call in rtw89_core_sta_assoc().
-> This prevent error handling from working.
-> 
-> Add the missing assignment.
-> 
-> Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ samples/hid/hid_surface_dial.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Patch applied to wireless-next.git, thanks.
-
-81c0b8928437 wifi: rtw89: Fix some error handling path in rtw89_core_sta_assoc()
-
+diff --git a/samples/hid/hid_surface_dial.c b/samples/hid/hid_surface_dial.c
+index bceea53d39b0..4bc97373a708 100644
+--- a/samples/hid/hid_surface_dial.c
++++ b/samples/hid/hid_surface_dial.c
+@@ -4,7 +4,7 @@
+  * This program will morph the Microsoft Surface Dial into a mouse,
+  * and depending on the chosen resolution enable or not the haptic feedback:
+  * - a resolution (-r) of 3600 will report 3600 "ticks" in one full rotation
+- *   wihout haptic feedback
++ *   without haptic feedback
+  * - any other resolution will report N "ticks" in a full rotation with haptic
+  *   feedback
+  *
+@@ -57,7 +57,7 @@ static void usage(const char *prog)
+ 		"This program will morph the Microsoft Surface Dial into a mouse,\n"
+ 		"and depending on the chosen resolution enable or not the haptic feedback:\n"
+ 		"- a resolution (-r) of 3600 will report 3600 'ticks' in one full rotation\n"
+-		"  wihout haptic feedback\n"
++		"  without haptic feedback\n"
+ 		"- any other resolution will report N 'ticks' in a full rotation with haptic\n"
+ 		"  feedback\n"
+ 		"\n"
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/7b1d82594635e4406d3438f33d8da29eaa056c5a.1668354547.git.christophe.jaillet@wanadoo.fr/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.38.1
 
