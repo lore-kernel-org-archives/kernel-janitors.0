@@ -2,107 +2,145 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4F2C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 16:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C92ABC4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 22:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234505AbiKPQSe (ORCPT
+        id S234272AbiKPWhZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 11:18:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55066 "EHLO
+        Wed, 16 Nov 2022 17:37:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234316AbiKPQST (ORCPT
+        with ESMTP id S230205AbiKPWhY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 11:18:19 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11AF57B5D
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 08:18:18 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so2728411pjs.4
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 08:18:18 -0800 (PST)
+        Wed, 16 Nov 2022 17:37:24 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB716B397
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 14:37:23 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id o7-20020a05600c510700b003cffc0b3374so43543wms.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 14:37:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3vuu78aZaHK7VJ8++7/BN17PpF7VX0jC0oheW36hmIs=;
-        b=uuC6XXHVG9Amxc061f3zNUOSdEnIEF4TjDWOnctoTMuFscut4Itv7mLnBGqCfgs0al
-         L+c/6HzzyuYppun8NsFwkMKhAp5vuR0lJkvjp0Yz5s3NOtHEoezqavVS9o1XoDOkXRp2
-         nqljq8Xzfl5NVYp/FgHWjOUh+fYjzcJCl7moBfmRkCKQLPemXAavMLERLsUbzejrOh3g
-         sGecALTxxhB0T3feWWlLZDsacHgB4UyWhkhOqkh529nWjGvMUHJ+j4rmzbEUntYWrui9
-         +lVi3b7o7oneBIJGhYCYDGHbBxGQ56+iebIAoJY2gK5JwDxBEF9X3O2nublK5wBYf97X
-         8/Qg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DdCi7i53M7SdmWJENVuu2u1iCBwoHAK4ArwaATMNUTk=;
+        b=IXpqH5PJjyVvfTaPA2+sTXPEZNNLJ5rfd1SD13n0pu91n5YCewPqfqhTjdLizA4SWH
+         mCgW/ut2XejvFczESAw6Z99Tqq5keSSXypILyUOazGBliBZdkNQYXro90nXVung2q6bb
+         4HIPuDX6ZDJmFesxzpFL89/pZpWT+Z8c1Nc+H3S3KF3wwJeyzWgeJvEWtKeqrea/9R1M
+         ccz9vSWZS1904qymqkRvoXup5dzGpXgAJaKBkSDxl6T/AU+LCrsVADf6y9NmDdCr51QH
+         oxpQqPZ9Hgm6fNrjtaytErXsqPtlVUET3+kxv6Z8GmM8U8+zaHdVFuh5W55LehLTHJt+
+         qcNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3vuu78aZaHK7VJ8++7/BN17PpF7VX0jC0oheW36hmIs=;
-        b=0hU2WSWd3E007xN9sPVniKDSV+GZtRoYBDvqxaHI3EJ+vO0uui7Tb+/j7xQoCrdzLb
-         ALf2xkG22Hj4VRwXOR8jH3ItoaocNtjGim8uOgDbprRoy3/7SDXcJxwS/uYKfAMFEWY8
-         VErGDbaJZpzNkYbVOyjDLCRc40pu8av76ogHRvPn+DsCn8Yh4BavB0xUtrR6aYPHJZN2
-         4rKNY+JS67jcLtlQlb+CcknlkT8DD2JSsMo+PUun8l1nXd1H4ltQ9egzTWt4iKEZxhn9
-         LcRiVCM3piLoxOjVaLqr86bahlaIJGLv8mTwF9GDM2hPFPe7VLYjQSN56rbYm+JmbpZV
-         1vmQ==
-X-Gm-Message-State: ANoB5pn4kVWNUzQHiNhqvITFKQejN5g6HUe9DsNwmmtVVYcr34W5iOtt
-        OCTlFWr0a0Feu9C5Km9ReQc2LHcqVnZSO29SkxdEpQ==
-X-Google-Smtp-Source: AA0mqf4Wa1H27TGFSnM/a1m63gk9/L+t2q1xko8YOBEh2/dkruP1K3xLmmg6L38tevF4sFxaktwBmh2GNWgpZ2zVkB4=
-X-Received: by 2002:a17:902:d48a:b0:188:6baf:2011 with SMTP id
- c10-20020a170902d48a00b001886baf2011mr9115763plg.165.1668615498412; Wed, 16
- Nov 2022 08:18:18 -0800 (PST)
+        bh=DdCi7i53M7SdmWJENVuu2u1iCBwoHAK4ArwaATMNUTk=;
+        b=hnen0U9JCAhgEkd9TQyPCAoHk7lTUSk82bQ6+xgxc31JwQ2pSmjzf2Jd0Nf0/pSjDN
+         VdnkNzHUY1lK7Wt8wq7cmwb7Vu5+SblFW6t18igodDqTMDOPdVc+58lxa7SFJShn4C3P
+         wSys/BPpvgvBXWiTUBh0aowdctBobELOqJd/K6FXpnZPjkYH595VDm4RtBZeg2wdTSXk
+         xiSPWXNXpdJxB/Cncu2it3ClxKW5Jybwm5FqpZaKmk0W5M9s3WJvQ9BNAOdVRgUo2O+m
+         mmOP/IX6OKt0C2nQi5HWg1NTxwFVONX06XkyYjwGicZNG4jxPTyqT+c65qvmqmAFFnz2
+         tp4Q==
+X-Gm-Message-State: ANoB5pnyDzLnd2ldeBB6nRnhRBnE0XTcu1NIgidvOMcsYn2yYMSUMFHB
+        +mnqhwRKHu8VI/1K2QUl/MV0QQ==
+X-Google-Smtp-Source: AA0mqf7nQtnAf+wahmKfpwsx+1U4sa/29Y2YebNZUFFmC+4pwsUWTz2lMlpIxzeSD5v15yhQTsRC+w==
+X-Received: by 2002:a05:600c:4f04:b0:3cf:9881:e9d9 with SMTP id l4-20020a05600c4f0400b003cf9881e9d9mr3570378wmq.6.1668638241510;
+        Wed, 16 Nov 2022 14:37:21 -0800 (PST)
+Received: from zoltan.localdomain ([167.98.215.174])
+        by smtp.gmail.com with ESMTPSA id f4-20020adff984000000b0024194bba380sm7598297wrr.22.2022.11.16.14.37.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 14:37:20 -0800 (PST)
+From:   Alex Elder <elder@linaro.org>
+To:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
+Cc:     error27@gmail.com, caleb.connolly@linaro.com, elder@kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: ipa: avoid a null pointer dereference
+Date:   Wed, 16 Nov 2022 16:37:18 -0600
+Message-Id: <20221116223718.137175-1-elder@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20221110072819.11530-1-yuzhe@nfschina.com>
-In-Reply-To: <20221110072819.11530-1-yuzhe@nfschina.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 16 Nov 2022 17:17:41 +0100
-Message-ID: <CAPDyKFrW+FaDNc+YPjrR1eAYhjPc6BHj4zqghBRnMC0P+A_jKA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: mtk-sd: fix two spelling mistakes in comment
-To:     Yu Zhe <yuzhe@nfschina.com>
-Cc:     chaotian.jing@mediatek.com, matthias.bgg@gmail.com,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 10 Nov 2022 at 08:29, Yu Zhe <yuzhe@nfschina.com> wrote:
->
-> spelling mistake fix : "alreay" -> "already"
->                        "checksume" -> "checksum"
->
-> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+Dan Carpenter reported that Smatch found an instance where a pointer
+which had previously been assumed could be null (as indicated by a
+null check) was later dereferenced without a similar check.
 
-Applied for next, thanks!
+In practice this doesn't lead to a problem because currently the
+pointers used are all non-null.  Nevertheless this patch addresses
+the reported problem.
 
-Kind regards
-Uffe
+In addition, I spotted another bug that arose in the same commit.
+When the command to initialize a routing table memory region was
+added, the number of entries computed for the non-hashed table
+was wrong (it ended up being a Boolean rather than the count
+intended).  This bug is fixed here as well.
 
+Reported-by: Dan Carpenter <error27@gmail.com>
+Link: https://lore.kernel.org/kernel-janitors/Y3OOP9dXK6oEydkf@kili
+Tested-by: Caleb Connolly <caleb.connolly@linaro.com>
+Fixes: 5cb76899fb47 ("net: ipa: reduce arguments to ipa_table_init_add()")
+Signed-off-by: Alex Elder <elder@linaro.org>
+---
+Note:  This does *not* need to be back-ported (it applies to net-next).
 
-> ---
->  drivers/mmc/host/mtk-sd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> index df941438aef5..a10aca76dfb3 100644
-> --- a/drivers/mmc/host/mtk-sd.c
-> +++ b/drivers/mmc/host/mtk-sd.c
-> @@ -735,7 +735,7 @@ static inline void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
->                 else
->                         bd[j].bd_info &= ~BDMA_DESC_EOL;
->
-> -               /* checksume need to clear first */
-> +               /* checksum need to clear first */
->                 bd[j].bd_info &= ~BDMA_DESC_CHECKSUM;
->                 bd[j].bd_info |= msdc_dma_calcs((u8 *)(&bd[j]), 16) << 8;
->         }
-> @@ -1212,7 +1212,7 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
->                      !host->hs400_tuning))
->                         /*
->                          * should not clear fifo/interrupt as the tune data
-> -                        * may have alreay come when cmd19/cmd21 gets response
-> +                        * may have already come when cmd19/cmd21 gets response
->                          * CRC error.
->                          */
->                         msdc_reset_hw(host);
-> --
-> 2.11.0
->
+ drivers/net/ipa/ipa_table.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ipa/ipa_table.c b/drivers/net/ipa/ipa_table.c
+index cc9349a1d4df9..b81e27b613549 100644
+--- a/drivers/net/ipa/ipa_table.c
++++ b/drivers/net/ipa/ipa_table.c
+@@ -382,6 +382,7 @@ static void ipa_table_init_add(struct gsi_trans *trans, bool filter, bool ipv6)
+ 	const struct ipa_mem *mem;
+ 	dma_addr_t hash_addr;
+ 	dma_addr_t addr;
++	u32 hash_offset;
+ 	u32 zero_offset;
+ 	u16 hash_count;
+ 	u32 zero_size;
+@@ -394,8 +395,10 @@ static void ipa_table_init_add(struct gsi_trans *trans, bool filter, bool ipv6)
+ 			: ipv6 ? IPA_CMD_IP_V6_ROUTING_INIT
+ 			       : IPA_CMD_IP_V4_ROUTING_INIT;
+ 
++	/* The non-hashed region will exist (see ipa_table_mem_valid()) */
+ 	mem = ipa_table_mem(ipa, filter, false, ipv6);
+ 	hash_mem = ipa_table_mem(ipa, filter, true, ipv6);
++	hash_offset = hash_mem ? hash_mem->offset : 0;
+ 
+ 	/* Compute the number of table entries to initialize */
+ 	if (filter) {
+@@ -411,7 +414,7 @@ static void ipa_table_init_add(struct gsi_trans *trans, bool filter, bool ipv6)
+ 		 * of entries it has.
+ 		 */
+ 		count = mem->size / sizeof(__le64);
+-		hash_count = hash_mem && hash_mem->size / sizeof(__le64);
++		hash_count = hash_mem ? hash_mem->size / sizeof(__le64) : 0;
+ 	}
+ 	size = count * sizeof(__le64);
+ 	hash_size = hash_count * sizeof(__le64);
+@@ -420,7 +423,7 @@ static void ipa_table_init_add(struct gsi_trans *trans, bool filter, bool ipv6)
+ 	hash_addr = ipa_table_addr(ipa, filter, hash_count);
+ 
+ 	ipa_cmd_table_init_add(trans, opcode, size, mem->offset, addr,
+-			       hash_size, hash_mem->offset, hash_addr);
++			       hash_size, hash_offset, hash_addr);
+ 	if (!filter)
+ 		return;
+ 
+@@ -433,7 +436,7 @@ static void ipa_table_init_add(struct gsi_trans *trans, bool filter, bool ipv6)
+ 		return;
+ 
+ 	/* Zero the unused space in the hashed filter table */
+-	zero_offset = hash_mem->offset + hash_size;
++	zero_offset = hash_offset + hash_size;
+ 	zero_size = hash_mem->size - hash_size;
+ 	ipa_cmd_dma_shared_mem_add(trans, zero_offset, zero_size,
+ 				   ipa->zero_addr, true);
+-- 
+2.34.1
+
