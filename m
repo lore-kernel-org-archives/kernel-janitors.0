@@ -2,155 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2531C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 13:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4F2C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 16:18:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237884AbiKPNiT (ORCPT
+        id S234505AbiKPQSe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 08:38:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51860 "EHLO
+        Wed, 16 Nov 2022 11:18:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237831AbiKPNiQ (ORCPT
+        with ESMTP id S234316AbiKPQST (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 08:38:16 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA734429AA;
-        Wed, 16 Nov 2022 05:38:14 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id ft34so44045390ejc.12;
-        Wed, 16 Nov 2022 05:38:14 -0800 (PST)
+        Wed, 16 Nov 2022 11:18:19 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11AF57B5D
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 08:18:18 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so2728411pjs.4
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 08:18:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4wIDFtoQcxM4v9BSbkXANKUxT6C+d890LN3a0zTsJxA=;
-        b=Vr3x0gTvOeZDCKekWYV9fzA8t5IzU6556bd+oUIKmGCAYwjc4GLIlYpkxHKU0vti4h
-         2zxxSV3A09jjeFsBVAMlhjk4ftpNNJ4qnbQwCO+rK0vIgmXHz9D4KqhUxw85jhDC0mMR
-         eO157reViF9/Hg/c6tgdHtiecbTJw3YA4/ySoBAbm96hSahWOQWH0Fpu+WofM3HkhVHo
-         oG24UOx5pPpOrlrCmCngtboRMTcG4mCHSHIj/RpiVhUCgAToGHIgVcKW1bj7v5cZE5/9
-         uLSk/ZrcwTExiPKqYtcOCmyAlCRg3Hr+QlpSRuyjztIZQqh9DCW0FF86ELPdqZSl+64f
-         evDw==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3vuu78aZaHK7VJ8++7/BN17PpF7VX0jC0oheW36hmIs=;
+        b=uuC6XXHVG9Amxc061f3zNUOSdEnIEF4TjDWOnctoTMuFscut4Itv7mLnBGqCfgs0al
+         L+c/6HzzyuYppun8NsFwkMKhAp5vuR0lJkvjp0Yz5s3NOtHEoezqavVS9o1XoDOkXRp2
+         nqljq8Xzfl5NVYp/FgHWjOUh+fYjzcJCl7moBfmRkCKQLPemXAavMLERLsUbzejrOh3g
+         sGecALTxxhB0T3feWWlLZDsacHgB4UyWhkhOqkh529nWjGvMUHJ+j4rmzbEUntYWrui9
+         +lVi3b7o7oneBIJGhYCYDGHbBxGQ56+iebIAoJY2gK5JwDxBEF9X3O2nublK5wBYf97X
+         8/Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4wIDFtoQcxM4v9BSbkXANKUxT6C+d890LN3a0zTsJxA=;
-        b=vKo4019M5/8N1jAXmasiJNcwnI3U6GqrU2xObxwBBeo62bUqMMOPwYirK8G6TEHekp
-         gKw9TMVXwZV4EchxfpD2VMXUvvWA8cJO1U+7efst6YCEma/Qof3FyIilDaFypQxIzAFJ
-         1OxmCABlLDu8AMOoomXlWbnXe9G+QkTDUFz995642l2jS/ayNCAlojzoGDjVM9dkrBIw
-         0qjPbDH/lmd0P2XdEtosFa6FZ1QFVE1ZJsGxjykEArw1ZTKNxnqsBxA59VkJf0n7i/3c
-         q62hf+Ip8bbbP+Uc19vHnueqAIEa70+o2F5wwJxSKJ6g8shXeCZibSaeLHJx5jGCZDze
-         B80A==
-X-Gm-Message-State: ANoB5pm8QJJd/eBx316/bygKVe1stywDykewDttn54kWTv8iLuGyyKlF
-        b78u4lqn1ciUOcUbk/UhwOc=
-X-Google-Smtp-Source: AA0mqf6pqA6SMZnHgw4Ph5CBksVUnO0C2CJ2/eWeAQKHc9RvBitMa9WSOVlLbeDTf8kSJrqH0Z0tVA==
-X-Received: by 2002:a17:907:6f17:b0:791:9801:e48a with SMTP id sy23-20020a1709076f1700b007919801e48amr16926157ejc.738.1668605893180;
-        Wed, 16 Nov 2022 05:38:13 -0800 (PST)
-Received: from felia.fritz.box (200116b826c55000c59461cca0b9a159.dip.versatel-1u1.de. [2001:16b8:26c5:5000:c594:61cc:a0b9:a159])
-        by smtp.gmail.com with ESMTPSA id c1-20020a17090618a100b0078b03d57fa7sm6869628ejf.34.2022.11.16.05.38.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 05:38:12 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2] x86: make config X86_FEATURE_NAMES visible with EXPERT
-Date:   Wed, 16 Nov 2022 14:37:53 +0100
-Message-Id: <20221116133753.5615-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3vuu78aZaHK7VJ8++7/BN17PpF7VX0jC0oheW36hmIs=;
+        b=0hU2WSWd3E007xN9sPVniKDSV+GZtRoYBDvqxaHI3EJ+vO0uui7Tb+/j7xQoCrdzLb
+         ALf2xkG22Hj4VRwXOR8jH3ItoaocNtjGim8uOgDbprRoy3/7SDXcJxwS/uYKfAMFEWY8
+         VErGDbaJZpzNkYbVOyjDLCRc40pu8av76ogHRvPn+DsCn8Yh4BavB0xUtrR6aYPHJZN2
+         4rKNY+JS67jcLtlQlb+CcknlkT8DD2JSsMo+PUun8l1nXd1H4ltQ9egzTWt4iKEZxhn9
+         LcRiVCM3piLoxOjVaLqr86bahlaIJGLv8mTwF9GDM2hPFPe7VLYjQSN56rbYm+JmbpZV
+         1vmQ==
+X-Gm-Message-State: ANoB5pn4kVWNUzQHiNhqvITFKQejN5g6HUe9DsNwmmtVVYcr34W5iOtt
+        OCTlFWr0a0Feu9C5Km9ReQc2LHcqVnZSO29SkxdEpQ==
+X-Google-Smtp-Source: AA0mqf4Wa1H27TGFSnM/a1m63gk9/L+t2q1xko8YOBEh2/dkruP1K3xLmmg6L38tevF4sFxaktwBmh2GNWgpZ2zVkB4=
+X-Received: by 2002:a17:902:d48a:b0:188:6baf:2011 with SMTP id
+ c10-20020a170902d48a00b001886baf2011mr9115763plg.165.1668615498412; Wed, 16
+ Nov 2022 08:18:18 -0800 (PST)
+MIME-Version: 1.0
+References: <20221110072819.11530-1-yuzhe@nfschina.com>
+In-Reply-To: <20221110072819.11530-1-yuzhe@nfschina.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 16 Nov 2022 17:17:41 +0100
+Message-ID: <CAPDyKFrW+FaDNc+YPjrR1eAYhjPc6BHj4zqghBRnMC0P+A_jKA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mtk-sd: fix two spelling mistakes in comment
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     chaotian.jing@mediatek.com, matthias.bgg@gmail.com,
+        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to CONFIG_EXPERT")
-introduces CONFIG_EXPERT to carry the previous intent of CONFIG_EMBEDDED
-and just gives that intent a much better name. That has been clearly a good
-and long overdue renaming, and it is clearly an improvement to the kernel
-build configuration that has shown to help managing the kernel build
-configuration in the last decade.
+On Thu, 10 Nov 2022 at 08:29, Yu Zhe <yuzhe@nfschina.com> wrote:
+>
+> spelling mistake fix : "alreay" -> "already"
+>                        "checksume" -> "checksum"
+>
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 
-However, rather than bravely and radically just deleting CONFIG_EMBEDDED,
-this commit gives CONFIG_EMBEDDED a new intended semantics, but keeps it
-open for future contributors to implement that intended semantics:
+Applied for next, thanks!
 
-    A new CONFIG_EMBEDDED option is added that automatically selects
-    CONFIG_EXPERT when enabled and can be used in the future to isolate
-    options that should only be considered for embedded systems (RISC
-    architectures, SLOB, etc).
+Kind regards
+Uffe
 
-Since then, this CONFIG_EMBEDDED implicitly had two purposes:
 
-  - It can make even more options visible beyond what CONFIG_EXPERT makes
-    visible. In other words, it may introduce another level of enabling the
-    visibility of configuration options: always visible, visible with
-    CONFIG_EXPERT and visible with CONFIG_EMBEDDED.
-
-  - Set certain default values of some configurations differently,
-    following the assumption that configuring a kernel build for an
-    embedded system generally starts with a different set of default values
-    compared to kernel builds for all other kind of systems.
-
-Considering the first purpose, at the point in time where CONFIG_EMBEDDED
-was renamed to CONFIG_EXPERT, CONFIG_EXPERT already made 130 more options
-become visible throughout all different menus for the kernel configuration.
-Over the last decade, this has gradually increased, so that currently, with
-CONFIG_EXPERT, roughly 170 more options become visible throughout all
-different menus for the kernel configuration. In comparison, currently with
-CONFIG_EMBEDDED enabled, just seven more options are visible, one in x86,
-one in arm, and five for the ChipIdea Highspeed Dual Role Controller.
-
-As the numbers suggest, these two levels of enabling the visibility of even
-more configuration options---beyond what CONFIG_EXPERT enables---never
-evolved to a good solution in the last decade. In other words, this
-additional level of visibility of configuration option with CONFIG_EMBEDDED
-compared to CONFIG_EXPERT has since its introduction never become really
-valuable. It requires quite some investigation to actually understand what
-is additionally visible and it does not differ significantly in complexity
-compared to just enabling CONFIG_EXPERT. This CONFIG_EMBEDDED---or any
-other config to show more detailed options beyond CONFIG_EXPERT---is
-unlikely to be valuable unless somebody puts significant effort in
-identifying how such visibility options can be properly split and creating
-clear criteria, when some config option is visible with CONFIG_EXPERT and
-when some config option is visible only with some further option enabled
-beyond CONFIG_EXPERT, such as CONFIG_EMBEDDED attempted to do. For now, it
-is much more reasonable to simply make those additional seven options that
-are visible with CONFIG_EMBEDDED visible with CONFIG_EXPERT, and then
-remove CONFIG_EMBEDDED. If anyone spends significant effort in structuring
-the visibility of config options, they may re-introduce suitable new
-config options simply as they see fit.
-
-Make the config X86_FEATURE_NAMES visible when CONFIG_EXPERT is enabled.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
-v1:
-  https://lore.kernel.org/lkml/20220908104337.11940-3-lukas.bulwahn@gmail.com/
-v1 -> v2:
-  - fixed some omitted words in the commit message
-  - added tags from Masahiro-san and Arnd
-
- arch/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index cef0107e4260..4555ca4601e3 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -439,7 +439,7 @@ config SMP
- 	  If you don't know what to do here, say N.
- 
- config X86_FEATURE_NAMES
--	bool "Processor feature human-readable names" if EMBEDDED
-+	bool "Processor feature human-readable names" if EXPERT
- 	default y
- 	help
- 	  This option compiles in a table of x86 feature bits and corresponding
--- 
-2.17.1
-
+> ---
+>  drivers/mmc/host/mtk-sd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index df941438aef5..a10aca76dfb3 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -735,7 +735,7 @@ static inline void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
+>                 else
+>                         bd[j].bd_info &= ~BDMA_DESC_EOL;
+>
+> -               /* checksume need to clear first */
+> +               /* checksum need to clear first */
+>                 bd[j].bd_info &= ~BDMA_DESC_CHECKSUM;
+>                 bd[j].bd_info |= msdc_dma_calcs((u8 *)(&bd[j]), 16) << 8;
+>         }
+> @@ -1212,7 +1212,7 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
+>                      !host->hs400_tuning))
+>                         /*
+>                          * should not clear fifo/interrupt as the tune data
+> -                        * may have alreay come when cmd19/cmd21 gets response
+> +                        * may have already come when cmd19/cmd21 gets response
+>                          * CRC error.
+>                          */
+>                         msdc_reset_hw(host);
+> --
+> 2.11.0
+>
