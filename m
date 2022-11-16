@@ -2,100 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B76ECC43217
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 11:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26542C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 12:50:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239123AbiKPLRW (ORCPT
+        id S231952AbiKPMua (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 06:17:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33058 "EHLO
+        Wed, 16 Nov 2022 07:50:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239232AbiKPLRE (ORCPT
+        with ESMTP id S230115AbiKPMu0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 06:17:04 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0553549B6F;
-        Wed, 16 Nov 2022 03:05:09 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id m7-20020a05600c090700b003cf8a105d9eso1185512wmp.5;
-        Wed, 16 Nov 2022 03:05:08 -0800 (PST)
+        Wed, 16 Nov 2022 07:50:26 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B61E0B3D;
+        Wed, 16 Nov 2022 04:50:23 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id 21so26418664edv.3;
+        Wed, 16 Nov 2022 04:50:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nt8q54IUjG8fYZGllQ5PibnFEuFeXBcb2ZdQ9kqflsc=;
-        b=NqMS/k9x7OCLXkiVB/M6SRtzbLqnvSefXDCcNF4681VtRicjMHUZdDb467XItyzKPk
-         AfpTcuAuyapgKR057L39vb4DCZz+QOOv4bQ0ZrX4Agj09RArmsW+JgMURhqP08BrcHY8
-         +29zTda1y5S8FNUH0rznaNQfBMeb0oyicLmRQ+Aw0U4rpxgldnPoPmejkJv2K2QZnACX
-         yhsv7x5BuWkuaFwiChUcjETiF/V4JS3WcEZYltst/i6C3FAe82B4z59yTWC8grfewC0w
-         lZgBpAzZx5YHxUiTJFfrNEpPMmddA+0vp22AHYfQd97mwSiX5Y2ePbDm2PZnJt42C9gY
-         qhOQ==
+        bh=hiGro6ozvASLxm710qclktaIhbfsoyOS4Qzb18JkaHI=;
+        b=fxTvvyRqzMF0aRrGwb85R8pbPp8jXrXXb0R6XLrj8JyUCHFjzuH4cFvn7e/Yk6zCXC
+         jZvmUvnw5aTeS7TxqqcuuZrOtw32WjuGWv1CbhgjO7+oX/T3vv3Mb+f4sjwyO6xrQeB/
+         HtcGdu/X5ymbvMURCshBldUlfq8NMGizmrbNDieUqyPI/5hHFC5/xDgBtAtS/J//MR9E
+         iJnjhVtjhYdj7+48rfKLqhf1xoNa1jFwdGCBD9US1CZtp6+Iuh4uCJFDyzEFeuQQn4r0
+         asJHsNYLaF013MWBt19AYQm7bQIU/L3I4ysLGT9/c26IozYuZ41TjuqvYsTdNu6iw+wS
+         jbEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Nt8q54IUjG8fYZGllQ5PibnFEuFeXBcb2ZdQ9kqflsc=;
-        b=huCkGSZsAJ3w+Df09756gYhtUheAuDtg9PoNd9t9lgmYw/JWXuCt4OkXGzmhRJ+emI
-         BZS1S3F3PFPzdsi2HRQtrmqE4Whkl08U86yggXye3nR0foafDQ/M8E7Bol01dxPGwryW
-         x2tOQD0oOpIc5T/ZR5/XbMzmfz01qiIP1NxWBbEZfSgjBtIxUWk9JRCgnkzPEzZeSLKh
-         JEM5bZsuZB84m+DibmbZf+lBdobwyxoomg1q0Mj5faFWDZ1gNbDL4zexT7AdD9gjfOGR
-         fn402nOXGjefB+dsoi7QRcSa3GYFMLAodo6iKeoowZ+TfHUMonkuPB4rAabanF8rB79J
-         yHNA==
-X-Gm-Message-State: ANoB5pmYFKw15Pi+nLB3PlkuXr7oVHE5v+dHFmfG0ghA9Vl3JKSHUAfK
-        gR+tqY8jIqtkV7MZ+VZAsJyni+xkiHQ=
-X-Google-Smtp-Source: AA0mqf5vxmmcTH1fH17jwPxcH/8LGgjrFM8xrkw7QSUdiXmyDyzdHIII54vZlYmnyQVMhLrZrl/2cQ==
-X-Received: by 2002:a1c:29c5:0:b0:3cf:6263:bfc5 with SMTP id p188-20020a1c29c5000000b003cf6263bfc5mr1807409wmp.137.1668596707374;
-        Wed, 16 Nov 2022 03:05:07 -0800 (PST)
+        bh=hiGro6ozvASLxm710qclktaIhbfsoyOS4Qzb18JkaHI=;
+        b=MEyKzVsF4ZJ10fJWlPWjLQd9SMogV01Nnec8gc5iaGOr7KN3iDcwyOmWjsH8sRczun
+         NuY3Vq3LfmwdXNhW0S6kKU7EzaGyNuwPicmu3wrtxc4nnuNOY3xnuGjCX6BrHLM7DMqH
+         eR+qUQbSUNBrNYg2EczF3OZRH8oJlvdTC93sR8z2e6fcQSRAPvq1upKFIxLjeVwrgGKJ
+         amjHT9DK5wMwsZwvxGKG00K+AUpQwDcfrSPl4uX4wxBfGKPO1qsHg58vv9rrekyRljEZ
+         qNnV9Phhk6GX67XQGFrYv8wzCioxLd/jUXU3AAKePL7pCJ4RnWJnFamF1nCKEmExdD2d
+         +DMQ==
+X-Gm-Message-State: ANoB5pmF+qfLoVKwTHC4wS6Sq+wzEYFPPdTY3rdJgim7vaX1KMcpM42O
+        vh8o42hBAcw4e8ge7CxivK8=
+X-Google-Smtp-Source: AA0mqf7lyRizo8KsR7noBHMDFnXAq2zDiXHyiUBLhzcX3gG3UHIlwai5NPf2VPyY9Fuy7wP6zehjXQ==
+X-Received: by 2002:a05:6402:413:b0:463:a83c:e019 with SMTP id q19-20020a056402041300b00463a83ce019mr19078409edv.253.1668603022157;
+        Wed, 16 Nov 2022 04:50:22 -0800 (PST)
 Received: from felia.fritz.box (200116b826c55000c59461cca0b9a159.dip.versatel-1u1.de. [2001:16b8:26c5:5000:c594:61cc:a0b9:a159])
-        by smtp.gmail.com with ESMTPSA id h14-20020a05600c2cae00b003cfd0bd8c0asm1841370wmc.30.2022.11.16.03.05.06
+        by smtp.gmail.com with ESMTPSA id b12-20020a17090630cc00b00780b1979adesm6833452ejb.218.2022.11.16.04.50.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 03:05:06 -0800 (PST)
+        Wed, 16 Nov 2022 04:50:21 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        linux-mtd@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] usb: dwc3: improve the config dependency of USB_DWC3_XILINX
-Date:   Wed, 16 Nov 2022 12:04:44 +0100
-Message-Id: <20221116110444.8340-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] mtd: parsers: refer to ARCH_BCMBCA instead of ARCH_BCM4908
+Date:   Wed, 16 Nov 2022 13:49:32 +0100
+Message-Id: <20221116124932.4748-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A request to Manish Narani (see Link) asked for clarification of the
-reference to the config ARCH_VERSAL in the support of Xilinx SoCs with
-DesignWare Core USB3 IP.
+Commit dd5c672d7ca9 ("arm64: bcmbca: Merge ARCH_BCM4908 to ARCH_BCMBCA")
+removes config ARCH_BCM4908 as config ARCH_BCMBCA has the same intent.
 
-As there is no response, clean up the reference to the non-existing config
-symbol. While at it, follow up on Felipe Balbi's request to add the
-alternative COMPILE_TEST dependency.
+Probably due to concurrent development, commit 002181f5b150 ("mtd: parsers:
+add Broadcom's U-Boot parser") introduces 'Broadcom's U-Boot partition
+parser' that depends on ARCH_BCM4908, but this use was not visible during
+the config refactoring from the commit above. Hence, these two changes
+create a reference to a non-existing config symbol.
 
-Link: https://lore.kernel.org/all/CAKXUXMwgWfX8+OvY0aCwRNukencwJERAZzU7p4eOLXQ2zv6rAg@mail.gmail.com/
+Adjust the MTD_BRCM_U_BOOT definition to refer to ARCH_BCMBCA instead of
+ARCH_BCM4908 to remove the reference to the non-existing config symbol
+ARCH_BCM4908.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/usb/dwc3/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/parsers/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 03ededa86da1..b2f72b0e75c6 100644
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -152,11 +152,11 @@ config USB_DWC3_IMX8MP
+diff --git a/drivers/mtd/parsers/Kconfig b/drivers/mtd/parsers/Kconfig
+index c258ba2a3a6f..daeae79e64f9 100644
+--- a/drivers/mtd/parsers/Kconfig
++++ b/drivers/mtd/parsers/Kconfig
+@@ -22,7 +22,7 @@ config MTD_BCM63XX_PARTS
  
- config USB_DWC3_XILINX
- 	tristate "Xilinx Platforms"
--	depends on (ARCH_ZYNQMP || ARCH_VERSAL) && OF
-+	depends on (ARCH_ZYNQMP || COMPILE_TEST) && OF
- 	default USB_DWC3
+ config MTD_BRCM_U_BOOT
+ 	tristate "Broadcom's U-Boot partition parser"
+-	depends on ARCH_BCM4908 || COMPILE_TEST
++	depends on ARCH_BCMBCA || COMPILE_TEST
  	help
- 	  Support Xilinx SoCs with DesignWare Core USB3 IP.
--	  This driver handles both ZynqMP and Versal SoC operations.
-+	  This driver handles ZynqMP SoC operations.
- 	  Say 'Y' or 'M' if you have one such device.
- 
- config USB_DWC3_AM62
+ 	  Broadcom uses a custom way of storing U-Boot environment variables.
+ 	  They are placed inside U-Boot partition itself at unspecified offset.
 -- 
 2.17.1
 
