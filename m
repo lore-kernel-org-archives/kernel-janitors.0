@@ -2,95 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A10C43219
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 10:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F35C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 10:45:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233587AbiKPK3c (ORCPT
+        id S238909AbiKPKp5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 05:29:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38602 "EHLO
+        Wed, 16 Nov 2022 05:45:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233650AbiKPK2t (ORCPT
+        with ESMTP id S238906AbiKPKpK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 05:28:49 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D56392F3AD;
-        Wed, 16 Nov 2022 02:25:16 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id f18so9932832ejz.5;
-        Wed, 16 Nov 2022 02:25:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QE2rgR+SD3txu2X9qQrvuHMcKPW65HWDIVU0aZ4LzFk=;
-        b=iazRd6Fc4IJ8oSDNINndacd3WHizzJeIn0H+QfH3Of74DJw/qQ5uW6KWaKgH0nTiz1
-         Ip1vrLgbFD15IY5QqSwGmrcWwWUrXp9mtg/uc93K2BCOiW9YCc7EsmWiNZ27CSCdv2tK
-         DddMA/Qyalqljtfry5/e4DsmcJcGszv3HhoWnWDLKe12AA9FaCGlIp6KShAsgoGxYQ1m
-         vRYY+91MO0cEX/mpzSEM/0+nYxGF7XCwOQVW1msRkKmy1ma9EYPT7GZg0licXKjEROoq
-         0IyQHcg8R3A9pj4qq0K1aciDy02Y5WN9STTcdoenN9xjJQANUIz47kJtJQo2rx98PuKV
-         BDCQ==
+        Wed, 16 Nov 2022 05:45:10 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BF5E31F82
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 02:32:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668594734;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EUFIXYNzk8yDs3KImNG3AOVj6XZ3qyNFB3i2C1O73aQ=;
+        b=S0KEC+c92ZXfFv8u0m85OaibTBOaAcCExzjgG0JaK442JxYxvaH5pKmL7raKcxB0lfK3qL
+        Z+OL7EjeNbQGzt6/fwyW4q18CTNyIcTCO8woTXE2hDzs8QOhqG7nLk2wvg7Mr+XNXDYOSO
+        EG7VCXIgnyAmHveUwtxgBxwlpmtrXGg=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-613-h_b7t0GzNoWbcKZ7dRCpSg-1; Wed, 16 Nov 2022 05:32:12 -0500
+X-MC-Unique: h_b7t0GzNoWbcKZ7dRCpSg-1
+Received: by mail-io1-f70.google.com with SMTP id bx19-20020a056602419300b006bcbf3b91fdso8481738iob.13
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Nov 2022 02:32:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QE2rgR+SD3txu2X9qQrvuHMcKPW65HWDIVU0aZ4LzFk=;
-        b=0j/YXgw2D9Bf9Z0xMxf1SLevQQ2hxjLIU3iUG7WS1XXPhpxZDiddY0nTnlEPXNZl6Q
-         fL9ym1ag41zyZwjyHveiivy3ZHBVcepieHVAWCQP/QF/6wGOYH2jPn940mv4+TNAMkZ5
-         PwAQDZDsLZqs/zPAp24ZmGh6KFR84X7E0CJ5Vv4pY3HjK7Ez0T+dxhvJJdwW9arA28vv
-         lKA5QlEf6vrS79IWPlE160yNnPyddCvydnwb/DpuimRgy4rw6vAaOc1RBqDL0hWayNTS
-         U/gtaTSUu1M9qvlcsqS5UWDma8VqAzjS8PToJLx6s3veH6zjwxEn0tLmZM4cT6Vi65BX
-         mvSA==
-X-Gm-Message-State: ANoB5pn6wNZINGN8G3SlU3khyuBtVYFEpl/5HmZY69sGtuIWTNrbcDla
-        hp2giK8V90kNJTtXJsuHTFk=
-X-Google-Smtp-Source: AA0mqf4DxIr6lOh7UFZ8iVcc8DpYOp554VDVImChrKKz+ZA0VeEk13y/0Jljbf1po8KOTTxuR3d7rg==
-X-Received: by 2002:a17:907:76d2:b0:78d:8c6b:397b with SMTP id kf18-20020a17090776d200b0078d8c6b397bmr16610397ejc.364.1668594314896;
-        Wed, 16 Nov 2022 02:25:14 -0800 (PST)
-Received: from felia.fritz.box (200116b826c55000c59461cca0b9a159.dip.versatel-1u1.de. [2001:16b8:26c5:5000:c594:61cc:a0b9:a159])
-        by smtp.gmail.com with ESMTPSA id s5-20020a05640217c500b0045c010d0584sm7294352edy.47.2022.11.16.02.25.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 02:25:14 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Sean Anderson <sean.anderson@seco.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] net: fman: remove reference to non-existing config PCS
-Date:   Wed, 16 Nov 2022 11:24:50 +0100
-Message-Id: <20221116102450.13928-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EUFIXYNzk8yDs3KImNG3AOVj6XZ3qyNFB3i2C1O73aQ=;
+        b=7hLwLmMciqJ/jJ7PmfazXdaboZNcVxWdR6FZtON2htEsS1accQY+ZV8IK2P79i607c
+         paJTe5r3MuJ2cfr2mewSbQMPjCPzbkyfULTqpbg4/w2e6FT6A877CCuj91f9PMrHk/R1
+         LaMCb6SXQRgpy+Pu/8GB3G851fH7OpYNTIosNNTLjBTs5xnYy3aX8jsXTkrqD5LGOsYC
+         RO5b0TT3mOj2V+K67ReWnPPicYc+YYgRfheR2xq1Wtq5FRMcpV3yksUjlTqSJoz614Gp
+         0u16WhWE5CW/5AdALBPMYBjhHGK9PStZwKP485WdqpzbmpFho3dz5p5XNpGvqIzwbNQS
+         hINw==
+X-Gm-Message-State: ANoB5pnZNmkeyPUIcgb1bBIjj8NmMlfgoc2Y3L1aVOq605Diede3MLGO
+        JeJbVyr8SpbVbjBfuXWA2Cf1iEfA+1A8nMXVJiYCZw+H8/UwbXD1KXqtncxpBc35KBPNkbc/Hub
+        RB8Dnka2Uc2zMvR/uj1Zn9gzdeAcb/kQpJ081WAF6XUPu
+X-Received: by 2002:a92:d281:0:b0:302:4a3a:f480 with SMTP id p1-20020a92d281000000b003024a3af480mr8236516ilp.61.1668594732271;
+        Wed, 16 Nov 2022 02:32:12 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf6mDl6NLRXK3YUpDUDuMeH6TsB9CuSDyqczVUpHLVsgCk66OVWh+1FvOcD/MF7WRurpXNijbn91pIu0F/lzRq8=
+X-Received: by 2002:a92:d281:0:b0:302:4a3a:f480 with SMTP id
+ p1-20020a92d281000000b003024a3af480mr8236510ilp.61.1668594732003; Wed, 16 Nov
+ 2022 02:32:12 -0800 (PST)
+MIME-Version: 1.0
+References: <20221116093943.597572-1-colin.i.king@gmail.com>
+In-Reply-To: <20221116093943.597572-1-colin.i.king@gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Wed, 16 Nov 2022 11:32:00 +0100
+Message-ID: <CAO-hwJK4fn6eqMDdt7ZPe3e1tc54vQXQk9L6F7gY_QZCmGobGA@mail.gmail.com>
+Subject: Re: [PATCH][next] samples/hid: Fix spelling mistake "wihout" -> "without"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit a7c2a32e7f22 ("net: fman: memac: Use lynx pcs driver") makes the
-Freescale Data-Path Acceleration Architecture Frame Manager use lynx pcs
-driver by selecting PCS_LYNX.
+On Wed, Nov 16, 2022 at 10:39 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> There is a spelling mistake in a comment and a usage message. Fix them.
 
-It also selects the non-existing config PCS as well, which has no effect.
+Good catch
 
-Remove this select to a non-existing config.
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/net/ethernet/freescale/fman/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+Cheers,
+Benjamin
 
-diff --git a/drivers/net/ethernet/freescale/fman/Kconfig b/drivers/net/ethernet/freescale/fman/Kconfig
-index e76a3d262b2b..a55542c1ad65 100644
---- a/drivers/net/ethernet/freescale/fman/Kconfig
-+++ b/drivers/net/ethernet/freescale/fman/Kconfig
-@@ -4,7 +4,6 @@ config FSL_FMAN
- 	depends on FSL_SOC || ARCH_LAYERSCAPE || COMPILE_TEST
- 	select GENERIC_ALLOCATOR
- 	select PHYLINK
--	select PCS
- 	select PCS_LYNX
- 	select CRC32
- 	default n
--- 
-2.17.1
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  samples/hid/hid_surface_dial.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/samples/hid/hid_surface_dial.c b/samples/hid/hid_surface_dial.c
+> index bceea53d39b0..4bc97373a708 100644
+> --- a/samples/hid/hid_surface_dial.c
+> +++ b/samples/hid/hid_surface_dial.c
+> @@ -4,7 +4,7 @@
+>   * This program will morph the Microsoft Surface Dial into a mouse,
+>   * and depending on the chosen resolution enable or not the haptic feedback:
+>   * - a resolution (-r) of 3600 will report 3600 "ticks" in one full rotation
+> - *   wihout haptic feedback
+> + *   without haptic feedback
+>   * - any other resolution will report N "ticks" in a full rotation with haptic
+>   *   feedback
+>   *
+> @@ -57,7 +57,7 @@ static void usage(const char *prog)
+>                 "This program will morph the Microsoft Surface Dial into a mouse,\n"
+>                 "and depending on the chosen resolution enable or not the haptic feedback:\n"
+>                 "- a resolution (-r) of 3600 will report 3600 'ticks' in one full rotation\n"
+> -               "  wihout haptic feedback\n"
+> +               "  without haptic feedback\n"
+>                 "- any other resolution will report N 'ticks' in a full rotation with haptic\n"
+>                 "  feedback\n"
+>                 "\n"
+> --
+> 2.38.1
+>
 
