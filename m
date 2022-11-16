@@ -2,70 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0C6C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 13:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08ABFC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Nov 2022 13:35:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232584AbiKPNYB (ORCPT
+        id S233781AbiKPNfg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Nov 2022 08:24:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41120 "EHLO
+        Wed, 16 Nov 2022 08:35:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233429AbiKPNXr (ORCPT
+        with ESMTP id S238294AbiKPNf2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Nov 2022 08:23:47 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8518FDC4;
-        Wed, 16 Nov 2022 05:23:46 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DD43661DD6;
-        Wed, 16 Nov 2022 13:23:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0583C433D6;
-        Wed, 16 Nov 2022 13:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668605025;
-        bh=p+DJlB3s7cTLjFausQdOeYPjLX03jW5vrYZ/lglDEWE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BL/BzKAA6E6FvmPdLScU1ey74vJf8Te0mVM5gCPhSRxXoKvyXnc4inCPWLwT2usl7
-         EyvPf7xcuoaiPPS8W6elQT8snx2hImomeCmfc1rWT8lapqtwoeiaNTrU7GRSV4hdNy
-         Pwy3AeM+nO9KXeS7SeTQcl9G9h61nXDJvmcqWIJH0S9eLbexbxuaROhJ2LWRMJlhU5
-         MtHlVrfeQviW7zZsjBB53Os/XpAVPYLXT0EdzhY+7noQaaaVBTADof0EHxVz5wRozG
-         K4CNmTZUlzf6yftY+me2Yucs0PwPWbDmfrU7QNyR/eQLjA+ztH8S47TyPZxwPVm4qi
-         H0EMaw0SAn03g==
-Date:   Wed, 16 Nov 2022 15:23:40 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next][V2]: sundance: remove unused variable cnt
-Message-ID: <Y3TkXBYArRgIAhPE@unreal>
-References: <20221115093137.144002-1-colin.i.king@gmail.com>
+        Wed, 16 Nov 2022 08:35:28 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B8D3F07E;
+        Wed, 16 Nov 2022 05:35:16 -0800 (PST)
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C274749C;
+        Wed, 16 Nov 2022 14:35:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1668605714;
+        bh=Sys0rARy8J8jP/a46/LNXBCNgBu8UjwvelC2PQ7N1z4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=CMucZLEkB7PjzR3s2w/0Moz6WaXvsCfSbDbnEMYdJDs6B1RpB+vqWMFWPhPodBAU7
+         naMnG1Bpkpr4F7ZbK3KSP9zv/uIs5Ei3cOxQUw8IyN/sIAb39HxtIxUlZI/Adn1rUC
+         zO3IzpQLHz00jaelSiu/Xe/clZXSdilgXTfvJ+pE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221115093137.144002-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20221116094006.16054-1-lukas.bulwahn@gmail.com>
+References: <20221116094006.16054-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] media: i2c: refer to config VIDEO_DEV to make ov08x40 image sensor driver usable
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jason Chen <jason.z.chen@intel.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Shawn Tu <shawnx.tu@intel.com>, linux-media@vger.kernel.org
+Date:   Wed, 16 Nov 2022 13:35:12 +0000
+Message-ID: <166860571228.50677.2036444260575403904@Monstersaurus>
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 09:31:37AM +0000, Colin Ian King wrote:
-> Variable cnt is just being incremented and it's never used
-> anywhere else. The variable and the increment are redundant so
-> remove it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Quoting Lukas Bulwahn (2022-11-16 09:40:06)
+> Commit 9958d30f38b9 ("media: Kconfig: cleanup VIDEO_DEV dependencies")
+> removes the config VIDEO_V4L2 as it is merged with config VIDEO_DEV.
+>=20
+> Long after this change, commit 38fc5136ac16 ("media: i2c: Add ov08x40 ima=
+ge
+> sensor driver") introduces and refers to the removed config VIDEO_V4L2,
+> basically making this driver impossible to build, test and use due to
+> dependencies that cannot be met.
+>=20
+> Refer to config VIDEO_DEV instead to make this driver usable.
+
+
+Fixes: 38fc5136ac16 ("media: i2c: Add ov08x40 image sensor driver")
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
-> 
-> V2: Use the correct net-next convention. I do hope I've got this correct,
->     apologies for being consistently incorrect in the past.
-
-Almost :)
- [PATCH net-next][V2] -> [PATCH net-next V2]
-
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+>  drivers/media/i2c/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index 49c1c27afdc1..4a4ae9c20119 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -366,7 +366,7 @@ config VIDEO_OV08D10
+> =20
+>  config VIDEO_OV08X40
+>         tristate "OmniVision OV08X40 sensor support"
+> -       depends on VIDEO_V4L2 && I2C
+> +       depends on VIDEO_DEV && I2C
+>         select MEDIA_CONTROLLER
+>         select VIDEO_V4L2_SUBDEV_API
+>         select V4L2_FWNODE
+> --=20
+> 2.17.1
+>
