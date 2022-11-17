@@ -2,105 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED1DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Nov 2022 07:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93A3C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Nov 2022 09:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239384AbiKQHoK (ORCPT
+        id S239354AbiKQJpu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Nov 2022 02:44:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41866 "EHLO
+        Thu, 17 Nov 2022 04:45:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239378AbiKQHoI (ORCPT
+        with ESMTP id S239706AbiKQJpa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Nov 2022 02:44:08 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA9543AD6;
-        Wed, 16 Nov 2022 23:44:07 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id o30so791089wms.2;
-        Wed, 16 Nov 2022 23:44:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MOR1JhYmBEppD4imfnJsKI2Upd7EAK5taerzvHPk9+c=;
-        b=AR0KXsHrTXScIsEPXnJ4VaCawyhMDJ/M7RpX5dxwWTYQvTj6hC23XGad4JsalGFs8D
-         3CUI151aNsXYL3cLA7Z/tPli96/onkM3frgmBqYffFIdd6gnJb9pmjkAJLG5L0M0ygZc
-         a47bfALzjR5rVmP2uQSfqXkbRBe/TDAlVrOoCF22OHkTuruCtYWETKT5HcU3aKRAS6Uh
-         rtrClzRLckGk3An0amrWhBSL325+x6osmlqulqs47ztd3jC7HrF+t3PqAyLNGAQ52baa
-         ZtlBD72N3ZMh4C1AVsME+ovfL2a66Fasi4uFoojKkxRr24OW4s18Nsu1yr7Xx9RZ5P+F
-         6VGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MOR1JhYmBEppD4imfnJsKI2Upd7EAK5taerzvHPk9+c=;
-        b=SfLfsUWHcj/SQHgZvAP+ppeJ8GrT5rN0cBTr7K34x+Z8khDug8lLvJiq58hYER4xH8
-         PltVrz/FCb5q1ZO0DSl2YlSLrnhx114Fz9BuexQTQHNcbqXgttkCUv4AHrOICEOtDBHG
-         kL/FHL2HXj9tY/U4KilCYOAsSSEKx4OM+tU67GXGSojxhuWnkV/tjOv8sg9rZ+cQHEzj
-         31RiltHiB8BXfZLxuokb1EA8nlnBo55MBnDvEsKbH1ogUWIyDFccSHLkv5KkD5MyIE3/
-         x6UdTpG9u08++a44xGzL588wmDNDxbpMEXlEzc3m0nAyjW2ZwM8YGhgTR2MixNEEUSB2
-         MqDQ==
-X-Gm-Message-State: ANoB5pmOhkD3m0tBusHUBh5rGSVXQz/Uwdubaoh9RXnpMYY9WtXzwYZA
-        nD37x1DbpFbosSUe+CoK7Sg=
-X-Google-Smtp-Source: AA0mqf6NiEgyNEol/d08iW5yE2UXTFpm/iMHQ8Q//vT9l6FYLl5xikNIxKQc7vsUWjlf9T+QE3pspQ==
-X-Received: by 2002:a1c:7214:0:b0:3cf:7b65:76c5 with SMTP id n20-20020a1c7214000000b003cf7b6576c5mr760326wmc.166.1668671045992;
-        Wed, 16 Nov 2022 23:44:05 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z14-20020a7bc7ce000000b003a6125562e1sm267463wmk.46.2022.11.16.23.44.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 23:44:05 -0800 (PST)
-From:   Dan Carpenter <error27@gmail.com>
-X-Google-Original-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Thu, 17 Nov 2022 10:44:02 +0300
-To:     David Howells <dhowells@redhat.com>
-Cc:     Marc Dionne <marc.dionne@auristor.com>,
+        Thu, 17 Nov 2022 04:45:30 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6940151C18
+        for <kernel-janitors@vger.kernel.org>; Thu, 17 Nov 2022 01:44:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668678272;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qPdqiETw6KBVWJ2kQN4t8lwK9egbW/zCGd4bRWajDn4=;
+        b=DkF/AG7Xr+nEA+UAILX0/3Rt0mFM+hQqSqshS2R/wnQY79UxunH5vMR4RL8McohOyIID2y
+        vK+BYfiRvRFJAMqzZwzwhcbnMfHg0aIZbcGfrc8rZXhRSN2+wFqYbIpIhTYAhQBKi8p2JN
+        q9vHXpSsedrTiVwNnZVzosttGCp71Ho=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-638-WUpux3s7MROl-QecBuA1Cw-1; Thu, 17 Nov 2022 04:44:29 -0500
+X-MC-Unique: WUpux3s7MROl-QecBuA1Cw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9FD4E3C025C8;
+        Thu, 17 Nov 2022 09:44:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7625D1415119;
+        Thu, 17 Nov 2022 09:44:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y3XmQsOFwTHUBSLU@kili>
+References: <Y3XmQsOFwTHUBSLU@kili>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
         netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] rxrpc: uninitialized variable in
- rxrpc_send_ack_packet()
-Message-ID: <Y3XmQsOFwTHUBSLU@kili>
+Subject: Re: [PATCH net-next] rxrpc: uninitialized variable in rxrpc_send_ack_packet()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3475094.1668678264.1@warthog.procyon.org.uk>
+Date:   Thu, 17 Nov 2022 09:44:24 +0000
+Message-ID: <3475095.1668678264@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "pkt" was supposed to have been deleted in a previous patch.  It
-leads to an uninitialized variable bug.
+Dan Carpenter <error27@gmail.com> wrote:
 
-Fixes: 72f0c6fb0579 ("rxrpc: Allocate ACK records at proposal and queue for transmission")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Applies to net-next.
+> The "pkt" was supposed to have been deleted in a previous patch.  It
+> leads to an uninitialized variable bug.
 
- net/rxrpc/output.c | 2 --
- 1 file changed, 2 deletions(-)
+Weird.  I don't get a compiler warning and the kernel doesn't crash, despite
+transmitting millions of acks.
 
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index 46432e70a16b..04f945e042ab 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -202,7 +202,6 @@ static void rxrpc_cancel_rtt_probe(struct rxrpc_call *call,
- static int rxrpc_send_ack_packet(struct rxrpc_local *local, struct rxrpc_txbuf *txb)
- {
- 	struct rxrpc_connection *conn;
--	struct rxrpc_ack_buffer *pkt;
- 	struct rxrpc_call *call = txb->call;
- 	struct msghdr msg;
- 	struct kvec iov[1];
-@@ -270,7 +269,6 @@ static int rxrpc_send_ack_packet(struct rxrpc_local *local, struct rxrpc_txbuf *
- 		rxrpc_set_keepalive(call);
- 	}
- 
--	kfree(pkt);
- 	return ret;
- }
- 
--- 
-2.35.1
+If I disassemble the built code, I see:
+
+   0xffffffff81b09e89 <+723>:   xor    %edi,%edi
+   0xffffffff81b09e8b <+725>:   call   0xffffffff811c0bc1 <kfree>
+
+I'm not sure why it's sticking 0 in EDI, though.
+
+David
 
