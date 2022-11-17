@@ -2,90 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C405DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Nov 2022 18:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57443C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Nov 2022 21:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240612AbiKQSaE (ORCPT
+        id S235070AbiKQVO7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Nov 2022 13:30:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
+        Thu, 17 Nov 2022 16:14:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240545AbiKQS3r (ORCPT
+        with ESMTP id S234931AbiKQVOz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Nov 2022 13:29:47 -0500
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 374BC7EBD5;
-        Thu, 17 Nov 2022 10:29:47 -0800 (PST)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AHIG5xI007355;
-        Thu, 17 Nov 2022 18:29:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2022-7-12;
- bh=g7wHvpPrP2BLx61xazIY/wVa57IWIeMQsvlgo/mZ7vc=;
- b=Sc1Ue5UKm7DH1RPD9tmg4nCGv2ResDiM626QrdJAL9AhJC+QBfecI0LwHDV6+dZBKQOO
- T1XvHzaiyrIlDcw2NiganXVTseQaPsqsPrioKrtQ809ODz5YOzbRBTWfe8qpyxkJTuvS
- mNgaZ5FIFiI1H815Kn1EL6c5tlCX9Y2QZh9rs3OuZ4v+x1k2zQkYXChZJZLTC0Iv7qX3
- iD35msDuDFvcM+xlrD6zy0DCgh0FOhBysZdHmOw46UOBpVDhjKvGNamA0o7WdAY56y+6
- /GfaWs0hr/zBe7AFOeAwAEJ7CWNz8L+ZTAkWF0t4GyEo4lf6tr6Tat0A50sM+hSg+0IB cA== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3kv3nsa6nm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Nov 2022 18:29:43 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2AHHGbS2010856;
-        Thu, 17 Nov 2022 18:29:41 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ku3kab0m2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Nov 2022 18:29:41 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AHITapF022894;
-        Thu, 17 Nov 2022 18:29:40 GMT
-Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3ku3kab0gb-8;
-        Thu, 17 Nov 2022 18:29:40 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        linux-scsi@vger.kernel.org, Nilesh Javali <njavali@marvell.com>,
-        GR-QLogic-Storage-Upstream@marvell.com
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: qla2xxx: Remove unused variable found_devs
-Date:   Thu, 17 Nov 2022 13:29:30 -0500
-Message-Id: <166870943121.1584889.3157469158916542955.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20221101104733.30363-1-colin.i.king@gmail.com>
-References: <20221101104733.30363-1-colin.i.king@gmail.com>
+        Thu, 17 Nov 2022 16:14:55 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7585679929;
+        Thu, 17 Nov 2022 13:14:53 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id C84FC2000A;
+        Thu, 17 Nov 2022 21:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1668719691;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rjOO3HF8VOCT1YGIpGxFB5wFLfZ4kG/wIlQ/PZ/PcF8=;
+        b=cNhO9dAyxWPayRx6Cf0hiFc292apajC3QttlCKG7KjYAhsq1gjvmnzUU3vnqNIYUZ0qoK5
+        15bmJAFb/2ti7C22iW/ywJeybCLQ7cykGGM426BcFgb+oEDTdbyiRpX4CdcYP6Gp95hIrH
+        wVb8BW21F08+9Q0+Js1bXY54FWDkjzcv+1sriMTi1GmmKy6J42niz9I/AQT5biOI+R5SjT
+        PH1sm5qreL9j51hdlgeLdBMzcGmi96U59Y6b0mxcVGJ7EN+XsEzGEjOXf+LbsuTLes3w7u
+        aACOvqJz4oW4WJ3bc3NRUQhsyPLTHL4IGOMP+vcesEQkRc+EpO4Z2Hw+/pCHiw==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        =?utf-8?b?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        linux-mtd@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: parsers: refer to ARCH_BCMBCA instead of ARCH_BCM4908
+Date:   Thu, 17 Nov 2022 22:14:49 +0100
+Message-Id: <20221117211449.1273138-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221116124932.4748-1-lukas.bulwahn@gmail.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'085679b15b5af65f9610f619afde41da0f966194'
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-17_06,2022-11-17_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 adultscore=0
- phishscore=0 malwarescore=0 suspectscore=0 mlxlogscore=929 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
- definitions=main-2211170133
-X-Proofpoint-GUID: I3cVyau5iSuBEfgGjR1dewmrZQRfWyEe
-X-Proofpoint-ORIG-GUID: I3cVyau5iSuBEfgGjR1dewmrZQRfWyEe
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 1 Nov 2022 10:47:33 +0000, Colin Ian King wrote:
-
-> Variable found_devs is just being incremented and it's never used
-> anywhere else. The variable and the increment are redundant so
-> remove it.
+On Wed, 2022-11-16 at 12:49:32 UTC, Lukas Bulwahn wrote:
+> Commit dd5c672d7ca9 ("arm64: bcmbca: Merge ARCH_BCM4908 to ARCH_BCMBCA")
+> removes config ARCH_BCM4908 as config ARCH_BCMBCA has the same intent.
 > 
+> Probably due to concurrent development, commit 002181f5b150 ("mtd: parsers:
+> add Broadcom's U-Boot parser") introduces 'Broadcom's U-Boot partition
+> parser' that depends on ARCH_BCM4908, but this use was not visible during
+> the config refactoring from the commit above. Hence, these two changes
+> create a reference to a non-existing config symbol.
 > 
+> Adjust the MTD_BRCM_U_BOOT definition to refer to ARCH_BCMBCA instead of
+> ARCH_BCM4908 to remove the reference to the non-existing config symbol
+> ARCH_BCM4908.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Applied to 6.2/scsi-queue, thanks!
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
 
-[1/1] scsi: qla2xxx: Remove unused variable found_devs
-      https://git.kernel.org/mkp/scsi/c/e137b81d30e7
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Miquel
