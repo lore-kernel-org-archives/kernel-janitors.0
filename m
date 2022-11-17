@@ -2,99 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5009AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Nov 2022 10:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C46C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Nov 2022 12:00:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239546AbiKQKfJ (ORCPT
+        id S239836AbiKQMAv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Nov 2022 05:35:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33496 "EHLO
+        Thu, 17 Nov 2022 07:00:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239583AbiKQKfD (ORCPT
+        with ESMTP id S234840AbiKQMAr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Nov 2022 05:35:03 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9941BE0;
-        Thu, 17 Nov 2022 02:35:02 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id k8so3116099wrh.1;
-        Thu, 17 Nov 2022 02:35:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1tIES8M5p31Pz85hKfNgDWDSrA68rOOdtctNl9gU1lc=;
-        b=PRqNXSwzvw5iJSs7ru7DeKpofb6jxzL+Z53vX5WEn/O5fMjy7Amvc/HX/j9fk7ozNg
-         iFh1NSmBKISw7UnbsD4L+VYOG1RZ/OG//Xcpko1p5NtCp7nbvoHSdfVJgtVOR8HMxSZn
-         WXsh0P+YRnB99yraWPA3dmb68YO61JQDXx60gqXfNmqLUZAKn3iYVucSYU09QMqQqDLA
-         8ZjRLT7lhzwpWtlc+qnTh3lFsBUjNIkSpqrSXdMAZxfDojGVTrhqSz706sUQjhDMQL7N
-         I4wvb4fW5u2PqhJz2wOqxBfNF5NxHgY42cg5NynWcTiJKN1lCTySQZJi8lM2EzzYpbgF
-         s7hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1tIES8M5p31Pz85hKfNgDWDSrA68rOOdtctNl9gU1lc=;
-        b=IkOzLkzxY4l5aVi7NehC0XUcIKm4ZoNiNj96MuQBl8BWFl6Rddi99PhtF0rhM5UNhb
-         1vvuEeGxUZpzR8BZOMM5/g6WOyv/12JMHVdczYdttjlQ2Nxu+jFp5jykYc3t+hWoUqGI
-         TgEqYAL3ZCpwPaJe6IT+Pz9jf390MAeQ3B9fmzGm8R9f3CG2Qu/bSx0MxNNfLfhbrsc6
-         dFRD0kqLp6rD3O7Agh4Ol3bXGResvz32L2hoYyAVJTLzH9WaNCAlrdY8rYoiamPerJyC
-         1J5VcqpSWvqWxZm4fhHxG1QdgZSaxljFJq4xLk8uzrs0iIhV0cJlXofTeWWe8J9R9Kmm
-         IV3g==
-X-Gm-Message-State: ANoB5pkzh2Sf+9Myl+BrcI8zipVpxjpbvEfhmVrKOJ3/fGis1VHyzz4U
-        TND20bv2JZ7dkkjg8rebSg8=
-X-Google-Smtp-Source: AA0mqf76uIFuiYDNh3PBXTnttr8pYQJIqwCARGBPlN4ZwMF+FcncsG5R8fLAeu8e2zSszihRZoP1ng==
-X-Received: by 2002:adf:f8c5:0:b0:241:b408:f170 with SMTP id f5-20020adff8c5000000b00241b408f170mr1098387wrq.42.1668681301350;
-        Thu, 17 Nov 2022 02:35:01 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id k1-20020a5d6281000000b0022ae0965a8asm604269wru.24.2022.11.17.02.34.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Nov 2022 02:34:59 -0800 (PST)
-Date:   Thu, 17 Nov 2022 13:34:57 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Marc Dionne <marc.dionne@auristor.com>,
+        Thu, 17 Nov 2022 07:00:47 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C8C5ADE1
+        for <kernel-janitors@vger.kernel.org>; Thu, 17 Nov 2022 03:59:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668686387;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NPf1RG+wCb7clBGA38jNh+ZPSc1moikSLN57Kq5O9Bs=;
+        b=HRm4jp2NM9D/LNfyTVy+yfmfN4EsomFdeH5r6QIUnjgz3KRA8Z0I5+oxEUuBCs6fJuhuU3
+        OeG7H1YAxyxD94Only1nFBnqL0kbaRTMkPPLCDzT3vhJLWXq4nGO1WLeU+PfyJqVXxSlSG
+        6O0KXEjG4J9kmI6WR8To0RxmL9ItuBw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-34-qbEPj9JGO7ylkfBZD0NLwQ-1; Thu, 17 Nov 2022 06:59:37 -0500
+X-MC-Unique: qbEPj9JGO7ylkfBZD0NLwQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7DB52811E67;
+        Thu, 17 Nov 2022 11:59:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 40CB6111E3ED;
+        Thu, 17 Nov 2022 11:59:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y3YOUQM/ldDe/sgC@kadam>
+References: <Y3YOUQM/ldDe/sgC@kadam> <Y3XmQsOFwTHUBSLU@kili> <3475095.1668678264@warthog.procyon.org.uk>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
         netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] rxrpc: uninitialized variable in
- rxrpc_send_ack_packet()
-Message-ID: <Y3YOUQM/ldDe/sgC@kadam>
-References: <Y3XmQsOFwTHUBSLU@kili>
- <3475095.1668678264@warthog.procyon.org.uk>
+Subject: Re: [PATCH net-next] rxrpc: uninitialized variable in rxrpc_send_ack_packet()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3475095.1668678264@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3708247.1668686372.1@warthog.procyon.org.uk>
+Date:   Thu, 17 Nov 2022 11:59:32 +0000
+Message-ID: <3708248.1668686372@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 09:44:24AM +0000, David Howells wrote:
-> Dan Carpenter <error27@gmail.com> wrote:
-> 
-> > The "pkt" was supposed to have been deleted in a previous patch.  It
-> > leads to an uninitialized variable bug.
-> 
-> Weird.  I don't get a compiler warning and the kernel doesn't crash, despite
-> transmitting millions of acks.
-> 
-> If I disassemble the built code, I see:
-> 
->    0xffffffff81b09e89 <+723>:   xor    %edi,%edi
->    0xffffffff81b09e8b <+725>:   call   0xffffffff811c0bc1 <kfree>
-> 
-> I'm not sure why it's sticking 0 in EDI, though.
+Dan Carpenter <error27@gmail.com> wrote:
 
-We disabled GCC's check for uninitialized variables.  It could be that
-you have the .config to automatically zero out stack variables.
+> We disabled GCC's check for uninitialized variables.  It could be that
+> you have the .config to automatically zero out stack variables.
+> 
+> CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y
+> CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO_BARE=y
+> CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y
 
-CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y
-CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO_BARE=y
-CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y
+Ah.  Is there a way to reenable that?
 
-regards,
-dan carpenter
+David
 
