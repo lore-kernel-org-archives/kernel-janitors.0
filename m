@@ -2,50 +2,49 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2F7C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 12:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF70C43217
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 12:10:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241706AbiKRMKX (ORCPT
+        id S241697AbiKRMKZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Nov 2022 07:10:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54456 "EHLO
+        Fri, 18 Nov 2022 07:10:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241681AbiKRMKU (ORCPT
+        with ESMTP id S241676AbiKRMKU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Fri, 18 Nov 2022 07:10:20 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C97B98FF96;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8593F8FF8B;
         Fri, 18 Nov 2022 04:10:19 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7F949B8239B;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3E5ECB82398;
         Fri, 18 Nov 2022 12:10:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F2914C4314B;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D5FDAC433D7;
         Fri, 18 Nov 2022 12:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668773417;
-        bh=ANZ6V1aGh9EOk1nxhQz1CjwI0KqMAqItIJaxUQdN+/0=;
+        s=k20201202; t=1668773416;
+        bh=iM9YtUIsOab6WeIwJz+h09z5bY3C5GD2/zgEJN97YQk=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=lQ+pOJKqZQaG76cb+ueaKC/mWnCOdug0SOp4V1hgi59CNroyUC2v6ViVB65XC1R3L
-         EX23L7gjp0g9BOgrzVq72Gt+JXmzh2JfE6UfDfEvsQF/XB0zW8NzdKxWiJDnmjjJL+
-         Cf73VZ7tpkPqWMWmTGtbav8+NcQqp6FxoDbj+CxxlWm2GEh/kEDmjRKX/5a4rK459K
-         r8ocrSfGy+I7DOsxU7OwRB2PA9QXd1Dp/2iGNEh2Di6c7MAlRFYAN9qvGwRjtL7csd
-         REBSplUxDo5iZ6ToCX+6KHdXuMN+6mbhXsEkJothDdEVyZ133AfXNcPjVoxQrkoK2K
-         vOOZh6egHbDFQ==
+        b=HArKT+CbfoTfcWwtS6CYtZ6PjABxMss5IOw05NBsUf94dKPU7VXht5GLPU4fpfqAT
+         tXQUYkZ02Du9jDhQ5J38oSFCrxhLiQAaOy0/Py3w6YJiyd8ODc6K2NzVDN+Vq4qhig
+         awhu0ySRLg8MtjPt8vp+SdXvoKMOmK+BVkNgWZWQCdQdIS70vJKlyZBjMj2ekyq8+U
+         65ZkLTrstyV4jScs3leuIv54DxvdoRYmeCklD3J1efUUaqGIAOi9f92NtuIPbY+Wzg
+         AmuYqTwoEb8a8rFsBMqIUSl+CC2bFvBWDdrwjWvhGMJOPwmKdeHbZ8r9MaPU2FbVCc
+         sonC12UEZLeaQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D59C5E524E4;
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C3808E29F44;
         Fri, 18 Nov 2022 12:10:16 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] rxrpc: uninitialized variable in
- rxrpc_send_ack_packet()
+Subject: Re: [PATCH net-next] rxrpc: fix rxkad_verify_response()
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166877341687.19277.857117652193582222.git-patchwork-notify@kernel.org>
+Message-Id: <166877341679.19277.6962770053975463496.git-patchwork-notify@kernel.org>
 Date:   Fri, 18 Nov 2022 12:10:16 +0000
-References: <Y3XmQsOFwTHUBSLU@kili>
-In-Reply-To: <Y3XmQsOFwTHUBSLU@kili>
+References: <Y3XmKhBt5fclE6XC@kili>
+In-Reply-To: <Y3XmKhBt5fclE6XC@kili>
 To:     Dan Carpenter <error27@gmail.com>
 Cc:     dhowells@redhat.com, marc.dionne@auristor.com, davem@davemloft.net,
         edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
@@ -60,20 +59,23 @@ Hello:
 This patch was applied to netdev/net-next.git (master)
 by David S. Miller <davem@davemloft.net>:
 
-On Thu, 17 Nov 2022 10:44:02 +0300 you wrote:
-> The "pkt" was supposed to have been deleted in a previous patch.  It
-> leads to an uninitialized variable bug.
+On Thu, 17 Nov 2022 10:43:38 +0300 you wrote:
+> The error handling for if skb_copy_bits() fails was accidentally deleted
+> so the rxkad_decrypt_ticket() function is not called.
 > 
-> Fixes: 72f0c6fb0579 ("rxrpc: Allocate ACK records at proposal and queue for transmission")
+> Fixes: 5d7edbc9231e ("rxrpc: Get rid of the Rx ring")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> Applies to net-next.
+> This applies to net-next.  It might go throught some kind of an AFS
+> tree judging by the S-o-b tags on the earlier patches?  Tracking
+> everyone's trees is really complicated now that I'm dealing with over
+> 300 trees.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] rxrpc: uninitialized variable in rxrpc_send_ack_packet()
-    https://git.kernel.org/netdev/net-next/c/38461894838b
+  - [net-next] rxrpc: fix rxkad_verify_response()
+    https://git.kernel.org/netdev/net-next/c/101c1bb6c556
 
 You are awesome, thank you!
 -- 
