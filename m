@@ -2,98 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB4BC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 11:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C628C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 11:47:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230042AbiKRLVb (ORCPT
+        id S241706AbiKRLrt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Nov 2022 06:21:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55582 "EHLO
+        Fri, 18 Nov 2022 06:47:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240866AbiKRLVB (ORCPT
+        with ESMTP id S241560AbiKRLr2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Nov 2022 06:21:01 -0500
+        Fri, 18 Nov 2022 06:47:28 -0500
 Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD35697C1
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Nov 2022 03:20:59 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id bs21so8769348wrb.4
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Nov 2022 03:20:59 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570D0922F6;
+        Fri, 18 Nov 2022 03:47:17 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id y16so8837529wrt.12;
+        Fri, 18 Nov 2022 03:47:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wI8VnwsOTsKELjFhbeJN//XEX4AhQdiT05+NuNvYyZg=;
-        b=SG+t1B5MXfqsF6dMQAHnfNNGjwmxe21f91krmdpYMeIdRfvl4XncbcrtjUMma0X4V5
-         wDYtIQ0jRAwyVpzGomwO6hI82TLjUR1QosCGMlMjsy7fpHuJLdGhpC5DctRE9mZAdclH
-         IIGOhePzswL5aGbGbySyS4tNw0o5IJ/bxuo2Ks3SWhSOg/XvPYFdSWLP5BqDS+sYpJKu
-         1x2eIioZdcpOiiN4mzQKitY49zPvroGqQtiVNPu106SVkVpq6YQqZsQQ4DIhHNIwgcF5
-         9QWVN0i1OeYiAC631HkqtSBRsb/U41WEVKedFhB2LvfqEakdS4SXI+Id531NOadilzGd
-         7Wzg==
+        bh=noh2AIIXYOWhOTGjJCQMWSYDUuRgEeAbZcKQ+mwgXHU=;
+        b=PHlAnFT3dHdolSwsY/2RLSjQ39K1hJCCzWauvbpXnKIe2xMCoHIT4fFTkNGHP7aa4+
+         zqybsmUXC5jJKS5LJAiZglmiMtj9PfWh0nxpM9xQ7zfwwy9aZjoDzwoafrKI+MtbPt2f
+         OOwXdojX1EmM859EuTQCzzZHujKOXC0aBaeGu6EIDqEyat8dcwdLJaVeRruVo3hVSV4m
+         qQq7sfXsxt/PsXrXjgcr8Yj3FcH/G0F/4FZ9RzS9L7VDuEaYNPCFe6LzXUdYySgmEC2W
+         apJLjkk8m/lhA8FH/FOHbdFqzVMy+0708KiYSq+CpUogdsOpKOs8mfdKqB1wUUJDfbR7
+         RlWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wI8VnwsOTsKELjFhbeJN//XEX4AhQdiT05+NuNvYyZg=;
-        b=dpJ0NXY2NwAzX9rrmhCMBFvB+EZdZHfVpnfpHBsgUyy+LGe8lSG6qkACVnTgYZb78V
-         70Bn+XeycnnroQA/NLNSRKMSlhLG5hiQQUFuQOcwrUDfWg8iqrbpG4G/HouBotKVFl4z
-         VX9Um451SknDgVSCPQFbX7P4B+jaPgCmZAO/dqQbVboXB1DmIHSrULrn78p6fPFF9jPG
-         u01RjZB/MV6RyQwQm+rbOLlU40TfzP5bwf6CfHX/BvhI239hCITH9IGavgZrHn27Esyo
-         +S8GiRdwdnXrzSgleWsdtmKk87rv2oLbFmq6CNDF3eGGZkPsCS3YnovDc6qiZNZgoYXu
-         krXw==
-X-Gm-Message-State: ANoB5pk+fApOMZ9pux0zj8TuPX3u5lib6MN13HnOzwyDTLCcGopsC+Xz
-        Eubfn6acWS2YBuzg3Nv1E/FANuqtmsktIA==
-X-Google-Smtp-Source: AA0mqf7DGT7HH1nL4/i8LoObtfwOXBYRO1zVgfp0Yp1rqwL5GF6kXlgAaBYOuLlox73Du1FSl/d/Rw==
-X-Received: by 2002:a05:6000:1148:b0:236:71cd:1a71 with SMTP id d8-20020a056000114800b0023671cd1a71mr4024507wrx.712.1668770458275;
-        Fri, 18 Nov 2022 03:20:58 -0800 (PST)
+        bh=noh2AIIXYOWhOTGjJCQMWSYDUuRgEeAbZcKQ+mwgXHU=;
+        b=hdoh1Rxp6QVY/yYIq6FE9idatpkt3VQi50xvGD3TFXpDubG0OeOYF6ZoEmewwR6MJd
+         EyLgSy6cqAXmTjTRiyjdWbrBCDE8Mwt8NqzqcgAI5mpkVNNbDnHSPbB6OnFk01Xp9ISg
+         9rXZ/W6wIrzhRfkKwnbxfhVGkPZrTrORZP2+10LzS883jRoR3qRpY4qizFyd/Vi+GhJT
+         Xqg0NYNFraTfurQwF/MEAA15abddJ53rOJa09lFmehi80lfVaPKUWZJT2SzXhHzXb006
+         ekHA1g6K8PLV33V4f3vv8YnhZEQLccjl7iumGHsIFJceWKqNbbQSK5gV0kevDxdDXjuc
+         GSIg==
+X-Gm-Message-State: ANoB5pmaw5oe4IYYMu87fH3Y9/3c4LfwIs5CVQmhAlmr14BCKf2uMCpp
+        QBliBNvxINV5GHtbGKWRDOA=
+X-Google-Smtp-Source: AA0mqf7BM2P/jm8FlSiNjId4dPK9MHaSpfSX8lcOqtCMIG51LLlFo4DvRJSYS4aIat6Hk9WwGJkpWw==
+X-Received: by 2002:a05:6000:883:b0:22c:d6c7:562 with SMTP id ca3-20020a056000088300b0022cd6c70562mr4063179wrb.8.1668772035824;
+        Fri, 18 Nov 2022 03:47:15 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id c3-20020a5d4cc3000000b00241c4bd6c09sm809845wrt.33.2022.11.18.03.20.57
+        by smtp.gmail.com with ESMTPSA id fc10-20020a05600c524a00b003cf9bf5208esm9680699wmb.19.2022.11.18.03.47.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 03:20:57 -0800 (PST)
-Date:   Fri, 18 Nov 2022 14:20:55 +0300
+        Fri, 18 Nov 2022 03:47:15 -0800 (PST)
 From:   Dan Carpenter <error27@gmail.com>
-To:     cai.huoqing@linux.dev
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] net: hinic: Add support for configuration of
- rx-vlan-filter by ethtool
-Message-ID: <Y3dql2JP3jyTBPYs@kili>
+X-Google-Original-From: Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Fri, 18 Nov 2022 14:47:12 +0300
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Albert Briscoe <albertsbriscoe@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Zqiang <qiang.zhang@windriver.com>, linux-usb@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: gadget: function: use after free in printer_close()
+Message-ID: <Y3dwwNlBoS13VcIR@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Cai Huoqing,
+The printer_dev_free() function frees "dev" but then it is dereferenced
+by the debug code on the next line.  The debug printk only prints the
+function name so it's probably okay to just delete it.
 
-This is a semi-automatic email about new static checker warnings.
+Fixes: e8d5f92b8d30 ("usb: gadget: function: printer: fix use-after-free in __lock_acquire")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/gadget/function/f_printer.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-The patch 2acf960e3be6: "net: hinic: Add support for configuration of
-rx-vlan-filter by ethtool" from Nov 3, 2022, leads to the following
-Smatch complaint:
+diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
+index a881c69b1f2b..7354bfe1e682 100644
+--- a/drivers/usb/gadget/function/f_printer.c
++++ b/drivers/usb/gadget/function/f_printer.c
+@@ -382,7 +382,6 @@ printer_close(struct inode *inode, struct file *fd)
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ 
+ 	kref_put(&dev->kref, printer_dev_free);
+-	DBG(dev, "printer_close\n");
+ 
+ 	return 0;
+ }
+-- 
+2.35.1
 
-    drivers/net/ethernet/huawei/hinic/hinic_port.c:459 hinic_set_vlan_fliter()
-                                                                      ^^^^
-This should be "filter" instead of "fliter" (swap the li).
-
-    warn: variable dereferenced before check 'hwdev' (see line 453)
-
-drivers/net/ethernet/huawei/hinic/hinic_port.c
-   452		struct hinic_hwdev *hwdev = nic_dev->hwdev;
-   453		struct hinic_hwif *hwif = hwdev->hwif;
-                                          ^^^^^^^^^^^
-Dereference.
-
-   454		struct pci_dev *pdev = hwif->pdev;
-   455		struct hinic_vlan_filter vlan_filter;
-   456		u16 out_size = sizeof(vlan_filter);
-   457		int err;
-   458	
-   459		if (!hwdev)
-                    ^^^^^^
-Checked too late.
-
-   460			return -EINVAL;
-   461	
-
-regards,
-dan carpenter
