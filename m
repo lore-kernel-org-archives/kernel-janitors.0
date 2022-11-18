@@ -2,64 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F10C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 09:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69154C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 09:13:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241335AbiKRJLG (ORCPT
+        id S241795AbiKRJNc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Nov 2022 04:11:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58668 "EHLO
+        Fri, 18 Nov 2022 04:13:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241726AbiKRJLE (ORCPT
+        with ESMTP id S241792AbiKRJNH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Nov 2022 04:11:04 -0500
-X-Greylist: delayed 319 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 18 Nov 2022 01:11:01 PST
-Received: from mail.axisfairfi.com (mail.axisfairfi.com [94.177.230.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8557BF72
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Nov 2022 01:11:01 -0800 (PST)
-Received: by mail.axisfairfi.com (Postfix, from userid 1001)
-        id 3609982928; Fri, 18 Nov 2022 09:05:31 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=axisfairfi.com;
-        s=mail; t=1668762340;
-        bh=0BgaW9t8GFER5QecxVkFsHrVi3gO/4V5KAZgJaiRYBs=;
-        h=Date:From:To:Subject:From;
-        b=gX5yJ0UW+AcatEn3oofZg4txFWCjA7equHGoC1SYhB+BUVZI7BxGsNDG7Dwu8n2UG
-         e4Ir77mP1Q0xvdE9mdnWutDu0vD/JL+Cqac3/UF+xT8ZZi1LaiqjhvlbAxD0XQ+AXB
-         4TTKeqfkzXa0R52+3MYY06GlzJTWYMr/bV2WqiEuSlBjXPVW4nvV5h91bJ90mpGjIW
-         ekW2YbSlA9V8w1/y8LM4EE52bCT/SI1OUom6MZ66kshNEjo6pSs6z9UQi29BJAcijg
-         bJMVioRzANTZKr2HLsJw10s2R6RA68UyKXvrmsamMyEPdHmskm2BdKtB/gMHoh/bAa
-         mL+qje6HYvwPg==
-Received: by mail.axisfairfi.com for <kernel-janitors@vger.kernel.org>; Fri, 18 Nov 2022 09:05:24 GMT
-Message-ID: <20221118074500-0.1.b.hqx.0.ldk38d6x5k@axisfairfi.com>
-Date:   Fri, 18 Nov 2022 09:05:24 GMT
-From:   "Zbynek Spacek" <zbynek.spacek@axisfairfi.com>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Silikonmischungen
-X-Mailer: mail.axisfairfi.com
+        Fri, 18 Nov 2022 04:13:07 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7474C64F9;
+        Fri, 18 Nov 2022 01:13:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
+        t=1668762759; bh=eKtJWiPpgSifp4dBJaDSkL5sqHrBEh+fk4begN3cTGM=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=QQdIoYkdv7fAqcKxznKql80UxqQqvLwoCdJXXKczFwaYw6nSNxqGjV3XXjg44Ufgm
+         DQqhbIrWxmFDtcD1/UtWgejcX2zZx12hKkfRxfptU/8OGgTiK31xaRVGaGWni0jHXK
+         fx1FefJBl1ccCTP8OBEeQa3ug4r5qBJDdsvJpr05XthVgMFQXZFUfLnRxjXPxa7Eh7
+         wzslW5SfyRSMi5viHgeUUe/AqFcpC3DBx/ytRiTZr34dAJHpSqfDdety6rYbnID2dv
+         KVH2GQXDc8VGyUBBRhn3Av0kk3l+PoaBd3Qt5x/m6YR/rg8ZMypjh0BM3GnMK+bv4P
+         42Z6+rtHS/+xw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.60] ([92.116.164.156]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MMGRA-1ocdcX1xl0-00JNsO; Fri, 18
+ Nov 2022 10:12:39 +0100
+Message-ID: <9a32a234-b0a0-036d-86cc-f9942e165adc@gmx.de>
+Date:   Fri, 18 Nov 2022 10:12:37 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH] video: fbdev: fix spelling mistake
+ "paramaters"->"parameters"
+Content-Language: en-US
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com
+References: <20221118090050.22148-1-yuzhe@nfschina.com>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <20221118090050.22148-1-yuzhe@nfschina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qfIlyXIDHqaMAPZu9uHYkCd2oiFTvgPIJHWKLO9du0KUtLNE/2m
+ Qzk2OqSoz1Lb0es4i/CykSc+OajTd50HnyUFkQzuelz5HW3aIWEBQy8Dk5zb90YSPH9ZGYh
+ 9CT9UHjKTNHTYpUCWyCcSQ2BpG7Jx/O28VfIL5eWVS+1St+fYQI62OimfoGlWe7J8DrQ2Sf
+ ma7iSzENejpn3jVPXnV2Q==
+UI-OutboundReport: notjunk:1;M01:P0:4MMYiyYALVU=;0s3UI9q7gh6NlMHW3ScnT+zMsEh
+ YxFm1x/91bP1UjpfA4w7HsxhGwnSVkytLBItMdtfYZI1hhjHqQp9iqfBj0zz1QYVW/YNaR0sr
+ xsmypNg3dyicDohMtOgwm0LJnz0fHOmY1IGYKcYCCkislAM1nYuKPde6XRzOMEbXgyJc+AWb2
+ MaV6qwJyi4OvWhmmxnvYK5UJhQ89Oigao3q03tU9mwS6i35HXtJY6Qwq3uxCCGRCcNDu6/0u+
+ Ulv7TXCA6z0RaINaGl2xsXrs3frdJ07AzN5RhiLFaO/leFse8OWC0EJZEMdrMfBWyHVZM+34r
+ HgWIYOHGvHsoC7ugU34TFQTwRr2tgTm35mt/bBCp2QCeCdz94scZJfWXB3MY9/TO+9GkIr2mU
+ RID51dkRyBET6GkgHljmpbcJbq9w4CDGixAPx3/jvSqIQO0NUU7LzY+JtPKwFjMCoLWNnNFh8
+ RYLjVjimmVkF/AVHwsQNSgS8+VBjh2nVrMOLOmgkTerD3eiKvLPjdLW8hcKc9spTKz6v71D1J
+ ZiOG+YGCAEr14jl7MdRLx1SYizM5nlbKJvvKJKQrOToDUvKAyaaLt+w9h4fLYTGBOsEPPRa3E
+ Opln0X+n9MFIN7wLFhc1AI3Ik4IxZWaH8ZsS+9493yWn480SPrkx59xGwQywEDMNFQCXz9Xte
+ TaZWBiR4KnFYcrtCdp/ae3/Pw+9T2KNycULx2+McNDAjQ5vJB5++xaEahRC8dIWZwvMND4cO4
+ FHcFchrdWxxug0kJh8MPtdGQy9MI9wfK+h62KxmbpQ2DV6Bcfbh4S2LnQpf8WnW0gTtN5LfCP
+ sd/yVeDHImW6+lxDAop06+KHHwHis0yXZ+AwStvMAZPYaiY4keu2/jfv/IWvIHKfeQo1oN/7x
+ EHLhadKC8WSpHNR0Fx0r8Ca2ulhG0fDWYko0MSGVKRi52rnRfIqJgw+/RxtlPAhrFvaRN51Jm
+ p6f9DA==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Good morning,
+On 11/18/22 10:00, Yu Zhe wrote:
+> There is a spelling mistake in comment. Fix it.
+>
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 
-do you need intermediates for processing, plastics (e.g. rubber) or silic=
-one mixtures?
+applied.
 
-We provide a wide range of silicone rubbers with various properties, sili=
-cone mixtures from renowned manufacturers such as Wacker, Elastosil LR an=
-d dyes, stabilizers, primers and anti-adhesive additives.
+Thanks!
+Helge
 
-We also produce technical silicone compounds with increased resistance to=
- oils, resistant to high temperatures and water vapor, conductive and man=
-y more.
+> ---
+>   drivers/video/fbdev/controlfb.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/video/fbdev/controlfb.c b/drivers/video/fbdev/contr=
+olfb.c
+> index 6bbcd9fc864e..77dbf94aae5f 100644
+> --- a/drivers/video/fbdev/controlfb.c
+> +++ b/drivers/video/fbdev/controlfb.c
+> @@ -376,7 +376,7 @@ static int read_control_sense(struct fb_info_control=
+ *p)
+>   #define CONTROL_PIXCLOCK_MIN	5000	/* ~ 200 MHz dot clock */
+>
+>   /*
+> - * calculate the clock paramaters to be sent to CUDA according to given
+> + * calculate the clock parameters to be sent to CUDA according to given
+>    * pixclock in pico second.
+>    */
+>   static int calc_clock_params(unsigned long clk, unsigned char *param)
 
-We provide fast order fulfillment, timely deliveries and cost optimizatio=
-n.
-
-Can I introduce what we can offer you?
-
-
-Zbynek Spacek
