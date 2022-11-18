@@ -2,63 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C628C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 11:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66536C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 11:48:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241706AbiKRLrt (ORCPT
+        id S235182AbiKRLsJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Nov 2022 06:47:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
+        Fri, 18 Nov 2022 06:48:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241560AbiKRLr2 (ORCPT
+        with ESMTP id S241560AbiKRLsG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Nov 2022 06:47:28 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570D0922F6;
-        Fri, 18 Nov 2022 03:47:17 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id y16so8837529wrt.12;
-        Fri, 18 Nov 2022 03:47:17 -0800 (PST)
+        Fri, 18 Nov 2022 06:48:06 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C733A9208A;
+        Fri, 18 Nov 2022 03:48:05 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id 5so3469463wmo.1;
+        Fri, 18 Nov 2022 03:48:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=noh2AIIXYOWhOTGjJCQMWSYDUuRgEeAbZcKQ+mwgXHU=;
-        b=PHlAnFT3dHdolSwsY/2RLSjQ39K1hJCCzWauvbpXnKIe2xMCoHIT4fFTkNGHP7aa4+
-         zqybsmUXC5jJKS5LJAiZglmiMtj9PfWh0nxpM9xQ7zfwwy9aZjoDzwoafrKI+MtbPt2f
-         OOwXdojX1EmM859EuTQCzzZHujKOXC0aBaeGu6EIDqEyat8dcwdLJaVeRruVo3hVSV4m
-         qQq7sfXsxt/PsXrXjgcr8Yj3FcH/G0F/4FZ9RzS9L7VDuEaYNPCFe6LzXUdYySgmEC2W
-         apJLjkk8m/lhA8FH/FOHbdFqzVMy+0708KiYSq+CpUogdsOpKOs8mfdKqB1wUUJDfbR7
-         RlWg==
+        bh=puywXNDYXSd6DOzYL6X0dBASfGfJfFJZcaCdFAGPGnM=;
+        b=qvEhemKuv1YTSZxdMmVZcpNGHK81orvQSg9IJ5zu5X6x5tRzk1B8xEB4iUUYhkLjMq
+         xRHm9VeteUzX1f576K/0kPPiRiRjipG1h7ienao+bPQJJEGERMNQrVC7dbQxPX8bN5Lw
+         5we3OaXp6iLAEKxuNQArLUlfJ9k6+iKMzcjW40nyV+R7Pj/tEceylVNekDvbmmOd5UsE
+         xWjcMp5JmhfDKC31InI2fwBClseazQSDx1k7LWniQ7B935ZfT/H871PDeg1UCCyP55/k
+         CjqbvqT4ecB8pYG6ii4Wf6bJJ1z2Sjyq1vsrHfDhkbD3On1dZs0gktCDHiOEExP7jnxm
+         gAgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=noh2AIIXYOWhOTGjJCQMWSYDUuRgEeAbZcKQ+mwgXHU=;
-        b=hdoh1Rxp6QVY/yYIq6FE9idatpkt3VQi50xvGD3TFXpDubG0OeOYF6ZoEmewwR6MJd
-         EyLgSy6cqAXmTjTRiyjdWbrBCDE8Mwt8NqzqcgAI5mpkVNNbDnHSPbB6OnFk01Xp9ISg
-         9rXZ/W6wIrzhRfkKwnbxfhVGkPZrTrORZP2+10LzS883jRoR3qRpY4qizFyd/Vi+GhJT
-         Xqg0NYNFraTfurQwF/MEAA15abddJ53rOJa09lFmehi80lfVaPKUWZJT2SzXhHzXb006
-         ekHA1g6K8PLV33V4f3vv8YnhZEQLccjl7iumGHsIFJceWKqNbbQSK5gV0kevDxdDXjuc
-         GSIg==
-X-Gm-Message-State: ANoB5pmaw5oe4IYYMu87fH3Y9/3c4LfwIs5CVQmhAlmr14BCKf2uMCpp
-        QBliBNvxINV5GHtbGKWRDOA=
-X-Google-Smtp-Source: AA0mqf7BM2P/jm8FlSiNjId4dPK9MHaSpfSX8lcOqtCMIG51LLlFo4DvRJSYS4aIat6Hk9WwGJkpWw==
-X-Received: by 2002:a05:6000:883:b0:22c:d6c7:562 with SMTP id ca3-20020a056000088300b0022cd6c70562mr4063179wrb.8.1668772035824;
-        Fri, 18 Nov 2022 03:47:15 -0800 (PST)
+        bh=puywXNDYXSd6DOzYL6X0dBASfGfJfFJZcaCdFAGPGnM=;
+        b=WUcoYWgoNgjLFz4u1W8FtxJJ7tML2KwAMcf4BURog0u+katS7Fe6Ya1m1KS9pKVi/q
+         ZyLLew19QuNo9QO/xT88I5vcuNcTfDszEWh4dMmQk7O0/mSY96y+J4Tb1Xoh5WkQ8mih
+         /N6smICi6LecXBkC2wgRXf9QZFWzaEBjIduKsyB6qXOcEcEwrcQVbzB9YJxmE3c1GbNR
+         XEU+FqPKPNjmY4DlDeX2h5UHEzwccCuJ0KhZ5GZz9Tp4+sBDsIA3KYiyMKHGlIwXll/C
+         eaqU/yHRImcPeRYY85oCNt4/PyhRKumZRXIu+Msh/lKy8FqvaGlcEm0varesisx4GHh8
+         OJ9g==
+X-Gm-Message-State: ANoB5pkL2lrM5kNTL3ZI6tVSjY/QBQ3cDAyYXZjIlCsZ/2sm6ji3T8Oo
+        O4AJDT5Sx8CSZKr76TlWVNJPAXeKR4N40A==
+X-Google-Smtp-Source: AA0mqf5230MzRSqYS5Yekl4d3DsVgYyrbzvnhgwpOfs3v0u3hpStdf2fetzOeFKy5HoHQe7hQsUI/Q==
+X-Received: by 2002:a05:600c:805:b0:3c6:c13f:1194 with SMTP id k5-20020a05600c080500b003c6c13f1194mr4588783wmp.132.1668772084119;
+        Fri, 18 Nov 2022 03:48:04 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id fc10-20020a05600c524a00b003cf9bf5208esm9680699wmb.19.2022.11.18.03.47.14
+        by smtp.gmail.com with ESMTPSA id he5-20020a05600c540500b003cfd4e6400csm4388203wmb.19.2022.11.18.03.48.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 03:47:15 -0800 (PST)
+        Fri, 18 Nov 2022 03:48:03 -0800 (PST)
+Date:   Fri, 18 Nov 2022 14:48:00 +0300
 From:   Dan Carpenter <error27@gmail.com>
-X-Google-Original-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Fri, 18 Nov 2022 14:47:12 +0300
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Albert Briscoe <albertsbriscoe@gmail.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Zqiang <qiang.zhang@windriver.com>, linux-usb@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: gadget: function: use after free in printer_close()
-Message-ID: <Y3dwwNlBoS13VcIR@kili>
+To:     Steve French <sfrench@samba.org>
+Cc:     Paulo Alcantara <pc@cjr.nz>, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] cifs: Use after free in debug code
+Message-ID: <Y3dw8KLm7MDgACCY@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -67,28 +66,37 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The printer_dev_free() function frees "dev" but then it is dereferenced
-by the debug code on the next line.  The debug printk only prints the
-function name so it's probably okay to just delete it.
+This debug code dereferences "old_iface" after it was already freed by
+the call to release_iface().  Re-order the debugging to avoid this
+issue.
 
-Fixes: e8d5f92b8d30 ("usb: gadget: function: printer: fix use-after-free in __lock_acquire")
+Fixes: b54034a73baf ("cifs: during reconnect, update interface if necessary")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/usb/gadget/function/f_printer.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/cifs/sess.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
-index a881c69b1f2b..7354bfe1e682 100644
---- a/drivers/usb/gadget/function/f_printer.c
-+++ b/drivers/usb/gadget/function/f_printer.c
-@@ -382,7 +382,6 @@ printer_close(struct inode *inode, struct file *fd)
- 	spin_unlock_irqrestore(&dev->lock, flags);
+diff --git a/fs/cifs/sess.c b/fs/cifs/sess.c
+index 92e4278ec35d..9e7d9f0baa18 100644
+--- a/fs/cifs/sess.c
++++ b/fs/cifs/sess.c
+@@ -302,14 +302,14 @@ cifs_chan_update_iface(struct cifs_ses *ses, struct TCP_Server_Info *server)
  
- 	kref_put(&dev->kref, printer_dev_free);
--	DBG(dev, "printer_close\n");
- 
- 	return 0;
- }
+ 	/* now drop the ref to the current iface */
+ 	if (old_iface && iface) {
+-		kref_put(&old_iface->refcount, release_iface);
+ 		cifs_dbg(FYI, "replacing iface: %pIS with %pIS\n",
+ 			 &old_iface->sockaddr,
+ 			 &iface->sockaddr);
+-	} else if (old_iface) {
+ 		kref_put(&old_iface->refcount, release_iface);
++	} else if (old_iface) {
+ 		cifs_dbg(FYI, "releasing ref to iface: %pIS\n",
+ 			 &old_iface->sockaddr);
++		kref_put(&old_iface->refcount, release_iface);
+ 	} else {
+ 		WARN_ON(!iface);
+ 		cifs_dbg(FYI, "adding new iface: %pIS\n", &iface->sockaddr);
 -- 
 2.35.1
 
