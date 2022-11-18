@@ -2,101 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66536C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 11:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B61C43219
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 12:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235182AbiKRLsJ (ORCPT
+        id S241327AbiKRMAb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Nov 2022 06:48:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45904 "EHLO
+        Fri, 18 Nov 2022 07:00:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241560AbiKRLsG (ORCPT
+        with ESMTP id S235256AbiKRMA3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Nov 2022 06:48:06 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C733A9208A;
-        Fri, 18 Nov 2022 03:48:05 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id 5so3469463wmo.1;
-        Fri, 18 Nov 2022 03:48:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=puywXNDYXSd6DOzYL6X0dBASfGfJfFJZcaCdFAGPGnM=;
-        b=qvEhemKuv1YTSZxdMmVZcpNGHK81orvQSg9IJ5zu5X6x5tRzk1B8xEB4iUUYhkLjMq
-         xRHm9VeteUzX1f576K/0kPPiRiRjipG1h7ienao+bPQJJEGERMNQrVC7dbQxPX8bN5Lw
-         5we3OaXp6iLAEKxuNQArLUlfJ9k6+iKMzcjW40nyV+R7Pj/tEceylVNekDvbmmOd5UsE
-         xWjcMp5JmhfDKC31InI2fwBClseazQSDx1k7LWniQ7B935ZfT/H871PDeg1UCCyP55/k
-         CjqbvqT4ecB8pYG6ii4Wf6bJJ1z2Sjyq1vsrHfDhkbD3On1dZs0gktCDHiOEExP7jnxm
-         gAgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=puywXNDYXSd6DOzYL6X0dBASfGfJfFJZcaCdFAGPGnM=;
-        b=WUcoYWgoNgjLFz4u1W8FtxJJ7tML2KwAMcf4BURog0u+katS7Fe6Ya1m1KS9pKVi/q
-         ZyLLew19QuNo9QO/xT88I5vcuNcTfDszEWh4dMmQk7O0/mSY96y+J4Tb1Xoh5WkQ8mih
-         /N6smICi6LecXBkC2wgRXf9QZFWzaEBjIduKsyB6qXOcEcEwrcQVbzB9YJxmE3c1GbNR
-         XEU+FqPKPNjmY4DlDeX2h5UHEzwccCuJ0KhZ5GZz9Tp4+sBDsIA3KYiyMKHGlIwXll/C
-         eaqU/yHRImcPeRYY85oCNt4/PyhRKumZRXIu+Msh/lKy8FqvaGlcEm0varesisx4GHh8
-         OJ9g==
-X-Gm-Message-State: ANoB5pkL2lrM5kNTL3ZI6tVSjY/QBQ3cDAyYXZjIlCsZ/2sm6ji3T8Oo
-        O4AJDT5Sx8CSZKr76TlWVNJPAXeKR4N40A==
-X-Google-Smtp-Source: AA0mqf5230MzRSqYS5Yekl4d3DsVgYyrbzvnhgwpOfs3v0u3hpStdf2fetzOeFKy5HoHQe7hQsUI/Q==
-X-Received: by 2002:a05:600c:805:b0:3c6:c13f:1194 with SMTP id k5-20020a05600c080500b003c6c13f1194mr4588783wmp.132.1668772084119;
-        Fri, 18 Nov 2022 03:48:04 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id he5-20020a05600c540500b003cfd4e6400csm4388203wmb.19.2022.11.18.03.48.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 03:48:03 -0800 (PST)
-Date:   Fri, 18 Nov 2022 14:48:00 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Steve French <sfrench@samba.org>
-Cc:     Paulo Alcantara <pc@cjr.nz>, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] cifs: Use after free in debug code
-Message-ID: <Y3dw8KLm7MDgACCY@kili>
+        Fri, 18 Nov 2022 07:00:29 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79E6794A5B;
+        Fri, 18 Nov 2022 04:00:28 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 36136B82326;
+        Fri, 18 Nov 2022 12:00:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D408EC433D7;
+        Fri, 18 Nov 2022 12:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668772825;
+        bh=VSfoukfeWzEaAclEWk3wjoVGfU5aw8Tr/LQUdaROGOA=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=GFbLSIG83cNhdHJNgUKpEAD9gSjZn/n9fGuE8l+/kN3cdW/QCkzopGyrH3Nz7Lr50
+         LryLfekTdwvchvTEgaTfj6IBk15kriKQvq0vAQeVcbxZuWYKhs9oGW0jD5JeYGWJ8A
+         pXqdWmpyaPUe/eO7e2IKvvT2wAsQa8qOOQryD0xPEq+9I/BHEmcwSOjSa2+Lq0eCGl
+         DnuJ8L3VNNhL58aiD1tMOoVd9IhdaRmat/YZsHYB/bqg84NSqlxYIOdYPS8ERPK7dk
+         L6/IoOGsbvgZ6bn/btFTYqhLT1agzWV/flwL8Y8rGNapGpXO/LKfog0o7FD1B4cJIF
+         Tffx6G+Vr4Flg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AC0A9E50D71;
+        Fri, 18 Nov 2022 12:00:25 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: ipa: avoid a null pointer dereference
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166877282570.14131.14093782729381689956.git-patchwork-notify@kernel.org>
+Date:   Fri, 18 Nov 2022 12:00:25 +0000
+References: <20221116223718.137175-1-elder@linaro.org>
+In-Reply-To: <20221116223718.137175-1-elder@linaro.org>
+To:     Alex Elder <elder@linaro.org>
+Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, error27@gmail.com, caleb.connolly@linaro.com,
+        elder@kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This debug code dereferences "old_iface" after it was already freed by
-the call to release_iface().  Re-order the debugging to avoid this
-issue.
+Hello:
 
-Fixes: b54034a73baf ("cifs: during reconnect, update interface if necessary")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- fs/cifs/sess.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/fs/cifs/sess.c b/fs/cifs/sess.c
-index 92e4278ec35d..9e7d9f0baa18 100644
---- a/fs/cifs/sess.c
-+++ b/fs/cifs/sess.c
-@@ -302,14 +302,14 @@ cifs_chan_update_iface(struct cifs_ses *ses, struct TCP_Server_Info *server)
- 
- 	/* now drop the ref to the current iface */
- 	if (old_iface && iface) {
--		kref_put(&old_iface->refcount, release_iface);
- 		cifs_dbg(FYI, "replacing iface: %pIS with %pIS\n",
- 			 &old_iface->sockaddr,
- 			 &iface->sockaddr);
--	} else if (old_iface) {
- 		kref_put(&old_iface->refcount, release_iface);
-+	} else if (old_iface) {
- 		cifs_dbg(FYI, "releasing ref to iface: %pIS\n",
- 			 &old_iface->sockaddr);
-+		kref_put(&old_iface->refcount, release_iface);
- 	} else {
- 		WARN_ON(!iface);
- 		cifs_dbg(FYI, "adding new iface: %pIS\n", &iface->sockaddr);
+On Wed, 16 Nov 2022 16:37:18 -0600 you wrote:
+> Dan Carpenter reported that Smatch found an instance where a pointer
+> which had previously been assumed could be null (as indicated by a
+> null check) was later dereferenced without a similar check.
+> 
+> In practice this doesn't lead to a problem because currently the
+> pointers used are all non-null.  Nevertheless this patch addresses
+> the reported problem.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net: ipa: avoid a null pointer dereference
+    https://git.kernel.org/netdev/net-next/c/15b4f993d12b
+
+You are awesome, thank you!
 -- 
-2.35.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
