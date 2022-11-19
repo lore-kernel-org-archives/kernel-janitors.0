@@ -2,118 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C37C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Nov 2022 15:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB717C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Nov 2022 03:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242350AbiKRPNR (ORCPT
+        id S230306AbiKSDaV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Nov 2022 10:13:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40230 "EHLO
+        Fri, 18 Nov 2022 22:30:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242244AbiKRPND (ORCPT
+        with ESMTP id S229946AbiKSDaT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Nov 2022 10:13:03 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8102D3120A;
-        Fri, 18 Nov 2022 07:13:02 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id j15so9031841wrq.3;
-        Fri, 18 Nov 2022 07:13:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RBu6ZO+1FiLFyP3QbWuC4gA1lMk94ckwWc0IZKeuNxM=;
-        b=IlNQILsvhOTrBMZRldCQgd/g0Ibcf7lIYqkJKKHGSOuuytLtPYQar7KOrf/E9czZgB
-         ssNm0c5jB488Aqe2gZcke4eU7FzNWEjoh0OjtqfNKYorVbwGMzsn3D3b5t4ITMGvy0A2
-         pctA04IRg9BRvVqMWQ3oHRucyx/MvjarjwLgcRRUgkntwHA+yuytezYWzsp+fEV7CqGn
-         UsCHqqzYqc6dENW7wS+ItttjEg4V504jutac/qejkSFTAdUFmhMqVEPLZVoG/3JES3US
-         NLwa9PEWVt7hj0MY6HaW9W28+kZbZxvEQB1pEg2vdthIZ/izZk0smlOePekPUdlJplC/
-         DLNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RBu6ZO+1FiLFyP3QbWuC4gA1lMk94ckwWc0IZKeuNxM=;
-        b=itON++eGWIXwghyOP4ukyzO9bJ+5amESWRZS6dHxLxf2fCy1K1fXvJ7tKiY+oaTukW
-         +HqS8Q+hVKPvsYE1CiQz9yTf1sbNuI+5fZwUiPJfJJYYeD7YdD1j6u6gWZB3tfG0auXO
-         WqOtBfVMRgp0HeAFs1PJ90oXOA/Pfl2RAGDUbDez6Vu+j/MnJNTHsx/VVK65YTzLXkqw
-         rC+ypeZY9bBWqi9ZqyFFspVmyZC7KOjAb47f30hr4g2bFtQpE5hBDOIfMVw0gAX0uchL
-         Hw0Xy4ZPgeQKugDxfNYAQZ8xFrE40VKed+8UD2kWA/GpLIcJM/pgc86LwYfFk0QQjLv3
-         OnFQ==
-X-Gm-Message-State: ANoB5pmbS8nLJffFf2YOcpDx/TJXmkCmWvv3FpBX5rblqCly7KcYHt8z
-        YvaTv6xE9YRjKobgfE0OWdk=
-X-Google-Smtp-Source: AA0mqf47gtjGxXnD6K/2zYyQqGHg8iCiEhbq37b6wmEosMtfiHwlnpqPm0VXzSNtZc5icFffJy6KXQ==
-X-Received: by 2002:a5d:6551:0:b0:236:8fa1:47cf with SMTP id z17-20020a5d6551000000b002368fa147cfmr4815179wrv.50.1668784381085;
-        Fri, 18 Nov 2022 07:13:01 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id c2-20020a05600c0a4200b003cfd4cf0761sm10266842wmq.1.2022.11.18.07.12.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 07:13:00 -0800 (PST)
-Date:   Fri, 18 Nov 2022 18:12:52 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Steen Hegelund <steen.hegelund@microchip.com>
-Cc:     Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Casper Andersson <casper.casan@gmail.com>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: microchip: sparx5: fix uninitialized variables
-Message-ID: <Y3eg9Ml/LmLR3L3C@kili>
+        Fri, 18 Nov 2022 22:30:19 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33D5BA6596;
+        Fri, 18 Nov 2022 19:30:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C4A406235B;
+        Sat, 19 Nov 2022 03:30:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2DCD6C433B5;
+        Sat, 19 Nov 2022 03:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668828617;
+        bh=Pzsmj63t6Cj8oZLmswtjovlP2S56HXIvYjwwjzS/mTw=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=TJMPLyPnL7ohRdxen4DPDicAXEuh3YuhXASXuTv0KjYZqOkQpa6Tbartzx4CpcwzB
+         xpxM5pChHPy2OhHjPfGpH9TpjwVsxlixDq74b7TAVNzam1PVJArNFw+1LY0pOcY5Wk
+         4Eom984CXp3h9JUoBz5HrgFMqByBbbWGSQU9gnIZzqNhg7qxTE3eQJI1/0jGtyjU+e
+         Kpy1HYA5xEY1g9txNbEwOgC7FYy8m97LsoVBaXUOeiESY78M9iX9ZnD68SnNSnujUu
+         zRpt2qMtVQPWr4lWYpvweS4S2UV93h7LnRfKTB0+MhvQc0MizAmzfhhuOgtY+pColu
+         NI9Qz6tyZpT+Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 14C03E4D017;
+        Sat, 19 Nov 2022 03:30:17 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: fman: remove reference to non-existing config PCS
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166882861708.17876.6578588278157386208.git-patchwork-notify@kernel.org>
+Date:   Sat, 19 Nov 2022 03:30:17 +0000
+References: <20221116102450.13928-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20221116102450.13928-1-lukas.bulwahn@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     sean.anderson@seco.com, madalin.bucur@nxp.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch complains that "err" can be uninitialized on these paths.  Also
-it's just nicer to "return 0;" instead of "return err;"
+Hello:
 
-Fixes: 3a344f99bb55 ("net: microchip: sparx5: Add support for TC flower ARP dissector")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c b/drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c
-index a48baeacc1d2..aab7507cf568 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c
-@@ -341,7 +341,7 @@ sparx5_tc_flower_handler_vlan_usage(struct sparx5_tc_flower_parse_usage *st)
- 
- 	st->used_keys |= BIT(FLOW_DISSECTOR_KEY_VLAN);
- 
--	return err;
-+	return 0;
- out:
- 	NL_SET_ERR_MSG_MOD(st->fco->common.extack, "vlan parse error");
- 	return err;
-@@ -452,8 +452,10 @@ sparx5_tc_flower_handler_arp_usage(struct sparx5_tc_flower_parse_usage *st)
- 
- 	/* The IS2 ARP keyset does not support ARP hardware addresses */
- 	if (!is_zero_ether_addr(mt.mask->sha) ||
--	    !is_zero_ether_addr(mt.mask->tha))
-+	    !is_zero_ether_addr(mt.mask->tha)) {
-+		err = -EINVAL;
- 		goto out;
-+	}
- 
- 	if (mt.mask->sip) {
- 		ipval = be32_to_cpu((__force __be32)mt.key->sip);
-@@ -477,7 +479,7 @@ sparx5_tc_flower_handler_arp_usage(struct sparx5_tc_flower_parse_usage *st)
- 
- 	st->used_keys |= BIT(FLOW_DISSECTOR_KEY_ARP);
- 
--	return err;
-+	return 0;
- 
- out:
- 	NL_SET_ERR_MSG_MOD(st->fco->common.extack, "arp parse error");
+On Wed, 16 Nov 2022 11:24:50 +0100 you wrote:
+> Commit a7c2a32e7f22 ("net: fman: memac: Use lynx pcs driver") makes the
+> Freescale Data-Path Acceleration Architecture Frame Manager use lynx pcs
+> driver by selecting PCS_LYNX.
+> 
+> It also selects the non-existing config PCS as well, which has no effect.
+> 
+> Remove this select to a non-existing config.
+> 
+> [...]
+
+Here is the summary with links:
+  - net: fman: remove reference to non-existing config PCS
+    https://git.kernel.org/netdev/net-next/c/dbc4af768ba1
+
+You are awesome, thank you!
 -- 
-2.35.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
