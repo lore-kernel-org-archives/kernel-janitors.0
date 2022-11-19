@@ -2,85 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DA4C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Nov 2022 11:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C3DC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Nov 2022 19:59:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232426AbiKSLZQ (ORCPT
+        id S234477AbiKST7v (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Nov 2022 06:25:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52138 "EHLO
+        Sat, 19 Nov 2022 14:59:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231597AbiKSLZP (ORCPT
+        with ESMTP id S232895AbiKST7v (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Nov 2022 06:25:15 -0500
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69FF279344
-        for <kernel-janitors@vger.kernel.org>; Sat, 19 Nov 2022 03:25:12 -0800 (PST)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id wLy8o8HMFb9QWwLy8oM3lt; Sat, 19 Nov 2022 12:25:10 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 19 Nov 2022 12:25:10 +0100
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Nilesh Javali <njavali@marvell.com>,
-        GR-QLogic-Storage-Upstream@marvell.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH] scsi: qla2xxx: Remove a useless variable in qla24xx_async_gnnft_done()
-Date:   Sat, 19 Nov 2022 12:25:07 +0100
-Message-Id: <0a98ea98784299393042e9e7b2cd03ab17b13f94.1668857101.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 19 Nov 2022 14:59:51 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637521836E;
+        Sat, 19 Nov 2022 11:59:49 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id s8so13325740lfc.8;
+        Sat, 19 Nov 2022 11:59:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FwUOG5FZhO4dhjRA45yKkVi3IF2EbFqShN5s+O9Kd5s=;
+        b=kTWTIjYrz6ZFGwCgHRFnWSySppLVS9chsJ6CUdWyF1JGlGUfpN1sSCM4oCE3wyIAk+
+         xZgJ5ulAnN0jJ6CifLlbcCvc+ekdarqot/KOWwUN269rjvcnCMzh3uC5F0RqZkbauMfL
+         lwYYmuE+DQND/FQLHz984/KOAIYZbRNl6/SEiZ/qAnwIvZU/5FWXzmCblm3Sfm1LkZet
+         1OmrPexF1kbNHhyzQx8w4V5sQw3UmkfssoA0B+5mof7/Sc+RHhTDhqGSzuixqI1aVwbB
+         Zo63Bz/v0vxgIQbinHB11eF2u6CuY08Aby/QjeFjUTYXq6lAEKt+63uTz+sNUqFgSM7J
+         683Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FwUOG5FZhO4dhjRA45yKkVi3IF2EbFqShN5s+O9Kd5s=;
+        b=Bx7Jy9rL8Lkxjv6fGGkVkzUjzKHOdzYsh7rReNlyQEYcANaUokera6QUj0p7Ie2f+i
+         Rv+aj2OG/XqqKu6aRdf/iatJKhuAGzAI3mHGh7kyVZi8vE8sSVN8wLHEMDmi4GIhJIFq
+         wOqEv2w6y617O30nRA2ZkK3NUspb4EKVVRPzH8kQIjWEOqw8JLf3xmh2nCAZgQNwfgwv
+         en6cmAH0mdcLUymIaIGuA0UEqf1plGNHcO1t7X2sUMYv+Zb+JpbQ/+gdNeWGRA5jh72M
+         2jrUx6wg7JfA2FEmqlnsn3O30B5dvKnfkIp8bYXgp9K1/vHpNoUk6Zd4/jZuXY6hZ6q8
+         LXnw==
+X-Gm-Message-State: ANoB5pk1dhl+CoFffpQNe/tchTx+eYD5mC6syC9piFGFXUy7qM4ZYEp/
+        ug5fKtF77EyCN3yYGSwdxi6YVszLIDwlT0OqVQk=
+X-Google-Smtp-Source: AA0mqf5d63RKrc4xvjMlt8kezPSfqPjOQZJjZruRI5krdmqgLc/0DQc66EaG3xIQ68ZyLoDI66yUP6Dd1X9mEXA6kjI=
+X-Received: by 2002:a05:6512:3b8b:b0:4b0:54a9:38a3 with SMTP id
+ g11-20020a0565123b8b00b004b054a938a3mr800423lfv.20.1668887987474; Sat, 19 Nov
+ 2022 11:59:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <Y3dw8KLm7MDgACCY@kili> <87edu0jp3r.fsf@cjr.nz>
+In-Reply-To: <87edu0jp3r.fsf@cjr.nz>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sat, 19 Nov 2022 13:59:35 -0600
+Message-ID: <CAH2r5mtHsg0tO1NB38xSUwK7_9ak5izaBMhwuasfHXo_Wx_ZFw@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Use after free in debug code
+To:     Paulo Alcantara <pc@cjr.nz>
+Cc:     Dan Carpenter <error27@gmail.com>,
+        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Tom Talpey <tom@talpey.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'dup' is useless. It is only 1 if 'dup_cnt' is 1 or more.
-It is as easy to test 'dup_cnt' directly and remove 'dup'.
+merged into cifs-2.6.git for-next
 
-This slightly simplify the code.
+On Fri, Nov 18, 2022 at 8:48 AM Paulo Alcantara via samba-technical
+<samba-technical@lists.samba.org> wrote:
+>
+> Dan Carpenter <error27@gmail.com> writes:
+>
+> > This debug code dereferences "old_iface" after it was already freed by
+> > the call to release_iface().  Re-order the debugging to avoid this
+> > issue.
+> >
+> > Fixes: b54034a73baf ("cifs: during reconnect, update interface if necessary")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  fs/cifs/sess.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> Reviewed-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
+>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/scsi/qla2xxx/qla_gs.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
-index 0afd6cee7113..8caa6c6ed479 100644
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -3467,7 +3467,7 @@ void qla24xx_async_gnnft_done(scsi_qla_host_t *vha, srb_t *sp)
- 	struct fab_scan_rp *rp, *trp;
- 	unsigned long flags;
- 	u8 recheck = 0;
--	u16 dup = 0, dup_cnt = 0;
-+	u16 dup_cnt = 0;
- 
- 	ql_dbg(ql_dbg_disc + ql_dbg_verbose, vha, 0xffff,
- 	    "%s enter\n", __func__);
-@@ -3526,7 +3526,6 @@ void qla24xx_async_gnnft_done(scsi_qla_host_t *vha, srb_t *sp)
- 		for (k = i + 1; k < vha->hw->max_fibre_devices; k++) {
- 			trp = &vha->scan.l[k];
- 			if (rp->id.b24 == trp->id.b24) {
--				dup = 1;
- 				dup_cnt++;
- 				ql_dbg(ql_dbg_disc + ql_dbg_verbose,
- 				    vha, 0xffff,
-@@ -3588,7 +3587,7 @@ void qla24xx_async_gnnft_done(scsi_qla_host_t *vha, srb_t *sp)
- 		}
- 	}
- 
--	if (dup) {
-+	if (dup_cnt) {
- 		ql_log(ql_log_warn, vha, 0xffff,
- 		    "Detected %d duplicate NPORT ID(s) from switch data base\n",
- 		    dup_cnt);
 -- 
-2.34.1
+Thanks,
 
+Steve
