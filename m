@@ -2,120 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0F4C4332F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Nov 2022 10:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 072FCC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Nov 2022 11:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230073AbiKSKzV (ORCPT
+        id S232036AbiKSLU5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Nov 2022 05:55:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35868 "EHLO
+        Sat, 19 Nov 2022 06:20:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiKSKzV (ORCPT
+        with ESMTP id S231658AbiKSLUz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Nov 2022 05:55:21 -0500
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A934920B2;
-        Sat, 19 Nov 2022 02:55:20 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1ED415C0112;
-        Sat, 19 Nov 2022 05:55:18 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Sat, 19 Nov 2022 05:55:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
-        cc:cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm1; t=1668855318; x=1668941718; bh=CIwr77lYrj
-        EiDjN+lfmJBa8qTpOY2sqozIVlYRnXdhU=; b=Hmk/n8p3OvZWDV2jFpZZq2IZbG
-        uVhTVcq1s+BL0vWBjOBJ9SoJ+74Xq2YeZAR4wGmsYj+UOSnFisapOunmqqYUIH7G
-        k7EWWJDtLZWT66MaGKcTeVRvKZXBGc+s/ORIyn60H2ksXqBIfT81yHud0KtC7LcI
-        tJzerUVlEoNx76CKuOvehncGS7gPDuO/L5ozWtJjNtnfi6MpSGFxOpKhYV2RqKVX
-        mKaw6qipy7aCNSpEkPb6l0DNpye7QTcmA3mSoTS8yugKAGpLCqQI/RSDntOy/sMM
-        x95HxmIi/D7b6MTtPloNvBh5NpxJWi2GiDJwxq36/9o+Jsyg9jlfBgwpNmRw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1668855318; x=1668941718; bh=CIwr77lYrjEiDjN+lfmJBa8qTpOY
-        2sqozIVlYRnXdhU=; b=lNwUjvTWpmRNUVzK2Y2i31Wapj29V0azTxZPkj3TH3Xj
-        IeNLDBlOhvo6AHPaLoWMuzMvo0qPuAurb2ieg0AdXbTIfGnOMKZDthY6utk12jEO
-        Oz4m+gkvLTQ3OY+64JJUK0ZD6TJEAhauSK8yYb3JwI2iopARxKQ8RhwOB96rwUhR
-        PUueNyRQmva5OmAIFnPqUVEWeIRV4IObYqBbw3bNs7wPtngTi5Kr+3M8UxSNZW9o
-        sGoz7zalfjBudGyDfVm/zuxlD/X44DpA/bWxp4Bg8dUO1S2DfLFW78dT1Cr/B7SJ
-        Dlf+xdxHQw58iq+ITrPpqzAToJ3XgeWImi0kL6YtgA==
-X-ME-Sender: <xms:FbZ4Y579I-XB7wSjbSt-U0qwvOR5XkO9w3kiOhTh04el7yL3MHpjlA>
-    <xme:FbZ4Y24Mzf_TWOZh72i8-J_pjUAJnSS908O8v1APKsJSLgR6soKzh9iw1OGGbaU7N
-    Q3EfD60yJtc6Bh181M>
-X-ME-Received: <xmr:FbZ4Ywd3QfTbjriFPRI6AC7lgneacQjr1AcTQIrNPq4mPKA3hjbnug>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrhedvgddvvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpeffrghfnhgr
-    ucfjihhrshgthhhfvghlugcuoegurghfnhgrsehfrghsthhmrghilhdrtghomheqnecugg
-    ftrfgrthhtvghrnhepvdehtdeludekgeevleefuedvudejieetheekvdfhteekffdujefh
-    fedtudehvdeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepuggrfhhnrgesfhgrshhtmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:FbZ4YyJkJ-KjVecGPdMMxNYNtg9ogFvUjwh1ioLPQCSGPmYOlkvuAQ>
-    <xmx:FbZ4Y9LyV7aUYOGKTJj1iT4g4QNpc1r6TNvHFIHzN6rxeCdNOhGi3w>
-    <xmx:FbZ4Y7yrGR6YfkyYdphJHOT79cgKXmHfnC4kdjsXej4AoodGZceYLA>
-    <xmx:FrZ4Y18GJE1wkYTEPgztTjgA3yeFt_OEcORBYvcRqJR04bfgJU4iOA>
-Feedback-ID: i0e894699:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 19 Nov 2022 05:55:15 -0500 (EST)
-Date:   Sat, 19 Nov 2022 12:55:10 +0200
-From:   Dafna Hirschfeld <dafna@fastmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: rkisp1: make const arrays ae_wnd_num and
- hist_wnd_num static
-Message-ID: <20221119105510.26n7jk6tc4anu3f3@guri>
-References: <20221102155117.144570-1-colin.i.king@gmail.com>
+        Sat, 19 Nov 2022 06:20:55 -0500
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1A012A949
+        for <kernel-janitors@vger.kernel.org>; Sat, 19 Nov 2022 03:20:54 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id wLtyoAfds1SdMwLtyoEjpE; Sat, 19 Nov 2022 12:20:52 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 19 Nov 2022 12:20:52 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Nilesh Javali <njavali@marvell.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: qla2xxx: No need to clear memory after a dma_alloc_coherent() call
+Date:   Sat, 19 Nov 2022 12:20:49 +0100
+Message-Id: <57d6a4c0c44b9a33087d3f17a9cc245d1943d881.1668856835.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20221102155117.144570-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 02.11.2022 15:51, Colin Ian King wrote:
->Don't populate the const arrays on the stack, instead make them
->static. Also makes the object code smaller.
->
->Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+dma_alloc_coherent() already clear the allocated memory, there is no need
+to explicitly call memset().
 
-Reviewed-by: Dafna Hirschfeld <dafna@fastmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/scsi/qla2xxx/qla_gs.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
->---
-> drivers/media/platform/rockchip/rkisp1/rkisp1-params.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
->index d8731ebbf479..3482f7d707b7 100644
->--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
->+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
->@@ -715,7 +715,7 @@ static void rkisp1_aec_config_v12(struct rkisp1_params *params,
-> 	u32 exp_ctrl;
-> 	u32 block_hsize, block_vsize;
-> 	u32 wnd_num_idx = 1;
->-	const u32 ae_wnd_num[] = { 5, 9, 15, 15 };
->+	static const u32 ae_wnd_num[] = { 5, 9, 15, 15 };
->
-> 	/* avoid to override the old enable value */
-> 	exp_ctrl = rkisp1_read(params->rkisp1, RKISP1_CIF_ISP_EXP_CTRL);
->@@ -822,7 +822,7 @@ static void rkisp1_hst_config_v12(struct rkisp1_params *params,
-> 	u32 block_hsize, block_vsize;
-> 	u32 wnd_num_idx, hist_weight_num, hist_ctrl, value;
-> 	u8 weight15x15[RKISP1_CIF_ISP_HIST_WEIGHT_REG_SIZE_V12];
->-	const u32 hist_wnd_num[] = { 5, 9, 15, 15 };
->+	static const u32 hist_wnd_num[] = { 5, 9, 15, 15 };
->
-> 	/* now we just support 9x9 window */
-> 	wnd_num_idx = 1;
->-- 
->2.37.3
->
+diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
+index 64ab070b8716..0afd6cee7113 100644
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -622,8 +622,7 @@ static int qla_async_rftid(scsi_qla_host_t *vha, port_id_t *d_id)
+ 		    __func__);
+ 		goto done_free_sp;
+ 	}
+-	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.rsp;
+-	memset(ct_sns, 0, sizeof(*ct_sns));
++
+ 	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.req;
+ 
+ 	/* Prepare CT request */
+@@ -718,8 +717,7 @@ static int qla_async_rffid(scsi_qla_host_t *vha, port_id_t *d_id,
+ 		    __func__);
+ 		goto done_free_sp;
+ 	}
+-	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.rsp;
+-	memset(ct_sns, 0, sizeof(*ct_sns));
++
+ 	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.req;
+ 
+ 	/* Prepare CT request */
+@@ -810,8 +808,7 @@ static int qla_async_rnnid(scsi_qla_host_t *vha, port_id_t *d_id,
+ 		    __func__);
+ 		goto done_free_sp;
+ 	}
+-	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.rsp;
+-	memset(ct_sns, 0, sizeof(*ct_sns));
++
+ 	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.req;
+ 
+ 	/* Prepare CT request */
+@@ -917,8 +914,7 @@ static int qla_async_rsnn_nn(scsi_qla_host_t *vha)
+ 		    __func__);
+ 		goto done_free_sp;
+ 	}
+-	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.rsp;
+-	memset(ct_sns, 0, sizeof(*ct_sns));
++
+ 	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.req;
+ 
+ 	/* Prepare CT request */
+@@ -3228,10 +3224,8 @@ int qla24xx_async_gpnid(scsi_qla_host_t *vha, port_id_t *id)
+ 		goto done_free_sp;
+ 	}
+ 
+-	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.rsp;
+-	memset(ct_sns, 0, sizeof(*ct_sns));
+-
+ 	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.req;
++
+ 	/* CT_IU preamble  */
+ 	ct_req = qla2x00_prep_ct_req(ct_sns, GPN_ID_CMD, GPN_ID_RSP_SIZE);
+ 
+-- 
+2.34.1
+
