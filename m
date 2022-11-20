@@ -2,36 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2333C43217
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Nov 2022 08:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1134C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Nov 2022 09:34:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbiKTI0L (ORCPT
+        id S229600AbiKTJes (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Nov 2022 03:26:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38008 "EHLO
+        Sun, 20 Nov 2022 04:34:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbiKTI0D (ORCPT
+        with ESMTP id S229524AbiKTJer (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Nov 2022 03:26:03 -0500
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA062D1FA
-        for <kernel-janitors@vger.kernel.org>; Sun, 20 Nov 2022 00:26:02 -0800 (PST)
+        Sun, 20 Nov 2022 04:34:47 -0500
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D5D01EAE3
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Nov 2022 01:34:45 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id wfeJoeBiaNKuIwfeJoF2Sw; Sun, 20 Nov 2022 09:26:00 +0100
+        id wgiooJbLW0H6IwgioonYC1; Sun, 20 Nov 2022 10:34:44 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 20 Nov 2022 09:26:00 +0100
+X-ME-Date: Sun, 20 Nov 2022 10:34:44 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>
+To:     Tim Harvey <tharvey@gateworks.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] mailbox: zynq: Switch to flexible array to simplify code
-Date:   Sun, 20 Nov 2022 09:25:54 +0100
-Message-Id: <3c21e60417a0b57e7a80976b786726048119b5cf.1668932733.git.christophe.jaillet@wanadoo.fr>
+        linux-hwmon@vger.kernel.org
+Subject: [PATCH] hwmon: (gsc-hwmon) Switch to flexible array to simplify code
+Date:   Sun, 20 Nov 2022 10:34:41 +0100
+Message-Id: <61a23e1d642397cfcecc4ac3bb0ab485d257987d.1668936855.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,7 +41,7 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Using flexible array is more straight forward. It
-  - saves 1 pointer in the 'zynqmp_ipi_pdata' structure
+  - saves 1 pointer in the 'gsc_hwmon_platform_data' structure
   - saves an indirection when using this array
   - saves some LoC and avoids some always spurious pointer arithmetic
 
@@ -48,40 +49,62 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only
 ---
- drivers/mailbox/zynqmp-ipi-mailbox.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/hwmon/gsc-hwmon.c               | 6 ++----
+ include/linux/platform_data/gsc_hwmon.h | 5 ++---
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
-index 31a0fa914274..68e5726f5157 100644
---- a/drivers/mailbox/zynqmp-ipi-mailbox.c
-+++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
-@@ -110,7 +110,7 @@ struct zynqmp_ipi_pdata {
- 	unsigned int method;
- 	u32 local_id;
- 	int num_mboxes;
--	struct zynqmp_ipi_mbox *ipi_mboxes;
-+	struct zynqmp_ipi_mbox ipi_mboxes[];
- };
+diff --git a/drivers/hwmon/gsc-hwmon.c b/drivers/hwmon/gsc-hwmon.c
+index b60ec95b5edb..73e5d92b200b 100644
+--- a/drivers/hwmon/gsc-hwmon.c
++++ b/drivers/hwmon/gsc-hwmon.c
+@@ -257,13 +257,10 @@ gsc_hwmon_get_devtree_pdata(struct device *dev)
+ 	if (nchannels == 0)
+ 		return ERR_PTR(-ENODEV);
  
- static struct device_driver zynqmp_ipi_mbox_driver = {
-@@ -633,7 +633,7 @@ static int zynqmp_ipi_probe(struct platform_device *pdev)
- 	int num_mboxes, ret = -EINVAL;
- 
- 	num_mboxes = of_get_child_count(np);
--	pdata = devm_kzalloc(dev, sizeof(*pdata) + (num_mboxes * sizeof(*mbox)),
-+	pdata = devm_kzalloc(dev, struct_size(pdata, ipi_mboxes, num_mboxes),
+-	pdata = devm_kzalloc(dev,
+-			     sizeof(*pdata) + nchannels * sizeof(*ch),
++	pdata = devm_kzalloc(dev, struct_size(pdata, channels, nchannels),
  			     GFP_KERNEL);
  	if (!pdata)
- 		return -ENOMEM;
-@@ -647,8 +647,6 @@ static int zynqmp_ipi_probe(struct platform_device *pdev)
- 	}
+ 		return ERR_PTR(-ENOMEM);
+-	ch = (struct gsc_hwmon_channel *)(pdata + 1);
+-	pdata->channels = ch;
+ 	pdata->nchannels = nchannels;
  
- 	pdata->num_mboxes = num_mboxes;
--	pdata->ipi_mboxes = (struct zynqmp_ipi_mbox *)
--			    ((char *)pdata + sizeof(*pdata));
+ 	/* fan controller base address */
+@@ -277,6 +274,7 @@ gsc_hwmon_get_devtree_pdata(struct device *dev)
  
- 	mbox = pdata->ipi_mboxes;
- 	for_each_available_child_of_node(np, nc) {
+ 	of_node_put(fan);
+ 
++	ch = pdata->channels;
+ 	/* allocate structures for channels and count instances of each type */
+ 	device_for_each_child_node(dev, child) {
+ 		if (fwnode_property_read_string(child, "label", &ch->name)) {
+diff --git a/include/linux/platform_data/gsc_hwmon.h b/include/linux/platform_data/gsc_hwmon.h
+index 281f499eda97..f2781aa7eff8 100644
+--- a/include/linux/platform_data/gsc_hwmon.h
++++ b/include/linux/platform_data/gsc_hwmon.h
+@@ -29,18 +29,17 @@ struct gsc_hwmon_channel {
+ 
+ /**
+  * struct gsc_hwmon_platform_data - platform data for gsc_hwmon driver
+- * @channels:	pointer to array of gsc_hwmon_channel structures
+- *		describing channels
+  * @nchannels:	number of elements in @channels array
+  * @vreference: voltage reference (mV)
+  * @resolution: ADC bit resolution
+  * @fan_base: register base for FAN controller
++ * @channels:	array of gsc_hwmon_channel structures describing channels
+  */
+ struct gsc_hwmon_platform_data {
+-	const struct gsc_hwmon_channel *channels;
+ 	int nchannels;
+ 	unsigned int resolution;
+ 	unsigned int vreference;
+ 	unsigned int fan_base;
++	struct gsc_hwmon_channel channels[];
+ };
+ #endif
 -- 
 2.34.1
 
