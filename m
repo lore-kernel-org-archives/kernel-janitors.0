@@ -2,92 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C3DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Nov 2022 19:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2333C43217
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Nov 2022 08:26:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234477AbiKST7v (ORCPT
+        id S229519AbiKTI0L (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Nov 2022 14:59:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35236 "EHLO
+        Sun, 20 Nov 2022 03:26:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232895AbiKST7v (ORCPT
+        with ESMTP id S229446AbiKTI0D (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Nov 2022 14:59:51 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637521836E;
-        Sat, 19 Nov 2022 11:59:49 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id s8so13325740lfc.8;
-        Sat, 19 Nov 2022 11:59:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FwUOG5FZhO4dhjRA45yKkVi3IF2EbFqShN5s+O9Kd5s=;
-        b=kTWTIjYrz6ZFGwCgHRFnWSySppLVS9chsJ6CUdWyF1JGlGUfpN1sSCM4oCE3wyIAk+
-         xZgJ5ulAnN0jJ6CifLlbcCvc+ekdarqot/KOWwUN269rjvcnCMzh3uC5F0RqZkbauMfL
-         lwYYmuE+DQND/FQLHz984/KOAIYZbRNl6/SEiZ/qAnwIvZU/5FWXzmCblm3Sfm1LkZet
-         1OmrPexF1kbNHhyzQx8w4V5sQw3UmkfssoA0B+5mof7/Sc+RHhTDhqGSzuixqI1aVwbB
-         Zo63Bz/v0vxgIQbinHB11eF2u6CuY08Aby/QjeFjUTYXq6lAEKt+63uTz+sNUqFgSM7J
-         683Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FwUOG5FZhO4dhjRA45yKkVi3IF2EbFqShN5s+O9Kd5s=;
-        b=Bx7Jy9rL8Lkxjv6fGGkVkzUjzKHOdzYsh7rReNlyQEYcANaUokera6QUj0p7Ie2f+i
-         Rv+aj2OG/XqqKu6aRdf/iatJKhuAGzAI3mHGh7kyVZi8vE8sSVN8wLHEMDmi4GIhJIFq
-         wOqEv2w6y617O30nRA2ZkK3NUspb4EKVVRPzH8kQIjWEOqw8JLf3xmh2nCAZgQNwfgwv
-         en6cmAH0mdcLUymIaIGuA0UEqf1plGNHcO1t7X2sUMYv+Zb+JpbQ/+gdNeWGRA5jh72M
-         2jrUx6wg7JfA2FEmqlnsn3O30B5dvKnfkIp8bYXgp9K1/vHpNoUk6Zd4/jZuXY6hZ6q8
-         LXnw==
-X-Gm-Message-State: ANoB5pk1dhl+CoFffpQNe/tchTx+eYD5mC6syC9piFGFXUy7qM4ZYEp/
-        ug5fKtF77EyCN3yYGSwdxi6YVszLIDwlT0OqVQk=
-X-Google-Smtp-Source: AA0mqf5d63RKrc4xvjMlt8kezPSfqPjOQZJjZruRI5krdmqgLc/0DQc66EaG3xIQ68ZyLoDI66yUP6Dd1X9mEXA6kjI=
-X-Received: by 2002:a05:6512:3b8b:b0:4b0:54a9:38a3 with SMTP id
- g11-20020a0565123b8b00b004b054a938a3mr800423lfv.20.1668887987474; Sat, 19 Nov
- 2022 11:59:47 -0800 (PST)
+        Sun, 20 Nov 2022 03:26:03 -0500
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA062D1FA
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Nov 2022 00:26:02 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id wfeJoeBiaNKuIwfeJoF2Sw; Sun, 20 Nov 2022 09:26:00 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 20 Nov 2022 09:26:00 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] mailbox: zynq: Switch to flexible array to simplify code
+Date:   Sun, 20 Nov 2022 09:25:54 +0100
+Message-Id: <3c21e60417a0b57e7a80976b786726048119b5cf.1668932733.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <Y3dw8KLm7MDgACCY@kili> <87edu0jp3r.fsf@cjr.nz>
-In-Reply-To: <87edu0jp3r.fsf@cjr.nz>
-From:   Steve French <smfrench@gmail.com>
-Date:   Sat, 19 Nov 2022 13:59:35 -0600
-Message-ID: <CAH2r5mtHsg0tO1NB38xSUwK7_9ak5izaBMhwuasfHXo_Wx_ZFw@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Use after free in debug code
-To:     Paulo Alcantara <pc@cjr.nz>
-Cc:     Dan Carpenter <error27@gmail.com>,
-        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Tom Talpey <tom@talpey.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+Using flexible array is more straight forward. It
+  - saves 1 pointer in the 'zynqmp_ipi_pdata' structure
+  - saves an indirection when using this array
+  - saves some LoC and avoids some always spurious pointer arithmetic
 
-On Fri, Nov 18, 2022 at 8:48 AM Paulo Alcantara via samba-technical
-<samba-technical@lists.samba.org> wrote:
->
-> Dan Carpenter <error27@gmail.com> writes:
->
-> > This debug code dereferences "old_iface" after it was already freed by
-> > the call to release_iface().  Re-order the debugging to avoid this
-> > issue.
-> >
-> > Fixes: b54034a73baf ("cifs: during reconnect, update interface if necessary")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  fs/cifs/sess.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> Reviewed-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
->
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/mailbox/zynqmp-ipi-mailbox.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-
+diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
+index 31a0fa914274..68e5726f5157 100644
+--- a/drivers/mailbox/zynqmp-ipi-mailbox.c
++++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+@@ -110,7 +110,7 @@ struct zynqmp_ipi_pdata {
+ 	unsigned int method;
+ 	u32 local_id;
+ 	int num_mboxes;
+-	struct zynqmp_ipi_mbox *ipi_mboxes;
++	struct zynqmp_ipi_mbox ipi_mboxes[];
+ };
+ 
+ static struct device_driver zynqmp_ipi_mbox_driver = {
+@@ -633,7 +633,7 @@ static int zynqmp_ipi_probe(struct platform_device *pdev)
+ 	int num_mboxes, ret = -EINVAL;
+ 
+ 	num_mboxes = of_get_child_count(np);
+-	pdata = devm_kzalloc(dev, sizeof(*pdata) + (num_mboxes * sizeof(*mbox)),
++	pdata = devm_kzalloc(dev, struct_size(pdata, ipi_mboxes, num_mboxes),
+ 			     GFP_KERNEL);
+ 	if (!pdata)
+ 		return -ENOMEM;
+@@ -647,8 +647,6 @@ static int zynqmp_ipi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	pdata->num_mboxes = num_mboxes;
+-	pdata->ipi_mboxes = (struct zynqmp_ipi_mbox *)
+-			    ((char *)pdata + sizeof(*pdata));
+ 
+ 	mbox = pdata->ipi_mboxes;
+ 	for_each_available_child_of_node(np, nc) {
 -- 
-Thanks,
+2.34.1
 
-Steve
