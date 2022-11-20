@@ -2,26 +2,26 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F6CC4332F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Nov 2022 17:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B471DC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Nov 2022 17:19:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbiKTRGC (ORCPT
+        id S229641AbiKTRTJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Nov 2022 12:06:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41838 "EHLO
+        Sun, 20 Nov 2022 12:19:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbiKTRGB (ORCPT
+        with ESMTP id S229454AbiKTRTH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Nov 2022 12:06:01 -0500
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A8E5800B
-        for <kernel-janitors@vger.kernel.org>; Sun, 20 Nov 2022 09:05:59 -0800 (PST)
+        Sun, 20 Nov 2022 12:19:07 -0500
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CCB223168
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Nov 2022 09:19:07 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id wnlTouwJkx4XXwnlUoEiow; Sun, 20 Nov 2022 18:05:57 +0100
+        id wnyBohc3Ubw2uwnyBoEd95; Sun, 20 Nov 2022 18:19:05 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 20 Nov 2022 18:05:57 +0100
+X-ME-Date: Sun, 20 Nov 2022 18:19:05 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     Andy Gross <agross@kernel.org>,
@@ -33,7 +33,7 @@ Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Lee Jones <lee.jones@linaro.org>, linux-arm-msm@vger.kernel.org
 Subject: [PATCH 1/2] mfd: qcom_rpm: Fix an error handling path in qcom_rpm_probe()
-Date:   Sun, 20 Nov 2022 18:05:53 +0100
+Date:   Sun, 20 Nov 2022 18:19:01 +0100
 Message-ID: <e39752476d02605b2be46cab7115f71255ce13a8.1668949256.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
@@ -41,7 +41,7 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
-Message-ID: <20221120170553.B29XLNBIo2h0O2S8t2PjSqTrurSQ-Yak-JHNx1npKBk@z>
+Message-ID: <20221120171901.mlHDI26sdvcqKob_uubagptnQEtI-kufzNks66gFaWU@z>
 
 If an error occurs after the clk_prepare_enable() call, a corresponding
 clk_disable_unprepare() should be called.
