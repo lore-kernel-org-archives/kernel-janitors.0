@@ -2,99 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B53C43217
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 14:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB3BC4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 15:34:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231810AbiKUOzA (ORCPT
+        id S232469AbiKUPeT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Nov 2022 09:55:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52798 "EHLO
+        Mon, 21 Nov 2022 10:34:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231501AbiKUOyn (ORCPT
+        with ESMTP id S232466AbiKUPd4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Nov 2022 09:54:43 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 079C4CFA70;
-        Mon, 21 Nov 2022 06:44:30 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id ay14-20020a05600c1e0e00b003cf6ab34b61so12936741wmb.2;
-        Mon, 21 Nov 2022 06:44:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SVozTFlQLi4Kq1hQBrMpTSLTEeZeiiwiztBFqH0ZhNA=;
-        b=pdu6G3Cn3bz4GyeREeXItkqNLx/zA+/FH8DJ4jKKyQ/JJ6YXBQ5u+MgVTv73oDPuYk
-         1Klb9b7wxBhftuHodnPZ3MIYyfHa8XPQ9TBvhc3n1x2T+PIMJkZeC9JbMIo3Lfd8t4tn
-         PCcUcUoyqDCJuLLkATKZ43vCy8yOOiLvO8qDyPZEwRJVzTTJfCLrwH+nP41tZHfAfhTa
-         dJO9mYsCJfRL3h38HPBLgbA4IJBWBOlt7JE3YyCVAqdKNpVbMNSMTeCK1Rsu/iH5CwHJ
-         smsbRlNMdZaHyw379OI90dULUUuJWoFsICrrAZ26FpUd2XKCL1RNDZpfcn19D3vaSuDg
-         vXig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVozTFlQLi4Kq1hQBrMpTSLTEeZeiiwiztBFqH0ZhNA=;
-        b=xS7unXW1avYWaIVUK79J1xio05rt9J2k29H43AYZq+kV45dzmJpLBn6Wj5zhNOSekJ
-         EyMR/nuP0vKqjNTUbhY/+s+TPmfBoP56zblLlofBadDDoGJIraTZro4UuKJfpzHyicyY
-         WelPAuJxdJoggbWap7Hw/laJLE1Wix/zAH0xHxCzfP+VCyeJM37VE+48xsEMu3rf/BtJ
-         2v7YRqYIoiPDlDIyTORh6wyMnRmQp/c3QmW+S9TSFin+M9nk4otSUzr+5uS2Hlo+0r37
-         DjsMq/9PwwOM1RervDzy0nj7U++weUcDLv+17S//h/iShrDoh+xpemGgAkNdgTcberm3
-         JIPA==
-X-Gm-Message-State: ANoB5pnAHfY7QNTDJq5sYjH3YLF0S2uDAKgnN9uQk0H67lJ8Isv0y9XZ
-        HZ8fr4mwf0dduaWp8buXpK9hGF8LK6A=
-X-Google-Smtp-Source: AA0mqf4+EL/RjHxnD7gXkawZj5Rycvo83iijPrrJWvdfE4x8mTvrzf9niELA3CqbuL/U2BFoE03ORg==
-X-Received: by 2002:a05:600c:3b84:b0:3cf:b73f:c062 with SMTP id n4-20020a05600c3b8400b003cfb73fc062mr123748wms.204.1669041867319;
-        Mon, 21 Nov 2022 06:44:27 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id f19-20020a05600c4e9300b003cfd4a50d5asm20389354wmq.34.2022.11.21.06.44.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Nov 2022 06:44:26 -0800 (PST)
-Date:   Mon, 21 Nov 2022 17:44:21 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     Dan Carpenter <error27@gmail.com>,
-        Albert Briscoe <albertsbriscoe@gmail.com>,
+        Mon, 21 Nov 2022 10:33:56 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B69CE09;
+        Mon, 21 Nov 2022 07:32:57 -0800 (PST)
+Received: from [192.168.0.192] (unknown [194.146.248.75])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: andrzej.p)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 051D56600014;
+        Mon, 21 Nov 2022 15:32:55 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1669044776;
+        bh=17GTCflbo8BWuklmQRQq055N9cwYV+wqCUtsgqHsCUE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=kMSUAJ6v8fcm0zAT+WLjt58eGUcbzHhfd/EYc4KD3ei3LV0v/vWCY+jvhyzukPSRM
+         /SJxfePWrb1CMEtYoapMj1qYbXwSqdSNgywCgHkMtbM3Cf2UjQCKRt4yIOIen/kt9Y
+         7UlkQthESX6CvfgdITxK6JQV4aB43utiPJhstXhWhw5GfIceiGo0U3ofWIsJCUK0Rm
+         6WoV/5PKJ4VJsSNVi9iZYuwQxT4gOe/vihHdiR89mlbJylwjTLx+nAvRbdwV2OTswC
+         1SsBW0obzh+ABomBWyRGWnsEMwpoWAYYPv/AtE3Ndwbp2VDyhpPMWg7O9gX3YNdl2S
+         eOD7pajJcfw3A==
+Message-ID: <b7dcf498-51ea-3aaf-211f-09fa59c38768@collabora.com>
+Date:   Mon, 21 Nov 2022 16:32:52 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] usb: gadget: function: use after free in printer_close()
+To:     Dan Carpenter <error27@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Albert Briscoe <albertsbriscoe@gmail.com>,
         Zqiang <qiang.zhang@windriver.com>,
         Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: gadget: function: use after free in printer_close()
-Message-ID: <Y3uOxcvowFq75Tzv@kili>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <Y3uOxcvowFq75Tzv@kili>
+Content-Language: en-US
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+In-Reply-To: <Y3uOxcvowFq75Tzv@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The printer_dev_free() function frees "dev" but then it is dereferenced
-by the debug code on the next line.  Flip the order to avoid the use after
-free.
+Hi Dan,
 
-Fixes: e8d5f92b8d30 ("usb: gadget: function: printer: fix use-after-free in __lock_acquire")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-v2: In the v1, I just deleted the printk but Andrzej thought it was
-worth preserving.
+I'm fine with either symmetrically removing the DBG() from "printer_open()"
+or with this version of the patch.
 
- drivers/usb/gadget/function/f_printer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It seems to me that this version better fits "fixing UAF", though.
+Whether the driver is too verbose is another matter, and if it is,
+it deserves its own patch because DBG() invocations are sprinkled
+here and there.
 
-diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
-index a881c69b1f2b..01e842e1ba2f 100644
---- a/drivers/usb/gadget/function/f_printer.c
-+++ b/drivers/usb/gadget/function/f_printer.c
-@@ -381,8 +381,8 @@ printer_close(struct inode *inode, struct file *fd)
- 	dev->printer_status &= ~PRINTER_SELECTED;
- 	spin_unlock_irqrestore(&dev->lock, flags);
- 
--	kref_put(&dev->kref, printer_dev_free);
- 	DBG(dev, "printer_close\n");
-+	kref_put(&dev->kref, printer_dev_free);
- 
- 	return 0;
- }
--- 
-2.35.1
+W dniu 21.11.2022 o 15:44, Dan Carpenter pisze:
+> The printer_dev_free() function frees "dev" but then it is dereferenced
+> by the debug code on the next line.  Flip the order to avoid the use after
+> free.
+> 
+> Fixes: e8d5f92b8d30 ("usb: gadget: function: printer: fix use-after-free in __lock_acquire")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+Acked-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+
+
+> ---
+> v2: In the v1, I just deleted the printk but Andrzej thought it was
+> worth preserving.
+> 
+>   drivers/usb/gadget/function/f_printer.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
+> index a881c69b1f2b..01e842e1ba2f 100644
+> --- a/drivers/usb/gadget/function/f_printer.c
+> +++ b/drivers/usb/gadget/function/f_printer.c
+> @@ -381,8 +381,8 @@ printer_close(struct inode *inode, struct file *fd)
+>   	dev->printer_status &= ~PRINTER_SELECTED;
+>   	spin_unlock_irqrestore(&dev->lock, flags);
+>   
+> -	kref_put(&dev->kref, printer_dev_free);
+>   	DBG(dev, "printer_close\n");
+> +	kref_put(&dev->kref, printer_dev_free);
+>   
+>   	return 0;
+>   }
 
