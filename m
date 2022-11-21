@@ -2,99 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB3BC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 15:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2F4C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 21:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232469AbiKUPeT (ORCPT
+        id S230041AbiKUVJA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Nov 2022 10:34:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37460 "EHLO
+        Mon, 21 Nov 2022 16:09:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232466AbiKUPd4 (ORCPT
+        with ESMTP id S229568AbiKUVI7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Nov 2022 10:33:56 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B69CE09;
-        Mon, 21 Nov 2022 07:32:57 -0800 (PST)
-Received: from [192.168.0.192] (unknown [194.146.248.75])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: andrzej.p)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 051D56600014;
-        Mon, 21 Nov 2022 15:32:55 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1669044776;
-        bh=17GTCflbo8BWuklmQRQq055N9cwYV+wqCUtsgqHsCUE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=kMSUAJ6v8fcm0zAT+WLjt58eGUcbzHhfd/EYc4KD3ei3LV0v/vWCY+jvhyzukPSRM
-         /SJxfePWrb1CMEtYoapMj1qYbXwSqdSNgywCgHkMtbM3Cf2UjQCKRt4yIOIen/kt9Y
-         7UlkQthESX6CvfgdITxK6JQV4aB43utiPJhstXhWhw5GfIceiGo0U3ofWIsJCUK0Rm
-         6WoV/5PKJ4VJsSNVi9iZYuwQxT4gOe/vihHdiR89mlbJylwjTLx+nAvRbdwV2OTswC
-         1SsBW0obzh+ABomBWyRGWnsEMwpoWAYYPv/AtE3Ndwbp2VDyhpPMWg7O9gX3YNdl2S
-         eOD7pajJcfw3A==
-Message-ID: <b7dcf498-51ea-3aaf-211f-09fa59c38768@collabora.com>
-Date:   Mon, 21 Nov 2022 16:32:52 +0100
+        Mon, 21 Nov 2022 16:08:59 -0500
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5122EC6620
+        for <kernel-janitors@vger.kernel.org>; Mon, 21 Nov 2022 13:08:48 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id xE22ozk4OuZP6xE22oT8A1; Mon, 21 Nov 2022 22:08:46 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 21 Nov 2022 22:08:46 +0100
+X-ME-IP: 86.243.100.34
+Message-ID: <2e4c6ee6-d8d5-b4fe-ab60-cb6f440c2dee@wanadoo.fr>
+Date:   Mon, 21 Nov 2022 22:08:45 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] usb: gadget: function: use after free in printer_close()
-To:     Dan Carpenter <error27@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Albert Briscoe <albertsbriscoe@gmail.com>,
-        Zqiang <qiang.zhang@windriver.com>,
-        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <Y3uOxcvowFq75Tzv@kili>
-Content-Language: en-US
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-In-Reply-To: <Y3uOxcvowFq75Tzv@kili>
+ Thunderbird/102.2.2
+Subject: Re: [PATCH] interconnect: qcom: icc-rpmh: Fix an error handling path
+ in qcom_icc_rpmh_probe()
+Content-Language: fr
+To:     Luca Weiss <luca.weiss@fairphone.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
+References: <ec929c37c655ede7bb42e426354093c8a1377a0b.1668947686.git.christophe.jaillet@wanadoo.fr>
+ <COHSZZ9A5570.1P4NTXRE9IRZR@otso>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <COHSZZ9A5570.1P4NTXRE9IRZR@otso>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
-
-I'm fine with either symmetrically removing the DBG() from "printer_open()"
-or with this version of the patch.
-
-It seems to me that this version better fits "fixing UAF", though.
-Whether the driver is too verbose is another matter, and if it is,
-it deserves its own patch because DBG() invocations are sprinkled
-here and there.
-
-W dniu 21.11.2022 o 15:44, Dan Carpenter pisze:
-> The printer_dev_free() function frees "dev" but then it is dereferenced
-> by the debug code on the next line.  Flip the order to avoid the use after
-> free.
+Le 21/11/2022 à 08:42, Luca Weiss a écrit :
+> Hi Christophe,
 > 
-> Fixes: e8d5f92b8d30 ("usb: gadget: function: printer: fix use-after-free in __lock_acquire")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-
-
-> ---
-> v2: In the v1, I just deleted the printk but Andrzej thought it was
-> worth preserving.
+> On Sun Nov 20, 2022 at 1:35 PM CET, Christophe JAILLET wrote:
+>> If of_platform_populate() fails, some resources need to be freed as already
+>> done in the other error handling paths.
+>>
+>> Fixes: 57eb14779dfd ("interconnect: qcom: icc-rpmh: Support child NoC device probe")
 > 
->   drivers/usb/gadget/function/f_printer.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> I believe the same needs to be applied to icc-rpm.c.
+
+I'll give it a look and send a v2.
+
+CJ
+
 > 
-> diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
-> index a881c69b1f2b..01e842e1ba2f 100644
-> --- a/drivers/usb/gadget/function/f_printer.c
-> +++ b/drivers/usb/gadget/function/f_printer.c
-> @@ -381,8 +381,8 @@ printer_close(struct inode *inode, struct file *fd)
->   	dev->printer_status &= ~PRINTER_SELECTED;
->   	spin_unlock_irqrestore(&dev->lock, flags);
->   
-> -	kref_put(&dev->kref, printer_dev_free);
->   	DBG(dev, "printer_close\n");
-> +	kref_put(&dev->kref, printer_dev_free);
->   
->   	return 0;
->   }
+> Also there shouldn't be an empty line here between Fixes: and Signed-off-by:
+> 
+> Regards
+> Luca
+> 
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/interconnect/qcom/icc-rpmh.c | 7 +++++--
+>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
+>> index fd17291c61eb..5168bbf3d92f 100644
+>> --- a/drivers/interconnect/qcom/icc-rpmh.c
+>> +++ b/drivers/interconnect/qcom/icc-rpmh.c
+>> @@ -235,8 +235,11 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+>>   	platform_set_drvdata(pdev, qp);
+>>   
+>>   	/* Populate child NoC devices if any */
+>> -	if (of_get_child_count(dev->of_node) > 0)
+>> -		return of_platform_populate(dev->of_node, NULL, NULL, dev);
+>> +	if (of_get_child_count(dev->of_node) > 0) {
+>> +		ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+>> +		if (ret)
+>> +			goto err;
+>> +	}
+>>   
+>>   	return 0;
+>>   err:
+>> -- 
+>> 2.34.1
+> 
+> 
 
