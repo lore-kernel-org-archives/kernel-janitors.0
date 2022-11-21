@@ -2,82 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6261C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 13:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B53C43217
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 14:55:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230029AbiKUNKU (ORCPT
+        id S231810AbiKUOzA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Nov 2022 08:10:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52924 "EHLO
+        Mon, 21 Nov 2022 09:55:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbiKUNKR (ORCPT
+        with ESMTP id S231501AbiKUOyn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Nov 2022 08:10:17 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1231763FB;
-        Mon, 21 Nov 2022 05:10:17 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A3674611B2;
-        Mon, 21 Nov 2022 13:10:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F1B11C433B5;
-        Mon, 21 Nov 2022 13:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669036216;
-        bh=/qjTt7hewFcnLOUJ5OxRWpExb4deKnOpdDFcmIiccCs=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=XkFFKfJvoRF7GlQJCIUDdosua/4HMfbzYgssNR7fKKBIwwc6Yv10UuQpQuqukJbSX
-         IF0PSIUNgJ4nx/SGxnkV0LcfmwCA/CCDCHdJvHFu9uYSdiAmMBaxIrfa0/iFPlmV79
-         22kgO5NYf7IjbPnEcYwYia7OqhiM7yxP3iG4Pw0gfXPdp8+3SJcg6O2OgH60ac3Zhm
-         gkGwsIMiX3cVD03Yu/pAdMuDO+Jutmi2/v+sRaTM7Wb1MR+6PcM7dfk540oyIz+xd0
-         g98M+ZyD3jcypi23DGWlxnjoOXkxSjSVL2YNGHQuEbOKdEVo2EaY0FmglxlJKmAQC0
-         ZN00Y1UI6jHlA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D7AA1C395FF;
-        Mon, 21 Nov 2022 13:10:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] octeontx2-af: cn10k: mcs: Fix copy and paste bug in
- mcs_bbe_intr_handler()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166903621587.4573.17842069915148045364.git-patchwork-notify@kernel.org>
-Date:   Mon, 21 Nov 2022 13:10:15 +0000
-References: <Y3efyh1HjbToppbN@kili>
-In-Reply-To: <Y3efyh1HjbToppbN@kili>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     sgoutham@marvell.com, gakula@marvell.com, lcherian@marvell.com,
-        jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, vattunuru@marvell.com, netdev@vger.kernel.org,
+        Mon, 21 Nov 2022 09:54:43 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 079C4CFA70;
+        Mon, 21 Nov 2022 06:44:30 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id ay14-20020a05600c1e0e00b003cf6ab34b61so12936741wmb.2;
+        Mon, 21 Nov 2022 06:44:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SVozTFlQLi4Kq1hQBrMpTSLTEeZeiiwiztBFqH0ZhNA=;
+        b=pdu6G3Cn3bz4GyeREeXItkqNLx/zA+/FH8DJ4jKKyQ/JJ6YXBQ5u+MgVTv73oDPuYk
+         1Klb9b7wxBhftuHodnPZ3MIYyfHa8XPQ9TBvhc3n1x2T+PIMJkZeC9JbMIo3Lfd8t4tn
+         PCcUcUoyqDCJuLLkATKZ43vCy8yOOiLvO8qDyPZEwRJVzTTJfCLrwH+nP41tZHfAfhTa
+         dJO9mYsCJfRL3h38HPBLgbA4IJBWBOlt7JE3YyCVAqdKNpVbMNSMTeCK1Rsu/iH5CwHJ
+         smsbRlNMdZaHyw379OI90dULUUuJWoFsICrrAZ26FpUd2XKCL1RNDZpfcn19D3vaSuDg
+         vXig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SVozTFlQLi4Kq1hQBrMpTSLTEeZeiiwiztBFqH0ZhNA=;
+        b=xS7unXW1avYWaIVUK79J1xio05rt9J2k29H43AYZq+kV45dzmJpLBn6Wj5zhNOSekJ
+         EyMR/nuP0vKqjNTUbhY/+s+TPmfBoP56zblLlofBadDDoGJIraTZro4UuKJfpzHyicyY
+         WelPAuJxdJoggbWap7Hw/laJLE1Wix/zAH0xHxCzfP+VCyeJM37VE+48xsEMu3rf/BtJ
+         2v7YRqYIoiPDlDIyTORh6wyMnRmQp/c3QmW+S9TSFin+M9nk4otSUzr+5uS2Hlo+0r37
+         DjsMq/9PwwOM1RervDzy0nj7U++weUcDLv+17S//h/iShrDoh+xpemGgAkNdgTcberm3
+         JIPA==
+X-Gm-Message-State: ANoB5pnAHfY7QNTDJq5sYjH3YLF0S2uDAKgnN9uQk0H67lJ8Isv0y9XZ
+        HZ8fr4mwf0dduaWp8buXpK9hGF8LK6A=
+X-Google-Smtp-Source: AA0mqf4+EL/RjHxnD7gXkawZj5Rycvo83iijPrrJWvdfE4x8mTvrzf9niELA3CqbuL/U2BFoE03ORg==
+X-Received: by 2002:a05:600c:3b84:b0:3cf:b73f:c062 with SMTP id n4-20020a05600c3b8400b003cfb73fc062mr123748wms.204.1669041867319;
+        Mon, 21 Nov 2022 06:44:27 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id f19-20020a05600c4e9300b003cfd4a50d5asm20389354wmq.34.2022.11.21.06.44.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Nov 2022 06:44:26 -0800 (PST)
+Date:   Mon, 21 Nov 2022 17:44:21 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc:     Dan Carpenter <error27@gmail.com>,
+        Albert Briscoe <albertsbriscoe@gmail.com>,
+        Zqiang <qiang.zhang@windriver.com>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
         kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: gadget: function: use after free in printer_close()
+Message-ID: <Y3uOxcvowFq75Tzv@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The printer_dev_free() function frees "dev" but then it is dereferenced
+by the debug code on the next line.  Flip the order to avoid the use after
+free.
 
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
+Fixes: e8d5f92b8d30 ("usb: gadget: function: printer: fix use-after-free in __lock_acquire")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+v2: In the v1, I just deleted the printk but Andrzej thought it was
+worth preserving.
 
-On Fri, 18 Nov 2022 18:07:54 +0300 you wrote:
-> This code accidentally uses the RX macro twice instead of the RX and TX.
-> 
-> Fixes: 6c635f78c474 ("octeontx2-af: cn10k: mcs: Handle MCS block interrupts")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Applies to net.
-> 
-> [...]
+ drivers/usb/gadget/function/f_printer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [net] octeontx2-af: cn10k: mcs: Fix copy and paste bug in mcs_bbe_intr_handler()
-    https://git.kernel.org/netdev/net/c/badbda1a0186
-
-You are awesome, thank you!
+diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
+index a881c69b1f2b..01e842e1ba2f 100644
+--- a/drivers/usb/gadget/function/f_printer.c
++++ b/drivers/usb/gadget/function/f_printer.c
+@@ -381,8 +381,8 @@ printer_close(struct inode *inode, struct file *fd)
+ 	dev->printer_status &= ~PRINTER_SELECTED;
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ 
+-	kref_put(&dev->kref, printer_dev_free);
+ 	DBG(dev, "printer_close\n");
++	kref_put(&dev->kref, printer_dev_free);
+ 
+ 	return 0;
+ }
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.35.1
 
