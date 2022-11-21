@@ -2,82 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFAEC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 10:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD35C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 12:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231262AbiKUKKa (ORCPT
+        id S231440AbiKUMiF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Nov 2022 05:10:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47990 "EHLO
+        Mon, 21 Nov 2022 07:38:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231177AbiKUKKR (ORCPT
+        with ESMTP id S231484AbiKUMh7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Nov 2022 05:10:17 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98260647B;
-        Mon, 21 Nov 2022 02:10:16 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 21 Nov 2022 07:37:59 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C783F05B;
+        Mon, 21 Nov 2022 04:37:57 -0800 (PST)
+Received: from [192.168.0.192] (unknown [194.146.248.75])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 34DE860F8F;
-        Mon, 21 Nov 2022 10:10:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 876B2C433D7;
-        Mon, 21 Nov 2022 10:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669025415;
-        bh=T4K8ig7bmaI7VH4mNBFahKssSIE07VnyMOdXWGkqoJw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=YHivCHWmBtz7L8JX518XdlcGYjCJe3KqHcJbJ7rZgHcZ3mHW/nxc7HRysUE/MrYOT
-         MV6QO2d18w3p47H55aOK8nzIg3VXKd+n9p2hywFR9SztJEu+AUaIEuEZM2o4y8Gm+C
-         mL5pKCFwmRYXEePKMeGs27Oc1Mxasiz2lG2NSd+hzxSkFzD41TYbGe70P2qGwRpXEm
-         D4NCYOO9moeqHyVHOFVtoGiXh165UzJp9s74go3y7+PZziOHmeV05JnziuAzcRWfeM
-         0pwGe/zDcF92DAtAb5UCqFFQxMhUNJMSTbcEGvbByPr85KpinqQDJfLibaYmvxsuDC
-         YXZCpdkHowz3g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6CF66E29F3F;
-        Mon, 21 Nov 2022 10:10:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: andrzej.p)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 256E566029A3;
+        Mon, 21 Nov 2022 12:37:56 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1669034276;
+        bh=IMEXC4LxxXoPyMFAGux1KA8bKOkPsV70cV46Fq83/CY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=D7FOxOfderh/eib05480KpfSj18vjMjYugrxek2h0zF+7btHieBEC5crGhNLmeEpz
+         0HBPZ4S20Bywu0KpkC1rm4W19GPDmemfiLfMOkCz5v1ONelvRtS5nvaWjKi73gPlKQ
+         6P6zEbrA2OEQclgehQnkwWM/nDYTQ3bE3krwVeWH7JGgGdu2iv1l8J/2O1SHufTwjY
+         PuOev9ffsq2gFjs7jXqWyASiJjVsVTzdtZIt5q0SxTQkMZq3zX+iurbkr/xkd+Az6h
+         b/33U4bbNkHD30ixOhxHbFzY8GKHHgltHLW0k+loBw+AUJmp8qXZRolo07upCoHLc/
+         PFqaei4JNyETQ==
+Message-ID: <23f52a55-490c-9f43-49c4-f4c4f6b5d88e@collabora.com>
+Date:   Mon, 21 Nov 2022 13:37:53 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: microchip: sparx5: prevent uninitialized
- variable
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166902541544.20190.2250651542469852719.git-patchwork-notify@kernel.org>
-Date:   Mon, 21 Nov 2022 10:10:15 +0000
-References: <Y3ZTQZYz5zz5nMg2@kadam>
-In-Reply-To: <Y3ZTQZYz5zz5nMg2@kadam>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     davem@davemloft.net, daniel.machon@microchip.com,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
-        UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] usb: gadget: function: use after free in printer_close()
+Content-Language: en-US
+To:     Dan Carpenter <error27@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Albert Briscoe <albertsbriscoe@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Zqiang <qiang.zhang@windriver.com>, linux-usb@vger.kernel.org,
         kernel-janitors@vger.kernel.org
+References: <Y3dwwNlBoS13VcIR@kili>
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+In-Reply-To: <Y3dwwNlBoS13VcIR@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Hi Dan,
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Thu, 17 Nov 2022 18:29:05 +0300 you wrote:
-> Smatch complains that:
+W dniu 18.11.2022 o 12:47, Dan Carpenter pisze:
+> The printer_dev_free() function frees "dev" but then it is dereferenced
+> by the debug code on the next line.  The debug printk only prints the
+> function name so it's probably okay to just delete it.
 > 
->     drivers/net/ethernet/microchip/sparx5/sparx5_dcb.c:112
->     sparx5_dcb_apptrust_validate() error: uninitialized symbol 'match'.
+> Fixes: e8d5f92b8d30 ("usb: gadget: function: printer: fix use-after-free in __lock_acquire")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   drivers/usb/gadget/function/f_printer.c | 1 -
+>   1 file changed, 1 deletion(-)
 > 
-> This would only happen if the:
-> 
-> [...]
+> diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
+> index a881c69b1f2b..7354bfe1e682 100644
+> --- a/drivers/usb/gadget/function/f_printer.c
+> +++ b/drivers/usb/gadget/function/f_printer.c
+> @@ -382,7 +382,6 @@ printer_close(struct inode *inode, struct file *fd)
+>   	spin_unlock_irqrestore(&dev->lock, flags);
+>   
+>   	kref_put(&dev->kref, printer_dev_free);
+> -	DBG(dev, "printer_close\n");
 
-Here is the summary with links:
-  - [net-next,v2] net: microchip: sparx5: prevent uninitialized variable
-    https://git.kernel.org/netdev/net-next/c/62a45b384a28
+I think that if you delete the DBG() here, it should also be deleted in
+printer_open(). Alternatively this patch should reverse the order of
+calls to kref_put() and DBG().
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Regards,
 
+Andrzej
+
+>   
+>   	return 0;
+>   }
 
