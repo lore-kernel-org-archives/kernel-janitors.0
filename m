@@ -2,121 +2,184 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8344C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 07:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF655C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 08:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229980AbiKUHnP (ORCPT
+        id S229911AbiKUIA1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Nov 2022 02:43:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54574 "EHLO
+        Mon, 21 Nov 2022 03:00:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbiKUHnE (ORCPT
+        with ESMTP id S229883AbiKUIAY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Nov 2022 02:43:04 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7C04C271
-        for <kernel-janitors@vger.kernel.org>; Sun, 20 Nov 2022 23:43:02 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id f7so15003766edc.6
-        for <kernel-janitors@vger.kernel.org>; Sun, 20 Nov 2022 23:43:02 -0800 (PST)
+        Mon, 21 Nov 2022 03:00:24 -0500
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDC001E713;
+        Mon, 21 Nov 2022 00:00:22 -0800 (PST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AKMYxxO017079;
+        Mon, 21 Nov 2022 00:00:10 -0800
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+        by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3kxwcuw48w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Nov 2022 00:00:09 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gpk30RUSXCaov/JGj9trv1m7l8APFP5kSrvE7NUcIx2pzANXzg5pyvxt6boW5N/u4mtfWMlopnGnyl9RpThFk0p0hi7HY5226oln4wf6ZCJNesKzArertv/Vvqyzqc6PNpHv/yqtDRwfzHscklJDgJQNW4Q3KTjELtzXx5OaQ+FGu5/pOW7FtLWGc8rtCuSj0Km6c5SsPfKZLAhhRhnDZ4/P4XW8o0D3W02TSb+SQraoBUad+/MkXErRZHzS+370EwL2PX32jCQIjFSdXvjS/hjPvFJmFE0lpFa3bSgHv4w49qs9tb7sUbBXSNK0eshTMnpRMTZLjK35KPXrQt28Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SX9beojMH/SKgAgck8WsvyB4c/45D4bguKqHx0X3uR4=;
+ b=aM+WF9cqJN6EMRPpZmaDjImTdHkLaq4sdB4LWWcwUbYFYbRoopd1wBxRl6c3xTc8hxPy3SgODcUP+XRBq/cp07ZbsWxrGOAYkkpxJUhkt93uCQm3kn/BNQ2fJ+obOcCTzfo5mMbPctPheNwW9o/c6F09zcHc5S0tjS+TD3ltHGgT+MgIQ40Sa7vsd857PxZkY74dCkdYKgmPPIIy0xVazgDwfFwd/GcywH0PbwkQ60vT3Tmrc4jsVaRSCx3INDZa7xUJ0EjGaGtA93Yr5ENtBwX58w0iATa1FiM0At+x7hQOfy7lk3hPC8mCZaviCRNswUHUZN80UWSIMs3ikhB3aQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1TUVIyfnzpJrJjjktkuqFcVCWlSjqMueZ8oSh19wEx0=;
-        b=u8HULqbgDO1V1jjNHkBZ+tyxbUE+H5slR0LHOlbfeZAo3EEj10DJVA0a7eNayrx8QE
-         qkAIPnZN/1pyhj7djHgxGa6H6GOEPzp/BK4X9QN1iUaQzkZv42i3cBJppROe/Ej/iZ3E
-         DrQx85QkfKzETnYKoXMc/xsfBK04j9UbGhery64BTRSdObqu0tUQYDhy/q1NdZpfw1aY
-         6ZBdw+RMjZ8k2siwz+RcwlWJnWHhxYnldUPd4gqHu6++LVwVBmdtRmk885K7XmSv09fm
-         WbY3hF41oKOfCmenytGGcYFTMJYtm8wOhq+6nnTuT0a8an7eKvRjiv2AKO21kjqiN3Zo
-         tiUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1TUVIyfnzpJrJjjktkuqFcVCWlSjqMueZ8oSh19wEx0=;
-        b=4TTwYlZetUDD6ej+MptiQoJssZpPMeXiUv/l98AlRRFqPwCyyCKWbV0j1Ieh0iJxK+
-         hWdTe3uV+Eah/I3YHuUBDB0ETL5Dj4Lnkv+wndTT0ItCAN6qnz4jzInly5KKV1tVsC3o
-         S+y5drcnOtJ28Mc+mzjpmZ6K8NwqAYwPOTHuqwzMrYbp93aUZ5I8dTBxenrmnSWA0V0+
-         1tB/7gaqi/Qv9Zm0ZWGTzJLzF6s7N7nVql92fcMT4xcKtGzdgK/mlODGyHOI4loLyaFM
-         NXWcqHAPnCQ1YOuTwHaeYnACpGn2Npw6cc1RM1y5a44Y1X8VldD/zAm9yMfsIaSgdP7G
-         0Pvg==
-X-Gm-Message-State: ANoB5plXfF44rDXTvQjtvjyymixUpH6gPLCITOUIYBXOCYiUJHMuw1mU
-        Yy+XJLPLf03hinqfnFGFw4EpHg==
-X-Google-Smtp-Source: AA0mqf70Zc1BNt2e8y7KjZG/3WSjRLleM/arnX0rg2ndkyr3oTK5dpqVHh4yYqJ77f04oWtSKx3tnA==
-X-Received: by 2002:a05:6402:2a09:b0:461:30d8:6742 with SMTP id ey9-20020a0564022a0900b0046130d86742mr14964115edb.172.1669016580728;
-        Sun, 20 Nov 2022 23:43:00 -0800 (PST)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id e10-20020a170906648a00b007adade0e9easm4667280ejm.85.2022.11.20.23.42.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Nov 2022 23:42:59 -0800 (PST)
-Mime-Version: 1.0
+ d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SX9beojMH/SKgAgck8WsvyB4c/45D4bguKqHx0X3uR4=;
+ b=qYnBtzmaU5a3QKS9j8TSU8kF8NqWq0STPVeNcfJXPzeTBh0hI4kIO2O2RQOx5z9SYrlRq3dIL3mG9eWL2FH3zEabJ6+HSRn61C2MqNvflU9tUDC6kQjO4h4LoljanLBCVccCvIOBKCRpHktz//eBOzYJTIXFijOUtBDjfokq7II=
+Received: from DM6PR18MB2602.namprd18.prod.outlook.com (2603:10b6:5:15d::25)
+ by PH0PR18MB4844.namprd18.prod.outlook.com (2603:10b6:510:113::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.13; Mon, 21 Nov
+ 2022 08:00:07 +0000
+Received: from DM6PR18MB2602.namprd18.prod.outlook.com
+ ([fe80::7acb:2734:b129:b652]) by DM6PR18MB2602.namprd18.prod.outlook.com
+ ([fe80::7acb:2734:b129:b652%5]) with mapi id 15.20.5813.017; Mon, 21 Nov 2022
+ 08:00:07 +0000
+From:   Geethasowjanya Akula <gakula@marvell.com>
+To:     Dan Carpenter <error27@gmail.com>,
+        Sunil Kovvuri Goutham <sgoutham@marvell.com>
+CC:     Linu Cherian <lcherian@marvell.com>,
+        Jerin Jacob Kollanukkaran <jerinj@marvell.com>,
+        Hariprasad Kelam <hkelam@marvell.com>,
+        Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vamsi Krishna Attunuru <vattunuru@marvell.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [EXT] [PATCH net] octeontx2-af: cn10k: mcs: Fix copy and paste
+ bug in mcs_bbe_intr_handler()
+Thread-Topic: [EXT] [PATCH net] octeontx2-af: cn10k: mcs: Fix copy and paste
+ bug in mcs_bbe_intr_handler()
+Thread-Index: AQHY+1+OoZypSCU1OUas3wDZOgcb+65JBTKq
+Date:   Mon, 21 Nov 2022 08:00:07 +0000
+Message-ID: <DM6PR18MB2602D92B07F140B616729203CD0A9@DM6PR18MB2602.namprd18.prod.outlook.com>
+References: <Y3efyh1HjbToppbN@kili>
+In-Reply-To: <Y3efyh1HjbToppbN@kili>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR18MB2602:EE_|PH0PR18MB4844:EE_
+x-ms-office365-filtering-correlation-id: 83f5aa3d-e25c-4e3b-fa98-08dacb9667e7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ySmW6nzQuaTnlARouXQL+G1y1Q93alrXi+V+tpen2gv+cyZljmW0DakUUX7+mNCI/C7CjJJtV5fVaJmsliA36rnuZU60Hd3j3TnRzM7EcEaBP/dWMtiRJkEs2SEuSfW3DCVzvtixH4AbqDIvF/NnSZhXa6F8GDVdpC+GzkgD1NlSztbHxSl+bIWoBu+nEOpeIbJhPC8BxWMf/LREw7cPN6fEmckUfOb4kQMxVglNtDDXtDrRVnruiQ6/3/RORmmL0ZoPWdMxCZS6nwzFNxgCkhyJeCWulduJVGdYgWacTIY2MVYw/2532gseI+k5PY29CBxClcIfgOto4/qvzNgkV8w9yspPB6QJZac0lcCGVF+jacbVmMo9yphnh5NnUm8bNUKT4NtI90MKkqR3J/IHhmYvOJvvkFra+TipjIu8qEkaoyLsSUBiP7nz0W0/rV1GgVIsXGhirOMszY+d4buSfLlmK5KYwNo0O67fMwhszxIkUNzpeiQuxwlLJS7KiKSIAgjGpcxEVmrZKPUszVa3/e4G6e8D6F6fbH6LjocGp/HFCJTiU1Qom5TjSxfIzVC+VuCbKqK/e8stN5cjDJRoqZuagWVLxQa21XhsWbDGFyljr0zvgrygEn+86oQj1/wRBndzYtPl/rEnovdzlcQv2uoPZy2pY2UzwgTnyVFDuvPhrzajn3vDfd5/eTvLOyvmUH17wedY6/AB3640oPz4nw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR18MB2602.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39850400004)(366004)(136003)(376002)(346002)(451199015)(86362001)(33656002)(55016003)(5660300002)(8936002)(71200400001)(52536014)(41300700001)(2906002)(186003)(9686003)(316002)(110136005)(6636002)(53546011)(7696005)(6506007)(54906003)(4326008)(66476007)(66446008)(64756008)(8676002)(66946007)(66556008)(76116006)(26005)(91956017)(478600001)(38100700002)(122000001)(38070700005)(83380400001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?EkWE94gI1ohXEEWc9UMTyL7lGxkwtIGPTf3zh7Gu2Yw9BrlJIwdIOJ8KIWie?=
+ =?us-ascii?Q?4FJRdO+++jxnlAvUTnETyv5SJ6qc7/FFwsqy0go5exBB/hW3bTe4wixIOjpV?=
+ =?us-ascii?Q?yHYwvBr78juJckSXfY1JTeDVvnMj78rI7C3Q+/AQRUzVUq+xD+A6r7Dsw0a/?=
+ =?us-ascii?Q?VXqLNgnfJWHJDybQ/ni8gzQZ4o/ZCAEBEeetULEQ5rEQ+2BQkjKcGMcbrD7N?=
+ =?us-ascii?Q?N9avBj5+M0locqZtn0LYcm9JWbpp9wqEJ6Q2QatwvvSfoNs7jQV/SYpcRRPT?=
+ =?us-ascii?Q?f9EKJdCScIOorMT9VSpO6Z2eo+8+YuCj/2J91Q2XRlh1wC0Sf0DMJ88h1zsj?=
+ =?us-ascii?Q?KPIRHnwYLFnvHsO3KaganE5hbE9fHkUTV7cPbWHr7yIs0ngV3LtA8FT7LSTG?=
+ =?us-ascii?Q?Uo0lIumGlX228MeYZ4gORBOkLQ0c31NiV6SWKhgEhabyYqw5btf4WmoOQQPW?=
+ =?us-ascii?Q?Nd2Nl4Pqj6C3Qhvar68s326Mg5I6IXem2yCdDQIM+tHlNUPXfTIj+79kxCIa?=
+ =?us-ascii?Q?96ZrqC/KqxpkC1+kQ4mFxmyJH5AGn0LoCEJKbdO3n799Vc1rmmgJAZSNK3QV?=
+ =?us-ascii?Q?scanq0+uEKvs+O0Jtxr0KBurMfNn+tuLDcAmVySPDhLc4NzhGEjvIL8RoYaT?=
+ =?us-ascii?Q?JAMKJRZsuJqGGpKLxJF8mCBSbin/b5hiEveEPvZEa/4qHZo9iseLLLfF6mNX?=
+ =?us-ascii?Q?NhgAgE4/QuXMWKlyDC4hxCXwp+pJXaMrJDCxb2w3t6bA2iWGumZ7APi7mdT7?=
+ =?us-ascii?Q?aY3/0hAdLXCkCl6q2RPvejd8rOWRSPlHHrQzoDJFmENW13Qy/bofaxAdPUEG?=
+ =?us-ascii?Q?gRolpKS3C6VjbDyFo2l1ayRoDzCo6U/oPt5ux/cfjRmIuxQ5ziL+mOeIrWAD?=
+ =?us-ascii?Q?NqijUEaPRs28Sv1IQTVMRtI3g5qJinKQeAbzW+DsPqVQi7Hby7+xi6AUU/yO?=
+ =?us-ascii?Q?32XnngxNlKkyDKK/lW5KB0c09NjgQEjq8dYmIJoqagyZtOiOVDF3UcH90A4N?=
+ =?us-ascii?Q?6aBsbfnoipvwTwFwHkMC84yTH2hDDlyeybItDVQWCdZfyMZfdtNVnl5vIiOB?=
+ =?us-ascii?Q?91loLTdKQmXLbUnJI0mEN1cNjWRgSpsjmdOvjbMCKDBLNz496RL0A5TXItJL?=
+ =?us-ascii?Q?KuA8TyJ3wRqhFWxmLBGk6yjHgfzYnVUVxF3464jqGu+geKK5RV8uYytZtAzW?=
+ =?us-ascii?Q?Lfnou1k1slKKwtOf2mPEo4kCj0SygOyoBv8ZvZmjetCnOSSUx8/SCaFJPqtp?=
+ =?us-ascii?Q?xVdx5SD6JN7Ub9eSpOGevhE81s1t9qUY+xmsogelMaShqb3L8RwkSHUQg/61?=
+ =?us-ascii?Q?u8lIVjvXY2VIO7jQNHj5K1JKdx9U6aothc2Ab8QDfzCxcSGfwmneupW2KhMh?=
+ =?us-ascii?Q?Por9I7hQhGiVHCjBslwhCVXa5lFDgB+hd/o5Ap6ZZ6rzUvYU0zH93feuNhLd?=
+ =?us-ascii?Q?PwvQ3U6efhALt8lsSm65QDkC6oCn4DS4VHH2r7CV10Y6VVgz9r6nqZVNSwv2?=
+ =?us-ascii?Q?JnopogrFzkxeev32txOfSngNT9gy4upo0qr6jtWievm3fLvaxxxp1JPJV8zF?=
+ =?us-ascii?Q?4Tk76saddY3QNybtu3Q=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Mon, 21 Nov 2022 08:42:58 +0100
-Message-Id: <COHSZZ9A5570.1P4NTXRE9IRZR@otso>
-Cc:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] interconnect: qcom: icc-rpmh: Fix an error handling
- path in qcom_icc_rpmh_probe()
-From:   "Luca Weiss" <luca.weiss@fairphone.com>
-To:     "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Andy Gross" <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
-        "Georgi Djakov" <djakov@kernel.org>
-X-Mailer: aerc 0.13.0
-References: <ec929c37c655ede7bb42e426354093c8a1377a0b.1668947686.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ec929c37c655ede7bb42e426354093c8a1377a0b.1668947686.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR18MB2602.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83f5aa3d-e25c-4e3b-fa98-08dacb9667e7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2022 08:00:07.4510
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Em1CzbYeKjYzEhaK02gM7WXss5KkTvKYNPu3H5W84/JaTu1+N5nmQTVT9i5dHZwhDcI3TwuWKJ8OTpOAt6aOVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR18MB4844
+X-Proofpoint-ORIG-GUID: -VsF3WYTs_XZH7PIHkHm86XE7ECIMTHH
+X-Proofpoint-GUID: -VsF3WYTs_XZH7PIHkHm86XE7ECIMTHH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-21_05,2022-11-18_01,2022-06-22_01
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+ACK.
+Thanks for the patch.
 
-On Sun Nov 20, 2022 at 1:35 PM CET, Christophe JAILLET wrote:
-> If of_platform_populate() fails, some resources need to be freed as alrea=
-dy
-> done in the other error handling paths.
->
-> Fixes: 57eb14779dfd ("interconnect: qcom: icc-rpmh: Support child NoC dev=
-ice probe")
+Geetha.
 
-I believe the same needs to be applied to icc-rpm.c.
+________________________________________
+From: Dan Carpenter <error27@gmail.com>
+Sent: Friday, November 18, 2022 8:37 PM
+To: Sunil Kovvuri Goutham; Geethasowjanya Akula
+Cc: Linu Cherian; Jerin Jacob Kollanukkaran; Hariprasad Kelam; Subbaraya Su=
+ndeep Bhatta; David S. Miller; Eric Dumazet; Jakub Kicinski; Paolo Abeni; V=
+amsi Krishna Attunuru; netdev@vger.kernel.org; kernel-janitors@vger.kernel.=
+org
+Subject: [EXT] [PATCH net] octeontx2-af: cn10k: mcs: Fix copy and paste bug=
+ in mcs_bbe_intr_handler()
 
-Also there shouldn't be an empty line here between Fixes: and Signed-off-by=
-:
+External Email
 
-Regards
-Luca
+----------------------------------------------------------------------
+This code accidentally uses the RX macro twice instead of the RX and TX.
 
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/interconnect/qcom/icc-rpmh.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/=
-qcom/icc-rpmh.c
-> index fd17291c61eb..5168bbf3d92f 100644
-> --- a/drivers/interconnect/qcom/icc-rpmh.c
-> +++ b/drivers/interconnect/qcom/icc-rpmh.c
-> @@ -235,8 +235,11 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev=
-)
->  	platform_set_drvdata(pdev, qp);
-> =20
->  	/* Populate child NoC devices if any */
-> -	if (of_get_child_count(dev->of_node) > 0)
-> -		return of_platform_populate(dev->of_node, NULL, NULL, dev);
-> +	if (of_get_child_count(dev->of_node) > 0) {
-> +		ret =3D of_platform_populate(dev->of_node, NULL, NULL, dev);
-> +		if (ret)
-> +			goto err;
-> +	}
-> =20
->  	return 0;
->  err:
-> --=20
-> 2.34.1
+Fixes: 6c635f78c474 ("octeontx2-af: cn10k: mcs: Handle MCS block interrupts=
+")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Applies to net.
+
+ drivers/net/ethernet/marvell/octeontx2/af/mcs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mcs.c b/drivers/net/=
+ethernet/marvell/octeontx2/af/mcs.c
+index 4a343f853b28..c0bedf402da9 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/mcs.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/mcs.c
+@@ -951,7 +951,7 @@ static void mcs_bbe_intr_handler(struct mcs *mcs, u64 i=
+ntr, enum mcs_direction d
+                else
+                        event.intr_mask =3D (dir =3D=3D MCS_RX) ?
+                                          MCS_BBE_RX_PLFIFO_OVERFLOW_INT :
+-                                         MCS_BBE_RX_PLFIFO_OVERFLOW_INT;
++                                         MCS_BBE_TX_PLFIFO_OVERFLOW_INT;
+
+                /* Notify the lmac_id info which ran into BBE fatal error *=
+/
+                event.lmac_id =3D i & 0x3ULL;
+--
+2.35.1
 
