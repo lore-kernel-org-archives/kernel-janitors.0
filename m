@@ -2,99 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2F4C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 21:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67186C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Nov 2022 21:12:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230041AbiKUVJA (ORCPT
+        id S229519AbiKUVMX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Nov 2022 16:09:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36228 "EHLO
+        Mon, 21 Nov 2022 16:12:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbiKUVI7 (ORCPT
+        with ESMTP id S229498AbiKUVMW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Nov 2022 16:08:59 -0500
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5122EC6620
-        for <kernel-janitors@vger.kernel.org>; Mon, 21 Nov 2022 13:08:48 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id xE22ozk4OuZP6xE22oT8A1; Mon, 21 Nov 2022 22:08:46 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 21 Nov 2022 22:08:46 +0100
-X-ME-IP: 86.243.100.34
-Message-ID: <2e4c6ee6-d8d5-b4fe-ab60-cb6f440c2dee@wanadoo.fr>
-Date:   Mon, 21 Nov 2022 22:08:45 +0100
+        Mon, 21 Nov 2022 16:12:22 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F61C6BC6;
+        Mon, 21 Nov 2022 13:12:21 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F2A961460;
+        Mon, 21 Nov 2022 21:12:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A86F4C433D6;
+        Mon, 21 Nov 2022 21:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669065140;
+        bh=nmHwTBfz9HEKEVrdiVd0LFXO9AZHdMs3tAKcRRLdUsc=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=jKHBwzpxmQ5FiiNuMm8BVyYSu3oKFsWkh70TNQvQ0XH7jXQOshAjKEtZPQqgQE9yK
+         JYdFTwRlIjFFM13MMNPD13eFrMyC1sffarJLNovyELS6IaiJ19kXGktDQed20S6JZe
+         FJzkHWmX2VhYm2cMSV0FGyQibklpIEG3h6azgLIEgxs9XIXVGm8z/OyOkj+Mg5aXLf
+         iA3d7eYtPgtfw0ubDQQ9xFUgodsSrqf6FRdMUAU37FiBqdDeokSLxfX0WC5Wwnj6JK
+         SmAoPPrHCKLVUP7JW8uvkAV0TQBjFTCAYjdAINZgf375hV7GJcfKSu+pfjR1wiGrrC
+         MeJjO52z4x1Hg==
+Date:   Mon, 21 Nov 2022 22:12:19 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] samples/hid: Fix spelling mistake "wihout" ->
+ "without"
+In-Reply-To: <20221116093943.597572-1-colin.i.king@gmail.com>
+Message-ID: <nycvar.YFH.7.76.2211212212100.6045@cbobk.fhfr.pm>
+References: <20221116093943.597572-1-colin.i.king@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] interconnect: qcom: icc-rpmh: Fix an error handling path
- in qcom_icc_rpmh_probe()
-Content-Language: fr
-To:     Luca Weiss <luca.weiss@fairphone.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
-References: <ec929c37c655ede7bb42e426354093c8a1377a0b.1668947686.git.christophe.jaillet@wanadoo.fr>
- <COHSZZ9A5570.1P4NTXRE9IRZR@otso>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <COHSZZ9A5570.1P4NTXRE9IRZR@otso>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 21/11/2022 à 08:42, Luca Weiss a écrit :
-> Hi Christophe,
-> 
-> On Sun Nov 20, 2022 at 1:35 PM CET, Christophe JAILLET wrote:
->> If of_platform_populate() fails, some resources need to be freed as already
->> done in the other error handling paths.
->>
->> Fixes: 57eb14779dfd ("interconnect: qcom: icc-rpmh: Support child NoC device probe")
-> 
-> I believe the same needs to be applied to icc-rpm.c.
+On Wed, 16 Nov 2022, Colin Ian King wrote:
 
-I'll give it a look and send a v2.
+> There is a spelling mistake in a comment and a usage message. Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  samples/hid/hid_surface_dial.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/samples/hid/hid_surface_dial.c b/samples/hid/hid_surface_dial.c
+> index bceea53d39b0..4bc97373a708 100644
+> --- a/samples/hid/hid_surface_dial.c
+> +++ b/samples/hid/hid_surface_dial.c
+> @@ -4,7 +4,7 @@
+>   * This program will morph the Microsoft Surface Dial into a mouse,
+>   * and depending on the chosen resolution enable or not the haptic feedback:
+>   * - a resolution (-r) of 3600 will report 3600 "ticks" in one full rotation
+> - *   wihout haptic feedback
+> + *   without haptic feedback
+>   * - any other resolution will report N "ticks" in a full rotation with haptic
+>   *   feedback
+>   *
+> @@ -57,7 +57,7 @@ static void usage(const char *prog)
+>  		"This program will morph the Microsoft Surface Dial into a mouse,\n"
+>  		"and depending on the chosen resolution enable or not the haptic feedback:\n"
+>  		"- a resolution (-r) of 3600 will report 3600 'ticks' in one full rotation\n"
+> -		"  wihout haptic feedback\n"
+> +		"  without haptic feedback\n"
+>  		"- any other resolution will report N 'ticks' in a full rotation with haptic\n"
+>  		"  feedback\n"
 
-CJ
+Applied, thanks.
 
-> 
-> Also there shouldn't be an empty line here between Fixes: and Signed-off-by:
-> 
-> Regards
-> Luca
-> 
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/interconnect/qcom/icc-rpmh.c | 7 +++++--
->>   1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
->> index fd17291c61eb..5168bbf3d92f 100644
->> --- a/drivers/interconnect/qcom/icc-rpmh.c
->> +++ b/drivers/interconnect/qcom/icc-rpmh.c
->> @@ -235,8 +235,11 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
->>   	platform_set_drvdata(pdev, qp);
->>   
->>   	/* Populate child NoC devices if any */
->> -	if (of_get_child_count(dev->of_node) > 0)
->> -		return of_platform_populate(dev->of_node, NULL, NULL, dev);
->> +	if (of_get_child_count(dev->of_node) > 0) {
->> +		ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
->> +		if (ret)
->> +			goto err;
->> +	}
->>   
->>   	return 0;
->>   err:
->> -- 
->> 2.34.1
-> 
-> 
+-- 
+Jiri Kosina
+SUSE Labs
 
