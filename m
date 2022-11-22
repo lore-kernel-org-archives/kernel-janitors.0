@@ -2,138 +2,158 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D912FC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Nov 2022 13:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078ACC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Nov 2022 13:24:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233501AbiKVNUI (ORCPT
+        id S233731AbiKVNYE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Nov 2022 08:20:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50056 "EHLO
+        Tue, 22 Nov 2022 08:24:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231993AbiKVNUH (ORCPT
+        with ESMTP id S233721AbiKVNX6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Nov 2022 08:20:07 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 950EC63BA5
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 05:20:06 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id x102so20654145ede.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 05:20:06 -0800 (PST)
+        Tue, 22 Nov 2022 08:23:58 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C4D81A07D;
+        Tue, 22 Nov 2022 05:23:51 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id m22so35688067eji.10;
+        Tue, 22 Nov 2022 05:23:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=skymem-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OOzIbrFIOKeJXJT4ID/MUCczRZmmy/MUgRjL2diXaTc=;
-        b=exKArqMppRWvzwf3ELZJ+WIimhqTiI0eQUPBRXmFBulCFmneBcH9Du2QIac/RFgtB0
-         ykN9/Me7ltc8TFWhmNzPiQ3qYQlvB1977JR+h9ccv4Lc6MXyLPV7gModyDCR2xukjiIf
-         F9nSWGWjCA7aYQVANWKilM4s//f5IpoT8mTc6UZy8pKVGi+SjIufo3LoYBNsT8PLqBYO
-         VA81jm9pDN0AZj2/68Zb88mPhJYrEiIS3D7ZXF2FqxLSrsPcxbW/088aIm8ubbbXiz4Y
-         dTGGnv5rUGkfowZVNtCbk/5HsZzuvL9bnDmQ224JipcbMZrK7a0ze8FzosN5yb+e6zGt
-         6yiQ==
+        bh=WV4i7O8BzgnNi9s3HIsw9M8JIdyfTKAykF37RMUEeDI=;
+        b=FmwPwbnr0QiwbN9cFi0HeIzq91QfJ9NAmquz0Iv6i36HQBqvOLp7Xbg/fMhtUACapS
+         2W5H6W73OAc6rbsdatD8MTqCkgrmhxEPVkoQwhbQwq7frlPhDLzqs7IWxoWcEcmlZAOt
+         hZPaLY0H6iDWRRpzclVQuU8j/nK0rI7fWRYG5uaHTCpz8W6UhCP2WpdQXBd1kFC5ZglH
+         OH/pWbbGqFRMuIZkp9PeHgOlTUuGf8mBarEUFQvkfarXgHildhXmJzv0/R7ZX4bMB9aS
+         XPkuXpLV7mDnnF5mxRoJRm1OuiwRmL1/PJGZ0UxNKkdWkTHtRPIopDZziAAA7DnxWNLm
+         UaWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OOzIbrFIOKeJXJT4ID/MUCczRZmmy/MUgRjL2diXaTc=;
-        b=JLTvZuemKHC1WULGeq0HJ/SnHrA69o8mXFT08VW3rxmsBxLhcaGM77iGxvJhiFabxg
-         CDcGPpaLVjK/oGdka43Hd4hCa6dlODENsQ3I/+bR6zuOVOVEUKdhdl9UHwKx2VMKzZuO
-         aXgzOSD5IHRD83mxTpMfp5O992hM2xoarR/jQQjYbvsplJ37i0jjCXVW65GQoUwBPdJe
-         RstiICfOY9YSEliiF7EDH0yH5JTjePZAWXW/SPVsZVKoksa/7eW/McKvUQZL/0OL9wMO
-         yu8aVfspVc4X2HwBARzbJ5nNOrKAs1fm+xzOp4rWZtu/VpFuYU18Hs/7Mkw/S/W3MYK1
-         8iig==
-X-Gm-Message-State: ANoB5pmrufMUX0OAIol2wTwakl3+1kHUjNhwQ2F92jGPB6CZiIXvmHh4
-        tIRqNZxWJHPypHhvLfvCFhzc9aXNp53NmhtOOr2NVA==
-X-Google-Smtp-Source: AA0mqf6RIQN3NAIPq8n53brtdf2c7RBwC0dm3F1Hg3vcuzZA+yL7BZxfmN50fae3ZbC8cj8CDbzO4XEicnkv+Bo+9Ew=
-X-Received: by 2002:a05:6402:5d5:b0:464:fa1:9ece with SMTP id
- n21-20020a05640205d500b004640fa19ecemr21917763edx.262.1669123205084; Tue, 22
- Nov 2022 05:20:05 -0800 (PST)
-MIME-Version: 1.0
-References: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
-From:   Info Skymem <info@skymem.com>
-Date:   Tue, 22 Nov 2022 14:19:54 +0100
-Message-ID: <CAKvd=_ivRY1kDZYqygm2ZQCrcWV4f7RJjTdgw2i27gW9aUjCVA@mail.gmail.com>
-Subject: Re: [PATCH] wifi: b43: remove reference to removed config B43_PCMCIA
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-        b43-dev@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        bh=WV4i7O8BzgnNi9s3HIsw9M8JIdyfTKAykF37RMUEeDI=;
+        b=SeoH4GLIMknVVJ67q8a4MeO7+K5Iq4uufNvAxVuTGDp40SBob0hAuodzzJznL3Q0n7
+         BzC9loyhnfjls0OqyebgWfsLAZW08DoQrOhwSCdyceFsKoSm7NPGm5KQIc68KLdrGhxZ
+         JxUNfGJwCr5yEYSSD1exdPK0RN5Rw68FsvRbZb1ZBty3TJeOkW7drjnmqfWtSp3jGuIi
+         UQQkMIteDX7Q4aYJHd3lKNtyLsiLG54V1FcI0Sa0W071lyN651nW5ZGWo5Hdm8BzMSNK
+         ghyAYj1uFOrR+FiwsIuHhI7AzhZcODi8Fxa8wCn7vv9GBMPFsB+0m7Dzx4PITPnhePOU
+         TvmA==
+X-Gm-Message-State: ANoB5pnpeqsPcA4vOV8lnmyYdSylwEjWM6TTt77FFRd4YigdUxYqgkk0
+        z6wirOGrakAu9RYKHuC9/Bk=
+X-Google-Smtp-Source: AA0mqf5zQy0JMJm9xD6ZBOVIN5DHUP0heNHNJ5Y+eIMmNRJoeW2dTtMzPucyUyRkNu04MavtMVvUcA==
+X-Received: by 2002:a17:906:1244:b0:78d:d4ca:21f7 with SMTP id u4-20020a170906124400b0078dd4ca21f7mr20059292eja.128.1669123430366;
+        Tue, 22 Nov 2022 05:23:50 -0800 (PST)
+Received: from felia.fritz.box (200116b8267b3700c41d4e99e424db57.dip.versatel-1u1.de. [2001:16b8:267b:3700:c41d:4e99:e424:db57])
+        by smtp.gmail.com with ESMTPSA id bd27-20020a056402207b00b004585eba4baesm5429717edb.80.2022.11.22.05.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Nov 2022 05:23:49 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] media: imx: remove code for non-existing config IMX_GPT_ICAP
+Date:   Tue, 22 Nov 2022 14:23:30 +0100
+Message-Id: <20221122132330.30408-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-thank you for your information.
+There never was a config IMX_GPT_ICAP in the repository. So remove the code
+conditional on this config and simplify the callers that just called empty
+functions.
 
-On our website you can find email addresses of companies and people.
-https://www.skymem.info
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/staging/media/imx/imx-media-fim.c | 54 -----------------------
+ 1 file changed, 54 deletions(-)
 
-In short, it=E2=80=99s like Google for emails.
+diff --git a/drivers/staging/media/imx/imx-media-fim.c b/drivers/staging/media/imx/imx-media-fim.c
+index 3a9182933508..19a48eb445fd 100644
+--- a/drivers/staging/media/imx/imx-media-fim.c
++++ b/drivers/staging/media/imx/imx-media-fim.c
+@@ -187,54 +187,6 @@ static void frame_interval_monitor(struct imx_media_fim *fim,
+ 		send_fim_event(fim, error_avg);
+ }
+ 
+-#ifdef CONFIG_IMX_GPT_ICAP
+-/*
+- * Input Capture method of measuring frame intervals. Not subject
+- * to interrupt latency.
+- */
+-static void fim_input_capture_handler(int channel, void *dev_id,
+-				      ktime_t timestamp)
+-{
+-	struct imx_media_fim *fim = dev_id;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&fim->lock, flags);
+-
+-	frame_interval_monitor(fim, timestamp);
+-
+-	if (!completion_done(&fim->icap_first_event))
+-		complete(&fim->icap_first_event);
+-
+-	spin_unlock_irqrestore(&fim->lock, flags);
+-}
+-
+-static int fim_request_input_capture(struct imx_media_fim *fim)
+-{
+-	init_completion(&fim->icap_first_event);
+-
+-	return mxc_request_input_capture(fim->icap_channel,
+-					 fim_input_capture_handler,
+-					 fim->icap_flags, fim);
+-}
+-
+-static void fim_free_input_capture(struct imx_media_fim *fim)
+-{
+-	mxc_free_input_capture(fim->icap_channel, fim);
+-}
+-
+-#else /* CONFIG_IMX_GPT_ICAP */
+-
+-static int fim_request_input_capture(struct imx_media_fim *fim)
+-{
+-	return 0;
+-}
+-
+-static void fim_free_input_capture(struct imx_media_fim *fim)
+-{
+-}
+-
+-#endif /* CONFIG_IMX_GPT_ICAP */
+-
+ /*
+  * In case we are monitoring the first frame interval after streamon
+  * (when fim->num_skip = 0), we need a valid fim->last_ts before we
+@@ -435,14 +387,8 @@ int imx_media_fim_set_stream(struct imx_media_fim *fim,
+ 		spin_unlock_irqrestore(&fim->lock, flags);
+ 
+ 		if (icap_enabled(fim)) {
+-			ret = fim_request_input_capture(fim);
+-			if (ret)
+-				goto out;
+ 			fim_acquire_first_ts(fim);
+ 		}
+-	} else {
+-		if (icap_enabled(fim))
+-			fim_free_input_capture(fim);
+ 	}
+ 
+ 	fim->stream_on = on;
+-- 
+2.17.1
 
-Best regards,
-Robert,
-Skymem team
-
-On Tue, Nov 22, 2022 at 2:15 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wro=
-te:
->
-> Commit 399500da18f7 ("ssb: pick PCMCIA host code support from b43 driver"=
-)
-> removes the config B43_PCMCIA.
->
-> Clean up the last reference to this removed config B43_PCMCIA in the
-> b43_print_driverinfo() function.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  drivers/net/wireless/broadcom/b43/main.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wirel=
-ess/broadcom/b43/main.c
-> index 298febbdffc0..92ca0b2ca286 100644
-> --- a/drivers/net/wireless/broadcom/b43/main.c
-> +++ b/drivers/net/wireless/broadcom/b43/main.c
-> @@ -5784,15 +5784,12 @@ void b43_controller_restart(struct b43_wldev *dev=
-, const char *reason)
->
->  static void b43_print_driverinfo(void)
->  {
-> -       const char *feat_pci =3D "", *feat_pcmcia =3D "", *feat_nphy =3D =
-"",
-> +       const char *feat_pci =3D "", *feat_nphy =3D "",
->                    *feat_leds =3D "", *feat_sdio =3D "";
->
->  #ifdef CONFIG_B43_PCI_AUTOSELECT
->         feat_pci =3D "P";
->  #endif
-> -#ifdef CONFIG_B43_PCMCIA
-> -       feat_pcmcia =3D "M";
-> -#endif
->  #ifdef CONFIG_B43_PHY_N
->         feat_nphy =3D "N";
->  #endif
-> @@ -5803,9 +5800,8 @@ static void b43_print_driverinfo(void)
->         feat_sdio =3D "S";
->  #endif
->         printk(KERN_INFO "Broadcom 43xx driver loaded "
-> -              "[ Features: %s%s%s%s%s ]\n",
-> -              feat_pci, feat_pcmcia, feat_nphy,
-> -              feat_leds, feat_sdio);
-> +              "[ Features: %s%s%s%s ]\n",
-> +              feat_pci, feat_nphy, feat_leds, feat_sdio);
->  }
->
->  static int __init b43_init(void)
-> --
-> 2.17.1
->
->
-> _______________________________________________
-> b43-dev mailing list
-> b43-dev@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/b43-dev
