@@ -2,107 +2,158 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B486C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Nov 2022 07:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4488FC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Nov 2022 08:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232254AbiKVHAj (ORCPT
+        id S232154AbiKVID6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Nov 2022 02:00:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57882 "EHLO
+        Tue, 22 Nov 2022 03:03:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbiKVHAi (ORCPT
+        with ESMTP id S232638AbiKVID4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Nov 2022 02:00:38 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 721E423BF0;
-        Mon, 21 Nov 2022 23:00:37 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id i10so33592491ejg.6;
-        Mon, 21 Nov 2022 23:00:37 -0800 (PST)
+        Tue, 22 Nov 2022 03:03:56 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 577EA21E12
+        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 00:03:54 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id n3so6896998wrp.5
+        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 00:03:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RukMbpM7DzNOaOS5LbwSgZ9se9n27VN51Vl7EeaDcBA=;
-        b=HzOnesO0M/oRRindlCn3A72Afi0XaJBZNYvkRzoKZ6hbxCqgUBOH0AGml+hOeCrv3O
-         9WnxOwK9z2ixayRMIBC2EHqOyPxS3CwdVR4cpQh9YuNObRNkKiFu7YHt/U1VcGumhBwu
-         Fs8bxkMj4fzV/T0AwDeVqJSWLyxsAcNTSuH6TXtYN597l3zQHKKTM1eRybG4OkxkpdO5
-         Typt0DKAptdPi/w0ySvR4tMwGgJw1uXbMeApl6CGgDszL/NbN0kgV5cJPI5ChB5eIYLg
-         pJtdyyMgiByu99QkkW4NGCU4I2NiZqZy+rLIqRBlt3FZop9J6Ir2wHfoycEI6YdAIQXk
-         OlvQ==
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kGi+yAsvJ2Bt3D68oe/oFub1RRmdfnsNP3WdwJexxgk=;
+        b=OMGBNR+53FHnRxCjsa92FggLXTaYrdP1DxAo1pnqtURhP6vxAhHTWOUNPkRRTDnjnF
+         n5EUzOnzhWE3dI4lgVYNJRL570O1qEhNpO9eDlHhn9i5SXPy1BBE5IauNoKh7R+8q1X7
+         +0yiSZ4biOROSUIhR/yFyqBJ3wH1DCY0GHz7DCy0qD+oRC4jbx5LPEORiejiC94lFCod
+         pg8vFPZ0Z5CThSQ4DScklnQ2iYIjZiNhHvX0Y39ik60BkDcWnv+0ZLTQh6TOZGbuBc4r
+         DMNMB8xM0wLPtHRfm2Xb4FOvM95vxkolHw9dqh1tnArzydBv1eAaZRnmnjSo2/QPC3cD
+         KUPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RukMbpM7DzNOaOS5LbwSgZ9se9n27VN51Vl7EeaDcBA=;
-        b=SaZ7Eka5vLUtOr2GQ8S9sELmKqHIYR2aokKcUfBih5uvv/bI4fHPV0yY1YIbNOifer
-         oTpTy6JupShUcbZ+cUesm6wmZikP7wCYhN8s1gXHmP2YorEYWqJGaQEmMyZKrjOGOR+p
-         NUvdr3gUgxKdO8e1+LpQtCJT68RFUrr/cWTBpc4sJTU2nuO/CuC6ww9tOgaCutBTOXYh
-         lXEqrd0KylIGti8WNkz3R1e1CE7SIjmJQQ32Xz9c3epyOFiOD+ogG8ImJ29/lGVf+mHn
-         PbUuPZ9jcibdjv4SjhlNJrXQeSt7tQtGR8rNKFvByvSwQQ4oncLH4i8nJzZGuRYmiam4
-         vcRA==
-X-Gm-Message-State: ANoB5pllxgLHYOhAPak/dOKl2tzmhcxgAud6i5psbkX2pwbPUJkFQBkC
-        UviTtjf3/joK+GlNvcZn2Uz1x89/X2A=
-X-Google-Smtp-Source: AA0mqf5W5oeCVQeqq7On7gkKyBkHSppUXtAuOvnts6S6W4doH8Zy8I9BdIeCzt9MfzdP/it1VmLNAw==
-X-Received: by 2002:a17:906:77d0:b0:7ae:1826:b27b with SMTP id m16-20020a17090677d000b007ae1826b27bmr10025031ejn.692.1669100435918;
-        Mon, 21 Nov 2022 23:00:35 -0800 (PST)
+        bh=kGi+yAsvJ2Bt3D68oe/oFub1RRmdfnsNP3WdwJexxgk=;
+        b=2frvJ7Q7Fvxls0ihDA8BEVDuFFES6RuQITWA8dUsTMY8EMU/MvvlVVJv6s8QTGYgcu
+         4+S/KrsvbAis1IpD+5DGb8UzDE/6pp3VJ9HP7jwG/owxrgNQ1IT9aylBZuzb+21SyaLe
+         atgWsvv7bKackScANydz5j8ZPtegnX/8kCKXDCOLisrC3eUghHOJ3oub9XLouCLJLmVe
+         6GSXeARNKfqAiulJVyTKJo98QTvujFO00d0GgxTcW/Yxj1fY1SZwMh5oTJDFKjaXml4S
+         fqO3Ft4HHbKC+onzxPwbm+vummNJip2YgrZO/7xqOgpoNSW2PqmFSKV/v4+Tso4sNc/N
+         wDjg==
+X-Gm-Message-State: ANoB5pnxp5CRje/rXyZrnbUaLR0KmYaPyUbT4Bjcal70fTsPjKVajegP
+        BRz3vz76YNy6BtAqdWlWFH8=
+X-Google-Smtp-Source: AA0mqf6lM5ccSe+dVM1AZflD0NdV3k3fbHailrzQF+2gBWGrBfmQ7iPsTPU0l1Xey1qtawF+oMr74A==
+X-Received: by 2002:a05:6000:16c6:b0:236:6e66:3447 with SMTP id h6-20020a05600016c600b002366e663447mr13412336wrf.24.1669104232909;
+        Tue, 22 Nov 2022 00:03:52 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id qk14-20020a170906d9ce00b00772061034dbsm5664650ejb.182.2022.11.21.23.00.33
+        by smtp.gmail.com with ESMTPSA id n3-20020a05600c4f8300b003d01b84e9b2sm7573873wmq.27.2022.11.22.00.03.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Nov 2022 23:00:35 -0800 (PST)
-Date:   Tue, 22 Nov 2022 10:00:27 +0300
+        Tue, 22 Nov 2022 00:03:52 -0800 (PST)
+Date:   Tue, 22 Nov 2022 11:03:49 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Albert Briscoe <albertsbriscoe@gmail.com>,
-        Zqiang <qiang.zhang@windriver.com>,
-        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: function: use after free in printer_close()
-Message-ID: <Y3xzi389jS0PmEBA@kadam>
-References: <Y3uOxcvowFq75Tzv@kili>
- <b7dcf498-51ea-3aaf-211f-09fa59c38768@collabora.com>
+To:     thomas.jarosch@intra2net.com
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] xfrm: Fix oops in __xfrm_state_delete()
+Message-ID: <Y3yCZRzW4Vz3dOE4@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b7dcf498-51ea-3aaf-211f-09fa59c38768@collabora.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Nov 21, 2022 at 04:32:52PM +0100, Andrzej Pietrasiewicz wrote:
-> Hi Dan,
-> 
-> I'm fine with either symmetrically removing the DBG() from "printer_open()"
-> or with this version of the patch.
-> 
-> It seems to me that this version better fits "fixing UAF", though.
-> Whether the driver is too verbose is another matter, and if it is,
-> it deserves its own patch because DBG() invocations are sprinkled
-> here and there.
+Hello Thomas Jarosch,
 
-It is too verbose, but I'm trying to cut my kernel work to an hour a day
-and then all day Friday so I don't have time to clean to do clean up
-work.  A UAF is sort of high value but clean up is endless.
+The patch c39f95aaf6d1: "xfrm: Fix oops in __xfrm_state_delete()"
+from Nov 2, 2022, leads to the following Smatch static checker
+warning:
 
-I obviously considered this as v1 but thought deleting was better.  I
-still do.  :)  But it's not worth spending time on.
+	net/xfrm/xfrm_policy.c:2139 xfrm_policy_lookup_bytype()
+	error: potential NULL/IS_ERR bug 'ret'
 
-> 
-> W dniu 21.11.2022 o 15:44, Dan Carpenter pisze:
-> > The printer_dev_free() function frees "dev" but then it is dereferenced
-> > by the debug code on the next line.  Flip the order to avoid the use after
-> > free.
-> > 
-> > Fixes: e8d5f92b8d30 ("usb: gadget: function: printer: fix use-after-free in __lock_acquire")
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> Acked-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+net/xfrm/xfrm_policy.c
+    2076 static struct xfrm_policy *xfrm_policy_lookup_bytype(struct net *net, u8 type,
+    2077                                                      const struct flowi *fl,
+    2078                                                      u16 family, u8 dir,
+    2079                                                      u32 if_id)
+    2080 {
+    2081         struct xfrm_pol_inexact_candidates cand;
+    2082         const xfrm_address_t *daddr, *saddr;
+    2083         struct xfrm_pol_inexact_bin *bin;
+    2084         struct xfrm_policy *pol, *ret;
+    2085         struct hlist_head *chain;
+    2086         unsigned int sequence;
+    2087         int err;
+    2088 
+    2089         daddr = xfrm_flowi_daddr(fl, family);
+    2090         saddr = xfrm_flowi_saddr(fl, family);
+    2091         if (unlikely(!daddr || !saddr))
+    2092                 return NULL;
+    2093 
+    2094         rcu_read_lock();
+    2095  retry:
+    2096         do {
+    2097                 sequence = read_seqcount_begin(&net->xfrm.xfrm_policy_hash_generation);
+    2098                 chain = policy_hash_direct(net, daddr, saddr, family, dir);
+    2099         } while (read_seqcount_retry(&net->xfrm.xfrm_policy_hash_generation, sequence));
+    2100 
+    2101         ret = NULL;
 
-Thanks!
+ret starts as NULL.
+
+    2102         hlist_for_each_entry_rcu(pol, chain, bydst) {
+    2103                 err = xfrm_policy_match(pol, fl, type, family, if_id);
+    2104                 if (err) {
+    2105                         if (err == -ESRCH)
+    2106                                 continue;
+
+I guess it could end as NULL if every err == -ESRCH.
+
+    2107                         else {
+    2108                                 ret = ERR_PTR(err);
+    2109                                 goto fail;
+    2110                         }
+    2111                 } else {
+    2112                         ret = pol;
+    2113                         break;
+    2114                 }
+    2115         }
+    2116         bin = xfrm_policy_inexact_lookup_rcu(net, type, family, dir, if_id);
+    2117         if (!bin || !xfrm_policy_find_inexact_candidates(&cand, bin, saddr,
+    2118                                                          daddr))
+    2119                 goto skip_inexact;
+    2120 
+    2121         pol = xfrm_policy_eval_candidates(&cand, ret, fl, type,
+    2122                                           family, if_id);
+    2123         if (pol) {
+    2124                 ret = pol;
+    2125                 if (IS_ERR(pol))
+    2126                         goto fail;
+    2127         }
+    2128 
+    2129 skip_inexact:
+    2130         if (read_seqcount_retry(&net->xfrm.xfrm_policy_hash_generation, sequence))
+    2131                 goto retry;
+    2132 
+    2133         if (ret && !xfrm_pol_hold_rcu(ret))
+                     ^^^
+This code says it can be NULL.
+
+    2134                 goto retry;
+    2135 fail:
+    2136         rcu_read_unlock();
+    2137 
+    2138         if (!IS_ERR(ret))
+                             ^^^
+So this should be if (!IS_ERR_OR_NULL(ret))
+
+--> 2139                 printk("xfrm_policy_lookup_bytype: policy if_id %d, wanted if_id  %d\n", ret->if_id, if_id);
+                                                                                                  ^^^^^
+Unchecked dereference.
+
+    2140 
+    2141         return ret;
+    2142 }
 
 regards,
 dan carpenter
-
