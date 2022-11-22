@@ -2,158 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4488FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Nov 2022 08:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E35C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Nov 2022 09:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232154AbiKVID6 (ORCPT
+        id S232341AbiKVJtk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Nov 2022 03:03:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41918 "EHLO
+        Tue, 22 Nov 2022 04:49:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232638AbiKVID4 (ORCPT
+        with ESMTP id S233382AbiKVJth (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Nov 2022 03:03:56 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 577EA21E12
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 00:03:54 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id n3so6896998wrp.5
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 00:03:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kGi+yAsvJ2Bt3D68oe/oFub1RRmdfnsNP3WdwJexxgk=;
-        b=OMGBNR+53FHnRxCjsa92FggLXTaYrdP1DxAo1pnqtURhP6vxAhHTWOUNPkRRTDnjnF
-         n5EUzOnzhWE3dI4lgVYNJRL570O1qEhNpO9eDlHhn9i5SXPy1BBE5IauNoKh7R+8q1X7
-         +0yiSZ4biOROSUIhR/yFyqBJ3wH1DCY0GHz7DCy0qD+oRC4jbx5LPEORiejiC94lFCod
-         pg8vFPZ0Z5CThSQ4DScklnQ2iYIjZiNhHvX0Y39ik60BkDcWnv+0ZLTQh6TOZGbuBc4r
-         DMNMB8xM0wLPtHRfm2Xb4FOvM95vxkolHw9dqh1tnArzydBv1eAaZRnmnjSo2/QPC3cD
-         KUPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGi+yAsvJ2Bt3D68oe/oFub1RRmdfnsNP3WdwJexxgk=;
-        b=2frvJ7Q7Fvxls0ihDA8BEVDuFFES6RuQITWA8dUsTMY8EMU/MvvlVVJv6s8QTGYgcu
-         4+S/KrsvbAis1IpD+5DGb8UzDE/6pp3VJ9HP7jwG/owxrgNQ1IT9aylBZuzb+21SyaLe
-         atgWsvv7bKackScANydz5j8ZPtegnX/8kCKXDCOLisrC3eUghHOJ3oub9XLouCLJLmVe
-         6GSXeARNKfqAiulJVyTKJo98QTvujFO00d0GgxTcW/Yxj1fY1SZwMh5oTJDFKjaXml4S
-         fqO3Ft4HHbKC+onzxPwbm+vummNJip2YgrZO/7xqOgpoNSW2PqmFSKV/v4+Tso4sNc/N
-         wDjg==
-X-Gm-Message-State: ANoB5pnxp5CRje/rXyZrnbUaLR0KmYaPyUbT4Bjcal70fTsPjKVajegP
-        BRz3vz76YNy6BtAqdWlWFH8=
-X-Google-Smtp-Source: AA0mqf6lM5ccSe+dVM1AZflD0NdV3k3fbHailrzQF+2gBWGrBfmQ7iPsTPU0l1Xey1qtawF+oMr74A==
-X-Received: by 2002:a05:6000:16c6:b0:236:6e66:3447 with SMTP id h6-20020a05600016c600b002366e663447mr13412336wrf.24.1669104232909;
-        Tue, 22 Nov 2022 00:03:52 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n3-20020a05600c4f8300b003d01b84e9b2sm7573873wmq.27.2022.11.22.00.03.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Nov 2022 00:03:52 -0800 (PST)
-Date:   Tue, 22 Nov 2022 11:03:49 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     thomas.jarosch@intra2net.com
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] xfrm: Fix oops in __xfrm_state_delete()
-Message-ID: <Y3yCZRzW4Vz3dOE4@kili>
+        Tue, 22 Nov 2022 04:49:37 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50C0D429B5;
+        Tue, 22 Nov 2022 01:49:36 -0800 (PST)
+Received: from [192.168.0.192] (unknown [194.146.248.75])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: andrzej.p)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id BE2346602AC7;
+        Tue, 22 Nov 2022 09:49:34 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1669110575;
+        bh=HEPaJdPz6fXCosaO0Ku+ggnHlSYTwNdmruocqlZdFog=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=JjsU/qNNxymZbYJ5CQud9tO9oiPw3t+SZIHPfPIng1pEDfGMkvES4Yjx2kXQ0Lukn
+         4VfbAUSXI38dYiwXc+HsIU79kACQi9//HMLennxvwt23xqsjxdRVAKxq8MrkG4ZtgC
+         J0UWy+ro/YJuFkm1kj9a5Q42nBoJN/Y8dZ/fu0w42FBJljmaQ3vPAaFRlXxsTGCcEf
+         o3Dy8vngRlr7WBBObFuX3wGlQ9h3SP2PzLkiqt8UxF++yj7eZJuq8Pxf8TB1C6ZKtx
+         8TkMhTizlreNRM9BAil6p1WXJ30cqe0b9Ob02u4IRupNatSEwcJhVwQKNHPOD5/1e+
+         Vi43+4lHGPUew==
+Message-ID: <1894a272-4816-c44c-61d5-bfcfe478d7e5@collabora.com>
+Date:   Tue, 22 Nov 2022 10:49:31 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] usb: gadget: function: use after free in printer_close()
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Albert Briscoe <albertsbriscoe@gmail.com>,
+        Zqiang <qiang.zhang@windriver.com>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <Y3uOxcvowFq75Tzv@kili>
+ <b7dcf498-51ea-3aaf-211f-09fa59c38768@collabora.com> <Y3xzi389jS0PmEBA@kadam>
+Content-Language: en-US
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+In-Reply-To: <Y3xzi389jS0PmEBA@kadam>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Thomas Jarosch,
+Hi Dan,
 
-The patch c39f95aaf6d1: "xfrm: Fix oops in __xfrm_state_delete()"
-from Nov 2, 2022, leads to the following Smatch static checker
-warning:
+W dniu 22.11.2022 o 08:00, Dan Carpenter pisze:
+> On Mon, Nov 21, 2022 at 04:32:52PM +0100, Andrzej Pietrasiewicz wrote:
+>> Hi Dan,
+>>
+>> I'm fine with either symmetrically removing the DBG() from "printer_open()"
+>> or with this version of the patch.
+>>
+>> It seems to me that this version better fits "fixing UAF", though.
+>> Whether the driver is too verbose is another matter, and if it is,
+>> it deserves its own patch because DBG() invocations are sprinkled
+>> here and there.
+> 
+> It is too verbose, but I'm trying to cut my kernel work to an hour a day
+> and then all day Friday so I don't have time to clean to do clean up
+> work.  A UAF is sort of high value but clean up is endless.
+> 
 
-	net/xfrm/xfrm_policy.c:2139 xfrm_policy_lookup_bytype()
-	error: potential NULL/IS_ERR bug 'ret'
+I volunteer to reduce the amount of debug messages it produces.
 
-net/xfrm/xfrm_policy.c
-    2076 static struct xfrm_policy *xfrm_policy_lookup_bytype(struct net *net, u8 type,
-    2077                                                      const struct flowi *fl,
-    2078                                                      u16 family, u8 dir,
-    2079                                                      u32 if_id)
-    2080 {
-    2081         struct xfrm_pol_inexact_candidates cand;
-    2082         const xfrm_address_t *daddr, *saddr;
-    2083         struct xfrm_pol_inexact_bin *bin;
-    2084         struct xfrm_policy *pol, *ret;
-    2085         struct hlist_head *chain;
-    2086         unsigned int sequence;
-    2087         int err;
-    2088 
-    2089         daddr = xfrm_flowi_daddr(fl, family);
-    2090         saddr = xfrm_flowi_saddr(fl, family);
-    2091         if (unlikely(!daddr || !saddr))
-    2092                 return NULL;
-    2093 
-    2094         rcu_read_lock();
-    2095  retry:
-    2096         do {
-    2097                 sequence = read_seqcount_begin(&net->xfrm.xfrm_policy_hash_generation);
-    2098                 chain = policy_hash_direct(net, daddr, saddr, family, dir);
-    2099         } while (read_seqcount_retry(&net->xfrm.xfrm_policy_hash_generation, sequence));
-    2100 
-    2101         ret = NULL;
+Andrzej
 
-ret starts as NULL.
+> I obviously considered this as v1 but thought deleting was better.  I
+> still do.  :)  But it's not worth spending time on.
+> 
+>>
+>> W dniu 21.11.2022 o 15:44, Dan Carpenter pisze:
+>>> The printer_dev_free() function frees "dev" but then it is dereferenced
+>>> by the debug code on the next line.  Flip the order to avoid the use after
+>>> free.
+>>>
+>>> Fixes: e8d5f92b8d30 ("usb: gadget: function: printer: fix use-after-free in __lock_acquire")
+>>> Signed-off-by: Dan Carpenter <error27@gmail.com>
+>>
+>> Acked-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+> 
+> Thanks!
+> 
+> regards,
+> dan carpenter
+> 
 
-    2102         hlist_for_each_entry_rcu(pol, chain, bydst) {
-    2103                 err = xfrm_policy_match(pol, fl, type, family, if_id);
-    2104                 if (err) {
-    2105                         if (err == -ESRCH)
-    2106                                 continue;
-
-I guess it could end as NULL if every err == -ESRCH.
-
-    2107                         else {
-    2108                                 ret = ERR_PTR(err);
-    2109                                 goto fail;
-    2110                         }
-    2111                 } else {
-    2112                         ret = pol;
-    2113                         break;
-    2114                 }
-    2115         }
-    2116         bin = xfrm_policy_inexact_lookup_rcu(net, type, family, dir, if_id);
-    2117         if (!bin || !xfrm_policy_find_inexact_candidates(&cand, bin, saddr,
-    2118                                                          daddr))
-    2119                 goto skip_inexact;
-    2120 
-    2121         pol = xfrm_policy_eval_candidates(&cand, ret, fl, type,
-    2122                                           family, if_id);
-    2123         if (pol) {
-    2124                 ret = pol;
-    2125                 if (IS_ERR(pol))
-    2126                         goto fail;
-    2127         }
-    2128 
-    2129 skip_inexact:
-    2130         if (read_seqcount_retry(&net->xfrm.xfrm_policy_hash_generation, sequence))
-    2131                 goto retry;
-    2132 
-    2133         if (ret && !xfrm_pol_hold_rcu(ret))
-                     ^^^
-This code says it can be NULL.
-
-    2134                 goto retry;
-    2135 fail:
-    2136         rcu_read_unlock();
-    2137 
-    2138         if (!IS_ERR(ret))
-                             ^^^
-So this should be if (!IS_ERR_OR_NULL(ret))
-
---> 2139                 printk("xfrm_policy_lookup_bytype: policy if_id %d, wanted if_id  %d\n", ret->if_id, if_id);
-                                                                                                  ^^^^^
-Unchecked dereference.
-
-    2140 
-    2141         return ret;
-    2142 }
-
-regards,
-dan carpenter
