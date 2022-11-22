@@ -2,158 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 078ACC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Nov 2022 13:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D017AC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Nov 2022 14:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233731AbiKVNYE (ORCPT
+        id S233743AbiKVOOx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Nov 2022 08:24:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53172 "EHLO
+        Tue, 22 Nov 2022 09:14:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233721AbiKVNX6 (ORCPT
+        with ESMTP id S233702AbiKVOOv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Nov 2022 08:23:58 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C4D81A07D;
-        Tue, 22 Nov 2022 05:23:51 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id m22so35688067eji.10;
-        Tue, 22 Nov 2022 05:23:51 -0800 (PST)
+        Tue, 22 Nov 2022 09:14:51 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB8B72CE39;
+        Tue, 22 Nov 2022 06:14:50 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id o30so10825752wms.2;
+        Tue, 22 Nov 2022 06:14:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WV4i7O8BzgnNi9s3HIsw9M8JIdyfTKAykF37RMUEeDI=;
-        b=FmwPwbnr0QiwbN9cFi0HeIzq91QfJ9NAmquz0Iv6i36HQBqvOLp7Xbg/fMhtUACapS
-         2W5H6W73OAc6rbsdatD8MTqCkgrmhxEPVkoQwhbQwq7frlPhDLzqs7IWxoWcEcmlZAOt
-         hZPaLY0H6iDWRRpzclVQuU8j/nK0rI7fWRYG5uaHTCpz8W6UhCP2WpdQXBd1kFC5ZglH
-         OH/pWbbGqFRMuIZkp9PeHgOlTUuGf8mBarEUFQvkfarXgHildhXmJzv0/R7ZX4bMB9aS
-         XPkuXpLV7mDnnF5mxRoJRm1OuiwRmL1/PJGZ0UxNKkdWkTHtRPIopDZziAAA7DnxWNLm
-         UaWQ==
+        bh=a14RPlR4WzocN7pcji6vCght7gucx4JNI1zx9s6eY8g=;
+        b=mOunQdWTUfcQkGDwPyUiTOqAiUBclPnjfakRR18S9Rp/73LXJHhpbEob7dG3AT71I7
+         /ZWCgT+ev7rTqlwaPmCPgzpv1Y2TXBSmc54H029ZdTYbxHq4CB/7gFDBxSi27qVKMRL9
+         85Uh/y3y26Dz24ahDSFtIFlX8jMUSRx7vzZnJ0M209gJOPoo3mpqwb0F48PKE0rnNfTL
+         efpRb7+nUbirk0pyQ5JEdky8GFv1fJBd2uUyse4ydzqfDmAWgSulrHM4I+O2rQBzkteO
+         hMOduwfTdJPAO8rj3nNnZhsrhsxwxq2nvFbOppT5itzio2+jgmEBmTtliTbKKJlucdTY
+         Podw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WV4i7O8BzgnNi9s3HIsw9M8JIdyfTKAykF37RMUEeDI=;
-        b=SeoH4GLIMknVVJ67q8a4MeO7+K5Iq4uufNvAxVuTGDp40SBob0hAuodzzJznL3Q0n7
-         BzC9loyhnfjls0OqyebgWfsLAZW08DoQrOhwSCdyceFsKoSm7NPGm5KQIc68KLdrGhxZ
-         JxUNfGJwCr5yEYSSD1exdPK0RN5Rw68FsvRbZb1ZBty3TJeOkW7drjnmqfWtSp3jGuIi
-         UQQkMIteDX7Q4aYJHd3lKNtyLsiLG54V1FcI0Sa0W071lyN651nW5ZGWo5Hdm8BzMSNK
-         ghyAYj1uFOrR+FiwsIuHhI7AzhZcODi8Fxa8wCn7vv9GBMPFsB+0m7Dzx4PITPnhePOU
-         TvmA==
-X-Gm-Message-State: ANoB5pnpeqsPcA4vOV8lnmyYdSylwEjWM6TTt77FFRd4YigdUxYqgkk0
-        z6wirOGrakAu9RYKHuC9/Bk=
-X-Google-Smtp-Source: AA0mqf5zQy0JMJm9xD6ZBOVIN5DHUP0heNHNJ5Y+eIMmNRJoeW2dTtMzPucyUyRkNu04MavtMVvUcA==
-X-Received: by 2002:a17:906:1244:b0:78d:d4ca:21f7 with SMTP id u4-20020a170906124400b0078dd4ca21f7mr20059292eja.128.1669123430366;
-        Tue, 22 Nov 2022 05:23:50 -0800 (PST)
+        bh=a14RPlR4WzocN7pcji6vCght7gucx4JNI1zx9s6eY8g=;
+        b=OOrAOcB8jLMMoaQr1zz5QvPRM7Te/5vZh/5rtxspN3Zs+GhrPISHIpVFXYsTUVnj+X
+         Fpv0l5BHLp6A58QIBN2sVpLLsOXwlkOSAnMK77Ip026wdQerblnzM+wnbGzRNIUXlXYq
+         Lu8YBjtVKywH9kDLCS0RhEnFcYabEvr4qWzStcPNM71m3rwCYE56bwOXOWZqoVw4B3Qb
+         +767qwAbjNoH4mZekPuYo4qSBEvdZ7g/6MaEvsFj44GpA41lbNuYTF/1wQQ0TwS+Cz6L
+         VpGi+fwMHEeg1ENNVSKFL2HWl4YBaFJRq+jjMFfRWKQUM14QKdQpjFAZe/2ePmYrlDwd
+         ssOw==
+X-Gm-Message-State: ANoB5plc6KbmalDvwdHr23wcWXmEoVrG4g9y3Vt9IEkgm+dhdTrgNSL1
+        baqEXQJe3fqPF7eFOKUruMs=
+X-Google-Smtp-Source: AA0mqf4rMNLyM2P7cFlrTcJpiA7QoSOmaY2mo45mjl+FkwhzZZORV6c9t/h9t8QRooLxyBHo3ktrzg==
+X-Received: by 2002:a1c:7208:0:b0:3cf:6198:dd2f with SMTP id n8-20020a1c7208000000b003cf6198dd2fmr7382274wmc.119.1669126489116;
+        Tue, 22 Nov 2022 06:14:49 -0800 (PST)
 Received: from felia.fritz.box (200116b8267b3700c41d4e99e424db57.dip.versatel-1u1.de. [2001:16b8:267b:3700:c41d:4e99:e424:db57])
-        by smtp.gmail.com with ESMTPSA id bd27-20020a056402207b00b004585eba4baesm5429717edb.80.2022.11.22.05.23.49
+        by smtp.gmail.com with ESMTPSA id l24-20020a05600c1d1800b003cf878c4468sm24774664wms.5.2022.11.22.06.14.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Nov 2022 05:23:49 -0800 (PST)
+        Tue, 22 Nov 2022 06:14:48 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Maarten ter Huurne <maarten@treewalker.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] media: imx: remove code for non-existing config IMX_GPT_ICAP
-Date:   Tue, 22 Nov 2022 14:23:30 +0100
-Message-Id: <20221122132330.30408-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] clocksource: ingenic-ost: define pm functions properly in platform_driver struct
+Date:   Tue, 22 Nov 2022 15:14:34 +0100
+Message-Id: <20221122141434.30498-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There never was a config IMX_GPT_ICAP in the repository. So remove the code
-conditional on this config and simplify the callers that just called empty
-functions.
+Commit ca7b72b5a5f2 ("clocksource: Add driver for the Ingenic JZ47xx OST")
+adds the struct platform_driver ingenic_ost_driver, with the definition of
+pm functions under the non-existing config PM_SUSPEND, which means the
+intended pm functions were never actually included in any build.
 
+Since commit 7a82e97a11b9 ("PM: core: introduce pm_ptr() macro"), the
+default pattern for platform_driver definitions is to use pm_ptr().
+Assuming CONFIG_PM_SUSPEND really intended to mean CONFIG_PM (and not
+CONFIG_PM_SLEEP), use pm_ptr() just as most other drivers do.
+
+Fixes: ca7b72b5a5f2 ("clocksource: Add driver for the Ingenic JZ47xx OST")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/staging/media/imx/imx-media-fim.c | 54 -----------------------
- 1 file changed, 54 deletions(-)
+ drivers/clocksource/ingenic-ost.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/staging/media/imx/imx-media-fim.c b/drivers/staging/media/imx/imx-media-fim.c
-index 3a9182933508..19a48eb445fd 100644
---- a/drivers/staging/media/imx/imx-media-fim.c
-+++ b/drivers/staging/media/imx/imx-media-fim.c
-@@ -187,54 +187,6 @@ static void frame_interval_monitor(struct imx_media_fim *fim,
- 		send_fim_event(fim, error_avg);
- }
- 
--#ifdef CONFIG_IMX_GPT_ICAP
--/*
-- * Input Capture method of measuring frame intervals. Not subject
-- * to interrupt latency.
-- */
--static void fim_input_capture_handler(int channel, void *dev_id,
--				      ktime_t timestamp)
--{
--	struct imx_media_fim *fim = dev_id;
--	unsigned long flags;
--
--	spin_lock_irqsave(&fim->lock, flags);
--
--	frame_interval_monitor(fim, timestamp);
--
--	if (!completion_done(&fim->icap_first_event))
--		complete(&fim->icap_first_event);
--
--	spin_unlock_irqrestore(&fim->lock, flags);
--}
--
--static int fim_request_input_capture(struct imx_media_fim *fim)
--{
--	init_completion(&fim->icap_first_event);
--
--	return mxc_request_input_capture(fim->icap_channel,
--					 fim_input_capture_handler,
--					 fim->icap_flags, fim);
--}
--
--static void fim_free_input_capture(struct imx_media_fim *fim)
--{
--	mxc_free_input_capture(fim->icap_channel, fim);
--}
--
--#else /* CONFIG_IMX_GPT_ICAP */
--
--static int fim_request_input_capture(struct imx_media_fim *fim)
--{
--	return 0;
--}
--
--static void fim_free_input_capture(struct imx_media_fim *fim)
--{
--}
--
--#endif /* CONFIG_IMX_GPT_ICAP */
--
- /*
-  * In case we are monitoring the first frame interval after streamon
-  * (when fim->num_skip = 0), we need a valid fim->last_ts before we
-@@ -435,14 +387,8 @@ int imx_media_fim_set_stream(struct imx_media_fim *fim,
- 		spin_unlock_irqrestore(&fim->lock, flags);
- 
- 		if (icap_enabled(fim)) {
--			ret = fim_request_input_capture(fim);
--			if (ret)
--				goto out;
- 			fim_acquire_first_ts(fim);
- 		}
--	} else {
--		if (icap_enabled(fim))
--			fim_free_input_capture(fim);
- 	}
- 
- 	fim->stream_on = on;
+diff --git a/drivers/clocksource/ingenic-ost.c b/drivers/clocksource/ingenic-ost.c
+index 06d25754e606..6b64731df15c 100644
+--- a/drivers/clocksource/ingenic-ost.c
++++ b/drivers/clocksource/ingenic-ost.c
+@@ -181,9 +181,7 @@ static const struct of_device_id ingenic_ost_of_match[] = {
+ static struct platform_driver ingenic_ost_driver = {
+ 	.driver = {
+ 		.name = "ingenic-ost",
+-#ifdef CONFIG_PM_SUSPEND
+-		.pm = &ingenic_ost_pm_ops,
+-#endif
++		.pm = pm_ptr(&ingenic_ost_pm_ops),
+ 		.of_match_table = ingenic_ost_of_match,
+ 	},
+ };
 -- 
 2.17.1
 
