@@ -2,137 +2,141 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0521C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 10:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8EAFC43219
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 17:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237338AbiKWKqe (ORCPT
+        id S239087AbiKWRzI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Nov 2022 05:46:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48982 "EHLO
+        Wed, 23 Nov 2022 12:55:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236681AbiKWKqG (ORCPT
+        with ESMTP id S238510AbiKWRy7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Nov 2022 05:46:06 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF1110FEE4;
-        Wed, 23 Nov 2022 02:33:34 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id x17so15253406wrn.6;
-        Wed, 23 Nov 2022 02:33:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+OqSAHENsP2Eu+k3T6lfgmaN20FBPw3RANOCBpU5sGY=;
-        b=GhTJSHSNMn1LSkt5XAIirYA0GPUA9wmRL7L897xAkRyovmoeA5oKzMqtiCG8e9MKeN
-         DwuH7xPWG2gTrNaEStYB107xVh+/tH8yIqg+60fHiyylngxIFxvavQuAAiQ/gXR8powy
-         ja4PWp4wavYUPrKLM4VLb7NdO4I9YkUMevz4j7ACzMwJnN6TZ7HFfJC3u4mc28A1U/iS
-         vxg6yd1m2+yqRnSFOGEwU5z+/6ZI+IPYT4awd7F1Box3TfVaJ3o0rphSFiOOSk/JWAVD
-         6Lr+LFhjGziY4otzt+S2RCnk4SiTFAuha7bV5GXb5nHSSjfXVUmvF/QTza5W+q+VagCr
-         BoEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+OqSAHENsP2Eu+k3T6lfgmaN20FBPw3RANOCBpU5sGY=;
-        b=68NC5Qhq9uZ8P8Y6yHdQhzeXSjJQI2OqFr6mJp22a2klMPN+SqOutuzAqZlDLoYfE/
-         wN2OoKRe4z6jqDVA+azAN3RTXsNT9Czjh5sTYUH0eIzR1KYvI/Jz3UV6/tD8fbtZD5OL
-         Oq2FmULyuCmmvsfLWTnv/cgmaxTPTg2FCz8iD3X/WdX9huOxrM/vJj6+Ve1r1lfBZJFw
-         ZdNbXjHky+8ROF815rX43jUYOcH1RN5JfrhMf4N5OQnOHNa8Os2gJlHhyX50vcDTekRt
-         bUrXfkDG32dTz0+tJMqpn7sU01EolQt0n9BTFAf+b4SPHb3zChs5/gwwCGeZNkRUBUN2
-         tGrw==
-X-Gm-Message-State: ANoB5plg8CKBZMvcVImEpmXQkWp2tGu5u1MIUP87mMprAa0ZXIfPi4WZ
-        iv62mNGcZnsyqcWXNYC0wLw=
-X-Google-Smtp-Source: AA0mqf67+7Gm4xBpd33mmNGuvLu7YiooVfeAVPs6SZjz+EPNiDTk4OC5/lxTyoCQ+JYbI2Q7RmUpDg==
-X-Received: by 2002:a5d:4f85:0:b0:22e:35f4:9182 with SMTP id d5-20020a5d4f85000000b0022e35f49182mr4585712wru.121.1669199604715;
-        Wed, 23 Nov 2022 02:33:24 -0800 (PST)
-Received: from felia.fritz.box (200116b826997500d517ac74edd630a9.dip.versatel-1u1.de. [2001:16b8:2699:7500:d517:ac74:edd6:30a9])
-        by smtp.gmail.com with ESMTPSA id p37-20020a05600c1da500b003cf4eac8e80sm2158191wms.23.2022.11.23.02.33.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Nov 2022 02:33:24 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Ariel Elior <aelior@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] qed: avoid defines prefixed with CONFIG
-Date:   Wed, 23 Nov 2022 11:33:05 +0100
-Message-Id: <20221123103305.9083-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 23 Nov 2022 12:54:59 -0500
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B4DF6A6AE;
+        Wed, 23 Nov 2022 09:54:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1669226095; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jHjYY2fJd6j8Ey0DgGBVJy1ZtjI/zI9LZpso74F6uno=;
+        b=1ceT52ICq2ZQyZ4ilTggZSteICvAwpgdUn1vYvVXSE1Mpod8SfUX32Wt/8J54K2lHRso31
+        snZSJGXMiK4SQZ2abeu3/UdXwAg09siupD1vdHV0NmqLQ+Dk6DCG8amLlA0klFo4G47bUL
+        SH03ByJZwO+d1SzA5l3/31j22IB6uJQ=
+Date:   Wed, 23 Nov 2022 17:54:47 +0000
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2] clocksource: ingenic-ost: define pm functions properly
+ in platform_driver struct
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <B3BTLR.7FLNQ6FO762W3@crapouillou.net>
+In-Reply-To: <20221123083159.22821-1-lukas.bulwahn@gmail.com>
+References: <20221123083159.22821-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
-that are introduced in a Kconfig file.
+Hi Lukas,
 
-Here, constants for bitmap indices of some configs are defined and these
-defines begin with the config's name, and are suffixed with BITMAP_IDX.
+Le mer. 23 nov. 2022 =E0 09:31:59 +0100, Lukas Bulwahn=20
+<lukas.bulwahn@gmail.com> a =E9crit :
+> Commit ca7b72b5a5f2 ("clocksource: Add driver for the Ingenic JZ47xx=20
+> OST")
+> adds the struct platform_driver ingenic_ost_driver, with the=20
+> definition of
+> pm functions under the non-existing config PM_SUSPEND, which means the
+> intended pm functions were never actually included in any build.
+>=20
+> As the only callbacks are .suspend_noirq and .resume_noirq, we can=20
+> assume
+> that it is intended to be CONFIG_PM_SLEEP.
+>=20
+> Since commit 1a3c7bb08826 ("PM: core: Add new *_PM_OPS macros,=20
+> deprecate
+> old ones"), the default pattern for platform_driver definitions
+> conditional for CONFIG_PM_SLEEP is to use pm_sleep_ptr().
+>=20
+> As __maybe_unused annotations on the dev_pm_ops structure and its=20
+> callbacks
+> are not needed anymore, remove these as well.
+>=20
+> Suggested-by: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-To avoid defines prefixed with "CONFIG", name these constants
-BITMAP_IDX_FOR_CONFIG_XYZ instead of CONFIG_XYZ_BITMAP_IDX.
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
 
-No functional change.
+Cheers,
+-Paul
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/net/ethernet/qlogic/qed/qed_mcp.c | 24 +++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+> ---
+> v1:=20
+> https://lore.kernel.org/all/20221122141434.30498-1-lukas.bulwahn@gmail.co=
+m/
+>=20
+> v1 -> v2:
+>   - incorporated Paul Cercueil's feedback:
+>     - changed to pm_sleep_ptr
+>     - dropped Fixes: tag
+>=20
+>  drivers/clocksource/ingenic-ost.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/clocksource/ingenic-ost.c=20
+> b/drivers/clocksource/ingenic-ost.c
+> index 06d25754e606..9f7c280a1336 100644
+> --- a/drivers/clocksource/ingenic-ost.c
+> +++ b/drivers/clocksource/ingenic-ost.c
+> @@ -141,7 +141,7 @@ static int __init ingenic_ost_probe(struct=20
+> platform_device *pdev)
+>  	return 0;
+>  }
+>=20
+> -static int __maybe_unused ingenic_ost_suspend(struct device *dev)
+> +static int ingenic_ost_suspend(struct device *dev)
+>  {
+>  	struct ingenic_ost *ost =3D dev_get_drvdata(dev);
+>=20
+> @@ -150,14 +150,14 @@ static int __maybe_unused=20
+> ingenic_ost_suspend(struct device *dev)
+>  	return 0;
+>  }
+>=20
+> -static int __maybe_unused ingenic_ost_resume(struct device *dev)
+> +static int ingenic_ost_resume(struct device *dev)
+>  {
+>  	struct ingenic_ost *ost =3D dev_get_drvdata(dev);
+>=20
+>  	return clk_enable(ost->clk);
+>  }
+>=20
+> -static const struct dev_pm_ops __maybe_unused ingenic_ost_pm_ops =3D {
+> +static const struct dev_pm_ops ingenic_ost_pm_ops =3D {
+>  	/* _noirq: We want the OST clock to be gated last / ungated first */
+>  	.suspend_noirq =3D ingenic_ost_suspend,
+>  	.resume_noirq  =3D ingenic_ost_resume,
+> @@ -181,9 +181,7 @@ static const struct of_device_id=20
+> ingenic_ost_of_match[] =3D {
+>  static struct platform_driver ingenic_ost_driver =3D {
+>  	.driver =3D {
+>  		.name =3D "ingenic-ost",
+> -#ifdef CONFIG_PM_SUSPEND
+> -		.pm =3D &ingenic_ost_pm_ops,
+> -#endif
+> +		.pm =3D pm_sleep_ptr(&ingenic_ost_pm_ops),
+>  		.of_match_table =3D ingenic_ost_of_match,
+>  	},
+>  };
+> --
+> 2.17.1
+>=20
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.c b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-index 9fb1fa479d4b..16e6bd466143 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-@@ -767,34 +767,34 @@ static int qed_mcp_cancel_load_req(struct qed_hwfn *p_hwfn,
- 	return rc;
- }
- 
--#define CONFIG_QEDE_BITMAP_IDX		BIT(0)
--#define CONFIG_QED_SRIOV_BITMAP_IDX	BIT(1)
--#define CONFIG_QEDR_BITMAP_IDX		BIT(2)
--#define CONFIG_QEDF_BITMAP_IDX		BIT(4)
--#define CONFIG_QEDI_BITMAP_IDX		BIT(5)
--#define CONFIG_QED_LL2_BITMAP_IDX	BIT(6)
-+#define BITMAP_IDX_FOR_CONFIG_QEDE	BIT(0)
-+#define BITMAP_IDX_FOR_CONFIG_QED_SRIOV	BIT(1)
-+#define BITMAP_IDX_FOR_CONFIG_QEDR	BIT(2)
-+#define BITMAP_IDX_FOR_CONFIG_QEDF	BIT(4)
-+#define BITMAP_IDX_FOR_CONFIG_QEDI	BIT(5)
-+#define BITMAP_IDX_FOR_CONFIG_QED_LL2	BIT(6)
- 
- static u32 qed_get_config_bitmap(void)
- {
- 	u32 config_bitmap = 0x0;
- 
- 	if (IS_ENABLED(CONFIG_QEDE))
--		config_bitmap |= CONFIG_QEDE_BITMAP_IDX;
-+		config_bitmap |= BITMAP_IDX_FOR_CONFIG_QEDE;
- 
- 	if (IS_ENABLED(CONFIG_QED_SRIOV))
--		config_bitmap |= CONFIG_QED_SRIOV_BITMAP_IDX;
-+		config_bitmap |= BITMAP_IDX_FOR_CONFIG_QED_SRIOV;
- 
- 	if (IS_ENABLED(CONFIG_QED_RDMA))
--		config_bitmap |= CONFIG_QEDR_BITMAP_IDX;
-+		config_bitmap |= BITMAP_IDX_FOR_CONFIG_QEDR;
- 
- 	if (IS_ENABLED(CONFIG_QED_FCOE))
--		config_bitmap |= CONFIG_QEDF_BITMAP_IDX;
-+		config_bitmap |= BITMAP_IDX_FOR_CONFIG_QEDF;
- 
- 	if (IS_ENABLED(CONFIG_QED_ISCSI))
--		config_bitmap |= CONFIG_QEDI_BITMAP_IDX;
-+		config_bitmap |= BITMAP_IDX_FOR_CONFIG_QEDI;
- 
- 	if (IS_ENABLED(CONFIG_QED_LL2))
--		config_bitmap |= CONFIG_QED_LL2_BITMAP_IDX;
-+		config_bitmap |= BITMAP_IDX_FOR_CONFIG_QED_LL2;
- 
- 	return config_bitmap;
- }
--- 
-2.17.1
 
