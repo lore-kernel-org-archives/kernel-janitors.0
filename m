@@ -2,115 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADC3C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 07:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AABC43217
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 07:44:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235984AbiKWHci (ORCPT
+        id S236167AbiKWHoD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Nov 2022 02:32:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43976 "EHLO
+        Wed, 23 Nov 2022 02:44:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235652AbiKWHcf (ORCPT
+        with ESMTP id S235633AbiKWHoA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Nov 2022 02:32:35 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F51C25E7
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 23:32:28 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id e27so667311ejc.12
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 23:32:28 -0800 (PST)
+        Wed, 23 Nov 2022 02:44:00 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBA2BF72C5;
+        Tue, 22 Nov 2022 23:43:59 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id z63so4704733ede.1;
+        Tue, 22 Nov 2022 23:43:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d4qo3fGXZQy+8oZhU7cu78EOId5JBj3qLdZ14a/QvWs=;
-        b=A+BOWQfr+GHxiyky3FGgeGI42YGjsE2iWDptOAvatoeyB9b+yQTLOul0n5laPGqlbe
-         A8piGSB5NYg/4Mx8w+5UKEgUuUDPNeVCoiivRVSTZ+v7IQJABI+rxTTv9og6rk9YteNK
-         46KvaNjHzhJc+JNV46ND6MLRLfneU7Bq3if2AEqmq4uvB1qBgpwg4/LiW9UpX2cF/WJG
-         zRrKF8HL05kapczSgtl+WiYryLavK86jPzLVFl7Pt6cIk5zN7kyYrvTXie5dEcjDEerw
-         B0xxdzXGaCXRdKnoJ2HGdD4lI8QQ02xOFPnp/IoUPQ0/13E6ecEHNzIP8y8jALv0Fp76
-         p3+Q==
+        bh=4tVlprrrNke5mFJD3/iYHZS4yaa+3ERCi6F/wJGiXeM=;
+        b=D8LMubMYRPyqtEe2Gjzyr9EplHp0q3MLWskKwHjRMUwgenyPDDpRZEkg8Io47uLz1X
+         vcDl6SbtlYIBMpNRSnRXNaG6xdLiHpuZBb5MKQUnhy7unO6dCUU15hjW4lMJ3hHSknhn
+         m7pALpuyQWFpm2NGNum+Be3YrFprtZqo+ZF+r83Jav+Ke+wO1ArwqZ9M22vAymcDhCY1
+         FSiZqhzOXyltmOD+/oVmZe1MihCKzQXP9XXC6AGCNDr4yBvuP6LXERTEGZ2XxNEVuHKw
+         VVasILyvML6eAY7oPF8Lw0LPUa9EC+aqfIwJNVY2nmBzCRHTFjbaYE81cNDezVY7xOon
+         6U9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=d4qo3fGXZQy+8oZhU7cu78EOId5JBj3qLdZ14a/QvWs=;
-        b=y0u/qQfViK3s6e5D3MXtjPfoJ/MMy4Drqr/jwgSbfjSGCvAvdqHqhQQBrJVP+HY+R/
-         ACn0u/OHE8OyCL14oBnQCWBpPljKfuGyLgxEjmAitpTz2uu/HCfu34vP16ZvgBodV+oi
-         7E9nGuyssD6f668uJGgLpZ7Fd44gLh/9+UMzXh8i2YcCZJLaZgECK6Yoqk1J7EkALbpX
-         iKYvXW48YbSDm1z40QmYcnHugwLL6OpPswf+TGclAl8Ib1+4/FSzVw0xp7+7CxNmmFia
-         7rNB3g2rDpOabs5j3HnXz/STiXoMdRE5bwALNTLADJWoCX1HStzY1IuUFEc0kpxQqAwg
-         8ZeA==
-X-Gm-Message-State: ANoB5plUW0/NI+SzX/VCMkXZTRfiDIA17ddTiWPiXEYOLtyeullCWRys
-        mendeuiNN6gOzaXKvjwgS2gkwg==
-X-Google-Smtp-Source: AA0mqf7YzWyH2VU2YnkG3jnX1ifCWu9zwuLgz/9nZTRc2x7pdPbOoX1z9PpmE2lNj2LlqmhLHx0DGA==
-X-Received: by 2002:a17:906:2302:b0:7b9:de77:f0ef with SMTP id l2-20020a170906230200b007b9de77f0efmr1476436eja.5.1669188747005;
-        Tue, 22 Nov 2022 23:32:27 -0800 (PST)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id g16-20020a170906539000b007b935641971sm938539ejo.5.2022.11.22.23.32.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Nov 2022 23:32:26 -0800 (PST)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 23 Nov 2022 08:32:26 +0100
-Message-Id: <COJI0ZYCXF71.26IIP7J1SRHDZ@otso>
-From:   "Luca Weiss" <luca.weiss@fairphone.com>
-To:     "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Andy Gross" <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
-        "Georgi Djakov" <djakov@kernel.org>
-Cc:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] interconnect: qcom: icc-rpmh: Fix an error handling
- path in qcom_icc_rpmh_probe()
-X-Mailer: aerc 0.13.0
-References: <ec929c37c655ede7bb42e426354093c8a1377a0b.1668947686.git.christophe.jaillet@wanadoo.fr> <COHSZZ9A5570.1P4NTXRE9IRZR@otso> <253d4aac-62af-15af-90e7-a3cd4bacba92@wanadoo.fr>
-In-Reply-To: <253d4aac-62af-15af-90e7-a3cd4bacba92@wanadoo.fr>
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4tVlprrrNke5mFJD3/iYHZS4yaa+3ERCi6F/wJGiXeM=;
+        b=U+BMeXhMX9ETXdS9W5PlRtf4flq+iLXxbX8O8k0jdW1FVD4rC3IK+mGlhRNLLNcP3M
+         m6R7q0szv5UmYuVT1ab0yxPRJicQ0lL7xwxR11KdtNLg+2T1XkAPNB3DNQ9CDCJNv1w5
+         3FdBmxGgGOw/UC8JxClxL/4dloR9zM57DfKuMTEp5ngG8dX8AnHCBZYkIQl3ym8DOU5l
+         CiaYhTDfmzO1//gMzECUQF1FHWZWS7Z+uL/VJEhnUd3+TDzHU1tPUPB0RLN1IkJCBkWp
+         E+6ENP21CHzvkdUEiQVkLkAfAzn/xBuomUau5SXRlUuohMpn1KVidkK4CWBZephJ/MoX
+         RYmw==
+X-Gm-Message-State: ANoB5plcx5N2f1kdk78BDYJFK28Jo5fnHiKvhhsS9yA4IKZp/1M1VHyY
+        T1rylr7cY550EmEp7cNyI5k=
+X-Google-Smtp-Source: AA0mqf4cajyyEnqd7ZFPlV8ZMXO0wtZID40H63DrcO87cf5SlOZ8JsQQKIBnpLBDkPeYd4KYwGnFGg==
+X-Received: by 2002:a50:f602:0:b0:469:4e4f:4827 with SMTP id c2-20020a50f602000000b004694e4f4827mr16435104edn.214.1669189438290;
+        Tue, 22 Nov 2022 23:43:58 -0800 (PST)
+Received: from felia.fritz.box (200116b826997500d517ac74edd630a9.dip.versatel-1u1.de. [2001:16b8:2699:7500:d517:ac74:edd6:30a9])
+        by smtp.gmail.com with ESMTPSA id fi17-20020a056402551100b00459012e5145sm7284446edb.70.2022.11.22.23.43.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Nov 2022 23:43:57 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] can: etas_es58x: repair conditional for a verbose debug message
+Date:   Wed, 23 Nov 2022 08:42:14 +0100
+Message-Id: <20221123074214.21538-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+The definition of VERBOSE_DEBUG for detailled debugging is set simply by
+adding "#define VERBOSE_DEBUG" in the source code. It is not a kernel
+configuration that is prefixed by CONFIG.
 
-On Tue Nov 22, 2022 at 10:45 PM CET, Christophe JAILLET wrote:
-> > I believe the same needs to be applied to icc-rpm.c.
->
-> Their are other issues in the error handling path of this file.
->
-> 1)	if (desc->has_bus_pd) {
-> 		ret =3D dev_pm_domain_attach(dev, true);
-> is unbalanced, both in the error handling path and in the remove function=
-.
->
->
-> 2)	clk_bulk_prepare_enable()
-> is not balanced in all error handling paths.
->
->
-> 3) the same issue about error handling if of_platform_populate() fails.
->
->
-> These issues have been introduced in different commits.
->
->
-> Would you prefer several patches, each related to a given Fixes: tag, or=
-=20
-> one bigger "fix all error handling paths"?
+As the netdev_vdbg() macro is already defined conditional on
+defined(VERBOSE_DEBUG), there is really no need to duplicate the check
+before calling netdev_vdbg().
 
-I don't really have an opinion on this, I guess if the issues were
-introduced in different commits, make separate fixes?
-If it's the wrong way somebody will tell you anyways ;)
+Repair the conditional for a verbose debug message.
 
-Regards
-Luca
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/net/can/usb/etas_es58x/es58x_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
->
-> Anyway, fixing the points above would require moving some code around.=20
-> Usually I try to avoid it, because it is not always easy to see=20
-> associated side effects.
->
-> CJ
+diff --git a/drivers/net/can/usb/etas_es58x/es58x_core.c b/drivers/net/can/usb/etas_es58x/es58x_core.c
+index 25f863b4f5f0..2708909fb851 100644
+--- a/drivers/net/can/usb/etas_es58x/es58x_core.c
++++ b/drivers/net/can/usb/etas_es58x/es58x_core.c
+@@ -989,7 +989,7 @@ int es58x_rx_cmd_ret_u32(struct net_device *netdev,
+ 			break;
+ 
+ 		case ES58X_RET_TYPE_TX_MSG:
+-			if (IS_ENABLED(CONFIG_VERBOSE_DEBUG) && net_ratelimit())
++			if (net_ratelimit())
+ 				netdev_vdbg(netdev, "%s: OK\n", ret_desc);
+ 			break;
+ 
+-- 
+2.17.1
+
