@@ -2,115 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBB7C4321E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 09:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F15C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 09:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237234AbiKWJNz (ORCPT
+        id S237558AbiKWJVr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Nov 2022 04:13:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55546 "EHLO
+        Wed, 23 Nov 2022 04:21:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237196AbiKWJNy (ORCPT
+        with ESMTP id S237518AbiKWJVJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Nov 2022 04:13:54 -0500
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F4387A76;
-        Wed, 23 Nov 2022 01:13:53 -0800 (PST)
-Received: by mail-pf1-f174.google.com with SMTP id b29so16754935pfp.13;
-        Wed, 23 Nov 2022 01:13:53 -0800 (PST)
+        Wed, 23 Nov 2022 04:21:09 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2C66C729;
+        Wed, 23 Nov 2022 01:21:07 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id b12so14637301wrn.2;
+        Wed, 23 Nov 2022 01:21:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eY1uoxUa/SzoVyhECcaH3Ygl3jk0Vc9W5NwCNu1iMGo=;
+        b=XP6X7gMPnbSHQxIvyy+jkz1FbWjuBZoOmlwJNu7KswlVr3M4bHd7fDcpVk7NyZo4pI
+         x71hz1r7zg8a6DeeB8VSSq+484swfsIRM2j5FQdW49jdpLv/c79ry7cK5Kx8d0fS+bz7
+         k9v7La8Ddfx6xF84RU3xhQOb5U5R/xqlzyozq6l3bK+n2UMfJihOinxNdjoe6QPbFPxp
+         GPzhc2NcTnHBGaC451kHiueKTEfNmk+qHe+HHCIAOqBjXXDQbwlKfhzCs+qvbNueBf69
+         gXssQRwpZ6DcskJjMDeWdNvwlWkuTErz9K7CsTnfEpkSPe4Yd4DzaURlEZ/S184M+n6A
+         X1ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=srlt3bFZ6MegHyi5woaD55H1HX/2p/E5mzMQRE78ubI=;
-        b=mCOaP5A/twvoIWOM5puvcLpXNa8xGnl0XMQLJoDaW7vOX5vJm/zOvs2M36bPSLf5wA
-         o5Vo6uu6UcLAmAUwY9wldYCNxfNE4qgG+fRAk08kCim8c4CE0vOqkJihmS5dgOqrxHQR
-         1INhVMBsHcHvcLnW0ZWlRnobqf0kYIQomqwHC7jxw/b0v2okk2T/0m7O72nYtA9Y6LQ7
-         ps87QH0cA6NbU3hoSYOy0j9Sw5GMAD1hYjF4lwj0FaZesz1BNI9Yjt4aOdepms4xBojm
-         lsl+2Rz3XMQjyh8LZ6NHdjmim+84bw859okK8GSGme3Mhv7ohkVpjO5sLc/PIV/7DwvX
-         zN5A==
-X-Gm-Message-State: ANoB5pmeCpVH95dTHHORtg46MS0XK3D0Kxux6EFccfWwzwnW4BRD/W/m
-        TC9KVeNzBRnQh9BUdyVf6U1Lv/qwzQuiM0zjsE5lT61sqOVlHw==
-X-Google-Smtp-Source: AA0mqf6QcMoZUHVOXKOq7hmkMSMne2of/jIYq+ZRoWhH4Ple3ls0lT37Jo65bmF4tS5WSNRvBdMk6kxBtbk0gZCrA6Q=
-X-Received: by 2002:a63:1955:0:b0:477:50ed:6415 with SMTP id
- 21-20020a631955000000b0047750ed6415mr15313204pgz.535.1669194832632; Wed, 23
- Nov 2022 01:13:52 -0800 (PST)
+        bh=eY1uoxUa/SzoVyhECcaH3Ygl3jk0Vc9W5NwCNu1iMGo=;
+        b=usP2Zp7tY6kF0sDxa9nmtO4kBIODRRpuRNneTRaj3oGcQaXKw9mhMPHOLpgeWZwzi8
+         a7WQP8/yzjCLPw/CtU0TV59z5Fn1PV8VwHXtASOhvX1nc/MbIRSBfXws2JlLPnEkrhho
+         xV/Zvpj6Bqt/dG8Ht+wb5CC9cKq5S4c8KThLKWp0IUjF/pWc4stqf5ZalyOcwo5kdNRw
+         oUUEBzLbhUqA+stAYw+SWJWPjRzPlmTL3Zdh5GyoIlxHzYXuh9ZE3RVa3kOPxE5lE66A
+         SIVZO6NjHJ2DHqbGoB1aY8YE/JXiVXVf6Ll0RSSWUXbdr6sOXQXd9LQRVZhZhmqVuc7M
+         AMRA==
+X-Gm-Message-State: ANoB5pkUIEUhh+W3ncI7f2uxNwLflb2PE3c790KpEVsTijozf4+0S/kT
+        Xl2bgRP2Dd2+jS/uY5FYs2A=
+X-Google-Smtp-Source: AA0mqf4AZfPqxkXKTZpyPC6UNsJZKfdPjFl92u7DCIP8nEiikEfWcf4S9ClPEqEr8bQ8f7jil+P1XA==
+X-Received: by 2002:adf:f1cc:0:b0:236:e629:adab with SMTP id z12-20020adff1cc000000b00236e629adabmr7764763wro.621.1669195266358;
+        Wed, 23 Nov 2022 01:21:06 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id v1-20020a5d6101000000b002365cd93d05sm15794017wrt.102.2022.11.23.01.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Nov 2022 01:21:05 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     "David E . Box" <david.e.box@linux.intel.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] tools/arch/x86: intel_sdsi: Fix a couple of spelling mistakes
+Date:   Wed, 23 Nov 2022 09:21:04 +0000
+Message-Id: <20221123092104.378937-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-References: <20221123074214.21538-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20221123074214.21538-1-lukas.bulwahn@gmail.com>
-From:   Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
-Date:   Wed, 23 Nov 2022 18:13:41 +0900
-Message-ID: <CAMZ6RqLmgLMpkfrv1cM=8HhScTGoL6noozwGx36hYQmb1EKPQw@mail.gmail.com>
-Subject: Re: [PATCH] can: etas_es58x: repair conditional for a verbose debug message
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+There are two spelling mistakes in some literal strings. Fix these.
 
-Thank you for reporting this bug.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/arch/x86/intel_sdsi/intel_sdsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Wed. 23 Nov. 2022 at 16:45, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> The definition of VERBOSE_DEBUG for detailled debugging is set simply by
-                                      ^^^^^^^^^
-detailed
+diff --git a/tools/arch/x86/intel_sdsi/intel_sdsi.c b/tools/arch/x86/intel_sdsi/intel_sdsi.c
+index 2cd92761f171..e2607992673c 100644
+--- a/tools/arch/x86/intel_sdsi/intel_sdsi.c
++++ b/tools/arch/x86/intel_sdsi/intel_sdsi.c
+@@ -280,7 +280,7 @@ static int sdsi_read_reg(struct sdsi_dev *s)
+ 	printf("Provisioning Availability\n");
+ 	printf("    Updates Available:          %d\n", s->regs.prov_avail.available);
+ 	printf("    Updates Threshold:          %d\n", s->regs.prov_avail.threshold);
+-	printf("NVRAM Udate Limit\n");
++	printf("NVRAM Update Limit\n");
+ 	printf("    50%% Limit Reached:          %s\n", !!s->regs.limits.sdsi_50_pct ? "Yes" : "No");
+ 	printf("    75%% Limit Reached:          %s\n", !!s->regs.limits.sdsi_75_pct ? "Yes" : "No");
+ 	printf("    90%% Limit Reached:          %s\n", !!s->regs.limits.sdsi_90_pct ? "Yes" : "No");
+@@ -308,7 +308,7 @@ static char *content_type(uint32_t type)
+ {
+ 	switch (type) {
+ 	case  CONTENT_TYPE_LK_ENC:
+-		return "Licencse key encoding";
++		return "License key encoding";
+ 	case CONTENT_TYPE_LK_BLOB_ENC:
+ 		return "License key + Blob encoding";
+ 	default:
+-- 
+2.38.1
 
-> adding "#define VERBOSE_DEBUG" in the source code. It is not a kernel
-> configuration that is prefixed by CONFIG.
-
-ACK.
-I initially used #ifdef VERBOSE_DEBUG but then inadvertently replaced
-it by IS_ENABLED(CONFIG_VERBOSE_DEBUG) instead of
-defined(VERBOSE_DEBUG).
-
-> As the netdev_vdbg() macro is already defined conditional on
-> defined(VERBOSE_DEBUG), there is really no need to duplicate the check
-> before calling netdev_vdbg().
-
-NACK.
-
-There is a need. net_ratelimit() will continue to emit those messages:
-
-  net_ratelimit: xxxx callbacks suppressed
-
-The goal of this check is to guard net_ratelimit(), not to guard netdev_vdbg().
-
-> Repair the conditional for a verbose debug message.
->
-
-If you want to send a v2, please also add the fix tag:
-Fixes: commit 8537257874e9 ("can: etas_es58x: add core support for
-ETAS ES58X CAN USB interfaces")
-
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  drivers/net/can/usb/etas_es58x/es58x_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/can/usb/etas_es58x/es58x_core.c b/drivers/net/can/usb/etas_es58x/es58x_core.c
-> index 25f863b4f5f0..2708909fb851 100644
-> --- a/drivers/net/can/usb/etas_es58x/es58x_core.c
-> +++ b/drivers/net/can/usb/etas_es58x/es58x_core.c
-> @@ -989,7 +989,7 @@ int es58x_rx_cmd_ret_u32(struct net_device *netdev,
->                         break;
->
->                 case ES58X_RET_TYPE_TX_MSG:
-> -                       if (IS_ENABLED(CONFIG_VERBOSE_DEBUG) && net_ratelimit())
-> +                       if (net_ratelimit())
->                                 netdev_vdbg(netdev, "%s: OK\n", ret_desc);
->                         break;
->
-> --
-> 2.17.1
->
