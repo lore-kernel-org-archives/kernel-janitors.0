@@ -2,61 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8FDC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 06:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9C6C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 06:43:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235805AbiKWGnV (ORCPT
+        id S235787AbiKWGnf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Nov 2022 01:43:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43978 "EHLO
+        Wed, 23 Nov 2022 01:43:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235726AbiKWGnU (ORCPT
+        with ESMTP id S235464AbiKWGnd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Nov 2022 01:43:20 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53423FD14
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 22:43:19 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id s5so10758870wru.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Nov 2022 22:43:19 -0800 (PST)
+        Wed, 23 Nov 2022 01:43:33 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6AD9FD14;
+        Tue, 22 Nov 2022 22:43:32 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso623882wmo.1;
+        Tue, 22 Nov 2022 22:43:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wfEWeuAxvQfzW1nfRpEBj0UT4OdDwqRv3XSwMwCWnK8=;
-        b=kckRcbhlBzaM8bzbKIrqbhPBxHzXaM4nCX19z6Fin21rHq1Mf/9tfqHEvFWYqxZnFx
-         5istBw8HsJeU+q7Z2pfz0JmI8nRMz1yeqhHjJyzWcLKHW2m1aNZwDOUlvYlakkiraW4q
-         Qnh3L8Im8uGpEd3prM46yBIjM5z2tn7APY1S/fFjIJsGQP0vlTVRBDJJh1ySmi2gYTiQ
-         jYG8C7aTpYsvA4rkcDe3dIxfTJypb9siZMi6WHLhZRzSCCabl2n2JDffyIst85l7FggA
-         mer0eG3x/UFBhlSYGBUdwuOfgznrPQ8X7eA99nRYdV7wr3HbNYsnJpiruihnnFARFpUu
-         Qx1Q==
+        bh=C0Onr3XkLlbM2+edVHYPEJtbFfC8W0qaU8iJvB58mM4=;
+        b=l/H0pgpwyQ2LL36uYdrn1RHvVxvp22WGl0gIVz1H6m7t90IsMwVAU5zs7yEN+WwuWd
+         8xDLM3MADG6e448gGmpMxZy3oDYgqTJ9LxCc0kkVFdzOal50ma5JXY7Zq9My0aC3fCUZ
+         Vvj7x6l8elR3HP9wZ5NULemyJFtLhm7kMiR5Ar5ZhsL5T0RMrhtSktRQDaF4WGQ9y64v
+         wiQcYX7c2bvix7b6xRefBSOq3ruvA9rfxPVN0ApN73LrTP3/6gdMHQywO72df8gGR1V1
+         M/2AT21TeMWjLkzBqNYoznI3yP+6e7eO9oAKHEP7a2X0QHJnIgUfEsQ8eUG1Tlf5cuXp
+         YS4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wfEWeuAxvQfzW1nfRpEBj0UT4OdDwqRv3XSwMwCWnK8=;
-        b=k9a/oZyw9FAHwH6Ye6aJIsAD6tqDLWyvSAp+GOwL5nu5I210ItXIQO9NZGixp5SMxv
-         wCph8eweHIU5/45prxMKZDGO3snYqPeKESj7ORyJCe/q8Of8BSdwAybVMRuGjROxg5AR
-         DDoXbggZvBYj/m1VyelRXJRYJ2tweOZNv1HhYDGFyB4euEVpADgLmj6GC5EY0kYl8eGr
-         ivSApU6ALDS6GG6nT2MwV+zj7WbSdDrpYBAApd0ixixvufTmgW3zTpo8JeIusgJXmNMH
-         rzQ9dd8BMzZumY8CJDeJcxIxxhy2FdPqYbVVfzY19GR4j0ISWKy/dRKX9Ku0DdB6rJFN
-         +Ojw==
-X-Gm-Message-State: ANoB5pnpdmAfqcbZN2BNwMzKbpEiR5hTtEU+uHQ/BSmBiPrt45lae16W
-        VsVOoY07HENq8CDopt5yYR0=
-X-Google-Smtp-Source: AA0mqf7GBi1HAWtpNMQ9Qfe/x7OKT1cwB+9GB2UOQFOqO4khgdyxE+eLXbItE8l2kpDzKKkU8M1ZHg==
-X-Received: by 2002:adf:facd:0:b0:231:482f:ed6b with SMTP id a13-20020adffacd000000b00231482fed6bmr16247168wrs.253.1669185797849;
-        Tue, 22 Nov 2022 22:43:17 -0800 (PST)
+        bh=C0Onr3XkLlbM2+edVHYPEJtbFfC8W0qaU8iJvB58mM4=;
+        b=UL5yYV4FysHAq/VtrHSyfPVjlWkqdeIheJ+kWaNjmI7RalQtUYaitpbNBQHCez9o4B
+         78sCSBer1MPg4C1Mvs7dPdom4mTRKTxVBzs4cl7N7eLvDnn7Dw/J/LgbD3JWIts8mYnJ
+         ucuc7a91B84ZC3let2r+7wuy1OAg6jE6+DFdQJ4ePm+jqCCM4dJ+bYVt41Hm8RKKacht
+         GUJJ60eXp9QQIeshnyAdW7gvG6sThNdWSlfXorBvF7fVFN6tSElGzfcvQQ8E53DrYlu7
+         LJw54X7k6LEefFRh0Qcz8YGJ+K5UdAzaeLM5gym1LRmoLUf6SXVNABLbo47j2cSHmMac
+         ucfA==
+X-Gm-Message-State: ANoB5pk/hjaSVXyTU01euRjF0avQwZqxa4f3n2PuS5C5exyR1+P8aQ9V
+        nWv4xWD+Gr8sEgpAHFF7XEw=
+X-Google-Smtp-Source: AA0mqf5qeoU2frUPqQJa7asDmBhi818ur+B1Yka3IQ5YiwBgAunPgRtge6G4yaQnVaP+IbPaVwVBYA==
+X-Received: by 2002:a05:600c:3b0c:b0:3cf:8df2:63b7 with SMTP id m12-20020a05600c3b0c00b003cf8df263b7mr5574660wms.11.1669185811223;
+        Tue, 22 Nov 2022 22:43:31 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id i1-20020a05600c354100b003b50428cf66sm1107254wmq.33.2022.11.22.22.43.16
+        by smtp.gmail.com with ESMTPSA id r8-20020adfe688000000b0023662245d3csm6436045wrm.95.2022.11.22.22.43.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Nov 2022 22:43:17 -0800 (PST)
-Date:   Wed, 23 Nov 2022 09:43:14 +0300
+        Tue, 22 Nov 2022 22:43:30 -0800 (PST)
+Date:   Wed, 23 Nov 2022 09:43:27 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>
 Cc:     Dan Carpenter <error27@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: [PATCH] staging: rtl8192u: Fix use after free in ieee80211_rx()
-Message-ID: <Y33BArx3k/aw6yv/@kili>
+        Johnny Chuang <johnny.chuang.emc@gmail.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] Input: elants_i2c - delete some dead code
+Message-ID: <Y33BD9xkRC9euIdO@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,31 +65,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-We cannot dereference the "skb" pointer after calling
-ieee80211_monitor_rx(), because it is a use after free.
+We shuffled the error handling around so this condition is dead code
+now.  The "error" variable is always zero.
 
-Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+No Fixes tag because this does not fix a bug but if we were to assign
+a tag it would be:
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-index f142d0986990..5c73e3f8541a 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-@@ -951,9 +951,11 @@ int ieee80211_rx(struct ieee80211_device *ieee, struct sk_buff *skb,
- #endif
+Fixes: a85fbd649844 ("Input: elants_i2c - properly handle the reset GPIO when power is off")
+
+ drivers/input/touchscreen/elants_i2c.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
+index e1308e179dd6..af1dc43e988c 100644
+--- a/drivers/input/touchscreen/elants_i2c.c
++++ b/drivers/input/touchscreen/elants_i2c.c
+@@ -1353,8 +1353,6 @@ static int elants_i2c_power_on(struct elants_data *ts)
+ 	udelay(ELAN_POWERON_DELAY_USEC);
  
- 	if (ieee->iw_mode == IW_MODE_MONITOR) {
-+		unsigned int len = skb->len;
-+
- 		ieee80211_monitor_rx(ieee, skb, rx_stats);
- 		stats->rx_packets++;
--		stats->rx_bytes += skb->len;
-+		stats->rx_bytes += len;
- 		return 1;
- 	}
+ 	gpiod_set_value_cansleep(ts->reset_gpio, 0);
+-	if (error)
+-		return error;
+ 
+ 	msleep(ELAN_RESET_DELAY_MSEC);
  
 -- 
 2.35.1
