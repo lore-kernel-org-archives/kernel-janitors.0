@@ -2,137 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260DCC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 08:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBB7C4321E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 09:13:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235557AbiKWIcX (ORCPT
+        id S237234AbiKWJNz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Nov 2022 03:32:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39806 "EHLO
+        Wed, 23 Nov 2022 04:13:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236609AbiKWIcS (ORCPT
+        with ESMTP id S237196AbiKWJNy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Nov 2022 03:32:18 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F23F2FC1F;
-        Wed, 23 Nov 2022 00:32:15 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id a11-20020a05600c2d4b00b003cf6f5fd9f1so763116wmg.2;
-        Wed, 23 Nov 2022 00:32:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tiVq12etDEqpSPghR2pHAXWqLMT5ZsuO549677H8yKw=;
-        b=MyEV25w3LrvWhMxVEvRvLa3evdPIH+e40Svg0wHs/feDnitL6BmGPaIAd+kTt0evP9
-         /rfcjapSmugozwxRxFv1ndCofOBaP6LWVVa2Nao8xFHhbJkaW8f5tdXUyK0F11CksELZ
-         bkzKGeCRi8xAchSva0GRTTokYQ+8SOvV/9VwYi/PIefA90Owulxhb93hIxPAqMgubX6E
-         oACKfHhoU3tfLhGnX+eQLhr/4wnY8Dh/NRO2hlZIOJdNMd13KiVXEOgM2PeBkZxes+jM
-         /9kO+MFB8wpR/Z3A8aEFRAMUnZa6LPwxNx10rcrXNawVdxLBLLIpZH1etTDtys2042tj
-         5Nbw==
+        Wed, 23 Nov 2022 04:13:54 -0500
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F4387A76;
+        Wed, 23 Nov 2022 01:13:53 -0800 (PST)
+Received: by mail-pf1-f174.google.com with SMTP id b29so16754935pfp.13;
+        Wed, 23 Nov 2022 01:13:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tiVq12etDEqpSPghR2pHAXWqLMT5ZsuO549677H8yKw=;
-        b=tXrhpjRjzTJVkFgJMcvfKuEqzepWLH20HsHqgNu/D/lsVPAmvSlJl2DOfcS7i63vTL
-         06AeHK19ZG+NRM97rT9AWly+WuH7Pl1VNELeqjSyr5uKZ6sDAJU04O8ryUaOs0rqix48
-         KPaqL0KyGIy1eHAXUy24TvfiH8k1wkY7LteQDHK44AfaHYY+LAwQhInrf+BkL6AUZxPV
-         Zw+pcX+EZ4iDazfDCHmVAriddrPIaOQrmZOA8JbeUUvOh3JoHBTlvPJNnLyRMbSV7GPY
-         3ZRe2cwoLCcqHrsyr/4gQ9VoHRp97NKqa8iLJn7XoY7KTF/Q3RVuVZv8uy+t6FrU9Y1S
-         a7Ug==
-X-Gm-Message-State: ANoB5plv+YIuMrTmon53IF3hUar6JHlPQN5mW11bUs88x6OhF/CJTKcs
-        xtDpdCIhP882gXxWD0RuR8o=
-X-Google-Smtp-Source: AA0mqf58n/JCu3Qxs0fcYSBCRxypmvGsJMgBKbGX+NLdLniHernMYaeW19FVmoPaIQ5ZA+oKOo5eWQ==
-X-Received: by 2002:a05:600c:314f:b0:3cf:9efc:a9b7 with SMTP id h15-20020a05600c314f00b003cf9efca9b7mr19406962wmo.10.1669192333854;
-        Wed, 23 Nov 2022 00:32:13 -0800 (PST)
-Received: from felia.fritz.box (200116b826997500d517ac74edd630a9.dip.versatel-1u1.de. [2001:16b8:2699:7500:d517:ac74:edd6:30a9])
-        by smtp.gmail.com with ESMTPSA id l8-20020adfa388000000b002417f35767asm16276487wrb.40.2022.11.23.00.32.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Nov 2022 00:32:13 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Maarten ter Huurne <maarten@treewalker.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2] clocksource: ingenic-ost: define pm functions properly in platform_driver struct
-Date:   Wed, 23 Nov 2022 09:31:59 +0100
-Message-Id: <20221123083159.22821-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=srlt3bFZ6MegHyi5woaD55H1HX/2p/E5mzMQRE78ubI=;
+        b=mCOaP5A/twvoIWOM5puvcLpXNa8xGnl0XMQLJoDaW7vOX5vJm/zOvs2M36bPSLf5wA
+         o5Vo6uu6UcLAmAUwY9wldYCNxfNE4qgG+fRAk08kCim8c4CE0vOqkJihmS5dgOqrxHQR
+         1INhVMBsHcHvcLnW0ZWlRnobqf0kYIQomqwHC7jxw/b0v2okk2T/0m7O72nYtA9Y6LQ7
+         ps87QH0cA6NbU3hoSYOy0j9Sw5GMAD1hYjF4lwj0FaZesz1BNI9Yjt4aOdepms4xBojm
+         lsl+2Rz3XMQjyh8LZ6NHdjmim+84bw859okK8GSGme3Mhv7ohkVpjO5sLc/PIV/7DwvX
+         zN5A==
+X-Gm-Message-State: ANoB5pmeCpVH95dTHHORtg46MS0XK3D0Kxux6EFccfWwzwnW4BRD/W/m
+        TC9KVeNzBRnQh9BUdyVf6U1Lv/qwzQuiM0zjsE5lT61sqOVlHw==
+X-Google-Smtp-Source: AA0mqf6QcMoZUHVOXKOq7hmkMSMne2of/jIYq+ZRoWhH4Ple3ls0lT37Jo65bmF4tS5WSNRvBdMk6kxBtbk0gZCrA6Q=
+X-Received: by 2002:a63:1955:0:b0:477:50ed:6415 with SMTP id
+ 21-20020a631955000000b0047750ed6415mr15313204pgz.535.1669194832632; Wed, 23
+ Nov 2022 01:13:52 -0800 (PST)
+MIME-Version: 1.0
+References: <20221123074214.21538-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20221123074214.21538-1-lukas.bulwahn@gmail.com>
+From:   Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
+Date:   Wed, 23 Nov 2022 18:13:41 +0900
+Message-ID: <CAMZ6RqLmgLMpkfrv1cM=8HhScTGoL6noozwGx36hYQmb1EKPQw@mail.gmail.com>
+Subject: Re: [PATCH] can: etas_es58x: repair conditional for a verbose debug message
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit ca7b72b5a5f2 ("clocksource: Add driver for the Ingenic JZ47xx OST")
-adds the struct platform_driver ingenic_ost_driver, with the definition of
-pm functions under the non-existing config PM_SUSPEND, which means the
-intended pm functions were never actually included in any build.
+Hi Lukas,
 
-As the only callbacks are .suspend_noirq and .resume_noirq, we can assume
-that it is intended to be CONFIG_PM_SLEEP.
+Thank you for reporting this bug.
 
-Since commit 1a3c7bb08826 ("PM: core: Add new *_PM_OPS macros, deprecate
-old ones"), the default pattern for platform_driver definitions
-conditional for CONFIG_PM_SLEEP is to use pm_sleep_ptr().
+On Wed. 23 Nov. 2022 at 16:45, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> The definition of VERBOSE_DEBUG for detailled debugging is set simply by
+                                      ^^^^^^^^^
+detailed
 
-As __maybe_unused annotations on the dev_pm_ops structure and its callbacks
-are not needed anymore, remove these as well.
+> adding "#define VERBOSE_DEBUG" in the source code. It is not a kernel
+> configuration that is prefixed by CONFIG.
 
-Suggested-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-v1: https://lore.kernel.org/all/20221122141434.30498-1-lukas.bulwahn@gmail.com/
+ACK.
+I initially used #ifdef VERBOSE_DEBUG but then inadvertently replaced
+it by IS_ENABLED(CONFIG_VERBOSE_DEBUG) instead of
+defined(VERBOSE_DEBUG).
 
-v1 -> v2:
-  - incorporated Paul Cercueil's feedback:
-    - changed to pm_sleep_ptr
-    - dropped Fixes: tag
+> As the netdev_vdbg() macro is already defined conditional on
+> defined(VERBOSE_DEBUG), there is really no need to duplicate the check
+> before calling netdev_vdbg().
 
- drivers/clocksource/ingenic-ost.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+NACK.
 
-diff --git a/drivers/clocksource/ingenic-ost.c b/drivers/clocksource/ingenic-ost.c
-index 06d25754e606..9f7c280a1336 100644
---- a/drivers/clocksource/ingenic-ost.c
-+++ b/drivers/clocksource/ingenic-ost.c
-@@ -141,7 +141,7 @@ static int __init ingenic_ost_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int __maybe_unused ingenic_ost_suspend(struct device *dev)
-+static int ingenic_ost_suspend(struct device *dev)
- {
- 	struct ingenic_ost *ost = dev_get_drvdata(dev);
- 
-@@ -150,14 +150,14 @@ static int __maybe_unused ingenic_ost_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused ingenic_ost_resume(struct device *dev)
-+static int ingenic_ost_resume(struct device *dev)
- {
- 	struct ingenic_ost *ost = dev_get_drvdata(dev);
- 
- 	return clk_enable(ost->clk);
- }
- 
--static const struct dev_pm_ops __maybe_unused ingenic_ost_pm_ops = {
-+static const struct dev_pm_ops ingenic_ost_pm_ops = {
- 	/* _noirq: We want the OST clock to be gated last / ungated first */
- 	.suspend_noirq = ingenic_ost_suspend,
- 	.resume_noirq  = ingenic_ost_resume,
-@@ -181,9 +181,7 @@ static const struct of_device_id ingenic_ost_of_match[] = {
- static struct platform_driver ingenic_ost_driver = {
- 	.driver = {
- 		.name = "ingenic-ost",
--#ifdef CONFIG_PM_SUSPEND
--		.pm = &ingenic_ost_pm_ops,
--#endif
-+		.pm = pm_sleep_ptr(&ingenic_ost_pm_ops),
- 		.of_match_table = ingenic_ost_of_match,
- 	},
- };
--- 
-2.17.1
+There is a need. net_ratelimit() will continue to emit those messages:
 
+  net_ratelimit: xxxx callbacks suppressed
+
+The goal of this check is to guard net_ratelimit(), not to guard netdev_vdbg().
+
+> Repair the conditional for a verbose debug message.
+>
+
+If you want to send a v2, please also add the fix tag:
+Fixes: commit 8537257874e9 ("can: etas_es58x: add core support for
+ETAS ES58X CAN USB interfaces")
+
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  drivers/net/can/usb/etas_es58x/es58x_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/can/usb/etas_es58x/es58x_core.c b/drivers/net/can/usb/etas_es58x/es58x_core.c
+> index 25f863b4f5f0..2708909fb851 100644
+> --- a/drivers/net/can/usb/etas_es58x/es58x_core.c
+> +++ b/drivers/net/can/usb/etas_es58x/es58x_core.c
+> @@ -989,7 +989,7 @@ int es58x_rx_cmd_ret_u32(struct net_device *netdev,
+>                         break;
+>
+>                 case ES58X_RET_TYPE_TX_MSG:
+> -                       if (IS_ENABLED(CONFIG_VERBOSE_DEBUG) && net_ratelimit())
+> +                       if (net_ratelimit())
+>                                 netdev_vdbg(netdev, "%s: OK\n", ret_desc);
+>                         break;
+>
+> --
+> 2.17.1
+>
