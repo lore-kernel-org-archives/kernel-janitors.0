@@ -2,93 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2264C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Nov 2022 09:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB28C4321E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Nov 2022 10:45:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbiKXJ0J (ORCPT
+        id S229807AbiKXKpt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Nov 2022 04:26:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36732 "EHLO
+        Thu, 24 Nov 2022 05:45:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229783AbiKXJ0H (ORCPT
+        with ESMTP id S229615AbiKXKps (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Nov 2022 04:26:07 -0500
-Received: from mail.nfschina.com (unknown [124.16.136.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D8B6211E70F;
-        Thu, 24 Nov 2022 01:26:05 -0800 (PST)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 71C241E80CC6;
-        Thu, 24 Nov 2022 17:22:26 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id FuPqkGR70XhR; Thu, 24 Nov 2022 17:22:23 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 311E81E80CB3;
-        Thu, 24 Nov 2022 17:22:23 +0800 (CST)
-From:   Yu Zhe <yuzhe@nfschina.com>
-To:     kashyap.desai@broadcom.com, sumit.saxena@broadcom.com,
-        shivasharan.srikanteshwara@broadcom.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        liqiong@nfschina.com, Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH] scsi: megaraid_sas: fix some spelling mistakes in comment
-Date:   Thu, 24 Nov 2022 17:25:14 +0800
-Message-Id: <20221124092514.32032-1-yuzhe@nfschina.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 24 Nov 2022 05:45:48 -0500
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D24015BB04;
+        Thu, 24 Nov 2022 02:45:48 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4NHvm96p8Qz4x1T;
+        Thu, 24 Nov 2022 21:45:45 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1669286746;
+        bh=a/rgvu+x3DNbb+TuaqIRMakhyJTfbEd0k5XDjibLn0c=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=hkVtP7+TE9HiKfugwKMBr7W3jSEBpBQYR+0GKGVSazAx5OXNysgYeiUzQZR/ioHTH
+         dDR1vgi5ikZvLL4SHV4mGpLqv0Z0Sz8kbdb6rwrt763FeZt/I2xLpZapYdgOOA9A4p
+         8ipjhhxE5DInT76L6F+bFLnBqkXvKttNNAXEbl12lAsGcKNxfPER4nQCYfaQXuicoT
+         Bbg23ccChwoTDAXIuiR/p2D5LwK3X/o8byq42yLoK7zTPZi5OtaGousTMDgviiOVdu
+         0j+0Xi8T0UgkNI+Eq6xGXdnaHtTfeSnO2G80owAYuLP7JvWi1vJHJgNoGYcfYGM4Li
+         knciml4JyJuKw==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cxl: fix typo in comment
+In-Reply-To: <48936161-3e97-e8bb-1f85-ea511c13571e@csgroup.eu>
+References: <20220521111145.81697-82-Julia.Lawall@inria.fr>
+ <2835d67e-8ca0-cc2d-b86e-b2ac254428ab@linux.ibm.com>
+ <48936161-3e97-e8bb-1f85-ea511c13571e@csgroup.eu>
+Date:   Thu, 24 Nov 2022 21:45:45 +1100
+Message-ID: <875yf4d412.fsf@mpe.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix typos in comment.
+Christophe Leroy <christophe.leroy@csgroup.eu> writes:
+> Le 23/05/2022 =C3=A0 01:27, Andrew Donnellan a =C3=A9crit=C2=A0:
+>> On 21/5/22 21:11, Julia Lawall wrote:
+>>> Spelling mistake (triple letters) in comment.
+>>> Detected with the help of Coccinelle.
+>>>
+>>> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>>=20
+>> Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+>>=20
+>>=20
+>
+> How should apply that change ?
 
-Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
----
- drivers/scsi/megaraid/megaraid_sas_fusion.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I will.
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-index 6650f8c8e9b0..c53c29a0a018 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -80,7 +80,7 @@ static void megasas_fusion_crash_dump(struct megasas_instance *instance);
-  * @ocr_context:			If called from OCR context this will
-  *					be set to 1, else 0
-  *
-- * This function initates a chip reset followed by a wait for controller to
-+ * This function initiates a chip reset followed by a wait for controller to
-  * transition to ready state.
-  * During this, driver will block all access to PCI config space from userspace
-  */
-@@ -334,7 +334,7 @@ megasas_fire_cmd_fusion(struct megasas_instance *instance,
-  *
-  * This function is only for fusion controllers.
-  * Update host can queue, if firmware downgrade max supported firmware commands.
-- * Firmware upgrade case will be skiped because underlying firmware has
-+ * Firmware upgrade case will be skipped because underlying firmware has
-  * more resource than exposed to the OS.
-  *
-  */
-@@ -2588,7 +2588,7 @@ static void megasas_stream_detect(struct megasas_instance *instance,
- 			if ((io_info->ldStartBlock != current_sd->next_seq_lba)	&&
- 			    ((!io_info->isRead) || (!is_read_ahead)))
- 				/*
--				 * Once the API availible we need to change this.
-+				 * Once the API available we need to change this.
- 				 * At this point we are not allowing any gap
- 				 */
- 				continue;
-@@ -4650,7 +4650,7 @@ megasas_issue_tm(struct megasas_instance *instance, u16 device_handle,
- }
- 
- /*
-- * megasas_fusion_smid_lookup : Look for fusion command correpspodning to SCSI
-+ * megasas_fusion_smid_lookup : Look for fusion command corresponding to SCSI
-  * @instance: per adapter struct
-  *
-  * Return Non Zero index, if SMID found in outstanding commands
--- 
-2.11.0
-
+cheers
