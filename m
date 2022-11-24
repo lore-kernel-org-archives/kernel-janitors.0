@@ -2,141 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8EAFC43219
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Nov 2022 17:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2264C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Nov 2022 09:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239087AbiKWRzI (ORCPT
+        id S229727AbiKXJ0J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Nov 2022 12:55:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46270 "EHLO
+        Thu, 24 Nov 2022 04:26:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238510AbiKWRy7 (ORCPT
+        with ESMTP id S229783AbiKXJ0H (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Nov 2022 12:54:59 -0500
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B4DF6A6AE;
-        Wed, 23 Nov 2022 09:54:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1669226095; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jHjYY2fJd6j8Ey0DgGBVJy1ZtjI/zI9LZpso74F6uno=;
-        b=1ceT52ICq2ZQyZ4ilTggZSteICvAwpgdUn1vYvVXSE1Mpod8SfUX32Wt/8J54K2lHRso31
-        snZSJGXMiK4SQZ2abeu3/UdXwAg09siupD1vdHV0NmqLQ+Dk6DCG8amLlA0klFo4G47bUL
-        SH03ByJZwO+d1SzA5l3/31j22IB6uJQ=
-Date:   Wed, 23 Nov 2022 17:54:47 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2] clocksource: ingenic-ost: define pm functions properly
- in platform_driver struct
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <B3BTLR.7FLNQ6FO762W3@crapouillou.net>
-In-Reply-To: <20221123083159.22821-1-lukas.bulwahn@gmail.com>
-References: <20221123083159.22821-1-lukas.bulwahn@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+        Thu, 24 Nov 2022 04:26:07 -0500
+Received: from mail.nfschina.com (unknown [124.16.136.209])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D8B6211E70F;
+        Thu, 24 Nov 2022 01:26:05 -0800 (PST)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 71C241E80CC6;
+        Thu, 24 Nov 2022 17:22:26 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FuPqkGR70XhR; Thu, 24 Nov 2022 17:22:23 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id 311E81E80CB3;
+        Thu, 24 Nov 2022 17:22:23 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     kashyap.desai@broadcom.com, sumit.saxena@broadcom.com,
+        shivasharan.srikanteshwara@broadcom.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com
+Cc:     megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com, Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] scsi: megaraid_sas: fix some spelling mistakes in comment
+Date:   Thu, 24 Nov 2022 17:25:14 +0800
+Message-Id: <20221124092514.32032-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+Fix typos in comment.
 
-Le mer. 23 nov. 2022 =E0 09:31:59 +0100, Lukas Bulwahn=20
-<lukas.bulwahn@gmail.com> a =E9crit :
-> Commit ca7b72b5a5f2 ("clocksource: Add driver for the Ingenic JZ47xx=20
-> OST")
-> adds the struct platform_driver ingenic_ost_driver, with the=20
-> definition of
-> pm functions under the non-existing config PM_SUSPEND, which means the
-> intended pm functions were never actually included in any build.
->=20
-> As the only callbacks are .suspend_noirq and .resume_noirq, we can=20
-> assume
-> that it is intended to be CONFIG_PM_SLEEP.
->=20
-> Since commit 1a3c7bb08826 ("PM: core: Add new *_PM_OPS macros,=20
-> deprecate
-> old ones"), the default pattern for platform_driver definitions
-> conditional for CONFIG_PM_SLEEP is to use pm_sleep_ptr().
->=20
-> As __maybe_unused annotations on the dev_pm_ops structure and its=20
-> callbacks
-> are not needed anymore, remove these as well.
->=20
-> Suggested-by: Paul Cercueil <paul@crapouillou.net>
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ drivers/scsi/megaraid/megaraid_sas_fusion.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-
-Cheers,
--Paul
-
-> ---
-> v1:=20
-> https://lore.kernel.org/all/20221122141434.30498-1-lukas.bulwahn@gmail.co=
-m/
->=20
-> v1 -> v2:
->   - incorporated Paul Cercueil's feedback:
->     - changed to pm_sleep_ptr
->     - dropped Fixes: tag
->=20
->  drivers/clocksource/ingenic-ost.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/clocksource/ingenic-ost.c=20
-> b/drivers/clocksource/ingenic-ost.c
-> index 06d25754e606..9f7c280a1336 100644
-> --- a/drivers/clocksource/ingenic-ost.c
-> +++ b/drivers/clocksource/ingenic-ost.c
-> @@ -141,7 +141,7 @@ static int __init ingenic_ost_probe(struct=20
-> platform_device *pdev)
->  	return 0;
->  }
->=20
-> -static int __maybe_unused ingenic_ost_suspend(struct device *dev)
-> +static int ingenic_ost_suspend(struct device *dev)
->  {
->  	struct ingenic_ost *ost =3D dev_get_drvdata(dev);
->=20
-> @@ -150,14 +150,14 @@ static int __maybe_unused=20
-> ingenic_ost_suspend(struct device *dev)
->  	return 0;
->  }
->=20
-> -static int __maybe_unused ingenic_ost_resume(struct device *dev)
-> +static int ingenic_ost_resume(struct device *dev)
->  {
->  	struct ingenic_ost *ost =3D dev_get_drvdata(dev);
->=20
->  	return clk_enable(ost->clk);
->  }
->=20
-> -static const struct dev_pm_ops __maybe_unused ingenic_ost_pm_ops =3D {
-> +static const struct dev_pm_ops ingenic_ost_pm_ops =3D {
->  	/* _noirq: We want the OST clock to be gated last / ungated first */
->  	.suspend_noirq =3D ingenic_ost_suspend,
->  	.resume_noirq  =3D ingenic_ost_resume,
-> @@ -181,9 +181,7 @@ static const struct of_device_id=20
-> ingenic_ost_of_match[] =3D {
->  static struct platform_driver ingenic_ost_driver =3D {
->  	.driver =3D {
->  		.name =3D "ingenic-ost",
-> -#ifdef CONFIG_PM_SUSPEND
-> -		.pm =3D &ingenic_ost_pm_ops,
-> -#endif
-> +		.pm =3D pm_sleep_ptr(&ingenic_ost_pm_ops),
->  		.of_match_table =3D ingenic_ost_of_match,
->  	},
->  };
-> --
-> 2.17.1
->=20
-
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+index 6650f8c8e9b0..c53c29a0a018 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -80,7 +80,7 @@ static void megasas_fusion_crash_dump(struct megasas_instance *instance);
+  * @ocr_context:			If called from OCR context this will
+  *					be set to 1, else 0
+  *
+- * This function initates a chip reset followed by a wait for controller to
++ * This function initiates a chip reset followed by a wait for controller to
+  * transition to ready state.
+  * During this, driver will block all access to PCI config space from userspace
+  */
+@@ -334,7 +334,7 @@ megasas_fire_cmd_fusion(struct megasas_instance *instance,
+  *
+  * This function is only for fusion controllers.
+  * Update host can queue, if firmware downgrade max supported firmware commands.
+- * Firmware upgrade case will be skiped because underlying firmware has
++ * Firmware upgrade case will be skipped because underlying firmware has
+  * more resource than exposed to the OS.
+  *
+  */
+@@ -2588,7 +2588,7 @@ static void megasas_stream_detect(struct megasas_instance *instance,
+ 			if ((io_info->ldStartBlock != current_sd->next_seq_lba)	&&
+ 			    ((!io_info->isRead) || (!is_read_ahead)))
+ 				/*
+-				 * Once the API availible we need to change this.
++				 * Once the API available we need to change this.
+ 				 * At this point we are not allowing any gap
+ 				 */
+ 				continue;
+@@ -4650,7 +4650,7 @@ megasas_issue_tm(struct megasas_instance *instance, u16 device_handle,
+ }
+ 
+ /*
+- * megasas_fusion_smid_lookup : Look for fusion command correpspodning to SCSI
++ * megasas_fusion_smid_lookup : Look for fusion command corresponding to SCSI
+  * @instance: per adapter struct
+  *
+  * Return Non Zero index, if SMID found in outstanding commands
+-- 
+2.11.0
 
