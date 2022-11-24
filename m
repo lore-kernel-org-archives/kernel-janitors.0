@@ -2,114 +2,173 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADDBC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Nov 2022 16:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73EEC43219
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Nov 2022 21:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbiKXQVq (ORCPT
+        id S229624AbiKXV2U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Nov 2022 11:21:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56462 "EHLO
+        Thu, 24 Nov 2022 16:28:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbiKXQVp (ORCPT
+        with ESMTP id S229536AbiKXV2T (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Nov 2022 11:21:45 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 774E816F0E1;
-        Thu, 24 Nov 2022 08:21:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=FGjzuXAIl+wHDnB9X06Lj741Z1ohvCHZzEDHufjgoPA=; b=TdfHq33K0iHRvayUCiTchGcsns
-        dQfP4CvpGuk/CioBXk1AvcvjsZKIR9oDbLWGmTqtFpddFjkzn3MFNF4PcC5eoFzmZJ1kRqTzqVtKd
-        JzIN0cDJLD47KiZTybbsOGWD2ysOHOKZEJhy6VSWSL8JoDlNj/LWJc3pucDObBYSYW2nvphz7A1sM
-        08Bqpeb9DePDC3PcLqU715jUKJAtHYeHToklPMDaWYBJknUQ5PNrkxtRgLNwvCyQ1L54Srj6Zyo1G
-        5s5eqQ5MphEj0WnAEWaGgJzyR6zDnBrlNJeeJf6UC7MHQXmHwu5S9kjEMNuj6lIiVuJrzW3+71cG0
-        ZMitPOWQ==;
-Received: from [2601:1c2:d80:3110::a2e7]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oyEyn-00A3Ox-N0; Thu, 24 Nov 2022 16:21:37 +0000
-Message-ID: <387ebede-048b-203c-ffe7-7f0ff2014d3c@infradead.org>
-Date:   Thu, 24 Nov 2022 08:21:35 -0800
+        Thu, 24 Nov 2022 16:28:19 -0500
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E886B23158
+        for <kernel-janitors@vger.kernel.org>; Thu, 24 Nov 2022 13:28:17 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id yJlWods52CoWhyJlWo2n87; Thu, 24 Nov 2022 22:28:15 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 24 Nov 2022 22:28:15 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-nvme@lists.infradead.org
+Subject: [PATCH v2] nvme: Use kstrtobool() instead of strtobool()
+Date:   Thu, 24 Nov 2022 22:28:12 +0100
+Message-Id: <5edef1b51c865faf61752c991eaf292c8a68cc01.1669324969.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH] scsi: megaraid_sas: fix some spelling mistakes in comment
-Content-Language: en-US
-To:     Yu Zhe <yuzhe@nfschina.com>, kashyap.desai@broadcom.com,
-        sumit.saxena@broadcom.com, shivasharan.srikanteshwara@broadcom.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc:     megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        liqiong@nfschina.com
-References: <20221124092514.32032-1-yuzhe@nfschina.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20221124092514.32032-1-yuzhe@nfschina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi--
+strtobool() is the same as kstrtobool().
+However, the latter is more used within the kernel.
 
-These changes all look good.
-One small nit below:
+In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+the other function name.
 
-On 11/24/22 01:25, Yu Zhe wrote:
-> Fix typos in comment.
-> 
-> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
-> ---
->  drivers/scsi/megaraid/megaraid_sas_fusion.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> index 6650f8c8e9b0..c53c29a0a018 100644
-> --- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> +++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> @@ -80,7 +80,7 @@ static void megasas_fusion_crash_dump(struct megasas_instance *instance);
->   * @ocr_context:			If called from OCR context this will
->   *					be set to 1, else 0
->   *
-> - * This function initates a chip reset followed by a wait for controller to
-> + * This function initiates a chip reset followed by a wait for controller to
->   * transition to ready state.
->   * During this, driver will block all access to PCI config space from userspace
->   */
-> @@ -334,7 +334,7 @@ megasas_fire_cmd_fusion(struct megasas_instance *instance,
->   *
->   * This function is only for fusion controllers.
->   * Update host can queue, if firmware downgrade max supported firmware commands.
-> - * Firmware upgrade case will be skiped because underlying firmware has
-> + * Firmware upgrade case will be skipped because underlying firmware has
->   * more resource than exposed to the OS.
->   *
->   */
-> @@ -2588,7 +2588,7 @@ static void megasas_stream_detect(struct megasas_instance *instance,
->  			if ((io_info->ldStartBlock != current_sd->next_seq_lba)	&&
->  			    ((!io_info->isRead) || (!is_read_ahead)))
->  				/*
-> -				 * Once the API availible we need to change this.
-> +				 * Once the API available we need to change this.
+While at it, include the corresponding header file (<linux/kstrtox.h>)
 
-				 * Once the API is available we need to change this.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch was initially part of a serie ([1]) that axed all usages of
+strtobool().
 
->  				 * At this point we are not allowing any gap
->  				 */
->  				continue;
-> @@ -4650,7 +4650,7 @@ megasas_issue_tm(struct megasas_instance *instance, u16 device_handle,
->  }
->  
->  /*
-> - * megasas_fusion_smid_lookup : Look for fusion command correpspodning to SCSI
-> + * megasas_fusion_smid_lookup : Look for fusion command corresponding to SCSI
->   * @instance: per adapter struct
->   *
->   * Return Non Zero index, if SMID found in outstanding commands
+It is synched with latest -next and resent as an individual patch as
+requested in [2].
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+[1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
+[2]: https://lore.kernel.org/all/20221102064747.GA8903@lst.de/
+---
+ drivers/nvme/host/pci.c        |  3 ++-
+ drivers/nvme/target/configfs.c | 17 +++++++++--------
+ 2 files changed, 11 insertions(+), 9 deletions(-)
 
-Thanks.
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 0163bfa925aa..be70229c0b94 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -15,6 +15,7 @@
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/kstrtox.h>
+ #include <linux/memremap.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
+@@ -2185,7 +2186,7 @@ static ssize_t hmb_store(struct device *dev, struct device_attribute *attr,
+ 	bool new;
+ 	int ret;
+ 
+-	if (strtobool(buf, &new) < 0)
++	if (kstrtobool(buf, &new) < 0)
+ 		return -EINVAL;
+ 
+ 	if (new == ndev->hmb)
+diff --git a/drivers/nvme/target/configfs.c b/drivers/nvme/target/configfs.c
+index 6a2816f3b4e8..f14a5db3f02c 100644
+--- a/drivers/nvme/target/configfs.c
++++ b/drivers/nvme/target/configfs.c
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2015-2016 HGST, a Western Digital Company.
+  */
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++#include <linux/kstrtox.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+@@ -267,7 +268,7 @@ static ssize_t nvmet_param_pi_enable_store(struct config_item *item,
+ 	struct nvmet_port *port = to_nvmet_port(item);
+ 	bool val;
+ 
+-	if (strtobool(page, &val))
++	if (kstrtobool(page, &val))
+ 		return -EINVAL;
+ 
+ 	if (nvmet_is_port_enabled(port, __func__))
+@@ -532,7 +533,7 @@ static ssize_t nvmet_ns_enable_store(struct config_item *item,
+ 	bool enable;
+ 	int ret = 0;
+ 
+-	if (strtobool(page, &enable))
++	if (kstrtobool(page, &enable))
+ 		return -EINVAL;
+ 
+ 	if (enable)
+@@ -556,7 +557,7 @@ static ssize_t nvmet_ns_buffered_io_store(struct config_item *item,
+ 	struct nvmet_ns *ns = to_nvmet_ns(item);
+ 	bool val;
+ 
+-	if (strtobool(page, &val))
++	if (kstrtobool(page, &val))
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&ns->subsys->lock);
+@@ -579,7 +580,7 @@ static ssize_t nvmet_ns_revalidate_size_store(struct config_item *item,
+ 	struct nvmet_ns *ns = to_nvmet_ns(item);
+ 	bool val;
+ 
+-	if (strtobool(page, &val))
++	if (kstrtobool(page, &val))
+ 		return -EINVAL;
+ 
+ 	if (!val)
+@@ -728,7 +729,7 @@ static ssize_t nvmet_passthru_enable_store(struct config_item *item,
+ 	bool enable;
+ 	int ret = 0;
+ 
+-	if (strtobool(page, &enable))
++	if (kstrtobool(page, &enable))
+ 		return -EINVAL;
+ 
+ 	if (enable)
+@@ -995,7 +996,7 @@ static ssize_t nvmet_subsys_attr_allow_any_host_store(struct config_item *item,
+ 	bool allow_any_host;
+ 	int ret = 0;
+ 
+-	if (strtobool(page, &allow_any_host))
++	if (kstrtobool(page, &allow_any_host))
+ 		return -EINVAL;
+ 
+ 	down_write(&nvmet_config_sem);
+@@ -1275,7 +1276,7 @@ static ssize_t nvmet_subsys_attr_pi_enable_store(struct config_item *item,
+ 	struct nvmet_subsys *subsys = to_subsys(item);
+ 	bool pi_enable;
+ 
+-	if (strtobool(page, &pi_enable))
++	if (kstrtobool(page, &pi_enable))
+ 		return -EINVAL;
+ 
+ 	subsys->pi_support = pi_enable;
+@@ -1395,7 +1396,7 @@ static ssize_t nvmet_referral_enable_store(struct config_item *item,
+ 	struct nvmet_port *port = to_nvmet_port(item);
+ 	bool enable;
+ 
+-	if (strtobool(page, &enable))
++	if (kstrtobool(page, &enable))
+ 		goto inval;
+ 
+ 	if (enable)
 -- 
-~Randy
+2.34.1
+
