@@ -2,26 +2,26 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB9CC4167B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Nov 2022 12:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAAAC4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Nov 2022 12:24:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230016AbiKYMYX (ORCPT
+        id S229965AbiKYMY0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Nov 2022 07:24:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49276 "EHLO
+        Fri, 25 Nov 2022 07:24:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229956AbiKYMYO (ORCPT
+        with ESMTP id S229972AbiKYMYS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Nov 2022 07:24:14 -0500
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2CB64A5BB
-        for <kernel-janitors@vger.kernel.org>; Fri, 25 Nov 2022 04:24:12 -0800 (PST)
+        Fri, 25 Nov 2022 07:24:18 -0500
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B00F543AF7
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Nov 2022 04:24:14 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id yXkRoPBKkY4XVyXkZoE20z; Fri, 25 Nov 2022 13:24:11 +0100
+        id yXkRoPBKkY4XVyXkaoE21L; Fri, 25 Nov 2022 13:24:13 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 25 Nov 2022 13:24:11 +0100
+X-ME-Date: Fri, 25 Nov 2022 13:24:13 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     Sunil Goutham <sgoutham@marvell.com>,
@@ -37,9 +37,9 @@ To:     Sunil Goutham <sgoutham@marvell.com>,
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         netdev@vger.kernel.org
-Subject: [PATCH 4/5] octeontx2-af: Fix the size of memory allocated for the 'id_bmap' bitmap
-Date:   Fri, 25 Nov 2022 13:24:00 +0100
-Message-Id: <ce2710771939065d68f95d86a27cf7cea7966365.1669378798.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 5/5] octeontx2-af: Simplify a size computation in rvu_npc_exact_init()
+Date:   Fri, 25 Nov 2022 13:24:01 +0100
+Message-Id: <5230dabe27f48948a9fd0f50a62e2437b65e6a6e.1669378798.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1669378798.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1669378798.git.christophe.jaillet@wanadoo.fr>
@@ -49,49 +49,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This allocation is really spurious.
-The size of the bitmap is 'tot_ids' and it is used as such in the driver.
-
-So we could expect something like:
-   table->id_bmap = devm_kcalloc(rvu->dev, BITS_TO_LONGS(table->tot_ids),
-			         sizeof(long), GFP_KERNEL);
-
-However, when the bitmap is allocated, we allocate:
-   BITS_TO_LONGS(table->tot_ids) * table->tot_ids ~=
-   table->tot_ids / 32 * table->tot_ids ~=
-   table->tot_ids^2 / 32
-
-It is proportional to the square of 'table->tot_ids' which seems to
-potentially be big.
-
-Allocate the expected amount of memory, and switch to the bitmap API to
-have it more straightforward.
+We know that table_size = table->mem_table.depth * table->mem_table.ways,
+so use it instead, it is less verbose.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is speculative.
-
-If I'm right, I'm curious to know if 'able->tot_ids' can really get big
-(I'm just guessing) , and if yes, how much.
----
- drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c
-index 3f94b620ef5a..ae34746341c4 100644
+index ae34746341c4..00aef8f5ac29 100644
 --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c
 +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c
-@@ -1914,8 +1914,8 @@ int rvu_npc_exact_init(struct rvu *rvu)
+@@ -1913,7 +1913,7 @@ int rvu_npc_exact_init(struct rvu *rvu)
+ 
  	dev_dbg(rvu->dev, "%s: Allocated bitmap for 32 entry cam\n", __func__);
  
- 	table->tot_ids = (table->mem_table.depth * table->mem_table.ways) + table->cam_table.depth;
--	table->id_bmap = devm_kcalloc(rvu->dev, BITS_TO_LONGS(table->tot_ids),
--				      table->tot_ids, GFP_KERNEL);
-+	table->id_bmap = devm_bitmap_zalloc(rvu->dev, table->tot_ids,
-+					    GFP_KERNEL);
+-	table->tot_ids = (table->mem_table.depth * table->mem_table.ways) + table->cam_table.depth;
++	table->tot_ids = table_size + table->cam_table.depth;
+ 	table->id_bmap = devm_bitmap_zalloc(rvu->dev, table->tot_ids,
+ 					    GFP_KERNEL);
  
- 	if (!table->id_bmap)
- 		return -ENOMEM;
 -- 
 2.34.1
 
