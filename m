@@ -2,82 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 041E2C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Nov 2022 08:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEEEAC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Nov 2022 09:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229883AbiKYIUV (ORCPT
+        id S229909AbiKYJ1W (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Nov 2022 03:20:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
+        Fri, 25 Nov 2022 04:27:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbiKYIUU (ORCPT
+        with ESMTP id S229609AbiKYJ1U (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Nov 2022 03:20:20 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FEE22BE5;
-        Fri, 25 Nov 2022 00:20:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BAE7FB82991;
-        Fri, 25 Nov 2022 08:20:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7309BC433B5;
-        Fri, 25 Nov 2022 08:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669364416;
-        bh=JY0z5s5qoo4VFsTBcFQnvGgI1go7QlR2K06NC1N3cC8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=LAXWjc4cgIHQhpEAkRHY1ZYAaGaQ1Z7FwkfYXHqyZohG3NtQFBTpE3dTzTUDKhoXd
-         ui+blYpyBarfcoFJGRX5aRqZQhBfVNL9SaWXTbJ+IrOpsJIg8hPCI0zjeDieAM81hB
-         DxoS9ny7elUBB9FXRK6QIRYH26/9iNjfUDHoMdRzJUmKsq0pB/qoDjPSjDh+4V0/BN
-         VyQOyR9bHjsvtTIMUI088hFzZ6BD71JFgZE2sqrtXZ21yaPeE+iN3rrAb0TqdNwvyL
-         2ZpX8rKmt599HHGxvd+AAuUYkixW3zFzc0Wl2XlCfzDDd7CZ0Ech7DL04U6ipEKKkm
-         zmXMtTC1OAkOA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5429EE4D012;
-        Fri, 25 Nov 2022 08:20:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 25 Nov 2022 04:27:20 -0500
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C183F2A97F
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Nov 2022 01:27:18 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id yUzKo4Eiu1SdMyUzKoWrLE; Fri, 25 Nov 2022 10:27:16 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 25 Nov 2022 10:27:16 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: lpfc: Remove a useless variable
+Date:   Fri, 25 Nov 2022 10:27:13 +0100
+Message-Id: <0fa467c115ad75ba28959c909751abf2bfd2a30a.1669368420.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] qed: avoid defines prefixed with CONFIG
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166936441634.8812.12932619170728156837.git-patchwork-notify@kernel.org>
-Date:   Fri, 25 Nov 2022 08:20:16 +0000
-References: <20221123103305.9083-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20221123103305.9083-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     aelior@marvell.com, manishc@marvell.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+There is no point in using 'error' here. All other paths use 'rc'.
+So use it here as well and remove the 'error' variable.
 
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/lpfc/lpfc_init.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On Wed, 23 Nov 2022 11:33:05 +0100 you wrote:
-> Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
-> that are introduced in a Kconfig file.
-> 
-> Here, constants for bitmap indices of some configs are defined and these
-> defines begin with the config's name, and are suffixed with BITMAP_IDX.
-> 
-> To avoid defines prefixed with "CONFIG", name these constants
-> BITMAP_IDX_FOR_CONFIG_XYZ instead of CONFIG_XYZ_BITMAP_IDX.
-> 
-> [...]
-
-Here is the summary with links:
-  - qed: avoid defines prefixed with CONFIG
-    https://git.kernel.org/netdev/net/c/39701603519e
-
-You are awesome, thank you!
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 25ba20e42825..6e85af92fb01 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -4700,7 +4700,6 @@ lpfc_create_port(struct lpfc_hba *phba, int instance, struct device *dev)
+ 	struct lpfc_vport *vport;
+ 	struct Scsi_Host  *shost = NULL;
+ 	struct scsi_host_template *template;
+-	int error = 0;
+ 	int i;
+ 	uint64_t wwn;
+ 	bool use_no_reset_hba = false;
+@@ -4829,8 +4828,8 @@ lpfc_create_port(struct lpfc_hba *phba, int instance, struct device *dev)
+ 	if (phba->sli3_options & LPFC_SLI3_BG_ENABLED)
+ 		lpfc_setup_bg(phba, shost);
+ 
+-	error = scsi_add_host_with_dma(shost, dev, &phba->pcidev->dev);
+-	if (error)
++	rc = scsi_add_host_with_dma(shost, dev, &phba->pcidev->dev);
++	if (rc)
+ 		goto out_free_vmid;
+ 
+ 	spin_lock_irq(&phba->port_list_lock);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
