@@ -2,97 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C9DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Nov 2022 07:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041E2C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Nov 2022 08:20:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229745AbiKYHj6 (ORCPT
+        id S229883AbiKYIUV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Nov 2022 02:39:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58840 "EHLO
+        Fri, 25 Nov 2022 03:20:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbiKYHj5 (ORCPT
+        with ESMTP id S229877AbiKYIUU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Nov 2022 02:39:57 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3940E275E5
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Nov 2022 23:39:57 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id m7-20020a05600c090700b003cf8a105d9eso2740865wmp.5
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Nov 2022 23:39:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x2uDBlTkBIecsJ0/pVRgZ1UNVKyp5BR8++/Ee6tOums=;
-        b=kpu1wXauOilz8J5X8C4St9E56b95mRasnUl4vlQfR+SLfhQkPcWpca+WeHFuOhMX6q
-         i/fppI2mFwu+gCcf8izuX8iSqrLuuAUUE6AVRpe7bn5Q01Tau1lrKiZwzTxbXSJLEPuK
-         vSSk0DvyXjs91IxMjPt/gXMgK/PR1b7ICrMzemEy/Hb6nFtfoC/eFMPJMmpliGYQKI4w
-         Mq2NZ73RdB4F7UdIUpTq6pvlDiQfaW6pq8YxJWrXictO7fPBbqx4V60oxAgVm8rdMEN5
-         dIjvxjnLPINK3pzV4CC8QV2+JJY4D65LbBN0tJpoFGlxuO/uGAJmo51S/HgdEk/q3h3f
-         g9JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x2uDBlTkBIecsJ0/pVRgZ1UNVKyp5BR8++/Ee6tOums=;
-        b=zLuOusotYyeCCNvzlXXvpUbfNerR5ZK0vE3DABRPu63fiTUd/VKDLBYTp7jRSpJqsR
-         rEeipkosK8bjDMoFWbdx5Xe/MnpjaqwlDp7ZwhMgR0e91cCPJIZOwGFi2k7BhrrGohy8
-         rGDpVXcS2s40N0KMX8VS7OOZSh2RtNotPj6jcS//7gZGMGYSHwRdbc0UhXQv8Nif5E+Z
-         if4ddSiMzJfDxztqeLEF9mji9vMckhwsbzxRDFLIJ4/xfOm7hsrlmpdz2hwcVby5HKjA
-         XpKRojWfZPVjo7ezqh+7VsqBY00FTGrPZcYvwmEVj+Tub4KqxFLkNAzjsL2PiKnpmOR/
-         t6Og==
-X-Gm-Message-State: ANoB5pl1i8DqbgV7jQ37zRrdL2exFztyLITbQukavOes2osYTpi2VeSh
-        Qc+TkJAxLqzbqOJGNDZoiYA=
-X-Google-Smtp-Source: AA0mqf7AyhvECyDinFaapQedyGVNf0RiHnyQY1A32J0XXVfS85Ijp1ONmn55E/m2R9bigPakliMf2g==
-X-Received: by 2002:a05:600c:5406:b0:3d0:21f6:43ec with SMTP id he6-20020a05600c540600b003d021f643ecmr15867408wmb.162.1669361995675;
-        Thu, 24 Nov 2022 23:39:55 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id h16-20020a05600c315000b003cfb7c02542sm4606184wmo.11.2022.11.24.23.39.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Nov 2022 23:39:55 -0800 (PST)
-Date:   Fri, 25 Nov 2022 10:39:49 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Felix Kuehling <Felix.Kuehling@amd.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amdkfd: Remove unnecessary condition in
- kfd_topology_add_device()
-Message-ID: <Y4BxRRU+aiblAj2Y@kili>
+        Fri, 25 Nov 2022 03:20:20 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FEE22BE5;
+        Fri, 25 Nov 2022 00:20:19 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BAE7FB82991;
+        Fri, 25 Nov 2022 08:20:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7309BC433B5;
+        Fri, 25 Nov 2022 08:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669364416;
+        bh=JY0z5s5qoo4VFsTBcFQnvGgI1go7QlR2K06NC1N3cC8=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=LAXWjc4cgIHQhpEAkRHY1ZYAaGaQ1Z7FwkfYXHqyZohG3NtQFBTpE3dTzTUDKhoXd
+         ui+blYpyBarfcoFJGRX5aRqZQhBfVNL9SaWXTbJ+IrOpsJIg8hPCI0zjeDieAM81hB
+         DxoS9ny7elUBB9FXRK6QIRYH26/9iNjfUDHoMdRzJUmKsq0pB/qoDjPSjDh+4V0/BN
+         VyQOyR9bHjsvtTIMUI088hFzZ6BD71JFgZE2sqrtXZ21yaPeE+iN3rrAb0TqdNwvyL
+         2ZpX8rKmt599HHGxvd+AAuUYkixW3zFzc0Wl2XlCfzDDd7CZ0Ech7DL04U6ipEKKkm
+         zmXMtTC1OAkOA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5429EE4D012;
+        Fri, 25 Nov 2022 08:20:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] qed: avoid defines prefixed with CONFIG
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166936441634.8812.12932619170728156837.git-patchwork-notify@kernel.org>
+Date:   Fri, 25 Nov 2022 08:20:16 +0000
+References: <20221123103305.9083-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20221123103305.9083-1-lukas.bulwahn@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     aelior@marvell.com, manishc@marvell.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-We re-arranged this code recently so "ret" is always zero at this point.
+Hello:
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/gpu/drm/amd/amdkfd/kfd_topology.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
-index 6f01ebc8557b..bceb1a5b2518 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
-@@ -2012,10 +2012,9 @@ int kfd_topology_add_device(struct kfd_dev *gpu)
- 
- 	kfd_debug_print_topology();
- 
--	if (!res)
--		kfd_notify_gpu_change(gpu_id, 1);
-+	kfd_notify_gpu_change(gpu_id, 1);
- 
--	return res;
-+	return 0;
- }
- 
- /**
+On Wed, 23 Nov 2022 11:33:05 +0100 you wrote:
+> Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+> that are introduced in a Kconfig file.
+> 
+> Here, constants for bitmap indices of some configs are defined and these
+> defines begin with the config's name, and are suffixed with BITMAP_IDX.
+> 
+> To avoid defines prefixed with "CONFIG", name these constants
+> BITMAP_IDX_FOR_CONFIG_XYZ instead of CONFIG_XYZ_BITMAP_IDX.
+> 
+> [...]
+
+Here is the summary with links:
+  - qed: avoid defines prefixed with CONFIG
+    https://git.kernel.org/netdev/net/c/39701603519e
+
+You are awesome, thank you!
 -- 
-2.35.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
