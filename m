@@ -2,88 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2B2C4167D
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Nov 2022 03:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D02C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Nov 2022 09:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbiKZD1y (ORCPT
+        id S229509AbiKZJoO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Nov 2022 22:27:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35758 "EHLO
+        Sat, 26 Nov 2022 04:44:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbiKZD1t (ORCPT
+        with ESMTP id S229453AbiKZJoO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Nov 2022 22:27:49 -0500
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 764A4EE21;
-        Fri, 25 Nov 2022 19:27:48 -0800 (PST)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AQ2s0xW026859;
-        Sat, 26 Nov 2022 03:27:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2022-7-12;
- bh=Xlx7m0Sj8kgyhdQyLtI7DeOmq7iJSUePVKkR8/jQi7A=;
- b=b3WMXrNY+rLxtc66ipgk/V8rsSSwKakxPJWzpKBvUvMAz6lY2TGgT1J8WKhwKVU6Eo/i
- 9lluqggrFOd9ncdBqj7VCyeOKCFETKK+GozMBpZtOSl8FGDbWjOMQ7Af7V3CWQlIvw3G
- bSACt+hbll13CrtPOPzH0vCJYw/wzpiVQUs7iUZlaa3O5K4I5prtgZJsDP6zAcg6DiBr
- Iteet6UBX35iIiihykce1dy8MKztVbuKqve5ElQUswDqFUG5S7KjjjvZMkrCe0j2raOw
- cGyJn8M80Kehm+udX+GUjUyzhc9zVcuHhlm2IYhPEosgRV+tefcEyZXygkMjk8PoEty4 ig== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3m3adt00js-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 26 Nov 2022 03:27:44 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2AQ1XW7O007348;
-        Sat, 26 Nov 2022 03:27:44 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3m3988b7yp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 26 Nov 2022 03:27:44 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AQ3RhsP028327;
-        Sat, 26 Nov 2022 03:27:43 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3m3988b7y9-2;
-        Sat, 26 Nov 2022 03:27:43 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     Hannes Reinecke <hare@suse.de>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        linux-scsi@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: libfc: remove redundant variable ev_qual
-Date:   Sat, 26 Nov 2022 03:27:33 +0000
-Message-Id: <166943312545.1684293.11269903246948093096.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221111170824.558250-1-colin.i.king@gmail.com>
-References: <20221111170824.558250-1-colin.i.king@gmail.com>
+        Sat, 26 Nov 2022 04:44:14 -0500
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37A871BEAC
+        for <kernel-janitors@vger.kernel.org>; Sat, 26 Nov 2022 01:44:11 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id yrj9oK7dJ5FWAyrj9ogvye; Sat, 26 Nov 2022 10:44:08 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 26 Nov 2022 10:44:08 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
+        Alistar Popple <alistair@popple.id.au>,
+        Eddie James <eajames@linux.ibm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fsi@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org
+Subject: [PATCH] fsi: Aspeed: Fix a resource leak in fsi_master_aspeed_remove()
+Date:   Sat, 26 Nov 2022 10:44:02 +0100
+Message-Id: <faf56efd13207ea888c5ebda2d3de82e096d3fa0.1669455822.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-26_02,2022-11-25_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 phishscore=0
- mlxlogscore=882 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
- definitions=main-2211260024
-X-Proofpoint-ORIG-GUID: 8xDlR1DOyBMutphI-5ue06JYf0vqurTQ
-X-Proofpoint-GUID: 8xDlR1DOyBMutphI-5ue06JYf0vqurTQ
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 11 Nov 2022 17:08:24 +0000, Colin Ian King wrote:
+An explicit get_device() call in fsi_master_aspeed_probe() is not balanced
+by a corresponding put_device() in the .remove() function.
 
-> Variable ev_qual is being assigned and modified but the end result
-> is never used. The variable is redundant and can be removed.
-> 
-> 
+Add it, otherwise some resource may never be released.
 
-Applied to 6.2/scsi-queue, thanks!
+Fixes: 606397d67f41 ("fsi: Add ast2600 master driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is speculative and untested.
+---
+ drivers/fsi/fsi-master-aspeed.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[1/1] scsi: libfc: remove redundant variable ev_qual
-      https://git.kernel.org/mkp/scsi/c/0824050682ae
-
+diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
+index 7cec1772820d..b66d9853117b 100644
+--- a/drivers/fsi/fsi-master-aspeed.c
++++ b/drivers/fsi/fsi-master-aspeed.c
+@@ -651,6 +651,8 @@ static int fsi_master_aspeed_remove(struct platform_device *pdev)
+ 	fsi_master_unregister(&aspeed->master);
+ 	clk_disable_unprepare(aspeed->clk);
+ 
++	put_device(&aspeed->master.dev);
++
+ 	return 0;
+ }
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.34.1
+
