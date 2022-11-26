@@ -2,39 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98308C46467
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Nov 2022 10:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAD7C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Nov 2022 11:14:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbiKZKmk (ORCPT
+        id S229480AbiKZLOE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Nov 2022 05:42:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59210 "EHLO
+        Sat, 26 Nov 2022 06:14:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229621AbiKZKmg (ORCPT
+        with ESMTP id S229536AbiKZLNf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Nov 2022 05:42:36 -0500
-Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A00A31135
-        for <kernel-janitors@vger.kernel.org>; Sat, 26 Nov 2022 02:42:30 -0800 (PST)
+        Sat, 26 Nov 2022 06:13:35 -0500
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 429781AD97
+        for <kernel-janitors@vger.kernel.org>; Sat, 26 Nov 2022 03:13:32 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id ysdeoGr9wM75kysdfogT6N; Sat, 26 Nov 2022 11:42:28 +0100
+        id yt7gosMV5gfI9yt7hoiV8F; Sat, 26 Nov 2022 12:13:30 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Nov 2022 11:42:28 +0100
+X-ME-Date: Sat, 26 Nov 2022 12:13:30 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Lukasz Luba <lukasz.luba@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>
+To:     Hannes Reinecke <hare@suse.de>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] thermal/core/power allocator: Remove a useless include
-Date:   Sat, 26 Nov 2022 11:42:25 +0100
-Message-Id: <9adeec47cb5a8193016272d5c8bf936235c1711d.1669459337.git.christophe.jaillet@wanadoo.fr>
+        linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: libfc: Include the correct header
+Date:   Sat, 26 Nov 2022 12:13:27 +0100
+Message-Id: <960f34418358f0c35e645aa2cf7e0ec7fe6b60b9.1669461197.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,24 +43,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 This file does not use rcu, so there is no point in including
 <linux/rculist.h>.
 
-Remove it.
+The dependency has been removed in commit fa519f701d27 ("scsi: libfc: fixup
+'sleeping function called from invalid context'")
+It turned a list_for_each_entry_rcu() into a list_for_each_entry().
+
+So just #include <linux/list.h> now.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/thermal/gov_power_allocator.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/scsi/libfc/fc_disc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
-index 2d1aeaba38a8..d5d4eae16771 100644
---- a/drivers/thermal/gov_power_allocator.c
-+++ b/drivers/thermal/gov_power_allocator.c
-@@ -8,7 +8,6 @@
- 
- #define pr_fmt(fmt) "Power allocator: " fmt
- 
--#include <linux/rculist.h>
+diff --git a/drivers/scsi/libfc/fc_disc.c b/drivers/scsi/libfc/fc_disc.c
+index 0f32ded246d0..384f48ff64d7 100644
+--- a/drivers/scsi/libfc/fc_disc.c
++++ b/drivers/scsi/libfc/fc_disc.c
+@@ -24,7 +24,7 @@
  #include <linux/slab.h>
- #include <linux/thermal.h>
+ #include <linux/err.h>
+ #include <linux/export.h>
+-#include <linux/rculist.h>
++#include <linux/list.h>
+ 
+ #include <asm/unaligned.h>
  
 -- 
 2.34.1
