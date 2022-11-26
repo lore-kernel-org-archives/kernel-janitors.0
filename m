@@ -2,37 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAD7C4332F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Nov 2022 11:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0625C4167B
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Nov 2022 11:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229480AbiKZLOE (ORCPT
+        id S229509AbiKZLbK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Nov 2022 06:14:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50508 "EHLO
+        Sat, 26 Nov 2022 06:31:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbiKZLNf (ORCPT
+        with ESMTP id S229481AbiKZLbJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Nov 2022 06:13:35 -0500
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 429781AD97
-        for <kernel-janitors@vger.kernel.org>; Sat, 26 Nov 2022 03:13:32 -0800 (PST)
+        Sat, 26 Nov 2022 06:31:09 -0500
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB7C0218AA
+        for <kernel-janitors@vger.kernel.org>; Sat, 26 Nov 2022 03:31:04 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id yt7gosMV5gfI9yt7hoiV8F; Sat, 26 Nov 2022 12:13:30 +0100
+        id ytOfoOUED1LdIytOfoAzaK; Sat, 26 Nov 2022 12:31:03 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Nov 2022 12:13:30 +0100
+X-ME-Date: Sat, 26 Nov 2022 12:31:03 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Hannes Reinecke <hare@suse.de>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
+        Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH] scsi: libfc: Include the correct header
-Date:   Sat, 26 Nov 2022 12:13:27 +0100
-Message-Id: <960f34418358f0c35e645aa2cf7e0ec7fe6b60b9.1669461197.git.christophe.jaillet@wanadoo.fr>
+        linux-acpi@vger.kernel.org
+Subject: [PATCH] ACPI: APEI: Remove a useless include
+Date:   Sat, 26 Nov 2022 12:30:55 +0100
+Message-Id: <f619bc0b58a70e1cd1942b3db3716d6f9b261666.1669462247.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,30 +43,25 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 This file does not use rcu, so there is no point in including
 <linux/rculist.h>.
 
-The dependency has been removed in commit fa519f701d27 ("scsi: libfc: fixup
-'sleeping function called from invalid context'")
-It turned a list_for_each_entry_rcu() into a list_for_each_entry().
-
-So just #include <linux/list.h> now.
+So just remove it.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/scsi/libfc/fc_disc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/apei/apei-base.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/libfc/fc_disc.c b/drivers/scsi/libfc/fc_disc.c
-index 0f32ded246d0..384f48ff64d7 100644
---- a/drivers/scsi/libfc/fc_disc.c
-+++ b/drivers/scsi/libfc/fc_disc.c
-@@ -24,7 +24,7 @@
+diff --git a/drivers/acpi/apei/apei-base.c b/drivers/acpi/apei/apei-base.c
+index 02196a312dc5..c7c26872f4ce 100644
+--- a/drivers/acpi/apei/apei-base.c
++++ b/drivers/acpi/apei/apei-base.c
+@@ -25,7 +25,6 @@
  #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/export.h>
+ #include <linux/io.h>
+ #include <linux/kref.h>
 -#include <linux/rculist.h>
-+#include <linux/list.h>
- 
- #include <asm/unaligned.h>
- 
+ #include <linux/interrupt.h>
+ #include <linux/debugfs.h>
+ #include <acpi/apei.h>
 -- 
 2.34.1
 
