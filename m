@@ -2,72 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEFAC43217
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Nov 2022 15:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6948EC43217
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Nov 2022 16:07:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbiK0PPG (ORCPT
+        id S229632AbiK0QHq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Nov 2022 10:15:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50186 "EHLO
+        Sun, 27 Nov 2022 11:07:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbiK0PPF (ORCPT
+        with ESMTP id S229629AbiK0QHp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Nov 2022 10:15:05 -0500
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DD3CDC;
-        Sun, 27 Nov 2022 07:15:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=j40ekeFElSRTUtWtf4uTai1Djqh1538q9l9woq5ywmM=; b=XXiBVtjYsFdCIgK47ruEXgWi63
-        chbbXYoWn8viKshFPeI4Pp/wV9s+ODdQMcVnkLzkwmYzCyvqKCm7CTbR/9i+f7CwjmHbeAtO0+5mX
-        EedFowawd64MuPzeQw4FQloRot6bhlsB397GmjpM7opqKzBGDTd4FC904+Wm0FHu9QNxhG1Zv3nXK
-        WUiMkQISKyFinOJariXwDYtDtsj9MA722IPpg4NTfKGtwxqybC5RSjz4Lfp6Ml8/gaOun1lYFmsTe
-        bg9UxqDyuP/GikGU8kWY1KDewpdGpte4GUQMzr11IVwrkSnroXyr55tXnWuWLHJ/lrbfxoezQhMLS
-        eDarDYcAkiMXyzU+t4xUtUz+u4GFU9pz7q8DBzqnAFjIHTuecpr8RTe139cijMdxwopqbiIBmUyVf
-        o4G03qBzxeCeoM27HBK3B9VhlfCGIUgFthVyfHFJfgZegIamIsHWZV1MuS4lXGIxii35nG82Ju+jo
-        Zz4SThlvvUpUhRWxh+Mcf+9dUnCHr7x7WISZ/yYs5fTOBYezKFB8rKNQF4lAAYndlI9/mMGd9BtHk
-        dT8ik9YnlPS/SFpPvOqqdqElobFqi8lvQX+jRZ41ibzmSCLOqbns1lg/k9Ke+xFZKG1KPyEyaSXoQ
-        Yi8+mDsoeEbBxZLuNC2hfvgRKlRPe47hra8Uqo5SY=;
-From:   Christian Schoenebeck <linux_oss@crudebyte.com>
-To:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Sun, 27 Nov 2022 11:07:45 -0500
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C748563C3
+        for <kernel-janitors@vger.kernel.org>; Sun, 27 Nov 2022 08:07:41 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id zKBuo3TEYgfI9zKBuokZLw; Sun, 27 Nov 2022 17:07:39 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 27 Nov 2022 17:07:39 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org
-Subject: Re: [PATCH] 9p: Remove unneeded idr.h #include in the net/9p directory
-Date:   Sun, 27 Nov 2022 16:14:44 +0100
-Message-ID: <1691295.Xhe5vkXPrl@silver>
-In-Reply-To: <9e386018601d7e4a9e5d7da8fc3e9555ebb25c87.1669560387.git.christophe.jaillet@wanadoo.fr>
-References: <9e386018601d7e4a9e5d7da8fc3e9555ebb25c87.1669560387.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] io-mapping: Move some code within the include guarded section
+Date:   Sun, 27 Nov 2022 17:07:32 +0100
+Message-Id: <4dbaf427d4300edba6c6bbfaf4d57493b9bec6ee.1669565241.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sunday, November 27, 2022 3:46:45 PM CET Christophe JAILLET wrote:
-> The 9p net files don't use IDR or IDA functionalities. So there is no point
-> in including <linux/idr.h>.
-> Remove it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+It is spurious to have some code out-side the include guard in a .h file.
+Fix it.
 
-Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
+Fixes: 1fbaf8fc12a0 ("mm: add a io_mapping_map_user helper")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ include/linux/io-mapping.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->  net/9p/trans_fd.c     | 1 -
->  net/9p/trans_rdma.c   | 1 -
->  net/9p/trans_virtio.c | 1 -
->  3 files changed, 3 deletions(-)
-
-
+diff --git a/include/linux/io-mapping.h b/include/linux/io-mapping.h
+index 66a774d2710e..09d4f17c8d3b 100644
+--- a/include/linux/io-mapping.h
++++ b/include/linux/io-mapping.h
+@@ -213,7 +213,7 @@ io_mapping_free(struct io_mapping *iomap)
+ 	kfree(iomap);
+ }
+ 
+-#endif /* _LINUX_IO_MAPPING_H */
+-
+ int io_mapping_map_user(struct io_mapping *iomap, struct vm_area_struct *vma,
+ 		unsigned long addr, unsigned long pfn, unsigned long size);
++
++#endif /* _LINUX_IO_MAPPING_H */
+-- 
+2.34.1
 
