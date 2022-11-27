@@ -2,96 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA1DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Nov 2022 14:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEFAC43217
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Nov 2022 15:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbiK0Oqw (ORCPT
+        id S229555AbiK0PPG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Nov 2022 09:46:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44330 "EHLO
+        Sun, 27 Nov 2022 10:15:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiK0Oqv (ORCPT
+        with ESMTP id S229450AbiK0PPF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Nov 2022 09:46:51 -0500
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16679BF4C
-        for <kernel-janitors@vger.kernel.org>; Sun, 27 Nov 2022 06:46:50 -0800 (PST)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id zIveos02xGPMszIveoBAEd; Sun, 27 Nov 2022 15:46:49 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 27 Nov 2022 15:46:49 +0100
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Sun, 27 Nov 2022 10:15:05 -0500
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DD3CDC;
+        Sun, 27 Nov 2022 07:15:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        Content-ID:Content-Description;
+        bh=j40ekeFElSRTUtWtf4uTai1Djqh1538q9l9woq5ywmM=; b=XXiBVtjYsFdCIgK47ruEXgWi63
+        chbbXYoWn8viKshFPeI4Pp/wV9s+ODdQMcVnkLzkwmYzCyvqKCm7CTbR/9i+f7CwjmHbeAtO0+5mX
+        EedFowawd64MuPzeQw4FQloRot6bhlsB397GmjpM7opqKzBGDTd4FC904+Wm0FHu9QNxhG1Zv3nXK
+        WUiMkQISKyFinOJariXwDYtDtsj9MA722IPpg4NTfKGtwxqybC5RSjz4Lfp6Ml8/gaOun1lYFmsTe
+        bg9UxqDyuP/GikGU8kWY1KDewpdGpte4GUQMzr11IVwrkSnroXyr55tXnWuWLHJ/lrbfxoezQhMLS
+        eDarDYcAkiMXyzU+t4xUtUz+u4GFU9pz7q8DBzqnAFjIHTuecpr8RTe139cijMdxwopqbiIBmUyVf
+        o4G03qBzxeCeoM27HBK3B9VhlfCGIUgFthVyfHFJfgZegIamIsHWZV1MuS4lXGIxii35nG82Ju+jo
+        Zz4SThlvvUpUhRWxh+Mcf+9dUnCHr7x7WISZ/yYs5fTOBYezKFB8rKNQF4lAAYndlI9/mMGd9BtHk
+        dT8ik9YnlPS/SFpPvOqqdqElobFqi8lvQX+jRZ41ibzmSCLOqbns1lg/k9Ke+xFZKG1KPyEyaSXoQ
+        Yi8+mDsoeEbBxZLuNC2hfvgRKlRPe47hra8Uqo5SY=;
+From:   Christian Schoenebeck <linux_oss@crudebyte.com>
 To:     Eric Van Hensbergen <ericvh@gmail.com>,
         Latchesar Ionkov <lucho@ionkov.net>,
         Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
+        Paolo Abeni <pabeni@redhat.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org
-Subject: [PATCH] 9p: Remove unneeded idr.h #include in the net/9p directory
-Date:   Sun, 27 Nov 2022 15:46:45 +0100
-Message-Id: <9e386018601d7e4a9e5d7da8fc3e9555ebb25c87.1669560387.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH] 9p: Remove unneeded idr.h #include in the net/9p directory
+Date:   Sun, 27 Nov 2022 16:14:44 +0100
+Message-ID: <1691295.Xhe5vkXPrl@silver>
+In-Reply-To: <9e386018601d7e4a9e5d7da8fc3e9555ebb25c87.1669560387.git.christophe.jaillet@wanadoo.fr>
+References: <9e386018601d7e4a9e5d7da8fc3e9555ebb25c87.1669560387.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 9p net files don't use IDR or IDA functionalities. So there is no point
-in including <linux/idr.h>.
-Remove it.
+On Sunday, November 27, 2022 3:46:45 PM CET Christophe JAILLET wrote:
+> The 9p net files don't use IDR or IDA functionalities. So there is no point
+> in including <linux/idr.h>.
+> Remove it.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- net/9p/trans_fd.c     | 1 -
- net/9p/trans_rdma.c   | 1 -
- net/9p/trans_virtio.c | 1 -
- 3 files changed, 3 deletions(-)
+Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
 
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index eeea0a6a75b6..06ec9f7d3318 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -20,7 +20,6 @@
- #include <linux/un.h>
- #include <linux/uaccess.h>
- #include <linux/inet.h>
--#include <linux/idr.h>
- #include <linux/file.h>
- #include <linux/parser.h>
- #include <linux/slab.h>
-diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
-index 6ff706760676..33a9ac6f2d55 100644
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -21,7 +21,6 @@
- #include <linux/un.h>
- #include <linux/uaccess.h>
- #include <linux/inet.h>
--#include <linux/idr.h>
- #include <linux/file.h>
- #include <linux/parser.h>
- #include <linux/semaphore.h>
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index e757f0601304..19bccfa0d593 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -22,7 +22,6 @@
- #include <linux/un.h>
- #include <linux/uaccess.h>
- #include <linux/inet.h>
--#include <linux/idr.h>
- #include <linux/file.h>
- #include <linux/highmem.h>
- #include <linux/slab.h>
--- 
-2.34.1
+>  net/9p/trans_fd.c     | 1 -
+>  net/9p/trans_rdma.c   | 1 -
+>  net/9p/trans_virtio.c | 1 -
+>  3 files changed, 3 deletions(-)
+
+
 
