@@ -2,74 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96425C4167D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Nov 2022 07:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9027EC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Nov 2022 08:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbiK1HT6 (ORCPT
+        id S230006AbiK1IVJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 28 Nov 2022 02:19:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36126 "EHLO
+        Mon, 28 Nov 2022 03:21:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbiK1HT5 (ORCPT
+        with ESMTP id S230190AbiK1IUp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 28 Nov 2022 02:19:57 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A820F656E;
-        Sun, 27 Nov 2022 23:19:56 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00B2DD6E;
-        Sun, 27 Nov 2022 23:20:03 -0800 (PST)
-Received: from [10.57.7.86] (unknown [10.57.7.86])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D62FF3F73D;
-        Sun, 27 Nov 2022 23:19:54 -0800 (PST)
-Message-ID: <283adb73-99c2-4215-0711-26ff0f73da26@arm.com>
-Date:   Mon, 28 Nov 2022 07:19:53 +0000
+        Mon, 28 Nov 2022 03:20:45 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E6A1704E;
+        Mon, 28 Nov 2022 00:20:33 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id n3so15482136wrp.5;
+        Mon, 28 Nov 2022 00:20:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qSIbdQeQLc1B6fZDwz85ioJ0LOXvlrrzDAmnKikBfF0=;
+        b=NwL/5dEuggm86DTrBCWMUdvqPs2+LVBGByIglS7sm3G0+vlGhXnMVLgQrf8n8EFyJC
+         HW5izUDuVo/Sq6ThdRlec5rYWst/HjY5vtsWolt3M3JVTB27AZJuNM6TtVqBnRgS6rTQ
+         HmSIab1PZAKykrqYD4ljI3cxsiLZRsxeXFNnz1smkj6MY2iCRbAJNKfYZELFXBijBUoI
+         L7m5Dg4lpXDHLgtRTpyzQCapdmbRQ1PZz2yxqZJnDAlwHUbCmHyw2bveWsWkOyr1OHPu
+         MnJ4lut9Avqwa0WvfSUn0ZY8HYd8bStxGwFYrVIaA5OiqesPm4iWyj//W8r6jAqSajZJ
+         SWaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qSIbdQeQLc1B6fZDwz85ioJ0LOXvlrrzDAmnKikBfF0=;
+        b=4rdMMjukxHieo+2C5t38ZPwosKmK3TrlLsqzLdhr+VreZQtibM+Vdo+HtrFZ9WJD5a
+         XDaDMGnQ1lhJmyy8nfyn2C1j0aYeX8Ehcvo1AuqVQHupRoYmba4lmnjYANLK07ukOjlx
+         CqWRkmvCCNfXOatDTxH7eKXWv3Iuf7JXS/IiCiiVfTryulOVZkTPjyl7jPrNWyTmCI1v
+         Q1KuGwzzHDEOrxFHVPAa4cn3nzBEgrhiCInazOvAcucGgS0yYdE4LZXd49QGvyCAdTTG
+         pwkK8gKPVkV0l5spzKzFgpgoJ46Qq9ozxN7ln3gMoPgJJGHP0RIsNMgY4l/gAx7xVg98
+         DyGg==
+X-Gm-Message-State: ANoB5pmYDAditaigdW/J4znrssLwA/BhlctpMnuyc27P3trb7Ksg7pxO
+        0eXtrLAlUDe8O2b/TNXBbFI=
+X-Google-Smtp-Source: AA0mqf6aji4/cGcIbRAqRw4P6sBoRN0HKEiHun0VEl6pEwIos6LTLsQdy30HlrAYjW1M8L4Nz7R9zQ==
+X-Received: by 2002:adf:ea44:0:b0:242:19b2:f1fc with SMTP id j4-20020adfea44000000b0024219b2f1fcmr1221218wrn.593.1669623631507;
+        Mon, 28 Nov 2022 00:20:31 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id r6-20020a05600c458600b003cfd4a50d5asm18664171wmo.34.2022.11.28.00.20.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 00:20:31 -0800 (PST)
+Date:   Mon, 28 Nov 2022 11:20:27 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Jay Vosburgh <j.vosburgh@gmail.com>,
+        Jonathan Toppins <jtoppins@redhat.com>
+Cc:     Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] bonding: uninitialized variable in
+ bond_miimon_inspect()
+Message-ID: <Y4RvS7Bns4Q8MorG@kili>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] thermal/core/power allocator: Remove a useless include
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amitk@kernel.org>
-References: <9adeec47cb5a8193016272d5c8bf936235c1711d.1669459337.git.christophe.jaillet@wanadoo.fr>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <9adeec47cb5a8193016272d5c8bf936235c1711d.1669459337.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+The "ignore_updelay" variable needs to be initialized to false to
+prevent an uninitialized variable bug.
 
+Fixes: f8a65ab2f3ff ("bonding: fix link recovery in mode 2 when updelay is nonzero")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
 
-On 11/26/22 10:42, Christophe JAILLET wrote:
-> This file does not use rcu, so there is no point in including
-> <linux/rculist.h>.
-> 
-> Remove it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/thermal/gov_power_allocator.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
-> index 2d1aeaba38a8..d5d4eae16771 100644
-> --- a/drivers/thermal/gov_power_allocator.c
-> +++ b/drivers/thermal/gov_power_allocator.c
-> @@ -8,7 +8,6 @@
->   
->   #define pr_fmt(fmt) "Power allocator: " fmt
->   
-> -#include <linux/rculist.h>
->   #include <linux/slab.h>
->   #include <linux/thermal.h>
->   
+This was found by Smatch.  Another Smatch warning that might be worth
+investigating is:
 
-Good catch.
+drivers/net/bonding/bond_main.c:5071 bond_update_slave_arr() warn: missing error code here? 'bond_3ad_get_active_agg_info()' failed. 'ret' = '0'
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+I don't know the code well enough to say if that's a real bug.
+
+ drivers/net/bonding/bond_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index c87481033995..8a57a5681461 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -2527,7 +2527,7 @@ static int bond_miimon_inspect(struct bonding *bond)
+ 	int link_state, commit = 0;
+ 	struct list_head *iter;
+ 	struct slave *slave;
+-	bool ignore_updelay;
++	bool ignore_updelay = false;
+ 
+ 	if (BOND_MODE(bond) == BOND_MODE_ACTIVEBACKUP) {
+ 		ignore_updelay = !rcu_dereference(bond->curr_active_slave);
+-- 
+2.35.1
+
