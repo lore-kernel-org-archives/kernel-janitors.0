@@ -2,72 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058B9C43217
-	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Nov 2022 13:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F592C43217
+	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Nov 2022 14:36:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232159AbiK1N6O (ORCPT
+        id S230460AbiK1Ogs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 28 Nov 2022 08:58:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
+        Mon, 28 Nov 2022 09:36:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232276AbiK1N5v (ORCPT
+        with ESMTP id S230101AbiK1Ogr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 28 Nov 2022 08:57:51 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0622AE8D;
-        Mon, 28 Nov 2022 05:57:42 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 09F6BB80D9E;
-        Mon, 28 Nov 2022 13:57:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A17CC433D6;
-        Mon, 28 Nov 2022 13:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669643859;
-        bh=3iAjCz8Po6UxsVaFN66Kyn/1QE3Uxx8DWu4pZB3HbEM=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=H5FhmdZdWirC9HOnQW/3HbTLnGxregpR1YVsc6aDopEp2rolsPDSrPjxv4dZmBYuF
-         3z2C0shBk8SBfpgATE0mBtzB8GD5Ju0aCEr6NgVGOisvmjGA+q/htKLvSEOnsl/39k
-         ewgsG0FMjTSw+B2tVwHL3gHsB6lTEqNzRQHc5Gffn33nJ7SBIHpMxke9AcR0xBVnCe
-         bJrpvvtYa8+aJkfp/0LGTWj+pLSOQhD6FPGZCH7CtmfcYmWh8Z5jGGuoI/nWh6cVh4
-         dEgeKbvhnHIV0LJ3cUNXqHcLOnfImQNaqCL2WvvtL74TlFItTWCrqW3USArtLM6uwJ
-         QPorcHjt1TiOg==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 28 Nov 2022 09:36:47 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 164F7BC11;
+        Mon, 28 Nov 2022 06:36:47 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id ha10so26356767ejb.3;
+        Mon, 28 Nov 2022 06:36:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e4ISe8StrCOcGj2m5mAlUonifufkb1z6SSvKNLqiIMs=;
+        b=VexDcNokEuEO0yl29L47ZY45Ol8wdatJ5n9MpeRP3muD5IJbywClh4gyxfpO1KrzsL
+         CjDILPSO3loMZbc2r1PTVBOeYpmIEkC//a3TdtLxVwyEXo/by4iuboThVaSklpOohcyw
+         uHqixBUQrOoVLhhGJWrYeRF7I5J9y9NGI3lPtIIPGTwcF4XDHGfqG4nzXXi4F1DhsUqD
+         dPfZAojNDJo0br8NcbzU5NjT6d1PtezXpzqWWey1y2EF2TQBPBo0sAa9BMlcloINCHr+
+         fsv5W9K0OGzFDYZx9pXDf2OCP24oCiy/0jkPo6PBAUplrOSddh3On3N/497Rbiyx746E
+         +Xnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e4ISe8StrCOcGj2m5mAlUonifufkb1z6SSvKNLqiIMs=;
+        b=YrIrBA1RTy18FtaCg7ZPNIbpYXzt27ZnZMIeHP5Njl+f+OT3m6jmV+WnsunGPd6JqS
+         WfyK3pu9SrjiAXoBqu/WDMGky/KVuvuzph5PktX9e/m38y3AMmsd98NnNhpENURTro4q
+         MPw5Vi6HSeeeJ4q88TKEHgjgedDcac/vLmK+dTSajqycIDW4lBpUBhLS3r1NEcWnWZ/M
+         kQYqZ9QJEsAsCgV3rrgnG7W0NolT+76TATDPSzCkUM8XpqFp0TTIRV4hzKHd3fDw/Abp
+         BGHCoHI5bLjAsSd3xPQiNoEniU1tYV/j0rvCysOI2JNPVfzcxJs2n2S7t5nEvxKpOUjp
+         3BGQ==
+X-Gm-Message-State: ANoB5pmgqBKWcfRl4IX0p4H4vsd8FC2bebuSEWuXs5vhgdPPsTIdaoro
+        n7I/DO1Xsk9/Ts0nHCudFqY=
+X-Google-Smtp-Source: AA0mqf42cvk5Fhccpof1Z+Dmms2gvN5uvduTqmGCSEqJZ3unph5p55yxQVgTjBnqZ1aYV4UeF6DreQ==
+X-Received: by 2002:a17:906:f6c6:b0:78d:b367:20c1 with SMTP id jo6-20020a170906f6c600b0078db36720c1mr41386821ejb.530.1669646205650;
+        Mon, 28 Nov 2022 06:36:45 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id a14-20020aa7d90e000000b004611c230bd0sm5247213edr.37.2022.11.28.06.36.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 06:36:45 -0800 (PST)
+Date:   Mon, 28 Nov 2022 17:36:41 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Pavan Chebbi <pavan.chebbi@broadcom.com>
+Cc:     Jay Vosburgh <j.vosburgh@gmail.com>,
+        Jonathan Toppins <jtoppins@redhat.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next v2] bonding: uninitialized variable in
+ bond_miimon_inspect()
+Message-ID: <Y4THeSrc0lOJP/AJ@kadam>
+References: <Y4SWJlh3ohJ6EPTL@kili>
+ <CALs4sv3xJXJvWwcGk8N_s1mW9Y7GpEz6Bqv-DJO_q7hPi2yTLA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wifi: b43: remove reference to removed config B43_PCMCIA
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
-References: <20221122131248.23738-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     =?utf-8?b?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <166964385630.4701.15876061507595016726.kvalo@kernel.org>
-Date:   Mon, 28 Nov 2022 13:57:38 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALs4sv3xJXJvWwcGk8N_s1mW9Y7GpEz6Bqv-DJO_q7hPi2yTLA@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-
-> Commit 399500da18f7 ("ssb: pick PCMCIA host code support from b43 driver")
-> removes the config B43_PCMCIA.
+On Mon, Nov 28, 2022 at 07:15:39PM +0530, Pavan Chebbi wrote:
+> On Mon, Nov 28, 2022 at 4:36 PM Dan Carpenter <error27@gmail.com> wrote:
+> >
+> > The "ignore_updelay" variable needs to be initialized to false.
+> >
+> > Fixes: f8a65ab2f3ff ("bonding: fix link recovery in mode 2 when updelay is nonzero")
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > ---
+> > v2: Re-order so the declarations are in reverse Christmas tree order
+> >
+> Thanks,
+> Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
 > 
-> Clean up the last reference to this removed config B43_PCMCIA in the
-> b43_print_driverinfo() function.
+> > Don't forget about:
+> > drivers/net/bonding/bond_main.c:5071 bond_update_slave_arr() warn: missing error code here? 'bond_3ad_get_active_agg_info()' failed. 'ret' = '0'
+> >
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> I think that warning can be ignored, as bond_update_slave_arr() does
+> consider the return value of bond_3ad_get_active_agg_info() but
+> chooses to not bubble it up. Though the author of the function is the
+> best person to answer it, at this point, it looks OK to me. Maybe a
+> separate patch to address it would help to get the attention of the
+> author.
 
-Patch applied to wireless-next.git, thanks.
+Heh...  That's slightly vague.
 
-3ca7f0b2523c wifi: b43: remove reference to removed config B43_PCMCIA
+You're wrong to say that none of the callers care about the error code.
+It is checked in bond_slave_arr_handler().
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20221122131248.23738-1-lukas.bulwahn@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+regards,
+dan carpenter
