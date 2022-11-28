@@ -2,54 +2,55 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA51C4321E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Nov 2022 04:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 652FBC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Nov 2022 04:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbiK1E1h (ORCPT
+        id S229696AbiK1E5x (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Nov 2022 23:27:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60058 "EHLO
+        Sun, 27 Nov 2022 23:57:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbiK1E1e (ORCPT
+        with ESMTP id S229704AbiK1E5r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Nov 2022 23:27:34 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5EF023A
-        for <kernel-janitors@vger.kernel.org>; Sun, 27 Nov 2022 20:27:30 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id 1so11863711ybl.7
-        for <kernel-janitors@vger.kernel.org>; Sun, 27 Nov 2022 20:27:30 -0800 (PST)
+        Sun, 27 Nov 2022 23:57:47 -0500
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519E3F2E
+        for <kernel-janitors@vger.kernel.org>; Sun, 27 Nov 2022 20:57:42 -0800 (PST)
+Received: by mail-yb1-xb30.google.com with SMTP id k206so10634433ybk.5
+        for <kernel-janitors@vger.kernel.org>; Sun, 27 Nov 2022 20:57:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Ws39PTNmPwbxTbyz+NZ+1IRaFpcGa/b8DQZvgCy0Os=;
-        b=MfuJdPApib5HX4FiRYIJzVpijxkmjbf9E4PB7462t8A5qypTfnBa4E7tGrq0srHZAy
-         wAUB6NdyCInAOE6IAzrzLKPzLlDF9bdpirD4Z23LJsv8Y/maCVVgKyyqwcwoC/LfyUPJ
-         ELTA2v3Bv8ymPSaO90+vsIAlCfGpO4hUVpgms=
+        bh=J/VRq80WefebNrZexgpQf+sPyGJIi1XK1jtkcOB2Khk=;
+        b=dJg9r8Sw7U+yxvLpqu520cCcPQa42FBWTL4/iNiHITmFg15VSpCkfpQ5U/lrqQi7k6
+         23DN9bGJ1d23lBgGf104gP+Xc6Uuns89ejMimwO5rXXsZvShLL9KzQLu2XWQwej/ZdrY
+         IMPXTi97b1LJEEz5ZqoVzdNqt9/1pZMww10kY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/Ws39PTNmPwbxTbyz+NZ+1IRaFpcGa/b8DQZvgCy0Os=;
-        b=CiJdTpzY1oVqgEKDmwjPJ6cyiDYZ8b+p7FDljjb3X4K+HJYfmi7zftWvLPl9mQppe2
-         M4lrKz4F2en1/DPxc4UCyHQn/lP/UOtbc5h3elGdCAFtu0mPYJ9oz7FpqKML/qKkJ75c
-         NfV+AmH5xvuAk2DZPsLEm3+q+By4MlFNtP7Jxxhj+Y292URUEy7sWnRQcCPotnCjhKeW
-         0jqqXoBUvwuP48Cxo8wwfT1inH6t1/kMs7gkZjDqS/zux6XeUxb7U8XkCe53EN5C6LP/
-         72gBFPzirSBURI1VepCpnL2PfD/4WoUDFnXFKBMQDPIceR0rTqmGfxzeR+CkrGlnjr07
-         DhKQ==
-X-Gm-Message-State: ANoB5plVvxPJfA0kLFBGW1qa8N2qChJAkBZ3XIN1g6IHoeRiisHOj5dz
-        vTfRxE+FZZhdDNhqx3TR35fqsFfpLJOdTRrzXWfURVCe+/tQNA==
-X-Google-Smtp-Source: AA0mqf59XMMMqkBWO5nHeMbYxZUC46G9klb7UZK5FyAbdczsaT+ZptSo3fPojjXk/O7e9XaQASx0nsKSOxhyXi7P3nk=
-X-Received: by 2002:a25:9e8a:0:b0:6cc:54cb:71ff with SMTP id
- p10-20020a259e8a000000b006cc54cb71ffmr46817941ybq.339.1669609649937; Sun, 27
- Nov 2022 20:27:29 -0800 (PST)
+        bh=J/VRq80WefebNrZexgpQf+sPyGJIi1XK1jtkcOB2Khk=;
+        b=ECeGQiFTez7Oj+B4g6o8YPF9Vsq9yeQKMxHkiSlT6/bOCLx35szHFjRG7R2/DPPMl1
+         qVAt74EKKWsMMi7f3z/e7/ecW238fS1FR+b3AkJ6UEoTZ8IFBRl+RohPIt7adPLH+5s9
+         PHmnlIQoBqAEGpxGo9l6A9mMzi4PrBk58nKSlTzS5HKgY/OBG1vsKwMzFFlDf0Ur7DtC
+         zxpiw5woloiLYVtpcrhhT5RUD5kMXz71vwW2dTgizkRb/XXbZPxXqEPJV6cn8kPhHVN8
+         tXCXljTP2Qo9ZvJTkGebpzi3GuFKnjys6xWa94ewsrb6zHO4/lnUtfBAz8Hf73GnW6my
+         GXxg==
+X-Gm-Message-State: ANoB5pkSOHOWPFUEzTB9UBuqHB69CbmaliJ5gQ+m814AYBAK9Hj6cum4
+        teTtJCaktd7l+OOseuQKXJC4HGC4IRVioHInS9CAMg==
+X-Google-Smtp-Source: AA0mqf7fNNsFel5LktCof5/AZLeyNSFykkANwBLI5USCzPsP1tPZlwwtWE1i2dU7jwDNRWwj2pCwtVxGc+PzOh/H9aw=
+X-Received: by 2002:a25:7309:0:b0:6f3:3021:80ff with SMTP id
+ o9-20020a257309000000b006f3302180ffmr13622714ybc.436.1669611461401; Sun, 27
+ Nov 2022 20:57:41 -0800 (PST)
 MIME-Version: 1.0
 References: <7779439b2678fffe7d3e4e0d94bbb1b1eb850f5e.1669565797.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7779439b2678fffe7d3e4e0d94bbb1b1eb850f5e.1669565797.git.christophe.jaillet@wanadoo.fr>
+ <CALs4sv1x5kqHVu=q=kifSPXc=yhobowRvQhjkhG-3UwW2ZzbPg@mail.gmail.com>
+In-Reply-To: <CALs4sv1x5kqHVu=q=kifSPXc=yhobowRvQhjkhG-3UwW2ZzbPg@mail.gmail.com>
 From:   Pavan Chebbi <pavan.chebbi@broadcom.com>
-Date:   Mon, 28 Nov 2022 09:57:18 +0530
-Message-ID: <CALs4sv1x5kqHVu=q=kifSPXc=yhobowRvQhjkhG-3UwW2ZzbPg@mail.gmail.com>
+Date:   Mon, 28 Nov 2022 10:27:30 +0530
+Message-ID: <CALs4sv24PiCW_9svBCLF8W+rkb=w90fBCEYOuFAkozXUQu_kLQ@mail.gmail.com>
 Subject: Re: [PATCH] net/mlx5e: Remove unneeded io-mapping.h #include
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     Saeed Mahameed <saeedm@nvidia.com>,
@@ -61,71 +62,76 @@ Cc:     Saeed Mahameed <saeedm@nvidia.com>,
         kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
         linux-rdma@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="0000000000001f5f1205ee804a33"
+        boundary="0000000000001740b505ee80b652"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
---0000000000001f5f1205ee804a33
+--0000000000001740b505ee80b652
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Nov 27, 2022 at 9:47 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> The mlx5 net files don't use io_mapping functionalities. So there is no
-> point in including <linux/io-mapping.h>.
-> Remove it.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/cmd.c  | 1 -
->  drivers/net/ethernet/mellanox/mlx5/core/main.c | 1 -
->  drivers/net/ethernet/mellanox/mlx5/core/uar.c  | 1 -
->  3 files changed, 3 deletions(-)
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-> index 74bd05e5dda2..597907fd63f5 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-> @@ -37,7 +37,6 @@
->  #include <linux/slab.h>
->  #include <linux/delay.h>
->  #include <linux/random.h>
-> -#include <linux/io-mapping.h>
->  #include <linux/mlx5/driver.h>
->  #include <linux/mlx5/eq.h>
->  #include <linux/debugfs.h>
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-> index 70e8dc305bec..25e87e5d9270 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-> @@ -37,7 +37,6 @@
->  #include <linux/pci.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/slab.h>
-> -#include <linux/io-mapping.h>
->  #include <linux/interrupt.h>
->  #include <linux/delay.h>
->  #include <linux/mlx5/driver.h>
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/uar.c b/drivers/net/ethernet/mellanox/mlx5/core/uar.c
-> index 8455e79bc44a..1513112ecec8 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/uar.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/uar.c
-> @@ -31,7 +31,6 @@
->   */
->
->  #include <linux/kernel.h>
-> -#include <linux/io-mapping.h>
->  #include <linux/mlx5/driver.h>
->  #include "mlx5_core.h"
->
-> --
-> 2.34.1
->
+Though I think having the target tree specified conventionally in the
+subject line [PATCH net] would be more complying with the process.
 
-Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
+On Mon, Nov 28, 2022 at 9:57 AM Pavan Chebbi <pavan.chebbi@broadcom.com> wrote:
+>
+> On Sun, Nov 27, 2022 at 9:47 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+> >
+> > The mlx5 net files don't use io_mapping functionalities. So there is no
+> > point in including <linux/io-mapping.h>.
+> > Remove it.
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> >  drivers/net/ethernet/mellanox/mlx5/core/cmd.c  | 1 -
+> >  drivers/net/ethernet/mellanox/mlx5/core/main.c | 1 -
+> >  drivers/net/ethernet/mellanox/mlx5/core/uar.c  | 1 -
+> >  3 files changed, 3 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+> > index 74bd05e5dda2..597907fd63f5 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+> > @@ -37,7 +37,6 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/random.h>
+> > -#include <linux/io-mapping.h>
+> >  #include <linux/mlx5/driver.h>
+> >  #include <linux/mlx5/eq.h>
+> >  #include <linux/debugfs.h>
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+> > index 70e8dc305bec..25e87e5d9270 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+> > @@ -37,7 +37,6 @@
+> >  #include <linux/pci.h>
+> >  #include <linux/dma-mapping.h>
+> >  #include <linux/slab.h>
+> > -#include <linux/io-mapping.h>
+> >  #include <linux/interrupt.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/mlx5/driver.h>
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/uar.c b/drivers/net/ethernet/mellanox/mlx5/core/uar.c
+> > index 8455e79bc44a..1513112ecec8 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/uar.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/uar.c
+> > @@ -31,7 +31,6 @@
+> >   */
+> >
+> >  #include <linux/kernel.h>
+> > -#include <linux/io-mapping.h>
+> >  #include <linux/mlx5/driver.h>
+> >  #include "mlx5_core.h"
+> >
+> > --
+> > 2.34.1
+> >
+>
+> Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
 
---0000000000001f5f1205ee804a33
+--0000000000001740b505ee80b652
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -196,13 +202,13 @@ pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
 Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
 aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
 EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIKv/x47NItwPlwgIsE0KKXI1tb3y5qpU
-brO4wpgqn7h7MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIyMTEy
-ODA0MjczMFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIDTlJDpsi9xLbFzf9dKxcGjINDooNox1
+YE9doRQGXUhcMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIyMTEy
+ODA0NTc0MVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
 SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQCN6JV+ulzreKGAotqvQRu287Lc1aLKtN12oNXANxsN7E4A4ftY
-ADz9dn5kYNrMhdt5ba0RdO5jBmsYNsx977zHLytsL3YyO0hko8GHFVfl71PYF1Bf80sOUHgSSmDa
-f8vNxnyE8fdoLxbVsE54JNhAtmjhPElf5dqi/1vm65b/HMo2lbX6aGPARbjgqx5hgsam4g+lS9or
-DMiII3drT2z+nw0Zqun4UDV4/nf/1mcrt3EdoAPEJZTKeE8WZ8xl+keo2e3T75zMXrT+y0XC+GzA
-aFQJ0ZRkPgDlcY/7kDN2CCeJDmoh2sHOhxteNB4nP/dkRzRFxkZfZzqfLRPjIu7G
---0000000000001f5f1205ee804a33--
+ATANBgkqhkiG9w0BAQEFAASCAQCWNj5EM4Qi/MboBFuTWEJRqGWizf/MTy57q+p09CpRNSLN56wO
+YDTlwv+nn7cbhcQS20OR5Iynyily4lk1ErwO9IV9GPabvKRu9LjxYx9U/ugup+KV+JibDuPK3ui/
+uc9WrLTgDkeyCDXkcfgp8/0qDbamjWHL19tStGFoBHZH/bHa7YWbgbp6NcPaaBh5ZllMuneR2gKm
+NYJS8Tk5ODbXBPT7da5LTXI8K3I39sdhdY9vUHVO80j+ZUTluZ2LhykSemHmqQtwR/Fub/3HzKDF
+dHGOrWDJ/PIsJ0+4B9ZfydWdk3psfruvchN5Ps399MvBiuTStVyyitkHQw6X1Fas
+--0000000000001740b505ee80b652--
