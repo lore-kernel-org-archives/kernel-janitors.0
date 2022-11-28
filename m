@@ -2,147 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C41C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Nov 2022 18:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11EDC43217
+	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Nov 2022 23:00:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232678AbiK1SdP (ORCPT
+        id S233898AbiK1XAQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 28 Nov 2022 13:33:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43052 "EHLO
+        Mon, 28 Nov 2022 18:00:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233794AbiK1Sct (ORCPT
+        with ESMTP id S234488AbiK1W7q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 28 Nov 2022 13:32:49 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D2160F7
-        for <kernel-janitors@vger.kernel.org>; Mon, 28 Nov 2022 10:30:20 -0800 (PST)
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6BB703F460
-        for <kernel-janitors@vger.kernel.org>; Mon, 28 Nov 2022 18:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1669660218;
-        bh=/GO7SH++KbJUIUnG5/Y56ygpcT75/xWV7eW8Ngsar8Q=;
-        h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
-         Content-Type:Date:Message-ID;
-        b=g1japo+kRYsi6KOx3NwcnarWtHec0xcp2zVqzbqwbL6US8tAikeE3C8zxpTw5sO8i
-         y1JDk0Mw5EBEU/oNLExcp4q6GiUTxbOKNrTMdTZSoVlPROVZT43lr3l5nFmxc29o9C
-         MPsYun4TbFSh+1w0D9fMmC2onshy2+sDT8fJQdL+TrGbrXyCAjQ8ducSAzuQZhsUVI
-         K8YbiwAkZd5z8eLsRq6fPe5GjJbFYjZ1Imp82M+DSA4f+ju0AS+Iaj8oHI6c7YOmn4
-         dvBBVscITR34O9MihPHWP/meqljlM5s4+nh/HxxDFLPEExwuHb9kdCWova8dgUm5lX
-         krArUl2irO26A==
-Received: by mail-pl1-f197.google.com with SMTP id m1-20020a170902db0100b00188eec2726cso10861623plx.18
-        for <kernel-janitors@vger.kernel.org>; Mon, 28 Nov 2022 10:30:18 -0800 (PST)
+        Mon, 28 Nov 2022 17:59:46 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BB732E9EC
+        for <kernel-janitors@vger.kernel.org>; Mon, 28 Nov 2022 14:59:45 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id vp12so28366537ejc.8
+        for <kernel-janitors@vger.kernel.org>; Mon, 28 Nov 2022 14:59:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=17CpSrVEamfTq5xuUUDzrPWfetU5MF5FVrRiXoK5q/c=;
+        b=OWJS6qfb0KmCBvcz8v4OR3nqEOJXxappOQVdhQRiTRXQN7EOvs7F3Liz6nYuCykLZV
+         jI7r/ZnMMc84dX98wYFziBUr6UwArAQMlTp4ZlRrvXUyH5GiUORezVUWYH4fDHn3TtBR
+         Z3VhGmHKbGiHoIc4qNsl821drVxde4iBElo2I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:content-transfer-encoding:content-id:mime-version
-         :comments:references:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/GO7SH++KbJUIUnG5/Y56ygpcT75/xWV7eW8Ngsar8Q=;
-        b=EYDBbYnNsEXTot2xHSuLc5jgYM/i8W2VOsC/lKpYPy2k7yweK1TqezJs23cqom5vOV
-         BxTj/csrTz8sCyOqWwVL0kjzu3ATUVZrcnbE3b7dYsOYtBXfWF3cvBMYkgWrLOiD/Ew7
-         LuPbZRQO9zOkXdZPz90E7KJzdi8QSzmrKsVi9WqOb2aIXVKTT4potj4fAyvVRDetM281
-         Gec2tG7Id/WqTLKTZM0p2gaBoc/ruzCYtdGT5PXWe3wz5aLnp9lxi0dPIU/roN0ONxnQ
-         Q/8ExCEyOYrVqW5kqoXzS6GVuo92YvA3T0EHtH+Zi1oaj8WowVFTENYRx6YREXQppHhS
-         8FBQ==
-X-Gm-Message-State: ANoB5plIa/fOSbUooWGnu0DG/cUWJRP1PVETlwszsIKexzqDlTk/NIW9
-        f/iT5V3WuZ1mLqe9AfbBn40gRMKlsz/AhVeQbjJf/yzk0Q1HBzer+RPE/srTqubj+R03jO1peaG
-        X3Dnzsk6QzsGA8Z2xVGigtCO5oZWSQgj/ONl/kaoEkidBpA==
-X-Received: by 2002:a17:90a:d190:b0:20d:747a:c507 with SMTP id fu16-20020a17090ad19000b0020d747ac507mr56088813pjb.145.1669660216612;
-        Mon, 28 Nov 2022 10:30:16 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7zqlDsN68CVt3siI+SC4+AHykxApsWfGb81G+IfI8hdhkdigCuYQB4/S5+C6y8d2KTXMPDFg==
-X-Received: by 2002:a17:90a:d190:b0:20d:747a:c507 with SMTP id fu16-20020a17090ad19000b0020d747ac507mr56088781pjb.145.1669660216382;
-        Mon, 28 Nov 2022 10:30:16 -0800 (PST)
-Received: from famine.localdomain ([50.125.80.157])
-        by smtp.gmail.com with ESMTPSA id w10-20020a170902e88a00b00189240585a7sm9193548plg.173.2022.11.28.10.30.15
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Nov 2022 10:30:15 -0800 (PST)
-Received: by famine.localdomain (Postfix, from userid 1000)
-        id 298365FEAC; Mon, 28 Nov 2022 10:30:15 -0800 (PST)
-Received: from famine (localhost [127.0.0.1])
-        by famine.localdomain (Postfix) with ESMTP id 2414AA02BA;
-        Mon, 28 Nov 2022 10:30:15 -0800 (PST)
-From:   Jay Vosburgh <jay.vosburgh@canonical.com>
-To:     Dan Carpenter <error27@gmail.com>
-cc:     Jonathan Toppins <jtoppins@redhat.com>,
-        Pavan Chebbi <pavan.chebbi@broadcom.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next v2] bonding: uninitialized variable in bond_miimon_inspect()
-In-reply-to: <Y4SWJlh3ohJ6EPTL@kili>
-References: <Y4SWJlh3ohJ6EPTL@kili>
-Comments: In-reply-to Dan Carpenter <error27@gmail.com>
-   message dated "Mon, 28 Nov 2022 14:06:14 +0300."
-X-Mailer: MH-E 8.6+git; nmh 1.6; Emacs 29.0.50
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=17CpSrVEamfTq5xuUUDzrPWfetU5MF5FVrRiXoK5q/c=;
+        b=ONrRBBwpXTnZOHsy/oIu9XGA34OaFXAgr5S8vMLrVVd0saGwGpldDDuNfYPVGKlBgG
+         T8wrruJceamcWXm7XaBcrAqkJKS9A9bzg50U8xGevC2ijJ0dI+ho9tgPxXH+J40SXabx
+         B8V7RwiGecsR9OWevNaoB52moyI1OTVZe+VxQ3p7TtzhtbeGe1cXpYU1mA1PZYG2Fd48
+         abvZ6xor8Bqk0ticNejy24cK4RRS/49z/gKuq+iYkLNQjIMXca3akPdLh6BU87jdjM5R
+         4ZKy2hFj+3ouU9joB5rJp6aVjqeUQPZL3LOwJyLT1c9iEDxBG5Zmd8RElP/VAmy68OOG
+         jmpw==
+X-Gm-Message-State: ANoB5plGVe75Z26xDn0ZVNSQzOtEVFu2V1v6yAX2kAbLoL7f4FX6Kv8x
+        vLtXLREToVC0JSYMTnsu9iNXgg5IJ6a4ZNzY
+X-Google-Smtp-Source: AA0mqf6Sai90omJ0JDywRBEWMbgUMzNcu+QSHcohKuygslMpEekT8vsSGi+pCooCsBysNIay0gCI1Q==
+X-Received: by 2002:a17:906:a257:b0:7ae:3f79:4d0a with SMTP id bi23-20020a170906a25700b007ae3f794d0amr45621637ejb.120.1669676383525;
+        Mon, 28 Nov 2022 14:59:43 -0800 (PST)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
+        by smtp.gmail.com with ESMTPSA id b7-20020a17090630c700b0077a11b79b9bsm5377380ejb.133.2022.11.28.14.59.42
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Nov 2022 14:59:42 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id o7-20020a05600c510700b003cffc0b3374so9543348wms.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 28 Nov 2022 14:59:42 -0800 (PST)
+X-Received: by 2002:a05:600c:5118:b0:3cf:8e70:f34f with SMTP id
+ o24-20020a05600c511800b003cf8e70f34fmr26775070wms.93.1669676382413; Mon, 28
+ Nov 2022 14:59:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <14023.1669660215.1@famine>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 28 Nov 2022 10:30:15 -0800
-Message-ID: <14024.1669660215@famine>
+References: <Y33BD9xkRC9euIdO@kili>
+In-Reply-To: <Y33BD9xkRC9euIdO@kili>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 28 Nov 2022 14:59:30 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=W7692aCq1kamDJeyG6TLnVoZrfhM2=TgmjLgoaEO1GTw@mail.gmail.com>
+Message-ID: <CAD=FV=W7692aCq1kamDJeyG6TLnVoZrfhM2=TgmjLgoaEO1GTw@mail.gmail.com>
+Subject: Re: [PATCH] Input: elants_i2c - delete some dead code
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Johnny Chuang <johnny.chuang.emc@gmail.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <error27@gmail.com> wrote:
+Hi,
 
->The "ignore_updelay" variable needs to be initialized to false.
+On Tue, Nov 22, 2022 at 10:43 PM Dan Carpenter <error27@gmail.com> wrote:
 >
->Fixes: f8a65ab2f3ff ("bonding: fix link recovery in mode 2 when updelay i=
-s nonzero")
->Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-
->---
->v2: Re-order so the declarations are in reverse Christmas tree order
+> We shuffled the error handling around so this condition is dead code
+> now.  The "error" variable is always zero.
 >
->Don't forget about:
->drivers/net/bonding/bond_main.c:5071 bond_update_slave_arr() warn: missin=
-g error code here? 'bond_3ad_get_active_agg_info()' failed. 'ret' =3D '0'
-
-	The code around the cited line is correct.  A -1 return from
-bond_3ad_get_active_agg_info is not indicative of an error in the sense
-that something has failed, but indicates that there is no active
-aggregator.  The code correctly returns 0 from bond_update_slave_arr, as
-returning non-zero would cause bond_slave_arr_handler to loop, retrying
-the call to bond_update_slave_arr (via workqueue).
-
-	-J
-
-> drivers/net/bonding/bond_main.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> No Fixes tag because this does not fix a bug but if we were to assign
+> a tag it would be:
 >
->diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_m=
-ain.c
->index c87481033995..e01bb0412f1c 100644
->--- a/drivers/net/bonding/bond_main.c
->+++ b/drivers/net/bonding/bond_main.c
->@@ -2524,10 +2524,10 @@ static int bond_slave_info_query(struct net_devic=
-e *bond_dev, struct ifslave *in
-> /* called with rcu_read_lock() */
-> static int bond_miimon_inspect(struct bonding *bond)
-> {
->+	bool ignore_updelay =3D false;
-> 	int link_state, commit =3D 0;
-> 	struct list_head *iter;
-> 	struct slave *slave;
->-	bool ignore_updelay;
-> =
-
-> 	if (BOND_MODE(bond) =3D=3D BOND_MODE_ACTIVEBACKUP) {
-> 		ignore_updelay =3D !rcu_dereference(bond->curr_active_slave);
->-- =
-
->2.35.1
+> Fixes: a85fbd649844 ("Input: elants_i2c - properly handle the reset GPIO when power is off")
 >
+>  drivers/input/touchscreen/elants_i2c.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
+> index e1308e179dd6..af1dc43e988c 100644
+> --- a/drivers/input/touchscreen/elants_i2c.c
+> +++ b/drivers/input/touchscreen/elants_i2c.c
+> @@ -1353,8 +1353,6 @@ static int elants_i2c_power_on(struct elants_data *ts)
+>         udelay(ELAN_POWERON_DELAY_USEC);
+>
+>         gpiod_set_value_cansleep(ts->reset_gpio, 0);
+> -       if (error)
+> -               return error;
 
----
-	-Jay Vosburgh, jay.vosburgh@canonical.com
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
