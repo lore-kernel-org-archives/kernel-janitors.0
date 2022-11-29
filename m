@@ -2,67 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31032C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Nov 2022 09:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C38C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Nov 2022 09:45:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbiK2Jn4 (ORCPT
+        id S230146AbiK2JpK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Nov 2022 04:43:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44012 "EHLO
+        Tue, 29 Nov 2022 04:45:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbiK2Jnz (ORCPT
+        with ESMTP id S229630AbiK2JpI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Nov 2022 04:43:55 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A0CB1B7BF;
-        Tue, 29 Nov 2022 01:43:54 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id y16so1379994wrm.2;
-        Tue, 29 Nov 2022 01:43:54 -0800 (PST)
+        Tue, 29 Nov 2022 04:45:08 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFCB120F43;
+        Tue, 29 Nov 2022 01:45:07 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id w15so7936962wrl.9;
+        Tue, 29 Nov 2022 01:45:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jeqcoxm8Nqrt6iXsC20iMe7fG7ZxHmkQeMwVwCCMT84=;
-        b=GWW7tHdJvDC5InTvP1c5sP0a8wc8Way1HZPpGUGBCpWugXfUB2GIiU8Ulwn0OMpkNt
-         XGsllGvOyjsDEOMlsUVogaXndIDfIvTn8F0AZulXhPLi3zPhgh2ZwtCdIYAnXDKU+rOB
-         xUxoNXh1FPYdXE6iFRCVGrF228fnJ4drFmI0WsNyRo9OCIrhjgBgSqsyjSFL939at0If
-         W4VUZZWT3WuWWQWKdC9BKzhMnDrfSdEO/5NA1Svn/QAual9023jdQpNX7KmYKzTFz68k
-         /uH2MVR8+CfQrkVB3vhZIGWIOeJGq4x8WtzVlsRNMUZGscbY4ptm2qyFq+ZSeHHqVu0Z
-         fbIA==
+        bh=MVWkvrFtSXR0aVCDYTkhvYBX6IdEguz5iHOlDfowhxU=;
+        b=LWR3Q1/v616RqZP3Ux7MQaSze6Vsqm/SBmlVUF4GSV8/YRGLNpKxneFw0vIgz1iMUr
+         YwvDAkSbu/UNGPVNJzo494ffaMOWbVuS7BINJMS6AkNZn8cD/8sHeF4KBIFiW+QGimbr
+         WtAAmBEL1bYUZj5vHryzw8J8hA+3M4gMxICe3fvGOhYUepjMZMEPPL8J9Zn204Fl628I
+         FLtEjY1aN1QshfLe8qTrCnwBG2FfFqXjXGsCg9vdwOO2ehkNDIGWH3Wc30lSTy7w84+C
+         B9LHOchwMh8sQngXKthwcJ6OCtfqd2JNeVLBQbJc4aOqsrgAjz8XMfAjvsj7MzFg/rFh
+         8PrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jeqcoxm8Nqrt6iXsC20iMe7fG7ZxHmkQeMwVwCCMT84=;
-        b=4SaA63auDv1H1cGO4N4ySsMAt0BmM/pRtF1SdnI/thyOGiUAnjwhLLJ0ontbovZwiU
-         NMj9BuAtt5zKBZpfA5Cgyr0neRE0HdANKbtdwsx+V3vRrmPdrDxbGhdNIwuVCvubR7a+
-         JB4odSS3XaFP5ot+ecXakKc1UNfZKkKNkVKqWYhxtQGaCdkDCY93FxdRKTeFFGsqml6q
-         OrwiLMv9H6JV8FF3FTSrHdMxX57azqwTU4D+ufF/nT+VRMlJgPr7Xs4ZhqpxI6qwoAir
-         38DxjSLwj0BpA4++XkkjhrXT0nY2/8dD6LtFiUkUW7LMfzGeLO+Be/5fosdj6alVFf87
-         e7nw==
-X-Gm-Message-State: ANoB5plHs9h6syBv/hBnxo2B3Pii88m8BJ9YiaIj4PHe13qbbFsZ0OQZ
-        GjUOss0hma7mYc56bHRr/fb+IqyYwMy0sg==
-X-Google-Smtp-Source: AA0mqf7rByhOtrn/GWz8pQ9uGBwVAoOecGpgcUjL5Re7DNs0UezI0GfXpbeuQaEoWHClzXkdXA25dA==
-X-Received: by 2002:a5d:684f:0:b0:242:7a2:a014 with SMTP id o15-20020a5d684f000000b0024207a2a014mr11817514wrw.228.1669715032904;
-        Tue, 29 Nov 2022 01:43:52 -0800 (PST)
+        bh=MVWkvrFtSXR0aVCDYTkhvYBX6IdEguz5iHOlDfowhxU=;
+        b=iF3fNyLysZh1+joXisTBYwyz2RBBLeyOJsb3o5tsU1i11SR3jyF0jyJmv4i84WTVSS
+         Xr3i/2z+8pE9f8jsxd3OyAg1ZoYe848fdmXgVlkF6+CzLiVzGqdbqbDq1v8y4f31nWLb
+         je2d5MWqLlzNSFif6wMBXIDgz+rp9F8kO7X3mhRA/5g5a/HUwq6oCI5wR3wRagBmrQUV
+         EE67vHsu5Fzb+LeaM2dLmh9IPVsYG+QNzLBINKEXyR7s/jPxuNx0N36u6o5lqkt8eCE4
+         takFPTA2uvZZ0g9fBosy7QrBIRFwJxA/0thFSXlwTgNoAWVQ9vq3BrDSrFlsqolr1NVD
+         IzNQ==
+X-Gm-Message-State: ANoB5pklKVZc1Esdtm43kZhgKw3R37eIucTms4rXwoexKeTMDNO41400
+        c5CedrJfVIiPhfWXbZ7tzYI=
+X-Google-Smtp-Source: AA0mqf5ZFqoGIvoHAV3OXcgDjV4X0X8r8TRTT20KS1TK8Jb85mzDTTbSGgQIh/IXrvcurq29/dSNmQ==
+X-Received: by 2002:a5d:4c83:0:b0:236:7f36:1c05 with SMTP id z3-20020a5d4c83000000b002367f361c05mr33117379wrs.269.1669715106342;
+        Tue, 29 Nov 2022 01:45:06 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id c2-20020a05600c0a4200b003cfd4cf0761sm1484062wmq.1.2022.11.29.01.43.51
+        by smtp.gmail.com with ESMTPSA id a12-20020adfe5cc000000b0022cc3e67fc5sm12896794wrn.65.2022.11.29.01.45.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Nov 2022 01:43:52 -0800 (PST)
-Date:   Tue, 29 Nov 2022 12:43:47 +0300
+        Tue, 29 Nov 2022 01:45:05 -0800 (PST)
+Date:   Tue, 29 Nov 2022 12:44:57 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>
-Cc:     Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: microchip: sparx5: Fix error handling in
- vcap_show_admin()
-Message-ID: <Y4XUUx9kzurBN+BV@kili>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: rzg2l-cru: fix a test for timeout
+Message-ID: <Y4XUmZMqt9E6dF9g@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -71,53 +65,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If vcap_dup_rule() fails that leads to an error pointer dereference
-side the call to vcap_free_rule().  Also it only returns an error if the
-very last call to vcap_read_rule() fails and it returns success for
-other errors.
+The test for if the loop timed out is wrong and Smatch complains:
 
-I've changed it to just stop printing after the first error and return
-an error code.
+    drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c:411 rzg2l_csi2_mipi_link_disable()
+    warn: should this be 'timeout == -1'
 
-Fixes: 3a7921560d2f ("net: microchip: sparx5: Add VCAP rule debugFS support for the VCAP API")
+Let's change it to a preop loop instead of a post op loop.
+
+Fixes: 51e8415e39a9 ("media: platform: Add Renesas RZ/G2L MIPI CSI-2 receiver driver")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- .../ethernet/microchip/vcap/vcap_api_debugfs.c    | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+This does change the number of iterations from 20 to 19 but generally
+retry counts are approximations.
 
-diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c b/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
-index d9c7ca988b76..14fcb3d4ee85 100644
---- a/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
-+++ b/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
-@@ -639,17 +639,24 @@ static int vcap_show_admin(struct vcap_control *vctrl,
- 	mutex_lock(&admin->lock);
- 	list_for_each_entry(elem, &admin->rules, list) {
- 		ri = vcap_dup_rule(elem);
--		if (IS_ERR(ri))
--			goto free_rule;
-+		if (IS_ERR(ri)) {
-+			ret = PTR_ERR(ri);
-+			goto err_unlock;
-+		}
- 		/* Read data from VCAP */
- 		ret = vcap_read_rule(ri);
- 		if (ret)
--			goto free_rule;
-+			goto err_free_rule;
- 		out->prf(out->dst, "\n");
- 		vcap_show_admin_rule(vctrl, admin, out, ri);
--free_rule:
- 		vcap_free_rule((struct vcap_rule *)ri);
- 	}
-+	mutex_unlock(&admin->lock);
-+	return 0;
-+
-+err_free_rule:
-+	vcap_free_rule((struct vcap_rule *)ri);
-+err_unlock:
- 	mutex_unlock(&admin->lock);
- 	return ret;
- }
+ drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+index aa752b80574c..1bc27aec0265 100644
+--- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
++++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+@@ -402,7 +402,7 @@ static void rzg2l_csi2_mipi_link_disable(struct rzg2l_csi2 *csi2)
+ 	rzg2l_csi2_write(csi2, CSI2nRTCT, CSI2nRTCT_VSRST);
+ 
+ 	/* Make sure CSI2nRTST.VSRSTS bit is cleared */
+-	while (timeout--) {
++	while (--timeout) {
+ 		if (!(rzg2l_csi2_read(csi2, CSI2nRTST) & CSI2nRTST_VSRSTS))
+ 			break;
+ 		usleep_range(100, 200);
 -- 
 2.35.1
 
