@@ -2,63 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF53C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Nov 2022 08:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E64BC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Nov 2022 09:11:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231510AbiK2IzB (ORCPT
+        id S229930AbiK2JLA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Nov 2022 03:55:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36220 "EHLO
+        Tue, 29 Nov 2022 04:11:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231560AbiK2IyV (ORCPT
+        with ESMTP id S229603AbiK2JK5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Nov 2022 03:54:21 -0500
-X-Greylist: delayed 514 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Nov 2022 00:54:19 PST
-Received: from mail.gigabizplan.pl (mail.gigabizplan.pl [51.195.90.253])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859473898
-        for <kernel-janitors@vger.kernel.org>; Tue, 29 Nov 2022 00:54:18 -0800 (PST)
-Received: by mail.gigabizplan.pl (Postfix, from userid 1002)
-        id 94BB52220D; Tue, 29 Nov 2022 08:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gigabizplan.pl;
-        s=mail; t=1669711542;
-        bh=XwhyqI/moZPDJ7KCfcA6Gip8fA7ZKcg5SWsKuF/26zk=;
-        h=Date:From:To:Subject:From;
-        b=J2o5pjsZr3qP8R9WHFifFShKz+Y1WlRJz0aDY3HHyQ0X6cA2m9kkhYh5rMmAPywlq
-         4LnJ2N1uBd+otFjb9P0YG1m5GWSNN7i1Y+Rm5shNxSsrAb909ZpYTrdXlVTGuqQJZk
-         nrRVo6tOGpDQRBbFYX6AEon6B5w2wE0fg/B5sEC/nDYRRwFva076udIHoGTIHdwI5I
-         kJIyz72KDC+w+Ii9YDbGQis2cbIopk0/bxrc537van5bWRd1Ury5voT25n/vPKFbyW
-         MveV0cH9aqJGhw7d+q4hx2McCUw/8YnlUMj09nMArYuWCUysm0NbOA5Ky+Gklnc9Ml
-         7v1WCSxkiRfBg==
-Received: by mail.gigabizplan.pl for <kernel-janitors@vger.kernel.org>; Tue, 29 Nov 2022 08:45:39 GMT
-Message-ID: <20221129074500-0.1.2k.2vo7.0.44fa0ja88m@gigabizplan.pl>
-Date:   Tue, 29 Nov 2022 08:45:39 GMT
-From:   "Dominik Perkowski" <dominik.perkowski@gigabizplan.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Pozycjonowanie- informacja
-X-Mailer: mail.gigabizplan.pl
+        Tue, 29 Nov 2022 04:10:57 -0500
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46006532DF;
+        Tue, 29 Nov 2022 01:10:57 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id A76ED68AFE; Tue, 29 Nov 2022 10:10:53 +0100 (CET)
+Date:   Tue, 29 Nov 2022 10:10:53 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v2] nvme: Use kstrtobool() instead of strtobool()
+Message-ID: <20221129091053.GA27862@lst.de>
+References: <5edef1b51c865faf61752c991eaf292c8a68cc01.1669324969.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5edef1b51c865faf61752c991eaf292c8a68cc01.1669324969.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
+Thanks,
 
-jaki=C5=9B czas temu zg=C5=82osi=C5=82a si=C4=99 do nas firma, kt=C3=B3re=
-j strona internetowa nie pozycjonowa=C5=82a si=C4=99 wysoko w wyszukiwarc=
-e Google.=20
-
-Na podstawie wykonanego przez nas audytu SEO zoptymalizowali=C5=9Bmy tre=C5=
-=9Bci na stronie pod k=C4=85tem wcze=C5=9Bniej opracowanych s=C5=82=C3=B3=
-w kluczowych. Nasz wewn=C4=99trzny system codziennie analizuje prawid=C5=82=
-owe dzia=C5=82anie witryny.  Dzi=C4=99ki indywidualnej strategii, firma z=
-dobywa coraz wi=C4=99cej Klient=C3=B3w. =20
-
-Czy chcieliby Pa=C5=84stwo zwi=C4=99kszy=C4=87 liczb=C4=99 os=C3=B3b odwi=
-edzaj=C4=85cych stron=C4=99 internetow=C4=85 firmy? M=C3=B3g=C5=82bym prz=
-edstawi=C4=87 ofert=C4=99?=20
-
-
-Pozdrawiam serdecznie,
-Dominik Perkowski
+applied to nvme-6.2.
