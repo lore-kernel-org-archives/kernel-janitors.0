@@ -2,64 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3D8C46467
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Nov 2022 09:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9E3C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Nov 2022 09:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230229AbiK2Jp2 (ORCPT
+        id S230509AbiK2Jpj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Nov 2022 04:45:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44248 "EHLO
+        Tue, 29 Nov 2022 04:45:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbiK2Jp1 (ORCPT
+        with ESMTP id S231314AbiK2Jpi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Nov 2022 04:45:27 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF07220F43;
-        Tue, 29 Nov 2022 01:45:25 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id p16so10437202wmc.3;
-        Tue, 29 Nov 2022 01:45:25 -0800 (PST)
+        Tue, 29 Nov 2022 04:45:38 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C75035C740
+        for <kernel-janitors@vger.kernel.org>; Tue, 29 Nov 2022 01:45:35 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id q7so20245095wrr.8
+        for <kernel-janitors@vger.kernel.org>; Tue, 29 Nov 2022 01:45:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vEjMM0ABy7i3UMzUbAY0TsEEBbd6pZsT6MyfoMMngkU=;
-        b=YAZRv4bIBDi32Cyw324lJeX2UbEFkrfXrwdj7G95NwVVnmS/rnzfdVNW0MHlYFf8Nn
-         dY7aKmYp58nNAmBJBtap0o3UGHp9x9JQZ2VcDWdt/SeDlVzKCj0TR5/DS6YJdX3WEPlv
-         jreok8gX/NaShpnra/vVvwzDk51GXz1iZyWTXWLbGQqpwaHxWbViTpDmvsfHZDqh8w8V
-         tvcfsCfRfskvjFvIG0iIL0r+6axjYsoHHbt+KOR+cwqL2jhEnj+lW9fF9ra7XvEjvrF8
-         zcVdIPXBIGtzXIz4h/npMthncN93Y00T/7q/sXjB1AnqxctvkhNO2CKmgSU/inzPpTkq
-         Xa+A==
+        bh=COppZajkt4EWHP4TcI4+tgWNQUyyajXa4qnC9c1n0EM=;
+        b=Vw9DVXPyPdaZyUb6IddAz0h4Dk7BRWemag4IUiyZOgYAAxTYnOvbMZPnbZ8JlDmfG9
+         /59mkdcSgFkNlWlWSBUQ8prn6Vqvhiuo0h22r0pcW9NnUj0H/OF2LOaIny1mr8ln2gsm
+         xuJvyWOAk0s3JQvxmKUiIyNat/SlC76ZXxa1+4Ig2ICJgN40zAfkvCEMPjU5+fw7uyoY
+         2rOK+gduJgEB9i9htFbxTiBBTZbKiOzlrPqMkvZvLvr0DO5TZeHArtJNZcPH5LLzv4LE
+         +8swuf9MP8FP6MVngcme81QPC+7/kZ4Ps2slcW0Dxu/bzd1LsFbRqEflVAPZIYDPD8IR
+         T49Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vEjMM0ABy7i3UMzUbAY0TsEEBbd6pZsT6MyfoMMngkU=;
-        b=u0iC6GRU+K8MZWvP7B7R3Y7pmrL75+VTPsgR2OGStKEllrCRvW/xubD4/adw9yDMIT
-         rj9DEUwcnPg1RmCvViNt/e4oej/oYSVN3y/MY3xkn/i4xn2u2g0taRMWIftcN48Wg0XD
-         fp4vNmQfsUoS+49qQ6vidmxfGXr03n2BJJIAJDSJGPXwdu8mLJxDfLKItEkn4EqGXSS0
-         OjJhf7rhosi0lxc9067hRiLvL7Fl+oXQmgeVdLFFOStLoGvL6T6jvtg1U6Zo5zS+9xT5
-         dAOaMQ4z+Ib4DADnm3/dBC5xcdGQ8UUjgAICp87U8PK7JEcfwZxWydZL4vvHt2idnDgZ
-         zayw==
-X-Gm-Message-State: ANoB5pmyxPIponCR38wEw1AFI8eWxdPWiv+JHcurxb7DjFIJrPH0LvMK
-        GaAysNLUAYKFOaRye23A4JI=
-X-Google-Smtp-Source: AA0mqf74WU9oWeewGoUGebW6w6di75az0boe0BRU2S83sfwwQ6Bm8rIbf+dPvFJp+HYZc5n0mwJBlQ==
-X-Received: by 2002:a05:600c:3507:b0:3cf:8e62:f907 with SMTP id h7-20020a05600c350700b003cf8e62f907mr31984552wmq.7.1669715124533;
-        Tue, 29 Nov 2022 01:45:24 -0800 (PST)
+        bh=COppZajkt4EWHP4TcI4+tgWNQUyyajXa4qnC9c1n0EM=;
+        b=o4MX147+Yhq/EU2S37nHwYG1MekuP/tD9Py4YFr011kvDOWTKstNmTaWeCBMqP9Gwz
+         cgKw1uR+B1OLjzyk1CICEyOcIGrTp1A4VzE4c3nP0YjLjXDD0uF4mryUpcRQU7q/LWpJ
+         jQHPGISrKbo+NgssGZEO7Y0mF2udVP/u4orNisVHbHQthab5HPChdYLldJ0NzOvObEjf
+         +u83J+QjK1YE2Wb+/M228aduyiMMTiS1E35XL1Gp/Z8RXXf+0pmHHrzIGMwEZUDdzLs+
+         x2N/2epzFOYHlcbYrKQLYP5xmikzubvmvJFsCPzxwGXrH+vGMLWLbc6CSqbqPSvH8VUh
+         dIyw==
+X-Gm-Message-State: ANoB5pkyv3dKr0yS+I83mmvnexy3CXaGvVL4z3uKAS0lO8eOg9BBqz5j
+        XRsMmuxX/7v5T8DNe0ba1jg=
+X-Google-Smtp-Source: AA0mqf44784vK1ZJD251DLHoYNFxkZw+QumzwaciNBqk8qS62sgKY+UjRZT3rBMwvuo7jNCc77MSAQ==
+X-Received: by 2002:adf:e5d0:0:b0:242:17c9:a1e with SMTP id a16-20020adfe5d0000000b0024217c90a1emr5680321wrn.514.1669715134379;
+        Tue, 29 Nov 2022 01:45:34 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p7-20020a5d4587000000b0022ae0965a8asm13003997wrq.24.2022.11.29.01.45.23
+        by smtp.gmail.com with ESMTPSA id e14-20020adfe7ce000000b00241e7007905sm13104927wrn.75.2022.11.29.01.45.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Nov 2022 01:45:23 -0800 (PST)
-Date:   Tue, 29 Nov 2022 12:45:16 +0300
+        Tue, 29 Nov 2022 01:45:34 -0800 (PST)
+Date:   Tue, 29 Nov 2022 12:45:31 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>
-Cc:     Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] misc: fastrpc: fix error code in fastrpc_req_mmap()
-Message-ID: <Y4XUrMETCl1O6t0A@kili>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+        John Harrison <John.C.Harrison@intel.com>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/i915/uc: Fix double free bug
+Message-ID: <Y4XUuyFi3fr354sP@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -68,27 +71,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "err" variable shadows an earlier global variable so this code
-returns success instead of a negative error code.
+The "fw" pointer is freed again in the clean up code at the end of the
+function.  Set it to NULL here to prevent a double free.
 
-Fixes: 532ad70c6d44 ("misc: fastrpc: Add mmap request assigning for static PD pool")
+Fixes: 016241168dc5 ("drm/i915/uc: use different ggtt pin offsets for uc loads")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/misc/fastrpc.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index c9902a1dcf5d..876f0f146b16 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -1894,7 +1894,6 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
- 	/* Add memory to static PD pool, protection thru hypervisor */
- 	if (req.flags != ADSP_MMAP_REMOTE_HEAP_ADDR && fl->cctx->vmcount) {
- 		struct qcom_scm_vmperm perm;
--		int err = 0;
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c b/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c
+index 0c80ba51a4bd..8aa9bcae8e72 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c
+@@ -585,6 +585,7 @@ int intel_uc_fw_fetch(struct intel_uc_fw *uc_fw)
  
- 		perm.vmid = QCOM_SCM_VMID_HLOS;
- 		perm.perm = QCOM_SCM_PERM_RWX;
+ 		/* try to find another blob to load */
+ 		release_firmware(fw);
++		fw = NULL;
+ 		err = -ENOENT;
+ 	}
+ 
 -- 
 2.35.1
 
