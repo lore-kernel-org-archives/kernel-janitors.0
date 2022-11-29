@@ -2,95 +2,122 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C77C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Nov 2022 09:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31032C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Nov 2022 09:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231358AbiK2JZx (ORCPT
+        id S230034AbiK2Jn4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Nov 2022 04:25:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58136 "EHLO
+        Tue, 29 Nov 2022 04:43:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbiK2JZw (ORCPT
+        with ESMTP id S229630AbiK2Jnz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Nov 2022 04:25:52 -0500
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A39534384B;
-        Tue, 29 Nov 2022 01:25:50 -0800 (PST)
-Received: by mail-pl1-x644.google.com with SMTP id y4so12833409plb.2;
-        Tue, 29 Nov 2022 01:25:50 -0800 (PST)
+        Tue, 29 Nov 2022 04:43:55 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A0CB1B7BF;
+        Tue, 29 Nov 2022 01:43:54 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id y16so1379994wrm.2;
+        Tue, 29 Nov 2022 01:43:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w3baCgaNs5Hj1HOYdkfTTsua0OK2W4DrazIX6jc/oXc=;
-        b=OKdIuatpQSH+J6N9dvK1dnxe2GwOc6+6BVUXmZLAjdOYDHUBT76QKzX1/yOykZWFCU
-         89SagE3TL1c2y3y8e1aj9jkwFlqNx9BXvAWtgW1ZmcIU/x29q+8DvAlhmiGnpBz8J2DJ
-         jdgWwfyaVIRKUPwIjhFmNjGDZMXNg4wHBi31hf2ckK6LvDZ1fwoMymeClpVXDaP5VOMA
-         PQSsFhZsjyFO2ltsA+Iyasf7GVWs/TM7ix+gKubJmDE2HoiTcv57dDwFhqce6lNUSf87
-         zGiAftQVkjVD6wTMoVplT5krqtLEbUkajezjY/dKgvDcmSFuq/ulRgDTVf1Ne0rpelg/
-         pW1g==
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Jeqcoxm8Nqrt6iXsC20iMe7fG7ZxHmkQeMwVwCCMT84=;
+        b=GWW7tHdJvDC5InTvP1c5sP0a8wc8Way1HZPpGUGBCpWugXfUB2GIiU8Ulwn0OMpkNt
+         XGsllGvOyjsDEOMlsUVogaXndIDfIvTn8F0AZulXhPLi3zPhgh2ZwtCdIYAnXDKU+rOB
+         xUxoNXh1FPYdXE6iFRCVGrF228fnJ4drFmI0WsNyRo9OCIrhjgBgSqsyjSFL939at0If
+         W4VUZZWT3WuWWQWKdC9BKzhMnDrfSdEO/5NA1Svn/QAual9023jdQpNX7KmYKzTFz68k
+         /uH2MVR8+CfQrkVB3vhZIGWIOeJGq4x8WtzVlsRNMUZGscbY4ptm2qyFq+ZSeHHqVu0Z
+         fbIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w3baCgaNs5Hj1HOYdkfTTsua0OK2W4DrazIX6jc/oXc=;
-        b=zvvbJ3aqIlKEs692iWA1NpePIdnmuoEfpm+BJv9aLg5Vcjf1G/YGuBGcqrB2AQJGv5
-         +vXZQyAA3uHn4bcQ6QHiFNXodkm1rZg241Y5+/FxWkhfb1qT2wX25wy73m72rE/Fld+h
-         oudSKiST41226ZUDVUFqAzGQn/v6Rpcyns2AQ0Lwf1IG1wHyx2TdMx3PtKCSW/bnhvj2
-         a7kECT2aynVmWdIJHVJpU3Z7fh6vIELBEMW0NX1t7bQFotj9mGHCXoCZj4n+0KJsnyRv
-         gzm+wzqVt/bXurMrCe7G9nqSOyQcahZQo0d+XKIS0mlf/07tz2Mua0kzyDCDJrojH+LK
-         3WvQ==
-X-Gm-Message-State: ANoB5pmKchw51LpzAu37njYhu3BpVXwKuCu5KSQxTohq50b10fVGpFuL
-        ecnKAamAzCBIuHK7U1llWDc=
-X-Google-Smtp-Source: AA0mqf7YBuo0x764FtOodU/l2wB5AijmXuJH+08X4SJ0PENC459pBtGSpxzwmzbWTUbXIE59uVG8rQ==
-X-Received: by 2002:a17:902:ec04:b0:189:8c37:6f17 with SMTP id l4-20020a170902ec0400b001898c376f17mr9041980pld.67.1669713950116;
-        Tue, 29 Nov 2022 01:25:50 -0800 (PST)
-Received: from localhost.localdomain ([43.132.98.45])
-        by smtp.gmail.com with ESMTPSA id v190-20020a6261c7000000b00574ee8cfdabsm6006813pfb.148.2022.11.29.01.25.48
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 29 Nov 2022 01:25:49 -0800 (PST)
-From:   korantwork@gmail.com
-To:     dave.hansen@intel.com, luto@kernel.org
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Xinghui Li <korantli@tencent.com>
-Subject: [PATCH] x86/mm: fix the code style issue about "foo* bar"
-Date:   Tue, 29 Nov 2022 17:25:46 +0800
-Message-Id: <20221129092546.62895-1-korantwork@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jeqcoxm8Nqrt6iXsC20iMe7fG7ZxHmkQeMwVwCCMT84=;
+        b=4SaA63auDv1H1cGO4N4ySsMAt0BmM/pRtF1SdnI/thyOGiUAnjwhLLJ0ontbovZwiU
+         NMj9BuAtt5zKBZpfA5Cgyr0neRE0HdANKbtdwsx+V3vRrmPdrDxbGhdNIwuVCvubR7a+
+         JB4odSS3XaFP5ot+ecXakKc1UNfZKkKNkVKqWYhxtQGaCdkDCY93FxdRKTeFFGsqml6q
+         OrwiLMv9H6JV8FF3FTSrHdMxX57azqwTU4D+ufF/nT+VRMlJgPr7Xs4ZhqpxI6qwoAir
+         38DxjSLwj0BpA4++XkkjhrXT0nY2/8dD6LtFiUkUW7LMfzGeLO+Be/5fosdj6alVFf87
+         e7nw==
+X-Gm-Message-State: ANoB5plHs9h6syBv/hBnxo2B3Pii88m8BJ9YiaIj4PHe13qbbFsZ0OQZ
+        GjUOss0hma7mYc56bHRr/fb+IqyYwMy0sg==
+X-Google-Smtp-Source: AA0mqf7rByhOtrn/GWz8pQ9uGBwVAoOecGpgcUjL5Re7DNs0UezI0GfXpbeuQaEoWHClzXkdXA25dA==
+X-Received: by 2002:a5d:684f:0:b0:242:7a2:a014 with SMTP id o15-20020a5d684f000000b0024207a2a014mr11817514wrw.228.1669715032904;
+        Tue, 29 Nov 2022 01:43:52 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id c2-20020a05600c0a4200b003cfd4cf0761sm1484062wmq.1.2022.11.29.01.43.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Nov 2022 01:43:52 -0800 (PST)
+Date:   Tue, 29 Nov 2022 12:43:47 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>
+Cc:     Daniel Machon <daniel.machon@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: microchip: sparx5: Fix error handling in
+ vcap_show_admin()
+Message-ID: <Y4XUUx9kzurBN+BV@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Xinghui Li <korantli@tencent.com>
+If vcap_dup_rule() fails that leads to an error pointer dereference
+side the call to vcap_free_rule().  Also it only returns an error if the
+very last call to vcap_read_rule() fails and it returns success for
+other errors.
 
-Fix the error:
+I've changed it to just stop printing after the first error and return
+an error code.
 
-'ERROR: "(foo*)" should be "(foo *)"
-688: FILE: arch/x86/mm/fault.c:688:
-+		call_on_stack(__this_cpu_ist_top_va(DF) - sizeof(void*),'
-reported by checkpatch.pl.
-
-Signed-off-by: Xinghui Li <korantli@tencent.com>
+Fixes: 3a7921560d2f ("net: microchip: sparx5: Add VCAP rule debugFS support for the VCAP API")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- arch/x86/mm/fault.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../ethernet/microchip/vcap/vcap_api_debugfs.c    | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 7b0d4ab894c8..3f014cdd85f1 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -685,7 +685,7 @@ page_fault_oops(struct pt_regs *regs, unsigned long error_code,
- 		 * and then double-fault, though, because we're likely to
- 		 * break the console driver and lose most of the stack dump.
- 		 */
--		call_on_stack(__this_cpu_ist_top_va(DF) - sizeof(void*),
-+		call_on_stack(__this_cpu_ist_top_va(DF) - sizeof(void *),
- 			      handle_stack_overflow,
- 			      ASM_CALL_ARG3,
- 			      , [arg1] "r" (regs), [arg2] "r" (address), [arg3] "r" (&info));
+diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c b/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
+index d9c7ca988b76..14fcb3d4ee85 100644
+--- a/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
++++ b/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
+@@ -639,17 +639,24 @@ static int vcap_show_admin(struct vcap_control *vctrl,
+ 	mutex_lock(&admin->lock);
+ 	list_for_each_entry(elem, &admin->rules, list) {
+ 		ri = vcap_dup_rule(elem);
+-		if (IS_ERR(ri))
+-			goto free_rule;
++		if (IS_ERR(ri)) {
++			ret = PTR_ERR(ri);
++			goto err_unlock;
++		}
+ 		/* Read data from VCAP */
+ 		ret = vcap_read_rule(ri);
+ 		if (ret)
+-			goto free_rule;
++			goto err_free_rule;
+ 		out->prf(out->dst, "\n");
+ 		vcap_show_admin_rule(vctrl, admin, out, ri);
+-free_rule:
+ 		vcap_free_rule((struct vcap_rule *)ri);
+ 	}
++	mutex_unlock(&admin->lock);
++	return 0;
++
++err_free_rule:
++	vcap_free_rule((struct vcap_rule *)ri);
++err_unlock:
+ 	mutex_unlock(&admin->lock);
+ 	return ret;
+ }
 -- 
-2.38.1
+2.35.1
 
