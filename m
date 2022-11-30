@@ -2,73 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF0AC4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Nov 2022 04:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 890BEC4708B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Nov 2022 09:31:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233039AbiK3EUh (ORCPT
+        id S233846AbiK3Jbc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Nov 2022 23:20:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56422 "EHLO
+        Wed, 30 Nov 2022 04:31:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232859AbiK3EUf (ORCPT
+        with ESMTP id S233820AbiK3Jbb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Nov 2022 23:20:35 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E1396A76C;
-        Tue, 29 Nov 2022 20:20:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 30 Nov 2022 04:31:31 -0500
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DBD352167;
+        Wed, 30 Nov 2022 01:31:30 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8FBC1619EC;
-        Wed, 30 Nov 2022 04:20:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD11FC433C1;
-        Wed, 30 Nov 2022 04:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669782034;
-        bh=rhxe2NS1qMj88hLzeSaLLkIURFc6ENsFHmlnswfI07c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UanXum1bVt5dtWMfNwDK1Ip3MfLXPPCVi9tsG5FYKH1kLlCT4n7WGDOFd8i0weg0R
-         mPSG1iGO0XGTi6NAirfNcf3aprB+5+TBWHXCPFyyvRlHY0Kb4OXexEe2/P1W3nHiM8
-         YIhP1PTIcYaBd/OAjlvzw6U3WrzFoNsFv7BzcizDT7/gvTIPNGUDZNn6KvQwZ9mNLy
-         9WKjFSXncJShNhwBgvtO3Jhm3sq3Rh1M0P6Ygs6M0c6y1O6KdyfmnrxbFrinOgclm2
-         z5qfwJTzAIGc12/F0b9uLAlg1VVZYCZhSgTsNTFuGWJgEzYZFnEZPNfxMJNjy4bB+k
-         +SP+bV8J6wqhw==
-Date:   Tue, 29 Nov 2022 20:20:32 -0800
-From:   Saeed Mahameed <saeed@kernel.org>
-To:     Pavan Chebbi <pavan.chebbi@broadcom.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH] net/mlx5e: Remove unneeded io-mapping.h #include
-Message-ID: <Y4baEGvozPhBlUZw@fedora>
-References: <7779439b2678fffe7d3e4e0d94bbb1b1eb850f5e.1669565797.git.christophe.jaillet@wanadoo.fr>
- <CALs4sv1x5kqHVu=q=kifSPXc=yhobowRvQhjkhG-3UwW2ZzbPg@mail.gmail.com>
- <CALs4sv24PiCW_9svBCLF8W+rkb=w90fBCEYOuFAkozXUQu_kLQ@mail.gmail.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4NMYqf5t6Kz4xP3;
+        Wed, 30 Nov 2022 20:31:26 +1100 (AEDT)
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Anatolij Gustschin <agust@denx.de>,
+        Paul Mackerras <paulus@samba.org>,
+        John Bonesio <bones@secretlab.ca>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Grant Likely <grant.likely@secretlab.ca>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+In-Reply-To: <dec1496d46ccd5311d0f6e9f9ca4238be11bf6a6.1643440531.git.christophe.jaillet@wanadoo.fr>
+References: <dec1496d46ccd5311d0f6e9f9ca4238be11bf6a6.1643440531.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] powerpc: platforms: 52xx: Fix a resource leak in an error handling path
+Message-Id: <166980021648.3017288.16545601225539793155.b4-ty@ellerman.id.au>
+Date:   Wed, 30 Nov 2022 20:23:36 +1100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CALs4sv24PiCW_9svBCLF8W+rkb=w90fBCEYOuFAkozXUQu_kLQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 28 Nov 10:27, Pavan Chebbi wrote:
->Though I think having the target tree specified conventionally in the
->subject line [PATCH net] would be more complying with the process.
+On Sat, 29 Jan 2022 08:16:04 +0100, Christophe JAILLET wrote:
+> The error handling path of mpc52xx_lpbfifo_probe() and a request_irq() is
+> not balanced by a corresponding free_irq().
+> 
+> Add the missing call, as already done in the remove function.
+> 
+> 
 
-For such cleanup patches I think [PATCH net-next] is better.
+Applied to powerpc/next.
 
-[...]
+[1/1] powerpc: platforms: 52xx: Fix a resource leak in an error handling path
+      https://git.kernel.org/powerpc/c/5836947613ef33d311b4eff6a32d019580a214f5
 
->>
->> Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
-
-Thanks you Pavan & Christophe
-applied to net-next-mlx5 will be sent to net-next shortly 
-
+cheers
