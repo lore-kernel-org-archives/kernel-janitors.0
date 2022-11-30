@@ -2,104 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB9CC46467
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Nov 2022 18:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 383E0C4708B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Nov 2022 18:34:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230095AbiK3SFL (ORCPT
+        id S230379AbiK3SeX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 30 Nov 2022 13:05:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58744 "EHLO
+        Wed, 30 Nov 2022 13:34:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230035AbiK3SFE (ORCPT
+        with ESMTP id S230220AbiK3SeF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 30 Nov 2022 13:05:04 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3FE976140;
-        Wed, 30 Nov 2022 10:05:02 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id bx10so16340036wrb.0;
-        Wed, 30 Nov 2022 10:05:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F49cJsb8CUa65X+Gm6KdTwzZDDVKxz1Zo3pe8gGcwv0=;
-        b=EG/PnpDlTgJTJJO34GwsXSOqeEZlDZIRWWDQ1jtUTMA9gU2YnGm7LazarhIrEpOaoU
-         lM5OEwXW5+A/XpjTXfRQYyc2Wyj+Ls1YDXawTztM9GSBmWjz2zgbcGjhsmKv+Ut5Fvzt
-         8Rq9e4k6OX9YYED8w4BUGeG09Z/ju8GxxTnjj1DH2Ocj6XTTjDwM67c1A1xHUVfK+q5k
-         O6cpHmAlcGIbLJ2Zp6KL4giw8KMl9wx2agrP/bFRfV9rhoupeNBpOm5yja4ViYDDILcF
-         YiG6kFP9b/hAAaVnOYAl4O019zw9Zx2w4KerXeFwkeAfgTkxcrjTqm0ZkFGCMKEBlaDn
-         UaKg==
+        Wed, 30 Nov 2022 13:34:05 -0500
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DEDE24BF9;
+        Wed, 30 Nov 2022 10:34:03 -0800 (PST)
+Received: by mail-qt1-f182.google.com with SMTP id jr1so3609318qtb.7;
+        Wed, 30 Nov 2022 10:34:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=F49cJsb8CUa65X+Gm6KdTwzZDDVKxz1Zo3pe8gGcwv0=;
-        b=s+ZNWYEBhZ43KhAapjQAneA4k+DxbLQTfE/OrESQh4qsOB4jZ92S4Urgidia2OhKv3
-         Ej/h9xkoO9O+4q3RDA0sZMd9lEI4adJ0MZQDdzbR5YS1xrKGwOE+0AgurldkEHKH99vi
-         1/o27En7E5kX1ig1B5CcbnWvGKCMGcMUDKGG375yngTL6UeVYIK5aGRRqlfFd8ncxf/P
-         ju8yNhZoTjAPDGex5IZWICc5npd6R2AfARHGNsir7YvGSShSHQxaiOF8d3hnNQC02/Do
-         Zv8pz2sExak77PU2TeXZq3xJ8uJ5Lo6olGundAFRSUHjIc1Td7huRGYNkaL2XAiSdgNG
-         e2ew==
-X-Gm-Message-State: ANoB5pl8lp0+tKwJW3FuTOsk55A8kQF7VfeENNb18z229kI2+SUBN2B1
-        6pGnw03GNhqGMLEPFVc9Qj8=
-X-Google-Smtp-Source: AA0mqf5VT4u0wrpfLqYzOzziyDfaAq3+pawLVdT7IrkzMOfkGciPAx18ye557gAcuH0T5nW8eaj8Hg==
-X-Received: by 2002:adf:fb4c:0:b0:236:5270:735e with SMTP id c12-20020adffb4c000000b002365270735emr27400470wrs.659.1669831501168;
-        Wed, 30 Nov 2022 10:05:01 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g13-20020a05600c310d00b003a2f2bb72d5sm7943267wmo.45.2022.11.30.10.04.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 10:05:00 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: dvb-usb: m920x: make read-only arrays static const
-Date:   Wed, 30 Nov 2022 18:04:58 +0000
-Message-Id: <20221130180458.1580847-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        bh=HSephSpMMLyS6GN7D/yNJ77wfgPj8H/yF2e6L0lmOsc=;
+        b=OHnZ2LOaj4D6fl61/+Rlfit1bTzNY1WXnBkJ7f6jmax27yDYmUS8gFyLaNem4oNaeR
+         HGGf0MZypqZ1qQWAHWzwnskPuLttf5BsIVa/mKweuwkt/lSTW3zn1fcGYwrimuY8uQnW
+         BNOQPsD6DO1bIs46w6nJksvRaEaGVikwyvLTy5js6nzXRwtODJzH0tR0nR/m9WlC3/l2
+         6+InOtYWRqavLF8gyWxSvK0KLfZqJjv7iqs0KAEE+oFFX3kvhy3zrAKLrI9OjHW3Xf5g
+         Cl1G/uQvBUt1jVl8rIPVEBEmj453umqjGCfR7CdBUPK0y7S/vZ1uSzFGSjp4zEP3Jix1
+         zHYA==
+X-Gm-Message-State: ANoB5pmHOBKQQpDX+7BNpRlnQnQuo/x06YoLNHgrojvgXKFX5Zn/f5wD
+        ou6wFEK8OR7+eejCBvmGwJ+BAJhBjX18l+/Vfo4=
+X-Google-Smtp-Source: AA0mqf4jqExznIzftIUudzBQv83qor16LP4gntamj8CEAmg2OtwLcqcuiwLxBpbfLMQYpJH2mnWCxgRGwH44i5cPT1I=
+X-Received: by 2002:ac8:73c4:0:b0:3a5:a53d:a102 with SMTP id
+ v4-20020ac873c4000000b003a5a53da102mr58446428qtp.153.1669833242643; Wed, 30
+ Nov 2022 10:34:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20221107105657.19002-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20221107105657.19002-1-lukas.bulwahn@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 30 Nov 2022 19:33:51 +0100
+Message-ID: <CAJZ5v0jFO=6WLNZUe4vqUXxxWuhZuaq1Sifk7+094YFXUWp2wA@mail.gmail.com>
+Subject: Re: [PATCH] notifier: repair slips in kernel-doc comments
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the arrays on the stack, instead make them static
-const. Also makes the object code smaller.
+On Mon, Nov 7, 2022 at 11:57 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Invoking ./scripts/kernel-doc -none kernel/notifier.c warns:
+>
+>   kernel/notifier.c:71: warning: Excess function parameter 'returns' description in 'notifier_call_chain'
+>   kernel/notifier.c:119: warning: Function parameter or member 'v' not described in 'notifier_call_chain_robust'
+>
+> These two warning are easy to fix, as they are just due to some minor slips
+> that makes the comment not follow kernel-doc's syntactic expectation.
+>
+> Fix those minor slips in kernel-doc comments for make W=1 happiness.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Rafael, please pick this minor non-urgent patch for your pm tree. Thanks.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/usb/dvb-usb/m920x.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Applied as 6.2 material, but I'm kind of wondering why you decided to
+send this to me.
 
-diff --git a/drivers/media/usb/dvb-usb/m920x.c b/drivers/media/usb/dvb-usb/m920x.c
-index 548199cd86f6..fea5bcf72a31 100644
---- a/drivers/media/usb/dvb-usb/m920x.c
-+++ b/drivers/media/usb/dvb-usb/m920x.c
-@@ -485,14 +485,14 @@ static int m920x_identify_state(struct usb_device *udev,
- static int m920x_mt352_demod_init(struct dvb_frontend *fe)
- {
- 	int ret;
--	u8 config[] = { CONFIG, 0x3d };
--	u8 clock[] = { CLOCK_CTL, 0x30 };
--	u8 reset[] = { RESET, 0x80 };
--	u8 adc_ctl[] = { ADC_CTL_1, 0x40 };
--	u8 agc[] = { AGC_TARGET, 0x1c, 0x20 };
--	u8 sec_agc[] = { 0x69, 0x00, 0xff, 0xff, 0x40, 0xff, 0x00, 0x40, 0x40 };
--	u8 unk1[] = { 0x93, 0x1a };
--	u8 unk2[] = { 0xb5, 0x7a };
-+	static const u8 config[] = { CONFIG, 0x3d };
-+	static const u8 clock[] = { CLOCK_CTL, 0x30 };
-+	static const u8 reset[] = { RESET, 0x80 };
-+	static const u8 adc_ctl[] = { ADC_CTL_1, 0x40 };
-+	static const u8 agc[] = { AGC_TARGET, 0x1c, 0x20 };
-+	static const u8 sec_agc[] = { 0x69, 0x00, 0xff, 0xff, 0x40, 0xff, 0x00, 0x40, 0x40 };
-+	static const u8 unk1[] = { 0x93, 0x1a };
-+	static const u8 unk2[] = { 0xb5, 0x7a };
- 
- 	deb("Demod init!\n");
- 
--- 
-2.38.1
-
+>
+>  kernel/notifier.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/notifier.c b/kernel/notifier.c
+> index 0d5bd62c480e..ab75637fd904 100644
+> --- a/kernel/notifier.c
+> +++ b/kernel/notifier.c
+> @@ -62,7 +62,7 @@ static int notifier_chain_unregister(struct notifier_block **nl,
+>   *                     value of this parameter is -1.
+>   *     @nr_calls:      Records the number of notifications sent. Don't care
+>   *                     value of this field is NULL.
+> - *     @returns:       notifier_call_chain returns the value returned by the
+> + *     Return:         notifier_call_chain returns the value returned by the
+>   *                     last notifier function called.
+>   */
+>  static int notifier_call_chain(struct notifier_block **nl,
+> @@ -105,13 +105,13 @@ NOKPROBE_SYMBOL(notifier_call_chain);
+>   * @val_up:    Value passed unmodified to the notifier function
+>   * @val_down:  Value passed unmodified to the notifier function when recovering
+>   *              from an error on @val_up
+> - * @v          Pointer passed unmodified to the notifier function
+> + * @v:         Pointer passed unmodified to the notifier function
+>   *
+>   * NOTE:       It is important the @nl chain doesn't change between the two
+>   *             invocations of notifier_call_chain() such that we visit the
+>   *             exact same notifier callbacks; this rules out any RCU usage.
+>   *
+> - * Returns:    the return value of the @val_up call.
+> + * Return:     the return value of the @val_up call.
+>   */
+>  static int notifier_call_chain_robust(struct notifier_block **nl,
+>                                      unsigned long val_up, unsigned long val_down,
+> --
+> 2.17.1
+>
