@@ -2,85 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAA4C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Nov 2022 23:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF0AC4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Nov 2022 04:20:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236354AbiK2XNM (ORCPT
+        id S233039AbiK3EUh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Nov 2022 18:13:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
+        Tue, 29 Nov 2022 23:20:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233312AbiK2XNK (ORCPT
+        with ESMTP id S232859AbiK3EUf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Nov 2022 18:13:10 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45766D4BD;
-        Tue, 29 Nov 2022 15:13:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1669763587; x=1701299587;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=7tNHhFkjh3n5oBrKwNlDxAK0pyjU5usTlgw2G6E3UrM=;
-  b=Bx4GOSZ+3IyZcp4EUVcXNL+M2A5zUfZ2rhBWJJmf1MAE+8E7uAVto9H4
-   Nla2ExzgLmZnuIzs2WQpr+qt5XfOAt0nUz2CvXGo504tb4lvPbTvCxgtn
-   P4AWq+zAC5zP6F2mw0Wo3Emqfoqa+UTUid5cIpSXPVj34cJx38EAfgsvF
-   FMAT+fsnyTgQq2lW1vX+xU1Qucj4Eps9OmsD0XKIjLKnH/HOJkIxQ5/uk
-   7y9zsQRGbT9pfx3hZ6/nHT+O+WOYLNluBEhCyftQUnCxUiKA9Wa+Hy6KY
-   AkGLRE8kJ0WYbfA+W6toe8m1fb7mNQtptK/S5b7oWoFfpChOY5OMddU13
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.96,204,1665471600"; 
-   d="scan'208";a="125706831"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Nov 2022 16:13:06 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Tue, 29 Nov 2022 16:13:02 -0700
-Received: from den-dk-m31857.microchip.com (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.12 via Frontend Transport; Tue, 29 Nov 2022 16:13:00 -0700
-Message-ID: <8c3b48a2c1ae51e97b7701b122dfea1d095faf44.camel@microchip.com>
-Subject: Re: [PATCH net-next] net: microchip: sparx5: Fix error handling in
- vcap_show_admin()
-From:   Steen Hegelund <steen.hegelund@microchip.com>
-To:     Dan Carpenter <error27@gmail.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>
-CC:     Daniel Machon <daniel.machon@microchip.com>,
-        <UNGLinuxDriver@microchip.com>,
+        Tue, 29 Nov 2022 23:20:35 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E1396A76C;
+        Tue, 29 Nov 2022 20:20:35 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8FBC1619EC;
+        Wed, 30 Nov 2022 04:20:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD11FC433C1;
+        Wed, 30 Nov 2022 04:20:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669782034;
+        bh=rhxe2NS1qMj88hLzeSaLLkIURFc6ENsFHmlnswfI07c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UanXum1bVt5dtWMfNwDK1Ip3MfLXPPCVi9tsG5FYKH1kLlCT4n7WGDOFd8i0weg0R
+         mPSG1iGO0XGTi6NAirfNcf3aprB+5+TBWHXCPFyyvRlHY0Kb4OXexEe2/P1W3nHiM8
+         YIhP1PTIcYaBd/OAjlvzw6U3WrzFoNsFv7BzcizDT7/gvTIPNGUDZNn6KvQwZ9mNLy
+         9WKjFSXncJShNhwBgvtO3Jhm3sq3Rh1M0P6Ygs6M0c6y1O6KdyfmnrxbFrinOgclm2
+         z5qfwJTzAIGc12/F0b9uLAlg1VVZYCZhSgTsNTFuGWJgEzYZFnEZPNfxMJNjy4bB+k
+         +SP+bV8J6wqhw==
+Date:   Tue, 29 Nov 2022 20:20:32 -0800
+From:   Saeed Mahameed <saeed@kernel.org>
+To:     Pavan Chebbi <pavan.chebbi@broadcom.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>,
+        Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        "Paolo Abeni" <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Date:   Wed, 30 Nov 2022 00:13:00 +0100
-In-Reply-To: <Y4XUUx9kzurBN+BV@kili>
-References: <Y4XUUx9kzurBN+BV@kili>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.1 
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5e: Remove unneeded io-mapping.h #include
+Message-ID: <Y4baEGvozPhBlUZw@fedora>
+References: <7779439b2678fffe7d3e4e0d94bbb1b1eb850f5e.1669565797.git.christophe.jaillet@wanadoo.fr>
+ <CALs4sv1x5kqHVu=q=kifSPXc=yhobowRvQhjkhG-3UwW2ZzbPg@mail.gmail.com>
+ <CALs4sv24PiCW_9svBCLF8W+rkb=w90fBCEYOuFAkozXUQu_kLQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CALs4sv24PiCW_9svBCLF8W+rkb=w90fBCEYOuFAkozXUQu_kLQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On 28 Nov 10:27, Pavan Chebbi wrote:
+>Though I think having the target tree specified conventionally in the
+>subject line [PATCH net] would be more complying with the process.
 
-Thanks for the change.  It looks good to me.
+For such cleanup patches I think [PATCH net-next] is better.
 
-On Tue, 2022-11-29 at 12:43 +0300, Dan Carpenter wrote:
-> [Some people who received this message don't often get email from
-> error27@gmail.com. Learn why this is important at
-> https://aka.ms/LearnAboutSenderIdentification=C2=A0]
->=20
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e
-> content is safe
->=20
-> If vcap_dup_rule() fails that leads to an error pointer dereference
-> side the ca
+[...]
 
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+>>
+>> Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
 
-BR
-Steen
+Thanks you Pavan & Christophe
+applied to net-next-mlx5 will be sent to net-next shortly 
+
