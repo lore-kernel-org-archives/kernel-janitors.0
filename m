@@ -2,48 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 383E0C4708B
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Nov 2022 18:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45612C4708C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Nov 2022 20:23:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbiK3SeX (ORCPT
+        id S230082AbiK3UX0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 30 Nov 2022 13:34:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42624 "EHLO
+        Wed, 30 Nov 2022 15:23:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230220AbiK3SeF (ORCPT
+        with ESMTP id S229449AbiK3UW5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 30 Nov 2022 13:34:05 -0500
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DEDE24BF9;
-        Wed, 30 Nov 2022 10:34:03 -0800 (PST)
-Received: by mail-qt1-f182.google.com with SMTP id jr1so3609318qtb.7;
-        Wed, 30 Nov 2022 10:34:03 -0800 (PST)
+        Wed, 30 Nov 2022 15:22:57 -0500
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7AB82AFA;
+        Wed, 30 Nov 2022 12:21:29 -0800 (PST)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-3a7081e3b95so183342147b3.1;
+        Wed, 30 Nov 2022 12:21:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/E33WRItmkoiLgpHDHd24EmIcJsNGQPAC7NQMjlLAgo=;
+        b=evY1rXJKVKWb3sgc1Zd+kNKUwFZR8XT+XEsQIFIOsi+1jnzs47YHmQRW6OzLy4Xay1
+         KI2cGjwBHegJJuzuaROFf0+mpgTCEx2oKA+GjgbvG8t4C/TJ+0ZbLFNPahJdwarIf8od
+         Wtk+Yvq2pEaTqp8NBvXzV3bWj781yLKxNft/aooRBgBR5ChEvcFDIFn+5nYLWQrp1W1Y
+         iCkH7WB0mBgSQvkyuyVeBQkZRar9F0w8wq0y1OWrkF1rP0XPgSQRoJwGGmjoeSS/p+/D
+         PzS4+Uo6oicJ3lGsZMTYFbIbX3Y2kMjOn4CUFnNS6VjGoqAg31p92NJRT1RNpxPPfMbC
+         2cGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HSephSpMMLyS6GN7D/yNJ77wfgPj8H/yF2e6L0lmOsc=;
-        b=OHnZ2LOaj4D6fl61/+Rlfit1bTzNY1WXnBkJ7f6jmax27yDYmUS8gFyLaNem4oNaeR
-         HGGf0MZypqZ1qQWAHWzwnskPuLttf5BsIVa/mKweuwkt/lSTW3zn1fcGYwrimuY8uQnW
-         BNOQPsD6DO1bIs46w6nJksvRaEaGVikwyvLTy5js6nzXRwtODJzH0tR0nR/m9WlC3/l2
-         6+InOtYWRqavLF8gyWxSvK0KLfZqJjv7iqs0KAEE+oFFX3kvhy3zrAKLrI9OjHW3Xf5g
-         Cl1G/uQvBUt1jVl8rIPVEBEmj453umqjGCfR7CdBUPK0y7S/vZ1uSzFGSjp4zEP3Jix1
-         zHYA==
-X-Gm-Message-State: ANoB5pmHOBKQQpDX+7BNpRlnQnQuo/x06YoLNHgrojvgXKFX5Zn/f5wD
-        ou6wFEK8OR7+eejCBvmGwJ+BAJhBjX18l+/Vfo4=
-X-Google-Smtp-Source: AA0mqf4jqExznIzftIUudzBQv83qor16LP4gntamj8CEAmg2OtwLcqcuiwLxBpbfLMQYpJH2mnWCxgRGwH44i5cPT1I=
-X-Received: by 2002:ac8:73c4:0:b0:3a5:a53d:a102 with SMTP id
- v4-20020ac873c4000000b003a5a53da102mr58446428qtp.153.1669833242643; Wed, 30
- Nov 2022 10:34:02 -0800 (PST)
+        bh=/E33WRItmkoiLgpHDHd24EmIcJsNGQPAC7NQMjlLAgo=;
+        b=iD5giEzTq3MvfTNWKiHClvXfEws1pOwy7wFd9SY/QZbNpAjKnIZSwhbFj0QFxLOuB+
+         m3YQEGxJghire0mI/wb5L5lz8CP4KFvq3O7cIMsCjEt02tQoeOTH2iVMSwOo57IB3L0m
+         PPyQJVd10saFVacp8egIm3j9PiJHr0b8Ovz8kPnyQEyo0sSEKSRfxBkZDrMLTR0zz/sN
+         2A191sh0RseK3ljTzyGqPeghGGrr5cHivjovZWaqtYP6cs4IhbuntD9T15Qk3YPXeBwT
+         hdCpgQITtO/Y0LDwv2US4wrzy2DPQIOx/aOY7iVpl1h2SnRQrBocWmy3RvDIXV316ObU
+         F5YQ==
+X-Gm-Message-State: ANoB5pmAXkFhcrHueIRS8yDjrbWijUu4wFHGja00ymGBVrVGQMu3v8nZ
+        hhSmMjHmj/9wQEfpG4MVCu3Tp7k5yWMy837q0oU=
+X-Google-Smtp-Source: AA0mqf4QYVeo8noGqZEeUSQP0QhYgoUL9V5zvLRwNvCg7F5rTZturd/1+QWGiFv5o3YnBp/PokoRl9Q0AlpS0hzTsWY=
+X-Received: by 2002:a0d:ea8c:0:b0:3c3:5477:68c1 with SMTP id
+ t134-20020a0dea8c000000b003c3547768c1mr19055436ywe.464.1669839688853; Wed, 30
+ Nov 2022 12:21:28 -0800 (PST)
 MIME-Version: 1.0
-References: <20221107105657.19002-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20221107105657.19002-1-lukas.bulwahn@gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 30 Nov 2022 19:33:51 +0100
-Message-ID: <CAJZ5v0jFO=6WLNZUe4vqUXxxWuhZuaq1Sifk7+094YFXUWp2wA@mail.gmail.com>
+References: <20221107105657.19002-1-lukas.bulwahn@gmail.com> <CAJZ5v0jFO=6WLNZUe4vqUXxxWuhZuaq1Sifk7+094YFXUWp2wA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jFO=6WLNZUe4vqUXxxWuhZuaq1Sifk7+094YFXUWp2wA@mail.gmail.com>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Wed, 30 Nov 2022 21:21:18 +0100
+Message-ID: <CAKXUXMz_M5z00yZiBkYWxBmuQGFwMD4JwMH11qs4EHfPOawUvQ@mail.gmail.com>
 Subject: Re: [PATCH] notifier: repair slips in kernel-doc comments
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
 Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,58 +63,82 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Nov 7, 2022 at 11:57 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+On Wed, Nov 30, 2022 at 7:34 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
 >
-> Invoking ./scripts/kernel-doc -none kernel/notifier.c warns:
+> On Mon, Nov 7, 2022 at 11:57 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >
+> > Invoking ./scripts/kernel-doc -none kernel/notifier.c warns:
+> >
+> >   kernel/notifier.c:71: warning: Excess function parameter 'returns' description in 'notifier_call_chain'
+> >   kernel/notifier.c:119: warning: Function parameter or member 'v' not described in 'notifier_call_chain_robust'
+> >
+> > These two warning are easy to fix, as they are just due to some minor slips
+> > that makes the comment not follow kernel-doc's syntactic expectation.
+> >
+> > Fix those minor slips in kernel-doc comments for make W=1 happiness.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > ---
+> > Rafael, please pick this minor non-urgent patch for your pm tree. Thanks.
 >
->   kernel/notifier.c:71: warning: Excess function parameter 'returns' description in 'notifier_call_chain'
->   kernel/notifier.c:119: warning: Function parameter or member 'v' not described in 'notifier_call_chain_robust'
+> Applied as 6.2 material, but I'm kind of wondering why you decided to
+> send this to me.
 >
-> These two warning are easy to fix, as they are just due to some minor slips
-> that makes the comment not follow kernel-doc's syntactic expectation.
->
-> Fix those minor slips in kernel-doc comments for make W=1 happiness.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Rafael, please pick this minor non-urgent patch for your pm tree. Thanks.
 
-Applied as 6.2 material, but I'm kind of wondering why you decided to
-send this to me.
+Well, kernel/notifier.c is one of those files, with no specific
+maintainer and no specific obvious subsystem... so the next patch goes
+to the last one touching it ;)
 
->
->  kernel/notifier.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/notifier.c b/kernel/notifier.c
-> index 0d5bd62c480e..ab75637fd904 100644
-> --- a/kernel/notifier.c
-> +++ b/kernel/notifier.c
-> @@ -62,7 +62,7 @@ static int notifier_chain_unregister(struct notifier_block **nl,
->   *                     value of this parameter is -1.
->   *     @nr_calls:      Records the number of notifications sent. Don't care
->   *                     value of this field is NULL.
-> - *     @returns:       notifier_call_chain returns the value returned by the
-> + *     Return:         notifier_call_chain returns the value returned by the
->   *                     last notifier function called.
->   */
->  static int notifier_call_chain(struct notifier_block **nl,
-> @@ -105,13 +105,13 @@ NOKPROBE_SYMBOL(notifier_call_chain);
->   * @val_up:    Value passed unmodified to the notifier function
->   * @val_down:  Value passed unmodified to the notifier function when recovering
->   *              from an error on @val_up
-> - * @v          Pointer passed unmodified to the notifier function
-> + * @v:         Pointer passed unmodified to the notifier function
->   *
->   * NOTE:       It is important the @nl chain doesn't change between the two
->   *             invocations of notifier_call_chain() such that we visit the
->   *             exact same notifier callbacks; this rules out any RCU usage.
->   *
-> - * Returns:    the return value of the @val_up call.
-> + * Return:     the return value of the @val_up call.
->   */
->  static int notifier_call_chain_robust(struct notifier_block **nl,
->                                      unsigned long val_up, unsigned long val_down,
-> --
-> 2.17.1
->
+More seriously:
+
+get_maintainer.pl -f kernel/notifier.c does state:
+
+"Rafael J. Wysocki" <rafael.j.wysocki@intel.com> (commit_signer:2/3=67%)
+
+Rafael, you took the only two patches in 2022 and carried them forward
+to Linus. So, that was my thinking for this minor patch as well; no
+deeper thought than that.
+
+If you would not have accepted them, I might have tried Andrew Morton
+in a few weeks for the next merge window (v6.3) as a last resort.
+
+Rafael, thanks for picking up this patch.
+
+Lukas
+
+> >
+> >  kernel/notifier.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/kernel/notifier.c b/kernel/notifier.c
+> > index 0d5bd62c480e..ab75637fd904 100644
+> > --- a/kernel/notifier.c
+> > +++ b/kernel/notifier.c
+> > @@ -62,7 +62,7 @@ static int notifier_chain_unregister(struct notifier_block **nl,
+> >   *                     value of this parameter is -1.
+> >   *     @nr_calls:      Records the number of notifications sent. Don't care
+> >   *                     value of this field is NULL.
+> > - *     @returns:       notifier_call_chain returns the value returned by the
+> > + *     Return:         notifier_call_chain returns the value returned by the
+> >   *                     last notifier function called.
+> >   */
+> >  static int notifier_call_chain(struct notifier_block **nl,
+> > @@ -105,13 +105,13 @@ NOKPROBE_SYMBOL(notifier_call_chain);
+> >   * @val_up:    Value passed unmodified to the notifier function
+> >   * @val_down:  Value passed unmodified to the notifier function when recovering
+> >   *              from an error on @val_up
+> > - * @v          Pointer passed unmodified to the notifier function
+> > + * @v:         Pointer passed unmodified to the notifier function
+> >   *
+> >   * NOTE:       It is important the @nl chain doesn't change between the two
+> >   *             invocations of notifier_call_chain() such that we visit the
+> >   *             exact same notifier callbacks; this rules out any RCU usage.
+> >   *
+> > - * Returns:    the return value of the @val_up call.
+> > + * Return:     the return value of the @val_up call.
+> >   */
+> >  static int notifier_call_chain_robust(struct notifier_block **nl,
+> >                                      unsigned long val_up, unsigned long val_down,
+> > --
+> > 2.17.1
+> >
