@@ -2,89 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B689C43217
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Dec 2022 03:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF1EC43217
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Dec 2022 04:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229956AbiLADsC (ORCPT
+        id S229669AbiLAEua (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 30 Nov 2022 22:48:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59762 "EHLO
+        Wed, 30 Nov 2022 23:50:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229958AbiLADrM (ORCPT
+        with ESMTP id S229732AbiLAEuU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 30 Nov 2022 22:47:12 -0500
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A48D1A0552;
-        Wed, 30 Nov 2022 19:46:15 -0800 (PST)
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B12rgWg028895;
-        Thu, 1 Dec 2022 03:46:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2022-7-12;
- bh=cntpssrBK9Mj0vu9Dh9t9hFTv36JyTZYssv2NVwvK1c=;
- b=iZu7PMliElA0tdYb8JKUchEqRm1W4/c989kNWpcwKCr7zfoLMm5Mp4Q7ho2YK6r4KuKx
- I4wks7JezLl8Jbs0b8a2kSAWvNeDipdcfoR97KHNMlRG5U9lCT6HzkTQhG1zNgzg4NIK
- rESTDqs1PQGyfy/8IJWv/hboJ7UaWb/4YXl42F1nPLAfSA8vzZNggQizsHFtB/TFlj6F
- iFr+YDRzNKB/LKUe7eC6emgfRbquu8XEyJizTV6JPUeXs746lJeXwXwdnoIG6jDYcOa5
- VGPdo0rbkkqiXBD+blsStA8WE3pp+71beLKfKQ6/z/qa2QTwfmj4gCsVgZHCK7zlUn8o VA== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3m39k2vegw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 01 Dec 2022 03:46:07 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2B13NGrA007605;
-        Thu, 1 Dec 2022 03:46:07 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3m398a2d34-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 01 Dec 2022 03:46:06 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2B13jbqK033801;
-        Thu, 1 Dec 2022 03:46:06 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3m398a2cjs-30;
-        Thu, 01 Dec 2022 03:46:05 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     jejb@linux.ibm.com, kashyap.desai@broadcom.com,
-        sumit.saxena@broadcom.com, Yu Zhe <yuzhe@nfschina.com>,
-        shivasharan.srikanteshwara@broadcom.com
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        liqiong@nfschina.com, linux-kernel@vger.kernel.org,
-        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: megaraid_sas: fix some spelling mistakes in comment
-Date:   Thu,  1 Dec 2022 03:45:31 +0000
-Message-Id: <166986602297.2101055.12006536648078661788.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221125020703.22216-1-yuzhe@nfschina.com>
-References: <20221124092514.32032-1-yuzhe@nfschina.com> <20221125020703.22216-1-yuzhe@nfschina.com>
-MIME-Version: 1.0
+        Wed, 30 Nov 2022 23:50:20 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF758983A7;
+        Wed, 30 Nov 2022 20:50:17 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 50C9861BC2;
+        Thu,  1 Dec 2022 04:50:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 933DBC43143;
+        Thu,  1 Dec 2022 04:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669870216;
+        bh=KGus3DEVSCkNwKgnG+34eJNWEcvAksc8hT/r7f+ntGY=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=afvlJLMRc34lP/sa+XWk1fxy4U8yG+Mv4SQG4cCBmX/iG8vRYsWDvdb9jcpIf/e1Z
+         Pz1/d08hwmyOrA+TNqQRUy7sPrMmZz6rCwrBkIfipxPvnOD+fLxtrVmnhqEcGhZ+a+
+         a0uCaWwf1zOgRiW/Rtw89MdQRXHEIRLsx360ZYet3sfzkA+LrLvrZtVr00xNOF0Nwi
+         xIedtweDrOeECvYgcL7K5hXkMywQtuq2Wbxo6+uauUhoc9M++BHUNTxLv8oDKNKB5U
+         EvBHIBQyhcF1DzfAXkOek/y31Hyawuv4qSodOohnpslpR00Hp9Bart83OhZtK8SzA/
+         m3/L8KQestmUA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 79AA1E50D64;
+        Thu,  1 Dec 2022 04:50:16 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-01_02,2022-11-30_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- phishscore=0 mlxscore=0 bulkscore=0 spamscore=0 malwarescore=0
- mlxlogscore=852 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2212010022
-X-Proofpoint-GUID: 1PgftRhJw0IKy84XxvCBKWNqet-drycd
-X-Proofpoint-ORIG-GUID: 1PgftRhJw0IKy84XxvCBKWNqet-drycd
+Subject: Re: [PATCH 1/5] octeontx2-af: Fix a potentially spurious error message
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166987021649.2850.15484096041241790130.git-patchwork-notify@kernel.org>
+Date:   Thu, 01 Dec 2022 04:50:16 +0000
+References: <5ce01c402f86412dc57884ff0994b63f0c5b3871.1669378798.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <5ce01c402f86412dc57884ff0994b63f0c5b3871.1669378798.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+        jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 25 Nov 2022 10:07:03 +0800, Yu Zhe wrote:
+Hello:
 
-> Fix typos in comment.
+This series was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 25 Nov 2022 13:23:57 +0100 you wrote:
+> When this error message is displayed, we know that the all the bits in the
+> bitmap are set.
 > 
+> So, bitmap_weight() will return the number of bits of the bitmap, which is
+> 'table->tot_ids'.
 > 
+> It is unlikely that a bit will be cleared between mutex_unlock() and
+> dev_err(), but, in order to simplify the code and avoid this possibility,
+> just take 'table->tot_ids'.
+> 
+> [...]
 
-Applied to 6.2/scsi-queue, thanks!
+Here is the summary with links:
+  - [1/5] octeontx2-af: Fix a potentially spurious error message
+    https://git.kernel.org/netdev/net-next/c/2450d7d93fd2
+  - [2/5] octeontx2-af: Slightly simplify rvu_npc_exact_init()
+    https://git.kernel.org/netdev/net-next/c/b6a0ecaee2e6
+  - [3/5] octeontx2-af: Use the bitmap API to allocate bitmaps
+    https://git.kernel.org/netdev/net-next/c/05a7b52ee5e4
+  - [4/5] octeontx2-af: Fix the size of memory allocated for the 'id_bmap' bitmap
+    https://git.kernel.org/netdev/net-next/c/6d135d9e2b00
+  - [5/5] octeontx2-af: Simplify a size computation in rvu_npc_exact_init()
+    https://git.kernel.org/netdev/net-next/c/450f06505396
 
-[1/1] scsi: megaraid_sas: fix some spelling mistakes in comment
-      https://git.kernel.org/mkp/scsi/c/76dc609556c6
-
+You are awesome, thank you!
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
