@@ -2,89 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F002FC47088
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Dec 2022 09:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3814C4321E
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Dec 2022 09:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbiLAJOH (ORCPT
+        id S229597AbiLAJUS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Dec 2022 04:14:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47636 "EHLO
+        Thu, 1 Dec 2022 04:20:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229766AbiLAJOE (ORCPT
+        with ESMTP id S229780AbiLAJUR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Dec 2022 04:14:04 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9022F70606;
-        Thu,  1 Dec 2022 01:13:57 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id bx10so1698773wrb.0;
-        Thu, 01 Dec 2022 01:13:57 -0800 (PST)
+        Thu, 1 Dec 2022 04:20:17 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6988A85665
+        for <kernel-janitors@vger.kernel.org>; Thu,  1 Dec 2022 01:20:11 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id 124so1360659pfy.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 01 Dec 2022 01:20:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZiFvV/PpI7Kv9Cj/ZD/4j9tmtDiYehJfyRtCeZv1mCc=;
-        b=D+N7MLXEkYIUhMAL3zS0P4N6UGeA6VQYhiieMBLTkvz0ksZNrQu2+L9j+iwiIk0nRT
-         khYLA6X44ZX006SsOgUhW2rLJrR1KtR9BhDzQYCOcJlZGx1ZGIUGRA6H18ttYRndjkXQ
-         1Ae/LLGEC8skIrrN2w9z+zNRU85gRzQ2S2g+hvjFQ7oqym+Kn1jVagTjTo1x4JT6AaDK
-         fAewYQP2fct4sdkDFbKuxawcdf1DL+9D4eYD8IgS57wixtAd1YXwn9AYol5rA4hrsin3
-         0qdvabvgYNF67z2yqmfnOPEsrOhHjUd8XE9Ix9cNrlIR8+XoM6m+NUelSFgMHKl1D9xf
-         WDYQ==
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5COQrmAFX80Rt9/QM8jDMmpKU72o7nnxyNe4BluLOMQ=;
+        b=rXzzzyCGtE2MiaqDV3YOQFFJnBtfFZXPm412NZoX9eFQsYO6V1LQGMt0V9dsZbk7D7
+         uZlD6U4sAjq1JhJYXGHx3DlPXxnnkQYtnxQ9jvlSQfrPNNCYc/u7/w6mUksCvDsEY7j/
+         nC1N/Bx/O9tH2YDxsvfrnubO4aSaSkJ3ks80it9KxIiq/JFTWPzrbOmNd/Sh7DxW0hEe
+         LvIanTk+/EGREAdtBb6n2i48zATDKGypwryeccQsd8odzySVMUzd7q8RAuzMLAq4bGrF
+         3iGhKyUFo40Gi/iVZyzqv14i4ngqRXfhS8GJ3Kf9xv7PSmsMrEljIX4S2y2n9nWVPwhZ
+         m39g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZiFvV/PpI7Kv9Cj/ZD/4j9tmtDiYehJfyRtCeZv1mCc=;
-        b=ieNYZO52gL4JOc6fiMIGqvEAfzS6X6lI8N/EYYw937WcbsmzuW8MmdsfRgMIoF2Kkp
-         nIxN5qAEOnqGmfDKU+FPeUYG8Ks2U1r8df2m+1U73Wb2u+W6gnnN0JyWTgcOHUX1zCyT
-         RIvnRgFXmitc/7pyEPo6hJ4UkeOBi7dKfKRJgCcSUAr7NaG/MDzzf3NsO8hneO1z+52g
-         geCD9TpVYxqqToDzjyj8nuGSlCwEt1dM78u0bi+mhTEY3capFZOZjEWVvsppDJiemQK8
-         yN3+c1yuzplvU+8BXdd2oe2GUWwTgHVXGy9ODK+UkGR0wRwjnnRXjqIguR0qT7xBPcws
-         zZfA==
-X-Gm-Message-State: ANoB5pkRYRpNx6Qubug/fNOicd3RY3oTACL9kId8qdwDaoLJ2n+Z9Pb4
-        if1XFhQ+R1W2MacXz1BcTaFa+L3l/giwJUO5
-X-Google-Smtp-Source: AA0mqf79ZR9ZaEyJme/QB9Ao8CfIB8KWk8K8LFC5813EmX4C9KBfJ1hkop11ZOszCAReflbGSCF7EA==
-X-Received: by 2002:a05:6000:1a45:b0:242:1b69:786c with SMTP id t5-20020a0560001a4500b002421b69786cmr10738850wry.486.1669886036011;
-        Thu, 01 Dec 2022 01:13:56 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id i12-20020adffc0c000000b00241d21d4652sm3850499wrr.21.2022.12.01.01.13.55
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5COQrmAFX80Rt9/QM8jDMmpKU72o7nnxyNe4BluLOMQ=;
+        b=YvFCDU/N0Y1iUZbTz0UtBPpRrxmxXPd87nnj/pXlvXxFA8TNuWKVQ3FZ5EjkJlvjRt
+         10uk/XW+Ygf0rrcbaStKHw1rbpU/me07u0Vr7jH5NuKkjOWM09ixUWsvyEK4hJCjY9fF
+         K5DapgTdnsnFQHquCOhBiDNH/WO1ljUrgbCmBaa3j8ewSI6KVcd6SrsHgCZpzWfK/ByD
+         nPlmL27zi86PRfRyAM0kFNHhqrEzQZ43uOSrafC32bWt3ENcd3xGTKfh6rlMlm1FPY6Q
+         4RU5deK1WM/kU0DBPPIWl7pjAigtVh78b1+vAAGbU/fnPYtUbz9zZJo8rja00+vsUAzk
+         Y4lA==
+X-Gm-Message-State: ANoB5pn3AgO4vFPFQB3+NxGDmt5J6DOzcUNQcMWrNIn9mjDB0GaSenke
+        XHzdl9eF7AlwqR5KS8tUl6ixwA==
+X-Google-Smtp-Source: AA0mqf6XZ6BIBIaTNJzI3h5545GwZMXPWSEEOR6kemnJDSWPfoZxJpIHr12pfUHNGP8pI05+jEUT+A==
+X-Received: by 2002:a63:e444:0:b0:477:6a3a:e614 with SMTP id i4-20020a63e444000000b004776a3ae614mr40676499pgk.81.1669886410907;
+        Thu, 01 Dec 2022 01:20:10 -0800 (PST)
+Received: from localhost ([122.172.87.149])
+        by smtp.gmail.com with ESMTPSA id i190-20020a6287c7000000b0056c704abca7sm2714966pfe.220.2022.12.01.01.20.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Dec 2022 01:13:55 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] KVM: selftests: Fix spelling mistake "probabalistic" -> "probabilistic"
-Date:   Thu,  1 Dec 2022 09:13:54 +0000
-Message-Id: <20221201091354.1613652-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Thu, 01 Dec 2022 01:20:10 -0800 (PST)
+Date:   Thu, 1 Dec 2022 14:50:08 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: tegra186: Use flexible array to simplify memory
+ allocation
+Message-ID: <20221201092008.2nainxhjpxnsptin@vireshk-i7>
+References: <e39752476d02605b2be46cab7115f71255ce13a8.1668949256.git.christophe.jaillet@wanadoo.fr>
+ <f6b75a33df6f5fd94da3cfecb1e9e7590bf8cd37.1668963937.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6b75a33df6f5fd94da3cfecb1e9e7590bf8cd37.1668963937.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in some help text. Fix it.
+On 20-11-22, 18:19, Christophe JAILLET wrote:
+> Use flexible array to simplify memory allocation.
+> It saves some memory, avoids an indirection when reading the 'clusters'
+> array and removes some LoC.
+> 
+> 
+> Detailed explanation:
+> ====================
+> Knowing that:
+>   - each devm_ allocation over-allocates 40 bytes for internal needs
+>   - Some rounding is done by the memory allocator on 8, 16, 32, 64, 96,
+>     128, 192, 256, 512, 1024, 2048, 4096, 8192 boundaries
+> 
+> and that:
+>   - sizeof(struct tegra186_cpufreq_data) = 24
+>   - sizeof(struct tegra186_cpufreq_cluster) = 16
+> 
+> Memory allocations in tegra186_cpufreq_probe() are:
+>   data:           (24 + 40) = 64 		      => 64 bytes
+>   data->clusters: (2 * 16 + 40) = 72     => 96 bytes
+> So a total of 160 bytes are allocated.
+> 56 for the real need, 80 for internal uses and 24 are wasted.
+> 
+> 
+> If 'struct tegra186_cpufreq_data' is reordered so that 'clusters' is a
+> flexible array:
+>   - it saves one pointer in the structure
+>   - only one allocation is needed
+> 
+> So, only 96 bytes are allocated:
+>   16 + 2 * 16 + 40 = 88  => 96 bytes
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/kvm/dirty_log_perf_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied. Thanks.
 
-diff --git a/tools/testing/selftests/kvm/dirty_log_perf_test.c b/tools/testing/selftests/kvm/dirty_log_perf_test.c
-index c33e89012ae6..e9d6d1aecf89 100644
---- a/tools/testing/selftests/kvm/dirty_log_perf_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_perf_test.c
-@@ -398,7 +398,7 @@ static void help(char *name)
- 	printf(" -x: Split the memory region into this number of memslots.\n"
- 	       "     (default: 1)\n");
- 	printf(" -w: specify the percentage of pages which should be written to\n"
--	       "     as an integer from 0-100 inclusive. This is probabalistic,\n"
-+	       "     as an integer from 0-100 inclusive. This is probabilistic,\n"
- 	       "     so -w X means each page has an X%% chance of writing\n"
- 	       "     and a (100-X)%% chance of reading.\n"
- 	       "     (default: 100 i.e. all pages are written to.)\n");
 -- 
-2.38.1
-
+viresh
