@@ -2,111 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3814C4321E
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Dec 2022 09:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F096C43217
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Dec 2022 10:21:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbiLAJUS (ORCPT
+        id S230144AbiLAKVB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Dec 2022 04:20:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52944 "EHLO
+        Thu, 1 Dec 2022 05:21:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbiLAJUR (ORCPT
+        with ESMTP id S230080AbiLAKUW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Dec 2022 04:20:17 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6988A85665
-        for <kernel-janitors@vger.kernel.org>; Thu,  1 Dec 2022 01:20:11 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id 124so1360659pfy.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 01 Dec 2022 01:20:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5COQrmAFX80Rt9/QM8jDMmpKU72o7nnxyNe4BluLOMQ=;
-        b=rXzzzyCGtE2MiaqDV3YOQFFJnBtfFZXPm412NZoX9eFQsYO6V1LQGMt0V9dsZbk7D7
-         uZlD6U4sAjq1JhJYXGHx3DlPXxnnkQYtnxQ9jvlSQfrPNNCYc/u7/w6mUksCvDsEY7j/
-         nC1N/Bx/O9tH2YDxsvfrnubO4aSaSkJ3ks80it9KxIiq/JFTWPzrbOmNd/Sh7DxW0hEe
-         LvIanTk+/EGREAdtBb6n2i48zATDKGypwryeccQsd8odzySVMUzd7q8RAuzMLAq4bGrF
-         3iGhKyUFo40Gi/iVZyzqv14i4ngqRXfhS8GJ3Kf9xv7PSmsMrEljIX4S2y2n9nWVPwhZ
-         m39g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5COQrmAFX80Rt9/QM8jDMmpKU72o7nnxyNe4BluLOMQ=;
-        b=YvFCDU/N0Y1iUZbTz0UtBPpRrxmxXPd87nnj/pXlvXxFA8TNuWKVQ3FZ5EjkJlvjRt
-         10uk/XW+Ygf0rrcbaStKHw1rbpU/me07u0Vr7jH5NuKkjOWM09ixUWsvyEK4hJCjY9fF
-         K5DapgTdnsnFQHquCOhBiDNH/WO1ljUrgbCmBaa3j8ewSI6KVcd6SrsHgCZpzWfK/ByD
-         nPlmL27zi86PRfRyAM0kFNHhqrEzQZ43uOSrafC32bWt3ENcd3xGTKfh6rlMlm1FPY6Q
-         4RU5deK1WM/kU0DBPPIWl7pjAigtVh78b1+vAAGbU/fnPYtUbz9zZJo8rja00+vsUAzk
-         Y4lA==
-X-Gm-Message-State: ANoB5pn3AgO4vFPFQB3+NxGDmt5J6DOzcUNQcMWrNIn9mjDB0GaSenke
-        XHzdl9eF7AlwqR5KS8tUl6ixwA==
-X-Google-Smtp-Source: AA0mqf6XZ6BIBIaTNJzI3h5545GwZMXPWSEEOR6kemnJDSWPfoZxJpIHr12pfUHNGP8pI05+jEUT+A==
-X-Received: by 2002:a63:e444:0:b0:477:6a3a:e614 with SMTP id i4-20020a63e444000000b004776a3ae614mr40676499pgk.81.1669886410907;
-        Thu, 01 Dec 2022 01:20:10 -0800 (PST)
-Received: from localhost ([122.172.87.149])
-        by smtp.gmail.com with ESMTPSA id i190-20020a6287c7000000b0056c704abca7sm2714966pfe.220.2022.12.01.01.20.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Dec 2022 01:20:10 -0800 (PST)
-Date:   Thu, 1 Dec 2022 14:50:08 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: tegra186: Use flexible array to simplify memory
- allocation
-Message-ID: <20221201092008.2nainxhjpxnsptin@vireshk-i7>
-References: <e39752476d02605b2be46cab7115f71255ce13a8.1668949256.git.christophe.jaillet@wanadoo.fr>
- <f6b75a33df6f5fd94da3cfecb1e9e7590bf8cd37.1668963937.git.christophe.jaillet@wanadoo.fr>
+        Thu, 1 Dec 2022 05:20:22 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEDC699F4C;
+        Thu,  1 Dec 2022 02:20:19 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2A8D5B81E8A;
+        Thu,  1 Dec 2022 10:20:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BE1FEC43470;
+        Thu,  1 Dec 2022 10:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669890016;
+        bh=DYxx4vEh+2vGSDoOeknz8Z6Ugc5bktxlfVKzCpHut+s=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=uIGbeHTrCbDDv8uFTeHGKNpw+qHn7GgEI2Hsk+HbumL8ZljIWbXGolyNuhwbB7j5g
+         8sMDnCdDBZw+RpKv6VXsnQmmUfNgLS9xdtK45XDkFRbT4rrPTMSgNmbaFNQnWodMdb
+         +Jus4iBS8k8kbiSP9lXMv6A4w1T7aO411dbTDL/hjc5sRm3/blPuBqzJKenvOif8v5
+         9x33hI1lLjJ61pD6KvhVdV76VFWdR5l7LZGLLvlxNvS4YyrJ3QOvMvoRzarniRBTcI
+         CX6eIV6ZpWIPoZrfjbQSOL+F2d9ZwJZvLWkDj387yTlExd5v64TweCdoH7Q7AviwLI
+         edCD+bUMJ4cXQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A27EAE270C8;
+        Thu,  1 Dec 2022 10:20:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6b75a33df6f5fd94da3cfecb1e9e7590bf8cd37.1668963937.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] bonding: uninitialized variable in
+ bond_miimon_inspect()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166989001666.8639.6355322263297688114.git-patchwork-notify@kernel.org>
+Date:   Thu, 01 Dec 2022 10:20:16 +0000
+References: <Y4SWJlh3ohJ6EPTL@kili>
+In-Reply-To: <Y4SWJlh3ohJ6EPTL@kili>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     j.vosburgh@gmail.com, jtoppins@redhat.com,
+        pavan.chebbi@broadcom.com, vfalico@gmail.com, andy@greyhouse.net,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 20-11-22, 18:19, Christophe JAILLET wrote:
-> Use flexible array to simplify memory allocation.
-> It saves some memory, avoids an indirection when reading the 'clusters'
-> array and removes some LoC.
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 28 Nov 2022 14:06:14 +0300 you wrote:
+> The "ignore_updelay" variable needs to be initialized to false.
 > 
-> 
-> Detailed explanation:
-> ====================
-> Knowing that:
->   - each devm_ allocation over-allocates 40 bytes for internal needs
->   - Some rounding is done by the memory allocator on 8, 16, 32, 64, 96,
->     128, 192, 256, 512, 1024, 2048, 4096, 8192 boundaries
-> 
-> and that:
->   - sizeof(struct tegra186_cpufreq_data) = 24
->   - sizeof(struct tegra186_cpufreq_cluster) = 16
-> 
-> Memory allocations in tegra186_cpufreq_probe() are:
->   data:           (24 + 40) = 64 		      => 64 bytes
->   data->clusters: (2 * 16 + 40) = 72     => 96 bytes
-> So a total of 160 bytes are allocated.
-> 56 for the real need, 80 for internal uses and 24 are wasted.
-> 
-> 
-> If 'struct tegra186_cpufreq_data' is reordered so that 'clusters' is a
-> flexible array:
->   - it saves one pointer in the structure
->   - only one allocation is needed
-> 
-> So, only 96 bytes are allocated:
->   16 + 2 * 16 + 40 = 88  => 96 bytes
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: f8a65ab2f3ff ("bonding: fix link recovery in mode 2 when updelay is nonzero")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 > ---
+> v2: Re-order so the declarations are in reverse Christmas tree order
+> 
+> [...]
 
-Applied. Thanks.
+Here is the summary with links:
+  - [net-next,v2] bonding: uninitialized variable in bond_miimon_inspect()
+    https://git.kernel.org/netdev/net-next/c/e5214f363dab
 
+You are awesome, thank you!
 -- 
-viresh
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
