@@ -2,83 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DA6C47088
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 19:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA47C4321E
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 20:24:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234039AbiLBTUC (ORCPT
+        id S234890AbiLBUYP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Dec 2022 14:20:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45526 "EHLO
+        Fri, 2 Dec 2022 15:24:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232011AbiLBTUB (ORCPT
+        with ESMTP id S233548AbiLBUYO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Dec 2022 14:20:01 -0500
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C68D4E02C2;
-        Fri,  2 Dec 2022 11:19:56 -0800 (PST)
-Received: by mail-qt1-f172.google.com with SMTP id l15so6557165qtv.4;
-        Fri, 02 Dec 2022 11:19:56 -0800 (PST)
+        Fri, 2 Dec 2022 15:24:14 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C1A4DF45;
+        Fri,  2 Dec 2022 12:24:12 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id o5so9539814wrm.1;
+        Fri, 02 Dec 2022 12:24:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HWLZbrwyvitTVJVVBqs7BQW3jKoB+thAYx4GCZD+AaM=;
+        b=FEqFFlYrW/PjdzCFSbIy0xo7MCTyw6Dd/+lFO0vSj6yz/EHiSVCxCAbTGULKWVY3E4
+         RBK6katbdYqRtyu7pW1h6sQBg5+HKQwVXgtwXfrLcKc4/3P5DF0gk7UFc7mphRRo+KZL
+         VMYT3SkuqPHkbCLCSaz73S4bYESirD6nOfxu/OnBKyk8FKQttG9/ugfmntjZqlZ4AJFP
+         qj0CcX8a2cduamYphmw/+tbVxSzqmHKMtUhKUnqhSDzfv+GO2RhxbGetAmOdFZnrvYFo
+         LrAJpExZnqifF0ebRo1ZLLb2jRepTSFL64Nw5xaUzaIBO58D+V7zX1eyaXOwhbHOHe1l
+         6D4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Krq/qK4TL8BZ5IzDnHZVXKpdIUt0NJJ149BP500ozFw=;
-        b=s2TXTQCokc95OBy4JG79aDEbpRITb9DGOAJBa+Ldd2fKsWRTWiQzQgoB81mGiNFme1
-         EKAQdPGXAvqq1mhXED/DAihNmigQtc9UPJYfJOFTT/YsXSD8pOkwSdNtEM/59OVJUhrp
-         uymy1FZceYmsJPQBDxcNDOsB6g5sbHSLm1ww1QfYGBzTuCnJFSzGf0lBub87kLvRu+kp
-         jx/X8Zhoc0RPHoKKNRpeyRJ4IJp7rOc0hnt716cP+4YYyvH785h7LZ21+knLgMD87k+g
-         JgEGANDNomP+2fW/bHa9UYrVaJFoMJvm9LyY+U877+xva7LtJLw48DFJjJ944br/OEvZ
-         LlNQ==
-X-Gm-Message-State: ANoB5pkC8UZ7IIy/byiZ9Qygi2NmoM7XIZun9acL2LC9vncluvOqkKbW
-        mEoac5oVI9+fEXTIPaV81C43b2x284UMZsKmsnc=
-X-Google-Smtp-Source: AA0mqf4MmCmoKIvOQtZdJS4YLefVb+zGnYo6cw2RCpk9a2GbKL7ogkSPYOaePmqo0EcoDYtf699TDfMfpyle+ADBy64=
-X-Received: by 2002:ac8:4818:0:b0:3a6:a0d7:e1f7 with SMTP id
- g24-20020ac84818000000b003a6a0d7e1f7mr1696719qtq.153.1670008796014; Fri, 02
- Dec 2022 11:19:56 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HWLZbrwyvitTVJVVBqs7BQW3jKoB+thAYx4GCZD+AaM=;
+        b=TnK46Jv0MIyoxR3parSvdIHzpAaGZ4ZST4h21qgSyAKlOfeZlTwIdDuG8eGvm/Pvus
+         LKfL6ksJTaCUfJxATsvqeTPKLOLHntYXXgzG8He+cX4vTtF4vSV0naKqKBgOGx7QsWMT
+         USg+UGMBQxe4HmcIqh/gejcNQH8KxpoiOdQbO1YVASFKQUDL+gSeQVd+fkLukCFj/Oo2
+         1xPuDvGBVE4pm8+1+iqlpHx3ZZvfpROj4VMDPdshnmJpUkMmxmzWVeAagGtiIrfzxshn
+         0ZGDK6LeEDpWbkG+lJyjnZ/ULrG2GTSbMI4zkaO6ZJRJ+0r1pmdoWYXVAJyA92Na1a+V
+         vSxw==
+X-Gm-Message-State: ANoB5pmhPi46ijtDkj3/rADSJjgJUvcyfQiLwUeW/TcWb/0WxfpDtzC1
+        wMfI896s+UB7cc2blZrsSl2KY2rYQsYsbKKg
+X-Google-Smtp-Source: AA0mqf43bVKPAjCTIQl32HsfqJj4TL6iP3u2fljVt3YhggxW8aCWKn3wq7M0qtIbscDGuokESlgivw==
+X-Received: by 2002:adf:f24a:0:b0:242:3be9:71c7 with SMTP id b10-20020adff24a000000b002423be971c7mr5301585wrp.329.1670012650632;
+        Fri, 02 Dec 2022 12:24:10 -0800 (PST)
+Received: from [192.168.0.209] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.googlemail.com with ESMTPSA id bg28-20020a05600c3c9c00b003cfa3a12660sm15154616wmb.1.2022.12.02.12.24.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Dec 2022 12:24:10 -0800 (PST)
+Message-ID: <4fb9ef31-4d40-8e74-640f-bdbe60825bf1@gmail.com>
+Date:   Fri, 2 Dec 2022 20:24:08 +0000
 MIME-Version: 1.0
-References: <f619bc0b58a70e1cd1942b3db3716d6f9b261666.1669462247.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f619bc0b58a70e1cd1942b3db3716d6f9b261666.1669462247.git.christophe.jaillet@wanadoo.fr>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 2 Dec 2022 20:19:45 +0100
-Message-ID: <CAJZ5v0heDvc=tmn2bFBpUaq2w72R_E4HVtvSPuOuosyKDTHENw@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: APEI: Remove a useless include
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake
+ "probabalistic" -> "probabilistic"
+Content-Language: en-US
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221201091354.1613652-1-colin.i.king@gmail.com>
+ <Y4o0Nq4SKGZgDOxi@google.com>
+ <10445a4d-0175-3e5e-aa74-9d232737a7c2@gmail.com>
+ <Y4pEaaQsnDWEOxjH@google.com> <Y4pKfrX1ZfKhAT6y@google.com>
+From:   "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <Y4pKfrX1ZfKhAT6y@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Nov 26, 2022 at 12:31 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> This file does not use rcu, so there is no point in including
-> <linux/rculist.h>.
->
-> So just remove it.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/acpi/apei/apei-base.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/acpi/apei/apei-base.c b/drivers/acpi/apei/apei-base.c
-> index 02196a312dc5..c7c26872f4ce 100644
-> --- a/drivers/acpi/apei/apei-base.c
-> +++ b/drivers/acpi/apei/apei-base.c
-> @@ -25,7 +25,6 @@
->  #include <linux/slab.h>
->  #include <linux/io.h>
->  #include <linux/kref.h>
-> -#include <linux/rculist.h>
->  #include <linux/interrupt.h>
->  #include <linux/debugfs.h>
->  #include <acpi/apei.h>
-> --
+On 02/12/2022 18:57, Sean Christopherson wrote:
+> On Fri, Dec 02, 2022, Sean Christopherson wrote:
+>> On Fri, Dec 02, 2022, Colin King (gmail) wrote:
+>>> You may be better off with using codespell
+>>
+>> Heh, my kind of nitpicking people :-)
+>>
+>>    MSDOS->MS-DOS
+>>
+>> Thanks a ton, that's exactly what I was looking for!
+> 
+> For anyone following along and/or laughing at me, checkpatch even supports using
+> codespell, e.g.
+> 
+>    ./scripts/checkpatch.pl -g HEAD --codespell
 
-Applied as 6.2 material, thanks!
+checkpatch also uses a misspelling dictionary that I occasionally 
+contribute to with common spelling mistakes that I find and fix.
+
+Colin
+
