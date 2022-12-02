@@ -2,105 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D2BC47088
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 18:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBF2C4321E
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 18:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234405AbiLBSZW (ORCPT
+        id S234454AbiLBSbO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Dec 2022 13:25:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55910 "EHLO
+        Fri, 2 Dec 2022 13:31:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234382AbiLBSZQ (ORCPT
+        with ESMTP id S234089AbiLBSbL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Dec 2022 13:25:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A102C511C
-        for <kernel-janitors@vger.kernel.org>; Fri,  2 Dec 2022 10:24:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670005454;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=T5BTufQpndp/9gXIDoDcOexJN+Na84y6kRix0xZynyE=;
-        b=Iyc18EbOYEKd/WevSj0eu7mlzUUXq0osHHFg77XMu2ajMuw5VVyPw3CpuyzipKUexIqfWe
-        Xy7XmRlCj3m0jxfzZRhstJUfesIR91edzIgvdSCXVHu7fXpjO1QAvWKIP2Y1CgfSs3wby5
-        mPnB4H8SpZ8A1DwtelhEQYZ662T25Fs=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-398-UkMmFYqkO6aL9IYUZAmCxA-1; Fri, 02 Dec 2022 13:24:12 -0500
-X-MC-Unique: UkMmFYqkO6aL9IYUZAmCxA-1
-Received: by mail-wm1-f70.google.com with SMTP id ay40-20020a05600c1e2800b003cf8aa16377so2865116wmb.7
-        for <kernel-janitors@vger.kernel.org>; Fri, 02 Dec 2022 10:24:12 -0800 (PST)
+        Fri, 2 Dec 2022 13:31:11 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40AE0E7878
+        for <kernel-janitors@vger.kernel.org>; Fri,  2 Dec 2022 10:31:10 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id cm20so5718164pjb.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 02 Dec 2022 10:31:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZfK+kfqbWPptgCq2tZCiMpVEUs5CosRMB5lioDGYMKk=;
+        b=ihCOICzU9nJEOo0P2BhftCjjX0ng291HIJTq+vBvOtmTjDX2nctPCeEY54SNqvCoKH
+         Ho477OJgIkHgoBM5aUUXyNdBQvjrTfbO9K3yPIodpY7uFCH7Th53RYvtZ4OjIoPYGOZy
+         OH6uyhO0hSAiB9v2AHNP5icPXZGWNmyW4njPIBV05dgLLAEYqWdL0wqMbomqDJOo9HmV
+         g+13AgTUNTn5vOGErc0sqTcjcbYdxyVW8rUhNOPGwOs3HVIxZhfBGkHeZ/KZVxaTegFN
+         Min0mX0FvZfX9Het51hhpAMaFuW/dLQ77hSth14Gz7JzY2mtNSEsXuOy20hbMcU0uFVa
+         Hgow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T5BTufQpndp/9gXIDoDcOexJN+Na84y6kRix0xZynyE=;
-        b=IHvijenXj8VMt/Km40FfXNyggmSODwgnkLcK2jCn/Zu909JqRwsxO2wEl3iyZlgKO2
-         43lIhQn+C22JwOKa9NLvWcZ8wURPWiA4O5tF9ALvlyv9WuDaMfjKy8V2sa/JXOS3L7MF
-         thVrX3Sf8p822rHYxF7lJ5geTD/EBK2EVL0bG3imDKXkvuxadL8FsyL/iyLKp5mqsWH+
-         eV/NigfepHce+V6xD4gPj0aMs1ubT+lhYiRPOkUUPmSbojgLhIdFoYFfgMDS/OfVFcq2
-         ixFEDvpy7aOQmsWAN3WaEpRsTdvPpU3ZBJq121UK58RWxEhnQaDissEvUYRivmPzDXjg
-         AO4Q==
-X-Gm-Message-State: ANoB5pmrPKEu1KCzu8OerWACfKTSx5jutOHJsi86c6njajizZYamICzp
-        fUn9tXlaVdN4se/yL27xiDYPi22umsdaLSZALbtg8DIMnZ36dUfom39Hcaezrcoxa3R01MP9imF
-        PmTpcywdGZQMd59XLBTt/ESsV9uga
-X-Received: by 2002:a05:600c:3d8b:b0:3d0:545:a0 with SMTP id bi11-20020a05600c3d8b00b003d0054500a0mr41074871wmb.123.1670005451145;
-        Fri, 02 Dec 2022 10:24:11 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf79r6iGZnLxiQq0xFSEHBCA0qq6guXmdR+rJp0CazGPyxvYLlK7pomrpAN5b8b1jQb4w14YVQ==
-X-Received: by 2002:a05:600c:3d8b:b0:3d0:545:a0 with SMTP id bi11-20020a05600c3d8b00b003d0054500a0mr41074863wmb.123.1670005450938;
-        Fri, 02 Dec 2022 10:24:10 -0800 (PST)
-Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id bs4-20020a056000070400b0023677081f3asm7649064wrb.42.2022.12.02.10.24.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Dec 2022 10:24:10 -0800 (PST)
-Message-ID: <809a6a89-1046-cd38-60ab-6c4c60045b4f@redhat.com>
-Date:   Fri, 2 Dec 2022 19:24:09 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZfK+kfqbWPptgCq2tZCiMpVEUs5CosRMB5lioDGYMKk=;
+        b=eB90iCbWcOafuSIirfX6niFqH9E5PGqj6rIWZGnAoE+4xOXAsZyc1cpe3QUjUe13kS
+         Qj8HInSLBJgRVYsYVTOKA02UTNWnBNOUm9TQzOHz2hXb+LKNGwukdtTFMNOo414TpTdf
+         JQ/HzDxK3AtMgvXid6X4TgdklYWAokAc8yPpEGP5MRBys1ix7O5gsPvvwXmZZhy5jgQ+
+         F4SKNvObApqsZw1nGweLAsmoDOdZMnrUKfFOk+36WvNtD8c+JrdAq+0m6UUgWrc3Fv5j
+         H6V5BB2dOf2GDoFBxFWvSI6WbyfnnSPx0oPwSKgqvnkUs1o8NgAXbmT4jZ0tAukpEOjy
+         o5jQ==
+X-Gm-Message-State: ANoB5plyguP+YipqErJsgRkCbKj3FYauhshQe/ET+CQPE8MLC52y7wBZ
+        khx2umKqJI01zifYO6b1KvfABQ==
+X-Google-Smtp-Source: AA0mqf6HaLY2x1LQczWVnG+WVM5qZCz4SaGDPltGY08HbQBpPiqU6EAI8SfB8StMG3TIYceogMwsYw==
+X-Received: by 2002:a17:902:b282:b0:189:91f3:bfe2 with SMTP id u2-20020a170902b28200b0018991f3bfe2mr24328012plr.34.1670005869670;
+        Fri, 02 Dec 2022 10:31:09 -0800 (PST)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id fa13-20020a17090af0cd00b00218abadb6a8sm5019339pjb.49.2022.12.02.10.31.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Dec 2022 10:31:09 -0800 (PST)
+Date:   Fri, 2 Dec 2022 18:31:05 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     "Colin King (gmail)" <colin.i.king@gmail.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake
  "probabalistic" -> "probabilistic"
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <Y4pEaaQsnDWEOxjH@google.com>
 References: <20221201091354.1613652-1-colin.i.king@gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <20221201091354.1613652-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <Y4o0Nq4SKGZgDOxi@google.com>
+ <10445a4d-0175-3e5e-aa74-9d232737a7c2@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <10445a4d-0175-3e5e-aa74-9d232737a7c2@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 12/1/22 10:13, Colin Ian King wrote:
-> There is a spelling mistake in some help text. Fix it.
+On Fri, Dec 02, 2022, Colin King (gmail) wrote:
+> On 02/12/2022 17:21, Sean Christopherson wrote:
+> > On Thu, Dec 01, 2022, Colin Ian King wrote:
+> > > There is a spelling mistake in some help text. Fix it.
+> > 
+> > I assume you have a script/tool of some form to do spell checking?  If so, can
+> > you point me at it?  I'd love to incorporate something like that into my workflow.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   tools/testing/selftests/kvm/dirty_log_perf_test.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> https://github.com/ColinIanKing/kernelscan
 > 
-> diff --git a/tools/testing/selftests/kvm/dirty_log_perf_test.c b/tools/testing/selftests/kvm/dirty_log_perf_test.c
-> index c33e89012ae6..e9d6d1aecf89 100644
-> --- a/tools/testing/selftests/kvm/dirty_log_perf_test.c
-> +++ b/tools/testing/selftests/kvm/dirty_log_perf_test.c
-> @@ -398,7 +398,7 @@ static void help(char *name)
->   	printf(" -x: Split the memory region into this number of memslots.\n"
->   	       "     (default: 1)\n");
->   	printf(" -w: specify the percentage of pages which should be written to\n"
-> -	       "     as an integer from 0-100 inclusive. This is probabalistic,\n"
-> +	       "     as an integer from 0-100 inclusive. This is probabilistic,\n"
->   	       "     so -w X means each page has an X%% chance of writing\n"
->   	       "     and a (100-X)%% chance of reading.\n"
->   	       "     (default: 100 i.e. all pages are written to.)\n");
+> It needs an appropriate dictionary to be installed. It's very fast (but
+> sometimes makes mistakes, I need to fix those!).
+> 
+> ./kernelscan -k src_directory > mistakes.txt
 
-Queued, thanks.
+Ah, it's specifically checking messages to avoid false postives on code and whatnot.
+Neat!
 
-Paolo
+> I normally run this across the entire kernel git repo on a daily basis, and
+> diff the new results with the previous results using meld and figure out
+> what needs to be fixed.
+> 
+> You may be better off with using codespell
 
+Heh, my kind of nitpicking people :-)
+
+  MSDOS->MS-DOS
+
+Thanks a ton, that's exactly what I was looking for!
