@@ -2,97 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA47C4321E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 20:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574C0C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 21:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234890AbiLBUYP (ORCPT
+        id S234376AbiLBVNp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Dec 2022 15:24:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60122 "EHLO
+        Fri, 2 Dec 2022 16:13:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233548AbiLBUYO (ORCPT
+        with ESMTP id S229527AbiLBVNn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Dec 2022 15:24:14 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C1A4DF45;
-        Fri,  2 Dec 2022 12:24:12 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id o5so9539814wrm.1;
-        Fri, 02 Dec 2022 12:24:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HWLZbrwyvitTVJVVBqs7BQW3jKoB+thAYx4GCZD+AaM=;
-        b=FEqFFlYrW/PjdzCFSbIy0xo7MCTyw6Dd/+lFO0vSj6yz/EHiSVCxCAbTGULKWVY3E4
-         RBK6katbdYqRtyu7pW1h6sQBg5+HKQwVXgtwXfrLcKc4/3P5DF0gk7UFc7mphRRo+KZL
-         VMYT3SkuqPHkbCLCSaz73S4bYESirD6nOfxu/OnBKyk8FKQttG9/ugfmntjZqlZ4AJFP
-         qj0CcX8a2cduamYphmw/+tbVxSzqmHKMtUhKUnqhSDzfv+GO2RhxbGetAmOdFZnrvYFo
-         LrAJpExZnqifF0ebRo1ZLLb2jRepTSFL64Nw5xaUzaIBO58D+V7zX1eyaXOwhbHOHe1l
-         6D4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HWLZbrwyvitTVJVVBqs7BQW3jKoB+thAYx4GCZD+AaM=;
-        b=TnK46Jv0MIyoxR3parSvdIHzpAaGZ4ZST4h21qgSyAKlOfeZlTwIdDuG8eGvm/Pvus
-         LKfL6ksJTaCUfJxATsvqeTPKLOLHntYXXgzG8He+cX4vTtF4vSV0naKqKBgOGx7QsWMT
-         USg+UGMBQxe4HmcIqh/gejcNQH8KxpoiOdQbO1YVASFKQUDL+gSeQVd+fkLukCFj/Oo2
-         1xPuDvGBVE4pm8+1+iqlpHx3ZZvfpROj4VMDPdshnmJpUkMmxmzWVeAagGtiIrfzxshn
-         0ZGDK6LeEDpWbkG+lJyjnZ/ULrG2GTSbMI4zkaO6ZJRJ+0r1pmdoWYXVAJyA92Na1a+V
-         vSxw==
-X-Gm-Message-State: ANoB5pmhPi46ijtDkj3/rADSJjgJUvcyfQiLwUeW/TcWb/0WxfpDtzC1
-        wMfI896s+UB7cc2blZrsSl2KY2rYQsYsbKKg
-X-Google-Smtp-Source: AA0mqf43bVKPAjCTIQl32HsfqJj4TL6iP3u2fljVt3YhggxW8aCWKn3wq7M0qtIbscDGuokESlgivw==
-X-Received: by 2002:adf:f24a:0:b0:242:3be9:71c7 with SMTP id b10-20020adff24a000000b002423be971c7mr5301585wrp.329.1670012650632;
-        Fri, 02 Dec 2022 12:24:10 -0800 (PST)
-Received: from [192.168.0.209] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.googlemail.com with ESMTPSA id bg28-20020a05600c3c9c00b003cfa3a12660sm15154616wmb.1.2022.12.02.12.24.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Dec 2022 12:24:10 -0800 (PST)
-Message-ID: <4fb9ef31-4d40-8e74-640f-bdbe60825bf1@gmail.com>
-Date:   Fri, 2 Dec 2022 20:24:08 +0000
+        Fri, 2 Dec 2022 16:13:43 -0500
+Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99A2B1FD
+        for <kernel-janitors@vger.kernel.org>; Fri,  2 Dec 2022 13:13:41 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id 1DLlpPcSnM75k1DLlp2pVY; Fri, 02 Dec 2022 22:13:39 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 02 Dec 2022 22:13:39 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jason@zx2c4.com, kuba@kernel.org, tytso@mit.edu, elver@google.com,
+        yury.norov@gmail.com, linux@dominikbrodowski.net,
+        gregkh@linuxfoundation.org, pmladek@suse.com, keescook@chromium.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] random: Include <linux/once.h> in the right header
+Date:   Fri,  2 Dec 2022 22:13:36 +0100
+Message-Id: <212adb212cb0234a7d395daf31b2578b9409d492.1670015476.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake
- "probabalistic" -> "probabilistic"
-Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221201091354.1613652-1-colin.i.king@gmail.com>
- <Y4o0Nq4SKGZgDOxi@google.com>
- <10445a4d-0175-3e5e-aa74-9d232737a7c2@gmail.com>
- <Y4pEaaQsnDWEOxjH@google.com> <Y4pKfrX1ZfKhAT6y@google.com>
-From:   "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <Y4pKfrX1ZfKhAT6y@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 02/12/2022 18:57, Sean Christopherson wrote:
-> On Fri, Dec 02, 2022, Sean Christopherson wrote:
->> On Fri, Dec 02, 2022, Colin King (gmail) wrote:
->>> You may be better off with using codespell
->>
->> Heh, my kind of nitpicking people :-)
->>
->>    MSDOS->MS-DOS
->>
->> Thanks a ton, that's exactly what I was looking for!
-> 
-> For anyone following along and/or laughing at me, checkpatch even supports using
-> codespell, e.g.
-> 
->    ./scripts/checkpatch.pl -g HEAD --codespell
+<linux/prandom.h> uses DO_ONCE(). So it should include <linux/once.h>
+directly.
 
-checkpatch also uses a misspelling dictionary that I occasionally 
-contribute to with common spelling mistakes that I find and fix.
+On the contrary, <linux/random.h> doesn't use functionalities from
+<linux/once.h>, so it should be removed.
 
-Colin
+All this is true since commit c0842fbc1b18 ("random32: move the
+pseudo-random 32-bit definitions to prandom.h")
+
+Move the #include <linux/once.h> in the right file.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Let see if build-bots agree with me!
+---
+ include/linux/prandom.h | 1 +
+ include/linux/random.h  | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/prandom.h b/include/linux/prandom.h
+index 1f4a0de7b019..c94c02ba065c 100644
+--- a/include/linux/prandom.h
++++ b/include/linux/prandom.h
+@@ -9,6 +9,7 @@
+ #define _LINUX_PRANDOM_H
+ 
+ #include <linux/types.h>
++#include <linux/once.h>
+ #include <linux/percpu.h>
+ #include <linux/random.h>
+ 
+diff --git a/include/linux/random.h b/include/linux/random.h
+index b1a34181eed6..4a2a1de423cd 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -6,7 +6,6 @@
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
+-#include <linux/once.h>
+ 
+ #include <uapi/linux/random.h>
+ 
+-- 
+2.34.1
 
