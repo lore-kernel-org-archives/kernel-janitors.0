@@ -2,83 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 744AEC4321E
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Dec 2022 11:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3303AC4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 03:26:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbiLALXH (ORCPT
+        id S231542AbiLBD0O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Dec 2022 06:23:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37480 "EHLO
+        Thu, 1 Dec 2022 22:26:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230404AbiLALWp (ORCPT
+        with ESMTP id S231181AbiLBD0M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Dec 2022 06:22:45 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB7E5A6CE7;
-        Thu,  1 Dec 2022 03:20:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4FEA8B81F12;
-        Thu,  1 Dec 2022 11:20:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 013A6C43146;
-        Thu,  1 Dec 2022 11:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669893616;
-        bh=jzXAN5XgytwdU3x//EumIzh1xUo/7W9XJaN6OHgdMkU=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=hyNE0ReKiChBKVHdAMiBIDloAtQl/F9Lb83Im1BL3pOZigrBboeyROjd0wdi6Hqxj
-         qAwtyHvoPhDwqwYx5STvQs5up+kKylZG4uCV26dgS3KeLkxKy5f0ciBDmXZM1jZCuP
-         NYGiWu6HDoLHwCN4q33UId58s1Lv7Za1hGlb94lTYpOu9hOuR2ui6N1RTDExpHHOgC
-         qdLYgYZYKM+FJ91LW57AKZVhnSmmTu0DwgU7cwB+nMsaZgaxNuKJmhav2aftWIo0De
-         yQkCCpYmLXPmjtVYR82eMv6IE9Xr0QIKNOF85ipCbjld6pkpuhhLtm77sTUq7WKb6w
-         LCX/YuvcM/AyA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D98ACE29F38;
-        Thu,  1 Dec 2022 11:20:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: microchip: sparx5: Fix error handling in
- vcap_show_admin()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166989361588.14994.7087037126362934717.git-patchwork-notify@kernel.org>
-Date:   Thu, 01 Dec 2022 11:20:15 +0000
-References: <Y4XUUx9kzurBN+BV@kili>
-In-Reply-To: <Y4XUUx9kzurBN+BV@kili>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
-        daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+        Thu, 1 Dec 2022 22:26:12 -0500
+Received: from mail.nfschina.com (mail.nfschina.com [124.16.136.209])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 29AE4D78FE;
+        Thu,  1 Dec 2022 19:26:11 -0800 (PST)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 8B9FB1E80D50;
+        Fri,  2 Dec 2022 11:22:06 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4sj_UncHBgSW; Fri,  2 Dec 2022 11:22:03 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id 0411A1E80D27;
+        Fri,  2 Dec 2022 11:22:02 +0800 (CST)
+From:   Li Qiong <liqiong@nfschina.com>
+To:     Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, coreteam@netfilter.org,
+        Yu Zhe <yuzhe@nfschina.com>, Li Qiong <liqiong@nfschina.com>
+Subject: [PATCH] ipvs: initialize 'ret' variable in do_ip_vs_set_ctl()
+Date:   Fri,  2 Dec 2022 11:25:11 +0800
+Message-Id: <20221202032511.1435-1-liqiong@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The 'ret' should need to be initialized to 0, in case
+return a uninitialized value because no default process
+for "switch (cmd)".
 
-This patch was applied to netdev/net-next.git (master)
-by Paolo Abeni <pabeni@redhat.com>:
+Signed-off-by: Li Qiong <liqiong@nfschina.com>
+---
+ net/netfilter/ipvs/ip_vs_ctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, 29 Nov 2022 12:43:47 +0300 you wrote:
-> If vcap_dup_rule() fails that leads to an error pointer dereference
-> side the call to vcap_free_rule().  Also it only returns an error if the
-> very last call to vcap_read_rule() fails and it returns success for
-> other errors.
-> 
-> I've changed it to just stop printing after the first error and return
-> an error code.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] net: microchip: sparx5: Fix error handling in vcap_show_admin()
-    https://git.kernel.org/netdev/net-next/c/682f560b8a87
-
-You are awesome, thank you!
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 988222fff9f0..4b20db86077c 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -2456,7 +2456,7 @@ static int
+ do_ip_vs_set_ctl(struct sock *sk, int cmd, sockptr_t ptr, unsigned int len)
+ {
+ 	struct net *net = sock_net(sk);
+-	int ret;
++	int ret = 0;
+ 	unsigned char arg[MAX_SET_ARGLEN];
+ 	struct ip_vs_service_user *usvc_compat;
+ 	struct ip_vs_service_user_kern usvc;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.11.0
 
