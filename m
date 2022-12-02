@@ -2,99 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E8BC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 09:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3548FC47088
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 10:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233171AbiLBJ6i (ORCPT
+        id S233182AbiLBKCm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Dec 2022 04:58:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35384 "EHLO
+        Fri, 2 Dec 2022 05:02:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233147AbiLBJ6g (ORCPT
+        with ESMTP id S233171AbiLBKCk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Dec 2022 04:58:36 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B847D9855D;
-        Fri,  2 Dec 2022 01:58:33 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id o7-20020a05600c510700b003cffc0b3374so3874952wms.0;
-        Fri, 02 Dec 2022 01:58:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BWSIvQT615Lxx3SW2gsJZM1lgPmuBtNCLkFLBWYmSgs=;
-        b=Hh0Y4ITWHxUxcZ88wjU1cia5cd5bxhtvliLbDQinQDN+NlVOnpBcz6SgoTD+UQ82fk
-         aFutl0kVC0K4d6TfFWW8imi3ywMY0OcX4nPrGlbyuyZ9yTdTG2bR6/tG8cIaKDqCvEL1
-         z++dfJ787mgY3BrexXJnJLU/BiyIUczIEn5JQ1uCUo+nXdGwoNI+UewQYtxog43ZqHgm
-         NTbrT0R4F2L1ocJzbL4CbI1ioRY91wIpfdSQsXVotAjCVU/Um69aUas1w3GXXCDAvv60
-         FLnZRqzcwU3F5vAhXZQFQl/2Ur79Xnd9BFWEoDJnkx78HdVGH830G8Th/RujvyLKWd/B
-         G/qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BWSIvQT615Lxx3SW2gsJZM1lgPmuBtNCLkFLBWYmSgs=;
-        b=Hr4rkFAOAaqT+JGx118pUlP5KJhaWNxvKMyufxnC8bvE40UL/F2VYKTez5ejS8K9+Y
-         1QiwHIh70Ng2mvH/uL38Tft2UhdNu/D+Ec1ejMEhnaURwoTGv4PcpDc5MCRGUz4Ib+Dm
-         eFzhsBMbQ1l8446eR71CSYk6Opnd+bC6pxFp/dRMM10QPxRnPBNAhCxyi4IqH2kvci1m
-         SgvQRt/Xzv6oWCnebps/D/TnANl/qCtxyp9oAdb6jj/G1loQxlFMoX0AsyPVnHqf2eEH
-         GZqBO+h9YxyLgfWw0WfvYWFEy1YEvvYr/2UDyTAVMrJdJ+TaX6eK7h8L/3tRn0ZmQBsN
-         LENQ==
-X-Gm-Message-State: ANoB5pmLknF1T1ZBZ1ypSNCBNzwgJyxJT7S4hQPl2y0WSRd/+hSNkNAi
-        HsEhMFM82dhxK5qT8XdglYc=
-X-Google-Smtp-Source: AA0mqf48uxe4cwZTr683xZ3RgC1ZEeH9ELSF5+T3a3WnasVK5/pBPbNEhlJbswzbp2sasiwlasVB+g==
-X-Received: by 2002:a05:600c:538b:b0:3b4:7e87:895f with SMTP id hg11-20020a05600c538b00b003b47e87895fmr51966112wmb.30.1669975112217;
-        Fri, 02 Dec 2022 01:58:32 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id r11-20020a05600c35cb00b003a84375d0d1sm12880466wmq.44.2022.12.02.01.58.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Dec 2022 01:58:31 -0800 (PST)
-Date:   Fri, 2 Dec 2022 12:58:26 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+        Fri, 2 Dec 2022 05:02:40 -0500
+Received: from zeeaster.vergenet.net (zeeaster.vergenet.net [206.189.110.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 881A310B8;
+        Fri,  2 Dec 2022 02:02:36 -0800 (PST)
+Received: from momiji.horms.nl (86-93-216-223.fixed.kpn.net [86.93.216.223])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by zeeaster.vergenet.net (Postfix) with ESMTPSA id 7F991200A3;
+        Fri,  2 Dec 2022 10:02:04 +0000 (UTC)
+Received: by momiji.horms.nl (Postfix, from userid 7100)
+        id 3436E9401C8; Fri,  2 Dec 2022 11:02:04 +0100 (CET)
+Date:   Fri, 2 Dec 2022 11:02:04 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Li Qiong <liqiong@nfschina.com>
+Cc:     Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net] net: mvneta: Prevent out of bounds read in
- mvneta_config_rss()
-Message-ID: <Y4nMQuEtuVO+rlQy@kili>
+        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        coreteam@netfilter.org, Yu Zhe <yuzhe@nfschina.com>
+Subject: Re: [PATCH] ipvs: initialize 'ret' variable in do_ip_vs_set_ctl()
+Message-ID: <Y4nNHHfIY7iEvMgr@vergenet.net>
+References: <20221202032511.1435-1-liqiong@nfschina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20221202032511.1435-1-liqiong@nfschina.com>
+Organisation: Horms Solutions BV
+X-Virus-Scanned: clamav-milter 0.103.7 at zeeaster
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pp->indir[0] value comes from the user.  It is passed to:
+On Fri, Dec 02, 2022 at 11:25:11AM +0800, Li Qiong wrote:
+> The 'ret' should need to be initialized to 0, in case
+> return a uninitialized value because no default process
+> for "switch (cmd)".
+> 
+> Signed-off-by: Li Qiong <liqiong@nfschina.com>
 
-	if (cpu_online(pp->rxq_def))
+Thanks,
 
-inside the mvneta_percpu_elect() function.  It needs bounds checkeding
-to ensure that it is not beyond the end of the cpu bitmap.
+I agree there seems to be a problem here.  But perhaps it's nicer to solve
+it by adding a default case to the switch statement?
 
-Fixes: cad5d847a093 ("net: mvneta: Fix the CPU choice in mvneta_percpu_elect")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/net/ethernet/marvell/mvneta.c | 3 +++
- 1 file changed, 3 insertions(+)
+Also, if we update the declaration of ret, perhaps we could also move it to
+the bottom of the declaration of local variables, to move more towards
+reverse xmas tree order.
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index c2cb98d24f5c..5abc7c3e399e 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -4927,6 +4927,9 @@ static int  mvneta_config_rss(struct mvneta_port *pp)
- 		napi_disable(&pp->napi);
- 	}
- 
-+	if (pp->indir[0] >= nr_cpu_ids)
-+		return -EINVAL;
-+
- 	pp->rxq_def = pp->indir[0];
- 
- 	/* Update unicast mapping */
--- 
-2.35.1
+But to be honest, I don't feel strongly about either of these issues.
 
+So if someone wants to take this patch as-is then feel free to add.
+
+Reviewed-by: Simon Horman <horms@verge.net.au>
+
+> ---
+>  net/netfilter/ipvs/ip_vs_ctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+> index 988222fff9f0..4b20db86077c 100644
+> --- a/net/netfilter/ipvs/ip_vs_ctl.c
+> +++ b/net/netfilter/ipvs/ip_vs_ctl.c
+> @@ -2456,7 +2456,7 @@ static int
+>  do_ip_vs_set_ctl(struct sock *sk, int cmd, sockptr_t ptr, unsigned int len)
+>  {
+>  	struct net *net = sock_net(sk);
+> -	int ret;
+> +	int ret = 0;
+>  	unsigned char arg[MAX_SET_ARGLEN];
+>  	struct ip_vs_service_user *usvc_compat;
+>  	struct ip_vs_service_user_kern usvc;
+> -- 
+> 2.11.0
+> 
