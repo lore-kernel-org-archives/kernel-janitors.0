@@ -2,89 +2,58 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 425FBC47090
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 10:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D63FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 10:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233172AbiLBKSs (ORCPT
+        id S233301AbiLBKUD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Dec 2022 05:18:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57944 "EHLO
+        Fri, 2 Dec 2022 05:20:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232841AbiLBKSo (ORCPT
+        with ESMTP id S233303AbiLBKUA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Dec 2022 05:18:44 -0500
-Received: from mail.nfschina.com (unknown [124.16.136.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C53788DBD0;
-        Fri,  2 Dec 2022 02:18:42 -0800 (PST)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 9F8871E80D27;
-        Fri,  2 Dec 2022 18:14:37 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0MNc3Rl89av0; Fri,  2 Dec 2022 18:14:34 +0800 (CST)
-Received: from [172.30.38.124] (unknown [180.167.10.98])
-        (Authenticated sender: liqiong@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 465691E80CCF;
-        Fri,  2 Dec 2022 18:14:34 +0800 (CST)
-Subject: Re: [PATCH] ipvs: initialize 'ret' variable in do_ip_vs_set_ctl()
-To:     Dan Carpenter <error27@gmail.com>,
-        Peilin Ye <yepeilin.cs@gmail.com>
-Cc:     Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        coreteam@netfilter.org, Yu Zhe <yuzhe@nfschina.com>
-References: <20221202032511.1435-1-liqiong@nfschina.com>
- <Y4nORiViTw0XlU2a@kadam>
-From:   liqiong <liqiong@nfschina.com>
-Message-ID: <9bc0af1a-3cf0-de4e-7073-0f7895b7f6eb@nfschina.com>
-Date:   Fri, 2 Dec 2022 18:18:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 2 Dec 2022 05:20:00 -0500
+Received: from formenos.hmeau.com (helcar.hmeau.com [216.24.177.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DC10CCFDE;
+        Fri,  2 Dec 2022 02:20:00 -0800 (PST)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1p1394-003CCS-AZ; Fri, 02 Dec 2022 18:19:51 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 02 Dec 2022 18:19:50 +0800
+Date:   Fri, 2 Dec 2022 18:19:50 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Corentin Labbe <clabbe@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH] crypto: amlogic - Save a few bytes of memory
+Message-ID: <Y4nRRtV3ZCr+DJlM@gondor.apana.org.au>
+References: <c797dc5e9248498918916a6eeedaa25de2196e8c.1669154149.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-In-Reply-To: <Y4nORiViTw0XlU2a@kadam>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c797dc5e9248498918916a6eeedaa25de2196e8c.1669154149.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Tue, Nov 22, 2022 at 10:56:19PM +0100, Christophe JAILLET wrote:
+> There is no real point in allocating dedicated memory for the irqs array.
+> MAXFLOW is only 2, so it is easier to allocated the needed space
+> directly within the 'meson_dev' structure.
+> 
+> This saves some memory allocation and avoids an indirection when using the
+> irqs array.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/crypto/amlogic/amlogic-gxl-core.c | 1 -
+>  drivers/crypto/amlogic/amlogic-gxl.h      | 2 +-
+>  2 files changed, 1 insertion(+), 2 deletions(-)
 
-
-在 2022年12月02日 18:07, Dan Carpenter 写道:
-> On Fri, Dec 02, 2022 at 11:25:11AM +0800, Li Qiong wrote:
->> The 'ret' should need to be initialized to 0, in case
->> return a uninitialized value because no default process
->> for "switch (cmd)".
->>
->> Signed-off-by: Li Qiong <liqiong@nfschina.com>
-> If this is a real bug, then it needs a fixes tag.  The fixes tag helps
-> us know whether to back port or not and it also helps in reviewing the
-> patch.  Also get_maintainer.pl will CC the person who introduced the
-> bug so they can review it.  They are normally the best person to review
-> their own code.
->
-> Here it would be:
-> Fixes: c5a8a8498eed ("ipvs: Fix uninit-value in do_ip_vs_set_ctl()")
->
-> Which is strange...  Also it suggest that the correct value is -EINVAL
-> and not 0.
->
-> The thing about uninitialized variable bugs is that Smatch and Clang
-> both warn about them so they tend to get reported pretty quick.
-> Apparently neither Nathan nor I sent forwarded this static checker
-> warning.  :/
->
-> regards,
-> dan carpenter
-
-It is not a real bug,   I  use tool (eg: smatch, sparse) to audit the code,  got this warning and check it,
-found may be a real problem.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
