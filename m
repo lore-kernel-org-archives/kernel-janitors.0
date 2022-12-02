@@ -2,78 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C46A2C4321E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 15:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0BCC4321E
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 16:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233650AbiLBPAN (ORCPT
+        id S233546AbiLBQmG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Dec 2022 10:00:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33018 "EHLO
+        Fri, 2 Dec 2022 11:42:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233645AbiLBPAK (ORCPT
+        with ESMTP id S234087AbiLBQmA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Dec 2022 10:00:10 -0500
-Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A99D56EC9;
-        Fri,  2 Dec 2022 07:00:09 -0800 (PST)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id DDC02C009; Fri,  2 Dec 2022 16:00:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1669993216; bh=eFVoZAfD9YPOPHkY+vtVQeAztonhM8KEg/TJuZEwtyk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZRYxCC+feO+qQnoPKijZmbBfFAQa7Q7NTkHW2QfbIB/shlM0vI2PWs9elzx1U7gkf
-         9tc/e3ak1TTY7DIoLiYE7Jnc7Zrpjxj7UQukuff4TLF0bQ+e+H7ooaOitZk8ONb6bT
-         RQ8/SzyRepBFQIT90+RxlxDq3w7ZZS6HBf+l8v35TKp8BJYRZlps89P1kfc13rCxxE
-         f+zb9ku7FdPnZfdY1EfLwmUgDZWCtDbSlM/rd+Xic83LsBBVQPBCEQIROlGt6N+zgq
-         XTydyZmIfOqpXywhXFFS9bXZo9Wj3vN0WFtn8BpvG++ARmlnWjorZq7ENXm5hxBzFN
-         CSbZGSFLAnY+A==
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 99EDDC009;
-        Fri,  2 Dec 2022 16:00:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1669993216; bh=eFVoZAfD9YPOPHkY+vtVQeAztonhM8KEg/TJuZEwtyk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZRYxCC+feO+qQnoPKijZmbBfFAQa7Q7NTkHW2QfbIB/shlM0vI2PWs9elzx1U7gkf
-         9tc/e3ak1TTY7DIoLiYE7Jnc7Zrpjxj7UQukuff4TLF0bQ+e+H7ooaOitZk8ONb6bT
-         RQ8/SzyRepBFQIT90+RxlxDq3w7ZZS6HBf+l8v35TKp8BJYRZlps89P1kfc13rCxxE
-         f+zb9ku7FdPnZfdY1EfLwmUgDZWCtDbSlM/rd+Xic83LsBBVQPBCEQIROlGt6N+zgq
-         XTydyZmIfOqpXywhXFFS9bXZo9Wj3vN0WFtn8BpvG++ARmlnWjorZq7ENXm5hxBzFN
-         CSbZGSFLAnY+A==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 831197e9;
-        Fri, 2 Dec 2022 15:00:01 +0000 (UTC)
-Date:   Fri, 2 Dec 2022 23:59:46 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org
-Subject: Re: [PATCH] 9p: Remove unneeded idr.h #include in the net/9p
- directory
-Message-ID: <Y4oS4rMkjil1H11K@codewreck.org>
-References: <9e386018601d7e4a9e5d7da8fc3e9555ebb25c87.1669560387.git.christophe.jaillet@wanadoo.fr>
+        Fri, 2 Dec 2022 11:42:00 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01E42C7243;
+        Fri,  2 Dec 2022 08:42:00 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id d1so8606489wrs.12;
+        Fri, 02 Dec 2022 08:41:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NBhUhPdweZ3fTupviVjoDkaZ/Bzxjb/TM6/+Uzw6tYM=;
+        b=W3qrvxNWQG18OXMSTFZQkIOrmn9ZkqxlS3C/C5VDGgmacy8F6t4GEmPN7+nIzI3R1W
+         UQjqIBsFhs2EmDiU4IouSTnNwPv6jUb97Il4+HByArzo6uADGnPWEGKJLJ0rOnvWxX1Q
+         f7y6wk9Q+rYhTodh2rXoXvfytFFWNLtzU0x8mLSiy9Oj/a0izKbpcO//QAVdGSHCTEQg
+         x7K8L8ymNYZvoApuerQTVuOL6ysZ97HpDjOG0FG8GgNNUBbRBrKcD2VJFGysU5557HPv
+         5o7o9qy8DYTXJzniz5BXdgMtT2ot4J5sVDErgRFSi7f57gVONYVkQTVbHGLr6WJsqv3J
+         dNOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NBhUhPdweZ3fTupviVjoDkaZ/Bzxjb/TM6/+Uzw6tYM=;
+        b=HrmbnKlJ9KIXdDGDUkGCJ6p0MIkiu2LQB90jCvNcOPVSEVWeBI6/6qx/J8/jGZtnf6
+         ElgbccdIcQdDtNVto0GCbPSBOvEqdHaKcCGw6nQrAihiEV8nXoXuIzYZHL04T8bt+7oh
+         Uce2tpbBJ9hh01cXqJYg5OVjmt75J7dIWOY4ddoZNpsz1AtPgfPefis+p5+3lUfD4I66
+         1pBoGuvYXdlvN38Tg2InopRkzwJuVO4TCAtuRsFWrwUfkfHPJh6pdR0/2i8nfOvZ5cGu
+         uBG15sIf3aFEcQXD/+aQmaWixmbZUqchEsaFElkO/usAiy+4vdM2sh8NWfOt+FC+YsUr
+         B1Kw==
+X-Gm-Message-State: ANoB5pl2xu4xDP5U9c1Q55nC7ewk2waxQ8sCF7341+/JAN+gXbR1/dnQ
+        LG2WklM0EK8urOpecnZwkLo0xbekiIbDTVU7
+X-Google-Smtp-Source: AA0mqf684oIN5gBFoOCtGHGhakQpJrnScN39W14mgEhGfEioE0MUho6Hs0PFLef9eXd4F5q208iQ/A==
+X-Received: by 2002:a5d:46d1:0:b0:242:4698:f0a7 with SMTP id g17-20020a5d46d1000000b002424698f0a7mr2151557wrs.77.1669999318410;
+        Fri, 02 Dec 2022 08:41:58 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id q17-20020a05600000d100b0024207ed4ce0sm7491149wrx.58.2022.12.02.08.41.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Dec 2022 08:41:57 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: uniphier: aio-core: Make some read-only arrays static const
+Date:   Fri,  2 Dec 2022 16:41:56 +0000
+Message-Id: <20221202164156.1812971-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9e386018601d7e4a9e5d7da8fc3e9555ebb25c87.1669560387.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET wrote on Sun, Nov 27, 2022 at 03:46:45PM +0100:
-> The 9p net files don't use IDR or IDA functionalities. So there is no point
-> in including <linux/idr.h>.
-> Remove it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Don't populate the read-only arrays slotsel_2ch, slotsel_multi, v_pll
+and v_div on the stack but instead make them static const. Also makes
+the object code a little smaller.
 
-Thanks, picked this one up as well
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/uniphier/aio-core.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
+diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
+index b8195778953e..0eba60758134 100644
+--- a/sound/soc/uniphier/aio-core.c
++++ b/sound/soc/uniphier/aio-core.c
+@@ -277,17 +277,18 @@ void aio_port_reset(struct uniphier_aio_sub *sub)
+ static int aio_port_set_ch(struct uniphier_aio_sub *sub)
+ {
+ 	struct regmap *r = sub->aio->chip->regmap;
+-	u32 slotsel_2ch[] = {
++	static const u32 slotsel_2ch[] = {
+ 		0, 0, 0, 0, 0,
+ 	};
+-	u32 slotsel_multi[] = {
++	static const u32 slotsel_multi[] = {
+ 		OPORTMXTYSLOTCTR_SLOTSEL_SLOT0,
+ 		OPORTMXTYSLOTCTR_SLOTSEL_SLOT1,
+ 		OPORTMXTYSLOTCTR_SLOTSEL_SLOT2,
+ 		OPORTMXTYSLOTCTR_SLOTSEL_SLOT3,
+ 		OPORTMXTYSLOTCTR_SLOTSEL_SLOT4,
+ 	};
+-	u32 mode, *slotsel;
++	u32 mode;
++	const u32 *slotsel;
+ 	int i;
+ 
+ 	switch (params_channels(&sub->params)) {
+@@ -515,13 +516,13 @@ static int aio_port_set_clk(struct uniphier_aio_sub *sub)
+ 	struct uniphier_aio_chip *chip = sub->aio->chip;
+ 	struct device *dev = &sub->aio->chip->pdev->dev;
+ 	struct regmap *r = sub->aio->chip->regmap;
+-	u32 v_pll[] = {
++	static const u32 v_pll[] = {
+ 		OPORTMXCTR2_ACLKSEL_A1, OPORTMXCTR2_ACLKSEL_F1,
+ 		OPORTMXCTR2_ACLKSEL_A2, OPORTMXCTR2_ACLKSEL_F2,
+ 		OPORTMXCTR2_ACLKSEL_A2PLL,
+ 		OPORTMXCTR2_ACLKSEL_RX1,
+ 	};
+-	u32 v_div[] = {
++	static const u32 v_div[] = {
+ 		OPORTMXCTR2_DACCKSEL_1_2, OPORTMXCTR2_DACCKSEL_1_3,
+ 		OPORTMXCTR2_DACCKSEL_1_1, OPORTMXCTR2_DACCKSEL_2_3,
+ 	};
 -- 
-Dominique
+2.38.1
+
