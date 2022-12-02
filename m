@@ -2,161 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5991AC4321E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 17:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2AFC47088
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 17:22:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234242AbiLBRO5 (ORCPT
+        id S234328AbiLBRW0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Dec 2022 12:14:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54166 "EHLO
+        Fri, 2 Dec 2022 12:22:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234184AbiLBROz (ORCPT
+        with ESMTP id S234199AbiLBRWM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Dec 2022 12:14:55 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E73E074B;
-        Fri,  2 Dec 2022 09:14:54 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id m14so8764889wrh.7;
-        Fri, 02 Dec 2022 09:14:54 -0800 (PST)
+        Fri, 2 Dec 2022 12:22:12 -0500
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C8EEC812
+        for <kernel-janitors@vger.kernel.org>; Fri,  2 Dec 2022 09:22:03 -0800 (PST)
+Received: by mail-pg1-x52e.google.com with SMTP id f9so4894980pgf.7
+        for <kernel-janitors@vger.kernel.org>; Fri, 02 Dec 2022 09:22:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8v9XTf3vXMWdEj7JPZSNyX2wl94/lt81sDZmVmnAZk=;
-        b=REs7QLBqW5J5VrEbzEthHZE1wfZSrK3cW5zRoKBqN3bvl3pN/pCfDR+um1uJkzTC/4
-         JP9Dm4H+19RXZnkU+om7Nn9lCfBSX27Iae2tITdSutf8C/usQe5SB7bN+p5H5mZePrz6
-         xndHgU5Igr91sHK3NScswZ91dHpRQWOKaTVtWu0aVehvkf3z0jVrCHSTPeoDmyD1mXOg
-         s5/jy3ze5ZJtuLi2dMj61QW6WtkG+PjeOLTtMjLv/dplZiuw7apog/3pgaruv+HnkuB5
-         rJJJN7yYn/kiuaZsCf45/24G4dGrrZJpFF0sGgAGNUunAwBd4ZAEIwHyGUnNveDJTBoy
-         k4xA==
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nAc9Ui5FDUiek1r3Ck1fS7WTbV+aLgSqwss523muYTk=;
+        b=Hesf4Q5brm36uJX3MEKcbGHrBL3g6VJA4t6P1O4r21kyQ+SXDRhZoqBvQAszLuC4az
+         1AyHP6c6OrwskWd44Vpqp8dBDzowKxdJHuoV4a6EviwOXax84doqhj+TH6WQjMSNjDfJ
+         4E0wk3E2LEXYUvYjnhKN9yHVCPd9TT3Bv6OkbES3PPIHEPhHD2GAR2Ituic7qtcNCPBv
+         wAMaRX33IGTJSxTTc9sDJv/frwj7Y91TR1GyRMjhbFONoRofpSJDgnn/hIcmXntNOrx0
+         w/N1FJlZ5tm9vbPmXYVg/u8o6iNfmatY+lN0LgpprUnqJpuQJkhUOtXICTGDU9dL1R7M
+         Mc2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B8v9XTf3vXMWdEj7JPZSNyX2wl94/lt81sDZmVmnAZk=;
-        b=VFz5qyAVhmIDE+9vZZjOi4rzFB6fIB1KAQJimDIEkc2EMX5KsFup7AwIJoP2LPKRmP
-         fXreVc6MkGKZFmjdCEkWRRptkLUcwsPVZfwvrWLKnCW3rtCEpZdXxAYmXA2amStk7f+G
-         t6LZ/HvXiwZFS1Z2rAMs9xicmYwKpg2okm7MD0ZifGDe6mrPwFEcLLJBJ7hmZMf1yCTq
-         S2RfodKcXVVHellT2e/CkEhEHkitXXIo/HoZzTLL2SkAAB1W+m3FQq6Y3raKQFyqvMux
-         9460/QHqKIoHKtTPPoGeUe7Cj8GjNUUNzRT4gcQUUovadQ61nMlpsPxqfK34Pz+XtBLU
-         BF8Q==
-X-Gm-Message-State: ANoB5pmNj/NHf/UwELLXNV4NG2gwNOoEEn/V/ndibFngbKxXmDeF1Wwd
-        V/kBwoz0ihSzEdH/9uPcXPA=
-X-Google-Smtp-Source: AA0mqf7V00hqex6XhkoCKa3wTyxa3SNkDDr8CfdyWdN/p7w47wrcrprI66nTe6Gqv77wmWQs7pXSBA==
-X-Received: by 2002:adf:f54d:0:b0:242:9e6:ea4d with SMTP id j13-20020adff54d000000b0024209e6ea4dmr20929160wrp.251.1670001292663;
-        Fri, 02 Dec 2022 09:14:52 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id k12-20020adfe8cc000000b00241b5af8697sm7651532wrn.85.2022.12.02.09.14.51
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nAc9Ui5FDUiek1r3Ck1fS7WTbV+aLgSqwss523muYTk=;
+        b=u91gPPTOJuYP+l+xTphDmESVv+VqVrXyyRWpZ0uUAK+BiyGFU55a5B3FSxvPIYuIjC
+         jo0FDKdfVe5EdJbvrCxn/nJ+M5Bm+jwNddYuPk5ZqzO/Dom4YKql5GAgK/+x3wmiAlJO
+         yYrWHMj/6G7h4+eAJ3slM5g+iASeyBoypT5sfBSyLQkAazTvnzFQFz2bo+V5vHwiEdX8
+         VOlFuYJzJCT6Cjm5ZtJben23pfr7VQmYdKsojuc1CFJcSyQePSz3kRhw+COs+v3hIKhu
+         1aawcoayjThPpILBNOQXKtd/QApFQwVoItv5izYf4rGo9pQV/Ac4nVEbHrA4OAxmimWA
+         3fcg==
+X-Gm-Message-State: ANoB5pndBmHi7MgtRTLZ468I7Cc81rSk0xwV7ReX1V2VaJOdCI2MHqrb
+        oTzyyFWCVPJ0Vx5asjc/wkfGEw==
+X-Google-Smtp-Source: AA0mqf5m4zXkdiVg7X1oUF/in3uAi1adGUciP0lbBTNgQCH9BYJcAzGmMa6mLTtbviUw1JXWglFLJA==
+X-Received: by 2002:a05:6a00:414e:b0:575:7968:f546 with SMTP id bv14-20020a056a00414e00b005757968f546mr18387843pfb.30.1670001723093;
+        Fri, 02 Dec 2022 09:22:03 -0800 (PST)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id l4-20020a17090a384400b00212c27abcaesm6898955pjf.17.2022.12.02.09.22.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Dec 2022 09:14:51 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: rt715: Make read-only arrays capture_reg_H and capture_reg_L static const
-Date:   Fri,  2 Dec 2022 17:14:50 +0000
-Message-Id: <20221202171450.1815346-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Fri, 02 Dec 2022 09:22:02 -0800 (PST)
+Date:   Fri, 2 Dec 2022 17:21:58 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake
+ "probabalistic" -> "probabilistic"
+Message-ID: <Y4o0Nq4SKGZgDOxi@google.com>
+References: <20221201091354.1613652-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221201091354.1613652-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only arrays capture_reg_H and capture_reg_L
-on the stack but instead make them static const. Also makes the
-object code a little smaller.
+On Thu, Dec 01, 2022, Colin Ian King wrote:
+> There is a spelling mistake in some help text. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/codecs/rt715.c | 48 ++++++++++++++++++++--------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+I assume you have a script/tool of some form to do spell checking?  If so, can
+you point me at it?  I'd love to incorporate something like that into my workflow.
 
-diff --git a/sound/soc/codecs/rt715.c b/sound/soc/codecs/rt715.c
-index 917a04092da2..1a2036ccfbac 100644
---- a/sound/soc/codecs/rt715.c
-+++ b/sound/soc/codecs/rt715.c
-@@ -204,12 +204,12 @@ static int rt715_set_main_switch_put(struct snd_kcontrol *kcontrol,
- 	struct snd_soc_dapm_context *dapm =
- 		snd_soc_component_get_dapm(component);
- 	struct rt715_priv *rt715 = snd_soc_component_get_drvdata(component);
--	unsigned int capture_reg_H[] = {RT715_SET_GAIN_MIC_ADC_H,
--		RT715_SET_GAIN_LINE_ADC_H, RT715_SET_GAIN_MIX_ADC_H,
--		RT715_SET_GAIN_MIX_ADC2_H};
--	unsigned int capture_reg_L[] = {RT715_SET_GAIN_MIC_ADC_L,
--		RT715_SET_GAIN_LINE_ADC_L, RT715_SET_GAIN_MIX_ADC_L,
--		RT715_SET_GAIN_MIX_ADC2_L};
-+	static const unsigned int capture_reg_H[] = {
-+		RT715_SET_GAIN_MIC_ADC_H, RT715_SET_GAIN_LINE_ADC_H,
-+		RT715_SET_GAIN_MIX_ADC_H, RT715_SET_GAIN_MIX_ADC2_H };
-+	static const unsigned int capture_reg_L[] = {
-+		RT715_SET_GAIN_MIC_ADC_L, RT715_SET_GAIN_LINE_ADC_L,
-+		RT715_SET_GAIN_MIX_ADC_L, RT715_SET_GAIN_MIX_ADC2_L };
- 	unsigned int addr_h, addr_l, val_h = 0x0, val_ll, val_lr;
- 	unsigned int k_shift = RT715_DIR_IN_SFT, k_changed = 0;
- 	unsigned int read_ll, read_rl, i, j, loop_cnt = 4;
-@@ -284,12 +284,12 @@ static int rt715_set_main_switch_get(struct snd_kcontrol *kcontrol,
- {
- 	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
- 	struct rt715_priv *rt715 = snd_soc_component_get_drvdata(component);
--	unsigned int capture_reg_H[] = {RT715_SET_GAIN_MIC_ADC_H,
--		RT715_SET_GAIN_LINE_ADC_H, RT715_SET_GAIN_MIX_ADC_H,
--		RT715_SET_GAIN_MIX_ADC2_H};
--	unsigned int capture_reg_L[] = {RT715_SET_GAIN_MIC_ADC_L,
--		RT715_SET_GAIN_LINE_ADC_L, RT715_SET_GAIN_MIX_ADC_L,
--		RT715_SET_GAIN_MIX_ADC2_L};
-+	static const unsigned int capture_reg_H[] = {
-+		RT715_SET_GAIN_MIC_ADC_H, RT715_SET_GAIN_LINE_ADC_H,
-+		RT715_SET_GAIN_MIX_ADC_H, RT715_SET_GAIN_MIX_ADC2_H };
-+	static const unsigned int capture_reg_L[] = {
-+		RT715_SET_GAIN_MIC_ADC_L, RT715_SET_GAIN_LINE_ADC_L,
-+		RT715_SET_GAIN_MIX_ADC_L, RT715_SET_GAIN_MIX_ADC2_L };
- 	unsigned int addr_h, addr_l, val_h = 0x0, i, loop_cnt = 4;
- 	unsigned int read_ll, read_rl;
- 
-@@ -312,12 +312,12 @@ static int rt715_set_main_vol_put(struct snd_kcontrol *kcontrol,
- 	struct snd_soc_dapm_context *dapm =
- 		snd_soc_component_get_dapm(component);
- 	struct rt715_priv *rt715 = snd_soc_component_get_drvdata(component);
--	unsigned int capture_reg_H[] = {RT715_SET_GAIN_MIC_ADC_H,
--		RT715_SET_GAIN_LINE_ADC_H, RT715_SET_GAIN_MIX_ADC_H,
--		RT715_SET_GAIN_MIX_ADC2_H};
--	unsigned int capture_reg_L[] = {RT715_SET_GAIN_MIC_ADC_L,
--		RT715_SET_GAIN_LINE_ADC_L, RT715_SET_GAIN_MIX_ADC_L,
--		RT715_SET_GAIN_MIX_ADC2_L};
-+	static const unsigned int capture_reg_H[] = {
-+		RT715_SET_GAIN_MIC_ADC_H, RT715_SET_GAIN_LINE_ADC_H,
-+		RT715_SET_GAIN_MIX_ADC_H, RT715_SET_GAIN_MIX_ADC2_H };
-+	static const unsigned int capture_reg_L[] = {
-+		RT715_SET_GAIN_MIC_ADC_L, RT715_SET_GAIN_LINE_ADC_L,
-+		RT715_SET_GAIN_MIX_ADC_L, RT715_SET_GAIN_MIX_ADC2_L};
- 	unsigned int addr_h, addr_l, val_h = 0x0, val_ll, val_lr;
- 	unsigned int read_ll, read_rl, i, j, loop_cnt = 4, k_changed = 0;
- 	unsigned int k_shift = RT715_DIR_IN_SFT, k_max = 0x3f;
-@@ -393,12 +393,12 @@ static int rt715_set_main_vol_get(struct snd_kcontrol *kcontrol,
- {
- 	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
- 	struct rt715_priv *rt715 = snd_soc_component_get_drvdata(component);
--	unsigned int capture_reg_H[] = {RT715_SET_GAIN_MIC_ADC_H,
--		RT715_SET_GAIN_LINE_ADC_H, RT715_SET_GAIN_MIX_ADC_H,
--		RT715_SET_GAIN_MIX_ADC2_H};
--	unsigned int capture_reg_L[] = {RT715_SET_GAIN_MIC_ADC_L,
--		RT715_SET_GAIN_LINE_ADC_L, RT715_SET_GAIN_MIX_ADC_L,
--		RT715_SET_GAIN_MIX_ADC2_L};
-+	static const unsigned int capture_reg_H[] = {
-+		RT715_SET_GAIN_MIC_ADC_H, RT715_SET_GAIN_LINE_ADC_H,
-+		RT715_SET_GAIN_MIX_ADC_H, RT715_SET_GAIN_MIX_ADC2_H };
-+	static const unsigned int capture_reg_L[] = {
-+		RT715_SET_GAIN_MIC_ADC_L, RT715_SET_GAIN_LINE_ADC_L,
-+		RT715_SET_GAIN_MIX_ADC_L, RT715_SET_GAIN_MIX_ADC2_L };
- 	unsigned int addr_h, addr_l, val_h = 0x0, i, loop_cnt = 4;
- 	unsigned int read_ll, read_rl;
- 
--- 
-2.38.1
+Thanks!
 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+
+Reviewed-by: Sean Christopherson <seanjc@google.com>
