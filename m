@@ -2,111 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D735C47088
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 17:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0D2C4321E
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 17:43:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234155AbiLBRge (ORCPT
+        id S233757AbiLBRn5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Dec 2022 12:36:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52374 "EHLO
+        Fri, 2 Dec 2022 12:43:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233920AbiLBRgc (ORCPT
+        with ESMTP id S232550AbiLBRn4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Dec 2022 12:36:32 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EF13E8E07
-        for <kernel-janitors@vger.kernel.org>; Fri,  2 Dec 2022 09:36:28 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id bs21so8871265wrb.4
-        for <kernel-janitors@vger.kernel.org>; Fri, 02 Dec 2022 09:36:27 -0800 (PST)
+        Fri, 2 Dec 2022 12:43:56 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2C90DEA47;
+        Fri,  2 Dec 2022 09:43:55 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id n16-20020a05600c3b9000b003d08febff59so284421wms.3;
+        Fri, 02 Dec 2022 09:43:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tMmIbi4e/X1/uiuwY8BvO8Ud6JyyRMbx0iz80rslda4=;
-        b=LcrCJ2TMz3+4QidtoXI756Tji9ADtZqJ62iUoXhSHHFiW0rmbyQRLemmBLmyKNAsa7
-         iftotDTyUGc/SP2LfHQknWNFZjbVRgzUmyLRihHVtU/RwIgZP6B5e57L1Yhm/OFRzyvp
-         CNoNSuNyKsFwifjqqi5uLPa5lvo4JwNcJrIoTVBCsOTjrR9BkkXnmnY1i7cp0PW7gJBV
-         ZKxsTg2TBOMI+rrFVte47+8f/BLpVW/fKUMPu8FhkS1PotgqaGbhs3e0ICFoPctNz/Ql
-         RvhL7THGsVk44W73zzV8Xu/Jb+2ADrbZXxD4BHpOLpGqvMsQhM11XaSTa45a8ZAqzhAq
-         kXtA==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I7gcmDY2i8H8nOgJd+/7YR9Wml+Y6wMDjwIDDCDK+EA=;
+        b=CK9HVBzPcVTyLBqrwqnixOSWS3Ky91StRIaYIBXIlZ8xZIHIKCn9fB++l4/aJ0jhE7
+         dzMEgmAD063h7+lGJNGgJ886wVblLnRQDs4AXDu2f59D8fUIeJ1oWRiS4sUDIuIM+I5U
+         Reo79LfldT8ZEILK2dn7dyU60mvPXwyBdT7f+F0QN+2EEnqyt70HVvea53RMEMLpeM2k
+         NwVU+0TiuDnaxsclFIbYfg2wGfkoykA8RTIYXtG/BQZFL6mqx9sVqM/tpAsSthGl6jfn
+         wXL3Hs7fU8KvsL8DUXlaBvSGEp2j3TkU2LQFbfUSUGQuGBcAiFcM4ORFOIAdr1ebyTp3
+         2LYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tMmIbi4e/X1/uiuwY8BvO8Ud6JyyRMbx0iz80rslda4=;
-        b=1r26kDO96ikJykug9W9RtbhPbO0kHGe75J4R9l7HbgbdhwsFrsTLud6KDGwrvYhEyo
-         Ifjva4+IejwOFvbsv9BYb7L99kkR/Ytb1tLQSZmhcqkDRaqarRQroIG5Kzui7r01pqr3
-         wpkj7MkklLmUOiGTbuGjKyb0g1HDUvArAqJDI8O1ieO8du2UHVqV6AGSFG0Tw2PBnJ+h
-         wdYrm1TyqIswRwkNAZZ/JNu13kzVYDNEwU9WZnh/ugaDmzpoNjLZFMij3UTQsmgzFzft
-         sC7l6aZ2JmFA8fUCspzoTw26NVhKR6NC9caId80ILC68l6abWQbpF6WHkS/rKgMkblPR
-         /1rw==
-X-Gm-Message-State: ANoB5pmOCcQOcHX8FGDkyvT7ZviTHT6aztQzkpE8JHmF7snpOnf/sCBe
-        CfsxOgzgAw8RPBZXGmsh1BBkdtataEOO8F4mRieZ9Q==
-X-Google-Smtp-Source: AA0mqf429zt33NbLfsZBqEmtjy/QQWT2sYU+veHHys1lkbA96+XFEq+2NvVor/amc0cuAQW+zzn3msPfSy+bKCD4Pcc=
-X-Received: by 2002:adf:e64f:0:b0:241:e2f1:8b44 with SMTP id
- b15-20020adfe64f000000b00241e2f18b44mr31351795wrn.300.1670002586412; Fri, 02
- Dec 2022 09:36:26 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I7gcmDY2i8H8nOgJd+/7YR9Wml+Y6wMDjwIDDCDK+EA=;
+        b=uojCxsZvMbrckC2atm795/HV5S8mIyGa0VCkNyxKWj4yT2bw1lo2eeB973m6598clo
+         HpZij/ok31GkIWMhjOzUaUNRxmo1ICuuwWF4htNexw3Z5LzH+4MpGQJ2QhESjCG2a9lG
+         6HcbsLWCjf/XkFLeUH/IJUVjJiArl0a/eP/Kwx6W013864SWRoAo7GZrP/P7VmaTALmS
+         l0EtmjxIHtZiKfUl94y9YqmI6JDaFJz9krLDV8QTmfnjQmoTVk03Z5OIn2oaL1NVnxI9
+         omrhHNX+lZJKIxdo3LY/jofXoyfsG4x4Kz9wIZT6BLsWqB49PTeRpEeVdLvlsQwzsoAY
+         mhAA==
+X-Gm-Message-State: ANoB5pnXIKCklbqLvYHOJvEe1Jtz/WD7TJFMDReEvmd28sIzZIaHhPUw
+        cfCsLjIp9pg591a6F1fW5o4=
+X-Google-Smtp-Source: AA0mqf5sVVP51gLMwRzFGWqSIDNnlCH4OFmV1E1eFgIYtbaDPna6XrofuDwAexiQyFJPpcx+4gkG+Q==
+X-Received: by 2002:a05:600c:5385:b0:3d0:8644:19fe with SMTP id hg5-20020a05600c538500b003d0864419femr2904719wmb.132.1670003034537;
+        Fri, 02 Dec 2022 09:43:54 -0800 (PST)
+Received: from [192.168.0.210] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.googlemail.com with ESMTPSA id fn9-20020a05600c688900b003cf75213bb9sm12467768wmb.8.2022.12.02.09.43.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Dec 2022 09:43:53 -0800 (PST)
+Message-ID: <10445a4d-0175-3e5e-aa74-9d232737a7c2@gmail.com>
+Date:   Fri, 2 Dec 2022 17:43:52 +0000
 MIME-Version: 1.0
-References: <20221202135149.1797974-1-colin.i.king@gmail.com>
-In-Reply-To: <20221202135149.1797974-1-colin.i.king@gmail.com>
-From:   Ian Rogers <irogers@google.com>
-Date:   Fri, 2 Dec 2022 09:36:14 -0800
-Message-ID: <CAP-5=fWKbC_wOLiAnEnPV42mM9fpobJD++wKohFYVU66LdaJ-g@mail.gmail.com>
-Subject: Re: [PATCH][next] perf/x86/amd: fix potential integer overflow on
- shift of a int
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Kim Phillips <kim.phillips@amd.com>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake
+ "probabalistic" -> "probabilistic"
+Content-Language: en-US
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221201091354.1613652-1-colin.i.king@gmail.com>
+ <Y4o0Nq4SKGZgDOxi@google.com>
+From:   "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <Y4o0Nq4SKGZgDOxi@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Dec 2, 2022 at 5:52 AM Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
-> arithmetic and then passed as a 64 bit function argument. In the case where
-> i is 32 or more this can lead to an overflow.  Avoid this by shifting
-> using the BIT_ULL macro instead.
->
-> Fixes: 471af006a747 ("perf/x86/amd: Constrain Large Increment per Cycle events")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On 02/12/2022 17:21, Sean Christopherson wrote:
+> On Thu, Dec 01, 2022, Colin Ian King wrote:
+>> There is a spelling mistake in some help text. Fix it.
+> 
+> I assume you have a script/tool of some form to do spell checking?  If so, can
+> you point me at it?  I'd love to incorporate something like that into my workflow.
 
-Acked-by: Ian Rogers <irogers@google.com>
+https://github.com/ColinIanKing/kernelscan
 
-Thanks,
-Ian
+It needs an appropriate dictionary to be installed. It's very fast (but 
+sometimes makes mistakes, I need to fix those!).
 
-> ---
->  arch/x86/events/amd/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-> index d6f3703e4119..4386b10682ce 100644
-> --- a/arch/x86/events/amd/core.c
-> +++ b/arch/x86/events/amd/core.c
-> @@ -1387,7 +1387,7 @@ static int __init amd_core_pmu_init(void)
->                  * numbered counter following it.
->                  */
->                 for (i = 0; i < x86_pmu.num_counters - 1; i += 2)
-> -                       even_ctr_mask |= 1 << i;
-> +                       even_ctr_mask |= BIT_ULL(i);
->
->                 pair_constraint = (struct event_constraint)
->                                     __EVENT_CONSTRAINT(0, even_ctr_mask, 0,
-> --
-> 2.38.1
->
+./kernelscan -k src_directory > mistakes.txt
+
+I normally run this across the entire kernel git repo on a daily basis, 
+and diff the new results with the previous results using meld and figure 
+out what needs to be fixed.
+
+You may be better off with using codespell
+
+Colin
+
+> 
+> Thanks!
+> 
+>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>> ---
+> 
+> Reviewed-by: Sean Christopherson <seanjc@google.com>
+
