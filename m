@@ -2,34 +2,33 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3303AC4167B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 03:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C80C4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 07:04:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231542AbiLBD0O (ORCPT
+        id S232477AbiLBHEk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Dec 2022 22:26:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37160 "EHLO
+        Fri, 2 Dec 2022 02:04:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231181AbiLBD0M (ORCPT
+        with ESMTP id S230163AbiLBHEj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Dec 2022 22:26:12 -0500
-Received: from mail.nfschina.com (mail.nfschina.com [124.16.136.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 29AE4D78FE;
-        Thu,  1 Dec 2022 19:26:11 -0800 (PST)
+        Fri, 2 Dec 2022 02:04:39 -0500
+Received: from mail.nfschina.com (unknown [124.16.136.209])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1DE7DBEE36;
+        Thu,  1 Dec 2022 23:04:37 -0800 (PST)
 Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 8B9FB1E80D50;
-        Fri,  2 Dec 2022 11:22:06 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTP id 439C01E80D27;
+        Fri,  2 Dec 2022 15:00:33 +0800 (CST)
 X-Virus-Scanned: amavisd-new at test.com
 Received: from mail.nfschina.com ([127.0.0.1])
         by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 4sj_UncHBgSW; Fri,  2 Dec 2022 11:22:03 +0800 (CST)
+        with ESMTP id Si2qrSyBFN9Z; Fri,  2 Dec 2022 15:00:30 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.167.10.98])
         (Authenticated sender: liqiong@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 0411A1E80D27;
-        Fri,  2 Dec 2022 11:22:02 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTPA id CDC741E80CCF;
+        Fri,  2 Dec 2022 15:00:29 +0800 (CST)
 From:   Li Qiong <liqiong@nfschina.com>
-To:     Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
         Jozsef Kadlecsik <kadlec@netfilter.org>,
         Florian Westphal <fw@strlen.de>,
         "David S . Miller" <davem@davemloft.net>,
@@ -37,39 +36,47 @@ To:     Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, coreteam@netfilter.org,
-        Yu Zhe <yuzhe@nfschina.com>, Li Qiong <liqiong@nfschina.com>
-Subject: [PATCH] ipvs: initialize 'ret' variable in do_ip_vs_set_ctl()
-Date:   Fri,  2 Dec 2022 11:25:11 +0800
-Message-Id: <20221202032511.1435-1-liqiong@nfschina.com>
+        netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        coreteam@netfilter.org, Yu Zhe <yuzhe@nfschina.com>,
+        Li Qiong <liqiong@nfschina.com>
+Subject: [PATCH] netfilter: initialize 'ret' variable
+Date:   Fri,  2 Dec 2022 15:03:31 +0800
+Message-Id: <20221202070331.10865-1-liqiong@nfschina.com>
 X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 The 'ret' should need to be initialized to 0, in case
-return a uninitialized value because no default process
-for "switch (cmd)".
+return a uninitialized value.
 
 Signed-off-by: Li Qiong <liqiong@nfschina.com>
 ---
- net/netfilter/ipvs/ip_vs_ctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nf_flow_table_ip.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 988222fff9f0..4b20db86077c 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -2456,7 +2456,7 @@ static int
- do_ip_vs_set_ctl(struct sock *sk, int cmd, sockptr_t ptr, unsigned int len)
- {
- 	struct net *net = sock_net(sk);
+diff --git a/net/netfilter/nf_flow_table_ip.c b/net/netfilter/nf_flow_table_ip.c
+index b350fe9d00b0..225ff865d609 100644
+--- a/net/netfilter/nf_flow_table_ip.c
++++ b/net/netfilter/nf_flow_table_ip.c
+@@ -351,7 +351,7 @@ nf_flow_offload_ip_hook(void *priv, struct sk_buff *skb,
+ 	struct rtable *rt;
+ 	struct iphdr *iph;
+ 	__be32 nexthop;
 -	int ret;
 +	int ret = 0;
- 	unsigned char arg[MAX_SET_ARGLEN];
- 	struct ip_vs_service_user *usvc_compat;
- 	struct ip_vs_service_user_kern usvc;
+ 
+ 	if (skb->protocol != htons(ETH_P_IP) &&
+ 	    !nf_flow_skb_encap_protocol(skb, htons(ETH_P_IP), &offset))
+@@ -613,7 +613,7 @@ nf_flow_offload_ipv6_hook(void *priv, struct sk_buff *skb,
+ 	u32 hdrsize, offset = 0;
+ 	struct ipv6hdr *ip6h;
+ 	struct rt6_info *rt;
+-	int ret;
++	int ret = 0;
+ 
+ 	if (skb->protocol != htons(ETH_P_IPV6) &&
+ 	    !nf_flow_skb_encap_protocol(skb, htons(ETH_P_IPV6), &offset))
 -- 
 2.11.0
 
