@@ -2,68 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F48C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Dec 2022 21:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C23C4321E
+	for <kernel-janitors@archiver.kernel.org>; Sat,  3 Dec 2022 01:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234418AbiLBVRZ (ORCPT
+        id S235054AbiLCBDt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Dec 2022 16:17:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57184 "EHLO
+        Fri, 2 Dec 2022 20:03:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234409AbiLBVRW (ORCPT
+        with ESMTP id S232011AbiLCBDs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Dec 2022 16:17:22 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D25F4ED6A7
-        for <kernel-janitors@vger.kernel.org>; Fri,  2 Dec 2022 13:17:21 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id d3so5740652plr.10
-        for <kernel-janitors@vger.kernel.org>; Fri, 02 Dec 2022 13:17:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWCytxw2GwvkIRyjMsGItc6tSPW6eIa2hCojgQ491Zo=;
-        b=bajllRR0W9wmzd4Nw2CalvIXB2XPAXMdlanCcbLZbvVXt1B1Pl6NTxmK3wxwqtM7kV
-         CxHsUVrEXom1EL5rOfhhLf59se6NhxPVGd5NRmcIbnlGtNCpS088grJYnYJ0D+/YJFti
-         6DL7+PfEWKWxxy02Ch2OcVaic0rs/mH/oVaMg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CWCytxw2GwvkIRyjMsGItc6tSPW6eIa2hCojgQ491Zo=;
-        b=4xRbGqWafFyfbt756JKcSXFtYOUyP5csZ/xJQMpwN/1X+Wcw1rtbMXzec7HGL4tSkN
-         eWjRq7/GZQiRhDVobFep2slg3Pyu7Jd7oDEPKUTrSH5kXWWBzqI3MBW6ktafP3XJ/K57
-         fsLBCsC2FOsR2DAKPB6YX/sYhylEWaGadZerYuUV4BixWE/IhzCkVxRKUPL2IUlvCil/
-         GuUuXlgJJZlwRiaMWRbc3ZvmI7HALt8jfdoUJXMV6jHYh8uBByPwlCr2UF8nEUj9P9mM
-         KkJvYmGWQeOVhC7A4SPVqzLeL0/sIvRFILvLBKyaI0Lhy5ukWBO7OmhkEcE+MV0PVd3g
-         H07Q==
-X-Gm-Message-State: ANoB5pkD+IgbWrsDL9oyAlcOlwYAYo5ZGsRcPaOJpXIiNYLzFMmecvO3
-        /lBPJid1r2XmKXPO2hK7gaw5vw==
-X-Google-Smtp-Source: AA0mqf4yK8k4jj9BxYD7YjYVNBTxiTDeEOIyTukBKrDUunylOzFFlU/7UtMvczkInCXPtJNqJ5N5zw==
-X-Received: by 2002:a17:90a:b703:b0:20d:7716:b05f with SMTP id l3-20020a17090ab70300b0020d7716b05fmr38392031pjr.104.1670015841306;
-        Fri, 02 Dec 2022 13:17:21 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f88-20020a17090a28e100b001f94d25bfabsm7005868pjd.28.2022.12.02.13.17.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Dec 2022 13:17:20 -0800 (PST)
-Date:   Fri, 2 Dec 2022 13:17:19 -0800
-From:   Kees Cook <keescook@chromium.org>
+        Fri, 2 Dec 2022 20:03:48 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D37BDF621;
+        Fri,  2 Dec 2022 17:03:47 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E7B6E62454;
+        Sat,  3 Dec 2022 01:03:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11CD1C433C1;
+        Sat,  3 Dec 2022 01:03:44 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="o0jkKGOh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1670029422;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=j6bZwrTUHq7dBuwU+bEsBeXOQjWTTzwBJH6CCe+MexE=;
+        b=o0jkKGOhHEPlso7/XPa+9klWAw4KZC1iMj9yOcAdjahvoo81K1TSO6QStoVtjlvam4J+Ug
+        Qy4h6qX0sngbO14SB2wuhLg2mg+UFfUbACYVE7S/CgE0Tu5lfGj6F1Ol/vRjGHLbheLzs0
+        0vREd3ty69xzlF4M2HzcpuKRnLxq588=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b651a5ab (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Sat, 3 Dec 2022 01:03:41 +0000 (UTC)
+Date:   Sat, 3 Dec 2022 02:03:33 +0100
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jason@zx2c4.com, kuba@kernel.org, tytso@mit.edu, elver@google.com,
+Cc:     kuba@kernel.org, tytso@mit.edu, elver@google.com,
         yury.norov@gmail.com, linux@dominikbrodowski.net,
         gregkh@linuxfoundation.org, pmladek@suse.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] random: Include <linux/once.h> in the right header
-Message-ID: <202212021317.80F5899CBD@keescook>
+Message-ID: <Y4qgZUfcnQvL3hYm@zx2c4.com>
 References: <212adb212cb0234a7d395daf31b2578b9409d492.1670015476.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 In-Reply-To: <212adb212cb0234a7d395daf31b2578b9409d492.1670015476.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+
+Hi Christophe,
 
 On Fri, Dec 02, 2022 at 10:13:36PM +0100, Christophe JAILLET wrote:
 > <linux/prandom.h> uses DO_ONCE(). So it should include <linux/once.h>
@@ -79,7 +71,13 @@ On Fri, Dec 02, 2022 at 10:13:36PM +0100, Christophe JAILLET wrote:
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Thanks, applied for now as:
+https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git/commit/?id=1ea746beac98ad11132b0a9a11978d5cf0a055ef
 
--- 
-Kees Cook
+> ---
+> Let see if build-bots agree with me!
+
+Indeed. I've got a few builds of my own going, and so far so good, but
+we'll learn soon enough if something goes wrong.
+
+Jason
