@@ -2,93 +2,164 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD95C3A5A7
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Dec 2022 16:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BDEC4321E
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Dec 2022 17:16:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230181AbiLDQkY (ORCPT
+        id S230216AbiLDRQN convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Dec 2022 11:40:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55458 "EHLO
+        Sun, 4 Dec 2022 12:16:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230168AbiLDQkW (ORCPT
+        with ESMTP id S229785AbiLDRQL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Dec 2022 11:40:22 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 346A814D19
-        for <kernel-janitors@vger.kernel.org>; Sun,  4 Dec 2022 08:40:21 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id h11so15266262wrw.13
-        for <kernel-janitors@vger.kernel.org>; Sun, 04 Dec 2022 08:40:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wbNKJgqamf76QS4A7riHRQ/K/kQjFtOAWIhBQTumKHQ=;
-        b=xHGdBi84weUIxIzDT1mYhxwPaFtjMpVnPXMwVxTFMk7BsowhXoG0D+2gWtYa8z4h2d
-         3pEmiAP1v1p4mmjjSOtZOGg8n+9uQpo+6sRaaVXtEntR5fdes3m/JKSvT8+uxrHweGoe
-         xxHls0AWWr+ZGFrCoaOlcl8qcHF2zKEAhhGKxH5NDD/b/6tSrRV3DvBOBqXnMaTllqu2
-         ZKLKy/5zkflIEB8bAC2OOjVpa4tfCvqJ/Ln07AZlgU2zlwc4FEplE+qgZGtLZGqrF703
-         PpM8kVKCZTuYhdaLowtdnOkoBwiv/2O1WTpfzT95IJh0yfUXUWdspjLiqzgSYPobxVRl
-         wBqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wbNKJgqamf76QS4A7riHRQ/K/kQjFtOAWIhBQTumKHQ=;
-        b=VaCsNzCrPhIUn67Ndoc/ceRckkC52MmscRhVwSHVSXZEXQ7Aoj7UWZz9J2it7Rd2FK
-         b/78WQl4+kjxo/bTTE2DobqzIEsg9D/QJ8TTOA76hxsZhV+8GmZAsHGMM5jppb3PPecw
-         AeU8Gsuf+rcgQqJK33SBxclb3o84QeulJaAtgtUw5FlQYU51KPKE5R0YsHvRfXz9ftki
-         qzMFMRyy5AN4edsCJqNWXKWO1rJyEeTgk/MU7tgx6W3jGM36H8UmgqZN2x6Ao/qUgfVP
-         sZ0VmESqY4e4qP/LNGNs+qKpCD6TnaY1bEPfPHoY+WtJixvdNlV5KxAfs8beZU5AeO5e
-         XkLw==
-X-Gm-Message-State: ANoB5pkeqgrzVU50nXJLxAfRj1Zh4aoIrok+kLFst720+yHh2eXooIC4
-        MAoJ8RFC/2qHA7zC/bWRPZYSog==
-X-Google-Smtp-Source: AA0mqf5pX7sHWt7L7PETaiw7GUTCGcD+YISEEYnvFmfUMY9ugjib98oKRwTOzTkkFV1fgorTt7rgbw==
-X-Received: by 2002:adf:efcb:0:b0:242:5ff0:6d8a with SMTP id i11-20020adfefcb000000b002425ff06d8amr1553837wrp.135.1670172019766;
-        Sun, 04 Dec 2022 08:40:19 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id l9-20020a05600c1d0900b003cf878c4468sm21165858wms.5.2022.12.04.08.40.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Dec 2022 08:40:19 -0800 (PST)
-Message-ID: <c2155e23-d381-c4fb-f98f-be505665f49a@linaro.org>
-Date:   Sun, 4 Dec 2022 17:40:18 +0100
+        Sun, 4 Dec 2022 12:16:11 -0500
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72BF413E26;
+        Sun,  4 Dec 2022 09:16:10 -0800 (PST)
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay04.hostedemail.com (Postfix) with ESMTP id 151DE1A0AB6;
+        Sun,  4 Dec 2022 17:16:09 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf08.hostedemail.com (Postfix) with ESMTPA id 6E15E20025;
+        Sun,  4 Dec 2022 17:15:58 +0000 (UTC)
+Message-ID: <c78a28f429beccef0941be90957e2549ea39cbd0.camel@perches.com>
+Subject: Re: [PATCH] init_task: Include <linux/rbtree.h> in the right file
+From:   Joe Perches <joe@perches.com>
+To:     Marco Elver <elver@google.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     paulmck@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>
+Date:   Sun, 04 Dec 2022 09:16:03 -0800
+In-Reply-To: <Y4ymv/BxtulPrM47@elver.google.com>
+References: <f06e810735c49a611e7dc75715f0689b5f7e87c6.1670153931.git.christophe.jaillet@wanadoo.fr>
+         <Y4ymv/BxtulPrM47@elver.google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] thermal/core/power allocator: Remove a useless include
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <9adeec47cb5a8193016272d5c8bf936235c1711d.1669459337.git.christophe.jaillet@wanadoo.fr>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <9adeec47cb5a8193016272d5c8bf936235c1711d.1669459337.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 6E15E20025
+X-Stat-Signature: y44oiop5a53cqwtk798gq9ox5wbbozu4
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX182QPKfG0oLlS7HH44DolJF2hPJI6KnYL0=
+X-HE-Tag: 1670174158-38091
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 26/11/2022 11:42, Christophe JAILLET wrote:
-> This file does not use rcu, so there is no point in including
-> <linux/rculist.h>.
+On Sun, 2022-12-04 at 14:55 +0100, Marco Elver wrote:
+> [+Cc Ingo, who had been working on lots of include improvements.]
 > 
-> Remove it.
+> The Cc list is odd -- it appears that get_maintainers.pl is broken on
+> init_task.c:
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+> 	$> ./scripts/get_maintainer.pl init/init_task.c
+> 	Mark Rutland <mark.rutland@arm.com> (commit_signer:1/1=100%)
+> 	"Paul E. McKenney" <paulmck@kernel.org> (commit_signer:1/1=100%)
+> 	Marco Elver <elver@google.com> (commit_signer:1/1=100%,authored:1/1=100%,removed_lines:5/5=100%)
+> 	linux-kernel@vger.kernel.org (open list)
+> 
+> What's going on here?
 
-Applied, thanks
+No one claims to be a maintainer of any init/ files
+($ git grep "^F:.*init" MAINTAINERS)
+so by default it merely shows the people that have patched the
+particular file in the last year.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+You could perhaps see this better by adding --no-git --no-gitfallback
+to the get_maintainer.pl command line
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+$ ./scripts/get_maintainer.pl --nogit --nogit-fallback init/init_task.c
+linux-kernel@vger.kernel.org (open list)
+
+see the --help option for details
+
+$ ./scripts/get_maintainer.pl --help
+usage: ./scripts/get_maintainer.pl [options] patchfile
+       ./scripts/get_maintainer.pl [options] -f file|directory
+version: 0.26
+
+MAINTAINER field selection options:
+  --email => print email address(es) if any
+    --git => include recent git *-by: signers
+    --git-all-signature-types => include signers regardless of signature type
+        or use only (Signed-off-by:|Reviewed-by:|Acked-by:) signers (default: 0)
+    --git-fallback => use git when no exact MAINTAINERS pattern (default: 1)
+    --git-chief-penguins => include (Linus Torvalds)
+    --git-min-signatures => number of signatures required (default: 1)
+    --git-max-maintainers => maximum maintainers to add (default: 5)
+    --git-min-percent => minimum percentage of commits required (default: 5)
+    --git-blame => use git blame to find modified commits for patch or file
+    --git-blame-signatures => when used with --git-blame, also include all commit signers
+    --git-since => git history to use (default: 1-year-ago)
+    --hg-since => hg history to use (default: -365)
+    --interactive => display a menu (mostly useful if used with the --git option)
+    --m => include maintainer(s) if any
+    --r => include reviewer(s) if any
+    --n => include name 'Full Name <addr@domain.tld>'
+    --l => include list(s) if any
+    --moderated => include moderated lists(s) if any (default: true)
+    --s => include subscriber only list(s) if any (default: false)
+    --remove-duplicates => minimize duplicate email names/addresses
+    --roles => show roles (status:subsystem, git-signer, list, etc...)
+    --rolestats => show roles and statistics (commits/total_commits, %)
+    --file-emails => add email addresses found in -f file (default: 0 (off))
+    --fixes => for patches, add signatures of commits with 'Fixes: <commit>' (default: 1 (on))
+  --scm => print SCM tree(s) if any
+  --status => print status if any
+  --subsystem => print subsystem name if any
+  --web => print website(s) if any
+
+Output type options:
+  --separator [, ] => separator for multiple entries on 1 line
+    using --separator also sets --nomultiline if --separator is not [, ]
+  --multiline => print 1 entry per line
+
+Other options:
+  --pattern-depth => Number of pattern directory traversals (default: 0 (all))
+  --keywords => scan patch for keywords (default: 1)
+  --sections => print all of the subsystem sections with pattern matches
+  --letters => print all matching 'letter' types from all matching sections
+  --mailmap => use .mailmap file (default: 1)
+  --no-tree => run without a kernel tree
+  --self-test => show potential issues with MAINTAINERS file content
+  --version => show version
+  --help => show this help information
+
+Default options:
+  [--email --tree --nogit --git-fallback --m --r --n --l --multiline
+   --pattern-depth=0 --remove-duplicates --rolestats]
+
+Notes:
+  Using "-f directory" may give unexpected results:
+      Used with "--git", git signators for _all_ files in and below
+          directory are examined as git recurses directories.
+          Any specified X: (exclude) pattern matches are _not_ ignored.
+      Used with "--nogit", directory is used as a pattern match,
+          no individual file within the directory or subdirectory
+          is matched.
+      Used with "--git-blame", does not iterate all files in directory
+  Using "--git-blame" is slow and may add old committers and authors
+      that are no longer active maintainers to the output.
+  Using "--roles" or "--rolestats" with git send-email --cc-cmd or any
+      other automated tools that expect only ["name"] <email address>
+      may not work because of additional output after <email address>.
+  Using "--rolestats" and "--git-blame" shows the #/total=% commits,
+      not the percentage of the entire file authored.  # of commits is
+      not a good measure of amount of code authored.  1 major commit may
+      contain a thousand lines, 5 trivial commits may modify a single line.
+  If git is not installed, but mercurial (hg) is installed and an .hg
+      repository exists, the following options apply to mercurial:
+          --git,
+          --git-min-signatures, --git-max-maintainers, --git-min-percent, and
+          --git-blame
+      Use --hg-since not --git-since to control date selection
+  File ".get_maintainer.conf", if it exists in the linux kernel source root
+      directory, can change whatever get_maintainer defaults are desired.
+      Entries in this file can be any command line argument.
+      This file is prepended to any additional command line arguments.
+      Multiple lines and # comments are allowed.
+  Most options have both positive and negative forms.
+      The negative forms for --<foo> are --no<foo> and --no-<foo>.
+
 
