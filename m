@@ -2,98 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5A0C4321E
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 09:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF36AC47089
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 09:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232548AbiLEJFI (ORCPT
+        id S230230AbiLEJS0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Dec 2022 04:05:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53892 "EHLO
+        Mon, 5 Dec 2022 04:18:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231858AbiLEJEC (ORCPT
+        with ESMTP id S230192AbiLEJSX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Dec 2022 04:04:02 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838DB2AF3;
-        Mon,  5 Dec 2022 01:03:51 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id i131-20020a1c3b89000000b003d1cb516ce0so1832162wma.4;
-        Mon, 05 Dec 2022 01:03:51 -0800 (PST)
+        Mon, 5 Dec 2022 04:18:23 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2060120AE;
+        Mon,  5 Dec 2022 01:18:22 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id bs21so17597456wrb.4;
+        Mon, 05 Dec 2022 01:18:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e/CZbUfVc92ihBtnZodjLsSvk+mrxIQEYUtjx/OCLL0=;
-        b=pp81H3Yt4+1Cpj1ilPVV5q62Hnu0Hs+IllFYW/m+/vT08VtOey0TfVE/2v45ADNlcQ
-         D2KEciG6R58sCSq6WpgF9WuGrW78vDv/pPdnHijjo+szCjfpNbXNwAeWC2wlZ8GFk1WS
-         jfBQrOPEcmPo+w1S4unbFEQXa6koPY732HFKyANAwbkXoH+K6UXUjZbJ4kWER+fJyiy6
-         xI7GPzNBwd7H+3GeQZAoBZR4vch+d74YG2sOEl/1GmZUGE3s17EcnPzz6tfY9C4iWqEL
-         38VpXzK5iowBW7JfTbBt7OJPGvvRm4yx4MBQoTWaDRhSgcogwQyy9JPhy0Ym+Pel7PV8
-         OI4w==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sumSJif1KcV0FaN006UmFPaN/kz70g4clkF7zQg7tWQ=;
+        b=V1AZLh9TcBMFoO9PVFvolh5beBynJUBr8pz9yxx1AVuoc0W/xkj+Nv0ZDG4g7BRZs+
+         W8SNE3Gx/cK32LpZ3pJE7QchHqPVuxMOEFhD6J+xIGyD2lAjUailabRt/SFtNdUVdTfo
+         L7H2+Ej4YVBqT5oRjxSwk7Gt6LrGB7CcyVNkbRrX9LcFBrg3Vn4VcU8JIKLB6GHzQR+N
+         bp7A6lo0IiV4EUakrsyMhBNr6pocDjF4pmkdowKgXISCQSADvjKVYRfr9IlDIaX1T4pX
+         kS7S1b2FgWV4di0mB6uqsFF6tRvvViAvuT1cSRXnrZyQXP/Z6EX5eH5isnqByeZ0nGiF
+         xpiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e/CZbUfVc92ihBtnZodjLsSvk+mrxIQEYUtjx/OCLL0=;
-        b=V+iwY+/7mM+TiBGVb83tM+KC/RNs2MutZLWCrOXohEUiKxZ1PHWIlYGzysJaNVbDTH
-         Uo1RaChCW1owgnoflkOWwtbwnQR6ZU/d5q4DYxBGbA6AuqyqN+Nicnn1JcR1pIC/8M3b
-         A1q9qpmVvTzzeVrEJe532bzfNVglFqic7dh6Wujw717QY7NnvgbYdkC4JnlNSLb+8Xpn
-         vhM2pZ0vhHnJkb/d8LnM9seg0LDh/0BlpOXG7+uk2WRESlUxup1SHep7fXiMpDyY73PB
-         mCzpAxEJ1cbol9my4H8AHlEHi4CZiGAm8uB1C9yN/v0BLB/SB/B8+heFLiIdMHxBRCUu
-         UCzQ==
-X-Gm-Message-State: ANoB5pkgl5ZRHnptX2uWvNG3SYVN+X2hLfcRbUnqo0K7frZL4u62S9mr
-        ob89Utr8BfRDTez4/JAGYQ7ezhvjb1SEdg==
-X-Google-Smtp-Source: AA0mqf4WTCIUBsC2Punap4p9avd5YzN7MONDVYDrH2H3jVmXQQH7sy5+uw60icPc4KqRQlK1T0xoLw==
-X-Received: by 2002:a05:600c:3acd:b0:3cf:550e:d7a2 with SMTP id d13-20020a05600c3acd00b003cf550ed7a2mr1585649wms.97.1670231029911;
-        Mon, 05 Dec 2022 01:03:49 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id g6-20020a05600c4ec600b003b49bd61b19sm23638795wmq.15.2022.12.05.01.03.48
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sumSJif1KcV0FaN006UmFPaN/kz70g4clkF7zQg7tWQ=;
+        b=08UgOD+5Oa2SmdECh0CPbOcA+PniQc3eEM1rj7tfjKifmvR6jrhFbMC807MYhERF1D
+         4i6NuyGEIIJxr7E+KIROmJm7jMoMQFJlGnuT5xEmjcuJkJ6EDaEDLuLc6b4mBjie6z8N
+         RACn4aYA1uv+ltx+dr1yUMtOYxWeajX/yMvKTTayqL9Im+/GyVJSFd/ro8pIJVaAOoVL
+         C2jqDpc4sL4NsuSSzCIEmJBUI32jS0DKFQ583DWlCefL1ePoI6PQVLUOWdY2tBcwqHBX
+         XO7ehoME5aJGpcDviFcLqVc4lWlPA5bBnQaVxQbUK1ioFdh/++LLiKKtquc/Zls9Y0bs
+         spsg==
+X-Gm-Message-State: ANoB5pl6TljwZSCF/yVcHWzLSKtIsaWMF62kdpXu7T7e0/M/VGn4iH9s
+        dVqsTu4cd+Zl/ifs2HsZsISlLCpeLpcSxw==
+X-Google-Smtp-Source: AA0mqf6++JdyACBdUlXgN4/VDFM66EOmbwsu8lhVh9/BL4h5oEROpg95H6sFr4V9OYcfzkStrL/vrA==
+X-Received: by 2002:a05:6000:501:b0:22c:d27d:12e4 with SMTP id a1-20020a056000050100b0022cd27d12e4mr48387454wrf.546.1670231901337;
+        Mon, 05 Dec 2022 01:18:21 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o18-20020a05600c4fd200b003cff309807esm22571931wmq.23.2022.12.05.01.18.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 01:03:49 -0800 (PST)
-Date:   Mon, 5 Dec 2022 12:03:46 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Leon Romanovsky <leon@kernel.org>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: mvneta: Prevent out of bounds read in
- mvneta_config_rss()
-Message-ID: <Y42z8kv8ehkk6YKf@kadam>
-References: <Y4nMQuEtuVO+rlQy@kili>
- <Y4yW0fhKuoG3i7w3@unreal>
+        Mon, 05 Dec 2022 01:18:20 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Alison Schofield <alison.schofield@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ben Widawsky <bwidawsk@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-cxl@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cxl/region: Fix spelling mistake "memergion" -> "memregion"
+Date:   Mon,  5 Dec 2022 09:18:19 +0000
+Message-Id: <20221205091819.1943564-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y4yW0fhKuoG3i7w3@unreal>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Dec 04, 2022 at 02:47:13PM +0200, Leon Romanovsky wrote:
-> On Fri, Dec 02, 2022 at 12:58:26PM +0300, Dan Carpenter wrote:
-> > The pp->indir[0] value comes from the user.  It is passed to:
-> > 
-> > 	if (cpu_online(pp->rxq_def))
-> > 
-> > inside the mvneta_percpu_elect() function.  It needs bounds checkeding
-> > to ensure that it is not beyond the end of the cpu bitmap.
-> > 
-> > Fixes: cad5d847a093 ("net: mvneta: Fix the CPU choice in mvneta_percpu_elect")
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > ---
-> >  drivers/net/ethernet/marvell/mvneta.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> 
-> I would expect that ethtool_copy_validate_indir() will prevent this.
-> 
+There is a spelling mistake in a dev_warn message. Fix it.
 
-Huh...  Sort of, but in the strictest sense, no.  mvneta_ethtool_get_rxnfc()
-sets the cap at 8 by default or an unvalidated module parameter.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/cxl/core/region.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index f75df35b9d3d..c56ddfed3393 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -1969,7 +1969,7 @@ static int cxl_region_invalidate_memregion(struct cxl_region *cxlr)
+ 		if (IS_ENABLED(CONFIG_CXL_REGION_INVALIDATION_TEST)) {
+ 			dev_warn(
+ 				&cxlr->dev,
+-				"Bypassing cpu_cache_invalidate_memergion() for testing!\n");
++				"Bypassing cpu_cache_invalidate_memregion() for testing!\n");
+ 			clear_bit(CXL_REGION_F_INCOHERENT, &cxlr->flags);
+ 			return 0;
+ 		} else {
+-- 
+2.38.1
 
