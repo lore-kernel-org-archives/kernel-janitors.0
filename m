@@ -2,91 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1BCC4321E
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 09:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 797EBC47089
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 11:50:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230443AbiLEJVE (ORCPT
+        id S231138AbiLELuV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Dec 2022 04:21:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39726 "EHLO
+        Mon, 5 Dec 2022 06:50:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231179AbiLEJUo (ORCPT
+        with ESMTP id S229544AbiLELuS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Dec 2022 04:20:44 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B7E12763;
-        Mon,  5 Dec 2022 01:20:36 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id v7so8250151wmn.0;
-        Mon, 05 Dec 2022 01:20:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nfqa1/DcZe0r0B/XaN6wGfaWPmJF2FQC9eWV8YducM0=;
-        b=NcRefKO5GW2oc76+9SIi4DsNdkaAj2EDR7CgEibSGrRq2RjwAzFj2+bU2GBeo1NqkJ
-         IBIuR1cSVd8mQoJVr0norXvfLhhBFizG0sUJZGF1VSUr3FxXx3wcJGN9mE7Kv42Uq7Rx
-         ggejGZcAOaRWiqv3pt8qMG4p5G/1mWUuS7DGFNeA1I3kdJL8ToUy2TyXEddolA/iuyPC
-         gbkwPK2GqpQ3MdRVUHdaZoeIQ8a6QuhLKzwoUz7dh8Qxe3OaEOdxrLqGOfOqIEJBimPz
-         wfHtaVchIcpisbK0L8P0jzoikQMyrjZTYfou0O9yZvH2QtH9jb16ReY75JjcnvEAzaIQ
-         grsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nfqa1/DcZe0r0B/XaN6wGfaWPmJF2FQC9eWV8YducM0=;
-        b=Q7dtvJ0BYFXRwbn5B3ZTpA1yqKHiahlYLSDewarBH+j0SvaYbZJRfZq79xGWrUqoc1
-         f3AgAZ3wJg+tBjJdMIkCLUH6YGmb2ZPix/fPvd9hBIB6pm9Pw6cvIAIRk95EdA6ySrOY
-         T0D6ArUroJga1KNlAVySi6xeoUTGKtQdG17gXOznNgiOLsrL4tSSUrsfS5jaa/YUtr0/
-         yZxqzD2v4m+OZXwUOZJ6qlYi3sAQocsO72fWPJD0ICfyH4we1RhurClUmdZnRHiXaCUT
-         7q+E/k4a+/1bfN1ER7NlGKH/4x6ZNINuhOMq7y/S1NikOuAdgPf/3ZPf9xtuDhi4r/rl
-         ucVQ==
-X-Gm-Message-State: ANoB5pm05/+q+fWNwUAAOTvLXNaIEyhifZTR3TFM4P0PrqCgf1MDKi8D
-        g14laeH/TSf1usxJe6BxmNZfZLRoOo8w5Q==
-X-Google-Smtp-Source: AA0mqf46joosKsrX7Xpeewt/KqZGUwqtd/jDSD8o4ItpKe7tKVyvz+U0nM1UYkbuk7wHDafiO9HL5w==
-X-Received: by 2002:a7b:cd88:0:b0:3d0:87d5:9e6a with SMTP id y8-20020a7bcd88000000b003d087d59e6amr8944600wmj.56.1670232034802;
-        Mon, 05 Dec 2022 01:20:34 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z2-20020a5d4402000000b00226dba960b4sm13531854wrq.3.2022.12.05.01.20.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 01:20:34 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, nvdimm@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nvdimm/region: Fix spelling mistake "memergion" -> "memregion"
-Date:   Mon,  5 Dec 2022 09:20:33 +0000
-Message-Id: <20221205092033.1943769-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
-MIME-Version: 1.0
+        Mon, 5 Dec 2022 06:50:18 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD1F514D1E;
+        Mon,  5 Dec 2022 03:50:17 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 98D66B80EF4;
+        Mon,  5 Dec 2022 11:50:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5630BC433D7;
+        Mon,  5 Dec 2022 11:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670241015;
+        bh=DXKDXjr6wXXXvRIZgU4nvDFM/n/s0d0Th6NkDHZDBn8=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=nCJ2Q+osZhXR30MAe+9R/fxG9WLGAQ3VRzUF7lxyKb4kBICxVAAtF7G7Dtzcw1PIW
+         WnpkqxjA2E9YFlvRR9uh0ecDRwAEv+sgs3S68pGP5Hvxa0uqaXUh+cPR495D32AMiZ
+         LnPcgJJkmFxBixVXjlEF84X18/aWxPUG/GSOmczvxAiHzrMI881g9iWPjaDlGyC6pY
+         zZj7MkVZBndSj7S3mvTXiDlhJ1h5IX+TSUU++/AxxwvWlOaQp2aDeYb4Mvtqnbd5TU
+         cMNgWFBduO/LSZnZgjio42jABpgamGfVu76rgeirA0uOGwtmwqBrogPXlo0IzXPrAL
+         ucTmri8e2jHfQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 33F45E21EFD;
+        Mon,  5 Dec 2022 11:50:15 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: mvneta: Prevent out of bounds read in
+ mvneta_config_rss()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167024101520.9380.656886968006446743.git-patchwork-notify@kernel.org>
+Date:   Mon, 05 Dec 2022 11:50:15 +0000
+References: <Y4nMQuEtuVO+rlQy@kili>
+In-Reply-To: <Y4nMQuEtuVO+rlQy@kili>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_warn message. Fix it.
+Hello:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/nvdimm/region_devs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-index 83dbf398ea84..8f5274b04348 100644
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -80,7 +80,7 @@ static int nd_region_invalidate_memregion(struct nd_region *nd_region)
- 		if (IS_ENABLED(CONFIG_NVDIMM_SECURITY_TEST)) {
- 			dev_warn(
- 				&nd_region->dev,
--				"Bypassing cpu_cache_invalidate_memergion() for testing!\n");
-+				"Bypassing cpu_cache_invalidate_memregion() for testing!\n");
- 			goto out;
- 		} else {
- 			dev_err(&nd_region->dev,
+On Fri, 2 Dec 2022 12:58:26 +0300 you wrote:
+> The pp->indir[0] value comes from the user.  It is passed to:
+> 
+> 	if (cpu_online(pp->rxq_def))
+> 
+> inside the mvneta_percpu_elect() function.  It needs bounds checkeding
+> to ensure that it is not beyond the end of the cpu bitmap.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] net: mvneta: Prevent out of bounds read in mvneta_config_rss()
+    https://git.kernel.org/netdev/net/c/e8b4fc13900b
+
+You are awesome, thank you!
 -- 
-2.38.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
