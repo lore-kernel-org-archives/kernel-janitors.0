@@ -2,113 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFCBC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 08:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5A0C4321E
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 09:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232169AbiLEIxC (ORCPT
+        id S232548AbiLEJFI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Dec 2022 03:53:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40360 "EHLO
+        Mon, 5 Dec 2022 04:05:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232297AbiLEIsh (ORCPT
+        with ESMTP id S231858AbiLEJEC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Dec 2022 03:48:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592886394
-        for <kernel-janitors@vger.kernel.org>; Mon,  5 Dec 2022 00:47:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670230048;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=rfvEnKIf4mHuvu3yIVqxv1Te1T4eVbeJMHjj7Ep8ikc=;
-        b=GlGOVnuhDe1FXGBrQdHHHUJMafMneVn02+QyMP/2k3SkQmoTiuGkG6OtJXK3neRgHepJUe
-        h1YJW3usYZUId9uzrM4kjXHMAi5A2At1CfATTe123kkDRvhxVADTvE+NLwnkfa3urLJYJl
-        n59Pb7nUh/UhKlrPKKNRbVHepBU+WcU=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-262-cQQzNqe9M32Lctdjj044Rg-1; Mon, 05 Dec 2022 03:47:26 -0500
-X-MC-Unique: cQQzNqe9M32Lctdjj044Rg-1
-Received: by mail-ed1-f72.google.com with SMTP id q13-20020a056402518d00b00462b0599644so5502674edd.20
-        for <kernel-janitors@vger.kernel.org>; Mon, 05 Dec 2022 00:47:26 -0800 (PST)
+        Mon, 5 Dec 2022 04:04:02 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838DB2AF3;
+        Mon,  5 Dec 2022 01:03:51 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id i131-20020a1c3b89000000b003d1cb516ce0so1832162wma.4;
+        Mon, 05 Dec 2022 01:03:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e/CZbUfVc92ihBtnZodjLsSvk+mrxIQEYUtjx/OCLL0=;
+        b=pp81H3Yt4+1Cpj1ilPVV5q62Hnu0Hs+IllFYW/m+/vT08VtOey0TfVE/2v45ADNlcQ
+         D2KEciG6R58sCSq6WpgF9WuGrW78vDv/pPdnHijjo+szCjfpNbXNwAeWC2wlZ8GFk1WS
+         jfBQrOPEcmPo+w1S4unbFEQXa6koPY732HFKyANAwbkXoH+K6UXUjZbJ4kWER+fJyiy6
+         xI7GPzNBwd7H+3GeQZAoBZR4vch+d74YG2sOEl/1GmZUGE3s17EcnPzz6tfY9C4iWqEL
+         38VpXzK5iowBW7JfTbBt7OJPGvvRm4yx4MBQoTWaDRhSgcogwQyy9JPhy0Ym+Pel7PV8
+         OI4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rfvEnKIf4mHuvu3yIVqxv1Te1T4eVbeJMHjj7Ep8ikc=;
-        b=pGwbhbmK2Zp3aL8Ehr2fQfJC28rI5s7JBsbNPTjFHz4qN5P4BNYzj8OyK3oam6tPCv
-         0APFw+5Tt5AZWE8h5aXvACjXjmWau09seoBbhdwQigEZnw1YztzH8w5thcMa7lhEMQxe
-         C78g2EJt79e2EkNKYvjrT+rJ0knFGWVW/6LFFOolIR6fsJ2ZI4l7R4rpEtS2Qlu5nvEz
-         FW+W2JsS2OGY+9kBc4WyOPkQJ0DzI+xePBsRtIYPNhdnY6Go9AUhpp0sl8ngLcnDofYh
-         rWHWtPyIiLOWEo8QqDcaVy5nMlrXIIaVk5I1min0eUrhqQrFH+XgJreYhmerJ3kZy0fg
-         hwFw==
-X-Gm-Message-State: ANoB5pnkIj0L6C3yXYrjky+0mcqZgaipG8Eu6lw/k0b17QyUicSj0apd
-        giQa7n/KQCG+5+WvTSDEvId6RBicJ/3NIj2wKH/tHZF1ztsiQcnR/4M5xOOlFW2Wp59QQaYVqEo
-        OtkmuIlW8DxoAH4f6rIkMQt8qbfKr
-X-Received: by 2002:a17:907:986c:b0:7a0:b505:e8f9 with SMTP id ko12-20020a170907986c00b007a0b505e8f9mr57399300ejc.216.1670230045719;
-        Mon, 05 Dec 2022 00:47:25 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf4akIQi8ZxTBNZtjIUUOko4vMClvta2bAqlLxc8Vd0sNOyBb3DMgM9yf+Lei9GFyOV6jqe66g==
-X-Received: by 2002:a17:907:986c:b0:7a0:b505:e8f9 with SMTP id ko12-20020a170907986c00b007a0b505e8f9mr57399290ejc.216.1670230045506;
-        Mon, 05 Dec 2022 00:47:25 -0800 (PST)
-Received: from fedora (nat-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id r9-20020a1709061ba900b007aec1b39478sm5997193ejg.188.2022.12.05.00.47.24
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e/CZbUfVc92ihBtnZodjLsSvk+mrxIQEYUtjx/OCLL0=;
+        b=V+iwY+/7mM+TiBGVb83tM+KC/RNs2MutZLWCrOXohEUiKxZ1PHWIlYGzysJaNVbDTH
+         Uo1RaChCW1owgnoflkOWwtbwnQR6ZU/d5q4DYxBGbA6AuqyqN+Nicnn1JcR1pIC/8M3b
+         A1q9qpmVvTzzeVrEJe532bzfNVglFqic7dh6Wujw717QY7NnvgbYdkC4JnlNSLb+8Xpn
+         vhM2pZ0vhHnJkb/d8LnM9seg0LDh/0BlpOXG7+uk2WRESlUxup1SHep7fXiMpDyY73PB
+         mCzpAxEJ1cbol9my4H8AHlEHi4CZiGAm8uB1C9yN/v0BLB/SB/B8+heFLiIdMHxBRCUu
+         UCzQ==
+X-Gm-Message-State: ANoB5pkgl5ZRHnptX2uWvNG3SYVN+X2hLfcRbUnqo0K7frZL4u62S9mr
+        ob89Utr8BfRDTez4/JAGYQ7ezhvjb1SEdg==
+X-Google-Smtp-Source: AA0mqf4WTCIUBsC2Punap4p9avd5YzN7MONDVYDrH2H3jVmXQQH7sy5+uw60icPc4KqRQlK1T0xoLw==
+X-Received: by 2002:a05:600c:3acd:b0:3cf:550e:d7a2 with SMTP id d13-20020a05600c3acd00b003cf550ed7a2mr1585649wms.97.1670231029911;
+        Mon, 05 Dec 2022 01:03:49 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id g6-20020a05600c4ec600b003b49bd61b19sm23638795wmq.15.2022.12.05.01.03.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 00:47:24 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust entry after renaming the vmx hyperv
- files
-In-Reply-To: <20221205082044.10141-1-lukas.bulwahn@gmail.com>
-References: <20221205082044.10141-1-lukas.bulwahn@gmail.com>
-Date:   Mon, 05 Dec 2022 09:47:23 +0100
-Message-ID: <87pmcydyp0.fsf@redhat.com>
+        Mon, 05 Dec 2022 01:03:49 -0800 (PST)
+Date:   Mon, 5 Dec 2022 12:03:46 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net: mvneta: Prevent out of bounds read in
+ mvneta_config_rss()
+Message-ID: <Y42z8kv8ehkk6YKf@kadam>
+References: <Y4nMQuEtuVO+rlQy@kili>
+ <Y4yW0fhKuoG3i7w3@unreal>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y4yW0fhKuoG3i7w3@unreal>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+On Sun, Dec 04, 2022 at 02:47:13PM +0200, Leon Romanovsky wrote:
+> On Fri, Dec 02, 2022 at 12:58:26PM +0300, Dan Carpenter wrote:
+> > The pp->indir[0] value comes from the user.  It is passed to:
+> > 
+> > 	if (cpu_online(pp->rxq_def))
+> > 
+> > inside the mvneta_percpu_elect() function.  It needs bounds checkeding
+> > to ensure that it is not beyond the end of the cpu bitmap.
+> > 
+> > Fixes: cad5d847a093 ("net: mvneta: Fix the CPU choice in mvneta_percpu_elect")
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > ---
+> >  drivers/net/ethernet/marvell/mvneta.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> 
+> I would expect that ethtool_copy_validate_indir() will prevent this.
+> 
 
-> Commit a789aeba4196 ("KVM: VMX: Rename "vmx/evmcs.{ch}" to
-> "vmx/hyperv.{ch}"") renames the VMX specific Hyper-V files, but does not
-> adjust the entry in MAINTAINERS.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
->
-> Repair this file reference in KVM X86 HYPER-V (KVM/hyper-v).
->
+Huh...  Sort of, but in the strictest sense, no.  mvneta_ethtool_get_rxnfc()
+sets the cap at 8 by default or an unvalidated module parameter.
 
-Fixes: a789aeba4196 ("KVM: VMX: Rename "vmx/evmcs.{ch}" to "vmx/hyperv.{ch}"")
-
-maybe?
-
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ceda8a0abffa..8fda3844b55b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11457,7 +11457,7 @@ F:	arch/x86/kvm/hyperv.*
->  F:	arch/x86/kvm/kvm_onhyperv.*
->  F:	arch/x86/kvm/svm/hyperv.*
->  F:	arch/x86/kvm/svm/svm_onhyperv.*
-> -F:	arch/x86/kvm/vmx/evmcs.*
-> +F:	arch/x86/kvm/vmx/hyperv.*
->  
->  KVM X86 Xen (KVM/Xen)
->  M:	David Woodhouse <dwmw2@infradead.org>
-
-Reviewed-by: 
-
--- 
-Vitaly
+regards,
+dan carpenter
 
