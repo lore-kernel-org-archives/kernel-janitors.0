@@ -2,81 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797EBC47089
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 11:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF7EC47088
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 14:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231138AbiLELuV (ORCPT
+        id S231530AbiLEO0Z (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Dec 2022 06:50:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33048 "EHLO
+        Mon, 5 Dec 2022 09:26:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbiLELuS (ORCPT
+        with ESMTP id S230090AbiLEO0X (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Dec 2022 06:50:18 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD1F514D1E;
-        Mon,  5 Dec 2022 03:50:17 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 98D66B80EF4;
-        Mon,  5 Dec 2022 11:50:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5630BC433D7;
-        Mon,  5 Dec 2022 11:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670241015;
-        bh=DXKDXjr6wXXXvRIZgU4nvDFM/n/s0d0Th6NkDHZDBn8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=nCJ2Q+osZhXR30MAe+9R/fxG9WLGAQ3VRzUF7lxyKb4kBICxVAAtF7G7Dtzcw1PIW
-         WnpkqxjA2E9YFlvRR9uh0ecDRwAEv+sgs3S68pGP5Hvxa0uqaXUh+cPR495D32AMiZ
-         LnPcgJJkmFxBixVXjlEF84X18/aWxPUG/GSOmczvxAiHzrMI881g9iWPjaDlGyC6pY
-         zZj7MkVZBndSj7S3mvTXiDlhJ1h5IX+TSUU++/AxxwvWlOaQp2aDeYb4Mvtqnbd5TU
-         cMNgWFBduO/LSZnZgjio42jABpgamGfVu76rgeirA0uOGwtmwqBrogPXlo0IzXPrAL
-         ucTmri8e2jHfQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 33F45E21EFD;
-        Mon,  5 Dec 2022 11:50:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 5 Dec 2022 09:26:23 -0500
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.188.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BF0761E1;
+        Mon,  5 Dec 2022 06:26:22 -0800 (PST)
+Date:   Mon, 5 Dec 2022 15:26:16 +0100
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Li Qiong <liqiong@nfschina.com>
+Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, coreteam@netfilter.org,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: Re: [PATCH] netfilter: initialize 'ret' variable
+Message-ID: <Y43/iCzGY7qJckCe@salvia>
+References: <20221202070331.10865-1-liqiong@nfschina.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: mvneta: Prevent out of bounds read in
- mvneta_config_rss()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167024101520.9380.656886968006446743.git-patchwork-notify@kernel.org>
-Date:   Mon, 05 Dec 2022 11:50:15 +0000
-References: <Y4nMQuEtuVO+rlQy@kili>
-In-Reply-To: <Y4nMQuEtuVO+rlQy@kili>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20221202070331.10865-1-liqiong@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Fri, 2 Dec 2022 12:58:26 +0300 you wrote:
-> The pp->indir[0] value comes from the user.  It is passed to:
+On Fri, Dec 02, 2022 at 03:03:31PM +0800, Li Qiong wrote:
+> The 'ret' should need to be initialized to 0, in case
+> return a uninitialized value.
 > 
-> 	if (cpu_online(pp->rxq_def))
+> Signed-off-by: Li Qiong <liqiong@nfschina.com>
+> ---
+>  net/netfilter/nf_flow_table_ip.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> inside the mvneta_percpu_elect() function.  It needs bounds checkeding
-> to ensure that it is not beyond the end of the cpu bitmap.
-> 
-> [...]
+> diff --git a/net/netfilter/nf_flow_table_ip.c b/net/netfilter/nf_flow_table_ip.c
+> index b350fe9d00b0..225ff865d609 100644
+> --- a/net/netfilter/nf_flow_table_ip.c
+> +++ b/net/netfilter/nf_flow_table_ip.c
+> @@ -351,7 +351,7 @@ nf_flow_offload_ip_hook(void *priv, struct sk_buff *skb,
+>  	struct rtable *rt;
+>  	struct iphdr *iph;
+>  	__be32 nexthop;
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	if (skb->protocol != htons(ETH_P_IP) &&
+>  	    !nf_flow_skb_encap_protocol(skb, htons(ETH_P_IP), &offset))
+> @@ -613,7 +613,7 @@ nf_flow_offload_ipv6_hook(void *priv, struct sk_buff *skb,
+>  	u32 hdrsize, offset = 0;
+>  	struct ipv6hdr *ip6h;
+>  	struct rt6_info *rt;
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	if (skb->protocol != htons(ETH_P_IPV6) &&
+>  	    !nf_flow_skb_encap_protocol(skb, htons(ETH_P_IPV6), &offset))
 
-Here is the summary with links:
-  - [net] net: mvneta: Prevent out of bounds read in mvneta_config_rss()
-    https://git.kernel.org/netdev/net/c/e8b4fc13900b
+This can only happen with tuplehash->tuple.xmit_type:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+- FLOW_OFFLOAD_XMIT_UNSPEC
+- FLOW_OFFLOAD_XMIT_TC
 
+but this should not ever happen in that path.
 
+Instead, I'd suggest to add a 'default' case to the switch, set ret to
+NF_DROP and WARN_ON_ONCE(1).
