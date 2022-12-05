@@ -2,55 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB3EC47088
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 07:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A2EC47089
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Dec 2022 08:21:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231690AbiLEHKU (ORCPT
+        id S232003AbiLEIVV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Dec 2022 02:10:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50180 "EHLO
+        Mon, 5 Dec 2022 03:21:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231406AbiLEHKS (ORCPT
+        with ESMTP id S231983AbiLEIVT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Dec 2022 02:10:18 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266CFBF5E;
-        Sun,  4 Dec 2022 23:10:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=44OC1RvAvD0oCfSAH1w+pJ13wY3bP51cQgH0C3Dezfs=; b=A9iQFgguKVyQoprmdJyhQ4sT/Q
-        QEbNxNInj6yDaT1uACEzB0YrCiEa8rxYfMscK1wc56+BBYHiBLsDa5/wO2721iSsMby2QdV4OZ/EW
-        57rzxbsMPlS6cLyyYt9NJ2UgHQW02sLCx2HSBZozY+lQjvjMMvpmiF/3uUOriiqZiIgT48YviQt8u
-        oPdB1PgE7RgIw3gCLLFS97kcLkqF2jwZaMVIHcqbfYh3HX9Ocwkb5Sl4ITxvmkkSDf6Vg2mm0AEaT
-        bFwqXA7xYfJr4sE5ISvgJQz/pyQlz7XpHrd3Xaqbbr8qTWfdgGx5egdFOLFJI0FDXTR3LzRAkQvY9
-        lacYvgWg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p25cF-00FMKT-9I; Mon, 05 Dec 2022 07:10:15 +0000
-Date:   Sun, 4 Dec 2022 23:10:15 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jonathan Derrick <jonathan.derrick@linux.dev>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH] block: sed-opal: Don't include <linux/kernel.h>
-Message-ID: <Y42ZV/AwSqUlDnas@infradead.org>
-References: <a2de79b3de30fe70c457953af935dadd49441f00.1670069909.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2de79b3de30fe70c457953af935dadd49441f00.1670069909.git.christophe.jaillet@wanadoo.fr>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 5 Dec 2022 03:21:19 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980D915A1B;
+        Mon,  5 Dec 2022 00:21:17 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id h7so11361041wrs.6;
+        Mon, 05 Dec 2022 00:21:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AoYiUm0CAuKiBijaDIoS23ayBhfa6Vxgpoz9/9wHDCY=;
+        b=MU/F4mHxbDQV0ncGQ1q7mZM3A1oDKoawjBYD/MsUMNywpIpqVbk6c465LE78KIml0Q
+         eO+uYjMN5F6ZgcnLNtWItfC+KFLwL1ArMcYX5oXyXzxPzmFykgQL8QnvzvckK/+Wjca6
+         nzA22sZGqAdkDqZUIWvXMT1/UWbBcaJV+CA8wX2QCRKtQn7IOYxJT+WQvAvQMDOxd9qa
+         l6wFlqBwGa/0GuHLEwPrgWmV0jdTbMNaugfO3oTMr8bwh/tzunJvKP6rw9EiH18/abyX
+         TCiwK9g/kuVqcxIxJASOnwbyrPUV8aAXsxdK1eVcasEsSAbgeoWQZEH+aBgvZwKdDj/P
+         PeTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AoYiUm0CAuKiBijaDIoS23ayBhfa6Vxgpoz9/9wHDCY=;
+        b=SjlZNiyoMmW0w25sY55ER9R6KSHQuTE4mXlcXZEX5ULykwh+RRJpohbpJ1B9kFCWfL
+         h/she4ejesxJ9DEK90GptmUD6QEZldx+sAitxO95tal9z9ocdNDkNvQDEzdelK6CEFP5
+         gPu1mLs3KgvYCfH57uH7m+MXcUNiDsDI5U0/k8Sb0w6LIyn/87RPHRSPFPyCUImEvGm9
+         GzI2RbmcT97LY28TgoL1pkrnqCnt1CtzpI5qYED4Bs8ehONFskDlYViQY3LWJk5jzred
+         5u8oMSdYOEAdNWxDZ9EDU2ONXABsXoHwwPHzEqva/Z1NLum7H5fCLAc0zDZKagqf/P4N
+         MalQ==
+X-Gm-Message-State: ANoB5plrQqXUuxugeNZ46JyfTk4iAY4TTZNiuhu1R6fEew/dqqs5DnSH
+        o4JBoz5MSAXF2unB3WhoxJQ=
+X-Google-Smtp-Source: AA0mqf7XDfL88V/zuF3ps7+lP7rAf8Tmlm26ebdLUUXu14RS20LjHG81XovN0UYrCwQ1JIwnY6U/Mw==
+X-Received: by 2002:adf:a413:0:b0:242:1cbf:8f73 with SMTP id d19-20020adfa413000000b002421cbf8f73mr20448189wra.317.1670228475933;
+        Mon, 05 Dec 2022 00:21:15 -0800 (PST)
+Received: from felia.fritz.box (200116b826fd9e0089413745833bd418.dip.versatel-1u1.de. [2001:16b8:26fd:9e00:8941:3745:833b:d418])
+        by smtp.gmail.com with ESMTPSA id bg28-20020a05600c3c9c00b003cfa3a12660sm26317084wmb.1.2022.12.05.00.21.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Dec 2022 00:21:15 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust entry after renaming the vmx hyperv files
+Date:   Mon,  5 Dec 2022 09:20:44 +0100
+Message-Id: <20221205082044.10141-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Dec 03, 2022 at 01:18:49PM +0100, Christophe JAILLET wrote:
->  #include <uapi/linux/sed-opal.h>
-> -#include <linux/kernel.h>
-> +
-> +#include <linux/compiler_types.h>		/* for __user */
+Commit a789aeba4196 ("KVM: VMX: Rename "vmx/evmcs.{ch}" to
+"vmx/hyperv.{ch}"") renames the VMX specific Hyper-V files, but does not
+adjust the entry in MAINTAINERS.
 
-Not sure we really need the comment here, we don't comment on the
-other includes either.  Also why the added empty line?
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
+
+Repair this file reference in KVM X86 HYPER-V (KVM/hyper-v).
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ceda8a0abffa..8fda3844b55b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11457,7 +11457,7 @@ F:	arch/x86/kvm/hyperv.*
+ F:	arch/x86/kvm/kvm_onhyperv.*
+ F:	arch/x86/kvm/svm/hyperv.*
+ F:	arch/x86/kvm/svm/svm_onhyperv.*
+-F:	arch/x86/kvm/vmx/evmcs.*
++F:	arch/x86/kvm/vmx/hyperv.*
+ 
+ KVM X86 Xen (KVM/Xen)
+ M:	David Woodhouse <dwmw2@infradead.org>
+-- 
+2.17.1
+
