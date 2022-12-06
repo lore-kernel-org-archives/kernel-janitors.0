@@ -2,51 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0E5C3A5A7
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Dec 2022 08:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFAEC352A1
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Dec 2022 14:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233724AbiLFI3o (ORCPT
+        id S230230AbiLFO0Y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Dec 2022 03:29:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56252 "EHLO
+        Tue, 6 Dec 2022 09:26:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233178AbiLFI3l (ORCPT
+        with ESMTP id S229461AbiLFO0X (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Dec 2022 03:29:41 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D761113F93;
-        Tue,  6 Dec 2022 00:29:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=RfQ2CvwYdw3Vp1qoRTFcDqBjiW
-        EKFzZcdQaUazje9kzcWOOrbkywyTNbrxgmBULhx8nQz+XwQgAazevKM4UYNjpkEtYQiimi9azD1xm
-        RRUFLz5+HsPwRVTaBqj17O3hbZom69F8PYnM5iyPXTKnCNBMQ8wTaflCcrNrjVqmYQCw4p/zCxuYK
-        5Bk0ydz/8ysN7M9PUFBI4MNSOWwe6O0gfTmPyelyIstc0HVcict+ipS6U1rhrHgMB7vZd/vQww7MD
-        2ZGg3pk9nKFpiSJVajRaYqDyfhKfeiqBKkhbD2+Qy/YhtENOoGvaNqIpo4aftYNuNnzmT9kX6/JP0
-        AxScauDQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p2TKZ-004qdQ-7K; Tue, 06 Dec 2022 08:29:35 +0000
-Date:   Tue, 6 Dec 2022 00:29:35 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jonathan Derrick <jonathan.derrick@linux.dev>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH v2] block: sed-opal: Don't include <linux/kernel.h>
-Message-ID: <Y479b0KiXjWzXFRR@infradead.org>
-References: <c1d479b39e30fe70c4579a1af035d4db49421f56.1670069909.git.christophe.jaillet@wanadoo.fr>
+        Tue, 6 Dec 2022 09:26:23 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94817D7E;
+        Tue,  6 Dec 2022 06:26:19 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id m18so5045142eji.5;
+        Tue, 06 Dec 2022 06:26:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3Wg3wyhZI1iQp1XKP6mxboGBlL0AzpG0TjS50hdCrEM=;
+        b=GXTK4+2h3fN/c9v0DEiyJun1Nm1XyhVTLMlM/+Jyb9MoCD4lkOV3244RiR9LSbyLJX
+         LbNhGYfgwFPBa8egNdotONC1yQwlB6O4vyhif26Lj4p2u7Fj5yF6+6G1LaWgAy9ez6Ke
+         Sko3vIyWUxp/miDPqpmCCKejeMRsLzww3km1N5AjfxzzallZ+M+DIOeBTLWHtwfm22aT
+         trM+Ldfh27UrmzUX5BE1zA05xxBigSrTLULr1UC/Cg3he9npXJif4OEhIiOv0x79hJKd
+         LOEj7fwQylbKVnd8bijCOGEVPMdub6SHBZj+DXcavgwNY6mzgAunkrSPqQe1PnXv3Mwk
+         ejhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Wg3wyhZI1iQp1XKP6mxboGBlL0AzpG0TjS50hdCrEM=;
+        b=h4H0uvZZbt7A+oew6595e2mSUIf7f6KPUlouZtMJDJnuUFIqgyWODi6q8599ddz2zx
+         N1dxo4/wuGqiRH0J/GYA/18FwiIW8ClbIqipAWkjwJoLZIb8t6LJhZuAQAzrX0vd+rjN
+         JBuAkOZNS+UarDdn2iAEUmuXV2rypofUiG1jshs38b6y1P6og7CWoqTtyiogLSAoSEXX
+         NoupXwRRIMngZqbaCANtkBiBUIkcYCFVmPX0OKXK+Vy4n+/NuVwsrSlEC8wMIslr2ZH0
+         PZW02nplB9n36WuFoQ34OIhbH+En6Z08C2314+pbD+XtOL+EG1+/FLoXPYqbtItXaDu4
+         L8zA==
+X-Gm-Message-State: ANoB5pmZQ7AgBaXWU83XWZz/uwiIJs6/9Qus7Q/p+T5HmuhnL1bv7gMX
+        gZDZOLxGQud2XL+Cc6FK/B0=
+X-Google-Smtp-Source: AA0mqf6J+3aSlpTEjQxJsHcNJ5xwvum3vCNI9XWcwh/QmnikWZfrelRh/I8Bad9Kos4CWkIgvIOCXA==
+X-Received: by 2002:a17:906:17c9:b0:782:fd8e:9298 with SMTP id u9-20020a17090617c900b00782fd8e9298mr56803474eje.640.1670336778026;
+        Tue, 06 Dec 2022 06:26:18 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id kw25-20020a170907771900b007c0ae8569d6sm1303612ejc.146.2022.12.06.06.26.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Dec 2022 06:26:17 -0800 (PST)
+Date:   Tue, 6 Dec 2022 17:26:05 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: mvneta: Fix an out of bounds check
+Message-ID: <Y49Q/Z1X1PKxIFfx@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c1d479b39e30fe70c4579a1af035d4db49421f56.1670069909.git.christophe.jaillet@wanadoo.fr>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Looks good:
+In an earlier commit, I added a bounds check to prevent an out of bounds
+read and a WARN().  On further discussion and consideration that check
+was probably too aggressive.  Instead of returning -EINVAL, a better fix
+would be to just prevent the out of bounds read but continue the process.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Background: The value of "pp->rxq_def" is a number between 0-7 by default,
+or even higher depending on the value of "rxq_number", which is a module
+parameter. If the value is more than the number of available CPUs then
+it will trigger the WARN() in cpu_max_bits_warn().
+
+Fixes: e8b4fc13900b ("net: mvneta: Prevent out of bounds read in mvneta_config_rss()")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/net/ethernet/marvell/mvneta.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 66b7f27c9a48..5aefaaff0871 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -4271,7 +4271,7 @@ static void mvneta_percpu_elect(struct mvneta_port *pp)
+ 	/* Use the cpu associated to the rxq when it is online, in all
+ 	 * the other cases, use the cpu 0 which can't be offline.
+ 	 */
+-	if (cpu_online(pp->rxq_def))
++	if (pp->rxq_def < nr_cpu_ids && cpu_online(pp->rxq_def))
+ 		elected_cpu = pp->rxq_def;
+ 
+ 	max_cpu = num_present_cpus();
+@@ -4927,9 +4927,6 @@ static int  mvneta_config_rss(struct mvneta_port *pp)
+ 		napi_disable(&pp->napi);
+ 	}
+ 
+-	if (pp->indir[0] >= nr_cpu_ids)
+-		return -EINVAL;
+-
+ 	pp->rxq_def = pp->indir[0];
+ 
+ 	/* Update unicast mapping */
+-- 
+2.35.1
+
