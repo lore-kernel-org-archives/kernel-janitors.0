@@ -2,61 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DEBC4708E
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 12:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97987C4708E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 13:02:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbiLGMvT (ORCPT
+        id S229634AbiLGNCr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 07:51:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33216 "EHLO
+        Wed, 7 Dec 2022 08:02:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbiLGMvR (ORCPT
+        with ESMTP id S229739AbiLGNCq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 07:51:17 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45ECF4E685;
-        Wed,  7 Dec 2022 04:51:15 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id r65-20020a1c4444000000b003d1e906ca23so952421wma.3;
-        Wed, 07 Dec 2022 04:51:15 -0800 (PST)
+        Wed, 7 Dec 2022 08:02:46 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 800F116498;
+        Wed,  7 Dec 2022 05:02:45 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id x22so13755081ejs.11;
+        Wed, 07 Dec 2022 05:02:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EmAGgUk46Zi0pbhWz1FAYyEwTM+DUAARY75FlGYPEKA=;
-        b=IrKI+AlPoS/A7wUwucc/bLt1re4BAK1qtUe3AvvRmws7olKgOZnpx8tHf1JxgY9ltz
-         xwnn4A6iy1cygRdGmI/vFZjrp8mDeMz82wDgxVtS79t87wIAUp8He1ZD1zgcIgApBGIY
-         0XUbn83S2OI18uESyVaYsWvideuJY6CB5EhWPxES7uFJ53xWdie+ntzOrzBgDb49JU6p
-         z4iE2lVwPQliKQAIwaK9smHDgWdwGCoWn5OVq5+eg032CkhTIl0odxOdtxuHOlefQzRI
-         0MJsKEHsB0s14U4yUyTugZTzWbfiQrYDmYz0HgPyMxLlsV5YUh8BCoT4ZsCURHwwISQo
-         H8gQ==
+        bh=fZf8Ip8KDjMA4XH3s9oD0RHIMIP28yiN4IeA3BSkBys=;
+        b=qbuHTBWM9ebTxZTC40eXpJqNbiYRpqkNwBpxK1qfZhxoCnVTv3uY2C2rt95ao9+f9c
+         D7D/6kCh50WZnHVG+StwEIUmd4BffC+lPwCZGhte7WH4p5+4JQ7qMyWdFIvoMGX9tGA5
+         n5f92wwA9pocp0UIMwlzNexXQozK+xycBvaqazhGhSVq+EMpl1GXcRrBJWUaFdIpZ/j3
+         E/Mbgr6ckGDE9ZNKX37OHzzyQWaMadtzQeUrLDsMEx3UaxGHtDZXGjN90uAXMX5ti/R3
+         hSa2vW/mxgXauanzPc/jLI9SoNjRmbh5peCpqOw1V9Y0O6wtch/O7gXv+2i/LWCFD8eg
+         xVjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EmAGgUk46Zi0pbhWz1FAYyEwTM+DUAARY75FlGYPEKA=;
-        b=5E204OxyQgoSmKO99cZuSG2MDkAinH2FJaDuPkY2rgpihvsR1KCOkTWthl/fQ4Qz8e
-         F8ngMhI+f3JoO/+09BsY0PL/kV/PBgRMblYxW2MtamLmeGfa7VcB9lJQRsQ5nAcW0YDC
-         DlKhdWjSopY5sgBRtMBsFKvSDVx9YvdoZwWXIFedu7+pOSMMJcBCW9GMXO6ich1eiiO3
-         tWkkaqr5XK2x9eIN8HQ8QjvLFnHyDodtoEIobT2tF2Ojmgl21vC1D3N2Hq0TOAGS1wr+
-         wzS8fEju0CfM6mTmXqL3nq8IQFRy3jxSMz4D38SiUlDJYMMERWxhLPMxPRUHPVcaWiQg
-         e4YQ==
-X-Gm-Message-State: ANoB5pnBIGsZAAyFvf0Ii5Y4XQ3SetjmGSwXBF30/NqNUVJXKEZc/mCo
-        EhFQ0NH/6gM3m9Md8tQiO5Y=
-X-Google-Smtp-Source: AA0mqf5piDfabNZVMyogT+kODxjUb4BeltVpq1Fo4ZxMkEtn2MGFVPyF1AxS7JnFRT8xTyPodClcFw==
-X-Received: by 2002:a05:600c:3b24:b0:3cf:88df:d355 with SMTP id m36-20020a05600c3b2400b003cf88dfd355mr65800211wms.141.1670417473643;
-        Wed, 07 Dec 2022 04:51:13 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id g8-20020a5d46c8000000b0023662d97130sm19456173wrs.20.2022.12.07.04.51.12
+        bh=fZf8Ip8KDjMA4XH3s9oD0RHIMIP28yiN4IeA3BSkBys=;
+        b=kpvryqibTnVTEQZzaUK3shC2J5vM8Un2AajTG/O+mvgnPsCwRnXdBUV5ESM8cuA6ie
+         eNib3jIj7kou4CNYVyrygC6eWfXUOwOj3ZqPg5HHu0ym0t16HrVL0EN3PbM666cGmRr7
+         PM/OJTs66IfIbPRrq210lay+c7+EdwpxE/h5TrgBEC0fi0GXnUL1lr/0TKRYsJiXFHm9
+         ySmAUBF3RSFLM00D5jojdsu1R1bKXuLGTKuDjoMCOVUdIk8+2kxr4TeZnupulmq+v5pf
+         eyNYclx2ttk45+/grFwpkNceT7sO07cu1hjORNvwUTakXPGsUNrUHHhpzjdzMHeEKjHG
+         BoBg==
+X-Gm-Message-State: ANoB5pnFgq4Ujrk3iU6FMMLdoyt5iZk2ECUHMJvML4pYEAuox5QFLacK
+        gPxgRc/Nh4gB/kVweA0O3L4HY7/995GAKw==
+X-Google-Smtp-Source: AA0mqf6/yFShyR8oIl+NhzrlP0lxrNuNVPamhMuER9NJefO1n1bE5++74DyReyB9/b2pgVQMjKNxIQ==
+X-Received: by 2002:a17:906:94e:b0:7ba:4617:3f17 with SMTP id j14-20020a170906094e00b007ba46173f17mr54627840ejd.226.1670418163916;
+        Wed, 07 Dec 2022 05:02:43 -0800 (PST)
+Received: from skbuf ([188.26.184.215])
+        by smtp.gmail.com with ESMTPSA id k3-20020a17090632c300b007aece68483csm8424367ejk.193.2022.12.07.05.02.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 04:51:13 -0800 (PST)
-Date:   Wed, 7 Dec 2022 15:51:08 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Vladimir Oltean <olteanv@gmail.com>
+        Wed, 07 Dec 2022 05:02:43 -0800 (PST)
+Date:   Wed, 7 Dec 2022 15:02:40 +0200
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Dan Carpenter <error27@gmail.com>
 Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH net] lib: packing: fix shift wrapping in bit_reverse()
-Message-ID: <Y5CMPGrSuP+0ptdP@kadam>
+Message-ID: <20221207130240.aoojta5n5enec72y@skbuf>
 References: <Y5B3sAcS6qKSt+lS@kili>
  <Y5B3sAcS6qKSt+lS@kili>
  <20221207121936.bajyi5igz2kum4v3@skbuf>
@@ -71,94 +71,113 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 On Wed, Dec 07, 2022 at 02:22:54PM +0200, Vladimir Oltean wrote:
-> On Wed, Dec 07, 2022 at 03:21:04PM +0300, Dan Carpenter wrote:
-> > On Wed, Dec 07, 2022 at 02:19:36PM +0200, Vladimir Oltean wrote:
-> > > On Wed, Dec 07, 2022 at 02:23:28PM +0300, Dan Carpenter wrote:
-> > > > The bit_reverse() function is clearly supposed to be able to handle
-> > > > 64 bit values, but the types for "(1 << i)" and "bit << (width - i - 1)"
-> > > > are not enough to handle more than 32 bits.
-> > > > 
-> > > > Fixes: 554aae35007e ("lib: Add support for generic packing operations")
-> > > > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > > > ---
-> > > >  lib/packing.c | 5 ++---
-> > > >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/lib/packing.c b/lib/packing.c
-> > > > index 9a72f4bbf0e2..9d7418052f5a 100644
-> > > > --- a/lib/packing.c
-> > > > +++ b/lib/packing.c
-> > > > @@ -32,12 +32,11 @@ static int get_reverse_lsw32_offset(int offset, size_t len)
-> > > >  static u64 bit_reverse(u64 val, unsigned int width)
-> > > >  {
-> > > >  	u64 new_val = 0;
-> > > > -	unsigned int bit;
-> > > >  	unsigned int i;
-> > > >  
-> > > >  	for (i = 0; i < width; i++) {
-> > > > -		bit = (val & (1 << i)) != 0;
-> > > > -		new_val |= (bit << (width - i - 1));
-> > > > +		if (val & BIT_ULL(1))
-> > > 
-> > > hmm, why 1 and not i?
-> > 
-> > Because I'm a moron.  Let me resend.
-> 
 > Wait a second, I deliberately wrote the code without conditionals.
 > Let me look at the code disassembly before and after the patch and see
 > what they look like.
 
-My crappy benchmark says that the if statement is faster.  22 vs 26
-seconds.
+Before (make lib/packing.lst on arm64):
 
-regards,
-dan carpenter
+	for (i = 0; i < width; i++) {
+  1c:	310004ec 	adds	w12, w7, #0x1
+  20:	540001c0 	b.eq	58 <adjust_for_msb_right_quirk+0x58>  // b.none
+  24:	52800004 	mov	w4, #0x0                   	// #0
+		bit = (val & (1 << i)) != 0;
+  28:	5280002b 	mov	w11, #0x1                   	// #1
+  2c:	d503201f 	nop
+  30:	1ac42166 	lsl	w6, w11, w4
+		new_val |= (bit << (width - i - 1));
+  34:	4b0400e9 	sub	w9, w7, w4
+		bit = (val & (1 << i)) != 0;
+  38:	93407cc6 	sxtw	x6, w6		/* We don't want sign extension */
+  3c:	ea0a00df 	tst	x6, x10
+  40:	1a9f07e6 	cset	w6, ne  // ne = any
+	for (i = 0; i < width; i++) {
+  44:	6b07009f 	cmp	w4, w7
+  48:	11000484 	add	w4, w4, #0x1
+		new_val |= (bit << (width - i - 1));
+  4c:	1ac920c6 	lsl	w6, w6, w9
+  50:	aa060108 	orr	x8, x8, x6
+	for (i = 0; i < width; i++) {
+  54:	54fffee1 	b.ne	30 <adjust_for_msb_right_quirk+0x30>  // b.any
 
-#include <stdio.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <string.h>
 
-#define BIT(n) (1 << (n))
-#define BIT_ULL(n) (1ULL << (n))
+Then this modified code:
 
-#define u64 unsigned long long
-#define u32 unsigned int
-#define u16 unsigned short
-#define u8  unsigned char
-
-static u64 bit_reverse1(u64 val, unsigned int width)
+static u64 bit_reverse(u64 val, unsigned int width)
 {
 	u64 new_val = 0;
 	unsigned int i;
 
-	for (i = 0; i < width; i++) {
+	for (i = 0; i < width; i++)
 		if (val & BIT_ULL(i))
 			new_val |= BIT_ULL(width - i - 1);
-	}
+
 	return new_val;
 }
 
-static u64 bit_reverse2(u64 val, unsigned int width)
-{
-	u64 new_val = 0;
-	u64 bit;
-	unsigned int i;
+compiles to this:
 
 	for (i = 0; i < width; i++) {
-		bit = (val & BIT_ULL(i)) != 0;
-		new_val |= (bit << (width - i - 1));
-	}
+  1c:	310004eb 	adds	w11, w7, #0x1
+  20:	540001c0 	b.eq	58 <adjust_for_msb_right_quirk+0x58>  // b.none
+  24:	52800005 	mov	w5, #0x0                   	// #0
+			new_val |= BIT_ULL(width - i - 1);
+  28:	d280002a 	mov	x10, #0x1                   	// #1
+  2c:	14000002 	b	34 <adjust_for_msb_right_quirk+0x34>	/* this is an unconditional jump to "sub w4, w7, w5", skipping the assignment to w5 */
+  30:	2a0803e5 	mov	w5, w8			/* this is only hit by the backwards jump b.ne 30 at the end */
+  34:	4b0500e4 	sub	w4, w7, w5
+		if (val & BIT_ULL(i))
+  38:	9ac52528 	lsr	x8, x9, x5
+			new_val |= BIT_ULL(width - i - 1);
+  3c:	f240011f 	tst	x8, #0x1
+	for (i = 0; i < width; i++) {
+  40:	110004a8 	add	w8, w5, #0x1
+			new_val |= BIT_ULL(width - i - 1);
+  44:	9ac42144 	lsl	x4, x10, x4
+  48:	aa0400c4 	orr	x4, x6, x4
+  4c:	9a861086 	csel	x6, x4, x6, ne  // ne = any
+	for (i = 0; i < width; i++) {
+  50:	6b0700bf 	cmp	w5, w7
+  54:	54fffee1 	b.ne	30 <adjust_for_msb_right_quirk+0x30>  // b.any
+
+which indeed has no branch in the main loop (between 0x30 and 0x54),
+because as I explained, the "b 34" doesn't count - it's not in the loop.
+
+Additionally, this rewritten code which is considerably more obscure in C:
+
+static u64 bit_reverse(u64 val, unsigned int width)
+{
+	u64 new_val = 0;
+	unsigned int i;
+
+	for (i = 0; i < width; i++)
+		new_val |= !!(val & BIT_ULL(i)) ?
+			   BIT_ULL(width - i - 1) : 0;
+
 	return new_val;
 }
 
-int main(void)
-{
-	unsigned long long val;
+compiles to the exact same assembly code as the variant with "if":
 
-	for (val = ULLONG_MAX - INT_MAX; val; val++)
-		bit_reverse1(val, 2);
+	for (i = 0; i < width; i++)
+  1c:	310004eb 	adds	w11, w7, #0x1
+  20:	540001c0 	b.eq	58 <adjust_for_msb_right_quirk+0x58>  // b.none
+  24:	52800005 	mov	w5, #0x0                   	// #0
+		new_val |= !!(val & BIT_ULL(i)) ?
+  28:	d280002a 	mov	x10, #0x1                   	// #1
+  2c:	14000002 	b	34 <adjust_for_msb_right_quirk+0x34>
+  30:	2a0803e5 	mov	w5, w8
+  34:	4b0500e4 	sub	w4, w7, w5
+  38:	9ac52528 	lsr	x8, x9, x5
+  3c:	f240011f 	tst	x8, #0x1
+	for (i = 0; i < width; i++)
+  40:	110004a8 	add	w8, w5, #0x1
+		new_val |= !!(val & BIT_ULL(i)) ?
+  44:	9ac42144 	lsl	x4, x10, x4
+  48:	aa0400c4 	orr	x4, x6, x4
+  4c:	9a861086 	csel	x6, x4, x6, ne  // ne = any
+	for (i = 0; i < width; i++)
+  50:	6b0700bf 	cmp	w5, w7
+  54:	54fffee1 	b.ne	30 <adjust_for_msb_right_quirk+0x30>  // b.any
 
-	return 0;
-}
-
+So this is good with the "if".
