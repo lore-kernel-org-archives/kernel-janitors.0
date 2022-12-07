@@ -2,105 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB859C47089
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 10:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 157F3C352A1
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 10:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230298AbiLGKOP (ORCPT
+        id S229876AbiLGKhY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 05:14:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43022 "EHLO
+        Wed, 7 Dec 2022 05:37:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230323AbiLGKOM (ORCPT
+        with ESMTP id S229736AbiLGKhJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 05:14:12 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F6F2714D;
-        Wed,  7 Dec 2022 02:14:10 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id o7-20020a05600c510700b003cffc0b3374so713032wms.0;
-        Wed, 07 Dec 2022 02:14:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jxmfktVo1c7I9TfGKhpFnuMsTMZSubcGd4XXjSjhiS8=;
-        b=HDDkcehqX+6CTSSx6ZcH7IBcmqUljP/LUYffmQaakWZHMVdRndoDLP98evMboJIONF
-         5Vyux7uiI28FUdq6tXvYHm004tuWiAofkFLtqmUd80yG9fA9v0zCneL55yeotADd3POK
-         J7dm28C79KXN5VKrAbzVu1T5FtcyCUlzKvqOKACxQzH1B48r0fogJJFeUWkv9aIb59eQ
-         tDdzBTlN9yXjxEduJUTHNwz5b+oLCO66HACgqVWN8rN7J4HiUt657QeJK0oJJUyabU/h
-         rLvUy8Av/S8xgi9HMpgIqq+SUzl8PdAINLfgS2TpN8gjf02X1APolkjhCQ7KPpct/7a7
-         9Vbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jxmfktVo1c7I9TfGKhpFnuMsTMZSubcGd4XXjSjhiS8=;
-        b=hSEwFW26hJVehMXPev07t7gcbd+2tdaHLJfGD97KykoeG1vFUmsVDZ1iKsfbCpZt/+
-         grrA9sQgathw5ZwVYFpvbrzqItJxyiVKJqZuJhs+0Y3sgIoPEtXQZHB+FuMkOe3hAWRz
-         haGHvi4ROp7OojQKyCA3uhSUaiAh5C3DVYY3+9zpGNNTYKHdUNHjJFrJaap8gQM2vbIE
-         LRJEeV43ClykilBHnTrbQYxl+9BcDndV5lJDMYhr+nQr9nQfuxDoUkYMFLwCzkyyPvXf
-         QIctcWbx9JMHYebZanuh3byeSKvKIGCNaksWByhEId1CtYC4cnIalPYqLt86JxvgvXlp
-         89kQ==
-X-Gm-Message-State: ANoB5pmSvWNZB+JKcJ7Bpmy6ljIxHRxLCWyS8RSe9HDPqjAhmyek0c6o
-        L20VIVodofPp9xmP2K7/YhF8pTBAtfgXxTcl
-X-Google-Smtp-Source: AA0mqf64RWzzi27+MgKKIt62u31McnZURFRGUmm0JvtRaf3tquhSgS8+d00TBNGsFF+MM7vHX4Y45A==
-X-Received: by 2002:a05:600c:314f:b0:3cf:9efc:a9b7 with SMTP id h15-20020a05600c314f00b003cf9efca9b7mr66575359wmo.10.1670408049403;
-        Wed, 07 Dec 2022 02:14:09 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id x11-20020adfec0b000000b00241f029e672sm18763941wrn.107.2022.12.07.02.14.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 02:14:08 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests: Fix spelling mistake "allright" -> "alright"
-Date:   Wed,  7 Dec 2022 10:14:07 +0000
-Message-Id: <20221207101407.2285701-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Wed, 7 Dec 2022 05:37:09 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4753A2F02B;
+        Wed,  7 Dec 2022 02:37:09 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D74A461169;
+        Wed,  7 Dec 2022 10:37:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74144C433D6;
+        Wed,  7 Dec 2022 10:37:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670409428;
+        bh=KY7YWJF5oa3fs9ZE2wvbBGq5KADvA3wXFexep9vKVxY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PU0COV5USvTeV+KLv9v8U8W4ISb34xnl83IuPS1kXhitlUw26rjKWyZWCsSfEmI+5
+         QvTH2td0P9UeEXi956u3J0BjpDbpjM7JamzkxZx+ASN4dE/r7igzgvlOSQ3zcV9IKy
+         taknTlmuSUCL1oOoCoDDBZH0V2dgaf4abj3J+ZTd0xp8BVYzj2sw0bd+YgOvr+6DJh
+         WDD48Ay+JLm5iSQZt8+Ta4eVB9WlQYVPQ1Q7YpPBNVxk1rsBczt9EN8IvmEgQWvoaX
+         u1W3VfduIqv53xXEPAwMorMMDl/Q/AW/3ioCnaabIDy+hG4GIhETpwQNs9LvtHbPmP
+         PrhIHU3t6iPBw==
+Date:   Wed, 7 Dec 2022 12:37:03 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Simon Horman <simon.horman@corigine.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Huanhuan Wang <huanhuan.wang@corigine.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Louis Peens <louis.peens@corigine.com>,
+        oss-drivers@corigine.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] xfrm: Fix spelling mistake "tyoe" -> "type"
+Message-ID: <Y5Bszxs5Mtaxdf2x@unreal>
+References: <20221207091919.2278416-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221207091919.2278416-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are spelling mistakes in messages in the prctl tests. Fix these.
-Note: One can use "all right", or "alright", I'm fixing this to use
-the slightly more informal and more modern form of the spelling for
-the fix.
+On Wed, Dec 07, 2022 at 09:19:19AM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a nn_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/netronome/nfp/crypto/ipsec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c | 2 +-
- tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c b/tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c
-index 62a93cc61b7c..868f37fd1d5e 100644
---- a/tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c
-+++ b/tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c
-@@ -79,7 +79,7 @@ int main(void)
- {
- 	int n_tasks = 100, i;
- 
--	fprintf(stderr, "[No further output means we're allright]\n");
-+	fprintf(stderr, "[No further output means we're alright]\n");
- 
- 	for (i=0; i<n_tasks; i++)
- 		if (fork() == 0)
-diff --git a/tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c b/tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c
-index 79950f9a26fd..3822532fc0c6 100644
---- a/tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c
-+++ b/tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c
-@@ -83,7 +83,7 @@ int main(void)
- {
- 	int n_tasks = 100, i;
- 
--	fprintf(stderr, "[No further output means we're allright]\n");
-+	fprintf(stderr, "[No further output means we're alright]\n");
- 
- 	for (i=0; i<n_tasks; i++)
- 		if (fork() == 0)
--- 
-2.38.1
-
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
