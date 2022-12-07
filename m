@@ -2,61 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B3FC4708E
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 13:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9274FC4708E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 13:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229583AbiLGNmX (ORCPT
+        id S229798AbiLGN5P (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 08:42:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40598 "EHLO
+        Wed, 7 Dec 2022 08:57:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229749AbiLGNmU (ORCPT
+        with ESMTP id S230156AbiLGN4t (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 08:42:20 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1516C59FCB;
-        Wed,  7 Dec 2022 05:42:20 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id f13-20020a1cc90d000000b003d08c4cf679so1078596wmb.5;
-        Wed, 07 Dec 2022 05:42:20 -0800 (PST)
+        Wed, 7 Dec 2022 08:56:49 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3BCC5BD72;
+        Wed,  7 Dec 2022 05:56:47 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id h12so28163299wrv.10;
+        Wed, 07 Dec 2022 05:56:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TMF2QTzrIEhAvcCRAKAyrDjyFw5YI3dtgKin010Drxo=;
-        b=Nsh4hYm51nfI+1na0IvpRbqgwiNwOvz4fAxaQwLeZ95GKOCHayKqMTikL/f9snt+oC
-         /jcD6T1WMloKlEF6hJAZetIXhp40cHFYS10PCx9rru0I3gaZKG01LOBqS22GQYi8q05O
-         2m9c750Py1YavUiyPHAn43ykX6B2Y3YKkXZnfncWAoPrSMqjSSQlevISHXHSih8aHjhp
-         kM0BhLS0xIsI3fEy0hsOMLZNwjtMQqbLe0r2gkRJv7Nzq2cUi8mo63lcFRtlaaxNcl2F
-         PtBCe27d6EavPdmShqny6TwH4G46ifmbeF30VWCn7qbF3Lmwxs0Ij1a0lKC8YkwquwyN
-         YHCw==
+        bh=RYrYY/fm6aX39Ixp9LpWPNUVB2qUa51Mk5FBV63lR/s=;
+        b=GCVATqAgYI6b2pNpJJm2LfaW175fXxR+izq/VPTFa8KVQ1yOnR5IrWn3C80fnuN0Wd
+         +/aw3SUKtWyLIhiB2VjVXAmbWiZ4jlvKIA8ZWGdxIYCNpcrE1f9WSD7Sx84CqATK9gmN
+         5qs+AihyZvqGSKKlr7le7x1WDk7tiCZmJ8ltAvXSIOTa5y8VUdkSQm6BLx7GUIuImeeo
+         PFCkCA7KhwWyX1uo6ZHwIfAGOcFC3wnt5qC1YtX2ahEylh6w80BUkvd79NeBw7a/kAv6
+         QNVpfsyEUPsCyw27ltDWSPqQc+/Ox05FGtAUrssnOiDhh/fYFOfSBYA2k4iEW38KPzzR
+         H+Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TMF2QTzrIEhAvcCRAKAyrDjyFw5YI3dtgKin010Drxo=;
-        b=By2nY40z73C9HkauB2pmfAUTFyi8e0lK+8Er202ZBmlFxwz7V6tciNBVbse9T1msGd
-         6xPorfzndOa/TgShukwO82MnTolq6Az8SONkESPnlEYJbRCmg1vwk5ZPlvugiSmxinDk
-         h06b/Q3joaYLtuegrbISgDmZLHJHGJtt2RBkRuVhu/DFgw6H+s9x4PBzQoQ44j1xqh34
-         EEl07PP+jcYCNL+sHGUvFxTQIygdw9DKvpw8RnLwzzEyZN5Bo8BdcjDbtqkB14daM7gE
-         7242SpnfNnGupgyjOAdG6J2Xrl79bjwEdNQEZdQWL+OXCnQuOygPq2pn/9k2XPDQpZOT
-         THlg==
-X-Gm-Message-State: ANoB5pnkM3UhjM+MbG9PgFNY67D/jRq5Wtd9gdtV4gVrA/8gO9WD2zlc
-        UYQrqoj7wEkQR5w2yZfRGVbFPzKhdAcOQMvS
-X-Google-Smtp-Source: AA0mqf4v7NhxFM6ADBnyGnt437t6imDkbPXjJcoZTc+HXGyF5bCElcmBD8N2fTCKcX6IrxbPqGMliA==
-X-Received: by 2002:a05:600c:1c04:b0:3cf:ecdb:bcb7 with SMTP id j4-20020a05600c1c0400b003cfecdbbcb7mr63835767wms.180.1670420538472;
-        Wed, 07 Dec 2022 05:42:18 -0800 (PST)
+        bh=RYrYY/fm6aX39Ixp9LpWPNUVB2qUa51Mk5FBV63lR/s=;
+        b=LDu/9S4VK3sVGTg+2LGliSBMNq6NS2C6I1rzRgl8gWABZySryQVd3f9zoBrMiGx8uh
+         HmCT6F65OYKNQTZ2FkeUtP8oAlMSjh2kxjWXdk/0Tzx6muwvekj7zwlzZPk4cb7aBQp/
+         OirEXA6hHUe4VUPXXwLDkUjEgd4N9H3Y/7qSyIr/o+ogg9ZpvavA43ZiAvha4i5errKm
+         hpukETTh+no6TcczCoJPO/JY7Dmq9D7ftQIi144T9FsHJMPLhUIdtcfp46qZ9yS1Oth+
+         O4H6H0ageV8ZzVuqmN3q7nZBix/LWVkxPOxTJIMeDvCC0AtgD0lAQf2zUliv09hVdgQm
+         KZVw==
+X-Gm-Message-State: ANoB5pnbKbqWd9ajzljHOazKzRRNSqczhT9Y1fVSVk3pQUwORQZDTFz1
+        OK7z8Ft44nYfx9wzanN0CTg=
+X-Google-Smtp-Source: AA0mqf78tDp/NbW5pJ5zC7IruwhOp2apHPbj5OpwxqwSxL3nqgqQ5BfEHvDHxyaoryVf9MFVK8FeDg==
+X-Received: by 2002:adf:ebc5:0:b0:241:6c90:79e9 with SMTP id v5-20020adfebc5000000b002416c9079e9mr39623325wrn.642.1670421406257;
+        Wed, 07 Dec 2022 05:56:46 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m31-20020a05600c3b1f00b003d1e3b1624dsm2075515wms.2.2022.12.07.05.42.17
+        by smtp.gmail.com with ESMTPSA id j10-20020a05600c1c0a00b003b49bd61b19sm2130825wms.15.2022.12.07.05.56.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 05:42:18 -0800 (PST)
+        Wed, 07 Dec 2022 05:56:45 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-perf-users@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] f2fs: Fix spelling mistake in label: free_bio_enrty_cache -> free_bio_entry_cache
-Date:   Wed,  7 Dec 2022 13:42:17 +0000
-Message-Id: <20221207134217.2325189-1-colin.i.king@gmail.com>
+Subject: [PATCH] perf vendor events powerpc: Fix spelling mistake "fpr" -> "for"
+Date:   Wed,  7 Dec 2022 13:56:45 +0000
+Message-Id: <20221207135645.2327224-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,35 +71,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a label name. Fix it.
+There is a spelling mistake in the description text. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/f2fs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/pmu-events/arch/powerpc/power8/other.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 79bf1faf4161..7a9fa1a5baa2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4709,7 +4709,7 @@ static int __init init_f2fs_fs(void)
- 		goto free_iostat;
- 	err = f2fs_init_bioset();
- 	if (err)
--		goto free_bio_enrty_cache;
-+		goto free_bio_entry_cache;
- 	err = f2fs_init_compress_mempool();
- 	if (err)
- 		goto free_bioset;
-@@ -4726,7 +4726,7 @@ static int __init init_f2fs_fs(void)
- 	f2fs_destroy_compress_mempool();
- free_bioset:
- 	f2fs_destroy_bioset();
--free_bio_enrty_cache:
-+free_bio_entry_cache:
- 	f2fs_destroy_bio_entry_cache();
- free_iostat:
- 	f2fs_destroy_iostat_processing();
+diff --git a/tools/perf/pmu-events/arch/powerpc/power8/other.json b/tools/perf/pmu-events/arch/powerpc/power8/other.json
+index f1f2965f6775..6de8c472ec99 100644
+--- a/tools/perf/pmu-events/arch/powerpc/power8/other.json
++++ b/tools/perf/pmu-events/arch/powerpc/power8/other.json
+@@ -2996,7 +2996,7 @@
+   {
+     "EventCode": "0x308e",
+     "EventName": "PM_SWAP_COMPLETE_GPR",
+-    "BriefDescription": "swap cast in completed fpr gpr",
++    "BriefDescription": "swap cast in completed for gpr",
+     "PublicDescription": ""
+   },
+   {
 -- 
 2.38.1
 
