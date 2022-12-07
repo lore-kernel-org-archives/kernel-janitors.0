@@ -2,77 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B923C4708E
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 13:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B3FC4708E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 13:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229752AbiLGNHD (ORCPT
+        id S229583AbiLGNmX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 08:07:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42642 "EHLO
+        Wed, 7 Dec 2022 08:42:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbiLGNGy (ORCPT
+        with ESMTP id S229749AbiLGNmU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 08:06:54 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0B256EEA;
-        Wed,  7 Dec 2022 05:06:43 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id m18so12286183eji.5;
-        Wed, 07 Dec 2022 05:06:43 -0800 (PST)
+        Wed, 7 Dec 2022 08:42:20 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1516C59FCB;
+        Wed,  7 Dec 2022 05:42:20 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id f13-20020a1cc90d000000b003d08c4cf679so1078596wmb.5;
+        Wed, 07 Dec 2022 05:42:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1n2xKrEJmiAiMH62NDMHkE+KBXQtCMKJa3DDPhNfqEs=;
-        b=AAh8sB6+TGuCresy/bUkOIqesyfwoCEYUjfvpNrkqane3PYjXJ0INpQtaz4OpPenfK
-         ExqNue+tHfXrjp6+lwS98JYigX5lU0SDhxhIWr/ibeKz1OIfV230t2H64Whl3G+5DKFC
-         z0g0vC0Vm0e8LAETOuPet5yjA+gNCcmjzRCferk7c71mAC1K18vm4Wr1cICwCB13fhgT
-         Xll+srZQaiqGbXIJ8KR1GuwnSu5c33SfQt+PxO62ckdqJgqqshBCV4z1F9fTLZLy1mK6
-         BdPv7IEo2YoFcfzX6OBHjzy+uoSUJIcjRoIf6pT1ijKrbQ5kc6w62EElDu/OPa0vHhmM
-         ag0g==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TMF2QTzrIEhAvcCRAKAyrDjyFw5YI3dtgKin010Drxo=;
+        b=Nsh4hYm51nfI+1na0IvpRbqgwiNwOvz4fAxaQwLeZ95GKOCHayKqMTikL/f9snt+oC
+         /jcD6T1WMloKlEF6hJAZetIXhp40cHFYS10PCx9rru0I3gaZKG01LOBqS22GQYi8q05O
+         2m9c750Py1YavUiyPHAn43ykX6B2Y3YKkXZnfncWAoPrSMqjSSQlevISHXHSih8aHjhp
+         kM0BhLS0xIsI3fEy0hsOMLZNwjtMQqbLe0r2gkRJv7Nzq2cUi8mo63lcFRtlaaxNcl2F
+         PtBCe27d6EavPdmShqny6TwH4G46ifmbeF30VWCn7qbF3Lmwxs0Ij1a0lKC8YkwquwyN
+         YHCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1n2xKrEJmiAiMH62NDMHkE+KBXQtCMKJa3DDPhNfqEs=;
-        b=HnoQEKXtLbM/I+A+mbgYTvNw91l/4i+bZ84v9yAVedN/hGUPqY1sdMORrkehuMF6DP
-         8QaR7erHS2a0eOUGjkVq6fZsNFQVpc6+Im8IIxZwbN/ZdXGbnPt7dfrd30Z2rhSDvFFx
-         cL9iGULFac8UiQlgqQoeNDeO5D76F7wFBT5zp1+pJrHv6ESDe9jJnHMBIkmI4SJ3aV+l
-         GFb9wlYt0RlTlztbjtFrTCSmUGN7RqVjMEBzDGK3aJzcA7TnNPFybjoQpmOlaIROPiQk
-         scZXsqMO7CIra5Q01hWuQSC6zhTBBqinJgsgUK1Ae/GGdV2zd+qBsTg5sfZXuHDyRcZP
-         Fpxg==
-X-Gm-Message-State: ANoB5pnoxa2OrGdGhEdJuOTXAVek894QWhIDc0eUqaniF5evvyDN3/Ha
-        CqAeUt0zPvEiXRFMDhVzvBgyBcfnRAd7uA==
-X-Google-Smtp-Source: AA0mqf6VhiuMb59vUW55mSPfqpifujJ43V5lPqoqws22HvOkjYbrkl3dHJPhd+FQrZnofDv+FCs4dg==
-X-Received: by 2002:a17:906:b45:b0:7c1:f69:71bb with SMTP id v5-20020a1709060b4500b007c10f6971bbmr5192215ejg.685.1670418402037;
-        Wed, 07 Dec 2022 05:06:42 -0800 (PST)
-Received: from skbuf ([188.26.184.215])
-        by smtp.gmail.com with ESMTPSA id u25-20020aa7db99000000b0046c7c3755a7sm2185173edt.17.2022.12.07.05.06.41
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TMF2QTzrIEhAvcCRAKAyrDjyFw5YI3dtgKin010Drxo=;
+        b=By2nY40z73C9HkauB2pmfAUTFyi8e0lK+8Er202ZBmlFxwz7V6tciNBVbse9T1msGd
+         6xPorfzndOa/TgShukwO82MnTolq6Az8SONkESPnlEYJbRCmg1vwk5ZPlvugiSmxinDk
+         h06b/Q3joaYLtuegrbISgDmZLHJHGJtt2RBkRuVhu/DFgw6H+s9x4PBzQoQ44j1xqh34
+         EEl07PP+jcYCNL+sHGUvFxTQIygdw9DKvpw8RnLwzzEyZN5Bo8BdcjDbtqkB14daM7gE
+         7242SpnfNnGupgyjOAdG6J2Xrl79bjwEdNQEZdQWL+OXCnQuOygPq2pn/9k2XPDQpZOT
+         THlg==
+X-Gm-Message-State: ANoB5pnkM3UhjM+MbG9PgFNY67D/jRq5Wtd9gdtV4gVrA/8gO9WD2zlc
+        UYQrqoj7wEkQR5w2yZfRGVbFPzKhdAcOQMvS
+X-Google-Smtp-Source: AA0mqf4v7NhxFM6ADBnyGnt437t6imDkbPXjJcoZTc+HXGyF5bCElcmBD8N2fTCKcX6IrxbPqGMliA==
+X-Received: by 2002:a05:600c:1c04:b0:3cf:ecdb:bcb7 with SMTP id j4-20020a05600c1c0400b003cfecdbbcb7mr63835767wms.180.1670420538472;
+        Wed, 07 Dec 2022 05:42:18 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m31-20020a05600c3b1f00b003d1e3b1624dsm2075515wms.2.2022.12.07.05.42.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 05:06:41 -0800 (PST)
-Date:   Wed, 7 Dec 2022 15:06:39 +0200
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] lib: packing: fix shift wrapping in bit_reverse()
-Message-ID: <20221207130639.ta3zodrx4el766g5@skbuf>
-References: <Y5B3sAcS6qKSt+lS@kili>
- <Y5B3sAcS6qKSt+lS@kili>
- <20221207121936.bajyi5igz2kum4v3@skbuf>
- <Y5CFMIGsZmB1TRni@kadam>
- <20221207122254.otq7biekqz2nzhgl@skbuf>
- <Y5CMPGrSuP+0ptdP@kadam>
+        Wed, 07 Dec 2022 05:42:18 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] f2fs: Fix spelling mistake in label: free_bio_enrty_cache -> free_bio_entry_cache
+Date:   Wed,  7 Dec 2022 13:42:17 +0000
+Message-Id: <20221207134217.2325189-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y5CMPGrSuP+0ptdP@kadam>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Dec 07, 2022 at 03:51:08PM +0300, Dan Carpenter wrote:
-> My crappy benchmark says that the if statement is faster.  22 vs 26
-> seconds.
+There is a spelling mistake in a label name. Fix it.
 
-Sure that's not just noise in the measurements? :)
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/f2fs/super.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 79bf1faf4161..7a9fa1a5baa2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4709,7 +4709,7 @@ static int __init init_f2fs_fs(void)
+ 		goto free_iostat;
+ 	err = f2fs_init_bioset();
+ 	if (err)
+-		goto free_bio_enrty_cache;
++		goto free_bio_entry_cache;
+ 	err = f2fs_init_compress_mempool();
+ 	if (err)
+ 		goto free_bioset;
+@@ -4726,7 +4726,7 @@ static int __init init_f2fs_fs(void)
+ 	f2fs_destroy_compress_mempool();
+ free_bioset:
+ 	f2fs_destroy_bioset();
+-free_bio_enrty_cache:
++free_bio_entry_cache:
+ 	f2fs_destroy_bio_entry_cache();
+ free_iostat:
+ 	f2fs_destroy_iostat_processing();
+-- 
+2.38.1
+
