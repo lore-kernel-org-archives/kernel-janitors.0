@@ -2,95 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9274FC4708E
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 13:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0522CC63709
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 14:02:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229798AbiLGN5P (ORCPT
+        id S229782AbiLGOCa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 08:57:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52446 "EHLO
+        Wed, 7 Dec 2022 09:02:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230156AbiLGN4t (ORCPT
+        with ESMTP id S229955AbiLGOBj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 08:56:49 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3BCC5BD72;
-        Wed,  7 Dec 2022 05:56:47 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id h12so28163299wrv.10;
-        Wed, 07 Dec 2022 05:56:47 -0800 (PST)
+        Wed, 7 Dec 2022 09:01:39 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0854D5E3D0
+        for <kernel-janitors@vger.kernel.org>; Wed,  7 Dec 2022 06:00:49 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id x22so14146869ejs.11
+        for <kernel-janitors@vger.kernel.org>; Wed, 07 Dec 2022 06:00:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RYrYY/fm6aX39Ixp9LpWPNUVB2qUa51Mk5FBV63lR/s=;
-        b=GCVATqAgYI6b2pNpJJm2LfaW175fXxR+izq/VPTFa8KVQ1yOnR5IrWn3C80fnuN0Wd
-         +/aw3SUKtWyLIhiB2VjVXAmbWiZ4jlvKIA8ZWGdxIYCNpcrE1f9WSD7Sx84CqATK9gmN
-         5qs+AihyZvqGSKKlr7le7x1WDk7tiCZmJ8ltAvXSIOTa5y8VUdkSQm6BLx7GUIuImeeo
-         PFCkCA7KhwWyX1uo6ZHwIfAGOcFC3wnt5qC1YtX2ahEylh6w80BUkvd79NeBw7a/kAv6
-         QNVpfsyEUPsCyw27ltDWSPqQc+/Ox05FGtAUrssnOiDhh/fYFOfSBYA2k4iEW38KPzzR
-         H+Yg==
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jfRkMHNrRkp1qLY537DSP04mPwW9szmx8pniSmiTIl8=;
+        b=mqcNT3ExPz5YjeGN/Jn7t22ZzS9zuRG2UD5pvjrBMUEj2dQlKDvi6pFca9ZcDPcRLl
+         dv3yOFH0afgtZ0mOlcCbaJa9UD7BzL+zpPT+zH+91apwm/cyfWMisr3BMY7wNzSrokFn
+         LsVzPO8YkXIVDUrgMyh0gBt2CLcnIqlwrSFiFcDEdw5eJio2h62VzHXvenV22zyVBNtL
+         OrzZwfVa3DTgGE0FhTrXKGZTqMY05sz+JQG6a9DiBrLcJZtV2mFk/P7iBKo6A+tDH9x8
+         rJlP2rABfZ3veXE2zjwcLaTl6rgE3WDypXCr8djQKITx+PltF98oslvQzZbFm3zKixAC
+         Z3kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RYrYY/fm6aX39Ixp9LpWPNUVB2qUa51Mk5FBV63lR/s=;
-        b=LDu/9S4VK3sVGTg+2LGliSBMNq6NS2C6I1rzRgl8gWABZySryQVd3f9zoBrMiGx8uh
-         HmCT6F65OYKNQTZ2FkeUtP8oAlMSjh2kxjWXdk/0Tzx6muwvekj7zwlzZPk4cb7aBQp/
-         OirEXA6hHUe4VUPXXwLDkUjEgd4N9H3Y/7qSyIr/o+ogg9ZpvavA43ZiAvha4i5errKm
-         hpukETTh+no6TcczCoJPO/JY7Dmq9D7ftQIi144T9FsHJMPLhUIdtcfp46qZ9yS1Oth+
-         O4H6H0ageV8ZzVuqmN3q7nZBix/LWVkxPOxTJIMeDvCC0AtgD0lAQf2zUliv09hVdgQm
-         KZVw==
-X-Gm-Message-State: ANoB5pnbKbqWd9ajzljHOazKzRRNSqczhT9Y1fVSVk3pQUwORQZDTFz1
-        OK7z8Ft44nYfx9wzanN0CTg=
-X-Google-Smtp-Source: AA0mqf78tDp/NbW5pJ5zC7IruwhOp2apHPbj5OpwxqwSxL3nqgqQ5BfEHvDHxyaoryVf9MFVK8FeDg==
-X-Received: by 2002:adf:ebc5:0:b0:241:6c90:79e9 with SMTP id v5-20020adfebc5000000b002416c9079e9mr39623325wrn.642.1670421406257;
-        Wed, 07 Dec 2022 05:56:46 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j10-20020a05600c1c0a00b003b49bd61b19sm2130825wms.15.2022.12.07.05.56.45
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jfRkMHNrRkp1qLY537DSP04mPwW9szmx8pniSmiTIl8=;
+        b=pXmdgTC+nSbmlrQr8d5smz9020IiihM14o/SISJ2T6V1YGzE2MVAbHLv9Jq5BD3yeD
+         3bqwM6BmYe9ezXmmSCa/NE9Ei+1L6d+3iiIWI1C0vX2ktlgqg7b+/hrLdupuI20mEKMg
+         FGqtQTYkQMZHRZ8x1S0ILK/sscQ4EKKfizoqNT4sYDYZ6GCUMcdJ7VvChD/R4+uq9FeC
+         CvOsYzQEWchSZByrpT/R/2SWAqHzZuNLmmV/dnLyzGLux+9Gyi4ed2vRD1lIye4HSEp6
+         cH40778eYNUSA2AqqwKMK8gks7jKhU2phjDU42SIxe/WNhCSROQJfq1Wag5Lo++unwjM
+         KMuQ==
+X-Gm-Message-State: ANoB5plnv3A1HshBf3grPpeilP2jstc+bKTS0oOmdNHEg5OtrociDnF+
+        THmEH7LGUETQNLkpcaDkvTA=
+X-Google-Smtp-Source: AA0mqf6tGtcQiB1pfq3u+wqBZOMVAwFc2sR4CTneNWQMvND/A7e5Gp5bm83HUUU1BK2Lev/cgnwBgw==
+X-Received: by 2002:a17:906:a148:b0:7ad:b286:8ee2 with SMTP id bu8-20020a170906a14800b007adb2868ee2mr33552244ejb.511.1670421647365;
+        Wed, 07 Dec 2022 06:00:47 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id l9-20020a1709063d2900b0073d71792c8dsm8506372ejf.180.2022.12.07.06.00.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 05:56:45 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-perf-users@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] perf vendor events powerpc: Fix spelling mistake "fpr" -> "for"
-Date:   Wed,  7 Dec 2022 13:56:45 +0000
-Message-Id: <20221207135645.2327224-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Wed, 07 Dec 2022 06:00:46 -0800 (PST)
+Date:   Wed, 7 Dec 2022 17:00:43 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     idosch@nvidia.com
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] mlxsw: spectrum: Apply RIF configuration when joining a
+ LAG
+Message-ID: <Y5Cci6U4sb4hYNUL@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the description text. Fix it.
+Hello Ido Schimmel,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/perf/pmu-events/arch/powerpc/power8/other.json | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch 31e1de4f1242: "mlxsw: spectrum: Apply RIF configuration
+when joining a LAG" from Dec 6, 2020, leads to the following Smatch
+static checker warning:
 
-diff --git a/tools/perf/pmu-events/arch/powerpc/power8/other.json b/tools/perf/pmu-events/arch/powerpc/power8/other.json
-index f1f2965f6775..6de8c472ec99 100644
---- a/tools/perf/pmu-events/arch/powerpc/power8/other.json
-+++ b/tools/perf/pmu-events/arch/powerpc/power8/other.json
-@@ -2996,7 +2996,7 @@
-   {
-     "EventCode": "0x308e",
-     "EventName": "PM_SWAP_COMPLETE_GPR",
--    "BriefDescription": "swap cast in completed fpr gpr",
-+    "BriefDescription": "swap cast in completed for gpr",
-     "PublicDescription": ""
-   },
-   {
--- 
-2.38.1
+	drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c:8546 mlxsw_sp_port_vlan_router_join()
+	warn: missing error code here? 'mlxsw_sp_rif_find_by_dev()' failed. 'err' = '0'
 
+drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+    8534 int
+    8535 mlxsw_sp_port_vlan_router_join(struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan,
+    8536                                struct net_device *l3_dev,
+    8537                                struct netlink_ext_ack *extack)
+    8538 {
+    8539         struct mlxsw_sp *mlxsw_sp = mlxsw_sp_port_vlan->mlxsw_sp_port->mlxsw_sp;
+    8540         struct mlxsw_sp_rif *rif;
+    8541         int err = 0;
+    8542 
+    8543         mutex_lock(&mlxsw_sp->router->lock);
+    8544         rif = mlxsw_sp_rif_find_by_dev(mlxsw_sp, l3_dev);
+    8545         if (!rif)
+--> 8546                 goto out;
+                         ^^^^^^^^
+Is this an error path?
+
+    8547 
+    8548         err = __mlxsw_sp_port_vlan_router_join(mlxsw_sp_port_vlan, l3_dev,
+    8549                                                extack);
+    8550 out:
+    8551         mutex_unlock(&mlxsw_sp->router->lock);
+    8552         return err;
+    8553 }
+
+regards,
+dan carpenter
