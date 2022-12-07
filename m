@@ -2,66 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A68C352A1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 09:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB859C47089
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 10:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229968AbiLGJwJ (ORCPT
+        id S230298AbiLGKOP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 04:52:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57276 "EHLO
+        Wed, 7 Dec 2022 05:14:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbiLGJwG (ORCPT
+        with ESMTP id S230323AbiLGKOM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 04:52:06 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8CD2E691;
-        Wed,  7 Dec 2022 01:52:05 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id h7so21267196wrs.6;
-        Wed, 07 Dec 2022 01:52:05 -0800 (PST)
+        Wed, 7 Dec 2022 05:14:12 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F6F2714D;
+        Wed,  7 Dec 2022 02:14:10 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id o7-20020a05600c510700b003cffc0b3374so713032wms.0;
+        Wed, 07 Dec 2022 02:14:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dkCv+0Lxdb8Uhc/wcFvh4AwlpWfEWCJ/tFl+smmHeWg=;
-        b=O8CisVTSl8Be01rBLgb6kGohraYbiTYI102ydoHrosu6x3ZQRQxK7Ew2mveUEjiNGF
-         NeGl2VNaA1YirFFGIc6+RlVlHo/4+rPjUOn2eUwGLKgK37ao9ECuuFnK8aZM4PqEZ3dt
-         Itwb2hQYdizvOF7Tu/lh4gS70Vob1GZ1QAFEAuIJp/XsPgr+wQuJP2ysLWd6GFhg7H4+
-         5w/uHkhmvwmNSUaFQ9djYxLNFWuDbifg9KZ5i2HylTJ3si0dQFPhPCItIYbHuXMX6a3C
-         1O/tPv5Uel/28y8fos7E5k07FUSechYXfuUFpZxHXtGPPkH7iFy08YYP1DrCtdp6vGIv
-         MaDQ==
+        bh=jxmfktVo1c7I9TfGKhpFnuMsTMZSubcGd4XXjSjhiS8=;
+        b=HDDkcehqX+6CTSSx6ZcH7IBcmqUljP/LUYffmQaakWZHMVdRndoDLP98evMboJIONF
+         5Vyux7uiI28FUdq6tXvYHm004tuWiAofkFLtqmUd80yG9fA9v0zCneL55yeotADd3POK
+         J7dm28C79KXN5VKrAbzVu1T5FtcyCUlzKvqOKACxQzH1B48r0fogJJFeUWkv9aIb59eQ
+         tDdzBTlN9yXjxEduJUTHNwz5b+oLCO66HACgqVWN8rN7J4HiUt657QeJK0oJJUyabU/h
+         rLvUy8Av/S8xgi9HMpgIqq+SUzl8PdAINLfgS2TpN8gjf02X1APolkjhCQ7KPpct/7a7
+         9Vbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dkCv+0Lxdb8Uhc/wcFvh4AwlpWfEWCJ/tFl+smmHeWg=;
-        b=jKe478loR7iw1a82CewY3JUbl8rLip3PLLdNEhJlOu2JWp1glRJtxY2FDyZ/8ebZp2
-         js0imrFY0n+v+jaafXngkHelK16xHQa1EzIheg15vg0JYvcxNjTpNEOfBXqli/Co3mhY
-         DkSyc/UrommBs6F0vRTyGz82pmmME6151ikAzybZzwOhBRvmI36Zbl1zO/y6Ys9KyYx1
-         1U7ktuonk73GGBSuzcqx46KLVIWA0yaQaDNLAyzdXnqbh0wIGy6TYqSHHr4GcWFFTH9P
-         8XtpK/rkcOZ3l4g9KDjs3xpnz3nYTBvwqfuFYY8G1zXyCY0PZg7r2WO7Z0cP6AL9xXPq
-         e/DA==
-X-Gm-Message-State: ANoB5pnmMD0KFgnP8u0rP/MBncya6S22vXBVct9IE4o7G6LxpgkJq8sT
-        QVaBbR99wJrFBr4zOho9pt4=
-X-Google-Smtp-Source: AA0mqf7UA4lPZCgcEajZZw4gOk96rpxb9AiJkDfWVMAFyvd7J7+ApO1QEz6J/ElX43S+6cIdpuovcg==
-X-Received: by 2002:adf:decf:0:b0:242:82ba:cda1 with SMTP id i15-20020adfdecf000000b0024282bacda1mr949559wrn.532.1670406723753;
-        Wed, 07 Dec 2022 01:52:03 -0800 (PST)
+        bh=jxmfktVo1c7I9TfGKhpFnuMsTMZSubcGd4XXjSjhiS8=;
+        b=hSEwFW26hJVehMXPev07t7gcbd+2tdaHLJfGD97KykoeG1vFUmsVDZ1iKsfbCpZt/+
+         grrA9sQgathw5ZwVYFpvbrzqItJxyiVKJqZuJhs+0Y3sgIoPEtXQZHB+FuMkOe3hAWRz
+         haGHvi4ROp7OojQKyCA3uhSUaiAh5C3DVYY3+9zpGNNTYKHdUNHjJFrJaap8gQM2vbIE
+         LRJEeV43ClykilBHnTrbQYxl+9BcDndV5lJDMYhr+nQr9nQfuxDoUkYMFLwCzkyyPvXf
+         QIctcWbx9JMHYebZanuh3byeSKvKIGCNaksWByhEId1CtYC4cnIalPYqLt86JxvgvXlp
+         89kQ==
+X-Gm-Message-State: ANoB5pmSvWNZB+JKcJ7Bpmy6ljIxHRxLCWyS8RSe9HDPqjAhmyek0c6o
+        L20VIVodofPp9xmP2K7/YhF8pTBAtfgXxTcl
+X-Google-Smtp-Source: AA0mqf64RWzzi27+MgKKIt62u31McnZURFRGUmm0JvtRaf3tquhSgS8+d00TBNGsFF+MM7vHX4Y45A==
+X-Received: by 2002:a05:600c:314f:b0:3cf:9efc:a9b7 with SMTP id h15-20020a05600c314f00b003cf9efca9b7mr66575359wmo.10.1670408049403;
+        Wed, 07 Dec 2022 02:14:09 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id y7-20020adfe6c7000000b002423edd7e50sm15185710wrm.32.2022.12.07.01.52.03
+        by smtp.gmail.com with ESMTPSA id x11-20020adfec0b000000b00241f029e672sm18763941wrn.107.2022.12.07.02.14.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 01:52:03 -0800 (PST)
+        Wed, 07 Dec 2022 02:14:08 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mushahid Hussain <mushi.shar@gmail.com>,
-        speakup@linux-speakup.org
+To:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] accessibility: speakup: Fix spelling mistake "thw" -> "the"
-Date:   Wed,  7 Dec 2022 09:52:02 +0000
-Message-Id: <20221207095202.2282567-1-colin.i.king@gmail.com>
+Subject: [PATCH] selftests: Fix spelling mistake "allright" -> "alright"
+Date:   Wed,  7 Dec 2022 10:14:07 +0000
+Message-Id: <20221207101407.2285701-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -70,28 +64,43 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the module parameter description
-for say_word_ctl and an extra space. Fix the spelling mistake and
-remove the extraneous space.
+There are spelling mistakes in messages in the prctl tests. Fix these.
+Note: One can use "all right", or "alright", I'm fixing this to use
+the slightly more informal and more modern form of the spelling for
+the fix.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/accessibility/speakup/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c | 2 +-
+ tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/accessibility/speakup/main.c b/drivers/accessibility/speakup/main.c
-index 4733fd6334ab..56c073103cbb 100644
---- a/drivers/accessibility/speakup/main.c
-+++ b/drivers/accessibility/speakup/main.c
-@@ -2490,7 +2490,7 @@ MODULE_PARM_DESC(punc_level, "Controls the level of punctuation spoken as the sc
- MODULE_PARM_DESC(reading_punc, "It controls the level of punctuation when reviewing the screen with speakup's screen review commands.");
- MODULE_PARM_DESC(cursor_time, "This controls cursor delay when using arrow keys.");
- MODULE_PARM_DESC(say_control, "This controls if speakup speaks shift, alt and control when those keys are pressed or not.");
--MODULE_PARM_DESC(say_word_ctl, "Sets thw say_word_ctl  on load.");
-+MODULE_PARM_DESC(say_word_ctl, "Sets the say_word_ctl on load.");
- MODULE_PARM_DESC(no_interrupt, "Controls if typing interrupts output from speakup.");
- MODULE_PARM_DESC(key_echo, "Controls if speakup speaks keys when they are typed. One = on zero = off or don't echo keys.");
- MODULE_PARM_DESC(cur_phonetic, "Controls if speakup speaks letters phonetically during navigation. One = on zero = off or don't speak phonetically.");
+diff --git a/tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c b/tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c
+index 62a93cc61b7c..868f37fd1d5e 100644
+--- a/tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c
++++ b/tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test.c
+@@ -79,7 +79,7 @@ int main(void)
+ {
+ 	int n_tasks = 100, i;
+ 
+-	fprintf(stderr, "[No further output means we're allright]\n");
++	fprintf(stderr, "[No further output means we're alright]\n");
+ 
+ 	for (i=0; i<n_tasks; i++)
+ 		if (fork() == 0)
+diff --git a/tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c b/tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c
+index 79950f9a26fd..3822532fc0c6 100644
+--- a/tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c
++++ b/tools/testing/selftests/prctl/disable-tsc-on-off-stress-test.c
+@@ -83,7 +83,7 @@ int main(void)
+ {
+ 	int n_tasks = 100, i;
+ 
+-	fprintf(stderr, "[No further output means we're allright]\n");
++	fprintf(stderr, "[No further output means we're alright]\n");
+ 
+ 	for (i=0; i<n_tasks; i++)
+ 		if (fork() == 0)
 -- 
 2.38.1
 
