@@ -2,86 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1659BC63706
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Dec 2022 22:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B1FC63706
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 04:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229513AbiLFWt1 (ORCPT
+        id S229853AbiLGELC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Dec 2022 17:49:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41342 "EHLO
+        Tue, 6 Dec 2022 23:11:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiLFWt0 (ORCPT
+        with ESMTP id S229811AbiLGEKc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Dec 2022 17:49:26 -0500
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34239101F;
-        Tue,  6 Dec 2022 14:49:25 -0800 (PST)
-Received: by mail-pg1-x52c.google.com with SMTP id s196so14698285pgs.3;
-        Tue, 06 Dec 2022 14:49:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pe1eOciIXEJ+05IC+V1OUGdVr7z9y/treN6lOvW2ZCI=;
-        b=OwEJvuf/JOQglAYaq6BU9UsJlJfr3meImRdp9x/CoksF2U5mAD159MFnPwbeqjeEyM
-         RUAWcqPcQouMLqLpvL8rUCF9UN8j5uRADokKyNqIb77Bh3Oul5F1PZYTAPfeRWa4GdPH
-         AESGxMxcBXfCyoq7g0SUQKyGoowDNuOlxrbR+KN/jqYv659XYwG5BM5FgpGQ9pSnObxO
-         TQlWW4ztqJCtCh835Sjyjf+VyXAznrR5stb9yMgbn8eNkJgYkLKwaqRqyWUrzTq9jCaP
-         z1WCbE8AlOCQoYFguhtlF8B/guKFl3p7wDPWwOlSrjKYJkVeht93X1D34qj0j+5VlVY0
-         rizQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Pe1eOciIXEJ+05IC+V1OUGdVr7z9y/treN6lOvW2ZCI=;
-        b=VmM0CvLqRraJoHuHqJPJ9d0wd8REI3UeQXMS9oM1m6zRnDrtRUV/U8BA3IrqwssJBC
-         VNugjnMq9iJUpZQYFOFid+zxbiQiao7WmOsF88AsOAh+dKe2pEaRrrTI/vqPdO2wEsDX
-         Cl1/hwNZ5evDG13I379JlsPL3O+5xA/wOYlei2pqdJjidZHHlpwQ6m1yriuWR1UPUU/1
-         A3svOJ72SDwM7SZKGO5zr7+Rst8nvCpM9R0N0uS8AyltG+yN2k/ANI6KVjP3dye9p/uY
-         aVHRHFHzIIQ42halYGgk6K43b759hQYGHDLkkIupLsa5zCEu6X06UuKt1fJ7WsY7FfkB
-         P00A==
-X-Gm-Message-State: ANoB5plfQP/2gOLRkgJtFSBdCpbo3icwlXIvHju99iSNF9cJ7nl3OCkn
-        xb0EcD8dHVoU9/eLI/W46YYc0iDaCpE=
-X-Google-Smtp-Source: AA0mqf7IfCRwxmsc0rRgNngVMIeMwL16nWO5Ls60aK7lhp8auFmnlXqSTynUfJkX/RzkZ7LXcvkU+g==
-X-Received: by 2002:a05:6a00:2396:b0:56c:318a:f808 with SMTP id f22-20020a056a00239600b0056c318af808mr73933355pfc.11.1670366964596;
-        Tue, 06 Dec 2022 14:49:24 -0800 (PST)
-Received: from localhost ([129.95.247.247])
-        by smtp.gmail.com with ESMTPSA id s15-20020a170902ea0f00b00189b910c6ccsm5587954plg.125.2022.12.06.14.49.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 14:49:24 -0800 (PST)
-Date:   Tue, 06 Dec 2022 14:49:23 -0800
-From:   John Fastabend <john.fastabend@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Message-ID: <638fc6f33c755_b05f2082c@john.notmuch>
-In-Reply-To: <88d6a1d88764cca328610854f890a9ca1f4b029e.1670086246.git.christophe.jaillet@wanadoo.fr>
+        Tue, 6 Dec 2022 23:10:32 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8003C56553;
+        Tue,  6 Dec 2022 20:10:17 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D2FF261628;
+        Wed,  7 Dec 2022 04:10:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2F86DC433C1;
+        Wed,  7 Dec 2022 04:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670386216;
+        bh=u43Wrj7LqwbZbNTe/wgV3/vOTBju22GcWv2aBAMaLHU=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=bUVRywHrluPHy+gxWr0IG/U2cJVyVcjJ0YYGTfegZUMxh7E+OJ61Ftldlza9AgR2J
+         k/BH8buZostw9sL2873ZpA6fnN02OzeedG7TFY7nZlNKazQVU5G+SovbHAFrpgK4Nj
+         X2XiqhkUMPlmMbkTyQbGXVIS1ck/kwQDwBIFn480VOodkO3pU4f0VZ204T+VNb/1b8
+         47j+QHCvrPse80WCuxEmbYfqEUDgta5ICPWq/iVcWYntwQ8toKCcCIFehbUX5sjY19
+         IipbVI5oBxnUH7uVh1d2lnFj3Cr04nqyxCQ9/sy8JU6aq6J6r9Sef8oq49t3wVH3WO
+         2maieB8+dVFCQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 11A7AE49BBD;
+        Wed,  7 Dec 2022 04:10:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: xsk: Don't include <linux/rculist.h>
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167038621606.4717.104553106066207739.git-patchwork-notify@kernel.org>
+Date:   Wed, 07 Dec 2022 04:10:16 +0000
 References: <88d6a1d88764cca328610854f890a9ca1f4b029e.1670086246.git.christophe.jaillet@wanadoo.fr>
-Subject: RE: [PATCH] net: xsk: Don't include <linux/rculist.h>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <88d6a1d88764cca328610854f890a9ca1f4b029e.1670086246.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     bjorn@kernel.org, magnus.karlsson@intel.com,
+        maciej.fijalkowski@intel.com, jonathan.lemon@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
+        hawk@kernel.org, john.fastabend@gmail.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET wrote:
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Sat,  3 Dec 2022 17:51:04 +0100 you wrote:
 > There is no need to include <linux/rculist.h> here.
 > 
 > Prefer the less invasive <linux/types.h> which is needed for 'hlist_head'.
@@ -90,30 +71,15 @@ Christophe JAILLET wrote:
 > ---
 > Let see if build-bots agree with me!
 > 
-> Just declaring 'struct mutex' and 'struct hlist_head' would also be an
-> option.
-> It would remove the need of any include, but is more likely to break
-> something.
-> ---
->  include/net/netns/xdp.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/net/netns/xdp.h b/include/net/netns/xdp.h
-> index e5734261ba0a..21a4f25a187a 100644
-> --- a/include/net/netns/xdp.h
-> +++ b/include/net/netns/xdp.h
-> @@ -2,8 +2,8 @@
->  #ifndef __NETNS_XDP_H__
->  #define __NETNS_XDP_H__
->  
-> -#include <linux/rculist.h>
->  #include <linux/mutex.h>
-> +#include <linux/types.h>
->  
->  struct netns_xdp {
->  	struct mutex		lock;
-> -- 
-> 2.34.1
-> 
+> [...]
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+Here is the summary with links:
+  - net: xsk: Don't include <linux/rculist.h>
+    https://git.kernel.org/bpf/bpf-next/c/e9b4aeed5669
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
