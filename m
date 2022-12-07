@@ -2,62 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81503C4708E
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 09:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC3FC352A1
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 09:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229819AbiLGJdf (ORCPT
+        id S230096AbiLGJnX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 04:33:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45516 "EHLO
+        Wed, 7 Dec 2022 04:43:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbiLGJde (ORCPT
+        with ESMTP id S230033AbiLGJnU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 04:33:34 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF8D20E;
-        Wed,  7 Dec 2022 01:33:34 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id bg10so13143784wmb.1;
-        Wed, 07 Dec 2022 01:33:33 -0800 (PST)
+        Wed, 7 Dec 2022 04:43:20 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63ADD2AC4E;
+        Wed,  7 Dec 2022 01:43:15 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id h10so17695327wrx.3;
+        Wed, 07 Dec 2022 01:43:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z/Q6kvRFfdVCMvD/9KspZyMV4JmhJENHyXiGZYFDk44=;
-        b=fGvVgz/qLTD3VEZDyt0R79HKaMueP/MoJWsyBHUwQi8OkgR6+KCU6nDmoFMopvR3T7
-         L47YKFDIIbN+1PBNVuJIRY2y2sBhXYbp+WdEV03RNxbEMnrPE685neASGJWiaY1gOvhY
-         +OjTKux0yGwNj+htnlJ1vUL0Vb4ZBDwxovlNX1PzDo9cBHQAQGGIw7vlm0821idOlYXf
-         YYwSQDP6rPV3Uy1xXqVobWc2boYm1b4GO988NLxFWaqeE+mv4dsMuo46qAAwHODWZkAW
-         +pUpbqyVKe3qFbrq2+LelY9V4zzKwA9FIhRSzY8nPZQb5E8Iomf+wo8JR7BPFRVSNcwG
-         eDPA==
+        bh=09w5K8q+Vo1x6aVGPUuFNxXTP2+qz4rNcAnPf/61v7I=;
+        b=NrOIn7R0KDNsGOOtkL5Ic5J6tkYNfZuWs2Dqrb2ZO7B80AMKzUb2LKGGMAa7ORVgpr
+         jq3VsgSnvEF07ZGi64CJAe9wVFZgdQMqNEKt+42NX+vNbnriZWLAyNE0hZTWkvBaWI8U
+         VWJrXpWAPPSxVOyx9rstT0jK0UME2xsrpmgiTH8yyVTKRX4iVujtei0/EAYamgpwvMy0
+         B0Abh3l7sEr6Np/TICPvDwgStOAJAZmyjFbQvzv1opQnAiigctzjJjQ58DgHac0Y3bDJ
+         tzCVMWrUxbptHx9/AzvFU8fvHQbRc5op0MUAWfZl4ipuVE9ET3dnuMiOU5PYlVEeCedr
+         IZig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Z/Q6kvRFfdVCMvD/9KspZyMV4JmhJENHyXiGZYFDk44=;
-        b=kPdcwoR8hAfUSpGomgICFUykpJnYymmwF3vh9dg3reoa1T5NX78iv8jACgqp/it3KU
-         gIZYboBz/9apy/QcM6IdPFadbRzFVykyBUFXEPIcVfmY3vi+Ev/aUIoZSxcxCd/+pd5z
-         920/HkqVQGKKg6qy8V+2xydmRFqOKnXwg+EnLUrR2DIrRwGMg7DKpZorckr3iYcv3RF2
-         TR9Lg7Pi1GNgP+p9W9/zjOumpbYRbeS1m+EpDV7XAZvZx+OV1rPjSlYgcGUl4qmiNWkH
-         bhLIQeTi3sibt5COEviD3rKPj1zXQ65m0o3JfFtENF49/+DpWiKBO6/rpl4eLdbjBtpC
-         PzwQ==
-X-Gm-Message-State: ANoB5pm49XOqhMIrW3nkGbH7qUInc3oQfazLdyCsfUcepJ7X+w+Ehw50
-        ZqC+rTq3AwLwsKMTbW0DPBQ=
-X-Google-Smtp-Source: AA0mqf65Hayvxx6HW4BpL6shqMfP5P+7WL8Kx9rrVd0hJaGecXER7SpcxDy/P4CdKLK5k/ZFAtBVDA==
-X-Received: by 2002:a05:600c:2d45:b0:3d0:8c4c:f681 with SMTP id a5-20020a05600c2d4500b003d08c4cf681mr14114048wmg.37.1670405612599;
-        Wed, 07 Dec 2022 01:33:32 -0800 (PST)
+        bh=09w5K8q+Vo1x6aVGPUuFNxXTP2+qz4rNcAnPf/61v7I=;
+        b=VaqQ9jKLg+uJxfseul9GEQTjo4SNMBTZPwkmmetQuWr47ttCugEwlUyIoK6o3knfaI
+         1/DJH4oN5g9gLwpoYX9UjL3mlUznovYLws0oafIVOEGHQar9hGM3igERK9680nr8Vq9J
+         SmiXSQ7/ZrpcbPg84xmatcvB85fPYE3lcvxRXqdPAx3IE0hgSQViqXRg1YfJQdiY87PK
+         TTr0FPu9GeRAwdgRRw08TOF7veuFU5Fk+NjoxF4U/w9hYKUO9J/o//7NRUAjjqeK6f2O
+         QaWNs1J2H5Djtu82k6cSP9DUg9OVhT0Zdb0RC1JiNVXez/mtD8VuzEuNj7fbV94CuZkn
+         izVA==
+X-Gm-Message-State: ANoB5pmNKNCKaKr4kKI+WtZnB++UHGHT7E8I5rquyGU0fvMaBXj2ZyjX
+        RCvgQ0t2s5SirsPXXtP2iIe7lBKwTMkDOyzJ
+X-Google-Smtp-Source: AA0mqf7nRTfOhWbNWVuEKpAj8Cqhsvjc2YnSbUysoqefJ9gzGRtYI+1gICzJFh2J88UVck+BFX3Fxg==
+X-Received: by 2002:a05:6000:1084:b0:241:f866:6bc8 with SMTP id y4-20020a056000108400b00241f8666bc8mr36015720wrw.501.1670406193950;
+        Wed, 07 Dec 2022 01:43:13 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b40-20020a05600c4aa800b003cf6a55d8e8sm1078481wmp.7.2022.12.07.01.33.31
+        by smtp.gmail.com with ESMTPSA id e25-20020a05600c4b9900b003b476cabf1csm1061791wmp.26.2022.12.07.01.43.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 01:33:32 -0800 (PST)
+        Wed, 07 Dec 2022 01:43:13 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-        linux-staging@lists.linux.dev
+To:     Simon Horman <simon.horman@corigine.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, oss-drivers@corigine.com,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8192e: Fix spelling mistake "ContryIE" -> "CountryIE"
-Date:   Wed,  7 Dec 2022 09:33:31 +0000
-Message-Id: <20221207093331.2280355-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] nfp: Fix spelling mistake "tha" -> "the"
+Date:   Wed,  7 Dec 2022 09:43:12 +0000
+Message-Id: <20221207094312.2281493-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,26 +69,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a netdev_info message. Fix it.
+There is a spelling mistake in a nn_dp_warn message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/staging/rtl8192e/rtllib_rx.c | 2 +-
+ drivers/net/ethernet/netronome/nfp/ccm_mbox.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-index f8965afab767..669e74a67190 100644
---- a/drivers/staging/rtl8192e/rtllib_rx.c
-+++ b/drivers/staging/rtl8192e/rtllib_rx.c
-@@ -1776,7 +1776,7 @@ static inline void rtllib_extract_country_ie(
- 				if (rtllib_act_scanning(ieee, false) &&
- 				    ieee->FirstIe_InScan)
- 					netdev_info(ieee->dev,
--						    "Received beacon ContryIE, SSID: <%s>\n",
-+						    "Received beacon CountryIE, SSID: <%s>\n",
- 						    network->ssid);
- 				dot11d_update_country(ieee, addr2,
- 						       info_element->len,
+diff --git a/drivers/net/ethernet/netronome/nfp/ccm_mbox.c b/drivers/net/ethernet/netronome/nfp/ccm_mbox.c
+index 4247bca09807..aa8aba4ff7aa 100644
+--- a/drivers/net/ethernet/netronome/nfp/ccm_mbox.c
++++ b/drivers/net/ethernet/netronome/nfp/ccm_mbox.c
+@@ -503,7 +503,7 @@ nfp_ccm_mbox_msg_prepare(struct nfp_net *nn, struct sk_buff *skb,
+ 	max_len = max(max_reply_size, round_up(skb->len, 4));
+ 	if (max_len > mbox_max) {
+ 		nn_dp_warn(&nn->dp,
+-			   "message too big for tha mailbox: %u/%u vs %u\n",
++			   "message too big for the mailbox: %u/%u vs %u\n",
+ 			   skb->len, max_reply_size, mbox_max);
+ 		return -EMSGSIZE;
+ 	}
 -- 
 2.38.1
 
