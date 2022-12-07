@@ -2,65 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BD2C47089
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 09:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81503C4708E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 09:33:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbiLGJXU (ORCPT
+        id S229819AbiLGJdf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 04:23:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40186 "EHLO
+        Wed, 7 Dec 2022 04:33:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbiLGJXT (ORCPT
+        with ESMTP id S229437AbiLGJde (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 04:23:19 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B083B1A230;
-        Wed,  7 Dec 2022 01:23:17 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id l26so6883853wms.4;
-        Wed, 07 Dec 2022 01:23:17 -0800 (PST)
+        Wed, 7 Dec 2022 04:33:34 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF8D20E;
+        Wed,  7 Dec 2022 01:33:34 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id bg10so13143784wmb.1;
+        Wed, 07 Dec 2022 01:33:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mp7IkQilsHJq1Ek0bhLypo9ye+2ulLNr79KyJ290OkQ=;
-        b=V/1PP5ugnQD3HtZI2CHfhf2OvV8wuimKi2nxm5esC6nBSO8i60D82nEL3Ug1nlJtSs
-         D8+yMU4EOyYHjaFseKS+j5Kilz03DJF/zGLAWR33QOiVmkC/J/IF6LLA0o63oMe5JB7R
-         0/CGch7Hod9/IaxHMMXHjiPm0PkYJLE78dXRgBwlYA/ok+p1Wi+bN2r0ke1xWMGd1diA
-         2Xp25ZW4xltMIppGDDrLV/wpmYksgzMalEOaFWT2UYGZ+tTVQqRq3mxxcgrFrsKOIkAx
-         yaMPacX1mJbN1RmxGk0m3B2gbPE/NLvyQZtU2lbMsQxW/V9JTU96Wailf0f22IHm5rQu
-         u7Kw==
+        bh=Z/Q6kvRFfdVCMvD/9KspZyMV4JmhJENHyXiGZYFDk44=;
+        b=fGvVgz/qLTD3VEZDyt0R79HKaMueP/MoJWsyBHUwQi8OkgR6+KCU6nDmoFMopvR3T7
+         L47YKFDIIbN+1PBNVuJIRY2y2sBhXYbp+WdEV03RNxbEMnrPE685neASGJWiaY1gOvhY
+         +OjTKux0yGwNj+htnlJ1vUL0Vb4ZBDwxovlNX1PzDo9cBHQAQGGIw7vlm0821idOlYXf
+         YYwSQDP6rPV3Uy1xXqVobWc2boYm1b4GO988NLxFWaqeE+mv4dsMuo46qAAwHODWZkAW
+         +pUpbqyVKe3qFbrq2+LelY9V4zzKwA9FIhRSzY8nPZQb5E8Iomf+wo8JR7BPFRVSNcwG
+         eDPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Mp7IkQilsHJq1Ek0bhLypo9ye+2ulLNr79KyJ290OkQ=;
-        b=HAswyaGsrvQMkmA3tLbZdZ6W2q2m4Opt1XA6NRtWmHmrj66a0zVo5M0xR8j+csNGVw
-         mX8G0M1g/6OOQba1pyCEB6/iqIuWZQEFjvjXSZz+GTLEiN3HkPpsbSubMfk6j8fvNgN5
-         AZUbhV2GfEpYcR9bkfOSQEEqLgd+TkJv3e5Ij9WcdMrni6bimEoSkkxRbiEpGDhXhZAI
-         C7/OeKHhJfUKz8LfHpxrqNiadZVwna3KNPNs0vJCduJyfcQdkUngSSpG4ccs2tzzAiQt
-         qWDqHfMysXtC7efdOLfVJRHppC3095h/500uIYFHosUp2HVncbcZg5aKeHmALfCQd6gq
-         pf0w==
-X-Gm-Message-State: ANoB5pntvk/cwRJ5XBcxXXjb6flyIS75nlEuPjdDjmF3WTgsfEA1vYI7
-        OtJlCTfEU1YGeZ49mRJX50o=
-X-Google-Smtp-Source: AA0mqf70WKp0djLuEZ+wipgcuqi1y/7k3VbUP9ZuF7jEtcrnXqSRpqyOKVVD7RP8FHU63pDQxXDe3w==
-X-Received: by 2002:a05:600c:1907:b0:3cf:7981:9a7 with SMTP id j7-20020a05600c190700b003cf798109a7mr65485568wmq.87.1670404996211;
-        Wed, 07 Dec 2022 01:23:16 -0800 (PST)
+        bh=Z/Q6kvRFfdVCMvD/9KspZyMV4JmhJENHyXiGZYFDk44=;
+        b=kPdcwoR8hAfUSpGomgICFUykpJnYymmwF3vh9dg3reoa1T5NX78iv8jACgqp/it3KU
+         gIZYboBz/9apy/QcM6IdPFadbRzFVykyBUFXEPIcVfmY3vi+Ev/aUIoZSxcxCd/+pd5z
+         920/HkqVQGKKg6qy8V+2xydmRFqOKnXwg+EnLUrR2DIrRwGMg7DKpZorckr3iYcv3RF2
+         TR9Lg7Pi1GNgP+p9W9/zjOumpbYRbeS1m+EpDV7XAZvZx+OV1rPjSlYgcGUl4qmiNWkH
+         bhLIQeTi3sibt5COEviD3rKPj1zXQ65m0o3JfFtENF49/+DpWiKBO6/rpl4eLdbjBtpC
+         PzwQ==
+X-Gm-Message-State: ANoB5pm49XOqhMIrW3nkGbH7qUInc3oQfazLdyCsfUcepJ7X+w+Ehw50
+        ZqC+rTq3AwLwsKMTbW0DPBQ=
+X-Google-Smtp-Source: AA0mqf65Hayvxx6HW4BpL6shqMfP5P+7WL8Kx9rrVd0hJaGecXER7SpcxDy/P4CdKLK5k/ZFAtBVDA==
+X-Received: by 2002:a05:600c:2d45:b0:3d0:8c4c:f681 with SMTP id a5-20020a05600c2d4500b003d08c4cf681mr14114048wmg.37.1670405612599;
+        Wed, 07 Dec 2022 01:33:32 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l10-20020a05600c47ca00b003c6b70a4d69sm966248wmo.42.2022.12.07.01.23.15
+        by smtp.gmail.com with ESMTPSA id b40-20020a05600c4aa800b003cf6a55d8e8sm1078481wmp.7.2022.12.07.01.33.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 01:23:15 -0800 (PST)
+        Wed, 07 Dec 2022 01:33:32 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
+        linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] xfrm: Fix spelling mistake "oflload" -> "offload"
-Date:   Wed,  7 Dec 2022 09:23:14 +0000
-Message-Id: <20221207092314.2279009-1-colin.i.king@gmail.com>
+Subject: [PATCH] staging: rtl8192e: Fix spelling mistake "ContryIE" -> "CountryIE"
+Date:   Wed,  7 Dec 2022 09:33:31 +0000
+Message-Id: <20221207093331.2280355-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,26 +66,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a NL_SET_ERR_MSG message. Fix it.
+There is a spelling mistake in a netdev_info message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- net/xfrm/xfrm_device.c | 2 +-
+ drivers/staging/rtl8192e/rtllib_rx.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_device.c b/net/xfrm/xfrm_device.c
-index 3e9e874522a8..4aff76c6f12e 100644
---- a/net/xfrm/xfrm_device.c
-+++ b/net/xfrm/xfrm_device.c
-@@ -379,7 +379,7 @@ int xfrm_dev_policy_add(struct net *net, struct xfrm_policy *xp,
- 	default:
- 		xdo->dev = NULL;
- 		dev_put(dev);
--		NL_SET_ERR_MSG(extack, "Unrecognized oflload direction");
-+		NL_SET_ERR_MSG(extack, "Unrecognized offload direction");
- 		return -EINVAL;
- 	}
- 
+diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
+index f8965afab767..669e74a67190 100644
+--- a/drivers/staging/rtl8192e/rtllib_rx.c
++++ b/drivers/staging/rtl8192e/rtllib_rx.c
+@@ -1776,7 +1776,7 @@ static inline void rtllib_extract_country_ie(
+ 				if (rtllib_act_scanning(ieee, false) &&
+ 				    ieee->FirstIe_InScan)
+ 					netdev_info(ieee->dev,
+-						    "Received beacon ContryIE, SSID: <%s>\n",
++						    "Received beacon CountryIE, SSID: <%s>\n",
+ 						    network->ssid);
+ 				dot11d_update_country(ieee, addr2,
+ 						       info_element->len,
 -- 
 2.38.1
 
