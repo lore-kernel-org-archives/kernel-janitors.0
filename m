@@ -2,66 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BDDC352A1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 10:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90406C352A1
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 10:46:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229891AbiLGKhh (ORCPT
+        id S229589AbiLGKqL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 05:37:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33986 "EHLO
+        Wed, 7 Dec 2022 05:46:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229943AbiLGKhV (ORCPT
+        with ESMTP id S229462AbiLGKqJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 05:37:21 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5CB2D1C3;
-        Wed,  7 Dec 2022 02:37:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 7 Dec 2022 05:46:09 -0500
+Received: from sonata.ens-lyon.org (domu-toccata.ens-lyon.fr [140.77.166.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A7F2CE13;
+        Wed,  7 Dec 2022 02:46:07 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+        by sonata.ens-lyon.org (Postfix) with ESMTP id 8ECD920152;
+        Wed,  7 Dec 2022 11:46:04 +0100 (CET)
+Received: from sonata.ens-lyon.org ([127.0.0.1])
+        by localhost (sonata.ens-lyon.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Z0b3ieXArZz6; Wed,  7 Dec 2022 11:46:04 +0100 (CET)
+Received: from begin (nat-inria-interne-52-gw-01-bso.bordeaux.inria.fr [194.199.1.52])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 060D0612B7;
-        Wed,  7 Dec 2022 10:37:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC726C433D6;
-        Wed,  7 Dec 2022 10:37:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670409439;
-        bh=r4Ky0VEt4IYt4gEBJ+qBI3AQnvtdo/WFFF7dgMzFhug=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sqfwCpBO6fkO/RGC8pNiSfmwT/JWpBq8bl02+gAakEJYTnKMSpW/P6+BqemNmwmNS
-         GrvQJau3t6+FO9+1jYSlpIfHQgv7s6OqsKjSbDpw7rTECOFrBGeWcyeFO/6uinI01t
-         OQi8BGR0DhnONgl4fefLQl66DnxcTb0qpv2BBU5YC4yNkRtt0bq2NNbIyGzqF9NPrT
-         DtuFNbr4OYW+r0JiQmJgdSZ4qgVfTg3wYWR1XlLMqbgwrZR8yezoKdk81zJo+JkiUd
-         DpYsexFHtVJEvvRffhADDfeID5uEV/cGS4aA4ro9W99uJ4gHiOGfh3+qiyJntLxWQx
-         U/QS7CvdaY3ng==
-Date:   Wed, 7 Dec 2022 12:37:15 +0200
-From:   Leon Romanovsky <leon@kernel.org>
+        by sonata.ens-lyon.org (Postfix) with ESMTPSA id 14E212014F;
+        Wed,  7 Dec 2022 11:46:03 +0100 (CET)
+Received: from samy by begin with local (Exim 4.96)
+        (envelope-from <samuel.thibault@ens-lyon.org>)
+        id 1p2rwB-000kuI-1Q;
+        Wed, 07 Dec 2022 11:46:03 +0100
+Date:   Wed, 7 Dec 2022 11:46:03 +0100
+From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+Cc:     William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mushahid Hussain <mushi.shar@gmail.com>,
+        speakup@linux-speakup.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] accessibility: speakup: Fix spelling mistake "thw" ->
+ "the"
+Message-ID: <20221207104603.awjfxnv67yhzdanv@begin>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mushahid Hussain <mushi.shar@gmail.com>, speakup@linux-speakup.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] xfrm: Fix spelling mistake "oflload" -> "offload"
-Message-ID: <Y5Bs28CaQwXRLFB+@unreal>
-References: <20221207092314.2279009-1-colin.i.king@gmail.com>
+References: <20221207095202.2282567-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20221207092314.2279009-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221207095202.2282567-1-colin.i.king@gmail.com>
+Organization: I am not organized
+User-Agent: NeoMutt/20170609 (1.8.3)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Dec 07, 2022 at 09:23:14AM +0000, Colin Ian King wrote:
-> There is a spelling mistake in a NL_SET_ERR_MSG message. Fix it.
+Colin Ian King, le mer. 07 déc. 2022 09:52:02 +0000, a ecrit:
+> There is a spelling mistake in the module parameter description
+> for say_word_ctl and an extra space. Fix the spelling mistake and
+> remove the extraneous space.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+
 > ---
->  net/xfrm/xfrm_device.c | 2 +-
+>  drivers/accessibility/speakup/main.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/accessibility/speakup/main.c b/drivers/accessibility/speakup/main.c
+> index 4733fd6334ab..56c073103cbb 100644
+> --- a/drivers/accessibility/speakup/main.c
+> +++ b/drivers/accessibility/speakup/main.c
+> @@ -2490,7 +2490,7 @@ MODULE_PARM_DESC(punc_level, "Controls the level of punctuation spoken as the sc
+>  MODULE_PARM_DESC(reading_punc, "It controls the level of punctuation when reviewing the screen with speakup's screen review commands.");
+>  MODULE_PARM_DESC(cursor_time, "This controls cursor delay when using arrow keys.");
+>  MODULE_PARM_DESC(say_control, "This controls if speakup speaks shift, alt and control when those keys are pressed or not.");
+> -MODULE_PARM_DESC(say_word_ctl, "Sets thw say_word_ctl  on load.");
+> +MODULE_PARM_DESC(say_word_ctl, "Sets the say_word_ctl on load.");
+>  MODULE_PARM_DESC(no_interrupt, "Controls if typing interrupts output from speakup.");
+>  MODULE_PARM_DESC(key_echo, "Controls if speakup speaks keys when they are typed. One = on zero = off or don't echo keys.");
+>  MODULE_PARM_DESC(cur_phonetic, "Controls if speakup speaks letters phonetically during navigation. One = on zero = off or don't speak phonetically.");
+> -- 
+> 2.38.1
+> 
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+-- 
+Samuel
+---
+Pour une évaluation indépendante, transparente et rigoureuse !
+Je soutiens la Commission d'Évaluation de l'Inria.
