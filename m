@@ -2,110 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB42C352A1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 07:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3AFC4708E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 09:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbiLGHGi (ORCPT
+        id S229611AbiLGJBf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 02:06:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45838 "EHLO
+        Wed, 7 Dec 2022 04:01:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbiLGHGh (ORCPT
+        with ESMTP id S229437AbiLGJBb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 02:06:37 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43C4B4B9B8;
-        Tue,  6 Dec 2022 23:06:36 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id h10so17196828wrx.3;
-        Tue, 06 Dec 2022 23:06:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aMIaupsjBzYoj3oHl6ISBy9SaKUaHfbUmGVEOiCO/Zw=;
-        b=AGMxaYUx7nIsG+zrtjflWNBmycUOvMrq6beQCJqB84swIrJJxKFJZzMW0S9zuJMGjR
-         hjCO7agUQtLPdZTbzSsRE7O2IfqoSHCsq1o/LO/WRKQqPB5kHr1iRiqkx3d81z3opg7p
-         6vCCIm6GUjk3gULYg4cDEGR+QJHAZMPVDR+zK/Q2v+bxgP35K06lQvjG6tMAh8EQyIjD
-         zl7eZOmZ/M/OH9d4WaIc6IDDEboNLPRa3M8hoD/Z8Gk2qMRHgoZE2oyJ7W5DpNUhLPhQ
-         7OSh9GOkEec8L6Hv7142d6leif5F0Ujjf68X33bW1ubXPk9O4axBrxSELf5BlEwshmbg
-         m4Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aMIaupsjBzYoj3oHl6ISBy9SaKUaHfbUmGVEOiCO/Zw=;
-        b=BMYJW155u5VgVqdkRTUGYflLn0Ju58FQss59BuvQRhIbIZEG+BB1X/q9qWnK2ADLt0
-         arpFdmfoGz8XhFjSBRgevlkV09Gninw7SnP9DYAu7AWlCDtBPCGKvfjdryITIZhsg7tX
-         KOs8AfR+0qfP0R8j6aG1O3HCu7HlLDa/DefoyIT8N1WRpCW2R7b+urpTtbrzb9u2/sxg
-         J6CFa63wrXYCuz3DX4quD01dTMmbeQrz9TXw3DX5SrAHrQffnPZwpAG+/Urojax8QrpR
-         J5uiwcxN3rgwPxTfLC+HB4QpKj5pG18mAtcvLtwRAVyr9Aoxll8iQV6vx8pPmLJhx9X5
-         sG8w==
-X-Gm-Message-State: ANoB5pmIwd9JmPtbPt/G0jWDUAYJQZGadqPVrqOeyUCzlMFQsYTK94Lw
-        MJwDDUZi+d/Y5a5esL6eBZ0=
-X-Google-Smtp-Source: AA0mqf59DrGolkaKKFPghPHRMk6OkfcWCp3fxT5XH/qdWz1zR+6qJb9moMxNQDF7YotJSF42fdwLiQ==
-X-Received: by 2002:a5d:4950:0:b0:242:1f80:6cd9 with SMTP id r16-20020a5d4950000000b002421f806cd9mr22980844wrs.405.1670396794508;
-        Tue, 06 Dec 2022 23:06:34 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u16-20020adff890000000b0024165454262sm18739665wrp.11.2022.12.06.23.06.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 23:06:34 -0800 (PST)
-Date:   Wed, 7 Dec 2022 10:06:31 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+        Wed, 7 Dec 2022 04:01:31 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA123B3;
+        Wed,  7 Dec 2022 01:01:30 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8B690B81B51;
+        Wed,  7 Dec 2022 09:01:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF571C433D6;
+        Wed,  7 Dec 2022 09:01:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670403688;
+        bh=HsAIY/njquEAeiBXvkIXYVIRzC6BKGyZBfVHiR0FK00=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FOqy+toZ0W4FLw/mYuuKcryTgReNVNsOE/riMNkU5onAreiKw/Dj8OcOZNId9qdju
+         MkmAl/J6CT3guADlVizr8s+3qyI5bjSLc44rIU+MPnNMI34xYcmDnPS/8D0o6g6vFc
+         g3O+WwVeiYg85vvl2zDcIQLkbx6NPZZUbrz5WsgFs3LKGCNFdFMDq0Gf0EugDrrbyq
+         ygMsgEGNQ5eFWCQkYDGldRToAtNUdqTKOpnI0fOIsse4UeztUSaZ4qPSpu3j3FPgwR
+         Lm0rbgFs3BIE0rJ1pRVL8XU6OZCdLOEBDn0kzV64Bbv0f2L+W2ExqDJ8BT7EjekVXV
+         FiATcJIDD/XwQ==
+Date:   Wed, 7 Dec 2022 11:01:24 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH net v2] net: mvneta: Fix an out of bounds check
-Message-ID: <Y5A7d1E5ccwHTYPf@kadam>
+Subject: Re: [PATCH net v2] net: mvneta: Fix an out of bounds check
+Message-ID: <Y5BWZDS09uv7TTKA@unreal>
+References: <Y5A7d1E5ccwHTYPf@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Y5A7d1E5ccwHTYPf@kadam>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In an earlier commit, I added a bounds check to prevent an out of bounds
-read and a WARN().  On further discussion and consideration that check
-was probably too aggressive.  Instead of returning -EINVAL, a better fix
-would be to just prevent the out of bounds read but continue the process.
+On Wed, Dec 07, 2022 at 10:06:31AM +0300, Dan Carpenter wrote:
+> In an earlier commit, I added a bounds check to prevent an out of bounds
+> read and a WARN().  On further discussion and consideration that check
+> was probably too aggressive.  Instead of returning -EINVAL, a better fix
+> would be to just prevent the out of bounds read but continue the process.
+> 
+> Background: The value of "pp->rxq_def" is a number between 0-7 by default,
+> or even higher depending on the value of "rxq_number", which is a module
+> parameter. If the value is more than the number of available CPUs then
+> it will trigger the WARN() in cpu_max_bits_warn().
+> 
+> Fixes: e8b4fc13900b ("net: mvneta: Prevent out of bounds read in mvneta_config_rss()")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> v2: fix the subject to say net instead of net-next.
+> 
+>  drivers/net/ethernet/marvell/mvneta.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
 
-Background: The value of "pp->rxq_def" is a number between 0-7 by default,
-or even higher depending on the value of "rxq_number", which is a module
-parameter. If the value is more than the number of available CPUs then
-it will trigger the WARN() in cpu_max_bits_warn().
-
-Fixes: e8b4fc13900b ("net: mvneta: Prevent out of bounds read in mvneta_config_rss()")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-v2: fix the subject to say net instead of net-next.
-
- drivers/net/ethernet/marvell/mvneta.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 66b7f27c9a48..5aefaaff0871 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -4271,7 +4271,7 @@ static void mvneta_percpu_elect(struct mvneta_port *pp)
- 	/* Use the cpu associated to the rxq when it is online, in all
- 	 * the other cases, use the cpu 0 which can't be offline.
- 	 */
--	if (cpu_online(pp->rxq_def))
-+	if (pp->rxq_def < nr_cpu_ids && cpu_online(pp->rxq_def))
- 		elected_cpu = pp->rxq_def;
- 
- 	max_cpu = num_present_cpus();
-@@ -4927,9 +4927,6 @@ static int  mvneta_config_rss(struct mvneta_port *pp)
- 		napi_disable(&pp->napi);
- 	}
- 
--	if (pp->indir[0] >= nr_cpu_ids)
--		return -EINVAL;
--
- 	pp->rxq_def = pp->indir[0];
- 
- 	/* Update unicast mapping */
--- 
-2.35.1
+Thanks for the followup,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
