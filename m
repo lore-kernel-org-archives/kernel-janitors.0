@@ -2,97 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D1CC352A1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 11:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 336F7C352A1
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Dec 2022 11:51:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229936AbiLGLXs (ORCPT
+        id S230112AbiLGLvl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Dec 2022 06:23:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37650 "EHLO
+        Wed, 7 Dec 2022 06:51:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229813AbiLGLXk (ORCPT
+        with ESMTP id S229652AbiLGLve (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Dec 2022 06:23:40 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D5CFC6;
-        Wed,  7 Dec 2022 03:23:38 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id d14so19489209edj.11;
-        Wed, 07 Dec 2022 03:23:38 -0800 (PST)
+        Wed, 7 Dec 2022 06:51:34 -0500
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2102.outbound.protection.outlook.com [40.107.92.102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 430C04FF9B;
+        Wed,  7 Dec 2022 03:51:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KWmYKToMB059JK5QxXYpwC0P7FKO8AA581pBrr4hfNlN8Jl0NXkZpRQf8iaYLgAyThOmDYFh88bA576DkZIh9CeqGHUUhJN5qEx3OXfimshDrgiywWxpYVxHwGhPsrHpqWjzMed0mnOYXuLG3u+cuA2cAJOWAGREDxnYg8VRezBslCmmHu5GAaC6EuCCmFlsIis01tw57mBXxJvpj7niNAy0wwbNxnEZGKbFksNsvTrf1th3zMF80KIHJXylcVpZ2hBoTT8DSrCBE6kUeaQnO/qVeVGLA1PDtt9bthohzza9y8EgKa9wiW2pklriwmhTTRmr2J5CAbNkT8jB98Tp8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fJreNJUmAB5ziO0IkkJna+UqDqVgAO37LZKJiqVfLG4=;
+ b=KzLAqgWpa43fNvZJGAaYs7VhBWGZJhJHh4gfVEwP1JHR5+EoGo16qG90e2W+7FiejAEgCCusyOnjHvf84fkVGT1xTxUdmB1y8I/zorbb8ccKgrsrai9BrtkGWcZK28mC99bJfU4vzul4rYdwuZRRyMwhqxGkjHBcOa/kzi4XGsHZpsi35HIkLBZuk45jBs+buSYEQtGdl1uBa9y5ZwY2ie4V8YcdfNY5EuPiV0PkQsU0kLLx3h/XwpWrrLGOPixm1KuaeuHtqXyKNE7w0j6eJtdSmEusR2ZBmVwL2xQVCyuFOFWsL/UJl5oFjMovveeXUFrBm4RleYxmYPkUpZhseg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Swxnqm3Yd6IphquwUVUjDbZqjsoRJONegiUpMUBVzbI=;
-        b=HYxWXiXhINqH8bCJs4SmMewv5g8Ur2E0DRr8gIwW12/0KK4qTfP5z59eS4QT8nStom
-         /EkDq+Tm7TELmiMhkrf5PqXt7YxQu0DPQ4W72ASsxVWhhuKhlPFMondPKLLQmhr7f/Q1
-         szN+UjpPqSMfqdT29m3C4nk0GmQn59Y78UFMY/Xhp46FBIeOMzpu+iLWGi4mFfw37L2k
-         TOB/rqpmia7dsWAgOAdFo3Im+C0xXflKP44KCK6tfikKdpCvzjX6Nf2kD+/gnXd/geYk
-         gXNxrpP6hipS4G5NkFzdbm9l7m8DDue++k/VWjlsjB5l8qAiM94C5lAXdDoRxyGf6+Rr
-         j4wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Swxnqm3Yd6IphquwUVUjDbZqjsoRJONegiUpMUBVzbI=;
-        b=D3AP79h39VUPYfP9UaNi4/eN3CXWn89gdVpexfw52XPLub3o1JUnl7bydqzt82S200
-         vkPBHw8kdZQZzk8u18KDgEkH5qNB/kjFHi8K8lES7EGNxd+qUIOASjAew2FVTes5QpDG
-         11gkh0slBnuz3KgdJsPjE8laRpVQr6/488P8naRbkeZgtNPVDw/+XHj3Ul5SfVkKqQPK
-         yKENvUxTh6sQUFbwOrFdu7I8dV/Q8msJYAg1oC27UtoaqpvdFOz3iZuWFerxcFF/dl69
-         TL4zNwOPDgu984+cSdvjXh2DQjTzbqLKraFrQyUg7GWfoIx9UH7YV/fuEBSh8p6veeZ0
-         s44w==
-X-Gm-Message-State: ANoB5plGUr2/ed2xedYXiFKVDPdfYcN37UWU2hTmnpMozvO9Oj6sebyK
-        9OhqahIwi1Bxj5tHO2dk+uccqm2me6cnUg==
-X-Google-Smtp-Source: AA0mqf5HAtg0GE5OsFF3c0vQQ0Lz9CGfSlS0+QSwQa5Bicln7DNek7IMvwQAAEuPZ1pLMl4hryWeQg==
-X-Received: by 2002:a05:6402:e0d:b0:466:4168:6ea7 with SMTP id h13-20020a0564020e0d00b0046641686ea7mr20466056edh.273.1670412216884;
-        Wed, 07 Dec 2022 03:23:36 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id f6-20020a056402004600b0046776f98d0csm2051450edu.79.2022.12.07.03.23.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 03:23:36 -0800 (PST)
-Date:   Wed, 7 Dec 2022 14:23:28 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net] lib: packing: fix shift wrapping in bit_reverse()
-Message-ID: <Y5B3sAcS6qKSt+lS@kili>
-MIME-Version: 1.0
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fJreNJUmAB5ziO0IkkJna+UqDqVgAO37LZKJiqVfLG4=;
+ b=Q44PCi6bZnzlF5Awechl8pBPBq/JW4rxc5giNZes/NmG2IuBIgiL5WVZI04DNknNLEOyChpry3SJskhbJo3VpclbpxkE0jwvMTdk+dbNHcJwwq429OS6ae2Rg8jrjD2oAbI7ZyPCrzsPzYnS9LhT5cafN+p3QG6xO74MVSI80EE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by BY3PR13MB5042.namprd13.prod.outlook.com (2603:10b6:a03:366::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.14; Wed, 7 Dec
+ 2022 11:51:19 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::483b:9e84:fadc:da30]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::483b:9e84:fadc:da30%9]) with mapi id 15.20.5880.014; Wed, 7 Dec 2022
+ 11:51:19 +0000
+Date:   Wed, 7 Dec 2022 12:51:10 +0100
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Huanhuan Wang <huanhuan.wang@corigine.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Louis Peens <louis.peens@corigine.com>,
+        oss-drivers@corigine.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] xfrm: Fix spelling mistake "tyoe" -> "type"
+Message-ID: <Y5B+Lo+xaKx71p+n@corigine.com>
+References: <20221207091919.2278416-1-colin.i.king@gmail.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20221207091919.2278416-1-colin.i.king@gmail.com>
+X-ClientProxiedBy: AM0PR04CA0065.eurprd04.prod.outlook.com
+ (2603:10a6:208:1::42) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|BY3PR13MB5042:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4952e2fc-3dca-439b-1303-08dad8495aaf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: O9jpspLVMaUpDAUDkuhKJOkLpwd0sEIiLTjrOwKCT4u52+F8fNOQJKbCQz9juJPcFAUHMaKcyUxDtGfqQYpL4V18/vRlQqSacs+C3gA81u7HE3f5KcEOPyMMobB0QH13izoyxY35d2f5eVtU9ttxGPCIGrMMSxUvKV9DZeoSryiZsb/9P1GcLZG7MNiy5toC2lPO/CAA/Niz4ivQvcn9uP8Gjxm2ZBFy8ijIonGnWSEsaQFfdF8tyFcNv09ON+7nIBngDZkDxnjDbPEBtjZYNmAmkxv9TwFf9SH17Ctw6md20qx5YfAc5QLQI2I9ksCp+xFBdrq1YgJPTXvc6K6CpjDgJqykGKrqJyBL2xvxx6vPJYqvAdFZWCvW0+++QZh6fNra5tV971Bo1QQ2dQbumadVHISGWUJmsgKHPPwnHigfBWi4iTSHnX+fscTJ+48AC3VvrThHxuhaSomOvvUpr7lNWzl8mtCoK8vW9ynG1GcZJ6UqlY6cFjZs8SvSDlbdPhWXd/AQBOFh0PRXrDlNISGuLy8dLGjlcj33cvXroTVvG2DNkNKRB1PNjx+//H/moiKy5wBSbyVfD8ME1wCLe/EmrcbuiU9l17q/14aRZbUD4NpunBjE5siW1Qc1/AHP2e/0KsFWrT4fmSUJYteJG4L/9amjnqlO/5GNHRkqdC9mWqs9sqeTYqCOJOKDuNKt
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(346002)(376002)(366004)(39840400004)(451199015)(36756003)(4326008)(86362001)(8936002)(66476007)(66556008)(2906002)(4744005)(66946007)(478600001)(41300700001)(8676002)(44832011)(38100700002)(83380400001)(54906003)(6916009)(316002)(6486002)(2616005)(966005)(5660300002)(186003)(6506007)(6666004)(6512007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?aaRGLKpvGMwXbK2N6vdLhTWzvMJg/K8OvoL4UIDcrGId25E96nqu5mmy19J2?=
+ =?us-ascii?Q?qRd6cwfzI4yfzEEhspDXMZ8z5FJj7zJtGKapRULNlS13GlKwcNUH00Lt79XL?=
+ =?us-ascii?Q?V0QNQWMmvcdUp4Wob92psIxlg3CDD4k+JsOx+nC+R18Ibc4yK2KnUSqHmslY?=
+ =?us-ascii?Q?v9fgLXEds47nOlzIyLl9rdJyZ/agBQj+R9xfs+x5sFHuKbffCtH2yTXeN8dr?=
+ =?us-ascii?Q?9jV84MlrqbtR3oTNKl1ywgqCOwYc7DvFNRnhsqAtAM0fpnjXJgud4Un9z245?=
+ =?us-ascii?Q?XVWTHocUDb8fo14uxSrRYmjQa6HUL/43OkBeo6ZrhSFdDTiUCDE6S8cZLNWC?=
+ =?us-ascii?Q?m1YJrzv8XqfagpHNAwZCBIVUnPiWfQH8KUuAsPpNNch5HKkKvGjxsz6Ivj5O?=
+ =?us-ascii?Q?5FsbJ5Bcskcv61wo8U6qYMjGjCTwNzRtsAkvHvT1jV3izao6dWW/0Ae2o26+?=
+ =?us-ascii?Q?je1Bd6GsCmGX9MisWBDi/6GfhO43nx88EV4G3ESFR0DXrqn5UJDEkWBwJFN0?=
+ =?us-ascii?Q?sPvYS6F462WRRBJAGHHNVrvn0mcV+a5xVL4v0RG6B2/CbgGPnyP8A0vf5W6E?=
+ =?us-ascii?Q?+LNW0jH86NGl3qsixljKtClTS15wI2c6vqer/Dv8t3e9uT9DW2co+JRw1STD?=
+ =?us-ascii?Q?FEi1IwOtdwsmJIBd6B1sD+fitUUi51adWex8pjooCbM/3uDntWEpOsQhS4An?=
+ =?us-ascii?Q?Z8nqyx6ONnCml9Yg+UhAsgmREoL506Kcyi/q1p/CDXVTWbOeuPB51zudQ9w+?=
+ =?us-ascii?Q?xaE9QqR1SEwqgc7c3JAQukWkMk8sAv0ioScMlTEeQBotJGaIuH+GJT75MFEO?=
+ =?us-ascii?Q?XVrW5+orNBJ4r8I17hsDuGFtkjsaV9mvQxRe45/ZRFrmdfalucDuphJNP4rL?=
+ =?us-ascii?Q?GN3FQrO+2UtbKyvLr6Ra3xrAaESFQWGWuimO8hEFpgE5BFW4IT1VqcJLrO3x?=
+ =?us-ascii?Q?B6sgIqW17MhGQn/GmJ8FTlzQLzGAPk3BSiEW827SBjdVEQddwtPKstFYS0Ne?=
+ =?us-ascii?Q?98i9EehXph0AeSv7TqyfUFzdpkltIn7KQ89mNrCi95ZoFcqcUNWFUz6c2sMl?=
+ =?us-ascii?Q?oM/Yb1RlTtnEFLYIheT1H4JCf0n4x5+Jpq5BuNHSgf7DccFAXARZY50PGMUM?=
+ =?us-ascii?Q?0mcrurLEcvLAcbfpo84jIgonTPbDzyAMfC58pbbMZ7L+KRcXVhcFpRouDp1i?=
+ =?us-ascii?Q?u65P93f6mWeIVigp7k2786YGpiGAm+PW+XPFxgkEvhzKGotNiw2wjqI1Va20?=
+ =?us-ascii?Q?FkGUvixapDevrN009g44/OWJO2cpBatDulx1bD6xnLHIfW6H0UQjeDdN4QBH?=
+ =?us-ascii?Q?gky69aCqxpYC+bAq2zlbUy7rikZOJ3j1F/TX5PLyR3uy5NVi6eiZbTskMib7?=
+ =?us-ascii?Q?vc1HVSAhrk699WfgqnuFrHLXwRGgXmf1fk9VvjEobwGC9D7zQZcerJW+IWQb?=
+ =?us-ascii?Q?Wxsv0xHF4TAT1Bf9JUGCKZcjm4fpBzmWmy4r9Px/1+bXydUp4UHIQAI/48BW?=
+ =?us-ascii?Q?0vCtKJE7C5QMZr+RE9z22t5alZ2yay95EBHS4Mya0rIogbLc8SRwTXZnocna?=
+ =?us-ascii?Q?KDVx99avFm3VdiBUIZ6G/3wEGwR5M7k/96aTcIQgIdH/9xFAYCkxcpVljJfm?=
+ =?us-ascii?Q?8F6453AxMcXiL657x/zVxQcS/18jDCxRMqZLmWZy/MsZ29KXRkcNep6lrgX4?=
+ =?us-ascii?Q?qQD7PA=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4952e2fc-3dca-439b-1303-08dad8495aaf
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2022 11:51:19.3700
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QNowr2uH7EKa1JlkN2AqQAg9/b19Xf4Lcx2qJQlN9ySx1kf9b6t77wljtdYJL21xjCNpLVBaH767ARC+/7pQuWUjLGWU6LnBG9dSvKnRvqA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR13MB5042
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The bit_reverse() function is clearly supposed to be able to handle
-64 bit values, but the types for "(1 << i)" and "bit << (width - i - 1)"
-are not enough to handle more than 32 bits.
+On Wed, Dec 07, 2022 at 09:19:19AM +0000, Colin Ian King wrote:
+> [Some people who received this message don't often get email from colin.i.king@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> There is a spelling mistake in a nn_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Fixes: 554aae35007e ("lib: Add support for generic packing operations")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- lib/packing.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Hi Colin,
 
-diff --git a/lib/packing.c b/lib/packing.c
-index 9a72f4bbf0e2..9d7418052f5a 100644
---- a/lib/packing.c
-+++ b/lib/packing.c
-@@ -32,12 +32,11 @@ static int get_reverse_lsw32_offset(int offset, size_t len)
- static u64 bit_reverse(u64 val, unsigned int width)
- {
- 	u64 new_val = 0;
--	unsigned int bit;
- 	unsigned int i;
- 
- 	for (i = 0; i < width; i++) {
--		bit = (val & (1 << i)) != 0;
--		new_val |= (bit << (width - i - 1));
-+		if (val & BIT_ULL(1))
-+			new_val |= BIT_ULL(width - i - 1);
- 	}
- 	return new_val;
- }
--- 
-2.35.1
+Thanks for fixing this.
 
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
