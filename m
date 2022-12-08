@@ -2,38 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21719C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 12:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87571C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 13:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbiLHMtn (ORCPT
+        id S229738AbiLHNxL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Dec 2022 07:49:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47716 "EHLO
+        Thu, 8 Dec 2022 08:53:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229982AbiLHMtl (ORCPT
+        with ESMTP id S229612AbiLHNxK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Dec 2022 07:49:41 -0500
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7091F63D69;
-        Thu,  8 Dec 2022 04:49:41 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4NSYrg6QQkz4xYQ;
-        Thu,  8 Dec 2022 23:49:39 +1100 (AEDT)
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <52e843a460bc374973149b8da0bd04f9761b80b7.1657382184.git.christophe.jaillet@wanadoo.fr>
-References: <52e843a460bc374973149b8da0bd04f9761b80b7.1657382184.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] KVM: PPC: Book3S HV: Use the bitmap API to allocate bitmaps
-Message-Id: <167050315701.1457988.18073290985698209430.b4-ty@ellerman.id.au>
-Date:   Thu, 08 Dec 2022 23:39:17 +1100
+        Thu, 8 Dec 2022 08:53:10 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ECC83204C;
+        Thu,  8 Dec 2022 05:53:09 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id j5-20020a05600c410500b003cfa9c0ea76so1050719wmi.3;
+        Thu, 08 Dec 2022 05:53:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2v8l5THJ19GAjS4O893x/pYLkkbHLYw6NG1nL55YPFc=;
+        b=AL19aAA79DEHlxU2LBDbITcgE09dwsxmvXgb6m3ikkCGqlcqc7LNc1YT+vU0WEdmMU
+         IXdkiJEFU3UWYfJSx6oxzZbgiozELKNpcbq7iG+o2g1Q31ou0UX65S8nkCwoRwLKH7IS
+         J0lhIkXCny3lTS7iU/t7yAPz7F89klF3sgBJMCEt0LaTeAkSKduMCXW3nBYjl0Gg2G59
+         +1RvMbKeKU6j3xBBpv63Ax2oQpK/2ExCIylx3H1Ub6tmkxyZBzzQ2+VPt4V/Acxzgr2H
+         z6iNrBMHcrwuJjguz+Ykd96gUCrIphHYoeu6TrtoBEqwK6a8fkmIqZ/BUE2GJQxiY3Wm
+         mj4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2v8l5THJ19GAjS4O893x/pYLkkbHLYw6NG1nL55YPFc=;
+        b=Vx/H7ltFBu8yPSD5xPNCwF499RSdsvv7wtWmnwp1CNF5sWJOs56Z6kZLZPVyem1dYa
+         eeRp41wpZSOluIsbsgbERwB8N6Qh6ZbKhhHOHsP4y2trxVwFR4g9RcKEWfaPUduRsuJq
+         Orx5TeDryltoH7agp49neXQJwGOjK4xcyVEf+8oF6Y6+ecFABRDLJ3F1Or0QvV9jCXz9
+         b7LdN8uZWWwgu5xYihHQFM8SZhVf3WxE9aVC2A4ba0bkXF5hzXxhXKVvCHOEh13aMp9q
+         QGtZURXCUGcGSZXJnfgMgXwbGGz0r7Yqqwv3h0+nBPpHOxnthojghfuMLPhVOt2Q+hwR
+         N6yQ==
+X-Gm-Message-State: ANoB5pnFfXMyor+cb9mAGnhoDLqttslKVk0sUjpAs6+Oz12uFjGFLI8D
+        N4kzuidAiEocAoqsH1UgR0F0ZN06ooCCbcvOOf4=
+X-Google-Smtp-Source: AA0mqf6Bi3YvmAgQHC3Yt6sL/8Ifia4RSL0RqODEeiOHDgXMgNNldxonwBXOgCAjtOx5rpss4/Fs1Q==
+X-Received: by 2002:a05:600c:1e08:b0:3c6:e63d:b89c with SMTP id ay8-20020a05600c1e0800b003c6e63db89cmr1974812wmb.11.1670507587793;
+        Thu, 08 Dec 2022 05:53:07 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id t64-20020a1c4643000000b003cfa622a18asm4994319wma.3.2022.12.08.05.53.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Dec 2022 05:53:07 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] selftest: Fix spelling mistake "eith" -> "with"
+Date:   Thu,  8 Dec 2022 13:53:05 +0000
+Message-Id: <20221208135305.2445846-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -41,16 +64,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 9 Jul 2022 17:56:43 +0200, Christophe JAILLET wrote:
-> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
-> 
-> It is less verbose and it improves the semantic.
-> 
-> 
+There is a spelling mistake in a ksft_test_result_fail message. Fix it.
 
-Applied to powerpc/next.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/capabilities/test_execve.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] KVM: PPC: Book3S HV: Use the bitmap API to allocate bitmaps
-      https://git.kernel.org/powerpc/c/a96b20758b23be7e9f693218908228d6100c3c26
+diff --git a/tools/testing/selftests/capabilities/test_execve.c b/tools/testing/selftests/capabilities/test_execve.c
+index df0ef02b4036..5cc2481507a6 100644
+--- a/tools/testing/selftests/capabilities/test_execve.c
++++ b/tools/testing/selftests/capabilities/test_execve.c
+@@ -288,7 +288,7 @@ static int do_tests(int uid, const char *our_path)
+ 				"PR_CAP_AMBIENT_RAISE isn't supported\n");
+ 		else
+ 			ksft_test_result_fail(
+-				"PR_CAP_AMBIENT_RAISE should have failed eith EPERM on a non-inheritable cap\n");
++				"PR_CAP_AMBIENT_RAISE should have failed with EPERM on a non-inheritable cap\n");
+ 		return 1;
+ 	}
+ 	ksft_test_result_pass(
+-- 
+2.38.1
 
-cheers
