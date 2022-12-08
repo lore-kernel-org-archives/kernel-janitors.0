@@ -2,82 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E1FC4167B
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 17:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A72ECC10F1E
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 18:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbiLHRUV (ORCPT
+        id S229840AbiLHScB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Dec 2022 12:20:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41876 "EHLO
+        Thu, 8 Dec 2022 13:32:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229792AbiLHRUT (ORCPT
+        with ESMTP id S229867AbiLHSb2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Dec 2022 12:20:19 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9D488C6BD;
-        Thu,  8 Dec 2022 09:20:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9743CB82583;
-        Thu,  8 Dec 2022 17:20:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 49902C433F2;
-        Thu,  8 Dec 2022 17:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670520016;
-        bh=+qWr5OgV+ASUPlcQiDwWmxYKt772L4SsruZm0A+X7DM=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=MyiCsCfrw2ugo1U30Cos31ZjVCkHU3QHRJf04cJXhx8LCxG7VRYNVPlNeP8PkOaj0
-         f0UwKuqbvSL/PombYwekXuiWD3REd5o6GGa5yjGwrl7NCJNeEN2hhYvhC7YV3Bqt6Q
-         booW3LuFu1FfRnmpTYV4T1rEVwzeiXLyJOFofBsFwD2qjkzPA4qui40TI3dYUBB+bL
-         rGviUKI+BV6hvcBBiarPDPxTWZ4qDY9VsgtYshR1SoRXhuBCYH7Xfv3KzboDm91hqF
-         OjKQuWVJXPnB4gUfpTLcAHZQ48ZEApUwEKU6f0Z4zg9EzksjDf88Q1wc43HS7D9dSJ
-         evWGaDYiau5hg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 20FE5C00442;
-        Thu,  8 Dec 2022 17:20:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 8 Dec 2022 13:31:28 -0500
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83231AE4E5
+        for <kernel-janitors@vger.kernel.org>; Thu,  8 Dec 2022 10:31:13 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id 3LfhpT2ds1uKA3Lfhpfwkn; Thu, 08 Dec 2022 19:31:02 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 08 Dec 2022 19:31:02 +0100
+X-ME-IP: 86.243.100.34
+Message-ID: <fbd0748f-9f22-42bb-c388-ce1ea10ef60c@wanadoo.fr>
+Date:   Thu, 8 Dec 2022 19:31:01 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH 1/2] mfd: qcom_rpm: Fix an error handling path in
+ qcom_rpm_probe()
+To:     Lee Jones <lee@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>, linux-arm-msm@vger.kernel.org
+References: <e39752476d02605b2be46cab7115f71255ce13a8.1668949256.git.christophe.jaillet@wanadoo.fr>
+ <Y5HYzzwdWCrpWOTv@google.com>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <Y5HYzzwdWCrpWOTv@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: mvneta: Fix an out of bounds check
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167052001612.19571.10773749806364386937.git-patchwork-notify@kernel.org>
-Date:   Thu, 08 Dec 2022 17:20:16 +0000
-References: <Y5A7d1E5ccwHTYPf@kadam>
-In-Reply-To: <Y5A7d1E5ccwHTYPf@kadam>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     thomas.petazzoni@bootlin.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 7 Dec 2022 10:06:31 +0300 you wrote:
-> In an earlier commit, I added a bounds check to prevent an out of bounds
-> read and a WARN().  On further discussion and consideration that check
-> was probably too aggressive.  Instead of returning -EINVAL, a better fix
-> would be to just prevent the out of bounds read but continue the process.
+Le 08/12/2022 à 13:30, Lee Jones a écrit :
+> On Sun, 20 Nov 2022, Christophe JAILLET wrote:
 > 
-> Background: The value of "pp->rxq_def" is a number between 0-7 by default,
-> or even higher depending on the value of "rxq_number", which is a module
-> parameter. If the value is more than the number of available CPUs then
-> it will trigger the WARN() in cpu_max_bits_warn().
+>> If an error occurs after the clk_prepare_enable() call, a corresponding
+>> clk_disable_unprepare() should be called.
+>>
+>> Simplify code and switch to devm_clk_get_enabled() to fix it.
+>>
+>> Fixes: 3526403353c2 ("mfd: qcom_rpm: Handle message RAM clock")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> This changes the order of the clean-ups if the .remove() function is called
+>> but it looks fine to me.
+>> ---
+>>   drivers/mfd/qcom_rpm.c | 4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> [...]
+> Something funny going on here.
+> 
+> I received 3 identical versions of the same patch.
+> 
 
-Here is the summary with links:
-  - [net,v2] net: mvneta: Fix an out of bounds check
-    https://git.kernel.org/netdev/net/c/cdd97383e19d
+Yes, was my fault.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Sorry for the inconvenience.
+
+CJ
 
 
