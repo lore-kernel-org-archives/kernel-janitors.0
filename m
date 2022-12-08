@@ -2,188 +2,356 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E87DC3A5A7
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 14:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE71C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 15:42:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbiLHOO6 (ORCPT
+        id S229758AbiLHPmm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Dec 2022 09:14:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47298 "EHLO
+        Thu, 8 Dec 2022 10:42:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiLHOO5 (ORCPT
+        with ESMTP id S229949AbiLHPmg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Dec 2022 09:14:57 -0500
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14DA67F895
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Dec 2022 06:14:53 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221208141449epoutp04a490558de9b6843963c7d8eba09c8bdf~u1vwIAYkq1467314673epoutp04E
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Dec 2022 14:14:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221208141449epoutp04a490558de9b6843963c7d8eba09c8bdf~u1vwIAYkq1467314673epoutp04E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1670508889;
-        bh=y9qUn4mXBv4NSRx5v9NuWhOMRw9GaeQfdHzFhonAdg0=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=IIDgzWcfGhPXW+e9yVbjuCqiGs0ytBI1g4dStBAaq/v9isdUsGUKEaGzJteWTE25F
-         6cIjwIeqVa2EEpNld2ihsmXh2Xw0IPGj9HWNifh/+2UlxUmAYxgij0lo39UDiR88Su
-         MxqVmIpWWeRiWWvx40W/rAE+QjtvihPgEFYhqliw=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20221208141449epcas5p45d35d6ca14aef2e0d906c9ee87d4d958~u1vvyyt340520505205epcas5p4P;
-        Thu,  8 Dec 2022 14:14:49 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4NSbkv5Vbrz4x9Pp; Thu,  8 Dec
-        2022 14:14:47 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9F.29.39477.751F1936; Thu,  8 Dec 2022 23:14:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20221208141447epcas5p44220ff166d8b4c594274cff4011b339e~u1vt-NmN_0520505205epcas5p4N;
-        Thu,  8 Dec 2022 14:14:47 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221208141447epsmtrp24fa15b13372427ab8710cafb51f29bbd~u1vt9Sv_m2935429354epsmtrp2H;
-        Thu,  8 Dec 2022 14:14:47 +0000 (GMT)
-X-AuditID: b6c32a4a-259fb70000019a35-16-6391f1575356
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        38.83.14392.751F1936; Thu,  8 Dec 2022 23:14:47 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221208141445epsmtip2a75fc708e4e957c0b9dd1ca49ad5b82a~u1vsmR-rM1136411364epsmtip2Q;
-        Thu,  8 Dec 2022 14:14:45 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Colin Ian King'" <colin.i.king@gmail.com>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Mauro Carvalho Chehab'" <mchehab@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>
-Cc:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20221208115847.2433777-1-colin.i.king@gmail.com>
-Subject: RE: [PATCH] media: platform: exynos4-is: Fix spelling mistake
- "palne" -> "plane"
-Date:   Thu, 8 Dec 2022 19:44:44 +0530
-Message-ID: <000801d90b0f$6d621620$48264260$@samsung.com>
+        Thu, 8 Dec 2022 10:42:36 -0500
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2062.outbound.protection.outlook.com [40.107.92.62])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1BEE1017;
+        Thu,  8 Dec 2022 07:42:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LV73cODS3+f7Pu5KQ2cmy/9+wcruRhqCGyOJBt725LVgtvSO66SDAcqWoLOhde/x+2CzZE7sIpKSraOAUx6iSCPGKrqWMbSo8vuwd+Ed6k8D6Ip0to4Euwfk7fT71ai514x/qmK2a+O+JzzKxU8kkDQsNWTFTWs19UsIb8PKji3OorkeNzEoVabsmkz1lyBArhlvTnt/EjFhxcDhe1kviwJdAJvkTPYyKZaO6HjzIQ2r8x/yrm4IedJClTJNGWGRwiwr+RR5afeJapX8u4QC9hV6PP8pABpaY5DyGeFpZHv7LcNXR6m4oINOY+j8vmrDMz4RyHB9J/MU6/Kx8lCWCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kJvec/1RhqvgkYqQzf07K8OkyUMvjzQe9vb7vLB3Txc=;
+ b=RQ4sfiRwEpm4P6tdHxmBtDCToFe+kVsX60H07UnvZR8SF9VoES0fv+WUFC1Osv7jSsbTJPQhlXXjkug1XAXnxy84z7G7lihVHdzR89h75wiWTAgviEjjy3wlX0xLE+qyNqGtHZo45L7UAk0tb4NjRI/lYzU6JqS3y9dpHd1gPQIYuy+CV729L1cpJjqavG6JgtZB6R8WeMZwR62sqaIREhMw5CPFfDK9m/dlPKn8J6dgevBwSdUzCRvNIbysYMgjItu6oCWleQdCWeJgZ0Yef+gu+VyMnJdCyGvTYP13tVyW0iZQxpGOebPA9gMHM8sJfuABjW/QxmDnWJVjycZr/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kJvec/1RhqvgkYqQzf07K8OkyUMvjzQe9vb7vLB3Txc=;
+ b=2QOkGFhYF4NT/GYzQcvXCmrxdMC7CbeBQT2L0UDUQ7dB2W94WjR7u5Tj5S19qdvnL7Xg2F3RQLlfnStUgwTCqBs8s2mm/sA9lEYj7H7pOnKW4N0mpQp2ZJsf/rhl/iGJYBJ0NlDWHextMBp8f+ZUtBaxxoQNZjSEoa86ScGvOMY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6280.namprd12.prod.outlook.com (2603:10b6:8:a2::11) by
+ SJ0PR12MB5405.namprd12.prod.outlook.com (2603:10b6:a03:3af::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.16; Thu, 8 Dec
+ 2022 15:42:31 +0000
+Received: from DM4PR12MB6280.namprd12.prod.outlook.com
+ ([fe80::5935:7d8d:e955:6298]) by DM4PR12MB6280.namprd12.prod.outlook.com
+ ([fe80::5935:7d8d:e955:6298%7]) with mapi id 15.20.5880.014; Thu, 8 Dec 2022
+ 15:42:31 +0000
+Message-ID: <5f1c3233-2b39-39a5-24d1-d0bbead4ed65@amd.com>
+Date:   Thu, 8 Dec 2022 10:43:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH] drm/amd/display: Fix spelling mistake: "dram_clk_chanage"
+ -> "dram_clk_change"
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221208121854.2436398-1-colin.i.king@gmail.com>
+From:   Hamza Mahfooz <hamza.mahfooz@amd.com>
+In-Reply-To: <20221208121854.2436398-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BLAPR03CA0139.namprd03.prod.outlook.com
+ (2603:10b6:208:32e::24) To DM4PR12MB6280.namprd12.prod.outlook.com
+ (2603:10b6:8:a2::11)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQI0vk9RW1iZ4BXMTfsejTy1hxIu1gDaeiQgraXOGYA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmhm74x4nJBv8maVpMav/CarH1lrTF
-        3tdb2S02Pb7GanF51xw2i54NW1ktZpzfx2SxbNMfJovDb9pZHTg9ds66y+6xaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkAtqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE
-        3FRbJRefAF23zBygm5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BSYFesWJucWl
-        eel6eaklVoYGBkamQIUJ2RkfpvYxF+wVqbhwaC9zA+N/wS5GTg4JAROJU8+esHcxcnEICexm
-        lLh++DsLhPOJUWLVlZtQmW+MEiu3fQFyOMBaHk11BOkWEtjLKPH2TTJEzUtGidPzVrKAJNgE
-        dCV2LG5jA0mICOxjkvg/fQMjSIJZwFXizpl7rCA2p4CdRN/eV0wgtrBAtMTRP4+ZQWwWARWJ
-        Dzfmgg3iFbCUaHp5jRnCFpQ4OfMJC8QcbYllC18zQ/ygIPHz6TKwmSICVhLb1y5hgqgRl3h5
-        9AjYBxICazkkpt7fwA7R4CKxvauDEcIWlnh1fAtUXEri87u9bBBfekgs+iMFEc6QeLt8PVS5
-        vcSBK3NYQEqYBTQl1u/Sh1jFJ9H7+wkTRCevREebEES1qkTzu6ssELa0xMTublYI20Nix7Mf
-        rBMYFWcheWwWksdmIXlgFsKyBYwsqxglUwuKc9NTi00LjPJSy+HRnZyfu4kRnGC1vHYwPnzw
-        Qe8QIxMH4yFGCQ5mJRHeZcsmJgvxpiRWVqUW5ccXleakFh9iNAWG9kRmKdHkfGCKzyuJNzSx
-        NDAxMzMzsTQ2M1QS5106pSNZSCA9sSQ1OzW1ILUIpo+Jg1OqganG+OTytqWspfz5Wb03Fvxb
-        Z31wTUnCnYiA2y+u+gZErY0J/F7XsnZWsG5qjJ3Z9M8mGl9EHVMrktO3XPbnnTT56jGZaQ9e
-        LpotGP+/q3+xUP2l4xUr5q9b3hFhITL5lIqZl8l6O26Fcysm3Pj8PMvidZixQ9afQ5uTOY8t
-        nJ01z0OWzS9+wjmdhEu6get8Wb51aZY6xKavVa2OZXXc+OrGx08as+59r2A66Lapr377pQ23
-        Vx35Gaqw0bD+SBXzu/ncPgXpDuy5re0s4SkTk1OctN99+miukPw52EJiclm40faHz+LMjV7x
-        MLQtvx7pKNdWaZRg8TXLpLxpq27vLe9pf08+Zou9bTBf6ODJciWW4oxEQy3mouJEAMOIhWk5
-        BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7bCSvG74x4nJBnv/CVlMav/CarH1lrTF
-        3tdb2S02Pb7GanF51xw2i54NW1ktZpzfx2SxbNMfJovDb9pZHTg9ds66y+6xaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujKXHdrIVvBauuNm8mK2Bca1gFyMHh4SA
-        icSjqY5djFwcQgK7GSV23/7P2MXICRSXlri+cQI7hC0ssfLfc3aIoueMEg8272EBSbAJ6Ers
-        WNzGBpIQETjEJDF52x0mkASzgLvEtKadjBAd/YwST5tnsYIkOAXsJPr2vgIrEhaIlLh3YREz
-        iM0ioCLx4cZcsKm8ApYSTS+vMUPYghInZz5hgRiqLdH7sJURxl628DUzxHkKEj+fLgObLyJg
-        JbF97RKoI8QlXh49wj6BUXgWklGzkIyahWTULCQtCxhZVjFKphYU56bnFhsWGOallusVJ+YW
-        l+al6yXn525iBMealuYOxu2rPugdYmTiYDzEKMHBrCTCu2zZxGQh3pTEyqrUovz4otKc1OJD
-        jNIcLErivBe6TsYLCaQnlqRmp6YWpBbBZJk4OKUamLYlJFq/Tpp0arWTrLrA3EusIa1bNky+
-        07xpT3Zy70Qn8y1haz5zCR9uCvE9r80Swj9bzWHd2Qim6Deziiv4/u77OVPp8Clx7ef1ohbd
-        OUfUkk7kLaxOV+g5OV+Bcd6rFT92TU1z+HLy8fvD8yr2KO090XBtQk+Rps0vnqZn01jbVsXO
-        ai/Q9+K84ij4L2x/us7O+ycaY9ZqBP7ujOlp2vNCr7bq7dXmwHkL0j/mia39ZX4skcX4v1Rk
-        vObTToPH/P/E53nMUlSrddT2Ppw82XyX582ZN5+YJUwUPPQmwvaCCHvICWm5BbM3bao/eFV2
-        d4Od0KK2w3/fbJNjaFhhyb5DRozpz5Fd/A8SD3WG7FViKc5INNRiLipOBAAesAeWJAMAAA==
-X-CMS-MailID: 20221208141447epcas5p44220ff166d8b4c594274cff4011b339e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221208115852epcas5p476b048a9661b4ac6d11971475968c73e
-References: <CGME20221208115852epcas5p476b048a9661b4ac6d11971475968c73e@epcas5p4.samsung.com>
-        <20221208115847.2433777-1-colin.i.king@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6280:EE_|SJ0PR12MB5405:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9208bc69-1ba5-40c3-94f9-08dad932d11c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0kfz2W4oH/klvvY8tyYc76zlL1cTtgl+jvqs7uq50aRVPev4mpaK3hivGskNoQV7PRJiGfTcDrwag316TNvStQs7FAnEwhoeFdCiRDoXPD4WGPkSzLqLk4kyz0NgobhhH7FR287Of4dlVkxPq8PUz8nqkd3Yj9X+3ooBuFr/Gm7hh7vbswfwWJ96ZyBIihfGIigiPQ94CLluW6Pb/jjUpvKXpzHVZDSLrpktjObq5e1naLegSwldWxFNkGa65+6NSzOPafz2gkJ9VNemT0yD6W/FxLBqz59xc+uCn4wsMEYLZtogBqjoeKCq0QaKsGDLxwxxKiwgG7PZA1Qd9rr9RT0Y5NsFeKlRpkjQqIWwWYGoA5iZbu4PSfoPHT5nWFJdJbvl63NsDjeB3LJJ7sOEcIG0RMmPzhoOCa6l6GdqBD7enhHcAAunoOYxH/3SCfQR6CuAKOL6B6qOH8+cUvBZz3ci3L/VH/c1iJnp3/M47zM11hqBiM9cfAn20aQItw6mPxPjS/+pM9T+D4TkGQldR8S1z7p0pCx0MJHPVxQB4aMAuvPomeIbbbwutQgZTpaWsFEZgJU0dcXfbeIGpECk7QlYyrjpjLROaAUAiT4Op9Q0NIKbCjom2NWfF7Iz5fgKTA9tfzUnQg7UBdXY630Xyq30wP0Sp/8S7DH1O4X5r98bsOtc8J+CZ1WoaDfzqwohRglGBSosSsb180RG0c6pBqGCZkL+1zfJbDXaWIT4m4bx1waleRjc7hEJnpTJYTQG
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6280.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(376002)(366004)(346002)(39860400002)(396003)(451199015)(44832011)(36756003)(2906002)(86362001)(31696002)(2616005)(83380400001)(4326008)(110136005)(6666004)(478600001)(6486002)(26005)(6512007)(186003)(53546011)(6506007)(41300700001)(38100700002)(5660300002)(8936002)(30864003)(921005)(66476007)(66556008)(66946007)(8676002)(316002)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?blFQV2xuWkZYdkUwRmVTVWlnY2J4QVV2YVdtQTAyYmpNYkwrZzNyQ0VTSkpq?=
+ =?utf-8?B?MVY3cldsbmx0SklxNEJjLzRyTjAwRStqcEdUZEZyVWVYZDlzVUxxN1VyeHl3?=
+ =?utf-8?B?WVcvalFJelVtcHpVUVJyNGJFQ05GQ2lqMGhzTlVVMHlhcUg0ZngwVW8vTjlE?=
+ =?utf-8?B?VHBBM0ZTTkRBNjh0N2t5UHFyMk5yMnlKRDBTMlA0ajZjdGFjZjhiVjB3dHNG?=
+ =?utf-8?B?aTFoUEwwVCtoNDN6eGV2UDhUZ1dJd2VrOUNIOXEwa293aFhGamhUcW5zdVNC?=
+ =?utf-8?B?QUhSdjRNcEJBbnNEdXVhMVlXWGw3a0VYZDljV1d3YXZKNHd0aHZxZVFaTG1Z?=
+ =?utf-8?B?b2t3bkxqb2ZiL2FiNDZaQzVPeTgyclZUYXd3MGt0eFpMUUJuMTgvUHRhL3ZY?=
+ =?utf-8?B?ZHNxUXQyaWZBTzI1TG5WQ0FpSjFSL0NQZUZaSzdON3hLYzdaRG9VMDJFUnJY?=
+ =?utf-8?B?bEVYM0tKTE5OR2lxTUZqNzNwbzMvaW1YdllYbE8vR25BUjM2VlpRUzNpTVJu?=
+ =?utf-8?B?NXR5TTNpNCt1Y3Z4bjNNdWJhT0xlMGV2MlNSdkErN0loVXkyblNqMDBRbmF1?=
+ =?utf-8?B?KzZJWnltN21WeTl1czFTa09TUDB6dXJmS0I4Z0hBNXBQdVVjeDhCTEw3Qjls?=
+ =?utf-8?B?bXpsVHlZNEdGeXFuSU9IRVp1cEJ4clFDNzNqL1Ywd1dYUTF6R1FMK2p0aHpi?=
+ =?utf-8?B?UFRobE4wc2ZTSWplNnRPOVVyTGRUMWY3ZW5TZVFNMTF1WEVWRlRSTVJmMWtn?=
+ =?utf-8?B?SktEUEhLU2hDK3l5dCtQZ3NnTk9DNVcyM2tHL3hBeWtnWTJCOFgyb3dnTzNq?=
+ =?utf-8?B?akpYRkdIWlFIdlFEdXE1dkJBL0pmUng0MEQ4dEVKSkJQNEJHNlpCaC9Wdjlv?=
+ =?utf-8?B?S3l6bnZLMG4zMUJTQlUzTUNFQWpMWFB3YnNmTmNnY2hJQkpRSTEveW5LdC9a?=
+ =?utf-8?B?V0NGOUlWUFBzbFlSSlgvSWFQZnJacHU1bm81b3l3WTZteDFhT1FPY3lGemxU?=
+ =?utf-8?B?K295VW15bkNtRUtLRUhuOWRiWnVybHMrQVZ2RURiOC9hQnJFWUNLREJGaGY0?=
+ =?utf-8?B?T0M1RDk5WlBSWkJBYlgzN29kRDZDU0ZPOTF4Smcyc2E2ekVpNzNTTlQvT1NL?=
+ =?utf-8?B?Z1UzNm9vMzdOQzR0UmMyaTNKS3ZPZTJTeVFEODBSYnBPMmY4MWt4KzU5d2Jz?=
+ =?utf-8?B?TnhSSUZqeE9YOWdqVHplMUhxVEtCeHN3a0VFalR1eHV4L21ybGRXOEVrcndX?=
+ =?utf-8?B?NVJpZUZFaXNvS2l2Z0l2OEd1U1YyMjB0VEo1MnRlYXpYbS9MelJqZ3lpZXYy?=
+ =?utf-8?B?elFNZWltRlloVno2Y2wyaEdMemZiaER0L2FkNUpUa2tTU29SYTRTTUV1MkVO?=
+ =?utf-8?B?d0JRSEtFSTdCdTMraGhGVUQyUm9wZVNhVy9QeUJnQkgzRHFVY1NEcFdmSm00?=
+ =?utf-8?B?eFR5VzZuSlZjUFk4Zjd2ckszRytGSWZqdlFMNlQzOHBEclFvczZJS2gzeit3?=
+ =?utf-8?B?UCtDcHJnODNBbUh0NmpLbFloME9IT05YQ1prVFBvd2VRaE1rUm5LQVB1TzlL?=
+ =?utf-8?B?UzdKVHpaUkFsTDAxcWJnUHhTK3p5dHBoWmZQdUlJTml4VVo3NVRpSlBIaGQ3?=
+ =?utf-8?B?MEZXSEYwVStBZFhZc2JvTzViMm8rY1J6NnhIWlo2QWR4SXBCdEJkQk1ha3Ar?=
+ =?utf-8?B?T3pKMFNlbEcreHl2b043QUR5OHdqQUx2eTNtekdxT3ZHbzdsQ2dLa0VKWmxT?=
+ =?utf-8?B?Z2FFZ0k4bU1CRkhEcHRYdUVIcmMyRUoxMHBnSkdFSGVQZHk1TVI0RXNkUVZq?=
+ =?utf-8?B?M29GNCt2NTJUK1hmSUJaNUFLaXJTSG5YcXhkYTkyOXhsNW94OVQyaUpOV3Zn?=
+ =?utf-8?B?RUR2MFJKaG1BeFBiUDUwaXZuUHMrd1NYWExIRDhVdzhpOGl1MFRneDJmdUtO?=
+ =?utf-8?B?cHpiMjJzelJBeVNRcDBxTjFFY2NKOUVGRnBuY09rTHd6NzVoSmJrdk43MTRa?=
+ =?utf-8?B?ZkhoSndGdUxTYWRGbGJ6VDZVRXd3T1NKOUYxNG1wZ0RqVUdhWGVENUR6aDdT?=
+ =?utf-8?B?aDZnZ1ArS3JtUTBJTllobnNub0JoZkdKWE8ybm42c1h5ZEhwVUp0QXNqZW9a?=
+ =?utf-8?Q?bh8ebxy28KkGoLiADPkfVVB57?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9208bc69-1ba5-40c3-94f9-08dad932d11c
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6280.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2022 15:42:30.8280
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bEyRbSJueB5UdUL3Z2eoPuBMiO9BORPHWI5TFgqtJQ1w2hbqmd2cKLfGu+8niS559VLeUY/NBMKWT6QFI4xXgQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5405
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On 12/8/22 07:18, Colin Ian King wrote:
+> There is a spelling mistake in the struct field dram_clk_chanage. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
+Applied. Thanks!
 
->-----Original Message-----
->From: Colin Ian King =5Bmailto:colin.i.king=40gmail.com=5D
->Sent: Thursday, December 8, 2022 5:29 PM
->To: Sylwester Nawrocki <s.nawrocki=40samsung.com>; Mauro Carvalho
->Chehab <mchehab=40kernel.org>; Krzysztof Kozlowski
-><krzysztof.kozlowski=40linaro.org>; Alim Akhtar <alim.akhtar=40samsung.com=
->;
->linux-media=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
->samsung-soc=40vger.kernel.org
->Cc: kernel-janitors=40vger.kernel.org; linux-kernel=40vger.kernel.org
->Subject: =5BPATCH=5D media: platform: exynos4-is: Fix spelling mistake =22=
-palne=22 ->
->=22plane=22
->
->There are spelling mistakes in a literal string and a comment. Fix them.
->
->Signed-off-by: Colin Ian King <colin.i.king=40gmail.com>
->---
+> ---
+>   drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c       | 8 ++++----
+>   drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 2 +-
+>   .../drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c   | 4 ++--
+>   drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hubbub.c       | 8 ++++----
+>   drivers/gpu/drm/amd/display/dc/dcn21/dcn21_hubbub.c       | 8 ++++----
+>   drivers/gpu/drm/amd/display/dc/dcn32/dcn32_hubbub.c       | 8 ++++----
+>   drivers/gpu/drm/amd/display/dc/inc/hw/dchubbub.h          | 2 +-
+>   7 files changed, 20 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c
+> index 0f746bb4e500..d51f1ce02874 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubbub.c
+> @@ -55,7 +55,7 @@ void hubbub1_wm_read_state(struct hubbub *hubbub,
+>   		s->sr_enter = REG_READ(DCHUBBUB_ARB_ALLOW_SR_ENTER_WATERMARK_A);
+>   		s->sr_exit = REG_READ(DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_A);
+>   	}
+> -	s->dram_clk_chanage = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_A);
+> +	s->dram_clk_change = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_A);
+>   
+>   	s = &wm->sets[1];
+>   	s->wm_set = 1;
+> @@ -65,7 +65,7 @@ void hubbub1_wm_read_state(struct hubbub *hubbub,
+>   		s->sr_enter = REG_READ(DCHUBBUB_ARB_ALLOW_SR_ENTER_WATERMARK_B);
+>   		s->sr_exit = REG_READ(DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_B);
+>   	}
+> -	s->dram_clk_chanage = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_B);
+> +	s->dram_clk_change = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_B);
+>   
+>   	s = &wm->sets[2];
+>   	s->wm_set = 2;
+> @@ -75,7 +75,7 @@ void hubbub1_wm_read_state(struct hubbub *hubbub,
+>   		s->sr_enter = REG_READ(DCHUBBUB_ARB_ALLOW_SR_ENTER_WATERMARK_C);
+>   		s->sr_exit = REG_READ(DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_C);
+>   	}
+> -	s->dram_clk_chanage = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_C);
+> +	s->dram_clk_change = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_C);
+>   
+>   	s = &wm->sets[3];
+>   	s->wm_set = 3;
+> @@ -85,7 +85,7 @@ void hubbub1_wm_read_state(struct hubbub *hubbub,
+>   		s->sr_enter = REG_READ(DCHUBBUB_ARB_ALLOW_SR_ENTER_WATERMARK_D);
+>   		s->sr_exit = REG_READ(DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_D);
+>   	}
+> -	s->dram_clk_chanage = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_D);
+> +	s->dram_clk_change = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_D);
+>   }
+>   
+>   void hubbub1_allow_self_refresh_control(struct hubbub *hubbub, bool allow)
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+> index c8ec11839b4d..fe2023f18b7d 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+> @@ -159,7 +159,7 @@ static void dcn10_log_hubbub_state(struct dc *dc,
+>   		DTN_INFO_MICRO_SEC(s->pte_meta_urgent);
+>   		DTN_INFO_MICRO_SEC(s->sr_enter);
+>   		DTN_INFO_MICRO_SEC(s->sr_exit);
+> -		DTN_INFO_MICRO_SEC(s->dram_clk_chanage);
+> +		DTN_INFO_MICRO_SEC(s->dram_clk_change);
+>   		DTN_INFO("\n");
+>   	}
+>   
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c
+> index e8b6065fffad..a0f8e31d2adc 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c
+> @@ -83,7 +83,7 @@ static unsigned int dcn10_get_hubbub_state(struct dc *dc, char *pBuf, unsigned i
+>   	memset(&wm, 0, sizeof(struct dcn_hubbub_wm));
+>   	dc->res_pool->hubbub->funcs->wm_read_state(dc->res_pool->hubbub, &wm);
+>   
+> -	chars_printed = snprintf_count(pBuf, remaining_buffer, "wm_set_index,data_urgent,pte_meta_urgent,sr_enter,sr_exit,dram_clk_chanage\n");
+> +	chars_printed = snprintf_count(pBuf, remaining_buffer, "wm_set_index,data_urgent,pte_meta_urgent,sr_enter,sr_exit,dram_clk_change\n");
+>   	remaining_buffer -= chars_printed;
+>   	pBuf += chars_printed;
+>   
+> @@ -98,7 +98,7 @@ static unsigned int dcn10_get_hubbub_state(struct dc *dc, char *pBuf, unsigned i
+>   			(s->pte_meta_urgent * frac) / ref_clk_mhz / frac, (s->pte_meta_urgent * frac) / ref_clk_mhz % frac,
+>   			(s->sr_enter * frac) / ref_clk_mhz / frac, (s->sr_enter * frac) / ref_clk_mhz % frac,
+>   			(s->sr_exit * frac) / ref_clk_mhz / frac, (s->sr_exit * frac) / ref_clk_mhz % frac,
+> -			(s->dram_clk_chanage * frac) / ref_clk_mhz / frac, (s->dram_clk_chanage * frac) / ref_clk_mhz % frac);
+> +			(s->dram_clk_change * frac) / ref_clk_mhz / frac, (s->dram_clk_change * frac) / ref_clk_mhz % frac);
+>   		remaining_buffer -= chars_printed;
+>   		pBuf += chars_printed;
+>   	}
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hubbub.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hubbub.c
+> index aacb1fb5c73e..24bd93219936 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hubbub.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hubbub.c
+> @@ -500,7 +500,7 @@ void hubbub2_wm_read_state(struct hubbub *hubbub,
+>   		s->sr_enter = REG_READ(DCHUBBUB_ARB_ALLOW_SR_ENTER_WATERMARK_A);
+>   		s->sr_exit = REG_READ(DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_A);
+>   	}
+> -	s->dram_clk_chanage = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_A);
+> +	s->dram_clk_change = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_A);
+>   
+>   	s = &wm->sets[1];
+>   	s->wm_set = 1;
+> @@ -511,7 +511,7 @@ void hubbub2_wm_read_state(struct hubbub *hubbub,
+>   		s->sr_enter = REG_READ(DCHUBBUB_ARB_ALLOW_SR_ENTER_WATERMARK_B);
+>   		s->sr_exit = REG_READ(DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_B);
+>   	}
+> -	s->dram_clk_chanage = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_B);
+> +	s->dram_clk_change = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_B);
+>   
+>   	s = &wm->sets[2];
+>   	s->wm_set = 2;
+> @@ -522,7 +522,7 @@ void hubbub2_wm_read_state(struct hubbub *hubbub,
+>   		s->sr_enter = REG_READ(DCHUBBUB_ARB_ALLOW_SR_ENTER_WATERMARK_C);
+>   		s->sr_exit = REG_READ(DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_C);
+>   	}
+> -	s->dram_clk_chanage = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_C);
+> +	s->dram_clk_change = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_C);
+>   
+>   	s = &wm->sets[3];
+>   	s->wm_set = 3;
+> @@ -533,7 +533,7 @@ void hubbub2_wm_read_state(struct hubbub *hubbub,
+>   		s->sr_enter = REG_READ(DCHUBBUB_ARB_ALLOW_SR_ENTER_WATERMARK_D);
+>   		s->sr_exit = REG_READ(DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_D);
+>   	}
+> -	s->dram_clk_chanage = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_D);
+> +	s->dram_clk_change = REG_READ(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_D);
+>   }
+>   
+>   void hubbub2_get_dchub_ref_freq(struct hubbub *hubbub,
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_hubbub.c b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_hubbub.c
+> index c5e200d09038..aeb0e0d9b70a 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_hubbub.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_hubbub.c
+> @@ -635,7 +635,7 @@ void hubbub21_wm_read_state(struct hubbub *hubbub,
+>   			DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_A, &s->sr_exit);
+>   
+>   	REG_GET(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_A,
+> -			 DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_A, &s->dram_clk_chanage);
+> +			 DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_A, &s->dram_clk_change);
+>   
+>   	s = &wm->sets[1];
+>   	s->wm_set = 1;
+> @@ -649,7 +649,7 @@ void hubbub21_wm_read_state(struct hubbub *hubbub,
+>   			DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_B, &s->sr_exit);
+>   
+>   	REG_GET(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_B,
+> -			DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_B, &s->dram_clk_chanage);
+> +			DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_B, &s->dram_clk_change);
+>   
+>   	s = &wm->sets[2];
+>   	s->wm_set = 2;
+> @@ -663,7 +663,7 @@ void hubbub21_wm_read_state(struct hubbub *hubbub,
+>   			DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_C, &s->sr_exit);
+>   
+>   	REG_GET(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_C,
+> -			DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_C, &s->dram_clk_chanage);
+> +			DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_C, &s->dram_clk_change);
+>   
+>   	s = &wm->sets[3];
+>   	s->wm_set = 3;
+> @@ -677,7 +677,7 @@ void hubbub21_wm_read_state(struct hubbub *hubbub,
+>   			DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_D, &s->sr_exit);
+>   
+>   	REG_GET(DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_D,
+> -			DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_D, &s->dram_clk_chanage);
+> +			DCHUBBUB_ARB_ALLOW_DRAM_CLK_CHANGE_WATERMARK_D, &s->dram_clk_change);
+>   }
+>   
+>   static void hubbub21_apply_DEDCN21_147_wa(struct hubbub *hubbub)
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn32/dcn32_hubbub.c b/drivers/gpu/drm/amd/display/dc/dcn32/dcn32_hubbub.c
+> index 5947c2cb0f30..9501403a48a9 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn32/dcn32_hubbub.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn32/dcn32_hubbub.c
+> @@ -865,7 +865,7 @@ static void hubbub32_wm_read_state(struct hubbub *hubbub,
+>   			DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_A, &s->sr_exit);
+>   
+>   	REG_GET(DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_A,
+> -			 DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_A, &s->dram_clk_chanage);
+> +			 DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_A, &s->dram_clk_change);
+>   
+>   	REG_GET(DCHUBBUB_ARB_USR_RETRAINING_WATERMARK_A,
+>   			 DCHUBBUB_ARB_USR_RETRAINING_WATERMARK_A, &s->usr_retrain);
+> @@ -885,7 +885,7 @@ static void hubbub32_wm_read_state(struct hubbub *hubbub,
+>   			DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_B, &s->sr_exit);
+>   
+>   	REG_GET(DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_B,
+> -			DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_B, &s->dram_clk_chanage);
+> +			DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_B, &s->dram_clk_change);
+>   
+>   	REG_GET(DCHUBBUB_ARB_USR_RETRAINING_WATERMARK_B,
+>   			 DCHUBBUB_ARB_USR_RETRAINING_WATERMARK_B, &s->usr_retrain);
+> @@ -905,7 +905,7 @@ static void hubbub32_wm_read_state(struct hubbub *hubbub,
+>   			DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_C, &s->sr_exit);
+>   
+>   	REG_GET(DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_C,
+> -			DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_C, &s->dram_clk_chanage);
+> +			DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_C, &s->dram_clk_change);
+>   
+>   	REG_GET(DCHUBBUB_ARB_USR_RETRAINING_WATERMARK_C,
+>   			 DCHUBBUB_ARB_USR_RETRAINING_WATERMARK_C, &s->usr_retrain);
+> @@ -925,7 +925,7 @@ static void hubbub32_wm_read_state(struct hubbub *hubbub,
+>   			DCHUBBUB_ARB_ALLOW_SR_EXIT_WATERMARK_D, &s->sr_exit);
+>   
+>   	REG_GET(DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_D,
+> -			DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_D, &s->dram_clk_chanage);
+> +			DCHUBBUB_ARB_UCLK_PSTATE_CHANGE_WATERMARK_D, &s->dram_clk_change);
+>   
+>   	REG_GET(DCHUBBUB_ARB_USR_RETRAINING_WATERMARK_D,
+>   			 DCHUBBUB_ARB_USR_RETRAINING_WATERMARK_D, &s->usr_retrain);
+> diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/dchubbub.h b/drivers/gpu/drm/amd/display/dc/inc/hw/dchubbub.h
+> index f2e1fcb668fb..5b0265c0df61 100644
+> --- a/drivers/gpu/drm/amd/display/dc/inc/hw/dchubbub.h
+> +++ b/drivers/gpu/drm/amd/display/dc/inc/hw/dchubbub.h
+> @@ -46,7 +46,7 @@ struct dcn_hubbub_wm_set {
+>   	uint32_t pte_meta_urgent;
+>   	uint32_t sr_enter;
+>   	uint32_t sr_exit;
+> -	uint32_t dram_clk_chanage;
+> +	uint32_t dram_clk_change;
+>   	uint32_t usr_retrain;
+>   	uint32_t fclk_pstate_change;
+>   };
 
-Thanks=21
-
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
-
-
-> drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c =7C 2 +-
->drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h =7C 2 +-
-> 2 files changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
->b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
->index 5d9f4c1cdc5e..7a48fad1df16 100644
->--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
->+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
->=40=40 -54,7 +54,7 =40=40 const char *fimc_is_param_strerr(unsigned int er=
-ror)
-> 	case ERROR_DMA_INPUT_ORDER:
-> 		return =22ERROR_DMA_INPUT_ORDER: Invalid order(DRC:
->YYCbCr,YCbYCr,FD:NO,YYCbCr,YCbYCr,CbCr,CrCb)=22;
-> 	case ERROR_DMA_INPUT_PLANE:
->-		return =22ERROR_DMA_INPUT_PLANE: Invalid palne (DRC: 3,
->FD: 1, 2, 3)=22;
->+		return =22ERROR_DMA_INPUT_PLANE: Invalid plane (DRC: 3,
->FD: 1, 2, 3)=22;
-> 	case ERROR_OTF_OUTPUT_WIDTH:
-> 		return =22ERROR_OTF_OUTPUT_WIDTH: Invalid width (DRC:
->128=7E8192)=22;
-> 	case ERROR_OTF_OUTPUT_HEIGHT:
->diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
->b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
->index 9dcbb9853ac0..809e117331c0 100644
->--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
->+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
->=40=40 -156,7 +156,7 =40=40 enum fimc_is_error =7B
-> 	ERROR_DMA_INPUT_BIT_WIDTH	=3D 34,
-> 	/* invalid order(DRC: YYCbCrorYCbYCr,
->FD:NO,YYCbCr,YCbYCr,CbCr,CrCb) */
-> 	ERROR_DMA_INPUT_ORDER		=3D 35,
->-	/* invalid palne (DRC: 3, FD: 1, 2, 3) */
->+	/* invalid plane (DRC: 3, FD: 1, 2, 3) */
-> 	ERROR_DMA_INPUT_PLANE		=3D 36,
->
-> 	ERROR_OTF_OUTPUT_NONE		=3D ERROR_COMMON_NONE,
->--
->2.38.1
-
+-- 
+Hamza
 
