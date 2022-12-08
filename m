@@ -2,119 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA8FC10F1B
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 22:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CD1C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 22:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbiLHWIt (ORCPT
+        id S230088AbiLHWQt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Dec 2022 17:08:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40592 "EHLO
+        Thu, 8 Dec 2022 17:16:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbiLHWIP (ORCPT
+        with ESMTP id S230070AbiLHWQq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Dec 2022 17:08:15 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAB8879C38
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Dec 2022 14:08:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1670537281; x=1702073281;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BNVcmw3p0eharH1YaGnuUamwOi/8mEyVmXMjxWOlEQM=;
-  b=ciTF4Bbif70qBa5wjb+8lI3qP2xfI+Db7fpJcPmpNoe0kVpui6Y589HM
-   n1gkPsWy/y2RE873NnYjg5t8l4UoePcEgBifc11fXcS23rp+N82RRUe6z
-   M2QAvSCoUiHghftrbWhQtCHU1vkK+Sw7eQkAZpOYZjtZiLK4liwiPnRoB
-   2h+hQVdyEudN4oa9W/aIFMzxKb8SxL47BhXMr8Bzzeca0ArPai7bTLsM0
-   qcsmu5KeWLBqPFw41WKYgZ1l3PnB29XjyF2tG1NcA6DeBc/Wp30EKfF7q
-   AQGLwwBJPM97iSt7Wq+Xf6/wA6UDMCnbhXmZCut5L3j5aJK8bIoN3ZsIB
-   g==;
-X-IronPort-AV: E=Sophos;i="5.96,228,1665471600"; 
-   d="scan'208";a="190772312"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Dec 2022 15:08:00 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Thu, 8 Dec 2022 15:07:56 -0700
-Received: from localhost (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
- Transport; Thu, 8 Dec 2022 15:07:56 -0700
-Date:   Thu, 8 Dec 2022 23:13:03 +0100
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+        Thu, 8 Dec 2022 17:16:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A0A9DF20
+        for <kernel-janitors@vger.kernel.org>; Thu,  8 Dec 2022 14:15:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1670537748;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FFucKqZ5g4RYQZgbVFZF1v5fxQZ2+gEQUrOtWvEcYuA=;
+        b=SmFGnAW3FEMbX18jPm4j2wn7xk0DlXq59JY6CS5if7KLUUHw4HyHDs/TZWFomTvppw/QVP
+        z4ZXsNbgNMnKopL3EoOV/BzoACwJLdTy/nsWyvPrDxH+aChPdeUdvYy9fJCZZcDr57MOPw
+        E81bb+JuGDnGP0oaRL6yrlvLPBQ4+Rg=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-646-x6Q2p-uDMOmaEg7i98mSJw-1; Thu, 08 Dec 2022 17:15:47 -0500
+X-MC-Unique: x6Q2p-uDMOmaEg7i98mSJw-1
+Received: by mail-io1-f70.google.com with SMTP id o16-20020a056602225000b006e032e361ccso1054600ioo.13
+        for <kernel-janitors@vger.kernel.org>; Thu, 08 Dec 2022 14:15:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FFucKqZ5g4RYQZgbVFZF1v5fxQZ2+gEQUrOtWvEcYuA=;
+        b=3xW0ghSr2HcY9sN2/j+F+yKl4KkmVUF7RBUY4Gug0JzrvMGFCfCDAI3PUkzyTbijwT
+         gwgAL2ivKXw//Zu5dEzulbyIMu5iR0TIf3aNQgoXDO9cbfUefsD1HiYaysoj1rLB5jST
+         I599nqiTA9EGS9DQ8nYPiUal/tXnB4bEyT8ZmLl864IalkwzCuMuyn6+IA803sU01BSg
+         Z7bKxE3aWTBmMmXaS67+N3EsudcupPC5VVnOOgug7MI48sq32g69QT1biuAjKi/B6uWu
+         sf6Y2opLXYoEuZFD2kEwp8YFaV8CRKCaEHHX+j9SsP8q363SbNcwnG0xiJcnD6eGd9Z/
+         zZTA==
+X-Gm-Message-State: ANoB5pkq2IESkssjBJmdlAec8+HDbzuwSNIgqGsb97EstMchSyTIPgkG
+        zCcQH5a/tgD60WXKWVHgYfiN0Db6RPtUtT2JJ6XrgSxNpHcGD9e2EeOSRHZDKjj31CeZ0gxjZnL
+        tZ0nNDpPQ1qvw2ABQQ46+4yAItod6
+X-Received: by 2002:a05:6e02:542:b0:303:7c99:eb78 with SMTP id i2-20020a056e02054200b003037c99eb78mr4210625ils.88.1670537746664;
+        Thu, 08 Dec 2022 14:15:46 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf7fGLYEQgxoER97yecG8lw8y51v2EHG1rR/2NisBDARU6wasAHEg9IAkNOG+qXw7WJABOfSuQ==
+X-Received: by 2002:a05:6e02:542:b0:303:7c99:eb78 with SMTP id i2-20020a056e02054200b003037c99eb78mr4210621ils.88.1670537746464;
+        Thu, 08 Dec 2022 14:15:46 -0800 (PST)
+Received: from redhat.com ([38.15.36.239])
+        by smtp.gmail.com with ESMTPSA id y10-20020a056638228a00b00363781b6bccsm1686691jas.49.2022.12.08.14.15.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Dec 2022 14:15:45 -0800 (PST)
+Date:   Thu, 8 Dec 2022 15:15:44 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
 To:     Dan Carpenter <error27@gmail.com>
-CC:     <kernel-janitors@vger.kernel.org>
-Subject: Re: [bug report] net: microchip: vcap: Add vcap_get_rule
-Message-ID: <20221208221303.msbtavyk2cwznk4g@soft-dev3-1>
-References: <Y5IJ6huWhdBN8afS@kili>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>,
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Shay Drory <shayd@nvidia.com>, kvm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] vfio/mlx5: fix error code in mlx5vf_precopy_ioctl()
+Message-ID: <20221208151544.488c575d.alex.williamson@redhat.com>
+In-Reply-To: <Y5IKVknlf5Z5NPtU@kili>
+References: <Y5IKVknlf5Z5NPtU@kili>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <Y5IJ6huWhdBN8afS@kili>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 12/08/2022 18:59, Dan Carpenter wrote:
+On Thu, 8 Dec 2022 19:01:26 +0300
+Dan Carpenter <error27@gmail.com> wrote:
 
-Hi Dan,
+> The copy_to_user() function returns the number of bytes remaining to
+> be copied but we want to return a negative error code here.
+> 
+> Fixes: 0dce165b1adf ("vfio/mlx5: Introduce vfio precopy ioctl implementation")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>  drivers/vfio/pci/mlx5/main.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-> 
-> Hello Horatiu Vultur,
-> 
-> The patch 610c32b2ce66: "net: microchip: vcap: Add vcap_get_rule"
-> from Dec 3, 2022, leads to the following Smatch static checker
-> warning:
-> 
->         drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c:275 vcap_show_admin()
->         warn: passing zero to 'PTR_ERR'
-> 
-> drivers/net/ethernet/microchip/vcap/vcap_api_debugfs.c
->     263 static int vcap_show_admin(struct vcap_control *vctrl,
->     264                            struct vcap_admin *admin,
->     265                            struct vcap_output_print *out)
->     266 {
->     267         struct vcap_rule_internal *elem;
->     268         struct vcap_rule *vrule;
->     269         int ret = 0;
->     270
->     271         vcap_show_admin_info(vctrl, admin, out);
->     272         list_for_each_entry(elem, &admin->rules, list) {
->     273                 vrule = vcap_get_rule(vctrl, elem->data.id);
->     274                 if (IS_ERR_OR_NULL(vrule)) {
-> --> 275                         ret = PTR_ERR(vrule);
->     276                         break;
->     277                 }
-> 
-> There aren't any comments explaing what a NULL means...
-> 
-> Intuitively this doesn't feel like the correct way to handle NULL
-> returns.  It feels like it should be:
+Applied both to vfio next branch for v6.2.  Thanks,
 
-Thanks for reporting this.
-You are right, it is not really a hard error if the vrule is NULL.
-We are planning to change a little bit the things here, as the locking
-is not exactly correct.
+Alex
 
-> 
->                 vrule = vcap_get_rule(vctrl, elem->data.id);
->                 if (!vrule)
->                         continue;
->                 if (IS_ERR(vrule)) {
->                         ret = PTR_ERR(vrule);
->                         break;
->                 }
-> 
->     278
->     279                 out->prf(out->dst, "\n");
->     280                 vcap_show_admin_rule(vctrl, admin, out, to_intrule(vrule));
->     281                 vcap_free_rule(vrule);
->     282         }
->     283         return ret;
->     284 }
-> 
-> regards,
-> dan carpenter
-
--- 
-/Horatiu
