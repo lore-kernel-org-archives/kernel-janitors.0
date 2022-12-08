@@ -2,73 +2,55 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9FBC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 12:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21719C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Dec 2022 12:49:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbiLHMlu (ORCPT
+        id S230064AbiLHMtn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Dec 2022 07:41:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43246 "EHLO
+        Thu, 8 Dec 2022 07:49:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbiLHMls (ORCPT
+        with ESMTP id S229982AbiLHMtl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Dec 2022 07:41:48 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B00F58000;
-        Thu,  8 Dec 2022 04:41:48 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 8 Dec 2022 07:49:41 -0500
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7091F63D69;
+        Thu,  8 Dec 2022 04:49:41 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ED05AB823A1;
-        Thu,  8 Dec 2022 12:41:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BE46C433D6;
-        Thu,  8 Dec 2022 12:41:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670503305;
-        bh=dMXfN+dLPHMlr3tBQTVs8tArv5agk8+7shaxgICP7cM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WLpkQSwKeuifV1wHpWPjzlu7yRwXMDOMdMa2PAtYMnxABzQn0MtAW0YDsAj0sMuwc
-         C9F36/oEPh/05y9gVgTEifbhrgQwN/tSRZFGCBxGqJhw12b0Tp3Ryi2Bcl0QQV2NRs
-         U+O0y53tuAO/f+UMdl2ED65aWjfq7fhMdv7h66nkXboHYAgl6dRd2VPomZWaUsGJVa
-         0TPbm8MQLdOhlRNIztYHyZN23CbaYrnPyCp+BUdCA7IE9Dx2eSm9RahhIvEqJXphgS
-         EyZvE4Bn1bEEV5Hl3m7L8x6fsuQ7NSiv3db9VXoCJYjtwIhs5ZhBvaz5x44uoSoSfG
-         VgGHH7LmS3Ixw==
-Date:   Thu, 8 Dec 2022 12:41:40 +0000
-From:   Lee Jones <lee@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/2] mfd: qcom_rpm: Use devm_of_platform_populate() to
- simplify code
-Message-ID: <Y5HbhJCBFXWIIAid@google.com>
-References: <e39752476d02605b2be46cab7115f71255ce13a8.1668949256.git.christophe.jaillet@wanadoo.fr>
- <fd997dc92b9cee219e9c55e22959a94f4bbf570b.1668949256.git.christophe.jaillet@wanadoo.fr>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4NSYrg6QQkz4xYQ;
+        Thu,  8 Dec 2022 23:49:39 +1100 (AEDT)
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <52e843a460bc374973149b8da0bd04f9761b80b7.1657382184.git.christophe.jaillet@wanadoo.fr>
+References: <52e843a460bc374973149b8da0bd04f9761b80b7.1657382184.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] KVM: PPC: Book3S HV: Use the bitmap API to allocate bitmaps
+Message-Id: <167050315701.1457988.18073290985698209430.b4-ty@ellerman.id.au>
+Date:   Thu, 08 Dec 2022 23:39:17 +1100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fd997dc92b9cee219e9c55e22959a94f4bbf570b.1668949256.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 20 Nov 2022, Christophe JAILLET wrote:
-
-> Use devm_of_platform_populate() instead of hand-writing it.
-> This simplifies the code.
+On Sat, 9 Jul 2022 17:56:43 +0200, Christophe JAILLET wrote:
+> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This changes the order of the clean-ups if the .remove() function is called
-> but it looks fine to me.
-> ---
->  drivers/mfd/qcom_rpm.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
+> It is less verbose and it improves the semantic.
+> 
+> 
 
-Applied, thanks.
+Applied to powerpc/next.
 
--- 
-Lee Jones [李琼斯]
+[1/1] KVM: PPC: Book3S HV: Use the bitmap API to allocate bitmaps
+      https://git.kernel.org/powerpc/c/a96b20758b23be7e9f693218908228d6100c3c26
+
+cheers
