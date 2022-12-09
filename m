@@ -2,88 +2,348 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADA9C04FDE
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 10:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F11C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 14:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbiLIKAC (ORCPT
+        id S229953AbiLIOal (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Dec 2022 05:00:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34002 "EHLO
+        Fri, 9 Dec 2022 09:30:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbiLIKAA (ORCPT
+        with ESMTP id S229873AbiLIOaa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Dec 2022 05:00:00 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763CC3D90B;
-        Fri,  9 Dec 2022 01:59:59 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id d20so2481519edn.0;
-        Fri, 09 Dec 2022 01:59:59 -0800 (PST)
+        Fri, 9 Dec 2022 09:30:30 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8E132BB7;
+        Fri,  9 Dec 2022 06:30:27 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id vp12so11887423ejc.8;
+        Fri, 09 Dec 2022 06:30:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uV6wgLLBJq+5PmPft7u7+V4YEJPvc3umfQt0xK4OsN4=;
-        b=Sr0b5P0r6WV8j9QfllEgNWYMdbyORZX9LDzGOued1mvnVNaz84U+JWTDP13ZDZ4JcK
-         iFNDGKKZqX9klGBP8ba3/3vqFBrVv05jXbU/sW07X7GhZkznwt7GM0S3PGzxqeF17GU0
-         8Ywkcvwp4OK34DzwOTmA4xp+w6BTNLXOhR7S8vxO5gD5NDvnVMOFiYAF9WE4RUorBo1q
-         wGLTTLAGt95Rpwiw07chOrweuYcKLGVQP5ZFdqOWA4EoGpFkJZTLY6yZkhgsdqBsALOg
-         i3whDws+6YA6URMuDH49bIPbrBku0LccK/ECTnybUEG0M6hcjvEEH9z0xl5tkjtBsGFO
-         TqSw==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cuA2yPf+ChfcfCglv6Ul1/eHJRw+DDn5TeyeY8RCIMk=;
+        b=XZ5aiS7J0L0YcnighJH4FbLcZQdAWCgk+XRT3yyaxd6yTQ2N1iR/NFMH3zc5oxoqyK
+         O2kdbDTlwT+kQgh31FJD6v7IRSY9cEwDemh0TDy4M9PNzmJnP4tdLbNTL6NEppFYZrii
+         idbE8Zc8W7KNK0WiNX2gF7XohHE1dE6K92a7aqMgXl3D0W5guFQ39loq1diDLsBpRD48
+         XwTEb5ir38Fx+fqf9lq7RhWtwNczI15clq6l9/LG09rOVrO2yOe5jVZqGc2SR4q1PhWI
+         PUzkgCoFEBMy3OBqcSZ+fCG9OTfcq9Qth4kFA8NfJ/NgRV7F/dE5U9W+jN0itIDueSlc
+         N6VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uV6wgLLBJq+5PmPft7u7+V4YEJPvc3umfQt0xK4OsN4=;
-        b=vWOagpRUQaJVXsOkyr/JrsN75HEVS3RidQjwQ2Ooxq38Q/5x8D0tAfdMxjdx7HpfI5
-         w/OQFaDj0vmfnO9F4+0+iWZT9TkVHhVc8mNCtkwSlbZ+iZtMbNiekRJdKW8eqzvYZQzL
-         KTh/NXQDGJ53aL/0wbJpFBjf5sQ+85cTrD2lHCVBK9duyM6UuMu/bp6zstyJwmhStrVE
-         ozM8GShKdBoIdvh3yxqZFRikWv8BJ98A+Pk6VmjohqnPiIePP5kp8XMXu9tRzjimzRin
-         DzCBGCYfO1SwGpLzdHNh+Vzr5VXu7Pzg4PcDjNQunvQBy2u/h3DpfSggL/dWsOREkbC7
-         93+A==
-X-Gm-Message-State: ANoB5pl4U+Ei4BTXEQM0DlzYkQReyNg1nPnifvskPYmT7PpBAdzwS4dH
-        YZBbu9ysHBeloUJ6r3xhpmQbU+/P7gw=
-X-Google-Smtp-Source: AA0mqf6J/oH42DT3d9Mda8adYRV2Kqcr5cWYXHtAYgSBKt+zP95FdUIdqjsGVskC+Cy1mbSAi4Tr0Q==
-X-Received: by 2002:a05:6402:5299:b0:461:7c4e:c437 with SMTP id en25-20020a056402529900b004617c4ec437mr4188667edb.1.1670579997645;
-        Fri, 09 Dec 2022 01:59:57 -0800 (PST)
-Received: from felia.fritz.box (200116b826756500611a29889499a521.dip.versatel-1u1.de. [2001:16b8:2675:6500:611a:2988:9499:a521])
-        by smtp.gmail.com with ESMTPSA id f5-20020aa7d845000000b00461a6997c5dsm426890eds.83.2022.12.09.01.59.56
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cuA2yPf+ChfcfCglv6Ul1/eHJRw+DDn5TeyeY8RCIMk=;
+        b=qQtfoP0GA99ikHE5gsiLEdyPDVj1sJxtYmoST+yyPCHA3sfBK1VEC4ndHmoek9FD0V
+         u86z6o65SDyoPN0eeRHpPEwM0hdLuxtp4YjvUqTkmQLP6Agr9DpSYEsBAqkjieypiBgP
+         6uyfePl2Wp10Hbk17twSJ/iD4jcDc1Px7dIP8vzk20Qa3jz80kxq28J6VhBegtEx07yr
+         dUGwnCV9nquD1D09hbqU+3/450UTsrATKlE+aHlfkzxb7b5+6r6/Km4UAkXOKyXV9klY
+         B653hD9oJY+mQpcUpZG187HuBGQNyudNI4RNHaODZ9/By0YnjIE0SO8dN/VE0aQ45UHN
+         +0gQ==
+X-Gm-Message-State: ANoB5plWhu2o89jJ+39qkAwkAokyajK8G34nveaSHCYyf3hZWjtdUsfj
+        aOhABEm23CjWZ2SkpXDbqYw=
+X-Google-Smtp-Source: AA0mqf6a9KtAVVGSdOmc+5oXWjX8CuVNvMLv6UohalkXgvPQqtSu54aECYaS+1SuFdcWvyygfurYyQ==
+X-Received: by 2002:a17:907:9712:b0:78d:f459:7186 with SMTP id jg18-20020a170907971200b0078df4597186mr10344136ejc.49.1670596226850;
+        Fri, 09 Dec 2022 06:30:26 -0800 (PST)
+Received: from skbuf ([188.27.185.190])
+        by smtp.gmail.com with ESMTPSA id fu38-20020a170907b02600b007ae32daf4b9sm621192ejc.106.2022.12.09.06.30.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Dec 2022 01:59:57 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] wireless: ti: remove obsolete lines in the Makefile
-Date:   Fri,  9 Dec 2022 10:59:37 +0100
-Message-Id: <20221209095937.17773-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 09 Dec 2022 06:30:26 -0800 (PST)
+Date:   Fri, 9 Dec 2022 16:30:24 +0200
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Uladzislau Koshchanka <koshchanka@gmail.com>
+Cc:     Dan Carpenter <error27@gmail.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] lib: packing: fix shift wrapping in bit_reverse()
+Message-ID: <20221209143024.ad4cckonv4c3yhxd@skbuf>
+References: <Y5B3sAcS6qKSt+lS@kili>
+ <CAHktU2C00J7wY5uDbbScxwb0fD2kwUH+-=hgS5o_Timemh0Auw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHktU2C00J7wY5uDbbScxwb0fD2kwUH+-=hgS5o_Timemh0Auw@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 06463f6e98df ("wifi: wl1251: drop support for platform data")
-removes TI WiLink platform data, but leaves some dead lines in the
-Makefile.
+Hi Uladzislau,
 
-Remove these obsolete lines in the Makefile.
+On Fri, Dec 09, 2022 at 11:21:21AM +0300, Uladzislau Koshchanka wrote:
+> On Wed, 7 Dec 2022 at 14:30, Dan Carpenter <error27@gmail.com> wrote:
+> >
+> > The bit_reverse() function is clearly supposed to be able to handle
+> > 64 bit values, but the types for "(1 << i)" and "bit << (width - i - 1)"
+> > are not enough to handle more than 32 bits.
+> 
+> It seems from the surrounding code that this function is only called
+> for width of up to a byte (but correct me if I'm wrong).
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+This observation is quite true. I was quite lazy to look and remember
+whether this is the case, but the comment says it quite clearly:
+
+		/* Bit indices into the currently accessed 8-bit box */
+		int box_start_bit, box_end_bit, box_addr;
+
+> There are fast implementations of bit-reverse in include/linux/bitrev.h.
+> It's better to just remove this function entirely and call bitrev8,
+> which is just a precalc-table lookup. While at it, also sort includes.
+
+The problem I see with bitrev8 is that the byte_rev_table[] can
+seemingly be built as a module (the BITREVERSE Kconfig knob is tristate,
+and btw your patch doesn't make PACKING select BITREVERSE). But PACKING
+is bool. IIRC, I got comments during review that it's not worth making
+packing a module, but I may remember wrong.
+
+> @@ -49,7 +37,7 @@ static void adjust_for_msb_right_quirk(u64
+> *to_write, int *box_start_bit,
+>         int new_box_start_bit, new_box_end_bit;
+> 
+>         *to_write >>= *box_end_bit;
+> -       *to_write = bit_reverse(*to_write, box_bit_width);
+> +       *to_write = bitrev8(*to_write) >> (8 - box_bit_width);
+>         *to_write <<= *box_end_bit;
+> 
+>         new_box_end_bit   = box_bit_width - *box_start_bit - 1;
+
+Anyway, the patch works in principle. I know this because I wrote the
+following patch to check:
+
+From 17099a86291713d2bcf8137473daea5f390a2ef4 Mon Sep 17 00:00:00 2001
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+Date: Fri, 9 Dec 2022 16:23:35 +0200
+Subject: [PATCH] lib: packing: add boot-time selftests
+
+In case people want to make changes to the packing() implementation but
+they aren't sure it's going to keep working, provide 16 boot-time calls
+to packing() which exercise all combinations of quirks plus PACK |
+UNPACK.
+
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 ---
- drivers/net/wireless/ti/Makefile | 3 ---
- 1 file changed, 3 deletions(-)
+ lib/Kconfig   |   9 +++
+ lib/packing.c | 186 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 195 insertions(+)
 
-diff --git a/drivers/net/wireless/ti/Makefile b/drivers/net/wireless/ti/Makefile
-index 0530dd744275..05ee016594f8 100644
---- a/drivers/net/wireless/ti/Makefile
-+++ b/drivers/net/wireless/ti/Makefile
-@@ -3,6 +3,3 @@ obj-$(CONFIG_WLCORE)			+= wlcore/
- obj-$(CONFIG_WL12XX)			+= wl12xx/
- obj-$(CONFIG_WL1251)			+= wl1251/
- obj-$(CONFIG_WL18XX)			+= wl18xx/
--
--# small builtin driver bit
--obj-$(CONFIG_WILINK_PLATFORM_DATA)	+= wilink_platform_data.o
+diff --git a/lib/Kconfig b/lib/Kconfig
+index 9bbf8a4b2108..54b8deaf44fc 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -39,6 +39,15 @@ config PACKING
+ 
+ 	  When in doubt, say N.
+ 
++config PACKING_SELFTESTS
++	bool "Selftests for packing library"
++	depends on PACKING
++	help
++	  Boot-time selftests to make sure that the packing and unpacking
++	  functions work properly.
++
++	  When in doubt, say N.
++
+ config BITREVERSE
+ 	tristate
+ 
+diff --git a/lib/packing.c b/lib/packing.c
+index 9a72f4bbf0e2..aff70853b0c4 100644
+--- a/lib/packing.c
++++ b/lib/packing.c
+@@ -210,5 +210,191 @@ int packing(void *pbuf, u64 *uval, int startbit, int endbit, size_t pbuflen,
+ }
+ EXPORT_SYMBOL(packing);
+ 
++#if IS_ENABLED(CONFIG_PACKING_SELFTESTS)
++
++#define PBUF_LEN 16
++
++/* These selftests pack and unpack a magic 64-bit value (0xcafedeadbeefcafe) at
++ * a fixed logical offset (32) within an otherwise zero array of 128 bits
++ * (16 bytes). They test all possible bit layouts of the 128 bit buffer.
++ */
++static bool test_pack(u8 expected_pbuf[PBUF_LEN], u8 quirks)
++{
++	u64 uval = 0xcafedeadbeefcafe;
++	u8 pbuf[PBUF_LEN];
++	int err, i;
++
++	memset(pbuf, 0, PBUF_LEN);
++	err = packing(pbuf, &uval, 95, 32, PBUF_LEN, PACK, quirks);
++	if (err) {
++		pr_err("packing() returned %pe\n", ERR_PTR(err));
++		return false;
++	}
++
++	for (i = 0; i < PBUF_LEN; i++) {
++		if (pbuf[i] != expected_pbuf[i]) {
++			print_hex_dump(KERN_ERR, "pbuf:     ", DUMP_PREFIX_NONE,
++				       16, 1, pbuf, PBUF_LEN, false);
++			print_hex_dump(KERN_ERR, "expected: ", DUMP_PREFIX_NONE,
++				       16, 1, expected_pbuf, PBUF_LEN, false);
++			return false;
++		}
++	}
++
++	return true;
++}
++
++static bool test_unpack(u8 pbuf[PBUF_LEN], u8 quirks)
++{
++	u64 uval, expected_uval = 0xcafedeadbeefcafe;
++	int err;
++
++	err = packing(pbuf, &uval, 95, 32, PBUF_LEN, UNPACK, quirks);
++	if (err) {
++		pr_err("packing() returned %pe\n", ERR_PTR(err));
++		return false;
++	}
++
++	if (uval != expected_uval) {
++		pr_err("uval: 0x%llx expected 0x%llx\n", uval, expected_uval);
++		return false;
++	}
++
++	return true;
++}
++
++static void test_no_quirks(void)
++{
++	u8 pbuf[PBUF_LEN] = {0x00, 0x00, 0x00, 0x00, 0xca, 0xfe, 0xde, 0xad,
++			     0xbe, 0xef, 0xca, 0xfe, 0x00, 0x00, 0x00, 0x00};
++	bool ret;
++
++	ret = test_pack(pbuf, 0);
++	pr_info("packing with no quirks: %s\n", ret ? "OK" : "FAIL");
++
++	ret = test_unpack(pbuf, 0);
++	pr_info("unpacking with no quirks: %s\n", ret ? "OK" : "FAIL");
++}
++
++static void test_msb_right(void)
++{
++	u8 pbuf[PBUF_LEN] = {0x00, 0x00, 0x00, 0x00, 0x53, 0x7f, 0x7b, 0xb5,
++			     0x7d, 0xf7, 0x53, 0x7f, 0x00, 0x00, 0x00, 0x00};
++	bool ret;
++
++	ret = test_pack(pbuf, QUIRK_MSB_ON_THE_RIGHT);
++	pr_info("packing with QUIRK_MSB_ON_THE_RIGHT: %s\n",
++		ret ? "OK" : "FAIL");
++
++	ret = test_unpack(pbuf, QUIRK_MSB_ON_THE_RIGHT);
++	pr_info("unpacking with QUIRK_MSB_ON_THE_RIGHT: %s\n",
++		ret ? "OK" : "FAIL");
++}
++
++static void test_le(void)
++{
++	u8 pbuf[PBUF_LEN] = {0x00, 0x00, 0x00, 0x00, 0xad, 0xde, 0xfe, 0xca,
++			     0xfe, 0xca, 0xef, 0xbe, 0x00, 0x00, 0x00, 0x00};
++	bool ret;
++
++	ret = test_pack(pbuf, QUIRK_LITTLE_ENDIAN);
++	pr_info("packing with QUIRK_LITTLE_ENDIAN: %s\n", ret ? "OK" : "FAIL");
++
++	ret = test_unpack(pbuf, QUIRK_LITTLE_ENDIAN);
++	pr_info("unpacking with QUIRK_LITTLE_ENDIAN: %s\n",
++		ret ? "OK" : "FAIL");
++}
++
++static void test_le_msb_right(void)
++{
++	u8 pbuf[PBUF_LEN] = {0x00, 0x00, 0x00, 0x00, 0xb5, 0x7b, 0x7f, 0x53,
++			     0x7f, 0x53, 0xf7, 0x7d, 0x00, 0x00, 0x00, 0x00};
++	bool ret;
++
++	ret = test_pack(pbuf, QUIRK_LITTLE_ENDIAN | QUIRK_MSB_ON_THE_RIGHT);
++	pr_info("packing with QUIRK_LITTLE_ENDIAN | QUIRK_MSB_ON_THE_RIGHT: %s\n",
++		ret ? "OK" : "FAIL");
++
++	ret = test_unpack(pbuf, QUIRK_LITTLE_ENDIAN | QUIRK_MSB_ON_THE_RIGHT);
++	pr_info("unpacking with QUIRK_LITTLE_ENDIAN | QUIRK_MSB_ON_THE_RIGHT: %s\n",
++		ret ? "OK" : "FAIL");
++}
++
++static void test_lsw32_first(void)
++{
++	u8 pbuf[PBUF_LEN] = {0x00, 0x00, 0x00, 0x00, 0xbe, 0xef, 0xca, 0xfe,
++			     0xca, 0xfe, 0xde, 0xad, 0x00, 0x00, 0x00, 0x00};
++	bool ret;
++
++	ret = test_pack(pbuf, QUIRK_LSW32_IS_FIRST);
++	pr_info("packing with QUIRK_LSW32_IS_FIRST: %s\n", ret ? "OK" : "FAIL");
++
++	ret = test_unpack(pbuf, QUIRK_LSW32_IS_FIRST);
++	pr_info("unpacking with QUIRK_LSW32_IS_FIRST: %s\n", ret ? "OK" : "FAIL");
++}
++
++static void test_lsw32_first_msb_right(void)
++{
++	u8 pbuf[PBUF_LEN] = {0x00, 0x00, 0x00, 0x00, 0x7d, 0xf7, 0x53, 0x7f,
++			     0x53, 0x7f, 0x7b, 0xb5, 0x00, 0x00, 0x00, 0x00};
++	bool ret;
++
++	ret = test_pack(pbuf, QUIRK_LSW32_IS_FIRST | QUIRK_MSB_ON_THE_RIGHT);
++	pr_info("packing with QUIRK_LSW32_IS_FIRST | QUIRK_MSB_ON_THE_RIGHT: %s\n",
++		ret ? "OK" : "FAIL");
++
++	ret = test_unpack(pbuf, QUIRK_LSW32_IS_FIRST | QUIRK_MSB_ON_THE_RIGHT);
++	pr_info("unpacking with QUIRK_LSW32_IS_FIRST | QUIRK_MSB_ON_THE_RIGHT: %s\n",
++		ret ? "OK" : "FAIL");
++}
++
++static void test_lsw32_first_le(void)
++{
++	u8 pbuf[PBUF_LEN] = {0x00, 0x00, 0x00, 0x00, 0xfe, 0xca, 0xef, 0xbe,
++			     0xad, 0xde, 0xfe, 0xca, 0x00, 0x00, 0x00, 0x00};
++	bool ret;
++
++	ret = test_pack(pbuf, QUIRK_LSW32_IS_FIRST | QUIRK_LITTLE_ENDIAN);
++	pr_info("packing with QUIRK_LSW32_IS_FIRST | QUIRK_LITTLE_ENDIAN: %s\n",
++		ret ? "OK" : "FAIL");
++
++	ret = test_unpack(pbuf, QUIRK_LSW32_IS_FIRST | QUIRK_LITTLE_ENDIAN);
++	pr_info("unpacking with QUIRK_LSW32_IS_FIRST | QUIRK_LITTLE_ENDIAN: %s\n",
++		ret ? "OK" : "FAIL");
++}
++
++static void test_lsw32_first_le_msb_right(void)
++{
++	u8 pbuf[PBUF_LEN] = {0x00, 0x00, 0x00, 0x00, 0x7f, 0x53, 0xf7, 0x7d,
++			     0xb5, 0x7b, 0x7f, 0x53, 0x00, 0x00, 0x00, 0x00};
++	bool ret;
++
++	ret = test_pack(pbuf, QUIRK_LSW32_IS_FIRST | QUIRK_LITTLE_ENDIAN |
++			QUIRK_MSB_ON_THE_RIGHT);
++	pr_info("packing with QUIRK_LSW32_IS_FIRST | QUIRK_LITTLE_ENDIAN | QUIRK_MSB_ON_THE_RIGHT: %s\n",
++		ret ? "OK" : "FAIL");
++
++	ret = test_unpack(pbuf, QUIRK_LSW32_IS_FIRST | QUIRK_LITTLE_ENDIAN |
++			  QUIRK_MSB_ON_THE_RIGHT);
++	pr_info("unpacking with QUIRK_LSW32_IS_FIRST | QUIRK_LITTLE_ENDIAN | QUIRK_MSB_ON_THE_RIGHT: %s\n",
++		ret ? "OK" : "FAIL");
++}
++
++static int __init packing_init(void)
++{
++	test_no_quirks();
++	test_msb_right();
++	test_le();
++	test_le_msb_right();
++	test_lsw32_first();
++	test_lsw32_first_msb_right();
++	test_lsw32_first_le();
++	test_lsw32_first_le_msb_right();
++
++	return 0;
++}
++module_init(packing_init);
++#endif
++
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("Generic bitfield packing and unpacking");
 -- 
-2.17.1
+2.34.1
 
+
+I've been meaning to do this for a while, but I'm not sure what is the
+best way to integrate such a thing. Does anyone have any idea?
