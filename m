@@ -2,89 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE2DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 09:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADA9C04FDE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 10:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbiLIJQW (ORCPT
+        id S229678AbiLIKAC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Dec 2022 04:16:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43148 "EHLO
+        Fri, 9 Dec 2022 05:00:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbiLIJQU (ORCPT
+        with ESMTP id S229605AbiLIKAA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Dec 2022 04:16:20 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB531B9C2;
-        Fri,  9 Dec 2022 01:16:18 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id gh17so10064217ejb.6;
-        Fri, 09 Dec 2022 01:16:18 -0800 (PST)
+        Fri, 9 Dec 2022 05:00:00 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763CC3D90B;
+        Fri,  9 Dec 2022 01:59:59 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id d20so2481519edn.0;
+        Fri, 09 Dec 2022 01:59:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MFKTxSskKkvNwPaluwiCksazhwpmGkKKYy4t6/+aZ2c=;
-        b=epzyxHkp1surXXNxxf+GWa7hiZthLFue3Ia5s8TjtkbP/cgWI3x+PphCZEX+il/i3r
-         G6u2PFhnEAeif/3Sznlt2N96aSdrD+NeTuT8rl56g/7xEyvuM21TwiDPz0J6ulxwWEu5
-         mEsXKIvJ6SOdw1b8BavY5Zv8LedPzfN+z1kCsb93AHZXmE8ygQp8wyNjxYpB4wKEUpLF
-         60w3WDoC6Pggee+euhLLMWQPGV6NIJdKfSKXY0y3BMUgx9wueT2nx6QZHL0c5DLYw0vV
-         zR6n2hT2XdYB5YzAzoZPMqAI2CjuIYoa480s4LHavvobC9JaRVqhvQSzMQ/B5rgKrBZw
-         N72g==
+        bh=uV6wgLLBJq+5PmPft7u7+V4YEJPvc3umfQt0xK4OsN4=;
+        b=Sr0b5P0r6WV8j9QfllEgNWYMdbyORZX9LDzGOued1mvnVNaz84U+JWTDP13ZDZ4JcK
+         iFNDGKKZqX9klGBP8ba3/3vqFBrVv05jXbU/sW07X7GhZkznwt7GM0S3PGzxqeF17GU0
+         8Ywkcvwp4OK34DzwOTmA4xp+w6BTNLXOhR7S8vxO5gD5NDvnVMOFiYAF9WE4RUorBo1q
+         wGLTTLAGt95Rpwiw07chOrweuYcKLGVQP5ZFdqOWA4EoGpFkJZTLY6yZkhgsdqBsALOg
+         i3whDws+6YA6URMuDH49bIPbrBku0LccK/ECTnybUEG0M6hcjvEEH9z0xl5tkjtBsGFO
+         TqSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MFKTxSskKkvNwPaluwiCksazhwpmGkKKYy4t6/+aZ2c=;
-        b=CutY27cv1mMI2L+tunYCtiH4hdqbpR/oACyNKrj6HyS8N7KkSWQn+d6MnZqrljCLdO
-         MBY/u+rei4uhCG1GKzFzE64/zNqCLDpxHOF0fUxsbc850wMnKFCYovik/UznKaTZPo8M
-         1wcvX/glBhxlqQjR//xXnVGxtbbl5k3yKrCxijTmBlpADHMupnNcL0euuWsO38rDEdu8
-         OR/VJrpCu4lj4HAvBUgWVtjM9hSNIucq51692J421gjq4Z+Msx9mtMZSk/zIyv7PK2OV
-         4ZkIHP6oQH/1o1qPfpDRh5sTtKaOyCxJzYO45PxvTZv4MR1klDosf59qoNQNxo/tKXKp
-         gxuQ==
-X-Gm-Message-State: ANoB5pktXyt8dMMb0QtFhr1quwfngJmx6i9YazoGU1yTk31FbDj1LDAb
-        hr9hsM8YUzqT66tbi/d+X8U=
-X-Google-Smtp-Source: AA0mqf7OuGVGyXKcpxVk4I6erdRtNX4a2sFcYN4q8GjeOa83/tpjUDa+hHFYA5K58XISOngaQOPEDA==
-X-Received: by 2002:a17:906:9f23:b0:7c1:1ad9:e5b0 with SMTP id fy35-20020a1709069f2300b007c11ad9e5b0mr4261790ejc.33.1670577376973;
-        Fri, 09 Dec 2022 01:16:16 -0800 (PST)
+        bh=uV6wgLLBJq+5PmPft7u7+V4YEJPvc3umfQt0xK4OsN4=;
+        b=vWOagpRUQaJVXsOkyr/JrsN75HEVS3RidQjwQ2Ooxq38Q/5x8D0tAfdMxjdx7HpfI5
+         w/OQFaDj0vmfnO9F4+0+iWZT9TkVHhVc8mNCtkwSlbZ+iZtMbNiekRJdKW8eqzvYZQzL
+         KTh/NXQDGJ53aL/0wbJpFBjf5sQ+85cTrD2lHCVBK9duyM6UuMu/bp6zstyJwmhStrVE
+         ozM8GShKdBoIdvh3yxqZFRikWv8BJ98A+Pk6VmjohqnPiIePP5kp8XMXu9tRzjimzRin
+         DzCBGCYfO1SwGpLzdHNh+Vzr5VXu7Pzg4PcDjNQunvQBy2u/h3DpfSggL/dWsOREkbC7
+         93+A==
+X-Gm-Message-State: ANoB5pl4U+Ei4BTXEQM0DlzYkQReyNg1nPnifvskPYmT7PpBAdzwS4dH
+        YZBbu9ysHBeloUJ6r3xhpmQbU+/P7gw=
+X-Google-Smtp-Source: AA0mqf6J/oH42DT3d9Mda8adYRV2Kqcr5cWYXHtAYgSBKt+zP95FdUIdqjsGVskC+Cy1mbSAi4Tr0Q==
+X-Received: by 2002:a05:6402:5299:b0:461:7c4e:c437 with SMTP id en25-20020a056402529900b004617c4ec437mr4188667edb.1.1670579997645;
+        Fri, 09 Dec 2022 01:59:57 -0800 (PST)
 Received: from felia.fritz.box (200116b826756500611a29889499a521.dip.versatel-1u1.de. [2001:16b8:2675:6500:611a:2988:9499:a521])
-        by smtp.gmail.com with ESMTPSA id u17-20020a1709061db100b0079dbf06d558sm314354ejh.184.2022.12.09.01.16.15
+        by smtp.gmail.com with ESMTPSA id f5-20020aa7d845000000b00461a6997c5dsm426890eds.83.2022.12.09.01.59.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Dec 2022 01:16:16 -0800 (PST)
+        Fri, 09 Dec 2022 01:59:57 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] scripts: headers_install.sh: remove left-over due to now gone pktcdvd shortcomings
-Date:   Fri,  9 Dec 2022 10:15:54 +0100
-Message-Id: <20221209091554.22403-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] wireless: ti: remove obsolete lines in the Makefile
+Date:   Fri,  9 Dec 2022 10:59:37 +0100
+Message-Id: <20221209095937.17773-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit f40eb99897af ("pktcdvd: remove driver.") removes the pktcdvd driver,
-including the config CDROM_PKTCDVD and CDROM_PKTCDVD_WCACHE, and the uapi
-header file.
+Commit 06463f6e98df ("wifi: wl1251: drop support for platform data")
+removes TI WiLink platform data, but leaves some dead lines in the
+Makefile.
 
-Remove some further unneeded left-over due to now gone pktcdvd shortcomings
-in the headers_install.sh script.
+Remove these obsolete lines in the Makefile.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- scripts/headers_install.sh | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/ti/Makefile | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/scripts/headers_install.sh b/scripts/headers_install.sh
-index 4041881746ad..ad5930cab251 100755
---- a/scripts/headers_install.sh
-+++ b/scripts/headers_install.sh
-@@ -86,7 +86,6 @@ arch/x86/include/uapi/asm/mman.h:CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
- include/uapi/linux/atmdev.h:CONFIG_COMPAT
- include/uapi/linux/eventpoll.h:CONFIG_PM_SLEEP
- include/uapi/linux/hw_breakpoint.h:CONFIG_HAVE_MIXED_BREAKPOINTS_REGS
--include/uapi/linux/pktcdvd.h:CONFIG_CDROM_PKTCDVD_WCACHE
- "
- 
- for c in $configs
+diff --git a/drivers/net/wireless/ti/Makefile b/drivers/net/wireless/ti/Makefile
+index 0530dd744275..05ee016594f8 100644
+--- a/drivers/net/wireless/ti/Makefile
++++ b/drivers/net/wireless/ti/Makefile
+@@ -3,6 +3,3 @@ obj-$(CONFIG_WLCORE)			+= wlcore/
+ obj-$(CONFIG_WL12XX)			+= wl12xx/
+ obj-$(CONFIG_WL1251)			+= wl1251/
+ obj-$(CONFIG_WL18XX)			+= wl18xx/
+-
+-# small builtin driver bit
+-obj-$(CONFIG_WILINK_PLATFORM_DATA)	+= wilink_platform_data.o
 -- 
 2.17.1
 
