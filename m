@@ -2,74 +2,128 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6557EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 08:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2964C4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 08:21:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbiLIINI (ORCPT
+        id S229512AbiLIIVf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Dec 2022 03:13:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34896 "EHLO
+        Fri, 9 Dec 2022 03:21:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230055AbiLIINF (ORCPT
+        with ESMTP id S229498AbiLIIVd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Dec 2022 03:13:05 -0500
-Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0E7D5B593;
-        Fri,  9 Dec 2022 00:13:04 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 6C1CF204FD;
-        Fri,  9 Dec 2022 09:13:03 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id mtFtQd5DziqR; Fri,  9 Dec 2022 09:13:03 +0100 (CET)
-Received: from mailout1.secunet.com (mailout1.secunet.com [62.96.220.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 00575204E5;
-        Fri,  9 Dec 2022 09:13:03 +0100 (CET)
-Received: from cas-essen-01.secunet.de (unknown [10.53.40.201])
-        by mailout1.secunet.com (Postfix) with ESMTP id EECEB80004A;
-        Fri,  9 Dec 2022 09:13:02 +0100 (CET)
-Received: from mbx-essen-01.secunet.de (10.53.40.197) by
- cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 9 Dec 2022 09:13:02 +0100
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-01.secunet.de
- (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Fri, 9 Dec
- 2022 09:13:02 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-        id 3507D3182989; Fri,  9 Dec 2022 09:13:02 +0100 (CET)
-Date:   Fri, 9 Dec 2022 09:13:02 +0100
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-CC:     Simon Horman <simon.horman@corigine.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Huanhuan Wang <huanhuan.wang@corigine.com>,
-        Louis Peens <louis.peens@corigine.com>,
-        <oss-drivers@corigine.com>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] xfrm: Fix spelling mistake "tyoe" -> "type"
-Message-ID: <20221209081302.GY424616@gauss3.secunet.de>
-References: <20221207091919.2278416-1-colin.i.king@gmail.com>
+        Fri, 9 Dec 2022 03:21:33 -0500
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D58475CD12;
+        Fri,  9 Dec 2022 00:21:32 -0800 (PST)
+Received: by mail-yb1-xb31.google.com with SMTP id o127so4663185yba.5;
+        Fri, 09 Dec 2022 00:21:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v3RTjeyyiRTAhODV0n3zXPIltUWeH9mdUsUulbRdH4Y=;
+        b=I68bjLoq30DDevaccoVyiJLwK3tJyRwlR9fqbgOdHs4H2JVNggn5W8x6NbNuSMDvnY
+         ckVYaPQLShPzebCxUZ8BOMxYriuK1YVcd71RiL5RxE+NsDuXVv659UwYHqwY718EEN40
+         qZv/mHl2310qGHETs0c6tQkrlXvJFXSdBdgIVVZfKDP07GnPooeFlfugPF4HUHt5NNz5
+         w9xKM/3OI7PmWW4h9y9WDJP6Ji3lUXfkmjGPKgPRqF8dvDzk4YZtVn/it9EuFYq5WYYY
+         ODT07mfIlA1g/aAFnQJFsT95A/Q6G8Jk6FT3AE6p/GCxayYFXCQNQG68nbZ7pbtL5bRp
+         ntEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v3RTjeyyiRTAhODV0n3zXPIltUWeH9mdUsUulbRdH4Y=;
+        b=UXNIVnM/lEQ14JfqBHj1l76tDhB7B3KMKgNpW1if38phl6aXgKlVY644LtlVyjF1yL
+         WiCHignOfza/9GD+v4SIL9OpkOsXcsNZWCWj/tef+iTurWm8OXL4l+BHoWc9syKviWQd
+         gcw8L+fgNKlfh0YjTv01t0PQUW/PV9wrH+O13Hl3jqx2sxTjbN1Es8Igjz4ODg6CLjnh
+         3pS270tpQVOlZxMCU1yaAT79vEeu4Zi09btZ983HYE+Va2W90neqWMafnGuvlcrza85z
+         Ofna6N5FT2fp8cqF+0YOGXTmRdIgNFkHuW+7Hieh1K2YSorG4eovtRU2vJK9lBGXGsuG
+         tuvg==
+X-Gm-Message-State: ANoB5pnAHLvkkfgqBbdeX04dAue5uNrIDvi8w6lVCv9q9SeZxNvKL+GL
+        E6sb1z5F7cWa1YLRa7GUs7d9xtCE7+2JoixuKUoSHl98ZB7i/g==
+X-Google-Smtp-Source: AA0mqf6D7MOwK8V5FdIqJBWAUExRwwx4GNnORVJ1/nyWDDw+z5Nm6WTMCzcuG72Gkg3/kp50u2y1eF6hAyVtRb4k4qc=
+X-Received: by 2002:a25:53c5:0:b0:6fb:80c:fe0f with SMTP id
+ h188-20020a2553c5000000b006fb080cfe0fmr32944286ybb.25.1670574092075; Fri, 09
+ Dec 2022 00:21:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20221207091919.2278416-1-colin.i.king@gmail.com>
-X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
- mbx-essen-01.secunet.de (10.53.40.197)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+References: <Y5B3sAcS6qKSt+lS@kili>
+In-Reply-To: <Y5B3sAcS6qKSt+lS@kili>
+From:   Uladzislau Koshchanka <koshchanka@gmail.com>
+Date:   Fri, 9 Dec 2022 11:21:21 +0300
+Message-ID: <CAHktU2C00J7wY5uDbbScxwb0fD2kwUH+-=hgS5o_Timemh0Auw@mail.gmail.com>
+Subject: Re: [PATCH net] lib: packing: fix shift wrapping in bit_reverse()
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        olteanv@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Dec 07, 2022 at 09:19:19AM +0000, Colin Ian King wrote:
-> There is a spelling mistake in a nn_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Wed, 7 Dec 2022 at 14:30, Dan Carpenter <error27@gmail.com> wrote:
+>
+> The bit_reverse() function is clearly supposed to be able to handle
+> 64 bit values, but the types for "(1 << i)" and "bit << (width - i - 1)"
+> are not enough to handle more than 32 bits.
 
-This one does not apply to ipsec-next.
+It seems from the surrounding code that this function is only called
+for width of up to a byte (but correct me if I'm wrong). There are
+fast implementations of bit-reverse in include/linux/bitrev.h. It's
+better to just remove this function entirely and call bitrev8, which
+is just a precalc-table lookup. While at it, also sort includes.
+
+Signed-off-by: Uladzislau Koshchanka <koshchanka@gmail.com>
+
+ lib/packing.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
+
+diff --git a/lib/packing.c b/lib/packing.c
+index 9a72f4bbf0e2..47ea47c1198a 100644
+--- a/lib/packing.c
++++ b/lib/packing.c
+@@ -2,10 +2,11 @@
+ /* Copyright 2016-2018 NXP
+  * Copyright (c) 2018-2019, Vladimir Oltean <olteanv@gmail.com>
+  */
+-#include <linux/packing.h>
+-#include <linux/module.h>
+ #include <linux/bitops.h>
++#include <linux/bitrev.h>
+ #include <linux/errno.h>
++#include <linux/module.h>
++#include <linux/packing.h>
+ #include <linux/types.h>
+
+ static int get_le_offset(int offset)
+@@ -29,19 +30,6 @@ static int get_reverse_lsw32_offset(int offset, size_t len)
+        return word_index * 4 + offset;
+ }
+
+-static u64 bit_reverse(u64 val, unsigned int width)
+-{
+-       u64 new_val = 0;
+-       unsigned int bit;
+-       unsigned int i;
+-
+-       for (i = 0; i < width; i++) {
+-               bit = (val & (1 << i)) != 0;
+-               new_val |= (bit << (width - i - 1));
+-       }
+-       return new_val;
+-}
+-
+ static void adjust_for_msb_right_quirk(u64 *to_write, int *box_start_bit,
+                                       int *box_end_bit, u8 *box_mask)
+ {
+@@ -49,7 +37,7 @@ static void adjust_for_msb_right_quirk(u64
+*to_write, int *box_start_bit,
+        int new_box_start_bit, new_box_end_bit;
+
+        *to_write >>= *box_end_bit;
+-       *to_write = bit_reverse(*to_write, box_bit_width);
++       *to_write = bitrev8(*to_write) >> (8 - box_bit_width);
+        *to_write <<= *box_end_bit;
+
+        new_box_end_bit   = box_bit_width - *box_start_bit - 1;
