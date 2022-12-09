@@ -2,94 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE399C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 22:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0390C4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 23:32:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbiLIWJO (ORCPT
+        id S229733AbiLIXcL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Dec 2022 17:09:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53676 "EHLO
+        Fri, 9 Dec 2022 18:32:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229722AbiLIWIy (ORCPT
+        with ESMTP id S229470AbiLIXcH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Dec 2022 17:08:54 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF046F48B;
-        Fri,  9 Dec 2022 14:08:03 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id bg10so942784wmb.1;
-        Fri, 09 Dec 2022 14:08:02 -0800 (PST)
+        Fri, 9 Dec 2022 18:32:07 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5837866CBF;
+        Fri,  9 Dec 2022 15:32:06 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id q7so6715361wrr.8;
+        Fri, 09 Dec 2022 15:32:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mzj3qyQItGAAsYBfHeM0+6Yfzhg3iJO8a7fLkUF6aMs=;
-        b=DaP4ldgMJxXb/dfYJd0Y9dqxOlLP7qkZu525rINlFJBN9QZx+vMCeMFlGyq6gdiNPk
-         dJGvnJtAZZlmtfTkjymrNhWMJtfswE7bql0dARpwxCyjB0RIXpFXG+dnmoqQRHqCmyjV
-         a5b8Pu5io0gBTRrk9Pv5NIDhnJ6IM02hT++MNYW826f/hHUgDE1jmiZweMoEimDV7w9m
-         CmacaVdJomfeBUBrBu/xY5fRlTi+NCT0Cxz6Au4joV6/LTa6QrvemzbCL+SaTJ1qdX5s
-         bZkAtfNGrtVCoQSIlRIP3q5RJ8emD4tyF6fhjr1Fd1U406JgxdT3wR7T7MZ8XE1yuSwe
-         Wj/w==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8W71q9LELQYCpcjWYqNiTXMd9NVyi7pMCWA3gVwKHyI=;
+        b=oehfC2AMuozA5HHZ2FNgIr+aTNRZIXIezkB8wWW/j8Pfezq5ulL0OeDJ+YkOgv5OJx
+         /UDSh7XAfJ7ekEOe5+3kFQLVcYGqn323kFhDPa4B/TiZl8zg/w4UrZcXXpKXZikcYCFI
+         IGZzRQvjHmKeAlwQoMKiqKPMxMbrKQIUH2lrXbdDeKnvF0IMhn4oZIBwbRpzub7GOyGm
+         5Xpo+DqgKMoGtjM3MT/JFDk/haRvr9YzxOdWdO3UHqEMdm3EBWepPqaF9XJNCndyZtbb
+         qIKhx2dGTI7xsRl6t+QIBBmf/CRbibAUjV9cUXQV3+xFD3N5TTQ4BtQAqa+m8fL4paXJ
+         qX0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mzj3qyQItGAAsYBfHeM0+6Yfzhg3iJO8a7fLkUF6aMs=;
-        b=YLIGScBrljHkRFXdbISw623Wi9ba1tD/Tw1rcWjOE1tPvDcvJJo9I/kenYDULAy+TO
-         kPszKnyWVBcARcboQPv9CSQF3NNI4u4QZaDto1DwadSOa7TtV6TNm1hA/2yn4cmmugJU
-         e4IjCUCopCXVuA9obnXUcCF3oNTcfGqRkiV1AvxIqwWvLIXyX4oG1yXGrWIcKEQlvOKk
-         vUUoIxTSp1jx6cOCp4/MgYFVVxW9vWJFO4n/nUZVslMmXwkgzzrqYsnMwn0KdvaN5Tvk
-         oAErKYwmgvB9pZooy8+BZf4aNPlRLn6cQm9KkjexGLkmnkVRpBAwWzy0R2wo/rSqjLuX
-         GFtw==
-X-Gm-Message-State: ANoB5pkDDautHybN2U5nCYsmh9/Zv7WTbwCmFJRr5hZjveX1eSfEughI
-        if4kK9AoLTLRK4/e5SgmLUo=
-X-Google-Smtp-Source: AA0mqf6qAxahS5L+cAQNa13hQaEO7gVqjYPrnk9VazYoGp7dU4ZDGVFwPmQSibSaljrfVil0S0L0uA==
-X-Received: by 2002:a05:600c:1c25:b0:3d0:a768:a702 with SMTP id j37-20020a05600c1c2500b003d0a768a702mr6043289wms.19.1670623681499;
-        Fri, 09 Dec 2022 14:08:01 -0800 (PST)
-Received: from skbuf ([188.27.185.190])
-        by smtp.gmail.com with ESMTPSA id i28-20020a1709067a5c00b007b4bc423b41sm345341ejo.190.2022.12.09.14.08.00
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8W71q9LELQYCpcjWYqNiTXMd9NVyi7pMCWA3gVwKHyI=;
+        b=EIIZmEA0r5+zpFjxGy0NuEMBnBjedyYsasMIIg8+/jkER4+T4RIYE+Bg2W9jd02gTu
+         4d2jNz238D5B1DZVWprDXam8tT54iv5FOY4Wg8bLH+VzEEI8TaMIoyPtqKAHY4P0K7bb
+         /R3BuHtGtMKv3Fr3h93OuL8v07vLkq4RUIkzJ7qj6Fd2ZThDGM9iQLWKTZvIFGxq/swM
+         +KdPkQzwym7dHfecw3Mf8NhRobdEXJK9T6V4rCzCdKA5hg/AjEic1GZQLrdwXPUUPpl7
+         jjJbG41Eg5qAc1z6z82HrnOa/6ws8SfLfA/5jb2XOKOPz8Sw+6vO77xD58Xl3ap/I4Zz
+         7Ekg==
+X-Gm-Message-State: ANoB5pkYoLp919VdtTNr873buGDyjkIx5RHyspVYQmTSFI7lnRI+KYBX
+        1xlSwnRVoyfnkNp4TURcgw9+qW4Qhou+WQ==
+X-Google-Smtp-Source: AA0mqf4qXzfvOfLq+euSh8QvD6nEIapNpwbG3YjI1LX4qjiPcIWEAotmn74Hzln8zQnM3N5802G3gg==
+X-Received: by 2002:a5d:4d0f:0:b0:242:2eae:2ae4 with SMTP id z15-20020a5d4d0f000000b002422eae2ae4mr5161447wrt.62.1670628724805;
+        Fri, 09 Dec 2022 15:32:04 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id cl6-20020a5d5f06000000b0024274a5db0asm2564975wrb.2.2022.12.09.15.32.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Dec 2022 14:08:01 -0800 (PST)
-Date:   Sat, 10 Dec 2022 00:07:59 +0200
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Uladzislau Koshchanka <koshchanka@gmail.com>
-Cc:     Dan Carpenter <error27@gmail.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] lib: packing: fix shift wrapping in bit_reverse()
-Message-ID: <20221209220759.ilbmtf5htncyhiwq@skbuf>
-References: <Y5B3sAcS6qKSt+lS@kili>
- <CAHktU2C00J7wY5uDbbScxwb0fD2kwUH+-=hgS5o_Timemh0Auw@mail.gmail.com>
- <20221209143024.ad4cckonv4c3yhxd@skbuf>
- <CAHktU2A2MQ4hW0WYcLDXuCuMsN84OmfrnrhTiOKqvHB_oFaVwg@mail.gmail.com>
- <20221209220651.i43mxhz5aczhhjgs@skbuf>
+        Fri, 09 Dec 2022 15:32:03 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: imu: kmx61: Fix spelling mistake "Errow" -> "Error"
+Date:   Fri,  9 Dec 2022 23:32:02 +0000
+Message-Id: <20221209233202.222083-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221209220651.i43mxhz5aczhhjgs@skbuf>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Dec 10, 2022 at 12:06:51AM +0200, Vladimir Oltean wrote:
-> On Sat, Dec 10, 2022 at 12:01:28AM +0300, Uladzislau Koshchanka wrote:
-> > Hi Vladimir,
-> > 
-> > > The problem I see with bitrev8 is that the byte_rev_table[] can
-> > > seemingly be built as a module (the BITREVERSE Kconfig knob is tristate,
-> > > and btw your patch doesn't make PACKING select BITREVERSE). But PACKING
-> > > is bool. IIRC, I got comments during review that it's not worth making
-> > > packing a module, but I may remember wrong.
-> > 
-> > Do you really think it's a problem? I personally would just select
-> > BITREVERSE with/without making PACKING tristate. BITREVERSE is already
-> > selected by CRC32 which defaults to y, so just adding a select isn't a
-> > change in the default. Can't think of a practical point in avoiding
-> > linking against 256 bytes here.
-> > 
-> > In any case, it just doesn't look right to have multiple bit-reverse
-> > implementations only because of Kconfig relations.
-> 
-> Ok, let's use BITREVERSE then. Could you submit your patch formally please?
+There is a spelling mistake in a dev_err message. Fix it.
 
-Also, none of that 'while at it, do XYZ unrelated stuff'. One patch per
-logical change please.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/iio/imu/kmx61.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/imu/kmx61.c b/drivers/iio/imu/kmx61.c
+index e692dfeeda44..53ba020fa5d0 100644
+--- a/drivers/iio/imu/kmx61.c
++++ b/drivers/iio/imu/kmx61.c
+@@ -649,7 +649,7 @@ static int kmx61_chip_update_thresholds(struct kmx61_data *data)
+ 					KMX61_REG_WUF_TIMER,
+ 					data->wake_duration);
+ 	if (ret < 0) {
+-		dev_err(&data->client->dev, "Errow writing reg_wuf_timer\n");
++		dev_err(&data->client->dev, "Error writing reg_wuf_timer\n");
+ 		return ret;
+ 	}
+ 
+-- 
+2.38.1
+
