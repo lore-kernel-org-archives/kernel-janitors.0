@@ -2,101 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2948C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 19:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9E2C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 21:01:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229828AbiLITWI (ORCPT
+        id S229517AbiLIVBo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Dec 2022 14:22:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54426 "EHLO
+        Fri, 9 Dec 2022 16:01:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbiLITWF (ORCPT
+        with ESMTP id S229530AbiLIVBl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Dec 2022 14:22:05 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05CA478BA7;
-        Fri,  9 Dec 2022 11:22:05 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id jn7so5860963plb.13;
-        Fri, 09 Dec 2022 11:22:05 -0800 (PST)
+        Fri, 9 Dec 2022 16:01:41 -0500
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A054AF4D8;
+        Fri,  9 Dec 2022 13:01:40 -0800 (PST)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-3bf4ade3364so67992327b3.3;
+        Fri, 09 Dec 2022 13:01:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BhRGeJWGrl0tr2bjnWyizth/nhOim0rSCX/mVsf4FsI=;
-        b=jdzNMVpr4uHxXDO6uF6Z+4fuId1VRik3H9I3yGfzwXeRXAMfacAtS2iG+grTIwxiee
-         6bMVyhr8xa6JdiZyypIERaCGtlmS77PHs8tHVkTwFWA6/GgShNry8csPojRQL2LmzLOU
-         QZhPHUlv/ltOFMmIGh6B+2lpHCfCI7EyxlSu7MlYTkdhRwNvoeNApleDxmPl2wsOKnKt
-         pXBImU/vsPCAFdHByYxONpKDX8jghKpHo4suCZge3VNpFhlzpmS4qsq/Ih/n7uwkkV1W
-         nmLklSSr2mTHQw8Lh9kEmYTv1XTTidafb++TuFK4cV3oZVmkt0vZM7QRVQip70GisfHt
-         XSGg==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ww4C2VTWkj7IF5qdJ8e0SkSDNmvW1h7I6Mx/ZRJOkY4=;
+        b=CcLzblNC/vCuqWcNu/T1zxvY984E8N59flQNaw/n/g5x0n+aYgl0xNESOn4S1/DJ5b
+         ux3Joq5cdU6PAjxl/nie1m2IMlVZX4FwjTL6QfClbAoMp8IqS3DYME+zMzcoNEK8fjvG
+         MHAte/riloJ2DuSr3WMalHN57EEBAOHWwgZ6NlMZwqMrfsIM0SYpE+bEgAyGd2XFoq4e
+         bxrACRV+A/LRsVDnH2qa2fT7V7AmQL09D60kgizbLyEd/3tPw4f3Ax28KtZeYyuWp+Yn
+         UK2t4IXo+HvPZJJxHVzwwMGJ7/h06NK26/xHZDBuRReG+PY4gXgMfSUvfSJcVx8lEGc/
+         YWeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BhRGeJWGrl0tr2bjnWyizth/nhOim0rSCX/mVsf4FsI=;
-        b=KQmCoxz1BUeXKE1dFhS80S3nQY4P39jwGeRqtfXXonA8qmeeE/HdmhxRmvRIdr+pl0
-         PVow0fSUf9npJJVA1xxC8GR087Yl8NOC7NN1E2KVXx0ISKL+ztapK0L0shG7wUyi78g1
-         jAemPteh2OQ8gO4et1h1kR9qHJNZRCo4rJ2cjwZ1hTAlg0kBStF+MwfCYvxEWTyutg3z
-         Fg0Zjwxu++K9hElMPb35DSBvG+Ar5/R1GpjvXUCrSpEmlJHAXavuA+TJaDLL1hg+rVtf
-         nXJ7xht+KJHz4kSEIOO1q90Y2dh3zDYdZq5gq8ApceIP7RcsCMseS3M7LHPLmAE2fEea
-         k4CQ==
-X-Gm-Message-State: ANoB5plXpZcwWc47zd/QP8ibf3uQ/yxrrup68biU+oYFc2bfJvZgqIQU
-        Tiuz+2E1v4Xg+Zfme9HUAdA=
-X-Google-Smtp-Source: AA0mqf4wdfMIqGQEHLdJxiXpEjHBSnTL5Tg00ntUG/Fa/LRlZHT0p2nb7uxswyrXWf6WqayH3/tOgA==
-X-Received: by 2002:a17:902:ccd2:b0:185:441e:4cfc with SMTP id z18-20020a170902ccd200b00185441e4cfcmr7857718ple.44.1670613724242;
-        Fri, 09 Dec 2022 11:22:04 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:5853:f1e8:694c:1488])
-        by smtp.gmail.com with ESMTPSA id x22-20020a170902821600b00183e2a96414sm1658778pln.121.2022.12.09.11.22.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Dec 2022 11:22:03 -0800 (PST)
-Date:   Fri, 9 Dec 2022 11:22:00 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wireless: ti: remove obsolete lines in the Makefile
-Message-ID: <Y5OK2AvJGhgHXepf@google.com>
-References: <20221209095937.17773-1-lukas.bulwahn@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ww4C2VTWkj7IF5qdJ8e0SkSDNmvW1h7I6Mx/ZRJOkY4=;
+        b=NhQQekJ1DIwKkcmYDEBVV2PKsr+U9rWN1vv1/CXiQDPzaI7AB0StGFYkUuhJxVsDkY
+         xeVUaDFygKtVF57CBZDtu9mkgtg95kcGSphAsqtLBhcLgjsJrFEWyAq+snerDCp/4Quk
+         rmAIsLdKq9GPHfOZOWf+bqZ+b6lSYDD2JgH2IZC8pNveNHYEi1lnwNTBMOK5IDipCfCG
+         OGjA88DHor8oRIrRzd267vCrK2BBVrSCdnWPHW8l/KU90wCNz+BLigOWqbli3SH2xhoG
+         G7dwxmhqqLKvUlA1xxpIhldvuFlB5DADTuOKURxEkilo4fQ9JBGl7v/mvC6c2XnpLt81
+         IuwQ==
+X-Gm-Message-State: ANoB5pnYHWENNINRmMyg0+nNG9hoqlTmZVo2t9BtYCkFegnkuqM0L1RR
+        bzkK+2MQzUSN7dXzphZYAtt3C48MrKBgQFcDSwjCNJQkUpwnHOFl
+X-Google-Smtp-Source: AA0mqf4VbI0wwWPkzyLDKowh06WVfO4OvtoC/p1+6arSDvL9Fj+S/Ya2VtpIx8Ak5p+6JXXdHErmno80LSp9vpyPTmo=
+X-Received: by 2002:a81:8807:0:b0:370:4456:5cb5 with SMTP id
+ y7-20020a818807000000b0037044565cb5mr6181857ywf.284.1670619699326; Fri, 09
+ Dec 2022 13:01:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221209095937.17773-1-lukas.bulwahn@gmail.com>
+References: <Y5B3sAcS6qKSt+lS@kili> <CAHktU2C00J7wY5uDbbScxwb0fD2kwUH+-=hgS5o_Timemh0Auw@mail.gmail.com>
+ <20221209143024.ad4cckonv4c3yhxd@skbuf>
+In-Reply-To: <20221209143024.ad4cckonv4c3yhxd@skbuf>
+From:   Uladzislau Koshchanka <koshchanka@gmail.com>
+Date:   Sat, 10 Dec 2022 00:01:28 +0300
+Message-ID: <CAHktU2A2MQ4hW0WYcLDXuCuMsN84OmfrnrhTiOKqvHB_oFaVwg@mail.gmail.com>
+Subject: Re: [PATCH net] lib: packing: fix shift wrapping in bit_reverse()
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     Dan Carpenter <error27@gmail.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Dec 09, 2022 at 10:59:37AM +0100, Lukas Bulwahn wrote:
-> Commit 06463f6e98df ("wifi: wl1251: drop support for platform data")
-> removes TI WiLink platform data, but leaves some dead lines in the
-> Makefile.
-> 
-> Remove these obsolete lines in the Makefile.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Hi Vladimir,
 
-Thanks for spotting this.
+> The problem I see with bitrev8 is that the byte_rev_table[] can
+> seemingly be built as a module (the BITREVERSE Kconfig knob is tristate,
+> and btw your patch doesn't make PACKING select BITREVERSE). But PACKING
+> is bool. IIRC, I got comments during review that it's not worth making
+> packing a module, but I may remember wrong.
 
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Do you really think it's a problem? I personally would just select
+BITREVERSE with/without making PACKING tristate. BITREVERSE is already
+selected by CRC32 which defaults to y, so just adding a select isn't a
+change in the default. Can't think of a practical point in avoiding
+linking against 256 bytes here.
 
-> ---
->  drivers/net/wireless/ti/Makefile | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ti/Makefile b/drivers/net/wireless/ti/Makefile
-> index 0530dd744275..05ee016594f8 100644
-> --- a/drivers/net/wireless/ti/Makefile
-> +++ b/drivers/net/wireless/ti/Makefile
-> @@ -3,6 +3,3 @@ obj-$(CONFIG_WLCORE)			+= wlcore/
->  obj-$(CONFIG_WL12XX)			+= wl12xx/
->  obj-$(CONFIG_WL1251)			+= wl1251/
->  obj-$(CONFIG_WL18XX)			+= wl18xx/
-> -
-> -# small builtin driver bit
-> -obj-$(CONFIG_WILINK_PLATFORM_DATA)	+= wilink_platform_data.o
-> -- 
-> 2.17.1
-> 
-
--- 
-Dmitry
+In any case, it just doesn't look right to have multiple bit-reverse
+implementations only because of Kconfig relations.
