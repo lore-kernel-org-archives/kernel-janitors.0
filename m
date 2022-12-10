@@ -2,96 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384ADC4167B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Dec 2022 14:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F65FC4167B
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Dec 2022 16:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbiLJOyJ (ORCPT
+        id S229563AbiLJQGL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Dec 2022 09:54:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53122 "EHLO
+        Sat, 10 Dec 2022 11:06:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbiLJOyH (ORCPT
+        with ESMTP id S229623AbiLJQGJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Dec 2022 09:54:07 -0500
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E222C1A053;
-        Sat, 10 Dec 2022 06:54:06 -0800 (PST)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-3b5d9050e48so88240417b3.2;
-        Sat, 10 Dec 2022 06:54:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nwNMp0YAJGSQ7QKo5n56cmMH5UND+SgKbR3yvLQLo2E=;
-        b=NES8jTbwBCd6vpzlC4z4+szxha9oaVY0zluEA5jek8x6wxfyr8/6LXllc3mdXa4RAD
-         4+SBu38pXcD45beSY2tIFKophRRBB+Cy4j3VSxn7fPC7cmsCBtCza+uApZuap2f7CDiJ
-         pP0Hu5pZeUM2Ac+4cL+AoguM3nktWEOgCtt6JYcXFVkWcznp/lBGKgefTGSQ3/793dkg
-         p4mrQbWdTx/2jo0NtjbNZmQNvaCFOwCYUapzQeF6IMw8ZSrgqDmSfBIxkA9GikZ4t7cX
-         +nWRwST/1Gb6Ctb3yHG5hgGf42UX5qpRL+C9l2A+Idfr6EFL8SSlK+9UzQbEh7SDWt7t
-         h4cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nwNMp0YAJGSQ7QKo5n56cmMH5UND+SgKbR3yvLQLo2E=;
-        b=5RcMgsimDC6VLCOPmFurngasv8ENoEzySPOJ651k+bdhE/KcY6tFUBZQekVqQewBq+
-         +n7KygRoXJE3ius+ljv53pcJOC3ngYPnFo0yR6M+989pRqm5ftThSrC71STDGLK7VDFL
-         shsrK4xZDtj7Ae+meR11aQoNzktoKcWK1FKahIcuM2XjqlZ8bno/WXwDG9XAS+8wbp9w
-         treEQ7v0zWx8agHMfdAbwOoZIBOgJpME3b4tyg6xtWozfWJjod4ZcxJaL2wWQLPR2P5t
-         z7JfqqaXE86U8I3kC/YssaNYY3LCNvPvkl4smxXN+Ft+htkBuxRm97Jm4j3gImrOUgbF
-         uKfw==
-X-Gm-Message-State: ANoB5pl9TYXu8DdYF4CY56HEljFcMWE7ac0vjh++pokyTSNKbRO9b0il
-        d08OGJZoWCBFdp4T9agrkzkX6VRj7M8RRV1EviF5/ZDu0Gk=
-X-Google-Smtp-Source: AA0mqf4ZN2tQdTdKKPfosPY967se21wGX1Ji/RelVipfjmWvRseo/aPjtgausjHGD/b9gSLcQE4NyP9Qkpfr6NerwBw=
-X-Received: by 2002:a81:94f:0:b0:3da:3a9a:ef5d with SMTP id
- 76-20020a81094f000000b003da3a9aef5dmr33020129ywj.504.1670683693882; Sat, 10
- Dec 2022 06:48:13 -0800 (PST)
+        Sat, 10 Dec 2022 11:06:09 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8398E186F7;
+        Sat, 10 Dec 2022 08:06:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
+        t=1670688347; bh=UAb7ldzD3tHL8gu70PvIFz+mnBkn1chzH5limOUuYsw=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=WC2+qGRnwHZeYHj5Lb3TMBeX6YsRFoGp7XIIcgj0vs7SLPLznN9XD7OfcCU2205xN
+         Y09Dmv0KPPsz7T1O13liVhUY8naXDHusFEd/jd81W9EuwqysBrb830Yqfc2Md2mNow
+         NRXfcX0AFA3kfrHYfY6yzpFgnKOdLi8rp+h72uMiNGVVWrRbjF6GzaYAfYnx8zSMTt
+         IPh3KGoWEIA16briH6q+H+HCzvXfm/a+e342AA7vu/1T6M+NWJQyKav7bpUaEuK0q5
+         9SySa5jbhsTnnso/KxY79u/NOfWzDZfGl9XAd25YNhwJono3Ulto6i67OYG/zcrWoZ
+         BtEHIwjwELNYg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.60] ([92.116.157.120]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MZCbB-1pQMZO2pyj-00VC2f; Sat, 10
+ Dec 2022 17:05:47 +0100
+Message-ID: <cb19a577-0778-1d85-2c74-b92166038288@gmx.de>
+Date:   Sat, 10 Dec 2022 17:05:46 +0100
 MIME-Version: 1.0
-References: <7946a26c6e53a4158f0f5bad5276d8654fd59415.1670673147.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7946a26c6e53a4158f0f5bad5276d8654fd59415.1670673147.git.christophe.jaillet@wanadoo.fr>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Sat, 10 Dec 2022 06:48:02 -0800
-Message-ID: <CAMo8BfKCv9j-ftKWU+B27g1oHBB_=EZhGBH7qymyVAeF10JcnQ@mail.gmail.com>
-Subject: Re: [PATCH v1] spi: xtensa-xtfpga: Fix a double put() in xtfpga_spi_remove()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linux-spi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2 1/2] video: fbdev: uvesafb: Fixes an error handling
+ path in uvesafb_probe()
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Michal Januszewski <spock@gentoo.org>,
+        Antonino Daplas <adaplas@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <0eba6acb70fa1270d8cf798afd11ce342aa7e8e1.1670671944.git.christophe.jaillet@wanadoo.fr>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <0eba6acb70fa1270d8cf798afd11ce342aa7e8e1.1670671944.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1o0OJtIJZku0ozeLcuTXLOKqT55qfyBM1PV7jFRQE5NXzjsCr3Z
+ L3vzE56cLZM7CtCF9CgQ1mcJMrrGwXTViEpUllTnt86x86KwI1IhpNdnZTZgZHWy4P4z1Cf
+ DslrD3dCaPmQxZ7c4Us1R95WSrJ3ehA3Ro2K4V97OnWr4l/7YTagm74HEUnEePm+7aodL68
+ kfepUdky5+wCDez/wqPaQ==
+UI-OutboundReport: notjunk:1;M01:P0:Dfdv0cAgnqM=;ceBKxw3nJHiyNW0GOq19wXaz+T+
+ IEX2ydSfMEW3GfAXqh8rrZZSeU/+OqdKpweZbUty3Pg+aWNDoF3pYikaqVDPhy1PBFQa+UJ5q
+ z8MzgFaFETf+PhjUwSJfhdEGzkpmyqmNVgK7D0yy99Us9r9RJrvnneliDx7MvwZdnuR/bnU9/
+ eOipAs4AKF6AAiz1nrDNnpVPtnsjc6+AE/iXKxuRJBgNzy4E0+/qf5X17y5XRU2ZrZVgvfRt0
+ WME9inKV5g4kgTs2Td0w+xlfDmyNGQrQFOpZI1ksoDqwbp2SKJYgLFtn18bkciJ0bNLsU91mF
+ QBdryFjI+iu5s6XJdl9G4YA8W821cf2L25gtiYJSr1URGKBDEIC9mZkdENvS0jJD4NKk1KA8j
+ DAmiFxyulAYnmkkPHD9S5Z7cj5+hRddJ2fX0tCtNq1aflOFpKKcAAFPOX3auENDOSHZaDgtNE
+ h5fLhEtuASOp69Zy5vVlDPvBaUmkPTiEm643vusw+OK+lFD+mmkvJ7xQkqR7kFHshlMOW7oBa
+ Snyi7XG5oXG3hD1bTbhvUEAHf00teKhXyqkAlrra1C1Q8OEb8evyhF1ahnLsQYgP2kWU2YKiY
+ 8lcIN+Aw3WLmzXl6qbd3M+TaqWtfKmF6+gba/hTd4DWLqKEXewqkzOb48cbdcuYpHIZL7uBRF
+ NJfbCTzWuYLNCJG+2HVx4a9Sa+IYWm4lvNvs4e1gcBX5oYQU70WZhn0rBqL3ll/ZpkO8T8txJ
+ 7RwAw/+A1N35QV7ubhY1k5yiidFZxBGZk+YsdpGrdoXJ5nd3j9MSS9F/DqzB5VhNvwQxiyXr0
+ 4w7fWdNTgfDc/mxhcU/B+UfNcbY25lctAXHWl9NCtOhqIilrqXQcULhn8RogjKI8D6HIl7m0c
+ L7neJHT2FR30rL9h57rbM8tbl3eLaECMFWIJvGZC51bsS1IDt2BnsGEACw5WQDyPatZ0Ri+j+
+ Fb4lnuEdg+kOzLOq6dPrT7zaZHE=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
-
-On Sat, Dec 10, 2022 at 3:52 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+On 12/10/22 12:35, Christophe JAILLET wrote:
+> If an error occurs after a successful uvesafb_init_mtrr() call, it must =
+be
+> undone by a corresponding arch_phys_wc_del() call, as already done in th=
+e
+> remove function.
 >
-> 'master' is allocated with devm_spi_alloc_master(), there is no need to
-> put it explicitly in the remove function.
+> This has been added in the remove function in commit 63e28a7a5ffc
+> ("uvesafb: Clean up MTRR code")
 >
-> Fixes: 478cc2fc3dd7 ("spi: xtensa-xtfpga: Switch to use devm_spi_alloc_master()")
+> Fixes: 8bdb3a2d7df4 ("uvesafb: the driver core")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Both patches applied.
+Thanks!
+Helge
+
+
 > ---
->  drivers/spi/spi-xtensa-xtfpga.c | 1 -
->  1 file changed, 1 deletion(-)
+> Unsure about the Fixes tag, maybe it is 63e28a7a5ffc
 >
-> diff --git a/drivers/spi/spi-xtensa-xtfpga.c b/drivers/spi/spi-xtensa-xtfpga.c
-> index 2fa7608f94cd..271ae98f441c 100644
-> --- a/drivers/spi/spi-xtensa-xtfpga.c
-> +++ b/drivers/spi/spi-xtensa-xtfpga.c
-> @@ -123,7 +123,6 @@ static int xtfpga_spi_remove(struct platform_device *pdev)
->         struct xtfpga_spi *xspi = spi_master_get_devdata(master);
+> Change in v2:
+>    - add arch_phys_wc_del() at the right place in the error handling pat=
+h
 >
->         spi_bitbang_stop(&xspi->bitbang);
-> -       spi_master_put(master);
+> v1 (a long time ago!):
+> https://lore.kernel.org/all/dd2a4806d3a570ab84947806f38a494454fd0245.162=
+2994310.git.christophe.jaillet@wanadoo.fr/
+> ---
+>   drivers/video/fbdev/uvesafb.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/video/fbdev/uvesafb.c b/drivers/video/fbdev/uvesafb=
+.c
+> index 00d789b6c0fa..0e3cabbec4b4 100644
+> --- a/drivers/video/fbdev/uvesafb.c
+> +++ b/drivers/video/fbdev/uvesafb.c
+> @@ -1758,6 +1758,7 @@ static int uvesafb_probe(struct platform_device *d=
+ev)
+>   out_unmap:
+>   	iounmap(info->screen_base);
+>   out_mem:
+> +	arch_phys_wc_del(par->mtrr_handle);
+>   	release_mem_region(info->fix.smem_start, info->fix.smem_len);
+>   out_reg:
+>   	release_region(0x3c0, 32);
 
-This put is matching the get in the spi_bitbang_start.
-It was discussed here:
-https://lore.kernel.org/linux-spi/CAMo8BfJaD7pG_iutY8jordysjChyzhTpVSqpxXh3QoZsj2QmaQ@mail.gmail.com/
-
--- 
-Thanks.
--- Max
