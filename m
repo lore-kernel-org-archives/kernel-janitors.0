@@ -2,89 +2,133 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0390C4167B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Dec 2022 23:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C806C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Dec 2022 00:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbiLIXcL (ORCPT
+        id S229841AbiLJArk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Dec 2022 18:32:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38914 "EHLO
+        Fri, 9 Dec 2022 19:47:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiLIXcH (ORCPT
+        with ESMTP id S229468AbiLJArj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Dec 2022 18:32:07 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5837866CBF;
-        Fri,  9 Dec 2022 15:32:06 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id q7so6715361wrr.8;
-        Fri, 09 Dec 2022 15:32:06 -0800 (PST)
+        Fri, 9 Dec 2022 19:47:39 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68014DD0;
+        Fri,  9 Dec 2022 16:47:37 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id t17so15239637eju.1;
+        Fri, 09 Dec 2022 16:47:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8W71q9LELQYCpcjWYqNiTXMd9NVyi7pMCWA3gVwKHyI=;
-        b=oehfC2AMuozA5HHZ2FNgIr+aTNRZIXIezkB8wWW/j8Pfezq5ulL0OeDJ+YkOgv5OJx
-         /UDSh7XAfJ7ekEOe5+3kFQLVcYGqn323kFhDPa4B/TiZl8zg/w4UrZcXXpKXZikcYCFI
-         IGZzRQvjHmKeAlwQoMKiqKPMxMbrKQIUH2lrXbdDeKnvF0IMhn4oZIBwbRpzub7GOyGm
-         5Xpo+DqgKMoGtjM3MT/JFDk/haRvr9YzxOdWdO3UHqEMdm3EBWepPqaF9XJNCndyZtbb
-         qIKhx2dGTI7xsRl6t+QIBBmf/CRbibAUjV9cUXQV3+xFD3N5TTQ4BtQAqa+m8fL4paXJ
-         qX0Q==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uRnRrqGsFpngaI89ODUUTmQJOBbmZXvuzOkPrCLsszM=;
+        b=j7132LuMo5aHHPdlvEWbCPQmE1/OnzvHCr1zbaj91+ZEl3kRZLZtZP5WaRt8prNwsk
+         06SbQjIlWtRTafIoKdeQKKVPYqY/qiLJvbWSlHcx0QE9E6Ls+M9WzH6BYXss1X3S6SeF
+         oqHmen/fDSz3vy1aESM4VHRNCULDPpf1yeDAdZ2z0W22g1772tcHaZNO1Ya7CK+/K3zc
+         ISDz8RjQw0EGzvHGrFDUh4QFs5K3YzO+wre95dc4Eaf+y4YbBN4iBRzVbUYFNWJfGo/P
+         7XzSXNSnoc4brItBbDkwLsvSKwdtuUMGvJS6ELQpW8jAm6MI/LZHSLSml+9JCqutsok/
+         SjnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8W71q9LELQYCpcjWYqNiTXMd9NVyi7pMCWA3gVwKHyI=;
-        b=EIIZmEA0r5+zpFjxGy0NuEMBnBjedyYsasMIIg8+/jkER4+T4RIYE+Bg2W9jd02gTu
-         4d2jNz238D5B1DZVWprDXam8tT54iv5FOY4Wg8bLH+VzEEI8TaMIoyPtqKAHY4P0K7bb
-         /R3BuHtGtMKv3Fr3h93OuL8v07vLkq4RUIkzJ7qj6Fd2ZThDGM9iQLWKTZvIFGxq/swM
-         +KdPkQzwym7dHfecw3Mf8NhRobdEXJK9T6V4rCzCdKA5hg/AjEic1GZQLrdwXPUUPpl7
-         jjJbG41Eg5qAc1z6z82HrnOa/6ws8SfLfA/5jb2XOKOPz8Sw+6vO77xD58Xl3ap/I4Zz
-         7Ekg==
-X-Gm-Message-State: ANoB5pkYoLp919VdtTNr873buGDyjkIx5RHyspVYQmTSFI7lnRI+KYBX
-        1xlSwnRVoyfnkNp4TURcgw9+qW4Qhou+WQ==
-X-Google-Smtp-Source: AA0mqf4qXzfvOfLq+euSh8QvD6nEIapNpwbG3YjI1LX4qjiPcIWEAotmn74Hzln8zQnM3N5802G3gg==
-X-Received: by 2002:a5d:4d0f:0:b0:242:2eae:2ae4 with SMTP id z15-20020a5d4d0f000000b002422eae2ae4mr5161447wrt.62.1670628724805;
-        Fri, 09 Dec 2022 15:32:04 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id cl6-20020a5d5f06000000b0024274a5db0asm2564975wrb.2.2022.12.09.15.32.03
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uRnRrqGsFpngaI89ODUUTmQJOBbmZXvuzOkPrCLsszM=;
+        b=ZShXGy+uvzokD0ijPwZQcwxkzYy8awyOyypfvTXg6XPVDHH9BTERv+8ZZoYXyQ11RS
+         1xR7fVVuj4tNe9oXNUQekp06YumuUH+MgMF/12NECerF/u/TFTi3Q64DQfqYUlz/7V0D
+         RmwzZFGazlcFRD3EQ2oiUp7sbi+Yw1HUG6RktVBGSBfJ4WMumN4IYEPp5w0IGQuyx9OB
+         diSV23F9MjbwM+8HuXnMQihBN3vnhqJW5EnCp6Xn9pd+9a8IpEMWmHP1FxE2unVFGdw2
+         nmI+qF3/APorYdfp28pITkSVgVKVd23ZgzRQZSY1tda56h6icQNlirlT+3eCifzw5NBR
+         D+xw==
+X-Gm-Message-State: ANoB5plk9k+B6fravfGgMb7BQaBuMH2kBJhrnJeXyU5WZAavuKGKFiz3
+        peIVS2U5E/DvOAE7gUIKfcPh2enRzly0yQ==
+X-Google-Smtp-Source: AA0mqf4FN60H3mOLSUeiSgAWP+9BKg3XqlbLAQ4LON1jjtFfV8L+aj0XkAgozjycPxluHPy4hPbijw==
+X-Received: by 2002:a17:907:3e91:b0:7c1:13b5:c434 with SMTP id hs17-20020a1709073e9100b007c113b5c434mr10137680ejc.35.1670633255959;
+        Fri, 09 Dec 2022 16:47:35 -0800 (PST)
+Received: from koshchanka.. (mm-144-58-120-178.brest.dynamic.pppoe.byfly.by. [178.120.58.144])
+        by smtp.gmail.com with ESMTPSA id 1-20020a170906318100b007c0688a68cbsm468739ejy.176.2022.12.09.16.47.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Dec 2022 15:32:03 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: imu: kmx61: Fix spelling mistake "Errow" -> "Error"
-Date:   Fri,  9 Dec 2022 23:32:02 +0000
-Message-Id: <20221209233202.222083-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Fri, 09 Dec 2022 16:47:35 -0800 (PST)
+From:   Uladzislau Koshchanka <koshchanka@gmail.com>
+To:     olteanv@gmail.com
+Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Uladzislau Koshchanka <koshchanka@gmail.com>
+Subject: [PATCH] lib: packing: replace bit_reverse() with bitrev8()
+Date:   Sat, 10 Dec 2022 03:44:23 +0300
+Message-Id: <20221210004423.32332-1-koshchanka@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221209220651.i43mxhz5aczhhjgs@skbuf>
+References: <20221209220651.i43mxhz5aczhhjgs@skbuf>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_err message. Fix it.
+Remove bit_reverse() function.  Instead use bitrev8() from linux/bitrev.h +
+bitshift.  Reduces code-repetition.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Uladzislau Koshchanka <koshchanka@gmail.com>
 ---
- drivers/iio/imu/kmx61.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/Kconfig   |  1 +
+ lib/packing.c | 16 ++--------------
+ 2 files changed, 3 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/iio/imu/kmx61.c b/drivers/iio/imu/kmx61.c
-index e692dfeeda44..53ba020fa5d0 100644
---- a/drivers/iio/imu/kmx61.c
-+++ b/drivers/iio/imu/kmx61.c
-@@ -649,7 +649,7 @@ static int kmx61_chip_update_thresholds(struct kmx61_data *data)
- 					KMX61_REG_WUF_TIMER,
- 					data->wake_duration);
- 	if (ret < 0) {
--		dev_err(&data->client->dev, "Errow writing reg_wuf_timer\n");
-+		dev_err(&data->client->dev, "Error writing reg_wuf_timer\n");
- 		return ret;
- 	}
+diff --git a/lib/Kconfig b/lib/Kconfig
+index 9bbf8a4b2108..cc969ef58a2a 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -24,6 +24,7 @@ config LINEAR_RANGES
  
+ config PACKING
+ 	bool "Generic bitfield packing and unpacking"
++	select BITREVERSE
+ 	default n
+ 	help
+ 	  This option provides the packing() helper function, which permits
+diff --git a/lib/packing.c b/lib/packing.c
+index 9a72f4bbf0e2..a96169237ae6 100644
+--- a/lib/packing.c
++++ b/lib/packing.c
+@@ -7,6 +7,7 @@
+ #include <linux/bitops.h>
+ #include <linux/errno.h>
+ #include <linux/types.h>
++#include <linux/bitrev.h>
+ 
+ static int get_le_offset(int offset)
+ {
+@@ -29,19 +30,6 @@ static int get_reverse_lsw32_offset(int offset, size_t len)
+ 	return word_index * 4 + offset;
+ }
+ 
+-static u64 bit_reverse(u64 val, unsigned int width)
+-{
+-	u64 new_val = 0;
+-	unsigned int bit;
+-	unsigned int i;
+-
+-	for (i = 0; i < width; i++) {
+-		bit = (val & (1 << i)) != 0;
+-		new_val |= (bit << (width - i - 1));
+-	}
+-	return new_val;
+-}
+-
+ static void adjust_for_msb_right_quirk(u64 *to_write, int *box_start_bit,
+ 				       int *box_end_bit, u8 *box_mask)
+ {
+@@ -49,7 +37,7 @@ static void adjust_for_msb_right_quirk(u64 *to_write, int *box_start_bit,
+ 	int new_box_start_bit, new_box_end_bit;
+ 
+ 	*to_write >>= *box_end_bit;
+-	*to_write = bit_reverse(*to_write, box_bit_width);
++	*to_write = bitrev8(*to_write) >> (8 - box_bit_width);
+ 	*to_write <<= *box_end_bit;
+ 
+ 	new_box_end_bit   = box_bit_width - *box_start_bit - 1;
 -- 
-2.38.1
+2.34.1
 
