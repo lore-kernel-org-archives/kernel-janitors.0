@@ -2,38 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C01A8C10F1B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Dec 2022 11:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A35C10F1E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Dec 2022 11:57:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbiLJLfi (ORCPT
+        id S229728AbiLJLxK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Dec 2022 06:35:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59818 "EHLO
+        Sat, 10 Dec 2022 06:53:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbiLJLfh (ORCPT
+        with ESMTP id S229691AbiLJLxH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Dec 2022 06:35:37 -0500
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBB61FCF6
-        for <kernel-janitors@vger.kernel.org>; Sat, 10 Dec 2022 03:35:35 -0800 (PST)
+        Sat, 10 Dec 2022 06:53:07 -0500
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCF7AB87A
+        for <kernel-janitors@vger.kernel.org>; Sat, 10 Dec 2022 03:52:59 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id 3y8gpaJiRNF1W3y8gp0xrM; Sat, 10 Dec 2022 12:35:32 +0100
+        id 3yPYpAeHxFUJ33yPYptfah; Sat, 10 Dec 2022 12:52:58 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 10 Dec 2022 12:35:32 +0100
+X-ME-Date: Sat, 10 Dec 2022 12:52:58 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Michal Januszewski <spock@gentoo.org>,
-        Helge Deller <deller@gmx.de>,
-        Antonino Daplas <adaplas@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
+To:     Max Filippov <jcmvbkbc@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Yang Yingliang <yangyingliang@huawei.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v2 1/2] video: fbdev: uvesafb: Fixes an error handling path in uvesafb_probe()
-Date:   Sat, 10 Dec 2022 12:35:22 +0100
-Message-Id: <0eba6acb70fa1270d8cf798afd11ce342aa7e8e1.1670671944.git.christophe.jaillet@wanadoo.fr>
+        linux-xtensa@linux-xtensa.org, linux-spi@vger.kernel.org
+Subject: [PATCH v1] spi: xtensa-xtfpga: Fix a double put() in xtfpga_spi_remove()
+Date:   Sat, 10 Dec 2022 12:52:53 +0100
+Message-Id: <7946a26c6e53a4158f0f5bad5276d8654fd59415.1670673147.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,39 +39,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a successful uvesafb_init_mtrr() call, it must be
-undone by a corresponding arch_phys_wc_del() call, as already done in the
-remove function.
+'master' is allocated with devm_spi_alloc_master(), there is no need to
+put it explicitly in the remove function.
 
-This has been added in the remove function in commit 63e28a7a5ffc
-("uvesafb: Clean up MTRR code")
-
-Fixes: 8bdb3a2d7df4 ("uvesafb: the driver core")
+Fixes: 478cc2fc3dd7 ("spi: xtensa-xtfpga: Switch to use devm_spi_alloc_master()")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Unsure about the Fixes tag, maybe it is 63e28a7a5ffc
+ drivers/spi/spi-xtensa-xtfpga.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Change in v2:
-  - add arch_phys_wc_del() at the right place in the error handling path
-
-v1 (a long time ago!):
-https://lore.kernel.org/all/dd2a4806d3a570ab84947806f38a494454fd0245.1622994310.git.christophe.jaillet@wanadoo.fr/
----
- drivers/video/fbdev/uvesafb.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/video/fbdev/uvesafb.c b/drivers/video/fbdev/uvesafb.c
-index 00d789b6c0fa..0e3cabbec4b4 100644
---- a/drivers/video/fbdev/uvesafb.c
-+++ b/drivers/video/fbdev/uvesafb.c
-@@ -1758,6 +1758,7 @@ static int uvesafb_probe(struct platform_device *dev)
- out_unmap:
- 	iounmap(info->screen_base);
- out_mem:
-+	arch_phys_wc_del(par->mtrr_handle);
- 	release_mem_region(info->fix.smem_start, info->fix.smem_len);
- out_reg:
- 	release_region(0x3c0, 32);
+diff --git a/drivers/spi/spi-xtensa-xtfpga.c b/drivers/spi/spi-xtensa-xtfpga.c
+index 2fa7608f94cd..271ae98f441c 100644
+--- a/drivers/spi/spi-xtensa-xtfpga.c
++++ b/drivers/spi/spi-xtensa-xtfpga.c
+@@ -123,7 +123,6 @@ static int xtfpga_spi_remove(struct platform_device *pdev)
+ 	struct xtfpga_spi *xspi = spi_master_get_devdata(master);
+ 
+ 	spi_bitbang_stop(&xspi->bitbang);
+-	spi_master_put(master);
+ 
+ 	return 0;
+ }
 -- 
 2.34.1
 
