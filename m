@@ -2,73 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0686C10F1B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Dec 2022 18:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20652C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Dec 2022 02:53:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbiLJS4o (ORCPT
+        id S229951AbiLKCxA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Dec 2022 13:56:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57314 "EHLO
+        Sat, 10 Dec 2022 21:53:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbiLJS4n (ORCPT
+        with ESMTP id S229964AbiLKCwz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Dec 2022 13:56:43 -0500
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F36E1705F
-        for <kernel-janitors@vger.kernel.org>; Sat, 10 Dec 2022 10:56:43 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id 451cprUINGPMs451cpi102; Sat, 10 Dec 2022 19:56:41 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 10 Dec 2022 19:56:41 +0100
-X-ME-IP: 86.243.100.34
-Message-ID: <2c481903-74be-6dbd-8ef9-5f01301792a7@wanadoo.fr>
-Date:   Sat, 10 Dec 2022 19:56:41 +0100
+        Sat, 10 Dec 2022 21:52:55 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE3A59FDF;
+        Sat, 10 Dec 2022 18:52:54 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7AA2660D3C;
+        Sun, 11 Dec 2022 02:52:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C4DC433D2;
+        Sun, 11 Dec 2022 02:52:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670727173;
+        bh=nisRq5p9DLzuzSIWJsSZIki1q8UKQxwkg+jqQ5Nd/z4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=KBrkA6E0LlP7rdNpvJYHcbH78mclYWwZnnWXVPxvPK2SN8d+yucpszYOSymv9ckJw
+         wd5jd40VkSTbYl/Jm1WXLKeX0xb23ZtCH0wKn+BUCUq7bMRFpTt3u8i12Bq8om49lW
+         W0JvNzZ1oDLjSHhQp41EkchugLTdtwyotUci5Yifx1/+TWI02mUkvTHypWMSWsiJ/8
+         qYozze92W5noFHYkIdvqqQ0gO9wKS7t4BlDwk7Br3H8wu8fe5rDdei24+5+sZCvOvY
+         PzHGKY7+yv3v7dWQwQhzttzigKVstDD5Lud/k4+GO0sobzi/BbKxXdb9XhWsNUS2Ja
+         Bovk4VXNIR3RA==
+Message-ID: <6c258bab-84fd-6515-6af1-d9fced65c34f@kernel.org>
+Date:   Sun, 11 Dec 2022 10:52:50 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH 1/3] mmc: sunlpus: Fix an error handling path in
- spmmc_drv_probe()
-To:     Tony Huang <tonyhuang.sunplus@gmail.com>,
-        Li-hao Kuo <lhjeff911@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-References: <7c686fecb11b4ec1f55cd7075dc7cfcdd9b445ba.1670697358.git.christophe.jaillet@wanadoo.fr>
-Content-Language: fr, en-US
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7c686fecb11b4ec1f55cd7075dc7cfcdd9b445ba.1670697358.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH] f2fs: Fix spelling mistake in label: free_bio_enrty_cache
+ -> free_bio_entry_cache
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221207134217.2325189-1-colin.i.king@gmail.com>
+From:   Chao Yu <chao@kernel.org>
+In-Reply-To: <20221207134217.2325189-1-colin.i.king@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 10/12/2022 à 19:36, Christophe JAILLET a écrit :
-> If an error occurs after successful clk_prepare_enable() call in the probe,
-> the clk is not clk_disable_unprepare()'ed.
+On 2022/12/7 21:42, Colin Ian King wrote:
+> There is a spelling mistake in a label name. Fix it.
 > 
-> Use devm_clk_get_enabled() instead of devm_clk_get() to fix, and simplify
-> the probe and the remove function accordingly.
-> 
-> Fixes: 4e268fed8b18 ("mmc: Add mmc driver for Sunplus SP7021")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This changes the order of resource releasing when the driver is removed,
-> but it looks ok to me.
-> ---
->   drivers/mmc/host/sunplus-mmc.c | 7 +------
->   1 file changed, 1 insertion(+), 6 deletions(-)
-> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Hi, in the whole serie, the subject was supposed to be sunplus, not sunlpus.
-Could also be SP7021, or sunplus-SP7021, or whatever else.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-I'll wait for potential comments on the patches themselves before 
-sending a v2 to fix the subject (and I hope it could be fixed when 
-applied if there is no comment :))
-
-CJ
+Thanks,
 
