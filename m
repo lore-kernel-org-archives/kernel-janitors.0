@@ -2,37 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3C4C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Dec 2022 20:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7FCC4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Dec 2022 20:15:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233361AbiLLUBu (ORCPT
+        id S233199AbiLLUPc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Dec 2022 15:01:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44528 "EHLO
+        Mon, 12 Dec 2022 15:15:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232867AbiLLUBu (ORCPT
+        with ESMTP id S233450AbiLLUPL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Dec 2022 15:01:50 -0500
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3959017586
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Dec 2022 12:01:49 -0800 (PST)
+        Mon, 12 Dec 2022 15:15:11 -0500
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADBAB186FC
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Dec 2022 12:14:22 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id 4ozhpgCRi0H6I4ozhpkHYh; Mon, 12 Dec 2022 21:01:47 +0100
+        id 4pBqpxCjtuZP64pBqpJBAT; Mon, 12 Dec 2022 21:14:20 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 12 Dec 2022 21:01:47 +0100
+X-ME-Date: Mon, 12 Dec 2022 21:14:20 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
+        David Sterba <dsterba@suse.com>,
+        Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Chris Mason <chris.mason@oracle.com>,
         linux-btrfs@vger.kernel.org
-Subject: [PATCH] btrfs: Fix an error handling path in btrfs_defrag_leaves()
-Date:   Mon, 12 Dec 2022 21:01:43 +0100
-Message-Id: <9a1d857866d4768090d7f89869076b7a5a85116b.1670875295.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] btrfs: Fix an error handling path in btrfs_rename()
+Date:   Mon, 12 Dec 2022 21:14:17 +0100
+Message-Id: <943f0f360f221da954f5dd7f16e366d0e294ae72.1670876024.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,41 +40,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-All error handling paths end to 'out', except this memory allocation
-failure.
+If new_whiteout_inode() fails, some resources need to be freed.
+Add the missing goto to the error handling path.
 
-This is spurious. So branch to the error handling path also in this case.
-It will add a call to:
-	memset(&root->defrag_progress, 0,
-	       sizeof(root->defrag_progress));
-
-Fixes: 6702ed490ca0 ("Btrfs: Add run time btree defrag, and an ioctl to force btree defrag")
+Fixes: ab3c5c18e8fa ("btrfs: setup qstr from dentrys using fscrypt helper")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is completely speculative.
-
-Review with care !
----
- fs/btrfs/defrag.c | 6 ++++--
+ fs/btrfs/inode.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/defrag.c b/fs/btrfs/defrag.c
-index 0a3c261b69c9..d81b764a7644 100644
---- a/fs/btrfs/defrag.c
-+++ b/fs/btrfs/defrag.c
-@@ -358,8 +358,10 @@ int btrfs_defrag_leaves(struct btrfs_trans_handle *trans,
- 		goto out;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 8bcad9940154..2ead7b1bdbaf 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9377,8 +9377,10 @@ static int btrfs_rename(struct user_namespace *mnt_userns,
  
- 	path = btrfs_alloc_path();
--	if (!path)
--		return -ENOMEM;
-+	if (!path) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 
- 	level = btrfs_header_level(root->node);
- 
+ 	if (flags & RENAME_WHITEOUT) {
+ 		whiteout_args.inode = new_whiteout_inode(mnt_userns, old_dir);
+-		if (!whiteout_args.inode)
+-			return -ENOMEM;
++		if (!whiteout_args.inode) {
++			ret = -ENOMEM;
++			goto out_fscrypt_names;
++		}
+ 		ret = btrfs_new_inode_prepare(&whiteout_args, &trans_num_items);
+ 		if (ret)
+ 			goto out_whiteout_inode;
 -- 
 2.34.1
 
