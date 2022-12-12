@@ -2,94 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2027C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Dec 2022 15:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37332C00145
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Dec 2022 19:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232546AbiLLPks (ORCPT
+        id S233258AbiLLTiB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Dec 2022 10:40:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47448 "EHLO
+        Mon, 12 Dec 2022 14:38:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232530AbiLLPkq (ORCPT
+        with ESMTP id S233238AbiLLTh7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Dec 2022 10:40:46 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E19911C04;
-        Mon, 12 Dec 2022 07:40:46 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FE536112B;
-        Mon, 12 Dec 2022 15:40:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF40EC433D2;
-        Mon, 12 Dec 2022 15:40:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670859645;
-        bh=PYPely3qOQWyWv/e5Pdt422ahT6SYCZQGHE5vP69vkw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d8veBx4KuVjJZCAz2OT/q7caXG/00dX50LGa5S+/jh62UZomlk+VTgKR/B/kDEH/e
-         YFHuuTZmS43gz/VLrPTaIhNHUB0FkcHUuxS14TQdYWHDobTGVeTjpEWysCgxNt6yYL
-         V8Yf4/jML98ohZnKInEpjA3mbOvbjkUVxiWFjhPZtsCk8Y6zdW3mCgKn96OZaBjXJ9
-         +DbDKdLVQwyteIEp+MEMa6aR/VXg1tRpkcbYNvQppdzh4nhlUn3vR6NCEGVENmwwdY
-         fOf9+NrdxFVk9oNQZnc4MUD6ChIGUIZWmwCwoGgkB6OlXiRGPrInc0FHD6SDi/RBxT
-         oVlllmUg5Ergg==
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7AFE840483; Mon, 12 Dec 2022 12:40:42 -0300 (-03)
-Date:   Mon, 12 Dec 2022 12:40:42 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Sandipan Das <sandipan@linux.ibm.com>,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf vendor events powerpc: Fix spelling mistake "fpr"
- -> "for"
-Message-ID: <Y5dLer9nOR6j0Xmb@kernel.org>
-References: <20221207135645.2327224-1-colin.i.king@gmail.com>
+        Mon, 12 Dec 2022 14:37:59 -0500
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0124164A1
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Dec 2022 11:37:56 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id 4ocXpvXppb9QW4ocXpZUeo; Mon, 12 Dec 2022 20:37:51 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 12 Dec 2022 20:37:51 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org
+Subject: [PATCH net-next] net: lan966x: Remove a useless test in lan966x_ptp_add_trap()
+Date:   Mon, 12 Dec 2022 20:37:16 +0100
+Message-Id: <27992ffcee47fc865ce87274d6dfcffe7a1e69e0.1670873784.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221207135645.2327224-1-colin.i.king@gmail.com>
-X-Url:  http://acmel.wordpress.com
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Em Wed, Dec 07, 2022 at 01:56:45PM +0000, Colin Ian King escreveu:
-> There is a spelling mistake in the description text. Fix it.
+vcap_alloc_rule() can't return NULL.
 
-Sandipan,
+So remove some dead-code
 
-	Is this generated from some other file? Or can I apply this one?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-- Arnaldo
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c b/drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c
+index 300fe4005919..f9ebfaafbebc 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c
+@@ -76,8 +76,6 @@ static int lan966x_ptp_add_trap(struct lan966x_port *port,
+ 	vrule = vcap_alloc_rule(lan966x->vcap_ctrl, port->dev,
+ 				LAN966X_VCAP_CID_IS2_L0,
+ 				VCAP_USER_PTP, 0, rule_id);
+-	if (!vrule)
+-		return -ENOMEM;
+ 	if (IS_ERR(vrule))
+ 		return PTR_ERR(vrule);
  
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/perf/pmu-events/arch/powerpc/power8/other.json | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/pmu-events/arch/powerpc/power8/other.json b/tools/perf/pmu-events/arch/powerpc/power8/other.json
-> index f1f2965f6775..6de8c472ec99 100644
-> --- a/tools/perf/pmu-events/arch/powerpc/power8/other.json
-> +++ b/tools/perf/pmu-events/arch/powerpc/power8/other.json
-> @@ -2996,7 +2996,7 @@
->    {
->      "EventCode": "0x308e",
->      "EventName": "PM_SWAP_COMPLETE_GPR",
-> -    "BriefDescription": "swap cast in completed fpr gpr",
-> +    "BriefDescription": "swap cast in completed for gpr",
->      "PublicDescription": ""
->    },
->    {
-> -- 
-> 2.38.1
-
 -- 
+2.34.1
 
-- Arnaldo
