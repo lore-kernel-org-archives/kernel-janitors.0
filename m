@@ -2,64 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EEFC4167B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Dec 2022 08:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9160AC4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Dec 2022 11:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231601AbiLLIjz (ORCPT
+        id S232107AbiLLLKt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Dec 2022 03:39:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51600 "EHLO
+        Mon, 12 Dec 2022 06:10:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231537AbiLLIjy (ORCPT
+        with ESMTP id S232057AbiLLLJ6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Dec 2022 03:39:54 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38969BEF;
-        Mon, 12 Dec 2022 00:39:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Zr+LzmsqOxE2SWoY3n7ygSNQvczxGbNu/n79CO+xp7g=; b=kzRCc7F+pv0O7XF9u6CEPW9l95
-        S1z9Sfzlyqsad8kyIrx6+2VYUv/QD0vkG1AHwwOjn6jdQ80iCiXcxcqqSTwF288OQk/TD+Cineyjf
-        vUwFIU0E8BiPRaFsH50Ko+wSmr76Gu4dosx86n6HUcSwjGEtiibaMUsSkENsR3p9aRMn/ENm4JxQO
-        lDEzerdi1jwMMCq4oDkgsoRHnkBfKdWOOT7mFxsetzPQlPldS1tByN6riJWILOKyxsoRYMf/dIr3c
-        ps42vz/g23DPk0q93YWqqi6zgcsutuQYlYnU3MWZZYCgcPCLttVUSGC2lKKVkKXSd6XvUNYy1+YIL
-        PaCaoT7w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p4eLk-00AO7a-9p; Mon, 12 Dec 2022 08:39:48 +0000
-Date:   Mon, 12 Dec 2022 00:39:48 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: remove left-over due to now gone pktcdvd
- shortcomings
-Message-ID: <Y5bo1I5SytNV8ytv@infradead.org>
-References: <20221209084130.31805-1-lukas.bulwahn@gmail.com>
+        Mon, 12 Dec 2022 06:09:58 -0500
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BE4B129D
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Dec 2022 03:06:41 -0800 (PST)
+Received: from 8bytes.org (p4ff2b8a9.dip0.t-ipconnect.de [79.242.184.169])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id 47E902208DD;
+        Mon, 12 Dec 2022 12:06:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1670843200;
+        bh=Wx/FQOa0twYM0J5vE2YN6rDdN+so7uRjoO2kTY5Jbi0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dW4pqcZewOZIBby4X/JgUMfAZGaEUzvnd6vMsAkbBHkhFy+Ob6GJzF0jf7dAi/rpk
+         NFHRYkUI7faJCB7GChDJX3aCOGeNFuDgOyEqsKieXlFO2M0gzpTn5NI+POC0fhZASL
+         auv0ddRDic9vhY9c4mqkpM1JfvccQUCTCArArvyfsVgAmAK74J3/eQlQRXuIBtaQHd
+         Y667DXckjktnMd9xO172C3U4nEDHIOl7BoIQcr5eHtceKXgt6FmGj/QfdJPpLP/rUs
+         28pCd9MX2lyZOOaUlGzDAWw6Wls7GKT5enuhfaJ48OeHc4otRH7bjYgbtHNh2xud6X
+         DKhQ/4Wxp4jRQ==
+Date:   Mon, 12 Dec 2022 12:06:39 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Yong Wu <yong.wu@mediatek.com>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, iommu@lists.linux.dev,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iommu/mediatek: Fix forever loop in error handling
+Message-ID: <Y5cLPzaQzMadY4Yk@8bytes.org>
+References: <Y5C3mTam2nkbaz6o@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221209084130.31805-1-lukas.bulwahn@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <Y5C3mTam2nkbaz6o@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Dec 09, 2022 at 09:41:30AM +0100, Lukas Bulwahn wrote:
-> Commit f40eb99897af ("pktcdvd: remove driver.") removes the pktcdvd driver,
-> including the config CDROM_PKTCDVD and CDROM_PKTCDVD_WCACHE, and the uapi
-> header file.
+On Wed, Dec 07, 2022 at 06:56:09PM +0300, Dan Carpenter wrote:
+> There is a typo so this loop does i++ where i-- was intended.  It will
+> result in looping until the kernel crashes.
 > 
-> Remove some further unneeded left-over due to now gone pktcdvd shortcomings
-> in the scsi library.
+> Fixes: 26593928564c ("iommu/mediatek: Add error path for loop of mm_dts_parse")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>  drivers/iommu/mtk_iommu.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Right now the removal is only in the block tree, so this will have to
-wait until that and the scsi tree are merged to mainline.
-
-I was actually going to send this patch at that point, but we can
-just pick up yours now:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Applied, thanks.
