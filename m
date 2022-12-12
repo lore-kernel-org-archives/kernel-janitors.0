@@ -2,100 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0B5C4167B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Dec 2022 14:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE51C4167B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Dec 2022 15:37:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232095AbiLLOVA (ORCPT
+        id S231876AbiLLPhF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Dec 2022 09:21:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43878 "EHLO
+        Mon, 12 Dec 2022 10:37:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231612AbiLLOU6 (ORCPT
+        with ESMTP id S232290AbiLLPg7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Dec 2022 09:20:58 -0500
-Received: from mg.ssi.bg (mg.ssi.bg [193.238.174.37])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C194B7644;
-        Mon, 12 Dec 2022 06:20:56 -0800 (PST)
-Received: from mg.ssi.bg (localhost [127.0.0.1])
-        by mg.ssi.bg (Proxmox) with ESMTP id 8D97142D42;
-        Mon, 12 Dec 2022 16:20:55 +0200 (EET)
-Received: from ink.ssi.bg (unknown [193.238.174.40])
-        by mg.ssi.bg (Proxmox) with ESMTP id 13CCA42DDC;
-        Mon, 12 Dec 2022 16:20:51 +0200 (EET)
-Received: from ja.ssi.bg (unknown [178.16.129.10])
-        by ink.ssi.bg (Postfix) with ESMTPS id 536733C07CB;
-        Mon, 12 Dec 2022 16:20:46 +0200 (EET)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by ja.ssi.bg (8.17.1/8.16.1) with ESMTP id 2BCEKf1E041625;
-        Mon, 12 Dec 2022 16:20:44 +0200
-Date:   Mon, 12 Dec 2022 16:20:41 +0200 (EET)
-From:   Julian Anastasov <ja@ssi.bg>
-To:     Li Qiong <liqiong@nfschina.com>
-cc:     Simon Horman <horms@verge.net.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, coreteam@netfilter.org,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: Re: [PATCH v2] ipvs: add a 'default' case in do_ip_vs_set_ctl()
-In-Reply-To: <20221212074351.26440-1-liqiong@nfschina.com>
-Message-ID: <c3ca27a-f923-6eb6-bbe4-5e99b65c5940@ssi.bg>
-References: <272315c8-5e3b-e8ca-3c7f-68eccd0f2430@nfschina.com> <20221212074351.26440-1-liqiong@nfschina.com>
+        Mon, 12 Dec 2022 10:36:59 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1836F959B;
+        Mon, 12 Dec 2022 07:36:59 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B0BB2B80D53;
+        Mon, 12 Dec 2022 15:36:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A28F1C433EF;
+        Mon, 12 Dec 2022 15:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670859416;
+        bh=3xjGxpTU+uAlErxm+6V13eo7pAhpayNah3d0WO3wiak=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ankc2UWgSEwXXsJNdufE3nbPUAcqxg6QNkfU64wkwb5y1YetnuV1L037jyLlkva4X
+         ohtZQhosg4nDJ7p5su7G34J7AWRTA7bJHWUC8Au61QKpSZ/sK0bLqxhQ49Tmjvtdrj
+         0TunmuHfbcuJrGLA66Z5an+mH9CUoj53HQsj10/2vDoXmbhJFE/H6GT9pTzSHYFHOy
+         M2SMlVDPkdqiejzdinA/gI0OXHWo1kTKa/NDOt+ry9726IdKNQTlMckg/s0jzlBvpK
+         j4BAooH92FmNo49cYOY7qSwPsJa58mJikw5h4Mh49MlUtEnmq6YSo7myQNRJXd8zaU
+         6CtYQXfXvMq9A==
+Date:   Mon, 12 Dec 2022 15:36:51 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Max Filippov <jcmvbkbc@gmail.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v1] spi: xtensa-xtfpga: Fix a double put() in
+ xtfpga_spi_remove()
+Message-ID: <Y5dKk+uw3UcW2Pu1@sirena.org.uk>
+References: <7946a26c6e53a4158f0f5bad5276d8654fd59415.1670673147.git.christophe.jaillet@wanadoo.fr>
+ <CAMo8BfKCv9j-ftKWU+B27g1oHBB_=EZhGBH7qymyVAeF10JcnQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EHvVr8XnbtwPXPXJ"
+Content-Disposition: inline
+In-Reply-To: <CAMo8BfKCv9j-ftKWU+B27g1oHBB_=EZhGBH7qymyVAeF10JcnQ@mail.gmail.com>
+X-Cookie: It was Penguin lust... at its ugliest.
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
-	Hello,
+--EHvVr8XnbtwPXPXJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 12 Dec 2022, Li Qiong wrote:
+On Sat, Dec 10, 2022 at 06:48:02AM -0800, Max Filippov wrote:
+> Hi Christophe,
+>=20
+> On Sat, Dec 10, 2022 at 3:52 AM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
 
-> It is better to return the default switch case with
-> '-EINVAL', in case new commands are added. otherwise,
-> return a uninitialized value of ret.
-> 
-> Signed-off-by: Li Qiong <liqiong@nfschina.com>
-> Reviewed-by: Simon Horman <horms@verge.net.au>
+> > 'master' is allocated with devm_spi_alloc_master(), there is no need to
+> > put it explicitly in the remove function.
 
-	Change looks correct to me for -next, thanks!
+> >         spi_bitbang_stop(&xspi->bitbang);
+> > -       spi_master_put(master);
 
-Acked-by: Julian Anastasov <ja@ssi.bg>
+> This put is matching the get in the spi_bitbang_start.
+> It was discussed here:
+> https://lore.kernel.org/linux-spi/CAMo8BfJaD7pG_iutY8jordysjChyzhTpVSqpxX=
+h3QoZsj2QmaQ@mail.gmail.com/
 
-	Still, the comment can explain that this code
-is currently unreachable and that some parsers need
-the default case to avoid report for uninitialized 'ret'.
+Probably worth a comment though since it is a bit of a gotcha.  Ideally
+we'd improve this in the bitbang code but that's harder.
 
-> ---
-> v2: Add 'default' case instead of initializing 'ret'.
-> ---
->  net/netfilter/ipvs/ip_vs_ctl.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-> index 988222fff9f0..97f6a1c8933a 100644
-> --- a/net/netfilter/ipvs/ip_vs_ctl.c
-> +++ b/net/netfilter/ipvs/ip_vs_ctl.c
-> @@ -2590,6 +2590,11 @@ do_ip_vs_set_ctl(struct sock *sk, int cmd, sockptr_t ptr, unsigned int len)
->  		break;
->  	case IP_VS_SO_SET_DELDEST:
->  		ret = ip_vs_del_dest(svc, &udest);
-> +		break;
-> +	default:
-> +		WARN_ON_ONCE(1);
-> +		ret = -EINVAL;
-> +		break;
->  	}
->  
->    out_unlock:
-> -- 
-> 2.11.0
+--EHvVr8XnbtwPXPXJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards
+-----BEGIN PGP SIGNATURE-----
 
---
-Julian Anastasov <ja@ssi.bg>
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmOXSpIACgkQJNaLcl1U
+h9BT0Qf+NdrWJWMDdjoqnd5CyDhVDKdBCD/mS40Y9yT/7kC/kmCpKV3k5xsYhfxl
+TLdaRq5V3JYZX9L/jCwANwlCm9+hFNp+X2BMeum0UnPQ3tqmf1HXUw1JudlRpb/7
+k4h6vxqi5b4vd4bAeLztmRpN999BHuZPnR5lfbnCMLCJHGe2WIR63+fUJDVs20z4
+sMLRCVN9hQbLN3qSp6CKdCdwPXrJf9O0H/2oLtwjEB2qG9F9Z3M9pHGBZceRR3tV
+hdhpXl1deQauicERPLIG5O1lXhTF5oqgU2Wx3qFfY1hlWykwBiumjFSNfDRkhYjO
+sff6XWL/4MqS9TkWh2YuDoxHeFscbQ==
+=sjZz
+-----END PGP SIGNATURE-----
 
+--EHvVr8XnbtwPXPXJ--
