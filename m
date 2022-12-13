@@ -2,141 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4DAC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Dec 2022 01:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98156C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Dec 2022 03:51:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234155AbiLMBgL (ORCPT
+        id S229557AbiLMDv0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Dec 2022 20:36:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52060 "EHLO
+        Mon, 12 Dec 2022 22:51:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234163AbiLMBgI (ORCPT
+        with ESMTP id S234516AbiLMDvF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Dec 2022 20:36:08 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B151D32D;
-        Mon, 12 Dec 2022 17:36:07 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BD1KIIc002952;
-        Tue, 13 Dec 2022 01:36:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : from : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=pCZeAfDoRhwWqONc4flZx60RTmPIhwedWOry2zw04m8=;
- b=ESnm0JDYvat8UpXraksERXMqs2Kj/Hl8XfKh3gRys+XF7yzraas7zLQqRa/1ZDGyGwat
- MK0l50xPL+2Gr0v8KfdYMqpwew3Ts6JqZnq+jvI7D5TeD/tb2foZfDlAGqfH9czfIoF1
- qL5+GYIZagzoACiWw4L1taWnjIcfP1c+vt4yzfB8q/yMgJEGXQSQYypDw+7/OAiWuPZq
- fdMBEZRhPa89inkvf6VKasKjLQZ7PRVF10WUlwE6MJBF+UaFKF28pPKL+nmXLkCXHCf3
- jPMD5uXteUh47bd4nRBLjIKHeO+Uifyw8ba8zeYaj1Fozf/gQg1k7QhIXrx3yHMVf/oh LA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mchesdsy7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Dec 2022 01:36:03 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BD1a2c2022801
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Dec 2022 01:36:02 GMT
-Received: from [10.111.167.12] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 12 Dec
- 2022 17:36:00 -0800
-Message-ID: <46c1f014-7c3f-88c4-d576-7b6bd5e1590d@quicinc.com>
-Date:   Mon, 12 Dec 2022 17:35:58 -0800
+        Mon, 12 Dec 2022 22:51:05 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD1361F2E7;
+        Mon, 12 Dec 2022 19:50:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 78551B808BB;
+        Tue, 13 Dec 2022 03:50:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E9D7C433F1;
+        Tue, 13 Dec 2022 03:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670903416;
+        bh=BT8OHaV2tjYMg1V3salQG9z9OJouBX098LNgTtQQFQM=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=J5Dv3P5dOIhTaiZGoctHcYrBMaUynTGk+lHJUsPWglPqWh+Y4fNNPma5G3brsTEMt
+         MDpxao80aMlu4QsJep/Cr1w8TjZgCA8sJi+ZuB+I6Go/7BXXvQG72813MiqKOd0nXt
+         WYfdDvxMM4/kmBYc8/Jb9CQV0e+Qlf2rkz4kkGMnnztOv2dq1rjVy3IkB8pI7oQKBp
+         yOhGWThG2eUpLkjlAw1/oqJAMOPYy8zGBiSPdVmjzezJNPFfPcWMnMFITHO6GUV+Vk
+         8E3sIanjYS8DOYj8bcwZluGetF+am+QAAnDPyb98IwtPNs4REjPUup18cJlHHLBmh+
+         pT6LyBnWBkHWQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 174D3C41622;
+        Tue, 13 Dec 2022 03:50:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Subject: Re: [Freedreno] [PATCH] drm/msm/hdm: Fix the error handling path of
- msm_hdmi_dev_probe()
-Content-Language: en-US
-From:   Abhinav Kumar <quic_abhinavk@quicinc.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-CC:     <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-References: <b3d9dac978f1e2e42a40ec61f58aa98c44c85dfd.1670741386.git.christophe.jaillet@wanadoo.fr>
- <b34374ed-0444-6bd9-4994-7f890455b451@quicinc.com>
-In-Reply-To: <b34374ed-0444-6bd9-4994-7f890455b451@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: QiioKxyM5fxSL8PC9z6BgRR-vYYuuoh5
-X-Proofpoint-GUID: QiioKxyM5fxSL8PC9z6BgRR-vYYuuoh5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-12_02,2022-12-12_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- bulkscore=0 spamscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
- impostorscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
- definitions=main-2212130014
+Subject: Re: [PATCH net-next] net: lan966x: Remove a useless test in
+ lan966x_ptp_add_trap()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167090341609.4783.16305690023365204184.git-patchwork-notify@kernel.org>
+Date:   Tue, 13 Dec 2022 03:50:16 +0000
+References: <27992ffcee47fc865ce87274d6dfcffe7a1e69e0.1670873784.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <27992ffcee47fc865ce87274d6dfcffe7a1e69e0.1670873784.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     horatiu.vultur@microchip.com, UNGLinuxDriver@microchip.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, richardcochran@gmail.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 12/12/2022 5:34 PM, Abhinav Kumar wrote:
+On Mon, 12 Dec 2022 20:37:16 +0100 you wrote:
+> vcap_alloc_rule() can't return NULL.
 > 
+> So remove some dead-code
 > 
-> On 12/10/2022 10:50 PM, Christophe JAILLET wrote:
->> If an error occurs after a successful msm_hdmi_get_phy() call, it must be
->> undone by a corresponding msm_hdmi_put_phy(), as already done in the
->> remove function.
->>
->> Fixes: 437365464043 ("drm/msm/hdmi: move msm_hdmi_get_phy() to 
->> msm_hdmi_dev_probe()")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-Actually, i missed one nit
+Here is the summary with links:
+  - [net-next] net: lan966x: Remove a useless test in lan966x_ptp_add_trap()
+    https://git.kernel.org/netdev/net-next/c/d1c722867f80
 
-In the subject line, it should be "drm/msm/hdmi"
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-The "i" is missing.
 
-Please fix that and post it.
-
-> 
->> ---
->> Not sure if the Fixes tag is correct. At least it is when the probe needs
->> to be fixed but the issue was maybe there elsewhere before.
-> 
-> Seems right to me.
-> 
->> ---
->>   drivers/gpu/drm/msm/hdmi/hdmi.c | 12 ++++++++++--
->>   1 file changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c 
->> b/drivers/gpu/drm/msm/hdmi/hdmi.c
->> index 4d3fdc806bef..97372bb241d8 100644
->> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
->> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
->> @@ -532,11 +532,19 @@ static int msm_hdmi_dev_probe(struct 
->> platform_device *pdev)
->>       ret = devm_pm_runtime_enable(&pdev->dev);
->>       if (ret)
->> -        return ret;
->> +        goto err_put_phy;
->>       platform_set_drvdata(pdev, hdmi);
->> -    return component_add(&pdev->dev, &msm_hdmi_ops);
->> +    ret = component_add(&pdev->dev, &msm_hdmi_ops);
->> +    if (ret)
->> +        goto err_put_phy;
->> +
->> +    return 0;
->> +
->> +err_put_phy:
->> +    msm_hdmi_put_phy(hdmi);
->> +    return ret;
->>   }
->>   static int msm_hdmi_dev_remove(struct platform_device *pdev)
