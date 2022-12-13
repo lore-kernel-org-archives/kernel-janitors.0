@@ -2,58 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B809EC10F1D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Dec 2022 11:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE0EC4167B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Dec 2022 11:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235406AbiLML3H (ORCPT
+        id S235159AbiLMLky (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Dec 2022 06:29:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33358 "EHLO
+        Tue, 13 Dec 2022 06:40:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230093AbiLML2j (ORCPT
+        with ESMTP id S230054AbiLMLkx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Dec 2022 06:28:39 -0500
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.188.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2127F1D0E9;
-        Tue, 13 Dec 2022 03:28:27 -0800 (PST)
-Date:   Tue, 13 Dec 2022 12:28:24 +0100
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Julian Anastasov <ja@ssi.bg>
-Cc:     Li Qiong <liqiong@nfschina.com>, Simon Horman <horms@verge.net.au>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, coreteam@netfilter.org,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: Re: [PATCH v2] ipvs: add a 'default' case in do_ip_vs_set_ctl()
-Message-ID: <Y5hh2NPmmkmD4VTt@salvia>
-References: <272315c8-5e3b-e8ca-3c7f-68eccd0f2430@nfschina.com>
- <20221212074351.26440-1-liqiong@nfschina.com>
- <c3ca27a-f923-6eb6-bbe4-5e99b65c5940@ssi.bg>
+        Tue, 13 Dec 2022 06:40:53 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8461D0C3;
+        Tue, 13 Dec 2022 03:40:52 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1AABFB810CB;
+        Tue, 13 Dec 2022 11:40:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A85C433EF;
+        Tue, 13 Dec 2022 11:40:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670931649;
+        bh=a3uM+NwgrxE9/Equ3z8yfvDSF/B2Uo8jYAQaJ9WnQ08=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A7m1Z4D65qZhLo5f8G0vWRaDpwNZJtpEHki102/SIci7Y5R7ZWe5DbKzcPFhEQaTY
+         hs0EmmP2oqjyGvUFcIieGvmCyVFzjML5CiL04/it3TAQEkTkW/w9C7HNaUE0+NkDEW
+         UfSvvQNo+DZtaI7IH9V+K7IpjKbsblA+lDxNZEDr1AcWIQ0rettf67zKzhaM7BqHOb
+         sEzxH+QhU1KqKCfp55FbfDVO+1lKVxonzgH4EtEc7puqjcR9QUTpoXCIBVg8DTVZnT
+         iKPBtxAHqElSDPeIIT2LJ/tdi2GHiMHK//lqDUwPU5MyjtSFiB60cnTBKe+7A+Saj1
+         E4RuRPf41qomg==
+Date:   Tue, 13 Dec 2022 11:40:43 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     Max Filippov <jcmvbkbc@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v1] spi: xtensa-xtfpga: Fix a double put() in
+ xtfpga_spi_remove()
+Message-ID: <Y5hku6VFhguH2osM@sirena.org.uk>
+References: <7946a26c6e53a4158f0f5bad5276d8654fd59415.1670673147.git.christophe.jaillet@wanadoo.fr>
+ <CAMo8BfKCv9j-ftKWU+B27g1oHBB_=EZhGBH7qymyVAeF10JcnQ@mail.gmail.com>
+ <Y5dKk+uw3UcW2Pu1@sirena.org.uk>
+ <bdb26ba3-7276-359a-7784-6ec3e35c64de@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mqecs6IEkkZ9zLfG"
 Content-Disposition: inline
-In-Reply-To: <c3ca27a-f923-6eb6-bbe4-5e99b65c5940@ssi.bg>
+In-Reply-To: <bdb26ba3-7276-359a-7784-6ec3e35c64de@huawei.com>
+X-Cookie: Edwin Meese made me wear CORDOVANS!!
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Dec 12, 2022 at 04:20:41PM +0200, Julian Anastasov wrote:
-> 
-> 	Hello,
-> 
-> On Mon, 12 Dec 2022, Li Qiong wrote:
-> 
-> > It is better to return the default switch case with
-> > '-EINVAL', in case new commands are added. otherwise,
-> > return a uninitialized value of ret.
-> > 
-> > Signed-off-by: Li Qiong <liqiong@nfschina.com>
-> > Reviewed-by: Simon Horman <horms@verge.net.au>
-> 
-> 	Change looks correct to me for -next, thanks!
-> 
-> Acked-by: Julian Anastasov <ja@ssi.bg>
 
-Applied, thanks.
+--mqecs6IEkkZ9zLfG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Dec 13, 2022 at 09:30:32AM +0800, Yang Yingliang wrote:
+> On 2022/12/12 23:36, Mark Brown wrote:
+> > On Sat, Dec 10, 2022 at 06:48:02AM -0800, Max Filippov wrote:
+
+> > Probably worth a comment though since it is a bit of a gotcha.  Ideally
+> > we'd improve this in the bitbang code but that's harder.
+
+> Ideally, spi_bitbang_stop() should undo spi_bitbang_start(). shall we move
+> spi_master_put() in spi_bitbang_stop() instead of
+> calling it separately in drivers?
+
+Ideally like I say, there's issues with devm IIRC which make it more
+complicated than just adding a put() there.
+
+--mqecs6IEkkZ9zLfG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmOYZLsACgkQJNaLcl1U
+h9BZPwf+Ny42WwHXUMIzf46c6f9EyBH0/UqF7yyuUcaJ9EVVi1mYMaY1p1CbG45Z
+80H+ZkfcWDDlrgSAsukJCzVJ3U3foAI3MtarQJFJ+6h6zcw/SqEExQ1hADg5tH3C
+svM/zcT7k9yoPVcYXLaLJ7QnB+TUAdUXdYAxpHeAXokDK7IsYpynr4IMwjuOEajH
+U3UJ9dbRHpACDz4a8+ZGzcsdTpJfzEYe5X80GmJerkix/O8uGFq1cK/mLvgwscFr
+BS/LJbABnUQVJBHkRpzdG8V6CwouG0W+hwWNy9EXi2rvnQhpVWtnLQq97ngY+DaO
+HwVRroIuno1HawxhJm6flTpK/SEzAQ==
+=/C27
+-----END PGP SIGNATURE-----
+
+--mqecs6IEkkZ9zLfG--
