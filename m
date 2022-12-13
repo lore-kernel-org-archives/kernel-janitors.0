@@ -2,92 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60ABAC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Dec 2022 18:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73CEC10F1B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Dec 2022 19:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236661AbiLMSqV (ORCPT
+        id S236810AbiLMTEV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Dec 2022 13:46:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40662 "EHLO
+        Tue, 13 Dec 2022 14:04:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236636AbiLMSqL (ORCPT
+        with ESMTP id S236663AbiLMTEA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Dec 2022 13:46:11 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1502A252BF;
-        Tue, 13 Dec 2022 10:46:06 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 567EF22B96;
-        Tue, 13 Dec 2022 18:46:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1670957165;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=01sRJ/kU83m5Fgk2BYm0GD32kiR7ygZRdeTmPkKhxDY=;
-        b=JJqNtBdEatj/CvWbN841pqmEuahdIAQBIv0ivh05pcL6GGybTDIto2P4TQ1URVRXzMX9d7
-        yFB+wceKhjbkmtdvU3HN78pF1dCxdSSSMgmRyCiYBjXVzLROaDcxS7uWOetBUdPF++Bs9M
-        VCBPRoy2ZB5yyoqUA5fZjLHpXutYx/c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1670957165;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=01sRJ/kU83m5Fgk2BYm0GD32kiR7ygZRdeTmPkKhxDY=;
-        b=QSCe7crFxKQHuE+n9exwrb6ZeHEX+pLyy+6D6lbyN013N05eRRd5BX6ajrqkZv2GgPKvrU
-        xRhRffDhVVWm6VBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 26E64138F9;
-        Tue, 13 Dec 2022 18:46:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id iD+FCG3ImGP7ewAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Tue, 13 Dec 2022 18:46:05 +0000
-Date:   Tue, 13 Dec 2022 19:45:23 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-kernel@vger.kernel.org,
+        Tue, 13 Dec 2022 14:04:00 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452E4F28;
+        Tue, 13 Dec 2022 11:03:59 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id p36so6491842lfa.12;
+        Tue, 13 Dec 2022 11:03:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zQF6hMxTmG4slJ9Nz3trIgcsMDVZJZQDuZmv2zhDQHk=;
+        b=Q+fdIT8hdXjsy1pkEw8iH3UM4HoedY27FzR/yBfHRUQQoUhlbasG/OktcKkqkbB9pD
+         E8qUAiABYUpVYenvWdqVnX3WWTiprBwgeS8/aeXu9i4TdE7WUER2TouIIn5dxyPiTJW7
+         UC1DE2DVbYvmVCzUF0XjhZ/0oPx8LVkBTnMAl+HqbWMpoivCZ9MoeRRSjX1x39iFlE8n
+         Ye0/ZU6ACxT5el2M+bzWGjhxU8cjFsPkjN1FFmY7cMQpQLvqkJfDFKtKeiX6CRXuk7vQ
+         I/01YKMCUtBJ2sKoRpNfMchpvKx5z3dRi0673cy/IsO3Ka5jTkg/iY/rVTnbE57vYD45
+         lMtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zQF6hMxTmG4slJ9Nz3trIgcsMDVZJZQDuZmv2zhDQHk=;
+        b=a8HUae0z8FIZoHiSZnLmdXiqNLEPpZ0Nn2Lg45PbY3oUUZAbKwEYXVzApC0v5Uorzd
+         O5HnB808mxAqpxxy9fRMv+sTXK4NTY2vecqpaTlj49cRj7J7y0082cdWOiIhUWmKsTt8
+         3ECt0D+zrfYsaeU+arW+m0CyM+oAqDXKNt3FzbtIUs6pz58zxZvSnOdGEBG6DVzZTwcT
+         ndv3IoiMajimy6dssUrx8uQUjZxHiQEfYsHRRPUId4eK+FBWvf0+FQcVrDA1O7DAsY5/
+         wqFmbxDp/tRaFFSWYCECpNet1C60MS3/gMuOHypQaVeDGj/jbA6/TCdZKrsAPgCcarTj
+         P62Q==
+X-Gm-Message-State: ANoB5pmJGj0Dk2dZRqsEMxfU6teRTbdxH9vbrGQNSg+vhbQmlDYl6Ujr
+        uJFQhVmfe7KlAI+Puo2DdGo=
+X-Google-Smtp-Source: AA0mqf6MaCUVan1IJEPVjs/aiMbQp9mjcMuZj72AS4fv7ti1UhQKYHuVyV5MD8wOjbPiUap9ZDgaZw==
+X-Received: by 2002:a05:6512:4cb:b0:4b5:6417:43bb with SMTP id w11-20020a05651204cb00b004b5641743bbmr5097373lfq.51.1670958237582;
+        Tue, 13 Dec 2022 11:03:57 -0800 (PST)
+Received: from DESKTOP-5EKDQDN.localdomain (78-63-10-115.static.zebra.lt. [78.63.10.115])
+        by smtp.gmail.com with ESMTPSA id z2-20020a196502000000b004b54ca56cf9sm472232lfb.303.2022.12.13.11.03.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Dec 2022 11:03:57 -0800 (PST)
+From:   =?UTF-8?q?Aldas=20Tara=C5=A1kevi=C4=8Dius?= <aldas60@gmail.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
-        Chris Mason <chris.mason@oracle.com>,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH] btrfs: Fix an error handling path in
- btrfs_defrag_leaves()
-Message-ID: <20221213184522.GF5824@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <9a1d857866d4768090d7f89869076b7a5a85116b.1670875295.git.christophe.jaillet@wanadoo.fr>
+        =?UTF-8?q?Aldas=20Tara=C5=A1kevi=C4=8Dius?= <aldas60@gmail.com>
+Subject: [PATCH] Input: atkbd - fix typo in comment
+Date:   Tue, 13 Dec 2022 21:03:05 +0200
+Message-Id: <20221213190305.6477-1-aldas60@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a1d857866d4768090d7f89869076b7a5a85116b.1670875295.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Dec 12, 2022 at 09:01:43PM +0100, Christophe JAILLET wrote:
-> All error handling paths end to 'out', except this memory allocation
-> failure.
-> 
-> This is spurious. So branch to the error handling path also in this case.
-> It will add a call to:
-> 	memset(&root->defrag_progress, 0,
-> 	       sizeof(root->defrag_progress));
-> 
-> Fixes: 6702ed490ca0 ("Btrfs: Add run time btree defrag, and an ioctl to force btree defrag")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is completely speculative.
-> 
-> Review with care !
+"Certain keyboards to not like" -> "Certain keyboards do not like"
 
-I think it's correct, using goto for cleanup is for consistency and the
-memset is not necessary on error paths but again for consistency with
-what other types of errors in the functions lead to. Added to misc-next,
-thanks.
+Signed-off-by: Aldas Taraškevičius <aldas60@gmail.com>
+---
+ drivers/input/keyboard/atkbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+index 246958795..08f87c592 100644
+--- a/drivers/input/keyboard/atkbd.c
++++ b/drivers/input/keyboard/atkbd.c
+@@ -247,7 +247,7 @@ static void *atkbd_platform_fixup_data;
+ static unsigned int (*atkbd_platform_scancode_fixup)(struct atkbd *, unsigned int);
+ 
+ /*
+- * Certain keyboards to not like ATKBD_CMD_RESET_DIS and stop responding
++ * Certain keyboards do not like ATKBD_CMD_RESET_DIS and stop responding
+  * to many commands until full reset (ATKBD_CMD_RESET_BAT) is performed.
+  */
+ static bool atkbd_skip_deactivate;
+-- 
+2.37.2
+
