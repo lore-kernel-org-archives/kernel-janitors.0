@@ -2,82 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98156C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Dec 2022 03:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0354AC10F1B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Dec 2022 06:15:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229557AbiLMDv0 (ORCPT
+        id S234461AbiLMGPy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Dec 2022 22:51:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50426 "EHLO
+        Tue, 13 Dec 2022 01:15:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234516AbiLMDvF (ORCPT
+        with ESMTP id S234443AbiLMGPw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Dec 2022 22:51:05 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD1361F2E7;
-        Mon, 12 Dec 2022 19:50:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 78551B808BB;
-        Tue, 13 Dec 2022 03:50:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E9D7C433F1;
-        Tue, 13 Dec 2022 03:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670903416;
-        bh=BT8OHaV2tjYMg1V3salQG9z9OJouBX098LNgTtQQFQM=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=J5Dv3P5dOIhTaiZGoctHcYrBMaUynTGk+lHJUsPWglPqWh+Y4fNNPma5G3brsTEMt
-         MDpxao80aMlu4QsJep/Cr1w8TjZgCA8sJi+ZuB+I6Go/7BXXvQG72813MiqKOd0nXt
-         WYfdDvxMM4/kmBYc8/Jb9CQV0e+Qlf2rkz4kkGMnnztOv2dq1rjVy3IkB8pI7oQKBp
-         yOhGWThG2eUpLkjlAw1/oqJAMOPYy8zGBiSPdVmjzezJNPFfPcWMnMFITHO6GUV+Vk
-         8E3sIanjYS8DOYj8bcwZluGetF+am+QAAnDPyb98IwtPNs4REjPUup18cJlHHLBmh+
-         pT6LyBnWBkHWQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 174D3C41622;
-        Tue, 13 Dec 2022 03:50:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 13 Dec 2022 01:15:52 -0500
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E6112ADB
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Dec 2022 22:15:51 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id 4yZvpMESVbw2u4yZvpN1WL; Tue, 13 Dec 2022 07:15:49 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 13 Dec 2022 07:15:49 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org
+Subject: [PATCH v2] drm/msm/hdmi: Fix the error handling path of msm_hdmi_dev_probe()
+Date:   Tue, 13 Dec 2022 07:15:33 +0100
+Message-Id: <b3f9da097851e2e42a40dc61458aa98c41c88d0d.1670741386.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: lan966x: Remove a useless test in
- lan966x_ptp_add_trap()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167090341609.4783.16305690023365204184.git-patchwork-notify@kernel.org>
-Date:   Tue, 13 Dec 2022 03:50:16 +0000
-References: <27992ffcee47fc865ce87274d6dfcffe7a1e69e0.1670873784.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <27992ffcee47fc865ce87274d6dfcffe7a1e69e0.1670873784.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     horatiu.vultur@microchip.com, UNGLinuxDriver@microchip.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, richardcochran@gmail.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+If an error occurs after a successful msm_hdmi_get_phy() call, it must be
+undone by a corresponding msm_hdmi_put_phy(), as already done in the
+remove function.
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Fixes: 437365464043 ("drm/msm/hdmi: move msm_hdmi_get_phy() to msm_hdmi_dev_probe()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+---
+Change in v2:
+  - Fix a typo in the prefix of the subject line    [Abhinav Kumar]
+  - Add R-b tag    [Abhinav Kumar]
 
-On Mon, 12 Dec 2022 20:37:16 +0100 you wrote:
-> vcap_alloc_rule() can't return NULL.
-> 
-> So remove some dead-code
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c | 2 --
->  1 file changed, 2 deletions(-)
+v1:
+https://lore.kernel.org/all/b3d9dac978f1e2e42a40ec61f58aa98c44c85dfd.1670741386.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/gpu/drm/msm/hdmi/hdmi.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Here is the summary with links:
-  - [net-next] net: lan966x: Remove a useless test in lan966x_ptp_add_trap()
-    https://git.kernel.org/netdev/net-next/c/d1c722867f80
-
-You are awesome, thank you!
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+index 4d3fdc806bef..97372bb241d8 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+@@ -532,11 +532,19 @@ static int msm_hdmi_dev_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_pm_runtime_enable(&pdev->dev);
+ 	if (ret)
+-		return ret;
++		goto err_put_phy;
+ 
+ 	platform_set_drvdata(pdev, hdmi);
+ 
+-	return component_add(&pdev->dev, &msm_hdmi_ops);
++	ret = component_add(&pdev->dev, &msm_hdmi_ops);
++	if (ret)
++		goto err_put_phy;
++
++	return 0;
++
++err_put_phy:
++	msm_hdmi_put_phy(hdmi);
++	return ret;
+ }
+ 
+ static int msm_hdmi_dev_remove(struct platform_device *pdev)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
