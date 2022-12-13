@@ -2,78 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FEEC00145
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Dec 2022 23:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FDEC00145
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Dec 2022 01:30:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234004AbiLLXaW (ORCPT
+        id S234081AbiLMBaj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Dec 2022 18:30:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43776 "EHLO
+        Mon, 12 Dec 2022 20:30:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233933AbiLLXaU (ORCPT
+        with ESMTP id S233867AbiLMBai (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Dec 2022 18:30:20 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34CEF1ADAE;
-        Mon, 12 Dec 2022 15:30:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A3DBF612A3;
-        Mon, 12 Dec 2022 23:30:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 113A8C433A4;
-        Mon, 12 Dec 2022 23:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670887818;
-        bh=+/gZuwbX2AOZla/BINx/sTVv2bw8lA7Os1gfimf9CMY=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=RCyAkMYFmiEeSLpRTJ+sEjo2J7UD/Wr9cvV1GUCAKk3HodPI6+obFn11jqQZOCsfU
-         SUQvEC3ulp6ASCkITJFo+ykWwY5afoyNGTKb7olJVaHQQSAblyNr0auBnP22zVI9Lh
-         J7i6zlxkREMb25jMbbH+hhmRlktS7R+yMwNzv2/6uwV8SBhphsj0wFQ6r8a6XNCekR
-         WRcnV7jYFE0qsYf/MbRsUswDK/PB4R84NcZ6PrcpHSQFSUOKh/EBbmFNDiUmbEeaH4
-         EMyqtkAisouy0gZTsvv6v87/jrBkcWRIZpDbn7nZOk9M5GgGRi5lLXlF9V0PVi0087
-         dv0cF4V2hlfQw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E66A2C41612;
-        Mon, 12 Dec 2022 23:30:17 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 12 Dec 2022 20:30:38 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D4411CFC5;
+        Mon, 12 Dec 2022 17:30:37 -0800 (PST)
+Received: from dggpemm500007.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NWLRs5rtGzqT5J;
+        Tue, 13 Dec 2022 09:26:17 +0800 (CST)
+Received: from [10.174.178.174] (10.174.178.174) by
+ dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Tue, 13 Dec 2022 09:30:33 +0800
+Subject: Re: [PATCH v1] spi: xtensa-xtfpga: Fix a double put() in
+ xtfpga_spi_remove()
+To:     Mark Brown <broonie@kernel.org>, Max Filippov <jcmvbkbc@gmail.com>
+CC:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-xtensa@linux-xtensa.org>, <linux-spi@vger.kernel.org>,
+        <yangyingliang@huawei.com>
+References: <7946a26c6e53a4158f0f5bad5276d8654fd59415.1670673147.git.christophe.jaillet@wanadoo.fr>
+ <CAMo8BfKCv9j-ftKWU+B27g1oHBB_=EZhGBH7qymyVAeF10JcnQ@mail.gmail.com>
+ <Y5dKk+uw3UcW2Pu1@sirena.org.uk>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <bdb26ba3-7276-359a-7784-6ec3e35c64de@huawei.com>
+Date:   Tue, 13 Dec 2022 09:30:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] lib: packing: replace bit_reverse() with bitrev8()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167088781794.32014.12837469418338196039.git-patchwork-notify@kernel.org>
-Date:   Mon, 12 Dec 2022 23:30:17 +0000
-References: <20221210004423.32332-1-koshchanka@gmail.com>
-In-Reply-To: <20221210004423.32332-1-koshchanka@gmail.com>
-To:     Uladzislau Koshchanka <koshchanka@gmail.com>
-Cc:     olteanv@gmail.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+In-Reply-To: <Y5dKk+uw3UcW2Pu1@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.174.178.174]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+On 2022/12/12 23:36, Mark Brown wrote:
+> On Sat, Dec 10, 2022 at 06:48:02AM -0800, Max Filippov wrote:
+>> Hi Christophe,
+>>
+>> On Sat, Dec 10, 2022 at 3:52 AM Christophe JAILLET
+>> <christophe.jaillet@wanadoo.fr> wrote:
+>>> 'master' is allocated with devm_spi_alloc_master(), there is no need to
+>>> put it explicitly in the remove function.
+>>>          spi_bitbang_stop(&xspi->bitbang);
+>>> -       spi_master_put(master);
+>> This put is matching the get in the spi_bitbang_start.
+>> It was discussed here:
+>> https://lore.kernel.org/linux-spi/CAMo8BfJaD7pG_iutY8jordysjChyzhTpVSqpxXh3QoZsj2QmaQ@mail.gmail.com/
+> Probably worth a comment though since it is a bit of a gotcha.  Ideally
+> we'd improve this in the bitbang code but that's harder.
+Ideally, spi_bitbang_stop() should undo spi_bitbang_start(). shall we 
+move spi_master_put() in spi_bitbang_stop() instead of
+calling it separately in drivers?
 
-On Sat, 10 Dec 2022 03:44:23 +0300 you wrote:
-> Remove bit_reverse() function.  Instead use bitrev8() from linux/bitrev.h +
-> bitshift.  Reduces code-repetition.
-> 
-> Signed-off-by: Uladzislau Koshchanka <koshchanka@gmail.com>
-> ---
->  lib/Kconfig   |  1 +
->  lib/packing.c | 16 ++--------------
->  2 files changed, 3 insertions(+), 14 deletions(-)
-
-Here is the summary with links:
-  - lib: packing: replace bit_reverse() with bitrev8()
-    https://git.kernel.org/netdev/net-next/c/1280d4b76f34
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
+Yang
