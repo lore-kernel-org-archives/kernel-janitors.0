@@ -2,129 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 723EAC4167B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 14:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A3EC4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 19:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiLOOwg (ORCPT
+        id S229676AbiLOToZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Dec 2022 09:52:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60308 "EHLO
+        Thu, 15 Dec 2022 14:44:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229882AbiLOOwc (ORCPT
+        with ESMTP id S229448AbiLOToX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Dec 2022 09:52:32 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0739E2F03A;
-        Thu, 15 Dec 2022 06:52:32 -0800 (PST)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BFEfuMo020469;
-        Thu, 15 Dec 2022 14:52:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=r+X72MD81XNUgAPaVDg/P7jJrUiBIuV0IsuJB8WYRYs=;
- b=Oay979FmnYk1l5v2Z/P7W4jzlFYPHvb7fG7HQeucGurpbtgofPQFp/p2kT/KVheDwRgy
- C3udsnA0po8omwtkbZR7mzlwic+NEEJXE1G2CDJbhRCZvgvrV1yz5YOVD5w9PpkNcqGz
- xrk30LwZDwyxfGECpGv9dA5tjhXmt3I+Ejbx/As66soFBcjk1x4oDbMyDrSOYFZY9Shm
- EZ7+xcZbWqNHS8cFkC3SGclROZxs9HBYTWQNYNs/CzAH4o/y/jAR4lGOMKkga4E67Ljz
- v62KzVzXhP2TachkOBILacvmVuOrf7cutAGjyNeetntZjYMemRdL7TRcnwSQcWOOyWsz 6g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mg5jr896y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Dec 2022 14:52:30 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2BFEo6CG022151;
-        Thu, 15 Dec 2022 14:52:30 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mg5jr896a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Dec 2022 14:52:30 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 2BFDmBac017104;
-        Thu, 15 Dec 2022 14:52:29 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([9.208.129.120])
-        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3mf07gpdk0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Dec 2022 14:52:29 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2BFEqRCN7996126
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Dec 2022 14:52:27 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C63745803F;
-        Thu, 15 Dec 2022 14:52:27 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CA05758056;
-        Thu, 15 Dec 2022 14:52:26 +0000 (GMT)
-Received: from [9.160.108.96] (unknown [9.160.108.96])
-        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 15 Dec 2022 14:52:26 +0000 (GMT)
-Message-ID: <8b86ec00-2112-0c00-993e-dad2c816833b@linux.ibm.com>
-Date:   Thu, 15 Dec 2022 08:52:26 -0600
+        Thu, 15 Dec 2022 14:44:23 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA6E511CB;
+        Thu, 15 Dec 2022 11:44:22 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3E86EB81B9E;
+        Thu, 15 Dec 2022 19:44:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94038C433D2;
+        Thu, 15 Dec 2022 19:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1671133459;
+        bh=DN7Ky2ByqlL7lH1aNikrWtAHE0Y0hbmJhJ4JoipwVeY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IQZG5r+wv+dyf0U9C9ex8PfNrturX/5mj2Jomp3qebm3sVEqhXfnuz0usqieo9HxW
+         3mb1TvROeRiBdkS+K2j47ah46Ax54/TIqDLWWQ7xkDMNNL0YsZeu7Iq0CY9pXYgXR0
+         shDI/TpSoYNaSf8iYlRsNfvJR6pfo4OHxtsVp7WAeylSRWSzBNuAuO/NylUxPPj9iU
+         jjWz9AD6TPKuGJckyLieRSs03RKsHQQr7NTwRDu1qthJsG5wfWC3sIdMz8r3Gy+bS4
+         1xf8rM9eYz2uG9Z3upaxhzLeIT1zoQoSoS/dNKjzlltwabteTj4M+y+PSgQXt9Crvh
+         WLFRYrGscF1Xw==
+Date:   Thu, 15 Dec 2022 19:44:14 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: errata: refer to config ARM64_ERRATUM_2645198 to
+ make workaround work
+Message-ID: <20221215194413.GA8094@willie-the-truck>
+References: <20221215094811.23188-1-lukas.bulwahn@gmail.com>
+ <20221215105745.GA7711@willie-the-truck>
+ <b6f61241-e436-5db1-1053-3b441080b8d6@arm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH] Input: ibm-panel - fix typo in comment
-Content-Language: en-US
-To:     Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        =?UTF-8?B?QWxkYXMgVGFyYcWha2V2acSNaXVz?= <aldas60@gmail.com>,
-        dmitry.torokhov@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20221213194855.260-1-aldas60@gmail.com>
- <87wn6sixd0.fsf@baylibre.com>
-From:   Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <87wn6sixd0.fsf@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3R9LAlX9s6FzcI8tQutxQKq7a6QN6mRk
-X-Proofpoint-ORIG-GUID: bO0dCly1KWyen7Mke5Z7wOJCRqOOoHml
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-15_08,2022-12-15_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- suspectscore=0 mlxlogscore=999 malwarescore=0 spamscore=0 clxscore=1011
- adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2212150117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b6f61241-e436-5db1-1053-3b441080b8d6@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Thu, Dec 15, 2022 at 04:59:20PM +0530, Anshuman Khandual wrote:
+> On 12/15/22 16:27, Will Deacon wrote:
+> > On Thu, Dec 15, 2022 at 10:48:11AM +0100, Lukas Bulwahn wrote:
+> >> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+> >> index cd8d96e1fa1a..95364e8bdc19 100644
+> >> --- a/arch/arm64/mm/hugetlbpage.c
+> >> +++ b/arch/arm64/mm/hugetlbpage.c
+> >> @@ -562,7 +562,7 @@ bool __init arch_hugetlb_valid_size(unsigned long size)
+> >>  
+> >>  pte_t huge_ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
+> >>  {
+> >> -	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_2645198) &&
+> >> +	if (IS_ENABLED(CONFIG_ARM64_ERRATUM_2645198) &&
+> >>  	    cpus_have_const_cap(ARM64_WORKAROUND_2645198)) {
+> >>  		/*
+> >>  		 * Break-before-make (BBM) is required for all user space mappings
+> >> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> >> index 12915f379c22..d77c9f56b7b4 100644
+> >> --- a/arch/arm64/mm/mmu.c
+> >> +++ b/arch/arm64/mm/mmu.c
+> >> @@ -1633,7 +1633,7 @@ early_initcall(prevent_bootmem_remove_init);
+> >>  
+> >>  pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
+> >>  {
+> >> -	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_2645198) &&
+> >> +	if (IS_ENABLED(CONFIG_ARM64_ERRATUM_2645198) &&
+> >>  	    cpus_have_const_cap(ARM64_WORKAROUND_2645198)) {
+> >>  		/*
+> >>  		 * Break-before-make (BBM) is required for all user space mappings
+> > 
+> > Grr, this bug seems to exist in all three versions of the patch reviewed on
+> > the list, so I can only draw the conclusion that this code has never been
+> 
+> Ohh, my bad, apologies. I did not have a real system with this erratum, although
+> had emulated and tested this workaround path via some other debug changes (which
+> might have just forced the first condition to always evaluate true).
 
-On 12/15/22 07:56, Mattijs Korpershoek wrote:
-> On Tue, Dec 13, 2022 at 21:48, Aldas Taraškevičius <aldas60@gmail.com> wrote:
->
->> "set the index to it's largest possible value" -> "set the index to its
->> largest possible value"
+"might have"?
 
+> > tested. Consequently, I'm more inclined to _revert_ the change for now and
+> > we can bring it back as a fix once somebody has checked that it actually
+> > works properly.
+> Please do not revert this change if possible.
 
-Thanks!
+I've gone ahead with the revert anyway, just because it's the easy thing to
+do and we can bring back a fixed version of the patch as a fix in the new
+year. So please send a new version with this fix folded in after you've
+tested that it doesn't cause regressions for systems without the erratum.
 
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
+Cheers,
 
-
->>
->> Signed-off-by: Aldas Taraškevičius <aldas60@gmail.com>
-> Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
->
->> ---
->>   drivers/input/misc/ibm-panel.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/input/misc/ibm-panel.c b/drivers/input/misc/ibm-panel.c
->> index a8fba0054..6be60bc8d 100644
->> --- a/drivers/input/misc/ibm-panel.c
->> +++ b/drivers/input/misc/ibm-panel.c
->> @@ -101,7 +101,7 @@ static int ibm_panel_i2c_slave_cb(struct i2c_client *client,
->>   		else
->>   			/*
->>   			 * The command is too long and therefore invalid, so set the index
->> -			 * to it's largest possible value. When a STOP is finally received,
->> +			 * to its largest possible value. When a STOP is finally received,
->>   			 * the command will be rejected upon processing.
->>   			 */
->>   			panel->idx = U8_MAX;
->> -- 
->> 2.37.2
+Will
