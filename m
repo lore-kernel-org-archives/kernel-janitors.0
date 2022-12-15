@@ -2,103 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD639C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 10:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEA6C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 10:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbiLOKhc (ORCPT
+        id S229498AbiLOK6V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Dec 2022 05:37:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47410 "EHLO
+        Thu, 15 Dec 2022 05:58:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbiLOKha (ORCPT
+        with ESMTP id S230173AbiLOK5y (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Dec 2022 05:37:30 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 598632C10A;
-        Thu, 15 Dec 2022 02:37:28 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id bj12so51173175ejb.13;
-        Thu, 15 Dec 2022 02:37:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pZnStEcJmw/vCnQPEoFz/U81Z/gFR8HaoVf+ewX8+W8=;
-        b=YUWSo2BIxLaYYOUJ9vgnftsQJz7NxG2vBgVRcmkQq1HRkHG4eJ+YDBHT/WSEO1FUMC
-         Ogr09dhZucid4t6Ylzmzq1x3hs8Dcouh9WVU+A4JXCSf0yR+Bya8xEljD+BzOsbcm4Oe
-         uje8H2YePJ6Y/CD6G2+XHjisEQHw7YiVUNDswsifc0Dj96gOZ3fF2G9hlNXl//eiu1zP
-         MiekjRe6DMZnxNn/qiIrx5lAk399FITvutcHfFYbqIpMtXethgbGj3gWCUhmC1RzkInh
-         WMH2Q2MRUgPNkhc6LYMezUzmMX60M5+lxJQTgbcTAKzqRG56nJeIgesSevyRyCiQbsq/
-         FYDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pZnStEcJmw/vCnQPEoFz/U81Z/gFR8HaoVf+ewX8+W8=;
-        b=mCzn83VhuPYGH1BYrXSsd69MQQgLO+XjzvH6ZQuJt/JEXt+ogMj6E9skv/7sqcAviG
-         Wn8tGqNYBQY63YF1izy1ozL7OUR1boqyR/G60Hl0X3v4coggbUQBI5AF1ZaAnyq5rZ1W
-         z8+lz/EBA0zHR72oVDhQlLRTHPw9cjzyjcYFryiGqlP4yX+iC5svIOjA9wkuzMHEBeSF
-         X3V+JWD7w+4U8j83LmqVnp88k2qpFBWKf3GHay5aaDEA6PAIC5HDGu8jTAi3IdZgtklf
-         cWGp04rEjJP3pjQJZTXt5reI/KLGTPSblOB9iOkYb/3stNSFzHBly5sMUR+XgfYq0QHn
-         q2Fg==
-X-Gm-Message-State: ANoB5pkoJnOdbxvV+I9Vuu4TCbnZq0T582sGwod3nSgaQ3DZhoSc5n7S
-        AyPznYIBf2TpnTPU0biyPrs=
-X-Google-Smtp-Source: AA0mqf787wvPIKuw+89zRvMEFTBZH65JE0oxnu/nqS6Wj9FWG0xXqcR572hD+nRm74sI0Tx4RWCmqg==
-X-Received: by 2002:a17:907:3e26:b0:7c1:9519:5cfa with SMTP id hp38-20020a1709073e2600b007c195195cfamr10547768ejc.77.1671100646765;
-        Thu, 15 Dec 2022 02:37:26 -0800 (PST)
-Received: from felia.fritz.box (ipbcc1d920.dynamic.kabel-deutschland.de. [188.193.217.32])
-        by smtp.gmail.com with ESMTPSA id 10-20020a170906218a00b0078d76ee7543sm6889698eju.222.2022.12.15.02.37.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Dec 2022 02:37:26 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        linux-pci@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] PCI: dwc: adjust to recent removal of PCI_MSI_IRQ_DOMAIN
-Date:   Thu, 15 Dec 2022 11:34:52 +0100
-Message-Id: <20221215103452.23131-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 15 Dec 2022 05:57:54 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD882E696;
+        Thu, 15 Dec 2022 02:57:53 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7756DB81ADB;
+        Thu, 15 Dec 2022 10:57:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3192C433EF;
+        Thu, 15 Dec 2022 10:57:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1671101871;
+        bh=fMmjzGIH0CRhTtjJw03yzuzhzkLRPQKpcOH9nmWFjx0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZuwanRa7QECHG/OZEtvLfBneGVE/BzhYGdE8JDorggkxdYspHrSUooR1f637h2sMg
+         +cK/nMV9ubDQNsLGcs977dt78mvaZ9lcMG/nsAyFYay8yXsITx1DQYSwFkXTakOWGS
+         H+NMbJQQI8+DcPH7G9URddZE7hG1zo48B/0PXPIM2ClImq7jfma0+pZgmBXrtgJXvH
+         tpqUFOVBtOdUtBn0M2YQwrEMCXe1+/lZGLaCCl39e2WyTzbN0yO0CBdf0Ac1T/5S++
+         snfT3+MMoecoOxwEcpLvNTJdf4PeuGUOygByqiZkc45rRUHbtUEjIjPcifBn44+J6T
+         eGkRqbnY4Y8VA==
+Date:   Thu, 15 Dec 2022 10:57:46 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: errata: refer to config ARM64_ERRATUM_2645198 to
+ make workaround work
+Message-ID: <20221215105745.GA7711@willie-the-truck>
+References: <20221215094811.23188-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221215094811.23188-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit a474d3fbe287 ("PCI/MSI: Get rid of PCI_MSI_IRQ_DOMAIN") removes the
-config PCI_MSI_IRQ_DOMAIN and makes all previous references to that config
-then refer to PCI_MSI instead.
+On Thu, Dec 15, 2022 at 10:48:11AM +0100, Lukas Bulwahn wrote:
+> Commit 44ecda71fd8a ("arm64: errata: Workaround possible Cortex-A715
+> [ESR|FAR]_ELx corruption") implements a workaround for arm64 erratum
+> 2645198. The arm64 cpucaps is called WORKAROUND_2645198; the kernel build
+> configuration is called ARM64_ERRATUM_2645198.
+> 
+> In the functions huge_ptep_modify_prot_start() and
+> ptep_modify_prot_start(), the code accidently refers to the non-existing
+> config CONFIG_ARM64_WORKAROUND_2645198. Note that the config name uses
+> ERRATUM, not WORKAROUND. By this accidental misreference, this condition is
+> always false, the branch of the workaround is not reachable and the
+> workaround is effectively not implemented at all.
+> 
+> Refer to the intended config ARM64_ERRATUM_2645198 and make the intended
+> workaround effectively work.
+> 
+> Fixes: 44ecda71fd8a ("arm64: errata: Workaround possible Cortex-A715 [ESR|FAR]_ELx corruption")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/arm64/mm/hugetlbpage.c | 2 +-
+>  arch/arm64/mm/mmu.c         | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Commit ba6ed462dcf4 ("PCI: dwc: Add Baikal-T1 PCIe controller support")
-adds the config PCIE_BT1, which following the previous default pattern
-depends on the config PCI_MSI_IRQ_DOMAIN.
+Thanks for the report!
 
-As these two commits were submitted roughly at the same time, the
-refactoring did not take of this occurrence and the addition did not yet
-notice the refactoring.
+> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+> index cd8d96e1fa1a..95364e8bdc19 100644
+> --- a/arch/arm64/mm/hugetlbpage.c
+> +++ b/arch/arm64/mm/hugetlbpage.c
+> @@ -562,7 +562,7 @@ bool __init arch_hugetlb_valid_size(unsigned long size)
+>  
+>  pte_t huge_ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
+>  {
+> -	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_2645198) &&
+> +	if (IS_ENABLED(CONFIG_ARM64_ERRATUM_2645198) &&
+>  	    cpus_have_const_cap(ARM64_WORKAROUND_2645198)) {
+>  		/*
+>  		 * Break-before-make (BBM) is required for all user space mappings
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 12915f379c22..d77c9f56b7b4 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -1633,7 +1633,7 @@ early_initcall(prevent_bootmem_remove_init);
+>  
+>  pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
+>  {
+> -	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_2645198) &&
+> +	if (IS_ENABLED(CONFIG_ARM64_ERRATUM_2645198) &&
+>  	    cpus_have_const_cap(ARM64_WORKAROUND_2645198)) {
+>  		/*
+>  		 * Break-before-make (BBM) is required for all user space mappings
 
-Take care of the PCI_MSI config refactoring on this latest addition.
+Grr, this bug seems to exist in all three versions of the patch reviewed on
+the list, so I can only draw the conclusion that this code has never been
+tested. Consequently, I'm more inclined to _revert_ the change for now and
+we can bring it back as a fix once somebody has checked that it actually
+works properly.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/pci/controller/dwc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index a0d2713f0e88..99ec91e2a5cf 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -225,7 +225,7 @@ config PCIE_ARTPEC6_EP
- config PCIE_BT1
- 	tristate "Baikal-T1 PCIe controller"
- 	depends on MIPS_BAIKAL_T1 || COMPILE_TEST
--	depends on PCI_MSI_IRQ_DOMAIN
-+	depends on PCI_MSI
- 	select PCIE_DW_HOST
- 	help
- 	  Enables support for the PCIe controller in the Baikal-T1 SoC to work
--- 
-2.17.1
-
+Will
