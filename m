@@ -2,112 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F62EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 11:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C9FC46467
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 13:56:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229683AbiLOL32 (ORCPT
+        id S229694AbiLON4V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Dec 2022 06:29:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44110 "EHLO
+        Thu, 15 Dec 2022 08:56:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbiLOL31 (ORCPT
+        with ESMTP id S229488AbiLON4U (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Dec 2022 06:29:27 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E534B2A436;
-        Thu, 15 Dec 2022 03:29:25 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7FAD1063;
-        Thu, 15 Dec 2022 03:30:05 -0800 (PST)
-Received: from [192.168.0.110] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 381573F5A1;
-        Thu, 15 Dec 2022 03:29:22 -0800 (PST)
-Message-ID: <b6f61241-e436-5db1-1053-3b441080b8d6@arm.com>
-Date:   Thu, 15 Dec 2022 16:59:20 +0530
+        Thu, 15 Dec 2022 08:56:20 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EB0629CB5
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Dec 2022 05:56:18 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id ay40so13833607wmb.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Dec 2022 05:56:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cp4iCMCKSFYrY2bZuHPNAksFz//lyOio/VrK920rZiE=;
+        b=Ka5fLLNI7dmDMjgqmtFE3fuU2OBmdpN02BvQf7bumYXhPUETIMmx5EjohTtJv4Q2AF
+         Y83rsuC5IQjPcJTfOsONtE6TAlbJCLCvYuCm3/iXxMBDTTqdakvo3Ki78Ti8mnJa/Foq
+         xcUFpbE8RI+cNp1viM/b0f6yjd5tavFYYib7T6IwUKKOlQ6l2hLH02xV3+xCsF6y5dpU
+         4vfiFZfbN6ulQNL8InEKJnq46HKDQqjiM1BVBCnzMvUZiTjSrGCGXk19THJZM57EONGI
+         vE5MXjQWLrHlW3jM9NmN6EWmMroMyM+wfy29bIS2bhRUy+/W888Z98Z/NJ5c8yU/dBYf
+         en9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cp4iCMCKSFYrY2bZuHPNAksFz//lyOio/VrK920rZiE=;
+        b=CmvLASJ/0lH1XO4IQwBmKzM3iWS/QZGYvLMxqwh53r9x5XG0jfg/c/UnecqQ9NkS4p
+         lWTXican+Uk5ij+d9pk3RB69Ur6z40Ovt9dsxSsxkeIgpQyFuN3TlSfCZuwMjKx2kTcZ
+         OuuxvCzw2lrACnnrpoyT93plsCf+jyzOBKY5klh/PgPrEmTwcrSS7iF6rPrT62ldnox3
+         B8IFDV27g1bY7+cME1xICn3ygtHbgMS+1uVFx3AjSEjnWx6jbcptAwmBU4C4dMgg+0w+
+         uY39/uo8lw9tmO8R3eKraEioctfJo8WsezVadoeIkJHAGrv3M8982JTaJqpr1nDzNGl4
+         pQiA==
+X-Gm-Message-State: ANoB5pmSCBldNTLMne0yqLBoxslpKZFoENcbPfoFkQYz8eJkNTrg8Kxc
+        hjoYpz98qxNk/OVJ8Yba1WAm1g==
+X-Google-Smtp-Source: AA0mqf5l4ladylQqnGZFtWczTEDtuIpVK/y7ndr7wFtzKfmK1/4mqGEBCx1ki6PUVaamIWyVQOl5Ag==
+X-Received: by 2002:a05:600c:1d83:b0:3d2:13c6:4740 with SMTP id p3-20020a05600c1d8300b003d213c64740mr25060000wms.39.1671112577045;
+        Thu, 15 Dec 2022 05:56:17 -0800 (PST)
+Received: from localhost ([82.66.159.240])
+        by smtp.gmail.com with ESMTPSA id bg2-20020a05600c3c8200b003b47e75b401sm8058108wmb.37.2022.12.15.05.56.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Dec 2022 05:56:16 -0800 (PST)
+From:   Mattijs Korpershoek <mkorpershoek@baylibre.com>
+To:     Aldas =?utf-8?Q?Tara=C5=A1kevi=C4=8Dius?= <aldas60@gmail.com>,
+        dmitry.torokhov@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Aldas =?utf-8?Q?Tara=C5=A1kevi=C4=8Dius?= <aldas60@gmail.com>
+Subject: Re: [PATCH] Input: atkbd - fix typo in comment
+In-Reply-To: <20221213190305.6477-1-aldas60@gmail.com>
+References: <20221213190305.6477-1-aldas60@gmail.com>
+Date:   Thu, 15 Dec 2022 14:56:15 +0100
+Message-ID: <87zgboixds.fsf@baylibre.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] arm64: errata: refer to config ARM64_ERRATUM_2645198 to
- make workaround work
-Content-Language: en-US
-To:     Will Deacon <will@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221215094811.23188-1-lukas.bulwahn@gmail.com>
- <20221215105745.GA7711@willie-the-truck>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20221215105745.GA7711@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Tue, Dec 13, 2022 at 21:03, Aldas Tara=C5=A1kevi=C4=8Dius <aldas60@gmail=
+.com> wrote:
 
+> "Certain keyboards to not like" -> "Certain keyboards do not like"
+>
+> Signed-off-by: Aldas Tara=C5=A1kevi=C4=8Dius <aldas60@gmail.com>
 
-On 12/15/22 16:27, Will Deacon wrote:
-> On Thu, Dec 15, 2022 at 10:48:11AM +0100, Lukas Bulwahn wrote:
->> Commit 44ecda71fd8a ("arm64: errata: Workaround possible Cortex-A715
->> [ESR|FAR]_ELx corruption") implements a workaround for arm64 erratum
->> 2645198. The arm64 cpucaps is called WORKAROUND_2645198; the kernel build
->> configuration is called ARM64_ERRATUM_2645198.
->>
->> In the functions huge_ptep_modify_prot_start() and
->> ptep_modify_prot_start(), the code accidently refers to the non-existing
->> config CONFIG_ARM64_WORKAROUND_2645198. Note that the config name uses
->> ERRATUM, not WORKAROUND. By this accidental misreference, this condition is
->> always false, the branch of the workaround is not reachable and the
->> workaround is effectively not implemented at all.
->>
->> Refer to the intended config ARM64_ERRATUM_2645198 and make the intended
->> workaround effectively work.
->>
->> Fixes: 44ecda71fd8a ("arm64: errata: Workaround possible Cortex-A715 [ESR|FAR]_ELx corruption")
->> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
->> ---
->>  arch/arm64/mm/hugetlbpage.c | 2 +-
->>  arch/arm64/mm/mmu.c         | 2 +-
->>  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> Thanks for the report!
-> 
->> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
->> index cd8d96e1fa1a..95364e8bdc19 100644
->> --- a/arch/arm64/mm/hugetlbpage.c
->> +++ b/arch/arm64/mm/hugetlbpage.c
->> @@ -562,7 +562,7 @@ bool __init arch_hugetlb_valid_size(unsigned long size)
->>  
->>  pte_t huge_ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
->>  {
->> -	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_2645198) &&
->> +	if (IS_ENABLED(CONFIG_ARM64_ERRATUM_2645198) &&
->>  	    cpus_have_const_cap(ARM64_WORKAROUND_2645198)) {
->>  		/*
->>  		 * Break-before-make (BBM) is required for all user space mappings
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index 12915f379c22..d77c9f56b7b4 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -1633,7 +1633,7 @@ early_initcall(prevent_bootmem_remove_init);
->>  
->>  pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
->>  {
->> -	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_2645198) &&
->> +	if (IS_ENABLED(CONFIG_ARM64_ERRATUM_2645198) &&
->>  	    cpus_have_const_cap(ARM64_WORKAROUND_2645198)) {
->>  		/*
->>  		 * Break-before-make (BBM) is required for all user space mappings
-> 
-> Grr, this bug seems to exist in all three versions of the patch reviewed on
-> the list, so I can only draw the conclusion that this code has never been
+Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
 
-Ohh, my bad, apologies. I did not have a real system with this erratum, although
-had emulated and tested this workaround path via some other debug changes (which
-might have just forced the first condition to always evaluate true).
-
-> tested. Consequently, I'm more inclined to _revert_ the change for now and
-> we can bring it back as a fix once somebody has checked that it actually
-> works properly.
-Please do not revert this change if possible.
+> ---
+>  drivers/input/keyboard/atkbd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkb=
+d.c
+> index 246958795..08f87c592 100644
+> --- a/drivers/input/keyboard/atkbd.c
+> +++ b/drivers/input/keyboard/atkbd.c
+> @@ -247,7 +247,7 @@ static void *atkbd_platform_fixup_data;
+>  static unsigned int (*atkbd_platform_scancode_fixup)(struct atkbd *, uns=
+igned int);
+>=20=20
+>  /*
+> - * Certain keyboards to not like ATKBD_CMD_RESET_DIS and stop responding
+> + * Certain keyboards do not like ATKBD_CMD_RESET_DIS and stop responding
+>   * to many commands until full reset (ATKBD_CMD_RESET_BAT) is performed.
+>   */
+>  static bool atkbd_skip_deactivate;
+> --=20
+> 2.37.2
