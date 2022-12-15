@@ -2,116 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22882C4167B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 09:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F195C4167B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 10:17:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbiLOJwI (ORCPT
+        id S229889AbiLOKRG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Dec 2022 04:52:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50442 "EHLO
+        Thu, 15 Dec 2022 05:17:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230237AbiLOJv3 (ORCPT
+        with ESMTP id S230319AbiLOKQn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Dec 2022 04:51:29 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04905E03B;
-        Thu, 15 Dec 2022 01:51:28 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id b2so50951387eja.7;
-        Thu, 15 Dec 2022 01:51:27 -0800 (PST)
+        Thu, 15 Dec 2022 05:16:43 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7329BE49;
+        Thu, 15 Dec 2022 02:16:14 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id tz12so28462018ejc.9;
+        Thu, 15 Dec 2022 02:16:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j84zMuJuK3HAp9zOgMIVL+Uq6tjz2z4EhGNGd4W418M=;
-        b=PKjKRu6qWEO5muTqlD2CVwbLvq2hdoDup0XgCi6Fncx3S9fWoO5WwlCMwVNLyTBEZL
-         M7EqDOFqiVKbf4vNolZfe2mBrpG6PPBvHkBcxmYCv3ePLgBjrkZZ9h308B1znZY/VGSo
-         q6bf/E1PCcJEzeSOf3kbfW/Gxj+7pY0JfjydStRpX7KeMMRayi0sAwLaN4XbcUpGdMel
-         +BISnAzi1N7MeHRPR7GwN3ccBy6CkcCNAPw7ydbAfa0jeQcCOdVizdKS4sBra4KymZRI
-         LPKVx8X7pcaNiS9z/s+yWA8RohNOL014IAMGVsEAF5EB5feqYiJHuFGj7cuAFwyfT9bW
-         FLag==
+        bh=hA/7khQ2+Kdd7B5BwckeWPlm4BuKyCyk2Db9rfcWYlY=;
+        b=DWi77J9FBp2VCsKdifXN4b3eFSlR5g9vSiAeGJukzZfKOvKykp1KOr+oNlswa8mUAM
+         g2RKmEvjeeyzxckVeHMI6QFcjM4n0l2YGEwUNCk4Y/dOon6KCq64YWLyfx8eyVVjQ638
+         9Q/BObbVafAgLT5QG2LMMXUCjpppuqVYbuM3icSIHrw2LhFM+1hmNbodJlDe7tnASjdk
+         KdO9DNS4YRUa8/Ij0NVrS9kayAVfsTmnG38PFwkw3XN+oE7ZiA5TauKV1+ieW+SGPz8/
+         vqMcXAWm9PDKb18Sh65oYv8KIWKbCcbGcDyKI0MA58MRL9GNOnqZmlx784x0dd1a1mTi
+         NTfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j84zMuJuK3HAp9zOgMIVL+Uq6tjz2z4EhGNGd4W418M=;
-        b=mlZeZlp44Rf70NQm0Oit5C2wk+fndI9g1agu0Rf/YzKYwTmeCgDO2ezNG4f3mvf77/
-         4KKM3Bt8jJ3E2IbNpOPhc11oVz2OyshJaw4CFm/UVj4TSRRY0o1TWIk1vovr6maaxRRq
-         D1ZUwGID3DDm/jh5hoZ+BnnLlmkufREShC8MKE5PmGg3cG4iwwhdXsALaUfWWWNqwhu7
-         m7PeIHv0Okrfd0/PE3X6Afk4QVhsIj/KM+QhKkdEtlnnRXv1X5hP7j1DNtsbdez6dcxx
-         EDHiN0y85Q/9loYo72MgVbQHuLZgeLvr2VjYp4oJHZhH+G+8wuw+tI3Dv2Y2wvm2e2aX
-         qVHQ==
-X-Gm-Message-State: ANoB5pkuRS+uV1zCY/iAIvuAUpl8G+mgujFIq4IOKzSKjt4Hujik/pek
-        0sGNcVwmWYLO2t0/WZArWIc=
-X-Google-Smtp-Source: AA0mqf6hdAWRiJ4Wp0UpbkZFyGdwENTU38QDaYDDmMcYPZA7OTVT2XhKysyK3tJnvku7Mh5FXOeNaA==
-X-Received: by 2002:a17:906:168a:b0:7c1:10b4:4742 with SMTP id s10-20020a170906168a00b007c110b44742mr21853116ejd.55.1671097886550;
-        Thu, 15 Dec 2022 01:51:26 -0800 (PST)
+        bh=hA/7khQ2+Kdd7B5BwckeWPlm4BuKyCyk2Db9rfcWYlY=;
+        b=M860OOlZsRLwueV/7mDx2VOpoWzLvXeu6tsTKLttA3+KVu/pxt0JcAEmLSQYxJRbDQ
+         Uk8+XFY9hhQI8pRymmFFUULKy+fN8BJhhYpclwJiQuRFieO4H3d4nl/FGTOTeQmay7d0
+         9gDQzYR1sJR4dA75p+iUjBNVu1WcT01oobfUNXIM6UqbnVEy/0FhbGuNxDK4mm63GTnS
+         +BX6chqszFTylRRotZiuPoyoLAdTeLySs2W6N48GJZlu3N77SRgvVXvevCL1hCC0iODk
+         iOkL0SLubb9cHIFtyi2sEq/hb1MX19ctOsAgOk2cpfJsdI8Ax7t3WtyiHIAEGpi4ox9Z
+         WVaQ==
+X-Gm-Message-State: ANoB5pmxDKiSBlny33GE9jdWl+QlBNuxkFL852naApOJ9Ua2uPt9s+H1
+        WgA+k0mxM/SfstKtXIyEYuo=
+X-Google-Smtp-Source: AA0mqf4lmse1kKK/Q5APz3a/gFfizwyYisCLauByKyceMs51gqEOgmktFN+14CSKjKilnLu2Jm6EGQ==
+X-Received: by 2002:a17:907:2b12:b0:7c1:1c7:3bad with SMTP id gc18-20020a1709072b1200b007c101c73badmr20273207ejc.36.1671099372882;
+        Thu, 15 Dec 2022 02:16:12 -0800 (PST)
 Received: from felia.fritz.box (ipbcc1d920.dynamic.kabel-deutschland.de. [188.193.217.32])
-        by smtp.gmail.com with ESMTPSA id e9-20020a170906080900b007bfacaea851sm6787739ejd.88.2022.12.15.01.51.25
+        by smtp.gmail.com with ESMTPSA id 1-20020a170906210100b007c1675d2626sm5504493ejt.96.2022.12.15.02.16.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Dec 2022 01:51:25 -0800 (PST)
+        Thu, 15 Dec 2022 02:16:11 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        linux-arm-kernel@lists.infradead.org
+To:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] arm64: errata: refer to config ARM64_ERRATUM_2645198 to make workaround work
-Date:   Thu, 15 Dec 2022 10:48:11 +0100
-Message-Id: <20221215094811.23188-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] PCI/MSI: clean up duplicate dependency in config PCI_HYPERV_INTERFACE
+Date:   Thu, 15 Dec 2022 11:13:10 +0100
+Message-Id: <20221215101310.9135-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 44ecda71fd8a ("arm64: errata: Workaround possible Cortex-A715
-[ESR|FAR]_ELx corruption") implements a workaround for arm64 erratum
-2645198. The arm64 cpucaps is called WORKAROUND_2645198; the kernel build
-configuration is called ARM64_ERRATUM_2645198.
+Commit a474d3fbe287 ("PCI/MSI: Get rid of PCI_MSI_IRQ_DOMAIN") removes the
+config PCI_MSI_IRQ_DOMAIN and makes all previous references to that config
+then refer to PCI_MSI instead.
 
-In the functions huge_ptep_modify_prot_start() and
-ptep_modify_prot_start(), the code accidently refers to the non-existing
-config CONFIG_ARM64_WORKAROUND_2645198. Note that the config name uses
-ERRATUM, not WORKAROUND. By this accidental misreference, this condition is
-always false, the branch of the workaround is not reachable and the
-workaround is effectively not implemented at all.
+In the refactoring of config PCI_HYPERV_INTERFACE, it creates a duplicate
+dependency on PCI_MSI. Remove this needless duplicate dependency.
 
-Refer to the intended config ARM64_ERRATUM_2645198 and make the intended
-workaround effectively work.
+No functional change. Just a stylistic clean-up.
 
-Fixes: 44ecda71fd8a ("arm64: errata: Workaround possible Cortex-A715 [ESR|FAR]_ELx corruption")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- arch/arm64/mm/hugetlbpage.c | 2 +-
- arch/arm64/mm/mmu.c         | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/controller/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index cd8d96e1fa1a..95364e8bdc19 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -562,7 +562,7 @@ bool __init arch_hugetlb_valid_size(unsigned long size)
+diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+index 1569d9a3ada0..c2261da85f7b 100644
+--- a/drivers/pci/controller/Kconfig
++++ b/drivers/pci/controller/Kconfig
+@@ -285,7 +285,7 @@ config PCIE_BRCMSTB
  
- pte_t huge_ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
- {
--	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_2645198) &&
-+	if (IS_ENABLED(CONFIG_ARM64_ERRATUM_2645198) &&
- 	    cpus_have_const_cap(ARM64_WORKAROUND_2645198)) {
- 		/*
- 		 * Break-before-make (BBM) is required for all user space mappings
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 12915f379c22..d77c9f56b7b4 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -1633,7 +1633,7 @@ early_initcall(prevent_bootmem_remove_init);
- 
- pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
- {
--	if (IS_ENABLED(CONFIG_ARM64_WORKAROUND_2645198) &&
-+	if (IS_ENABLED(CONFIG_ARM64_ERRATUM_2645198) &&
- 	    cpus_have_const_cap(ARM64_WORKAROUND_2645198)) {
- 		/*
- 		 * Break-before-make (BBM) is required for all user space mappings
+ config PCI_HYPERV_INTERFACE
+ 	tristate "Hyper-V PCI Interface"
+-	depends on ((X86 && X86_64) || ARM64) && HYPERV && PCI_MSI && PCI_MSI
++	depends on ((X86 && X86_64) || ARM64) && HYPERV && PCI_MSI
+ 	help
+ 	  The Hyper-V PCI Interface is a helper driver allows other drivers to
+ 	  have a common interface with the Hyper-V PCI frontend driver.
 -- 
 2.17.1
 
