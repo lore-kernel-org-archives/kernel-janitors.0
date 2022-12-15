@@ -2,64 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F195C4167B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 10:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD639C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Dec 2022 10:37:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbiLOKRG (ORCPT
+        id S229988AbiLOKhc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Dec 2022 05:17:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37046 "EHLO
+        Thu, 15 Dec 2022 05:37:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbiLOKQn (ORCPT
+        with ESMTP id S229741AbiLOKha (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Dec 2022 05:16:43 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7329BE49;
-        Thu, 15 Dec 2022 02:16:14 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id tz12so28462018ejc.9;
-        Thu, 15 Dec 2022 02:16:14 -0800 (PST)
+        Thu, 15 Dec 2022 05:37:30 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 598632C10A;
+        Thu, 15 Dec 2022 02:37:28 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id bj12so51173175ejb.13;
+        Thu, 15 Dec 2022 02:37:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hA/7khQ2+Kdd7B5BwckeWPlm4BuKyCyk2Db9rfcWYlY=;
-        b=DWi77J9FBp2VCsKdifXN4b3eFSlR5g9vSiAeGJukzZfKOvKykp1KOr+oNlswa8mUAM
-         g2RKmEvjeeyzxckVeHMI6QFcjM4n0l2YGEwUNCk4Y/dOon6KCq64YWLyfx8eyVVjQ638
-         9Q/BObbVafAgLT5QG2LMMXUCjpppuqVYbuM3icSIHrw2LhFM+1hmNbodJlDe7tnASjdk
-         KdO9DNS4YRUa8/Ij0NVrS9kayAVfsTmnG38PFwkw3XN+oE7ZiA5TauKV1+ieW+SGPz8/
-         vqMcXAWm9PDKb18Sh65oYv8KIWKbCcbGcDyKI0MA58MRL9GNOnqZmlx784x0dd1a1mTi
-         NTfg==
+        bh=pZnStEcJmw/vCnQPEoFz/U81Z/gFR8HaoVf+ewX8+W8=;
+        b=YUWSo2BIxLaYYOUJ9vgnftsQJz7NxG2vBgVRcmkQq1HRkHG4eJ+YDBHT/WSEO1FUMC
+         Ogr09dhZucid4t6Ylzmzq1x3hs8Dcouh9WVU+A4JXCSf0yR+Bya8xEljD+BzOsbcm4Oe
+         uje8H2YePJ6Y/CD6G2+XHjisEQHw7YiVUNDswsifc0Dj96gOZ3fF2G9hlNXl//eiu1zP
+         MiekjRe6DMZnxNn/qiIrx5lAk399FITvutcHfFYbqIpMtXethgbGj3gWCUhmC1RzkInh
+         WMH2Q2MRUgPNkhc6LYMezUzmMX60M5+lxJQTgbcTAKzqRG56nJeIgesSevyRyCiQbsq/
+         FYDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hA/7khQ2+Kdd7B5BwckeWPlm4BuKyCyk2Db9rfcWYlY=;
-        b=M860OOlZsRLwueV/7mDx2VOpoWzLvXeu6tsTKLttA3+KVu/pxt0JcAEmLSQYxJRbDQ
-         Uk8+XFY9hhQI8pRymmFFUULKy+fN8BJhhYpclwJiQuRFieO4H3d4nl/FGTOTeQmay7d0
-         9gDQzYR1sJR4dA75p+iUjBNVu1WcT01oobfUNXIM6UqbnVEy/0FhbGuNxDK4mm63GTnS
-         +BX6chqszFTylRRotZiuPoyoLAdTeLySs2W6N48GJZlu3N77SRgvVXvevCL1hCC0iODk
-         iOkL0SLubb9cHIFtyi2sEq/hb1MX19ctOsAgOk2cpfJsdI8Ax7t3WtyiHIAEGpi4ox9Z
-         WVaQ==
-X-Gm-Message-State: ANoB5pmxDKiSBlny33GE9jdWl+QlBNuxkFL852naApOJ9Ua2uPt9s+H1
-        WgA+k0mxM/SfstKtXIyEYuo=
-X-Google-Smtp-Source: AA0mqf4lmse1kKK/Q5APz3a/gFfizwyYisCLauByKyceMs51gqEOgmktFN+14CSKjKilnLu2Jm6EGQ==
-X-Received: by 2002:a17:907:2b12:b0:7c1:1c7:3bad with SMTP id gc18-20020a1709072b1200b007c101c73badmr20273207ejc.36.1671099372882;
-        Thu, 15 Dec 2022 02:16:12 -0800 (PST)
+        bh=pZnStEcJmw/vCnQPEoFz/U81Z/gFR8HaoVf+ewX8+W8=;
+        b=mCzn83VhuPYGH1BYrXSsd69MQQgLO+XjzvH6ZQuJt/JEXt+ogMj6E9skv/7sqcAviG
+         Wn8tGqNYBQY63YF1izy1ozL7OUR1boqyR/G60Hl0X3v4coggbUQBI5AF1ZaAnyq5rZ1W
+         z8+lz/EBA0zHR72oVDhQlLRTHPw9cjzyjcYFryiGqlP4yX+iC5svIOjA9wkuzMHEBeSF
+         X3V+JWD7w+4U8j83LmqVnp88k2qpFBWKf3GHay5aaDEA6PAIC5HDGu8jTAi3IdZgtklf
+         cWGp04rEjJP3pjQJZTXt5reI/KLGTPSblOB9iOkYb/3stNSFzHBly5sMUR+XgfYq0QHn
+         q2Fg==
+X-Gm-Message-State: ANoB5pkoJnOdbxvV+I9Vuu4TCbnZq0T582sGwod3nSgaQ3DZhoSc5n7S
+        AyPznYIBf2TpnTPU0biyPrs=
+X-Google-Smtp-Source: AA0mqf787wvPIKuw+89zRvMEFTBZH65JE0oxnu/nqS6Wj9FWG0xXqcR572hD+nRm74sI0Tx4RWCmqg==
+X-Received: by 2002:a17:907:3e26:b0:7c1:9519:5cfa with SMTP id hp38-20020a1709073e2600b007c195195cfamr10547768ejc.77.1671100646765;
+        Thu, 15 Dec 2022 02:37:26 -0800 (PST)
 Received: from felia.fritz.box (ipbcc1d920.dynamic.kabel-deutschland.de. [188.193.217.32])
-        by smtp.gmail.com with ESMTPSA id 1-20020a170906210100b007c1675d2626sm5504493ejt.96.2022.12.15.02.16.11
+        by smtp.gmail.com with ESMTPSA id 10-20020a170906218a00b0078d76ee7543sm6889698eju.222.2022.12.15.02.37.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Dec 2022 02:16:11 -0800 (PST)
+        Thu, 15 Dec 2022 02:37:26 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
 To:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
         Rob Herring <robh@kernel.org>,
         =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org
+        Thomas Gleixner <tglx@linutronix.de>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        linux-pci@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] PCI/MSI: clean up duplicate dependency in config PCI_HYPERV_INTERFACE
-Date:   Thu, 15 Dec 2022 11:13:10 +0100
-Message-Id: <20221215101310.9135-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] PCI: dwc: adjust to recent removal of PCI_MSI_IRQ_DOMAIN
+Date:   Thu, 15 Dec 2022 11:34:52 +0100
+Message-Id: <20221215103452.23131-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -69,29 +71,34 @@ Commit a474d3fbe287 ("PCI/MSI: Get rid of PCI_MSI_IRQ_DOMAIN") removes the
 config PCI_MSI_IRQ_DOMAIN and makes all previous references to that config
 then refer to PCI_MSI instead.
 
-In the refactoring of config PCI_HYPERV_INTERFACE, it creates a duplicate
-dependency on PCI_MSI. Remove this needless duplicate dependency.
+Commit ba6ed462dcf4 ("PCI: dwc: Add Baikal-T1 PCIe controller support")
+adds the config PCIE_BT1, which following the previous default pattern
+depends on the config PCI_MSI_IRQ_DOMAIN.
 
-No functional change. Just a stylistic clean-up.
+As these two commits were submitted roughly at the same time, the
+refactoring did not take of this occurrence and the addition did not yet
+notice the refactoring.
+
+Take care of the PCI_MSI config refactoring on this latest addition.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/pci/controller/Kconfig | 2 +-
+ drivers/pci/controller/dwc/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-index 1569d9a3ada0..c2261da85f7b 100644
---- a/drivers/pci/controller/Kconfig
-+++ b/drivers/pci/controller/Kconfig
-@@ -285,7 +285,7 @@ config PCIE_BRCMSTB
- 
- config PCI_HYPERV_INTERFACE
- 	tristate "Hyper-V PCI Interface"
--	depends on ((X86 && X86_64) || ARM64) && HYPERV && PCI_MSI && PCI_MSI
-+	depends on ((X86 && X86_64) || ARM64) && HYPERV && PCI_MSI
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index a0d2713f0e88..99ec91e2a5cf 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -225,7 +225,7 @@ config PCIE_ARTPEC6_EP
+ config PCIE_BT1
+ 	tristate "Baikal-T1 PCIe controller"
+ 	depends on MIPS_BAIKAL_T1 || COMPILE_TEST
+-	depends on PCI_MSI_IRQ_DOMAIN
++	depends on PCI_MSI
+ 	select PCIE_DW_HOST
  	help
- 	  The Hyper-V PCI Interface is a helper driver allows other drivers to
- 	  have a common interface with the Hyper-V PCI frontend driver.
+ 	  Enables support for the PCIe controller in the Baikal-T1 SoC to work
 -- 
 2.17.1
 
