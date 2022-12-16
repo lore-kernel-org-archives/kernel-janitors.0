@@ -2,102 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978FEC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Dec 2022 15:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7684C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Dec 2022 17:23:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231552AbiLPPxx (ORCPT
+        id S231774AbiLPRX2 convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Dec 2022 10:53:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60246 "EHLO
+        Fri, 16 Dec 2022 12:23:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231589AbiLPPxX (ORCPT
+        with ESMTP id S231783AbiLPRXZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Dec 2022 10:53:23 -0500
-Received: from post.baikalelectronics.com (post.baikalelectronics.com [213.79.110.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BCD652713;
-        Fri, 16 Dec 2022 07:53:06 -0800 (PST)
-Received: from post.baikalelectronics.com (localhost.localdomain [127.0.0.1])
-        by post.baikalelectronics.com (Proxmox) with ESMTP id 85465E0EFC;
-        Fri, 16 Dec 2022 18:53:05 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        baikalelectronics.ru; h=cc:cc:content-type:content-type:date
-        :from:from:in-reply-to:message-id:mime-version:references
-        :reply-to:subject:subject:to:to; s=post; bh=BlqsW160MZlI49NjTuF7
-        XmYKlcUm5mfF+05TJoJvOtE=; b=Mf2TwvIAUTPwFXIqnarhHdLi83phpmii33vN
-        LdSKqw6W4fVa3yhCiy5d9Sw5KEHMi4O4zqfVXFSojn8Qj3LJWJQeu4LbpWK/nAmx
-        +THbHjjM8sb+b9VX7TElEiCRM8USXOyWlT1PpcGrtSwsriNoZ4MukLCyl/9hR/vi
-        Qhuj0bQ=
-Received: from mail.baikal.int (mail.baikal.int [192.168.51.25])
-        by post.baikalelectronics.com (Proxmox) with ESMTP id 648FEE0ED4;
-        Fri, 16 Dec 2022 18:53:05 +0300 (MSK)
-Received: from mobilestation (10.8.30.14) by mail (192.168.51.25) with
- Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 16 Dec 2022 18:53:05 +0300
-Date:   Fri, 16 Dec 2022 18:53:04 +0300
-From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-CC:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-pci@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: dwc: adjust to recent removal of PCI_MSI_IRQ_DOMAIN
-Message-ID: <20221216155304.uckgqbcgotqj6bha@mobilestation>
-References: <20221215103452.23131-1-lukas.bulwahn@gmail.com>
+        Fri, 16 Dec 2022 12:23:25 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A3670BB4
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Dec 2022 09:23:23 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1p6EQJ-0000Hx-PA; Fri, 16 Dec 2022 18:23:03 +0100
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1p6EQH-004yGT-OC; Fri, 16 Dec 2022 18:23:02 +0100
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1p6EQG-000CO8-Tw; Fri, 16 Dec 2022 18:23:00 +0100
+Message-ID: <545454630ff9f769ef61178bdd623621fafed4e2.camel@pengutronix.de>
+Subject: Re: [PATCH v2] media: imx: remove code for non-existing config
+ IMX_GPT_ICAP
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 16 Dec 2022 18:23:00 +0100
+In-Reply-To: <20221123075216.28193-1-lukas.bulwahn@gmail.com>
+References: <20221123075216.28193-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20221215103452.23131-1-lukas.bulwahn@gmail.com>
-X-Originating-IP: [10.8.30.14]
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Dec 15, 2022 at 11:34:52AM +0100, Lukas Bulwahn wrote:
-> Commit a474d3fbe287 ("PCI/MSI: Get rid of PCI_MSI_IRQ_DOMAIN") removes the
-> config PCI_MSI_IRQ_DOMAIN and makes all previous references to that config
-> then refer to PCI_MSI instead.
-> 
-> Commit ba6ed462dcf4 ("PCI: dwc: Add Baikal-T1 PCIe controller support")
-> adds the config PCIE_BT1, which following the previous default pattern
-> depends on the config PCI_MSI_IRQ_DOMAIN.
-> 
-> As these two commits were submitted roughly at the same time, the
-> refactoring did not take of this occurrence and the addition did not yet
-> notice the refactoring.
-> 
-> Take care of the PCI_MSI config refactoring on this latest addition.
-
-Indeed. I just didn't know about the refactoring. Thanks for submitting
-a fixup patch.
-
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-
--Serge(y)
-
+On Mi, 2022-11-23 at 08:52 +0100, Lukas Bulwahn wrote:
+> There never was a config IMX_GPT_ICAP in the repository. So remove the code
+> conditional on this config and simplify the callers that just called empty
+> functions.
 > 
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  drivers/pci/controller/dwc/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index a0d2713f0e88..99ec91e2a5cf 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -225,7 +225,7 @@ config PCIE_ARTPEC6_EP
->  config PCIE_BT1
->  	tristate "Baikal-T1 PCIe controller"
->  	depends on MIPS_BAIKAL_T1 || COMPILE_TEST
-> -	depends on PCI_MSI_IRQ_DOMAIN
-> +	depends on PCI_MSI
->  	select PCIE_DW_HOST
->  	help
->  	  Enables support for the PCIe controller in the Baikal-T1 SoC to work
-> -- 
-> 2.17.1
-> 
-> 
 
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
