@@ -2,72 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7684C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Dec 2022 17:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DDEC3DA78
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Dec 2022 16:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231774AbiLPRX2 convert rfc822-to-8bit (ORCPT
+        id S229953AbiLQQFy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Dec 2022 12:23:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40280 "EHLO
+        Sat, 17 Dec 2022 11:05:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231783AbiLPRXZ (ORCPT
+        with ESMTP id S229902AbiLQQFv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Dec 2022 12:23:25 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A3670BB4
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Dec 2022 09:23:23 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1p6EQJ-0000Hx-PA; Fri, 16 Dec 2022 18:23:03 +0100
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1p6EQH-004yGT-OC; Fri, 16 Dec 2022 18:23:02 +0100
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1p6EQG-000CO8-Tw; Fri, 16 Dec 2022 18:23:00 +0100
-Message-ID: <545454630ff9f769ef61178bdd623621fafed4e2.camel@pengutronix.de>
-Subject: Re: [PATCH v2] media: imx: remove code for non-existing config
- IMX_GPT_ICAP
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 16 Dec 2022 18:23:00 +0100
-In-Reply-To: <20221123075216.28193-1-lukas.bulwahn@gmail.com>
-References: <20221123075216.28193-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1 
+        Sat, 17 Dec 2022 11:05:51 -0500
+Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E42DE2AE3
+        for <kernel-janitors@vger.kernel.org>; Sat, 17 Dec 2022 08:05:47 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id 6Zh1p8BhCoBUE6Zh1pSnSL; Sat, 17 Dec 2022 17:05:44 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 17 Dec 2022 17:05:44 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Niklas Cassel <nks@flawful.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH] PM: AVS: qcom-cpr: Fix an error handling path in cpr_probe()
+Date:   Sat, 17 Dec 2022 17:05:41 +0100
+Message-Id: <0f520597dbad89ab99c217c8986912fa53eaf5f9.1671293108.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mi, 2022-11-23 at 08:52 +0100, Lukas Bulwahn wrote:
-> There never was a config IMX_GPT_ICAP in the repository. So remove the code
-> conditional on this config and simplify the callers that just called empty
-> functions.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+If an error occurs after a successful pm_genpd_init() call, it should be
+undone by a corresponding pm_genpd_remove().
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Add the missing call in the error handling path, as already done in the
+remove function.
 
-regards
-Philipp
+Fixes: bf6910abf548 ("power: avs: Add support for CPR (Core Power Reduction)")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/soc/qcom/cpr.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/qcom/cpr.c b/drivers/soc/qcom/cpr.c
+index e9b854ed1bdf..144ea68e0920 100644
+--- a/drivers/soc/qcom/cpr.c
++++ b/drivers/soc/qcom/cpr.c
+@@ -1708,12 +1708,16 @@ static int cpr_probe(struct platform_device *pdev)
+ 
+ 	ret = of_genpd_add_provider_simple(dev->of_node, &drv->pd);
+ 	if (ret)
+-		return ret;
++		goto err_remove_genpd;
+ 
+ 	platform_set_drvdata(pdev, drv);
+ 	cpr_debugfs_init(drv);
+ 
+ 	return 0;
++
++err_remove_genpd:
++	pm_genpd_remove(&drv->pd);
++	return ret;
+ }
+ 
+ static int cpr_remove(struct platform_device *pdev)
+-- 
+2.34.1
+
