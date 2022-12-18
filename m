@@ -2,41 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DDEC3DA78
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Dec 2022 16:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC61C4708D
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Dec 2022 18:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbiLQQFy (ORCPT
+        id S231210AbiLRSaQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Dec 2022 11:05:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39384 "EHLO
+        Sun, 18 Dec 2022 13:30:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229902AbiLQQFv (ORCPT
+        with ESMTP id S231153AbiLRS3d (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Dec 2022 11:05:51 -0500
-Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E42DE2AE3
-        for <kernel-janitors@vger.kernel.org>; Sat, 17 Dec 2022 08:05:47 -0800 (PST)
+        Sun, 18 Dec 2022 13:29:33 -0500
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B291D211
+        for <kernel-janitors@vger.kernel.org>; Sun, 18 Dec 2022 10:08:51 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id 6Zh1p8BhCoBUE6Zh1pSnSL; Sat, 17 Dec 2022 17:05:44 +0100
+        id 6y5fpvYLi8ao36y5fpZW7m; Sun, 18 Dec 2022 19:08:49 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 17 Dec 2022 17:05:44 +0100
+X-ME-Date: Sun, 18 Dec 2022 19:08:49 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Niklas Cassel <nks@flawful.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+To:     Chris Lee <christopher.lee@cspi.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Andrew Gallatin <gallatin@myri.com>,
+        Brice Goglin <brice@myri.com>, Jeff Garzik <jgarzik@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH] PM: AVS: qcom-cpr: Fix an error handling path in cpr_probe()
-Date:   Sat, 17 Dec 2022 17:05:41 +0100
-Message-Id: <0f520597dbad89ab99c217c8986912fa53eaf5f9.1671293108.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org
+Subject: [PATCH] myri10ge: Fix an error handling path in myri10ge_probe()
+Date:   Sun, 18 Dec 2022 19:08:40 +0100
+Message-Id: <f03711f1d0919017c081e273e16afd9009874fd4.1671386898.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,40 +44,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a successful pm_genpd_init() call, it should be
-undone by a corresponding pm_genpd_remove().
+Some memory allocated in myri10ge_probe_slices() is not released in the
+error handling path of myri10ge_probe().
 
-Add the missing call in the error handling path, as already done in the
-remove function.
+Add the corresponding kfree(), as already done in the remove function.
 
-Fixes: bf6910abf548 ("power: avs: Add support for CPR (Core Power Reduction)")
+Fixes: 0dcffac1a329 ("myri10ge: add multislices support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/soc/qcom/cpr.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/qcom/cpr.c b/drivers/soc/qcom/cpr.c
-index e9b854ed1bdf..144ea68e0920 100644
---- a/drivers/soc/qcom/cpr.c
-+++ b/drivers/soc/qcom/cpr.c
-@@ -1708,12 +1708,16 @@ static int cpr_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+index 8073d7a90a26..c5687d94ea88 100644
+--- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
++++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+@@ -3912,6 +3912,7 @@ static int myri10ge_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	myri10ge_free_slices(mgp);
  
- 	ret = of_genpd_add_provider_simple(dev->of_node, &drv->pd);
- 	if (ret)
--		return ret;
-+		goto err_remove_genpd;
+ abort_with_firmware:
++	kfree(mgp->msix_vectors);
+ 	myri10ge_dummy_rdma(mgp, 0);
  
- 	platform_set_drvdata(pdev, drv);
- 	cpr_debugfs_init(drv);
- 
- 	return 0;
-+
-+err_remove_genpd:
-+	pm_genpd_remove(&drv->pd);
-+	return ret;
- }
- 
- static int cpr_remove(struct platform_device *pdev)
+ abort_with_ioremap:
 -- 
 2.34.1
 
