@@ -2,39 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C2BC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Dec 2022 21:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A97FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Dec 2022 21:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232302AbiLSVRZ (ORCPT
+        id S232470AbiLSVg7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Dec 2022 16:17:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43718 "EHLO
+        Mon, 19 Dec 2022 16:36:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231401AbiLSVRX (ORCPT
+        with ESMTP id S229532AbiLSVg6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Dec 2022 16:17:23 -0500
+        Mon, 19 Dec 2022 16:36:58 -0500
 Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4251C11818
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Dec 2022 13:17:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F43F767E
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Dec 2022 13:36:57 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id 7NVXpqDedLrOW7NVXpZTjE; Mon, 19 Dec 2022 22:17:17 +0100
+        id 7Nodpo3YfP7YW7NodprsHy; Mon, 19 Dec 2022 22:36:56 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 19 Dec 2022 22:17:17 +0100
+X-ME-Date: Mon, 19 Dec 2022 22:36:56 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
-Subject: [PATCH] iommu/arm-smmu-v3: Fix an error handling path in arm_smmu_device_probe()
-Date:   Mon, 19 Dec 2022 22:17:09 +0100
-Message-Id: <596b9a44410c67d04599cfd4d6825fa8253c8830.1671484609.git.christophe.jaillet@wanadoo.fr>
+        linux-input@vger.kernel.org
+Subject: [PATCH] Input: fm801-gp - Fix an error handling path
+Date:   Mon, 19 Dec 2022 22:36:47 +0100
+Message-Id: <2d4f01f3a721b0dcd34669ab01aff9eddaad53dc.1671485791.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -42,62 +38,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In the arm_smmu_device_probe() probe function, we have the following call
-chain:
-  arm_smmu_device_probe()
-    --> arm_smmu_init_structures()
-       --> arm_smmu_init_queues()
-          --> iopf_queue_alloc()
+This looks odd to call release_resource() for something allocated with
+request_region().
+Use release_region() instead.
 
-This memory allocation has to be undone in the error handling path of the
-probe,  as already done in the remove function.
-
-While at it, also move a iommu_device_sysfs_remove() call to the newly
-created error handling path so that error handling is all at the same
-place.
-
-Fixes: 395ad89d11fd ("iommu/arm-smmu-v3: Add stall support for platform devices")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+This patch is speculative and compile tested only.
+---
+ drivers/input/gameport/fm801-gp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index ab160198edd6..2051b1ed1ff6 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -3826,22 +3826,27 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 	/* Reset the device */
- 	ret = arm_smmu_device_reset(smmu, bypass);
- 	if (ret)
--		return ret;
-+		goto err_free_queue;
+diff --git a/drivers/input/gameport/fm801-gp.c b/drivers/input/gameport/fm801-gp.c
+index e785d36b1926..90ef1935084a 100644
+--- a/drivers/input/gameport/fm801-gp.c
++++ b/drivers/input/gameport/fm801-gp.c
+@@ -118,7 +118,7 @@ static void fm801_gp_remove(struct pci_dev *pci)
+ 	struct fm801_gp *gp = pci_get_drvdata(pci);
  
- 	/* And we're up. Go go go! */
- 	ret = iommu_device_sysfs_add(&smmu->iommu, dev, NULL,
- 				     "smmu3.%pa", &ioaddr);
- 	if (ret)
--		return ret;
-+		goto err_free_queue;
+ 	gameport_unregister_port(gp->gameport);
+-	release_resource(gp->res_port);
++	release_region(gp->gameport->io, 0x10);
+ 	kfree(gp);
  
- 	ret = iommu_device_register(&smmu->iommu, &arm_smmu_ops, dev);
- 	if (ret) {
- 		dev_err(dev, "Failed to register iommu\n");
--		iommu_device_sysfs_remove(&smmu->iommu);
--		return ret;
-+		goto err_remove_sysfs;
- 	}
- 
- 	return 0;
-+
-+err_remove_sysfs:
-+	iommu_device_sysfs_remove(&smmu->iommu);
-+err_free_queue:
-+	iopf_queue_free(smmu->evtq.iopf);
-+	return ret;
- }
- 
- static int arm_smmu_device_remove(struct platform_device *pdev)
+ 	pci_disable_device(pci);
 -- 
 2.34.1
 
