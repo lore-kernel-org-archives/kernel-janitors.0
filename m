@@ -2,81 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 393AFC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Dec 2022 12:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27235C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Dec 2022 18:06:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231810AbiLSMkU (ORCPT
+        id S232124AbiLSSGe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Dec 2022 07:40:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49962 "EHLO
+        Mon, 19 Dec 2022 13:06:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231297AbiLSMkS (ORCPT
+        with ESMTP id S231761AbiLSSGc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Dec 2022 07:40:18 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806C3C6C;
-        Mon, 19 Dec 2022 04:40:17 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1B85D60F7E;
-        Mon, 19 Dec 2022 12:40:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6DDADC433F0;
-        Mon, 19 Dec 2022 12:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671453616;
-        bh=4PH+Dt04nM5TXGAUTkqGWDnE6DuDw4TPpKQaD9oynDs=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=cha1F02SfFZEVuR1DgTxNcHuzx2+s0xFTd98jf+KoxtIjXu2JL76n46VsXgSjOcmj
-         SICWnj95ROl88Ex+RPg/RyLdmyW9WJDmcNiB0sOQ/p+rt7zhwMapCX4pHH9gAQcKSV
-         F04Np4ExzBSsnF+QoGJ1wkWsr6IWrqjdtrnX9cztxm/SQSK8pqMoQUdxCMiUGmarVC
-         jOGedBSQiOHWo5Ug1joJ5+Tn5ctIud+CupaDSMtEgFTO7TJgLKkuoy8Vo5xIlE6Sl0
-         wwvhgXLIqaSFn58T2ChT16aC0CGz0t1o5OKLBuCWcjN33mWapvRXJTFEr+N6uZLXYj
-         L3ICZmVLvhmpA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 51A28E21EF8;
-        Mon, 19 Dec 2022 12:40:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 19 Dec 2022 13:06:32 -0500
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2B013CDB
+        for <kernel-janitors@vger.kernel.org>; Mon, 19 Dec 2022 10:06:30 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id 7KWtpg0ivBonI7KWtprGLS; Mon, 19 Dec 2022 19:06:28 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 19 Dec 2022 19:06:28 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Honghui Zhang <honghui.zhang@mediatek.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] iommu/mediatek-v1: Fix an error handling path in mtk_iommu_v1_probe()
+Date:   Mon, 19 Dec 2022 19:06:22 +0100
+Message-Id: <593e7b7d97c6e064b29716b091a9d4fd122241fb.1671473163.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] myri10ge: Fix an error handling path in myri10ge_probe()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167145361633.5637.13803811490044949479.git-patchwork-notify@kernel.org>
-Date:   Mon, 19 Dec 2022 12:40:16 +0000
-References: <f03711f1d0919017c081e273e16afd9009874fd4.1671386898.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f03711f1d0919017c081e273e16afd9009874fd4.1671386898.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     christopher.lee@cspi.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, gallatin@myri.com,
-        brice@myri.com, jgarzik@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+A clk, prepared and enabled in mtk_iommu_v1_hw_init(), is not released in
+the error handling path of mtk_iommu_v1_probe().
 
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
+Add the corresponding clk_disable_unprepare(), as already done in the
+remove function.
 
-On Sun, 18 Dec 2022 19:08:40 +0100 you wrote:
-> Some memory allocated in myri10ge_probe_slices() is not released in the
-> error handling path of myri10ge_probe().
-> 
-> Add the corresponding kfree(), as already done in the remove function.
-> 
-> Fixes: 0dcffac1a329 ("myri10ge: add multislices support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+Fixes: b17336c55d89 ("iommu/mediatek: add support for mtk iommu generation one HW")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Another option would be to use devm_clk_get_enabled(). This would save a
+few LoC in mtk_iommu_v1_hw_init() and in the remove function.
+However, it would change the order of function calls in the remove function
+so I leave it as-is.
+Let me know if it is fine and if you prefer this alternative.
+---
+ drivers/iommu/mtk_iommu_v1.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Here is the summary with links:
-  - myri10ge: Fix an error handling path in myri10ge_probe()
-    https://git.kernel.org/netdev/net/c/d83b950d44d2
-
-You are awesome, thank you!
+diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+index 69682ee068d2..ca581ff1c769 100644
+--- a/drivers/iommu/mtk_iommu_v1.c
++++ b/drivers/iommu/mtk_iommu_v1.c
+@@ -683,7 +683,7 @@ static int mtk_iommu_v1_probe(struct platform_device *pdev)
+ 	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
+ 				     dev_name(&pdev->dev));
+ 	if (ret)
+-		return ret;
++		goto out_clk_unprepare;
+ 
+ 	ret = iommu_device_register(&data->iommu, &mtk_iommu_v1_ops, dev);
+ 	if (ret)
+@@ -698,6 +698,8 @@ static int mtk_iommu_v1_probe(struct platform_device *pdev)
+ 	iommu_device_unregister(&data->iommu);
+ out_sysfs_remove:
+ 	iommu_device_sysfs_remove(&data->iommu);
++out_clk_unprepare:
++	clk_disable_unprepare(data->bclk);
+ 	return ret;
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
