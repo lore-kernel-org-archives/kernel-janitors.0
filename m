@@ -2,67 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A97FC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Dec 2022 21:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8833BC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Dec 2022 08:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232470AbiLSVg7 (ORCPT
+        id S233194AbiLTIFw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Dec 2022 16:36:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
+        Tue, 20 Dec 2022 03:05:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbiLSVg6 (ORCPT
+        with ESMTP id S229489AbiLTIFv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Dec 2022 16:36:58 -0500
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F43F767E
-        for <kernel-janitors@vger.kernel.org>; Mon, 19 Dec 2022 13:36:57 -0800 (PST)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id 7Nodpo3YfP7YW7NodprsHy; Mon, 19 Dec 2022 22:36:56 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 19 Dec 2022 22:36:56 +0100
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-input@vger.kernel.org
-Subject: [PATCH] Input: fm801-gp - Fix an error handling path
-Date:   Mon, 19 Dec 2022 22:36:47 +0100
-Message-Id: <2d4f01f3a721b0dcd34669ab01aff9eddaad53dc.1671485791.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 20 Dec 2022 03:05:51 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595F7E03;
+        Tue, 20 Dec 2022 00:05:49 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id vv4so27377032ejc.2;
+        Tue, 20 Dec 2022 00:05:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7wlvFHSM2RP+PNNDHtW3ieuOTdii0G62X5MBvZ2V8pw=;
+        b=DzQpJy1YuDICiFFo5pvGUUvsMHbV1zXfHdwuQxVsi0lWUG4Tiwjzht2EtdLWrKjLaw
+         YO9FLwzoYGvVfnQlBpfM3r6WL8eCsodlqIXtg0gICKvAIzboSYoA2kHYpbCv+0b6vWdD
+         /LWA9cGRH3sbKAsSqLtI3k/wXluUeIAoHdjb82Q1mlXzVtA0gELb+QnjRjMrAWlG1gXm
+         ft/5cnl94ua/jvqh9e9Xk875pNJqi02ndMQm/Ayglf8qyLA2ZQcmh1fdFrgGwxqm7TnG
+         TvsAwlLJ/meo2C49I5lCdw+ycR+r4Wi1JGxgQkLaL7trrrcEsFzI0hOvCqSoP1gZ1dxT
+         HEyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7wlvFHSM2RP+PNNDHtW3ieuOTdii0G62X5MBvZ2V8pw=;
+        b=ozAlENPRhlAad62DMIpzfPhqQQhnUGFqDZF+HqqhNhu0bzu8Ur/Nd0LaOkLTuH1iu+
+         askMPIiK3SLuca9lXJAGiocKhBlJHMrnjX7O/vqPM+pVRk1+4WoMTyxBsBsY4/Wo1UEW
+         iV4vQOFvDJOj3o78RgXOPO2jjiBnB/FTES+FSiNAJZ/erT5lHWVFwYhRiClZtDH7D+DG
+         vbd6E3NcvFyxsr1mRDLzPETo0867tubHE57+wO+GNhSlkIY2mmSihXjb0fSWip4sC+wc
+         tr3UgpBjb7EwonCcb/cFV8ag+ORs2yN4wcj+ccFceJv4AqDpbOpSOexDDi0eerzuyOd5
+         T1Sw==
+X-Gm-Message-State: AFqh2krzFqoftgnhZ4xUv1M1+Fv1n1M6j8nCpLpt3z/SpGzI7SLwTZo1
+        /9UfrpvM3HZD7NOk2MLmxMY=
+X-Google-Smtp-Source: AMrXdXuaAZucjnEltzM0+MhP1yNON2tjJW5PR8pqNtPWWPcRzlFdJ+gpwKt8OL9HxtTjB1IXMjsupQ==
+X-Received: by 2002:a17:907:d093:b0:81e:8dd4:51c3 with SMTP id vc19-20020a170907d09300b0081e8dd451c3mr6315697ejc.76.1671523547595;
+        Tue, 20 Dec 2022 00:05:47 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:954c:45e:aaca:69b])
+        by smtp.gmail.com with ESMTPSA id jx14-20020a170906ca4e00b007b47749838asm5263634ejb.45.2022.12.20.00.05.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Dec 2022 00:05:47 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] crypto: ux500: update debug config after ux500 cryp driver removal
+Date:   Tue, 20 Dec 2022 09:05:36 +0100
+Message-Id: <20221220080536.30794-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This looks odd to call release_resource() for something allocated with
-request_region().
-Use release_region() instead.
+Commit 453de3eb08c4 ("crypto: ux500/cryp - delete driver") removes the
+config CRYPTO_DEV_UX500_CRYP, but leaves an obsolete reference in the
+dependencies of config CRYPTO_DEV_UX500_DEBUG.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative and compile tested only.
----
- drivers/input/gameport/fm801-gp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Remove that obsolete reference, and adjust the description while at it.
 
-diff --git a/drivers/input/gameport/fm801-gp.c b/drivers/input/gameport/fm801-gp.c
-index e785d36b1926..90ef1935084a 100644
---- a/drivers/input/gameport/fm801-gp.c
-+++ b/drivers/input/gameport/fm801-gp.c
-@@ -118,7 +118,7 @@ static void fm801_gp_remove(struct pci_dev *pci)
- 	struct fm801_gp *gp = pci_get_drvdata(pci);
+Fixes: 453de3eb08c4 ("crypto: ux500/cryp - delete driver")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/crypto/ux500/Kconfig | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/crypto/ux500/Kconfig b/drivers/crypto/ux500/Kconfig
+index dcbd7404768f..ac89cd2de12a 100644
+--- a/drivers/crypto/ux500/Kconfig
++++ b/drivers/crypto/ux500/Kconfig
+@@ -15,8 +15,7 @@ config CRYPTO_DEV_UX500_HASH
+ 	  Depends on UX500/STM DMA if running in DMA mode.
  
- 	gameport_unregister_port(gp->gameport);
--	release_resource(gp->res_port);
-+	release_region(gp->gameport->io, 0x10);
- 	kfree(gp);
- 
- 	pci_disable_device(pci);
+ config CRYPTO_DEV_UX500_DEBUG
+-	bool "Activate ux500 platform debug-mode for crypto and hash block"
+-	depends on CRYPTO_DEV_UX500_CRYP || CRYPTO_DEV_UX500_HASH
++	bool "Activate debug-mode for UX500 crypto driver for HASH block"
++	depends on CRYPTO_DEV_UX500_HASH
+ 	help
+-	  Say Y if you want to add debug prints to ux500_hash and
+-	  ux500_cryp devices.
++	  Say Y if you want to add debug prints to ux500_hash devices.
 -- 
-2.34.1
+2.17.1
 
