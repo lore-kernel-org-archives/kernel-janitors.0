@@ -2,84 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D042C4167B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Dec 2022 18:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF329C4167B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Dec 2022 20:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233685AbiLTS72 (ORCPT
+        id S234321AbiLTU5R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Dec 2022 13:59:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44448 "EHLO
+        Tue, 20 Dec 2022 15:57:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbiLTS71 (ORCPT
+        with ESMTP id S234273AbiLTU5O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Dec 2022 13:59:27 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 415751B1E2;
-        Tue, 20 Dec 2022 10:59:26 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id w26so9134215pfj.6;
-        Tue, 20 Dec 2022 10:59:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dBWAV6mPvRgKPCAJVlW6TB8VEgAk8q8OnRK0EpMiohs=;
-        b=cDurWDHM8sRetRDZFkI5MeOy9ihnMMpmqsnytFtPLxOpzSNS6GSu2/l7rhHOGOnO1X
-         RyL5z2SEXXiA/IWeCS1qwfRJQ6AVBcypZU0+BeEGysouLmMjJkRLZ3weaoElOMtFgIPj
-         yswJLxXbtEyRNSLYeuYNTM+egI4t0RQ1ibYoapv10odUIy0sStFI5kbfTsDkmffY7kG+
-         tQn5oxGvxGpkA+hMRQ9xl1w+3AttjyjKqzVRYiwAYTBSucIivOA+aJ/ZQDIlTYxYoIW+
-         JMhuSwrWoMwBWbjsgXxi/W9eugoTUuDjfuXZ0NQQPJLDGMaaTtKnHp/BJSohWsfblceo
-         VIOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dBWAV6mPvRgKPCAJVlW6TB8VEgAk8q8OnRK0EpMiohs=;
-        b=4hmsDTmtOnTn+sronDYd6+tL63CyxJAqkAK81MO8PdoSJip1CWGLCdNHuunOzX6sWF
-         8pcZt2xqZPvFTLAiWbemTsitbpOz+fI9uelvrly/Bh+gsBqVVerW30b7Jk0fWfFMXdOM
-         MNAguMNnjOqgH7nv/gyYJEQHZo6f4lqGOTmKeCueXdpZCmrjSNt/SQpzTjjL5m2q9PI7
-         gbEePHG9q47aWOTKPcWiDi3dAlwX8jVXbW7jvhnlZoWUd/oxisfytFL9fqVlIf4IzR2n
-         AwI/b57xtimJYsDJPf08YYtXiF2l67yBECPKMdcDZkFeCK2tsgdCrVnvQJiLeo26suJ7
-         gmVw==
-X-Gm-Message-State: ANoB5pnPCX76jMUXP+5gQD81F72UZuXmFUecFVGCkaiwkMM0F6i+smUQ
-        gWTQoNzKyTzDf4G1Szfi0j/XI6USNJY=
-X-Google-Smtp-Source: AA0mqf4kEDgTidFKfZQ0Nxnf0RmG5OCyWuiN2591xupEvfSQGRQ5aeEdKJ7spc7NqXGCM2GlHpt2GQ==
-X-Received: by 2002:a62:1bd6:0:b0:578:e56:f57b with SMTP id b205-20020a621bd6000000b005780e56f57bmr42484658pfb.28.1671562765617;
-        Tue, 20 Dec 2022 10:59:25 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:7206:404e:4820:d175])
-        by smtp.gmail.com with ESMTPSA id y28-20020aa78f3c000000b005774d225353sm8979966pfr.137.2022.12.20.10.59.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Dec 2022 10:59:24 -0800 (PST)
-Date:   Tue, 20 Dec 2022 10:59:22 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Tue, 20 Dec 2022 15:57:14 -0500
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B00C193DB
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 Dec 2022 12:57:11 -0800 (PST)
+Received: from pop-os.home ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id 7jfgp6zGQPNsN7jfgpkyQP; Tue, 20 Dec 2022 21:57:09 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 20 Dec 2022 21:57:09 +0100
+X-ME-IP: 86.243.100.34
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Taku Izumi <izumi.taku@jp.fujitsu.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH] Input: fm801-gp - Fix an error handling path
-Message-ID: <Y6IGCtw1CHgcBwbB@google.com>
-References: <2d4f01f3a721b0dcd34669ab01aff9eddaad53dc.1671485791.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org
+Subject: [PATCH net] fjes: Fix an error handling path in fjes_probe()
+Date:   Tue, 20 Dec 2022 21:57:06 +0100
+Message-Id: <fde673f106d2b264ad76759195901aae94691b5c.1671569785.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d4f01f3a721b0dcd34669ab01aff9eddaad53dc.1671485791.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+A netif_napi_add() call is hidden in fjes_sw_init(). It should be undone
+by a corresponding netif_napi_del() call in the error handling path of the
+probe, as already done inthe remove function.
 
-On Mon, Dec 19, 2022 at 10:36:47PM +0100, Christophe JAILLET wrote:
-> This looks odd to call release_resource() for something allocated with
-> request_region().
-> Use release_region() instead.
+Fixes: 265859309a76 ("fjes: NAPI polling function")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/fjes/fjes_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I do not see why it is weird. request_region() gives you an instance of
-"resource" structure which can later be freed. If we indeed want to use
-release_region() (and hardcode the length in both places) then we should
-also remove gp->res_port member. But I really do not find anything wrong
-nor do I want to touch these old drivers...
-
-Thanks.
-
+diff --git a/drivers/net/fjes/fjes_main.c b/drivers/net/fjes/fjes_main.c
+index 2513be6d4e11..01b4c9c6adbd 100644
+--- a/drivers/net/fjes/fjes_main.c
++++ b/drivers/net/fjes/fjes_main.c
+@@ -1370,7 +1370,7 @@ static int fjes_probe(struct platform_device *plat_dev)
+ 	adapter->txrx_wq = alloc_workqueue(DRV_NAME "/txrx", WQ_MEM_RECLAIM, 0);
+ 	if (unlikely(!adapter->txrx_wq)) {
+ 		err = -ENOMEM;
+-		goto err_free_netdev;
++		goto err_del_napi;
+ 	}
+ 
+ 	adapter->control_wq = alloc_workqueue(DRV_NAME "/control",
+@@ -1431,6 +1431,8 @@ static int fjes_probe(struct platform_device *plat_dev)
+ 	destroy_workqueue(adapter->control_wq);
+ err_free_txrx_wq:
+ 	destroy_workqueue(adapter->txrx_wq);
++err_del_napi:
++	netif_napi_del(&adapter->napi);
+ err_free_netdev:
+ 	free_netdev(netdev);
+ err_out:
 -- 
-Dmitry
+2.34.1
+
