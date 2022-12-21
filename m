@@ -2,105 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A683C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Dec 2022 10:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01708C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Dec 2022 18:51:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234745AbiLUKCd (ORCPT
+        id S234928AbiLUSu7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Dec 2022 05:02:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35042 "EHLO
+        Wed, 21 Dec 2022 13:50:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234629AbiLUKBY (ORCPT
+        with ESMTP id S235008AbiLUSuo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Dec 2022 05:01:24 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20AF5B03;
-        Wed, 21 Dec 2022 02:00:09 -0800 (PST)
+        Wed, 21 Dec 2022 13:50:44 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B4226549;
+        Wed, 21 Dec 2022 10:50:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1671616809; x=1703152809;
+  t=1671648634; x=1703184634;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=aiSXeVIBu1312PhslkhPu0/gx5qNetKLWcvvYm3kwKw=;
-  b=LHhIn8kv7Sa7NFSTjE+jhyHrjmJftL3Akfdevw67a+FqNbNI+1NqGf3d
-   uA29Q/w5nLluIU6YCHPDEtLItukJT/69TlZA1lp5uk0zxAUCQDbfBaerY
-   pi/n8AxaT0rqSUOw3r7P9eWU4PJXkEItGiFhqrt8iHI51cpk24p/wiQ5s
-   ML3dpjr7lwEL6cM6Y830o6FzJXSUQ/0cJXz0SqYEbLNEJHJUgj5Ju9XsJ
-   UxV93Z4rPyLfU/7klg/QLBnBOQ8Kp1s9hSskNTInmkeaoxshx9GoBAVcC
-   +OPSmCtH2sRJOjCXoUxrgbW6qYJbTiw1TbA06Bw01mqzMN95VCoGs52pH
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10567"; a="321012467"
-X-IronPort-AV: E=Sophos;i="5.96,262,1665471600"; 
-   d="scan'208";a="321012467"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2022 02:00:08 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10567"; a="793649553"
-X-IronPort-AV: E=Sophos;i="5.96,262,1665471600"; 
-   d="scan'208";a="793649553"
+  bh=Z01BVsejbngTM6ruRmidtKJYXyXGIth2OroyVk1DGBk=;
+  b=hrvHIUU3/2K7c3DF4f1EFgOsTUesWCoGp14cWmIiGP0plC/2cc2t6Xnb
+   j7DWxg3Vsl2JPQETTSvhj953mhDw+SIS8cpzCtIB5+fM+cFBJzb8us9Hq
+   gNY/Cif9BupG3lXbz1rPIpu1w9DtTUVskTrg/qMaUsCh8EqlCFu8McmyM
+   KBAl8EzvbR6KetrLv/wKvcvb9yaIhCrsqMzMsMHrj1wJbXkRm4n4PxS5Q
+   cf4vuy1CtldZsBl3s1d6bqwye4VfmTFo92IPeqNNxPNfhVq5iTv6Qi8cO
+   +HZq0J1ZF4oPim9I7Q/AAiCfmcJngPdGlXzWh8jDptaONKvOzTX/jYCKH
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10568"; a="319999393"
+X-IronPort-AV: E=Sophos;i="5.96,263,1665471600"; 
+   d="scan'208";a="319999393"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2022 10:50:34 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10568"; a="653595156"
+X-IronPort-AV: E=Sophos;i="5.96,263,1665471600"; 
+   d="scan'208";a="653595156"
 Received: from unknown (HELO localhost.localdomain) ([10.237.112.144])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2022 02:00:06 -0800
-Date:   Wed, 21 Dec 2022 10:59:57 +0100
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2022 10:50:31 -0800
+Date:   Wed, 21 Dec 2022 19:50:23 +0100
 From:   Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+Cc:     Krzysztof Halasa <khalasa@piap.pl>,
+        "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
-        Taku Izumi <izumi.taku@jp.fujitsu.com>,
+        Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khc@pm.waw.pl>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: Re: [PATCH net] fjes: Fix an error handling path in fjes_probe()
-Message-ID: <Y6LZEVU7tKPzjHQ8@localhost.localdomain>
-References: <fde673f106d2b264ad76759195901aae94691b5c.1671569785.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ixp4xx_eth: Fix an error handling path in
+ ixp4xx_eth_probe()
+Message-ID: <Y6NVb8igxFCwwdw5@localhost.localdomain>
+References: <3ab37c3934c99066a124f99e73c0fc077fcb69b4.1671607040.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fde673f106d2b264ad76759195901aae94691b5c.1671569785.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <3ab37c3934c99066a124f99e73c0fc077fcb69b4.1671607040.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Dec 20, 2022 at 09:57:06PM +0100, Christophe JAILLET wrote:
-> A netif_napi_add() call is hidden in fjes_sw_init(). It should be undone
-> by a corresponding netif_napi_del() call in the error handling path of the
-> probe, as already done inthe remove function.
+On Wed, Dec 21, 2022 at 08:17:52AM +0100, Christophe JAILLET wrote:
+> If an error occurs after a successful ixp4xx_mdio_register() call, it
+> should be undone by a corresponding ixp4xx_mdio_remove().
+
+What about error when mdio_bus is 0? It means that mdio_register can
+return no error, but sth happen and there is no need to call mdio_remove
+in this case?
+
+I mean:
+ /* If the instance with the MDIO bus has not yet appeared,
+  * defer probing until it gets probed.
+  */
+  if (!mdio_bus)
+	return -EPROBE_DEFER;
 > 
-> Fixes: 265859309a76 ("fjes: NAPI polling function")
+> Add the missing call in the error handling path, as already done in the
+> remove function.
+> 
+> Fixes: 2098c18d6cf6 ("IXP4xx: Add PHYLIB support to Ethernet driver.")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/net/fjes/fjes_main.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/net/ethernet/xscale/ixp4xx_eth.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/net/fjes/fjes_main.c b/drivers/net/fjes/fjes_main.c
-> index 2513be6d4e11..01b4c9c6adbd 100644
-> --- a/drivers/net/fjes/fjes_main.c
-> +++ b/drivers/net/fjes/fjes_main.c
-> @@ -1370,7 +1370,7 @@ static int fjes_probe(struct platform_device *plat_dev)
->  	adapter->txrx_wq = alloc_workqueue(DRV_NAME "/txrx", WQ_MEM_RECLAIM, 0);
->  	if (unlikely(!adapter->txrx_wq)) {
->  		err = -ENOMEM;
-> -		goto err_free_netdev;
-> +		goto err_del_napi;
->  	}
+> diff --git a/drivers/net/ethernet/xscale/ixp4xx_eth.c b/drivers/net/ethernet/xscale/ixp4xx_eth.c
+> index 3b0c5f177447..007d68b385a5 100644
+> --- a/drivers/net/ethernet/xscale/ixp4xx_eth.c
+> +++ b/drivers/net/ethernet/xscale/ixp4xx_eth.c
+> @@ -1490,8 +1490,10 @@ static int ixp4xx_eth_probe(struct platform_device *pdev)
 >  
->  	adapter->control_wq = alloc_workqueue(DRV_NAME "/control",
-> @@ -1431,6 +1431,8 @@ static int fjes_probe(struct platform_device *plat_dev)
->  	destroy_workqueue(adapter->control_wq);
->  err_free_txrx_wq:
->  	destroy_workqueue(adapter->txrx_wq);
-> +err_del_napi:
-> +	netif_napi_del(&adapter->napi);
->  err_free_netdev:
->  	free_netdev(netdev);
->  err_out:
+>  	netif_napi_add_weight(ndev, &port->napi, eth_poll, NAPI_WEIGHT);
+netif_napi_add_weight() doesn't need to be unrolled in case of error
+(call netif_napi_del() or something)?
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Thanks
 
-I wonder if it won't be better to have fjes_sw_deinit() instead or
-change fjes_sw_init to only netif_napi_add(). You know, to avoid another
-bug here when someone add sth to the fjes_sw_deinit(). This is only
-suggestion, patch looks fine.
-
+>  
+> -	if (!(port->npe = npe_request(NPE_ID(port->id))))
+> -		return -EIO;
+> +	if (!(port->npe = npe_request(NPE_ID(port->id)))) {
+> +		err = -EIO;
+> +		goto err_remove_mdio;
+> +	}
+>  
+>  	port->plat = plat;
+>  	npe_port_tab[NPE_ID(port->id)] = port;
+> @@ -1530,6 +1532,8 @@ static int ixp4xx_eth_probe(struct platform_device *pdev)
+>  err_free_mem:
+>  	npe_port_tab[NPE_ID(port->id)] = NULL;
+>  	npe_release(port->npe);
+> +err_remove_mdio:
+> +	ixp4xx_mdio_remove();
+>  	return err;
+>  }
+>  
 > -- 
 > 2.34.1
 > 
