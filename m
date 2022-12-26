@@ -2,99 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A51C3DA79
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Dec 2022 15:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AE4C4167B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Dec 2022 20:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbiLZPZ1 (ORCPT
+        id S229762AbiLZUwA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Dec 2022 10:25:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34570 "EHLO
+        Mon, 26 Dec 2022 15:52:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232056AbiLZPZ0 (ORCPT
+        with ESMTP id S229522AbiLZUv7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Dec 2022 10:25:26 -0500
-X-Greylist: delayed 561 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 26 Dec 2022 07:25:21 PST
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4750D43
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Dec 2022 07:25:21 -0800 (PST)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 013101B7;
-        Mon, 26 Dec 2022 15:12:29 +0000 (UTC)
+        Mon, 26 Dec 2022 15:51:59 -0500
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F0F12704;
+        Mon, 26 Dec 2022 12:51:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1672067549;
-        bh=vROiKSym8cI4wQS/SSI2A7qFfbXsoMydSXWspjPpWl4=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=opKq4WXuxvDL25/p+VNd0TA3bdByvsGER6ZxROyvWuZjY8lqtqxJEPSIRJNL/5cfn
-         T95PlGxSvaUhyyyb8hHqCALudLnkZJufqhrf1sf7jLt1prNvEj7GB6ohSnLQt60O5a
-         dzjgF2WyHAZqPh8HLf7vbUnihzkM4nNuKp01ggYI=
-Received: from [192.168.211.153] (192.168.211.153) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Mon, 26 Dec 2022 18:15:57 +0300
-Message-ID: <d14a1700-e36a-9fc7-ffc3-464de93cd355@paragon-software.com>
-Date:   Mon, 26 Dec 2022 19:15:57 +0400
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=RmcwEiUuBcsPcxa9rXqRz+kxCkmwHP3oMR9AYtZDyRE=;
+  b=sFudRSyHAzYqAqG0nTxNPmPWzl8i8bxlVoaErjN2PdafVnecjD/itMVL
+   +t3B/ua4tjJHecArA6aIoAl1m66xUYbwDyuLTqCKS5Sbmd8GKzu7o+Eqv
+   5S/SHVL088HkksQeowudAJELh1R1VsPBprUdfKruldxUgLq7hukM9nXct
+   k=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.96,276,1665439200"; 
+   d="scan'208";a="85104477"
+Received: from 214.123.68.85.rev.sfr.net (HELO hadrien) ([85.68.123.214])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Dec 2022 21:51:56 +0100
+Date:   Mon, 26 Dec 2022 21:51:55 +0100 (CET)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Deepak R Varma <drv@mailo.com>
+cc:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Saurabh Singh Sengar <ssengar@microsoft.com>,
+        Praveen Kumar <kumarpraveen@linux.microsoft.com>
+Subject: Re: [PATCH v2] coccinelle: api/atomic_as_refcounter: include message
+ type in output
+In-Reply-To: <Y6mIQIubjvg7aX11@qemulion>
+Message-ID: <alpine.DEB.2.22.394.2212262151450.2933@hadrien>
+References: <Y6mIQIubjvg7aX11@qemulion>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH] fs/ntfs3: Uninitialized variable bug in ntfs_d_compare()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     <ntfs3@lists.linux.dev>, <kernel-janitors@vger.kernel.org>
-References: <Y0kug+IlQhJyyg25@kili>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <Y0kug+IlQhJyyg25@kili>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.211.153]
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 14.10.2022 13:40, Dan Carpenter wrote:
-> Smatch detected an uninitialized variable bug:
+
+
+On Mon, 26 Dec 2022, Deepak R Varma wrote:
+
+> A common practice is to grep for "WARNING" or "ERROR" text in the report
+> output from a Coccinelle semantic patch script. So, include the text
+> "WARNING: " in the report output generated by the semantic patch for
+> desired filtering of the output. Also improves the readability of the
+> output. Here is an example of the old and new outputs reported:
 >
->      fs/ntfs3/namei.c:487 ntfs_d_compare() error: uninitialized symbol 'uni1'
+>     xyz_file.c:131:39-40: atomic_add_unless
+>     xyz_file.c:131:39-40: WARNING: atomic_add_unless
 >
-> Fixes: a3a956c78efa ("fs/ntfs3: Add option "nocase"")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>     xyz_file.c:196:6-25: atomic_dec_and_test variation before object free at line 208.
+>     xyz_file.c:196:6-25: WARNING: atomic_dec_and_test variation before object free at line 208.
+>
+> Signed-off-by: Deepak R Varma <drv@mailo.com>
+
+Applied, thanks.
+
 > ---
->   fs/ntfs3/namei.c | 12 ++++--------
->   1 file changed, 4 insertions(+), 8 deletions(-)
 >
-> diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
-> index 315763eb05ff..5d3a6ce3f05f 100644
-> --- a/fs/ntfs3/namei.c
-> +++ b/fs/ntfs3/namei.c
-> @@ -431,10 +431,8 @@ static int ntfs_d_compare(const struct dentry *dentry, unsigned int len1,
->   
->   	/* First try fast implementation. */
->   	for (;;) {
-> -		if (!lm--) {
-> -			ret = len1 == len2 ? 0 : 1;
-> -			goto out;
-> -		}
-> +		if (!lm--)
-> +			return len1 == len2 ? 0 : 1;
->   
->   		if ((c1 = *n1++) == (c2 = *n2++))
->   			continue;
-> @@ -442,10 +440,8 @@ static int ntfs_d_compare(const struct dentry *dentry, unsigned int len1,
->   		if (c1 >= 0x80 || c2 >= 0x80)
->   			break;
->   
-> -		if (toupper(c1) != toupper(c2)) {
-> -			ret = 1;
-> -			goto out;
-> -		}
-> +		if (toupper(c1) != toupper(c2))
-> +			return 1;
->   	}
->   
->   	/*
-
-Thanks for work, this bug has already been fixed:
-
-https://lore.kernel.org/ntfs3/20221004232359.285685-1-nathan@kernel.org/
-
+> Changes in v2:
+>    1. Correct word test to text in patch description. Feedback from Markus.Elfring@web.de
+>
+>
+>  scripts/coccinelle/api/atomic_as_refcounter.cocci | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+> index e63d52408b86..bbe5b2932933 100644
+> --- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
+> +++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+> @@ -55,7 +55,7 @@ identifier fname6 =~ ".*call_rcu.*";
+>  p1 << r1.p1;
+>  p2 << r1.p2;
+>  @@
+> -msg = "atomic_dec_and_test variation before object free at line %s."
+> +msg = "WARNING: atomic_dec_and_test variation before object free at line %s."
+>  coccilib.report.print_report(p1[0], msg % (p2[0].line))
+>
+>  @r4 exists@
+> @@ -88,7 +88,7 @@ fname@p2(y, ...);
+>  p1 << r4.p1;
+>  p2 << r4.p2;
+>  @@
+> -msg = "atomic_dec_and_test variation before object free at line %s."
+> +msg = "WARNING: atomic_dec_and_test variation before object free at line %s."
+>  coccilib.report.print_report(p1[0], msg % (p2[0].line))
+>
+>  @r2 exists@
+> @@ -107,7 +107,7 @@ atomic64_add_unless(&(a)->x,-1,1)@p1
+>  @script:python depends on report@
+>  p1 << r2.p1;
+>  @@
+> -msg = "atomic_add_unless"
+> +msg = "WARNING: atomic_add_unless"
+>  coccilib.report.print_report(p1[0], msg)
+>
+>  @r3 exists@
+> @@ -126,5 +126,5 @@ x = atomic64_add_return@p1(-1, ...);
+>  @script:python depends on report@
+>  p1 << r3.p1;
+>  @@
+> -msg = "x = atomic_add_return(-1, ...)"
+> +msg = "WARNING: x = atomic_add_return(-1, ...)"
+>  coccilib.report.print_report(p1[0], msg)
+> --
+> 2.34.1
+>
+>
+>
+>
