@@ -2,70 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C687CC3DA79
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Dec 2022 11:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A51C3DA79
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Dec 2022 15:25:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231593AbiLZLmE (ORCPT
+        id S229623AbiLZPZ1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Dec 2022 06:42:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
+        Mon, 26 Dec 2022 10:25:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbiLZLmD (ORCPT
+        with ESMTP id S232056AbiLZPZ0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Dec 2022 06:42:03 -0500
-X-Greylist: delayed 66 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 26 Dec 2022 03:42:02 PST
-Received: from msg-4.mailo.com (msg-4.mailo.com [213.182.54.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA016276;
-        Mon, 26 Dec 2022 03:42:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailo.com; s=mailo;
-        t=1672054920; bh=YWnNo6ULzV1M3coilbPGzg/xiPj1C8aTcjvcQnHxCIA=;
-        h=X-EA-Auth:Date:From:To:Cc:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To;
-        b=Gln8HDyj/aABbMvICwfdfe53atZENaGnl1/kSmfAamcnnFoKAxfaA4HuDIKd+PUvT
-         p3t6gBEAwVA6hmNG+yo4CobK73BBjCw5BLWBE863vjOli5kaYfctnUiUL8pZ0KirRf
-         5jxy1dCRqwefEtwu3xZXzcfMtLawOvJL/zmC3FTc=
-Received: by b-6.in.mailobj.net [192.168.90.16] with ESMTP
-        via ip-206.mailobj.net [213.182.55.206]
-        Mon, 26 Dec 2022 12:41:59 +0100 (CET)
-X-EA-Auth: a6woBLnrOkV+3lXWrM5ZM9eYHe/lZWHP4yEvyptewATXyNr4NtmplLjB1RruF9rHBzT1ijIMI8MvzZSAvTqwZZuhdMqT2dJb
-Date:   Mon, 26 Dec 2022 17:11:52 +0530
-From:   Deepak R Varma <drv@mailo.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     cocci@inria.fr, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Saurabh Singh Sengar <ssengar@microsoft.com>,
-        Praveen Kumar <kumarpraveen@linux.microsoft.com>
-Subject: Re: [cocci] [PATCH] coccinelle: api/atomic_as_refcounter: include
- message type in output
-Message-ID: <Y6mIgLpxzr4KmbAz@qemulion>
-References: <Y6hnpcLiHmJaQbeE@qemulion>
- <a31e9df0-1d15-9727-0a98-6c0cb2acdf84@web.de>
+        Mon, 26 Dec 2022 10:25:26 -0500
+X-Greylist: delayed 561 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 26 Dec 2022 07:25:21 PST
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4750D43
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 Dec 2022 07:25:21 -0800 (PST)
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 013101B7;
+        Mon, 26 Dec 2022 15:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1672067549;
+        bh=vROiKSym8cI4wQS/SSI2A7qFfbXsoMydSXWspjPpWl4=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=opKq4WXuxvDL25/p+VNd0TA3bdByvsGER6ZxROyvWuZjY8lqtqxJEPSIRJNL/5cfn
+         T95PlGxSvaUhyyyb8hHqCALudLnkZJufqhrf1sf7jLt1prNvEj7GB6ohSnLQt60O5a
+         dzjgF2WyHAZqPh8HLf7vbUnihzkM4nNuKp01ggYI=
+Received: from [192.168.211.153] (192.168.211.153) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Mon, 26 Dec 2022 18:15:57 +0300
+Message-ID: <d14a1700-e36a-9fc7-ffc3-464de93cd355@paragon-software.com>
+Date:   Mon, 26 Dec 2022 19:15:57 +0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a31e9df0-1d15-9727-0a98-6c0cb2acdf84@web.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH] fs/ntfs3: Uninitialized variable bug in ntfs_d_compare()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     <ntfs3@lists.linux.dev>, <kernel-janitors@vger.kernel.org>
+References: <Y0kug+IlQhJyyg25@kili>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <Y0kug+IlQhJyyg25@kili>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.211.153]
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Dec 26, 2022 at 11:30:09AM +0100, Markus Elfring wrote:
+On 14.10.2022 13:40, Dan Carpenter wrote:
+> Smatch detected an uninitialized variable bug:
 >
-> > … So, include the test "WARNING: " in the report output …
+>      fs/ntfs3/namei.c:487 ntfs_d_compare() error: uninitialized symbol 'uni1'
 >
+> Fixes: a3a956c78efa ("fs/ntfs3: Add option "nocase"")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   fs/ntfs3/namei.c | 12 ++++--------
+>   1 file changed, 4 insertions(+), 8 deletions(-)
 >
-> How do you think about to use the word “text” instead of “test” in
-> the change description?
+> diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+> index 315763eb05ff..5d3a6ce3f05f 100644
+> --- a/fs/ntfs3/namei.c
+> +++ b/fs/ntfs3/namei.c
+> @@ -431,10 +431,8 @@ static int ntfs_d_compare(const struct dentry *dentry, unsigned int len1,
+>   
+>   	/* First try fast implementation. */
+>   	for (;;) {
+> -		if (!lm--) {
+> -			ret = len1 == len2 ? 0 : 1;
+> -			goto out;
+> -		}
+> +		if (!lm--)
+> +			return len1 == len2 ? 0 : 1;
+>   
+>   		if ((c1 = *n1++) == (c2 = *n2++))
+>   			continue;
+> @@ -442,10 +440,8 @@ static int ntfs_d_compare(const struct dentry *dentry, unsigned int len1,
+>   		if (c1 >= 0x80 || c2 >= 0x80)
+>   			break;
+>   
+> -		if (toupper(c1) != toupper(c2)) {
+> -			ret = 1;
+> -			goto out;
+> -		}
+> +		if (toupper(c1) != toupper(c2))
+> +			return 1;
+>   	}
+>   
+>   	/*
 
-Hi Markus,
-Thank you for catching that. Just sent v2 with the correction.
+Thanks for work, this bug has already been fixed:
 
-./drv
-
->
-> Regards,
-> Markus
->
-
+https://lore.kernel.org/ntfs3/20221004232359.285685-1-nathan@kernel.org/
 
