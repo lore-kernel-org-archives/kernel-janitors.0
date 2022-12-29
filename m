@@ -2,125 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AE4C4167B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Dec 2022 20:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFC4C3DA7C
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Dec 2022 01:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbiLZUwA (ORCPT
+        id S229630AbiL2BF6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Dec 2022 15:52:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
+        Wed, 28 Dec 2022 20:05:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbiLZUv7 (ORCPT
+        with ESMTP id S230083AbiL2BF5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Dec 2022 15:51:59 -0500
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F0F12704;
-        Mon, 26 Dec 2022 12:51:57 -0800 (PST)
+        Wed, 28 Dec 2022 20:05:57 -0500
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E58146390
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Dec 2022 17:05:55 -0800 (PST)
+Received: by mail-ot1-x334.google.com with SMTP id y18-20020a0568301d9200b0067082cd4679so10750170oti.4
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Dec 2022 17:05:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=RmcwEiUuBcsPcxa9rXqRz+kxCkmwHP3oMR9AYtZDyRE=;
-  b=sFudRSyHAzYqAqG0nTxNPmPWzl8i8bxlVoaErjN2PdafVnecjD/itMVL
-   +t3B/ua4tjJHecArA6aIoAl1m66xUYbwDyuLTqCKS5Sbmd8GKzu7o+Eqv
-   5S/SHVL088HkksQeowudAJELh1R1VsPBprUdfKruldxUgLq7hukM9nXct
-   k=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="5.96,276,1665439200"; 
-   d="scan'208";a="85104477"
-Received: from 214.123.68.85.rev.sfr.net (HELO hadrien) ([85.68.123.214])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Dec 2022 21:51:56 +0100
-Date:   Mon, 26 Dec 2022 21:51:55 +0100 (CET)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     Deepak R Varma <drv@mailo.com>
-cc:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Saurabh Singh Sengar <ssengar@microsoft.com>,
-        Praveen Kumar <kumarpraveen@linux.microsoft.com>
-Subject: Re: [PATCH v2] coccinelle: api/atomic_as_refcounter: include message
- type in output
-In-Reply-To: <Y6mIQIubjvg7aX11@qemulion>
-Message-ID: <alpine.DEB.2.22.394.2212262151450.2933@hadrien>
-References: <Y6mIQIubjvg7aX11@qemulion>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DI97Fal4l3a4mIM8YI84buSF/5tfBrhRqOQY8iLVk3E=;
+        b=WqJKhSzKCXSTIHOKuiqnICGlQ2V768y5ujY7ES9xnaetUxtaPIuRXmxyn5GTOLvmTs
+         euOlBGNJOZFuXWJ5g4/zVDcXwYQ8NEHH5Y1H/tzKv3KR4GxDz0fAKssXzWZcgdr9kExT
+         shynMeJfaJDToL3VS47mBGrKou5KObWIRy45vdjkHq61RMWw7xu5/GvS8NxbWs9Fy0tB
+         nOJ6r/glZYIMdiX+J89429YRQwVwejnkCPqQ6HSK5pAOozgvqy87YktKyf4sJSVR6Lj6
+         mVufRsTvOajl8TszrvC5WGdTPPLESJPZt0H+38QzfbD463xQ5BtUTZWLmKDc+ESkVc+u
+         oCug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DI97Fal4l3a4mIM8YI84buSF/5tfBrhRqOQY8iLVk3E=;
+        b=4AKdP/dgGRXe5VewZOvcLbWJA5QhT8fFqok/llV50a9DZBBUFWIBBR/po/pq3Kw2SA
+         AQSBt/yVJEXYsMrn88EZjgvryMT49IrdMsMy/KeBseypOpMj3uX9/EK86WRHU+wiURLI
+         +ZY8X2PjPnL18dWDKpXh4/WjRoJYEDof8rqHi3N4cAv4puII3wF1sss7i53q1bzsqzWS
+         vOguvzIMcj6P993suc7CWhV+qXfTusSEig0C9EdWVD0B+h2dR4gKXULy+auS8JmvQCdK
+         UD7oVsiTNelea9QEo7vGe/xIEypbGiY25bkfCtpchmhHl9fxd6hpiENz3Kv72ken2TNF
+         ka9Q==
+X-Gm-Message-State: AFqh2ko8aGt/34poQMTUYx9XIu/zgJkI3kHms/qvAcG7D2qgGLYP5i5g
+        qBge3i9Bd/0kZ82XjqCgsK3/7SGXAubV98yLLwDeOA==
+X-Google-Smtp-Source: AMrXdXuGricZfodTWWI6d98OVmw8h2ZdLRjQGI7lbMkCdFb3YcjCj9osLbpVJFSaqd6O0uA58CabL8j33av6dEorlaI=
+X-Received: by 2002:a05:6830:3499:b0:66c:61c8:ceeb with SMTP id
+ c25-20020a056830349900b0066c61c8ceebmr1795675otu.12.1672275955280; Wed, 28
+ Dec 2022 17:05:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20221215092128.3954-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20221215092128.3954-1-lukas.bulwahn@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 29 Dec 2022 02:07:49 +0100
+Message-ID: <CACRpkdZyPP-wSuWLiKfhpnoQna-3_P1vjT_i7Rty3xGCq83nsQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mxs: avoid defines prefixed with CONFIG
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Thu, Dec 15, 2022 at 10:30 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
+> Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+> that are introduced in a Kconfig file.
+>
+> Here, expressions to convert pin configurations to booleans for pull-up,
+> voltage and mA are macro definitions that begin with "CONFIG".
+>
+> To avoid defines prefixed with "CONFIG", rename these defines to begin with
+> "PIN_CONFIG" instead.
+>
+> No functional change.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Mon, 26 Dec 2022, Deepak R Varma wrote:
+Patch applied.
 
-> A common practice is to grep for "WARNING" or "ERROR" text in the report
-> output from a Coccinelle semantic patch script. So, include the text
-> "WARNING: " in the report output generated by the semantic patch for
-> desired filtering of the output. Also improves the readability of the
-> output. Here is an example of the old and new outputs reported:
->
->     xyz_file.c:131:39-40: atomic_add_unless
->     xyz_file.c:131:39-40: WARNING: atomic_add_unless
->
->     xyz_file.c:196:6-25: atomic_dec_and_test variation before object free at line 208.
->     xyz_file.c:196:6-25: WARNING: atomic_dec_and_test variation before object free at line 208.
->
-> Signed-off-by: Deepak R Varma <drv@mailo.com>
-
-Applied, thanks.
-
-> ---
->
-> Changes in v2:
->    1. Correct word test to text in patch description. Feedback from Markus.Elfring@web.de
->
->
->  scripts/coccinelle/api/atomic_as_refcounter.cocci | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-> index e63d52408b86..bbe5b2932933 100644
-> --- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-> +++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-> @@ -55,7 +55,7 @@ identifier fname6 =~ ".*call_rcu.*";
->  p1 << r1.p1;
->  p2 << r1.p2;
->  @@
-> -msg = "atomic_dec_and_test variation before object free at line %s."
-> +msg = "WARNING: atomic_dec_and_test variation before object free at line %s."
->  coccilib.report.print_report(p1[0], msg % (p2[0].line))
->
->  @r4 exists@
-> @@ -88,7 +88,7 @@ fname@p2(y, ...);
->  p1 << r4.p1;
->  p2 << r4.p2;
->  @@
-> -msg = "atomic_dec_and_test variation before object free at line %s."
-> +msg = "WARNING: atomic_dec_and_test variation before object free at line %s."
->  coccilib.report.print_report(p1[0], msg % (p2[0].line))
->
->  @r2 exists@
-> @@ -107,7 +107,7 @@ atomic64_add_unless(&(a)->x,-1,1)@p1
->  @script:python depends on report@
->  p1 << r2.p1;
->  @@
-> -msg = "atomic_add_unless"
-> +msg = "WARNING: atomic_add_unless"
->  coccilib.report.print_report(p1[0], msg)
->
->  @r3 exists@
-> @@ -126,5 +126,5 @@ x = atomic64_add_return@p1(-1, ...);
->  @script:python depends on report@
->  p1 << r3.p1;
->  @@
-> -msg = "x = atomic_add_return(-1, ...)"
-> +msg = "WARNING: x = atomic_add_return(-1, ...)"
->  coccilib.report.print_report(p1[0], msg)
-> --
-> 2.34.1
->
->
->
->
+Yours,
+Linus Walleij
