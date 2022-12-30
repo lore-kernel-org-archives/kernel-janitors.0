@@ -2,42 +2,38 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C076BC4167B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 16:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4868C4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 16:33:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235311AbiL3QAd (ORCPT
+        id S230093AbiL3QdA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Dec 2022 11:00:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34052 "EHLO
+        Fri, 30 Dec 2022 11:33:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235350AbiL3QAQ (ORCPT
+        with ESMTP id S229527AbiL3Qc7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Dec 2022 11:00:16 -0500
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 471351BE81
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Dec 2022 08:00:15 -0800 (PST)
+        Fri, 30 Dec 2022 11:32:59 -0500
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BE1FDF
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Dec 2022 08:32:53 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id BHnmp7f8kLrOWBHnnp1MiM; Fri, 30 Dec 2022 17:00:13 +0100
+        id BIJMpP2pGRn9tBIJNpODUv; Fri, 30 Dec 2022 17:32:51 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Dec 2022 17:00:13 +0100
+X-ME-Date: Fri, 30 Dec 2022 17:32:51 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH v2] drm/bridge: tc358767: Use devm_clk_get_enabled() helper
-Date:   Fri, 30 Dec 2022 17:00:09 +0100
-Message-Id: <208546ce4e01973da1eb9ad7bc0f9241f650b3af.1672415956.git.christophe.jaillet@wanadoo.fr>
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] watchdog: visconti: Use devm_clk_get_enabled() helper
+Date:   Fri, 30 Dec 2022 17:32:42 +0100
+Message-Id: <13e8cdf17556da111d1d98a8fe0b1dc1c78007e2.1672417940.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,62 +50,48 @@ This simplifies the code and avoids the need of a dedicated function used
 with devm_add_action_or_reset().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
 ---
-Change in v2:
-  - Convert to dev_err_probe()    [Andrzej Hajda]
-  - Update the error message    [Andrzej Hajda]
-  - Add R-b tag    [Andrzej Hajda]
+ drivers/watchdog/visconti_wdt.c | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
-v1:
-https://lore.kernel.org/all/4f855984ea895e1488169e77935fa6e044912ac2.1672414073.git.christophe.jaillet@wanadoo.fr/
----
- drivers/gpu/drm/bridge/tc358767.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 2a58eb271f70..99f3d5ca7257 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -2022,13 +2022,6 @@ static int tc_probe_bridge_endpoint(struct tc_data *tc)
- 	return -EINVAL;
- }
+diff --git a/drivers/watchdog/visconti_wdt.c b/drivers/watchdog/visconti_wdt.c
+index 83ef55e66ca8..cef0794708e7 100644
+--- a/drivers/watchdog/visconti_wdt.c
++++ b/drivers/watchdog/visconti_wdt.c
+@@ -112,11 +112,6 @@ static const struct watchdog_ops visconti_wdt_ops = {
+ 	.set_timeout	= visconti_wdt_set_timeout,
+ };
  
--static void tc_clk_disable(void *data)
+-static void visconti_clk_disable_unprepare(void *data)
 -{
--	struct clk *refclk = data;
--
--	clk_disable_unprepare(refclk);
+-	clk_disable_unprepare(data);
 -}
 -
- static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ static int visconti_wdt_probe(struct platform_device *pdev)
  {
- 	struct device *dev = &client->dev;
-@@ -2045,20 +2038,10 @@ static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	if (ret)
- 		return ret;
+ 	struct watchdog_device *wdev;
+@@ -134,20 +129,10 @@ static int visconti_wdt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
  
--	tc->refclk = devm_clk_get(dev, "ref");
--	if (IS_ERR(tc->refclk)) {
--		ret = PTR_ERR(tc->refclk);
--		dev_err(dev, "Failed to get refclk: %d\n", ret);
+-	clk = devm_clk_get(dev, NULL);
++	clk = devm_clk_get_enabled(dev, NULL);
+ 	if (IS_ERR(clk))
+ 		return dev_err_probe(dev, PTR_ERR(clk), "Could not get clock\n");
+ 
+-	ret = clk_prepare_enable(clk);
+-	if (ret) {
+-		dev_err(dev, "Could not enable clock\n");
 -		return ret;
 -	}
 -
--	ret = clk_prepare_enable(tc->refclk);
+-	ret = devm_add_action_or_reset(dev, visconti_clk_disable_unprepare, clk);
 -	if (ret)
 -		return ret;
 -
--	ret = devm_add_action_or_reset(dev, tc_clk_disable, tc->refclk);
--	if (ret)
--		return ret;
-+	tc->refclk = devm_clk_get_enabled(dev, "ref");
-+	if (IS_ERR(tc->refclk))
-+		return dev_err_probe(dev, PTR_ERR(tc->refclk),
-+				     "Failed to get and enable the ref clk\n");
- 
- 	/* tRSTW = 100 cycles , at 13 MHz that is ~7.69 us */
- 	usleep_range(10, 15);
+ 	clk_freq = clk_get_rate(clk);
+ 	if (!clk_freq)
+ 		return -EINVAL;
 -- 
 2.34.1
 
