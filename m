@@ -2,111 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAED2C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Dec 2022 16:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44705C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 08:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233726AbiL2Qea (ORCPT
+        id S234572AbiL3IAm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Dec 2022 11:34:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32838 "EHLO
+        Fri, 30 Dec 2022 03:00:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233613AbiL2Qe3 (ORCPT
+        with ESMTP id S229490AbiL3IAk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Dec 2022 11:34:29 -0500
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E9511C15
-        for <kernel-janitors@vger.kernel.org>; Thu, 29 Dec 2022 08:34:27 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id AvrKpnmhptht4AvrKpvTPn; Thu, 29 Dec 2022 17:34:25 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 29 Dec 2022 17:34:25 +0100
-X-ME-IP: 86.243.100.34
-Message-ID: <437145bf-d925-e91e-affd-835d272c55a0@wanadoo.fr>
-Date:   Thu, 29 Dec 2022 17:34:22 +0100
+        Fri, 30 Dec 2022 03:00:40 -0500
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45382A2;
+        Fri, 30 Dec 2022 00:00:39 -0800 (PST)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 76A34439;
+        Fri, 30 Dec 2022 07:57:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1672387025;
+        bh=sdyCsHrj1JB3LElMTAusAWdswOo7hSFgN46qEO3F4Kc=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=VKYefI/WpAMXFwJkXwPyyHgyukshDdTwvH5RdrTsgbGoTVRQztmv5PaVRLbjafuTG
+         2+DQmhQjfQVmNSnN7bxTA9VSdny7PEjwNB7Ho2AU1s+sBRuyrb7BN5BIL6ME6lN1IN
+         TkP7Ls3S8zS+YpdmUOh4E5WjcaeVbPMxVz/omqRM=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id ED7F114F;
+        Fri, 30 Dec 2022 08:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1672387237;
+        bh=sdyCsHrj1JB3LElMTAusAWdswOo7hSFgN46qEO3F4Kc=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=Yj02To+HpK0Z9ew+S6yhmv0D9Mm8cqBvIkoBnW3FXLRblOk2XZG0MZt4TsJfQ+J5J
+         P8S5U+BAnF5yF3vQSgqvCZjBAN6vArBNE7PMKJjR365z8t+193Yp48d5dGQQ1HmZ7L
+         AvjRanhQUW0jMtI6Cyp1/n5R5KZGNWkPkz3GQqWg=
+Received: from [192.168.211.146] (192.168.211.146) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 30 Dec 2022 11:00:37 +0300
+Message-ID: <6d826d25-f847-77b7-fbb0-caa72a1cf47e@paragon-software.com>
+Date:   Fri, 30 Dec 2022 12:00:36 +0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH net] fjes: Fix an error handling path in fjes_probe()
-To:     Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Taku Izumi <izumi.taku@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <fde673f106d2b264ad76759195901aae94691b5c.1671569785.git.christophe.jaillet@wanadoo.fr>
- <Y6LZEVU7tKPzjHQ8@localhost.localdomain>
-Content-Language: fr, en-US
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <Y6LZEVU7tKPzjHQ8@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ Thunderbird/102.6.0
+Subject: Re: [PATCH] fs/ntfs3: fix spelling mistake "attibute" -> "attribute"
+To:     Yu Zhe <yuzhe@nfschina.com>
+CC:     <ntfs3@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <liqiong@nfschina.com>
+References: <20221110074640.16792-1-yuzhe@nfschina.com>
+Content-Language: en-US
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20221110074640.16792-1-yuzhe@nfschina.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.211.146]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 21/12/2022 à 10:59, Michal Swiatkowski a écrit :
-> On Tue, Dec 20, 2022 at 09:57:06PM +0100, Christophe JAILLET wrote:
->> A netif_napi_add() call is hidden in fjes_sw_init(). It should be undone
->> by a corresponding netif_napi_del() call in the error handling path of the
->> probe, as already done inthe remove function.
->>
->> Fixes: 265859309a76 ("fjes: NAPI polling function")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/net/fjes/fjes_main.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/fjes/fjes_main.c b/drivers/net/fjes/fjes_main.c
->> index 2513be6d4e11..01b4c9c6adbd 100644
->> --- a/drivers/net/fjes/fjes_main.c
->> +++ b/drivers/net/fjes/fjes_main.c
->> @@ -1370,7 +1370,7 @@ static int fjes_probe(struct platform_device *plat_dev)
->>   	adapter->txrx_wq = alloc_workqueue(DRV_NAME "/txrx", WQ_MEM_RECLAIM, 0);
->>   	if (unlikely(!adapter->txrx_wq)) {
->>   		err = -ENOMEM;
->> -		goto err_free_netdev;
->> +		goto err_del_napi;
->>   	}
->>   
->>   	adapter->control_wq = alloc_workqueue(DRV_NAME "/control",
->> @@ -1431,6 +1431,8 @@ static int fjes_probe(struct platform_device *plat_dev)
->>   	destroy_workqueue(adapter->control_wq);
->>   err_free_txrx_wq:
->>   	destroy_workqueue(adapter->txrx_wq);
->> +err_del_napi:
->> +	netif_napi_del(&adapter->napi);
->>   err_free_netdev:
->>   	free_netdev(netdev);
->>   err_out:
-> 
-> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-> 
-> I wonder if it won't be better to have fjes_sw_deinit() instead or
-> change fjes_sw_init to only netif_napi_add(). You know, to avoid another
-> bug here when someone add sth to the fjes_sw_deinit(). This is only
-> suggestion, patch looks fine.
-
-hi,
-
-based on Jakub's comment [1], free_netdev() already cleans up NAPIs (see 
-[2]).
-
-So would it make more sense to remove netif_napi_del() from the 
-.remove() function instead?
-The call looks useless to me now.
-
-CJ
-
-[1]: https://lore.kernel.org/all/20221221174043.1191996a@kernel.org/
-[2]: https://elixir.bootlin.com/linux/v6.2-rc1/source/net/core/dev.c#L10710
-
-> 
->> -- 
->> 2.34.1
->>
-> 
-
+On 10.11.2022 11:46, Yu Zhe wrote:
+> There is a spelling mistake in comment. Fix it.
+>
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> ---
+>   fs/ntfs3/xattr.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+> index 7de8718c68a9..1ce8c0957621 100644
+> --- a/fs/ntfs3/xattr.c
+> +++ b/fs/ntfs3/xattr.c
+> @@ -376,7 +376,7 @@ static noinline int ntfs_set_ea(struct inode *inode, const char *name,
+>   
+>   	/*
+>   	 * 1. Check ea_info.size_pack for overflow.
+> -	 * 2. New attibute size must fit value from $AttrDef
+> +	 * 2. New attribute size must fit value from $AttrDef
+>   	 */
+>   	if (new_pack > 0xffff || size > sbi->ea_max_size) {
+>   		ntfs_inode_warn(
+Applied, thanks!
