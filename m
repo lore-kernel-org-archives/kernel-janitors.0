@@ -2,94 +2,135 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9FBC4167B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 15:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7941AC4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 15:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235130AbiL3Pen (ORCPT
+        id S235348AbiL3Pj3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Dec 2022 10:34:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
+        Fri, 30 Dec 2022 10:39:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235148AbiL3Pei (ORCPT
+        with ESMTP id S235242AbiL3PjL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Dec 2022 10:34:38 -0500
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11E21B1D6
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Dec 2022 07:34:37 -0800 (PST)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id BHP1pigEwSTJGBHP1p2nrE; Fri, 30 Dec 2022 16:34:36 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Dec 2022 16:34:36 +0100
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] bus: bt1-apb: Use devm_clk_get_enabled() helper
-Date:   Fri, 30 Dec 2022 16:34:34 +0100
-Message-Id: <206396623f7a9c475c915896c3990bee2d3384dd.1672414440.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Fri, 30 Dec 2022 10:39:11 -0500
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA871C109;
+        Fri, 30 Dec 2022 07:37:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1672414675; x=1703950675;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PAx56ZENjsCB5hUOX9aS/7Fwz8yCIwa/E6TZBG11sYI=;
+  b=UD6MxC97ffPJHsIvjxiZYJDOXCbRx67DS57ZZdMJvLR6zWQwSdfMLSsF
+   /zoX4K6b4/20XkYvTvIDNtsWdHlSwrWPTuPfjmKahIi1DYnegR0HU2+JS
+   6A0JMm9A8RdihGdpWwZ+TYhVgXChpN8ZZTmRWH7FKSb3ILZm7RPBGr6+L
+   Ra9ynmuQfnFXS51KBGiALOj2wSkK3VOJrPPHVTx7WB8INAMUljuvJqokI
+   7pmASNttibrVkgwkEhMfcb/fTdu1xGnhDzdUGayWijpzRja8ewSk6wj2p
+   wDnLAEHoWfcFsc/dgLaHJyvAL1D+CSdUIrZ3vf3YUJG90y5BuxYVUT686
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10576"; a="348433409"
+X-IronPort-AV: E=Sophos;i="5.96,287,1665471600"; 
+   d="scan'208";a="348433409"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2022 07:37:47 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10576"; a="631556267"
+X-IronPort-AV: E=Sophos;i="5.96,287,1665471600"; 
+   d="scan'208";a="631556267"
+Received: from ahajda-mobl.ger.corp.intel.com (HELO [10.213.2.40]) ([10.213.2.40])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2022 07:37:44 -0800
+Message-ID: <eb919e0b-8dd3-00e3-a2e9-2b6daf378539@intel.com>
+Date:   Fri, 30 Dec 2022 16:37:41 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.6.1
+Subject: Re: [PATCH] drm/bridge: tc358767: Use devm_clk_get_enabled() helper
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <4f855984ea895e1488169e77935fa6e044912ac2.1672414073.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From:   Andrzej Hajda <andrzej.hajda@intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
+ Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <4f855984ea895e1488169e77935fa6e044912ac2.1672414073.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The devm_clk_get_enabled() helper:
-   - calls devm_clk_get()
-   - calls clk_prepare_enable() and registers what is needed in order to
-     call clk_disable_unprepare() when needed, as a managed resource.
 
-This simplifies the code and avoids the need of a dedicated function used
-with devm_add_action_or_reset().
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/bus/bt1-apb.c | 23 +----------------------
- 1 file changed, 1 insertion(+), 22 deletions(-)
+On 30.12.2022 16:29, Christophe JAILLET wrote:
+> The devm_clk_get_enabled() helper:
+>     - calls devm_clk_get()
+>     - calls clk_prepare_enable() and registers what is needed in order to
+>       call clk_disable_unprepare() when needed, as a managed resource.
+>
+> This simplifies the code and avoids the need of a dedicated function used
+> with devm_add_action_or_reset().
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   drivers/gpu/drm/bridge/tc358767.c | 17 +----------------
+>   1 file changed, 1 insertion(+), 16 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+> index 2a58eb271f70..b95c36ca660d 100644
+> --- a/drivers/gpu/drm/bridge/tc358767.c
+> +++ b/drivers/gpu/drm/bridge/tc358767.c
+> @@ -2022,13 +2022,6 @@ static int tc_probe_bridge_endpoint(struct tc_data *tc)
+>   	return -EINVAL;
+>   }
+>   
+> -static void tc_clk_disable(void *data)
+> -{
+> -	struct clk *refclk = data;
+> -
+> -	clk_disable_unprepare(refclk);
+> -}
+> -
+>   static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   {
+>   	struct device *dev = &client->dev;
+> @@ -2045,21 +2038,13 @@ static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   	if (ret)
+>   		return ret;
+>   
+> -	tc->refclk = devm_clk_get(dev, "ref");
+> +	tc->refclk = devm_clk_get_enabled(dev, "ref");
+>   	if (IS_ERR(tc->refclk)) {
+>   		ret = PTR_ERR(tc->refclk);
+>   		dev_err(dev, "Failed to get refclk: %d\n", ret);
 
-diff --git a/drivers/bus/bt1-apb.c b/drivers/bus/bt1-apb.c
-index 63b1b4a76671..9ed8d10c489b 100644
---- a/drivers/bus/bt1-apb.c
-+++ b/drivers/bus/bt1-apb.c
-@@ -186,34 +186,13 @@ static int bt1_apb_request_rst(struct bt1_apb *apb)
- 	return ret;
- }
- 
--static void bt1_apb_disable_clk(void *data)
--{
--	struct bt1_apb *apb = data;
--
--	clk_disable_unprepare(apb->pclk);
--}
--
- static int bt1_apb_request_clk(struct bt1_apb *apb)
- {
--	int ret;
--
--	apb->pclk = devm_clk_get(apb->dev, "pclk");
-+	apb->pclk = devm_clk_get_enabled(apb->dev, "pclk");
- 	if (IS_ERR(apb->pclk))
- 		return dev_err_probe(apb->dev, PTR_ERR(apb->pclk),
- 				     "Couldn't get APB clock descriptor\n");
- 
--	ret = clk_prepare_enable(apb->pclk);
--	if (ret) {
--		dev_err(apb->dev, "Couldn't enable the APB clock\n");
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(apb->dev, bt1_apb_disable_clk, apb);
--	if (ret) {
--		dev_err(apb->dev, "Can't add APB EHB clocks disable action\n");
--		return ret;
--	}
--
- 	apb->rate = clk_get_rate(apb->pclk);
- 	if (!apb->rate) {
- 		dev_err(apb->dev, "Invalid clock rate\n");
--- 
-2.34.1
+You can adjust the message and convert to dev_err_probe.
+With that:
+Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
+
+Regards
+Andrzej
+
+
+>   		return ret;
+>   	}
+>   
+> -	ret = clk_prepare_enable(tc->refclk);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = devm_add_action_or_reset(dev, tc_clk_disable, tc->refclk);
+> -	if (ret)
+> -		return ret;
+> -
+>   	/* tRSTW = 100 cycles , at 13 MHz that is ~7.69 us */
+>   	usleep_range(10, 15);
+>   
 
