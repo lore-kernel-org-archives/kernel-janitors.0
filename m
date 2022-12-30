@@ -2,85 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44705C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 08:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE42C4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 13:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234572AbiL3IAm (ORCPT
+        id S235008AbiL3NX4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Dec 2022 03:00:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37182 "EHLO
+        Fri, 30 Dec 2022 08:23:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbiL3IAk (ORCPT
+        with ESMTP id S231439AbiL3NXr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Dec 2022 03:00:40 -0500
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45382A2;
-        Fri, 30 Dec 2022 00:00:39 -0800 (PST)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 76A34439;
-        Fri, 30 Dec 2022 07:57:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1672387025;
-        bh=sdyCsHrj1JB3LElMTAusAWdswOo7hSFgN46qEO3F4Kc=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=VKYefI/WpAMXFwJkXwPyyHgyukshDdTwvH5RdrTsgbGoTVRQztmv5PaVRLbjafuTG
-         2+DQmhQjfQVmNSnN7bxTA9VSdny7PEjwNB7Ho2AU1s+sBRuyrb7BN5BIL6ME6lN1IN
-         TkP7Ls3S8zS+YpdmUOh4E5WjcaeVbPMxVz/omqRM=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id ED7F114F;
-        Fri, 30 Dec 2022 08:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1672387237;
-        bh=sdyCsHrj1JB3LElMTAusAWdswOo7hSFgN46qEO3F4Kc=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=Yj02To+HpK0Z9ew+S6yhmv0D9Mm8cqBvIkoBnW3FXLRblOk2XZG0MZt4TsJfQ+J5J
-         P8S5U+BAnF5yF3vQSgqvCZjBAN6vArBNE7PMKJjR365z8t+193Yp48d5dGQQ1HmZ7L
-         AvjRanhQUW0jMtI6Cyp1/n5R5KZGNWkPkz3GQqWg=
-Received: from [192.168.211.146] (192.168.211.146) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 30 Dec 2022 11:00:37 +0300
-Message-ID: <6d826d25-f847-77b7-fbb0-caa72a1cf47e@paragon-software.com>
-Date:   Fri, 30 Dec 2022 12:00:36 +0400
+        Fri, 30 Dec 2022 08:23:47 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF81D1AD9C;
+        Fri, 30 Dec 2022 05:23:45 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4878061172;
+        Fri, 30 Dec 2022 13:23:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FFC8C433D2;
+        Fri, 30 Dec 2022 13:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672406624;
+        bh=NqmqGbk5hNMzGGcEm4dJNpuxoV4wFsE7sNHS+ETbSqw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jO61gvfKtXf+0r3Va55qQpluFxWwsQ/h/hi6h5D31HrsyUkm0FRcX9BU4gKmfaThg
+         cl7n+oAnzEWMq+3pW6lOlIL+1Id1yJstOrpABJYr6U/032CQJaLwnVbGLsr1iTi+8Q
+         I7x/gcmobqcsIYB8M3zXttLV+vnn5CXdRP5mJhThKunawto9a0j7l5VWFZEmRu9caY
+         QUL8qPVq9d8drPJxWL2VkEZZsH/gIHkNMf2jLAz2sTfFplu4jlVz3w/acrSAHvYZwr
+         oplcFo7WdZagkGFrxLdRyPKwNkRGb/2CwBzd6jcmVMvLt97PLeKbLOXkQS1p0TOd0v
+         DTBQRgzstEk8A==
+From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
+To:     linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc: adjust to recent removal of PCI_MSI_IRQ_DOMAIN
+Date:   Fri, 30 Dec 2022 14:23:38 +0100
+Message-Id: <167240660288.752172.35470572785572794.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221215103452.23131-1-lukas.bulwahn@gmail.com>
+References: <20221215103452.23131-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH] fs/ntfs3: fix spelling mistake "attibute" -> "attribute"
-To:     Yu Zhe <yuzhe@nfschina.com>
-CC:     <ntfs3@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <liqiong@nfschina.com>
-References: <20221110074640.16792-1-yuzhe@nfschina.com>
-Content-Language: en-US
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <20221110074640.16792-1-yuzhe@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.211.146]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10.11.2022 11:46, Yu Zhe wrote:
-> There is a spelling mistake in comment. Fix it.
->
-> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
-> ---
->   fs/ntfs3/xattr.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-> index 7de8718c68a9..1ce8c0957621 100644
-> --- a/fs/ntfs3/xattr.c
-> +++ b/fs/ntfs3/xattr.c
-> @@ -376,7 +376,7 @@ static noinline int ntfs_set_ea(struct inode *inode, const char *name,
->   
->   	/*
->   	 * 1. Check ea_info.size_pack for overflow.
-> -	 * 2. New attibute size must fit value from $AttrDef
-> +	 * 2. New attribute size must fit value from $AttrDef
->   	 */
->   	if (new_pack > 0xffff || size > sbi->ea_max_size) {
->   		ntfs_inode_warn(
-Applied, thanks!
+On Thu, 15 Dec 2022 11:34:52 +0100, Lukas Bulwahn wrote:
+> Commit a474d3fbe287 ("PCI/MSI: Get rid of PCI_MSI_IRQ_DOMAIN") removes the
+> config PCI_MSI_IRQ_DOMAIN and makes all previous references to that config
+> then refer to PCI_MSI instead.
+> 
+> Commit ba6ed462dcf4 ("PCI: dwc: Add Baikal-T1 PCIe controller support")
+> adds the config PCIE_BT1, which following the previous default pattern
+> depends on the config PCI_MSI_IRQ_DOMAIN.
+> 
+> [...]
+
+Applied to pci/dwc, thanks!
+
+[1/1] PCI: dwc: adjust to recent removal of PCI_MSI_IRQ_DOMAIN
+      https://git.kernel.org/lpieralisi/pci/c/3c9686173220
+
+Thanks,
+Lorenzo
