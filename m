@@ -2,60 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9662C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 23:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A42AC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 23:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235266AbiL3XPB (ORCPT
+        id S235669AbiL3Xc1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Dec 2022 18:15:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33830 "EHLO
+        Fri, 30 Dec 2022 18:32:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbiL3XO4 (ORCPT
+        with ESMTP id S235664AbiL3Xc0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Dec 2022 18:14:56 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A79FDE81;
-        Fri, 30 Dec 2022 15:14:55 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id ja17so16060875wmb.3;
-        Fri, 30 Dec 2022 15:14:55 -0800 (PST)
+        Fri, 30 Dec 2022 18:32:26 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A327412D20;
+        Fri, 30 Dec 2022 15:32:24 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id co23so21064943wrb.4;
+        Fri, 30 Dec 2022 15:32:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lk6w/dQjZUnYKE5Q3JHgYqAZAoCgT7dU2bsxNcBc+uw=;
-        b=WxA+HcdaZEzK4JWMlzrKByVBwloSBQ4d402kcMDlw5Hq6HagKbayu5W4MrDLSFENNQ
-         Qowus9h3Ny3R+1gniOvdEsOdjm3i9sAO2nvV+L7bKpMLUjMsY4CidfXhahR9czVjzrjl
-         1ZpR+n78MqWawDXDnBN0DMKYrpWjriDxGmjPv+e9zDyoP3oHleBMREWvo6N/mof7wgbw
-         QITaXu+rTIoY4I6VRipHipMZgsfKmvGbn3zDtDuNp7bl4IN5egDla4uOw/kpgxgTuPas
-         euQZzxMySnf7cazDn6/NM/731giIICXTeIAiyXJ23Q0UPBqQNeINTV0DHx1X5vb/q9yG
-         BJhw==
+        bh=I67DJyMZ2pVBI8781A9LPZqkSNUsohSh0BZqH+JheCc=;
+        b=nWx3Otszq8LNvUhzN+GkPHe49rJvZicXb/35lWUQBDolDbDSfowtvv0JzqvXuPnJ0V
+         xQICKBGUryYOphQGf6/Bed0u9HTDWwdqPVHbD3vKUK7tR+UV1b/ph8k4SX/cRVT9lvB+
+         cB+tfVcg+u5YkwozoBuGwVIUJrahnf+maImB0uyd0FhSBLDbUqgjtshFvtfnBqIrpYcS
+         rdosCBYzdycSQ+Ypbv5QKd/8oNWNYCruQLazjyL6J0PQKS9auceBKNja09ecolvjXptz
+         UqqBwPQN775CY4NICoBh/69cDhCUw1BswPZPcCklVBB2rKLmezKhDIHaBvazmPDizbsW
+         77gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lk6w/dQjZUnYKE5Q3JHgYqAZAoCgT7dU2bsxNcBc+uw=;
-        b=oWUAAbv4qEuCsQ7H1VydKhiNRmomB81BhP6aCmH6As3URwzoiVusD6+vCdAVm3R1sA
-         bNoQFmB0LqNrBvkP1N8yYIW4PMUEcKdCex/ehBayYKm/cOzKvcZu1ttqL448bEpTqrFa
-         YmVHiMsgzAWlNJ094AF63hsF9LFB0KjdqXrt2mpdYWGc5zyMGb2IgSA25ctve/2xJ+vU
-         ssmoCDQ44dNhR1oTKUFwsms68CIpwfi9tXvA59YP31LLUTAShChEfs8Jupf6VlQ7XJnz
-         bFT0S7AQpjg82cA4PY8KZ7UwCAFmNZaTTJ68JX7uZdrSUTB6tE/evn4TYSIxp8sLuP9J
-         TG5g==
-X-Gm-Message-State: AFqh2krHBz3KgYKeDNF0CrVU00UgS4nQnhknGiYA9x46aQiwa5ZH9gjp
-        WJ31eHh2qbSwPKr8nolJK8eDGaWd3xM=
-X-Google-Smtp-Source: AMrXdXvozabtH+hwGlMJ481uiCYAIaPqDIJRQ+OdqGE7yXSLtmnx2I2T2IlqOBqB9g7uApOlepmx8g==
-X-Received: by 2002:a05:600c:6016:b0:3d3:3c93:af5e with SMTP id az22-20020a05600c601600b003d33c93af5emr23727755wmb.35.1672442094088;
-        Fri, 30 Dec 2022 15:14:54 -0800 (PST)
+        bh=I67DJyMZ2pVBI8781A9LPZqkSNUsohSh0BZqH+JheCc=;
+        b=Hs/vzKE8y7nW3DbzTclc7zhtbaIuRANsaSXXEqytc0i9/8HSkYVtcnmvdNszqAuEVJ
+         lbZjEIR+j4E0btiM1cRZUINDbpLFd6TOHCdZGi74/ftMxphAtZAHgrS4Il2Up5aWSOgo
+         OfPyiaBreZUfSJPsInfx2j+4StEADYLi8yaSEj4Cu/pTCnmE1ryukBQ7pwvG+hQShxAL
+         4GJF3WZDj3EPl+eqyeWbwNnIVycYnJslnG4lHqumrY4QTUGMCzfO8JuZ/+URY4CmfnJ2
+         vn5hmLFEtVF+OEJNMEOmTmktlkZkXoiZoqnS3GjQ1nbI3vCq8mU5TQcIKxscvYTONdCL
+         X4bQ==
+X-Gm-Message-State: AFqh2kprMxtyvI2/2SQcTUi+bFOVdwYJ69+2I+NFwcVLX/Npag9BZFrc
+        ALLxBcPUjLwFTJ8dulRDfT4=
+X-Google-Smtp-Source: AMrXdXuvEzISEd/jtpcHkGpk9jeGiHTZ08jmZJMO986jqYdOIcSx3H7di8izv5YXBGQDXcfCayznbg==
+X-Received: by 2002:adf:a50c:0:b0:254:3dcb:dbbc with SMTP id i12-20020adfa50c000000b002543dcbdbbcmr23398533wrb.11.1672443143261;
+        Fri, 30 Dec 2022 15:32:23 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p34-20020a05600c1da200b003d99fad7511sm5304770wms.22.2022.12.30.15.14.52
+        by smtp.gmail.com with ESMTPSA id y6-20020adfdf06000000b002879c013b8asm8049812wrl.42.2022.12.30.15.32.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Dec 2022 15:14:53 -0800 (PST)
+        Fri, 30 Dec 2022 15:32:22 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jan Kara <jack@suse.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-perf-users@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] udf: Fix spelling mistake "lenght" -> "length"
-Date:   Fri, 30 Dec 2022 23:14:52 +0000
-Message-Id: <20221230231452.5821-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] perf-tools: Fix spelling mistake "lenght" -> "length"
+Date:   Fri, 30 Dec 2022 23:32:22 +0000
+Message-Id: <20221230233222.45385-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +71,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a udf_err message. Fix it.
+There is a spelling mistake in the variable expansion_lenght. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/udf/directory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-trace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/udf/directory.c b/fs/udf/directory.c
-index a4c91905b033..18a1514871fe 100644
---- a/fs/udf/directory.c
-+++ b/fs/udf/directory.c
-@@ -34,7 +34,7 @@ static int udf_verify_fi(struct udf_fileident_iter *iter)
- 	len = udf_dir_entry_len(&iter->fi);
- 	if (le16_to_cpu(iter->fi.lengthOfImpUse) & 3) {
- 		udf_err(iter->dir->i_sb,
--			"directory (ino %lu) has entry at pos %llu with unaligned lenght of impUse field\n",
-+			"directory (ino %lu) has entry at pos %llu with unaligned length of impUse field\n",
- 			iter->dir->i_ino, (unsigned long long)iter->pos);
- 		return -EFSCORRUPTED;
- 	}
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 86e06f136f40..ccd7923ae802 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3784,7 +3784,7 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
+ 
+ 				if (fmt->strtoul(right, right_size, &syscall_arg, &val)) {
+ 					char *n, expansion[19];
+-					int expansion_lenght = scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
++					int expansion_length = scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
+ 					int expansion_offset = right - new_filter;
+ 
+ 					pr_debug("%s", expansion);
+@@ -3796,7 +3796,7 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
+ 					}
+ 					if (new_filter != evsel->filter)
+ 						free(new_filter);
+-					left = n + expansion_offset + expansion_lenght;
++					left = n + expansion_offset + expansion_length;
+ 					new_filter = n;
+ 				} else {
+ 					pr_err("\"%.*s\" not found for \"%s\" in \"%s\", can't set filter \"%s\"\n",
 -- 
 2.30.2
 
