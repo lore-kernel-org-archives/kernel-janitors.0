@@ -2,37 +2,45 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34595C4167B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 15:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C076BC4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 16:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235253AbiL3Plo (ORCPT
+        id S235311AbiL3QAd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Dec 2022 10:41:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49004 "EHLO
+        Fri, 30 Dec 2022 11:00:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235276AbiL3PlK (ORCPT
+        with ESMTP id S235350AbiL3QAQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Dec 2022 10:41:10 -0500
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AF46BC0B
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Dec 2022 07:41:09 -0800 (PST)
+        Fri, 30 Dec 2022 11:00:16 -0500
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 471351BE81
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Dec 2022 08:00:15 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id BHVLpyfPcexdxBHVLp8KyJ; Fri, 30 Dec 2022 16:41:07 +0100
+        id BHnmp7f8kLrOWBHnnp1MiM; Fri, 30 Dec 2022 17:00:13 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Dec 2022 16:41:07 +0100
+X-ME-Date: Fri, 30 Dec 2022 17:00:13 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] bus: bt1-axi: Use devm_clk_get_enabled() helper
-Date:   Fri, 30 Dec 2022 16:41:05 +0100
-Message-Id: <bb6731e2f2cdae66f3ce94cbb7760a671e034ee1.1672414841.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH v2] drm/bridge: tc358767: Use devm_clk_get_enabled() helper
+Date:   Fri, 30 Dec 2022 17:00:09 +0100
+Message-Id: <208546ce4e01973da1eb9ad7bc0f9241f650b3af.1672415956.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -46,50 +54,62 @@ This simplifies the code and avoids the need of a dedicated function used
 with devm_add_action_or_reset().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
 ---
- drivers/bus/bt1-axi.c | 23 ++---------------------
- 1 file changed, 2 insertions(+), 21 deletions(-)
+Change in v2:
+  - Convert to dev_err_probe()    [Andrzej Hajda]
+  - Update the error message    [Andrzej Hajda]
+  - Add R-b tag    [Andrzej Hajda]
 
-diff --git a/drivers/bus/bt1-axi.c b/drivers/bus/bt1-axi.c
-index 70e49a6e5374..e02485270777 100644
---- a/drivers/bus/bt1-axi.c
-+++ b/drivers/bus/bt1-axi.c
-@@ -146,33 +146,14 @@ static int bt1_axi_request_rst(struct bt1_axi *axi)
- 	return ret;
+v1:
+https://lore.kernel.org/all/4f855984ea895e1488169e77935fa6e044912ac2.1672414073.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/gpu/drm/bridge/tc358767.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index 2a58eb271f70..99f3d5ca7257 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -2022,13 +2022,6 @@ static int tc_probe_bridge_endpoint(struct tc_data *tc)
+ 	return -EINVAL;
  }
  
--static void bt1_axi_disable_clk(void *data)
+-static void tc_clk_disable(void *data)
 -{
--	struct bt1_axi *axi = data;
+-	struct clk *refclk = data;
 -
--	clk_disable_unprepare(axi->aclk);
+-	clk_disable_unprepare(refclk);
 -}
 -
- static int bt1_axi_request_clk(struct bt1_axi *axi)
+ static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
  {
--	int ret;
--
--	axi->aclk = devm_clk_get(axi->dev, "aclk");
-+	axi->aclk = devm_clk_get_enabled(axi->dev, "aclk");
- 	if (IS_ERR(axi->aclk))
- 		return dev_err_probe(axi->dev, PTR_ERR(axi->aclk),
- 				     "Couldn't get AXI Interconnect clock\n");
+ 	struct device *dev = &client->dev;
+@@ -2045,20 +2038,10 @@ static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	if (ret)
+ 		return ret;
  
--	ret = clk_prepare_enable(axi->aclk);
--	if (ret) {
--		dev_err(axi->dev, "Couldn't enable the AXI clock\n");
+-	tc->refclk = devm_clk_get(dev, "ref");
+-	if (IS_ERR(tc->refclk)) {
+-		ret = PTR_ERR(tc->refclk);
+-		dev_err(dev, "Failed to get refclk: %d\n", ret);
 -		return ret;
 -	}
 -
--	ret = devm_add_action_or_reset(axi->dev, bt1_axi_disable_clk, axi);
+-	ret = clk_prepare_enable(tc->refclk);
 -	if (ret)
--		dev_err(axi->dev, "Can't add AXI clock disable action\n");
+-		return ret;
 -
--	return ret;
-+	return 0;
- }
+-	ret = devm_add_action_or_reset(dev, tc_clk_disable, tc->refclk);
+-	if (ret)
+-		return ret;
++	tc->refclk = devm_clk_get_enabled(dev, "ref");
++	if (IS_ERR(tc->refclk))
++		return dev_err_probe(dev, PTR_ERR(tc->refclk),
++				     "Failed to get and enable the ref clk\n");
  
- static int bt1_axi_request_irq(struct bt1_axi *axi)
+ 	/* tRSTW = 100 cycles , at 13 MHz that is ~7.69 us */
+ 	usleep_range(10, 15);
 -- 
 2.34.1
 
