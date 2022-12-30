@@ -2,39 +2,36 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E41C4167B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 16:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42042C4167B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 17:00:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbiL3Qtw (ORCPT
+        id S235088AbiL3RAD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Dec 2022 11:49:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50890 "EHLO
+        Fri, 30 Dec 2022 12:00:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbiL3Qtv (ORCPT
+        with ESMTP id S229527AbiL3RAB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Dec 2022 11:49:51 -0500
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 587B1E009
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Dec 2022 08:49:51 -0800 (PST)
+        Fri, 30 Dec 2022 12:00:01 -0500
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 276AA19034
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Dec 2022 09:00:00 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id BIZopMPUH4s3dBIZop6r4L; Fri, 30 Dec 2022 17:49:49 +0100
+        id BIjepxxYHqMfRBIjepeWsm; Fri, 30 Dec 2022 17:59:59 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Dec 2022 17:49:49 +0100
+X-ME-Date: Fri, 30 Dec 2022 17:59:59 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [PATCH] watchdog: qcom: Use devm_clk_get_enabled() helper
-Date:   Fri, 30 Dec 2022 17:49:47 +0100
-Message-Id: <7c2d5f3815949faf6d3a0237a7b5f272f00a7ae9.1672418969.git.christophe.jaillet@wanadoo.fr>
+        linux-serial@vger.kernel.org
+Subject: [PATCH] serial: sccnxp: Use devm_clk_get_enabled() helper
+Date:   Fri, 30 Dec 2022 17:59:56 +0100
+Message-Id: <735a807c2df835aa436dcbc76b374f983f89a9af.1672419577.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -47,53 +44,45 @@ The devm_clk_get_enabled() helper:
    - calls clk_prepare_enable() and registers what is needed in order to
      call clk_disable_unprepare() when needed, as a managed resource.
 
-This simplifies the code and avoids the need of a dedicated function used
-with devm_add_action_or_reset().
+This simplifies the code.
+This also avoids some other warnings/issues. (see [1])
+
+[1]: https://lore.kernel.org/all/20221118233101.never.215-kees@kernel.org/
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/watchdog/qcom-wdt.c | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
+ drivers/tty/serial/sccnxp.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-index 0d2209c5eaca..d776474dcdf3 100644
---- a/drivers/watchdog/qcom-wdt.c
-+++ b/drivers/watchdog/qcom-wdt.c
-@@ -175,11 +175,6 @@ static const struct watchdog_info qcom_wdt_pt_info = {
- 	.identity	= KBUILD_MODNAME,
- };
+diff --git a/drivers/tty/serial/sccnxp.c b/drivers/tty/serial/sccnxp.c
+index 7df687822634..4f2fc5f7bb19 100644
+--- a/drivers/tty/serial/sccnxp.c
++++ b/drivers/tty/serial/sccnxp.c
+@@ -913,23 +913,13 @@ static int sccnxp_probe(struct platform_device *pdev)
+ 	} else if (PTR_ERR(s->regulator) == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
  
--static void qcom_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static const struct qcom_wdt_match_data match_data_apcs_tmr = {
- 	.offset = reg_offset_data_apcs_tmr,
- 	.pretimeout = false,
-@@ -226,21 +221,12 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(wdt->base))
- 		return PTR_ERR(wdt->base);
- 
--	clk = devm_clk_get(dev, NULL);
-+	clk = devm_clk_get_enabled(dev, NULL);
+-	clk = devm_clk_get(&pdev->dev, NULL);
++	clk = devm_clk_get_enabled(&pdev->dev, NULL);
  	if (IS_ERR(clk)) {
- 		dev_err(dev, "failed to get input clock\n");
- 		return PTR_ERR(clk);
+ 		ret = PTR_ERR(clk);
+ 		if (ret == -EPROBE_DEFER)
+ 			goto err_out;
+ 		uartclk = 0;
+ 	} else {
+-		ret = clk_prepare_enable(clk);
+-		if (ret)
+-			goto err_out;
+-
+-		ret = devm_add_action_or_reset(&pdev->dev,
+-				(void(*)(void *))clk_disable_unprepare,
+-				clk);
+-		if (ret)
+-			goto err_out;
+-
+ 		uartclk = clk_get_rate(clk);
  	}
  
--	ret = clk_prepare_enable(clk);
--	if (ret) {
--		dev_err(dev, "failed to setup clock\n");
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, qcom_clk_disable_unprepare, clk);
--	if (ret)
--		return ret;
--
- 	/*
- 	 * We use the clock rate to calculate the max timeout, so ensure it's
- 	 * not zero to avoid a divide-by-zero exception.
 -- 
 2.34.1
 
