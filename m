@@ -2,104 +2,130 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A42AC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Dec 2022 23:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9747DC3DA7A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Dec 2022 06:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235669AbiL3Xc1 (ORCPT
+        id S231570AbiLaGHO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Dec 2022 18:32:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41422 "EHLO
+        Sat, 31 Dec 2022 01:07:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235664AbiL3Xc0 (ORCPT
+        with ESMTP id S229523AbiLaGHM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Dec 2022 18:32:26 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A327412D20;
-        Fri, 30 Dec 2022 15:32:24 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id co23so21064943wrb.4;
-        Fri, 30 Dec 2022 15:32:24 -0800 (PST)
+        Sat, 31 Dec 2022 01:07:12 -0500
+Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2231B4A5;
+        Fri, 30 Dec 2022 22:07:10 -0800 (PST)
+Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-1322d768ba7so26838594fac.5;
+        Fri, 30 Dec 2022 22:07:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=I67DJyMZ2pVBI8781A9LPZqkSNUsohSh0BZqH+JheCc=;
-        b=nWx3Otszq8LNvUhzN+GkPHe49rJvZicXb/35lWUQBDolDbDSfowtvv0JzqvXuPnJ0V
-         xQICKBGUryYOphQGf6/Bed0u9HTDWwdqPVHbD3vKUK7tR+UV1b/ph8k4SX/cRVT9lvB+
-         cB+tfVcg+u5YkwozoBuGwVIUJrahnf+maImB0uyd0FhSBLDbUqgjtshFvtfnBqIrpYcS
-         rdosCBYzdycSQ+Ypbv5QKd/8oNWNYCruQLazjyL6J0PQKS9auceBKNja09ecolvjXptz
-         UqqBwPQN775CY4NICoBh/69cDhCUw1BswPZPcCklVBB2rKLmezKhDIHaBvazmPDizbsW
-         77gw==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eXaXaysXPbPqROOfEXq6yZCBBqbbsw4F/suhux8TP7I=;
+        b=WgxBUgz09A4l/ZjEh8EEPEMZ6/1Fo8A3VqVzRh5lpsuA93yXl6ylY7pGG8j1uh7gJg
+         chUI6FRQic7DLXhxDc7v8ARSqimQBHZ/nUNS1TA7bcby+72mfegrafp0gEDry9guLnvk
+         720L7A1F8ygUiMFeYMEvvRQ9rGTvKI3pd6TYGzhrAbx9RGh5Hkx/iVRZ0ZJazXhNpubf
+         oilf3UzA9YNRtQCS0BpEA25kPJ+acP2QRvJ2OyQjIN4xhSqEgCcsEJ2fyPfb+eP7TydJ
+         zysR0Dzv7onSi8J7Fiw7aIb4qSD0c7AsdTskALpOoh6fFmqkO4pHRjt3K4132NOK4EnF
+         nVSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I67DJyMZ2pVBI8781A9LPZqkSNUsohSh0BZqH+JheCc=;
-        b=Hs/vzKE8y7nW3DbzTclc7zhtbaIuRANsaSXXEqytc0i9/8HSkYVtcnmvdNszqAuEVJ
-         lbZjEIR+j4E0btiM1cRZUINDbpLFd6TOHCdZGi74/ftMxphAtZAHgrS4Il2Up5aWSOgo
-         OfPyiaBreZUfSJPsInfx2j+4StEADYLi8yaSEj4Cu/pTCnmE1ryukBQ7pwvG+hQShxAL
-         4GJF3WZDj3EPl+eqyeWbwNnIVycYnJslnG4lHqumrY4QTUGMCzfO8JuZ/+URY4CmfnJ2
-         vn5hmLFEtVF+OEJNMEOmTmktlkZkXoiZoqnS3GjQ1nbI3vCq8mU5TQcIKxscvYTONdCL
-         X4bQ==
-X-Gm-Message-State: AFqh2kprMxtyvI2/2SQcTUi+bFOVdwYJ69+2I+NFwcVLX/Npag9BZFrc
-        ALLxBcPUjLwFTJ8dulRDfT4=
-X-Google-Smtp-Source: AMrXdXuvEzISEd/jtpcHkGpk9jeGiHTZ08jmZJMO986jqYdOIcSx3H7di8izv5YXBGQDXcfCayznbg==
-X-Received: by 2002:adf:a50c:0:b0:254:3dcb:dbbc with SMTP id i12-20020adfa50c000000b002543dcbdbbcmr23398533wrb.11.1672443143261;
-        Fri, 30 Dec 2022 15:32:23 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id y6-20020adfdf06000000b002879c013b8asm8049812wrl.42.2022.12.30.15.32.22
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eXaXaysXPbPqROOfEXq6yZCBBqbbsw4F/suhux8TP7I=;
+        b=svvtDnkaRREwhEsmKZwpqvk3rID2a9G3fu4ITKQAx7bT4u4Ay4eUFMJ68FTZG7sNHP
+         hQYVB6V+ADUf6gYN9lAlJWAuDsnWjXEZlJFzO2AESBcg0HSb2Cn1FynNVSrHwNOvKmAP
+         NhRKBkLzJ9WEORqSP55QWbkiVlKU7827DQWlW4YYfnriD4dKcTHcAYxNhkk8tsm3ifG2
+         CRmd5W6J1W4DsptxQ1JkQtnUEv+5GrtKL2hpDydkV2jArsqLdCRrvHNlLl3vpyadM0hw
+         +RNAyDx4+oXR6+BZCDdg6hR2XLAEhtC8a+T4y/c8nEH/env7kJFCpR0ddxG76ZG/iYzX
+         VHQQ==
+X-Gm-Message-State: AFqh2kplrZeWpOCo+5hIk8LH/UGRy1B9Dd/q57+LhAClfjDxJmi+qYwh
+        WrHWorn0voi2hS7BVSlZVIQ=
+X-Google-Smtp-Source: AMrXdXs4hcymSV8eBwdYvJfjVINQYyVV085l1H52p/TSeSxzsIW8SSv3E7ygWXAE6SL5jWiwMD1MKQ==
+X-Received: by 2002:a05:6871:714:b0:14e:ab8c:8735 with SMTP id f20-20020a056871071400b0014eab8c8735mr18913187oap.57.1672466829151;
+        Fri, 30 Dec 2022 22:07:09 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id r16-20020a056870179000b0014813cc4a51sm6529590oae.29.2022.12.30.22.07.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Dec 2022 15:32:22 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-perf-users@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] perf-tools: Fix spelling mistake "lenght" -> "length"
-Date:   Fri, 30 Dec 2022 23:32:22 +0000
-Message-Id: <20221230233222.45385-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Fri, 30 Dec 2022 22:07:08 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Fri, 30 Dec 2022 22:07:07 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] watchdog: visconti: Use devm_clk_get_enabled() helper
+Message-ID: <20221231060707.GA2927444@roeck-us.net>
+References: <13e8cdf17556da111d1d98a8fe0b1dc1c78007e2.1672417940.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13e8cdf17556da111d1d98a8fe0b1dc1c78007e2.1672417940.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the variable expansion_lenght. Fix it.
+On Fri, Dec 30, 2022 at 05:32:42PM +0100, Christophe JAILLET wrote:
+> The devm_clk_get_enabled() helper:
+>    - calls devm_clk_get()
+>    - calls clk_prepare_enable() and registers what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
+> 
+> This simplifies the code and avoids the need of a dedicated function used
+> with devm_add_action_or_reset().
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/perf/builtin-trace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 86e06f136f40..ccd7923ae802 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3784,7 +3784,7 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
- 
- 				if (fmt->strtoul(right, right_size, &syscall_arg, &val)) {
- 					char *n, expansion[19];
--					int expansion_lenght = scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
-+					int expansion_length = scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
- 					int expansion_offset = right - new_filter;
- 
- 					pr_debug("%s", expansion);
-@@ -3796,7 +3796,7 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
- 					}
- 					if (new_filter != evsel->filter)
- 						free(new_filter);
--					left = n + expansion_offset + expansion_lenght;
-+					left = n + expansion_offset + expansion_length;
- 					new_filter = n;
- 				} else {
- 					pr_err("\"%.*s\" not found for \"%s\" in \"%s\", can't set filter \"%s\"\n",
--- 
-2.30.2
-
+> ---
+>  drivers/watchdog/visconti_wdt.c | 17 +----------------
+>  1 file changed, 1 insertion(+), 16 deletions(-)
+> 
+> diff --git a/drivers/watchdog/visconti_wdt.c b/drivers/watchdog/visconti_wdt.c
+> index 83ef55e66ca8..cef0794708e7 100644
+> --- a/drivers/watchdog/visconti_wdt.c
+> +++ b/drivers/watchdog/visconti_wdt.c
+> @@ -112,11 +112,6 @@ static const struct watchdog_ops visconti_wdt_ops = {
+>  	.set_timeout	= visconti_wdt_set_timeout,
+>  };
+>  
+> -static void visconti_clk_disable_unprepare(void *data)
+> -{
+> -	clk_disable_unprepare(data);
+> -}
+> -
+>  static int visconti_wdt_probe(struct platform_device *pdev)
+>  {
+>  	struct watchdog_device *wdev;
+> @@ -134,20 +129,10 @@ static int visconti_wdt_probe(struct platform_device *pdev)
+>  	if (IS_ERR(priv->base))
+>  		return PTR_ERR(priv->base);
+>  
+> -	clk = devm_clk_get(dev, NULL);
+> +	clk = devm_clk_get_enabled(dev, NULL);
+>  	if (IS_ERR(clk))
+>  		return dev_err_probe(dev, PTR_ERR(clk), "Could not get clock\n");
+>  
+> -	ret = clk_prepare_enable(clk);
+> -	if (ret) {
+> -		dev_err(dev, "Could not enable clock\n");
+> -		return ret;
+> -	}
+> -
+> -	ret = devm_add_action_or_reset(dev, visconti_clk_disable_unprepare, clk);
+> -	if (ret)
+> -		return ret;
+> -
+>  	clk_freq = clk_get_rate(clk);
+>  	if (!clk_freq)
+>  		return -EINVAL;
+> -- 
+> 2.34.1
+> 
