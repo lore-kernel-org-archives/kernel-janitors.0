@@ -2,99 +2,128 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03459C3DA7A
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Jan 2023 12:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE44C53210
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Jan 2023 12:49:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231454AbjABMjq (ORCPT
+        id S232934AbjABMt5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Jan 2023 07:39:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49742 "EHLO
+        Mon, 2 Jan 2023 07:49:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229708AbjABMjo (ORCPT
+        with ESMTP id S232882AbjABMtp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Jan 2023 07:39:44 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4FFE6423;
-        Mon,  2 Jan 2023 04:39:43 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 20EDB33EFB;
-        Mon,  2 Jan 2023 12:39:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1672663182; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vh8oOl8B0pDGWo7uaAANPYMniQThtt1/t22YPdxLRZ8=;
-        b=rWOzyuzwuXZfEhGt9KseWFo3TRq+B/tEKBKORemtlGILCT0rS4ZAg13TDk5yLR8R4+B//d
-        YwrXXvul6qDegdBBQ0ewx+KLhc5XU/kIsxnnKxFcvPE5qREKnAom/DLmQudhBCac429nZt
-        JRTKxSRgHfS0XTV4E7AfZTj4YeX+QAw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1672663182;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vh8oOl8B0pDGWo7uaAANPYMniQThtt1/t22YPdxLRZ8=;
-        b=ZQhWvBU7lh5chH5WXGZOBlJ/iEp9ADl1u0CPSYpdXxyEeseTcTVZVlJNnzyxMgfCGiiXsM
-        J/Afjst8IXQKJlAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 136B713427;
-        Mon,  2 Jan 2023 12:39:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id JFG0BI7QsmNHFgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 02 Jan 2023 12:39:42 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9BB04A073E; Mon,  2 Jan 2023 13:39:41 +0100 (CET)
-Date:   Mon, 2 Jan 2023 13:39:41 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] udf: Fix spelling mistake "lenght" -> "length"
-Message-ID: <20230102123941.xumwslcekp5zo65a@quack3>
-References: <20221230231452.5821-1-colin.i.king@gmail.com>
+        Mon, 2 Jan 2023 07:49:45 -0500
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E401095
+        for <kernel-janitors@vger.kernel.org>; Mon,  2 Jan 2023 04:49:44 -0800 (PST)
+Received: by mail-pf1-x432.google.com with SMTP id x26so12376125pfq.10
+        for <kernel-janitors@vger.kernel.org>; Mon, 02 Jan 2023 04:49:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TMEbty0JviNpn+Yg5A0C6kfJvNq8b2Lmd3piEj6ZucM=;
+        b=xNxnlhnsuQeYEWCioPL1Rr8t7KdGqG8JqqAo1ZY4yCPqKI1ekX1RVvn6hfY6VcXbiQ
+         bhLkJpVx4XcTjJcJd3vHyyi1bBw02wB8HWKsF1+Kfe8CWyQXlb45h2DrifhTSLj1n6fO
+         0TCR8WkxW9vO4Uqxw/deI2DBs6S4lAgTSbURM/T1FoIr/N1C8/cra+0sXxD2P1wY6nI2
+         6ZwBR6i3mC/5uT1JKqyCyGCWn99hhfFaXpMF1PvYDPaVu36RVyAw+LFmAW4AoRfzS8I7
+         gBflxdrFhwI0/xQ4z1/s4+NvgfWQamHqiYlKidycHuMaMN4Fq01IcacExFziiS0cb/Lj
+         OnqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TMEbty0JviNpn+Yg5A0C6kfJvNq8b2Lmd3piEj6ZucM=;
+        b=nS9PGOOcJoAD2yt390MwMHmMi040k7U2CK30bD0QkOaDtOsiwrwblGSmMWq/KX7j2k
+         4yq+4IVFOHW1dWT8v7gLdW4V+T4GiGhg6Qp8CsAsSft4Wm0ALPgRI0QqJC907uIbYvKl
+         gv7nmzNbVpKmwDUjFT3nelTHiZzGBcCl5K23HBgVjiVIzfwBOMWOxmyD3avo1bX44xuk
+         ch3p1AZ5zCSubOx6F7nxR04YiX7E8nTx8/zBMDNW9h6LIs/MqHipGZmybVVLVUUaQxbQ
+         lThBqv52WMyPLqlbcbBUUc2ur0zEb5sG/euyN/XSzOCWUhLPTtTrJy3ievtYzc+/Hy7/
+         PAZg==
+X-Gm-Message-State: AFqh2kqF7U9o8z02bHXKUTEC6ryGL5NJUdV85L800wxCt7fW4zF2BnCx
+        icDGwgFbVisswdsf2WQ1JndNxYumH86XS0e2UKDcOw==
+X-Google-Smtp-Source: AMrXdXvzgF7HAsl+aefGp8qa6WXa410ObFc+WdoziWwxlwHOMP/uW5ZYac6nTWvIBRT8mIXKtl58wGKLROQKlWPQDzE=
+X-Received: by 2002:a63:5841:0:b0:477:b650:494b with SMTP id
+ i1-20020a635841000000b00477b650494bmr2384311pgm.434.1672663784228; Mon, 02
+ Jan 2023 04:49:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221230231452.5821-1-colin.i.king@gmail.com>
+References: <7c686fecb11b4ec1f55cd7075dc7cfcdd9b445ba.1670697358.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7c686fecb11b4ec1f55cd7075dc7cfcdd9b445ba.1670697358.git.christophe.jaillet@wanadoo.fr>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 2 Jan 2023 13:49:08 +0100
+Message-ID: <CAPDyKFo7W3EVCFjACB+zaMi8O-wTmCX2winydAB_XtxfnA0Qiw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mmc: sunlpus: Fix an error handling path in spmmc_drv_probe()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Tony Huang <tonyhuang.sunplus@gmail.com>,
+        Li-hao Kuo <lhjeff911@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri 30-12-22 23:14:52, Colin Ian King wrote:
-> There is a spelling mistake in a udf_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Thanks! I've merged the patch to my tree.
-
-								Honza
-
+On Sat, 10 Dec 2022 at 19:36, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> If an error occurs after successful clk_prepare_enable() call in the probe,
+> the clk is not clk_disable_unprepare()'ed.
+>
+> Use devm_clk_get_enabled() instead of devm_clk_get() to fix, and simplify
+> the probe and the remove function accordingly.
+>
+> Fixes: 4e268fed8b18 ("mmc: Add mmc driver for Sunplus SP7021")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  fs/udf/directory.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/udf/directory.c b/fs/udf/directory.c
-> index a4c91905b033..18a1514871fe 100644
-> --- a/fs/udf/directory.c
-> +++ b/fs/udf/directory.c
-> @@ -34,7 +34,7 @@ static int udf_verify_fi(struct udf_fileident_iter *iter)
->  	len = udf_dir_entry_len(&iter->fi);
->  	if (le16_to_cpu(iter->fi.lengthOfImpUse) & 3) {
->  		udf_err(iter->dir->i_sb,
-> -			"directory (ino %lu) has entry at pos %llu with unaligned lenght of impUse field\n",
-> +			"directory (ino %lu) has entry at pos %llu with unaligned length of impUse field\n",
->  			iter->dir->i_ino, (unsigned long long)iter->pos);
->  		return -EFSCORRUPTED;
->  	}
-> -- 
-> 2.30.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> This changes the order of resource releasing when the driver is removed,
+> but it looks ok to me.
+> ---
+>  drivers/mmc/host/sunplus-mmc.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sunplus-mmc.c b/drivers/mmc/host/sunplus-mmc.c
+> index db5e0dcdfa7f..3e8856a82188 100644
+> --- a/drivers/mmc/host/sunplus-mmc.c
+> +++ b/drivers/mmc/host/sunplus-mmc.c
+> @@ -878,7 +878,7 @@ static int spmmc_drv_probe(struct platform_device *pdev)
+>         if (IS_ERR(host->base))
+>                 return PTR_ERR(host->base);
+>
+> -       host->clk = devm_clk_get(&pdev->dev, NULL);
+> +       host->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>         if (IS_ERR(host->clk))
+>                 return dev_err_probe(&pdev->dev, PTR_ERR(host->clk), "clk get fail\n");
+>
+> @@ -896,10 +896,6 @@ static int spmmc_drv_probe(struct platform_device *pdev)
+>         if (ret)
+>                 return ret;
+>
+> -       ret = clk_prepare_enable(host->clk);
+> -       if (ret)
+> -               return dev_err_probe(&pdev->dev, ret, "failed to enable clk\n");
+> -
+>         ret = mmc_of_parse(mmc);
+>         if (ret)
+>                 goto probe_free_host;
+> @@ -944,7 +940,6 @@ static int spmmc_drv_remove(struct platform_device *dev)
+>
+>         mmc_remove_host(host->mmc);
+>         pm_runtime_get_sync(&dev->dev);
+> -       clk_disable_unprepare(host->clk);
+
+I don't think this improves code quality, but rather the opposite.
+
+Removing the call to clk_disable_unprepare() here, makes the untrained
+eye, to believe that the calls to pm_runtime_get_sync() and
+pm_runtime_put_noidle() are redundant, while they aren't.
+
+Instead, I suggest we add a call to clk_disable_unprepare() in the
+error path in ->probe(), rather than using devm_clk_get_enabled().
+
+>         pm_runtime_put_noidle(&dev->dev);
+>         pm_runtime_disable(&dev->dev);
+>         platform_set_drvdata(dev, NULL);
+
+Kind regards
+Uffe
