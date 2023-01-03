@@ -2,78 +2,157 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC882C54EBD
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Jan 2023 20:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78615C4708E
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Jan 2023 21:13:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234534AbjACUGK (ORCPT
+        id S233670AbjACVNa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Jan 2023 15:06:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46332 "EHLO
+        Tue, 3 Jan 2023 16:13:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230488AbjACUGI (ORCPT
+        with ESMTP id S233455AbjACVN3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Jan 2023 15:06:08 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473A8F12;
-        Tue,  3 Jan 2023 12:06:06 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 07ABAB810FB;
-        Tue,  3 Jan 2023 20:06:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEB4C433F1;
-        Tue,  3 Jan 2023 20:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672776363;
-        bh=9625wY2U5dr79783vx/w/dXrSwzOePF3VKlSe0vb1+w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=UJzutdaWMxWMmQxEjcqVzgUGfTFyXNPT2SVesZ5lD5asxoFddmE8BMwTToFZU1Di0
-         gItd68C2GjW2QvMuYQ8justZU0eEtC4rIwVuZKZkRvinP6x7uLIXQgab45Cah79o9e
-         4rD6BjcgkIB0eeDXISTJYhG/DYfDvhZom4daFuzNpzuTI5cAQmy1kSScX3iB+ghDwg
-         0+LEn5Fz6lVccpPLBdicakJZ0P3IjIP5Neka9wUFJo0Qaqb8osj/xXqkgD5kY/rW+a
-         f4ZjTO6lHZyal8xeYxq8VCKqkom5Ur2v8ljCNv4hQ2ZjlILaXA6e+s9WSzgLfhmzYU
-         lnrT/33g4pmFQ==
-Date:   Tue, 3 Jan 2023 14:06:01 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc:     linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: dwc: adjust to recent removal of PCI_MSI_IRQ_DOMAIN
-Message-ID: <20230103200601.GA1017153@bhelgaas>
+        Tue, 3 Jan 2023 16:13:29 -0500
+Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547ED13F14;
+        Tue,  3 Jan 2023 13:13:28 -0800 (PST)
+Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-14ffd3c5b15so26707130fac.3;
+        Tue, 03 Jan 2023 13:13:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R/ctDO+1ilKD6bs7lChYRRMb/JY8dZrPmDPwlnfuZHc=;
+        b=oIB3rIEQz/D2KREth89OCJSRJZEBpIK+MFBQmor0fooSEZk18AcmqBOgYOhmas9q7D
+         ttfETsVJw1GpHmdCg57IL79D3Nasg5d87mS7DmRK7QILO0Allhm1YF5fhN8ICghyryaI
+         djFOu6K+6T3cN38qivcj9h7S9Ol6oXKU/9W6TBqt7ao4Zxx4/94B1w+O84hfwL7uxyP0
+         PyRm3iW0VcUlU9iDoVuUA2K/AgUrAWMB7PMQto3fDAZrNOE6AhefW31KRkdiaOvDvWCx
+         JzuWJmaF/99calV257xxJVwQNHDetlQvoMvFTNQ3m7VLLYRdaB9QJBy3jE/KNOULlyH3
+         AYrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R/ctDO+1ilKD6bs7lChYRRMb/JY8dZrPmDPwlnfuZHc=;
+        b=yKrJA8JMrrPCO4iapiZ0yB3NbUrdWLQN5EChJB/s0Ex7Rs51nId8KSa9Kh+rJQk9Ng
+         kNTeyh34XQQX439c4YNCoQv10E1GQarJM+WdvTmShpy0Rjc9Jmoml0ePaLRiHPKG9W4P
+         jcbcUxmHbCnHLGTLVZ6HJRRjHOFFrS+CJ5Ks3LWDT9juTXSKE1We835LFVJCRqo5m51W
+         eObEytzvezD3oLGL/uyifngCrzCBejOvH55c3Q05QggDWL9lPEUHJ98Xx0T9lYzVPdX6
+         UJtUmkFMuIc91r6TeCZZmRta7C8j1M8xAAc0YMg7AB25rg9J+o4P+Nr41pPWU6zweTwb
+         X+Xg==
+X-Gm-Message-State: AFqh2krV0yRrQe647wBosHf1Wc61A/aCivw10u1sNsr3+sz9dN7BPGLL
+        L/4AxDL2A0YBv17o06oUy6Y=
+X-Google-Smtp-Source: AMrXdXu5bzH3G3kwF3I9ktB1IvbGd0d/1Z36TYxs8O4B3uzY/tLwiEmdYnn5FfJ+MKxI65vK9IoF2A==
+X-Received: by 2002:a05:6870:6c04:b0:14f:b93f:1603 with SMTP id na4-20020a0568706c0400b0014fb93f1603mr17825271oab.22.1672780407611;
+        Tue, 03 Jan 2023 13:13:27 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id o33-20020a05687107a100b001446480a042sm14816200oap.58.2023.01.03.13.13.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jan 2023 13:13:26 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Tue, 3 Jan 2023 13:13:25 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] watchdog: lpc18xx: Use devm_clk_get_enabled() helper
+Message-ID: <20230103211325.GA212337@roeck-us.net>
+References: <d4c675190d3ddfbba5c354edb4274757f9117304.1672489554.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <167240660288.752172.35470572785572794.b4-ty@kernel.org>
+In-Reply-To: <d4c675190d3ddfbba5c354edb4274757f9117304.1672489554.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Dec 30, 2022 at 02:23:38PM +0100, Lorenzo Pieralisi wrote:
-> On Thu, 15 Dec 2022 11:34:52 +0100, Lukas Bulwahn wrote:
-> > Commit a474d3fbe287 ("PCI/MSI: Get rid of PCI_MSI_IRQ_DOMAIN") removes the
-> > config PCI_MSI_IRQ_DOMAIN and makes all previous references to that config
-> > then refer to PCI_MSI instead.
-> > 
-> > Commit ba6ed462dcf4 ("PCI: dwc: Add Baikal-T1 PCIe controller support")
-> > adds the config PCIE_BT1, which following the previous default pattern
-> > depends on the config PCI_MSI_IRQ_DOMAIN.
-> > 
-> > [...]
+On Sat, Dec 31, 2022 at 01:26:09PM +0100, Christophe JAILLET wrote:
+> The devm_clk_get_enabled() helper:
+>    - calls devm_clk_get()
+>    - calls clk_prepare_enable() and registers what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
 > 
-> Applied to pci/dwc, thanks!
+> This simplifies the code and avoids the need of a dedicated function used
+> with devm_add_action_or_reset().
 > 
-> [1/1] PCI: dwc: adjust to recent removal of PCI_MSI_IRQ_DOMAIN
->       https://git.kernel.org/lpieralisi/pci/c/3c9686173220
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Since both commits appeared in v6.2-rc1, I cherry-picked the fix to
-for-linus so we can get it in v6.2.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Lorenzo, can you drop it from your pci/dwc branch so we don't end up
-with a duplicate?
-
-Bjorn
+> ---
+> Note that the order of operations is slightly modified by this patch. The
+> "reg" clk is now prepare_enable()'ed before clk_get("wdtclk").
+> ---
+>  drivers/watchdog/lpc18xx_wdt.c | 30 ++----------------------------
+>  1 file changed, 2 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/watchdog/lpc18xx_wdt.c b/drivers/watchdog/lpc18xx_wdt.c
+> index 60b6d74f267d..1b9b5f21a0df 100644
+> --- a/drivers/watchdog/lpc18xx_wdt.c
+> +++ b/drivers/watchdog/lpc18xx_wdt.c
+> @@ -197,16 +197,10 @@ static const struct watchdog_ops lpc18xx_wdt_ops = {
+>  	.restart        = lpc18xx_wdt_restart,
+>  };
+>  
+> -static void lpc18xx_clk_disable_unprepare(void *data)
+> -{
+> -	clk_disable_unprepare(data);
+> -}
+> -
+>  static int lpc18xx_wdt_probe(struct platform_device *pdev)
+>  {
+>  	struct lpc18xx_wdt_dev *lpc18xx_wdt;
+>  	struct device *dev = &pdev->dev;
+> -	int ret;
+>  
+>  	lpc18xx_wdt = devm_kzalloc(dev, sizeof(*lpc18xx_wdt), GFP_KERNEL);
+>  	if (!lpc18xx_wdt)
+> @@ -216,38 +210,18 @@ static int lpc18xx_wdt_probe(struct platform_device *pdev)
+>  	if (IS_ERR(lpc18xx_wdt->base))
+>  		return PTR_ERR(lpc18xx_wdt->base);
+>  
+> -	lpc18xx_wdt->reg_clk = devm_clk_get(dev, "reg");
+> +	lpc18xx_wdt->reg_clk = devm_clk_get_enabled(dev, "reg");
+>  	if (IS_ERR(lpc18xx_wdt->reg_clk)) {
+>  		dev_err(dev, "failed to get the reg clock\n");
+>  		return PTR_ERR(lpc18xx_wdt->reg_clk);
+>  	}
+>  
+> -	lpc18xx_wdt->wdt_clk = devm_clk_get(dev, "wdtclk");
+> +	lpc18xx_wdt->wdt_clk = devm_clk_get_enabled(dev, "wdtclk");
+>  	if (IS_ERR(lpc18xx_wdt->wdt_clk)) {
+>  		dev_err(dev, "failed to get the wdt clock\n");
+>  		return PTR_ERR(lpc18xx_wdt->wdt_clk);
+>  	}
+>  
+> -	ret = clk_prepare_enable(lpc18xx_wdt->reg_clk);
+> -	if (ret) {
+> -		dev_err(dev, "could not prepare or enable sys clock\n");
+> -		return ret;
+> -	}
+> -	ret = devm_add_action_or_reset(dev, lpc18xx_clk_disable_unprepare,
+> -				       lpc18xx_wdt->reg_clk);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = clk_prepare_enable(lpc18xx_wdt->wdt_clk);
+> -	if (ret) {
+> -		dev_err(dev, "could not prepare or enable wdt clock\n");
+> -		return ret;
+> -	}
+> -	ret = devm_add_action_or_reset(dev, lpc18xx_clk_disable_unprepare,
+> -				       lpc18xx_wdt->wdt_clk);
+> -	if (ret)
+> -		return ret;
+> -
+>  	/* We use the clock rate to calculate timeouts */
+>  	lpc18xx_wdt->clk_rate = clk_get_rate(lpc18xx_wdt->wdt_clk);
+>  	if (lpc18xx_wdt->clk_rate == 0) {
+> -- 
+> 2.34.1
+> 
