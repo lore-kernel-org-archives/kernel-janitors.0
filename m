@@ -2,105 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC587C3DA7D
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Jan 2023 11:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC882C54EBD
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Jan 2023 20:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233082AbjACLik (ORCPT
+        id S234534AbjACUGK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Jan 2023 06:38:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36218 "EHLO
+        Tue, 3 Jan 2023 15:06:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237428AbjACLiL (ORCPT
+        with ESMTP id S230488AbjACUGI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Jan 2023 06:38:11 -0500
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A387EDF11;
-        Tue,  3 Jan 2023 03:38:06 -0800 (PST)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 08B945C054E;
-        Tue,  3 Jan 2023 06:38:04 -0500 (EST)
-Received: from imap47 ([10.202.2.97])
-  by compute5.internal (MEProxy); Tue, 03 Jan 2023 06:38:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1672745884; x=1672832284; bh=p2
-        IVLcKLfYVfXq3tOPJfy9fqA+CIFIvOUBhc8QFZ2+A=; b=MUklIHs7gzCKpEOO5r
-        1bvq39xyx/Ea65nv5IjDv1iCvNH/6Z8WEFI2t2t6X71A3lW8Uf84p0yO9jIuK5Ju
-        6HIfSgSkuuNiyNQYQywdagyZAtcYuOK4UQLhxlOgmSBosH94XXl1puDwlNPGa9nx
-        aG73MPQAMtCb7CEO22tiYdOqbXZazX48aW9iL8EBoEntbXjo4WQdBwZvEzz7w4u+
-        nkpCMDaS2+bLkZbYVl7BbOnGVpbAcIS+KFdQCYOT2iAuKSHbanLQ6aZGsZdQgw5P
-        uRRmSmubqqCdVIv7McKCKSeuLo+KxqFEVzCEh9Z6NbF+zO0cgyXFPryORAD/+W8e
-        drGw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1672745884; x=1672832284; bh=p2IVLcKLfYVfXq3tOPJfy9fqA+CI
-        FIvOUBhc8QFZ2+A=; b=RRR4lGdjU5qgZWpvlv7gWOBZ+3ZRLIELrTKSLtEgij82
-        porsHf4hPpfNiMHANXtr/wqFpRYBtS+FcMKxBVl4h1fDGv0LxvvipaOjcmrKs6/X
-        EtibEmdZwTsh244r8W2PTI5fycD/JWkCzxIPTyNepswPdN5G76O5xHws9ugCuyQj
-        ZaBEC7gyI8vfFtv3rbGpbRsYneHl9tL8VV/zCKMXROPG0c1Ij2D10u8J6kTLaL1w
-        einiw+wzG1MErWu+AM8MmK65sHhwSFgiAEsvUfHaGqKzgzAvnx69dobegdY9uHY/
-        VcaABIbeGCsUd5GrwmaDOx5aL99m5m3eEKkqpyfM7w==
-X-ME-Sender: <xms:mhO0Y59Z8i4B82a-n6IP83_yBP1xx3s64NpzImujxMdlKAXtMj18Yw>
-    <xme:mhO0Y9seP4KSGIGcSHtz8s9WS5ZTyXrtoOJST80rMy4OchRQr8qvJJGlsjfb1dvwa
-    cAUJhnuKzNpAPj1vpc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrjeeggddvlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdfuvhgv
-    nhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvghrrdguvghvqeenucggtffrrg
-    htthgvrhhnpeelvefggeffheevtdeivefhkeehfeettdejteduveeiheevveeilefghfei
-    veeiueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hsvhgvnhesshhvvghnphgvthgvrhdruggvvh
-X-ME-Proxy: <xmx:mhO0Y3A93X0nfCn-JQFPV80WZ9BD7yh7UhiFzK2qZ8pvJWxwjt-5qQ>
-    <xmx:mhO0Y9c0iWRIX2rPJnofnhBZGQLVKhcPJNE9-zVAWDzjlbswZ-eA4g>
-    <xmx:mhO0Y-NtXHjs3l9Ony8srFU_GRXqN3QpK79jL77fnKcWkTpMaIw4LA>
-    <xmx:nBO0Y9cV6p19-b6L8Ui7vqw_Dh0inHu_2ZXe3MazqtTDpHAfdSNf2w>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 7E4CFA6007C; Tue,  3 Jan 2023 06:38:02 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
-Mime-Version: 1.0
-Message-Id: <8b8a3f31-936f-4595-83aa-8e5b0272f8a3@app.fastmail.com>
-In-Reply-To: <6f312af6160d1e10b616c9adbd1fd8f822db964d.1672473415.git.christophe.jaillet@wanadoo.fr>
-References: <6f312af6160d1e10b616c9adbd1fd8f822db964d.1672473415.git.christophe.jaillet@wanadoo.fr>
-Date:   Tue, 03 Jan 2023 12:37:41 +0100
-From:   "Sven Peter" <sven@svenpeter.dev>
-To:     "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Hector Martin" <marcan@marcan.st>,
-        "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
-        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
-        "Guenter Roeck" <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH] watchdog: apple: Use devm_clk_get_enabled() helper
-Content-Type: text/plain
+        Tue, 3 Jan 2023 15:06:08 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473A8F12;
+        Tue,  3 Jan 2023 12:06:06 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 07ABAB810FB;
+        Tue,  3 Jan 2023 20:06:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEB4C433F1;
+        Tue,  3 Jan 2023 20:06:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672776363;
+        bh=9625wY2U5dr79783vx/w/dXrSwzOePF3VKlSe0vb1+w=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=UJzutdaWMxWMmQxEjcqVzgUGfTFyXNPT2SVesZ5lD5asxoFddmE8BMwTToFZU1Di0
+         gItd68C2GjW2QvMuYQ8justZU0eEtC4rIwVuZKZkRvinP6x7uLIXQgab45Cah79o9e
+         4rD6BjcgkIB0eeDXISTJYhG/DYfDvhZom4daFuzNpzuTI5cAQmy1kSScX3iB+ghDwg
+         0+LEn5Fz6lVccpPLBdicakJZ0P3IjIP5Neka9wUFJo0Qaqb8osj/xXqkgD5kY/rW+a
+         f4ZjTO6lHZyal8xeYxq8VCKqkom5Ur2v8ljCNv4hQ2ZjlILaXA6e+s9WSzgLfhmzYU
+         lnrT/33g4pmFQ==
+Date:   Tue, 3 Jan 2023 14:06:01 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc:     linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc: adjust to recent removal of PCI_MSI_IRQ_DOMAIN
+Message-ID: <20230103200601.GA1017153@bhelgaas>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <167240660288.752172.35470572785572794.b4-ty@kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, Dec 30, 2022 at 02:23:38PM +0100, Lorenzo Pieralisi wrote:
+> On Thu, 15 Dec 2022 11:34:52 +0100, Lukas Bulwahn wrote:
+> > Commit a474d3fbe287 ("PCI/MSI: Get rid of PCI_MSI_IRQ_DOMAIN") removes the
+> > config PCI_MSI_IRQ_DOMAIN and makes all previous references to that config
+> > then refer to PCI_MSI instead.
+> > 
+> > Commit ba6ed462dcf4 ("PCI: dwc: Add Baikal-T1 PCIe controller support")
+> > adds the config PCIE_BT1, which following the previous default pattern
+> > depends on the config PCI_MSI_IRQ_DOMAIN.
+> > 
+> > [...]
+> 
+> Applied to pci/dwc, thanks!
+> 
+> [1/1] PCI: dwc: adjust to recent removal of PCI_MSI_IRQ_DOMAIN
+>       https://git.kernel.org/lpieralisi/pci/c/3c9686173220
 
+Since both commits appeared in v6.2-rc1, I cherry-picked the fix to
+for-linus so we can get it in v6.2.
 
-On Sat, Dec 31, 2022, at 08:57, Christophe JAILLET wrote:
-> The devm_clk_get_enabled() helper:
->    - calls devm_clk_get()
->    - calls clk_prepare_enable() and registers what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
->
-> This simplifies the code and avoids the need of a dedicated function used
-> with devm_add_action_or_reset().
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Lorenzo, can you drop it from your pci/dwc branch so we don't end up
+with a duplicate?
 
-Reviewed-by: Sven Peter <sven@svenpeter.dev>
-
-
-Thanks,
-
-
-Sven
+Bjorn
