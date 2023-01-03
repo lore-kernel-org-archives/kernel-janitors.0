@@ -2,115 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D65EDC54E76
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Jan 2023 15:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC587C3DA7D
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Jan 2023 11:39:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236249AbjABPNO (ORCPT
+        id S233082AbjACLik (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Jan 2023 10:13:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53822 "EHLO
+        Tue, 3 Jan 2023 06:38:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236290AbjABPNM (ORCPT
+        with ESMTP id S237428AbjACLiL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Jan 2023 10:13:12 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DC398FE2
-        for <kernel-janitors@vger.kernel.org>; Mon,  2 Jan 2023 07:13:11 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id m7-20020a17090a730700b00225ebb9cd01so21245721pjk.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 02 Jan 2023 07:13:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=otygSCeqYmw+ATuRegxvbEPgY/sYQb9Ip6+W2rvVaQg=;
-        b=a9G0rqbfwcOQy3clY+Qqml/pRfbYB3tTnEXqDNbOVsZW/oJt/kC1Xv5lyiLa4kBSGm
-         3zoAcBlS5kMS0qrWlWmDeRRvjU/4kShoMy3tdgdkOca2QT5m3Yy4UFIqYmKYOfG1cCVD
-         DspfzOTfaWX+1uQEbN+pxBIyru80S5a524q2+1d9UKlKhK3+IxBRP4BRIRcq8py39qJH
-         lrx4pvoREYQh8usxT//rKsGVjLyJcrKovhip8OypTd+udn34vdUF5uXXcYPD5DvFmcmG
-         T19ru4YhFZTvPcjU4VdACf1K0ozGQDY4gh7CZ/H++N9vbkRR+fQjGzyJ61hBbxoY9CJA
-         z94w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=otygSCeqYmw+ATuRegxvbEPgY/sYQb9Ip6+W2rvVaQg=;
-        b=5iYuJGZHedgdli1aUiUbv/YloSWjf7qSUn604l8rBw6JmHnWosLyZZut7EnKsAbkEF
-         aOEq57Y8vaNreybnQyFRoTt06h218Z9qkiV68VJGZQu00CtxcvhNLWifUXgp7aypveZl
-         +QD47LSRaq/nkjao7pmTNyCceaOabw3FJwvwGeQ31dJTu+9RqiEw5mfEwSHlttSXMA+/
-         Z2CpkdGIelK39102gW6oiV3l5A0HuPe286brNvQ18OQLz8yoTfue4t2Y1DndsM6ApRXd
-         /3gAW4ONIFLiMacIqt78dc0/Jf9zsaCCE3HaikeEssg+PRGLrv4oTtDsQmxlQmwSQUuf
-         RwZQ==
-X-Gm-Message-State: AFqh2kqDeHENAS8Vrkbl5LPvIO11FYPPJetAwTLtyM0BT+uoOt2np50k
-        8G6Q3jSG5/f6WzXm6gZwGf84V3R2+FUMP/MxCEgy5A==
-X-Google-Smtp-Source: AMrXdXvBbRg+gwuK3zo3zJqn8sbYYAEgGNQd6plGlB7o9px13hy9RfXgRvDIwUhQ9Hr1LwldjrkE3KnikV8v2+McWew=
-X-Received: by 2002:a17:902:e053:b0:192:8d55:4599 with SMTP id
- x19-20020a170902e05300b001928d554599mr1261766plx.165.1672672390946; Mon, 02
- Jan 2023 07:13:10 -0800 (PST)
-MIME-Version: 1.0
-References: <0f520597dbad89ab99c217c8986912fa53eaf5f9.1671293108.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <0f520597dbad89ab99c217c8986912fa53eaf5f9.1671293108.git.christophe.jaillet@wanadoo.fr>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 2 Jan 2023 16:12:34 +0100
-Message-ID: <CAPDyKFrhHnk21qKK0Losg02KCN18JdVZb1CgA=LYj4NwN33_Bw@mail.gmail.com>
-Subject: Re: [PATCH] PM: AVS: qcom-cpr: Fix an error handling path in cpr_probe()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Niklas Cassel <nks@flawful.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 3 Jan 2023 06:38:11 -0500
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A387EDF11;
+        Tue,  3 Jan 2023 03:38:06 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 08B945C054E;
+        Tue,  3 Jan 2023 06:38:04 -0500 (EST)
+Received: from imap47 ([10.202.2.97])
+  by compute5.internal (MEProxy); Tue, 03 Jan 2023 06:38:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+         h=cc:cc:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1672745884; x=1672832284; bh=p2
+        IVLcKLfYVfXq3tOPJfy9fqA+CIFIvOUBhc8QFZ2+A=; b=MUklIHs7gzCKpEOO5r
+        1bvq39xyx/Ea65nv5IjDv1iCvNH/6Z8WEFI2t2t6X71A3lW8Uf84p0yO9jIuK5Ju
+        6HIfSgSkuuNiyNQYQywdagyZAtcYuOK4UQLhxlOgmSBosH94XXl1puDwlNPGa9nx
+        aG73MPQAMtCb7CEO22tiYdOqbXZazX48aW9iL8EBoEntbXjo4WQdBwZvEzz7w4u+
+        nkpCMDaS2+bLkZbYVl7BbOnGVpbAcIS+KFdQCYOT2iAuKSHbanLQ6aZGsZdQgw5P
+        uRRmSmubqqCdVIv7McKCKSeuLo+KxqFEVzCEh9Z6NbF+zO0cgyXFPryORAD/+W8e
+        drGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1672745884; x=1672832284; bh=p2IVLcKLfYVfXq3tOPJfy9fqA+CI
+        FIvOUBhc8QFZ2+A=; b=RRR4lGdjU5qgZWpvlv7gWOBZ+3ZRLIELrTKSLtEgij82
+        porsHf4hPpfNiMHANXtr/wqFpRYBtS+FcMKxBVl4h1fDGv0LxvvipaOjcmrKs6/X
+        EtibEmdZwTsh244r8W2PTI5fycD/JWkCzxIPTyNepswPdN5G76O5xHws9ugCuyQj
+        ZaBEC7gyI8vfFtv3rbGpbRsYneHl9tL8VV/zCKMXROPG0c1Ij2D10u8J6kTLaL1w
+        einiw+wzG1MErWu+AM8MmK65sHhwSFgiAEsvUfHaGqKzgzAvnx69dobegdY9uHY/
+        VcaABIbeGCsUd5GrwmaDOx5aL99m5m3eEKkqpyfM7w==
+X-ME-Sender: <xms:mhO0Y59Z8i4B82a-n6IP83_yBP1xx3s64NpzImujxMdlKAXtMj18Yw>
+    <xme:mhO0Y9seP4KSGIGcSHtz8s9WS5ZTyXrtoOJST80rMy4OchRQr8qvJJGlsjfb1dvwa
+    cAUJhnuKzNpAPj1vpc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrjeeggddvlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdfuvhgv
+    nhcurfgvthgvrhdfuceoshhvvghnsehsvhgvnhhpvghtvghrrdguvghvqeenucggtffrrg
+    htthgvrhhnpeelvefggeffheevtdeivefhkeehfeettdejteduveeiheevveeilefghfei
+    veeiueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsvhgvnhesshhvvghnphgvthgvrhdruggvvh
+X-ME-Proxy: <xmx:mhO0Y3A93X0nfCn-JQFPV80WZ9BD7yh7UhiFzK2qZ8pvJWxwjt-5qQ>
+    <xmx:mhO0Y9c0iWRIX2rPJnofnhBZGQLVKhcPJNE9-zVAWDzjlbswZ-eA4g>
+    <xmx:mhO0Y-NtXHjs3l9Ony8srFU_GRXqN3QpK79jL77fnKcWkTpMaIw4LA>
+    <xmx:nBO0Y9cV6p19-b6L8Ui7vqw_Dh0inHu_2ZXe3MazqtTDpHAfdSNf2w>
+Feedback-ID: i51094778:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 7E4CFA6007C; Tue,  3 Jan 2023 06:38:02 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
+Mime-Version: 1.0
+Message-Id: <8b8a3f31-936f-4595-83aa-8e5b0272f8a3@app.fastmail.com>
+In-Reply-To: <6f312af6160d1e10b616c9adbd1fd8f822db964d.1672473415.git.christophe.jaillet@wanadoo.fr>
+References: <6f312af6160d1e10b616c9adbd1fd8f822db964d.1672473415.git.christophe.jaillet@wanadoo.fr>
+Date:   Tue, 03 Jan 2023 12:37:41 +0100
+From:   "Sven Peter" <sven@svenpeter.dev>
+To:     "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+        "Hector Martin" <marcan@marcan.st>,
+        "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
+        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
+        "Guenter Roeck" <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH] watchdog: apple: Use devm_clk_get_enabled() helper
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 17 Dec 2022 at 17:05, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+
+
+On Sat, Dec 31, 2022, at 08:57, Christophe JAILLET wrote:
+> The devm_clk_get_enabled() helper:
+>    - calls devm_clk_get()
+>    - calls clk_prepare_enable() and registers what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
 >
-> If an error occurs after a successful pm_genpd_init() call, it should be
-> undone by a corresponding pm_genpd_remove().
+> This simplifies the code and avoids the need of a dedicated function used
+> with devm_add_action_or_reset().
 >
-> Add the missing call in the error handling path, as already done in the
-> remove function.
->
-> Fixes: bf6910abf548 ("power: avs: Add support for CPR (Core Power Reduction)")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Sven Peter <sven@svenpeter.dev>
 
-Kind regards
-Uffe
 
-> ---
->  drivers/soc/qcom/cpr.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/qcom/cpr.c b/drivers/soc/qcom/cpr.c
-> index e9b854ed1bdf..144ea68e0920 100644
-> --- a/drivers/soc/qcom/cpr.c
-> +++ b/drivers/soc/qcom/cpr.c
-> @@ -1708,12 +1708,16 @@ static int cpr_probe(struct platform_device *pdev)
->
->         ret = of_genpd_add_provider_simple(dev->of_node, &drv->pd);
->         if (ret)
-> -               return ret;
-> +               goto err_remove_genpd;
->
->         platform_set_drvdata(pdev, drv);
->         cpr_debugfs_init(drv);
->
->         return 0;
-> +
-> +err_remove_genpd:
-> +       pm_genpd_remove(&drv->pd);
-> +       return ret;
->  }
->
->  static int cpr_remove(struct platform_device *pdev)
-> --
-> 2.34.1
->
+Thanks,
+
+
+Sven
