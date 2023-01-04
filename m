@@ -2,26 +2,26 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C3FC46467
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89230C54E76
 	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Jan 2023 21:07:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240286AbjADVGk (ORCPT
+        id S240174AbjADVGd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Jan 2023 16:06:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
+        Wed, 4 Jan 2023 16:06:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240313AbjADVGa (ORCPT
+        with ESMTP id S240260AbjADVGM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Jan 2023 16:06:30 -0500
+        Wed, 4 Jan 2023 16:06:12 -0500
 Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C421CB24
-        for <kernel-janitors@vger.kernel.org>; Wed,  4 Jan 2023 13:06:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA4B51CB12
+        for <kernel-janitors@vger.kernel.org>; Wed,  4 Jan 2023 13:06:10 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id DAxcpwWwVxN58DAxvpFlKB; Wed, 04 Jan 2023 22:06:27 +0100
+        id DAxcpwWwVxN58DAxcpFlIl; Wed, 04 Jan 2023 22:06:09 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 04 Jan 2023 22:06:27 +0100
+X-ME-Date: Wed, 04 Jan 2023 22:06:09 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     "David S . Miller" <davem@davemloft.net>,
@@ -31,50 +31,46 @@ To:     "David S . Miller" <davem@davemloft.net>,
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         netdev@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next 3/3] ezchip: Further clean-up
-Date:   Wed,  4 Jan 2023 22:05:34 +0100
-Message-Id: <e65e188a837c59c1f1785b491c775a6ee1aed5d4.1672865629.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next 0/3] ezchip: Simplify some code
+Date:   Wed,  4 Jan 2023 22:05:31 +0100
+Message-Id: <cover.1672865629.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1672865629.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1672865629.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Now that is only call to platform_get_drvdata() is removed, calling
-platform_set_drvdata() looks useless. Remove it.
+Theses patches (at least 1 and 2) can be seen as an RFC for net MAINTAINERS
+get see if they see any interest in:
+  - axing useless netif_napi_del() calls, when free_netdev() is called just
+    after. (patch 1)
+  - simplifying code with axing the error handling path of the probe and the
+    remove function in favor of using devm_ functions (patch 2)
 
-While at it, remove a useless 'err' initialization and change its type to a
-more common 'int'
+  or
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/ezchip/nps_enet.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+if it doesn't not worth it and MAINTAINERS' time can be focused on more
+interesting topics than checking what is in fact only code clean-ups.
 
-diff --git a/drivers/net/ethernet/ezchip/nps_enet.c b/drivers/net/ethernet/ezchip/nps_enet.c
-index 21e230150104..139510d9669f 100644
---- a/drivers/net/ethernet/ezchip/nps_enet.c
-+++ b/drivers/net/ethernet/ezchip/nps_enet.c
-@@ -574,7 +574,7 @@ static s32 nps_enet_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct net_device *ndev;
- 	struct nps_enet_priv *priv;
--	s32 err = 0;
-+	int err;
- 
- 	if (!dev->of_node)
- 		return -ENODEV;
-@@ -583,7 +583,6 @@ static s32 nps_enet_probe(struct platform_device *pdev)
- 	if (!ndev)
- 		return -ENOMEM;
- 
--	platform_set_drvdata(pdev, ndev);
- 	SET_NETDEV_DEV(ndev, dev);
- 	priv = netdev_priv(ndev);
- 
+
+The rational for patch 1 is based on Jakub's comment [1].
+free_netdev() already cleans up NAPIs (see [2]).
+
+CJ
+
+[1]: https://lore.kernel.org/all/20221221174043.1191996a@kernel.org/
+[2]: https://elixir.bootlin.com/linux/v6.2-rc1/source/net/core/dev.c#L10710
+
+
+Christophe JAILLET (3):
+  ezchip: Remove some redundant clean-up functions
+  ezchip: Switch to some devm_ function to simplify code
+  ezchip: Further clean-up
+
+ drivers/net/ethernet/ezchip/nps_enet.c | 47 ++++++--------------------
+ 1 file changed, 10 insertions(+), 37 deletions(-)
+
 -- 
 2.34.1
 
