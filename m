@@ -2,41 +2,41 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DC8C46467
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Jan 2023 20:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D5DC54EBC
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Jan 2023 21:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235601AbjADUlT (ORCPT
+        id S240233AbjADVGe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Jan 2023 15:41:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45300 "EHLO
+        Wed, 4 Jan 2023 16:06:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233421AbjADUlS (ORCPT
+        with ESMTP id S240306AbjADVGU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Jan 2023 15:41:18 -0500
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D71EB9C
-        for <kernel-janitors@vger.kernel.org>; Wed,  4 Jan 2023 12:41:12 -0800 (PST)
+        Wed, 4 Jan 2023 16:06:20 -0500
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50AD8AE47
+        for <kernel-janitors@vger.kernel.org>; Wed,  4 Jan 2023 13:06:19 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id DAZPpIg1LIwEfDAZPpB30n; Wed, 04 Jan 2023 21:41:10 +0100
+        id DAxcpwWwVxN58DAxlpFlJL; Wed, 04 Jan 2023 22:06:17 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 04 Jan 2023 21:41:10 +0100
+X-ME-Date: Wed, 04 Jan 2023 22:06:17 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-        Taku Izumi <izumi.taku@jp.fujitsu.com>,
-        "David S. Miller" <davem@davemloft.net>,
+To:     "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH net-next v2] fjes: Fix an error handling path in fjes_probe()
-Date:   Wed,  4 Jan 2023 21:40:47 +0100
-Message-Id: <a294f5f3af7e29212a27cc7d17503fba346266b5.1672864635.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next 1/3] ezchip: Remove some redundant clean-up functions
+Date:   Wed,  4 Jan 2023 22:05:32 +0100
+Message-Id: <43e9d047a036cd8a84aad8e9fffdfdcb17a1cf2a.1672865629.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1672865629.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1672865629.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -47,35 +47,32 @@ free_netdev() already calls netif_napi_del(), no need to call it
 explicitly.
 It's harmless, but useless.
 
-Remove the call, make the  error handling path of the probe and the remove
-function be consistent one with the other.
+Remove the call in the error handling path of the probe and in the remove
+function.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Change in v2:
-  - Leave the error handling path of the probe as-is, and simplify the
-    remove function instead.
-  - Removes the Fixes tag. It's finally not at fix, just a consistency
-    issue. (was Fixes: 265859309a76 ("fjes: NAPI polling function"))
-  - As a consequence, target net-next instead of net, now.
-
-v1:
-https://lore.kernel.org/all/fde673f106d2b264ad76759195901aae94691b5c.1671569785.git.christophe.jaillet@wanadoo.fr/
----
- drivers/net/fjes/fjes_main.c | 2 --
+ drivers/net/ethernet/ezchip/nps_enet.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/fjes/fjes_main.c b/drivers/net/fjes/fjes_main.c
-index 5805e4a56385..db9c0da82f33 100644
---- a/drivers/net/fjes/fjes_main.c
-+++ b/drivers/net/fjes/fjes_main.c
-@@ -1324,8 +1324,6 @@ static int fjes_remove(struct platform_device *plat_dev)
+diff --git a/drivers/net/ethernet/ezchip/nps_enet.c b/drivers/net/ethernet/ezchip/nps_enet.c
+index f1eb660aaee2..6389c6b5005c 100644
+--- a/drivers/net/ethernet/ezchip/nps_enet.c
++++ b/drivers/net/ethernet/ezchip/nps_enet.c
+@@ -627,7 +627,6 @@ static s32 nps_enet_probe(struct platform_device *pdev)
+ 	return 0;
  
- 	fjes_hw_exit(hw);
+ out_netif_api:
+-	netif_napi_del(&priv->napi);
+ out_netdev:
+ 	free_netdev(ndev);
  
--	netif_napi_del(&adapter->napi);
--
- 	free_netdev(netdev);
+@@ -640,7 +639,6 @@ static s32 nps_enet_remove(struct platform_device *pdev)
+ 	struct nps_enet_priv *priv = netdev_priv(ndev);
+ 
+ 	unregister_netdev(ndev);
+-	netif_napi_del(&priv->napi);
+ 	free_netdev(ndev);
  
  	return 0;
 -- 
