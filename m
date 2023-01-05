@@ -2,140 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B935CC54EBD
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Jan 2023 21:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2DAC3DA7A
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 04:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240264AbjADVGg (ORCPT
+        id S230160AbjAEEw5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Jan 2023 16:06:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52824 "EHLO
+        Wed, 4 Jan 2023 23:52:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240310AbjADVG2 (ORCPT
+        with ESMTP id S230225AbjAEEws (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Jan 2023 16:06:28 -0500
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D16711CB13
-        for <kernel-janitors@vger.kernel.org>; Wed,  4 Jan 2023 13:06:26 -0800 (PST)
-Received: from pop-os.home ([86.243.100.34])
-        by smtp.orange.fr with ESMTPA
-        id DAxcpwWwVxN58DAxtpFlJp; Wed, 04 Jan 2023 22:06:25 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 04 Jan 2023 22:06:25 +0100
-X-ME-IP: 86.243.100.34
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "David S . Miller" <davem@davemloft.net>,
+        Wed, 4 Jan 2023 23:52:48 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54CC751310;
+        Wed,  4 Jan 2023 20:52:39 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D477E6149B;
+        Thu,  5 Jan 2023 04:52:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62A4C433EF;
+        Thu,  5 Jan 2023 04:52:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672894358;
+        bh=h+Zt8kl9f/QMFlD2IOoAtcRssR1q5VE8RGSwXgCHpvw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=r0ZQFVETsdq8x0PXZDJRzaw1GDfX1BSMEt8kqexXOy2fqKnc5s+2Qldytn41UjZQ2
+         +DYH7Xw/2trq76T5X6gXuSGtxZYk0jNBmsVXgrjaVGj8fUi21CqMWiPVZZJhHFoyNS
+         pMyP3ruZ914D5nEB6MeGNKFY3I9WgmsfFBZpuZw/mi6EuAO28foz2oGkp8ldH0EzBl
+         ZqHzjsy8CgQ2MGLmyk4rAFzvwGZCXk93+nFoUdZG72TREra3m5sS4Vml9Tg6scM8tl
+         uzNOAzCzVWgzhiqGuCN27teaWTQZDwUc1CUZoWeOAtPfrcu5IY6NrtgCOiTZSSU+gj
+         tcOs88ATVhDmA==
+Date:   Wed, 4 Jan 2023 20:52:36 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next 2/3] ezchip: Switch to some devm_ function to simplify code
-Date:   Wed,  4 Jan 2023 22:05:33 +0100
-Message-Id: <e1fd0cc1fd865e58af713c92f09251e6180c1636.1672865629.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1672865629.git.christophe.jaillet@wanadoo.fr>
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] ezchip: Remove some redundant clean-up
+ functions
+Message-ID: <20230104205236.3c0f90de@kernel.org>
+In-Reply-To: <43e9d047a036cd8a84aad8e9fffdfdcb17a1cf2a.1672865629.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1672865629.git.christophe.jaillet@wanadoo.fr>
+        <43e9d047a036cd8a84aad8e9fffdfdcb17a1cf2a.1672865629.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-devm_alloc_etherdev() and devm_register_netdev() can be used to simplify
-code.
+On Wed,  4 Jan 2023 22:05:32 +0100 Christophe JAILLET wrote:
+> @@ -640,7 +639,6 @@ static s32 nps_enet_remove(struct platform_device *pdev)
+>  	struct nps_enet_priv *priv = netdev_priv(ndev);
+>  
+>  	unregister_netdev(ndev);
+> -	netif_napi_del(&priv->napi);
+>  	free_netdev(ndev);
 
-Now the error handling path of the probe and the remove function are
-useless and can be removed completely.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/ezchip/nps_enet.c | 42 ++++++--------------------
- 1 file changed, 9 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/net/ethernet/ezchip/nps_enet.c b/drivers/net/ethernet/ezchip/nps_enet.c
-index 6389c6b5005c..21e230150104 100644
---- a/drivers/net/ethernet/ezchip/nps_enet.c
-+++ b/drivers/net/ethernet/ezchip/nps_enet.c
-@@ -579,7 +579,7 @@ static s32 nps_enet_probe(struct platform_device *pdev)
- 	if (!dev->of_node)
- 		return -ENODEV;
- 
--	ndev = alloc_etherdev(sizeof(struct nps_enet_priv));
-+	ndev = devm_alloc_etherdev(dev, sizeof(struct nps_enet_priv));
- 	if (!ndev)
- 		return -ENOMEM;
- 
-@@ -594,10 +594,8 @@ static s32 nps_enet_probe(struct platform_device *pdev)
- 	ndev->flags &= ~IFF_MULTICAST;
- 
- 	priv->regs_base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(priv->regs_base)) {
--		err = PTR_ERR(priv->regs_base);
--		goto out_netdev;
--	}
-+	if (IS_ERR(priv->regs_base))
-+		return PTR_ERR(priv->regs_base);
- 	dev_dbg(dev, "Registers base address is 0x%p\n", priv->regs_base);
- 
- 	/* set kernel MAC address to dev */
-@@ -607,41 +605,20 @@ static s32 nps_enet_probe(struct platform_device *pdev)
- 
- 	/* Get IRQ number */
- 	priv->irq = platform_get_irq(pdev, 0);
--	if (priv->irq < 0) {
--		err = -ENODEV;
--		goto out_netdev;
--	}
-+	if (priv->irq < 0)
-+		return -ENODEV;
- 
- 	netif_napi_add_weight(ndev, &priv->napi, nps_enet_poll,
- 			      NPS_ENET_NAPI_POLL_WEIGHT);
- 
- 	/* Register the driver. Should be the last thing in probe */
--	err = register_netdev(ndev);
--	if (err) {
--		dev_err(dev, "Failed to register ndev for %s, err = 0x%08x\n",
--			ndev->name, (s32)err);
--		goto out_netif_api;
--	}
-+	err = devm_register_netdev(dev, ndev);
-+	if (err)
-+		return dev_err_probe(dev, err, "Failed to register ndev for %s\n",
-+				     ndev->name);
- 
- 	dev_info(dev, "(rx/tx=%d)\n", priv->irq);
- 	return 0;
--
--out_netif_api:
--out_netdev:
--	free_netdev(ndev);
--
--	return err;
--}
--
--static s32 nps_enet_remove(struct platform_device *pdev)
--{
--	struct net_device *ndev = platform_get_drvdata(pdev);
--	struct nps_enet_priv *priv = netdev_priv(ndev);
--
--	unregister_netdev(ndev);
--	free_netdev(ndev);
--
--	return 0;
- }
- 
- static const struct of_device_id nps_enet_dt_ids[] = {
-@@ -652,7 +629,6 @@ MODULE_DEVICE_TABLE(of, nps_enet_dt_ids);
- 
- static struct platform_driver nps_enet_driver = {
- 	.probe = nps_enet_probe,
--	.remove = nps_enet_remove,
- 	.driver = {
- 		.name = DRV_NAME,
- 		.of_match_table  = nps_enet_dt_ids,
--- 
-2.34.1
-
+This adds an unused variable warning, which is fixed by the next patch.
+Could you remove the @priv variable here already?
