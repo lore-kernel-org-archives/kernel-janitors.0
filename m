@@ -2,36 +2,36 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A50C3DA7A
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 10:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 454F7C3DA7D
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 10:04:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232388AbjAEKDu (ORCPT
+        id S232654AbjAEKEU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Jan 2023 05:03:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56502 "EHLO
+        Thu, 5 Jan 2023 05:04:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231862AbjAEKDR (ORCPT
+        with ESMTP id S231370AbjAEKDj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Jan 2023 05:03:17 -0500
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAEEA102D;
-        Thu,  5 Jan 2023 02:03:14 -0800 (PST)
+        Thu, 5 Jan 2023 05:03:39 -0500
+Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC77233D63;
+        Thu,  5 Jan 2023 02:03:27 -0800 (PST)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id ED03DFF815;
-        Thu,  5 Jan 2023 10:03:11 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 3D37524000A;
+        Thu,  5 Jan 2023 10:03:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1672912993;
+        t=1672913005;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vwK9pvRfjwBdJNHXPaYqmCSQq++D7SmsZdpp8kJRkTE=;
-        b=QeM5SGgr5AB1hCD4CXUwjf1uk4cehuufO9XLEWWQsNFeFBdHd5Hvspt28D5auUE9r+MvV2
-        SrI5P0fPRnNw9tjru6fapsShNDhk9imdx9kUDobfOBxPhTp2tkueFLxQIgdkOxJUumtkVJ
-        LtB5S8bqg7QrwBPvwN+aZqHV7DhQgBZryManUJLWaBixofJhWv4BEQW2DCB/Hq/eSmterc
-        VubZeZJOKlAo6fPOpJOzOuDrTpWG8qKOu3v26oqbzDzDmiB5mTeNlAs7eEi9rLrfbvi+vv
-        N0eLfFL4+LlQG47py5R6sDQPYKtB+y2lD/BbxyAVE+0eiWCjsLp8w7VCWNm27A==
-Date:   Thu, 5 Jan 2023 11:03:10 +0100
+        bh=YhxtqzDnqdn/yv5fZtR2reVGVJ31mNbQjd2aTvJ+gc8=;
+        b=SBmiOtHGwyzmO79FWDV/qh5ZTui++lkqYDJeO+C46F6xwcPCH5rnZFZe8mUna8MHTFLFRk
+        AeKgQqDPfilLburR5yGbr2w9KLO68RykVkBVQuia3lfBBtzd3Xl7dqBW11RayfCO+U/4ph
+        B+TR6vvppSlQyTGk0sATa/Kk9/qWFj8HfSqzgXetzsooxmkZUxtF5QJKLZS7UE1Io8eKS0
+        ee30e3pNeFovPU+u2Vz05zNsOIK8U0IKruqRj6xaDWNRIRQhZyGeWPRGIaNmFw41sGsibc
+        7m9F74wrejriya+lN4jXoGZc4hy88fOmMd43/nPbpmyRNX3RTLHFjne6Lzs4iQ==
+Date:   Thu, 5 Jan 2023 11:03:22 +0100
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Colin Ian King <colin.i.king@gmail.com>
 Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
@@ -39,11 +39,12 @@ Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2][next] nvmem: layouts: Fix spelling mistake
+Subject: Re: [PATCH 2/2][next] dt-bindings: nvmem: Fix spelling mistake
  "platforn" -> "platform"
-Message-ID: <20230105110310.373f076b@xps-13>
-In-Reply-To: <20230105095828.2951-1-colin.i.king@gmail.com>
+Message-ID: <20230105110322.60145714@xps-13>
+In-Reply-To: <20230105095828.2951-2-colin.i.king@gmail.com>
 References: <20230105095828.2951-1-colin.i.king@gmail.com>
+        <20230105095828.2951-2-colin.i.king@gmail.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -55,34 +56,33 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hi Colin,
 
-colin.i.king@gmail.com wrote on Thu,  5 Jan 2023 09:58:27 +0000:
+colin.i.king@gmail.com wrote on Thu,  5 Jan 2023 09:58:28 +0000:
 
-> There is a spelling mistake in the literal string. Fix it.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Good catch.
+> There is a spelling mistake in platforn-name. Fix it.
 
 Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/nvmem/layouts/onie-tlv.c | 2 +-
+>  .../devicetree/bindings/nvmem/layouts/onie,tlv-layout.yaml      | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/nvmem/layouts/onie-tlv.c b/drivers/nvmem/layouts/oni=
-e-tlv.c
-> index 074c7c700845..767f39fff717 100644
-> --- a/drivers/nvmem/layouts/onie-tlv.c
-> +++ b/drivers/nvmem/layouts/onie-tlv.c
-> @@ -48,7 +48,7 @@ static const char *onie_tlv_cell_name(u8 type)
->  	case 0x27:
->  		return "label-revision";
->  	case 0x28:
-> -		return "platforn-name";
-> +		return "platform-name";
->  	case 0x29:
->  		return "onie-version";
->  	case 0x2A:
+> diff --git a/Documentation/devicetree/bindings/nvmem/layouts/onie,tlv-lay=
+out.yaml b/Documentation/devicetree/bindings/nvmem/layouts/onie,tlv-layout.=
+yaml
+> index 5a0e7671aa3f..714a6538cc7c 100644
+> --- a/Documentation/devicetree/bindings/nvmem/layouts/onie,tlv-layout.yaml
+> +++ b/Documentation/devicetree/bindings/nvmem/layouts/onie,tlv-layout.yaml
+> @@ -61,7 +61,7 @@ properties:
+>      type: object
+>      additionalProperties: false
+> =20
+> -  platforn-name:
+> +  platform-name:
+>      type: object
+>      additionalProperties: false
+> =20
 
 
 Thanks,
