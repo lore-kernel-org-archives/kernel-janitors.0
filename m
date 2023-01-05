@@ -2,62 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6254BC3DA7A
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 04:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29550C3DA7D
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 06:27:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbjAEEyp (ORCPT
+        id S230489AbjAEG1G (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Jan 2023 23:54:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53376 "EHLO
+        Thu, 5 Jan 2023 01:27:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbjAEEyn (ORCPT
+        with ESMTP id S230261AbjAEG1F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Jan 2023 23:54:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D81A48839;
-        Wed,  4 Jan 2023 20:54:42 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E02A3B818F2;
-        Thu,  5 Jan 2023 04:54:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAFBC433D2;
-        Thu,  5 Jan 2023 04:54:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672894479;
-        bh=3jGxlIIBUtNtU8F7fzNaR/sMnXA6GWowBwE8yID47R8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=sYvGkKEGukfc64sbaHmt08pESFnbfWarRFkfT/O4/FYRdGF8I3boTRUCEdKs54bN8
-         pxs8QBjxTaOIfhtyZDlR28aAZlGc+vNDIyDWMR2q7qENzNNNrMKiADCXHCNv+c3Rd9
-         1H12lsJcagXjXbdAvP1jlalUHgFadKSLfWoma4cR3k+nf+18xtXrZVgDqhwcsL/ygA
-         m2HoF8oojqEmUFg2qHTBMrRM1aM0Ar/vw7MyXFfJVRwxb9/VqPkMV/GyGyj9Q4iQP+
-         Rd+/50OasXEZ+hR47YgZ0p3xOGkcxqp1HSJ5FVmAQkDfy6E/ZKokl6zvKduEbv4e96
-         9odlMwB+6T1uA==
-Date:   Wed, 4 Jan 2023 20:54:38 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Thu, 5 Jan 2023 01:27:05 -0500
+Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7935750F75
+        for <kernel-janitors@vger.kernel.org>; Wed,  4 Jan 2023 22:27:03 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id DJiOpLFMWoBUEDJiOpC7y5; Thu, 05 Jan 2023 07:27:02 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 05 Jan 2023 07:27:02 +0100
+X-ME-IP: 86.243.100.34
+Message-ID: <94876618-bc7c-dd42-6d41-eda80deb6f1d@wanadoo.fr>
+Date:   Thu, 5 Jan 2023 07:27:00 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH net-next 2/3] ezchip: Switch to some devm_ function to
+ simplify code
+To:     Jakub Kicinski <kuba@kernel.org>
 Cc:     "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 2/3] ezchip: Switch to some devm_ function to
- simplify code
-Message-ID: <20230104205438.61a7dc20@kernel.org>
-In-Reply-To: <e1fd0cc1fd865e58af713c92f09251e6180c1636.1672865629.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1672865629.git.christophe.jaillet@wanadoo.fr>
-        <e1fd0cc1fd865e58af713c92f09251e6180c1636.1672865629.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <e1fd0cc1fd865e58af713c92f09251e6180c1636.1672865629.git.christophe.jaillet@wanadoo.fr>
+ <20230104205438.61a7dc20@kernel.org>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230104205438.61a7dc20@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed,  4 Jan 2023 22:05:33 +0100 Christophe JAILLET wrote:
-> devm_alloc_etherdev() and devm_register_netdev() can be used to simplify
-> code.
+Le 05/01/2023 à 05:54, Jakub Kicinski a écrit :
+> On Wed,  4 Jan 2023 22:05:33 +0100 Christophe JAILLET wrote:
+>> devm_alloc_etherdev() and devm_register_netdev() can be used to simplify
+>> code.
+>>
+>> Now the error handling path of the probe and the remove function are
+>> useless and can be removed completely.
 > 
-> Now the error handling path of the probe and the remove function are
-> useless and can be removed completely.
+> Right, but this is very likely a dead driver. Why invest in refactoring?
+> 
 
-Right, but this is very likely a dead driver. Why invest in refactoring?
+Hi Jakub,
+
+this driver was just randomly picked as an example.
+
+My main point is in the cover letter. I look for feed-back to know if 
+patches like that are welcomed. Only the first, Only the second, Both or 
+None.
+
+
+I put it here, slightly rephrased:
+
+
+These patches (at least 1 and 2) can be seen as an RFC for net 
+MAINTAINERS, to see if there is any interest in:
+   - axing useless netif_napi_del() calls, when free_netdev() is called 
+just after. (patch 1)
+   - simplifying code with axing the error handling path of the probe 
+and the remove function in favor of using devm_ functions (patch 2)
+
+   or
+
+if it doesn't worth it and would only waste MAINTAINERS' time to review 
+what is in fact only code clean-ups.
+
+
+The rational for patch 1 is based on Jakub's comment [1].
+free_netdev() already cleans up NAPIs (see [2]).
+
+CJ
+
+[1]: https://lore.kernel.org/all/20221221174043.1191996a@kernel.org/
+[2]: https://elixir.bootlin.com/linux/v6.2-rc1/source/net/core/dev.c#L10710
