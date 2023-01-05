@@ -2,62 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0155EC4708E
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 18:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3ABC3DA7A
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 18:44:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235096AbjAESdt (ORCPT
+        id S234812AbjAESoJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Jan 2023 13:33:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52642 "EHLO
+        Thu, 5 Jan 2023 13:44:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234934AbjAESdS (ORCPT
+        with ESMTP id S234735AbjAESoH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Jan 2023 13:33:18 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C7E7564CE;
-        Thu,  5 Jan 2023 10:33:17 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id z16so20509599wrw.1;
-        Thu, 05 Jan 2023 10:33:17 -0800 (PST)
+        Thu, 5 Jan 2023 13:44:07 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 154221054D;
+        Thu,  5 Jan 2023 10:44:06 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id az7so12627175wrb.5;
+        Thu, 05 Jan 2023 10:44:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eUPwa7KxD0+pG9NyQ6Wyn6qhlGS+n6AKwqwRVnYWk0Y=;
-        b=KvVT9tPDVsA9kdQufrBybdgLUcJV9JBGQ2sh5Ji3kWzMT6O24oSJb5bJpNnkkR/kou
-         HRcWREqSE+zfoM28vgUH+ZrCjfvrRXaprPpOU7qVZWcKRmTywkNipIqjUQaJSWlse2oJ
-         l/roJlFRC5AW8fraHY5vuSkYHc+FDAqQY5jwU2SqkNzLx4iKm4KnUklBtmuHu/xemLSl
-         KL6D9T1IIE2oLPXxz6ZyxB3brQUrWSqo+opkiLRSSvvXpzzGhivxtYIZnXqUD+YHViaf
-         J66jXfAjrq/ZWQ7+ft2k+lxbGxaBL5TOOQE+HdE//KoMSL9jVuj3Ip+r7CTR//nMRyIP
-         do2g==
+        bh=R5VFmITpcq980NC7BHDSxAFwvqy7pS4EajnFTTRxXo8=;
+        b=KwmlitPYUG0nvLmz8rNf3rqtW8HM76f8nSBVunCIkaSBPwbAvZxYZzHGK3PwNwR7aP
+         fXmL4M+I2ETLzUWtEaUP9ZgpU40ro0a++SN8LS/D/grUAMzOWx6pMpjTO2xBTma+fF+p
+         8Z3nxBZ+cC1pRdAij++ZrS7CSicWYw5vryfLTNzHWibH4C2JwL/mO05ngE6FAeKFTJPp
+         7117FL10SSEFxQmIZmC6nSjOs4c24ZGqcR7nqVsYXQU9BeeIsdoNF9Bm4KRUmUoNNXC8
+         SmTSY6Ry8x2RKUASJo4qsQmKlVlyA07StKm5osrTpfbX+VlP9JLQW2BgFMmSPB+jWHEV
+         wp5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eUPwa7KxD0+pG9NyQ6Wyn6qhlGS+n6AKwqwRVnYWk0Y=;
-        b=lyUnyV3xEIkFM0M9ahyP8urXOquD7Yl3rCU5vR4v9XIk9SLYh+Kh/jKysWZ1xSaU2t
-         ML54N8cSSRoMXJsjd7QZAjpOf7Sd6dLWs7oSuxdyOX+YCJ1D8W6f75QExr/jTfmQ7F4d
-         A1RJNEW9kCgPMiJw6qAOYsrPzi6QopXBICKAtPxYzIaxl3JBry9rmBACEaien413aXze
-         5N9cwquh4RbkgXf3NBJjXRTgMS2IrNOWtNF7fzFLw2ClC4zeiWvidpyYpZbRjHrs+Vog
-         SL/UHWSrY/qBrmJv5mJUZlgwfMi/k/109w8IYU1nHanEiR3sgwNQtLQEGV7KMtEDYWs7
-         Hx4w==
-X-Gm-Message-State: AFqh2krDsAvXnTw3BW1v3uIFzs2vD4P5aNt/7CJfGtt3KdMpIfiwuUfZ
-        Jxp2+fxh4ZmOthyCDo0Z+zdT71vYhBsd8yzy
-X-Google-Smtp-Source: AMrXdXtZIqBiAhbDcFGq0bT49zrMcD7N+SAhYjRhbse+8LWS/ce9Rc9rg6YxXIbYWh99v0rgNeRlIw==
-X-Received: by 2002:a5d:4005:0:b0:242:5877:1ebc with SMTP id n5-20020a5d4005000000b0024258771ebcmr32457681wrp.33.1672943595922;
-        Thu, 05 Jan 2023 10:33:15 -0800 (PST)
+        bh=R5VFmITpcq980NC7BHDSxAFwvqy7pS4EajnFTTRxXo8=;
+        b=bU649uZNiyAxsI/wt+12O4I2nDUwEnAruxKftYohPFRZMkUJL8ywPAK7GktKWRa7kj
+         TGMYvZ4Wlde637ne3+UEHZv/4Uy0cRkJuEhHE78NDhsT+q2hZ2GL/LOLh3N/CtYp+R/j
+         m1OFGA+XLapQ7d/M1KKCTvq4o5OM2YyfFOfFnVEquzzn8sSeAspsxNAvfFnbPAQQya9I
+         IXdW28bRy/OOE1N57eErb13iawlpmP6BrxMUKLfDHW3Rz3OFvX8H32VTCimgRtcNiM2n
+         Ty3HqcWjgXNXKnMQ8HWs0nU7JHmQ9VXFDI9cAJXhOXJTYejZ53WRee130AGrgJvK3m3P
+         5QAA==
+X-Gm-Message-State: AFqh2kqBfzirxGPXOdYrQWfGOT+HZumjgZdo4wPRJxiyo1+7UpcdD9pQ
+        WlPovBXrGypbMZ5IazZokyg=
+X-Google-Smtp-Source: AMrXdXupHpSiCAPJMry8NhE3IeKFncHiPo3XY0ysiysKAVmAVt/UICl6Oja6cqmdM/4eTxSax6ktpw==
+X-Received: by 2002:adf:db11:0:b0:242:6055:dee3 with SMTP id s17-20020adfdb11000000b002426055dee3mr31114213wri.63.1672944244668;
+        Thu, 05 Jan 2023 10:44:04 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l15-20020a5d410f000000b002683695bf97sm37377687wrp.58.2023.01.05.10.33.14
+        by smtp.gmail.com with ESMTPSA id b14-20020a05600010ce00b0023c8026841csm37004971wrx.23.2023.01.05.10.44.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 10:33:15 -0800 (PST)
+        Thu, 05 Jan 2023 10:44:04 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "Daniel W . S . Almeida" <dwlsalmeida@gmail.com>,
+To:     Dafna Hirschfeld <dafna@fastmail.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+        Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: vidtv: make const array DURATION static
-Date:   Thu,  5 Jan 2023 18:33:14 +0000
-Message-Id: <20230105183314.62820-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] media: rkisp1: make a few const arrays static
+Date:   Thu,  5 Jan 2023 18:44:03 +0000
+Message-Id: <20230105184403.63419-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,27 +68,47 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only const array DURATION on the stack but
-instead make it static. Also makes the object code a little smaller.
+Don't populate the const arrays on the stack, instead make them
+static. Also makes the object code smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/test-drivers/vidtv/vidtv_psi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../platform/rockchip/rkisp1/rkisp1-capture.c     | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/test-drivers/vidtv/vidtv_psi.c b/drivers/media/test-drivers/vidtv/vidtv_psi.c
-index a5875380ef40..ce0b7a6e92dc 100644
---- a/drivers/media/test-drivers/vidtv/vidtv_psi.c
-+++ b/drivers/media/test-drivers/vidtv/vidtv_psi.c
-@@ -1940,7 +1940,7 @@ u32 vidtv_psi_eit_write_into(struct vidtv_psi_eit_write_args *args)
- struct vidtv_psi_table_eit_event
- *vidtv_psi_eit_event_init(struct vidtv_psi_table_eit_event *head, u16 event_id)
+diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
+index d4540684ea9a..d1d1fdce03e3 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
+@@ -1131,10 +1131,12 @@ static void rkisp1_try_fmt(const struct rkisp1_capture *cap,
+ 	const struct rkisp1_capture_config *config = cap->config;
+ 	const struct rkisp1_capture_fmt_cfg *fmt;
+ 	const struct v4l2_format_info *info;
+-	const unsigned int max_widths[] = { RKISP1_RSZ_MP_SRC_MAX_WIDTH,
+-					    RKISP1_RSZ_SP_SRC_MAX_WIDTH };
+-	const unsigned int max_heights[] = { RKISP1_RSZ_MP_SRC_MAX_HEIGHT,
+-					     RKISP1_RSZ_SP_SRC_MAX_HEIGHT};
++	static const unsigned int max_widths[] = {
++		RKISP1_RSZ_MP_SRC_MAX_WIDTH, RKISP1_RSZ_SP_SRC_MAX_WIDTH
++	};
++	static const unsigned int max_heights[] = {
++		RKISP1_RSZ_MP_SRC_MAX_HEIGHT, RKISP1_RSZ_SP_SRC_MAX_HEIGHT
++	};
+ 
+ 	fmt = rkisp1_find_fmt_cfg(cap, pixm->pixelformat);
+ 	if (!fmt) {
+@@ -1336,8 +1338,9 @@ void rkisp1_capture_devs_unregister(struct rkisp1_device *rkisp1)
+ 
+ static int rkisp1_register_capture(struct rkisp1_capture *cap)
  {
--	const u8 DURATION[] = {0x23, 0x59, 0x59}; /* BCD encoded */
-+	static const u8 DURATION[] = {0x23, 0x59, 0x59}; /* BCD encoded */
- 	struct vidtv_psi_table_eit_event *e;
- 	struct timespec64 ts;
- 	struct tm time;
+-	const char * const dev_names[] = {RKISP1_MP_DEV_NAME,
+-					  RKISP1_SP_DEV_NAME};
++	static const char * const dev_names[] = {
++		RKISP1_MP_DEV_NAME, RKISP1_SP_DEV_NAME
++	};
+ 	struct v4l2_device *v4l2_dev = &cap->rkisp1->v4l2_dev;
+ 	struct video_device *vdev = &cap->vnode.vdev;
+ 	struct rkisp1_vdev_node *node;
 -- 
 2.30.2
 
