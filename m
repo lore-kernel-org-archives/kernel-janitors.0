@@ -2,88 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 454F7C3DA7D
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 10:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04BEC3DA7D
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 10:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232654AbjAEKEU (ORCPT
+        id S232251AbjAEKyJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Jan 2023 05:04:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60088 "EHLO
+        Thu, 5 Jan 2023 05:54:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231370AbjAEKDj (ORCPT
+        with ESMTP id S232589AbjAEKx4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Jan 2023 05:03:39 -0500
-Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC77233D63;
-        Thu,  5 Jan 2023 02:03:27 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 3D37524000A;
-        Thu,  5 Jan 2023 10:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1672913005;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YhxtqzDnqdn/yv5fZtR2reVGVJ31mNbQjd2aTvJ+gc8=;
-        b=SBmiOtHGwyzmO79FWDV/qh5ZTui++lkqYDJeO+C46F6xwcPCH5rnZFZe8mUna8MHTFLFRk
-        AeKgQqDPfilLburR5yGbr2w9KLO68RykVkBVQuia3lfBBtzd3Xl7dqBW11RayfCO+U/4ph
-        B+TR6vvppSlQyTGk0sATa/Kk9/qWFj8HfSqzgXetzsooxmkZUxtF5QJKLZS7UE1Io8eKS0
-        ee30e3pNeFovPU+u2Vz05zNsOIK8U0IKruqRj6xaDWNRIRQhZyGeWPRGIaNmFw41sGsibc
-        7m9F74wrejriya+lN4jXoGZc4hy88fOmMd43/nPbpmyRNX3RTLHFjne6Lzs4iQ==
-Date:   Thu, 5 Jan 2023 11:03:22 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2][next] dt-bindings: nvmem: Fix spelling mistake
- "platforn" -> "platform"
-Message-ID: <20230105110322.60145714@xps-13>
-In-Reply-To: <20230105095828.2951-2-colin.i.king@gmail.com>
-References: <20230105095828.2951-1-colin.i.king@gmail.com>
-        <20230105095828.2951-2-colin.i.king@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Thu, 5 Jan 2023 05:53:56 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B83750174;
+        Thu,  5 Jan 2023 02:53:55 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id m8-20020a05600c3b0800b003d96f801c48so1025650wms.0;
+        Thu, 05 Jan 2023 02:53:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5nwMq5RxlGq2Rp72O65oHNJVovNCqvBQEsaRzCUxkl4=;
+        b=aEtpEUSN8zeVQtThy9khsr+NMiqMbu1k3j3jW5zT0evRPzwWLjgbGKjwxENMQIKrmF
+         AWJPJtUhk/fr0msY2Y9Xn3RiuzBiduBkxPwLjyXhZN00bHzpwzZKuOuBuBOe6SDuEdo8
+         JEx0QRp1Yo5XLK/y+5P9/RJN9WlAQDnAHpXYTHwHwNHfAt+NmBlYqcbj5XCDedghjwZJ
+         CLAklcIQVwMy8uv1GTNNqVnBAkVGvxQio4WoEgrUWVLZ4hT2B4MIawePXkYZj9uCyyi9
+         WZEWcJkWp23WACRXS6he8BWSAFNt+Y9exct0PVAvBoczQVcP8n0OituhTbjzPzU/K7lx
+         Hf8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5nwMq5RxlGq2Rp72O65oHNJVovNCqvBQEsaRzCUxkl4=;
+        b=5pq9d6CSmK59NBr5kf8pfBxoROJMxjWYlefGoODjF5HJu4s9k2w0ei98TnUudZkllx
+         i2AgDTmdszijQGxjufaxAeQM7mEy7R9hnbJPnaBX7mk69yojq+byLTL6dCL8c3doUoHH
+         zzKAa0USzFEqsIR5ZunyaywcBCSkypRXmNOq2n7HknrmrStpoq0Q3MIr+1bikvtbIBr+
+         19Zturlu/EWpD5JdQQCmbJZDhjv1htQ8ZUoEp+tRml/4JJ92LJz6YdIE2NszglDa+nio
+         Qw3+pFgs8bXiEY52r7230IDTa+PLNxiSVQPsN2qrx9qK6OdXDfiNT6QtWT4+xsBPnOkL
+         /BXg==
+X-Gm-Message-State: AFqh2kopbI/9SiyNmE6fwSlm7h0lbS4aJQ0P69TFgaeqCKeH7KshtngC
+        IkJRHrUjZnPWzL1Wh64hq74=
+X-Google-Smtp-Source: AMrXdXvYf5181nm386ergfcbjb6gWFTPRfHv+VtXO1iLkiqFscFV/rDF/dVwvAxr0YFbbMSWimk3Ow==
+X-Received: by 2002:a05:600c:13ca:b0:3d3:4427:dfbf with SMTP id e10-20020a05600c13ca00b003d34427dfbfmr35289301wmg.5.1672916033540;
+        Thu, 05 Jan 2023 02:53:53 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id v16-20020a05600c445000b003c6c3fb3cf6sm2197277wmn.18.2023.01.05.02.53.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jan 2023 02:53:53 -0800 (PST)
+Date:   Thu, 5 Jan 2023 13:53:35 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Jason Yan <yanaijie@huawei.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        John Garry <john.garry@huawei.com>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
+        Jie Zhan <zhanjie9@hisilicon.com>, linux-scsi@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] scsi: libsas: fix an error code in sas_ata_add_dev()
+Message-ID: <Y7asLxzVwQ56G+ya@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
+This code accidentally returns success instead of -ENOMEM.
 
-colin.i.king@gmail.com wrote on Thu,  5 Jan 2023 09:58:28 +0000:
+Fixes: 7cc7646b4b24 ("scsi: libsas: Factor out sas_ata_add_dev()")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/scsi/libsas/sas_ata.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> There is a spelling mistake in platforn-name. Fix it.
+diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+index 177cdaef3cad..f5e1c24f54ca 100644
+--- a/drivers/scsi/libsas/sas_ata.c
++++ b/drivers/scsi/libsas/sas_ata.c
+@@ -716,7 +716,7 @@ int sas_ata_add_dev(struct domain_device *parent, struct ex_phy *phy,
+ 
+ 	rphy = sas_end_device_alloc(phy->port);
+ 	if (!rphy)
+-		return ret;
++		return -ENOMEM;
+ 
+ 	rphy->identify.phy_identifier = phy_id;
+ 	child->rphy = rphy;
+-- 
+2.35.1
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  .../devicetree/bindings/nvmem/layouts/onie,tlv-layout.yaml      | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/nvmem/layouts/onie,tlv-lay=
-out.yaml b/Documentation/devicetree/bindings/nvmem/layouts/onie,tlv-layout.=
-yaml
-> index 5a0e7671aa3f..714a6538cc7c 100644
-> --- a/Documentation/devicetree/bindings/nvmem/layouts/onie,tlv-layout.yaml
-> +++ b/Documentation/devicetree/bindings/nvmem/layouts/onie,tlv-layout.yaml
-> @@ -61,7 +61,7 @@ properties:
->      type: object
->      additionalProperties: false
-> =20
-> -  platforn-name:
-> +  platform-name:
->      type: object
->      additionalProperties: false
-> =20
-
-
-Thanks,
-Miqu=C3=A8l
