@@ -2,96 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E3FC3DA7D
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 10:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919E3C54E76
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 11:28:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232489AbjAEKyn (ORCPT
+        id S233126AbjAEL2i (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Jan 2023 05:54:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42646 "EHLO
+        Thu, 5 Jan 2023 06:28:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232432AbjAEKy1 (ORCPT
+        with ESMTP id S233195AbjAEL23 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Jan 2023 05:54:27 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E7244C65;
-        Thu,  5 Jan 2023 02:54:26 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id r2so892290wrv.7;
-        Thu, 05 Jan 2023 02:54:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jv0GR470MWgiD3mfl5X1bKpTXHWvkolc5a9wY9HKdXc=;
-        b=bIxbw96/A1sJN+bIpREHnJIorPMs8VvgHbuaNT/hFwUWdCsSGgO8RUcTOkpWRtjI9G
-         oWHtiPdZYnoOqiyPy2gs6x38EfPE0ZEo+yn2INV9GU8AJbk7fugW0U8Sia7uxg+wN4+H
-         a5eUzKEfEG3dZ1Q32U+0AWjIPEphHI4YaUjhfnNM0upYEUH44QiMGnndQpYXrjqhPwGY
-         qfL7+0DWsb1KcZM2gE2eCYCn6jJuS1AsjwGxNRc0ryBZspPVxA8hKZLVaYC3H0tWgvLc
-         tZnoGMWMiL/Dp4syYkFWEwDuWi5/YSC4i4EyGTOxc9v5+bDiSIr+dadoGN2/5PtgDq27
-         0YyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jv0GR470MWgiD3mfl5X1bKpTXHWvkolc5a9wY9HKdXc=;
-        b=HpLd+vqsLBnxTMl9MWIkzSgRi+MhdPG84vM3WRO7SnOhbnk+zglVWyv2OkhGvVMlHZ
-         SAWzvyUbxSraxVS9wPUFBQclW+WHrtFfHZBsCminLYSp7rwtleKDmmZGTi/CXzDl9oYC
-         vD5yobowDtiHXqjcM8SGvcN8l9m9pMOQi+gT/KHGf4WsASrvb5ISa019Hdxpa+svpReA
-         t8tmagSp8qf116CMTTuJ1aSDs36ynv3aoVsKC+mCBsCXWKdpsMp006VWW9pgbc/u+ri1
-         li9wr5bjlhAvbeEMJBXlgwVuxI5cpW2wsKGQ8+CgDhtdlAjeYM4urEcmRJG4P2QPeCsi
-         z2rQ==
-X-Gm-Message-State: AFqh2kpiviGWiljAHxlNGQeV7fUSuVZyRrj48LC6HTLtl2KnYriIezYp
-        +U3PQR6FsdJRV6chlD+uLBI=
-X-Google-Smtp-Source: AMrXdXu9fCIMloz3wZcsshGUNDrZpUQk+/zBa0oWHKenigtLxNcjAbzS44P/5mYopHMUNpokS6Y8AA==
-X-Received: by 2002:adf:fe09:0:b0:242:149c:6d29 with SMTP id n9-20020adffe09000000b00242149c6d29mr28395857wrr.16.1672916064665;
-        Thu, 05 Jan 2023 02:54:24 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id bt18-20020a056000081200b002368f6b56desm4557610wrb.18.2023.01.05.02.54.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 02:54:24 -0800 (PST)
-Date:   Thu, 5 Jan 2023 13:54:13 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] soc: qcom: dcc: Delete some bogus dead code
-Message-ID: <Y7asVSr5ERGCZedk@kili>
+        Thu, 5 Jan 2023 06:28:29 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D386BBA6;
+        Thu,  5 Jan 2023 03:28:27 -0800 (PST)
+Received: from canpemm100004.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NnkhL2r1GznTWh;
+        Thu,  5 Jan 2023 19:26:58 +0800 (CST)
+Received: from [10.174.179.14] (10.174.179.14) by
+ canpemm100004.china.huawei.com (7.192.105.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Thu, 5 Jan 2023 19:28:25 +0800
+Subject: Re: [PATCH] scsi: libsas: fix an error code in sas_ata_add_dev()
+To:     Dan Carpenter <error27@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+CC:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        John Garry <john.garry@huawei.com>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
+        Jie Zhan <zhanjie9@hisilicon.com>,
+        <linux-scsi@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <Y7asLxzVwQ56G+ya@kili>
+From:   Jason Yan <yanaijie@huawei.com>
+Message-ID: <0a15d816-7760-e845-7fe5-05e73d439f95@huawei.com>
+Date:   Thu, 5 Jan 2023 19:28:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y7asNqoIapctHmbI@kili>
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <Y7asLxzVwQ56G+ya@kili>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.179.14]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ canpemm100004.china.huawei.com (7.192.105.92)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It feels very wrong to assign "cfg.sram_offset" to be out of bounds.
-Fortunately, this is just dead code and can be deleted.
+On 2023/1/5 18:53, Dan Carpenter wrote:
+> This code accidentally returns success instead of -ENOMEM.
+> 
+> Fixes: 7cc7646b4b24 ("scsi: libsas: Factor out sas_ata_add_dev()")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>   drivers/scsi/libsas/sas_ata.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+> index 177cdaef3cad..f5e1c24f54ca 100644
+> --- a/drivers/scsi/libsas/sas_ata.c
+> +++ b/drivers/scsi/libsas/sas_ata.c
+> @@ -716,7 +716,7 @@ int sas_ata_add_dev(struct domain_device *parent, struct ex_phy *phy,
+>   
+>   	rphy = sas_end_device_alloc(phy->port);
+>   	if (!rphy)
+> -		return ret;
+> +		return -ENOMEM;
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/soc/qcom/dcc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Hi Dan,
 
-diff --git a/drivers/soc/qcom/dcc.c b/drivers/soc/qcom/dcc.c
-index 1e2cbefc1655..681d55018e66 100644
---- a/drivers/soc/qcom/dcc.c
-+++ b/drivers/soc/qcom/dcc.c
-@@ -483,10 +483,8 @@ static int dcc_emit_config(struct dcc_drvdata *drvdata, unsigned int curr_list)
- 	/* Update ram_cfg and check if the data will overstep */
- 	drvdata->ram_cfg = (cfg.sram_offset + total_len) / 4;
- 
--	if (cfg.sram_offset + total_len > drvdata->ram_size) {
--		cfg.sram_offset += total_len;
-+	if (cfg.sram_offset + total_len > drvdata->ram_size)
- 		goto overstep;
--	}
- 
- 	drvdata->ram_start = cfg.sram_offset / 4;
- 	return 0;
--- 
-2.35.1
+Good catch, thanks for the fix.
 
+Reviewed-by: Jason Yan <yanaijie@huawei.com>
