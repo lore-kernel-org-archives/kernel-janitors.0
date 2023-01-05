@@ -2,84 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CC3C3DA7A
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 13:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F91C53210
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 13:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231710AbjAENa7 (ORCPT
+        id S231942AbjAENld (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Jan 2023 08:30:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49652 "EHLO
+        Thu, 5 Jan 2023 08:41:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231363AbjAENa5 (ORCPT
+        with ESMTP id S233622AbjAENlQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Jan 2023 08:30:57 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16966D71;
-        Thu,  5 Jan 2023 05:30:54 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id i17-20020a05600c355100b003d99434b1cfso1310514wmq.1;
-        Thu, 05 Jan 2023 05:30:54 -0800 (PST)
+        Thu, 5 Jan 2023 08:41:16 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8309E12D02;
+        Thu,  5 Jan 2023 05:41:14 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id k22-20020a05600c1c9600b003d1ee3a6289so1332341wms.2;
+        Thu, 05 Jan 2023 05:41:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XW98DVrs0+Jly8h1gtMatPwTE1I6WBstQY29vkxVduE=;
-        b=oV57iYoR7l6B/Scumx7tivkt+6tkqLuGNmuHDne8f9719J5Xs8QQHuRMpndKCZfAUQ
-         y6I/qRUs/9SJRBZSqhczjBDaJLsXmw53kCGSYbreS92L0o/JhjGww/bhOlzumdirzquG
-         EW6k3WMaUz8O9wLrAWHENvHWl02lnADPNjNQJ9rn8L3F8riZGEK/kI+OQqpe7mxW/rbx
-         AlXjS7sc1mOHQ2cDhrpPnUCm8w5R/vD/XrVbbnS7xf/EEmc5FVtvNzRnqCOgMdh6aFSY
-         n523pvqho0pslAL6b7RXFOgRFltTliPqXeSLHzuxlT+M+ychTAbvZlRBSaEJ0Xm2rzWx
-         V1tw==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GyyRdgebspZF1HHBg/x+bnzRDFwvCGUNNQpRJ9GE9NE=;
+        b=gVovIXNCyutrMkt3B7RkQAXY9mkDckwwv0IwDDTcMNXgyGB/xpYBpp07ss+3hnRL4r
+         VNSazoyUN8XC1C5yLkMI1DcBWCH/YA+y2FXM45UghIv6aUPAUBAoFZBnNe4FEUAMegID
+         3c7ZnWO5b0AYdk7acTUBed5ytK1VLXUtsK7B5zybvgrnnHOXdGMKZV75T4f0G+Hh4kbH
+         opPfBEB4SE6UA4OESxQIGCoqAgfjqna0saJ9vGzS2ClRJnzWUEhhOEILucszK8ZIqZHA
+         /CV/27Jtt8du9zkuwBXSoPf57ZxeJN9c0VC+b6XRkLohdWdipAVn9lU4jBJjNe6mgCo7
+         8mKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XW98DVrs0+Jly8h1gtMatPwTE1I6WBstQY29vkxVduE=;
-        b=epheGXsiXijwoA7tDySSr0NCC35Q6n4mqNonbjhjRz7AdEJimAE9dnr492QIB8fKDW
-         xVkEPqm7drb2hX02M0gvT9kM+c5Xhc2hjMvBHVyrGEleTm3WCrK+iNg7MCryRuycCvEF
-         j66ak/VyMcWho3InWZrXg0I6FJhPnZt3rj2noYPkaQZckt2kwkgMuKJniukUswvQuBD5
-         vA1AUwSfxEXzkp5VST7ySWg5RUXTkX5bcQTdkJYfHErpQ/14AUtiaj5UCwHqZL/miAvT
-         WgFomn79OUi5C270iFI1RfR9rm9WjxzC2mycPhZjNU7EILhsRgxQL4gbxsqfn3RhQbBm
-         CVow==
-X-Gm-Message-State: AFqh2koTNQpYZBQPRj/cBaDLl5G/2kDvH4hQH6KXPD1VH9Bei4ysjr0Z
-        fB68klWpO6EJEJuWLClbM5k=
-X-Google-Smtp-Source: AMrXdXuWumIsrjNFbb2l0gWAOmk5Zn0BArd1QVRz956TyiH/2eN+e/GRUk6W1sbn78Io1e+J3+JuFA==
-X-Received: by 2002:a05:600c:a0f:b0:3cf:7704:50ce with SMTP id z15-20020a05600c0a0f00b003cf770450cemr37181991wmp.38.1672925452598;
-        Thu, 05 Jan 2023 05:30:52 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id h2-20020a05600c350200b003d9b351de26sm2814486wmq.9.2023.01.05.05.30.50
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GyyRdgebspZF1HHBg/x+bnzRDFwvCGUNNQpRJ9GE9NE=;
+        b=a9idR9MiBNKwb5HIjJxgiuLep+q5KE7ZFvVc5GXZt1WiwLVgQce83R3NBJ8dYINGLd
+         f3VShGEZsBpivS1O9EH7nz2ylRpQ/dZliAqI9Pkx08bboTtJBJ9fsV+ZTE6rNggBQmCI
+         Bbnm2+qfwog5D7l4f3Q7OwX/73XSXv9xCSH1HMQXPdKum6bKacErNgTZXdgRc97iObaM
+         ezWw/ufYxSR0R8QWDRfNCcuSo/4mkOzeUwYx24lohqtyxhHzW9nRsOyAlKRRUMXai2RJ
+         32OU24nfvDDpPXBo9kUz27X9qKEUtOMubA7YLSCPkrEnAd+yhvbLmb6RTnQTilMJ+6Np
+         7GSg==
+X-Gm-Message-State: AFqh2kpnVRfzfw8yWlJMcAQj4Edtu9G06KpRaUCD0Ne503VRQAHHqKIz
+        FldixAtNEgcRF5KqAv7wTiKb8fu8IPjp5Msw
+X-Google-Smtp-Source: AMrXdXv+HroiUbAmYEH/mD+Ekli8hj6yu3IC02jJ00oTFNUO93iv3a1BHfq46uZB6xtnwejHQ1zFMQ==
+X-Received: by 2002:a05:600c:b4d:b0:3d3:5d69:7aa5 with SMTP id k13-20020a05600c0b4d00b003d35d697aa5mr34879221wmr.25.1672926073037;
+        Thu, 05 Jan 2023 05:41:13 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id l9-20020a05600c4f0900b003d9780466b0sm2689085wmq.31.2023.01.05.05.41.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 05:30:52 -0800 (PST)
-Date:   Thu, 5 Jan 2023 16:30:37 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Alex Elder <elder@linaro.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] soc: qcom: dcc: Signedness bug in
- config_reset_write()
-Message-ID: <Y7bQ/SjUlzt6iLts@kadam>
-References: <Y7asNqoIapctHmbI@kili>
- <7017c4e0-16c0-225f-028d-2cf2cb34f360@linaro.org>
+        Thu, 05 Jan 2023 05:41:12 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] cifs: remove redundant assignment to the variable match
+Date:   Thu,  5 Jan 2023 13:41:11 +0000
+Message-Id: <20230105134111.45001-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7017c4e0-16c0-225f-028d-2cf2cb34f360@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 05, 2023 at 12:47:45PM +0100, Konrad Dybcio wrote:
-> The commit message should be written in an imperative manner,
-> such as "Fix X, make Y do Z"
-> 
+The variable match is being assigned a value that is never read, it
+is being re-assigned a new value later on. The assignment is redundant
+and can be removed.
 
-Imperative tense requirements are a symptom of bureaucracy run mad.  I
-always want to push back against that.  We accrete layers of
-requirements like case-bearing leaf beetles making armor out of poop.
+Cleans up clang scan-build warning:
+fs/cifs/dfs_cache.c:1302:2: warning: Value stored to 'match' is never read
 
-regards,
-dan carpenter
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/cifs/dfs_cache.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
+index 43ad1176dcb9..e20f8880363f 100644
+--- a/fs/cifs/dfs_cache.c
++++ b/fs/cifs/dfs_cache.c
+@@ -1299,7 +1299,6 @@ static bool target_share_equal(struct TCP_Server_Info *server, const char *s1, c
+ 	 * Resolve share's hostname and check if server address matches.  Otherwise just ignore it
+ 	 * as we could not have upcall to resolve hostname or failed to convert ip address.
+ 	 */
+-	match = true;
+ 	extract_unc_hostname(s1, &host, &hostlen);
+ 	scnprintf(unc, sizeof(unc), "\\\\%.*s", (int)hostlen, host);
+ 
+-- 
+2.30.2
 
