@@ -2,65 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B04BEC3DA7D
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 10:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB8FC3DA7A
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 10:54:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232251AbjAEKyJ (ORCPT
+        id S232339AbjAEKym (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Jan 2023 05:54:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42550 "EHLO
+        Thu, 5 Jan 2023 05:54:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232589AbjAEKx4 (ORCPT
+        with ESMTP id S232369AbjAEKyX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Jan 2023 05:53:56 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B83750174;
-        Thu,  5 Jan 2023 02:53:55 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id m8-20020a05600c3b0800b003d96f801c48so1025650wms.0;
-        Thu, 05 Jan 2023 02:53:54 -0800 (PST)
+        Thu, 5 Jan 2023 05:54:23 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75C134C724;
+        Thu,  5 Jan 2023 02:54:22 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id s9so3699127wru.13;
+        Thu, 05 Jan 2023 02:54:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5nwMq5RxlGq2Rp72O65oHNJVovNCqvBQEsaRzCUxkl4=;
-        b=aEtpEUSN8zeVQtThy9khsr+NMiqMbu1k3j3jW5zT0evRPzwWLjgbGKjwxENMQIKrmF
-         AWJPJtUhk/fr0msY2Y9Xn3RiuzBiduBkxPwLjyXhZN00bHzpwzZKuOuBuBOe6SDuEdo8
-         JEx0QRp1Yo5XLK/y+5P9/RJN9WlAQDnAHpXYTHwHwNHfAt+NmBlYqcbj5XCDedghjwZJ
-         CLAklcIQVwMy8uv1GTNNqVnBAkVGvxQio4WoEgrUWVLZ4hT2B4MIawePXkYZj9uCyyi9
-         WZEWcJkWp23WACRXS6he8BWSAFNt+Y9exct0PVAvBoczQVcP8n0OituhTbjzPzU/K7lx
-         Hf8A==
+        bh=TdHeHF4mTbDvrlFZGioHAvpse64q4uNez3wi8r/aN44=;
+        b=fOxOeudJ7qAy0oYQORrvEOu/JM0hFJeJ7YQDLVMxcniHQrkD783Ur7EDAe6AYxPcDc
+         oPudqEezkneoTporSI8hTHexd73DDS4IGDNLVgcmSK/fWTNRH6YzPPp2Lqip/Rdlans7
+         hSLGK/EDE9a1CRKpdFYv38u/op+ZrUej1uw4uyAMtED5fPDt0fMkkh5UxWPqGuv8pcFO
+         cqe0mB3KDGgyfJ72VlWs53M1NmELpcnC2LNzEolrhCnepUZuL60lnidKj22MDQe+k3Fp
+         Gm15xfPAqsSTlqgkMR0kfMEqKoCI2u8tvAuL5Fq8ZKZmE4fsdxqsLCuOHyJWrg2eOWB2
+         5kmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5nwMq5RxlGq2Rp72O65oHNJVovNCqvBQEsaRzCUxkl4=;
-        b=5pq9d6CSmK59NBr5kf8pfBxoROJMxjWYlefGoODjF5HJu4s9k2w0ei98TnUudZkllx
-         i2AgDTmdszijQGxjufaxAeQM7mEy7R9hnbJPnaBX7mk69yojq+byLTL6dCL8c3doUoHH
-         zzKAa0USzFEqsIR5ZunyaywcBCSkypRXmNOq2n7HknrmrStpoq0Q3MIr+1bikvtbIBr+
-         19Zturlu/EWpD5JdQQCmbJZDhjv1htQ8ZUoEp+tRml/4JJ92LJz6YdIE2NszglDa+nio
-         Qw3+pFgs8bXiEY52r7230IDTa+PLNxiSVQPsN2qrx9qK6OdXDfiNT6QtWT4+xsBPnOkL
-         /BXg==
-X-Gm-Message-State: AFqh2kopbI/9SiyNmE6fwSlm7h0lbS4aJQ0P69TFgaeqCKeH7KshtngC
-        IkJRHrUjZnPWzL1Wh64hq74=
-X-Google-Smtp-Source: AMrXdXvYf5181nm386ergfcbjb6gWFTPRfHv+VtXO1iLkiqFscFV/rDF/dVwvAxr0YFbbMSWimk3Ow==
-X-Received: by 2002:a05:600c:13ca:b0:3d3:4427:dfbf with SMTP id e10-20020a05600c13ca00b003d34427dfbfmr35289301wmg.5.1672916033540;
-        Thu, 05 Jan 2023 02:53:53 -0800 (PST)
+        bh=TdHeHF4mTbDvrlFZGioHAvpse64q4uNez3wi8r/aN44=;
+        b=nU8kdjIHP+6OggleH+BkPPFR1ccn9LHRsO2lCGTEygZSDJEpaQmD9qfLwT7Rc9+X/m
+         ooZrKvEmzmFPYd4Qp94Nvy3U9eXXdgutvWqW3+wXvdfR9+1F/KhBJTnZIq+yr7o/ZPJ4
+         w9KeeKDTNWjCxvcCRW5dK6f2nzi4s0xK+XtQbike6jXFtx6hzF2F6ThlLXoo3vjpJJKu
+         wpes9mCcEjd2b4zeWyyamnJ6nPi53Mchqft2vhXzxPOaop5Hc4M/YQc8t4JMl78WWFAk
+         iS882WGGfThUIwf0AtWXG1t6Gy7Vy0StOnNRFDTKR6b7CNatc71WQgeHTM7Jmk8dcj7Z
+         qbGg==
+X-Gm-Message-State: AFqh2kplXhXf8vw1mV9EcYsJ3odOQBA7SHqCGA8/gRVhFP2bzwTaiB3T
+        wkYUAfI26YYzvMkcu5CVsTQ=
+X-Google-Smtp-Source: AMrXdXulo2y4fgRl+GrzA5Y5zlgpQoKtceGrfDdFonoUQamJ9TJsbsT8UIXFlKRhC0HVHq6Y0mdMZg==
+X-Received: by 2002:a5d:5b17:0:b0:2a3:50c5:9c29 with SMTP id bx23-20020a5d5b17000000b002a350c59c29mr3734303wrb.14.1672916061080;
+        Thu, 05 Jan 2023 02:54:21 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v16-20020a05600c445000b003c6c3fb3cf6sm2197277wmn.18.2023.01.05.02.53.52
+        by smtp.gmail.com with ESMTPSA id d14-20020adfa40e000000b0029d9ed7e707sm8256321wra.44.2023.01.05.02.54.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 02:53:53 -0800 (PST)
-Date:   Thu, 5 Jan 2023 13:53:35 +0300
+        Thu, 05 Jan 2023 02:54:20 -0800 (PST)
+Date:   Thu, 5 Jan 2023 13:53:42 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Jason Yan <yanaijie@huawei.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        John Garry <john.garry@huawei.com>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Xiang Chen <chenxiang66@hisilicon.com>,
-        Jie Zhan <zhanjie9@hisilicon.com>, linux-scsi@vger.kernel.org,
+To:     Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Alex Elder <elder@linaro.org>, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] scsi: libsas: fix an error code in sas_ata_add_dev()
-Message-ID: <Y7asLxzVwQ56G+ya@kili>
+Subject: [PATCH 1/2] soc: qcom: dcc: Signedness bug in config_reset_write()
+Message-ID: <Y7asNqoIapctHmbI@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -69,27 +67,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code accidentally returns success instead of -ENOMEM.
+The "ret" variable needs to be signed for the error handling to work.
 
-Fixes: 7cc7646b4b24 ("scsi: libsas: Factor out sas_ata_add_dev()")
+Fixes: 4cbe60cf5ad6 ("soc: qcom: dcc: Add driver support for Data Capture and Compare unit(DCC)")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/scsi/libsas/sas_ata.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/qcom/dcc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
-index 177cdaef3cad..f5e1c24f54ca 100644
---- a/drivers/scsi/libsas/sas_ata.c
-+++ b/drivers/scsi/libsas/sas_ata.c
-@@ -716,7 +716,7 @@ int sas_ata_add_dev(struct domain_device *parent, struct ex_phy *phy,
+diff --git a/drivers/soc/qcom/dcc.c b/drivers/soc/qcom/dcc.c
+index d4101f79cb5d..1e2cbefc1655 100644
+--- a/drivers/soc/qcom/dcc.c
++++ b/drivers/soc/qcom/dcc.c
+@@ -808,8 +808,9 @@ static ssize_t config_reset_write(struct file *filp,
+ 				  const char __user *user_buf, size_t count,
+ 				  loff_t *ppos)
+ {
+-	unsigned int val, ret;
++	unsigned int val;
+ 	struct dcc_drvdata *drvdata = filp->private_data;
++	int ret;
  
- 	rphy = sas_end_device_alloc(phy->port);
- 	if (!rphy)
--		return ret;
-+		return -ENOMEM;
- 
- 	rphy->identify.phy_identifier = phy_id;
- 	child->rphy = rphy;
+ 	ret = kstrtouint_from_user(user_buf, count, 0, &val);
+ 	if (ret < 0)
 -- 
 2.35.1
 
