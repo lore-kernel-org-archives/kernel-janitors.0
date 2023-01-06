@@ -2,127 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 473BDC3DA7A
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Jan 2023 15:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78435C3DA7A
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Jan 2023 16:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234989AbjAFPOO (ORCPT
+        id S232218AbjAFQSX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Jan 2023 10:14:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32884 "EHLO
+        Fri, 6 Jan 2023 11:18:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233792AbjAFPOF (ORCPT
+        with ESMTP id S231469AbjAFQRw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Jan 2023 10:14:05 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A94E877D34;
-        Fri,  6 Jan 2023 07:14:03 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id m8-20020a05600c3b0800b003d96f801c48so3766459wms.0;
-        Fri, 06 Jan 2023 07:14:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yst21N0uSYqEFSfuMC6izsJAwCQLkY9y90gu79pYeM4=;
-        b=CZ5c1LoTctHQNBub/7AEZQNJqP9y+neA8rcDMogdCSI2nHueEiIiCWErGQeyfZ0660
-         zgoZ6v3rBvPHYuF48BJIRbN8BAWkpnxkg34kQp+ZdgXlC+yINqA3fnJUj2TUoKRQilbE
-         ZzH9quUoIpGoFVEsutX90VJ48I3AUArQhBfPOVPDCbQy62aRtR9gpUN+35LBBiilYUYh
-         zXJglaZCMLawkgjr1o266kwfAZZNNjUUXs6MBLv0gmb8TzMIabyDVaECQs6Net7rti4D
-         /9F32WMWeELSVER/kkRyQLplpHOES+jHQ9pMHsCzvB4Rzc6vKk3hRKG1Bbg6gCjQQs4W
-         3asw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yst21N0uSYqEFSfuMC6izsJAwCQLkY9y90gu79pYeM4=;
-        b=d8QB5+i7gnmyQCsqV5OVdtzCgPEtc9/SWl+pYZ7ywfc5LtEL2oq5k/+Ahd8aC8V2QS
-         z85gvoc9Z6hh5WMEn2q4+BGstmV14mCruijWtnA+BKIGomcyeg4oVp/3bGv1E9HExZIW
-         c+RrgH11UAJjaP9cHJoGasnypAMWO4P/I2kKWb73P5B4hjJcRpPPpJTT0wKdlFLeuQUU
-         rYMzDPk9MHVUhS4bEUPjEUy9pr37nObswlOJ2F1vhtEtOPmmY9mIuZ4E8rphjNZbmx5t
-         fvIVKJwXOZfVDlM+Wdnt0tVZFCqnenzbHfJW3/6gIsyVZCo+RESaBNcCiYHs7NbYWRs1
-         MQqg==
-X-Gm-Message-State: AFqh2kqtcEBm9ozLCdVzzsNUrDXB+4GhyvKgNozGcA0QZ9EO0/CzC7c4
-        nygr/wu47qe3Y4A4FOTTFse3HqWhaU6UfQ==
-X-Google-Smtp-Source: AMrXdXsm3WjfA9H7piH5cTLWes10jjW4zKI1uvF4s5Prr2wLB8jXM59KAwFW+eNMt0A6yCUs5e066w==
-X-Received: by 2002:a05:600c:348b:b0:3d2:2a72:2577 with SMTP id a11-20020a05600c348b00b003d22a722577mr38623383wmq.27.1673018041983;
-        Fri, 06 Jan 2023 07:14:01 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u13-20020a05600c19cd00b003c6f1732f65sm7264982wmq.38.2023.01.06.07.14.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jan 2023 07:14:01 -0800 (PST)
-Date:   Fri, 6 Jan 2023 18:13:58 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     outreachy-kernel@googlegroups.com
-Subject: calling iounmap while holding a spinlock (preempt disabled)
-Message-ID: <Y7g6tkauv8eV3ZBm@kili>
+        Fri, 6 Jan 2023 11:17:52 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A2D7621D;
+        Fri,  6 Jan 2023 08:17:49 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 8C150270C2;
+        Fri,  6 Jan 2023 16:17:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1673021868; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=B9WUSg1w6lXgk5OVW4/SCoCMWU1E1GVuFjkdC7c+hUY=;
+        b=MK0/SWzgDjvH0OLCXOmD8llWuxeQ4+GDqR5thC5vVOXVkAaNOCeRAGWCEi3PKFwoEjfSXW
+        m0/DnI2kdA2Wys54Xoi0K5pAFmUjIK0coJmR4915frMtjwnkHs4CvG5uu9ouO0YocwS5Uu
+        BOkucLt/fNsv+ZxzFtx8Y/8BLith/Wg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1673021868;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=B9WUSg1w6lXgk5OVW4/SCoCMWU1E1GVuFjkdC7c+hUY=;
+        b=spn+BCL1tlmrdvxJR1WtCbu+aQymd7Kaa0Q/iO3T7VVPpp9y8jCxke37K+2lYuujQZBiNh
+        29mPtFxkkEu4k9Cg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7166913596;
+        Fri,  6 Jan 2023 16:17:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id blCiG6xJuGNaLwAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 06 Jan 2023 16:17:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id B6B47A0742; Fri,  6 Jan 2023 17:17:47 +0100 (CET)
+Date:   Fri, 6 Jan 2023 17:17:47 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] udf: remove redundant variable netype
+Message-ID: <20230106161747.a5j4orghkegeiqjg@quack3>
+References: <20230105134925.45599-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20230105134925.45599-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch complains correctly that it is a bug to call iounmap while
-holding a spin_lock (or other actions which disable preemption).
+On Thu 05-01-23 13:49:25, Colin Ian King wrote:
+> The variable netype is assigned a value that is never read, the assignment
+> is redundant the variable can be removed.
+> 
+> Cleans up clang scan-build warning:
+> fs/exfat/dir.c:1012:5: warning: Value stored to 'step' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-However there are too many bugs for me to look at them so I'm just
-going to forward the list here and whoever wants to can fix them as
-a kind of newbie project.
+Thanks, I've added the patch to my tree. Just the warning message mentioned
+in the changelog is apparently from somewhere else so I've just deleted it
+;).
 
-The Smatch warnings look like:
+								Honza
 
-arch/x86/mm/ioremap.c:471 iounmap() warn: sleeping in atomic context
-arch/x86/mm/ioremap.c:494 iounmap() warn: sleeping in atomic context
-
-Which means that the iounmap() function sleeps.  Then we run
-`smatch/smatch_data/db/smdb.py preempt iounmap` to get the list of
-callers which disable preemption.
-
-The raw output is below.  Basically every "disables preempt" is a bug.
-In the first example, tsi148_master_set() calls spin_lock(&image->lock),
-then it calls tsi148_alloc_resource() which calls iounmap().  Clear bug.
-However it's not clear how to fix it necessarily.
-
-regards,
-dan carpenter
-
-tsi148_master_set() <- disables preempt
--> tsi148_alloc_resource()
-hfc_remove_pci() <- disables preempt
--> release_card()
-   -> release_io_hfcmulti()
-pcc_get_freq() <- disables preempt
-pcc_cpufreq_target() <- disables preempt
--> pcc_cmd()
-   -> acpi_read()
-      -> acpi_hw_read()
-ghes_poll_func() <- disables preempt
-ghes_irq_func() <- disables preempt
-ghes_notify_hed() <- disables preempt
-ghes_probe() <- disables preempt
--> ghes_proc()
-ghes_notify_nmi() <- disables preempt
--> ghes_in_nmi_spool_from_list()
-ghes_sdei_normal_callback() <- disables preempt
-ghes_sdei_critical_callback() <- disables preempt
--> __ghes_sdei_callback()
-   -> ghes_in_nmi_queue_one_entry()
-      -> __ghes_panic()
-ghes_in_nmi_queue_one_entry() <duplicate>
-         -> ghes_clear_estatus()
-            -> ghes_ack_error()
-ghes_proc() <duplicate>
--> ghes_read_estatus()
-ghes_in_nmi_queue_one_entry() <duplicate>
-   -> __ghes_peek_estatus()
-               -> apei_read()
-                  -> acpi_os_read_memory()
-pcc_cmd() <duplicate>
--> acpi_write()
-   -> acpi_hw_write()
-ghes_ack_error() <duplicate>
--> apei_write()
-      -> acpi_os_write_memory()
-                     -> iounmap()
-
-
+> ---
+>  fs/udf/truncate.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/udf/truncate.c b/fs/udf/truncate.c
+> index 036ebd892b85..775edaba82ee 100644
+> --- a/fs/udf/truncate.c
+> +++ b/fs/udf/truncate.c
+> @@ -125,7 +125,7 @@ void udf_discard_prealloc(struct inode *inode)
+>  	struct kernel_lb_addr eloc;
+>  	uint32_t elen;
+>  	uint64_t lbcount = 0;
+> -	int8_t etype = -1, netype;
+> +	int8_t etype = -1;
+>  	struct udf_inode_info *iinfo = UDF_I(inode);
+>  	int bsize = 1 << inode->i_blkbits;
+>  
+> @@ -136,7 +136,7 @@ void udf_discard_prealloc(struct inode *inode)
+>  	epos.block = iinfo->i_location;
+>  
+>  	/* Find the last extent in the file */
+> -	while ((netype = udf_next_aext(inode, &epos, &eloc, &elen, 0)) != -1) {
+> +	while (udf_next_aext(inode, &epos, &eloc, &elen, 0) != -1) {
+>  		brelse(prev_epos.bh);
+>  		prev_epos = epos;
+>  		if (prev_epos.bh)
+> -- 
+> 2.30.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
