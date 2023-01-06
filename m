@@ -2,113 +2,156 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3ABC3DA7A
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Jan 2023 18:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E498C3DA7A
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Jan 2023 07:30:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234812AbjAESoJ (ORCPT
+        id S232041AbjAFHai (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Jan 2023 13:44:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58704 "EHLO
+        Fri, 6 Jan 2023 02:30:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234735AbjAESoH (ORCPT
+        with ESMTP id S232088AbjAFHad (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Jan 2023 13:44:07 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 154221054D;
-        Thu,  5 Jan 2023 10:44:06 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id az7so12627175wrb.5;
-        Thu, 05 Jan 2023 10:44:06 -0800 (PST)
+        Fri, 6 Jan 2023 02:30:33 -0500
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EE7E71FED;
+        Thu,  5 Jan 2023 23:30:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R5VFmITpcq980NC7BHDSxAFwvqy7pS4EajnFTTRxXo8=;
-        b=KwmlitPYUG0nvLmz8rNf3rqtW8HM76f8nSBVunCIkaSBPwbAvZxYZzHGK3PwNwR7aP
-         fXmL4M+I2ETLzUWtEaUP9ZgpU40ro0a++SN8LS/D/grUAMzOWx6pMpjTO2xBTma+fF+p
-         8Z3nxBZ+cC1pRdAij++ZrS7CSicWYw5vryfLTNzHWibH4C2JwL/mO05ngE6FAeKFTJPp
-         7117FL10SSEFxQmIZmC6nSjOs4c24ZGqcR7nqVsYXQU9BeeIsdoNF9Bm4KRUmUoNNXC8
-         SmTSY6Ry8x2RKUASJo4qsQmKlVlyA07StKm5osrTpfbX+VlP9JLQW2BgFMmSPB+jWHEV
-         wp5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R5VFmITpcq980NC7BHDSxAFwvqy7pS4EajnFTTRxXo8=;
-        b=bU649uZNiyAxsI/wt+12O4I2nDUwEnAruxKftYohPFRZMkUJL8ywPAK7GktKWRa7kj
-         TGMYvZ4Wlde637ne3+UEHZv/4Uy0cRkJuEhHE78NDhsT+q2hZ2GL/LOLh3N/CtYp+R/j
-         m1OFGA+XLapQ7d/M1KKCTvq4o5OM2YyfFOfFnVEquzzn8sSeAspsxNAvfFnbPAQQya9I
-         IXdW28bRy/OOE1N57eErb13iawlpmP6BrxMUKLfDHW3Rz3OFvX8H32VTCimgRtcNiM2n
-         Ty3HqcWjgXNXKnMQ8HWs0nU7JHmQ9VXFDI9cAJXhOXJTYejZ53WRee130AGrgJvK3m3P
-         5QAA==
-X-Gm-Message-State: AFqh2kqBfzirxGPXOdYrQWfGOT+HZumjgZdo4wPRJxiyo1+7UpcdD9pQ
-        WlPovBXrGypbMZ5IazZokyg=
-X-Google-Smtp-Source: AMrXdXupHpSiCAPJMry8NhE3IeKFncHiPo3XY0ysiysKAVmAVt/UICl6Oja6cqmdM/4eTxSax6ktpw==
-X-Received: by 2002:adf:db11:0:b0:242:6055:dee3 with SMTP id s17-20020adfdb11000000b002426055dee3mr31114213wri.63.1672944244668;
-        Thu, 05 Jan 2023 10:44:04 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b14-20020a05600010ce00b0023c8026841csm37004971wrx.23.2023.01.05.10.44.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 10:44:04 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672990229; x=1704526229;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=K08OhAmW3FK1nvM92XEIEnUdOkleecistnUg2IhBg3k=;
+  b=nRe5PyDTYWL0wo0ycu850GkHLnGa0q9cDpTNfOt1fI1DK0lpW3iD/e7w
+   XQvrcmsG/D8CNGhuGcx6Jz2JFN/FeVl/ybDb1o9Fy/qiJ7zdTs1DBNYzE
+   GmbOHJWF4/OBnu1Y+VDV4r0WfXvD5zoS9VYUgkHKfauoIdDEmC3HtaSq4
+   n3Ao1l/QfJf+sJppaPUAIpHW8D3fd0pymOERZ/fx1QOUUt1KeGZgwCJw1
+   AC62R01fqvLtzsMP8bIa2UEMDNsK2mk0PyD0mH5uDRjgMoyLTbvwUPo7Y
+   zZ8ODzBuosAiSq9y+pChMaaJpLsAzTk9GcB0DcRG9MRtOISD1Q7h/0kmy
+   w==;
+X-IronPort-AV: E=Sophos;i="5.96,304,1665439200"; 
+   d="scan'208";a="28270425"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 06 Jan 2023 08:30:26 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Fri, 06 Jan 2023 08:30:26 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Fri, 06 Jan 2023 08:30:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1672990226; x=1704526226;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=K08OhAmW3FK1nvM92XEIEnUdOkleecistnUg2IhBg3k=;
+  b=ldXTu9BGtkiqGItpxWzU57eAJYp6eAQXSUCTt32kH+9gixjJt8xGqXw0
+   aaNiIGf4DVFfkMVGFrGhV2iE9LH3ebbbfW5EKdOjvjSoN0L1fry2alAeY
+   NSoNQB545dwGbyZPGZrW9stTiI47zhj6hrUiQ8kvScVOPBaKYM8QwEYNO
+   MuZjlkwlTkLMrH23FbU/3zyppS4vmHEJ7SYHEmeUOYuHUPlKZTo7ZfHzk
+   XxCe+FMFt8hlklN0ZzroO/iC7AFWzPHKo7XQj4GymSDno2vqBevnh3l2Z
+   kPK/YMm++AUXzbe71Y4Ljs5QhsnYhi7BORf+k0GDDxGTAs0lrabgFeMSW
+   g==;
+X-IronPort-AV: E=Sophos;i="5.96,304,1665439200"; 
+   d="scan'208";a="28270424"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 06 Jan 2023 08:30:26 +0100
+Received: from steina-w.localnet (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 15BC2280056;
+        Fri,  6 Jan 2023 08:30:26 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
 To:     Dafna Hirschfeld <dafna@fastmail.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
+        linux-arm-kernel@lists.infradead.org,
+        Colin Ian King <colin.i.king@gmail.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: rkisp1: make a few const arrays static
-Date:   Thu,  5 Jan 2023 18:44:03 +0000
-Message-Id: <20230105184403.63419-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+Subject: Re: [PATCH][next] media: rkisp1: make a few const arrays static
+Date:   Fri, 06 Jan 2023 08:30:23 +0100
+Message-ID: <10879096.BaYr0rKQ5T@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20230105184403.63419-1-colin.i.king@gmail.com>
+References: <20230105184403.63419-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the const arrays on the stack, instead make them
-static. Also makes the object code smaller.
+Hi Ian,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .../platform/rockchip/rkisp1/rkisp1-capture.c     | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Am Donnerstag, 5. Januar 2023, 19:44:03 CET schrieb Colin Ian King:
+> Don't populate the const arrays on the stack, instead make them
+> static. Also makes the object code smaller.
 
-diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
-index d4540684ea9a..d1d1fdce03e3 100644
---- a/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
-+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
-@@ -1131,10 +1131,12 @@ static void rkisp1_try_fmt(const struct rkisp1_capture *cap,
- 	const struct rkisp1_capture_config *config = cap->config;
- 	const struct rkisp1_capture_fmt_cfg *fmt;
- 	const struct v4l2_format_info *info;
--	const unsigned int max_widths[] = { RKISP1_RSZ_MP_SRC_MAX_WIDTH,
--					    RKISP1_RSZ_SP_SRC_MAX_WIDTH };
--	const unsigned int max_heights[] = { RKISP1_RSZ_MP_SRC_MAX_HEIGHT,
--					     RKISP1_RSZ_SP_SRC_MAX_HEIGHT};
-+	static const unsigned int max_widths[] = {
-+		RKISP1_RSZ_MP_SRC_MAX_WIDTH, RKISP1_RSZ_SP_SRC_MAX_WIDTH
-+	};
-+	static const unsigned int max_heights[] = {
-+		RKISP1_RSZ_MP_SRC_MAX_HEIGHT, RKISP1_RSZ_SP_SRC_MAX_HEIGHT
-+	};
- 
- 	fmt = rkisp1_find_fmt_cfg(cap, pixm->pixelformat);
- 	if (!fmt) {
-@@ -1336,8 +1338,9 @@ void rkisp1_capture_devs_unregister(struct rkisp1_device *rkisp1)
- 
- static int rkisp1_register_capture(struct rkisp1_capture *cap)
- {
--	const char * const dev_names[] = {RKISP1_MP_DEV_NAME,
--					  RKISP1_SP_DEV_NAME};
-+	static const char * const dev_names[] = {
-+		RKISP1_MP_DEV_NAME, RKISP1_SP_DEV_NAME
-+	};
- 	struct v4l2_device *v4l2_dev = &cap->rkisp1->v4l2_dev;
- 	struct video_device *vdev = &cap->vnode.vdev;
- 	struct rkisp1_vdev_node *node;
--- 
-2.30.2
+While I don't dislike this change itself, are you sure about the size change?
+
+bloat-o-meter shows an overall increase:
+> ./scripts/bloat-o-meter /tmp/rkisp1-capture_old.o
+> /tmp/rkisp1-capture_new.o
+> add/remove: 3/0 grow/shrink: 1/2 up/down: 256/-116 (140)
+> Function                                     old     new   delta
+> rkisp1_try_fmt_vid_cap_mplane                 56     280    +224
+> dev_names                                      -      16     +16
+> max_widths                                     -       8      +8
+> max_heights                                    -       8      +8
+> rkisp1_try_fmt                               356     304     -52
+> rkisp1_register_capture                      548     484     -64
+> Total: Before=12333, After=12473, chg +1.14%
+
+To be honest I don't know why GCC now inlines rkisp1_try_fmt() in 
+rkisp1_try_fmt_vid_cap_mplane.
+
+Best regards,
+Alexander
+
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  .../platform/rockchip/rkisp1/rkisp1-capture.c     | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
+> b/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c index
+> d4540684ea9a..d1d1fdce03e3 100644
+> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
+> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
+> @@ -1131,10 +1131,12 @@ static void rkisp1_try_fmt(const struct
+> rkisp1_capture *cap, const struct rkisp1_capture_config *config =
+> cap->config;
+>  	const struct rkisp1_capture_fmt_cfg *fmt;
+>  	const struct v4l2_format_info *info;
+> -	const unsigned int max_widths[] = { RKISP1_RSZ_MP_SRC_MAX_WIDTH,
+> -					    
+RKISP1_RSZ_SP_SRC_MAX_WIDTH };
+> -	const unsigned int max_heights[] = { RKISP1_RSZ_MP_SRC_MAX_HEIGHT,
+> -					     
+RKISP1_RSZ_SP_SRC_MAX_HEIGHT};
+> +	static const unsigned int max_widths[] = {
+> +		RKISP1_RSZ_MP_SRC_MAX_WIDTH, RKISP1_RSZ_SP_SRC_MAX_WIDTH
+> +	};
+> +	static const unsigned int max_heights[] = {
+> +		RKISP1_RSZ_MP_SRC_MAX_HEIGHT, RKISP1_RSZ_SP_SRC_MAX_HEIGHT
+> +	};
+> 
+>  	fmt = rkisp1_find_fmt_cfg(cap, pixm->pixelformat);
+>  	if (!fmt) {
+> @@ -1336,8 +1338,9 @@ void rkisp1_capture_devs_unregister(struct
+> rkisp1_device *rkisp1)
+> 
+>  static int rkisp1_register_capture(struct rkisp1_capture *cap)
+>  {
+> -	const char * const dev_names[] = {RKISP1_MP_DEV_NAME,
+> -					  RKISP1_SP_DEV_NAME};
+> +	static const char * const dev_names[] = {
+> +		RKISP1_MP_DEV_NAME, RKISP1_SP_DEV_NAME
+> +	};
+>  	struct v4l2_device *v4l2_dev = &cap->rkisp1->v4l2_dev;
+>  	struct video_device *vdev = &cap->vnode.vdev;
+>  	struct rkisp1_vdev_node *node;
+
+
+
 
