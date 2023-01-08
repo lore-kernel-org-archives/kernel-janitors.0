@@ -2,35 +2,37 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0B8C53210
-	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Jan 2023 12:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5284EC54EBE
+	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Jan 2023 19:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233070AbjAHMdA (ORCPT
+        id S230363AbjAHTE5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 8 Jan 2023 07:33:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57446 "EHLO
+        Sun, 8 Jan 2023 14:04:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbjAHMc7 (ORCPT
+        with ESMTP id S229459AbjAHTEz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 8 Jan 2023 07:32:59 -0500
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1857BBF5C
-        for <kernel-janitors@vger.kernel.org>; Sun,  8 Jan 2023 04:32:56 -0800 (PST)
+        Sun, 8 Jan 2023 14:04:55 -0500
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA52DF2F
+        for <kernel-janitors@vger.kernel.org>; Sun,  8 Jan 2023 11:04:54 -0800 (PST)
 Received: from pop-os.home ([86.243.100.34])
         by smtp.orange.fr with ESMTPA
-        id EUr7pusmESTJGEUr7pUBmi; Sun, 08 Jan 2023 13:32:54 +0100
+        id EayQpvONwvuBYEayQps48G; Sun, 08 Jan 2023 20:04:52 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 08 Jan 2023 13:32:54 +0100
+X-ME-Date: Sun, 08 Jan 2023 20:04:52 +0100
 X-ME-IP: 86.243.100.34
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Dan Carpenter <error27@gmail.com>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] fs/dcache: Remove unneeded math.h and rculist.h includes
-Date:   Sun,  8 Jan 2023 13:32:52 +0100
-Message-Id: <028298a8b70a67a70bc7b7eb0b07d9780fc1e5f3.1673181086.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] bit_spinlock: Include <asm/processor.h>
+Date:   Sun,  8 Jan 2023 20:04:44 +0100
+Message-Id: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -38,47 +40,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-<linux/math.h> and <linux/rculist.h> are not used by <linux/dcache.h>.
-Remove them.
+In an attempt to simplify some includes in <include/dcache.h>, it
+appeared, when compiling fs/ecryptfs/dentry.c, that <linux/bit_spinlock.h>
+was relying on other includes to get the definition of cpu_relax().
+(see [1])
+
+It broke on arc.
+
+Include <asm/processor.h> in <linux/bit_spinlock.h> to fix the issue.
+This will help remove some un-needed includes from <include/dcache.h>.
+
+[1]: https://lore.kernel.org/all/202301082130.LXMj5qkD-lkp@intel.com/
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-I've built:
-  arch/mips		(cross-built)
-  arch/powerpc	 (cross-built)
-  drivers/crypto/caam/
-  drivers/gpu/drm/msm/
-  drivers/infiniband/hw/hfi1/
-  drivers/net/ethernet/amd/xgbe/
-  drivers/net/ethernet/freescale/dpaa2/
-  drivers/net/wireless/marvell/libertas/debugfs.o
-  drivers/s390/cio/ccwgroup.o   (cross-built)
-  drivers/usb/gadget/function/f_mass_storage.o
-  fs/
-  kernel/events/core.o
-  kernel/sysctl.o
-  lib/
-  net/unix/af_unix.o
-  security/
+Not sure who to send this to.
+get_maintainer.pl is of no help, and the file is untouched from a too long
+time.
 
-Let see if build-bots spot something I've missed.
+Greg? Dan? Any pointer?
 ---
- include/linux/dcache.h | 2 --
- 1 file changed, 2 deletions(-)
+ include/linux/bit_spinlock.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 6b351e009f59..c4db829d48cf 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -4,8 +4,6 @@
+diff --git a/include/linux/bit_spinlock.h b/include/linux/bit_spinlock.h
+index bbc4730a6505..d0fd2a7afca2 100644
+--- a/include/linux/bit_spinlock.h
++++ b/include/linux/bit_spinlock.h
+@@ -2,6 +2,7 @@
+ #ifndef __LINUX_BIT_SPINLOCK_H
+ #define __LINUX_BIT_SPINLOCK_H
  
++#include <asm/processor.h>
+ #include <linux/kernel.h>
+ #include <linux/preempt.h>
  #include <linux/atomic.h>
- #include <linux/list.h>
--#include <linux/math.h>
--#include <linux/rculist.h>
- #include <linux/rculist_bl.h>
- #include <linux/spinlock.h>
- #include <linux/seqlock.h>
 -- 
 2.34.1
 
