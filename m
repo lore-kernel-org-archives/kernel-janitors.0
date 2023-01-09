@@ -2,97 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42FCC54EBD
-	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Jan 2023 08:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E18C5479D
+	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Jan 2023 08:54:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236511AbjAII0W (ORCPT
+        id S236928AbjAIIyr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 9 Jan 2023 03:26:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42386 "EHLO
+        Mon, 9 Jan 2023 03:54:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236505AbjAII0S (ORCPT
+        with ESMTP id S237006AbjAIIx7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 9 Jan 2023 03:26:18 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFD956572;
-        Mon,  9 Jan 2023 00:26:17 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id m8-20020a05600c3b0800b003d96f801c48so8384746wms.0;
-        Mon, 09 Jan 2023 00:26:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GtUHkTRRfiNW5TLc5bwX/ucBfvpI6oGzoNoxA/kdcb4=;
-        b=PX/Re6EXO5D5x2aOrBoI7eA99YcH6y0uQW4Vy4O2TGXKH6hdNRvrsHnBZ+Ubcv6tiQ
-         TXL+WU+PKwozsVIYHmrowUrubNx4OdxGGBXm6FVfKXw/LCApwYZoSbyIsca39fx+QV1E
-         3ZxqQvtEQCEoLV/2KlNULgPiCnKnr+TvOMtU57t0W/50RjnVAUjWgJD4D+dA59AVoKWh
-         GEf+f2o1uqAtruBo7es8ttxLoVYaE+bRhLQe3VRGhpiyVNwe01Snp693OaYjzSAdrzV4
-         j9VOFaaboM1rMGg1fsBk8OrP0MfGOgOoXRKaV7Ugk8swmNYtUZuiZKCDU98Ui/EnhUWr
-         TFLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GtUHkTRRfiNW5TLc5bwX/ucBfvpI6oGzoNoxA/kdcb4=;
-        b=uWwnMpr6j64t3c8NhZVQLOY8g9xznOyDRYM6iAbUewDHXVa6I3QB87DRrYMM/br4fg
-         ycLPoYagA4NNfcDvvO046xsyRXH+rSSW2Wk7hNo2akx6sm1aJw5uSKhU5wWMXYPsyPYu
-         nUu4gsXY5aKOcrr1KGgCWNFvEtwpzIe9V5vhy1md17h6YeKIPHwm1T+KHwY5nETZKG5s
-         fyYkzPJR9HlRYobtE6qE3RaoxHK5zyLGB9Gb81Rbie88EWA2JgP9r27p3QQ8ryV0cz54
-         0W1yQye+Ssq4/sOx4E4qqSUUbnITyd/++pI8VCcGyfA6f52cT1OWSn5RBKOJyByprd4t
-         xCnA==
-X-Gm-Message-State: AFqh2krOBksguDCSlIu+paWWk4M166gqMdDW4MAj9BCmO5tHZ1hCPHkD
-        7ezD38HWbR4wY1SIgfeDQxs=
-X-Google-Smtp-Source: AMrXdXuAKMUeskJfUuvD8C9z9OcPka00Get8EuUaW0pYUVKXK+LmkvJIxuFXAbNoY9jOuXApvBte+A==
-X-Received: by 2002:a05:600c:3b82:b0:3cf:900c:de6b with SMTP id n2-20020a05600c3b8200b003cf900cde6bmr45739129wms.15.1673252776288;
-        Mon, 09 Jan 2023 00:26:16 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id i6-20020a05600c4b0600b003d9e91cd08dsm5605620wmp.4.2023.01.09.00.26.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jan 2023 00:26:15 -0800 (PST)
-Date:   Mon, 9 Jan 2023 11:26:05 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vineet Gupta <vgupta@kernel.org>,
-        linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] bit_spinlock: Include <asm/processor.h>
-Message-ID: <Y7vPnXaUBXPwO0Bj@kadam>
-References: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
+        Mon, 9 Jan 2023 03:53:59 -0500
+Received: from mail.dufert24.com (mail.dufert24.com [38.242.205.183])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F1B11409C
+        for <kernel-janitors@vger.kernel.org>; Mon,  9 Jan 2023 00:45:53 -0800 (PST)
+Received: by mail.dufert24.com (Postfix, from userid 1001)
+        id 6CE5A40F10; Mon,  9 Jan 2023 09:45:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dufert24.com; s=mail;
+        t=1673253950; bh=oIICWKo9u1D1jW6PXE1Xkws2aZgemRr9S/HRdzov8s4=;
+        h=Date:From:To:Subject:From;
+        b=CYrjpcxh2hogB8cnLCyBzKq1RR86pPmZ8E6yz0g+vITHF8wj2U7/lGYXmBbGIb1sA
+         /7xyZhGMczIoH6zuazd4z3CVRbihSqDSbUrO1Oc0k6nwzpScwsqpQVup+XqaXH5xMR
+         3DHccP3Opc7mI4b8cxaO0aebHGDXp64dWUIwNusEUyObW/G9zr2KQN76FGiPE6OkKm
+         zTqsreEvRby5d02SfT9VBDrJq8U2fsW25P0SkN1HyHc3sfLo4kzCx1eMdP+KYy0hFS
+         nM86I+1TrRb/HNk9Z6Elr9bRxdQ/9EHwz76VMXmjKv2VWNoV1eHSpOMZCWnhHJc2ad
+         H730bUZQpfMbw==
+Received: by mail.dufert24.com for <kernel-janitors@vger.kernel.org>; Mon,  9 Jan 2023 08:45:29 GMT
+Message-ID: <20230109084500-0.1.19.4dvu.0.t1m17j0876@dufert24.com>
+Date:   Mon,  9 Jan 2023 08:45:29 GMT
+From:   "Nikolaus Mazal" <nikolaus.mazal@dufert24.com>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: =?UTF-8?Q?Dropshipping_-_spolupr=C3=A1ce?=
+X-Mailer: mail.dufert24.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 08, 2023 at 08:04:44PM +0100, Christophe JAILLET wrote:
-> In an attempt to simplify some includes in <include/dcache.h>, it
-> appeared, when compiling fs/ecryptfs/dentry.c, that <linux/bit_spinlock.h>
-> was relying on other includes to get the definition of cpu_relax().
-> (see [1])
-> 
-> It broke on arc.
-> 
-> Include <asm/processor.h> in <linux/bit_spinlock.h> to fix the issue.
-> This will help remove some un-needed includes from <include/dcache.h>.
-> 
-> [1]: https://lore.kernel.org/all/202301082130.LXMj5qkD-lkp@intel.com/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Not sure who to send this to.
-> get_maintainer.pl is of no help, and the file is untouched from a too long
-> time.
-> 
-> Greg? Dan? Any pointer?
+Dobr=C3=A9 r=C3=A1no,
 
-Andrew Morton is the maintainer of last resort.  Plus spinlocks seem
-like something he would be interested in.  Otherwise Ingo, Peter Z and
-the x86 team.
+Prost=C5=99ednictv=C3=ADm syst=C3=A9mu dropshippingov=C3=A9ho prodeje pod=
+porujeme podnikatele ji=C5=BE 20 let.
 
-regards,
-dan carpenter
+Hled=C3=A1me partnery pro spolupr=C3=A1ci zam=C4=9B=C5=99enou na konkr=C3=
+=A9tn=C3=AD zisky z prodeje modern=C3=ADch produkt=C5=AF na platform=C4=9B=
+ Amazon nebo jin=C3=A9m tr=C5=BEi=C5=A1ti =E2=80=93 bez nutnosti m=C3=ADt=
+ sklad, nakupovat zbo=C5=BE=C3=AD na sklad a p=C5=99ipravovat z=C3=A1silk=
+y pro z=C3=A1kazn=C3=ADky.
+=20
+Vyr=C3=A1b=C3=ADme na zak=C3=A1zku rolety, obrazy, tapety a dal=C5=A1=C3=AD=
+ ti=C5=A1t=C4=9Bn=C3=A9 dekora=C4=8Dn=C3=AD prvky, kter=C3=A9 jsou mezi o=
+bdarovan=C3=BDmi velmi obl=C3=ADben=C3=A9. Za pouh=C3=BD m=C4=9Bs=C3=ADc =
+=C4=8Dinil prodej rolet na n=C4=9Bmeck=C3=A9m trhu Amazon 12 500 000 EUR.
 
+Poskytujeme produkty nejvy=C5=A1=C5=A1=C3=AD kvality, neomezen=C3=A9 skla=
+dov=C3=A9 z=C3=A1soby, spr=C3=A1vn=C4=9B organizovanou logistiku po cel=C3=
+=A9 Evrop=C4=9B, prodejn=C3=AD materi=C3=A1ly a podporu supervizora p=C5=99=
+i spolupr=C3=A1ci.
+
+M=C3=A1te z=C3=A1jem diskutovat o mo=C5=BEnosti nav=C3=A1z=C3=A1n=C3=AD s=
+polupr=C3=A1ce?
+
+
+Pozdravy
+Nikolaus Mazal
