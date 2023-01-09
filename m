@@ -2,69 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E18C5479D
-	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Jan 2023 08:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D19C54EBD
+	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Jan 2023 17:56:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236928AbjAIIyr (ORCPT
+        id S237403AbjAIR4v (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 9 Jan 2023 03:54:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35328 "EHLO
+        Mon, 9 Jan 2023 12:56:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237006AbjAIIx7 (ORCPT
+        with ESMTP id S229648AbjAIR4T (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 9 Jan 2023 03:53:59 -0500
-Received: from mail.dufert24.com (mail.dufert24.com [38.242.205.183])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F1B11409C
-        for <kernel-janitors@vger.kernel.org>; Mon,  9 Jan 2023 00:45:53 -0800 (PST)
-Received: by mail.dufert24.com (Postfix, from userid 1001)
-        id 6CE5A40F10; Mon,  9 Jan 2023 09:45:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dufert24.com; s=mail;
-        t=1673253950; bh=oIICWKo9u1D1jW6PXE1Xkws2aZgemRr9S/HRdzov8s4=;
-        h=Date:From:To:Subject:From;
-        b=CYrjpcxh2hogB8cnLCyBzKq1RR86pPmZ8E6yz0g+vITHF8wj2U7/lGYXmBbGIb1sA
-         /7xyZhGMczIoH6zuazd4z3CVRbihSqDSbUrO1Oc0k6nwzpScwsqpQVup+XqaXH5xMR
-         3DHccP3Opc7mI4b8cxaO0aebHGDXp64dWUIwNusEUyObW/G9zr2KQN76FGiPE6OkKm
-         zTqsreEvRby5d02SfT9VBDrJq8U2fsW25P0SkN1HyHc3sfLo4kzCx1eMdP+KYy0hFS
-         nM86I+1TrRb/HNk9Z6Elr9bRxdQ/9EHwz76VMXmjKv2VWNoV1eHSpOMZCWnhHJc2ad
-         H730bUZQpfMbw==
-Received: by mail.dufert24.com for <kernel-janitors@vger.kernel.org>; Mon,  9 Jan 2023 08:45:29 GMT
-Message-ID: <20230109084500-0.1.19.4dvu.0.t1m17j0876@dufert24.com>
-Date:   Mon,  9 Jan 2023 08:45:29 GMT
-From:   "Nikolaus Mazal" <nikolaus.mazal@dufert24.com>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: =?UTF-8?Q?Dropshipping_-_spolupr=C3=A1ce?=
-X-Mailer: mail.dufert24.com
+        Mon, 9 Jan 2023 12:56:19 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A3E40C28;
+        Mon,  9 Jan 2023 09:51:59 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id h16so9008220wrz.12;
+        Mon, 09 Jan 2023 09:51:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2L4Nx5qVuAviVSz8W0zvvT/84e//kF+LGBMYcQHzhto=;
+        b=OAT6bNAVgnQlY6KivDvwimWCgYQAWlKSZU+FsNS+g1O58an01D5QYUB38PZkGtBBX+
+         HQ0aSoY8+TgnzHpcBM9LJh0ySnmFD4xbmxZqKXUtYE2SOdBDBeyY9/cXu6MgS7hgnTEW
+         3wVOnf02ZgPi8H+N1lG9t7CGSi5jl6JJ7fno+ern+drJQLIxnfOV8ckd9Qxc29Sf5vvQ
+         BuB187f2XcDAmLtcgD6OzUcWuf7AvQwyU+/jxT7/La71KCQWp4zQTIfX8bgNNoNCO3rE
+         gDuHnSHWENE1IY9C15MNUyOmXxsol6MO1dFrBp0P7wF04CbPw+O6jTsXefbKyJq+g/Ev
+         plyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2L4Nx5qVuAviVSz8W0zvvT/84e//kF+LGBMYcQHzhto=;
+        b=3vZol5k0hC2L8yyHn6pfsDQTe1O20ZkfCsWBeFlg/KEXrLfe2KM04YpIhydTpTX5/8
+         JB6/P7Oa16hEsbe/4lTHuQE5U6VHHFaYTo3IsDVLrUxRkCpJk1ZD0AUM9+krn/D9vCrZ
+         dp9KLXHHTNzfOGBAxy9uTcTYTeIcbtas7KtvqgxWtFHqWxFMStNggbkR+fXdHD29XvW3
+         AQDV0iLwxnXYT0BOtMgz1FOkC0f4GTRUtOhfBBaCRyaG5aqr9svWf5xlC+vaJLTGJn/7
+         pkzHairrJo6ZB13mM3OjL8e9NmeJMRF0f2Id8gr9GQPmGLc/sweGQoz//JTid1TAJ8Qs
+         nNOQ==
+X-Gm-Message-State: AFqh2krP5rnJdeO2vcj3u5TL2xk01ioVpFY5rY8GdDAj6aS7aKpbByw2
+        cV5BjXwMisUSA/fVE2WQ0Cc=
+X-Google-Smtp-Source: AMrXdXvUK6A5f5l9Ckn5YqN3cLQ6zLmOpwGjk/W0rs5SIGBpOhiinBNYvloTHGDdkEdfNx2pD/+4fQ==
+X-Received: by 2002:a5d:5269:0:b0:2a6:37a6:a071 with SMTP id l9-20020a5d5269000000b002a637a6a071mr12809819wrc.21.1673286718114;
+        Mon, 09 Jan 2023 09:51:58 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id c18-20020adffb52000000b0025e86026866sm10678421wrs.0.2023.01.09.09.51.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jan 2023 09:51:57 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] pefile: remove the redundant pointer secs
+Date:   Mon,  9 Jan 2023 17:51:56 +0000
+Message-Id: <20230109175156.1572877-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dobr=C3=A9 r=C3=A1no,
+The pointer secs is being assigned a value that is never read. The
+pointer and assignment are redundant, remove them.
 
-Prost=C5=99ednictv=C3=ADm syst=C3=A9mu dropshippingov=C3=A9ho prodeje pod=
-porujeme podnikatele ji=C5=BE 20 let.
+Cleans up clang scan build warning:
+warning: Although the value stored to 'secs' is used in the enclosing
+expression, the value is never actually read from 'secs'
 
-Hled=C3=A1me partnery pro spolupr=C3=A1ci zam=C4=9B=C5=99enou na konkr=C3=
-=A9tn=C3=AD zisky z prodeje modern=C3=ADch produkt=C5=AF na platform=C4=9B=
- Amazon nebo jin=C3=A9m tr=C5=BEi=C5=A1ti =E2=80=93 bez nutnosti m=C3=ADt=
- sklad, nakupovat zbo=C5=BE=C3=AD na sklad a p=C5=99ipravovat z=C3=A1silk=
-y pro z=C3=A1kazn=C3=ADky.
-=20
-Vyr=C3=A1b=C3=ADme na zak=C3=A1zku rolety, obrazy, tapety a dal=C5=A1=C3=AD=
- ti=C5=A1t=C4=9Bn=C3=A9 dekora=C4=8Dn=C3=AD prvky, kter=C3=A9 jsou mezi o=
-bdarovan=C3=BDmi velmi obl=C3=ADben=C3=A9. Za pouh=C3=BD m=C4=9Bs=C3=ADc =
-=C4=8Dinil prodej rolet na n=C4=9Bmeck=C3=A9m trhu Amazon 12 500 000 EUR.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ crypto/asymmetric_keys/verify_pefile.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Poskytujeme produkty nejvy=C5=A1=C5=A1=C3=AD kvality, neomezen=C3=A9 skla=
-dov=C3=A9 z=C3=A1soby, spr=C3=A1vn=C4=9B organizovanou logistiku po cel=C3=
-=A9 Evrop=C4=9B, prodejn=C3=AD materi=C3=A1ly a podporu supervizora p=C5=99=
-i spolupr=C3=A1ci.
+diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
+index 7553ab18db89..a660e4d68d50 100644
+--- a/crypto/asymmetric_keys/verify_pefile.c
++++ b/crypto/asymmetric_keys/verify_pefile.c
+@@ -28,7 +28,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+ 	const struct pe32plus_opt_hdr *pe64;
+ 	const struct data_directory *ddir;
+ 	const struct data_dirent *dde;
+-	const struct section_header *secs, *sec;
++	const struct section_header *sec;
+ 	size_t cursor, datalen = pelen;
+ 
+ 	kenter("");
+@@ -110,7 +110,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+ 	ctx->n_sections = pe->sections;
+ 	if (ctx->n_sections > (ctx->header_size - cursor) / sizeof(*sec))
+ 		return -ELIBBAD;
+-	ctx->secs = secs = pebuf + cursor;
++	ctx->secs = pebuf + cursor;
+ 
+ 	return 0;
+ }
+-- 
+2.30.2
 
-M=C3=A1te z=C3=A1jem diskutovat o mo=C5=BEnosti nav=C3=A1z=C3=A1n=C3=AD s=
-polupr=C3=A1ce?
-
-
-Pozdravy
-Nikolaus Mazal
