@@ -2,103 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09677C54EBE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Jan 2023 15:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A1BC46467
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Jan 2023 16:17:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234763AbjAJPti (ORCPT
+        id S232148AbjAJQRd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 Jan 2023 10:49:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51066 "EHLO
+        Tue, 10 Jan 2023 11:17:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238599AbjAJPtg (ORCPT
+        with ESMTP id S233241AbjAJQRa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 Jan 2023 10:49:36 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088D944C4E;
-        Tue, 10 Jan 2023 07:49:35 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id z11so18231306ede.1;
-        Tue, 10 Jan 2023 07:49:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RlwouCi8H0VvCFHHOlIlDVE1aSi+HO1S7gDSu150N9o=;
-        b=Ls9jEEVeVOogdOhnGSIKAnC3MFbZ5Ol/YRfgadxXtNM6zGPapxkKjsK2nwhmOxs+xj
-         vjeT9QnhVSm8r6ZrSlEooK2iIN3/KBHR/gLW8AipjjvOaN8m1BTOzovjHPqk6xjU1DEw
-         CxjVypf7mDTyHnXhjxSxvcstWNTsevS8dN9xg402H/4Y32c98tpjmRhJT1Yl81fPQBTL
-         D28TWLVKJ5KY+LQNjhN8V9/y8zNW+otaBkrWDyqtvy5xzLNFBFyitc6boUnL+lNUWC/2
-         OnJolzF15hCUJhZpZ0NsGDJeHOP9ls2uJEk740kElNA4I3MMh0YOT34s1wNaH+OS+jb0
-         qtmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RlwouCi8H0VvCFHHOlIlDVE1aSi+HO1S7gDSu150N9o=;
-        b=KTdX5hvz12cZON13oS8NctfK+kS9p3B/mFmKLWtDLLbfQ1AeDGokMmZ3k7+n0mvhJd
-         A1Y1CL9QYLRyWv6eQP1aJgjViu/0ZuE9LkRBP7WZtbpRzUYqkbSu+UezfWwkvKWVz5go
-         Mu036yl4EhEe7XLZ/pVDW7jOkLXK2dcgE18XMPIvj1o/AHI+QLZXDgVltUTvBATWFHyT
-         VSrG13PG9lZxAh+xr8ir26hHMeenYqL7+t9poSpoy9noHX2V5wUXd8IFUFpe62QBqWly
-         3PRHWdIUn9+N7g4BzD1JPl6yO1ZjrerXq0ErOChXIVtmEb6ZqlNIJzebExwjwKKIhGSo
-         MupA==
-X-Gm-Message-State: AFqh2krgzBZNnV3ZZw2UxdTbtWxB4H0Q3mchsElLCOcWaUGrZAPd8JtY
-        rk6FmtnrsH4m9z9M/nT45NI=
-X-Google-Smtp-Source: AMrXdXs5bidUFyY7RUUCR9qvNSDcJGtq434/qMc8FWLJuxLNi9j9NSppDNXbg7cLU3itdPPD4+pVfA==
-X-Received: by 2002:aa7:d789:0:b0:497:4f53:ee8f with SMTP id s9-20020aa7d789000000b004974f53ee8fmr12917106edq.39.1673365773324;
-        Tue, 10 Jan 2023 07:49:33 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:1402:f4b6:2bd4:8c31])
-        by smtp.gmail.com with ESMTPSA id cx26-20020a05640222ba00b0048ec121a52fsm5063572edb.46.2023.01.10.07.49.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jan 2023 07:49:32 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Conor Dooley <conor.dooley@microchip.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH RESEND] MAINTAINERS: repair pattern in DIALOG SEMICONDUCTOR DRIVERS
-Date:   Tue, 10 Jan 2023 16:49:01 +0100
-Message-Id: <20230110154901.20223-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 10 Jan 2023 11:17:30 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC6C5BA03;
+        Tue, 10 Jan 2023 08:17:29 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ADEAFB8188F;
+        Tue, 10 Jan 2023 16:17:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8852EC433F2;
+        Tue, 10 Jan 2023 16:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673367445;
+        bh=/8ixJ0FRiTV6sp1QD9mpmHIBrQ0y5oJw7AolxgL+f7g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GouM3kJ7WOOO08mLdeX1hy+OUen2ZdcclSJbGkcWhPazvNFICF5e1Oj2REGAz4rIL
+         /usGN53KDEBFgulAHaEdvO/aKw5ANp++ctm6ATaoUJIz5cbiWVNKaeac3idWJh7lQw
+         /BE7Wum8yoCbqRlKazLJJQVXYa9ZP6OhWysY5n01VFlv31ys4Mn52Hxb8YclVsCymM
+         UnCXuT7FcDJxznrSKbHddTQmhQPsr6Fvj5kIO76Tg5dgbSOC3z8uNARmr3s84s53IR
+         NkOR3BSXLxULGKb0Rug77eEVkewc+H34CaypD2eM9RrDbgwR2OYajSWAJTSXZLy0mE
+         yCbzW766IY+Zw==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     jorge.ramirez-ortiz@linaro.org, ulf.hansson@linaro.org,
+        christophe.jaillet@wanadoo.fr, nks@flawful.org,
+        rafael.j.wysocki@intel.com, agross@kernel.org,
+        konrad.dybcio@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        niklas.cassel@linaro.org, kernel-janitors@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] PM: AVS: qcom-cpr: Fix an error handling path in cpr_probe()
+Date:   Tue, 10 Jan 2023 10:17:18 -0600
+Message-Id: <167336743973.2134489.6560821756335725257.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <0f520597dbad89ab99c217c8986912fa53eaf5f9.1671293108.git.christophe.jaillet@wanadoo.fr>
+References: <0f520597dbad89ab99c217c8986912fa53eaf5f9.1671293108.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 441613662db7 ("dt-bindings: mfd: Convert da9063 to yaml") converts
-da9063.txt to dlg,da9063.yaml and adds a new file pattern in MAINTAINERS.
-Unfortunately, the file pattern matches da90*.yaml, but the yaml file is
-prefixed with dlg,da90.
+On Sat, 17 Dec 2022 17:05:41 +0100, Christophe JAILLET wrote:
+> If an error occurs after a successful pm_genpd_init() call, it should be
+> undone by a corresponding pm_genpd_remove().
+> 
+> Add the missing call in the error handling path, as already done in the
+> remove function.
+> 
+> 
+> [...]
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken file pattern.
+Applied, thanks!
 
-Repair this file pattern in DIALOG SEMICONDUCTOR DRIVERS.
+[1/1] PM: AVS: qcom-cpr: Fix an error handling path in cpr_probe()
+      commit: 6049aae52392539e505bfb8ccbcff3c26f1d2f0b
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-v1: https://lore.kernel.org/all/20220623104456.27144-1-lukas.bulwahn@gmail.com/
-
-v1 to resend:
- - added the Acked-by from Conor Dooley.
-
-Lee, please pick this minor non-urgent clean-up patch.
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2a1368722c45..a0cd07e968ae 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5971,7 +5971,7 @@ W:	http://www.dialog-semiconductor.com/products
- F:	Documentation/devicetree/bindings/input/da90??-onkey.txt
- F:	Documentation/devicetree/bindings/input/dlg,da72??.txt
- F:	Documentation/devicetree/bindings/mfd/da90*.txt
--F:	Documentation/devicetree/bindings/mfd/da90*.yaml
-+F:	Documentation/devicetree/bindings/mfd/dlg,da90*.yaml
- F:	Documentation/devicetree/bindings/regulator/dlg,da9*.yaml
- F:	Documentation/devicetree/bindings/regulator/da92*.txt
- F:	Documentation/devicetree/bindings/regulator/slg51000.txt
+Best regards,
 -- 
-2.17.1
-
+Bjorn Andersson <andersson@kernel.org>
