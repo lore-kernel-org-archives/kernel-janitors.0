@@ -2,79 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DFAC54EBD
-	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Jan 2023 22:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0FAC54EBE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Jan 2023 07:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237421AbjAIWqb (ORCPT
+        id S229915AbjAJHUA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 9 Jan 2023 17:46:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33288 "EHLO
+        Tue, 10 Jan 2023 02:20:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237536AbjAIWqM (ORCPT
+        with ESMTP id S230446AbjAJHT6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 9 Jan 2023 17:46:12 -0500
+        Tue, 10 Jan 2023 02:19:58 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49D2B1BE91;
-        Mon,  9 Jan 2023 14:46:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C149A1A066;
+        Mon,  9 Jan 2023 23:19:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EB91AB81085;
-        Mon,  9 Jan 2023 22:46:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520AAC433EF;
-        Mon,  9 Jan 2023 22:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1673304368;
-        bh=Smpr3DrhasTIUOdQUCkLW1n6OMxtHjQcAGkhZhSSagU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NrWnulaBpJswTJNHy51afCrsavlOnbtuYkpyeTJoDlBMYqgN/PeSkGKExpci/qM4d
-         WbVIfcvQBMqAan8/zukuIIu+2yZRT6exWCBTwZTobsdkdh/s1Hh1WFo5VfhgHYzcQG
-         3eOWgRys64FEGm9Cl9Ky5N+bwLQTBYBZ7fNjiufo=
-Date:   Mon, 9 Jan 2023 14:46:07 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Dan Carpenter <error27@gmail.com>,
-        linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+        by ams.source.kernel.org (Postfix) with ESMTPS id 75941B81126;
+        Tue, 10 Jan 2023 07:19:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC8EC433F0;
+        Tue, 10 Jan 2023 07:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673335195;
+        bh=Vq616gbwymfsGxKmfDRsySN7+m4LEuQS7EzTcz4ZHkI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=a/VEo/lCYP+p45d8/rYEc0sbVo2alyJDKrnmcKhyH1AeAYvPU3ycxgcVgKX1RunPO
+         4t9UxdujD0tZzGUYvZTOzwyf1plZh3R5GV25JMhetGZXVvU24CyahRcMay3YnNt0m7
+         yEfkGP2hlcyGEAYUAeIUSG6B/5rMzwuiBuDRkmiK3Qxpjx/nBghqpBMtjXdqH3dQUo
+         T/NyFEnB1rn1LmRxSeQDZf3EMLc1P0mOddpWipv1iR2BQJcvyMqTr3TYz/iC5kVdRT
+         lfbYNKasrzi58el/IUVluM1ATnZFtVbNHa5j6S6Tz22sK/IlCP8dPpkqKSchAYGX8i
+         g9kTLqUCDhdaA==
+Message-ID: <b5e0bd90-ff29-d301-30ca-2f12028109ce@kernel.org>
+Date:   Mon, 9 Jan 2023 23:19:53 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
 Subject: Re: [PATCH] bit_spinlock: Include <asm/processor.h>
-Message-Id: <20230109144607.02edd319f9b5e25ee774f9a5@linux-foundation.org>
-In-Reply-To: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Dan Carpenter <error27@gmail.com>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 References: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From:   Vineet Gupta <vgupta@kernel.org>
+In-Reply-To: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun,  8 Jan 2023 20:04:44 +0100 Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
+On 1/8/23 11:04, Christophe JAILLET wrote:
 > In an attempt to simplify some includes in <include/dcache.h>, it
 > appeared, when compiling fs/ecryptfs/dentry.c, that <linux/bit_spinlock.h>
 > was relying on other includes to get the definition of cpu_relax().
 > (see [1])
-> 
+>
 > It broke on arc.
-> 
+
+It its just ARC that broke, maybe we can do something there ?
+
 > Include <asm/processor.h> in <linux/bit_spinlock.h> to fix the issue.
 > This will help remove some un-needed includes from <include/dcache.h>.
-> 
-> [1]: https://lore.kernel.org/all/202301082130.LXMj5qkD-lkp@intel.com/
-> 
-> ...
 >
+> [1]: https://lore.kernel.org/all/202301082130.LXMj5qkD-lkp@intel.com/
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Not sure who to send this to.
+> get_maintainer.pl is of no help, and the file is untouched from a too long
+> time.
+>
+> Greg? Dan? Any pointer?
+> ---
+>   include/linux/bit_spinlock.h | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/include/linux/bit_spinlock.h b/include/linux/bit_spinlock.h
+> index bbc4730a6505..d0fd2a7afca2 100644
 > --- a/include/linux/bit_spinlock.h
 > +++ b/include/linux/bit_spinlock.h
 > @@ -2,6 +2,7 @@
->  #ifndef __LINUX_BIT_SPINLOCK_H
->  #define __LINUX_BIT_SPINLOCK_H
->  
+>   #ifndef __LINUX_BIT_SPINLOCK_H
+>   #define __LINUX_BIT_SPINLOCK_H
+>   
 > +#include <asm/processor.h>
->  #include <linux/kernel.h>
->  #include <linux/preempt.h>
->  #include <linux/atomic.h>
+>   #include <linux/kernel.h>
+>   #include <linux/preempt.h>
+>   #include <linux/atomic.h>
 
-linux/processor.h would be preferable, rather than diving straight into asm/?
