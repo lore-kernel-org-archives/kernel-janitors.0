@@ -2,73 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A1BC46467
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Jan 2023 16:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA71C678D7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Jan 2023 18:11:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232148AbjAJQRd (ORCPT
+        id S233960AbjAJSLO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 Jan 2023 11:17:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40634 "EHLO
+        Tue, 10 Jan 2023 13:11:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233241AbjAJQRa (ORCPT
+        with ESMTP id S238956AbjAJSKR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 Jan 2023 11:17:30 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC6C5BA03;
-        Tue, 10 Jan 2023 08:17:29 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ADEAFB8188F;
-        Tue, 10 Jan 2023 16:17:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8852EC433F2;
-        Tue, 10 Jan 2023 16:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673367445;
-        bh=/8ixJ0FRiTV6sp1QD9mpmHIBrQ0y5oJw7AolxgL+f7g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GouM3kJ7WOOO08mLdeX1hy+OUen2ZdcclSJbGkcWhPazvNFICF5e1Oj2REGAz4rIL
-         /usGN53KDEBFgulAHaEdvO/aKw5ANp++ctm6ATaoUJIz5cbiWVNKaeac3idWJh7lQw
-         /BE7Wum8yoCbqRlKazLJJQVXYa9ZP6OhWysY5n01VFlv31ys4Mn52Hxb8YclVsCymM
-         UnCXuT7FcDJxznrSKbHddTQmhQPsr6Fvj5kIO76Tg5dgbSOC3z8uNARmr3s84s53IR
-         NkOR3BSXLxULGKb0Rug77eEVkewc+H34CaypD2eM9RrDbgwR2OYajSWAJTSXZLy0mE
-         yCbzW766IY+Zw==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     jorge.ramirez-ortiz@linaro.org, ulf.hansson@linaro.org,
-        christophe.jaillet@wanadoo.fr, nks@flawful.org,
-        rafael.j.wysocki@intel.com, agross@kernel.org,
-        konrad.dybcio@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        niklas.cassel@linaro.org, kernel-janitors@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] PM: AVS: qcom-cpr: Fix an error handling path in cpr_probe()
-Date:   Tue, 10 Jan 2023 10:17:18 -0600
-Message-Id: <167336743973.2134489.6560821756335725257.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <0f520597dbad89ab99c217c8986912fa53eaf5f9.1671293108.git.christophe.jaillet@wanadoo.fr>
-References: <0f520597dbad89ab99c217c8986912fa53eaf5f9.1671293108.git.christophe.jaillet@wanadoo.fr>
+        Tue, 10 Jan 2023 13:10:17 -0500
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8453F1033
+        for <kernel-janitors@vger.kernel.org>; Tue, 10 Jan 2023 10:08:40 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.100.34])
+        by smtp.orange.fr with ESMTPA
+        id FJ34pw6UszUTHFJ34pLghR; Tue, 10 Jan 2023 19:08:38 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 10 Jan 2023 19:08:38 +0100
+X-ME-IP: 86.243.100.34
+Message-ID: <f4aa7f0d-50a9-b5e0-e980-1e8e779b48bc@wanadoo.fr>
+Date:   Tue, 10 Jan 2023 19:08:33 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] bit_spinlock: Include <asm/processor.h>
+To:     Vineet Gupta <vgupta@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Carpenter <error27@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
+ <b5e0bd90-ff29-d301-30ca-2f12028109ce@kernel.org>
+Content-Language: fr, en-GB
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <b5e0bd90-ff29-d301-30ca-2f12028109ce@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 17 Dec 2022 17:05:41 +0100, Christophe JAILLET wrote:
-> If an error occurs after a successful pm_genpd_init() call, it should be
-> undone by a corresponding pm_genpd_remove().
+Le 10/01/2023 à 08:19, Vineet Gupta a écrit :
 > 
-> Add the missing call in the error handling path, as already done in the
-> remove function.
+> On 1/8/23 11:04, Christophe JAILLET wrote:
+>> In an attempt to simplify some includes in <include/dcache.h>, it
+>> appeared, when compiling fs/ecryptfs/dentry.c, that 
+>> <linux/bit_spinlock.h>
+>> was relying on other includes to get the definition of cpu_relax().
+>> (see [1])
+>>
+>> It broke on arc.
+> 
+> It its just ARC that broke, maybe we can do something there ?
+
+Hi,
+
+It is all what build-bots have spotted so far :)
+
+I don't think that "fixing" it in ARC is the right approach, unless I 
+missed something.
+
+<linux/bit_spinlock.h> does use cpu_relax(), so it should include what 
+is need for that, and not rely on other black magic.
+
+CJ
+
+> 
+>> Include <asm/processor.h> in <linux/bit_spinlock.h> to fix the issue.
+>> This will help remove some un-needed includes from <include/dcache.h>.
+>>
+>> [1]: https://lore.kernel.org/all/202301082130.LXMj5qkD-lkp@intel.com/
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Not sure who to send this to.
+>> get_maintainer.pl is of no help, and the file is untouched from a too 
+>> long
+>> time.
+>>
+>> Greg? Dan? Any pointer?
+>> ---
+>>   include/linux/bit_spinlock.h | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/include/linux/bit_spinlock.h b/include/linux/bit_spinlock.h
+>> index bbc4730a6505..d0fd2a7afca2 100644
+>> --- a/include/linux/bit_spinlock.h
+>> +++ b/include/linux/bit_spinlock.h
+>> @@ -2,6 +2,7 @@
+>>   #ifndef __LINUX_BIT_SPINLOCK_H
+>>   #define __LINUX_BIT_SPINLOCK_H
+>> +#include <asm/processor.h>
+>>   #include <linux/kernel.h>
+>>   #include <linux/preempt.h>
+>>   #include <linux/atomic.h>
 > 
 > 
-> [...]
 
-Applied, thanks!
-
-[1/1] PM: AVS: qcom-cpr: Fix an error handling path in cpr_probe()
-      commit: 6049aae52392539e505bfb8ccbcff3c26f1d2f0b
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
