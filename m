@@ -2,96 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0FAC54EBE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Jan 2023 07:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905FDC61DB3
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Jan 2023 09:05:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229915AbjAJHUA (ORCPT
+        id S230444AbjAJJFZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 Jan 2023 02:20:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42136 "EHLO
+        Tue, 10 Jan 2023 04:05:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230446AbjAJHT6 (ORCPT
+        with ESMTP id S231200AbjAJJEV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 Jan 2023 02:19:58 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C149A1A066;
-        Mon,  9 Jan 2023 23:19:57 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 75941B81126;
-        Tue, 10 Jan 2023 07:19:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC8EC433F0;
-        Tue, 10 Jan 2023 07:19:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673335195;
-        bh=Vq616gbwymfsGxKmfDRsySN7+m4LEuQS7EzTcz4ZHkI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=a/VEo/lCYP+p45d8/rYEc0sbVo2alyJDKrnmcKhyH1AeAYvPU3ycxgcVgKX1RunPO
-         4t9UxdujD0tZzGUYvZTOzwyf1plZh3R5GV25JMhetGZXVvU24CyahRcMay3YnNt0m7
-         yEfkGP2hlcyGEAYUAeIUSG6B/5rMzwuiBuDRkmiK3Qxpjx/nBghqpBMtjXdqH3dQUo
-         T/NyFEnB1rn1LmRxSeQDZf3EMLc1P0mOddpWipv1iR2BQJcvyMqTr3TYz/iC5kVdRT
-         lfbYNKasrzi58el/IUVluM1ATnZFtVbNHa5j6S6Tz22sK/IlCP8dPpkqKSchAYGX8i
-         g9kTLqUCDhdaA==
-Message-ID: <b5e0bd90-ff29-d301-30ca-2f12028109ce@kernel.org>
-Date:   Mon, 9 Jan 2023 23:19:53 -0800
+        Tue, 10 Jan 2023 04:04:21 -0500
+X-Greylist: delayed 385 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 10 Jan 2023 01:02:55 PST
+Received: from mail.newpredict.pl (mail.newpredict.pl [51.89.166.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B136193F1
+        for <kernel-janitors@vger.kernel.org>; Tue, 10 Jan 2023 01:02:55 -0800 (PST)
+Received: by mail.newpredict.pl (Postfix, from userid 1002)
+        id 4E6D6A290A; Tue, 10 Jan 2023 08:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=newpredict.pl;
+        s=mail; t=1673340988;
+        bh=DQrvNxV4sbMtkGDNj/C7a2f11q8dNrBm5UPp1jE5GkY=;
+        h=Date:From:To:Subject:From;
+        b=e6fFlOljVfAT6UZtNTvnevkKEH3093NzvsZ0RFNxwYH/uARKRF/3gUPgL6YJNLkMw
+         luTSIlJnP5Fgmu6wlgHSfTi/IsxN6T79dV6mQPUofULis2jiW9cyZr1UugtWOdR8+X
+         bk8iAApTyewdnd4JxPCyCpmQa++IoOpUApPZkOvmuijb9vPfwNYk20hn7Un6XEmn4A
+         g9JOdNXjfVYpseUjEDU3QUZcYsF85TFv/+U3NwCaUQziDYYkjNlTlAX1mhJCVOsZ8q
+         0e6wlJjcVlWwG2DM0ccrfxznn3D06VwxIK13U0nN6t6oWQhvaa2ZFOw7v/eXRbqzOe
+         lkjBculcpuHAQ==
+Received: by mail.newpredict.pl for <kernel-janitors@vger.kernel.org>; Tue, 10 Jan 2023 08:56:14 GMT
+Message-ID: <20230110074500-0.1.6q.gpji.0.41x0pnvorn@newpredict.pl>
+Date:   Tue, 10 Jan 2023 08:56:14 GMT
+From:   "Piotr Werner" <piotr.werner@newpredict.pl>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: Panele fotowaltaiczne
+X-Mailer: mail.newpredict.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] bit_spinlock: Include <asm/processor.h>
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Dan Carpenter <error27@gmail.com>
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
-From:   Vineet Gupta <vgupta@kernel.org>
-In-Reply-To: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Dzie=C5=84 dobry,
 
-On 1/8/23 11:04, Christophe JAILLET wrote:
-> In an attempt to simplify some includes in <include/dcache.h>, it
-> appeared, when compiling fs/ecryptfs/dentry.c, that <linux/bit_spinlock.h>
-> was relying on other includes to get the definition of cpu_relax().
-> (see [1])
->
-> It broke on arc.
+Jeste=C5=9Bmy firm=C4=85 z wieloletnim do=C5=9Bwiadczeniem, kt=C3=B3ra sp=
+rawnie przygotuje dla Pa=C5=84stwa ofert=C4=99 i wszelkie formalno=C5=9Bc=
+i. Sam monta=C5=BC zaplanujemy na wiosn=C4=99.
 
-It its just ARC that broke, maybe we can do something there ?
+O samych plusach fotowoltaiki czy pompach ciep=C5=82a na pewno ju=C5=BC P=
+a=C5=84stwo s=C5=82yszeli, dlatego teraz prosimy o zostawienie kontaktu, =
+aby nasz specjalista m=C3=B3g=C5=82 przedstawi=C4=87 ofert=C4=99 zgodn=C4=
+=85 z Waszymi potrzebami.
 
-> Include <asm/processor.h> in <linux/bit_spinlock.h> to fix the issue.
-> This will help remove some un-needed includes from <include/dcache.h>.
->
-> [1]: https://lore.kernel.org/all/202301082130.LXMj5qkD-lkp@intel.com/
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Not sure who to send this to.
-> get_maintainer.pl is of no help, and the file is untouched from a too long
-> time.
->
-> Greg? Dan? Any pointer?
-> ---
->   include/linux/bit_spinlock.h | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/include/linux/bit_spinlock.h b/include/linux/bit_spinlock.h
-> index bbc4730a6505..d0fd2a7afca2 100644
-> --- a/include/linux/bit_spinlock.h
-> +++ b/include/linux/bit_spinlock.h
-> @@ -2,6 +2,7 @@
->   #ifndef __LINUX_BIT_SPINLOCK_H
->   #define __LINUX_BIT_SPINLOCK_H
->   
-> +#include <asm/processor.h>
->   #include <linux/kernel.h>
->   #include <linux/preempt.h>
->   #include <linux/atomic.h>
+Kiedy mogliby=C5=9Bmy z Pa=C5=84stwem um=C3=B3wi=C4=87 si=C4=99 na rozmow=
+=C4=99 w celu zbadania potrzeb?
 
+
+Pozdrawiam,
+Piotr Werner
