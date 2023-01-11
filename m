@@ -2,109 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC41C54EBC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Jan 2023 21:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C336C46467
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Jan 2023 09:30:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbjAJVXt (ORCPT
+        id S232614AbjAKJaI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 Jan 2023 16:23:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38454 "EHLO
+        Wed, 11 Jan 2023 04:30:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229707AbjAJVXp (ORCPT
+        with ESMTP id S238808AbjAKJ2u (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 Jan 2023 16:23:45 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37BC41C106;
-        Tue, 10 Jan 2023 13:23:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-        bh=HMyMBFRESow/WM9ygWpCSGTusSEWJqvkUIysz1wv1dE=; b=mBx0U3jxjMHQOE0pq78Ghngrd6
-        yL+fwmUmdLpuk6/N8DUP3Ml3v2eqOkcgxNaHxpQLlzVliLQCofMrqhy/q0LOU8mkNjB7xWpGqa/sl
-        Rhla/vldS+0AFV/FnfPE06TGlKpKwZBlYqFRMzRClUHtzOMfJdRGiPi1fwHkn2GaOyuLbB05+rk9D
-        cdbNO4XlKpHIQLouUWyIGxHgoITsEEbEU2dYkwJWZNB+o4GmY/FzqqdeSH1xmFgud0iw3P3QTtXCx
-        saQMvF9oFMKPydfH0i5SgQYHhTM3wvmBJ9KYgiHHZ5dyOatOjcLSFmCmNjeu+5gUP8uQfwK4Q4D91
-        qNG3QIQw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pFM5n-0014fx-21;
-        Tue, 10 Jan 2023 21:23:35 +0000
-Date:   Tue, 10 Jan 2023 21:23:35 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Vineet Gupta <vgupta@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Carpenter <error27@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] bit_spinlock: Include <asm/processor.h>
-Message-ID: <Y73XV1SRtcpJQ1Vq@ZenIV>
-References: <8b81101d59a31f4927016c17e49be96754a23380.1673204461.git.christophe.jaillet@wanadoo.fr>
- <b5e0bd90-ff29-d301-30ca-2f12028109ce@kernel.org>
- <f4aa7f0d-50a9-b5e0-e980-1e8e779b48bc@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f4aa7f0d-50a9-b5e0-e980-1e8e779b48bc@wanadoo.fr>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+        Wed, 11 Jan 2023 04:28:50 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DF08F57;
+        Wed, 11 Jan 2023 01:28:36 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id tz12so35295230ejc.9;
+        Wed, 11 Jan 2023 01:28:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2GqVP0FevVzDRika8AgmvVadRKbtFlpNbmPvpvY1gzo=;
+        b=cpRTXTgvZMWKjjIYEE10nJ/ZRmqx+KCGknPkTKRPVh544s/x2qUmao6dX0vmRQxx9o
+         Qx5C6kvAxFn2nX9QUNk/fh/lBgk9tSQ5ScqPCmLS/XQKRB2tjj+TfyYTa/zQjOQLb4CI
+         1OzqhDivPSsxTeRSoesgW/RlvAaB5Nk89pJMzgNy0I4PP2W+cvEAwQNYRLHAJL+tNMbu
+         L07+fGh4WWAOBm105wsHSPwL47WWyjocutDZ0+uGMCv7MmuP+sFKU+NxK2VysMduMxxl
+         OtAXmepOTbsLdMKiOezMHoWjZkcxvstPlnTWRiKsLDV40OcpZW608hElIMjwv+6CVg1e
+         k0Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2GqVP0FevVzDRika8AgmvVadRKbtFlpNbmPvpvY1gzo=;
+        b=XUkBuC+Uw0f4WCAOh9E+p3i8Ta5dJ2UeFXDbPBNI7/j0VcVCcY5yOO+h0PVgfhLu1X
+         np5Ol6zE/8eHj/+G+wRJRhD9PpRGk61jJ7xRqjKgq/D5HPMDmRDj8+mjqFvdJjA/zdtO
+         7MP9fYFVut2GgorKDM6cpTtqir/BJS/s5csYUUWC2IEk2qkm6gUPTM0A367uaXNoFdXO
+         QVir7PCb2T88zUn4q/Y6xXM30BJqZVqCpbZH8N3srsvF1VfvC5cDlNGEaTwdUPI++QMc
+         Pcqt6nCLSdX0kBLGcY1mXx4SAfSYRqGJNadoA5Ozp9WZySwfHMnAxPEycq3MPWnkaDyk
+         RrLA==
+X-Gm-Message-State: AFqh2krrvegT3Lfc6OphZsGdHhvEqh8k+tyOCvEipoEVLoKVvinM20Rr
+        Etoz59jC0LEE6Eu2ObBD1pk=
+X-Google-Smtp-Source: AMrXdXuHVYsMKMRFnaYPK+KtkCvSOS387jsdTlMgFAADLRBDZZizxcytk11kwQq8cECNnFv8X8ne4w==
+X-Received: by 2002:a17:907:a4c5:b0:84c:f9b0:b54a with SMTP id vq5-20020a170907a4c500b0084cf9b0b54amr22983015ejc.58.1673429314842;
+        Wed, 11 Jan 2023 01:28:34 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:a47e:7f3e:6b25:bafb])
+        by smtp.gmail.com with ESMTPSA id 14-20020a170906308e00b0084d3acda5fasm4473970ejv.189.2023.01.11.01.28.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jan 2023 01:28:34 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/2] MAINTAINERS clean-up after Arnd's rework
+Date:   Wed, 11 Jan 2023 10:28:26 +0100
+Message-Id: <20230111092828.958-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jan 10, 2023 at 07:08:33PM +0100, Christophe JAILLET wrote:
-> Le 10/01/2023 à 08:19, Vineet Gupta a écrit :
-> > 
-> > On 1/8/23 11:04, Christophe JAILLET wrote:
-> > > In an attempt to simplify some includes in <include/dcache.h>, it
-> > > appeared, when compiling fs/ecryptfs/dentry.c, that
-> > > <linux/bit_spinlock.h>
-> > > was relying on other includes to get the definition of cpu_relax().
-> > > (see [1])
-> > > 
-> > > It broke on arc.
-> > 
-> > It its just ARC that broke, maybe we can do something there ?
-> 
-> Hi,
-> 
-> It is all what build-bots have spotted so far :)
-> 
-> I don't think that "fixing" it in ARC is the right approach, unless I missed
-> something.
-> 
-> <linux/bit_spinlock.h> does use cpu_relax(), so it should include what is
-> need for that, and not rely on other black magic.
+Dear Arnd,
 
-Umm...  That's not obvious - it only uses cpu_relax() in macros, so missing
-include would not cause problems if all actual users of those macros happen
-to pull the needed header by other means.
+please pick these two minor clean-up patches into your soc tree.
 
-Said that, we have
+These patches apply on next-20230110.
 
-1) defined directly in asm/processor.h, using nothing but the stuff provided by
-compiler.h:
-	alpha, arc, csky, loongarch, m68k, microblaze, nios2,
-	openrisc, parisc, s390, sh, xtensa
-2) same, using something in headers pulled by asm/processor.h itself:
-	ia64 (needs asm/intrinsic.h)
-	hexagon (needs asm/hexagon_vm.h)
-	um (needs arch/um/include/linux/time-internal.h)
-3) same, but defined in something pulled by asm/processor.h rather than
-in asm/processor.h itself; asm/vdso/processor.h is the common location -
-those are the cases when we share the same definition for kernel and
-vdso builds
-	sparc (asm/processor_32.h or asm/processor_64.h)
-	arm (asm/vdso/processor.h)
-	arm64 (asm/vdso/processor.h)
-	powerpc (asm/vdso/processor.h)
-	x86 (asm/vdso/processor.h)
-	riscv (asm/vdso/processor.h; needs several headers included there -
-jump_label.h, etc.)
-	mips (asm/vdso/processor.h, needs asm/barrier.h, pulled from asm/processor.h
-by way of linux/atomic.h -> asm/atomic.h -> asm/barrier.h)
+Lukas
 
-So asm/processor.h is sufficient for working cpu_relax() and if some
-arch-independent code wants cpu_relax() it should pull either
-asm/processor.h or linux/processor.h
+Lukas Bulwahn (2):
+  MAINTAINERS: update file entries after arm multi-platform rework and
+    mach-pxa removal
+  MAINTAINERS: adjust SAMSUNG SOC CLOCK DRIVERS after s3c24xx support
+    removal
+
+ MAINTAINERS | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+-- 
+2.17.1
+
