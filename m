@@ -2,61 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 967F8C67871
-	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Jan 2023 12:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCA1C54EBC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Jan 2023 12:59:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233905AbjAKMQx (ORCPT
+        id S229709AbjAKM7Q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 11 Jan 2023 07:16:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37548 "EHLO
+        Wed, 11 Jan 2023 07:59:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234269AbjAKMQv (ORCPT
+        with ESMTP id S231720AbjAKM7J (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 11 Jan 2023 07:16:51 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CE9C23;
-        Wed, 11 Jan 2023 04:16:50 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id tz12so36345751ejc.9;
-        Wed, 11 Jan 2023 04:16:50 -0800 (PST)
+        Wed, 11 Jan 2023 07:59:09 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FAE41C4;
+        Wed, 11 Jan 2023 04:59:09 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id tz12so36609270ejc.9;
+        Wed, 11 Jan 2023 04:59:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x08Spm0bFRozqdUSVPHwNKzOpA8X+ZTZMfsdSpNIew8=;
-        b=gmzED7m26SVu62/36L9vOG7cnDA1WZFYKNMJcZFjMtVD1a3+BT+eo1FqfL2AydigOA
-         Khq6LZnEqFVPFw3mJIppspw8UURfTv/eQdSaX+CpW6f7vsK2ZkCaJBv3bx7XWgndFa+I
-         1Fubr71+EIuegTp5xHO/M3LoY7+nIy1heZGTAllQGbVxAWytV8Dfi9dNFmZPFdfQ28w/
-         7C045XLBZFPTzdwH+q0jPIbSbklXAThKjAe9cP+QDvuXzHWpL/yXyUwUZ7fawV3imWMU
-         LuLBdCv7rleGsnILFEHKI79bTovseiCOIX5ZjbdniodVE9Th9FWWPygmvffoOzlsyq9C
-         uaOQ==
+        bh=eRmDb6MnASCSulRT3fi8JUMdCbchYa2gNuJnz0uHb/k=;
+        b=fo4u7NpMztI3D6iH4IlF9kEA//Q1Xu5yE0L5w3SK3+9tSdGAAOeYt5MzvQBwLd4LNr
+         n1Hh2dMb29EOawRmFwuyyEfc2FSoZLRSl7JfIQw1DFQJC3YOeVgRfu9aPC4Z4ijtjdU7
+         KOeu2l1sPCqWdU2nkw7rVZ+e53zy+Tgeb3krc+gnVVkDvT5ZKPViWpdqfnsfcEm0rTvk
+         +1PW+iM9xB9e4AJWz3myp1xi70VDViAHQb8M7SIRaoSg6OPwqjJyTk1NMSMJyYGHSjTG
+         o9jwOKvpvYTRgiPbAOXFn/Ya2nAKGA7Z9SSFS/t2NOjPd40eaULlOJrseDpQ74/QqAaP
+         g0pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x08Spm0bFRozqdUSVPHwNKzOpA8X+ZTZMfsdSpNIew8=;
-        b=z8VkLXxGnla6Q1rCV8dk4UaxOh6d11iaHv03hXwzIr9aVnvt1YftWep3lLXVi0FQXY
-         QvNL9EsyiBwKoJ404TRRbgdQa7Lr84F/6RQWD8zpHV2IRPFtVJebhZzPSr02PVArdWR/
-         b5Nk2ONoFJN6F+ZWNk9qmKxC7ZIPNiVnNPQRd19jTY0qmnCHLMTa3tHcTEFEH1oOfYu2
-         qqne0YoAoIfF9VxfoY3ngG40iUUvSt+/t7H0hy94fosNGkUT7MG/E9u/RgLnIcqpwvWh
-         qtdoX4baXV7S1t5EtkF3Ap3SgW5Lv9P+xgs4uP5Hj1Q5MSZkdobod4FXmoE7qEDjCIBr
-         kabw==
-X-Gm-Message-State: AFqh2kpGXZ7e77vpdwC+yCZu3wvT1feYUeUwRetie0VejqX736T2K1Ww
-        rHOzIiNfVQ3HGHlMv/gtfNQ=
-X-Google-Smtp-Source: AMrXdXtjR0szQ3pFuXAK6UjOEQnmp0MSIjHr7ekMU60R+xKNEQzmKTjmedz7qHq/iBti5BxXSYVvUw==
-X-Received: by 2002:a17:907:a508:b0:7c1:539b:d028 with SMTP id vr8-20020a170907a50800b007c1539bd028mr62112760ejc.48.1673439408769;
-        Wed, 11 Jan 2023 04:16:48 -0800 (PST)
+        bh=eRmDb6MnASCSulRT3fi8JUMdCbchYa2gNuJnz0uHb/k=;
+        b=W1sQJbNNFMXOMYGjlXIeIWyWNxjb7LpuMLTN4MdDUF9VAP3n5BLAaTmsjJNnxtRZY1
+         9OoTBky+CZKqKVEupjzuy7rIoJjln68C2ZXx3DxGtVHDMy82zuImKwkXnfWzZa7Ky9qc
+         mL9rWi222WJfSh2YBzzyJbw4bSRKGYxdwbDDby4AHkS7hP1pTgmCqGcm3wA8USzMcbVi
+         5fwT/uXq24QC6vBXi00q3pRWY4mc5aEvJCf1Z9v/j8ltbOdyPa/lyt3njaGQ/V9t0Tz4
+         9Ym6MrOGhk8cBNOI8mjbc0MuHWZw/uxJ7oFOoefK4dhPcCH9IVPJ3GgjjoGZfqlTHn5T
+         tGpA==
+X-Gm-Message-State: AFqh2ko6RVBbvvepPNUSiXcg0vDXLmGYT0C16FK8EkzjulJnq2Vm0FUU
+        ZG/BaPxmxsp7MuQdbgClLzk=
+X-Google-Smtp-Source: AMrXdXuhx9eLNNpIeiI4cVc6fom2CqGdYXuZgFk614ouDSLnWZ2I1LRl70zcG2CqRNxivizJ7mZa1Q==
+X-Received: by 2002:a17:907:a70b:b0:7c1:98d:a8a3 with SMTP id vw11-20020a170907a70b00b007c1098da8a3mr54765314ejc.7.1673441947633;
+        Wed, 11 Jan 2023 04:59:07 -0800 (PST)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:a47e:7f3e:6b25:bafb])
-        by smtp.gmail.com with ESMTPSA id q1-20020a17090676c100b007c0d4d3a0c1sm6148208ejn.32.2023.01.11.04.16.48
+        by smtp.gmail.com with ESMTPSA id l9-20020a1709063d2900b0084d4a60b3ccsm3345631ejf.115.2023.01.11.04.59.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 04:16:48 -0800 (PST)
+        Wed, 11 Jan 2023 04:59:07 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+To:     Dimitris Michailidis <dmichail@fungible.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Simon Horman <simon.horman@corigine.com>,
+        oss-drivers@corigine.com, "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] dmaengine: dw-edma: remove redundant config PCI dependency for some Synopsys DesignWare eDMA driver configs
-Date:   Wed, 11 Jan 2023 13:16:37 +0100
-Message-Id: <20230111121637.24708-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] net: remove redundant config PCI dependency for some network driver configs
+Date:   Wed, 11 Jan 2023 13:58:55 +0100
+Message-Id: <20230111125855.19020-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -68,36 +73,64 @@ since its introduction, been dependent on the config PCI. So, it is
 sufficient to just depend on PCI_MSI, and know that the dependency on PCI
 is implicitly implied.
 
-Reduce the dependencies of configs DW_EDMA and DW_EDMA_PCIE.
+Reduce the dependencies of some network driver configs.
 No functional change and effective change of Kconfig dependendencies.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/dma/dw-edma/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/freescale/enetc/Kconfig | 4 ++--
+ drivers/net/ethernet/fungible/funeth/Kconfig | 2 +-
+ drivers/net/ethernet/netronome/Kconfig       | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/dma/dw-edma/Kconfig b/drivers/dma/dw-edma/Kconfig
-index 7ff17b2db6a1..0408e515b2f3 100644
---- a/drivers/dma/dw-edma/Kconfig
-+++ b/drivers/dma/dw-edma/Kconfig
-@@ -2,7 +2,7 @@
- 
- config DW_EDMA
- 	tristate "Synopsys DesignWare eDMA controller driver"
+diff --git a/drivers/net/ethernet/freescale/enetc/Kconfig b/drivers/net/ethernet/freescale/enetc/Kconfig
+index cdc0ff89388a..6f6d07324d3b 100644
+--- a/drivers/net/ethernet/freescale/enetc/Kconfig
++++ b/drivers/net/ethernet/freescale/enetc/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ config FSL_ENETC
+ 	tristate "ENETC PF driver"
 -	depends on PCI && PCI_MSI
 +	depends on PCI_MSI
- 	select DMA_ENGINE
- 	select DMA_VIRTUAL_CHANNELS
- 	help
-@@ -11,7 +11,7 @@ config DW_EDMA
+ 	select FSL_ENETC_IERB
+ 	select FSL_ENETC_MDIO
+ 	select PHYLINK
+@@ -16,7 +16,7 @@ config FSL_ENETC
  
- config DW_EDMA_PCIE
- 	tristate "Synopsys DesignWare eDMA PCIe driver"
+ config FSL_ENETC_VF
+ 	tristate "ENETC VF driver"
 -	depends on PCI && PCI_MSI
 +	depends on PCI_MSI
- 	select DW_EDMA
- 	help
- 	  Provides a glue-logic between the Synopsys DesignWare
+ 	select FSL_ENETC_MDIO
+ 	select PHYLINK
+ 	select DIMLIB
+diff --git a/drivers/net/ethernet/fungible/funeth/Kconfig b/drivers/net/ethernet/fungible/funeth/Kconfig
+index c72ad9386400..e742e7663449 100644
+--- a/drivers/net/ethernet/fungible/funeth/Kconfig
++++ b/drivers/net/ethernet/fungible/funeth/Kconfig
+@@ -5,7 +5,7 @@
+ 
+ config FUN_ETH
+ 	tristate "Fungible Ethernet device driver"
+-	depends on PCI && PCI_MSI
++	depends on PCI_MSI
+ 	depends on TLS && TLS_DEVICE || TLS_DEVICE=n
+ 	select NET_DEVLINK
+ 	select FUN_CORE
+diff --git a/drivers/net/ethernet/netronome/Kconfig b/drivers/net/ethernet/netronome/Kconfig
+index e785c00b5845..d03d6e96f730 100644
+--- a/drivers/net/ethernet/netronome/Kconfig
++++ b/drivers/net/ethernet/netronome/Kconfig
+@@ -18,7 +18,7 @@ if NET_VENDOR_NETRONOME
+ 
+ config NFP
+ 	tristate "Netronome(R) NFP4000/NFP6000 NIC driver"
+-	depends on PCI && PCI_MSI
++	depends on PCI_MSI
+ 	depends on VXLAN || VXLAN=n
+ 	depends on TLS && TLS_DEVICE || TLS_DEVICE=n
+ 	select NET_DEVLINK
 -- 
 2.17.1
 
