@@ -2,60 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2137BC46467
-	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Jan 2023 10:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD24C46467
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Jan 2023 12:05:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232408AbjAKKKX (ORCPT
+        id S235843AbjAKMFN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 11 Jan 2023 05:10:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38376 "EHLO
+        Wed, 11 Jan 2023 07:05:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237988AbjAKKKA (ORCPT
+        with ESMTP id S238497AbjAKMEP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 11 Jan 2023 05:10:00 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8762140FB;
-        Wed, 11 Jan 2023 02:06:17 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id fy8so35431256ejc.13;
-        Wed, 11 Jan 2023 02:06:17 -0800 (PST)
+        Wed, 11 Jan 2023 07:04:15 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331EDE09D;
+        Wed, 11 Jan 2023 04:02:20 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id b4so2467779edf.0;
+        Wed, 11 Jan 2023 04:02:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ORHQd0uW/DYf9xZjyiu2NQW0oYhRtYQlzsx2cCGgO2U=;
-        b=eJccLBIoNknMuHIwnLvBDMZXp3LqxYu3OOzUR0i9bmMS3uC13KM1L7O97ILCFOyEti
-         2QwqNR5vVxQVkwM5132debeUDhAr/9Xf+gFdhUSCySVuEocpwFzTNzv0/HYhv9nrIqB3
-         Rr87/E7XZcCFN1BdXBGqYLsZgvg35oOijwZC9+ZmvNWRG0i3L54qo33k9bXqDj9RzqfV
-         zx2u49buCU8xbRlm4fPgEVQOvmdfOSktjy4YqFFDLkXVVjIX0kt12PMBtC5afYJkOM1w
-         G3107iA2NfFDOCInee68RUZH4cfsLB2nbvKwASU+L5++Kpdr0nYh+D4yzpMnWuKuNJ3B
-         CiZg==
+        bh=KSuqfITy3pm9CBhTZW7epwEnvbhgxRePj6Bs2ANFDpM=;
+        b=N1zS2hQ1HfEy0d09EjJCAjf3Vqojk+cS720EpMWNIeTlJ2I80nW2qQf8Zy+ZypDx0v
+         XLZVBsknEaUA0QubwMJwF8m8lmHgHJoQaZ3PxBPlNxMOc9RfduDJk36yPddNk2nrGU9f
+         /dJPghA+Ozl7657uwIVw7oTQm71EA1jsa4Y0c8LCobifFCens8JZzuat5iqaDnz97KlH
+         wGBFFGgI/mL07XvMLUELztxBEZ7iWGc4Ep2XSU6Vm4nqr7DcdydTtu9+0BKix56JCn6Y
+         9hRSn337QSa097wypWNnESgiPJkv7BfH1PjGJJj0PcWb0RhzjCspRwjITeojGLQmxjyf
+         LvUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ORHQd0uW/DYf9xZjyiu2NQW0oYhRtYQlzsx2cCGgO2U=;
-        b=Vvtw1nzEXQ4AwkcaRnLtPOxpvw5+jTqVs+DgoanL6GRHeGJj6XRiEVQjEBVIV1dari
-         N+w2o6bucFeXsxZu0TOYS15tdUdygE91iIcNxtWyx2GmwloX5eldawB5OOzCbWnC25uW
-         ieqk8yptBXKBGMFH9VKCT0d3xYAJSyAJxHJBIrnPuLV3iA2zsHI7eB/wkpocN5DKGPgQ
-         woeWYf4UeGX1/j/EirwjPDYn7VqEe/cCFLdGZFSiAl8aR0iBZNF/E3BCk7BC4OpKtobC
-         xaqO1dLL1LSP1VAD9nBHrxG1KTxc5tQwNvOL2aHkjXb8fxpFfz9fCYwFmm+QlGDo4xW8
-         NMxg==
-X-Gm-Message-State: AFqh2koKK+jopUoPTQ0XpaAVT63cO82ukBDgnQsnOEGFjjj5tQj/zGxk
-        F9ym5Z08IQQwQ8WZj62qS8jQY6TrJd4=
-X-Google-Smtp-Source: AMrXdXvoFgQnph8HVT1XmkH/GJbj4aInTs/SnbR7ks7N3WIYkBT0pKeDQ8wbfk+Td+VWiAVTuB1cAw==
-X-Received: by 2002:a17:906:910:b0:7c0:f71b:8b3 with SMTP id i16-20020a170906091000b007c0f71b08b3mr56882076ejd.57.1673431572026;
-        Wed, 11 Jan 2023 02:06:12 -0800 (PST)
+        bh=KSuqfITy3pm9CBhTZW7epwEnvbhgxRePj6Bs2ANFDpM=;
+        b=kAGMX2ianm7ukDxWdpbyMnzgv3TVoBB+HpoPaCd8ufxP2h5sBkoYIGrcO2MjFK8xTM
+         1EMSYR8x0iSMx3Xa21jPS1jpf1TKQOwBRDe1zO8poc4PIWgJ4aOg080D1rOwzqBUryIe
+         OiI26VMKih5hT2X2ULZdH1+5yb+c2ApQCxoZhP4FHHswELxvVKSi2MkX1N1io9ZEl1Xq
+         loQ3s8xAZLvfsSKanyltOnOyNypJmpxwIt5dJBAnglgXa93PePCVvhXfaxL5v76YUEQZ
+         Le5nlvE+WSNdkVmtLfIVPe1MEbwfrHK43033BPUASahsxMdjG3Xf75BJuhcGcH5jJGPz
+         Jbww==
+X-Gm-Message-State: AFqh2kpJkunSmgX2AKKTVJp/8OPsaibrBjHhOa4olrFPlR+WR54KYG2m
+        ZrDkEmx5USXZ6ygrrknRS+BNVOE5QJE=
+X-Google-Smtp-Source: AMrXdXuNHA9Xyr1zGaRBGq3GFbifwPFLIhsMvnW3acesULec+F01SyfhE+HE+O82bqgEsIdqJF6mTA==
+X-Received: by 2002:a05:6402:34f:b0:461:7c4e:c437 with SMTP id r15-20020a056402034f00b004617c4ec437mr66195299edw.1.1673438538628;
+        Wed, 11 Jan 2023 04:02:18 -0800 (PST)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:a47e:7f3e:6b25:bafb])
-        by smtp.gmail.com with ESMTPSA id ku21-20020a170907789500b0084d43def70esm3995517ejc.25.2023.01.11.02.06.11
+        by smtp.gmail.com with ESMTPSA id p9-20020aa7d309000000b0046776f98d0csm6002410edq.79.2023.01.11.04.02.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 02:06:11 -0800 (PST)
+        Wed, 11 Jan 2023 04:02:18 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>
+To:     Weili Qian <qianweili@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] irqchip: remove redundant config PCI dependency for config LS_SCFG_MSI
-Date:   Wed, 11 Jan 2023 11:05:54 +0100
-Message-Id: <20230111100554.24500-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] crypto: hisilicon - remove redundant config PCI dependency for some CRYPTO_DEV_HISI configs
+Date:   Wed, 11 Jan 2023 13:02:03 +0100
+Message-Id: <20230111120203.822-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -67,27 +71,56 @@ since its introduction, been dependent on the config PCI. So, it is
 sufficient to just depend on PCI_MSI, and know that the dependency on PCI
 is implicitly implied.
 
-Reduce the dependencies of config LS_SCFG_MSI.
+Reduce the dependencies of configs CRYPTO_DEV_HISI_SEC2,
+CRYPTO_DEV_HISI_QM, CRYPTO_DEV_HISI_ZIP and CRYPTO_DEV_HISI_HPRE.
+
 No functional change and effective change of Kconfig dependendencies.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/irqchip/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/hisilicon/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index d79683154f7f..59bcce29b1a4 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -384,7 +384,7 @@ config LS_EXTIRQ
- 
- config LS_SCFG_MSI
- 	def_bool y if SOC_LS1021A || ARCH_LAYERSCAPE
+diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
+index 743ce4fc3158..4137a8bf131f 100644
+--- a/drivers/crypto/hisilicon/Kconfig
++++ b/drivers/crypto/hisilicon/Kconfig
+@@ -27,7 +27,7 @@ config CRYPTO_DEV_HISI_SEC2
+ 	select CRYPTO_SHA256
+ 	select CRYPTO_SHA512
+ 	select CRYPTO_SM4_GENERIC
 -	depends on PCI && PCI_MSI
 +	depends on PCI_MSI
+ 	depends on UACCE || UACCE=n
+ 	depends on ARM64 || (COMPILE_TEST && 64BIT)
+ 	depends on ACPI
+@@ -42,7 +42,7 @@ config CRYPTO_DEV_HISI_SEC2
+ config CRYPTO_DEV_HISI_QM
+ 	tristate
+ 	depends on ARM64 || COMPILE_TEST
+-	depends on PCI && PCI_MSI
++	depends on PCI_MSI
+ 	depends on UACCE || UACCE=n
+ 	depends on ACPI
+ 	help
+@@ -51,7 +51,7 @@ config CRYPTO_DEV_HISI_QM
  
- config PARTITION_PERCPU
- 	bool
+ config CRYPTO_DEV_HISI_ZIP
+ 	tristate "Support for HiSilicon ZIP accelerator"
+-	depends on PCI && PCI_MSI
++	depends on PCI_MSI
+ 	depends on ARM64 || (COMPILE_TEST && 64BIT)
+ 	depends on !CPU_BIG_ENDIAN || COMPILE_TEST
+ 	depends on UACCE || UACCE=n
+@@ -62,7 +62,7 @@ config CRYPTO_DEV_HISI_ZIP
+ 
+ config CRYPTO_DEV_HISI_HPRE
+ 	tristate "Support for HISI HPRE accelerator"
+-	depends on PCI && PCI_MSI
++	depends on PCI_MSI
+ 	depends on UACCE || UACCE=n
+ 	depends on ARM64 || (COMPILE_TEST && 64BIT)
+ 	depends on ACPI
 -- 
 2.17.1
 
