@@ -2,94 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7988BC5479D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Jan 2023 09:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 108E0C5479D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Jan 2023 09:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231888AbjAKJa3 (ORCPT
+        id S233776AbjAKJ5f (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 11 Jan 2023 04:30:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58200 "EHLO
+        Wed, 11 Jan 2023 04:57:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238823AbjAKJ2v (ORCPT
+        with ESMTP id S239220AbjAKJ4z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 11 Jan 2023 04:28:51 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F26761003;
-        Wed, 11 Jan 2023 01:28:39 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id tz12so35295695ejc.9;
-        Wed, 11 Jan 2023 01:28:39 -0800 (PST)
+        Wed, 11 Jan 2023 04:56:55 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4688CC9;
+        Wed, 11 Jan 2023 01:54:11 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id jo4so35476599ejb.7;
+        Wed, 11 Jan 2023 01:54:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ygIVHVHC7ext0UN1C5LJ2TwQHCTMxtld2JzO7RrKTU4=;
-        b=jTpyx9hnJIoy78iTB6SIoWRbX4qrzQ1fuOViFzx0w8CI9A2WBNuaaAw9BJDaMxvW1V
-         UKxyT9rVcCPCXHcIF6lN4Vnd0ZFuHO5/Na0eUcj0eyiYoZSO3e5v6d33qzOSrk+QcPsL
-         hwt9Bz3jgllgJqtq8QrsGcF13f0WWYtGZKOKk2TypBlQlsQMFgUTvg7WU7Yrz4odFGYP
-         2xHPX4ZkA8u9rs3PMWdKr5sj+nzMCLHzYI+W+mWPkytuWs/7fPYqCxMFENSnJX06e/v7
-         WWtZdomU5vIXn9UjaX00UuJi2+O0Z4Ge1SaEjEDJEuYrki/PWihxk962vCXY9UTKTm7m
-         o3wQ==
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m8kExCUKRNhblEbW+B8lIqskfGoABqtXBunGasaq1Oo=;
+        b=kgSSuMjCic6AcTBc/EZpLz9gNiQVLoTJMu/wm4fQcLczNMuXE85aCL4ohw1hQ9EXfk
+         basT8jf5u5sfV7woGgAfTsqpVUyQ6ZCtNcVtBfyck925RBBQpVTySHotWywXi9DJ/43P
+         VZzbzyWJnJOl4E4c5w/taxrV4y46mWDR85QOzEjj3WbkA9A7uI6eaZ666/5DzoCnt4w1
+         OWGTRiSpz0+g5KyNK/NtTCJPHLO6HozLwy1VLB5tutOoQsWV+1+e7A4s98p15+BRS8fw
+         wl8q9eMMgAqLrKVQRNHQy4C6a8ptWtjConGv7DLdYhNo15EeHole0REU5fKmr1KSxdaR
+         zHwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ygIVHVHC7ext0UN1C5LJ2TwQHCTMxtld2JzO7RrKTU4=;
-        b=p5UO+HnNLpD86wwnK6p3V02rclyK939UD5xY/PjgXEtVLugrfe1sQlel9vVeHlMByo
-         m7xfJvQNxOZXHtS9DCuRri6vGv2vgWczAmZZQhMDSEf13wfB6Hro/iFbwf7RzQnxNtEs
-         rA9VXz81ciT1wRcHqq/8jX/vytvkhE/VXLwOdQHca1rsdKxWiIKYWNyW1u/2ECtJ7k7b
-         We48/juT47I216SZj2Tk8A+j6waQwfQha/X1uc7joFWA6F2TXKiDGyHKf7Dbbm7Ik8vZ
-         aKalDRNXbF04aOxWdgzW7ZiFLL5pxfuatNHrAcy3rOGXCHPQq0SAm85DayAbSrYeDFy1
-         +47g==
-X-Gm-Message-State: AFqh2koJvBP7hjI3qAX67hq6j3lkOc2uu22pRkhn3uuU/49ftMpQCJg/
-        EDSljF/21WfDVRRhuoeMMMh5WZ847Sg=
-X-Google-Smtp-Source: AMrXdXs4hf7WiPmjqQae5kzx61lOUZYsBW4synif4lYB7hFc6zelE1Qtu8JacKsT5n1coC7Of1L6PQ==
-X-Received: by 2002:a17:907:c70c:b0:7c0:a247:2f3c with SMTP id ty12-20020a170907c70c00b007c0a2472f3cmr65431025ejc.1.1673429319503;
-        Wed, 11 Jan 2023 01:28:39 -0800 (PST)
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m8kExCUKRNhblEbW+B8lIqskfGoABqtXBunGasaq1Oo=;
+        b=2pSlnhkB3ZVPDknK6FkH+ZU5a5ru1bwJUyH9IY/R3Jm3aHB6kTPFTPKVRs0wKCJ4DE
+         WzO15bR//Gksirqrs3Imiz/DMOq5qDkZOufVt0NH8uILHkgcTOS35myPlehM+ZZj7h70
+         PubhFICDQcuahisgLot3VxKPwohOy1Q9yWEptwXNPP6f4hIfile8frSnrlHdDKgZ2Ebz
+         1RKz92PvKeeLeLvJ1CMgtluBYghFUPE7k/d0iu0TAxuM1lK8xB3tvb6OLeoQA1rf9z8N
+         oMyLKSeXr/gnwnvHPyQjvYz/fXRez+jdf1KbT1KVwydKjxhrQe9mOfaRStU/POae3kAo
+         6OYw==
+X-Gm-Message-State: AFqh2ko1hxuOZC21xBq28KTm6w7JDBYDhXLkVwb9VOyRoGtu/kOGOmRZ
+        UGuID7dvuNL6Tix1qSivMVQ=
+X-Google-Smtp-Source: AMrXdXviwQ9qBVfsVUAk9RIHULDycXIVNWkW/bbCw0pNuqvVggqjD4WexAU7d9BEgpVYjulNSCTIWg==
+X-Received: by 2002:a17:906:3513:b0:7ff:7205:414e with SMTP id r19-20020a170906351300b007ff7205414emr54002294eja.69.1673430849942;
+        Wed, 11 Jan 2023 01:54:09 -0800 (PST)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:a47e:7f3e:6b25:bafb])
-        by smtp.gmail.com with ESMTPSA id 14-20020a170906308e00b0084d3acda5fasm4473970ejv.189.2023.01.11.01.28.38
+        by smtp.gmail.com with ESMTPSA id k2-20020a17090632c200b007b47749838asm5891101ejk.45.2023.01.11.01.54.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 01:28:39 -0800 (PST)
+        Wed, 11 Jan 2023 01:54:09 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
+To:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 2/2] MAINTAINERS: adjust SAMSUNG SOC CLOCK DRIVERS after s3c24xx support removal
-Date:   Wed, 11 Jan 2023 10:28:28 +0100
-Message-Id: <20230111092828.958-3-lukas.bulwahn@gmail.com>
+Subject: [PATCH] PCI: dwc: remove redundant config PCI dependency for config PCIE_DW_PLAT_EP
+Date:   Wed, 11 Jan 2023 10:54:01 +0100
+Message-Id: <20230111095401.17071-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230111092828.958-1-lukas.bulwahn@gmail.com>
-References: <20230111092828.958-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit a4946a153cb9 ("ARM: s3c: remove all s3c24xx support") removes all
-files that match the file pattern 'include/dt-bindings/clock/s3c*.h'.
+While reviewing dependencies in some Kconfig files, I noticed the redundant
+dependency "depends on PCI && PCI_MSI". The config PCI_MSI has always,
+since its introduction, been dependent on the config PCI. So, it is
+sufficient to just depend on PCI_MSI, and know that the dependency on PCI
+is implicitly implied.
 
-Hence,  ./scripts/get_maintainer.pl --self-test=patterns complains about a
-obsolete file pattern in SAMSUNG SOC CLOCK DRIVERS, as it does not match
-any file in the repository after the commit above.
+Reduce the dependencies of config PCIE_DW_PLAT_EP.
+No functional change and effective change of Kconfig dependendencies.
 
-Remove this obsolete file entry in SAMSUNG SOC CLOCK DRIVERS.
-
-Fixes: a4946a153cb9 ("ARM: s3c: remove all s3c24xx support")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/pci/controller/dwc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e400f564b0f9..b0a0711090cd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18377,7 +18377,6 @@ F:	Documentation/devicetree/bindings/clock/samsung,*.yaml
- F:	Documentation/devicetree/bindings/clock/samsung,s3c*
- F:	drivers/clk/samsung/
- F:	include/dt-bindings/clock/exynos*.h
--F:	include/dt-bindings/clock/s3c*.h
- F:	include/dt-bindings/clock/s5p*.h
- F:	include/dt-bindings/clock/samsung,*.h
- F:	include/linux/clk/samsung.h
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index 99ec91e2a5cf..ff2e478e48b5 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -67,7 +67,7 @@ config PCIE_DW_PLAT_HOST
+ 
+ config PCIE_DW_PLAT_EP
+ 	bool "Platform bus based DesignWare PCIe Controller - Endpoint mode"
+-	depends on PCI && PCI_MSI
++	depends on PCI_MSI
+ 	depends on PCI_ENDPOINT
+ 	select PCIE_DW_EP
+ 	select PCIE_DW_PLAT
 -- 
 2.17.1
 
