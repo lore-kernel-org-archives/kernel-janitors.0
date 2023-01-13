@@ -2,79 +2,183 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC461C54EBE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 14:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0047EC54EBE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 15:39:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241434AbjAMOCM (ORCPT
+        id S229663AbjAMPjj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Jan 2023 09:02:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56752 "EHLO
+        Fri, 13 Jan 2023 10:39:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233352AbjAMOBZ (ORCPT
+        with ESMTP id S230317AbjAMPid (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Jan 2023 09:01:25 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAEE613F60;
-        Fri, 13 Jan 2023 05:58:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 507D0B8206B;
-        Fri, 13 Jan 2023 13:58:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9AC4C433D2;
-        Fri, 13 Jan 2023 13:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673618313;
-        bh=kGpMQxjI+fFQs+jBsaQNT3ZJMiDOZkdLszEE2sQFRCw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=a0b6N8+JbeS5RVqc3A1GvhT8qfZBs89IP5y30W79s44rrUaFmN3Iq/PcmfbvWCAoi
-         bAg9+/vRi63twHuw8/t6EHBLUg3+UZlGkTs21MAHBQKj0HKI7Ssl2mhqEuupAZQPQL
-         h3OGSbIfl0jxx+15dwHn4do/GIf3rJmnUmXWv6puOkr5eCjOTFd5nxomLf0Ksg2FP4
-         cLH4ZXIB2pGCv7QsWo3FqHokcDi07JWBv7OYJdGkRgcO3us2Uxgj3bvVBTMRAmX+n6
-         j9sX9nyefXIie0kj4z3qTGzyxqaoEoWKey7+ki1E79d6ogiLEId1FzhuISpcywY4XP
-         MowxazhYPP+aA==
-Date:   Fri, 13 Jan 2023 07:58:30 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: rcar: avoid defines prefixed with CONFIG
-Message-ID: <20230113135830.GA1835786@bhelgaas>
+        Fri, 13 Jan 2023 10:38:33 -0500
+Received: from mail-4018.proton.ch (mail-4018.proton.ch [185.70.40.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C7547EC90
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Jan 2023 07:30:40 -0800 (PST)
+Date:   Fri, 13 Jan 2023 15:30:19 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=n8pjl.ca;
+        s=protonmail; t=1673623827; x=1673883027;
+        bh=jbFxkExsMlV9xsBwHzYnqYf/viHGLmssqbaqiMZo0s0=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+        b=CM7DV48/Ak0H02Fr785pQIKLcDaRYszEE2EFaNPnc4ybCQfBEQZ7R+n6+Pd/KrIT6
+         AGKazUm6H8LEs64o5KUZcfw+jyATbRA4hifXgIlQWwCB9ZqR9ll1MXWTx7y0xEE/3p
+         uandkFmK0Ol9cOAa/puWvjKUb+/So+dKPOrd9LIHCrE4bJxQ0EkQrPpI3Q44mZeWvl
+         oQmc4tmP9RARDw8C0su0K6MWlv4fzuy32NjbYA2s8J2qPW9qwyQPS47KeGcdX0Jl/f
+         ViTrriFWaqbVYBvBenZPdwyXntF0DJXlaF2xfSxfgCgW+SLeq5FAxdSyeK8jm6mDtZ
+         5UI5OdxSEbDjQ==
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Peter Lafreniere <peter@n8pjl.ca>
+Cc:     "linux@dominikbrodowski.net" <linux@dominikbrodowski.net>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>
+Subject: [PATCH] pcmcia: avoid defines prefixed with CONFIG
+Message-ID: <n-Xd5VZl4mxdBIPvH-LgdDqAi8N9cL3TiAQ6fKEOpXLKsyDAxcf9VWQZfnMobTdIXucJJ1U2B82W6KhoODwWr_n3d-V9YkDcV92AjzxMrys=@n8pjl.ca>
+Feedback-ID: 53133685:user:proton
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230113084516.31888-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+Macros prefixed with "CONFIG_" should be relegated to Kconfig switches,
+so we should change the config state flags to avoid conflicts.
 
-On Fri, Jan 13, 2023 at 09:45:16AM +0100, Lukas Bulwahn wrote:
-> Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
-> that are introduced in a Kconfig file.
-> 
-> Here, a definition for a bitmask to configure the SEND_ENABLE mode is named
-> CONFIG_SEND_ENABLE.
-> 
-> Rename this local definition to CONFIGURE_SEND_ENABLE to avoid defines
-> prefixed with "CONFIG".
-> 
-> No functional change.
+This change affects only code readability, not function.
 
-If you update this patch, please capitalize the subject to match:
+Signed-off-by: Peter Lafreniere <peter@n8pjl.ca>
+---
+ drivers/pcmcia/cs_internal.h     |  6 +++---
+ drivers/pcmcia/pcmcia_resource.c | 26 +++++++++++++-------------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
 
-  $ git log --oneline drivers/pci/controller/pcie-rcar-host.c
-  6e36203bc14c ("PCI: rcar: Use PCI_SET_ERROR_RESPONSE after read which triggered an exception")
-  84b576146294 ("PCI: rcar: Finish transition to L1 state in rcar_pcie_config_access()")
-  d2a14b54989e ("PCI: rcar: Check if device is runtime suspended instead of __clk_is_enabled()")
-  a115b1bd3af0 ("PCI: rcar: Add L1 link state fix into data abort hook")
-  83ed8d4fa656 ("PCI: rcar: Convert to MSI domains")
+diff --git a/drivers/pcmcia/cs_internal.h b/drivers/pcmcia/cs_internal.h
+index 580369f3c0b0..95df616fb0a4 100644
+--- a/drivers/pcmcia/cs_internal.h
++++ b/drivers/pcmcia/cs_internal.h
+@@ -59,9 +59,9 @@ struct pccard_resource_ops {
+ };
+=20
+ /* Flags in config state */
+-#define CONFIG_LOCKED=09=090x01
+-#define CONFIG_IRQ_REQ=09=090x02
+-#define CONFIG_IO_REQ=09=090x04
++#define CFG_LOCKED=09=090x01
++#define CFG_IRQ_REQ=09=090x02
++#define CFG_IO_REQ=09=090x04
+=20
+ /* Flags in socket state */
+ #define SOCKET_PRESENT=09=090x0008
+diff --git a/drivers/pcmcia/pcmcia_resource.c b/drivers/pcmcia/pcmcia_resou=
+rce.c
+index d78091e79a0f..d559977b9332 100644
+--- a/drivers/pcmcia/pcmcia_resource.c
++++ b/drivers/pcmcia/pcmcia_resource.c
+@@ -168,7 +168,7 @@ static int pcmcia_access_config(struct pcmcia_device *p=
+_dev,
+ =09mutex_lock(&s->ops_mutex);
+ =09c =3D p_dev->function_config;
+=20
+-=09if (!(c->state & CONFIG_LOCKED)) {
++=09if (!(c->state & CFG_LOCKED)) {
+ =09=09dev_dbg(&p_dev->dev, "Configuration isn't locked\n");
+ =09=09mutex_unlock(&s->ops_mutex);
+ =09=09return -EACCES;
+@@ -262,7 +262,7 @@ int pcmcia_fixup_iowidth(struct pcmcia_device *p_dev)
+ =09dev_dbg(&p_dev->dev, "fixup iowidth to 8bit\n");
+=20
+ =09if (!(s->state & SOCKET_PRESENT) ||
+-=09=09!(p_dev->function_config->state & CONFIG_LOCKED)) {
++=09=09!(p_dev->function_config->state & CFG_LOCKED)) {
+ =09=09dev_dbg(&p_dev->dev, "No card? Config not locked?\n");
+ =09=09ret =3D -EACCES;
+ =09=09goto unlock;
+@@ -310,7 +310,7 @@ int pcmcia_fixup_vpp(struct pcmcia_device *p_dev, unsig=
+ned char new_vpp)
+ =09dev_dbg(&p_dev->dev, "fixup Vpp to %d\n", new_vpp);
+=20
+ =09if (!(s->state & SOCKET_PRESENT) ||
+-=09=09!(p_dev->function_config->state & CONFIG_LOCKED)) {
++=09=09!(p_dev->function_config->state & CFG_LOCKED)) {
+ =09=09dev_dbg(&p_dev->dev, "No card? Config not locked?\n");
+ =09=09ret =3D -EACCES;
+ =09=09goto unlock;
+@@ -361,9 +361,9 @@ int pcmcia_release_configuration(struct pcmcia_device *=
+p_dev)
+ =09=09=09s->ops->set_socket(s, &s->socket);
+ =09=09}
+ =09}
+-=09if (c->state & CONFIG_LOCKED) {
+-=09=09c->state &=3D ~CONFIG_LOCKED;
+-=09=09if (c->state & CONFIG_IO_REQ)
++=09if (c->state & CFG_LOCKED) {
++=09=09c->state &=3D ~CFG_LOCKED;
++=09=09if (c->state & CFG_IO_REQ)
+ =09=09=09for (i =3D 0; i < MAX_IO_WIN; i++) {
+ =09=09=09=09if (!s->io[i].res)
+ =09=09=09=09=09continue;
+@@ -407,7 +407,7 @@ static void pcmcia_release_io(struct pcmcia_device *p_d=
+ev)
+ =09=09release_io_space(s, &c->io[1]);
+=20
+ =09p_dev->_io =3D 0;
+-=09c->state &=3D ~CONFIG_IO_REQ;
++=09c->state &=3D ~CFG_IO_REQ;
+=20
+ out:
+ =09mutex_unlock(&s->ops_mutex);
+@@ -491,7 +491,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
+=20
+ =09mutex_lock(&s->ops_mutex);
+ =09c =3D p_dev->function_config;
+-=09if (c->state & CONFIG_LOCKED) {
++=09if (c->state & CFG_LOCKED) {
+ =09=09mutex_unlock(&s->ops_mutex);
+ =09=09dev_dbg(&p_dev->dev, "Configuration is locked\n");
+ =09=09return -EACCES;
+@@ -581,7 +581,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
+ =09}
+=20
+ =09/* Configure I/O windows */
+-=09if (c->state & CONFIG_IO_REQ) {
++=09if (c->state & CFG_IO_REQ) {
+ =09=09iomap.speed =3D io_speed;
+ =09=09for (i =3D 0; i < MAX_IO_WIN; i++)
+ =09=09=09if (s->io[i].res) {
+@@ -602,7 +602,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
+ =09=09=09}
+ =09}
+=20
+-=09c->state |=3D CONFIG_LOCKED;
++=09c->state |=3D CFG_LOCKED;
+ =09p_dev->_locked =3D 1;
+ =09mutex_unlock(&s->ops_mutex);
+ =09return 0;
+@@ -635,11 +635,11 @@ int pcmcia_request_io(struct pcmcia_device *p_dev)
+ =09=09goto out;
+ =09}
+=20
+-=09if (c->state & CONFIG_LOCKED) {
++=09if (c->state & CFG_LOCKED) {
+ =09=09dev_dbg(&p_dev->dev, "Configuration is locked\n");
+ =09=09goto out;
+ =09}
+-=09if (c->state & CONFIG_IO_REQ) {
++=09if (c->state & CFG_IO_REQ) {
+ =09=09dev_dbg(&p_dev->dev, "IO already configured\n");
+ =09=09goto out;
+ =09}
+@@ -663,7 +663,7 @@ int pcmcia_request_io(struct pcmcia_device *p_dev)
+ =09} else
+ =09=09c->io[1].start =3D 0;
+=20
+-=09c->state |=3D CONFIG_IO_REQ;
++=09c->state |=3D CFG_IO_REQ;
+ =09p_dev->_io =3D 1;
+=20
+ =09dev_dbg(&p_dev->dev, "pcmcia_request_io succeeded: %pR , %pR",
+--=20
+2.39.0
 
-Bjorn
