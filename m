@@ -2,124 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76237C54EBD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 07:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B791C61DB3
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 07:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232500AbjAMHhE (ORCPT
+        id S234479AbjAMHto (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Jan 2023 02:37:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60366 "EHLO
+        Fri, 13 Jan 2023 02:49:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240738AbjAMHgZ (ORCPT
+        with ESMTP id S232051AbjAMHtm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Jan 2023 02:36:25 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9CCA482A1;
-        Thu, 12 Jan 2023 23:36:03 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id g10so14672098wmo.1;
-        Thu, 12 Jan 2023 23:36:03 -0800 (PST)
+        Fri, 13 Jan 2023 02:49:42 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8DF1A822;
+        Thu, 12 Jan 2023 23:49:41 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id l22so20663095eja.12;
+        Thu, 12 Jan 2023 23:49:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DXggE3W8CIBjCZ9C95iTI+NeNj7il/k4Fv8jK8o0OlI=;
-        b=Dq+Feophv6UuqAGIrE/kjgvybH7PZDEem3UecsytoP+TVYPP85ixUzw/cctMzTpNBQ
-         u20Jg+4GYu4Q/rE/R3MM5YEqL6Wq7ElnaWQPQQ1oy7hX1nWSe2YZ4IEfrqKbCK8tg5eB
-         1BQmE5nW97gfTsX2MlGGkDiNi+HxU/g6PO294AuHbGVjntUaxpqHSvAnRKQTd6W3jz+F
-         US1yhxbF7YHs6SFW7lOZExRRZ6t7AqY+tS/2IC9T98H/SjhmgZxQsy/TnAqqWCQpXusn
-         cVDFCp5nBzFVntxLu3IsS7/gpYe096dkvdtItzNn7niiM4g25Tapmg+DBVZJgv/7LlNQ
-         dCwQ==
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ki/D1WUy5ryn68f131sCexKZ8Uw0CRINUHMpMThw1h4=;
+        b=MrZqIjlJU54cg2457lOD+lg384HK6gA1Nb9CBdGUiKfgYsB14QaQX61r9OtNwotQKB
+         THMs47B1dqPWxYTr7sgoDSVTHBgACpbIVVlRD715H+brWuzh91B9W8j1cR3TIFJgGVk4
+         lq4oEcRbrZIjFGCgcACACa7pmQA9hjXwKnhpL4wZ7lvSSniEIcS50+UyxUdlpY/+nx/K
+         niXvF292CD8sS4XkYXPBxMNf2xgeYY9W3FderhTHx6nJkpsr75YA78XAgzXB+Ku21Cdn
+         729M2KRBmulaAjdScbAqLBaR2faFc9g0J8W7vjpqnHrrQcHe8m71av87l8YRblaxALpj
+         IxAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DXggE3W8CIBjCZ9C95iTI+NeNj7il/k4Fv8jK8o0OlI=;
-        b=qZm04dUx1Tfuy/8yN/E3kHF+o9Ng1EuSiiE8RmSk2CQT6UxtgSflQOHJ9hdFFi+nWN
-         alGZ2U8qkHosz1TWrUBBm2gyYhFzNF+1OoDQCjHeJLP4LOu1zX1290QEQQCsV3xoIG7Y
-         dqAhU/KrkA2GsdJIZm94lR/6Y4rBSB2MG/5xhjVsUpn6dmsxzuwN+X4uE70nHcdJ/FUr
-         bc9K3eV82v3q0suyXRFgJUCSrj5OIJctvH9Q5Zffwhnqw5pQFIveO2WdJ3656XndpiLi
-         FydoOQ+7keWMlTfYqpgTCtkQLsZOoKGDBqAYRexQL1XdpNAkpBlhQEo9s5fjLK6JK6SW
-         Ziaw==
-X-Gm-Message-State: AFqh2kp587FwgevgzqPwV8Hi07E/Tx2kZrTfSMxGI1ZjfSQEBVllJgML
-        36NoNpdP3NvkErxVi18lauMvgeYphCKUWA==
-X-Google-Smtp-Source: AMrXdXvajpOjI5yU+GLbikMrDle5FotCAEeQY3dIc7nvFO6wi8Y++y5wxDnf84RKtU30Tmod4Qk11g==
-X-Received: by 2002:a05:600c:3d05:b0:3d3:5c21:dd94 with SMTP id bh5-20020a05600c3d0500b003d35c21dd94mr59341271wmb.9.1673595362080;
-        Thu, 12 Jan 2023 23:36:02 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u13-20020a05600c19cd00b003c6f1732f65sm31259062wmq.38.2023.01.12.23.36.00
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ki/D1WUy5ryn68f131sCexKZ8Uw0CRINUHMpMThw1h4=;
+        b=YN8T2x9KkPCciKokUiSYgsfc1LLsytuWb9PdalQ8aPaoAf1G2TEiueIOrPYxLo/AXB
+         qScAIKA4kiuf+d+Es6XTeMV18BC7Hcy6mRLXURwvrKKidq9gPGC4X8DAMOMstkWi/ogJ
+         di/P6B6dRUvRl+voK6OuywHFCF0UWU98A9eNbKM9DPmKOL0K2D9oT8nN+7VxE53LWpNw
+         zSZ6KN097I8mL5wj5n5xfAQs2Mm7qet8gCpUVP+7ti0A78UTGd3a1EvFyh40KHS/qer7
+         RmO9v7x/avwBlmWANpr43FXcf2AJIXt1ue2XUeH4dU7DCNe2zz5dpu5SzN6DO52OpDzY
+         +3Hw==
+X-Gm-Message-State: AFqh2kpX266Z54lfjM9XKKKDkP9U5DnsE8PtmvyBrQNxoxEffTFWdI3f
+        WN/dqbhlOAz0hn1rGwDuQc8=
+X-Google-Smtp-Source: AMrXdXvpYNAJ1hb/R8RykYrpD9NO6MRCwedsK48BgHEkt6XdgGobwficLiSe7Qyl0u7bzBTsagaFdA==
+X-Received: by 2002:a17:907:c48d:b0:7c0:aafa:6dc0 with SMTP id tp13-20020a170907c48d00b007c0aafa6dc0mr52745239ejc.25.1673596179964;
+        Thu, 12 Jan 2023 23:49:39 -0800 (PST)
+Received: from felia.fritz.box (ipbcc1d920.dynamic.kabel-deutschland.de. [188.193.217.32])
+        by smtp.gmail.com with ESMTPSA id 18-20020a170906319200b007c1651aeeacsm8246555ejy.181.2023.01.12.23.49.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 23:36:01 -0800 (PST)
-Date:   Fri, 13 Jan 2023 10:35:43 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Ido Schimmel <idosch@nvidia.com>, Jiri Pirko <jiri@nvidia.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] devlink: remove some unnecessary code
-Message-ID: <Y8EJz8oxpMhfiPUb@kili>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Thu, 12 Jan 2023 23:49:39 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] crypto: atmel-i2c - avoid defines prefixed with CONFIG
+Date:   Fri, 13 Jan 2023 08:47:15 +0100
+Message-Id: <20230113074715.32016-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code checks if (attrs[DEVLINK_ATTR_TRAP_POLICER_ID]) twice.  Once
-at the start of the function and then a couple lines later.  Delete the
-second check since that one must be true.
+Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+that are introduced in a Kconfig file.
 
-Because the second condition is always true, it means the:
+Here, a definition for the driver's configuration zone is named
+CONFIG_ZONE. Rename this local definition to CONFIGURATION_ZONE to avoid
+defines prefixed with "CONFIG".
 
-	policer_item = group_item->policer_item;
+No functional change.
 
-assignment is immediately over-written.  Delete that as well.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-This is from static analysis and not tested.  It's possible (although
-unlikely) that the static checker found buggy code instead of merely
-a bit of dead code.  Please review this one carefully.
+Herbert, David, please pick this clean-up work into your crypto tree. Thanks.
 
- net/devlink/leftover.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/crypto/atmel-i2c.c | 2 +-
+ drivers/crypto/atmel-i2c.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/devlink/leftover.c b/net/devlink/leftover.c
-index 1e23b2da78cc..bf5e0b1c0422 100644
---- a/net/devlink/leftover.c
-+++ b/net/devlink/leftover.c
-@@ -8719,6 +8719,7 @@ static int devlink_trap_group_set(struct devlink *devlink,
- 	struct netlink_ext_ack *extack = info->extack;
- 	const struct devlink_trap_policer *policer;
- 	struct nlattr **attrs = info->attrs;
-+	u32 policer_id;
- 	int err;
+diff --git a/drivers/crypto/atmel-i2c.c b/drivers/crypto/atmel-i2c.c
+index 55bff1e13142..66e27f71e37e 100644
+--- a/drivers/crypto/atmel-i2c.c
++++ b/drivers/crypto/atmel-i2c.c
+@@ -59,7 +59,7 @@ void atmel_i2c_init_read_cmd(struct atmel_i2c_cmd *cmd)
+ 	 * Read the word from Configuration zone that contains the lock bytes
+ 	 * (UserExtra, Selector, LockValue, LockConfig).
+ 	 */
+-	cmd->param1 = CONFIG_ZONE;
++	cmd->param1 = CONFIGURATION_ZONE;
+ 	cmd->param2 = cpu_to_le16(DEVICE_LOCK_ADDR);
+ 	cmd->count = READ_COUNT;
  
- 	if (!attrs[DEVLINK_ATTR_TRAP_POLICER_ID])
-@@ -8727,17 +8728,11 @@ static int devlink_trap_group_set(struct devlink *devlink,
- 	if (!devlink->ops->trap_group_set)
- 		return -EOPNOTSUPP;
+diff --git a/drivers/crypto/atmel-i2c.h b/drivers/crypto/atmel-i2c.h
+index 35f7857a7f7c..c1fdc04eac07 100644
+--- a/drivers/crypto/atmel-i2c.h
++++ b/drivers/crypto/atmel-i2c.h
+@@ -63,7 +63,7 @@ struct atmel_i2c_cmd {
+ #define STATUS_WAKE_SUCCESSFUL		0x11
  
--	policer_item = group_item->policer_item;
--	if (attrs[DEVLINK_ATTR_TRAP_POLICER_ID]) {
--		u32 policer_id;
--
--		policer_id = nla_get_u32(attrs[DEVLINK_ATTR_TRAP_POLICER_ID]);
--		policer_item = devlink_trap_policer_item_lookup(devlink,
--								policer_id);
--		if (policer_id && !policer_item) {
--			NL_SET_ERR_MSG_MOD(extack, "Device did not register this trap policer");
--			return -ENOENT;
--		}
-+	policer_id = nla_get_u32(attrs[DEVLINK_ATTR_TRAP_POLICER_ID]);
-+	policer_item = devlink_trap_policer_item_lookup(devlink, policer_id);
-+	if (policer_id && !policer_item) {
-+		NL_SET_ERR_MSG_MOD(extack, "Device did not register this trap policer");
-+		return -ENOENT;
- 	}
- 	policer = policer_item ? policer_item->policer : NULL;
+ /* Definitions for eeprom organization */
+-#define CONFIG_ZONE			0
++#define CONFIGURATION_ZONE		0
  
+ /* Definitions for Indexes common to all commands */
+ #define RSP_DATA_IDX			1 /* buffer index of data in response */
 -- 
-2.35.1
+2.17.1
 
