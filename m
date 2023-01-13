@@ -2,108 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B645C54EBD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 10:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D4AC54EBE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 12:57:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238205AbjAMKKL (ORCPT
+        id S240754AbjAMM5R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Jan 2023 05:10:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
+        Fri, 13 Jan 2023 07:57:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234982AbjAMKKD (ORCPT
+        with ESMTP id S241497AbjAMM4g (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Jan 2023 05:10:03 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD72B4F13A
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Jan 2023 02:10:01 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id g19-20020a05600c4ed300b003d9eb1dbc0aso14030264wmq.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Jan 2023 02:10:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gSVl5Sds0K3+KZcEdjR8SvziCTcv9fxNo6Bvw/idysI=;
-        b=aswETd7JofjodlQwRTEaMY39q6cLRxXbGz4sWS1z4HdfSFlFlacI44O6PW90eNGTSL
-         9PNSxYGISkPqoE1XYUGtdCEb/Fv9a1Q7OwNqkzMJosXzjZOQCbGoBFhd2i6eu863RW5o
-         YuRlk2GHemgttWcKomFKBrImFmlepSAu7SliiZWD1+rblpd5eJF+mP6L6dpm3R6Zt1d1
-         SIkpNyIhcsTyINYRonZz8szOAxajrf36wgd2NgxvXM4Wosedex5mwhFC1BGFEzMHwYqc
-         VRekTeVxVC5ZEJRqn9FZG2DN3fiUHKuT9FHwBbyOoL7sVdyqtPc0mvM5PnB5R2xfl07F
-         WYxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gSVl5Sds0K3+KZcEdjR8SvziCTcv9fxNo6Bvw/idysI=;
-        b=WQRGV0JSeJ90V4NYCfbmLOcZolnoNgUdZ/oMtgCq0Mli0DdnQ94NKwJsa1+YEEnO7w
-         giTajPNt3ceQ/e8iEJ2TthI6Yhl+Gl1NDiM4JM6JbyxL2PZ/FJCJ/rSDeguMmWsFlX/b
-         Yj8KXQ3S/nDhBcdrVZh3DVhCAp3Ru+dN1kwmm5R53zt+6icGYYalJDUIJw0ouW8eg0VQ
-         MNUue4bF8gKnU9Rczn8WDH0inNmN5pUIxx5MylxnRsy4K/PPchHow4Jx8oT86EwfHjVq
-         SauuxFqbDsjZ8b31CP6jIXdcNpVstFQrjDMI20st9qipHjXfF/qXn5t40+PYVScNbEsf
-         JGaw==
-X-Gm-Message-State: AFqh2krgC4NHKru5w5odI6TMWn3qq02C6PWKultUSCDXSFMdiKBFXEnH
-        b4VysDl5BExuiP5DjTpvq+EdTLSyt78n5g==
-X-Google-Smtp-Source: AMrXdXuF09ofFhbUjN2nSi9BnZQwyr37SS3M2YFjX0/cPjEHxEHVFvUMYjog736OW7NXewReG7u+3Q==
-X-Received: by 2002:a05:600c:22ca:b0:3d1:ebdf:d586 with SMTP id 10-20020a05600c22ca00b003d1ebdfd586mr57862681wmg.29.1673604600315;
-        Fri, 13 Jan 2023 02:10:00 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id he12-20020a05600c540c00b003d9ddc82450sm23762476wmb.45.2023.01.13.02.09.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 02:09:59 -0800 (PST)
-Date:   Fri, 13 Jan 2023 13:09:55 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Zack Rusin <zackr@vmware.com>
-Cc:     VMware Graphics Reviewers <linux-graphics-maintainer@vmware.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Martin Krastev <krastevm@vmware.com>,
-        Maaz Mombasawala <mombasawalam@vmware.com>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/vmwgfx: Fix uninitialized return variables
-Message-ID: <Y8Et8+c8+JAGNqTP@kili>
+        Fri, 13 Jan 2023 07:56:36 -0500
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B51BBCE3A;
+        Fri, 13 Jan 2023 04:44:44 -0800 (PST)
+Received: from 8bytes.org (p200300c277327f0086ad4f9d2505dd0d.dip0.t-ipconnect.de [IPv6:2003:c2:7732:7f00:86ad:4f9d:2505:dd0d])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id ED600262340;
+        Fri, 13 Jan 2023 13:44:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1673613884;
+        bh=MscDIF3GsS7zhLNLVm/WiZfXdK2GItkr1gCY7Yuq/gI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rPPebLs22xmYECIA08EQJNTrmdxY/5R/5bZCTMtoBcDNUjONEC2f+5UAg8dAZe75+
+         tqE8v/3rLs7mCO3KLHwvNGsPVWQBtuVvqPwY3CkNFofuCjIbjORA2kfOpk1F+SJqHS
+         vu74z7MbR0+vA3ZD6tOFAUFqsWrOHy3641EGSVcGnfOUn2ROmYiifTNyvZaaOZVeup
+         CHaSNd8Wxg0IAfMYSzJLIyNFFsgFkFpLl3vTxK06O5163O32q9h66/GXsfrk9ouli+
+         wblcy2rD81UzrGfIbXJ5pJIvmpHtRjWubRPBGt7+fMH6SD1A1suPCFFH1DEGwtb3oG
+         3OjlH5HQuawEA==
+Date:   Fri, 13 Jan 2023 13:44:42 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Yong Wu <yong.wu@mediatek.com>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Honghui Zhang <honghui.zhang@mediatek.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] iommu/mediatek-v1: Fix an error handling path in
+ mtk_iommu_v1_probe()
+Message-ID: <Y8FSOqUqQpTa+zAU@8bytes.org>
+References: <593e7b7d97c6e064b29716b091a9d4fd122241fb.1671473163.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <593e7b7d97c6e064b29716b091a9d4fd122241fb.1671473163.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code accidentally returns the wrong variable (which is
-uninitialized).  It should return ret.
+On Mon, Dec 19, 2022 at 07:06:22PM +0100, Christophe JAILLET wrote:
+> Fixes: b17336c55d89 ("iommu/mediatek: add support for mtk iommu generation one HW")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Another option would be to use devm_clk_get_enabled(). This would save a
+> few LoC in mtk_iommu_v1_hw_init() and in the remove function.
+> However, it would change the order of function calls in the remove function
+> so I leave it as-is.
+> Let me know if it is fine and if you prefer this alternative.
+> ---
+>  drivers/iommu/mtk_iommu_v1.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Fixes: a309c7194e8a ("drm/vmwgfx: Remove rcu locks from user resources")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 2 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-index 9359e8dfbac2..0ee30a1aa23d 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-@@ -1156,7 +1156,7 @@ static int vmw_translate_mob_ptr(struct vmw_private *dev_priv,
- 	ret = vmw_user_bo_lookup(sw_context->filp, handle, &vmw_bo);
- 	if (ret != 0) {
- 		drm_dbg(&dev_priv->drm, "Could not find or use MOB buffer.\n");
--		return PTR_ERR(vmw_bo);
-+		return ret;
- 	}
- 	ret = vmw_validation_add_bo(sw_context->ctx, vmw_bo, true, false);
- 	ttm_bo_put(&vmw_bo->base);
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-index 0ee30a1aa23d..fa3761b3e956 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-@@ -1210,7 +1210,7 @@ static int vmw_translate_guest_ptr(struct vmw_private *dev_priv,
- 	ret = vmw_user_bo_lookup(sw_context->filp, handle, &vmw_bo);
- 	if (ret != 0) {
- 		drm_dbg(&dev_priv->drm, "Could not find or use GMR region.\n");
--		return PTR_ERR(vmw_bo);
-+		return ret;
- 	}
- 	ret = vmw_validation_add_bo(sw_context->ctx, vmw_bo, false, false);
- 	ttm_bo_put(&vmw_bo->base);
--- 
-2.35.1
-
+Applied, thanks.
