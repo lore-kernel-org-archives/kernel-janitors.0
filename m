@@ -2,85 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FE9C54EBE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 08:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C11C677F1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 08:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240923AbjAMIBB (ORCPT
+        id S240813AbjAMIrw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Jan 2023 03:01:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46152 "EHLO
+        Fri, 13 Jan 2023 03:47:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240277AbjAMH74 (ORCPT
+        with ESMTP id S240492AbjAMIru (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Jan 2023 02:59:56 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 322326B5B5
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Jan 2023 23:59:53 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id z11so30140248ede.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Jan 2023 23:59:53 -0800 (PST)
+        Fri, 13 Jan 2023 03:47:50 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D0FAE47;
+        Fri, 13 Jan 2023 00:47:49 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id az20so31612894ejc.1;
+        Fri, 13 Jan 2023 00:47:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wnHbH8z/0UrE79uXH0uK/safm3GXRV2WsqxSNHfUHA4=;
-        b=rxQ12wFZZic/MFea44lF/Hxy4P9PqtVLt/sd0DBj1WEJ1ycC/bwQncVuuv7XOf2aHd
-         kBKvBOtwPhmnfPVAZeB7sf5OR0eeMMfHaUka7mYMIFCuu+tv86U2QrqAmGHb+NIyYGYv
-         5dmvCApyCHhsKrYyWEAHwXIFOdVSsS7EKaFF4qFH9eRjENMiBkfDOxyBb+m+TlF76cPg
-         3R0uJGYkGC6cYG+mVNJVVXkws0yHmkJhLt8U65Zg5YHfW27RQ0g2FaZo4gmsu5qq29a6
-         1s33RTc0zMsftLiUumpauZtBo+u1rTDkp9HpMzVlZp+5GxS0aLl/hbuD6d/BEqlFJ5+f
-         p7NQ==
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5zces+1O7hY7iJZIJRBo/L6sfY3J8Lf9pSZe8jUHoT4=;
+        b=JKMm/rO/PyuWX0pLZaQ1Z9zOgUz9h7kRg514ktxGbI/sVGXPQvtQPPMjkXcxqRbEil
+         aop0kvCe3t30/gZbUJh3bQtbtL2I2HJD2fi5mtBUve4uDiJ6v/YZyAmUCIvK+CucpN6T
+         rQoR9sI836bFdld/HVmHIjSnPL1p+CvgEosOyoSOjHi2x5pEBYgVOho/n7nxzCECvnd9
+         I4Vb2vktrjJWRVL5I4/C32a1/4uYwXjMRSDQnGePvquuPWwN625miLmunbBoqveDDP8Q
+         FBCwHLRwwU0DgyPP65Sd4xrzNrw4dOvLTSGzWP9HAaJCmJxBWg4D+rhP9hq5danAgyLv
+         40Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wnHbH8z/0UrE79uXH0uK/safm3GXRV2WsqxSNHfUHA4=;
-        b=1ha0qFPhfw+Hps4jRRM74Mbl5mtANN/hVR6vLOpre/p7VPrPWv5fCNrS22i0txXWiD
-         BZHCg97JUoYcID/IXQGgVmp8pBY1PkrKYxfqaQS1F0sVoaBqien6OJDAFf7zLNZCTgxU
-         M2tKzr6zCpRYyoowsQCNP1hv+fuIewDgRobK6uxDZfbgNT/zlzjR+JccDaVnbS9o9ad2
-         fvnsxzgzSi2KltMmCpjDJvGhxw6qEk3MsjTZr3x30mGTSIWjGSv2pcalp3eORDCYkGsU
-         H81Paw2KLmVCfU22XrJRKVVV9dLJlcmIA+6FK3cFvBSZezhWYKSCswrfdCnDVY6na+x6
-         lw5g==
-X-Gm-Message-State: AFqh2koQd8E9aJHNdE2tmiITQf96WGL8/iiV66X/8dV43ZVXoIUyJFYs
-        +ztpZRURaAYxPxqSYC+iCjFKkA==
-X-Google-Smtp-Source: AMrXdXvtEvPEYWoZ0f7Fe2+oPQjlgmtPeXy4VZF3RjDLZ+zvzlJFCsGVs6p6MFOHfPEvL9oqgVQOdA==
-X-Received: by 2002:a05:6402:548b:b0:49c:869e:6134 with SMTP id fg11-20020a056402548b00b0049c869e6134mr706953edb.8.1673596792363;
-        Thu, 12 Jan 2023 23:59:52 -0800 (PST)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id u9-20020a056402110900b00499d0d78540sm3381660edv.39.2023.01.12.23.59.51
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5zces+1O7hY7iJZIJRBo/L6sfY3J8Lf9pSZe8jUHoT4=;
+        b=KYoAJHpVa4N7VSjKtTPnPKg2cVusijISSvdO72zhr9gpYeaYa3dvz6I0KBTppAiiWu
+         awA3sDG75upCA3hzu1kWMQxLXIlEX66mQ9tqzt/+o92J5RS5i0NhQTe7qapidu7w4NVH
+         PZGnDNp2dPsDpjMhj5CAye+5GZDxVvFUiYRh8BXQC6KavtZ0/B0tbnJ5mk5WaL1oIEzf
+         qWhz9RXyKtTrC9+GAWvW7TtFsRlrmMXNnporkbFJ+Is127Wfkoyse0qFSQADA7XwiwSS
+         HE/mMR8NAOpy6+/mwILWyGebxoU6bwQBiTG47hIW9/xqCjZ2P2hvxlLKdFlqyjnO+LpN
+         Lxog==
+X-Gm-Message-State: AFqh2kod3lcj1/wBMkUWyYjE2eGd7gTpfRtBqQrqTo/2JHedt0WVL1xL
+        okTFtoDJqIX3sMjrn7bmkvQ=
+X-Google-Smtp-Source: AMrXdXuyvnC6igG9kOyuA9QRAEg1TACbQ37KDGwfThlkqWU+obPWH+wwN5ZNSRKl63VzcFqbtNAg+Q==
+X-Received: by 2002:a17:906:19ce:b0:858:cccd:7c6a with SMTP id h14-20020a17090619ce00b00858cccd7c6amr10722125ejd.68.1673599667620;
+        Fri, 13 Jan 2023 00:47:47 -0800 (PST)
+Received: from felia.fritz.box (ipbcc1d920.dynamic.kabel-deutschland.de. [188.193.217.32])
+        by smtp.gmail.com with ESMTPSA id q5-20020aa7d445000000b00482b3d0e1absm7944996edr.87.2023.01.13.00.47.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 23:59:51 -0800 (PST)
-Date:   Fri, 13 Jan 2023 08:59:50 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Ido Schimmel <idosch@nvidia.com>, Jiri Pirko <jiri@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] devlink: remove some unnecessary code
-Message-ID: <Y8EPdjD3bXXp0M2Q@nanopsycho>
-References: <Y8EJz8oxpMhfiPUb@kili>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y8EJz8oxpMhfiPUb@kili>
+        Fri, 13 Jan 2023 00:47:47 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] PCI: rcar: avoid defines prefixed with CONFIG
+Date:   Fri, 13 Jan 2023 09:45:16 +0100
+Message-Id: <20230113084516.31888-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fri, Jan 13, 2023 at 08:35:43AM CET, error27@gmail.com wrote:
->This code checks if (attrs[DEVLINK_ATTR_TRAP_POLICER_ID]) twice.  Once
->at the start of the function and then a couple lines later.  Delete the
->second check since that one must be true.
->
->Because the second condition is always true, it means the:
->
->	policer_item = group_item->policer_item;
->
->assignment is immediately over-written.  Delete that as well.
->
->Signed-off-by: Dan Carpenter <error27@gmail.com>
+Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+that are introduced in a Kconfig file.
 
-Reviewed-by: Jiri Pirko <jiri@nvidia.com>
+Here, a definition for a bitmask to configure the SEND_ENABLE mode is named
+CONFIG_SEND_ENABLE.
+
+Rename this local definition to CONFIGURE_SEND_ENABLE to avoid defines
+prefixed with "CONFIG".
+
+No functional change.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/pci/controller/pcie-rcar-host.c | 4 ++--
+ drivers/pci/controller/pcie-rcar.h      | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+index e4faf90feaf5..52fdafe5c877 100644
+--- a/drivers/pci/controller/pcie-rcar-host.c
++++ b/drivers/pci/controller/pcie-rcar-host.c
+@@ -219,9 +219,9 @@ static int rcar_pcie_config_access(struct rcar_pcie_host *host,
+ 
+ 	/* Enable the configuration access */
+ 	if (pci_is_root_bus(bus->parent))
+-		rcar_pci_write_reg(pcie, CONFIG_SEND_ENABLE | TYPE0, PCIECCTLR);
++		rcar_pci_write_reg(pcie, CONFIGURE_SEND_ENABLE | TYPE0, PCIECCTLR);
+ 	else
+-		rcar_pci_write_reg(pcie, CONFIG_SEND_ENABLE | TYPE1, PCIECCTLR);
++		rcar_pci_write_reg(pcie, CONFIGURE_SEND_ENABLE | TYPE1, PCIECCTLR);
+ 
+ 	/* Check for errors */
+ 	if (rcar_pci_read_reg(pcie, PCIEERRFR) & UNSUPPORTED_REQUEST)
+diff --git a/drivers/pci/controller/pcie-rcar.h b/drivers/pci/controller/pcie-rcar.h
+index 9bb125db85c6..a09f58ab04ca 100644
+--- a/drivers/pci/controller/pcie-rcar.h
++++ b/drivers/pci/controller/pcie-rcar.h
+@@ -11,7 +11,7 @@
+ 
+ #define PCIECAR			0x000010
+ #define PCIECCTLR		0x000018
+-#define  CONFIG_SEND_ENABLE	BIT(31)
++#define  CONFIGURE_SEND_ENABLE	BIT(31)
+ #define  TYPE0			(0 << 8)
+ #define  TYPE1			BIT(8)
+ #define PCIECDR			0x000020
+-- 
+2.17.1
+
