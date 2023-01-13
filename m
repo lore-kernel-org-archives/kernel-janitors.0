@@ -2,70 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D4AC54EBE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 12:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC461C54EBE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 14:02:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240754AbjAMM5R (ORCPT
+        id S241434AbjAMOCM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Jan 2023 07:57:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34582 "EHLO
+        Fri, 13 Jan 2023 09:02:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241497AbjAMM4g (ORCPT
+        with ESMTP id S233352AbjAMOBZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Jan 2023 07:56:36 -0500
-Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B51BBCE3A;
-        Fri, 13 Jan 2023 04:44:44 -0800 (PST)
-Received: from 8bytes.org (p200300c277327f0086ad4f9d2505dd0d.dip0.t-ipconnect.de [IPv6:2003:c2:7732:7f00:86ad:4f9d:2505:dd0d])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Fri, 13 Jan 2023 09:01:25 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAEE613F60;
+        Fri, 13 Jan 2023 05:58:36 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.8bytes.org (Postfix) with ESMTPSA id ED600262340;
-        Fri, 13 Jan 2023 13:44:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-        s=default; t=1673613884;
-        bh=MscDIF3GsS7zhLNLVm/WiZfXdK2GItkr1gCY7Yuq/gI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rPPebLs22xmYECIA08EQJNTrmdxY/5R/5bZCTMtoBcDNUjONEC2f+5UAg8dAZe75+
-         tqE8v/3rLs7mCO3KLHwvNGsPVWQBtuVvqPwY3CkNFofuCjIbjORA2kfOpk1F+SJqHS
-         vu74z7MbR0+vA3ZD6tOFAUFqsWrOHy3641EGSVcGnfOUn2ROmYiifTNyvZaaOZVeup
-         CHaSNd8Wxg0IAfMYSzJLIyNFFsgFkFpLl3vTxK06O5163O32q9h66/GXsfrk9ouli+
-         wblcy2rD81UzrGfIbXJ5pJIvmpHtRjWubRPBGt7+fMH6SD1A1suPCFFH1DEGwtb3oG
-         3OjlH5HQuawEA==
-Date:   Fri, 13 Jan 2023 13:44:42 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Yong Wu <yong.wu@mediatek.com>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Honghui Zhang <honghui.zhang@mediatek.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] iommu/mediatek-v1: Fix an error handling path in
- mtk_iommu_v1_probe()
-Message-ID: <Y8FSOqUqQpTa+zAU@8bytes.org>
-References: <593e7b7d97c6e064b29716b091a9d4fd122241fb.1671473163.git.christophe.jaillet@wanadoo.fr>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 507D0B8206B;
+        Fri, 13 Jan 2023 13:58:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9AC4C433D2;
+        Fri, 13 Jan 2023 13:58:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673618313;
+        bh=kGpMQxjI+fFQs+jBsaQNT3ZJMiDOZkdLszEE2sQFRCw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=a0b6N8+JbeS5RVqc3A1GvhT8qfZBs89IP5y30W79s44rrUaFmN3Iq/PcmfbvWCAoi
+         bAg9+/vRi63twHuw8/t6EHBLUg3+UZlGkTs21MAHBQKj0HKI7Ssl2mhqEuupAZQPQL
+         h3OGSbIfl0jxx+15dwHn4do/GIf3rJmnUmXWv6puOkr5eCjOTFd5nxomLf0Ksg2FP4
+         cLH4ZXIB2pGCv7QsWo3FqHokcDi07JWBv7OYJdGkRgcO3us2Uxgj3bvVBTMRAmX+n6
+         j9sX9nyefXIie0kj4z3qTGzyxqaoEoWKey7+ki1E79d6ogiLEId1FzhuISpcywY4XP
+         MowxazhYPP+aA==
+Date:   Fri, 13 Jan 2023 07:58:30 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar: avoid defines prefixed with CONFIG
+Message-ID: <20230113135830.GA1835786@bhelgaas>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <593e7b7d97c6e064b29716b091a9d4fd122241fb.1671473163.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230113084516.31888-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Dec 19, 2022 at 07:06:22PM +0100, Christophe JAILLET wrote:
-> Fixes: b17336c55d89 ("iommu/mediatek: add support for mtk iommu generation one HW")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Another option would be to use devm_clk_get_enabled(). This would save a
-> few LoC in mtk_iommu_v1_hw_init() and in the remove function.
-> However, it would change the order of function calls in the remove function
-> so I leave it as-is.
-> Let me know if it is fine and if you prefer this alternative.
-> ---
->  drivers/iommu/mtk_iommu_v1.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+Hi Lukas,
 
-Applied, thanks.
+On Fri, Jan 13, 2023 at 09:45:16AM +0100, Lukas Bulwahn wrote:
+> Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+> that are introduced in a Kconfig file.
+> 
+> Here, a definition for a bitmask to configure the SEND_ENABLE mode is named
+> CONFIG_SEND_ENABLE.
+> 
+> Rename this local definition to CONFIGURE_SEND_ENABLE to avoid defines
+> prefixed with "CONFIG".
+> 
+> No functional change.
+
+If you update this patch, please capitalize the subject to match:
+
+  $ git log --oneline drivers/pci/controller/pcie-rcar-host.c
+  6e36203bc14c ("PCI: rcar: Use PCI_SET_ERROR_RESPONSE after read which triggered an exception")
+  84b576146294 ("PCI: rcar: Finish transition to L1 state in rcar_pcie_config_access()")
+  d2a14b54989e ("PCI: rcar: Check if device is runtime suspended instead of __clk_is_enabled()")
+  a115b1bd3af0 ("PCI: rcar: Add L1 link state fix into data abort hook")
+  83ed8d4fa656 ("PCI: rcar: Convert to MSI domains")
+
+Bjorn
