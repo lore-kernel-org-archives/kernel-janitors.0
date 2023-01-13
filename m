@@ -2,183 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0047EC54EBE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 15:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA733C54EBD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 16:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbjAMPjj (ORCPT
+        id S230479AbjAMQgf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Jan 2023 10:39:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59568 "EHLO
+        Fri, 13 Jan 2023 11:36:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230317AbjAMPid (ORCPT
+        with ESMTP id S230141AbjAMQgM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Jan 2023 10:38:33 -0500
-Received: from mail-4018.proton.ch (mail-4018.proton.ch [185.70.40.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C7547EC90
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Jan 2023 07:30:40 -0800 (PST)
-Date:   Fri, 13 Jan 2023 15:30:19 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=n8pjl.ca;
-        s=protonmail; t=1673623827; x=1673883027;
-        bh=jbFxkExsMlV9xsBwHzYnqYf/viHGLmssqbaqiMZo0s0=;
-        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-        b=CM7DV48/Ak0H02Fr785pQIKLcDaRYszEE2EFaNPnc4ybCQfBEQZ7R+n6+Pd/KrIT6
-         AGKazUm6H8LEs64o5KUZcfw+jyATbRA4hifXgIlQWwCB9ZqR9ll1MXWTx7y0xEE/3p
-         uandkFmK0Ol9cOAa/puWvjKUb+/So+dKPOrd9LIHCrE4bJxQ0EkQrPpI3Q44mZeWvl
-         oQmc4tmP9RARDw8C0su0K6MWlv4fzuy32NjbYA2s8J2qPW9qwyQPS47KeGcdX0Jl/f
-         ViTrriFWaqbVYBvBenZPdwyXntF0DJXlaF2xfSxfgCgW+SLeq5FAxdSyeK8jm6mDtZ
-         5UI5OdxSEbDjQ==
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Peter Lafreniere <peter@n8pjl.ca>
-Cc:     "linux@dominikbrodowski.net" <linux@dominikbrodowski.net>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>
-Subject: [PATCH] pcmcia: avoid defines prefixed with CONFIG
-Message-ID: <n-Xd5VZl4mxdBIPvH-LgdDqAi8N9cL3TiAQ6fKEOpXLKsyDAxcf9VWQZfnMobTdIXucJJ1U2B82W6KhoODwWr_n3d-V9YkDcV92AjzxMrys=@n8pjl.ca>
-Feedback-ID: 53133685:user:proton
+        Fri, 13 Jan 2023 11:36:12 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A0EA83E6;
+        Fri, 13 Jan 2023 08:30:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CB6366226E;
+        Fri, 13 Jan 2023 16:30:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC89BC433D2;
+        Fri, 13 Jan 2023 16:30:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673627432;
+        bh=j52NZSUcbPH04wq22NuEeLM/pe4Wo9omP1Wcc2GeDRk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tMxoK32yQiH3wR0wEpYOfAevbRha36rHH02Gwf6dMMQKX445c/KNCED5XVxbzyH1p
+         cZVF5t2pOLb1VATvIhZiIj7J/xrBmFaj6BbDNNdeK9VLyoPSAYjgSqx71rzc2/ylXX
+         Nf0MSQ8ci05/Fb6k+LziWXY6Ye4bJtNRAIDHAM30HywOdDz3r19ozJfHuiMG1WzTZH
+         IsLmQ4dQcv6j6ekU/3NsxV14hU4xAPWnKz41p8wgsGMKZuLbINEyFKlaEspHssqhVK
+         deO+FKx0GbCSnFzjDLDjUcZIDAA7n8POhuifnavTnfTbdARoyW3HKavsZ/FOLkObMQ
+         Ivfoh9AC3Jbsw==
+Date:   Fri, 13 Jan 2023 17:30:24 +0100
+From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar: avoid defines prefixed with CONFIG
+Message-ID: <Y8GHICwCNRsYCva8@lpieralisi>
+References: <20230113084516.31888-1-lukas.bulwahn@gmail.com>
+ <CAMuHMdX_TPgXO2KYNdD5rRzuE9m6_JxfW-otWzw7r7Wptq_rOQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX_TPgXO2KYNdD5rRzuE9m6_JxfW-otWzw7r7Wptq_rOQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Macros prefixed with "CONFIG_" should be relegated to Kconfig switches,
-so we should change the config state flags to avoid conflicts.
+On Fri, Jan 13, 2023 at 10:05:09AM +0100, Geert Uytterhoeven wrote:
+> Hi Lukas,
+> 
+> On Fri, Jan 13, 2023 at 9:52 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+> > that are introduced in a Kconfig file.
+> >
+> > Here, a definition for a bitmask to configure the SEND_ENABLE mode is named
+> > CONFIG_SEND_ENABLE.
+> >
+> > Rename this local definition to CONFIGURE_SEND_ENABLE to avoid defines
+> > prefixed with "CONFIG".
+> >
+> > No functional change.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> 
+> Thanks for your patch!
+> 
+> > --- a/drivers/pci/controller/pcie-rcar.h
+> > +++ b/drivers/pci/controller/pcie-rcar.h
+> > @@ -11,7 +11,7 @@
+> >
+> >  #define PCIECAR                        0x000010
+> >  #define PCIECCTLR              0x000018
+> > -#define  CONFIG_SEND_ENABLE    BIT(31)
+> > +#define  CONFIGURE_SEND_ENABLE BIT(31)
+> 
+> The R-Car Gen3 rev. 2.30 Hardware User's Manual calls the bit "CCIE".
+> 
+> Hence if I would have written the driver, I would have used
+> 
+>     #define PCIECCTLR_CCIE     BIT(31)   /* Configuration Send Enable */
 
-This change affects only code readability, not function.
+Should I change it when I merge it ? That makes sense actually.
 
-Signed-off-by: Peter Lafreniere <peter@n8pjl.ca>
----
- drivers/pcmcia/cs_internal.h     |  6 +++---
- drivers/pcmcia/pcmcia_resource.c | 26 +++++++++++++-------------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+Thanks,
+Lorenzo
 
-diff --git a/drivers/pcmcia/cs_internal.h b/drivers/pcmcia/cs_internal.h
-index 580369f3c0b0..95df616fb0a4 100644
---- a/drivers/pcmcia/cs_internal.h
-+++ b/drivers/pcmcia/cs_internal.h
-@@ -59,9 +59,9 @@ struct pccard_resource_ops {
- };
-=20
- /* Flags in config state */
--#define CONFIG_LOCKED=09=090x01
--#define CONFIG_IRQ_REQ=09=090x02
--#define CONFIG_IO_REQ=09=090x04
-+#define CFG_LOCKED=09=090x01
-+#define CFG_IRQ_REQ=09=090x02
-+#define CFG_IO_REQ=09=090x04
-=20
- /* Flags in socket state */
- #define SOCKET_PRESENT=09=090x0008
-diff --git a/drivers/pcmcia/pcmcia_resource.c b/drivers/pcmcia/pcmcia_resou=
-rce.c
-index d78091e79a0f..d559977b9332 100644
---- a/drivers/pcmcia/pcmcia_resource.c
-+++ b/drivers/pcmcia/pcmcia_resource.c
-@@ -168,7 +168,7 @@ static int pcmcia_access_config(struct pcmcia_device *p=
-_dev,
- =09mutex_lock(&s->ops_mutex);
- =09c =3D p_dev->function_config;
-=20
--=09if (!(c->state & CONFIG_LOCKED)) {
-+=09if (!(c->state & CFG_LOCKED)) {
- =09=09dev_dbg(&p_dev->dev, "Configuration isn't locked\n");
- =09=09mutex_unlock(&s->ops_mutex);
- =09=09return -EACCES;
-@@ -262,7 +262,7 @@ int pcmcia_fixup_iowidth(struct pcmcia_device *p_dev)
- =09dev_dbg(&p_dev->dev, "fixup iowidth to 8bit\n");
-=20
- =09if (!(s->state & SOCKET_PRESENT) ||
--=09=09!(p_dev->function_config->state & CONFIG_LOCKED)) {
-+=09=09!(p_dev->function_config->state & CFG_LOCKED)) {
- =09=09dev_dbg(&p_dev->dev, "No card? Config not locked?\n");
- =09=09ret =3D -EACCES;
- =09=09goto unlock;
-@@ -310,7 +310,7 @@ int pcmcia_fixup_vpp(struct pcmcia_device *p_dev, unsig=
-ned char new_vpp)
- =09dev_dbg(&p_dev->dev, "fixup Vpp to %d\n", new_vpp);
-=20
- =09if (!(s->state & SOCKET_PRESENT) ||
--=09=09!(p_dev->function_config->state & CONFIG_LOCKED)) {
-+=09=09!(p_dev->function_config->state & CFG_LOCKED)) {
- =09=09dev_dbg(&p_dev->dev, "No card? Config not locked?\n");
- =09=09ret =3D -EACCES;
- =09=09goto unlock;
-@@ -361,9 +361,9 @@ int pcmcia_release_configuration(struct pcmcia_device *=
-p_dev)
- =09=09=09s->ops->set_socket(s, &s->socket);
- =09=09}
- =09}
--=09if (c->state & CONFIG_LOCKED) {
--=09=09c->state &=3D ~CONFIG_LOCKED;
--=09=09if (c->state & CONFIG_IO_REQ)
-+=09if (c->state & CFG_LOCKED) {
-+=09=09c->state &=3D ~CFG_LOCKED;
-+=09=09if (c->state & CFG_IO_REQ)
- =09=09=09for (i =3D 0; i < MAX_IO_WIN; i++) {
- =09=09=09=09if (!s->io[i].res)
- =09=09=09=09=09continue;
-@@ -407,7 +407,7 @@ static void pcmcia_release_io(struct pcmcia_device *p_d=
-ev)
- =09=09release_io_space(s, &c->io[1]);
-=20
- =09p_dev->_io =3D 0;
--=09c->state &=3D ~CONFIG_IO_REQ;
-+=09c->state &=3D ~CFG_IO_REQ;
-=20
- out:
- =09mutex_unlock(&s->ops_mutex);
-@@ -491,7 +491,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
-=20
- =09mutex_lock(&s->ops_mutex);
- =09c =3D p_dev->function_config;
--=09if (c->state & CONFIG_LOCKED) {
-+=09if (c->state & CFG_LOCKED) {
- =09=09mutex_unlock(&s->ops_mutex);
- =09=09dev_dbg(&p_dev->dev, "Configuration is locked\n");
- =09=09return -EACCES;
-@@ -581,7 +581,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
- =09}
-=20
- =09/* Configure I/O windows */
--=09if (c->state & CONFIG_IO_REQ) {
-+=09if (c->state & CFG_IO_REQ) {
- =09=09iomap.speed =3D io_speed;
- =09=09for (i =3D 0; i < MAX_IO_WIN; i++)
- =09=09=09if (s->io[i].res) {
-@@ -602,7 +602,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
- =09=09=09}
- =09}
-=20
--=09c->state |=3D CONFIG_LOCKED;
-+=09c->state |=3D CFG_LOCKED;
- =09p_dev->_locked =3D 1;
- =09mutex_unlock(&s->ops_mutex);
- =09return 0;
-@@ -635,11 +635,11 @@ int pcmcia_request_io(struct pcmcia_device *p_dev)
- =09=09goto out;
- =09}
-=20
--=09if (c->state & CONFIG_LOCKED) {
-+=09if (c->state & CFG_LOCKED) {
- =09=09dev_dbg(&p_dev->dev, "Configuration is locked\n");
- =09=09goto out;
- =09}
--=09if (c->state & CONFIG_IO_REQ) {
-+=09if (c->state & CFG_IO_REQ) {
- =09=09dev_dbg(&p_dev->dev, "IO already configured\n");
- =09=09goto out;
- =09}
-@@ -663,7 +663,7 @@ int pcmcia_request_io(struct pcmcia_device *p_dev)
- =09} else
- =09=09c->io[1].start =3D 0;
-=20
--=09c->state |=3D CONFIG_IO_REQ;
-+=09c->state |=3D CFG_IO_REQ;
- =09p_dev->_io =3D 1;
-=20
- =09dev_dbg(&p_dev->dev, "pcmcia_request_io succeeded: %pR , %pR",
---=20
-2.39.0
-
+> >  #define  TYPE0                 (0 << 8)
+> >  #define  TYPE1                 BIT(8)
+> >  #define PCIECDR                        0x000020
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
