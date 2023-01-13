@@ -2,114 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B791C61DB3
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 07:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FE9C54EBE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 08:01:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234479AbjAMHto (ORCPT
+        id S240923AbjAMIBB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Jan 2023 02:49:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39188 "EHLO
+        Fri, 13 Jan 2023 03:01:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232051AbjAMHtm (ORCPT
+        with ESMTP id S240277AbjAMH74 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Jan 2023 02:49:42 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8DF1A822;
-        Thu, 12 Jan 2023 23:49:41 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id l22so20663095eja.12;
-        Thu, 12 Jan 2023 23:49:41 -0800 (PST)
+        Fri, 13 Jan 2023 02:59:56 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 322326B5B5
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Jan 2023 23:59:53 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id z11so30140248ede.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Jan 2023 23:59:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ki/D1WUy5ryn68f131sCexKZ8Uw0CRINUHMpMThw1h4=;
-        b=MrZqIjlJU54cg2457lOD+lg384HK6gA1Nb9CBdGUiKfgYsB14QaQX61r9OtNwotQKB
-         THMs47B1dqPWxYTr7sgoDSVTHBgACpbIVVlRD715H+brWuzh91B9W8j1cR3TIFJgGVk4
-         lq4oEcRbrZIjFGCgcACACa7pmQA9hjXwKnhpL4wZ7lvSSniEIcS50+UyxUdlpY/+nx/K
-         niXvF292CD8sS4XkYXPBxMNf2xgeYY9W3FderhTHx6nJkpsr75YA78XAgzXB+Ku21Cdn
-         729M2KRBmulaAjdScbAqLBaR2faFc9g0J8W7vjpqnHrrQcHe8m71av87l8YRblaxALpj
-         IxAg==
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wnHbH8z/0UrE79uXH0uK/safm3GXRV2WsqxSNHfUHA4=;
+        b=rxQ12wFZZic/MFea44lF/Hxy4P9PqtVLt/sd0DBj1WEJ1ycC/bwQncVuuv7XOf2aHd
+         kBKvBOtwPhmnfPVAZeB7sf5OR0eeMMfHaUka7mYMIFCuu+tv86U2QrqAmGHb+NIyYGYv
+         5dmvCApyCHhsKrYyWEAHwXIFOdVSsS7EKaFF4qFH9eRjENMiBkfDOxyBb+m+TlF76cPg
+         3R0uJGYkGC6cYG+mVNJVVXkws0yHmkJhLt8U65Zg5YHfW27RQ0g2FaZo4gmsu5qq29a6
+         1s33RTc0zMsftLiUumpauZtBo+u1rTDkp9HpMzVlZp+5GxS0aLl/hbuD6d/BEqlFJ5+f
+         p7NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ki/D1WUy5ryn68f131sCexKZ8Uw0CRINUHMpMThw1h4=;
-        b=YN8T2x9KkPCciKokUiSYgsfc1LLsytuWb9PdalQ8aPaoAf1G2TEiueIOrPYxLo/AXB
-         qScAIKA4kiuf+d+Es6XTeMV18BC7Hcy6mRLXURwvrKKidq9gPGC4X8DAMOMstkWi/ogJ
-         di/P6B6dRUvRl+voK6OuywHFCF0UWU98A9eNbKM9DPmKOL0K2D9oT8nN+7VxE53LWpNw
-         zSZ6KN097I8mL5wj5n5xfAQs2Mm7qet8gCpUVP+7ti0A78UTGd3a1EvFyh40KHS/qer7
-         RmO9v7x/avwBlmWANpr43FXcf2AJIXt1ue2XUeH4dU7DCNe2zz5dpu5SzN6DO52OpDzY
-         +3Hw==
-X-Gm-Message-State: AFqh2kpX266Z54lfjM9XKKKDkP9U5DnsE8PtmvyBrQNxoxEffTFWdI3f
-        WN/dqbhlOAz0hn1rGwDuQc8=
-X-Google-Smtp-Source: AMrXdXvpYNAJ1hb/R8RykYrpD9NO6MRCwedsK48BgHEkt6XdgGobwficLiSe7Qyl0u7bzBTsagaFdA==
-X-Received: by 2002:a17:907:c48d:b0:7c0:aafa:6dc0 with SMTP id tp13-20020a170907c48d00b007c0aafa6dc0mr52745239ejc.25.1673596179964;
-        Thu, 12 Jan 2023 23:49:39 -0800 (PST)
-Received: from felia.fritz.box (ipbcc1d920.dynamic.kabel-deutschland.de. [188.193.217.32])
-        by smtp.gmail.com with ESMTPSA id 18-20020a170906319200b007c1651aeeacsm8246555ejy.181.2023.01.12.23.49.39
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wnHbH8z/0UrE79uXH0uK/safm3GXRV2WsqxSNHfUHA4=;
+        b=1ha0qFPhfw+Hps4jRRM74Mbl5mtANN/hVR6vLOpre/p7VPrPWv5fCNrS22i0txXWiD
+         BZHCg97JUoYcID/IXQGgVmp8pBY1PkrKYxfqaQS1F0sVoaBqien6OJDAFf7zLNZCTgxU
+         M2tKzr6zCpRYyoowsQCNP1hv+fuIewDgRobK6uxDZfbgNT/zlzjR+JccDaVnbS9o9ad2
+         fvnsxzgzSi2KltMmCpjDJvGhxw6qEk3MsjTZr3x30mGTSIWjGSv2pcalp3eORDCYkGsU
+         H81Paw2KLmVCfU22XrJRKVVV9dLJlcmIA+6FK3cFvBSZezhWYKSCswrfdCnDVY6na+x6
+         lw5g==
+X-Gm-Message-State: AFqh2koQd8E9aJHNdE2tmiITQf96WGL8/iiV66X/8dV43ZVXoIUyJFYs
+        +ztpZRURaAYxPxqSYC+iCjFKkA==
+X-Google-Smtp-Source: AMrXdXvtEvPEYWoZ0f7Fe2+oPQjlgmtPeXy4VZF3RjDLZ+zvzlJFCsGVs6p6MFOHfPEvL9oqgVQOdA==
+X-Received: by 2002:a05:6402:548b:b0:49c:869e:6134 with SMTP id fg11-20020a056402548b00b0049c869e6134mr706953edb.8.1673596792363;
+        Thu, 12 Jan 2023 23:59:52 -0800 (PST)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id u9-20020a056402110900b00499d0d78540sm3381660edv.39.2023.01.12.23.59.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 23:49:39 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] crypto: atmel-i2c - avoid defines prefixed with CONFIG
-Date:   Fri, 13 Jan 2023 08:47:15 +0100
-Message-Id: <20230113074715.32016-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 12 Jan 2023 23:59:51 -0800 (PST)
+Date:   Fri, 13 Jan 2023 08:59:50 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Ido Schimmel <idosch@nvidia.com>, Jiri Pirko <jiri@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] devlink: remove some unnecessary code
+Message-ID: <Y8EPdjD3bXXp0M2Q@nanopsycho>
+References: <Y8EJz8oxpMhfiPUb@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y8EJz8oxpMhfiPUb@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
-that are introduced in a Kconfig file.
+Fri, Jan 13, 2023 at 08:35:43AM CET, error27@gmail.com wrote:
+>This code checks if (attrs[DEVLINK_ATTR_TRAP_POLICER_ID]) twice.  Once
+>at the start of the function and then a couple lines later.  Delete the
+>second check since that one must be true.
+>
+>Because the second condition is always true, it means the:
+>
+>	policer_item = group_item->policer_item;
+>
+>assignment is immediately over-written.  Delete that as well.
+>
+>Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Here, a definition for the driver's configuration zone is named
-CONFIG_ZONE. Rename this local definition to CONFIGURATION_ZONE to avoid
-defines prefixed with "CONFIG".
-
-No functional change.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Herbert, David, please pick this clean-up work into your crypto tree. Thanks.
-
- drivers/crypto/atmel-i2c.c | 2 +-
- drivers/crypto/atmel-i2c.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/crypto/atmel-i2c.c b/drivers/crypto/atmel-i2c.c
-index 55bff1e13142..66e27f71e37e 100644
---- a/drivers/crypto/atmel-i2c.c
-+++ b/drivers/crypto/atmel-i2c.c
-@@ -59,7 +59,7 @@ void atmel_i2c_init_read_cmd(struct atmel_i2c_cmd *cmd)
- 	 * Read the word from Configuration zone that contains the lock bytes
- 	 * (UserExtra, Selector, LockValue, LockConfig).
- 	 */
--	cmd->param1 = CONFIG_ZONE;
-+	cmd->param1 = CONFIGURATION_ZONE;
- 	cmd->param2 = cpu_to_le16(DEVICE_LOCK_ADDR);
- 	cmd->count = READ_COUNT;
- 
-diff --git a/drivers/crypto/atmel-i2c.h b/drivers/crypto/atmel-i2c.h
-index 35f7857a7f7c..c1fdc04eac07 100644
---- a/drivers/crypto/atmel-i2c.h
-+++ b/drivers/crypto/atmel-i2c.h
-@@ -63,7 +63,7 @@ struct atmel_i2c_cmd {
- #define STATUS_WAKE_SUCCESSFUL		0x11
- 
- /* Definitions for eeprom organization */
--#define CONFIG_ZONE			0
-+#define CONFIGURATION_ZONE		0
- 
- /* Definitions for Indexes common to all commands */
- #define RSP_DATA_IDX			1 /* buffer index of data in response */
--- 
-2.17.1
-
+Reviewed-by: Jiri Pirko <jiri@nvidia.com>
