@@ -2,69 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4564C54EBD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 10:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B645C54EBD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Jan 2023 10:10:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239755AbjAMKHy (ORCPT
+        id S238205AbjAMKKL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Jan 2023 05:07:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51490 "EHLO
+        Fri, 13 Jan 2023 05:10:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235391AbjAMKHt (ORCPT
+        with ESMTP id S234982AbjAMKKD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Jan 2023 05:07:49 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C419A43E71
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Jan 2023 02:07:47 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id co23so20577670wrb.4
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Jan 2023 02:07:47 -0800 (PST)
+        Fri, 13 Jan 2023 05:10:03 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD72B4F13A
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Jan 2023 02:10:01 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id g19-20020a05600c4ed300b003d9eb1dbc0aso14030264wmq.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Jan 2023 02:10:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LgdeVYZ+deMRc/ei+kMH+4SXCwx2TEgssACm0boSjEM=;
-        b=aOdehrQKCnmwEtX56FiU6NCxjPIOxuIzXVpC4QiHmPZZfby+fTkgW3dhSZ30bzAFEO
-         Y2gywrOWSy7zPamNyLCa2YDVNJfJlhzq0zdCGsjAkZ/fE8Wh8Ev6ZXXrozy4BBe6yn4Q
-         pUR+xr5aHbRnxR2gdgmWO+Qu+/VlILMMP1SWIcitWSmGt/GAljeuN43l7Zc/izzsBxHw
-         totc1kX0LN9AUAEyA4GqlEPHJ93aWSTWZN0vwa0Qp5pGXXDq2DDyqYRayvKcySkyCtBU
-         0wQCZzW0DJF9Mcr1JXtY3NQHRSKfQaeHOTuBGT6Rm5CQXkm1RWFAg8ZnHpEXgxU1pxEF
-         Rddg==
+        bh=gSVl5Sds0K3+KZcEdjR8SvziCTcv9fxNo6Bvw/idysI=;
+        b=aswETd7JofjodlQwRTEaMY39q6cLRxXbGz4sWS1z4HdfSFlFlacI44O6PW90eNGTSL
+         9PNSxYGISkPqoE1XYUGtdCEb/Fv9a1Q7OwNqkzMJosXzjZOQCbGoBFhd2i6eu863RW5o
+         YuRlk2GHemgttWcKomFKBrImFmlepSAu7SliiZWD1+rblpd5eJF+mP6L6dpm3R6Zt1d1
+         SIkpNyIhcsTyINYRonZz8szOAxajrf36wgd2NgxvXM4Wosedex5mwhFC1BGFEzMHwYqc
+         VRekTeVxVC5ZEJRqn9FZG2DN3fiUHKuT9FHwBbyOoL7sVdyqtPc0mvM5PnB5R2xfl07F
+         WYxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LgdeVYZ+deMRc/ei+kMH+4SXCwx2TEgssACm0boSjEM=;
-        b=Fnl8Tntk8qxgBM3aiuwXYEtRLzIOtdI6VZaS4QhvnkjVNDENg6RBuvmQg/qbufJrNN
-         lq/XXniZ+Nv408+iEIH4SVCdk/c//xuz7dYrkDjb+y5ynSbKm3tm6gyzWcdm/an0Tf4s
-         KRUbclnk4gE0r9KL42HH0y6QHhV7zzdYKSnO8M4ZtCvd/fqE6xntc2RV9qBROUMMk1Kq
-         ekWH/KOeCvFOyjNLPcXbgHJ3prQ+r65mgnPj3LmrNPtD9GitT9HU6VpKPLFbFkuMZNg2
-         zZ2G7pOEla3wystWeiyE+xwPq7g3dbjAKCtcVXKbvtNgqjuajUHlFJZ5X/kro9K4Gy7Z
-         SPvA==
-X-Gm-Message-State: AFqh2kqug8co6Ko1OvLiW+qjROYnxQe8jKStztimXmbKh74QCYITkP9e
-        YlbTYWNf2dsXC07QH2eRvpw=
-X-Google-Smtp-Source: AMrXdXvsko1ZJDxi4t9nddmcNn062AcrE+xH8KlU5ueUwz/6CI/UwTOcW8zDwjENTNO4bcjlJLKg7w==
-X-Received: by 2002:adf:e193:0:b0:2a5:74c9:a8c1 with SMTP id az19-20020adfe193000000b002a574c9a8c1mr22046389wrb.16.1673604466261;
-        Fri, 13 Jan 2023 02:07:46 -0800 (PST)
+        bh=gSVl5Sds0K3+KZcEdjR8SvziCTcv9fxNo6Bvw/idysI=;
+        b=WQRGV0JSeJ90V4NYCfbmLOcZolnoNgUdZ/oMtgCq0Mli0DdnQ94NKwJsa1+YEEnO7w
+         giTajPNt3ceQ/e8iEJ2TthI6Yhl+Gl1NDiM4JM6JbyxL2PZ/FJCJ/rSDeguMmWsFlX/b
+         Yj8KXQ3S/nDhBcdrVZh3DVhCAp3Ru+dN1kwmm5R53zt+6icGYYalJDUIJw0ouW8eg0VQ
+         MNUue4bF8gKnU9Rczn8WDH0inNmN5pUIxx5MylxnRsy4K/PPchHow4Jx8oT86EwfHjVq
+         SauuxFqbDsjZ8b31CP6jIXdcNpVstFQrjDMI20st9qipHjXfF/qXn5t40+PYVScNbEsf
+         JGaw==
+X-Gm-Message-State: AFqh2krgC4NHKru5w5odI6TMWn3qq02C6PWKultUSCDXSFMdiKBFXEnH
+        b4VysDl5BExuiP5DjTpvq+EdTLSyt78n5g==
+X-Google-Smtp-Source: AMrXdXuF09ofFhbUjN2nSi9BnZQwyr37SS3M2YFjX0/cPjEHxEHVFvUMYjog736OW7NXewReG7u+3Q==
+X-Received: by 2002:a05:600c:22ca:b0:3d1:ebdf:d586 with SMTP id 10-20020a05600c22ca00b003d1ebdfd586mr57862681wmg.29.1673604600315;
+        Fri, 13 Jan 2023 02:10:00 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id bp28-20020a5d5a9c000000b00273cd321a1bsm18564014wrb.107.2023.01.13.02.07.45
+        by smtp.gmail.com with ESMTPSA id he12-20020a05600c540c00b003d9ddc82450sm23762476wmb.45.2023.01.13.02.09.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 02:07:45 -0800 (PST)
-Date:   Fri, 13 Jan 2023 13:07:42 +0300
+        Fri, 13 Jan 2023 02:09:59 -0800 (PST)
+Date:   Fri, 13 Jan 2023 13:09:55 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        Mario Limonciello <mario.limonciello@amd.com>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+To:     Zack Rusin <zackr@vmware.com>
+Cc:     VMware Graphics Reviewers <linux-graphics-maintainer@vmware.com>,
         David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Hawking Zhang <Hawking.Zhang@amd.com>,
-        Lang Yu <Lang.Yu@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Haohui Mai <ricetons@gmail.com>, Evan Quan <evan.quan@amd.com>,
-        Jack Xiao <Jack.Xiao@amd.com>, Lijo Lazar <lijo.lazar@amd.com>,
-        amd-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: Add a missing tab
-Message-ID: <Y8EtbpVGFJSDxM/m@kili>
+        Martin Krastev <krastevm@vmware.com>,
+        Maaz Mombasawala <mombasawalam@vmware.com>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/vmwgfx: Fix uninitialized return variables
+Message-ID: <Y8Et8+c8+JAGNqTP@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -73,31 +68,42 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This tab was deleted accidentally and triggers a Smatch warning:
+This code accidentally returns the wrong variable (which is
+uninitialized).  It should return ret.
 
-    drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c:1006 gfx_v8_0_init_microcode()
-    warn: inconsistent indenting
-
-Add it back.
-
-Fixes: 0aaafb7359d2 ("drm/amd: Use `amdgpu_ucode_*` helpers for GFX8")
+Fixes: a309c7194e8a ("drm/vmwgfx: Remove rcu locks from user resources")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-index 4fb577d047fd..b1f2684d854a 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-@@ -1003,7 +1003,7 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
- 		err = amdgpu_ucode_request(adev, &adev->gfx.me_fw, fw_name);
- 		if (err == -ENODEV) {
- 			snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_me.bin", chip_name);
--		err = amdgpu_ucode_request(adev, &adev->gfx.me_fw, fw_name);
-+			err = amdgpu_ucode_request(adev, &adev->gfx.me_fw, fw_name);
- 		}
- 	} else {
- 		snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_me.bin", chip_name);
---
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index 9359e8dfbac2..0ee30a1aa23d 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -1156,7 +1156,7 @@ static int vmw_translate_mob_ptr(struct vmw_private *dev_priv,
+ 	ret = vmw_user_bo_lookup(sw_context->filp, handle, &vmw_bo);
+ 	if (ret != 0) {
+ 		drm_dbg(&dev_priv->drm, "Could not find or use MOB buffer.\n");
+-		return PTR_ERR(vmw_bo);
++		return ret;
+ 	}
+ 	ret = vmw_validation_add_bo(sw_context->ctx, vmw_bo, true, false);
+ 	ttm_bo_put(&vmw_bo->base);
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index 0ee30a1aa23d..fa3761b3e956 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -1210,7 +1210,7 @@ static int vmw_translate_guest_ptr(struct vmw_private *dev_priv,
+ 	ret = vmw_user_bo_lookup(sw_context->filp, handle, &vmw_bo);
+ 	if (ret != 0) {
+ 		drm_dbg(&dev_priv->drm, "Could not find or use GMR region.\n");
+-		return PTR_ERR(vmw_bo);
++		return ret;
+ 	}
+ 	ret = vmw_validation_add_bo(sw_context->ctx, vmw_bo, false, false);
+ 	ttm_bo_put(&vmw_bo->base);
+-- 
 2.35.1
+
