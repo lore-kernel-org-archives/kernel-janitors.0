@@ -2,73 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E101C3DA78
-	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Jan 2023 13:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D8CAC46467
+	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Jan 2023 15:08:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbjANNcw (ORCPT
+        id S229816AbjANPIc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 14 Jan 2023 08:32:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47904 "EHLO
+        Sat, 14 Jan 2023 10:08:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229906AbjANNcs (ORCPT
+        with ESMTP id S229791AbjANPIa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 14 Jan 2023 08:32:48 -0500
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C925247
-        for <kernel-janitors@vger.kernel.org>; Sat, 14 Jan 2023 05:32:45 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.2.178])
+        Sat, 14 Jan 2023 10:08:30 -0500
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77B583F1
+        for <kernel-janitors@vger.kernel.org>; Sat, 14 Jan 2023 07:08:28 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id GgeIpQmdRVDZbGgeJpIxxi; Sat, 14 Jan 2023 14:32:43 +0100
-X-ME-Helo: [192.168.1.18]
+        id Gi8vpZUiZWvItGi8vpe9oD; Sat, 14 Jan 2023 16:08:26 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 14 Jan 2023 14:32:43 +0100
+X-ME-Date: Sat, 14 Jan 2023 16:08:26 +0100
 X-ME-IP: 86.243.2.178
-Message-ID: <7677faba-bd82-d49a-ad06-c42179b456cc@wanadoo.fr>
-Date:   Sat, 14 Jan 2023 14:32:42 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 18/30] module: Use kstrtobool() instead of strtobool()
-Content-Language: fr
-To:     Luis Chamberlain <mcgrof@kernel.org>, atomlin@redhat.com
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-modules@vger.kernel.org
-References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
- <bb37ff26b0c748d0ca883d8f301190cd1177aad2.1667336095.git.christophe.jaillet@wanadoo.fr>
- <Y2K5v08yIDNk7sNW@bombadil.infradead.org>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <Y2K5v08yIDNk7sNW@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-s390@vger.kernel.org
+Subject: [PATCH] s390/ipl: Use kstrtobool() instead of strtobool() (second step)
+Date:   Sat, 14 Jan 2023 16:08:22 +0100
+Message-Id: <58a3ed2e21903a93dfd742943b1e6936863ca037.1673708887.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 02/11/2022 à 19:41, Luis Chamberlain a écrit :
-> On Tue, Nov 01, 2022 at 10:14:06PM +0100, Christophe JAILLET wrote:
->> strtobool() is the same as kstrtobool().
->> However, the latter is more used within the kernel.
->>
->> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
->> the other function name.
->>
->> While at it, include the corresponding header file (<linux/kstrtox.h>)
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-> 
->    Luis
-> 
+strtobool() is the same as kstrtobool().
+However, the latter is more used within the kernel.
 
-Hi,
+In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+the other function name.
 
-This has been R-b 2 months ago by 2 persons, and I've just resent 
-patches in this serie that have neither been merged in -next, nor A-b or 
-R-b.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is similar to the serie ([1]) that tries to axed all usages
+of strtobool().
+Most of the patches have been merged in -next.
 
-So for this one, it is just a polite reminder. 😄
+Commit d9b25bdf57e4 ("s390/ipl: Use kstrtobool() instead of strtobool()")
+already fixed this file, but a new usage has been introduce by commit
+87fd22e0ae92 ("s390/ipl: add eckd support").
 
-Do you have visibility on when it should be merged?
+This patch has been cross-compiled with make.cross.
 
-CJ
+[1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
+---
+ arch/s390/kernel/ipl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
+index fbd646dbf440..5547223acce0 100644
+--- a/arch/s390/kernel/ipl.c
++++ b/arch/s390/kernel/ipl.c
+@@ -1194,7 +1194,7 @@ static ssize_t reipl_eckd_clear_store(struct kobject *kobj,
+ 				      struct kobj_attribute *attr,
+ 				      const char *buf, size_t len)
+ {
+-	if (strtobool(buf, &reipl_eckd_clear) < 0)
++	if (kstrtobool(buf, &reipl_eckd_clear) < 0)
+ 		return -EINVAL;
+ 	return len;
+ }
+-- 
+2.34.1
+
