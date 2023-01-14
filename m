@@ -2,116 +2,72 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF76C3DA78
-	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Jan 2023 13:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16778C3DA78
+	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Jan 2023 13:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbjANN03 (ORCPT
+        id S229650AbjANN35 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 14 Jan 2023 08:26:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43528 "EHLO
+        Sat, 14 Jan 2023 08:29:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbjANN03 (ORCPT
+        with ESMTP id S229553AbjANN3z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 14 Jan 2023 08:26:29 -0500
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 775B359FD
-        for <kernel-janitors@vger.kernel.org>; Sat, 14 Jan 2023 05:26:25 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
+        Sat, 14 Jan 2023 08:29:55 -0500
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C856E5241
+        for <kernel-janitors@vger.kernel.org>; Sat, 14 Jan 2023 05:29:54 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id GgY7pvKxtsfAHGgY7pSjYQ; Sat, 14 Jan 2023 14:26:23 +0100
-X-ME-Helo: pop-os.home
+        id GgbSpJmw5dQkSGgbTppFc9; Sat, 14 Jan 2023 14:29:49 +0100
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 14 Jan 2023 14:26:23 +0100
+X-ME-Date: Sat, 14 Jan 2023 14:29:49 +0100
 X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        kvmarm@lists.cs.columbia.edu
-Subject: [PATCH v2] KVM: arm64: vgic-v3: Use kstrtobool() instead of strtobool()
-Date:   Sat, 14 Jan 2023 14:26:15 +0100
-Message-Id: <f546e636c6d2bbcc0d8c4191ab98ce892fce4584.1673702763.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <c039de1b-0412-320c-8e91-d74ab1ffbc02@wanadoo.fr>
+Date:   Sat, 14 Jan 2023 14:29:46 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 24/30] arm64: cpufeature: Use kstrtobool() instead of
+ strtobool()
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <5a1b329cda34aec67615c0d2fd326eb0d6634bf7.1667336095.git.christophe.jaillet@wanadoo.fr>
+ <Y2J0xJ61iclx6WZG@arm.com>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <Y2J0xJ61iclx6WZG@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-strtobool() is the same as kstrtobool().
-However, the latter is more used within the kernel.
+Le 02/11/2022 à 14:46, Catalin Marinas a écrit :
+> On Tue, Nov 01, 2022 at 10:14:12PM +0100, Christophe JAILLET wrote:
+>> strtobool() is the same as kstrtobool().
+>> However, the latter is more used within the kernel.
+>>
+>> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+>> the other function name.
+>>
+>> While at it, include the corresponding header file (<linux/kstrtox.h>)
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> 
 
-In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-the other function name.
+Hi,
 
-While at it, include the corresponding header file (<linux/kstrtox.h>)
+This has been A-b 2 months ago, and I've just resent patches in this 
+serie that have neither been merged in -next, nor A-b or R-b.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch was already sent as a part of a serie ([1]) that axed all usages
-of strtobool().
-Most of the patches have been merged in -next.
+So for this one, it is just a polite reminder. :)
 
-I synch'ed with latest -next and re-send the remaining ones as individual
-patches.
+Do you have visibility on when it should be merged?
 
-Changes in v2:
-  - now compile tested with make.cross, ARCH=arm64 and compiler from
-    https://cdn.kernel.org/pub/tools/crosstool/files/bin/x86_64/
-
-[1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
----
- arch/arm64/kvm/vgic/vgic-v3.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/kvm/vgic/vgic-v3.c b/arch/arm64/kvm/vgic/vgic-v3.c
-index 2074521d4a8c..9d63149d9e53 100644
---- a/arch/arm64/kvm/vgic/vgic-v3.c
-+++ b/arch/arm64/kvm/vgic/vgic-v3.c
-@@ -3,6 +3,7 @@
- #include <linux/irqchip/arm-gic-v3.h>
- #include <linux/irq.h>
- #include <linux/irqdomain.h>
-+#include <linux/kstrtox.h>
- #include <linux/kvm.h>
- #include <linux/kvm_host.h>
- #include <kvm/arm_vgic.h>
-@@ -587,25 +588,25 @@ DEFINE_STATIC_KEY_FALSE(vgic_v3_cpuif_trap);
- 
- static int __init early_group0_trap_cfg(char *buf)
- {
--	return strtobool(buf, &group0_trap);
-+	return kstrtobool(buf, &group0_trap);
- }
- early_param("kvm-arm.vgic_v3_group0_trap", early_group0_trap_cfg);
- 
- static int __init early_group1_trap_cfg(char *buf)
- {
--	return strtobool(buf, &group1_trap);
-+	return kstrtobool(buf, &group1_trap);
- }
- early_param("kvm-arm.vgic_v3_group1_trap", early_group1_trap_cfg);
- 
- static int __init early_common_trap_cfg(char *buf)
- {
--	return strtobool(buf, &common_trap);
-+	return kstrtobool(buf, &common_trap);
- }
- early_param("kvm-arm.vgic_v3_common_trap", early_common_trap_cfg);
- 
- static int __init early_gicv4_enable(char *buf)
- {
--	return strtobool(buf, &gicv4_enable);
-+	return kstrtobool(buf, &gicv4_enable);
- }
- early_param("kvm-arm.vgic_v4_enable", early_gicv4_enable);
- 
--- 
-2.34.1
-
+CJ
