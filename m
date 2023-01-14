@@ -2,38 +2,36 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFAFC46467
-	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Jan 2023 08:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C36C677F1
+	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Jan 2023 08:54:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229732AbjANIuq (ORCPT
+        id S229767AbjANIyR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 14 Jan 2023 03:50:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41220 "EHLO
+        Sat, 14 Jan 2023 03:54:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjANIuo (ORCPT
+        with ESMTP id S229494AbjANIyP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 14 Jan 2023 03:50:44 -0500
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 512CD59DE
-        for <kernel-janitors@vger.kernel.org>; Sat, 14 Jan 2023 00:50:42 -0800 (PST)
+        Sat, 14 Jan 2023 03:54:15 -0500
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D3A30D7
+        for <kernel-janitors@vger.kernel.org>; Sat, 14 Jan 2023 00:54:13 -0800 (PST)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id GcFKpBC5RvDxRGcFKplSye; Sat, 14 Jan 2023 09:50:39 +0100
+        id GcIkpkMKaFcd8GcIkpbxVz; Sat, 14 Jan 2023 09:54:11 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 14 Jan 2023 09:50:39 +0100
+X-ME-Date: Sat, 14 Jan 2023 09:54:11 +0100
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>
+To:     Helge Deller <deller@gmx.de>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        nvdimm@lists.linux.dev
-Subject: [PATCH v2] nvdimm: Use kstrtobool() instead of strtobool()
-Date:   Sat, 14 Jan 2023 09:50:21 +0100
-Message-Id: <7565f107952e31fad2bc825b8c533df70c498537.1673686195.git.christophe.jaillet@wanadoo.fr>
+        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH v2] video: fbdev: omapfb: Use kstrtobool() instead of strtobool()
+Date:   Sat, 14 Jan 2023 09:54:04 +0100
+Message-Id: <b475ed9827ccef2081b557330a224f5fd8e6c8f3.1673686433.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -59,87 +57,136 @@ I synch'ed with latest -next and re-send the remaining ones as individual
 patches.
 
 Changes in v2:
-  - synch with latest -next.
+  - No change
 
 [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
 ---
- drivers/nvdimm/namespace_devs.c | 3 ++-
- drivers/nvdimm/pmem.c           | 3 ++-
- drivers/nvdimm/region_devs.c    | 5 +++--
- 3 files changed, 7 insertions(+), 4 deletions(-)
+ drivers/video/fbdev/omap2/omapfb/dss/display-sysfs.c | 7 ++++---
+ drivers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c | 7 ++++---
+ drivers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c | 3 ++-
+ drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c      | 3 ++-
+ 4 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-index c60ec0b373c5..07177eadc56e 100644
---- a/drivers/nvdimm/namespace_devs.c
-+++ b/drivers/nvdimm/namespace_devs.c
-@@ -2,6 +2,7 @@
- /*
-  * Copyright(c) 2013-2015 Intel Corporation. All rights reserved.
-  */
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/display-sysfs.c b/drivers/video/fbdev/omap2/omapfb/dss/display-sysfs.c
+index bc5a44c2a144..ae937854403b 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/display-sysfs.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/display-sysfs.c
+@@ -10,6 +10,7 @@
+ #define DSS_SUBSYS_NAME "DISPLAY"
+ 
+ #include <linux/kernel.h>
 +#include <linux/kstrtox.h>
  #include <linux/module.h>
- #include <linux/device.h>
- #include <linux/sort.h>
-@@ -1338,7 +1339,7 @@ static ssize_t force_raw_store(struct device *dev,
- 		struct device_attribute *attr, const char *buf, size_t len)
- {
- 	bool force_raw;
--	int rc = strtobool(buf, &force_raw);
-+	int rc = kstrtobool(buf, &force_raw);
+ #include <linux/platform_device.h>
+ #include <linux/sysfs.h>
+@@ -36,7 +37,7 @@ static ssize_t display_enabled_store(struct omap_dss_device *dssdev,
+ 	int r;
+ 	bool enable;
  
- 	if (rc)
- 		return rc;
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 80ded5a2838a..f2a336c6d8c6 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -17,6 +17,7 @@
- #include <linux/moduleparam.h>
- #include <linux/badblocks.h>
- #include <linux/memremap.h>
-+#include <linux/kstrtox.h>
- #include <linux/vmalloc.h>
- #include <linux/blk-mq.h>
- #include <linux/pfn_t.h>
-@@ -408,7 +409,7 @@ static ssize_t write_cache_store(struct device *dev,
- 	bool write_cache;
- 	int rc;
+-	r = strtobool(buf, &enable);
++	r = kstrtobool(buf, &enable);
+ 	if (r)
+ 		return r;
  
--	rc = strtobool(buf, &write_cache);
-+	rc = kstrtobool(buf, &write_cache);
- 	if (rc)
- 		return rc;
- 	dax_write_cache(pmem->dax_dev, write_cache);
-diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-index 83dbf398ea84..f5872de7ea5a 100644
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -5,6 +5,7 @@
- #include <linux/scatterlist.h>
- #include <linux/memregion.h>
- #include <linux/highmem.h>
+@@ -73,7 +74,7 @@ static ssize_t display_tear_store(struct omap_dss_device *dssdev,
+ 	if (!dssdev->driver->enable_te || !dssdev->driver->get_te)
+ 		return -ENOENT;
+ 
+-	r = strtobool(buf, &te);
++	r = kstrtobool(buf, &te);
+ 	if (r)
+ 		return r;
+ 
+@@ -183,7 +184,7 @@ static ssize_t display_mirror_store(struct omap_dss_device *dssdev,
+ 	if (!dssdev->driver->set_mirror || !dssdev->driver->get_mirror)
+ 		return -ENOENT;
+ 
+-	r = strtobool(buf, &mirror);
++	r = kstrtobool(buf, &mirror);
+ 	if (r)
+ 		return r;
+ 
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c b/drivers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c
+index ba21c4a2633d..1b644be5fe2e 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c
+@@ -10,6 +10,7 @@
+ #define DSS_SUBSYS_NAME "MANAGER"
+ 
+ #include <linux/kernel.h>
 +#include <linux/kstrtox.h>
- #include <linux/sched.h>
  #include <linux/slab.h>
- #include <linux/hash.h>
-@@ -275,7 +276,7 @@ static ssize_t deep_flush_store(struct device *dev, struct device_attribute *att
- 		const char *buf, size_t len)
- {
- 	bool flush;
--	int rc = strtobool(buf, &flush);
-+	int rc = kstrtobool(buf, &flush);
- 	struct nd_region *nd_region = to_nd_region(dev);
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -246,7 +247,7 @@ static ssize_t manager_trans_key_enabled_store(struct omap_overlay_manager *mgr,
+ 	bool enable;
+ 	int r;
  
- 	if (rc)
-@@ -530,7 +531,7 @@ static ssize_t read_only_store(struct device *dev,
- 		struct device_attribute *attr, const char *buf, size_t len)
- {
- 	bool ro;
--	int rc = strtobool(buf, &ro);
-+	int rc = kstrtobool(buf, &ro);
- 	struct nd_region *nd_region = to_nd_region(dev);
+-	r = strtobool(buf, &enable);
++	r = kstrtobool(buf, &enable);
+ 	if (r)
+ 		return r;
  
- 	if (rc)
+@@ -290,7 +291,7 @@ static ssize_t manager_alpha_blending_enabled_store(
+ 	if(!dss_has_feature(FEAT_ALPHA_FIXED_ZORDER))
+ 		return -ENODEV;
+ 
+-	r = strtobool(buf, &enable);
++	r = kstrtobool(buf, &enable);
+ 	if (r)
+ 		return r;
+ 
+@@ -329,7 +330,7 @@ static ssize_t manager_cpr_enable_store(struct omap_overlay_manager *mgr,
+ 	if (!dss_has_feature(FEAT_CPR))
+ 		return -ENODEV;
+ 
+-	r = strtobool(buf, &enable);
++	r = kstrtobool(buf, &enable);
+ 	if (r)
+ 		return r;
+ 
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c b/drivers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c
+index 601c0beb6de9..1da4fb1c77b4 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c
+@@ -13,6 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/sysfs.h>
+ #include <linux/kobject.h>
++#include <linux/kstrtox.h>
+ #include <linux/platform_device.h>
+ 
+ #include <video/omapfb_dss.h>
+@@ -210,7 +211,7 @@ static ssize_t overlay_enabled_store(struct omap_overlay *ovl, const char *buf,
+ 	int r;
+ 	bool enable;
+ 
+-	r = strtobool(buf, &enable);
++	r = kstrtobool(buf, &enable);
+ 	if (r)
+ 		return r;
+ 
+diff --git a/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c b/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
+index 06dc41aa0354..831b2c2fbdf9 100644
+--- a/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
++++ b/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
+@@ -15,6 +15,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/platform_device.h>
+ #include <linux/kernel.h>
++#include <linux/kstrtox.h>
+ #include <linux/mm.h>
+ #include <linux/omapfb.h>
+ 
+@@ -96,7 +97,7 @@ static ssize_t store_mirror(struct device *dev,
+ 	int r;
+ 	struct fb_var_screeninfo new_var;
+ 
+-	r = strtobool(buf, &mirror);
++	r = kstrtobool(buf, &mirror);
+ 	if (r)
+ 		return r;
+ 
 -- 
 2.34.1
 
