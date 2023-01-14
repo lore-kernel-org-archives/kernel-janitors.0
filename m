@@ -2,36 +2,39 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032DFC46467
-	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Jan 2023 17:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3D1C46467
+	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Jan 2023 17:33:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230327AbjANRVz (ORCPT
+        id S230204AbjANRd0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 14 Jan 2023 12:21:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41604 "EHLO
+        Sat, 14 Jan 2023 12:33:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230299AbjANRVv (ORCPT
+        with ESMTP id S229983AbjANRdY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 14 Jan 2023 12:21:51 -0500
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 264E193E5
-        for <kernel-janitors@vger.kernel.org>; Sat, 14 Jan 2023 09:21:48 -0800 (PST)
+        Sat, 14 Jan 2023 12:33:24 -0500
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1974A5FF
+        for <kernel-janitors@vger.kernel.org>; Sat, 14 Jan 2023 09:33:22 -0800 (PST)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id GkDwpTOYE2zC1GkDwp5Jc6; Sat, 14 Jan 2023 18:21:47 +0100
+        id GkP6p29fEI2kPGkP6pk30A; Sat, 14 Jan 2023 18:33:21 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 14 Jan 2023 18:21:47 +0100
+X-ME-Date: Sat, 14 Jan 2023 18:33:21 +0100
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     akpm@linux-foundation.org, ddiss@suse.de, mwilck@suse.com,
-        brauner@kernel.org, wuchi.zero@gmail.com, ebiederm@xmission.com,
-        xupengfei@nfschina.com
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Chang S. Bae" <chang.seok.bae@intel.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] initramfs: Use kstrtobool() instead of strtobool()
-Date:   Sat, 14 Jan 2023 18:21:38 +0100
-Message-Id: <2597e80cb7059ec6ad63a01b77d7c944dcc99195.1673716768.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH] x86/signal: Fix the value returned by strict_sas_size()
+Date:   Sat, 14 Jan 2023 18:33:09 +0100
+Message-Id: <73882d43ebe420c9d8fb82d0560021722b243000.1673717552.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,59 +42,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-strtobool() is the same as kstrtobool().
-However, the latter is more used within the kernel.
+Functions used with __setup() return 1 when the argument has been
+successfully parsed.
 
-In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-the other function name.
+Reverse the returned value so that 1 is returned when kstrtobool() is
+successful (i.e. returns 0)
 
-While at it, include the corresponding header file (<linux/kstrtox.h>)
-
+Fixes: 3aac3ebea08f ("x86/signal: Implement sigaltstack size validation")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch was already sent as a part of a serie ([1]) that axed all usages
-of strtobool().
-Most of the patches have been merged in -next.
+This patch is completely speculative. Review with care!
 
-I synch'ed with latest -next and re-send the remaining ones as individual
-patches.
+My understanding of these __setup() functions is that returning 1 or 0
+does not change much anyway.
 
-This patch slightly changes the existing code with an additional error
-handling.
-
-Note that the first version was sent to no-one, only mailing lists,
-because "get_maintainer.pl --nogit-fallback" returns an empty list.
-
-Changes in v2:
-  - Re-write to code to be more consistent with other kstrtobool() usage
-    in __setup() functions
-
-[1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
+I spot it and found it spurious while looking at something else.
+Even if the output is not perfect, you'll get the idea with:
+   git grep -B2 -A10 retu.*kstrtobool | grep __setup -B10
 ---
- init/initramfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/signal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 62321883fe61..f6c112e30bd4 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -11,6 +11,7 @@
- #include <linux/syscalls.h>
- #include <linux/utime.h>
- #include <linux/file.h>
-+#include <linux/kstrtox.h>
- #include <linux/memblock.h>
- #include <linux/mm.h>
- #include <linux/namei.h>
-@@ -571,8 +572,7 @@ __setup("keepinitrd", keepinitrd_setup);
- static bool __initdata initramfs_async = true;
- static int __init initramfs_async_setup(char *str)
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 1504eb8d25aa..004cb30b7419 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -360,7 +360,7 @@ static bool strict_sigaltstack_size __ro_after_init = false;
+ 
+ static int __init strict_sas_size(char *arg)
  {
--	strtobool(str, &initramfs_async);
--	return 1;
-+	return kstrtobool(str, &initramfs_async) == 0;
+-	return kstrtobool(arg, &strict_sigaltstack_size);
++	return kstrtobool(arg, &strict_sigaltstack_size) == 0;
  }
- __setup("initramfs_async=", initramfs_async_setup);
+ __setup("strict_sas_size", strict_sas_size);
  
 -- 
 2.34.1
