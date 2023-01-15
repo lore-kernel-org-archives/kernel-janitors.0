@@ -2,65 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EDCC3DA78
-	for <kernel-janitors@archiver.kernel.org>; Sun, 15 Jan 2023 11:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97384C63797
+	for <kernel-janitors@archiver.kernel.org>; Sun, 15 Jan 2023 18:13:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231152AbjAOLcv (ORCPT
+        id S231396AbjAOSN4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 15 Jan 2023 06:32:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36164 "EHLO
+        Sun, 15 Jan 2023 13:13:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230269AbjAOLct (ORCPT
+        with ESMTP id S231223AbjAOSNz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 15 Jan 2023 06:32:49 -0500
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AC73F770;
-        Sun, 15 Jan 2023 03:32:47 -0800 (PST)
-Received: from kwepemm600007.china.huawei.com (unknown [172.30.72.54])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4NvtJS3qbRz16Mc5;
-        Sun, 15 Jan 2023 19:31:04 +0800 (CST)
-Received: from [10.174.185.179] (10.174.185.179) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.34; Sun, 15 Jan 2023 19:32:43 +0800
-Subject: Re: [PATCH v2] KVM: arm64: vgic-v3: Use kstrtobool() instead of
- strtobool()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>
-References: <f546e636c6d2bbcc0d8c4191ab98ce892fce4584.1673702763.git.christophe.jaillet@wanadoo.fr>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <d3e91900-eb88-2e25-a32e-dc5667939b98@huawei.com>
-Date:   Sun, 15 Jan 2023 19:32:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Sun, 15 Jan 2023 13:13:55 -0500
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C59BEC71
+        for <kernel-janitors@vger.kernel.org>; Sun, 15 Jan 2023 10:13:53 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id H7VtpuQKibLr1H7VtpQ63o; Sun, 15 Jan 2023 19:13:51 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 15 Jan 2023 19:13:51 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Paul Olaru <paul.olaru@nxp.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] firmware: imx-dsp: Fix an error handling path in imx_dsp_setup_channels()
+Date:   Sun, 15 Jan 2023 19:13:46 +0100
+Message-Id: <2b4bc0b22fac32ab3a7262240019486804c1691f.1673806409.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-In-Reply-To: <f546e636c6d2bbcc0d8c4191ab98ce892fce4584.1673702763.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.185.179]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600007.china.huawei.com (7.193.23.208)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/1/14 21:26, Christophe JAILLET wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
-> 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
-> 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+If mbox_request_channel_byname() fails, the memory allocated a few lines
+above still need to be freed before going to the error handling path.
 
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+Fixes: 046326989a18 ("firmware: imx: Save channel name for further use")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The Fixes tag is not really accurate, the issue was already there before,
+with other emory leaks.
+However, I think that the Fixes tag above is much more logical.
+
+Feel free to update!
+---
+ drivers/firmware/imx/imx-dsp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/firmware/imx/imx-dsp.c b/drivers/firmware/imx/imx-dsp.c
+index a6c06d7476c3..1f410809d3ee 100644
+--- a/drivers/firmware/imx/imx-dsp.c
++++ b/drivers/firmware/imx/imx-dsp.c
+@@ -115,6 +115,7 @@ static int imx_dsp_setup_channels(struct imx_dsp_ipc *dsp_ipc)
+ 		dsp_chan->idx = i % 2;
+ 		dsp_chan->ch = mbox_request_channel_byname(cl, chan_name);
+ 		if (IS_ERR(dsp_chan->ch)) {
++			kfree(dsp_chan->name);
+ 			ret = PTR_ERR(dsp_chan->ch);
+ 			if (ret != -EPROBE_DEFER)
+ 				dev_err(dev, "Failed to request mbox chan %s ret %d\n",
+-- 
+2.34.1
+
