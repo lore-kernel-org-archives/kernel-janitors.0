@@ -2,138 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C710C46467
-	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Jan 2023 18:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BFCC3DA78
+	for <kernel-janitors@archiver.kernel.org>; Sun, 15 Jan 2023 11:24:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbjANSLc (ORCPT
+        id S230488AbjAOLY3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 14 Jan 2023 13:11:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51160 "EHLO
+        Sun, 15 Jan 2023 06:24:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230210AbjANSLa (ORCPT
+        with ESMTP id S230285AbjAOLY0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 14 Jan 2023 13:11:30 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 727F7B77B;
-        Sat, 14 Jan 2023 10:11:29 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id x37so25746969ljq.1;
-        Sat, 14 Jan 2023 10:11:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NSlRoDTtSoPSgCdi+CZiZS3Sznec9wySQ545Pko7j/k=;
-        b=Z8eXvudrG4nQzD8PfAyoxIhxbLNvVxnIrofwEXoHf8uz02oXhL2i5BvN8zAV8V8rJt
-         u3C7YyUb2MeYY1GPqWkxpAhkdLEpe3SI8T94/ysVfIuMSXInnJQNGSONIP4GwqoJiD7N
-         uF5buMMj6oOJi+bbO74m8kS/N7/SMzZfnF73Nu+8W/9tFDFfzS58t1DbCy+uD2xxaNX7
-         IqoIYVHxDBhke6+gQRog682Z1+qLVD3ZLU8ysy09+MBIZTsJNCEmZ6XJVkLCUIlOhPOq
-         O34XYAadIUNwFcmFh8UVkOT9MyHTEssVtdXFsi5J4aNBoACjcBSQ6oQiq4QhApMvkQ+S
-         lNLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NSlRoDTtSoPSgCdi+CZiZS3Sznec9wySQ545Pko7j/k=;
-        b=A/Y0mNDhr0lxRfttqbtlUxO5asx81zJntC6HqqLB/IGNfUJDZU6itha59914Xm9XBJ
-         xf/xcOHvShNR+XsGVjiqEmphkCKeD9i/F5bHjs7yyQJKqF7uQ3X48be4K647zGTCUYy1
-         SOdMwTlSGxwXNNSA6D/pSB1HDOSrtberzJQe2R0+Yse5ro39P0jIy6xRzWzuWm6LoDDF
-         zjS93X6MCNIXa3E9oUQKQ6hy96Wz2VKrWAUowq0HDTudMjWyW8Vs4EhDZ3jYqPtJYaJC
-         N5kdolAlpkvZmWGNvHltSS6y7O11IuEcafaJzaHS1gdZBfmAKV01/ku9hXF5iIUw1jQN
-         2MLg==
-X-Gm-Message-State: AFqh2ko0DkPf4YQIc+lACrunYuiWAPrBBoahUY+pXp3yILl8MOG56Wtu
-        j1TtOwIeRiD8v3MD7oFDl3HkqFJTcramFb0Gea8=
-X-Google-Smtp-Source: AMrXdXsegW3pLvFHzGQ24UgODjHyhq7rdd1Hqg+NWXOoist8eCemWI9UMRmUSycI6TzREF0sM3CTiOZ+G+VfBIPYeA0=
-X-Received: by 2002:a2e:988b:0:b0:28b:7925:3d2 with SMTP id
- b11-20020a2e988b000000b0028b792503d2mr48626ljj.229.1673719887512; Sat, 14 Jan
- 2023 10:11:27 -0800 (PST)
+        Sun, 15 Jan 2023 06:24:26 -0500
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FFDFCDD3
+        for <kernel-janitors@vger.kernel.org>; Sun, 15 Jan 2023 03:24:24 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id H17bpDGm8IopLH17bpa0Ms; Sun, 15 Jan 2023 12:24:23 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 15 Jan 2023 12:24:23 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Arthur Simchaev <Arthur.Simchaev@wdc.com>,
+        Bean Huo <beanhuo@micron.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: ufs: core: Fix an error handling path in ufshcd_read_desc_param()
+Date:   Sun, 15 Jan 2023 12:24:17 +0100
+Message-Id: <2c6e42205e5ec22e5e8c7c85c6deb8fde31c74da.1673781835.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <b4cb5ccc96332ca81d6732b3063942186614eaa6.1673686651.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <b4cb5ccc96332ca81d6732b3063942186614eaa6.1673686651.git.christophe.jaillet@wanadoo.fr>
-From:   Steve French <smfrench@gmail.com>
-Date:   Sat, 14 Jan 2023 12:11:16 -0600
-Message-ID: <CAH2r5mvvVwSFf7y=YB0=gxGPOhVaN2zwNvFdRSh_E5Dk7hAMEg@mail.gmail.com>
-Subject: Re: [PATCH v2] cifs: Use kstrtobool() instead of strtobool()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+If an error occurs, some memory may need to be freed, as in the other
+error handling paths.
 
-On Sat, Jan 14, 2023 at 2:58 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
->
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
->
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch was already sent as a part of a serie ([1]) that axed all usages
-> of strtobool().
-> Most of the patches have been merged in -next.
->
-> I synch'ed with latest -next and re-send the remaining ones as individual
-> patches.
->
-> Changes in v2:
->   - synch with latest -next.
->
-> [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  fs/cifs/cifs_debug.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/cifs/cifs_debug.c b/fs/cifs/cifs_debug.c
-> index 56b23def4c95..612f0bb284c9 100644
-> --- a/fs/cifs/cifs_debug.c
-> +++ b/fs/cifs/cifs_debug.c
-> @@ -8,6 +8,7 @@
->  #include <linux/fs.h>
->  #include <linux/string.h>
->  #include <linux/ctype.h>
-> +#include <linux/kstrtox.h>
->  #include <linux/module.h>
->  #include <linux/proc_fs.h>
->  #include <linux/uaccess.h>
-> @@ -787,7 +788,7 @@ static ssize_t cifsFYI_proc_write(struct file *file, const char __user *buffer,
->         rc = get_user(c[0], buffer);
->         if (rc)
->                 return rc;
-> -       if (strtobool(c, &bv) == 0)
-> +       if (kstrtobool(c, &bv) == 0)
->                 cifsFYI = bv;
->         else if ((c[0] > '1') && (c[0] <= '9'))
->                 cifsFYI = (int) (c[0] - '0'); /* see cifs_debug.h for meanings */
-> @@ -947,7 +948,7 @@ static ssize_t cifs_security_flags_proc_write(struct file *file,
->
->         if (count < 3) {
->                 /* single char or single char followed by null */
-> -               if (strtobool(flags_string, &bv) == 0) {
-> +               if (kstrtobool(flags_string, &bv) == 0) {
->                         global_secflags = bv ? CIFSSEC_MAX : CIFSSEC_DEF;
->                         return count;
->                 } else if (!isdigit(flags_string[0])) {
-> --
-> 2.34.1
->
+Before the commit in the Fixes tag, this test was done before the memory
+allocation, so there was no issue.
 
+Fixes: 16ed9d312b42 ("scsi: ufs: core: Remove ufshcd_map_desc_id_to_length()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/ufs/core/ufshcd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 6ec65dcdd689..097f2489bc91 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -3452,7 +3452,8 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
+ 	if (param_offset >= buff_len) {
+ 		dev_err(hba->dev, "%s: Invalid offset 0x%x in descriptor IDN 0x%x, length 0x%x\n",
+ 			__func__, param_offset, desc_id, buff_len);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out;
+ 	}
+ 
+ 	/* Sanity check */
 -- 
-Thanks,
+2.34.1
 
-Steve
