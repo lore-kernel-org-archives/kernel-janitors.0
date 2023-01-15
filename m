@@ -2,75 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97384C63797
-	for <kernel-janitors@archiver.kernel.org>; Sun, 15 Jan 2023 18:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 424A0C3DA78
+	for <kernel-janitors@archiver.kernel.org>; Sun, 15 Jan 2023 20:34:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231396AbjAOSN4 (ORCPT
+        id S231276AbjAOUe5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 15 Jan 2023 13:13:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37422 "EHLO
+        Sun, 15 Jan 2023 15:34:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231223AbjAOSNz (ORCPT
+        with ESMTP id S231356AbjAOUez (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 15 Jan 2023 13:13:55 -0500
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C59BEC71
-        for <kernel-janitors@vger.kernel.org>; Sun, 15 Jan 2023 10:13:53 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id H7VtpuQKibLr1H7VtpQ63o; Sun, 15 Jan 2023 19:13:51 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 15 Jan 2023 19:13:51 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Paul Olaru <paul.olaru@nxp.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] firmware: imx-dsp: Fix an error handling path in imx_dsp_setup_channels()
-Date:   Sun, 15 Jan 2023 19:13:46 +0100
-Message-Id: <2b4bc0b22fac32ab3a7262240019486804c1691f.1673806409.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 15 Jan 2023 15:34:55 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63C2212F23;
+        Sun, 15 Jan 2023 12:34:54 -0800 (PST)
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30FEDgwq015903;
+        Sun, 15 Jan 2023 20:34:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=pp1; bh=1xzxUn5io4MOqbVROavDWiLZH9RakxX9HiJJQ5zs4R0=;
+ b=gHYGsTdgXOFi3d/kiz4uWUuU2aNW/E/tJDJQdqiLHW/uCiBaSZiaRjkJ2bdxmh9Fp3ZE
+ uwQc2NA/PCxCA11mBnznC4FfMyZGt+BrIdPeYWAINTtMadsJIgR8JYew1t2a1r3Nmp60
+ i0jNPq5L4BuvsOfWn9npOVctn2+4Tib3/8/xF2Dt+vBLl+mD6ZS9Ls8l3jWcXdcIDSkI
+ Z1uLdEiZUxQEtiM4BhYJZ5QGG26bQ1kTKFLZ4yuvvNZpCHzq7/hujqC3yyaejGOfybYY
+ Bkpf7yI23g8TN2GF6lXcLMAym3oSOSIB/OdcKlzVrE0b7CRj7cac4GC2ISPdApbD9pmY XA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n48nt5239-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 15 Jan 2023 20:34:53 +0000
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30FKYq8R031007;
+        Sun, 15 Jan 2023 20:34:52 GMT
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n48nt522y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 15 Jan 2023 20:34:52 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30FARtKM002192;
+        Sun, 15 Jan 2023 20:34:51 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma06fra.de.ibm.com (PPS) with ESMTPS id 3n3knf95qy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 15 Jan 2023 20:34:51 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30FKYlEQ50790670
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 15 Jan 2023 20:34:47 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 460BE20043;
+        Sun, 15 Jan 2023 20:34:47 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8DAB20040;
+        Sun, 15 Jan 2023 20:34:46 +0000 (GMT)
+Received: from osiris (unknown [9.171.18.28])
+        by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Sun, 15 Jan 2023 20:34:46 +0000 (GMT)
+Date:   Sun, 15 Jan 2023 21:34:45 +0100
+From:   Heiko Carstens <hca@linux.ibm.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH] s390/ipl: Use kstrtobool() instead of strtobool()
+ (second step)
+Message-ID: <Y8RjZQBqWxug5nn8@osiris>
+References: <58a3ed2e21903a93dfd742943b1e6936863ca037.1673708887.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58a3ed2e21903a93dfd742943b1e6936863ca037.1673708887.git.christophe.jaillet@wanadoo.fr>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: I7znFn07prtoGb1HtUXgBGn0dYevvsug
+X-Proofpoint-ORIG-GUID: hawnuB-sNZ1KU4KQbCKgkbETYqZHikC_
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-15_15,2023-01-13_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ phishscore=0 mlxscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ mlxlogscore=748 clxscore=1011 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301150163
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If mbox_request_channel_byname() fails, the memory allocated a few lines
-above still need to be freed before going to the error handling path.
+On Sat, Jan 14, 2023 at 04:08:22PM +0100, Christophe JAILLET wrote:
+> strtobool() is the same as kstrtobool().
+> However, the latter is more used within the kernel.
+> 
+> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> the other function name.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is similar to the serie ([1]) that tries to axed all usages
+> of strtobool().
+> Most of the patches have been merged in -next.
+> 
+> Commit d9b25bdf57e4 ("s390/ipl: Use kstrtobool() instead of strtobool()")
+> already fixed this file, but a new usage has been introduce by commit
+> 87fd22e0ae92 ("s390/ipl: add eckd support").
+> 
+> This patch has been cross-compiled with make.cross.
+> 
+> [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
+> ---
+>  arch/s390/kernel/ipl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: 046326989a18 ("firmware: imx: Save channel name for further use")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-The Fixes tag is not really accurate, the issue was already there before,
-with other emory leaks.
-However, I think that the Fixes tag above is much more logical.
-
-Feel free to update!
----
- drivers/firmware/imx/imx-dsp.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/firmware/imx/imx-dsp.c b/drivers/firmware/imx/imx-dsp.c
-index a6c06d7476c3..1f410809d3ee 100644
---- a/drivers/firmware/imx/imx-dsp.c
-+++ b/drivers/firmware/imx/imx-dsp.c
-@@ -115,6 +115,7 @@ static int imx_dsp_setup_channels(struct imx_dsp_ipc *dsp_ipc)
- 		dsp_chan->idx = i % 2;
- 		dsp_chan->ch = mbox_request_channel_byname(cl, chan_name);
- 		if (IS_ERR(dsp_chan->ch)) {
-+			kfree(dsp_chan->name);
- 			ret = PTR_ERR(dsp_chan->ch);
- 			if (ret != -EPROBE_DEFER)
- 				dev_err(dev, "Failed to request mbox chan %s ret %d\n",
--- 
-2.34.1
-
+Applied, thanks!
