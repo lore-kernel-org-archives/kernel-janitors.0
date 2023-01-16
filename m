@@ -2,70 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55725C46467
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 13:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D9FC678D4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 16:28:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbjAPNYx (ORCPT
+        id S233236AbjAPQ2Z (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Jan 2023 08:24:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44464 "EHLO
+        Mon, 16 Jan 2023 11:28:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230229AbjAPNY1 (ORCPT
+        with ESMTP id S233052AbjAPQ2D (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Jan 2023 08:24:27 -0500
-Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E6417CF6;
-        Mon, 16 Jan 2023 05:23:34 -0800 (PST)
-Date:   Mon, 16 Jan 2023 13:23:29 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=n8pjl.ca;
-        s=protonmail; t=1673875412; x=1674134612;
-        bh=HHEPb+FSYfInu1nGAlCBXquqHc3nD5GHUbvyD7P7K+E=;
-        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-         Message-ID:BIMI-Selector;
-        b=KBHfF46d8tWixUotXkxMVXFrCuNQuli5stA2cygRpvgLi7yQjwrtbSyRtC/vR1LFq
-         Jqu6piQ1duj/iwPuWrZ1436nj9dxMc/uBnXWnNFzA7lesN7WCLDmOHr9fYdRgUF1MN
-         wbp0AyawFsN4lrMqDNSL7teJVYYa+0xyXBrdSmCejRKCQMBxx+u7dp8bRRB9pYoiGh
-         QGfV4x84SB/4RYm6hw/TgIb+9ipTF1f+YbOQEAxT+rFd66/3Za1Uz8lsqvl0IVDoGC
-         pQB7q1x6EQihIOldWDBnRgc6DL8X4V3LzwLg1KTAxyr/mO0q+p8KoE7ySW68zXfW2Y
-         J44g9BYSSAZaA==
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-From:   Peter Lafreniere <peter@n8pjl.ca>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux@dominikbrodowski.net" <linux@dominikbrodowski.net>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] pcmcia: avoid defines prefixed with CONFIG
-Message-ID: <v3ljEwMO_JmxXsJBi8zDkqbj1cLa5SuzFZ6Xsdc-QypVtTwok_YApIRX5Rmj7HqplbMiAVjS7UyfYi-_tNh1hzv2u-KPB8i5mx4HMhviHrU=@n8pjl.ca>
-In-Reply-To: <CAKXUXMwbkDgwMvB-CDyDbL7CS1eSn4P=87BqfWCyvCvP+SkQ8A@mail.gmail.com>
-References: <n-Xd5VZl4mxdBIPvH-LgdDqAi8N9cL3TiAQ6fKEOpXLKsyDAxcf9VWQZfnMobTdIXucJJ1U2B82W6KhoODwWr_n3d-V9YkDcV92AjzxMrys=@n8pjl.ca> <CAKXUXMwbkDgwMvB-CDyDbL7CS1eSn4P=87BqfWCyvCvP+SkQ8A@mail.gmail.com>
-Feedback-ID: 53133685:user:proton
+        Mon, 16 Jan 2023 11:28:03 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85BC72CFE9;
+        Mon, 16 Jan 2023 08:16:14 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id k22-20020a05600c1c9600b003d1ee3a6289so22532389wms.2;
+        Mon, 16 Jan 2023 08:16:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f/E+8L2nNxeWkA6s3DUbOSQakN8jVIdhHcZDVIHwYps=;
+        b=VR7Ib1BBKuYLVSp3WIWB4DRQO+8D4J76bPB7KlZ3Jt4l0TERYiSe7a4+8GA21ZG2+X
+         co3XvgAsRR9S1UpfeVUfczUZe5h9Vtcsxbrq21VDtSv/J0yEFn99C64WLd5sdWH/MLPw
+         HlkoN0CsB0JMfw7okqZwRUEbz5jPdzxuBPBVQUH98Ub6rIeUYxChkzLvzjfPCvrgLQwm
+         F05PLtcBRkZgJbNvyXgbCmXDB4U/LVkh9F6r1IBWbQg/27hQ9ctCEV/UQ18EDT8uWAtM
+         ZGNJex0qAGLce+9EFs2Ht8SUhFyoJk9YVCUAELtPhl92CxDYgVkkIdCoJcN2UMU62ffC
+         k0Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f/E+8L2nNxeWkA6s3DUbOSQakN8jVIdhHcZDVIHwYps=;
+        b=NfzrG4w2l0pQ5xnW0RyN3v4EOjhrzE99+AbzHbWZwooEiemY1Qp4nwXHgL9bgJRk96
+         azAGMz2TX6W9mZkpCEbgcOcqe4V/r7mRh9gavUj0vnh/9qlkkconK5obY14s0qNFBrKz
+         oZ/U4BidIMAGgB81f1Ln/MKlFYEbaIO4Z0dVtolDb9zx0gsei0DsH4zqrtNBFrRiqpyf
+         +1mg5B2/HcMpEeQ5d3gIC/sOJokCFoQZLgO4eUjJewAhrzfWnFoSyeF+H9PAlqkDXKbM
+         hRa0gKTT9G4CmL2KjNn9l/7rBzYVRnW0etAK6gbIQeoxnr5a2F+WvsKWrumHysfkJNe5
+         2F9A==
+X-Gm-Message-State: AFqh2kqDrwBj1Ej7Wckj8w4vt9pczlnzsdf7UrLXt0OI3dDJPf2ipurH
+        J/zDVjgHdypyYiUQ9HmtcjrQm2nDiWfGZrsq
+X-Google-Smtp-Source: AMrXdXsgdvbCYVjrLvXsZb1bY+dKxiaYrFzVfelXx3yOCP1qxGF3nM9FHiJjEyC4aQYxfnFmCmKhEA==
+X-Received: by 2002:a05:600c:540c:b0:3cf:7704:50ce with SMTP id he12-20020a05600c540c00b003cf770450cemr7266wmb.38.1673885773414;
+        Mon, 16 Jan 2023 08:16:13 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id s7-20020a1cf207000000b003d98438a43asm32545526wmc.34.2023.01.16.08.16.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jan 2023 08:16:12 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Daniel Bristot de Oliveira <bristot@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-trace-devel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] rv: remove redundant initialization of pointer ptr
+Date:   Mon, 16 Jan 2023 16:16:12 +0000
+Message-Id: <20230116161612.77192-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-> Peter,
->=20
-> If you are interested in doing more clean-up work in this area, please
-> let me know. I have a longer patch series of various changes that have
-> been partially submitted and have not been included yet and some
-> changes I have not sent yet, as they are really minor spelling fixes
-> in comments. Further, I have a list of known false positives from the
-> ./scripts/checkkconfigsymbols.py warnings, which you can use to filter
-> out some of the warnings, and some experience on this script to find
-> what is more relevant to address first and what could go to the
-> low-priority TODO list (that just might disappear, as old code is
-> completely deleted).
->=20
-> I can share all that with you if you just give me a ping.
+The pointer ptr is being initialized with a value that is never read,
+it is being updated later on a call to strim. Remove the extraneous
+initialization.
 
-Why not? I wouldn't mind helping with this effort.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ kernel/trace/rv/rv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Best regards,
->=20
-> Lukas
+diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+index 6c97cc2d754a..7e9061828c24 100644
+--- a/kernel/trace/rv/rv.c
++++ b/kernel/trace/rv/rv.c
+@@ -516,7 +516,7 @@ static ssize_t enabled_monitors_write(struct file *filp, const char __user *user
+ 	struct rv_monitor_def *mdef;
+ 	int retval = -EINVAL;
+ 	bool enable = true;
+-	char *ptr = buff;
++	char *ptr;
+ 	int len;
+ 
+ 	if (count < 1 || count > MAX_RV_MONITOR_NAME_SIZE + 1)
+-- 
+2.30.2
 
-Cheers,
-Peter
