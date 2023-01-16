@@ -2,64 +2,60 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D9FC678D4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 16:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8BBC67871
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 17:02:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233236AbjAPQ2Z (ORCPT
+        id S234105AbjAPRCD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Jan 2023 11:28:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
+        Mon, 16 Jan 2023 12:02:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233052AbjAPQ2D (ORCPT
+        with ESMTP id S232146AbjAPRBW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Jan 2023 11:28:03 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85BC72CFE9;
-        Mon, 16 Jan 2023 08:16:14 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id k22-20020a05600c1c9600b003d1ee3a6289so22532389wms.2;
-        Mon, 16 Jan 2023 08:16:14 -0800 (PST)
+        Mon, 16 Jan 2023 12:01:22 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022585AB44;
+        Mon, 16 Jan 2023 08:43:34 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id c4-20020a1c3504000000b003d9e2f72093so19199800wma.1;
+        Mon, 16 Jan 2023 08:43:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f/E+8L2nNxeWkA6s3DUbOSQakN8jVIdhHcZDVIHwYps=;
-        b=VR7Ib1BBKuYLVSp3WIWB4DRQO+8D4J76bPB7KlZ3Jt4l0TERYiSe7a4+8GA21ZG2+X
-         co3XvgAsRR9S1UpfeVUfczUZe5h9Vtcsxbrq21VDtSv/J0yEFn99C64WLd5sdWH/MLPw
-         HlkoN0CsB0JMfw7okqZwRUEbz5jPdzxuBPBVQUH98Ub6rIeUYxChkzLvzjfPCvrgLQwm
-         F05PLtcBRkZgJbNvyXgbCmXDB4U/LVkh9F6r1IBWbQg/27hQ9ctCEV/UQ18EDT8uWAtM
-         ZGNJex0qAGLce+9EFs2Ht8SUhFyoJk9YVCUAELtPhl92CxDYgVkkIdCoJcN2UMU62ffC
-         k0Jg==
+        bh=hdMES01EPPPE0n9D0ujpLqB92A4Ph7O7jAl0KOo2U5E=;
+        b=omy54DRAvSUB7i6EYvsO3YHFs/r5BjAXmaWpPrFeifZmPB0W93qQe71EzR3PVvZbsm
+         nzco5MkDgfKynzNzqYMJif02+0nYqNkuTYoR4KCcXFmlEh6siWcd7A1SbpcCpeOdlTdI
+         JWT5UL9xJBDxjY/Cef+FdjlMRZtG4AmLZ4YE3tXbnMefW1x4h7tw9IoIs79DCFniTq7g
+         GEhOU4ES2IWRtidNvii0gCcRLsbEZ4fsRHrCURqhpMrqrA17xmFYsaDKHFk6p42CWl5g
+         D/cJAdxM/VPPsZuqqDZqcuhJjKsSLu3WLxB+aFAucJ587yNGcZ5cgYmnpZDj9vWdkEtA
+         cFkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=f/E+8L2nNxeWkA6s3DUbOSQakN8jVIdhHcZDVIHwYps=;
-        b=NfzrG4w2l0pQ5xnW0RyN3v4EOjhrzE99+AbzHbWZwooEiemY1Qp4nwXHgL9bgJRk96
-         azAGMz2TX6W9mZkpCEbgcOcqe4V/r7mRh9gavUj0vnh/9qlkkconK5obY14s0qNFBrKz
-         oZ/U4BidIMAGgB81f1Ln/MKlFYEbaIO4Z0dVtolDb9zx0gsei0DsH4zqrtNBFrRiqpyf
-         +1mg5B2/HcMpEeQ5d3gIC/sOJokCFoQZLgO4eUjJewAhrzfWnFoSyeF+H9PAlqkDXKbM
-         hRa0gKTT9G4CmL2KjNn9l/7rBzYVRnW0etAK6gbIQeoxnr5a2F+WvsKWrumHysfkJNe5
-         2F9A==
-X-Gm-Message-State: AFqh2kqDrwBj1Ej7Wckj8w4vt9pczlnzsdf7UrLXt0OI3dDJPf2ipurH
-        J/zDVjgHdypyYiUQ9HmtcjrQm2nDiWfGZrsq
-X-Google-Smtp-Source: AMrXdXsgdvbCYVjrLvXsZb1bY+dKxiaYrFzVfelXx3yOCP1qxGF3nM9FHiJjEyC4aQYxfnFmCmKhEA==
-X-Received: by 2002:a05:600c:540c:b0:3cf:7704:50ce with SMTP id he12-20020a05600c540c00b003cf770450cemr7266wmb.38.1673885773414;
-        Mon, 16 Jan 2023 08:16:13 -0800 (PST)
+        bh=hdMES01EPPPE0n9D0ujpLqB92A4Ph7O7jAl0KOo2U5E=;
+        b=eOXiDlVLU7xnULfZ2bM7Xosy5TFTYpCr5oUTMFTfe7A3hGfyIS0E9GaXIHLlWtmIDG
+         QDx/tD1E1kSE+d9CAbES1VRQxDMrnIQsURuJMl5WSrSJA4MNVwDFoK41wFXvUO39MFa1
+         INe9GOCgZo2B+wC/3UgMb8ktwZQJ3lJCTaLhMdpYCBc7S8XAnYkbPGERXEjFYReypRt7
+         ojJrxj1thO+zlkGSo0yT3tdIQNuyFC7dIuolqnd87Jllog8R7pTAktvtvvvMaL9qaUoW
+         rWKU36x5+xsM16HBTSZsFrCBGsuj8oOjwIqiMojlIbCr6G9OUrXv6JzofZKgK2TQSus3
+         rWzA==
+X-Gm-Message-State: AFqh2krR+2uXTujuxhTVHvSJh45U7h52lruL0t6jEQtcr/18mATCEY6e
+        BrfKgoSMGFmVg5/QEAvy4xpBf17ZRF8rcr7t
+X-Google-Smtp-Source: AMrXdXu9vFGQR99Y245eOAWzlFecq6Ah7aU8g1JRMshkROR6DtVyxdV2Hhit9yRaF4npesCKsttOnA==
+X-Received: by 2002:a05:600c:5d1:b0:3d0:761b:f86 with SMTP id p17-20020a05600c05d100b003d0761b0f86mr98565wmd.28.1673887413230;
+        Mon, 16 Jan 2023 08:43:33 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id s7-20020a1cf207000000b003d98438a43asm32545526wmc.34.2023.01.16.08.16.12
+        by smtp.gmail.com with ESMTPSA id p13-20020a05600c1d8d00b003d9fb04f658sm8007889wms.4.2023.01.16.08.43.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 08:16:12 -0800 (PST)
+        Mon, 16 Jan 2023 08:43:32 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Daniel Bristot de Oliveira <bristot@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org
+To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] rv: remove redundant initialization of pointer ptr
-Date:   Mon, 16 Jan 2023 16:16:12 +0000
-Message-Id: <20230116161612.77192-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] mm/secretmem: remove redundant initiialization of pointer file
+Date:   Mon, 16 Jan 2023 16:43:32 +0000
+Message-Id: <20230116164332.79500-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,28 +64,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer ptr is being initialized with a value that is never read,
-it is being updated later on a call to strim. Remove the extraneous
+The pointer file is being initialized with a value that is never read, it
+is being re-assigned later on. Clean up code by removing the redundant
 initialization.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- kernel/trace/rv/rv.c | 2 +-
+ mm/secretmem.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index 6c97cc2d754a..7e9061828c24 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -516,7 +516,7 @@ static ssize_t enabled_monitors_write(struct file *filp, const char __user *user
- 	struct rv_monitor_def *mdef;
- 	int retval = -EINVAL;
- 	bool enable = true;
--	char *ptr = buff;
-+	char *ptr;
- 	int len;
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index 04c3ac9448a1..be3fff86ba00 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -190,7 +190,7 @@ static struct vfsmount *secretmem_mnt;
  
- 	if (count < 1 || count > MAX_RV_MONITOR_NAME_SIZE + 1)
+ static struct file *secretmem_file_create(unsigned long flags)
+ {
+-	struct file *file = ERR_PTR(-ENOMEM);
++	struct file *file;
+ 	struct inode *inode;
+ 	const char *anon_name = "[secretmem]";
+ 	const struct qstr qname = QSTR_INIT(anon_name, strlen(anon_name));
 -- 
 2.30.2
 
