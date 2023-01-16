@@ -2,90 +2,133 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8BBC67871
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 17:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A6FC46467
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 18:44:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234105AbjAPRCD (ORCPT
+        id S234317AbjAPSoq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Jan 2023 12:02:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
+        Mon, 16 Jan 2023 13:44:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbjAPRBW (ORCPT
+        with ESMTP id S233867AbjAPSoU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Jan 2023 12:01:22 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022585AB44;
-        Mon, 16 Jan 2023 08:43:34 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id c4-20020a1c3504000000b003d9e2f72093so19199800wma.1;
-        Mon, 16 Jan 2023 08:43:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hdMES01EPPPE0n9D0ujpLqB92A4Ph7O7jAl0KOo2U5E=;
-        b=omy54DRAvSUB7i6EYvsO3YHFs/r5BjAXmaWpPrFeifZmPB0W93qQe71EzR3PVvZbsm
-         nzco5MkDgfKynzNzqYMJif02+0nYqNkuTYoR4KCcXFmlEh6siWcd7A1SbpcCpeOdlTdI
-         JWT5UL9xJBDxjY/Cef+FdjlMRZtG4AmLZ4YE3tXbnMefW1x4h7tw9IoIs79DCFniTq7g
-         GEhOU4ES2IWRtidNvii0gCcRLsbEZ4fsRHrCURqhpMrqrA17xmFYsaDKHFk6p42CWl5g
-         D/cJAdxM/VPPsZuqqDZqcuhJjKsSLu3WLxB+aFAucJ587yNGcZ5cgYmnpZDj9vWdkEtA
-         cFkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hdMES01EPPPE0n9D0ujpLqB92A4Ph7O7jAl0KOo2U5E=;
-        b=eOXiDlVLU7xnULfZ2bM7Xosy5TFTYpCr5oUTMFTfe7A3hGfyIS0E9GaXIHLlWtmIDG
-         QDx/tD1E1kSE+d9CAbES1VRQxDMrnIQsURuJMl5WSrSJA4MNVwDFoK41wFXvUO39MFa1
-         INe9GOCgZo2B+wC/3UgMb8ktwZQJ3lJCTaLhMdpYCBc7S8XAnYkbPGERXEjFYReypRt7
-         ojJrxj1thO+zlkGSo0yT3tdIQNuyFC7dIuolqnd87Jllog8R7pTAktvtvvvMaL9qaUoW
-         rWKU36x5+xsM16HBTSZsFrCBGsuj8oOjwIqiMojlIbCr6G9OUrXv6JzofZKgK2TQSus3
-         rWzA==
-X-Gm-Message-State: AFqh2krR+2uXTujuxhTVHvSJh45U7h52lruL0t6jEQtcr/18mATCEY6e
-        BrfKgoSMGFmVg5/QEAvy4xpBf17ZRF8rcr7t
-X-Google-Smtp-Source: AMrXdXu9vFGQR99Y245eOAWzlFecq6Ah7aU8g1JRMshkROR6DtVyxdV2Hhit9yRaF4npesCKsttOnA==
-X-Received: by 2002:a05:600c:5d1:b0:3d0:761b:f86 with SMTP id p17-20020a05600c05d100b003d0761b0f86mr98565wmd.28.1673887413230;
-        Mon, 16 Jan 2023 08:43:33 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p13-20020a05600c1d8d00b003d9fb04f658sm8007889wms.4.2023.01.16.08.43.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 08:43:32 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mm/secretmem: remove redundant initiialization of pointer file
-Date:   Mon, 16 Jan 2023 16:43:32 +0000
-Message-Id: <20230116164332.79500-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 16 Jan 2023 13:44:20 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8FFF13523;
+        Mon, 16 Jan 2023 10:40:09 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2C8456071C;
+        Mon, 16 Jan 2023 18:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1673894408;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=46/SEf7/fXbPLGrF1rGRUK7+t20MRpthKLbpCiFgCX0=;
+        b=k2bdcbbql1J1a+Tywgx9KsmZgKmhmEwTnM9n1rfoIc3GtUgAlOn+OTQAqg0IBIRrElBEgg
+        Ucd0Q8vpm0UoNTGZtSUC3ylU5qMwvuG2sbjmKVr55lCdjswluuG2hzB7KUxRrAGm/0y0fp
+        quXWwGd0DtgzysxLb/G1xSUjazh30mo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1673894408;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=46/SEf7/fXbPLGrF1rGRUK7+t20MRpthKLbpCiFgCX0=;
+        b=zN6xwnewwYwwX9Q1hxU3eTAhckvH4QIxdrjp7a8kYw3FwW9qoncCuAb4D4z43m+SdlUQ//
+        8T+k7VaBXPmWhxAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DAB84138FE;
+        Mon, 16 Jan 2023 18:40:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id yXEJNAeaxWPTdwAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Mon, 16 Jan 2023 18:40:07 +0000
+Date:   Mon, 16 Jan 2023 19:34:30 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] btrfs: Fix spelling mistake "geneartion" ->
+ "generation"
+Message-ID: <20230116183430.GX11562@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20230116093847.26275-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230116093847.26275-1-colin.i.king@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer file is being initialized with a value that is never read, it
-is being re-assigned later on. Clean up code by removing the redundant
-initialization.
+On Mon, Jan 16, 2023 at 09:38:47AM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a btrfs warning message and in a comment.
+> Fix them both.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  fs/btrfs/scrub.c        | 2 +-
+>  fs/btrfs/tree-checker.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+> index 10c26bc8e60e..a5d026041be4 100644
+> --- a/fs/btrfs/scrub.c
+> +++ b/fs/btrfs/scrub.c
+> @@ -2106,7 +2106,7 @@ static int scrub_checksum_tree_block(struct scrub_block *sblock)
+>  		sblock->header_error = 1;
+>  		sblock->generation_error = 1;
+>  		btrfs_warn_rl(fs_info,
+> -		"tree block %llu mirror %u has bad geneartion, has %llu want %llu",
+> +		"tree block %llu mirror %u has bad generation, has %llu want %llu",
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- mm/secretmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Folded to the patch, thanks.
 
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index 04c3ac9448a1..be3fff86ba00 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -190,7 +190,7 @@ static struct vfsmount *secretmem_mnt;
- 
- static struct file *secretmem_file_create(unsigned long flags)
- {
--	struct file *file = ERR_PTR(-ENOMEM);
-+	struct file *file;
- 	struct inode *inode;
- 	const char *anon_name = "[secretmem]";
- 	const struct qstr qname = QSTR_INIT(anon_name, strlen(anon_name));
--- 
-2.30.2
+>  			      sblock->logical, sblock->mirror_num,
+>  			      btrfs_stack_header_generation(h),
+>  			      sector->generation);
+> diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
+> index baad1ed7e111..32cd06f7660e 100644
+> --- a/fs/btrfs/tree-checker.c
+> +++ b/fs/btrfs/tree-checker.c
+> @@ -1144,7 +1144,7 @@ static int check_root_item(struct extent_buffer *leaf, struct btrfs_key *key,
+>  	/*
+>  	 * For legacy root item, the members starting at generation_v2 will be
+>  	 * all filled with 0.
+> -	 * And since we allow geneartion_v2 as 0, it will still pass the check.
+> +	 * And since we allow generation_v2 as 0, it will still pass the check.
 
+This has been there for some time and codespell does not catch it,
+probably due to "_v2".
+
+What else I found in current misc-next:
+
+./raid56.c:1001: numer ==> number
+./raid56.c:1186: veritical ==> vertical
+./raid56.c:1360: Uptodate ==> Up-to-date
+./raid56.c:1524: behaviro ==> behavior
+./raid56.c:1768: veritical ==> vertical
+./raid56.h:68: Numer ==> Number
+./raid56.h:135: exlcuding ==> excluding
+./extent-io-tree.c:1628: Searche ==> Search, searched
+./super.c:2053: goup ==> group
+./volumes.c:730: constitutent ==> constituent
+./bio.c:286: sychronously ==> synchronously
+./compression.c:799: priting ==> printing
+./compression.c:1645: uncompressible ==> incompressible
+./compression.c:1645: uncompressible ==> incompressible
+./disk-io.c:770: Retrun ==> Return
+./disk-io.c:771: succesfuly ==> successfully
+./scrub.c:232: archtectures ==> architectures
+
+I'd rather apply one patch for all the typo fixes, can you do that
+please? The above is only from codespell I haven't looked if the
+suggestions are actually correct. Thanks.
