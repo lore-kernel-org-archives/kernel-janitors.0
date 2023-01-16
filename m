@@ -2,241 +2,212 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD50FC677F1
-	for <kernel-janitors@archiver.kernel.org>; Sun, 15 Jan 2023 20:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09730C46467
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 07:41:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231598AbjAOU52 (ORCPT
+        id S231972AbjAPHlg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 15 Jan 2023 15:57:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34514 "EHLO
+        Mon, 16 Jan 2023 02:41:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231329AbjAOU50 (ORCPT
+        with ESMTP id S231840AbjAPHle (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 15 Jan 2023 15:57:26 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB5A13535;
-        Sun, 15 Jan 2023 12:57:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-        t=1673816240; bh=iCHzrI3/Aj5kWtzk9CytDtglCVQ11xjtngzlljo+NhM=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=mQZiX84YBGlJE6qGlxkZJ6wHhQNjVe7JYb5V3YjMzB9jfFAuHlo3AqLX3tXTCkc6y
-         spmplv3CjcqAtJgscvGCe3OoR4W3hq4sKMWwxNnJUr9+JaCre0XepOHCOXED/18GbD
-         29W3suX2iteLzbQrTM5NE/dnJzvlbur72AQfdvxeR1AKSDtCJbJwfCp+8ITxpvHC9T
-         iMFHNtPiUJJ/cikqV3u6BvBgQswcqzx4IhLXajanGffjt9K55SZyVOy0DvxX7L+4cQ
-         ggGHQ1mOSnj0jLjc9txUiob7JWmOc4ys0gTmhVoj5RC2zx7wapcwrFYLRmLa2M8QqV
-         HFQYV4RozFApw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([92.116.161.25]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MLR1f-1p0K2N1GXD-00IVuK; Sun, 15
- Jan 2023 21:57:20 +0100
-Message-ID: <d892efab-39a8-02e4-5afb-3b33abdc58bc@gmx.de>
-Date:   Sun, 15 Jan 2023 21:57:19 +0100
+        Mon, 16 Jan 2023 02:41:34 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C845AC142;
+        Sun, 15 Jan 2023 23:41:29 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id az20so46906509ejc.1;
+        Sun, 15 Jan 2023 23:41:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=V9xXzKXRO+NGObj3dwVimAXlD4rcXBD5shnDxRrZZuA=;
+        b=qysVqxHpHhOd0B8XZacdoKyAMbMf00PMCmXmQU1jRSMF5p2Yj6ybuJbspeMYGwjCdn
+         hSwqqWsVKJSJIBvCIAklSque+uAL4J7jNtLL/PTx51nSUHfRyeJS6DVmW2X+K+K4Wo4z
+         TLnZ3gDKo8v7eblYIuuoUl8wfMlHojdD0+DWhWimeJWv2IfpFokx47VzO6qPLlkxrp/A
+         7+cjc9i9rwBjYbMrKLYdtl7yRozC9GoKDzlIX0ZaKY/y3EM6Dq+F03+d6Go9DjlCujnL
+         4uqRQQu51zybQHHVvpEHJkBFQqhKW8nT+UkN9wSYT+V7YJaJVctEN9IGSgk/z36U8QT9
+         D4xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V9xXzKXRO+NGObj3dwVimAXlD4rcXBD5shnDxRrZZuA=;
+        b=60/EAkhjHGI3IUUs9fL2Bg5bCa/6F9IvoazbfaywCqHbIDJjyCHw8yJToVxgIbm+Nm
+         WtttI74K5GJOhj3neWV5yfXA6rzVkwDHOGWI11PKx7CDTcprNDQwo3XGtEqlntiQ6t1O
+         i7JbGnIU7fReF4IB6Wm/6+S0hmljFlNGXglss2i05ShdRAtB1oGwrnnPuCrQXhhuqgpb
+         rLY+jxhBHXTnbUvXoZcqHtF9YQCa+N3cfJcPrItrg+FvxXGqBN8PYr7C93C1LVYt+V2z
+         YqnTRkkesXdPWx5xcbWqYxK3eEjFA/I9YTv1ZWohNXDijq1n04ilK4lOAa/+rDxrV4my
+         +GIA==
+X-Gm-Message-State: AFqh2kr6FPlf2WnlUwWzfTGGDDBcsdztPFsPnizv6yn0KWCGWXgvBly+
+        WeBuvuIRaNf02CkJcSDvj2ne8m83Gtes1jSxfCq37qOk
+X-Google-Smtp-Source: AMrXdXscUiZr7v1nbWrNcDcM2BSoIPDBsHyQWjtcKuZ7ybN2TxC9BzAoZJGzm1Gm7NCREpVwGAvOgGtCDKge4ZEuEcw=
+X-Received: by 2002:a17:906:f909:b0:86e:8b7b:adb0 with SMTP id
+ lc9-20020a170906f90900b0086e8b7badb0mr313198ejb.130.1673854888202; Sun, 15
+ Jan 2023 23:41:28 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v2] video: fbdev: omapfb: Use kstrtobool() instead of
- strtobool()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <b475ed9827ccef2081b557330a224f5fd8e6c8f3.1673686433.git.christophe.jaillet@wanadoo.fr>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <b475ed9827ccef2081b557330a224f5fd8e6c8f3.1673686433.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9gbLCh5+D4eAvUf/NKqhI7QbjcQ6WT5LZS7UN7n4wftXAbpNmmp
- /S7NFKRzt+2Eg/A9Do4y/aY2CAwsXHF5+M+4k9UD3RJAJOvYKBictBl2sX13OG/lpg0FIyn
- L5so/Urn9H3ycsFAR4R35tmkH81DoU/XhnDbqOIAa74MFMRWqCj3Y+Q2wH644ThPWoI6c0k
- 05qFQdpvkrbC/itkxhjWQ==
-UI-OutboundReport: notjunk:1;M01:P0:N4MIz6zWr3Q=;hJmGQLDQv3s1enQ4CbYyEvhbC6x
- zPJomF2ijGoTPS+8gchbBWCPpIHRKbxZYgMOJ5wTDjiFkdW7yq2PTjNNlOlOgYxC3XavAyDIE
- ygsRoOuzmEI4XXJWlzvCBrw1mVOSc89lZuGw6H9HbPaU9z4bK4F/OcoA+2BoGIt1YR5iuWjfs
- dFyddAqHWUw0nqJCeWXaOsjIaw/AZ4vNTCc6bOscqBCH0ThTxiHAmvKf34kqEJ4uNBGTKXmnI
- WyrkVqXfnzYQH33tzUkuDGSvemm7q/3vqhz6ga2FlaMgAaLScY0JwS3SyA737agnvryR+bMxs
- VOsqBQ7thMqJKn/JAutleC67ojMFJdcKpjMsncGPtZb/MXAGU+7r7l3srrTtv1jB1TkfVYhCA
- m5sWSG+kdbGw+8rTXWHLQqVuY4lHwgjL/MnZJwTKhZVLSbL77nMXignQeu3mW6pOQQqAbC3zT
- LD1ChrwesAhLOLsUE/Ym6M9sWKkT+fdzAb3vt5ykjVQDEnRkTItJMbl7XL3nZTAT9oEOCE0tn
- Ldyty4GCCoSgizmPLhyq4/3YDGVFo49zvylOK8BB4WkLja/O443BgmWKYaTdRQCAAws+TbsN5
- auOkq9FHDHsIULPH+1658Ud3cA2RJXuGlnESG52f97uoJTHAXy+BZEwf+2knhdfCOCc0j0K3C
- dLM9zODHUdKNN4oLerTqz2P21tayhwUAUxM6/pHk8rUoECdS2YZJTlCNZcFG+PdW2icTtdLQt
- 7w8HtvLNgFBBgGG7bYrf/0FJTGtklc7nfkPjOTlFjHESq3KjJxEImmYF74EVVciau6LuB82ZC
- 9aXkiTCLqeiigDwiJhGWSnYKWF5sck1mNhDwi5sToN0UyOgdC5VvdTOPPNBeB/u+n3RJC/T+J
- D7voijMu/UGV7WJuj3zq4TIt0JvYHCcKN4NKqsHGr2g0Py7Y0cV9sy1nmnkr4YqeR3RjnLyn/
- J1JaI+bkPT8y2jytxSz6N3BJpQ0=
+References: <n-Xd5VZl4mxdBIPvH-LgdDqAi8N9cL3TiAQ6fKEOpXLKsyDAxcf9VWQZfnMobTdIXucJJ1U2B82W6KhoODwWr_n3d-V9YkDcV92AjzxMrys=@n8pjl.ca>
+In-Reply-To: <n-Xd5VZl4mxdBIPvH-LgdDqAi8N9cL3TiAQ6fKEOpXLKsyDAxcf9VWQZfnMobTdIXucJJ1U2B82W6KhoODwWr_n3d-V9YkDcV92AjzxMrys=@n8pjl.ca>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Mon, 16 Jan 2023 08:41:17 +0100
+Message-ID: <CAKXUXMyBaTdFWvguHqQDD3e1CJ9nUoQ0yO_mTL836rP9LOrf7g@mail.gmail.com>
+Subject: Re: [PATCH] pcmcia: avoid defines prefixed with CONFIG
+To:     peter@n8pjl.ca
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux@dominikbrodowski.net" <linux@dominikbrodowski.net>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 1/14/23 09:54, Christophe JAILLET wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
+On Fri, Jan 13, 2023 at 4:30 PM Peter Lafreniere <peter@n8pjl.ca> wrote:
 >
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch t=
-o
-> the other function name.
+> Macros prefixed with "CONFIG_" should be relegated to Kconfig switches,
+> so we should change the config state flags to avoid conflicts.
 >
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> This change affects only code readability, not function.
 >
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-applied.
-
-Thanks!
-Helge
-
-
+> Signed-off-by: Peter Lafreniere <peter@n8pjl.ca>
 > ---
-> This patch was already sent as a part of a serie ([1]) that axed all usa=
-ges
-> of strtobool().
-> Most of the patches have been merged in -next.
->
-> I synch'ed with latest -next and re-send the remaining ones as individua=
-l
-> patches.
->
-> Changes in v2:
->    - No change
->
-> [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet=
-@wanadoo.fr/
-> ---
->   drivers/video/fbdev/omap2/omapfb/dss/display-sysfs.c | 7 ++++---
->   drivers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c | 7 ++++---
->   drivers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c | 3 ++-
->   drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c      | 3 ++-
->   4 files changed, 12 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/video/fbdev/omap2/omapfb/dss/display-sysfs.c b/driv=
-ers/video/fbdev/omap2/omapfb/dss/display-sysfs.c
-> index bc5a44c2a144..ae937854403b 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/dss/display-sysfs.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/dss/display-sysfs.c
-> @@ -10,6 +10,7 @@
->   #define DSS_SUBSYS_NAME "DISPLAY"
->
->   #include <linux/kernel.h>
-> +#include <linux/kstrtox.h>
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
->   #include <linux/sysfs.h>
-> @@ -36,7 +37,7 @@ static ssize_t display_enabled_store(struct omap_dss_d=
-evice *dssdev,
->   	int r;
->   	bool enable;
->
-> -	r =3D strtobool(buf, &enable);
-> +	r =3D kstrtobool(buf, &enable);
->   	if (r)
->   		return r;
->
-> @@ -73,7 +74,7 @@ static ssize_t display_tear_store(struct omap_dss_devi=
-ce *dssdev,
->   	if (!dssdev->driver->enable_te || !dssdev->driver->get_te)
->   		return -ENOENT;
->
-> -	r =3D strtobool(buf, &te);
-> +	r =3D kstrtobool(buf, &te);
->   	if (r)
->   		return r;
->
-> @@ -183,7 +184,7 @@ static ssize_t display_mirror_store(struct omap_dss_=
-device *dssdev,
->   	if (!dssdev->driver->set_mirror || !dssdev->driver->get_mirror)
->   		return -ENOENT;
->
-> -	r =3D strtobool(buf, &mirror);
-> +	r =3D kstrtobool(buf, &mirror);
->   	if (r)
->   		return r;
->
-> diff --git a/drivers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c b/driv=
-ers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c
-> index ba21c4a2633d..1b644be5fe2e 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/dss/manager-sysfs.c
-> @@ -10,6 +10,7 @@
->   #define DSS_SUBSYS_NAME "MANAGER"
->
->   #include <linux/kernel.h>
-> +#include <linux/kstrtox.h>
->   #include <linux/slab.h>
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
-> @@ -246,7 +247,7 @@ static ssize_t manager_trans_key_enabled_store(struc=
-t omap_overlay_manager *mgr,
->   	bool enable;
->   	int r;
->
-> -	r =3D strtobool(buf, &enable);
-> +	r =3D kstrtobool(buf, &enable);
->   	if (r)
->   		return r;
->
-> @@ -290,7 +291,7 @@ static ssize_t manager_alpha_blending_enabled_store(
->   	if(!dss_has_feature(FEAT_ALPHA_FIXED_ZORDER))
->   		return -ENODEV;
->
-> -	r =3D strtobool(buf, &enable);
-> +	r =3D kstrtobool(buf, &enable);
->   	if (r)
->   		return r;
->
-> @@ -329,7 +330,7 @@ static ssize_t manager_cpr_enable_store(struct omap_=
-overlay_manager *mgr,
->   	if (!dss_has_feature(FEAT_CPR))
->   		return -ENODEV;
->
-> -	r =3D strtobool(buf, &enable);
-> +	r =3D kstrtobool(buf, &enable);
->   	if (r)
->   		return r;
->
-> diff --git a/drivers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c b/driv=
-ers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c
-> index 601c0beb6de9..1da4fb1c77b4 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/dss/overlay-sysfs.c
-> @@ -13,6 +13,7 @@
->   #include <linux/err.h>
->   #include <linux/sysfs.h>
->   #include <linux/kobject.h>
-> +#include <linux/kstrtox.h>
->   #include <linux/platform_device.h>
->
->   #include <video/omapfb_dss.h>
-> @@ -210,7 +211,7 @@ static ssize_t overlay_enabled_store(struct omap_ove=
-rlay *ovl, const char *buf,
->   	int r;
->   	bool enable;
->
-> -	r =3D strtobool(buf, &enable);
-> +	r =3D kstrtobool(buf, &enable);
->   	if (r)
->   		return r;
->
-> diff --git a/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c b/drivers/v=
-ideo/fbdev/omap2/omapfb/omapfb-sysfs.c
-> index 06dc41aa0354..831b2c2fbdf9 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
-> @@ -15,6 +15,7 @@
->   #include <linux/uaccess.h>
->   #include <linux/platform_device.h>
->   #include <linux/kernel.h>
-> +#include <linux/kstrtox.h>
->   #include <linux/mm.h>
->   #include <linux/omapfb.h>
->
-> @@ -96,7 +97,7 @@ static ssize_t store_mirror(struct device *dev,
->   	int r;
->   	struct fb_var_screeninfo new_var;
->
-> -	r =3D strtobool(buf, &mirror);
-> +	r =3D kstrtobool(buf, &mirror);
->   	if (r)
->   		return r;
->
 
+Thanks for supporting the effort of the clean-up on removing CONFIG
+definitions that are not Kconfig options. Those three instances are
+all instances in drivers/pcmcia/ that the
+./scripts/checkkconfigsymbols.py points out. So that addresses yet
+another subsystem that is cleaned up. Renaming the defines is a good
+solution for these three instances.
+
+Reviewed-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+Lukas
+
+>  drivers/pcmcia/cs_internal.h     |  6 +++---
+>  drivers/pcmcia/pcmcia_resource.c | 26 +++++++++++++-------------
+>  2 files changed, 16 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/pcmcia/cs_internal.h b/drivers/pcmcia/cs_internal.h
+> index 580369f3c0b0..95df616fb0a4 100644
+> --- a/drivers/pcmcia/cs_internal.h
+> +++ b/drivers/pcmcia/cs_internal.h
+> @@ -59,9 +59,9 @@ struct pccard_resource_ops {
+>  };
+>
+>  /* Flags in config state */
+> -#define CONFIG_LOCKED          0x01
+> -#define CONFIG_IRQ_REQ         0x02
+> -#define CONFIG_IO_REQ          0x04
+> +#define CFG_LOCKED             0x01
+> +#define CFG_IRQ_REQ            0x02
+> +#define CFG_IO_REQ             0x04
+>
+>  /* Flags in socket state */
+>  #define SOCKET_PRESENT         0x0008
+> diff --git a/drivers/pcmcia/pcmcia_resource.c b/drivers/pcmcia/pcmcia_resource.c
+> index d78091e79a0f..d559977b9332 100644
+> --- a/drivers/pcmcia/pcmcia_resource.c
+> +++ b/drivers/pcmcia/pcmcia_resource.c
+> @@ -168,7 +168,7 @@ static int pcmcia_access_config(struct pcmcia_device *p_dev,
+>         mutex_lock(&s->ops_mutex);
+>         c = p_dev->function_config;
+>
+> -       if (!(c->state & CONFIG_LOCKED)) {
+> +       if (!(c->state & CFG_LOCKED)) {
+>                 dev_dbg(&p_dev->dev, "Configuration isn't locked\n");
+>                 mutex_unlock(&s->ops_mutex);
+>                 return -EACCES;
+> @@ -262,7 +262,7 @@ int pcmcia_fixup_iowidth(struct pcmcia_device *p_dev)
+>         dev_dbg(&p_dev->dev, "fixup iowidth to 8bit\n");
+>
+>         if (!(s->state & SOCKET_PRESENT) ||
+> -               !(p_dev->function_config->state & CONFIG_LOCKED)) {
+> +               !(p_dev->function_config->state & CFG_LOCKED)) {
+>                 dev_dbg(&p_dev->dev, "No card? Config not locked?\n");
+>                 ret = -EACCES;
+>                 goto unlock;
+> @@ -310,7 +310,7 @@ int pcmcia_fixup_vpp(struct pcmcia_device *p_dev, unsigned char new_vpp)
+>         dev_dbg(&p_dev->dev, "fixup Vpp to %d\n", new_vpp);
+>
+>         if (!(s->state & SOCKET_PRESENT) ||
+> -               !(p_dev->function_config->state & CONFIG_LOCKED)) {
+> +               !(p_dev->function_config->state & CFG_LOCKED)) {
+>                 dev_dbg(&p_dev->dev, "No card? Config not locked?\n");
+>                 ret = -EACCES;
+>                 goto unlock;
+> @@ -361,9 +361,9 @@ int pcmcia_release_configuration(struct pcmcia_device *p_dev)
+>                         s->ops->set_socket(s, &s->socket);
+>                 }
+>         }
+> -       if (c->state & CONFIG_LOCKED) {
+> -               c->state &= ~CONFIG_LOCKED;
+> -               if (c->state & CONFIG_IO_REQ)
+> +       if (c->state & CFG_LOCKED) {
+> +               c->state &= ~CFG_LOCKED;
+> +               if (c->state & CFG_IO_REQ)
+>                         for (i = 0; i < MAX_IO_WIN; i++) {
+>                                 if (!s->io[i].res)
+>                                         continue;
+> @@ -407,7 +407,7 @@ static void pcmcia_release_io(struct pcmcia_device *p_dev)
+>                 release_io_space(s, &c->io[1]);
+>
+>         p_dev->_io = 0;
+> -       c->state &= ~CONFIG_IO_REQ;
+> +       c->state &= ~CFG_IO_REQ;
+>
+>  out:
+>         mutex_unlock(&s->ops_mutex);
+> @@ -491,7 +491,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
+>
+>         mutex_lock(&s->ops_mutex);
+>         c = p_dev->function_config;
+> -       if (c->state & CONFIG_LOCKED) {
+> +       if (c->state & CFG_LOCKED) {
+>                 mutex_unlock(&s->ops_mutex);
+>                 dev_dbg(&p_dev->dev, "Configuration is locked\n");
+>                 return -EACCES;
+> @@ -581,7 +581,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
+>         }
+>
+>         /* Configure I/O windows */
+> -       if (c->state & CONFIG_IO_REQ) {
+> +       if (c->state & CFG_IO_REQ) {
+>                 iomap.speed = io_speed;
+>                 for (i = 0; i < MAX_IO_WIN; i++)
+>                         if (s->io[i].res) {
+> @@ -602,7 +602,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
+>                         }
+>         }
+>
+> -       c->state |= CONFIG_LOCKED;
+> +       c->state |= CFG_LOCKED;
+>         p_dev->_locked = 1;
+>         mutex_unlock(&s->ops_mutex);
+>         return 0;
+> @@ -635,11 +635,11 @@ int pcmcia_request_io(struct pcmcia_device *p_dev)
+>                 goto out;
+>         }
+>
+> -       if (c->state & CONFIG_LOCKED) {
+> +       if (c->state & CFG_LOCKED) {
+>                 dev_dbg(&p_dev->dev, "Configuration is locked\n");
+>                 goto out;
+>         }
+> -       if (c->state & CONFIG_IO_REQ) {
+> +       if (c->state & CFG_IO_REQ) {
+>                 dev_dbg(&p_dev->dev, "IO already configured\n");
+>                 goto out;
+>         }
+> @@ -663,7 +663,7 @@ int pcmcia_request_io(struct pcmcia_device *p_dev)
+>         } else
+>                 c->io[1].start = 0;
+>
+> -       c->state |= CONFIG_IO_REQ;
+> +       c->state |= CFG_IO_REQ;
+>         p_dev->_io = 1;
+>
+>         dev_dbg(&p_dev->dev, "pcmcia_request_io succeeded: %pR , %pR",
+> --
+> 2.39.0
+>
