@@ -2,104 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38716C46467
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 09:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C1AC54EBE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 10:07:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231868AbjAPJix (ORCPT
+        id S230032AbjAPKHm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Jan 2023 04:38:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33120 "EHLO
+        Mon, 16 Jan 2023 05:07:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231808AbjAPJiv (ORCPT
+        with ESMTP id S229668AbjAPKHN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Jan 2023 04:38:51 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F019518B1A;
-        Mon, 16 Jan 2023 01:38:50 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id r2so26856084wrv.7;
-        Mon, 16 Jan 2023 01:38:50 -0800 (PST)
+        Mon, 16 Jan 2023 05:07:13 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4E11B54B
+        for <kernel-janitors@vger.kernel.org>; Mon, 16 Jan 2023 02:06:49 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id o15so19575685wmr.4
+        for <kernel-janitors@vger.kernel.org>; Mon, 16 Jan 2023 02:06:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uWw0MNuvZ+RLzRl5Ziiy99iE7oykebQAiTZQIyD1oSA=;
-        b=SKbUMrPj9TutpM5ihnWS3SGFTRwO3C6CP98KJUdKW2j8jAy32GHFG3YNeE8k/Zoc2B
-         hwWCHQwloDbWuOboj9kvCgPiX5650JLr+ikdd/hmwv1DFcxiu4ARzOZxPExNwwELQOcQ
-         W9S9kCMos7EDcyDe8qV6OSttQwyia2bjbqgRKEzBZy04wWHlxGV9obHUkY/ahmUGXDbk
-         G12qzjEKkBV5XtEEA97SWjlR9q1qydpnRYu6b4BHyAbseO87DiSI0RgjEKfU7wJpl2Ls
-         ++EW3G+ICr/pjgUGYXMPK20nFy5S1lRRL8eA9NW6K/liq8Ofce6V+0MhLALnHylJwgsq
-         R3/A==
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l8ZbtSHOUAKocMKDLySjiAo61QyKAr+kh0P7nwLFVz8=;
+        b=nVswlCxitVNTLiT7uh4nFEbsUuOSEhdDRrH23xCJaSC+Rfrq4YtaiLJ5oxXmnTM9D+
+         xFXJKi05w0p27LuVFi3TPZUE2C65tAklXigoqHJf5izPL1mNbHYjH+N15AOlLQvdCMi2
+         n/6QQsMyP6X61SU84AT/vUc6njRjBxAIKSW3AKkna83+RTfF94EoC6Py3BRNwRlblpH5
+         wmma2QnZlIEdwcugtOudctASL9DnZBamIpOoj4Vvm4uSpqLQ+8KLn6/fgyCcDIFibXLD
+         9CD151eCLWnlq2BMfblrtBwKAKyMUmP+4nWHTHZ6ACW4ZD767WHTcDXhYNoLZRUT0kvS
+         j/bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uWw0MNuvZ+RLzRl5Ziiy99iE7oykebQAiTZQIyD1oSA=;
-        b=T76/s+BKn4okfgSNyKcLtKcAAmV3/y+tC8Ib3HnmAW6TK9j5ajZEF/JWMiVeeZCW2D
-         WyH2lyJBEmIis14OpVx+NL/AMu5R0RiKArpxCd0QvtF97IJr+E2oBm2jUACO+/VwW2DL
-         /DX96Url0GtM+zX85iYf82XOOCFhyWHfXhH8z21eKSk9avzPWGIa1HfTaPHb8nO3Bmsc
-         h7EPBLF5goH0mm+dKd4ypOS5Kl8arHX9YJDwGSIiluFgqEbxLEuwoD2/Ez1iptQ4TIIv
-         t4JFskk9cfM+2ebJtPhXenPoxlFMbZ9IWOs3QzHwv2zFDlBeGFYjrW2XVRVh1aHAZJL3
-         rZ0Q==
-X-Gm-Message-State: AFqh2krJIraTpg+xrFizOwsiyxARyU0pWWLvrWYRvWffPUEk2EKw/SjW
-        dkCKaELY74azTUJZzkfklcY=
-X-Google-Smtp-Source: AMrXdXtSVduXH27RxMaGcjotyxL/mHnEdbQfMrYxtHykP8whXboc6GFGpWiE8r0kYm2CltUUi3GY+A==
-X-Received: by 2002:a5d:4d8d:0:b0:2bd:ca88:d07a with SMTP id b13-20020a5d4d8d000000b002bdca88d07amr11398187wru.33.1673861929599;
-        Mon, 16 Jan 2023 01:38:49 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bt19-20020a056000081300b002bdc3f5945dsm13551207wrb.89.2023.01.16.01.38.48
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l8ZbtSHOUAKocMKDLySjiAo61QyKAr+kh0P7nwLFVz8=;
+        b=gbp9pat3vSKEjdUft5rtznoAKq4pUoWfn3DkSRfyyZTH9vVD4x72Kg6lYRuWxsd1HL
+         ZoOJIpmKun/RppailMkq9gVLjv/INXbsByMC0kPYGzmDleRDDM2qAlLhVkRboe2yDoCN
+         Vy+zjwNi2OoacMkQvwCyMRru2NO7Xxv6rJjFWAsloONkPeuT/O4Q/7FvF4TGbJ9q8S24
+         5es/pFhwF6NtFn92lniVq3EjiumvGn5n06Dr4klf4TupClkEr3ouXx5/76FXsl2OtUsh
+         /CdIviZNg28vGnbsFGOaeUoIorHSD12VlxGO0bTBNLR8f922kG19ZpKdMRNfzYxFcBwR
+         lTyw==
+X-Gm-Message-State: AFqh2krt1mJfmq+9KGHWZERl7n0Nq1uvQKTJ3KqV9lY7KkpnZbCNpYlI
+        gQ/4GVFgWmNEB8rXWlEIWQSfAH3BLm4=
+X-Google-Smtp-Source: AMrXdXteKOo/YtjCsBJ0u+t1ZYIC58kmKlq08Y/Q8ZOkMZpnDP+xIVM55DYsK+Ws0tbDQFbsKX0qCw==
+X-Received: by 2002:a05:600c:1c99:b0:3da:909f:1f6b with SMTP id k25-20020a05600c1c9900b003da909f1f6bmr6177374wms.1.1673863608513;
+        Mon, 16 Jan 2023 02:06:48 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id u2-20020a05600c210200b003d98f92692fsm11656315wml.17.2023.01.16.02.06.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 01:38:49 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] btrfs: Fix spelling mistake "geneartion" -> "generation"
-Date:   Mon, 16 Jan 2023 09:38:47 +0000
-Message-Id: <20230116093847.26275-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 16 Jan 2023 02:06:47 -0800 (PST)
+Date:   Mon, 16 Jan 2023 13:06:44 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     tariqt@nvidia.com
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] net/mlx5e: kTLS, Add debugfs
+Message-ID: <Y8UhtLhI3fEeRA++@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a btrfs warning message and in a comment.
-Fix them both.
+Hello Tariq Toukan,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/btrfs/scrub.c        | 2 +-
- fs/btrfs/tree-checker.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+The patch 0fedee1ae9ef: "net/mlx5e: kTLS, Add debugfs" from May 3,
+2022, leads to the following Smatch static checker warning:
 
-diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-index 10c26bc8e60e..a5d026041be4 100644
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -2106,7 +2106,7 @@ static int scrub_checksum_tree_block(struct scrub_block *sblock)
- 		sblock->header_error = 1;
- 		sblock->generation_error = 1;
- 		btrfs_warn_rl(fs_info,
--		"tree block %llu mirror %u has bad geneartion, has %llu want %llu",
-+		"tree block %llu mirror %u has bad generation, has %llu want %llu",
- 			      sblock->logical, sblock->mirror_num,
- 			      btrfs_stack_header_generation(h),
- 			      sector->generation);
-diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
-index baad1ed7e111..32cd06f7660e 100644
---- a/fs/btrfs/tree-checker.c
-+++ b/fs/btrfs/tree-checker.c
-@@ -1144,7 +1144,7 @@ static int check_root_item(struct extent_buffer *leaf, struct btrfs_key *key,
- 	/*
- 	 * For legacy root item, the members starting at generation_v2 will be
- 	 * all filled with 0.
--	 * And since we allow geneartion_v2 as 0, it will still pass the check.
-+	 * And since we allow generation_v2 as 0, it will still pass the check.
- 	 */
- 	read_extent_buffer(leaf, &ri, btrfs_item_ptr_offset(leaf, slot),
- 			   btrfs_item_size(leaf, slot));
--- 
-2.30.2
+	drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c:897 mlx5e_tls_tx_debugfs_init()
+	warn: 'tls->debugfs.dfs_tx' is an error pointer or valid
 
+drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c
+    890 static void mlx5e_tls_tx_debugfs_init(struct mlx5e_tls *tls,
+    891                                       struct dentry *dfs_root)
+    892 {
+    893         if (IS_ERR_OR_NULL(dfs_root))
+    894                 return;
+    895 
+    896         tls->debugfs.dfs_tx = debugfs_create_dir("tx", dfs_root);
+--> 897         if (!tls->debugfs.dfs_tx)
+
+This isn't NULL, but also the correct way to write debugsf code is to
+delete the error checking.  There are some exceptions where the driver
+dereferences ->dfs_tx directly to get the inode size or whatever, but it
+doesn't apply in this case.
+
+    898                 return;
+    899 
+    900         debugfs_create_size_t("pool_size", 0400, tls->debugfs.dfs_tx,
+    901                               &tls->tx_pool->size);
+    902 }
+
+regards,
+dan carpenter
