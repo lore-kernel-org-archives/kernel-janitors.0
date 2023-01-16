@@ -2,57 +2,57 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09730C46467
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 07:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A29F3C54EBE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 07:48:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231972AbjAPHlg (ORCPT
+        id S231967AbjAPHs5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Jan 2023 02:41:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52918 "EHLO
+        Mon, 16 Jan 2023 02:48:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231840AbjAPHle (ORCPT
+        with ESMTP id S231840AbjAPHsz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Jan 2023 02:41:34 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C845AC142;
-        Sun, 15 Jan 2023 23:41:29 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id az20so46906509ejc.1;
-        Sun, 15 Jan 2023 23:41:29 -0800 (PST)
+        Mon, 16 Jan 2023 02:48:55 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 468C1CDCD;
+        Sun, 15 Jan 2023 23:48:54 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id vw16so2888548ejc.12;
+        Sun, 15 Jan 2023 23:48:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=V9xXzKXRO+NGObj3dwVimAXlD4rcXBD5shnDxRrZZuA=;
-        b=qysVqxHpHhOd0B8XZacdoKyAMbMf00PMCmXmQU1jRSMF5p2Yj6ybuJbspeMYGwjCdn
-         hSwqqWsVKJSJIBvCIAklSque+uAL4J7jNtLL/PTx51nSUHfRyeJS6DVmW2X+K+K4Wo4z
-         TLnZ3gDKo8v7eblYIuuoUl8wfMlHojdD0+DWhWimeJWv2IfpFokx47VzO6qPLlkxrp/A
-         7+cjc9i9rwBjYbMrKLYdtl7yRozC9GoKDzlIX0ZaKY/y3EM6Dq+F03+d6Go9DjlCujnL
-         4uqRQQu51zybQHHVvpEHJkBFQqhKW8nT+UkN9wSYT+V7YJaJVctEN9IGSgk/z36U8QT9
-         D4xw==
+        bh=BveKnQYzfJcfYlQlVBW6q1fKDAnDrjIUIsSQNVV8cbo=;
+        b=L+wbY/8CkiQMynFh4aHwuT/QiZNNSTsIPyDk6a9CQKT+Mx+bJqEKS4kwbjjPSjK3tc
+         k81mQxiztbOMfjMZkGyJRpfztHtwzn/bemOFUEj9/57t/MEHgAqq1dkZx9hMWTu8MHDr
+         XAuh8PDmp14+8aV5qg3vuh/7oxaiNvHcHJOZB7WJs5VA3h1W00yyHnmo4bbCvAn1kPEA
+         SXy23P13ideCM0ezwQsUESggMCqj6wGTOBO347OM/IOWi88LcDwfnTgqqS8nLSnUQcl2
+         ne9JTarBsFi2ONedIWpRCqVIdZS7/DH94bRknR9W6F5q3zLSAWfIsJ2fr5dXBjG1jpMW
+         yOqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=V9xXzKXRO+NGObj3dwVimAXlD4rcXBD5shnDxRrZZuA=;
-        b=60/EAkhjHGI3IUUs9fL2Bg5bCa/6F9IvoazbfaywCqHbIDJjyCHw8yJToVxgIbm+Nm
-         WtttI74K5GJOhj3neWV5yfXA6rzVkwDHOGWI11PKx7CDTcprNDQwo3XGtEqlntiQ6t1O
-         i7JbGnIU7fReF4IB6Wm/6+S0hmljFlNGXglss2i05ShdRAtB1oGwrnnPuCrQXhhuqgpb
-         rLY+jxhBHXTnbUvXoZcqHtF9YQCa+N3cfJcPrItrg+FvxXGqBN8PYr7C93C1LVYt+V2z
-         YqnTRkkesXdPWx5xcbWqYxK3eEjFA/I9YTv1ZWohNXDijq1n04ilK4lOAa/+rDxrV4my
-         +GIA==
-X-Gm-Message-State: AFqh2kr6FPlf2WnlUwWzfTGGDDBcsdztPFsPnizv6yn0KWCGWXgvBly+
-        WeBuvuIRaNf02CkJcSDvj2ne8m83Gtes1jSxfCq37qOk
-X-Google-Smtp-Source: AMrXdXscUiZr7v1nbWrNcDcM2BSoIPDBsHyQWjtcKuZ7ybN2TxC9BzAoZJGzm1Gm7NCREpVwGAvOgGtCDKge4ZEuEcw=
-X-Received: by 2002:a17:906:f909:b0:86e:8b7b:adb0 with SMTP id
- lc9-20020a170906f90900b0086e8b7badb0mr313198ejb.130.1673854888202; Sun, 15
- Jan 2023 23:41:28 -0800 (PST)
+        bh=BveKnQYzfJcfYlQlVBW6q1fKDAnDrjIUIsSQNVV8cbo=;
+        b=LuH4sHnRcirwl+T8KfDqIXPCyWCA7Mq0jwg069QUxDUcFX99MFcRjB4lXFI6ea5J3c
+         +Dm/rs8L/hJNsLO3oioJHXVtks2h8EzicjOYhoVO3nKAX6iXbSH/BBoRhckwAO/CuQ8I
+         iv1J5us5GQYKV6xlM7KEFmHfYZUQ6Riq5qNVOEIbnkOlzPVlX3ItwqVFLDvybj4gdPLQ
+         fADXEcXAtiEwKhNFh+d0sE2YX5DV/9DfPIpp1z3iMOSVmm5eleZ3VMxpTkqJJonyK5qz
+         tVBOkVgAnCVmr+SLuPTlGLyDZ7YsB1sjxlQ72kS1h5/35Qzg76K60TjNS65pA75l/FUy
+         +MsA==
+X-Gm-Message-State: AFqh2krpbUNsO2Tm0WmAWOpSvM78XZboT8SHX1wuIkI2k9Meg0GSTx05
+        p6X2RYSt/BWAaZ9PKjag/+sikDH5dGDW3O5aMQA=
+X-Google-Smtp-Source: AMrXdXvZ+4+4TqdhQem+0vftK+QhVXUdMvzHwjSomU60LrE+mLihUcd7+EyxUSKEj7onvODE+IekAc2eLZRriQqElUk=
+X-Received: by 2002:a17:906:74ca:b0:84d:33bc:652a with SMTP id
+ z10-20020a17090674ca00b0084d33bc652amr4195405ejl.68.1673855332653; Sun, 15
+ Jan 2023 23:48:52 -0800 (PST)
 MIME-Version: 1.0
 References: <n-Xd5VZl4mxdBIPvH-LgdDqAi8N9cL3TiAQ6fKEOpXLKsyDAxcf9VWQZfnMobTdIXucJJ1U2B82W6KhoODwWr_n3d-V9YkDcV92AjzxMrys=@n8pjl.ca>
 In-Reply-To: <n-Xd5VZl4mxdBIPvH-LgdDqAi8N9cL3TiAQ6fKEOpXLKsyDAxcf9VWQZfnMobTdIXucJJ1U2B82W6KhoODwWr_n3d-V9YkDcV92AjzxMrys=@n8pjl.ca>
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 16 Jan 2023 08:41:17 +0100
-Message-ID: <CAKXUXMyBaTdFWvguHqQDD3e1CJ9nUoQ0yO_mTL836rP9LOrf7g@mail.gmail.com>
+Date:   Mon, 16 Jan 2023 08:48:41 +0100
+Message-ID: <CAKXUXMwbkDgwMvB-CDyDbL7CS1eSn4P=87BqfWCyvCvP+SkQ8A@mail.gmail.com>
 Subject: Re: [PATCH] pcmcia: avoid defines prefixed with CONFIG
 To:     peter@n8pjl.ca
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -70,144 +70,22 @@ On Fri, Jan 13, 2023 at 4:30 PM Peter Lafreniere <peter@n8pjl.ca> wrote:
 >
 > This change affects only code readability, not function.
 >
-> Signed-off-by: Peter Lafreniere <peter@n8pjl.ca>
-> ---
 
-Thanks for supporting the effort of the clean-up on removing CONFIG
-definitions that are not Kconfig options. Those three instances are
-all instances in drivers/pcmcia/ that the
-./scripts/checkkconfigsymbols.py points out. So that addresses yet
-another subsystem that is cleaned up. Renaming the defines is a good
-solution for these three instances.
+Peter,
 
-Reviewed-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+If you are interested in doing more clean-up work in this area, please
+let me know. I have a longer patch series of various changes that have
+been partially submitted and have not been included yet and some
+changes I have not sent yet, as they are really minor spelling fixes
+in comments. Further, I have a list of known false positives from the
+./scripts/checkkconfigsymbols.py warnings, which you can use to filter
+out some of the warnings, and some experience on this script to find
+what is more relevant to address first and what could go to the
+low-priority TODO list (that just might disappear, as old code is
+completely deleted).
+
+I can share all that with you if you just give me a ping.
+
+Best regards,
 
 Lukas
-
->  drivers/pcmcia/cs_internal.h     |  6 +++---
->  drivers/pcmcia/pcmcia_resource.c | 26 +++++++++++++-------------
->  2 files changed, 16 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/pcmcia/cs_internal.h b/drivers/pcmcia/cs_internal.h
-> index 580369f3c0b0..95df616fb0a4 100644
-> --- a/drivers/pcmcia/cs_internal.h
-> +++ b/drivers/pcmcia/cs_internal.h
-> @@ -59,9 +59,9 @@ struct pccard_resource_ops {
->  };
->
->  /* Flags in config state */
-> -#define CONFIG_LOCKED          0x01
-> -#define CONFIG_IRQ_REQ         0x02
-> -#define CONFIG_IO_REQ          0x04
-> +#define CFG_LOCKED             0x01
-> +#define CFG_IRQ_REQ            0x02
-> +#define CFG_IO_REQ             0x04
->
->  /* Flags in socket state */
->  #define SOCKET_PRESENT         0x0008
-> diff --git a/drivers/pcmcia/pcmcia_resource.c b/drivers/pcmcia/pcmcia_resource.c
-> index d78091e79a0f..d559977b9332 100644
-> --- a/drivers/pcmcia/pcmcia_resource.c
-> +++ b/drivers/pcmcia/pcmcia_resource.c
-> @@ -168,7 +168,7 @@ static int pcmcia_access_config(struct pcmcia_device *p_dev,
->         mutex_lock(&s->ops_mutex);
->         c = p_dev->function_config;
->
-> -       if (!(c->state & CONFIG_LOCKED)) {
-> +       if (!(c->state & CFG_LOCKED)) {
->                 dev_dbg(&p_dev->dev, "Configuration isn't locked\n");
->                 mutex_unlock(&s->ops_mutex);
->                 return -EACCES;
-> @@ -262,7 +262,7 @@ int pcmcia_fixup_iowidth(struct pcmcia_device *p_dev)
->         dev_dbg(&p_dev->dev, "fixup iowidth to 8bit\n");
->
->         if (!(s->state & SOCKET_PRESENT) ||
-> -               !(p_dev->function_config->state & CONFIG_LOCKED)) {
-> +               !(p_dev->function_config->state & CFG_LOCKED)) {
->                 dev_dbg(&p_dev->dev, "No card? Config not locked?\n");
->                 ret = -EACCES;
->                 goto unlock;
-> @@ -310,7 +310,7 @@ int pcmcia_fixup_vpp(struct pcmcia_device *p_dev, unsigned char new_vpp)
->         dev_dbg(&p_dev->dev, "fixup Vpp to %d\n", new_vpp);
->
->         if (!(s->state & SOCKET_PRESENT) ||
-> -               !(p_dev->function_config->state & CONFIG_LOCKED)) {
-> +               !(p_dev->function_config->state & CFG_LOCKED)) {
->                 dev_dbg(&p_dev->dev, "No card? Config not locked?\n");
->                 ret = -EACCES;
->                 goto unlock;
-> @@ -361,9 +361,9 @@ int pcmcia_release_configuration(struct pcmcia_device *p_dev)
->                         s->ops->set_socket(s, &s->socket);
->                 }
->         }
-> -       if (c->state & CONFIG_LOCKED) {
-> -               c->state &= ~CONFIG_LOCKED;
-> -               if (c->state & CONFIG_IO_REQ)
-> +       if (c->state & CFG_LOCKED) {
-> +               c->state &= ~CFG_LOCKED;
-> +               if (c->state & CFG_IO_REQ)
->                         for (i = 0; i < MAX_IO_WIN; i++) {
->                                 if (!s->io[i].res)
->                                         continue;
-> @@ -407,7 +407,7 @@ static void pcmcia_release_io(struct pcmcia_device *p_dev)
->                 release_io_space(s, &c->io[1]);
->
->         p_dev->_io = 0;
-> -       c->state &= ~CONFIG_IO_REQ;
-> +       c->state &= ~CFG_IO_REQ;
->
->  out:
->         mutex_unlock(&s->ops_mutex);
-> @@ -491,7 +491,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
->
->         mutex_lock(&s->ops_mutex);
->         c = p_dev->function_config;
-> -       if (c->state & CONFIG_LOCKED) {
-> +       if (c->state & CFG_LOCKED) {
->                 mutex_unlock(&s->ops_mutex);
->                 dev_dbg(&p_dev->dev, "Configuration is locked\n");
->                 return -EACCES;
-> @@ -581,7 +581,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
->         }
->
->         /* Configure I/O windows */
-> -       if (c->state & CONFIG_IO_REQ) {
-> +       if (c->state & CFG_IO_REQ) {
->                 iomap.speed = io_speed;
->                 for (i = 0; i < MAX_IO_WIN; i++)
->                         if (s->io[i].res) {
-> @@ -602,7 +602,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
->                         }
->         }
->
-> -       c->state |= CONFIG_LOCKED;
-> +       c->state |= CFG_LOCKED;
->         p_dev->_locked = 1;
->         mutex_unlock(&s->ops_mutex);
->         return 0;
-> @@ -635,11 +635,11 @@ int pcmcia_request_io(struct pcmcia_device *p_dev)
->                 goto out;
->         }
->
-> -       if (c->state & CONFIG_LOCKED) {
-> +       if (c->state & CFG_LOCKED) {
->                 dev_dbg(&p_dev->dev, "Configuration is locked\n");
->                 goto out;
->         }
-> -       if (c->state & CONFIG_IO_REQ) {
-> +       if (c->state & CFG_IO_REQ) {
->                 dev_dbg(&p_dev->dev, "IO already configured\n");
->                 goto out;
->         }
-> @@ -663,7 +663,7 @@ int pcmcia_request_io(struct pcmcia_device *p_dev)
->         } else
->                 c->io[1].start = 0;
->
-> -       c->state |= CONFIG_IO_REQ;
-> +       c->state |= CFG_IO_REQ;
->         p_dev->_io = 1;
->
->         dev_dbg(&p_dev->dev, "pcmcia_request_io succeeded: %pR , %pR",
-> --
-> 2.39.0
->
