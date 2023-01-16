@@ -2,90 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29F3C54EBE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 07:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38716C46467
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Jan 2023 09:38:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbjAPHs5 (ORCPT
+        id S231868AbjAPJix (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Jan 2023 02:48:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56378 "EHLO
+        Mon, 16 Jan 2023 04:38:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231840AbjAPHsz (ORCPT
+        with ESMTP id S231808AbjAPJiv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Jan 2023 02:48:55 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 468C1CDCD;
-        Sun, 15 Jan 2023 23:48:54 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id vw16so2888548ejc.12;
-        Sun, 15 Jan 2023 23:48:54 -0800 (PST)
+        Mon, 16 Jan 2023 04:38:51 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F019518B1A;
+        Mon, 16 Jan 2023 01:38:50 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id r2so26856084wrv.7;
+        Mon, 16 Jan 2023 01:38:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BveKnQYzfJcfYlQlVBW6q1fKDAnDrjIUIsSQNVV8cbo=;
-        b=L+wbY/8CkiQMynFh4aHwuT/QiZNNSTsIPyDk6a9CQKT+Mx+bJqEKS4kwbjjPSjK3tc
-         k81mQxiztbOMfjMZkGyJRpfztHtwzn/bemOFUEj9/57t/MEHgAqq1dkZx9hMWTu8MHDr
-         XAuh8PDmp14+8aV5qg3vuh/7oxaiNvHcHJOZB7WJs5VA3h1W00yyHnmo4bbCvAn1kPEA
-         SXy23P13ideCM0ezwQsUESggMCqj6wGTOBO347OM/IOWi88LcDwfnTgqqS8nLSnUQcl2
-         ne9JTarBsFi2ONedIWpRCqVIdZS7/DH94bRknR9W6F5q3zLSAWfIsJ2fr5dXBjG1jpMW
-         yOqw==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uWw0MNuvZ+RLzRl5Ziiy99iE7oykebQAiTZQIyD1oSA=;
+        b=SKbUMrPj9TutpM5ihnWS3SGFTRwO3C6CP98KJUdKW2j8jAy32GHFG3YNeE8k/Zoc2B
+         hwWCHQwloDbWuOboj9kvCgPiX5650JLr+ikdd/hmwv1DFcxiu4ARzOZxPExNwwELQOcQ
+         W9S9kCMos7EDcyDe8qV6OSttQwyia2bjbqgRKEzBZy04wWHlxGV9obHUkY/ahmUGXDbk
+         G12qzjEKkBV5XtEEA97SWjlR9q1qydpnRYu6b4BHyAbseO87DiSI0RgjEKfU7wJpl2Ls
+         ++EW3G+ICr/pjgUGYXMPK20nFy5S1lRRL8eA9NW6K/liq8Ofce6V+0MhLALnHylJwgsq
+         R3/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BveKnQYzfJcfYlQlVBW6q1fKDAnDrjIUIsSQNVV8cbo=;
-        b=LuH4sHnRcirwl+T8KfDqIXPCyWCA7Mq0jwg069QUxDUcFX99MFcRjB4lXFI6ea5J3c
-         +Dm/rs8L/hJNsLO3oioJHXVtks2h8EzicjOYhoVO3nKAX6iXbSH/BBoRhckwAO/CuQ8I
-         iv1J5us5GQYKV6xlM7KEFmHfYZUQ6Riq5qNVOEIbnkOlzPVlX3ItwqVFLDvybj4gdPLQ
-         fADXEcXAtiEwKhNFh+d0sE2YX5DV/9DfPIpp1z3iMOSVmm5eleZ3VMxpTkqJJonyK5qz
-         tVBOkVgAnCVmr+SLuPTlGLyDZ7YsB1sjxlQ72kS1h5/35Qzg76K60TjNS65pA75l/FUy
-         +MsA==
-X-Gm-Message-State: AFqh2krpbUNsO2Tm0WmAWOpSvM78XZboT8SHX1wuIkI2k9Meg0GSTx05
-        p6X2RYSt/BWAaZ9PKjag/+sikDH5dGDW3O5aMQA=
-X-Google-Smtp-Source: AMrXdXvZ+4+4TqdhQem+0vftK+QhVXUdMvzHwjSomU60LrE+mLihUcd7+EyxUSKEj7onvODE+IekAc2eLZRriQqElUk=
-X-Received: by 2002:a17:906:74ca:b0:84d:33bc:652a with SMTP id
- z10-20020a17090674ca00b0084d33bc652amr4195405ejl.68.1673855332653; Sun, 15
- Jan 2023 23:48:52 -0800 (PST)
+        bh=uWw0MNuvZ+RLzRl5Ziiy99iE7oykebQAiTZQIyD1oSA=;
+        b=T76/s+BKn4okfgSNyKcLtKcAAmV3/y+tC8Ib3HnmAW6TK9j5ajZEF/JWMiVeeZCW2D
+         WyH2lyJBEmIis14OpVx+NL/AMu5R0RiKArpxCd0QvtF97IJr+E2oBm2jUACO+/VwW2DL
+         /DX96Url0GtM+zX85iYf82XOOCFhyWHfXhH8z21eKSk9avzPWGIa1HfTaPHb8nO3Bmsc
+         h7EPBLF5goH0mm+dKd4ypOS5Kl8arHX9YJDwGSIiluFgqEbxLEuwoD2/Ez1iptQ4TIIv
+         t4JFskk9cfM+2ebJtPhXenPoxlFMbZ9IWOs3QzHwv2zFDlBeGFYjrW2XVRVh1aHAZJL3
+         rZ0Q==
+X-Gm-Message-State: AFqh2krJIraTpg+xrFizOwsiyxARyU0pWWLvrWYRvWffPUEk2EKw/SjW
+        dkCKaELY74azTUJZzkfklcY=
+X-Google-Smtp-Source: AMrXdXtSVduXH27RxMaGcjotyxL/mHnEdbQfMrYxtHykP8whXboc6GFGpWiE8r0kYm2CltUUi3GY+A==
+X-Received: by 2002:a5d:4d8d:0:b0:2bd:ca88:d07a with SMTP id b13-20020a5d4d8d000000b002bdca88d07amr11398187wru.33.1673861929599;
+        Mon, 16 Jan 2023 01:38:49 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id bt19-20020a056000081300b002bdc3f5945dsm13551207wrb.89.2023.01.16.01.38.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jan 2023 01:38:49 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] btrfs: Fix spelling mistake "geneartion" -> "generation"
+Date:   Mon, 16 Jan 2023 09:38:47 +0000
+Message-Id: <20230116093847.26275-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <n-Xd5VZl4mxdBIPvH-LgdDqAi8N9cL3TiAQ6fKEOpXLKsyDAxcf9VWQZfnMobTdIXucJJ1U2B82W6KhoODwWr_n3d-V9YkDcV92AjzxMrys=@n8pjl.ca>
-In-Reply-To: <n-Xd5VZl4mxdBIPvH-LgdDqAi8N9cL3TiAQ6fKEOpXLKsyDAxcf9VWQZfnMobTdIXucJJ1U2B82W6KhoODwWr_n3d-V9YkDcV92AjzxMrys=@n8pjl.ca>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 16 Jan 2023 08:48:41 +0100
-Message-ID: <CAKXUXMwbkDgwMvB-CDyDbL7CS1eSn4P=87BqfWCyvCvP+SkQ8A@mail.gmail.com>
-Subject: Re: [PATCH] pcmcia: avoid defines prefixed with CONFIG
-To:     peter@n8pjl.ca
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux@dominikbrodowski.net" <linux@dominikbrodowski.net>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jan 13, 2023 at 4:30 PM Peter Lafreniere <peter@n8pjl.ca> wrote:
->
-> Macros prefixed with "CONFIG_" should be relegated to Kconfig switches,
-> so we should change the config state flags to avoid conflicts.
->
-> This change affects only code readability, not function.
->
+There is a spelling mistake in a btrfs warning message and in a comment.
+Fix them both.
 
-Peter,
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/btrfs/scrub.c        | 2 +-
+ fs/btrfs/tree-checker.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-If you are interested in doing more clean-up work in this area, please
-let me know. I have a longer patch series of various changes that have
-been partially submitted and have not been included yet and some
-changes I have not sent yet, as they are really minor spelling fixes
-in comments. Further, I have a list of known false positives from the
-./scripts/checkkconfigsymbols.py warnings, which you can use to filter
-out some of the warnings, and some experience on this script to find
-what is more relevant to address first and what could go to the
-low-priority TODO list (that just might disappear, as old code is
-completely deleted).
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index 10c26bc8e60e..a5d026041be4 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -2106,7 +2106,7 @@ static int scrub_checksum_tree_block(struct scrub_block *sblock)
+ 		sblock->header_error = 1;
+ 		sblock->generation_error = 1;
+ 		btrfs_warn_rl(fs_info,
+-		"tree block %llu mirror %u has bad geneartion, has %llu want %llu",
++		"tree block %llu mirror %u has bad generation, has %llu want %llu",
+ 			      sblock->logical, sblock->mirror_num,
+ 			      btrfs_stack_header_generation(h),
+ 			      sector->generation);
+diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
+index baad1ed7e111..32cd06f7660e 100644
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -1144,7 +1144,7 @@ static int check_root_item(struct extent_buffer *leaf, struct btrfs_key *key,
+ 	/*
+ 	 * For legacy root item, the members starting at generation_v2 will be
+ 	 * all filled with 0.
+-	 * And since we allow geneartion_v2 as 0, it will still pass the check.
++	 * And since we allow generation_v2 as 0, it will still pass the check.
+ 	 */
+ 	read_extent_buffer(leaf, &ri, btrfs_item_ptr_offset(leaf, slot),
+ 			   btrfs_item_size(leaf, slot));
+-- 
+2.30.2
 
-I can share all that with you if you just give me a ping.
-
-Best regards,
-
-Lukas
