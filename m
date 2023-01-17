@@ -2,80 +2,258 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25993C63797
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Jan 2023 09:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 577B0C3DA78
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Jan 2023 10:03:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236551AbjAQJRJ (ORCPT
+        id S236352AbjAQKDp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Jan 2023 04:17:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47302 "EHLO
+        Tue, 17 Jan 2023 05:03:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236554AbjAQJQm (ORCPT
+        with ESMTP id S236447AbjAQKD0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Jan 2023 04:16:42 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA0F30293;
-        Tue, 17 Jan 2023 01:10:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 47115B81250;
-        Tue, 17 Jan 2023 09:10:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DB718C433F0;
-        Tue, 17 Jan 2023 09:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673946615;
-        bh=xZpznIQ09R4nUtwSDKcglfRLI5LKxCh4f6CTxDsf3JU=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=mJbhoZ6Nfl1pnPwjGi4AgiE4ZEb1fK1fAaYVOK5Pbr9ksfC94FIajxLeenbYibcm+
-         aQ5YgVFqAQ6rt1MZ/jogndVSrPxqLQruIw/jM56J39c2TziBGBeOj2QNrsvEAVXnHo
-         B5M8hbcqZwMaRc+fctkDOIK1KN/nACLfQyfeB+GtNMhw5IpiwmtixTFsJHo5y/3O0N
-         sCOX5z4s51OAo1wX/vaVry8WM/VmC0JtjlFC9YucZju6u838LYkD7T4zA/0gAFGc9R
-         JesPUXbiSJDqkWwyJHZw5om1b4Cat/WI3ZtyBVO0W/cTTfHT2Vf5qQUE26KfCkRfc0
-         3KYI9evh4UUvw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C1AA8C43147;
-        Tue, 17 Jan 2023 09:10:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 17 Jan 2023 05:03:26 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC1102C67E;
+        Tue, 17 Jan 2023 02:03:24 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id j17so3258680wms.0;
+        Tue, 17 Jan 2023 02:03:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jDTSmRwtuhSampwuymzbbEvtHIuPFvNY4RP4UxpSO18=;
+        b=Epjaxhxeg/xTyBpjJ8dK3TQ+2/6vTEWkYnkBmYYaK0QKdNvjQENHSyljWxgcTCRl4V
+         8iENmN1toOgAWGjQF5nHWK5HQ6hsVzwe3UYQ0m0QPrVLoqAHU4h1rncxuZkDDwZdS63w
+         5G+fsMjWfOqklDt1kU9pkwgPy05jwEi7BNUOmEV/yDtMvwpAEV7iASbbrBdbOlKgDhLS
+         Hkhi8tKsKlNpdgx9ZdZDDvv/pI6Ar6eO+ZFYT7Ohnat3e1bVUbVW41Qa5jZWkIAPtSNd
+         W4gBnxfO5uMHTAzYsLMkYPBJaK/obBugvR0bbgzJPijlG6ddcwxPR8ouSjpoxA8B3V4C
+         TP+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jDTSmRwtuhSampwuymzbbEvtHIuPFvNY4RP4UxpSO18=;
+        b=vSz0K/jmp0BGpfOET/bXQFceZAQLZiLqpj6SD3rqMUwgom4STkR/0WUFubfQVN1xGj
+         57Qa3BTSsUC0UluIFXTHRfQPf7NH88oLth8+9Cq/xKYUJhxDFrC394cvIrTgBhYvRwhL
+         32RjCTQSo9ACYaE7k1uskdUO0Wl0LLVndoIoZ10+W+VvpleVv/9/8/Xb7YTT1BjgF2r6
+         TDNx+1Q3jYIS60Skm5GtKplta/IVEVmhaERiV8iGniVT4ffS7c5sYhOA3MLHFOW3RrbG
+         CUQm+vyyvTn7H74GFekG2RX6ZC1oLoLf7cZrre6hHNxdY0dzYAt5Xn3w6N44qJhp+5WV
+         butQ==
+X-Gm-Message-State: AFqh2krif2AooEkHwa4iHul9CnRCDFNFwao2vcL8lFZ4FbGSs3DPYs5f
+        uajGxPBBG27j/Lm+Qh5Ro1o=
+X-Google-Smtp-Source: AMrXdXulFJH7mjDeKwureG6f1LaKIwECTX4q+r1Lbs/CtqNgE/BYMlVJ939Ui5mN3Zvi/mJtezzxBg==
+X-Received: by 2002:a05:600c:304a:b0:3d9:8635:a916 with SMTP id n10-20020a05600c304a00b003d98635a916mr2505428wmh.9.1673949803326;
+        Tue, 17 Jan 2023 02:03:23 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id k30-20020a05600c1c9e00b003d9b89a39b2sm40427155wms.10.2023.01.17.02.03.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jan 2023 02:03:22 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] btrfs: Fix spelling mistakes found using codespell
+Date:   Tue, 17 Jan 2023 10:03:21 +0000
+Message-Id: <20230117100321.113814-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] devlink: remove some unnecessary code
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167394661579.18505.5359254062812323564.git-patchwork-notify@kernel.org>
-Date:   Tue, 17 Jan 2023 09:10:15 +0000
-References: <Y8EJz8oxpMhfiPUb@kili>
-In-Reply-To: <Y8EJz8oxpMhfiPUb@kili>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     idosch@nvidia.com, jiri@nvidia.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+There quite a few spelling mistakes as found using codespell. Fix them.
+Thanks to David Sterba for pointing these out.
 
-This patch was applied to netdev/net-next.git (master)
-by Paolo Abeni <pabeni@redhat.com>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/btrfs/bio.c            |  2 +-
+ fs/btrfs/compression.c    |  4 ++--
+ fs/btrfs/disk-io.c        |  4 ++--
+ fs/btrfs/extent-io-tree.c |  2 +-
+ fs/btrfs/raid56.c         | 10 +++++-----
+ fs/btrfs/raid56.h         |  4 ++--
+ fs/btrfs/scrub.c          |  2 +-
+ fs/btrfs/super.c          |  2 +-
+ fs/btrfs/volumes.c        |  2 +-
+ 9 files changed, 16 insertions(+), 16 deletions(-)
 
-On Fri, 13 Jan 2023 10:35:43 +0300 you wrote:
-> This code checks if (attrs[DEVLINK_ATTR_TRAP_POLICER_ID]) twice.  Once
-> at the start of the function and then a couple lines later.  Delete the
-> second check since that one must be true.
-> 
-> Because the second condition is always true, it means the:
-> 
-> 	policer_item = group_item->policer_item;
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] devlink: remove some unnecessary code
-    https://git.kernel.org/netdev/net-next/c/501543b4fff0
-
-You are awesome, thank you!
+diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
+index 8affc88b0e0a..c3bf36fef3aa 100644
+--- a/fs/btrfs/bio.c
++++ b/fs/btrfs/bio.c
+@@ -283,7 +283,7 @@ void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio, int mirror
+  * RAID setup.  Here we only want to write the one bad copy, so we do the
+  * mapping ourselves and submit the bio directly.
+  *
+- * The I/O is issued sychronously to block the repair read completion from
++ * The I/O is issued synchronously to block the repair read completion from
+  * freeing the bio.
+  */
+ int btrfs_repair_io_failure(struct btrfs_fs_info *fs_info, u64 ino, u64 start,
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index 5122ca79f7ea..cca6838f6775 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -796,7 +796,7 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 			 * Save the initial offset of this chunk, as there
+ 			 * is no direct correlation between compressed pages and
+ 			 * the original file offset.  The field is only used for
+-			 * priting error messages.
++			 * printing error messages.
+ 			 */
+ 			btrfs_bio(comp_bio)->file_offset = file_offset;
+ 
+@@ -1642,7 +1642,7 @@ static void heuristic_collect_sample(struct inode *inode, u64 start, u64 end,
+  *
+  * For now is's a naive and optimistic 'return true', we'll extend the logic to
+  * quickly (compared to direct compression) detect data characteristics
+- * (compressible/uncompressible) to avoid wasting CPU time on uncompressible
++ * (compressible/incompressible) to avoid wasting CPU time on incompressible
+  * data.
+  *
+  * The following types of analysis can be performed:
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 3aa04224315e..5204a7340f36 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -763,8 +763,8 @@ static void run_one_async_free(struct btrfs_work *work)
+ /*
+  * Submit bio to an async queue.
+  *
+- * Retrun:
+- * - true if the work has been succesfuly submitted
++ * Return:
++ * - true if the work has been successfully submitted
+  * - false in case of error
+  */
+ bool btrfs_wq_submit_bio(struct btrfs_inode *inode, struct bio *bio, int mirror_num,
+diff --git a/fs/btrfs/extent-io-tree.c b/fs/btrfs/extent-io-tree.c
+index 3c7766dfaa69..6fb621e0c6e7 100644
+--- a/fs/btrfs/extent-io-tree.c
++++ b/fs/btrfs/extent-io-tree.c
+@@ -1625,7 +1625,7 @@ u64 count_range_bits(struct extent_io_tree *tree,
+ }
+ 
+ /*
+- * Searche a range in the state tree for a given mask.  If 'filled' == 1, this
++ * Search a range in the state tree for a given mask.  If 'filled' == 1, this
+  * returns 1 only if every extent in the tree has the bits set.  Otherwise, 1
+  * is returned if any bit in the range is found set.
+  */
+diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+index 6a2cf754912d..43f7a72161bf 100644
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -998,7 +998,7 @@ static int alloc_rbio_parity_pages(struct btrfs_raid_bio *rbio)
+ }
+ 
+ /*
+- * Return the total numer of errors found in the vertical stripe of @sector_nr.
++ * Return the total number of errors found in the vertical stripe of @sector_nr.
+  *
+  * @faila and @failb will also be updated to the first and second stripe
+  * number of the errors.
+@@ -1183,7 +1183,7 @@ static void bio_get_trace_info(struct btrfs_raid_bio *rbio, struct bio *bio,
+ 	trace_info->stripe_nr = -1;
+ }
+ 
+-/* Generate PQ for one veritical stripe. */
++/* Generate PQ for one vertical stripe. */
+ static void generate_pq_vertical(struct btrfs_raid_bio *rbio, int sectornr)
+ {
+ 	void **pointers = rbio->finish_pointers;
+@@ -1357,7 +1357,7 @@ static void set_rbio_range_error(struct btrfs_raid_bio *rbio, struct bio *bio)
+ }
+ 
+ /*
+- * For subpage case, we can no longer set page Uptodate directly for
++ * For subpage case, we can no longer set page Up-to-date directly for
+  * stripe_pages[], thus we need to locate the sector.
+  */
+ static struct sector_ptr *find_stripe_sector(struct btrfs_raid_bio *rbio,
+@@ -1521,7 +1521,7 @@ static int rmw_assemble_read_bios(struct btrfs_raid_bio *rbio,
+ 	/*
+ 	 * Build a list of bios to read all sectors (including data and P/Q).
+ 	 *
+-	 * This behaviro is to compensate the later csum verification and
++	 * This behavior is to compensate the later csum verification and
+ 	 * recovery.
+ 	 */
+ 	for (total_sector_nr = 0; total_sector_nr < rbio->nr_sectors;
+@@ -1765,7 +1765,7 @@ static int recover_vertical(struct btrfs_raid_bio *rbio, int sector_nr,
+ 	found_errors = get_rbio_veritical_errors(rbio, sector_nr, &faila,
+ 						 &failb);
+ 	/*
+-	 * No errors in the veritical stripe, skip it.  Can happen for recovery
++	 * No errors in the vertical stripe, skip it.  Can happen for recovery
+ 	 * which only part of a stripe failed csum check.
+ 	 */
+ 	if (!found_errors)
+diff --git a/fs/btrfs/raid56.h b/fs/btrfs/raid56.h
+index 7c73a443939e..df0e0abdeb1f 100644
+--- a/fs/btrfs/raid56.h
++++ b/fs/btrfs/raid56.h
+@@ -65,7 +65,7 @@ struct btrfs_raid_bio {
+ 	/* Number of data stripes (no p/q) */
+ 	u8 nr_data;
+ 
+-	/* Numer of all stripes (including P/Q) */
++	/* Number of all stripes (including P/Q) */
+ 	u8 real_stripes;
+ 
+ 	/* How many pages there are for each stripe */
+@@ -132,7 +132,7 @@ struct btrfs_raid_bio {
+ 
+ 	/*
+ 	 * Checksum buffer if the rbio is for data.  The buffer should cover
+-	 * all data sectors (exlcuding P/Q sectors).
++	 * all data sectors (excluding P/Q sectors).
+ 	 */
+ 	u8 *csum_buf;
+ 
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index 52b346795f66..f0efaecdb749 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -229,7 +229,7 @@ struct full_stripe_lock {
+ };
+ 
+ #ifndef CONFIG_64BIT
+-/* This structure is for archtectures whose (void *) is smaller than u64 */
++/* This structure is for architectures whose (void *) is smaller than u64 */
+ struct scrub_page_private {
+ 	u64 logical;
+ };
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 433ce221dc5c..f900e921ab22 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2049,7 +2049,7 @@ static int btrfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 		}
+ 
+ 		/*
+-		 * Metadata in mixed block goup profiles are accounted in data
++		 * Metadata in mixed block group profiles are accounted in data
+ 		 */
+ 		if (!mixed && found->flags & BTRFS_BLOCK_GROUP_METADATA) {
+ 			if (found->flags & BTRFS_BLOCK_GROUP_DATA)
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index bf0decaac7f3..877b0a3e4551 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -727,7 +727,7 @@ static struct btrfs_fs_devices *find_fsid_reverted_metadata(
+ 	/*
+ 	 * Handle the case where the scanned device is part of an fs whose last
+ 	 * metadata UUID change reverted it to the original FSID. At the same
+-	 * time * fs_devices was first created by another constitutent device
++	 * time * fs_devices was first created by another constituent device
+ 	 * which didn't fully observe the operation. This results in an
+ 	 * btrfs_fs_devices created with metadata/fsid different AND
+ 	 * btrfs_fs_devices::fsid_change set AND the metadata_uuid of the
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.30.2
 
