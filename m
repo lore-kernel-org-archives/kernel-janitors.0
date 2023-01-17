@@ -2,78 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 332B5C6379F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Jan 2023 06:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58659C3DA78
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Jan 2023 07:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235773AbjAQGoP (ORCPT
+        id S235796AbjAQHz0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Jan 2023 01:44:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44248 "EHLO
+        Tue, 17 Jan 2023 02:55:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235731AbjAQGoE (ORCPT
+        with ESMTP id S235772AbjAQHzW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Jan 2023 01:44:04 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605942005F;
-        Mon, 16 Jan 2023 22:44:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F033260F75;
-        Tue, 17 Jan 2023 06:44:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77024C433D2;
-        Tue, 17 Jan 2023 06:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673937843;
-        bh=Udx4r/gXUNGK85PWEZcekLE/XqdTwwDIDXtajpnNYVI=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=buBlts+XQqKp13V+BFgCkpNF388yQyubFLcLITHOOXcUAPFff2l8KpxcsyLtTD/tq
-         tqhHAJM51MrZrEujZHxyFChV6stIEjmgGvKeh7RqOfaVfw/bhCaprzk3sDFhK+9hvH
-         Tx4ORdY2v8qOTuH/FViR7CBDUGHgpLtGrhJUtm9cvcF0laqaIy/NpaaPrFr35YND0c
-         EzNMVlxaS8s1tX6enWKJEMRaahRAv4laQR24fMBlzoLb2s4UvtQ3ohU5XTMUHXXLJQ
-         YAbcQpawWwH0P+DX7Ph3cxxiWO5C9HMaSbncin6p5d78c6oRqpl/dZ93JKbeItqUqi
-         sxDqgW/WC0Tiw==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     Peter Lafreniere <peter@n8pjl.ca>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] wifi: rsi: Avoid defines prefixed with CONFIG
-References: <20230117032729.9578-1-peter@n8pjl.ca>
-Date:   Tue, 17 Jan 2023 08:44:00 +0200
-In-Reply-To: <20230117032729.9578-1-peter@n8pjl.ca> (Peter Lafreniere's
-        message of "Mon, 16 Jan 2023 22:27:29 -0500")
-Message-ID: <87mt6h8xu7.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 17 Jan 2023 02:55:22 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F0BF24480;
+        Mon, 16 Jan 2023 23:55:18 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id hw16so61516467ejc.10;
+        Mon, 16 Jan 2023 23:55:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Doys/SC0QOZ3upK94vMab3sn1eoA5ffBssidJQpR6WE=;
+        b=T7vjsLXATy6+GqiZT3hsLButMHNBLRladrcF5/He5OPGnFCjvUiXtlLVxdY+dP7iWW
+         hdkiuhaAaYo0QJZFRu1k6OoyFL6wLHV8LGBM2mGhlr9Iljzq792ZX2Rtxr0LeYNE2z+S
+         7wEMFCxC5mNwH5rI+dVxhl3mJJEyTNHkUydVBnrCMPeS7GLQ1tYPnKnBZzj3ASUom26S
+         aQwcHsr7MuzGbWyiCUhq9RYdpK1a+M5sM+WsZSIJQcVy5X1stM/STILqMb37S8hW2ngU
+         O/3sOPeR1n+CsDp7jjqrRUKfbu5WQsTwa3DlB4VV1CP7r+rEH1lhs3m67s8kiiZBTmOQ
+         TtmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Doys/SC0QOZ3upK94vMab3sn1eoA5ffBssidJQpR6WE=;
+        b=MOSiVSI3hRPexEkEWV9xT5muetD4T3NUmyJQjH1NB3h9XUqysKj6AgoMx+Veu3Mp4B
+         1gI7q0wcM6I/0Q4VBpuYkkcJ20qCbdXM5+rNpi/ppU/4GaIBgK3FJlCH8BL7nuisZp1J
+         12yFWmRspV/hzhkp8HB5iYHgHQRBV+F5CrE+/Vq+vWq2fgjgVdoWQUtMF88jsBFQwqNj
+         VHXBBf9c7JnocklqTh0Uw9SGnv7+kKJXTfO4HRHwfsC/BrCZaVJGhi6uc6okHEqKQFbn
+         SMnUMp/LnAcNsK6e0Dhj9JRQiPCLnZ9XITgrvNP7c0g91Fu1X3NbPRvRd7Gv0cgwv+bj
+         0fkA==
+X-Gm-Message-State: AFqh2kqhzO97heZcunE7uWYQTKvDxK3aGxUX3oYXWH5hcn+4u3it89e4
+        L05ItuThH5cs+ulmb6ZLp4sl/0BYxPv1+zzixx4=
+X-Google-Smtp-Source: AMrXdXtUspQBMKsdRawiO8iv21L66kOBo9o4QJxwo4y9amKrjl4eUvOXWL7oAQ8jT7OtiXFbPEJk/ALc+HxbDdpaNBA=
+X-Received: by 2002:a17:906:ce36:b0:7c1:6f86:ec4 with SMTP id
+ sd22-20020a170906ce3600b007c16f860ec4mr200821ejb.621.1673942116562; Mon, 16
+ Jan 2023 23:55:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <2b4bc0b22fac32ab3a7262240019486804c1691f.1673806409.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2b4bc0b22fac32ab3a7262240019486804c1691f.1673806409.git.christophe.jaillet@wanadoo.fr>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Tue, 17 Jan 2023 09:55:04 +0200
+Message-ID: <CAEnQRZC=JNGixTRVDnEK0p5rZWuQbOmQvApTUM5=0iJN9pzVRw@mail.gmail.com>
+Subject: Re: [PATCH] firmware: imx-dsp: Fix an error handling path in imx_dsp_setup_channels()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Paul Olaru <paul.olaru@nxp.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Peter Lafreniere <peter@n8pjl.ca> writes:
-
-> To avoid confusion, it is best to only define CONFIG_* macros in Kconfig
-> files. Here we change the name of one define, which causes no change to
-> functionality.
+On Sun, Jan 15, 2023 at 8:35 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> Signed-off-by: Peter Lafreniere <peter@n8pjl.ca>
-> ---
+> If mbox_request_channel_byname() fails, the memory allocated a few lines
+> above still need to be freed before going to the error handling path.
+>
+> Fixes: 046326989a18 ("firmware: imx: Save channel name for further use")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[...]
+Good catch.
 
-> --- a/drivers/net/wireless/rsi/rsi_hal.h
-> +++ b/drivers/net/wireless/rsi/rsi_hal.h
-> @@ -69,7 +69,7 @@
->  #define EOF_REACHED			'E'
->  #define CHECK_CRC			'K'
->  #define POLLING_MODE			'P'
-> -#define CONFIG_AUTO_READ_MODE		'R'
-> +#define CONFIGURE_AUTO_READ_MODE	'R'
-
-I would prefer to add a prefix instead, for example
-RSI_CONFIG_AUTO_READ_MODE or something like that.
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
