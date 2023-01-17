@@ -2,76 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A697EC63797
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Jan 2023 14:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E08C3DA78
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Jan 2023 15:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230253AbjAQOvx (ORCPT
+        id S232119AbjAQP1X (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Jan 2023 09:51:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37232 "EHLO
+        Tue, 17 Jan 2023 10:27:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230219AbjAQOvu (ORCPT
+        with ESMTP id S229803AbjAQP05 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Jan 2023 09:51:50 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C4A3B3DB;
-        Tue, 17 Jan 2023 06:51:49 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 453B0688C5;
-        Tue, 17 Jan 2023 14:51:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1673967108; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hTVeN2Bi9Z9fSTLDdrvLfcxsXOF6CNTVmA7ARmZ4o3Q=;
-        b=qxg4Q5qN/+xs80/V3voVIOMVPWX4qnwvTIgAzVkzlaCbfjTbCP6NQBf4gcCODirCddL58d
-        7QZojPW59Pj+DfNqtFUoRtttKoqNuuwvdImH4VDkjDLlwnoX/n9HsqoqRtvHmwlrt1X5Pp
-        lV9pA6pyFNMtVFnDTtOVOaAFOOXvO3c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1673967108;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hTVeN2Bi9Z9fSTLDdrvLfcxsXOF6CNTVmA7ARmZ4o3Q=;
-        b=HBpePNQTd+YVmdzaVz+mdNDmd0EXkdiNXWYxPLfPzD2CgdpqN8H8ZLzyh12Ij/90Pyjzy0
-        jHRaQh0p+0wKjbAA==
-Received: from pobox.suse.cz (pobox.suse.cz [10.100.2.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 226142C141;
-        Tue, 17 Jan 2023 14:51:48 +0000 (UTC)
-Date:   Tue, 17 Jan 2023 15:51:52 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     linux@rasmusvillemoes.dk, mcgrof@kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+        Tue, 17 Jan 2023 10:26:57 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0A0540BF8;
+        Tue, 17 Jan 2023 07:26:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=iQI88h0VSGDg33Wtb/20PzDWWfVjQlopCHtG0vCIRi8=; b=I4srSTwj4EKpgzxIws3jfvmII9
+        R7Hab00DMGE3oRqzWTO3xtS5QI/LRV5rxAL1s8gW0256uNUVgkYIlepRLpHJteg1FIBmZh3gWpHPy
+        7M8GEUcUipRvjjoxZmFhHGSaIX5w2q+Gln6wVdhWEoJNjMnkU9rVYrAE3sDXQtcyziIrfb5b9aHqF
+        FTsEM1SEDp+1KYmBJ7BWrhjYTLW2Zd14tfbd04uNLyvuL+SCq8h5iCeWmgy9Z0Z5M+vv83ltpAt9a
+        uMX6xY+k7HjFG8Ah5ZWdJr7aNs63Io7+ckIoIrzQhv/XTRZl0TH2VpTLGNfhAlk91mw3o8EivRsNw
+        zrExik8A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pHnrG-00Epf4-US; Tue, 17 Jan 2023 15:26:42 +0000
+Date:   Tue, 17 Jan 2023 07:26:42 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux@rasmusvillemoes.dk, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH v2] kernel/params.c: Use kstrtobool() instead of
  strtobool()
-In-Reply-To: <a0abd4f77374428bd3c9dd8b69b2afe52544c994.1673687215.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <alpine.LSU.2.21.2301171550500.24433@pobox.suse.cz>
+Message-ID: <Y8a+MtWgMfBf378R@bombadil.infradead.org>
 References: <a0abd4f77374428bd3c9dd8b69b2afe52544c994.1673687215.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+ <alpine.LSU.2.21.2301171550500.24433@pobox.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.2301171550500.24433@pobox.suse.cz>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 14 Jan 2023, Christophe JAILLET wrote:
-
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
+On Tue, Jan 17, 2023 at 03:51:52PM +0100, Miroslav Benes wrote:
+> On Sat, 14 Jan 2023, Christophe JAILLET wrote:
 > 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
+> > strtobool() is the same as kstrtobool().
+> > However, the latter is more used within the kernel.
+> > 
+> > In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> > the other function name.
+> > 
+> > While at it, include the corresponding header file (<linux/kstrtox.h>)
+> > 
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Luis, will you take it through your modules tree?
 
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+Yes, queued up, thanks!
 
-Luis, will you take it through your modules tree?
-
-M
+  Luis
