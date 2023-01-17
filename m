@@ -2,82 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58659C3DA78
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Jan 2023 07:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25993C63797
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Jan 2023 09:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235796AbjAQHz0 (ORCPT
+        id S236551AbjAQJRJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Jan 2023 02:55:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48750 "EHLO
+        Tue, 17 Jan 2023 04:17:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235772AbjAQHzW (ORCPT
+        with ESMTP id S236554AbjAQJQm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Jan 2023 02:55:22 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F0BF24480;
-        Mon, 16 Jan 2023 23:55:18 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id hw16so61516467ejc.10;
-        Mon, 16 Jan 2023 23:55:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Doys/SC0QOZ3upK94vMab3sn1eoA5ffBssidJQpR6WE=;
-        b=T7vjsLXATy6+GqiZT3hsLButMHNBLRladrcF5/He5OPGnFCjvUiXtlLVxdY+dP7iWW
-         hdkiuhaAaYo0QJZFRu1k6OoyFL6wLHV8LGBM2mGhlr9Iljzq792ZX2Rtxr0LeYNE2z+S
-         7wEMFCxC5mNwH5rI+dVxhl3mJJEyTNHkUydVBnrCMPeS7GLQ1tYPnKnBZzj3ASUom26S
-         aQwcHsr7MuzGbWyiCUhq9RYdpK1a+M5sM+WsZSIJQcVy5X1stM/STILqMb37S8hW2ngU
-         O/3sOPeR1n+CsDp7jjqrRUKfbu5WQsTwa3DlB4VV1CP7r+rEH1lhs3m67s8kiiZBTmOQ
-         TtmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Doys/SC0QOZ3upK94vMab3sn1eoA5ffBssidJQpR6WE=;
-        b=MOSiVSI3hRPexEkEWV9xT5muetD4T3NUmyJQjH1NB3h9XUqysKj6AgoMx+Veu3Mp4B
-         1gI7q0wcM6I/0Q4VBpuYkkcJ20qCbdXM5+rNpi/ppU/4GaIBgK3FJlCH8BL7nuisZp1J
-         12yFWmRspV/hzhkp8HB5iYHgHQRBV+F5CrE+/Vq+vWq2fgjgVdoWQUtMF88jsBFQwqNj
-         VHXBBf9c7JnocklqTh0Uw9SGnv7+kKJXTfO4HRHwfsC/BrCZaVJGhi6uc6okHEqKQFbn
-         SMnUMp/LnAcNsK6e0Dhj9JRQiPCLnZ9XITgrvNP7c0g91Fu1X3NbPRvRd7Gv0cgwv+bj
-         0fkA==
-X-Gm-Message-State: AFqh2kqhzO97heZcunE7uWYQTKvDxK3aGxUX3oYXWH5hcn+4u3it89e4
-        L05ItuThH5cs+ulmb6ZLp4sl/0BYxPv1+zzixx4=
-X-Google-Smtp-Source: AMrXdXtUspQBMKsdRawiO8iv21L66kOBo9o4QJxwo4y9amKrjl4eUvOXWL7oAQ8jT7OtiXFbPEJk/ALc+HxbDdpaNBA=
-X-Received: by 2002:a17:906:ce36:b0:7c1:6f86:ec4 with SMTP id
- sd22-20020a170906ce3600b007c16f860ec4mr200821ejb.621.1673942116562; Mon, 16
- Jan 2023 23:55:16 -0800 (PST)
+        Tue, 17 Jan 2023 04:16:42 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA0F30293;
+        Tue, 17 Jan 2023 01:10:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 47115B81250;
+        Tue, 17 Jan 2023 09:10:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DB718C433F0;
+        Tue, 17 Jan 2023 09:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673946615;
+        bh=xZpznIQ09R4nUtwSDKcglfRLI5LKxCh4f6CTxDsf3JU=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=mJbhoZ6Nfl1pnPwjGi4AgiE4ZEb1fK1fAaYVOK5Pbr9ksfC94FIajxLeenbYibcm+
+         aQ5YgVFqAQ6rt1MZ/jogndVSrPxqLQruIw/jM56J39c2TziBGBeOj2QNrsvEAVXnHo
+         B5M8hbcqZwMaRc+fctkDOIK1KN/nACLfQyfeB+GtNMhw5IpiwmtixTFsJHo5y/3O0N
+         sCOX5z4s51OAo1wX/vaVry8WM/VmC0JtjlFC9YucZju6u838LYkD7T4zA/0gAFGc9R
+         JesPUXbiSJDqkWwyJHZw5om1b4Cat/WI3ZtyBVO0W/cTTfHT2Vf5qQUE26KfCkRfc0
+         3KYI9evh4UUvw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C1AA8C43147;
+        Tue, 17 Jan 2023 09:10:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <2b4bc0b22fac32ab3a7262240019486804c1691f.1673806409.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <2b4bc0b22fac32ab3a7262240019486804c1691f.1673806409.git.christophe.jaillet@wanadoo.fr>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Tue, 17 Jan 2023 09:55:04 +0200
-Message-ID: <CAEnQRZC=JNGixTRVDnEK0p5rZWuQbOmQvApTUM5=0iJN9pzVRw@mail.gmail.com>
-Subject: Re: [PATCH] firmware: imx-dsp: Fix an error handling path in imx_dsp_setup_channels()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Paul Olaru <paul.olaru@nxp.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] devlink: remove some unnecessary code
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167394661579.18505.5359254062812323564.git-patchwork-notify@kernel.org>
+Date:   Tue, 17 Jan 2023 09:10:15 +0000
+References: <Y8EJz8oxpMhfiPUb@kili>
+In-Reply-To: <Y8EJz8oxpMhfiPUb@kili>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     idosch@nvidia.com, jiri@nvidia.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 15, 2023 at 8:35 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> If mbox_request_channel_byname() fails, the memory allocated a few lines
-> above still need to be freed before going to the error handling path.
->
-> Fixes: 046326989a18 ("firmware: imx: Save channel name for further use")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Hello:
 
-Good catch.
+This patch was applied to netdev/net-next.git (master)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+On Fri, 13 Jan 2023 10:35:43 +0300 you wrote:
+> This code checks if (attrs[DEVLINK_ATTR_TRAP_POLICER_ID]) twice.  Once
+> at the start of the function and then a couple lines later.  Delete the
+> second check since that one must be true.
+> 
+> Because the second condition is always true, it means the:
+> 
+> 	policer_item = group_item->policer_item;
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] devlink: remove some unnecessary code
+    https://git.kernel.org/netdev/net-next/c/501543b4fff0
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
