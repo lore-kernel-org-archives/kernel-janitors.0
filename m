@@ -2,72 +2,153 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD40C6379F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Jan 2023 15:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 578F1C38147
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Jan 2023 00:39:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232570AbjAQPnY (ORCPT
+        id S229689AbjARAjC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Jan 2023 10:43:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44594 "EHLO
+        Tue, 17 Jan 2023 19:39:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232871AbjAQPm5 (ORCPT
+        with ESMTP id S229682AbjARAiG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Jan 2023 10:42:57 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63FC146718;
-        Tue, 17 Jan 2023 07:39:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Kom6on8j6mSNlJKtIXaCMnBU1kbmwG1jw9oAyKkQ8ns=; b=0iiZ3N7aFYhkbvtWJZx5cdptZS
-        yb4woqkr/28SlChyuHssCvO+LdsYqwYMCR2KlpWDwgmjj2sGMuJ/1ZlV/ZEfOZFtyjNjL1VL/IrwN
-        v1SuDbSLbyxR34UrffovTlISRU/haUH1EExpP577jpfmPn2jxCepaOuwgJY4FyyV2FT+8E7irqrDQ
-        gjeBMOw3aaNA7s3VmYYiSyGoECcK+Q2fxYa3zRNjdcREhFW9BCh/gO/CxuFjTV26rhuLDJJnWiZiC
-        hdj49a074N0AC5/Y25Mm/bfEoigKL0XIdK0/rpPSw1H2n46K+U8vZ7JcmHCz9ypQ9z46RxJy0C7aJ
-        XuwroYCw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pHo3i-00EsoZ-1G; Tue, 17 Jan 2023 15:39:34 +0000
-Date:   Tue, 17 Jan 2023 07:39:33 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-modules@vger.kernel.org
-Subject: Re: [PATCH 18/30] module: Use kstrtobool() instead of strtobool()
-Message-ID: <Y8bBNcWZ9gZDk+LR@bombadil.infradead.org>
-References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
- <bb37ff26b0c748d0ca883d8f301190cd1177aad2.1667336095.git.christophe.jaillet@wanadoo.fr>
+        Tue, 17 Jan 2023 19:38:06 -0500
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457C24ED3
+        for <kernel-janitors@vger.kernel.org>; Tue, 17 Jan 2023 16:08:52 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id E03155C0116;
+        Tue, 17 Jan 2023 19:08:49 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 17 Jan 2023 19:08:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+         h=cc:cc:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1674000529; x=1674086929; bh=q1
+        PH25IQLsnN3LX7ptMcvbwCg622ib0Dmv0/dqTvCZA=; b=P8FOQBsndPGuLxLq9T
+        l9D6jY5klyaXi0DCeOes1MNz6w0Apdyf+s1DA/kZBTAHaw0kkfki9pHuCHh73AuE
+        PqzAv1peGHwq8I/3SC43++9eVp/yEry3tDeMtiPR6G2m/2Syw7XkUlPFkKPLZEdo
+        r/x3t+KizxhH4WGDyI+ztgT1NNrqwfF+tGYIEehjnNcQYy7bCxHdX4TquKJbOHAN
+        QACoOJYPpAgHDlQh6YY/5LHg+6k4EiezUyDU+AGJenQL6Ro1bXReKN0Y4oROJUEd
+        Us1/SLsj2AAAOWfrCDrxJYeKlggc6b8qSYhOkVp8KFiWpK+ocIgMjULfgrE8g/+A
+        Xbdw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1674000529; x=1674086929; bh=q1PH25IQLsnN3LX7ptMcvbwCg622
+        ib0Dmv0/dqTvCZA=; b=lFOPFzlbNDe9pBfWaQB42KArawY2shiWw5LlkRiyzNGj
+        CvssjeOIGV9LkUyPx10U9RKgY96W5RxZfwnL1XzlxHqE5xIMxDLdsXL99mjmKpUZ
+        8SZldZ5D4oErmCjk0puR42/P9MYMiX+1FflIi9nsdfdcfT7v4oLeUbcqrrItDRXW
+        q+qJ5X47Qk3+ZeMk7VH1YLf4ZD1sB//TP45Ew32lD36iBvz/KZ0vO7x1WkQmCu88
+        h9q/V6aVmNlDkG2/m5f/wojHblNw1RkG9dXEm9iGhcW0rATGjhZYLHS+OpS7LwjF
+        ORu5FVf240BE9H2hGQ5rO2hnjmlt3jzRtir0jz1jvw==
+X-ME-Sender: <xms:kTjHY7GjqjKMY6AsB28FZ8NjTaW8t2Y3clUhutYfPZSxzXgyuh3fOw>
+    <xme:kTjHY4XU2o6mSqHibk-E6WwO-4pDUk1qaO76a8I_RYr-xvJyEH74KiZki4NumaR3X
+    sc-71p20knoyQG3q2A>
+X-ME-Received: <xmr:kTjHY9JSGKZJEJHYTiNhbAmZqsCql5MMIqpxGo7KKh9kpvppYfILVZa9fhJcaH9yiwE_DE1SQhU4FxL7_x_TKA3lYAIAOnAICV1a>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedruddtjedgvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfgrkhgr
+    shhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhird
+    hjpheqnecuggftrfgrthhtvghrnhephefhhfettefgkedvieeuffevveeufedtlefhjeei
+    ieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjph
+X-ME-Proxy: <xmx:kTjHY5FbP01fYwovyfIKyJVm1yFSex1CHz3PfoSiC23u7i8wz_wRqQ>
+    <xmx:kTjHYxUHLjSCV5VASMWv6yDmWAkADzB7LR1YxBSMr09YtmLZy4K_8w>
+    <xmx:kTjHY0N-OND-gZ5jpCwS-yXPolHWyj5f9XKPcg9d_CohgIXXCPn2EA>
+    <xmx:kTjHY3zp5HPzEsC9VibJ3ZKqB3ZnKF_2PgYS6Jb3rtt11W1RDYGxKg>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 17 Jan 2023 19:08:47 -0500 (EST)
+Date:   Wed, 18 Jan 2023 09:08:45 +0900
+From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: fireface: fix locking bug in
+ ff400_copy_msg_to_user()
+Message-ID: <Y8c4jcr/Uo0wiCnq@workstation>
+Mail-Followup-To: Dan Carpenter <error27@gmail.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+References: <Y8at+W/7OGvEBY8O@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bb37ff26b0c748d0ca883d8f301190cd1177aad2.1667336095.git.christophe.jaillet@wanadoo.fr>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <Y8at+W/7OGvEBY8O@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 01, 2022 at 10:14:06PM +0100, Christophe JAILLET wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
-> 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
-> 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is part of a serie that axes all usages of strtobool().
-> Each patch can be applied independently from the other ones.
-> 
-> The last patch of the serie removes the definition of strtobool().
-> 
-> You may not be in copy of the cover letter. So, if needed, it is available
-> at [1].
-> 
-> [1]: https://lore.kernel.org/all/cover.1667336095.git.christophe.jaillet@wanadoo.fr/
-> ---
+Hi,
 
-Queued up to modules-next.
+On Tue, Jan 17, 2023 at 05:17:29PM +0300, Dan Carpenter wrote:
+> The ff400_copy_msg_to_user() function drops the spin lock to call
+> copy_to_user().  However, if the copy_to_user() fails, then it must
+> take the lock again before returning.  Failure to take the lock leads
+> to a double unlock in the caller, hwdep_read().
+> 
+> Fixes: acdebd8b4c0c ("ALSA: fireface: implement message parser for Fireface 400")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>  sound/firewire/fireface/ff-protocol-former.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
 
-  Luis
+Indeed. Thanks for your care.
+
+Acked-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+
+> diff --git a/sound/firewire/fireface/ff-protocol-former.c b/sound/firewire/fireface/ff-protocol-former.c
+> index f58008762fe6..fa41de978756 100644
+> --- a/sound/firewire/fireface/ff-protocol-former.c
+> +++ b/sound/firewire/fireface/ff-protocol-former.c
+> @@ -680,28 +680,30 @@ static long ff400_copy_msg_to_user(struct snd_ff *ff, char __user *buf, long cou
+>  	struct ff400_msg_parser *parser = ff->msg_parser;
+>  	u32 type = SNDRV_FIREWIRE_EVENT_FF400_MESSAGE;
+>  	long consumed = 0;
+> +	int ret = 0;
+>  
+>  	if (count < 8)
+>  		return 0;
+>  
+>  	spin_unlock_irq(&ff->lock);
+> -
+>  	if (copy_to_user(buf, &type, sizeof(type)))
+> -		return -EFAULT;
+> -
+> +		ret = -EFAULT;
+>  	spin_lock_irq(&ff->lock);
+> +	if (ret)
+> +		return ret;
+>  
+>  	count -= sizeof(type);
+>  	consumed += sizeof(type);
+>  
+>  	while (count >= sizeof(*parser->msgs) && parser->pull_pos != parser->push_pos) {
+>  		spin_unlock_irq(&ff->lock);
+> -
+>  		if (copy_to_user(buf + consumed, parser->msgs + parser->pull_pos,
+>  				 sizeof(*parser->msgs)))
+> -			return -EFAULT;
+> -
+> +			ret = -EFAULT;
+>  		spin_lock_irq(&ff->lock);
+> +		if (ret)
+> +			return ret;
+> +
+>  		++parser->pull_pos;
+>  		if (parser->pull_pos >= FF400_QUEUE_SIZE)
+>  			parser->pull_pos = 0;
+> -- 
+> 2.35.1
+ 
+
+Regards
+
+Takashi Sakamoto
