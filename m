@@ -2,94 +2,115 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56708C38159
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Jan 2023 08:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A06C0C677F1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Jan 2023 11:16:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbjARIUZ (ORCPT
+        id S229753AbjARLQj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 Jan 2023 03:20:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41106 "EHLO
+        Wed, 18 Jan 2023 06:16:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbjARITY (ORCPT
+        with ESMTP id S229751AbjARLQH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 Jan 2023 03:19:24 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A8246E833;
-        Tue, 17 Jan 2023 23:47:18 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id s3so10280687edd.4;
-        Tue, 17 Jan 2023 23:47:18 -0800 (PST)
+        Wed, 18 Jan 2023 06:16:07 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769387E683;
+        Wed, 18 Jan 2023 02:28:41 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id d2so13305065wrp.8;
+        Wed, 18 Jan 2023 02:28:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1LCPLBgrIk06G/mmYXIxpu2GlEPHwjS0EL5galTqjKo=;
-        b=mk6DYCPA+0dr5KzN8hWOljeu2+D2BOIf4y69CviWz0TxGM8p3ohAy/qdgWh+4tP7Pn
-         RU8t83mIghKo4gQNvEx22yvEMHQpZ6qlduuloCBR9WWdCLEkbSl73vXzNhzQgefnK2CS
-         JavXdDwYnoUjDgJTrtUjWN5YAgI1LgXr6n0YKvFpZ34QyA0AxZMjLUvlMQT/q7Cwvkmr
-         nawi1MgAM45bvssJ8V0lWmj8v9HfaEZVSFE+6zlrxcYcDKzQ04RuIowZkQr+Etiau4LM
-         pzQKX4TqbeOGYVBcQnpSQBERHLtm9Nhftr5l9o9QfqgkW8/OB+pyXuBUl8NDmqoNeav4
-         KpUQ==
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gzsqNrbxHo0OcC1GphGJCSObntaxHh0Sxvj/Esx93IQ=;
+        b=ilzZZfcSWcirWUeK0XagMp7feRsjm2KUvtSIRAOV4BzlMNPb2j/wSUUgJVcax0i6Zk
+         FqRXHfhUBYTg4Valawe/kFf/cdtqnGfeCNDdUOv5AKTTDE//KQ+w6tUd2lON6/wLtmGE
+         2bgnrkJQ4jXTadZXAqHYPvUMkQWPijq3KAK1GbnCYZuAT7orhR2OnHJcLIf3YitzN9vz
+         1v8LfZCSQn6EZE95hUJ8UBeetfpzLzSJSv/NfKcXUwKRipwc00oLTdiuBtidjCcDdqZn
+         a1O5e6fjWtndFhpfmNkSvSgPLaNLg7uuVHEKG+pyce3e9BHoHTNMXQrBdvcvfUC2+fWR
+         EYuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1LCPLBgrIk06G/mmYXIxpu2GlEPHwjS0EL5galTqjKo=;
-        b=F3fy+O7MkwwiTz7Z+zD3H5iaEPlWlvuVdiI7Kxgy0Wecq6equ/sYEE7bkXCFtpgyxY
-         otH68oswe+ABiCM5xNfzirvO9Ox09sQ2bRUvE06onkmAoOkhnUrMMM/hX9F/JHjh0exd
-         XRXGA2QYulipprkNcl0q3QG56q0KzFFWDnEfWp8aSyBXbAY4cGg/v1ZxA9Mtd/y4E8uk
-         C54ygW1fFvfV3Cjs9TbcK0uJKaA9oCpXHlIkhASMvYsEhTciPoe3exZOP+GmDyphLvyC
-         0NxkidXqmCifwkzyrer+cRBnYQui0eaw1h5EuD2m+pTlgRvNrChYslmPmi4zqaDfgzR7
-         bKkw==
-X-Gm-Message-State: AFqh2kpWWgjJYRhj3DjU1f8aw9AXkqxA27UJHkVgmFQ2CxVaKf76oJAb
-        BLhJoUETWc8QuTM98Qa2i74=
-X-Google-Smtp-Source: AMrXdXs+nGvLJcMIXH6ilNgO1yBx9w5fuQ2adsLupLu+3b5xhhSHqIu/FadeRG05Q0MYZTQT1snkNw==
-X-Received: by 2002:aa7:cc91:0:b0:46c:6ed1:83b0 with SMTP id p17-20020aa7cc91000000b0046c6ed183b0mr5821272edt.9.1674028036849;
-        Tue, 17 Jan 2023 23:47:16 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:595a:333:19d3:2dba])
-        by smtp.gmail.com with ESMTPSA id s1-20020aa7c541000000b00495c3573b36sm13813184edr.32.2023.01.17.23.47.15
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gzsqNrbxHo0OcC1GphGJCSObntaxHh0Sxvj/Esx93IQ=;
+        b=nvGrbKocnon5gqyfiMwhYqmeCJyCSOLIQaizWnsUnvwueixfJjzwaRC/+SMfLaN+20
+         KM7+8EmW9c2oLILNXeEDwpZAL1ExtYRsEIBaR0lSEfW6NqJLZ+Y1S77BKRB79o28YRAe
+         w4R/0LDuLP0M41MCmV5cfXz1DBJbFy0K3Pm3RwbJUPrCaagLFKb4HtUOj/4/5E/nce+v
+         Lx1wEMwfr3AbUS7R/Cs+L+hZRnYBT3dsHczUMiWgeqTQ5Pu46HfVO3hZHZXAM+Gk+xpY
+         CFbP3cq/yE8bOJLKlSgeeryXOfGraIQ87hReWMQZbRIz/bASzpdC37ZdiRf6UJdAUV4G
+         h+7A==
+X-Gm-Message-State: AFqh2kpLaiE3TUDtEkq8YO5fmW88yon6/Dk6/lCdLMI35RDxWon+ewUE
+        6rDUq/xTW18GT/d0oIm6cdA=
+X-Google-Smtp-Source: AMrXdXsonIed5RGvJTUyf5EJoU7UgpQhvl1SGxYWo4geApiRoNMiyzngTeNP1o/94hxuQ3koLTFs4A==
+X-Received: by 2002:adf:ea02:0:b0:2bd:f549:e4c with SMTP id q2-20020adfea02000000b002bdf5490e4cmr5423080wrm.14.1674037719901;
+        Wed, 18 Jan 2023 02:28:39 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id l7-20020a5d6747000000b002b57bae7174sm31400907wrw.5.2023.01.18.02.28.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jan 2023 23:47:16 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     William Breathitt Gray <william.gray@linaro.org>,
-        Peter Robinson <pbrobinson@gmail.com>,
-        linux-iio@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] counter: fix dependency references for config MICROCHIP_TCB_CAPTURE
-Date:   Wed, 18 Jan 2023 08:46:59 +0100
-Message-Id: <20230118074659.5909-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 18 Jan 2023 02:28:39 -0800 (PST)
+Date:   Wed, 18 Jan 2023 13:28:21 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Woojung Huh <woojung.huh@microchip.com>,
+        Christian Eggers <ceggers@arri.de>
+Cc:     UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Arun Ramadoss <arun.ramadoss@microchip.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: dsa: microchip: ptp: Fix error code in
+ ksz_hwtstamp_set()
+Message-ID: <Y8fJxSvbl7UNVHh/@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit dfeef15e73ca ("counter: microchip-tcp-capture: Add appropriate arch
-deps for TCP driver") intends to add appropriate dependencies for the
-config MICROCHIP_TCB_CAPTURE. It however prefixes the intended configs with
-CONFIG, but in Kconfig files in contrast to source files, the configs are
-referenced to without prefixing them with CONFIG.
+We want to return negative error codes here but the copy_to/from_user()
+functions return the number of bytes remaining to be copied.
 
-Fix the dependency references due to this minor misconception.
-
-Fixes: dfeef15e73ca ("counter: microchip-tcp-capture: Add appropriate arch deps for TCP driver")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fixes: c59e12a140fb ("net: dsa: microchip: ptp: Initial hardware time stamping support")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/counter/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/dsa/microchip/ksz_ptp.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
-index 90602536fb13..b5ba8fb02cf7 100644
---- a/drivers/counter/Kconfig
-+++ b/drivers/counter/Kconfig
-@@ -63,7 +63,7 @@ config INTERRUPT_CNT
+diff --git a/drivers/net/dsa/microchip/ksz_ptp.c b/drivers/net/dsa/microchip/ksz_ptp.c
+index a66a256f8814..4e22a695a64c 100644
+--- a/drivers/net/dsa/microchip/ksz_ptp.c
++++ b/drivers/net/dsa/microchip/ksz_ptp.c
+@@ -416,9 +416,8 @@ int ksz_hwtstamp_set(struct dsa_switch *ds, int port, struct ifreq *ifr)
  
- config MICROCHIP_TCB_CAPTURE
- 	tristate "Microchip Timer Counter Capture driver"
--	depends on CONFIG_SOC_AT91SAM9 || CONFIG_SOC_SAM_V7 || COMPILE_TEST
-+	depends on SOC_AT91SAM9 || SOC_SAM_V7 || COMPILE_TEST
- 	depends on HAS_IOMEM && OF
- 	select REGMAP_MMIO
- 	help
+ 	prt = &dev->ports[port];
+ 
+-	ret = copy_from_user(&config, ifr->ifr_data, sizeof(config));
+-	if (ret)
+-		return ret;
++	if (copy_from_user(&config, ifr->ifr_data, sizeof(config)))
++		return -EFAULT;
+ 
+ 	ret = ksz_set_hwtstamp_config(dev, prt, &config);
+ 	if (ret)
+@@ -426,7 +425,10 @@ int ksz_hwtstamp_set(struct dsa_switch *ds, int port, struct ifreq *ifr)
+ 
+ 	memcpy(&prt->tstamp_config, &config, sizeof(config));
+ 
+-	return copy_to_user(ifr->ifr_data, &config, sizeof(config));
++	if (copy_to_user(ifr->ifr_data, &config, sizeof(config)))
++		return -EFAULT;
++
++	return 0;
+ }
+ 
+ static ktime_t ksz_tstamp_reconstruct(struct ksz_device *dev, ktime_t tstamp)
 -- 
-2.17.1
+2.35.1
 
