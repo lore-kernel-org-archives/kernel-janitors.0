@@ -2,153 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 578F1C38147
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Jan 2023 00:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0832C32793
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Jan 2023 07:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbjARAjC (ORCPT
+        id S229606AbjARHs3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Jan 2023 19:39:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36218 "EHLO
+        Wed, 18 Jan 2023 02:48:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229682AbjARAiG (ORCPT
+        with ESMTP id S229704AbjARHrC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Jan 2023 19:38:06 -0500
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457C24ED3
-        for <kernel-janitors@vger.kernel.org>; Tue, 17 Jan 2023 16:08:52 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id E03155C0116;
-        Tue, 17 Jan 2023 19:08:49 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 17 Jan 2023 19:08:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1674000529; x=1674086929; bh=q1
-        PH25IQLsnN3LX7ptMcvbwCg622ib0Dmv0/dqTvCZA=; b=P8FOQBsndPGuLxLq9T
-        l9D6jY5klyaXi0DCeOes1MNz6w0Apdyf+s1DA/kZBTAHaw0kkfki9pHuCHh73AuE
-        PqzAv1peGHwq8I/3SC43++9eVp/yEry3tDeMtiPR6G2m/2Syw7XkUlPFkKPLZEdo
-        r/x3t+KizxhH4WGDyI+ztgT1NNrqwfF+tGYIEehjnNcQYy7bCxHdX4TquKJbOHAN
-        QACoOJYPpAgHDlQh6YY/5LHg+6k4EiezUyDU+AGJenQL6Ro1bXReKN0Y4oROJUEd
-        Us1/SLsj2AAAOWfrCDrxJYeKlggc6b8qSYhOkVp8KFiWpK+ocIgMjULfgrE8g/+A
-        Xbdw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; t=1674000529; x=1674086929; bh=q1PH25IQLsnN3LX7ptMcvbwCg622
-        ib0Dmv0/dqTvCZA=; b=lFOPFzlbNDe9pBfWaQB42KArawY2shiWw5LlkRiyzNGj
-        CvssjeOIGV9LkUyPx10U9RKgY96W5RxZfwnL1XzlxHqE5xIMxDLdsXL99mjmKpUZ
-        8SZldZ5D4oErmCjk0puR42/P9MYMiX+1FflIi9nsdfdcfT7v4oLeUbcqrrItDRXW
-        q+qJ5X47Qk3+ZeMk7VH1YLf4ZD1sB//TP45Ew32lD36iBvz/KZ0vO7x1WkQmCu88
-        h9q/V6aVmNlDkG2/m5f/wojHblNw1RkG9dXEm9iGhcW0rATGjhZYLHS+OpS7LwjF
-        ORu5FVf240BE9H2hGQ5rO2hnjmlt3jzRtir0jz1jvw==
-X-ME-Sender: <xms:kTjHY7GjqjKMY6AsB28FZ8NjTaW8t2Y3clUhutYfPZSxzXgyuh3fOw>
-    <xme:kTjHY4XU2o6mSqHibk-E6WwO-4pDUk1qaO76a8I_RYr-xvJyEH74KiZki4NumaR3X
-    sc-71p20knoyQG3q2A>
-X-ME-Received: <xmr:kTjHY9JSGKZJEJHYTiNhbAmZqsCql5MMIqpxGo7KKh9kpvppYfILVZa9fhJcaH9yiwE_DE1SQhU4FxL7_x_TKA3lYAIAOnAICV1a>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedruddtjedgvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfgrkhgr
-    shhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhird
-    hjpheqnecuggftrfgrthhtvghrnhephefhhfettefgkedvieeuffevveeufedtlefhjeei
-    ieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjph
-X-ME-Proxy: <xmx:kTjHY5FbP01fYwovyfIKyJVm1yFSex1CHz3PfoSiC23u7i8wz_wRqQ>
-    <xmx:kTjHYxUHLjSCV5VASMWv6yDmWAkADzB7LR1YxBSMr09YtmLZy4K_8w>
-    <xmx:kTjHY0N-OND-gZ5jpCwS-yXPolHWyj5f9XKPcg9d_CohgIXXCPn2EA>
-    <xmx:kTjHY3zp5HPzEsC9VibJ3ZKqB3ZnKF_2PgYS6Jb3rtt11W1RDYGxKg>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Jan 2023 19:08:47 -0500 (EST)
-Date:   Wed, 18 Jan 2023 09:08:45 +0900
-From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ALSA: fireface: fix locking bug in
- ff400_copy_msg_to_user()
-Message-ID: <Y8c4jcr/Uo0wiCnq@workstation>
-Mail-Followup-To: Dan Carpenter <error27@gmail.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
-References: <Y8at+W/7OGvEBY8O@kili>
+        Wed, 18 Jan 2023 02:47:02 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B8C454121;
+        Tue, 17 Jan 2023 23:15:26 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DC5D1B81A7F;
+        Wed, 18 Jan 2023 07:15:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCCFFC433EF;
+        Wed, 18 Jan 2023 07:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674026123;
+        bh=oswTGct7uqfO1zJc7lc+OiWYf2C5d3wtbTuKilVFf2Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uoCyU4c5xyWQfUmOagIswgZwedE5Dvg3e3KhOXKdFYdGy2TWV4wsaQWBRDw8bOk2z
+         aJgnuXB2DUwKDU/sRs6hSjmTl8hqVC5YInezrDxl6bswni7OlAhjgrkha18x0VcbiT
+         vLbFJFuNp+TzmcExiJkuq0m/j1cpfXT/QrItfysHQS3/dMyMMO84DwIl8D0wF/YHqd
+         mcvk08qUdh/0Ag4SmwGfDIEU64hfh2pXaDBdGOKjBi4XlolfA9l8OqibnviCIZG/df
+         RrBouVv0L06O1AwHFFlQvn9vJrUXi+AEcDu8R0Fhr7zzdfaoWm1QuSJz0lml5htA9s
+         2fx3CfwTS+ddQ==
+Date:   Wed, 18 Jan 2023 12:45:19 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: dw-edma: remove redundant config PCI
+ dependency for some Synopsys DesignWare eDMA driver configs
+Message-ID: <Y8ech6XHg7gMgruI@matsya>
+References: <20230111121637.24708-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y8at+W/7OGvEBY8O@kili>
+In-Reply-To: <20230111121637.24708-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-On Tue, Jan 17, 2023 at 05:17:29PM +0300, Dan Carpenter wrote:
-> The ff400_copy_msg_to_user() function drops the spin lock to call
-> copy_to_user().  However, if the copy_to_user() fails, then it must
-> take the lock again before returning.  Failure to take the lock leads
-> to a double unlock in the caller, hwdep_read().
+On 11-01-23, 13:16, Lukas Bulwahn wrote:
+> While reviewing dependencies in some Kconfig files, I noticed the redundant
+> dependency "depends on PCI && PCI_MSI". The config PCI_MSI has always,
+> since its introduction, been dependent on the config PCI. So, it is
+> sufficient to just depend on PCI_MSI, and know that the dependency on PCI
+> is implicitly implied.
 > 
-> Fixes: acdebd8b4c0c ("ALSA: fireface: implement message parser for Fireface 400")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  sound/firewire/fireface/ff-protocol-former.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
+> Reduce the dependencies of configs DW_EDMA and DW_EDMA_PCIE.
+> No functional change and effective change of Kconfig dependendencies.
 
-Indeed. Thanks for your care.
+Applied, thanks
 
-Acked-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-
-> diff --git a/sound/firewire/fireface/ff-protocol-former.c b/sound/firewire/fireface/ff-protocol-former.c
-> index f58008762fe6..fa41de978756 100644
-> --- a/sound/firewire/fireface/ff-protocol-former.c
-> +++ b/sound/firewire/fireface/ff-protocol-former.c
-> @@ -680,28 +680,30 @@ static long ff400_copy_msg_to_user(struct snd_ff *ff, char __user *buf, long cou
->  	struct ff400_msg_parser *parser = ff->msg_parser;
->  	u32 type = SNDRV_FIREWIRE_EVENT_FF400_MESSAGE;
->  	long consumed = 0;
-> +	int ret = 0;
->  
->  	if (count < 8)
->  		return 0;
->  
->  	spin_unlock_irq(&ff->lock);
-> -
->  	if (copy_to_user(buf, &type, sizeof(type)))
-> -		return -EFAULT;
-> -
-> +		ret = -EFAULT;
->  	spin_lock_irq(&ff->lock);
-> +	if (ret)
-> +		return ret;
->  
->  	count -= sizeof(type);
->  	consumed += sizeof(type);
->  
->  	while (count >= sizeof(*parser->msgs) && parser->pull_pos != parser->push_pos) {
->  		spin_unlock_irq(&ff->lock);
-> -
->  		if (copy_to_user(buf + consumed, parser->msgs + parser->pull_pos,
->  				 sizeof(*parser->msgs)))
-> -			return -EFAULT;
-> -
-> +			ret = -EFAULT;
->  		spin_lock_irq(&ff->lock);
-> +		if (ret)
-> +			return ret;
-> +
->  		++parser->pull_pos;
->  		if (parser->pull_pos >= FF400_QUEUE_SIZE)
->  			parser->pull_pos = 0;
-> -- 
-> 2.35.1
- 
-
-Regards
-
-Takashi Sakamoto
+-- 
+~Vinod
