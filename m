@@ -2,115 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13094C38147
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Jan 2023 18:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F930C00A5A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Jan 2023 06:51:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229540AbjARSyB (ORCPT
+        id S229528AbjASGvN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 Jan 2023 13:54:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37698 "EHLO
+        Thu, 19 Jan 2023 01:51:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjARSyA (ORCPT
+        with ESMTP id S229659AbjASGvL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 Jan 2023 13:54:00 -0500
-Received: from aib29gb127.yyz1.oracleemaildelivery.com (aib29gb127.yyz1.oracleemaildelivery.com [192.29.72.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC8865957F
-        for <kernel-janitors@vger.kernel.org>; Wed, 18 Jan 2023 10:53:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=oci-2023;
- d=n8pjl.ca;
- h=Date:To:From:Subject:Message-Id:MIME-Version:Sender;
- bh=HvmYGxZ3PCtj7Uea3ffl65o9PUU+NR2IdupH9AUgaLw=;
- b=HnD0LBFzuF0g5tMpHTp7m65pC+nCi6ZrmGp6wW7WBmtdWSzJtTimD9Ft3PdzZJP43Ekl5f1VPW9o
-   NPl3ZSITzBEBIMlXwZteq6hca35BO+XFiNRmqDOUQYKZlIrWUMQWO1BHIKjjGRRCXZ0bSPGEYjkB
-   whPYLjaon4/ESrWsb78dAZjGDiVb1wgCbr4jNQsitbF0ICGgVV0HwpvjQ4uAuvYz1WlT6QWBCtV6
-   dAHqIvUmeM3SsS8GihuKLtPkxvRd39XHXVKafJh3mwIlxmERN8BLRATfzW9NlUQ85q8916Pr5DRQ
-   kFd0O27SIFUvrGm63xCLHeKASSoMKYtp07VIGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=prod-yyz-20200204;
- d=yyz1.rp.oracleemaildelivery.com;
- h=Date:To:From:Subject:Message-Id:MIME-Version:Sender;
- bh=HvmYGxZ3PCtj7Uea3ffl65o9PUU+NR2IdupH9AUgaLw=;
- b=Ui3hFNx5yCNYXo2fgYbHjMyELT6IqsUMqCim7X8O3Pq0KNoDecpFEgJ2vejin2j5uVP8zDqH6odS
-   37zwrWGwJKe/SSWQ5ghzTspIWDi1qyriZH3ydllJ+3f/MnvJfjMbb5aNnwrKTQaXnpAk2JhgCOAo
-   IzBsLd0ISUM3O13UsmoZoxUPaTsAaEjuhjL12akxrqV/LHZfzu5oo/5ImzuUe4oIN/JAGynFcwxq
-   GtfbxdgX4gE4mENKd60oBzHRoFp1ceWrJMPQswSY4cxeUekU1FEFCAqQnv8vdPnPh2EwmYkEDxD8
-   08tqAOL7vnTOZEB4ByN8rNxP6Gj8lojtWS56mQ==
-Received: by omta-ad1-fd3-102-ca-toronto-1.omtaad1.vcndpyyz.oraclevcn.com
- (Oracle Communications Messaging Server 8.1.0.1.20221212 64bit (built Dec 12
- 2022))
- with ESMTPS id <0ROP00AS935W6600@omta-ad1-fd3-102-ca-toronto-1.omtaad1.vcndpyyz.oraclevcn.com> for
- kernel-janitors@vger.kernel.org; Wed, 18 Jan 2023 18:53:56 +0000 (GMT)
-From:   Peter Lafreniere <peter@n8pjl.ca>
-To:     linux-wireless@vger.kernel.org
-Cc:     Peter Lafreniere <peter@n8pjl.ca>, kernel-janitors@vger.kernel.org,
-        kvalo@kernel.org
-Subject: [PATCH v2] wifi: rsi: Avoid defines prefixed with CONFIG
-Date:   Wed, 18 Jan 2023 13:53:53 -0500
-Message-id: <20230118185353.2422-1-peter@n8pjl.ca>
-X-Mailer: git-send-email 2.39.0
-MIME-version: 1.0
-Content-transfer-encoding: 8bit
-Reporting-Meta: AAHTI2vs1IyzD/vgTOy84Ji/NKLmHFHPaVHR0ZxgJPPMpuFfMChswkLkl3fhBTBo
- PiFREIAkb8Ia75rXvcZw19oB6BQ/n9ntMqXTnLKHkseNDZi9+8kZBSHRUoWG3nUG
- ex2ZHYDOxwgNJqQT9XsGd0UJIFonLiYdcIjidIbrtGj9bUisW6HFMop6RNM+vD/f
- W/Zw5b1eCN+vn4PdOEeqv4R97SXzCqsR0ocKVlzu3dbQkEzkLGtdl0niUMKGHzro
- qF4uttOkHsevQq4iAHffr00xgP7ITAcCtzG+DtM+WsFMJ/Y62RTNgjtErh7BI0IC
- ft5vCFkT1jiTgPRQH23IfDsSP1bkKGSXFAScDmGIpF3fEpUZMmGT4AW39oh+WCu2
- fVtw+VxcHXGCSYURjMIv7KLz8KSU74QpcjIoUTNtextFFYH3MFK+WBE1CA7bl+2W
+        Thu, 19 Jan 2023 01:51:11 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71DF960489
+        for <kernel-janitors@vger.kernel.org>; Wed, 18 Jan 2023 22:51:08 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id i4so223072wrs.9
+        for <kernel-janitors@vger.kernel.org>; Wed, 18 Jan 2023 22:51:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M/DJ3YR/mwXkVm0qrVUuOsd9Y6kXfdKw0V70qz6kY7Y=;
+        b=oWjvoN1tvRpAXLalnl5XUcf+U5x9IB/KxQRLmYnAWRqbyvKotQ3VFZ7f2NYgFANMkQ
+         ZLOVbK93th4rlGbpXhPQr/eozanBSXfR2UCDQbrnhDHiIDk02DU5qi+hbb/INpsesRi1
+         eqarEsaOtOGqAQpRh/Be6DVnRCbq8bHITxnoj6Bui2MWNSSO51I4B5b5SB3pjwVqh2VP
+         lbIn8ZMXpo9dr+NuALkMULPcnctSHT6KwvpUd9yd33Lt2m1bzRDeSZ2EIADo3LAHKQ7I
+         SJYolGzB225SP4nhcqM7G/sEXDXNjQZWuzpRrBCYwkc0/sCf0FSSFGaVP1JYh+EAzCbf
+         dXiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M/DJ3YR/mwXkVm0qrVUuOsd9Y6kXfdKw0V70qz6kY7Y=;
+        b=B4VkBAEihD49NyN6O3XAyYojoPeWUuQ5rkWIRnUVjiuJ+o6k3g+hwQVI/QrIX2LlST
+         bxhhcTXdKcJSk4rO4ab1gzUhWE6UzYLC7P1K2ubqnlbsfOv9U0XKFU4Xc94ErUPN/eAu
+         /dIFXaurMuj/4VNpFqwoXBcTq+tnJ30lJyQUOe5LyIiPlOcQinPDdOYjBu5/f8jKoG3p
+         MMpoPAYjgHIrcEqthMCYDB+fDrZoHO5DO0J2WjqAqMWZKur93qQGznIhdiHdgr+9zdHO
+         0rsa90zyv/qAFMH6oeJLdlckyUWIaLlWKutApECVysxTlSlwad/RKWZgorbwguVsMH5R
+         sRdg==
+X-Gm-Message-State: AFqh2kobbJ+ocfaYurzlYQVFCEtLXdw+Slt8awObhzOXUGvL7JGkTbAe
+        Tsa5PbQgUtd1tNsJo/e15EtoMVTVyGZFSQ==
+X-Google-Smtp-Source: AMrXdXu/drsOiIDYqIqtk4VD/SYcqhjRNNSGa78rS+ww23F5ceyQwyjXKYGJVBrm3hTQq+NrouLc3g==
+X-Received: by 2002:a5d:50d0:0:b0:2bd:d9ae:41d4 with SMTP id f16-20020a5d50d0000000b002bdd9ae41d4mr8226240wrt.44.1674111066958;
+        Wed, 18 Jan 2023 22:51:06 -0800 (PST)
+Received: from [192.168.0.103] ([77.126.105.148])
+        by smtp.gmail.com with ESMTPSA id q15-20020adfab0f000000b002bde7999cd6sm15042762wrc.61.2023.01.18.22.51.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jan 2023 22:51:06 -0800 (PST)
+Message-ID: <cddf991f-cdf0-4054-5d0d-3955403d4f5c@gmail.com>
+Date:   Thu, 19 Jan 2023 08:51:04 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [bug report] net/mlx5e: kTLS, Add debugfs
+Content-Language: en-US
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
+        tariq Toukan <tariqt@nvidia.com>
+References: <Y8UhtLhI3fEeRA++@kili>
+From:   Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <Y8UhtLhI3fEeRA++@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Macros prefixed with CONFIG_ are intended to be defined only by
-Kconfig scripts. Here we remove the prefix from the
-CONFIG_AUTO_READ_MODE define to avoid confusion when reading the code.
 
-This causes no change to functionality.
 
-Signed-off-by: Peter Lafreniere <peter@n8pjl.ca>
----
-v1 -> v2:
- - Use AUTO_READ_MODE instead of CONFIGURE_AUTO_READ_MODE
- - Remove netdev from cc list
+On 16/01/2023 12:06, Dan Carpenter wrote:
+> Hello Tariq Toukan,
+> 
+> The patch 0fedee1ae9ef: "net/mlx5e: kTLS, Add debugfs" from May 3,
+> 2022, leads to the following Smatch static checker warning:
+> 
+> 	drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c:897 mlx5e_tls_tx_debugfs_init()
+> 	warn: 'tls->debugfs.dfs_tx' is an error pointer or valid
+> 
+> drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c
+>      890 static void mlx5e_tls_tx_debugfs_init(struct mlx5e_tls *tls,
+>      891                                       struct dentry *dfs_root)
+>      892 {
+>      893         if (IS_ERR_OR_NULL(dfs_root))
+>      894                 return;
+>      895
+>      896         tls->debugfs.dfs_tx = debugfs_create_dir("tx", dfs_root);
+> --> 897         if (!tls->debugfs.dfs_tx)
+> 
+> This isn't NULL, but also the correct way to write debugsf code is to
+> delete the error checking.  There are some exceptions where the driver
+> dereferences ->dfs_tx directly to get the inode size or whatever, but it
+> doesn't apply in this case.
+> 
+>      898                 return;
+>      899
+>      900         debugfs_create_size_t("pool_size", 0400, tls->debugfs.dfs_tx,
+>      901                               &tls->tx_pool->size);
+>      902 }
+> 
+> regards,
+> dan carpenter
 
- drivers/net/wireless/rsi/rsi_91x_hal.c | 4 ++--
- drivers/net/wireless/rsi/rsi_hal.h     | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Hi Dan,
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_hal.c b/drivers/net/wireless/rsi/rsi_91x_hal.c
-index c7460fbba014..d4489b943873 100644
---- a/drivers/net/wireless/rsi/rsi_91x_hal.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
-@@ -894,7 +894,7 @@ static int rsi_load_9113_firmware(struct rsi_hw *adapter)
- 	struct ta_metadata *metadata_p;
- 	int status;
- 
--	status = bl_cmd(adapter, CONFIG_AUTO_READ_MODE, CMD_PASS,
-+	status = bl_cmd(adapter, AUTO_READ_MODE, CMD_PASS,
- 			"AUTO_READ_CMD");
- 	if (status < 0)
- 		return status;
-@@ -984,7 +984,7 @@ static int rsi_load_9113_firmware(struct rsi_hw *adapter)
- 	}
- 	rsi_dbg(ERR_ZONE, "Firmware upgrade failed\n");
- 
--	status = bl_cmd(adapter, CONFIG_AUTO_READ_MODE, CMD_PASS,
-+	status = bl_cmd(adapter, AUTO_READ_MODE, CMD_PASS,
- 			"AUTO_READ_MODE");
- 	if (status)
- 		goto fail;
-diff --git a/drivers/net/wireless/rsi/rsi_hal.h b/drivers/net/wireless/rsi/rsi_hal.h
-index 5b07262a9740..479b1b0b57a6 100644
---- a/drivers/net/wireless/rsi/rsi_hal.h
-+++ b/drivers/net/wireless/rsi/rsi_hal.h
-@@ -69,7 +69,7 @@
- #define EOF_REACHED			'E'
- #define CHECK_CRC			'K'
- #define POLLING_MODE			'P'
--#define CONFIG_AUTO_READ_MODE		'R'
-+#define AUTO_READ_MODE			'R'
- #define JUMP_TO_ZERO_PC			'J'
- #define FW_LOADING_SUCCESSFUL		'S'
- #define LOADING_INITIATED		'1'
--- 
-2.39.0
+Thanks for your report.
+We'll analyze and handle soon.
 
+Regards,
+Tariq
