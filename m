@@ -2,106 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C29FC678D6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 05:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA2DC05027
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 08:55:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229495AbjATF16 (ORCPT
+        id S229554AbjATIzA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Jan 2023 00:27:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56164 "EHLO
+        Fri, 20 Jan 2023 03:55:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230365AbjATF1f (ORCPT
+        with ESMTP id S229458AbjATIy7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Jan 2023 00:27:35 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4654AD14;
-        Thu, 19 Jan 2023 21:22:10 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id o17-20020a05600c511100b003db021ef437so2827248wms.4;
-        Thu, 19 Jan 2023 21:22:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPUNBOEvi+EfT+XJWJvekQT2sNWEjQ5PxX/U+WoCuzc=;
-        b=YBIwhB603yUqIdel1BN1aQ2kRRXRXqB2ePnBo3AkabEKkIGyDyo6TflF9PCi7R+hXF
-         uM7KoCMnU6bNghykefMWau8xbi8kmQEoq0eKHop8Onk0DBVr0FMBryV2/DhXMkUxVxyW
-         +25pM8oejnfFKv2WQMqpFfhuNf+U+R7cRkBTKzRS9Ng0t/RojLDy6qWw6EkKgyf4PkPT
-         B2XYSyWpzPB9g9N21dEcnHRVUJwkRPSEsgEo5PUsnNMF1+YfJkhVuxfLSEFilB4J2Mtk
-         EohULOeh+ymbakO1zDxwI+oXnMV/seI/uIkLI/7sPHX5TxRBoO190pVfz9VszRXppNYv
-         aKXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZPUNBOEvi+EfT+XJWJvekQT2sNWEjQ5PxX/U+WoCuzc=;
-        b=W4rPLuRgliCjsl/eedr1speGyY6sdc3pRPEtQG1xCMrgH9NqgOoh4eZwbMA1DLwAXD
-         4MZvD4U35cdlEMsS9pKsOfqnV7V8Vuj9b1LzwsCKU0rMrgV3G227+dt/4BPDdB5rTGYZ
-         u/Ei4agiKDQS+mZRIhNLoQ6Dhb1HCbkbKUN1SGEz9os0/idpmp709NsSbwShvrQBSFQV
-         zQgLy75/zfKOyyRvLhnnhKVUkWOZnAD+FGalrPRyj7qR9Zh8XF1Xdngg4laS2iA38OL+
-         TSbjkDXFN9TGSgtHL1mHG27twMLopbNpSERS0pkwBewh7RelG5wVwvjBDfrRSsrhV+8A
-         gE1g==
-X-Gm-Message-State: AFqh2krwJfH3DGw3eUWzFo74cZZAxw9GS5/JJJfz7hN2bWxGFDcsCkrD
-        H4uO10bk2woGCDXx/cq4g1LMjXC0VN4aAA==
-X-Google-Smtp-Source: AMrXdXvzl4+RN1WjgYUz4tRPCvty5ZKlP8ibxlgMTYBueXvwytqo0rr34srYHacHIL0AlSzaowxE1A==
-X-Received: by 2002:a05:600c:3b1b:b0:3da:11d7:dba3 with SMTP id m27-20020a05600c3b1b00b003da11d7dba3mr12497450wms.5.1674192129466;
-        Thu, 19 Jan 2023 21:22:09 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id k16-20020a05600c0b5000b003db0a08694bsm1118757wmr.8.2023.01.19.21.22.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jan 2023 21:22:09 -0800 (PST)
-Date:   Fri, 20 Jan 2023 08:22:06 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, nvdimm@lists.linux.dev,
-        linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        cip-dev <cip-dev@lists.cip-project.org>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH v2] ACPI: NFIT: prevent underflow in acpi_nfit_ctl()
-Message-ID: <Y8ok/oCxzOhFDEQ+@kadam>
-References: <Y8ldQn1v4r5i5WLX@kadam>
- <x49y1py5wcd.fsf@segfault.boston.devel.redhat.com>
+        Fri, 20 Jan 2023 03:54:59 -0500
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF96D5B9A
+        for <kernel-janitors@vger.kernel.org>; Fri, 20 Jan 2023 00:54:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674204898; x=1705740898;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7oANbYIjgIDFI3cmChN7wYp6Yx10CkYP0TIkgphGYbE=;
+  b=efDs0UHeeFBUqP218BMauLAurQttgrKoKC81/eLGQp54Gwro2vu6Iy54
+   3w0yLLldMTPqm0I5edjmFQymUcruJCLQwt+BoVEw84OpKJDk6Lz827knF
+   +dPLT4NLy/06OqyGd3705FfSGkoyZM7BMKs7ZPHBT1ZBKE2M6U7EHpfsP
+   s2g1DKyBmJ3jZ3chKNPD52Xq+L4M6bIQRi3uMjHXHI2xcBY17RjkgqkhP
+   HFF0kQwzVifLtUAqbc6GNz0gm6YlU7bhaq89b4CfZBD3FMgWqf8RWSnnU
+   G8IArtKwWHl1nndbYaXdJ99JCMCKASiNpEjjTaUIu0d/28sDRgh8yW/Hr
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="387901723"
+X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
+   d="scan'208";a="387901723"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2023 00:54:58 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="803007044"
+X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
+   d="scan'208";a="803007044"
+Received: from karenodx-mobl1.ger.corp.intel.com (HELO [10.252.29.156]) ([10.252.29.156])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2023 00:54:54 -0800
+Message-ID: <1d14581b-60b7-6745-380f-5540bdbd7564@linux.intel.com>
+Date:   Fri, 20 Jan 2023 10:55:00 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <x49y1py5wcd.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.6.1
+Subject: Re: [PATCH] ASoC: SOF: ipc4-mtrace: prevent underflow in
+ sof_ipc4_priority_mask_dfs_write()
+Content-Language: en-US
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     alsa-devel@alsa-project.org,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rander Wang <rander.wang@intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        cip-dev <cip-dev@lists.cip-project.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        sound-open-firmware@alsa-project.org
+References: <Y8laruWOEwOC/dx9@kili>
+From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+In-Reply-To: <Y8laruWOEwOC/dx9@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 19, 2023 at 11:21:22AM -0500, Jeff Moyer wrote:
-> Dan Carpenter <error27@gmail.com> writes:
+
+
+On 19/01/2023 16:58, Dan Carpenter wrote:
+> The "id" comes from the user.  Change the type to unsigned to prevent
+> an array underflow.
 > 
-> > The concern here would be that "family" is negative and we pass a
-> > negative value to test_bit() resulting in an out of bounds read
-> > and potentially a crash.
+> Fixes: f4ea22f7aa75 ("ASoC: SOF: ipc4: Add support for mtrace log extraction")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+
+> ---
+>  sound/soc/sof/ipc4-mtrace.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> I don't see how this can happen.  Do you have a particular scenario in
-> mind?
-> 
+> diff --git a/sound/soc/sof/ipc4-mtrace.c b/sound/soc/sof/ipc4-mtrace.c
+> index 70dea8ae706e..0ec6ef681012 100644
+> --- a/sound/soc/sof/ipc4-mtrace.c
+> +++ b/sound/soc/sof/ipc4-mtrace.c
+> @@ -344,9 +344,10 @@ static ssize_t sof_ipc4_priority_mask_dfs_write(struct file *file,
+>  						size_t count, loff_t *ppos)
+>  {
+>  	struct sof_mtrace_priv *priv = file->private_data;
+> -	int id, ret;
+> +	unsigned int id;
+>  	char *buf;
+>  	u32 mask;
+> +	int ret;
+>  
+>  	/*
+>  	 * To update Nth mask entry, write:
+> @@ -357,9 +358,9 @@ static ssize_t sof_ipc4_priority_mask_dfs_write(struct file *file,
+>  	if (IS_ERR(buf))
+>  		return PTR_ERR(buf);
+>  
+> -	ret = sscanf(buf, "%d,0x%x", &id, &mask);
+> +	ret = sscanf(buf, "%u,0x%x", &id, &mask);
+>  	if (ret != 2) {
+> -		ret = sscanf(buf, "%d,%x", &id, &mask);
+> +		ret = sscanf(buf, "%u,%x", &id, &mask);
+>  		if (ret != 2) {
+>  			ret = -EINVAL;
+>  			goto out;
 
-This is from static analysis.  My main thinking was:
-
-1) The static checker says that this comes from the user.
-2) Every upper bounds check should have a lower bounds check.
-3) family is passed to array_index_nospec() so we must not trust it.
-
-But looking closer today here is what the checker is concerned about:
-
-	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
-
-Assume "nfit_mem" is NULL but "call_pkg" is non NULL (user input from
-__nd_ioctl() or ars_get_status().  In that case family is unchecked user
-input.
-
-But probably, it's not possible for nfit_mem to be NULL in those caller
-functions?
-
-regards,
-dan carpenter
-
+-- 
+Péter
