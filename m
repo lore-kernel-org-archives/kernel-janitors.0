@@ -2,104 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D371C25B4E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 16:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2480DC05027
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 18:18:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229723AbjATQRI convert rfc822-to-8bit (ORCPT
+        id S229636AbjATSSR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Jan 2023 11:17:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50374 "EHLO
+        Fri, 20 Jan 2023 13:18:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbjATQRH (ORCPT
+        with ESMTP id S229472AbjATSSQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Jan 2023 11:17:07 -0500
-X-Greylist: delayed 367 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 20 Jan 2023 08:17:04 PST
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B57EA79292;
-        Fri, 20 Jan 2023 08:17:04 -0800 (PST)
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay10.hostedemail.com (Postfix) with ESMTP id 3C7D7C0E54;
-        Fri, 20 Jan 2023 16:10:56 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf15.hostedemail.com (Postfix) with ESMTPA id D84741A;
-        Fri, 20 Jan 2023 16:10:53 +0000 (UTC)
-Message-ID: <e092f27243feeeec282ef8fdab57d8f9ee88a32d.camel@perches.com>
-Subject: Re: [PATCH 1/1] checkpatch: recognise NOKPROBE_SYMBOL for blank
- line detection after function/struct/union/enum
-From:   Joe Perches <joe@perches.com>
-To:     Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Andy Whitcroft <apw@canonical.com>
-Cc:     Dwaipayan Ray <dwaipayanray1@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Date:   Fri, 20 Jan 2023 08:10:52 -0800
-In-Reply-To: <20230120114649.117018-1-borntraeger@linux.ibm.com>
-References: <20230120114649.117018-1-borntraeger@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
+        Fri, 20 Jan 2023 13:18:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4FF75E51B;
+        Fri, 20 Jan 2023 10:18:14 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 505E662048;
+        Fri, 20 Jan 2023 18:18:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C890C4339B;
+        Fri, 20 Jan 2023 18:18:11 +0000 (UTC)
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        senozhatsky@chromium.org, wangkefeng.wang@huawei.com,
+        axboe@kernel.dk, kbusch@kernel.org, sfr@canb.auug.org.au,
+        mark.rutland@arm.com,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: (subset) [PATCH 00/30] Remove strtobool()
+Date:   Fri, 20 Jan 2023 18:18:09 +0000
+Message-Id: <167423868542.2495840.9363512425128429378.b4-ty@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: D84741A
-X-Stat-Signature: 1jz4n1qnqjhasgto8xre3srtw7ky79h6
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18hm9FFIVkeI2f60JwFr08IYgJKDV6xqZE=
-X-HE-Tag: 1674231053-15640
-X-HE-Meta: U2FsdGVkX1/+j64fLOquTRtFq/9/Pb1u5A1hpY/6WNAXFf0Ywzy/Quzi/4cMJtwxkXWqnG6g6CSqZv3AP8aSFQ==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2023-01-20 at 12:46 +0100, Christian Borntraeger wrote:
-> NOKPROBE_SYMBOL should be treated like EXPORT_SYMBOL to avoid
-> false positives.
-[]
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -3995,6 +3995,7 @@ sub process {
->  		    $line =~ /^\+/ &&
->  		    !($line =~ /^\+\s*$/ ||
->  		      $line =~ /^\+\s*(?:EXPORT_SYMBOL|early_param)/ ||
-> +		      $line =~ /^\+\s*NOKPROBE_SYMBOL/ ||
->  		      $line =~ /^\+\s*MODULE_/i ||
->  		      $line =~ /^\+\s*\#\s*(?:end|elif|else)/ ||
->  		      $line =~ /^\+[a-z_]*init/ ||
+On Tue, 01 Nov 2022 22:05:37 +0100, Christophe JAILLET wrote:
+> strtobool() is the same as kstrtobool().
+> However, the latter is more used within the kernel.
+> 
+> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
+> the other function name.
+> 
+> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> 
+> [...]
 
-$ git grep -P -w -oh '\w*NOKPROBE_SYMBOL\w*' | sort | uniq -c
-     60 _ASM_NOKPROBE_SYMBOL
-      2 __NOKPROBE_SYMBOL
-    304 NOKPROBE_SYMBOL
+Applied to arm64 (for-next/misc), thanks!
 
-Any issue with these other variants? (it doesn't seem so)
+[24/30] arm64: cpufeature: Use kstrtobool() instead of strtobool()
+        https://git.kernel.org/arm64/c/1a920c92cd0c
 
-btw: __NOKPROBE_SYMBOL has a ; at the end of its definition.
-
-include/asm-generic/kprobes.h:# define __NOKPROBE_SYMBOL(fname)                         \
-include/asm-generic/kprobes.h-static unsigned long __used                                       \
-include/asm-generic/kprobes.h-  __section("_kprobe_blacklist")                          \
-include/asm-generic/kprobes.h-  _kbl_addr_##fname = (unsigned long)fname;
-
-And so there are extra ; uses after ever use of NOKPROBE_SYMBOL(foo);
-
-$ git grep -w NOKPROBE_SYMBOL | grep ';' | wc -l
-285
-
-There are only 10 uses of NOKPROBE_SYMBOL(foo) without a semicolon
-
-$ git grep -P '\bNOKPROBE_SYMBOL\s*\(\s*\w+\s*\)\s*(?:[^\;]|$)'
-arch/arm/kernel/traps.c:NOKPROBE_SYMBOL(do_undefinstr)
-arch/arm/probes/kprobes/opt-arm.c:NOKPROBE_SYMBOL(optimized_callback)
-arch/arm64/kernel/kgdb.c:NOKPROBE_SYMBOL(kgdb_brk_fn)
-arch/powerpc/mm/cacheflush.c:NOKPROBE_SYMBOL(flush_dcache_icache_phys)
-arch/powerpc/platforms/82xx/pq2.c:NOKPROBE_SYMBOL(pq2_restart)
-include/asm-generic/kprobes.h:# define NOKPROBE_SYMBOL(fname)   __NOKPROBE_SYMBOL(fname)
-include/asm-generic/kprobes.h:# define NOKPROBE_SYMBOL(fname)
-kernel/fail_function.c:NOKPROBE_SYMBOL(fei_kprobe_handler)
-kernel/kprobes.c:NOKPROBE_SYMBOL(__kretprobe_trampoline_handler)
-kernel/trace/trace_eprobe.c:NOKPROBE_SYMBOL(process_fetch_insn)
-kernel/trace/trace_kprobe.c:NOKPROBE_SYMBOL(process_fetch_insn)
-kernel/trace/trace_uprobe.c:NOKPROBE_SYMBOL(process_fetch_insn)
-
-The actual uses with NOKPROBE_SYMBOL(foo) should likely have semicolons added
-and the __NOKPROBE_SYMBOL definition should have the semicolon removed.
+-- 
+Catalin
 
