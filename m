@@ -2,100 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92296C05027
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 09:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1686AC05027
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 09:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230187AbjATJ3d (ORCPT
+        id S229533AbjATJzm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Jan 2023 04:29:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49006 "EHLO
+        Fri, 20 Jan 2023 04:55:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbjATJ3b (ORCPT
+        with ESMTP id S229477AbjATJzl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Jan 2023 04:29:31 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1413A5A81A;
-        Fri, 20 Jan 2023 01:29:07 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id f19-20020a1c6a13000000b003db0ef4dedcso5378938wmc.4;
-        Fri, 20 Jan 2023 01:29:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=csxV7SBcRMOtyGwXXr6VYNEIrNsBq0mzq7uR5oLy8sw=;
-        b=VYpnC/cOlpiHsNoVzbSFm5Pp66EorTVLht/M0vNOywX6Jw6WZGYBYlLa4V+WQGI2TX
-         3lhve4nIMd91sJcMEMKN+7W0JPNrdfo1qYfCUktVTqjJuopusR3wrPB2pA4/HLpIIrEw
-         FmFzPYhL7p23K2XPFxqOL8mgkV6g9jASqSe1WYwSguYIOnyYjoLDbytDLibSkJ+E1ahV
-         CKYRL7mJ+4OTnR9e8cCaq4r60zv0UvR/ShCGhiTxmUC0Z3L1xmLCcNi3RnZyNqIeADHN
-         EKVQYhkbOVNCm8kSkDfb5KLFu7dlM3yW4mu3jrcZ2D/mFR/HqAtrVUPfw2kksem9BmjX
-         rIoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=csxV7SBcRMOtyGwXXr6VYNEIrNsBq0mzq7uR5oLy8sw=;
-        b=f/R6dFvWZyG/H+QceGuGAMwlIG62jplOfUQl0YEhyoV3+2SrhlsJG8WLYP2hp7a5rU
-         1HsrFpEX/UyhnfTegqyLITgEiiwEjuR0puqon/Q7inw1/tUWLp4/jbNNcBRweeOz2yjg
-         mzU2DdDYBuDAWqdBiHNQf7X9MSfOHtSPBIkAnuh4BOwvn6NWn6v1C6r/yN7ZhOaMC0b+
-         kEx294JmmdthYF/1oC+G6mp1DrxBnR5ptwNX/czX3aTsDKUq0VhK8sfkj57kZeBh1aBe
-         ObYlsjN1iDHuxGJ1m8llVQ9ONibacoDUPYB1sCemLB7cML6Tl2j2Rn2H5T0I3TI4QRku
-         bM9g==
-X-Gm-Message-State: AFqh2kq2k9ccjvluUGLfETVEWWiEjVqkEk/i/KEUnW5Q9yzlpQvzeijE
-        BngyoM5bteh91DJbvgmxMUgWaXZIBX+KyOyE
-X-Google-Smtp-Source: AMrXdXtAnv1VnjoW886QL9Vu3rdysDqbLp9waCd/Qgh+W86DERrCHcfZk/wkz5cU7w1CwOKs5L0/Vw==
-X-Received: by 2002:a05:600c:54eb:b0:3da:2090:d404 with SMTP id jb11-20020a05600c54eb00b003da2090d404mr13381883wmb.18.1674206923943;
-        Fri, 20 Jan 2023 01:28:43 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d19-20020a05600c34d300b003a6125562e1sm1675318wmq.46.2023.01.20.01.28.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 01:28:43 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        Fri, 20 Jan 2023 04:55:41 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9BFAA733D;
+        Fri, 20 Jan 2023 01:54:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674208498; x=1705744498;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+nvvEu/BOUFSCsUyjF17UjmDZnCUyvy9snQzL3mM8lQ=;
+  b=WzFqsynfQ/gwu1dYtEwTJXhFbY4ERg4lW9EhACGSrcTPaSzHli5v02tn
+   cPl7XRg4oIqvuqTizr/nF9a+ACzm4mq/EHRw1Wv5zc7U+lgapGaL9cIHB
+   Mwn59zElV0NBADZi+ZEogfA46kl4J7D8RK7NuNwTMZFE43iIsH+wQ/sJ2
+   Op37oXx2JcjoPBFWT9uUhoO0v9RGpAZUALrA7jKVNiu0eGatdixP/AOHk
+   PiiZeOHYaTiMv9ALs2qRHnTYybbulIvQQYms65mAoJgYiT7E9GEY/cFR2
+   zhHmUpqt0VAbChftHfi0jhSnoLLZnKwG9hokBnPNA6AhobvaYPw1FDkqE
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="305912520"
+X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
+   d="scan'208";a="305912520"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2023 01:54:58 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="834364601"
+X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
+   d="scan'208";a="834364601"
+Received: from joe-255.igk.intel.com (HELO localhost) ([10.91.220.57])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2023 01:54:56 -0800
+Date:   Fri, 20 Jan 2023 10:54:54 +0100
+From:   Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
         Oded Gabbay <ogabbay@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] accel/ivpu: Fix spelling mistake "tansition" -> "transition"
-Date:   Fri, 20 Jan 2023 09:28:42 +0000
-Message-Id: <20230120092842.79238-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] accel/ivpu: Fix spelling mistake "tansition" ->
+ "transition"
+Message-ID: <20230120095454.GA56856@linux.intel.com>
+References: <20230120092842.79238-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230120092842.79238-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are spelling mistakes in two ivpu_err error messages. Fix them.
+On Fri, Jan 20, 2023 at 09:28:42AM +0000, Colin Ian King wrote:
+> There are spelling mistakes in two ivpu_err error messages. Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Reviewed-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/accel/ivpu/ivpu_hw_mtl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/accel/ivpu/ivpu_hw_mtl.c b/drivers/accel/ivpu/ivpu_hw_mtl.c
-index b59b1f472b40..62bfaa9081c4 100644
---- a/drivers/accel/ivpu/ivpu_hw_mtl.c
-+++ b/drivers/accel/ivpu/ivpu_hw_mtl.c
-@@ -608,7 +608,7 @@ static int ivpu_boot_d0i3_drive(struct ivpu_device *vdev, bool enable)
- 
- 	ret = REGB_POLL_FLD(MTL_BUTTRESS_VPU_D0I3_CONTROL, INPROGRESS, 0, TIMEOUT_US);
- 	if (ret) {
--		ivpu_err(vdev, "Failed to sync before D0i3 tansition: %d\n", ret);
-+		ivpu_err(vdev, "Failed to sync before D0i3 transition: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -621,7 +621,7 @@ static int ivpu_boot_d0i3_drive(struct ivpu_device *vdev, bool enable)
- 
- 	ret = REGB_POLL_FLD(MTL_BUTTRESS_VPU_D0I3_CONTROL, INPROGRESS, 0, TIMEOUT_US);
- 	if (ret)
--		ivpu_err(vdev, "Failed to sync after D0i3 tansition: %d\n", ret);
-+		ivpu_err(vdev, "Failed to sync after D0i3 transition: %d\n", ret);
- 
- 	return ret;
- }
--- 
-2.30.2
-
+> ---
+>  drivers/accel/ivpu/ivpu_hw_mtl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/accel/ivpu/ivpu_hw_mtl.c b/drivers/accel/ivpu/ivpu_hw_mtl.c
+> index b59b1f472b40..62bfaa9081c4 100644
+> --- a/drivers/accel/ivpu/ivpu_hw_mtl.c
+> +++ b/drivers/accel/ivpu/ivpu_hw_mtl.c
+> @@ -608,7 +608,7 @@ static int ivpu_boot_d0i3_drive(struct ivpu_device *vdev, bool enable)
+>  
+>  	ret = REGB_POLL_FLD(MTL_BUTTRESS_VPU_D0I3_CONTROL, INPROGRESS, 0, TIMEOUT_US);
+>  	if (ret) {
+> -		ivpu_err(vdev, "Failed to sync before D0i3 tansition: %d\n", ret);
+> +		ivpu_err(vdev, "Failed to sync before D0i3 transition: %d\n", ret);
+>  		return ret;
+>  	}
+>  
+> @@ -621,7 +621,7 @@ static int ivpu_boot_d0i3_drive(struct ivpu_device *vdev, bool enable)
+>  
+>  	ret = REGB_POLL_FLD(MTL_BUTTRESS_VPU_D0I3_CONTROL, INPROGRESS, 0, TIMEOUT_US);
+>  	if (ret)
+> -		ivpu_err(vdev, "Failed to sync after D0i3 tansition: %d\n", ret);
+> +		ivpu_err(vdev, "Failed to sync after D0i3 transition: %d\n", ret);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.30.2
+> 
