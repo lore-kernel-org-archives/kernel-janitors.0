@@ -2,83 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36BDC004D4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 03:00:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C29FC678D6
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 05:28:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbjATDAX (ORCPT
+        id S229495AbjATF16 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Jan 2023 22:00:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54096 "EHLO
+        Fri, 20 Jan 2023 00:27:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229771AbjATDAV (ORCPT
+        with ESMTP id S230365AbjATF1f (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Jan 2023 22:00:21 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 099629F3A1;
-        Thu, 19 Jan 2023 19:00:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 82B4D61DE4;
-        Fri, 20 Jan 2023 03:00:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DC71CC433F1;
-        Fri, 20 Jan 2023 03:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674183618;
-        bh=TUlF/UkyYMykIbN2dcybW735XtmZNjZttJvL4i2P4nM=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=OuV3oWSWIEcM0DzZTPHNGaauZRSkoRQgixXE5LS6dxyzaBQkYnB4rIKgUOco/EAVT
-         jDFNle8WGxJQ+jQJOoOoyba0K6bQaVS7wA6bodQC8Jvi3QCO+fx25GW7gyxESw9uwe
-         01/TLzTS28fDD/+cm4+Q33p2nMieAN3rEKbbBpF6XpCjFYvT5KZlADBOZDCXo85vzB
-         0b28sctnPSjjDpYk9hKN74GofpfCmcPfXdqcVDzl/NDapUZUEacdHPd3yFA6lO8ph2
-         BPktCmdprfYC3FigV2YjLqq8x+lRXlRdWMHstO0I6qu9y8Z+AsFeETFfZ2ODa5WWFc
-         6Bk95kofxggFA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B8748E4D01B;
-        Fri, 20 Jan 2023 03:00:18 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 20 Jan 2023 00:27:35 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4654AD14;
+        Thu, 19 Jan 2023 21:22:10 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id o17-20020a05600c511100b003db021ef437so2827248wms.4;
+        Thu, 19 Jan 2023 21:22:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZPUNBOEvi+EfT+XJWJvekQT2sNWEjQ5PxX/U+WoCuzc=;
+        b=YBIwhB603yUqIdel1BN1aQ2kRRXRXqB2ePnBo3AkabEKkIGyDyo6TflF9PCi7R+hXF
+         uM7KoCMnU6bNghykefMWau8xbi8kmQEoq0eKHop8Onk0DBVr0FMBryV2/DhXMkUxVxyW
+         +25pM8oejnfFKv2WQMqpFfhuNf+U+R7cRkBTKzRS9Ng0t/RojLDy6qWw6EkKgyf4PkPT
+         B2XYSyWpzPB9g9N21dEcnHRVUJwkRPSEsgEo5PUsnNMF1+YfJkhVuxfLSEFilB4J2Mtk
+         EohULOeh+ymbakO1zDxwI+oXnMV/seI/uIkLI/7sPHX5TxRBoO190pVfz9VszRXppNYv
+         aKXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZPUNBOEvi+EfT+XJWJvekQT2sNWEjQ5PxX/U+WoCuzc=;
+        b=W4rPLuRgliCjsl/eedr1speGyY6sdc3pRPEtQG1xCMrgH9NqgOoh4eZwbMA1DLwAXD
+         4MZvD4U35cdlEMsS9pKsOfqnV7V8Vuj9b1LzwsCKU0rMrgV3G227+dt/4BPDdB5rTGYZ
+         u/Ei4agiKDQS+mZRIhNLoQ6Dhb1HCbkbKUN1SGEz9os0/idpmp709NsSbwShvrQBSFQV
+         zQgLy75/zfKOyyRvLhnnhKVUkWOZnAD+FGalrPRyj7qR9Zh8XF1Xdngg4laS2iA38OL+
+         TSbjkDXFN9TGSgtHL1mHG27twMLopbNpSERS0pkwBewh7RelG5wVwvjBDfrRSsrhV+8A
+         gE1g==
+X-Gm-Message-State: AFqh2krwJfH3DGw3eUWzFo74cZZAxw9GS5/JJJfz7hN2bWxGFDcsCkrD
+        H4uO10bk2woGCDXx/cq4g1LMjXC0VN4aAA==
+X-Google-Smtp-Source: AMrXdXvzl4+RN1WjgYUz4tRPCvty5ZKlP8ibxlgMTYBueXvwytqo0rr34srYHacHIL0AlSzaowxE1A==
+X-Received: by 2002:a05:600c:3b1b:b0:3da:11d7:dba3 with SMTP id m27-20020a05600c3b1b00b003da11d7dba3mr12497450wms.5.1674192129466;
+        Thu, 19 Jan 2023 21:22:09 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id k16-20020a05600c0b5000b003db0a08694bsm1118757wmr.8.2023.01.19.21.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jan 2023 21:22:09 -0800 (PST)
+Date:   Fri, 20 Jan 2023 08:22:06 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>, nvdimm@lists.linux.dev,
+        linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        cip-dev <cip-dev@lists.cip-project.org>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH v2] ACPI: NFIT: prevent underflow in acpi_nfit_ctl()
+Message-ID: <Y8ok/oCxzOhFDEQ+@kadam>
+References: <Y8ldQn1v4r5i5WLX@kadam>
+ <x49y1py5wcd.fsf@segfault.boston.devel.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: dsa: microchip: ptp: Fix error code in
- ksz_hwtstamp_set()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167418361874.28289.5370339181727219172.git-patchwork-notify@kernel.org>
-Date:   Fri, 20 Jan 2023 03:00:18 +0000
-References: <Y8fJxSvbl7UNVHh/@kili>
-In-Reply-To: <Y8fJxSvbl7UNVHh/@kili>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     woojung.huh@microchip.com, ceggers@arri.de,
-        UNGLinuxDriver@microchip.com, andrew@lunn.ch, f.fainelli@gmail.com,
-        olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, richardcochran@gmail.com,
-        arun.ramadoss@microchip.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <x49y1py5wcd.fsf@segfault.boston.devel.redhat.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 18 Jan 2023 13:28:21 +0300 you wrote:
-> We want to return negative error codes here but the copy_to/from_user()
-> functions return the number of bytes remaining to be copied.
+On Thu, Jan 19, 2023 at 11:21:22AM -0500, Jeff Moyer wrote:
+> Dan Carpenter <error27@gmail.com> writes:
 > 
-> Fixes: c59e12a140fb ("net: dsa: microchip: ptp: Initial hardware time stamping support")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/net/dsa/microchip/ksz_ptp.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+> > The concern here would be that "family" is negative and we pass a
+> > negative value to test_bit() resulting in an out of bounds read
+> > and potentially a crash.
+> 
+> I don't see how this can happen.  Do you have a particular scenario in
+> mind?
+> 
 
-Here is the summary with links:
-  - [net-next] net: dsa: microchip: ptp: Fix error code in ksz_hwtstamp_set()
-    https://git.kernel.org/netdev/net-next/c/a76e88c29425
+This is from static analysis.  My main thinking was:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+1) The static checker says that this comes from the user.
+2) Every upper bounds check should have a lower bounds check.
+3) family is passed to array_index_nospec() so we must not trust it.
 
+But looking closer today here is what the checker is concerned about:
+
+	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
+
+Assume "nfit_mem" is NULL but "call_pkg" is non NULL (user input from
+__nd_ioctl() or ars_get_status().  In that case family is unchecked user
+input.
+
+But probably, it's not possible for nfit_mem to be NULL in those caller
+functions?
+
+regards,
+dan carpenter
 
