@@ -2,60 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCE9C05027
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 10:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 925D3C25B50
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 10:35:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbjATKdy (ORCPT
+        id S229964AbjATKfb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Jan 2023 05:33:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45998 "EHLO
+        Fri, 20 Jan 2023 05:35:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230017AbjATKdv (ORCPT
+        with ESMTP id S229533AbjATKfa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Jan 2023 05:33:51 -0500
+        Fri, 20 Jan 2023 05:35:30 -0500
 Received: from formenos.hmeau.com (helcar.hmeau.com [216.24.177.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0718D93CA;
-        Fri, 20 Jan 2023 02:33:42 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F3E66599;
+        Fri, 20 Jan 2023 02:35:29 -0800 (PST)
 Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
         by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1pIoi9-002BZU-5l; Fri, 20 Jan 2023 18:33:30 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 20 Jan 2023 18:33:29 +0800
-Date:   Fri, 20 Jan 2023 18:33:29 +0800
+        id 1pIojt-002Bdz-9J; Fri, 20 Jan 2023 18:35:18 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 20 Jan 2023 18:35:17 +0800
+Date:   Fri, 20 Jan 2023 18:35:17 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Weili Qian <qianweili@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: hisilicon - remove redundant config PCI
- dependency for some CRYPTO_DEV_HISI configs
-Message-ID: <Y8pt+eTq/wwFWjw3@gondor.apana.org.au>
-References: <20230111120203.822-1-lukas.bulwahn@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: atmel-i2c - avoid defines prefixed with CONFIG
+Message-ID: <Y8puZQ071Igc+1T4@gondor.apana.org.au>
+References: <20230113074715.32016-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230111120203.822-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20230113074715.32016-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jan 11, 2023 at 01:02:03PM +0100, Lukas Bulwahn wrote:
-> While reviewing dependencies in some Kconfig files, I noticed the redundant
-> dependency "depends on PCI && PCI_MSI". The config PCI_MSI has always,
-> since its introduction, been dependent on the config PCI. So, it is
-> sufficient to just depend on PCI_MSI, and know that the dependency on PCI
-> is implicitly implied.
+On Fri, Jan 13, 2023 at 08:47:15AM +0100, Lukas Bulwahn wrote:
+> Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+> that are introduced in a Kconfig file.
 > 
-> Reduce the dependencies of configs CRYPTO_DEV_HISI_SEC2,
-> CRYPTO_DEV_HISI_QM, CRYPTO_DEV_HISI_ZIP and CRYPTO_DEV_HISI_HPRE.
+> Here, a definition for the driver's configuration zone is named
+> CONFIG_ZONE. Rename this local definition to CONFIGURATION_ZONE to avoid
+> defines prefixed with "CONFIG".
 > 
-> No functional change and effective change of Kconfig dependendencies.
+> No functional change.
 > 
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  drivers/crypto/hisilicon/Kconfig | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> Herbert, David, please pick this clean-up work into your crypto tree. Thanks.
+> 
+>  drivers/crypto/atmel-i2c.c | 2 +-
+>  drivers/crypto/atmel-i2c.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
 Patch applied.  Thanks.
 -- 
