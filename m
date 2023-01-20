@@ -2,89 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E5DC46467
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Jan 2023 23:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B36BDC004D4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 03:00:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230210AbjASXi2 (ORCPT
+        id S229847AbjATDAX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Jan 2023 18:38:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44106 "EHLO
+        Thu, 19 Jan 2023 22:00:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbjASXiZ (ORCPT
+        with ESMTP id S229771AbjATDAV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Jan 2023 18:38:25 -0500
-Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B84059F066
-        for <kernel-janitors@vger.kernel.org>; Thu, 19 Jan 2023 15:38:18 -0800 (PST)
-Received: by mail-pl1-x64a.google.com with SMTP id n14-20020a170902d2ce00b00194a2301b10so2129942plc.8
-        for <kernel-janitors@vger.kernel.org>; Thu, 19 Jan 2023 15:38:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ml9HXgsWlhngPnr5LLGuwB7yZz4iONvMOGsoPpn+lFs=;
-        b=sRQGguvtprbdmw+e8cPYJH8/ogys3HECUlSwrzw5y4MYeybvAva39pmFs73NJfk5l6
-         RJMr8/EIO3bmkz3y5PMzE7c3GNdyx/YcNjIzMbVCj7zMHMqdfMhu7G2Pa84/w18B+qgB
-         gIo0trzYoAlaecwGOnEg1wmQF1crmm8IDPMqejURYCUkX2B1XqDshijYAszDNo2PDk1+
-         scCsc8/34YIwuUaR96rqE95pR8oNPCG71cJcq50LnqkVAn4QkW6nGObq+pMWmgZX4r3E
-         IRXxgUHVp2wRpO+MkO2p4qicjlSMjF3RnFsJtRAQm2Gk6FHtEawj4/A5diFt1Ez8zJLy
-         9CAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ml9HXgsWlhngPnr5LLGuwB7yZz4iONvMOGsoPpn+lFs=;
-        b=bKuiEx0GvpdSb6k/jKYlBmjqpZnATPXe1PGNgu3H5RL3hQ8U1eF6/MgJG7LyUb0eV5
-         1oPu/59qyXduAbpZLB30VTTw6fFkW0kb0/81XlsSAi744M2I8OS07Fn+mPfQ15ZxfB3f
-         H2JDFK4M+x+j8FetP20esXaO84e2L//wvUGztHBDW4c9Nw8Fwkr1fGsgT9EUEzj1Tyqs
-         uF5R8MbJODsIX7/sOWrJI3Ql4Z/Q22sf4yW76mvGyoqv/d5d1e9I5K/EN1aJ2sIzvjhC
-         SME8phtFQ8tYMangY9hHanDKYncsolHwqL3yp6CyKkqBkpkxZFBh/6t6ld/gkyMMiXFd
-         NOSw==
-X-Gm-Message-State: AFqh2kr6dURTcmUq4JNVsWzweVZjBAb3l9GzG7L7pBR8DtDFKOBl5vMa
-        6FXpiBmThrQKDOJdXiJrCmm3jKVtkts=
-X-Google-Smtp-Source: AMrXdXuNY7nE6cPrEZuTnpdSnSbNpQnHAujMZmdw0F814eGvjY4r6VbiQta65zMxBxyRuPG3p6HE3cIFUd0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:d995:b0:225:eaa2:3f5d with SMTP id
- d21-20020a17090ad99500b00225eaa23f5dmr14069pjv.2.1674171497748; Thu, 19 Jan
- 2023 15:38:17 -0800 (PST)
-Date:   Thu, 19 Jan 2023 23:37:39 +0000
-In-Reply-To: <670882aa04dbdd171b46d3b20ffab87158454616.1673689135.git.christophe.jaillet@wanadoo.fr>
-Mime-Version: 1.0
-References: <670882aa04dbdd171b46d3b20ffab87158454616.1673689135.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.39.0.246.g2a6d74b583-goog
-Message-ID: <167416883797.2559854.8461573625576324226.b4-ty@google.com>
-Subject: Re: [PATCH v2] KVM: x86/mmu: Use kstrtobool() instead of strtobool()
-From:   Sean Christopherson <seanjc@google.com>
-To:     Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        kvm@vger.kernel.org
+        Thu, 19 Jan 2023 22:00:21 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 099629F3A1;
+        Thu, 19 Jan 2023 19:00:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 82B4D61DE4;
+        Fri, 20 Jan 2023 03:00:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DC71CC433F1;
+        Fri, 20 Jan 2023 03:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674183618;
+        bh=TUlF/UkyYMykIbN2dcybW735XtmZNjZttJvL4i2P4nM=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=OuV3oWSWIEcM0DzZTPHNGaauZRSkoRQgixXE5LS6dxyzaBQkYnB4rIKgUOco/EAVT
+         jDFNle8WGxJQ+jQJOoOoyba0K6bQaVS7wA6bodQC8Jvi3QCO+fx25GW7gyxESw9uwe
+         01/TLzTS28fDD/+cm4+Q33p2nMieAN3rEKbbBpF6XpCjFYvT5KZlADBOZDCXo85vzB
+         0b28sctnPSjjDpYk9hKN74GofpfCmcPfXdqcVDzl/NDapUZUEacdHPd3yFA6lO8ph2
+         BPktCmdprfYC3FigV2YjLqq8x+lRXlRdWMHstO0I6qu9y8Z+AsFeETFfZ2ODa5WWFc
+         6Bk95kofxggFA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B8748E4D01B;
+        Fri, 20 Jan 2023 03:00:18 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: dsa: microchip: ptp: Fix error code in
+ ksz_hwtstamp_set()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167418361874.28289.5370339181727219172.git-patchwork-notify@kernel.org>
+Date:   Fri, 20 Jan 2023 03:00:18 +0000
+References: <Y8fJxSvbl7UNVHh/@kili>
+In-Reply-To: <Y8fJxSvbl7UNVHh/@kili>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     woojung.huh@microchip.com, ceggers@arri.de,
+        UNGLinuxDriver@microchip.com, andrew@lunn.ch, f.fainelli@gmail.com,
+        olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, richardcochran@gmail.com,
+        arun.ramadoss@microchip.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 14 Jan 2023 10:39:11 +0100, Christophe JAILLET wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
-> 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
-> 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
-> 
-> [...]
+Hello:
 
-Applied to kvm-x86 mmu, thanks!
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-[1/1] KVM: x86/mmu: Use kstrtobool() instead of strtobool()
-      https://github.com/kvm-x86/linux/commit/48350639019f
+On Wed, 18 Jan 2023 13:28:21 +0300 you wrote:
+> We want to return negative error codes here but the copy_to/from_user()
+> functions return the number of bytes remaining to be copied.
+> 
+> Fixes: c59e12a140fb ("net: dsa: microchip: ptp: Initial hardware time stamping support")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>  drivers/net/dsa/microchip/ksz_ptp.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
---
-https://github.com/kvm-x86/linux/tree/next
-https://github.com/kvm-x86/linux/tree/fixes
+Here is the summary with links:
+  - [net-next] net: dsa: microchip: ptp: Fix error code in ksz_hwtstamp_set()
+    https://git.kernel.org/netdev/net-next/c/a76e88c29425
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
