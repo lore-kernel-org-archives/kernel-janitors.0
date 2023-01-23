@@ -2,64 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2480DC05027
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Jan 2023 18:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A2FC38142
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Jan 2023 09:21:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbjATSSR (ORCPT
+        id S230023AbjAWJV7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Jan 2023 13:18:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36098 "EHLO
+        Mon, 23 Jan 2023 04:21:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjATSSQ (ORCPT
+        with ESMTP id S229455AbjAWJV6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Jan 2023 13:18:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4FF75E51B;
-        Fri, 20 Jan 2023 10:18:14 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 505E662048;
-        Fri, 20 Jan 2023 18:18:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C890C4339B;
-        Fri, 20 Jan 2023 18:18:11 +0000 (UTC)
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        senozhatsky@chromium.org, wangkefeng.wang@huawei.com,
-        axboe@kernel.dk, kbusch@kernel.org, sfr@canb.auug.org.au,
-        mark.rutland@arm.com,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: (subset) [PATCH 00/30] Remove strtobool()
-Date:   Fri, 20 Jan 2023 18:18:09 +0000
-Message-Id: <167423868542.2495840.9363512425128429378.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1667336095.git.christophe.jaillet@wanadoo.fr>
+        Mon, 23 Jan 2023 04:21:58 -0500
+X-Greylist: delayed 337 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 Jan 2023 01:21:55 PST
+Received: from mail.corstfran.pl (mail.corstfran.pl [141.95.1.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D93913D67
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jan 2023 01:21:55 -0800 (PST)
+Received: by mail.corstfran.pl (Postfix, from userid 1002)
+        id 3F9C6A2FA0; Mon, 23 Jan 2023 09:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corstfran.pl; s=mail;
+        t=1674465376; bh=so3xiFooQ9N0D/cd/+ivPaO6nnHsd9cY/G2xa/w5Tfg=;
+        h=Date:From:To:Subject:From;
+        b=gd12wczuwpoDAUPbn3jiE3FhBo610p40o251yesg/F4uEkhJdEkw9z/bP6b7L0lET
+         0QQIBLrytgbEfqTd/QRfcyOMs1Rpqi8NvZSS3Ag6cls8FJVHyS+u787KZUhy6+gj8o
+         MkO7vLIZmouR6G0rp86m6owh5eLj6W8gnc/6YGvzML0kHTtiY6l0XOHH6oO5WxeIan
+         1STEgiw8c1FB7WFYo0THvcsJCUto2xMve9LHNcO9t/7/VtJAjH44Gh6UWiu54av0Jf
+         dWUwQ2fXE4fdN2qt+ONCMeA9t39KUgRnp8U3GDd7rxLOeXeR9g+Tk8JnyAr27pIFnd
+         DeNz6UvEaS/xg==
+Received: by mail.corstfran.pl for <kernel-janitors@vger.kernel.org>; Mon, 23 Jan 2023 09:15:47 GMT
+Message-ID: <20230123074500-0.1.4t.c7vg.0.ijscra7glj@corstfran.pl>
+Date:   Mon, 23 Jan 2023 09:15:47 GMT
+From:   "Konrad Trojanowski" <konrad.trojanowski@corstfran.pl>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: W sprawie samochodu
+X-Mailer: mail.corstfran.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 01 Nov 2022 22:05:37 +0100, Christophe JAILLET wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
-> 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
-> 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
-> 
-> [...]
+Dzie=C5=84 dobry,
 
-Applied to arm64 (for-next/misc), thanks!
+chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
+, je=C5=9Bli chodzi o system monitoringu GPS.
 
-[24/30] arm64: cpufeature: Use kstrtobool() instead of strtobool()
-        https://git.kernel.org/arm64/c/1a920c92cd0c
+Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
+e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
+a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
 
--- 
-Catalin
+Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
+dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
+szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
+mne znaczenie.
 
+Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
+b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
+
+
+Pozdrawiam
+Konrad Trojanowski
