@@ -2,63 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A2FC38142
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Jan 2023 09:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DEBC05027
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Jan 2023 15:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbjAWJV7 (ORCPT
+        id S231671AbjAWPHP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Jan 2023 04:21:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59282 "EHLO
+        Mon, 23 Jan 2023 10:07:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjAWJV6 (ORCPT
+        with ESMTP id S229514AbjAWPHO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Jan 2023 04:21:58 -0500
-X-Greylist: delayed 337 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 Jan 2023 01:21:55 PST
-Received: from mail.corstfran.pl (mail.corstfran.pl [141.95.1.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D93913D67
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jan 2023 01:21:55 -0800 (PST)
-Received: by mail.corstfran.pl (Postfix, from userid 1002)
-        id 3F9C6A2FA0; Mon, 23 Jan 2023 09:16:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corstfran.pl; s=mail;
-        t=1674465376; bh=so3xiFooQ9N0D/cd/+ivPaO6nnHsd9cY/G2xa/w5Tfg=;
-        h=Date:From:To:Subject:From;
-        b=gd12wczuwpoDAUPbn3jiE3FhBo610p40o251yesg/F4uEkhJdEkw9z/bP6b7L0lET
-         0QQIBLrytgbEfqTd/QRfcyOMs1Rpqi8NvZSS3Ag6cls8FJVHyS+u787KZUhy6+gj8o
-         MkO7vLIZmouR6G0rp86m6owh5eLj6W8gnc/6YGvzML0kHTtiY6l0XOHH6oO5WxeIan
-         1STEgiw8c1FB7WFYo0THvcsJCUto2xMve9LHNcO9t/7/VtJAjH44Gh6UWiu54av0Jf
-         dWUwQ2fXE4fdN2qt+ONCMeA9t39KUgRnp8U3GDd7rxLOeXeR9g+Tk8JnyAr27pIFnd
-         DeNz6UvEaS/xg==
-Received: by mail.corstfran.pl for <kernel-janitors@vger.kernel.org>; Mon, 23 Jan 2023 09:15:47 GMT
-Message-ID: <20230123074500-0.1.4t.c7vg.0.ijscra7glj@corstfran.pl>
-Date:   Mon, 23 Jan 2023 09:15:47 GMT
-From:   "Konrad Trojanowski" <konrad.trojanowski@corstfran.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: W sprawie samochodu
-X-Mailer: mail.corstfran.pl
+        Mon, 23 Jan 2023 10:07:14 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A5E83ABA;
+        Mon, 23 Jan 2023 07:07:13 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id n7so11103607wrx.5;
+        Mon, 23 Jan 2023 07:07:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2r/jQsT2oEtOaIcS9vBErqTIfKM514JHFTcSRlzNiJk=;
+        b=NI9VeMmKPpbbz0TCCZFqlACCyCjRtIQH1LXay4iHb5L7cwXC9C05rVzDy8t4boOARD
+         ITqqWkdZFg7s2dhkfzDTO0PYouCczNUgmF+g0YNlPypmfQSuxkf3gwgc0duluEn5zYRe
+         BGj9luGazljmvjSSK2kIM6dkPKipT0gSqF/d9p5/6Koa6Wid4/sy5ZPSc0XvxveIANNL
+         OLmoxPLeorbSCHvaRFPquDrzvdacAeSEWCXY42GIyODGEhGAAU5kpNZnK9BZLN4alsXe
+         6CCqQjhq0hAxdpyuOyKTM/TAiyOYtOiMc3Px61GIiQ0oL4dOz6mvsI/ahi9gmNe0cVeT
+         buSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2r/jQsT2oEtOaIcS9vBErqTIfKM514JHFTcSRlzNiJk=;
+        b=OV4h8bfhGhX8RuaTzKJ1IX8pUzKOZHZ/8mms97gCr9KVc2VljVoYxabJrVf5HFpe/c
+         PGPNR53TRzl0W8cgJPyfj+bVuXVzCyQ+2U6WxsMLEu3Jn0YoQK7Rszm7TUnuZ+vrMEwy
+         gxJf+/h9ElxWIufu2evQe3RvfsXFeUTfcl/GpTelpKdNYbyO007K7b6YtUfiCmL4+5+j
+         3jS8RgErbd7PqsVqVide8VrAeFqwsew5JlBVKnvu+LtMLu11goJHxx573vrqSaDSkmol
+         veHsadqP4PXQhSsVKcd4dpZPlIMrG3UnwXgmv39wCsaH+7rFncE4QO0X5TCV7J1XTLYg
+         wA4A==
+X-Gm-Message-State: AFqh2kqtegPVtG3d/g63bRLz0EWuWBLl28o7vjPUHWBGfuDPbxLCcqxw
+        x6t0xANYWA/iQe7Rf33Z+p1Dhn74R3ElPA==
+X-Google-Smtp-Source: AMrXdXsU5OJbMtMy8HopokShczr+JtKjkxOBLstZUM6HS5OjuWvTMCsoLgWmESZH43ffbscSu/cnPQ==
+X-Received: by 2002:a05:6000:98d:b0:2bb:6d44:5d1 with SMTP id by13-20020a056000098d00b002bb6d4405d1mr24853979wrb.28.1674486431669;
+        Mon, 23 Jan 2023 07:07:11 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id bu3-20020a056000078300b002be505ab59asm8888399wrb.97.2023.01.23.07.07.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jan 2023 07:07:11 -0800 (PST)
+Date:   Mon, 23 Jan 2023 18:07:07 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] firmware: arm_scmi: Clean up a return statement
+Message-ID: <Y86im5M49p3ePGxj@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+The comments say "enabled" where "disabled" is intended.  Also it's
+cleaner to return zero explicitly instead of ret.
 
-chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
-, je=C5=9Bli chodzi o system monitoringu GPS.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/firmware/arm_scmi/driver.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
-e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
-a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index d21c7eafd641..703f16ef3953 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -2739,8 +2739,8 @@ static int scmi_probe(struct platform_device *pdev)
+ 				if (ret)
+ 					goto clear_dev_req_notifier;
+ 
+-				/* Bail out anyway when coex enabled */
+-				return ret;
++				/* Bail out anyway when coex disabled. */
++				return 0;
+ 			}
+ 
+ 			/* Coex enabled, carry on in any case. */
+-- 
+2.35.1
 
-Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
-dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
-szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
-mne znaczenie.
-
-Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
-b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
-
-
-Pozdrawiam
-Konrad Trojanowski
