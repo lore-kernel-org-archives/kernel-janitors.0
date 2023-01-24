@@ -2,154 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7C1C25B50
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 12:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1110CC38142
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 15:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233513AbjAXMQe (ORCPT
+        id S233949AbjAXPUi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Jan 2023 07:16:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55970 "EHLO
+        Tue, 24 Jan 2023 10:20:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233479AbjAXMQd (ORCPT
+        with ESMTP id S232550AbjAXPUh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Jan 2023 07:16:33 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06344523E;
-        Tue, 24 Jan 2023 04:16:13 -0800 (PST)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30OBn3WW005401;
-        Tue, 24 Jan 2023 12:16:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=f07QMuBUSg3ZarMkt3Gwjde/EaP6Bc9lH2qZXl5nyCY=;
- b=gfreqFprsd6yG+wEqww+B7Z8olg2a6AhtG7A9foPXXeWRsW97SScghsj8+ARFWHovfLF
- KKd3iVLa0FtJRCwrBVXpP9TL+z+BYQrJ5+WU7M/5SxtJg8AVF8NHn+zrNrbL4fn4W8re
- 8/uvgjTblLP4SeFZoxvXUMonZhB7ZhnC8oU8ML23i5MrEXYc60B4VszTHIcYQcKquHPZ
- 3voa7XAHQkedsymHIKwmgy4mHkPSX4MhjrdY/rQ9ns/hLJT/QhJ6M7S8QY4/bsz3WvZs
- /xgioy0EuND+J3kWKREhXVca9hktVD/dzTgtHaTZd+yOxHn10jDrsVG4mzIsVVF+8CnI Xg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3na9vbqkux-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Jan 2023 12:16:07 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30OCG6Gd004119;
-        Tue, 24 Jan 2023 12:16:06 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3na9vbqku6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Jan 2023 12:16:06 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30NNTwa9011514;
-        Tue, 24 Jan 2023 12:16:04 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3n87p6kshv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Jan 2023 12:16:04 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30OCG2Hn40370608
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Jan 2023 12:16:02 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B3CE2004D;
-        Tue, 24 Jan 2023 12:16:02 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E79952004B;
-        Tue, 24 Jan 2023 12:16:01 +0000 (GMT)
-Received: from [9.171.71.154] (unknown [9.171.71.154])
-        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 24 Jan 2023 12:16:01 +0000 (GMT)
-Message-ID: <86bb384b-0084-05ac-3a13-ef462d1c0a35@linux.ibm.com>
-Date:   Tue, 24 Jan 2023 13:16:01 +0100
+        Tue, 24 Jan 2023 10:20:37 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69BD9016;
+        Tue, 24 Jan 2023 07:20:33 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id r2so14211993wrv.7;
+        Tue, 24 Jan 2023 07:20:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1Lsg60nvZlEGJHZUjNzUpKHf3Vd8l4sYDLN1k8dpFYc=;
+        b=Hb+jn0G/8M611T3NASyRbuvm6WKllLHxVL1tL1rEpv7brrLb0Hu6NTToNzv0tmzdeC
+         JyaVBn6wQpjb343uNF/rERO2GC1ek3HJ+nRaxWnLIyEYmtt7tUE1PFwhNicKyqFpWfLm
+         Sbfmh9iH8uaAZjkeIW692nwDXGcQWiJDUZKeMS9AMI/xMTZfoQv4Q7iOl91Wddji2pa5
+         NqPbDh8/LtAnhzSrqAojhapIg8FxbSk/rfrvQB7CVo28gD77n1vAsuB0KU+Uf2K5ByI6
+         /gL/XTwTShyrwGohsbsNeUHXqC0hBWjC2paRa1a85vRglY05W2s2yzK5Qw5fSgmhx510
+         UKjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Lsg60nvZlEGJHZUjNzUpKHf3Vd8l4sYDLN1k8dpFYc=;
+        b=5DkOrQWyi+rIYedO2GF/H5/CxC7JMm2FFfCNvpJHPKYR1HpUCjU8d1UQKCb5x86it5
+         W8YlMMzK9Gl1NBdKVVHM4uIAF0HKxYOOgE7NOPnOuUhHy8UdbWe8PX9l969So/scxPEV
+         iAyTLfqY5YAUvHC921+eChPgVMoO0J0KgWJRxWN7VlmEvoF3dMFdLd/Qh5/fVAG9ylh3
+         r+d7N8o3aZ5KHG0AA67H9Rjjl07zUJDRCTBbBVWwvoF3ncabeHQvJMliSGCmfSP9N2ar
+         Po2c9NXjw4S3TxFigXsld03JXYH0B+DriJLJjyuwqa25t7guilQKeSZ9DttLwfQPfuWY
+         lOmg==
+X-Gm-Message-State: AO0yUKVBN0mzxowBxn/e9ZJsYPmEZSft8rvMV+tTjx1fjLs74OAIVeHP
+        kdisuUYTyuZAHPx5N0fc7l94fjBc88Hq+w==
+X-Google-Smtp-Source: AK7set+6/6FKuztBdvA1zYGewj8dNdEvHYeylIpxZhYsg1UYxByQrNAd9I2SzW1uQoCFDPnNhQsMsA==
+X-Received: by 2002:a5d:5712:0:b0:2bf:b106:9f9b with SMTP id a18-20020a5d5712000000b002bfb1069f9bmr2123611wrv.10.1674573632243;
+        Tue, 24 Jan 2023 07:20:32 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id j12-20020a5d564c000000b002bdef155868sm1265459wrw.106.2023.01.24.07.20.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jan 2023 07:20:31 -0800 (PST)
+Date:   Tue, 24 Jan 2023 18:20:26 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Marek Vasut <marex@denx.de>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, Marc Zyngier <maz@kernel.org>,
+        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] gpio: mxc: Unlock on error path in mxc_flip_edge()
+Message-ID: <Y8/3OlSVCK/0wQRj@kili>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 1/1] checkpatch: recognise NOKPROBE_SYMBOL for blank line
- detection after function/struct/union/enum
-Content-Language: en-US
-To:     Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>
-Cc:     Dwaipayan Ray <dwaipayanray1@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-References: <20230120114649.117018-1-borntraeger@linux.ibm.com>
- <e092f27243feeeec282ef8fdab57d8f9ee88a32d.camel@perches.com>
-From:   Christian Borntraeger <borntraeger@linux.ibm.com>
-In-Reply-To: <e092f27243feeeec282ef8fdab57d8f9ee88a32d.camel@perches.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: B6cJ4QtP57BqYT7t9v8F4mRo1EDn66_o
-X-Proofpoint-ORIG-GUID: oT6S8bMmXIr5ds1smx_vAzFJkC2qCxgL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-23_12,2023-01-24_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 phishscore=0 mlxlogscore=999 clxscore=1011 spamscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301240111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+We recently added locking to this function but one error path was
+over looked.  Drop the lock before returning.
 
+Fixes: e5464277625c ("gpio: mxc: Protect GPIO irqchip RMW with bgpio spinlock")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/gpio/gpio-mxc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Am 20.01.23 um 17:10 schrieb Joe Perches:
-> On Fri, 2023-01-20 at 12:46 +0100, Christian Borntraeger wrote:
->> NOKPROBE_SYMBOL should be treated like EXPORT_SYMBOL to avoid
->> false positives.
-> []
->> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> []
->> @@ -3995,6 +3995,7 @@ sub process {
->>   		    $line =~ /^\+/ &&
->>   		    !($line =~ /^\+\s*$/ ||
->>   		      $line =~ /^\+\s*(?:EXPORT_SYMBOL|early_param)/ ||
->> +		      $line =~ /^\+\s*NOKPROBE_SYMBOL/ ||
->>   		      $line =~ /^\+\s*MODULE_/i ||
->>   		      $line =~ /^\+\s*\#\s*(?:end|elif|else)/ ||
->>   		      $line =~ /^\+[a-z_]*init/ ||
-> 
-> $ git grep -P -w -oh '\w*NOKPROBE_SYMBOL\w*' | sort | uniq -c
->       60 _ASM_NOKPROBE_SYMBOL
->        2 __NOKPROBE_SYMBOL
->      304 NOKPROBE_SYMBOL
-> 
-> Any issue with these other variants? (it doesn't seem so)
-7
-The other variants should not matter.
-> 
-> btw: __NOKPROBE_SYMBOL has a ; at the end of its definition.
-> 
-> include/asm-generic/kprobes.h:# define __NOKPROBE_SYMBOL(fname)                         \
-> include/asm-generic/kprobes.h-static unsigned long __used                                       \
-> include/asm-generic/kprobes.h-  __section("_kprobe_blacklist")                          \
-> include/asm-generic/kprobes.h-  _kbl_addr_##fname = (unsigned long)fname;
-> 
-> And so there are extra ; uses after ever use of NOKPROBE_SYMBOL(foo);
-> 
-> $ git grep -w NOKPROBE_SYMBOL | grep ';' | wc -l
-> 285
-> 
-> There are only 10 uses of NOKPROBE_SYMBOL(foo) without a semicolon
-> 
-> $ git grep -P '\bNOKPROBE_SYMBOL\s*\(\s*\w+\s*\)\s*(?:[^\;]|$)'
-> arch/arm/kernel/traps.c:NOKPROBE_SYMBOL(do_undefinstr)
-> arch/arm/probes/kprobes/opt-arm.c:NOKPROBE_SYMBOL(optimized_callback)
-> arch/arm64/kernel/kgdb.c:NOKPROBE_SYMBOL(kgdb_brk_fn)
-> arch/powerpc/mm/cacheflush.c:NOKPROBE_SYMBOL(flush_dcache_icache_phys)
-> arch/powerpc/platforms/82xx/pq2.c:NOKPROBE_SYMBOL(pq2_restart)
-> include/asm-generic/kprobes.h:# define NOKPROBE_SYMBOL(fname)   __NOKPROBE_SYMBOL(fname)
-> include/asm-generic/kprobes.h:# define NOKPROBE_SYMBOL(fname)
-> kernel/fail_function.c:NOKPROBE_SYMBOL(fei_kprobe_handler)
-> kernel/kprobes.c:NOKPROBE_SYMBOL(__kretprobe_trampoline_handler)
-> kernel/trace/trace_eprobe.c:NOKPROBE_SYMBOL(process_fetch_insn)
-> kernel/trace/trace_kprobe.c:NOKPROBE_SYMBOL(process_fetch_insn)
-> kernel/trace/trace_uprobe.c:NOKPROBE_SYMBOL(process_fetch_insn)
-> 
-> The actual uses with NOKPROBE_SYMBOL(foo) should likely have semicolons added
-> and the __NOKPROBE_SYMBOL definition should have the semicolon removed.
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 6f673b2f2a1b..9d0cec4b82a3 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -249,10 +249,11 @@ static void mxc_flip_edge(struct mxc_gpio_port *port, u32 gpio)
+ 	} else {
+ 		pr_err("mxc: invalid configuration for GPIO %d: %x\n",
+ 		       gpio, edge);
+-		return;
++		goto unlock;
+ 	}
+ 	writel(val | (edge << (bit << 1)), reg);
+ 
++unlock:
+ 	raw_spin_unlock_irqrestore(&port->gc.bgpio_lock, flags);
+ }
+ 
+-- 
+2.35.1
 
-That would be an independent check I guess.
-  
