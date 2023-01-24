@@ -2,96 +2,154 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17587C25B4E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 10:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7C1C25B50
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 12:16:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233689AbjAXKEX (ORCPT
+        id S233513AbjAXMQe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Jan 2023 05:04:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46778 "EHLO
+        Tue, 24 Jan 2023 07:16:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233705AbjAXKEU (ORCPT
+        with ESMTP id S233479AbjAXMQd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Jan 2023 05:04:20 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58D2B3EC7B;
-        Tue, 24 Jan 2023 02:04:16 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id r9so13320837wrw.4;
-        Tue, 24 Jan 2023 02:04:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C07Sdj5SgC+4bTQhxr8yF2K18bhfSCxMpf1Br4u8+/M=;
-        b=a7qtoobVIxAwjxdMt/BthyU3ccigYZFLZ2xxeSed3jIo0aDVlo8EDF+jDw5EFpWnOB
-         HXYEjd4cAv9BxL4XKx64iZ1Gz8Rk4u9VMRzKe+ZV8RIFK61sVY16i3R7N/ntK4E86y47
-         T74j4E3TkRO7CffrSlzH5aUPpX76mcotpaLwnNX0aRiEtmwakyX2G0ApPTv16w/54fsQ
-         11/gr/v7Wbj8tGYlwFsxaHg0lFSK43CfBwnFKw75zy+dHX493b4lbu1dIzX3HCDwok6R
-         iEo8oj7pM9bKWDlkn6rEHsgDMb7JAYGZhyDvDPZW38vj3bj7L1LQD5/aYNb/J3WLmU4M
-         LK/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C07Sdj5SgC+4bTQhxr8yF2K18bhfSCxMpf1Br4u8+/M=;
-        b=U/NWhawNEGQSe5Uwq5LsymM5c/7YsNGG2hVZAwVZ2ua8cua4tiZ4v6EH9pRBphox5l
-         arF3CNWlyv4S3DQhPlGTDrcfYhHgNAJxZH4PUSl/v68Z6gcW9wJgl7BTdqcz9A3Aj9tS
-         Dq/+UncxmzmoUTaxc/z0xOYBfk3o3pC4JRX9r7c1xNHVcTFsyYW1JyXLCvXkc2ga7gcy
-         agJhV6b7W3ceUZ7awT7QXm5gIUpU9qemvaCwhlJ8Yf9wFQmBG/bEXeAFhd3GNO7WAE0v
-         889FnG/mwqo3zT3citxzgquKg9r+FyFvfOqSE3newmDHaHEuJbK13raeFIVd3WHA/K+6
-         faTQ==
-X-Gm-Message-State: AFqh2kqlbieV6uxE3zFu2KhptYzEsB/7eKyHU0b1fPRKpn9NzldPu7H5
-        i06tF0rmwXcfmovm0r83wQw=
-X-Google-Smtp-Source: AMrXdXtSX600y9yX9q1xMcVZ9eQp8dKJQEZC+hSjWrcMzjUx4Frpc2/Tl6sFwQF1sJipV65ZrjQD+Q==
-X-Received: by 2002:adf:ec4f:0:b0:2bd:ffc1:3f16 with SMTP id w15-20020adfec4f000000b002bdffc13f16mr24414099wrn.8.1674554654776;
-        Tue, 24 Jan 2023 02:04:14 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id t20-20020adfa2d4000000b002bdcce37d31sm1758731wra.99.2023.01.24.02.04.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 02:04:14 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Haibo Chen <haibo.chen@nxp.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: adc: imx93: Fix spelling mistake "geting" -> "getting"
-Date:   Tue, 24 Jan 2023 10:04:13 +0000
-Message-Id: <20230124100413.684416-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 24 Jan 2023 07:16:33 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06344523E;
+        Tue, 24 Jan 2023 04:16:13 -0800 (PST)
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30OBn3WW005401;
+        Tue, 24 Jan 2023 12:16:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=f07QMuBUSg3ZarMkt3Gwjde/EaP6Bc9lH2qZXl5nyCY=;
+ b=gfreqFprsd6yG+wEqww+B7Z8olg2a6AhtG7A9foPXXeWRsW97SScghsj8+ARFWHovfLF
+ KKd3iVLa0FtJRCwrBVXpP9TL+z+BYQrJ5+WU7M/5SxtJg8AVF8NHn+zrNrbL4fn4W8re
+ 8/uvgjTblLP4SeFZoxvXUMonZhB7ZhnC8oU8ML23i5MrEXYc60B4VszTHIcYQcKquHPZ
+ 3voa7XAHQkedsymHIKwmgy4mHkPSX4MhjrdY/rQ9ns/hLJT/QhJ6M7S8QY4/bsz3WvZs
+ /xgioy0EuND+J3kWKREhXVca9hktVD/dzTgtHaTZd+yOxHn10jDrsVG4mzIsVVF+8CnI Xg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3na9vbqkux-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Jan 2023 12:16:07 +0000
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30OCG6Gd004119;
+        Tue, 24 Jan 2023 12:16:06 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3na9vbqku6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Jan 2023 12:16:06 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30NNTwa9011514;
+        Tue, 24 Jan 2023 12:16:04 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3n87p6kshv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Jan 2023 12:16:04 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30OCG2Hn40370608
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Jan 2023 12:16:02 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4B3CE2004D;
+        Tue, 24 Jan 2023 12:16:02 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E79952004B;
+        Tue, 24 Jan 2023 12:16:01 +0000 (GMT)
+Received: from [9.171.71.154] (unknown [9.171.71.154])
+        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 24 Jan 2023 12:16:01 +0000 (GMT)
+Message-ID: <86bb384b-0084-05ac-3a13-ef462d1c0a35@linux.ibm.com>
+Date:   Tue, 24 Jan 2023 13:16:01 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 1/1] checkpatch: recognise NOKPROBE_SYMBOL for blank line
+ detection after function/struct/union/enum
+Content-Language: en-US
+To:     Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>
+Cc:     Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+References: <20230120114649.117018-1-borntraeger@linux.ibm.com>
+ <e092f27243feeeec282ef8fdab57d8f9ee88a32d.camel@perches.com>
+From:   Christian Borntraeger <borntraeger@linux.ibm.com>
+In-Reply-To: <e092f27243feeeec282ef8fdab57d8f9ee88a32d.camel@perches.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: B6cJ4QtP57BqYT7t9v8F4mRo1EDn66_o
+X-Proofpoint-ORIG-GUID: oT6S8bMmXIr5ds1smx_vAzFJkC2qCxgL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-23_12,2023-01-24_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 phishscore=0 mlxlogscore=999 clxscore=1011 spamscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301240111
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thrre is a spelling mistake in a dev_err_probe message. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/iio/adc/imx93_adc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/imx93_adc.c b/drivers/iio/adc/imx93_adc.c
-index d8de8284e13d..a775d2e40567 100644
---- a/drivers/iio/adc/imx93_adc.c
-+++ b/drivers/iio/adc/imx93_adc.c
-@@ -315,7 +315,7 @@ static int imx93_adc_probe(struct platform_device *pdev)
- 	adc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(adc->regs))
- 		return dev_err_probe(dev, PTR_ERR(adc->regs),
--				     "Failed geting ioremap resource\n");
-+				     "Failed getting ioremap resource\n");
- 
- 	/* The third irq is for ADC conversion usage */
- 	adc->irq = platform_get_irq(pdev, 2);
--- 
-2.30.2
+Am 20.01.23 um 17:10 schrieb Joe Perches:
+> On Fri, 2023-01-20 at 12:46 +0100, Christian Borntraeger wrote:
+>> NOKPROBE_SYMBOL should be treated like EXPORT_SYMBOL to avoid
+>> false positives.
+> []
+>> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> []
+>> @@ -3995,6 +3995,7 @@ sub process {
+>>   		    $line =~ /^\+/ &&
+>>   		    !($line =~ /^\+\s*$/ ||
+>>   		      $line =~ /^\+\s*(?:EXPORT_SYMBOL|early_param)/ ||
+>> +		      $line =~ /^\+\s*NOKPROBE_SYMBOL/ ||
+>>   		      $line =~ /^\+\s*MODULE_/i ||
+>>   		      $line =~ /^\+\s*\#\s*(?:end|elif|else)/ ||
+>>   		      $line =~ /^\+[a-z_]*init/ ||
+> 
+> $ git grep -P -w -oh '\w*NOKPROBE_SYMBOL\w*' | sort | uniq -c
+>       60 _ASM_NOKPROBE_SYMBOL
+>        2 __NOKPROBE_SYMBOL
+>      304 NOKPROBE_SYMBOL
+> 
+> Any issue with these other variants? (it doesn't seem so)
+7
+The other variants should not matter.
+> 
+> btw: __NOKPROBE_SYMBOL has a ; at the end of its definition.
+> 
+> include/asm-generic/kprobes.h:# define __NOKPROBE_SYMBOL(fname)                         \
+> include/asm-generic/kprobes.h-static unsigned long __used                                       \
+> include/asm-generic/kprobes.h-  __section("_kprobe_blacklist")                          \
+> include/asm-generic/kprobes.h-  _kbl_addr_##fname = (unsigned long)fname;
+> 
+> And so there are extra ; uses after ever use of NOKPROBE_SYMBOL(foo);
+> 
+> $ git grep -w NOKPROBE_SYMBOL | grep ';' | wc -l
+> 285
+> 
+> There are only 10 uses of NOKPROBE_SYMBOL(foo) without a semicolon
+> 
+> $ git grep -P '\bNOKPROBE_SYMBOL\s*\(\s*\w+\s*\)\s*(?:[^\;]|$)'
+> arch/arm/kernel/traps.c:NOKPROBE_SYMBOL(do_undefinstr)
+> arch/arm/probes/kprobes/opt-arm.c:NOKPROBE_SYMBOL(optimized_callback)
+> arch/arm64/kernel/kgdb.c:NOKPROBE_SYMBOL(kgdb_brk_fn)
+> arch/powerpc/mm/cacheflush.c:NOKPROBE_SYMBOL(flush_dcache_icache_phys)
+> arch/powerpc/platforms/82xx/pq2.c:NOKPROBE_SYMBOL(pq2_restart)
+> include/asm-generic/kprobes.h:# define NOKPROBE_SYMBOL(fname)   __NOKPROBE_SYMBOL(fname)
+> include/asm-generic/kprobes.h:# define NOKPROBE_SYMBOL(fname)
+> kernel/fail_function.c:NOKPROBE_SYMBOL(fei_kprobe_handler)
+> kernel/kprobes.c:NOKPROBE_SYMBOL(__kretprobe_trampoline_handler)
+> kernel/trace/trace_eprobe.c:NOKPROBE_SYMBOL(process_fetch_insn)
+> kernel/trace/trace_kprobe.c:NOKPROBE_SYMBOL(process_fetch_insn)
+> kernel/trace/trace_uprobe.c:NOKPROBE_SYMBOL(process_fetch_insn)
+> 
+> The actual uses with NOKPROBE_SYMBOL(foo) should likely have semicolons added
+> and the __NOKPROBE_SYMBOL definition should have the semicolon removed.
 
+That would be an independent check I guess.
+  
