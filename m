@@ -2,71 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FB1C05027
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Jan 2023 20:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17932C38142
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 05:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231875AbjAWUZ4 (ORCPT
+        id S232255AbjAXFk3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Jan 2023 15:25:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
+        Tue, 24 Jan 2023 00:40:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232213AbjAWUZz (ORCPT
+        with ESMTP id S231875AbjAXFk2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Jan 2023 15:25:55 -0500
-Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CFF212E;
-        Mon, 23 Jan 2023 12:25:53 -0800 (PST)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1674505551;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qA/YV51x0NzBgSINPoR//MrOdoxZaOLSq8U1gyTnrk4=;
-        b=qWEhA45TXBuxhF+vl52y/3zWz2cXV0daunb7EabtOQLzm/+kO+uQ0jESmd/SEjh/Ii4Qk9
-        MPmSWGPb8HuPmdypo59cKjmFeLA4/Ga4oKmEgz8V/nX4YThMMdHFf8KTIeCg8qBzIHc2Oj
-        nEh2g9uT4hX0yUZwC/a/90FiWxJHVoY=
-From:   Oliver Upton <oliver.upton@linux.dev>
-To:     Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Oliver Upton <oliver.upton@linux.dev>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Subject: Re: [PATCH v2] KVM: arm64: vgic-v3: Use kstrtobool() instead of strtobool()
-Date:   Mon, 23 Jan 2023 20:25:37 +0000
-Message-Id: <167450419464.2571033.6082403533536145707.b4-ty@linux.dev>
-In-Reply-To: <f546e636c6d2bbcc0d8c4191ab98ce892fce4584.1673702763.git.christophe.jaillet@wanadoo.fr>
-References: <f546e636c6d2bbcc0d8c4191ab98ce892fce4584.1673702763.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
+        Tue, 24 Jan 2023 00:40:28 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2D6305FE;
+        Mon, 23 Jan 2023 21:40:27 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 10FB261177;
+        Tue, 24 Jan 2023 05:40:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 602ADC433A0;
+        Tue, 24 Jan 2023 05:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674538826;
+        bh=qvg+AcmvVF7mUQYijwMRQBPynWwrabBv7d+Ecn7H4DQ=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=W/22PdFMyhCboxEhkAIMdM3l6v3pPUdec0biDZdcKxw/9sKej8gWsRzXmHcI/pviu
+         zD42HcSTRuyokV1GLHiongtHhY4eMx4ha+dv5Q7VqzUtRfq0pdFPcaeGBqP4uA8fsi
+         7jU2Sod+PGrary5Veej8O1y9NghIfMYd3lunPfjFdoCxLJTyY3js7ZiKJtIybMTEpF
+         xo1FS8xObvnYe3tlq5lejB5dVqXwGQBOCLLea90qhZneQDFGjiIAOMzsh303WACtgA
+         qfJCCgQ/rVJJkF+lcX06kQE96KDGm9KiwUR4wk47vNhYjJ0zNb7XqhtQ9yLR1GZOBy
+         ZYPOdaWH4okhA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 45997F83ECD;
+        Tue, 24 Jan 2023 05:40:26 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH net-next] net: microchip: sparx5: Fix uninitialized variable
+ in vcap_path_exist()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167453882627.30916.10967773161306261455.git-patchwork-notify@kernel.org>
+Date:   Tue, 24 Jan 2023 05:40:26 +0000
+References: <Y8qbYAb+YSXo1DgR@kili>
+In-Reply-To: <Y8qbYAb+YSXo1DgR@kili>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
+        daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, horatiu.vultur@microchip.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 14 Jan 2023 14:26:15 +0100, Christophe JAILLET wrote:
-> strtobool() is the same as kstrtobool().
-> However, the latter is more used within the kernel.
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 20 Jan 2023 16:47:12 +0300 you wrote:
+> The "eport" variable needs to be initialized to NULL for this code to
+> work.
 > 
-> In order to remove strtobool() and slightly simplify kstrtox.h, switch to
-> the other function name.
-> 
-> While at it, include the corresponding header file (<linux/kstrtox.h>)
+> Fixes: 814e7693207f ("net: microchip: vcap api: Add a storage state to a VCAP rule")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> Probably you had CONFIG_INIT_STACK_ALL=y in your .config for this to
+> pass testing.
 > 
 > [...]
 
-Applied to kvmarm/next, thanks!
+Here is the summary with links:
+  - [net-next] net: microchip: sparx5: Fix uninitialized variable in vcap_path_exist()
+    https://git.kernel.org/netdev/net-next/c/3bee9b573af5
 
-[1/1] KVM: arm64: vgic-v3: Use kstrtobool() instead of strtobool()
-      https://git.kernel.org/kvmarm/kvmarm/c/016cbbd2ba55
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
---
-Best,
-Oliver
+
