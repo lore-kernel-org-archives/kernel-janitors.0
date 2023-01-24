@@ -2,84 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17932C38142
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 05:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E114C38142
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 09:21:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232255AbjAXFk3 (ORCPT
+        id S233550AbjAXJVZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Jan 2023 00:40:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36874 "EHLO
+        Tue, 24 Jan 2023 04:21:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231875AbjAXFk2 (ORCPT
+        with ESMTP id S233562AbjAXJVG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Jan 2023 00:40:28 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2D6305FE;
-        Mon, 23 Jan 2023 21:40:27 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 10FB261177;
-        Tue, 24 Jan 2023 05:40:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 602ADC433A0;
-        Tue, 24 Jan 2023 05:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674538826;
-        bh=qvg+AcmvVF7mUQYijwMRQBPynWwrabBv7d+Ecn7H4DQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=W/22PdFMyhCboxEhkAIMdM3l6v3pPUdec0biDZdcKxw/9sKej8gWsRzXmHcI/pviu
-         zD42HcSTRuyokV1GLHiongtHhY4eMx4ha+dv5Q7VqzUtRfq0pdFPcaeGBqP4uA8fsi
-         7jU2Sod+PGrary5Veej8O1y9NghIfMYd3lunPfjFdoCxLJTyY3js7ZiKJtIybMTEpF
-         xo1FS8xObvnYe3tlq5lejB5dVqXwGQBOCLLea90qhZneQDFGjiIAOMzsh303WACtgA
-         qfJCCgQ/rVJJkF+lcX06kQE96KDGm9KiwUR4wk47vNhYjJ0zNb7XqhtQ9yLR1GZOBy
-         ZYPOdaWH4okhA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 45997F83ECD;
-        Tue, 24 Jan 2023 05:40:26 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: microchip: sparx5: Fix uninitialized variable
- in vcap_path_exist()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167453882627.30916.10967773161306261455.git-patchwork-notify@kernel.org>
-Date:   Tue, 24 Jan 2023 05:40:26 +0000
-References: <Y8qbYAb+YSXo1DgR@kili>
-In-Reply-To: <Y8qbYAb+YSXo1DgR@kili>
+        Tue, 24 Jan 2023 04:21:06 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6C1D83BDA6;
+        Tue, 24 Jan 2023 01:20:44 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D33FC14;
+        Tue, 24 Jan 2023 01:21:08 -0800 (PST)
+Received: from e120937-lin (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D536C3F64C;
+        Tue, 24 Jan 2023 01:20:25 -0800 (PST)
+Date:   Tue, 24 Jan 2023 09:20:23 +0000
+From:   Cristian Marussi <cristian.marussi@arm.com>
 To:     Dan Carpenter <error27@gmail.com>
-Cc:     lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
-        daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, horatiu.vultur@microchip.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] firmware: arm_scmi: Clean up a return statement
+Message-ID: <Y8+i14h0bfo3aOeb@e120937-lin>
+References: <Y86im5M49p3ePGxj@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y86im5M49p3ePGxj@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 20 Jan 2023 16:47:12 +0300 you wrote:
-> The "eport" variable needs to be initialized to NULL for this code to
-> work.
+On Mon, Jan 23, 2023 at 06:07:07PM +0300, Dan Carpenter wrote:
+> The comments say "enabled" where "disabled" is intended.  Also it's
+> cleaner to return zero explicitly instead of ret.
 > 
-> Fixes: 814e7693207f ("net: microchip: vcap api: Add a storage state to a VCAP rule")
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
 > ---
-> Probably you had CONFIG_INIT_STACK_ALL=y in your .config for this to
-> pass testing.
+>  drivers/firmware/arm_scmi/driver.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> [...]
+> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+> index d21c7eafd641..703f16ef3953 100644
+> --- a/drivers/firmware/arm_scmi/driver.c
+> +++ b/drivers/firmware/arm_scmi/driver.c
+> @@ -2739,8 +2739,8 @@ static int scmi_probe(struct platform_device *pdev)
+>  				if (ret)
+>  					goto clear_dev_req_notifier;
+>  
+> -				/* Bail out anyway when coex enabled */
+> -				return ret;
+> +				/* Bail out anyway when coex disabled. */
+> +				return 0;
+>  			}
+>  
+>  			/* Coex enabled, carry on in any case. */
+> -- 
 
-Here is the summary with links:
-  - [net-next] net: microchip: sparx5: Fix uninitialized variable in vcap_path_exist()
-    https://git.kernel.org/netdev/net-next/c/3bee9b573af5
+Indeed.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
+Cristian
