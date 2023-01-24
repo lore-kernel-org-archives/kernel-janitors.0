@@ -2,70 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E114C38142
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 09:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17587C25B4E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 10:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233550AbjAXJVZ (ORCPT
+        id S233689AbjAXKEX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Jan 2023 04:21:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51586 "EHLO
+        Tue, 24 Jan 2023 05:04:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233562AbjAXJVG (ORCPT
+        with ESMTP id S233705AbjAXKEU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Jan 2023 04:21:06 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6C1D83BDA6;
-        Tue, 24 Jan 2023 01:20:44 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D33FC14;
-        Tue, 24 Jan 2023 01:21:08 -0800 (PST)
-Received: from e120937-lin (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D536C3F64C;
-        Tue, 24 Jan 2023 01:20:25 -0800 (PST)
-Date:   Tue, 24 Jan 2023 09:20:23 +0000
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] firmware: arm_scmi: Clean up a return statement
-Message-ID: <Y8+i14h0bfo3aOeb@e120937-lin>
-References: <Y86im5M49p3ePGxj@kili>
+        Tue, 24 Jan 2023 05:04:20 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58D2B3EC7B;
+        Tue, 24 Jan 2023 02:04:16 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id r9so13320837wrw.4;
+        Tue, 24 Jan 2023 02:04:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C07Sdj5SgC+4bTQhxr8yF2K18bhfSCxMpf1Br4u8+/M=;
+        b=a7qtoobVIxAwjxdMt/BthyU3ccigYZFLZ2xxeSed3jIo0aDVlo8EDF+jDw5EFpWnOB
+         HXYEjd4cAv9BxL4XKx64iZ1Gz8Rk4u9VMRzKe+ZV8RIFK61sVY16i3R7N/ntK4E86y47
+         T74j4E3TkRO7CffrSlzH5aUPpX76mcotpaLwnNX0aRiEtmwakyX2G0ApPTv16w/54fsQ
+         11/gr/v7Wbj8tGYlwFsxaHg0lFSK43CfBwnFKw75zy+dHX493b4lbu1dIzX3HCDwok6R
+         iEo8oj7pM9bKWDlkn6rEHsgDMb7JAYGZhyDvDPZW38vj3bj7L1LQD5/aYNb/J3WLmU4M
+         LK/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C07Sdj5SgC+4bTQhxr8yF2K18bhfSCxMpf1Br4u8+/M=;
+        b=U/NWhawNEGQSe5Uwq5LsymM5c/7YsNGG2hVZAwVZ2ua8cua4tiZ4v6EH9pRBphox5l
+         arF3CNWlyv4S3DQhPlGTDrcfYhHgNAJxZH4PUSl/v68Z6gcW9wJgl7BTdqcz9A3Aj9tS
+         Dq/+UncxmzmoUTaxc/z0xOYBfk3o3pC4JRX9r7c1xNHVcTFsyYW1JyXLCvXkc2ga7gcy
+         agJhV6b7W3ceUZ7awT7QXm5gIUpU9qemvaCwhlJ8Yf9wFQmBG/bEXeAFhd3GNO7WAE0v
+         889FnG/mwqo3zT3citxzgquKg9r+FyFvfOqSE3newmDHaHEuJbK13raeFIVd3WHA/K+6
+         faTQ==
+X-Gm-Message-State: AFqh2kqlbieV6uxE3zFu2KhptYzEsB/7eKyHU0b1fPRKpn9NzldPu7H5
+        i06tF0rmwXcfmovm0r83wQw=
+X-Google-Smtp-Source: AMrXdXtSX600y9yX9q1xMcVZ9eQp8dKJQEZC+hSjWrcMzjUx4Frpc2/Tl6sFwQF1sJipV65ZrjQD+Q==
+X-Received: by 2002:adf:ec4f:0:b0:2bd:ffc1:3f16 with SMTP id w15-20020adfec4f000000b002bdffc13f16mr24414099wrn.8.1674554654776;
+        Tue, 24 Jan 2023 02:04:14 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id t20-20020adfa2d4000000b002bdcce37d31sm1758731wra.99.2023.01.24.02.04.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jan 2023 02:04:14 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Haibo Chen <haibo.chen@nxp.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] iio: adc: imx93: Fix spelling mistake "geting" -> "getting"
+Date:   Tue, 24 Jan 2023 10:04:13 +0000
+Message-Id: <20230124100413.684416-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y86im5M49p3ePGxj@kili>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 23, 2023 at 06:07:07PM +0300, Dan Carpenter wrote:
-> The comments say "enabled" where "disabled" is intended.  Also it's
-> cleaner to return zero explicitly instead of ret.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/firmware/arm_scmi/driver.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index d21c7eafd641..703f16ef3953 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -2739,8 +2739,8 @@ static int scmi_probe(struct platform_device *pdev)
->  				if (ret)
->  					goto clear_dev_req_notifier;
->  
-> -				/* Bail out anyway when coex enabled */
-> -				return ret;
-> +				/* Bail out anyway when coex disabled. */
-> +				return 0;
->  			}
->  
->  			/* Coex enabled, carry on in any case. */
-> -- 
+Thrre is a spelling mistake in a dev_err_probe message. Fix it.
 
-Indeed.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/iio/adc/imx93_adc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Cristian
+diff --git a/drivers/iio/adc/imx93_adc.c b/drivers/iio/adc/imx93_adc.c
+index d8de8284e13d..a775d2e40567 100644
+--- a/drivers/iio/adc/imx93_adc.c
++++ b/drivers/iio/adc/imx93_adc.c
+@@ -315,7 +315,7 @@ static int imx93_adc_probe(struct platform_device *pdev)
+ 	adc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(adc->regs))
+ 		return dev_err_probe(dev, PTR_ERR(adc->regs),
+-				     "Failed geting ioremap resource\n");
++				     "Failed getting ioremap resource\n");
+ 
+ 	/* The third irq is for ADC conversion usage */
+ 	adc->irq = platform_get_irq(pdev, 2);
+-- 
+2.30.2
+
