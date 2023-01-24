@@ -2,99 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9CBC25B4E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 15:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14824C54E94
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Jan 2023 15:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234519AbjAXPVD (ORCPT
+        id S234943AbjAXP1h (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Jan 2023 10:21:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35262 "EHLO
+        Tue, 24 Jan 2023 10:27:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232550AbjAXPVC (ORCPT
+        with ESMTP id S234227AbjAXP1g (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Jan 2023 10:21:02 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA1F9016;
-        Tue, 24 Jan 2023 07:21:01 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so11202133wms.2;
-        Tue, 24 Jan 2023 07:21:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tSLanuDzqCW+eUvvpWt1HPWdPcVU7kF2EEorDOUKdRo=;
-        b=PBatQWyIpE/59It9hSvEdvGeE0J9Y75XC/jgtgMHGSwEk3ZbEjNTXgW36NdnpwyHrg
-         QzswVvnySfKWWJe6dqDqh9MzFYYD9MXVGP3xscZs84KSuo4fgd9Hu2ICcjThl9JOZd8k
-         CsMVpBxn6M0zWakJKv0DzcDxVI4va/YpBRPFKOuu1/8xjdK7HZs0edOluK935wOJoOag
-         zCprjN0lRwfnxW2D1X1gJIyHfreGMaVyMwWUfwRIDAfh3w9+1twSOJK4rQlv9Vkor6JR
-         eXXH9dXYR1Z5/X+aRsANtZhtpS2vzw9uBHf/OVvuR72c4zRCD3m2Xfz+U0jKlZfrl/kQ
-         299w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSLanuDzqCW+eUvvpWt1HPWdPcVU7kF2EEorDOUKdRo=;
-        b=sjvuouo8gH8DkEYcZ4kq3bRdYpME8DcFb3xbVMb5XJiJLA784nR4qpPqebVoDZR0TM
-         O8KAIZ/Ok1bb0NkgWiUtrMgrlNAm93uqqFQUfQ0htjXF5OLFvO3jAAZ9ThIV5m7OVVgo
-         fMqBAhlbdrxiKXZbyynY5G7JQ+8AbiA3MXq4ip2wpQakMcjOrf7ZAqgK49EufjY4IXzv
-         1l0IpvOJQ54i3l4PEgt5VnTxxM0xp5gCsm1I/tlTOUbcxP91ubQM9ubXGFLPAPAWypQY
-         H7tTh/tZm8ZcfYZ+skvcdMSLR7oJ15chDmgBzII9/4XhdjVK62TgpD7r0lhEhHKQlnc/
-         gvTg==
-X-Gm-Message-State: AFqh2kpl0ya/3izuETZlcoMpo+XjtHLC4rGO8v1JFbUpe++sVvnrV/oY
-        8WYJdl5xZfe+QMFfyDGd0LXO0Jtfh5KUUQ==
-X-Google-Smtp-Source: AMrXdXu0DPcXGPtwApwpyWqrvPM4rjZOGby+zXj2sAtlWwLaCV2jWLWtRxjTibQMP8F1o7T1ODmznQ==
-X-Received: by 2002:a05:600c:3d10:b0:3d9:ee3d:2f54 with SMTP id bh16-20020a05600c3d1000b003d9ee3d2f54mr36218520wmb.13.1674573661398;
-        Tue, 24 Jan 2023 07:21:01 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id 21-20020a05600c26d500b003d9b87296a9sm12927456wmv.25.2023.01.24.07.20.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 07:21:00 -0800 (PST)
-Date:   Tue, 24 Jan 2023 18:20:54 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Long Li <longli@microsoft.com>
-Cc:     Ajay Sharma <sharmaajay@microsoft.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Dexuan Cui <decui@microsoft.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] RDMA/mana_ib: Prevent array underflow in
- mana_ib_create_qp_raw()
-Message-ID: <Y8/3Vn8qx00kE9Kk@kili>
+        Tue, 24 Jan 2023 10:27:36 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F6E460B4;
+        Tue, 24 Jan 2023 07:27:31 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 512DD81F28;
+        Tue, 24 Jan 2023 16:27:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1674574049;
+        bh=NvY1Ms7ZtjHQDFqdz6yuwfqess1BDrJEVwapFmtZ4Xw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=rmjR0NhfU/AZz1QZqGuSJzK89nCkorBZeYGwqhf2r51DLkEyomxhhBKPna2zwjm9R
+         jWVyT3+s88txrbXPNOfQ1sOtb0SulvhEgcfDee1Zn5IOonJXyAGANYdHfLTrZiOMJt
+         CJa2buNUBsytL22bsGJVH2lGXsDgA/OrBWsVvbo8JRqibfLGvWzPvZ03Da7BgCb8DK
+         yRyoBWYd2/qE74vt7e8vQqO9JExSo9Cj1vLNunsHEb7obixlwZQFqYpCQSQ1t4M3Hw
+         T0AtGc9D2qUaCGX5MEOMMXybOeUsKeWl4obwB7Ub3q6S6HfdL1d8rShOryafmQIyY1
+         o3OYfHbGr/OBQ==
+Message-ID: <76be618d-e0fa-6bf2-7a8f-da422a0e8485@denx.de>
+Date:   Tue, 24 Jan 2023 16:27:28 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH] gpio: mxc: Unlock on error path in mxc_flip_edge()
+Content-Language: en-US
+To:     Dan Carpenter <error27@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, Marc Zyngier <maz@kernel.org>,
+        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <Y8/3OlSVCK/0wQRj@kili>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <Y8/3OlSVCK/0wQRj@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "port" comes from the user and if it is zero then the:
+On 1/24/23 16:20, Dan Carpenter wrote:
+> We recently added locking to this function but one error path was
+> over looked.  Drop the lock before returning.
+> 
+> Fixes: e5464277625c ("gpio: mxc: Protect GPIO irqchip RMW with bgpio spinlock")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>   drivers/gpio/gpio-mxc.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+> index 6f673b2f2a1b..9d0cec4b82a3 100644
+> --- a/drivers/gpio/gpio-mxc.c
+> +++ b/drivers/gpio/gpio-mxc.c
+> @@ -249,10 +249,11 @@ static void mxc_flip_edge(struct mxc_gpio_port *port, u32 gpio)
+>   	} else {
+>   		pr_err("mxc: invalid configuration for GPIO %d: %x\n",
+>   		       gpio, edge);
+> -		return;
+> +		goto unlock;
+>   	}
+>   	writel(val | (edge << (bit << 1)), reg);
+>   
+> +unlock:
+>   	raw_spin_unlock_irqrestore(&port->gc.bgpio_lock, flags);
+>   }
 
-	ndev = mc->ports[port - 1];
+Acked-by: Marek Vasut <marex@denx.de>
 
-assignment does an out of bounds read.  I have changed the if
-statement to fix this and to mirror how it is done in
-mana_ib_create_qp_rss().
-
-Fixes: 0266a177631d ("RDMA/mana_ib: Add a driver for Microsoft Azure Network Adapter")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/infiniband/hw/mana/qp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/mana/qp.c b/drivers/infiniband/hw/mana/qp.c
-index ea15ec77e321..54b61930a7fd 100644
---- a/drivers/infiniband/hw/mana/qp.c
-+++ b/drivers/infiniband/hw/mana/qp.c
-@@ -289,7 +289,7 @@ static int mana_ib_create_qp_raw(struct ib_qp *ibqp, struct ib_pd *ibpd,
- 
- 	/* IB ports start with 1, MANA Ethernet ports start with 0 */
- 	port = ucmd.port;
--	if (ucmd.port > mc->num_ports)
-+	if (port < 1 || port > mc->num_ports)
- 		return -EINVAL;
- 
- 	if (attr->cap.max_send_wr > MAX_SEND_BUFFERS_PER_QUEUE) {
--- 
-2.35.1
-
+Thanks !
