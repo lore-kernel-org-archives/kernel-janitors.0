@@ -2,111 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C05C54E94
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Jan 2023 12:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2591DC54E94
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Jan 2023 13:22:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233955AbjAZMxG (ORCPT
+        id S232760AbjAZNWP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Jan 2023 07:53:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36048 "EHLO
+        Thu, 26 Jan 2023 08:22:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231428AbjAZMxF (ORCPT
+        with ESMTP id S229558AbjAZNWO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Jan 2023 07:53:05 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46DA01632B
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jan 2023 04:53:03 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 26 Jan 2023 08:22:14 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBF0CC0E
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jan 2023 05:22:14 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E8F561FF40;
-        Thu, 26 Jan 2023 12:53:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1674737581; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fb8sBTQKgZCf6TAxBxFcTinrtnL4nnYNoq4E8lw+Nbo=;
-        b=WiCCqTKsTH+tpt0hZChA7TpyjuumFyZTFjVO0Lb6bNHMt5yCgpe8rxSAdL+d8nrooGQGxs
-        PaPRJzC0hxe7Xd6tu6VrCt1zIqvl+0Qk7uyU+deTR70pz4JUVD97S9Kg3NIQR7eCzIJBFj
-        4cNhQtk9V/vd5hAbdqewmSHhyPKRI/Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1674737581;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fb8sBTQKgZCf6TAxBxFcTinrtnL4nnYNoq4E8lw+Nbo=;
-        b=o9BVJXQ6VUJR8PrD3TMCo5h0cV70q6rH1UKd4ziNRh3axCVtcGAaXibH+j22p1GVg5aYs8
-        DRLa2lWLPLw3mxDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C328A139B3;
-        Thu, 26 Jan 2023 12:53:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id b5XrLq130mPfTgAAMHmgww
-        (envelope-from <tiwai@suse.de>); Thu, 26 Jan 2023 12:53:01 +0000
-Date:   Thu, 26 Jan 2023 13:53:01 +0100
-Message-ID: <878rhptq36.wl-tiwai@suse.de>
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>,
-        Maxime Ripard <mripard@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 23F5C6602E70;
+        Thu, 26 Jan 2023 13:22:12 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1674739332;
+        bh=PFjk7Lwomgg5i2CpzGsGjt10RBQ/x3BeqMztijLbhMw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=L1rfx53K/+HWdvL1cFrlzGxZv387Xj8Ya90h3fuTz4wMoksDSXelcJszna55ZhRbL
+         g4USt4nnYYxPHhEAHfCu8fQxK6Q8cfPl+A1FEMKC1MUNkbEBBYVhYcbM8hsLjRQmtc
+         J0aHr59lUYz6GUfuZrH5I6yJAoJtJEV1kr0aGGPtn94D9nwsBgUYIRvQ31PffMO8HF
+         EkgrUEk2lau+3IpH6suc9ngYFTg6cp5dWk7CbOnYXPbiTCRuHZdmcikQmU8lD5e12P
+         7kFZniCswiQV0vwKifCAMoeMwEEnuTWVZ+GzvOCW11ZOkxyvrHGkZy8ULBaUAyBpfp
+         a0PFtoVdaPJmA==
+Message-ID: <6f376bb9-2f44-b705-6843-795c0c1da742@collabora.com>
+Date:   Thu, 26 Jan 2023 14:22:09 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH] ASoC: mediatek: mt8188: remove some dead code
+Content-Language: en-US
+To:     Dan Carpenter <error27@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Trevor Wu <trevor.wu@mediatek.com>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ALSA: pci: lx6464es: fix a debug loop
-In-Reply-To: <Y9JIGt0HT8mLkUXF@kili>
-References: <Y9JIGt0HT8mLkUXF@kili>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+References: <Y9JHSwcfdNcfMjjt@kili>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <Y9JHSwcfdNcfMjjt@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 26 Jan 2023 10:30:02 +0100,
-Dan Carpenter wrote:
+Il 26/01/23 10:26, Dan Carpenter ha scritto:
+> We know that "irq < 0", so delete the unnecessary check.
 > 
-> This loop accidentally reuses the "i" iterator for both the inside and
-> the outside loop.  The value of MAX_STREAM_BUFFER is 5.  I believe that
-> chip->rmh.stat_len is in the 2-12 range.  If the value of .stat_len is
-> 4 or more then it will loop exactly one time, but if it's less then it
-> is a forever loop.
-> 
-> Fixes: 8e6320064c33 ("ALSA: lx_core: Remove useless #if 0 .. #endif")
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  sound/pci/lx6464es/lx_core.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/sound/pci/lx6464es/lx_core.c b/sound/pci/lx6464es/lx_core.c
-> index d3f58a3d17fb..7c1b380a54c0 100644
-> --- a/sound/pci/lx6464es/lx_core.c
-> +++ b/sound/pci/lx6464es/lx_core.c
-> @@ -493,13 +493,11 @@ int lx_buffer_ask(struct lx6464es *chip, u32 pipe, int is_capture,
->  		dev_dbg(chip->card->dev,
->  			"CMD_08_ASK_BUFFERS: needed %d, freed %d\n",
->  			    *r_needed, *r_freed);
-> -		for (i = 0; i < MAX_STREAM_BUFFER; ++i) {
-> -			for (i = 0; i != chip->rmh.stat_len; ++i)
-> -				dev_dbg(chip->card->dev,
-> -					"  stat[%d]: %x, %x\n", i,
-> -					    chip->rmh.stat[i],
-> -					    chip->rmh.stat[i] & MASK_DATA_SIZE);
-> -		}
-> +		for (i = 0; i < chip->rmh.stat_len; ++i)
 
-Judging from the previous lines, the access over MAX_STREAM_BUFFER
-might be unsafe.  So I guess a more safer change would be something
-like:
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-		for (i = 0; i < MAX_STREAM_BUFFER && chip->rmh.stat_len; ++i)
-
-Care to resubmit with it?
-
-
-Thanks!
-
-Takashi
