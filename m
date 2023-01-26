@@ -2,118 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E626CC05027
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Jan 2023 16:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6ECAC54EAA
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Jan 2023 22:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231944AbjAZQjX (ORCPT
+        id S233128AbjAZW4D (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Jan 2023 11:39:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50304 "EHLO
+        Thu, 26 Jan 2023 17:56:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231852AbjAZQjW (ORCPT
+        with ESMTP id S233103AbjAZW4B (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Jan 2023 11:39:22 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F7934A202
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jan 2023 08:39:19 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id t18so2390049wro.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jan 2023 08:39:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WcIULWf1hJO2aSG6ip1Q2Tbo7KEX8l8vfq1u07hQEUU=;
-        b=nTJd3UqQHJYIgHfYtrJfyHF3jy6yesQbAxKnBfhlrW7ZZYv5vss1/BwpzGKnU//+pW
-         zpEWqlJSU1UJSI1ZnMW1/fpJO+yHRhfSOrbz1DMeeefUw11iYpnJNzq7lutcwL4sdVQA
-         M8u0eJoyy7W8bYrQw3m8zo2lACqWAzDw3gWKispcuaQug6tcfxcDGjBfRUSmloFUhxGM
-         Sw/XwIM7yxzH/86FHVCW4XrLFoPQQKBIX3LLkuUfneMt47tO5zFJRor1KAkP1FlI503l
-         rgytrxiJuJYtCArZvzsNUT3M8ZVe4MODcWS2KQ1S65g210VjD1EB76AaowZCvsQ/VBqY
-         zIkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WcIULWf1hJO2aSG6ip1Q2Tbo7KEX8l8vfq1u07hQEUU=;
-        b=rq+wq5Wjz1N9ZI5O8gDSqp22Ig7hVDCt946HNwMIj+ku3UT32R95y4Bm/QL3kznola
-         e+8yDUyN8zF+2rW0KbcAhVnllAc1Fq5yKd/LapvRmvtsEmU6je7bQ2lYoVvUe5FFViMX
-         /RhZ3BNWa+KUF+puHRbG+Xv5wGLUrSy6c7jy0yP8MD96eezDlRnLVCRVhlMdG9lV2otS
-         u1u5afLl6QqAcM1iteZx5+0Ql8bKW9CR69vaC49q06NE2PWsx8AemkDEJzFXsuc5KXG/
-         0LQIk7UzhUwceSvNLgIs72OaCNL9UWojlNr79IEV+RiqaYEEfh3gIqSCvbnXy8+F3Cu4
-         uSBQ==
-X-Gm-Message-State: AFqh2krG+wz3FHQID5Pv2HLJu7QBHJgm5+0EEMO6EnAkBIUpQTJsNTkT
-        183QiflKDLYaw9UT32+seNg=
-X-Google-Smtp-Source: AMrXdXsrjgrGETIMbiJakho1CzIks0SH953VqlAvOj6xcJEoDaMM1z2UyXPlB7L/3oOwE6z5TxzZag==
-X-Received: by 2002:a05:6000:1f95:b0:2bc:371a:8a2 with SMTP id bw21-20020a0560001f9500b002bc371a08a2mr32915198wrb.37.1674751157968;
-        Thu, 26 Jan 2023 08:39:17 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l16-20020adffe90000000b002b8fe58d6desm1716079wrr.62.2023.01.26.08.39.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jan 2023 08:39:17 -0800 (PST)
-Date:   Thu, 26 Jan 2023 19:39:06 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Jaroslav Kysela <perex@perex.cz>,
-        Maxime Ripard <mripard@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Thu, 26 Jan 2023 17:56:01 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C1C52DE7F
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jan 2023 14:55:58 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3708861977
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jan 2023 22:55:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FBA7C433D2;
+        Thu, 26 Jan 2023 22:55:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674773757;
+        bh=lUlV7aiI0si0/W517FBDa/HeRq2i5wQgYiZ8e4/VPhs=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=NJ8I2pTHBLWb9hqw76GjVnV6JAeuMwrghH7OCL69Ywnzcw0hma9owHEn0ajjkcR+2
+         LDPToCsgG14hdUcA1a71FHfrreEjFtpjY5lyDWaTsJp2yLsyJDgyMG36v/SwuT+D0a
+         hXXGPROBCuaiQoTpNbVqWtw2TE/G3+H39NbPP91qI24Y9LGZrpht/e8kQXcx6jUp/V
+         4OM2AJpgoMtuOjANAvLc3QL806WDoHVtRAu3jjbhqGgs+9I62knDXsh2kxSgtFqrH8
+         Blumk/pfW4u8siG8Ljt3B/8XnxVu2GBLuAtuShCCoGgRFQxP3RlzKIusfqZ4ngyacJ
+         qIKP5PQHppuEg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Dan Carpenter <error27@gmail.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Trevor Wu <trevor.wu@mediatek.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ALSA: pci: lx6464es: fix a debug loop
-Message-ID: <Y9KsqpFRrlhX57WJ@kadam>
-References: <Y9JIGt0HT8mLkUXF@kili>
- <878rhptq36.wl-tiwai@suse.de>
+In-Reply-To: <Y9JHSwcfdNcfMjjt@kili>
+References: <Y9JHSwcfdNcfMjjt@kili>
+Subject: Re: [PATCH] ASoC: mediatek: mt8188: remove some dead code
+Message-Id: <167477375499.524795.3525968034845691950.b4-ty@kernel.org>
+Date:   Thu, 26 Jan 2023 22:55:54 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878rhptq36.wl-tiwai@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 01:53:01PM +0100, Takashi Iwai wrote:
-> On Thu, 26 Jan 2023 10:30:02 +0100,
-> Dan Carpenter wrote:
-> > 
-> > This loop accidentally reuses the "i" iterator for both the inside and
-> > the outside loop.  The value of MAX_STREAM_BUFFER is 5.  I believe that
-> > chip->rmh.stat_len is in the 2-12 range.  If the value of .stat_len is
-> > 4 or more then it will loop exactly one time, but if it's less then it
-> > is a forever loop.
-> > 
-> > Fixes: 8e6320064c33 ("ALSA: lx_core: Remove useless #if 0 .. #endif")
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > ---
-> >  sound/pci/lx6464es/lx_core.c | 12 +++++-------
-> >  1 file changed, 5 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/sound/pci/lx6464es/lx_core.c b/sound/pci/lx6464es/lx_core.c
-> > index d3f58a3d17fb..7c1b380a54c0 100644
-> > --- a/sound/pci/lx6464es/lx_core.c
-> > +++ b/sound/pci/lx6464es/lx_core.c
-> > @@ -493,13 +493,11 @@ int lx_buffer_ask(struct lx6464es *chip, u32 pipe, int is_capture,
-> >  		dev_dbg(chip->card->dev,
-> >  			"CMD_08_ASK_BUFFERS: needed %d, freed %d\n",
-> >  			    *r_needed, *r_freed);
-> > -		for (i = 0; i < MAX_STREAM_BUFFER; ++i) {
-> > -			for (i = 0; i != chip->rmh.stat_len; ++i)
-> > -				dev_dbg(chip->card->dev,
-> > -					"  stat[%d]: %x, %x\n", i,
-> > -					    chip->rmh.stat[i],
-> > -					    chip->rmh.stat[i] & MASK_DATA_SIZE);
-> > -		}
-> > +		for (i = 0; i < chip->rmh.stat_len; ++i)
+On Thu, 26 Jan 2023 12:26:35 +0300, Dan Carpenter wrote:
+> We know that "irq < 0", so delete the unnecessary check.
 > 
-> Judging from the previous lines, the access over MAX_STREAM_BUFFER
-> might be unsafe.  So I guess a more safer change would be something
-> like:
 > 
-> 		for (i = 0; i < MAX_STREAM_BUFFER && chip->rmh.stat_len; ++i)
 
-&& i < chip->rmh.stat_len
+Applied to
 
-TBH, I'd prefer to just delete all this code since it used be ifdef 0.
+   broonie/sound.git for-next
 
-But I'll resend as you have suggested.
+Thanks!
 
-regards,
-dan carpenter
+[1/1] ASoC: mediatek: mt8188: remove some dead code
+      commit: aa326917f58fa577bfba8976da214080bdec2699
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
