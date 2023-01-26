@@ -2,109 +2,137 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6322EC05027
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Jan 2023 12:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EA5C05027
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Jan 2023 12:52:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236918AbjAZMTS (ORCPT
+        id S231201AbjAZMwH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Jan 2023 07:19:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41624 "EHLO
+        Thu, 26 Jan 2023 07:52:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236130AbjAZMTB (ORCPT
+        with ESMTP id S229620AbjAZMwG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Jan 2023 07:19:01 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2877C37F3B;
-        Thu, 26 Jan 2023 04:19:00 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 26 Jan 2023 07:52:06 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF5E7A6
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jan 2023 04:52:05 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D58B2B81D88;
-        Thu, 26 Jan 2023 12:18:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09BA5C433EF;
-        Thu, 26 Jan 2023 12:18:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674735537;
-        bh=lU2LeSFbTu1l/v/xSG9/yai4jdQ2YFJYYUAMUnfQF/Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d1K8qIfUwJGLmWPzRZ7gyWxhUUGXgIuij8OoK/h4sejVNrjOex1UVAS1By0fFgYzS
-         baJBmWC/KollN3B3f4S/WNOtzEQeNfSBFh2fW8hTJcd4tnmRHyCcJd/bV6FTPewCCK
-         oaYBNY+D2nrb5PeD6nwBF9rhawxg6QnFOjHOP2jZdbRWku2Vh1xiGpVwku+F9yKnuQ
-         v/vMsuYbZZH9Tl4/ICEqCvvaTksqrz3jWiRaUbk/XTaFJ6jYrUvy9icfehq4wbugrI
-         tczwd6nOIA0sNdKa70SZMtXvzgmNvRQtY91kzGvLqwU0WgH8S2ua/QiArT9PlSQx/q
-         6wnA9EFZ5TTcQ==
-Date:   Thu, 26 Jan 2023 14:18:53 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Long Li <longli@microsoft.com>,
-        Ajay Sharma <sharmaajay@microsoft.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dexuan Cui <decui@microsoft.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RDMA/mana_ib: Prevent array underflow in
- mana_ib_create_qp_raw()
-Message-ID: <Y9JvrfOezthLscEP@unreal>
-References: <Y8/3Vn8qx00kE9Kk@kili>
- <Y9JThu/RSCGKAnTH@unreal>
- <Y9JdXfJvGhrJeLF7@kadam>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id A45C21FF3F;
+        Thu, 26 Jan 2023 12:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1674737524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kClzY75js7aJiKLg/LKVoj+cBTiR9hjjvCqhmX7urHU=;
+        b=KJOUE8L29pNygRJbHtanSbjApBXzGzKgY8+qaYymFEkFJmqZXwEp604mECVafle1BqRVaH
+        CWfs/uFuCArmuFObK/KE+9fmUrY1mArc9xFS9z57KxW1cTtjD3KqfT75m3SjwK2LvhYRt+
+        Lqb2RIhA13AUtyYC3UaAtVMk50VDUN0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1674737524;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kClzY75js7aJiKLg/LKVoj+cBTiR9hjjvCqhmX7urHU=;
+        b=wiAhwhdaOctBFBQQpNs8w0g7YiOp3up2Q/TkZAajvEu9D4uVg8r1CB2YUy2yw2A2yA/w47
+        N/SLxWgcsDN7DWCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7A7A3139B3;
+        Thu, 26 Jan 2023 12:52:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id hkfvHHR30mNhTgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 26 Jan 2023 12:52:04 +0000
+Message-ID: <8af99e7e-c84a-ee52-5885-4b208451c7a2@suse.de>
+Date:   Thu, 26 Jan 2023 13:52:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y9JdXfJvGhrJeLF7@kadam>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] drm/simpledrm: Fix an NULL vs IS_ERR() bug
+Content-Language: en-US
+To:     Dan Carpenter <error27@gmail.com>,
+        Thierry Reding <treding@nvidia.com>
+Cc:     kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Javier Martinez Canillas <javierm@redhat.com>
+References: <Y9JHzImRcUaa0mi1@kili>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <Y9JHzImRcUaa0mi1@kili>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------WoVsUO0nYZssglI9T0oXGqwt"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 02:00:45PM +0300, Dan Carpenter wrote:
-> On Thu, Jan 26, 2023 at 12:18:46PM +0200, Leon Romanovsky wrote:
-> > On Tue, Jan 24, 2023 at 06:20:54PM +0300, Dan Carpenter wrote:
-> > > The "port" comes from the user and if it is zero then the:
-> > > 
-> > > 	ndev = mc->ports[port - 1];
-> > > 
-> > > assignment does an out of bounds read.  I have changed the if
-> > > statement to fix this and to mirror how it is done in
-> > > mana_ib_create_qp_rss().
-> > > 
-> > > Fixes: 0266a177631d ("RDMA/mana_ib: Add a driver for Microsoft Azure Network Adapter")
-> > > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > > ---
-> > >  drivers/infiniband/hw/mana/qp.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/infiniband/hw/mana/qp.c b/drivers/infiniband/hw/mana/qp.c
-> > > index ea15ec77e321..54b61930a7fd 100644
-> > > --- a/drivers/infiniband/hw/mana/qp.c
-> > > +++ b/drivers/infiniband/hw/mana/qp.c
-> > > @@ -289,7 +289,7 @@ static int mana_ib_create_qp_raw(struct ib_qp *ibqp, struct ib_pd *ibpd,
-> > >  
-> > >  	/* IB ports start with 1, MANA Ethernet ports start with 0 */
-> > >  	port = ucmd.port;
-> > > -	if (ucmd.port > mc->num_ports)
-> > > +	if (port < 1 || port > mc->num_ports)
-> > 
-> > Why do I see port in mana_ib_create_qp? It should come from ib_qp_init_attr.
-> 
-> I am so confused by this question.  Are you asking me?  
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------WoVsUO0nYZssglI9T0oXGqwt
+Content-Type: multipart/mixed; boundary="------------0SdfjjfTvS7yWr2y4Zr1JDYX";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Dan Carpenter <error27@gmail.com>, Thierry Reding <treding@nvidia.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <8af99e7e-c84a-ee52-5885-4b208451c7a2@suse.de>
+Subject: Re: [PATCH] drm/simpledrm: Fix an NULL vs IS_ERR() bug
+References: <Y9JHzImRcUaa0mi1@kili>
+In-Reply-To: <Y9JHzImRcUaa0mi1@kili>
 
-I asked *@microsoft folks.
+--------------0SdfjjfTvS7yWr2y4Zr1JDYX
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-> This is the _raw function. 
+DQoNCkFtIDI2LjAxLjIzIHVtIDEwOjI4IHNjaHJpZWIgRGFuIENhcnBlbnRlcjoNCj4gVGhl
+IGRldm1fbWVtcmVtYXAoKSBmdW5jdGlvbiBkb2Vzbid0IHJldHVybiBOVUxMLCBpdCByZXR1
+cm5zIGVycm9yDQo+IHBvaW50ZXJzLg0KPiANCj4gRml4ZXM6IDlhMTBjN2U2NTE5YiAoImRy
+bS9zaW1wbGVkcm06IEFkZCBzdXBwb3J0IGZvciBzeXN0ZW0gbWVtb3J5IGZyYW1lYnVmZmVy
+cyIpDQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGVycm9yMjdAZ21haWwuY29t
+Pg0KDQpSZXZpZXdlZC1ieTogVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2Uu
+ZGU+DQoNCj4gLS0tDQo+ICAgZHJpdmVycy9ncHUvZHJtL3Rpbnkvc2ltcGxlZHJtLmMgfCA0
+ICsrLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9u
+cygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90aW55L3NpbXBsZWRy
+bS5jIGIvZHJpdmVycy9ncHUvZHJtL3Rpbnkvc2ltcGxlZHJtLmMNCj4gaW5kZXggMmFjYzBl
+YjMyNDg5Li42Mzg4MWEzNzU0ZjggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90
+aW55L3NpbXBsZWRybS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90aW55L3NpbXBsZWRy
+bS5jDQo+IEBAIC03MTksOCArNzE5LDggQEAgc3RhdGljIHN0cnVjdCBzaW1wbGVkcm1fZGV2
+aWNlICpzaW1wbGVkcm1fZGV2aWNlX2NyZWF0ZShzdHJ1Y3QgZHJtX2RyaXZlciAqZHJ2LA0K
+PiAgIAkJZHJtX2RiZyhkZXYsICJ1c2luZyBzeXN0ZW0gbWVtb3J5IGZyYW1lYnVmZmVyIGF0
+ICVwclxuIiwgbWVtKTsNCj4gICANCj4gICAJCXNjcmVlbl9iYXNlID0gZGV2bV9tZW1yZW1h
+cChkZXYtPmRldiwgbWVtLT5zdGFydCwgcmVzb3VyY2Vfc2l6ZShtZW0pLCBNRU1SRU1BUF9X
+Qyk7DQo+IC0JCWlmICghc2NyZWVuX2Jhc2UpDQo+IC0JCQlyZXR1cm4gRVJSX1BUUigtRU5P
+TUVNKTsNCj4gKwkJaWYgKElTX0VSUihzY3JlZW5fYmFzZSkpDQo+ICsJCQlyZXR1cm4gc2Ny
+ZWVuX2Jhc2U7DQo+ICAgDQo+ICAgCQlpb3N5c19tYXBfc2V0X3ZhZGRyKCZzZGV2LT5zY3Jl
+ZW5fYmFzZSwgc2NyZWVuX2Jhc2UpOw0KPiAgIAl9IGVsc2Ugew0KDQotLSANClRob21hcyBa
+aW1tZXJtYW5uDQpHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3YXJlIFNv
+bHV0aW9ucyBHZXJtYW55IEdtYkgNCk1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJuYmVyZywg
+R2VybWFueQ0KKEhSQiAzNjgwOSwgQUcgTsO8cm5iZXJnKQ0KR2VzY2jDpGZ0c2bDvGhyZXI6
+IEl2byBUb3Rldg0K
 
-_raw comes from QP type, it is not raw (basic) in a sense you imagine.
+--------------0SdfjjfTvS7yWr2y4Zr1JDYX--
 
-> I'm now sure what mana_ib_create_qp() has to do with it.
+--------------WoVsUO0nYZssglI9T0oXGqwt
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
-All create QP calls come through same verbs interface.
-ib_create_qp_user->create_qp->.create_qp->mana_ib_create_qp->mana_ib_create_qp_raw
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> The port comes from ib_copy_from_udata() which is just a wrapper around
-> copy_from_user().
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmPSd3QFAwAAAAAACgkQlh/E3EQov+Cx
+ZRAAn60jnMLPuToD0isiHiNCmDhtLMi5v+NBh8gE4/zYTA2j/0vmX1SEtrRTs+9iISvNB0wdkb6S
+XRC15CtpB7wuSi7CUWJ5jZn2UtfhKC4kIURlvQUQ1G5SvIX6fh/ykBxW/c8j2AAjKYAoLyjaGhOK
+TL5PmK5G6rdwMTTyd5rHUuBV4UT6RPSp0BebsoPXP9Bqq0VVT/GaQBSQMNRxmCKevqTsMmhOWaQI
+8PSViylAoKQnZD65nEImOHsBG8QCuiwq9uaApUkY309n/AnDQaTiow8TYvryA983vmDEnJ/+nG8F
+kBIEIoegbBPtE5hxmjNp9+d3Pij8aJZFpTtsVHd6dkUbSKhn8VJZG8/kKZddyky8CseyL+pNQma1
+sV5JZRWQ9mSzgTpcxzRzwz0pxW7yANGruVA+iHuKOWrndQCws5B+xKNgALMjR5Cx0kMAQZJ4SEeV
+Wb/+Rff77lQJ2V80e95detL6YnT4AQc/6tvZc9iUJ/RoPx0mI37+7EcqUA0fWtWKo5kZTOExN8xD
+hL7XvJUBsP+NbHchY3O/cu+T1ZhMcpcMFCtMi3h+Ab7Tf/AAO7qLYEhsM6PsqVXrE4vcJrJ61CJQ
+hEY/dGfW87wK6q0CZoeEfBtIBP5W2I0svUVR0D8aNxJMdrwbO4Wzg1zJOmEqFQ9aNm/5scRHEFjn
+0GM=
+=0S73
+-----END PGP SIGNATURE-----
 
-Right, and it shouldn't.
-
-> 
-> regards,
-> dan carpenter
-> 
+--------------WoVsUO0nYZssglI9T0oXGqwt--
