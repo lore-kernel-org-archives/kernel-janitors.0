@@ -2,63 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881FFC54E94
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Jan 2023 09:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CDEC54E94
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Jan 2023 09:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236790AbjAZJ3K (ORCPT
+        id S236871AbjAZJ3Q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Jan 2023 04:29:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38696 "EHLO
+        Thu, 26 Jan 2023 04:29:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236936AbjAZJ24 (ORCPT
+        with ESMTP id S236836AbjAZJ3P (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Jan 2023 04:28:56 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E04027491
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jan 2023 01:28:55 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id f12-20020a7bc8cc000000b003daf6b2f9b9so2850310wml.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jan 2023 01:28:55 -0800 (PST)
+        Thu, 26 Jan 2023 04:29:15 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 042F29EFB;
+        Thu, 26 Jan 2023 01:29:15 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id m14so650332wrg.13;
+        Thu, 26 Jan 2023 01:29:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/IxBVmoaeMHgo4qohihhRMExp2vqEbWrBTuk2dZo30k=;
-        b=MfLleEFuHVk5Eqk2rl0bV08WiVj4OMVvz1lAR8CvfOzu4JZhnamDCEDGgw9pcxewwc
-         QBKA/M54UwJS50/Za8zbcHI2HX7J5HAlG+8Nt62iTxKSQSDwhymzbIDQq5D5PbZLZ2En
-         tlbtVPoQftM06dwGqqKniTBMLs1jZOO4xqSy2Bp6pfQN/1+1jaVOBrbaQFQLcEh8I4zw
-         ZSnbwvbqDzJ/kzSunWbJCeZns6ytbsCdttKSXnPUfnIBNtN1dIO/zdXTaYuCaaVekxGZ
-         SmJHG/vnxnzAtWl7jZ9MRixmmuqrpcs9KWG1clJYHXmRXEJPWBOz7gKGddyY7WBoTByR
-         MeyQ==
+        bh=2TMGf0x6Yj1FSsXabSbdX1Eb3jJ9xtPHTfrzgF7BXbM=;
+        b=Z/LwmRDVP2Z01bmql6t+8rD5RN+E4ElNyGI+HN7i1RsXrokHBqZDly19xfnLfZuyK9
+         WeHLimaxuQnpirzi6fsRffYTgPhfeXeVobZN4pxh8slmzePsLin85mhjgTEVnXMYb3eD
+         d+7innz7fd+KKCCYqlxUId0YRmBbBA2wWvVT/4DwksnhpsiS0jw7etJ4akdgnyOyV3S/
+         va+dnKtYWMYoZoqG3+bnW7Ke6FU1H7WwUzza3MwzVh5eP9ilmsnCZCu52v0/yeTr3yeB
+         OQO3ilbuh4m5kUGai2/7I8kS7k3W/eo+E7fqQA0AgbfpOeTIZifPIKbBJyXLcXbVrwNM
+         F2bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/IxBVmoaeMHgo4qohihhRMExp2vqEbWrBTuk2dZo30k=;
-        b=SKwfEsUivMVei5NH554rm+t0P8YQZINbnAwFf5jxOXsQzdRZqa9nAZ952Yq7/D2CLh
-         PEi5eebD+QNc0ix5WyVcJV6GoFnD6BldGvjl8JC2IuzhFe8PIS5qO9v+bmC3153/XxBQ
-         qcuAADtaXhWiCyvn8OgmCOcJJq1rBoAE23ct9TA3onYRcSj06jxs8cQjIdx9WmbnOLD7
-         2wIwOTW8iZFhaMf9b5RWmYDtQD8fAFWT1MF34soPKl3NUI/+22QA9cMfCvcqiM3U0Vcp
-         7alOGs0hrNgYghoeKHHuk6qmUOmA9GNTpks1USbeBcRm0fxytOpANe0eKLgNYYQUXIAG
-         6dnw==
-X-Gm-Message-State: AFqh2kr4LNc5vK0Au55Ot/wddHaXYX385vM65YevszaUG8IPwbfxgURO
-        K5Ebiro2mNx3p960Q3k7CN0=
-X-Google-Smtp-Source: AMrXdXvuPjKYrz6r9VXVEKS7W8Gs0rtLGgODZ1eB3jGVWEsIQmy5BB/BO50YeASdR8746CRa4aJQTw==
-X-Received: by 2002:a05:600c:35cf:b0:3d3:49db:d95 with SMTP id r15-20020a05600c35cf00b003d349db0d95mr34482619wmq.37.1674725333855;
-        Thu, 26 Jan 2023 01:28:53 -0800 (PST)
+        bh=2TMGf0x6Yj1FSsXabSbdX1Eb3jJ9xtPHTfrzgF7BXbM=;
+        b=PKEVoQe+Ql1jJ1KBEsWyrqd5l55TALIkaY4S37D9LNpLmsmg/KzXmQy46JD+I72WuZ
+         PcmKmoEKcHxXg6bCyZYhhMne9xwaWrlpWX2cfjw8NKmPysIBvLl8HZwgh64b132VQAtx
+         Hhsk+lTUbbFZUsQiiGUaSYyh+1zcbK4wg0Tah1EqlVC7PhqT2EsVD8tJYcYDH1luG4QD
+         IdZPFlMr3VxR9Bryd80kk0IgO1KKpJzgb+CS+UQSLQIp0KRvidlwJ2v3AazoxJohMqI8
+         +Tt42I4WDzxEkfNPI99zVQ7WzgA87JrapwoDZSKEJVFgH0lkPlUsTRCUrwG5CkuY1coG
+         6bdw==
+X-Gm-Message-State: AO0yUKXM6jqph+ECLv6nCI2c14taSSiQYEIj2mBWuoSLoj75shieP98v
+        r4rtdNW10HxIzyC2udUxY7ALUOBI7rJvCQ==
+X-Google-Smtp-Source: AK7set8YapJdyyMzZYPyaW5m8mk0iBf7Sf+RNWhXX9zD2B3BOK4diZmPVtm63Vv6D3DY8DFjyPYg0Q==
+X-Received: by 2002:a5d:6e05:0:b0:2bf:b92b:8a8a with SMTP id h5-20020a5d6e05000000b002bfb92b8a8amr4837241wrz.7.1674725353522;
+        Thu, 26 Jan 2023 01:29:13 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id c42-20020a05600c4a2a00b003da105437besm932937wmp.29.2023.01.26.01.28.50
+        by smtp.gmail.com with ESMTPSA id t4-20020a05600001c400b002bdcce37d31sm873136wrx.99.2023.01.26.01.29.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jan 2023 01:28:53 -0800 (PST)
-Date:   Thu, 26 Jan 2023 12:28:44 +0300
+        Thu, 26 Jan 2023 01:29:13 -0800 (PST)
+Date:   Thu, 26 Jan 2023 12:29:10 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Thierry Reding <treding@nvidia.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/simpledrm: Fix an NULL vs IS_ERR() bug
-Message-ID: <Y9JHzImRcUaa0mi1@kili>
+To:     Manivannan Sadhasivam <mani@kernel.org>
+Cc:     Alex Elder <elder@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>, mhi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] bus: mhi: ep: Fix off by one in  mhi_ep_process_cmd_ring()
+Message-ID: <Y9JH5sudiZWvbODv@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -67,30 +66,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The devm_memremap() function doesn't return NULL, it returns error
-pointers.
+The > comparison should be changed to >= to prevent an out of bounds
+access into the mhi_cntrl->mhi_chan[] array.  The mhi_cntrl->mhi_chan[]
+array is allocated in mhi_ep_chan_init() and has mhi_cntrl->max_chan
+elements.
 
-Fixes: 9a10c7e6519b ("drm/simpledrm: Add support for system memory framebuffers")
+Fixes: 2527ad44ddb2 ("bus: mhi: ep: Check if the channel is supported by the controller")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/gpu/drm/tiny/simpledrm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/bus/mhi/ep/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/simpledrm.c
-index 2acc0eb32489..63881a3754f8 100644
---- a/drivers/gpu/drm/tiny/simpledrm.c
-+++ b/drivers/gpu/drm/tiny/simpledrm.c
-@@ -719,8 +719,8 @@ static struct simpledrm_device *simpledrm_device_create(struct drm_driver *drv,
- 		drm_dbg(dev, "using system memory framebuffer at %pr\n", mem);
+diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
+index bcaaba97ef63..be2d56e7f392 100644
+--- a/drivers/bus/mhi/ep/main.c
++++ b/drivers/bus/mhi/ep/main.c
+@@ -125,7 +125,7 @@ static int mhi_ep_process_cmd_ring(struct mhi_ep_ring *ring, struct mhi_ring_ele
+ 	ch_id = MHI_TRE_GET_CMD_CHID(el);
  
- 		screen_base = devm_memremap(dev->dev, mem->start, resource_size(mem), MEMREMAP_WC);
--		if (!screen_base)
--			return ERR_PTR(-ENOMEM);
-+		if (IS_ERR(screen_base))
-+			return screen_base;
- 
- 		iosys_map_set_vaddr(&sdev->screen_base, screen_base);
- 	} else {
+ 	/* Check if the channel is supported by the controller */
+-	if ((ch_id > mhi_cntrl->max_chan) || !mhi_cntrl->mhi_chan[ch_id].name) {
++	if ((ch_id >= mhi_cntrl->max_chan) || !mhi_cntrl->mhi_chan[ch_id].name) {
+ 		dev_err(dev, "Channel (%u) not supported!\n", ch_id);
+ 		return -ENODEV;
+ 	}
 -- 
 2.35.1
 
