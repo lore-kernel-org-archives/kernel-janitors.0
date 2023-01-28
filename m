@@ -2,91 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FC7C61DA7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Jan 2023 07:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6CEC38142
+	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Jan 2023 15:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232200AbjA0HAX (ORCPT
+        id S233380AbjA1PnQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Jan 2023 02:00:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58178 "EHLO
+        Sat, 28 Jan 2023 10:43:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232142AbjA0HAO (ORCPT
+        with ESMTP id S232174AbjA1PnK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Jan 2023 02:00:14 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76A9D222FF;
-        Thu, 26 Jan 2023 23:00:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DB98361A04;
-        Fri, 27 Jan 2023 07:00:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D29C433EF;
-        Fri, 27 Jan 2023 07:00:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674802812;
-        bh=bWVN+OTliEjC/t2AVEdhiTatxpI8RYyW/A4NxbNdTMg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Asnn3+OSDHyfYdubzgNrVsAHzWZR4c8hXSurNlKWoQDlQD9Fw/TdaJnfLmmdPolXU
-         EXRIuPFPd6Iz/hvjCzuLpnP5cYdExrxqd2uMaRG5rP66EpM2N/sWaybsNLIfGx3+Rl
-         9KJLZ6q+DEDQOdpwV9g5nL5OQdzGyzCVei0Fo+uUTxKuLvO1gwdMDsni9phlyEq5pI
-         g34YsSpxClnnTkjINn8b0l/Q9aUM20m+qvrLPxA59FykuLRUWf0TTH/me5qcB8Jt5i
-         fdu4sfrx3f++5w+YWJNSrq3eO/nshT0Uf677wkoHi4aylDIwJOTgrxNLFsYOrJ+UqD
-         QHK1vl9LC+wZQ==
-Date:   Fri, 27 Jan 2023 12:29:58 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Alex Elder <elder@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] bus: mhi: ep: Fix off by one in mhi_ep_process_cmd_ring()
-Message-ID: <20230127065958.GG7809@thinkpad>
-References: <Y9JH5sudiZWvbODv@kili>
+        Sat, 28 Jan 2023 10:43:10 -0500
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46A8E13DFF
+        for <kernel-janitors@vger.kernel.org>; Sat, 28 Jan 2023 07:43:08 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id LnM9phWDqeUnHLnM9p9nzv; Sat, 28 Jan 2023 16:43:06 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 28 Jan 2023 16:43:06 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] dm-crypt: Slightly simplify crypt_set_keyring_key()
+Date:   Sat, 28 Jan 2023 16:43:00 +0100
+Message-Id: <c3d25e24503d9e625cf46e9fb4ee55f10bfdd398.1674920529.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Y9JH5sudiZWvbODv@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 12:29:10PM +0300, Dan Carpenter wrote:
-> The > comparison should be changed to >= to prevent an out of bounds
-> access into the mhi_cntrl->mhi_chan[] array.  The mhi_cntrl->mhi_chan[]
-> array is allocated in mhi_ep_chan_init() and has mhi_cntrl->max_chan
-> elements.
-> 
-> Fixes: 2527ad44ddb2 ("bus: mhi: ep: Check if the channel is supported by the controller")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use strchr() instead of strpbrk() when there is only 1 element in the set
+of characters to look for.
+This potentially saves a few cycles.
 
-Applied to mhi-next!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+On my machine, the diff of the .s file shows that the generated code is
+the same:
 
-Thanks,
-Mani
+-- drivers/md/dm-crypt.old.s	2023-01-28 16:28:08.968026902 +0100
+++ drivers/md/dm-crypt.s	2023-01-28 16:28:32.056027335 +0100
+@@ -17950,7 +17950,7 @@
+ 	call	__sanitizer_cov_trace_const_cmp1	#
+ 	testb	%bl, %bl	# _56
+ 	jne	.L928	#,
+-# drivers/md/dm-crypt.c:2490: 	key_desc = strpbrk(key_string, ":");
++# drivers/md/dm-crypt.c:2490: 	key_desc = strchr(key_string, ':');
+ 	call	__sanitizer_cov_trace_pc	#
+ 	movl	$58, %esi	#,
+ 	movq	%r12, %rdi	# key_string,
 
-> ---
->  drivers/bus/mhi/ep/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
-> index bcaaba97ef63..be2d56e7f392 100644
-> --- a/drivers/bus/mhi/ep/main.c
-> +++ b/drivers/bus/mhi/ep/main.c
-> @@ -125,7 +125,7 @@ static int mhi_ep_process_cmd_ring(struct mhi_ep_ring *ring, struct mhi_ring_ele
->  	ch_id = MHI_TRE_GET_CMD_CHID(el);
->  
->  	/* Check if the channel is supported by the controller */
-> -	if ((ch_id > mhi_cntrl->max_chan) || !mhi_cntrl->mhi_chan[ch_id].name) {
-> +	if ((ch_id >= mhi_cntrl->max_chan) || !mhi_cntrl->mhi_chan[ch_id].name) {
->  		dev_err(dev, "Channel (%u) not supported!\n", ch_id);
->  		return -ENODEV;
->  	}
-> -- 
-> 2.35.1
-> 
+This is done thanks to fold_builtin_strpbrk() in gcc which already
+transforms such patterns.
+(https://github.com/gcc-mirror/gcc/blob/master/gcc/builtins.cc#L10238)
+---
+ drivers/md/dm-crypt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 2653516bcdef..b9c41fd42e8a 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -2487,7 +2487,7 @@ static int crypt_set_keyring_key(struct crypt_config *cc, const char *key_string
+ 	}
+ 
+ 	/* look for next ':' separating key_type from key_description */
+-	key_desc = strpbrk(key_string, ":");
++	key_desc = strchr(key_string, ':');
+ 	if (!key_desc || key_desc == key_string || !strlen(key_desc + 1))
+ 		return -EINVAL;
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
