@@ -2,63 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95F1C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 09:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DF1C636CC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 09:30:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236336AbjA3J0C (ORCPT
+        id S236199AbjA3Jam (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 30 Jan 2023 04:26:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56086 "EHLO
+        Mon, 30 Jan 2023 04:30:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236070AbjA3JZQ (ORCPT
+        with ESMTP id S236911AbjA3Ja0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 30 Jan 2023 04:25:16 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD12A2FCE3;
-        Mon, 30 Jan 2023 01:24:17 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id q10so10386411wrm.4;
-        Mon, 30 Jan 2023 01:24:17 -0800 (PST)
+        Mon, 30 Jan 2023 04:30:26 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAC015CBC;
+        Mon, 30 Jan 2023 01:28:18 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id c10-20020a05600c0a4a00b003db0636ff84so7670708wmq.0;
+        Mon, 30 Jan 2023 01:28:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfICYlOuLoOFLmSVCsv7Ez+Wg1iIfXBt/b5H/P4TiEQ=;
-        b=fAr+gRUQ7tl3KvPS7+xNmBeEAU0Yuce94GDMBv2SkZ7oKen6ZHC2e4T3ix7t3Xzj3d
-         kW5kAA34cUt2REzQ4bDyJwRm6VxuW2uazTE7Yf5mx+BehyY0MEpWwM4759kcl9x3bbg+
-         wKCE07oAsTri8cQ8GN9H7Cbk5mPciyjI12xKAN5dxSr56uGsYhXUDFTVV8bTVR5caF/C
-         gng9jNGVpnXtqgjCzDDcMJvY9duVyY5E/f0YPM2sxABhW+ULHFWTdbbjvWjyRL6QKLNC
-         49OmfCY2ZyOMQVhUhL1eWlPgXdciB9KYaqO4JYv6wCwwWnmrfwtnaMKTdWZmi3efdi8U
-         Zwhg==
+        bh=OuLcOVPfJKWmXcPSkUYt5otjql3lzwckGBRlOexX5eg=;
+        b=ZXn2zd0063FyAix6NrN7VGDXhGb6b+O25Xp8PW/V2t53nvsxiQvM+0m3oLYK60pCiA
+         I8P2TXZ4hc84wqBQySsHQ5Sict8RkPmhCS7XPCHyIYfPFl8sCRbFYM7HWBFG2O3Ber4c
+         UxxpyWagXaVlhl8rCzljfAGoM6qopIdjVi+utn/zEiz+K9bqQtjWUwrPdJ96NW59xLNZ
+         2nT05mw+FaH5q2V33bbX4E2YZM8kyb7O1KrNGoVXZl2uDNuqiKTtf0YbFJ1xmHNLMHI6
+         P225XCTGdhGVcxqGK3OJLEtSGcH9w+J830OUj4KuGRjOCua0KKjzD7pxN3mg2wzvp17D
+         qYtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vfICYlOuLoOFLmSVCsv7Ez+Wg1iIfXBt/b5H/P4TiEQ=;
-        b=XKo9i7E0+P2s0O2qgNzvWkjLXPydFg0WHelsYd6PrDvlhV0TPMAKUKSfgmgrwOU4x9
-         F5r6ATQoeJ+ValC078zNKoEg1OxppBd1nBwbJTeJMluN0xsoO+owQ2kmAyziWAYVFMm6
-         MwulukIT8NlfqqV0+APEqZMhIxpCoLFrhV1sdWZ5I+FP9vFc5UT0SSLXGMhr6ZZeGkWI
-         gyszf8ghUZ/6DUFVAvzKfGTwxZ8dWnVvYluDgXvpv7VKrQWX+G6uAqFWeLLGCicPusAZ
-         /NYnP4bbbbnP9OwnB5a6DnOIgIoCgKm2ECCTbQdXhBY76uptgOZgvRl8IuYEr2Bt/7pj
-         jMxQ==
-X-Gm-Message-State: AO0yUKXC6fjgkllt0Mkfc8plgYGpF9Yq37zTdvIQ+r8+pKIACe7KI3yG
-        DYMnynfHfFESWlp9oRuCH28=
-X-Google-Smtp-Source: AK7set+2myVLd06Pu5edYxOwUfsZKmitHbZAGtWszR3c1HZ2HD+vVEMkpKY6OnedR68lQkQl+PpjpA==
-X-Received: by 2002:a05:6000:1448:b0:2bf:decb:ecac with SMTP id v8-20020a056000144800b002bfdecbecacmr8700884wrx.11.1675070638360;
-        Mon, 30 Jan 2023 01:23:58 -0800 (PST)
+        bh=OuLcOVPfJKWmXcPSkUYt5otjql3lzwckGBRlOexX5eg=;
+        b=AuyeFaRPb7QO+0/EpzyKL8/Q1qjExaWM5XHyz+9eOQp+1H7sSJ3aU57f6Km8gup3Bc
+         xwsKNO69dEoCCTkf0ASUbKimDEdSI6JWU82R2TpeerEuLQU45TUVgox+YCUEEyzNCSWf
+         SKaQq4d1/DP2KLXoTdWrOZwo2xjxR56D0xwL4S8dZMQ0TaCog6q7FoZ9eypXh3SKTHzM
+         yajupErCnT+/wLR+TKoAD/dCitm3jSxkFmllDISARuiTx/3dly4FnzdW7iMNa/Q8zybx
+         8btPWLWELXUmNt2FWxXmRVw+YxguJbVyqpuzQJ1f++VrvNeNEQq8dfzIMaFf4NKZ6jaP
+         605A==
+X-Gm-Message-State: AFqh2krbdeVRfQAODQaEHM/jztISfg2QJI0UEOXhtRLRF6XyAmQA3Da9
+        IEG1IyChJSuiwB3T4ukvKAI=
+X-Google-Smtp-Source: AMrXdXubdJG4wn5XI09lBCNxLEtCZCPj/+tc/g+IZBKThni+yvDUga2N9vHiBJEIUAGiHHUrV0CFZg==
+X-Received: by 2002:a05:600c:4f42:b0:3db:30c3:ed83 with SMTP id m2-20020a05600c4f4200b003db30c3ed83mr36215678wmq.28.1675070805951;
+        Mon, 30 Jan 2023 01:26:45 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id x7-20020a5d6b47000000b002bbed1388a5sm11348862wrw.15.2023.01.30.01.23.57
+        by smtp.gmail.com with ESMTPSA id bg6-20020a05600c3c8600b003db06493ee7sm17628908wmb.47.2023.01.30.01.26.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jan 2023 01:23:57 -0800 (PST)
+        Mon, 30 Jan 2023 01:26:45 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Namjae Jeon <linkinjeon@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org
+To:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        virtualization@lists.linux-foundation.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ksmbd: Fix spelling mistake "excceed" -> "exceeded"
-Date:   Mon, 30 Jan 2023 09:23:57 +0000
-Message-Id: <20230130092357.36730-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] vdpa: Fix a couple of spelling mistakes in some messages
+Date:   Mon, 30 Jan 2023 09:26:44 +0000
+Message-Id: <20230130092644.37002-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,26 +67,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an error message. Fix it.
+There are two spelling mistakes in some literal strings. Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/ksmbd/connection.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vdpa/vdpa.c                  | 2 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ksmbd/connection.c b/fs/ksmbd/connection.c
-index 56be077e5d8a..0f7eab5aa04c 100644
---- a/fs/ksmbd/connection.c
-+++ b/fs/ksmbd/connection.c
-@@ -312,7 +312,7 @@ int ksmbd_conn_handler_loop(void *p)
- 			max_allowed_pdu_size = SMB3_MAX_MSGSIZE;
- 
- 		if (pdu_size > max_allowed_pdu_size) {
--			pr_err_ratelimited("PDU length(%u) excceed maximum allowed pdu size(%u) on connection(%d)\n",
-+			pr_err_ratelimited("PDU length(%u) exceeded maximum allowed pdu size(%u) on connection(%d)\n",
- 					pdu_size, max_allowed_pdu_size,
- 					conn->status);
+diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+index 6821b2850bbb..a1bb5b92212d 100644
+--- a/drivers/vdpa/vdpa.c
++++ b/drivers/vdpa/vdpa.c
+@@ -1016,7 +1016,7 @@ static int vdpa_dev_vendor_stats_fill(struct vdpa_device *vdev,
+ 	switch (device_id) {
+ 	case VIRTIO_ID_NET:
+ 		if (index > VIRTIO_NET_CTRL_MQ_VQ_PAIRS_MAX) {
+-			NL_SET_ERR_MSG_MOD(info->extack, "queue index excceeds max value");
++			NL_SET_ERR_MSG_MOD(info->extack, "queue index exceeds max value");
+ 			err = -ERANGE;
  			break;
+ 		}
+diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+index e827708adcca..862f405362de 100644
+--- a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
++++ b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+@@ -324,7 +324,7 @@ static int vdpasim_net_get_stats(struct vdpasim *vdpasim, u16 idx,
+ 				      rx_errors, VDPA_ATTR_PAD))
+ 			break;
+ 		if (nla_put_string(msg, VDPA_ATTR_DEV_VENDOR_ATTR_NAME,
+-				  "rx overrunss"))
++				  "rx overruns"))
+ 			break;
+ 		if (nla_put_u64_64bit(msg, VDPA_ATTR_DEV_VENDOR_ATTR_VALUE,
+ 				      rx_overruns, VDPA_ATTR_PAD))
 -- 
 2.30.2
 
