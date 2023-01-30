@@ -2,99 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 593CEC61D97
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 08:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1FDC54EED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 09:22:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235798AbjA3IZQ (ORCPT
+        id S235759AbjA3JWK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 30 Jan 2023 03:25:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49628 "EHLO
+        Mon, 30 Jan 2023 04:22:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbjA3IZP (ORCPT
+        with ESMTP id S235627AbjA3JWB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 30 Jan 2023 03:25:15 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 359582411A;
-        Mon, 30 Jan 2023 00:25:15 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C415960CA3;
-        Mon, 30 Jan 2023 08:25:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4365FC433EF;
-        Mon, 30 Jan 2023 08:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675067114;
-        bh=VGiJId1bjg3NxXN/pSLWx22A7YpzR0vUawCKWzEuKi0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uVS/ofOUDmw7mdGXqcY5tqwJ2PEjf5mF362Q4I55VAef+MEQjVcyyP0fVw+WooqhI
-         Cih2HvmA/h59/hyIN1/Mb13BVHJVsIOHDF+qx9lsQFB7QDMotNaV5ZeUox8xjDxSzo
-         x9hNAgYYQMWI3H7kZ9u5nqdHu1WJ6DP5+ch7NbQVGwTYMINJNEobpU0z4PxzhfXmhr
-         hWZLZ1X5dr8Ai4Zz7/bG9kD2wWp0NY0NEvH20TNIVIGnuTzyovWvo/IuppeyO1I73l
-         kr4UBvZ7O7yyhuMW/llyBFbvkNCvcXafl4tyQ2R9uNa6zKZvnQnahCLQfhUoUobg8D
-         0j7d+GmHbHYvQ==
-Date:   Mon, 30 Jan 2023 13:55:06 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Asutosh Das <quic_asutoshd@quicinc.com>,
-        Can Guo <quic_cang@quicinc.com>, linux-scsi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: qcom: include specific ops when
- GENERIC_MSI_IRQ is set
-Message-ID: <20230130082506.GC12687@thinkpad>
-References: <20230130075615.17108-1-lukas.bulwahn@gmail.com>
+        Mon, 30 Jan 2023 04:22:01 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661BA86B7
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jan 2023 01:22:00 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id f47-20020a05600c492f00b003dc584a7b7eso1493800wmp.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jan 2023 01:22:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GGUEVcAPqc3ntFlXLDsn+VtadZ+2wmI0bSmlamuFI1w=;
+        b=heFkggjZxYLMIntkP1VjyCKEUKwu6aOiFm6NB0rJJTLoOYIZISDNYEAWvEFRajqXL6
+         kK44PaSkuRHigjnWxLRS/ggB91RDuh9mj6z7mSYuDD7Lj8QDNc3g2tgc56ly8yXs+8q8
+         5aR9YePGg2D9zhTP63ufenslUPaZ3NKjakW9ZY0BiIWoOUnmSEtUdBKfao8RP8DyhOa3
+         dL2heRT+utCzhrG1XFB2AvkaUiT6imMgmUykFjSJQSmsTsCznfhlglGlumwFAXTFHSe6
+         yyL0T9Kv5nvTeA5EZK4Q6Fli3hha8qxzv87z+OijRYGSFirWEroUrC9NnKaH6LhZSuKw
+         9A5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GGUEVcAPqc3ntFlXLDsn+VtadZ+2wmI0bSmlamuFI1w=;
+        b=elXuo/wnAKkGznpDMRL8mU4x5KD3InwDOyHVQCReiIWj2Wo/p4lzFnAPaz3HLObDf9
+         pQcRNEPG9e2Tno6OU1mZjwZoQvm9wiH6YPwDzTVr43ByPpesmcmyVhA2ZS3hIYh/rVi+
+         YmVaPYF+CypGaaQ/OKWyNq+oYljjlJRKRrM508bXHhrxzVwSwMS/8cSFxqYtl6tTVbeR
+         f5DAMCow8R23gu98KJV1hZC7+AhqiP6ovopWc0g43Rkj7gttfDzfh0qCcx07EU+7tvU3
+         BtdyMvoY2aSy2CC+g9hV7ZC1klIm+iLaT1drXTcaKqx4SqBVO7BpPj80VfOGhqmyElHZ
+         N+/g==
+X-Gm-Message-State: AFqh2krB9eG8pHHwiBPnVHelg6G5lx7txo7mGCPVEkP9pXeHO37iT8KG
+        OnXQrssVkxSIe7fClG/6TGxg4Ua2lkr/gA==
+X-Google-Smtp-Source: AMrXdXvH4jwg86yGTRFJ5HRm3uZIAeg7hodaP8VUpLyT2Nuwyprlwgapu+iRrvgaS05M5aPObfeymg==
+X-Received: by 2002:a05:600c:5114:b0:3db:254e:59a9 with SMTP id o20-20020a05600c511400b003db254e59a9mr39478716wms.15.1675070518868;
+        Mon, 30 Jan 2023 01:21:58 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id d11-20020a05600c3acb00b003db30be4a54sm15357905wms.38.2023.01.30.01.21.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jan 2023 01:21:58 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        KiseokJo <kiseok.jo@irondevice.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [PATCH][next] ASoC: SMA1303: Fix spelling mistake "Invald" -> "Invalid"
+Date:   Mon, 30 Jan 2023 09:21:57 +0000
+Message-Id: <20230130092157.36446-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230130075615.17108-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 30, 2023 at 08:56:15AM +0100, Lukas Bulwahn wrote:
-> Commit 13e7accb81d6 ("genirq: Get rid of GENERIC_MSI_IRQ_DOMAIN") removes
-> the config GENERIC_MSI_IRQ_DOMAIN and replaces all references with
-> GENERIC_MSI_IRQ.
-> 
-> Probably due to concurrent development, commit 519b6274a777 ("scsi: ufs:
-> qcom: Add MCQ ESI config vendor specific ops") adds an ifdef block
-> conditional under the config GENERIC_MSI_IRQ_DOMAIN.
-> 
-> Make this code conditional under the existing config GENERIC_MSI_IRQ.
-> 
-> Fixes: 519b6274a777 ("scsi: ufs: qcom: Add MCQ ESI config vendor specific ops")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+There are spelling mistakes in dev_err messages. Fix them.
 
-There is already a patch submitted for fixing this issue:
-https://lore.kernel.org/linux-scsi/20230126211831.2274211-1-arnd@kernel.org/
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/sma1303.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Mani
-
-> ---
->  drivers/ufs/host/ufs-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 681da3ea7154..14283f6dc3f7 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -1538,7 +1538,7 @@ static int ufs_qcom_get_outstanding_cqs(struct ufs_hba *hba,
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_GENERIC_MSI_IRQ_DOMAIN
-> +#ifdef CONFIG_GENERIC_MSI_IRQ
->  static void ufs_qcom_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
->  {
->  	struct device *dev = msi_desc_to_dev(desc);
-> -- 
-> 2.17.1
-> 
-
+diff --git a/sound/soc/codecs/sma1303.c b/sound/soc/codecs/sma1303.c
+index d3ee831e88f0..3d8e3900f5c3 100644
+--- a/sound/soc/codecs/sma1303.c
++++ b/sound/soc/codecs/sma1303.c
+@@ -500,7 +500,7 @@ static int sma1303_aif_in_event(struct snd_soc_dapm_widget *w,
+ 			sma1303->amp_mode = SMA1303_STEREO;
+ 			break;
+ 		default:
+-			dev_err(sma1303->dev, "%s : Invald value (%d)\n",
++			dev_err(sma1303->dev, "%s : Invalid value (%d)\n",
+ 								__func__, mux);
+ 			return -EINVAL;
+ 		}
+@@ -640,7 +640,7 @@ static int sma1303_aif_out_event(struct snd_soc_dapm_widget *w,
+ 				change = true;
+ 			break;
+ 		default:
+-			dev_err(sma1303->dev, "%s : Invald value (%d)\n",
++			dev_err(sma1303->dev, "%s : Invalid value (%d)\n",
+ 								__func__, mux);
+ 			return -EINVAL;
+ 		}
 -- 
-மணிவண்ணன் சதாசிவம்
+2.30.2
+
