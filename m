@@ -2,102 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7592BC54EAA
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 07:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DED2C54EED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 07:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235588AbjA3Hdm (ORCPT
+        id S230422AbjA3H44 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 30 Jan 2023 02:33:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46176 "EHLO
+        Mon, 30 Jan 2023 02:56:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235522AbjA3Hdk (ORCPT
+        with ESMTP id S229653AbjA3H4z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 30 Jan 2023 02:33:40 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 670EC23840;
-        Sun, 29 Jan 2023 23:33:36 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id m2so28611097ejb.8;
-        Sun, 29 Jan 2023 23:33:36 -0800 (PST)
+        Mon, 30 Jan 2023 02:56:55 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17853279AA;
+        Sun, 29 Jan 2023 23:56:54 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id o12so11710042ljp.11;
+        Sun, 29 Jan 2023 23:56:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GqQ934JWSGPRtN10m9jH2L8S8kM1Q6Pi2aTaTuPesk0=;
-        b=YYeZg554V3NqyL6dwLyNgBhyrgk8MXV//FB3Kjsbx7B6ok8MBRkxBJgTnoY84SDvMG
-         9y4kbKdrVw10Ek6MBlXG2FnFUWfkHZxiMsrLlpNpO64T7GE1VrWoLiKqArDq6vkrLqHx
-         DtV3UwSIHrErWaZPQJiVZhT77bj+T5StutazyD+gddecuyPMbD8Yt01C/iW8K221K0S6
-         795FAvGnUDpAa7DhZ/EOWhzg3EWf/oudStUxvtAP4oPgtf2vSQLM8QFH/Rp7CHu2lMaL
-         75b/qvQ37/NxV4N4MgFce2c5bqvxCm8iPyTZxfkScbG98GbdUAGgvjsTmnOIDa2DNL/C
-         JW1w==
+        bh=Pxjejnf+qHKVQ1YQcmwOkN18hl/Nwiz0oq4H7oGqOVc=;
+        b=ifbLiIwx1QkjeNx4VZUd7c/9Ix9+6W76OsYE4tFo9MEGqrgzWgmdmxMyISn2y9Bq2z
+         Av6mgrwEczL5nbgHCmYTbSYzU65n8GHfV/RW83oC9pglKDw1ogpJWqeJwbtFDRwop+hn
+         Blvz6ae3YaON6Bx0/voPe/5uMDX3p/mgoPZWVSJ6LJI8m/Teen9tZuuhu+6ZGe8x3nmv
+         UAgUMuxxeFwld8omz4boagZ7UQbVYw7itSOYlbXs4qPzY/R59wenWoj29KCakXVwscM3
+         Bv03aRCw9CTpycfuRvNdYKmA73xN2mTiox1Pj7Fjb2fQzP2bHzIPogtfX/kCAeL1cd8R
+         htCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GqQ934JWSGPRtN10m9jH2L8S8kM1Q6Pi2aTaTuPesk0=;
-        b=5MY4sXvQJJYhwVjCUAIOzLjJjFb4l3+hpTKCst/fPyxiJViy78pHi7TlHDrSgHf4BH
-         VQb+CSnsILLKBdYnDsfuF5qCt9ilKDyQb9mkL2NQLkSYDMEmCHRfnfOY5fblBZHR8Wvf
-         HthjQrZABRJnARv8QjoTN9n/6nA5e5tNV8jIjWg3bnAf3kVOxycE423SzE01uri4ESXW
-         iCHVZWdKHJeVJ3I9nKQJviLLvfLIsUsS2ZqEiC0+VIi5H6p/7m4w8TexNLzlhsMm3P5G
-         kv1wt/EwcIyDCZWgh3ZAm8KuidVXj1ARhiqeYfI46SR3/W/5xiQkvryP/Ae5UJtFNUOo
-         URJg==
-X-Gm-Message-State: AO0yUKVfv8LgKMLsK2hhkj6SDtsc7PyQEHFGevN/eyMQIAVd0B//PXHz
-        YCzHFNmvo3wLJLiDnrwNaF0=
-X-Google-Smtp-Source: AK7set92Dsb90ymDMZDctLBT9JmHOpG2cC7hczPLPI0Y8mfE06+zWE+OVpzP7XOjN8ZrcC2TYTiLFg==
-X-Received: by 2002:a17:907:6f1b:b0:887:2320:57e5 with SMTP id sy27-20020a1709076f1b00b00887232057e5mr4870130ejc.46.1675064014778;
-        Sun, 29 Jan 2023 23:33:34 -0800 (PST)
+        bh=Pxjejnf+qHKVQ1YQcmwOkN18hl/Nwiz0oq4H7oGqOVc=;
+        b=bNWBtPY6aaBwYT+6dwJvsLxKpKcaODAK0AaHR0eqNIAooKyI3F54tJpcSG9RC7ZvGv
+         0NEzhTQffORLK6y67d0VQ4aVA88eihJ1wSArGoVLLcmGh5M5v5lMroOSZVIkGs2vfIzv
+         8W/g8xIvZjhI1ul7sbuJJZNVxTtYFkWARRo7yI1kFaq5N5OlN7G4g0atJIPzCErEcaIU
+         pMpWtycZXsV1WIIS77V7K40sRv42J1P60XcbZjpgxWKc6kseZ3slwj0Jdyb7aHFNsgpw
+         H202yfVdLY3Zw0A4pQs72rPNGNqODNEsgSldfOoYt/dy8O3T3HjUzm3LX9ajIDmnYT8l
+         6DvQ==
+X-Gm-Message-State: AO0yUKVOzmR3fRZpOxENqEdU6h87fcd4fea2IxuBuksQVhTFiq2zeS0e
+        bKEtQ2fNW05Ay7SmiUXrECZlu2JE3xE=
+X-Google-Smtp-Source: AMrXdXt2UFDcrXI0Shm47v8sKGf2D+KdwABvPpv8QquopCYW43xOw2FHor6i1oOWHOyQocqVchI+tQ==
+X-Received: by 2002:a17:906:60d0:b0:877:612e:516e with SMTP id f16-20020a17090660d000b00877612e516emr145029435ejk.61.1675065401916;
+        Sun, 29 Jan 2023 23:56:41 -0800 (PST)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:893:4a0f:7898:3492])
-        by smtp.gmail.com with ESMTPSA id z2-20020a170906714200b00888161349desm1505532ejj.182.2023.01.29.23.33.33
+        by smtp.gmail.com with ESMTPSA id jo17-20020a170906f6d100b008785b914883sm6481176ejb.116.2023.01.29.23.56.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 23:33:34 -0800 (PST)
+        Sun, 29 Jan 2023 23:56:41 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jenny Zhang <jenny.zhang@starfivetech.com>,
-        Jia Jie Ho <jiajie.ho@starfivetech.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Olivia Mackall <olivia@selenic.com>,
-        linux-crypto@vger.kernel.org
+To:     Manivannan Sadhasivam <mani@kernel.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Asutosh Das <quic_asutoshd@quicinc.com>,
+        Can Guo <quic_cang@quicinc.com>, linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: repair file entry for STARFIVE TRNG DRIVER
-Date:   Mon, 30 Jan 2023 08:31:09 +0100
-Message-Id: <20230130073109.32025-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] scsi: ufs: qcom: include specific ops when GENERIC_MSI_IRQ is set
+Date:   Mon, 30 Jan 2023 08:56:15 +0100
+Message-Id: <20230130075615.17108-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit c388f458bc34 ("hwrng: starfive - Add TRNG driver for StarFive SoC")
-adds the STARFIVE TRNG DRIVER section to MAINTAINERS, but refers to the
-non-existing file drivers/char/hw_random/starfive-trng.c rather than to the
-actually added file drivers/char/hw_random/jh7110-trng.c in this commit.
+Commit 13e7accb81d6 ("genirq: Get rid of GENERIC_MSI_IRQ_DOMAIN") removes
+the config GENERIC_MSI_IRQ_DOMAIN and replaces all references with
+GENERIC_MSI_IRQ.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+Probably due to concurrent development, commit 519b6274a777 ("scsi: ufs:
+qcom: Add MCQ ESI config vendor specific ops") adds an ifdef block
+conditional under the config GENERIC_MSI_IRQ_DOMAIN.
 
-Repair this file entry in STARFIVE TRNG DRIVER.
+Make this code conditional under the existing config GENERIC_MSI_IRQ.
 
-Fixes: c388f458bc34 ("hwrng: starfive - Add TRNG driver for StarFive SoC")
+Fixes: 519b6274a777 ("scsi: ufs: qcom: Add MCQ ESI config vendor specific ops")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Jia Jie, please ack this patch.
-
-Herbert, please pick this minor fix patch on top of the commit above. Thanks.
-
- MAINTAINERS | 2 +-
+ drivers/ufs/host/ufs-qcom.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b615c8418e80..7d87a78446cd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19845,7 +19845,7 @@ STARFIVE TRNG DRIVER
- M:	Jia Jie Ho <jiajie.ho@starfivetech.com>
- S:	Supported
- F:	Documentation/devicetree/bindings/rng/starfive*
--F:	drivers/char/hw_random/starfive-trng.c
-+F:	drivers/char/hw_random/jh7110-trng.c
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index 681da3ea7154..14283f6dc3f7 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -1538,7 +1538,7 @@ static int ufs_qcom_get_outstanding_cqs(struct ufs_hba *hba,
+ 	return 0;
+ }
  
- STATIC BRANCH/CALL
- M:	Peter Zijlstra <peterz@infradead.org>
+-#ifdef CONFIG_GENERIC_MSI_IRQ_DOMAIN
++#ifdef CONFIG_GENERIC_MSI_IRQ
+ static void ufs_qcom_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
+ {
+ 	struct device *dev = msi_desc_to_dev(desc);
 -- 
 2.17.1
 
