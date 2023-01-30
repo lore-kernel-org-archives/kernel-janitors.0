@@ -2,105 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DF1C636CC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 09:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF49C636D3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 21:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236199AbjA3Jam (ORCPT
+        id S229643AbjA3VAG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 30 Jan 2023 04:30:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34882 "EHLO
+        Mon, 30 Jan 2023 16:00:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236911AbjA3Ja0 (ORCPT
+        with ESMTP id S229579AbjA3VAG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 30 Jan 2023 04:30:26 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAC015CBC;
-        Mon, 30 Jan 2023 01:28:18 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id c10-20020a05600c0a4a00b003db0636ff84so7670708wmq.0;
-        Mon, 30 Jan 2023 01:28:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OuLcOVPfJKWmXcPSkUYt5otjql3lzwckGBRlOexX5eg=;
-        b=ZXn2zd0063FyAix6NrN7VGDXhGb6b+O25Xp8PW/V2t53nvsxiQvM+0m3oLYK60pCiA
-         I8P2TXZ4hc84wqBQySsHQ5Sict8RkPmhCS7XPCHyIYfPFl8sCRbFYM7HWBFG2O3Ber4c
-         UxxpyWagXaVlhl8rCzljfAGoM6qopIdjVi+utn/zEiz+K9bqQtjWUwrPdJ96NW59xLNZ
-         2nT05mw+FaH5q2V33bbX4E2YZM8kyb7O1KrNGoVXZl2uDNuqiKTtf0YbFJ1xmHNLMHI6
-         P225XCTGdhGVcxqGK3OJLEtSGcH9w+J830OUj4KuGRjOCua0KKjzD7pxN3mg2wzvp17D
-         qYtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OuLcOVPfJKWmXcPSkUYt5otjql3lzwckGBRlOexX5eg=;
-        b=AuyeFaRPb7QO+0/EpzyKL8/Q1qjExaWM5XHyz+9eOQp+1H7sSJ3aU57f6Km8gup3Bc
-         xwsKNO69dEoCCTkf0ASUbKimDEdSI6JWU82R2TpeerEuLQU45TUVgox+YCUEEyzNCSWf
-         SKaQq4d1/DP2KLXoTdWrOZwo2xjxR56D0xwL4S8dZMQ0TaCog6q7FoZ9eypXh3SKTHzM
-         yajupErCnT+/wLR+TKoAD/dCitm3jSxkFmllDISARuiTx/3dly4FnzdW7iMNa/Q8zybx
-         8btPWLWELXUmNt2FWxXmRVw+YxguJbVyqpuzQJ1f++VrvNeNEQq8dfzIMaFf4NKZ6jaP
-         605A==
-X-Gm-Message-State: AFqh2krbdeVRfQAODQaEHM/jztISfg2QJI0UEOXhtRLRF6XyAmQA3Da9
-        IEG1IyChJSuiwB3T4ukvKAI=
-X-Google-Smtp-Source: AMrXdXubdJG4wn5XI09lBCNxLEtCZCPj/+tc/g+IZBKThni+yvDUga2N9vHiBJEIUAGiHHUrV0CFZg==
-X-Received: by 2002:a05:600c:4f42:b0:3db:30c3:ed83 with SMTP id m2-20020a05600c4f4200b003db30c3ed83mr36215678wmq.28.1675070805951;
-        Mon, 30 Jan 2023 01:26:45 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bg6-20020a05600c3c8600b003db06493ee7sm17628908wmb.47.2023.01.30.01.26.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jan 2023 01:26:45 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        virtualization@lists.linux-foundation.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] vdpa: Fix a couple of spelling mistakes in some messages
-Date:   Mon, 30 Jan 2023 09:26:44 +0000
-Message-Id: <20230130092644.37002-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 30 Jan 2023 16:00:06 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA08A45BF4
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jan 2023 13:00:03 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 469D3B80E78
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jan 2023 21:00:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB98C433EF;
+        Mon, 30 Jan 2023 20:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675112400;
+        bh=cf47b8CAKK73Es+LoTlxJKk80qn/DQy1RvwAP1SqyUM=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=WzI0yrz5MLh+YZP+wofAz67AukTVZU0QtEHdm3HjwLu9Cx6+g6Czt3cMj+vOooU0Z
+         Cpk0GEweBMxjMk0N1m9K1Rq2i1jqMDfUE6MoT5G+vhufLGiPHjZ3zZ4T68xHfYVewc
+         XnM6v212lKPlOEP8KjKyN5rSiBP/nKBQO8+UdqC8wXOhlIrIvEljMctmFD2GroXXgM
+         uywzlLb4K7sO8NuzoRWlIwz+q1ioND79PWyhEro+O6xWVIkm4pQE/O/M+GJexKCQN4
+         /oaVYcKpWRqxaz/Ik+Vy65kSsOMMpQFWAg3CU822fw78T2JDjwnPpwu/aI0pPnvAKT
+         71Uew8aWOAJ2A==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        KiseokJo <kiseok.jo@irondevice.com>, alsa-devel@alsa-project.org,
+        Colin Ian King <colin.i.king@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org
+In-Reply-To: <20230130092157.36446-1-colin.i.king@gmail.com>
+References: <20230130092157.36446-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: SMA1303: Fix spelling mistake "Invald" ->
+ "Invalid"
+Message-Id: <167511239928.2141894.16999579130173129133.b4-ty@kernel.org>
+Date:   Mon, 30 Jan 2023 20:59:59 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are two spelling mistakes in some literal strings. Fix them.
+On Mon, 30 Jan 2023 09:21:57 +0000, Colin Ian King wrote:
+> There are spelling mistakes in dev_err messages. Fix them.
+> 
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/vdpa/vdpa.c                  | 2 +-
- drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Applied to
 
-diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-index 6821b2850bbb..a1bb5b92212d 100644
---- a/drivers/vdpa/vdpa.c
-+++ b/drivers/vdpa/vdpa.c
-@@ -1016,7 +1016,7 @@ static int vdpa_dev_vendor_stats_fill(struct vdpa_device *vdev,
- 	switch (device_id) {
- 	case VIRTIO_ID_NET:
- 		if (index > VIRTIO_NET_CTRL_MQ_VQ_PAIRS_MAX) {
--			NL_SET_ERR_MSG_MOD(info->extack, "queue index excceeds max value");
-+			NL_SET_ERR_MSG_MOD(info->extack, "queue index exceeds max value");
- 			err = -ERANGE;
- 			break;
- 		}
-diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
-index e827708adcca..862f405362de 100644
---- a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
-+++ b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
-@@ -324,7 +324,7 @@ static int vdpasim_net_get_stats(struct vdpasim *vdpasim, u16 idx,
- 				      rx_errors, VDPA_ATTR_PAD))
- 			break;
- 		if (nla_put_string(msg, VDPA_ATTR_DEV_VENDOR_ATTR_NAME,
--				  "rx overrunss"))
-+				  "rx overruns"))
- 			break;
- 		if (nla_put_u64_64bit(msg, VDPA_ATTR_DEV_VENDOR_ATTR_VALUE,
- 				      rx_overruns, VDPA_ATTR_PAD))
--- 
-2.30.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: SMA1303: Fix spelling mistake "Invald" -> "Invalid"
+      commit: 5b28c049ff53cf49e3a97d80cebd2e9c2779ea96
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
