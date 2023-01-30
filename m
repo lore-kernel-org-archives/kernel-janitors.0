@@ -2,88 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF49C636D3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 21:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF7BC54EAA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 21:16:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229643AbjA3VAG (ORCPT
+        id S230015AbjA3VQN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 30 Jan 2023 16:00:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55064 "EHLO
+        Mon, 30 Jan 2023 16:16:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjA3VAG (ORCPT
+        with ESMTP id S230135AbjA3VQK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 30 Jan 2023 16:00:06 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA08A45BF4
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jan 2023 13:00:03 -0800 (PST)
+        Mon, 30 Jan 2023 16:16:10 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 249EF7EED;
+        Mon, 30 Jan 2023 13:16:09 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 469D3B80E78
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jan 2023 21:00:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB98C433EF;
-        Mon, 30 Jan 2023 20:59:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B2F796126D;
+        Mon, 30 Jan 2023 21:16:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D17DC433A0;
+        Mon, 30 Jan 2023 21:16:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675112400;
-        bh=cf47b8CAKK73Es+LoTlxJKk80qn/DQy1RvwAP1SqyUM=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=WzI0yrz5MLh+YZP+wofAz67AukTVZU0QtEHdm3HjwLu9Cx6+g6Czt3cMj+vOooU0Z
-         Cpk0GEweBMxjMk0N1m9K1Rq2i1jqMDfUE6MoT5G+vhufLGiPHjZ3zZ4T68xHfYVewc
-         XnM6v212lKPlOEP8KjKyN5rSiBP/nKBQO8+UdqC8wXOhlIrIvEljMctmFD2GroXXgM
-         uywzlLb4K7sO8NuzoRWlIwz+q1ioND79PWyhEro+O6xWVIkm4pQE/O/M+GJexKCQN4
-         /oaVYcKpWRqxaz/Ik+Vy65kSsOMMpQFWAg3CU822fw78T2JDjwnPpwu/aI0pPnvAKT
-         71Uew8aWOAJ2A==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        KiseokJo <kiseok.jo@irondevice.com>, alsa-devel@alsa-project.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org
-In-Reply-To: <20230130092157.36446-1-colin.i.king@gmail.com>
-References: <20230130092157.36446-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: SMA1303: Fix spelling mistake "Invald" ->
- "Invalid"
-Message-Id: <167511239928.2141894.16999579130173129133.b4-ty@kernel.org>
-Date:   Mon, 30 Jan 2023 20:59:59 +0000
+        s=k20201202; t=1675113368;
+        bh=2S03H7fD4naG7KTpUwIw+Yz2fSOiRObvNN6hiNwBCUo=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=eQEbwFYLjjkeFFEzczkfxYAB4mEibjmLyLyPer5+LBm+C9t1HlzqQhIh8K2NL2VM1
+         mfTW2sxlxwkYHo/v7Nhejy+Ra6KeReeyXMIozKyuw3ed8El9tCL/SxvRx2t5gySnhX
+         MEQleXNcqVQBt1F4SJTVkk6dSAiizJeWlDjysdNe+6W9m9HnwRMRXxLYC0bITxyEeJ
+         EUgMz9Z3S7a5ya7MuMZ0+n65T/BaPJZZcOLuquI2T9Oa+lEZY4T9jfHNUrjfVOYcfb
+         YQU+pUHwLf7ZtdiaTeX1qH8OwwZUPFGqb4pt+lYTz+xMDitkgd9boPw9h4HB0vMCqt
+         y2KorzwgsxZ0g==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-142b72a728fso16834536fac.9;
+        Mon, 30 Jan 2023 13:16:08 -0800 (PST)
+X-Gm-Message-State: AFqh2kqdwWFbIkhj6y//yjGLYwystEtO+IkaV2BakfewjsFb1+q7mQSI
+        rMyOEveKGU0MadIt1CHRkEmC/wSv9yVm/truulM=
+X-Google-Smtp-Source: AMrXdXtB53/qFM1iiGo26TtT4yGfxrKK/gWnHN/GArEN8iZgkj9mWvEbKXmACHZBBoGkDKU99Iyuy25sg/Gc7QGT+mE=
+X-Received: by 2002:a05:6870:8c11:b0:15f:de79:36c7 with SMTP id
+ ec17-20020a0568708c1100b0015fde7936c7mr2738367oab.215.1675113367173; Mon, 30
+ Jan 2023 13:16:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.0
+Received: by 2002:a8a:355:0:b0:4a5:1048:434b with HTTP; Mon, 30 Jan 2023
+ 13:16:06 -0800 (PST)
+In-Reply-To: <20230130092357.36730-1-colin.i.king@gmail.com>
+References: <20230130092357.36730-1-colin.i.king@gmail.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Tue, 31 Jan 2023 06:16:06 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_tPpu-w7vuALcfDnBe4Fsu4hFUdbJ==xUqfFmNuaUVHw@mail.gmail.com>
+Message-ID: <CAKYAXd_tPpu-w7vuALcfDnBe4Fsu4hFUdbJ==xUqfFmNuaUVHw@mail.gmail.com>
+Subject: Re: [PATCH][next] ksmbd: Fix spelling mistake "excceed" -> "exceeded"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Steve French <sfrench@samba.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 30 Jan 2023 09:21:57 +0000, Colin Ian King wrote:
-> There are spelling mistakes in dev_err messages. Fix them.
-> 
-> 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+2023-01-30 18:23 GMT+09:00, Colin Ian King <colin.i.king@gmail.com>:
+> There is a spelling mistake in an error message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
 Thanks!
-
-[1/1] ASoC: SMA1303: Fix spelling mistake "Invald" -> "Invalid"
-      commit: 5b28c049ff53cf49e3a97d80cebd2e9c2779ea96
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
