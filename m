@@ -2,101 +2,116 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09586C636D3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Jan 2023 21:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E27C38142
+	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Jan 2023 05:24:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbjA3VYA (ORCPT
+        id S230249AbjAaFYT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 30 Jan 2023 16:24:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46016 "EHLO
+        Tue, 31 Jan 2023 00:24:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjA3VX7 (ORCPT
+        with ESMTP id S230150AbjAaFYJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 30 Jan 2023 16:23:59 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A5B30E9D;
-        Mon, 30 Jan 2023 13:23:58 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id u12so10595436lfq.0;
-        Mon, 30 Jan 2023 13:23:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tFZC+05wFKTwfBGiPm2JG45yZl9PbUY9aQpOd0L6E7g=;
-        b=fvW/6D2DrtdIJ/6d1hceaPOF1h6ipkEhchDRSrdREgCUCtR1zBw/xxWtzoW7u+RWZA
-         QlKyRmo5JZ6/HthrfJYHTuni2Xj7HzrkiZE+4PlbaWOqTpVyq2vDY/sQjWE9KgplrCSW
-         oa41bbYwyXV4w5cPBfQG0je+JEYjN+zeINDdofYB2w4XDo50ulHPOOEagSlzsnGpv0II
-         +9HA7a7kVzVifHDIJegD5/6IaD3a0k4CDdcwc3Tip3tWICRc/ot7YS10O0czTg4HrlKu
-         ud5E2PRByaqtBVwaDyZvdM/EyvZquoU6o2ssHh8CcGp11ERPI27Azy4ooowpvw0Fco2P
-         AzpA==
+        Tue, 31 Jan 2023 00:24:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D1B0E38C
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jan 2023 21:23:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1675142599;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tBuwpBVXvpFhXGcDe/LdMP61Sfzf57MnN//0wiFS4tA=;
+        b=bknq3fgdbkDTwq1TVPDd65JuilgHInI9BT8Pf20onM44IZ9HT017XHk8C1K7RYCWhGReus
+        vrWliDnMLT5LxlSrufweKT97nMIjbZiGu9JHMg11jE3QBjuNEh2396hVOhpXlRPyYEl/Gt
+        p3j5LSc/LK3m41BDjLIa8Zpt5f22/gc=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-78-gdGBb-9EOk2GMENT0ew6ag-1; Tue, 31 Jan 2023 00:23:17 -0500
+X-MC-Unique: gdGBb-9EOk2GMENT0ew6ag-1
+Received: by mail-oo1-f72.google.com with SMTP id r5-20020a4ad4c5000000b0051754772eeaso904985oos.20
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jan 2023 21:23:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tFZC+05wFKTwfBGiPm2JG45yZl9PbUY9aQpOd0L6E7g=;
-        b=NRUIr9Y6Hu3APUf5hD1RmBpLDzwUbz3XnT0oTXc3nv+ilRjLNhwAbXN29br+Vaeq/8
-         PSUF75yhTEv6A3nF7Lke4aKKPn8hMP6ptXX5yVeGGZdO/6KuYqfVWR/ddBNWkrHpZUBr
-         VhpQwDAjn8DXE+FoZHw3wzDs0IXHpMF/9S88xeZsjw+OHbKJDu8CgNWAln4zRTZ6mur7
-         GHUXFDBm4ujGSiwOLEEN0zRqEz2U/I+eDeIsiE2UR8lZ8Hm6LoTPS5V08L73gUQt3vsl
-         05jsG4E+xNUETmv9Vqz562sxWzSupHfUWGtgRU1vBmx6vnsf6hk/28rGrUqjlt4u7CpZ
-         4LHw==
-X-Gm-Message-State: AFqh2kqsQi6386om28J7Sa5igWgt4lQ8LWO5Ajl9SqK/NNmDr8AMkDhy
-        f0Q5iDTutR8zk8v85fLuJt9CkxLZ0o/O6CzePgM=
-X-Google-Smtp-Source: AMrXdXvScZZA1kRbAk5eq+Cm5AtTeHfnPzL3YpC02jU2WGXCjtQ75wxhNZ0xCWwOKZnFsmPA4u7gld7fYRAcikFfpz4=
-X-Received: by 2002:a05:6512:3f03:b0:4cb:20b3:e7f4 with SMTP id
- y3-20020a0565123f0300b004cb20b3e7f4mr6707926lfa.194.1675113836316; Mon, 30
- Jan 2023 13:23:56 -0800 (PST)
+        bh=tBuwpBVXvpFhXGcDe/LdMP61Sfzf57MnN//0wiFS4tA=;
+        b=zu90gAHabF2I9AwaJ2u5Q2TK5aZC8cRcuCFUDj54B3rzVUZipVKCmLwRgSON3d9Tgm
+         1EUEuxFMTausQ/f7suM6jWICTCMC3phAg62QU3zHtdB+R4lTicfTe1sb2LdGXuSIz03A
+         98n6xKnK6yC/3vJ/Ck3RFsxlNnofJN+gidWzH9+w238TNKhnUccLLfs4H2I/g5OYHL+u
+         dyJkCfBorHNWpl8OymBQB9dYZ/5v1l6o+sqgLLlU+VNtwlho/4vix2e7SwAYZijB4ujk
+         mxcJmiK9SDsveShwUNDGPdtCnJ9ovE3NhEu1wiQF7TRTZ2byjQ9h74z/yp+9fFa+8H3v
+         OHhg==
+X-Gm-Message-State: AFqh2kqmC6TO6jWPoWgY+XCCJ7RbHEzlrDTYikcONF6NCYRcvlY0SOQv
+        nirpBoOTktsdbkF367+ukCa7OvfRIhR/NIzblrIkY8k+3H5L11eJYGrUSBfl5/G/59n+S8b+9Q3
+        cUbkODTIGON4Ch0H8STJkS5+HRFE4sNr2bThmHTdQ7a3S
+X-Received: by 2002:a05:6871:10e:b0:15b:96b5:9916 with SMTP id y14-20020a056871010e00b0015b96b59916mr4391884oab.280.1675142596876;
+        Mon, 30 Jan 2023 21:23:16 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXtz7jMxZSFLd+CNnOJpiqDKGvOYMcNJ6sBtUoRkm8qhoapPK42eBepYF1fhvcrqoTDubwtnrXBwROgRvtImXgM=
+X-Received: by 2002:a05:6871:10e:b0:15b:96b5:9916 with SMTP id
+ y14-20020a056871010e00b0015b96b59916mr4391882oab.280.1675142596696; Mon, 30
+ Jan 2023 21:23:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20230130092357.36730-1-colin.i.king@gmail.com>
-In-Reply-To: <20230130092357.36730-1-colin.i.king@gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 30 Jan 2023 15:23:45 -0600
-Message-ID: <CAH2r5muFzyAW6YYFRmoZ89AFPYETPZU59-DR+2H8zAxsZbnwkw@mail.gmail.com>
-Subject: Re: [PATCH][next] ksmbd: Fix spelling mistake "excceed" -> "exceeded"
+References: <20230130092644.37002-1-colin.i.king@gmail.com>
+In-Reply-To: <20230130092644.37002-1-colin.i.king@gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Tue, 31 Jan 2023 13:23:05 +0800
+Message-ID: <CACGkMEu9eg3aem4a_Xu_uxn4HvifyQqe-JRfH0rdxXDmsMfDuw@mail.gmail.com>
+Subject: Re: [PATCH][next] vdpa: Fix a couple of spelling mistakes in some messages
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Namjae Jeon <linkinjeon@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        virtualization@lists.linux-foundation.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-added to smb3-kernel ksmbd-for-next
-
-thx
-
-On Mon, Jan 30, 2023 at 3:26 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+On Mon, Jan 30, 2023 at 5:26 PM Colin Ian King <colin.i.king@gmail.com> wrote:
 >
-> There is a spelling mistake in an error message. Fix it.
+> There are two spelling mistakes in some literal strings. Fix them.
 >
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Acked-by: Jason Wang <jasowang@redhat.com>
+
+Thanks
+
 > ---
->  fs/ksmbd/connection.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/vdpa/vdpa.c                  | 2 +-
+>  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/fs/ksmbd/connection.c b/fs/ksmbd/connection.c
-> index 56be077e5d8a..0f7eab5aa04c 100644
-> --- a/fs/ksmbd/connection.c
-> +++ b/fs/ksmbd/connection.c
-> @@ -312,7 +312,7 @@ int ksmbd_conn_handler_loop(void *p)
->                         max_allowed_pdu_size = SMB3_MAX_MSGSIZE;
->
->                 if (pdu_size > max_allowed_pdu_size) {
-> -                       pr_err_ratelimited("PDU length(%u) excceed maximum allowed pdu size(%u) on connection(%d)\n",
-> +                       pr_err_ratelimited("PDU length(%u) exceeded maximum allowed pdu size(%u) on connection(%d)\n",
->                                         pdu_size, max_allowed_pdu_size,
->                                         conn->status);
+> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> index 6821b2850bbb..a1bb5b92212d 100644
+> --- a/drivers/vdpa/vdpa.c
+> +++ b/drivers/vdpa/vdpa.c
+> @@ -1016,7 +1016,7 @@ static int vdpa_dev_vendor_stats_fill(struct vdpa_device *vdev,
+>         switch (device_id) {
+>         case VIRTIO_ID_NET:
+>                 if (index > VIRTIO_NET_CTRL_MQ_VQ_PAIRS_MAX) {
+> -                       NL_SET_ERR_MSG_MOD(info->extack, "queue index excceeds max value");
+> +                       NL_SET_ERR_MSG_MOD(info->extack, "queue index exceeds max value");
+>                         err = -ERANGE;
 >                         break;
+>                 }
+> diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> index e827708adcca..862f405362de 100644
+> --- a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> +++ b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> @@ -324,7 +324,7 @@ static int vdpasim_net_get_stats(struct vdpasim *vdpasim, u16 idx,
+>                                       rx_errors, VDPA_ATTR_PAD))
+>                         break;
+>                 if (nla_put_string(msg, VDPA_ATTR_DEV_VENDOR_ATTR_NAME,
+> -                                 "rx overrunss"))
+> +                                 "rx overruns"))
+>                         break;
+>                 if (nla_put_u64_64bit(msg, VDPA_ATTR_DEV_VENDOR_ATTR_VALUE,
+>                                       rx_overruns, VDPA_ATTR_PAD))
 > --
 > 2.30.2
 >
 
-
--- 
-Thanks,
-
-Steve
