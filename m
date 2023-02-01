@@ -2,109 +2,130 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB9CC636CC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Jan 2023 10:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B93C8C636D3
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Feb 2023 10:32:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232361AbjAaKC1 (ORCPT
+        id S229597AbjBAKcS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 31 Jan 2023 05:02:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32932 "EHLO
+        Wed, 1 Feb 2023 05:32:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbjAaKCY (ORCPT
+        with ESMTP id S229451AbjBAKcR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 31 Jan 2023 05:02:24 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD8794B4B6;
-        Tue, 31 Jan 2023 02:02:19 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id q5so13703645wrv.0;
-        Tue, 31 Jan 2023 02:02:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BQtD71MCuqdoYLyEkwguINUig+I6UC5jBNAWlEZAE74=;
-        b=Xzw2nzSO1P6ENTdTvBc3HZWqUOTvaXqkGqa5xZniFKIVjoPM47DLx5iUVdPoYU0ePl
-         /Y5UbUPocgpxeqkM1GodWs70YnnETJs7dJuicE4kGMZFK/i+fyETSyykEP2/KtrjITMv
-         0qc++SMkUW7f9bz+HWY0AKGSmyWQcsQo3EWo99D5MDCWVELxnjEtyZYNNpugniWW4cjE
-         LYhpqtwWuRT3M+cpMGZEY6Ty+qaIWSHB24UFR7up1AjAZzvjYXaN1PaAI1eXMGb5y8GB
-         pBWhxFTMNXdqPwIoixuz5okvjoZBA3igr47ZS7oaa+JHk9XVm3uUnmHu4mq1pA4/rPND
-         pevg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BQtD71MCuqdoYLyEkwguINUig+I6UC5jBNAWlEZAE74=;
-        b=BdpxY5pHLzUzSZqRBEx1ztDbIRbJtKBlT7QAITJAITqgdN4zDxDwuBAeqVs6cZm9sh
-         j+hRvyT7qUMMtHrQJcdJ5OYVNg4E1PsLOvZCk+6QBpJEXV7FaU5qiRbegY/1jeFDOX1u
-         Z2097V6xRq7OYEo9/EURH/T82rsoDVq7fJ0po2lt4GUHAVC/B+BQAplbuyg2f2MPtnj4
-         kol1XO7545FKODJcY79KerbR97vqfDd2vh9dw7OwmbvokBFWrO2IkuR699VEtHm/y7uj
-         eEk+WXwavvcOwIsMWgK0ZUGGXkAfbsqUcy29TFjA9GofZa13mJmiVDJF/NWqu5R7Hp/Z
-         ZDBA==
-X-Gm-Message-State: AO0yUKVWT11QNZErgVxYdsPKyiAp9G/kW7fCM1khWaz0TxuKkx5R96Yc
-        ilZcYgYpZ0kz1pE0L6BKyg4=
-X-Google-Smtp-Source: AK7set99zuDW29NEW4bzQ7VrmGv4iF1XLdL3T9STAFE1oa1tmi3iLOxWH3RviNrVkdbl73H2weHuug==
-X-Received: by 2002:adf:dd84:0:b0:27a:d81:1137 with SMTP id x4-20020adfdd84000000b0027a0d811137mr2379364wrl.38.1675159338147;
-        Tue, 31 Jan 2023 02:02:18 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id y3-20020adff143000000b002be546f947asm14353360wro.61.2023.01.31.02.02.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Jan 2023 02:02:17 -0800 (PST)
-Date:   Tue, 31 Jan 2023 13:02:13 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Jaroslav Kysela <perex@perex.cz>
-Cc:     Takashi Iwai <tiwai@suse.com>, Maxime Ripard <mripard@kernel.org>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] ALSA: pci: lx6464es: fix a debug loop
-Message-ID: <Y9jnJTis/mRFJAQp@kili>
+        Wed, 1 Feb 2023 05:32:17 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3749044B7
+        for <kernel-janitors@vger.kernel.org>; Wed,  1 Feb 2023 02:32:16 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C245133BDD;
+        Wed,  1 Feb 2023 10:32:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1675247534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ART/YkiTrYg+jQn43kBcwYu4uICVAq+oi+dZSKACtVY=;
+        b=CNsbz7lbxY06bgIX+hana8zOtFRxUCN8WSQDcogK611GRvPRqMtbem0dmNa7R5Gt2nqVkj
+        4fHbic35TandcDwWpXi3S4O2zGB8P6rid2VeDymYijz9DvtIYCal80hLJYr7kJ4VrwNxej
+        CJJMXxsqwwrtsXefApmOk6OPRVeS/I0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1675247534;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ART/YkiTrYg+jQn43kBcwYu4uICVAq+oi+dZSKACtVY=;
+        b=seHE4nl9mgJ+qonk4I8kLd0UHlZpzkjlzLi/1yb20EELQTAp1KqXZKbCKdvu6XpjtZgTI9
+        T6Jdq6pJLzP3FcCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9E4E813A10;
+        Wed,  1 Feb 2023 10:32:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id ff6qJa4/2mMlAwAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Wed, 01 Feb 2023 10:32:14 +0000
+Message-ID: <c1072a01-9919-f1d8-c281-3e1bc1dc4f36@suse.de>
+Date:   Wed, 1 Feb 2023 11:32:14 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] drm/simpledrm: Fix an NULL vs IS_ERR() bug
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Dan Carpenter <error27@gmail.com>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Javier Martinez Canillas <javierm@redhat.com>
+References: <Y9JHzImRcUaa0mi1@kili> <Y9Kn3UQ8WGUtgJgi@orome>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <Y9Kn3UQ8WGUtgJgi@orome>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------qaN10g7MCmG0ivSFVpvTYcCJ"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This loop accidentally reuses the "i" iterator for both the inside and
-the outside loop.  The value of MAX_STREAM_BUFFER is 5.  I believe that
-chip->rmh.stat_len is in the 2-12 range.  If the value of .stat_len is
-4 or more then it will loop exactly one time, but if it's less then it
-is a forever loop.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------qaN10g7MCmG0ivSFVpvTYcCJ
+Content-Type: multipart/mixed; boundary="------------WhPdVrp8xfhlMYi3Dr1tEgFV";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Dan Carpenter <error27@gmail.com>
+Cc: Thierry Reding <treding@nvidia.com>, kernel-janitors@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <c1072a01-9919-f1d8-c281-3e1bc1dc4f36@suse.de>
+Subject: Re: [PATCH] drm/simpledrm: Fix an NULL vs IS_ERR() bug
+References: <Y9JHzImRcUaa0mi1@kili> <Y9Kn3UQ8WGUtgJgi@orome>
+In-Reply-To: <Y9Kn3UQ8WGUtgJgi@orome>
 
-It looks like it was supposed to combined into one loop where
-conditions are checked.
+--------------WhPdVrp8xfhlMYi3Dr1tEgFV
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Fixes: 8e6320064c33 ("ALSA: lx_core: Remove useless #if 0 .. #endif")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-v2: In the first version I just deleted the outside loop but that was
-not the correct fix.  Combine the conditions instead.
+DQoNCkFtIDI2LjAxLjIzIHVtIDE3OjE4IHNjaHJpZWIgVGhpZXJyeSBSZWRpbmc6DQo+IE9u
+IFRodSwgSmFuIDI2LCAyMDIzIGF0IDEyOjI4OjQ0UE0gKzAzMDAsIERhbiBDYXJwZW50ZXIg
+d3JvdGU6DQo+PiBUaGUgZGV2bV9tZW1yZW1hcCgpIGZ1bmN0aW9uIGRvZXNuJ3QgcmV0dXJu
+IE5VTEwsIGl0IHJldHVybnMgZXJyb3INCj4+IHBvaW50ZXJzLg0KPj4NCj4+IEZpeGVzOiA5
+YTEwYzdlNjUxOWIgKCJkcm0vc2ltcGxlZHJtOiBBZGQgc3VwcG9ydCBmb3Igc3lzdGVtIG1l
+bW9yeSBmcmFtZWJ1ZmZlcnMiKQ0KPj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8
+ZXJyb3IyN0BnbWFpbC5jb20+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy9ncHUvZHJtL3Rpbnkv
+c2ltcGxlZHJtLmMgfCA0ICsrLS0NCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9u
+cygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IEdvb2QgY2F0Y2ghIEFwcGxpZWQgdG8gZHJt
+LW1pc2MtbmV4dCwgdGhhbmtzLg0KDQpJIGhhdmUgY2hlcnJ5LXBpY2tlZCB0aGUgcGF0Y2gg
+aW50byBkcm0tbWlzYy1uZXh0LWZpeGVzLg0KDQo+IA0KPiBUaGllcnJ5DQoNCi0tIA0KVGhv
+bWFzIFppbW1lcm1hbm4NCkdyYXBoaWNzIERyaXZlciBEZXZlbG9wZXINClNVU0UgU29mdHdh
+cmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0KTWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5i
+ZXJnLCBHZXJtYW55DQooSFJCIDM2ODA5LCBBRyBOw7xybmJlcmcpDQpHZXNjaMOkZnRzZsO8
+aHJlcjogSXZvIFRvdGV2DQo=
 
- sound/pci/lx6464es/lx_core.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+--------------WhPdVrp8xfhlMYi3Dr1tEgFV--
 
-diff --git a/sound/pci/lx6464es/lx_core.c b/sound/pci/lx6464es/lx_core.c
-index d3f58a3d17fb..b5b0d43bb8dc 100644
---- a/sound/pci/lx6464es/lx_core.c
-+++ b/sound/pci/lx6464es/lx_core.c
-@@ -493,12 +493,11 @@ int lx_buffer_ask(struct lx6464es *chip, u32 pipe, int is_capture,
- 		dev_dbg(chip->card->dev,
- 			"CMD_08_ASK_BUFFERS: needed %d, freed %d\n",
- 			    *r_needed, *r_freed);
--		for (i = 0; i < MAX_STREAM_BUFFER; ++i) {
--			for (i = 0; i != chip->rmh.stat_len; ++i)
--				dev_dbg(chip->card->dev,
--					"  stat[%d]: %x, %x\n", i,
--					    chip->rmh.stat[i],
--					    chip->rmh.stat[i] & MASK_DATA_SIZE);
-+		for (i = 0; i < MAX_STREAM_BUFFER && i < chip->rmh.stat_len;
-+		     ++i) {
-+			dev_dbg(chip->card->dev, "  stat[%d]: %x, %x\n", i,
-+				chip->rmh.stat[i],
-+				chip->rmh.stat[i] & MASK_DATA_SIZE);
- 		}
- 	}
- 
--- 
-2.35.1
+--------------qaN10g7MCmG0ivSFVpvTYcCJ
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmPaP64FAwAAAAAACgkQlh/E3EQov+Dd
+Cw//VUqRC9g4byAsrdDWyPkUsAZz4pFUVmgv/YlIsOddCteWJtKjllaVKdxDPuTuSRF7GTWvc33C
+ZmWzionGCK3ZRSMMQv4WjUDhMy0PHDuXdws36DjmY4VPRRJuTco7AyCOVEiFhD3oWG370RkfBx3X
+IQQwjQIT3L5V3BBQsCeSLwLzeo+WaFCKvAUMexN3rYmIyTYemvsCJTeIGwOlmfjCsHBRPhpLMp/J
+ss7oRTnCx1fcpnx65hCWJhR0gJybK1GuC377R2vKB7YWmGWKh0bXdyCtQD7QqRthVF6Gj3Q3cub3
+nsAVhkqPemQ44GXpMysOu4/NWC8rHpDQ6wRoa34UyrX5/UHqFKpaChb4rh5zZ9kydf5ldbVhgthj
+l4914HuYuPm2AlXqyHZyHNiPBe8hVBX4lmdUQaaRlGNGvpLryphr73fhVKnRMwmFZq1j5v70WJDj
+NPbzbiPsdZvxTzmVEuNAsI1G3dLkdDgmEADQhSS+Pfb8bq6NXP/xuD/F6ZXwcs21NNl97ecZHfjr
+iQR1GdNgUgkn2JcuAy9Wz4w0H/Iw/NYNq1Q+jhNQcXaBZ77sad+c+WbXyJ76cnF8QU1I9IlJiALT
+CHPHL3xeDUMdw37BBhMg+AsZpzDN/2QQEPKVA7a43EWDM3k/V4UxfSBkv5LfeTit0y87shAbwz/m
+400=
+=+sb/
+-----END PGP SIGNATURE-----
+
+--------------qaN10g7MCmG0ivSFVpvTYcCJ--
