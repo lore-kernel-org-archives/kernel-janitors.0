@@ -2,117 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4C9C636D4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Feb 2023 15:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2022C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Feb 2023 20:23:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231971AbjBBPmX (ORCPT
+        id S232822AbjBBUXl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Feb 2023 10:42:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39620 "EHLO
+        Thu, 2 Feb 2023 15:23:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231707AbjBBPmW (ORCPT
+        with ESMTP id S232773AbjBBUXj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Feb 2023 10:42:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3721027D46;
-        Thu,  2 Feb 2023 07:41:59 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 56B6E61B8C;
-        Thu,  2 Feb 2023 15:41:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FFF7C433D2;
-        Thu,  2 Feb 2023 15:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675352460;
-        bh=SnokYtP0nj6+SdMUZyE/P5z1gQHBzL3/1Otl7bzbNK0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qeFYPex0TzA+VS5gBR3VY20pInVwSOxzIE9DS2E/rVorWjdplJ7T6z4Jt7mTCUIEb
-         nD8qA26Zqm7KB9hK0gNg2i2WvyDVSnkPDzwrlp5DrsPf375ACqitNM/AtlZJK6zEuy
-         6k29M0fgNmDAK3DlYrpiYat5Qi3YbNb/yBo0ePq/+QciRgfIWjr9JMiYFYFpbDCIK3
-         XAIvyjPMErvq8IPmbZV5ikztXtZatwsjnGubkenVLMsgr+8Wpr2G2p8RbZpmbRJHZG
-         ziPS3ZEQebz72j0/bvhKDjkYiMat5pTuNd9PXdJhfOwZ1SbGcOQgN8aSjYW415iJZ8
-         uTazh+EWqSZSA==
-Date:   Thu, 2 Feb 2023 16:40:54 +0100
-From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: rcar: avoid defines prefixed with CONFIG
-Message-ID: <Y9vZhv2+F4e/Asko@lpieralisi>
-References: <20230113084516.31888-1-lukas.bulwahn@gmail.com>
- <CAMuHMdX_TPgXO2KYNdD5rRzuE9m6_JxfW-otWzw7r7Wptq_rOQ@mail.gmail.com>
- <Y8GHICwCNRsYCva8@lpieralisi>
+        Thu, 2 Feb 2023 15:23:39 -0500
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E1DF6B35C
+        for <kernel-janitors@vger.kernel.org>; Thu,  2 Feb 2023 12:23:35 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id Ng7FpzaaXkc0dNg7FpPXWm; Thu, 02 Feb 2023 21:23:32 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 02 Feb 2023 21:23:32 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Mustafa Ismail <mustafa.ismail@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH] RDMA/irdma: Slightly optimize irdma_form_ah_cm_frame()
+Date:   Thu,  2 Feb 2023 21:23:24 +0100
+Message-Id: <098e3c397be0436f1867899245ecfe656c472110.1675369386.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y8GHICwCNRsYCva8@lpieralisi>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jan 13, 2023 at 05:30:24PM +0100, Lorenzo Pieralisi wrote:
-> On Fri, Jan 13, 2023 at 10:05:09AM +0100, Geert Uytterhoeven wrote:
-> > Hi Lukas,
-> > 
-> > On Fri, Jan 13, 2023 at 9:52 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > > Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
-> > > that are introduced in a Kconfig file.
-> > >
-> > > Here, a definition for a bitmask to configure the SEND_ENABLE mode is named
-> > > CONFIG_SEND_ENABLE.
-> > >
-> > > Rename this local definition to CONFIGURE_SEND_ENABLE to avoid defines
-> > > prefixed with "CONFIG".
-> > >
-> > > No functional change.
-> > >
-> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > 
-> > Thanks for your patch!
-> > 
-> > > --- a/drivers/pci/controller/pcie-rcar.h
-> > > +++ b/drivers/pci/controller/pcie-rcar.h
-> > > @@ -11,7 +11,7 @@
-> > >
-> > >  #define PCIECAR                        0x000010
-> > >  #define PCIECCTLR              0x000018
-> > > -#define  CONFIG_SEND_ENABLE    BIT(31)
-> > > +#define  CONFIGURE_SEND_ENABLE BIT(31)
-> > 
-> > The R-Car Gen3 rev. 2.30 Hardware User's Manual calls the bit "CCIE".
-> > 
-> > Hence if I would have written the driver, I would have used
-> > 
-> >     #define PCIECCTLR_CCIE     BIT(31)   /* Configuration Send Enable */
-> 
-> Should I change it when I merge it ? That makes sense actually.
+There is no need to zero 'pktsize' bytes of 'buf', only the header needs
+to be cleared, to be safe.
+All the other bytes are already written with some memcpy() at the end of
+the function.
 
-If I don't hear from anybody I will make the change above and merge it.
+Doing so also gives the opportunity to the compiler to avoid the memset()
+call. It can be inlined now that the length is known as compile time.
 
-Thanks,
-Lorenzo
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Just in case, here is the diff of what is generated by gcc 11.3.0 before
+and after the patch.
 
-> 
-> Thanks,
-> Lorenzo
-> 
-> > >  #define  TYPE0                 (0 << 8)
-> > >  #define  TYPE1                 BIT(8)
-> > >  #define PCIECDR                        0x000020
-> > 
-> > Gr{oetje,eeting}s,
-> > 
-> >                         Geert
-> > 
-> > --
-> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> > 
-> > In personal conversations with technical people, I call myself a hacker. But
-> > when I'm talking to journalists I just say "programmer" or something like that.
-> >                                 -- Linus Torvalds
+ .L736:
+-# drivers/infiniband/hw/irdma/cm.c:340: 	memset(buf, 0, pktsize);
++# drivers/infiniband/hw/irdma/cm.c:340: 	memset(buf, 0, sizeof(*tcph));
+ 	call	__sanitizer_cov_trace_pc	#
+-	xorl	%esi, %esi	#
+-	movzwl	%r13w, %edx	# _194, __fortify_size
+-	movq	%rbp, %rdi	# buf,
+-	call	memset	#
+-	leaq	104(%r12), %rax	#, _259
++	movl	$0, 16(%rbp)	#, MEM <char[1:20]> [(void *)buf_114]
++	leaq	104(%r12), %rax	#, _295
++# drivers/infiniband/hw/irdma/cm.c:342: 	sqbuf->totallen = pktsize;
++	movzwl	%r13w, %r13d	# _192, _192
++# drivers/infiniband/hw/irdma/cm.c:340: 	memset(buf, 0, sizeof(*tcph));
++	movq	$0, 0(%rbp)	#, MEM <char[1:20]> [(void *)buf_114]
++# drivers/infiniband/hw/irdma/cm.c:342: 	sqbuf->totallen = pktsize;
++	movq	%rax, %rdi	# _295,
++# drivers/infiniband/hw/irdma/cm.c:340: 	memset(buf, 0, sizeof(*tcph));
++	movq	$0, 8(%rbp)	#, MEM <char[1:20]> [(void *)buf_114]
++	movq	%rax, 64(%rsp)	# _295, %sfp
+ # drivers/infiniband/hw/irdma/cm.c:342: 	sqbuf->totallen = pktsize;
+---
+ drivers/infiniband/hw/irdma/cm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/irdma/cm.c b/drivers/infiniband/hw/irdma/cm.c
+index 195aa9ea18b6..48c2a303e9ec 100644
+--- a/drivers/infiniband/hw/irdma/cm.c
++++ b/drivers/infiniband/hw/irdma/cm.c
+@@ -337,7 +337,7 @@ static struct irdma_puda_buf *irdma_form_ah_cm_frame(struct irdma_cm_node *cm_no
+ 
+ 	pktsize = sizeof(*tcph) + opts_len + hdr_len + pd_len;
+ 
+-	memset(buf, 0, pktsize);
++	memset(buf, 0, sizeof(*tcph));
+ 
+ 	sqbuf->totallen = pktsize;
+ 	sqbuf->tcphlen = sizeof(*tcph) + opts_len;
+-- 
+2.34.1
+
