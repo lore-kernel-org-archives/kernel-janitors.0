@@ -2,128 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E836C636CD
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Feb 2023 17:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297C7C636D4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Feb 2023 06:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232009AbjBARSt (ORCPT
+        id S231644AbjBBGma (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Feb 2023 12:18:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44670 "EHLO
+        Thu, 2 Feb 2023 01:42:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232013AbjBARSp (ORCPT
+        with ESMTP id S231478AbjBBGm3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Feb 2023 12:18:45 -0500
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A124616F;
-        Wed,  1 Feb 2023 09:18:42 -0800 (PST)
-Received: from [192.168.1.103] (178.176.77.227) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.14; Wed, 1 Feb 2023
- 20:18:34 +0300
+        Thu, 2 Feb 2023 01:42:29 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56680820E1;
+        Wed,  1 Feb 2023 22:42:27 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so554050wms.2;
+        Wed, 01 Feb 2023 22:42:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pDcYVndzbrv1IhY57IErydYh8H4ITxzj3QsSNm1fvUA=;
+        b=AXaOSqmOyNDB0cPQs544EL34IAo7P7AeMOLwOz/4Fs8kngmdK+YZhXeluZdAfM322d
+         qcKvYIebP5Mc+HTTt6X9TmYJj8YUTzC0FNOuwhziTDkNXEzBJKR76fywmbWYGYwxZ05P
+         sY26q40Qp7g7ebwdOayLzfRrov4uWHu05aLmVxGTYgKNWdgprJmSu9o9wT0Hj0YCd1lK
+         37DXLwrnb/SAC660mm8OFX4I8ZNQkzwWX7DZLVXe3CyIbBRDYgSXJ8ViXc+Bkx8hEcic
+         vg/By/cGlo8syvUIxT0qYplS0Iev7dXbjLvquGRIYtr3zQXeUf+0mwOoC90LF9xraT4X
+         xAxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pDcYVndzbrv1IhY57IErydYh8H4ITxzj3QsSNm1fvUA=;
+        b=g2/IOe00fD4FtBXcq/SB+2s8SA8kcBw9Z3rcSCg3aXHqqVwdunjx1YN7jw2kYZIKo/
+         u76td5cAdTSsE9De1T/K8Y+S14YJsiXwdmweFqsJbuD80KHo7TPNCdNZeFJBbXy7l0A8
+         0o9m4eAOnw166wpSUuFgyh9jz39/cDhr4OUlIMvF895S5vs8TSIVJzbVAsCYtKYDu/70
+         kWfBeRbgsIXf/voEbKaVcVoJ4VSgvHokW+5k5gvjGbwIdsBSRq9YDvIyRwHt8GEXhh29
+         A5Zfbu5WP2ZD8ZcIvm3AvFeljlbZFfv3Hg4ZNxsG9e1G9J6+xDysDvLBapklGvI9DssL
+         r41Q==
+X-Gm-Message-State: AO0yUKUOEgZtpHAD/LLg6uMITeIuN0gHmOHRrrC36ROIM/68IYE7ZcfT
+        gs3prcRARHqN/+WZ0gZ0t0s=
+X-Google-Smtp-Source: AK7set+RF5RVbaknUR6I652giSlyDxqIgRU4c27KGqjBnEb9NkAcBImhZ9z6ul97LXr0y1n02I27bQ==
+X-Received: by 2002:a05:600c:4f06:b0:3da:fd07:1e3 with SMTP id l6-20020a05600c4f0600b003dafd0701e3mr4566739wmq.22.1675320145722;
+        Wed, 01 Feb 2023 22:42:25 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id i22-20020a1c5416000000b003dc3f3d77e3sm3884532wmb.7.2023.02.01.22.42.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Feb 2023 22:42:25 -0800 (PST)
+Date:   Thu, 2 Feb 2023 09:42:12 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Sergey Shtylyov <s.shtylyov@omp.ru>
+Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] ata: pata_hpt37x: fix potential forever loop
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-To:     Dan Carpenter <error27@gmail.com>
-CC:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        <linux-ide@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Message-ID: <Y9tbRLRgPZb5AQ+/@kadam>
 References: <Y9py1vjPW5HgRwOR@kili>
  <98e8e8cb-53a3-c247-078e-85724079ecad@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <eb44fe29-47bb-315e-c340-10918a6250f6@omp.ru>
-Date:   Wed, 1 Feb 2023 20:18:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+ <eb44fe29-47bb-315e-c340-10918a6250f6@omp.ru>
 MIME-Version: 1.0
-In-Reply-To: <98e8e8cb-53a3-c247-078e-85724079ecad@omp.ru>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [178.176.77.227]
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 5.9.59, Database issued on: 02/01/2023 17:00:31
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 175185 [Feb 01 2023]
-X-KSE-AntiSpam-Info: Version: 5.9.59.0
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 502 502 69dee8ef46717dd3cb3eeb129cb7cc8dab9e30f6
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.77.227 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.77.227 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.77.227
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 02/01/2023 17:03:00
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 2/1/2023 3:09:00 PM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb44fe29-47bb-315e-c340-10918a6250f6@omp.ru>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/1/23 5:59 PM, Sergey Shtylyov wrote:
-[...]
->> This code accidentally reuses the "tries" iterator for both the inside
->> and outside loops.  It could result in a forever loop if the "tries"
->> variable gets reset to 0x1000 and never reaches 0x5000.
-
-   Have you actually seen this happening?
-
->>
->> Fixes: 669a5db411d8 ("[libata] Add a bunch of PATA drivers.")
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
->> ---
->>  drivers/ata/pata_hpt37x.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/ata/pata_hpt37x.c b/drivers/ata/pata_hpt37x.c
->> index ce3c5eaa7e76..35be9a095b18 100644
->> --- a/drivers/ata/pata_hpt37x.c
->> +++ b/drivers/ata/pata_hpt37x.c
->> @@ -621,14 +621,14 @@ static int hpt37x_calibrate_dpll(struct pci_dev *dev)
->>  {
->>  	u8 reg5b;
->>  	u32 reg5c;
->> -	int tries;
->> +	int tries, tries2;
->>  
->>  	for (tries = 0; tries < 0x5000; tries++) {
->>  		udelay(50);
->>  		pci_read_config_byte(dev, 0x5b, &reg5b);
->>  		if (reg5b & 0x80) {
->>  			/* See if it stays set */
->> -			for (tries = 0; tries < 0x1000; tries++) {
->> +			for (tries2 = 0; tries2 < 0x1000; tries2++) {
->>  				pci_read_config_byte(dev, 0x5b, &reg5b);
->>  				/* Failed ? */
->>  				if ((reg5b & 0x80) == 0)
+On Wed, Feb 01, 2023 at 08:18:13PM +0300, Sergey Shtylyov wrote:
+> On 2/1/23 5:59 PM, Sergey Shtylyov wrote:
+> [...]
+> >> This code accidentally reuses the "tries" iterator for both the inside
+> >> and outside loops.  It could result in a forever loop if the "tries"
+> >> variable gets reset to 0x1000 and never reaches 0x5000.
 > 
->    Looks like Alan tried to "fix" the DPLL calibration code imported from drivers/ide/hpt366.c
-> and failed at that... :-) The iriginal code has 2 sequential loops (thus 'tries' could be used
-> for both). In principle, I agree with a simplistic patch:
+>    Have you actually seen this happening?
+> 
 
-   Err, wait! Once we have bit 7 of the PCI register at 0x5b set, we'll never
-return to the outer loop... So, I'm ot seeing the bug here...
+No, this is from static analysis.
 
-> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+drivers/ata/pata_hpt3x2n.c:390 hpt3xn_calibrate_dpll() warn: reusing outside iterator: 'tries'
 
-   So I have to take this back...
+You're right that this is a false positive.  I thought I had addressed
+that particular type of false positive so the check wouldn't warn about
+it but apparently I hadn't.  Sorry!
 
-MBR, Sergey
+Thanks again for reviewing this.
+
+regards,
+dan carpenter
+
