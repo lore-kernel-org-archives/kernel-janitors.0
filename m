@@ -2,73 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0BFC61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Feb 2023 08:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4329C05027
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Feb 2023 10:32:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231904AbjBBIjl (ORCPT
+        id S232052AbjBBKcq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Feb 2023 03:39:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55486 "EHLO
+        Thu, 2 Feb 2023 05:32:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232123AbjBBIji (ORCPT
+        with ESMTP id S232462AbjBBKck (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Feb 2023 03:39:38 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 874DF83052;
-        Thu,  2 Feb 2023 00:39:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E7FFC61920;
-        Thu,  2 Feb 2023 08:39:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC60C4339B;
-        Thu,  2 Feb 2023 08:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675327174;
-        bh=w+LG5iu2OTZCGv8sKvoPSMJuh8GGxV5NutNULbkUb6Q=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=jKn8yJ/ZtVxpTI0prdZm2ZsELNmfU1C8pB+9bCdxy6jmcMOKv3Y8VilQkd0zBKWAY
-         eM2cjcRsSoGbRHklNOt8PbH7U0TvajUJuPhwY4irBW9GeOaWBx1MrqlKeFS3AORJfT
-         HsNFV5KE1C28RbtfjVmOEkob+uZPWKlPmFWdgYQnxxpEopJTNYw8ABdZdcgiKYrGFs
-         pRjAZqJG8czGrBih/HCbXg6kYYicVLg6tTX9Ga9BZloP1R0cekPTjIPfulGfbd0/An
-         dw5RmoBcTvxzGmARNkHEs+6D4+A1DxihdKo/rfUL2MVWPK0+18CsDBDVuzpcUOmMWZ
-         AJqSwVNW7FN2Q==
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Long Li <longli@microsoft.com>, Dan Carpenter <error27@gmail.com>
-Cc:     Ajay Sharma <sharmaajay@microsoft.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dexuan Cui <decui@microsoft.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <Y8/3Vn8qx00kE9Kk@kili>
-References: <Y8/3Vn8qx00kE9Kk@kili>
-Subject: Re: [PATCH] RDMA/mana_ib: Prevent array underflow in mana_ib_create_qp_raw()
-Message-Id: <167532717017.1954401.2294597501814507302.b4-ty@kernel.org>
-Date:   Thu, 02 Feb 2023 10:39:30 +0200
+        Thu, 2 Feb 2023 05:32:40 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F9CB37F1C;
+        Thu,  2 Feb 2023 02:32:39 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id q5so1298433wrv.0;
+        Thu, 02 Feb 2023 02:32:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EejFREaRcGB12MROc0EjjXorli5U5zGmeKKwC+PD69Y=;
+        b=lkaOghGgKEQfqkgsXwmtwNQu620B8HWmBvHbt38srdgUNTDNN05Th8aLCqnBgb6VAx
+         ua3g8NumFJ08kJCBV0N0auJgpyo2Ffg7eNGBbDVcTIrq4jrgLp85fG2Xeb31asM3TY1l
+         q+TpSafFUrp0VhfvO0Vxx8r/JXY25T6ZFLFMILS6LVaMGBCFsR7ozAfKqwGpXdzFDVjO
+         it2+korIam7YnPh0UMeXmgAzG7r2YeaYZ6OB2J44ieMxlWhY0QlrCaxPVqIHh8ykkkx4
+         ikYVQNH46nff01C71lhV9E8qavSMde/Yd2940+5AoHarT41x1KG6U2TRDU/zxKdFprOh
+         q9sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EejFREaRcGB12MROc0EjjXorli5U5zGmeKKwC+PD69Y=;
+        b=DjUvWCrPADrQyd8rVA4+ujrJ0/6RhBkxqF68rlCVxjpJh6YlLfFwuxom2SLMhi3K+Z
+         +VDaw282dVi60jBziKVi/yZAAuedSc5iaorDX+TQoacMgpKH5jIkUkcgoTpilnIu3vzf
+         nY/ulmpdDYQhpt9viOnLPx+F9A3mDimnMLw9sDXSnxxmxqi7BUou4hRWM7vuYlDJjGuZ
+         slG53kHAjZJq4WrdTsKj6WIrDT6dG5boOvJIcyybASCUhcSoBJX/N7jRQ7gQEns/qAaq
+         TXQjoKPLlkscpjSJ3+OS97c7wJ715VsxCTUyvLUp4yAVQIRG2PWN/CLdHnUzUrDKw3Eq
+         6aww==
+X-Gm-Message-State: AO0yUKXyjiYiksYi+26Um3sMouZ4CZ1/+VB60XfMvajI2Gc0S1zwTvcr
+        ncysL7Yw5DZf7dxvMd2HaU0=
+X-Google-Smtp-Source: AK7set8HdyNKLMuUjW2H8YE/xzHf42PoOyS1nBg2jpeu/DVWNlu8unfSe9+oQS4qNg3TDRb9x0a4og==
+X-Received: by 2002:a5d:5984:0:b0:2c3:bbfa:d509 with SMTP id n4-20020a5d5984000000b002c3bbfad509mr4366725wri.61.1675333957908;
+        Thu, 02 Feb 2023 02:32:37 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id h4-20020adfaa84000000b002bfbf4c3f9fsm19533001wrc.17.2023.02.02.02.32.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Feb 2023 02:32:37 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Bruce zhao <zhaolei@awinic.com>,
+        Weidong Wang <wangweidong.a@awinic.com>,
+        Nick Li <liweilei@awinic.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: codecs: aw88395: Fix spelling mistake "cersion" -> "version"
+Date:   Thu,  2 Feb 2023 10:32:36 +0000
+Message-Id: <20230202103236.270057-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12-dev-a055d
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+There are spelling mistakes in dev_err messages. Fix them.
 
-On Tue, 24 Jan 2023 18:20:54 +0300, Dan Carpenter wrote:
-> The "port" comes from the user and if it is zero then the:
-> 
-> 	ndev = mc->ports[port - 1];
-> 
-> assignment does an out of bounds read.  I have changed the if
-> statement to fix this and to mirror how it is done in
-> mana_ib_create_qp_rss().
-> 
-> [...]
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/aw88395/aw88395_lib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks!
-
-[1/1] RDMA/mana_ib: Prevent array underflow in mana_ib_create_qp_raw()
-      https://git.kernel.org/rdma/rdma/c/29419daf6c957f
-
-Best regards,
+diff --git a/sound/soc/codecs/aw88395/aw88395_lib.c b/sound/soc/codecs/aw88395/aw88395_lib.c
+index 34ae405bb43d..64dde972f3f0 100644
+--- a/sound/soc/codecs/aw88395/aw88395_lib.c
++++ b/sound/soc/codecs/aw88395/aw88395_lib.c
+@@ -890,7 +890,7 @@ int aw88395_dev_cfg_load(struct aw_device *aw_dev, struct aw_container *aw_cfg)
+ 	case AW88395_CFG_HDR_VER:
+ 		ret = aw_dev_load_cfg_by_hdr(aw_dev, cfg_hdr);
+ 		if (ret < 0) {
+-			dev_err(aw_dev->dev, "hdr_cersion[0x%x] parse failed",
++			dev_err(aw_dev->dev, "hdr_version[0x%x] parse failed",
+ 						cfg_hdr->hdr_version);
+ 			return ret;
+ 		}
+@@ -898,7 +898,7 @@ int aw88395_dev_cfg_load(struct aw_device *aw_dev, struct aw_container *aw_cfg)
+ 	case AW88395_CFG_HDR_VER_V1:
+ 		ret = aw_dev_load_cfg_by_hdr_v1(aw_dev, aw_cfg);
+ 		if (ret < 0) {
+-			dev_err(aw_dev->dev, "hdr_cersion[0x%x] parse failed",
++			dev_err(aw_dev->dev, "hdr_version[0x%x] parse failed",
+ 						cfg_hdr->hdr_version);
+ 			return ret;
+ 		}
 -- 
-Leon Romanovsky <leon@kernel.org>
+2.30.2
+
