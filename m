@@ -2,77 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22B2C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Feb 2023 20:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB53C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Feb 2023 08:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232658AbjBBU6X (ORCPT
+        id S232204AbjBCIiP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Feb 2023 15:58:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52426 "EHLO
+        Fri, 3 Feb 2023 03:38:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232883AbjBBU6V (ORCPT
+        with ESMTP id S232108AbjBCIiN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Feb 2023 15:58:21 -0500
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23B7C22029
-        for <kernel-janitors@vger.kernel.org>; Thu,  2 Feb 2023 12:58:18 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id NgespaMSp7c7GNgetpCoUX; Thu, 02 Feb 2023 21:58:16 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 02 Feb 2023 21:58:16 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Loic Poulain <loic.poulain@linaro.org>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH net-next] wifi: wcn36xx: Slightly optimize PREPARE_HAL_BUF()
-Date:   Thu,  2 Feb 2023 21:58:10 +0100
-Message-Id: <7d8ab7fee45222cdbaf80c507525f2d3941587c1.1675371372.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 3 Feb 2023 03:38:13 -0500
+Received: from mail.nfschina.com (unknown [42.101.60.237])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2588C9770;
+        Fri,  3 Feb 2023 00:38:12 -0800 (PST)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 90D2E1A00A61;
+        Fri,  3 Feb 2023 16:38:38 +0800 (CST)
+X-Virus-Scanned: amavisd-new at nfschina.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VJ64y10Zm-3J; Fri,  3 Feb 2023 16:38:37 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id 340A51A00A0A;
+        Fri,  3 Feb 2023 16:38:37 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     jk@ozlabs.org, joel@jms.id.au, alistair@popple.id.au,
+        eajames@linux.ibm.com
+Cc:     linux-fsi@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] fsi: fix some spelling mistakes in comment
+Date:   Fri,  3 Feb 2023 16:37:21 +0800
+Message-Id: <20230203083721.23455-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In most (likely all) cases, INIT_HAL_MSG() is called before
-PREPARE_HAL_BUF().
-In such cases calling memset() is useless because:
-   msg_body.header.len = sizeof(msg_body)
+Fix typos in comment.
 
-So, instead of writing twice the memory, we just have a sanity check to
-make sure that some potential trailing memory is zeroed.
-It even gives the opportunity to see that by itself and optimize it away.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 ---
- drivers/net/wireless/ath/wcn36xx/smd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/fsi/fsi-master-ast-cf.c | 2 +-
+ drivers/fsi/fsi-sbefifo.c       | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
-index 566f0b9c1584..17e1919d1cd8 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.c
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.c
-@@ -475,8 +475,8 @@ static int wcn36xx_smd_send_and_wait(struct wcn36xx *wcn, size_t len)
+diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
+index 5f608ef8b53c..5fcf2514642b 100644
+--- a/drivers/fsi/fsi-master-ast-cf.c
++++ b/drivers/fsi/fsi-master-ast-cf.c
+@@ -1133,7 +1133,7 @@ static int fsi_master_acf_gpio_request(void *data)
  
- #define PREPARE_HAL_BUF(send_buf, msg_body) \
- 	do {							\
--		memset(send_buf, 0, msg_body.header.len);	\
--		memcpy(send_buf, &msg_body, sizeof(msg_body));	\
-+		memcpy_and_pad(send_buf, msg_body.header.len,	\
-+			       &msg_body, sizeof(msg_body), 0);	\
- 	} while (0)						\
+ 	/* Note: This doesn't require holding out mutex */
  
- #define PREPARE_HAL_PTT_MSG_BUF(send_buf, p_msg_body) \
+-	/* Write reqest */
++	/* Write request */
+ 	iowrite8(ARB_ARM_REQ, master->sram + ARB_REG);
+ 
+ 	/*
+diff --git a/drivers/fsi/fsi-sbefifo.c b/drivers/fsi/fsi-sbefifo.c
+index 9912b7a6a4b9..0a0313c409a9 100644
+--- a/drivers/fsi/fsi-sbefifo.c
++++ b/drivers/fsi/fsi-sbefifo.c
+@@ -81,7 +81,7 @@
+ 
+ enum sbe_state
+ {
+-	SBE_STATE_UNKNOWN = 0x0, // Unkown, initial state
++	SBE_STATE_UNKNOWN = 0x0, // Unknown, initial state
+ 	SBE_STATE_IPLING  = 0x1, // IPL'ing - autonomous mode (transient)
+ 	SBE_STATE_ISTEP   = 0x2, // ISTEP - Running IPL by steps (transient)
+ 	SBE_STATE_MPIPL   = 0x3, // MPIPL
+@@ -730,7 +730,7 @@ static int __sbefifo_submit(struct sbefifo *sbefifo,
+  * @response: The output response buffer
+  * @resp_len: In: Response buffer size, Out: Response size
+  *
+- * This will perform the entire operation. If the reponse buffer
++ * This will perform the entire operation. If the response buffer
+  * overflows, returns -EOVERFLOW
+  */
+ int sbefifo_submit(struct device *dev, const __be32 *command, size_t cmd_len,
 -- 
-2.34.1
+2.11.0
 
