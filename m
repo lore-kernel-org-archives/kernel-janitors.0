@@ -2,88 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB53C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Feb 2023 08:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 968CBC636CD
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Feb 2023 20:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232204AbjBCIiP (ORCPT
+        id S232523AbjBDUcO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Feb 2023 03:38:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44522 "EHLO
+        Sat, 4 Feb 2023 15:32:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232108AbjBCIiN (ORCPT
+        with ESMTP id S232124AbjBDUcN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Feb 2023 03:38:13 -0500
-Received: from mail.nfschina.com (unknown [42.101.60.237])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2588C9770;
-        Fri,  3 Feb 2023 00:38:12 -0800 (PST)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 90D2E1A00A61;
-        Fri,  3 Feb 2023 16:38:38 +0800 (CST)
-X-Virus-Scanned: amavisd-new at nfschina.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id VJ64y10Zm-3J; Fri,  3 Feb 2023 16:38:37 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 340A51A00A0A;
-        Fri,  3 Feb 2023 16:38:37 +0800 (CST)
-From:   Yu Zhe <yuzhe@nfschina.com>
-To:     jk@ozlabs.org, joel@jms.id.au, alistair@popple.id.au,
-        eajames@linux.ibm.com
-Cc:     linux-fsi@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH] fsi: fix some spelling mistakes in comment
-Date:   Fri,  3 Feb 2023 16:37:21 +0800
-Message-Id: <20230203083721.23455-1-yuzhe@nfschina.com>
-X-Mailer: git-send-email 2.11.0
+        Sat, 4 Feb 2023 15:32:13 -0500
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBD922B092
+        for <kernel-janitors@vger.kernel.org>; Sat,  4 Feb 2023 12:32:08 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id OPCRpn7kE4UotOPCRphKuG; Sat, 04 Feb 2023 21:32:06 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 04 Feb 2023 21:32:06 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        iommu@lists.linux.dev
+Subject: [PATCH] iommu/intel: Do not use GFP_ATOMIC when not needed
+Date:   Sat,  4 Feb 2023 21:31:45 +0100
+Message-Id: <e2a8a1019ffc8a86b4b4ed93def3623f60581274.1675542576.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix typos in comment.
+There is no need to use GFP_ATOMIC here. GFP_KERNEL is already used for
+some other memory allocations just a few lines above.
 
-Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+Commit e3a981d61d15 ("iommu/vt-d: Convert allocations to GFP_KERNEL") has
+changed the other memory allocation flags.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/fsi/fsi-master-ast-cf.c | 2 +-
- drivers/fsi/fsi-sbefifo.c       | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/iommu/intel/irq_remapping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
-index 5f608ef8b53c..5fcf2514642b 100644
---- a/drivers/fsi/fsi-master-ast-cf.c
-+++ b/drivers/fsi/fsi-master-ast-cf.c
-@@ -1133,7 +1133,7 @@ static int fsi_master_acf_gpio_request(void *data)
+diff --git a/drivers/iommu/intel/irq_remapping.c b/drivers/iommu/intel/irq_remapping.c
+index 6d01fa078c36..013ccc25ee4f 100644
+--- a/drivers/iommu/intel/irq_remapping.c
++++ b/drivers/iommu/intel/irq_remapping.c
+@@ -552,7 +552,7 @@ static int intel_setup_irq_remapping(struct intel_iommu *iommu)
+ 		goto out_free_table;
+ 	}
  
- 	/* Note: This doesn't require holding out mutex */
- 
--	/* Write reqest */
-+	/* Write request */
- 	iowrite8(ARB_ARM_REQ, master->sram + ARB_REG);
- 
- 	/*
-diff --git a/drivers/fsi/fsi-sbefifo.c b/drivers/fsi/fsi-sbefifo.c
-index 9912b7a6a4b9..0a0313c409a9 100644
---- a/drivers/fsi/fsi-sbefifo.c
-+++ b/drivers/fsi/fsi-sbefifo.c
-@@ -81,7 +81,7 @@
- 
- enum sbe_state
- {
--	SBE_STATE_UNKNOWN = 0x0, // Unkown, initial state
-+	SBE_STATE_UNKNOWN = 0x0, // Unknown, initial state
- 	SBE_STATE_IPLING  = 0x1, // IPL'ing - autonomous mode (transient)
- 	SBE_STATE_ISTEP   = 0x2, // ISTEP - Running IPL by steps (transient)
- 	SBE_STATE_MPIPL   = 0x3, // MPIPL
-@@ -730,7 +730,7 @@ static int __sbefifo_submit(struct sbefifo *sbefifo,
-  * @response: The output response buffer
-  * @resp_len: In: Response buffer size, Out: Response size
-  *
-- * This will perform the entire operation. If the reponse buffer
-+ * This will perform the entire operation. If the response buffer
-  * overflows, returns -EOVERFLOW
-  */
- int sbefifo_submit(struct device *dev, const __be32 *command, size_t cmd_len,
+-	bitmap = bitmap_zalloc(INTR_REMAP_TABLE_ENTRIES, GFP_ATOMIC);
++	bitmap = bitmap_zalloc(INTR_REMAP_TABLE_ENTRIES, GFP_KERNEL);
+ 	if (bitmap == NULL) {
+ 		pr_err("IR%d: failed to allocate bitmap\n", iommu->seq_id);
+ 		goto out_free_pages;
 -- 
-2.11.0
+2.34.1
 
