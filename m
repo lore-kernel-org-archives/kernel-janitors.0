@@ -2,108 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 325F1C636D3
-	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Feb 2023 13:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 371BAC636CC
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Feb 2023 15:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229645AbjBENSs (ORCPT
+        id S229688AbjBEPP3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 5 Feb 2023 08:18:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35556 "EHLO
+        Sun, 5 Feb 2023 10:15:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbjBENSr (ORCPT
+        with ESMTP id S229580AbjBEPP2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 5 Feb 2023 08:18:47 -0500
-Received: from mail-oa1-x2e.google.com (mail-oa1-x2e.google.com [IPv6:2001:4860:4864:20::2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5366712592
-        for <kernel-janitors@vger.kernel.org>; Sun,  5 Feb 2023 05:18:45 -0800 (PST)
-Received: by mail-oa1-x2e.google.com with SMTP id 586e51a60fabf-16a10138faeso5912196fac.11
-        for <kernel-janitors@vger.kernel.org>; Sun, 05 Feb 2023 05:18:45 -0800 (PST)
+        Sun, 5 Feb 2023 10:15:28 -0500
+Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 640C91ADCC;
+        Sun,  5 Feb 2023 07:15:27 -0800 (PST)
+Received: by mail-qt1-x82f.google.com with SMTP id g8so10370705qtq.13;
+        Sun, 05 Feb 2023 07:15:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=h16mJ+aO8lr2ielP5RpRXxKcR46VAZs2FWT7LlTMtpc=;
-        b=dYJowsvHwOLrIclI6l2MSF0Q1WwGPZKqxISvHsgenprhQq6S1FOjy9sTerHy7Jtf0u
-         XUKpsqyx4tqe7PIxSqXuM0pk0x+RA8pZ9CepIdZ9ImEC40Paa3MWRn7lI0p8/jtACKFz
-         KCvsqr7RxDpddrK9v4rVjjf9AoM3FQVYWl4vTHyc2ScFmiivipJhikxr2OILk5ANZXHl
-         wBL63bvqvH/1TWy3xxnM0eAwIDPJKgd8QeRq45lIl5YyZF9M/5oiyput3OW2W2G9+95q
-         udMtpHi/q4dxOxvbhpvkfva3k4GLE7LoUP980iQ2J18hDnCYfJ1W2udx/OaFqD8+pQC0
-         XJvg==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2byMz+/6Sh1TLllSwNgLGo9KhlhjlVKEdxXfG0cTpSk=;
+        b=bM1UPGVlukg5IZQvBlSsUkfeimYyh6tojk94DiSb623M5M8KDgOCUzzfiNdo9pIhba
+         X0ju+lS1ikt2avaAwaZX6+ypsch9Kzgnh7v5wYacdHkVHOoTg1yMEtSGti/f+NU8dFbk
+         olYXnyOfQ2TCRT7DR+EHomTRHXEAT5tC/FxLNiP3m4YsziYxMDUikSN/0r6cIR2r5lGD
+         Tbcvzj7ZH3bxLT4Fu6s8h9fPjr3nPZim0XGZRnyTj27DZjsGkSPFSwewg0LJqdHOjkFH
+         mP4U2jfYpJYXfZdjxU/YFXiz18l4yU6w/ZF/i40JCW8QQn4PlHds8xB290MfvjBlZjOO
+         D3PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h16mJ+aO8lr2ielP5RpRXxKcR46VAZs2FWT7LlTMtpc=;
-        b=s3yuejXZ18rUILr9pVKYDN56/zHvyHRl278wvkMM673ei7fpBNuyituJA+XyUroEZ7
-         efUES32WVgGRcLQinCHBxTDVwAGR4tJOIKH/IVX2zsegJJWoGUop6IfsXAOGxuj7lmml
-         niOjabBhMWS67GJGV9x8co0VVCbXN8sS5e6uiIFDpxv5UnXlne4i/1OsdYQSCmCoyDx8
-         iVD5jp/tgAf8X7alxFljKmOKok93eY9umr0JDmNH+qoLGViNSnF/M7T0YoF3+xJqUUdw
-         yc8IVyPITQl5dwrzzvJClAXsGwK1zCKUoCeJIctW/TIxqa3iXIbStnbo4BEx/yTvhzuY
-         z2zQ==
-X-Gm-Message-State: AO0yUKX7Gqc1i/dyNGdbYmUTd4HkZTxMGsv7AMU4LhnKmXYxplU5zJMe
-        47mlerUCjSc9UE+cVkrFayE81EtzX7PQ32EA9G6Uww==
-X-Google-Smtp-Source: AK7set8fyzikb9w/tfLmg85NZNZ97HLh/d73kei5xCwzmXPjRHGaVo+XJFv+Sm+v8W1kbUv43TfIS+C2lQh7PqSIYuY=
-X-Received: by 2002:a05:6870:649e:b0:15f:1ad9:6c2c with SMTP id
- cz30-20020a056870649e00b0015f1ad96c2cmr1407757oab.184.1675603124525; Sun, 05
- Feb 2023 05:18:44 -0800 (PST)
-MIME-Version: 1.0
-References: <7d8ab7fee45222cdbaf80c507525f2d3941587c1.1675371372.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7d8ab7fee45222cdbaf80c507525f2d3941587c1.1675371372.git.christophe.jaillet@wanadoo.fr>
-From:   Loic Poulain <loic.poulain@linaro.org>
-Date:   Sun, 5 Feb 2023 14:18:07 +0100
-Message-ID: <CAMZdPi-hUyorX6N-3koxOZ+gSxovdQc7iKxx7wuN+qJek_cvCA@mail.gmail.com>
-Subject: Re: [PATCH net-next] wifi: wcn36xx: Slightly optimize PREPARE_HAL_BUF()
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2byMz+/6Sh1TLllSwNgLGo9KhlhjlVKEdxXfG0cTpSk=;
+        b=Ej2vLog5kG2SMDD1EfzJtVjrWkGs1FBub8fmIXAk7HTNGa6z5LmMjTKqYTlEHllYc+
+         APH/q4SYZlhwCn5rymZhZ3nOs+vBOGQ0BjZUdJ4ziKHvCEb49hnBcWqacaTJnrSUxmJq
+         YjgLVWKGGjlzs9Jig02ZNjzvEHSkNQbaRZAMhzT3iEWuPpzNwrgw/P4EVphor02gsKPf
+         KyFTftQsFSF5tX4EzOb0EW2gMRusyTa9qd1vumayMRThI/+iZTiTDpNQXxr0GQZ9Ceau
+         aIN08Zq1P23OsWPV+mMjGgIZJ2obtlMJdIwkotyAlLoaEePfkPYQ3NFb2OCwxPrR1umn
+         NrGA==
+X-Gm-Message-State: AO0yUKWDFGUHkYfJZ9AxZQXzOq6pd8xLVXKf8Ahq1fCYJ4tjUiphEV/P
+        MwuAbqGBvJZlWEiC6CB5DCif5XELZI1/
+X-Google-Smtp-Source: AK7set93djiaBUljyrNcJkGIJV3koL2pnqGsfFk+j5qwUKO3nKUi/O4AiomLyV9rXpYjXRGhqrILXg==
+X-Received: by 2002:ac8:59cc:0:b0:3b9:b1ea:2d0f with SMTP id f12-20020ac859cc000000b003b9b1ea2d0fmr31019703qtf.34.1675610126405;
+        Sun, 05 Feb 2023 07:15:26 -0800 (PST)
+Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
+        by smtp.gmail.com with ESMTPSA id u25-20020ae9c019000000b0071c9eea2056sm5684592qkk.14.2023.02.05.07.15.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Feb 2023 07:15:25 -0800 (PST)
+Sender: Corey Minyard <tcminyard@gmail.com>
+Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:4d8a:a95f:e506:25f6])
+        by serve.minyard.net (Postfix) with ESMTPSA id 8F60C1800C0;
+        Sun,  5 Feb 2023 15:15:24 +0000 (UTC)
+Date:   Sun, 5 Feb 2023 09:15:23 -0600
+From:   Corey Minyard <minyard@acm.org>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, wcn36xx@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Andrew Manley <andrew.manley@sealingtech.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net
+Subject: Re: [PATCH] ipmi: ipmb: Fix the MODULE_PARM_DESC associated to
+ 'retry_time_ms'
+Message-ID: <Y9/IC9oWzxo3jjrO@minyard.net>
+Reply-To: minyard@acm.org
+References: <0d8670cff2c656e99a832a249e77dc90578f67de.1675591429.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d8670cff2c656e99a832a249e77dc90578f67de.1675591429.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 2 Feb 2023 at 21:58, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> In most (likely all) cases, INIT_HAL_MSG() is called before
-> PREPARE_HAL_BUF().
-> In such cases calling memset() is useless because:
->    msg_body.header.len = sizeof(msg_body)
->
-> So, instead of writing twice the memory, we just have a sanity check to
-> make sure that some potential trailing memory is zeroed.
-> It even gives the opportunity to see that by itself and optimize it away.
->
+On Sun, Feb 05, 2023 at 11:04:01AM +0100, Christophe JAILLET wrote:
+> 'This should be 'retry_time_ms' instead of 'max_retries'.
+
+Oops.  Applied to my next tree.
+
+Thanks,
+
+-corey
+
+> 
+> Fixes: 63c4eb347164 ("ipmi:ipmb: Add initial support for IPMI over IPMB")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Acked-by: Loic Poulain <loic.poulain@linaro.org>
-
-
-
 > ---
->  drivers/net/wireless/ath/wcn36xx/smd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
-> index 566f0b9c1584..17e1919d1cd8 100644
-> --- a/drivers/net/wireless/ath/wcn36xx/smd.c
-> +++ b/drivers/net/wireless/ath/wcn36xx/smd.c
-> @@ -475,8 +475,8 @@ static int wcn36xx_smd_send_and_wait(struct wcn36xx *wcn, size_t len)
->
->  #define PREPARE_HAL_BUF(send_buf, msg_body) \
->         do {                                                    \
-> -               memset(send_buf, 0, msg_body.header.len);       \
-> -               memcpy(send_buf, &msg_body, sizeof(msg_body));  \
-> +               memcpy_and_pad(send_buf, msg_body.header.len,   \
-> +                              &msg_body, sizeof(msg_body), 0); \
->         } while (0)                                             \
->
->  #define PREPARE_HAL_PTT_MSG_BUF(send_buf, p_msg_body) \
-> --
+>  drivers/char/ipmi/ipmi_ipmb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmi_ipmb.c b/drivers/char/ipmi/ipmi_ipmb.c
+> index 7c1aee5e11b7..3f1c9f1573e7 100644
+> --- a/drivers/char/ipmi/ipmi_ipmb.c
+> +++ b/drivers/char/ipmi/ipmi_ipmb.c
+> @@ -27,7 +27,7 @@ MODULE_PARM_DESC(bmcaddr, "Address to use for BMC.");
+>  
+>  static unsigned int retry_time_ms = 250;
+>  module_param(retry_time_ms, uint, 0644);
+> -MODULE_PARM_DESC(max_retries, "Timeout time between retries, in milliseconds.");
+> +MODULE_PARM_DESC(retry_time_ms, "Timeout time between retries, in milliseconds.");
+>  
+>  static unsigned int max_retries = 1;
+>  module_param(max_retries, uint, 0644);
+> -- 
 > 2.34.1
->
+> 
