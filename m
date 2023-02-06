@@ -2,97 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56999C64EC7
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Feb 2023 14:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A83C9C636D6
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Feb 2023 14:02:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbjBFOAY (ORCPT
+        id S230271AbjBFOCL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Feb 2023 09:00:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41430 "EHLO
+        Mon, 6 Feb 2023 09:02:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231139AbjBFN73 (ORCPT
+        with ESMTP id S230308AbjBFOBn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Feb 2023 08:59:29 -0500
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F3CD528;
-        Mon,  6 Feb 2023 05:58:50 -0800 (PST)
-Received: by mail-wr1-f53.google.com with SMTP id j25so6911149wrc.4;
-        Mon, 06 Feb 2023 05:58:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zpGZ0SKXKOge6HnxdkWMSdwz/l7mvDMZXx0r+zMmH6I=;
-        b=ayBkd5SxKmxbth+Yy2we/29UalD+V2nIW98P3VjtfRSovsUSdEriYKfCyrLNnAIqKV
-         5DxkIDIJxv++JZigdua25s2wxJtbbesDydxUYrDe1uNbBkDYn9Gc7xvcump0eMjLN/u5
-         +z8ONnIXoAul+Cv2xxQJEpRETQloVFwFCD+AII+V58gxoGaRKx+bZvJrmqDxFDOw0A7C
-         crV8afUth14o0Nn8boldTFgMdfQaMGXTqyhRJgomWTPXW/p6cyz8c6DNg64r2L/o3HCT
-         pbhgRHUoyatlPBiNq1gmvGvoBbNDfWvE4x+gmctj8QNVVMkSStDB9yo8kXwBzPcwh9CR
-         xLrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zpGZ0SKXKOge6HnxdkWMSdwz/l7mvDMZXx0r+zMmH6I=;
-        b=Zitm4HosRPxdGzLWrectphmFaaIN/t3aa9vyboM1Xsjnqy52CqHFT4BdzyZ6QR0sjg
-         uovWsfScU8ziCH5AOrQ589IrorhnHIVwsvzkmyCxUCfkeV8BJZLJXvwlFWlSQiIXWEYi
-         g64ogXLF0N7c/nfRmB1MKhHW1Zjp+9Tvh3E7R6PJjTb2i2/cuVZpgndwGSaux9vd44Sg
-         oruPvnULHR6dwqwVRVL0RRXlWVZnoxR7eIc32XW1GAwGECZuBBBaFfqt5r3uLDFlzvJu
-         M2Z3XabaPlRpreIuQuGLTg9139Ny8rHQnXnb3+AdFdVm1hA4Rd+Sn/yvl0aegFqqQByB
-         CEkg==
-X-Gm-Message-State: AO0yUKW8fm1PPx4vR090CfaHE+OAi7k9csbOakYquO8mozHOk5/GHE67
-        ZfdR4aTU125XprD13PSXWouOC9JKAtY=
-X-Google-Smtp-Source: AK7set/oAJw/wZouRHq2oiPHaQjLsZsQDOu0rNiek7XTsirfs/qg6NCpaXQfJdRm42EY8M07IIfbrA==
-X-Received: by 2002:a05:6000:186a:b0:2c3:9851:e644 with SMTP id d10-20020a056000186a00b002c39851e644mr22129707wri.63.1675691929628;
-        Mon, 06 Feb 2023 05:58:49 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a4-20020a5d5084000000b002c3db0eec5fsm7200088wrt.62.2023.02.06.05.58.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Feb 2023 05:58:49 -0800 (PST)
-Date:   Mon, 6 Feb 2023 16:18:32 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Jamal Hadi Salim <jhs@mojatatu.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Simon Horman <simon.horman@corigine.com>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: sched: sch: Fix off by one in
- htb_activate_prios()
-Message-ID: <Y+D+KN18FQI2DKLq@kili>
+        Mon, 6 Feb 2023 09:01:43 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77565298ED
+        for <kernel-janitors@vger.kernel.org>; Mon,  6 Feb 2023 06:00:48 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A01DBB81184
+        for <kernel-janitors@vger.kernel.org>; Mon,  6 Feb 2023 14:00:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D38DC433D2;
+        Mon,  6 Feb 2023 14:00:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675692045;
+        bh=WHmuZ4HOQhS+Ld/3mBNiQinI0Q/poYTTVhw9vo4zWAo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gR7dHSykZ5YFuPkcFzcN3fEKmpKVUR5vCog6Nymhup0iMTfawYgAEY6asKI6c1+0S
+         uaYLLsN50+QwTyoT6AJ9apGVdH4dveKzBEsfLXslqNPs3mOE4lK+oyGam9U9DHbk3c
+         6VjBA7MYuWJ4AG4Gg9Y60J8/DxEb1v+mwIhxe9CBdzprzoZQuT7Ax+pdqB73IYOaKF
+         rW9f11x/5G92S59NKFqaBL5pHukb/AC8RnLffeIiQHw9nAwyhDq2xsi9gWK+h3B257
+         7Hd8/dEiCD9/4IsbS1ud2rUYdK9i0jaTqHkMOoDmtltNwXflXu4G6EwpzZ34yCXf5P
+         0lgJqQ8o6gscw==
+Date:   Mon, 6 Feb 2023 14:00:39 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Weidong Wang <wangweidong.a@awinic.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Bruce zhao <zhaolei@awinic.com>, Nick Li <liweilei@awinic.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ASoC: codecs: aw88395: Uninitialized variable bug in
+ aw_dev_parse_dev_type_v1()
+Message-ID: <Y+EIB2UrQ3+5Ax72@sirena.org.uk>
+References: <Y+EHjQ0+QCAXxmlh@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/4JoUgpNFgE7fxsI"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <Y+EHjQ0+QCAXxmlh@kili>
+X-Cookie: Hope is a waking dream.
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The > needs be >= to prevent an out of bounds access.
 
-Fixes: de5ca4c3852f ("net: sched: sch: Bounds check priority")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- net/sched/sch_htb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--/4JoUgpNFgE7fxsI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/net/sched/sch_htb.c b/net/sched/sch_htb.c
-index cc28e41fb745..92f2975b6a82 100644
---- a/net/sched/sch_htb.c
-+++ b/net/sched/sch_htb.c
-@@ -433,7 +433,7 @@ static void htb_activate_prios(struct htb_sched *q, struct htb_class *cl)
- 		while (m) {
- 			unsigned int prio = ffz(~m);
- 
--			if (WARN_ON_ONCE(prio > ARRAY_SIZE(p->inner.clprio)))
-+			if (WARN_ON_ONCE(prio >= ARRAY_SIZE(p->inner.clprio)))
- 				break;
- 			m &= ~(1 << prio);
- 
--- 
-2.35.1
+On Mon, Feb 06, 2023 at 04:58:37PM +0300, Dan Carpenter wrote:
+> The "cur_scene_id" variable is never initialized.  It needs to be set
+> to zero for the code to work.
 
+Someone already sent a fix for this.
+
+--/4JoUgpNFgE7fxsI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmPhCAYACgkQJNaLcl1U
+h9Cijgf/YHHuQ9XpwusAnVzXrs2tRILYwpZOHfRv+NDdSvXG2FH5HuYOtRyH6lbg
+e/ulk+Co/6L51zkVFBnkeyyHFmLxl3LG49h+dnCaFcf8WqwjllacASz98ZAe3D1w
+si5IH1h8l+tX6WhCXDI0paTH3PlqOpNsz9ikLAlLiiHiFOHgiIxgfKuCpRMjMY5X
+YRzTJ78U0tGC1V0ZOIQyR3nygywlu/TNn2uyPq/+cfjLC4Kgz0tRIraSFrWPp/iS
+ID13trYgCM4WmKxTANyPSaeFmJZ4l2WsPklLn3MtIYfdcH02AC8F6qa9bkh0z64E
+NENYjZ+uVbOIrn6alMRkjO7/wYgKHA==
+=Limx
+-----END PGP SIGNATURE-----
+
+--/4JoUgpNFgE7fxsI--
