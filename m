@@ -2,61 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 901F3C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Feb 2023 14:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65316C05027
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Feb 2023 14:41:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbjBFOkn (ORCPT
+        id S231446AbjBFOlo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Feb 2023 09:40:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58026 "EHLO
+        Mon, 6 Feb 2023 09:41:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbjBFOkm (ORCPT
+        with ESMTP id S231502AbjBFOll (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Feb 2023 09:40:42 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C6F6E8F;
-        Mon,  6 Feb 2023 06:40:41 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id j32-20020a05600c1c2000b003dc4fd6e61dso10924514wms.5;
-        Mon, 06 Feb 2023 06:40:41 -0800 (PST)
+        Mon, 6 Feb 2023 09:41:41 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 278CA24C8B;
+        Mon,  6 Feb 2023 06:41:39 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id bg26so8862405wmb.0;
+        Mon, 06 Feb 2023 06:41:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lNBGnfql26nMVEZnGqLckYgZRmrNvkVJGT25CMo/sv0=;
-        b=D7K5LC2cy6FPkd+E/LUC4kZeqdzjUw6ynZizepdmKnsj/G7jINlaYwbkblMs6cLLar
-         JPvghdqfKgdCfB5Ei9TKE+ad2/K+7LoIuD2/8vOpeK6yjXzAi5XJn8q8l02izyWoD5ik
-         oQGB1sEfnKp7dTfps3B/SG1yXJQBMtCqmHMoqwb1pGMB+DEL9i2AmBLM9KGkfo2Hf3f8
-         6z4hzc6iah6Iqk6ZVFeZ+DRJok5kyyXMsdYxIYVOJMnQbDpa8BMWUnMDgQilm07UcHa5
-         MPrpnYTuknHx09qn4/EqLBllf5Cjag24tzs8MZcClX4mixK+HnECX9ERTSLZRS8UyXl5
-         IS2g==
+        bh=HzCHZgMAtU1lwfgKiXjvWaTvm2+bd5CX7c+kVIRQKEU=;
+        b=osF8wkrcpsfpc0hCXE0D6Y4dHrmKgnG1p9gfaKmL7nIieN2qWJfdNWCMNO0J5ySI/c
+         CYIlQQ+JeJuDy441wecpzU0UMInpr/v4gwF994dSfBSgoGOLlJ6fiVm1vvQ4UgVSKHa6
+         NGGVtuF+UJFERcKDB0roHYSHJTk733Cpf3pDcemOdgn2+Dp6UuFXs9eldL5cXFnbW1E2
+         hgNRSr/brgF9hSv4OCXg1rt/UA7cU+mFS4/783zG4IDYpkCQAWHfVixQSU+Tz34I+ixX
+         Zi7ZQBdZYSdsC5xRqH4vYOsJAvr0qquV9h8v8/j12b4w26GBOC/TEdSpdweflgh5O/dx
+         IjDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lNBGnfql26nMVEZnGqLckYgZRmrNvkVJGT25CMo/sv0=;
-        b=wVUy2IXtUWjCF0gX0JuV9mO/LDrNlkx9jFkNdUyC0O6LJTrtECp/mGQH0rfq+3aSCH
-         UUz82gUZNvuDVm3Av4/nUL2UUpLEJAyV9DDLLvD8jq98/WrRqXjJ1eg5e7vflzkI2mrJ
-         kx8tu0OTB3ZRYpThnEY0wOs2GIaJI5fuEBYKUnjp3qK2CjZCHRJLdkULhjZrbRkepcFt
-         YASuwSbsh/Gj/YWbAZyugm+05tI7Du5PvEta2S3dou3nkSI7dVPyiBbvs2dNQaPEEw6a
-         Tzn6RJSjkRlkW8GNSBjFScN/AStijdDWV4LDGoitvmsrOFsMLCT9Lw5QA6Nu6WJsvdCA
-         bXnQ==
-X-Gm-Message-State: AO0yUKV27iH+CMApDMGGhodiBn7AE7q+JZ9VgOF9I2v4RLq1KRyZbaP2
-        EEMjWhF+n67AGkoLB6lPl7I=
-X-Google-Smtp-Source: AK7set/grbWLfkMRpIFTz5OrVlF5doiXTKdPxO0cBlJpGfKcoO6rMYpOCKdMA5oSsJtP6sGqFaK3Gw==
-X-Received: by 2002:a05:600c:5113:b0:3dc:59ee:7978 with SMTP id o19-20020a05600c511300b003dc59ee7978mr19621900wms.38.1675694439951;
-        Mon, 06 Feb 2023 06:40:39 -0800 (PST)
+        bh=HzCHZgMAtU1lwfgKiXjvWaTvm2+bd5CX7c+kVIRQKEU=;
+        b=QZBmZwmlYrFscN2KP2s7pu49Ra/giS0WnYaeLl6IspeREvOjBwiAGtc52qoofEDRJQ
+         a8rwXIWZtIvG4M+Z1vjqMMBYKfj8hrxoMlGj74xVjbMGXAOy17MQu0AFsoEYhNED3LqL
+         2UJDG9dhdFFPCH4/aRQaxk5SLt0vt6WQzMzJIh2WCfVRT00wnn0e3BIUPsyqA0+Wv0M+
+         JNoPG3wcmaDdduM7P5fze0dVFDhoH+85rclXiizc1zx5vtsQuAbyBlaYGlZ4r/QaxMOB
+         7Q43TXCJHzAS/1kIf1ITRBH0LxA2cYBeiAbB+ve+Ja9kW9liD13zmSvKKLotSwqiOE0Q
+         ADag==
+X-Gm-Message-State: AO0yUKXL7KzkRAKtXOnaX2fUSFwt5eq2e2Zrie8LTt7q7sOMDB8pyJox
+        3RhsWQnr15yP5EFxWCLSePynry2Vms94oA==
+X-Google-Smtp-Source: AK7set8QhziBZLhtKt4r7cWYVvybJNPAOODK+58BXXg6Sc45bWnKO1fuhX5ul84DGGzVbwWv2iDGSQ==
+X-Received: by 2002:a05:600c:54c5:b0:3dc:9ecc:22a with SMTP id iw5-20020a05600c54c500b003dc9ecc022amr19345409wmb.8.1675694497607;
+        Mon, 06 Feb 2023 06:41:37 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id x9-20020a05600c21c900b003dc434b39c7sm21309230wmj.0.2023.02.06.06.40.38
+        by smtp.gmail.com with ESMTPSA id v16-20020a05600c471000b003dd1bd66e0dsm12407562wmo.3.2023.02.06.06.41.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Feb 2023 06:40:39 -0800 (PST)
-Date:   Mon, 6 Feb 2023 17:40:35 +0300
+        Mon, 06 Feb 2023 06:41:37 -0800 (PST)
+Date:   Mon, 6 Feb 2023 17:41:33 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Michael Guralnik <michaelgur@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] RDMA/mlx5: check reg_create() create for errors
-Message-ID: <Y+ERYy4wN0LsKsm+@kili>
+To:     Amitkumar Karwar <amitkarwar@gmail.com>
+Cc:     Ganapathi Bhat <ganapathi017@gmail.com>,
+        Sharvari Harisangam <sharvari.harisangam@nxp.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Chunfan Chen <jeffc@marvell.com>, Cathy Luo <cluo@marvell.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] wifi: mwifiex: fix loop iterator in
+ mwifiex_update_ampdu_txwinsize()
+Message-ID: <Y+ERnaDaZD7RtLvX@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -65,27 +69,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The reg_create() can fail.  Check for errors before dereferencing it.
+This code re-uses "i" to be the iterator for both the inside and outside
+loops.  It means the outside loop will exit earlier than intended.
 
-Fixes: dd1b913fb0d0 ("RDMA/mlx5: Cache all user cacheable mkeys on dereg MR flow")
+Fixes: d219b7eb3792 ("mwifiex: handle BT coex event to adjust Rx BA window size")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/infiniband/hw/mlx5/mr.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/marvell/mwifiex/11n.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
-index c396b942d0c8..2feab0818a76 100644
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -1164,6 +1164,8 @@ static struct mlx5_ib_mr *alloc_cacheable_mr(struct ib_pd *pd,
- 		mutex_lock(&dev->slow_path_mutex);
- 		mr = reg_create(pd, umem, iova, access_flags, page_size, false);
- 		mutex_unlock(&dev->slow_path_mutex);
-+		if (IS_ERR(mr))
-+			return mr;
- 		mr->mmkey.rb_key = rb_key;
- 		return mr;
+diff --git a/drivers/net/wireless/marvell/mwifiex/11n.c b/drivers/net/wireless/marvell/mwifiex/11n.c
+index 4af57e6d4393..90e401100898 100644
+--- a/drivers/net/wireless/marvell/mwifiex/11n.c
++++ b/drivers/net/wireless/marvell/mwifiex/11n.c
+@@ -878,7 +878,7 @@ mwifiex_send_delba_txbastream_tbl(struct mwifiex_private *priv, u8 tid)
+  */
+ void mwifiex_update_ampdu_txwinsize(struct mwifiex_adapter *adapter)
+ {
+-	u8 i;
++	u8 i, j;
+ 	u32 tx_win_size;
+ 	struct mwifiex_private *priv;
+ 
+@@ -909,8 +909,8 @@ void mwifiex_update_ampdu_txwinsize(struct mwifiex_adapter *adapter)
+ 		if (tx_win_size != priv->add_ba_param.tx_win_size) {
+ 			if (!priv->media_connected)
+ 				continue;
+-			for (i = 0; i < MAX_NUM_TID; i++)
+-				mwifiex_send_delba_txbastream_tbl(priv, i);
++			for (j = 0; j < MAX_NUM_TID; j++)
++				mwifiex_send_delba_txbastream_tbl(priv, j);
+ 		}
  	}
+ }
 -- 
 2.35.1
 
