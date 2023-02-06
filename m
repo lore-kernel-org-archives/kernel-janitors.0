@@ -2,83 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30763C636D3
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Feb 2023 21:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25DF8C636D3
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Feb 2023 23:01:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbjBFVs4 (ORCPT
+        id S230227AbjBFXBu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Feb 2023 16:48:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54878 "EHLO
+        Mon, 6 Feb 2023 18:01:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbjBFVsz (ORCPT
+        with ESMTP id S229893AbjBFXBk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Feb 2023 16:48:55 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F0E2C64C;
-        Mon,  6 Feb 2023 13:48:54 -0800 (PST)
+        Mon, 6 Feb 2023 18:01:40 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C765430EA0;
+        Mon,  6 Feb 2023 15:01:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 126E06101A;
-        Mon,  6 Feb 2023 21:48:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9996C433EF;
-        Mon,  6 Feb 2023 21:48:52 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A1C1261053;
+        Mon,  6 Feb 2023 23:00:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0646BC4339B;
+        Mon,  6 Feb 2023 23:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675720133;
-        bh=4BmwbqRZz8fBV5STtlvsWsmzGtmvBvkwghaDNmFeCuo=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=PJv+UDVe0qxWzdFOwTrYU4pvj6CnmhokZ9n3VCxaOdXJNVdpPSgUAxwomDDxrqfq4
-         GCeP2ptFwN/+2QL+gdRnSdd9meza8Phn+iNX4MogFgZwgeILKhrMIoMsOeoo+ti1SO
-         jetntcJuqC93/6N9aQIExSIhWFlPfLj6BXRXA0sxIa2ZZKPpDCzP8Ek1cevi5HEhRP
-         WKPJhil1ZuFMrbP+IF2jjrdqQcdtv/rVdu/twjUGnh8j1gslWBrB2SwazqOY+4Mrg7
-         WORDaJXR5mSrtuAv0TArwKcgvfy7jxar9PHzWFlsmndB1KosBoS7F6Bjrs1EALAWzG
-         7X/eIap7adXdA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <Y+ETCk7XKfAy8yWQ@kili>
-References: <Y+ETCk7XKfAy8yWQ@kili>
-Subject: Re: [PATCH] spi: spidev: Fix double unlock in spidev_sync()
-Message-Id: <167572013247.1380048.6557352141669503571.b4-ty@kernel.org>
-Date:   Mon, 06 Feb 2023 21:48:52 +0000
-MIME-Version: 1.0
+        s=k20201202; t=1675724418;
+        bh=QG2YBrV/adBMQWEYvrCLms4K8cp/bkCC8oogOhxKCrs=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=DLmFIcEybLIfQKL56XNZI/5gyRyF52YRMOp9NE3TEXeyGCLc8ez0Vxpr6GegRyxxS
+         w9ldk6KTlq5/rjjK6fRRKYp7E3RH5GMc14Y7pH9MA9Xt6jHfwVimiEYuNZOXrYzNkX
+         JKOwTpCGE0G3G3zpyN68SO8RPd/Unn7ntjev2rxKqAg0XW+u5Ph24T4I8n2e8sJasI
+         IKG90IIJ0s8dKmlaB0a6tmHh0wz5PoZ1nHKPwarqbLhAgb3YESpeBEhDvtyCFcOeGr
+         oEyeoBErEDaZ4ncpMv1R95Hl4HsVD1jOGcfdlyBirADgXSmJkyb2HaKr51h7JdAux2
+         OekTrquXNOvPA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E2D64E55F07;
+        Mon,  6 Feb 2023 23:00:17 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] selftests/bpf: Fix spelling mistake "detecion" ->
+ "detection"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167572441792.26837.8769229954804516382.git-patchwork-notify@kernel.org>
+Date:   Mon, 06 Feb 2023 23:00:17 +0000
+References: <20230206092229.46416-1-colin.i.king@gmail.com>
+In-Reply-To: <20230206092229.46416-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     lorenzo@kernel.org, shuah@kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 06 Feb 2023 17:47:38 +0300, Dan Carpenter wrote:
-> This unlocks twice due to a merge issue.
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Mon,  6 Feb 2023 09:22:29 +0000 you wrote:
+> There is a spelling mistake in a literal string. Fix it.
 > 
-> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  tools/testing/selftests/bpf/xdp_features.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to
+Here is the summary with links:
+  - [next] selftests/bpf: Fix spelling mistake "detecion" -> "detection"
+    https://git.kernel.org/bpf/bpf-next/c/8306829bf845
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks!
-
-[1/1] spi: spidev: Fix double unlock in spidev_sync()
-      commit: 941811980df00161fe639c252dabe6488875887c
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
