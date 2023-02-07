@@ -2,66 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AA4C636D3
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Feb 2023 10:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 754C2C636D3
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Feb 2023 17:50:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbjBGK21 (ORCPT
+        id S232177AbjBGRuB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Feb 2023 05:28:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52894 "EHLO
+        Tue, 7 Feb 2023 12:50:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231278AbjBGK2Z (ORCPT
+        with ESMTP id S231201AbjBGRt7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Feb 2023 05:28:25 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB09F23108;
-        Tue,  7 Feb 2023 02:28:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 77EE3B81854;
-        Tue,  7 Feb 2023 10:28:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D247C433EF;
-        Tue,  7 Feb 2023 10:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675765700;
-        bh=zRQOcq6RWAaLJtuhvYQYOJyLbpfJKoXpH/MHB0mfWLY=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=O1GftF68Fxel6dZ1eInH+ssSSZhD3B/+9/y+WhFoRxR9FQ5Fhwipbr8anVSkA1sUR
-         gNVbuWWNxWIwsqmHkeCUnuZJYV7zP3zmdYFOgP/QC/yT4X3rQEsx+pYg/RBqqw/FJ8
-         Ipdi42EXQKiqwG7/gFzMXlaLagP3ubzM2Ct54EuulFSTRPRdMcK9SSuni3zza217KF
-         4hgBh2tgdk2o7ioet2Q7CvMIpRq8Wk6xutsrfXrFC/ghS3A9Z1TK0B3WWn0Nq7zzMH
-         nh7iI+Q5K8CgeP8xkU2emcRrV6cFbZUBkd5d5cLGOm38UyEAeiaTtQYzionpMyZ6bO
-         kFVVfoI2WxWgg==
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Michael Guralnik <michaelgur@nvidia.com>,
-        Dan Carpenter <error27@gmail.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <Y+ERYy4wN0LsKsm+@kili>
-References: <Y+ERYy4wN0LsKsm+@kili>
-Subject: Re: [PATCH] RDMA/mlx5: check reg_create() create for errors
-Message-Id: <167576569583.91565.12336209121176541340.b4-ty@kernel.org>
-Date:   Tue, 07 Feb 2023 12:28:15 +0200
+        Tue, 7 Feb 2023 12:49:59 -0500
+Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D91821BC3
+        for <kernel-janitors@vger.kernel.org>; Tue,  7 Feb 2023 09:49:58 -0800 (PST)
+Received: by mail-vk1-xa2b.google.com with SMTP id g25so710562vkk.11
+        for <kernel-janitors@vger.kernel.org>; Tue, 07 Feb 2023 09:49:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jq2WTnUOKOlouEj9rhMJsPCKZ636O+FLTpfvi8EpzGk=;
+        b=pNLJpHP1McY8BIX7M1KsXNR98xK6Okw7ZLSmxEa32RZd0YLzSdnwNLUhsjf3X6bJLB
+         z9gEGsARi7VW48nVivnQPt56f45T5UZdiinjUT61tgJVB+zINfshW6/gXyix5/11BiTj
+         uKF/Ju6nWBzKVgVfja85yNQOoG1RC3UCNVFtvu6Q5+WUxgcqjZf8g+NuLIu9xhsflbqO
+         RAKou2GKXaNNxlrtcO3zIuKYUF3wYRwwHblR5w33XbCoGoFfSzNJa5jG2aRUPQYH7UeL
+         obAT5bXPijJF8CXWz3fv5CWeeFNfkujMGR9MLiXm+GPyPgkV9WUoNS7CUtRW152LxF0e
+         t3FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jq2WTnUOKOlouEj9rhMJsPCKZ636O+FLTpfvi8EpzGk=;
+        b=fhzPizyPusSPC172nfYBZQNRvP56O1TzxsC6z8HX/4PbfWeztezRjFcIj3fETQCP2R
+         lPezb7s++utO/SvwpcyR9sKZAG/qL8b2str7MSLgh0mzIjlv0q/kvLuNUKsYxhhWsbRw
+         PaYTJ3Hq1RvRDsmIooStArBvtvqJEWVBVVMcZUWRu6uZZjb9e1gyDHvVir0VAQeXrxDu
+         c4HDFGa8xdeb2Szy0cOMxGKuPjBAKzLlBhamXWN0MJgCddPPeOBk5RSGi4l6NpUBdI2s
+         MvTFk/Xq7J/x0KQ4DuQl88XvXXBvs3Vyi9yPAe8EBtMyuGxL36iMYipVYSkcq7wApPQB
+         lCzA==
+X-Gm-Message-State: AO0yUKWAyNUMlaX0wo50XfDsydQ2gixE6eQvnY4PKcVyUERR4+BBkvgk
+        Om/8y0aVZ4c7QTmPEuXWRE13zxVHNF4r3SYelnkjGg==
+X-Google-Smtp-Source: AK7set+6EsmzH/1uinKsBljoDIrb4rmosrnVxPNeqIwTFKopf7huIhtQL1p9wYVL2AhexhvDRphZZ4Gd6ODYQ3L+Z1U=
+X-Received: by 2002:a05:6122:226:b0:3ea:49cf:10e2 with SMTP id
+ e6-20020a056122022600b003ea49cf10e2mr591913vko.19.1675792197917; Tue, 07 Feb
+ 2023 09:49:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12-dev-a055d
+References: <20230207091443.143995-1-colin.i.king@gmail.com>
+In-Reply-To: <20230207091443.143995-1-colin.i.king@gmail.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Tue, 7 Feb 2023 09:49:46 -0800
+Message-ID: <CABXOdTePo76u1UAP0VsYBJZiPaOEk=hZe1cLeMseRvcFOsJ_Mg@mail.gmail.com>
+Subject: Re: [PATCH][next] platform/chrome: Fix spelling mistake "Attenetion"
+ -> "attention"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Prashant Malani <pmalani@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        chrome-platform@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Tue, Feb 7, 2023 at 1:14 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> There is a spelling mistake in a dev_warn message, make it lower case
+> and fix the spelling.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-On Mon, 06 Feb 2023 17:40:35 +0300, Dan Carpenter wrote:
-> The reg_create() can fail.  Check for errors before dereferencing it.
-> 
-> 
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-Applied, thanks!
-
-[1/1] RDMA/mlx5: check reg_create() create for errors
-      https://git.kernel.org/rdma/rdma/c/8e6e49ccf1a0f2
-
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
+> ---
+>  drivers/platform/chrome/cros_ec_typec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
+> index 71f5d7d8e055..a673c3342470 100644
+> --- a/drivers/platform/chrome/cros_ec_typec.c
+> +++ b/drivers/platform/chrome/cros_ec_typec.c
+> @@ -1020,7 +1020,7 @@ static void cros_typec_handle_status(struct cros_typec_data *typec, int port_num
+>                 cros_typec_handle_vdm_attention(typec, port_num);
+>                 ret = cros_typec_send_clear_event(typec, port_num, PD_STATUS_EVENT_VDM_ATTENTION);
+>                 if (ret < 0)
+> -                       dev_warn(typec->dev, "Failed VDM Attenetion event clear, port: %d\n",
+> +                       dev_warn(typec->dev, "Failed VDM attention event clear, port: %d\n",
+>                                  port_num);
+>         }
+>  }
+> --
+> 2.30.2
+>
