@@ -2,92 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C16C636CD
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Feb 2023 09:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F188C636CD
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Feb 2023 09:48:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231280AbjBGJOv (ORCPT
+        id S231532AbjBGJsU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Feb 2023 04:14:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55768 "EHLO
+        Tue, 7 Feb 2023 04:48:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231202AbjBGJOt (ORCPT
+        with ESMTP id S231164AbjBGJsS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Feb 2023 04:14:49 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FED82B084;
-        Tue,  7 Feb 2023 01:14:47 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id r2so12836248wrv.7;
-        Tue, 07 Feb 2023 01:14:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EnOMeG0z+YCevJjETbIYGt07S+IbdApmVaDUDwVjN8U=;
-        b=iqlAf7IGMyIOrcKjo+GQMhHPJG6L6QvHww9wyGLEFS56jdFszjRj15dzxrUf6AMNBC
-         RDsxjqagk1CLTr8CwmHto2Fz6sq+pgCqj640Km2/vSTeqO4frnXLFWq6wgtHyteVFM0d
-         95HOJ1JP26R16VXiWvMb2xQFoHzePRnjO85XemX8yWzYTweqk0xr/0xkmT/aUsdaoic5
-         VF8x0bmepJSwpe6y9rwpC3m61PYM04SunqcFQvUbAc4stRekVH6AQynVJki6LRemKp6L
-         uDrHlxrGnHEQ74VibFi2GYvH8ycHsMHnITQNKPxapKQPLLSlUUIFpEzsoYeSpBx0GC5N
-         yHRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EnOMeG0z+YCevJjETbIYGt07S+IbdApmVaDUDwVjN8U=;
-        b=3RwIWsb75wtvTpz8SVAfE2Zp29VHAYk1bsYrWSpPmqg5gG/PBwoF694kOjA88gQtKt
-         0WScMVdUxwH0+HfieHtNP84WFlDOWpErWYRHJEGBkYLWTKCxH6Rj85mR1y0n44PYhMxY
-         UrMSiO1TTfbnDIHkeZFw6kO3/0agVe4fC79UU7FLTHiewYjhyE0E8EC6NQgbLRmrxf5b
-         OEsjJxG5YLiRX2lZPv4gts4GhLNzTi0XCqW5ni74+d+qWqkn1e17+v/9FXGZjZnkboxD
-         tU+xtDpQJdv+8HDSxwXE8c/faBz7yfE7c9L4HZBBQXZwbCl7Vy3+B9OweQ+NpbT9gBqq
-         JhNQ==
-X-Gm-Message-State: AO0yUKW3cKT9w8PLGdKA0BxgjJCPtz1ZEaSF+SjdVa/EazKfigaNbH+4
-        EMB3cg3XMxcoTa5HgBQvNfqpU0NGVB7WPYfk
-X-Google-Smtp-Source: AK7set95oC0Zx1vGd8VPUnITmIN++zR08TCoUYDCujeSmKMmRwYBoI5qC0HZN3YdOhaYkVNR6b9BcA==
-X-Received: by 2002:a5d:6447:0:b0:2be:57a6:8161 with SMTP id d7-20020a5d6447000000b002be57a68161mr1879784wrw.46.1675761285516;
-        Tue, 07 Feb 2023 01:14:45 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a17-20020a5d53d1000000b002c3ebbc9248sm3704990wrw.66.2023.02.07.01.14.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Feb 2023 01:14:44 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Prashant Malani <pmalani@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        chrome-platform@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] platform/chrome: Fix spelling mistake "Attenetion" -> "attention"
-Date:   Tue,  7 Feb 2023 09:14:43 +0000
-Message-Id: <20230207091443.143995-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 7 Feb 2023 04:48:18 -0500
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1E2F61BDC;
+        Tue,  7 Feb 2023 01:48:14 -0800 (PST)
+X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
+        LIVER,40,3)
+Received: from 192.168.10.47
+        by mg.richtek.com with MailGates ESMTP Server V5.0(17225:0:AUTH_RELAY)
+        (envelope-from <chiaen_wu@richtek.com>); Tue, 07 Feb 2023 17:47:58 +0800 (CST)
+Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.20; Tue, 7 Feb
+ 2023 17:47:58 +0800
+Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1118.20 via Frontend
+ Transport; Tue, 7 Feb 2023 17:47:58 +0800
+Date:   Tue, 7 Feb 2023 17:47:58 +0800
+From:   ChiaEn Wu <chiaen_wu@richtek.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+CC:     Sebastian Reichel <sre@kernel.org>, <linux-pm@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <peterwu.pub@gmail.com>
+Subject: Re: [PATCH][next] power: supply: rt9467: Fix spelling mistake
+ "attache" -> "attach"
+Message-ID: <20230207094758.GA17541@linuxcarl2.richtek.com>
+References: <20230206091742.45977-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230206091742.45977-1-colin.i.king@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_warn message, make it lower case
-and fix the spelling.
+On Mon, Feb 06, 2023 at 09:17:42AM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+Hi,
+It's really typo. Thanks!
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/platform/chrome/cros_ec_typec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: ChiaEn Wu <chiaen_wu@richtek.com>
 
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index 71f5d7d8e055..a673c3342470 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -1020,7 +1020,7 @@ static void cros_typec_handle_status(struct cros_typec_data *typec, int port_num
- 		cros_typec_handle_vdm_attention(typec, port_num);
- 		ret = cros_typec_send_clear_event(typec, port_num, PD_STATUS_EVENT_VDM_ATTENTION);
- 		if (ret < 0)
--			dev_warn(typec->dev, "Failed VDM Attenetion event clear, port: %d\n",
-+			dev_warn(typec->dev, "Failed VDM attention event clear, port: %d\n",
- 				 port_num);
- 	}
- }
--- 
-2.30.2
+Best regards,
+ChiaEn Wu
 
+>  drivers/power/supply/rt9467-charger.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
+> index 96ad0d7d3af4..73f744a3155d 100644
+> --- a/drivers/power/supply/rt9467-charger.c
+> +++ b/drivers/power/supply/rt9467-charger.c
+> @@ -970,7 +970,7 @@ static irqreturn_t rt9467_usb_state_handler(int irq, void *priv)
+>  
+>  	ret = rt9467_report_usb_state(data);
+>  	if (ret) {
+> -		dev_err(data->dev, "Failed to report attache type (%d)\n", ret);
+> +		dev_err(data->dev, "Failed to report attach type (%d)\n", ret);
+>  		return IRQ_NONE;
+>  	}
+>  
+> -- 
+> 2.30.2
+> 
