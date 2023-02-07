@@ -2,80 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F188C636CD
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Feb 2023 09:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AA4C636D3
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Feb 2023 10:28:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231532AbjBGJsU (ORCPT
+        id S230286AbjBGK21 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Feb 2023 04:48:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52996 "EHLO
+        Tue, 7 Feb 2023 05:28:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231164AbjBGJsS (ORCPT
+        with ESMTP id S231278AbjBGK2Z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Feb 2023 04:48:18 -0500
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1E2F61BDC;
-        Tue,  7 Feb 2023 01:48:14 -0800 (PST)
-X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
-        LIVER,40,3)
-Received: from 192.168.10.47
-        by mg.richtek.com with MailGates ESMTP Server V5.0(17225:0:AUTH_RELAY)
-        (envelope-from <chiaen_wu@richtek.com>); Tue, 07 Feb 2023 17:47:58 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.20; Tue, 7 Feb
- 2023 17:47:58 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1118.20 via Frontend
- Transport; Tue, 7 Feb 2023 17:47:58 +0800
-Date:   Tue, 7 Feb 2023 17:47:58 +0800
-From:   ChiaEn Wu <chiaen_wu@richtek.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-CC:     Sebastian Reichel <sre@kernel.org>, <linux-pm@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <peterwu.pub@gmail.com>
-Subject: Re: [PATCH][next] power: supply: rt9467: Fix spelling mistake
- "attache" -> "attach"
-Message-ID: <20230207094758.GA17541@linuxcarl2.richtek.com>
-References: <20230206091742.45977-1-colin.i.king@gmail.com>
+        Tue, 7 Feb 2023 05:28:25 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB09F23108;
+        Tue,  7 Feb 2023 02:28:22 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 77EE3B81854;
+        Tue,  7 Feb 2023 10:28:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D247C433EF;
+        Tue,  7 Feb 2023 10:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675765700;
+        bh=zRQOcq6RWAaLJtuhvYQYOJyLbpfJKoXpH/MHB0mfWLY=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=O1GftF68Fxel6dZ1eInH+ssSSZhD3B/+9/y+WhFoRxR9FQ5Fhwipbr8anVSkA1sUR
+         gNVbuWWNxWIwsqmHkeCUnuZJYV7zP3zmdYFOgP/QC/yT4X3rQEsx+pYg/RBqqw/FJ8
+         Ipdi42EXQKiqwG7/gFzMXlaLagP3ubzM2Ct54EuulFSTRPRdMcK9SSuni3zza217KF
+         4hgBh2tgdk2o7ioet2Q7CvMIpRq8Wk6xutsrfXrFC/ghS3A9Z1TK0B3WWn0Nq7zzMH
+         nh7iI+Q5K8CgeP8xkU2emcRrV6cFbZUBkd5d5cLGOm38UyEAeiaTtQYzionpMyZ6bO
+         kFVVfoI2WxWgg==
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Michael Guralnik <michaelgur@nvidia.com>,
+        Dan Carpenter <error27@gmail.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+In-Reply-To: <Y+ERYy4wN0LsKsm+@kili>
+References: <Y+ERYy4wN0LsKsm+@kili>
+Subject: Re: [PATCH] RDMA/mlx5: check reg_create() create for errors
+Message-Id: <167576569583.91565.12336209121176541340.b4-ty@kernel.org>
+Date:   Tue, 07 Feb 2023 12:28:15 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20230206091742.45977-1-colin.i.king@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12-dev-a055d
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Feb 06, 2023 at 09:17:42AM +0000, Colin Ian King wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
-Hi,
-It's really typo. Thanks!
 
-Reviewed-by: ChiaEn Wu <chiaen_wu@richtek.com>
+On Mon, 06 Feb 2023 17:40:35 +0300, Dan Carpenter wrote:
+> The reg_create() can fail.  Check for errors before dereferencing it.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] RDMA/mlx5: check reg_create() create for errors
+      https://git.kernel.org/rdma/rdma/c/8e6e49ccf1a0f2
 
 Best regards,
-ChiaEn Wu
-
->  drivers/power/supply/rt9467-charger.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
-> index 96ad0d7d3af4..73f744a3155d 100644
-> --- a/drivers/power/supply/rt9467-charger.c
-> +++ b/drivers/power/supply/rt9467-charger.c
-> @@ -970,7 +970,7 @@ static irqreturn_t rt9467_usb_state_handler(int irq, void *priv)
->  
->  	ret = rt9467_report_usb_state(data);
->  	if (ret) {
-> -		dev_err(data->dev, "Failed to report attache type (%d)\n", ret);
-> +		dev_err(data->dev, "Failed to report attach type (%d)\n", ret);
->  		return IRQ_NONE;
->  	}
->  
-> -- 
-> 2.30.2
-> 
+-- 
+Leon Romanovsky <leon@kernel.org>
