@@ -2,93 +2,111 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED1FC05027
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Feb 2023 13:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACB3C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Feb 2023 14:36:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230174AbjBINoL (ORCPT
+        id S230449AbjBIOgB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Feb 2023 08:44:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
+        Thu, 9 Feb 2023 09:36:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbjBINoJ (ORCPT
+        with ESMTP id S230060AbjBIOgA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Feb 2023 08:44:09 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78D013C1A;
-        Thu,  9 Feb 2023 05:44:06 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id m14so1777038wrg.13;
-        Thu, 09 Feb 2023 05:44:06 -0800 (PST)
+        Thu, 9 Feb 2023 09:36:00 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 964EC5FE4B;
+        Thu,  9 Feb 2023 06:35:53 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id t5so1808076oiw.1;
+        Thu, 09 Feb 2023 06:35:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/4DTmXFwApA8waMAf0L62/W+9hAErlR/ehQjcCNwjq8=;
-        b=SvqxnUsaAdjvzlWfwPu/6gggRtVTPcNgg4vTkSpOYYCWLJnY5AGKEm9JCFeIZJ/2eq
-         hqfL22GNZvV1MtHa2jAktMJ1BoqRkK+6HV1Y7+uwIEQXJn7A327RXTO6IWHdZjb6yzyT
-         RDMm92avX+sr6Ag8CERaZDPblMOgZdEBVszp624kZaPPA95BfO1RYizGiZmJKImxdyJG
-         wHe/aFiQKZd4IZIkm8Q9eacZUV/YPvCvQNY3Om/6EMiGluSDoCSwYytZ2VyKAK+y57eI
-         +UYzvVHpKsCLgocQecprFxEy0X9BW4+e/qhMs8yfeA4h48eSPbjEl9JCVc1/FvH8O+Kf
-         SlxA==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sp03I73N+r+twL5ugYnXLYJHbMgUcy+BtwmbrfyskRA=;
+        b=pk2zh5SKB0jC3nyw5hEQMgnCtR1FzWaM40IWi6fTOOzWWWDF1KEMm8BKLaF++pBFNP
+         LISFddbkBGt9pkiEX0zlHCkysLhP+vszdT3pE68qkI/nihnVTWYwwJpKaxdjhRp2CLoV
+         hmRmhAc0oWHyLq4KSG2cYKAsxoZ0DGLJe5wVv8celkMvhfKOpkP1PfJW7PPfB9+9+uP4
+         ycFwzTH3d6vQVrraGr7hcY4+ddve3ztW8K/x+lLZoH7QegRjFncz6U8ug2RBt6NR7pOO
+         LW8z8m6jay2uXfa1lIrvzXJAaqska39DGFurLQA2fTzT0vtpW77xAXGfdjRQ5yEMVsVK
+         udAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/4DTmXFwApA8waMAf0L62/W+9hAErlR/ehQjcCNwjq8=;
-        b=nirQWgmYyPlgNi+oKds0uEAZpOc/V+MPvHm9G24ftcxL79BX88jiUb2YjDY3bVXkgD
-         sjjATyGK5WQE9F253qw0UTN136A45GJoLxdPxWhc+KSzTjxLSvVC8s3lLTSEbovEk6UQ
-         4AQpiFxUFqU6RYtJZK947jlPvRmwdd1zZON6r5rg3YFEhrj6l3xSpA0KqiLRoFIdncw3
-         K+UBhtFYF/AgpGIAq4ZzhbWhjnVA9by+tdOlc4IV88Qivpb+1Tz7khiqHSW/QwB+wO9Y
-         p6t9lf2PKzGtlxUBZpX/UCOnSCNcaIjYPQ1L6BS1gLr7aAEmFKJFZyIj1hvvXhwIMbFR
-         Z7Ew==
-X-Gm-Message-State: AO0yUKWklNR5BKxZRw8jZIFgEky3IqfcW+2dAZIYbrVqM5bE814Gc3La
-        YgCjTQpsx6LO4fu5dw9DyPY=
-X-Google-Smtp-Source: AK7set/oGb0BPv+y6CypTmY1t5MFOnwlR8lInTjUEIKOguf0oQ84U9/Dznvkm4bghiG/CAs9NlNAjA==
-X-Received: by 2002:a5d:510e:0:b0:2c3:e4f5:18c with SMTP id s14-20020a5d510e000000b002c3e4f5018cmr9673087wrt.30.1675950244957;
-        Thu, 09 Feb 2023 05:44:04 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v2-20020a5d6102000000b002be5bdbe40csm1290080wrt.27.2023.02.09.05.44.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 05:44:04 -0800 (PST)
-Date:   Thu, 9 Feb 2023 16:43:45 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] xhci: host: potential NULL dereference in
- xhci_generic_plat_probe()
-Message-ID: <Y+T4kTcJwRwxNHJq@kili>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sp03I73N+r+twL5ugYnXLYJHbMgUcy+BtwmbrfyskRA=;
+        b=lCLjrTOFccTKxdrgginidX9YMHoAIH/nb4AENGn/IoeKInftYNqQTdrDyHwsfloRRH
+         LpsD9nlYUgPrgtUzxJnrsJa/9ynMfiwhaGIUjGKx74aUp0mIAODMN9oBcN4Q8/v3lB67
+         OjtAFIWv96QSDAW2CeXJPwFmrKss/ULip4DMSWv5Rpa+SsrQx1GRf/7/IKjCv/vTwsEw
+         4PGTe2Nr2fX7aJs6UwcWV3AisQSzcttAlHGjLIr4iMTch5Z2d2WR3mBQlj+t8L+Eo73x
+         MkcdFXLPNukAEJZ9BSnCqIWkhUjlQ7EQf/w19eyJDoGpIvSSkWiSqW++8NAW033Htqwa
+         IGtQ==
+X-Gm-Message-State: AO0yUKVuXgSo38p8lBP21ro+EHZns2rYxQC75JoHXUCc4fZMzbQg9kTc
+        a6I7Oc41nA9BDuHtObk9f2Bt4SBDNXAyh6LaDyauzjlM
+X-Google-Smtp-Source: AK7set8WUzFR+9A6rkN9lf35+zMlZ5Ra7EmUoSFmZH1NreHw2xOKi29aBn57YpXN8BAKmHuLuXls8iBeXTO3FjkqpBs=
+X-Received: by 2002:aca:c108:0:b0:35b:d93f:cbc4 with SMTP id
+ r8-20020acac108000000b0035bd93fcbc4mr575101oif.96.1675953352898; Thu, 09 Feb
+ 2023 06:35:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20230209125330.1433481-1-colin.i.king@gmail.com>
+In-Reply-To: <20230209125330.1433481-1-colin.i.king@gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 9 Feb 2023 09:35:41 -0500
+Message-ID: <CADnq5_Pju2QxoR2QEhWf_p9EcKnuF+SkqaKJ7i7adxBktJBBAw@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistakes of function
+ name in error message
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It's possible to exit the loop with "sysdev" set to NULL.  In that
-case we should use "&pdev->dev".
+Applied.  Thanks!
 
-Fixes: ec5499d338ec ("xhci: split out rcar/rz support from xhci-plat.c")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/usb/host/xhci-plat.c | 3 +++
- 1 file changed, 3 insertions(+)
+Alex
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index cd17ccab6e00..b9f9625467d6 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -368,6 +368,9 @@ static int xhci_generic_plat_probe(struct platform_device *pdev)
- #endif
- 	}
- 
-+	if (!sysdev)
-+		sysdev = &pdev->dev;
-+
- 	if (WARN_ON(!sysdev->dma_mask)) {
- 		/* Platform did not initialize dma_mask */
- 		ret = dma_coerce_mask_and_coherent(sysdev, DMA_BIT_MASK(64));
--- 
-2.35.1
-
+On Thu, Feb 9, 2023 at 7:53 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> The function name is being reported as dc_link_contruct when it is
+> actually dc_link_construct_phy. Fix this by using %s and the __func__
+> for the function name.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/display/dc/link/link_factory.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/link/link_factory.c b/drivers/gpu/drm/amd/display/dc/link/link_factory.c
+> index 13a766273755..3fc93fc593fb 100644
+> --- a/drivers/gpu/drm/amd/display/dc/link/link_factory.c
+> +++ b/drivers/gpu/drm/amd/display/dc/link/link_factory.c
+> @@ -452,7 +452,7 @@ static bool dc_link_construct_phy(struct dc_link *link,
+>         link->psr_settings.psr_vtotal_control_support = false;
+>         link->psr_settings.psr_version = DC_PSR_VERSION_UNSUPPORTED;
+>
+> -       DC_LOG_DC("BIOS object table - dc_link_contruct finished successfully.\n");
+> +       DC_LOG_DC("BIOS object table - %s finished successfully.\n", __func__);
+>         return true;
+>  device_tag_fail:
+>         link->link_enc->funcs->destroy(&link->link_enc);
+> @@ -469,7 +469,7 @@ static bool dc_link_construct_phy(struct dc_link *link,
+>                 link->hpd_gpio = NULL;
+>         }
+>
+> -       DC_LOG_DC("BIOS object table - dc_link_contruct failed.\n");
+> +       DC_LOG_DC("BIOS object table - %s failed.\n", __func__);
+>         return false;
+>  }
+>
+> --
+> 2.30.2
+>
