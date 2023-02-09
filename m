@@ -2,65 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9464C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Feb 2023 13:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED1FC05027
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Feb 2023 13:44:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbjBINnp (ORCPT
+        id S230174AbjBINoL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Feb 2023 08:43:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45562 "EHLO
+        Thu, 9 Feb 2023 08:44:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjBINnn (ORCPT
+        with ESMTP id S230039AbjBINoJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Feb 2023 08:43:43 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC70D2CC52;
-        Thu,  9 Feb 2023 05:43:18 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id f47-20020a05600c492f00b003dc584a7b7eso3887896wmp.3;
-        Thu, 09 Feb 2023 05:43:18 -0800 (PST)
+        Thu, 9 Feb 2023 08:44:09 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78D013C1A;
+        Thu,  9 Feb 2023 05:44:06 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id m14so1777038wrg.13;
+        Thu, 09 Feb 2023 05:44:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UJhX5uRHq4kGgYCUsrSMsI3fM2T8uaj+xuxLxu5jIHU=;
-        b=ax3yDGUEAwJXtl0fGhCBS+VfBBMUefxqlbOhTaVgBtt2MwHdRc8blJwNsk8DtpHzz0
-         F2C9b3tkATap42dQXw81INMJ63L88Dnd/83iGheziHlRehw4KC/FapL7DYQOLHt53pDh
-         VJYRgVQ4UDLP4jGGUq6xwRU9RIcbOpRuqSr6Hv9T70Rb5tDZsVi6ScDqkuiICe0Y5gUV
-         QvuO45iij+PM7OC5AtrMtkqQryAhmGQG85bRKnu43iqm58CFCXY+LRcBC75gPpS/CBlM
-         SC/BZsKiP8VUh9P9xtLXjeMYlP60ve+/nMy5NWH7Z1MzEAhX3XE5m/+AC369f5UcF2qP
-         Uh2A==
+        bh=/4DTmXFwApA8waMAf0L62/W+9hAErlR/ehQjcCNwjq8=;
+        b=SvqxnUsaAdjvzlWfwPu/6gggRtVTPcNgg4vTkSpOYYCWLJnY5AGKEm9JCFeIZJ/2eq
+         hqfL22GNZvV1MtHa2jAktMJ1BoqRkK+6HV1Y7+uwIEQXJn7A327RXTO6IWHdZjb6yzyT
+         RDMm92avX+sr6Ag8CERaZDPblMOgZdEBVszp624kZaPPA95BfO1RYizGiZmJKImxdyJG
+         wHe/aFiQKZd4IZIkm8Q9eacZUV/YPvCvQNY3Om/6EMiGluSDoCSwYytZ2VyKAK+y57eI
+         +UYzvVHpKsCLgocQecprFxEy0X9BW4+e/qhMs8yfeA4h48eSPbjEl9JCVc1/FvH8O+Kf
+         SlxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UJhX5uRHq4kGgYCUsrSMsI3fM2T8uaj+xuxLxu5jIHU=;
-        b=akAeH/uU45YDd2h+jbfRkeOyAv6KoczW0dV2JhjGyEXi9l3NKEcF5/YBhxSqftyzIy
-         epuzzxuUstEaXnwDRAFrG36R7szokvj4onQ5g+zA+EBEGtv+utgwbTcliGSg43rsMdRt
-         5HNFuN+wxJSJ+ahJgoYoF3r25Q2ROdIcc3Rjajd8OTjEchsT0Fpxnh9lR1URe83/iF5F
-         Sg0qbMBw54OZ9yjA/rUe/gQhJ4rqYl7nwP9atJmi5bIn77/Yv1IW638eiGxULryW8qRD
-         k46Q8MtArI8lddBJpP367kfrSHJt+W+MQWC5Z+DGLvWYu9UqJN4000MMe3KhagID9k/m
-         DPtA==
-X-Gm-Message-State: AO0yUKWhGFifYRXNjF+0XZHNqKxzC8p28qYM+GOoLqzf0459xzMhTSih
-        DO2jNoX+EbRWn+1TswOxVk8=
-X-Google-Smtp-Source: AK7set/kjE+8CPZZmmxkjdQaYU+lpfU2VCSfRUwINVjYE/KYo1v+hC1g/ZYLOap3tnlv7QzNvsdwyg==
-X-Received: by 2002:a05:600c:43c7:b0:3dc:932f:f7cb with SMTP id f7-20020a05600c43c700b003dc932ff7cbmr10357134wmn.37.1675950197161;
-        Thu, 09 Feb 2023 05:43:17 -0800 (PST)
+        bh=/4DTmXFwApA8waMAf0L62/W+9hAErlR/ehQjcCNwjq8=;
+        b=nirQWgmYyPlgNi+oKds0uEAZpOc/V+MPvHm9G24ftcxL79BX88jiUb2YjDY3bVXkgD
+         sjjATyGK5WQE9F253qw0UTN136A45GJoLxdPxWhc+KSzTjxLSvVC8s3lLTSEbovEk6UQ
+         4AQpiFxUFqU6RYtJZK947jlPvRmwdd1zZON6r5rg3YFEhrj6l3xSpA0KqiLRoFIdncw3
+         K+UBhtFYF/AgpGIAq4ZzhbWhjnVA9by+tdOlc4IV88Qivpb+1Tz7khiqHSW/QwB+wO9Y
+         p6t9lf2PKzGtlxUBZpX/UCOnSCNcaIjYPQ1L6BS1gLr7aAEmFKJFZyIj1hvvXhwIMbFR
+         Z7Ew==
+X-Gm-Message-State: AO0yUKWklNR5BKxZRw8jZIFgEky3IqfcW+2dAZIYbrVqM5bE814Gc3La
+        YgCjTQpsx6LO4fu5dw9DyPY=
+X-Google-Smtp-Source: AK7set/oGb0BPv+y6CypTmY1t5MFOnwlR8lInTjUEIKOguf0oQ84U9/Dznvkm4bghiG/CAs9NlNAjA==
+X-Received: by 2002:a5d:510e:0:b0:2c3:e4f5:18c with SMTP id s14-20020a5d510e000000b002c3e4f5018cmr9673087wrt.30.1675950244957;
+        Thu, 09 Feb 2023 05:44:04 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id t7-20020a05600c450700b003dc42d48defsm2409481wmo.6.2023.02.09.05.43.15
+        by smtp.gmail.com with ESMTPSA id v2-20020a5d6102000000b002be5bdbe40csm1290080wrt.27.2023.02.09.05.44.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 05:43:16 -0800 (PST)
-Date:   Thu, 9 Feb 2023 16:43:06 +0300
+        Thu, 09 Feb 2023 05:44:04 -0800 (PST)
+Date:   Thu, 9 Feb 2023 16:43:45 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Jiawen Wu <jiawenwu@trustnetic.com>
-Cc:     Mengyuan Lou <mengyuanlou@net-swift.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: libwx: fix an error code in
- wx_alloc_page_pool()
-Message-ID: <Y+T4aoefc1XWvGYb@kili>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] xhci: host: potential NULL dereference in
+ xhci_generic_plat_probe()
+Message-ID: <Y+T4kTcJwRwxNHJq@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -69,31 +66,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This function always returns success.  We need to preserve the error
-code before setting rx_ring->page_pool = NULL.
+It's possible to exit the loop with "sysdev" set to NULL.  In that
+case we should use "&pdev->dev".
 
-Fixes: 850b971110b2 ("net: libwx: Allocate Rx and Tx resources")
+Fixes: ec5499d338ec ("xhci: split out rcar/rz support from xhci-plat.c")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
-Applies to net-next.
+ drivers/usb/host/xhci-plat.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/net/ethernet/wangxun/libwx/wx_lib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/wangxun/libwx/wx_lib.c b/drivers/net/ethernet/wangxun/libwx/wx_lib.c
-index 57e1871ea0c6..ca92fe19a663 100644
---- a/drivers/net/ethernet/wangxun/libwx/wx_lib.c
-+++ b/drivers/net/ethernet/wangxun/libwx/wx_lib.c
-@@ -1745,8 +1745,8 @@ static int wx_alloc_page_pool(struct wx_ring *rx_ring)
- 
- 	rx_ring->page_pool = page_pool_create(&pp_params);
- 	if (IS_ERR(rx_ring->page_pool)) {
--		rx_ring->page_pool = NULL;
- 		ret = PTR_ERR(rx_ring->page_pool);
-+		rx_ring->page_pool = NULL;
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index cd17ccab6e00..b9f9625467d6 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -368,6 +368,9 @@ static int xhci_generic_plat_probe(struct platform_device *pdev)
+ #endif
  	}
  
- 	return ret;
++	if (!sysdev)
++		sysdev = &pdev->dev;
++
+ 	if (WARN_ON(!sysdev->dma_mask)) {
+ 		/* Platform did not initialize dma_mask */
+ 		ret = dma_coerce_mask_and_coherent(sysdev, DMA_BIT_MASK(64));
 -- 
 2.35.1
 
