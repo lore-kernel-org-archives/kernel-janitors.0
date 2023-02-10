@@ -2,111 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACB3C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Feb 2023 14:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AA8C05027
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Feb 2023 09:44:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230449AbjBIOgB (ORCPT
+        id S231766AbjBJJot (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Feb 2023 09:36:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58724 "EHLO
+        Fri, 10 Feb 2023 04:44:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230060AbjBIOgA (ORCPT
+        with ESMTP id S231379AbjBJJos (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Feb 2023 09:36:00 -0500
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 964EC5FE4B;
-        Thu,  9 Feb 2023 06:35:53 -0800 (PST)
-Received: by mail-oi1-x233.google.com with SMTP id t5so1808076oiw.1;
-        Thu, 09 Feb 2023 06:35:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sp03I73N+r+twL5ugYnXLYJHbMgUcy+BtwmbrfyskRA=;
-        b=pk2zh5SKB0jC3nyw5hEQMgnCtR1FzWaM40IWi6fTOOzWWWDF1KEMm8BKLaF++pBFNP
-         LISFddbkBGt9pkiEX0zlHCkysLhP+vszdT3pE68qkI/nihnVTWYwwJpKaxdjhRp2CLoV
-         hmRmhAc0oWHyLq4KSG2cYKAsxoZ0DGLJe5wVv8celkMvhfKOpkP1PfJW7PPfB9+9+uP4
-         ycFwzTH3d6vQVrraGr7hcY4+ddve3ztW8K/x+lLZoH7QegRjFncz6U8ug2RBt6NR7pOO
-         LW8z8m6jay2uXfa1lIrvzXJAaqska39DGFurLQA2fTzT0vtpW77xAXGfdjRQ5yEMVsVK
-         udAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sp03I73N+r+twL5ugYnXLYJHbMgUcy+BtwmbrfyskRA=;
-        b=lCLjrTOFccTKxdrgginidX9YMHoAIH/nb4AENGn/IoeKInftYNqQTdrDyHwsfloRRH
-         LpsD9nlYUgPrgtUzxJnrsJa/9ynMfiwhaGIUjGKx74aUp0mIAODMN9oBcN4Q8/v3lB67
-         OjtAFIWv96QSDAW2CeXJPwFmrKss/ULip4DMSWv5Rpa+SsrQx1GRf/7/IKjCv/vTwsEw
-         4PGTe2Nr2fX7aJs6UwcWV3AisQSzcttAlHGjLIr4iMTch5Z2d2WR3mBQlj+t8L+Eo73x
-         MkcdFXLPNukAEJZ9BSnCqIWkhUjlQ7EQf/w19eyJDoGpIvSSkWiSqW++8NAW033Htqwa
-         IGtQ==
-X-Gm-Message-State: AO0yUKVuXgSo38p8lBP21ro+EHZns2rYxQC75JoHXUCc4fZMzbQg9kTc
-        a6I7Oc41nA9BDuHtObk9f2Bt4SBDNXAyh6LaDyauzjlM
-X-Google-Smtp-Source: AK7set8WUzFR+9A6rkN9lf35+zMlZ5Ra7EmUoSFmZH1NreHw2xOKi29aBn57YpXN8BAKmHuLuXls8iBeXTO3FjkqpBs=
-X-Received: by 2002:aca:c108:0:b0:35b:d93f:cbc4 with SMTP id
- r8-20020acac108000000b0035bd93fcbc4mr575101oif.96.1675953352898; Thu, 09 Feb
- 2023 06:35:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20230209125330.1433481-1-colin.i.king@gmail.com>
-In-Reply-To: <20230209125330.1433481-1-colin.i.king@gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 9 Feb 2023 09:35:41 -0500
-Message-ID: <CADnq5_Pju2QxoR2QEhWf_p9EcKnuF+SkqaKJ7i7adxBktJBBAw@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistakes of function
- name in error message
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        Fri, 10 Feb 2023 04:44:48 -0500
+Received: from formenos.hmeau.com (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D4E2DE4A;
+        Fri, 10 Feb 2023 01:44:45 -0800 (PST)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1pQPxG-009bxi-FL; Fri, 10 Feb 2023 17:44:31 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 Feb 2023 17:44:30 +0800
+Date:   Fri, 10 Feb 2023 17:44:30 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Jenny Zhang <jenny.zhang@starfivetech.com>,
+        Jia Jie Ho <jiajie.ho@starfivetech.com>,
+        Olivia Mackall <olivia@selenic.com>,
+        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] MAINTAINERS: repair file entry for STARFIVE TRNG DRIVER
+Message-ID: <Y+YR/mn9XIH3ueBN@gondor.apana.org.au>
+References: <20230130073109.32025-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230130073109.32025-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
-
-Alex
-
-On Thu, Feb 9, 2023 at 7:53 AM Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> The function name is being reported as dc_link_contruct when it is
-> actually dc_link_construct_phy. Fix this by using %s and the __func__
-> for the function name.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Mon, Jan 30, 2023 at 08:31:09AM +0100, Lukas Bulwahn wrote:
+> Commit c388f458bc34 ("hwrng: starfive - Add TRNG driver for StarFive SoC")
+> adds the STARFIVE TRNG DRIVER section to MAINTAINERS, but refers to the
+> non-existing file drivers/char/hw_random/starfive-trng.c rather than to the
+> actually added file drivers/char/hw_random/jh7110-trng.c in this commit.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> Repair this file entry in STARFIVE TRNG DRIVER.
+> 
+> Fixes: c388f458bc34 ("hwrng: starfive - Add TRNG driver for StarFive SoC")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  drivers/gpu/drm/amd/display/dc/link/link_factory.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/link/link_factory.c b/drivers/gpu/drm/amd/display/dc/link/link_factory.c
-> index 13a766273755..3fc93fc593fb 100644
-> --- a/drivers/gpu/drm/amd/display/dc/link/link_factory.c
-> +++ b/drivers/gpu/drm/amd/display/dc/link/link_factory.c
-> @@ -452,7 +452,7 @@ static bool dc_link_construct_phy(struct dc_link *link,
->         link->psr_settings.psr_vtotal_control_support = false;
->         link->psr_settings.psr_version = DC_PSR_VERSION_UNSUPPORTED;
->
-> -       DC_LOG_DC("BIOS object table - dc_link_contruct finished successfully.\n");
-> +       DC_LOG_DC("BIOS object table - %s finished successfully.\n", __func__);
->         return true;
->  device_tag_fail:
->         link->link_enc->funcs->destroy(&link->link_enc);
-> @@ -469,7 +469,7 @@ static bool dc_link_construct_phy(struct dc_link *link,
->                 link->hpd_gpio = NULL;
->         }
->
-> -       DC_LOG_DC("BIOS object table - dc_link_contruct failed.\n");
-> +       DC_LOG_DC("BIOS object table - %s failed.\n", __func__);
->         return false;
->  }
->
-> --
-> 2.30.2
->
+> Jia Jie, please ack this patch.
+> 
+> Herbert, please pick this minor fix patch on top of the commit above. Thanks.
+> 
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
