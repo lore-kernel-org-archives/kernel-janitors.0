@@ -2,62 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AA8C05027
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Feb 2023 09:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A59EC636CD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Feb 2023 09:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231766AbjBJJot (ORCPT
+        id S231680AbjBJJti (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Feb 2023 04:44:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40562 "EHLO
+        Fri, 10 Feb 2023 04:49:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231379AbjBJJos (ORCPT
+        with ESMTP id S231439AbjBJJth (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Feb 2023 04:44:48 -0500
+        Fri, 10 Feb 2023 04:49:37 -0500
 Received: from formenos.hmeau.com (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D4E2DE4A;
-        Fri, 10 Feb 2023 01:44:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A9A527B;
+        Fri, 10 Feb 2023 01:49:35 -0800 (PST)
 Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
         by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1pQPxG-009bxi-FL; Fri, 10 Feb 2023 17:44:31 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 Feb 2023 17:44:30 +0800
-Date:   Fri, 10 Feb 2023 17:44:30 +0800
+        id 1pQQ1s-009c8U-00; Fri, 10 Feb 2023 17:49:17 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 Feb 2023 17:49:15 +0800
+Date:   Fri, 10 Feb 2023 17:49:15 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Jenny Zhang <jenny.zhang@starfivetech.com>,
-        Jia Jie Ho <jiajie.ho@starfivetech.com>,
-        Olivia Mackall <olivia@selenic.com>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: repair file entry for STARFIVE TRNG DRIVER
-Message-ID: <Y+YR/mn9XIH3ueBN@gondor.apana.org.au>
-References: <20230130073109.32025-1-lukas.bulwahn@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Gonglei <arei.gonglei@huawei.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH] virtio-crypto: Do not use GFP_ATOMIC when not needed
+Message-ID: <Y+YTG/RcD3hU2Dws@gondor.apana.org.au>
+References: <00f487d16bf9fc5ce215c44bed3f11df5adf266a.1675544037.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230130073109.32025-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <00f487d16bf9fc5ce215c44bed3f11df5adf266a.1675544037.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 30, 2023 at 08:31:09AM +0100, Lukas Bulwahn wrote:
-> Commit c388f458bc34 ("hwrng: starfive - Add TRNG driver for StarFive SoC")
-> adds the STARFIVE TRNG DRIVER section to MAINTAINERS, but refers to the
-> non-existing file drivers/char/hw_random/starfive-trng.c rather than to the
-> actually added file drivers/char/hw_random/jh7110-trng.c in this commit.
+On Sat, Feb 04, 2023 at 09:54:08PM +0100, Christophe JAILLET wrote:
+> There is no need to use GFP_ATOMIC here. GFP_KERNEL is already used for
+> another memory allocation just the line after.
 > 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> Repair this file entry in STARFIVE TRNG DRIVER.
-> 
-> Fixes: c388f458bc34 ("hwrng: starfive - Add TRNG driver for StarFive SoC")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> Jia Jie, please ack this patch.
+> This patch is speculative ! ! !
 > 
-> Herbert, please pick this minor fix patch on top of the commit above. Thanks.
+> Maybe it is the other memory allocation that should use GFP_ATOMIC.
 > 
->  MAINTAINERS | 2 +-
+> Review with care !
+
+Looks correct to me.  We don't support calling akcipher in atomic
+contexts.
+
+> ---
+>  drivers/crypto/virtio/virtio_crypto_akcipher_algs.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Patch applied.  Thanks.
