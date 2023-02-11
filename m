@@ -2,117 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 047ADC05027
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Feb 2023 16:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 080A8C636CC
+	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Feb 2023 03:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232704AbjBJQp0 (ORCPT
+        id S229669AbjBKDk0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Feb 2023 11:45:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57328 "EHLO
+        Fri, 10 Feb 2023 22:40:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232685AbjBJQpZ (ORCPT
+        with ESMTP id S229583AbjBKDkX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Feb 2023 11:45:25 -0500
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 750706A730;
-        Fri, 10 Feb 2023 08:45:22 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id DD5DE5C024C;
-        Fri, 10 Feb 2023 11:45:21 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 10 Feb 2023 11:45:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1676047521; x=1676133921; bh=sKazkHroa4
-        DBwqlZXXKpLH6uGRtHXhLpZc/CphCd9H0=; b=HVW2W3SatwbyrQ9JXNxXe9Yoy3
-        KSizOj3WI4UsBseFAbaQqaD3Ca8Q/6rlX1FUaXSEWoXidk+KM6vT/dtCZQ+iekQF
-        PjeS/ltELiPAHbH2pnXMAkjqQp8SSXnJh1mNILt7Lf9mfm1JiAjGUH9eV7ON8fXW
-        vvJGldvXfBzY8jY/8JM5jW9MlY1+MRO95mAPvdm2FNhq6wfuwXXW7CJRrzmo/QQH
-        deauloaN3I/P4wu1uNeVFaLVuSsH6nwGjbist0tUgL9YawxQy/aOe6dheQ00CLMS
-        bzfm4I7V6ep/Klz/DGKpS64sST0n8RhJGui49eqU1OYjfyTMBuZHLRD/0RAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1676047521; x=1676133921; bh=sKazkHroa4DBwqlZXXKpLH6uGRtH
-        XhLpZc/CphCd9H0=; b=Ar0KwhEk7RNFWIJvMaHjIFOmMtV9V10pgaUGcxyuAzYM
-        edrXPQ/fSEzEKNZm52hycokA+UZ3ILwS+CBk80LNTNeSDW2Ftm5mLog2oWWrdW3i
-        UBPFpLEibvYDn7yDpL5wVef6Ltp3N7bwwJRjyv3CAwY5YvTo2GlxQqfE1TuhQT3X
-        x3W40qcSfiBcSBuvQnQpZu+0B0atYUHVNzPGfBgUJaKURE0ZxzXrriSAw7Dtr98y
-        w1uJQWyUlIKbctXEgxWCEezxjJBr/EnqlFAtt9BJY81VX8atNe1pgFFYC/r3cvi3
-        wI7Lc9j1EI2clqlC1ONJnU60XWuJS0ZR+9TDq50S6w==
-X-ME-Sender: <xms:oXTmYxSMcMrWk23gle0JuXKZMRgpfQm0OUh5dDN7GWIy8VC73_Q0ug>
-    <xme:oXTmY6y4KxLwCIohROXprIgm5YQrvP1ZZ8VnC9UUfVZ6QNpnIvu2xS1VwcUjBLAE2
-    6fXbc0n3J-JJfkao3g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudehhedgleduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:oXTmY22BeGKtAESepSkqBFm7Iutv7h5MDt9aoTkIBsWiifxQFq-rMw>
-    <xmx:oXTmY5B19kwAGjHThQgZnJxa0HUBeLaEOHtjE0t3eDpcOel8eARLyg>
-    <xmx:oXTmY6gyk6_9O2RYIKBK4xB8i6oJrmnBuNTB8r8otEAQu4wfP0oDYg>
-    <xmx:oXTmY9vsgnUDz8_mYZubUXsWfWmpVz28mQ9vY3evaIQNLCRR5bUpQQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 9FD2FB60086; Fri, 10 Feb 2023 11:45:21 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-156-g081acc5ed5-fm-20230206.001-g081acc5e
-Mime-Version: 1.0
-Message-Id: <91e2e047-adaf-4bf5-8244-8aca304b1b78@app.fastmail.com>
-In-Reply-To: <Y+T4kTcJwRwxNHJq@kili>
-References: <Y+T4kTcJwRwxNHJq@kili>
-Date:   Fri, 10 Feb 2023 17:45:03 +0100
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Dan Carpenter" <error27@gmail.com>
-Cc:     "Mathias Nyman" <mathias.nyman@intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xhci: host: potential NULL dereference in
- xhci_generic_plat_probe()
-Content-Type: text/plain
+        Fri, 10 Feb 2023 22:40:23 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3C313A082;
+        Fri, 10 Feb 2023 19:40:22 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4928DB826AB;
+        Sat, 11 Feb 2023 03:40:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0DF42C4339B;
+        Sat, 11 Feb 2023 03:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676086820;
+        bh=7ZWclToRlsx912+0GIfFf/Ov+J0+3loGpn7En6vWOXU=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=mnBKt0DVj7UTjLVp76fjhNz3weZnNpWCJnP5ZLGKhKbJn5Gnl44JxMBB3z5kK6bcB
+         gJkifeBhhsnIlfg3RfkoIgosFBcrUC/ylFDeEZbf5sKAf53oy7rMdpTtONTq4oQvOX
+         MZgDe/IuOdtacWEE6zTI29z2MLvMP9tqwE3Zez5oCTfU3pk+LbY98Fh++8wZx0/G1A
+         CU5y4vXTsCeiWLpBcvnIQda8gGrS+RiNsy+bof5qQplsUIuA9/NjRx3JfMmEhSw+9L
+         8UdYRMAFJr2fLTaL9jHe8X5RWBeJs8W1PIVxSGdGeAJtOinDM3GpzpfeoU02STdx3k
+         mKzsEEYD+75sg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E8D06E29F46;
+        Sat, 11 Feb 2023 03:40:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: libwx: fix an error code in
+ wx_alloc_page_pool()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167608681994.24732.14317703886025479892.git-patchwork-notify@kernel.org>
+Date:   Sat, 11 Feb 2023 03:40:19 +0000
+References: <Y+T4aoefc1XWvGYb@kili>
+In-Reply-To: <Y+T4aoefc1XWvGYb@kili>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     jiawenwu@trustnetic.com, mengyuanlou@net-swift.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Feb 9, 2023, at 14:43, Dan Carpenter wrote:
-> It's possible to exit the loop with "sysdev" set to NULL.  In that
-> case we should use "&pdev->dev".
->
-> Fixes: ec5499d338ec ("xhci: split out rcar/rz support from xhci-plat.c")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Hello:
 
-Thanks for the fix!
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-I think this doesn't happen in practice because the loop should
-always find a firmware or PCI owned device, but it is clearly better
-to keep the original behavior from before my patch to be on the
-safe side here.
-
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-
->  drivers/usb/host/xhci-plat.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-> index cd17ccab6e00..b9f9625467d6 100644
-> --- a/drivers/usb/host/xhci-plat.c
-> +++ b/drivers/usb/host/xhci-plat.c
-> @@ -368,6 +368,9 @@ static int xhci_generic_plat_probe(struct 
-> platform_device *pdev)
->  #endif
->  	}
+On Thu, 9 Feb 2023 16:43:06 +0300 you wrote:
+> This function always returns success.  We need to preserve the error
+> code before setting rx_ring->page_pool = NULL.
 > 
-> +	if (!sysdev)
-> +		sysdev = &pdev->dev;
-> +
->  	if (WARN_ON(!sysdev->dma_mask)) {
->  		/* Platform did not initialize dma_mask */
->  		ret = dma_coerce_mask_and_coherent(sysdev, DMA_BIT_MASK(64));
+> Fixes: 850b971110b2 ("net: libwx: Allocate Rx and Tx resources")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> Applies to net-next.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net: libwx: fix an error code in wx_alloc_page_pool()
+    https://git.kernel.org/netdev/net-next/c/183514f7c569
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
