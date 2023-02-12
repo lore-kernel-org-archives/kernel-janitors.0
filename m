@@ -2,82 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 080A8C636CC
-	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Feb 2023 03:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B214C05027
+	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Feb 2023 06:52:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229669AbjBKDk0 (ORCPT
+        id S229514AbjBLGwI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Feb 2023 22:40:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50936 "EHLO
+        Sun, 12 Feb 2023 01:52:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbjBKDkX (ORCPT
+        with ESMTP id S229489AbjBLGwH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Feb 2023 22:40:23 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3C313A082;
-        Fri, 10 Feb 2023 19:40:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4928DB826AB;
-        Sat, 11 Feb 2023 03:40:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0DF42C4339B;
-        Sat, 11 Feb 2023 03:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676086820;
-        bh=7ZWclToRlsx912+0GIfFf/Ov+J0+3loGpn7En6vWOXU=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=mnBKt0DVj7UTjLVp76fjhNz3weZnNpWCJnP5ZLGKhKbJn5Gnl44JxMBB3z5kK6bcB
-         gJkifeBhhsnIlfg3RfkoIgosFBcrUC/ylFDeEZbf5sKAf53oy7rMdpTtONTq4oQvOX
-         MZgDe/IuOdtacWEE6zTI29z2MLvMP9tqwE3Zez5oCTfU3pk+LbY98Fh++8wZx0/G1A
-         CU5y4vXTsCeiWLpBcvnIQda8gGrS+RiNsy+bof5qQplsUIuA9/NjRx3JfMmEhSw+9L
-         8UdYRMAFJr2fLTaL9jHe8X5RWBeJs8W1PIVxSGdGeAJtOinDM3GpzpfeoU02STdx3k
-         mKzsEEYD+75sg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E8D06E29F46;
-        Sat, 11 Feb 2023 03:40:19 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sun, 12 Feb 2023 01:52:07 -0500
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE7914234
+        for <kernel-janitors@vger.kernel.org>; Sat, 11 Feb 2023 22:52:05 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id R6DPpfF8cfKYFR6DPpGS8u; Sun, 12 Feb 2023 07:52:03 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 12 Feb 2023 07:52:03 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Mark Lee <Mark-MC.Lee@mediatek.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH net-next] net: ethernet: mtk_wed: No need to clear memory after a dma_alloc_coherent() call
+Date:   Sun, 12 Feb 2023 07:51:51 +0100
+Message-Id: <d5acce7dd108887832c9719f62c7201b4c83b3fb.1676184599.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: libwx: fix an error code in
- wx_alloc_page_pool()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167608681994.24732.14317703886025479892.git-patchwork-notify@kernel.org>
-Date:   Sat, 11 Feb 2023 03:40:19 +0000
-References: <Y+T4aoefc1XWvGYb@kili>
-In-Reply-To: <Y+T4aoefc1XWvGYb@kili>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     jiawenwu@trustnetic.com, mengyuanlou@net-swift.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+dma_alloc_coherent() already clears the allocated memory, there is no need
+to explicitly call memset().
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Moreover, it is likely that the size in the memset() is incorrect and
+should be "size * sizeof(*ring->desc)".
 
-On Thu, 9 Feb 2023 16:43:06 +0300 you wrote:
-> This function always returns success.  We need to preserve the error
-> code before setting rx_ring->page_pool = NULL.
-> 
-> Fixes: 850b971110b2 ("net: libwx: Allocate Rx and Tx resources")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Applies to net-next.
-> 
-> [...]
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/mediatek/mtk_wed.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Here is the summary with links:
-  - [net-next] net: libwx: fix an error code in wx_alloc_page_pool()
-    https://git.kernel.org/netdev/net-next/c/183514f7c569
-
-You are awesome, thank you!
+diff --git a/drivers/net/ethernet/mediatek/mtk_wed.c b/drivers/net/ethernet/mediatek/mtk_wed.c
+index 95ac4f71d2b2..95d890870984 100644
+--- a/drivers/net/ethernet/mediatek/mtk_wed.c
++++ b/drivers/net/ethernet/mediatek/mtk_wed.c
+@@ -787,7 +787,6 @@ mtk_wed_rro_ring_alloc(struct mtk_wed_device *dev, struct mtk_wed_ring *ring,
+ 
+ 	ring->desc_size = sizeof(*ring->desc);
+ 	ring->size = size;
+-	memset(ring->desc, 0, size);
+ 
+ 	return 0;
+ }
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
