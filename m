@@ -2,60 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5F6C636CC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 08:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F93C636D4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 10:05:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbjBMI5d (ORCPT
+        id S229884AbjBMKF2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Feb 2023 03:57:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58916 "EHLO
+        Mon, 13 Feb 2023 05:05:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbjBMI5c (ORCPT
+        with ESMTP id S229649AbjBMKF1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Feb 2023 03:57:32 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81EE613DEB;
-        Mon, 13 Feb 2023 00:57:02 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id m16-20020a05600c3b1000b003dc4050c94aso8397622wms.4;
-        Mon, 13 Feb 2023 00:57:02 -0800 (PST)
+        Mon, 13 Feb 2023 05:05:27 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E88186AE;
+        Mon, 13 Feb 2023 02:05:25 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id bu23so11513346wrb.8;
+        Mon, 13 Feb 2023 02:05:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A2v1+wAQIxuDwwfxKBOXSuMRM+HP0P5i3QqMWmALdpg=;
-        b=E7xg3B5eff3XtQGugwQOH4Lg08fyzJ6jm39iQ3rGjFHGXCUFDCHlRJaRLAPObm2rJN
-         GY3i0iY7i6rrDz5daOFJc2/8Vd7UdmTk9A4rY6UOKc13xVByDW70ll2m8d6A0v1XyOmB
-         wpM3wx6DKfW9W2Yr0l5YLv6mknvUJ5WX2ma358/n4tAlAAh09BXV9djARLTxN29ZBS+h
-         rRR1P8ZUxAG3Vj5/c/8gXOYQiUy06jA8quctDib4upMtmNGhzb6GzoJEjIRh0r50a9AD
-         dduQ+EfgPutdM7VAbGTJhJTb22+8U1gk+KfJ2vZaySI3UIMTyd3sk1xOA4iiuircIU0i
-         DFSw==
+        bh=WUa23RLrE0PDgwOjJmU3KO0GQPvKnhT5EyoVK7X5UhQ=;
+        b=NGbOY4Wq2iBE/J7VYQUnRvm4YdtkCIOTmYGDioEkZ0i9/nQMaxrQWOBFDd/rHyk8wp
+         xhluCXAjdkqsLKcDjaRhyhYSyV5NPGbX+OVJIZa8UHZYFXhfhcpV3hgH4sj+Zm6H+7Ct
+         +a4CmPIyiBy0ANAWqATFVLJHWJg5bsAgi8VQ8TPtsY86pcKnYN46lcFc+G7SLBVhgKdc
+         t7aEqadMnqUf2W/LAvzalL6dS9N2To/EUzwDk9xEBk43v8+jyPoKmOaBVuibx7EyG9Sm
+         gGyrWDlH5Zur5dROT0mqpMTohKCl0RVi1SVsn2hx89wCgckWHdgZn+ID/xXyID0el87j
+         eCtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A2v1+wAQIxuDwwfxKBOXSuMRM+HP0P5i3QqMWmALdpg=;
-        b=H6Ar/zFfkA3orbj5b8d8VX8rQ8DfhLRxwnAnnjLjw2QxXqLihTHX/bpqg0T6x68Zy3
-         RIH2WifWAT/W9rtGaHfstjJoaFxFCr93vYoXMimIJis4yY3SDRlePo2DBkcyNSD6yRvN
-         h5bt9VU8zupyNwhirEHTSvhStsgf2gPGiEenZanIPg8FM0thtEgBpRySMCQjq56l7mOV
-         MlqUhIfyBa8/+BkKH1TCF6fAmICjuutcHhYeCT6v7L6KwhDyVMLGzJxl8Ifpf4Grsj7F
-         uOaNlU8OEKb1ymXVxwXIA1ZkkR1sxtvfQ+yabtelo5BipJoZPgf5LDm0LilBr7ANh+ZD
-         4HgA==
-X-Gm-Message-State: AO0yUKUKCY8u9MbLBDcCi5nGuuzr31PzzQ2NF8AZm+ZevHoTnOyuucT1
-        KHBCWElTstIqBPXf0oNqritH3Vu+/XWa6g==
-X-Google-Smtp-Source: AK7set8U0uKqML9KE2p+Jse1vuLMJiY1RtQBjS2ARR+GJhqbCyI4NylHOGp73+YufJis9gr9tB5/8w==
-X-Received: by 2002:a05:600c:4b1d:b0:3de:3ee3:4f6f with SMTP id i29-20020a05600c4b1d00b003de3ee34f6fmr18753551wmp.8.1676278620730;
-        Mon, 13 Feb 2023 00:57:00 -0800 (PST)
+        bh=WUa23RLrE0PDgwOjJmU3KO0GQPvKnhT5EyoVK7X5UhQ=;
+        b=PO8vPvQ2KMvv+DsXLplKmFBkUEODPhUPkHw5/C/T4UEEkiMo0uRzm/0Aeq+4njbjtg
+         kdJJzNHDaxLux3wSFwi8CFwgsR/w1HDrlbdRhObr8hmhOLCGqV+l+FRVJfwFJPRexRIC
+         DzAK+RWMFdpzxSfywDACvROHgNkyCOF0NI3sjrbsCY7PKmB37Tg6q37U9ATM4k2YDvNA
+         cs4YAQR6DFiajL+KuC9FwA/tEegoGZ2wMlDQCqat9pu8WAp65rsn17LuajZt7SmPTIcN
+         lSUowQoW1mdZblVNHInOG0VduhkRe4BrgppLHxbBTOCAyid1MuuuxqMuGo/nzkDz+50K
+         6/DA==
+X-Gm-Message-State: AO0yUKXiwX4Njd1yn5LHpwsJWIGvItEhisJNnPvDPFTwoK2Zi9tHHpu+
+        yTTqByoF1TkEnnijJtO7ByA=
+X-Google-Smtp-Source: AK7set+OyHoZYHJJKwZnGuNO/t3bO4Y/XsFy7rfyeH+ibv4u55KiCMaSH5FtXn3Vn5144URAcuC+zw==
+X-Received: by 2002:adf:d0c5:0:b0:2c5:5237:3b21 with SMTP id z5-20020adfd0c5000000b002c552373b21mr4354202wrh.69.1676282724079;
+        Mon, 13 Feb 2023 02:05:24 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o7-20020a05600c4fc700b003db0ad636d1sm18005330wmq.28.2023.02.13.00.56.59
+        by smtp.gmail.com with ESMTPSA id s11-20020adfeccb000000b002bfcc9d9607sm10039611wro.68.2023.02.13.02.05.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Feb 2023 00:57:00 -0800 (PST)
+        Mon, 13 Feb 2023 02:05:23 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Oded Gabbay <ogabbay@kernel.org>, dri-devel@lists.freedesktop.org
+To:     Alain Volmat <alain.volmat@foss.st.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] habanalabs: Fix spelling mistake "offest" -> "offset"
-Date:   Mon, 13 Feb 2023 08:56:58 +0000
-Message-Id: <20230213085658.96918-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/sti: Fix spelling mistake "top_cmd_offest" -> "top_cmd_offset"
+Date:   Mon, 13 Feb 2023 10:05:22 +0000
+Message-Id: <20230213100522.106595-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +67,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_err message. Fix it.
+There is a spelling mistake in a variable name. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/accel/habanalabs/common/command_submission.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/sti/sti_hqvdp.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/accel/habanalabs/common/command_submission.c b/drivers/accel/habanalabs/common/command_submission.c
-index 6c4d9b1aa5de..74ccafeb38dc 100644
---- a/drivers/accel/habanalabs/common/command_submission.c
-+++ b/drivers/accel/habanalabs/common/command_submission.c
-@@ -3199,7 +3199,7 @@ static int ts_buff_get_kernel_ts_record(struct hl_mmap_mem_buf *buf,
- 			usleep_range(100, 1000);
- 			if (++iter_counter == MAX_TS_ITER_NUM) {
- 				dev_err(buf->mmg->dev,
--					"Timestamp offest processing reached timeout of %lld ms\n",
-+					"Timestamp offset processing reached timeout of %lld ms\n",
- 					ktime_ms_delta(ktime_get(), timestamp));
- 				return -EAGAIN;
- 			}
+diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
+index 02b77279f6e4..711a6e333afc 100644
+--- a/drivers/gpu/drm/sti/sti_hqvdp.c
++++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+@@ -797,7 +797,7 @@ static void sti_hqvdp_disable(struct sti_hqvdp *hqvdp)
+ static int sti_hqvdp_vtg_cb(struct notifier_block *nb, unsigned long evt, void *data)
+ {
+ 	struct sti_hqvdp *hqvdp = container_of(nb, struct sti_hqvdp, vtg_nb);
+-	int btm_cmd_offset, top_cmd_offest;
++	int btm_cmd_offset, top_cmd_offset;
+ 	struct sti_hqvdp_cmd *btm_cmd, *top_cmd;
+ 
+ 	if ((evt != VTG_TOP_FIELD_EVENT) && (evt != VTG_BOTTOM_FIELD_EVENT)) {
+@@ -816,14 +816,14 @@ static int sti_hqvdp_vtg_cb(struct notifier_block *nb, unsigned long evt, void *
+ 	if (hqvdp->btm_field_pending) {
+ 		/* Create the btm field command from the current one */
+ 		btm_cmd_offset = sti_hqvdp_get_free_cmd(hqvdp);
+-		top_cmd_offest = sti_hqvdp_get_curr_cmd(hqvdp);
+-		if ((btm_cmd_offset == -1) || (top_cmd_offest == -1)) {
++		top_cmd_offset = sti_hqvdp_get_curr_cmd(hqvdp);
++		if ((btm_cmd_offset == -1) || (top_cmd_offset == -1)) {
+ 			DRM_DEBUG_DRIVER("Warning: no cmd, will skip field\n");
+ 			return -EBUSY;
+ 		}
+ 
+ 		btm_cmd = hqvdp->hqvdp_cmd + btm_cmd_offset;
+-		top_cmd = hqvdp->hqvdp_cmd + top_cmd_offest;
++		top_cmd = hqvdp->hqvdp_cmd + top_cmd_offset;
+ 
+ 		memcpy(btm_cmd, top_cmd, sizeof(*btm_cmd));
+ 
 -- 
 2.30.2
 
