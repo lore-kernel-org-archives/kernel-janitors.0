@@ -2,70 +2,123 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A975C636D4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 17:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80847C636D4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 18:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229892AbjBMRYV (ORCPT
+        id S230121AbjBMSHa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Feb 2023 12:24:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
+        Mon, 13 Feb 2023 13:07:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229736AbjBMRYU (ORCPT
+        with ESMTP id S230131AbjBMSH1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Feb 2023 12:24:20 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69837E048;
-        Mon, 13 Feb 2023 09:24:19 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 041C7611DE;
-        Mon, 13 Feb 2023 17:24:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A3BC433D2;
-        Mon, 13 Feb 2023 17:24:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676309058;
-        bh=QBTjZ1GXTW8BThNCOkaRE7H2SIlQ/kEbAqp3JYbdLP0=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=Xv3KYgxBT0fPT/STveV+ySFw3qlAHQpEau2WDXALuisowuL+iKvLfdHrO6FH4H9b8
-         DbDiM9I1dcQcDhkHHooFEzUYXleJNE7neVPBqBZo7MdUgO5wkfeHvH75etURAVn7mk
-         Opl017av6w9aLw8RNxZHeC24y9zQ1Rk8qxDMhON8Gp1/UK+XokemdLEfixR7JdjNU+
-         aVoCRUBfbmkNYewgaKHTbckjbKCqHRtShygc8LWFqPWoS1sWoaHY1hbnw/SvmiXdq8
-         8P4AFetneMY3AV9ut/If92FKOQW6H5LWE/SK+7nHOknZUE377GfSJBXXQQ8cA3fg+J
-         PNpXmn/0l6/AQ==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 13 Feb 2023 13:07:27 -0500
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C112C647;
+        Mon, 13 Feb 2023 10:06:59 -0800 (PST)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DF4ojM001249;
+        Mon, 13 Feb 2023 19:06:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=selector1; bh=lFvVE6a0bpKOP2vnegCzoLsc/2F0/jk1UuFDh9YzM0A=;
+ b=h35cN+Sfa0RNuzqkx8c5jV4c3wZ0q6sUuR/SEKsyKrl8D9H7f7XebHDxVhPDxrthUFbI
+ rjFN1EQ+Wv+9VuwfDToLWRcdQA+BNzzhW7WUZIwGlIIUPEp32jQVkyucU0qwraZZQAq1
+ pkyBoFtkDyHTrUHgNXHG60MBMBtWu1i9gkm9kofV+eDr9L+eL3NU6wYi7B8l7EeZRs8h
+ 0oknRDp5bykgxJcJeRPcrB9eOAGRmt6OE4Y9aXj+TkEUVciLxKpmi7XBoPqOfR+XebxZ
+ 7kiFG5UB1n6PMmW0ArfnLZpnbRKVx1HwkNF0cJFidm7QcSg4C9Jb8MyN/Wa9DlUxBAqq vA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3np2spvj78-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Feb 2023 19:06:17 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B971010002A;
+        Mon, 13 Feb 2023 19:06:15 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A5AE62309C0;
+        Mon, 13 Feb 2023 19:06:15 +0100 (CET)
+Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Mon, 13 Feb
+ 2023 19:06:15 +0100
+Date:   Mon, 13 Feb 2023 19:06:08 +0100
+From:   Alain Volmat <alain.volmat@foss.st.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+CC:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] drm/sti: Fix spelling mistake "top_cmd_offest" ->
+ "top_cmd_offset"
+Message-ID: <20230213180608.GA1925841@gnbcxd0016.gnb.st.com>
+Mail-Followup-To: Colin Ian King <colin.i.king@gmail.com>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230213100522.106595-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2] wifi: rsi: Avoid defines prefixed with CONFIG
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20230118185353.2422-1-peter@n8pjl.ca>
-References: <20230118185353.2422-1-peter@n8pjl.ca>
-To:     Peter Lafreniere <peter@n8pjl.ca>
-Cc:     linux-wireless@vger.kernel.org, Peter Lafreniere <peter@n8pjl.ca>,
-        kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <167630905571.12830.2660289695202957081.kvalo@kernel.org>
-Date:   Mon, 13 Feb 2023 17:24:17 +0000 (UTC)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230213100522.106595-1-colin.i.king@gmail.com>
+X-Disclaimer: ce message est personnel / this message is private
+X-Originating-IP: [10.129.178.213]
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-13_11,2023-02-13_01,2023-02-09_01
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Peter Lafreniere <peter@n8pjl.ca> wrote:
+Hi,
 
-> Macros prefixed with CONFIG_ are intended to be defined only by
-> Kconfig scripts. Here we remove the prefix from the
-> CONFIG_AUTO_READ_MODE define to avoid confusion when reading the code.
+thanks for the patch.
+
+
+On Mon, Feb 13, 2023 at 10:05:22AM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a variable name. Fix it.
 > 
-> This causes no change to functionality.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/sti/sti_hqvdp.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> Signed-off-by: Peter Lafreniere <peter@n8pjl.ca>
+> diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
+> index 02b77279f6e4..711a6e333afc 100644
+> --- a/drivers/gpu/drm/sti/sti_hqvdp.c
+> +++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+> @@ -797,7 +797,7 @@ static void sti_hqvdp_disable(struct sti_hqvdp *hqvdp)
+>  static int sti_hqvdp_vtg_cb(struct notifier_block *nb, unsigned long evt, void *data)
+>  {
+>  	struct sti_hqvdp *hqvdp = container_of(nb, struct sti_hqvdp, vtg_nb);
+> -	int btm_cmd_offset, top_cmd_offest;
+> +	int btm_cmd_offset, top_cmd_offset;
+>  	struct sti_hqvdp_cmd *btm_cmd, *top_cmd;
+>  
+>  	if ((evt != VTG_TOP_FIELD_EVENT) && (evt != VTG_BOTTOM_FIELD_EVENT)) {
+> @@ -816,14 +816,14 @@ static int sti_hqvdp_vtg_cb(struct notifier_block *nb, unsigned long evt, void *
+>  	if (hqvdp->btm_field_pending) {
+>  		/* Create the btm field command from the current one */
+>  		btm_cmd_offset = sti_hqvdp_get_free_cmd(hqvdp);
+> -		top_cmd_offest = sti_hqvdp_get_curr_cmd(hqvdp);
+> -		if ((btm_cmd_offset == -1) || (top_cmd_offest == -1)) {
+> +		top_cmd_offset = sti_hqvdp_get_curr_cmd(hqvdp);
+> +		if ((btm_cmd_offset == -1) || (top_cmd_offset == -1)) {
+>  			DRM_DEBUG_DRIVER("Warning: no cmd, will skip field\n");
+>  			return -EBUSY;
+>  		}
+>  
+>  		btm_cmd = hqvdp->hqvdp_cmd + btm_cmd_offset;
+> -		top_cmd = hqvdp->hqvdp_cmd + top_cmd_offest;
+> +		top_cmd = hqvdp->hqvdp_cmd + top_cmd_offset;
+>  
+>  		memcpy(btm_cmd, top_cmd, sizeof(*btm_cmd));
+>  
+> -- 
 
-Patch applied to wireless-next.git, thanks.
+Acked-by: Alain Volmat <alain.volmat@foss.st.com>
 
-c6e3dc99fd32 wifi: rsi: Avoid defines prefixed with CONFIG
+Alain
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20230118185353.2422-1-peter@n8pjl.ca/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+> 2.30.2
+> 
