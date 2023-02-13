@@ -2,123 +2,115 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80847C636D4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 18:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7255FC636D4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 20:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbjBMSHa (ORCPT
+        id S230527AbjBMUnd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Feb 2023 13:07:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53180 "EHLO
+        Mon, 13 Feb 2023 15:43:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230131AbjBMSH1 (ORCPT
+        with ESMTP id S230315AbjBMUnb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Feb 2023 13:07:27 -0500
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C112C647;
-        Mon, 13 Feb 2023 10:06:59 -0800 (PST)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DF4ojM001249;
-        Mon, 13 Feb 2023 19:06:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=selector1; bh=lFvVE6a0bpKOP2vnegCzoLsc/2F0/jk1UuFDh9YzM0A=;
- b=h35cN+Sfa0RNuzqkx8c5jV4c3wZ0q6sUuR/SEKsyKrl8D9H7f7XebHDxVhPDxrthUFbI
- rjFN1EQ+Wv+9VuwfDToLWRcdQA+BNzzhW7WUZIwGlIIUPEp32jQVkyucU0qwraZZQAq1
- pkyBoFtkDyHTrUHgNXHG60MBMBtWu1i9gkm9kofV+eDr9L+eL3NU6wYi7B8l7EeZRs8h
- 0oknRDp5bykgxJcJeRPcrB9eOAGRmt6OE4Y9aXj+TkEUVciLxKpmi7XBoPqOfR+XebxZ
- 7kiFG5UB1n6PMmW0ArfnLZpnbRKVx1HwkNF0cJFidm7QcSg4C9Jb8MyN/Wa9DlUxBAqq vA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3np2spvj78-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Feb 2023 19:06:17 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B971010002A;
-        Mon, 13 Feb 2023 19:06:15 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A5AE62309C0;
-        Mon, 13 Feb 2023 19:06:15 +0100 (CET)
-Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Mon, 13 Feb
- 2023 19:06:15 +0100
-Date:   Mon, 13 Feb 2023 19:06:08 +0100
-From:   Alain Volmat <alain.volmat@foss.st.com>
+        Mon, 13 Feb 2023 15:43:31 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B13FB11678;
+        Mon, 13 Feb 2023 12:43:23 -0800 (PST)
+Received: from mercury (unknown [185.209.196.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6DE406602158;
+        Mon, 13 Feb 2023 20:43:22 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1676321002;
+        bh=fDlbvUHgZ2o7uES7FSGsaM7fflx5SBe/1baNqJbzXLg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mA34D1hLFpx3gKU0fsx3h7xQhpfOVWc4/JrsprdZonVfMECcKWb2/tiL0ZmhLLvkf
+         ++OGhwNziqWB+KcrUji7lWphTuPQFLzDUK4gFC1a2TJBA3alKhmPt+3o1B/GDXwJWe
+         xnpNIujksVk+mseiSp0q8S048eUnpvGypJ8EZA6Zpc3gIHo+lL45chbRaTJzzEgDqA
+         teSiVH/8tALURYMEaq8+vvHhvr7oAe52k0YSRZ1lkJ6Bp5RBY8VjkL/ZuySPBtP0Is
+         HzBxokxF45gUbfZL4WLGJBBVktBCBgB3oegt7/TIgybs/8eHgw/N35A+hUg3kpkY65
+         BGPsiRUJVvsng==
+Received: by mercury (Postfix, from userid 1000)
+        id 4FA721060961; Mon, 13 Feb 2023 21:43:20 +0100 (CET)
+Date:   Mon, 13 Feb 2023 21:43:20 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Colin Ian King <colin.i.king@gmail.com>
-CC:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] drm/sti: Fix spelling mistake "top_cmd_offest" ->
- "top_cmd_offset"
-Message-ID: <20230213180608.GA1925841@gnbcxd0016.gnb.st.com>
-Mail-Followup-To: Colin Ian King <colin.i.king@gmail.com>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230213100522.106595-1-colin.i.king@gmail.com>
+Cc:     ChiaEn Wu <chiaen_wu@richtek.com>, linux-pm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] power: supply: rt9467: Fix spelling mistake
+ "attache" -> "attach"
+Message-ID: <20230213204320.3izngcqy4gpnn4oa@mercury.elektranox.org>
+References: <20230206091742.45977-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ocofjycqlrsrefpq"
 Content-Disposition: inline
-In-Reply-To: <20230213100522.106595-1-colin.i.king@gmail.com>
-X-Disclaimer: ce message est personnel / this message is private
-X-Originating-IP: [10.129.178.213]
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
- definitions=2023-02-13_11,2023-02-13_01,2023-02-09_01
+In-Reply-To: <20230206091742.45977-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+
+--ocofjycqlrsrefpq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
 Hi,
 
-thanks for the patch.
-
-
-On Mon, Feb 13, 2023 at 10:05:22AM +0000, Colin Ian King wrote:
-> There is a spelling mistake in a variable name. Fix it.
-> 
+On Mon, Feb 06, 2023 at 09:17:42AM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
+>=20
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/gpu/drm/sti/sti_hqvdp.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
-> index 02b77279f6e4..711a6e333afc 100644
-> --- a/drivers/gpu/drm/sti/sti_hqvdp.c
-> +++ b/drivers/gpu/drm/sti/sti_hqvdp.c
-> @@ -797,7 +797,7 @@ static void sti_hqvdp_disable(struct sti_hqvdp *hqvdp)
->  static int sti_hqvdp_vtg_cb(struct notifier_block *nb, unsigned long evt, void *data)
->  {
->  	struct sti_hqvdp *hqvdp = container_of(nb, struct sti_hqvdp, vtg_nb);
-> -	int btm_cmd_offset, top_cmd_offest;
-> +	int btm_cmd_offset, top_cmd_offset;
->  	struct sti_hqvdp_cmd *btm_cmd, *top_cmd;
->  
->  	if ((evt != VTG_TOP_FIELD_EVENT) && (evt != VTG_BOTTOM_FIELD_EVENT)) {
-> @@ -816,14 +816,14 @@ static int sti_hqvdp_vtg_cb(struct notifier_block *nb, unsigned long evt, void *
->  	if (hqvdp->btm_field_pending) {
->  		/* Create the btm field command from the current one */
->  		btm_cmd_offset = sti_hqvdp_get_free_cmd(hqvdp);
-> -		top_cmd_offest = sti_hqvdp_get_curr_cmd(hqvdp);
-> -		if ((btm_cmd_offset == -1) || (top_cmd_offest == -1)) {
-> +		top_cmd_offset = sti_hqvdp_get_curr_cmd(hqvdp);
-> +		if ((btm_cmd_offset == -1) || (top_cmd_offset == -1)) {
->  			DRM_DEBUG_DRIVER("Warning: no cmd, will skip field\n");
->  			return -EBUSY;
->  		}
->  
->  		btm_cmd = hqvdp->hqvdp_cmd + btm_cmd_offset;
-> -		top_cmd = hqvdp->hqvdp_cmd + top_cmd_offest;
-> +		top_cmd = hqvdp->hqvdp_cmd + top_cmd_offset;
->  
->  		memcpy(btm_cmd, top_cmd, sizeof(*btm_cmd));
->  
-> -- 
 
-Acked-by: Alain Volmat <alain.volmat@foss.st.com>
+Thanks, queued.
 
-Alain
+-- Sebastian
 
+>  drivers/power/supply/rt9467-charger.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply=
+/rt9467-charger.c
+> index 96ad0d7d3af4..73f744a3155d 100644
+> --- a/drivers/power/supply/rt9467-charger.c
+> +++ b/drivers/power/supply/rt9467-charger.c
+> @@ -970,7 +970,7 @@ static irqreturn_t rt9467_usb_state_handler(int irq, =
+void *priv)
+> =20
+>  	ret =3D rt9467_report_usb_state(data);
+>  	if (ret) {
+> -		dev_err(data->dev, "Failed to report attache type (%d)\n", ret);
+> +		dev_err(data->dev, "Failed to report attach type (%d)\n", ret);
+>  		return IRQ_NONE;
+>  	}
+> =20
+> --=20
 > 2.30.2
-> 
+>=20
+
+--ocofjycqlrsrefpq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmPqoOcACgkQ2O7X88g7
++pq4jA/+NQHkObTrWjMPEHdEpsIdt1ZFwpRlDTYP+uHSbobnSFQERLCW/mSpY7HF
+z1Pv2gZJ6jo5R6dDCjL6kJ+txtNb8LxBAt3IItAYkkgkbt5bC7d9ep822g3SGMQj
+LRmIs3KW/pCXaHLtxnX+8Gp74PCKysflQX3Xh6IZ0DeaeAmqyNzkjzBFZexXY+0e
+0ZfAvU2eLGg7VZHcmh3NAGwNeNR1q5VtBOO5OzH1IbbIrH41dLJFYHawqDOWb7KY
+ASNeKZQxR/c/a2B+8DXPf+akBMpXtWBBF8wi+rBCRmzvQU0UaBgPfxTl46/wqio3
+qV0oOkpC4gYWu6wQcwlSnWVcP0T672qrXtHSIdpftK4ts11GaegZGzNxB9a7Y7W3
+NS6zxBFYhgGumjYl3ineHt2aZ3/tS48igK3j7kUKZzquFyLhA+G5Oeuem3XwHqWH
+ZQm/RGyge8QbkY17G/UL/4+NbaBpSlVP7JCGbrEVINAVsH9k1WVxosIgAHdgB71X
+MOvC+1Jh2Sr3br+077qRsp2a9PQnZFJN9YuTAflMeeyBqQIJgPnCVypn0WAMVTwR
+bAPIyUQzCuSrMGQCbg8ITfDNut98RZpBqC/4gT/4dEckkAqIyblUqoIr0iJiqSU2
+SHl8LnzC50h3IQfJDzNwF0nFEBlQ5UKIzayDn0uTtTq6wiGA6iw=
+=SZKJ
+-----END PGP SIGNATURE-----
+
+--ocofjycqlrsrefpq--
