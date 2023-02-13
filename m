@@ -2,76 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B214C05027
-	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Feb 2023 06:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 046FEC05027
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 02:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229514AbjBLGwI (ORCPT
+        id S229744AbjBMCey (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 12 Feb 2023 01:52:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36670 "EHLO
+        Sun, 12 Feb 2023 21:34:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjBLGwH (ORCPT
+        with ESMTP id S229503AbjBMCew (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 12 Feb 2023 01:52:07 -0500
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE7914234
-        for <kernel-janitors@vger.kernel.org>; Sat, 11 Feb 2023 22:52:05 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id R6DPpfF8cfKYFR6DPpGS8u; Sun, 12 Feb 2023 07:52:03 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 12 Feb 2023 07:52:03 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Mark Lee <Mark-MC.Lee@mediatek.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH net-next] net: ethernet: mtk_wed: No need to clear memory after a dma_alloc_coherent() call
-Date:   Sun, 12 Feb 2023 07:51:51 +0100
-Message-Id: <d5acce7dd108887832c9719f62c7201b4c83b3fb.1676184599.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 12 Feb 2023 21:34:52 -0500
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C74AFF31;
+        Sun, 12 Feb 2023 18:34:41 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id BFD753200392;
+        Sun, 12 Feb 2023 21:34:37 -0500 (EST)
+Received: from imap50 ([10.202.2.100])
+  by compute6.internal (MEProxy); Sun, 12 Feb 2023 21:34:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1676255677; x=1676342077; bh=ChGoJ4GRCi
+        EK4ihxYoeB/GRDzwmtaTjjQbAlTxLyMhs=; b=oF1g34aexBhv1b0WCitgWhRbtk
+        NCMOw36Qm8VxejAWjXg8mENjK4fPB+Wi5mGlPyUqA8n1KfOMcqib4EQ52m0O/w+W
+        Z8Vq6f++2q3DTcAAD6Cqm5+nSI8SvxQSDh6iP3kW2OAYU5WDY6xGmComlYbv9r03
+        qeiFUaq6aBSKTxNY4SyeN3Q8l2EwrVPWEKZFpepMvNmNmS7eW0/G6sp+zD/4Nbhs
+        coTP/v6wzZDQHQXzlzXmh1PXQyyHimGVS4fLRIMBa8o9n35Or4pTngAbko9viffB
+        +qxuowobGPIfsE0JBPVW7U5Lxpn9RDtBUfvB9m5xycncxHihBHsUjngbNePg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1676255677; x=1676342077; bh=ChGoJ4GRCiEK4ihxYoeB/GRDzwmt
+        aTjjQbAlTxLyMhs=; b=TZ7zSkNmZIPVKuqOEREJDO25NX1M57HSynFHTHcY2eJN
+        8O9qp3DvdYBqsKC3duklBcaalUy+XKPrF0QoHIpGLnCIllkvwcd1PdPHvOIx7uqF
+        ebtMjXAdlMHFBmyi7J8x0MOyDjaNmpqjuXKRyCPZG9lQXb6E0X2WRyxvrg6LwhqL
+        vxKr51+OvoPbg5VndzdV2qyXB2qFR4DNKyuWwmVOdBOE5D9FUFOjMgRa/mqfo4iF
+        vt3QiTTASSV6KvbgrPB/NDQE9Xg92lsqE78fJ1pwIgIv/Cgcb+EGWGIRdekbUxwA
+        Gqn82TxQJHI4BFa2VH7eVvGETB5fQ8ZmCU7bx/Puzg==
+X-ME-Sender: <xms:u6HpY43gaZ4s5BeMAwII7PGu4sLFE7zP7PadlzutH9GiiXxg_bh-7Q>
+    <xme:u6HpYzFmxSK2wvh67PzoW1SaQgnoicsFammhAFzrmgcoOSd7gDUE-6sz5zVC1BR4s
+    -bB_aUfklbE9yKTiQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudeitddggeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehn
+    ughrvgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucggtf
+    frrghtthgvrhhnpeekvdekjeekgfejudffteetgeejkeetteduvedtffdtledutdfhheev
+    feetkeeiteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpegrnhgurhgvfiesrghjrdhiugdrrghu
+X-ME-Proxy: <xmx:vKHpYw7haNK5jYaU3a47ZK3-NefD15ad2Jv6CTN7AL-ol1tuhIV63Q>
+    <xmx:vKHpYx3TpbLQRk_qu4ig22VlFo6_B-cio63wXeLEnXwERscDcMJzeQ>
+    <xmx:vKHpY7G1Rg1CqP_-bA_0z8Q1MdTAxZ_MZ9TqJ04asWrruSU_Xbs__A>
+    <xmx:vaHpYw6D9Fc4ocU2_GzTIh2DODwqhNUb8HaltiOA11iGFPZrTqYzIA>
+Feedback-ID: idfb84289:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id E9C621700089; Sun, 12 Feb 2023 21:34:35 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-156-g081acc5ed5-fm-20230206.001-g081acc5e
+Mime-Version: 1.0
+Message-Id: <d7cbb0e8-20cd-4413-b89d-f7a3bb259c15@app.fastmail.com>
+In-Reply-To: <20230203083721.23455-1-yuzhe@nfschina.com>
+References: <20230203083721.23455-1-yuzhe@nfschina.com>
+Date:   Mon, 13 Feb 2023 13:04:15 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Yu Zhe" <yuzhe@nfschina.com>, "Jeremy Kerr" <jk@ozlabs.org>,
+        "Joel Stanley" <joel@jms.id.au>,
+        "Alistair Popple" <alistair@popple.id.au>,
+        "Eddie James" <eajames@linux.ibm.com>
+Cc:     liqiong@nfschina.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org
+Subject: Re: [PATCH] fsi: fix some spelling mistakes in comment
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-dma_alloc_coherent() already clears the allocated memory, there is no need
-to explicitly call memset().
 
-Moreover, it is likely that the size in the memset() is incorrect and
-should be "size * sizeof(*ring->desc)".
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/mediatek/mtk_wed.c | 1 -
- 1 file changed, 1 deletion(-)
+On Fri, 3 Feb 2023, at 19:07, Yu Zhe wrote:
+> Fix typos in comment.
+>
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_wed.c b/drivers/net/ethernet/mediatek/mtk_wed.c
-index 95ac4f71d2b2..95d890870984 100644
---- a/drivers/net/ethernet/mediatek/mtk_wed.c
-+++ b/drivers/net/ethernet/mediatek/mtk_wed.c
-@@ -787,7 +787,6 @@ mtk_wed_rro_ring_alloc(struct mtk_wed_device *dev, struct mtk_wed_ring *ring,
- 
- 	ring->desc_size = sizeof(*ring->desc);
- 	ring->size = size;
--	memset(ring->desc, 0, size);
- 
- 	return 0;
- }
--- 
-2.34.1
-
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
