@@ -2,109 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F93C636D4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 10:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 349C4C636D4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 16:54:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbjBMKF2 (ORCPT
+        id S229805AbjBMQyn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Feb 2023 05:05:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40452 "EHLO
+        Mon, 13 Feb 2023 11:54:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjBMKF1 (ORCPT
+        with ESMTP id S229543AbjBMQyl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Feb 2023 05:05:27 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E88186AE;
-        Mon, 13 Feb 2023 02:05:25 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id bu23so11513346wrb.8;
-        Mon, 13 Feb 2023 02:05:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WUa23RLrE0PDgwOjJmU3KO0GQPvKnhT5EyoVK7X5UhQ=;
-        b=NGbOY4Wq2iBE/J7VYQUnRvm4YdtkCIOTmYGDioEkZ0i9/nQMaxrQWOBFDd/rHyk8wp
-         xhluCXAjdkqsLKcDjaRhyhYSyV5NPGbX+OVJIZa8UHZYFXhfhcpV3hgH4sj+Zm6H+7Ct
-         +a4CmPIyiBy0ANAWqATFVLJHWJg5bsAgi8VQ8TPtsY86pcKnYN46lcFc+G7SLBVhgKdc
-         t7aEqadMnqUf2W/LAvzalL6dS9N2To/EUzwDk9xEBk43v8+jyPoKmOaBVuibx7EyG9Sm
-         gGyrWDlH5Zur5dROT0mqpMTohKCl0RVi1SVsn2hx89wCgckWHdgZn+ID/xXyID0el87j
-         eCtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WUa23RLrE0PDgwOjJmU3KO0GQPvKnhT5EyoVK7X5UhQ=;
-        b=PO8vPvQ2KMvv+DsXLplKmFBkUEODPhUPkHw5/C/T4UEEkiMo0uRzm/0Aeq+4njbjtg
-         kdJJzNHDaxLux3wSFwi8CFwgsR/w1HDrlbdRhObr8hmhOLCGqV+l+FRVJfwFJPRexRIC
-         DzAK+RWMFdpzxSfywDACvROHgNkyCOF0NI3sjrbsCY7PKmB37Tg6q37U9ATM4k2YDvNA
-         cs4YAQR6DFiajL+KuC9FwA/tEegoGZ2wMlDQCqat9pu8WAp65rsn17LuajZt7SmPTIcN
-         lSUowQoW1mdZblVNHInOG0VduhkRe4BrgppLHxbBTOCAyid1MuuuxqMuGo/nzkDz+50K
-         6/DA==
-X-Gm-Message-State: AO0yUKXiwX4Njd1yn5LHpwsJWIGvItEhisJNnPvDPFTwoK2Zi9tHHpu+
-        yTTqByoF1TkEnnijJtO7ByA=
-X-Google-Smtp-Source: AK7set+OyHoZYHJJKwZnGuNO/t3bO4Y/XsFy7rfyeH+ibv4u55KiCMaSH5FtXn3Vn5144URAcuC+zw==
-X-Received: by 2002:adf:d0c5:0:b0:2c5:5237:3b21 with SMTP id z5-20020adfd0c5000000b002c552373b21mr4354202wrh.69.1676282724079;
-        Mon, 13 Feb 2023 02:05:24 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id s11-20020adfeccb000000b002bfcc9d9607sm10039611wro.68.2023.02.13.02.05.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Feb 2023 02:05:23 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alain Volmat <alain.volmat@foss.st.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/sti: Fix spelling mistake "top_cmd_offest" -> "top_cmd_offset"
-Date:   Mon, 13 Feb 2023 10:05:22 +0000
-Message-Id: <20230213100522.106595-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
+        Mon, 13 Feb 2023 11:54:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2679DB75A;
+        Mon, 13 Feb 2023 08:54:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D3DD4B81619;
+        Mon, 13 Feb 2023 16:54:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA99CC433EF;
+        Mon, 13 Feb 2023 16:54:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676307249;
+        bh=ApUzQnIOnlCLAzVUy9JXCaqzI4pYzY1LlIGz+iu5T+M=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=lpQXsl7h+RRRYBVFZ1ASnY966cP0lGSDW1J4UxFHhn99K4AjZsfsTQSQjT7NYnHAi
+         XzUn2P422lu+YVJPkFWpFX8wnLILd85JxBXqb1gOYnIn0twdWl0j2nCD67RUcVKJ7V
+         qGRoahKqkwJ43cECiybv8Xxkc4/PhDlJPoQkEekvssSi+L0ecIpGi2oLoHCf0vuURT
+         5kTnDlLE3je2OOXj04oh71kak78oguKtVObXcflYI0tEf3dCj1T9wH5nA27sZ6JKQC
+         67MBYZiBpCby9XOrrNVKZ7GUktej2ibmzQ+HhdHhFQKh59qjtIdOVVOkOUbLjAuavv
+         xI3wlEJbxLhjw==
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: mwifiex: fix loop iterator in
+ mwifiex_update_ampdu_txwinsize()
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <Y+ERnaDaZD7RtLvX@kili>
+References: <Y+ERnaDaZD7RtLvX@kili>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Ganapathi Bhat <ganapathi017@gmail.com>,
+        Sharvari Harisangam <sharvari.harisangam@nxp.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Chunfan Chen <jeffc@marvell.com>, Cathy Luo <cluo@marvell.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <167630724602.12830.10531062958911653339.kvalo@kernel.org>
+Date:   Mon, 13 Feb 2023 16:54:07 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a variable name. Fix it.
+Dan Carpenter <error27@gmail.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/sti/sti_hqvdp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> This code re-uses "i" to be the iterator for both the inside and outside
+> loops.  It means the outside loop will exit earlier than intended.
+> 
+> Fixes: d219b7eb3792 ("mwifiex: handle BT coex event to adjust Rx BA window size")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
-index 02b77279f6e4..711a6e333afc 100644
---- a/drivers/gpu/drm/sti/sti_hqvdp.c
-+++ b/drivers/gpu/drm/sti/sti_hqvdp.c
-@@ -797,7 +797,7 @@ static void sti_hqvdp_disable(struct sti_hqvdp *hqvdp)
- static int sti_hqvdp_vtg_cb(struct notifier_block *nb, unsigned long evt, void *data)
- {
- 	struct sti_hqvdp *hqvdp = container_of(nb, struct sti_hqvdp, vtg_nb);
--	int btm_cmd_offset, top_cmd_offest;
-+	int btm_cmd_offset, top_cmd_offset;
- 	struct sti_hqvdp_cmd *btm_cmd, *top_cmd;
- 
- 	if ((evt != VTG_TOP_FIELD_EVENT) && (evt != VTG_BOTTOM_FIELD_EVENT)) {
-@@ -816,14 +816,14 @@ static int sti_hqvdp_vtg_cb(struct notifier_block *nb, unsigned long evt, void *
- 	if (hqvdp->btm_field_pending) {
- 		/* Create the btm field command from the current one */
- 		btm_cmd_offset = sti_hqvdp_get_free_cmd(hqvdp);
--		top_cmd_offest = sti_hqvdp_get_curr_cmd(hqvdp);
--		if ((btm_cmd_offset == -1) || (top_cmd_offest == -1)) {
-+		top_cmd_offset = sti_hqvdp_get_curr_cmd(hqvdp);
-+		if ((btm_cmd_offset == -1) || (top_cmd_offset == -1)) {
- 			DRM_DEBUG_DRIVER("Warning: no cmd, will skip field\n");
- 			return -EBUSY;
- 		}
- 
- 		btm_cmd = hqvdp->hqvdp_cmd + btm_cmd_offset;
--		top_cmd = hqvdp->hqvdp_cmd + top_cmd_offest;
-+		top_cmd = hqvdp->hqvdp_cmd + top_cmd_offset;
- 
- 		memcpy(btm_cmd, top_cmd, sizeof(*btm_cmd));
- 
+Patch applied to wireless-next.git, thanks.
+
+3cfb7df24cee wifi: mwifiex: fix loop iterator in mwifiex_update_ampdu_txwinsize()
+
 -- 
-2.30.2
+https://patchwork.kernel.org/project/linux-wireless/patch/Y+ERnaDaZD7RtLvX@kili/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
