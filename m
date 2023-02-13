@@ -2,90 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 046FEC05027
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 02:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5F6C636CC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Feb 2023 08:57:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjBMCey (ORCPT
+        id S229804AbjBMI5d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 12 Feb 2023 21:34:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48676 "EHLO
+        Mon, 13 Feb 2023 03:57:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjBMCew (ORCPT
+        with ESMTP id S229598AbjBMI5c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 12 Feb 2023 21:34:52 -0500
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C74AFF31;
-        Sun, 12 Feb 2023 18:34:41 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.west.internal (Postfix) with ESMTP id BFD753200392;
-        Sun, 12 Feb 2023 21:34:37 -0500 (EST)
-Received: from imap50 ([10.202.2.100])
-  by compute6.internal (MEProxy); Sun, 12 Feb 2023 21:34:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1676255677; x=1676342077; bh=ChGoJ4GRCi
-        EK4ihxYoeB/GRDzwmtaTjjQbAlTxLyMhs=; b=oF1g34aexBhv1b0WCitgWhRbtk
-        NCMOw36Qm8VxejAWjXg8mENjK4fPB+Wi5mGlPyUqA8n1KfOMcqib4EQ52m0O/w+W
-        Z8Vq6f++2q3DTcAAD6Cqm5+nSI8SvxQSDh6iP3kW2OAYU5WDY6xGmComlYbv9r03
-        qeiFUaq6aBSKTxNY4SyeN3Q8l2EwrVPWEKZFpepMvNmNmS7eW0/G6sp+zD/4Nbhs
-        coTP/v6wzZDQHQXzlzXmh1PXQyyHimGVS4fLRIMBa8o9n35Or4pTngAbko9viffB
-        +qxuowobGPIfsE0JBPVW7U5Lxpn9RDtBUfvB9m5xycncxHihBHsUjngbNePg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1676255677; x=1676342077; bh=ChGoJ4GRCiEK4ihxYoeB/GRDzwmt
-        aTjjQbAlTxLyMhs=; b=TZ7zSkNmZIPVKuqOEREJDO25NX1M57HSynFHTHcY2eJN
-        8O9qp3DvdYBqsKC3duklBcaalUy+XKPrF0QoHIpGLnCIllkvwcd1PdPHvOIx7uqF
-        ebtMjXAdlMHFBmyi7J8x0MOyDjaNmpqjuXKRyCPZG9lQXb6E0X2WRyxvrg6LwhqL
-        vxKr51+OvoPbg5VndzdV2qyXB2qFR4DNKyuWwmVOdBOE5D9FUFOjMgRa/mqfo4iF
-        vt3QiTTASSV6KvbgrPB/NDQE9Xg92lsqE78fJ1pwIgIv/Cgcb+EGWGIRdekbUxwA
-        Gqn82TxQJHI4BFa2VH7eVvGETB5fQ8ZmCU7bx/Puzg==
-X-ME-Sender: <xms:u6HpY43gaZ4s5BeMAwII7PGu4sLFE7zP7PadlzutH9GiiXxg_bh-7Q>
-    <xme:u6HpYzFmxSK2wvh67PzoW1SaQgnoicsFammhAFzrmgcoOSd7gDUE-6sz5zVC1BR4s
-    -bB_aUfklbE9yKTiQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudeitddggeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehn
-    ughrvgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucggtf
-    frrghtthgvrhhnpeekvdekjeekgfejudffteetgeejkeetteduvedtffdtledutdfhheev
-    feetkeeiteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpegrnhgurhgvfiesrghjrdhiugdrrghu
-X-ME-Proxy: <xmx:vKHpYw7haNK5jYaU3a47ZK3-NefD15ad2Jv6CTN7AL-ol1tuhIV63Q>
-    <xmx:vKHpYx3TpbLQRk_qu4ig22VlFo6_B-cio63wXeLEnXwERscDcMJzeQ>
-    <xmx:vKHpY7G1Rg1CqP_-bA_0z8Q1MdTAxZ_MZ9TqJ04asWrruSU_Xbs__A>
-    <xmx:vaHpYw6D9Fc4ocU2_GzTIh2DODwqhNUb8HaltiOA11iGFPZrTqYzIA>
-Feedback-ID: idfb84289:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id E9C621700089; Sun, 12 Feb 2023 21:34:35 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-156-g081acc5ed5-fm-20230206.001-g081acc5e
-Mime-Version: 1.0
-Message-Id: <d7cbb0e8-20cd-4413-b89d-f7a3bb259c15@app.fastmail.com>
-In-Reply-To: <20230203083721.23455-1-yuzhe@nfschina.com>
-References: <20230203083721.23455-1-yuzhe@nfschina.com>
-Date:   Mon, 13 Feb 2023 13:04:15 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Yu Zhe" <yuzhe@nfschina.com>, "Jeremy Kerr" <jk@ozlabs.org>,
-        "Joel Stanley" <joel@jms.id.au>,
-        "Alistair Popple" <alistair@popple.id.au>,
-        "Eddie James" <eajames@linux.ibm.com>
-Cc:     liqiong@nfschina.com, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org
-Subject: Re: [PATCH] fsi: fix some spelling mistakes in comment
-Content-Type: text/plain
+        Mon, 13 Feb 2023 03:57:32 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81EE613DEB;
+        Mon, 13 Feb 2023 00:57:02 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id m16-20020a05600c3b1000b003dc4050c94aso8397622wms.4;
+        Mon, 13 Feb 2023 00:57:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A2v1+wAQIxuDwwfxKBOXSuMRM+HP0P5i3QqMWmALdpg=;
+        b=E7xg3B5eff3XtQGugwQOH4Lg08fyzJ6jm39iQ3rGjFHGXCUFDCHlRJaRLAPObm2rJN
+         GY3i0iY7i6rrDz5daOFJc2/8Vd7UdmTk9A4rY6UOKc13xVByDW70ll2m8d6A0v1XyOmB
+         wpM3wx6DKfW9W2Yr0l5YLv6mknvUJ5WX2ma358/n4tAlAAh09BXV9djARLTxN29ZBS+h
+         rRR1P8ZUxAG3Vj5/c/8gXOYQiUy06jA8quctDib4upMtmNGhzb6GzoJEjIRh0r50a9AD
+         dduQ+EfgPutdM7VAbGTJhJTb22+8U1gk+KfJ2vZaySI3UIMTyd3sk1xOA4iiuircIU0i
+         DFSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A2v1+wAQIxuDwwfxKBOXSuMRM+HP0P5i3QqMWmALdpg=;
+        b=H6Ar/zFfkA3orbj5b8d8VX8rQ8DfhLRxwnAnnjLjw2QxXqLihTHX/bpqg0T6x68Zy3
+         RIH2WifWAT/W9rtGaHfstjJoaFxFCr93vYoXMimIJis4yY3SDRlePo2DBkcyNSD6yRvN
+         h5bt9VU8zupyNwhirEHTSvhStsgf2gPGiEenZanIPg8FM0thtEgBpRySMCQjq56l7mOV
+         MlqUhIfyBa8/+BkKH1TCF6fAmICjuutcHhYeCT6v7L6KwhDyVMLGzJxl8Ifpf4Grsj7F
+         uOaNlU8OEKb1ymXVxwXIA1ZkkR1sxtvfQ+yabtelo5BipJoZPgf5LDm0LilBr7ANh+ZD
+         4HgA==
+X-Gm-Message-State: AO0yUKUKCY8u9MbLBDcCi5nGuuzr31PzzQ2NF8AZm+ZevHoTnOyuucT1
+        KHBCWElTstIqBPXf0oNqritH3Vu+/XWa6g==
+X-Google-Smtp-Source: AK7set8U0uKqML9KE2p+Jse1vuLMJiY1RtQBjS2ARR+GJhqbCyI4NylHOGp73+YufJis9gr9tB5/8w==
+X-Received: by 2002:a05:600c:4b1d:b0:3de:3ee3:4f6f with SMTP id i29-20020a05600c4b1d00b003de3ee34f6fmr18753551wmp.8.1676278620730;
+        Mon, 13 Feb 2023 00:57:00 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o7-20020a05600c4fc700b003db0ad636d1sm18005330wmq.28.2023.02.13.00.56.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Feb 2023 00:57:00 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Oded Gabbay <ogabbay@kernel.org>, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] habanalabs: Fix spelling mistake "offest" -> "offset"
+Date:   Mon, 13 Feb 2023 08:56:58 +0000
+Message-Id: <20230213085658.96918-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+There is a spelling mistake in a dev_err message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/accel/habanalabs/common/command_submission.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, 3 Feb 2023, at 19:07, Yu Zhe wrote:
-> Fix typos in comment.
->
-> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+diff --git a/drivers/accel/habanalabs/common/command_submission.c b/drivers/accel/habanalabs/common/command_submission.c
+index 6c4d9b1aa5de..74ccafeb38dc 100644
+--- a/drivers/accel/habanalabs/common/command_submission.c
++++ b/drivers/accel/habanalabs/common/command_submission.c
+@@ -3199,7 +3199,7 @@ static int ts_buff_get_kernel_ts_record(struct hl_mmap_mem_buf *buf,
+ 			usleep_range(100, 1000);
+ 			if (++iter_counter == MAX_TS_ITER_NUM) {
+ 				dev_err(buf->mmg->dev,
+-					"Timestamp offest processing reached timeout of %lld ms\n",
++					"Timestamp offset processing reached timeout of %lld ms\n",
+ 					ktime_ms_delta(ktime_get(), timestamp));
+ 				return -EAGAIN;
+ 			}
+-- 
+2.30.2
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
