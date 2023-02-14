@@ -2,94 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43408C6379F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 14:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EEFC05027
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 14:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232734AbjBNOPs (ORCPT
+        id S233007AbjBNOe0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 09:15:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34814 "EHLO
+        Tue, 14 Feb 2023 09:34:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232609AbjBNOPl (ORCPT
+        with ESMTP id S232890AbjBNOeY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 09:15:41 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E41526B;
-        Tue, 14 Feb 2023 06:15:13 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id hg24-20020a05600c539800b003e1f5f2a29cso1322522wmb.4;
-        Tue, 14 Feb 2023 06:15:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fN0HsQBeTzPwMed5PupJcQefwKI7QfP4v9v/v9W2LxI=;
-        b=UFaRySGiv/0XDhI+9JMU/apFJCQZZUwpHqeYYYfKT6uFj0y4cNTT2ahKjCtWHWnknt
-         8SlXyNDZRVpNjivo8F7Z3BI7mdJ7IKfhvNtYuElpfa+zvH75OyD6uXWa7da2pvmcCJkx
-         Mojc94U7XVWwqjzaSFOmGcoZ8bNXB4gNWCXC6Xj+SGE5dS7RTkAvJljvIbIDXunVkHWT
-         QLsXNOozZgq+r+T3nhGg/pPKX1kmtr5KTmpqBusl6RdefCYc00Gw2sKUng+tMxTzmolk
-         eEo6b3i87GEq6jDtbYDyIj2XohOLo0kT2//narlDGgT3jDNlzM5abkHlEJ1qOqKf52wa
-         F1rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fN0HsQBeTzPwMed5PupJcQefwKI7QfP4v9v/v9W2LxI=;
-        b=PnJmLejpwpFMQwlheCa1nkjlgmNgYo1/Sz2GYYOwGwehtMCstNcu0RWzUjJWTpVFT1
-         OTj3draNm58PMRRX/z3y6N9ICCubbJ1/uFalcwk2ESI1cIekL5qrPGHh5RWY57MWRzw3
-         53fFSrYbbHPjEktuyh3rPXyi7WPuH6oveVz+k2KdbjJNdBJtPlh4vxp9o02PAN0Qgh1A
-         SDvVE4Or0bRVnilIvy6krqI41EFsgGE5RZD/vh0/BtgLfJfr1Z9GAojmQ7BNHWATWsED
-         /m8pIWPA3MrGQKl4hjAXOaa+m19W+MsgMz1PT5ewp/kls6h0D9b52sfQjJQAl/XoFVx3
-         WZRw==
-X-Gm-Message-State: AO0yUKUfXVkUZti57rF7AAvXfVnhspbTatLS4Bjfb1Y9cEYlX3xtKTuy
-        jICWnvdSG3JnxEO3Wv19uWU04cFoEWsF4XP2
-X-Google-Smtp-Source: AK7set8xfol8iOAuE9Uz+t4fyhTxWBj+dfG5LfPISwLrecWhbMm8j9QEeStmI5TGuUB+ez4xaqFoMQ==
-X-Received: by 2002:a05:600c:4927:b0:3df:f2a5:49fb with SMTP id f39-20020a05600c492700b003dff2a549fbmr2148871wmp.7.1676384069688;
-        Tue, 14 Feb 2023 06:14:29 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id t13-20020adfe44d000000b002c557f82e27sm5881010wrm.99.2023.02.14.06.14.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 06:14:29 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] nfsd: remove redundant assignment to pointer dentry
-Date:   Tue, 14 Feb 2023 14:14:28 +0000
-Message-Id: <20230214141428.301121-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 14 Feb 2023 09:34:24 -0500
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0462D61A5
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Feb 2023 06:34:23 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id RwNxpI8ETXjveRwNxpC96F; Tue, 14 Feb 2023 15:34:21 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 14 Feb 2023 15:34:21 +0100
+X-ME-IP: 86.243.2.178
+Message-ID: <75480cf9-8d06-7a7d-4624-6ddbb7d6053a@wanadoo.fr>
+Date:   Tue, 14 Feb 2023 15:34:21 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] RDMA/restrack: Reorder fields in 'struct
+ rdma_restrack_entry'
+Content-Language: fr, en-GB
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <d47800d9fd5ac7c33d01af04b12b6d43ad23c96e.1676379187.git.christophe.jaillet@wanadoo.fr>
+ <Y+uH0k0OBzPip1P8@ziepe.ca>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <Y+uH0k0OBzPip1P8@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer dentry is assigned a value that is never read, the
-assignment is redundant and can be removed.
+Le 14/02/2023 à 14:08, Jason Gunthorpe a écrit :
+> On Tue, Feb 14, 2023 at 01:53:52PM +0100, Christophe JAILLET wrote:
+>> diff --git a/include/rdma/restrack.h b/include/rdma/restrack.h
+>> index 8b7c46daeb07..da53fefe6f9e 100644
+>> --- a/include/rdma/restrack.h
+>> +++ b/include/rdma/restrack.h
+>> @@ -80,6 +80,10 @@ struct rdma_restrack_entry {
+>>   	 * query stage.
+>>   	 */
+>>   	u8			no_track : 1;
+>> +	/**
+>> +	 * @user: user resource
+>> +	 */
+>> +	bool			user;
+> 
+> Can we combine this into the bitfield above?
+> 
+> Jason
+> 
+Hi,
 
-Cleans up clang-scan warning:
-fs/nfsd/nfsctl.c:1231:2: warning: Value stored to 'dentry' is
-never read [deadcode.DeadStores]
-        dentry = ERR_PTR(ret);
+and even above, we have
+	bool	valid;
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/nfsd/nfsctl.c | 1 -
- 1 file changed, 1 deletion(-)
+I wanted to keep the changes as minimal as possible, but I can change 
+them all in a single bitfield.
 
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 04474b8ccf0a..5946064cd794 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1228,7 +1228,6 @@ static void nfsd_symlink(struct dentry *parent, const char *name,
- 	return;
- out_err:
- 	dput(dentry);
--	dentry = ERR_PTR(ret);
- 	goto out;
- }
- #else
--- 
-2.30.2
 
+Do you want code such as:
+static void rdma_restrack_attach_task(struct rdma_restrack_entry *res,
+				      struct task_struct *task)
+{
+	if (WARN_ON_ONCE(!task))
+		return;
+
+	if (res->task)
+		put_task_struct(res->task);
+	get_task_struct(task);
+	res->task = task;
+	res->user = true;			<--------
+}
+
+to be changed with 0/1 instead of false/true?
+
+Apparently gcc 11.3 is fine with using true with u8:1, but I don't find 
+it really logical.
+
+CJ
