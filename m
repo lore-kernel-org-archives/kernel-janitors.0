@@ -2,98 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94826C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 15:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C22EC05027
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 15:50:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233239AbjBNPtN (ORCPT
+        id S233115AbjBNPuR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 10:49:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36240 "EHLO
+        Tue, 14 Feb 2023 10:50:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232990AbjBNPtM (ORCPT
+        with ESMTP id S232664AbjBNPuQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 10:49:12 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D2743C32;
-        Tue, 14 Feb 2023 07:49:09 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id l37-20020a05600c1d2500b003dfe46a9801so11995000wms.0;
-        Tue, 14 Feb 2023 07:49:09 -0800 (PST)
+        Tue, 14 Feb 2023 10:50:16 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9363430D4;
+        Tue, 14 Feb 2023 07:50:15 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id f47-20020a05600c492f00b003dc584a7b7eso13982287wmp.3;
+        Tue, 14 Feb 2023 07:50:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AWHllFyKrR+xZQxHI6mDR0G17o8Ie4DvLljLVm9vbJ4=;
-        b=PpO4vFlYHyjHMtpC8Mz2jg+gdCtxxKGHSpk2/VEWkKYZgf7iTz8cDHO7jSFmTIIiSI
-         ehwFTcEgcKtbAhPl5lmgvTh2Amt5OB1oLwqOjRl1EjOGRWAnUhcOpGJmZYGUjpyNLkDG
-         hRL9bskiPpU9ntUuq4Y8f6ToQM6e72EVZlESrL8zzi9tIxmLLpCytH88l7XBy5AalbRE
-         JqX+b1nJ2qn8qBOQ2HXm3/g4jFqqNcwXLw/7SK00OHxm/AordXwEsKOyvSbieqsHf0tC
-         oq+DWhxKhFZ9Y668oETRSNWzfHYQ+QKNPhQSEMHL9kQ56Xeps3Lm13GyIGNc6WQct3SM
-         vfcg==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qii2og17aImvT8ZjPxYLeXITxSxT4PHRaFvNRbLddrY=;
+        b=Bm+vmVE1i/BGWDwu1fWFPZws69djpT2yeKi6VLfmmWQ9h/gHxEkKAOWNN9jFFJ2tIT
+         ZrwUKglQhfR7kDkw42sqLKXhLjLBqbAMbaVIAGTKlDNgKzm0DHib/QpISnvLM7oSx9Ht
+         WU3RTsPMt0dtLv6KJtB2mc/0ecNs5nuhLVbpKT9KoqzGBwf5eCQJ7uOqvrt1gioT0CkK
+         VNXMzuyfErm2BO7WpQkHgE8s3uymzdxZGq3pVC+lO8e78gHLUDnJmvV4DJaYir6igKZs
+         gsV7Jk2ggpE0A6F0hQDZ+6Pr3z9tucgSB04IEvZKNqkYryPW03bivCyET0Zjzks303qT
+         OFyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AWHllFyKrR+xZQxHI6mDR0G17o8Ie4DvLljLVm9vbJ4=;
-        b=koX2W8ZS+AqoDir6rckqUXhdi01hae5/PNB1rNqyF19/rM9NJYN2lf49QwuIdeq1su
-         CkhOVPRkK5v7EhTrV5KjuzLOiDFbQbWaAg4sqd8x9hH822cpi1nLCZHy9I2B/nY0JfnX
-         ADaqK/K/fVWC5Ujug/Amn6eVcpNnPYo9iPUvr+Z0FL85yXIliCZcImZhxuROzi2peQHy
-         4yTtDLwqemh//ZflaMcKrWrZyxY966j0i+z7Rubf0ipq/1IqbXRQoEgnQVQnThfWT7mv
-         xtKBiLbQQ/vNpXi3Y2RUoIq50BTF6c7KMhwDAhlQadrkv2k1Ahckc2dHD61FtTAKHcjj
-         yNjg==
-X-Gm-Message-State: AO0yUKWypT/OGw1k6smhRamfD4GRQTYwZwm6CU62BIIKzY93CE2D1G2h
-        CBHFrY9HxwXSHfTDYcirj7w=
-X-Google-Smtp-Source: AK7set9rjRZPUVh5jSiIATnm7Rmz7aKfhtMGcbYUrP0JOrfy4NjkD5Dt/3jnGeGvjwG6ZtxSehC+xg==
-X-Received: by 2002:a05:600c:91d:b0:3df:d817:df98 with SMTP id m29-20020a05600c091d00b003dfd817df98mr2502200wmp.10.1676389747871;
-        Tue, 14 Feb 2023 07:49:07 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qii2og17aImvT8ZjPxYLeXITxSxT4PHRaFvNRbLddrY=;
+        b=iVG/PEi2PHsNHROZyivv/pW07oQoQ+Z+wk1XnVcSAF9i+kaYU4A3f1YYSzoGCUgHBe
+         OCA8H8Llr1Tuj/qJNkwvhLoEr0SKCAIfeq2JMIHb4lOapt2uOT+xShgcD6/xMMH2N8dk
+         kW+83RweZc+WP4IQxo4WWUAKaBCPrgrAAHLC86pypjsbgVU8kq0mzSfZmc3Ti69wjTtQ
+         ONKoooJ1ma5zDYVLySSxo9Phe8XbDtYa0Dbu9Ii2iDjcew8UY6g2S0XsKhZUJn0pADyK
+         u+xjpbQZS9BRMa3jfUsY9RAoirmPRE7kW5BmuhU3Db3Bi34F7hA8qM6zjaWTWdcWSWkh
+         Xulg==
+X-Gm-Message-State: AO0yUKXpbXd2NFmVvUd3bZ5y5vGcITNvX1a/G9qhxsM4JoJ1iDh7NUej
+        ViFWmG7NvGc6lnoVpggZP3tUgv2NWJRoyA==
+X-Google-Smtp-Source: AK7set/+Vodl/e6827TR4dk5c4heRYgjpT/PdpbRFCjng2PzQoG7cNVNGmd6WDos7FZvbsUWewdtuw==
+X-Received: by 2002:a05:600c:3418:b0:3dc:50dd:361b with SMTP id y24-20020a05600c341800b003dc50dd361bmr2473315wmp.5.1676389814160;
+        Tue, 14 Feb 2023 07:50:14 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id he7-20020a05600c540700b003e1f6e18c95sm2024328wmb.21.2023.02.14.07.49.06
+        by smtp.gmail.com with ESMTPSA id g10-20020a05600c310a00b003e1e8d794e1sm9158227wmo.13.2023.02.14.07.50.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 07:49:07 -0800 (PST)
-Date:   Tue, 14 Feb 2023 18:49:03 +0300
+        Tue, 14 Feb 2023 07:50:13 -0800 (PST)
+Date:   Tue, 14 Feb 2023 18:50:09 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Steve Wise <larrystevenwise@gmail.com>
-Cc:     Potnuri Bharat Teja <bharat@chelsio.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+To:     Frank Sae <Frank.Sae@motor-comm.com>
+Cc:     Peter Geis <pgwipeout@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] iw_cxgb4: potential NULL dereference in
- c4iw_fill_res_cm_id_entry()
-Message-ID: <Y+utb9JSKpgAeiWC@kili>
+Subject: Re: [PATCH net-next] net: phy: Uninitialized variables in
+ yt8531_link_change_notify()
+Message-ID: <Y+utsW/vGIYNJJu7@kadam>
+References: <Y+utT+5q5Te1GvYk@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Y+utT+5q5Te1GvYk@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This condition needs to match the previous "if (epcp->state == LISTEN) {"
-exactly to avoid a NULL dereference of either "listen_ep" or "ep". The
-problem is that "epcp" has been re-assigned so just testing
-"if (epcp->state == LISTEN) {" a second time is not sufficient.
+On Tue, Feb 14, 2023 at 06:48:31PM +0300, Dan Carpenter wrote:
+> These booleans are never set to false, but are just used uninitialized.
+> 
+> Fixes: 4ac94f728a58 ("net: phy: Add driver for Motorcomm yt8531 gigabit ethernet phy")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> Applies to net-next.
+> 
 
-Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-From static analysis, not from testing.  It's possible that the current
-code works but this change makes it more Obviously Correct[tm].
+Sorry for sending this twice.  :/
 
- drivers/infiniband/hw/cxgb4/restrack.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/cxgb4/restrack.c b/drivers/infiniband/hw/cxgb4/restrack.c
-index ff645b955a08..fd22c85d35f4 100644
---- a/drivers/infiniband/hw/cxgb4/restrack.c
-+++ b/drivers/infiniband/hw/cxgb4/restrack.c
-@@ -238,7 +238,7 @@ int c4iw_fill_res_cm_id_entry(struct sk_buff *msg,
- 	if (rdma_nl_put_driver_u64_hex(msg, "history", epcp->history))
- 		goto err_cancel_table;
- 
--	if (epcp->state == LISTEN) {
-+	if (listen_ep) {
- 		if (rdma_nl_put_driver_u32(msg, "stid", listen_ep->stid))
- 			goto err_cancel_table;
- 		if (rdma_nl_put_driver_u32(msg, "backlog", listen_ep->backlog))
--- 
-2.35.1
+regards,
+dan carpenter
 
