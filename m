@@ -2,94 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605B5C6379F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 16:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21C3C6379F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 18:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231715AbjBNQVX (ORCPT
+        id S233201AbjBNSB7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 11:21:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36816 "EHLO
+        Tue, 14 Feb 2023 13:01:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231714AbjBNQVW (ORCPT
+        with ESMTP id S232948AbjBNSB5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 11:21:22 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF0B26B6
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Feb 2023 08:21:20 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id l37-20020a05600c1d2500b003dfe46a9801so12063979wms.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Feb 2023 08:21:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fOPXTSTnWEyhEixxdhEAiX1IzwmDS1kueI7usRMkHUw=;
-        b=gDByGn1T5oBBVJ69WWoYHinhg01Cl2Gpj2wYx6ENHSR5fArlzitFIB0pQYdmsqlSkb
-         P5oGcYodKRi0785Td/YzMABcNOhUodRE8gP6a/duSU7ikOL+ke40KP6idsuvcz9/CyJm
-         W57ieosv9M8ep7Txwv1hECvOvJZ1NUVQqCGOnGgsfL8pkFEw6L7DVqEFXmsLjKP8pBeL
-         cZB5o1/xJ3J4V9rVFMvClipB2hqY9Z2cVD5hpqGzHBfk+TAcfekbITtDrQLGa2NDSyC1
-         uroc1PbDb+YN+5XkDuvM4QINv32pzspYOyV+tYdiz2TvhBXgak1H/qYINd4TUwAzCBKR
-         nEBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fOPXTSTnWEyhEixxdhEAiX1IzwmDS1kueI7usRMkHUw=;
-        b=Ej7ODAYsAbegKIkJZyBuuq4oaBqRvBJMT0PcgZ8h85glzjQ7HnfwLjkfxq3ADMyU/d
-         hZJwQoGOChZ5rPfmY9HiLVscXWWoCGB4nj+sq5PiHGNTgBTCethe7aKg+p7pgbwkLgCm
-         UZeSgMMsmosSGv/f09ystX6FTohos5D5+7FXDYryXnvtcoa6aFcxesBAUfHPLcca7+vS
-         YLlhmvlabZtPUQG1rXuJ0x80km0HVEY+s4iIZ+UwTDx3puDPCAMSgnGvbFbR8uikZ/Es
-         dk395Q5aQRc8ytPYQ9cux/xHe08tBdglQDhRf5qSXcniiEeQjF62TFlk0cte+7Excd4T
-         ivgQ==
-X-Gm-Message-State: AO0yUKUKMHcrF5TYMb8Owte00rqkWJJdpr4pTApR2Rt7dNTvB9SYaMS/
-        NjRMQ+JMghOvpDFcd2bgvBzB+r9cEIHB0Q==
-X-Google-Smtp-Source: AK7set+/RxPS/G1DYQeiUF58g3QJy+3JAq3UBWlubguQ4MV8aa1hlZxFADMkPl7Z9qfc06/TYhzS3Q==
-X-Received: by 2002:a05:600c:4b1d:b0:3df:fbc7:5b10 with SMTP id i29-20020a05600c4b1d00b003dffbc75b10mr2576676wmp.0.1676391679495;
-        Tue, 14 Feb 2023 08:21:19 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s12-20020a05600c45cc00b003dfe5190376sm18893303wmo.35.2023.02.14.08.21.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 08:21:18 -0800 (PST)
-Date:   Tue, 14 Feb 2023 19:21:15 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     pctammela@mojatatu.com
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] net/sched: tcindex: update imperfect hash filters
- respecting rcu
-Message-ID: <Y+u0+9MYw6Y9WzNq@kili>
+        Tue, 14 Feb 2023 13:01:57 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC2322D175;
+        Tue, 14 Feb 2023 10:01:54 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D277617EE;
+        Tue, 14 Feb 2023 18:01:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8762C433EF;
+        Tue, 14 Feb 2023 18:01:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676397713;
+        bh=fJ9opWwlrNRE3PSWElmM+meCZDF25dlk2Afd6BfAL2k=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=fdtz39CWX0U3i8MMtBbziZwqaRekEbPj5ymk2mj6D5AqNK7pMYTSlVLvNbxb7YMPU
+         ytchlc+6EAsRuAuG5qQ89Xp8hoUtvEijMwMy0LB8wsAa2qtnR6O+8WT3OTaL5W4Gd8
+         hY0cJj1o4Xw0Lg4JTExwTbqWdrgXLgqCpcglMi/VlzbakHzo7mBWC0E5tj6gs3HDoT
+         FBvUavrcSsyIKymmbqZEc/8ISnN5xKu+byYtOSsloGkC6NjDwTYzH0ApsxtQ26ST+8
+         dke74q3JkrlIwt6jNsD+Fhz6eT6xOWqFZBtWL3SzOGmwKUBXM3PU3CkDj51YLndEBe
+         rUSsu+IsBHlrg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <077ca39622c8870a3ea932298a9cec34f7a8295a.1676363976.git.christophe.jaillet@wanadoo.fr>
+References: <077ca39622c8870a3ea932298a9cec34f7a8295a.1676363976.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] regmap: Reorder fields in 'struct regmap_bus' to save
+ some memory
+Message-Id: <167639771249.3067854.8958372042708188891.b4-ty@kernel.org>
+Date:   Tue, 14 Feb 2023 18:01:52 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Pedro Tammela,
+On Tue, 14 Feb 2023 09:40:14 +0100, Christophe JAILLET wrote:
+> Group some bool variables to reduce hole and avoid padding.
+> On x86_64, this shrinks the size from 136 to 128 bytes.
+> 
+> As an example:
+> 
+> $ size drivers/base/regmap/regmap-fsi.o (Before)
+>    text	   data	    bss	    dec	    hex	filename
+>    4837	    136	      0	   4973	   136d	drivers/base/regmap/regmap-fsi.o
+> 
+> [...]
 
-This is a semi-automatic email about new static checker warnings.
+Applied to
 
-The patch ee059170b1f7: "net/sched: tcindex: update imperfect hash 
-filters respecting rcu" from Feb 9, 2023, leads to the following 
-Smatch complaint:
+   broonie/regmap.git for-next
 
-    net/sched/cls_tcindex.c:509 tcindex_set_parms()
-    error: we previously assumed 'cf' could be null (see line 504)
+Thanks!
 
-net/sched/cls_tcindex.c
-   503			/* lookup the filter, guaranteed to exist */
-   504			for (cf = rcu_dereference_bh_rtnl(*fp); cf;
-                                                                ^^
-This loops until "cf" is NULL
+[1/1] regmap: Reorder fields in 'struct regmap_bus' to save some memory
+      commit: 7464145862d606cf9835f24080341a397cbc0669
 
-   505			     fp = &cf->next, cf = rcu_dereference_bh_rtnl(*fp))
-   506				if (cf->key == handle)
-   507					break;
-   508	
-   509			f->next = cf->next;
-                                  ^^^^^^^^
-Unchecked dereference
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-   510	
-   511			cf = rcu_replace_pointer(*fp, f, 1);
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-regards,
-dan carpenter
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
