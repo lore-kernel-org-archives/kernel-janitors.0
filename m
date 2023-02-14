@@ -2,85 +2,110 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504C7C05027
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 03:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983ABC05027
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 07:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231529AbjBNDuW (ORCPT
+        id S231687AbjBNHHP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Feb 2023 22:50:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38378 "EHLO
+        Tue, 14 Feb 2023 02:07:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbjBNDuV (ORCPT
+        with ESMTP id S231777AbjBNHHG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Feb 2023 22:50:21 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC0C1A5FA;
-        Mon, 13 Feb 2023 19:50:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3F2166140B;
-        Tue, 14 Feb 2023 03:50:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9000DC433A7;
-        Tue, 14 Feb 2023 03:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676346619;
-        bh=n9qOiH0RUbj9t+6MFTaBCd3iC12UZ0ekk/x0pMcHtYI=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=TqugRf9U4rSu/UzbqTgMaSG1wAW12A2epaYg4QgsZsL1sq7lgqWoZn4qLetVgEFtP
-         isoR51XuN5rFekVkxVeLXDb1m0Y7rQ3vCsvQH5c1Hf39LPOEIF1/094Uf1tPBJENao
-         sWVN6V0bHS/hDPxhVrwZ5RY+rCY9KZn60gXU4l4eJclCNZhDbDdHoiQajL19jjXLO+
-         fase24yUkPLmrFzvvD7Fowc3rNi4frTp3ITainCRsGtYGty784OivbqkaB2XHxKaAw
-         UdSL/z8xcy4pUpnFxcK1Qp24HaD4Tn/0nbAKeBj0PV5MdvwjnS4w+XMFV4vrZrixOG
-         yHVvlwe2H1jhA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 74403C41677;
-        Tue, 14 Feb 2023 03:50:19 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 14 Feb 2023 02:07:06 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AFD51EFF5;
+        Mon, 13 Feb 2023 23:06:46 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id bg5-20020a05600c3c8500b003e00c739ce4so10771047wmb.5;
+        Mon, 13 Feb 2023 23:06:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2RSNDSei1cvEI2TbZqPp2qztpn6EMY6rziZcsn0c1v4=;
+        b=DGIGar2V45GyQ5EGa5cr2sHvNFhtS2/eCSc8t2a9Jy1U9vdQwNuXHfUCwlRsF0kkPi
+         zp6W5I/bOvRFU44DkcAy90Fmm2pTaAjojOU5Rq3JKabZUsUf6ZmBSw2e+iDQDJopym9Y
+         FfJUIy2c95Li1c1+w4nW+jkIlbnt5QaRqK3MU+EjSJ5X8+KAVh6jAQO0FSzEwNynvcRH
+         e83jCJK3VeBfrKbyXjc2Awp43i18sjD3cp0fVTJRzViY43jy7w7GlKvl2NEeiCCoUZj+
+         PEanH2j/NJB+doemDSu+IQcMNHPulM0Xo/lH9jm00QoZDG8Sm3rmi9zien0kCioIEQZ0
+         SFzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2RSNDSei1cvEI2TbZqPp2qztpn6EMY6rziZcsn0c1v4=;
+        b=J1KhbdCok+MdoVFxxWny59RdsSdHFIie+G4U/WYFHcY2u+O034jE4aHNzn9KxmBCJe
+         yfdnh2+BO3HnsCKrFh9Cw/sVBXt13P2bw/3D3POISEU1ttPa46UnyJnjjqi4qQIPZTu8
+         945YyDkIqIbZtAVEVe6eAuhrz+6Gt0rcniLdvAKUSO+tQJSzQ/tKJYR0dWruWwJc3DzN
+         V+/0FEFRxxakORGofzjj1lxkv55V31wQttVxDW9zdfXdXZqC3hnsO+ZiJNrBN5dmpX6B
+         +L/Xg1ixWiwQFeYLR65akytW8tjzFIbfL3f0dLdds65VAe7bt/Q7VSHuJ3IQIDmWdAMB
+         FpfA==
+X-Gm-Message-State: AO0yUKXgMiJRwSmRO/ZLE4SgHolRFdSLiDsCKsoPSTrFT8DuruJVyZZg
+        IiJufUcWwBMIXrI5mFWqumvYSy68hhQ=
+X-Google-Smtp-Source: AK7set+5/I+CAmLWWtV5fCxP5KSDYhsVKt723oHN1uONsZ1JTPM40/7jcY5v1b6hH1mIAbKe9mi6Ew==
+X-Received: by 2002:a05:600c:1e14:b0:3df:9858:c033 with SMTP id ay20-20020a05600c1e1400b003df9858c033mr8516458wmb.8.1676358404333;
+        Mon, 13 Feb 2023 23:06:44 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id bd6-20020a05600c1f0600b003e0015c8618sm19607599wmb.6.2023.02.13.23.06.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Feb 2023 23:06:43 -0800 (PST)
+Date:   Tue, 14 Feb 2023 10:06:39 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     Sergey Shtylyov <s.shtylyov@omp.ru>, linux-ide@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ata: pata_hpt3x2n: prevent potential forever loop in
+ hpt3xn_calibrate_dpll()
+Message-ID: <Y+sy/zldAljT5Sir@kadam>
+References: <Y9pyzLUShZJeLDq7@kili>
+ <48330abf-31ee-d0d1-7542-6d6a2de71dfc@opensource.wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: ethernet: mtk_wed: No need to clear memory
- after a dma_alloc_coherent() call
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167634661945.22468.7891071719271483314.git-patchwork-notify@kernel.org>
-Date:   Tue, 14 Feb 2023 03:50:19 +0000
-References: <d5acce7dd108887832c9719f62c7201b4c83b3fb.1676184599.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <d5acce7dd108887832c9719f62c7201b4c83b3fb.1676184599.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     nbd@nbd.name, john@phrozen.org, sean.wang@mediatek.com,
-        Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <48330abf-31ee-d0d1-7542-6d6a2de71dfc@opensource.wdc.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sun, 12 Feb 2023 07:51:51 +0100 you wrote:
-> dma_alloc_coherent() already clears the allocated memory, there is no need
-> to explicitly call memset().
+On Tue, Feb 14, 2023 at 12:47:52PM +0900, Damien Le Moal wrote:
+> On 2/1/23 23:10, Dan Carpenter wrote:
+> > This code accidentally reuses "tries" as the iterator for both the inside
+> > and outside loops.  It means that the potentially the "tries" could be
+> > reset to 0x1000 and never reach 0x5000.
+> > 
+> > Fixes: 669a5db411d8 ("[libata] Add a bunch of PATA drivers.")
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > ---
+> >  drivers/ata/pata_hpt3x2n.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/ata/pata_hpt3x2n.c b/drivers/ata/pata_hpt3x2n.c
+> > index 617c95522f43..447dc287a2d4 100644
+> > --- a/drivers/ata/pata_hpt3x2n.c
+> > +++ b/drivers/ata/pata_hpt3x2n.c
+> > @@ -380,14 +380,14 @@ static int hpt3xn_calibrate_dpll(struct pci_dev *dev)
+> >  {
+> >  	u8 reg5b;
+> >  	u32 reg5c;
+> > -	int tries;
+> > +	int tries, tries2;
+> >  
+> >  	for (tries = 0; tries < 0x5000; tries++) {
+> >  		udelay(50);
+> >  		pci_read_config_byte(dev, 0x5b, &reg5b);
+> >  		if (reg5b & 0x80) {
+> >  			/* See if it stays set */
+> > -			for (tries = 0; tries < 0x1000; tries++) {
+> > +			for (tries2 = 0; tries2 < 0x1000; tries2++) {
+> >  				pci_read_config_byte(dev, 0x5b, &reg5b);
+> >  				/* Failed ? */
+> >  				if ((reg5b & 0x80) == 0)
 > 
-> Moreover, it is likely that the size in the memset() is incorrect and
-> should be "size * sizeof(*ring->desc)".
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+> I am assuming this one is the same as for pata_hpt37x: a false positive ?
 
-Here is the summary with links:
-  - [net-next] net: ethernet: mtk_wed: No need to clear memory after a dma_alloc_coherent() call
-    https://git.kernel.org/netdev/net-next/c/511b88fedab4
+Yes, sorry.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+regards,
+dan carpenter
 
