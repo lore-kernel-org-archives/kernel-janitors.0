@@ -2,66 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E599FC6379F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 15:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F468C05027
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 15:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232664AbjBNPsN (ORCPT
+        id S233069AbjBNPsZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 10:48:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35318 "EHLO
+        Tue, 14 Feb 2023 10:48:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232347AbjBNPsL (ORCPT
+        with ESMTP id S233005AbjBNPsY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 10:48:11 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0107F2B62F;
-        Tue, 14 Feb 2023 07:47:43 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id f47-20020a05600c492f00b003dc584a7b7eso13976658wmp.3;
-        Tue, 14 Feb 2023 07:47:43 -0800 (PST)
+        Tue, 14 Feb 2023 10:48:24 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F5095BAC;
+        Tue, 14 Feb 2023 07:47:54 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id o15so12810658wrc.9;
+        Tue, 14 Feb 2023 07:47:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fm2/SUb2lF2wvyRiNYJZC21IgBGnaGjbT93F/GV9Cow=;
-        b=dAwjA/sWLsNkKtFXv5yQdJAP/9IOFaPgMAcbYfAqJ/Z3T8ZQFYI3qF12D6mxYQnfhU
-         fYx+ow1LVC4kpWW1BPF26MZEu7O15lkxOBLQvfcBB2GWhEL307OnukTq4Igjei7SfPRa
-         nux81I5euviiuBiUE8JT76lF7deo5rHIwzyyJ2uIMziT4HNBSIz3m7IoJq84FIo2w/4F
-         T5PMncbR0+vclVA3VNxcbzqZsUDMf6CwEItgrbDh/JuQmYCEHBV5SP+4EpvtbX4WMMU7
-         S44wsnM8xXUjHJdAjB8kyXZC16aQaF2rIiu6Bxl+ozsCV3111IxgvX5RMpDhPi/hugQz
-         69Kw==
+        bh=tRR037kJulgwhYLTLVS64RUcLKjXsyaAdjVztOdmt4c=;
+        b=LHcslZJDJ8pOVmIPMgFS3RKX/ECo8AvXW1x8gcuyrSEHrMGizuufRmRzlUGBqID/Ty
+         ZJDtUoCT7Fk9ZbhcrcK3U6xcUm9D+scmCVBkdbPJ35VSSlXwWdibTIFwGvYNflz6vOdl
+         8Y4fc+imZQUula0TczQZhUmtD+ipQH0bm4eK4t6ffmOJ7fFlBiZmA8SNy5Hqyzjvp55o
+         93YTUF2rD27wLAlrH9bxJm1r873qQ2DDgZmS2pOakTkdIVYvhFZ34ebL6GdgsDAbNnik
+         iH4DLaD7PLbDdynEDAk1SKLkuNNMF5UlmVz6UcrWW2F8Q4bQrB6rJHlaRyzw9/xFpZ56
+         eFzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fm2/SUb2lF2wvyRiNYJZC21IgBGnaGjbT93F/GV9Cow=;
-        b=aBKJtWZ3wy6LBZLkMLTc3g+wvqG8faBGiwgydVT7DSYb3D5F6OmsZc5dcRiyFfS9jO
-         Zl/YiFdgaB1cQlGo9A2cqbGjcf3pKHTicAnBeYo/2kFXc6PrfeU3NNbnEBdvpKvFxQKC
-         jh1HkSz9r0uML7WWGfkGIO0nb+1Ue7HPMTbSTkSGCJisUP4K5pGDE+9y7WOTsSlW6iL1
-         ePLpWcnwCXuD3Uw29LbT/BErZQCz8+u0qGtGxGOdRK3XqRBYmHiT9ZCUT33fmxZt9CD3
-         vmCpqxBZloLaRsvKmau068mnGGEyu2y4+oCTKd2diJCTk2nif092Mtkqqw0a4VGCgSEg
-         ZHfQ==
-X-Gm-Message-State: AO0yUKUTY/ggrsAVOuYjFWHZHiirxsmQrIsOec9R/CDS5+Nef9kAwyTK
-        tvOZkE5sf4i7slE701kXPC4=
-X-Google-Smtp-Source: AK7set+TIQE1j9EuKB5ZbCEey4WQc0C6Jv98jIuoeZU2ESTqJg08IqO6lXAJs9YUTbynGCyaFBFI3w==
-X-Received: by 2002:a05:600c:511f:b0:3df:9858:c03a with SMTP id o31-20020a05600c511f00b003df9858c03amr13268wms.15.1676389654849;
-        Tue, 14 Feb 2023 07:47:34 -0800 (PST)
+        bh=tRR037kJulgwhYLTLVS64RUcLKjXsyaAdjVztOdmt4c=;
+        b=H7oIqP0+1rJAfWTJw5ZD7Kb4Cy5pt3wKzxKsQXdRYoSTee5xs0i8ixmhW5/qBELtO7
+         +aZa525q/wrYkFA987Y2ipb1BHjyYJlmmh7WEPvqQ//Suhu0g493M5/HGC0thnOCNHPh
+         bh4WcLTfGjE+Rh7UF7oep3HlwF+cWBq1cphXO8hJyNEEO5NDEe/yZK70H77zqCkDh6oX
+         PZpr2f1NUTZS1JB/XC2e8On8FpiHTvnE2BYKM5gGOiJU4D0LlH3SXXo3VlsQhlE+KTAr
+         jAwQfuhSzHFr9LKH8cx0KrdYcyUJUAmTSI72eBUBu9mgE1xhVsTbjKx001lArut6yBuW
+         ocLg==
+X-Gm-Message-State: AO0yUKUHgoV18Ny6YO2fsXYb4Bt3ArmYAo0lEfKUtnS7dw7MGgubF48a
+        PxEeu3vH77Pbgw+dZPljDMM=
+X-Google-Smtp-Source: AK7set+CwGvIpahHplmQw/Wo46JqvON9hV+HVgYZg3zRz4apZODEa3REh9eIYNJv1wNVaguy//1UOw==
+X-Received: by 2002:adf:fac4:0:b0:2c5:5357:60b8 with SMTP id a4-20020adffac4000000b002c5535760b8mr2183612wrs.48.1676389659383;
+        Tue, 14 Feb 2023 07:47:39 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id be7-20020a05600c1e8700b003dff2b493c8sm22283715wmb.36.2023.02.14.07.47.33
+        by smtp.gmail.com with ESMTPSA id e1-20020adfe381000000b002c54f39d34csm8894545wrm.111.2023.02.14.07.47.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 07:47:34 -0800 (PST)
-Date:   Tue, 14 Feb 2023 18:47:30 +0300
+        Tue, 14 Feb 2023 07:47:38 -0800 (PST)
+Date:   Tue, 14 Feb 2023 18:42:37 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Haibo Chen <haibo.chen@nxp.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: adc: imx93: fix a signedness bug in imx93_adc_read_raw()
-Message-ID: <Y+utEvjfjQRQo2QB@kili>
+To:     Frank Sae <Frank.Sae@motor-comm.com>
+Cc:     Peter Geis <pgwipeout@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: phy: Uninitialized variables in
+ yt8531_link_change_notify()
+Message-ID: <Y+ur7SAUjidrMwkz@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -70,51 +71,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The problem is these lines:
+These booleans are never set to false, but are just used uninitialized.
 
-	ret = vref_uv = regulator_get_voltage(adc->vref);
-	if (ret < 0)
-
-The "ret" variable is type long and "vref_uv" is u32 so that means
-the condition can never be true on a 64bit system.  A negative error
-code from regulator_get_voltage() would be cast to a high positive
-u32 value and then remain a high positive value when cast to a long.
-
-The "ret" variable only ever stores ints so it should be declared as
-an int.  We can delete the "vref_uv" variable and use "ret" directly.
-
-Fixes: 7d02296ac8b8 ("iio: adc: add imx93 adc support")
+Fixes: 4ac94f728a58 ("net: phy: Add driver for Motorcomm yt8531 gigabit ethernet phy")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/iio/adc/imx93_adc.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Applies to net-next.
 
-diff --git a/drivers/iio/adc/imx93_adc.c b/drivers/iio/adc/imx93_adc.c
-index d8de8284e13d..8c68f0cd48f2 100644
---- a/drivers/iio/adc/imx93_adc.c
-+++ b/drivers/iio/adc/imx93_adc.c
-@@ -236,8 +236,7 @@ static int imx93_adc_read_raw(struct iio_dev *indio_dev,
+ drivers/net/phy/motorcomm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
+index ee7c37dfdca0..119a54d6c65d 100644
+--- a/drivers/net/phy/motorcomm.c
++++ b/drivers/net/phy/motorcomm.c
+@@ -1534,9 +1534,9 @@ static void yt8531_link_change_notify(struct phy_device *phydev)
  {
- 	struct imx93_adc *adc = iio_priv(indio_dev);
- 	struct device *dev = adc->dev;
--	long ret;
--	u32 vref_uv;
-+	int ret;
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
-@@ -253,10 +252,10 @@ static int imx93_adc_read_raw(struct iio_dev *indio_dev,
- 		return IIO_VAL_INT;
- 
- 	case IIO_CHAN_INFO_SCALE:
--		ret = vref_uv = regulator_get_voltage(adc->vref);
-+		ret = regulator_get_voltage(adc->vref);
- 		if (ret < 0)
- 			return ret;
--		*val = vref_uv / 1000;
-+		*val = ret / 1000;
- 		*val2 = 12;
- 		return IIO_VAL_FRACTIONAL_LOG2;
+ 	struct device_node *node = phydev->mdio.dev.of_node;
+ 	bool tx_clk_adj_enabled = false;
+-	bool tx_clk_1000_inverted;
+-	bool tx_clk_100_inverted;
+-	bool tx_clk_10_inverted;
++	bool tx_clk_1000_inverted = false;
++	bool tx_clk_100_inverted = false;
++	bool tx_clk_10_inverted = false;
+ 	u16 val = 0;
+ 	int ret;
  
 -- 
 2.35.1
