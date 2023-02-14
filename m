@@ -2,67 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8553C05027
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 15:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94826C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 15:49:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233170AbjBNPtB (ORCPT
+        id S233239AbjBNPtN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 10:49:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36000 "EHLO
+        Tue, 14 Feb 2023 10:49:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233115AbjBNPs7 (ORCPT
+        with ESMTP id S232990AbjBNPtM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 10:48:59 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51B92A9A5;
-        Tue, 14 Feb 2023 07:48:38 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id co8so12376237wrb.1;
-        Tue, 14 Feb 2023 07:48:38 -0800 (PST)
+        Tue, 14 Feb 2023 10:49:12 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D2743C32;
+        Tue, 14 Feb 2023 07:49:09 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id l37-20020a05600c1d2500b003dfe46a9801so11995000wms.0;
+        Tue, 14 Feb 2023 07:49:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tRR037kJulgwhYLTLVS64RUcLKjXsyaAdjVztOdmt4c=;
-        b=VjbWCbotQWqLI6NTvaGcQuuN96uHe8+UBeDLz/A66EW0peCmEB/10IudvOblgTTJM0
-         ldWU16eigU+Dj5URo75u917Nu0vPunLTVGLW1kBYrCKKM8RDJNWxsUypJoKZTRIufRUz
-         e1dbFaJItUXUfhfCugSErp+KdIiA+QLw2qvdyj6Z5EkJ9+YYwWflfywFlb9cCTtzU4Dd
-         b+YNsgX7WuE4c9aCZUAKaulUzxE2SAaSZvfa8Qb4yNQHqcEdUV63OyYSzBWKNJthRvSL
-         QJTbfRVMyiRUhgasD5XngcjB/lcOdVRQoMP6j/dLa/EV+RawU6NMsM7eZV6tTLlt3ne6
-         oNPQ==
+        bh=AWHllFyKrR+xZQxHI6mDR0G17o8Ie4DvLljLVm9vbJ4=;
+        b=PpO4vFlYHyjHMtpC8Mz2jg+gdCtxxKGHSpk2/VEWkKYZgf7iTz8cDHO7jSFmTIIiSI
+         ehwFTcEgcKtbAhPl5lmgvTh2Amt5OB1oLwqOjRl1EjOGRWAnUhcOpGJmZYGUjpyNLkDG
+         hRL9bskiPpU9ntUuq4Y8f6ToQM6e72EVZlESrL8zzi9tIxmLLpCytH88l7XBy5AalbRE
+         JqX+b1nJ2qn8qBOQ2HXm3/g4jFqqNcwXLw/7SK00OHxm/AordXwEsKOyvSbieqsHf0tC
+         oq+DWhxKhFZ9Y668oETRSNWzfHYQ+QKNPhQSEMHL9kQ56Xeps3Lm13GyIGNc6WQct3SM
+         vfcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tRR037kJulgwhYLTLVS64RUcLKjXsyaAdjVztOdmt4c=;
-        b=s6UDCgbn/GHOUHEVot5uE3wZp6GvciDCmFz7RZQTFV8Bgzml1lYBAjCBfXqtjNL95e
-         CjhWsuIlI+YjajrCyuBfSLK64Dgjve+WI7Kc2PPJdYsOUncPaNQn7MDTWGmb8ofmSUCT
-         DeGZ8QUj0p8hQ3JC8TDENDxigXmoAkVCgZlxU2Dfgo3bj1VR4iWaPrP8z5wOwMSYVrWH
-         A+sGALGvfLngiKjGXPTXUmKpx/YX7mJ/vjldgzv9fV1zvaQSnQYUhs9qmSEPR03L2tIl
-         1hB0hxe90Tu4wldgZA1C40+VBEo+4V/hBAIk/AC1SXgdimf7IgoFd53A2Ivx5Q762Vb4
-         Gi4g==
-X-Gm-Message-State: AO0yUKVaGI+tu58dtpbKzuK/xSZXuULqxir8S7+DBwqoUMbe+0XFwLPm
-        35gORQ0fhfAH/juzSnI0rWA=
-X-Google-Smtp-Source: AK7set+azTp13SuUGwjoNTZyrMsLUMb49C2onH4V27e0C/cXyii//Ul3dV50Ex869zgJSQEedF0Kpw==
-X-Received: by 2002:adf:f04e:0:b0:2bf:dcdc:afb8 with SMTP id t14-20020adff04e000000b002bfdcdcafb8mr2658209wro.64.1676389717261;
-        Tue, 14 Feb 2023 07:48:37 -0800 (PST)
+        bh=AWHllFyKrR+xZQxHI6mDR0G17o8Ie4DvLljLVm9vbJ4=;
+        b=koX2W8ZS+AqoDir6rckqUXhdi01hae5/PNB1rNqyF19/rM9NJYN2lf49QwuIdeq1su
+         CkhOVPRkK5v7EhTrV5KjuzLOiDFbQbWaAg4sqd8x9hH822cpi1nLCZHy9I2B/nY0JfnX
+         ADaqK/K/fVWC5Ujug/Amn6eVcpNnPYo9iPUvr+Z0FL85yXIliCZcImZhxuROzi2peQHy
+         4yTtDLwqemh//ZflaMcKrWrZyxY966j0i+z7Rubf0ipq/1IqbXRQoEgnQVQnThfWT7mv
+         xtKBiLbQQ/vNpXi3Y2RUoIq50BTF6c7KMhwDAhlQadrkv2k1Ahckc2dHD61FtTAKHcjj
+         yNjg==
+X-Gm-Message-State: AO0yUKWypT/OGw1k6smhRamfD4GRQTYwZwm6CU62BIIKzY93CE2D1G2h
+        CBHFrY9HxwXSHfTDYcirj7w=
+X-Google-Smtp-Source: AK7set9rjRZPUVh5jSiIATnm7Rmz7aKfhtMGcbYUrP0JOrfy4NjkD5Dt/3jnGeGvjwG6ZtxSehC+xg==
+X-Received: by 2002:a05:600c:91d:b0:3df:d817:df98 with SMTP id m29-20020a05600c091d00b003dfd817df98mr2502200wmp.10.1676389747871;
+        Tue, 14 Feb 2023 07:49:07 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s12-20020a5d510c000000b002c55bbeefc2sm4449390wrt.22.2023.02.14.07.48.35
+        by smtp.gmail.com with ESMTPSA id he7-20020a05600c540700b003e1f6e18c95sm2024328wmb.21.2023.02.14.07.49.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 07:48:36 -0800 (PST)
-Date:   Tue, 14 Feb 2023 18:48:31 +0300
+        Tue, 14 Feb 2023 07:49:07 -0800 (PST)
+Date:   Tue, 14 Feb 2023 18:49:03 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Frank Sae <Frank.Sae@motor-comm.com>
-Cc:     Peter Geis <pgwipeout@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+To:     Steve Wise <larrystevenwise@gmail.com>
+Cc:     Potnuri Bharat Teja <bharat@chelsio.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: phy: Uninitialized variables in
- yt8531_link_change_notify()
-Message-ID: <Y+utT+5q5Te1GvYk@kili>
+Subject: [PATCH] iw_cxgb4: potential NULL dereference in
+ c4iw_fill_res_cm_id_entry()
+Message-ID: <Y+utb9JSKpgAeiWC@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -70,33 +67,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-These booleans are never set to false, but are just used uninitialized.
+This condition needs to match the previous "if (epcp->state == LISTEN) {"
+exactly to avoid a NULL dereference of either "listen_ep" or "ep". The
+problem is that "epcp" has been re-assigned so just testing
+"if (epcp->state == LISTEN) {" a second time is not sufficient.
 
-Fixes: 4ac94f728a58 ("net: phy: Add driver for Motorcomm yt8531 gigabit ethernet phy")
+Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
-Applies to net-next.
+From static analysis, not from testing.  It's possible that the current
+code works but this change makes it more Obviously Correct[tm].
 
- drivers/net/phy/motorcomm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/cxgb4/restrack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
-index ee7c37dfdca0..119a54d6c65d 100644
---- a/drivers/net/phy/motorcomm.c
-+++ b/drivers/net/phy/motorcomm.c
-@@ -1534,9 +1534,9 @@ static void yt8531_link_change_notify(struct phy_device *phydev)
- {
- 	struct device_node *node = phydev->mdio.dev.of_node;
- 	bool tx_clk_adj_enabled = false;
--	bool tx_clk_1000_inverted;
--	bool tx_clk_100_inverted;
--	bool tx_clk_10_inverted;
-+	bool tx_clk_1000_inverted = false;
-+	bool tx_clk_100_inverted = false;
-+	bool tx_clk_10_inverted = false;
- 	u16 val = 0;
- 	int ret;
+diff --git a/drivers/infiniband/hw/cxgb4/restrack.c b/drivers/infiniband/hw/cxgb4/restrack.c
+index ff645b955a08..fd22c85d35f4 100644
+--- a/drivers/infiniband/hw/cxgb4/restrack.c
++++ b/drivers/infiniband/hw/cxgb4/restrack.c
+@@ -238,7 +238,7 @@ int c4iw_fill_res_cm_id_entry(struct sk_buff *msg,
+ 	if (rdma_nl_put_driver_u64_hex(msg, "history", epcp->history))
+ 		goto err_cancel_table;
  
+-	if (epcp->state == LISTEN) {
++	if (listen_ep) {
+ 		if (rdma_nl_put_driver_u32(msg, "stid", listen_ep->stid))
+ 			goto err_cancel_table;
+ 		if (rdma_nl_put_driver_u32(msg, "backlog", listen_ep->backlog))
 -- 
 2.35.1
 
