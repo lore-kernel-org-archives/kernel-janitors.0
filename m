@@ -2,87 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C22EC05027
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 15:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C07C05027
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 15:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233115AbjBNPuR (ORCPT
+        id S233173AbjBNPvI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 10:50:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36622 "EHLO
+        Tue, 14 Feb 2023 10:51:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232664AbjBNPuQ (ORCPT
+        with ESMTP id S232365AbjBNPvH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 10:50:16 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9363430D4;
-        Tue, 14 Feb 2023 07:50:15 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id f47-20020a05600c492f00b003dc584a7b7eso13982287wmp.3;
-        Tue, 14 Feb 2023 07:50:15 -0800 (PST)
+        Tue, 14 Feb 2023 10:51:07 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1719F10F6;
+        Tue, 14 Feb 2023 07:51:06 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id m14so16113857wrg.13;
+        Tue, 14 Feb 2023 07:51:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qii2og17aImvT8ZjPxYLeXITxSxT4PHRaFvNRbLddrY=;
-        b=Bm+vmVE1i/BGWDwu1fWFPZws69djpT2yeKi6VLfmmWQ9h/gHxEkKAOWNN9jFFJ2tIT
-         ZrwUKglQhfR7kDkw42sqLKXhLjLBqbAMbaVIAGTKlDNgKzm0DHib/QpISnvLM7oSx9Ht
-         WU3RTsPMt0dtLv6KJtB2mc/0ecNs5nuhLVbpKT9KoqzGBwf5eCQJ7uOqvrt1gioT0CkK
-         VNXMzuyfErm2BO7WpQkHgE8s3uymzdxZGq3pVC+lO8e78gHLUDnJmvV4DJaYir6igKZs
-         gsV7Jk2ggpE0A6F0hQDZ+6Pr3z9tucgSB04IEvZKNqkYryPW03bivCyET0Zjzks303qT
-         OFyQ==
+        bh=wzAUyHtfoHuSnIcDKMQpUmStqp8uBg0Ef5hbSbh32Pc=;
+        b=M1Jn2v07w8RE5r5b6Kx65c7YeYnFWwStF19DpbwmUBYCvawZakOcHpsuaJ9rh3Uiwa
+         rZBRh00UDb+YpTbzYnpgeBRhZk2SQpKcLSmcHPIVnYep1O05Zr5yw9orZfGGB18MKgi6
+         01JIPf8tVY6fCKQ0KCr9TVBLinKFpm3ndCMrPOfdAc4S1s/mgdezqyQOrTcFM3iTvWbP
+         cGndravD15y78TQFvGKfI2EW+FVuehN9TDtxiu5vihswWzU5Dp26B8uNyWR1wDhgGHXR
+         1rbiq2uRWU6MplUCDTlaOEpW3lJP6yYD1cYmIOYReXfZXsyfLY6Hl53IgMtn/Z3myu3z
+         jz4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qii2og17aImvT8ZjPxYLeXITxSxT4PHRaFvNRbLddrY=;
-        b=iVG/PEi2PHsNHROZyivv/pW07oQoQ+Z+wk1XnVcSAF9i+kaYU4A3f1YYSzoGCUgHBe
-         OCA8H8Llr1Tuj/qJNkwvhLoEr0SKCAIfeq2JMIHb4lOapt2uOT+xShgcD6/xMMH2N8dk
-         kW+83RweZc+WP4IQxo4WWUAKaBCPrgrAAHLC86pypjsbgVU8kq0mzSfZmc3Ti69wjTtQ
-         ONKoooJ1ma5zDYVLySSxo9Phe8XbDtYa0Dbu9Ii2iDjcew8UY6g2S0XsKhZUJn0pADyK
-         u+xjpbQZS9BRMa3jfUsY9RAoirmPRE7kW5BmuhU3Db3Bi34F7hA8qM6zjaWTWdcWSWkh
-         Xulg==
-X-Gm-Message-State: AO0yUKXpbXd2NFmVvUd3bZ5y5vGcITNvX1a/G9qhxsM4JoJ1iDh7NUej
-        ViFWmG7NvGc6lnoVpggZP3tUgv2NWJRoyA==
-X-Google-Smtp-Source: AK7set/+Vodl/e6827TR4dk5c4heRYgjpT/PdpbRFCjng2PzQoG7cNVNGmd6WDos7FZvbsUWewdtuw==
-X-Received: by 2002:a05:600c:3418:b0:3dc:50dd:361b with SMTP id y24-20020a05600c341800b003dc50dd361bmr2473315wmp.5.1676389814160;
-        Tue, 14 Feb 2023 07:50:14 -0800 (PST)
+        bh=wzAUyHtfoHuSnIcDKMQpUmStqp8uBg0Ef5hbSbh32Pc=;
+        b=PYrVDveSUtQq2iU0MiC/aSeqs/8I381KkG99u4EktwlwJoYI5xzu6qkcfMLC+mRANd
+         8QexbiKLJeiAFkQOyivJpLRpyjsZ94/tIpH+SpwG/e9rcWdAxipwY9zlUBKH1T82x9Cj
+         HBTmfaebkddCWK+0NGGTHddGblaGnvifusHfIC5VaA5QYfDHnhAD7UobDS4L8lDvhQBk
+         mqx3IVXLAQxpJBCIeoBGgdohtzeJyvu7TapMr2fX6MVjXpYZweSW2jlf3Q3a+JMaWVL0
+         Tb91balrb6mMMWVN13OoH3u4YHS04N5sD2Z16mf0WbGelF5GkaGEXBeGpgQPZIfKrLvg
+         iCcQ==
+X-Gm-Message-State: AO0yUKVTQoCiIHnhyzXnsH3L5Qs9Pb3t2m+Tkx6JE+xEyuei3z+CLkM5
+        gGxYo4Esnt4L1LZBNdHUsIc=
+X-Google-Smtp-Source: AK7set+Et6EXBwEJ4gK6KhDjAWS7SBFOOZDLF5vFM5RbW56sXRp/GXJ3A+Qqlyw/EpF5z+Lm80TbVQ==
+X-Received: by 2002:a5d:6652:0:b0:2c5:56f7:51ec with SMTP id f18-20020a5d6652000000b002c556f751ecmr2590115wrw.1.1676389864679;
+        Tue, 14 Feb 2023 07:51:04 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id g10-20020a05600c310a00b003e1e8d794e1sm9158227wmo.13.2023.02.14.07.50.12
+        by smtp.gmail.com with ESMTPSA id o7-20020a056000010700b002c559def236sm4681612wrx.57.2023.02.14.07.51.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 07:50:13 -0800 (PST)
-Date:   Tue, 14 Feb 2023 18:50:09 +0300
+        Tue, 14 Feb 2023 07:51:04 -0800 (PST)
+Date:   Tue, 14 Feb 2023 18:51:00 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Frank Sae <Frank.Sae@motor-comm.com>
-Cc:     Peter Geis <pgwipeout@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+To:     Steve Wise <larrystevenwise@gmail.com>
+Cc:     Potnuri Bharat Teja <bharat@chelsio.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: Uninitialized variables in
- yt8531_link_change_notify()
-Message-ID: <Y+utsW/vGIYNJJu7@kadam>
-References: <Y+utT+5q5Te1GvYk@kili>
+Subject: Re: [PATCH] iw_cxgb4: potential NULL dereference in
+ c4iw_fill_res_cm_id_entry()
+Message-ID: <Y+ut5OhZFnIO2JtZ@kadam>
+References: <Y+utb9JSKpgAeiWC@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y+utT+5q5Te1GvYk@kili>
+In-Reply-To: <Y+utb9JSKpgAeiWC@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 14, 2023 at 06:48:31PM +0300, Dan Carpenter wrote:
-> These booleans are never set to false, but are just used uninitialized.
+On Tue, Feb 14, 2023 at 06:49:03PM +0300, Dan Carpenter wrote:
+> This condition needs to match the previous "if (epcp->state == LISTEN) {"
+> exactly to avoid a NULL dereference of either "listen_ep" or "ep". The
+> problem is that "epcp" has been re-assigned so just testing
+> "if (epcp->state == LISTEN) {" a second time is not sufficient.
 > 
-> Fixes: 4ac94f728a58 ("net: phy: Add driver for Motorcomm yt8531 gigabit ethernet phy")
+> Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
 > ---
-> Applies to net-next.
+> >From static analysis, not from testing.  It's possible that the current
+> code works but this change makes it more Obviously Correct[tm].
 > 
 
-Sorry for sending this twice.  :/
+Oops.  I accidentally sent this twice.  Sorry!
 
 regards,
 dan carpenter
