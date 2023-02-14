@@ -2,110 +2,169 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983ABC05027
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 07:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184A9C05027
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 08:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231687AbjBNHHP (ORCPT
+        id S232131AbjBNIky (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 02:07:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50074 "EHLO
+        Tue, 14 Feb 2023 03:40:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231777AbjBNHHG (ORCPT
+        with ESMTP id S232129AbjBNIkc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 02:07:06 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AFD51EFF5;
-        Mon, 13 Feb 2023 23:06:46 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id bg5-20020a05600c3c8500b003e00c739ce4so10771047wmb.5;
-        Mon, 13 Feb 2023 23:06:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2RSNDSei1cvEI2TbZqPp2qztpn6EMY6rziZcsn0c1v4=;
-        b=DGIGar2V45GyQ5EGa5cr2sHvNFhtS2/eCSc8t2a9Jy1U9vdQwNuXHfUCwlRsF0kkPi
-         zp6W5I/bOvRFU44DkcAy90Fmm2pTaAjojOU5Rq3JKabZUsUf6ZmBSw2e+iDQDJopym9Y
-         FfJUIy2c95Li1c1+w4nW+jkIlbnt5QaRqK3MU+EjSJ5X8+KAVh6jAQO0FSzEwNynvcRH
-         e83jCJK3VeBfrKbyXjc2Awp43i18sjD3cp0fVTJRzViY43jy7w7GlKvl2NEeiCCoUZj+
-         PEanH2j/NJB+doemDSu+IQcMNHPulM0Xo/lH9jm00QoZDG8Sm3rmi9zien0kCioIEQZ0
-         SFzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2RSNDSei1cvEI2TbZqPp2qztpn6EMY6rziZcsn0c1v4=;
-        b=J1KhbdCok+MdoVFxxWny59RdsSdHFIie+G4U/WYFHcY2u+O034jE4aHNzn9KxmBCJe
-         yfdnh2+BO3HnsCKrFh9Cw/sVBXt13P2bw/3D3POISEU1ttPa46UnyJnjjqi4qQIPZTu8
-         945YyDkIqIbZtAVEVe6eAuhrz+6Gt0rcniLdvAKUSO+tQJSzQ/tKJYR0dWruWwJc3DzN
-         V+/0FEFRxxakORGofzjj1lxkv55V31wQttVxDW9zdfXdXZqC3hnsO+ZiJNrBN5dmpX6B
-         +L/Xg1ixWiwQFeYLR65akytW8tjzFIbfL3f0dLdds65VAe7bt/Q7VSHuJ3IQIDmWdAMB
-         FpfA==
-X-Gm-Message-State: AO0yUKXgMiJRwSmRO/ZLE4SgHolRFdSLiDsCKsoPSTrFT8DuruJVyZZg
-        IiJufUcWwBMIXrI5mFWqumvYSy68hhQ=
-X-Google-Smtp-Source: AK7set+5/I+CAmLWWtV5fCxP5KSDYhsVKt723oHN1uONsZ1JTPM40/7jcY5v1b6hH1mIAbKe9mi6Ew==
-X-Received: by 2002:a05:600c:1e14:b0:3df:9858:c033 with SMTP id ay20-20020a05600c1e1400b003df9858c033mr8516458wmb.8.1676358404333;
-        Mon, 13 Feb 2023 23:06:44 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id bd6-20020a05600c1f0600b003e0015c8618sm19607599wmb.6.2023.02.13.23.06.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Feb 2023 23:06:43 -0800 (PST)
-Date:   Tue, 14 Feb 2023 10:06:39 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc:     Sergey Shtylyov <s.shtylyov@omp.ru>, linux-ide@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ata: pata_hpt3x2n: prevent potential forever loop in
- hpt3xn_calibrate_dpll()
-Message-ID: <Y+sy/zldAljT5Sir@kadam>
-References: <Y9pyzLUShZJeLDq7@kili>
- <48330abf-31ee-d0d1-7542-6d6a2de71dfc@opensource.wdc.com>
+        Tue, 14 Feb 2023 03:40:32 -0500
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCFFAD13
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Feb 2023 00:40:22 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id RqrMpTv93mwp8RqrMpArGj; Tue, 14 Feb 2023 09:40:20 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 14 Feb 2023 09:40:20 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] regmap: Reorder fields in 'struct regmap_bus' to save some memory
+Date:   Tue, 14 Feb 2023 09:40:14 +0100
+Message-Id: <077ca39622c8870a3ea932298a9cec34f7a8295a.1676363976.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <48330abf-31ee-d0d1-7542-6d6a2de71dfc@opensource.wdc.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 14, 2023 at 12:47:52PM +0900, Damien Le Moal wrote:
-> On 2/1/23 23:10, Dan Carpenter wrote:
-> > This code accidentally reuses "tries" as the iterator for both the inside
-> > and outside loops.  It means that the potentially the "tries" could be
-> > reset to 0x1000 and never reach 0x5000.
-> > 
-> > Fixes: 669a5db411d8 ("[libata] Add a bunch of PATA drivers.")
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > ---
-> >  drivers/ata/pata_hpt3x2n.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/ata/pata_hpt3x2n.c b/drivers/ata/pata_hpt3x2n.c
-> > index 617c95522f43..447dc287a2d4 100644
-> > --- a/drivers/ata/pata_hpt3x2n.c
-> > +++ b/drivers/ata/pata_hpt3x2n.c
-> > @@ -380,14 +380,14 @@ static int hpt3xn_calibrate_dpll(struct pci_dev *dev)
-> >  {
-> >  	u8 reg5b;
-> >  	u32 reg5c;
-> > -	int tries;
-> > +	int tries, tries2;
-> >  
-> >  	for (tries = 0; tries < 0x5000; tries++) {
-> >  		udelay(50);
-> >  		pci_read_config_byte(dev, 0x5b, &reg5b);
-> >  		if (reg5b & 0x80) {
-> >  			/* See if it stays set */
-> > -			for (tries = 0; tries < 0x1000; tries++) {
-> > +			for (tries2 = 0; tries2 < 0x1000; tries2++) {
-> >  				pci_read_config_byte(dev, 0x5b, &reg5b);
-> >  				/* Failed ? */
-> >  				if ((reg5b & 0x80) == 0)
-> 
-> I am assuming this one is the same as for pata_hpt37x: a false positive ?
+Group some bool variables to reduce hole and avoid padding.
+On x86_64, this shrinks the size from 136 to 128 bytes.
 
-Yes, sorry.
+As an example:
 
-regards,
-dan carpenter
+$ size drivers/base/regmap/regmap-fsi.o (Before)
+   text	   data	    bss	    dec	    hex	filename
+   4837	    136	      0	   4973	   136d	drivers/base/regmap/regmap-fsi.o
+
+$ size drivers/base/regmap/regmap-fsi.o (After)
+   text	   data	    bss	    dec	    hex	filename
+   4701	    136	      0	   4837	   12e5	drivers/base/regmap/regmap-fsi.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Using pahole
+
+Before:
+======
+struct regmap_bus {
+	bool                       fast_io;              /*     0     1 */
+
+	/* XXX 7 bytes hole, try to pack */
+
+	regmap_hw_write            write;                /*     8     8 */
+	regmap_hw_gather_write     gather_write;         /*    16     8 */
+	regmap_hw_async_write      async_write;          /*    24     8 */
+	regmap_hw_reg_write        reg_write;            /*    32     8 */
+	regmap_hw_reg_noinc_write  reg_noinc_write;      /*    40     8 */
+	regmap_hw_reg_update_bits  reg_update_bits;      /*    48     8 */
+	regmap_hw_read             read;                 /*    56     8 */
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	regmap_hw_reg_read         reg_read;             /*    64     8 */
+	regmap_hw_reg_noinc_read   reg_noinc_read;       /*    72     8 */
+	regmap_hw_free_context     free_context;         /*    80     8 */
+	regmap_hw_async_alloc      async_alloc;          /*    88     8 */
+	u8                         read_flag_mask;       /*    96     1 */
+
+	/* XXX 3 bytes hole, try to pack */
+
+	enum regmap_endian         reg_format_endian_default; /*   100     4 */
+	enum regmap_endian         val_format_endian_default; /*   104     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	size_t                     max_raw_read;         /*   112     8 */
+	size_t                     max_raw_write;        /*   120     8 */
+	/* --- cacheline 2 boundary (128 bytes) --- */
+	bool                       free_on_exit;         /*   128     1 */
+
+	/* size: 136, cachelines: 3, members: 18 */
+	/* sum members: 115, holes: 3, sum holes: 14 */
+	/* padding: 7 */
+	/* last cacheline: 8 bytes */
+};
+
+
+After:
+=====
+struct regmap_bus {
+	bool                       fast_io;              /*     0     1 */
+	bool                       free_on_exit;         /*     1     1 */
+
+	/* XXX 6 bytes hole, try to pack */
+
+	regmap_hw_write            write;                /*     8     8 */
+	regmap_hw_gather_write     gather_write;         /*    16     8 */
+	regmap_hw_async_write      async_write;          /*    24     8 */
+	regmap_hw_reg_write        reg_write;            /*    32     8 */
+	regmap_hw_reg_noinc_write  reg_noinc_write;      /*    40     8 */
+	regmap_hw_reg_update_bits  reg_update_bits;      /*    48     8 */
+	regmap_hw_read             read;                 /*    56     8 */
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	regmap_hw_reg_read         reg_read;             /*    64     8 */
+	regmap_hw_reg_noinc_read   reg_noinc_read;       /*    72     8 */
+	regmap_hw_free_context     free_context;         /*    80     8 */
+	regmap_hw_async_alloc      async_alloc;          /*    88     8 */
+	u8                         read_flag_mask;       /*    96     1 */
+
+	/* XXX 3 bytes hole, try to pack */
+
+	enum regmap_endian         reg_format_endian_default; /*   100     4 */
+	enum regmap_endian         val_format_endian_default; /*   104     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	size_t                     max_raw_read;         /*   112     8 */
+	size_t                     max_raw_write;        /*   120     8 */
+
+	/* size: 128, cachelines: 2, members: 18 */
+	/* sum members: 115, holes: 3, sum holes: 13 */
+};
+---
+ include/linux/regmap.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 029b9e09d3ca..f26432dc02ef 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -520,6 +520,7 @@ typedef void (*regmap_hw_free_context)(void *context);
+  *	     to perform locking. This field is ignored if custom lock/unlock
+  *	     functions are used (see fields lock/unlock of
+  *	     struct regmap_config).
++ * @free_on_exit: kfree this on exit of regmap
+  * @write: Write operation.
+  * @gather_write: Write operation with split register/value, return -ENOTSUPP
+  *                if not implemented  on a given device.
+@@ -548,10 +549,10 @@ typedef void (*regmap_hw_free_context)(void *context);
+  *     DEFAULT, BIG is assumed.
+  * @max_raw_read: Max raw read size that can be used on the bus.
+  * @max_raw_write: Max raw write size that can be used on the bus.
+- * @free_on_exit: kfree this on exit of regmap
+  */
+ struct regmap_bus {
+ 	bool fast_io;
++	bool free_on_exit;
+ 	regmap_hw_write write;
+ 	regmap_hw_gather_write gather_write;
+ 	regmap_hw_async_write async_write;
+@@ -568,7 +569,6 @@ struct regmap_bus {
+ 	enum regmap_endian val_format_endian_default;
+ 	size_t max_raw_read;
+ 	size_t max_raw_write;
+-	bool free_on_exit;
+ };
+ 
+ /*
+-- 
+2.34.1
 
