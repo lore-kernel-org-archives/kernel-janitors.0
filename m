@@ -2,36 +2,35 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA63C05027
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 10:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0917FC05027
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 12:54:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232043AbjBNKe7 (ORCPT
+        id S232203AbjBNMyK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 05:34:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39392 "EHLO
+        Tue, 14 Feb 2023 07:54:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232590AbjBNKe6 (ORCPT
+        with ESMTP id S231781AbjBNMyJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 05:34:58 -0500
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0C69227BB
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Feb 2023 02:34:56 -0800 (PST)
+        Tue, 14 Feb 2023 07:54:09 -0500
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA6622785
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Feb 2023 04:53:57 -0800 (PST)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id RseEpCV6Kar8pRseEpAfEj; Tue, 14 Feb 2023 11:34:54 +0100
+        id Ruokph5lwOJaFRuolpOzce; Tue, 14 Feb 2023 13:53:55 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 14 Feb 2023 11:34:54 +0100
+X-ME-Date: Tue, 14 Feb 2023 13:53:55 +0100
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Mark Brown <broonie@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-spi@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH] spi: Reorder fields in 'struct spi_transfer'
-Date:   Tue, 14 Feb 2023 11:34:50 +0100
-Message-Id: <93a051da85a895bc6003aedfb00a13e1c2fc6338.1676370870.git.christophe.jaillet@wanadoo.fr>
+        linux-rdma@vger.kernel.org
+Subject: [PATCH] RDMA/restrack: Reorder fields in 'struct rdma_restrack_entry'
+Date:   Tue, 14 Feb 2023 13:53:52 +0100
+Message-Id: <d47800d9fd5ac7c33d01af04b12b6d43ad23c96e.1676379187.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,14 +39,7 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Group some variables based on their sizes to reduce hole and avoid padding.
-On x86_64, this shrinks the size from 144 to 128 bytes.
-
-Turn 'timestamped' into a bitfield so that it can be easily merged with
-some other bifields and move 'error'.
-
-This should have no real impact on memory allocation because 'struct
-spi_transfer' is mostly used on stack, but it can save a few cycles
-when the structure is initialized or copied.
+On x86_64, this shrinks the size from 136 to 128 bytes.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
@@ -55,171 +47,87 @@ Using pahole
 
 Before:
 ======
-struct spi_transfer {
-	const void  *              tx_buf;               /*     0     8 */
-	void *                     rx_buf;               /*     8     8 */
-	unsigned int               len;                  /*    16     4 */
-
-	/* XXX 4 bytes hole, try to pack */
-
-	dma_addr_t                 tx_dma;               /*    24     8 */
-	dma_addr_t                 rx_dma;               /*    32     8 */
-	struct sg_table            tx_sg;                /*    40    16 */
-	struct sg_table            rx_sg;                /*    56    16 */
-	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
-	unsigned int               dummy_data:1;         /*    72: 0  4 */
-	unsigned int               cs_off:1;             /*    72: 1  4 */
-	unsigned int               cs_change:1;          /*    72: 2  4 */
-	unsigned int               tx_nbits:3;           /*    72: 3  4 */
-	unsigned int               rx_nbits:3;           /*    72: 6  4 */
+struct rdma_restrack_entry {
+	bool                       valid;                /*     0     1 */
+	u8                         no_track:1;           /*     1: 0  1 */
 
 	/* XXX 7 bits hole, try to pack */
-	/* Bitfield combined with next fields */
+	/* XXX 2 bytes hole, try to pack */
 
-	u8                         bits_per_word;        /*    74     1 */
+	struct kref                kref;                 /*     4     4 */
+	struct completion          comp;                 /*     8    96 */
+	/* --- cacheline 1 boundary (64 bytes) was 40 bytes ago --- */
+	struct task_struct *       task;                 /*   104     8 */
+	const char  *              kern_name;            /*   112     8 */
+	enum rdma_restrack_type    type;                 /*   120     4 */
+	bool                       user;                 /*   124     1 */
 
-	/* XXX 1 byte hole, try to pack */
+	/* XXX 3 bytes hole, try to pack */
 
-	struct spi_delay           delay;                /*    76     4 */
+	/* --- cacheline 2 boundary (128 bytes) --- */
+	u32                        id;                   /*   128     4 */
 
-	/* XXX last struct has 1 byte of padding */
-
-	struct spi_delay           cs_change_delay;      /*    80     4 */
-
-	/* XXX last struct has 1 byte of padding */
-
-	struct spi_delay           word_delay;           /*    84     4 */
-
-	/* XXX last struct has 1 byte of padding */
-
-	u32                        speed_hz;             /*    88     4 */
-	u32                        effective_speed_hz;   /*    92     4 */
-	unsigned int               ptp_sts_word_pre;     /*    96     4 */
-	unsigned int               ptp_sts_word_post;    /*   100     4 */
-	struct ptp_system_timestamp * ptp_sts;           /*   104     8 */
-	bool                       timestamped;          /*   112     1 */
-
-	/* XXX 7 bytes hole, try to pack */
-
-	struct list_head           transfer_list;        /*   120    16 */
-	/* --- cacheline 2 boundary (128 bytes) was 8 bytes ago --- */
-	u16                        error;                /*   136     2 */
-
-	/* size: 144, cachelines: 3, members: 24 */
-	/* sum members: 124, holes: 3, sum holes: 12 */
-	/* sum bitfield members: 9 bits, bit holes: 1, sum bit holes: 7 bits */
-	/* padding: 6 */
-	/* paddings: 3, sum paddings: 3 */
-	/* last cacheline: 16 bytes */
+	/* size: 136, cachelines: 3, members: 9 */
+	/* sum members: 126, holes: 2, sum holes: 5 */
+	/* sum bitfield members: 1 bits, bit holes: 1, sum bit holes: 7 bits */
+	/* padding: 4 */
+	/* last cacheline: 8 bytes */
 };
-
 
 After:
 =====
-struct spi_transfer {
-	const void  *              tx_buf;               /*     0     8 */
-	void *                     rx_buf;               /*     8     8 */
-	unsigned int               len;                  /*    16     4 */
-	u16                        error;                /*    20     2 */
+struct rdma_restrack_entry {
+	bool                       valid;                /*     0     1 */
+	u8                         no_track:1;           /*     1: 0  1 */
 
-	/* XXX 2 bytes hole, try to pack */
+	/* XXX 7 bits hole, try to pack */
 
-	dma_addr_t                 tx_dma;               /*    24     8 */
-	dma_addr_t                 rx_dma;               /*    32     8 */
-	struct sg_table            tx_sg;                /*    40    16 */
-	struct sg_table            rx_sg;                /*    56    16 */
-	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
-	unsigned int               dummy_data:1;         /*    72: 0  4 */
-	unsigned int               cs_off:1;             /*    72: 1  4 */
-	unsigned int               cs_change:1;          /*    72: 2  4 */
-	unsigned int               tx_nbits:3;           /*    72: 3  4 */
-	unsigned int               rx_nbits:3;           /*    72: 6  4 */
-	unsigned int               timestamped:1;        /*    72: 9  4 */
-
-	/* XXX 6 bits hole, try to pack */
-	/* Bitfield combined with next fields */
-
-	u8                         bits_per_word;        /*    74     1 */
+	bool                       user;                 /*     2     1 */
 
 	/* XXX 1 byte hole, try to pack */
 
-	struct spi_delay           delay;                /*    76     4 */
+	struct kref                kref;                 /*     4     4 */
+	struct completion          comp;                 /*     8    96 */
+	/* --- cacheline 1 boundary (64 bytes) was 40 bytes ago --- */
+	struct task_struct *       task;                 /*   104     8 */
+	const char  *              kern_name;            /*   112     8 */
+	enum rdma_restrack_type    type;                 /*   120     4 */
+	u32                        id;                   /*   124     4 */
 
-	/* XXX last struct has 1 byte of padding */
-
-	struct spi_delay           cs_change_delay;      /*    80     4 */
-
-	/* XXX last struct has 1 byte of padding */
-
-	struct spi_delay           word_delay;           /*    84     4 */
-
-	/* XXX last struct has 1 byte of padding */
-
-	u32                        speed_hz;             /*    88     4 */
-	u32                        effective_speed_hz;   /*    92     4 */
-	unsigned int               ptp_sts_word_pre;     /*    96     4 */
-	unsigned int               ptp_sts_word_post;    /*   100     4 */
-	struct ptp_system_timestamp * ptp_sts;           /*   104     8 */
-	struct list_head           transfer_list;        /*   112    16 */
-
-	/* size: 128, cachelines: 2, members: 24 */
-	/* sum members: 123, holes: 2, sum holes: 3 */
-	/* sum bitfield members: 10 bits, bit holes: 1, sum bit holes: 6 bits */
-	/* paddings: 3, sum paddings: 3 */
+	/* size: 128, cachelines: 2, members: 9 */
+	/* sum members: 126, holes: 1, sum holes: 1 */
+	/* sum bitfield members: 1 bits, bit holes: 1, sum bit holes: 7 bits */
 };
 ---
- drivers/spi/spi.c       | 2 +-
- include/linux/spi/spi.h | 9 ++++-----
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ include/rdma/restrack.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 9f5c6b9f5135..44b85a8d47f1 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1927,7 +1927,7 @@ void spi_take_timestamp_post(struct spi_controller *ctlr,
- 	/* Capture the resolution of the timestamp */
- 	xfer->ptp_sts_word_post = progress;
- 
--	xfer->timestamped = true;
-+	xfer->timestamped = 1;
- }
- EXPORT_SYMBOL_GPL(spi_take_timestamp_post);
- 
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 988aabc31871..4fa26b9a3572 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -1022,6 +1022,9 @@ struct spi_transfer {
- 	void		*rx_buf;
- 	unsigned	len;
- 
-+#define SPI_TRANS_FAIL_NO_START	BIT(0)
-+	u16		error;
-+
- 	dma_addr_t	tx_dma;
- 	dma_addr_t	rx_dma;
- 	struct sg_table tx_sg;
-@@ -1032,6 +1035,7 @@ struct spi_transfer {
- 	unsigned	cs_change:1;
- 	unsigned	tx_nbits:3;
- 	unsigned	rx_nbits:3;
-+	unsigned	timestamped:1;
- #define	SPI_NBITS_SINGLE	0x01 /* 1bit transfer */
- #define	SPI_NBITS_DUAL		0x02 /* 2bits transfer */
- #define	SPI_NBITS_QUAD		0x04 /* 4bits transfer */
-@@ -1048,12 +1052,7 @@ struct spi_transfer {
- 
- 	struct ptp_system_timestamp *ptp_sts;
- 
--	bool		timestamped;
--
- 	struct list_head transfer_list;
--
--#define SPI_TRANS_FAIL_NO_START	BIT(0)
--	u16		error;
- };
- 
- /**
+diff --git a/include/rdma/restrack.h b/include/rdma/restrack.h
+index 8b7c46daeb07..da53fefe6f9e 100644
+--- a/include/rdma/restrack.h
++++ b/include/rdma/restrack.h
+@@ -80,6 +80,10 @@ struct rdma_restrack_entry {
+ 	 * query stage.
+ 	 */
+ 	u8			no_track : 1;
++	/**
++	 * @user: user resource
++	 */
++	bool			user;
+ 	/*
+ 	 * @kref: Protect destroy of the resource
+ 	 */
+@@ -106,10 +110,6 @@ struct rdma_restrack_entry {
+ 	 * @type: various objects in restrack database
+ 	 */
+ 	enum rdma_restrack_type	type;
+-	/**
+-	 * @user: user resource
+-	 */
+-	bool			user;
+ 	/**
+ 	 * @id: ID to expose to users
+ 	 */
 -- 
 2.34.1
 
