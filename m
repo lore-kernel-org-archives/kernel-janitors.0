@@ -2,84 +2,133 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA33C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 14:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0DA2C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 15:01:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232947AbjBNOzn (ORCPT
+        id S233441AbjBNPBQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 09:55:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51440 "EHLO
+        Tue, 14 Feb 2023 10:01:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232735AbjBNOzm (ORCPT
+        with ESMTP id S233344AbjBNPBM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 09:55:42 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE17435A7;
-        Tue, 14 Feb 2023 06:55:41 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id o36so11176053wms.1;
-        Tue, 14 Feb 2023 06:55:41 -0800 (PST)
+        Tue, 14 Feb 2023 10:01:12 -0500
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36C4B2A9B6
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Feb 2023 07:01:03 -0800 (PST)
+Received: by mail-qt1-x82e.google.com with SMTP id g8so17649507qtq.13
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Feb 2023 07:01:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QvW5pGHVivMxjs1aNmPctDUR2Ntx1Oph/YR4c4+1gmo=;
-        b=oqoB0LXHb8Eh3I37klRsLyZehbOLG+pwWVZuRKb62bUdPDYp4W6DvOa5Zp0aRv/sAI
-         AVLt9nMDbSCkzhT1vD0RgzUpOHTm2RDDiYFsO6L/2ia4tGf7y1fnDZHZhqVQgD7XRRlt
-         vzFDxPyc7eRMAr6XKBCXgaOcu+HWhurOBbWX8BvQcoM2ZbuWtEwBV5sRsLdDwHn0OIW2
-         EWll4UTJFG/y/W7y8fa5AIlJR/Zea0KyRjqNqw0qLgeCiJt/s5C7No46kINmRLOsyFT/
-         WQTlydUZaZUwGu+ir6aRn9wKVQ3tIzNHPXwwFfonPMfzRZsMp22aIdN+HExyM7r9fier
-         6xGQ==
+        d=ziepe.ca; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IWClI4gmqGN4DlU8lND230mPm2ROhEH1JY/mvbe9IGY=;
+        b=ef6d2jKYU3nPPxyVbosZ51CBYb7roCJPlQ4NryeZdFF13Tr3ltLwWFXTWmtAfy28GR
+         aYXpVWl3dUDp8fe0SpOb3qwZ375nxS9u6ugpwY8FBLDtS7rUKDm/4Pn8QIpAcziR7ezW
+         2Cc/1QSN5NFq2iYp/zMY2AZvdk4VP3kxJ3kSmp8w9X3RXDj4+kQFK6wwFcN1H8z9+0MB
+         uvPww2oce5T06kjF/x9cD3weEOOs/5dOR/lMPdaeDnYsLWH0d59D++bu+Vylfx0vdRZb
+         0M6xtSMqfk3NP3p3mCsmbYfl1O2nxDxd2FIc0NvxAyrlBLJJwAT2VsKdK1jN4dpa7BoV
+         Jv+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QvW5pGHVivMxjs1aNmPctDUR2Ntx1Oph/YR4c4+1gmo=;
-        b=svk6tiNBEKYN19yKIoy1KyyBjCxqKZ4jDZH2D8325Ay5M4BKH61wu3hq7O92WHl0fq
-         DDIYgrbRSrgNftmrKRsdUXD1CLUjxfAjwgSOSj8vJahbzoJHB3XpAyCBzyK4Xx7MiPrA
-         2oovS5FIsUja4XzMrz0Ect5cobZJNLlCcl78HRpjpg3tpBApS/dcqCDDFbeMviZRX63q
-         jmBbcjJjcpoGEqyl9x2kiPCDU32/YVOmSxW3dlN2wgp+uLQw5frD148KeOPo5iFuI9rO
-         osz9Ex+oaO3iDpY/6UeVlm0hOJFMjcWb+hAS6qx0kRI39217p5/nl9fZ4iXeOXwhpGMB
-         YDNA==
-X-Gm-Message-State: AO0yUKXQTgAzzjY7im81Cf+xObGy/+2gt+HtgQaYtil6cq89SaLMzRsn
-        CNtLvCvn7F+h1eaCKLSsTHA=
-X-Google-Smtp-Source: AK7set+kdPQihdChAfLBVJIbmsaK+sCKpNRiEaD0LnQChHH5Wm48eY1CvKWWpE3RF7KfpojCGaLgSg==
-X-Received: by 2002:a05:600c:3caa:b0:3df:f85a:46fe with SMTP id bg42-20020a05600c3caa00b003dff85a46femr2175409wmb.40.1676386540332;
-        Tue, 14 Feb 2023 06:55:40 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id r14-20020a05600c35ce00b003dc4ecfc4d7sm18823993wmq.29.2023.02.14.06.55.39
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IWClI4gmqGN4DlU8lND230mPm2ROhEH1JY/mvbe9IGY=;
+        b=zZRmhBwH6+kbp3xI6m7WVUIBrre16D4S1iVC0uSN4OxF6gUoBN7NILzQkRPuZNNezp
+         ZK6/DAwmxqTykkiabgd5dmqPg3PKDhU3jV625vuTsB6knhQ+7NAmspcqchDnwnUmQqQI
+         cSCOwrbYN1TAJvqc9U7NevdmW8ZNYt6bGTWqMAjQT/O2qY4OXZuXcKKgAwvIgFGmQn5e
+         PnYZ1T18+gPKAQvey6RViLi7ehdf5SqvZnKDXpzfo2yFm8uxR702KmJymiaSDzlXLS+J
+         86i8yj9IyfMPlYy0c1MwNNqmpVeP4ruTi2Nck9brj9d2qHAY/RYguiO9WAhzjk21t6b7
+         SomQ==
+X-Gm-Message-State: AO0yUKUrlgXwEdp0kBaOOGDY07B2MgTyDuDD/j3L3pH8st+TiXmQBk3e
+        UcHnbI7qxpFGI5z3KxX6UGpexg==
+X-Google-Smtp-Source: AK7set8/INvNdj6TDxgd7rqMzcASY2jtFBOsamVV51VAlU7OICrs7+stQvx8HLmwXKP0SYGLlqLFRA==
+X-Received: by 2002:ac8:4e45:0:b0:3b8:2e36:efd with SMTP id e5-20020ac84e45000000b003b82e360efdmr4837930qtw.55.1676386862310;
+        Tue, 14 Feb 2023 07:01:02 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-167-59-176.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.59.176])
+        by smtp.gmail.com with ESMTPSA id p19-20020ac84093000000b003b6325dfc4esm11200235qtl.67.2023.02.14.07.01.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 06:55:39 -0800 (PST)
-Date:   Tue, 14 Feb 2023 17:55:35 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] nfsd: remove redundant assignment to pointer dentry
-Message-ID: <Y+ug53kWXe5tqZbw@kadam>
-References: <20230214141428.301121-1-colin.i.king@gmail.com>
+        Tue, 14 Feb 2023 07:01:01 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.95)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1pRwnk-000RYJ-T3;
+        Tue, 14 Feb 2023 11:01:00 -0400
+Date:   Tue, 14 Feb 2023 11:01:00 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] RDMA/restrack: Reorder fields in 'struct
+ rdma_restrack_entry'
+Message-ID: <Y+uiLCB7H2xVvQZW@ziepe.ca>
+References: <d47800d9fd5ac7c33d01af04b12b6d43ad23c96e.1676379187.git.christophe.jaillet@wanadoo.fr>
+ <Y+uH0k0OBzPip1P8@ziepe.ca>
+ <75480cf9-8d06-7a7d-4624-6ddbb7d6053a@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230214141428.301121-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <75480cf9-8d06-7a7d-4624-6ddbb7d6053a@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 14, 2023 at 02:14:28PM +0000, Colin Ian King wrote:
-> The pointer dentry is assigned a value that is never read, the
-> assignment is redundant and can be removed.
+On Tue, Feb 14, 2023 at 03:34:21PM +0100, Christophe JAILLET wrote:
+> Le 14/02/2023 à 14:08, Jason Gunthorpe a écrit :
+> > On Tue, Feb 14, 2023 at 01:53:52PM +0100, Christophe JAILLET wrote:
+> > > diff --git a/include/rdma/restrack.h b/include/rdma/restrack.h
+> > > index 8b7c46daeb07..da53fefe6f9e 100644
+> > > --- a/include/rdma/restrack.h
+> > > +++ b/include/rdma/restrack.h
+> > > @@ -80,6 +80,10 @@ struct rdma_restrack_entry {
+> > >   	 * query stage.
+> > >   	 */
+> > >   	u8			no_track : 1;
+> > > +	/**
+> > > +	 * @user: user resource
+> > > +	 */
+> > > +	bool			user;
+> > 
+> > Can we combine this into the bitfield above?
+> > 
+> > Jason
+> > 
+> Hi,
 > 
-> Cleans up clang-scan warning:
-> fs/nfsd/nfsctl.c:1231:2: warning: Value stored to 'dentry' is
-> never read [deadcode.DeadStores]
->         dentry = ERR_PTR(ret);
+> and even above, we have
+> 	bool	valid;
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> I wanted to keep the changes as minimal as possible, but I can change them
+> all in a single bitfield.
 
-No need to initalized "int ret = -ENOMEM;" either.
+IIRC it needs to be checked, I vaugely remember valid can't be a
+bitfield because it is an atomic
+> Do you want code such as:
+> static void rdma_restrack_attach_task(struct rdma_restrack_entry *res,
+> 				      struct task_struct *task)
+> {
+> 	if (WARN_ON_ONCE(!task))
+> 		return;
+> 
+> 	if (res->task)
+> 		put_task_struct(res->task);
+> 	get_task_struct(task);
+> 	res->task = task;
+> 	res->user = true;			<--------
+> }
+>
+> to be changed with 0/1 instead of false/true?
 
-regards,
-dan carpenter
+I'd keep with true/false
 
+Ideally the bitfield itself would be bool type too
+
+> Apparently gcc 11.3 is fine with using true with u8:1, but I don't find it
+> really logical.
+
+Bool types can be casted to integers in defined ways, it is pretty
+normal.
+
+Jason
