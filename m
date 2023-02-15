@@ -2,133 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D345CC05027
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Feb 2023 21:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E62AC05027
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 01:52:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233142AbjBNV75 (ORCPT
+        id S231686AbjBOBwN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 16:59:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50992 "EHLO
+        Tue, 14 Feb 2023 20:52:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233147AbjBNV7w (ORCPT
+        with ESMTP id S229551AbjBOBv6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 16:59:52 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7FC117148;
-        Tue, 14 Feb 2023 13:59:51 -0800 (PST)
-Received: from mercury (unknown [185.209.196.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B8686660217C;
-        Tue, 14 Feb 2023 21:59:49 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676411989;
-        bh=umvdnlXK8Q8qXfGxRr+LD6ap94ksE0y9IEQyzzsAy6U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VpkL/3XYODBw1rF2g5Hc+oIqQsICsxE717FhTvFsNxWyBaKfD3HiM9oraLfkqU8Vb
-         52CY+lGFye9YgNI5DunztvaW0oT7U1zMVYddaZQ7I+maLdtPRzsOYhj2Z7McWtAY1v
-         EqJjajMDz0Re/E0GyoPrV2CHMeDSccmkkIO+ZRa/wKvPABvdE3ZKjrg6KVl3RmZEYT
-         oz0X84WPkXsXZ8JkrpbZ4VXmkc5ZeC2T3qtEoy0WpT0F7cKtpwKQ8BUXA1StGW0cwc
-         +xcvc6KDdYCgw+7aGGTF8SpZLKd8T/rxKnuwyK0Yw/YX1j2w4GxaC+PWU6Hm+yF63F
-         CI10EvlmkA8gQ==
-Received: by mercury (Postfix, from userid 1000)
-        id BF2BF10603FE; Tue, 14 Feb 2023 22:59:46 +0100 (CET)
-Date:   Tue, 14 Feb 2023 22:59:46 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] power: supply: fix spelling mistake "charing" ->
- "charging"
-Message-ID: <20230214215946.m4r73dy5fxds7p3g@mercury.elektranox.org>
-References: <20230214092425.265553-1-colin.i.king@gmail.com>
+        Tue, 14 Feb 2023 20:51:58 -0500
+Received: from out28-220.mail.aliyun.com (out28-220.mail.aliyun.com [115.124.28.220])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CED2A29155;
+        Tue, 14 Feb 2023 17:51:56 -0800 (PST)
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2547287|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_news_journal|0.011767-0.00220176-0.986031;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047198;MF=frank.sae@motor-comm.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.RMSivG-_1676425912;
+Received: from 10.0.2.15(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.RMSivG-_1676425912)
+          by smtp.aliyun-inc.com;
+          Wed, 15 Feb 2023 09:51:53 +0800
+Message-ID: <02c16d4c-1e88-c9b4-4649-a6125c160c09@motor-comm.com>
+Date:   Wed, 15 Feb 2023 09:51:56 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="64xkbddsvhgi7vvf"
-Content-Disposition: inline
-In-Reply-To: <20230214092425.265553-1-colin.i.king@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH net-next] net: phy: Uninitialized variables in
+ yt8531_link_change_notify()
+Content-Language: en-US
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Peter Geis <pgwipeout@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <Y+utT+5q5Te1GvYk@kili>
+From:   Frank Sae <Frank.Sae@motor-comm.com>
+In-Reply-To: <Y+utT+5q5Te1GvYk@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---64xkbddsvhgi7vvf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 2023/2/14 23:48, Dan Carpenter wrote:
 
-On Tue, Feb 14, 2023 at 09:24:25AM +0000, Colin Ian King wrote:
-> There are spelling mistakes in dev_err_probe messages. Fix them.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+> @@ -1534,9 +1534,9 @@ static void yt8531_link_change_notify(struct phy_device *phydev)
+>  {
+>  	struct device_node *node = phydev->mdio.dev.of_node;
+>  	bool tx_clk_adj_enabled = false;
+> -	bool tx_clk_1000_inverted;
+> -	bool tx_clk_100_inverted;
+> -	bool tx_clk_10_inverted;
+> +	bool tx_clk_1000_inverted = false;
+> +	bool tx_clk_100_inverted = false;
+> +	bool tx_clk_10_inverted = false;
 
-Needs to go through the Qualcomm tree:
+Thanks, please keep reverse christmas tree.
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
--- Sebastian
-
->  drivers/power/supply/qcom_battmgr.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/q=
-com_battmgr.c
-> index ec31f887184f..5c2353241099 100644
-> --- a/drivers/power/supply/qcom_battmgr.c
-> +++ b/drivers/power/supply/qcom_battmgr.c
-> @@ -1367,7 +1367,7 @@ static int qcom_battmgr_probe(struct auxiliary_devi=
-ce *adev,
->  		battmgr->wls_psy =3D devm_power_supply_register(dev, &sc8280xp_wls_psy=
-_desc, &psy_cfg_supply);
->  		if (IS_ERR(battmgr->wls_psy))
->  			return dev_err_probe(dev, PTR_ERR(battmgr->wls_psy),
-> -					     "failed to register wireless charing power supply\n");
-> +					     "failed to register wireless charging power supply\n");
->  	} else {
->  		battmgr->bat_psy =3D devm_power_supply_register(dev, &sm8350_bat_psy_d=
-esc, &psy_cfg);
->  		if (IS_ERR(battmgr->bat_psy))
-> @@ -1382,7 +1382,7 @@ static int qcom_battmgr_probe(struct auxiliary_devi=
-ce *adev,
->  		battmgr->wls_psy =3D devm_power_supply_register(dev, &sm8350_wls_psy_d=
-esc, &psy_cfg_supply);
->  		if (IS_ERR(battmgr->wls_psy))
->  			return dev_err_probe(dev, PTR_ERR(battmgr->wls_psy),
-> -					     "failed to register wireless charing power supply\n");
-> +					     "failed to register wireless charging power supply\n");
->  	}
-> =20
->  	battmgr->client =3D devm_pmic_glink_register_client(dev,
-> --=20
-> 2.30.2
->=20
-
---64xkbddsvhgi7vvf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmPsBE8ACgkQ2O7X88g7
-+pp6SQ//Yall0DcVWRKFJsRKGh1EUrBGE3zpYpHcs4eYWIWI4jn4gQIT5uFObKwJ
-tmZVhKeLl0797SN+kLdvbbGoJPxXu5wlDqdQJ91H/BX/1JrsaTxwX/IHZPjfB8WG
-0zA1ZWN4MV5L4ZBpDTWuWG5AD2417Uw2MGaW61lEOQssySadSfT+jFiG/ugKR6qC
-42CU6/J64NrMaKcRIVOt6a/a/LovaZuwmN/hxLIxKB8t0i7ThdUZSYRmBpRFVkaQ
-1JGxrCa8VvYDxdqNX2no2O0hWMTSWMrKdDGIY3BAm051HeSoDrtqVmz0Uecn5Eg5
-moiGGRxHZIX6d+xxMUfgSvDZH4oi39SVXcsX3BdfcWgcI8I+OeDFd4Ow9YIyiCI1
-aE27egTmuRX0a5zgPjB2emNv63/y3FaDwfQFsXZyyjgxCCwo4Qwkzsfukf/yuobq
-G6nOb0q183J8cpoT2HFXP08O0CSH+d4FsV6P5MYzefXU6NbLsP5oNLG51jbarr0z
-cxm5X831lrh1JOy0Rgs6HZ7uhiE9ujMChoCGAmI34Ec6FqgjGw3HHBEHsl88+xMr
-yZJMGP3FrTnU/FWRlogdGLgj4p4p8QxyReDSCX0bWphbCAi7LUUzNYBk+S34BaJ5
-GbsFSQq7dCUz5Y0aESKaO/QBA8ZN5no75jrHO1ZX5RV6/sCzPOc=
-=fExG
------END PGP SIGNATURE-----
-
---64xkbddsvhgi7vvf--
+>  	u16 val = 0;
+>  	int ret;
+>  
