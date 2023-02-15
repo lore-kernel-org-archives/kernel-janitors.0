@@ -2,78 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A895C636D4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 09:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CBDC636D4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 09:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233817AbjBOJVz (ORCPT
+        id S233933AbjBOJaI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Feb 2023 04:21:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34590 "EHLO
+        Wed, 15 Feb 2023 04:30:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233099AbjBOJVz (ORCPT
+        with ESMTP id S233909AbjBOJaG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Feb 2023 04:21:55 -0500
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2FAC10AAF
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 01:21:53 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.2.178])
+        Wed, 15 Feb 2023 04:30:06 -0500
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8171130D2
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 01:30:05 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id SDz4pkY1ksavKSDz5p7jth; Wed, 15 Feb 2023 10:21:52 +0100
-X-ME-Helo: [192.168.1.18]
+        id SE71pmycJOJaFSE71pRCYM; Wed, 15 Feb 2023 10:30:04 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 15 Feb 2023 10:21:52 +0100
+X-ME-Date: Wed, 15 Feb 2023 10:30:04 +0100
 X-ME-IP: 86.243.2.178
-Message-ID: <d3c53024-2830-7bad-9d25-74b0070d5a0a@wanadoo.fr>
-Date:   Wed, 15 Feb 2023 10:21:50 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] firmware: turris-mox-rwtm: Fix an error handling path in
- mox_get_board_info()
-To:     =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <60b29f04b47a60ae6da754034a608aae1eba053a.1676452827.git.christophe.jaillet@wanadoo.fr>
-Content-Language: fr
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <60b29f04b47a60ae6da754034a608aae1eba053a.1676452827.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2] firmware: turris-mox-rwtm: Fix an error handling path in mox_get_board_info()
+Date:   Wed, 15 Feb 2023 10:30:02 +0100
+Message-Id: <fb3a73fd378582bf02e6c5eeabb61d3a3662cbdc.1676453328.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 15/02/2023 à 10:20, Christophe JAILLET a écrit :
-> wait_for_completion_timeout() returns 0 if timed out, and positive (at
-> least 1, or number of jiffies left till timeout) if completed.
-> 
-> In case of timeout, return -ETIMEDOUT.
-> 
-> Fixes: 389711b37493 ("firmware: Add Turris Mox rWTM firmware driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
-> ---
->   drivers/firmware/turris-mox-rwtm.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/turris-mox-rwtm.c
-> index 6ea5789a89e2..577e87e1c6ee 100644
-> --- a/drivers/firmware/turris-mox-rwtm.c
-> +++ b/drivers/firmware/turris-mox-rwtm.c
-> @@ -200,8 +200,8 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
->   		return ret;
->   
->   	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
-> -	if (ret < 0)
-> -		return ret;
-> +	if (ret == 0)
-> +		return -ETIMEDOUT;
->   
->   	ret = mox_get_status(MBOX_CMD_BOARD_INFO, reply->retval);
->   	if (ret == -ENODATA) {
+wait_for_completion_timeout() returns 0 if timed out, and positive (at
+least 1, or number of jiffies left till timeout) if completed.
 
-NACK, some other need to be fixed in the same file.
-I'll send a V2.
+In case of timeout, return -ETIMEDOUT.
 
-CJ
+Fixes: 389711b37493 ("firmware: Add Turris Mox rWTM firmware driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+
+v2:
+   - Fix some other wait_for_completion_timeout() calls
+
+---
+ drivers/firmware/turris-mox-rwtm.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/turris-mox-rwtm.c
+index 6ea5789a89e2..d6fc37ba897d 100644
+--- a/drivers/firmware/turris-mox-rwtm.c
++++ b/drivers/firmware/turris-mox-rwtm.c
+@@ -200,8 +200,8 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
+ 		return ret;
+ 
+ 	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+-	if (ret < 0)
+-		return ret;
++	if (ret == 0)
++		return -ETIMEDOUT;
+ 
+ 	ret = mox_get_status(MBOX_CMD_BOARD_INFO, reply->retval);
+ 	if (ret == -ENODATA) {
+@@ -236,8 +236,8 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
+ 		return ret;
+ 
+ 	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+-	if (ret < 0)
+-		return ret;
++	if (ret == 0)
++		return -ETIMEDOUT;
+ 
+ 	ret = mox_get_status(MBOX_CMD_ECDSA_PUB_KEY, reply->retval);
+ 	if (ret == -ENODATA) {
+@@ -275,8 +275,8 @@ static int check_get_random_support(struct mox_rwtm *rwtm)
+ 		return ret;
+ 
+ 	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+-	if (ret < 0)
+-		return ret;
++	if (ret == 0)
++		return -ETIMEDOUT;
+ 
+ 	return mox_get_status(MBOX_CMD_GET_RANDOM, rwtm->reply.retval);
+ }
+-- 
+2.34.1
+
