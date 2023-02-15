@@ -2,98 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B7AC636D4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 10:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAF5C636CC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 11:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234187AbjBOKqh (ORCPT
+        id S229817AbjBOLJB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Feb 2023 05:46:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36654 "EHLO
+        Wed, 15 Feb 2023 06:09:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234183AbjBOKqg (ORCPT
+        with ESMTP id S229503AbjBOLJA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Feb 2023 05:46:36 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43EBE34306;
-        Wed, 15 Feb 2023 02:46:35 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id mc25so9761584ejb.13;
-        Wed, 15 Feb 2023 02:46:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dtAqLJjb8kXNprDpI0ZhXk+okZoB2I39B1lgMZMQzzg=;
-        b=lt63oOVP5qUE2gyjmgluFbV+pfWGnpvPL5yplwbqtYs1oD6uoCjiyPN7DyFtHX3Z3V
-         QSl9evIvowezyMNR7hU27QrpBUhtAkDlY9YbrlBMCHWO5yy/1TSLVZBfFIpof95/Yxfn
-         mUNpUSbMGannFPCcgAow46tbPaNQSSdkbGYsd1HHVCtrPqHeDJdQCF+BMOf2vt2ytgPW
-         +9SL0U+lKkNN9rsAl6T6dpIb9umSi8qbKqK8xwDrkvDEv1NmF8Rm8uMs3NX7eNALE3YF
-         wnMu0OEGPWevO/a139cdzlUAedF6rJukpOdc413plVknkQZzMw4N/8CkVySlN5X56gaj
-         Jd7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dtAqLJjb8kXNprDpI0ZhXk+okZoB2I39B1lgMZMQzzg=;
-        b=t9pII/3LCEH2Jtzkimawm7A8iYZJo2LihuuSL7+VyE8eIb8U8qv6FX2ife5B9mkzvI
-         ZhITeXciorc2sLAC9yVP4S/LrVnm0FJKpZoQ18ZYjiOCQOOfeLlzqW7L/DPP2CnNJ/2r
-         WJuD1/+2BRFMo5Gm11B7g8rIcGlrS07DImWpAP1HbD9h/wKxTVVG94KYxJkM5qE2g3DZ
-         +t5XnNLr9RFIKaPVld0gdHm7x82hCmfV0UdXzaOedXgqlAW5WNd+VVNXmyspo3QgJ/b4
-         OPr1BX5xMdnIYO76ClMadnZPzoKLcSQeJBFRcYfc+ZMgNx7tS2VxC1avIqQGFjLyy2P6
-         JIvg==
-X-Gm-Message-State: AO0yUKXbxX9t9N5JghBE3FGLslnAXqEqKsyPsQ7r3K8JMPQUek9ZFzkS
-        Gps9xGeZ+KvM2cfJ29AMpXI=
-X-Google-Smtp-Source: AK7set9p4byJT4a67ATaz4GPxWN199dFQnPC5T0vRGeHQ+qvsIatOq202sACz4oADpSyrPFIbNqzbA==
-X-Received: by 2002:a17:907:d30d:b0:8af:2cf7:dd2b with SMTP id vg13-20020a170907d30d00b008af2cf7dd2bmr2232679ejc.13.1676457993711;
-        Wed, 15 Feb 2023 02:46:33 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:983e:41b3:46f3:e161])
-        by smtp.gmail.com with ESMTPSA id kt13-20020a170906aacd00b008b13b0dabcasm1141025ejb.182.2023.02.15.02.46.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Feb 2023 02:46:33 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Colin Foster <colin.foster@in-advantage.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] net: dsa: ocelot: fix selecting MFD_OCELOT
-Date:   Wed, 15 Feb 2023 11:46:31 +0100
-Message-Id: <20230215104631.31568-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 15 Feb 2023 06:09:00 -0500
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C1D28D36
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 03:08:55 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id SFebpT64kwevESFebpYEea; Wed, 15 Feb 2023 12:08:54 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 15 Feb 2023 12:08:54 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-mtd@lists.infradead.org
+Subject: [PATCH] mtd: nand: mxic-ecc: Fix mxic_ecc_data_xfer_wait_for_completion() when irq is used
+Date:   Wed, 15 Feb 2023 12:08:45 +0100
+Message-Id: <beddbc374557e44ceec897e68c4a5d12764ddbb9.1676459308.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 3d7316ac81ac ("net: dsa: ocelot: add external ocelot switch
-control") adds config NET_DSA_MSCC_OCELOT_EXT, which selects the
-non-existing config MFD_OCELOT_CORE.
+wait_for_completion_timeout() and readl_poll_timeout() don't handle their
+return value the same way.
 
-Replace this select with the intended and existing MFD_OCELOT.
+wait_for_completion_timeout() returns 0 on time out (and >0 in all other
+cases)
+readl_poll_timeout() returns 0 on success and -ETIMEDOUT upon a timeout.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+In order for the error handling path to work in both cases, the logic
+against wait_for_completion_timeout() needs to be inverted.
+
+Fixes: 48e6633a9fa2 ("mtd: nand: mxic-ecc: Add Macronix external ECC engine support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/dsa/ocelot/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Compile tested only.
 
-diff --git a/drivers/net/dsa/ocelot/Kconfig b/drivers/net/dsa/ocelot/Kconfig
-index eff0a7dfcd21..081e7a88ea02 100644
---- a/drivers/net/dsa/ocelot/Kconfig
-+++ b/drivers/net/dsa/ocelot/Kconfig
-@@ -14,7 +14,7 @@ config NET_DSA_MSCC_OCELOT_EXT
- 	depends on NET_VENDOR_MICROSEMI
- 	depends on PTP_1588_CLOCK_OPTIONAL
- 	select MDIO_MSCC_MIIM
--	select MFD_OCELOT_CORE
-+	select MFD_OCELOT
- 	select MSCC_OCELOT_SWITCH_LIB
- 	select NET_DSA_MSCC_FELIX_DSA_LIB
- 	select NET_DSA_TAG_OCELOT_8021Q
+This is really spurious.
+If I'm right, this means that it never worked!
+
+Can any one with the hardware test?
+---
+ drivers/mtd/nand/ecc-mxic.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mtd/nand/ecc-mxic.c b/drivers/mtd/nand/ecc-mxic.c
+index 8afdca731b87..6b487ffe2f2d 100644
+--- a/drivers/mtd/nand/ecc-mxic.c
++++ b/drivers/mtd/nand/ecc-mxic.c
+@@ -429,6 +429,7 @@ static int mxic_ecc_data_xfer_wait_for_completion(struct mxic_ecc_engine *mxic)
+ 		mxic_ecc_enable_int(mxic);
+ 		ret = wait_for_completion_timeout(&mxic->complete,
+ 						  msecs_to_jiffies(1000));
++		ret = ret ? 0 : -ETIMEDOUT;
+ 		mxic_ecc_disable_int(mxic);
+ 	} else {
+ 		ret = readl_poll_timeout(mxic->regs + INTRPT_STS, val,
 -- 
-2.17.1
+2.34.1
 
