@@ -2,154 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C01C636CC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 16:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14557C636D7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 17:47:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229500AbjBOQ3L (ORCPT
+        id S229704AbjBORrr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Feb 2023 11:29:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37612 "EHLO
+        Wed, 15 Feb 2023 12:47:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbjBOQ3K (ORCPT
+        with ESMTP id S229514AbjBORrq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Feb 2023 11:29:10 -0500
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2117.outbound.protection.outlook.com [40.107.212.117])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA5F73A87E;
-        Wed, 15 Feb 2023 08:29:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=amBl8Jl59R3bYRAwa3X+yeukzc6Swwnq55AE3NY+iwA8qpPcY9ExAQ9lcsHR6J3lhJucOO63/pX1ukPoXw2tbJ5Yql4wq8yoT4s/vPGU/q18Sb8RUDv1HIEo97Z8zVaGFHYS1fiRLkmKJy32TSF61BIxglErRRui9AxYbbG7N08RKJOfgBQSw3zGxJl8CVbBc+N9GHGnB/W88Efq86tWN4b5TSSNE5mNIoj0hMI4u/qPbc86ocWbMRFc5im7rKp5xHH+411wHJ6OaiW7Eo1wjZQ6c/BVzphG/Xl+iO40P9644/6aoTSyJeIzmSbXwDHfQonBdJrfQYqC5OU9SrTIwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7YnfpIje7GUKnPvACkIQSK2pcsLn2buXtDaFx5HybIw=;
- b=jZH4MrlvkHxFQLtJQTuIiYISlKbtqpAMMMMj7ElfCSHWyxMqvuBYQIyvGpwKehiGYGpwQVZFqz7bOt5jsnxCBe4HX2SO4PK4nFsLLVuXYlLnNrXzup9uEqsaCNiCOoKX7wZnH8/noIpamRpykNC2t4B/Zt1JEZYapjRwXk4YKkLUFrUmxKCd8aPN7JxGOc7kQ5hEOxda0ePAcRYiFsTMQWUgTsd2babogn1nxHDYt7tPn4vEpqA/LFl+oIeJvvNzQK8ohjiD1UYkSAIESnhJJvUbTeqKQIpMVvueAEBQ6ud4sCmqkKBYqYd66fQ4UbSdHxBHChoA+YrdfnBvbWuj7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=in-advantage.com; dmarc=pass action=none
- header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
+        Wed, 15 Feb 2023 12:47:46 -0500
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E53D37F15;
+        Wed, 15 Feb 2023 09:47:45 -0800 (PST)
+Received: by mail-qv1-xf35.google.com with SMTP id o42so11067302qvo.13;
+        Wed, 15 Feb 2023 09:47:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7YnfpIje7GUKnPvACkIQSK2pcsLn2buXtDaFx5HybIw=;
- b=MWNJA96q3gOPpuyXUzdM0Y6IwPQRbMS1xMHHP5sw5pzoHWHQLDtsV+8jystkj7F5rLv/v4fPgGlhpIDSD9KCgDz/pPRf5OcSs00gKQk52oRAlpGypOZ8IK/tKgJpFlui55UWRsNDHHPQPosWWV3HXY6zW/6ztnncewUloYvJPcA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=in-advantage.com;
-Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37) by BLAPR10MB5315.namprd10.prod.outlook.com
- (2603:10b6:208:324::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.12; Wed, 15 Feb
- 2023 16:29:06 +0000
-Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
- ([fe80::1897:6663:87ba:c8fa]) by MWHPR1001MB2351.namprd10.prod.outlook.com
- ([fe80::1897:6663:87ba:c8fa%4]) with mapi id 15.20.6111.010; Wed, 15 Feb 2023
- 16:29:06 +0000
-Date:   Wed, 15 Feb 2023 08:29:03 -0800
-From:   Colin Foster <colin.foster@in-advantage.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: dsa: ocelot: fix selecting MFD_OCELOT
-Message-ID: <Y+0IT/bV7snqCmnF@COLIN-DESKTOP1.localdomain>
-References: <20230215104631.31568-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230215104631.31568-1-lukas.bulwahn@gmail.com>
-X-ClientProxiedBy: BYAPR04CA0016.namprd04.prod.outlook.com
- (2603:10b6:a03:40::29) To MWHPR1001MB2351.namprd10.prod.outlook.com
- (2603:10b6:301:35::37)
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tFBor5UvoURzDIhUi2ANDgvJb7I1vJzRftM/nDRmQ/0=;
+        b=VVA3ZILoU2CpGLIgVq7WUztfKwAV8+HbpCemGVGbDRdckRXjSC0MqE+S+ZGnv0ufyR
+         XQpTdkow/gpRciaSNEQ/mXPSANYJ2vq0yci/pxkIBtgSY3Tu2D/S4BNXVi/83MZnjHC9
+         zSQrnD8r/SRu8+xUtyF9+nw2xR4+65CoYNMGHX9XR9pDvTL5Vus2zTEaOi6LyFrC+cVm
+         3SwIoUo3++KRqkrY/JM1ulb5y9WjI36wAELJxFJhJofUbKxDMYbbp+gzRrRnvQBA/bPa
+         O7ts43yoT8oorzA6tdOt6BBlU4PkAnPkyPXA7E/6qEDnbNWU/1jS8fOVdrrz3Izcza1o
+         QRGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tFBor5UvoURzDIhUi2ANDgvJb7I1vJzRftM/nDRmQ/0=;
+        b=dTrX3tN5YYH0ANmlHoc7iS4xidRXR4CV1rQhQ+DbCpcW2OEv1VIEmgWPsdASXcZw3g
+         2BE/PnhZxXmkath+lPRKIgO1ANEud7858T4QVGLKWfzZZLIoc0NwoHzavEkPziySi3qR
+         U1L7SUpSI73sJMWCCIHt0AWKA/+HeX4JNvrx+RiATOVn2qvhe2LeTf3LgXvZ4btDU9n5
+         QFSaQjMeNuBy4NWSlU3lgTUCtD0p4zJz9GH18FOu6o/d5DZQyou55TEUAEDGBzc8S+/c
+         tYn275KvdvOAqarpCkwJNP3zkuJW/OuqGOdzUY14Uis19rMGFbjHr/9RlORhpFkLRUl9
+         rE3A==
+X-Gm-Message-State: AO0yUKWg0eadST6xY3f0afDlc1wIGjhs1OGRvQhHRWjPN2BY+PtCuSnV
+        OxX3SQWgH8SUFgPslxuSQgE=
+X-Google-Smtp-Source: AK7set9HhR9JtoGU/X+ptdxD2/fr4vhxiySFOf9f6dnU4YmPuG295Kv0vjZRsCOTZeDZJrNN4mSNxg==
+X-Received: by 2002:a05:6214:c29:b0:56e:a96a:2beb with SMTP id a9-20020a0562140c2900b0056ea96a2bebmr5048741qvd.43.1676483264213;
+        Wed, 15 Feb 2023 09:47:44 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id o62-20020a374141000000b0072ad54e36b2sm14276562qka.93.2023.02.15.09.47.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Feb 2023 09:47:43 -0800 (PST)
+Message-ID: <a8a1ffec-7c62-77c4-a1ca-b52f4e6a80e3@gmail.com>
+Date:   Wed, 15 Feb 2023 09:47:39 -0800
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWHPR1001MB2351:EE_|BLAPR10MB5315:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe2c9531-9398-4d5a-dca6-08db0f71c198
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: QYBubiLRXbccHt16MMXcvat8m5hnTvT6bJi55+DrLcRV2m1G0nADwPIFXWwpPBm5L++o1NxCGguAoBOLm0bNhlJOEpQ4KIMs1/49nZIh1AvzZrx4hEJSBryG7C+e940WyObXI18Ov2WlMheTaCXITfIEqQPPYg/URnZsBbBGdIzD3m1hTOycC/92aOPqB6WuJFgs7ZjhAgR+gyImjPl1F3KXJJUGBQpCurxh9SB1GJwJtezUg+wMxGrxh61WU6bbZ4l2gEaLhzi2VUGbODXfqKjQTQz+DEUj3APCkyp3R47XlmdDCr1iCBh0v9dte/WWyPc9vL48znvWSXL7hhkeebFdcfjgWs0vt+VX1Lp4R+o0EpWO2Tc5hjhsxEcnMiT9fFhlpNBiq62pEJwwWXmjrPofOzn1pkl1Xie4UDBOvsKxcQfqQAYOvf41N9VG0A25W/Vpqzb2uF8Vphvn+YkvWmWaPmcv7BL0hn8EHI35mpFUmx8UkdGsyeSxScaKejY5yKaO3coYUczl9xSCEQeK1KKn8bC9OuAsT4BTkvDffadtrZdNehyVq11S/KomcSffSOhBl9Sutx5BlRDBOWXkrtC9qjvpBety3TQlv9To0kQ09vvkIYRhynhjN0HXtz/KbRYAFGJ7szob89/Vw18iKg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(346002)(376002)(396003)(366004)(39830400003)(136003)(451199018)(66556008)(2906002)(6916009)(66946007)(8676002)(66476007)(8936002)(7416002)(5660300002)(4326008)(54906003)(44832011)(41300700001)(316002)(9686003)(6486002)(6512007)(478600001)(6506007)(6666004)(186003)(26005)(38100700002)(86362001)(83380400001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7DZgUzEJXa07p1S3vs5HsYV7DjnvpolsPS+1LiWxVzhdLC/IrjihANf5KjQt?=
- =?us-ascii?Q?6845hijJkPfs91Iw7ZOoyPb1+G+m/7pj7CdhOIrsNGeMXdF4l/gR18+xVu+4?=
- =?us-ascii?Q?ozvPQnURyUVd3mBDjG/hWpRUE2S4eTngSqK+nNuY/nIWCgvQfUg5H4iVJjCS?=
- =?us-ascii?Q?hwkxKMGgZMQdFshoxw4fvnSF/JG5XgINo7q3Ie7wAbzKuEMZUNyt4fDYp15q?=
- =?us-ascii?Q?rg7tzSmEpxgLKPenFRtlrCJY89t7LT3gdWoITJvJC0NeUg2cZzBuTxXbe0NX?=
- =?us-ascii?Q?4Up203EcC/R5a//55i1rgWDc+f2QMU3fnxWO9LPhUQ0EeEDN6AKllKH/RCkS?=
- =?us-ascii?Q?ynjdIMD9pf8QwL6nLPzi/z9yTr4+SFy1nQ2d2M8L0s+Vf8CT5NmWsJ4T64OR?=
- =?us-ascii?Q?is4pUcp56zv7vb9W7lGPw2NkdQ2wiuSfIGnXYA+TiRqLo6KPzIlnJDG0fwe9?=
- =?us-ascii?Q?0Zd4HZ2hv5iOBDkn5jwvl2mzppFwlQeuGuGfFC23SwoFRrq2G3oNkp6Tq0Gt?=
- =?us-ascii?Q?M85ufgIZPKSou4IgTGVSKaCTdBcIaOLBz+CSZYWzGiidiEEkmSVdtHm67YLq?=
- =?us-ascii?Q?Jb/H2lgZE7S1fPBffS+KRjxQOi/c1DbXmnkj44iBzmi7zDI10OfKvL3Yrp/y?=
- =?us-ascii?Q?sirTFW2HcRzTVw1rNiWWcQugdmSP4aJAzE72ibcvpQ7wOS8f9K+yq8+h5h3I?=
- =?us-ascii?Q?tgpPa/mVss0foEbPZWyCaTw/CB8fmu2SJB+KG+ILdJH4M9NJFAWHMGPm/iMh?=
- =?us-ascii?Q?238Su7+3gQR6IHpR3OJNHFPfYSCO/ur/VxdxoYyeKLAJR4oksvdWo8KccIml?=
- =?us-ascii?Q?9YjqtlHdhhrX2Q2JvFTXtsJ2VrqnOyvjkuXd9zcIt1NXI2KKReTYlb76TODC?=
- =?us-ascii?Q?qNtr7aLd45oDa0RFj0hbjP4+5HLhqiBOmoM65kC5roJTzqeaa2q45riwOBmY?=
- =?us-ascii?Q?D2Yr32c4s6Jj4voUH/VKH7OGD4/69zIdrbvMwQozetmC1vMXp7xdBP1Md4dW?=
- =?us-ascii?Q?91Kuy/hspq/3ZB2ISBHVDEbaJpWK5LXBPsnBjGbZS2i4/3gT92ofAzN8mDz9?=
- =?us-ascii?Q?2bCZZipzf2QhkpSG6T7HsKXjK8m5vZGMi2uUA1LwaO3RCFRD4E4D2y282+hZ?=
- =?us-ascii?Q?8xWBnPv2JrkQrco5zTMGxzo4wt9JEWf1YnxZq7q8CQ2WM4jGrfEh/B3HIxu0?=
- =?us-ascii?Q?dRC8T3h76TRLWZwOCZckcTgEQ10Iw9QFEEb7BN3XNe6nRDlwtRbYzadiyLFE?=
- =?us-ascii?Q?BnO94dWAaClb/GwJUX7dKD2QcuQVz9NaPoGdsndJ62Sbb3KR6QvUUIa7jP3Q?=
- =?us-ascii?Q?noWebBSfPi7boIhWVTWpvvJB5voJqW0q5KV0yAF8uC6xb4qgNHFrcpFMMw5r?=
- =?us-ascii?Q?1GnhbqW8VqolMnZoVDVehEmDPauleE5YHqrY+3aklzs7K7Uh+ZU+PMX1HrFt?=
- =?us-ascii?Q?QNUDvzXLNh+lMTSaVriSOtPOuoyi62VWvDhXlns8oeMB4l0wKtx03rrZaU9i?=
- =?us-ascii?Q?G/YUOvWH+ozbU0debmM8hee+QOPm3MwA4z2ZQBC3wzR7yCWrAr7hLEYXcba2?=
- =?us-ascii?Q?2zeQPNfwZ7mSSEYbqAVVEAztcX5UjJA/EcG/rWSWTXHN7y8FgtNz5xK6me2X?=
- =?us-ascii?Q?qIaRp+8Rx40hmte5QfJvPAo=3D?=
-X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe2c9531-9398-4d5a-dca6-08db0f71c198
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Feb 2023 16:29:06.0861
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GrU8/TiluaMSui2CblA88Dj4NSOSAPcUCPI7yx8mUA9t3esER4HbaKV+VgLJ/HbZv2y80QHhkzN3AZyjboE1SgLyGSKe/63btrx65CRdzg0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5315
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] spi: bcmbca-hsspi: Fix error code in probe() function
+To:     Dan Carpenter <error27@gmail.com>,
+        William Zhang <william.zhang@broadcom.com>
+Cc:     Kursad Oney <kursad.oney@broadcom.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Mark Brown <broonie@kernel.org>,
+        Anand Gore <anand.gore@broadcom.com>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <Y+zmrNJ9zjNQpzWq@kili>
+Content-Language: en-US
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <Y+zmrNJ9zjNQpzWq@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
-
-On Wed, Feb 15, 2023 at 11:46:31AM +0100, Lukas Bulwahn wrote:
-> Commit 3d7316ac81ac ("net: dsa: ocelot: add external ocelot switch
-> control") adds config NET_DSA_MSCC_OCELOT_EXT, which selects the
-> non-existing config MFD_OCELOT_CORE.
+On 2/15/23 06:05, Dan Carpenter wrote:
+> This code accidentally returns success instead of a negative error code.
 > 
-> Replace this select with the intended and existing MFD_OCELOT.
+> Fixes: a38a2233f23b ("spi: bcmbca-hsspi: Add driver for newer HSSPI controller")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks for this. We pivoted away from *_CORE a while back and I clearly
-missed this. It can go through net-next this week.
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
 
-Acked-by: Colin Foster <colin.foster@in-advantage.com>
-
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  drivers/net/dsa/ocelot/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/dsa/ocelot/Kconfig b/drivers/net/dsa/ocelot/Kconfig
-> index eff0a7dfcd21..081e7a88ea02 100644
-> --- a/drivers/net/dsa/ocelot/Kconfig
-> +++ b/drivers/net/dsa/ocelot/Kconfig
-> @@ -14,7 +14,7 @@ config NET_DSA_MSCC_OCELOT_EXT
->  	depends on NET_VENDOR_MICROSEMI
->  	depends on PTP_1588_CLOCK_OPTIONAL
->  	select MDIO_MSCC_MIIM
-> -	select MFD_OCELOT_CORE
-> +	select MFD_OCELOT
->  	select MSCC_OCELOT_SWITCH_LIB
->  	select NET_DSA_MSCC_FELIX_DSA_LIB
->  	select NET_DSA_TAG_OCELOT_8021Q
-> -- 
-> 2.17.1
-> 
