@@ -2,99 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C73B5C636D4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 04:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B62C636D4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 05:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229761AbjBOEWX (ORCPT
+        id S231147AbjBOFTh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Feb 2023 23:22:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50102 "EHLO
+        Wed, 15 Feb 2023 00:19:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjBOEWW (ORCPT
+        with ESMTP id S230212AbjBOFTg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Feb 2023 23:22:22 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E0EF2705;
-        Tue, 14 Feb 2023 20:22:21 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id o36so12448942wms.1;
-        Tue, 14 Feb 2023 20:22:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3YMLkksoZ4jJfn+msaHSyMfsNrZTPgUVFMg2RlFg3t4=;
-        b=BtSsFKyisu7AZjIWvgF1BV4h9kmjVWCFS790Z365i0B9bA7d5TYhchzvaiTPUkrNCS
-         3UpOL7+vpT4/JbAMwowbO/YWGk2Lj6IAoCKpdyeCoQOs4hVKg/T0yazmBqtn3gLPOx1x
-         UDSutiwYWZnWMLXDd+36uQ6qsUG2+qRmhJHmvrVny7jwIv0y3JpNh5aW0yd6A73fJi9H
-         CCDpt/EVp3bm6tJ9Kk2N5yvqZSvb/yz8jy+PWosPW5y4PQ2kQlU41wRPPJ6KPGexpE+s
-         ebYsifoYnIYe6y1jVQV5kIAD/qikrEd3CtwGhPEForeD7uZIZirxOA69UyVwU2mmbEXL
-         I7qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3YMLkksoZ4jJfn+msaHSyMfsNrZTPgUVFMg2RlFg3t4=;
-        b=265jlHt7lOVhEvQ8IBsHJbSZJ6MAMwBwLEV6VpWQFql40Gk/BDAauQbZea+RNewNcq
-         lDispjNuSmFBHb3XhY9vqKoAZDqmsbgI1NzSHZeE5KABYkeZHDS/dCY22eHlEatC2fPj
-         iutsw7grcC6x97l2WaHfWPApKYNveKNL1OK+HQMwo1baja/+cw5zNvNJopmT2uswijyI
-         oaVvbRyvSyji9JV81hM6lNfCpMltklOcCsKcVu2OYwkBontVCYkbymZhUxmQysEnItZZ
-         yhxYgSOJt510yHuOL2PuozGM8Ki2qhid428+raLJqNT567QZg8wF9Oha32xDE8mF9HZV
-         0FDw==
-X-Gm-Message-State: AO0yUKUBzKx0NAoSe+QlrToA0xjaUUcHjY56VIPh+WVxfpi0RgovpOoS
-        ur0nm+d8fdUdR3XpuAF35Wo=
-X-Google-Smtp-Source: AK7set/G/g+U7EHZpv3SmlkR1b90u+q38dhjWNehIjyNvpWHbFfi5Mjf2RjxaTk9e32N+GhwmzYgZg==
-X-Received: by 2002:a05:600c:3583:b0:3dc:53da:328b with SMTP id p3-20020a05600c358300b003dc53da328bmr1375916wmq.14.1676434939932;
-        Tue, 14 Feb 2023 20:22:19 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l4-20020adff484000000b002c569acab1esm2405146wro.73.2023.02.14.20.22.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 20:22:19 -0800 (PST)
-Date:   Wed, 15 Feb 2023 07:22:16 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Frank Sae <Frank.Sae@motor-comm.com>
-Cc:     Peter Geis <pgwipeout@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Wed, 15 Feb 2023 00:19:36 -0500
+Received: from out28-77.mail.aliyun.com (out28-77.mail.aliyun.com [115.124.28.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E4C32528;
+        Tue, 14 Feb 2023 21:19:34 -0800 (PST)
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1662711|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.00516174-0.000373739-0.994465;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047204;MF=frank.sae@motor-comm.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.RMfZsn3_1676438369;
+Received: from 10.0.2.15(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.RMfZsn3_1676438369)
+          by smtp.aliyun-inc.com;
+          Wed, 15 Feb 2023 13:19:30 +0800
+Message-ID: <4c84995c-5546-47aa-d4ed-1db8cc7053c3@motor-comm.com>
+Date:   Wed, 15 Feb 2023 13:19:28 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v2 net-next] net: phy: motorcomm: uninitialized variables
+ in yt8531_link_change_notify()
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
         Heiner Kallweit <hkallweit1@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: Uninitialized variables in
- yt8531_link_change_notify()
-Message-ID: <Y+xd+AkAJpTnLY+h@kadam>
-References: <Y+utT+5q5Te1GvYk@kili>
- <02c16d4c-1e88-c9b4-4649-a6125c160c09@motor-comm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02c16d4c-1e88-c9b4-4649-a6125c160c09@motor-comm.com>
+        kernel-janitors@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>,
+        yanhong.wang@starfivetech.com, xiaogang.fan@motor-comm.com,
+        fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+References: <Y+xd2yJet2ImHLoQ@kili>
+Content-Language: en-US
+From:   Frank Sae <Frank.Sae@motor-comm.com>
+In-Reply-To: <Y+xd2yJet2ImHLoQ@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Feb 15, 2023 at 09:51:56AM +0800, Frank Sae wrote:
-> 
-> 
-> On 2023/2/14 23:48, Dan Carpenter wrote:
-> 
-> > @@ -1534,9 +1534,9 @@ static void yt8531_link_change_notify(struct phy_device *phydev)
-> >  {
-> >  	struct device_node *node = phydev->mdio.dev.of_node;
-> >  	bool tx_clk_adj_enabled = false;
-> > -	bool tx_clk_1000_inverted;
-> > -	bool tx_clk_100_inverted;
-> > -	bool tx_clk_10_inverted;
-> > +	bool tx_clk_1000_inverted = false;
-> > +	bool tx_clk_100_inverted = false;
-> > +	bool tx_clk_10_inverted = false;
-> 
-> Thanks, please keep reverse christmas tree.
-> 
 
-Right.  Good point.
 
-regards,
-dan carpenter
+On 2023/2/15 12:21, Dan Carpenter wrote:
+> These booleans are never set to false, but are just used without being
+> initialized.
+> 
+> Fixes: 4ac94f728a58 ("net: phy: Add driver for Motorcomm yt8531 gigabit ethernet phy")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> v2: reverse Christmas tree.  Also add "motorcomm" to the subject.  It
+> really feels like previous patches to this driver should have had
+> motorcomm in the subject as well.  It's a common anti-pattern to only
+> put the subsystem name and not the driver name when adding a new file.
+> 
+>  drivers/net/phy/motorcomm.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
+> index ee7c37dfdca0..2fa5a90e073b 100644
+> --- a/drivers/net/phy/motorcomm.c
+> +++ b/drivers/net/phy/motorcomm.c
+> @@ -1533,10 +1533,10 @@ static int yt8531_config_init(struct phy_device *phydev)
+>  static void yt8531_link_change_notify(struct phy_device *phydev)
+>  {
+>  	struct device_node *node = phydev->mdio.dev.of_node;
+> +	bool tx_clk_1000_inverted = false;
+> +	bool tx_clk_100_inverted = false;
+> +	bool tx_clk_10_inverted = false;
+>  	bool tx_clk_adj_enabled = false;
+> -	bool tx_clk_1000_inverted;
+> -	bool tx_clk_100_inverted;
+> -	bool tx_clk_10_inverted;
+>  	u16 val = 0;
+>  	int ret;
+>  
 
+Reviewed-by: Frank Sae <Frank.Sae@motor-comm.com> 
+
+Add cc.
