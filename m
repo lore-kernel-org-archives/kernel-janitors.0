@@ -2,38 +2,38 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3606DC64EC7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 12:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8516C636CC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 13:01:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233950AbjBOMnO (ORCPT
+        id S233950AbjBONBm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Feb 2023 07:43:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59348 "EHLO
+        Wed, 15 Feb 2023 08:01:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233910AbjBOMnM (ORCPT
+        with ESMTP id S233944AbjBONBj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Feb 2023 07:43:12 -0500
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7B9F34C3E
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 04:43:10 -0800 (PST)
+        Wed, 15 Feb 2023 08:01:39 -0500
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CAA538B5D
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 05:01:33 -0800 (PST)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id SH7ppsWwIZBE3SH7ppDdAf; Wed, 15 Feb 2023 13:43:08 +0100
+        id SHPepPq8UqIOtSHPepCxKZ; Wed, 15 Feb 2023 14:01:31 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 15 Feb 2023 13:43:08 +0100
+X-ME-Date: Wed, 15 Feb 2023 14:01:31 +0100
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Sebastian Reichel <sre@kernel.org>,
-        ChiYuan Huang <cy_huang@richtek.com>,
-        ChiaEn Wu <chiaen_wu@richtek.com>
+To:     Masahisa Kojima <masahisa.kojima@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] power: supply: rt9467: Fix rt9467_run_aicl()
-Date:   Wed, 15 Feb 2023 13:43:04 +0100
-Message-Id: <2ed01020fa8a135c36dbaa871095ded47d926507.1676464968.git.christophe.jaillet@wanadoo.fr>
+        linux-spi@vger.kernel.org
+Subject: [PATCH] spi: synquacer: Fix timeout handling in synquacer_spi_transfer_one()
+Date:   Wed, 15 Feb 2023 14:01:28 +0100
+Message-Id: <c2040bf3cfa201fd8890cfab14fa5a701ffeca14.1676466072.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,37 +41,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It is spurious to bail-out on a wait_for_completion_timeout() call that
-does NOT timeout.
+wait_for_completion_timeout() never returns a <0 value. It returns either
+on timeout or a positive value (at least 1, or number of jiffies left
+till timeout)
 
-Reverse the logic to return -ETIMEDOUT instead, in case of tiemout.
+So, fix the error handling path and return -ETIMEDOUT should a timeout
+occur.
 
-Fixes: 6f7f70e3a8dd ("power: supply: rt9467: Add Richtek RT9467 charger driver")
+Fixes: b0823ee35cf9 ("spi: Add spi driver for Socionext SynQuacer platform")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
-
-This is spurious, because if I'm right, it means that it does not work!
-Testing on a real hardware is really welcomed.
 ---
- drivers/power/supply/rt9467-charger.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-synquacer.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
-index 96ad0d7d3af4..bb737fd1cca6 100644
---- a/drivers/power/supply/rt9467-charger.c
-+++ b/drivers/power/supply/rt9467-charger.c
-@@ -598,8 +598,8 @@ static int rt9467_run_aicl(struct rt9467_chg_data *data)
+diff --git a/drivers/spi/spi-synquacer.c b/drivers/spi/spi-synquacer.c
+index 47cbe73137c2..dc188f9202c9 100644
+--- a/drivers/spi/spi-synquacer.c
++++ b/drivers/spi/spi-synquacer.c
+@@ -472,10 +472,9 @@ static int synquacer_spi_transfer_one(struct spi_master *master,
+ 		read_fifo(sspi);
+ 	}
  
- 	reinit_completion(&data->aicl_done);
- 	ret = wait_for_completion_timeout(&data->aicl_done, msecs_to_jiffies(3500));
--	if (ret)
--		return ret;
-+	if (ret == 0)
+-	if (status < 0) {
+-		dev_err(sspi->dev, "failed to transfer. status: 0x%x\n",
+-			status);
+-		return status;
++	if (status == 0) {
++		dev_err(sspi->dev, "failed to transfer. Timeout.\n");
 +		return -ETIMEDOUT;
+ 	}
  
- 	ret = rt9467_get_value_from_ranges(data, F_IAICR, RT9467_RANGE_IAICR, &aicr_get);
- 	if (ret) {
+ 	return 0;
 -- 
 2.34.1
 
