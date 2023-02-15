@@ -2,76 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA20C636CC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 18:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D9AC636D7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 18:01:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbjBOSBR (ORCPT
+        id S230032AbjBOSBv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Feb 2023 13:01:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60524 "EHLO
+        Wed, 15 Feb 2023 13:01:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbjBOSBP (ORCPT
+        with ESMTP id S229938AbjBOSBu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Feb 2023 13:01:15 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 358203C7A0
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 10:01:10 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id oa11-20020a17090b1bcb00b002341a2656e5so2624629pjb.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 10:01:10 -0800 (PST)
+        Wed, 15 Feb 2023 13:01:50 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E35305C7
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 10:01:49 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id n20-20020a17090aab9400b00229ca6a4636so3067864pjq.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 10:01:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=in-reply-to:mime-version:user-agent:date:message-id:from:references
          :cc:to:subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmWl4lr89cdr2VSBOnpLQUNIxtStNJZ2dk9mQ7UceUw=;
-        b=UE3uJpmc+A72Sd5jbdXzShFG3FO111M33dcuR4xYUOxPKXNiPhn6+w49XjDoFQuesH
-         TBUXe+Vm326yFtwVTA+cbQMGkB9sYL+3fkeTjv0OQmS9PfXgR5ogyoFwBcj1/XmZ9hlV
-         UfUhnJq5kjBzh0O09eVIlv81EeRbEM1uryKD0=
+        bh=c7JElAQk/KVj1qPl2XThckP46cK/NBKyEqzuDuKILTE=;
+        b=VENKRm4SdbSRKo6HctU3DZB6STPz3Dv2gvIdQMCrTmLxDG7BVs4gUs/J/kunwD98CB
+         8lv5uKbsFiNYrlnKVwq1RY+fxM2M6IhN+ypI2u4diqXXeka0gUvPuyiXqrZgJ3nRjdEq
+         4Dz9Ba+GqaY0tK7DGVBf79W6T7pHbrhR7SrpY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:mime-version:user-agent:date:message-id:from:references
          :cc:to:subject:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jmWl4lr89cdr2VSBOnpLQUNIxtStNJZ2dk9mQ7UceUw=;
-        b=TfTLI66SnXl4sj5Xjc5kebkOh2t3y8CSJ1hsQE4DSClJrwQb5whKVKBme+403QZebQ
-         8Rx/3bXDAwkJAGKCRU5mTB048P9Q/E0o4wsQOfSp+7MyXTnCC3Sf7qaQq2f6yflriNt3
-         2kAcYzYpql1VaKfZsj2QDZQgsarm6rbyJCO8OtvVQgHnYcDNDqHOu6xhd1fa4sg3jLmx
-         iiqWLkqPjDABbrZ+9btJl/aFuEnp6sn134ZWkq/3i5JAroYcysqtUETxD5wU3pljOX+M
-         X3OEi1cS3ZcCa1N/DkTzAtxlcQD2SkHSRldeqVEtzPgYWVtZWmOaYoPnu2kVhaksD1DL
-         Goog==
-X-Gm-Message-State: AO0yUKXnLYA9gaLzGKj+Pupzu2kpz8vNy2EihCMfPpgXBwWExSZP+btP
-        TsEMJxQotBYIFyBiKJJUPmPTT4OB30cZWA7LLEurS8dvB2X3mnjob1QoHi3sSOOofx00K9nLqrT
-        BIrAZB61d4xd6k7395jt1WPZETUTLv6T0+CTMs8U2dsLQB+rXgEBF6BAHaTVLfQ4pn5xc5dKhfI
-        +mCGaRoAf4QkJP3Hg=
-X-Google-Smtp-Source: AK7set98uB8qMmiJVc1JXFTFwKNcN1BPVuA+c00jE1XY0hl8cv1xocH6CZX93SEzImoIufga2z1eqg==
-X-Received: by 2002:a05:6a20:8f0d:b0:bc:4d0c:ce45 with SMTP id b13-20020a056a208f0d00b000bc4d0cce45mr3273651pzk.53.1676484069122;
-        Wed, 15 Feb 2023 10:01:09 -0800 (PST)
+        bh=c7JElAQk/KVj1qPl2XThckP46cK/NBKyEqzuDuKILTE=;
+        b=bJHd8w1guRZ5LhVJs0s8qmzUNAFTwIx02leICa172bBwlaDtp8gpWrybAo1VqTp320
+         +s701L03XUxR5cuJg5ym9eKJ1hE3HMBrKc4gW6I+j0pvUHX/ER0Mqj5npM7msgwH+BoK
+         7QKyWhu6lQ30JMaewAHqyAZYjjlLoLLx3dA8RR61VUuSlfQY2crnfju7WiPb2DMnIV1J
+         T5oSNHUdD+vhWMpd1YqMoneUqc+ZbWT8AIWXrC8JXmO0ikXSNMf9OWgLrRlU8M6/3tlQ
+         x3qX78cu8VX7j9bkfkLWZjQVVuz4DucUnZldFwMg0krAAea178pXUGDWwg6+nfNSmzf7
+         AotQ==
+X-Gm-Message-State: AO0yUKVfLr1ZgZ3DmOympLuJgYkgPORxlf4UEI6NgonMCUkJQSViIGsO
+        xqjS9vi7tMgkn9OzKNLQaG9iKMygGQS2R7eUkfgUHSAZA0TVBIrchx02CcL8mdEv6aRsE9MZGRg
+        esxtm+xJFlsQzScTaRWIdSUJnfVlIWacKeBl+sc2ZW7eoL43J5KHmqKB0HyXT3yG7JxZqddKYht
+        6qVCH5RyZDOR+YV28=
+X-Google-Smtp-Source: AK7set9oq1EAzYiiE4UIKy8/HR75rg3dEDnHlAjIyAZMloLIngZQPzdaEMPmRHHkPzInltIKYoV9Vw==
+X-Received: by 2002:a17:902:d48c:b0:19a:b6bf:1e16 with SMTP id c12-20020a170902d48c00b0019ab6bf1e16mr3516260plg.51.1676484108659;
+        Wed, 15 Feb 2023 10:01:48 -0800 (PST)
 Received: from bcacpedev-irv-3.lvn.broadcom.net ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id c15-20020aa78c0f000000b00589605fb0a1sm2442302pfd.96.2023.02.15.10.01.07
+        by smtp.gmail.com with ESMTPSA id g16-20020a1709029f9000b0019956f23fc1sm4078184plq.302.2023.02.15.10.01.47
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Feb 2023 10:01:08 -0800 (PST)
-Subject: Re: [PATCH] spi: bcm63xx-hsspi: fix error code in probe
+        Wed, 15 Feb 2023 10:01:48 -0800 (PST)
+Subject: Re: [PATCH] spi: bcmbca-hsspi: Fix error code in probe() function
 To:     Dan Carpenter <error27@gmail.com>
 Cc:     Kursad Oney <kursad.oney@broadcom.com>,
         Jonas Gorski <jonas.gorski@gmail.com>,
         Broadcom internal kernel review list 
         <bcm-kernel-feedback-list@broadcom.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <Y+zmoGH6LubPhiI0@kili>
+        Mark Brown <broonie@kernel.org>,
+        Anand Gore <anand.gore@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <Y+zmrNJ9zjNQpzWq@kili>
 From:   William Zhang <william.zhang@broadcom.com>
-Message-ID: <c54b2da0-8c53-1ad9-b9ef-f385b46a2dee@broadcom.com>
-Date:   Wed, 15 Feb 2023 10:01:07 -0800
+Message-ID: <45707dce-300c-078c-ca24-dc09afb3cde3@broadcom.com>
+Date:   Wed, 15 Feb 2023 10:01:46 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <Y+zmoGH6LubPhiI0@kili>
+In-Reply-To: <Y+zmrNJ9zjNQpzWq@kili>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="00000000000071d44405f4c0dd36"
+        boundary="000000000000cd57cf05f4c0dfce"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
---00000000000071d44405f4c0dd36
+--000000000000cd57cf05f4c0dfce
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -81,22 +84,22 @@ Content-Transfer-Encoding: 7bit
 On 02/15/2023 06:05 AM, Dan Carpenter wrote:
 > This code accidentally returns success instead of a negative error code.
 > 
-> Fixes: 50a6620dd1fb ("spi: bcm63xx-hsspi: Add polling mode support")
+> Fixes: a38a2233f23b ("spi: bcmbca-hsspi: Add driver for newer HSSPI controller")
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
 > ---
->   drivers/spi/spi-bcm63xx-hsspi.c | 3 ++-
+>   drivers/spi/spi-bcmbca-hsspi.c | 3 ++-
 >   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hsspi.c
-> index 1e9e906d297c..e481c8d5e5d6 100644
-> --- a/drivers/spi/spi-bcm63xx-hsspi.c
-> +++ b/drivers/spi/spi-bcm63xx-hsspi.c
-> @@ -847,7 +847,8 @@ static int bcm63xx_hsspi_probe(struct platform_device *pdev)
+> diff --git a/drivers/spi/spi-bcmbca-hsspi.c b/drivers/spi/spi-bcmbca-hsspi.c
+> index d58033251c02..c14c1969e2cb 100644
+> --- a/drivers/spi/spi-bcmbca-hsspi.c
+> +++ b/drivers/spi/spi-bcmbca-hsspi.c
+> @@ -546,7 +546,8 @@ static int bcmbca_hsspi_probe(struct platform_device *pdev)
 >   
 >   	pm_runtime_enable(&pdev->dev);
 >   
-> -	if (sysfs_create_group(&pdev->dev.kobj, &bcm63xx_hsspi_group)) {
-> +	ret = sysfs_create_group(&pdev->dev.kobj, &bcm63xx_hsspi_group);
+> -	if (sysfs_create_group(&pdev->dev.kobj, &bcmbca_hsspi_group)) {
+> +	ret = sysfs_create_group(&pdev->dev.kobj, &bcmbca_hsspi_group);
 > +	if (ret) {
 >   		dev_err(&pdev->dev, "couldn't register sysfs group\n");
 >   		goto out_pm_disable;
@@ -105,7 +108,9 @@ On 02/15/2023 06:05 AM, Dan Carpenter wrote:
 
 Reviewed-by: William Zhang <william.zhang@broadcom.com>
 
---00000000000071d44405f4c0dd36
+Thanks Dan for fixing both drivers!
+
+--000000000000cd57cf05f4c0dfce
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -176,13 +181,13 @@ VhYAxZlzj7tSjUIM7G7IhyfqPC46GKJ/4x+Amz1Z6YxNGy71L68kYD6hIbBcA5AM42QBUufly6Oa
 urb/KlmDGfVrIRYDbL0ckhGQIP5c6L+kSQZ2sHnQK0e0WgIaZYxaPYeY5u0GLCOze+3vyRMxggJt
 MIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYD
 VQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwxuh2XG3FXRL1W
-JOEwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIN7w5FJrcPzha5qWycv2r6VukwG8
-gL6bOlHwiue6Z1K+MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIz
-MDIxNTE4MDEwOVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+JOEwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEII5sBuB4RaLGbncIwWeXxtDxQoqg
+9iD/YCpriPlMHnyeMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIz
+MDIxNTE4MDE0OVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
 CWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFl
-AwQCATANBgkqhkiG9w0BAQEFAASCAQBTQEqZWO9TxZi1XObtEbHkw+fzf03zjt/dWiXn0eD1aKT1
-FmACvIrkoR9ZGEj2GMJCJi6LSX7x5m/mgTzlEoNTlWkPz2I7O9x7cgUlFwLhNFod431bpxcKOm6o
-5zAkKhR0QFQ7InJ9+2FgMkCV5DVCtU4+afq7062n+q7atM0ffEVZyzPUQzsd4DmP6MaxhnU8hyO7
-+bH9wGy7hFOOKyXLxPBsyv9FZJpvz8VV+2sRelHLE7ioZlTtCWGp2hFKy8IlBON3x2dzoPprcxMA
-Zpx5dMRozsY44CMaTsH9cIhmB1raR/tDrU+iCWQqW49dBWXc09r2Gd4Hhz3LxmsH2Dde
---00000000000071d44405f4c0dd36--
+AwQCATANBgkqhkiG9w0BAQEFAASCAQAUrnUWC3ztZ6GOw3OKXc1qGJPrAW44Fi3KBVksN0z+V7Xe
+ptmtslbDpFNJmwhLFQBK+ydmYJE5GJ9HvWJYB4Si03IIEVZ2Qg8ChCveEiBdqvGMjLqMJGDQrKXx
+3Yis7oGoMM71AGtK0a1AJ7Qm1ZGk6yc7ZjNWlW2fufKXhx2hT9K3B5kd8UmpjsMRL0ChvESSMbbh
+B4kx3ybPzwaMJm/sdAhp0EH1EfdrxXpIdmkm8Q3c+0SzSwKfJKnpotS1tm/MoAhLnDK7fPtnzAHm
+HcLU4ryye015/OXu7OFM0uy6HtCNH9/ATk4qebClmWbHCpPU3vnEO9NVmR9U0MuRGkGJ
+--000000000000cd57cf05f4c0dfce--
