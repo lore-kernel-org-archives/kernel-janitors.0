@@ -2,96 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CBDC636D4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 09:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2441DC64EC7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Feb 2023 10:08:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233933AbjBOJaI (ORCPT
+        id S233438AbjBOKIQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Feb 2023 04:30:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
+        Wed, 15 Feb 2023 05:08:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233909AbjBOJaG (ORCPT
+        with ESMTP id S230456AbjBOKIO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Feb 2023 04:30:06 -0500
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8171130D2
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 01:30:05 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id SE71pmycJOJaFSE71pRCYM; Wed, 15 Feb 2023 10:30:04 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 15 Feb 2023 10:30:04 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] firmware: turris-mox-rwtm: Fix an error handling path in mox_get_board_info()
-Date:   Wed, 15 Feb 2023 10:30:02 +0100
-Message-Id: <fb3a73fd378582bf02e6c5eeabb61d3a3662cbdc.1676453328.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 15 Feb 2023 05:08:14 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9212F2CC5F;
+        Wed, 15 Feb 2023 02:08:12 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id d40so19978615eda.8;
+        Wed, 15 Feb 2023 02:08:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y6MCLus7og6tH4wyNJPR/gMALnQD+WF5etbQB128KZw=;
+        b=d3mwB5owrz8EKeNgg8t0aARG54UPa0BBrGXl59LsISXfpTki/raaEZKUATx1vF34Mw
+         e2DqR1iOhcYAOYDPKvq2XOOWSNEPzgy/YxsYdH49e4nkTFWXhy/0J6GhefBeHpfLZSZ8
+         p2uSTf66hDOSPpZ6Jh1Gz4gnSt6EklWCKD5r3aV2gtvqwNjl3woGUinT56yLegkgkVQU
+         cd3IQz4LZ9qB3g6x+dhv4Rb2X2A4KCOomGFCeCctMvn5b6KiPy8tyoKkTaCVgKhKlYRx
+         p8ALh6CIGqNfECOKGFoYCgEVAzqToweKpUtX7qPBOKkAedwaLwP49nqy7N0Qyx9CgTxQ
+         M09A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y6MCLus7og6tH4wyNJPR/gMALnQD+WF5etbQB128KZw=;
+        b=y4ihc1PscV5rmrWkI03CurEh2Je3r3CMtj+SFedSxev1dBfB1A0IDX0y8sk8fGzdkW
+         PMYl0SkCPhXQzPMinC9U1CkChTV2ZbdgijhviSglhR5gP6IdlXQIBPq2VRBEw31++Tvr
+         +AoamnH1TItGiqhPuhNrggSovpyZeWQBUdAtPd2a382qfQ7CONf9s98ztaXp6z8c8xg2
+         vuwCIvF5Wtgt3pXpHq/TNR+7IHMErlX/0FSPc1EXefzKEwCasB/rIhRh35aUiEWFOKzD
+         LmuZo7wGC9DNKJHH8AnJxtjSGx/8jFJ41dx8joNEZXoYhH4JIBxpx9Q3tXKFAriCRJ8A
+         7f6Q==
+X-Gm-Message-State: AO0yUKUveRCxSyZ/aHdn4oohA30oy7A82dMcKEKZkFNwO+9guz79DSch
+        EQOgbTmtUaygapqe8le7HKs=
+X-Google-Smtp-Source: AK7set+jl73xD3wOWKJkZohFLNswWW494tqPrziSN7TM8LbEHBH9mqWWUh9VybAtGt5Fs6rp5pC5Jw==
+X-Received: by 2002:a50:ec85:0:b0:4ad:66b:84a6 with SMTP id e5-20020a50ec85000000b004ad066b84a6mr1308568edr.13.1676455690998;
+        Wed, 15 Feb 2023 02:08:10 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:983e:41b3:46f3:e161])
+        by smtp.gmail.com with ESMTPSA id g21-20020a50d5d5000000b004acbecf091esm4715020edj.17.2023.02.15.02.08.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Feb 2023 02:08:10 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>, Mike Rapoport <rppt@kernel.org>,
+        linux-doc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] docs/mm: Physical Memory: correct spelling in reference to CONFIG_PAGE_EXTENSION
+Date:   Wed, 15 Feb 2023 11:08:08 +0100
+Message-Id: <20230215100808.9613-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-wait_for_completion_timeout() returns 0 if timed out, and positive (at
-least 1, or number of jiffies left till timeout) if completed.
+Commit 5d8c5e430a63 ("docs/mm: Physical Memory: add structure, introduction
+and nodes description") slips in a minor spelling mistake for the config
+PAGE_EXTENSION.
 
-In case of timeout, return -ETIMEDOUT.
+Correct the config name in the physical-memory documentation.
 
-Fixes: 389711b37493 ("firmware: Add Turris Mox rWTM firmware driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Compile tested only.
+ Documentation/mm/physical_memory.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-   - Fix some other wait_for_completion_timeout() calls
-
----
- drivers/firmware/turris-mox-rwtm.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/turris-mox-rwtm.c
-index 6ea5789a89e2..d6fc37ba897d 100644
---- a/drivers/firmware/turris-mox-rwtm.c
-+++ b/drivers/firmware/turris-mox-rwtm.c
-@@ -200,8 +200,8 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
- 		return ret;
+diff --git a/Documentation/mm/physical_memory.rst b/Documentation/mm/physical_memory.rst
+index 3f3c02aa6e6e..f9d7ea4b9dca 100644
+--- a/Documentation/mm/physical_memory.rst
++++ b/Documentation/mm/physical_memory.rst
+@@ -210,7 +210,7 @@ General
+ ``node_page_ext``
+   For UMA systems that use FLATMEM memory model the 0's node
+   ``node_page_ext`` is array of extensions of struct pages. Available only
+-  in the kernels built with ``CONFIG_PAGE_EXTENTION`` enabled.
++  in the kernels built with ``CONFIG_PAGE_EXTENSION`` enabled.
  
- 	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
--	if (ret < 0)
--		return ret;
-+	if (ret == 0)
-+		return -ETIMEDOUT;
- 
- 	ret = mox_get_status(MBOX_CMD_BOARD_INFO, reply->retval);
- 	if (ret == -ENODATA) {
-@@ -236,8 +236,8 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
- 		return ret;
- 
- 	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
--	if (ret < 0)
--		return ret;
-+	if (ret == 0)
-+		return -ETIMEDOUT;
- 
- 	ret = mox_get_status(MBOX_CMD_ECDSA_PUB_KEY, reply->retval);
- 	if (ret == -ENODATA) {
-@@ -275,8 +275,8 @@ static int check_get_random_support(struct mox_rwtm *rwtm)
- 		return ret;
- 
- 	ret = wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
--	if (ret < 0)
--		return ret;
-+	if (ret == 0)
-+		return -ETIMEDOUT;
- 
- 	return mox_get_status(MBOX_CMD_GET_RANDOM, rwtm->reply.retval);
- }
+ ``node_start_pfn``
+   The page frame number of the starting page frame in this node.
 -- 
-2.34.1
+2.17.1
 
