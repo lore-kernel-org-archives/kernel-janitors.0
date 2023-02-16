@@ -2,126 +2,132 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C447CC61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 06:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D590EC61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 09:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbjBPGpl (ORCPT
+        id S230037AbjBPJNJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Feb 2023 01:45:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50046 "EHLO
+        Thu, 16 Feb 2023 04:13:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbjBPGpk (ORCPT
+        with ESMTP id S230017AbjBPJNH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Feb 2023 01:45:40 -0500
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E400E2
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 22:45:38 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id SY1Nph9XNm8TdSY1NpF4Iy; Thu, 16 Feb 2023 07:45:36 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 16 Feb 2023 07:45:36 +0100
-X-ME-IP: 86.243.2.178
-Message-ID: <95af8972-478f-12b8-efea-30c7e249f449@wanadoo.fr>
-Date:   Thu, 16 Feb 2023 07:45:33 +0100
+        Thu, 16 Feb 2023 04:13:07 -0500
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2065.outbound.protection.outlook.com [40.107.102.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2035D13D61;
+        Thu, 16 Feb 2023 01:13:06 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZDU/nsHagMRmZIIWSF0pR11X4rVeIv7YBD+JwVad6sncv6qzJvZ6JqUoSjY+NDV68WO3V9Dmy6VWrvZy4nVZsXdzjmdw2QGm1/dWMGlH3gTNsJjWv3kqMIcNZBh5xXjdoQgxvlmXzLUnGjJrlsQ8iuOHabrB6z1rU6a2hRRBAoeFTDgwfPsBYRQOjyah1+yFa0al6l/mwGS0n3CqS9Sq6cLPOpQ1546u8/qlGD+gOopWjG4orUow3E++Hszbde2qfYgyI5gxXHzdHIIMCFweeD3p8gdvfOnQ2Gu7ZVaiOWK99DnUeFfXw/HYNLa+w02rXGpxYy4caR/6+5cSMEkjxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=klV0qTySTJ3ALfy+/Vq5u2Y+rjoQM8Pvf4C5WzfoIa4=;
+ b=B6Nmb7o/BU463p6CVdNrhqH/Z0FYVkKpnmp2A7v37aGhmD+85yezkPnNUHuhOER9xcJlkQb3c+ZE1UDKjOq6yXQ431VmK2PE2jPZOGsgf+JRjECfPm0wXKij/ylVv79fQ3V37buMiBXoALS11KVSjoUZCpBQJPT4tkJloFfxxDjVuqMJ3L0VzNVr0ms/7LZY29CSVNSAN7DWmZPC9lZwj/AnZSqIvvJWZU3nok8FmT/V0h4i6aOlzuhsT0JDZ9Gt/39pt5EmZtkKnJYIhRaXSvJBVx7uzaJFZOhT/ATfQ9P2qESwTBBb/J9Qyf+qCJHq4aG/H/oPZuRAvSfFDYEQuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=wanadoo.fr smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=klV0qTySTJ3ALfy+/Vq5u2Y+rjoQM8Pvf4C5WzfoIa4=;
+ b=fJWJ9seQ4ByT7zhlciU23PlqEiA3aLQRbDZQQHqX4OUOPnN3QCKkN6vJXBsOelZKi1m1n8GYcxU07y11+S9hOmgOF+2LutTPQFfun4qpIaOC66iH5NCO8tDfkxgwHWAyr/8dHOH+bnn2upZUQXWZRju/iRDjXFZbFcWnfGp820w=
+Received: from BN7PR06CA0048.namprd06.prod.outlook.com (2603:10b6:408:34::25)
+ by CH0PR12MB5073.namprd12.prod.outlook.com (2603:10b6:610:e0::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.12; Thu, 16 Feb
+ 2023 09:13:03 +0000
+Received: from BN8NAM11FT100.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:34:cafe::ac) by BN7PR06CA0048.outlook.office365.com
+ (2603:10b6:408:34::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.13 via Frontend
+ Transport; Thu, 16 Feb 2023 09:13:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN8NAM11FT100.mail.protection.outlook.com (10.13.177.100) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6111.13 via Frontend Transport; Thu, 16 Feb 2023 09:13:03 +0000
+Received: from [10.254.241.51] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 16 Feb
+ 2023 03:13:00 -0600
+Message-ID: <0bc626c8-492b-78ab-b054-0ae9f40cb967@amd.com>
+Date:   Thu, 16 Feb 2023 10:12:57 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] net: mdio: thunder: Do not unregister buses that have not
- been registered
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        David Daney <david.daney@cavium.com>
-Cc:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <918382e19fdeb172f3836234d07e706460b7d06b.1620906605.git.christophe.jaillet@wanadoo.fr>
- <20210513121634.GX1336@shell.armlinux.org.uk>
-Content-Language: fr, en-US
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210513121634.GX1336@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ Thunderbird/102.7.2
+Subject: Re: [PATCH] i2c: xiic: Remove some dead code
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Michal Simek <michal.simek@xilinx.com>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>
+References: <9d36938de98dc491425a51a9c07367dd9e448e60.1676457464.git.christophe.jaillet@wanadoo.fr>
+From:   Michal Simek <michal.simek@amd.com>
+In-Reply-To: <9d36938de98dc491425a51a9c07367dd9e448e60.1676457464.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT100:EE_|CH0PR12MB5073:EE_
+X-MS-Office365-Filtering-Correlation-Id: 280f2d5f-b161-4e25-bb46-08db0ffe01f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5xvy8Kl9YaxR6Ym2Ja26Xx7zbaqcBIGcQZPmDeQk8s5oGF/fkWcqKi0UCVw4934WfD5GcHiMv5uRIrTH4GZgzNP+nkyir0LQHN0ALAqTJF6DyiuQTHPSe0JOG3bNWibTWld0g21ezG14eh8vwRr9hqdf8v5D5ZuzERBecyb+L4aK0iLyvLcdkmnw2uTwZrZTC/C87f1E0XNXOD2u968RKIL0PYF8kdfRBBDrBY/3lNVj1IlRmlyM+Y17VNm1SjZuT9XvvDac5PFG4SsO2Apl42aCym4+0+bD7Uj9/2bBBo5kUhKFI1sosWsOWXdNqqfi/s4f6SNx7enITsXjIfByoZC0h+HG7mtcf5lITPmORjh8pHZf9VmJZ4VhBSOTelRRJ/fb7iWMEzR6T74fiI/oNTtn43pctmkV3qEcaS1z8RocZrdy5CtGmtVXmVYYM5GRIaJldeC9VMOSnPw477183o2eLTado4LFN5VWv4XGW0V6HGDKlX5fr9IPO6AQCtbgLz/twZZvGVBUmvSH1HMG1J04S2gdyH3jUGXfFX3Ps7xIv9gw6LSev6Cz4E91JhaeGh4gK3e1K9+Jr/a6HPqgMbs4jW6dQvmpNvSG7lOOaixXcJSC7hqJdmcXBdUZaNGto4CpAOMTtEYjrZOVoaJHbrLH2ldnpkrTIHkJFBN/LWRdES5lA4nK8Lto+izANfl9zh2w75X5NLfRq6vjT3+AezOPxMjvbinGjqJqZ2izpJ1rHhRyz4u0S1EjebbsTdkPBYQCGn3bdYYTwdCqTWs+TQ==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(396003)(346002)(39860400002)(136003)(376002)(451199018)(40470700004)(36840700001)(46966006)(110136005)(5660300002)(44832011)(4744005)(36860700001)(31696002)(2906002)(86362001)(40460700003)(6666004)(40480700001)(36756003)(53546011)(186003)(26005)(16526019)(478600001)(2616005)(336012)(82310400005)(70586007)(4326008)(356005)(8676002)(41300700001)(82740400003)(31686004)(81166007)(83380400001)(54906003)(70206006)(8936002)(316002)(47076005)(16576012)(426003)(36900700001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2023 09:13:03.1514
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 280f2d5f-b161-4e25-bb46-08db0ffe01f4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT100.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5073
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 13/05/2021 à 14:16, Russell King - ARM Linux admin a écrit :
-> On Thu, May 13, 2021 at 01:51:40PM +0200, Christophe JAILLET wrote:
->> In the probe, if 'of_mdiobus_register()' fails, 'nexus->buses[i]' will
->> still have a non-NULL value.
->> So in the remove function, we will try to unregister a bus that has not
->> been registered.
->>
->> In order to avoid that NULLify 'nexus->buses[i]'.
->> 'oct_mdio_writeq(0,...)' must also be called here.
->>
->> Suggested-by: Russell King - ARM Linux admin <linux@armlinux.org.uk>
->> Fixes: 379d7ac7ca31 ("phy: mdio-thunder: Add driver for Cavium Thunder SoC MDIO buses.")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Calling 'devm_mdiobus_free()' would also be cleaner, IMHO.
->> I've not added it because:
->>     - it should be fine, even without it
->>     - I'm not sure how to use it
-> 
-> devm_mdiobus_free() is a static function not intended to be used by
-> drivers. There is no devm.*free() function available for this, so
-> this memory will only ever be freed when either probe fails or the
-> driver is unbound from its device.
-> 
-> That should be fine, but it would be nice to give that memory back
-> to the system. Without having a function for drivers to use though,
-> that's not possible. Such a function should take a struct device
-> pointer and the struct mii_bus pointer returned by the devm
-> allocation function.
-> 
-> So, unless Andrew things we really need to free that, what you're
-> doing below should be fine as far as setting the pointer to NULL.
-> 
-> I think I'd want comments from Cavium on setting the register to
-> zero - as we don't know how this hardware behaves, and whether that
-> would have implications we aren't aware of. So, I'm copying in
-> David Daney (the original driver author) for comment, if his email
-> address still works!
 
-Hi,
 
-drivers/net/mdio/mdio-thunder.c has been touched recently, so i take the 
-opportunity to ping on this old patch.
-
-It does not cleanly apply anymore, but still look valid to me.
-
-CJ
-
+On 2/15/23 11:38, Christophe JAILLET wrote:
 > 
->> ---
->>   drivers/net/mdio/mdio-thunder.c | 8 +++++++-
->>   1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/mdio/mdio-thunder.c b/drivers/net/mdio/mdio-thunder.c
->> index 822d2cdd2f35..140c405d4a41 100644
->> --- a/drivers/net/mdio/mdio-thunder.c
->> +++ b/drivers/net/mdio/mdio-thunder.c
->> @@ -97,8 +97,14 @@ static int thunder_mdiobus_pci_probe(struct pci_dev *pdev,
->>   		bus->mii_bus->write = cavium_mdiobus_write;
->>   
->>   		err = of_mdiobus_register(bus->mii_bus, node);
->> -		if (err)
->> +		if (err) {
->>   			dev_err(&pdev->dev, "of_mdiobus_register failed\n");
->> +			/* non-registered buses must not be unregistered in
->> +			 * the .remove function
->> +			 */
->> +			oct_mdio_writeq(0, bus->register_base + SMI_EN);
->> +			nexus->buses[i] = NULL;
->> +		}
->>   
->>   		dev_info(&pdev->dev, "Added bus at %llx\n", r.start);
->>   		if (i >= ARRAY_SIZE(nexus->buses))
->> -- 
->> 2.30.2
->>
->>
+> wait_for_completion_timeout() never returns negative value.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   drivers/i2c/busses/i2c-xiic.c | 4 ----
+>   1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+> index 8503b5016aaf..5543f372ae60 100644
+> --- a/drivers/i2c/busses/i2c-xiic.c
+> +++ b/drivers/i2c/busses/i2c-xiic.c
+> @@ -1038,10 +1038,6 @@ static int xiic_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+>                  i2c->rx_msg = NULL;
+>                  i2c->nmsgs = 0;
+>                  err = -ETIMEDOUT;
+> -       } else if (err < 0) {   /* Completion error */
+> -               i2c->tx_msg = NULL;
+> -               i2c->rx_msg = NULL;
+> -               i2c->nmsgs = 0;
+>          } else {
+>                  err = (i2c->state == STATE_DONE) ? num : -EIO;
+>          }
+> --
+> 2.34.1
 > 
 
+Reviewed-by: Michal Simek <michal.simek@amd.com>
+
+Thanks,
+Michal
