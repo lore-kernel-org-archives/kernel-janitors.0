@@ -2,85 +2,126 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1E7C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 05:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C447CC61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 06:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229694AbjBPFaZ (ORCPT
+        id S229728AbjBPGpl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Feb 2023 00:30:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60816 "EHLO
+        Thu, 16 Feb 2023 01:45:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbjBPFaX (ORCPT
+        with ESMTP id S229551AbjBPGpk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Feb 2023 00:30:23 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457B440DB;
-        Wed, 15 Feb 2023 21:30:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D20F561E98;
-        Thu, 16 Feb 2023 05:30:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2613FC433A7;
-        Thu, 16 Feb 2023 05:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676525419;
-        bh=8taGhAa3ezrsNt9ICR/ULzHLloT4PreJpvb01iqeoV0=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=E0C083RvD//3ws/GemD+5s/OUyYBWXQgnOGpA9/+91eTZuPm7nb73EstM0cxPk7o9
-         DdzWDoYtBQBPPxIiZo31L5yXrSxDfvQ6vEklEi6dmdC6hh1PTf9S9ior/OYC3ELFMj
-         cdKNDE8gPa5jwD/DiCJI8JalCLtJoG3ybgQCXGIPZjrPDq1oFcEbPKNPGNCWF04dh+
-         qIW9LkymIH6JgS5Tcn4099GJpgk1JcV7iidM1feXaHDu47z4BrzQNiwqG3eLIG56P1
-         GanClKVglRAGl9DWc9gDyetUv8DylKsifXSTgF7L4A/eRcGsQKPU0XvboWSYqY6wEJ
-         60eDQxJkwylow==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 084C2E4D026;
-        Thu, 16 Feb 2023 05:30:19 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 16 Feb 2023 01:45:40 -0500
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E400E2
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Feb 2023 22:45:38 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id SY1Nph9XNm8TdSY1NpF4Iy; Thu, 16 Feb 2023 07:45:36 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 16 Feb 2023 07:45:36 +0100
+X-ME-IP: 86.243.2.178
+Message-ID: <95af8972-478f-12b8-efea-30c7e249f449@wanadoo.fr>
+Date:   Thu, 16 Feb 2023 07:45:33 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] net: mdio: thunder: Do not unregister buses that have not
+ been registered
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        David Daney <david.daney@cavium.com>
+Cc:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <918382e19fdeb172f3836234d07e706460b7d06b.1620906605.git.christophe.jaillet@wanadoo.fr>
+ <20210513121634.GX1336@shell.armlinux.org.uk>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20210513121634.GX1336@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net-next] net: phy: motorcomm: uninitialized variables in
- yt8531_link_change_notify()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167652541903.5481.7404304709458067270.git-patchwork-notify@kernel.org>
-Date:   Thu, 16 Feb 2023 05:30:19 +0000
-References: <Y+xd2yJet2ImHLoQ@kili>
-In-Reply-To: <Y+xd2yJet2ImHLoQ@kili>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Frank.Sae@motor-comm.com, andrew@lunn.ch, hkallweit1@gmail.com,
-        linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 15 Feb 2023 07:21:47 +0300 you wrote:
-> These booleans are never set to false, but are just used without being
-> initialized.
+Le 13/05/2021 à 14:16, Russell King - ARM Linux admin a écrit :
+> On Thu, May 13, 2021 at 01:51:40PM +0200, Christophe JAILLET wrote:
+>> In the probe, if 'of_mdiobus_register()' fails, 'nexus->buses[i]' will
+>> still have a non-NULL value.
+>> So in the remove function, we will try to unregister a bus that has not
+>> been registered.
+>>
+>> In order to avoid that NULLify 'nexus->buses[i]'.
+>> 'oct_mdio_writeq(0,...)' must also be called here.
+>>
+>> Suggested-by: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+>> Fixes: 379d7ac7ca31 ("phy: mdio-thunder: Add driver for Cavium Thunder SoC MDIO buses.")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Calling 'devm_mdiobus_free()' would also be cleaner, IMHO.
+>> I've not added it because:
+>>     - it should be fine, even without it
+>>     - I'm not sure how to use it
 > 
-> Fixes: 4ac94f728a58 ("net: phy: Add driver for Motorcomm yt8531 gigabit ethernet phy")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> v2: reverse Christmas tree.  Also add "motorcomm" to the subject.  It
-> really feels like previous patches to this driver should have had
-> motorcomm in the subject as well.  It's a common anti-pattern to only
-> put the subsystem name and not the driver name when adding a new file.
+> devm_mdiobus_free() is a static function not intended to be used by
+> drivers. There is no devm.*free() function available for this, so
+> this memory will only ever be freed when either probe fails or the
+> driver is unbound from its device.
 > 
-> [...]
+> That should be fine, but it would be nice to give that memory back
+> to the system. Without having a function for drivers to use though,
+> that's not possible. Such a function should take a struct device
+> pointer and the struct mii_bus pointer returned by the devm
+> allocation function.
+> 
+> So, unless Andrew things we really need to free that, what you're
+> doing below should be fine as far as setting the pointer to NULL.
+> 
+> I think I'd want comments from Cavium on setting the register to
+> zero - as we don't know how this hardware behaves, and whether that
+> would have implications we aren't aware of. So, I'm copying in
+> David Daney (the original driver author) for comment, if his email
+> address still works!
 
-Here is the summary with links:
-  - [v2,net-next] net: phy: motorcomm: uninitialized variables in yt8531_link_change_notify()
-    https://git.kernel.org/netdev/net-next/c/9753613f7399
+Hi,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+drivers/net/mdio/mdio-thunder.c has been touched recently, so i take the 
+opportunity to ping on this old patch.
 
+It does not cleanly apply anymore, but still look valid to me.
+
+CJ
+
+> 
+>> ---
+>>   drivers/net/mdio/mdio-thunder.c | 8 +++++++-
+>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/mdio/mdio-thunder.c b/drivers/net/mdio/mdio-thunder.c
+>> index 822d2cdd2f35..140c405d4a41 100644
+>> --- a/drivers/net/mdio/mdio-thunder.c
+>> +++ b/drivers/net/mdio/mdio-thunder.c
+>> @@ -97,8 +97,14 @@ static int thunder_mdiobus_pci_probe(struct pci_dev *pdev,
+>>   		bus->mii_bus->write = cavium_mdiobus_write;
+>>   
+>>   		err = of_mdiobus_register(bus->mii_bus, node);
+>> -		if (err)
+>> +		if (err) {
+>>   			dev_err(&pdev->dev, "of_mdiobus_register failed\n");
+>> +			/* non-registered buses must not be unregistered in
+>> +			 * the .remove function
+>> +			 */
+>> +			oct_mdio_writeq(0, bus->register_base + SMI_EN);
+>> +			nexus->buses[i] = NULL;
+>> +		}
+>>   
+>>   		dev_info(&pdev->dev, "Added bus at %llx\n", r.start);
+>>   		if (i >= ARRAY_SIZE(nexus->buses))
+>> -- 
+>> 2.30.2
+>>
+>>
+> 
 
