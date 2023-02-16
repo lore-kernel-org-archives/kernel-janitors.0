@@ -2,146 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22662C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 14:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D675C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 14:42:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbjBPO03 (ORCPT
+        id S230163AbjBPOmV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Feb 2023 09:26:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
+        Thu, 16 Feb 2023 09:42:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229935AbjBPO02 (ORCPT
+        with ESMTP id S229684AbjBPOmU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Feb 2023 09:26:28 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C3710242;
-        Thu, 16 Feb 2023 06:26:18 -0800 (PST)
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 09D8110B;
-        Thu, 16 Feb 2023 15:26:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1676557577;
-        bh=sA65bn0TGQs6om8e/KPMxmXURS3KslDykq9AzqoUIFg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=A2euq+dCedT5uyqEOQN7/t+oOhRp2u9XR7ZEXz4NzX+qvoLP0pO8Zl0KCbwi1sZ4S
-         zQ+o5szep6Iqvl5CYONLe0+AAdfg7gYh00VSVOvxPCz+AAQmSbohoWk5SrZaCig9rF
-         0ecd0vVkjAfKEN+tVKD9I5XGwi3p3OoPoGGOoeMM=
-Message-ID: <a3f5ec02-6e23-c3a6-3c5b-9413337615ec@ideasonboard.com>
-Date:   Thu, 16 Feb 2023 14:26:13 +0000
+        Thu, 16 Feb 2023 09:42:20 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91CCD4486;
+        Thu, 16 Feb 2023 06:42:19 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C45061380;
+        Thu, 16 Feb 2023 14:42:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B8C2C433D2;
+        Thu, 16 Feb 2023 14:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676558538;
+        bh=1oxCpm4govChwxnrWbBKkeSBKiNpqIg7oKaukmWGuLI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qlS183GqNvRSEdrnVvi4dyrVgvNMA7hU4qtQGrxZ5z1lGzoiuixP+tV06pmqZCBsz
+         9xTyF8bNNzyfgWlflpnfpc0JPPEpMLdmoFSe0G935zyP4PoZEwvzvbLvNbNfHehdYT
+         nTWQXDSaxXz15g52jNMgdPaWgdj5IgE7DWyUUH5CbWYuwlEequhuLMDGgEYot/rjmW
+         YKIg6xHmRvStYUsU2JZ7kXHagC7GEKu85G6PXvKeKs9AgxG0yv5Ik8UrExjUuWEHN8
+         rCNYgrQ95EYE/yo1Hj6T8Vf/bVd5QDTRITh6L+egUSHiHkdbcaQugnT0fhnj1Fah9w
+         N6f4pwrwvjnwg==
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5258f66721bso27616597b3.1;
+        Thu, 16 Feb 2023 06:42:18 -0800 (PST)
+X-Gm-Message-State: AO0yUKUyK/rcPnMl0TRffxjQ4PteIK6ibVO8ojq7MDkohdPhXxqX/UP+
+        jb/4gp9ywi4qNhcWuutsu0SIWy43eQnOboK5qzg=
+X-Google-Smtp-Source: AK7set/h/QZbnvz10Jpej51w7hGkoQ7yp8WdchZC9bWh8SiCJyYUlbUCOaNWvzjx0rLxqBrWpQIX3QvfASmE4/aBW28=
+X-Received: by 2002:a0d:ea05:0:b0:52e:fbcd:e1b4 with SMTP id
+ t5-20020a0dea05000000b0052efbcde1b4mr790508ywe.0.1676558537664; Thu, 16 Feb
+ 2023 06:42:17 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] usb: gadget: uvc: unlock on an error paths
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <Y+4ehE7/GgnRZuo0@kili>
-Content-Language: en-US
-From:   Dan Scally <dan.scally@ideasonboard.com>
-In-Reply-To: <Y+4ehE7/GgnRZuo0@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230213085658.96918-1-colin.i.king@gmail.com>
+In-Reply-To: <20230213085658.96918-1-colin.i.king@gmail.com>
+From:   Oded Gabbay <ogabbay@kernel.org>
+Date:   Thu, 16 Feb 2023 16:41:51 +0200
+X-Gmail-Original-Message-ID: <CAFCwf11_+NH1A-1eWUriWFuuh38TiOQCMHLvqFVq_4Uwn1+HUQ@mail.gmail.com>
+Message-ID: <CAFCwf11_+NH1A-1eWUriWFuuh38TiOQCMHLvqFVq_4Uwn1+HUQ@mail.gmail.com>
+Subject: Re: [PATCH][next] habanalabs: Fix spelling mistake "offest" -> "offset"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thanks Dan. This one was tackled by Yang already actually: 
-https://lore.kernel.org/linux-usb/20230213070926.776447-1-yangyingliang@huawei.com/
-
-On 16/02/2023 12:16, Dan Carpenter wrote:
-> This code accidentally returns without dropping the "su_mutex" if
-> kstrtou8() fails.  It's probably better to just do the kstrtou8() before
-> taking the lock.
+On Mon, Feb 13, 2023 at 10:57 AM Colin Ian King <colin.i.king@gmail.com> wrote:
 >
-> Fixes: b3c839bd8a07 ("usb: gadget: uvc: Make bSourceID read/write")
-> Fixes: 0525210c9840 ("usb: gadget: uvc: Allow definition of XUs in configfs")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> There is a spelling mistake in a dev_err message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   drivers/usb/gadget/function/uvc_configfs.c | 31 +++++++++++-----------
->   1 file changed, 16 insertions(+), 15 deletions(-)
+>  drivers/accel/habanalabs/common/command_submission.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
-> index 18c6a1461b7e..a59c1a95bfcd 100644
-> --- a/drivers/usb/gadget/function/uvc_configfs.c
-> +++ b/drivers/usb/gadget/function/uvc_configfs.c
-> @@ -590,6 +590,10 @@ static ssize_t uvcg_default_output_b_source_id_store(struct config_item *item,
->   	int result;
->   	u8 num;
->   
-> +	result = kstrtou8(page, 0, &num);
-> +	if (result)
-> +		return result;
-> +
->   	mutex_lock(su_mutex); /* for navigating configfs hierarchy */
->   
->   	opts_item = group->cg_item.ci_parent->ci_parent->
-> @@ -597,10 +601,6 @@ static ssize_t uvcg_default_output_b_source_id_store(struct config_item *item,
->   	opts = to_f_uvc_opts(opts_item);
->   	cd = &opts->uvc_output_terminal;
->   
-> -	result = kstrtou8(page, 0, &num);
-> -	if (result)
-> -		return result;
-> -
->   	mutex_lock(&opts->lock);
->   	cd->bSourceID = num;
->   	mutex_unlock(&opts->lock);
-> @@ -707,15 +707,15 @@ static ssize_t uvcg_extension_b_num_controls_store(struct config_item *item,
->   	int ret;
->   	u8 num;
->   
-> +	ret = kstrtou8(page, 0, &num);
-> +	if (ret)
-> +		return ret;
-> +
->   	mutex_lock(su_mutex);
->   
->   	opts_item = item->ci_parent->ci_parent->ci_parent;
->   	opts = to_f_uvc_opts(opts_item);
->   
-> -	ret = kstrtou8(page, 0, &num);
-> -	if (ret)
-> -		return ret;
-> -
->   	mutex_lock(&opts->lock);
->   	xu->desc.bNumControls = num;
->   	mutex_unlock(&opts->lock);
-> @@ -742,14 +742,15 @@ static ssize_t uvcg_extension_b_nr_in_pins_store(struct config_item *item,
->   	int ret;
->   	u8 num;
->   
-> +	ret = kstrtou8(page, 0, &num);
-> +	if (ret)
-> +		return ret;
-> +
->   	mutex_lock(su_mutex);
->   
->   	opts_item = item->ci_parent->ci_parent->ci_parent;
->   	opts = to_f_uvc_opts(opts_item);
->   
-> -	ret = kstrtou8(page, 0, &num);
-> -	if (ret)
-> -		return ret;
->   
->   	mutex_lock(&opts->lock);
->   
-> @@ -795,15 +796,15 @@ static ssize_t uvcg_extension_b_control_size_store(struct config_item *item,
->   	int ret;
->   	u8 num;
->   
-> +	ret = kstrtou8(page, 0, &num);
-> +	if (ret)
-> +		return ret;
-> +
->   	mutex_lock(su_mutex);
->   
->   	opts_item = item->ci_parent->ci_parent->ci_parent;
->   	opts = to_f_uvc_opts(opts_item);
->   
-> -	ret = kstrtou8(page, 0, &num);
-> -	if (ret)
-> -		return ret;
-> -
->   	mutex_lock(&opts->lock);
->   
->   	if (num == xu->desc.bControlSize) {
+> diff --git a/drivers/accel/habanalabs/common/command_submission.c b/drivers/accel/habanalabs/common/command_submission.c
+> index 6c4d9b1aa5de..74ccafeb38dc 100644
+> --- a/drivers/accel/habanalabs/common/command_submission.c
+> +++ b/drivers/accel/habanalabs/common/command_submission.c
+> @@ -3199,7 +3199,7 @@ static int ts_buff_get_kernel_ts_record(struct hl_mmap_mem_buf *buf,
+>                         usleep_range(100, 1000);
+>                         if (++iter_counter == MAX_TS_ITER_NUM) {
+>                                 dev_err(buf->mmg->dev,
+> -                                       "Timestamp offest processing reached timeout of %lld ms\n",
+> +                                       "Timestamp offset processing reached timeout of %lld ms\n",
+>                                         ktime_ms_delta(ktime_get(), timestamp));
+>                                 return -EAGAIN;
+>                         }
+> --
+> 2.30.2
+>
+Thanks,
+but I've already fixed it in my tree in the original patch before
+seeing this email, sorry.
+Oded
