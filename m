@@ -2,88 +2,111 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83347C64ED6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 13:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361B4C636CC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 13:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230092AbjBPNXr (ORCPT
+        id S230207AbjBPNZT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Feb 2023 08:23:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37164 "EHLO
+        Thu, 16 Feb 2023 08:25:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbjBPNXq (ORCPT
+        with ESMTP id S230198AbjBPNZR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Feb 2023 08:23:46 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58AC854579;
-        Thu, 16 Feb 2023 05:23:45 -0800 (PST)
+        Thu, 16 Feb 2023 08:25:17 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050C955284;
+        Thu, 16 Feb 2023 05:25:17 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E915661FF5;
-        Thu, 16 Feb 2023 13:23:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B6BC433AE;
-        Thu, 16 Feb 2023 13:23:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9216961FB7;
+        Thu, 16 Feb 2023 13:25:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59C7C433D2;
+        Thu, 16 Feb 2023 13:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676553824;
-        bh=erojs45d0jxAXUZzIrxqgpVrUG2ZaS/aS/eC0hZuboI=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=lhe5WQZAQvK0ZORtMx+VxuBKOxoltzMeXuIw/vRX/QWh2PXtQ3ZigajQ3FUCBh8CL
-         l1QbiszyVlESLDuseiONsvU/T8RNJ4NPnNUltraDFXaS7uomry6SRjwhrjqAhQMRo4
-         yhOYtbqPxHy4rtEcIKkKhYK6KlzXH1sZXYo1eYKkfnMZWDCfUImgWkjvIIT1F2nk5R
-         PXQ3V4uFLakjYr/Lqq0B4SzXKojBuLVsCKAqw2PprPq4rv3pRKh4LBqZ0aNqu1tRrN
-         KMRnYp93VFpZTalVPR582oodi7N4PY2VVfqloPZ68o67uogcAR00APWlRu+08U2rSo
-         yZdYURlLU8zfQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     William Zhang <william.zhang@broadcom.com>,
-        Dan Carpenter <error27@gmail.com>
-Cc:     Kursad Oney <kursad.oney@broadcom.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>, linux-spi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <Y+zmoGH6LubPhiI0@kili>
-References: <Y+zmoGH6LubPhiI0@kili>
-Subject: Re: [PATCH] spi: bcm63xx-hsspi: fix error code in probe
-Message-Id: <167655382233.3676429.7341927577915213769.b4-ty@kernel.org>
-Date:   Thu, 16 Feb 2023 13:23:42 +0000
+        s=k20201202; t=1676553916;
+        bh=uHtnhWLsn2Hd9jpxap1Di2ofv0wWPnKj0G7sCTRuaFA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qn+bH7b9qPf23owDpFfK6jr/LyLh5edvLARebuXfAFd1VxLWIRELfo3gt8PIlJ9Rf
+         RbtlyL0xXOAVEUINyu2HRyNdrNweygWtTTo0xgjnEnLy/kMk1ileE++wMFL5zo4YSj
+         tUMPcac2HgwOu8NGsX/qNTVZ0jXjGCNBlIQAYenyoWhWcrkdShtL5c1J/p+cMeQE6S
+         rOA9xPxTFW2HQVFyh4uZOuq8e8lZnvCQEg3VdxTN5fiuOFu3ZHFdtlM+DhTdobjsQt
+         JSG2HTSQnQPslDl7LeqbaQBdwS+ntQiSipKOScD9f5aA4nbU/OQxaj7LkLTjA4omDs
+         5HTdRbZAAuaPg==
+Date:   Thu, 16 Feb 2023 14:25:12 +0100
+From:   Lorenzo Bianconi <lorenzo@kernel.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Howard Hsu <howard-yh.hsu@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Shayne Chen <shayne.chen@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Peter Chiu <chui-hao.chiu@mediatek.com>,
+        MeiChia Chiu <MeiChia.Chiu@mediatek.com>,
+        Nicolas Cavallari <nicolas.cavallari@green-communications.fr>,
+        Bo Jiao <bo.jiao@mediatek.com>, linux-wireless@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] wifi: mt76: mt7915: unlock on error in
+ mt7915_thermal_temp_store()
+Message-ID: <Y+4uuOiVKegnfrq/@lore-desk>
+References: <Y+4eSSqaHCpfK1EG@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xTNt1ROkNg+Crel6"
+Content-Disposition: inline
+In-Reply-To: <Y+4eSSqaHCpfK1EG@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 15 Feb 2023 17:05:20 +0300, Dan Carpenter wrote:
-> This code accidentally returns success instead of a negative error code.
-> 
-> 
 
-Applied to
+--xTNt1ROkNg+Crel6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   broonie/spi.git for-next
+> Drop the lock before returning -EINVAL.
+>=20
+> Fixes: ecaccdae7a7e ("wifi: mt76: mt7915: rework mt7915_thermal_temp_stor=
+e()")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks!
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-[1/1] spi: bcm63xx-hsspi: fix error code in probe
-      commit: 97b7cea04f52c3263a74b945a4738f678181b117
+> ---
+>  drivers/net/wireless/mediatek/mt76/mt7915/init.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/init.c b/drivers/n=
+et/wireless/mediatek/mt76/mt7915/init.c
+> index 1ab768feccaa..728150b35537 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+> @@ -89,6 +89,7 @@ static ssize_t mt7915_thermal_temp_store(struct device =
+*dev,
+>  	     val < phy->throttle_temp[MT7915_CRIT_TEMP_IDX])) {
+>  		dev_err(phy->dev->mt76.dev,
+>  			"temp1_max shall be greater than temp1_crit.");
+> +		mutex_unlock(&phy->dev->mt76.mutex);
+>  		return -EINVAL;
+>  	}
+> =20
+> --=20
+> 2.39.1
+>=20
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+--xTNt1ROkNg+Crel6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-----BEGIN PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCY+4uuAAKCRA6cBh0uS2t
+rFNFAP9hqG8m0lMLsz+ZVwJWSdLkAflxJ25xi4RlZDISOt85qQD+P9/K9GlAjh+g
+hZTD6jjLdMJdd5+mX6ffbAnkcah/KQk=
+=xAWw
+-----END PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--xTNt1ROkNg+Crel6--
