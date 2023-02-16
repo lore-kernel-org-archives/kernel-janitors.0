@@ -2,74 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2C5C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 12:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE54C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 12:16:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230079AbjBPMPT (ORCPT
+        id S229990AbjBPMQN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Feb 2023 07:15:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57770 "EHLO
+        Thu, 16 Feb 2023 07:16:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229929AbjBPMPS (ORCPT
+        with ESMTP id S229561AbjBPMQM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Feb 2023 07:15:18 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0362CA2D;
-        Thu, 16 Feb 2023 04:15:12 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id fi26so2488216edb.7;
-        Thu, 16 Feb 2023 04:15:12 -0800 (PST)
+        Thu, 16 Feb 2023 07:16:12 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66888270F;
+        Thu, 16 Feb 2023 04:16:11 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id c1so2519868edt.4;
+        Thu, 16 Feb 2023 04:16:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LjOcvsZDIQCf+hq+MC47oV0H+OQ7PYaJvMVzLlaMG/g=;
-        b=bLVOYgJbpodTUmrN6JEz8wHouhRjeij0pQm1HtJliwebNIB+uBscgGPxjOsodww3UL
-         /IyVhn7TGvfsqrjfn+BuqfrFWYPaDyQWBBCGgVoTDTOE0KPkdl2k+h7ph5whuu9trUw5
-         8aUebWPfpb2p1AupPxeLAoYTCHSOgJUFYPpNAhRLdTBXD89zxVIZFWEnp91Hz0dlUlv6
-         UDtKrwj24I4pEBaIjVtEPeSrl/QaFOCfJ9aPYyVodOE2IlrR7gMGpPAtbxxnl+K8X1oH
-         HTrJqivihA2UivxNoqXcaHdDCT1/hdPFWJTn4zW6tT71hMRvNjcgR/nw9lqmOhd1MGFS
-         GPjg==
+        bh=EbvmtuNwS3/dsrG/u4fvnYPw2qS6adCghBRkCaNErR0=;
+        b=n3FSV2+0RSYgLQ/igTpgUG5opVXJhff2ITeG3DGkqv0e3Hh+ejo3zeqhouw1yfj0o5
+         A7PlfzjNAW13/ee9/p9fk0JdQlqCqWxshs5x6lj92anQ8SjQ9q7ThP6NQYPIDJEAE/YL
+         9N5nE8X7KsoOwZOtQ/XH4y5ahJ8JejEysbOPJ5dmEpzABL0e41aRX/mXJvzj7uqtj7SZ
+         MXq3cgqUUdQUwWYS3qNHSznGDsDyi/TW2LGzGbT5gD2PNMOGMx2zt9uREL5dxmw1umnA
+         7cANpstwRoGJNfALlNldYiNE5unSxvIoGbwu/QdVaLK4trV1Bt8EESmqEQFNn3YfPhVN
+         GljA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LjOcvsZDIQCf+hq+MC47oV0H+OQ7PYaJvMVzLlaMG/g=;
-        b=xbsuDU8ELulirP3gau496Q5apRD7pHaUAQDXJOE7ksGOf4WoVKdJ7U+wB74yMy7vQn
-         GhmF0YW2v2ybyzYlbJbWv1KbfuNHZm3yc+IFzITlbnFjQuvowB0YAPfagIg+rzotVBq3
-         ATYhWYYb1MAcRLvGcY2HJsvXXYrEvb3Baggvar7PdeSkLc32H2guTcwx84Xw4T601YtG
-         3fbt6Q9eNtgz3qAATPC71m4JlpadIqIR4MZL9L3btnM8s6dADHJdlkrBfxESg8Ai0apX
-         Bu9w5qabs/5OrRdtcWKRpj8uL8zOa3Z1NAFJmdmdvQ3sT+IG1euRgPYPEPFJbwG1Z6Ob
-         QIzA==
-X-Gm-Message-State: AO0yUKVihT6h/OBXPdDCQ35MS7Slq9ZGJBKBiOLJ5KsL4cWHOPQIaLlx
-        XRrCqhzG6rhxfSrbf1GXP68=
-X-Google-Smtp-Source: AK7set++FMpxqDaSzuqmtTnlKrhVhMkeqZRMCr8YnZqw1C2uL/5q3tGz3OgBKKCOYhdz7nmD9qaGDg==
-X-Received: by 2002:aa7:cf04:0:b0:4ac:b8eb:e398 with SMTP id a4-20020aa7cf04000000b004acb8ebe398mr5141813edy.6.1676549711175;
-        Thu, 16 Feb 2023 04:15:11 -0800 (PST)
+        bh=EbvmtuNwS3/dsrG/u4fvnYPw2qS6adCghBRkCaNErR0=;
+        b=I7xyuW2cT0bzBb/uO3UgfAsgVz8j9Rn5E4VqM/EBPpUgtH2mi2GaQBnwWFh52woBrN
+         uHNmIsqXliLl0VFcxGd2mzOUyBrVTJOBtqW2bY07OVjz+FZ+v30VOHRRQ5EfHHLSHdgz
+         zFTfu3NI+26R4CB3lH9JblUOriNq/0HXfcVky25M5V7xCcYAFFhz/oU5iSJeeTB/fzmK
+         pnEDw2sTSlnay7aqUIbcAsYrEivcRogmiJtWDm/oDsAQMneptO0e1etgvrYt40SbrGkd
+         sAmgYCxLGPllvAqL5D5FBhwtmgnHGJDJZS5e6pzhMO9vzI3Z+L/WUnrHECfe3Yt88mzE
+         iLEQ==
+X-Gm-Message-State: AO0yUKUTdEplLGgV8sHPThhEGq2I6zoox+tvjnJ3P0zxVDf/H8Qjb/+r
+        GDHhMMW2LtuEqwVQZTmXht8=
+X-Google-Smtp-Source: AK7set+MZaKMAueIo+Wa0CW/YU2VjhO2HzL1sA6pm4GwovsHtXJhXB8PlhaKYO4+1iy3PxcmKEXydA==
+X-Received: by 2002:a05:6402:885:b0:4ac:b97f:214c with SMTP id e5-20020a056402088500b004acb97f214cmr5203363edy.2.1676549769905;
+        Thu, 16 Feb 2023 04:16:09 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id k2-20020a50ce42000000b004acbecf091esm780169edj.17.2023.02.16.04.15.09
+        by smtp.gmail.com with ESMTPSA id y7-20020a50ce07000000b004a21304f5a0sm768887edi.72.2023.02.16.04.16.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 04:15:10 -0800 (PST)
-Date:   Thu, 16 Feb 2023 15:15:05 +0300
+        Thu, 16 Feb 2023 04:16:09 -0800 (PST)
+Date:   Thu, 16 Feb 2023 15:16:04 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Howard Hsu <howard-yh.hsu@mediatek.com>
-Cc:     Lorenzo Bianconi <lorenzo@kernel.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Shayne Chen <shayne.chen@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Peter Chiu <chui-hao.chiu@mediatek.com>,
-        MeiChia Chiu <MeiChia.Chiu@mediatek.com>,
-        Nicolas Cavallari <nicolas.cavallari@green-communications.fr>,
-        Bo Jiao <bo.jiao@mediatek.com>,
-        Howard Hsu <howard-yh.hsu@mediatek.com>,
-        linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: mt76: mt7915: unlock on error in
- mt7915_thermal_temp_store()
-Message-ID: <Y+4eSSqaHCpfK1EG@kili>
+To:     Daniel Scally <dan.scally@ideasonboard.com>
+Cc:     Daniel Scally <dan.scally@ideasonboard.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: gadget: uvc: unlock on an error paths
+Message-ID: <Y+4ehE7/GgnRZuo0@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -78,26 +65,102 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Drop the lock before returning -EINVAL.
+This code accidentally returns without dropping the "su_mutex" if
+kstrtou8() fails.  It's probably better to just do the kstrtou8() before
+taking the lock.
 
-Fixes: ecaccdae7a7e ("wifi: mt76: mt7915: rework mt7915_thermal_temp_store()")
+Fixes: b3c839bd8a07 ("usb: gadget: uvc: Make bSourceID read/write")
+Fixes: 0525210c9840 ("usb: gadget: uvc: Allow definition of XUs in configfs")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/net/wireless/mediatek/mt76/mt7915/init.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/gadget/function/uvc_configfs.c | 31 +++++++++++-----------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/init.c b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
-index 1ab768feccaa..728150b35537 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/init.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
-@@ -89,6 +89,7 @@ static ssize_t mt7915_thermal_temp_store(struct device *dev,
- 	     val < phy->throttle_temp[MT7915_CRIT_TEMP_IDX])) {
- 		dev_err(phy->dev->mt76.dev,
- 			"temp1_max shall be greater than temp1_crit.");
-+		mutex_unlock(&phy->dev->mt76.mutex);
- 		return -EINVAL;
- 	}
+diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
+index 18c6a1461b7e..a59c1a95bfcd 100644
+--- a/drivers/usb/gadget/function/uvc_configfs.c
++++ b/drivers/usb/gadget/function/uvc_configfs.c
+@@ -590,6 +590,10 @@ static ssize_t uvcg_default_output_b_source_id_store(struct config_item *item,
+ 	int result;
+ 	u8 num;
  
++	result = kstrtou8(page, 0, &num);
++	if (result)
++		return result;
++
+ 	mutex_lock(su_mutex); /* for navigating configfs hierarchy */
+ 
+ 	opts_item = group->cg_item.ci_parent->ci_parent->
+@@ -597,10 +601,6 @@ static ssize_t uvcg_default_output_b_source_id_store(struct config_item *item,
+ 	opts = to_f_uvc_opts(opts_item);
+ 	cd = &opts->uvc_output_terminal;
+ 
+-	result = kstrtou8(page, 0, &num);
+-	if (result)
+-		return result;
+-
+ 	mutex_lock(&opts->lock);
+ 	cd->bSourceID = num;
+ 	mutex_unlock(&opts->lock);
+@@ -707,15 +707,15 @@ static ssize_t uvcg_extension_b_num_controls_store(struct config_item *item,
+ 	int ret;
+ 	u8 num;
+ 
++	ret = kstrtou8(page, 0, &num);
++	if (ret)
++		return ret;
++
+ 	mutex_lock(su_mutex);
+ 
+ 	opts_item = item->ci_parent->ci_parent->ci_parent;
+ 	opts = to_f_uvc_opts(opts_item);
+ 
+-	ret = kstrtou8(page, 0, &num);
+-	if (ret)
+-		return ret;
+-
+ 	mutex_lock(&opts->lock);
+ 	xu->desc.bNumControls = num;
+ 	mutex_unlock(&opts->lock);
+@@ -742,14 +742,15 @@ static ssize_t uvcg_extension_b_nr_in_pins_store(struct config_item *item,
+ 	int ret;
+ 	u8 num;
+ 
++	ret = kstrtou8(page, 0, &num);
++	if (ret)
++		return ret;
++
+ 	mutex_lock(su_mutex);
+ 
+ 	opts_item = item->ci_parent->ci_parent->ci_parent;
+ 	opts = to_f_uvc_opts(opts_item);
+ 
+-	ret = kstrtou8(page, 0, &num);
+-	if (ret)
+-		return ret;
+ 
+ 	mutex_lock(&opts->lock);
+ 
+@@ -795,15 +796,15 @@ static ssize_t uvcg_extension_b_control_size_store(struct config_item *item,
+ 	int ret;
+ 	u8 num;
+ 
++	ret = kstrtou8(page, 0, &num);
++	if (ret)
++		return ret;
++
+ 	mutex_lock(su_mutex);
+ 
+ 	opts_item = item->ci_parent->ci_parent->ci_parent;
+ 	opts = to_f_uvc_opts(opts_item);
+ 
+-	ret = kstrtou8(page, 0, &num);
+-	if (ret)
+-		return ret;
+-
+ 	mutex_lock(&opts->lock);
+ 
+ 	if (num == xu->desc.bControlSize) {
 -- 
 2.39.1
 
