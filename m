@@ -2,83 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E562C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 12:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DA6C636D6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 13:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230088AbjBPMUY (ORCPT
+        id S230116AbjBPNXq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Feb 2023 07:20:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33126 "EHLO
+        Thu, 16 Feb 2023 08:23:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjBPMUX (ORCPT
+        with ESMTP id S229794AbjBPNXp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Feb 2023 07:20:23 -0500
+        Thu, 16 Feb 2023 08:23:45 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EBD5359A;
-        Thu, 16 Feb 2023 04:20:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB6765456B;
+        Thu, 16 Feb 2023 05:23:44 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C9420B826AA;
-        Thu, 16 Feb 2023 12:20:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 66EBCC4339B;
-        Thu, 16 Feb 2023 12:20:20 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 59E07B827F7;
+        Thu, 16 Feb 2023 13:23:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DCEC433EF;
+        Thu, 16 Feb 2023 13:23:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676550020;
-        bh=T+eqhOPEhX/3YmGw3VA36cZ9ZO1kX5yOpptGMfZQfBw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=HTFVDxa++cuc2vDhMMuToKpYkpgZOryvngUN3OIBXSyBnqBh2LhvRVTXFBa0Y1pmd
-         0P1NF8cvNmB5kO2cvvFSIwg0Oms8w32eRnAYgp0pq2wF+kOWdjf9GMc3Mq+7k7C8YP
-         4Mbbiz2WJ2ZyFlN7qCpnmUqD4x67Cw4GV7v9j05dClV/T/bAKvX4idMHiM74IU3TFn
-         n3tDYyJfnenxOWoiAw9UQ02+90YwW7Q2smHFCTfIF8LahCsgJdTfmETtX/GzWyxOYj
-         f/AGgtrP7wAYwWXHFyzi8Tul3qtb/CoJ+TQS4OtEokh/vwLFEJy8xQiDjviu+pBFDX
-         m2Bifc7Cu0L6Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 492AEE21EC3;
-        Thu, 16 Feb 2023 12:20:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1676553822;
+        bh=QoC6w+W5+IjPC7lXTWwpGP9CeD1GjolKIUfcqf2VQAU=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=gv+SoxJGxFb5KKAY2Tq3LNIU0gJRm0sv2857l/HvuqvEkOTlK0kHdxUfWE13v9Deq
+         2+oDkiS1XWNVnnj5iB9JoRV7WW/Jw8trlk2y0imA3tn7Xg+hZiTooDFurbDzdDCLSj
+         nnrp7n5eg5WwUxEWUJIgLRp1K5893RHY0m4QuH36Fupl5WUFp5ucUTzDYJwmQoegEC
+         hA2kP2d9Q/m+u7bQ0SHGFIzuZzYR2Deul+uL7RQFyDsWDFadrCT+kttrNi2tA21MRu
+         6xLqC7Cyd9/R4/0vpPzJpZD6btSwQvXsVpZf6zDOaXzef8lklnJbVz/hO/QtSR/CIW
+         Kr8DqeQCwkgoA==
+From:   Mark Brown <broonie@kernel.org>
+To:     William Zhang <william.zhang@broadcom.com>,
+        Dan Carpenter <error27@gmail.com>
+Cc:     Kursad Oney <kursad.oney@broadcom.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Anand Gore <anand.gore@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
+        linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <Y+zmrNJ9zjNQpzWq@kili>
+References: <Y+zmrNJ9zjNQpzWq@kili>
+Subject: Re: [PATCH] spi: bcmbca-hsspi: Fix error code in probe() function
+Message-Id: <167655381929.3676429.15587417251493299810.b4-ty@kernel.org>
+Date:   Thu, 16 Feb 2023 13:23:39 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: dsa: ocelot: fix selecting MFD_OCELOT
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167655002029.8163.12563431131032946888.git-patchwork-notify@kernel.org>
-Date:   Thu, 16 Feb 2023 12:20:20 +0000
-References: <20230215104631.31568-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20230215104631.31568-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     colin.foster@in-advantage.com, vladimir.oltean@nxp.com,
-        f.fainelli@gmail.com, kuba@kernel.org, claudiu.manoil@nxp.com,
-        alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
-        andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Wed, 15 Feb 2023 11:46:31 +0100 you wrote:
-> Commit 3d7316ac81ac ("net: dsa: ocelot: add external ocelot switch
-> control") adds config NET_DSA_MSCC_OCELOT_EXT, which selects the
-> non-existing config MFD_OCELOT_CORE.
+On Wed, 15 Feb 2023 17:05:32 +0300, Dan Carpenter wrote:
+> This code accidentally returns success instead of a negative error code.
 > 
-> Replace this select with the intended and existing MFD_OCELOT.
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> 
-> [...]
 
-Here is the summary with links:
-  - net: dsa: ocelot: fix selecting MFD_OCELOT
-    https://git.kernel.org/netdev/net-next/c/f5b12be34249
+Applied to
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+   broonie/spi.git for-next
 
+Thanks!
+
+[1/1] spi: bcmbca-hsspi: Fix error code in probe() function
+      commit: 0696532e12524855fa8044590d374079f271f216
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
