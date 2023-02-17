@@ -2,102 +2,151 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9960C636D7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 19:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AE2C636D6
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 20:23:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbjBQTvc (ORCPT
+        id S229717AbjBQUXI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Feb 2023 14:51:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35024 "EHLO
+        Fri, 17 Feb 2023 15:23:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbjBQTvb (ORCPT
+        with ESMTP id S229674AbjBQUXH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Feb 2023 14:51:31 -0500
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F03B353ED5
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 11:51:28 -0800 (PST)
-Received: from [192.168.1.18] ([86.243.2.178])
+        Fri, 17 Feb 2023 15:23:07 -0500
+Received: from smtp.smtpout.orange.fr (smtp-12.smtpout.orange.fr [80.12.242.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2E42A16F
+        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 12:23:04 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id T6lQpg4mYbhnbT6lQpVFTX; Fri, 17 Feb 2023 20:51:26 +0100
-X-ME-Helo: [192.168.1.18]
+        id T7G2pKIElTHu0T7G2pfheb; Fri, 17 Feb 2023 21:23:03 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 17 Feb 2023 20:51:26 +0100
+X-ME-Date: Fri, 17 Feb 2023 21:23:03 +0100
 X-ME-IP: 86.243.2.178
-Message-ID: <af667999-c465-2814-3ca2-cdccfce72754@wanadoo.fr>
-Date:   Fri, 17 Feb 2023 20:51:24 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] wifi: wfx: Remove some dead code
-Content-Language: fr, en-US
-To:     =?UTF-8?B?SsOpcsO0bWUgUG91aWxsZXI=?= <jerome.pouiller@silabs.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <809c4a645c8d1306c0d256345515865c40ec731c.1676464422.git.christophe.jaillet@wanadoo.fr>
- <5176724.BZd2XUeKfp@pc-42>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <5176724.BZd2XUeKfp@pc-42>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-serial@vger.kernel.org
+Subject: [PATCH] serial: 8250: Reorder fields in 'struct plat_serial8250_port'
+Date:   Fri, 17 Feb 2023 21:22:57 +0100
+Message-Id: <f3cb1efe1454e0615840fd331ee335bc441589a9.1676665358.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 15/02/2023 à 14:23, Jérôme Pouiller a écrit :
-> Hello Christophe,
-> 
-> On Wednesday 15 February 2023 13:34:37 CET Christophe JAILLET wrote:
->>
->> wait_for_completion_timeout() can not return a <0 value.
->> So simplify the logic and remove dead code.
->>
->> -ERESTARTSYS can not be returned by do_wait_for_common() for tasks with
->> TASK_UNINTERRUPTIBLE, which is the case for wait_for_completion_timeout()
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/net/wireless/silabs/wfx/main.c | 10 +++-------
->>   1 file changed, 3 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/net/wireless/silabs/wfx/main.c b/drivers/net/wireless/silabs/wfx/main.c
->> index 6b9864e478ac..0b50f7058bbb 100644
->> --- a/drivers/net/wireless/silabs/wfx/main.c
->> +++ b/drivers/net/wireless/silabs/wfx/main.c
->> @@ -358,13 +358,9 @@ int wfx_probe(struct wfx_dev *wdev)
->>
->>          wfx_bh_poll_irq(wdev);
->>          err = wait_for_completion_timeout(&wdev->firmware_ready, 1 * HZ);
->> -       if (err <= 0) {
->> -               if (err == 0) {
->> -                       dev_err(wdev->dev, "timeout while waiting for startup indication\n");
->> -                       err = -ETIMEDOUT;
->> -               } else if (err == -ERESTARTSYS) {
->> -                       dev_info(wdev->dev, "probe interrupted by user\n");
-> 
-> This code is ran during modprobe/insmod. We would like to allow the user
-> to interrupt (Ctrl+C) the probing if something is going wrong with the
-> device.
-> 
-> So, the real issue is wait_for_completion_interruptible_timeout() should
-> be used instead of wait_for_completion_timeout().
+Group some variables based on their sizes to reduce hole and avoid padding.
+On x86_64, this shrinks the size of 'struct plat_serial8250_port'
+from 144 to 128 bytes.
 
-Hmmm, not that clear.
+It saves a few bytes of memory.
 
-See commit 01088cd143a9.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Using pahole
 
-Let me know if you prefer this patch as-is or if 01088cd143a9 should be 
-reverted.
+Before:
+======
+struct plat_serial8250_port {
+	long unsigned int          iobase;               /*     0     8 */
+	void *                     membase;              /*     8     8 */
+	resource_size_t            mapbase;              /*    16     8 */
+	unsigned int               irq;                  /*    24     4 */
 
-CJ
+	/* XXX 4 bytes hole, try to pack */
 
-> 
-> (By reading this code again, it also seems the test "if (err <= 0)" is
-> useless)
-> 
-> 
+	long unsigned int          irqflags;             /*    32     8 */
+	unsigned int               uartclk;              /*    40     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	void *                     private_data;         /*    48     8 */
+	unsigned char              regshift;             /*    56     1 */
+	unsigned char              iotype;               /*    57     1 */
+	unsigned char              hub6;                 /*    58     1 */
+	unsigned char              has_sysrq;            /*    59     1 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	upf_t                      flags;                /*    64     8 */
+	unsigned int               type;                 /*    72     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	unsigned int               (*serial_in)(struct uart_port *, int); /*    80     8 */
+	void                       (*serial_out)(struct uart_port *, int, int); /*    88     8 */
+	void                       (*set_termios)(struct uart_port *, struct ktermios *, const struct ktermios  *); /*    96     8 */
+	void                       (*set_ldisc)(struct uart_port *, struct ktermios *); /*   104     8 */
+	unsigned int               (*get_mctrl)(struct uart_port *); /*   112     8 */
+	int                        (*handle_irq)(struct uart_port *); /*   120     8 */
+	/* --- cacheline 2 boundary (128 bytes) --- */
+	void                       (*pm)(struct uart_port *, unsigned int, unsigned int); /*   128     8 */
+	void                       (*handle_break)(struct uart_port *); /*   136     8 */
+
+	/* size: 144, cachelines: 3, members: 21 */
+	/* sum members: 128, holes: 4, sum holes: 16 */
+	/* last cacheline: 16 bytes */
+};
+
+After:
+=====
+struct plat_serial8250_port {
+	long unsigned int          iobase;               /*     0     8 */
+	void *                     membase;              /*     8     8 */
+	resource_size_t            mapbase;              /*    16     8 */
+	unsigned int               uartclk;              /*    24     4 */
+	unsigned int               irq;                  /*    28     4 */
+	long unsigned int          irqflags;             /*    32     8 */
+	void *                     private_data;         /*    40     8 */
+	unsigned char              regshift;             /*    48     1 */
+	unsigned char              iotype;               /*    49     1 */
+	unsigned char              hub6;                 /*    50     1 */
+	unsigned char              has_sysrq;            /*    51     1 */
+	unsigned int               type;                 /*    52     4 */
+	upf_t                      flags;                /*    56     8 */
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	unsigned int               (*serial_in)(struct uart_port *, int); /*    64     8 */
+	void                       (*serial_out)(struct uart_port *, int, int); /*    72     8 */
+	void                       (*set_termios)(struct uart_port *, struct ktermios *, const struct ktermios  *); /*    80     8 */
+	void                       (*set_ldisc)(struct uart_port *, struct ktermios *); /*    88     8 */
+	unsigned int               (*get_mctrl)(struct uart_port *); /*    96     8 */
+	int                        (*handle_irq)(struct uart_port *); /*   104     8 */
+	void                       (*pm)(struct uart_port *, unsigned int, unsigned int); /*   112     8 */
+	void                       (*handle_break)(struct uart_port *); /*   120     8 */
+
+	/* size: 128, cachelines: 2, members: 21 */
+};
+---
+ include/linux/serial_8250.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/serial_8250.h b/include/linux/serial_8250.h
+index 19376bee9667..741ed4807a9c 100644
+--- a/include/linux/serial_8250.h
++++ b/include/linux/serial_8250.h
+@@ -18,16 +18,16 @@ struct plat_serial8250_port {
+ 	unsigned long	iobase;		/* io base address */
+ 	void __iomem	*membase;	/* ioremap cookie or NULL */
+ 	resource_size_t	mapbase;	/* resource base */
++	unsigned int	uartclk;	/* UART clock rate */
+ 	unsigned int	irq;		/* interrupt number */
+ 	unsigned long	irqflags;	/* request_irq flags */
+-	unsigned int	uartclk;	/* UART clock rate */
+ 	void            *private_data;
+ 	unsigned char	regshift;	/* register shift */
+ 	unsigned char	iotype;		/* UPIO_* */
+ 	unsigned char	hub6;
+ 	unsigned char	has_sysrq;	/* supports magic SysRq */
+-	upf_t		flags;		/* UPF_* flags */
+ 	unsigned int	type;		/* If UPF_FIXED_TYPE */
++	upf_t		flags;		/* UPF_* flags */
+ 	unsigned int	(*serial_in)(struct uart_port *, int);
+ 	void		(*serial_out)(struct uart_port *, int, int);
+ 	void		(*set_termios)(struct uart_port *,
+-- 
+2.34.1
 
