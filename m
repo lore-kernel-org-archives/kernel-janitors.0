@@ -2,87 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B81B9C636D4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 08:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCB3C05027
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 09:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229513AbjBQICw (ORCPT
+        id S230073AbjBQJZg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Feb 2023 03:02:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38300 "EHLO
+        Fri, 17 Feb 2023 04:25:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbjBQICv (ORCPT
+        with ESMTP id S229488AbjBQJZf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Feb 2023 03:02:51 -0500
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3AB5E580
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 00:01:57 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id SvggpHzY6ReC5Svghp1MLD; Fri, 17 Feb 2023 09:01:47 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 17 Feb 2023 09:01:47 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        kvm@vger.kernel.org
-Subject: [PATCH] KVM: Reorder fields in 'struct kvm_mmu_memory_cache'
-Date:   Fri, 17 Feb 2023 09:01:38 +0100
-Message-Id: <f9423a6ee10d91bd6bad32beefd1b96cad4d28f1.1676620879.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Fri, 17 Feb 2023 04:25:35 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B88D05CF27;
+        Fri, 17 Feb 2023 01:25:31 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id ja15-20020a05600c556f00b003dc52fed235so371000wmb.1;
+        Fri, 17 Feb 2023 01:25:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hfv8pNhpvIlz1d8dy78P9h3OnVq3+w0YDz5WQ/jittM=;
+        b=N/oI/0KPkC3GxCjn2AkIqalsLak2mEXfpblyZvKT4kxeTGnFMm+6zqrlxpHXUPloU9
+         5OqE7drkWQIQtCzhVybaC9mcxsItKme0R3A9AbUmyKMx/sXWryOH3e1TJ5cBU3UUwXYl
+         5+SQjS6LTGhuLd4rMKCKQarrnwMEJPcbq3HjNdz9b7RQV9M8kew7VBCLm6mjDPTa5yQm
+         SXf4TAWKJCJYgu7dQIL4CleEkXwB9dCWiNJKkF50x4PKTw+Pl7HZplhsg786WsZHVxVR
+         tP1c/+NQGJe/rNA5sdsHfHqX72MTbm17X6hanUwjMa5/dOAny6yP3PoUaXsyBr/2oYwh
+         IpCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hfv8pNhpvIlz1d8dy78P9h3OnVq3+w0YDz5WQ/jittM=;
+        b=VHxSByX7NKAE3lIfbjQ9/Y0Xcl4cWp1fExX8PZqJkLb4sRul5QGOy9OW6viWXBnQPY
+         4bmgO4lJZ6QgEtk2ApXluTG83VtAh2nUVtEhQbjkYBmCr9KENzEOVxM6e0zPpKVHp/RB
+         XEEjksyfUYlXmGSZ/UR65iAAGl99tUyW+vCU9yxvXAOQ7XJ8EdI8hp92/cwaAO8hRIQD
+         rjsMoMo6NiDv87O0huam5zeGg1HOvtkRcjVNKecTtj+Qc6r/WZP/GZTF6ZcW5it+uEyn
+         x7IrQBR/OIf5jyDALjZPu9usOlNp1LC0BAG1iuLhSU0JKsPtA4f2UB66Gqw2PsZqTwYf
+         7NoA==
+X-Gm-Message-State: AO0yUKXT0mvJglQXoUadR74omfD2A0ijQ3sbE8ri8L6SITaVhtqo3X19
+        mWTCUWioIbSJYPpJJ4QW11M=
+X-Google-Smtp-Source: AK7set94K+QQT8K9J8A/GCN8UvOIJoCENp1z+zznF12KfNTRFstmaghcuQG8r0oHTzi4E8T1BPM3Kg==
+X-Received: by 2002:a05:600c:1688:b0:3e2:2304:c7b3 with SMTP id k8-20020a05600c168800b003e22304c7b3mr1102918wmn.34.1676625930177;
+        Fri, 17 Feb 2023 01:25:30 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id n2-20020a05600c3b8200b003e22508a343sm1152098wms.12.2023.02.17.01.25.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Feb 2023 01:25:29 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Edward Cree <ecree.xilinx@gmail.com>,
+        Martin Habets <habetsm.xilinx@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] sfc: Fix spelling mistake "creationg" -> "creating"
+Date:   Fri, 17 Feb 2023 09:25:28 +0000
+Message-Id: <20230217092528.576105-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Group some variables based on their sizes to reduce hole and avoid padding.
-On x86_64, this shrinks the size from 40 to 32 bytes.
+There is a spelling mistake in a pci_warn message. Fix it.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Using pahole
-
-Before:
-======
-struct kvm_mmu_memory_cache {
-	int                        nobjs;                /*     0     4 */
-	gfp_t                      gfp_zero;             /*     4     4 */
-	gfp_t                      gfp_custom;           /*     8     4 */
-
-	/* XXX 4 bytes hole, try to pack */
-
-	struct kmem_cache *        kmem_cache;           /*    16     8 */
-	int                        capacity;             /*    24     4 */
-
-	/* XXX 4 bytes hole, try to pack */
-
-	void * *                   objects;              /*    32     8 */
-
-	/* size: 40, cachelines: 1, members: 6 */
-	/* sum members: 32, holes: 2, sum holes: 8 */
-	/* last cacheline: 40 bytes */
-};
----
- include/linux/kvm_types.h | 2 +-
+ drivers/net/ethernet/sfc/efx_devlink.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/kvm_types.h b/include/linux/kvm_types.h
-index 2728d49bbdf6..76af8425dbc6 100644
---- a/include/linux/kvm_types.h
-+++ b/include/linux/kvm_types.h
-@@ -94,8 +94,8 @@ struct kvm_mmu_memory_cache {
- 	int nobjs;
- 	gfp_t gfp_zero;
- 	gfp_t gfp_custom;
--	struct kmem_cache *kmem_cache;
- 	int capacity;
-+	struct kmem_cache *kmem_cache;
- 	void **objects;
- };
- #endif
+diff --git a/drivers/net/ethernet/sfc/efx_devlink.c b/drivers/net/ethernet/sfc/efx_devlink.c
+index d2eb6712ba35..52fe2b2658f3 100644
+--- a/drivers/net/ethernet/sfc/efx_devlink.c
++++ b/drivers/net/ethernet/sfc/efx_devlink.c
+@@ -655,7 +655,7 @@ static struct devlink_port *ef100_set_devlink_port(struct efx_nic *efx, u32 idx)
+ 				 "devlink port creation for PF failed.\n");
+ 		else
+ 			pci_warn(efx->pci_dev,
+-				 "devlink_port creationg for VF %u failed.\n",
++				 "devlink_port creation for VF %u failed.\n",
+ 				 idx);
+ 		return NULL;
+ 	}
 -- 
-2.34.1
+2.30.2
 
