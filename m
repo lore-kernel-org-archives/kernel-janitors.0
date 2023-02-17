@@ -2,77 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30ED2C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Feb 2023 23:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDF7C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 01:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230022AbjBPX4E (ORCPT
+        id S230037AbjBQBgJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Feb 2023 18:56:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56752 "EHLO
+        Thu, 16 Feb 2023 20:36:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjBPX4D (ORCPT
+        with ESMTP id S230109AbjBQBgG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Feb 2023 18:56:03 -0500
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E63B610F3;
-        Thu, 16 Feb 2023 15:56:02 -0800 (PST)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 7D83B37E;
-        Thu, 16 Feb 2023 23:56:02 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7D83B37E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1676591762; bh=diMbwq1hcd7STRYDtgcrxMgdSmLcQFCfpKLNFzdXGXQ=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=qhNXTgS/dG0RxFbeF8CDH0Sy1rHnFKjjWQq8elgeYKW/NLaUhKsxgVGd/5AoBJ4Oo
-         qTfaedBNyG1Qbb9YfnnFb0Zl22Cf4h5Gfkt5RzlYmVjyHP8KJtWUTg4rJf2w+nUH4G
-         ZLkvX9IIFcBkhQiWunFer2NggmF/COsfZoX5EWk38Mmv08NcqLG4+BVdum2AP4HXMf
-         rNB6M1V1GHtJiIx+BcHoXz8vHxfOWPJ0QTJE7ubg/+alLbr+3Ua+RYEPoCft7TueRB
-         4Cw+MYq3tdNF0v2ltKRtfWR6tymE/Kg2wGVfhfkWUI/EQhfQmsuZORV0VAhkDiHMxB
-         dmSzs3BXE6UKw==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, linux-doc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] docs/mm: Physical Memory: correct spelling in reference
- to CONFIG_PAGE_EXTENSION
-In-Reply-To: <20230215100808.9613-1-lukas.bulwahn@gmail.com>
-References: <20230215100808.9613-1-lukas.bulwahn@gmail.com>
-Date:   Thu, 16 Feb 2023 16:56:01 -0700
-Message-ID: <87bkltgo6m.fsf@meer.lwn.net>
+        Thu, 16 Feb 2023 20:36:06 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F62582A7
+        for <kernel-janitors@vger.kernel.org>; Thu, 16 Feb 2023 17:36:03 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id m2so4055545plg.4
+        for <kernel-janitors@vger.kernel.org>; Thu, 16 Feb 2023 17:36:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AJ7SflY2meS6XlN65Pv9owj6VZSWx0v9fxvbNqNRU2A=;
+        b=TuVEX+qGEOUHn8Q85BMZaJTFL4PfnJ6dyTgJSh855/3O5hoR7zSrXx4Mb9hMyTUns/
+         mv9/jupshxEfehziAzsTyQPENBDr/qVKOPL1s/DmqQ2IXrmmJPeKfcNRiubnhki5ZLAT
+         tpfIw+kE4wV8D3CWzH21tpEICoFPC1uB2JH9NCz6CmTjc/2Pm3st+ODgRFFgGUG229nK
+         cowrXO+7/RXG6tedXHb2Yub7xn7Z12DQ+GwN0hNwTfJG1wwmBKl5za5FOBDu6As+00U5
+         0UrMmcngdbjvHtxn8h/W3uX2wlo7jGEcDk5sEvEqEffcvdR3L0sbVN+4xXlnzmyxH2MQ
+         /seg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AJ7SflY2meS6XlN65Pv9owj6VZSWx0v9fxvbNqNRU2A=;
+        b=esJtx/LeW6lXy+EaJZVSReB0Jrganw/ecmCAiOcuyk1Pc4oDJ9+Rwu60I2OdZ85y7J
+         F4D76bzIy+F2fmlsRpZsxlWGjwYhuy3nZw2NSVlyErAqdcYbd7Yu/Sr4l+wkmBNhk5Wx
+         q2P6NV2hjHOLeyuEHYjJTt70WlnAIsGE+aMZFi0LXih1ytLej3+7pRxTN0H+Sie0zJzt
+         gMOJBvreV24Y7pOmgXbZwMQcbQDgPDXla3UDPTb6k3zl7k+E6g9TRVMj6cINla0F4eN2
+         52AmT0MtVj72rHqXh3y0C8aw9lDi8+2Xwe/dKIjsylkpG3eahdtVLUlZzfjT5FmLPO4u
+         0u1A==
+X-Gm-Message-State: AO0yUKVWTLiPuyTYkbCp9+e5ymZhpmr+5Zra1R7iDA97b6tlPH0ToCPk
+        UGu0vUv3QcyAjeuAIrcbjuuGaBl/vgQ=
+X-Google-Smtp-Source: AK7set8idwkFvKNHstL6OpY0YXsSIDJQZgqTyU2bM7b8VMyOpIk93NwxYMKGZUWBwAglESfMAk7a+g==
+X-Received: by 2002:a17:90b:4f44:b0:234:1a60:a6b0 with SMTP id pj4-20020a17090b4f4400b002341a60a6b0mr9129403pjb.34.1676597763315;
+        Thu, 16 Feb 2023 17:36:03 -0800 (PST)
+Received: from localhost ([156.236.96.165])
+        by smtp.gmail.com with ESMTPSA id js8-20020a17090b148800b00234afca2498sm1054461pjb.28.2023.02.16.17.36.01
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Feb 2023 17:36:03 -0800 (PST)
+Date:   Fri, 17 Feb 2023 09:41:57 +0800
+From:   Yue Hu <zbestahu@gmail.com>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Sandeep Dhavale <dhavale@google.com>,
+        kernel-janitors@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        huyue2@coolpad.com, zhangwen@coolpad.com
+Subject: Re: [PATCH] erofs: fix an error code in
+ z_erofs_init_zip_subsystem()
+Message-ID: <20230217094157.00005eb4.zbestahu@gmail.com>
+In-Reply-To: <Y+4d0FRsUq8jPoOu@kili>
+References: <Y+4d0FRsUq8jPoOu@kili>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+On Thu, 16 Feb 2023 15:13:04 +0300
+Dan Carpenter <error27@gmail.com> wrote:
 
-> Commit 5d8c5e430a63 ("docs/mm: Physical Memory: add structure, introduction
-> and nodes description") slips in a minor spelling mistake for the config
-> PAGE_EXTENSION.
->
-> Correct the config name in the physical-memory documentation.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Return -ENOMEM if alloc_workqueue() fails.  Don't return success.
+> 
+> Fixes: d8a650adf429 ("erofs: add per-cpu threads for decompression as an option")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+Reviewed-by: Yue Hu <huyue2@coolpad.com>
+
 > ---
->  Documentation/mm/physical_memory.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/mm/physical_memory.rst b/Documentation/mm/physical_memory.rst
-> index 3f3c02aa6e6e..f9d7ea4b9dca 100644
-> --- a/Documentation/mm/physical_memory.rst
-> +++ b/Documentation/mm/physical_memory.rst
-> @@ -210,7 +210,7 @@ General
->  ``node_page_ext``
->    For UMA systems that use FLATMEM memory model the 0's node
->    ``node_page_ext`` is array of extensions of struct pages. Available only
-> -  in the kernels built with ``CONFIG_PAGE_EXTENTION`` enabled.
-> +  in the kernels built with ``CONFIG_PAGE_EXTENSION`` enabled.
+>  fs/erofs/zdata.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+> index 8ea3f5fe985e..3247d2422bea 100644
+> --- a/fs/erofs/zdata.c
+> +++ b/fs/erofs/zdata.c
+> @@ -475,8 +475,10 @@ int __init z_erofs_init_zip_subsystem(void)
 >  
+>  	z_erofs_workqueue = alloc_workqueue("erofs_worker",
+>  			WQ_UNBOUND | WQ_HIGHPRI, num_possible_cpus());
+> -	if (!z_erofs_workqueue)
+> +	if (!z_erofs_workqueue) {
+> +		err = -ENOMEM;
+>  		goto out_error_workqueue_init;
+> +	}
+>  
+>  	err = erofs_init_percpu_workers();
+>  	if (err)
 
-Applied, thanks.
-
-jon
