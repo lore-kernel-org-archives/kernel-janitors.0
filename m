@@ -2,88 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B37C636D6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 20:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0ECC636D7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 21:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229840AbjBQUiM (ORCPT
+        id S229886AbjBQVqp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Feb 2023 15:38:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35186 "EHLO
+        Fri, 17 Feb 2023 16:46:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229826AbjBQUiL (ORCPT
+        with ESMTP id S229593AbjBQVqo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Feb 2023 15:38:11 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823A12A6C7
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 12:38:09 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id f11so700595ioz.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 12:38:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6QW1U0BdBx7Jx8kPGyXfr0Re3UnOpioEFLwDuydQbjM=;
-        b=03Qqa8iulXI39rGuZGvUnr1cd60q0K6fePLUgetpk/SjU81oBjlBQpzV/77WUPU928
-         lO5N0nk8iKBudMAGpCzboTfrxNFL1VVF08fpkHFT0hwHf1pLKxLNBoLZrdJJHJlqS7sJ
-         CIVsowbrrq87cc/k6aM2wwakwL4S6Z5y++4RF9cyTqeFwV+ZveU76zEYw9J4vLJ9Pt4Q
-         JZ7WqzMIAos1A+oS9NmCEXzFT/GcxJEQ8KghXYNcw2kZF6kfiaByHbdSZsJ9ahLZLuPy
-         KBDkvLW7qZSEVY2Q5A8B3gygAkijQZNJ9YdqKojPCSc1fvI9fU6E04t6PBqGnxG7ItNY
-         +m9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6QW1U0BdBx7Jx8kPGyXfr0Re3UnOpioEFLwDuydQbjM=;
-        b=FBQ3VQfsHjuoHbuzUNBJ2I6CPf7VjOjAiDh0yHAuyCL1K8aUIllI90RVRj99D0aB1y
-         LefVUxgYVl+cYD9FP72ZfeRCtZZ25M/m93GvEjBm4Y3Vx7/mE52DvSYn2rG2v22NbsRs
-         DWoK6LWvoKYc1khYNO1L8sfnVGPsEVH0DQvjmtVV/hcMCaaCfwZ6IHRCYWlndcDJx3vc
-         FtTNwXl9/i0ryYwkEQcPDo0UTxtDXNoDbPJYRXlWkcYzpqC5LVnv6JI9rJOqrkGGL5Wz
-         Dz94pmCA+JiaCmgnr29I2jJyj+6uNoVsrWe/iAf0T3pE/L1xxHj4n6ZHmXcNwqzpiLQ0
-         iCtA==
-X-Gm-Message-State: AO0yUKXMrdvWKmyI8DB2TBvbsls7XHsAp/VeJsyIUQuiZiDdbK+/EEL+
-        1edPJGdMPIuQJUiQeZf/C/7CAA==
-X-Google-Smtp-Source: AK7set8hN4MPWUVNlWZduo6D5QmHgRQl2zP/sHLvJowbKiJcCnsTqE0hGcGJTzdO40QqrbiSa0r6Lw==
-X-Received: by 2002:a05:6602:26d3:b0:70a:9fce:853c with SMTP id g19-20020a05660226d300b0070a9fce853cmr2300877ioo.2.1676666288852;
-        Fri, 17 Feb 2023 12:38:08 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id bh25-20020a056602371900b00740710c0a65sm1709811iob.47.2023.02.17.12.38.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Feb 2023 12:38:08 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
+        Fri, 17 Feb 2023 16:46:44 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BF3965696;
+        Fri, 17 Feb 2023 13:46:27 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E9F3FB82B45;
+        Fri, 17 Feb 2023 21:46:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290C0C433D2;
+        Fri, 17 Feb 2023 21:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676670384;
+        bh=RawpE5mpSU8yc2/xySzrtzYpZhoqwKb/hsTWXduMG7E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rCI5bC8B2vVqPBRSHcw4jEhqiAl8MuRKSwjXVBMXAI59BYggIz/UBeEoGg9hwyXPm
+         D948Zu1uubn6SCGCggpVTYDzy+MLOt1NtzXbO1sfLhS38bYOSQLVd9t86DB/mssjo8
+         GqClz+wWN09ca8wJGxB6oiOIVZU7SrnHbkkREJf7Kp7+OCYXQ4o3Q/Eb4YTOkKHnm2
+         MdpxeaHk9ECYbgMH4lcNcqnuIL/tkFC57pLO0ShIEBnnJEF7hQqagMUXtNlWtW5iNi
+         D454qIFZJ6rpQDrnwPhvG889xlnJzM0yZnoOQR3wz5FHkBhGUlVS6h7Zw6mdBGPU5x
+         BH2cVIvPr9lBA==
+Date:   Fri, 17 Feb 2023 22:46:21 +0100
+From:   Wolfram Sang <wsa@kernel.org>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-block@vger.kernel.org
-In-Reply-To: <6f249f9b02a3490283ef0278096556de41aa0cf0.1676626130.git.christophe.jaillet@wanadoo.fr>
-References: <6f249f9b02a3490283ef0278096556de41aa0cf0.1676626130.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] blk-mq: Reorder fields in 'struct blk_mq_tag_set'
-Message-Id: <167666628814.273360.17235110926752683174.b4-ty@kernel.dk>
-Date:   Fri, 17 Feb 2023 13:38:08 -0700
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] i2c: xiic: Remove some dead code
+Message-ID: <Y+/1rR0wGc5E70O0@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
+References: <9d36938de98dc491425a51a9c07367dd9e448e60.1676457464.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-ada30
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="T2k9SWCaMMVdEf0J"
+Content-Disposition: inline
+In-Reply-To: <9d36938de98dc491425a51a9c07367dd9e448e60.1676457464.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
-On Fri, 17 Feb 2023 10:29:10 +0100, Christophe JAILLET wrote:
-> Group some variables based on their sizes to reduce hole and avoid padding.
-> On x86_64, this shrinks the size of 'struct blk_mq_tag_set'
-> from 304 to 296 bytes.
-> 
-> 
+--T2k9SWCaMMVdEf0J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Wed, Feb 15, 2023 at 11:38:07AM +0100, Christophe JAILLET wrote:
+> wait_for_completion_timeout() never returns negative value.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[1/1] blk-mq: Reorder fields in 'struct blk_mq_tag_set'
-      commit: d88cbbb39b4db057feb1552de31f22c02a21b36f
-
-Best regards,
--- 
-Jens Axboe
+Applied to for-next, thanks!
 
 
+--T2k9SWCaMMVdEf0J
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmPv9a0ACgkQFA3kzBSg
+KbbTURAAtZEbY4eI2SEy24N++zA3qqGZIwvkgw4Ikkf1l10zUxrX6VhfdMGAcjGH
+PjlW4RwXvcBhOOsc13ZQp7jf9dOuozh99jt8MUW0irG8XfdUyF1oZCWIF4+zslzX
+NaH6Ft+4OHylNkzLj1V0GJ1kb6GOYpCmn4NWrwSc4c7c7aJQDIUM3f/M5bY2/f0x
+icx+iqsyOz6FXVhWm8F8PeaM+Y9vn9JGAiZkK4reyFylxILt0/uXgxGMnHfXjVgh
+G01oP2JoBAIPqLkJkNy5NKZkMR/PshVYHTxJ/pUB2Jam6nqao8c+wDbGPkqmyBwq
+4aRC1olkGhj1n+t5qyaW/RjXqPS5HL7FCtScLIkP39kjP3iGSBC62ZTKQEFQVyZQ
+Unj1AUuy+DNhvGDU1AHST/XM2reNrFkTvE4BsyRxrHYXdjFnf9nwXMh4tZOw8mS/
+9jFysdo6NwPx6agfFMPwttykD7QFnJnfKIq3SxDe91k2hV4xIkLwhwW5UtR5nmW+
+F9kICYnqkwmFodz755UzNIhiqHLhA1qMMZ6wjc24NP+OIEQX2FhKr7nQqvncnhVg
+9ZKsdEP8fKUcQsa8GcjEcHLGhcbs6Kq43k9lx2W5KQcbNDW7T9gL46YayLAPt5cB
+6COH4gYn+O11cAX6jGYx2MX+aeslMCWJgi+9EJhIs7iq2UPOsg4=
+=oyIq
+-----END PGP SIGNATURE-----
+
+--T2k9SWCaMMVdEf0J--
