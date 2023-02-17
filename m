@@ -2,88 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18187C636D4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 05:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B81B9C636D4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 08:02:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229625AbjBQFvh (ORCPT
+        id S229513AbjBQICw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Feb 2023 00:51:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50744 "EHLO
+        Fri, 17 Feb 2023 03:02:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbjBQFvg (ORCPT
+        with ESMTP id S229505AbjBQICv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Feb 2023 00:51:36 -0500
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4C79F49899;
-        Thu, 16 Feb 2023 21:51:33 -0800 (PST)
-X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
-        LIVER,40,3)
-Received: from 192.168.10.46
-        by mg.richtek.com with MailGates ESMTP Server V5.0(23447:0:AUTH_RELAY)
-        (envelope-from <cy_huang@richtek.com>); Fri, 17 Feb 2023 13:51:22 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.20; Fri, 17 Feb
- 2023 13:51:22 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1118.20 via Frontend
- Transport; Fri, 17 Feb 2023 13:51:22 +0800
-Date:   Fri, 17 Feb 2023 13:51:22 +0800
-From:   ChiYuan Huang <cy_huang@richtek.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     Sebastian Reichel <sre@kernel.org>,
-        ChiaEn Wu <chiaen_wu@richtek.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] power: supply: rt9467: Fix rt9467_run_aicl()
-Message-ID: <20230217055122.GA5502@linuxcarl2.richtek.com>
-References: <2ed01020fa8a135c36dbaa871095ded47d926507.1676464968.git.christophe.jaillet@wanadoo.fr>
+        Fri, 17 Feb 2023 03:02:51 -0500
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3AB5E580
+        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 00:01:57 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id SvggpHzY6ReC5Svghp1MLD; Fri, 17 Feb 2023 09:01:47 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 17 Feb 2023 09:01:47 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kvm@vger.kernel.org
+Subject: [PATCH] KVM: Reorder fields in 'struct kvm_mmu_memory_cache'
+Date:   Fri, 17 Feb 2023 09:01:38 +0100
+Message-Id: <f9423a6ee10d91bd6bad32beefd1b96cad4d28f1.1676620879.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <2ed01020fa8a135c36dbaa871095ded47d926507.1676464968.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi, Christophe:
-On Wed, Feb 15, 2023 at 01:43:04PM +0100, Christophe JAILLET wrote:
-> It is spurious to bail-out on a wait_for_completion_timeout() call that
-> does NOT timeout.
-> 
-> Reverse the logic to return -ETIMEDOUT instead, in case of tiemout.
->
-Thanks. It's really our coding issue.
+Group some variables based on their sizes to reduce hole and avoid padding.
+On x86_64, this shrinks the size from 40 to 32 bytes.
 
-Reviewed-by: ChiYuan Huang <cy_huang@richtek.com>
-> Fixes: 6f7f70e3a8dd ("power: supply: rt9467: Add Richtek RT9467 charger driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
-> 
-> This is spurious, because if I'm right, it means that it does not work!
-> Testing on a real hardware is really welcomed.
-> ---
->  drivers/power/supply/rt9467-charger.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
-> index 96ad0d7d3af4..bb737fd1cca6 100644
-> --- a/drivers/power/supply/rt9467-charger.c
-> +++ b/drivers/power/supply/rt9467-charger.c
-> @@ -598,8 +598,8 @@ static int rt9467_run_aicl(struct rt9467_chg_data *data)
->  
->  	reinit_completion(&data->aicl_done);
->  	ret = wait_for_completion_timeout(&data->aicl_done, msecs_to_jiffies(3500));
-> -	if (ret)
-> -		return ret;
-> +	if (ret == 0)
-> +		return -ETIMEDOUT;
->  
->  	ret = rt9467_get_value_from_ranges(data, F_IAICR, RT9467_RANGE_IAICR, &aicr_get);
->  	if (ret) {
-> -- 
-> 2.34.1
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Using pahole
+
+Before:
+======
+struct kvm_mmu_memory_cache {
+	int                        nobjs;                /*     0     4 */
+	gfp_t                      gfp_zero;             /*     4     4 */
+	gfp_t                      gfp_custom;           /*     8     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	struct kmem_cache *        kmem_cache;           /*    16     8 */
+	int                        capacity;             /*    24     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	void * *                   objects;              /*    32     8 */
+
+	/* size: 40, cachelines: 1, members: 6 */
+	/* sum members: 32, holes: 2, sum holes: 8 */
+	/* last cacheline: 40 bytes */
+};
+---
+ include/linux/kvm_types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/kvm_types.h b/include/linux/kvm_types.h
+index 2728d49bbdf6..76af8425dbc6 100644
+--- a/include/linux/kvm_types.h
++++ b/include/linux/kvm_types.h
+@@ -94,8 +94,8 @@ struct kvm_mmu_memory_cache {
+ 	int nobjs;
+ 	gfp_t gfp_zero;
+ 	gfp_t gfp_custom;
+-	struct kmem_cache *kmem_cache;
+ 	int capacity;
++	struct kmem_cache *kmem_cache;
+ 	void **objects;
+ };
+ #endif
+-- 
+2.34.1
+
