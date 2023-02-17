@@ -2,134 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2046C636D4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 10:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B95C05027
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 11:21:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbjBQK7S (ORCPT
+        id S230039AbjBQLVU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Feb 2023 05:59:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37036 "EHLO
+        Fri, 17 Feb 2023 06:21:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbjBQK7P (ORCPT
+        with ESMTP id S229904AbjBQLVS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Feb 2023 05:59:15 -0500
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFEFF635A2
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 02:59:13 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id SySNpfME7qIOtSySNpIV5M; Fri, 17 Feb 2023 11:59:11 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 17 Feb 2023 11:59:11 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH] ACPI: video: Reorder fields in 'struct acpi_video_device'
-Date:   Fri, 17 Feb 2023 11:59:08 +0100
-Message-Id: <6b868520dac20434296b6282496d3234fae01115.1676631473.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Fri, 17 Feb 2023 06:21:18 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 847DD23D84;
+        Fri, 17 Feb 2023 03:21:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1240B61924;
+        Fri, 17 Feb 2023 11:21:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8066DC433D2;
+        Fri, 17 Feb 2023 11:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676632874;
+        bh=TYymLuHAKHOg75kxJhhRqder3kZtvUkxS0yzAEY7rTg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ii6HlaR1dzVwRY2k9Ee4iONIk1u0ySksMKx8c5eJI3B9HAhdj60HjSnuRA65aYNYa
+         iddD2VtWtSZ7xL+jbEt1YXtQqHNRxCX4Jrz/E6A1JSqvqqKiyGuh0eJILFxrmTtUj4
+         X0ODHDlK2ZZuXP0uoLSxhB50lJnNSRAg/A5YiqQaY/v6VKX1BECC/lrO3MN+vkYCVt
+         zUaBixe00sLKkw3DHFa3/NlXgrsQuPYCi3a2W46HjbsImat0JFWzbr8JRTUJI/D5UG
+         qkIZXRZy7zvC5UKKY5XHDm8B3PP5IKuoWS9H803Q0kusLXzMwSAhMlnRu9pcYH7P/D
+         /1aLFAb4RjT9A==
+Date:   Fri, 17 Feb 2023 12:21:08 +0100
+From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] firmware: turris-mox-rwtm: Fix an error handling
+ path in mox_get_board_info()
+Message-ID: <20230217122108.4a93667f@dellmb>
+In-Reply-To: <fb3a73fd378582bf02e6c5eeabb61d3a3662cbdc.1676453328.git.christophe.jaillet@wanadoo.fr>
+References: <fb3a73fd378582bf02e6c5eeabb61d3a3662cbdc.1676453328.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.35; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Group some variables based on their sizes to reduce hole and avoid padding.
-On x86_64, this shrinks the size of 'struct acpi_video_device'
-from 264 to 256 bytes.
+On Wed, 15 Feb 2023 10:30:02 +0100
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-This size is much better when the struct is kmalloc()'ed.
+> wait_for_completion_timeout() returns 0 if timed out, and positive (at
+> least 1, or number of jiffies left till timeout) if completed.
+>=20
+> In case of timeout, return -ETIMEDOUT.
+>=20
+> Fixes: 389711b37493 ("firmware: Add Turris Mox rWTM firmware driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+>=20
+> v2:
+>    - Fix some other wait_for_completion_timeout() calls
+>=20
+> ---
+>  drivers/firmware/turris-mox-rwtm.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/turris=
+-mox-rwtm.c
+> index 6ea5789a89e2..d6fc37ba897d 100644
+> --- a/drivers/firmware/turris-mox-rwtm.c
+> +++ b/drivers/firmware/turris-mox-rwtm.c
+> @@ -200,8 +200,8 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
+>  		return ret;
+> =20
+>  	ret =3D wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+> -	if (ret < 0)
+> -		return ret;
+> +	if (ret =3D=3D 0)
+> +		return -ETIMEDOUT;
+> =20
+>  	ret =3D mox_get_status(MBOX_CMD_BOARD_INFO, reply->retval);
+>  	if (ret =3D=3D -ENODATA) {
+> @@ -236,8 +236,8 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
+>  		return ret;
+> =20
+>  	ret =3D wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+> -	if (ret < 0)
+> -		return ret;
+> +	if (ret =3D=3D 0)
+> +		return -ETIMEDOUT;
+> =20
+>  	ret =3D mox_get_status(MBOX_CMD_ECDSA_PUB_KEY, reply->retval);
+>  	if (ret =3D=3D -ENODATA) {
+> @@ -275,8 +275,8 @@ static int check_get_random_support(struct mox_rwtm *=
+rwtm)
+>  		return ret;
+> =20
+>  	ret =3D wait_for_completion_timeout(&rwtm->cmd_done, HZ / 2);
+> -	if (ret < 0)
+> -		return ret;
+> +	if (ret =3D=3D 0)
+> +		return -ETIMEDOUT;
+> =20
+>  	return mox_get_status(MBOX_CMD_GET_RANDOM, rwtm->reply.retval);
+>  }
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Using pahole
-
-Before:
-======
-struct acpi_video_device {
-	long unsigned int          device_id;            /*     0     8 */
-	struct acpi_video_device_flags flags;            /*     8     1 */
-	struct acpi_video_device_cap cap;                /*     9     1 */
-
-	/* XXX 6 bytes hole, try to pack */
-
-	struct list_head           entry;                /*    16    16 */
-	struct delayed_work        switch_brightness_work; /*    32   184 */
-
-	/* XXX last struct has 4 bytes of padding */
-
-	/* --- cacheline 3 boundary (192 bytes) was 24 bytes ago --- */
-	int                        switch_brightness_event; /*   216     4 */
-
-	/* XXX 4 bytes hole, try to pack */
-
-	struct acpi_video_bus *    video;                /*   224     8 */
-	struct acpi_device *       dev;                  /*   232     8 */
-	struct acpi_video_device_brightness * brightness; /*   240     8 */
-	struct backlight_device *  backlight;            /*   248     8 */
-	/* --- cacheline 4 boundary (256 bytes) --- */
-	struct thermal_cooling_device * cooling_dev;     /*   256     8 */
-
-	/* size: 264, cachelines: 5, members: 11 */
-	/* sum members: 254, holes: 2, sum holes: 10 */
-	/* paddings: 1, sum paddings: 4 */
-	/* last cacheline: 8 bytes */
-};
-
-
-After:
-=====
-struct acpi_video_device {
-	long unsigned int          device_id;            /*     0     8 */
-	struct list_head           entry;                /*     8    16 */
-	struct acpi_video_device_flags flags;            /*    24     1 */
-	struct acpi_video_device_cap cap;                /*    25     1 */
-
-	/* XXX 2 bytes hole, try to pack */
-
-	int                        switch_brightness_event; /*    28     4 */
-	struct delayed_work        switch_brightness_work; /*    32   184 */
-
-	/* XXX last struct has 4 bytes of padding */
-
-	/* --- cacheline 3 boundary (192 bytes) was 24 bytes ago --- */
-	struct acpi_video_bus *    video;                /*   216     8 */
-	struct acpi_device *       dev;                  /*   224     8 */
-	struct acpi_video_device_brightness * brightness; /*   232     8 */
-	struct backlight_device *  backlight;            /*   240     8 */
-	struct thermal_cooling_device * cooling_dev;     /*   248     8 */
-
-	/* size: 256, cachelines: 4, members: 11 */
-	/* sum members: 254, holes: 1, sum holes: 2 */
-	/* paddings: 1, sum paddings: 4 */
-};
----
- drivers/acpi/acpi_video.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 97b711e57bff..1118dd7dbf6c 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -202,11 +202,11 @@ struct acpi_video_device_cap {
- 
- struct acpi_video_device {
- 	unsigned long device_id;
-+	struct list_head entry;
- 	struct acpi_video_device_flags flags;
- 	struct acpi_video_device_cap cap;
--	struct list_head entry;
--	struct delayed_work switch_brightness_work;
- 	int switch_brightness_event;
-+	struct delayed_work switch_brightness_work;
- 	struct acpi_video_bus *video;
- 	struct acpi_device *dev;
- 	struct acpi_video_device_brightness *brightness;
--- 
-2.34.1
-
+Reviewed-by: Marek Beh=C3=BAn <kabel@kernel.org>
