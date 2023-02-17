@@ -2,107 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE1EC636D6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 16:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA893C05027
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 16:41:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbjBQQGM (ORCPT
+        id S229959AbjBQQlg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Feb 2023 11:06:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34736 "EHLO
+        Fri, 17 Feb 2023 11:41:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjBQQGL (ORCPT
+        with ESMTP id S229797AbjBQQle (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Feb 2023 11:06:11 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A98168E75;
-        Fri, 17 Feb 2023 08:06:10 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id z1-20020a1c4c01000000b003e206711347so1239586wmf.0;
-        Fri, 17 Feb 2023 08:06:09 -0800 (PST)
+        Fri, 17 Feb 2023 11:41:34 -0500
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC0197290A
+        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 08:41:11 -0800 (PST)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-53655de27a1so16407457b3.14
+        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 08:41:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HueOvbuw31YRgxQXQPlUUdJnio1mzAYCQ45ZzyihROk=;
-        b=CkVK5N8OXTdHE3TIk5MnvI3qb985NhzvKBNNrzemPAVRmJkLcXV9QAO1GKhYjbwmSf
-         K/Hc7V1hLIWgwa6TWLRl1yjpp9F5Z1ET4FcsFz/gSTNO4pX4KrIpSr/w/EvbbaG79r+z
-         1ChGswfwUchX4Kvdpv1PatAoWeql6s1SQm0t0Pp+cxkx+T5acb5/CRJX3y0ERjDGKDJw
-         +RA4107z7OBf9MUBjxurkqfd4x0vYuEbtGRXZSAIasGiTN2uK4KqaFD8w+5yvQz9jhKR
-         1PnWokQ168L96Q3hih1aRoIXd7TORAn2hhNewIXQ783I7FUsl3Bg0ovikMlmRHzZfy8c
-         d8BQ==
+        d=google.com; s=20210112;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=26XswqPiBSGHP6s6nxsJN9EyGJs7UFJ3DdAuQxz9eTI=;
+        b=QjVPkerEjWrxxjarxuiJc+xdZaWtTMwrrVkbMKx+zQ0sS+2ZceALbz7w3tw+V08q/h
+         wZfHVB3xkCHpTjL88c17MyVIUYKcMEggb59H/DoG0w8KBqRLE9WJlC4+25UXq/SWtRhY
+         rxuEtgMzJFQkPm+OQLT1oVlkhmWrILCyrgJLNHtCuyGjPMQ4ge94AoXcKmKShB7eLZAg
+         mRuf3n4F4BErDTyzRdKmOFMm2TAV+/h6CpgcPfOHCAcV7pKhjb52pIVSr+2pxKDYHZ70
+         VgpCTIoqrp09786WrH+nhLHXZyWPckazRDQMLnUelBF05IIhtS9cik+QlNNlyHfVooHg
+         +DwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HueOvbuw31YRgxQXQPlUUdJnio1mzAYCQ45ZzyihROk=;
-        b=fRL78lul1IR1bO3FwShasMGf/NTHo68F/Rhjhkufib4HN649HyrYZe/SIQisFO5kw9
-         p45GbGdMD+xZK/QNusoHmcSf3krM089zkDMtBRq1hwJIGu24KuPbWW6Oc5lUCHeJ/JKs
-         ulA7ZJncFVOXWnSmdtkbMS6trrlw3qnjqak4NTuXE4WzfyNtLxCwWsPPlPKh66OIhUGT
-         bMD/AKTzCZt1SLmnyzOmlZqiLP4WNHRS2R+TZxZv3YFapuZ+u4QsFQ0ep3XkNFfcAY2z
-         KAmWfQYONrb1YPnmx8O16jFFKMeSGsBzHCI0/4pyReHRIFj75M2nYQhKDpOPt1VQm7bs
-         c2AQ==
-X-Gm-Message-State: AO0yUKWKJTJ5XGWYmZz5MstShbsVkaN7IdTwFQ+w5RN69w4eEWdbXS2K
-        /K1NsT7p8+0sSm0ckCdtyAqvF3RCmo0=
-X-Google-Smtp-Source: AK7set/QLoueyR8Cqypop8wEPM7PizTLim+/KHniFgO0wtCy1O5/5PfulSZiBjwyd70LMkl/Fe/KLQ==
-X-Received: by 2002:a05:600c:4fc4:b0:3dc:50c2:cc1 with SMTP id o4-20020a05600c4fc400b003dc50c20cc1mr1000602wmq.23.1676649968417;
-        Fri, 17 Feb 2023 08:06:08 -0800 (PST)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id bi23-20020a05600c3d9700b003e200d3b2d1sm5486983wmb.38.2023.02.17.08.06.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Feb 2023 08:06:07 -0800 (PST)
-Subject: Re: [PATCH][next][V2] sfc: Fix spelling mistake "creationg" ->
- "creation"
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Martin Habets <habetsm.xilinx@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org,
-        Alejandro Lucero <alejandro.lucero-palau@amd.com>,
-        linux-kernel@vger.kernel.org
-References: <20230217143753.599629-1-colin.i.king@gmail.com>
-From:   Edward Cree <ecree.xilinx@gmail.com>
-Message-ID: <405e95d4-a29f-07ff-d9bf-7562ef8faff5@gmail.com>
-Date:   Fri, 17 Feb 2023 16:06:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-MIME-Version: 1.0
-In-Reply-To: <20230217143753.599629-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=26XswqPiBSGHP6s6nxsJN9EyGJs7UFJ3DdAuQxz9eTI=;
+        b=M0ZurrULaE08oRmA/2S0ZEJEMrCtQjf+DmtRX5GSeZfBHPWc6e2O81tf0NU/RpMwP+
+         IlLLYy+GI4vmCteZqbc3nwJ7THphwJ7uaRHtPC/BIMU+4tue/AdrPOZUfQKT20g4pXK9
+         /qPlzigpRHYYJ73KLtMpW8kvddTNWzh6doQ6gs5RmL+3ni3sD26dv9ubc29H5FCfPaW6
+         C+CYFQwoq4dpsj+ATcZBLqzAbUnyft4lqFPA31RoO8FHOT3Dr8KvAmfexThK6vnQsHvY
+         gMa6seeSMgwE8q4OFB8ePgUyWPEw4yqP8OMLtp/Fn6ZScgV2iSUMoTlsevBphLBdEkRN
+         FQwA==
+X-Gm-Message-State: AO0yUKXzvqkfP9au7y6Ut2ZMqPClfRxtIxZAv+Ktfa/6tF1gSpSnkrXb
+        d1BCrPYg0tb0GRtYSmus1tr4Rrds500=
+X-Google-Smtp-Source: AK7set87ApVahS7blZenNrptYr3Ndt+wNPJw2gc7DMQ+lKkl6rWB22TCh2FKD8Zi8efKfBlmA8lkGKpHUiw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a5b:64a:0:b0:965:fa76:ae7a with SMTP id
+ o10-20020a5b064a000000b00965fa76ae7amr688504ybq.16.1676652064456; Fri, 17 Feb
+ 2023 08:41:04 -0800 (PST)
+Date:   Fri, 17 Feb 2023 08:41:02 -0800
+In-Reply-To: <f9423a6ee10d91bd6bad32beefd1b96cad4d28f1.1676620879.git.christophe.jaillet@wanadoo.fr>
+Mime-Version: 1.0
+References: <f9423a6ee10d91bd6bad32beefd1b96cad4d28f1.1676620879.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <Y++uHlQz7OEOzojb@google.com>
+Subject: Re: [PATCH] KVM: Reorder fields in 'struct kvm_mmu_memory_cache'
+From:   Sean Christopherson <seanjc@google.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, kvm@vger.kernel.org,
+        Mathias Krause <minipli@grsecurity.net>
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 17/02/2023 14:37, Colin Ian King wrote:
-> There is a spelling mistake in a pci_warn message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Reviewed-by:  Alejandro Lucero <alejandro.lucero-palau@amd.com>
+On Fri, Feb 17, 2023, Christophe JAILLET wrote:
+> Group some variables based on their sizes to reduce hole and avoid padding.
+> On x86_64, this shrinks the size from 40 to 32 bytes.
 
-Acked-by: Edward Cree <ecree.xilinx@gmail.com>
+Heh, a hair too late[*].  Unless I'm mistaken, Mathias will be sending a new
+version in the not-too-distant future.
 
-> ---
-> V2: Fix subject to match the actual spelling mistake fix
-> ---
->  drivers/net/ethernet/sfc/efx_devlink.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/sfc/efx_devlink.c b/drivers/net/ethernet/sfc/efx_devlink.c
-> index d2eb6712ba35..52fe2b2658f3 100644
-> --- a/drivers/net/ethernet/sfc/efx_devlink.c
-> +++ b/drivers/net/ethernet/sfc/efx_devlink.c
-> @@ -655,7 +655,7 @@ static struct devlink_port *ef100_set_devlink_port(struct efx_nic *efx, u32 idx)
->  				 "devlink port creation for PF failed.\n");
->  		else
->  			pci_warn(efx->pci_dev,
-> -				 "devlink_port creationg for VF %u failed.\n",
-> +				 "devlink_port creation for VF %u failed.\n",
->  				 idx);
->  		return NULL;
->  	}
-> 
+Thanks!
 
+[*] https://lore.kernel.org/all/Y+puefrgtqf430fs@google.com
