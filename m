@@ -2,131 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA42C6379F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 15:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D40EDC05027
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 16:04:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbjBQP5K (ORCPT
+        id S230038AbjBQQEz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Feb 2023 10:57:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52122 "EHLO
+        Fri, 17 Feb 2023 11:04:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230342AbjBQP5H (ORCPT
+        with ESMTP id S229729AbjBQQEo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Feb 2023 10:57:07 -0500
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0719868ACC
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 07:56:39 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id T35cpSuxkFOC9T35cp2ZIu; Fri, 17 Feb 2023 16:56:01 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 17 Feb 2023 16:56:01 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH] clk: Reorder fields in 'struct clk_fractional_divider'
-Date:   Fri, 17 Feb 2023 16:55:55 +0100
-Message-Id: <d1874eb8848d5f97f87337011188640a1463a666.1676649335.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Fri, 17 Feb 2023 11:04:44 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E1436D7A5;
+        Fri, 17 Feb 2023 08:04:43 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BA0D7B82C67;
+        Fri, 17 Feb 2023 16:04:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F062C433D2;
+        Fri, 17 Feb 2023 16:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676649880;
+        bh=MhbECQnoKSy05RSvXladUTSAdb/Mb7zR8TEQqOIMZ6c=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=DGJXci3x60y9O+nZEq+OdbAoI6bpewskbhX947OXu7XRLiKbxPjYUgybyEyACvgzr
+         /GsI6BHpkS+Qz1jmTqcb0FGh+QYW4iAIe6DqB1cRwPEpWSxqAlOKV8zZkLPrZbQ0Tc
+         QHBlht8mYhGpm2WLJiMEWnLM6bkajPudXzudtd78jbwGspVJp/LRTyV2hQi+Q2/Uc9
+         WtEsLfsDhrB5BCgneqOM/I6JNphsENDkyES5wlACULuG9UXDCJIpMhmhtB35Rl9QpX
+         z6+GzVRxqSjELTLVyiL+wwPmWASwYlnCCinvp4SvNtMKMBJxwDyKjgwHK5cl8506H0
+         f2akMTLj3es7A==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] wifi: ath12k: Fix spelling mistakes in warning
+ messages
+ and comments
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20230214092122.265336-1-colin.i.king@gmail.com>
+References: <20230214092122.265336-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, ath12k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <167664987616.8263.15640226468725297685.kvalo@kernel.org>
+Date:   Fri, 17 Feb 2023 16:04:38 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Group some variables based on their sizes to reduce hole and avoid padding.
-On x86_64, this shrinks the size of 'struct clk_fractional_divider'
-from 72 to 64 bytes.
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-It saves a few bytes of memory when the structure is kzalloc()'ed.
+> There are quite a few spelling mistakes in warning messages and a lot
+> of the comments. Fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Using pahole
+Patch applied to ath-next branch of ath.git, thanks.
 
-Before:
-======
-struct clk_fractional_divider {
-	struct clk_hw              hw;                   /*     0    24 */
-	void *                     reg;                  /*    24     8 */
-	u8                         mshift;               /*    32     1 */
-	u8                         mwidth;               /*    33     1 */
+480c9df57787 wifi: ath12k: Fix spelling mistakes in warning messages and comments
 
-	/* XXX 2 bytes hole, try to pack */
-
-	u32                        mmask;                /*    36     4 */
-	u8                         nshift;               /*    40     1 */
-	u8                         nwidth;               /*    41     1 */
-
-	/* XXX 2 bytes hole, try to pack */
-
-	u32                        nmask;                /*    44     4 */
-	u8                         flags;                /*    48     1 */
-
-	/* XXX 7 bytes hole, try to pack */
-
-	void                       (*approximation)(struct clk_hw *, long unsigned int, long unsigned int *, long unsigned int *, long unsigned int *); /*    56     8 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	spinlock_t *               lock;                 /*    64     8 */
-
-	/* size: 72, cachelines: 2, members: 11 */
-	/* sum members: 61, holes: 3, sum holes: 11 */
-	/* last cacheline: 8 bytes */
-};
-
-
-After:
-=====
-struct clk_fractional_divider {
-	struct clk_hw              hw;                   /*     0    24 */
-	void *                     reg;                  /*    24     8 */
-	u8                         flags;                /*    32     1 */
-	u8                         mshift;               /*    33     1 */
-	u8                         mwidth;               /*    34     1 */
-
-	/* XXX 1 byte hole, try to pack */
-
-	u32                        mmask;                /*    36     4 */
-	u8                         nshift;               /*    40     1 */
-	u8                         nwidth;               /*    41     1 */
-
-	/* XXX 2 bytes hole, try to pack */
-
-	u32                        nmask;                /*    44     4 */
-	void                       (*approximation)(struct clk_hw *, long unsigned int, long unsigned int *, long unsigned int *, long unsigned int *); /*    48     8 */
-	spinlock_t *               lock;                 /*    56     8 */
-
-	/* size: 64, cachelines: 1, members: 11 */
-	/* sum members: 61, holes: 2, sum holes: 3 */
-};
----
- include/linux/clk-provider.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index cf1adfeaf257..8cec844f5dde 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1134,13 +1134,13 @@ struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
- struct clk_fractional_divider {
- 	struct clk_hw	hw;
- 	void __iomem	*reg;
-+	u8		flags;
- 	u8		mshift;
- 	u8		mwidth;
- 	u32		mmask;
- 	u8		nshift;
- 	u8		nwidth;
- 	u32		nmask;
--	u8		flags;
- 	void		(*approximation)(struct clk_hw *hw,
- 				unsigned long rate, unsigned long *parent_rate,
- 				unsigned long *m, unsigned long *n);
 -- 
-2.34.1
+https://patchwork.kernel.org/project/linux-wireless/patch/20230214092122.265336-1-colin.i.king@gmail.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
