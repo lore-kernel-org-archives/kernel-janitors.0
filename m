@@ -2,36 +2,35 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D405AC6379F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 12:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A006C64EC4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 14:23:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbjBQMKy (ORCPT
+        id S229506AbjBQOX3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Feb 2023 07:10:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47730 "EHLO
+        Fri, 17 Feb 2023 09:23:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229728AbjBQMKx (ORCPT
+        with ESMTP id S229491AbjBQOX2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Feb 2023 07:10:53 -0500
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F511644D8
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 04:10:50 -0800 (PST)
+        Fri, 17 Feb 2023 09:23:28 -0500
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 542936D797
+        for <kernel-janitors@vger.kernel.org>; Fri, 17 Feb 2023 06:23:12 -0800 (PST)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id SzZgpJS69fKYFSzZgpVsgJ; Fri, 17 Feb 2023 13:10:48 +0100
+        id T1dgpDEZkPPaiT1dhp5Tkn; Fri, 17 Feb 2023 15:23:08 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 17 Feb 2023 13:10:48 +0100
+X-ME-Date: Fri, 17 Feb 2023 15:23:08 +0100
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>
+To:     Vinod Koul <vkoul@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH] ACPI: EC: Reorder fields in 'struct acpi_ec'
-Date:   Fri, 17 Feb 2023 13:10:46 +0100
-Message-Id: <334a5e2d8c9a05ce7cbac126bfbc6b39d05e1c9c.1676635829.git.christophe.jaillet@wanadoo.fr>
+        dmaengine@vger.kernel.org
+Subject: [PATCH] dmaengine: Reorder fields in 'struct dma_slave_config'
+Date:   Fri, 17 Feb 2023 15:23:00 +0100
+Message-Id: <7ea34ff257633d9a1eeac77dd00616fb24429c4f.1676643752.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,10 +39,10 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Group some variables based on their sizes to reduce hole and avoid padding.
-On x86_64, this shrinks the size of 'struct acpi_ec'
-from 520 to 512 bytes.
+On x86_64, this shrinks the size of 'struct dma_slave_config'
+from 72 to 64 bytes.
 
-This size is much better when the struct is kmalloc()'ed.
+This should save a few bytes of memory and a few cycles.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
@@ -51,113 +50,98 @@ Using pahole
 
 Before:
 ======
-struct acpi_ec {
-	acpi_handle                handle;               /*     0     8 */
-	acpi_handle                address_space_handler_holder; /*     8     8 */
-	int                        gpe;                  /*    16     4 */
-	int                        irq;                  /*    20     4 */
-	long unsigned int          command_addr;         /*    24     8 */
-	long unsigned int          data_addr;            /*    32     8 */
-	bool                       global_lock;          /*    40     1 */
+struct dma_slave_config {
+	enum dma_transfer_direction direction;           /*     0     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	phys_addr_t                src_addr;             /*     8     8 */
+	phys_addr_t                dst_addr;             /*    16     8 */
+	enum dma_slave_buswidth    src_addr_width;       /*    24     4 */
+	enum dma_slave_buswidth    dst_addr_width;       /*    28     4 */
+	u32                        src_maxburst;         /*    32     4 */
+	u32                        dst_maxburst;         /*    36     4 */
+	u32                        src_port_window_size; /*    40     4 */
+	u32                        dst_port_window_size; /*    44     4 */
+	bool                       device_fc;            /*    48     1 */
 
 	/* XXX 7 bytes hole, try to pack */
 
-	long unsigned int          flags;                /*    48     8 */
-	long unsigned int          reference_count;      /*    56     8 */
+	void *                     peripheral_config;    /*    56     8 */
 	/* --- cacheline 1 boundary (64 bytes) --- */
-	struct mutex               mutex;                /*    64   160 */
-	/* --- cacheline 3 boundary (192 bytes) was 32 bytes ago --- */
-	wait_queue_head_t          wait;                 /*   224    88 */
-	/* --- cacheline 4 boundary (256 bytes) was 56 bytes ago --- */
-	struct list_head           list;                 /*   312    16 */
-	/* --- cacheline 5 boundary (320 bytes) was 8 bytes ago --- */
-	struct transaction *       curr;                 /*   328     8 */
-	spinlock_t                 lock;                 /*   336    72 */
-	/* --- cacheline 6 boundary (384 bytes) was 24 bytes ago --- */
-	struct work_struct         work;                 /*   408    80 */
-	/* --- cacheline 7 boundary (448 bytes) was 40 bytes ago --- */
-	long unsigned int          timestamp;            /*   488     8 */
-	enum acpi_ec_event_state   event_state;          /*   496     4 */
-	unsigned int               events_to_process;    /*   500     4 */
-	unsigned int               events_in_progress;   /*   504     4 */
-	unsigned int               queries_in_progress;  /*   508     4 */
-	/* --- cacheline 8 boundary (512 bytes) --- */
-	bool                       busy_polling;         /*   512     1 */
+	size_t                     peripheral_size;      /*    64     8 */
 
-	/* XXX 3 bytes hole, try to pack */
-
-	unsigned int               polling_guard;        /*   516     4 */
-
-	/* size: 520, cachelines: 9, members: 22 */
-	/* sum members: 510, holes: 2, sum holes: 10 */
+	/* size: 72, cachelines: 2, members: 12 */
+	/* sum members: 61, holes: 2, sum holes: 11 */
 	/* last cacheline: 8 bytes */
 };
 
-
 After:
 =====
-struct acpi_ec {
-	acpi_handle                handle;               /*     0     8 */
-	acpi_handle                address_space_handler_holder; /*     8     8 */
-	int                        gpe;                  /*    16     4 */
-	int                        irq;                  /*    20     4 */
-	long unsigned int          command_addr;         /*    24     8 */
-	long unsigned int          data_addr;            /*    32     8 */
-	bool                       global_lock;          /*    40     1 */
-	bool                       busy_polling;         /*    41     1 */
+struct dma_slave_config {
+	enum dma_transfer_direction direction;           /*     0     4 */
+	bool                       device_fc;            /*     4     1 */
 
-	/* XXX 2 bytes hole, try to pack */
+	/* XXX 3 bytes hole, try to pack */
 
-	unsigned int               polling_guard;        /*    44     4 */
-	long unsigned int          flags;                /*    48     8 */
-	long unsigned int          reference_count;      /*    56     8 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	struct mutex               mutex;                /*    64   160 */
-	/* --- cacheline 3 boundary (192 bytes) was 32 bytes ago --- */
-	wait_queue_head_t          wait;                 /*   224    88 */
-	/* --- cacheline 4 boundary (256 bytes) was 56 bytes ago --- */
-	struct list_head           list;                 /*   312    16 */
-	/* --- cacheline 5 boundary (320 bytes) was 8 bytes ago --- */
-	struct transaction *       curr;                 /*   328     8 */
-	spinlock_t                 lock;                 /*   336    72 */
-	/* --- cacheline 6 boundary (384 bytes) was 24 bytes ago --- */
-	struct work_struct         work;                 /*   408    80 */
-	/* --- cacheline 7 boundary (448 bytes) was 40 bytes ago --- */
-	long unsigned int          timestamp;            /*   488     8 */
-	enum acpi_ec_event_state   event_state;          /*   496     4 */
-	unsigned int               events_to_process;    /*   500     4 */
-	unsigned int               events_in_progress;   /*   504     4 */
-	unsigned int               queries_in_progress;  /*   508     4 */
+	phys_addr_t                src_addr;             /*     8     8 */
+	phys_addr_t                dst_addr;             /*    16     8 */
+	enum dma_slave_buswidth    src_addr_width;       /*    24     4 */
+	enum dma_slave_buswidth    dst_addr_width;       /*    28     4 */
+	u32                        src_maxburst;         /*    32     4 */
+	u32                        dst_maxburst;         /*    36     4 */
+	u32                        src_port_window_size; /*    40     4 */
+	u32                        dst_port_window_size; /*    44     4 */
+	void *                     peripheral_config;    /*    48     8 */
+	size_t                     peripheral_size;      /*    56     8 */
 
-	/* size: 512, cachelines: 8, members: 22 */
-	/* sum members: 510, holes: 1, sum holes: 2 */
+	/* size: 64, cachelines: 1, members: 12 */
+	/* sum members: 61, holes: 1, sum holes: 3 */
 };
 ---
- drivers/acpi/internal.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/dmaengine.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/acpi/internal.h b/drivers/acpi/internal.h
-index 06ad497067ac..acfdd23c8dec 100644
---- a/drivers/acpi/internal.h
-+++ b/drivers/acpi/internal.h
-@@ -179,6 +179,8 @@ struct acpi_ec {
- 	unsigned long command_addr;
- 	unsigned long data_addr;
- 	bool global_lock;
-+	bool busy_polling;
-+	unsigned int polling_guard;
- 	unsigned long flags;
- 	unsigned long reference_count;
- 	struct mutex mutex;
-@@ -192,8 +194,6 @@ struct acpi_ec {
- 	unsigned int events_to_process;
- 	unsigned int events_in_progress;
- 	unsigned int queries_in_progress;
--	bool busy_polling;
--	unsigned int polling_guard;
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index c3656e590213..61e1d1da4446 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -390,6 +390,9 @@ enum dma_slave_buswidth {
+  * legal values. DEPRECATED, drivers should use the direction argument
+  * to the device_prep_slave_sg and device_prep_dma_cyclic functions or
+  * the dir field in the dma_interleaved_template structure.
++ * @device_fc: Flow Controller Settings. Only valid for slave channels. Fill
++ * with 'true' if peripheral should be flow controller. Direction will be
++ * selected at Runtime.
+  * @src_addr: this is the physical address where DMA slave data
+  * should be read (RX), if the source is memory this argument is
+  * ignored.
+@@ -415,9 +418,6 @@ enum dma_slave_buswidth {
+  * loops in this area in order to transfer the data.
+  * @dst_port_window_size: same as src_port_window_size but for the destination
+  * port.
+- * @device_fc: Flow Controller Settings. Only valid for slave channels. Fill
+- * with 'true' if peripheral should be flow controller. Direction will be
+- * selected at Runtime.
+  * @peripheral_config: peripheral configuration for programming peripheral
+  * for dmaengine transfer
+  * @peripheral_size: peripheral configuration buffer size
+@@ -436,6 +436,7 @@ enum dma_slave_buswidth {
+  */
+ struct dma_slave_config {
+ 	enum dma_transfer_direction direction;
++	bool device_fc;
+ 	phys_addr_t src_addr;
+ 	phys_addr_t dst_addr;
+ 	enum dma_slave_buswidth src_addr_width;
+@@ -444,7 +445,6 @@ struct dma_slave_config {
+ 	u32 dst_maxburst;
+ 	u32 src_port_window_size;
+ 	u32 dst_port_window_size;
+-	bool device_fc;
+ 	void *peripheral_config;
+ 	size_t peripheral_size;
  };
- 
- extern struct acpi_ec *first_ec;
 -- 
 2.34.1
 
