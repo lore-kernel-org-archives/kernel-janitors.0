@@ -2,92 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0ECC636D7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Feb 2023 21:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0276DC61DA4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Feb 2023 08:10:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbjBQVqp (ORCPT
+        id S229507AbjBRIKl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Feb 2023 16:46:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54480 "EHLO
+        Sat, 18 Feb 2023 03:10:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjBQVqo (ORCPT
+        with ESMTP id S229436AbjBRIKk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Feb 2023 16:46:44 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BF3965696;
-        Fri, 17 Feb 2023 13:46:27 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E9F3FB82B45;
-        Fri, 17 Feb 2023 21:46:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290C0C433D2;
-        Fri, 17 Feb 2023 21:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676670384;
-        bh=RawpE5mpSU8yc2/xySzrtzYpZhoqwKb/hsTWXduMG7E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rCI5bC8B2vVqPBRSHcw4jEhqiAl8MuRKSwjXVBMXAI59BYggIz/UBeEoGg9hwyXPm
-         D948Zu1uubn6SCGCggpVTYDzy+MLOt1NtzXbO1sfLhS38bYOSQLVd9t86DB/mssjo8
-         GqClz+wWN09ca8wJGxB6oiOIVZU7SrnHbkkREJf7Kp7+OCYXQ4o3Q/Eb4YTOkKHnm2
-         MdpxeaHk9ECYbgMH4lcNcqnuIL/tkFC57pLO0ShIEBnnJEF7hQqagMUXtNlWtW5iNi
-         D454qIFZJ6rpQDrnwPhvG889xlnJzM0yZnoOQR3wz5FHkBhGUlVS6h7Zw6mdBGPU5x
-         BH2cVIvPr9lBA==
-Date:   Fri, 17 Feb 2023 22:46:21 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] i2c: xiic: Remove some dead code
-Message-ID: <Y+/1rR0wGc5E70O0@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Sat, 18 Feb 2023 03:10:40 -0500
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 358C42B29F
+        for <kernel-janitors@vger.kernel.org>; Sat, 18 Feb 2023 00:10:38 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id TIIkp7w6pOJaFTIIlpYfjR; Sat, 18 Feb 2023 09:10:36 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 18 Feb 2023 09:10:36 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-References: <9d36938de98dc491425a51a9c07367dd9e448e60.1676457464.git.christophe.jaillet@wanadoo.fr>
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH] virtio: Reorder fields in 'struct virtqueue'
+Date:   Sat, 18 Feb 2023 09:10:31 +0100
+Message-Id: <8f3d2e49270a2158717e15008e7ed7228196ba02.1676707807.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="T2k9SWCaMMVdEf0J"
-Content-Disposition: inline
-In-Reply-To: <9d36938de98dc491425a51a9c07367dd9e448e60.1676457464.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Group some variables based on their sizes to reduce hole and avoid padding.
+On x86_64, this shrinks the size of 'struct virtqueue'
+from 72 to 68 bytes.
 
---T2k9SWCaMMVdEf0J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It saves a few bytes of memory.
 
-On Wed, Feb 15, 2023 at 11:38:07AM +0100, Christophe JAILLET wrote:
-> wait_for_completion_timeout() never returns negative value.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Using pahole
 
-Applied to for-next, thanks!
+Before:
+======
+struct virtqueue {
+	struct list_head           list;                 /*     0    16 */
+	void                       (*callback)(struct virtqueue *); /*    16     8 */
+	const char  *              name;                 /*    24     8 */
+	struct virtio_device *     vdev;                 /*    32     8 */
+	unsigned int               index;                /*    40     4 */
+	unsigned int               num_free;             /*    44     4 */
+	unsigned int               num_max;              /*    48     4 */
 
+	/* XXX 4 bytes hole, try to pack */
 
---T2k9SWCaMMVdEf0J
-Content-Type: application/pgp-signature; name="signature.asc"
+	void *                     priv;                 /*    56     8 */
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	bool                       reset;                /*    64     1 */
 
------BEGIN PGP SIGNATURE-----
+	/* size: 72, cachelines: 2, members: 9 */
+	/* sum members: 61, holes: 1, sum holes: 4 */
+	/* padding: 7 */
+	/* last cacheline: 8 bytes */
+};
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmPv9a0ACgkQFA3kzBSg
-KbbTURAAtZEbY4eI2SEy24N++zA3qqGZIwvkgw4Ikkf1l10zUxrX6VhfdMGAcjGH
-PjlW4RwXvcBhOOsc13ZQp7jf9dOuozh99jt8MUW0irG8XfdUyF1oZCWIF4+zslzX
-NaH6Ft+4OHylNkzLj1V0GJ1kb6GOYpCmn4NWrwSc4c7c7aJQDIUM3f/M5bY2/f0x
-icx+iqsyOz6FXVhWm8F8PeaM+Y9vn9JGAiZkK4reyFylxILt0/uXgxGMnHfXjVgh
-G01oP2JoBAIPqLkJkNy5NKZkMR/PshVYHTxJ/pUB2Jam6nqao8c+wDbGPkqmyBwq
-4aRC1olkGhj1n+t5qyaW/RjXqPS5HL7FCtScLIkP39kjP3iGSBC62ZTKQEFQVyZQ
-Unj1AUuy+DNhvGDU1AHST/XM2reNrFkTvE4BsyRxrHYXdjFnf9nwXMh4tZOw8mS/
-9jFysdo6NwPx6agfFMPwttykD7QFnJnfKIq3SxDe91k2hV4xIkLwhwW5UtR5nmW+
-F9kICYnqkwmFodz755UzNIhiqHLhA1qMMZ6wjc24NP+OIEQX2FhKr7nQqvncnhVg
-9ZKsdEP8fKUcQsa8GcjEcHLGhcbs6Kq43k9lx2W5KQcbNDW7T9gL46YayLAPt5cB
-6COH4gYn+O11cAX6jGYx2MX+aeslMCWJgi+9EJhIs7iq2UPOsg4=
-=oyIq
------END PGP SIGNATURE-----
+After:
+=====
+struct virtqueue {
+	struct list_head           list;                 /*     0    16 */
+	void                       (*callback)(struct virtqueue *); /*    16     8 */
+	const char  *              name;                 /*    24     8 */
+	struct virtio_device *     vdev;                 /*    32     8 */
+	unsigned int               index;                /*    40     4 */
+	unsigned int               num_free;             /*    44     4 */
+	unsigned int               num_max;              /*    48     4 */
+	bool                       reset;                /*    52     1 */
 
---T2k9SWCaMMVdEf0J--
+	/* XXX 3 bytes hole, try to pack */
+
+	void *                     priv;                 /*    56     8 */
+
+	/* size: 64, cachelines: 1, members: 9 */
+	/* sum members: 61, holes: 1, sum holes: 3 */
+};
+---
+ include/linux/virtio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+index 6ac2655500dc..9439ae898310 100644
+--- a/include/linux/virtio.h
++++ b/include/linux/virtio.h
+@@ -35,8 +35,8 @@ struct virtqueue {
+ 	unsigned int index;
+ 	unsigned int num_free;
+ 	unsigned int num_max;
+-	void *priv;
+ 	bool reset;
++	void *priv;
+ };
+ 
+ int virtqueue_add_outbuf(struct virtqueue *vq,
+-- 
+2.34.1
+
