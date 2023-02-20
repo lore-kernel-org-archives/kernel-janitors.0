@@ -2,95 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA02EC6379F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 18:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5627BC636D6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 22:16:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232169AbjBTStz (ORCPT
+        id S232596AbjBTWQn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Feb 2023 13:49:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59464 "EHLO
+        Mon, 20 Feb 2023 17:16:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232689AbjBTStg (ORCPT
+        with ESMTP id S231570AbjBTWQm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Feb 2023 13:49:36 -0500
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99AF91E9F9;
-        Mon, 20 Feb 2023 10:49:00 -0800 (PST)
-Received: by mail-ot1-x32f.google.com with SMTP id bh19-20020a056830381300b00690bf2011b2so321637otb.6;
-        Mon, 20 Feb 2023 10:49:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dp9FA0RvdgxvVZhfm9R2KGLFsqWa4RXhCmE9KXcq+cs=;
-        b=CPicpEjuNiPzLxDIkzhnkE1I5W9ZZP3oBvECpcvd+X+0jnurW4jKG1R/pnA59+QIUk
-         km3NMqnjsGkEDCzl6Ke3REvKnOB3vongF5sRv+ANxQa5QV/xfPn7kdP6hu/Kl+nq0jLn
-         T7sx0BbE8lLMpbARkG/84/UPp2KvAb9EdM+tckWM3lYaQFyd/RVJAzN5UcERoBXkeTPm
-         xPtNabn0cFnMEIkRw6ZImwYTV1iaV1++tFFtRfPn3u6d3eM8pgL9iTy1mI9Q6dH6TAYV
-         wrjYfkuLGfeiJMsHCcsoAJttuI2HI87wBaSgnvMpRyT/v20hABBdJkik9MGztdsrLgtk
-         W5gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dp9FA0RvdgxvVZhfm9R2KGLFsqWa4RXhCmE9KXcq+cs=;
-        b=qcwleeucLqhmrtS4nSvtSoPICryAARZl0SeZLq+jMzh+NzDPCGanP1mVPaeNTJJoKp
-         17wOUTbRHIfYLsOD47gbX3RkOo97EaN5ibi7o3etIxL0gvf9KAxS90DJ1GHAwE/7S+b7
-         b86J2oMU6G2bUsXslS4YcHKHQdoZ9jQM0nUOB6rSvmcWC9K2A0EokLbbyU+c5kgJEcQR
-         wrlG1byIjQ3zqTxzDb7ltY/PyYzB7sAAfOwQyHxjUkMB5Wzj4EZatG5ZUjvIyYKaNTD8
-         ccgXudfGyUdlk4KTHPhVL0I5GtILX3UZKgZq9cQ2mUOZFh1nZ583HFSFNq4BP+Mb/R/S
-         p7Ng==
-X-Gm-Message-State: AO0yUKVbZSs8PkYLWcGvObVP+FKnBy7Q1mpm9FJPp5hM0GlxQyZHyur5
-        8ZwLFOdixDP4A36l2jPYvfM=
-X-Google-Smtp-Source: AK7set/1HBaSRcuvDF94MEmuuDb4BY1XA0yEYH480iBvBiMnJBbHcZ/hQE8hMs0Fj83hj9msF5bOpg==
-X-Received: by 2002:a05:6830:3101:b0:68b:cdd3:3b93 with SMTP id b1-20020a056830310100b0068bcdd33b93mr6960472ots.26.1676918933968;
-        Mon, 20 Feb 2023 10:48:53 -0800 (PST)
-Received: from ?IPV6:2600:1700:2442:6db0:e458:3986:a974:9501? ([2600:1700:2442:6db0:e458:3986:a974:9501])
-        by smtp.gmail.com with ESMTPSA id n4-20020acabd04000000b003645b64d7b3sm5218893oif.4.2023.02.20.10.48.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Feb 2023 10:48:53 -0800 (PST)
-Message-ID: <ac009137-dcc3-849a-cc97-96268d692c68@gmail.com>
-Date:   Mon, 20 Feb 2023 12:48:52 -0600
+        Mon, 20 Feb 2023 17:16:42 -0500
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDEC21ADC4
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Feb 2023 14:16:37 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id UESYpyOTplrplUESYpdBva; Mon, 20 Feb 2023 23:16:35 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 20 Feb 2023 23:16:35 +0100
+X-ME-IP: 86.243.2.178
+Message-ID: <e92c7992-303a-0f71-13b2-f33efbba4b22@wanadoo.fr>
+Date:   Mon, 20 Feb 2023 23:16:34 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH][next] of: dynamic: Fix spelling mistake "kojbect" ->
- "kobject"
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230220144422.873356-1-colin.i.king@gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-In-Reply-To: <20230220144422.873356-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] RDMA/restrack: Reorder fields in 'struct
+ rdma_restrack_entry'
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <d47800d9fd5ac7c33d01af04b12b6d43ad23c96e.1676379187.git.christophe.jaillet@wanadoo.fr>
+ <Y+uH0k0OBzPip1P8@ziepe.ca> <75480cf9-8d06-7a7d-4624-6ddbb7d6053a@wanadoo.fr>
+ <Y+uiLCB7H2xVvQZW@ziepe.ca> <Y+zCkwTgevj0zDFK@unreal>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <Y+zCkwTgevj0zDFK@unreal>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/20/23 08:44, Colin Ian King wrote:
-> There is a spelling mistake in a pr_err message. Fix it.
+Le 15/02/2023 à 12:31, Leon Romanovsky a écrit :
+> On Tue, Feb 14, 2023 at 11:01:00AM -0400, Jason Gunthorpe wrote:
+>> On Tue, Feb 14, 2023 at 03:34:21PM +0100, Christophe JAILLET wrote:
+>>> Le 14/02/2023 à 14:08, Jason Gunthorpe a écrit :
+>>>> On Tue, Feb 14, 2023 at 01:53:52PM +0100, Christophe JAILLET wrote:
+>>>>> diff --git a/include/rdma/restrack.h b/include/rdma/restrack.h
+>>>>> index 8b7c46daeb07..da53fefe6f9e 100644
+>>>>> --- a/include/rdma/restrack.h
+>>>>> +++ b/include/rdma/restrack.h
+>>>>> @@ -80,6 +80,10 @@ struct rdma_restrack_entry {
+>>>>>    	 * query stage.
+>>>>>    	 */
+>>>>>    	u8			no_track : 1;
+>>>>> +	/**
+>>>>> +	 * @user: user resource
+>>>>> +	 */
+>>>>> +	bool			user;
+>>>>
+>>>> Can we combine this into the bitfield above?
+>>>>
+>>>> Jason
+>>>>
+>>> Hi,
+>>>
+>>> and even above, we have
+>>> 	bool	valid;
+>>>
+>>> I wanted to keep the changes as minimal as possible, but I can change them
+>>> all in a single bitfield.
+>>
+>> IIRC it needs to be checked, I vaugely remember valid can't be a
+>> bitfield because it is an atomic
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/of/dynamic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> I don't remember anything like this.
 > 
-> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> index 12aa99018969..07d93753b12f 100644
-> --- a/drivers/of/dynamic.c
-> +++ b/drivers/of/dynamic.c
-> @@ -350,7 +350,7 @@ void of_node_release(struct kobject *kobj)
->  		if (!IS_ENABLED(CONFIG_OF_UNITTEST) ||
->  		    strcmp(node->parent->full_name, "testcase-data")) {
->  			dump_stack();
-> -			pr_err("ERROR: next of_node_put() on this node will result in a kboject warning 'refcount_t: underflow; use-after-free.'\n");
-> +			pr_err("ERROR: next of_node_put() on this node will result in a kobject warning 'refcount_t: underflow; use-after-free.'\n");
->  		}
->  
->  		return;
+> Thanks
+> 
 
-Reviewed-by: Frank Rowand <frowand.list@gmail.com>
+If I understand code correctly, 'valid' is only used in 
+rdma_restrack_add() and rdma_restrack_del().
+
+I don't think that any atomic behavior is in place in these functions.
+
+
+I'll send in the coming days a v2 which changes 'valid', 'no_track' and 
+'user' as bool:1.
+
+CJ
