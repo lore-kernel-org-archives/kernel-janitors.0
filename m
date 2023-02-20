@@ -2,123 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA17C05027
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 17:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0C1C636CC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 17:19:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232317AbjBTRPK (ORCPT
+        id S232375AbjBTRTU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Feb 2023 12:15:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52726 "EHLO
+        Mon, 20 Feb 2023 12:19:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231969AbjBTRPJ (ORCPT
+        with ESMTP id S232397AbjBTRTR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Feb 2023 12:15:09 -0500
-X-Greylist: delayed 447 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 20 Feb 2023 09:15:06 PST
-Received: from mail.alarsen.net (mail.alarsen.net [144.76.18.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 906331C58D
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Feb 2023 09:15:06 -0800 (PST)
-Received: from oscar.alarsen.net (unknown [IPv6:fd8b:531:bccf:96:2813:fcf4:8062:a04f])
-        by joe.alarsen.net (Postfix) with ESMTPS id 65E47180744;
-        Mon, 20 Feb 2023 18:07:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alarsen.net; s=joe;
-        t=1676912857; bh=T2sQlFBlTIMYe9k7rCqKWiAryzwsGearmcwCGtaYoY4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cslByaZ25ANlGFLokwqOd3SNfpPAh5urnc0n2ESOEZPmwGD51IHVgiL/gMfejln8G
-         7tjnzg343Gxa3rATIByjTIwYGlrMu5tnqFaTB8xtA1w2gyb/I2ftaEn0+yz44JxYUK
-         mbjXnrANcBCVniB5+Pbunc/xeUhS2rybKAcZRiN8=
-Received: from oscar.localnet (localhost [IPv6:::1])
-        by oscar.alarsen.net (Postfix) with ESMTP id 5F03627C0364;
-        Mon, 20 Feb 2023 18:07:37 +0100 (CET)
-From:   Anders Larsen <al@alarsen.net>
-To:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] qnx4: credit contributors in CREDITS
-Date:   Mon, 20 Feb 2023 18:07:37 +0100
-Message-ID: <2694824.9PvXe5no7K@alarsen.net>
-In-Reply-To: <20230220170210.15677-3-lukas.bulwahn@gmail.com>
-References: <20230220170210.15677-1-lukas.bulwahn@gmail.com> <20230220170210.15677-3-lukas.bulwahn@gmail.com>
+        Mon, 20 Feb 2023 12:19:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B06917144
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Feb 2023 09:18:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1676913511;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=n9UUOuyc1RiLX6lt0RLTFWolnPF6Xb+dal6ndxAWPtg=;
+        b=SNNjQX7uCZMsefWg+y/Yj27xEWyGTv/RzALx8l5ZxS+25wmQXmIqCSY09C2YyOZOi38qZc
+        +8wi7Mlsxjy7sRyj/sMhMONdWBcy5oxwbhH4pnmO1hWMIJiZnZ3jORCczZp+qBjITYOf+k
+        Ynv0u74/KhvLAjcOy1TdB1HClwCpeYc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-465-0ZToPXgeO9mm24tFAWT64g-1; Mon, 20 Feb 2023 12:18:30 -0500
+X-MC-Unique: 0ZToPXgeO9mm24tFAWT64g-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7618288562A;
+        Mon, 20 Feb 2023 17:18:29 +0000 (UTC)
+Received: from [10.18.17.153] (dhcp-17-153.bos.redhat.com [10.18.17.153])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B4C9A492C3C;
+        Mon, 20 Feb 2023 17:18:28 +0000 (UTC)
+Message-ID: <248fbb79-744b-4e49-71de-a6d3d0a0e7ef@redhat.com>
+Date:   Mon, 20 Feb 2023 12:18:28 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH] docs: locking: refer to the actual existing config names
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230220165749.12850-1-lukas.bulwahn@gmail.com>
+From:   Waiman Long <longman@redhat.com>
+In-Reply-To: <20230220165749.12850-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Monday, 2023-02-20 18:02 Lukas Bulwahn wrote:
-> Replace the content of the qnx4 README file with the canonical place for
-> such information.
-> 
-> Add the credits of the qnx4 contribution to CREDITS. As there is already a
-> QNX4 FILESYSTEM section in MAINTAINERS, it is clear who to contact and send
-> patches to.
-> 
+On 2/20/23 11:57, Lukas Bulwahn wrote:
+> The config is actually called CONFIG_RT_MUTEXES, not CONFIG_RT_MUTEX.
+>
+> The config CONFIG_LOCK_TORTURE_TEST should be connected by underscore, for
+> the sake of consistent referencing to configs in the kernel documentation.
+>
+> Address those issues.
+>
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  CREDITS        | 12 ++++++++++++
->  fs/qnx4/README |  9 ---------
->  2 files changed, 12 insertions(+), 9 deletions(-)
->  delete mode 100644 fs/qnx4/README
-> 
-> diff --git a/CREDITS b/CREDITS
-> index 07e871d60cf0..b6c93e0a62c3 100644
-> --- a/CREDITS
-> +++ b/CREDITS
-> @@ -890,6 +890,10 @@ W: http://jdelvare.nerim.net/
->  D: Several hardware monitoring drivers
->  S: France
->  
-> +N: Frank "Jedi/Sector One" Denis
-> +E: j@pureftpd.org
-> +D: QNX4 filesystem
-> +
->  N: Peter Denison
->  E: peterd@pnd-pc.demon.co.uk
->  W: http://www.pnd-pc.demon.co.uk/promise/
-> @@ -1263,6 +1267,10 @@ S: USA
->  N: Adam Fritzler
->  E: mid@zigamorph.net
->  
-> +N: Richard "Scuba" A. Frowijn
-> +E: scuba@wxs.nl
-> +D: QNX4 filesystem
-> +
->  N: Fernando Fuganti
->  E: fuganti@conectiva.com.br
->  E: fuganti@netbank.com.br
-> @@ -2222,6 +2230,10 @@ D: Digiboard PC/Xe and PC/Xi, Digiboard EPCA
->  D: NUMA support, Slab allocators, Page migration
->  D: Scalability, Time subsystem
->  
-> +N: Anders Larsen
-> +E: al@alarsen.net
-> +D: QNX4 filesystem
-> +
->  N: Paul Laufer
->  E: paul@laufernet.com
->  D: Soundblaster driver fixes, ISAPnP quirk
-> diff --git a/fs/qnx4/README b/fs/qnx4/README
-> deleted file mode 100644
-> index 1f1e320d91da..000000000000
-> --- a/fs/qnx4/README
-> +++ /dev/null
-> @@ -1,9 +0,0 @@
-> -
-> -  This is a snapshot of the QNX4 filesystem for Linux.
-> -  Please send diffs and remarks to <al@alarsen.net> .
-> -  
-> -Credits :
-> -
-> -Richard "Scuba" A. Frowijn     <scuba@wxs.nl>
-> -Frank "Jedi/Sector One" Denis  <j@pureftpd.org>
-> -Anders Larsen                  <al@alarsen.net> (Maintainer)
-
-Acked-By: Anders Larsen <al@alarsen.net>
-
-Thx
-Anders
-
-
-
+>   Documentation/locking/locktorture.rst | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/locking/locktorture.rst b/Documentation/locking/locktorture.rst
+> index dfaf9fc883f4..7f56fc0d7c31 100644
+> --- a/Documentation/locking/locktorture.rst
+> +++ b/Documentation/locking/locktorture.rst
+> @@ -5,7 +5,7 @@ Kernel Lock Torture Test Operation
+>   CONFIG_LOCK_TORTURE_TEST
+>   ========================
+>   
+> -The CONFIG LOCK_TORTURE_TEST config option provides a kernel module
+> +The CONFIG_LOCK_TORTURE_TEST config option provides a kernel module
+>   that runs torture tests on core kernel locking primitives. The kernel
+>   module, 'locktorture', may be built after the fact on the running
+>   kernel to be tested, if desired. The tests periodically output status
+> @@ -67,7 +67,7 @@ torture_type
+>   
+>   		     - "rtmutex_lock":
+>   				rtmutex_lock() and rtmutex_unlock() pairs.
+> -				Kernel must have CONFIG_RT_MUTEX=y.
+> +				Kernel must have CONFIG_RT_MUTEXES=y.
+>   
+>   		     - "rwsem_lock":
+>   				read/write down() and up() semaphore pairs.
+Acked-by: Waiman Long <longman@redhat.com>
 
