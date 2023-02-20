@@ -2,90 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9872C636CC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 14:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDA1C64EC4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 15:42:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231821AbjBTOo1 (ORCPT
+        id S231504AbjBTPmq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Feb 2023 09:44:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36762 "EHLO
+        Mon, 20 Feb 2023 10:42:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbjBTOo0 (ORCPT
+        with ESMTP id S231243AbjBTPmp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Feb 2023 09:44:26 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 816211555D;
-        Mon, 20 Feb 2023 06:44:25 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id bg37-20020a05600c3ca500b003e21e018039so2075249wmb.3;
-        Mon, 20 Feb 2023 06:44:25 -0800 (PST)
+        Mon, 20 Feb 2023 10:42:45 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BEA1EBF7;
+        Mon, 20 Feb 2023 07:42:44 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id s26so6268661edw.11;
+        Mon, 20 Feb 2023 07:42:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GoVGloOBZkw+ZVyAnbX/LJByXhmIlf+jL2epYX5xU4w=;
-        b=hYs7rM8UbOBWW4+Ml0n9QHWF2Jr1aO+fwKAQ/Oge7K740EcTNzWOkbSWX4CJ2rM1lg
-         dU/oYDQLhNs7B5WF8M7+VNWdWVFWDinFUHzYs/PHYr0yUd/mOMq8ZL1QLMsTzaVmh+TU
-         iFD8vUx9YyspA0O7Ufcl3rubUo71ay4NApKqrRenPWnX1C/hbhzuUZE8adbIoiUyOrAs
-         0t8uxMlMqKQBdNjGsHyHMW+2Y2J3ckGT8XKqv3paORf9Q3FQzbeCYu0dXrGsdcKr1eRE
-         8RQqIz0qwxr0Wt/vkrDcJxOsXRQK2Yol/90/F6cywOoHrS/scG+4bmhoaNQnaekR6m41
-         TkeQ==
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1e7qAtyTbXCYmyAw0z2FHUgfQzdV2nSR6ErhWKooC5E=;
+        b=ePJBdirpFPeeUNHvJC3d94QERMHY0C4pPfprSLzDSjo7WAIhqeAmXR5mnjTPBmaLkz
+         /18dyL4jWS7LnVpRhjkom9z/WeWoPS/vq8FUht52GASb2KM6+9+jEn+wVf/+n0LbYl6Q
+         P4QJkAg6Lz7qmHwdn/d6mSYyM6j35e4Pz7WUE8fMQQsAmGfSX+F+vQFgvs/CUcfT3kbM
+         rVDuwY9r6rw+PocDnqGVCuJwvEnFW7Ti6ZsWQ3qycQmHjRzZW1190+NVu2T+x5sered5
+         kP1kIkWuSSQWRPN+p9mBRWd/hp0GICwfiuZwzK04OTMRx1U/mN1rIzr4ja/EV76jAXeU
+         YnGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GoVGloOBZkw+ZVyAnbX/LJByXhmIlf+jL2epYX5xU4w=;
-        b=CBlqHYPZRCw+XFwk98FLgKQrbIG81g2DY8vBjmbzOWlAK09F/COptp9xearcrdNUmD
-         RHmVGEyhR2JoI+jM61SVMvvkkd+mFbRAdUOlPdX9j6XJTRbPFpjxDPRUv5ztj8kDXqpD
-         i17PL0w9FzbEP+w29WEoxBFEYzl8P4hLXsn5VWRN1WfKKT4jPjJaGCYtlBIuLIOOuPn5
-         JGiDtZ+xYySwlPla+L5W/wUXyYqB2b3xQ3h8CwFh2VGqYTGLkmLy6nEnyAXKMs1t+3as
-         LrfIPhAajJJ4Rq6POBWVuUposQ8o8pd96d8aVGyrYhAS+QQjpksIHZ9XnzVPczK/Au7R
-         ipwg==
-X-Gm-Message-State: AO0yUKU97tGMzNL7mjErMHT2KX5BUMTHZ+GRL6mymCivsfGjx7kLisjn
-        0qsj71fYgtPfDvlqY1D74B8=
-X-Google-Smtp-Source: AK7set9IE7HOSZDZgMmccuHfWHe65GIO0gQQEpfT9G+zufqe0IBsuL7NA0ndfQe6bju3HPRc5qJeww==
-X-Received: by 2002:a05:600c:198e:b0:3e2:1f00:bff7 with SMTP id t14-20020a05600c198e00b003e21f00bff7mr1069910wmq.12.1676904263882;
-        Mon, 20 Feb 2023 06:44:23 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r5-20020a1c2b05000000b003ddf2865aeasm1339840wmr.41.2023.02.20.06.44.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Feb 2023 06:44:23 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] of: dynamic: Fix spelling mistake "kojbect" -> "kobject"
-Date:   Mon, 20 Feb 2023 14:44:22 +0000
-Message-Id: <20230220144422.873356-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1e7qAtyTbXCYmyAw0z2FHUgfQzdV2nSR6ErhWKooC5E=;
+        b=z9/XNcN+4RSz1ZNo6PlYUcdmqMvtqTuMB7NF+4wtdc2xIdDHnE/vKtvQ2b88npbLac
+         n2IT/bZcBs/5UX+Ra5U+zPyNE3LywQwIZtNx04H92JFTdWj2c55a1w9At5S4iNpJbQDK
+         IJUQcSlER7PN4Ne6fa37rSm+BdSek0PkBqMeLNM7CwhjTADCCQDWiBM1ecWYMp8EXEIW
+         JzqDNvK6yslcNcLJIHHYJ21dDkztU1EkFm5UxpZyHdip1iHjWeGey6DYFeyLHk1j8dZ8
+         O8igh7JN+mJPFBOSqXQn2B8agWkmP29N+0hg6gjm7mlCejUbt6mrzR546t5VXzpbHuPP
+         6hQg==
+X-Gm-Message-State: AO0yUKWAfJB/cEB5huIoQZEmU55GPQVTBiPtX34svqQUPryPNZoC5MsZ
+        F8n11EkQXNMdNLTA5vlPhyr4nujvGSBPu8qUXz/eniS2GUs=
+X-Google-Smtp-Source: AK7set/Gm9LJ9PXPPK+H5YJdvC1FO1hMJiSfkmsQ7SwDlbbZI+ocUYKOQFEcPvx8tVmqmYM19ntTe3UNAdsvQ+v5KCA=
+X-Received: by 2002:a50:f689:0:b0:4ad:6052:ee88 with SMTP id
+ d9-20020a50f689000000b004ad6052ee88mr410381edn.2.1676907763113; Mon, 20 Feb
+ 2023 07:42:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Mon, 20 Feb 2023 16:42:32 +0100
+Message-ID: <CAKXUXMwWuh2Qtiq+qQBjU1Qpb-qaphob=YoaoNWS2W_GQui_5A@mail.gmail.com>
+Subject: Still a QNX6 filesystem maintainer?
+To:     Kai Bankett <chaosman@ontika.net>
+Cc:     kernel-janitors <kernel-janitors@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a pr_err message. Fix it.
+Dear Kai,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/of/dynamic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+in the course of clean-up of "lost documentation" in the kernel, I
+intend to remove the file ./fs/qnx6/README in the repository and
+replace it by a section in the CREDITS and MAINTAINERS file, just as
+done with all other contributions to the kernel.
 
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index 12aa99018969..07d93753b12f 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -350,7 +350,7 @@ void of_node_release(struct kobject *kobj)
- 		if (!IS_ENABLED(CONFIG_OF_UNITTEST) ||
- 		    strcmp(node->parent->full_name, "testcase-data")) {
- 			dump_stack();
--			pr_err("ERROR: next of_node_put() on this node will result in a kboject warning 'refcount_t: underflow; use-after-free.'\n");
-+			pr_err("ERROR: next of_node_put() on this node will result in a kobject warning 'refcount_t: underflow; use-after-free.'\n");
- 		}
- 
- 		return;
--- 
-2.30.2
+Given that the email address has not been used since around 2012 and
+the time the filesystem was initially submitted, it might be likely
+that this email does not exist anymore.
 
+So, this email is just a quick check if there is still somebody
+responding or not.
+
+If no one responds, I would mark the QNX6 FILESYSTEM as Orphaned. If
+you do respond, I would simply submit a section with you as a
+maintainer.
+
+
+Best regards,
+
+Lukas
