@@ -2,100 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0C1C636CC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 17:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA02EC6379F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 18:49:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232375AbjBTRTU (ORCPT
+        id S232169AbjBTStz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Feb 2023 12:19:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55162 "EHLO
+        Mon, 20 Feb 2023 13:49:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232397AbjBTRTR (ORCPT
+        with ESMTP id S232689AbjBTStg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Feb 2023 12:19:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B06917144
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Feb 2023 09:18:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676913511;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=n9UUOuyc1RiLX6lt0RLTFWolnPF6Xb+dal6ndxAWPtg=;
-        b=SNNjQX7uCZMsefWg+y/Yj27xEWyGTv/RzALx8l5ZxS+25wmQXmIqCSY09C2YyOZOi38qZc
-        +8wi7Mlsxjy7sRyj/sMhMONdWBcy5oxwbhH4pnmO1hWMIJiZnZ3jORCczZp+qBjITYOf+k
-        Ynv0u74/KhvLAjcOy1TdB1HClwCpeYc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-465-0ZToPXgeO9mm24tFAWT64g-1; Mon, 20 Feb 2023 12:18:30 -0500
-X-MC-Unique: 0ZToPXgeO9mm24tFAWT64g-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7618288562A;
-        Mon, 20 Feb 2023 17:18:29 +0000 (UTC)
-Received: from [10.18.17.153] (dhcp-17-153.bos.redhat.com [10.18.17.153])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B4C9A492C3C;
-        Mon, 20 Feb 2023 17:18:28 +0000 (UTC)
-Message-ID: <248fbb79-744b-4e49-71de-a6d3d0a0e7ef@redhat.com>
-Date:   Mon, 20 Feb 2023 12:18:28 -0500
+        Mon, 20 Feb 2023 13:49:36 -0500
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99AF91E9F9;
+        Mon, 20 Feb 2023 10:49:00 -0800 (PST)
+Received: by mail-ot1-x32f.google.com with SMTP id bh19-20020a056830381300b00690bf2011b2so321637otb.6;
+        Mon, 20 Feb 2023 10:49:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dp9FA0RvdgxvVZhfm9R2KGLFsqWa4RXhCmE9KXcq+cs=;
+        b=CPicpEjuNiPzLxDIkzhnkE1I5W9ZZP3oBvECpcvd+X+0jnurW4jKG1R/pnA59+QIUk
+         km3NMqnjsGkEDCzl6Ke3REvKnOB3vongF5sRv+ANxQa5QV/xfPn7kdP6hu/Kl+nq0jLn
+         T7sx0BbE8lLMpbARkG/84/UPp2KvAb9EdM+tckWM3lYaQFyd/RVJAzN5UcERoBXkeTPm
+         xPtNabn0cFnMEIkRw6ZImwYTV1iaV1++tFFtRfPn3u6d3eM8pgL9iTy1mI9Q6dH6TAYV
+         wrjYfkuLGfeiJMsHCcsoAJttuI2HI87wBaSgnvMpRyT/v20hABBdJkik9MGztdsrLgtk
+         W5gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dp9FA0RvdgxvVZhfm9R2KGLFsqWa4RXhCmE9KXcq+cs=;
+        b=qcwleeucLqhmrtS4nSvtSoPICryAARZl0SeZLq+jMzh+NzDPCGanP1mVPaeNTJJoKp
+         17wOUTbRHIfYLsOD47gbX3RkOo97EaN5ibi7o3etIxL0gvf9KAxS90DJ1GHAwE/7S+b7
+         b86J2oMU6G2bUsXslS4YcHKHQdoZ9jQM0nUOB6rSvmcWC9K2A0EokLbbyU+c5kgJEcQR
+         wrlG1byIjQ3zqTxzDb7ltY/PyYzB7sAAfOwQyHxjUkMB5Wzj4EZatG5ZUjvIyYKaNTD8
+         ccgXudfGyUdlk4KTHPhVL0I5GtILX3UZKgZq9cQ2mUOZFh1nZ583HFSFNq4BP+Mb/R/S
+         p7Ng==
+X-Gm-Message-State: AO0yUKVbZSs8PkYLWcGvObVP+FKnBy7Q1mpm9FJPp5hM0GlxQyZHyur5
+        8ZwLFOdixDP4A36l2jPYvfM=
+X-Google-Smtp-Source: AK7set/1HBaSRcuvDF94MEmuuDb4BY1XA0yEYH480iBvBiMnJBbHcZ/hQE8hMs0Fj83hj9msF5bOpg==
+X-Received: by 2002:a05:6830:3101:b0:68b:cdd3:3b93 with SMTP id b1-20020a056830310100b0068bcdd33b93mr6960472ots.26.1676918933968;
+        Mon, 20 Feb 2023 10:48:53 -0800 (PST)
+Received: from ?IPV6:2600:1700:2442:6db0:e458:3986:a974:9501? ([2600:1700:2442:6db0:e458:3986:a974:9501])
+        by smtp.gmail.com with ESMTPSA id n4-20020acabd04000000b003645b64d7b3sm5218893oif.4.2023.02.20.10.48.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Feb 2023 10:48:53 -0800 (PST)
+Message-ID: <ac009137-dcc3-849a-cc97-96268d692c68@gmail.com>
+Date:   Mon, 20 Feb 2023 12:48:52 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH] docs: locking: refer to the actual existing config names
+ Thunderbird/102.7.1
+Subject: Re: [PATCH][next] of: dynamic: Fix spelling mistake "kojbect" ->
+ "kobject"
 Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230220165749.12850-1-lukas.bulwahn@gmail.com>
-From:   Waiman Long <longman@redhat.com>
-In-Reply-To: <20230220165749.12850-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20230220144422.873356-1-colin.i.king@gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+In-Reply-To: <20230220144422.873356-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/20/23 11:57, Lukas Bulwahn wrote:
-> The config is actually called CONFIG_RT_MUTEXES, not CONFIG_RT_MUTEX.
->
-> The config CONFIG_LOCK_TORTURE_TEST should be connected by underscore, for
-> the sake of consistent referencing to configs in the kernel documentation.
->
-> Address those issues.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On 2/20/23 08:44, Colin Ian King wrote:
+> There is a spelling mistake in a pr_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   Documentation/locking/locktorture.rst | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/locking/locktorture.rst b/Documentation/locking/locktorture.rst
-> index dfaf9fc883f4..7f56fc0d7c31 100644
-> --- a/Documentation/locking/locktorture.rst
-> +++ b/Documentation/locking/locktorture.rst
-> @@ -5,7 +5,7 @@ Kernel Lock Torture Test Operation
->   CONFIG_LOCK_TORTURE_TEST
->   ========================
->   
-> -The CONFIG LOCK_TORTURE_TEST config option provides a kernel module
-> +The CONFIG_LOCK_TORTURE_TEST config option provides a kernel module
->   that runs torture tests on core kernel locking primitives. The kernel
->   module, 'locktorture', may be built after the fact on the running
->   kernel to be tested, if desired. The tests periodically output status
-> @@ -67,7 +67,7 @@ torture_type
->   
->   		     - "rtmutex_lock":
->   				rtmutex_lock() and rtmutex_unlock() pairs.
-> -				Kernel must have CONFIG_RT_MUTEX=y.
-> +				Kernel must have CONFIG_RT_MUTEXES=y.
->   
->   		     - "rwsem_lock":
->   				read/write down() and up() semaphore pairs.
-Acked-by: Waiman Long <longman@redhat.com>
+>  drivers/of/dynamic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> index 12aa99018969..07d93753b12f 100644
+> --- a/drivers/of/dynamic.c
+> +++ b/drivers/of/dynamic.c
+> @@ -350,7 +350,7 @@ void of_node_release(struct kobject *kobj)
+>  		if (!IS_ENABLED(CONFIG_OF_UNITTEST) ||
+>  		    strcmp(node->parent->full_name, "testcase-data")) {
+>  			dump_stack();
+> -			pr_err("ERROR: next of_node_put() on this node will result in a kboject warning 'refcount_t: underflow; use-after-free.'\n");
+> +			pr_err("ERROR: next of_node_put() on this node will result in a kobject warning 'refcount_t: underflow; use-after-free.'\n");
+>  		}
+>  
+>  		return;
 
+Reviewed-by: Frank Rowand <frowand.list@gmail.com>
