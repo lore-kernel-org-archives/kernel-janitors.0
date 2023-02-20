@@ -2,74 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 900C2C636CC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 08:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2F4C05027
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 10:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231220AbjBTIgV (ORCPT
+        id S231191AbjBTKuT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Feb 2023 03:36:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51826 "EHLO
+        Mon, 20 Feb 2023 05:50:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231215AbjBTIgU (ORCPT
+        with ESMTP id S230127AbjBTKuS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Feb 2023 03:36:20 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6F781555D;
-        Mon, 20 Feb 2023 00:36:04 -0800 (PST)
+        Mon, 20 Feb 2023 05:50:18 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 162D3125A7;
+        Mon, 20 Feb 2023 02:50:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 51376B80B17;
-        Mon, 20 Feb 2023 08:36:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC1AC433D2;
-        Mon, 20 Feb 2023 08:35:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A88BA60DC6;
+        Mon, 20 Feb 2023 10:50:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 08127C4339C;
+        Mon, 20 Feb 2023 10:50:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676882162;
-        bh=lote9b8ZjlQAz5KsQvHp/Q5FbH1kp4EcSqoIPKfV4qA=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=J8OxOqWN+C3Vx/tq9E3zKsVKnJdWBkwDhKS3MHNedd43jWjegrBhPK5TCj9p94PiN
-         JKM+zRKh/+8H9MnLYe9rbwytHgGZqNWDntHli/0aKb6gpnpnEM2Fi1r3s55JkfmVnn
-         Loau/Ku5rZl/rF/t1GWOZ1OP6EznbDuIVg/ymR0f+AGmvjz2Mvya6sSyai41nlSlLa
-         CcLMCnLW0SgjrlZiZM+0NtOHU8v9KLBeyQ9qVDXqdPF4fbv6ASfGsHB4Zk3Z+WoS5i
-         ooBuUK97bvC2K1gI5dUjTmo/AeGSDKz28AfIxrmY4msJpGrvn2T7ZTmlha5YgqWBwQ
-         zL3Klfu2Axz/g==
+        s=k20201202; t=1676890217;
+        bh=yEVhtS6FxR2Kzv7aZMd2KZgZnytjnwM+ed7XvVlAxBY=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=noodEMRympV8Qmq3kHZ6ixYqDf/RHsBZ5p1y0WNNoBHLfPe9aL+GX6/soohqzH+cu
+         PF+kDqOgtnE639K16vTZKqYcbEdBql9EOf6GtT7071qYknUH3rMB0eo7XLdzeFkA2B
+         w0PnaukrK+ih4Vebpo0bczhRjMmlubDwaouN0BCnydxWVvfYA0iQkMcor82TIdB/XJ
+         +m4D4LXygKZ6sEEgjV0TYT6m3AmbScotnptGaavUrYD/Cbn/DLRt1PMHPsG6MQrOjl
+         +QbqYGhTUoFhPOFZAs1oKJrkiB5boEkDwT5Qezg25eRaCzYt8djSUdfJrEwCejpVw5
+         5/oP3hEQKmx7Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E2272C43161;
+        Mon, 20 Feb 2023 10:50:16 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wifi: ath12k: use kfree_skb() instead of kfree()
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <Y+4ejiYakhEvEw7c@kili>
-References: <Y+4ejiYakhEvEw7c@kili>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Kalle Valo <quic_kvalo@quicinc.com>,
-        P Praneesh <quic_ppranees@quicinc.com>,
-        Bhagavathi Perumal S <quic_bperumal@quicinc.com>,
-        Wen Gong <quic_wgong@quicinc.com>,
-        Balamurugan Selvarajan <quic_bselvara@quicinc.com>,
-        Baochen Qiang <quic_bqiang@quicinc.com>,
-        ath12k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <167688215685.14547.14754982829823195768.kvalo@kernel.org>
-Date:   Mon, 20 Feb 2023 08:35:59 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] sfc: Fix spelling mistake "creationg" -> "creating"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167689021692.13054.14484640120876008010.git-patchwork-notify@kernel.org>
+Date:   Mon, 20 Feb 2023 10:50:16 +0000
+References: <20230217092528.576105-1-colin.i.king@gmail.com>
+In-Reply-To: <20230217092528.576105-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     ecree.xilinx@gmail.com, habetsm.xilinx@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <error27@gmail.com> wrote:
+Hello:
 
-> Sk_buffs are supposed to be freed with kfree_skb().
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
+
+On Fri, 17 Feb 2023 09:25:28 +0000 you wrote:
+> There is a spelling mistake in a pci_warn message. Fix it.
 > 
-> Fixes: d889913205cf ("wifi: ath12k: driver for Qualcomm Wi-Fi 7 devices")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/sfc/efx_devlink.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied to ath-next branch of ath.git, thanks.
+Here is the summary with links:
+  - [next] sfc: Fix spelling mistake "creationg" -> "creating"
+    https://git.kernel.org/netdev/net-next/c/0d39ad3e1b04
 
-8c464d16809f wifi: ath12k: use kfree_skb() instead of kfree()
-
+You are awesome, thank you!
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/Y+4ejiYakhEvEw7c@kili/
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
