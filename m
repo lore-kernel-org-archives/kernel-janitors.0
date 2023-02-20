@@ -2,103 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE9CC05027
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 16:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 853BFC636CC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Feb 2023 17:02:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232037AbjBTQ6F (ORCPT
+        id S232212AbjBTRCQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Feb 2023 11:58:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40548 "EHLO
+        Mon, 20 Feb 2023 12:02:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232073AbjBTQ55 (ORCPT
+        with ESMTP id S230062AbjBTRCP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Feb 2023 11:57:57 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F43F7A8F;
-        Mon, 20 Feb 2023 08:57:55 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id o12so7606728edb.9;
-        Mon, 20 Feb 2023 08:57:55 -0800 (PST)
+        Mon, 20 Feb 2023 12:02:15 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 147B61ADDD;
+        Mon, 20 Feb 2023 09:02:14 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id eg37so3418268edb.12;
+        Mon, 20 Feb 2023 09:02:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sKhS1XkPMQxMCs4PB6gvYep2AFIGq1h4u0coF+hO4cs=;
-        b=PiXZZTBpnSk7jqOvEbc8PkUHAQktrGb4YNVGKT/ZHKH7ZuHbGZUsQDWfhsYT1ofpsY
-         juUYSy3JCUoOfp/cM/Yd3IWpid9re8SW8pap9fHQWupba9QkDz1XpFwBw6+c707VDOgw
-         x6bLoAEoLN91vxCXVehQ2wqD6XkQJkkptMLIseBmgdGDCIAW87h3F+8YKdN1FV7qxj12
-         5RYLoLQ+5G9DFZm3laExe2B2xcBKK7U8QrAaD5e4ARtjADnxzfXXx55YJ/9qusX0SRi6
-         rIMWy5XAUtbY4W44ahIoqN6a7JPqX7vwpIIC8dl+/VqOz99DDyX795OARNKkB+57Witp
-         5OGQ==
+        bh=KIXPG9Tfia4VG3SCp8cf3t2f7Ns1NurWtREmNjjn+9Q=;
+        b=C2SRfLt8/RtKLfxN9ed/Yko3i3/BJMM4vVATAtuhwyK0ueyAendsJqzyAX5KOt2/LL
+         qjR4KKiuom9zDVnLSnv39XdEyMH6SXKzOI+wp/5hBQQ/9YXzpIYQjQPfWWz8KapeLsNr
+         PBn/Mmv/Z6BzyICL8uBRAjUwgn0U8p6ZLdiVJAxcLJCCqw55PuGexKuRkO1DsMZPh3u7
+         od5ejshwMzos7R2vnVrflCdTPtODz3+8sPYz8DTYzFIqCP4PalH+XCkxVyvWoJBE0Hxa
+         cr24BnjI6+bspeMh/XYcpwOCbgR4Vd/hqeOmOv5MzRHQ3b0mWbXi39EhpATQ0AEXk5bs
+         0PbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sKhS1XkPMQxMCs4PB6gvYep2AFIGq1h4u0coF+hO4cs=;
-        b=D8wuBJNiHoJiIWZSjMUOBXYBEF8gz28FFvYhZ52zKhEJ1E9Mix/VyohRLJk1qjKl/P
-         862a4qAxVaU09OocFp6AZeJcpTBUE7W7MCH8er1jRvyC+H4IdilYLGcp+VV4c2BqAwY3
-         R9BNUkbzFHzDDfYwl1OYgJ0eMg0XbReu9CuWD+G37Z5GNS2aVlU+hLK0FjzwUTpT/3/5
-         bwDqlSi9qW8jEsOYA39Sfl/yVKDE9+gA85H+KkBbL4zHI//Pw3qnMufdHAw+GbBxdcOQ
-         TolV8f0SMJjDj/SUOR9lzfNtcWC8wLs69ToAmL/NufFrOWtEV/T5HD/yWxjID4XKfw5D
-         ofFA==
-X-Gm-Message-State: AO0yUKXgZYAmM0WkI0a3n0ZpBp0oau+c9d0MqD9/EMpSy0IaGJDG9kjw
-        Hm8lHBWz+kZDxyk+K74hmnMoirxgO+E=
-X-Google-Smtp-Source: AK7set+mH7M/KvRblmnMoa+9/DsPaLZW6zlUTOWS4is9TUws62Uxkgy5fA8KpE6ss2dF9bPRf8HVSQ==
-X-Received: by 2002:a17:906:7c55:b0:88e:d435:3fd6 with SMTP id g21-20020a1709067c5500b0088ed4353fd6mr10651591ejp.63.1676912273814;
-        Mon, 20 Feb 2023 08:57:53 -0800 (PST)
+        bh=KIXPG9Tfia4VG3SCp8cf3t2f7Ns1NurWtREmNjjn+9Q=;
+        b=nFPnodlmh03HXF9DDIeLqZx09GBy0xmaPPZPCK8kRJIT+8uTxn3Sm/3Ex23bDKPzFy
+         JBB2QLz13lnP3/J/B6zMpMvVdBNv34UrdXxxyhM/+NVyKIJqxvmm5k91oMtGRQXvYnFg
+         WTVc7jPdD3zb01YWyEFqkE4wVLGHFnoOFARoMXSz3JJfHPAL3kgj4Gez6invZcZC6HpN
+         PuDlzNmTU+yK6fFVNrIQJ2+ixngD/QWrRd6ADmI3cRgotf+jPRChajdBYojU1FDVduxC
+         nDoVa3wt6xiXxcAaJOVDDdrWCXFJ4o5ZQPQP1wlrlMoUnG0HOEtakXJ8cWqZu5bxMjCG
+         G9rw==
+X-Gm-Message-State: AO0yUKXcbFemTWBZ0NkSjF/Ybz/iBpNU7PVRJCVsW8a45byTKpzXbS5i
+        lYr7tBcmBQ2atNms0ScuBqc=
+X-Google-Smtp-Source: AK7set9d9gEgqwgD/HzdEscSoraXTox2l1B0ZTaStLBNjd3Ol0z73ed8pSdEQ1amJLzNrqdmgl2r1A==
+X-Received: by 2002:a05:6402:26cf:b0:4ab:7f0:1865 with SMTP id x15-20020a05640226cf00b004ab07f01865mr945848edd.5.1676912532385;
+        Mon, 20 Feb 2023 09:02:12 -0800 (PST)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:ad0f:1d29:d8a4:7999])
-        by smtp.gmail.com with ESMTPSA id hb22-20020a170906b89600b008b14d3978adsm6004006ejb.189.2023.02.20.08.57.53
+        by smtp.gmail.com with ESMTPSA id h10-20020a50c38a000000b004ad75c5c0fdsm927227edf.18.2023.02.20.09.02.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Feb 2023 08:57:53 -0800 (PST)
+        Mon, 20 Feb 2023 09:02:12 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Jonathan Corbet <corbet@lwn.net>, Anders Larsen <al@alarsen.net>,
+        linux-doc@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] docs: locking: refer to the actual existing config names
-Date:   Mon, 20 Feb 2023 17:57:49 +0100
-Message-Id: <20230220165749.12850-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/2] Minor documentation clean-up in fs
+Date:   Mon, 20 Feb 2023 18:02:08 +0100
+Message-Id: <20230220170210.15677-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The config is actually called CONFIG_RT_MUTEXES, not CONFIG_RT_MUTEX.
+Dear Jonathan,
 
-The config CONFIG_LOCK_TORTURE_TEST should be connected by underscore, for
-the sake of consistent referencing to configs in the kernel documentation.
+please pick this minor documentation clean-up in fs. It is not in the
+Documentation directory, but I would consider these README files also
+some unsorted largely distributed kernel documentation.
 
-Address those issues.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- Documentation/locking/locktorture.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/locking/locktorture.rst b/Documentation/locking/locktorture.rst
-index dfaf9fc883f4..7f56fc0d7c31 100644
---- a/Documentation/locking/locktorture.rst
-+++ b/Documentation/locking/locktorture.rst
-@@ -5,7 +5,7 @@ Kernel Lock Torture Test Operation
- CONFIG_LOCK_TORTURE_TEST
- ========================
+Here is some trivial and probably little-to-debate clean up.
  
--The CONFIG LOCK_TORTURE_TEST config option provides a kernel module
-+The CONFIG_LOCK_TORTURE_TEST config option provides a kernel module
- that runs torture tests on core kernel locking primitives. The kernel
- module, 'locktorture', may be built after the fact on the running
- kernel to be tested, if desired. The tests periodically output status
-@@ -67,7 +67,7 @@ torture_type
- 
- 		     - "rtmutex_lock":
- 				rtmutex_lock() and rtmutex_unlock() pairs.
--				Kernel must have CONFIG_RT_MUTEX=y.
-+				Kernel must have CONFIG_RT_MUTEXES=y.
- 
- 		     - "rwsem_lock":
- 				read/write down() and up() semaphore pairs.
+Lukas Bulwahn (2):
+  qnx6: credit contributor and mark filesystem orphan
+  qnx4: credit contributors in CREDITS
+
+ CREDITS        | 16 ++++++++++++++++
+ MAINTAINERS    |  6 ++++++
+ fs/qnx4/README |  9 ---------
+ fs/qnx6/README |  8 --------
+ 4 files changed, 22 insertions(+), 17 deletions(-)
+ delete mode 100644 fs/qnx4/README
+ delete mode 100644 fs/qnx6/README
+
 -- 
 2.17.1
 
