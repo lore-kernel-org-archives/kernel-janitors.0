@@ -2,87 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C81C6379F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 17:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB88C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 19:27:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbjBWRJx (ORCPT
+        id S232029AbjBWT1G (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Feb 2023 12:09:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58534 "EHLO
+        Thu, 23 Feb 2023 14:27:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbjBWRJt (ORCPT
+        with ESMTP id S229540AbjBWT1F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Feb 2023 12:09:49 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE403B0D7;
-        Thu, 23 Feb 2023 09:09:48 -0800 (PST)
-Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DBE6A496;
-        Thu, 23 Feb 2023 18:09:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1677172187;
-        bh=YmI4bePew5s3iR1SwM70b3C4XVKZZhwCBWDJWMAo3ys=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MZAwOID6CizODhmxXPwbNkZucge1abyxa5+aWB1pf8wJGed1gSXZpVjpr60UeePBd
-         A5rEeu9qY2myOvIsM4J646cgMbWhsinDMBmBm06KL7VX2DceKOIRMHbOyPebtjF3K8
-         gLe1zrgRpU9UV5APHbr+1yyvqClShJErUf1VW0lE=
-Date:   Thu, 23 Feb 2023 19:09:45 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: imx296: fix error checking in
- imx296_read_temperature()
-Message-ID: <Y/ed2Z/gobzgo1cb@pendragon.ideasonboard.com>
-References: <Y/Yf19AE78jn5YW7@kili>
+        Thu, 23 Feb 2023 14:27:05 -0500
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B894305CB;
+        Thu, 23 Feb 2023 11:27:03 -0800 (PST)
+Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 05A287DB;
+        Thu, 23 Feb 2023 19:27:02 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 05A287DB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1677180423; bh=FTLTlXHPh7OCNugqlntdrnGBtfh20djbZsbB+Ze9a58=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=Eq8bc82qh5IggBQ/SvHQ33ErIAXWMjwa5kbpRh8zrtPs81MOu8bpfCuRJhk45zA2f
+         NMHra05xOds3h/aCELUjTO24bwBUAtCvLSqLJTbCNKY0mvYpxi2zNYKyy1dRfeoVb8
+         eehYIN02Fv7K+Qx4FFOXp+MxTddSyIqe1ngVmU77NX34XKWnmNHfJ5kBMD05LEmjT0
+         jpRQVerdRMFgYcBr0wevNbRFzjoVuAnn6i4RLZWJEpU0wg70oHJ6REJRmL/z3K4o6q
+         NVhPgwz3ZwU/Joz4Q5z96YSxsQsHaTJxUVDjuGh+bi3X1HwU9DFmz+IFf75pwM5qbl
+         jo3tx3oBQyYSw==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>, linux-doc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] docs: locking: refer to the actual existing config names
+In-Reply-To: <20230220165749.12850-1-lukas.bulwahn@gmail.com>
+References: <20230220165749.12850-1-lukas.bulwahn@gmail.com>
+Date:   Thu, 23 Feb 2023 12:27:02 -0700
+Message-ID: <877cw85gjd.fsf@meer.lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Y/Yf19AE78jn5YW7@kili>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
-Thank you for the patch.
-
-On Wed, Feb 22, 2023 at 04:59:51PM +0300, Dan Carpenter wrote:
-> The "& IMX296_TMDOUT_MASK" means that "tmdout" can't be negative so the
-> error checking will not work.
-> 
-> Fixes: cb33db2b6ccf ("media: i2c: IMX296 camera sensor driver")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+> The config is actually called CONFIG_RT_MUTEXES, not CONFIG_RT_MUTEX.
+>
+> The config CONFIG_LOCK_TORTURE_TEST should be connected by underscore, for
+> the sake of consistent referencing to configs in the kernel documentation.
+>
+> Address those issues.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  drivers/media/i2c/imx296.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/imx296.c b/drivers/media/i2c/imx296.c
-> index 3c12b6edeac9..bb0c896f3d67 100644
-> --- a/drivers/media/i2c/imx296.c
-> +++ b/drivers/media/i2c/imx296.c
-> @@ -931,10 +931,12 @@ static int imx296_read_temperature(struct imx296 *sensor, int *temp)
->  	if (ret < 0)
->  		return ret;
+>  Documentation/locking/locktorture.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/locking/locktorture.rst b/Documentation/locking/locktorture.rst
+> index dfaf9fc883f4..7f56fc0d7c31 100644
+> --- a/Documentation/locking/locktorture.rst
+> +++ b/Documentation/locking/locktorture.rst
+> @@ -5,7 +5,7 @@ Kernel Lock Torture Test Operation
+>  CONFIG_LOCK_TORTURE_TEST
+>  ========================
 >  
-> -	tmdout = imx296_read(sensor, IMX296_TMDOUT) & IMX296_TMDOUT_MASK;
-> +	tmdout = imx296_read(sensor, IMX296_TMDOUT);
->  	if (tmdout < 0)
->  		return tmdout;
+> -The CONFIG LOCK_TORTURE_TEST config option provides a kernel module
+> +The CONFIG_LOCK_TORTURE_TEST config option provides a kernel module
+>  that runs torture tests on core kernel locking primitives. The kernel
+>  module, 'locktorture', may be built after the fact on the running
+>  kernel to be tested, if desired. The tests periodically output status
+> @@ -67,7 +67,7 @@ torture_type
 >  
-> +	tmdout &= IMX296_TMDOUT_MASK;
-> +
->  	/* T(°C) = 246.312 - 0.304 * TMDOUT */;
->  	*temp = 246312 - 304 * tmdout;
+>  		     - "rtmutex_lock":
+>  				rtmutex_lock() and rtmutex_unlock() pairs.
+> -				Kernel must have CONFIG_RT_MUTEX=y.
+> +				Kernel must have CONFIG_RT_MUTEXES=y.
 >  
 
--- 
-Regards,
+Applied, thanks.
 
-Laurent Pinchart
+jon
