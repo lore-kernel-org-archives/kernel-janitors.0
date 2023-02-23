@@ -2,90 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 133B6C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 04:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D44C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 05:46:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233267AbjBWE5N (ORCPT
+        id S233185AbjBWFqw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Feb 2023 23:57:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58346 "EHLO
+        Thu, 23 Feb 2023 00:46:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233023AbjBWE5M (ORCPT
+        with ESMTP id S229452AbjBWFqu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Feb 2023 23:57:12 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05B29367D3
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Feb 2023 20:57:11 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id v3so9613173wrp.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Feb 2023 20:57:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g7kUpsnawfyg2ZRyIba11uMYTEsMyAFj9I8/zy69niw=;
-        b=d/2ElFcihnD1C6glcD23C7A/SWFZ7ZUBjeiUtTyuB0E/+Yp5Xh6q0DcjtyUtXP6yG4
-         M97I4pPuipWZK8zaLqtUzOsea2WsNwaFu+y19NOdv/YX/0MgnutgmWQyvR58MfQJy02u
-         ooNcvUdWKBUppLh4o/+TLFrRf82Mcc61GIaXSOpZJFaeGRu+7fGspUq4HN9AFE7/GwUZ
-         47g0sZLQqfGKtTHF95Za7mVDYU+le/5BVRmO/Tuh96vmXEGc9uh6R84M1fTPCGnxuUQP
-         aoDizM3r9dMMejq/LdfSD8sD3Ol1lbHAfuqXGWNQ3IR/M7zfTyioUrX5ieqhuLz0yJ8l
-         FShg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g7kUpsnawfyg2ZRyIba11uMYTEsMyAFj9I8/zy69niw=;
-        b=5QLhZXGUZSbEh5EvmSFnrnxtrh6O2rc3JiWaFRVUuLpz3w/xhv9GtYF/LQAWWyk7pY
-         xGOyDWWbwN66OZZ2SlA07BedoVZjxJsU2uWLGbSYxDyc9Cf0GJG2N5x3488vR0+fmd2h
-         63VVSNOYxj0YkXmqy1MD/CjFdYLyhMK9cryYCNaN6wvzlqDT5J+rwygVMuWizCRXM3yz
-         JjDq8xjRcd5+mZE3f2xtVB6zEveKNswBgWeHuZcMVq6gGoS3vzhv/BNbsKqlER+sJGDk
-         ksiC2dR1dKR4vIQlfbM51BJDCoPkNssl8F1C2GlVOPBGcjcCLoBNGCjEgeJ9meULORvk
-         Qzyg==
-X-Gm-Message-State: AO0yUKUF/MMwOrD0JdgYCSoow56IyhnX621j2a7cHwTo2P79zo14ZcGg
-        92NZ66X6ryu+1udKcUR9iTO5lsnndw9Htg==
-X-Google-Smtp-Source: AK7set+eYY8DnAFYHh4MQC9XO/j7UocMG1ow7qW/1FSjw5zvCevKuVVESVwmQvGrR9EHEousz00jDg==
-X-Received: by 2002:a5d:4a06:0:b0:2c7:658:f835 with SMTP id m6-20020a5d4a06000000b002c70658f835mr6595239wrq.33.1677128229538;
-        Wed, 22 Feb 2023 20:57:09 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id q2-20020adff942000000b002c573778432sm12528180wrr.102.2023.02.22.20.57.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Feb 2023 20:57:09 -0800 (PST)
-Date:   Wed, 22 Feb 2023 18:17:06 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Cristian Marussi <cristian.marussi@arm.com>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] firmware: arm_scmi: return a literal instead of a variable
-Message-ID: <Y/Yx8pOdf8rNhPVe@kili>
+        Thu, 23 Feb 2023 00:46:50 -0500
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F1E2D153;
+        Wed, 22 Feb 2023 21:46:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1677131206; x=1708667206;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=5LUNYswzjNRR62NCzZouZlNn0t25R/Y0NvLZYy4sFJw=;
+  b=VDcPoTjapyPXdmEvrJ/Ul1EWBBDCvUNXD3/kgjHTMNQD1G9+t89RQ6Yq
+   PljBkcXmgXt6i1sVEirsDbnQKT6Xzbl9LhjQV75WRDEnT0Jvm25GLrSj9
+   SNUX8+eWQsYIFwJj4d0fa/J9HfFKkXiYUBZ5KiGfz2XwpNSGWBPLBdswf
+   X2L5EKxxU9pG/3B+5ygUpdFpOSTWq80dC7K0MZzpKia/ahbG+qlZmhfdy
+   cb8uStmxqMKkunc++hE2E+PkZOXi2+E4fVdjnb5c4w8NsOj1d8/tNxd8z
+   sjl2G9wuiNlKajl1zdhQ3A29yQtWH6UcEgKTLZI06S15bPgrZKYN9l5Eg
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10629"; a="360610228"
+X-IronPort-AV: E=Sophos;i="5.97,320,1669104000"; 
+   d="asc'?scan'208";a="360610228"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2023 21:46:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10629"; a="674390236"
+X-IronPort-AV: E=Sophos;i="5.97,320,1669104000"; 
+   d="asc'?scan'208";a="674390236"
+Received: from debian-skl.sh.intel.com (HELO debian-skl) ([10.239.159.40])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Feb 2023 21:46:42 -0800
+Date:   Thu, 23 Feb 2023 13:44:55 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] i915/gvt: Fix spelling mistake "vender" -> "vendor"
+Message-ID: <Y/b9V321SlQt9wWS@debian-scheme>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20230202125018.285523-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="HzSWUdm6s+7n4EaD"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20230202125018.285523-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In this context "return scmi_dev;" and "return NULL;" are equivalent
-but it is more readable to return a literal.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/firmware/arm_scmi/bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--HzSWUdm6s+7n4EaD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
-index 73140b854b31..ac306ca48b07 100644
---- a/drivers/firmware/arm_scmi/bus.c
-+++ b/drivers/firmware/arm_scmi/bus.c
-@@ -436,7 +436,7 @@ struct scmi_device *scmi_device_create(struct device_node *np,
- 	/* Nothing to do. */
- 	if (!phead) {
- 		mutex_unlock(&scmi_requested_devices_mtx);
--		return scmi_dev;
-+		return NULL;
- 	}
- 
- 	/* Walk the list of requested devices for protocol and create them */
--- 
-2.39.1
+On 2023.02.02 12:50:18 +0000, Colin Ian King wrote:
+> There is a spelling mistake in a literal string. Fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/i915/gvt/firmware.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/firmware.c b/drivers/gpu/drm/i915/g=
+vt/firmware.c
+> index dce93738e98a..4dd52ac2043e 100644
+> --- a/drivers/gpu/drm/i915/gvt/firmware.c
+> +++ b/drivers/gpu/drm/i915/gvt/firmware.c
+> @@ -171,7 +171,7 @@ static int verify_firmware(struct intel_gvt *gvt,
+>  	mem =3D (fw->data + h->cfg_space_offset);
+> =20
+>  	id =3D *(u16 *)(mem + PCI_VENDOR_ID);
+> -	VERIFY("vender id", id, pdev->vendor);
+> +	VERIFY("vendor id", id, pdev->vendor);
+> =20
+>  	id =3D *(u16 *)(mem + PCI_DEVICE_ID);
+>  	VERIFY("device id", id, pdev->device);
+> --=20
 
+Thanks, Colin.
+
+Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+>=20
+
+--HzSWUdm6s+7n4EaD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCY/b9VwAKCRCxBBozTXgY
+J6YGAJ9xp830QGO5I7mHfJCVb6JRefE6tgCgi00lyStr8rW5AvDfi8sjBs32WoQ=
+=sHmJ
+-----END PGP SIGNATURE-----
+
+--HzSWUdm6s+7n4EaD--
