@@ -2,113 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D44C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 05:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A0DC636D7
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 06:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233185AbjBWFqw (ORCPT
+        id S233207AbjBWGzl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Feb 2023 00:46:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58552 "EHLO
+        Thu, 23 Feb 2023 01:55:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjBWFqu (ORCPT
+        with ESMTP id S232627AbjBWGzk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Feb 2023 00:46:50 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F1E2D153;
-        Wed, 22 Feb 2023 21:46:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1677131206; x=1708667206;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=5LUNYswzjNRR62NCzZouZlNn0t25R/Y0NvLZYy4sFJw=;
-  b=VDcPoTjapyPXdmEvrJ/Ul1EWBBDCvUNXD3/kgjHTMNQD1G9+t89RQ6Yq
-   PljBkcXmgXt6i1sVEirsDbnQKT6Xzbl9LhjQV75WRDEnT0Jvm25GLrSj9
-   SNUX8+eWQsYIFwJj4d0fa/J9HfFKkXiYUBZ5KiGfz2XwpNSGWBPLBdswf
-   X2L5EKxxU9pG/3B+5ygUpdFpOSTWq80dC7K0MZzpKia/ahbG+qlZmhfdy
-   cb8uStmxqMKkunc++hE2E+PkZOXi2+E4fVdjnb5c4w8NsOj1d8/tNxd8z
-   sjl2G9wuiNlKajl1zdhQ3A29yQtWH6UcEgKTLZI06S15bPgrZKYN9l5Eg
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10629"; a="360610228"
-X-IronPort-AV: E=Sophos;i="5.97,320,1669104000"; 
-   d="asc'?scan'208";a="360610228"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2023 21:46:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10629"; a="674390236"
-X-IronPort-AV: E=Sophos;i="5.97,320,1669104000"; 
-   d="asc'?scan'208";a="674390236"
-Received: from debian-skl.sh.intel.com (HELO debian-skl) ([10.239.159.40])
-  by fmsmga007.fm.intel.com with ESMTP; 22 Feb 2023 21:46:42 -0800
-Date:   Thu, 23 Feb 2023 13:44:55 +0800
-From:   Zhenyu Wang <zhenyuw@linux.intel.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Zhi Wang <zhi.a.wang@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] i915/gvt: Fix spelling mistake "vender" -> "vendor"
-Message-ID: <Y/b9V321SlQt9wWS@debian-scheme>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <20230202125018.285523-1-colin.i.king@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="HzSWUdm6s+7n4EaD"
-Content-Disposition: inline
-In-Reply-To: <20230202125018.285523-1-colin.i.king@gmail.com>
+        Thu, 23 Feb 2023 01:55:40 -0500
+Received: from mail.nfschina.com (unknown [42.101.60.237])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D83497D4;
+        Wed, 22 Feb 2023 22:55:39 -0800 (PST)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id B27C31A00A90;
+        Thu, 23 Feb 2023 14:56:18 +0800 (CST)
+X-Virus-Scanned: amavisd-new at nfschina.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id rRBRkp_nGXo5; Thu, 23 Feb 2023 14:56:18 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id 4A1A11A00A79;
+        Thu, 23 Feb 2023 14:56:17 +0800 (CST)
+From:   Li Qiong <liqiong@nfschina.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Yu Zhe <yuzhe@nfschina.com>,
+        Li Qiong <liqiong@nfschina.com>
+Subject: [PATCH] net/atm/mpc: Fix dereference NULL pointer in mpc_send_packet()
+Date:   Thu, 23 Feb 2023 14:54:46 +0800
+Message-Id: <20230223065446.24173-1-liqiong@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+The 'non_ip' statement need do 'mpc' pointer dereference,
+so return '-ENODEV' if 'mpc' is NULL.
 
---HzSWUdm6s+7n4EaD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Li Qiong <liqiong@nfschina.com>
+---
+ net/atm/mpc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2023.02.02 12:50:18 +0000, Colin Ian King wrote:
-> There is a spelling mistake in a literal string. Fix it.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpu/drm/i915/gvt/firmware.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/gvt/firmware.c b/drivers/gpu/drm/i915/g=
-vt/firmware.c
-> index dce93738e98a..4dd52ac2043e 100644
-> --- a/drivers/gpu/drm/i915/gvt/firmware.c
-> +++ b/drivers/gpu/drm/i915/gvt/firmware.c
-> @@ -171,7 +171,7 @@ static int verify_firmware(struct intel_gvt *gvt,
->  	mem =3D (fw->data + h->cfg_space_offset);
-> =20
->  	id =3D *(u16 *)(mem + PCI_VENDOR_ID);
-> -	VERIFY("vender id", id, pdev->vendor);
-> +	VERIFY("vendor id", id, pdev->vendor);
-> =20
->  	id =3D *(u16 *)(mem + PCI_DEVICE_ID);
->  	VERIFY("device id", id, pdev->device);
-> --=20
+diff --git a/net/atm/mpc.c b/net/atm/mpc.c
+index 033871e718a3..1cd6610b8a12 100644
+--- a/net/atm/mpc.c
++++ b/net/atm/mpc.c
+@@ -577,7 +577,7 @@ static netdev_tx_t mpc_send_packet(struct sk_buff *skb,
+ 	mpc = find_mpc_by_lec(dev); /* this should NEVER fail */
+ 	if (mpc == NULL) {
+ 		pr_info("(%s) no MPC found\n", dev->name);
+-		goto non_ip;
++		return -ENODEV;
+ 	}
+ 
+ 	eth = (struct ethhdr *)skb->data;
+-- 
+2.11.0
 
-Thanks, Colin.
-
-Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
->=20
-
---HzSWUdm6s+7n4EaD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCY/b9VwAKCRCxBBozTXgY
-J6YGAJ9xp830QGO5I7mHfJCVb6JRefE6tgCgi00lyStr8rW5AvDfi8sjBs32WoQ=
-=sHmJ
------END PGP SIGNATURE-----
-
---HzSWUdm6s+7n4EaD--
