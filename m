@@ -2,111 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D69C636D7
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 07:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350C9C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 07:59:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232919AbjBWHAz (ORCPT
+        id S233356AbjBWH7N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Feb 2023 02:00:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48118 "EHLO
+        Thu, 23 Feb 2023 02:59:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232580AbjBWHAx (ORCPT
+        with ESMTP id S230356AbjBWH7L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Feb 2023 02:00:53 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A04A49886
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Feb 2023 23:00:53 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id ec43so38444111edb.8
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Feb 2023 23:00:52 -0800 (PST)
+        Thu, 23 Feb 2023 02:59:11 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 343E21A95E;
+        Wed, 22 Feb 2023 23:59:10 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id h14so1234493wru.4;
+        Wed, 22 Feb 2023 23:59:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6V1kgFkz+2nmuQRL3q8czZyEspOUTUcUgYJRLDxG5Jo=;
-        b=h8jtJEetutWZ+CFqdIFBLdMLgBt/HsmmoreRRsSiEFyjsfNAQ+2h3Jogr0VJZDiz71
-         SdBLFosZ61lDdEzPyUFgJOjv+HB1IMwTFn+FZT2WefFyvUwp1m9CtMVaObnZEZ6lV6PG
-         LP2oAkOPgSJcAYaWIdt3HSWCrcp6qUdrcBYgl9O4QwdWHmsv2UlDp6hinz2OaEmrAqiR
-         AAUrQEoBC4TzbfUblLFrgEoVvp8DhnZjXhG0ZCqQJVByWtu8OkT7CvLxxPjbdxCwmnZ5
-         Tfedo+dmciYzcX9EmSJ70cd0IbGv1hkKcvxJnP3g3+k0M8qjhKkiRz2X5fAs9q3iNzI0
-         L9Wg==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Il8snxql8ozdG2/FJTHrbWky6YEzgialCwP80s4gEs=;
+        b=oQHMl1nwEZva0H7MyfHd8UslaX1sRFNliauoq+2suP0Cmk83Vta8hZ04SZHkrVx5hE
+         yfLy2FDlPyS1Q/8DEyFBJPNU9130wSNyGzoInVWi6L0icMlTsc+DmycLV8xIc6phUbzM
+         VKdTHpsb24RP+KGv5uCvWCHMvTIKuY9LaH/+FeZyUK6L7hbPUU9vzEvqX+2EKe39uFmT
+         appwfDtj5u/DjofsZHzG8gs9Anis+C6yoarAnlwixYoOb93TUUdiscc99+1ldx4b44O3
+         KlTgmrrHulDWVLNDzvfx0ZgtvqAE29IXxQ9lDcMHUC1qMxL8uky1reSYFDNInwGIXEj/
+         HYsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6V1kgFkz+2nmuQRL3q8czZyEspOUTUcUgYJRLDxG5Jo=;
-        b=y6HdAtlYFf+o5nTwUmdNojLr7RytGiaaAkrLRzdIBRJB9JBdSR+8GUtZSp5HYpfww5
-         2UV5HeotVpZFORydxl3ZZ02ll9TIRcYVft/cVlr9S/llD1zlR7++LMvJu7uOzQgvzbP2
-         YENJU4TgbdIjGHu3Ag2OAvEhUgWkq5HuzNtF/Nv9X3M+3QbOjf/bnzPLrfUF4bVLI8ep
-         Q3BVIH4slHaufVuuGGeQMN8gdAVCcYXZz4YFbtjwZFWNmHVr8j+3kAth/W3sBZoYvcHm
-         oYgmmfNRxa2qLDGthoN0v08/SqOICaROkuFK5s0cSi/347wiN8yVtrUyF4J3/u3+cHrH
-         gN1A==
-X-Gm-Message-State: AO0yUKV7guACWvJ2T7O0CwE6UqX2cq0P8qi9ffi0JTQSHXBAnysQsoUj
-        ResI4qMtHOOaBrCN55/eiW1JPBgbMd4=
-X-Google-Smtp-Source: AK7set8ZuKaSbrQBJ3a8M+xYxT2z6oxVHpwoR5gtoCZW2lx53fTy63X3CNCbD1dMJt4V9SMvFl3Phg==
-X-Received: by 2002:a17:906:7394:b0:8b1:2614:dea6 with SMTP id f20-20020a170906739400b008b12614dea6mr17645055ejl.1.1677135651535;
-        Wed, 22 Feb 2023 23:00:51 -0800 (PST)
-Received: from [192.168.0.100] (p57935146.dip0.t-ipconnect.de. [87.147.81.70])
-        by smtp.gmail.com with ESMTPSA id me19-20020a170906aed300b008b17662e1f7sm8764897ejb.53.2023.02.22.23.00.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Feb 2023 23:00:50 -0800 (PST)
-Message-ID: <0893bcc8-a06d-1f99-8887-3731b8e5a9f8@gmail.com>
-Date:   Thu, 23 Feb 2023 08:00:49 +0100
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Il8snxql8ozdG2/FJTHrbWky6YEzgialCwP80s4gEs=;
+        b=2mqCaUlK8wTi7BqzWsQe1rfj40ffEwIEuNR1SKTvOUn8pRZQ64IsgUuGVNa/AE4Ikj
+         fQNw10JjHA9N30V8iEXWNZQkRQBz0n2s6cZFExAneccNBoDbRhAxhstJARPQkYUH/ojw
+         erBWgoPQZ/53XtKf9pad3h8REzH6yluGMmDLiK1D2A17fZ93FccC9Yy936+t0IvPW2iM
+         PmkIKwcxJpMGEfuuEMTuqTZmKxsjIaOgE/cPrVEkou/HM5AyWJ+zsCt78+z6K+XXCKk0
+         km/iaOl98bWwu2EyI4IASjMRt6MpIxr/gDXpJDJayfQ75NWjMzB1/ckjsXU1i0FTTx40
+         LTvw==
+X-Gm-Message-State: AO0yUKWVFJaTUkcnTzzk0yXcUD44lIkAg0/9LcuEyvKaDGhrYJPaIRfi
+        fgimOF3JkUjfVTPj6B3exK8=
+X-Google-Smtp-Source: AK7set9MLr/MHa5L+CeOzL7RmVFKKC5a8u8ezAEhTAHR0VTtzjkKQUBeIzWiKjZ75VyBlA0RgKolWg==
+X-Received: by 2002:a5d:4566:0:b0:2bf:e8f5:fd6e with SMTP id a6-20020a5d4566000000b002bfe8f5fd6emr10845421wrc.17.1677139148487;
+        Wed, 22 Feb 2023 23:59:08 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id a18-20020adfe5d2000000b002be505ab59asm10122239wrn.97.2023.02.22.23.59.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Feb 2023 23:59:08 -0800 (PST)
+Date:   Thu, 23 Feb 2023 10:59:05 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Li Qiong <liqiong@nfschina.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: Re: [PATCH] net/atm/mpc: Fix dereference NULL pointer in
+ mpc_send_packet()
+Message-ID: <Y/ccya+o7zBqMyhJ@kadam>
+References: <20230223065446.24173-1-liqiong@nfschina.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] staging: r8188eu: fix a potential integer underflow bug
-To:     Dan Carpenter <error27@gmail.com>,
-        Phillip Potter <phil@philpotter.co.uk>
-Cc:     Pavel Skripkin <paskripkin@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Deepak R Varma <drv@mailo.com>,
-        Charlie Sands <sandsch@northvilleschools.net>,
-        Mahak Gupta <mahak_g@cs.iitr.ac.in>,
-        Alaa Mohamed <eng.alaamohamedsoliman.am@gmail.com>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
-References: <Y/YfzZeFCAPiZ6RV@kili>
-Content-Language: en-US
-From:   Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <Y/YfzZeFCAPiZ6RV@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230223065446.24173-1-liqiong@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/22/23 14:59, Dan Carpenter wrote:
-> Here the code is testing to see if skb->len meets a minimum size
-> requirement.  However if skb->len is very small then the ETH_HLEN
-> subtraction will result in a negative which is then type promoted
-> to an unsigned int and the condition will be true.
+On Thu, Feb 23, 2023 at 02:54:46PM +0800, Li Qiong wrote:
+> The 'non_ip' statement need do 'mpc' pointer dereference,
+> so return '-ENODEV' if 'mpc' is NULL.
 > 
-> Generally, when you have an untrusted variable like skb->len, you
-> should move all the math to the other side of the comparison.
-> 
-> Fixes: 15865124feed ("staging: r8188eu: introduce new core dir for RTL8188eu driver")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> Signed-off-by: Li Qiong <liqiong@nfschina.com>
 > ---
-> Compile tested only.  This is basic algebra of moving parts of the
-> equation from one side to the other and I am surprisingly bad at
-> something that I was supposed to have learned in 9th grade.
+>  net/atm/mpc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->   drivers/staging/r8188eu/core/rtw_br_ext.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/r8188eu/core/rtw_br_ext.c b/drivers/staging/r8188eu/core/rtw_br_ext.c
-> index a7c67014dde0..f49e32c33372 100644
-> --- a/drivers/staging/r8188eu/core/rtw_br_ext.c
-> +++ b/drivers/staging/r8188eu/core/rtw_br_ext.c
-> @@ -538,7 +538,7 @@ int nat25_db_handle(struct adapter *priv, struct sk_buff *skb, int method)
->   		/*------------------------------------------------*/
->   		struct ipv6hdr *iph = (struct ipv6hdr *)(skb->data + ETH_HLEN);
->   
-> -		if (sizeof(*iph) >= (skb->len - ETH_HLEN))
-> +		if (skb->len <= sizeof(*iph) + ETH_HLEN)
->   			return -1;
->   
->   		switch (method) {
+> diff --git a/net/atm/mpc.c b/net/atm/mpc.c
+> index 033871e718a3..1cd6610b8a12 100644
+> --- a/net/atm/mpc.c
+> +++ b/net/atm/mpc.c
+> @@ -577,7 +577,7 @@ static netdev_tx_t mpc_send_packet(struct sk_buff *skb,
+>  	mpc = find_mpc_by_lec(dev); /* this should NEVER fail */
+>  	if (mpc == NULL) {
+>  		pr_info("(%s) no MPC found\n", dev->name);
+> -		goto non_ip;
+> +		return -ENODEV;
+>  	}
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com> # Edimax N150
+The comment says that find_mpc_by_lec() can't fail.  This business of
+handling impossible situations is very complicated.  Should this
+free the skb before returning?  Eventually static checkers will detect
+that.
+
+Generally the rule is that we don't have checks for impossible
+conditions.  That would trigger a warning for certain static checkers
+but it would be a false positive.  Otherwise we need to add a whole
+bunch of code to silence all warnings about handling an impossible
+situation correctly.
+
+regards,
+dan carpenter
+
