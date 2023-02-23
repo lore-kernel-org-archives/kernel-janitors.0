@@ -2,77 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED42C6379F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Feb 2023 12:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B33EC636D6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 01:13:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231722AbjBVM3I (ORCPT
+        id S231388AbjBWBNI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Feb 2023 07:29:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53950 "EHLO
+        Wed, 22 Feb 2023 20:13:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230246AbjBVM3H (ORCPT
+        with ESMTP id S233067AbjBWBNE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Feb 2023 07:29:07 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BF0EC52;
-        Wed, 22 Feb 2023 04:29:06 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8FF86142F;
-        Wed, 22 Feb 2023 12:29:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE475C433D2;
-        Wed, 22 Feb 2023 12:29:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677068945;
-        bh=H2n9Hhn+qkxGGVkGijtYVg5UEC0Yvol3hKw+sPKeNPk=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=UeqgMqEAMAD2zWdvKqa1UsN6BHg94gTt9JWkPuDyj+bckiyyd4GyUoQfSt4zTzNiq
-         E/CMq/N8z2D4zw53sZwP8JuTN8a1lcMoDYJb6RuPpJZjPXvhJXp9WD/nJpSnbdWfFQ
-         u9KDKdAkfexVO6feWrS9n7Q1jGJd5HAhTtHXyjR3xR7GabnMJ5jt4DQaq0bEvXkKSZ
-         2LF1FHew2//fZsJA7Q6kSgk3LdDdEginn0Holfas65oKxeX5nDsx26+K86UHGtCUjE
-         QQsWcxMSz6MLj5YnXkdr7xoo/pH9lrJO4aBu/MS/WCvx1ZCrNEjXeoViedwN1BToa6
-         joC3z1hXJn9zw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] wifi: wfx: Remove some dead code
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <809c4a645c8d1306c0d256345515865c40ec731c.1676464422.git.christophe.jaillet@wanadoo.fr>
-References: <809c4a645c8d1306c0d256345515865c40ec731c.1676464422.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     =?utf-8?b?SsOpcsO0bWUgUG91aWxsZXI=?= <jerome.pouiller@silabs.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <167706894098.20055.4595162521483783391.kvalo@kernel.org>
-Date:   Wed, 22 Feb 2023 12:29:02 +0000 (UTC)
+        Wed, 22 Feb 2023 20:13:04 -0500
+Received: from mail.nfschina.com (unknown [42.101.60.237])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DB161630E;
+        Wed, 22 Feb 2023 17:13:03 -0800 (PST)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 6E61D1A00886;
+        Thu, 23 Feb 2023 09:13:42 +0800 (CST)
+X-Virus-Scanned: amavisd-new at nfschina.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VPth5Z-QIjct; Thu, 23 Feb 2023 09:13:41 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id EE84F1A00075;
+        Thu, 23 Feb 2023 09:13:40 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     freude@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] s390/zcrypt: remove unnecessary (void*) conversions
+Date:   Thu, 23 Feb 2023 09:12:12 +0800
+Message-Id: <20230223011212.13045-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Pointer variables of void * type do not require type cast.
 
-> wait_for_completion_timeout() can not return a <0 value.
-> So simplify the logic and remove dead code.
-> 
-> -ERESTARTSYS can not be returned by do_wait_for_common() for tasks with
-> TASK_UNINTERRUPTIBLE, which is the case for wait_for_completion_timeout()
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Jérôme Pouiller <jerome.pouiller@silabs.com>
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ drivers/s390/crypto/zcrypt_msgtype6.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Patch applied to wireless-next.git, thanks.
-
-015bf4df8ea6 wifi: wfx: Remove some dead code
-
+diff --git a/drivers/s390/crypto/zcrypt_msgtype6.c b/drivers/s390/crypto/zcrypt_msgtype6.c
+index 5ad251477593..09b714c6adc3 100644
+--- a/drivers/s390/crypto/zcrypt_msgtype6.c
++++ b/drivers/s390/crypto/zcrypt_msgtype6.c
+@@ -926,8 +926,7 @@ static void zcrypt_msgtype6_receive(struct ap_queue *aq,
+ 		.type = TYPE82_RSP_CODE,
+ 		.reply_code = REP82_ERROR_MACHINE_FAILURE,
+ 	};
+-	struct response_type *resp_type =
+-		(struct response_type *)msg->private;
++	struct response_type *resp_type = msg->private;
+ 	struct type86x_reply *t86r;
+ 	int len;
+ 
+@@ -982,8 +981,7 @@ static void zcrypt_msgtype6_receive_ep11(struct ap_queue *aq,
+ 		.type = TYPE82_RSP_CODE,
+ 		.reply_code = REP82_ERROR_MACHINE_FAILURE,
+ 	};
+-	struct response_type *resp_type =
+-		(struct response_type *)msg->private;
++	struct response_type *resp_type = msg->private;
+ 	struct type86_ep11_reply *t86r;
+ 	int len;
+ 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/809c4a645c8d1306c0d256345515865c40ec731c.1676464422.git.christophe.jaillet@wanadoo.fr/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
 
