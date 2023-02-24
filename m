@@ -2,89 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB88C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Feb 2023 19:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 586B5C678DB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Feb 2023 10:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232029AbjBWT1G (ORCPT
+        id S230226AbjBXKXW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Feb 2023 14:27:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
+        Fri, 24 Feb 2023 05:23:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjBWT1F (ORCPT
+        with ESMTP id S230017AbjBXKXN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Feb 2023 14:27:05 -0500
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B894305CB;
-        Thu, 23 Feb 2023 11:27:03 -0800 (PST)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
+        Fri, 24 Feb 2023 05:23:13 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6FF31E1CC;
+        Fri, 24 Feb 2023 02:23:00 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 05A287DB;
-        Thu, 23 Feb 2023 19:27:02 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 05A287DB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1677180423; bh=FTLTlXHPh7OCNugqlntdrnGBtfh20djbZsbB+Ze9a58=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=Eq8bc82qh5IggBQ/SvHQ33ErIAXWMjwa5kbpRh8zrtPs81MOu8bpfCuRJhk45zA2f
-         NMHra05xOds3h/aCELUjTO24bwBUAtCvLSqLJTbCNKY0mvYpxi2zNYKyy1dRfeoVb8
-         eehYIN02Fv7K+Qx4FFOXp+MxTddSyIqe1ngVmU77NX34XKWnmNHfJ5kBMD05LEmjT0
-         jpRQVerdRMFgYcBr0wevNbRFzjoVuAnn6i4RLZWJEpU0wg70oHJ6REJRmL/z3K4o6q
-         NVhPgwz3ZwU/Joz4Q5z96YSxsQsHaTJxUVDjuGh+bi3X1HwU9DFmz+IFf75pwM5qbl
-         jo3tx3oBQyYSw==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>, linux-doc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] docs: locking: refer to the actual existing config names
-In-Reply-To: <20230220165749.12850-1-lukas.bulwahn@gmail.com>
-References: <20230220165749.12850-1-lukas.bulwahn@gmail.com>
-Date:   Thu, 23 Feb 2023 12:27:02 -0700
-Message-ID: <877cw85gjd.fsf@meer.lwn.net>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8D684B81C22;
+        Fri, 24 Feb 2023 10:22:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C512AC433EF;
+        Fri, 24 Feb 2023 10:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677234178;
+        bh=SKfrap5oDtQdvwt0M/zcUMmBC58Di/JU1xdEhqwAODw=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=dMK5dJxm7ozctkazGHWxGw8R2KHQacu5Z6NKXne2to//xIekyjy3LQIbppmmO7eEV
+         Tv9L3FULv9b2VaJiRIyDVpF/HMEQw1DD/tBGGnyqhM8GPJlE2jQhgtRwUOynq2qDpz
+         0SXmXM6iF+LDQdruzsKs9nbHzl+6y+3BTZAadHDDOZsseW8UtdRMJG8oE9n8yHpJM/
+         nY8YjTCQ6gRTcmy+WdyAHa2WiNiSLtQFRYJVrZYaE57myclZ3u4LmiothVR07hmGBc
+         /aZwCR9JAm3g05U5MMvv6VL9zbEBKvILKC3hP4DeRjegbcLMnpmORBP2dKq7V/+gKi
+         QJhICMiRaADrw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH net-next] wifi: wcn36xx: Slightly optimize
+ PREPARE_HAL_BUF()
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <7d8ab7fee45222cdbaf80c507525f2d3941587c1.1675371372.git.christophe.jaillet@wanadoo.fr>
+References: <7d8ab7fee45222cdbaf80c507525f2d3941587c1.1675371372.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Loic Poulain <loic.poulain@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <167723417226.18267.13778224357236866036.kvalo@kernel.org>
+Date:   Fri, 24 Feb 2023 10:22:55 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> The config is actually called CONFIG_RT_MUTEXES, not CONFIG_RT_MUTEX.
->
-> The config CONFIG_LOCK_TORTURE_TEST should be connected by underscore, for
-> the sake of consistent referencing to configs in the kernel documentation.
->
-> Address those issues.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  Documentation/locking/locktorture.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/locking/locktorture.rst b/Documentation/locking/locktorture.rst
-> index dfaf9fc883f4..7f56fc0d7c31 100644
-> --- a/Documentation/locking/locktorture.rst
-> +++ b/Documentation/locking/locktorture.rst
-> @@ -5,7 +5,7 @@ Kernel Lock Torture Test Operation
->  CONFIG_LOCK_TORTURE_TEST
->  ========================
->  
-> -The CONFIG LOCK_TORTURE_TEST config option provides a kernel module
-> +The CONFIG_LOCK_TORTURE_TEST config option provides a kernel module
->  that runs torture tests on core kernel locking primitives. The kernel
->  module, 'locktorture', may be built after the fact on the running
->  kernel to be tested, if desired. The tests periodically output status
-> @@ -67,7 +67,7 @@ torture_type
->  
->  		     - "rtmutex_lock":
->  				rtmutex_lock() and rtmutex_unlock() pairs.
-> -				Kernel must have CONFIG_RT_MUTEX=y.
-> +				Kernel must have CONFIG_RT_MUTEXES=y.
->  
+> In most (likely all) cases, INIT_HAL_MSG() is called before
+> PREPARE_HAL_BUF().
+> In such cases calling memset() is useless because:
+>    msg_body.header.len = sizeof(msg_body)
+> 
+> So, instead of writing twice the memory, we just have a sanity check to
+> make sure that some potential trailing memory is zeroed.
+> It even gives the opportunity to see that by itself and optimize it away.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Acked-by: Loic Poulain <loic.poulain@linaro.org>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-Applied, thanks.
+Patch applied to ath-next branch of ath.git, thanks.
 
-jon
+4a51e66fe96d wifi: wcn36xx: Slightly optimize PREPARE_HAL_BUF()
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/7d8ab7fee45222cdbaf80c507525f2d3941587c1.1675371372.git.christophe.jaillet@wanadoo.fr/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
