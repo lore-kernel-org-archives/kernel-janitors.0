@@ -2,105 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 195A8C6FA8E
-	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Feb 2023 02:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C24C64EC7
+	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Feb 2023 02:09:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbjBZCG2 (ORCPT
+        id S229589AbjBZCJR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Feb 2023 21:06:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
+        Sat, 25 Feb 2023 21:09:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbjBZCG1 (ORCPT
+        with ESMTP id S229540AbjBZCJP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Feb 2023 21:06:27 -0500
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A568113DA;
-        Sat, 25 Feb 2023 18:06:26 -0800 (PST)
-Received: by mail-io1-xd2e.google.com with SMTP id q6so1220993iot.2;
-        Sat, 25 Feb 2023 18:06:26 -0800 (PST)
+        Sat, 25 Feb 2023 21:09:15 -0500
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92A611041C;
+        Sat, 25 Feb 2023 18:09:14 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id f14so1214263iow.5;
+        Sat, 25 Feb 2023 18:09:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EFQbRxHSsPKNCItLK55Hjyu7uq3Glv5bk5SL/HPENLw=;
-        b=pWl9WeshiUsJJpSN94ckZrzGj8ltCX4QfX3dzF6nARHNtRoAXdghfuRZf4/vGXUJUW
-         sBbfR7GSZoF0L4vP+oi5w9YxWVGK5Pn2hSymO9bcaYg1mCtKrdACDzuRlCbzHJUPJneR
-         cS2G2kA5UMrR+ly5+pz6W/9B6XhTQjXg/0KUsNeOZ1VLEqTINL8i3AW6u6o7vegrbjfN
-         XQSqyClPFVy1LrEHgCTr5711M4o6uUvyAKzqWRwfhQOUXdW5A6/iIpIMvX3k+AV3gboi
-         2cCgVlNGbFIlazjeF+pRTo/tSfOhu+E9riJK6xid9d+sz7NMmkGcAqCUEwKXOtFlS+ox
-         HU/A==
+        bh=zOiw7v4d0b1KPpG9R/9yiqx5BWikVuJtMLZ9Bzv3kSo=;
+        b=k+yMM7OX2Vq1cfpvwqtoq1c2EUROQBBVjl3ijtcoyhwuSOIBRGGC4N+G3mnkyTuLGR
+         DCbHX2YI/bH0kNvM8g2nLmO8kV3h4WGNmQIdqLXI8C/5MqTd/zGJwh6T0F0YiYSkDxqR
+         HrAixy5lA+PS6Z+hMXrB5ZQUSlpWE2ptOTd23u3NBHIQ1Psr3/kSAHVkLsS9KC19IbzQ
+         U7O436YrEHzpxwSlUmW1Kx4oOZQ8Tov54qKH1/PDhy/wHfFrLbHMKgovXSN8JxpJDIr1
+         GNENh4oT94YSVAOSzlY1WTNbCuwR2xKH4ImghicSABzEge7lnX66moQnucgURb5j9U5j
+         q72A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EFQbRxHSsPKNCItLK55Hjyu7uq3Glv5bk5SL/HPENLw=;
-        b=JGqCzhzpTLbfcqEpE5LuoPotZ+LEJqIV5K8lBUbXpc7mM9RLSPoLWOYpOpTmih/di1
-         U1pBmgvnoWHE+SKYzwwTn9qIcxH+m4LCrZHvA0b+Rx5Wtah16Ad4OuHqf+YbQmGh4DdX
-         dSTs8udZxjMyqoCIPUOJmeY9vSZs8dO206Ge9t1ON+aF7GTuqlp+Gw/FdxohsIXZGf1T
-         LZh8wAQs1krKtCUHrnnKz5C4nKvQ6FTgG47mAJv/ACkD/yuqTzVzcSaoTPfTYSFq9IY2
-         oozum1r+0XCqntj+d5Mz41helF9UKZ0Ej016GYbBpXTXw3s24oLHkKQQJbZSXKsgFUG3
-         TSag==
-X-Gm-Message-State: AO0yUKVD/LlVOxU1p+Nvo3y9cTeMv47zl1BpgpaHqVhtaFZAyAnwwIQ4
-        tWVt95oPGhm6Ky1e2TcV5z9We4Wv7Bapwg0s0dQrd3Nllojz5g==
-X-Google-Smtp-Source: AK7set/MlPlEPWlLadEyKgt76qfDiD1Iz/AOVbvZ4H8WCSAmhnYu/DiJXy6NU2VZEz/DY7PVFKYxnwwJ0fwprCFhX9A=
-X-Received: by 2002:a02:85ae:0:b0:3e5:c536:392 with SMTP id
- d43-20020a0285ae000000b003e5c5360392mr4590406jai.5.1677377185660; Sat, 25 Feb
- 2023 18:06:25 -0800 (PST)
+        bh=zOiw7v4d0b1KPpG9R/9yiqx5BWikVuJtMLZ9Bzv3kSo=;
+        b=ULmB8JlkKBXa/NKO0/yg5//syzDJj0bvNBX9R8RpwZYcSVKFS6x5bdmxXZBUgHiy2z
+         fQUAIodN0BUKPCT5tMZL1zVna85H3LylBlIC0RsafoxeHnQJwfJ0p9wNnUGgWsFkzv9B
+         ySikpi+9JFpbVCEXUcb01s8tptfFxq1in0SJJ/+yFUbvEWgubPoqUffW32qj9i5w5IWi
+         IwhCHNRj6fRGSbQdOXV/cMolhFGloimaNTBvoT58OmfOoFXIyObxUjiGLA1zAqujuXsz
+         0NorbXC7o4ZiN9xw3AZ6zHyj4Tefcwv/o/GZP6lK8KoAE1c7bpFm7frC29iH5JzZwRZi
+         DtvQ==
+X-Gm-Message-State: AO0yUKWwymZ8fa/nm4Os7fNH9XfnyE/O5w9KRvm8C2advbLA2FeXl6R1
+        N5rDu9JHaKHazTgTjf5DhfDnosuSJ2Pn48URXvPqHoa8XrEOIrgG
+X-Google-Smtp-Source: AK7set/CAIQiJKl/9sFKTHtLe+J96h6rAxuX1mBEyeygUXcd0YNkvyyyyO+qiU5URQMYF7lDmYcLSIB4aXSMQMhoeWM=
+X-Received: by 2002:a05:6602:399c:b0:74c:deb9:538 with SMTP id
+ bw28-20020a056602399c00b0074cdeb90538mr398320iob.0.1677377353864; Sat, 25 Feb
+ 2023 18:09:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20220929101329.31036-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220929101329.31036-1-lukas.bulwahn@gmail.com>
+References: <20211213185625.546358-1-colin.i.king@gmail.com>
+In-Reply-To: <20211213185625.546358-1-colin.i.king@gmail.com>
 From:   Matt Turner <mattst88@gmail.com>
-Date:   Sat, 25 Feb 2023 21:06:14 -0500
-Message-ID: <CAEdQ38Gp0rFZjpRKsrYp94WyBQPB6=7YbHu6JvjYwf2odx+TgQ@mail.gmail.com>
-Subject: Re: [PATCH] alpha: update config files
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Richard Henderson <richard.henderson@linaro.org>,
+Date:   Sat, 25 Feb 2023 21:09:02 -0500
+Message-ID: <CAEdQ38GpkM8mZJ2oiADjCgKfEmavCrq9mcYErqPf-CHvWZX84g@mail.gmail.com>
+Subject: Re: [PATCH] alpha: osf_sys: reduce kernel log spamming on invalid
+ osf_mount call typenr
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Richard Henderson <rth@twiddle.net>,
         Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        linux-alpha@vger.kernel.org
+        linux-alpha@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 6:14 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+On Mon, Dec 13, 2021 at 10:58 PM Colin Ian King <colin.i.king@gmail.com> wrote:
 >
-> Clean up config files by:
->   - removing configs that were deleted in the past
->   - removing configs not in tree and without recently pending patches
->   - adding new configs that are replacements for old configs in the file
+> Calling the osf_mount system call with an invalid typenr value will
+> spam the kernel log with error messages. Reduce the spamming by making
+> it a ratelimited printk.  Issue found when exercising with the stress-ng
+> enosys system call stressor.
 >
-> For some detailed information, see Link.
->
-> Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  arch/alpha/configs/defconfig | 2 --
->  1 file changed, 2 deletions(-)
+>  arch/alpha/kernel/osf_sys.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/arch/alpha/configs/defconfig b/arch/alpha/configs/defconfig
-> index 6a39fe8ce9e5..1816c1dc22b1 100644
-> --- a/arch/alpha/configs/defconfig
-> +++ b/arch/alpha/configs/defconfig
-> @@ -39,14 +39,12 @@ CONFIG_PATA_CYPRESS=y
->  CONFIG_ATA_GENERIC=y
->  CONFIG_NETDEVICES=y
->  CONFIG_DUMMY=m
-> -CONFIG_NET_ETHERNET=y
->  CONFIG_NET_VENDOR_3COM=y
->  CONFIG_VORTEX=y
->  CONFIG_NET_TULIP=y
->  CONFIG_DE2104X=m
->  CONFIG_TULIP=y
->  CONFIG_TULIP_MMIO=y
-> -CONFIG_NET_PCI=y
->  CONFIG_YELLOWFIN=y
->  CONFIG_SERIAL_8250=y
->  CONFIG_SERIAL_8250_CONSOLE=y
+> diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+> index 8bbeebb73cf0..2367a385d726 100644
+> --- a/arch/alpha/kernel/osf_sys.c
+> +++ b/arch/alpha/kernel/osf_sys.c
+> @@ -521,7 +521,7 @@ SYSCALL_DEFINE4(osf_mount, unsigned long, typenr, const char __user *, path,
+>                 break;
+>         default:
+>                 retval = -EINVAL;
+> -               printk("osf_mount(%ld, %x)\n", typenr, flag);
+> +               printk_ratelimited("osf_mount(%ld, %x)\n", typenr, flag);
+>         }
+>
+>         return retval;
 > --
-> 2.17.1
+> 2.33.1
 >
 
 Thanks for the patch! This was included in my pull request today and
