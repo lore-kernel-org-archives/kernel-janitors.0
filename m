@@ -2,74 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C680BC64EC7
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Feb 2023 10:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 195A8C6FA8E
+	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Feb 2023 02:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbjBYK64 (ORCPT
+        id S229578AbjBZCG2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Feb 2023 05:58:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37234 "EHLO
+        Sat, 25 Feb 2023 21:06:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjBYK6z (ORCPT
+        with ESMTP id S229504AbjBZCG1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Feb 2023 05:58:55 -0500
-Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90CF712BE2
-        for <kernel-janitors@vger.kernel.org>; Sat, 25 Feb 2023 02:58:53 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id VsGQpbpJVHeiPVsGRphwXq; Sat, 25 Feb 2023 11:58:51 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 25 Feb 2023 11:58:51 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Matthew Garrett <mjg59@srcf.ucam.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH] tpm_crb: Fix an error handling path in crb_acpi_add()
-Date:   Sat, 25 Feb 2023 11:58:48 +0100
-Message-Id: <a820eaf8c77ca4fde50fc170f535de4b28c82a2d.1677322706.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 25 Feb 2023 21:06:27 -0500
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A568113DA;
+        Sat, 25 Feb 2023 18:06:26 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id q6so1220993iot.2;
+        Sat, 25 Feb 2023 18:06:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EFQbRxHSsPKNCItLK55Hjyu7uq3Glv5bk5SL/HPENLw=;
+        b=pWl9WeshiUsJJpSN94ckZrzGj8ltCX4QfX3dzF6nARHNtRoAXdghfuRZf4/vGXUJUW
+         sBbfR7GSZoF0L4vP+oi5w9YxWVGK5Pn2hSymO9bcaYg1mCtKrdACDzuRlCbzHJUPJneR
+         cS2G2kA5UMrR+ly5+pz6W/9B6XhTQjXg/0KUsNeOZ1VLEqTINL8i3AW6u6o7vegrbjfN
+         XQSqyClPFVy1LrEHgCTr5711M4o6uUvyAKzqWRwfhQOUXdW5A6/iIpIMvX3k+AV3gboi
+         2cCgVlNGbFIlazjeF+pRTo/tSfOhu+E9riJK6xid9d+sz7NMmkGcAqCUEwKXOtFlS+ox
+         HU/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EFQbRxHSsPKNCItLK55Hjyu7uq3Glv5bk5SL/HPENLw=;
+        b=JGqCzhzpTLbfcqEpE5LuoPotZ+LEJqIV5K8lBUbXpc7mM9RLSPoLWOYpOpTmih/di1
+         U1pBmgvnoWHE+SKYzwwTn9qIcxH+m4LCrZHvA0b+Rx5Wtah16Ad4OuHqf+YbQmGh4DdX
+         dSTs8udZxjMyqoCIPUOJmeY9vSZs8dO206Ge9t1ON+aF7GTuqlp+Gw/FdxohsIXZGf1T
+         LZh8wAQs1krKtCUHrnnKz5C4nKvQ6FTgG47mAJv/ACkD/yuqTzVzcSaoTPfTYSFq9IY2
+         oozum1r+0XCqntj+d5Mz41helF9UKZ0Ej016GYbBpXTXw3s24oLHkKQQJbZSXKsgFUG3
+         TSag==
+X-Gm-Message-State: AO0yUKVD/LlVOxU1p+Nvo3y9cTeMv47zl1BpgpaHqVhtaFZAyAnwwIQ4
+        tWVt95oPGhm6Ky1e2TcV5z9We4Wv7Bapwg0s0dQrd3Nllojz5g==
+X-Google-Smtp-Source: AK7set/MlPlEPWlLadEyKgt76qfDiD1Iz/AOVbvZ4H8WCSAmhnYu/DiJXy6NU2VZEz/DY7PVFKYxnwwJ0fwprCFhX9A=
+X-Received: by 2002:a02:85ae:0:b0:3e5:c536:392 with SMTP id
+ d43-20020a0285ae000000b003e5c5360392mr4590406jai.5.1677377185660; Sat, 25 Feb
+ 2023 18:06:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220929101329.31036-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220929101329.31036-1-lukas.bulwahn@gmail.com>
+From:   Matt Turner <mattst88@gmail.com>
+Date:   Sat, 25 Feb 2023 21:06:14 -0500
+Message-ID: <CAEdQ38Gp0rFZjpRKsrYp94WyBQPB6=7YbHu6JvjYwf2odx+TgQ@mail.gmail.com>
+Subject: Re: [PATCH] alpha: update config files
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        linux-alpha@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Some error paths don't call acpi_put_table() before returning.
-Branch to the correct place instead of doing some direct return.
+On Thu, Sep 29, 2022 at 6:14 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Clean up config files by:
+>   - removing configs that were deleted in the past
+>   - removing configs not in tree and without recently pending patches
+>   - adding new configs that are replacements for old configs in the file
+>
+> For some detailed information, see Link.
+>
+> Link: https://lore.kernel.org/kernel-janitors/20220929090645.1389-1-lukas.bulwahn@gmail.com/
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/alpha/configs/defconfig | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/arch/alpha/configs/defconfig b/arch/alpha/configs/defconfig
+> index 6a39fe8ce9e5..1816c1dc22b1 100644
+> --- a/arch/alpha/configs/defconfig
+> +++ b/arch/alpha/configs/defconfig
+> @@ -39,14 +39,12 @@ CONFIG_PATA_CYPRESS=y
+>  CONFIG_ATA_GENERIC=y
+>  CONFIG_NETDEVICES=y
+>  CONFIG_DUMMY=m
+> -CONFIG_NET_ETHERNET=y
+>  CONFIG_NET_VENDOR_3COM=y
+>  CONFIG_VORTEX=y
+>  CONFIG_NET_TULIP=y
+>  CONFIG_DE2104X=m
+>  CONFIG_TULIP=y
+>  CONFIG_TULIP_MMIO=y
+> -CONFIG_NET_PCI=y
+>  CONFIG_YELLOWFIN=y
+>  CONFIG_SERIAL_8250=y
+>  CONFIG_SERIAL_8250_CONSOLE=y
+> --
+> 2.17.1
+>
 
-Fixes: 4d2732882703 ("tpm_crb: Add support for CRB devices based on Pluton")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/char/tpm/tpm_crb.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 99698ee1a744..f7068bd8b3d0 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -771,12 +771,13 @@ static int crb_acpi_add(struct acpi_device *device)
- 				FW_BUG "TPM2 ACPI table has wrong size %u for start method type %d\n",
- 				buf->header.length,
- 				ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON);
--			return -EINVAL;
-+			rc = -EINVAL;
-+			goto out;
- 		}
- 		crb_pluton = ACPI_ADD_PTR(struct tpm2_crb_pluton, buf, sizeof(*buf));
- 		rc = crb_map_pluton(dev, priv, buf, crb_pluton);
- 		if (rc)
--			return rc;
-+			goto out;
- 	}
- 
- 	priv->sm = sm;
--- 
-2.34.1
-
+Thanks for the patch! This was included in my pull request today and
+is now upstream in Linus' tree.
