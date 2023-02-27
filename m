@@ -2,42 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44156C64ED8
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 14:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D03C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 14:38:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230029AbjB0OF6 (ORCPT
+        id S230024AbjB0Oiz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Feb 2023 09:05:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51794 "EHLO
+        Mon, 27 Feb 2023 09:38:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229888AbjB0OF5 (ORCPT
+        with ESMTP id S229996AbjB0Oiy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Feb 2023 09:05:57 -0500
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2F0EC72
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Feb 2023 06:05:56 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 05CA567373; Mon, 27 Feb 2023 15:05:53 +0100 (CET)
-Date:   Mon, 27 Feb 2023 15:05:52 +0100
-From:   Christoph Hellwig <hch@lst.de>
+        Mon, 27 Feb 2023 09:38:54 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF1C1ACDB;
+        Mon, 27 Feb 2023 06:38:49 -0800 (PST)
+Received: from pendragon.ideasonboard.com (85-76-78-34-nat.elisa-mobile.fi [85.76.78.34])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9F41C56A;
+        Mon, 27 Feb 2023 15:38:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1677508728;
+        bh=flL3K74FpmQhbfYWrxtIBKmRyaIm0PL2gw4qy434ZP4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RZDkwCgfR/ZjHWQxvkQiEwJAqsxC3NWoKOgQsAILaOfXPOZ8SgnHxmyRulFSvLO1g
+         DP8EZ4QST+GAmivQm2aMRlpexQ/E2CsRQvpAQ4F8h9fQqQF+S8Pu3Zd0XGpiBufQRT
+         6rschwE3fyKsHdrhaDAFUkl+fmOzGkofwa/WTq2s=
+Date:   Mon, 27 Feb 2023 16:38:17 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Dan Carpenter <error27@gmail.com>
-Cc:     Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>,
-        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] nvme-auth: fix an error code in
- nvme_auth_process_dhchap_challenge()
-Message-ID: <20230227140552.GA18487@lst.de>
-References: <Y+4eOa57zTdCZ56P@kili>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: Fix a NULL vs IS_ERR() bug
+Message-ID: <Y/zAWdgjKQjvdmXr@pendragon.ideasonboard.com>
+References: <Y/yAw6sHu82OnOWj@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Y+4eOa57zTdCZ56P@kili>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <Y/yAw6sHu82OnOWj@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thanks,
+Hi Dan,
 
-applied to nvme-6.3.
+Thank you for the patch.
+
+On Mon, Feb 27, 2023 at 01:06:59PM +0300, Dan Carpenter wrote:
+> The drmm_encoder_alloc() function returns error pointers.  It never
+> returns NULL.  Fix the check accordingly.
+> 
+> Fixes: 7a1adbd23990 ("drm: rcar-du: Use drmm_encoder_alloc() to manage encoder")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> index b1787be31e92..7ecec7b04a8d 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> @@ -109,8 +109,8 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>  	renc = drmm_encoder_alloc(&rcdu->ddev, struct rcar_du_encoder, base,
+>  				  &rcar_du_encoder_funcs, DRM_MODE_ENCODER_NONE,
+>  				  NULL);
+> -	if (!renc)
+> -		return -ENOMEM;
+> +	if (IS_ERR(renc))
+> +		return PTR_ERR(renc);
+>  
+>  	renc->output = output;
+>  
+
+-- 
+Regards,
+
+Laurent Pinchart
