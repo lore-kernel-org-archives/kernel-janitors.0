@@ -2,60 +2,60 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36290C64ED8
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D85C7EE2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229688AbjB0KG0 (ORCPT
+        id S229850AbjB0KGm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Feb 2023 05:06:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47634 "EHLO
+        Mon, 27 Feb 2023 05:06:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229899AbjB0KGY (ORCPT
+        with ESMTP id S229872AbjB0KGl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Feb 2023 05:06:24 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC111E5E8;
-        Mon, 27 Feb 2023 02:06:18 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id bx12so2409149wrb.11;
-        Mon, 27 Feb 2023 02:06:18 -0800 (PST)
+        Mon, 27 Feb 2023 05:06:41 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1024A1D908;
+        Mon, 27 Feb 2023 02:06:39 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id q16so5584401wrw.2;
+        Mon, 27 Feb 2023 02:06:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lWPtIeGJuLp2sNqEUD7UlToTJ4p0ZWwdgktgqC9Ag+M=;
-        b=kpmv7ygLhic7CkQUH8FSQ1S84c4UmufxDVATvkq61obO/OPQQElNy/sFDO3FBUbGZY
-         m37m29y10lmsdhgCh9fEaOCaHza+cuQugNbK38FDRg5JO09TuapmOTiJ6mCtC0lMFIto
-         iYx/y08+hxxOUAUS3KyvKXIE3b/LiaVk4GNZr6vRUT6yW0AP5XBxwEK+/LZjNXLHmzH2
-         agwe6H1/UBFQdohk6U1SZ4HaHs3lcCkHl/IqxYt+DxIF1dUXoSfyqGNkGd9FLtQJM8qN
-         cxJVisvE6b+D9/CL6dXjltIZmKbwtiPy5nQYZBqNFW6w3bZC+AEjwoN/m1Kk3hjeoqy0
-         nFTA==
+        bh=LHUpbKilmk7cv1IdpC+KRbByny6PyYIiDNlZO12FoT4=;
+        b=lgKfKNJftgfACpxpYfriycZ3sy6njWYalCTnYyTnqUo2GdVm+9HEMo0ZDNbcFMxcG8
+         TqaYPDpD8TTz3F4qaRSrfTaGVtCe5c5vL0QjbicwbUIF95iGpywbu8Q/ElrE++REkkT1
+         /9LxllsjaRETEXaVh2EG/Ey6uISlQ3XJNtssQ4ilICNWuacKO+y0dWV9rwq/5umpWEls
+         QNsbbrFW6hQvyZS7z56GBJcGfdNDq9aAsrSeiziNyaoEIRVu2ToX8NYBgknWwYH/ZZHM
+         LHSVL/N1wckhOrgrtNEvB2QDsDSHiv2deTqMBLH5uKQbJg9Fl1Jb7OwaQr7IOI6Gr5cK
+         5A6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lWPtIeGJuLp2sNqEUD7UlToTJ4p0ZWwdgktgqC9Ag+M=;
-        b=xXFhMlSH4jr2JARIoT8hDA8RJkXrE4ccyjwnCBlnioQO/J385laniRV5nthxnOtvZM
-         j10ipxvaAvZOLYiW35e13AwcpDeaHzVUedGeUzUdwNPaT9w0OTFjRJPVDrRhYJWjWfyz
-         8T2xc/ZakOUOwtKy3SPxaajI0Y8N6jsRn0BgeQ7KfKNpVGZHmh1AJrPQnJrX6GNh1YF+
-         wrpQbHY/ohEuk7CxmPRpkWaalSAz9JVEchBfdu9h4ukDeF2ew97Jb7spaLkibSC+bYUm
-         qItUhvQ6BmngtbhCUdll7MD4mf+DLXjVYadvQs6fBEFpmDhCqFPZXmBuFiB5zTucMi0U
-         txLw==
-X-Gm-Message-State: AO0yUKUaShDsHhUeVVOxpuM7+EVCgneAM3i0mFyAx/OKGvvm7w1ILwhg
-        Ett+CU/aaRkNSzi06JdsbOUptrr5POk=
-X-Google-Smtp-Source: AK7set+EYtKmyM2Jpl/lq7Xexv+iRyoOjpkhf8PuQko9ygB3oBuXA0vflCN2lZwL/NosTd6RfgHw2g==
-X-Received: by 2002:a5d:4e47:0:b0:2c8:840:26ea with SMTP id r7-20020a5d4e47000000b002c8084026eamr7842180wrt.12.1677492377048;
-        Mon, 27 Feb 2023 02:06:17 -0800 (PST)
+        bh=LHUpbKilmk7cv1IdpC+KRbByny6PyYIiDNlZO12FoT4=;
+        b=JOp7jTY/4enCKC76BLyVM8H5CuDvs/hWQeTnc2x9AG/5QI2+H6M+To5kgVp+Tg8SYi
+         1BSYdUr/X5tR4wX/RcCJ8dKvau3MGP0zsLrgxJLqY5mHWzOChoetLXX5uBgVlYkQJH+z
+         gROdifA/bsmy8aQWQQjVz57+qnnFIfMxUuIlRdzVRLg3v3QZ0/62Jbcu4dyZ8qQEpRsx
+         bqcWLZtmYb1G4ymhLbigmlEjRtb2+HYlrJqjMOQye/t9e/FbTLmorX7gvoMSVwBlzWeO
+         vUazCE+ggwq/zutPxL3A3KFEp6+kwhaEtuUk1ONW9vTup1oNr2vUltPGXCtIHJPKUENX
+         31GQ==
+X-Gm-Message-State: AO0yUKVizoW7YUQXEE9+tR8dm3peK33SbxViEjMuGFaeW0XdmRKGZZaW
+        It3Cn8UaGMUFvNNbK74jt6w=
+X-Google-Smtp-Source: AK7set+IrbaplolR3MswH0vPZMGtfKW+MMNXJSN9VsL8h4csEg2LUHtg38D6EwSu4UKeQ0MxLP89Hg==
+X-Received: by 2002:a05:6000:11d2:b0:2c7:1603:16c5 with SMTP id i18-20020a05600011d200b002c7160316c5mr10590792wrx.67.1677492397487;
+        Mon, 27 Feb 2023 02:06:37 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s8-20020a5d4ec8000000b002c704271b05sm6665807wrv.66.2023.02.27.02.06.15
+        by smtp.gmail.com with ESMTPSA id j14-20020a5d464e000000b002c558869934sm6723878wrs.81.2023.02.27.02.06.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 02:06:16 -0800 (PST)
-Date:   Mon, 27 Feb 2023 13:06:12 +0300
+        Mon, 27 Feb 2023 02:06:37 -0800 (PST)
+Date:   Mon, 27 Feb 2023 13:06:33 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] dca: delete unnecessary variable
-Message-ID: <Y/yAlDytLH0ZNLNz@kili>
+To:     Nick Hawkins <nick.hawkins@hpe.com>
+Cc:     Joel Stanley <joel@jms.id.au>, Wolfram Sang <wsa@kernel.org>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] i2c: gxp: fix an error code in probe
+Message-ID: <Y/yAqRlSTN5VygUy@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,31 +64,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It's more readable to just pass NULL directly instead of using a
-variable for that.
+This is passing IS_ERR() instead of PTR_ERR() so instead of an error
+code it prints and returns the number 1.
 
+Fixes: 4a55ed6f89f5 ("i2c: Add GXP SoC I2C Controller")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
-This subsystem seems unmaintained, but I already looked at the code and
-wrote the patch...  Andrew, could you take this?
+ drivers/i2c/busses/i2c-gxp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/dca/dca-core.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/dca/dca-core.c b/drivers/dca/dca-core.c
-index c40c2ebfdae9..ed3dac546dd6 100644
---- a/drivers/dca/dca-core.c
-+++ b/drivers/dca/dca-core.c
-@@ -294,9 +294,7 @@ EXPORT_SYMBOL_GPL(dca3_get_tag);
-  */
- u8 dca_get_tag(int cpu)
- {
--	struct device *dev = NULL;
--
--	return dca_common_get_tag(dev, cpu);
-+	return dca_common_get_tag(NULL, cpu);
- }
- EXPORT_SYMBOL_GPL(dca_get_tag);
+diff --git a/drivers/i2c/busses/i2c-gxp.c b/drivers/i2c/busses/i2c-gxp.c
+index da4c8e5a8039..e2a322813074 100644
+--- a/drivers/i2c/busses/i2c-gxp.c
++++ b/drivers/i2c/busses/i2c-gxp.c
+@@ -525,7 +525,7 @@ static int gxp_i2c_probe(struct platform_device *pdev)
+ 		i2cg_map = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+ 							   "hpe,sysreg");
+ 		if (IS_ERR(i2cg_map)) {
+-			return dev_err_probe(&pdev->dev, IS_ERR(i2cg_map),
++			return dev_err_probe(&pdev->dev, PTR_ERR(i2cg_map),
+ 					     "failed to map i2cg_handle\n");
+ 		}
  
 -- 
 2.39.1
