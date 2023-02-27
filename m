@@ -2,67 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C26C64ED6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3786C7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:07:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229834AbjB0KHi (ORCPT
+        id S229705AbjB0KHn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Feb 2023 05:07:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48984 "EHLO
+        Mon, 27 Feb 2023 05:07:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbjB0KHg (ORCPT
+        with ESMTP id S229771AbjB0KHm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Feb 2023 05:07:36 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90C5B1E2AD;
-        Mon, 27 Feb 2023 02:07:32 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id v16so2765326wrn.0;
-        Mon, 27 Feb 2023 02:07:32 -0800 (PST)
+        Mon, 27 Feb 2023 05:07:42 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FDC31E286;
+        Mon, 27 Feb 2023 02:07:41 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id j2so5551692wrh.9;
+        Mon, 27 Feb 2023 02:07:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aryQAhvsSY+Hbo1a8NQr5WK5lRwd5wGrYicSNyjnIAs=;
-        b=iKyIgI0NKzm5EQCAj1+9yEE3snoyPKq98PTKr1c9vbfXL3+vXDcuxtUjeFfGLoKa+b
-         rzgATe26luIji9Ats+QU55vG5UJnykksvJz7mRzjwWMkuxkzq6RXn5U2txWG3yp48Xxc
-         FpmU91VvXuZTcPTf0ec7XNpmuzy3pFr6Q7XHLPIpkNOvWsSaY1Bb8cdtp+VSGk+Dkyg1
-         l855ifRTCp93+TNtcOrZd7NYhJ29c9KXEgYFywMHtdNBbjBArnnS/H6lr3v2kKuiplF3
-         L2hP3cmjn7LuMcaQQaUi6BFDURmUFgiK9EVXoZr/F3j5hDQiE6wRUybbMhBqZQ/m+nUQ
-         ukjA==
+        bh=jnMX1QvB2TAT+d6bBwXqIXUvE0HfNg38gx5xp0MvMKA=;
+        b=j0kwkt5SgEJKfHAWbmCBG9RFTkd8CIloKWFZ4XXSWwHXEI2DFmWxCxaTnTfnWpCyeb
+         QV62H/ZNEjBmn8ccxPqO8XxzTyOzCXtOg4qo6m8827dsQA43jTlLHyDCuEUMuqg2XihF
+         zPBdt+MsXPcvJVjJwPCE+bk6oe2fP5BHGbQtE7Q4N/fFozfPtKPcc0whXMvfEvPlD1LK
+         JD0pLzr+/vQpDHFeggj6kSc1tjk/Z8dRg+u7BTzXYI/ldpOOyrM4RM1EuwrEbSFinJRP
+         HvP6R0ux1DPVxzt91otFq8I5V3ajJbnGgUyB5p6F6Hs+jCVQUOo/JkaDHDD3/r3QZNSE
+         Y4sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aryQAhvsSY+Hbo1a8NQr5WK5lRwd5wGrYicSNyjnIAs=;
-        b=NuNB/1iRsytay4Nsu1T4Qy/ZISfDPDPNxwnREy4v5kqOVXLrB7dhu3uyRhhyFVqX5D
-         VVGtXpUAe2w9HqhkKX0gZ79MMaLz0wYGJj7xchg3w8ht3m6Fp1Y34J0AwEkyF2utwRCu
-         8UpiA4yTeqO8W8oMYCOGn4MkX/sZHc2t8mOqJQGzkWlb29WmFuSfLkmGfAfXNUFqRQIW
-         CfTI1w7ZAqv/0QMzcnxT7h4jUuGdrzveM7qUH2K8OkxLtuynZLrIh/MD2Z+Xn6qAnMiD
-         VC6ri7wAnJIDC5cvR4LrT4QcvX3YQFb2HC6SPXK+VNHo1KwJNQV9MdMl0uZGhhIlIXvF
-         F7rw==
-X-Gm-Message-State: AO0yUKUDQtoyB+8NoLajSI8e4Zn3qrQspvl3en8LoeNc2FCEaBI5RiYT
-        NQTJkdwDdYa4VHT4kikaUA4=
-X-Google-Smtp-Source: AK7set9kXruz4qDyKvNS2xYLlHU7YARTec/KWK0vo9XtOAsb1NEGpb1pEuS11t9zlpM9BlB9n/VMUw==
-X-Received: by 2002:adf:ec03:0:b0:2c9:850c:6b15 with SMTP id x3-20020adfec03000000b002c9850c6b15mr5454138wrn.41.1677492451049;
-        Mon, 27 Feb 2023 02:07:31 -0800 (PST)
+        bh=jnMX1QvB2TAT+d6bBwXqIXUvE0HfNg38gx5xp0MvMKA=;
+        b=BB10TRoNE4a5y1liB8CYtnD+5wQTV9AM/z1Hhq/YDrm6i7ceXHXN2e0EUtq7+oS4ev
+         JM865YrlNk7rI1259ruFXpCqxMI+FYCjSddWeO6MRJSAII3eqef/2CGco6Jp1ddavXll
+         TGFawfMZ3kr3//tdHIkyOguk1g8ZettVxeCb9ee9iCNt7KBhR720u8VnfNuTJrvP1OuR
+         FZ2LU43NrL4S0+B1YhlfoIei/bB1Jz6r15b/1uf4JU7umrOrSqmcGpDp6SG7IdTOi9om
+         GukhFj1qOh8ZbOtixQ8iUOEL4VaM8CEqRFsJFP94yuGoLynMSSBf8C+xw5bO6QLgjpZ5
+         ul9w==
+X-Gm-Message-State: AO0yUKVA0LzW8johkdGKWVug2QfjFLtij0SXwyvaopCoK/CnrH4abY5j
+        ay/B1Idpfn/nWVVJ8wagzak=
+X-Google-Smtp-Source: AK7set8A/RFwFh8podMXMM5ARoUOWSbyyo9zeJjupddomMttuY/UuYtHi7GPcniDxq6DCLSlWZxXAQ==
+X-Received: by 2002:a05:6000:5c1:b0:2c5:4ca3:d56c with SMTP id bh1-20020a05600005c100b002c54ca3d56cmr5407214wrb.0.1677492459988;
+        Mon, 27 Feb 2023 02:07:39 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a4-20020a5d5704000000b002c559843748sm6681955wrv.10.2023.02.27.02.07.30
+        by smtp.gmail.com with ESMTPSA id bg14-20020a05600c3c8e00b003eb395a8280sm7175794wmb.37.2023.02.27.02.07.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 02:07:30 -0800 (PST)
-Date:   Mon, 27 Feb 2023 13:07:26 +0300
+        Mon, 27 Feb 2023 02:07:39 -0800 (PST)
+Date:   Mon, 27 Feb 2023 13:07:35 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Yaniv Gardi <ygardi@codeaurora.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Gilad Broner <gbroner@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] scsi: ufs: ufs-qcom: remove impossible check
-Message-ID: <Y/yA3niWUcGYgBU8@kili>
+Subject: [PATCH] fbdev: chipsfb: Fix error codes in chipsfb_pci_init()
+Message-ID: <Y/yA53V/rW8g1Zlm@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -71,29 +66,53 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "dev_req_params" pointer points to inside the middle of a struct
-so it can't be NULL.  Removing this impossible condition is nice because
-now we don't need to consider the correct error code for that situation.
+The error codes are not set on these error paths.
 
-Fixes: f06fcc7155dc ("scsi: ufs-qcom: add QUniPro hardware support and power optimizations")
+Fixes: 145eed48de27 ("fbdev: Remove conflicting devices on PCI bus")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/ufs/host/ufs-qcom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/chipsfb.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 34fc453f3eb1..797230ad3939 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -1177,7 +1177,7 @@ static int ufs_qcom_clk_scale_notify(struct ufs_hba *hba,
- 			err = ufs_qcom_clk_scale_down_post_change(hba);
+diff --git a/drivers/video/fbdev/chipsfb.c b/drivers/video/fbdev/chipsfb.c
+index cc37ec3f8fc1..98398789528a 100644
+--- a/drivers/video/fbdev/chipsfb.c
++++ b/drivers/video/fbdev/chipsfb.c
+@@ -358,16 +358,21 @@ static int chipsfb_pci_init(struct pci_dev *dp, const struct pci_device_id *ent)
+ 	if (rc)
+ 		return rc;
  
+-	if (pci_enable_device(dp) < 0) {
++	rc = pci_enable_device(dp);
++	if (rc < 0) {
+ 		dev_err(&dp->dev, "Cannot enable PCI device\n");
+ 		goto err_out;
+ 	}
  
--		if (err || !dev_req_params) {
-+		if (err) {
- 			ufshcd_uic_hibern8_exit(hba);
- 			return err;
- 		}
+-	if ((dp->resource[0].flags & IORESOURCE_MEM) == 0)
++	if ((dp->resource[0].flags & IORESOURCE_MEM) == 0) {
++		rc = -EINVAL;
+ 		goto err_disable;
++	}
+ 	addr = pci_resource_start(dp, 0);
+-	if (addr == 0)
++	if (addr == 0) {
++		rc = -EINVAL;
+ 		goto err_disable;
++	}
+ 
+ 	p = framebuffer_alloc(0, &dp->dev);
+ 	if (p == NULL) {
+@@ -417,7 +422,8 @@ static int chipsfb_pci_init(struct pci_dev *dp, const struct pci_device_id *ent)
+ 
+ 	init_chips(p, addr);
+ 
+-	if (register_framebuffer(p) < 0) {
++	rc = register_framebuffer(p);
++	if (rc < 0) {
+ 		dev_err(&dp->dev,"C&T 65550 framebuffer failed to register\n");
+ 		goto err_unmap;
+ 	}
 -- 
 2.39.1
 
