@@ -2,63 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80595C7EE2D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E95E5C64ED6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229688AbjB0KHK (ORCPT
+        id S230117AbjB0KHR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Feb 2023 05:07:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48570 "EHLO
+        Mon, 27 Feb 2023 05:07:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbjB0KHH (ORCPT
+        with ESMTP id S230002AbjB0KHQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Feb 2023 05:07:07 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A091EBC5;
-        Mon, 27 Feb 2023 02:07:05 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id q16so5585729wrw.2;
-        Mon, 27 Feb 2023 02:07:05 -0800 (PST)
+        Mon, 27 Feb 2023 05:07:16 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF2B16321;
+        Mon, 27 Feb 2023 02:07:15 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id r18so5587820wrx.1;
+        Mon, 27 Feb 2023 02:07:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qAMEtyjFDybUtWkpyE6ui7qLzDRJJ6qwM16U5VTuzlg=;
-        b=e4tBYEn47Bz7XTq/47q1gAg4ykFpvq98gzdqcMJUJkKWlNHPZ9h/rzex1SoseIKQRF
-         VYJFEwDvVBRz7cTK2Cfzu6dqM9fBtoLXH/S4fiNCCn+i+6X7WzO8FLO+ez0/buSL8DL2
-         HhpyW9+QVXe3hTM5DqCgk09LjZaWh0USZKDutYXCqmNXVlWkW/aXTiDCjFGUoXsjVdfF
-         oqZoSuspvzd4EKLS52srDlSPTtRkAm8qWb6MbadaEdOegQm1JKcaw0EHQNwGZTVAunYX
-         lpZIdjozf+vlbWvvcUihfQ1u1KcELVlc72ntGEzUvzhjm84blJgS06n3uvi2F0M5Y1FQ
-         mByQ==
+        bh=MqNgqAJx/n0S7+BoW8AS5oVR4jMes+tqXU99MEBiNwI=;
+        b=E1ROgjIM1XNegAMpfrYyY9kkIvGBVnqPPjdVsHT4VHjei6/6FcJ6ycWizoOrBesIdF
+         jtc4IG/+Nrwgwi/sw0Wyss7OYRGBhwWS3KmJcblbx0KtADk7dXpVnxBGnvWUWondngo1
+         iNxNVC9kRih5IbgqIghKKdZBdB26NPToRhvuVKhE2UoXMtTUbVEB1Nya9wwNrGF899w9
+         fOkWG2o7KM1SYCn2yRijDfrqiX1n55TiqvPJ1wVUj5DOAtSp5opGadsbDccFknndUJoL
+         rqxZ1VnLUDHi9pfp1dDdHY+E74ehBrxaere1HDL+zzvfgiHU8DjCkPlesbq6VqhMI1wH
+         mvYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qAMEtyjFDybUtWkpyE6ui7qLzDRJJ6qwM16U5VTuzlg=;
-        b=6OmlpuUBVLbm4IDDqX7/p8MqK5ZKq2XZ5NvCuYLaPCmW+5iYkX/P6j1VRohi70WlFv
-         AUjRvtISZGISR+VylX9guCOJVXbWelN0gbb7EDenO3dXzuc8N96aoDUaz0WIqw+QCWJU
-         RmM4Lv6Bki4EO5fsOPO0Q3qRGHdoXos6aPbnACAV/klsgZ9Nn566mxq9xzFCZp7t594c
-         fHHaWm6AgYKuZmAIX3V+JCDb2DbZ6VKop+3SRu2Iq2GkNoGfYo1hzmxBr7JhuCNQaAAk
-         waoI140UGbBrIG0FA0PEe9Ue1+jpJVJJlI9CeVejaJBQfFXW2lMfGq1ntceNnO5NUdC1
-         Jp7Q==
-X-Gm-Message-State: AO0yUKWHcxvPwgfaETgY/nrEERBLY45kx1JPiEMrils+lbfjNTRBVp1M
-        6bojCU2VPcFGNdZY+fkS2NA=
-X-Google-Smtp-Source: AK7set+/ftDBmse6dEgq46GZHTuU3FWLKVD5J/HGxegFqt+baaFGyw9PDDL9gTRiJnuitgx1/F6bOg==
-X-Received: by 2002:a05:6000:15c4:b0:2c5:3fce:423b with SMTP id y4-20020a05600015c400b002c53fce423bmr7345353wry.4.1677492423829;
-        Mon, 27 Feb 2023 02:07:03 -0800 (PST)
+        bh=MqNgqAJx/n0S7+BoW8AS5oVR4jMes+tqXU99MEBiNwI=;
+        b=eKDSVb0gukMM9D6d7Sz8NJPxXzdsPNOw1wuJYeMOEWG2QAULjTBYsggtBQR1IMJ/7z
+         QE1Hr33hRcjvsVDVKBfC29PStKEuPVcWooCzgExhipmRHxcwYCFAzeb8P+089jwkFjOt
+         wip1TAsTY1neX/y/5GEDTotN/YIhQIWJRffN8raAKWf17EJKNcPv2uj5tk/ohWLtsrYF
+         Zow5FPiaY4uwWKAh/2YfYO5M5S+VzYRqymzQQ+k/JvWNAzGcKxtuHCEDIEdQJcPIrBu7
+         WezO9hOtU7GDOmML29Bm8mZFMUOLmXzWmc2zHROPnRvklSewRqqKWMd3uj/HsgQrWGNB
+         bkuA==
+X-Gm-Message-State: AO0yUKWbV2iO4gP9CgGLiIB8MJgIjX81iWJ4o4jfWLGhQkNe65FdSJZA
+        FP4gpIgm4hRLZcxIHtQUxa0cZG8ZG4nzQA==
+X-Google-Smtp-Source: AK7set9olwW5SckjSIZrQELzNrVlnXDXFuOGW2+7Md6ZiEesbCdx5GrGgnDZEgw7EmgSd1m2Tc88XA==
+X-Received: by 2002:adf:ee8f:0:b0:2c7:ffd:f483 with SMTP id b15-20020adfee8f000000b002c70ffdf483mr12018660wro.41.1677492433585;
+        Mon, 27 Feb 2023 02:07:13 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p10-20020a5d458a000000b002c559def236sm6630643wrq.57.2023.02.27.02.07.02
+        by smtp.gmail.com with ESMTPSA id g9-20020a056000118900b002c794495f6fsm6475314wrx.117.2023.02.27.02.07.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 02:07:02 -0800 (PST)
-Date:   Mon, 27 Feb 2023 13:06:59 +0300
+        Mon, 27 Feb 2023 02:07:13 -0800 (PST)
+Date:   Mon, 27 Feb 2023 13:07:09 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm: rcar-du: Fix a NULL vs IS_ERR() bug
-Message-ID: <Y/yAw6sHu82OnOWj@kili>
+To:     Hector Martin <marcan@marcan.st>
+Cc:     Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Marc Zyngier <maz@kernel.org>, asahi@lists.linux.dev,
+        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] cpufreq: apple-soc: Fix an IS_ERR() vs NULL check
+Message-ID: <Y/yAzR6sWvPedLej@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -67,30 +68,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The drmm_encoder_alloc() function returns error pointers.  It never
-returns NULL.  Fix the check accordingly.
+The of_iomap() function returns NULL if it fails.  It never returns
+error pointers.  Fix the check accordingly.
 
-Fixes: 7a1adbd23990 ("drm: rcar-du: Use drmm_encoder_alloc() to manage encoder")
+Fixes: 6286bbb40576 ("cpufreq: apple-soc: Add new driver to control Apple SoC CPU P-states")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 4 ++--
+ drivers/cpufreq/apple-soc-cpufreq.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index b1787be31e92..7ecec7b04a8d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -109,8 +109,8 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	renc = drmm_encoder_alloc(&rcdu->ddev, struct rcar_du_encoder, base,
- 				  &rcar_du_encoder_funcs, DRM_MODE_ENCODER_NONE,
- 				  NULL);
--	if (!renc)
--		return -ENOMEM;
-+	if (IS_ERR(renc))
-+		return PTR_ERR(renc);
+diff --git a/drivers/cpufreq/apple-soc-cpufreq.c b/drivers/cpufreq/apple-soc-cpufreq.c
+index c11d22fd84c3..021f423705e1 100644
+--- a/drivers/cpufreq/apple-soc-cpufreq.c
++++ b/drivers/cpufreq/apple-soc-cpufreq.c
+@@ -189,8 +189,8 @@ static int apple_soc_cpufreq_find_cluster(struct cpufreq_policy *policy,
+ 	*info = match->data;
  
- 	renc->output = output;
+ 	*reg_base = of_iomap(args.np, 0);
+-	if (IS_ERR(*reg_base))
+-		return PTR_ERR(*reg_base);
++	if (!*reg_base)
++		return -ENOMEM;
  
+ 	return 0;
+ }
 -- 
 2.39.1
 
