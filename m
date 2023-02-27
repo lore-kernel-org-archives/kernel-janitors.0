@@ -2,61 +2,60 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB9DC7EE2D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 11:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B48C64ED6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 13:54:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbjB0LtM (ORCPT
+        id S229660AbjB0Nyf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Feb 2023 06:49:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42780 "EHLO
+        Mon, 27 Feb 2023 08:54:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbjB0Ls6 (ORCPT
+        with ESMTP id S229639AbjB0Nye (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Feb 2023 06:48:58 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 535D893FB
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Feb 2023 03:48:50 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id bv17so5899769wrb.5
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Feb 2023 03:48:50 -0800 (PST)
+        Mon, 27 Feb 2023 08:54:34 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C100136D7
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Feb 2023 05:54:34 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id bw19so6272103wrb.13
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Feb 2023 05:54:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3KkkEMBkFL+SpRQkYG8mO0IIRPmZ8l1+9M6eEDOT58U=;
-        b=gyMRAlKCCLNc6Zq43sL2Gn68EPd5JsgYheOOoydbAmGdslhfx6QkLuKkdAMfie70iS
-         KcYRw+oy3fkuUM/x7mBTmEOx3XptUoOWQcycgOdul/sYlfBZwT4LK6Dk/hI/zCUyDsH4
-         8+18oDqkm+Q4HJZ1X1nzSTXS4D5GNZGz2MC1uDWF0fk7k48zRSHxkgrEWAjKeWs5hjCM
-         zfyYXELKMXfvyAjv/D/Age4da5tCTqsuyRdsnVc3k58AiMJdm9tDPrSWg6gPlwGjsQ/K
-         tJaMZ40rBb5MeL7iMdNh+4XKedREHnDrMezijgzrFW62jdvQbA6OtFnnnOKJA195d0h6
-         edLQ==
+        bh=YB8gZKgLvJtsDiGBnoAIkQeWhirkutyg9pUCHs+ovXc=;
+        b=NUKvWx2Ut9IYXzGvXjCjzEzwxMKoElStUabhgiNNgeMgl4Enc14+H5pmw5YJW1J5DT
+         D3rKxIBrGAIf0q2wxcUxFFCDL2qAPNdr/qzUnYZjma+F3QECiCx8UX+aFA7AstHrB9rZ
+         VhcZODuKXuQb3jBCDxoYW1kFvl6vgB5AHCDDZrPvOHDHs3rqU+fcQVUUumOZOn2ko8Cy
+         BHaKA+T1e4AHL7qL3wRiS4ZNXXfW0b4QQO+JaVgtPZezADMATtBpB83aktQB9hZv/1i8
+         08JjSWqDJpOjmQ0LDUBG2k7N3tmaY5PInhcU8vI7uw7J00famrxf7BPpBadPKtoOJ9t2
+         VsVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3KkkEMBkFL+SpRQkYG8mO0IIRPmZ8l1+9M6eEDOT58U=;
-        b=biDgzcG/txELff/IW5JWSl0H5A1bvnVyKg/FoGac5FhSsCxmohKObwWtxPhZyCCkBT
-         nGWMsdHWLodgEfpKE3K9ONaqOpxoXarUmFb2b5yrWhSRjwfHMIsQXBWYHUM15ghDQ2pQ
-         q58uLgBpcwKpif9RkIgfsRTQfPfYzIHRmTGhrSnjo0BG5Cg9mERNGM6gac+8VJlRuhL1
-         5sMizX1/fYRceD5hrRLDq54A2tLmjpjR5jM8ZeJAhD1hR7aggR3H8E5R9dn5on7Vtr88
-         mZnfZpZM+UhKMYc/KucmDpuYOFDN4ZcyDjXxgUhlHJKQXol/XYAT54SZBHESpPQfjeTA
-         NNjw==
-X-Gm-Message-State: AO0yUKV7sgmrMaU1sZkU11bFkS68VxOqLhv0maIQZyYpkqFjvtaA8rN/
-        6dmce2kejLE9GYXT4EcrZbc=
-X-Google-Smtp-Source: AK7set+megi08C6GLvZQ3YduK3Ssoi6s1oKQy545U6bc9s9+NPwwkuV3EqNyEW93GPerDbWcK8On7w==
-X-Received: by 2002:adf:cd8b:0:b0:2c7:bfe:4f60 with SMTP id q11-20020adfcd8b000000b002c70bfe4f60mr16139383wrj.15.1677498528643;
-        Mon, 27 Feb 2023 03:48:48 -0800 (PST)
+        bh=YB8gZKgLvJtsDiGBnoAIkQeWhirkutyg9pUCHs+ovXc=;
+        b=0dBmaq8ZrUp1A0TcDnGP/ClNpYUhoHUII7L6KQDQgjHvGgKqq0Ubk+G+iRTep9pDI4
+         tvhLjPuS7pNFtTlBwxqaxetKpnjV8wgHk52Sd9B5Aiy7UVKC4bI/0fv2hCiIYXe+y6y1
+         cC8Mjc2vZLJgW+TfQzoFbb8F3tR5GZJnllw/PlrsVztC2V18t0biLWkpIxyNx/eFW1h6
+         B8uf+JUBX2hyMcfLW8J6RuVa2aOI9Wu4NT7CvwfhcZtEwLldfBTNB/OdF3HYzudgmMIC
+         s8dmqoEdaBtgw2adyFAwOEsSO7UC13YpeeLx8h67CWI6M83q3RvA/YCNxc5pvoXaM+ng
+         JAew==
+X-Gm-Message-State: AO0yUKWxsr033ChpXtZgE6IqIqd/cRF7aEbCGIJ0ssEEoCFRQ/bhY8cc
+        a4364V8xN4+/84mwtFRrU3A=
+X-Google-Smtp-Source: AK7set/fxi/9ue67rBJwOlnSw8IHoLVYZY2TDSG4b5qcTpJjNDvn5ZYsNL4Kg8JmZ/a2FAgQjHybvQ==
+X-Received: by 2002:a5d:47a1:0:b0:2c5:519f:307a with SMTP id 1-20020a5d47a1000000b002c5519f307amr6813041wrb.30.1677506072425;
+        Mon, 27 Feb 2023 05:54:32 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u5-20020a5d6ac5000000b002c5a1bd5280sm6804828wrw.95.2023.02.27.03.48.47
+        by smtp.gmail.com with ESMTPSA id b6-20020a5d4b86000000b002c5691f13eesm7124367wrt.50.2023.02.27.05.54.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 03:48:48 -0800 (PST)
-Date:   Mon, 27 Feb 2023 14:48:44 +0300
+        Mon, 27 Feb 2023 05:54:31 -0800 (PST)
+Date:   Mon, 27 Feb 2023 16:54:22 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     dhowells@redhat.com
-Cc:     kernel-janitors@vger.kernel.org,
-        Steve French <stfrench@microsoft.com>
-Subject: [bug report] netfs: Add a function to extract an iterator into a
- scatterlist
-Message-ID: <Y/yYnAhoAYDBKixX@kili>
+To:     paulb@nvidia.com
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        kernel-janitors@vger.kernel.org
+Subject: [bug report] net/sched: cls_api: Support hardware miss to tc action
+Message-ID: <Y/y2DhV37BDxSwFc@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,71 +63,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-[ Julia sent a message about this in Jan, but that was like a million
-  years ago so I'm resending.  -dan ]
+Hello Paul Blakey,
 
-Hello David Howells,
+The patch 80cd22c35c90: "net/sched: cls_api: Support hardware miss to
+tc action" from Feb 18, 2023, leads to the following Smatch static
+checker warning:
 
-The patch 018584697533: "netfs: Add a function to extract an iterator
-into a scatterlist" from Oct 27, 2022, leads to the following Smatch
-static checker warning:
+	net/sched/cls_api.c:102 tcf_exts_miss_cookie_base_alloc()
+	warn: xa_alloc_cyclic() also returns 1 on success
 
-fs/netfs/iterator.c:137 netfs_extract_user_to_sg() warn: count down condition reversed? 'npages < 0'
-fs/netfs/iterator.c:137 netfs_extract_user_to_sg() warn: unsigned 'npages' is never less than zero.
+net/sched/cls_api.c
+    92 
+    93         n->chain_index = tp->chain->index;
+    94         n->chain = tp->chain;
+    95         n->tp_prio = tp->prio;
+    96         n->tp = tp;
+    97         n->exts = exts;
+    98         n->handle = handle;
+    99 
+    100         err = xa_alloc_cyclic(&tcf_exts_miss_cookies_xa, &n->miss_cookie_base,
+    101                               n, xa_limit_32b, &next, GFP_KERNEL);
+--> 102         if (err)
 
-fs/netfs/iterator.c
-    109 static ssize_t netfs_extract_user_to_sg(struct iov_iter *iter,
-    110                                         ssize_t maxsize,
-    111                                         struct sg_table *sgtable,
-    112                                         unsigned int sg_max,
-    113                                         iov_iter_extraction_t extraction_flags)
-    114 {
-    115         struct scatterlist *sg = sgtable->sgl + sgtable->nents;
-    116         struct page **pages;
-    117         unsigned int npages;
-    118         ssize_t ret = 0, res;
-    119         size_t len, off;
-    120 
-    121         /* We decant the page list into the tail of the scatterlist */
-    122         pages = (void *)sgtable->sgl + array_size(sg_max, sizeof(struct scatterlist));
-    123         pages -= sg_max;
-    124 
-    125         do {
-    126                 res = iov_iter_extract_pages(iter, &pages, maxsize, sg_max,
-    127                                              extraction_flags, &off);
-    128                 if (res < 0)
-    129                         goto failed;
-    130 
-    131                 len = res;
-    132                 maxsize -= len;
-    133                 ret += len;
-    134                 npages = DIV_ROUND_UP(off + len, PAGE_SIZE);
-    135                 sg_max -= npages;
-    136 
---> 137                 for (; npages < 0; npages--) {
-                               ^^^^^^^^^^
-This was supposed to be npages >= 0 or > 0 probably.   Also signedness
-bug.
+xa_alloc_cyclic() returns 1 if it succeeds after wrapping.  I don't
+know if that applies here, but I feel like this check would be better as
+"if (err < 0)".
 
-    138                         struct page *page = *pages;
-    139                         size_t seg = min_t(size_t, PAGE_SIZE - off, len);
-    140 
-    141                         *pages++ = NULL;
-    142                         sg_set_page(sg, page, len, off);
-    143                         sgtable->nents++;
-    144                         sg++;
-    145                         len -= seg;
-    146                         off = 0;
-    147                 }
-    148         } while (maxsize > 0 && sg_max > 0);
-    149 
-    150         return ret;
-    151 
-    152 failed:
-    153         while (sgtable->nents > sgtable->orig_nents)
-    154                 put_page(sg_page(&sgtable->sgl[--sgtable->nents]));
-    155         return res;
-    156 }
+    103                 goto err_xa_alloc;
+    104 
+    105         exts->miss_cookie_node = n;
+    106         return 0;
+    107 
+    108 err_xa_alloc:
+    109         kfree(n);
+    110         return err;
+    111 }
 
 regards,
 dan carpenter
