@@ -2,65 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C323DC7EE2D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80595C7EE2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbjB0KHD (ORCPT
+        id S229688AbjB0KHK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Feb 2023 05:07:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48494 "EHLO
+        Mon, 27 Feb 2023 05:07:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbjB0KHC (ORCPT
+        with ESMTP id S229916AbjB0KHH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Feb 2023 05:07:02 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6081E1EBE6;
-        Mon, 27 Feb 2023 02:06:55 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id bt28so5559049wrb.8;
-        Mon, 27 Feb 2023 02:06:55 -0800 (PST)
+        Mon, 27 Feb 2023 05:07:07 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A091EBC5;
+        Mon, 27 Feb 2023 02:07:05 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id q16so5585729wrw.2;
+        Mon, 27 Feb 2023 02:07:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yJDKXszmmKLN/R4d+/6xdWOXvYFvI2xH82tZbAjm4g8=;
-        b=KbugpxkvguhSI2rmjI2w2+7SfWTVbj4WqjS+DU7abkH7AmVjkvrP2Qak0bH+OAav96
-         Kj+PDHJHcv/iQJSgDSTHhj9NdXHcpeZZWNNeX2bUEMjU5Siq5XiGsAbUnhK38386rTxl
-         bB3JlRKZ2N70hajSrS3xeaBDRb5+NYxIbvJv2u5hzkdLB+LPwfTRzHNo9CZ1GnwWVkWn
-         ZPjkNZPgPi3gnsOSPny2gMTAOmTWtGaux+iOmiO+3hV1/BoO7VbxyzPM6pb7obOP/EI4
-         6xBFx+G9RfR1xt+p9asA/OJIqVnlmFNZFEAi8ln4w27dILRcJGajv5M1BKa1wrmOZMeW
-         1p1w==
+        bh=qAMEtyjFDybUtWkpyE6ui7qLzDRJJ6qwM16U5VTuzlg=;
+        b=e4tBYEn47Bz7XTq/47q1gAg4ykFpvq98gzdqcMJUJkKWlNHPZ9h/rzex1SoseIKQRF
+         VYJFEwDvVBRz7cTK2Cfzu6dqM9fBtoLXH/S4fiNCCn+i+6X7WzO8FLO+ez0/buSL8DL2
+         HhpyW9+QVXe3hTM5DqCgk09LjZaWh0USZKDutYXCqmNXVlWkW/aXTiDCjFGUoXsjVdfF
+         oqZoSuspvzd4EKLS52srDlSPTtRkAm8qWb6MbadaEdOegQm1JKcaw0EHQNwGZTVAunYX
+         lpZIdjozf+vlbWvvcUihfQ1u1KcELVlc72ntGEzUvzhjm84blJgS06n3uvi2F0M5Y1FQ
+         mByQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yJDKXszmmKLN/R4d+/6xdWOXvYFvI2xH82tZbAjm4g8=;
-        b=T6/R/f6iGS7GfATEQogCjxdJF5Na6lcCu2IU2Ht7uGauIDdi7/xXPNhEFFIX716Ut0
-         rBLhTrQ3e//sX0yYN7b/yv8X52kFLxziNH03ekKsfUmYsKU8OS5EeTI3DMpViyN11LpE
-         CcqGe+otLa8Htx+CmNLCi4EUPh1gYo2TwZgmvCZkQjkgneLm1AkqzW/UpTTukNqwyJtS
-         HBbN6IDDjZcvuHmhbo2ch6HQaRS4SebPs+UqvLVe4BxpV2OnzbjwihnSMZCwLAWjzLI1
-         FytQbiitbFWUDcsf4WTxOZiNMeoBL6BBTb+8BCxL9uy69MhUmDHOf+pRUJz4nSuw05ab
-         35kA==
-X-Gm-Message-State: AO0yUKUnIrqh8hTGpqcU2sp4lx4C4o0kHc04Xh1uN9veGCvM2VSkYkqr
-        +z3GZmywE5rJTda30vV5KfI=
-X-Google-Smtp-Source: AK7set+t02ISuqkHwl46+XUcjwJTBXAtfqwc42XUAZrwlpi+bmSRMYlmn7pg1rHurkV3Z/xBA8lOYQ==
-X-Received: by 2002:a5d:564e:0:b0:2c9:993a:f4db with SMTP id j14-20020a5d564e000000b002c9993af4dbmr4812267wrw.7.1677492413873;
-        Mon, 27 Feb 2023 02:06:53 -0800 (PST)
+        bh=qAMEtyjFDybUtWkpyE6ui7qLzDRJJ6qwM16U5VTuzlg=;
+        b=6OmlpuUBVLbm4IDDqX7/p8MqK5ZKq2XZ5NvCuYLaPCmW+5iYkX/P6j1VRohi70WlFv
+         AUjRvtISZGISR+VylX9guCOJVXbWelN0gbb7EDenO3dXzuc8N96aoDUaz0WIqw+QCWJU
+         RmM4Lv6Bki4EO5fsOPO0Q3qRGHdoXos6aPbnACAV/klsgZ9Nn566mxq9xzFCZp7t594c
+         fHHaWm6AgYKuZmAIX3V+JCDb2DbZ6VKop+3SRu2Iq2GkNoGfYo1hzmxBr7JhuCNQaAAk
+         waoI140UGbBrIG0FA0PEe9Ue1+jpJVJJlI9CeVejaJBQfFXW2lMfGq1ntceNnO5NUdC1
+         Jp7Q==
+X-Gm-Message-State: AO0yUKWHcxvPwgfaETgY/nrEERBLY45kx1JPiEMrils+lbfjNTRBVp1M
+        6bojCU2VPcFGNdZY+fkS2NA=
+X-Google-Smtp-Source: AK7set+/ftDBmse6dEgq46GZHTuU3FWLKVD5J/HGxegFqt+baaFGyw9PDDL9gTRiJnuitgx1/F6bOg==
+X-Received: by 2002:a05:6000:15c4:b0:2c5:3fce:423b with SMTP id y4-20020a05600015c400b002c53fce423bmr7345353wry.4.1677492423829;
+        Mon, 27 Feb 2023 02:07:03 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e15-20020a5d594f000000b002c5d3f0f737sm6620989wri.30.2023.02.27.02.06.52
+        by smtp.gmail.com with ESMTPSA id p10-20020a5d458a000000b002c559def236sm6630643wrq.57.2023.02.27.02.07.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 02:06:53 -0800 (PST)
-Date:   Mon, 27 Feb 2023 13:06:50 +0300
+        Mon, 27 Feb 2023 02:07:02 -0800 (PST)
+Date:   Mon, 27 Feb 2023 13:06:59 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Boon Leong <boon.leong.ong@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>,
-        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] thermal: intel: quark_dts: fix error pointer dereference
-Message-ID: <Y/yAusqpje3MqS1N@kili>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm: rcar-du: Fix a NULL vs IS_ERR() bug
+Message-ID: <Y/yAw6sHu82OnOWj@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -69,44 +67,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If alloc_soc_dts() fails, then we can just return.  Trying to free
-"soc_dts" will lead to an Oops.
+The drmm_encoder_alloc() function returns error pointers.  It never
+returns NULL.  Fix the check accordingly.
 
-Fixes: 8c1876939663 ("thermal: intel Quark SoC X1000 DTS thermal driver")
+Fixes: 7a1adbd23990 ("drm: rcar-du: Use drmm_encoder_alloc() to manage encoder")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/thermal/intel/intel_quark_dts_thermal.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/intel/intel_quark_dts_thermal.c b/drivers/thermal/intel/intel_quark_dts_thermal.c
-index 97b843fa7568..ffdc95047838 100644
---- a/drivers/thermal/intel/intel_quark_dts_thermal.c
-+++ b/drivers/thermal/intel/intel_quark_dts_thermal.c
-@@ -400,22 +400,14 @@ MODULE_DEVICE_TABLE(x86cpu, qrk_thermal_ids);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index b1787be31e92..7ecec7b04a8d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -109,8 +109,8 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 	renc = drmm_encoder_alloc(&rcdu->ddev, struct rcar_du_encoder, base,
+ 				  &rcar_du_encoder_funcs, DRM_MODE_ENCODER_NONE,
+ 				  NULL);
+-	if (!renc)
+-		return -ENOMEM;
++	if (IS_ERR(renc))
++		return PTR_ERR(renc);
  
- static int __init intel_quark_thermal_init(void)
- {
--	int err = 0;
--
- 	if (!x86_match_cpu(qrk_thermal_ids) || !iosf_mbi_available())
- 		return -ENODEV;
+ 	renc->output = output;
  
- 	soc_dts = alloc_soc_dts();
--	if (IS_ERR(soc_dts)) {
--		err = PTR_ERR(soc_dts);
--		goto err_free;
--	}
-+	if (IS_ERR(soc_dts))
-+		return PTR_ERR(soc_dts);
- 
- 	return 0;
--
--err_free:
--	free_soc_dts(soc_dts);
--	return err;
- }
- 
- static void __exit intel_quark_thermal_exit(void)
 -- 
 2.39.1
 
