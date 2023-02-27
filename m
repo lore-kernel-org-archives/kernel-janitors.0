@@ -2,152 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3968C64ED8
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73848C64ED6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:13:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230019AbjB0KN2 (ORCPT
+        id S230074AbjB0KNm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Feb 2023 05:13:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54350 "EHLO
+        Mon, 27 Feb 2023 05:13:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbjB0KN1 (ORCPT
+        with ESMTP id S229867AbjB0KNl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Feb 2023 05:13:27 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2BA9113C8;
-        Mon, 27 Feb 2023 02:13:21 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A34041F8D9;
-        Mon, 27 Feb 2023 10:13:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1677492800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hyqifWMnIihxVxu2aPn4a3Z9GcWS0luycqzlGHRRrn4=;
-        b=d99jIcOpEtbiAnyNLIW2t+4dcNOSiPw5s2BPeiNyG2wZ8zQooAvsYCllkmmG/Kv9XnwHBX
-        2Cq0aCBQmVk3UrVOuT2O5lHOMePldqnP2ZNK9NCSQk4lH4o3imT5eI7RqpL2XjaW6uZ6Ch
-        RiahWDs0D4OgKDEik82yeaA+8svcJXA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1677492800;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hyqifWMnIihxVxu2aPn4a3Z9GcWS0luycqzlGHRRrn4=;
-        b=FdVyH4nsUYAmglJvx7okCMpVBiDDp8itsPAF/QNbzq1svc7Y+9eb88gsUpTHFEzN1gAHHI
-        fnDegI1vKOVzVoAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 819F713A43;
-        Mon, 27 Feb 2023 10:13:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Z9Z5HkCC/GM+bgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 27 Feb 2023 10:13:20 +0000
-Message-ID: <2673f515-9516-de13-3e59-4d473165010d@suse.de>
-Date:   Mon, 27 Feb 2023 11:13:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] fbdev: chipsfb: Fix error codes in chipsfb_pci_init()
-Content-Language: en-US
+        Mon, 27 Feb 2023 05:13:41 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39589F772
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Feb 2023 02:13:40 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pWaTS-000825-0r; Mon, 27 Feb 2023 11:11:14 +0100
+Received: from ore by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pWaTQ-0000gH-7e; Mon, 27 Feb 2023 11:11:12 +0100
+Date:   Mon, 27 Feb 2023 11:11:12 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Dan Carpenter <error27@gmail.com>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-References: <Y/yA53V/rW8g1Zlm@kili>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <Y/yA53V/rW8g1Zlm@kili>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------FdrI51bCTG0C9tJkYvxuMCBX"
+Cc:     Oleksij Rempel <linux@rempel-privat.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net: phy: unlock on error in phy_probe()
+Message-ID: <20230227101112.GB24064@pengutronix.de>
+References: <Y/x/6kHCjnQHqOpF@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Y/x/6kHCjnQHqOpF@kili>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------FdrI51bCTG0C9tJkYvxuMCBX
-Content-Type: multipart/mixed; boundary="------------gW0bBC9K44XeVzYvFXtgy5Lj";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Dan Carpenter <error27@gmail.com>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
- Yang Yingliang <yangyingliang@huawei.com>, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Message-ID: <2673f515-9516-de13-3e59-4d473165010d@suse.de>
-Subject: Re: [PATCH] fbdev: chipsfb: Fix error codes in chipsfb_pci_init()
-References: <Y/yA53V/rW8g1Zlm@kili>
-In-Reply-To: <Y/yA53V/rW8g1Zlm@kili>
+On Mon, Feb 27, 2023 at 01:03:22PM +0300, Dan Carpenter wrote:
+> If genphy_c45_read_eee_adv() fails then we need to do a reset and unlock
+> the &phydev->lock mutex before returning.
+> 
+> Fixes: 3eeca4e199ce ("net: phy: do not force EEE support")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
---------------gW0bBC9K44XeVzYvFXtgy5Lj
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-SGkNCg0KQW0gMjcuMDIuMjMgdW0gMTE6MDcgc2NocmllYiBEYW4gQ2FycGVudGVyOg0KPiBU
-aGUgZXJyb3IgY29kZXMgYXJlIG5vdCBzZXQgb24gdGhlc2UgZXJyb3IgcGF0aHMuDQo+IA0K
-PiBGaXhlczogMTQ1ZWVkNDhkZTI3ICgiZmJkZXY6IFJlbW92ZSBjb25mbGljdGluZyBkZXZp
-Y2VzIG9uIFBDSSBidXMiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxlcnJv
-cjI3QGdtYWlsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IFRob21hcyBaaW1tZXJtYW5uIDx0emlt
-bWVybWFubkBzdXNlLmRlPg0KDQp3aXRoIHRoZSBjb21tZW50cyBiZWxvdyBhZGRyZXNzZWQu
-DQoNCj4gLS0tDQo+ICAgZHJpdmVycy92aWRlby9mYmRldi9jaGlwc2ZiLmMgfCAxNCArKysr
-KysrKysrLS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCA0IGRl
-bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlkZW8vZmJkZXYvY2hp
-cHNmYi5jIGIvZHJpdmVycy92aWRlby9mYmRldi9jaGlwc2ZiLmMNCj4gaW5kZXggY2MzN2Vj
-M2Y4ZmMxLi45ODM5ODc4OTUyOGEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvdmlkZW8vZmJk
-ZXYvY2hpcHNmYi5jDQo+ICsrKyBiL2RyaXZlcnMvdmlkZW8vZmJkZXYvY2hpcHNmYi5jDQo+
-IEBAIC0zNTgsMTYgKzM1OCwyMSBAQCBzdGF0aWMgaW50IGNoaXBzZmJfcGNpX2luaXQoc3Ry
-dWN0IHBjaV9kZXYgKmRwLCBjb25zdCBzdHJ1Y3QgcGNpX2RldmljZV9pZCAqZW50KQ0KPiAg
-IAlpZiAocmMpDQo+ICAgCQlyZXR1cm4gcmM7DQo+ICAgDQo+IC0JaWYgKHBjaV9lbmFibGVf
-ZGV2aWNlKGRwKSA8IDApIHsNCj4gKwlyYyA9IHBjaV9lbmFibGVfZGV2aWNlKGRwKTsNCj4g
-KwlpZiAocmMgPCAwKSB7DQo+ICAgCQlkZXZfZXJyKCZkcC0+ZGV2LCAiQ2Fubm90IGVuYWJs
-ZSBQQ0kgZGV2aWNlXG4iKTsNCj4gICAJCWdvdG8gZXJyX291dDsNCj4gICAJfQ0KPiAgIA0K
-PiAtCWlmICgoZHAtPnJlc291cmNlWzBdLmZsYWdzICYgSU9SRVNPVVJDRV9NRU0pID09IDAp
-DQo+ICsJaWYgKChkcC0+cmVzb3VyY2VbMF0uZmxhZ3MgJiBJT1JFU09VUkNFX01FTSkgPT0g
-MCkgew0KPiArCQlyYyA9IC1FSU5WQUw7DQoNCkkgdGhpbmsgRU5PREVWIGlzIG1vcmUgYXBw
-cm9wcmlhdGUuIEFuZCBpdCdzIHRoZSBkZWZhdWx0IHZhbHVlIGZyb20gdGhlIA0Kb3JpZ2lu
-YWwgY29kZS4NCg0KPiAgIAkJZ290byBlcnJfZGlzYWJsZTsNCj4gKwl9DQo+ICAgCWFkZHIg
-PSBwY2lfcmVzb3VyY2Vfc3RhcnQoZHAsIDApOw0KPiAtCWlmIChhZGRyID09IDApDQo+ICsJ
-aWYgKGFkZHIgPT0gMCkgew0KPiArCQlyYyA9IC1FSU5WQUw7DQoNClNhbWUgaGVyZS4NCg0K
-QmVzdCByZWdhcmRzDQpUaG9tYXMNCg0KPiAgIAkJZ290byBlcnJfZGlzYWJsZTsNCj4gKwl9
-DQo+ICAgDQo+ICAgCXAgPSBmcmFtZWJ1ZmZlcl9hbGxvYygwLCAmZHAtPmRldik7DQo+ICAg
-CWlmIChwID09IE5VTEwpIHsNCj4gQEAgLTQxNyw3ICs0MjIsOCBAQCBzdGF0aWMgaW50IGNo
-aXBzZmJfcGNpX2luaXQoc3RydWN0IHBjaV9kZXYgKmRwLCBjb25zdCBzdHJ1Y3QgcGNpX2Rl
-dmljZV9pZCAqZW50KQ0KPiAgIA0KPiAgIAlpbml0X2NoaXBzKHAsIGFkZHIpOw0KPiAgIA0K
-PiAtCWlmIChyZWdpc3Rlcl9mcmFtZWJ1ZmZlcihwKSA8IDApIHsNCj4gKwlyYyA9IHJlZ2lz
-dGVyX2ZyYW1lYnVmZmVyKHApOw0KPiArCWlmIChyYyA8IDApIHsNCj4gICAJCWRldl9lcnIo
-JmRwLT5kZXYsIkMmVCA2NTU1MCBmcmFtZWJ1ZmZlciBmYWlsZWQgdG8gcmVnaXN0ZXJcbiIp
-Ow0KPiAgIAkJZ290byBlcnJfdW5tYXA7DQo+ICAgCX0NCg0KLS0gDQpUaG9tYXMgWmltbWVy
-bWFubg0KR3JhcGhpY3MgRHJpdmVyIERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlv
-bnMgR2VybWFueSBHbWJIDQpNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1h
-bnkNCihIUkIgMzY4MDksIEFHIE7DvHJuYmVyZykNCkdlc2Now6RmdHNmw7xocmVyOiBJdm8g
-VG90ZXYNCg==
+Thank you!
 
---------------gW0bBC9K44XeVzYvFXtgy5Lj--
+> ---
+>  drivers/net/phy/phy_device.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index 3f8a64fb9d71..9e9fd8ff00f6 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -3146,7 +3146,7 @@ static int phy_probe(struct device *dev)
+>  	 */
+>  	err = genphy_c45_read_eee_adv(phydev, phydev->advertising_eee);
+>  	if (err)
+> -		return err;
+> +		goto out;
+>  
+>  	/* There is no "enabled" flag. If PHY is advertising, assume it is
+>  	 * kind of enabled.
+> -- 
+> 2.39.1
+> 
+> 
 
---------------FdrI51bCTG0C9tJkYvxuMCBX
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmP8gj8FAwAAAAAACgkQlh/E3EQov+Ch
-aA/9GbcwRxWxkxz+JmD6gL6BryzEVqW4wkZXiqt2GKcu5eUz6LVa+29r1XpLtqUbpZ5a99+bCgau
-tw0zaUD4ZHosZNmzXK3NfRCQTIpQzdyuaS4m3x/rhnsumQHlxvFtRzC5TlT62bmC6cwAErrEOWoG
-vMQFJffgmogF5RlnvAg7UgMp/potuVqhzuh/GPsi7tq14NNLUSGs2j7FDWwt8iOzo6xhOIncFii8
-dEHWJd1T/2cH+jasyrljoR3WRHo+dbp5xEmJX0ZJJwtA3X9HMUPeX+jH8GW0LIy85DJphkCG7aVY
-woxMopK4qVx+WsS4SK2uTrA2nQFfrkxxnRyftl+HC72JXHUxIlQWKaxN3Argm1nTVgNm6kXCdluU
-WINleE1YPUpo+FczxEtL3lXgun0oqJkb7YNgQjIeQ0uOX44ClPilmRL/VZj1SgNLcmpRg+1+LcZ6
-yBtfIO1kskFo2uAREC7FmV4JttDk0n38/+B49ArZJFaM6g7ezk1osVOYMVqO7Bky5giDUWJHf3Z8
-/GOp98ntyPijdlxGdeodX0ujT7WNa2u0tzALFLLHLbvLmW1DL94xkhZYQakdJ1vUoSsTqrOA6Hcl
-z1mzJT9Wa6QHD24/BpYGKv8XiL7yoEp17JyRhWx02ylA/MgbBAIx7aIGGh5x0s40bcM7QtlLz0Yi
-CqE=
-=9rdz
------END PGP SIGNATURE-----
-
---------------FdrI51bCTG0C9tJkYvxuMCBX--
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
