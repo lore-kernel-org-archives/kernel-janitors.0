@@ -2,60 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D85C7EE2D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C323DC7EE2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 10:07:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229850AbjB0KGm (ORCPT
+        id S229763AbjB0KHD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Feb 2023 05:06:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48016 "EHLO
+        Mon, 27 Feb 2023 05:07:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229872AbjB0KGl (ORCPT
+        with ESMTP id S229688AbjB0KHC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Feb 2023 05:06:41 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1024A1D908;
-        Mon, 27 Feb 2023 02:06:39 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id q16so5584401wrw.2;
-        Mon, 27 Feb 2023 02:06:38 -0800 (PST)
+        Mon, 27 Feb 2023 05:07:02 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6081E1EBE6;
+        Mon, 27 Feb 2023 02:06:55 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id bt28so5559049wrb.8;
+        Mon, 27 Feb 2023 02:06:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LHUpbKilmk7cv1IdpC+KRbByny6PyYIiDNlZO12FoT4=;
-        b=lgKfKNJftgfACpxpYfriycZ3sy6njWYalCTnYyTnqUo2GdVm+9HEMo0ZDNbcFMxcG8
-         TqaYPDpD8TTz3F4qaRSrfTaGVtCe5c5vL0QjbicwbUIF95iGpywbu8Q/ElrE++REkkT1
-         /9LxllsjaRETEXaVh2EG/Ey6uISlQ3XJNtssQ4ilICNWuacKO+y0dWV9rwq/5umpWEls
-         QNsbbrFW6hQvyZS7z56GBJcGfdNDq9aAsrSeiziNyaoEIRVu2ToX8NYBgknWwYH/ZZHM
-         LHSVL/N1wckhOrgrtNEvB2QDsDSHiv2deTqMBLH5uKQbJg9Fl1Jb7OwaQr7IOI6Gr5cK
-         5A6A==
+        bh=yJDKXszmmKLN/R4d+/6xdWOXvYFvI2xH82tZbAjm4g8=;
+        b=KbugpxkvguhSI2rmjI2w2+7SfWTVbj4WqjS+DU7abkH7AmVjkvrP2Qak0bH+OAav96
+         Kj+PDHJHcv/iQJSgDSTHhj9NdXHcpeZZWNNeX2bUEMjU5Siq5XiGsAbUnhK38386rTxl
+         bB3JlRKZ2N70hajSrS3xeaBDRb5+NYxIbvJv2u5hzkdLB+LPwfTRzHNo9CZ1GnwWVkWn
+         ZPjkNZPgPi3gnsOSPny2gMTAOmTWtGaux+iOmiO+3hV1/BoO7VbxyzPM6pb7obOP/EI4
+         6xBFx+G9RfR1xt+p9asA/OJIqVnlmFNZFEAi8ln4w27dILRcJGajv5M1BKa1wrmOZMeW
+         1p1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LHUpbKilmk7cv1IdpC+KRbByny6PyYIiDNlZO12FoT4=;
-        b=JOp7jTY/4enCKC76BLyVM8H5CuDvs/hWQeTnc2x9AG/5QI2+H6M+To5kgVp+Tg8SYi
-         1BSYdUr/X5tR4wX/RcCJ8dKvau3MGP0zsLrgxJLqY5mHWzOChoetLXX5uBgVlYkQJH+z
-         gROdifA/bsmy8aQWQQjVz57+qnnFIfMxUuIlRdzVRLg3v3QZ0/62Jbcu4dyZ8qQEpRsx
-         bqcWLZtmYb1G4ymhLbigmlEjRtb2+HYlrJqjMOQye/t9e/FbTLmorX7gvoMSVwBlzWeO
-         vUazCE+ggwq/zutPxL3A3KFEp6+kwhaEtuUk1ONW9vTup1oNr2vUltPGXCtIHJPKUENX
-         31GQ==
-X-Gm-Message-State: AO0yUKVizoW7YUQXEE9+tR8dm3peK33SbxViEjMuGFaeW0XdmRKGZZaW
-        It3Cn8UaGMUFvNNbK74jt6w=
-X-Google-Smtp-Source: AK7set+IrbaplolR3MswH0vPZMGtfKW+MMNXJSN9VsL8h4csEg2LUHtg38D6EwSu4UKeQ0MxLP89Hg==
-X-Received: by 2002:a05:6000:11d2:b0:2c7:1603:16c5 with SMTP id i18-20020a05600011d200b002c7160316c5mr10590792wrx.67.1677492397487;
-        Mon, 27 Feb 2023 02:06:37 -0800 (PST)
+        bh=yJDKXszmmKLN/R4d+/6xdWOXvYFvI2xH82tZbAjm4g8=;
+        b=T6/R/f6iGS7GfATEQogCjxdJF5Na6lcCu2IU2Ht7uGauIDdi7/xXPNhEFFIX716Ut0
+         rBLhTrQ3e//sX0yYN7b/yv8X52kFLxziNH03ekKsfUmYsKU8OS5EeTI3DMpViyN11LpE
+         CcqGe+otLa8Htx+CmNLCi4EUPh1gYo2TwZgmvCZkQjkgneLm1AkqzW/UpTTukNqwyJtS
+         HBbN6IDDjZcvuHmhbo2ch6HQaRS4SebPs+UqvLVe4BxpV2OnzbjwihnSMZCwLAWjzLI1
+         FytQbiitbFWUDcsf4WTxOZiNMeoBL6BBTb+8BCxL9uy69MhUmDHOf+pRUJz4nSuw05ab
+         35kA==
+X-Gm-Message-State: AO0yUKUnIrqh8hTGpqcU2sp4lx4C4o0kHc04Xh1uN9veGCvM2VSkYkqr
+        +z3GZmywE5rJTda30vV5KfI=
+X-Google-Smtp-Source: AK7set+t02ISuqkHwl46+XUcjwJTBXAtfqwc42XUAZrwlpi+bmSRMYlmn7pg1rHurkV3Z/xBA8lOYQ==
+X-Received: by 2002:a5d:564e:0:b0:2c9:993a:f4db with SMTP id j14-20020a5d564e000000b002c9993af4dbmr4812267wrw.7.1677492413873;
+        Mon, 27 Feb 2023 02:06:53 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id j14-20020a5d464e000000b002c558869934sm6723878wrs.81.2023.02.27.02.06.36
+        by smtp.gmail.com with ESMTPSA id e15-20020a5d594f000000b002c5d3f0f737sm6620989wri.30.2023.02.27.02.06.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 02:06:37 -0800 (PST)
-Date:   Mon, 27 Feb 2023 13:06:33 +0300
+        Mon, 27 Feb 2023 02:06:53 -0800 (PST)
+Date:   Mon, 27 Feb 2023 13:06:50 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Nick Hawkins <nick.hawkins@hpe.com>
-Cc:     Joel Stanley <joel@jms.id.au>, Wolfram Sang <wsa@kernel.org>,
-        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] i2c: gxp: fix an error code in probe
-Message-ID: <Y/yAqRlSTN5VygUy@kili>
+To:     Boon Leong <boon.leong.ong@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>,
+        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] thermal: intel: quark_dts: fix error pointer dereference
+Message-ID: <Y/yAusqpje3MqS1N@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,28 +69,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is passing IS_ERR() instead of PTR_ERR() so instead of an error
-code it prints and returns the number 1.
+If alloc_soc_dts() fails, then we can just return.  Trying to free
+"soc_dts" will lead to an Oops.
 
-Fixes: 4a55ed6f89f5 ("i2c: Add GXP SoC I2C Controller")
+Fixes: 8c1876939663 ("thermal: intel Quark SoC X1000 DTS thermal driver")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/i2c/busses/i2c-gxp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thermal/intel/intel_quark_dts_thermal.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-gxp.c b/drivers/i2c/busses/i2c-gxp.c
-index da4c8e5a8039..e2a322813074 100644
---- a/drivers/i2c/busses/i2c-gxp.c
-+++ b/drivers/i2c/busses/i2c-gxp.c
-@@ -525,7 +525,7 @@ static int gxp_i2c_probe(struct platform_device *pdev)
- 		i2cg_map = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
- 							   "hpe,sysreg");
- 		if (IS_ERR(i2cg_map)) {
--			return dev_err_probe(&pdev->dev, IS_ERR(i2cg_map),
-+			return dev_err_probe(&pdev->dev, PTR_ERR(i2cg_map),
- 					     "failed to map i2cg_handle\n");
- 		}
+diff --git a/drivers/thermal/intel/intel_quark_dts_thermal.c b/drivers/thermal/intel/intel_quark_dts_thermal.c
+index 97b843fa7568..ffdc95047838 100644
+--- a/drivers/thermal/intel/intel_quark_dts_thermal.c
++++ b/drivers/thermal/intel/intel_quark_dts_thermal.c
+@@ -400,22 +400,14 @@ MODULE_DEVICE_TABLE(x86cpu, qrk_thermal_ids);
  
+ static int __init intel_quark_thermal_init(void)
+ {
+-	int err = 0;
+-
+ 	if (!x86_match_cpu(qrk_thermal_ids) || !iosf_mbi_available())
+ 		return -ENODEV;
+ 
+ 	soc_dts = alloc_soc_dts();
+-	if (IS_ERR(soc_dts)) {
+-		err = PTR_ERR(soc_dts);
+-		goto err_free;
+-	}
++	if (IS_ERR(soc_dts))
++		return PTR_ERR(soc_dts);
+ 
+ 	return 0;
+-
+-err_free:
+-	free_soc_dts(soc_dts);
+-	return err;
+ }
+ 
+ static void __exit intel_quark_thermal_exit(void)
 -- 
 2.39.1
 
