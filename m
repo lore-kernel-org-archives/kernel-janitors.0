@@ -2,80 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 322A0C7EE2E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Feb 2023 12:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA618C6FA8E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Feb 2023 18:06:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231219AbjB1MAY (ORCPT
+        id S229571AbjB1SGO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Feb 2023 07:00:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58546 "EHLO
+        Tue, 28 Feb 2023 13:06:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231789AbjB1MAV (ORCPT
+        with ESMTP id S229451AbjB1SGN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Feb 2023 07:00:21 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4244E2D17B;
-        Tue, 28 Feb 2023 04:00:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F55A61052;
-        Tue, 28 Feb 2023 12:00:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DAD40C4339B;
-        Tue, 28 Feb 2023 12:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677585618;
-        bh=TybXlXsEufGFAnnew4E4g1LpOUYh/t//K0Edna/zuN0=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=YXNQY1sqHjZwZTiRJZBAy5R4kVpCulVkstnmha0VJIk9K4uIIGpF5bofLIDNYav1c
-         ofgnGDq2llhVhEfq7P3smo5YpiQP+hJVF4CsSz/O3M7NosZAZqPZlQWtXdZ1H0gDjr
-         brUZlr9holeUCOGs/eIU7DBLxBlMolofy+g3fGtWaIi5q2+8LczNNMXBvtP57naG2z
-         ZgJzQfiJy9q3SAX6PJr4xH9EpjNIGqwc3EdkchkcHS0uhGg2pT7qFyLNsEDcK6Wq2x
-         qStxcc5piyL3eq6rMHN/xQbo0bg5oweEktUS4gOMUhBYNoQLuq3r+/gpLp8QbqImEK
-         eDZp4dCDw1epg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BD244C691DE;
-        Tue, 28 Feb 2023 12:00:18 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 28 Feb 2023 13:06:13 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37B1C22A3B;
+        Tue, 28 Feb 2023 10:06:10 -0800 (PST)
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31SI26in018800;
+        Tue, 28 Feb 2023 18:06:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=hVktTuDzbdnCEYqkslltKYwTzBv1mpYfJVOt2DKa9qY=;
+ b=UXMozoPZvP/ISehujz8YpZ9+hHc/qHKmIfMfcuri2WZ/YPfdpFZrm3A5r+LeiGBap7gp
+ BNeV1WGYwKgf43LzauYsr9YdQStwrzf8O7QMf5kEYd5p0bSQbSNrPHA5CP3XfmE2DGJR
+ 5rvv9Yx31jxc6wbIaJWtv4EnZRS5WX20ub2At30vzIp8WbbhV1Qo5ov7JjLY/fdwM/fo
+ jc/DSnRduFnm/Sg91OiwKbk7Nb4L7ZpcgGemyo0kwIkO5TpMH8NadhrgSbTjvKTzJCr+
+ HZAUqASEJayB5FTzjyAh6Lc1kOuet0sqibReJt+cRGck5xp2lot5sgAf4Z7fEKtfgam/ AQ== 
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p1pg4g7g3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Feb 2023 18:06:05 +0000
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 31SCtbHr021478;
+        Tue, 28 Feb 2023 18:06:04 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+        by ppma05fra.de.ibm.com (PPS) with ESMTPS id 3nybbytgh7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Feb 2023 18:06:04 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31SI60N73277388
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Feb 2023 18:06:00 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8A27520040;
+        Tue, 28 Feb 2023 18:06:00 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0699420043;
+        Tue, 28 Feb 2023 18:06:00 +0000 (GMT)
+Received: from osiris (unknown [9.171.64.87])
+        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Tue, 28 Feb 2023 18:05:59 +0000 (GMT)
+Date:   Tue, 28 Feb 2023 19:05:58 +0100
+From:   Heiko Carstens <hca@linux.ibm.com>
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     freude@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
+Subject: Re: [PATCH] s390/zcrypt: remove unnecessary (void*) conversions
+Message-ID: <Y/5Chi/JhrSoI65x@osiris>
+References: <20230223011212.13045-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: phy: unlock on error in phy_probe()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167758561876.17796.13786935429522256800.git-patchwork-notify@kernel.org>
-Date:   Tue, 28 Feb 2023 12:00:18 +0000
-References: <Y/x/6kHCjnQHqOpF@kili>
-In-Reply-To: <Y/x/6kHCjnQHqOpF@kili>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     linux@rempel-privat.de, hkallweit1@gmail.com,
-        linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, rmk+kernel@armlinux.org.uk,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230223011212.13045-1-yuzhe@nfschina.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: elmniAKSCf8pBBed_WnnqvhNx09CDqq_
+X-Proofpoint-GUID: elmniAKSCf8pBBed_WnnqvhNx09CDqq_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-02-28_15,2023-02-28_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ malwarescore=0 clxscore=1011 suspectscore=0 bulkscore=0 mlxscore=0
+ impostorscore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302280146
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Mon, 27 Feb 2023 13:03:22 +0300 you wrote:
-> If genphy_c45_read_eee_adv() fails then we need to do a reset and unlock
-> the &phydev->lock mutex before returning.
+On Thu, Feb 23, 2023 at 09:12:12AM +0800, Yu Zhe wrote:
+> Pointer variables of void * type do not require type cast.
 > 
-> Fixes: 3eeca4e199ce ("net: phy: do not force EEE support")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 > ---
->  drivers/net/phy/phy_device.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/s390/crypto/zcrypt_msgtype6.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/zcrypt_msgtype6.c b/drivers/s390/crypto/zcrypt_msgtype6.c
+> index 5ad251477593..09b714c6adc3 100644
+> --- a/drivers/s390/crypto/zcrypt_msgtype6.c
+> +++ b/drivers/s390/crypto/zcrypt_msgtype6.c
+> @@ -926,8 +926,7 @@ static void zcrypt_msgtype6_receive(struct ap_queue *aq,
+>  		.type = TYPE82_RSP_CODE,
+>  		.reply_code = REP82_ERROR_MACHINE_FAILURE,
+>  	};
+> -	struct response_type *resp_type =
+> -		(struct response_type *)msg->private;
+> +	struct response_type *resp_type = msg->private;
+>  	struct type86x_reply *t86r;
+>  	int len;
 
-Here is the summary with links:
-  - [net] net: phy: unlock on error in phy_probe()
-    https://git.kernel.org/netdev/net/c/8f9850dd8d23
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+There are many more of this. Please convert all of them, or none.
