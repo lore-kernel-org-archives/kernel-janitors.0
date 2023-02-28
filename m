@@ -2,158 +2,151 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A55D3C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Feb 2023 18:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28E7C64EC7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Feb 2023 08:49:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229819AbjB0SNT (ORCPT
+        id S231226AbjB1ItG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Feb 2023 13:13:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42666 "EHLO
+        Tue, 28 Feb 2023 03:49:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230495AbjB0SNO (ORCPT
+        with ESMTP id S231256AbjB1Isn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Feb 2023 13:13:14 -0500
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2067.outbound.protection.outlook.com [40.107.96.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06291B570;
-        Mon, 27 Feb 2023 10:13:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xs4b+105t91lVejPx7L5d2WRLhvvr10tWquEIsJAeD9gDPmj+9JCBhzHvyc3lwow/eAa7NKL/S70JhbG+IaKER4UBhIaQ302FxcVDqlQ4ma1nKuH7EYxGVBUQXiDhIRL/B2Ti93Kf+8uwYyukboYRM2lfgeD9QhoFRuZUlKsB2lGxx2rvnUauukpIHf51xn/hUefgHm4hAYnp2BNNrsocVeSGOzCN+x1kcP84Hrc8QJwoZiQLmKnot9o1LclYYmZQyGDVYXt6FnJ8MDvMp+KXjlt4HHmQggGsdg3cao91S5UVeb0CM2M9YsRFib1uQ84LOhsU9sdbjKBL/ewFcHk+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n5SUfGF2fMwWHS5iiGjI42bTPu09/NKSl39Ozci3bqE=;
- b=jkGpnemx2dCVmUjAGJWuKequmUKdubhI2abWIJqsDxzVOh06/m0lLNOwKFVlhIw5zKaf6OeiTRCEa3YIvBGKF1s1rJcYMfVky2D0x8HONiI/x1UmNfmeuTQobMO5CzDpQLGvUp1sSDNlsqgjbHslAj2b0C0j93set2MhKG7fYWHtEQ1J0j1p2ZnPaM7urXvkEmJemYD6MWpvaJTa6QZwLUpGCqcsCwIxEG7j0yyfTE+hzEvHdabhMHdPd8HqKw4ZKD51dz+SKOCs9E3e6WapfvrGbt3pzb3mJq+IpkECrgjmhiXmpwLLTEwk8OaIVBWEdpPUWromu/bh/KtRKgfayQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n5SUfGF2fMwWHS5iiGjI42bTPu09/NKSl39Ozci3bqE=;
- b=PZoqaY+ZBEeFDyQwqhKZkgHVPDrWkYm8UP08QC1DBsAJMw9juN50juVP+uOHgt6EcIep5eFXR1hc6c3kcWReJ93BrUSTLul9qUyJ2+nrk8mw82Bw6sHST7OS6IP/MAJIzhc97wRGEmEiuSp6+1DjWoYxKBUOB41DDMJsDs+294kS0BmbhgamEr/oMXAcpl5hSK6xs9p7IrMBZMcdx7K3zF4bx6RkO2Ro7VP1nL/xd/G88n06X/2riaS4Gfn5mjtKmjZvWk4o500Ui2WUEuTRlWzyZl+kW7wUlfkCgBy216xfGuaaBE1UDjFLXMVDBCHHbyudrpDny0D42cGyW7+3TQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH0PR12MB5330.namprd12.prod.outlook.com (2603:10b6:610:d5::7)
- by SJ1PR12MB6313.namprd12.prod.outlook.com (2603:10b6:a03:458::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.29; Mon, 27 Feb
- 2023 18:13:09 +0000
-Received: from CH0PR12MB5330.namprd12.prod.outlook.com
- ([fe80::9ac7:2373:addf:14ec]) by CH0PR12MB5330.namprd12.prod.outlook.com
- ([fe80::9ac7:2373:addf:14ec%3]) with mapi id 15.20.6134.029; Mon, 27 Feb 2023
- 18:13:09 +0000
-Message-ID: <7e5aea12-7c56-bc11-69fd-a608cfa4eb93@nvidia.com>
-Date:   Mon, 27 Feb 2023 20:13:01 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101
- Thunderbird/110.0
-Subject: Re: [PATCH net] net/mlx5: E-Switch, Fix an Oops in error handling
- code
-To:     Dan Carpenter <error27@gmail.com>, Vu Pham <vuhuong@mellanox.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maor Dickman <maord@nvidia.com>,
-        Mark Bloch <markb@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <Y/yQ+kk/cQdXKBLw@kili>
-Content-Language: en-US
-From:   Roi Dayan <roid@nvidia.com>
-In-Reply-To: <Y/yQ+kk/cQdXKBLw@kili>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FRYP281CA0002.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::12)
- To CH0PR12MB5330.namprd12.prod.outlook.com (2603:10b6:610:d5::7)
+        Tue, 28 Feb 2023 03:48:43 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB89B2B2B1;
+        Tue, 28 Feb 2023 00:48:18 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 6946A1FDC2;
+        Tue, 28 Feb 2023 08:48:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1677574097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BLSztfM44hsCyXZ+LLDqJiVS1PmJTJb1OVTq280F8R0=;
+        b=KsfYhyv4BLuzV1DToVfqTyGdiHsJZda8ovv2q0h0WZ+2jN/R32hgF6z06Y/qNqvF2U7GDE
+        sULgjQ8NdnyQChk0F9eFkqdDTJey6yCoc8h/5UBtYS9sg+DpUAo6AeumjCqHuX5uPinKOJ
+        A1y7ZnT/YdILEOgzCCBz2Qy75G7LgPk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1677574097;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BLSztfM44hsCyXZ+LLDqJiVS1PmJTJb1OVTq280F8R0=;
+        b=FcYMoMM/2yDf/rwgd1q5vwYJzlUXqnpPdnrrxzCb66kKdBBMRigbNUZ6O4+wW62CaFcunz
+        DPAOVMetaNn263BA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 46F4413440;
+        Tue, 28 Feb 2023 08:48:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id OydcENG//WNuIQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Tue, 28 Feb 2023 08:48:17 +0000
+Message-ID: <af58dfc7-3957-0dad-0e8f-6deb17554f6e@suse.de>
+Date:   Tue, 28 Feb 2023 09:48:16 +0100
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR12MB5330:EE_|SJ1PR12MB6313:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ab30e50-8235-45b8-1ca2-08db18ee478f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4gXfB+mcwNQ5hFu7k2VDy/XKeZFL9FoAQqYHqijwbvczXadsn1QWHFM6K697Te3DSyQ2c0fKRMFlBTcHsV+7LcEEIWmn1Cn65iHA+0MrvVXLDTdszdpN+jKwnn5rVx4GSMh/Hsr4JPzgr3mClydFk99ZyFdMaZQhVfh6fN+4uTzuS7V7/48tJ6cEWy3F0/P5hbYjNF8pIuVGn5hedDfxjS5UFn8066/eGIuKxl8o1zzl7Ec4Ea01vskqPLBp3nQdjHaQkWF4+zuwqq3X74gMEA4pXwYzj9vqLqchKqLx2C7CkI3YTCiZvJpflshYd9FF7VfUgCmdAKErvLjkyE5rE/XGI4DmNSiWsF08mY1vl7T5GrFVWBkMohvv5CWBGA4966wvkKauCmi8olX9Wyi5XxwzLZetgzS9YOIcxWjGFsYZZJRJgCt6V2U+81Iny5nbgkmtgjWL5FO66JhYbS+tEnYQKVrckrET0qgD39ttCMWzi5Z3PNZ8hidQEQNIA9WOcxTfvbE/gbq4DjoE8QwUcZYG7+tKHMXfv+gmCmSoGk4HVpcPYp2x6ugFMjWdN2652AKGDApzR45m5hLN3Ea3lJTVqRKj+HS8AoA901QlqDyVYLDL1sH/hU0yL1pq91fhjD6XC3ZgGRnjGh9VnKV1u/OQAq/V9RAYeUMfashJXWuoAwTMyE2oGed8rUbI6aO6WudObvMiB+MWMHbtL/DQbGYf9dvH0TXgFUao9bZmBjE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR12MB5330.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(346002)(376002)(136003)(366004)(396003)(451199018)(36756003)(54906003)(110136005)(316002)(83380400001)(6666004)(6486002)(8936002)(2616005)(53546011)(6512007)(478600001)(6506007)(26005)(186003)(41300700001)(86362001)(66946007)(66476007)(31696002)(5660300002)(2906002)(66556008)(8676002)(38100700002)(4326008)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dXFOQWdMOXM1eHltU3NJR0J2L1NvVHFmZjBPMDd5ZjUxSDdlVi9mSWNDWFh1?=
- =?utf-8?B?SmlwTnZIQXkveHUrWDRPMEpyNTF5eEdzRWYrek1MS1U4dzBoSDZrZEUzSjZw?=
- =?utf-8?B?RkJUdFkvbGsrYXlNNXZBbWRaSS9Wcm5QMTRBL1VBWWNmeERVQXc2Qnk5VjF4?=
- =?utf-8?B?M1RiOEdtWlYxeWVCWVVtN1JwWWJTenRrUDZlcXBGOEZ5Z3hqakFCNVZVVTE3?=
- =?utf-8?B?TGpVWnJocTVaOC9pMllUaSs5ZzE3Y1dQY1YrVkVCRnFMOXREaTJpTFJ2MFpL?=
- =?utf-8?B?dndkenRlMU1OeEVJOWpSWGlPS3lLczlXN2k1Mk9oM1libC9pOHBSVHFBQjlF?=
- =?utf-8?B?VFhoL2U3TVZ6bWVGSFgzWWlMeXc3Y0F6SVpWV1NDNDFXVHdEL1dkYVdrN25k?=
- =?utf-8?B?TlpqL3h6Y1hQam1NWHYvRmZaNW9PRW1nZlBVRDc3Ri9sTldNVE9mRUpWVW9k?=
- =?utf-8?B?Q1o1NjU1a0pqV1Y3UkNrZlg5RFpzWkh1MmVqUm8xbENMVjVIS0tWbHV1OTY5?=
- =?utf-8?B?QzlVV0VLM1Bxc0Z1OW50TnRtWnBMUWxFYXZZSVF3ZU1sWHE3YkxMTkIrVDFB?=
- =?utf-8?B?UUJpM0pNQUc3UnA2SEprby9VbDNPRmlIQ0tKWXNnZklsVlhLa0dKUFlnRm9n?=
- =?utf-8?B?MlM3UEoxa2VBdkJVRUJyc0ZKTXNKNFhaSEhpWWhFMGtXTW1SNmlsb3JiajFG?=
- =?utf-8?B?eWYzL04rR3BFajR3eWIySHNjZklGeHhBVG9RQmY3aU1yUy9oUWRBMGcwOUZB?=
- =?utf-8?B?UGdXWHBucVhiSGJQaWN3TldBL3liUlRKSENCMHNETEFhSnoxLzAyQ2dWMmV1?=
- =?utf-8?B?dlB4NnN2azk1dGdGUS9EcVNaVkM4dFd6eHk5TDJqaW1wT3ZvTmMxVEJhUWYx?=
- =?utf-8?B?YXBua2Z1ZFpWMmVVdlhkamJJeERjeW5LYWUvb2lnaFRUa21WL21WYnNlSW5a?=
- =?utf-8?B?bnNmU00wZURXTys0Zno3cFhUckVuVUI2SDNXT0R0UVBURHM5T0c4bkhFcjBa?=
- =?utf-8?B?dXFBWDRmNGhVRHloTzZKZmZkN1R1UFpnbVdtTEY0VEJkN3pNZlloaitDbStu?=
- =?utf-8?B?UUdJYytSVi9xbGQ3dnIrQzI2NXdaNWtBVmVUNWFrRHl3S0tDOHBuMEo3ZGU0?=
- =?utf-8?B?OVVkQUQ2ditONXNETmxBV2Zpakd5eEVYM05XUkUrL0ROZGxVYUFOMTRyME9x?=
- =?utf-8?B?QTFLeFk3MUZOQjZzbnorR3czODNjVEw2b2FMZmtORC91a3RMUy9qelRPaDZN?=
- =?utf-8?B?MHZNMjBEQ0dWLzhGM21ia3dFdzhGdTd4cGIxMUk0bno5N1llU2xLaDFIdjZr?=
- =?utf-8?B?ZzZaczg5RWYreWJ0Q21sVVhXNXFzMUVGYTBpMXVkMkpHZGMxRVVnZVdJZy80?=
- =?utf-8?B?K0ZhVWh3WlVKemx6SFJOTnh6dXpzdzViMDZGMzB3ajhmbXVDeGtqaFQ1Zith?=
- =?utf-8?B?OERCRzlhNTNJcVBMMnh2QW5UYWZnYmMxdWFyaXZ5Ym9lWkFHeGFMSVB5azE2?=
- =?utf-8?B?VFF0UnhpbXpjeE5jWFlVakEvcXpqS1FTeDRHMi9STTNWZGRGV0UzU0hqS2xV?=
- =?utf-8?B?czlLY1ZIS240WlN6VUt2WGVsMTM0SXF4a0VTOHRHM0lFazg1V0FPdEkxYmNh?=
- =?utf-8?B?RERnNHZvbGoyNGE4V3BLK1RIZ3ZtR1RZRUhHcDFxa3AzQW93RGdjVlh1enNu?=
- =?utf-8?B?ODJJbFNWTG0yY3RHYmRUNm91S1I1UjQ5dHRydTZMS1RZdmRGZlQza0laTWRS?=
- =?utf-8?B?V3AwNmhTa1VxVy9Kc0wwS2t3UUNRVW1UclVrVjlvTUsybnVta1FSNDBpbTFS?=
- =?utf-8?B?WTNSRGs1MTlNVVhQSkpRVjByS2crc1c4KzRpckFIWWd6RUR5NG42OUNFN0lK?=
- =?utf-8?B?dy9LNXpYcWFCZHlSUmRaNnA4NmlrWXFEdFZDd3lZZ2JsTm1GSHhlazd2M1hX?=
- =?utf-8?B?a3MrRkpxd0JxYmVNamNYMlJ6bmg3emZZbDJ3eHJCbjRuK3ZybHRlY20vZ3Ex?=
- =?utf-8?B?VldSbFV4cnJjdkhYckxET1pXNmt6a1hMbTFQTTczTjFNOGpOYVdoZmhtTmdM?=
- =?utf-8?B?dlQzcnRtWmZQRFNQdzZiY011MmtSbDZVOUlkTm5rU2lhc29iRzJsYnFsYXRJ?=
- =?utf-8?Q?U809whZGeaPrBsAKV3bJIkw3K?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ab30e50-8235-45b8-1ca2-08db18ee478f
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR12MB5330.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2023 18:13:09.0538
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3KA/kyaQ0K1Qa+vukw8i1NEVDiyauQ3BR3NJaRUKvz65iiytGvej+oBnwKRu/4ih
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6313
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2] fbdev: chipsfb: Fix error codes in chipsfb_pci_init()
+Content-Language: en-US
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+References: <Y/yG+sm2mhdJeTZW@kili>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <Y/yG+sm2mhdJeTZW@kili>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------htUbmMqId4a9dbpmsvnUlZ0O"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------htUbmMqId4a9dbpmsvnUlZ0O
+Content-Type: multipart/mixed; boundary="------------3Duuibyufp3t47ZR1Qe95z8g";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+ Yang Yingliang <yangyingliang@huawei.com>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Message-ID: <af58dfc7-3957-0dad-0e8f-6deb17554f6e@suse.de>
+Subject: Re: [PATCH v2] fbdev: chipsfb: Fix error codes in chipsfb_pci_init()
+References: <Y/yG+sm2mhdJeTZW@kili>
+In-Reply-To: <Y/yG+sm2mhdJeTZW@kili>
 
+--------------3Duuibyufp3t47ZR1Qe95z8g
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-On 27/02/2023 13:16, Dan Carpenter wrote:
-> The error handling dereferences "vport".  There is nothing we can do if
-> it is an error pointer except returning the error code.
-> 
-> Fixes: 133dcfc577ea ("net/mlx5: E-Switch, Alloc and free unique metadata for match")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c b/drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c
-> index d55775627a47..50d2ea323979 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/esw/acl/ingress_ofld.c
-> @@ -364,8 +364,7 @@ int mlx5_esw_acl_ingress_vport_metadata_update(struct mlx5_eswitch *esw, u16 vpo
->  
->  	if (WARN_ON_ONCE(IS_ERR(vport))) {
->  		esw_warn(esw->dev, "vport(%d) invalid!\n", vport_num);
-> -		err = PTR_ERR(vport);
-> -		goto out;
-> +		return PTR_ERR(vport);
->  	}
->  
->  	esw_acl_ingress_ofld_rules_destroy(esw, vport);
+TWVyZ2VkIGludG8gZHJtLW1pc2MtZml4ZXMuDQoNCkFtIDI3LjAyLjIzIHVtIDExOjMzIHNj
+aHJpZWIgRGFuIENhcnBlbnRlcjoNCj4gVGhlIGVycm9yIGNvZGVzIGFyZSBub3Qgc2V0IG9u
+IHRoZXNlIGVycm9yIHBhdGhzLg0KPiANCj4gRml4ZXM6IDE0NWVlZDQ4ZGUyNyAoImZiZGV2
+OiBSZW1vdmUgY29uZmxpY3RpbmcgZGV2aWNlcyBvbiBQQ0kgYnVzIikNCj4gU2lnbmVkLW9m
+Zi1ieTogRGFuIENhcnBlbnRlciA8ZXJyb3IyN0BnbWFpbC5jb20+DQo+IFJldmlld2VkLWJ5
+OiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4NCj4gLS0tDQo+IHYy
+OiBJIGFjY2lkZW50YWxseSByZXR1cm5lZCAtRUlOVkFMIGluc3RlYWQgLUVOT0RFVi4NCj4g
+ICAgICBBZGQgVGhvbWFzJ3MgUmV2aWV3ZWQtYnkgdGFnLg0KPiANCj4gICBkcml2ZXJzL3Zp
+ZGVvL2ZiZGV2L2NoaXBzZmIuYyB8IDE0ICsrKysrKysrKystLS0tDQo+ICAgMSBmaWxlIGNo
+YW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy92aWRlby9mYmRldi9jaGlwc2ZiLmMgYi9kcml2ZXJzL3ZpZGVvL2Zi
+ZGV2L2NoaXBzZmIuYw0KPiBpbmRleCBjYzM3ZWMzZjhmYzEuLjc3OTlkNTJhNjUxZiAxMDA2
+NDQNCj4gLS0tIGEvZHJpdmVycy92aWRlby9mYmRldi9jaGlwc2ZiLmMNCj4gKysrIGIvZHJp
+dmVycy92aWRlby9mYmRldi9jaGlwc2ZiLmMNCj4gQEAgLTM1OCwxNiArMzU4LDIxIEBAIHN0
+YXRpYyBpbnQgY2hpcHNmYl9wY2lfaW5pdChzdHJ1Y3QgcGNpX2RldiAqZHAsIGNvbnN0IHN0
+cnVjdCBwY2lfZGV2aWNlX2lkICplbnQpDQo+ICAgCWlmIChyYykNCj4gICAJCXJldHVybiBy
+YzsNCj4gICANCj4gLQlpZiAocGNpX2VuYWJsZV9kZXZpY2UoZHApIDwgMCkgew0KPiArCXJj
+ID0gcGNpX2VuYWJsZV9kZXZpY2UoZHApOw0KPiArCWlmIChyYyA8IDApIHsNCj4gICAJCWRl
+dl9lcnIoJmRwLT5kZXYsICJDYW5ub3QgZW5hYmxlIFBDSSBkZXZpY2VcbiIpOw0KPiAgIAkJ
+Z290byBlcnJfb3V0Ow0KPiAgIAl9DQo+ICAgDQo+IC0JaWYgKChkcC0+cmVzb3VyY2VbMF0u
+ZmxhZ3MgJiBJT1JFU09VUkNFX01FTSkgPT0gMCkNCj4gKwlpZiAoKGRwLT5yZXNvdXJjZVsw
+XS5mbGFncyAmIElPUkVTT1VSQ0VfTUVNKSA9PSAwKSB7DQo+ICsJCXJjID0gLUVOT0RFVjsN
+Cj4gICAJCWdvdG8gZXJyX2Rpc2FibGU7DQo+ICsJfQ0KPiAgIAlhZGRyID0gcGNpX3Jlc291
+cmNlX3N0YXJ0KGRwLCAwKTsNCj4gLQlpZiAoYWRkciA9PSAwKQ0KPiArCWlmIChhZGRyID09
+IDApIHsNCj4gKwkJcmMgPSAtRU5PREVWOw0KPiAgIAkJZ290byBlcnJfZGlzYWJsZTsNCj4g
+Kwl9DQo+ICAgDQo+ICAgCXAgPSBmcmFtZWJ1ZmZlcl9hbGxvYygwLCAmZHAtPmRldik7DQo+
+ICAgCWlmIChwID09IE5VTEwpIHsNCj4gQEAgLTQxNyw3ICs0MjIsOCBAQCBzdGF0aWMgaW50
+IGNoaXBzZmJfcGNpX2luaXQoc3RydWN0IHBjaV9kZXYgKmRwLCBjb25zdCBzdHJ1Y3QgcGNp
+X2RldmljZV9pZCAqZW50KQ0KPiAgIA0KPiAgIAlpbml0X2NoaXBzKHAsIGFkZHIpOw0KPiAg
+IA0KPiAtCWlmIChyZWdpc3Rlcl9mcmFtZWJ1ZmZlcihwKSA8IDApIHsNCj4gKwlyYyA9IHJl
+Z2lzdGVyX2ZyYW1lYnVmZmVyKHApOw0KPiArCWlmIChyYyA8IDApIHsNCj4gICAJCWRldl9l
+cnIoJmRwLT5kZXYsIkMmVCA2NTU1MCBmcmFtZWJ1ZmZlciBmYWlsZWQgdG8gcmVnaXN0ZXJc
+biIpOw0KPiAgIAkJZ290byBlcnJfdW5tYXA7DQo+ICAgCX0NCg0KLS0gDQpUaG9tYXMgWmlt
+bWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1
+dGlvbnMgR2VybWFueSBHbWJIDQpNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdl
+cm1hbnkNCihIUkIgMzY4MDksIEFHIE7DvHJuYmVyZykNCkdlc2Now6RmdHNmw7xocmVyOiBJ
+dm8gVG90ZXYNCg==
 
-thanks
+--------------3Duuibyufp3t47ZR1Qe95z8g--
 
-Reviewed-by: Roi Dayan <roid@nvidia.com>
+--------------htUbmMqId4a9dbpmsvnUlZ0O
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmP9v9AFAwAAAAAACgkQlh/E3EQov+CV
+RRAAqKCxwlwcoQEA1f4yZ82PJBugmN5YuUxkda1y8coB95YS0c6yrNGPbJMb9fEvWuSSJjBFO/Gc
+lizEoI0u3XcUXOF9LvOaXZJFZaKfyKAi5AD8SuBByR5fO8KBGoj8ZYAXc6LpMxVssUHXFZPBRCtn
+rSIYhtsNy0BADysDGg0psMw2EJxC+JTa6horGcRax9f9hQe8r+SM5yhxl7KoqK4sXOOelvAoHN7P
+gsY5zlpvz/ScWJhY3r3df8ZfOv5GhwiAO4s6VnG8IsvmE4tizM0VD70BaupkjS7U+tAZGmgb0Y9f
+9x+ngGzICjU2NoK0PNcglWVzWGZk8tPzH3yNF8EIFMaIwxhehmsyB6KzYK6Bu2XkBqa0+wgEUBwr
+GV8VgbfQ5uuPtz9010U+QqCiw3BKFrNuczG3nXuRlagAvAWDaKXfokP7g161QihiDJLuOiGmdOIR
+WQ4M4YBcNXXlmcqqXsWkJDBsH+W8h6rWyQ8pIwiatCV+qzhEBCQtm8RrjpBGw3Bo7ANOEmauNyri
+B2zNHtuRhZu3qbTOF9c+FOO4r3sWyHw4qJuB3wEDs8F4DaAjAVVs4GkIbgmKTYIWIpr4IeU8oEqJ
+eb3fBULRfUzLfuVNRzZOGI+ViTUOmAqHJV1MLLYdRSfzXZrw7uLngNYCzanfjbx58kEsX5p1ekk4
+U6Y=
+=gKwu
+-----END PGP SIGNATURE-----
+
+--------------htUbmMqId4a9dbpmsvnUlZ0O--
