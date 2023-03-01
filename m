@@ -2,72 +2,155 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1066C64ED6
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Mar 2023 18:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D8EC7EE33
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Mar 2023 20:59:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbjCASgg (ORCPT
+        id S229806AbjCAU7D (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Mar 2023 13:36:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43152 "EHLO
+        Wed, 1 Mar 2023 15:59:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbjCASge (ORCPT
+        with ESMTP id S229720AbjCAU67 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Mar 2023 13:36:34 -0500
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC32A3C7BC;
-        Wed,  1 Mar 2023 10:36:33 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id u9so8254563edd.2;
-        Wed, 01 Mar 2023 10:36:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677695792;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZT/OJ9n++mt401vNDY8xHJSNHWuHKsSIBHt696WINAU=;
-        b=5MBBrJq1Bji07QoFQ9ng1b49+xgI7OUWqKoObdwNC8vwRu2GM6DjB4/3tGQ51xB6bL
-         fVL9vVLDSM5qONSgIKSTnpnWqHw6nw1I+McWImO5DDRsZjqs9k39n8EDdfUjf15DmpLj
-         Y4041nHsqi06g8RhPcFaLMF+waaBrjkx2znl0T9eci3TVvWu35/PwgVoAX9dpOS6QunN
-         H4I+41ynzYEN//jBvIgwK1yDjTqozglLUxdMb1jz+ZFkGnkRaOCGSJPhlQ6tfMCglXDY
-         d4b6+ticuIvz9sU3y7VXQJtf2cJ3x96/Cn9cFJP4mIpoDrdd8Hop1Vva6J904ChNuxJb
-         H4jQ==
-X-Gm-Message-State: AO0yUKVqndX3iXIXCHVczSbX4bscEMU78bLdphdeZ8wcJbylzyBmr2AJ
-        ReSj9zi7Yel0BPIU2aFkyrglnBF51STenAP7D+MHvsKM
-X-Google-Smtp-Source: AK7set/H2etJvYe1d1itJBx6hspBD30RZmx5cJZgLeGAW0PK9sgtTvz5euwqOQWEzRFywRWOoz9kl56jMNflDNjzbOs=
-X-Received: by 2002:a17:906:7687:b0:8ad:731:592d with SMTP id
- o7-20020a170906768700b008ad0731592dmr3628118ejm.5.1677695792428; Wed, 01 Mar
- 2023 10:36:32 -0800 (PST)
+        Wed, 1 Mar 2023 15:58:59 -0500
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 958F7521D0
+        for <kernel-janitors@vger.kernel.org>; Wed,  1 Mar 2023 12:58:56 -0800 (PST)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id XTXKp7HLjYdrCXTXKp7FeZ; Wed, 01 Mar 2023 21:58:55 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 01 Mar 2023 21:58:55 +0100
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-spi@vger.kernel.org
+Subject: [PATCH] spi: Reorder fields in 'struct spi_message'
+Date:   Wed,  1 Mar 2023 21:58:52 +0100
+Message-Id: <c112aad16eb47808e1ec10abd87b3d273c969a68.1677704283.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <Y/yAzR6sWvPedLej@kili> <CAOgh=FyxFuENe6SgJB7aUwPS-ZB_51q6a=zWEcZSAsGqX034hA@mail.gmail.com>
-In-Reply-To: <CAOgh=FyxFuENe6SgJB7aUwPS-ZB_51q6a=zWEcZSAsGqX034hA@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 1 Mar 2023 19:36:21 +0100
-Message-ID: <CAJZ5v0jMm25S2M2g2oB9fE+U1SJO8w5Y87ENwOQ4JpPTAH6XEQ@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: apple-soc: Fix an IS_ERR() vs NULL check
-To:     Eric Curtin <ecurtin@redhat.com>, Dan Carpenter <error27@gmail.com>
-Cc:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Marc Zyngier <maz@kernel.org>, asahi@lists.linux.dev,
-        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 11:26 AM Eric Curtin <ecurtin@redhat.com> wrote:
->
-> On Mon, 27 Feb 2023 at 10:16, Dan Carpenter <error27@gmail.com> wrote:
-> >
-> > The of_iomap() function returns NULL if it fails.  It never returns
-> > error pointers.  Fix the check accordingly.
-> >
-> > Fixes: 6286bbb40576 ("cpufreq: apple-soc: Add new driver to control Apple SoC CPU P-states")
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > ---
->
-> Nice catch!
->
-> Reviewed-by: Eric Curtin <ecurtin@redhat.com>
+Group some variables based on their sizes to reduce hole and avoid padding.
+On x86_64, this shrinks the size from 112 to 96 bytes.
 
-Applied as 6.3-rc material, thanks!
+This should have no real impact on memory allocation because 'struct
+spi_message' is mostly used on stack, but it can save a few cycles
+when the structure is initialized with spi_message_init() and co.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Using pahole
+
+Before:
+======
+struct spi_message {
+	struct list_head           transfers;            /*     0    16 */
+	struct spi_device *        spi;                  /*    16     8 */
+	unsigned int               is_dma_mapped:1;      /*    24: 0  4 */
+
+	/* XXX 31 bits hole, try to pack */
+	/* XXX 4 bytes hole, try to pack */
+
+	void                       (*complete)(void *);  /*    32     8 */
+	void *                     context;              /*    40     8 */
+	unsigned int               frame_length;         /*    48     4 */
+	unsigned int               actual_length;        /*    52     4 */
+	int                        status;               /*    56     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	struct list_head           queue;                /*    64    16 */
+	void *                     state;                /*    80     8 */
+	struct list_head           resources;            /*    88    16 */
+	bool                       prepared;             /*   104     1 */
+
+	/* size: 112, cachelines: 2, members: 12 */
+	/* sum members: 93, holes: 2, sum holes: 8 */
+	/* sum bitfield members: 1 bits, bit holes: 1, sum bit holes: 31 bits */
+	/* padding: 7 */
+	/* last cacheline: 48 bytes */
+};
+
+
+After:
+=====
+struct spi_message {
+	struct list_head           transfers;            /*     0    16 */
+	struct spi_device *        spi;                  /*    16     8 */
+	unsigned int               is_dma_mapped:1;      /*    24: 0  4 */
+
+	/* XXX 7 bits hole, try to pack */
+	/* Bitfield combined with next fields */
+
+	bool                       prepared;             /*    25     1 */
+
+	/* XXX 2 bytes hole, try to pack */
+
+	int                        status;               /*    28     4 */
+	void                       (*complete)(void *);  /*    32     8 */
+	void *                     context;              /*    40     8 */
+	unsigned int               frame_length;         /*    48     4 */
+	unsigned int               actual_length;        /*    52     4 */
+	struct list_head           queue;                /*    56    16 */
+	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
+	void *                     state;                /*    72     8 */
+	struct list_head           resources;            /*    80    16 */
+
+	/* size: 96, cachelines: 2, members: 12 */
+	/* sum members: 93, holes: 1, sum holes: 2 */
+	/* sum bitfield members: 1 bits, bit holes: 1, sum bit holes: 7 bits */
+	/* last cacheline: 32 bytes */
+};
+---
+ include/linux/spi/spi.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 4fa26b9a3572..bdb35a91b4bf 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -1093,6 +1093,9 @@ struct spi_message {
+ 
+ 	unsigned		is_dma_mapped:1;
+ 
++	/* spi_prepare_message() was called for this message */
++	bool			prepared;
++
+ 	/* REVISIT:  we might want a flag affecting the behavior of the
+ 	 * last transfer ... allowing things like "read 16 bit length L"
+ 	 * immediately followed by "read L bytes".  Basically imposing
+@@ -1105,11 +1108,11 @@ struct spi_message {
+ 	 */
+ 
+ 	/* Completion is reported through a callback */
++	int			status;
+ 	void			(*complete)(void *context);
+ 	void			*context;
+ 	unsigned		frame_length;
+ 	unsigned		actual_length;
+-	int			status;
+ 
+ 	/* For optional use by whatever driver currently owns the
+ 	 * spi_message ...  between calls to spi_async and then later
+@@ -1120,9 +1123,6 @@ struct spi_message {
+ 
+ 	/* List of spi_res reources when the spi message is processed */
+ 	struct list_head        resources;
+-
+-	/* spi_prepare_message() was called for this message */
+-	bool			prepared;
+ };
+ 
+ static inline void spi_message_init_no_memset(struct spi_message *m)
+-- 
+2.34.1
+
