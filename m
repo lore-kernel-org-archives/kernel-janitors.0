@@ -2,101 +2,72 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBF6C64ED6
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Mar 2023 18:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1066C64ED6
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Mar 2023 18:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbjCASaf (ORCPT
+        id S229880AbjCASgg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Mar 2023 13:30:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37156 "EHLO
+        Wed, 1 Mar 2023 13:36:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjCASaf (ORCPT
+        with ESMTP id S229471AbjCASge (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Mar 2023 13:30:35 -0500
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33AB032503;
-        Wed,  1 Mar 2023 10:30:34 -0800 (PST)
-Received: by mail-ed1-f41.google.com with SMTP id eg37so57515118edb.12;
-        Wed, 01 Mar 2023 10:30:34 -0800 (PST)
+        Wed, 1 Mar 2023 13:36:34 -0500
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC32A3C7BC;
+        Wed,  1 Mar 2023 10:36:33 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id u9so8254563edd.2;
+        Wed, 01 Mar 2023 10:36:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677695432;
+        d=1e100.net; s=20210112; t=1677695792;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HtYgXoCwtUuhPXmHs5pHvu8QCWRq+j3buBks+eQBQac=;
-        b=ftp7Jq5Q54F4SAmVLxDi6UbI8b92eEVqwDwsmt/ytlSLX6KJLN9W82VpBnUVVl8awh
-         lOg5B+D2DECmphh7Q2Kfg7wJukiIRBrwZZVNh6rEjQZ1UNzw/fja8MaCkmHbyxot9hUi
-         +2PIruKedT6E1uoklo0+Orj3/sY8H5Py695ItqzaQbtEwB+5oke8vUZd0LvD32m16Y/a
-         RGViYxk+nGkcUMLj/xmqnXwe6G7sE+UJkqtoF0DqIlOkTl8hbtITM7sP97KCy8KDg52D
-         TXGfChmDRP+Ma6PTpCJx1uuFZbpVMMTr71f4y3jvMjw6wqpjvHXGx98yWAllIbcC5PYH
-         hY4Q==
-X-Gm-Message-State: AO0yUKU/fq32/tC0FsZRKk75nzxhhfGbWvxsdbtMgVNxxjgAPoZraaRk
-        FbaVusPd7P6nL9e7TlTPslrbhsP1TJE0nM/3+4M=
-X-Google-Smtp-Source: AK7set+EyCePVrgZG0Rf4nKfGO8kKAJEBVSZkOMRs2FEBANMdM5uILSfp92588QSCdddTe/6Cs/I80dA3gHasUDqfKE=
-X-Received: by 2002:a17:906:2358:b0:877:747d:1108 with SMTP id
- m24-20020a170906235800b00877747d1108mr3522847eja.5.1677695432557; Wed, 01 Mar
- 2023 10:30:32 -0800 (PST)
+        bh=ZT/OJ9n++mt401vNDY8xHJSNHWuHKsSIBHt696WINAU=;
+        b=5MBBrJq1Bji07QoFQ9ng1b49+xgI7OUWqKoObdwNC8vwRu2GM6DjB4/3tGQ51xB6bL
+         fVL9vVLDSM5qONSgIKSTnpnWqHw6nw1I+McWImO5DDRsZjqs9k39n8EDdfUjf15DmpLj
+         Y4041nHsqi06g8RhPcFaLMF+waaBrjkx2znl0T9eci3TVvWu35/PwgVoAX9dpOS6QunN
+         H4I+41ynzYEN//jBvIgwK1yDjTqozglLUxdMb1jz+ZFkGnkRaOCGSJPhlQ6tfMCglXDY
+         d4b6+ticuIvz9sU3y7VXQJtf2cJ3x96/Cn9cFJP4mIpoDrdd8Hop1Vva6J904ChNuxJb
+         H4jQ==
+X-Gm-Message-State: AO0yUKVqndX3iXIXCHVczSbX4bscEMU78bLdphdeZ8wcJbylzyBmr2AJ
+        ReSj9zi7Yel0BPIU2aFkyrglnBF51STenAP7D+MHvsKM
+X-Google-Smtp-Source: AK7set/H2etJvYe1d1itJBx6hspBD30RZmx5cJZgLeGAW0PK9sgtTvz5euwqOQWEzRFywRWOoz9kl56jMNflDNjzbOs=
+X-Received: by 2002:a17:906:7687:b0:8ad:731:592d with SMTP id
+ o7-20020a170906768700b008ad0731592dmr3628118ejm.5.1677695792428; Wed, 01 Mar
+ 2023 10:36:32 -0800 (PST)
 MIME-Version: 1.0
-References: <Y/yAusqpje3MqS1N@kili>
-In-Reply-To: <Y/yAusqpje3MqS1N@kili>
+References: <Y/yAzR6sWvPedLej@kili> <CAOgh=FyxFuENe6SgJB7aUwPS-ZB_51q6a=zWEcZSAsGqX034hA@mail.gmail.com>
+In-Reply-To: <CAOgh=FyxFuENe6SgJB7aUwPS-ZB_51q6a=zWEcZSAsGqX034hA@mail.gmail.com>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 1 Mar 2023 19:30:21 +0100
-Message-ID: <CAJZ5v0gt1NiW76jsz_FU8c4CfNBv0ojN-Aq7Ds0WxDqO2-SVsg@mail.gmail.com>
-Subject: Re: [PATCH] thermal: intel: quark_dts: fix error pointer dereference
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Boon Leong <boon.leong.ong@intel.com>,
+Date:   Wed, 1 Mar 2023 19:36:21 +0100
+Message-ID: <CAJZ5v0jMm25S2M2g2oB9fE+U1SJO8w5Y87ENwOQ4JpPTAH6XEQ@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: apple-soc: Fix an IS_ERR() vs NULL check
+To:     Eric Curtin <ecurtin@redhat.com>, Dan Carpenter <error27@gmail.com>
+Cc:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>,
-        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Marc Zyngier <maz@kernel.org>, asahi@lists.linux.dev,
         linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 11:06 AM Dan Carpenter <error27@gmail.com> wrote:
+On Mon, Feb 27, 2023 at 11:26 AM Eric Curtin <ecurtin@redhat.com> wrote:
 >
-> If alloc_soc_dts() fails, then we can just return.  Trying to free
-> "soc_dts" will lead to an Oops.
+> On Mon, 27 Feb 2023 at 10:16, Dan Carpenter <error27@gmail.com> wrote:
+> >
+> > The of_iomap() function returns NULL if it fails.  It never returns
+> > error pointers.  Fix the check accordingly.
+> >
+> > Fixes: 6286bbb40576 ("cpufreq: apple-soc: Add new driver to control Apple SoC CPU P-states")
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > ---
 >
-> Fixes: 8c1876939663 ("thermal: intel Quark SoC X1000 DTS thermal driver")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/thermal/intel/intel_quark_dts_thermal.c | 12 ++----------
->  1 file changed, 2 insertions(+), 10 deletions(-)
+> Nice catch!
 >
-> diff --git a/drivers/thermal/intel/intel_quark_dts_thermal.c b/drivers/thermal/intel/intel_quark_dts_thermal.c
-> index 97b843fa7568..ffdc95047838 100644
-> --- a/drivers/thermal/intel/intel_quark_dts_thermal.c
-> +++ b/drivers/thermal/intel/intel_quark_dts_thermal.c
-> @@ -400,22 +400,14 @@ MODULE_DEVICE_TABLE(x86cpu, qrk_thermal_ids);
->
->  static int __init intel_quark_thermal_init(void)
->  {
-> -       int err = 0;
-> -
->         if (!x86_match_cpu(qrk_thermal_ids) || !iosf_mbi_available())
->                 return -ENODEV;
->
->         soc_dts = alloc_soc_dts();
-> -       if (IS_ERR(soc_dts)) {
-> -               err = PTR_ERR(soc_dts);
-> -               goto err_free;
-> -       }
-> +       if (IS_ERR(soc_dts))
-> +               return PTR_ERR(soc_dts);
->
->         return 0;
-> -
-> -err_free:
-> -       free_soc_dts(soc_dts);
-> -       return err;
->  }
->
->  static void __exit intel_quark_thermal_exit(void)
-> --
+> Reviewed-by: Eric Curtin <ecurtin@redhat.com>
 
 Applied as 6.3-rc material, thanks!
