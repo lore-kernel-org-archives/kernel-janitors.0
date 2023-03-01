@@ -2,77 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CF6C64ED6
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Mar 2023 09:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBF6C64ED6
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Mar 2023 18:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbjCAJ7M (ORCPT
+        id S229670AbjCASaf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Mar 2023 04:59:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40742 "EHLO
+        Wed, 1 Mar 2023 13:30:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229897AbjCAJ7I (ORCPT
+        with ESMTP id S229527AbjCASaf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Mar 2023 04:59:08 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2E3E392A1
-        for <kernel-janitors@vger.kernel.org>; Wed,  1 Mar 2023 01:58:50 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 78F7D66020E0;
-        Wed,  1 Mar 2023 09:58:21 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677664702;
-        bh=8ndsZkKsreebHEGikuSigtJ8zQTHmJC5HspQV2Bo/rk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=AiD+koqnGnT97mYujB5jOi3lxWhakT7ezL9D2aICxDP0RsZl4mEHO0XoDERpBphoj
-         7EtdnxQ6NcGtV8SZvsb/AX9KV3vbqD9+ldPLz4OH+zhepu2xvbxHag0z37m70P1sdN
-         pOXw5d9NWhVreFRPGlROANDOIH5iVfN83cyBpWJbxVrMZ3AoUPSkoh4JyAUP2SzbMT
-         Iy2thheD2P++lWPzCUtDxMtqbdxID036gN/PCNmjLLZb2T7Hskf+j0lO05ECe/a4qX
-         JmkqKToNgUHCQxfRkLdMi6Pafafmcah0djwT1tGg8m6od2Mz1NNoQnR2Pk32ojUuLd
-         +FCALBYCHFgpg==
-Message-ID: <3bcf01ef-e9af-3216-6cd3-7cc08a5bfedd@collabora.com>
-Date:   Wed, 1 Mar 2023 10:58:18 +0100
+        Wed, 1 Mar 2023 13:30:35 -0500
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33AB032503;
+        Wed,  1 Mar 2023 10:30:34 -0800 (PST)
+Received: by mail-ed1-f41.google.com with SMTP id eg37so57515118edb.12;
+        Wed, 01 Mar 2023 10:30:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677695432;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HtYgXoCwtUuhPXmHs5pHvu8QCWRq+j3buBks+eQBQac=;
+        b=ftp7Jq5Q54F4SAmVLxDi6UbI8b92eEVqwDwsmt/ytlSLX6KJLN9W82VpBnUVVl8awh
+         lOg5B+D2DECmphh7Q2Kfg7wJukiIRBrwZZVNh6rEjQZ1UNzw/fja8MaCkmHbyxot9hUi
+         +2PIruKedT6E1uoklo0+Orj3/sY8H5Py695ItqzaQbtEwB+5oke8vUZd0LvD32m16Y/a
+         RGViYxk+nGkcUMLj/xmqnXwe6G7sE+UJkqtoF0DqIlOkTl8hbtITM7sP97KCy8KDg52D
+         TXGfChmDRP+Ma6PTpCJx1uuFZbpVMMTr71f4y3jvMjw6wqpjvHXGx98yWAllIbcC5PYH
+         hY4Q==
+X-Gm-Message-State: AO0yUKU/fq32/tC0FsZRKk75nzxhhfGbWvxsdbtMgVNxxjgAPoZraaRk
+        FbaVusPd7P6nL9e7TlTPslrbhsP1TJE0nM/3+4M=
+X-Google-Smtp-Source: AK7set+EyCePVrgZG0Rf4nKfGO8kKAJEBVSZkOMRs2FEBANMdM5uILSfp92588QSCdddTe/6Cs/I80dA3gHasUDqfKE=
+X-Received: by 2002:a17:906:2358:b0:877:747d:1108 with SMTP id
+ m24-20020a170906235800b00877747d1108mr3522847eja.5.1677695432557; Wed, 01 Mar
+ 2023 10:30:32 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] drm/mediatek: dsi: fix error codes in
- mtk_dsi_host_transfer()
-Content-Language: en-US
-To:     Dan Carpenter <error27@gmail.com>,
-        Julien STEPHAN <jstephan@baylibre.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-References: <Y/yBC4yxTs+Po0TG@kili>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <Y/yBC4yxTs+Po0TG@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <Y/yAusqpje3MqS1N@kili>
+In-Reply-To: <Y/yAusqpje3MqS1N@kili>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 1 Mar 2023 19:30:21 +0100
+Message-ID: <CAJZ5v0gt1NiW76jsz_FU8c4CfNBv0ojN-Aq7Ds0WxDqO2-SVsg@mail.gmail.com>
+Subject: Re: [PATCH] thermal: intel: quark_dts: fix error pointer dereference
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Boon Leong <boon.leong.ong@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>,
+        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>,
+        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 27/02/23 11:08, Dan Carpenter ha scritto:
-> There is a type bug because the return statement:
-> 
-> 	return ret < 0 ? ret : recv_cnt;
-> 
-> will not return negatives on 64bit systems.  The problem is that the
-> function returns ssize_t types, while "ret" is int and "recv_cnt" is a
-> u32.  The negative values are type promoted to u32 and returned as
-> positive values instead of negative error codes.
-> 
-> Fixes: 81cc7e51c4f1 ("drm/mediatek: Allow commands to be sent during video mode")
+On Mon, Feb 27, 2023 at 11:06 AM Dan Carpenter <error27@gmail.com> wrote:
+>
+> If alloc_soc_dts() fails, then we can just return.  Trying to free
+> "soc_dts" will lead to an Oops.
+>
+> Fixes: 8c1876939663 ("thermal: intel Quark SoC X1000 DTS thermal driver")
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+>  drivers/thermal/intel/intel_quark_dts_thermal.c | 12 ++----------
+>  1 file changed, 2 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/thermal/intel/intel_quark_dts_thermal.c b/drivers/thermal/intel/intel_quark_dts_thermal.c
+> index 97b843fa7568..ffdc95047838 100644
+> --- a/drivers/thermal/intel/intel_quark_dts_thermal.c
+> +++ b/drivers/thermal/intel/intel_quark_dts_thermal.c
+> @@ -400,22 +400,14 @@ MODULE_DEVICE_TABLE(x86cpu, qrk_thermal_ids);
+>
+>  static int __init intel_quark_thermal_init(void)
+>  {
+> -       int err = 0;
+> -
+>         if (!x86_match_cpu(qrk_thermal_ids) || !iosf_mbi_available())
+>                 return -ENODEV;
+>
+>         soc_dts = alloc_soc_dts();
+> -       if (IS_ERR(soc_dts)) {
+> -               err = PTR_ERR(soc_dts);
+> -               goto err_free;
+> -       }
+> +       if (IS_ERR(soc_dts))
+> +               return PTR_ERR(soc_dts);
+>
+>         return 0;
+> -
+> -err_free:
+> -       free_soc_dts(soc_dts);
+> -       return err;
+>  }
+>
+>  static void __exit intel_quark_thermal_exit(void)
+> --
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
+Applied as 6.3-rc material, thanks!
