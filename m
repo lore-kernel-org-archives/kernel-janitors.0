@@ -2,80 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A9EC64EC4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 12:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEA5C7EE30
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 12:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231248AbjCCMDH (ORCPT
+        id S230193AbjCCMQM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 07:03:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51822 "EHLO
+        Fri, 3 Mar 2023 07:16:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229925AbjCCMDG (ORCPT
+        with ESMTP id S229969AbjCCMQL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 07:03:06 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41548768D;
-        Fri,  3 Mar 2023 04:03:05 -0800 (PST)
-Received: from localhost.localdomain (unknown [182.179.171.187])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 08B366602F6A;
-        Fri,  3 Mar 2023 12:02:55 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677844983;
-        bh=Hi8NWUOMMhmWak92kY1THi2+V5As1Gogx3xi3UhkAYk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JGNkfj0R1zmjv3rck3W64LfaNpmhpZiJvB4SF6QxmIUFL6E894MBBQ9jLy7cLa0UZ
-         /WhSqN1k2/TX29VIffjcQeg+keZDXGN66tQtoHqU7Rdv1RWq1UmlUkcoCTKHjvuCqQ
-         EGBzKHC8GmC5getS+aJ7vEaKCdXIMA6jNRNXJQWgkOzKGOLzVqDv87zPXVDKcXNcHi
-         isDRmxTMhl25NtPlhcGviYxsFdMoj4GzFHp/zX+kPgS/J1FAZfh49fW7OwRhwA+UI+
-         wUp1z15IiQ/VpF21BNu5IjileBKwv60BjkKkS7nPhhXV9PYYgVV6z1mm1pHFmIAedG
-         66fkI/Ppm0EGA==
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Kun Liu <Kun.Liu2@amd.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: remove dead code
-Date:   Fri,  3 Mar 2023 17:02:32 +0500
-Message-Id: <20230303120233.1878140-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+        Fri, 3 Mar 2023 07:16:11 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1315F531;
+        Fri,  3 Mar 2023 04:16:09 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id cy23so9325277edb.12;
+        Fri, 03 Mar 2023 04:16:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677845768;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wKF5bThLEdXvv6M/eGMYQTDSSRPUXsU5bEyWlcnJsFI=;
+        b=XTw2Ks9VFnobVPmqdmHB4E733ZuVBV38o6jsGQeOzO0QuqW7CsvLy+z95W+jahW8FQ
+         H2nIso0p5952QktEBH/nmuP1PYB6B4k5aTp5T7NnwKGoEHoVdRdFl5th99U8XlFX1yNq
+         wYhXeEJR72UTntkebh1MEmLRZIoobeejQxuzOI0duQlcYpTgDs1XuFsOMZc79VF7R46l
+         z1/FlF3v1sMavx4Jexnw3exmmTev22ydbR0UhxQRmwVE1z9TKtcCpdm5fkmqMwQVV8xX
+         Bg4yoLWhWwmvQo+eDTD5bf+2ThpPbN4af9C4j6QfwQSlK9VUkjOmoAT3Xs4JJRIAIR4X
+         Y4Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677845768;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wKF5bThLEdXvv6M/eGMYQTDSSRPUXsU5bEyWlcnJsFI=;
+        b=Bv6jU93VSJswx5LVKbmfRCjyWVPT7KbbUdgpRZdZrvvq0RNWoS1T/Z+dA0Rq+Bs2eL
+         NOS/sVnOq8EH/77+9R/WfIARRzLEeC9lq/n1H5It43hW47+ouvc7h9X5FXrW1NF5vE2C
+         OOIK//PoQ7IHqhhnOzHPrtrto8QdDf/LT6++RIyivi1XxZJEEHM7dP9Z3f0SiLAPL+KM
+         RaNhJpgNbyU7PTg/3fiAEnYKsk8sEqEFLKOqwmSx59LiLoMAfrUat8cTedB0l92FxvGa
+         WkHCYotlROPk/k5oEqF8vApIKGDfAXo1zYXMldybYBsTEj7qpA1hxn4c4h+3nXDlkUXN
+         P0Mg==
+X-Gm-Message-State: AO0yUKUi+0gNmCdaK8HPWncaLxGxVw/14UIN5foFNu92a28mqAxKFwi7
+        G+rivEer+Qw5xgHfoK6rpy6htDur7rY=
+X-Google-Smtp-Source: AK7set/R588HGFJwcd0eNeafQWwy8KUGJwUvOlfbwq5LI14n2rHC8JUskp9YzyeM9ses1FA3sV97ag==
+X-Received: by 2002:a05:6402:b11:b0:4ae:eb0f:8867 with SMTP id bm17-20020a0564020b1100b004aeeb0f8867mr1568280edb.41.1677845768269;
+        Fri, 03 Mar 2023 04:16:08 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id o22-20020a509b16000000b004c4eed3fe20sm1107400edi.5.2023.03.03.04.16.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Mar 2023 04:16:07 -0800 (PST)
+Date:   Fri, 3 Mar 2023 15:16:03 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     freude@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com
+Subject: Re: [PATCH v3] s390/zcrypt: remove unnecessary (void*) conversions
+Message-ID: <ZAHlAxv2QNKpNLmZ@kadam>
+References: <20230303013250.3058-1-yuzhe@nfschina.com>
+ <20230303052155.21072-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230303052155.21072-1-yuzhe@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The less than zero comparison of unsigned variable "value" is never
-true. Remove dead code.
+On Fri, Mar 03, 2023 at 01:21:55PM +0800, Yu Zhe wrote:
+> Pointer variables of void * type do not require type cast.
+> 
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 
-Fixes: c3ed0e72c872 ("drm/amdgpu: added a sysfs interface for thermal throttling")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- drivers/gpu/drm/amd/pm/amdgpu_pm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+LGTM.  Thanks!
 
-diff --git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-index f212cae0353f..0ffe351c1a1d 100644
---- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-+++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-@@ -1738,7 +1738,7 @@ static ssize_t amdgpu_set_apu_thermal_cap(struct device *dev,
- 	if (ret)
- 		return ret;
- 
--	if (value < 0 || value > 100) {
-+	if (value > 100) {
- 		dev_err(dev, "Invalid argument !\n");
- 		return -EINVAL;
- 	}
--- 
-2.39.2
+regards,
+dan carpenter
 
