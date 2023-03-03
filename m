@@ -2,103 +2,164 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DB3C678D4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 13:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BB6C678D4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 13:10:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230159AbjCCNEN (ORCPT
+        id S230388AbjCCNKP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 08:04:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46076 "EHLO
+        Fri, 3 Mar 2023 08:10:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjCCNEM (ORCPT
+        with ESMTP id S229959AbjCCNKN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 08:04:12 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3141E1630D;
-        Fri,  3 Mar 2023 05:04:11 -0800 (PST)
-Received: from localhost.localdomain (unknown [182.179.171.187])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 779206602FCA;
-        Fri,  3 Mar 2023 13:04:05 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677848650;
-        bh=pKUjjC88O8uUy9xkj/ixqWa3CHLtn+R9H2P6Mhch7m8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OWPBzPG9n6nr0oMR7LuZdeSUXKQSZcCF14SnodONMzIC+4K5sKrxANmDpPr3J4OuC
-         dBTGXXLliqYfrDo7XDGYkCVRaeBCaHsVEGWOdw74UYEkFvXgbrrCYYjvRsnnXMT/52
-         mxVbF2ulAetxgsUtPSVi7SjSrezYdqwrtdSauHn7wbQttInHU7RJmNXPHTyi1yLe+t
-         Kl18UdqgjQkFNV11EHZRMdg9J1RdiB0ZnuLaXP5wDnEIbVSqPv9luF6ed2XWhnWWy6
-         B4YUhd2O63sa9gxbxBoVd7JHI0PnYXXsYpMOMCm9LeLG2j4WaEBgHzE/0+7UZrc1pJ
-         xBE/DCNf9Fs/A==
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc/tegra: cbb: remove linux/version.h
-Date:   Fri,  3 Mar 2023 18:03:46 +0500
-Message-Id: <20230303130346.2062989-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+        Fri, 3 Mar 2023 08:10:13 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A36199C2;
+        Fri,  3 Mar 2023 05:10:12 -0800 (PST)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 323CVICW014013;
+        Fri, 3 Mar 2023 13:10:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=mime-version : date :
+ from : to : cc : subject : reply-to : in-reply-to : references :
+ message-id : content-type : content-transfer-encoding; s=pp1;
+ bh=dgL5yhuvcQ2N+KREVjvh0euyafxN8QfQ3vp/FL5+ge0=;
+ b=ZGIirRJ+kC/F95+oDMV5vKX1NVILUnmOdgEJ6XQAEwLEtk0YwI73xlpfYY8gOxG1La1y
+ CXvTrm2NdswGs4jpbfxfbPkOfspbulCwWZaRwU7ARnOAec4kqG9kz6RYCw5jxf5/HzlG
+ PirLjSZvSUoMX3QyExUFqDjCYskl0yOz0rX42in3niXpr5+OgisJW7dxCoqjudvNSsVz
+ lj6hsY3MuS5Ycz6G6nv0Kn/nYiZgKmdurN0IlE+Aik01lpel0PTUeBSo3nRlzw/YD7Uu
+ JBO+6qF8es8oauqdgzcyklCsVNiUXz9+3Ts46PJddZ9y1WqjCE2IzIERtOq5F7+spJ/x sw== 
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3p3gyjs0gg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 03 Mar 2023 13:10:08 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 323AvvIu020099;
+        Fri, 3 Mar 2023 13:10:06 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([9.208.130.98])
+        by ppma02wdc.us.ibm.com (PPS) with ESMTPS id 3nybe2aw83-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 03 Mar 2023 13:10:06 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+        by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 323DA5Dm28901850
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 3 Mar 2023 13:10:05 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A79858065;
+        Fri,  3 Mar 2023 13:10:05 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0408E5805E;
+        Fri,  3 Mar 2023 13:10:05 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
+        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Fri,  3 Mar 2023 13:10:04 +0000 (GMT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date:   Fri, 03 Mar 2023 14:10:04 +0100
+From:   Harald Freudenberger <freude@linux.ibm.com>
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
+Subject: Re: [PATCH v3] s390/zcrypt: remove unnecessary (void*) conversions
+Reply-To: freude@linux.ibm.com
+Mail-Reply-To: freude@linux.ibm.com
+In-Reply-To: <20230303052155.21072-1-yuzhe@nfschina.com>
+References: <20230303013250.3058-1-yuzhe@nfschina.com>
+ <20230303052155.21072-1-yuzhe@nfschina.com>
+Message-ID: <98d60c395e7f66a37a22fc42ff74d700@linux.ibm.com>
+X-Sender: freude@linux.ibm.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: XFubKWaTQ-nt1gHA89DxJz1CVSEmuB4P
+X-Proofpoint-GUID: XFubKWaTQ-nt1gHA89DxJz1CVSEmuB4P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-03_01,2023-03-03_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 spamscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0
+ bulkscore=0 phishscore=0 clxscore=1011 mlxlogscore=999 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303030113
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-make versioncheck reports the following:
-./drivers/soc/tegra/cbb/tegra-cbb.c: 19 linux/version.h not needed.
-./drivers/soc/tegra/cbb/tegra194-cbb.c: 26 linux/version.h not needed.
-./drivers/soc/tegra/cbb/tegra234-cbb.c: 27 linux/version.h not needed.
+On 2023-03-03 06:21, Yu Zhe wrote:
+> Pointer variables of void * type do not require type cast.
+> 
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> ---
+>  drivers/s390/crypto/zcrypt_msgtype6.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/zcrypt_msgtype6.c
+> b/drivers/s390/crypto/zcrypt_msgtype6.c
+> index 5ad251477593..a2e7fe33ba62 100644
+> --- a/drivers/s390/crypto/zcrypt_msgtype6.c
+> +++ b/drivers/s390/crypto/zcrypt_msgtype6.c
+> @@ -926,8 +926,7 @@ static void zcrypt_msgtype6_receive(struct ap_queue 
+> *aq,
+>  		.type = TYPE82_RSP_CODE,
+>  		.reply_code = REP82_ERROR_MACHINE_FAILURE,
+>  	};
+> -	struct response_type *resp_type =
+> -		(struct response_type *)msg->private;
+> +	struct response_type *resp_type = msg->private;
+>  	struct type86x_reply *t86r;
+>  	int len;
+> 
+> @@ -982,8 +981,7 @@ static void zcrypt_msgtype6_receive_ep11(struct
+> ap_queue *aq,
+>  		.type = TYPE82_RSP_CODE,
+>  		.reply_code = REP82_ERROR_MACHINE_FAILURE,
+>  	};
+> -	struct response_type *resp_type =
+> -		(struct response_type *)msg->private;
+> +	struct response_type *resp_type = msg->private;
+>  	struct type86_ep11_reply *t86r;
+>  	int len;
+> 
+> @@ -1157,7 +1155,7 @@ static long zcrypt_msgtype6_send_cprb(bool
+> userspace, struct zcrypt_queue *zq,
+>  				      struct ap_message *ap_msg)
+>  {
+>  	int rc;
+> -	struct response_type *rtype = (struct response_type 
+> *)(ap_msg->private);
+> +	struct response_type *rtype = ap_msg->private;
+>  	struct {
+>  		struct type6_hdr hdr;
+>  		struct CPRBX cprbx;
+> @@ -1240,7 +1238,7 @@ static long zcrypt_msgtype6_send_ep11_cprb(bool
+> userspace, struct zcrypt_queue *
+>  {
+>  	int rc;
+>  	unsigned int lfmt;
+> -	struct response_type *rtype = (struct response_type 
+> *)(ap_msg->private);
+> +	struct response_type *rtype = ap_msg->private;
+>  	struct {
+>  		struct type6_hdr hdr;
+>  		struct ep11_cprb cprbx;
+> @@ -1359,7 +1357,7 @@ static long zcrypt_msgtype6_rng(struct 
+> zcrypt_queue *zq,
+>  		short int verb_length;
+>  		short int key_length;
+>  	} __packed * msg = ap_msg->msg;
+> -	struct response_type *rtype = (struct response_type 
+> *)(ap_msg->private);
+> +	struct response_type *rtype = ap_msg->private;
+>  	int rc;
+> 
+>  	msg->cprbx.domain = AP_QID_QUEUE(zq->queue->qid);
 
-So remove linux/version.h from these files.
-
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- drivers/soc/tegra/cbb/tegra-cbb.c    | 1 -
- drivers/soc/tegra/cbb/tegra194-cbb.c | 1 -
- drivers/soc/tegra/cbb/tegra234-cbb.c | 1 -
- 3 files changed, 3 deletions(-)
-
-diff --git a/drivers/soc/tegra/cbb/tegra-cbb.c b/drivers/soc/tegra/cbb/tegra-cbb.c
-index a8566b9dd8de..bd96204a68ee 100644
---- a/drivers/soc/tegra/cbb/tegra-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra-cbb.c
-@@ -16,7 +16,6 @@
- #include <linux/of_address.h>
- #include <linux/interrupt.h>
- #include <linux/ioport.h>
--#include <linux/version.h>
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/tegra-cbb.h>
- 
-diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
-index d4112b683f00..a05fc2caff3b 100644
---- a/drivers/soc/tegra/cbb/tegra194-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
-@@ -23,7 +23,6 @@
- #include <linux/of_address.h>
- #include <linux/interrupt.h>
- #include <linux/ioport.h>
--#include <linux/version.h>
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/tegra-cbb.h>
- 
-diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
-index f33d094e5ea6..e23e8acfd7c7 100644
---- a/drivers/soc/tegra/cbb/tegra234-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
-@@ -24,7 +24,6 @@
- #include <linux/of_address.h>
- #include <linux/interrupt.h>
- #include <linux/ioport.h>
--#include <linux/version.h>
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/tegra-cbb.h>
- 
--- 
-2.39.2
+Thanks for this patch and the reviews done. As maintainer of the zcrypt 
+and ap bus
+code I will of course also review the patch, pick it and apply it to our 
+internal
+s390 subsystem kernel repository. On the next synch it will appear in 
+Linus Torwald's
+kernel tree. Thanks
 
