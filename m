@@ -2,154 +2,176 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB3DC678D4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 10:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFACC7EE2F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 10:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230213AbjCCKKi (ORCPT
+        id S230167AbjCCK55 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 05:10:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56564 "EHLO
+        Fri, 3 Mar 2023 05:57:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjCCKKh (ORCPT
+        with ESMTP id S230152AbjCCK5z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 05:10:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19C4310413;
-        Fri,  3 Mar 2023 02:10:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 3 Mar 2023 05:57:55 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0121926A6;
+        Fri,  3 Mar 2023 02:57:53 -0800 (PST)
+Received: from [192.168.10.39] (unknown [182.179.171.187])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CEF3AB81609;
-        Fri,  3 Mar 2023 10:10:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA4CC433EF;
-        Fri,  3 Mar 2023 10:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677838233;
-        bh=FRwC8MxYEXSaBs+LyEZqaL4MtL0zA/qyOGc7isT+9bQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b/V1m6N8NjwIiJzV3gK2iah8r/sb0vKPojyRor2g4r1tG1x4S3M3T2au8dgxQYoyK
-         am2udlEVnuvBqZWMLGkXjFXrbgTHnOlug+5rNJEtn2GoKtVVDoaG/wrjziwGptH6V+
-         mmvUEKjirr8Q7nt/nv1v4ZuUQ9jFTo8NmTyWUHBBm7pDcDNQ0vS+bXwu6gyBcd9WjJ
-         3/+Rk0ObtN4um7RmWboZFXFsDmoCBTHjtulVZMw9IMr+6NBsdow+KWiIq/uTcISqwF
-         +KysLcFECci4BrwprspEIiOX3wEHzrL2VuIeVONyitMsXVvRD5ysTEAazsfnvX42u/
-         r4Hhn3Vyrqa3w==
-Date:   Fri, 3 Mar 2023 10:10:29 +0000
-From:   Lee Jones <lee@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mfd: core: Reorder fields in 'struct mfd_cell' to save
- some memory
-Message-ID: <20230303101029.GM2303077@google.com>
-References: <bb631974888dfe1af593b6280cf30fb913d2d1a4.1676365116.git.christophe.jaillet@wanadoo.fr>
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D53756602FAE;
+        Fri,  3 Mar 2023 10:57:49 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1677841071;
+        bh=aJ629f459T2/4SFJjB3CeXdAJ6xSaeA5567kn8eFpEo=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=Ii3psLcOlxb4lKa3kZfiO/8QGnW2AuZi5bscmtyNvq25x6TsODv2DHO5QPdJTR1W8
+         Bx245Gw/BmL5agbvP09Qn7smJGUEvvymQnD8hBmxVgNav7GoE+y+dBzjv2tG5MB4A3
+         c6/xDyMKnqqJUN14qru1QE2l5B9srM8e8GB2ANRciZjhq1TuR9MTqof44usR2PZJhU
+         4RaPvhZ71uDwaWbqDBivSEnLH9rc/UffZh9a/4wPrSHKJJ31aAFGmHZnmgEXkm9gOE
+         6MIEkPaJmj0qCooILSaU8r263DukFij+So6djJkj12JgLbaIqk2vwgwQBtnjaDmGAR
+         IlLWAvbw4PyCQ==
+Message-ID: <2481c947-b558-f536-d505-dffaf6a023a9@collabora.com>
+Date:   Fri, 3 Mar 2023 15:57:45 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Re: [PATCH] spi: Reorder fields in 'struct spi_message'
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Mark Brown <broonie@kernel.org>
+References: <c112aad16eb47808e1ec10abd87b3d273c969a68.1677704283.git.christophe.jaillet@wanadoo.fr>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <c112aad16eb47808e1ec10abd87b3d273c969a68.1677704283.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bb631974888dfe1af593b6280cf30fb913d2d1a4.1676365116.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 14 Feb 2023, Christophe JAILLET wrote:
-
+On 3/2/23 1:58 AM, Christophe JAILLET wrote:
 > Group some variables based on their sizes to reduce hole and avoid padding.
-> On x86_64, this shrinks the size from 144 to 128 bytes.
+> On x86_64, this shrinks the size from 112 to 96 bytes.
 > 
-> As an example:
-> 
-> $ size drivers/mfd/as3722.o (Before)
->    text	   data	    bss	    dec	    hex	filename
->    9441	    680	     16	  10137	   2799	drivers/mfd/as3722.o
-> 
-> $ size drivers/mfd/as3722.o (After)
->    text	   data	    bss	    dec	    hex	filename
->    9345	    680	     16	  10041	   2739	drivers/mfd/as3722.o
+> This should have no real impact on memory allocation because 'struct
+> spi_message' is mostly used on stack, but it can save a few cycles
+> when the structure is initialized with spi_message_init() and co.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Tested-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+
 > ---
 > Using pahole
 > 
 > Before:
 > ======
-> struct mfd_cell {
-> 	const char  *              name;                 /*     0     8 */
-> 	int                        id;                   /*     8     4 */
-> 	int                        level;                /*    12     4 */
-> 	int                        (*enable)(struct platform_device *); /*    16     8 */
-> 	int                        (*disable)(struct platform_device *); /*    24     8 */
-> 	int                        (*suspend)(struct platform_device *); /*    32     8 */
-> 	int                        (*resume)(struct platform_device *); /*    40     8 */
-> 	void *                     platform_data;        /*    48     8 */
-> 	size_t                     pdata_size;           /*    56     8 */
-> 	/* --- cacheline 1 boundary (64 bytes) --- */
-> 	const struct software_node  * swnode;            /*    64     8 */
-> 	const char  *              of_compatible;        /*    72     8 */
-> 	const u64                  of_reg;               /*    80     8 */
-> 	bool                       use_of_reg;           /*    88     1 */
+> struct spi_message {
+> 	struct list_head           transfers;            /*     0    16 */
+> 	struct spi_device *        spi;                  /*    16     8 */
+> 	unsigned int               is_dma_mapped:1;      /*    24: 0  4 */
 > 
-> 	/* XXX 7 bytes hole, try to pack */
+> 	/* XXX 31 bits hole, try to pack */
+> 	/* XXX 4 bytes hole, try to pack */
 > 
-> 	const struct mfd_cell_acpi_match  * acpi_match;  /*    96     8 */
-> 	int                        num_resources;        /*   104     4 */
+> 	void                       (*complete)(void *);  /*    32     8 */
+> 	void *                     context;              /*    40     8 */
+> 	unsigned int               frame_length;         /*    48     4 */
+> 	unsigned int               actual_length;        /*    52     4 */
+> 	int                        status;               /*    56     4 */
 > 
 > 	/* XXX 4 bytes hole, try to pack */
 > 
-> 	const struct resource  *   resources;            /*   112     8 */
-> 	bool                       ignore_resource_conflicts; /*   120     1 */
-> 	bool                       pm_runtime_no_callbacks; /*   121     1 */
+> 	/* --- cacheline 1 boundary (64 bytes) --- */
+> 	struct list_head           queue;                /*    64    16 */
+> 	void *                     state;                /*    80     8 */
+> 	struct list_head           resources;            /*    88    16 */
+> 	bool                       prepared;             /*   104     1 */
 > 
-> 	/* XXX 6 bytes hole, try to pack */
-> 
-> 	/* --- cacheline 2 boundary (128 bytes) --- */
-> 	const char  * const *      parent_supplies;      /*   128     8 */
-> 	int                        num_parent_supplies;  /*   136     4 */
-> 
-> 	/* size: 144, cachelines: 3, members: 20 */
-> 	/* sum members: 123, holes: 3, sum holes: 17 */
-> 	/* padding: 4 */
-> 	/* last cacheline: 16 bytes */
+> 	/* size: 112, cachelines: 2, members: 12 */
+> 	/* sum members: 93, holes: 2, sum holes: 8 */
+> 	/* sum bitfield members: 1 bits, bit holes: 1, sum bit holes: 31 bits */
+> 	/* padding: 7 */
+> 	/* last cacheline: 48 bytes */
 > };
 > 
 > 
 > After:
 > =====
-> struct mfd_cell {
-> 	const char  *              name;                 /*     0     8 */
-> 	int                        id;                   /*     8     4 */
-> 	int                        level;                /*    12     4 */
-> 	int                        (*enable)(struct platform_device *); /*    16     8 */
-> 	int                        (*disable)(struct platform_device *); /*    24     8 */
-> 	int                        (*suspend)(struct platform_device *); /*    32     8 */
-> 	int                        (*resume)(struct platform_device *); /*    40     8 */
-> 	void *                     platform_data;        /*    48     8 */
-> 	size_t                     pdata_size;           /*    56     8 */
-> 	/* --- cacheline 1 boundary (64 bytes) --- */
-> 	const struct mfd_cell_acpi_match  * acpi_match;  /*    64     8 */
-> 	const struct software_node  * swnode;            /*    72     8 */
-> 	const char  *              of_compatible;        /*    80     8 */
-> 	const u64                  of_reg;               /*    88     8 */
-> 	bool                       use_of_reg;           /*    96     1 */
+> struct spi_message {
+> 	struct list_head           transfers;            /*     0    16 */
+> 	struct spi_device *        spi;                  /*    16     8 */
+> 	unsigned int               is_dma_mapped:1;      /*    24: 0  4 */
 > 
-> 	/* XXX 3 bytes hole, try to pack */
+> 	/* XXX 7 bits hole, try to pack */
+> 	/* Bitfield combined with next fields */
 > 
-> 	int                        num_resources;        /*   100     4 */
-> 	const struct resource  *   resources;            /*   104     8 */
-> 	bool                       ignore_resource_conflicts; /*   112     1 */
-> 	bool                       pm_runtime_no_callbacks; /*   113     1 */
+> 	bool                       prepared;             /*    25     1 */
 > 
 > 	/* XXX 2 bytes hole, try to pack */
 > 
-> 	int                        num_parent_supplies;  /*   116     4 */
-> 	const char  * const *      parent_supplies;      /*   120     8 */
+> 	int                        status;               /*    28     4 */
+> 	void                       (*complete)(void *);  /*    32     8 */
+> 	void *                     context;              /*    40     8 */
+> 	unsigned int               frame_length;         /*    48     4 */
+> 	unsigned int               actual_length;        /*    52     4 */
+> 	struct list_head           queue;                /*    56    16 */
+> 	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
+> 	void *                     state;                /*    72     8 */
+> 	struct list_head           resources;            /*    80    16 */
 > 
-> 	/* size: 128, cachelines: 2, members: 20 */
-> 	/* sum members: 123, holes: 2, sum holes: 5 */
+> 	/* size: 96, cachelines: 2, members: 12 */
+> 	/* sum members: 93, holes: 1, sum holes: 2 */
+> 	/* sum bitfield members: 1 bits, bit holes: 1, sum bit holes: 7 bits */
+> 	/* last cacheline: 32 bytes */
 > };
 > ---
->  include/linux/mfd/core.h | 8 ++++----
+>  include/linux/spi/spi.h | 8 ++++----
 >  1 file changed, 4 insertions(+), 4 deletions(-)
-
-Applied, thanks
+> 
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index 4fa26b9a3572..bdb35a91b4bf 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -1093,6 +1093,9 @@ struct spi_message {
+>  
+>  	unsigned		is_dma_mapped:1;
+>  
+> +	/* spi_prepare_message() was called for this message */
+> +	bool			prepared;
+> +
+>  	/* REVISIT:  we might want a flag affecting the behavior of the
+>  	 * last transfer ... allowing things like "read 16 bit length L"
+>  	 * immediately followed by "read L bytes".  Basically imposing
+> @@ -1105,11 +1108,11 @@ struct spi_message {
+>  	 */
+>  
+>  	/* Completion is reported through a callback */
+> +	int			status;
+>  	void			(*complete)(void *context);
+>  	void			*context;
+>  	unsigned		frame_length;
+>  	unsigned		actual_length;
+> -	int			status;
+>  
+>  	/* For optional use by whatever driver currently owns the
+>  	 * spi_message ...  between calls to spi_async and then later
+> @@ -1120,9 +1123,6 @@ struct spi_message {
+>  
+>  	/* List of spi_res reources when the spi message is processed */
+>  	struct list_head        resources;
+> -
+> -	/* spi_prepare_message() was called for this message */
+> -	bool			prepared;
+>  };
+>  
+>  static inline void spi_message_init_no_memset(struct spi_message *m)
 
 -- 
-Lee Jones [李琼斯]
+BR,
+Muhammad Usama Anjum
