@@ -2,106 +2,154 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E98BEC7EE32
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 05:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB3DC678D4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 10:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbjCCFWt (ORCPT
+        id S230213AbjCCKKi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 00:22:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50640 "EHLO
+        Fri, 3 Mar 2023 05:10:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjCCFWs (ORCPT
+        with ESMTP id S229437AbjCCKKh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 00:22:48 -0500
-Received: from mail.nfschina.com (unknown [42.101.60.237])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A321714988;
-        Thu,  2 Mar 2023 21:22:46 -0800 (PST)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 7C1061A00AA7;
-        Fri,  3 Mar 2023 13:23:30 +0800 (CST)
-X-Virus-Scanned: amavisd-new at nfschina.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id dwzXF7kyVtNh; Fri,  3 Mar 2023 13:23:29 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id D97361A0087A;
-        Fri,  3 Mar 2023 13:23:28 +0800 (CST)
-From:   Yu Zhe <yuzhe@nfschina.com>
-To:     freude@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH v3] s390/zcrypt: remove unnecessary (void*) conversions
-Date:   Fri,  3 Mar 2023 13:21:55 +0800
-Message-Id: <20230303052155.21072-1-yuzhe@nfschina.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20230303013250.3058-1-yuzhe@nfschina.com>
-References: <20230303013250.3058-1-yuzhe@nfschina.com>
+        Fri, 3 Mar 2023 05:10:37 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19C4310413;
+        Fri,  3 Mar 2023 02:10:36 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CEF3AB81609;
+        Fri,  3 Mar 2023 10:10:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA4CC433EF;
+        Fri,  3 Mar 2023 10:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677838233;
+        bh=FRwC8MxYEXSaBs+LyEZqaL4MtL0zA/qyOGc7isT+9bQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b/V1m6N8NjwIiJzV3gK2iah8r/sb0vKPojyRor2g4r1tG1x4S3M3T2au8dgxQYoyK
+         am2udlEVnuvBqZWMLGkXjFXrbgTHnOlug+5rNJEtn2GoKtVVDoaG/wrjziwGptH6V+
+         mmvUEKjirr8Q7nt/nv1v4ZuUQ9jFTo8NmTyWUHBBm7pDcDNQ0vS+bXwu6gyBcd9WjJ
+         3/+Rk0ObtN4um7RmWboZFXFsDmoCBTHjtulVZMw9IMr+6NBsdow+KWiIq/uTcISqwF
+         +KysLcFECci4BrwprspEIiOX3wEHzrL2VuIeVONyitMsXVvRD5ysTEAazsfnvX42u/
+         r4Hhn3Vyrqa3w==
+Date:   Fri, 3 Mar 2023 10:10:29 +0000
+From:   Lee Jones <lee@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mfd: core: Reorder fields in 'struct mfd_cell' to save
+ some memory
+Message-ID: <20230303101029.GM2303077@google.com>
+References: <bb631974888dfe1af593b6280cf30fb913d2d1a4.1676365116.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bb631974888dfe1af593b6280cf30fb913d2d1a4.1676365116.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer variables of void * type do not require type cast.
+On Tue, 14 Feb 2023, Christophe JAILLET wrote:
 
-Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
----
- drivers/s390/crypto/zcrypt_msgtype6.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+> Group some variables based on their sizes to reduce hole and avoid padding.
+> On x86_64, this shrinks the size from 144 to 128 bytes.
+> 
+> As an example:
+> 
+> $ size drivers/mfd/as3722.o (Before)
+>    text	   data	    bss	    dec	    hex	filename
+>    9441	    680	     16	  10137	   2799	drivers/mfd/as3722.o
+> 
+> $ size drivers/mfd/as3722.o (After)
+>    text	   data	    bss	    dec	    hex	filename
+>    9345	    680	     16	  10041	   2739	drivers/mfd/as3722.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Using pahole
+> 
+> Before:
+> ======
+> struct mfd_cell {
+> 	const char  *              name;                 /*     0     8 */
+> 	int                        id;                   /*     8     4 */
+> 	int                        level;                /*    12     4 */
+> 	int                        (*enable)(struct platform_device *); /*    16     8 */
+> 	int                        (*disable)(struct platform_device *); /*    24     8 */
+> 	int                        (*suspend)(struct platform_device *); /*    32     8 */
+> 	int                        (*resume)(struct platform_device *); /*    40     8 */
+> 	void *                     platform_data;        /*    48     8 */
+> 	size_t                     pdata_size;           /*    56     8 */
+> 	/* --- cacheline 1 boundary (64 bytes) --- */
+> 	const struct software_node  * swnode;            /*    64     8 */
+> 	const char  *              of_compatible;        /*    72     8 */
+> 	const u64                  of_reg;               /*    80     8 */
+> 	bool                       use_of_reg;           /*    88     1 */
+> 
+> 	/* XXX 7 bytes hole, try to pack */
+> 
+> 	const struct mfd_cell_acpi_match  * acpi_match;  /*    96     8 */
+> 	int                        num_resources;        /*   104     4 */
+> 
+> 	/* XXX 4 bytes hole, try to pack */
+> 
+> 	const struct resource  *   resources;            /*   112     8 */
+> 	bool                       ignore_resource_conflicts; /*   120     1 */
+> 	bool                       pm_runtime_no_callbacks; /*   121     1 */
+> 
+> 	/* XXX 6 bytes hole, try to pack */
+> 
+> 	/* --- cacheline 2 boundary (128 bytes) --- */
+> 	const char  * const *      parent_supplies;      /*   128     8 */
+> 	int                        num_parent_supplies;  /*   136     4 */
+> 
+> 	/* size: 144, cachelines: 3, members: 20 */
+> 	/* sum members: 123, holes: 3, sum holes: 17 */
+> 	/* padding: 4 */
+> 	/* last cacheline: 16 bytes */
+> };
+> 
+> 
+> After:
+> =====
+> struct mfd_cell {
+> 	const char  *              name;                 /*     0     8 */
+> 	int                        id;                   /*     8     4 */
+> 	int                        level;                /*    12     4 */
+> 	int                        (*enable)(struct platform_device *); /*    16     8 */
+> 	int                        (*disable)(struct platform_device *); /*    24     8 */
+> 	int                        (*suspend)(struct platform_device *); /*    32     8 */
+> 	int                        (*resume)(struct platform_device *); /*    40     8 */
+> 	void *                     platform_data;        /*    48     8 */
+> 	size_t                     pdata_size;           /*    56     8 */
+> 	/* --- cacheline 1 boundary (64 bytes) --- */
+> 	const struct mfd_cell_acpi_match  * acpi_match;  /*    64     8 */
+> 	const struct software_node  * swnode;            /*    72     8 */
+> 	const char  *              of_compatible;        /*    80     8 */
+> 	const u64                  of_reg;               /*    88     8 */
+> 	bool                       use_of_reg;           /*    96     1 */
+> 
+> 	/* XXX 3 bytes hole, try to pack */
+> 
+> 	int                        num_resources;        /*   100     4 */
+> 	const struct resource  *   resources;            /*   104     8 */
+> 	bool                       ignore_resource_conflicts; /*   112     1 */
+> 	bool                       pm_runtime_no_callbacks; /*   113     1 */
+> 
+> 	/* XXX 2 bytes hole, try to pack */
+> 
+> 	int                        num_parent_supplies;  /*   116     4 */
+> 	const char  * const *      parent_supplies;      /*   120     8 */
+> 
+> 	/* size: 128, cachelines: 2, members: 20 */
+> 	/* sum members: 123, holes: 2, sum holes: 5 */
+> };
+> ---
+>  include/linux/mfd/core.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/s390/crypto/zcrypt_msgtype6.c b/drivers/s390/crypto/zcrypt_msgtype6.c
-index 5ad251477593..a2e7fe33ba62 100644
---- a/drivers/s390/crypto/zcrypt_msgtype6.c
-+++ b/drivers/s390/crypto/zcrypt_msgtype6.c
-@@ -926,8 +926,7 @@ static void zcrypt_msgtype6_receive(struct ap_queue *aq,
- 		.type = TYPE82_RSP_CODE,
- 		.reply_code = REP82_ERROR_MACHINE_FAILURE,
- 	};
--	struct response_type *resp_type =
--		(struct response_type *)msg->private;
-+	struct response_type *resp_type = msg->private;
- 	struct type86x_reply *t86r;
- 	int len;
- 
-@@ -982,8 +981,7 @@ static void zcrypt_msgtype6_receive_ep11(struct ap_queue *aq,
- 		.type = TYPE82_RSP_CODE,
- 		.reply_code = REP82_ERROR_MACHINE_FAILURE,
- 	};
--	struct response_type *resp_type =
--		(struct response_type *)msg->private;
-+	struct response_type *resp_type = msg->private;
- 	struct type86_ep11_reply *t86r;
- 	int len;
- 
-@@ -1157,7 +1155,7 @@ static long zcrypt_msgtype6_send_cprb(bool userspace, struct zcrypt_queue *zq,
- 				      struct ap_message *ap_msg)
- {
- 	int rc;
--	struct response_type *rtype = (struct response_type *)(ap_msg->private);
-+	struct response_type *rtype = ap_msg->private;
- 	struct {
- 		struct type6_hdr hdr;
- 		struct CPRBX cprbx;
-@@ -1240,7 +1238,7 @@ static long zcrypt_msgtype6_send_ep11_cprb(bool userspace, struct zcrypt_queue *
- {
- 	int rc;
- 	unsigned int lfmt;
--	struct response_type *rtype = (struct response_type *)(ap_msg->private);
-+	struct response_type *rtype = ap_msg->private;
- 	struct {
- 		struct type6_hdr hdr;
- 		struct ep11_cprb cprbx;
-@@ -1359,7 +1357,7 @@ static long zcrypt_msgtype6_rng(struct zcrypt_queue *zq,
- 		short int verb_length;
- 		short int key_length;
- 	} __packed * msg = ap_msg->msg;
--	struct response_type *rtype = (struct response_type *)(ap_msg->private);
-+	struct response_type *rtype = ap_msg->private;
- 	int rc;
- 
- 	msg->cprbx.domain = AP_QID_QUEUE(zq->queue->qid);
+Applied, thanks
+
 -- 
-2.11.0
-
+Lee Jones [李琼斯]
