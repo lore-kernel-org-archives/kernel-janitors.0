@@ -2,98 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D61C7EE2D
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 18:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BC2C7EE32
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 20:03:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231845AbjCCSyp (ORCPT
+        id S231701AbjCCUDC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 13:54:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36008 "EHLO
+        Fri, 3 Mar 2023 15:03:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231583AbjCCSyn (ORCPT
+        with ESMTP id S231738AbjCCUCl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 13:54:43 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CA9415547;
-        Fri,  3 Mar 2023 10:54:41 -0800 (PST)
-Received: from localhost.localdomain (unknown [182.179.171.187])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Fri, 3 Mar 2023 15:02:41 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 292C362303;
+        Fri,  3 Mar 2023 12:02:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 10E056602FB0;
-        Fri,  3 Mar 2023 18:54:32 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677869680;
-        bh=kPAxGehnff6l8oiuJ40GvX3+I1+jtOiaN6I9cIx8lHA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DyTWu2Wi7OJw1mvphESD/xfp8/Q4+NTHe+WdERrupfbAS/71yjQ3fec98p/EvY0Nq
-         sikW4CPnK65sWerRQQ5S8waLti0ICsNdkf9hmDOy8MxgPZN6tupfF+6eGfF5mFRUu3
-         M4e57x45BIvnuzMswkPzoFqi2WYklsQYsTAsZtl8vC78PwpWQD2AzpPknx/gs8o8rU
-         mZ9DHi1o6zOrJc79x7bXhQwrDDXwB3ntfQ6ekUP/kYhMuDGUInm6RY3DW51hQP00bH
-         y+yR/DBZlMRCqTflVBGDGLZlYJKcLcQvfP3c+WKl7bijLDj2XYavN3Moq6dice8lD3
-         Kpk6kjD/vQQCA==
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Ariel Elior <aelior@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] qede: remove linux/version.h and linux/compiler.h
-Date:   Fri,  3 Mar 2023 23:53:50 +0500
-Message-Id: <20230303185351.2825900-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+        by sin.source.kernel.org (Postfix) with ESMTPS id A460ECE2241;
+        Fri,  3 Mar 2023 20:02:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A50DC433D2;
+        Fri,  3 Mar 2023 20:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677873724;
+        bh=L5veKLAxH2SUFYKMyMXRUHXlUXhf/n2cOJOJQB4SYck=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TmpJJXCTQg248QFTtu7cCyrNF914FevhEChpqBLFPXBIIBu0x4VjUhTq4wlwBwiw1
+         yGsV/lMtIyfp+Kgu0AQqiM86kUyEubDhK8FFLrQ0ZbewQMshi6tZxh/SODqgaq/mIo
+         lS/Qsdi6PesMY8EzT2JKmf1L9ICtzJT7d5/iKbNJBPkwd5257/Om8Z4rKbJnQblHyj
+         a4pP0GVkiYHhVXJ1lxrELnw3XyH8+JwKbDmqA1Av1rkx5TJwp2N2c1OvycI5movyOX
+         vfL1J31KazvMphJxS8i50iJYWErZ6mZeH/bKbWwGUtn6BHHy64bQTpefFTJBmdfIPZ
+         KOWnfhygn88Tw==
+Date:   Fri, 3 Mar 2023 21:02:00 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Nick Hawkins <nick.hawkins@hpe.com>, Joel Stanley <joel@jms.id.au>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] i2c: gxp: fix an error code in probe
+Message-ID: <ZAJSOKO8zA2dfmS1@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Dan Carpenter <error27@gmail.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>, Joel Stanley <joel@jms.id.au>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <Y/yAqRlSTN5VygUy@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="WP4VIKkpydrzWAv6"
+Content-Disposition: inline
+In-Reply-To: <Y/yAqRlSTN5VygUy@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-make versioncheck reports the following:
-./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
-./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
 
-So remove linux/version.h from both of these files. Also remove
-linux/compiler.h while at it as it is also not being used.
+--WP4VIKkpydrzWAv6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
-Changes since v1:
-- Remove linux/compiler.h as well
----
- drivers/net/ethernet/qlogic/qede/qede.h         | 2 --
- drivers/net/ethernet/qlogic/qede/qede_ethtool.c | 1 -
- 2 files changed, 3 deletions(-)
+On Mon, Feb 27, 2023 at 01:06:33PM +0300, Dan Carpenter wrote:
+> This is passing IS_ERR() instead of PTR_ERR() so instead of an error
+> code it prints and returns the number 1.
+>=20
+> Fixes: 4a55ed6f89f5 ("i2c: Add GXP SoC I2C Controller")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/net/ethernet/qlogic/qede/qede.h b/drivers/net/ethernet/qlogic/qede/qede.h
-index f90dcfe9ee68..f9931ecb7baa 100644
---- a/drivers/net/ethernet/qlogic/qede/qede.h
-+++ b/drivers/net/ethernet/qlogic/qede/qede.h
-@@ -6,8 +6,6 @@
- 
- #ifndef _QEDE_H_
- #define _QEDE_H_
--#include <linux/compiler.h>
--#include <linux/version.h>
- #include <linux/workqueue.h>
- #include <linux/netdevice.h>
- #include <linux/interrupt.h>
-diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-index 8034d812d5a0..374a86b875a3 100644
---- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-@@ -4,7 +4,6 @@
-  * Copyright (c) 2019-2020 Marvell International Ltd.
-  */
- 
--#include <linux/version.h>
- #include <linux/types.h>
- #include <linux/netdevice.h>
- #include <linux/etherdevice.h>
--- 
-2.39.2
+Applied to for-current, thanks!
 
+
+--WP4VIKkpydrzWAv6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmQCUjgACgkQFA3kzBSg
+KbblBw/9HOzZHQwYBPTM4F+97X3QI5IzhpSHSqxaoByOCxbkmCvuQjj4SnOoxxxQ
+LBM+87aJlWo9qL206Y8QfV7R+tNeWP5PPxOxjaFL39wzNxmKam5vY6T4LMXvJTBu
+ne2f/cuWVPwi1Q1Cx6DIq/UgL88zWjvD8cCcFaKVxHW+U0jjE+o1Gvk0IdlOKiDf
+Y2xTiYlGXniOlXeC09t9Dg5hnHqCR6IqQM66cOPtWmyyL4UIi7qua9ClZDLSyZ6F
+p4M9mcYIoXdKB7g1tjdai3DXSg5uGA4yyDa/1GBDdua0a3JeIt8bkdfijlasgZIY
+myVhT3N/pko0rJmmUkrU2uqAp/bDB3w6O1u75nW/p4D9qEX5cYeIE5xegYnzh7sK
+fJI8WfQQfLXwRDJLjgUE53RTPIL/2xU/BuaMvnsKyT9b+UZLmlrJzIYnIQQeuu98
+iXHXEl328fsFOzBLV89QL7N1DXc10EkL0vTZGWpxtD6y0sDeZUf6OEF4KhMDAGpN
+HeVk02xZnb3rI410fIRzBdxN8/3PN14QVTXPVMEh0Fs2+BY0NJil94aJFYJ3Nvom
+w2MWSLq128vkPOZ04N9D47AZ6wIwQbFYgNHvX7YtEq7JxDkBeUs1UnDXElrXOfQE
+TymUXyEQpziBIrvI+dQpjofR2KK1MIP+upwbDxNj26F/m2wAB5M=
+=MWnx
+-----END PGP SIGNATURE-----
+
+--WP4VIKkpydrzWAv6--
