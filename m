@@ -2,92 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BC2C7EE32
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 20:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA54C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 22:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231701AbjCCUDC (ORCPT
+        id S233652AbjCCWGm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 15:03:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59056 "EHLO
+        Fri, 3 Mar 2023 17:06:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231738AbjCCUCl (ORCPT
+        with ESMTP id S233488AbjCCWG1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 15:02:41 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 292C362303;
-        Fri,  3 Mar 2023 12:02:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A460ECE2241;
-        Fri,  3 Mar 2023 20:02:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A50DC433D2;
-        Fri,  3 Mar 2023 20:02:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677873724;
-        bh=L5veKLAxH2SUFYKMyMXRUHXlUXhf/n2cOJOJQB4SYck=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TmpJJXCTQg248QFTtu7cCyrNF914FevhEChpqBLFPXBIIBu0x4VjUhTq4wlwBwiw1
-         yGsV/lMtIyfp+Kgu0AQqiM86kUyEubDhK8FFLrQ0ZbewQMshi6tZxh/SODqgaq/mIo
-         lS/Qsdi6PesMY8EzT2JKmf1L9ICtzJT7d5/iKbNJBPkwd5257/Om8Z4rKbJnQblHyj
-         a4pP0GVkiYHhVXJ1lxrELnw3XyH8+JwKbDmqA1Av1rkx5TJwp2N2c1OvycI5movyOX
-         vfL1J31KazvMphJxS8i50iJYWErZ6mZeH/bKbWwGUtn6BHHy64bQTpefFTJBmdfIPZ
-         KOWnfhygn88Tw==
-Date:   Fri, 3 Mar 2023 21:02:00 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Nick Hawkins <nick.hawkins@hpe.com>, Joel Stanley <joel@jms.id.au>,
-        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i2c: gxp: fix an error code in probe
-Message-ID: <ZAJSOKO8zA2dfmS1@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Dan Carpenter <error27@gmail.com>,
-        Nick Hawkins <nick.hawkins@hpe.com>, Joel Stanley <joel@jms.id.au>,
-        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <Y/yAqRlSTN5VygUy@kili>
+        Fri, 3 Mar 2023 17:06:27 -0500
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22A0F7042C;
+        Fri,  3 Mar 2023 13:56:45 -0800 (PST)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-1763e201bb4so4671349fac.1;
+        Fri, 03 Mar 2023 13:56:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677880541;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6AFZEkYJ2SPZLOLjAy2GSQIbeAnHolJ0EeRAikdfL+4=;
+        b=P3d2oihIqjPJuCposna/iUIlVvMp/CshgIa/46oePogW1VU1iA6kwOQDkuYw1vYVMG
+         GTW8+NUonaE6nILgGlnJ0/4CGjZCM0Z9nVnzqfEXUqA7VA7xPbfi0Q4657v8yd4moT5K
+         aRcTrSGk3s1D9w6H4A6yeAL33Yt4xR1Z3E3cFOVh170NzcifWddufl/LLqRDvyy+iAy1
+         f78AtLxrWTcrvplFQYXzA0zLVmKnmuD0iDRA71HWr2siPdPWT02JEJLLYL7anyR/jxXY
+         OXSvcMYvaMJDXNtnD5zfvdbZQjZWiTa36yUgwBy11TjYMPJEtAUA4YI/7K7Z75fgmlv2
+         o2NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677880541;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6AFZEkYJ2SPZLOLjAy2GSQIbeAnHolJ0EeRAikdfL+4=;
+        b=gi2vNI4mdofQYfdpJjp+0OaMZxMWE6IJs1cOmg/W+JYaeCyLFkmONn9tZqL5sIVZkE
+         alhWxE1ab82zneAIAhB5wBZ4Zan8PnE5QWRKaVAPhmMhFL19jskH4jBWDCO9tiyNLOJa
+         fxfEHppnJSuwtoTyhOisVtIzzzB1fpH/NtjXM5QirQoI0d2rIgIv1oHYKGeAaTRharHO
+         AwrQ8oVNkaDNxdRauE5rKSo1wlUjGxp1mgIrZTr5Tkj5n03KTGLPlOZlJpnmaw4xoO5k
+         BTOW600oeftVOJeTbMS1khEcTmsaj/BpHcaFoiRLVqth1/OQVDSK65mt6DPccwpsEqAs
+         J/4g==
+X-Gm-Message-State: AO0yUKUip/FxSV38L/fbnvj9aTqQnr2JcwYx/kQ5uvDxd3RoTtGe5ael
+        z32TLqlGOgU9O4aiA7iFJi8EKtL8xu3ftJqJOso=
+X-Google-Smtp-Source: AK7set98BMz0wptKlJctbuyi8i0Ffce6eA9OhFewFlRnUKWKfPeYpxam4lXKQdp037LmrN3olRPSo6rPFsRvOqUB2cA=
+X-Received: by 2002:a05:6871:6b9d:b0:175:4a1f:edff with SMTP id
+ zh29-20020a0568716b9d00b001754a1fedffmr1100138oab.8.1677880540951; Fri, 03
+ Mar 2023 13:55:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="WP4VIKkpydrzWAv6"
-Content-Disposition: inline
-In-Reply-To: <Y/yAqRlSTN5VygUy@kili>
+References: <20230303120233.1878140-1-usama.anjum@collabora.com>
+In-Reply-To: <20230303120233.1878140-1-usama.anjum@collabora.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 3 Mar 2023 16:55:29 -0500
+Message-ID: <CADnq5_M_irvEL4Ggr4UaK2n5GeGD_EchqtZvumBtmdOUqqewhQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: remove dead code
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Kun Liu <Kun.Liu2@amd.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Applied.  Thanks!
 
---WP4VIKkpydrzWAv6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Alex
 
-On Mon, Feb 27, 2023 at 01:06:33PM +0300, Dan Carpenter wrote:
-> This is passing IS_ERR() instead of PTR_ERR() so instead of an error
-> code it prints and returns the number 1.
->=20
-> Fixes: 4a55ed6f89f5 ("i2c: Add GXP SoC I2C Controller")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Applied to for-current, thanks!
-
-
---WP4VIKkpydrzWAv6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmQCUjgACgkQFA3kzBSg
-KbblBw/9HOzZHQwYBPTM4F+97X3QI5IzhpSHSqxaoByOCxbkmCvuQjj4SnOoxxxQ
-LBM+87aJlWo9qL206Y8QfV7R+tNeWP5PPxOxjaFL39wzNxmKam5vY6T4LMXvJTBu
-ne2f/cuWVPwi1Q1Cx6DIq/UgL88zWjvD8cCcFaKVxHW+U0jjE+o1Gvk0IdlOKiDf
-Y2xTiYlGXniOlXeC09t9Dg5hnHqCR6IqQM66cOPtWmyyL4UIi7qua9ClZDLSyZ6F
-p4M9mcYIoXdKB7g1tjdai3DXSg5uGA4yyDa/1GBDdua0a3JeIt8bkdfijlasgZIY
-myVhT3N/pko0rJmmUkrU2uqAp/bDB3w6O1u75nW/p4D9qEX5cYeIE5xegYnzh7sK
-fJI8WfQQfLXwRDJLjgUE53RTPIL/2xU/BuaMvnsKyT9b+UZLmlrJzIYnIQQeuu98
-iXHXEl328fsFOzBLV89QL7N1DXc10EkL0vTZGWpxtD6y0sDeZUf6OEF4KhMDAGpN
-HeVk02xZnb3rI410fIRzBdxN8/3PN14QVTXPVMEh0Fs2+BY0NJil94aJFYJ3Nvom
-w2MWSLq128vkPOZ04N9D47AZ6wIwQbFYgNHvX7YtEq7JxDkBeUs1UnDXElrXOfQE
-TymUXyEQpziBIrvI+dQpjofR2KK1MIP+upwbDxNj26F/m2wAB5M=
-=MWnx
------END PGP SIGNATURE-----
-
---WP4VIKkpydrzWAv6--
+On Fri, Mar 3, 2023 at 7:03 AM Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+>
+> The less than zero comparison of unsigned variable "value" is never
+> true. Remove dead code.
+>
+> Fixes: c3ed0e72c872 ("drm/amdgpu: added a sysfs interface for thermal throttling")
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  drivers/gpu/drm/amd/pm/amdgpu_pm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+> index f212cae0353f..0ffe351c1a1d 100644
+> --- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+> +++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+> @@ -1738,7 +1738,7 @@ static ssize_t amdgpu_set_apu_thermal_cap(struct device *dev,
+>         if (ret)
+>                 return ret;
+>
+> -       if (value < 0 || value > 100) {
+> +       if (value > 100) {
+>                 dev_err(dev, "Invalid argument !\n");
+>                 return -EINVAL;
+>         }
+> --
+> 2.39.2
+>
