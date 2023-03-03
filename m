@@ -2,113 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 081F9C7EE2D
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 18:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D61C7EE2D
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 18:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231604AbjCCSv6 (ORCPT
+        id S231845AbjCCSyp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 13:51:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32968 "EHLO
+        Fri, 3 Mar 2023 13:54:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230228AbjCCSv5 (ORCPT
+        with ESMTP id S231583AbjCCSyn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 13:51:57 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9C654219;
-        Fri,  3 Mar 2023 10:51:53 -0800 (PST)
-Received: from [192.168.10.39] (unknown [182.179.171.187])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+        Fri, 3 Mar 2023 13:54:43 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CA9415547;
+        Fri,  3 Mar 2023 10:54:41 -0800 (PST)
+Received: from localhost.localdomain (unknown [182.179.171.187])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 75CF46602FB0;
-        Fri,  3 Mar 2023 18:51:47 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 10E056602FB0;
+        Fri,  3 Mar 2023 18:54:32 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677869511;
-        bh=6j5G1DzPfdDchQCrothO/vHHFj3+FwJJG8CYehazm/4=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=awW5Y02krkKBw8WR4fRsPzNJtePrV9cmCeVzyzfao0Xp/SWcqcF09g3bjXRL1+ixH
-         QVeC8t2SvRVJt+nEjKQ2j9AnhLxzfmTEEhEwU+i/A+UZTj1Lw8rv5AhCcs8FEVvqyP
-         ZTHmuQBfqsPD/BV8tDzYpeW29HeFMsuVZFntUZ2QpVunrDmYybv4y2ylE4yc5IJuTw
-         bSRBJhmAGZEfd7ZDNYzLP2TDz+1G7ENv4sikDN9b7iuzSJWNvpv0o4CRw92mMz0v6w
-         bV/rKusjMvfd5h8diSE3iu3afQxI2T8fVAdimJXdcicaGY//NdI9MM4+Dn10VmFBvH
-         KUUbshbEsGUkQ==
-Message-ID: <bc11e5ca-b259-8bfd-6d20-65eab089fbd0@collabora.com>
-Date:   Fri, 3 Mar 2023 23:51:37 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Ariel Elior <aelior@marvell.com>,
+        s=mail; t=1677869680;
+        bh=kPAxGehnff6l8oiuJ40GvX3+I1+jtOiaN6I9cIx8lHA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DyTWu2Wi7OJw1mvphESD/xfp8/Q4+NTHe+WdERrupfbAS/71yjQ3fec98p/EvY0Nq
+         sikW4CPnK65sWerRQQ5S8waLti0ICsNdkf9hmDOy8MxgPZN6tupfF+6eGfF5mFRUu3
+         M4e57x45BIvnuzMswkPzoFqi2WYklsQYsTAsZtl8vC78PwpWQD2AzpPknx/gs8o8rU
+         mZ9DHi1o6zOrJc79x7bXhQwrDDXwB3ntfQ6ekUP/kYhMuDGUInm6RY3DW51hQP00bH
+         y+yR/DBZlMRCqTflVBGDGLZlYJKcLcQvfP3c+WKl7bijLDj2XYavN3Moq6dice8lD3
+         Kpk6kjD/vQQCA==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Ariel Elior <aelior@marvell.com>,
         Manish Chopra <manishc@marvell.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] qede: remove linux/version.h
-Content-Language: en-US
-To:     Alexander Lobakin <aleksander.lobakin@intel.com>
-References: <20230303125844.2050449-1-usama.anjum@collabora.com>
- <f29ae960-dea1-6754-3957-412e3c4d095c@intel.com>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <f29ae960-dea1-6754-3957-412e3c4d095c@intel.com>
-Content-Type: text/plain; charset=UTF-8
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] qede: remove linux/version.h and linux/compiler.h
+Date:   Fri,  3 Mar 2023 23:53:50 +0500
+Message-Id: <20230303185351.2825900-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/3/23 8:35 PM, Alexander Lobakin wrote:
-> From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> Date: Fri,  3 Mar 2023 17:58:44 +0500
-> 
->> make versioncheck reports the following:
->> ./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
->> ./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
->>
->> So remove linux/version.h from both of these files.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>  drivers/net/ethernet/qlogic/qede/qede.h         | 1 -
->>  drivers/net/ethernet/qlogic/qede/qede_ethtool.c | 1 -
->>  2 files changed, 2 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/qlogic/qede/qede.h b/drivers/net/ethernet/qlogic/qede/qede.h
->> index f90dcfe9ee68..6ff1bd48d2aa 100644
->> --- a/drivers/net/ethernet/qlogic/qede/qede.h
->> +++ b/drivers/net/ethernet/qlogic/qede/qede.h
->> @@ -7,7 +7,6 @@
->>  #ifndef _QEDE_H_
->>  #define _QEDE_H_
->>  #include <linux/compiler.h>
-> 
-> I think compiler.h is also unused, maybe this one too, while at it?'
-Just checked, it is also not being used. I'll send v2.
+make versioncheck reports the following:
+./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
+./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
 
-> 
->> -#include <linux/version.h>
->>  #include <linux/workqueue.h>
->>  #include <linux/netdevice.h>
->>  #include <linux/interrupt.h>
->> diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
->> index 8034d812d5a0..374a86b875a3 100644
->> --- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
->> +++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
->> @@ -4,7 +4,6 @@
->>   * Copyright (c) 2019-2020 Marvell International Ltd.
->>   */
->>  
->> -#include <linux/version.h>
->>  #include <linux/types.h>
->>  #include <linux/netdevice.h>
->>  #include <linux/etherdevice.h>
-> 
-> Thanks,
-> Olek
+So remove linux/version.h from both of these files. Also remove
+linux/compiler.h while at it as it is also not being used.
 
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+Changes since v1:
+- Remove linux/compiler.h as well
+---
+ drivers/net/ethernet/qlogic/qede/qede.h         | 2 --
+ drivers/net/ethernet/qlogic/qede/qede_ethtool.c | 1 -
+ 2 files changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qede/qede.h b/drivers/net/ethernet/qlogic/qede/qede.h
+index f90dcfe9ee68..f9931ecb7baa 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede.h
++++ b/drivers/net/ethernet/qlogic/qede/qede.h
+@@ -6,8 +6,6 @@
+ 
+ #ifndef _QEDE_H_
+ #define _QEDE_H_
+-#include <linux/compiler.h>
+-#include <linux/version.h>
+ #include <linux/workqueue.h>
+ #include <linux/netdevice.h>
+ #include <linux/interrupt.h>
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+index 8034d812d5a0..374a86b875a3 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+@@ -4,7 +4,6 @@
+  * Copyright (c) 2019-2020 Marvell International Ltd.
+  */
+ 
+-#include <linux/version.h>
+ #include <linux/types.h>
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
 -- 
-BR,
-Muhammad Usama Anjum
+2.39.2
+
