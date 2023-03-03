@@ -2,102 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA54C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 22:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E38E5C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 23:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233652AbjCCWGm (ORCPT
+        id S229789AbjCCXym (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 17:06:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42588 "EHLO
+        Fri, 3 Mar 2023 18:54:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233488AbjCCWG1 (ORCPT
+        with ESMTP id S229753AbjCCXyl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 17:06:27 -0500
-Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22A0F7042C;
-        Fri,  3 Mar 2023 13:56:45 -0800 (PST)
-Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-1763e201bb4so4671349fac.1;
-        Fri, 03 Mar 2023 13:56:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677880541;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6AFZEkYJ2SPZLOLjAy2GSQIbeAnHolJ0EeRAikdfL+4=;
-        b=P3d2oihIqjPJuCposna/iUIlVvMp/CshgIa/46oePogW1VU1iA6kwOQDkuYw1vYVMG
-         GTW8+NUonaE6nILgGlnJ0/4CGjZCM0Z9nVnzqfEXUqA7VA7xPbfi0Q4657v8yd4moT5K
-         aRcTrSGk3s1D9w6H4A6yeAL33Yt4xR1Z3E3cFOVh170NzcifWddufl/LLqRDvyy+iAy1
-         f78AtLxrWTcrvplFQYXzA0zLVmKnmuD0iDRA71HWr2siPdPWT02JEJLLYL7anyR/jxXY
-         OXSvcMYvaMJDXNtnD5zfvdbZQjZWiTa36yUgwBy11TjYMPJEtAUA4YI/7K7Z75fgmlv2
-         o2NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677880541;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6AFZEkYJ2SPZLOLjAy2GSQIbeAnHolJ0EeRAikdfL+4=;
-        b=gi2vNI4mdofQYfdpJjp+0OaMZxMWE6IJs1cOmg/W+JYaeCyLFkmONn9tZqL5sIVZkE
-         alhWxE1ab82zneAIAhB5wBZ4Zan8PnE5QWRKaVAPhmMhFL19jskH4jBWDCO9tiyNLOJa
-         fxfEHppnJSuwtoTyhOisVtIzzzB1fpH/NtjXM5QirQoI0d2rIgIv1oHYKGeAaTRharHO
-         AwrQ8oVNkaDNxdRauE5rKSo1wlUjGxp1mgIrZTr5Tkj5n03KTGLPlOZlJpnmaw4xoO5k
-         BTOW600oeftVOJeTbMS1khEcTmsaj/BpHcaFoiRLVqth1/OQVDSK65mt6DPccwpsEqAs
-         J/4g==
-X-Gm-Message-State: AO0yUKUip/FxSV38L/fbnvj9aTqQnr2JcwYx/kQ5uvDxd3RoTtGe5ael
-        z32TLqlGOgU9O4aiA7iFJi8EKtL8xu3ftJqJOso=
-X-Google-Smtp-Source: AK7set98BMz0wptKlJctbuyi8i0Ffce6eA9OhFewFlRnUKWKfPeYpxam4lXKQdp037LmrN3olRPSo6rPFsRvOqUB2cA=
-X-Received: by 2002:a05:6871:6b9d:b0:175:4a1f:edff with SMTP id
- zh29-20020a0568716b9d00b001754a1fedffmr1100138oab.8.1677880540951; Fri, 03
- Mar 2023 13:55:40 -0800 (PST)
-MIME-Version: 1.0
-References: <20230303120233.1878140-1-usama.anjum@collabora.com>
-In-Reply-To: <20230303120233.1878140-1-usama.anjum@collabora.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 3 Mar 2023 16:55:29 -0500
-Message-ID: <CADnq5_M_irvEL4Ggr4UaK2n5GeGD_EchqtZvumBtmdOUqqewhQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: remove dead code
+        Fri, 3 Mar 2023 18:54:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E055311C8;
+        Fri,  3 Mar 2023 15:54:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 17306B818AB;
+        Fri,  3 Mar 2023 23:54:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56601C433EF;
+        Fri,  3 Mar 2023 23:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677887677;
+        bh=UluNXG14RmoSr4RS2NwksI5uEbS0WIkcjnPGlHH87+o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dpuqBrm+SBya6yNB7B9+YBgLNEnMLSA2Q3RDHWybx2BjOdG8IyVaTO/944N3Kcke1
+         ZMHnoLDm/YSrW2/4zdh2tiAm7gZmZgbrK6GZhVLrG53OKSHE6GUb5Vm6OLCp+RtS3v
+         gRqvUix+IAkf/L/2cc/paxuVMDmjCsPeFXGuoYJV0pCXN2r7NMtaYYAdxV+AszlV+/
+         dQWW1qX7dbAua88mabzdmyfoEO/SNruSBsMZvVFxeej3Bi8Dcm9U8W2XWbLaxfzw9A
+         il7HMV7I0V03Ga8OmzPaUXlohYBgUEPKel3pWRXenWUuyJtI8hfBpQiz1nKaIQiJLR
+         AymieGps/KoHA==
+Date:   Fri, 3 Mar 2023 15:54:36 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
 To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Kun Liu <Kun.Liu2@amd.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Ariel Elior <aelior@marvell.com>,
+        Manish Chopra <manishc@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] qede: remove linux/version.h and linux/compiler.h
+Message-ID: <20230303155436.213ee2c0@kernel.org>
+In-Reply-To: <20230303185351.2825900-1-usama.anjum@collabora.com>
+References: <20230303185351.2825900-1-usama.anjum@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
-
-Alex
-
-On Fri, Mar 3, 2023 at 7:03 AM Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
->
-> The less than zero comparison of unsigned variable "value" is never
-> true. Remove dead code.
->
-> Fixes: c3ed0e72c872 ("drm/amdgpu: added a sysfs interface for thermal throttling")
+On Fri,  3 Mar 2023 23:53:50 +0500 Muhammad Usama Anjum wrote:
+> make versioncheck reports the following:
+> ./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
+> ./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
+> 
+> So remove linux/version.h from both of these files. Also remove
+> linux/compiler.h while at it as it is also not being used.
+> 
 > Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  drivers/gpu/drm/amd/pm/amdgpu_pm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-> index f212cae0353f..0ffe351c1a1d 100644
-> --- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-> +++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-> @@ -1738,7 +1738,7 @@ static ssize_t amdgpu_set_apu_thermal_cap(struct device *dev,
->         if (ret)
->                 return ret;
->
-> -       if (value < 0 || value > 100) {
-> +       if (value > 100) {
->                 dev_err(dev, "Invalid argument !\n");
->                 return -EINVAL;
->         }
-> --
-> 2.39.2
->
+
+# Form letter - net-next is closed
+
+The merge window for v6.3 has begun and therefore net-next is closed
+for new drivers, features, code refactoring and optimizations.
+We are currently accepting bug fixes only.
+
+Please repost when net-next reopens after Mar 6th.
+
+RFC patches sent for review only are obviously welcome at any time.
