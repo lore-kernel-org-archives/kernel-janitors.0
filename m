@@ -2,50 +2,46 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D31EC64EC4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 12:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DB3C678D4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 13:04:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230100AbjCCM7c (ORCPT
+        id S230159AbjCCNEN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 07:59:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42706 "EHLO
+        Fri, 3 Mar 2023 08:04:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbjCCM7a (ORCPT
+        with ESMTP id S229649AbjCCNEM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 07:59:30 -0500
+        Fri, 3 Mar 2023 08:04:12 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 868DC521D3;
-        Fri,  3 Mar 2023 04:59:27 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3141E1630D;
+        Fri,  3 Mar 2023 05:04:11 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.179.171.187])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C769E6602FB8;
-        Fri,  3 Mar 2023 12:59:22 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 779206602FCA;
+        Fri,  3 Mar 2023 13:04:05 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677848365;
-        bh=MDOqV2RHO0eQ1qKkCRXV3uNsxpoqYhQQGsWN9W/E1oE=;
+        s=mail; t=1677848650;
+        bh=pKUjjC88O8uUy9xkj/ixqWa3CHLtn+R9H2P6Mhch7m8=;
         h=From:To:Cc:Subject:Date:From;
-        b=RLZn0njeawNYwS1ZNGYzL18IRaIhIRcVIfa36KBsISaD3ae31IG0Gw66EjuwZhdK+
-         fgsNEO9yRSGCom1UqHVWFS8qCV2QsiXIRwHgOMCUon3J1APkxaKK9nH8WvIuXLJ0GY
-         Iak0zz1BJUvuZjz4kaQlKs5BhROOUTLDtavEz2M17TOj1U1a3x8hBzI6lrkIuTGPyF
-         a/334sk7prYwg9yxcVx2RPG/bdXTzkELSZMlrsy4FfWDJ1MECJjfhiKT5BLmRsKwiS
-         yai/ee0YUTXhoSIhJ1M+yUGcady0xUyjTs2guC53Gl+rKuLFOyZxbqhjizbKhvLRqT
-         r1ieOWXIRuS+w==
+        b=OWPBzPG9n6nr0oMR7LuZdeSUXKQSZcCF14SnodONMzIC+4K5sKrxANmDpPr3J4OuC
+         dBTGXXLliqYfrDo7XDGYkCVRaeBCaHsVEGWOdw74UYEkFvXgbrrCYYjvRsnnXMT/52
+         mxVbF2ulAetxgsUtPSVi7SjSrezYdqwrtdSauHn7wbQttInHU7RJmNXPHTyi1yLe+t
+         Kl18UdqgjQkFNV11EHZRMdg9J1RdiB0ZnuLaXP5wDnEIbVSqPv9luF6ed2XWhnWWy6
+         B4YUhd2O63sa9gxbxBoVd7JHI0PnYXXsYpMOMCm9LeLG2j4WaEBgHzE/0+7UZrc1pJ
+         xBE/DCNf9Fs/A==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Ariel Elior <aelior@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] qede: remove linux/version.h
-Date:   Fri,  3 Mar 2023 17:58:44 +0500
-Message-Id: <20230303125844.2050449-1-usama.anjum@collabora.com>
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] soc/tegra: cbb: remove linux/version.h
+Date:   Fri,  3 Mar 2023 18:03:46 +0500
+Message-Id: <20230303130346.2062989-1-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,41 +50,55 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 make versioncheck reports the following:
-./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
-./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
+./drivers/soc/tegra/cbb/tegra-cbb.c: 19 linux/version.h not needed.
+./drivers/soc/tegra/cbb/tegra194-cbb.c: 26 linux/version.h not needed.
+./drivers/soc/tegra/cbb/tegra234-cbb.c: 27 linux/version.h not needed.
 
-So remove linux/version.h from both of these files.
+So remove linux/version.h from these files.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- drivers/net/ethernet/qlogic/qede/qede.h         | 1 -
- drivers/net/ethernet/qlogic/qede/qede_ethtool.c | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/soc/tegra/cbb/tegra-cbb.c    | 1 -
+ drivers/soc/tegra/cbb/tegra194-cbb.c | 1 -
+ drivers/soc/tegra/cbb/tegra234-cbb.c | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qede/qede.h b/drivers/net/ethernet/qlogic/qede/qede.h
-index f90dcfe9ee68..6ff1bd48d2aa 100644
---- a/drivers/net/ethernet/qlogic/qede/qede.h
-+++ b/drivers/net/ethernet/qlogic/qede/qede.h
-@@ -7,7 +7,6 @@
- #ifndef _QEDE_H_
- #define _QEDE_H_
- #include <linux/compiler.h>
--#include <linux/version.h>
- #include <linux/workqueue.h>
- #include <linux/netdevice.h>
+diff --git a/drivers/soc/tegra/cbb/tegra-cbb.c b/drivers/soc/tegra/cbb/tegra-cbb.c
+index a8566b9dd8de..bd96204a68ee 100644
+--- a/drivers/soc/tegra/cbb/tegra-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra-cbb.c
+@@ -16,7 +16,6 @@
+ #include <linux/of_address.h>
  #include <linux/interrupt.h>
-diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-index 8034d812d5a0..374a86b875a3 100644
---- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-@@ -4,7 +4,6 @@
-  * Copyright (c) 2019-2020 Marvell International Ltd.
-  */
- 
+ #include <linux/ioport.h>
 -#include <linux/version.h>
- #include <linux/types.h>
- #include <linux/netdevice.h>
- #include <linux/etherdevice.h>
+ #include <soc/tegra/fuse.h>
+ #include <soc/tegra/tegra-cbb.h>
+ 
+diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
+index d4112b683f00..a05fc2caff3b 100644
+--- a/drivers/soc/tegra/cbb/tegra194-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
+@@ -23,7 +23,6 @@
+ #include <linux/of_address.h>
+ #include <linux/interrupt.h>
+ #include <linux/ioport.h>
+-#include <linux/version.h>
+ #include <soc/tegra/fuse.h>
+ #include <soc/tegra/tegra-cbb.h>
+ 
+diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
+index f33d094e5ea6..e23e8acfd7c7 100644
+--- a/drivers/soc/tegra/cbb/tegra234-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
+@@ -24,7 +24,6 @@
+ #include <linux/of_address.h>
+ #include <linux/interrupt.h>
+ #include <linux/ioport.h>
+-#include <linux/version.h>
+ #include <soc/tegra/fuse.h>
+ #include <soc/tegra/tegra-cbb.h>
+ 
 -- 
 2.39.2
 
