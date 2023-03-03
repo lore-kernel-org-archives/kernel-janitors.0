@@ -2,48 +2,50 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC91C64EC4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 12:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D31EC64EC4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 12:59:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbjCCMwp (ORCPT
+        id S230100AbjCCM7c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 07:52:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36468 "EHLO
+        Fri, 3 Mar 2023 07:59:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjCCMwo (ORCPT
+        with ESMTP id S229541AbjCCM7a (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 07:52:44 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6479D1728;
-        Fri,  3 Mar 2023 04:52:43 -0800 (PST)
+        Fri, 3 Mar 2023 07:59:30 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 868DC521D3;
+        Fri,  3 Mar 2023 04:59:27 -0800 (PST)
 Received: from localhost.localdomain (unknown [182.179.171.187])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7FE9F6602FA9;
-        Fri,  3 Mar 2023 12:52:36 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C769E6602FB8;
+        Fri,  3 Mar 2023 12:59:22 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677847962;
-        bh=MI7FdBdM8TqrBaHLqEEIyTk6tGzLUhwM06htrA3FuKQ=;
+        s=mail; t=1677848365;
+        bh=MDOqV2RHO0eQ1qKkCRXV3uNsxpoqYhQQGsWN9W/E1oE=;
         h=From:To:Cc:Subject:Date:From;
-        b=MosHtu0UFNL1PVbnoVQZgkaIqYcwautrG+VVMiyDkfU0HpnGRGp7/+5wGtBFOZXG4
-         oDxSCFTJKPatp4yH7o2cmlk0wbAyDWJsnmme0qtoGgklHsB/HzFlf6m4bSOz7Ufp5Q
-         Qkexbc2so44q/SlvCMfiihkMGaiOTIurkrmmaZ6xT7NAY1jwO29+O0FWC8NuYZjwzQ
-         kq3aDFKoejV/Kpp7Ljz/zsOYSiwknqRfdZ3WijTYDxMNsvFCYuo+QtoaSP6MpZCdEh
-         VFwg8I/KXTlM+dCWbE4Dkai3wZ9jHGVKqSN8gLaDJDoROf320nRpp8pjrPQSlegIvU
-         5tE1g7WC/8u/w==
+        b=RLZn0njeawNYwS1ZNGYzL18IRaIhIRcVIfa36KBsISaD3ae31IG0Gw66EjuwZhdK+
+         fgsNEO9yRSGCom1UqHVWFS8qCV2QsiXIRwHgOMCUon3J1APkxaKK9nH8WvIuXLJ0GY
+         Iak0zz1BJUvuZjz4kaQlKs5BhROOUTLDtavEz2M17TOj1U1a3x8hBzI6lrkIuTGPyF
+         a/334sk7prYwg9yxcVx2RPG/bdXTzkELSZMlrsy4FfWDJ1MECJjfhiKT5BLmRsKwiS
+         yai/ee0YUTXhoSIhJ1M+yUGcady0xUyjTs2guC53Gl+rKuLFOyZxbqhjizbKhvLRqT
+         r1ieOWXIRuS+w==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>
+To:     Ariel Elior <aelior@marvell.com>,
+        Manish Chopra <manishc@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        speakup@linux-speakup.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] accessibility: speakup: remove linux/version.h
-Date:   Fri,  3 Mar 2023 17:51:51 +0500
-Message-Id: <20230303125152.2030241-1-usama.anjum@collabora.com>
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] qede: remove linux/version.h
+Date:   Fri,  3 Mar 2023 17:58:44 +0500
+Message-Id: <20230303125844.2050449-1-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,41 +54,41 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 make versioncheck reports the following:
-./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
-./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
+./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
+./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
 
 So remove linux/version.h from both of these files.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- drivers/accessibility/speakup/genmap.c      | 1 -
- drivers/accessibility/speakup/makemapdata.c | 1 -
+ drivers/net/ethernet/qlogic/qede/qede.h         | 1 -
+ drivers/net/ethernet/qlogic/qede/qede_ethtool.c | 1 -
  2 files changed, 2 deletions(-)
 
-diff --git a/drivers/accessibility/speakup/genmap.c b/drivers/accessibility/speakup/genmap.c
-index 0125000e00d9..0882bab10fb8 100644
---- a/drivers/accessibility/speakup/genmap.c
-+++ b/drivers/accessibility/speakup/genmap.c
-@@ -10,7 +10,6 @@
- #include <stdio.h>
- #include <libgen.h>
- #include <string.h>
+diff --git a/drivers/net/ethernet/qlogic/qede/qede.h b/drivers/net/ethernet/qlogic/qede/qede.h
+index f90dcfe9ee68..6ff1bd48d2aa 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede.h
++++ b/drivers/net/ethernet/qlogic/qede/qede.h
+@@ -7,7 +7,6 @@
+ #ifndef _QEDE_H_
+ #define _QEDE_H_
+ #include <linux/compiler.h>
 -#include <linux/version.h>
- #include <ctype.h>
- #include "utils.h"
+ #include <linux/workqueue.h>
+ #include <linux/netdevice.h>
+ #include <linux/interrupt.h>
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+index 8034d812d5a0..374a86b875a3 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+@@ -4,7 +4,6 @@
+  * Copyright (c) 2019-2020 Marvell International Ltd.
+  */
  
-diff --git a/drivers/accessibility/speakup/makemapdata.c b/drivers/accessibility/speakup/makemapdata.c
-index d7d41bb9b05f..55e4ef8a93dc 100644
---- a/drivers/accessibility/speakup/makemapdata.c
-+++ b/drivers/accessibility/speakup/makemapdata.c
-@@ -10,7 +10,6 @@
- #include <stdio.h>
- #include <libgen.h>
- #include <string.h>
 -#include <linux/version.h>
- #include <ctype.h>
- #include "utils.h"
- 
+ #include <linux/types.h>
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
 -- 
 2.39.2
 
