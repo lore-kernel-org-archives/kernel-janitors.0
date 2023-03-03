@@ -2,175 +2,121 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFACC7EE2F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 10:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F7DC64EC4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 11:02:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbjCCK55 (ORCPT
+        id S230220AbjCCLCl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Mar 2023 05:57:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40144 "EHLO
+        Fri, 3 Mar 2023 06:02:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230152AbjCCK5z (ORCPT
+        with ESMTP id S230198AbjCCLCk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Mar 2023 05:57:55 -0500
+        Fri, 3 Mar 2023 06:02:40 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0121926A6;
-        Fri,  3 Mar 2023 02:57:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFF6F5F6ED;
+        Fri,  3 Mar 2023 03:02:38 -0800 (PST)
 Received: from [192.168.10.39] (unknown [182.179.171.187])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D53756602FAE;
-        Fri,  3 Mar 2023 10:57:49 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 9BADE6600363;
+        Fri,  3 Mar 2023 11:02:31 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677841071;
-        bh=aJ629f459T2/4SFJjB3CeXdAJ6xSaeA5567kn8eFpEo=;
+        s=mail; t=1677841357;
+        bh=jYpU2R+/5CCDdv+B9z7WY6WA2foey3UzjG0WVVgYfrg=;
         h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=Ii3psLcOlxb4lKa3kZfiO/8QGnW2AuZi5bscmtyNvq25x6TsODv2DHO5QPdJTR1W8
-         Bx245Gw/BmL5agbvP09Qn7smJGUEvvymQnD8hBmxVgNav7GoE+y+dBzjv2tG5MB4A3
-         c6/xDyMKnqqJUN14qru1QE2l5B9srM8e8GB2ANRciZjhq1TuR9MTqof44usR2PZJhU
-         4RaPvhZ71uDwaWbqDBivSEnLH9rc/UffZh9a/4wPrSHKJJ31aAFGmHZnmgEXkm9gOE
-         6MIEkPaJmj0qCooILSaU8r263DukFij+So6djJkj12JgLbaIqk2vwgwQBtnjaDmGAR
-         IlLWAvbw4PyCQ==
-Message-ID: <2481c947-b558-f536-d505-dffaf6a023a9@collabora.com>
-Date:   Fri, 3 Mar 2023 15:57:45 +0500
+        b=DawcHy4cIsKanK3u1RtWmcN9Z0IGLkwcE3cDI43A1EIpDNBa/4JCUN+TJwTOy9GiC
+         cb4z/eUUyZwB6nslhca7BKzxSkVq7v5gpKcp75vD8MjQo5QB/wUpptwS6IXWcHj9BD
+         LXFPNWVy6KoCg9Jz7wrnqajpIatquB8Vu41mxrK2yZcQP7ILQiqIssXrBUs0bgXZHQ
+         YL+bFpaU7qPhn7OWbpx6ifSBzFjVQHDir2N2qdxAO04vWrHHNeP5Shftxfhp0uLB8k
+         jZk4mM8cnz9IkXfmfk9LchMEUYLzek6WgtXgG8wEiPxgOaaShhElV67lrZl0nTYDBf
+         iQMDkXsINOjnQ==
+Message-ID: <67d475aa-b999-bf57-3aa3-40ad4b50e21d@collabora.com>
+Date:   Fri, 3 Mar 2023 16:02:26 +0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: Reorder fields in 'struct spi_message'
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
+Subject: Re: [PATCH v3] s390/zcrypt: remove unnecessary (void*) conversions
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Mark Brown <broonie@kernel.org>
-References: <c112aad16eb47808e1ec10abd87b3d273c969a68.1677704283.git.christophe.jaillet@wanadoo.fr>
+To:     Yu Zhe <yuzhe@nfschina.com>, freude@linux.ibm.com,
+        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com
+References: <20230303013250.3058-1-yuzhe@nfschina.com>
+ <20230303052155.21072-1-yuzhe@nfschina.com>
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <c112aad16eb47808e1ec10abd87b3d273c969a68.1677704283.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230303052155.21072-1-yuzhe@nfschina.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/2/23 1:58 AM, Christophe JAILLET wrote:
-> Group some variables based on their sizes to reduce hole and avoid padding.
-> On x86_64, this shrinks the size from 112 to 96 bytes.
+On 3/3/23 10:21 AM, Yu Zhe wrote:
+> Pointer variables of void * type do not require type cast.
 > 
-> This should have no real impact on memory allocation because 'struct
-> spi_message' is mostly used on stack, but it can save a few cycles
-> when the structure is initialized with spi_message_init() and co.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Tested-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
 > ---
-> Using pahole
+>  drivers/s390/crypto/zcrypt_msgtype6.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
 > 
-> Before:
-> ======
-> struct spi_message {
-> 	struct list_head           transfers;            /*     0    16 */
-> 	struct spi_device *        spi;                  /*    16     8 */
-> 	unsigned int               is_dma_mapped:1;      /*    24: 0  4 */
-> 
-> 	/* XXX 31 bits hole, try to pack */
-> 	/* XXX 4 bytes hole, try to pack */
-> 
-> 	void                       (*complete)(void *);  /*    32     8 */
-> 	void *                     context;              /*    40     8 */
-> 	unsigned int               frame_length;         /*    48     4 */
-> 	unsigned int               actual_length;        /*    52     4 */
-> 	int                        status;               /*    56     4 */
-> 
-> 	/* XXX 4 bytes hole, try to pack */
-> 
-> 	/* --- cacheline 1 boundary (64 bytes) --- */
-> 	struct list_head           queue;                /*    64    16 */
-> 	void *                     state;                /*    80     8 */
-> 	struct list_head           resources;            /*    88    16 */
-> 	bool                       prepared;             /*   104     1 */
-> 
-> 	/* size: 112, cachelines: 2, members: 12 */
-> 	/* sum members: 93, holes: 2, sum holes: 8 */
-> 	/* sum bitfield members: 1 bits, bit holes: 1, sum bit holes: 31 bits */
-> 	/* padding: 7 */
-> 	/* last cacheline: 48 bytes */
-> };
-> 
-> 
-> After:
-> =====
-> struct spi_message {
-> 	struct list_head           transfers;            /*     0    16 */
-> 	struct spi_device *        spi;                  /*    16     8 */
-> 	unsigned int               is_dma_mapped:1;      /*    24: 0  4 */
-> 
-> 	/* XXX 7 bits hole, try to pack */
-> 	/* Bitfield combined with next fields */
-> 
-> 	bool                       prepared;             /*    25     1 */
-> 
-> 	/* XXX 2 bytes hole, try to pack */
-> 
-> 	int                        status;               /*    28     4 */
-> 	void                       (*complete)(void *);  /*    32     8 */
-> 	void *                     context;              /*    40     8 */
-> 	unsigned int               frame_length;         /*    48     4 */
-> 	unsigned int               actual_length;        /*    52     4 */
-> 	struct list_head           queue;                /*    56    16 */
-> 	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
-> 	void *                     state;                /*    72     8 */
-> 	struct list_head           resources;            /*    80    16 */
-> 
-> 	/* size: 96, cachelines: 2, members: 12 */
-> 	/* sum members: 93, holes: 1, sum holes: 2 */
-> 	/* sum bitfield members: 1 bits, bit holes: 1, sum bit holes: 7 bits */
-> 	/* last cacheline: 32 bytes */
-> };
-> ---
->  include/linux/spi/spi.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-> index 4fa26b9a3572..bdb35a91b4bf 100644
-> --- a/include/linux/spi/spi.h
-> +++ b/include/linux/spi/spi.h
-> @@ -1093,6 +1093,9 @@ struct spi_message {
+> diff --git a/drivers/s390/crypto/zcrypt_msgtype6.c b/drivers/s390/crypto/zcrypt_msgtype6.c
+> index 5ad251477593..a2e7fe33ba62 100644
+> --- a/drivers/s390/crypto/zcrypt_msgtype6.c
+> +++ b/drivers/s390/crypto/zcrypt_msgtype6.c
+> @@ -926,8 +926,7 @@ static void zcrypt_msgtype6_receive(struct ap_queue *aq,
+>  		.type = TYPE82_RSP_CODE,
+>  		.reply_code = REP82_ERROR_MACHINE_FAILURE,
+>  	};
+> -	struct response_type *resp_type =
+> -		(struct response_type *)msg->private;
+> +	struct response_type *resp_type = msg->private;
+>  	struct type86x_reply *t86r;
+>  	int len;
 >  
->  	unsigned		is_dma_mapped:1;
+> @@ -982,8 +981,7 @@ static void zcrypt_msgtype6_receive_ep11(struct ap_queue *aq,
+>  		.type = TYPE82_RSP_CODE,
+>  		.reply_code = REP82_ERROR_MACHINE_FAILURE,
+>  	};
+> -	struct response_type *resp_type =
+> -		(struct response_type *)msg->private;
+> +	struct response_type *resp_type = msg->private;
+>  	struct type86_ep11_reply *t86r;
+>  	int len;
 >  
-> +	/* spi_prepare_message() was called for this message */
-> +	bool			prepared;
-> +
->  	/* REVISIT:  we might want a flag affecting the behavior of the
->  	 * last transfer ... allowing things like "read 16 bit length L"
->  	 * immediately followed by "read L bytes".  Basically imposing
-> @@ -1105,11 +1108,11 @@ struct spi_message {
->  	 */
+> @@ -1157,7 +1155,7 @@ static long zcrypt_msgtype6_send_cprb(bool userspace, struct zcrypt_queue *zq,
+>  				      struct ap_message *ap_msg)
+>  {
+>  	int rc;
+> -	struct response_type *rtype = (struct response_type *)(ap_msg->private);
+> +	struct response_type *rtype = ap_msg->private;
+>  	struct {
+>  		struct type6_hdr hdr;
+>  		struct CPRBX cprbx;
+> @@ -1240,7 +1238,7 @@ static long zcrypt_msgtype6_send_ep11_cprb(bool userspace, struct zcrypt_queue *
+>  {
+>  	int rc;
+>  	unsigned int lfmt;
+> -	struct response_type *rtype = (struct response_type *)(ap_msg->private);
+> +	struct response_type *rtype = ap_msg->private;
+>  	struct {
+>  		struct type6_hdr hdr;
+>  		struct ep11_cprb cprbx;
+> @@ -1359,7 +1357,7 @@ static long zcrypt_msgtype6_rng(struct zcrypt_queue *zq,
+>  		short int verb_length;
+>  		short int key_length;
+>  	} __packed * msg = ap_msg->msg;
+> -	struct response_type *rtype = (struct response_type *)(ap_msg->private);
+> +	struct response_type *rtype = ap_msg->private;
+>  	int rc;
 >  
->  	/* Completion is reported through a callback */
-> +	int			status;
->  	void			(*complete)(void *context);
->  	void			*context;
->  	unsigned		frame_length;
->  	unsigned		actual_length;
-> -	int			status;
->  
->  	/* For optional use by whatever driver currently owns the
->  	 * spi_message ...  between calls to spi_async and then later
-> @@ -1120,9 +1123,6 @@ struct spi_message {
->  
->  	/* List of spi_res reources when the spi message is processed */
->  	struct list_head        resources;
-> -
-> -	/* spi_prepare_message() was called for this message */
-> -	bool			prepared;
->  };
->  
->  static inline void spi_message_init_no_memset(struct spi_message *m)
+>  	msg->cprbx.domain = AP_QID_QUEUE(zq->queue->qid);
 
 -- 
 BR,
