@@ -2,44 +2,42 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 153CCC678D4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 01:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECA7C678D4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Mar 2023 02:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229923AbjCCBdn (ORCPT
+        id S229616AbjCCCvj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Mar 2023 20:33:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42978 "EHLO
+        Thu, 2 Mar 2023 21:51:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjCCBdm (ORCPT
+        with ESMTP id S229437AbjCCCvi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Mar 2023 20:33:42 -0500
+        Thu, 2 Mar 2023 21:51:38 -0500
 Received: from mail.nfschina.com (unknown [42.101.60.237])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F44158BE;
-        Thu,  2 Mar 2023 17:33:40 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B0B0515C8;
+        Thu,  2 Mar 2023 18:51:37 -0800 (PST)
 Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 0BAA51A00AB6;
-        Fri,  3 Mar 2023 09:34:25 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTP id 8F82A1A009FD;
+        Fri,  3 Mar 2023 10:52:21 +0800 (CST)
 X-Virus-Scanned: amavisd-new at nfschina.com
 Received: from mail.nfschina.com ([127.0.0.1])
         by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id iuzHbEDDySAe; Fri,  3 Mar 2023 09:34:24 +0800 (CST)
+        with ESMTP id P0HFerBptk8g; Fri,  3 Mar 2023 10:52:20 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.167.10.98])
         (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 81FEA1A00A11;
-        Fri,  3 Mar 2023 09:34:23 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTPA id 1FAA01A00994;
+        Fri,  3 Mar 2023 10:52:20 +0800 (CST)
 From:   Yu Zhe <yuzhe@nfschina.com>
-To:     freude@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
+        hewenliang4@huawei.com, renzhijie2@huawei.com,
+        haibinzhang@tencent.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
         Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH v2] s390/zcrypt: remove unnecessary (void*) conversions
-Date:   Fri,  3 Mar 2023 09:32:50 +0800
-Message-Id: <20230303013250.3058-1-yuzhe@nfschina.com>
+Subject: [PATCH] arm64: armv8_deprecated: remove unnecessary (void*) conversions
+Date:   Fri,  3 Mar 2023 10:50:47 +0800
+Message-Id: <20230303025047.19717-1-yuzhe@nfschina.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20230223011212.13045-1-yuzhe@nfschina.com>
-References: <20230223011212.13045-1-yuzhe@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -48,60 +46,30 @@ Pointer variables of void * type do not require type cast.
 
 Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 ---
- drivers/s390/crypto/zcrypt_msgtype6.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ arch/arm64/kernel/armv8_deprecated.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/s390/crypto/zcrypt_msgtype6.c b/drivers/s390/crypto/zcrypt_msgtype6.c
-index 5ad251477593..a955dc97040c 100644
---- a/drivers/s390/crypto/zcrypt_msgtype6.c
-+++ b/drivers/s390/crypto/zcrypt_msgtype6.c
-@@ -926,8 +926,7 @@ static void zcrypt_msgtype6_receive(struct ap_queue *aq,
- 		.type = TYPE82_RSP_CODE,
- 		.reply_code = REP82_ERROR_MACHINE_FAILURE,
- 	};
--	struct response_type *resp_type =
--		(struct response_type *)msg->private;
-+	struct response_type *resp_type = msg->private;
- 	struct type86x_reply *t86r;
- 	int len;
+diff --git a/arch/arm64/kernel/armv8_deprecated.c b/arch/arm64/kernel/armv8_deprecated.c
+index 8a9052cf3013..1febd412b4d2 100644
+--- a/arch/arm64/kernel/armv8_deprecated.c
++++ b/arch/arm64/kernel/armv8_deprecated.c
+@@ -420,14 +420,14 @@ static DEFINE_MUTEX(insn_emulation_mutex);
  
-@@ -982,8 +981,7 @@ static void zcrypt_msgtype6_receive_ep11(struct ap_queue *aq,
- 		.type = TYPE82_RSP_CODE,
- 		.reply_code = REP82_ERROR_MACHINE_FAILURE,
- 	};
--	struct response_type *resp_type =
--		(struct response_type *)msg->private;
-+	struct response_type *resp_type = msg->private;
- 	struct type86_ep11_reply *t86r;
- 	int len;
- 
-@@ -1157,7 +1155,7 @@ static long zcrypt_msgtype6_send_cprb(bool userspace, struct zcrypt_queue *zq,
- 				      struct ap_message *ap_msg)
+ static void enable_insn_hw_mode(void *data)
  {
- 	int rc;
--	struct response_type *rtype = (struct response_type *)(ap_msg->private);
-+	struct response_type *rtype = (ap_msg->private);
- 	struct {
- 		struct type6_hdr hdr;
- 		struct CPRBX cprbx;
-@@ -1240,7 +1238,7 @@ static long zcrypt_msgtype6_send_ep11_cprb(bool userspace, struct zcrypt_queue *
- {
- 	int rc;
- 	unsigned int lfmt;
--	struct response_type *rtype = (struct response_type *)(ap_msg->private);
-+	struct response_type *rtype = (ap_msg->private);
- 	struct {
- 		struct type6_hdr hdr;
- 		struct ep11_cprb cprbx;
-@@ -1359,7 +1357,7 @@ static long zcrypt_msgtype6_rng(struct zcrypt_queue *zq,
- 		short int verb_length;
- 		short int key_length;
- 	} __packed * msg = ap_msg->msg;
--	struct response_type *rtype = (struct response_type *)(ap_msg->private);
-+	struct response_type *rtype = (ap_msg->private);
- 	int rc;
+-	struct insn_emulation *insn = (struct insn_emulation *)data;
++	struct insn_emulation *insn = data;
+ 	if (insn->set_hw_mode)
+ 		insn->set_hw_mode(true);
+ }
  
- 	msg->cprbx.domain = AP_QID_QUEUE(zq->queue->qid);
+ static void disable_insn_hw_mode(void *data)
+ {
+-	struct insn_emulation *insn = (struct insn_emulation *)data;
++	struct insn_emulation *insn = data;
+ 	if (insn->set_hw_mode)
+ 		insn->set_hw_mode(false);
+ }
 -- 
 2.11.0
 
