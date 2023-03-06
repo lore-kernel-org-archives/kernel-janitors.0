@@ -2,89 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB72BC678D4
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Mar 2023 13:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE604C678D4
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Mar 2023 14:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231136AbjCFNFb (ORCPT
+        id S230158AbjCFObx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Mar 2023 08:05:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40580 "EHLO
+        Mon, 6 Mar 2023 09:31:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230500AbjCFNFX (ORCPT
+        with ESMTP id S230144AbjCFObs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Mar 2023 08:05:23 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EA0B83D4;
-        Mon,  6 Mar 2023 05:05:15 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EE791B80E13;
-        Mon,  6 Mar 2023 13:05:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD48BC4339B;
-        Mon,  6 Mar 2023 13:05:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678107912;
-        bh=o/reu7XhlEU4l+WGdxo2zPNSFB63mVxpMFab8epHRZY=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=HdDmL6p3TDqGagRGMgH9Z7kISaiAfzZNwzfKjjQpJIa80Yk72fNaSwiwPT2fUS/y7
-         aZQOC3/pJRdKyKaLy2yl0ToHMCUOEdDy6sFyuUmH9CmC+zpBDBPyPRsd/mp9304S9M
-         YcdYq9ymQLK7ADVH44cCGgHdy9s2HCdks/HkuZC7JkjxIIWbUqit4FVktpkb9tu21H
-         AKhtSTqxMcrE4WZ21v2rmveR0ifGI9OnRccjtxUSAklBZtlEaUEdM/pPjdhsFu6k2U
-         btfCP1oXQssfM5u0BK0PI8yza3R6+RIQWnAhDnqjiANe2unqS/UbTyi3hAJn0QO4IO
-         Tp5FZ5S0s5F/g==
-From:   Mark Brown <broonie@kernel.org>
+        Mon, 6 Mar 2023 09:31:48 -0500
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B79183FC;
+        Mon,  6 Mar 2023 06:31:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678113066; x=1709649066;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SksSVVJC6Th1nYSN79c+dSdt06LId3S3q3vX1EepjTk=;
+  b=bLiM5Fsf/HxbJaj498hJZmNv9N2g+NRix0a9/Dvxug5lGspBdc1MQRqi
+   Fov0WKwTNRpEKhi4fGwB13rJq6jDrasyLGjpOpCngchflBDovB7Sk3iPU
+   XBXF4tbdPQUIQkNn96ks36Rf7pZlddK1ee89s3aAOBlxhW8yRM6g21n/Q
+   93AKwwO0atIgPpeX9qJrl3yuPM9xbHNU066RAXklWdindjv8D6JmfNqH2
+   EhtEHwlfHR6Xu/d/C0GLoHlklPmOtASpw9Sdwb6Ycd2B7kyPL3Z5dP8MA
+   7cHNWPdhawM7eD1pTG0wbsdaTsGgUr8zA0ae8ays55ObAhya+CLcqXEpv
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="315223089"
+X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
+   d="scan'208";a="315223089"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2023 06:29:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="765234872"
+X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
+   d="scan'208";a="765234872"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by FMSMGA003.fm.intel.com with ESMTP; 06 Mar 2023 06:29:23 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1pZBq5-00GTZD-2K;
+        Mon, 06 Mar 2023 16:29:21 +0200
+Date:   Mon, 6 Mar 2023 16:29:21 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-spi@vger.kernel.org
-In-Reply-To: <c112aad16eb47808e1ec10abd87b3d273c969a68.1677704283.git.christophe.jaillet@wanadoo.fr>
-References: <c112aad16eb47808e1ec10abd87b3d273c969a68.1677704283.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] spi: Reorder fields in 'struct spi_message'
-Message-Id: <167810791156.67440.14345936497327774965.b4-ty@kernel.org>
-Date:   Mon, 06 Mar 2023 13:05:11 +0000
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] regmap: Reorder fields in 'struct regmap_bus' to save
+ some memory
+Message-ID: <ZAX4wSFwKwr+2pZY@smile.fi.intel.com>
+References: <077ca39622c8870a3ea932298a9cec34f7a8295a.1676363976.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bd1bf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <077ca39622c8870a3ea932298a9cec34f7a8295a.1676363976.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 01 Mar 2023 21:58:52 +0100, Christophe JAILLET wrote:
-> Group some variables based on their sizes to reduce hole and avoid padding.
-> On x86_64, this shrinks the size from 112 to 96 bytes.
+On Tue, Feb 14, 2023 at 09:40:14AM +0100, Christophe JAILLET wrote:
+> Group some bool variables to reduce hole and avoid padding.
+> On x86_64, this shrinks the size from 136 to 128 bytes.
 > 
-> This should have no real impact on memory allocation because 'struct
-> spi_message' is mostly used on stack, but it can save a few cycles
-> when the structure is initialized with spi_message_init() and co.
+> As an example:
 > 
-> [...]
+> $ size drivers/base/regmap/regmap-fsi.o (Before)
+>    text	   data	    bss	    dec	    hex	filename
+>    4837	    136	      0	   4973	   136d	drivers/base/regmap/regmap-fsi.o
+> 
+> $ size drivers/base/regmap/regmap-fsi.o (After)
+>    text	   data	    bss	    dec	    hex	filename
+>    4701	    136	      0	   4837	   12e5	drivers/base/regmap/regmap-fsi.o
 
-Applied to
+FYI: we have scripts/bloat-o-meter for this.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks!
-
-[1/1] spi: Reorder fields in 'struct spi_message'
-      commit: ae2ade4ba58167f165fbf3db19380f9b72c56db8
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
