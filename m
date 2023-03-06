@@ -2,59 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8B7C678D4
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Mar 2023 08:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB72BC678D4
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Mar 2023 13:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229700AbjCFImN (ORCPT
+        id S231136AbjCFNFb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Mar 2023 03:42:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44768 "EHLO
+        Mon, 6 Mar 2023 08:05:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229951AbjCFImL (ORCPT
+        with ESMTP id S230500AbjCFNFX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Mar 2023 03:42:11 -0500
-Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC3721290
-        for <kernel-janitors@vger.kernel.org>; Mon,  6 Mar 2023 00:42:08 -0800 (PST)
-Received: by mail.ettrick.pl (Postfix, from userid 1002)
-        id D7F33A4158; Mon,  6 Mar 2023 08:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
-        t=1678092095; bh=KHux3km3Civcx5ChslOYQZwQRBjoJa4kWJfGcMIuN6w=;
-        h=Date:From:To:Subject:From;
-        b=j3wDuMInYfV55Szb8Lf3S7Bi699MRyVAqrqfxeHu5/7JdfYlVTEZ9kVBixZwEb6BF
-         EYatbiSyOFFY3qt7DgDgbqIBqzS4r2TRP2UuCw6Y1Ja81TrBt2HNhxQ6s7fbU9hs2i
-         QHyWbKaMoDD57mOfAe/BhpAYkpVWs4A4mADsEJY6ZXVOsxdExinNTarUl/XFCMrKPM
-         yY5LabcWwRAcT6MB7jtUQt4GzOOuNPUhoWhulbr1vrm0egzt7j8M4VTzchRujp0M5p
-         OsssQwV/OcwcDmCeSAD3N38kf8nIpt+0xGCa4fK4l5bDwi6vpPygcYibSr4ALv99ps
-         wQmXRPvhbaiMg==
-Received: by mail.ettrick.pl for <kernel-janitors@vger.kernel.org>; Mon,  6 Mar 2023 08:40:56 GMT
-Message-ID: <20230306074500-0.1.97.36pj8.0.o6ek13lg81@ettrick.pl>
-Date:   Mon,  6 Mar 2023 08:40:56 GMT
-From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Fotowoltaika - nowe warunki
-X-Mailer: mail.ettrick.pl
+        Mon, 6 Mar 2023 08:05:23 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EA0B83D4;
+        Mon,  6 Mar 2023 05:05:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EE791B80E13;
+        Mon,  6 Mar 2023 13:05:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD48BC4339B;
+        Mon,  6 Mar 2023 13:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678107912;
+        bh=o/reu7XhlEU4l+WGdxo2zPNSFB63mVxpMFab8epHRZY=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=HdDmL6p3TDqGagRGMgH9Z7kISaiAfzZNwzfKjjQpJIa80Yk72fNaSwiwPT2fUS/y7
+         aZQOC3/pJRdKyKaLy2yl0ToHMCUOEdDy6sFyuUmH9CmC+zpBDBPyPRsd/mp9304S9M
+         YcdYq9ymQLK7ADVH44cCGgHdy9s2HCdks/HkuZC7JkjxIIWbUqit4FVktpkb9tu21H
+         AKhtSTqxMcrE4WZ21v2rmveR0ifGI9OnRccjtxUSAklBZtlEaUEdM/pPjdhsFu6k2U
+         btfCP1oXQssfM5u0BK0PI8yza3R6+RIQWnAhDnqjiANe2unqS/UbTyi3hAJn0QO4IO
+         Tp5FZ5S0s5F/g==
+From:   Mark Brown <broonie@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-spi@vger.kernel.org
+In-Reply-To: <c112aad16eb47808e1ec10abd87b3d273c969a68.1677704283.git.christophe.jaillet@wanadoo.fr>
+References: <c112aad16eb47808e1ec10abd87b3d273c969a68.1677704283.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] spi: Reorder fields in 'struct spi_message'
+Message-Id: <167810791156.67440.14345936497327774965.b4-ty@kernel.org>
+Date:   Mon, 06 Mar 2023 13:05:11 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-bd1bf
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Wed, 01 Mar 2023 21:58:52 +0100, Christophe JAILLET wrote:
+> Group some variables based on their sizes to reduce hole and avoid padding.
+> On x86_64, this shrinks the size from 112 to 96 bytes.
+> 
+> This should have no real impact on memory allocation because 'struct
+> spi_message' is mostly used on stack, but it can save a few cycles
+> when the structure is initialized with spi_message_init() and co.
+> 
+> [...]
 
-chcia=C5=82bym poinformowa=C4=87, i=C5=BC mog=C4=85 Pa=C5=84stwo uzyska=C4=
-=87 dofinansowanie na systemy fotowoltaiczne w ramach nowej edycji progra=
-mu M=C3=B3j Pr=C4=85d.
+Applied to
 
-Program zapewnia 6000 z=C5=82 dofinansowania na instalacj=C4=99 paneli i =
-16 000 z=C5=82 na magazyn energii, ni=C5=BCsze cen pr=C4=85du i mo=C5=BCl=
-iwo=C5=9B=C4=87 odliczenia koszt=C3=B3w zwi=C4=85zanych z instalacj=C4=85=
- fotowoltaiki w ramach rozliczenia PIT (tzw. ulga termomodernizacyjna).
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
-temacie?
+Thanks!
 
+[1/1] spi: Reorder fields in 'struct spi_message'
+      commit: ae2ade4ba58167f165fbf3db19380f9b72c56db8
 
-Pozdrawiam,
-Norbert Karecki
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
