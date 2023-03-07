@@ -2,77 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C99DC678D4
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 10:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4039C678D4
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 11:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbjCGK4a (ORCPT
+        id S230144AbjCGLCF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Mar 2023 05:56:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42000 "EHLO
+        Tue, 7 Mar 2023 06:02:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230372AbjCGK4E (ORCPT
+        with ESMTP id S230215AbjCGLBX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Mar 2023 05:56:04 -0500
-X-Greylist: delayed 2357 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 07 Mar 2023 02:56:00 PST
-Received: from 7.mo575.mail-out.ovh.net (7.mo575.mail-out.ovh.net [46.105.63.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F33D4A1FD
-        for <kernel-janitors@vger.kernel.org>; Tue,  7 Mar 2023 02:55:59 -0800 (PST)
-Received: from director8.ghost.mail-out.ovh.net (unknown [10.109.138.246])
-        by mo575.mail-out.ovh.net (Postfix) with ESMTP id 4C1D81FEC7
-        for <kernel-janitors@vger.kernel.org>; Tue,  7 Mar 2023 09:41:16 +0000 (UTC)
-Received: from ghost-submission-6684bf9d7b-jr9mk (unknown [10.110.208.235])
-        by director8.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 011EC1FDEE;
-        Tue,  7 Mar 2023 09:41:15 +0000 (UTC)
-Received: from RCM-web8.webmail.mail.ovh.net ([151.80.29.22])
-        by ghost-submission-6684bf9d7b-jr9mk with ESMTPSA
-        id UzyDO7sGB2STSQEALa529g
-        (envelope-from <rafal@milecki.pl>); Tue, 07 Mar 2023 09:41:15 +0000
+        Tue, 7 Mar 2023 06:01:23 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E1C73AFC;
+        Tue,  7 Mar 2023 02:58:54 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id o12so50483099edb.9;
+        Tue, 07 Mar 2023 02:58:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678186698;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tLQHemRIXRE4FrIg6JDLewKbHFCJRHBj5gtISGj6+Lk=;
+        b=aU3b0QfFtNND0Irkk/Mc18zoqOmiezu9rIcyeh4HVIuUkcZjXjhTNUzykoPV18OnTs
+         gi5a53S9vy/d+rotfmbKzGXLgiMn4312e0IJ2YsV3H3bhnuNAvFugA552nfFkt12o5Es
+         XdaftS00MXt5ymcJm1gESWyuhoMTRpisCOFmvzCbrGHPvayGiizIE9s5cYdfM/oumXaB
+         h/dav8wUa68z+iu3eohWb1NV6aptQZT3ZRMryfW5y7Kd1OydeiTjuBUrbrUIuRbgtCKJ
+         g4Bq904pxhTLWZVfey5ElxXyxBDHL8p59uU9HPWw/gspI9FGhrTZGN4jp4e5UnM1/r5x
+         +iCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678186698;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tLQHemRIXRE4FrIg6JDLewKbHFCJRHBj5gtISGj6+Lk=;
+        b=uwgHvGqskkx8QaFmuCO70+myrNE7f+tTQhdcThvfGD9MHR6KAXCtxNi8Jzr2jCehpu
+         p7gg/zRUgNGkhnBne1UmQRjIGCruSu1ODK8WRaWDnOH2HNSieuVOeMOZ7pc3hBYiM3mO
+         apF11RPsfvfnUr+7xyB7dQCF9HjkWfJIXIfspV66ueJ6ae8sX48mPDl980PZJxh1elXN
+         U0eODp3o0p74Il3dtnd4I0OoF/V/WyG0e5Mt9ssw8q2nraUcUgdjXACHhEcnNrre0pDv
+         E0cX1qIfp1OyHIfCRHDThV5gcA8O/TuhcoC/BneeaNRPiRNoi7LO0bEPD8ZHICX3jcQa
+         Iaig==
+X-Gm-Message-State: AO0yUKUwnFScWsB4pRKV3nhoOFO9v15b/826bvJQaEBFXz2nOM0LMaDc
+        RQ8H1eTFAN66zkm8FNOM8U0zDpi4mr75iZhryVo=
+X-Google-Smtp-Source: AK7set/wDNUrNS4Lkg0oycNkwpaiZjj0SnAa4fQgceS30Sq51ZBWEWmjKvP54F+a3R1s+oLjaWc/fU/1EA9M08vNswU=
+X-Received: by 2002:a50:8a9d:0:b0:4bc:5de1:ee5 with SMTP id
+ j29-20020a508a9d000000b004bc5de10ee5mr7666471edj.2.1678186698578; Tue, 07 Mar
+ 2023 02:58:18 -0800 (PST)
 MIME-Version: 1.0
-Date:   Tue, 07 Mar 2023 10:41:15 +0100
-From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-leds@vger.kernel.org,
-        William Zhang <william.zhang@broadcom.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: bcm63138: refer to ARCH_BCMBCA instead of
- ARCH_BCM4908
-In-Reply-To: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
-References: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <9e448d3d42b4b3029e4b8993f2272e4c@milecki.pl>
-X-Sender: rafal@milecki.pl
-X-Originating-IP: 194.187.74.233
-X-Webmail-UserID: rafal@milecki.pl
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 485262861866281947
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrvddutddgtddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggffhffvvefujghffgfkgihitgfgsehtjehjtddtredvnecuhfhrohhmpeftrghfrghlucfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpeetheelfefgjedutdeivdduvdethffhhedulefggeeitdejudfhkeetjeekieejgfenucfkphepuddvjedrtddrtddruddpudelgedrudekjedrjeegrddvfeefpdduhedurdektddrvdelrddvvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoehrrghfrghlsehmihhlvggtkhhirdhplheqpdhnsggprhgtphhtthhopedupdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheejhedpmhhouggvpehsmhhtphhouhht
+References: <20230307074038.17391-1-lukas.bulwahn@gmail.com>
+ <20230307100350.1c0af7b9@xps-13> <1e321754-5bdd-4019-8524-2222ee369502@app.fastmail.com>
+ <20230307113846.5dab6e66@xps-13>
+In-Reply-To: <20230307113846.5dab6e66@xps-13>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Tue, 7 Mar 2023 11:58:07 +0100
+Message-ID: <CAKXUXMwn8wLBtTru74Mo4D=X6gA-M3b3Zin0L_ugtN9-R2L7-A@mail.gmail.com>
+Subject: Re: [PATCH] mtd: parsers: remove reference to config MTD_NAND_TMIO
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023-03-07 09:29, Lukas Bulwahn wrote:
-> diff --git a/drivers/leds/blink/Kconfig b/drivers/leds/blink/Kconfig
-> index 945c84286a4e..bdcb7377cd4e 100644
-> --- a/drivers/leds/blink/Kconfig
-> +++ b/drivers/leds/blink/Kconfig
-> @@ -1,10 +1,10 @@
->  config LEDS_BCM63138
->  	tristate "LED Support for Broadcom BCM63138 SoC"
->  	depends on LEDS_CLASS
-> -	depends on ARCH_BCM4908 || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
-> +	depends on ARCH_BCMBCA || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
->  	depends on HAS_IOMEM
->  	depends on OF
-> -	default ARCH_BCM4908
-> +	default ARCH_BCMBCA
->  	help
->  	  This option enables support for LED controller that is part of
->  	  BCM63138 SoC. The same hardware block is known to be also used
+On Tue, Mar 7, 2023 at 11:38=E2=80=AFAM Miquel Raynal <miquel.raynal@bootli=
+n.com> wrote:
+>
+> Hi Arnd,
+>
+> arnd@arndb.de wrote on Tue, 07 Mar 2023 11:26:48 +0100:
+>
+> > On Tue, Mar 7, 2023, at 10:03, Miquel Raynal wrote:
+> > > Hi Lukas,
+> > >
+> > > lukas.bulwahn@gmail.com wrote on Tue,  7 Mar 2023 08:40:38 +0100:
+> > >
+> > >> Commit 568494db6809 ("mtd: remove tmio_nand driver") removes the con=
+fig
+> > >> MTD_NAND_TMIO and its corresponding driver.
+> > >>
+> > >> Remove the reference in MTD_SHARPSL_PARTS to that removed config.
+> > >>
+> > >> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > >> ---
+> > >> Arnd, please ack.
+> > >> Miquel, please pick this minor non-urgent patch on top of the commit=
+ above.
+> > >
+> > > Actually I guess the SHARPSL driver is not selectable right now, so
+> > > this should be sent as part of my next fixes PR.
+> >
+> > I don't see why not, it just depends on 'ARCH_PXA||COMPILE_TEST' and
+> > should work fine with CONFIG_MACH_SPITZ PDAs.
+>
+> Sorry, I overlooked the diff, indeed there is nothing broken, so I'll
+> queue it to nand/next. I thought MTD_SHARPSL_PARTS was not selectable
+> anymore without COMPILE_TEST, which would have been problematic.
+>
+> Fixes tag still welcome though :)
+>
 
-William: do we want LEDS_BCM63138 default on all BCMBCA devices?
+Arnd's commit is not broken. It does what Arnd writes in his commit
+message what it should do.
+
+And this patch is just a clean-up that removes references, but it is
+just "stylistic" and reduces the complexity of Kconfig dependency
+definitions for non-existing config symbols. I do not see that this
+patch fixes Arnd's patch. It is just a clean-up with a reference to
+Arnd's patch to understand why this clean up can be done now.
+
+If you REALLY want the Fixes: tag, I can sure add it. But, I do not
+claim that I am fixing anything here; nothing was broken in the first
+place. The reference to the commit of interest is in the commit
+message, and anyone can follow or extract the information if they are
+interested.
+
+So, please keep this patch in the queue for nand/next.
+
+Lukas
+
+> Thanks,
+> Miqu=C3=A8l
