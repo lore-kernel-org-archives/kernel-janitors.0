@@ -2,95 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D81C6FA99
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 02:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C74C678D5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 07:40:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230168AbjCGC6h (ORCPT
+        id S230369AbjCGHkp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Mar 2023 21:58:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35326 "EHLO
+        Tue, 7 Mar 2023 02:40:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230158AbjCGC62 (ORCPT
+        with ESMTP id S229716AbjCGHkn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Mar 2023 21:58:28 -0500
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 011844FA89;
-        Mon,  6 Mar 2023 18:58:14 -0800 (PST)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 326NwkVl003461;
-        Tue, 7 Mar 2023 02:57:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2022-7-12;
- bh=PXP43dbIa4N6tBNeeYGo8M6iX7CVuoy+r/rFnZQ/2Sg=;
- b=qCWcfKlFFPENswHqVTEEqklyqT/EhVuEGLAvrNAr5kpkHNcb3eGtSdUDORjnLO8qNHp1
- pZ8AMFSGL1yuWGOTvk6DJHhLpD74kQ0FVkzu1Ur1OX109HN/7rnG+iSak8lm5BnFvWZH
- c0hzjaBDI4+m/9i49eWXzxRPvnOHLxoBZIEE53/mATcbAHb3+7KB+BCNBkXpWH9fVbfr
- SKKP8o2HyJkeQiM1hNVMDymIMLQphGOB4r9OqkmLHJKkAkBsUdnFqsn1RpCFbD13yqi1
- Y/C/ZF1ku4mXmab8B+LK3bA90ppKqGueolekk9Z5ia0ZRLirlVBE4J3YOG7evBW5NhMA jQ== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3p417ccg7t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Mar 2023 02:57:38 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 327277Hg038193;
-        Tue, 7 Mar 2023 02:57:37 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3p4txdvjjm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Mar 2023 02:57:37 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3272vY2G009567;
-        Tue, 7 Mar 2023 02:57:36 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3p4txdvjhj-4;
-        Tue, 07 Mar 2023 02:57:36 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     Yaniv Gardi <ygardi@codeaurora.org>,
-        Dan Carpenter <error27@gmail.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Gilad Broner <gbroner@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: ufs-qcom: remove impossible check
-Date:   Mon,  6 Mar 2023 21:57:21 -0500
-Message-Id: <167815780202.2075334.16632158719817352336.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <Y/yA3niWUcGYgBU8@kili>
-References: <Y/yA3niWUcGYgBU8@kili>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-06_14,2023-03-06_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 adultscore=0
- spamscore=0 suspectscore=0 mlxlogscore=801 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2303070025
-X-Proofpoint-GUID: KXtM477-1ezEF6M-3bVrF-6Ex0jSO2KR
-X-Proofpoint-ORIG-GUID: KXtM477-1ezEF6M-3bVrF-6Ex0jSO2KR
+        Tue, 7 Mar 2023 02:40:43 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 888193B658;
+        Mon,  6 Mar 2023 23:40:42 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id k10so24770334edk.13;
+        Mon, 06 Mar 2023 23:40:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678174841;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L5IpSKyXyeFe9/34ExltwmVNhqdaflxRmwhQAOMuSGk=;
+        b=Ktfkc1GCbZfBCATHYdSFkaawD4zQyKTqA7JZYwaqKWhc+HVXomvDx/3o9sLo2/HqoA
+         hbw/9bVUv6ukVu/0eABchQbfGBi02CJAE/66AaqRued8zleO76QN4BPpcGrMaA9W+/3i
+         6rbqxMbBcn7a7He0tEGb+nv1iRPU3lg6b0vRhjWL+a4y0w0OkOXa23bKuuZJRz0vBfsE
+         foZO68/I4M/+lRvofB//8HZUxQYNJaAXuvORSDQ1WDbIAofmQYHjtIhIwqMK3poBZt60
+         /NeSHYogP+4tg40lsCrbnZzxLWD8Y1XHktwlwoodmVr3nf04nzlk+99pyUZMtv81SuSS
+         k4GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678174841;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L5IpSKyXyeFe9/34ExltwmVNhqdaflxRmwhQAOMuSGk=;
+        b=JMvPpznZ5bwQ50na91Hs3DtfmCNkp+1ErGKvCN4N/Hcn/a8boCAe1Lj/3j6ZJ51v1F
+         l22BdIAe80yS9ovsbIPrlZvFd2tFlnWFkE268szasD2mZF3rS5XOJfcl1kXIj91s6C+v
+         id+uwAlaVvslg6MAfKMs1LtPWN3NDISlqG5bum/nTIPgftblPZVOKCe+93ndfAoAZLDu
+         CR9etzXpWZ4AMURWZ/t6h6l9mqqh2mkhuss2G6zd+bZwzwyF6XEcLYH9G99oU/6tSf27
+         7lvOysSvS3eIp4KM8QNyGUtQiJVyuyBM9MSKTsLwiimI22wGgHlaVq4U7EdZ1ls96qEI
+         N7kA==
+X-Gm-Message-State: AO0yUKVypB1MqJQn7HcsteYsbPkgNGrv+ndpoJ1IRCn7Dn1ewO2mQ19M
+        FuBgwQwcg/JCoVld3/qMiiVQggIe6J0p4w==
+X-Google-Smtp-Source: AK7set/9jJyUKVijolFNnzdZe4RkPQrD3rXz5wZWpxUGZUr8oynFlSwBDKwxTCqglSp7mMVRbr0g5g==
+X-Received: by 2002:aa7:d683:0:b0:4ac:bbb4:9772 with SMTP id d3-20020aa7d683000000b004acbbb49772mr8653860edr.40.1678174840834;
+        Mon, 06 Mar 2023 23:40:40 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:a517:a52e:cdbc:e30d])
+        by smtp.gmail.com with ESMTPSA id d26-20020a50f69a000000b004c0239e41d8sm6167084edn.81.2023.03.06.23.40.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 23:40:40 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] mtd: parsers: remove reference to config MTD_NAND_TMIO
+Date:   Tue,  7 Mar 2023 08:40:38 +0100
+Message-Id: <20230307074038.17391-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 27 Feb 2023 13:07:26 +0300, Dan Carpenter wrote:
+Commit 568494db6809 ("mtd: remove tmio_nand driver") removes the config
+MTD_NAND_TMIO and its corresponding driver.
 
-> The "dev_req_params" pointer points to inside the middle of a struct
-> so it can't be NULL.  Removing this impossible condition is nice because
-> now we don't need to consider the correct error code for that situation.
-> 
-> 
+Remove the reference in MTD_SHARPSL_PARTS to that removed config.
 
-Applied to 6.3/scsi-fixes, thanks!
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Arnd, please ack.
+Miquel, please pick this minor non-urgent patch on top of the commit above.
 
-[1/1] scsi: ufs: ufs-qcom: remove impossible check
-      https://git.kernel.org/mkp/scsi/c/fa8d32721a07
+ drivers/mtd/parsers/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/mtd/parsers/Kconfig b/drivers/mtd/parsers/Kconfig
+index b20e0c38b517..60738edcd5d5 100644
+--- a/drivers/mtd/parsers/Kconfig
++++ b/drivers/mtd/parsers/Kconfig
+@@ -149,7 +149,7 @@ config MTD_PARSER_TRX
+ 
+ config MTD_SHARPSL_PARTS
+ 	tristate "Sharp SL Series NAND flash partition parser"
+-	depends on MTD_NAND_SHARPSL || MTD_NAND_TMIO || COMPILE_TEST
++	depends on MTD_NAND_SHARPSL || COMPILE_TEST
+ 	help
+ 	  This provides the read-only FTL logic necessary to read the partition
+ 	  table from the NAND flash of Sharp SL Series (Zaurus) and the MTD
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.1
+
