@@ -2,104 +2,137 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D35C678D4
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 08:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E5EC678DB
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 08:38:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229549AbjCGI3o (ORCPT
+        id S229826AbjCGIid (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Mar 2023 03:29:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38642 "EHLO
+        Tue, 7 Mar 2023 03:38:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjCGI3m (ORCPT
+        with ESMTP id S229818AbjCGIic (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Mar 2023 03:29:42 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A90837F3E;
-        Tue,  7 Mar 2023 00:29:41 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id ec29so18263735edb.6;
-        Tue, 07 Mar 2023 00:29:41 -0800 (PST)
+        Tue, 7 Mar 2023 03:38:32 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86EB72E0EE;
+        Tue,  7 Mar 2023 00:38:29 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id k10so25264978edk.13;
+        Tue, 07 Mar 2023 00:38:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678177780;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20210112; t=1678178308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3AbvUXReTTM4AVHYC5kqdjEokxzgC2ZBAFH06E7ehB4=;
-        b=IS6tlqa7BHjdbJXvlwdGYpY0tlL7AnTvkm5MLjGJKBcnWmCztjRzqOW8C0c2dt8CnU
-         TZv/V35oG40BhjADsVoBnbN27t2eCqXNe6NwxGzcBX/fYM1cBlRV6NJfBZUzvvaGMUzs
-         nXRHaGNi6Aq00NszXO8bx7qSChKkSMBtMlQEqnZUzf+Z8qL6w4VE9MRMaQyfIyD6RW8A
-         owFrS4Maej/CDQkDTMorZEHDjx2AwgAvKQUtDvGq2SvhPKAaFuYVGqsQNeWPQVfa+P3q
-         gxYWl3Y2ts1qCaIoASBhKY+DLg3HwP/kASBo0QVkpa6eJAfl4j57I9r+Tkol2JTU4XXI
-         vMwQ==
+        bh=QFkwqhkT+lIt2irVF6rhRMk0pnuU8Ja1oB/xp+FXlr8=;
+        b=lUvWp6toVHkr4XQ7hhtU/YiewW60L/6LagLE9I0VbD7fq1zn7c+LpYUcPLm4sStnaI
+         o90OrqJ36nric2PeL0uS1QEdYAkrOEsnb6h+nZ+FYT7mi8lAupvgVxZk9X0IOqV0tR56
+         Ib1sShHJrT0vCcGZnMmjx/xmO7mezHQV54kCzaz63gbVPrvvKzw2U5QsF/MVI2BYz++A
+         ljYMIBdbtWLRfOqEK72sMBh4mXAzXRjn6vpArJRx9wVM6TDQt3YZz6cVoxY+inyyfr9e
+         rfbxhjlHLA+lXZfHSoC74fXRH+dDLWALUYu0hYHQ52awLQ9Nuka2gOGBjmnwa5vSS/W3
+         M4kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678177780;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1678178308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3AbvUXReTTM4AVHYC5kqdjEokxzgC2ZBAFH06E7ehB4=;
-        b=BJl/bc5RAa+tnOMhdUAqXbCgi908N/DCTWtuZG89Q1M8cMdiH5VkDbVYokvPdYNq7z
-         lRftbqzqCAM8uQZDmLA2vU/a0zoO2EBFIOtUebDdnImFKGuhwYCXG47WVT0Vynxyj5p2
-         xKFvI3JsIJEk3g8eQCeV02paemLsqR+bFAYA9nuZ4VbA94ZPko4dGdl7w7s6thXeJhf/
-         pGVdwcgForOS4IzFjKTMAeugSfbKiEzSMxWYSqyd6usa4BUqT4vAXJqkuyT8lTVjVU16
-         ykT32LNOX2YV64viuicm8f+JmLiBl1FtQ4jvoV4iMx2BQRN87x3xJ6T6zGRfHsrP+w44
-         cqOQ==
-X-Gm-Message-State: AO0yUKV5EmLOSZZOJuIfKyiGas35ZyoOd338uTB4MN6pX/EBm4iypT+O
-        VvWKRPhWc/csIp1WQPG7alTw7jbW49AJ0A==
-X-Google-Smtp-Source: AK7set+NqOA0GuLBi95jD9sL2EFZoTyWxqtV9tJspk9SNlbbF0WHDeIQzi+MHhbMHljWACWH9ttvUw==
-X-Received: by 2002:a17:907:8b16:b0:8b1:2e7c:df49 with SMTP id sz22-20020a1709078b1600b008b12e7cdf49mr15440608ejc.7.1678177779745;
-        Tue, 07 Mar 2023 00:29:39 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:a517:a52e:cdbc:e30d])
-        by smtp.gmail.com with ESMTPSA id f27-20020a50a6db000000b004acc61206cfsm6304353edc.33.2023.03.07.00.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 00:29:39 -0800 (PST)
+        bh=QFkwqhkT+lIt2irVF6rhRMk0pnuU8Ja1oB/xp+FXlr8=;
+        b=Bk1Wne6zUK7t6oron0ipXlO7uTXI49TIElwIZzj3Eau53Q8CEVDaGL/23Dz64+t8+l
+         RB6NbE6CYcaGc7YJq8jltxvFeZeUJzNI6KEvYHirL/v3e5USDaQeoGYviw/8DnTpsyxT
+         T7aCvT0BbudMv50kM5eMBCsHbxvvUBqgkU7a1ZECxy1FbmwmKflQAYea+waQy1ZLLkar
+         n/6YccqFhzASNtsJuAFSaY0GXW07AGfgFuBWsq0g1e/hIqu9s18jJRuLc6LEtCU/eDUv
+         Az7ac/SsQbFFmJGMx0lYeZF6nyb2sAsLQULva0rwIzm9x0S2h4NCisfeKqWv9HNixkEO
+         y/kA==
+X-Gm-Message-State: AO0yUKV+sMkOq82UgV5lEv1S7P0GiVyjv65qJKRx151XgvaHwF00BOUe
+        mHHsHT/Ysvz6ArPzLSSx3GiBb9FI9I0aEwfG7Xk=
+X-Google-Smtp-Source: AK7set835bG0dJ6ngtk0PjuuqUnLs8sqgHQUsfUtZuyvpNqCpDSFdEABaR2fb1BA1EJAY+RMipe53NieyYlhlK8/Rk0=
+X-Received: by 2002:a17:906:a4b:b0:879:9c05:f5fb with SMTP id
+ x11-20020a1709060a4b00b008799c05f5fbmr6743103ejf.5.1678178307909; Tue, 07 Mar
+ 2023 00:38:27 -0800 (PST)
+MIME-Version: 1.0
+References: <20230307075923.28821-1-lukas.bulwahn@gmail.com>
+ <CAMuHMdV1eYWhDKwTAxC32Qp0CcxrWxgu=uRNTdu_G8K=gHS9Yw@mail.gmail.com> <c85990e892571ae5da7a9c4b0e86897ee34286a7.camel@physik.fu-berlin.de>
+In-Reply-To: <c85990e892571ae5da7a9c4b0e86897ee34286a7.camel@physik.fu-berlin.de>
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-leds@vger.kernel.org
-Cc:     William Zhang <william.zhang@broadcom.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] leds: bcm63138: refer to ARCH_BCMBCA instead of ARCH_BCM4908
-Date:   Tue,  7 Mar 2023 09:29:36 +0100
-Message-Id: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+Date:   Tue, 7 Mar 2023 09:38:16 +0100
+Message-ID: <CAKXUXMyRd2V+a9yoqfgkVPY3UufKHKTOPxxXLSJCK49DDEUQEA@mail.gmail.com>
+Subject: Re: [PATCH] arch: sh: remove references to config USB_OHCI_SH
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit dd5c672d7ca9 ("arm64: bcmbca: Merge ARCH_BCM4908 to ARCH_BCMBCA")
-removes config ARCH_BCM4908 as config ARCH_BCMBCA has the same intent.
+On Tue, Mar 7, 2023 at 9:19=E2=80=AFAM John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
+>
+> Hi Geert!
+>
+> On Tue, 2023-03-07 at 09:16 +0100, Geert Uytterhoeven wrote:
+> > Hi Lukas,
+> >
+> > On Tue, Mar 7, 2023 at 9:02=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gma=
+il.com> wrote:
+> > > Commit 4f6dfc2136fb ("usb: remove the dead USB_OHCI_SH option") left =
+some
+> > > references to the config USB_OHCI_SH in ./arch/sh/ around, expecting =
+those
+> > > to be removed with the whole SH architecture deletion.
+> > >
+> > > As that did not happen, do minor clean-up instead and remove the refe=
+rences
+> > > to the removed config USB_OHCI_SH instead.
+> > >
+> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/arch/sh/Kconfig
+> > > +++ b/arch/sh/Kconfig
+> > > @@ -326,7 +326,6 @@ config CPU_SUBTYPE_SH7720
+> > >         select CPU_SH3
+> > >         select CPU_HAS_DSP
+> > >         select SYS_SUPPORTS_SH_CMT
+> > > -       select USB_OHCI_SH if USB_OHCI_HCD
+> >
+> > Shouldn't this select USB_OHCI_HCD_PLATFORM instead, as the (now
+> > removed) Kconfig help text for USB_OHCI_SH used to say?
+> >
+> >     +       select USB_OHCI_HCD_PLATFORM if USB_OHCI_HCD
+> >
+> > I completely forgot I already made that comment before, cfr.
+> > https://lore.kernel.org/all/CAMuHMdVM3BpvVD3c4gp1OidnwF5zFd4MJecij7zWBn=
+ahzNaSNw@mail.gmail.com
+> >
+> > The same is true for the three selects below.
+> > As USB is now broken, the proper solution will need
+> > Fixes: 4f6dfc2136fb2e8d ("usb: remove the dead USB_OHCI_SH option")
+>
 
-Probably due to concurrent development, commit a0ba692072d8 ("leds:
-bcm63138: add support for BCM63138 controller") introduces 'LED Support
-for Broadcom BCM63138 SoC' that depends on ARCH_BCM4908, but this use was
-not visible during the config refactoring from the commit above. Hence,
-these two changes create a reference to a non-existing config symbol.
+Well, I assumed that I am just cleaning up some minor stuff, not
+fixing broken code...
 
-Adjust the LEDS_BCM63138 definition to refer to ARCH_BCMBCA instead of
-ARCH_BCM4908 to remove the reference to the non-existing config symbol
-ARCH_BCM4908.
+With your link and explanation, Geert, I know what needs to be done. Thanks=
+.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/leds/blink/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Thanks a lot for catching this!
+>
+> @Lukas: Can you send a new patch with the suggested changes?
+>
 
-diff --git a/drivers/leds/blink/Kconfig b/drivers/leds/blink/Kconfig
-index 945c84286a4e..bdcb7377cd4e 100644
---- a/drivers/leds/blink/Kconfig
-+++ b/drivers/leds/blink/Kconfig
-@@ -1,10 +1,10 @@
- config LEDS_BCM63138
- 	tristate "LED Support for Broadcom BCM63138 SoC"
- 	depends on LEDS_CLASS
--	depends on ARCH_BCM4908 || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
-+	depends on ARCH_BCMBCA || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
- 	depends on HAS_IOMEM
- 	depends on OF
--	default ARCH_BCM4908
-+	default ARCH_BCMBCA
- 	help
- 	  This option enables support for LED controller that is part of
- 	  BCM63138 SoC. The same hardware block is known to be also used
--- 
-2.17.1
+I will send a new patch in a second.
 
+Lukas
+
+> Adrian
+>
+> --
+>  .''`.  John Paul Adrian Glaubitz
+> : :' :  Debian Developer
+> `. `'   Physicist
+>   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
