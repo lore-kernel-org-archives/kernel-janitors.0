@@ -2,92 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB566C678D5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 09:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31CCC678DB
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 09:57:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230176AbjCGJD6 (ORCPT
+        id S231178AbjCGJ56 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Mar 2023 04:03:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46614 "EHLO
+        Tue, 7 Mar 2023 04:57:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbjCGJD4 (ORCPT
+        with ESMTP id S230484AbjCGJ5k (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Mar 2023 04:03:56 -0500
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF7F032524;
-        Tue,  7 Mar 2023 01:03:54 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 43BCE2000B;
-        Tue,  7 Mar 2023 09:03:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1678179833;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lWnZbQ74txk8fmZIzwltqIy3VGDLFLIoD4qJMLHcs9Q=;
-        b=AB8OTewy2WxToW9EIlO9ll68NNpEnvsLM6dwAkzbF8VXcC6yG5UIH+cipbDuAO4GocKFib
-        A0XFjscqDG26hgdaKiqFbVTr49wyxAA6AKraiMfuUSDhYiYYIdGYpQvWUErCPRq7NO7BnA
-        pJ1gTAo8o5+so1XRs+iMyIMTxFpED6mPzOnm/6kGALJNIQ6LcNqpKTA9WARgTzaDsJaacH
-        jRvwNJrlxx85yQBQcJ7n3pCF2s1yqlzNLDe7msOrrniDHC2MJRIYwG8o9ojZvcQ+bAjlhK
-        vMixj94XbsAxPSffJqwq2hvINHUo9FkHve5ePUsXZqwLCxgVrIaagJLzxQAvSA==
-Date:   Tue, 7 Mar 2023 10:03:50 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: parsers: remove reference to config MTD_NAND_TMIO
-Message-ID: <20230307100350.1c0af7b9@xps-13>
-In-Reply-To: <20230307074038.17391-1-lukas.bulwahn@gmail.com>
-References: <20230307074038.17391-1-lukas.bulwahn@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Tue, 7 Mar 2023 04:57:40 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A033570B8;
+        Tue,  7 Mar 2023 01:57:36 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id s11so49920941edy.8;
+        Tue, 07 Mar 2023 01:57:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678183055;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jJQB/5gXipfe1LU3X5YR10NL53UE8w0mr0UyzsB03S8=;
+        b=KgForhX7LM+oAiVt4CMKCwzpS5UjfFx+wa0BXt8jHwe4HGGLchHyxDx1JwtjhlMLLT
+         te6qYLEimW3JJIYuiWxca+4xwipsprmTbjweRbqPMPez2Ji7tC+Qb30OAydugxB7RXvc
+         MHmxdti6v0oXo0opMGL/ONHwhcDmI7jK0Fp/m93CPpRnpFU3WbZe06EIfioIrv7utSWw
+         VZc7KL3aly+WaCTVXTaTi3ikbgqIy4JFaYL2TugKsXybFQtHgazymY5zMF/0HauldZ8U
+         1R1gqoCCjkRu9QEVG1UA3I24W5Rt3Gy0SXC6MaRCJg1QenbZpH4ZOrVbXOfpYi70Va3d
+         1BBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678183055;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jJQB/5gXipfe1LU3X5YR10NL53UE8w0mr0UyzsB03S8=;
+        b=kM/qkZGRNYJ7jgE1xbg6wi8ZXZKsBBmCtK0nVaViZyxKGX6e6GJNLd43bK6ZlovJlt
+         Qw5PGIxNProege9rZf241VcFGWjPlacfnYjvk4wx0OpKGmswOTGhneW/EZEfeiQljewl
+         n8PJP1C8tCq/SrXGcrrzy0B8FkxNiqPUbfelmpUiIKo5D0DnjQyY5pE3NMHH6JKhooQf
+         JT0kDjsjVMS/goRmxqYhfMKrNOkzTessKM/6P1RrsTzlTMD9GYFSCY42gQkGd8lSjAXA
+         BZqtxeThXPbt68oLAIlh1d/YOMB2L/ZGdfXe7sMh12IJ7NgVfkSV+J0EqpVp34mYtPgr
+         TW0Q==
+X-Gm-Message-State: AO0yUKX9AdLF6qR8oagOqefC/iOuRsMENrs5wmcNmOsFrtIrFkD5zsYk
+        +Q9aeoAqg6opyZtx3PBfKSBeSXbOMJ0=
+X-Google-Smtp-Source: AK7set8YRCPqJl/SKCS3F9pCBfL7k/OKqg2EWwsuALLrsybrjJ8XFz2YkuY03YTcWtjFO9ltIsLKbw==
+X-Received: by 2002:aa7:cf90:0:b0:4bc:502e:e7de with SMTP id z16-20020aa7cf90000000b004bc502ee7demr12996835edx.32.1678183054977;
+        Tue, 07 Mar 2023 01:57:34 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d27-20020a50f69b000000b004acb696a0f6sm6435229edn.91.2023.03.07.01.57.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Mar 2023 01:57:34 -0800 (PST)
+Date:   Tue, 7 Mar 2023 12:51:27 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Jack Morgenstein <jackm@dev.mellanox.co.il>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+        Roland Dreier <rolandd@cisco.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] RDMA/mlx: prevent shift wrapping in set_user_sq_size()
+Message-ID: <a8dfbd1d-c019-4556-930b-bab1ded73b10@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+The ucmd->log_sq_bb_count variable is controlled by the user so this
+shift can wrap.  Fix it by using check_shl_overflow() in the same way
+that it was done in commit 515f60004ed9 ("RDMA/hns: Prevent undefined
+behavior in hns_roce_set_user_sq_size()").
 
-lukas.bulwahn@gmail.com wrote on Tue,  7 Mar 2023 08:40:38 +0100:
+Fixes: 839041329fd3 ("IB/mlx4: Sanity check userspace send queue sizes")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/infiniband/hw/mlx4/qp.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> Commit 568494db6809 ("mtd: remove tmio_nand driver") removes the config
-> MTD_NAND_TMIO and its corresponding driver.
->=20
-> Remove the reference in MTD_SHARPSL_PARTS to that removed config.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Arnd, please ack.
-> Miquel, please pick this minor non-urgent patch on top of the commit abov=
-e.
+diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+index 884825b2e5f7..456656617c33 100644
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -447,9 +447,13 @@ static int set_user_sq_size(struct mlx4_ib_dev *dev,
+ 			    struct mlx4_ib_qp *qp,
+ 			    struct mlx4_ib_create_qp *ucmd)
+ {
++	u32 cnt;
++
+ 	/* Sanity check SQ size before proceeding */
+-	if ((1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
+-	    ucmd->log_sq_stride >
++	if (check_shl_overflow(1, ucmd->log_sq_bb_count, &cnt) ||
++	    cnt > dev->dev->caps.max_wqes)
++		return -EINVAL;
++	if (ucmd->log_sq_stride >
+ 		ilog2(roundup_pow_of_two(dev->dev->caps.max_sq_desc_sz)) ||
+ 	    ucmd->log_sq_stride < MLX4_IB_MIN_SQ_STRIDE)
+ 		return -EINVAL;
+-- 
+2.39.1
 
-Actually I guess the SHARPSL driver is not selectable right now, so
-this should be sent as part of my next fixes PR. Could you please send
-a v2 with a Fixes: tag?
-
->=20
->  drivers/mtd/parsers/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/mtd/parsers/Kconfig b/drivers/mtd/parsers/Kconfig
-> index b20e0c38b517..60738edcd5d5 100644
-> --- a/drivers/mtd/parsers/Kconfig
-> +++ b/drivers/mtd/parsers/Kconfig
-> @@ -149,7 +149,7 @@ config MTD_PARSER_TRX
-> =20
->  config MTD_SHARPSL_PARTS
->  	tristate "Sharp SL Series NAND flash partition parser"
-> -	depends on MTD_NAND_SHARPSL || MTD_NAND_TMIO || COMPILE_TEST
-> +	depends on MTD_NAND_SHARPSL || COMPILE_TEST
->  	help
->  	  This provides the read-only FTL logic necessary to read the partition
->  	  table from the NAND flash of Sharp SL Series (Zaurus) and the MTD
-
-
-Thanks,
-Miqu=C3=A8l
