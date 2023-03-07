@@ -2,140 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E186C6FD1B
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 18:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 234A5C678D4
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 19:34:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230428AbjCGSC2 (ORCPT
+        id S231547AbjCGTe6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Mar 2023 13:02:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57650 "EHLO
+        Tue, 7 Mar 2023 14:34:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230506AbjCGSCC (ORCPT
+        with ESMTP id S233221AbjCGTej (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Mar 2023 13:02:02 -0500
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61169A8C58;
-        Tue,  7 Mar 2023 09:55:21 -0800 (PST)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-176b48a9a05so8475427fac.0;
-        Tue, 07 Mar 2023 09:55:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678211720;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uHG36lzNr+0MKns2Z8CLtBxE1/BWaAWLiQcYx5kbvTI=;
-        b=h69phTOnMkva0qAJniwtPXqWnZBB20ZvoeVHVDLVJeHrLgcfFPWj38k4itcLwOlnNv
-         M7pb3iPMH1VFpISaJDqXvTteYXF4Z4r1jLkxDHAdZ2aEhBdPCJP2OqDCShTgU8nmPKw+
-         Q19CsP7x7F0TGZENf70DfPyC7y/W101avtunhvAwGnngUEb1ur+wecqw13nbLG0wUCka
-         bVk5ke4C6JWtUe8waZPrDggLV8hSYe83++9bFfLam/jyG8N39Ic1Cvjuw1nqCFgGUtxi
-         i6RxGkL0FxXBgBXvIQLbxiZ5DDXfUOPvex82NewhYQZx1wqjvgnTu1Uy5ssDaf6/VLDc
-         beww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678211720;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uHG36lzNr+0MKns2Z8CLtBxE1/BWaAWLiQcYx5kbvTI=;
-        b=jN92wPCVHuZRgga4051t60L7r9p134hrfm8XNKm2aXhUuwDMCIhnU7MaQjOnyQkN89
-         Fec+k4rSpZlSd1sEwSW7FB69z17NLDNU2fLXe0aquZX5J8D4Ah1MPsSgzyxW7tUPSgvp
-         SD+3JjVLjW4JPQBe6obfn1bxXb809g4kusjL0XS7Lot0JLvyETk1QWdNXdj/MQj/83Ht
-         ykYS11YwjK4K28WLeiZiXWBmsmLxdGMeSUUkFY8utBuiXdfQj8BfjSGEw3CZOjJVkkMQ
-         KJrwRMCp5zBhdzqdxzHMtAtpt7ChaSLlxX3uZL8Le5gVW42nkx5Bknp8dFm8wiCvhPuA
-         B3hQ==
-X-Gm-Message-State: AO0yUKWmvKbocvxnAJb02DDCy4IAOQ//wV+9LS1cWIRImK8JJVtxO4sV
-        zni0ucZOnsT74NdUEe0y558=
-X-Google-Smtp-Source: AK7set8n+Y8sZKSYTNBR5dC2J0IYWxQgIchgUGkDmOPwc4oBXKBbxCYC4mqx7e6bnlKwlfIA2ouAqA==
-X-Received: by 2002:a05:6870:3a06:b0:176:3218:a837 with SMTP id du6-20020a0568703a0600b001763218a837mr7463844oab.16.1678211720222;
-        Tue, 07 Mar 2023 09:55:20 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id ax39-20020a05687c022700b0016b0369f08fsm5329261oac.15.2023.03.07.09.55.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 09:55:19 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Tue, 7 Mar 2023 09:55:18 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Keguang Zhang <keguang.zhang@gmail.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH] watchdog: loongson1: Use devm_clk_get_enabled() helper
-Message-ID: <3144eb08-ca46-42df-9a7d-c541ad534857@roeck-us.net>
-References: <624106aa86ef7e49f16b11b229528eabd63de8f7.1672485257.git.christophe.jaillet@wanadoo.fr>
+        Tue, 7 Mar 2023 14:34:39 -0500
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30714A0F32;
+        Tue,  7 Mar 2023 11:21:32 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 9AF451BF205;
+        Tue,  7 Mar 2023 19:21:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1678216891;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RxdKgF0FoJ8o93pAtFh/ei+gKLeFCdS2rikMZuG/uH0=;
+        b=Y2NDczmdy4t+ddy4/B7pcehkSH7NVY7Yh9fCf/HP/QTBG6VfvC2+qeuZiq3PT2TtZEvHrh
+        dNskcRbXB3YfRTcr9S35hQNf/r+GT0yGxphzV8C6QBz8AEZMwu+pCrG0Iz76pPhlLh4/NU
+        ijID7TxI6NhaqnC2BrIwT0cHLsfyX+3HYlmIuNAy8uk5soatKdReOvBmBHRJdzvpSx//zl
+        Fi+wCcmqlJAkGvmbrJfamt7FXMNSsE+KeE+GDXMGbmkccpso6uvHyStZc2gMhlwk6P2cKU
+        icL5Ue1qo6pSFqC7qYd7lafsir/AWK7Y2ZGGCO5DlLAhtkYNfMNiTimhQ42Phg==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: nand: mxic-ecc: Fix mxic_ecc_data_xfer_wait_for_completion() when irq is used
+Date:   Tue,  7 Mar 2023 20:21:27 +0100
+Message-Id: <20230307192127.274869-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To:  <beddbc374557e44ceec897e68c4a5d12764ddbb9.1676459308.git.christophe.jaillet@wanadoo.fr>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <624106aa86ef7e49f16b11b229528eabd63de8f7.1672485257.git.christophe.jaillet@wanadoo.fr>
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'75dce6a941e3f16c3b4878c8b2f46d5d07c619ce'
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Dec 31, 2022 at 12:14:30PM +0100, Christophe JAILLET wrote:
-> The devm_clk_get_enabled() helper:
->    - calls devm_clk_get()
->    - calls clk_prepare_enable() and registers what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
+On Wed, 2023-02-15 at 11:08:45 UTC, Christophe JAILLET wrote:
+> wait_for_completion_timeout() and readl_poll_timeout() don't handle their
+> return value the same way.
 > 
-> This simplifies the code and avoids the need of a dedicated function used
-> with devm_add_action_or_reset().
+> wait_for_completion_timeout() returns 0 on time out (and >0 in all other
+> cases)
+> readl_poll_timeout() returns 0 on success and -ETIMEDOUT upon a timeout.
 > 
+> In order for the error handling path to work in both cases, the logic
+> against wait_for_completion_timeout() needs to be inverted.
+> 
+> Fixes: 48e6633a9fa2 ("mtd: nand: mxic-ecc: Add Macronix external ECC engine support")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/fixes, thanks.
 
-> ---
-> Note that I get a compilation error because <loongson1.h> is not found on
-> my system (x86_64).
-> So I think that a "depends on LOONG<something>" in missing in a KConfig
-> file.
-
-It has "depends on MACH_LOONGSON32" and is not expected to be buildable if
-MACH_LOONGSON32 is not selected. It builds just fine if MACH_LOONGSON32
-is selected.
-
-Guenter
-
-> 
-> Fixing it could help compilation farms build-bots.
-> ---
->  drivers/watchdog/loongson1_wdt.c | 17 +----------------
->  1 file changed, 1 insertion(+), 16 deletions(-)
-> 
-> diff --git a/drivers/watchdog/loongson1_wdt.c b/drivers/watchdog/loongson1_wdt.c
-> index bb3d075c0633..c55656cfb403 100644
-> --- a/drivers/watchdog/loongson1_wdt.c
-> +++ b/drivers/watchdog/loongson1_wdt.c
-> @@ -79,11 +79,6 @@ static const struct watchdog_ops ls1x_wdt_ops = {
->  	.set_timeout = ls1x_wdt_set_timeout,
->  };
->  
-> -static void ls1x_clk_disable_unprepare(void *data)
-> -{
-> -	clk_disable_unprepare(data);
-> -}
-> -
->  static int ls1x_wdt_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -100,20 +95,10 @@ static int ls1x_wdt_probe(struct platform_device *pdev)
->  	if (IS_ERR(drvdata->base))
->  		return PTR_ERR(drvdata->base);
->  
-> -	drvdata->clk = devm_clk_get(dev, pdev->name);
-> +	drvdata->clk = devm_clk_get_enabled(dev, pdev->name);
->  	if (IS_ERR(drvdata->clk))
->  		return PTR_ERR(drvdata->clk);
->  
-> -	err = clk_prepare_enable(drvdata->clk);
-> -	if (err) {
-> -		dev_err(dev, "clk enable failed\n");
-> -		return err;
-> -	}
-> -	err = devm_add_action_or_reset(dev, ls1x_clk_disable_unprepare,
-> -				       drvdata->clk);
-> -	if (err)
-> -		return err;
-> -
->  	clk_rate = clk_get_rate(drvdata->clk);
->  	if (!clk_rate)
->  		return -EINVAL;
+Miquel
