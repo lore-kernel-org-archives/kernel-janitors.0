@@ -2,137 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E5EC678DB
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 08:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB566C678D5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 09:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229826AbjCGIid (ORCPT
+        id S230176AbjCGJD6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Mar 2023 03:38:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46632 "EHLO
+        Tue, 7 Mar 2023 04:03:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229818AbjCGIic (ORCPT
+        with ESMTP id S229653AbjCGJD4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Mar 2023 03:38:32 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86EB72E0EE;
-        Tue,  7 Mar 2023 00:38:29 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id k10so25264978edk.13;
-        Tue, 07 Mar 2023 00:38:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678178308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QFkwqhkT+lIt2irVF6rhRMk0pnuU8Ja1oB/xp+FXlr8=;
-        b=lUvWp6toVHkr4XQ7hhtU/YiewW60L/6LagLE9I0VbD7fq1zn7c+LpYUcPLm4sStnaI
-         o90OrqJ36nric2PeL0uS1QEdYAkrOEsnb6h+nZ+FYT7mi8lAupvgVxZk9X0IOqV0tR56
-         Ib1sShHJrT0vCcGZnMmjx/xmO7mezHQV54kCzaz63gbVPrvvKzw2U5QsF/MVI2BYz++A
-         ljYMIBdbtWLRfOqEK72sMBh4mXAzXRjn6vpArJRx9wVM6TDQt3YZz6cVoxY+inyyfr9e
-         rfbxhjlHLA+lXZfHSoC74fXRH+dDLWALUYu0hYHQ52awLQ9Nuka2gOGBjmnwa5vSS/W3
-         M4kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678178308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QFkwqhkT+lIt2irVF6rhRMk0pnuU8Ja1oB/xp+FXlr8=;
-        b=Bk1Wne6zUK7t6oron0ipXlO7uTXI49TIElwIZzj3Eau53Q8CEVDaGL/23Dz64+t8+l
-         RB6NbE6CYcaGc7YJq8jltxvFeZeUJzNI6KEvYHirL/v3e5USDaQeoGYviw/8DnTpsyxT
-         T7aCvT0BbudMv50kM5eMBCsHbxvvUBqgkU7a1ZECxy1FbmwmKflQAYea+waQy1ZLLkar
-         n/6YccqFhzASNtsJuAFSaY0GXW07AGfgFuBWsq0g1e/hIqu9s18jJRuLc6LEtCU/eDUv
-         Az7ac/SsQbFFmJGMx0lYeZF6nyb2sAsLQULva0rwIzm9x0S2h4NCisfeKqWv9HNixkEO
-         y/kA==
-X-Gm-Message-State: AO0yUKV+sMkOq82UgV5lEv1S7P0GiVyjv65qJKRx151XgvaHwF00BOUe
-        mHHsHT/Ysvz6ArPzLSSx3GiBb9FI9I0aEwfG7Xk=
-X-Google-Smtp-Source: AK7set835bG0dJ6ngtk0PjuuqUnLs8sqgHQUsfUtZuyvpNqCpDSFdEABaR2fb1BA1EJAY+RMipe53NieyYlhlK8/Rk0=
-X-Received: by 2002:a17:906:a4b:b0:879:9c05:f5fb with SMTP id
- x11-20020a1709060a4b00b008799c05f5fbmr6743103ejf.5.1678178307909; Tue, 07 Mar
- 2023 00:38:27 -0800 (PST)
+        Tue, 7 Mar 2023 04:03:56 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF7F032524;
+        Tue,  7 Mar 2023 01:03:54 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 43BCE2000B;
+        Tue,  7 Mar 2023 09:03:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1678179833;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lWnZbQ74txk8fmZIzwltqIy3VGDLFLIoD4qJMLHcs9Q=;
+        b=AB8OTewy2WxToW9EIlO9ll68NNpEnvsLM6dwAkzbF8VXcC6yG5UIH+cipbDuAO4GocKFib
+        A0XFjscqDG26hgdaKiqFbVTr49wyxAA6AKraiMfuUSDhYiYYIdGYpQvWUErCPRq7NO7BnA
+        pJ1gTAo8o5+so1XRs+iMyIMTxFpED6mPzOnm/6kGALJNIQ6LcNqpKTA9WARgTzaDsJaacH
+        jRvwNJrlxx85yQBQcJ7n3pCF2s1yqlzNLDe7msOrrniDHC2MJRIYwG8o9ojZvcQ+bAjlhK
+        vMixj94XbsAxPSffJqwq2hvINHUo9FkHve5ePUsXZqwLCxgVrIaagJLzxQAvSA==
+Date:   Tue, 7 Mar 2023 10:03:50 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: parsers: remove reference to config MTD_NAND_TMIO
+Message-ID: <20230307100350.1c0af7b9@xps-13>
+In-Reply-To: <20230307074038.17391-1-lukas.bulwahn@gmail.com>
+References: <20230307074038.17391-1-lukas.bulwahn@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20230307075923.28821-1-lukas.bulwahn@gmail.com>
- <CAMuHMdV1eYWhDKwTAxC32Qp0CcxrWxgu=uRNTdu_G8K=gHS9Yw@mail.gmail.com> <c85990e892571ae5da7a9c4b0e86897ee34286a7.camel@physik.fu-berlin.de>
-In-Reply-To: <c85990e892571ae5da7a9c4b0e86897ee34286a7.camel@physik.fu-berlin.de>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 7 Mar 2023 09:38:16 +0100
-Message-ID: <CAKXUXMyRd2V+a9yoqfgkVPY3UufKHKTOPxxXLSJCK49DDEUQEA@mail.gmail.com>
-Subject: Re: [PATCH] arch: sh: remove references to config USB_OHCI_SH
-To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 7, 2023 at 9:19=E2=80=AFAM John Paul Adrian Glaubitz
-<glaubitz@physik.fu-berlin.de> wrote:
->
-> Hi Geert!
->
-> On Tue, 2023-03-07 at 09:16 +0100, Geert Uytterhoeven wrote:
-> > Hi Lukas,
-> >
-> > On Tue, Mar 7, 2023 at 9:02=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gma=
-il.com> wrote:
-> > > Commit 4f6dfc2136fb ("usb: remove the dead USB_OHCI_SH option") left =
-some
-> > > references to the config USB_OHCI_SH in ./arch/sh/ around, expecting =
-those
-> > > to be removed with the whole SH architecture deletion.
-> > >
-> > > As that did not happen, do minor clean-up instead and remove the refe=
-rences
-> > > to the removed config USB_OHCI_SH instead.
-> > >
-> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/arch/sh/Kconfig
-> > > +++ b/arch/sh/Kconfig
-> > > @@ -326,7 +326,6 @@ config CPU_SUBTYPE_SH7720
-> > >         select CPU_SH3
-> > >         select CPU_HAS_DSP
-> > >         select SYS_SUPPORTS_SH_CMT
-> > > -       select USB_OHCI_SH if USB_OHCI_HCD
-> >
-> > Shouldn't this select USB_OHCI_HCD_PLATFORM instead, as the (now
-> > removed) Kconfig help text for USB_OHCI_SH used to say?
-> >
-> >     +       select USB_OHCI_HCD_PLATFORM if USB_OHCI_HCD
-> >
-> > I completely forgot I already made that comment before, cfr.
-> > https://lore.kernel.org/all/CAMuHMdVM3BpvVD3c4gp1OidnwF5zFd4MJecij7zWBn=
-ahzNaSNw@mail.gmail.com
-> >
-> > The same is true for the three selects below.
-> > As USB is now broken, the proper solution will need
-> > Fixes: 4f6dfc2136fb2e8d ("usb: remove the dead USB_OHCI_SH option")
->
+Hi Lukas,
 
-Well, I assumed that I am just cleaning up some minor stuff, not
-fixing broken code...
+lukas.bulwahn@gmail.com wrote on Tue,  7 Mar 2023 08:40:38 +0100:
 
-With your link and explanation, Geert, I know what needs to be done. Thanks=
-.
+> Commit 568494db6809 ("mtd: remove tmio_nand driver") removes the config
+> MTD_NAND_TMIO and its corresponding driver.
+>=20
+> Remove the reference in MTD_SHARPSL_PARTS to that removed config.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Arnd, please ack.
+> Miquel, please pick this minor non-urgent patch on top of the commit abov=
+e.
 
-> Thanks a lot for catching this!
->
-> @Lukas: Can you send a new patch with the suggested changes?
->
+Actually I guess the SHARPSL driver is not selectable right now, so
+this should be sent as part of my next fixes PR. Could you please send
+a v2 with a Fixes: tag?
 
-I will send a new patch in a second.
+>=20
+>  drivers/mtd/parsers/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/mtd/parsers/Kconfig b/drivers/mtd/parsers/Kconfig
+> index b20e0c38b517..60738edcd5d5 100644
+> --- a/drivers/mtd/parsers/Kconfig
+> +++ b/drivers/mtd/parsers/Kconfig
+> @@ -149,7 +149,7 @@ config MTD_PARSER_TRX
+> =20
+>  config MTD_SHARPSL_PARTS
+>  	tristate "Sharp SL Series NAND flash partition parser"
+> -	depends on MTD_NAND_SHARPSL || MTD_NAND_TMIO || COMPILE_TEST
+> +	depends on MTD_NAND_SHARPSL || COMPILE_TEST
+>  	help
+>  	  This provides the read-only FTL logic necessary to read the partition
+>  	  table from the NAND flash of Sharp SL Series (Zaurus) and the MTD
 
-Lukas
 
-> Adrian
->
-> --
->  .''`.  John Paul Adrian Glaubitz
-> : :' :  Debian Developer
-> `. `'   Physicist
->   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Thanks,
+Miqu=C3=A8l
