@@ -2,61 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31CCC678DB
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 09:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 943B3C678D5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 10:00:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231178AbjCGJ56 (ORCPT
+        id S230414AbjCGKAc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Mar 2023 04:57:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59126 "EHLO
+        Tue, 7 Mar 2023 05:00:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230484AbjCGJ5k (ORCPT
+        with ESMTP id S229972AbjCGKAb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Mar 2023 04:57:40 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A033570B8;
-        Tue,  7 Mar 2023 01:57:36 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id s11so49920941edy.8;
-        Tue, 07 Mar 2023 01:57:36 -0800 (PST)
+        Tue, 7 Mar 2023 05:00:31 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E433B23C;
+        Tue,  7 Mar 2023 02:00:29 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id o12so49904109edb.9;
+        Tue, 07 Mar 2023 02:00:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678183055;
+        d=gmail.com; s=20210112; t=1678183228;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jJQB/5gXipfe1LU3X5YR10NL53UE8w0mr0UyzsB03S8=;
-        b=KgForhX7LM+oAiVt4CMKCwzpS5UjfFx+wa0BXt8jHwe4HGGLchHyxDx1JwtjhlMLLT
-         te6qYLEimW3JJIYuiWxca+4xwipsprmTbjweRbqPMPez2Ji7tC+Qb30OAydugxB7RXvc
-         MHmxdti6v0oXo0opMGL/ONHwhcDmI7jK0Fp/m93CPpRnpFU3WbZe06EIfioIrv7utSWw
-         VZc7KL3aly+WaCTVXTaTi3ikbgqIy4JFaYL2TugKsXybFQtHgazymY5zMF/0HauldZ8U
-         1R1gqoCCjkRu9QEVG1UA3I24W5Rt3Gy0SXC6MaRCJg1QenbZpH4ZOrVbXOfpYi70Va3d
-         1BBQ==
+        bh=bW3imLrGp8WnT6vZrMOHCljPinwG95AEioNHWio/7vQ=;
+        b=L8FEZOA8koMilcVz3cjTV/TbCnAocXh7L/8qUd1x16qbmEZzfksfcMY1XtBXiszSMV
+         MutxCKvuzckqOVVh4ZNkhEzZr/Hnl3LQvJ9SxQ1jcGi7AAxWE+VbF3SdHeqnMTvbs/y7
+         S3jvNl/i0tSg+nQUGYU+8AcLss+SEWBu4wh9ihDpSbqC7qNAUL6JSmw3DPmzi+RSUIYV
+         YWig7z7jztccm3jvIWLisKb3qvLNMib/gYjlAik6f9P809Y9qWQcmbobGPPhE10oOzwq
+         4a6wFnRSnMLcKJ8vfumWJT7y3U5/3cYXbhERoS7wmRm4+NfvB5mWDJDNT5hfoDJMCVx8
+         I3NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678183055;
+        d=1e100.net; s=20210112; t=1678183228;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJQB/5gXipfe1LU3X5YR10NL53UE8w0mr0UyzsB03S8=;
-        b=kM/qkZGRNYJ7jgE1xbg6wi8ZXZKsBBmCtK0nVaViZyxKGX6e6GJNLd43bK6ZlovJlt
-         Qw5PGIxNProege9rZf241VcFGWjPlacfnYjvk4wx0OpKGmswOTGhneW/EZEfeiQljewl
-         n8PJP1C8tCq/SrXGcrrzy0B8FkxNiqPUbfelmpUiIKo5D0DnjQyY5pE3NMHH6JKhooQf
-         JT0kDjsjVMS/goRmxqYhfMKrNOkzTessKM/6P1RrsTzlTMD9GYFSCY42gQkGd8lSjAXA
-         BZqtxeThXPbt68oLAIlh1d/YOMB2L/ZGdfXe7sMh12IJ7NgVfkSV+J0EqpVp34mYtPgr
-         TW0Q==
-X-Gm-Message-State: AO0yUKX9AdLF6qR8oagOqefC/iOuRsMENrs5wmcNmOsFrtIrFkD5zsYk
-        +Q9aeoAqg6opyZtx3PBfKSBeSXbOMJ0=
-X-Google-Smtp-Source: AK7set8YRCPqJl/SKCS3F9pCBfL7k/OKqg2EWwsuALLrsybrjJ8XFz2YkuY03YTcWtjFO9ltIsLKbw==
-X-Received: by 2002:aa7:cf90:0:b0:4bc:502e:e7de with SMTP id z16-20020aa7cf90000000b004bc502ee7demr12996835edx.32.1678183054977;
-        Tue, 07 Mar 2023 01:57:34 -0800 (PST)
+        bh=bW3imLrGp8WnT6vZrMOHCljPinwG95AEioNHWio/7vQ=;
+        b=KvTsDL0Fnhf3d6K10aj2ShFDia9Mhgoo0S75pHr88K/P2rT6eq/1cymBkBjF8twEwH
+         lAJyFuF5Kbs+euRyrAV9I0YwzpunKbHa+xUqX41z9chVaRbQKShrIkXdGnJyFmpK9+0H
+         C9h+Xx2cLEL6dflvAWyShaQyzWKkR2qkSkvUHhWcnDBRyM/SsyFBOA+kShnEllev4z3h
+         WL52UXFlM3INlgxcBGDvq6OVp/Akf3B5LFghglmNxbTh8CEF/MlqBrljeX1TTRWjMz89
+         MNekbmvlnPyMqxIEggsr/WAJqLYpDOkwkOCrW+urhhMyeDsZXcvQyPijZuTht0SWzWA4
+         AdUg==
+X-Gm-Message-State: AO0yUKU3lBC11dW5WtX2kQhAc7eMF1vNPfIV1EBaSRyKr8WiTOW0XMnx
+        9Oai+kzXxK/Cp3ZTgpqGczw=
+X-Google-Smtp-Source: AK7set+Mu0sSz5kh5LcUFRENpxc7AFUW6iMQai3ePX6vLZBpQmKw5SrwMprhdA8xotXGanAeNWGcwg==
+X-Received: by 2002:a17:906:1410:b0:8f6:76da:90dd with SMTP id p16-20020a170906141000b008f676da90ddmr12794941ejc.64.1678183228457;
+        Tue, 07 Mar 2023 02:00:28 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d27-20020a50f69b000000b004acb696a0f6sm6435229edn.91.2023.03.07.01.57.34
+        by smtp.gmail.com with ESMTPSA id m26-20020a50999a000000b004af73333d6esm6502618edb.53.2023.03.07.02.00.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 01:57:34 -0800 (PST)
-Date:   Tue, 7 Mar 2023 12:51:27 +0300
+        Tue, 07 Mar 2023 02:00:28 -0800 (PST)
+Date:   Tue, 7 Mar 2023 13:00:23 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Jack Morgenstein <jackm@dev.mellanox.co.il>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        Roland Dreier <rolandd@cisco.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] RDMA/mlx: prevent shift wrapping in set_user_sq_size()
-Message-ID: <a8dfbd1d-c019-4556-930b-bab1ded73b10@kili.mountain>
+To:     Oliver Endriss <o.endriss@gmx.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Husni Faiz <ahamedhusni73@gmail.com>,
+        Li zeming <zeming@nfschina.com>,
+        Oliver Endriss <o.endriss@gmx.de>, linux-media@vger.kernel.org,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        lwn@lwn.net, smatch@ver.kernel.org
+Subject: [PATCH] media: av7110: prevent underflow in write_ts_to_decoder()
+Message-ID: <9dbe6804-7fac-4ee1-9e70-c3648cb60ec8@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -65,37 +69,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The ucmd->log_sq_bb_count variable is controlled by the user so this
-shift can wrap.  Fix it by using check_shl_overflow() in the same way
-that it was done in commit 515f60004ed9 ("RDMA/hns: Prevent undefined
-behavior in hns_roce_set_user_sq_size()").
+The buf[4] value comes from the user via ts_play().  It is a value in
+the u8 range.  The final length we pass to av7110_ipack_instant_repack()
+is "len - (buf[4] + 1) - 4" so add a check to ensure that the length is
+not negative.  It's not clear that passing a negative len value does
+anything bad necessarily, but it's not best practice.
 
-Fixes: 839041329fd3 ("IB/mlx4: Sanity check userspace send queue sizes")
+With the new bounds checking the "if (!len)" condition is no longer
+possible or required so remove that.
+
+Fixes: fd46d16d602a ("V4L/DVB (11759): dvb-ttpci: Add TS replay capability")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/infiniband/hw/mlx4/qp.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+This is from static analysis and not tested.  I debated whether to
+return 0 or -1.
 
-diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
-index 884825b2e5f7..456656617c33 100644
---- a/drivers/infiniband/hw/mlx4/qp.c
-+++ b/drivers/infiniband/hw/mlx4/qp.c
-@@ -447,9 +447,13 @@ static int set_user_sq_size(struct mlx4_ib_dev *dev,
- 			    struct mlx4_ib_qp *qp,
- 			    struct mlx4_ib_create_qp *ucmd)
- {
-+	u32 cnt;
-+
- 	/* Sanity check SQ size before proceeding */
--	if ((1 << ucmd->log_sq_bb_count) > dev->dev->caps.max_wqes	 ||
--	    ucmd->log_sq_stride >
-+	if (check_shl_overflow(1, ucmd->log_sq_bb_count, &cnt) ||
-+	    cnt > dev->dev->caps.max_wqes)
-+		return -EINVAL;
-+	if (ucmd->log_sq_stride >
- 		ilog2(roundup_pow_of_two(dev->dev->caps.max_sq_desc_sz)) ||
- 	    ucmd->log_sq_stride < MLX4_IB_MIN_SQ_STRIDE)
- 		return -EINVAL;
+ drivers/staging/media/av7110/av7110_av.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/media/av7110/av7110_av.c b/drivers/staging/media/av7110/av7110_av.c
+index 0bf513c26b6b..a5c5bebad306 100644
+--- a/drivers/staging/media/av7110/av7110_av.c
++++ b/drivers/staging/media/av7110/av7110_av.c
+@@ -823,10 +823,10 @@ static int write_ts_to_decoder(struct av7110 *av7110, int type, const u8 *buf, s
+ 		av7110_ipack_flush(ipack);
+ 
+ 	if (buf[3] & ADAPT_FIELD) {
++		if (buf[4] > len - 1 - 4)
++			return 0;
+ 		len -= buf[4] + 1;
+ 		buf += buf[4] + 1;
+-		if (!len)
+-			return 0;
+ 	}
+ 
+ 	av7110_ipack_instant_repack(buf + 4, len - 4, ipack);
 -- 
 2.39.1
 
