@@ -2,125 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 582AAC678D4
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 11:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB15C6FD1A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Mar 2023 13:40:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230000AbjCGLWr (ORCPT
+        id S229646AbjCGNkN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Mar 2023 06:22:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47458 "EHLO
+        Tue, 7 Mar 2023 08:40:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbjCGLWp (ORCPT
+        with ESMTP id S229621AbjCGNkE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Mar 2023 06:22:45 -0500
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB812137;
-        Tue,  7 Mar 2023 03:22:44 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 5A544FF805;
-        Tue,  7 Mar 2023 11:22:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1678188162;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R0hEM7ISBUqXXS/ZqJd+VTykSF0s9BCSq2N153XQuMY=;
-        b=RQtVcjTA7kA4faWxb1cyqjsEPHmok7xwmu02vJX+83wq0qxG53hsnnFGx0txkT/FElcN7W
-        tLnphAoKc/E8VL7XzXbFlOJ2oNWAiArwU38M4XZlJVBGQeCpfFnS6UJGhpgdLqqcVGU6HK
-        0EIQQbThLZ11n79yKqzsysTs82zuVZqCfNDuujd2I0E9gmSgoRlxAEFejY0yvmypuDh3LT
-        zv01ydejEWekSzEomsWk6cABvCknE2q84w/VX7yL4PsmRsiCCDGMb2UV96Vh82lLAD80Yb
-        A9YzJvNnlT5OQcv1Vg2gtvWGni28yUf8rHGMkpbMS7mQYzmXaUy+qeNxKr3Crw==
-Date:   Tue, 7 Mar 2023 12:22:40 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: parsers: remove reference to config MTD_NAND_TMIO
-Message-ID: <20230307122240.1694501c@xps-13>
-In-Reply-To: <CAKXUXMwn8wLBtTru74Mo4D=X6gA-M3b3Zin0L_ugtN9-R2L7-A@mail.gmail.com>
-References: <20230307074038.17391-1-lukas.bulwahn@gmail.com>
-        <20230307100350.1c0af7b9@xps-13>
-        <1e321754-5bdd-4019-8524-2222ee369502@app.fastmail.com>
-        <20230307113846.5dab6e66@xps-13>
-        <CAKXUXMwn8wLBtTru74Mo4D=X6gA-M3b3Zin0L_ugtN9-R2L7-A@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Tue, 7 Mar 2023 08:40:04 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980E228D2C;
+        Tue,  7 Mar 2023 05:39:29 -0800 (PST)
+Received: from [192.168.10.12] (unknown [39.45.145.7])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0F2216602082;
+        Tue,  7 Mar 2023 13:39:23 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1678196366;
+        bh=WMlBdvHIScuFkkoGPtchKNS9u9P7bVVOeTivxhzjEG8=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=OzGvfTjKJ4s7PoMfHks/3lUdyc4iM4qP/SliI7hK+EiFlD3OiRuFDXM+UdgBdtW6L
+         XuTMtTrI9hme7OJX95cfox8cbNQdcrUFLid4o2gO4Wz5jmMfuoUqbd0ME2+CYyKxZ7
+         aKd2wo27Xgs6qAbez7XMauEjCogyMUeENDi9+fJYq6NVb/8BRLVPVP3958xWERIi+I
+         d7xKJ5KY6i1CYrU7JIR1jAEfgIlB7XSdPFajWTgHzMgjdTpjWTHC0MlkDs0yztjR/+
+         EBZCF1x/XWmiihGF2RCt6sMZUeRj31TDFVWbHioTiNI3LV+yWhmM9MxC2eRB9B8R82
+         HoJPKpOeWgGDg==
+Message-ID: <df8a446a-e8a9-3b3d-fd0f-791f0d01a0c9@collabora.com>
+Date:   Tue, 7 Mar 2023 18:39:20 +0500
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Ariel Elior <aelior@marvell.com>,
+        Manish Chopra <manishc@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] qede: remove linux/version.h and linux/compiler.h
+Content-Language: en-US
+To:     Jakub Kicinski <kuba@kernel.org>
+References: <20230303185351.2825900-1-usama.anjum@collabora.com>
+ <20230303155436.213ee2c0@kernel.org>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20230303155436.213ee2c0@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+On 3/4/23 4:54 AM, Jakub Kicinski wrote:
+> On Fri,  3 Mar 2023 23:53:50 +0500 Muhammad Usama Anjum wrote:
+>> make versioncheck reports the following:
+>> ./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
+>> ./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
+>>
+>> So remove linux/version.h from both of these files. Also remove
+>> linux/compiler.h while at it as it is also not being used.
+>>
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> 
+> # Form letter - net-next is closed
+> 
+> The merge window for v6.3 has begun and therefore net-next is closed
+> for new drivers, features, code refactoring and optimizations.
+> We are currently accepting bug fixes only.
+> 
+> Please repost when net-next reopens after Mar 6th.
+It is Mar 7th. Please review.
 
-lukas.bulwahn@gmail.com wrote on Tue, 7 Mar 2023 11:58:07 +0100:
+> 
+> RFC patches sent for review only are obviously welcome at any time.
 
-> On Tue, Mar 7, 2023 at 11:38=E2=80=AFAM Miquel Raynal <miquel.raynal@boot=
-lin.com> wrote:
-> >
-> > Hi Arnd,
-> >
-> > arnd@arndb.de wrote on Tue, 07 Mar 2023 11:26:48 +0100:
-> > =20
-> > > On Tue, Mar 7, 2023, at 10:03, Miquel Raynal wrote: =20
-> > > > Hi Lukas,
-> > > >
-> > > > lukas.bulwahn@gmail.com wrote on Tue,  7 Mar 2023 08:40:38 +0100:
-> > > > =20
-> > > >> Commit 568494db6809 ("mtd: remove tmio_nand driver") removes the c=
-onfig
-> > > >> MTD_NAND_TMIO and its corresponding driver.
-> > > >>
-> > > >> Remove the reference in MTD_SHARPSL_PARTS to that removed config.
-> > > >>
-> > > >> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > > >> ---
-> > > >> Arnd, please ack.
-> > > >> Miquel, please pick this minor non-urgent patch on top of the comm=
-it above. =20
-> > > >
-> > > > Actually I guess the SHARPSL driver is not selectable right now, so
-> > > > this should be sent as part of my next fixes PR. =20
-> > >
-> > > I don't see why not, it just depends on 'ARCH_PXA||COMPILE_TEST' and
-> > > should work fine with CONFIG_MACH_SPITZ PDAs. =20
-> >
-> > Sorry, I overlooked the diff, indeed there is nothing broken, so I'll
-> > queue it to nand/next. I thought MTD_SHARPSL_PARTS was not selectable
-> > anymore without COMPILE_TEST, which would have been problematic.
-> >
-> > Fixes tag still welcome though :)
-> > =20
->=20
-> Arnd's commit is not broken. It does what Arnd writes in his commit
-> message what it should do.
->
-> And this patch is just a clean-up that removes references, but it is
-> just "stylistic" and reduces the complexity of Kconfig dependency
-> definitions for non-existing config symbols. I do not see that this
-> patch fixes Arnd's patch. It is just a clean-up with a reference to
-> Arnd's patch to understand why this clean up can be done now.
->=20
-> If you REALLY want the Fixes: tag, I can sure add it. But, I do not
-> claim that I am fixing anything here; nothing was broken in the first
-> place. The reference to the commit of interest is in the commit
-> message, and anyone can follow or extract the information if they are
-> interested.
->
-> So, please keep this patch in the queue for nand/next.
-
-Wow, so much arguing just for a Fixes tag.
-
-It is not broken, I know, but it is somehow incomplete as it creates a
-stalled Kconfig symbol. And you come-in and fix the situation by
-dropping the remaining symbol. So for me it's a fix, no matter how
-deeply bogus (or not) the original commit was. It's not an insult, it's
-a tag that allows easy parsing. Anyway, that's meaningless. I'll take
-it like that.
-
-Thanks,
-Miqu=C3=A8l
+-- 
+BR,
+Muhammad Usama Anjum
