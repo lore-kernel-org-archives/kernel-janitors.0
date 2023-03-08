@@ -2,71 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A19FC6FD1E
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 15:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5355C678D5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 22:03:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232029AbjCHPP3 (ORCPT
+        id S229725AbjCHWDP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Mar 2023 10:15:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52462 "EHLO
+        Wed, 8 Mar 2023 17:03:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231570AbjCHPP0 (ORCPT
+        with ESMTP id S229462AbjCHWDO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Mar 2023 10:15:26 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E41BF8C5;
-        Wed,  8 Mar 2023 07:15:25 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 51F93B81D2D;
-        Wed,  8 Mar 2023 15:15:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AFECC433EF;
-        Wed,  8 Mar 2023 15:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678288522;
-        bh=ckd6OHb0gCWxoJ1b0/6DTQnfwh7ZbRtYCcoN1hkwPFs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eps92E5WeSIYwzl3lAooYKZn2q/BWO70KJ8coauiCYMBKmog4C0NduZBr1cwE6jAp
-         IaJn42e4SSkK/+V/kKtnH+wKytZtSop3COU947FYdO9IoVVZbRqa83mzXM2++DKMK5
-         NPIwmH+0FByP0/PbC8W1VfJlNU5KbiGe+tQjdvThVViSgYmBwaHby5DQjkjTjOLzxO
-         TMJ9lYs7r5po0PiJC03kDDg8Q/CvzWFNnn3CC2Q4DiqZHgmko0MZ8KdGlKryK/ce2e
-         yJorLx6Gu6+RGP+3CLK/5VVdkSXtiR9xYKNHvy4m5PBdPkbQcaGFivEbFfXoktQSpe
-         p6/6enWnpD9KQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Seth Forshee <sforshee@kernel.org>, linux-fsdevel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: repair a malformed T: entry in IDMAPPED MOUNTS
-Date:   Wed,  8 Mar 2023 16:15:15 +0100
-Message-Id: <167828841056.737958.2008329140627023278.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230308143640.9811-1-lukas.bulwahn@gmail.com>
-References: <20230308143640.9811-1-lukas.bulwahn@gmail.com>
+        Wed, 8 Mar 2023 17:03:14 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E382ED46;
+        Wed,  8 Mar 2023 14:03:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
+        t=1678312981; i=deller@gmx.de;
+        bh=URLRtCYvCA2OfgePK0dWq7nXnf4urDizzWJ5/29Hrz8=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=WP8JmQN1foHTYW81fe2J8bKqCKZZ0E3SuwAPCuk9mCCQ1EOBOitwYn2waiV/lhM+Y
+         HkjWCkWVMHsqWVkMICOWJKG+/GVQ5vv7PUrND0/FuQ/f++uuohdua7obODUxWIJ6Xk
+         gBqRbpByUTVEuCKjwLThbudN6kZPCh7y4P3oe3vNOQus1W4TkKSM40ywb4/mDfANE+
+         ASG4vHH8Wxitbfz8uqRjVVUSsEGFnlgSB5NN/9tgTrMhQHyVScrH00B3orSgZRITJp
+         l+3stHKU1C7p4rCL4MItI5G3GQ2ZGlbldxvC29QPZ5w83eE8hJqDiB8VQKrIrh75KL
+         3zIK2oZffpHZg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.60] ([94.134.151.44]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MYNNo-1q5UnP0E54-00VU3c; Wed, 08
+ Mar 2023 23:03:01 +0100
+Message-ID: <53d85de3-3072-50e2-9ce8-1fd48a2cfd69@gmx.de>
+Date:   Wed, 8 Mar 2023 23:03:00 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=455; i=brauner@kernel.org; h=from:subject:message-id; bh=ZcMI88vp30j3Pb/JVfQ6Kpswmo6FuSeIphkXIPFRCgM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRwLCv9JLtNJf7eZGHLwMVZBru9ixhZNlxY/PrF6i55pVkL Xokad5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE5zAjw++yuae+zprMzWTdYnVo5j GnfeZ/N65qLpSqFq3fJundUcTI8I2z48PX8OVvrsw5xKHQz28cv+bM4/tRgfOspbYek+1dzAQA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] MAINTAINERS: orphan SIS FRAMEBUFFER DRIVER
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Thomas Winischhofer <thomas@winischhofer.net>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YAJsaXgvOu0OB9fOwoTOiZ/2PC23B/DNDuSZiQLGjU07wjsxQAl
+ qd03dqtJO4F5q0zf2FXWuptrt4RJpXMT8Vv1EEogkxZ3n/nbynNOH3TxJzMdh+MlXKYuBzE
+ 2DxQsF8p6tjUoC3Hhgm15bW3puUSfVeGj3PRwGMk2/Dpve6F3/dWQkvnPd59HUFH6F5R1Do
+ Pi9Tq/HT/NiT9ybm37e3Q==
+UI-OutboundReport: notjunk:1;M01:P0:/hk/TkyoQ98=;e5NDFwsJ3f7fGsOUSw2qIsKpg+k
+ yJM5wYNEbIUAePkbQ876OyFBHJu+NpvPto3JPqpjgHIAd5qf/e7GjRFRA/NnJCZAqXpdui4wW
+ 2WvTRC7QQOhreRFsPIGqskl2bZp2AGRU2ItKrlK+jAlBx21gkLYKsaOtndQJzrjCfHe/zR7ed
+ 5GEGL5OsA+h1NZfBfKwBaeu0JYy77W7IWOL5Td62Ry5/wAE+94MGa4vQVrggL0Qzhmn8DFGHS
+ 3fz6w6SP/9gx7aW1/MAQPhqPkZkhtk/7BvmiwPFDg5LoqsW1esPv0VrvGEnHETae5JgWrGuoc
+ zXiKPjtkzudN4zUGJ8o7+qrDZBSRl8oJMfkmIz0HEoBKPSVKHgKaUss+ZHvU6/i7d8HbrcabC
+ Bis3RxmYGybOPqlp5K8Qok+KbqsdsRGmcMOp8aBGF+YX8Vh1T8Lh3MPOfuxOns65KsiS/MR11
+ qBiFd+wgVpRkSiFP0KNiWwG80ba9C2b2g7fcEoAjNnvIvt3le8sGaDw/n4tKDkjXYmuSp0heC
+ i+Lr/socogqSjdZ/rwrglN1jpoazN2UltdyMDIwIxY5EnvildsqG5qZgaHbrve3np+8IvNolg
+ /lQSL9HatYpA2l+xqcPZNGLo/5UG0EZtfzPqACCDd0Af25mLr/1w0p055gDKXIz36AYoqQSfh
+ R/cBLeo4L51faCiteXZFeip+EnBu/ryyy470Or+CiBirVmGewHfjVzRpNXxMvaJ7pLpOhSsEi
+ jTps5QXABvCsZwaNgfvg6hmMMxEJLSm8dQCx1ym41RSdk7pHXgb7r71wO/Zg3O8GYpj3U9uYD
+ qPjY7B/w8CzfjuyRqSjScLiXyavsytvJrTXfXP2tmai0q6Yr8OUKmBTitOvR8f/Jc0VyIjTr1
+ iE4hq6gyKOFpZe9mV7HHcnfcUEjnOG0E9O0E71osoC2qaOjew9vjn7oNZ4L067lIRdY2FFfRQ
+ 2tg+W3BvGr9lIpikmTge6TtvPAo=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Christian Brauner (Microsoft) <brauner@kernel.org>
+On 3/8/23 08:19, Lukas Bulwahn wrote:
+> This was triggered by the fact that the webpage:
+>
+>    http://www.winischhofer.net/linuxsisvga.shtml
+>
+> cannot be reached anymore.
+>
+> Thomas Winischhofer is still reachable at the given email address, but h=
+e
+> has not been active since 2005.
+>
+> Mark the SIS FRAMEBUFFER DRIVER as orphan to reflect the current state.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+applied to fbdev git tree.
+
+Thanks!
+Helge
 
 
-On Wed, 08 Mar 2023 15:36:40 +0100, Lukas Bulwahn wrote:
-> The T: entries shall be composed of a SCM tree type (git, hg, quilt, stgit
-> or topgit) and location.
-> 
-> Add the SCM tree type to the T: entry and reorder the file entries in
-> alphabetical order.
-> 
-> 
-> [...]
 
-Thanks for spotting and fixing this. Applied,
+> ---
+>   MAINTAINERS | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5d8f46f35aa4..354577534aef 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19191,9 +19191,7 @@ W:	http://www.brownhat.org/sis900.html
+>   F:	drivers/net/ethernet/sis/sis900.*
+>
+>   SIS FRAMEBUFFER DRIVER
+> -M:	Thomas Winischhofer <thomas@winischhofer.net>
+> -S:	Maintained
+> -W:	http://www.winischhofer.net/linuxsisvga.shtml
+> +S:	Orphan
+>   F:	Documentation/fb/sisfb.rst
+>   F:	drivers/video/fbdev/sis/
+>   F:	include/video/sisfb.h
 
-[1/1] MAINTAINERS: repair a malformed T: entry in IDMAPPED MOUNTS
-      commit: 5b8e5319affc977d24b8ce7edd295907e969e217
