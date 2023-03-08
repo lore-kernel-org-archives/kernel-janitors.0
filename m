@@ -2,97 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C76CCC64EC4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 15:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A19FC6FD1E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 15:15:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231547AbjCHPHA (ORCPT
+        id S232029AbjCHPP3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Mar 2023 10:07:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39274 "EHLO
+        Wed, 8 Mar 2023 10:15:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231844AbjCHPGe (ORCPT
+        with ESMTP id S231570AbjCHPP0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Mar 2023 10:06:34 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09473BCFE3;
-        Wed,  8 Mar 2023 07:06:33 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id ay14so63304587edb.11;
-        Wed, 08 Mar 2023 07:06:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678287991;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pGwSSBiuYrO44oxKM/UeXdd9+wzu8I3tozxPCbkUE+c=;
-        b=MGyby3tMiKc3nMQZRk1C5uDTxfxSv/oZWpdf7CFvXeIQUUK/SzpxkdPQa0+a/aoY4j
-         38s5BxcJzekRfVFbWiHSEJ/EF3HvWp/CsIYxUjrnuKhOATBZWPgvRra0JMPFmInqaT/m
-         9LT2qkbncQWmOYka8ZR9Zu0HLqM7h/2Mm1cF+MY1j27mdng32K4hXX+sTEotWaUp22eS
-         /HKZH6GzKj/7S22ddpoJeiIN/bZYwZvz4ycLk9+Z4w+kTz6Wj7axtOlSFk6io4ERVZ2J
-         YWgKaiwMvvcB1SHsVj0WpEYIuWMS8XOM1IGsITXnVaXDs4w+GsTPUmiksaZ5+XgWT2Pq
-         9IPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678287991;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pGwSSBiuYrO44oxKM/UeXdd9+wzu8I3tozxPCbkUE+c=;
-        b=L2js26B6YmBuLTSnEAsSjpaKBIHWFaPI2LSrtI++UM+17zc/E5B/6Vav0CeTy9AoNY
-         R7Gu/zYN+N8VSNVJU5UhvHfVtNw30DKpMg3/cLSTNwDzmWVs9dssFQMdXljhMEvJ1G+X
-         LnimpdxAmCuP5/35UnPJKYwBvLOWngaIgCLKgGAS4u0XLtD2Ez62hvp6EaKqpS+uOb+6
-         M3JdkNfnTQFG/6UzknUUOabSAGX+Ezg+vKpDbxmoN6vENCnLTn6IuyKM3JBK7wQTJAZo
-         J5qlOD23CMW304twH+3pYOy9+FbYxSnFMsAXg69FFfGg0nioHom4dVO/QmDHa97AiGGW
-         qMWA==
-X-Gm-Message-State: AO0yUKV7AxJGgV63sG5xiZM8Jh2mxpSR5R7bMn42SI1XqL55PY9EXzpU
-        hNlONAMCsFTFWW0LGmaQWxI=
-X-Google-Smtp-Source: AK7set+f7s6HeZilTNW4B7+qRpHv9TLRl9kJ1OjqiH5VHRyWcvQ7Uw7lBtdFh9i4WtBMrE1pLxA75w==
-X-Received: by 2002:a17:907:787:b0:8b1:7de3:cfb0 with SMTP id xd7-20020a170907078700b008b17de3cfb0mr23399678ejb.2.1678287991489;
-        Wed, 08 Mar 2023 07:06:31 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:c4be:f7db:77fd:b9e5])
-        by smtp.gmail.com with ESMTPSA id l5-20020a170906078500b008e1509dde19sm7570341ejc.205.2023.03.08.07.06.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 07:06:31 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Olivia Mackall <olivia@selenic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        akpm@linux-foundation.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wed, 8 Mar 2023 10:15:26 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E41BF8C5;
+        Wed,  8 Mar 2023 07:15:25 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 51F93B81D2D;
+        Wed,  8 Mar 2023 15:15:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AFECC433EF;
+        Wed,  8 Mar 2023 15:15:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678288522;
+        bh=ckd6OHb0gCWxoJ1b0/6DTQnfwh7ZbRtYCcoN1hkwPFs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eps92E5WeSIYwzl3lAooYKZn2q/BWO70KJ8coauiCYMBKmog4C0NduZBr1cwE6jAp
+         IaJn42e4SSkK/+V/kKtnH+wKytZtSop3COU947FYdO9IoVVZbRqa83mzXM2++DKMK5
+         NPIwmH+0FByP0/PbC8W1VfJlNU5KbiGe+tQjdvThVViSgYmBwaHby5DQjkjTjOLzxO
+         TMJ9lYs7r5po0PiJC03kDDg8Q/CvzWFNnn3CC2Q4DiqZHgmko0MZ8KdGlKryK/ce2e
+         yJorLx6Gu6+RGP+3CLK/5VVdkSXtiR9xYKNHvy4m5PBdPkbQcaGFivEbFfXoktQSpe
+         p6/6enWnpD9KQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Seth Forshee <sforshee@kernel.org>, linux-fsdevel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: remove the obsolete section EMBEDDED LINUX
-Date:   Wed,  8 Mar 2023 16:06:25 +0100
-Message-Id: <20230308150625.28732-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+Cc:     Christian Brauner <brauner@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: repair a malformed T: entry in IDMAPPED MOUNTS
+Date:   Wed,  8 Mar 2023 16:15:15 +0100
+Message-Id: <167828841056.737958.2008329140627023278.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230308143640.9811-1-lukas.bulwahn@gmail.com>
+References: <20230308143640.9811-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=455; i=brauner@kernel.org; h=from:subject:message-id; bh=ZcMI88vp30j3Pb/JVfQ6Kpswmo6FuSeIphkXIPFRCgM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRwLCv9JLtNJf7eZGHLwMVZBru9ixhZNlxY/PrF6i55pVkL Xokad5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE5zAjw++yuae+zprMzWTdYnVo5j GnfeZ/N65qLpSqFq3fJundUcTI8I2z48PX8OVvrsw5xKHQz28cv+bM4/tRgfOspbYek+1dzAQA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-By now, many developers are working on Linux for embedded systems. There
-is no need to point out single developers. The linux-embedded mailing list
-has only little traffic, and most of it is just spam.
+From: Christian Brauner (Microsoft) <brauner@kernel.org>
 
-Remove this obsolete section.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Andrew, please pick this minor clean-up patch.
+On Wed, 08 Mar 2023 15:36:40 +0100, Lukas Bulwahn wrote:
+> The T: entries shall be composed of a SCM tree type (git, hg, quilt, stgit
+> or topgit) and location.
+> 
+> Add the SCM tree type to the T: entry and reorder the file entries in
+> alphabetical order.
+> 
+> 
+> [...]
 
- MAINTAINERS | 6 ------
- 1 file changed, 6 deletions(-)
+Thanks for spotting and fixing this. Applied,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 99adcd74b06a..8b9b4fc2dc71 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7516,12 +7516,6 @@ T:	git git://linuxtv.org/media_tree.git
- F:	Documentation/admin-guide/media/em28xx*
- F:	drivers/media/usb/em28xx/
- 
--EMBEDDED LINUX
--M:	Olivia Mackall <olivia@selenic.com>
--M:	David Woodhouse <dwmw2@infradead.org>
--L:	linux-embedded@vger.kernel.org
--S:	Maintained
--
- EMMC CMDQ HOST CONTROLLER INTERFACE (CQHCI) DRIVER
- M:	Adrian Hunter <adrian.hunter@intel.com>
- M:	Ritesh Harjani <riteshh@codeaurora.org>
--- 
-2.17.1
-
+[1/1] MAINTAINERS: repair a malformed T: entry in IDMAPPED MOUNTS
+      commit: 5b8e5319affc977d24b8ce7edd295907e969e217
