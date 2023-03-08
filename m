@@ -2,96 +2,138 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 300C8C678D5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 09:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A82C64EC4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 09:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230244AbjCHJMz (ORCPT
+        id S229999AbjCHJil (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Mar 2023 04:12:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36594 "EHLO
+        Wed, 8 Mar 2023 04:38:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbjCHJMw (ORCPT
+        with ESMTP id S230030AbjCHJij (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Mar 2023 04:12:52 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB0EBA3378;
-        Wed,  8 Mar 2023 01:12:48 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id e13so14612544wro.10;
-        Wed, 08 Mar 2023 01:12:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678266766;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=42Tebu01feBjjmnfdSuFij+fK1V/+T2ggLj9HPy2k2A=;
-        b=BwDGpmRLGGevxzbXxe2kQZVQzqxqnTsPC4MmBdNBicw4Ha3q09zO3ROZuY2CP3MZFo
-         2e9V1irp3BVx47yDhZ0t8WzO1/SqRUSkpQmx2GHDZERkkg/TynusNYg+Gjb+L7r1lXe5
-         zpHZ2HU/TmvK+F/nBUd7SsGwgC3JkIzXldgttq3Cpdj5NnhY7MEunMbAWK2koJlY7e2r
-         k/2ymkZzT+SazxQ6JRbFA83bLgX20mZfqJC5qfVavU0uDpYTih9zVxsjdbpYFfKo9dKi
-         J0p4wt8ByIj9fFxsSapw3jrgyvxsNdnJiAlB1LvEmNT5rHMuC8mdwhgk62eQB/scLRqj
-         g4Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678266766;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=42Tebu01feBjjmnfdSuFij+fK1V/+T2ggLj9HPy2k2A=;
-        b=klgEMDqCnZi1hDK7NwnxEyJXvDiooI/gJ44c7eIM+ySRtJ3TRisfwpMp0Z5CVWDblK
-         HaUMkbiCCMpnDtpx/QjKib7xWf+IN6jAREp5jb3jhCtNEV27fxp09C1GezZlG2jZ8MdL
-         VDW70y4JRJYgZeb6tKDfz7k2iBWN9sOPo1uFwNXe3ut0ExY0UO14w4t3Jy0b2tEaPhEl
-         Nnzic/IUbL4EL7+DOEk4Tj3Y1viWJzFKvSoZsF29wH9j1oLLBlcLIQaggryIJ5xZ8QT5
-         UrEa/eV/myv1NlQ7hd+djN4CyCN9fucMupDymaF6k7/7d1lEPD1azkQoygYDr6QGvl+2
-         V8sg==
-X-Gm-Message-State: AO0yUKWVk2UUvRIFw+lQ+QJvLH4JskwRUypYGgLz09TkKkwBBp3SZVLh
-        dslkGITIidh/1HK8CVKzKIw=
-X-Google-Smtp-Source: AK7set/AePNSu3Roc2C/uKr4V6FQ6Lp8IK+7vZyXjHle7GZFLuXe/Nyr48LLqEhLqoBv9kpSBlX9TA==
-X-Received: by 2002:adf:e34c:0:b0:2ca:8995:38d with SMTP id n12-20020adfe34c000000b002ca8995038dmr12132661wrj.16.1678266766567;
-        Wed, 08 Mar 2023 01:12:46 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z17-20020a5d44d1000000b002c58ca558b6sm14567141wrr.88.2023.03.08.01.12.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 01:12:44 -0800 (PST)
-Date:   Wed, 8 Mar 2023 12:12:37 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Irina Tirdea <irina.tirdea@intel.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: magn: bmc150: add a lower bounds in
- bmc150_magn_write_raw()
-Message-ID: <94939714-a232-4107-8741-8867038b03ae@kili.mountain>
+        Wed, 8 Mar 2023 04:38:39 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5E981CE5;
+        Wed,  8 Mar 2023 01:38:35 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 041E521A01;
+        Wed,  8 Mar 2023 09:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1678268314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MFjwcD4Vp6zee18l/hOx+s0LnKajCjdYROBFnAJWXn8=;
+        b=06nbHXetL2+U8ybThhgCxE9ADDEQxGB6srtfy+202zHewUt8bM8MU5VEHPnXZ4smi9oT1S
+        iYej2uLtwQJCxgR88k1yaZzudj6hNLi07Z+UgDhAjlUvR7L/k15+3ZstMeUDHXYa5FcUGP
+        wbCZ8Mriw3df69T874Cpvw9HxMFC/DY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1678268314;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MFjwcD4Vp6zee18l/hOx+s0LnKajCjdYROBFnAJWXn8=;
+        b=kxDkmpn61fYNatyGv6yEFn5yAb0Rg/+7q7eImlcAJFmcc6VukSeH/EFIdG/DC9vdH3VHqq
+        pjbJeTCaTJfs1WBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D28331391B;
+        Wed,  8 Mar 2023 09:38:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id SItDMplXCGQnQAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Wed, 08 Mar 2023 09:38:33 +0000
+Message-ID: <cf8135bc-a255-1f02-28df-dec42342fb71@suse.de>
+Date:   Wed, 8 Mar 2023 10:38:33 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] MAINTAINERS: orphan SIS FRAMEBUFFER DRIVER
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Thomas Winischhofer <thomas@winischhofer.net>,
+        Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
+Content-Language: en-US
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------Fn5fYfi1pyf0sw01AuM9f1QD"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "val" variable comes from the user via iio_write_channel_info().
-This code puts an upper bound on "val" but it doesn't check for
-negatives so Smatch complains.  I don't think either the bounds
-checking is really required, but it's just good to be conservative.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------Fn5fYfi1pyf0sw01AuM9f1QD
+Content-Type: multipart/mixed; boundary="------------DpXEUfGRdJxUN3aO8OlXX3ln";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Thomas Winischhofer <thomas@winischhofer.net>, Helge Deller <deller@gmx.de>,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <cf8135bc-a255-1f02-28df-dec42342fb71@suse.de>
+Subject: Re: [PATCH] MAINTAINERS: orphan SIS FRAMEBUFFER DRIVER
+References: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
 
-Fixes: 5990dc970367 ("iio: magn: bmc150_magn: add oversampling ratio")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/iio/magnetometer/bmc150_magn.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--------------DpXEUfGRdJxUN3aO8OlXX3ln
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-diff --git a/drivers/iio/magnetometer/bmc150_magn.c b/drivers/iio/magnetometer/bmc150_magn.c
-index 06d5a1ef1fbd..c625416b8bcf 100644
---- a/drivers/iio/magnetometer/bmc150_magn.c
-+++ b/drivers/iio/magnetometer/bmc150_magn.c
-@@ -537,7 +537,7 @@ static int bmc150_magn_write_raw(struct iio_dev *indio_dev,
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_SAMP_FREQ:
--		if (val > data->max_odr)
-+		if (val < 0 || val > data->max_odr)
- 			return -EINVAL;
- 		mutex_lock(&data->mutex);
- 		ret = bmc150_magn_set_odr(data, val);
--- 
-2.39.1
+DQoNCkFtIDA4LjAzLjIzIHVtIDA4OjE5IHNjaHJpZWIgTHVrYXMgQnVsd2FobjoNCj4gVGhp
+cyB3YXMgdHJpZ2dlcmVkIGJ5IHRoZSBmYWN0IHRoYXQgdGhlIHdlYnBhZ2U6DQo+IA0KPiAg
+ICBodHRwOi8vd3d3LndpbmlzY2hob2Zlci5uZXQvbGludXhzaXN2Z2Euc2h0bWwNCj4gDQo+
+IGNhbm5vdCBiZSByZWFjaGVkIGFueW1vcmUuDQo+IA0KPiBUaG9tYXMgV2luaXNjaGhvZmVy
+IGlzIHN0aWxsIHJlYWNoYWJsZSBhdCB0aGUgZ2l2ZW4gZW1haWwgYWRkcmVzcywgYnV0IGhl
+DQo+IGhhcyBub3QgYmVlbiBhY3RpdmUgc2luY2UgMjAwNS4NCj4gDQo+IE1hcmsgdGhlIFNJ
+UyBGUkFNRUJVRkZFUiBEUklWRVIgYXMgb3JwaGFuIHRvIHJlZmxlY3QgdGhlIGN1cnJlbnQg
+c3RhdGUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBMdWthcyBCdWx3YWhuIDxsdWthcy5idWx3
+YWhuQGdtYWlsLmNvbT4NCg0KQWNrZWQtYnk6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVy
+bWFubkBzdXNlLmRlPg0KDQo+IC0tLQ0KPiAgIE1BSU5UQUlORVJTIHwgNCArLS0tDQo+ICAg
+MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4g
+ZGlmZiAtLWdpdCBhL01BSU5UQUlORVJTIGIvTUFJTlRBSU5FUlMNCj4gaW5kZXggNWQ4ZjQ2
+ZjM1YWE0Li4zNTQ1Nzc1MzRhZWYgMTAwNjQ0DQo+IC0tLSBhL01BSU5UQUlORVJTDQo+ICsr
+KyBiL01BSU5UQUlORVJTDQo+IEBAIC0xOTE5MSw5ICsxOTE5MSw3IEBAIFc6CWh0dHA6Ly93
+d3cuYnJvd25oYXQub3JnL3NpczkwMC5odG1sDQo+ICAgRjoJZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvc2lzL3NpczkwMC4qDQo+ICAgDQo+ICAgU0lTIEZSQU1FQlVGRkVSIERSSVZFUg0KPiAt
+TToJVGhvbWFzIFdpbmlzY2hob2ZlciA8dGhvbWFzQHdpbmlzY2hob2Zlci5uZXQ+DQo+IC1T
+OglNYWludGFpbmVkDQo+IC1XOglodHRwOi8vd3d3LndpbmlzY2hob2Zlci5uZXQvbGludXhz
+aXN2Z2Euc2h0bWwNCj4gK1M6CU9ycGhhbg0KPiAgIEY6CURvY3VtZW50YXRpb24vZmIvc2lz
+ZmIucnN0DQo+ICAgRjoJZHJpdmVycy92aWRlby9mYmRldi9zaXMvDQo+ICAgRjoJaW5jbHVk
+ZS92aWRlby9zaXNmYi5oDQoNCi0tIA0KVGhvbWFzIFppbW1lcm1hbm4NCkdyYXBoaWNzIERy
+aXZlciBEZXZlbG9wZXINClNVU0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0K
+TWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJtYW55DQooSFJCIDM2ODA5LCBB
+RyBOw7xybmJlcmcpDQpHZXNjaMOkZnRzZsO8aHJlcjogSXZvIFRvdGV2DQo=
 
+--------------DpXEUfGRdJxUN3aO8OlXX3ln--
+
+--------------Fn5fYfi1pyf0sw01AuM9f1QD
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmQIV5kFAwAAAAAACgkQlh/E3EQov+Ct
+ZBAAyvCPSk+foGIpM75INZQNCaVicv9az/FZKN/zoESZFGvr5YKRR/G82Iu8EWUKnKGjJnsd5+v5
+0fV+AOpFUONNFPq9mPt4VYUtmvv4iZHF+u38uoxbDKCGAU5YWaJ6vE0fbN43Gj87DJ+8iSwMG1Pp
+Sjs37Z6atV2YhnLKPnoznXB5zoWuzqQPVCbwBJePGAUFNjTBWDKMVlJkEfuK6Abg2qGo04eXhNkp
+1dMure1a87vF1M0Xp5Xnq7cD0xJDOLmueXgrwhqp5+pJHG0z9x98RMiEd38tCln6ONhB3GIpfZ5/
+x2xBSMbofXaRcb2FwDOgbodvR55zGHnEENgwBENGfuk0E37wG1BOCipiCQjzGvW+RFAVwMqunMpu
+iYnup//IFSXdr6EEZu5dWEWqUxD/5eJOqpF0z2bXO1zfzoBV3icSz6LfPrlKBX4JbbqqmmcwyxaZ
+2SbvzLujU/oeOdQewwpklX+z8qt5p+cJ54ME53HE7GVuzlahhSAv4nK37kaVJJkibWLNuWk6xAL8
+IR0NWHqJfzFAlGZZ4gsYa8qa/Koil4SGGzsKB5whcVYUrPEIyRONhGAxoOTt4S+Gp0a6ZPUNrTfb
+1QrJ/oEh0/DBPnB8du8r951t025yIvPQgmRhf5h13ADR6U0h9ugA6aCWu2xt785bhXMrAwr3eAin
+bT0=
+=3WCc
+-----END PGP SIGNATURE-----
+
+--------------Fn5fYfi1pyf0sw01AuM9f1QD--
