@@ -2,61 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A062BC64EC4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 14:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1988EC6FD1E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 14:36:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231891AbjCHObD (ORCPT
+        id S232089AbjCHOgw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Mar 2023 09:31:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34100 "EHLO
+        Wed, 8 Mar 2023 09:36:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232059AbjCHOam (ORCPT
+        with ESMTP id S229938AbjCHOgu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Mar 2023 09:30:42 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F30F46155;
-        Wed,  8 Mar 2023 06:30:16 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id da10so66603742edb.3;
-        Wed, 08 Mar 2023 06:30:16 -0800 (PST)
+        Wed, 8 Mar 2023 09:36:50 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54762CD677;
+        Wed,  8 Mar 2023 06:36:44 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id da10so66694382edb.3;
+        Wed, 08 Mar 2023 06:36:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678285812;
+        d=gmail.com; s=20210112; t=1678286203;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iAN9+ZOptTrJHDc9J/pvGJu6tT88Otl4KlrOdjgdjxk=;
-        b=hoUMihzIGkavLUfhJznY22uHPF4Tmn2x6jn1DZ4t2jCt5kPNMFZ4w/NWBvzVNNYpI4
-         axxFXa6Jo99KT9a2FY0/ce1qWsH3hGkunyyhZBaIdhI4MYxkCezFw74L++oc8Enu7qti
-         ExRQmHICUggumz0LfWomrQq3NYcd5mM870qhI4IG/RKSOOnok7fxfar2MrWyJLe04AOd
-         aT1VxvYd6y7Q1hNdKfI7LYk/cWs/F+hgLC++KpbNUfFkS7797mVj2XtGH0FvFbGu2J6r
-         BHkic0KgQoF3UEEEuhFMyCsxKsRsuX7K7Y7ghNMdA260bAagUF0b1B7znZpQAYf2Iij0
-         JKPw==
+        bh=l/+VzXSJ8+YNGpmelOUnAH17WkM2Hm4y5z7wV36d1jY=;
+        b=qi6zRgB81pkWFhchCRcNzbw0HiD8AEmb8/eTczQh8ZtltZIxlExx//LxydEFymwbUV
+         oK4DTTy1V02iaQHMAZ43rOFVstoIim4YJfX78sO6Zk+dQM2+OIDgxjvuhn+Ji/x4qs9b
+         Mi+JJ+jX9CtL69A4NcvkSAKyW1b4KJ4yW/WTnfe8PveLfscr5be5tCikdLN1Xox0fpQN
+         ljMnV84tGH0l8Lra+zhLwcsTu80sD2L4QJZCZ19b/JAgi4T2Q8gU171gRfdv1j9VN206
+         zR4PxmtV3Km33UJWsipubzVkpq1R6ZY8SWcaAAyxT9jWTadi9vgGogmq/CD5d8rEGas0
+         9Biw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678285812;
+        d=1e100.net; s=20210112; t=1678286203;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iAN9+ZOptTrJHDc9J/pvGJu6tT88Otl4KlrOdjgdjxk=;
-        b=ZL/aAjHlJJfDLOu4UE1c+r5C56UvHdXohwcf1RoHxhVToLTN/q3BtAEuscy8psfzRj
-         fK0vdbCzEB25hLYdjLNle9T8bSUPpa/7oq6//SNabnTQEBlnayyOya5OCwUKCcw5LnT2
-         Wjto6FZC6zNn9foe4RDekn67y5cpzbghk6u4+scN1vjBgtDLbITpLNtka9TLZutsL2qv
-         63M+BYwDyYxwf6zco1MLAN2DEVW0eh5bji5KOb+AIzjeQS909QwOPoi/kzbl9rCqTaV/
-         1n/4dR1hChSEiak5cIUkTalhKgvAOwCGIjYwc7dpqlAEUMvsgnSIGbQA9RLOzuP7hHlT
-         gADw==
-X-Gm-Message-State: AO0yUKUOdz2grhsSydcJIZRjeMbL5X4Bs86Hlr5eVkQpKQBHImkwnXzH
-        vD86mDqnKpBvQkkiL8T7K+lZGxdLCvF/NA==
-X-Google-Smtp-Source: AK7set8JUDC6Op30t1qpJ524iWF7urf8TzvMEmLBYMe7KUjZDDwSBVZ/x3DhwnQ7CK28oP7ZxktvzQ==
-X-Received: by 2002:a17:906:a882:b0:8aa:a802:adcd with SMTP id ha2-20020a170906a88200b008aaa802adcdmr16525524ejb.30.1678285812312;
-        Wed, 08 Mar 2023 06:30:12 -0800 (PST)
+        bh=l/+VzXSJ8+YNGpmelOUnAH17WkM2Hm4y5z7wV36d1jY=;
+        b=D2LmOGNUknvlSKi7aG/MN5MhgDfmnKkFwMxtPwyahS+w+ONBZlccUizU1Y6cQHqMdl
+         /bCD0rcmx0zvSI5o566md/md3FPsjmb8f6V27J/JqzNrScwkm7CsbY3qhc9u08W2OVXo
+         UD31ys3SmIlEdk0G4HrMXQFjHlTaiLakOZ60tPzK2vekqP4Jq8xyjZmfqvRZKcDS3aeR
+         1+Ce0UlW8EzNZJ3obrAxSh6csbwVTMTgK/UkNS0eXSi70mBX5BcpRcQ+yXXoBTIhHcUP
+         M2aloJxtQU1hS7acEi2T5ApxfoA/wRh4QwDQbiFqiNnrTE2gmTDiNuBlii52WKpIzF4G
+         J2tg==
+X-Gm-Message-State: AO0yUKWsQ3S3/SvzhV7oEIBc51qIhFE68rqkzBG6IlzU9d+daQBG4lis
+        Q8/0nPfEYnR4pxIG234jpf0=
+X-Google-Smtp-Source: AK7set/gqt5L6DTs27kbRHkVnthQnbYw+0uzGm9HfqdTreImKlF8KBVpAC4ChClQEZ3wSFKGBq4pgA==
+X-Received: by 2002:a17:907:7fab:b0:8b2:8876:6a3c with SMTP id qk43-20020a1709077fab00b008b288766a3cmr23360634ejc.29.1678286202830;
+        Wed, 08 Mar 2023 06:36:42 -0800 (PST)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:c4be:f7db:77fd:b9e5])
-        by smtp.gmail.com with ESMTPSA id o22-20020a509b16000000b004c4eed3fe20sm8289678edi.5.2023.03.08.06.30.11
+        by smtp.gmail.com with ESMTPSA id p7-20020a50cd87000000b004aef147add6sm8253619edi.47.2023.03.08.06.36.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 06:30:12 -0800 (PST)
+        Wed, 08 Mar 2023 06:36:42 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     John Johansen <john.johansen@canonical.com>,
-        John Johansen <john@apparmor.net>
+To:     Christian Brauner <brauner@kernel.org>,
+        Seth Forshee <sforshee@kernel.org>,
+        linux-fsdevel@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: repair a malformed T: entry in APPARMOR SECURITY MODULE
-Date:   Wed,  8 Mar 2023 15:30:09 +0100
-Message-Id: <20230308143009.4039-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: repair a malformed T: entry in IDMAPPED MOUNTS
+Date:   Wed,  8 Mar 2023 15:36:40 +0100
+Message-Id: <20230308143640.9811-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -65,27 +66,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 The T: entries shall be composed of a SCM tree type (git, hg, quilt, stgit
 or topgit) and location.
 
-Add the SCM tree type to the T: entry.
+Add the SCM tree type to the T: entry and reorder the file entries in
+alphabetical order.
 
-Fixes: 7b4bd1274d35 ("apparmor: Update MAINTAINERS file with the lastest information")
+Fixes: ddc84c90538e ("MAINTAINERS: update idmapping tree")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 4c293074040b..2091b15ae695 100644
+index 2091b15ae695..a51fdde146db 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -1490,7 +1490,7 @@ W:	apparmor.net
- B:	https://gitlab.com/apparmor/apparmor-kernel
- C:	irc://irc.oftc.net/apparmor
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor
--T:	https://gitlab.com/apparmor/apparmor-kernel.git
-+T:	git https://gitlab.com/apparmor/apparmor-kernel.git
- F:	Documentation/admin-guide/LSM/apparmor.rst
- F:	security/apparmor/
+@@ -9889,10 +9889,10 @@ M:	Christian Brauner <brauner@kernel.org>
+ M:	Seth Forshee <sforshee@kernel.org>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
+-T:	git://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git
+ F:	Documentation/filesystems/idmappings.rst
+-F:	tools/testing/selftests/mount_setattr/
+ F:	include/linux/mnt_idmapping.*
++F:	tools/testing/selftests/mount_setattr/
  
+ IDT VersaClock 5 CLOCK DRIVER
+ M:	Luca Ceresoli <luca@lucaceresoli.net>
 -- 
 2.17.1
 
