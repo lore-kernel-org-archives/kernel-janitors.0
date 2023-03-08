@@ -2,106 +2,120 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5719C6FA99
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 00:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 824AEC6FD1F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 00:49:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbjCHAp7 (ORCPT
+        id S229695AbjCHAtK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Mar 2023 19:45:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46268 "EHLO
+        Tue, 7 Mar 2023 19:49:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjCHAp6 (ORCPT
+        with ESMTP id S229653AbjCHAtJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Mar 2023 19:45:58 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 574A1A92C4
-        for <kernel-janitors@vger.kernel.org>; Tue,  7 Mar 2023 16:45:55 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id kb15so15078553pjb.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 07 Mar 2023 16:45:55 -0800 (PST)
+        Tue, 7 Mar 2023 19:49:09 -0500
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C001A225C
+        for <kernel-janitors@vger.kernel.org>; Tue,  7 Mar 2023 16:49:07 -0800 (PST)
+Received: by mail-qt1-x82b.google.com with SMTP id s12so16575052qtq.11
+        for <kernel-janitors@vger.kernel.org>; Tue, 07 Mar 2023 16:49:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1678236355;
+        d=broadcom.com; s=google; t=1678236546;
         h=in-reply-to:mime-version:user-agent:date:message-id:from:references
          :cc:to:subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=sndp6rKVejRSXlOUiqdFArkY0rNcYEoz9lYb0yrbgSw=;
-        b=EQcry3IUYsdJdmWgHzCMhlCt3IdqCjAcyaFFyriOn92Fxx+Kq6lDCOyVKd8XqgAPtV
-         c5KLXrRIuTckCUdRK04BdmM+RfENgXej1ngb2eMR5pYxwUGN58G+ot4XpbVlG0tK5O9x
-         3P0avDujj/cee99OIdQUUv+yJNhRlhc9I/6As=
+        bh=UfjazhmDGAyP/QsubFB9vxXSHpqd6fpHJMKelueo8co=;
+        b=KhLJm4Jl/YaB+8MhDxtUgaRcbpHSEj+/efpDWUBy/TA95HNH+8vgDNiwvSN5p+wNr2
+         r2VdCxwGtQATjEx88zhVoy82Rlh1bYlmf6qV3BoWquaJrAMb/p6+GOUbh8nLeupEDb3+
+         UmWxkrzS+qzK4IhA9fUpUHd91rWMCUZAtUWvU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678236355;
+        d=1e100.net; s=20210112; t=1678236546;
         h=in-reply-to:mime-version:user-agent:date:message-id:from:references
          :cc:to:subject:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sndp6rKVejRSXlOUiqdFArkY0rNcYEoz9lYb0yrbgSw=;
-        b=mQuXX7VWIk4f/fL2H4vFi/S1jaBHXn47U8eqXodZAZsm+JDEHRo6LCGdN3qyujij1/
-         xhXdav5op7JB6vTs44NzskIEsO6NyVU9P3w+EPJIebg445x+GjBTi4caXa/8XDkyX1VD
-         u4ijs8RhXheovV4+0sfNhVVqcF9OWbgl96sKsgzXkfekQ3bOsaI5tMEnR3cP2e6wjsdz
-         qdaskVf3H2Ian+0N4RnRAg0Ec6GtOQg9MI6USi/0Aha84HT1ADNktBZaJz6ntev2imxs
-         L1VE/nK2bSNzMrDxCwDvG+PLU/54l+EynZROOMsowYl0ahSVUc7BTRTvr3sdIWslntJ4
-         0F0A==
-X-Gm-Message-State: AO0yUKVsiJqoOV4iX6CuLI++VC6C1yf0Hv1veGt7ihJH1XPw+r58W7Yr
-        97eZuK5bT0umvssYiGO9wArUBQ==
-X-Google-Smtp-Source: AK7set/VTBPywdHCWksRNGgFbLMEnewd5fXDa8WfaX9IcJHjG6J8CvIt61sQ5mfeyxxtTx8r48O2fw==
-X-Received: by 2002:a17:90b:4d04:b0:230:81e9:ebb4 with SMTP id mw4-20020a17090b4d0400b0023081e9ebb4mr16512363pjb.10.1678236354682;
-        Tue, 07 Mar 2023 16:45:54 -0800 (PST)
+        bh=UfjazhmDGAyP/QsubFB9vxXSHpqd6fpHJMKelueo8co=;
+        b=mynBgLRd5HfLgbPvAylIHNtCW/MEPspod9250oj2Keo9gaKs7pN0U7w7IBm7BPR3ea
+         FDKIRPU7jx/UkP9ftV7k5kmi15fyoWq1zru4Ct1NuA0/Z+iUACZ1xbvp1/8emkIlcWz3
+         g/58/GqmoxWiYvrf168yqE3vNp7BplxW+0w9LqO4Ra0sr2/P9GzoTRYKXJxy9U6lsYtB
+         BZ8lXJBDx57hk8XDDDIPjdGqgvzT33pRSVV5FT8p6BkeqJ2vXmpznPzH1PvHAqVexi/P
+         7QD/PC/GJBjMQMByuaDVlSQmBq+9vELuQhqo/hUyeXAktv0GZQItQjEyg1VMI8NpL0zP
+         /qiw==
+X-Gm-Message-State: AO0yUKUhSGI1XOFDqYH558P7G24ek79ZVVa8ZrAr899c+e5G4D4SfIi/
+        SnXCBULj79nQRqO46LjMqW1msA==
+X-Google-Smtp-Source: AK7set9AUK3NbkrkZMPnng80DrpD87lrzsTOuY9dqS6zFxckblGLzcfNj4qqiYp2KAh6BSF2fwKxCw==
+X-Received: by 2002:a05:622a:118b:b0:3bf:c266:fa6f with SMTP id m11-20020a05622a118b00b003bfc266fa6fmr25810625qtk.46.1678236546336;
+        Tue, 07 Mar 2023 16:49:06 -0800 (PST)
 Received: from bcacpedev-irv-3.lvn.broadcom.net ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id mv15-20020a17090b198f00b0023087e8adf8sm8228649pjb.21.2023.03.07.16.45.53
+        by smtp.gmail.com with ESMTPSA id l5-20020ac87245000000b003b9a426d626sm10494400qtp.22.2023.03.07.16.49.05
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 Mar 2023 16:45:53 -0800 (PST)
+        Tue, 07 Mar 2023 16:49:06 -0800 (PST)
 Subject: Re: [PATCH] leds: bcm63138: refer to ARCH_BCMBCA instead of
  ARCH_BCM4908
-To:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
         Florian Fainelli <f.fainelli@gmail.com>,
-        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        linux-leds@vger.kernel.org
+Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
- <9e448d3d42b4b3029e4b8993f2272e4c@milecki.pl>
 From:   William Zhang <william.zhang@broadcom.com>
-Message-ID: <1c7b44ef-fccf-f993-805e-2fffb75b7ea8@broadcom.com>
-Date:   Tue, 7 Mar 2023 16:45:26 -0800
+Message-ID: <326dd0c4-06a1-7dfb-db6e-05e87d37dabc@broadcom.com>
+Date:   Tue, 7 Mar 2023 16:49:04 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <9e448d3d42b4b3029e4b8993f2272e4c@milecki.pl>
+In-Reply-To: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000cbba6805f658d980"
+        boundary="00000000000036644805f658e5e4"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
---000000000000cbba6805f658d980
+--00000000000036644805f658e5e4
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Rafal,
 
-On 03/07/2023 01:41 AM, Rafał Miłecki wrote:
-> On 2023-03-07 09:29, Lukas Bulwahn wrote:
->> diff --git a/drivers/leds/blink/Kconfig b/drivers/leds/blink/Kconfig
->> index 945c84286a4e..bdcb7377cd4e 100644
->> --- a/drivers/leds/blink/Kconfig
->> +++ b/drivers/leds/blink/Kconfig
->> @@ -1,10 +1,10 @@
->>  config LEDS_BCM63138
->>      tristate "LED Support for Broadcom BCM63138 SoC"
->>      depends on LEDS_CLASS
->> -    depends on ARCH_BCM4908 || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
->> +    depends on ARCH_BCMBCA || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
->>      depends on HAS_IOMEM
->>      depends on OF
->> -    default ARCH_BCM4908
->> +    default ARCH_BCMBCA
->>      help
->>        This option enables support for LED controller that is part of
->>        BCM63138 SoC. The same hardware block is known to be also used
+
+On 03/07/2023 12:29 AM, Lukas Bulwahn wrote:
+> Commit dd5c672d7ca9 ("arm64: bcmbca: Merge ARCH_BCM4908 to ARCH_BCMBCA")
+> removes config ARCH_BCM4908 as config ARCH_BCMBCA has the same intent.
 > 
-> William: do we want LEDS_BCM63138 default on all BCMBCA devices?
-Yes that is fine. We can always build this driver for BCMBCA but it will 
-be only probed and running if dts enable such device.
+> Probably due to concurrent development, commit a0ba692072d8 ("leds:
+> bcm63138: add support for BCM63138 controller") introduces 'LED Support
+> for Broadcom BCM63138 SoC' that depends on ARCH_BCM4908, but this use was
+> not visible during the config refactoring from the commit above. Hence,
+> these two changes create a reference to a non-existing config symbol.
+> 
+> Adjust the LEDS_BCM63138 definition to refer to ARCH_BCMBCA instead of
+> ARCH_BCM4908 to remove the reference to the non-existing config symbol
+> ARCH_BCM4908.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>   drivers/leds/blink/Kconfig | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/leds/blink/Kconfig b/drivers/leds/blink/Kconfig
+> index 945c84286a4e..bdcb7377cd4e 100644
+> --- a/drivers/leds/blink/Kconfig
+> +++ b/drivers/leds/blink/Kconfig
+> @@ -1,10 +1,10 @@
+>   config LEDS_BCM63138
+>   	tristate "LED Support for Broadcom BCM63138 SoC"
+>   	depends on LEDS_CLASS
+> -	depends on ARCH_BCM4908 || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
+> +	depends on ARCH_BCMBCA || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
+>   	depends on HAS_IOMEM
+>   	depends on OF
+> -	default ARCH_BCM4908
+> +	default ARCH_BCMBCA
+>   	help
+>   	  This option enables support for LED controller that is part of
+>   	  BCM63138 SoC. The same hardware block is known to be also used
+> 
+Acked-by: William Zhang <william.zhang@broadcom.com>
 
---000000000000cbba6805f658d980
+--00000000000036644805f658e5e4
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -172,13 +186,13 @@ VhYAxZlzj7tSjUIM7G7IhyfqPC46GKJ/4x+Amz1Z6YxNGy71L68kYD6hIbBcA5AM42QBUufly6Oa
 urb/KlmDGfVrIRYDbL0ckhGQIP5c6L+kSQZ2sHnQK0e0WgIaZYxaPYeY5u0GLCOze+3vyRMxggJt
 MIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYD
 VQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwxuh2XG3FXRL1W
-JOEwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEILh3GKDQkf8F6o0YYuq8qMbm6uKv
-UmK5xA52YKgW7eH1MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIz
-MDMwODAwNDU1NVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+JOEwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIOjmaoGToXQP6fo1oPkyEBBLHamL
+AdaQU/AGaUZiNR99MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIz
+MDMwODAwNDkwNlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
 CWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFl
-AwQCATANBgkqhkiG9w0BAQEFAASCAQCNIMeYhRVptou3e4/+IE10y7QhKhZFianGjf+vatBJuz0H
-Y2d7wTLYUoPo0Mn8M4k+Q+uF3knQ1RepEu+XwpyTtLTBE8MHLFvuIu5FCEsg4ofrUyoOprMBRYNC
-TOTgI6+farYtbkcU68WXBIRqcudcTKTzztt9kmn9PA5AxiTTBJvcNyZOFsikfrszg4JSIWJZeVbq
-SqXB/miwEzRMkUL0RHviQ5sbeps0/2BjwME7TTbcax4wuEBxWSljoJAaCBoimb9qZSrUGKbS/ycZ
-KbKXCwR8zOk0pqFmgXgJ9yYwC4rmee600OBvJ/RloThHdUhRAkKO5KlYTt+wIgFQ0RTK
---000000000000cbba6805f658d980--
+AwQCATANBgkqhkiG9w0BAQEFAASCAQCvCvh95gIHOOEVJlUoU2AoWGdyTdF2bPgkCx3aNE2OhxPT
+ZmVqQPQRKa/rHR5uPO5n676DWBop3NA71B2SQg7UNzxjumHUi/+5zMWesfeIlx466RAMV/VBCwRb
+GdQ6kXVnJFO2EmjPPmpOxpOP+MztR5fltXX3FtMg4ehm9Mtpu0V00EBytwx5Dus+V8XEzsP8xXku
+VpSAvIJPLN+I6HeDox4QqyjzfNnowaj/ZtaswlNd3xEPuWsjs0AROXO8Sq9sakXSp1KKG9SVWcuX
+6hct8zKprYufw5KlT2LmUr0BfL6iiL5oLHFxVZ0H+mBld3QtMKCovzRz6vC5QSBvPTlj
+--00000000000036644805f658e5e4--
