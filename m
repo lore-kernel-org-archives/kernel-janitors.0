@@ -2,138 +2,155 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A82C64EC4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 09:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 319B9C678D5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 14:09:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbjCHJil (ORCPT
+        id S232191AbjCHOJX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Mar 2023 04:38:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47762 "EHLO
+        Wed, 8 Mar 2023 09:09:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbjCHJij (ORCPT
+        with ESMTP id S231694AbjCHOIu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Mar 2023 04:38:39 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5E981CE5;
-        Wed,  8 Mar 2023 01:38:35 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 041E521A01;
-        Wed,  8 Mar 2023 09:38:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1678268314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Wed, 8 Mar 2023 09:08:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D753D09F
+        for <kernel-janitors@vger.kernel.org>; Wed,  8 Mar 2023 06:07:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678284438;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=MFjwcD4Vp6zee18l/hOx+s0LnKajCjdYROBFnAJWXn8=;
-        b=06nbHXetL2+U8ybThhgCxE9ADDEQxGB6srtfy+202zHewUt8bM8MU5VEHPnXZ4smi9oT1S
-        iYej2uLtwQJCxgR88k1yaZzudj6hNLi07Z+UgDhAjlUvR7L/k15+3ZstMeUDHXYa5FcUGP
-        wbCZ8Mriw3df69T874Cpvw9HxMFC/DY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1678268314;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MFjwcD4Vp6zee18l/hOx+s0LnKajCjdYROBFnAJWXn8=;
-        b=kxDkmpn61fYNatyGv6yEFn5yAb0Rg/+7q7eImlcAJFmcc6VukSeH/EFIdG/DC9vdH3VHqq
-        pjbJeTCaTJfs1WBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D28331391B;
-        Wed,  8 Mar 2023 09:38:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id SItDMplXCGQnQAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 08 Mar 2023 09:38:33 +0000
-Message-ID: <cf8135bc-a255-1f02-28df-dec42342fb71@suse.de>
-Date:   Wed, 8 Mar 2023 10:38:33 +0100
+        bh=V6cnINXPKnD2lG8vxbE8F7RlXvTWARojvYuwDfsphHk=;
+        b=BEL3HnhhGNsNJip34h5tzYaq5nF1GZpWLvydqL0H0xIZhnawZWVk/boTfrU7UdAte7wdsq
+        j2Pf1xfdGS/J55/erI6ZWHeTPyhVwMMw5ow9ydoBa0dmOYiS33Qj/OT+iNUiwFNVqEDRrq
+        iphRIoSI5/o8nuJa7yvb6x3knSUQR8M=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-294-iwWCBKOUOhu-wfCZhSkuXA-1; Wed, 08 Mar 2023 09:07:16 -0500
+X-MC-Unique: iwWCBKOUOhu-wfCZhSkuXA-1
+Received: by mail-qk1-f198.google.com with SMTP id s21-20020a05620a0bd500b0074234f33f24so9335510qki.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 08 Mar 2023 06:07:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678284429;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V6cnINXPKnD2lG8vxbE8F7RlXvTWARojvYuwDfsphHk=;
+        b=Ip5VTkWBv2hwlUCWO5nuSOpnYsmGSbCrX0cI9KRbsxzUjRGpDVkwF2bGwXrFuFkhxl
+         ZkJqPD5N6I3d0fV+HYpkyUjUVzvs2d8xU14oYz4qzuAssvcwDmmN1DU9EVA98aTDuDDf
+         BKI3tyv3PkJWOQa2JbtqEV13ooDtuBrdisAHKykbsjwIMQXCWk/iLksRfuv0r3DhqBrD
+         /xBdnqMLd+gHkTtK1RcbRUAHiBduYX+uQOyPD0QhmAZSAutZYZsnlGXz7svRSpCkQ+s+
+         mX1bKQm0V9eewLxIIk44BQS2NexJNOamGtCeQzRwm9JpNWqcqjZXH/hBkULc1IEGLquk
+         y1WQ==
+X-Gm-Message-State: AO0yUKXVF4XetFSKr8XDQMbcLi/2Fwm3rYWFr7Tyvs4lT9ZLgKzmf5M8
+        NjzEVuyZ6IOqxPLKy3Y0xo1BhEc4NbC/JDK0ajQMbtTemqV+s+NubP1951b8tpCzP/gwS7mHjsP
+        v/s7DJv9Tz4XDgFqxiqL7lKtUXFWvcjhVWa0G
+X-Received: by 2002:a05:622a:514:b0:3b9:bc8c:c213 with SMTP id l20-20020a05622a051400b003b9bc8cc213mr38252431qtx.30.1678284429137;
+        Wed, 08 Mar 2023 06:07:09 -0800 (PST)
+X-Google-Smtp-Source: AK7set+bnIm7lfXZMPMGp+YTM6UrwsXhtqFanRzxTP/WHmpltxuwqtKd97gRjNlbA6Fwv+mkWztPJw==
+X-Received: by 2002:a05:622a:514:b0:3b9:bc8c:c213 with SMTP id l20-20020a05622a051400b003b9bc8cc213mr38252394qtx.30.1678284428852;
+        Wed, 08 Mar 2023 06:07:08 -0800 (PST)
+Received: from sgarzare-redhat (host-82-57-51-170.retail.telecomitalia.it. [82.57.51.170])
+        by smtp.gmail.com with ESMTPSA id x185-20020a3763c2000000b0073baa5ec0besm11506824qkb.115.2023.03.08.06.07.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Mar 2023 06:07:08 -0800 (PST)
+Date:   Wed, 8 Mar 2023 15:07:04 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH] virtio: Reorder fields in 'struct virtqueue'
+Message-ID: <20230308140704.jsggcp4g3tz7vhxu@sgarzare-redhat>
+References: <8f3d2e49270a2158717e15008e7ed7228196ba02.1676707807.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] MAINTAINERS: orphan SIS FRAMEBUFFER DRIVER
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Thomas Winischhofer <thomas@winischhofer.net>,
-        Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
-Content-Language: en-US
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------Fn5fYfi1pyf0sw01AuM9f1QD"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <8f3d2e49270a2158717e15008e7ed7228196ba02.1676707807.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------Fn5fYfi1pyf0sw01AuM9f1QD
-Content-Type: multipart/mixed; boundary="------------DpXEUfGRdJxUN3aO8OlXX3ln";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Thomas Winischhofer <thomas@winischhofer.net>, Helge Deller <deller@gmx.de>,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <cf8135bc-a255-1f02-28df-dec42342fb71@suse.de>
-Subject: Re: [PATCH] MAINTAINERS: orphan SIS FRAMEBUFFER DRIVER
-References: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
+On Sat, Feb 18, 2023 at 09:10:31AM +0100, Christophe JAILLET wrote:
+>Group some variables based on their sizes to reduce hole and avoid padding.
+>On x86_64, this shrinks the size of 'struct virtqueue'
+>from 72 to 68 bytes.
+>
+>It saves a few bytes of memory.
+>
+>Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>---
 
---------------DpXEUfGRdJxUN3aO8OlXX3ln
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+LGTM!
 
-DQoNCkFtIDA4LjAzLjIzIHVtIDA4OjE5IHNjaHJpZWIgTHVrYXMgQnVsd2FobjoNCj4gVGhp
-cyB3YXMgdHJpZ2dlcmVkIGJ5IHRoZSBmYWN0IHRoYXQgdGhlIHdlYnBhZ2U6DQo+IA0KPiAg
-ICBodHRwOi8vd3d3LndpbmlzY2hob2Zlci5uZXQvbGludXhzaXN2Z2Euc2h0bWwNCj4gDQo+
-IGNhbm5vdCBiZSByZWFjaGVkIGFueW1vcmUuDQo+IA0KPiBUaG9tYXMgV2luaXNjaGhvZmVy
-IGlzIHN0aWxsIHJlYWNoYWJsZSBhdCB0aGUgZ2l2ZW4gZW1haWwgYWRkcmVzcywgYnV0IGhl
-DQo+IGhhcyBub3QgYmVlbiBhY3RpdmUgc2luY2UgMjAwNS4NCj4gDQo+IE1hcmsgdGhlIFNJ
-UyBGUkFNRUJVRkZFUiBEUklWRVIgYXMgb3JwaGFuIHRvIHJlZmxlY3QgdGhlIGN1cnJlbnQg
-c3RhdGUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBMdWthcyBCdWx3YWhuIDxsdWthcy5idWx3
-YWhuQGdtYWlsLmNvbT4NCg0KQWNrZWQtYnk6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVy
-bWFubkBzdXNlLmRlPg0KDQo+IC0tLQ0KPiAgIE1BSU5UQUlORVJTIHwgNCArLS0tDQo+ICAg
-MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4g
-ZGlmZiAtLWdpdCBhL01BSU5UQUlORVJTIGIvTUFJTlRBSU5FUlMNCj4gaW5kZXggNWQ4ZjQ2
-ZjM1YWE0Li4zNTQ1Nzc1MzRhZWYgMTAwNjQ0DQo+IC0tLSBhL01BSU5UQUlORVJTDQo+ICsr
-KyBiL01BSU5UQUlORVJTDQo+IEBAIC0xOTE5MSw5ICsxOTE5MSw3IEBAIFc6CWh0dHA6Ly93
-d3cuYnJvd25oYXQub3JnL3NpczkwMC5odG1sDQo+ICAgRjoJZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvc2lzL3NpczkwMC4qDQo+ICAgDQo+ICAgU0lTIEZSQU1FQlVGRkVSIERSSVZFUg0KPiAt
-TToJVGhvbWFzIFdpbmlzY2hob2ZlciA8dGhvbWFzQHdpbmlzY2hob2Zlci5uZXQ+DQo+IC1T
-OglNYWludGFpbmVkDQo+IC1XOglodHRwOi8vd3d3LndpbmlzY2hob2Zlci5uZXQvbGludXhz
-aXN2Z2Euc2h0bWwNCj4gK1M6CU9ycGhhbg0KPiAgIEY6CURvY3VtZW50YXRpb24vZmIvc2lz
-ZmIucnN0DQo+ICAgRjoJZHJpdmVycy92aWRlby9mYmRldi9zaXMvDQo+ICAgRjoJaW5jbHVk
-ZS92aWRlby9zaXNmYi5oDQoNCi0tIA0KVGhvbWFzIFppbW1lcm1hbm4NCkdyYXBoaWNzIERy
-aXZlciBEZXZlbG9wZXINClNVU0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0K
-TWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJtYW55DQooSFJCIDM2ODA5LCBB
-RyBOw7xybmJlcmcpDQpHZXNjaMOkZnRzZsO8aHJlcjogSXZvIFRvdGV2DQo=
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
---------------DpXEUfGRdJxUN3aO8OlXX3ln--
+>Using pahole
+>
+>Before:
+>======
+>struct virtqueue {
+>	struct list_head           list;                 /*     0    16 */
+>	void                       (*callback)(struct virtqueue *); /*    16     8 */
+>	const char  *              name;                 /*    24     8 */
+>	struct virtio_device *     vdev;                 /*    32     8 */
+>	unsigned int               index;                /*    40     4 */
+>	unsigned int               num_free;             /*    44     4 */
+>	unsigned int               num_max;              /*    48     4 */
+>
+>	/* XXX 4 bytes hole, try to pack */
+>
+>	void *                     priv;                 /*    56     8 */
+>	/* --- cacheline 1 boundary (64 bytes) --- */
+>	bool                       reset;                /*    64     1 */
+>
+>	/* size: 72, cachelines: 2, members: 9 */
+>	/* sum members: 61, holes: 1, sum holes: 4 */
+>	/* padding: 7 */
+>	/* last cacheline: 8 bytes */
+>};
+>
+>After:
+>=====
+>struct virtqueue {
+>	struct list_head           list;                 /*     0    16 */
+>	void                       (*callback)(struct virtqueue *); /*    16     8 */
+>	const char  *              name;                 /*    24     8 */
+>	struct virtio_device *     vdev;                 /*    32     8 */
+>	unsigned int               index;                /*    40     4 */
+>	unsigned int               num_free;             /*    44     4 */
+>	unsigned int               num_max;              /*    48     4 */
+>	bool                       reset;                /*    52     1 */
+>
+>	/* XXX 3 bytes hole, try to pack */
+>
+>	void *                     priv;                 /*    56     8 */
+>
+>	/* size: 64, cachelines: 1, members: 9 */
+>	/* sum members: 61, holes: 1, sum holes: 3 */
+>};
+>---
+> include/linux/virtio.h | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+>index 6ac2655500dc..9439ae898310 100644
+>--- a/include/linux/virtio.h
+>+++ b/include/linux/virtio.h
+>@@ -35,8 +35,8 @@ struct virtqueue {
+> 	unsigned int index;
+> 	unsigned int num_free;
+> 	unsigned int num_max;
+>-	void *priv;
+> 	bool reset;
+>+	void *priv;
+> };
+>
+> int virtqueue_add_outbuf(struct virtqueue *vq,
+>-- 
+>2.34.1
+>
 
---------------Fn5fYfi1pyf0sw01AuM9f1QD
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmQIV5kFAwAAAAAACgkQlh/E3EQov+Ct
-ZBAAyvCPSk+foGIpM75INZQNCaVicv9az/FZKN/zoESZFGvr5YKRR/G82Iu8EWUKnKGjJnsd5+v5
-0fV+AOpFUONNFPq9mPt4VYUtmvv4iZHF+u38uoxbDKCGAU5YWaJ6vE0fbN43Gj87DJ+8iSwMG1Pp
-Sjs37Z6atV2YhnLKPnoznXB5zoWuzqQPVCbwBJePGAUFNjTBWDKMVlJkEfuK6Abg2qGo04eXhNkp
-1dMure1a87vF1M0Xp5Xnq7cD0xJDOLmueXgrwhqp5+pJHG0z9x98RMiEd38tCln6ONhB3GIpfZ5/
-x2xBSMbofXaRcb2FwDOgbodvR55zGHnEENgwBENGfuk0E37wG1BOCipiCQjzGvW+RFAVwMqunMpu
-iYnup//IFSXdr6EEZu5dWEWqUxD/5eJOqpF0z2bXO1zfzoBV3icSz6LfPrlKBX4JbbqqmmcwyxaZ
-2SbvzLujU/oeOdQewwpklX+z8qt5p+cJ54ME53HE7GVuzlahhSAv4nK37kaVJJkibWLNuWk6xAL8
-IR0NWHqJfzFAlGZZ4gsYa8qa/Koil4SGGzsKB5whcVYUrPEIyRONhGAxoOTt4S+Gp0a6ZPUNrTfb
-1QrJ/oEh0/DBPnB8du8r951t025yIvPQgmRhf5h13ADR6U0h9ugA6aCWu2xt785bhXMrAwr3eAin
-bT0=
-=3WCc
------END PGP SIGNATURE-----
-
---------------Fn5fYfi1pyf0sw01AuM9f1QD--
