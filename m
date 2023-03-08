@@ -2,76 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228E1C64EC4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 08:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300C8C678D5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 09:12:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229981AbjCHIs2 (ORCPT
+        id S230244AbjCHJMz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Mar 2023 03:48:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59624 "EHLO
+        Wed, 8 Mar 2023 04:12:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbjCHIsY (ORCPT
+        with ESMTP id S230211AbjCHJMw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Mar 2023 03:48:24 -0500
-X-Greylist: delayed 8838 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 08 Mar 2023 00:48:22 PST
-Received: from 6.mo581.mail-out.ovh.net (6.mo581.mail-out.ovh.net [188.165.39.218])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615198F532
-        for <kernel-janitors@vger.kernel.org>; Wed,  8 Mar 2023 00:48:22 -0800 (PST)
-Received: from director9.ghost.mail-out.ovh.net (unknown [10.108.4.8])
-        by mo581.mail-out.ovh.net (Postfix) with ESMTP id 8D6A925DE1
-        for <kernel-janitors@vger.kernel.org>; Wed,  8 Mar 2023 06:21:02 +0000 (UTC)
-Received: from ghost-submission-6684bf9d7b-8btrn (unknown [10.110.103.246])
-        by director9.ghost.mail-out.ovh.net (Postfix) with ESMTPS id E51751FE41;
-        Wed,  8 Mar 2023 06:21:01 +0000 (UTC)
-Received: from RCM-web1.webmail.mail.ovh.net ([176.31.238.120])
-        by ghost-submission-6684bf9d7b-8btrn with ESMTPSA
-        id cjWaNk0pCGTz1QMA9qD2fA
-        (envelope-from <rafal@milecki.pl>); Wed, 08 Mar 2023 06:21:01 +0000
+        Wed, 8 Mar 2023 04:12:52 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB0EBA3378;
+        Wed,  8 Mar 2023 01:12:48 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id e13so14612544wro.10;
+        Wed, 08 Mar 2023 01:12:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678266766;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=42Tebu01feBjjmnfdSuFij+fK1V/+T2ggLj9HPy2k2A=;
+        b=BwDGpmRLGGevxzbXxe2kQZVQzqxqnTsPC4MmBdNBicw4Ha3q09zO3ROZuY2CP3MZFo
+         2e9V1irp3BVx47yDhZ0t8WzO1/SqRUSkpQmx2GHDZERkkg/TynusNYg+Gjb+L7r1lXe5
+         zpHZ2HU/TmvK+F/nBUd7SsGwgC3JkIzXldgttq3Cpdj5NnhY7MEunMbAWK2koJlY7e2r
+         k/2ymkZzT+SazxQ6JRbFA83bLgX20mZfqJC5qfVavU0uDpYTih9zVxsjdbpYFfKo9dKi
+         J0p4wt8ByIj9fFxsSapw3jrgyvxsNdnJiAlB1LvEmNT5rHMuC8mdwhgk62eQB/scLRqj
+         g4Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678266766;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=42Tebu01feBjjmnfdSuFij+fK1V/+T2ggLj9HPy2k2A=;
+        b=klgEMDqCnZi1hDK7NwnxEyJXvDiooI/gJ44c7eIM+ySRtJ3TRisfwpMp0Z5CVWDblK
+         HaUMkbiCCMpnDtpx/QjKib7xWf+IN6jAREp5jb3jhCtNEV27fxp09C1GezZlG2jZ8MdL
+         VDW70y4JRJYgZeb6tKDfz7k2iBWN9sOPo1uFwNXe3ut0ExY0UO14w4t3Jy0b2tEaPhEl
+         Nnzic/IUbL4EL7+DOEk4Tj3Y1viWJzFKvSoZsF29wH9j1oLLBlcLIQaggryIJ5xZ8QT5
+         UrEa/eV/myv1NlQ7hd+djN4CyCN9fucMupDymaF6k7/7d1lEPD1azkQoygYDr6QGvl+2
+         V8sg==
+X-Gm-Message-State: AO0yUKWVk2UUvRIFw+lQ+QJvLH4JskwRUypYGgLz09TkKkwBBp3SZVLh
+        dslkGITIidh/1HK8CVKzKIw=
+X-Google-Smtp-Source: AK7set/AePNSu3Roc2C/uKr4V6FQ6Lp8IK+7vZyXjHle7GZFLuXe/Nyr48LLqEhLqoBv9kpSBlX9TA==
+X-Received: by 2002:adf:e34c:0:b0:2ca:8995:38d with SMTP id n12-20020adfe34c000000b002ca8995038dmr12132661wrj.16.1678266766567;
+        Wed, 08 Mar 2023 01:12:46 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id z17-20020a5d44d1000000b002c58ca558b6sm14567141wrr.88.2023.03.08.01.12.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Mar 2023 01:12:44 -0800 (PST)
+Date:   Wed, 8 Mar 2023 12:12:37 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Irina Tirdea <irina.tirdea@intel.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] iio: magn: bmc150: add a lower bounds in
+ bmc150_magn_write_raw()
+Message-ID: <94939714-a232-4107-8741-8867038b03ae@kili.mountain>
 MIME-Version: 1.0
-Date:   Wed, 08 Mar 2023 07:21:00 +0100
-From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-leds@vger.kernel.org,
-        William Zhang <william.zhang@broadcom.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: bcm63138: refer to ARCH_BCMBCA instead of
- ARCH_BCM4908
-In-Reply-To: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
-References: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <b2b0db0e6489a4a7daa2606c1febabbb@milecki.pl>
-X-Sender: rafal@milecki.pl
-X-Originating-IP: 194.187.74.233
-X-Webmail-UserID: rafal@milecki.pl
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 2976316407250594779
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrvdduuddgledvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggffhffvvefujghffgfkgihitgfgsehtkehjtddtreejnecuhfhrohhmpeftrghfrghlucfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpeejvdelgfeutdfhfeelheegfedtleduleeuvdfgfeefvefhvedtheetjeetfeehgeenucfkphepuddvjedrtddrtddruddpudelgedrudekjedrjeegrddvfeefpddujeeirdefuddrvdefkedruddvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoehrrghfrghlsehmihhlvggtkhhirdhplheqpdhnsggprhgtphhtthhopedupdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheekuddpmhhouggvpehsmhhtphhouhht
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023-03-07 09:29, Lukas Bulwahn wrote:
-> Commit dd5c672d7ca9 ("arm64: bcmbca: Merge ARCH_BCM4908 to 
-> ARCH_BCMBCA")
-> removes config ARCH_BCM4908 as config ARCH_BCMBCA has the same intent.
-> 
-> Probably due to concurrent development, commit a0ba692072d8 ("leds:
-> bcm63138: add support for BCM63138 controller") introduces 'LED Support
-> for Broadcom BCM63138 SoC' that depends on ARCH_BCM4908, but this use 
-> was
-> not visible during the config refactoring from the commit above. Hence,
-> these two changes create a reference to a non-existing config symbol.
-> 
-> Adjust the LEDS_BCM63138 definition to refer to ARCH_BCMBCA instead of
-> ARCH_BCM4908 to remove the reference to the non-existing config symbol
-> ARCH_BCM4908.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+The "val" variable comes from the user via iio_write_channel_info().
+This code puts an upper bound on "val" but it doesn't check for
+negatives so Smatch complains.  I don't think either the bounds
+checking is really required, but it's just good to be conservative.
 
-Acked-by: Rafał Miłecki <rafal@milecki.pl>
+Fixes: 5990dc970367 ("iio: magn: bmc150_magn: add oversampling ratio")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/iio/magnetometer/bmc150_magn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/magnetometer/bmc150_magn.c b/drivers/iio/magnetometer/bmc150_magn.c
+index 06d5a1ef1fbd..c625416b8bcf 100644
+--- a/drivers/iio/magnetometer/bmc150_magn.c
++++ b/drivers/iio/magnetometer/bmc150_magn.c
+@@ -537,7 +537,7 @@ static int bmc150_magn_write_raw(struct iio_dev *indio_dev,
+ 
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_SAMP_FREQ:
+-		if (val > data->max_odr)
++		if (val < 0 || val > data->max_odr)
+ 			return -EINVAL;
+ 		mutex_lock(&data->mutex);
+ 		ret = bmc150_magn_set_odr(data, val);
+-- 
+2.39.1
+
