@@ -2,155 +2,140 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 319B9C678D5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 14:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4E0C6FD20
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 14:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232191AbjCHOJX (ORCPT
+        id S230235AbjCHOPg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Mar 2023 09:09:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48888 "EHLO
+        Wed, 8 Mar 2023 09:15:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231694AbjCHOIu (ORCPT
+        with ESMTP id S232201AbjCHOOy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Mar 2023 09:08:50 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D753D09F
-        for <kernel-janitors@vger.kernel.org>; Wed,  8 Mar 2023 06:07:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678284438;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=V6cnINXPKnD2lG8vxbE8F7RlXvTWARojvYuwDfsphHk=;
-        b=BEL3HnhhGNsNJip34h5tzYaq5nF1GZpWLvydqL0H0xIZhnawZWVk/boTfrU7UdAte7wdsq
-        j2Pf1xfdGS/J55/erI6ZWHeTPyhVwMMw5ow9ydoBa0dmOYiS33Qj/OT+iNUiwFNVqEDRrq
-        iphRIoSI5/o8nuJa7yvb6x3knSUQR8M=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-294-iwWCBKOUOhu-wfCZhSkuXA-1; Wed, 08 Mar 2023 09:07:16 -0500
-X-MC-Unique: iwWCBKOUOhu-wfCZhSkuXA-1
-Received: by mail-qk1-f198.google.com with SMTP id s21-20020a05620a0bd500b0074234f33f24so9335510qki.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Mar 2023 06:07:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678284429;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        Wed, 8 Mar 2023 09:14:54 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9993DB2570;
+        Wed,  8 Mar 2023 06:13:30 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id j11so46769593edq.4;
+        Wed, 08 Mar 2023 06:13:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678284809;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V6cnINXPKnD2lG8vxbE8F7RlXvTWARojvYuwDfsphHk=;
-        b=Ip5VTkWBv2hwlUCWO5nuSOpnYsmGSbCrX0cI9KRbsxzUjRGpDVkwF2bGwXrFuFkhxl
-         ZkJqPD5N6I3d0fV+HYpkyUjUVzvs2d8xU14oYz4qzuAssvcwDmmN1DU9EVA98aTDuDDf
-         BKI3tyv3PkJWOQa2JbtqEV13ooDtuBrdisAHKykbsjwIMQXCWk/iLksRfuv0r3DhqBrD
-         /xBdnqMLd+gHkTtK1RcbRUAHiBduYX+uQOyPD0QhmAZSAutZYZsnlGXz7svRSpCkQ+s+
-         mX1bKQm0V9eewLxIIk44BQS2NexJNOamGtCeQzRwm9JpNWqcqjZXH/hBkULc1IEGLquk
-         y1WQ==
-X-Gm-Message-State: AO0yUKXVF4XetFSKr8XDQMbcLi/2Fwm3rYWFr7Tyvs4lT9ZLgKzmf5M8
-        NjzEVuyZ6IOqxPLKy3Y0xo1BhEc4NbC/JDK0ajQMbtTemqV+s+NubP1951b8tpCzP/gwS7mHjsP
-        v/s7DJv9Tz4XDgFqxiqL7lKtUXFWvcjhVWa0G
-X-Received: by 2002:a05:622a:514:b0:3b9:bc8c:c213 with SMTP id l20-20020a05622a051400b003b9bc8cc213mr38252431qtx.30.1678284429137;
-        Wed, 08 Mar 2023 06:07:09 -0800 (PST)
-X-Google-Smtp-Source: AK7set+bnIm7lfXZMPMGp+YTM6UrwsXhtqFanRzxTP/WHmpltxuwqtKd97gRjNlbA6Fwv+mkWztPJw==
-X-Received: by 2002:a05:622a:514:b0:3b9:bc8c:c213 with SMTP id l20-20020a05622a051400b003b9bc8cc213mr38252394qtx.30.1678284428852;
-        Wed, 08 Mar 2023 06:07:08 -0800 (PST)
-Received: from sgarzare-redhat (host-82-57-51-170.retail.telecomitalia.it. [82.57.51.170])
-        by smtp.gmail.com with ESMTPSA id x185-20020a3763c2000000b0073baa5ec0besm11506824qkb.115.2023.03.08.06.07.07
+        bh=fYJgnl+7Us7KVNz74ou1/RTlLrV9+lTS5g77LiBuQ3c=;
+        b=V9sCNW+1YZWFT2DWSHIkc5h4/h1AyHtAH0y4hmTxYqQa7bxZKtkozguy7/MR2R/ynu
+         LtD7g6IMp4PRRj11DohjjcRDf+l4vp6Cabl8oX78gtNRyrX0pzKO6lT8DE1lvfKhRaA9
+         nXBy3yNr9k5TFRN3qfuee4BgcYdd5RaJKqQS1oE0OrV1+mfdYN6LILVuQhOKrTWVjpgJ
+         sOld3AdWulIj7Fa9D9WL3tZs4GfJnfKA+H+Ge3C7gSBTrHFiRmCy24gOJcCzz5caRY9V
+         8YWS/0tw24asfyeqkuKAcdzkvqjlHC0rROblChFfjD4vPyrkz0jd7aXBEHG/1s5N0KCP
+         BKEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678284809;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fYJgnl+7Us7KVNz74ou1/RTlLrV9+lTS5g77LiBuQ3c=;
+        b=XCTjRmX/KlRm7wApElvPKaP+nXXqp2fZ4hypY3gmFpdK92RmMFCu3oaMo9yqLd2O6g
+         BhwRCrOjxQwvD1G9taHrZDJ17sZU63X+FFqLSAeUBNyjvhIRWZ9w3yyR9TZ9i7EBEegZ
+         IHDppC42nLakSHZp7gfLoNPl65MlEW5Btv9yQBWXzU7uWczwshEEvDfXj9FqT6ZFhH3H
+         6XXRl92df8/rjUZ2/zxPI5CN+I4y1seIiivzQ/4LKPGWI+jZkbUUKzLMleqmmTxwdWYp
+         x/rGRtxeCydC6tQ4yhIcE39pP3Jq1/yoc6gSJUfjkeCjJGXhby7hqK+wZjXTvucFhtNS
+         AtoA==
+X-Gm-Message-State: AO0yUKXIS0W5BzEMKyp2bocL5QgqNLU0XKI3trKKdIWA5cFAf4PuBku1
+        6/aRqLVHjquN8OYmidZNcGI=
+X-Google-Smtp-Source: AK7set9KCSNRGEm9sChY9O0wotWq3iIMBNWylAEhP+Ubz3oleChgvVargNdNb4crfUiCIX8/U+bswg==
+X-Received: by 2002:a17:906:fa82:b0:8ea:a647:a5aa with SMTP id lt2-20020a170906fa8200b008eaa647a5aamr23318599ejb.38.1678284808714;
+        Wed, 08 Mar 2023 06:13:28 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:c4be:f7db:77fd:b9e5])
+        by smtp.gmail.com with ESMTPSA id h7-20020a50cdc7000000b004bc15a440f1sm8283607edj.78.2023.03.08.06.13.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 06:07:08 -0800 (PST)
-Date:   Wed, 8 Mar 2023 15:07:04 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH] virtio: Reorder fields in 'struct virtqueue'
-Message-ID: <20230308140704.jsggcp4g3tz7vhxu@sgarzare-redhat>
-References: <8f3d2e49270a2158717e15008e7ed7228196ba02.1676707807.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <8f3d2e49270a2158717e15008e7ed7228196ba02.1676707807.git.christophe.jaillet@wanadoo.fr>
+        Wed, 08 Mar 2023 06:13:28 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        Todd E Brandt <todd.e.brandt@linux.intel.com>,
+        linux-pm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: update the 01.org website entries
+Date:   Wed,  8 Mar 2023 15:13:22 +0100
+Message-Id: <20230308141322.25201-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Feb 18, 2023 at 09:10:31AM +0100, Christophe JAILLET wrote:
->Group some variables based on their sizes to reduce hole and avoid padding.
->On x86_64, this shrinks the size of 'struct virtqueue'
->from 72 to 68 bytes.
->
->It saves a few bytes of memory.
->
->Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->---
+The 01.org links in MAINTAINERS now forward to different other pages or do
+not resolve.
 
-LGTM!
+The link https://01.org/linuxgraphics/ resolves to the Intel Graphics for
+Linux - Programmer's Reference Manuals. Update this webpage entry.
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+The link
+https://01.org/linuxgraphics/gfx-docs/maintainer-tools/drm-misc.html
+does not resolve. Remove this webpage entry.
 
->Using pahole
->
->Before:
->======
->struct virtqueue {
->	struct list_head           list;                 /*     0    16 */
->	void                       (*callback)(struct virtqueue *); /*    16     8 */
->	const char  *              name;                 /*    24     8 */
->	struct virtio_device *     vdev;                 /*    32     8 */
->	unsigned int               index;                /*    40     4 */
->	unsigned int               num_free;             /*    44     4 */
->	unsigned int               num_max;              /*    48     4 */
->
->	/* XXX 4 bytes hole, try to pack */
->
->	void *                     priv;                 /*    56     8 */
->	/* --- cacheline 1 boundary (64 bytes) --- */
->	bool                       reset;                /*    64     1 */
->
->	/* size: 72, cachelines: 2, members: 9 */
->	/* sum members: 61, holes: 1, sum holes: 4 */
->	/* padding: 7 */
->	/* last cacheline: 8 bytes */
->};
->
->After:
->=====
->struct virtqueue {
->	struct list_head           list;                 /*     0    16 */
->	void                       (*callback)(struct virtqueue *); /*    16     8 */
->	const char  *              name;                 /*    24     8 */
->	struct virtio_device *     vdev;                 /*    32     8 */
->	unsigned int               index;                /*    40     4 */
->	unsigned int               num_free;             /*    44     4 */
->	unsigned int               num_max;              /*    48     4 */
->	bool                       reset;                /*    52     1 */
->
->	/* XXX 3 bytes hole, try to pack */
->
->	void *                     priv;                 /*    56     8 */
->
->	/* size: 64, cachelines: 1, members: 9 */
->	/* sum members: 61, holes: 1, sum holes: 3 */
->};
->---
-> include/linux/virtio.h | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/include/linux/virtio.h b/include/linux/virtio.h
->index 6ac2655500dc..9439ae898310 100644
->--- a/include/linux/virtio.h
->+++ b/include/linux/virtio.h
->@@ -35,8 +35,8 @@ struct virtqueue {
-> 	unsigned int index;
-> 	unsigned int num_free;
-> 	unsigned int num_max;
->-	void *priv;
-> 	bool reset;
->+	void *priv;
-> };
->
-> int virtqueue_add_outbuf(struct virtqueue *vq,
->-- 
->2.34.1
->
+The link https://01.org/igvt-g resolves to
+https://github.com/intel/gvt-linux. Remove the webpage entry, as the
+github repository is already referred to by the T: entry in that section.
+
+The link resolves the pm-graph project page in Intel's Open Ecosystem area
+at intel.com. Update this webpage entry.
+
+M:      "Todd E Brandt" <todd.e.brandt@linux.intel.com>
+L:      linux-pm@vger.kernel.org
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1333928a7be4..99adcd74b06a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6747,7 +6747,6 @@ M:	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+ M:	Maxime Ripard <mripard@kernel.org>
+ M:	Thomas Zimmermann <tzimmermann@suse.de>
+ S:	Maintained
+-W:	https://01.org/linuxgraphics/gfx-docs/maintainer-tools/drm-misc.html
+ T:	git git://anongit.freedesktop.org/drm/drm-misc
+ F:	Documentation/gpu/
+ F:	drivers/gpu/drm/*
+@@ -10250,7 +10249,7 @@ M:	Rodrigo Vivi <rodrigo.vivi@intel.com>
+ M:	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+ L:	intel-gfx@lists.freedesktop.org
+ S:	Supported
+-W:	https://01.org/linuxgraphics/
++W:	https://www.intel.com/content/www/us/en/develop/documentation/intel-graphics-for-linux-programmers-reference-guide/top.html
+ Q:	http://patchwork.freedesktop.org/project/intel-gfx/
+ B:	https://gitlab.freedesktop.org/drm/intel/-/wikis/How-to-file-i915-bugs
+ C:	irc://irc.oftc.net/intel-gfx
+@@ -10312,7 +10311,6 @@ M:	Zhi Wang <zhi.a.wang@intel.com>
+ L:	intel-gvt-dev@lists.freedesktop.org
+ L:	intel-gfx@lists.freedesktop.org
+ S:	Supported
+-W:	https://01.org/igvt-g
+ T:	git https://github.com/intel/gvt-linux.git
+ F:	drivers/gpu/drm/i915/gvt/
+ 
+@@ -16668,7 +16666,7 @@ PM-GRAPH UTILITY
+ M:	"Todd E Brandt" <todd.e.brandt@linux.intel.com>
+ L:	linux-pm@vger.kernel.org
+ S:	Supported
+-W:	https://01.org/pm-graph
++W:	https://www.intel.com/content/www/us/en/developer/topic-technology/open/pm-graph/overview.html
+ B:	https://bugzilla.kernel.org/buglist.cgi?component=pm-graph&product=Tools
+ T:	git git://github.com/intel/pm-graph
+ F:	tools/power/pm-graph
+-- 
+2.17.1
 
