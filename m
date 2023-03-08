@@ -2,85 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0E0C678D5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 07:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228E1C64EC4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Mar 2023 08:48:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbjCHHit (ORCPT
+        id S229981AbjCHIs2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Mar 2023 02:38:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39864 "EHLO
+        Wed, 8 Mar 2023 03:48:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbjCHHip (ORCPT
+        with ESMTP id S229486AbjCHIsY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Mar 2023 02:38:45 -0500
-X-Greylist: delayed 204 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 07 Mar 2023 23:38:11 PST
-Received: from h-241.webit.at (h-241.webit.at [213.208.138.241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ACD3212B1
-        for <kernel-janitors@vger.kernel.org>; Tue,  7 Mar 2023 23:38:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=winischhofer.net; s=rsa1; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=np2VeMjbFObtnEPKwHULGC9atl9R6YcO1ecS1ymUv9w=; b=NUwKJgdS/D7HyEhaJ8BQic2610
-        7+RzyW6H8ns30uSFexbfPEAN/sZmaUUhdOrMqW6MOsmLpfXt2V8OJ4TZN9gL6jmeInz+uWDFvoD76
-        ZH0lD4Cvw/nABr5LHHynklz8et3O2M0VWK53cd7qFfOeFvoXt3SGiPKiMlJdOT9IyMwU=;
-Message-ID: <59fee461-5aa5-dc66-2470-df55eaf0fe76@winischhofer.net>
-Date:   Wed, 8 Mar 2023 08:33:39 +0100
+        Wed, 8 Mar 2023 03:48:24 -0500
+X-Greylist: delayed 8838 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 08 Mar 2023 00:48:22 PST
+Received: from 6.mo581.mail-out.ovh.net (6.mo581.mail-out.ovh.net [188.165.39.218])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615198F532
+        for <kernel-janitors@vger.kernel.org>; Wed,  8 Mar 2023 00:48:22 -0800 (PST)
+Received: from director9.ghost.mail-out.ovh.net (unknown [10.108.4.8])
+        by mo581.mail-out.ovh.net (Postfix) with ESMTP id 8D6A925DE1
+        for <kernel-janitors@vger.kernel.org>; Wed,  8 Mar 2023 06:21:02 +0000 (UTC)
+Received: from ghost-submission-6684bf9d7b-8btrn (unknown [10.110.103.246])
+        by director9.ghost.mail-out.ovh.net (Postfix) with ESMTPS id E51751FE41;
+        Wed,  8 Mar 2023 06:21:01 +0000 (UTC)
+Received: from RCM-web1.webmail.mail.ovh.net ([176.31.238.120])
+        by ghost-submission-6684bf9d7b-8btrn with ESMTPSA
+        id cjWaNk0pCGTz1QMA9qD2fA
+        (envelope-from <rafal@milecki.pl>); Wed, 08 Mar 2023 06:21:01 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:91.0)
- Gecko/20100101 Thunderbird/91.13.1
-Subject: Re: [PATCH] MAINTAINERS: orphan SIS FRAMEBUFFER DRIVER
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
-From:   Thomas Winischhofer <thomas@winischhofer.net>
-In-Reply-To: <20230308071921.10963-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date:   Wed, 08 Mar 2023 07:21:00 +0100
+From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-leds@vger.kernel.org,
+        William Zhang <william.zhang@broadcom.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: bcm63138: refer to ARCH_BCMBCA instead of
+ ARCH_BCM4908
+In-Reply-To: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
+References: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
+User-Agent: Roundcube Webmail/1.4.13
+Message-ID: <b2b0db0e6489a4a7daa2606c1febabbb@milecki.pl>
+X-Sender: rafal@milecki.pl
+X-Originating-IP: 194.187.74.233
+X-Webmail-UserID: rafal@milecki.pl
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 2976316407250594779
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrvdduuddgledvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggffhffvvefujghffgfkgihitgfgsehtkehjtddtreejnecuhfhrohhmpeftrghfrghlucfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpeejvdelgfeutdfhfeelheegfedtleduleeuvdfgfeefvefhvedtheetjeetfeehgeenucfkphepuddvjedrtddrtddruddpudelgedrudekjedrjeegrddvfeefpddujeeirdefuddrvdefkedruddvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoehrrghfrghlsehmihhlvggtkhhirdhplheqpdhnsggprhgtphhtthhopedupdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheekuddpmhhouggvpehsmhhtphhouhht
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-Confirm.
-
-/Thomas
-
-
-On 08.03.23 08:19, Lukas Bulwahn wrote:
-> This was triggered by the fact that the webpage:
+On 2023-03-07 09:29, Lukas Bulwahn wrote:
+> Commit dd5c672d7ca9 ("arm64: bcmbca: Merge ARCH_BCM4908 to 
+> ARCH_BCMBCA")
+> removes config ARCH_BCM4908 as config ARCH_BCMBCA has the same intent.
 > 
->   http://www.winischhofer.net/linuxsisvga.shtml
+> Probably due to concurrent development, commit a0ba692072d8 ("leds:
+> bcm63138: add support for BCM63138 controller") introduces 'LED Support
+> for Broadcom BCM63138 SoC' that depends on ARCH_BCM4908, but this use 
+> was
+> not visible during the config refactoring from the commit above. Hence,
+> these two changes create a reference to a non-existing config symbol.
 > 
-> cannot be reached anymore.
-> 
-> Thomas Winischhofer is still reachable at the given email address, but he
-> has not been active since 2005.
-> 
-> Mark the SIS FRAMEBUFFER DRIVER as orphan to reflect the current state.
+> Adjust the LEDS_BCM63138 definition to refer to ARCH_BCMBCA instead of
+> ARCH_BCM4908 to remove the reference to the non-existing config symbol
+> ARCH_BCM4908.
 > 
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  MAINTAINERS | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5d8f46f35aa4..354577534aef 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19191,9 +19191,7 @@ W:	http://www.brownhat.org/sis900.html
->  F:	drivers/net/ethernet/sis/sis900.*
->  
->  SIS FRAMEBUFFER DRIVER
-> -M:	Thomas Winischhofer <thomas@winischhofer.net>
-> -S:	Maintained
-> -W:	http://www.winischhofer.net/linuxsisvga.shtml
-> +S:	Orphan
->  F:	Documentation/fb/sisfb.rst
->  F:	drivers/video/fbdev/sis/
->  F:	include/video/sisfb.h
+
+Acked-by: Rafał Miłecki <rafal@milecki.pl>
