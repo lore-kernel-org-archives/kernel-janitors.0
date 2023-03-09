@@ -2,76 +2,74 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9BBC61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Mar 2023 09:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B53C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Mar 2023 09:21:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbjCIJK2 (ORCPT
+        id S231241AbjCIJVE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Mar 2023 04:10:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60732 "EHLO
+        Thu, 9 Mar 2023 04:21:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230494AbjCIJJv (ORCPT
+        with ESMTP id S231204AbjCIJUl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Mar 2023 04:09:51 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6544A88EEE
-        for <kernel-janitors@vger.kernel.org>; Thu,  9 Mar 2023 01:09:44 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3FA54B81EA6
-        for <kernel-janitors@vger.kernel.org>; Thu,  9 Mar 2023 09:09:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74427C433EF;
-        Thu,  9 Mar 2023 09:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1678352981;
-        bh=BJpDLLGSbf0JY409g2Z5Y3znzLrkWGN8coeHCLZfjtQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F6S0Zx6rtJfft77ADuWW12+28sV/emIjyiCH3kHnx1zQHcvOAsBJyEpxcz9TIAkil
-         rJs6+Siw+ZcGWVXp36GLcYjWTFsfwX2h12YCYFwowCsEc63PWGSJNMV2pesxJX/ulb
-         JdzmWgA+jvgPvGi7BK6cOnuls9Hh/bSYMMiunni4=
-Date:   Thu, 9 Mar 2023 10:09:38 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Phillip Potter <phil@philpotter.co.uk>,
-        Pavel Skripkin <paskripkin@gmail.com>,
-        Deepak R Varma <drv@mailo.com>,
-        Charlie Sands <sandsch@northvilleschools.net>,
-        Mahak Gupta <mahak_g@cs.iitr.ac.in>,
-        Alaa Mohamed <eng.alaamohamedsoliman.am@gmail.com>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] staging: r8188eu: fix a potential integer underflow bug
-Message-ID: <ZAmiUmR2qRJhitds@kroah.com>
-References: <Y/YfzZeFCAPiZ6RV@kili>
+        Thu, 9 Mar 2023 04:20:41 -0500
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83057769DF;
+        Thu,  9 Mar 2023 01:20:36 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id d41-20020a05600c4c2900b003e9e066550fso746303wmp.4;
+        Thu, 09 Mar 2023 01:20:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678353635;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q4DnOrK6eluIY3csFfRpB7iVzEAaVZe/zURRAiYA2H0=;
+        b=8Opm1xHwy1Us7W9hSVEoWUwJYspXpQ7AJYK3hNqoffpSRpF/+dGMV+HxwuNq3p+4xx
+         zhmENzl6K/M6OH6lpljPv1SQKU5Lp8OiZZYG32Y6SW5RokZpZiP/v2kWH7x2aFrDLGls
+         VaB48jiHWjbolCSchMi3uu8m0SGdgQCl8bEwNrwF3Had9MIo+LRt7zLLmzfpi54Tpu6L
+         gFfsVgznhGSgtrud1VWW4sW3KrhDfxyYMWqf8mcpDKPBgyTZIZ4oe2QhzPrEfQuPM0nw
+         J11rmGw3h8rUZrCCjvgqBEEYkbsnNpyr0K1GiY3pr+nFB3i063+cecCaPLwJQ42ITR2V
+         k5jA==
+X-Gm-Message-State: AO0yUKW3dSN7L6HAGqseTWAbfPZDmTCjrcyPiBh+pa2A8zW23Ng6y2zV
+        xmla65iT761v5lGBuxXqBDc=
+X-Google-Smtp-Source: AK7set8O87BBg+d2mUeI1CxhxmCi92kGzMzTqUzavkVL5P8z3TFNd0uw7xpCE22oHD/Ia+FYkGWwDQ==
+X-Received: by 2002:a05:600c:3ac5:b0:3e7:534a:694e with SMTP id d5-20020a05600c3ac500b003e7534a694emr1500950wms.3.1678353634959;
+        Thu, 09 Mar 2023 01:20:34 -0800 (PST)
+Received: from [192.168.64.80] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
+        by smtp.gmail.com with ESMTPSA id d20-20020a1c7314000000b003e11ad0750csm1874514wmb.47.2023.03.09.01.20.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Mar 2023 01:20:34 -0800 (PST)
+Message-ID: <538393e2-3435-7e93-d688-d77f45552286@grimberg.me>
+Date:   Thu, 9 Mar 2023 11:20:33 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y/YfzZeFCAPiZ6RV@kili>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] MAINTAINERS: repair malformed T: entries in NVM EXPRESS
+ DRIVERS
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        linux-nvme@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230308144132.13368-1-lukas.bulwahn@gmail.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20230308144132.13368-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Feb 22, 2023 at 04:59:41PM +0300, Dan Carpenter wrote:
-> Here the code is testing to see if skb->len meets a minimum size
-> requirement.  However if skb->len is very small then the ETH_HLEN
-> subtraction will result in a negative which is then type promoted
-> to an unsigned int and the condition will be true.
-> 
-> Generally, when you have an untrusted variable like skb->len, you
-> should move all the math to the other side of the comparison.
-> 
-> Fixes: 15865124feed ("staging: r8188eu: introduce new core dir for RTL8188eu driver")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Compile tested only.  This is basic algebra of moving parts of the
-> equation from one side to the other and I am surprisingly bad at
-> something that I was supposed to have learned in 9th grade.
-> 
->  drivers/staging/r8188eu/core/rtw_br_ext.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This driver is now deleted, so no need to worry about this anymore.
+> The T: entries shall be composed of a SCM tree type (git, hg, quilt, stgit
+> or topgit) and location.
+> 
+> Add the SCM tree type to the T: entry, and reorder the file entries in
+> alphabetical order.
+> 
+> Fixes: b508fc354f6d ("nvme: update maintainers information")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-thanks,
-
-greg k-h
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
