@@ -2,44 +2,56 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DCBC61DA4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Mar 2023 09:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8F4C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Mar 2023 14:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230473AbjCIJme (ORCPT
+        id S231657AbjCIOME (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Mar 2023 04:42:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59942 "EHLO
+        Thu, 9 Mar 2023 09:12:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbjCIJmd (ORCPT
+        with ESMTP id S231659AbjCIOL0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Mar 2023 04:42:33 -0500
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2C81E824F;
-        Thu,  9 Mar 2023 01:42:31 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 833F168B05; Thu,  9 Mar 2023 10:42:27 +0100 (CET)
-Date:   Thu, 9 Mar 2023 10:42:27 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: repair malformed T: entries in NVM
- EXPRESS DRIVERS
-Message-ID: <20230309094227.GC24868@lst.de>
-References: <20230308144132.13368-1-lukas.bulwahn@gmail.com>
+        Thu, 9 Mar 2023 09:11:26 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B391A6152D;
+        Thu,  9 Mar 2023 06:10:05 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0435EAD7;
+        Thu,  9 Mar 2023 06:10:49 -0800 (PST)
+Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 94FC63F5A1;
+        Thu,  9 Mar 2023 06:10:04 -0800 (PST)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Cristian Marussi <cristian.marussi@arm.com>,
+        Dan Carpenter <error27@gmail.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] firmware: arm_scmi: Clean up a return statement
+Date:   Thu,  9 Mar 2023 14:10:02 +0000
+Message-Id: <167837075462.2091199.3854987429917984262.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <Y86im5M49p3ePGxj@kili>
+References: <Y86im5M49p3ePGxj@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230308144132.13368-1-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thanks,
+On Mon, 23 Jan 2023 18:07:07 +0300, Dan Carpenter wrote:
+> The comments say "enabled" where "disabled" is intended.  Also it's
+> cleaner to return zero explicitly instead of ret.
+> 
+> 
 
-applied to nvme-6.3.
+Applied to sudeep.holla/linux (for-next/scmi/fixes), thanks!
+
+[1/1] firmware: arm_scmi: Clean up a return statement
+      https://git.kernel.org/sudeep.holla/c/8ab5059dc4f4
+--
+Regards,
+Sudeep
+
