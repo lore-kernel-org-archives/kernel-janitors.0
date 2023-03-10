@@ -2,102 +2,113 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423ACC64EC4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Mar 2023 22:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649E8C64EC4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Mar 2023 12:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230144AbjCIWxn (ORCPT
+        id S230135AbjCJMbW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Mar 2023 17:53:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34206 "EHLO
+        Fri, 10 Mar 2023 07:31:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229874AbjCIWxl (ORCPT
+        with ESMTP id S229906AbjCJMbT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Mar 2023 17:53:41 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E0602211C;
-        Thu,  9 Mar 2023 14:53:03 -0800 (PST)
-Received: from localhost.localdomain (unknown [39.45.15.64])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2BF716602FA9;
-        Thu,  9 Mar 2023 22:52:37 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678402361;
-        bh=UbpO6Jn9dro3cJAuyDklcDJVca+wQ5DOLjgvsxCmB3k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ILDHMEFbQoZQA5pFSSPt7XyulkZLitsl0ZKD026XA/PgrT2RXVxK28xdfTgNTvQ9b
-         9+oc96wVTputNYxYjZtBGDFS8QWJswZd5TalA8yhvzPHVD+rfyjvH2Lur8eg0+y6yX
-         MqFcTGZ7uQmf56FEaDDFPgiC8jRAGdLplPQ3M4GVUq/IU8VLDSbZerQM7KwgWblzIq
-         ho2LbFP0xrT1VK43VLlXNiuyVsypjoDicU7OzvS9NhHNY3npU3sQXDpBT5qQAo4lxB
-         pmhjKQFe/sWiA+dNyceOvmgYzEk1d+F2h3B7TCVZCBq7Yh4IQehSUQ3Q4R3Cn7txEQ
-         6FmYmVLP0crxA==
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Ariel Elior <aelior@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        aleksander.lobakin@intel.com, simon.horman@corigine.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3] qede: remove linux/version.h and linux/compiler.h
-Date:   Fri, 10 Mar 2023 03:52:05 +0500
-Message-Id: <20230309225206.2473644-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+        Fri, 10 Mar 2023 07:31:19 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C47810A29A;
+        Fri, 10 Mar 2023 04:31:18 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id r19-20020a05600c459300b003eb3e2a5e7bso3337326wmo.0;
+        Fri, 10 Mar 2023 04:31:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678451477;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=luzXNHAhAe8Yhdg3tb56C4zTrY7DU3hQHfSExYhU4qg=;
+        b=ccr0N5tbxPM3LDVBnowbqqw6kxCGVU8KvLGs+UWh6CHiDphc14Y0wukelQZB22B1Yu
+         fVpYPi9zV+c84ZzGiXXJK0q8G6vPccIGgAV0oWbJoV1HNkfaOgc8KeU1JERxosNjUhP9
+         26BZq2PMDGNOXjxIXi2XFHe8O1rvs9C2Pnjr+2E/w9H+GHlBN2sdECbIdXXlN3wI+K9K
+         yNYlFxEhU0iuvM6kQD3MziSu9cPbg6fe7mCPrdkG5aDvOtoiy7CtM3qkGSJHDw4n0Wj0
+         Mzxuum2ZxK0ho/IX3VDgw8Pi59lKwR3FYzEIQu8wipdd6p4JRsFvypQiaL0tS5A8VCJx
+         6bMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678451477;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=luzXNHAhAe8Yhdg3tb56C4zTrY7DU3hQHfSExYhU4qg=;
+        b=6Wn1ldSrbdO1Ua4k4DO7kiAB6L2yVN8xZUT1ZsdikBGv74Ye8Z2KNFHP2sXuD+qD+7
+         y9wfY80mFDEmzCUBhiihc6YiP35e0vsvcu8w0bLQ0WWpc8N37uKKt0pwTNOdytMJ/1gz
+         f6a5rqFAZq1jwXZxjdjmtIs3OarCjrePgNpv5rAX6Cv9w+bcrWUBHww0AvIKzGeOtxCE
+         areTo9jLOva3Yvrhc/g4W+Q8IbmcOuY6NqLLh2Bln+ZJZefxj8r4wRpVglM42l+u/4E2
+         hDN2MRWeAS8zbSe0RvwGFS0a+X2CtYg3kaGRCm1tCnPWg45Ew7fmNW2xV2t0cKOrKyhY
+         g2Fg==
+X-Gm-Message-State: AO0yUKXzd7zriYIhCkq8z2neAZS1wgJVeyGQUg2tuiLRyWJbnWmBlJ7/
+        /MvtaBXiSHySyt/lBYkd0ZdNWrwp3o++BA==
+X-Google-Smtp-Source: AK7set9y1Pft3ReICIr5ocW19F7+rRgKPx4JB9o5IpPOWpbleVzu3b57MjC+v6kT2tSzTGd8IYqGjQ==
+X-Received: by 2002:a05:600c:358a:b0:3ea:c101:72b with SMTP id p10-20020a05600c358a00b003eac101072bmr2466391wmq.17.1678451476933;
+        Fri, 10 Mar 2023 04:31:16 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id w22-20020a1cf616000000b003e20fa01a86sm1998871wmc.13.2023.03.10.04.31.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Mar 2023 04:31:16 -0800 (PST)
+Date:   Fri, 10 Mar 2023 15:31:13 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Orlando Chamberlain <orlandoch.dev@gmail.com>
+Cc:     Mark Gross <markgross@kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform/x86: apple-gmux: return -EFAULT if copy fails
+Message-ID: <0bdfa8c2-cb22-4bec-8773-584060613043@kili.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-make versioncheck reports the following:
-./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
-./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
+The copy_to/from_user() functions return the number of bytes remaining
+to be copied, but we want to return -EFAULT to the user.
 
-So remove linux/version.h from both of these files. Also remove
-linux/compiler.h while at it as it is also not being used.
-
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Fixes: ce3fef2eb235 ("platform/x86: apple-gmux: add debugfs interface")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
-Changes since v2:
-- Correct subject and check patch application on net-next
+ drivers/platform/x86/apple-gmux.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-Changes since v1:
-- Remove linux/compiler.h as well
----
- drivers/net/ethernet/qlogic/qede/qede.h         | 2 --
- drivers/net/ethernet/qlogic/qede/qede_ethtool.c | 1 -
- 2 files changed, 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qede/qede.h b/drivers/net/ethernet/qlogic/qede/qede.h
-index f90dcfe9ee68..f9931ecb7baa 100644
---- a/drivers/net/ethernet/qlogic/qede/qede.h
-+++ b/drivers/net/ethernet/qlogic/qede/qede.h
-@@ -6,8 +6,6 @@
+diff --git a/drivers/platform/x86/apple-gmux.c b/drivers/platform/x86/apple-gmux.c
+index 787cf2a7e268..77e63d2da7b6 100644
+--- a/drivers/platform/x86/apple-gmux.c
++++ b/drivers/platform/x86/apple-gmux.c
+@@ -694,7 +694,6 @@ static ssize_t gmux_selected_port_data_write(struct file *file,
+ 		const char __user *userbuf, size_t count, loff_t *ppos)
+ {
+ 	struct apple_gmux_data *gmux_data = file->private_data;
+-	int ret;
  
- #ifndef _QEDE_H_
- #define _QEDE_H_
--#include <linux/compiler.h>
--#include <linux/version.h>
- #include <linux/workqueue.h>
- #include <linux/netdevice.h>
- #include <linux/interrupt.h>
-diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-index 8034d812d5a0..374a86b875a3 100644
---- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
-@@ -4,7 +4,6 @@
-  * Copyright (c) 2019-2020 Marvell International Ltd.
-  */
+ 	if (*ppos)
+ 		return -EINVAL;
+@@ -702,16 +701,16 @@ static ssize_t gmux_selected_port_data_write(struct file *file,
+ 	if (count == 1) {
+ 		u8 data;
  
--#include <linux/version.h>
- #include <linux/types.h>
- #include <linux/netdevice.h>
- #include <linux/etherdevice.h>
+-		ret = copy_from_user(&data, userbuf, 1);
+-		if (ret)
+-			return ret;
++		if (copy_from_user(&data, userbuf, 1))
++			return -EFAULT;
++
+ 		gmux_write8(gmux_data, gmux_data->selected_port, data);
+ 	} else if (count == 4) {
+ 		u32 data;
+ 
+-		ret = copy_from_user(&data, userbuf, 4);
+-		if (ret)
+-			return ret;
++		if (copy_from_user(&data, userbuf, 4))
++			return -EFAULT;
++
+ 		gmux_write32(gmux_data, gmux_data->selected_port, data);
+ 	} else
+ 		return -EINVAL;
 -- 
-2.39.2
+2.39.1
 
