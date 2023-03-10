@@ -2,113 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649E8C64EC4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Mar 2023 12:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F348C6FD1F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Mar 2023 12:37:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbjCJMbW (ORCPT
+        id S229913AbjCJMhZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Mar 2023 07:31:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39934 "EHLO
+        Fri, 10 Mar 2023 07:37:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229906AbjCJMbT (ORCPT
+        with ESMTP id S230461AbjCJMhL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Mar 2023 07:31:19 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C47810A29A;
-        Fri, 10 Mar 2023 04:31:18 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id r19-20020a05600c459300b003eb3e2a5e7bso3337326wmo.0;
-        Fri, 10 Mar 2023 04:31:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678451477;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=luzXNHAhAe8Yhdg3tb56C4zTrY7DU3hQHfSExYhU4qg=;
-        b=ccr0N5tbxPM3LDVBnowbqqw6kxCGVU8KvLGs+UWh6CHiDphc14Y0wukelQZB22B1Yu
-         fVpYPi9zV+c84ZzGiXXJK0q8G6vPccIGgAV0oWbJoV1HNkfaOgc8KeU1JERxosNjUhP9
-         26BZq2PMDGNOXjxIXi2XFHe8O1rvs9C2Pnjr+2E/w9H+GHlBN2sdECbIdXXlN3wI+K9K
-         yNYlFxEhU0iuvM6kQD3MziSu9cPbg6fe7mCPrdkG5aDvOtoiy7CtM3qkGSJHDw4n0Wj0
-         Mzxuum2ZxK0ho/IX3VDgw8Pi59lKwR3FYzEIQu8wipdd6p4JRsFvypQiaL0tS5A8VCJx
-         6bMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678451477;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=luzXNHAhAe8Yhdg3tb56C4zTrY7DU3hQHfSExYhU4qg=;
-        b=6Wn1ldSrbdO1Ua4k4DO7kiAB6L2yVN8xZUT1ZsdikBGv74Ye8Z2KNFHP2sXuD+qD+7
-         y9wfY80mFDEmzCUBhiihc6YiP35e0vsvcu8w0bLQ0WWpc8N37uKKt0pwTNOdytMJ/1gz
-         f6a5rqFAZq1jwXZxjdjmtIs3OarCjrePgNpv5rAX6Cv9w+bcrWUBHww0AvIKzGeOtxCE
-         areTo9jLOva3Yvrhc/g4W+Q8IbmcOuY6NqLLh2Bln+ZJZefxj8r4wRpVglM42l+u/4E2
-         hDN2MRWeAS8zbSe0RvwGFS0a+X2CtYg3kaGRCm1tCnPWg45Ew7fmNW2xV2t0cKOrKyhY
-         g2Fg==
-X-Gm-Message-State: AO0yUKXzd7zriYIhCkq8z2neAZS1wgJVeyGQUg2tuiLRyWJbnWmBlJ7/
-        /MvtaBXiSHySyt/lBYkd0ZdNWrwp3o++BA==
-X-Google-Smtp-Source: AK7set9y1Pft3ReICIr5ocW19F7+rRgKPx4JB9o5IpPOWpbleVzu3b57MjC+v6kT2tSzTGd8IYqGjQ==
-X-Received: by 2002:a05:600c:358a:b0:3ea:c101:72b with SMTP id p10-20020a05600c358a00b003eac101072bmr2466391wmq.17.1678451476933;
-        Fri, 10 Mar 2023 04:31:16 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id w22-20020a1cf616000000b003e20fa01a86sm1998871wmc.13.2023.03.10.04.31.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Mar 2023 04:31:16 -0800 (PST)
-Date:   Fri, 10 Mar 2023 15:31:13 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Orlando Chamberlain <orlandoch.dev@gmail.com>
-Cc:     Mark Gross <markgross@kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform/x86: apple-gmux: return -EFAULT if copy fails
-Message-ID: <0bdfa8c2-cb22-4bec-8773-584060613043@kili.mountain>
+        Fri, 10 Mar 2023 07:37:11 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D01110C72A;
+        Fri, 10 Mar 2023 04:36:39 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C9EEBB82289;
+        Fri, 10 Mar 2023 12:36:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A42DDC433D2;
+        Fri, 10 Mar 2023 12:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678451796;
+        bh=PWCVTsxCw26Cz18rQKUtN2MtA3+P6cbKGi9GO9ylpbY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gq85VTs8UU8E8IvynBgdr6eI3J2MbgjX/XPVexU4GKZbE2iZMln1k/EF35wc6+Fxs
+         fWFWmDTT5HSN/pUGIkAt800H4Rq4xPJCdbddaUwRyGwqNMvpq+oEYaZxEKuLVCuTVt
+         wobieWVxvIKtiXGHNsjkzysydfAiMolwCy7kT6P7M90+c//nQRJ6JAFUt9IRN71i9c
+         F6gIorX3ZHWbTWLBOZojMu5N/K4RL5Z8LjTI9JyXc++76KyRpxv1A832IibdFVRmhQ
+         eotnoCo7QxjAF/Q0GUtWeFsiS9MXtt7uUiyksk7LTEG2kFvZURIJlRjusB6NUUT5vD
+         QhNOfs97rupAw==
+From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
+To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar: avoid defines prefixed with CONFIG
+Date:   Fri, 10 Mar 2023 13:36:30 +0100
+Message-Id: <167845177669.1223205.12603940242969013581.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230113084516.31888-1-lukas.bulwahn@gmail.com>
+References: <20230113084516.31888-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The copy_to/from_user() functions return the number of bytes remaining
-to be copied, but we want to return -EFAULT to the user.
+On Fri, 13 Jan 2023 09:45:16 +0100, Lukas Bulwahn wrote:
+> Defines prefixed with "CONFIG" should be limited to proper Kconfig options,
+> that are introduced in a Kconfig file.
+> 
+> Here, a definition for a bitmask to configure the SEND_ENABLE mode is named
+> CONFIG_SEND_ENABLE.
+> 
+> Rename this local definition to CONFIGURE_SEND_ENABLE to avoid defines
+> prefixed with "CONFIG".
+> 
+> [...]
 
-Fixes: ce3fef2eb235 ("platform/x86: apple-gmux: add debugfs interface")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/platform/x86/apple-gmux.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Applied to pci/rcar, thanks!
 
-diff --git a/drivers/platform/x86/apple-gmux.c b/drivers/platform/x86/apple-gmux.c
-index 787cf2a7e268..77e63d2da7b6 100644
---- a/drivers/platform/x86/apple-gmux.c
-+++ b/drivers/platform/x86/apple-gmux.c
-@@ -694,7 +694,6 @@ static ssize_t gmux_selected_port_data_write(struct file *file,
- 		const char __user *userbuf, size_t count, loff_t *ppos)
- {
- 	struct apple_gmux_data *gmux_data = file->private_data;
--	int ret;
- 
- 	if (*ppos)
- 		return -EINVAL;
-@@ -702,16 +701,16 @@ static ssize_t gmux_selected_port_data_write(struct file *file,
- 	if (count == 1) {
- 		u8 data;
- 
--		ret = copy_from_user(&data, userbuf, 1);
--		if (ret)
--			return ret;
-+		if (copy_from_user(&data, userbuf, 1))
-+			return -EFAULT;
-+
- 		gmux_write8(gmux_data, gmux_data->selected_port, data);
- 	} else if (count == 4) {
- 		u32 data;
- 
--		ret = copy_from_user(&data, userbuf, 4);
--		if (ret)
--			return ret;
-+		if (copy_from_user(&data, userbuf, 4))
-+			return -EFAULT;
-+
- 		gmux_write32(gmux_data, gmux_data->selected_port, data);
- 	} else
- 		return -EINVAL;
--- 
-2.39.1
+[1/1] PCI: rcar: avoid defines prefixed with CONFIG
+      https://git.kernel.org/pci/pci/c/727de4c08768
 
+Thanks,
+Lorenzo
