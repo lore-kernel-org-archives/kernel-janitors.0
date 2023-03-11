@@ -2,122 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C012C64EC4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Mar 2023 14:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD3DC678D5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Mar 2023 05:40:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232523AbjCJOai (ORCPT
+        id S229906AbjCKFkY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Mar 2023 09:30:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55706 "EHLO
+        Sat, 11 Mar 2023 00:40:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232505AbjCJOaQ (ORCPT
+        with ESMTP id S229672AbjCKFkV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Mar 2023 09:30:16 -0500
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2095.outbound.protection.outlook.com [40.107.237.95])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B52FF4D87;
-        Fri, 10 Mar 2023 06:29:04 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PvYTcOIUCChG3I7p/lRXAtOD4YxJjJqKKCy4pAov+vty+tl+ehnvL/1B7JxNu2PHQJkpOfJMVzdpiKbJR18XS3zSzMxy3v7dbyBU1XblNGfrK4ncM0v68ADmhWDNQUUAcPLbLxD2nzO34VATgoIDtcGQeec4YrNzUNvgReoQNUh2QBHezIOOmgZ9g5vCyR48m85hgQHsxMjdduTZI6zWENSvB6ZzVRF8NgI84SISQkxI958Vp1YJAwfuGGQw/YYjCIRj2m1wnTAL2xXX8U3JwUq0+l9ZhS2Xtvit+XVm5bl4Zs0mo8umjA34Qpc6Y5vcBVef1NzsIlZY8h0CSF6c7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6ybqA30W45pYwAr/5w7CqzvPvYLuMWbJFkoayKaHQKw=;
- b=hBBqQTsudAyyVYbxpMB47/42aKVMhFD2NDeJ8HS/7ZpCk/WuDaJHkvBdeAiGJqJTDZuwl0TLUf6oDYk8ly1hVAPSixdxM4peiElz0hBDC6b1g1V2Jm9yqogvcAWUOwkHNRKOHd+AUJANo6uWZ5IZNZEsj0UEokVWzDNDy01gTMYlFssp6xs3Tsd7R7TE/RpnEMvCnUbkC76MOkAjHddfc9ej1NvnusZkFoVgHzZfXkkvMrTrhI/zKVG0OpHzmFy29dz/u2lPxnq19Co3VLgmitsQ3KrQMrezUCKGkdsSaUfvoVKwMX2XE8w/5GtZcFLzSzR0qpcp8FC57PzehRTd2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6ybqA30W45pYwAr/5w7CqzvPvYLuMWbJFkoayKaHQKw=;
- b=Y1n+B/S/2QRj7g50GiJz+wbq9ZYnRotC84EOCwO0hHRowAlzzpTriloDyngxfaWblJ/GWyhnQfxRxJg9KznS053IMXPY31kro8q5guUhYTeJFvMHtNEVZPWwkDcPCe3PZTzwZBuZ3JN1zc6ZhfWry5S3O3D+duaTrDKqGznKdOw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by PH0PR13MB6108.namprd13.prod.outlook.com (2603:10b6:510:29b::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.19; Fri, 10 Mar
- 2023 14:28:59 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::85f5:bdb:fb9e:294c]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::85f5:bdb:fb9e:294c%2]) with mapi id 15.20.6178.020; Fri, 10 Mar 2023
- 14:28:59 +0000
-Date:   Fri, 10 Mar 2023 15:28:51 +0100
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Ariel Elior <aelior@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, aleksander.lobakin@intel.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3] qede: remove linux/version.h and
- linux/compiler.h
-Message-ID: <ZAs+o2UaD/nCF/Cf@corigine.com>
-References: <20230309225206.2473644-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230309225206.2473644-1-usama.anjum@collabora.com>
-X-ClientProxiedBy: AS4P195CA0036.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:65a::29) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        Sat, 11 Mar 2023 00:40:21 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC932E8CC3;
+        Fri, 10 Mar 2023 21:40:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 695D9B824C1;
+        Sat, 11 Mar 2023 05:40:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 05B75C433D2;
+        Sat, 11 Mar 2023 05:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678513218;
+        bh=bJyckNVrVTbB93+vVGGowYUJvTM3LO9ZY+Ci+t4WU30=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=ryJ+lYUiLYeVRvnPkhEzIUuYoGfkMut996iWxwfttVnv89TTIbofWsF+EoDhn5FP0
+         msFB1sTE8Z73Jwju/aIsZ4lHwN8N8HgISb46mNdKEAMhoT+x0I/j2SUNYjMtcZGX9A
+         WpSg0QMus0g8FSxWZlRzKoB7Vw/u4zV+ViMg8iHNYGb2Lq8TpulpUVcG4QQjVoZtPZ
+         tIlRylnRZF6em95u2opIY+Y0l2sawRrdkM2no9v94DgDLwhzoEjkB1ZViUuHiAQ+aK
+         AubqEZg6752+m635rrVgYqY2mxCAAIgkF20LGqv+cGwq6VydDnBm12dSRIGAQz1Rx4
+         6NHraX3Z1aIbA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E14DCE270C7;
+        Sat, 11 Mar 2023 05:40:17 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|PH0PR13MB6108:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c496397-895c-4afe-ea9f-08db2173c98c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: yfDR2F8B0W/80bbbOQAu/KYM1PU/KtqYCIIkxAh07EpXe9rxf4VyvUY0bpr24A+k48coZe4UggbOgZa2xuEPuMkONzXiS9gBxXxz8kog0oIP3du+0pD2MnoicNrsuP+n8pE4o7jG1VmvDJhZ81C1ZCspUHnH7W3BG47S2+2WMvpH/x1Xj9lL+aczBPtykzclOWAKU9sgflGLaR4zZv8d6M0vW2OAlVyvOSYuYJEo/PRmqKNl30qlh3Gc2Kh3ytACi+IPMN4wXvYdlgeVoVd3rtn8V7/V7Hz+3/UziBmJDAv3ssde00qY01CTqt+175nTtH/ka4puzPHU0Gg13uyMUFrd/bmxVLEab0qZDC4yI3iOVg9F0TkjOBZDrvXbNit+16lxln+rHMMjc0pz3DvenzdGnkqUu0wNlWq+l9RVezkk+eUc9vDLoNAoJK2CYGmFHUg4lrxVuvL1mrK7FavksmXDuYQl9xGjKAcZmAehvLxt+C64wZ6nZrWcHNmH62S4mIFfdf2RwrQtIgdZzgEVh7FmZS8bZnLm648mYcLkRjX1wnZOOvJwCADf0Qes0HbgKapmY3UHkuh3eb8b0TsmstT+mLHRqBsNpvZMW1AdjGI3aoELX0eYeaU4fL4tIMYw+Lk5WaMx8uMfCHNxSzoc1w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(376002)(136003)(39840400004)(366004)(346002)(396003)(451199018)(8936002)(36756003)(4744005)(5660300002)(7416002)(6506007)(6666004)(38100700002)(186003)(2616005)(86362001)(6512007)(54906003)(316002)(8676002)(4326008)(66946007)(6916009)(41300700001)(66556008)(66476007)(478600001)(6486002)(2906002)(44832011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?o5sL0KNEQ3hRdAJAnY/mapjqjniteZ6/YMIo7KqF9aCw4L7NI5yaVurQ22ao?=
- =?us-ascii?Q?hc98E9UN5/nTdJ86jl+W99GOPRtPtbgi8FAyXIHnGO1ID2v58y//5hJVJf8e?=
- =?us-ascii?Q?Rn6pJCVSSyjXOGDMmVrwNfeLvqinoZad4RuWOrEYmd9Xku6DwENa/N8iBBg7?=
- =?us-ascii?Q?HfFrZ9evStZ5MtKBwNlr1ZU8F2dud4m7lysi/4vWxAN+cxSKfqoP7Sxt/s3E?=
- =?us-ascii?Q?855AavPLAozBKvAeIiqrdxIdhdpTcJjm9VRtxilNS558118D/AEr2iXHEmCB?=
- =?us-ascii?Q?xX65AXUd2ookq6ilF5ey0fRMEErmaDDL5X2pP2XEJTpui0E15GsKy3KDkwK/?=
- =?us-ascii?Q?mlCBDetn4Z+bg54cBwgjyroq4SDiCuldWkzifVrt1VHY29LHv+SOnXcg+riU?=
- =?us-ascii?Q?8Oa1xp67RpVPbTCMbKFegt6npAMQ5Zh88Xo7TxeFG5YdoTgsgax67rnsFvDW?=
- =?us-ascii?Q?2avERSKcCTHEvGZNVZn5BB3+8cemYdLdOJN8fL1qYAZt4DtcJVeOhK18ZaBl?=
- =?us-ascii?Q?vwletwzf73YqYdCf4TTpW54HcelLUnQLf8chrEy4EYVzb8uRPp+bAIbWbDgQ?=
- =?us-ascii?Q?b53qTnFkBilfUTr6cGVVXdoPtAsyds9zZ7ac6vdIdRbxLRMyg0smEoDHpl1P?=
- =?us-ascii?Q?Up/t3kD3kJKNFlc6RKtG1yICnpImzU/xWTIVPuN7S1etLV9VZ9TPrja04JNE?=
- =?us-ascii?Q?PXSjGpvdFb90IImrmdkzKItTxwya+GP9TEVmA749gZfDdTi9U6CEGTKxy58Q?=
- =?us-ascii?Q?jV/lG8gSu+nVMTu3ZtOgIAUYOoZSkR4queTC8IV94hN1h/xXwQIuLXxwAgyV?=
- =?us-ascii?Q?uRXNLtSHSSCd75MImho+/tC/BxNbMlGJQO4iFDkqu+9I7JU2Ao8rWp8Ej8Ga?=
- =?us-ascii?Q?oTuEwBsF8IuXQ6j8zC2KpqAUKVGheNSa2/Zvqstu+L2qOA5w667gURUkebR/?=
- =?us-ascii?Q?6PiVHOHPEt5gW+ji2q7MI+I5+xPeWDzTCTMGz5np5ECvI8eLd979f3woqmiZ?=
- =?us-ascii?Q?9IMRNU/o8mtZlTTgYK6fwEMCMDoDDpVtxrK34TQhFeJ6MYrQBOsHOTZAcSXB?=
- =?us-ascii?Q?c7whOxNxXYyVN8X4/QusoDu4u3YBu1hKRASOM+7bBEyR3XZZVuz+KEbnQwZG?=
- =?us-ascii?Q?g25zWcXrW1Bgk0nZiQ6N75LA2URgbFbSaGIyxnAXMSNgHK35vEQnuk/O3m1d?=
- =?us-ascii?Q?CHA/eXaoLyqQqGD1bADUMIsqeyqS57x6tj/lLp8NJTdfRhkDO5Y7+19jPAOQ?=
- =?us-ascii?Q?NreDQX8oxXCfhpWA1gTPHfWWm17XsJiVZ8WCYv3/d096s0dD+4HUSRh20f83?=
- =?us-ascii?Q?vYlr4dTjG2T/sUqQPAlz/IquvgMudSkSE+f+rJYgmdLO0WBFC+UxMBDUgu+v?=
- =?us-ascii?Q?zdIqMKTyMgTmDiqKKz8usQQb66o//iCsQw1D6vPlW6rkXqhkt/KwAGGPEpzi?=
- =?us-ascii?Q?81zszydhdMjrczxnaJvb1AiLl4iF5XU989n9XH4aTpYlVakY+Ahny2E1Gfpm?=
- =?us-ascii?Q?NDUee5r16f8YhG734ZhOuDL/V2of8856xdxkymbYZ20Fyp1SxTKbeZkX1FBe?=
- =?us-ascii?Q?WaDgY3S2SaWM14B5xxENpr9lyT3f6HxXLdn/4YycWhkGC0iKu+LgKdXbGeNO?=
- =?us-ascii?Q?uHDE3jYJvIfaCQOrNQL8E+WTX36IHWvC6T2h4A0MpO7IyLL6hz8H8AjQzTc4?=
- =?us-ascii?Q?rBQLsA=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c496397-895c-4afe-ea9f-08db2173c98c
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2023 14:28:59.1342
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 00+8ni/Nr/66BDxeGPcbhT3F3ldJldu4UGdUykAbTEuHajX6ei/TumfMkaI/mhGpQzcp84xFUFVHz57BaGH+q2fUmvipMHKsrd1br26p5yw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB6108
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3] qede: remove linux/version.h and linux/compiler.h
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167851321791.18470.11928056741442093099.git-patchwork-notify@kernel.org>
+Date:   Sat, 11 Mar 2023 05:40:17 +0000
+References: <20230309225206.2473644-1-usama.anjum@collabora.com>
+In-Reply-To: <20230309225206.2473644-1-usama.anjum@collabora.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     aelior@marvell.com, manishc@marvell.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        aleksander.lobakin@intel.com, simon.horman@corigine.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 03:52:05AM +0500, Muhammad Usama Anjum wrote:
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 10 Mar 2023 03:52:05 +0500 you wrote:
 > make versioncheck reports the following:
 > ./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
 > ./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
@@ -125,7 +68,15 @@ On Fri, Mar 10, 2023 at 03:52:05AM +0500, Muhammad Usama Anjum wrote:
 > So remove linux/version.h from both of these files. Also remove
 > linux/compiler.h while at it as it is also not being used.
 > 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> [...]
 
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
+Here is the summary with links:
+  - [net-next,v3] qede: remove linux/version.h and linux/compiler.h
+    https://git.kernel.org/netdev/net-next/c/95b744508d4d
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
