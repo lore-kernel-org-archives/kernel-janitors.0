@@ -2,81 +2,110 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD3DC678D5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Mar 2023 05:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8988C6FD1F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Mar 2023 14:45:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229906AbjCKFkY (ORCPT
+        id S229756AbjCLOpv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 11 Mar 2023 00:40:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53316 "EHLO
+        Sun, 12 Mar 2023 10:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjCKFkV (ORCPT
+        with ESMTP id S229621AbjCLOpu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 11 Mar 2023 00:40:21 -0500
+        Sun, 12 Mar 2023 10:45:50 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC932E8CC3;
-        Fri, 10 Mar 2023 21:40:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D71B41B50;
+        Sun, 12 Mar 2023 07:45:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 695D9B824C1;
-        Sat, 11 Mar 2023 05:40:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 05B75C433D2;
-        Sat, 11 Mar 2023 05:40:18 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A8AFBB80B01;
+        Sun, 12 Mar 2023 14:45:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343D7C433EF;
+        Sun, 12 Mar 2023 14:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678513218;
-        bh=bJyckNVrVTbB93+vVGGowYUJvTM3LO9ZY+Ci+t4WU30=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ryJ+lYUiLYeVRvnPkhEzIUuYoGfkMut996iWxwfttVnv89TTIbofWsF+EoDhn5FP0
-         msFB1sTE8Z73Jwju/aIsZ4lHwN8N8HgISb46mNdKEAMhoT+x0I/j2SUNYjMtcZGX9A
-         WpSg0QMus0g8FSxWZlRzKoB7Vw/u4zV+ViMg8iHNYGb2Lq8TpulpUVcG4QQjVoZtPZ
-         tIlRylnRZF6em95u2opIY+Y0l2sawRrdkM2no9v94DgDLwhzoEjkB1ZViUuHiAQ+aK
-         AubqEZg6752+m635rrVgYqY2mxCAAIgkF20LGqv+cGwq6VydDnBm12dSRIGAQz1Rx4
-         6NHraX3Z1aIbA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E14DCE270C7;
-        Sat, 11 Mar 2023 05:40:17 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1678632345;
+        bh=U29WGS9Lk3M1R4JOX0nWOxZypymAplwjapVIZtIG3Es=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=g7yJQEGufynQIOpKBRQWiOWvtuVnUaYr7gvy6SzpfIo7H+7Cs2dWqqYLpeNECvUM9
+         cFESFwC7iIhA9iTEoY9KInJHGPb761ulHJH8UGgQ8+yOUR9GkpYvbNxl8DImi/XGFV
+         yLpGjyhuYQt1+Y8wb69JrZMeG8323HqMXIZzGNH8AmvxtjYihCA7axDBw8jsxt7YJX
+         1lnAfroGdol2HLbLufqjLutwslegTYIHQksxTPGM4MvlzlvUJjomF5UucX7fTpBrwX
+         wEIM4xCVCa1CucUqWJsL0oZK8swRzdiGE9buw1lg1OwBGLUzNCShODxq4Bk+ITrElC
+         ladtH0iAs50Rg==
+Date:   Sun, 12 Mar 2023 14:45:51 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Irina Tirdea <irina.tirdea@intel.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: magn: bmc150: add a lower bounds in
+ bmc150_magn_write_raw()
+Message-ID: <20230312144551.2baf3e8b@jic23-huawei>
+In-Reply-To: <94939714-a232-4107-8741-8867038b03ae@kili.mountain>
+References: <94939714-a232-4107-8741-8867038b03ae@kili.mountain>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3] qede: remove linux/version.h and linux/compiler.h
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <167851321791.18470.11928056741442093099.git-patchwork-notify@kernel.org>
-Date:   Sat, 11 Mar 2023 05:40:17 +0000
-References: <20230309225206.2473644-1-usama.anjum@collabora.com>
-In-Reply-To: <20230309225206.2473644-1-usama.anjum@collabora.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     aelior@marvell.com, manishc@marvell.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        aleksander.lobakin@intel.com, simon.horman@corigine.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Wed, 8 Mar 2023 12:12:37 +0300
+Dan Carpenter <error27@gmail.com> wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 10 Mar 2023 03:52:05 +0500 you wrote:
-> make versioncheck reports the following:
-> ./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
-> ./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
+> The "val" variable comes from the user via iio_write_channel_info().
+> This code puts an upper bound on "val" but it doesn't check for
+> negatives so Smatch complains.  I don't think either the bounds
+> checking is really required, but it's just good to be conservative.
 > 
-> So remove linux/version.h from both of these files. Also remove
-> linux/compiler.h while at it as it is also not being used.
+> Fixes: 5990dc970367 ("iio: magn: bmc150_magn: add oversampling ratio")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+Hi Dan,
+
+I think this is more complex than it initially appears.
+
+bmc150_magn_set_odr() matches against a table of possible value
+(precise matching) and as such you'd assume neither check is necessary.
+
+However, for a given configuration not all values in that table can
+actually be set due to max_odr actually changing depending on other settings.
+
+My immediate thought was "why not push this check into bmc150_magn_set_odr()"
+where this will be more obvious.  Turns out that max_odr isn't available until
+later in bmc150_magn_init() than the initial call of bmc150_magn_set_odr()
+ 
+Whilst I 'think' you could move that around so that max_odr was set, that's not quite
+obvious enough for me to want to do it without testing the result.
+
+So question becomes is it wroth adding the val < 0 check here.
+My gut feeling is that actually makes it more confusing because we are checking
+something that doesn't restrict the later results alongside something that does.
+
+Am I missing something, or was smatch just being overly careful?
+
+Jonathan
+
+
+> ---
+>  drivers/iio/magnetometer/bmc150_magn.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v3] qede: remove linux/version.h and linux/compiler.h
-    https://git.kernel.org/netdev/net-next/c/95b744508d4d
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+> diff --git a/drivers/iio/magnetometer/bmc150_magn.c b/drivers/iio/magnetometer/bmc150_magn.c
+> index 06d5a1ef1fbd..c625416b8bcf 100644
+> --- a/drivers/iio/magnetometer/bmc150_magn.c
+> +++ b/drivers/iio/magnetometer/bmc150_magn.c
+> @@ -537,7 +537,7 @@ static int bmc150_magn_write_raw(struct iio_dev *indio_dev,
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_SAMP_FREQ:
+> -		if (val > data->max_odr)
+> +		if (val < 0 || val > data->max_odr)
+>  			return -EINVAL;
+>  		mutex_lock(&data->mutex);
+>  		ret = bmc150_magn_set_odr(data, val);
 
