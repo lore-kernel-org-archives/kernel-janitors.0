@@ -2,110 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8988C6FD1F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Mar 2023 14:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61217C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Mar 2023 05:09:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229756AbjCLOpv (ORCPT
+        id S229519AbjCMFJM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 12 Mar 2023 10:45:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48162 "EHLO
+        Mon, 13 Mar 2023 01:09:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229621AbjCLOpu (ORCPT
+        with ESMTP id S229437AbjCMFJL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 12 Mar 2023 10:45:50 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D71B41B50;
-        Sun, 12 Mar 2023 07:45:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A8AFBB80B01;
-        Sun, 12 Mar 2023 14:45:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343D7C433EF;
-        Sun, 12 Mar 2023 14:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678632345;
-        bh=U29WGS9Lk3M1R4JOX0nWOxZypymAplwjapVIZtIG3Es=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=g7yJQEGufynQIOpKBRQWiOWvtuVnUaYr7gvy6SzpfIo7H+7Cs2dWqqYLpeNECvUM9
-         cFESFwC7iIhA9iTEoY9KInJHGPb761ulHJH8UGgQ8+yOUR9GkpYvbNxl8DImi/XGFV
-         yLpGjyhuYQt1+Y8wb69JrZMeG8323HqMXIZzGNH8AmvxtjYihCA7axDBw8jsxt7YJX
-         1lnAfroGdol2HLbLufqjLutwslegTYIHQksxTPGM4MvlzlvUJjomF5UucX7fTpBrwX
-         wEIM4xCVCa1CucUqWJsL0oZK8swRzdiGE9buw1lg1OwBGLUzNCShODxq4Bk+ITrElC
-         ladtH0iAs50Rg==
-Date:   Sun, 12 Mar 2023 14:45:51 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Irina Tirdea <irina.tirdea@intel.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: magn: bmc150: add a lower bounds in
- bmc150_magn_write_raw()
-Message-ID: <20230312144551.2baf3e8b@jic23-huawei>
-In-Reply-To: <94939714-a232-4107-8741-8867038b03ae@kili.mountain>
-References: <94939714-a232-4107-8741-8867038b03ae@kili.mountain>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 13 Mar 2023 01:09:11 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEAB25E2F;
+        Sun, 12 Mar 2023 22:09:09 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id x3so43696956edb.10;
+        Sun, 12 Mar 2023 22:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678684148;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UPeUZ8/TRz97/5xautsmimgF2BR3ajyQnCAIeqXt5JE=;
+        b=nyqxQIrCF6KDiAZw1b8m4PZR/GNtSA1g9idSQFjcGHXMdu7brOu+KUW4P6dYaqGkIM
+         I+LMbpMydMTo8t5fPrmgLc0ZjqxZGVLOvUHgV6ptyWkTGm8cRGU1SYej5r4C945WSL1Y
+         VDZEKQZfTad4yYQ8l8NYYQ4xULG5GlaIacuhWhlRpC0EX8qUR6QDcAaxnNaNdsXIN8xU
+         7KqS7bzdhWdLueBbE0Oxo8MRZ51ETH9Dsnn6KdUHKmJjkiW98dAdV4R5+P+E0pGJ/XQr
+         tr/BiSAVO+/RNN6Voya0s7ZF5IHtW3ilUGcMSmknjAseZCdAbT40Qe8TZxk9Z5IEmQlG
+         EI1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678684148;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UPeUZ8/TRz97/5xautsmimgF2BR3ajyQnCAIeqXt5JE=;
+        b=nxka9wvdSNMYJL4O5eCHnpOrW72Du4pHcJoMq3bUKw6v0zh6F944VRCUMJivVGaY+/
+         hoh7ItgXQ1W8c3eWzppSU4cAmye/37pZCqGK6gfzBT+2VV5WaR3Qry5xE3r1jziEeexG
+         xgFA2mUhIBbkEzd2LPP5vPi97cHa3hRzh3d7pWOMZn68Tzz5RVL8Mu6apBqPOozUNQEP
+         s8mSU1LcTc8iBj7t3Dlv0B09204rOtsgMeiDlz/yXGuYIcASij84O49sgfZQXkBp65bg
+         ME4nQZwtdr99IzCK2xdaTHAJRubSYW9bIZJt9MlEsbwYhGV2MT+1Ws85XMFFMQFFvtad
+         EiiA==
+X-Gm-Message-State: AO0yUKWAox/fnPo/1fxEwcY44bJ7sDMnD+nO74Yb4itsp3lqP2xDKisy
+        4BvaEb528C/D4GONY+razOM=
+X-Google-Smtp-Source: AK7set8QPCJTIDTMIV6Kh2J2CdN72IibjdSoZKFWFmU76t8xV4MSkU+mwscyB62sGiOslWhlhF9Wgg==
+X-Received: by 2002:a05:6402:1645:b0:4aa:a4f0:2c17 with SMTP id s5-20020a056402164500b004aaa4f02c17mr30937503edx.4.1678684147911;
+        Sun, 12 Mar 2023 22:09:07 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:75e7:ea6b:c385:692e])
+        by smtp.gmail.com with ESMTPSA id 1-20020a508e01000000b004f9e6495f94sm2604363edw.50.2023.03.12.22.09.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Mar 2023 22:09:07 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH SECOND RESEND] MAINTAINERS: repair pattern in DIALOG SEMICONDUCTOR DRIVERS
+Date:   Mon, 13 Mar 2023 06:09:03 +0100
+Message-Id: <20230313050903.29416-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 8 Mar 2023 12:12:37 +0300
-Dan Carpenter <error27@gmail.com> wrote:
+Commit 441613662db7 ("dt-bindings: mfd: Convert da9063 to yaml") converts
+da9063.txt to dlg,da9063.yaml and adds a new file pattern in MAINTAINERS.
+Unfortunately, the file pattern matches da90*.yaml, but the yaml file is
+prefixed with dlg,da90.
 
-> The "val" variable comes from the user via iio_write_channel_info().
-> This code puts an upper bound on "val" but it doesn't check for
-> negatives so Smatch complains.  I don't think either the bounds
-> checking is really required, but it's just good to be conservative.
-> 
-> Fixes: 5990dc970367 ("iio: magn: bmc150_magn: add oversampling ratio")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken file pattern.
 
-Hi Dan,
+Repair this file pattern in DIALOG SEMICONDUCTOR DRIVERS.
 
-I think this is more complex than it initially appears.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+v1: https://lore.kernel.org/all/20220623104456.27144-1-lukas.bulwahn@gmail.com/
+v1-resend: https://lore.kernel.org/all/20230110154901.20223-1-lukas.bulwahn@gmail.com/
 
-bmc150_magn_set_odr() matches against a table of possible value
-(precise matching) and as such you'd assume neither check is necessary.
+v1 to resend:
+ - added the Acked-by from Conor Dooley.
 
-However, for a given configuration not all values in that table can
-actually be set due to max_odr actually changing depending on other settings.
+Lee, please pick this minor non-urgent clean-up patch.
 
-My immediate thought was "why not push this check into bmc150_magn_set_odr()"
-where this will be more obvious.  Turns out that max_odr isn't available until
-later in bmc150_magn_init() than the initial call of bmc150_magn_set_odr()
- 
-Whilst I 'think' you could move that around so that max_odr was set, that's not quite
-obvious enough for me to want to do it without testing the result.
+If not picked up, this patch will go to Andrew Morton for another try to submit.
 
-So question becomes is it wroth adding the val < 0 check here.
-My gut feeling is that actually makes it more confusing because we are checking
-something that doesn't restrict the later results alongside something that does.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Am I missing something, or was smatch just being overly careful?
-
-Jonathan
-
-
-> ---
->  drivers/iio/magnetometer/bmc150_magn.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/magnetometer/bmc150_magn.c b/drivers/iio/magnetometer/bmc150_magn.c
-> index 06d5a1ef1fbd..c625416b8bcf 100644
-> --- a/drivers/iio/magnetometer/bmc150_magn.c
-> +++ b/drivers/iio/magnetometer/bmc150_magn.c
-> @@ -537,7 +537,7 @@ static int bmc150_magn_write_raw(struct iio_dev *indio_dev,
->  
->  	switch (mask) {
->  	case IIO_CHAN_INFO_SAMP_FREQ:
-> -		if (val > data->max_odr)
-> +		if (val < 0 || val > data->max_odr)
->  			return -EINVAL;
->  		mutex_lock(&data->mutex);
->  		ret = bmc150_magn_set_odr(data, val);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2892858cb040..19792a020016 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6000,7 +6000,7 @@ W:	http://www.dialog-semiconductor.com/products
+ F:	Documentation/devicetree/bindings/input/da90??-onkey.txt
+ F:	Documentation/devicetree/bindings/input/dlg,da72??.txt
+ F:	Documentation/devicetree/bindings/mfd/da90*.txt
+-F:	Documentation/devicetree/bindings/mfd/da90*.yaml
++F:	Documentation/devicetree/bindings/mfd/dlg,da90*.yaml
+ F:	Documentation/devicetree/bindings/regulator/dlg,da9*.yaml
+ F:	Documentation/devicetree/bindings/regulator/da92*.txt
+ F:	Documentation/devicetree/bindings/regulator/slg51000.txt
+-- 
+2.17.1
 
