@@ -2,106 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61217C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Mar 2023 05:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B87C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Mar 2023 11:29:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbjCMFJM (ORCPT
+        id S230055AbjCML3O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Mar 2023 01:09:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52330 "EHLO
+        Mon, 13 Mar 2023 07:29:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjCMFJL (ORCPT
+        with ESMTP id S229740AbjCML3N (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Mar 2023 01:09:11 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEAB25E2F;
-        Sun, 12 Mar 2023 22:09:09 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id x3so43696956edb.10;
-        Sun, 12 Mar 2023 22:09:09 -0700 (PDT)
+        Mon, 13 Mar 2023 07:29:13 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6170132CED;
+        Mon, 13 Mar 2023 04:29:12 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so10666016wmb.5;
+        Mon, 13 Mar 2023 04:29:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678684148;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UPeUZ8/TRz97/5xautsmimgF2BR3ajyQnCAIeqXt5JE=;
-        b=nyqxQIrCF6KDiAZw1b8m4PZR/GNtSA1g9idSQFjcGHXMdu7brOu+KUW4P6dYaqGkIM
-         I+LMbpMydMTo8t5fPrmgLc0ZjqxZGVLOvUHgV6ptyWkTGm8cRGU1SYej5r4C945WSL1Y
-         VDZEKQZfTad4yYQ8l8NYYQ4xULG5GlaIacuhWhlRpC0EX8qUR6QDcAaxnNaNdsXIN8xU
-         7KqS7bzdhWdLueBbE0Oxo8MRZ51ETH9Dsnn6KdUHKmJjkiW98dAdV4R5+P+E0pGJ/XQr
-         tr/BiSAVO+/RNN6Voya0s7ZF5IHtW3ilUGcMSmknjAseZCdAbT40Qe8TZxk9Z5IEmQlG
-         EI1Q==
+        d=gmail.com; s=20210112; t=1678706951;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWh1L+aecKzdhSM2563wcUvUMrUfLZ8S1mD5QRwDh+E=;
+        b=eObCmCRd5bRHvvXHagrtp1WhYxC8O+iYfhT3uLnTJxJxFjQa+MwDN78rrqmhOsY2UE
+         cTrbK7sW35CqIkLT/iTTpepAr/FWvkGTxanvnVcKIWVvO5j61b3ATvPul+/Q3e2H7q7h
+         jrUBlm6g6CUEQwKrFQCUBVPCTXlbmf8ERYt64uBcUxW3iUv9Alr6bAYcRY5W7jG0k/6x
+         +dJOq5UWjQ8QZtbW6FJUE9OEHKWCEfntPoNIZMDCcyOKThSQkuYLQXfQAIXF6Rb71PT2
+         p8TAztgRsM4IhVPqncfkdfUEEN+8lvN1/voA7P/V4AoaqHNN0kzkjjy/0Tg6Ik3owkKG
+         tRHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678684148;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UPeUZ8/TRz97/5xautsmimgF2BR3ajyQnCAIeqXt5JE=;
-        b=nxka9wvdSNMYJL4O5eCHnpOrW72Du4pHcJoMq3bUKw6v0zh6F944VRCUMJivVGaY+/
-         hoh7ItgXQ1W8c3eWzppSU4cAmye/37pZCqGK6gfzBT+2VV5WaR3Qry5xE3r1jziEeexG
-         xgFA2mUhIBbkEzd2LPP5vPi97cHa3hRzh3d7pWOMZn68Tzz5RVL8Mu6apBqPOozUNQEP
-         s8mSU1LcTc8iBj7t3Dlv0B09204rOtsgMeiDlz/yXGuYIcASij84O49sgfZQXkBp65bg
-         ME4nQZwtdr99IzCK2xdaTHAJRubSYW9bIZJt9MlEsbwYhGV2MT+1Ws85XMFFMQFFvtad
-         EiiA==
-X-Gm-Message-State: AO0yUKWAox/fnPo/1fxEwcY44bJ7sDMnD+nO74Yb4itsp3lqP2xDKisy
-        4BvaEb528C/D4GONY+razOM=
-X-Google-Smtp-Source: AK7set8QPCJTIDTMIV6Kh2J2CdN72IibjdSoZKFWFmU76t8xV4MSkU+mwscyB62sGiOslWhlhF9Wgg==
-X-Received: by 2002:a05:6402:1645:b0:4aa:a4f0:2c17 with SMTP id s5-20020a056402164500b004aaa4f02c17mr30937503edx.4.1678684147911;
-        Sun, 12 Mar 2023 22:09:07 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:75e7:ea6b:c385:692e])
-        by smtp.gmail.com with ESMTPSA id 1-20020a508e01000000b004f9e6495f94sm2604363edw.50.2023.03.12.22.09.07
+        d=1e100.net; s=20210112; t=1678706951;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aWh1L+aecKzdhSM2563wcUvUMrUfLZ8S1mD5QRwDh+E=;
+        b=FTVhbZK0FoYmpbO3tsU6w0XZs/6lV+UMEt2blHz8Ik6+k59veilSdDfT50AA3p5HgT
+         ZtBCVR0oMcUkeXpnx+MYyE/tLU60CgBaTKzSei+Z/GZN4k2WDYnzMfrMq3rhU2aFF/t8
+         yVS5y222OHi8ProNHIyP2aF3p/+UFgwIwuZpp0SHABNOqFE6gmSfwe2NHLdfHAUvkE9v
+         184s4x+hixLZV53xj2J6IN7abfLu5n56OvEUOT2l2cT779Y/wwssretD17WKa8XnX61d
+         qav0HGZL3358r+ZFYZyOVQKxV0aGhZdR/cZJxHn4dpECRXsisgk9KSAbEyHwB8RO8Sgg
+         vSFQ==
+X-Gm-Message-State: AO0yUKW1rDgp1K/KxxFOJiDL/WZg2P4g0PNYYthmeJ8xQYCeBGNU+7Eg
+        Q5ReZVaevdigWh2ZJjoJNuk=
+X-Google-Smtp-Source: AK7set+0fAMqHxiCCQSGAz9wKpYNuL4HmWLGitFNyio88uZz54Ek5qEqkACVY0rkC4WEX4heyVcCoA==
+X-Received: by 2002:a05:600c:1c1f:b0:3eb:2b88:8682 with SMTP id j31-20020a05600c1c1f00b003eb2b888682mr11034003wms.17.1678706950758;
+        Mon, 13 Mar 2023 04:29:10 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id u10-20020a05600c00ca00b003eb192787bfsm8770781wmm.25.2023.03.13.04.29.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Mar 2023 22:09:07 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Conor Dooley <conor.dooley@microchip.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH SECOND RESEND] MAINTAINERS: repair pattern in DIALOG SEMICONDUCTOR DRIVERS
-Date:   Mon, 13 Mar 2023 06:09:03 +0100
-Message-Id: <20230313050903.29416-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 13 Mar 2023 04:29:09 -0700 (PDT)
+Date:   Mon, 13 Mar 2023 11:46:57 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Simon Horman <simon.horman@corigine.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ariel Elior <aelior@marvell.com>,
+        Manish Chopra <manishc@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] qede: remove linux/version.h and linux/compiler.h
+Message-ID: <ee08333d-d39d-45c6-9e6e-6328855d3068@kili.mountain>
+References: <20230303185351.2825900-1-usama.anjum@collabora.com>
+ <20230303155436.213ee2c0@kernel.org>
+ <df8a446a-e8a9-3b3d-fd0f-791f0d01a0c9@collabora.com>
+ <ZAdoivY94Y5dfOa4@corigine.com>
+ <1107bc10-9b14-98f4-3e47-f87188453ce7@collabora.com>
+ <8a90dca3-af66-5348-72b9-ac49610f22ce@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a90dca3-af66-5348-72b9-ac49610f22ce@intel.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 441613662db7 ("dt-bindings: mfd: Convert da9063 to yaml") converts
-da9063.txt to dlg,da9063.yaml and adds a new file pattern in MAINTAINERS.
-Unfortunately, the file pattern matches da90*.yaml, but the yaml file is
-prefixed with dlg,da90.
+On Tue, Mar 07, 2023 at 06:13:16PM +0100, Alexander Lobakin wrote:
+> >> Also, as per the examples above, the target tree, in this case
+> >> 'net-next' should be included in the subject.
+> > I don't know much about net tree and its location. This is why people use
+> 
+> Here[0].
+> 
+> > linux-next for sending patches. I'm not sure about the networking sub
+> 
+> No, people use the corresponding mailing lists to send and repositories
+> to base their patches on.
+> 
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken file pattern.
+This is only for networking.
 
-Repair this file pattern in DIALOG SEMICONDUCTOR DRIVERS.
+It affect BPF too, I suppose, but I always tell everyone to just send
+BPF bug reports instead of patches.  I can keep track of linux-next, net
+and net-next.  No one can keep track of all @#$@#$@#$@# 300+ trees.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-v1: https://lore.kernel.org/all/20220623104456.27144-1-lukas.bulwahn@gmail.com/
-v1-resend: https://lore.kernel.org/all/20230110154901.20223-1-lukas.bulwahn@gmail.com/
+I really hate this networking requirement but I try really hard to get
+it right and still mess up half the time.
 
-v1 to resend:
- - added the Acked-by from Conor Dooley.
-
-Lee, please pick this minor non-urgent clean-up patch.
-
-If not picked up, this patch will go to Andrew Morton for another try to submit.
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2892858cb040..19792a020016 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6000,7 +6000,7 @@ W:	http://www.dialog-semiconductor.com/products
- F:	Documentation/devicetree/bindings/input/da90??-onkey.txt
- F:	Documentation/devicetree/bindings/input/dlg,da72??.txt
- F:	Documentation/devicetree/bindings/mfd/da90*.txt
--F:	Documentation/devicetree/bindings/mfd/da90*.yaml
-+F:	Documentation/devicetree/bindings/mfd/dlg,da90*.yaml
- F:	Documentation/devicetree/bindings/regulator/dlg,da9*.yaml
- F:	Documentation/devicetree/bindings/regulator/da92*.txt
- F:	Documentation/devicetree/bindings/regulator/slg51000.txt
--- 
-2.17.1
+regards,
+dan carpenter
 
