@@ -2,52 +2,49 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C30C6FD19
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Mar 2023 19:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2D9C6FD19
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Mar 2023 20:04:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbjCMT43 convert rfc822-to-8bit (ORCPT
+        id S229649AbjCMUEY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Mar 2023 15:56:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44976 "EHLO
+        Mon, 13 Mar 2023 16:04:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229641AbjCMT41 (ORCPT
+        with ESMTP id S230253AbjCMUEJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Mar 2023 15:56:27 -0400
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103238534F;
-        Mon, 13 Mar 2023 12:56:21 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id h8so9615886ede.8;
-        Mon, 13 Mar 2023 12:56:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678737380;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fjMVYl/zcmqZd7QTw6wKbhHzflyXdyDOQNkUW9nv/Bo=;
-        b=D9lNcrqcKWZhYGH2knR6Vx+Ac5WO2sMeDpeLzpBiMrsE1/FgKX5ZB3GOXa18jHaGvy
-         G9rk+cey7h8Km9j02MU/joCzs8i+jPo9XgDmW6BOZVNcBphPzqFUP/BsmZLVcF5fU4UA
-         B34lzzneOmVdsZ7ZpZ6SwE4tyF1VofzAqvro0dVS7AYMxWCxB7nra58OBn47TfShJs7S
-         8nvRD5BxI1g804MlCSTG2FjS2NM0VxnWt4F7Zn1N1fL3XMZvLupTR6GybCUh/CPFfLbM
-         Pd9/0VVXq9rp5k2Jz57nEQO+oDxrXkfQrK447nX5W7oRX5z6lc9CL4F9mpoZVhZEorAz
-         QBzw==
-X-Gm-Message-State: AO0yUKV8gSCuGP4UbKEf/s1aufyfr1et6CGFowTH1OKk2oDuh7zsBSCE
-        eJa9iNoo3NA5yPdMjDZo1D7+2WCYi84gKLfaOZY=
-X-Google-Smtp-Source: AK7set+6bXxAz1AjPX0PoQzviwHtDnGhZeGybBm1XzqjXjCxdk0LzSFKdn0GMUK8pc0w02DXCKDF/nRF3teWxyC89FU=
-X-Received: by 2002:a17:906:64d:b0:8d1:57cf:ef3c with SMTP id
- t13-20020a170906064d00b008d157cfef3cmr17373566ejb.2.1678737380313; Mon, 13
- Mar 2023 12:56:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230308141322.25201-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20230308141322.25201-1-lukas.bulwahn@gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 13 Mar 2023 20:56:09 +0100
-Message-ID: <CAJZ5v0jinyS0asCT3fG+cAMkFYd=wYk9-fRnf=w=24qPH9hUkA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: update the 01.org website entries
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Mon, 13 Mar 2023 16:04:09 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EBBA6C8A8;
+        Mon, 13 Mar 2023 13:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678737846; x=1710273846;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=Y5ECLy3twENnI8OadRYmVgVwWANZtmeHdLoi5ULIRXk=;
+  b=nqpcEXMusIBW2Wu5dI0hvTnRy7eqbXejlfQ1baAQX+dKFBi4uZcB/rTP
+   a4S7gABo9pD0RDf3iADE0/FZs2E2ymonRudgqCg+WrgLpQYinEE8jiVBF
+   tMsIGuRaNRlFc69c3cbA62WDfKMBDwILAf6N89+Q7INYxzFzNhjlxQ0q0
+   uRYId03am/icEciJNssswp2IEm5VIRn62rG/QwG0ayhogvgvdNnKpP1Eo
+   mRtOhrxByCCWUiQkT0KXR/Uc5jZK/kH5yMhRLgnh6FiMUp5fSY24pgQBG
+   rFwXfhlH1EPaZxYBG6t5UrVJBbX+zUNfLbSlxVA3rjBfSWxhU1dVilo42
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10648"; a="334725077"
+X-IronPort-AV: E=Sophos;i="5.98,257,1673942400"; 
+   d="scan'208";a="334725077"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2023 13:04:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10648"; a="656082539"
+X-IronPort-AV: E=Sophos;i="5.98,257,1673942400"; 
+   d="scan'208";a="656082539"
+Received: from jjohanss-mobl.ger.corp.intel.com (HELO localhost) ([10.252.60.50])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2023 13:04:00 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
@@ -56,16 +53,22 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         intel-gvt-dev@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org,
         Todd E Brandt <todd.e.brandt@linux.intel.com>,
-        linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        linux-pm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: update the 01.org website entries
+In-Reply-To: <20230308141322.25201-1-lukas.bulwahn@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230308141322.25201-1-lukas.bulwahn@gmail.com>
+Date:   Mon, 13 Mar 2023 22:03:55 +0200
+Message-ID: <87sfe87710.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 8, 2023 at 3:15 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
+On Wed, 08 Mar 2023, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 > The 01.org links in MAINTAINERS now forward to different other pages or do
 > not resolve.
 >
@@ -87,15 +90,6 @@ On Wed, Mar 8, 2023 at 3:15 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 > L:      linux-pm@vger.kernel.org
 >
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-for the pm-graph entry.
-
-Or I can apply this part of the patch if you send it to linux-pm separately.
-
-Thanks!
-
 > ---
 >  MAINTAINERS | 6 ++----
 >  1 file changed, 2 insertions(+), 4 deletions(-)
@@ -104,40 +98,52 @@ Thanks!
 > index 1333928a7be4..99adcd74b06a 100644
 > --- a/MAINTAINERS
 > +++ b/MAINTAINERS
-> @@ -6747,7 +6747,6 @@ M:        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->  M:     Maxime Ripard <mripard@kernel.org>
->  M:     Thomas Zimmermann <tzimmermann@suse.de>
->  S:     Maintained
-> -W:     https://01.org/linuxgraphics/gfx-docs/maintainer-tools/drm-misc.html
->  T:     git git://anongit.freedesktop.org/drm/drm-misc
->  F:     Documentation/gpu/
->  F:     drivers/gpu/drm/*
-> @@ -10250,7 +10249,7 @@ M:      Rodrigo Vivi <rodrigo.vivi@intel.com>
->  M:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
->  L:     intel-gfx@lists.freedesktop.org
->  S:     Supported
-> -W:     https://01.org/linuxgraphics/
-> +W:     https://www.intel.com/content/www/us/en/develop/documentation/intel-graphics-for-linux-programmers-reference-guide/top.html
->  Q:     http://patchwork.freedesktop.org/project/intel-gfx/
->  B:     https://gitlab.freedesktop.org/drm/intel/-/wikis/How-to-file-i915-bugs
->  C:     irc://irc.oftc.net/intel-gfx
-> @@ -10312,7 +10311,6 @@ M:      Zhi Wang <zhi.a.wang@intel.com>
->  L:     intel-gvt-dev@lists.freedesktop.org
->  L:     intel-gfx@lists.freedesktop.org
->  S:     Supported
-> -W:     https://01.org/igvt-g
->  T:     git https://github.com/intel/gvt-linux.git
->  F:     drivers/gpu/drm/i915/gvt/
->
+> @@ -6747,7 +6747,6 @@ M:	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>  M:	Maxime Ripard <mripard@kernel.org>
+>  M:	Thomas Zimmermann <tzimmermann@suse.de>
+>  S:	Maintained
+> -W:	https://01.org/linuxgraphics/gfx-docs/maintainer-tools/drm-misc.html
+
+This was likely the same as:
+
+https://drm.pages.freedesktop.org/maintainer-tools/drm-misc.html
+
+>  T:	git git://anongit.freedesktop.org/drm/drm-misc
+>  F:	Documentation/gpu/
+>  F:	drivers/gpu/drm/*
+> @@ -10250,7 +10249,7 @@ M:	Rodrigo Vivi <rodrigo.vivi@intel.com>
+>  M:	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+>  L:	intel-gfx@lists.freedesktop.org
+>  S:	Supported
+> -W:	https://01.org/linuxgraphics/
+> +W:	https://www.intel.com/content/www/us/en/develop/documentation/intel-graphics-for-linux-programmers-reference-guide/top.html
+
+I don't think this is what we want, but we'll need to sort out what the
+right thing is first.
+
+BR,
+Jani.
+
+>  Q:	http://patchwork.freedesktop.org/project/intel-gfx/
+>  B:	https://gitlab.freedesktop.org/drm/intel/-/wikis/How-to-file-i915-bugs
+>  C:	irc://irc.oftc.net/intel-gfx
+> @@ -10312,7 +10311,6 @@ M:	Zhi Wang <zhi.a.wang@intel.com>
+>  L:	intel-gvt-dev@lists.freedesktop.org
+>  L:	intel-gfx@lists.freedesktop.org
+>  S:	Supported
+> -W:	https://01.org/igvt-g
+>  T:	git https://github.com/intel/gvt-linux.git
+>  F:	drivers/gpu/drm/i915/gvt/
+>  
 > @@ -16668,7 +16666,7 @@ PM-GRAPH UTILITY
->  M:     "Todd E Brandt" <todd.e.brandt@linux.intel.com>
->  L:     linux-pm@vger.kernel.org
->  S:     Supported
-> -W:     https://01.org/pm-graph
-> +W:     https://www.intel.com/content/www/us/en/developer/topic-technology/open/pm-graph/overview.html
->  B:     https://bugzilla.kernel.org/buglist.cgi?component=pm-graph&product=Tools
->  T:     git git://github.com/intel/pm-graph
->  F:     tools/power/pm-graph
-> --
-> 2.17.1
->
+>  M:	"Todd E Brandt" <todd.e.brandt@linux.intel.com>
+>  L:	linux-pm@vger.kernel.org
+>  S:	Supported
+> -W:	https://01.org/pm-graph
+> +W:	https://www.intel.com/content/www/us/en/developer/topic-technology/open/pm-graph/overview.html
+>  B:	https://bugzilla.kernel.org/buglist.cgi?component=pm-graph&product=Tools
+>  T:	git git://github.com/intel/pm-graph
+>  F:	tools/power/pm-graph
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
