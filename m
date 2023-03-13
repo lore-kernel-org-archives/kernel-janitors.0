@@ -2,105 +2,137 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B87C61DA4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Mar 2023 11:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA9DC6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Mar 2023 12:04:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230055AbjCML3O (ORCPT
+        id S230450AbjCMMEj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Mar 2023 07:29:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54248 "EHLO
+        Mon, 13 Mar 2023 08:04:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229740AbjCML3N (ORCPT
+        with ESMTP id S230435AbjCMMEh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Mar 2023 07:29:13 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6170132CED;
-        Mon, 13 Mar 2023 04:29:12 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so10666016wmb.5;
-        Mon, 13 Mar 2023 04:29:12 -0700 (PDT)
+        Mon, 13 Mar 2023 08:04:37 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC03C2367F;
+        Mon, 13 Mar 2023 05:04:34 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id l12so2787191wrm.10;
+        Mon, 13 Mar 2023 05:04:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678706951;
+        d=gmail.com; s=20210112; t=1678709073;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aWh1L+aecKzdhSM2563wcUvUMrUfLZ8S1mD5QRwDh+E=;
-        b=eObCmCRd5bRHvvXHagrtp1WhYxC8O+iYfhT3uLnTJxJxFjQa+MwDN78rrqmhOsY2UE
-         cTrbK7sW35CqIkLT/iTTpepAr/FWvkGTxanvnVcKIWVvO5j61b3ATvPul+/Q3e2H7q7h
-         jrUBlm6g6CUEQwKrFQCUBVPCTXlbmf8ERYt64uBcUxW3iUv9Alr6bAYcRY5W7jG0k/6x
-         +dJOq5UWjQ8QZtbW6FJUE9OEHKWCEfntPoNIZMDCcyOKThSQkuYLQXfQAIXF6Rb71PT2
-         p8TAztgRsM4IhVPqncfkdfUEEN+8lvN1/voA7P/V4AoaqHNN0kzkjjy/0Tg6Ik3owkKG
-         tRHg==
+        bh=Jgtg8JCjU4w9C5eAuNBhB2+PUMGO//HenbT6+z8Wpk4=;
+        b=gvS6hrEn01OyucgxuWqnY+qFSOCKmylW+p0JSaTcaKtzCe9JYbJCX1yVx4vHmsbACg
+         OydGU25xvyFvTGYCGTXG2C8ziCN/zv8+RZFSmuVSrwVpqmIM2/W68Qu344hIsslM+LTD
+         0Iwrg1LXJoDCrB6UlVnfwWHL2NSEKfPSMCidT52t1d5+nvCfgfqrHUWv09TYbd2jcM9Z
+         n7JDuC+rXKLy5p7kQHdsQO9RCTKr0wXiauFy86BJ4SSst/X7s9UdjgNWWFnBcBSaJT66
+         RVnfDKCgwLlUMFR61anyvTyDl3r6fScxKnrxiDMqM6EpONmGtIb4efBKpa1CpPaGwtIr
+         Gf6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678706951;
+        d=1e100.net; s=20210112; t=1678709073;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aWh1L+aecKzdhSM2563wcUvUMrUfLZ8S1mD5QRwDh+E=;
-        b=FTVhbZK0FoYmpbO3tsU6w0XZs/6lV+UMEt2blHz8Ik6+k59veilSdDfT50AA3p5HgT
-         ZtBCVR0oMcUkeXpnx+MYyE/tLU60CgBaTKzSei+Z/GZN4k2WDYnzMfrMq3rhU2aFF/t8
-         yVS5y222OHi8ProNHIyP2aF3p/+UFgwIwuZpp0SHABNOqFE6gmSfwe2NHLdfHAUvkE9v
-         184s4x+hixLZV53xj2J6IN7abfLu5n56OvEUOT2l2cT779Y/wwssretD17WKa8XnX61d
-         qav0HGZL3358r+ZFYZyOVQKxV0aGhZdR/cZJxHn4dpECRXsisgk9KSAbEyHwB8RO8Sgg
-         vSFQ==
-X-Gm-Message-State: AO0yUKW1rDgp1K/KxxFOJiDL/WZg2P4g0PNYYthmeJ8xQYCeBGNU+7Eg
-        Q5ReZVaevdigWh2ZJjoJNuk=
-X-Google-Smtp-Source: AK7set+0fAMqHxiCCQSGAz9wKpYNuL4HmWLGitFNyio88uZz54Ek5qEqkACVY0rkC4WEX4heyVcCoA==
-X-Received: by 2002:a05:600c:1c1f:b0:3eb:2b88:8682 with SMTP id j31-20020a05600c1c1f00b003eb2b888682mr11034003wms.17.1678706950758;
-        Mon, 13 Mar 2023 04:29:10 -0700 (PDT)
+        bh=Jgtg8JCjU4w9C5eAuNBhB2+PUMGO//HenbT6+z8Wpk4=;
+        b=G5UsgM9KMSiobNXy0p1Xn+xy/JBWMQElvIYEFYi2mmaQ9fpc5vSbv+DFaYTurkfLdb
+         h8XwapBSdCRmxgcDK019P2CkMMn//9PD7KiGBoWOCSkNObKLAIscaLZxHfd24yPlBu7P
+         WbS1eLvNPh8Wjfdwp3x8MEmudSUVkqwMMjNH6hoqMpVAWvv7ts9mmLtC7grvazLEXEfn
+         odMRJYUkLuOHI3d4gQ+NA6p8cxFv6hWcARbQWR7/Sn0Ut0UnurEUW9GLzimcATUZ7TC0
+         MF4r+dQyHcyhg+D0LBg3pBx3yZECT6VaWP86TbcfCbqCBxcVhSJIwnqI6SNiC+R42PUp
+         iXgg==
+X-Gm-Message-State: AO0yUKXs8CkWK++bcw2Vt2aKVB4a12lbp62z4ZjHMc5/w2dFfM4/sUOd
+        /TJAdLqjmOJcAuoUFvDKTs8=
+X-Google-Smtp-Source: AK7set/hbUqYtwUAoiJDXriueq9aqf41wjVXCAFELK0SgXu9jhkKBLVvc7CFERpXg0qhsbCQuwbetg==
+X-Received: by 2002:adf:f509:0:b0:2ce:a8f0:5e2b with SMTP id q9-20020adff509000000b002cea8f05e2bmr4347500wro.58.1678709073214;
+        Mon, 13 Mar 2023 05:04:33 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u10-20020a05600c00ca00b003eb192787bfsm8770781wmm.25.2023.03.13.04.29.07
+        by smtp.gmail.com with ESMTPSA id a3-20020adfe5c3000000b002cfe71153b4sm135329wrn.60.2023.03.13.05.04.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Mar 2023 04:29:09 -0700 (PDT)
-Date:   Mon, 13 Mar 2023 11:46:57 +0300
+        Mon, 13 Mar 2023 05:04:32 -0700 (PDT)
+Date:   Mon, 13 Mar 2023 15:04:28 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Simon Horman <simon.horman@corigine.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ariel Elior <aelior@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] qede: remove linux/version.h and linux/compiler.h
-Message-ID: <ee08333d-d39d-45c6-9e6e-6328855d3068@kili.mountain>
-References: <20230303185351.2825900-1-usama.anjum@collabora.com>
- <20230303155436.213ee2c0@kernel.org>
- <df8a446a-e8a9-3b3d-fd0f-791f0d01a0c9@collabora.com>
- <ZAdoivY94Y5dfOa4@corigine.com>
- <1107bc10-9b14-98f4-3e47-f87188453ce7@collabora.com>
- <8a90dca3-af66-5348-72b9-ac49610f22ce@intel.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Irina Tirdea <irina.tirdea@intel.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: magn: bmc150: add a lower bounds in
+ bmc150_magn_write_raw()
+Message-ID: <23e6a7db-895a-4674-9a2d-acbb15342fd0@kili.mountain>
+References: <94939714-a232-4107-8741-8867038b03ae@kili.mountain>
+ <20230312144551.2baf3e8b@jic23-huawei>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8a90dca3-af66-5348-72b9-ac49610f22ce@intel.com>
+In-Reply-To: <20230312144551.2baf3e8b@jic23-huawei>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 06:13:16PM +0100, Alexander Lobakin wrote:
-> >> Also, as per the examples above, the target tree, in this case
-> >> 'net-next' should be included in the subject.
-> > I don't know much about net tree and its location. This is why people use
+On Sun, Mar 12, 2023 at 02:45:51PM +0000, Jonathan Cameron wrote:
+> On Wed, 8 Mar 2023 12:12:37 +0300
+> Dan Carpenter <error27@gmail.com> wrote:
 > 
-> Here[0].
+> > The "val" variable comes from the user via iio_write_channel_info().
+> > This code puts an upper bound on "val" but it doesn't check for
+> > negatives so Smatch complains.  I don't think either the bounds
+> > checking is really required, but it's just good to be conservative.
+> > 
+> > Fixes: 5990dc970367 ("iio: magn: bmc150_magn: add oversampling ratio")
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
 > 
-> > linux-next for sending patches. I'm not sure about the networking sub
+> Hi Dan,
 > 
-> No, people use the corresponding mailing lists to send and repositories
-> to base their patches on.
+> I think this is more complex than it initially appears.
 > 
+> bmc150_magn_set_odr() matches against a table of possible value
+> (precise matching) and as such you'd assume neither check is necessary.
+> 
+> However, for a given configuration not all values in that table can
+> actually be set due to max_odr actually changing depending on other settings.
+> 
+> My immediate thought was "why not push this check into bmc150_magn_set_odr()"
+> where this will be more obvious.  Turns out that max_odr isn't available until
+> later in bmc150_magn_init() than the initial call of bmc150_magn_set_odr()
+>  
+> Whilst I 'think' you could move that around so that max_odr was set, that's not quite
+> obvious enough for me to want to do it without testing the result.
+> 
+> So question becomes is it wroth adding the val < 0 check here.
+> My gut feeling is that actually makes it more confusing because we are checking
+> something that doesn't restrict the later results alongside something that does.
+> 
+> Am I missing something, or was smatch just being overly careful?
 
-This is only for networking.
+Okay, fair enough.  The upper bounds is required and the lower bounds is
+not.
 
-It affect BPF too, I suppose, but I always tell everyone to just send
-BPF bug reports instead of patches.  I can keep track of linux-next, net
-and net-next.  No one can keep track of all @#$@#$@#$@# 300+ trees.
+However, passing negatives is still not best practice and I feel like it
+wasn't intentional here.  Let me resend the commit, but with a different
+commit message that doesn't say the upper bound is not required.
 
-I really hate this networking requirement but I try really hard to get
-it right and still mess up half the time.
+The Smatch warning feels intuitively correct.  If you're going to have
+an upper bounds check then you need to have a lower bounds check to
+prevent negative values.  In practice it works pretty well.  The only
+major issue with this check is that sometimes Smatch thinks a variable
+can be negative when it cannot.
+
+This patch is an example where passing a negative is harmless and I had
+a similar warning last week where it was passing a negative param was
+harmless as well.  The parameter was used as loop limit:
+
+	for (i = 0; i < param; i++) {
+
+It's a no-op since param is negative, but all all it needs is for
+someone declare the iterator as "unsigned int i;" and then it becomes
+a memory corruption issue.
+
+So occasionally passing negatives is harmless but mostly it's bad.
 
 regards,
 dan carpenter
+
+
 
