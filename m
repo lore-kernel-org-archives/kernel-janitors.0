@@ -2,46 +2,46 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FEBC74A44
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 18:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5B5C74A44
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 18:54:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230177AbjCNSbA (ORCPT
+        id S231197AbjCNSx7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Mar 2023 14:31:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40694 "EHLO
+        Tue, 14 Mar 2023 14:53:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbjCNSa6 (ORCPT
+        with ESMTP id S231181AbjCNSx5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Mar 2023 14:30:58 -0400
+        Tue, 14 Mar 2023 14:53:57 -0400
 Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5CA3196BD;
-        Tue, 14 Mar 2023 11:30:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B90B89EF47;
+        Tue, 14 Mar 2023 11:53:24 -0700 (PDT)
 Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 403E07F9;
-        Tue, 14 Mar 2023 18:30:43 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 403E07F9
+        by ms.lwn.net (Postfix) with ESMTPSA id ED85A7F9;
+        Tue, 14 Mar 2023 18:53:20 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ED85A7F9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1678818643; bh=tX5BlomIMfjFk48N7G8zpaNKZ5y6cgHFSYOhFhTC988=;
+        t=1678820001; bh=+lUML7AGokBrjmE+zN0xiWF+xgkeixecRJJs+Y23my8=;
         h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=SNm3rP7qoJk1gDhJtcF0OKB8tpDPK1wFWcLrmQYtt6lkjPtUyh2kF7kZ8ZK4Oitws
-         Nu2F+4kfSZYZROInIQw+uxQu0X5hiZ6nJDXshAxvh4M8KoGwFKWKcdnTXUewdPdAMS
-         BYB8eyGhzsu8wB/aZINEtvR1Sm9QYJHXa5BTPqZjqxZkZYAO/YglJ67YuVVVFj2vl7
-         WSKFEtN3u+PoCKZXYXDUBC7n0OSeh6jAnJ0NtiqMyQib96F7UINZJzzOlxyahTGQnV
-         eTX+Y44pOhi/4uuSRUZ2EfHyHEl+Vzd4bRjEpaoVKLpIi3vdDE3lkkaKqoLLpCF+CM
-         VCDwVCAFuARlg==
+        b=PdGRKgtGSTk4kdt1PvCQDHySTlY6Extsy2W6BsJ8f74JoESYktyqLfu8j8OkVJBx5
+         jdmFLXQ6sduK8orAeUBFjdxwgDiG/CeG5O7AHZAjHqrMAhWmqGtiuHPZU9VIAaG1Yv
+         PWg7CGn8yIdF3S6NTagxSnujaY/pDSiLSbZMdjjVkP8OqOo3X3tnQrB1/MrWGbluX7
+         NnLM3I7wzPb+r/yMR/fjoFaXYxTScF5cvWaOU3ResG0K94Swz5rmsR9rNlQ7rJ0sor
+         OE5J4Co3tEPN61WL+cTGI6LSzLNkeaNod4jiNcwzDLBcC5eOvjEfwuj7K2OeuLBQMI
+         FdEXyAES9dIxg==
 From:   Jonathan Corbet <corbet@lwn.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-doc@vger.kernel.org,
-        device@lanana.org, unicode@lanana.org,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Anders Larsen <al@alarsen.net>, linux-doc@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH 0/2] Updating information on lanana.org
-In-Reply-To: <20230307144000.29539-1-lukas.bulwahn@gmail.com>
-References: <20230307144000.29539-1-lukas.bulwahn@gmail.com>
-Date:   Tue, 14 Mar 2023 12:30:42 -0600
-Message-ID: <87edprrxrh.fsf@meer.lwn.net>
+Subject: Re: [PATCH 0/2] Minor documentation clean-up in fs
+In-Reply-To: <20230220170210.15677-1-lukas.bulwahn@gmail.com>
+References: <20230220170210.15677-1-lukas.bulwahn@gmail.com>
+Date:   Tue, 14 Mar 2023 12:53:20 -0600
+Message-ID: <87sfe7qi5b.fsf@meer.lwn.net>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -50,13 +50,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
-> Dear Jon,
+> Dear Jonathan,
 >
-> please pick these two changes that update information in MAINTAINERS and
-> the kernel documentation on the actual state of lanana.org.
+> please pick this minor documentation clean-up in fs. It is not in the
+> Documentation directory, but I would consider these README files also
+> some unsorted largely distributed kernel documentation.
+>
+> Here is some trivial and probably little-to-debate clean up.
+>  
+> Lukas Bulwahn (2):
+>   qnx6: credit contributor and mark filesystem orphan
+>   qnx4: credit contributors in CREDITS
+>
+>  CREDITS        | 16 ++++++++++++++++
+>  MAINTAINERS    |  6 ++++++
+>  fs/qnx4/README |  9 ---------
+>  fs/qnx6/README |  8 --------
+>  4 files changed, 22 insertions(+), 17 deletions(-)
+>  delete mode 100644 fs/qnx4/README
+>  delete mode 100644 fs/qnx6/README
 
-Done, applied.
-
-Thanks,
+Applied, thanks.
 
 jon
