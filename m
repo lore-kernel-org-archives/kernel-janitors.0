@@ -2,71 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915DBC6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 06:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940A4C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 07:22:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbjCNGQx (ORCPT
+        id S230198AbjCNHWF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Mar 2023 02:16:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50928 "EHLO
+        Tue, 14 Mar 2023 03:22:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjCNGQx (ORCPT
+        with ESMTP id S229949AbjCNHWE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Mar 2023 02:16:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 562AD76F62;
-        Mon, 13 Mar 2023 23:16:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DFC3B615E0;
-        Tue, 14 Mar 2023 06:16:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52909C433D2;
-        Tue, 14 Mar 2023 06:16:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678774611;
-        bh=M7/IuZ+P1PMkCewwA2wliaQ2VYsdEdrWZtoteqZE3uM=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=ivZPgp0fzFpzbl1PePSR8pwCNcHXAJaX2T3GyMbcDDOMUbn1DBf9GKrrS8U7gbhsY
-         Q53u0QX9HeFEndORdqZyOKJsfkvkQQSYdgWF4V0S+kcnfz/MGX5ufmB7B2JiLmVwRX
-         YReLflmWli8DuDTMoNMipfIE+0zuj3iXBCFTliZRQlSrsDXGqzHXHDheKLnK9XiyP8
-         Emq20yvt2jZbewrLjx7Zp2Yv3i+lDSzQrqnfaHuNZBS2LZa+SeE/3YND1o9RM4YH3Z
-         nyxseywQcU3L8guRB82gWXeAWs1aJrqYsWnn3e7sVOA3B1Ycah3edOBiXEXPzE8hQS
-         adS2PC+qUZa6A==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust file entries after wifi driver movement
-References: <20230314041848.5120-1-lukas.bulwahn@gmail.com>
-Date:   Tue, 14 Mar 2023 08:16:45 +0200
-In-Reply-To: <20230314041848.5120-1-lukas.bulwahn@gmail.com> (Lukas Bulwahn's
-        message of "Tue, 14 Mar 2023 05:18:48 +0100")
-Message-ID: <87ttynyi0i.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 14 Mar 2023 03:22:04 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E6C5D762;
+        Tue, 14 Mar 2023 00:22:03 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id r11so6443321edd.5;
+        Tue, 14 Mar 2023 00:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678778522;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9krYtYgrFfB+EZxwYgYFLH4M2qRAdQv9i48TyNn/Zvw=;
+        b=kJZ480KiLGQMVSncOnZGVRRx4P0N7HZDE5tLslc8GyW3aA7WqL3XWUTKlXJ+hJOarg
+         lOwW+YKeXPziRZZOYmtFTnQACP8mW49W/o7JddTQ1kGS6bDHRI5lWnrFvUxEHW1f9Ed1
+         +TwWFNcQQEo5VwIlH6DD4/S0b8GsYP45529MACcObqbIDjyc86kGBdSxpSCQ1GZHVOfY
+         VvzSvDxfcXqL/FCyvISuyWRWI0/28jqkpSQyrP8N3161bhOSCH3RGhX1s2EsMv/+m5DN
+         M3WMJtbpQyDtwE0VOU01sTF9xqIIPxFtkARdZ581774I2NtRORQMkG/dci42SXs5oDMG
+         80QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678778522;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9krYtYgrFfB+EZxwYgYFLH4M2qRAdQv9i48TyNn/Zvw=;
+        b=ZF5R3nuUKY900HpuwF4v/jIMLa7MV0jQ9fu+Yg+w+teBRrYKs0bQAHvk5MlXvicc4Q
+         xtzYy4qZhAIV+iZ9DOsQrlmanVKubEWvYs1xjke8w9RbYY+bcHem02umxkpHRikmurN1
+         GRRpicI94kRXniD6PUPH5HdwyvV4OArrfJ0D3GHYZPFPdisExWtr3+BpiBXKLHrjgKAd
+         0rZXKZa1Y+IzusYi2JnaK5F6e6vpglYQz7Ui2JEqDSOceXp0uqiCdWzQi8Ko+il57vEl
+         xUt98GpGsNK7WmeMuFyLqdoC75tvrLqSkvVIqcOGvkIIllon0O4S82LtgmE+bQwg7m5t
+         5XtQ==
+X-Gm-Message-State: AO0yUKXiiQhn1P5r4oSGwlEKjHMSu8GG0/bgSDjUOJouQU7SOoD4vTC+
+        17yojUd9l50RKIKY+OaxM1mk3fH3ad9lIJvjfEU=
+X-Google-Smtp-Source: AK7set8w7RHwJaqXqkb0zNbF2TQM1bbv1FN1z99erE9S9U8EuBbiRbq6QJAK5jLQk8p6wLGQEkDGieMxhqcQw/ObnTk=
+X-Received: by 2002:a17:907:e91:b0:924:32b2:e3d1 with SMTP id
+ ho17-20020a1709070e9100b0092432b2e3d1mr747785ejc.3.1678778521709; Tue, 14 Mar
+ 2023 00:22:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Tue, 14 Mar 2023 08:21:50 +0100
+Message-ID: <CAKXUXMwwQuwssyzBrOXHOz__YRpa1Rjgqmwn5rRFjDVLBbabPA@mail.gmail.com>
+Subject: Question about the dependency on the config SOC_FSL in CPM_QMC
+To:     Herve Codina <herve.codina@bootlin.com>,
+        Li Yang <leoyang.li@nxp.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Mark Brown <broonie@kernel.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>
+Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+Dear Herve,
 
-> Commit f79cbc77abde ("wifi: move mac80211_hwsim and virt_wifi to virtual
-> directory") and commit 298e50ad8eb8 ("wifi: move raycs, wl3501 and
-> rndis_wlan to legacy directory") move remaining wireless drivers into
-> subdirectories, but does not adjust the entries in MAINTAINERS.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-> broken references.
->
-> Repair these file references in those wireless driver sections.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+In your patch below, you added the config CPM_QMC which depends on the
+non-existing config SOC_FSL:
 
-Oh man, forgot about that. Thanks for fixing this.
+https://lore.kernel.org/r/20230217145645.1768659-7-herve.codina@bootlin.com
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Up to my knowledge, the config SOC_FSL never existed in the mainline
+tree. Is this dependency really required or can the expression simply
+be reduced to COMPILE_TEST and we drop the dependency to SOC_FSL?
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Note: This patch has now shown up in linux-next with commit
+3178d58e0b97. Currently, it would not be possible to compile test this
+driver, as the dependency on SOC_FSL is never met.
+
+
+Best regards,
+
+Lukas
