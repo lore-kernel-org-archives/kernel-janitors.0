@@ -2,120 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 937EAC6FD1F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 04:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 915DBC6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 06:16:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229796AbjCNETC (ORCPT
+        id S229673AbjCNGQx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Mar 2023 00:19:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59552 "EHLO
+        Tue, 14 Mar 2023 02:16:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjCNETA (ORCPT
+        with ESMTP id S229446AbjCNGQx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Mar 2023 00:19:00 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3895D7B48B;
-        Mon, 13 Mar 2023 21:18:56 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id j11so56945756edq.4;
-        Mon, 13 Mar 2023 21:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678767534;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TZ7QQfw5FkuIei/cI2/povdDw4YVh92kNRopK67KOaU=;
-        b=hf9G36pJEd0q3oRNqsR0+UcJ2hf1QLXVFpTC51sPFQz7JQUXaMrdxdJ/8smJc8kM7L
-         K7AW8Rfc1KGAa6oOIkCgzaulTIJDTYP//vMFuHWJTCqK+IGiq8FT2cSTMxcg6B0etO58
-         tdX5pV/C1iZ6w7gUJ939t/5/V91u4dfQ0BGHnturmzHVSpFS1dt9xvdCt/coUYvZv4O9
-         z1/xTpTqx3jEGOe3UJG/dCyqDqGh6VUAU3KIr6nV6U8c1sJ6cMw0QvBnU8DxKseiqAMh
-         bnuNFFd4vfiBxKFwn48pmQOhqzKm1HGQrEpecfhD9v68h8WLg7npTvwpJEv18MGsa/vr
-         nsKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678767534;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TZ7QQfw5FkuIei/cI2/povdDw4YVh92kNRopK67KOaU=;
-        b=ygB4B++9TPrhoLpd1Hxxj1jrWBJiLVxfrnH43UoZw8H9MzJnThjvQJoPAUoxQ3kXa3
-         aprICCrfoxo3Zk3F3SqcL9GCragyrmFheyL3B/qw9KgwtsLOYUpLjaKZOaDKHkPfH1aD
-         ECNO3zALRP2GEAM58gwFO93Kdm5od1aK2uh1Nd3Bp11VvoznzCJe0rNyfuTrSXOy+NgF
-         L86E3JoTVfdeNXYQH4Qqw7KwIcX8nVf7jI00ZlECKnAS2nqtlckdhvTuDNEbk1bU55YE
-         6ZahguBfCDiNCE6VLPGMF567UDT3PajRF4i7o6QlMdLEgYfvyJZB8D8RmkzpcTixBtHe
-         /H1Q==
-X-Gm-Message-State: AO0yUKUZLw740zsJgBvcu43hRRn1mAPMiR3BHQty4B2NMvfgEFWgSsWW
-        A8eSLszgJgQs2NF0FM1Xu23mWtPoNC4r1w==
-X-Google-Smtp-Source: AK7set8WaRvILSlswipSW/7mqGRZgz1V+baskJ9GNgwqCyY6TUQFybXrFgF6FCsYW+ZBgzh+vud/EQ==
-X-Received: by 2002:a17:906:c244:b0:877:a9d2:e5e9 with SMTP id bl4-20020a170906c24400b00877a9d2e5e9mr894889ejb.42.1678767534526;
-        Mon, 13 Mar 2023 21:18:54 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:e097:f710:4dc1:9ec4])
-        by smtp.gmail.com with ESMTPSA id zk6-20020a17090733c600b00927e0fb3e50sm540390ejb.100.2023.03.13.21.18.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Mar 2023 21:18:54 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust file entries after wifi driver movement
-Date:   Tue, 14 Mar 2023 05:18:48 +0100
-Message-Id: <20230314041848.5120-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 14 Mar 2023 02:16:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 562AD76F62;
+        Mon, 13 Mar 2023 23:16:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DFC3B615E0;
+        Tue, 14 Mar 2023 06:16:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52909C433D2;
+        Tue, 14 Mar 2023 06:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678774611;
+        bh=M7/IuZ+P1PMkCewwA2wliaQ2VYsdEdrWZtoteqZE3uM=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=ivZPgp0fzFpzbl1PePSR8pwCNcHXAJaX2T3GyMbcDDOMUbn1DBf9GKrrS8U7gbhsY
+         Q53u0QX9HeFEndORdqZyOKJsfkvkQQSYdgWF4V0S+kcnfz/MGX5ufmB7B2JiLmVwRX
+         YReLflmWli8DuDTMoNMipfIE+0zuj3iXBCFTliZRQlSrsDXGqzHXHDheKLnK9XiyP8
+         Emq20yvt2jZbewrLjx7Zp2Yv3i+lDSzQrqnfaHuNZBS2LZa+SeE/3YND1o9RM4YH3Z
+         nyxseywQcU3L8guRB82gWXeAWs1aJrqYsWnn3e7sVOA3B1Ycah3edOBiXEXPzE8hQS
+         adS2PC+qUZa6A==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: adjust file entries after wifi driver movement
+References: <20230314041848.5120-1-lukas.bulwahn@gmail.com>
+Date:   Tue, 14 Mar 2023 08:16:45 +0200
+In-Reply-To: <20230314041848.5120-1-lukas.bulwahn@gmail.com> (Lukas Bulwahn's
+        message of "Tue, 14 Mar 2023 05:18:48 +0100")
+Message-ID: <87ttynyi0i.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit f79cbc77abde ("wifi: move mac80211_hwsim and virt_wifi to virtual
-directory") and commit 298e50ad8eb8 ("wifi: move raycs, wl3501 and
-rndis_wlan to legacy directory") move remaining wireless drivers into
-subdirectories, but does not adjust the entries in MAINTAINERS.
+Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-broken references.
+> Commit f79cbc77abde ("wifi: move mac80211_hwsim and virt_wifi to virtual
+> directory") and commit 298e50ad8eb8 ("wifi: move raycs, wl3501 and
+> rndis_wlan to legacy directory") move remaining wireless drivers into
+> subdirectories, but does not adjust the entries in MAINTAINERS.
+>
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+> broken references.
+>
+> Repair these file references in those wireless driver sections.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Repair these file references in those wireless driver sections.
+Oh man, forgot about that. Thanks for fixing this.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 25a0981c74b6..8b38772e27dc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12309,7 +12309,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless.git
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git
- F:	Documentation/networking/mac80211-injection.rst
- F:	Documentation/networking/mac80211_hwsim/mac80211_hwsim.rst
--F:	drivers/net/wireless/mac80211_hwsim.[ch]
-+F:	drivers/net/wireless/virtual/mac80211_hwsim.[ch]
- F:	include/net/mac80211.h
- F:	net/mac80211/
- 
-@@ -17574,7 +17574,7 @@ F:	include/ras/ras_event.h
- RAYLINK/WEBGEAR 802.11 WIRELESS LAN DRIVER
- L:	linux-wireless@vger.kernel.org
- S:	Orphan
--F:	drivers/net/wireless/ray*
-+F:	drivers/net/wireless/legacy/ray*
- 
- RC-CORE / LIRC FRAMEWORK
- M:	Sean Young <sean@mess.org>
-@@ -21815,7 +21815,7 @@ USB WIRELESS RNDIS DRIVER (rndis_wlan)
- M:	Jussi Kivilinna <jussi.kivilinna@iki.fi>
- L:	linux-wireless@vger.kernel.org
- S:	Maintained
--F:	drivers/net/wireless/rndis_wlan.c
-+F:	drivers/net/wireless/legacy/rndis_wlan.c
- 
- USB XHCI DRIVER
- M:	Mathias Nyman <mathias.nyman@intel.com>
-@@ -22571,7 +22571,7 @@ F:	drivers/input/misc/wistron_btns.c
- WL3501 WIRELESS PCMCIA CARD DRIVER
- L:	linux-wireless@vger.kernel.org
- S:	Odd fixes
--F:	drivers/net/wireless/wl3501*
-+F:	drivers/net/wireless/legacy/wl3501*
- 
- WOLFSON MICROELECTRONICS DRIVERS
- L:	patches@opensource.cirrus.com
 -- 
-2.17.1
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
