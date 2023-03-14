@@ -2,132 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C001C6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 08:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40624C6FD1F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 08:19:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbjCNIS2 (ORCPT
+        id S230202AbjCNITO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Mar 2023 04:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60020 "EHLO
+        Tue, 14 Mar 2023 04:19:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230207AbjCNIRw (ORCPT
+        with ESMTP id S229730AbjCNISr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Mar 2023 04:17:52 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A70DF1F5DF;
-        Tue, 14 Mar 2023 01:17:30 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id j11so58533879edq.4;
-        Tue, 14 Mar 2023 01:17:30 -0700 (PDT)
+        Tue, 14 Mar 2023 04:18:47 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 287DB8DCE0
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Mar 2023 01:18:16 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id o7so4080724wrg.5
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Mar 2023 01:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678781849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dFmrgoFX8e2tXRWBLSQLhRldhqfPMiA/z+mX5uDLA5E=;
-        b=n6wGLaeHLTOcz5q517JnqrC2Xt7AxmI2nv4QFevlP0RyX8Mp6PDcCBaA0lLJp/itCW
-         VBlcS5cZKmJkxd0x+uG7iXdb1IhHh046fxGJ3W60DxFPFLcsTjXh7JCxsMDDpOPqS9Ap
-         rRFPZhai3QZ1K0mBjYYtJUswXLAKAUADeeMBlqygnBnNYbLIHvIgsD0WuO+NgIRSeSWx
-         xE9rK5cLcOmiXwmRCzIEzsDrwiBIfKOwOzF5AUePYV+3LT2jRVNwhKkQWLPM6PQ0mx7t
-         aaCC0IVenXzK6Dh9PEXCeBhMopwQimceFiFC9lB+68IsLyMbg/pBjyGwnSlPaqM2d1rI
-         ep0g==
+        d=gmail.com; s=20210112; t=1678781894;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2214dcZRNnFFU9/Etuq7BnZaeDVA1LLzT7N7JzpJVnM=;
+        b=A5j3q9dJ2yC101SHzOx+ouKXXw2OXhxVZbUgszPQ0lwmy6tvtDFY7fsvg6bmpfVvK0
+         ewiepno8BqXtp+uqpPKC4jFD6gAyinz4sKNMjmA59+bJ5C0SfChfpgHfS/0Vpfl7oj7d
+         4Y4xeBXQTU78clGG8QD9xOwHlqNGPsLNTCyZOfZz/Xbf5hn0F0xD+NBLW8yR5AL6fkNj
+         yhQOSsSWOLBx99YrD8tB4vTDc/Q04vtcDCtQIcKsCUNd4s7qgH+r2rz/NNBIMR5RpoT/
+         ZfTymqsA8qB4Ca07KVX8Tw2/mI6mqq5e3GVUovSnoZEbPOutOHmO0b+OPbu8n0Sr+dkY
+         xFvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678781849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dFmrgoFX8e2tXRWBLSQLhRldhqfPMiA/z+mX5uDLA5E=;
-        b=YAySHchRdXsUc4O5wGVl7EtKIr/bpBm1tTjta6Uq23UTsryCGtwkP6tLVpOqA4GioE
-         CdBWIijtdeypInHNbGAjza0cqZxei7EwupyfR9MPma27IbC/74EcbjATaXQOIs1NEa4G
-         aJNIy2uH5fI0kVcFrdWpLhtYKRSUXonOKNjn1G7S+Z+wZ/JxnCYTg2kpYn5qwIgfcsGF
-         KjjEg5jP/vn1UmzKnYc2h5nVaG8BSy85dcR57/v5qprcXfQPCboggWJccaApKkc9h5s4
-         TgiE1Jl0zwA/DQd1pkUAQg26+tda31GOsPivIWfKHy/Bi7sUHQD5TeLRrVgIpuMAqtgp
-         9EVw==
-X-Gm-Message-State: AO0yUKVx7guvdcLtsGLPn8mwfxXQcH7QHDjBlW63CsVlhk0Jiq8CVtTp
-        y9nmwZiluzQ2KDBM9+aDnI823qPLwX20jdveD38=
-X-Google-Smtp-Source: AK7set/WsRTaXQDKcuv6Z3Z8FDkurQyyZzTSUvVAfJWb39YBTuibZxwLFDRj0gBxe+eRAtNAc9NQ8F/WFpjjun5zK6s=
-X-Received: by 2002:a17:906:4d57:b0:90a:33e4:5a69 with SMTP id
- b23-20020a1709064d5700b0090a33e45a69mr662685ejv.3.1678781849147; Tue, 14 Mar
- 2023 01:17:29 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1678781894;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2214dcZRNnFFU9/Etuq7BnZaeDVA1LLzT7N7JzpJVnM=;
+        b=WpVy6jRWOqsAC4hJ03dnhCkXiAQfxzC/5/WF6GAIDjAa6WR3gMvMbm+38rjuP1/JNI
+         US8QLaWfvF6jzOs6FiCi2uZe22+7QJLE8NGROl7kMmSvHs/SLcr4Csuq0SAv92X29aCY
+         cyCHiIrAKqcaKXa4YuoTjRSYjvARN5sv/wIu6UFBVZq+3jy80QsuKDQUHrtuPWrpezjU
+         BO1qwIst7qWBD7pW6a9jVpKng5y3kkgnc5PAd5cVbJdaiKEf5XbqsfOulUc/pLY119x0
+         HfaXN2c9li0B9B6hJIW30OzmvVnp9fhZrVC/nN51BPM/XzuTh0r5KgoEGxwJ+A56Q/tu
+         RmjA==
+X-Gm-Message-State: AO0yUKUVxgWkU/lh6KNBLYmTpgbZMONUblIqTuS0KcJGHD20HrSqvl8l
+        CiwJXyD/GoMTFlnZpG3B8+4=
+X-Google-Smtp-Source: AK7set9iRHCKWKPm+mnreWBZ1a1d7cE4kIhCrdrICssPEdiPtuBsjjhazUr3f1fAUw3y2IGFlhP5iw==
+X-Received: by 2002:a05:6000:1004:b0:2cf:e517:c138 with SMTP id a4-20020a056000100400b002cfe517c138mr2828443wrx.66.1678781894551;
+        Tue, 14 Mar 2023 01:18:14 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id t2-20020a5d49c2000000b002ce72cff2ecsm1416846wrs.72.2023.03.14.01.18.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Mar 2023 01:18:13 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Oded Gabbay <ogabbay@kernel.org>, dri-devel@lists.freedesktop.org,
+        Yuri Nudelman <ynudelman@habana.ai>
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [PATCH][next] habanalabs: Fix spelling mistake "maped" -> "mapped"
+Date:   Tue, 14 Mar 2023 08:18:12 +0000
+Message-Id: <20230314081812.26065-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <CAKXUXMwwQuwssyzBrOXHOz__YRpa1Rjgqmwn5rRFjDVLBbabPA@mail.gmail.com>
- <20230314085741.6f968e68@bootlin.com>
-In-Reply-To: <20230314085741.6f968e68@bootlin.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 14 Mar 2023 09:17:18 +0100
-Message-ID: <CAKXUXMwqobqZJtDXAfymF3iWmzE3EXH1q6VLddVob9q2ygzWyQ@mail.gmail.com>
-Subject: Re: Question about the dependency on the config SOC_FSL in CPM_QMC
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     Li Yang <leoyang.li@nxp.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Mark Brown <broonie@kernel.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 14, 2023 at 8:57=E2=80=AFAM Herve Codina <herve.codina@bootlin.=
-com> wrote:
->
-> Hi Lukas,
->
-> On Tue, 14 Mar 2023 08:21:50 +0100
-> Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> > Dear Herve,
-> >
-> > In your patch below, you added the config CPM_QMC which depends on the
-> > non-existing config SOC_FSL:
-> >
-> > https://lore.kernel.org/r/20230217145645.1768659-7-herve.codina@bootlin=
-.com
-> >
-> > Up to my knowledge, the config SOC_FSL never existed in the mainline
-> > tree. Is this dependency really required or can the expression simply
-> > be reduced to COMPILE_TEST and we drop the dependency to SOC_FSL?
-> >
-> > Note: This patch has now shown up in linux-next with commit
-> > 3178d58e0b97. Currently, it would not be possible to compile test this
-> > driver, as the dependency on SOC_FSL is never met.
-> >
-> >
-> > Best regards,
-> >
-> > Lukas
->
-> My bad :(
->
-> The dependency must be FSL_SOC instead of SOC_FSL.
+There is a spelling mistake in a dev_err message. Fix it.
 
-Herve, are you going to send a quick fix to your patch or ask Mark if
-your original patch can simply be replaced with a new one with this
-change added?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/accel/habanalabs/common/memory_mgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Lukas
+diff --git a/drivers/accel/habanalabs/common/memory_mgr.c b/drivers/accel/habanalabs/common/memory_mgr.c
+index 30f8059f28c2..c4d84df355b0 100644
+--- a/drivers/accel/habanalabs/common/memory_mgr.c
++++ b/drivers/accel/habanalabs/common/memory_mgr.c
+@@ -275,7 +275,7 @@ int hl_mem_mgr_mmap(struct hl_mem_mgr *mmg, struct vm_area_struct *vma,
+ 
+ 	if (atomic_cmpxchg(&buf->mmap, 0, 1)) {
+ 		dev_err(mmg->dev,
+-			"%s, Memory mmap failed, already maped to user\n",
++			"%s, Memory mmap failed, already mapped to user\n",
+ 			buf->behavior->topic);
+ 		rc = -EINVAL;
+ 		goto put_mem;
+-- 
+2.30.2
 
-> I mean:
-> diff --git a/drivers/soc/fsl/qe/Kconfig b/drivers/soc/fsl/qe/Kconfig
-> index f90cfdf0c763..7268c2fbcbc1 100644
-> --- a/drivers/soc/fsl/qe/Kconfig
-> +++ b/drivers/soc/fsl/qe/Kconfig
-> @@ -47,7 +47,7 @@ config CPM_TSA
->  config CPM_QMC
->         tristate "CPM QMC support"
->         depends on OF && HAS_IOMEM
-> -       depends on CPM1 || (SOC_FSL && COMPILE_TEST)
-> +       depends on CPM1 || (FSL_SOC && COMPILE_TEST)
->         depends on CPM_TSA
->         help
->           Freescale CPM QUICC Multichannel Controller
->
->
->
-> --
-> Herv=C3=A9 Codina, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
