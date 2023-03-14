@@ -2,107 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0282EC6FD1F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 16:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FEBC74A44
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 18:31:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbjCNQhS (ORCPT
+        id S230177AbjCNSbA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Mar 2023 12:37:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60926 "EHLO
+        Tue, 14 Mar 2023 14:31:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230454AbjCNQhF (ORCPT
+        with ESMTP id S229905AbjCNSa6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Mar 2023 12:37:05 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FED6B5B49;
-        Tue, 14 Mar 2023 09:36:32 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32EEuYCL029403;
-        Tue, 14 Mar 2023 16:35:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=xE78rOhENvxzwN/jZO3oIOvhx6dV/6fT2Bvwxfynab4=;
- b=ZcaFvVT/u6bMROEFbQZ5gGSpzIP7YQ7MJX6kaloaQ7O9EgCgJdNFNENLioQiEA6ts7Uj
- non8071AFsWZT6Q9tUFmIdFgBD2z+C4eDIROPjyguKrkbn0Q4LU+M8Ct7E9wUL+xc4OR
- 3VW7UuITT3IazA95oNHKHPmY1d0Yr5pWTjBTOzFzaSNkwW2Ip2jmmpiXyDd8iU7a8EBK
- x/rjjDhGJDkJ63DffmKmWwtKxTqgxcZezogCEVo0oMYYrWLsZIWl417Nx7EPyYA8nUEe
- WDZQKHQOJNRZ+yxDpDvL7SvkxmwNwYJzgiFG+ZKmflZFz9ZLLgRhrJ/2UrN8TBwn+/Te Uw== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pau4mga0n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Mar 2023 16:35:59 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32EGZw6a015874
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Mar 2023 16:35:58 GMT
-Received: from [10.110.64.241] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 14 Mar
- 2023 09:35:57 -0700
-Message-ID: <9dc6c74f-8982-0ccb-af1b-e6ef22276886@quicinc.com>
-Date:   Tue, 14 Mar 2023 09:35:56 -0700
+        Tue, 14 Mar 2023 14:30:58 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5CA3196BD;
+        Tue, 14 Mar 2023 11:30:43 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 403E07F9;
+        Tue, 14 Mar 2023 18:30:43 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 403E07F9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1678818643; bh=tX5BlomIMfjFk48N7G8zpaNKZ5y6cgHFSYOhFhTC988=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=SNm3rP7qoJk1gDhJtcF0OKB8tpDPK1wFWcLrmQYtt6lkjPtUyh2kF7kZ8ZK4Oitws
+         Nu2F+4kfSZYZROInIQw+uxQu0X5hiZ6nJDXshAxvh4M8KoGwFKWKcdnTXUewdPdAMS
+         BYB8eyGhzsu8wB/aZINEtvR1Sm9QYJHXa5BTPqZjqxZkZYAO/YglJ67YuVVVFj2vl7
+         WSKFEtN3u+PoCKZXYXDUBC7n0OSeh6jAnJ0NtiqMyQib96F7UINZJzzOlxyahTGQnV
+         eTX+Y44pOhi/4uuSRUZ2EfHyHEl+Vzd4bRjEpaoVKLpIi3vdDE3lkkaKqoLLpCF+CM
+         VCDwVCAFuARlg==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-doc@vger.kernel.org,
+        device@lanana.org, unicode@lanana.org,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH 0/2] Updating information on lanana.org
+In-Reply-To: <20230307144000.29539-1-lukas.bulwahn@gmail.com>
+References: <20230307144000.29539-1-lukas.bulwahn@gmail.com>
+Date:   Tue, 14 Mar 2023 12:30:42 -0600
+Message-ID: <87edprrxrh.fsf@meer.lwn.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Subject: Re: [PATCH][next] drm/msm/dp: Fix spelling mistake "Capabiity" ->
- "Capability"
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230314082050.26331-1-colin.i.king@gmail.com>
-From:   Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20230314082050.26331-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: AixY7ideUSUqI-B9Au3qBmqNQiHVj_eP
-X-Proofpoint-ORIG-GUID: AixY7ideUSUqI-B9Au3qBmqNQiHVj_eP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-14_10,2023-03-14_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- impostorscore=0 lowpriorityscore=0 phishscore=0 spamscore=0 clxscore=1011
- priorityscore=1501 bulkscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303140137
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
+> Dear Jon,
+>
+> please pick these two changes that update information in MAINTAINERS and
+> the kernel documentation on the actual state of lanana.org.
 
-On 3/14/2023 1:20 AM, Colin Ian King wrote:
-> There is a spelling mistake in a drm_dbg_dp message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Done, applied.
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Thanks,
 
-> ---
->   drivers/gpu/drm/msm/dp/dp_link.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_link.c b/drivers/gpu/drm/msm/dp/dp_link.c
-> index 5a4817ac086f..42427129acea 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_link.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_link.c
-> @@ -1090,7 +1090,7 @@ int dp_link_process_request(struct dp_link *dp_link)
->   	} else if (dp_link_read_psr_error_status(link)) {
->   		DRM_ERROR("PSR IRQ_HPD received\n");
->   	} else if (dp_link_psr_capability_changed(link)) {
-> -		drm_dbg_dp(link->drm_dev, "PSR Capabiity changed");
-> +		drm_dbg_dp(link->drm_dev, "PSR Capability changed");
->   	} else {
->   		ret = dp_link_process_link_status_update(link);
->   		if (!ret) {
+jon
