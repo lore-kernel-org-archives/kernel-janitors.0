@@ -2,69 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF5FC6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 11:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F17C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 15:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231515AbjCNLv3 (ORCPT
+        id S230370AbjCNP2X (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Mar 2023 07:51:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37576 "EHLO
+        Tue, 14 Mar 2023 11:28:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231536AbjCNLvZ (ORCPT
+        with ESMTP id S229616AbjCNP2W (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Mar 2023 07:51:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08839FBFD;
-        Tue, 14 Mar 2023 04:51:06 -0700 (PDT)
+        Tue, 14 Mar 2023 11:28:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8381844B1;
+        Tue, 14 Mar 2023 08:28:20 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F2B016173E;
-        Tue, 14 Mar 2023 11:51:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1046EC43443;
-        Tue, 14 Mar 2023 11:51:03 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 38CEFB819C7;
+        Tue, 14 Mar 2023 15:28:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8346FC433D2;
+        Tue, 14 Mar 2023 15:28:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678794665;
-        bh=JAGoo2SgIY4kQe/DowCGQHuyh5Fpt75CcZrOFP7yelI=;
+        s=k20201202; t=1678807697;
+        bh=65I5JNrjq3L2NB/1GDeSH5LJoqTISGdDomt4jD2nldE=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=JwGKxtg5us41CJNA77pobrV92L4EWU67jkSnaQudPOdjmX7Kyz9EzctB8n7N3CXAa
-         xT4gEgpQpHD4485KaY5i6NFqem/MeKKTj3rdD/9h+rIhiN65cMCwRQWxoy/pjXRKPa
-         GqVz7IrJGorHarrlqMrl8Yc/ZYyFMKahiPuyOxDI63+2VBKHRW430XNyQPtdbI+Lfl
-         3NzYxM9du9G/2t+l8TvCW+r2mWXkPlKt8yuw9xdzOM3VDuwb7yKQdnjTHCQCkrpGRF
-         BnxU4amRMZr0RMyweyq2xS2hwnI4/ovGmc6MXh4WfEGcxKe8j8S0NnrW4lHt+C1Xtm
-         2Vrd1dFBx65ug==
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Dan Carpenter <error27@gmail.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Roland Dreier <rolandd@cisco.com>,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <a8dfbd1d-c019-4556-930b-bab1ded73b10@kili.mountain>
-References: <a8dfbd1d-c019-4556-930b-bab1ded73b10@kili.mountain>
-Subject: Re: [PATCH] RDMA/mlx: prevent shift wrapping in set_user_sq_size()
-Message-Id: <167879465887.235555.12153701745715660360.b4-ty@kernel.org>
-Date:   Tue, 14 Mar 2023 13:50:58 +0200
+        b=SZAHD7znl/GkqgTFkA77v7vPan/XhmIZU6Yp68c6FGE4T0BGmzPusl8tuG1a2Li9p
+         39W45QlVvW/i21IrKl7hrWYbYqJv/BS0nkaocgc5JBURVLvu9OD7y8mHnKkAvHlJcb
+         wNpV3QA0tqHjd2HTZ/frg+b8hk0bjfR4ujdhl68P30ip4Qw6/dp4Ey6timHWXZPC4r
+         J4QtRytW9oXZVVHnteDIdcfmA7l7a6pUlgg2IHx3e43ygEPprP66HjpliFlZhFQzVh
+         rqM3o0jNAxJkFbt2ewA13JyE1MFmOxWsvMWsGmZesjm7Q+W2qcq/bBBY+ZTA3i85aM
+         BWYxEk1ZgcOVA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org
+In-Reply-To: <20230314075609.5232-1-lukas.bulwahn@gmail.com>
+References: <20230314075609.5232-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] spi: docs: adjust summary to CONFIG_SYSFS_DEPRECATED
+ removal
+Message-Id: <167880769625.45617.10639491792263901775.b4-ty@kernel.org>
+Date:   Tue, 14 Mar 2023 15:28:16 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12-dev-a055d
+X-Mailer: b4 0.13-dev-bd1bf
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-On Tue, 07 Mar 2023 12:51:27 +0300, Dan Carpenter wrote:
-> The ucmd->log_sq_bb_count variable is controlled by the user so this
-> shift can wrap.  Fix it by using check_shl_overflow() in the same way
-> that it was done in commit 515f60004ed9 ("RDMA/hns: Prevent undefined
-> behavior in hns_roce_set_user_sq_size()").
+On Tue, 14 Mar 2023 08:56:09 +0100, Lukas Bulwahn wrote:
+> With commit 721da5cee9d4 ("driver core: remove CONFIG_SYSFS_DEPRECATED and
+> CONFIG_SYSFS_DEPRECATED_V2"), ./scripts/checkkconfigsymbols.py indicated
+> an unresolved reference to the config SYSFS_DEPRECATED in the SPI summary
+> documentation.
 > 
+> Simply, delete the sentence referring to the removed config there. Also
+> update the documentation, as these sys/class entries should always be
+> symlinks, as the commit message of the commit above suggests.
 > 
+> [...]
 
-Applied, thanks!
+Applied to
 
-[1/1] RDMA/mlx: prevent shift wrapping in set_user_sq_size()
-      https://git.kernel.org/rdma/rdma/c/9b88b0fcab7461
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
+Thanks!
+
+[1/1] spi: docs: adjust summary to CONFIG_SYSFS_DEPRECATED removal
+      commit: 93d205457dcda137e73dbfdcaa6a3c4c3b6d505f
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
