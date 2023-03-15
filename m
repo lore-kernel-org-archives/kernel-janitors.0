@@ -2,101 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8629C76195
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Mar 2023 08:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27886C61DA4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Mar 2023 09:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231578AbjCOICA (ORCPT
+        id S229769AbjCOJKN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Mar 2023 04:02:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41256 "EHLO
+        Wed, 15 Mar 2023 05:10:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231313AbjCOIBx (ORCPT
+        with ESMTP id S232005AbjCOJJ3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Mar 2023 04:01:53 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC1546772F;
-        Wed, 15 Mar 2023 01:01:46 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id bi20so2016037wmb.2;
-        Wed, 15 Mar 2023 01:01:46 -0700 (PDT)
+        Wed, 15 Mar 2023 05:09:29 -0400
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146D42739;
+        Wed, 15 Mar 2023 02:09:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678867305;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7bY7uM2WUrQr++XXrQWRw8Isupq/sx4rHRa6AGV7kwM=;
-        b=aJZBZt8+qQGUmGLRg1lShIpbmXGwdzVJDh3Wn+oX8FI8DsNFQyZqOuNwutOzqkAf/f
-         bdEh0KrCFSwMbrw02U+tZnq0Cdw3eZtImTe038zXGsZg1bDS2e3KXXH/ISoX/kk5769T
-         uaGXya5wmwCqyF+cwVxfSZDexQGzVca6GGasgq1VrW/geHnXeTYb5yLOtQJlMgrw310H
-         IkXUASDUD8Hg/L8LcfeyDPxvJ9CR66i6JMA/UZZAIPGsdrPsSKjE8MUuj3l67VH+OjiF
-         vGkGGox5UM7SRruncy9rwcSrujdP9x96Ofv6EhlUrrtqivgu7HAzW22QipqbJrwWmfmf
-         n7pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678867305;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7bY7uM2WUrQr++XXrQWRw8Isupq/sx4rHRa6AGV7kwM=;
-        b=2Bk5hDE8oxWFqw9Kja0nK+W5CjuXzveaTm2VC3dy+d6UarTfmIl5Lp6DyNycjmbyhr
-         lkF7v0Ylkgb5Rk0a9s+4t4h1CLuKrSRCPq6HlJHbhf7WWL06ONVUywS5TOR4rQPsnaHM
-         /p4X6i2BTDJ6t/reahi2YB2ux7S756TZNwMkiuzbnYtBbWS3z2oU5nNR3PSZ1ia1il+n
-         uu+Acojg8UHCCJhCPnMiq1tofDoJoxEP7gtr815s/LKQ4w7jXyFGJXubjmMqAMyeEszf
-         DQ+Ax//Fd5MZMfrX3yW2Xcvvc6ayqY8R7nOgiDMVftt7HnOQqTAATXvzhJ75A5Te5OlR
-         DxWA==
-X-Gm-Message-State: AO0yUKV6E6ZX9JKkFge7Z3pZKAOAHVcBTPLS0k9QnHw7yB6i64JBcmLc
-        UAGGMyj/hNCWleBuYJ0MsEg=
-X-Google-Smtp-Source: AK7set/lqTfii/x9kup6SsaRh721b/XRSN95Hv9u4L+njZPWQwhfJ7r4py/nOuzdql3dN/3kumtAXg==
-X-Received: by 2002:a05:600c:190a:b0:3e0:6c4:6a38 with SMTP id j10-20020a05600c190a00b003e006c46a38mr16519683wmq.33.1678867304741;
-        Wed, 15 Mar 2023 01:01:44 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id k18-20020a05600c1c9200b003dc434b39c7sm5957812wms.0.2023.03.15.01.01.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 01:01:43 -0700 (PDT)
-Date:   Wed, 15 Mar 2023 11:01:39 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Alexander Lobakin <aleksander.lobakin@intel.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Simon Horman <simon.horman@corigine.com>,
-        Ariel Elior <aelior@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=MP1L1kZAaysXUeL2NiJnvDJlsldUV5D8hJj4fTXBLAg=;
+  b=qQQ5QxU+RKTbYCtFpC0w+eFvfiiZ1Pyh1M9Ae2gLl2Ok0pqCc4Ky/Inp
+   dLr2R5L0fCkrKQNYqc+OhyQ22tvtp4oZDxypnnQTY9TK4d7dUuIgcYQvI
+   7h0eKZjVeoGnAFotV9NqybWdyOdU4rbAIs4wJVNleOa9apZsxgsIHtywz
+   g=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.98,262,1673910000"; 
+   d="scan'208";a="97303132"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2023 10:09:09 +0100
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] qede: remove linux/version.h and linux/compiler.h
-Message-ID: <e90eb551-3b56-4c34-be8d-3d2187a1f81c@kili.mountain>
-References: <20230303185351.2825900-1-usama.anjum@collabora.com>
- <20230303155436.213ee2c0@kernel.org>
- <df8a446a-e8a9-3b3d-fd0f-791f0d01a0c9@collabora.com>
- <ZAdoivY94Y5dfOa4@corigine.com>
- <1107bc10-9b14-98f4-3e47-f87188453ce7@collabora.com>
- <8a90dca3-af66-5348-72b9-ac49610f22ce@intel.com>
- <ee08333d-d39d-45c6-9e6e-6328855d3068@kili.mountain>
- <20230313114538.74e6caca@kernel.org>
+Subject: [PATCH] media: atomisp-mt9m114: adjust macro parameter name
+Date:   Wed, 15 Mar 2023 10:09:04 +0100
+Message-Id: <20230315090904.20092-1-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230313114538.74e6caca@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 13, 2023 at 11:45:38AM -0700, Jakub Kicinski wrote:
-> Reality check for me - this is really something that should
-> be handled by our process scripts, right? get_maintainer/
-> /checkpatch ? Or that's not a fair expectation.
+The macro parameter name, sd, captures the field name in the third
+argument of container_of.  Fortunately, the argument at all uses is
+actually sd.  But change the macro parameter name anyway, for a little
+added safety.
 
-If it could be automated some way, that would help a lot.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-There are a bunch of things which have confused me in the past such as
-how RDMA and the net trees interact.  Also the Mellanox tree, I used to
-think Mellanox maintainers collect patches and send git pulls but
-apparently for fixes they prefer if you collect them from mailing list?
+---
 
-I'm looking at my process now and I can see that I was dumb when I set
-this up.  Just doing a fetch and switching between git trees was taking
-4 minutes but I can cut it down to 30 seconds.  So some of this was my
-fault.
+An alternative would be to make an inline function.
 
-regards,
-dan carpenter
+ drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c b/drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c
+index 0e5a981dd331..b47d0882041b 100644
+--- a/drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c
++++ b/drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c
+@@ -35,7 +35,7 @@
+ 
+ #include "mt9m114.h"
+ 
+-#define to_mt9m114_sensor(sd) container_of(sd, struct mt9m114_device, sd)
++#define to_mt9m114_sensor(s) container_of(s, struct mt9m114_device, sd)
+ 
+ /*
+  * TODO: use debug parameter to actually define when debug messages should
+
