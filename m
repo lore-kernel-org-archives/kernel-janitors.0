@@ -2,74 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5B5C74A44
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Mar 2023 18:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8629C76195
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Mar 2023 08:02:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231197AbjCNSx7 (ORCPT
+        id S231578AbjCOICA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Mar 2023 14:53:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37516 "EHLO
+        Wed, 15 Mar 2023 04:02:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231181AbjCNSx5 (ORCPT
+        with ESMTP id S231313AbjCOIBx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Mar 2023 14:53:57 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B90B89EF47;
-        Tue, 14 Mar 2023 11:53:24 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id ED85A7F9;
-        Tue, 14 Mar 2023 18:53:20 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ED85A7F9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1678820001; bh=+lUML7AGokBrjmE+zN0xiWF+xgkeixecRJJs+Y23my8=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=PdGRKgtGSTk4kdt1PvCQDHySTlY6Extsy2W6BsJ8f74JoESYktyqLfu8j8OkVJBx5
-         jdmFLXQ6sduK8orAeUBFjdxwgDiG/CeG5O7AHZAjHqrMAhWmqGtiuHPZU9VIAaG1Yv
-         PWg7CGn8yIdF3S6NTagxSnujaY/pDSiLSbZMdjjVkP8OqOo3X3tnQrB1/MrWGbluX7
-         NnLM3I7wzPb+r/yMR/fjoFaXYxTScF5cvWaOU3ResG0K94Swz5rmsR9rNlQ7rJ0sor
-         OE5J4Co3tEPN61WL+cTGI6LSzLNkeaNod4jiNcwzDLBcC5eOvjEfwuj7K2OeuLBQMI
-         FdEXyAES9dIxg==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Anders Larsen <al@alarsen.net>, linux-doc@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH 0/2] Minor documentation clean-up in fs
-In-Reply-To: <20230220170210.15677-1-lukas.bulwahn@gmail.com>
-References: <20230220170210.15677-1-lukas.bulwahn@gmail.com>
-Date:   Tue, 14 Mar 2023 12:53:20 -0600
-Message-ID: <87sfe7qi5b.fsf@meer.lwn.net>
+        Wed, 15 Mar 2023 04:01:53 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC1546772F;
+        Wed, 15 Mar 2023 01:01:46 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id bi20so2016037wmb.2;
+        Wed, 15 Mar 2023 01:01:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678867305;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7bY7uM2WUrQr++XXrQWRw8Isupq/sx4rHRa6AGV7kwM=;
+        b=aJZBZt8+qQGUmGLRg1lShIpbmXGwdzVJDh3Wn+oX8FI8DsNFQyZqOuNwutOzqkAf/f
+         bdEh0KrCFSwMbrw02U+tZnq0Cdw3eZtImTe038zXGsZg1bDS2e3KXXH/ISoX/kk5769T
+         uaGXya5wmwCqyF+cwVxfSZDexQGzVca6GGasgq1VrW/geHnXeTYb5yLOtQJlMgrw310H
+         IkXUASDUD8Hg/L8LcfeyDPxvJ9CR66i6JMA/UZZAIPGsdrPsSKjE8MUuj3l67VH+OjiF
+         vGkGGox5UM7SRruncy9rwcSrujdP9x96Ofv6EhlUrrtqivgu7HAzW22QipqbJrwWmfmf
+         n7pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678867305;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7bY7uM2WUrQr++XXrQWRw8Isupq/sx4rHRa6AGV7kwM=;
+        b=2Bk5hDE8oxWFqw9Kja0nK+W5CjuXzveaTm2VC3dy+d6UarTfmIl5Lp6DyNycjmbyhr
+         lkF7v0Ylkgb5Rk0a9s+4t4h1CLuKrSRCPq6HlJHbhf7WWL06ONVUywS5TOR4rQPsnaHM
+         /p4X6i2BTDJ6t/reahi2YB2ux7S756TZNwMkiuzbnYtBbWS3z2oU5nNR3PSZ1ia1il+n
+         uu+Acojg8UHCCJhCPnMiq1tofDoJoxEP7gtr815s/LKQ4w7jXyFGJXubjmMqAMyeEszf
+         DQ+Ax//Fd5MZMfrX3yW2Xcvvc6ayqY8R7nOgiDMVftt7HnOQqTAATXvzhJ75A5Te5OlR
+         DxWA==
+X-Gm-Message-State: AO0yUKV6E6ZX9JKkFge7Z3pZKAOAHVcBTPLS0k9QnHw7yB6i64JBcmLc
+        UAGGMyj/hNCWleBuYJ0MsEg=
+X-Google-Smtp-Source: AK7set/lqTfii/x9kup6SsaRh721b/XRSN95Hv9u4L+njZPWQwhfJ7r4py/nOuzdql3dN/3kumtAXg==
+X-Received: by 2002:a05:600c:190a:b0:3e0:6c4:6a38 with SMTP id j10-20020a05600c190a00b003e006c46a38mr16519683wmq.33.1678867304741;
+        Wed, 15 Mar 2023 01:01:44 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id k18-20020a05600c1c9200b003dc434b39c7sm5957812wms.0.2023.03.15.01.01.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Mar 2023 01:01:43 -0700 (PDT)
+Date:   Wed, 15 Mar 2023 11:01:39 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Alexander Lobakin <aleksander.lobakin@intel.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Simon Horman <simon.horman@corigine.com>,
+        Ariel Elior <aelior@marvell.com>,
+        Manish Chopra <manishc@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] qede: remove linux/version.h and linux/compiler.h
+Message-ID: <e90eb551-3b56-4c34-be8d-3d2187a1f81c@kili.mountain>
+References: <20230303185351.2825900-1-usama.anjum@collabora.com>
+ <20230303155436.213ee2c0@kernel.org>
+ <df8a446a-e8a9-3b3d-fd0f-791f0d01a0c9@collabora.com>
+ <ZAdoivY94Y5dfOa4@corigine.com>
+ <1107bc10-9b14-98f4-3e47-f87188453ce7@collabora.com>
+ <8a90dca3-af66-5348-72b9-ac49610f22ce@intel.com>
+ <ee08333d-d39d-45c6-9e6e-6328855d3068@kili.mountain>
+ <20230313114538.74e6caca@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230313114538.74e6caca@kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+On Mon, Mar 13, 2023 at 11:45:38AM -0700, Jakub Kicinski wrote:
+> Reality check for me - this is really something that should
+> be handled by our process scripts, right? get_maintainer/
+> /checkpatch ? Or that's not a fair expectation.
 
-> Dear Jonathan,
->
-> please pick this minor documentation clean-up in fs. It is not in the
-> Documentation directory, but I would consider these README files also
-> some unsorted largely distributed kernel documentation.
->
-> Here is some trivial and probably little-to-debate clean up.
->  
-> Lukas Bulwahn (2):
->   qnx6: credit contributor and mark filesystem orphan
->   qnx4: credit contributors in CREDITS
->
->  CREDITS        | 16 ++++++++++++++++
->  MAINTAINERS    |  6 ++++++
->  fs/qnx4/README |  9 ---------
->  fs/qnx6/README |  8 --------
->  4 files changed, 22 insertions(+), 17 deletions(-)
->  delete mode 100644 fs/qnx4/README
->  delete mode 100644 fs/qnx6/README
+If it could be automated some way, that would help a lot.
 
-Applied, thanks.
+There are a bunch of things which have confused me in the past such as
+how RDMA and the net trees interact.  Also the Mellanox tree, I used to
+think Mellanox maintainers collect patches and send git pulls but
+apparently for fixes they prefer if you collect them from mailing list?
 
-jon
+I'm looking at my process now and I can see that I was dumb when I set
+this up.  Just doing a fetch and switching between git trees was taking
+4 minutes but I can cut it down to 30 seconds.  So some of this was my
+fault.
+
+regards,
+dan carpenter
