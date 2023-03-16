@@ -2,107 +2,145 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA15C6FD19
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Mar 2023 11:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 596A5C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Mar 2023 12:25:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229892AbjCPLuC (ORCPT
+        id S229988AbjCPMZe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Mar 2023 07:50:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51778 "EHLO
+        Thu, 16 Mar 2023 08:25:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230314AbjCPLt5 (ORCPT
+        with ESMTP id S229878AbjCPMZb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Mar 2023 07:49:57 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FF55527C;
-        Thu, 16 Mar 2023 04:49:56 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id w9so6524680edc.3;
-        Thu, 16 Mar 2023 04:49:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678967395;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gC4X7gyYMX27ih55GNpE0NiMJD+KDeM3ZDEJ0rkCdRU=;
-        b=BnVZVkixrG4X8QtUa3sqYoBoJdvoMIiemrrDTnlRGv1vTLoMlKoxafcTDaKPdkJii3
-         gTNBIfkFbMy1t0f7Crsu6zIAd6IZD7H2CND2uNOA06vsrV4Oqw4+wya0yZmb+3QGOcYL
-         uTSqTP8E4/iCGEDYaCFZtl2cvu/gHN7/AxNTCOSoIl+oDOkXpDdseiupk3PmELIk4vql
-         mmJIR76ouW7Ldsdtr/vkbNJs6u/VHXmHUAMaklXrTRo83QDCUME3IuJLuOcXJ2AS9YKn
-         tyspUfvY8SPlAEQkhuuQDLSh17VrWPmJMs8A4tyMUNu0s+cxgEmpog6lQRRRnqaX8mju
-         J49Q==
+        Thu, 16 Mar 2023 08:25:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB32E85682
+        for <kernel-janitors@vger.kernel.org>; Thu, 16 Mar 2023 05:24:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678969485;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=tGtAxHTpwhqk1MF3FY7AMDANiX6ih0L2CASPGlsjh3s=;
+        b=DpHgscPJ1HmkFvksvk+q+/K2PVnHBY1x0J9zm9Hr/8ycuP8iwX0Ic5BhEzRc3bqxIQokmF
+        UX+3PGG6B11ltwvGyxSKJbtej122DibjURatfSdV2K/OicoZP9hROr87t9nviPUUM/ZxiB
+        xCFsA17Cq139vIQVxn8iA4ir0jwsYi0=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-467-e5dZkpkMObi9fFcdoiX4Qw-1; Thu, 16 Mar 2023 08:24:43 -0400
+X-MC-Unique: e5dZkpkMObi9fFcdoiX4Qw-1
+Received: by mail-ed1-f72.google.com with SMTP id ev6-20020a056402540600b004bc2358ac04so2801968edb.21
+        for <kernel-janitors@vger.kernel.org>; Thu, 16 Mar 2023 05:24:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678967395;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gC4X7gyYMX27ih55GNpE0NiMJD+KDeM3ZDEJ0rkCdRU=;
-        b=K6IxRJ69xLY+wtVThub0lkwhtVjp+mtKqmdofDKG7Mtfq1ES/s3JksDC3vQK030GyA
-         qK+qMBgt4c1lKU1UWchagjEo+0sd71TeHvmXoptxq6wInHVpXkC5xzDnIM9dcjLfiMlV
-         tK4eVGMRZH6eqoxa+5Hy6VHE7xfCIzESqu/V/aVqJGLiUcMoUcKWw35BQsQUKX1p0oKd
-         70GKS/CGpLgwshixGfj0ukS24xDY95zDLXO1RtEznskcwKJxgOdfTU5W0YrD2x3KzSDa
-         Ctg4O2joqFRYIM8vVehNYuuYV3pjnSmQRYOyleOCC8uaVsMgPBLjeOgukyNwwAWJ/OhD
-         QxAA==
-X-Gm-Message-State: AO0yUKVTvzydEKMomoFzeLY1TULdCuyBniOrsbI0Olwg2tO3RPhuBW6/
-        YxIb5t9Q0R179JZVQ5l/P8U=
-X-Google-Smtp-Source: AK7set+9frqBtAJD8IC4XNzK5Mu2xwczlVSFBoe+ym6swjbG9Bt1fit7bePBC77hi8Yrv/e5uloFbg==
-X-Received: by 2002:aa7:d8c4:0:b0:4fd:298a:fa12 with SMTP id k4-20020aa7d8c4000000b004fd298afa12mr5974053eds.3.1678967394853;
-        Thu, 16 Mar 2023 04:49:54 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:a05c:be0f:b1e7:779e])
-        by smtp.gmail.com with ESMTPSA id i9-20020a50d749000000b004af6163f845sm3718720edj.28.2023.03.16.04.49.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 04:49:54 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        John Crispin <john@phrozen.org>, linux-mips@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MIPS: ath79: remove obsolete ATH79_DEV_* configs
-Date:   Thu, 16 Mar 2023 12:49:52 +0100
-Message-Id: <20230316114952.26253-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        d=1e100.net; s=20210112; t=1678969483;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tGtAxHTpwhqk1MF3FY7AMDANiX6ih0L2CASPGlsjh3s=;
+        b=QR8iN6BtKqvg9pf6Q6lAZ57EH4LRvBzMx5hioW0aq3hawIzeqL9xUvmlS/5NRbNgx6
+         WIZezcX2O0DGS3iDyl/d7jG/BT9DASyIbRFKuG71bxYdrRddQChVHgnocBwSis54L7WW
+         U1Y5KBLQvm5H29JXGhtFWNMtg9ZeY0JcmvTjaoncUDlic77xloPX0Rm3hR8mJELYZ+jC
+         YIHhV3xM542cQtbpDWhyvNhWr7At2iTxo1mZ+4TLqSZH1tSgL8J70TU5ExkPw6asjNcr
+         4gV3cCisiX/cIYHId1Rrkm5hdL2sV+qxFnblVw/c+6jMB7WSeBYInmTpJNJyVL8ufpxe
+         X8Dw==
+X-Gm-Message-State: AO0yUKVXPeDKGrZ1uUVP1EO/Iexy+3HxB+pr08FXBENgFMOBfKuX1xBe
+        i2ozYkLoO21oRbEjGuJR3YpN13YAdi2lgOZvXZBwENK7n7aIhteb/ccB8FrYbJ4KjTTKPxpq7+w
+        /O/dotoXqqCU4fPJ14cpQSdXARJFp
+X-Received: by 2002:a17:906:684f:b0:905:a46b:a725 with SMTP id a15-20020a170906684f00b00905a46ba725mr2404667ejs.16.1678969482829;
+        Thu, 16 Mar 2023 05:24:42 -0700 (PDT)
+X-Google-Smtp-Source: AK7set9CJC8m64MpLfR95218nEK90up6Y5N372dSWgwbA4FFvYEVUUhPR3NXyYyQGPFr5ECoSsEaTg==
+X-Received: by 2002:a17:906:684f:b0:905:a46b:a725 with SMTP id a15-20020a170906684f00b00905a46ba725mr2404652ejs.16.1678969482598;
+        Thu, 16 Mar 2023 05:24:42 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id u20-20020a17090617d400b0092be4b381b7sm3768638eje.81.2023.03.16.05.24.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Mar 2023 05:24:42 -0700 (PDT)
+Message-ID: <ec1ffb3a-178e-6bba-2e54-350fb659a03f@redhat.com>
+Date:   Thu, 16 Mar 2023 13:24:41 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] platform/x86: apple-gmux: return -EFAULT if copy fails
+Content-Language: en-US, nl
+To:     Dan Carpenter <error27@gmail.com>,
+        Orlando Chamberlain <orlandoch.dev@gmail.com>
+Cc:     Mark Gross <markgross@kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <0bdfa8c2-cb22-4bec-8773-584060613043@kili.mountain>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <0bdfa8c2-cb22-4bec-8773-584060613043@kili.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 85b9686dae30 ("MIPS: ath79: drop platform device registration code")
-removes all files arch/mips/ath79/dev-*.[ch], adjusts the Makefile, but
-misses to adjust the Kconfig file. Hence, since then, the configs
-ATH79_DEV_* are really dead.
+Hi,
 
-Commit 3a77e0d75eed ("MIPS: ath79: drop machfiles") already removes all
-configs that select ATH79_DEV_* config. So at that point, they was not a
-way to enable them with a kernel build configuration.
+On 3/10/23 13:31, Dan Carpenter wrote:
+> The copy_to/from_user() functions return the number of bytes remaining
+> to be copied, but we want to return -EFAULT to the user.
+> 
+> Fixes: ce3fef2eb235 ("platform/x86: apple-gmux: add debugfs interface")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Remove these obsolete ATH79_DEV_* configs.
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/mips/ath79/Kconfig | 16 ----------------
- 1 file changed, 16 deletions(-)
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
 
-diff --git a/arch/mips/ath79/Kconfig b/arch/mips/ath79/Kconfig
-index 7367416642cb..04154128c4de 100644
---- a/arch/mips/ath79/Kconfig
-+++ b/arch/mips/ath79/Kconfig
-@@ -29,20 +29,4 @@ config SOC_QCA955X
- config PCI_AR724X
- 	def_bool n
- 
--config ATH79_DEV_GPIO_BUTTONS
--	def_bool n
--
--config ATH79_DEV_LEDS_GPIO
--	def_bool n
--
--config ATH79_DEV_SPI
--	def_bool n
--
--config ATH79_DEV_USB
--	def_bool n
--
--config ATH79_DEV_WMAC
--	depends on (SOC_AR913X || SOC_AR933X || SOC_AR934X || SOC_QCA955X)
--	def_bool n
--
- endif
--- 
-2.17.1
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
+> ---
+>  drivers/platform/x86/apple-gmux.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/apple-gmux.c b/drivers/platform/x86/apple-gmux.c
+> index 787cf2a7e268..77e63d2da7b6 100644
+> --- a/drivers/platform/x86/apple-gmux.c
+> +++ b/drivers/platform/x86/apple-gmux.c
+> @@ -694,7 +694,6 @@ static ssize_t gmux_selected_port_data_write(struct file *file,
+>  		const char __user *userbuf, size_t count, loff_t *ppos)
+>  {
+>  	struct apple_gmux_data *gmux_data = file->private_data;
+> -	int ret;
+>  
+>  	if (*ppos)
+>  		return -EINVAL;
+> @@ -702,16 +701,16 @@ static ssize_t gmux_selected_port_data_write(struct file *file,
+>  	if (count == 1) {
+>  		u8 data;
+>  
+> -		ret = copy_from_user(&data, userbuf, 1);
+> -		if (ret)
+> -			return ret;
+> +		if (copy_from_user(&data, userbuf, 1))
+> +			return -EFAULT;
+> +
+>  		gmux_write8(gmux_data, gmux_data->selected_port, data);
+>  	} else if (count == 4) {
+>  		u32 data;
+>  
+> -		ret = copy_from_user(&data, userbuf, 4);
+> -		if (ret)
+> -			return ret;
+> +		if (copy_from_user(&data, userbuf, 4))
+> +			return -EFAULT;
+> +
+>  		gmux_write32(gmux_data, gmux_data->selected_port, data);
+>  	} else
+>  		return -EINVAL;
 
