@@ -2,90 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CFCC6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Mar 2023 13:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1149C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Mar 2023 05:30:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231536AbjCONT3 (ORCPT
+        id S229701AbjCPFaZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Mar 2023 09:19:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44386 "EHLO
+        Thu, 16 Mar 2023 01:30:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbjCONT3 (ORCPT
+        with ESMTP id S229475AbjCPFaY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Mar 2023 09:19:29 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 012071F5EB;
-        Wed, 15 Mar 2023 06:19:27 -0700 (PDT)
+        Thu, 16 Mar 2023 01:30:24 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75AA11ADD4;
+        Wed, 15 Mar 2023 22:30:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8AA53B81DEC;
-        Wed, 15 Mar 2023 13:19:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 911B4C433EF;
-        Wed, 15 Mar 2023 13:19:23 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 984BFCE1BA7;
+        Thu, 16 Mar 2023 05:30:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C33A3C433D2;
+        Thu, 16 Mar 2023 05:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678886365;
-        bh=sga3q+scIZvfNK/6EdO/zdT6nG8pr/gf9L75QKEyXLE=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=OUirE43Qzm0pBNiCEdWb7jM+cVNqa603CO3Zzp7vsSbCJCbgLFTl1u5uL7NlQSUcQ
-         OhbHwNlLmMWGEo9vYEZeeSsKOU2X7l8xkhVu5WhAF+llat0rVrwL2rB3el0OWAFebx
-         QT09DZvyQymTRSTzKmZpr2jwXXsVFt98ejUeRMcecOPOJZCZAMxiTKq7fPo00qsGj5
-         AuyAMwi7zgAKYm/MwOyTN6bcOXlWX7vW07Vss6xo+auD1hQf3zABe2DilAK6KLvLCH
-         Otu5p+bPtC973v3j7H8jOjwnsPe9Nn5dqKNF/LhPBAhOvOs5IVMNWmrndwkPuKWSuo
-         X9oySDgyUtEjQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Herve Codina <herve.codina@bootlin.com>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-In-Reply-To: <20230314082157.137176-1-herve.codina@bootlin.com>
-References: <20230314082157.137176-1-herve.codina@bootlin.com>
-Subject: Re: [PATCH] soc: fsl: cpm1: qmc: Fix test dependency
-Message-Id: <167888636330.25434.5728670450975508265.b4-ty@kernel.org>
-Date:   Wed, 15 Mar 2023 13:19:23 +0000
-MIME-Version: 1.0
+        s=k20201202; t=1678944618;
+        bh=4hUdMQr026xj00aKlL6xKmoXEUt5LW0CoAdBttBl4gE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=tD+tCxSYeQNwm+w9jLF687DP9EjJGJz3e/Zkj7cvWRFWDEagsnWePH01jb6zTTsi0
+         yGccOtCUjbplaiRBz9xSTIfnD7A+NMuABD9B0eAEXoIOl5tqWal88bvWos5EsczHCI
+         xYoiYMsnNgzlvdZiVYxm9iNrB0EnZClEWAtGjHx35NxY+b6dOhAnQsVdHJi7yUUsYr
+         w/jOYHZmGgxKWi4fEt1409ks6bU7Gz6QGR4Nt0p7Cd3K36Xc5uE2admjpQkVS/cT2a
+         7whQkCaEO4MZfyejrNRLOvK6J5vrVNjbMecSWnb7AmeNWGm0d2fR+0Is92VAyDAz9C
+         LZ+4PoGXiBCbg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AAA57C43161;
+        Thu, 16 Mar 2023 05:30:18 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bd1bf
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: phy: micrel: Fix spelling mistake "minimim" ->
+ "minimum"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <167894461869.21360.5260748461499126273.git-patchwork-notify@kernel.org>
+Date:   Thu, 16 Mar 2023 05:30:18 +0000
+References: <20230314082315.26532-1-colin.i.king@gmail.com>
+In-Reply-To: <20230314082315.26532-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 14 Mar 2023 09:21:57 +0100, Herve Codina wrote:
-> The QMC depends on (SOC_FSL && COMPILE_TEST). SOC_FSL does not exist.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 14 Mar 2023 08:23:15 +0000 you wrote:
+> There is a spelling mistake in a pr_warn_ratelimited message. Fix it.
 > 
-> Fix the dependency using the correct one: FSL_SOC.
-> 
-> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/phy/micrel.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to
+Here is the summary with links:
+  - [next] net: phy: micrel: Fix spelling mistake "minimim" -> "minimum"
+    https://git.kernel.org/netdev/net-next/c/9bdf4489a395
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks!
-
-[1/1] soc: fsl: cpm1: qmc: Fix test dependency
-      commit: 6ffa0da5c63f8408101d01075709981005eb66ec
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
