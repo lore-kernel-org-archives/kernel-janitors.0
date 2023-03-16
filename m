@@ -2,39 +2,39 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A711C7618A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Mar 2023 08:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1449C6FD19
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Mar 2023 09:05:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbjCPIxx (ORCPT
+        id S230026AbjCPJFL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Mar 2023 04:53:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45646 "EHLO
+        Thu, 16 Mar 2023 05:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229985AbjCPIw7 (ORCPT
+        with ESMTP id S229667AbjCPJFJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Mar 2023 04:52:59 -0400
+        Thu, 16 Mar 2023 05:05:09 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.237])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B914B79F0;
-        Thu, 16 Mar 2023 01:52:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0302DB1A79;
+        Thu, 16 Mar 2023 02:05:02 -0700 (PDT)
 Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id D9D621A00ADB;
-        Thu, 16 Mar 2023 16:51:25 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTP id 77B371A00A90;
+        Thu, 16 Mar 2023 17:05:02 +0800 (CST)
 X-Virus-Scanned: amavisd-new at nfschina.com
 Received: from mail.nfschina.com ([127.0.0.1])
         by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id meKGZ0lKMs2B; Thu, 16 Mar 2023 16:51:25 +0800 (CST)
+        with ESMTP id eQsYFf5tV3lD; Thu, 16 Mar 2023 17:05:01 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.167.10.98])
         (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 61B3E1A00874;
-        Thu, 16 Mar 2023 16:51:24 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTPA id 97E2A1A0079E;
+        Thu, 16 Mar 2023 17:05:00 +0800 (CST)
 From:   Yu Zhe <yuzhe@nfschina.com>
-To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     olivia@selenic.com, herbert@gondor.apana.org.au
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
         Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH] tpm: remove unnecessary (void*) conversions
-Date:   Thu, 16 Mar 2023 16:50:37 +0800
-Message-Id: <20230316085037.21255-1-yuzhe@nfschina.com>
+Subject: [PATCH] hwrng: xgene - remove unnecessary (void*) conversions
+Date:   Thu, 16 Mar 2023 17:04:12 +0800
+Message-Id: <20230316090412.4383-1-yuzhe@nfschina.com>
 X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -44,33 +44,22 @@ Pointer variables of void * type do not require type cast.
 
 Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 ---
- drivers/char/tpm/eventlog/common.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/char/hw_random/xgene-rng.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/eventlog/common.c b/drivers/char/tpm/eventlog/common.c
-index 8512ec76d526..639c3f395a5a 100644
---- a/drivers/char/tpm/eventlog/common.c
-+++ b/drivers/char/tpm/eventlog/common.c
-@@ -36,7 +36,7 @@ static int tpm_bios_measurements_open(struct inode *inode,
- 		inode_unlock(inode);
- 		return -ENODEV;
- 	}
--	chip_seqops = (struct tpm_chip_seqops *)inode->i_private;
-+	chip_seqops = inode->i_private;
- 	seqops = chip_seqops->seqops;
- 	chip = chip_seqops->chip;
- 	get_device(&chip->dev);
-@@ -55,8 +55,8 @@ static int tpm_bios_measurements_open(struct inode *inode,
- static int tpm_bios_measurements_release(struct inode *inode,
- 					 struct file *file)
+diff --git a/drivers/char/hw_random/xgene-rng.c b/drivers/char/hw_random/xgene-rng.c
+index 008e6db9ce01..1ddeb32ec597 100644
+--- a/drivers/char/hw_random/xgene-rng.c
++++ b/drivers/char/hw_random/xgene-rng.c
+@@ -200,7 +200,7 @@ static void xgene_rng_chk_overflow(struct xgene_rng_dev *ctx)
+ 
+ static irqreturn_t xgene_rng_irq_handler(int irq, void *id)
  {
--	struct seq_file *seq = (struct seq_file *)file->private_data;
--	struct tpm_chip *chip = (struct tpm_chip *)seq->private;
-+	struct seq_file *seq = file->private_data;
-+	struct tpm_chip *chip = seq->private;
+-	struct xgene_rng_dev *ctx = (struct xgene_rng_dev *) id;
++	struct xgene_rng_dev *ctx = id;
  
- 	put_device(&chip->dev);
- 
+ 	/* RNG Alarm Counter overflow */
+ 	xgene_rng_chk_overflow(ctx);
 -- 
 2.11.0
 
