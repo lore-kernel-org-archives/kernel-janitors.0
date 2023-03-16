@@ -2,138 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC29C7618D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Mar 2023 10:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1417C6FD19
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Mar 2023 11:16:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229904AbjCPKf0 (ORCPT
+        id S230001AbjCPLQh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Mar 2023 06:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46624 "EHLO
+        Thu, 16 Mar 2023 07:16:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbjCPKfY (ORCPT
+        with ESMTP id S229786AbjCPLQg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Mar 2023 06:35:24 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C7C9E509;
-        Thu, 16 Mar 2023 03:35:15 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32G9SMHq028719;
-        Thu, 16 Mar 2023 10:35:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=W3Tlrftt0yAjUTBVCg7DwbudT+xfc9oUHrxvoR5zQ2w=;
- b=UB6ahDQjPQZDktFQT1PQ03snbgk5BXlzSbKkCss61cA/J8iO7okE1bbcph0/jLI06QFe
- VTIS58hEiLpWT8KvPOKbauJuDsgG5Mb25VCgYQrdlEwsldyVW8YeZdWrA7t9XDMT2n62
- TYndC58G1QbHvAYEp33uDscq1fPupqOPwXjoo1hYsycT6t4hZ3UiDdphIultGKP4qL9F
- eVtaeUUK7IcrlgZBBxtm2MPxfwG5gR915nxMTXhrbnEq5Ly+tw3SsA7RUyCavpmNvROA
- u0ucqg4LyOZ9DIytGSbk7PKd1jmE+Qduzl8V1F71N9u5Lci+7InNZ1yWTHeqQXgoS1d0 Sw== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pbpxshh7v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Mar 2023 10:35:08 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32GAZ7QI026155
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Mar 2023 10:35:07 GMT
-Received: from [10.216.13.67] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 16 Mar
- 2023 03:35:03 -0700
-Message-ID: <2c5f63ac-470e-51fa-4330-c9603eb9efcf@quicinc.com>
-Date:   Thu, 16 Mar 2023 16:04:58 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: remove unnecessary (void*)
- conversions
-Content-Language: en-US
-To:     Yu Zhe <yuzhe@nfschina.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <liqiong@nfschina.com>
-References: <20230316091902.20765-1-yuzhe@nfschina.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20230316091902.20765-1-yuzhe@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KPrmjP2TBcREIWEb-VgZzDwYGavEJur4
-X-Proofpoint-ORIG-GUID: KPrmjP2TBcREIWEb-VgZzDwYGavEJur4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-16_07,2023-03-16_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 malwarescore=0
- impostorscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303160089
+        Thu, 16 Mar 2023 07:16:36 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50D22BBB15;
+        Thu, 16 Mar 2023 04:16:35 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id eg48so5966695edb.13;
+        Thu, 16 Mar 2023 04:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678965394;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NfjSPidc5pyhIjhycYrYynfFm6hlfBhZw9y/nZ4/67Y=;
+        b=WxdArsdAYr4fk0dWLGtqTHtrj6klABluPaNoEoRS+hnaZcm1OoFRtNNMvGPxQvMjXx
+         cNVUR8DgmDTpELX0ZyUkQopcSbTfcWDg+rhMHdp2YvnsNFRw0Fpl5H3D8oEfAKcZtnV3
+         si+whSMJ3ZxTJ868ssF76X17ZSC9I8+YgoN4RoJ5rjIZpEg0JdG99Gut9V2jgEvF9vKE
+         xmgxEgel3MKcHFPMGS+QsEXMD7R6voxnvwf+Z3/MRVG8WFsmGvd11OZyJnZSv5CZeCU8
+         xXPv5G91hbFnpVyjK/71C5pQRQGTyp/3xu/JsZZZo/GN01QObZdv6NjnjUTttoIV/zzG
+         FstQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678965394;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NfjSPidc5pyhIjhycYrYynfFm6hlfBhZw9y/nZ4/67Y=;
+        b=6dminVI27YqZgJCB7rlch2ZjOV2a1YOKbprCIEhQpwz3KdOIRZ7+lM+skVSC6jWuFv
+         VFKjusjpAq5O7n7ml/EDTKe84nQM+XVq02gXs+4UrGLu1DGyclopAAtZ7PbXSMUqgH+k
+         HsZmJ9zSZQMiOIGVNMftUWntCogu0qzI5IdG6XxoxAGNQE5bmIQf4zmLx362ighTgVly
+         rRbOrzeWyT4B9wxZs0UWTDgCbXXFQT3zJGX1yb+OFVsmsD7W3s9UXKVqtHI2qiKAJ8s8
+         RbyraJzgYjAludCLtUqUkt7G2HuEmqobT5IUj11XoKBrYi6o3nOW/xOBAUaZtmEJRTid
+         CYPw==
+X-Gm-Message-State: AO0yUKU8WFmgzZAuwbbUje4kdDfm/pgF8sBlpNg3UYPceU2SpWk06bTv
+        foJjNpJu9dyJHQJg1btyfwo=
+X-Google-Smtp-Source: AK7set86pLM7AMgzdBVkzaZKIiaXpyIOBZ/aEXxSow8ZQjQPCY3mEBF3kqIJjz3w8nY9ds6lKLYaDQ==
+X-Received: by 2002:a17:906:c244:b0:86a:316:d107 with SMTP id bl4-20020a170906c24400b0086a0316d107mr9706530ejb.72.1678965393665;
+        Thu, 16 Mar 2023 04:16:33 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:a05c:be0f:b1e7:779e])
+        by smtp.gmail.com with ESMTPSA id qa14-20020a170907868e00b008f702684c51sm3704245ejc.161.2023.03.16.04.16.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Mar 2023 04:16:33 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] block: remove obsolete config BLOCK_COMPAT
+Date:   Thu, 16 Mar 2023 12:16:30 +0100
+Message-Id: <20230316111630.4897-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Before commit bdc1ddad3e5f ("compat_ioctl: block: move
+blkdev_compat_ioctl() into ioctl.c"), the config BLOCK_COMPAT was used to
+include compat_ioctl.c into the kernel build. With this commit, the code
+is moved into ioctl.c and included with the config COMPAT. So, since then,
+the config BLOCK_COMPAT has no effect and any further purpose.
 
+Remove this obsolete config BLOCK_COMPAT.
 
-On 3/16/2023 2:49 PM, Yu Zhe wrote:
-> Pointer variables of void * type do not require type cast.
-> 
-> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
-> ---
->   drivers/remoteproc/qcom_q6v5_mss.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index ab053084f7a2..e7a67c8c16a0 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -1562,7 +1562,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
->   
->   static int q6v5_start(struct rproc *rproc)
->   {
-> -	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-> +	struct q6v5 *qproc = rproc->priv;
->   	int xfermemop_ret;
->   	int ret;
->   
-> @@ -1604,7 +1604,7 @@ static int q6v5_start(struct rproc *rproc)
->   
->   static int q6v5_stop(struct rproc *rproc)
->   {
-> -	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-> +	struct q6v5 *qproc = rproc->priv;
->   	int ret;
->   
->   	ret = qcom_q6v5_request_stop(&qproc->q6v5, qproc->sysmon);
-> @@ -1662,7 +1662,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
->   
->   static unsigned long q6v5_panic(struct rproc *rproc)
->   {
-> -	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-> +	struct q6v5 *qproc = rproc->priv;
->   
->   	return qcom_q6v5_panic(&qproc->q6v5);
->   }
-> @@ -1977,7 +1977,7 @@ static int q6v5_probe(struct platform_device *pdev)
->   	rproc->auto_boot = false;
->   	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
->   
-> -	qproc = (struct q6v5 *)rproc->priv;
-> +	qproc = rproc->priv;
->   	qproc->dev = &pdev->dev;
->   	qproc->rproc = rproc;
->   	qproc->hexagon_mdt_image = "modem.mdt";
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ block/Kconfig | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Well, there is quite a few files under driver/remoteproc/ which has this 
-kind of assignation.
+diff --git a/block/Kconfig b/block/Kconfig
+index 5d9d9c84d516..941b2dca70db 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -204,9 +204,6 @@ config BLK_INLINE_ENCRYPTION_FALLBACK
+ 
+ source "block/partitions/Kconfig"
+ 
+-config BLOCK_COMPAT
+-	def_bool COMPAT
+-
+ config BLK_MQ_PCI
+ 	def_bool PCI
+ 
+-- 
+2.17.1
 
-Do you intend to do this for all ?
-
-Acked-by: Mukesh Ojha <quic_mojha@quicinc.com>
-
--- Mukesh
