@@ -2,101 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF03EC74A5B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 07:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545D4C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 08:13:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230488AbjCQH5p (ORCPT
+        id S231481AbjCQINV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Mar 2023 03:57:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40128 "EHLO
+        Fri, 17 Mar 2023 04:13:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230477AbjCQH5o (ORCPT
+        with ESMTP id S231406AbjCQINH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Mar 2023 03:57:44 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0DA8A9DCF;
-        Fri, 17 Mar 2023 00:57:12 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.west.internal (Postfix) with ESMTP id 63C163200094;
-        Fri, 17 Mar 2023 03:57:09 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 17 Mar 2023 03:57:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1679039829; x=1679126229; bh=HH
-        5mSoKeCDFL5MPPTYOG3eK7UTiiQQAH4drXFEK0xeY=; b=TtJREXn47myAL1DyQJ
-        PfEToOoKmVQqdPsScQhfuB966xL3U1NyexBp1buTXyfzSkE7zU5settyBSAuWoAi
-        XIum3aMvD9JsOcCNeZF1RJi5RXhl86uHUWIm/OKGR0a4aKdyC63Or/2h/86Qkgbp
-        9SGeKE9nss8bO/w8ZJ3/3yckY+2k7q8A/bZc6VxoSzcNWDml2kBWSlScIPbEt+lw
-        brDKE5HRuuyReaIKruTqbM0YepJmYNyLsB60eyKsjrmZiLAGCINbShEWodcFsrOK
-        Ou3ImfKtnVq8708SfEY2hi548hjnuEoEireiRKGo8U+BMGBxS9tEC40U/gqFYWwW
-        TOrQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1679039829; x=1679126229; bh=HH5mSoKeCDFL5
-        MPPTYOG3eK7UTiiQQAH4drXFEK0xeY=; b=Iki4b9XJppVXoSefSosAdN8ZjUMHq
-        mUss1rpMxe/mUKEyNsvbZFY1Yun/R8hiaIMAUbc668s3c424egCgXL010P7KXSmD
-        EfYoax7Q3OS9c67SgsFsfZnzskcsVQc/PmLmegJvNa2UxQD2Vr31kl+C2wuIXjKz
-        9TuWqDMPsVBtZL7JSZOlFfx9YuV4YUOLzf2H2G83eY2irFo6CBB8E1Vhck9WrYtC
-        QXWHq841RXzPnFbAc5OzOXCZT/LFHBbKsHkhkvgPLU+Nri3OdGHAO3BAUGpAdU+I
-        UJqoaiquHzklR1+Nk388fqydDO+/xoCPBlkGLtkkw7SR8+u8+73wPd2dA==
-X-ME-Sender: <xms:VB0UZFIdA1Nulf-SZznbpCuyLIPc9R1xwgEyHxKT7LHAtksUtD4L9w>
-    <xme:VB0UZBJEOZCFirhpMMPxifF9gcHeVmX-7qsl64Bhpebb6wSA-ydD-EeXofQbuj1R-
-    iIDpg5NhB7qk_W4xMU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdefuddgudduhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:VB0UZNt_gi_a7RFFvG0nmoJieqjmo6TqqCnkJFk4-GL26ohc5G3xMA>
-    <xmx:VB0UZGaeNobtyE8Pj3HCvoS_byjKUirqmZdpM3IV_PEWtt6gLDIEcQ>
-    <xmx:VB0UZMbZ3O1VUSuVnz-phT3M7b_yYs_2unYyzLrDzFbEZPJxE4Ij3Q>
-    <xmx:VR0UZEEzmeyPhgwCBN6iI-tiPKg5PPuvOjU03UTLkFP9MUUWx4nrbw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id BCFCDB60086; Fri, 17 Mar 2023 03:57:08 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-221-gec32977366-fm-20230306.001-gec329773
-Mime-Version: 1.0
-Message-Id: <01b8aa89-2de5-4f98-8b93-659022c7e8e1@app.fastmail.com>
-In-Reply-To: <20230317071538.29366-1-lukas.bulwahn@gmail.com>
-References: <20230317071538.29366-1-lukas.bulwahn@gmail.com>
-Date:   Fri, 17 Mar 2023 08:56:47 +0100
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Jiri Slaby" <jirislaby@kernel.org>, linux-serial@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tty: serial: remove obsolete config SERIAL_SAMSUNG_UARTS_4
-Content-Type: text/plain
+        Fri, 17 Mar 2023 04:13:07 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1BE1CD679;
+        Fri, 17 Mar 2023 01:12:11 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id ek18so17188557edb.6;
+        Fri, 17 Mar 2023 01:12:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679040719;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cMw3bVrnGcR3UGzni31zr568CiQtvl1Ofgs9bx9DY1g=;
+        b=qVsuC/h2AQuc5Pxojy3yTCdlBkcPKQ0BUtA9FFw3078MRG+hk7AMBWowzKbQvG6RjU
+         bHbzw8bM679UUW5BsI0aPkC+HthVTnOajGhLjhzg9XK4Z6061lkz1RFVPxJdXgSHoifJ
+         RXAlcweJeoqY8LbwhfsWgNsJOvkQWg2RdlvZvV0zOakk3e9VWDyP1IQt4UJeuznxBQBi
+         UkTFZhwC8Ky09YTIHQt5Bg8JItW6Yq7OFVH6ph3iPBFEPWASHP5p7i28eMvgbRTqgl2t
+         hbROyMXvHoriDV14B5umi/Ad9DyX7ZRS/yF4StVHGchufo+Rc5Gnge9DFZ3+lxgvoqX8
+         T+dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679040719;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cMw3bVrnGcR3UGzni31zr568CiQtvl1Ofgs9bx9DY1g=;
+        b=aTgB1Hiz/zQBxp2J7DUnfdJSn6gzAy8jGjMumeIO9I0U17Ll/qAYDCYlw8cZVmxbsJ
+         b1FgBHY3cq+GAzumQDNG8TCdCGV0JyqGv8IZqDHIaumin7T6o+i14O22t/QSw3VBi9sn
+         DZG/oiK+sBRBQOkY09/3wm/Ut715oAJtarzn+VICYe9L4wbIMqsIsPL9Ktmn1ZMypGvp
+         Y3A7arqXG2FytLTKDJk1R2xF2BrbmSFtDs7KcD0m+CmU633heCEgP6/8XBfyFX3zWVb6
+         yqyaP5CMWfoXl5F32SpbPCLFr/lHuOf+kX9kSlXJ2FLXVuhv0koZe6uaOJ+pnycHkn0i
+         CrZw==
+X-Gm-Message-State: AO0yUKU3SbLLOQwg1B69cn32Nl01UZbUAsdXyh6TjAaftXwx7dEnHMQP
+        jKtrUXiucZHj5K59QIwqbzDCd/cwv2madg==
+X-Google-Smtp-Source: AK7set/ftSNliYy3Vj4JFpPfT3EFFmpTe7BMfXpC62GVqkpT+TYR5AY7p1VKJDpRfo1tfiTYEaYldg==
+X-Received: by 2002:a17:906:3582:b0:8b1:347c:85c8 with SMTP id o2-20020a170906358200b008b1347c85c8mr12412782ejb.17.1679040719306;
+        Fri, 17 Mar 2023 01:11:59 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:d59c:b746:d2ef:469])
+        by smtp.gmail.com with ESMTPSA id ce6-20020a170906b24600b0092101bb66desm669076ejb.147.2023.03.17.01.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Mar 2023 01:11:59 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc:     Lubomir Rintel <lkundrak@v3.sk>,
+        Russell King <linux@armlinux.org.uk>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] ARM: mmp: remove obsolete config USB_EHCI_MV_U2O
+Date:   Fri, 17 Mar 2023 09:11:56 +0100
+Message-Id: <20230317081156.32337-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 17, 2023, at 08:15, Lukas Bulwahn wrote:
-> Commit 1ea35b355722 ("ARM: s3c: remove s3c24xx specific hacks"), allows
-> simplifying the whole config logic for SERIAL_SAMSUNG_UARTS, and did this
-> config simplification. However, it misses that SERIAL_SAMSUNG_UARTS_4's
-> effect was just to control SERIAL_SAMSUNG_UARTS, and with the commit's
-> change, the config SERIAL_SAMSUNG_UARTS_4 has no remaining effect and can
-> be deleted.
->
-> Remove this obsolete config SERIAL_SAMSUNG_UARTS_4.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Commit 77acc85ce797 ("ARM: mmp: remove device definitions") and commit
+06f11dfb5b75 ("ARM: mmp: remove all board files") remove mach-mmp's device
+definitions and the board file for the Marvell PXA910-based TTC_DKB
+Development Platform. With that removal, all references to the config
+USB_EHCI_MV_U2O are gone. The config has no remaining effect and can be
+deleted.
 
-Nice find!
+Remove the obsolete config USB_EHCI_MV_U2O.
 
-I tried to carefully check that all Kconfig options that were
-no longer selectable got removed recursively, along with the code
-that they control, but I missed this one as I did not search
-the other way.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Arnd, please pick this minor clean-up patch as follow-up to your patches
+mentioned above. Thanks.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+ arch/arm/mach-mmp/Kconfig | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/arch/arm/mach-mmp/Kconfig b/arch/arm/mach-mmp/Kconfig
+index 85b0d9ddb7d8..8c1d4402fd69 100644
+--- a/arch/arm/mach-mmp/Kconfig
++++ b/arch/arm/mach-mmp/Kconfig
+@@ -76,10 +76,4 @@ config CPU_MMP2
+ 	help
+ 	  Select code specific to MMP2. MMP2 is ARMv7 compatible.
+ 
+-config USB_EHCI_MV_U2O
+-        bool "EHCI support for PXA USB OTG controller"
+-	depends on USB_EHCI_MV
+-	help
+-	  Enables support for OTG controller which can be switched to host mode.
+-
+ endif
+-- 
+2.17.1
+
