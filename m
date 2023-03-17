@@ -2,143 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54EB7C74A5B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 15:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA80FC74A5B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 16:04:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbjCQPlw (ORCPT
+        id S231420AbjCQQEN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Mar 2023 11:41:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54236 "EHLO
+        Fri, 17 Mar 2023 12:04:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229887AbjCQPlu (ORCPT
+        with ESMTP id S231277AbjCQQEL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Mar 2023 11:41:50 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D333D0B9;
-        Fri, 17 Mar 2023 08:41:49 -0700 (PDT)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32HFSWgK014392;
-        Fri, 17 Mar 2023 15:41:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : in-reply-to : references : date : message-id : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=CdMh8Da9qkxn8nG2HWX1Om/OpyHxK6jJUh5AAuUVOYQ=;
- b=J0ZFWBPiJvoqxnGw7LmkuPEHhP9mNkih4i7as373N535qKOdLpOgk8LJkM5JFeKfgHHF
- KPIR5MCK1a8tp5tYd/LqMNCHmVFpwsF2V4PISAgfGR7EqW04AgnYR4gAIb3rQmg3BGVt
- IYrIs5JZM5jaTsBaHPrgBFGlfZ9dCUsweUtYm0P3xP9h+ElK68XQws+ldPDsQAPZGdUx
- CID4je4xmuay1+3+LYcLNDAVYRprJjWVEltDFhAEY4vI3QRS353zI2hB9nNfIT7LFxep
- EnkZRPdwdYAAS7r7iagJdzLbT30b4+HNk//e38Lrc4unPTItHO2ozEwfZS65AuuFE83o qQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pctvqgb6b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 15:41:35 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32HFSpSp019205;
-        Fri, 17 Mar 2023 15:41:34 GMT
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pctvqgb5u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 15:41:34 +0000
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32HDpXZo002789;
-        Fri, 17 Mar 2023 15:41:33 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([9.208.129.117])
-        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3pbs53990r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 15:41:33 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32HFfVfq31982232
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Mar 2023 15:41:32 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E0BD558059;
-        Fri, 17 Mar 2023 15:41:31 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A9AFF5805B;
-        Fri, 17 Mar 2023 15:41:31 +0000 (GMT)
-Received: from localhost (unknown [9.163.4.251])
-        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 17 Mar 2023 15:41:31 +0000 (GMT)
-From:   Nathan Lynch <nathanl@linux.ibm.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
-Subject: Re: powerpc/pseries: Fix exception handling in
- pSeries_reconfig_add_node()
-In-Reply-To: <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de>
- <871qln8quw.fsf@linux.ibm.com>
- <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de>
-Date:   Fri, 17 Mar 2023 10:41:31 -0500
-Message-ID: <87v8iz75ck.fsf@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: VAnCAZbvkGVP7qumF8JkX5udQ_eHDj6e
-X-Proofpoint-ORIG-GUID: reTzuusy-TiznGKUgMe0DpjY9hsBVW0w
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Fri, 17 Mar 2023 12:04:11 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 127F1E6FCE;
+        Fri, 17 Mar 2023 09:03:50 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id h17so4895440wrt.8;
+        Fri, 17 Mar 2023 09:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679069028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1PHX/D9zvMUuUDZPk6M5cJdE4VBkXlkPO0Tq8Iw4uEY=;
+        b=bnHr15HqmtE+HDOM4QlDsPZeI9M2oUruac2ILzNvyNQxB6CaHkk7vDqTSBKouq1cGJ
+         a7RkWHALslHDZ4KcH8Pt17hXIvhMjcmdHgDK47qYavdJobf1KFoyThdNIm9s1MrrCYYJ
+         fTDS8DSJtbgcJv8V74cLt/aFYt/Xv5xlgUJRmIPIS9TsNoa/mk4JzAuksMBEBs6kYAWB
+         1rZuQlCJ78Z9zaxb1aLOEMpaFv8/bvTctK1HjvQV9/8jE9diysBeSwFvTn89YJt9uJgw
+         veFI7BbG/aVoEmMvvmbK3FtEUSrkw/+VWiHJ6YowKG/8gGaerng+kFZ2e8CRHJQVXSMu
+         3oXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679069028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1PHX/D9zvMUuUDZPk6M5cJdE4VBkXlkPO0Tq8Iw4uEY=;
+        b=XKrKO2N5WsrnPo1hsGvXlF7aP8qbUMDgeeTaW3MiEh8fGTJMsmWxxxIKTr+QquusSH
+         JUnVF/w93rqZFHh1uiAjMQME00gcrFrnBR+cnIUUIzTfFDdAmrAC1xMDWgwjygmNwGjP
+         C7Mfjri+Dale1N+0jf5EyV1TETAgBJi81aqvgqls2I2MZS6z85xGOGkTPKl8e3pmpmcA
+         +C8RHoyxB92RHxZ+hJX8RfPHHhb2Rjk7P0xcpfopWbv51djeijDrLeS0AwhezphHxD2P
+         TD9qokjJxVJIfJoADBK/XU5dUx98duGKgFTGYsQISwrp8DkZFlSI8h+qQjLOLRXl5itu
+         YO2A==
+X-Gm-Message-State: AO0yUKXO6xwwz2Gt0rVHCbweGGmZoeWZyVJDb+Q+Zw1dVefVHY7m6RgE
+        oBhqt1F0gpa0uKDb6P4yMq00AWy40rk=
+X-Google-Smtp-Source: AK7set/UszkhlSzys5oh35JLT03OfbPlDigTObehwUGKc9KQXjjSggaC0kYeaf4P71dz4oKz8u4Eog==
+X-Received: by 2002:a5d:4382:0:b0:2cd:ddd6:c215 with SMTP id i2-20020a5d4382000000b002cdddd6c215mr7932186wrq.52.1679069028458;
+        Fri, 17 Mar 2023 09:03:48 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id y1-20020a5d4ac1000000b002ceaeb24c0asm2291002wrs.58.2023.03.17.09.03.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Mar 2023 09:03:46 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     coda@cs.cmu.edu, codalist@coda.cs.cmu.edu
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] coda: Remove redundant assignments to variable s
+Date:   Fri, 17 Mar 2023 16:03:45 +0000
+Message-Id: <20230317160345.421230-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-17_10,2023-03-16_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 mlxlogscore=999
- bulkscore=0 suspectscore=0 clxscore=1015 spamscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303170106
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Markus Elfring <Markus.Elfring@web.de> writes:
->>> The label =E2=80=9Cout_err=E2=80=9D was used to jump to another pointer=
- check despite of
->>> the detail in the implementation of the function =E2=80=9CpSeries_recon=
-fig_add_node=E2=80=9D
->>> that it was determined already that the corresponding variable contained
->>> a null pointer (because of a failed function call in two cases).
->>>
->>> 1. Thus return directly after a call of the function =E2=80=9Ckzalloc=
-=E2=80=9D failed.
->>>
->>> 2. Use more appropriate labels instead.
->>>
->>> 3. Delete a redundant check.
->>>
->>> 4. Omit an explicit initialisation for the local variable =E2=80=9Cerr=
-=E2=80=9D.
->>>
->>> This issue was detected by using the Coccinelle software.
->> Is there a correctness or safety issue here?
->
-> I got the impression that the application of only a single label like =E2=
-=80=9Cout_err=E2=80=9D
-> resulted in improvable implementation details.
+Variable s is being assigned values and it is not being read afterwards.
+The assignments are redundant and can be removed.
 
-I don't understand what you're trying to say here. It doesn't seem to
-answer my question.
+Cleans up 2 clang-scan warnings:
+fs/coda/upcall.c:259:9: warning: Value stored to 's' is never read [deadcode.DeadStores]
+        s = ( new_length & ~0x3) +4; /* round up to word boundary */
+fs/coda/upcall.c:430:9: warning: Value stored to 's' is never read [deadcode.DeadStores]
+        s = (len & ~0x3) + 4;
 
->> The subject uses the word "fix" but the commit message doesn't seem to i=
-dentify one.
->
-> Can you find the proposed adjustments reasonable?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/coda/upcall.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-In the absence of a bug fix or an improvement in readability, not
-really, sorry. It adds to the function more goto labels and another
-return, apparently to avoid checks that are sometimes redundant (but not
-incorrect) at the C source code level. An optimizing compiler doesn't
-necessarily arrange the generated code in the same way.
+diff --git a/fs/coda/upcall.c b/fs/coda/upcall.c
+index cd6a3721f6f6..1870a91eae86 100644
+--- a/fs/coda/upcall.c
++++ b/fs/coda/upcall.c
+@@ -256,7 +256,6 @@ int venus_rename(struct super_block *sb, struct CodaFid *old_fid,
+         /* another null terminated string for Venus */
+         offset += s;
+         inp->coda_rename.destname = offset;
+-        s = ( new_length & ~0x3) +4; /* round up to word boundary */
+         memcpy((char *)(inp) + offset, new_name, new_length);
+         *((char *)inp + offset + new_length) = '\0';
+ 
+@@ -427,7 +426,6 @@ int venus_symlink(struct super_block *sb, struct CodaFid *fid,
+ 	/* Round up to word boundary and null terminate */
+         offset += s;
+         inp->coda_symlink.tname = offset;
+-        s = (len & ~0x3) + 4;
+         memcpy((char *)(inp) + offset, name, len);
+         *((char *)inp + offset + len) = '\0';
+ 
+-- 
+2.30.2
 
->> Can you share how Coccinelle is being invoked and its output?
->
-> Please take another look at available information sources.
-> https://lore.kernel.org/cocci/f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de/
-
-I wasn't cc'd on this and I'm not subscribed to any lists in the
-recipients for that message, so not sure how I would take "another"
-look. :-)
