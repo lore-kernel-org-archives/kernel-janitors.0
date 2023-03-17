@@ -2,103 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD82C76195
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 06:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7123C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 07:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbjCQGsW (ORCPT
+        id S230109AbjCQHPo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Mar 2023 02:48:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35896 "EHLO
+        Fri, 17 Mar 2023 03:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbjCQGsV (ORCPT
+        with ESMTP id S229473AbjCQHPn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Mar 2023 02:48:21 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.237])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A1D856B5;
-        Thu, 16 Mar 2023 23:48:19 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id B14D51A00A8B;
-        Fri, 17 Mar 2023 14:48:19 +0800 (CST)
-X-Virus-Scanned: amavisd-new at nfschina.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id XD_21-S8BybF; Fri, 17 Mar 2023 14:48:17 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 4E0A11A00994;
-        Fri, 17 Mar 2023 14:48:17 +0800 (CST)
-From:   Yu Zhe <yuzhe@nfschina.com>
-To:     ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH] mmc: core: remove unnecessary (void*) conversions
-Date:   Fri, 17 Mar 2023 14:47:29 +0800
-Message-Id: <20230317064729.24407-1-yuzhe@nfschina.com>
-X-Mailer: git-send-email 2.11.0
+        Fri, 17 Mar 2023 03:15:43 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FB64B479;
+        Fri, 17 Mar 2023 00:15:42 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id ek18so16755777edb.6;
+        Fri, 17 Mar 2023 00:15:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679037340;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nq9nxA1qio6sHiPpysjGP5/YY8vR6Z5D1TNGlUNP8IU=;
+        b=o6syNwWOXuj89QalIA8NDAwlkjXJyLJJY8bM5ljdEu6ARdegjLasqz1alEkl1U4Nr7
+         4mctbKGozjiQQuVw7Q/JjttDccEw45SGLqoWuiKZFz4qbY9O1B6AA+7KRXy2T2a/lk96
+         F3wJHX3YLJOc508q1WI5UgOVZ1BqOnSbscZqdT/4YYhhqrWy8hFNh7v/rCV0ItIqtXUF
+         8ABhvyL0+fG7uqJ2toLms9cUgNbauVQtJ6cfCDTjP5qsUCU/SRYPJ7fvMEw9wWrQXxf6
+         o8mnRbt8/0MdguEB86hiuMjlBYC8YDNOfHiIHwL+IQwRVcGa2RQi4lgDnmxLwOUju+tg
+         01rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679037340;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nq9nxA1qio6sHiPpysjGP5/YY8vR6Z5D1TNGlUNP8IU=;
+        b=DjbaVNjCo4kN3nursecXkcHBB/l2n0AfrCsTw6ByKprXzd5CyAILzGhTw8Qx5Vfh96
+         9/sUvIGNxPelH47JtjOKSx1TQ+lhVd57P5O1EGWFwBRCayB2bMJ3zHLBtPGPSG2JYbnC
+         t92Xc5G28cw2piDjMyjIZWadnU0mkn3AiPMGpV3ado478irqMQohU0/8YbWVwveGhkYD
+         2zHLFhqcQ+t/yKk/BL1uu3CM4CfwPcDLtCpL6SnHrZNXt1svSPfdGOy/p0SuIiXYBG9V
+         /JShQNwyjcOFyQ/O7UdIyQC4lqsOMJQQS3PQL6yLl0xlua3OL99U5hjZ9uU9TLGOiWcP
+         G85A==
+X-Gm-Message-State: AO0yUKXhTht696gOjOWogFEMmohOMJoJu0nA5kVGJSGHYCUmtFjL29TW
+        pL+SBsad+puYx+amWU/8Ybc=
+X-Google-Smtp-Source: AK7set9/hQB+19dBuwQn53wi6HeRunc/rW+F4LLLcY/Y6YJHsmy/XWiipCsPGNYohznhu8OlytA4bw==
+X-Received: by 2002:a17:906:3714:b0:92b:4f8e:dde1 with SMTP id d20-20020a170906371400b0092b4f8edde1mr12375573ejc.20.1679037340179;
+        Fri, 17 Mar 2023 00:15:40 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:d59c:b746:d2ef:469])
+        by smtp.gmail.com with ESMTPSA id s10-20020a1709060d6a00b008d044ede804sm595192ejh.163.2023.03.17.00.15.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Mar 2023 00:15:40 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] tty: serial: remove obsolete config SERIAL_SAMSUNG_UARTS_4
+Date:   Fri, 17 Mar 2023 08:15:38 +0100
+Message-Id: <20230317071538.29366-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer variables of void * type do not require type cast.
+Commit 1ea35b355722 ("ARM: s3c: remove s3c24xx specific hacks"), allows
+simplifying the whole config logic for SERIAL_SAMSUNG_UARTS, and did this
+config simplification. However, it misses that SERIAL_SAMSUNG_UARTS_4's
+effect was just to control SERIAL_SAMSUNG_UARTS, and with the commit's
+change, the config SERIAL_SAMSUNG_UARTS_4 has no remaining effect and can
+be deleted.
 
-Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+Remove this obsolete config SERIAL_SAMSUNG_UARTS_4.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/mmc/core/debugfs.c  | 2 +-
- drivers/mmc/core/host.c     | 2 +-
- drivers/mmc/core/mmc_test.c | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+Arnd, please ack.
 
-diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
-index fe6808771bc7..2c97b94aab23 100644
---- a/drivers/mmc/core/debugfs.c
-+++ b/drivers/mmc/core/debugfs.c
-@@ -246,7 +246,7 @@ DEFINE_DEBUGFS_ATTRIBUTE(mmc_err_state, mmc_err_state_get, NULL, "%llu\n");
+Greg, please pick this minor clean-up patch.
+
+ drivers/tty/serial/Kconfig | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 0072892ca7fc..39a0078f54f6 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -248,13 +248,6 @@ config SERIAL_SAMSUNG
  
- static int mmc_err_stats_show(struct seq_file *file, void *data)
- {
--	struct mmc_host *host = (struct mmc_host *)file->private;
-+	struct mmc_host *host = file->private;
- 	const char *desc[MMC_ERR_MAX] = {
- 		[MMC_ERR_CMD_TIMEOUT] = "Command Timeout Occurred",
- 		[MMC_ERR_CMD_CRC] = "Command CRC Errors Occurred",
-diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-index 096093f7be00..76900f67c782 100644
---- a/drivers/mmc/core/host.c
-+++ b/drivers/mmc/core/host.c
-@@ -590,7 +590,7 @@ EXPORT_SYMBOL(mmc_alloc_host);
+ 	  Choose Y/M here only if you build for such SoC.
  
- static void devm_mmc_host_release(struct device *dev, void *res)
- {
--	mmc_free_host(*(struct mmc_host **)res);
-+	mmc_free_host(res);
- }
- 
- struct mmc_host *devm_mmc_alloc_host(struct device *dev, int extra)
-diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-index 156d34b2ed4d..0f6a563103fd 100644
---- a/drivers/mmc/core/mmc_test.c
-+++ b/drivers/mmc/core/mmc_test.c
-@@ -3045,7 +3045,7 @@ static LIST_HEAD(mmc_test_file_test);
- 
- static int mtf_test_show(struct seq_file *sf, void *data)
- {
--	struct mmc_card *card = (struct mmc_card *)sf->private;
-+	struct mmc_card *card = sf->private;
- 	struct mmc_test_general_result *gr;
- 
- 	mutex_lock(&mmc_test_lock);
-@@ -3079,8 +3079,8 @@ static int mtf_test_open(struct inode *inode, struct file *file)
- static ssize_t mtf_test_write(struct file *file, const char __user *buf,
- 	size_t count, loff_t *pos)
- {
--	struct seq_file *sf = (struct seq_file *)file->private_data;
--	struct mmc_card *card = (struct mmc_card *)sf->private;
-+	struct seq_file *sf = file->private_data;
-+	struct mmc_card *card = sf->private;
- 	struct mmc_test_card *test;
- 	long testcase;
- 	int ret;
+-config SERIAL_SAMSUNG_UARTS_4
+-	bool
+-	depends on SERIAL_SAMSUNG
+-	default y
+-	help
+-	  Internal node for the common case of 4 Samsung compatible UARTs
+-
+ config SERIAL_SAMSUNG_UARTS
+ 	int
+ 	depends on SERIAL_SAMSUNG
 -- 
-2.11.0
+2.17.1
 
