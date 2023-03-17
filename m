@@ -2,92 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3E9C76195
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 14:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 056E6C76195
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 15:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230263AbjCQOfF (ORCPT
+        id S230239AbjCQPcL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Mar 2023 10:35:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60276 "EHLO
+        Fri, 17 Mar 2023 11:32:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231310AbjCQOez (ORCPT
+        with ESMTP id S229542AbjCQPcF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Mar 2023 10:34:55 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6E010DE68;
-        Fri, 17 Mar 2023 07:34:23 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id m35so3469528wms.4;
-        Fri, 17 Mar 2023 07:34:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679063662;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9wEPVpsDJ+eVU2ayy3OZi1jrduVw8/8ymYn0qSuZays=;
-        b=K5la/SfjO65BOgwF/u6LgTQ1f+i1hHrenfb2zoVMnAD9rkyccRrIcO13xjYw3RAyTh
-         ED5gwoCFQB8OJamAZgxdGMtZ23ZrS3HZmr1h2s1sVqm8k6kTgAqIO7SbdTmK+wD1asyS
-         SsFtt78B9d2KSPeWYbAZFXPOiaxgm8Lq3+S1tFZ+ADXGsqhMS8NM0Y0T4OOgUixacaMv
-         COHVor7lQk5bVY22QgHHBkK5HCxJg60dPBfoyK2eYnB8XuXC7K3U+WCcCPPvpgRwkBgO
-         3QHI1haZBjgyurPw6uOvzvveKtF/wm8eOgIdvPA+aNHGZDhMCDq0NgGts+4XG3Dle5M1
-         ipgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679063662;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9wEPVpsDJ+eVU2ayy3OZi1jrduVw8/8ymYn0qSuZays=;
-        b=3GG5+yRx4D7YZHFZov0PSHSOo7u/qimeqTQ/p6q+cicQVYwzTtDTf9Fkecf/clS9HM
-         b1zc7dC17K52AyJKERsv6VpxenJlgREvXcrBdRUoLwSTF78yzb779P3BHfkLvKb2D+l0
-         1lRVAycNFSd14kD+DlU+61DPyDJBe1t0XIyeZuUo3duzYUAz2pmKXs19n+hQGkyJqYL3
-         gJYmcjIew+9MCpnKWRMfsZH9f+Vhps0h4s4rdCheYeoAhrtQU81dgYocJDMSpmNLTMWe
-         tHs6L/SMhMBgOKoyMTTC5CrAxUHe+4M+3bjoM+0RxJ9WtVSgGCPcrQr9KPlKH40xjact
-         fJ2g==
-X-Gm-Message-State: AO0yUKWGBEpDBHhOcyvWDsSUZxvOLCWWVh5c9N/+Pj+6J3q47Hc+On2S
-        TzJPsZgxkT6oRmER35haDSo=
-X-Google-Smtp-Source: AK7set8uQgZPt/dhZCj1n8QuiVwT5KrkwFw/aLgz/2WouLqjBvXYqprdgPtufTzgm3LABScKFazbCA==
-X-Received: by 2002:a7b:cb98:0:b0:3ed:8360:e54 with SMTP id m24-20020a7bcb98000000b003ed83600e54mr2176440wmi.8.1679063662197;
-        Fri, 17 Mar 2023 07:34:22 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id c16-20020adffb50000000b002c56179d39esm2106715wrs.44.2023.03.17.07.34.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Mar 2023 07:34:21 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ext2: remove redundant assignment to pointer end
-Date:   Fri, 17 Mar 2023 14:34:20 +0000
-Message-Id: <20230317143420.419005-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 17 Mar 2023 11:32:05 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F95D9663C;
+        Fri, 17 Mar 2023 08:32:04 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id EA6565C00C1;
+        Fri, 17 Mar 2023 11:32:03 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 17 Mar 2023 11:32:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1679067123; x=1679153523; bh=jB
+        gCssmgOfG5MkjfkiPqcV9O/3gEfCK3M40fWK1PAh4=; b=PV+mFUPDDJAka+xToN
+        j3JVVOoFBD8x7hBKnKegHMbLEo9F8F3yk1yj2+mZCKYxuFYv0/QpHo/lw/jw8xO+
+        ouTmskQ8qhnWBSx96OcrEbqm1XGxJn0R1UDe93YIZ7bTCMIHWfh6oPNEUs3cavSX
+        TwcXphRIT7ZFQMKa+d4pZtl49rsXyKONEnbOJWkJBS6qiIozWt5vUe0klIjlNKwO
+        dL+A0UCi6BEdRRzz9nALHTCGkWsg4VROh1CNveFE3XPWqkIdngqaBgQ9TlU9L0Ov
+        2Ujc2cBlJFYI7N0cU1ndGaYIOWRoLCZ3AxN3ZFEmkqWmaX6WDDKHVOiIz+nQ1tSP
+        Hl4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1679067123; x=1679153523; bh=jBgCssmgOfG5M
+        kjfkiPqcV9O/3gEfCK3M40fWK1PAh4=; b=fwm63yHcv00u2sjVH5H+Z3Us/ft5x
+        Gg2cDMeZ5XtaUzf0juBe+mUWSVZtAIoNauSny1sviPjfSeD9iERvlC5cn1Y1yase
+        sQw16d7FHZUqFYijPMOFa2wft3qK9fHognZo7HavCvYlIk5pZku6+mRIUJCm3qnG
+        dQJEeaCtLT5rj0B3Uwu+WCra6NqndCIRtLu2h9f4QljkjSvpy+QxF4H+YhkK9ojd
+        Cp0XPydWoFQiqAR6J1LDor8pIGOSs9khwXeFUof0Vo/+4xzrqdZZQCISaud0cBi0
+        JOD+AG82gixH7TwF8eBNxbOcMuxM9mUy/gldbAiNPppW+1O7H02Z7voFg==
+X-ME-Sender: <xms:84cUZHvqS7VrITUPyYBIN0ilJD0KTapRE3Qth09cTTeuROH_cjtZfw>
+    <xme:84cUZId0V4GRS0oqi6qXC8bGCZtEN5k9xypkQXoEXRNwC_WSGRp9vXx_wy5M8_U59
+    p6IYGIBiSRn24UVZCM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdefvddgjeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:84cUZKw_whoVRzsocaKakyKmGE3tmgnq4rMrfkTac0bNWP0MWRxKIw>
+    <xmx:84cUZGMQXQmKYG-Kwdr3CA5BZZFWEAlc4dqdBw5MxGX5z_J1PUEGHw>
+    <xmx:84cUZH-w4MrehzkZo6Aah9au3WJZPV8ymrFNmIkYktCKACvfgjSPQA>
+    <xmx:84cUZKaJV8x7rApGvpESsp7EVY353DbBBvextLPRveA1rAUBMEu33g>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 4F1C6B60086; Fri, 17 Mar 2023 11:32:03 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-221-gec32977366-fm-20230306.001-gec329773
+Mime-Version: 1.0
+Message-Id: <b030a920-d9c0-4f2a-b1a8-f6d89bcbdfe1@app.fastmail.com>
+In-Reply-To: <20230317081156.32337-1-lukas.bulwahn@gmail.com>
+References: <20230317081156.32337-1-lukas.bulwahn@gmail.com>
+Date:   Fri, 17 Mar 2023 16:31:43 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     "Lubomir Rintel" <lkundrak@v3.sk>,
+        "Russell King" <linux@armlinux.org.uk>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: mmp: remove obsolete config USB_EHCI_MV_U2O
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer is assigned a value that is never read, the assignment is
-redundant and can be removed.
+On Fri, Mar 17, 2023, at 09:11, Lukas Bulwahn wrote:
+> Commit 77acc85ce797 ("ARM: mmp: remove device definitions") and commit
+> 06f11dfb5b75 ("ARM: mmp: remove all board files") remove mach-mmp's device
+> definitions and the board file for the Marvell PXA910-based TTC_DKB
+> Development Platform. With that removal, all references to the config
+> USB_EHCI_MV_U2O are gone. The config has no remaining effect and can be
+> deleted.
+>
+> Remove the obsolete config USB_EHCI_MV_U2O.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Arnd, please pick this minor clean-up patch as follow-up to your patches
+> mentioned above. Thanks.
 
-Cleans up clang-scan warning:
-fs/ext2/xattr.c:555:3: warning: Value stored to 'end' is never read [deadcode.DeadStores]
-                end = (char *)header + sb->s_blocksize;
+Ok, added for 6.4 now. Note: for platforms that don't normally have
+pull requests, you can add soc@kernel.org to Cc. That way it will show
+up in patchwork to make sure I don't miss it. Don't use it for the
+more active platforms though.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/ext2/xattr.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
-index b126af5f8b15..8906ba479aaf 100644
---- a/fs/ext2/xattr.c
-+++ b/fs/ext2/xattr.c
-@@ -552,7 +552,6 @@ ext2_xattr_set(struct inode *inode, int name_index, const char *name,
- 		error = -ENOMEM;
- 		if (header == NULL)
- 			goto cleanup;
--		end = (char *)header + sb->s_blocksize;
- 		header->h_magic = cpu_to_le32(EXT2_XATTR_MAGIC);
- 		header->h_blocks = header->h_refcount = cpu_to_le32(1);
- 		last = here = ENTRY(header+1);
--- 
-2.30.2
-
+    Arnd
