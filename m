@@ -2,103 +2,143 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056E6C76195
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 15:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54EB7C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Mar 2023 15:41:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230239AbjCQPcL (ORCPT
+        id S230001AbjCQPlw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Mar 2023 11:32:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35558 "EHLO
+        Fri, 17 Mar 2023 11:41:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbjCQPcF (ORCPT
+        with ESMTP id S229887AbjCQPlu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Mar 2023 11:32:05 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F95D9663C;
-        Fri, 17 Mar 2023 08:32:04 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id EA6565C00C1;
-        Fri, 17 Mar 2023 11:32:03 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 17 Mar 2023 11:32:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1679067123; x=1679153523; bh=jB
-        gCssmgOfG5MkjfkiPqcV9O/3gEfCK3M40fWK1PAh4=; b=PV+mFUPDDJAka+xToN
-        j3JVVOoFBD8x7hBKnKegHMbLEo9F8F3yk1yj2+mZCKYxuFYv0/QpHo/lw/jw8xO+
-        ouTmskQ8qhnWBSx96OcrEbqm1XGxJn0R1UDe93YIZ7bTCMIHWfh6oPNEUs3cavSX
-        TwcXphRIT7ZFQMKa+d4pZtl49rsXyKONEnbOJWkJBS6qiIozWt5vUe0klIjlNKwO
-        dL+A0UCi6BEdRRzz9nALHTCGkWsg4VROh1CNveFE3XPWqkIdngqaBgQ9TlU9L0Ov
-        2Ujc2cBlJFYI7N0cU1ndGaYIOWRoLCZ3AxN3ZFEmkqWmaX6WDDKHVOiIz+nQ1tSP
-        Hl4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1679067123; x=1679153523; bh=jBgCssmgOfG5M
-        kjfkiPqcV9O/3gEfCK3M40fWK1PAh4=; b=fwm63yHcv00u2sjVH5H+Z3Us/ft5x
-        Gg2cDMeZ5XtaUzf0juBe+mUWSVZtAIoNauSny1sviPjfSeD9iERvlC5cn1Y1yase
-        sQw16d7FHZUqFYijPMOFa2wft3qK9fHognZo7HavCvYlIk5pZku6+mRIUJCm3qnG
-        dQJEeaCtLT5rj0B3Uwu+WCra6NqndCIRtLu2h9f4QljkjSvpy+QxF4H+YhkK9ojd
-        Cp0XPydWoFQiqAR6J1LDor8pIGOSs9khwXeFUof0Vo/+4xzrqdZZQCISaud0cBi0
-        JOD+AG82gixH7TwF8eBNxbOcMuxM9mUy/gldbAiNPppW+1O7H02Z7voFg==
-X-ME-Sender: <xms:84cUZHvqS7VrITUPyYBIN0ilJD0KTapRE3Qth09cTTeuROH_cjtZfw>
-    <xme:84cUZId0V4GRS0oqi6qXC8bGCZtEN5k9xypkQXoEXRNwC_WSGRp9vXx_wy5M8_U59
-    p6IYGIBiSRn24UVZCM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdefvddgjeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:84cUZKw_whoVRzsocaKakyKmGE3tmgnq4rMrfkTac0bNWP0MWRxKIw>
-    <xmx:84cUZGMQXQmKYG-Kwdr3CA5BZZFWEAlc4dqdBw5MxGX5z_J1PUEGHw>
-    <xmx:84cUZH-w4MrehzkZo6Aah9au3WJZPV8ymrFNmIkYktCKACvfgjSPQA>
-    <xmx:84cUZKaJV8x7rApGvpESsp7EVY353DbBBvextLPRveA1rAUBMEu33g>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 4F1C6B60086; Fri, 17 Mar 2023 11:32:03 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-221-gec32977366-fm-20230306.001-gec329773
-Mime-Version: 1.0
-Message-Id: <b030a920-d9c0-4f2a-b1a8-f6d89bcbdfe1@app.fastmail.com>
-In-Reply-To: <20230317081156.32337-1-lukas.bulwahn@gmail.com>
-References: <20230317081156.32337-1-lukas.bulwahn@gmail.com>
-Date:   Fri, 17 Mar 2023 16:31:43 +0100
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     "Lubomir Rintel" <lkundrak@v3.sk>,
-        "Russell King" <linux@armlinux.org.uk>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: mmp: remove obsolete config USB_EHCI_MV_U2O
-Content-Type: text/plain
+        Fri, 17 Mar 2023 11:41:50 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D333D0B9;
+        Fri, 17 Mar 2023 08:41:49 -0700 (PDT)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32HFSWgK014392;
+        Fri, 17 Mar 2023 15:41:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : in-reply-to : references : date : message-id : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=CdMh8Da9qkxn8nG2HWX1Om/OpyHxK6jJUh5AAuUVOYQ=;
+ b=J0ZFWBPiJvoqxnGw7LmkuPEHhP9mNkih4i7as373N535qKOdLpOgk8LJkM5JFeKfgHHF
+ KPIR5MCK1a8tp5tYd/LqMNCHmVFpwsF2V4PISAgfGR7EqW04AgnYR4gAIb3rQmg3BGVt
+ IYrIs5JZM5jaTsBaHPrgBFGlfZ9dCUsweUtYm0P3xP9h+ElK68XQws+ldPDsQAPZGdUx
+ CID4je4xmuay1+3+LYcLNDAVYRprJjWVEltDFhAEY4vI3QRS353zI2hB9nNfIT7LFxep
+ EnkZRPdwdYAAS7r7iagJdzLbT30b4+HNk//e38Lrc4unPTItHO2ozEwfZS65AuuFE83o qQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pctvqgb6b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 15:41:35 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32HFSpSp019205;
+        Fri, 17 Mar 2023 15:41:34 GMT
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3pctvqgb5u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 15:41:34 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32HDpXZo002789;
+        Fri, 17 Mar 2023 15:41:33 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([9.208.129.117])
+        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3pbs53990r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Mar 2023 15:41:33 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32HFfVfq31982232
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Mar 2023 15:41:32 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E0BD558059;
+        Fri, 17 Mar 2023 15:41:31 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9AFF5805B;
+        Fri, 17 Mar 2023 15:41:31 +0000 (GMT)
+Received: from localhost (unknown [9.163.4.251])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 17 Mar 2023 15:41:31 +0000 (GMT)
+From:   Nathan Lynch <nathanl@linux.ibm.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+Subject: Re: powerpc/pseries: Fix exception handling in
+ pSeries_reconfig_add_node()
+In-Reply-To: <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de>
+ <871qln8quw.fsf@linux.ibm.com>
+ <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de>
+Date:   Fri, 17 Mar 2023 10:41:31 -0500
+Message-ID: <87v8iz75ck.fsf@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: VAnCAZbvkGVP7qumF8JkX5udQ_eHDj6e
+X-Proofpoint-ORIG-GUID: reTzuusy-TiznGKUgMe0DpjY9hsBVW0w
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-17_10,2023-03-16_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 mlxlogscore=999
+ bulkscore=0 suspectscore=0 clxscore=1015 spamscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303170106
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 17, 2023, at 09:11, Lukas Bulwahn wrote:
-> Commit 77acc85ce797 ("ARM: mmp: remove device definitions") and commit
-> 06f11dfb5b75 ("ARM: mmp: remove all board files") remove mach-mmp's device
-> definitions and the board file for the Marvell PXA910-based TTC_DKB
-> Development Platform. With that removal, all references to the config
-> USB_EHCI_MV_U2O are gone. The config has no remaining effect and can be
-> deleted.
+Markus Elfring <Markus.Elfring@web.de> writes:
+>>> The label =E2=80=9Cout_err=E2=80=9D was used to jump to another pointer=
+ check despite of
+>>> the detail in the implementation of the function =E2=80=9CpSeries_recon=
+fig_add_node=E2=80=9D
+>>> that it was determined already that the corresponding variable contained
+>>> a null pointer (because of a failed function call in two cases).
+>>>
+>>> 1. Thus return directly after a call of the function =E2=80=9Ckzalloc=
+=E2=80=9D failed.
+>>>
+>>> 2. Use more appropriate labels instead.
+>>>
+>>> 3. Delete a redundant check.
+>>>
+>>> 4. Omit an explicit initialisation for the local variable =E2=80=9Cerr=
+=E2=80=9D.
+>>>
+>>> This issue was detected by using the Coccinelle software.
+>> Is there a correctness or safety issue here?
 >
-> Remove the obsolete config USB_EHCI_MV_U2O.
+> I got the impression that the application of only a single label like =E2=
+=80=9Cout_err=E2=80=9D
+> resulted in improvable implementation details.
+
+I don't understand what you're trying to say here. It doesn't seem to
+answer my question.
+
+>> The subject uses the word "fix" but the commit message doesn't seem to i=
+dentify one.
 >
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Arnd, please pick this minor clean-up patch as follow-up to your patches
-> mentioned above. Thanks.
+> Can you find the proposed adjustments reasonable?
 
-Ok, added for 6.4 now. Note: for platforms that don't normally have
-pull requests, you can add soc@kernel.org to Cc. That way it will show
-up in patchwork to make sure I don't miss it. Don't use it for the
-more active platforms though.
+In the absence of a bug fix or an improvement in readability, not
+really, sorry. It adds to the function more goto labels and another
+return, apparently to avoid checks that are sometimes redundant (but not
+incorrect) at the C source code level. An optimizing compiler doesn't
+necessarily arrange the generated code in the same way.
 
-    Arnd
+>> Can you share how Coccinelle is being invoked and its output?
+>
+> Please take another look at available information sources.
+> https://lore.kernel.org/cocci/f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de/
+
+I wasn't cc'd on this and I'm not subscribed to any lists in the
+recipients for that message, so not sure how I would take "another"
+look. :-)
