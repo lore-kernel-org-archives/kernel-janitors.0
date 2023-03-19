@@ -2,89 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F585C7618A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 19 Mar 2023 11:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCFBC6FD1F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 19 Mar 2023 13:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230208AbjCSLll (ORCPT
+        id S230367AbjCSNg3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 19 Mar 2023 07:41:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45130 "EHLO
+        Sun, 19 Mar 2023 09:36:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230227AbjCSLli (ORCPT
+        with ESMTP id S230320AbjCSNg2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 19 Mar 2023 07:41:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE6B1CAF4;
-        Sun, 19 Mar 2023 04:41:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 584FD60FCB;
-        Sun, 19 Mar 2023 11:41:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AF5FC433D2;
-        Sun, 19 Mar 2023 11:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679226095;
-        bh=ExZwx8jh/Z19yiEgpkbK+BLckhnmEjECfuwpp5U7nW0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ha8+NoV5KMotFaVzeYbTTD0suS9RQhwThazW8291t+hgww4f0xcPfrj9jgFcFOf5v
-         2L7C2u1/bVqlT97R7EHX1ke2bQkA/gTuxbaw9ce9AMWEqb7cnohczlyJ9GrZIRXfqP
-         pyJxs2ofUrBoG9XjYnSAyZVvXK943irTuZlpKGoo64viKasN/0aCS+nzz3vFaOpGfk
-         oZIiFfawDpAoHNBPf9TodIQg9XuxGEkHu+KGPT1CXtbVE1oW4f8dq3WzoPfMrwDjQ4
-         H3U/+90PtAdU/D0gMVkRZkIGrnSXUmqwWXP9bbV2CoA8VqUQYGfQNrM8OwXUYZM42u
-         6C20zTKGgbUrw==
-Date:   Sun, 19 Mar 2023 13:41:31 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Cheng Xu <chengyou@linux.alibaba.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Kai Shen <kaishen@linux.alibaba.com>,
-        Yang Li <yang.lee@linux.alibaba.com>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>
+        Sun, 19 Mar 2023 09:36:28 -0400
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 842BD10B;
+        Sun, 19 Mar 2023 06:36:25 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R441e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=chengyou@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Ve8VpRZ_1679232982;
+Received: from 30.0.143.175(mailfrom:chengyou@linux.alibaba.com fp:SMTPD_---0Ve8VpRZ_1679232982)
+          by smtp.aliyun-inc.com;
+          Sun, 19 Mar 2023 21:36:22 +0800
+Message-ID: <167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com>
+Date:   Sun, 19 Mar 2023 21:36:20 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.8.0
 Subject: Re: [PATCH] RDMA/erdma: Fix exception handling in
  erdma_accept_newconn()
-Message-ID: <20230319114131.GC36557@unreal>
+Content-Language: en-US
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kai Shen <kaishen@linux.alibaba.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Yang Li <yang.lee@linux.alibaba.com>
+Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
 References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
  <f0f96f74-21d1-f5bf-1086-1c3ce0ea18f5@web.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+From:   Cheng Xu <chengyou@linux.alibaba.com>
 In-Reply-To: <f0f96f74-21d1-f5bf-1086-1c3ce0ea18f5@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Mar 18, 2023 at 09:15:58PM +0100, Markus Elfring wrote:
+
+
+On 3/19/23 4:15 AM, Markus Elfring wrote:
 > Date: Sat, 18 Mar 2023 21:08:58 +0100
 > 
-> The label “error” was used to jump to another pointer check despite of
-> the detail in the implementation of the function “erdma_accept_newconn”
-> that it was determined already that corresponding variables contained
-> still null pointers.
-> 
-> 1. Thus return directly if
->    * the cep state is not the value “ERDMA_EPSTATE_LISTENING”
->      or
->    * a call of the function “erdma_cep_alloc” failed.
-> 
-> 2. Use more appropriate labels instead.
-> 
-> 3. Delete two questionable checks.
-> 
-> 4. Omit extra initialisations (for the variables “new_cep”, “new_s” and “ret”)
->    which became unnecessary with this refactoring.
-> 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 920d93eac8b97778fef48f34f10e58ddf870fc2a ("RDMA/erdma: Add connection management (CM) support")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/erdma/erdma_cm.c | 39 +++++++++++---------------
->  1 file changed, 17 insertions(+), 22 deletions(-)
 
-Same comment as for your RDMA/siw patch.
+<...>
 
-Thanks
+> +disassoc_socket:
+> +    erdma_socket_disassoc(new_s);
+> +    sock_release(new_s);
+> +    new_cep->state = ERDMA_EPSTATE_CLOSED;
+> +    erdma_cancel_mpatimer(new_cep);
+> +put_cep:
+> +    erdma_cep_put(new_cep);> +    new_cep->sock = NULL;
+
+Thanks, but this causes an use-after-free issue because new_cep will be
+released after last erdma_cep_put being called.
+
+Cheng Xu
+
+>  }
+>  
+>  static int erdma_newconn_connected(struct erdma_cep *cep)
