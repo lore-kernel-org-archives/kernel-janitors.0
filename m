@@ -2,70 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCFBC6FD1F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 19 Mar 2023 13:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420D5C7618A
+	for <kernel-janitors@archiver.kernel.org>; Sun, 19 Mar 2023 13:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230367AbjCSNg3 (ORCPT
+        id S230243AbjCSNpn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 19 Mar 2023 09:36:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40010 "EHLO
+        Sun, 19 Mar 2023 09:45:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230320AbjCSNg2 (ORCPT
+        with ESMTP id S229843AbjCSNpl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 19 Mar 2023 09:36:28 -0400
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 842BD10B;
-        Sun, 19 Mar 2023 06:36:25 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R441e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=chengyou@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Ve8VpRZ_1679232982;
-Received: from 30.0.143.175(mailfrom:chengyou@linux.alibaba.com fp:SMTPD_---0Ve8VpRZ_1679232982)
-          by smtp.aliyun-inc.com;
-          Sun, 19 Mar 2023 21:36:22 +0800
-Message-ID: <167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com>
-Date:   Sun, 19 Mar 2023 21:36:20 +0800
+        Sun, 19 Mar 2023 09:45:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 031311E2AA;
+        Sun, 19 Mar 2023 06:45:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9FA63B80B93;
+        Sun, 19 Mar 2023 13:45:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0795BC433D2;
+        Sun, 19 Mar 2023 13:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679233537;
+        bh=6cn3HNLfLYBgaBUQoVOOYAA+mt6uEPTvkYutYN40OOM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KJAcomoBILh4SU1eor8j/oJBNTmQ3+kTndeDQg3yE31rj0z0vodLU+qQeaJiYEKxx
+         gYMpdRQSHxxVsumMqVI81jhCF67Q24d6ycPSYtTIMVOvpbXUXiYftm6jJAlomqxx0s
+         ISpapmDaaE5NwpHwXBnvIt7l3CHb7EtkIbZgZx4WgweQNUaAfqGKf/YsiDfRF+KesA
+         8SQ4S7RaeNavdSgKuzknEm1uGEny0jVeJRJca4u6UNwIgmGwL0qJ0GLgYr3MQoTjqG
+         x6OdZj9CUAdawTz4YowaZJs1bbUTjyaGrMxVBxLjWGNWluGP+NH7lo32zJIU7J740t
+         Lcq+RyNNGDYYw==
+Date:   Sun, 19 Mar 2023 15:45:33 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com
+Subject: Re: [PATCH] tpm: remove unnecessary (void*) conversions
+Message-ID: <20230319134533.f63ajqelx6eeadnh@kernel.org>
+References: <20230316085037.21255-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.8.0
-Subject: Re: [PATCH] RDMA/erdma: Fix exception handling in
- erdma_accept_newconn()
-Content-Language: en-US
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Kai Shen <kaishen@linux.alibaba.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Yang Li <yang.lee@linux.alibaba.com>
-Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <f0f96f74-21d1-f5bf-1086-1c3ce0ea18f5@web.de>
-From:   Cheng Xu <chengyou@linux.alibaba.com>
-In-Reply-To: <f0f96f74-21d1-f5bf-1086-1c3ce0ea18f5@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230316085037.21255-1-yuzhe@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 3/19/23 4:15 AM, Markus Elfring wrote:
-> Date: Sat, 18 Mar 2023 21:08:58 +0100
+On Thu, Mar 16, 2023 at 04:50:37PM +0800, Yu Zhe wrote:
+> Pointer variables of void * type do not require type cast.
+> 
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> ---
+>  drivers/char/tpm/eventlog/common.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/eventlog/common.c b/drivers/char/tpm/eventlog/common.c
+> index 8512ec76d526..639c3f395a5a 100644
+> --- a/drivers/char/tpm/eventlog/common.c
+> +++ b/drivers/char/tpm/eventlog/common.c
+> @@ -36,7 +36,7 @@ static int tpm_bios_measurements_open(struct inode *inode,
+>  		inode_unlock(inode);
+>  		return -ENODEV;
+>  	}
+> -	chip_seqops = (struct tpm_chip_seqops *)inode->i_private;
+> +	chip_seqops = inode->i_private;
+>  	seqops = chip_seqops->seqops;
+>  	chip = chip_seqops->chip;
+>  	get_device(&chip->dev);
+> @@ -55,8 +55,8 @@ static int tpm_bios_measurements_open(struct inode *inode,
+>  static int tpm_bios_measurements_release(struct inode *inode,
+>  					 struct file *file)
+>  {
+> -	struct seq_file *seq = (struct seq_file *)file->private_data;
+> -	struct tpm_chip *chip = (struct tpm_chip *)seq->private;
+> +	struct seq_file *seq = file->private_data;
+> +	struct tpm_chip *chip = seq->private;
+>  
+>  	put_device(&chip->dev);
+>  
+> -- 
+> 2.11.0
 > 
 
-<...>
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-> +disassoc_socket:
-> +    erdma_socket_disassoc(new_s);
-> +    sock_release(new_s);
-> +    new_cep->state = ERDMA_EPSTATE_CLOSED;
-> +    erdma_cancel_mpatimer(new_cep);
-> +put_cep:
-> +    erdma_cep_put(new_cep);> +    new_cep->sock = NULL;
-
-Thanks, but this causes an use-after-free issue because new_cep will be
-released after last erdma_cep_put being called.
-
-Cheng Xu
-
->  }
->  
->  static int erdma_newconn_connected(struct erdma_cep *cep)
+BR, Jarkko
