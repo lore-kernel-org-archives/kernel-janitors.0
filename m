@@ -2,132 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E75CEC7618B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Mar 2023 17:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14237C76195
+	for <kernel-janitors@archiver.kernel.org>; Sun, 19 Mar 2023 11:40:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbjCRRQY (ORCPT
+        id S229612AbjCSLk5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 18 Mar 2023 13:16:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47820 "EHLO
+        Sun, 19 Mar 2023 07:40:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbjCRRQW (ORCPT
+        with ESMTP id S229441AbjCSLk4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 18 Mar 2023 13:16:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA0C265A3;
-        Sat, 18 Mar 2023 10:16:15 -0700 (PDT)
+        Sun, 19 Mar 2023 07:40:56 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F71F6E9B;
+        Sun, 19 Mar 2023 04:40:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6CCA1B803F5;
-        Sat, 18 Mar 2023 17:16:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F802C433D2;
-        Sat, 18 Mar 2023 17:16:11 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2C968B80AB5;
+        Sun, 19 Mar 2023 11:40:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A93C433D2;
+        Sun, 19 Mar 2023 11:40:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679159773;
-        bh=9A2fgv5oQbxynJAYMRA2toHVpzS70vkHPEQb8wWQvP4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=O/h5RHcd+9uw139/ETE4kVAQuQT9Vm1lkk8uwwZUn30CtHULLYoCs6p0sOU6ScoYa
-         CeChAuaeHKSdU68FeKmc2FzKADSK2dgS+/lY0X/QtRX4ABIGfo2AOKg4NX3pZ1yM93
-         umQ089CWba7cdJnj2h82cZA2bYEsrhgKhB26s/vVPVNlo2wT+33dvUZ5k2RGikm1aW
-         QmFZLnFUmM+ZwEGkSL74702LRCvmTp/QhXAAOV8xV4er27wWc0y8dXbt7V0kgXazfo
-         PxDwKl7ZcDjjiONfOhEyRP3j/JdK8uNIOVfC5HNLlFmEsh9j40N/P5X6WhTfkRU6SE
-         Ugty5DdQ+8Eog==
-Date:   Sat, 18 Mar 2023 17:31:06 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Irina Tirdea <irina.tirdea@intel.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: magn: bmc150: add a lower bounds in
- bmc150_magn_write_raw()
-Message-ID: <20230318173106.78ae91d7@jic23-huawei>
-In-Reply-To: <23e6a7db-895a-4674-9a2d-acbb15342fd0@kili.mountain>
-References: <94939714-a232-4107-8741-8867038b03ae@kili.mountain>
-        <20230312144551.2baf3e8b@jic23-huawei>
-        <23e6a7db-895a-4674-9a2d-acbb15342fd0@kili.mountain>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
+        s=k20201202; t=1679226052;
+        bh=LldkDG7q1fdcJMFLpCO5/nBIKzU9c/xA/fLYRPQZFdk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NvRQ9wIPHfFR6JB9JCMJ4w97u/hq5jiMubcgODSoRSXQW8WsESnSizCcnxxJJh8Ar
+         qxWLlpXabMLDPXhcsXGpI583MEqcPO48Tcs44apqaJpH/yyA0mM4W6jOIKKAax68MR
+         I6YiWXAwYPqQZ41dq9BIOMtp3+3s1gkz0j6ac8EUQnUbVSn/oQP7jmBTDbnCdiLDid
+         lp65sGiJUmUJz24k8XWsA7tMgOgo84QlJHESuOP+5UVpWeJt1HDfsDg2gLtnn0QbR4
+         PLWnP7LW5kRnFBQeDQwk+grQCZmgEjzXf4gvAuacOBwO0wSNZHvLc/ymnpUozirDu5
+         Co/d4Nj+PJtqg==
+Date:   Sun, 19 Mar 2023 13:40:48 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, cocci@inria.fr,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] RDMA/siw: Fix exception handling in siw_accept_newconn()
+Message-ID: <20230319114048.GB36557@unreal>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <afe30fc6-04c9-528c-f84a-67902b5a6ed8@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <afe30fc6-04c9-528c-f84a-67902b5a6ed8@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 13 Mar 2023 15:04:28 +0300
-Dan Carpenter <error27@gmail.com> wrote:
+On Sat, Mar 18, 2023 at 08:43:04PM +0100, Markus Elfring wrote:
+> Date: Sat, 18 Mar 2023 20:30:12 +0100
+> 
+> The label “error” was used to jump to another pointer check despite of
+> the detail in the implementation of the function “siw_accept_newconn”
+> that it was determined already that corresponding variables contained
+> still null pointers.
+> 
+> 1. Use more appropriate labels instead.
+> 
+> 2. Delete two questionable checks.
+> 
+> 3. Omit extra initialisations (for the variables “new_cep” and “new_s”)
+>    which became unnecessary with this refactoring.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Fixes: 6c52fdc244b5ccc468006fd65a504d4ee33743c7 ("rdma/siw: connection management")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/infiniband/sw/siw/siw_cm.c | 32 ++++++++++++++----------------
+>  1 file changed, 15 insertions(+), 17 deletions(-)
 
-> On Sun, Mar 12, 2023 at 02:45:51PM +0000, Jonathan Cameron wrote:
-> > On Wed, 8 Mar 2023 12:12:37 +0300
-> > Dan Carpenter <error27@gmail.com> wrote:
-> >   
-> > > The "val" variable comes from the user via iio_write_channel_info().
-> > > This code puts an upper bound on "val" but it doesn't check for
-> > > negatives so Smatch complains.  I don't think either the bounds
-> > > checking is really required, but it's just good to be conservative.
-> > > 
-> > > Fixes: 5990dc970367 ("iio: magn: bmc150_magn: add oversampling ratio")
-> > > Signed-off-by: Dan Carpenter <error27@gmail.com>  
-> > 
-> > Hi Dan,
-> > 
-> > I think this is more complex than it initially appears.
-> > 
-> > bmc150_magn_set_odr() matches against a table of possible value
-> > (precise matching) and as such you'd assume neither check is necessary.
-> > 
-> > However, for a given configuration not all values in that table can
-> > actually be set due to max_odr actually changing depending on other settings.
-> > 
-> > My immediate thought was "why not push this check into bmc150_magn_set_odr()"
-> > where this will be more obvious.  Turns out that max_odr isn't available until
-> > later in bmc150_magn_init() than the initial call of bmc150_magn_set_odr()
-> >  
-> > Whilst I 'think' you could move that around so that max_odr was set, that's not quite
-> > obvious enough for me to want to do it without testing the result.
-> > 
-> > So question becomes is it wroth adding the val < 0 check here.
-> > My gut feeling is that actually makes it more confusing because we are checking
-> > something that doesn't restrict the later results alongside something that does.
-> > 
-> > Am I missing something, or was smatch just being overly careful?  
-> 
-> Okay, fair enough.  The upper bounds is required and the lower bounds is
-> not.
-> 
-> However, passing negatives is still not best practice and I feel like it
-> wasn't intentional here.  Let me resend the commit, but with a different
-> commit message that doesn't say the upper bound is not required.
+Please read Documentation/process/submitting-patches.rst and resubmit.
+Your patch is not valid.
 
-That works for me.
-
-> 
-> The Smatch warning feels intuitively correct.  If you're going to have
-> an upper bounds check then you need to have a lower bounds check to
-> prevent negative values.  In practice it works pretty well.  The only
-> major issue with this check is that sometimes Smatch thinks a variable
-> can be negative when it cannot.
-> 
-> This patch is an example where passing a negative is harmless and I had
-> a similar warning last week where it was passing a negative param was
-> harmless as well.  The parameter was used as loop limit:
-> 
-> 	for (i = 0; i < param; i++) {
-> 
-> It's a no-op since param is negative, but all all it needs is for
-> someone declare the iterator as "unsigned int i;" and then it becomes
-> a memory corruption issue.
-> 
-> So occasionally passing negatives is harmless but mostly it's bad.
-
-Agreed.
-
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> 
-
+Thanks
