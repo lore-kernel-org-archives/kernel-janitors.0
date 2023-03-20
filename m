@@ -2,104 +2,151 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C33DC7618A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 14:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9BDC7618D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 15:47:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231696AbjCTOm5 (ORCPT
+        id S232195AbjCTPr5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 10:42:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47870 "EHLO
+        Mon, 20 Mar 2023 11:47:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229849AbjCTOm4 (ORCPT
+        with ESMTP id S232193AbjCTPrl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 10:42:56 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BDE4EC7;
-        Mon, 20 Mar 2023 07:42:53 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D410D660212C;
-        Mon, 20 Mar 2023 14:42:51 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1679323372;
-        bh=1PCOMoENo5QV1yJfjTv1LPzClFUUYLNo+EJ9cnM0EJU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=fQA6F6bYqkFXmYuOYjx5Fou2CI4BblLmcXlfoMWjrjA2/B6OGqG1Pq285ZJHu5fOQ
-         XjjDmuyiqgA5Oc+0+zkcfn6WY3A7k0RvYOfHrw3FPhjSufylFiVpC7uqMpWybRWfrp
-         87iJx1ywBEZr1SpucGKR76fu82VIniQ0u0wKtTp4SkWXZl4LllksBxZrMhcjOSu5fi
-         Z8ndbUKPhGeGRwOeRNrJ8HAaXVUN4qDqiYBk21V6RE3hcD5UAqrGzo6mC7aZuhxOGF
-         XW8VmJ+tN+mYOS7nxL6FKvenceibyx2cVcQLOK6rj5fbpcU5hMqF5+1Xmz9zoGJB+w
-         fi4Ee8x+a9IEw==
-Message-ID: <01964ce6-7a91-a86e-6ae0-73ab177ba01a@collabora.com>
-Date:   Mon, 20 Mar 2023 15:42:49 +0100
+        Mon, 20 Mar 2023 11:47:41 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A671D13501;
+        Mon, 20 Mar 2023 08:39:07 -0700 (PDT)
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32KFHSFe022310;
+        Mon, 20 Mar 2023 15:38:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : in-reply-to : references : date : message-id : mime-version :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=tF9DPR4BziRpIYNIxnHYz1rUjU1J1WPHeaPCtVN4Vy0=;
+ b=H4ehmhdJR7vvqAhDkTDpDUy6pvdFwBfibNmi9y8msPYVIt6vt5PKMwfY2qgEkibBgjpV
+ T054dBChtf7ChrcrxZttx/NZ3+0C8YB1hBetfc/+kr0tqm6A0N7sD7y2+3ZsBUcADfJN
+ Vxl7AMy+EKN/JEuT6edr0R/wgjBvZ3GiIAfzpW1AB0cgnCBvAWM4Gp4z5WIAWilxKmW/
+ KCakSYDRuuOiktmqvAoWjjGbtcN06/y6UybPhN260gFFE/OG/sNEDAaJ728BINJBPKXv
+ Blu2Ekiz1sCWNaM+9bSDQ6jKX6hJkXAtR1j3Xc4aONug65o3JLselHC/4f66AItLXTb1 xA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pdqf3546u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Mar 2023 15:38:54 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32KENu8h008070;
+        Mon, 20 Mar 2023 15:38:54 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pdqf3546m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Mar 2023 15:38:54 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32KF8i3C024217;
+        Mon, 20 Mar 2023 15:38:53 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
+        by ppma03dal.us.ibm.com (PPS) with ESMTPS id 3pd4x70x2a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Mar 2023 15:38:52 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32KFcppB63504820
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Mar 2023 15:38:51 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 87D7058043;
+        Mon, 20 Mar 2023 15:38:51 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EA375805D;
+        Mon, 20 Mar 2023 15:38:51 +0000 (GMT)
+Received: from localhost (unknown [9.211.100.146])
+        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 20 Mar 2023 15:38:51 +0000 (GMT)
+From:   Nathan Lynch <nathanl@linux.ibm.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+Subject: Re: powerpc/pseries: Fix exception handling in
+ pSeries_reconfig_add_node()
+In-Reply-To: <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de>
+ <871qln8quw.fsf@linux.ibm.com>
+ <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de>
+ <87v8iz75ck.fsf@linux.ibm.com>
+ <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de>
+Date:   Mon, 20 Mar 2023 10:38:50 -0500
+Message-ID: <87pm9377qt.fsf@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] ARM: mediatek: Remove unused configs MACH_MT6592 and
- MACH_MT6592
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230320132634.17331-1-lukas.bulwahn@gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230320132634.17331-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: F9folt-ke6hPsK5kwyUnxRyoAE_QFa5l
+X-Proofpoint-ORIG-GUID: oHG_wXOFkuavUcnxh9y4s7Bxzj34q6ny
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-20_10,2023-03-20_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 mlxscore=0 adultscore=0 mlxlogscore=587 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303200128
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 20/03/23 14:26, Lukas Bulwahn ha scritto:
-> Commit ad8a221e1f49 ("ARM: mediatek: Add config options for mediatek SoCs.")
-> adds four configs MACH_MT6592, MACH_MT6592, MACH_MT8127 and MACH_MT8127 for
-> foreseen future use in the MediaTek pinctrl driver. As of now, nine years
+Markus Elfring <Markus.Elfring@web.de> writes:
+>>>>> The label =E2=80=9Cout_err=E2=80=9D was used to jump to another point=
+er check despite of
+>>>>> the detail in the implementation of the function =E2=80=9CpSeries_rec=
+onfig_add_node=E2=80=9D
+>>>>> that it was determined already that the corresponding variable contai=
+ned
+>>>>> a null pointer (because of a failed function call in two cases).
+>>>>>
+>>>>> 1. Thus return directly after a call of the function =E2=80=9Ckzalloc=
+=E2=80=9D failed.
+>>>>>
+>>>>> 2. Use more appropriate labels instead.
+>>>>>
+>>>>> 3. Delete a redundant check.
+>>>>>
+>>>>> 4. Omit an explicit initialisation for the local variable =E2=80=9Cer=
+r=E2=80=9D.
+>>>>>
+>>>>> This issue was detected by using the Coccinelle software.
+>>>> Is there a correctness or safety issue here?
+>>> I got the impression that the application of only a single label like =
+=E2=80=9Cout_err=E2=80=9D
+>>> resulted in improvable implementation details.
+>> I don't understand what you're trying to say here.
+>
+> What does hinder you to understand the presented change description better
+> at the moment?
+>
+>
+>> It doesn't seem to answer my question.
+>
+>
+> I hope that my answer will trigger further helpful considerations.
 
-........
+I don't consider this response constructive, but I want to get this back
+on track. It's been brought to my attention that there is in fact a
+crash bug in this function's error path:
 
-> after that commit, the configs MACH_MT8127 and MACH_MT8127 are used for
-> that purpose, but tconfigs MACH_MT6592 and MACH_MT6592 have not been used.
-> 
-> Remove the unused configs MACH_MT6592 and MACH_MT6592.
+	np->parent =3D pseries_of_derive_parent(path);
+	if (IS_ERR(np->parent)) {
+		err =3D PTR_ERR(np->parent);
+		goto out_err;
+	}
+...
+out_err:
+	if (np) {
+		of_node_put(np->parent);
 
-I say that there's some confusion in the commit description... :-)
+np->parent can be an encoded error value, we don't want to of_node_put()
+that.
 
-Please fix.
-
-Thanks,
-Angelo
-
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->   arch/arm/mach-mediatek/Kconfig | 8 --------
->   1 file changed, 8 deletions(-)
-> 
-> diff --git a/arch/arm/mach-mediatek/Kconfig b/arch/arm/mach-mediatek/Kconfig
-> index 35a3430c7942..521af13a79d8 100644
-> --- a/arch/arm/mach-mediatek/Kconfig
-> +++ b/arch/arm/mach-mediatek/Kconfig
-> @@ -15,14 +15,6 @@ config MACH_MT2701
->   	bool "MediaTek MT2701 SoCs support"
->   	default ARCH_MEDIATEK
->   
-> -config MACH_MT6589
-> -	bool "MediaTek MT6589 SoCs support"
-> -	default ARCH_MEDIATEK
-> -
-> -config MACH_MT6592
-> -	bool "MediaTek MT6592 SoCs support"
-> -	default ARCH_MEDIATEK
-> -
->   config MACH_MT7623
->   	bool "MediaTek MT7623 SoCs support"
->   	default ARCH_MEDIATEK
-
-
+I believe the patch as written happens to fix the issue. Will you please
+write it up as a bug fix and resubmit?
