@@ -2,93 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A510BC7618A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 19 Mar 2023 17:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCA1C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 04:21:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjCSRhZ (ORCPT
+        id S229562AbjCTEVX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 19 Mar 2023 13:37:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48040 "EHLO
+        Mon, 20 Mar 2023 00:21:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbjCSRhY (ORCPT
+        with ESMTP id S229460AbjCTEVW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 19 Mar 2023 13:37:24 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 830E230D6;
-        Sun, 19 Mar 2023 10:37:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3F047B80AB6;
-        Sun, 19 Mar 2023 17:37:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BAEDC433EF;
-        Sun, 19 Mar 2023 17:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679247441;
-        bh=upZcKMU7+DARFBX3E6Uc9RmcizJx5/0XM13Bn3C1u9o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gp/UY7wUWiE4dCNZuyDu9CYQLvVeAZa+RMcv8KH65JfRJYu5Z3gk6DI+YPaOsv6De
-         dHHJYNxXZyzifWfhoMdIVD7m2YMlCiYI1mq4LogR/Qpcv/bcfyl0/I3N6hzcfb+mgv
-         keBDBWXYbTCtucguhuUu2Ggm2cLX86+hp3OMGHJaatBuYXL6XwyGqj4zU68+tfvG3I
-         loR48IuuM1Z+G05ivUGgy/trf+m8zJeSZRn/P7yPZNqKbhKK7QNfG7XrutUdI30dBN
-         03V2Ze7mxH/T2i+3fGakoVjNvuD1kIezWUHYWR3YE+xkrkdQ/Msvv7Pc41PNfSxyAg
-         mXAuL253DwA0w==
-Date:   Sun, 19 Mar 2023 19:37:16 +0200
-From:   Leon Romanovsky <leon@kernel.org>
+        Mon, 20 Mar 2023 00:21:22 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 389A3C66E;
+        Sun, 19 Mar 2023 21:21:21 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id k2so11162495pll.8;
+        Sun, 19 Mar 2023 21:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679286081;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RS1w7jufLTgqj4IcYaB/yvHrW7A9zSSTjyhf1dZzfNM=;
+        b=UYZ4lXSE+fk2ch38kp24qVIB/g3NrO9tCkzEczF3dIhgdmMl48WycaRDmmxbb1lsLy
+         TNz/NY7Q2knzvZ30g7Dexjv6RqakQ5SZDBonPBUGxVOLqKrLIm45yHLScaGcoMRawAAB
+         Qo2tQSdCtJJtwXGjw7ixR1vXqS9VptmWqzUrVmjdGx0vjOb/jjufga1UOqIjcIwAv9et
+         Ds0zY2MTiocqUm4E/RMabAhvQB2ApkVInO3Kr5P22HrWGxpKle9+SCHtCPIw2ThgsJy6
+         UYGGNnwpc0KEnA5sMuSnq0NyTDVf1hdZ2X3lxfd1XW8R03bL5ftkuwUKP7e0ec8z/OUn
+         VUeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679286081;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RS1w7jufLTgqj4IcYaB/yvHrW7A9zSSTjyhf1dZzfNM=;
+        b=6oHt0JIt+xLyGPPUQlXh4ZZDCUyDHkM2YY+Uvs9al6JdmAA/OuKhxCDK7GPamNaulS
+         3aFw04hV66V/49THImH8LELSAjErWwX1ijgR6GtI3jwT0nlhJNeAu+jqEB+ibvxcrce4
+         N0PhgYu0Pq5OisGt917QYFvhDULmzApi0d1dR6pFzZiOHn+F5fAjaLznJmd0bLyPAHP1
+         ERz7xRKwk/Vu9yexPexarQYONGj/wRuJTvt9c8pqTncGUPA02K8HzSnRO4PJOKWDZAEU
+         npYOFhcV/RJhMrxhhrVUO6+WWww2g1HkOPMTvRw46T3EZojhLf7ickzeSyn1xb0fc9zm
+         9n7A==
+X-Gm-Message-State: AO0yUKUIyp18YnpVrSQidTnhlui89EAXFn3qCs2D5eNnrot9LAec2poh
+        m+a/0d4uw/PoqcADJsRucfU=
+X-Google-Smtp-Source: AK7set/OkIXlOAw6NRV+sFsu29XPd9i/eNuH4vDyF0QKBJE2m6aRrELRvriOwhclBp5/Tmr4BhgECQ==
+X-Received: by 2002:a17:903:2910:b0:19d:1c6e:d31f with SMTP id lh16-20020a170903291000b0019d1c6ed31fmr14313851plb.29.1679286080664;
+        Sun, 19 Mar 2023 21:21:20 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:687c:5175:b0b1:a145])
+        by smtp.gmail.com with ESMTPSA id jk5-20020a170903330500b001a01bb92273sm5494855plb.279.2023.03.19.21.21.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Mar 2023 21:21:19 -0700 (PDT)
+Date:   Sun, 19 Mar 2023 21:21:16 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: RDMA/siw: Fix exception handling in siw_accept_newconn()
-Message-ID: <20230319173716.GF36557@unreal>
+Cc:     kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org,
+        Hillf Danton <hdanton@sina.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Input: iforce - Fix exception handling in
+ iforce_usb_probe()
+Message-ID: <ZBffPEIWcmYcaXR3@google.com>
 References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <afe30fc6-04c9-528c-f84a-67902b5a6ed8@web.de>
- <20230319114048.GB36557@unreal>
- <1c06e86d-1468-c11a-8344-9563ad6047b5@web.de>
- <20230319141145.GE36557@unreal>
- <a03c1d04-a41e-7722-c36a-bd6f61094702@web.de>
+ <521b63e1-9470-58ef-599e-50a1846e5380@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a03c1d04-a41e-7722-c36a-bd6f61094702@web.de>
+In-Reply-To: <521b63e1-9470-58ef-599e-50a1846e5380@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Mar 19, 2023 at 04:40:17PM +0100, Markus Elfring wrote:
-> >>>> Date: Sat, 18 Mar 2023 20:30:12 +0100
-> >>>>
-> >>>> The label “error” was used to jump to another pointer check despite of
-> >>>> the detail in the implementation of the function “siw_accept_newconn”
-> >>>> that it was determined already that corresponding variables contained
-> >>>> still null pointers.
-> >>>>
-> >>>> 1. Use more appropriate labels instead.
-> >>>>
-> >>>> 2. Delete two questionable checks.
-> >>>>
-> >>>> 3. Omit extra initialisations (for the variables “new_cep” and “new_s”)
-> >>>>    which became unnecessary with this refactoring.
-> >>>>
-> >>>> This issue was detected by using the Coccinelle software.
-> >>>>
-> >>>> Fixes: 6c52fdc244b5ccc468006fd65a504d4ee33743c7 ("rdma/siw: connection management")
-> >>>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> >>>> ---
-> >>>>  drivers/infiniband/sw/siw/siw_cm.c | 32 ++++++++++++++----------------
-> >>>>  1 file changed, 15 insertions(+), 17 deletions(-)
-> >>> Please read Documentation/process/submitting-patches.rst and resubmit.
-> >>> Your patch is not valid.
-> >>
-> >> What do you find improvable here?
-> > Did you read the guide above?
+On Sun, Mar 19, 2023 at 07:03:00PM +0100, Markus Elfring wrote:
+> Date: Sun, 19 Mar 2023 18:50:51 +0100
 > 
-> Yes, of course (several times before).
+> The label “fail” was used to jump to another pointer check despite of
+> the detail in the implementation of the function “iforce_usb_probe”
+> that it was determined already that a corresponding variable contained
+> still a null pointer.
+> 
+> 1. Use more appropriate labels instead.
+> 
+> 2. Reorder jump targets at the end.
+> 
+> 3. Delete a redundant check.
+> 
+> 
+> This issue was detected by using the Coccinelle software.
 
-ok, I'm taking my request to resubmit back.
-Please retain from posting to RDMA ML. I'm not going to apply any of
-your patches.
+I am sorry, but I do not understand what the actual issue is. The fact
+that come Coccinelle script complains is not enough to change the code.
 
-Thanks
+Thanks.
+
+-- 
+Dmitry
