@@ -2,90 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 664A9C7618A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 12:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB23EC6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 13:02:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231317AbjCTMcL (ORCPT
+        id S230204AbjCTNCI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 08:32:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33476 "EHLO
+        Mon, 20 Mar 2023 09:02:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbjCTMcH (ORCPT
+        with ESMTP id S230178AbjCTNCE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 08:32:07 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A279112056;
-        Mon, 20 Mar 2023 05:32:05 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id eh3so45995278edb.11;
-        Mon, 20 Mar 2023 05:32:05 -0700 (PDT)
+        Mon, 20 Mar 2023 09:02:04 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE8210EE;
+        Mon, 20 Mar 2023 06:02:03 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id ek18so46404082edb.6;
+        Mon, 20 Mar 2023 06:02:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679315524;
+        d=gmail.com; s=20210112; t=1679317321;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tRSq0b1sTFzr8ws1GQ+q4eOf3VxKeSr0xYhVTY1jp3k=;
-        b=BCAkygqH0WEvytHMINnIwYyzn2RyLBZ86EK6i7DZfpErm3mA9QCOkErcWDUZ9DyfPQ
-         0NURWCU8HMDvgTiuOWRkt3/l2pJUWS3jGSUvkWscQyQBEnTlkHLdfrmmLyrZFLmORZuD
-         YES8gPtdn/bo8gNm27Uujd8yJqTcMaBm9+hehhCz4sqoqxkIctWQMOXfW+seOzvS/4ER
-         mRR/r/h8NlGo60OiS7wpt+EErZB/g2pob5VWQAkEpRwLJMnVH12RaJTBR9QZvIIYw5A5
-         shblSWkrGGs3nRDxbi0VFLvYITB1qXB3BiNAxhdGrFRDw0QMUGTADl7itgBwShHlKTyJ
-         DP9g==
+        bh=5c2sQm27Vp/HhAftIFTylROdy7YRt+aXlwqBwwRN7xc=;
+        b=Gw/kM9iK38FS85c7Bhsi2I3/0vb0G7m0AGdGUQ7ve5Chf9VXT1Xbx6EeFf/iBr1h4L
+         5Sh6I4yk3Q9FX9mvphR/SGVkc21Tcjbwsj40Ws2+SflPwjB69XoMRWwlqwWGQRaqIHll
+         vHI7+I1OTHDehSAGqEZOHUo5RRW79QN09+wAqvFm/AvO9zDe1QvWJse/EP5wDoCdEdJs
+         z4OymjGG1SkCnWKCq69xEq0Mgoj10g/Yl4Nd2vvK7vrZljhgC4AgRnzCiv8aspFdYKGT
+         FBlI1D/naH7UwEUJWDj/3wxzmA9oC3YsRxwhHS/h3/AwHcxFiXM5Ivc9wiwt1Nh3rxpP
+         H7Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679315524;
+        d=1e100.net; s=20210112; t=1679317321;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tRSq0b1sTFzr8ws1GQ+q4eOf3VxKeSr0xYhVTY1jp3k=;
-        b=67lF3eyHbc0IcyZsc2ER2ZnP1W86CHEeUBmx0clG467HMNFNClqisnwJSzzCqbGaPU
-         mRyknZ8DnSdjTbfh88FTUm6Sc+5Di7dO0wXinDP8MJ3JRu0YRVGQb9T48VyR+xWY3Lyk
-         0r+EVRrk5Jxkn6/2AxsPJpkwDXf9jWiIVqNxdLpdnkyUFOMzd6hANhrPexPnVGczRwui
-         fIicb/QogXb8KhDDPo1D4dnJu3X9rMWcQShbMmuucPbGKW3bFw0rsBhf0z3lrOKqAe1s
-         yD80w4OP9tzW9Fv98oZtm8qPVILkWCrk/DJFSmjF7ItAWIgdlLbldYLZzpsgKXY5znbh
-         SZhQ==
-X-Gm-Message-State: AO0yUKXOACdzmyIAS000dQOl636zqLZn9LIskbsLiC7v7mWxM5ZQw0f3
-        E8SFdBdSKKvicuvK76Qq6k4=
-X-Google-Smtp-Source: AK7set8p85JMiX22HyE0zxyzElUR9zJVe57o+rBNFBkNVLtp44uQIaJkP6OepruGyMmyk9cJYigx0w==
-X-Received: by 2002:a17:906:2e8e:b0:913:ff28:59bd with SMTP id o14-20020a1709062e8e00b00913ff2859bdmr8415010eji.52.1679315524146;
-        Mon, 20 Mar 2023 05:32:04 -0700 (PDT)
+        bh=5c2sQm27Vp/HhAftIFTylROdy7YRt+aXlwqBwwRN7xc=;
+        b=7jAwnAGz80vFxd1vwabyKKT74EnByFHrfRoD3hEHsivrpi7M67okzL76OJcrN3TYcn
+         42WJJI8GWcTcU5JIjOdCwNFfcs9DqPrfOrSshfUhN4y1wmgg2xmjl3IAzmC3uJPe5IIT
+         M+SBmihnJrPVfr7NIjSlefEZYgb811myMCuSxyXyU4lKS/Y8XniFPjyFp3y8qUZ61IQp
+         tG5s1vWLa65Uw9NUuDztvVO5aU8uSIHHk9YMoR10Cd7J8uYrg4T3CcQdBAu18GqKUWBA
+         3qcFZbXo1Q3yTMi6khrMlO1o4lBSwgmdVh8B1uzH0ZxniOH1bsQikzF6+V5ww9wMk92h
+         /qJw==
+X-Gm-Message-State: AO0yUKWB1VOSReqIv0gdgyKajUmvalejsQBGDvqAqbi3242K1ycByDYG
+        CkoY7ZegpTLF1UaKkdiG/V4=
+X-Google-Smtp-Source: AK7set+1rtX0rl0Ssjz/WjGKPyvlO4Ny2whG20GaytLyE+jjEr8JawHoWubHAJcBnhM95g55DgJXng==
+X-Received: by 2002:a50:fe81:0:b0:4fb:5a36:1539 with SMTP id d1-20020a50fe81000000b004fb5a361539mr11117966edt.25.1679317321551;
+        Mon, 20 Mar 2023 06:02:01 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:394b:6c53:31d8:7b18])
-        by smtp.gmail.com with ESMTPSA id 11-20020a170906318b00b008d606b1bbb1sm4348436ejy.9.2023.03.20.05.32.03
+        by smtp.gmail.com with ESMTPSA id d2-20020a17090648c200b008ea8effe947sm4411441ejt.225.2023.03.20.06.02.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 05:32:03 -0700 (PDT)
+        Mon, 20 Mar 2023 06:02:01 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org
+To:     Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] m68k: remove obsolete config NO_KERNEL_MSG
-Date:   Mon, 20 Mar 2023 13:32:02 +0100
-Message-Id: <20230320123202.14474-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] ARM: spear: remove obsolete config MACH_SPEAR600
+Date:   Mon, 20 Mar 2023 14:01:59 +0100
+Message-Id: <20230320130159.32316-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The use of the config NO_KERNEL_MSG is long gone. Remove this config from
-m68k's debug kernel configuration setup.
+ARM: spear: remove obsolete config MACH_SPEAR600
+
+Since commit ddb902cc3459 ("ARM: centralize common multi-platform kconfig
+options"), the config MACH_SPEAR600 has no effect. Remove this config.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- arch/m68k/Kconfig.debug | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/arm/mach-spear/Kconfig | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/m68k/Kconfig.debug b/arch/m68k/Kconfig.debug
-index 465e28be0ce4..30638a6e8edc 100644
---- a/arch/m68k/Kconfig.debug
-+++ b/arch/m68k/Kconfig.debug
-@@ -36,11 +36,6 @@ config HIGHPROFILE
+diff --git a/arch/arm/mach-spear/Kconfig b/arch/arm/mach-spear/Kconfig
+index 1add7ee49b63..7108ad628f8d 100644
+--- a/arch/arm/mach-spear/Kconfig
++++ b/arch/arm/mach-spear/Kconfig
+@@ -81,12 +81,6 @@ config ARCH_SPEAR6XX
  	help
- 	  Use a fast secondary clock to produce profiling information.
+ 	  Supports for ARM's SPEAR6XX family
  
--config NO_KERNEL_MSG
--	bool "Suppress Kernel BUG Messages"
+-config MACH_SPEAR600
+-	def_bool y
+-	depends on ARCH_SPEAR6XX
 -	help
--	  Do not output any debug BUG messages within the kernel.
+-	  Supports ST SPEAr600 boards configured via the device-tree
 -
- config BDM_DISABLE
- 	bool "Disable BDM signals"
- 	depends on COLDFIRE
+ config ARCH_SPEAR_AUTO
+ 	bool
+ 	depends on !ARCH_SPEAR13XX && !ARCH_SPEAR6XX
 -- 
 2.17.1
 
