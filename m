@@ -2,101 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CD3C7618A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 08:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF96DC7618D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 08:46:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230413AbjCTIiP (ORCPT
+        id S230083AbjCTIqL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 04:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33130 "EHLO
+        Mon, 20 Mar 2023 04:46:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230402AbjCTIiM (ORCPT
+        with ESMTP id S229931AbjCTIqI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 04:38:12 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647ABE3BC;
-        Mon, 20 Mar 2023 01:38:11 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id t5so6686735edd.7;
-        Mon, 20 Mar 2023 01:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679301490;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4v5B0ZBvmnomgMaZgZ/Lok+0gkMSMRZHESpPHckBKB4=;
-        b=XrqrNbGqqVagN2gpYk9X7AhO+Bjv4bEYCWjDkX1IIzzvIj4e1weJz81VSgHjKM5Wt0
-         l6V/CEi+7bG79Ya9QHsjPbNh9asSchXa9kcS5u1PZeJO1b/l29AWvUmcat8oMeCDN0h7
-         OGQlUsZSMTDfPBp7twlmDWJIdNmUCh5dDRmvmy1Lr0JIKtkYNFDewkFCeas7LIlIteM1
-         9fvjioMPngQEOx+z35vr72jsfa7OeVLJgVOKwDjKmpp7SfbI4Vg8gXAobmoXZ60uo8w9
-         w0cEDA6HrNBna6xF7fKA6NRfhIx7NxdA1ZSK1a2sX9+CDL7hNbvMgem7jnxNEm9upF8+
-         kOsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679301490;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4v5B0ZBvmnomgMaZgZ/Lok+0gkMSMRZHESpPHckBKB4=;
-        b=SAq5mvxgaUc27KREKdx9Ibq9qu7rW40GUrQhUei4BSfs6+4nG2Wcv4VWcdNSNvkIXn
-         JhBSTGYuSH9E56nbVzuaFDGmMA9pcgKnGMyA66roqchOMGdRzWFKJBLCAM2NcbQl93oR
-         8fvz7+BiYXcZ7n/BcCuRWxk8HUXuCsaGcJT121DwtTWgfUCilEgGGoNFzibdo1QOkaqV
-         AVMjeGfZ+jTSB0alrD9+9SM6Zj3/8lYUaX64DKmOQ2sEMcTmgqyswFxGdfvlpBdXjG+a
-         IVd7uLoodZ0Xy9TmcJhRG1jxhk4GeJnQfD4H7kYkM2g5aOdwJqFhN5+DX8gFf1A9Ww/M
-         niaw==
-X-Gm-Message-State: AO0yUKUeijupNIZOA4zZayMjSei+UOKafyZZcArwCcL5s4Y5415/6t1F
-        BHr9wRuAtTysL/HqbGF27bE=
-X-Google-Smtp-Source: AK7set+EHnaBvHsOLfvKoB1PfMWKK8OuCVtRGT5mNLYFXpMX7ZwKXvbr0tjV/EkkqXV742saqRef1A==
-X-Received: by 2002:aa7:c414:0:b0:4fc:65c7:a991 with SMTP id j20-20020aa7c414000000b004fc65c7a991mr14208943edq.35.1679301489901;
-        Mon, 20 Mar 2023 01:38:09 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:149a:8de0:b37a:3ec9])
-        by smtp.gmail.com with ESMTPSA id m11-20020a50998b000000b004c13fe8fabfsm4463170edb.84.2023.03.20.01.38.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 01:38:09 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] arm: omap2: remove obsolete config OMAP3_SDRC_AC_TIMING
-Date:   Mon, 20 Mar 2023 09:38:06 +0100
-Message-Id: <20230320083806.9545-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 20 Mar 2023 04:46:08 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.237])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19E720D1E;
+        Mon, 20 Mar 2023 01:45:52 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 7769E1A00A34;
+        Mon, 20 Mar 2023 16:45:54 +0800 (CST)
+X-Virus-Scanned: amavisd-new at nfschina.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 6jm06hZJpQeJ; Mon, 20 Mar 2023 16:45:53 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id 517EC1A0091B;
+        Mon, 20 Mar 2023 16:45:53 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     awalls@md.metrocast.net, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] media: cx18: remove unnecessary (void*) conversions
+Date:   Mon, 20 Mar 2023 16:45:02 +0800
+Message-Id: <20230320084502.29478-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit d42f265a5d7a ("ARM: OMAP3: clock: remove un-used core dpll
-re-program code") removes arch/arm/mach-omap2/sram34xx.S, which
-implemented the effect of the config OMAP3_SDRC_AC_TIMING. Since then, the
-OMAP3_SDRC_AC_TIMING config was hanging around without effect.
+Pointer variables of void * type do not require type cast.
 
-Remove this obsolete config.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 ---
- arch/arm/mach-omap2/Kconfig | 11 -----------
- 1 file changed, 11 deletions(-)
+ drivers/media/pci/cx18/cx18-dvb.c  | 4 ++--
+ drivers/media/pci/cx18/cx18-gpio.c | 2 +-
+ drivers/media/pci/cx18/cx18-irq.c  | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/Kconfig b/arch/arm/mach-omap2/Kconfig
-index 3b53dda9ec79..821727eefd5a 100644
---- a/arch/arm/mach-omap2/Kconfig
-+++ b/arch/arm/mach-omap2/Kconfig
-@@ -255,17 +255,6 @@ config MACH_NOKIA_N8X0
- 	select MACH_NOKIA_N810
- 	select MACH_NOKIA_N810_WIMAX
+diff --git a/drivers/media/pci/cx18/cx18-dvb.c b/drivers/media/pci/cx18/cx18-dvb.c
+index 33e5a5b5fab4..cf82360a503d 100644
+--- a/drivers/media/pci/cx18/cx18-dvb.c
++++ b/drivers/media/pci/cx18/cx18-dvb.c
+@@ -234,7 +234,7 @@ static int dvb_register(struct cx18_stream *stream);
+ static int cx18_dvb_start_feed(struct dvb_demux_feed *feed)
+ {
+ 	struct dvb_demux *demux = feed->demux;
+-	struct cx18_stream *stream = (struct cx18_stream *) demux->priv;
++	struct cx18_stream *stream = demux->priv;
+ 	struct cx18 *cx;
+ 	int ret;
+ 	u32 v;
+@@ -305,7 +305,7 @@ static int cx18_dvb_start_feed(struct dvb_demux_feed *feed)
+ static int cx18_dvb_stop_feed(struct dvb_demux_feed *feed)
+ {
+ 	struct dvb_demux *demux = feed->demux;
+-	struct cx18_stream *stream = (struct cx18_stream *)demux->priv;
++	struct cx18_stream *stream = demux->priv;
+ 	struct cx18 *cx;
+ 	int ret = -EINVAL;
  
--config OMAP3_SDRC_AC_TIMING
--	bool "Enable SDRC AC timing register changes"
--	depends on ARCH_OMAP3
--	help
--	  If you know that none of your system initiators will attempt to
--	  access SDRAM during CORE DVFS, select Y here.  This should boost
--	  SDRAM performance at lower CORE OPPs.  There are relatively few
--	  users who will wish to say yes at this point - almost everyone will
--	  wish to say no.  Selecting yes without understanding what is
--	  going on could result in system crashes;
--
- endmenu
+diff --git a/drivers/media/pci/cx18/cx18-gpio.c b/drivers/media/pci/cx18/cx18-gpio.c
+index 160c8377e352..c85eb8d25837 100644
+--- a/drivers/media/pci/cx18/cx18-gpio.c
++++ b/drivers/media/pci/cx18/cx18-gpio.c
+@@ -307,7 +307,7 @@ int cx18_gpio_register(struct cx18 *cx, u32 hw)
  
- endif
+ void cx18_reset_ir_gpio(void *data)
+ {
+-	struct cx18 *cx = to_cx18((struct v4l2_device *)data);
++	struct cx18 *cx = to_cx18(data);
+ 
+ 	if (cx->card->gpio_i2c_slave_reset.ir_reset_mask == 0)
+ 		return;
+diff --git a/drivers/media/pci/cx18/cx18-irq.c b/drivers/media/pci/cx18/cx18-irq.c
+index fb10e9c2c5b8..db63077821b1 100644
+--- a/drivers/media/pci/cx18/cx18-irq.c
++++ b/drivers/media/pci/cx18/cx18-irq.c
+@@ -30,7 +30,7 @@ static void epu_cmd(struct cx18 *cx, u32 sw1)
+ 
+ irqreturn_t cx18_irq_handler(int irq, void *dev_id)
+ {
+-	struct cx18 *cx = (struct cx18 *)dev_id;
++	struct cx18 *cx = dev_id;
+ 	u32 sw1, sw2, hw2;
+ 
+ 	sw1 = cx18_read_reg(cx, SW1_INT_STATUS) & cx->sw1_irq_mask;
 -- 
-2.17.1
+2.11.0
 
