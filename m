@@ -2,87 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C0BC7618A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 14:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C33DC7618A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 14:42:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230094AbjCTOcN convert rfc822-to-8bit (ORCPT
+        id S231696AbjCTOm5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 10:32:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34996 "EHLO
+        Mon, 20 Mar 2023 10:42:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231207AbjCTOcL (ORCPT
+        with ESMTP id S229849AbjCTOm4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 10:32:11 -0400
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 420231BF4;
-        Mon, 20 Mar 2023 07:31:58 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-54184571389so227699557b3.4;
-        Mon, 20 Mar 2023 07:31:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679322717;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O54noMvqG3UegcIjTcDUZ+r5sq4m1GQijs9yejp9gRE=;
-        b=2mmU2NzI7fPSM7igO/TV1SPNwoEBk7PYJAUoCClbejCfpCff1kVVJXvtw7N/rAw2I8
-         G9Gwg8EJyFYsq58L0HIQ8zvctFEufPEjDLE94rFkQboy6Dfsf+KWzEhgRqt5v7uik6sI
-         kGN9ux/71m4+l1g3l2QGC5t1c72v2LJFRlnf6UqRHIovRtf3CzHeTf/m6HI6GCG4kYcA
-         ZlCRI/o0FdkN3iipImh18KQKoW85Tk4ZIYSkM3e4A/jGEshcXP107mbbqILwNlZszEbl
-         LhqTBFAa0yjZr7f/majl9cGswHjQq94rj06hRXOE9aYanuFRAHSV48vBWXQWHJQ/REvm
-         eBdw==
-X-Gm-Message-State: AO0yUKW33/AoYFap8iCS48RG+/dBzbrfsIlaZ3PGRB6RZ+DAgLwS4aqF
-        UbIbkCzXHmXyL2YdCnJmYF6mEARNjLrPQw==
-X-Google-Smtp-Source: AK7set/G5h7Cx8EAy8UinGJ3E0ckUpcuGdpS3oMAVuuiY9HZk+6hOwmvuE4AYLltvyiDjy8MJvaUNA==
-X-Received: by 2002:a81:4f90:0:b0:541:826c:210a with SMTP id d138-20020a814f90000000b00541826c210amr13493358ywb.13.1679322717330;
-        Mon, 20 Mar 2023 07:31:57 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id j2-20020a378702000000b00746059d9c3fsm7446338qkd.35.2023.03.20.07.31.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Mar 2023 07:31:57 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id p204so2171413ybc.12;
-        Mon, 20 Mar 2023 07:31:56 -0700 (PDT)
-X-Received: by 2002:a05:6902:120b:b0:b6e:b924:b96f with SMTP id
- s11-20020a056902120b00b00b6eb924b96fmr542059ybu.3.1679322716693; Mon, 20 Mar
- 2023 07:31:56 -0700 (PDT)
+        Mon, 20 Mar 2023 10:42:56 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BDE4EC7;
+        Mon, 20 Mar 2023 07:42:53 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D410D660212C;
+        Mon, 20 Mar 2023 14:42:51 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1679323372;
+        bh=1PCOMoENo5QV1yJfjTv1LPzClFUUYLNo+EJ9cnM0EJU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=fQA6F6bYqkFXmYuOYjx5Fou2CI4BblLmcXlfoMWjrjA2/B6OGqG1Pq285ZJHu5fOQ
+         XjjDmuyiqgA5Oc+0+zkcfn6WY3A7k0RvYOfHrw3FPhjSufylFiVpC7uqMpWybRWfrp
+         87iJx1ywBEZr1SpucGKR76fu82VIniQ0u0wKtTp4SkWXZl4LllksBxZrMhcjOSu5fi
+         Z8ndbUKPhGeGRwOeRNrJ8HAaXVUN4qDqiYBk21V6RE3hcD5UAqrGzo6mC7aZuhxOGF
+         XW8VmJ+tN+mYOS7nxL6FKvenceibyx2cVcQLOK6rj5fbpcU5hMqF5+1Xmz9zoGJB+w
+         fi4Ee8x+a9IEw==
+Message-ID: <01964ce6-7a91-a86e-6ae0-73ab177ba01a@collabora.com>
+Date:   Mon, 20 Mar 2023 15:42:49 +0100
 MIME-Version: 1.0
-References: <20230320123202.14474-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20230320123202.14474-1-lukas.bulwahn@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 20 Mar 2023 15:31:45 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXoPXjXSr=-CnQnNFBf2bd1Oyj++nFekAUnhaj69Rv7JA@mail.gmail.com>
-Message-ID: <CAMuHMdXoPXjXSr=-CnQnNFBf2bd1Oyj++nFekAUnhaj69Rv7JA@mail.gmail.com>
-Subject: Re: [PATCH] m68k: remove obsolete config NO_KERNEL_MSG
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-m68k@lists.linux-m68k.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] ARM: mediatek: Remove unused configs MACH_MT6592 and
+ MACH_MT6592
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230320132634.17331-1-lukas.bulwahn@gmail.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230320132634.17331-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+Il 20/03/23 14:26, Lukas Bulwahn ha scritto:
+> Commit ad8a221e1f49 ("ARM: mediatek: Add config options for mediatek SoCs.")
+> adds four configs MACH_MT6592, MACH_MT6592, MACH_MT8127 and MACH_MT8127 for
+> foreseen future use in the MediaTek pinctrl driver. As of now, nine years
 
-On Mon, Mar 20, 2023 at 1:32 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> The use of the config NO_KERNEL_MSG is long gone. Remove this config from
-> m68k's debug kernel configuration setup.
->
+........
+
+> after that commit, the configs MACH_MT8127 and MACH_MT8127 are used for
+> that purpose, but tconfigs MACH_MT6592 and MACH_MT6592 have not been used.
+> 
+> Remove the unused configs MACH_MT6592 and MACH_MT6592.
+
+I say that there's some confusion in the commit description... :-)
+
+Please fix.
+
+Thanks,
+Angelo
+
+> 
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>   arch/arm/mach-mediatek/Kconfig | 8 --------
+>   1 file changed, 8 deletions(-)
+> 
+> diff --git a/arch/arm/mach-mediatek/Kconfig b/arch/arm/mach-mediatek/Kconfig
+> index 35a3430c7942..521af13a79d8 100644
+> --- a/arch/arm/mach-mediatek/Kconfig
+> +++ b/arch/arm/mach-mediatek/Kconfig
+> @@ -15,14 +15,6 @@ config MACH_MT2701
+>   	bool "MediaTek MT2701 SoCs support"
+>   	default ARCH_MEDIATEK
+>   
+> -config MACH_MT6589
+> -	bool "MediaTek MT6589 SoCs support"
+> -	default ARCH_MEDIATEK
+> -
+> -config MACH_MT6592
+> -	bool "MediaTek MT6592 SoCs support"
+> -	default ARCH_MEDIATEK
+> -
+>   config MACH_MT7623
+>   	bool "MediaTek MT7623 SoCs support"
+>   	default ARCH_MEDIATEK
 
-Thanks for your patch!
 
-The last user was removed 20 years ago...
-
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-i.e. will queue in the m68k for-v6.4 branch.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
