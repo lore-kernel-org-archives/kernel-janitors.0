@@ -2,39 +2,39 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D48C6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 06:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC57C7618D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 07:09:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbjCTG6H (ORCPT
+        id S230054AbjCTHJV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 02:58:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60254 "EHLO
+        Mon, 20 Mar 2023 03:09:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjCTG6G (ORCPT
+        with ESMTP id S229572AbjCTHJU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 02:58:06 -0400
+        Mon, 20 Mar 2023 03:09:20 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.237])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9086117CC2;
-        Sun, 19 Mar 2023 23:58:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5916F903A;
+        Mon, 20 Mar 2023 00:09:18 -0700 (PDT)
 Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 978F11A00A28;
-        Mon, 20 Mar 2023 14:58:06 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTP id 057DF1A009F5;
+        Mon, 20 Mar 2023 15:09:20 +0800 (CST)
 X-Virus-Scanned: amavisd-new at nfschina.com
 Received: from mail.nfschina.com ([127.0.0.1])
         by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id FBlHBdSlUVbI; Mon, 20 Mar 2023 14:58:05 +0800 (CST)
+        with ESMTP id 5rRpAstuwPnR; Mon, 20 Mar 2023 15:09:19 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.167.10.98])
         (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 62FD51A00931;
-        Mon, 20 Mar 2023 14:58:05 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTPA id B303B1A0091A;
+        Mon, 20 Mar 2023 15:09:18 +0800 (CST)
 From:   Yu Zhe <yuzhe@nfschina.com>
-To:     mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH] media: au0828: remove unnecessary (void*) conversions
-Date:   Mon, 20 Mar 2023 14:57:14 +0800
-Message-Id: <20230320065714.15965-1-yuzhe@nfschina.com>
+To:     patrice.chotard@foss.st.com, mchehab@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com, Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] media: c8sectpfe: dvb: remove unnecessary (void*) conversions
+Date:   Mon, 20 Mar 2023 15:08:28 +0800
+Message-Id: <20230320070828.13322-1-yuzhe@nfschina.com>
 X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -44,45 +44,31 @@ Pointer variables of void * type do not require type cast.
 
 Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 ---
- drivers/media/usb/au0828/au0828-core.c | 2 +-
- drivers/media/usb/au0828/au0828-dvb.c  | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/au0828/au0828-core.c b/drivers/media/usb/au0828/au0828-core.c
-index 877e85a451cb..400cf9bd26b9 100644
---- a/drivers/media/usb/au0828/au0828-core.c
-+++ b/drivers/media/usb/au0828/au0828-core.c
-@@ -211,7 +211,7 @@ static int au0828_media_device_init(struct au0828_dev *dev,
- static void au0828_media_graph_notify(struct media_entity *new,
- 				      void *notify_data)
+diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
+index c38b62d4f1ae..d238f6478fc9 100644
+--- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
++++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
+@@ -135,7 +135,7 @@ static void channel_swdemux_tsklet(struct tasklet_struct *t)
+ static int c8sectpfe_start_feed(struct dvb_demux_feed *dvbdmxfeed)
  {
--	struct au0828_dev *dev = (struct au0828_dev *) notify_data;
-+	struct au0828_dev *dev = notify_data;
- 	int ret;
- 	struct media_entity *entity, *mixer = NULL, *decoder = NULL;
- 
-diff --git a/drivers/media/usb/au0828/au0828-dvb.c b/drivers/media/usb/au0828/au0828-dvb.c
-index 2a8691a0d7fa..09f9948c6f8e 100644
---- a/drivers/media/usb/au0828/au0828-dvb.c
-+++ b/drivers/media/usb/au0828/au0828-dvb.c
-@@ -273,7 +273,7 @@ static void au0828_stop_transport(struct au0828_dev *dev, int full_stop)
- static int au0828_dvb_start_feed(struct dvb_demux_feed *feed)
+ 	struct dvb_demux *demux = dvbdmxfeed->demux;
+-	struct stdemux *stdemux = (struct stdemux *)demux->priv;
++	struct stdemux *stdemux = demux->priv;
+ 	struct c8sectpfei *fei = stdemux->c8sectpfei;
+ 	struct channel_info *channel;
+ 	u32 tmp;
+@@ -256,7 +256,7 @@ static int c8sectpfe_stop_feed(struct dvb_demux_feed *dvbdmxfeed)
  {
- 	struct dvb_demux *demux = feed->demux;
--	struct au0828_dev *dev = (struct au0828_dev *) demux->priv;
-+	struct au0828_dev *dev = demux->priv;
- 	struct au0828_dvb *dvb = &dev->dvb;
- 	int ret = 0;
  
-@@ -305,7 +305,7 @@ static int au0828_dvb_start_feed(struct dvb_demux_feed *feed)
- static int au0828_dvb_stop_feed(struct dvb_demux_feed *feed)
- {
- 	struct dvb_demux *demux = feed->demux;
--	struct au0828_dev *dev = (struct au0828_dev *) demux->priv;
-+	struct au0828_dev *dev = demux->priv;
- 	struct au0828_dvb *dvb = &dev->dvb;
- 	int ret = 0;
- 
+ 	struct dvb_demux *demux = dvbdmxfeed->demux;
+-	struct stdemux *stdemux = (struct stdemux *)demux->priv;
++	struct stdemux *stdemux = demux->priv;
+ 	struct c8sectpfei *fei = stdemux->c8sectpfei;
+ 	struct channel_info *channel;
+ 	int idlereq;
 -- 
 2.11.0
 
