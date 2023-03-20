@@ -2,59 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22961C7618A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 11:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664A9C7618A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 12:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231224AbjCTLTn (ORCPT
+        id S231317AbjCTMcL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 07:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38320 "EHLO
+        Mon, 20 Mar 2023 08:32:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229767AbjCTLTM (ORCPT
+        with ESMTP id S229696AbjCTMcH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 07:19:12 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6842D2D43;
-        Mon, 20 Mar 2023 04:19:11 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D26C6FEC;
-        Mon, 20 Mar 2023 04:19:54 -0700 (PDT)
-Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 06DA73F67D;
-        Mon, 20 Mar 2023 04:19:09 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Cristian Marussi <cristian.marussi@arm.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] firmware: arm_scmi: Use the bitmap API to allocate bitmaps
-Date:   Mon, 20 Mar 2023 11:19:01 +0000
-Message-Id: <167930959710.2462578.17747677460338953983.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <c073b1607ada34d5bde6ce1009179cf15bbf0da3.1657308593.git.christophe.jaillet@wanadoo.fr>
-References: <c073b1607ada34d5bde6ce1009179cf15bbf0da3.1657308593.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 20 Mar 2023 08:32:07 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A279112056;
+        Mon, 20 Mar 2023 05:32:05 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id eh3so45995278edb.11;
+        Mon, 20 Mar 2023 05:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679315524;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tRSq0b1sTFzr8ws1GQ+q4eOf3VxKeSr0xYhVTY1jp3k=;
+        b=BCAkygqH0WEvytHMINnIwYyzn2RyLBZ86EK6i7DZfpErm3mA9QCOkErcWDUZ9DyfPQ
+         0NURWCU8HMDvgTiuOWRkt3/l2pJUWS3jGSUvkWscQyQBEnTlkHLdfrmmLyrZFLmORZuD
+         YES8gPtdn/bo8gNm27Uujd8yJqTcMaBm9+hehhCz4sqoqxkIctWQMOXfW+seOzvS/4ER
+         mRR/r/h8NlGo60OiS7wpt+EErZB/g2pob5VWQAkEpRwLJMnVH12RaJTBR9QZvIIYw5A5
+         shblSWkrGGs3nRDxbi0VFLvYITB1qXB3BiNAxhdGrFRDw0QMUGTADl7itgBwShHlKTyJ
+         DP9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679315524;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tRSq0b1sTFzr8ws1GQ+q4eOf3VxKeSr0xYhVTY1jp3k=;
+        b=67lF3eyHbc0IcyZsc2ER2ZnP1W86CHEeUBmx0clG467HMNFNClqisnwJSzzCqbGaPU
+         mRyknZ8DnSdjTbfh88FTUm6Sc+5Di7dO0wXinDP8MJ3JRu0YRVGQb9T48VyR+xWY3Lyk
+         0r+EVRrk5Jxkn6/2AxsPJpkwDXf9jWiIVqNxdLpdnkyUFOMzd6hANhrPexPnVGczRwui
+         fIicb/QogXb8KhDDPo1D4dnJu3X9rMWcQShbMmuucPbGKW3bFw0rsBhf0z3lrOKqAe1s
+         yD80w4OP9tzW9Fv98oZtm8qPVILkWCrk/DJFSmjF7ItAWIgdlLbldYLZzpsgKXY5znbh
+         SZhQ==
+X-Gm-Message-State: AO0yUKXOACdzmyIAS000dQOl636zqLZn9LIskbsLiC7v7mWxM5ZQw0f3
+        E8SFdBdSKKvicuvK76Qq6k4=
+X-Google-Smtp-Source: AK7set8p85JMiX22HyE0zxyzElUR9zJVe57o+rBNFBkNVLtp44uQIaJkP6OepruGyMmyk9cJYigx0w==
+X-Received: by 2002:a17:906:2e8e:b0:913:ff28:59bd with SMTP id o14-20020a1709062e8e00b00913ff2859bdmr8415010eji.52.1679315524146;
+        Mon, 20 Mar 2023 05:32:04 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:394b:6c53:31d8:7b18])
+        by smtp.gmail.com with ESMTPSA id 11-20020a170906318b00b008d606b1bbb1sm4348436ejy.9.2023.03.20.05.32.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Mar 2023 05:32:03 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] m68k: remove obsolete config NO_KERNEL_MSG
+Date:   Mon, 20 Mar 2023 13:32:02 +0100
+Message-Id: <20230320123202.14474-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 08 Jul 2022 21:30:01 +0200, Christophe JAILLET wrote:
-> Use devm_bitmap_zalloc() instead of hand-writing them.
-> 
-> It is less verbose and it improves the semantic.
-> 
+The use of the config NO_KERNEL_MSG is long gone. Remove this config from
+m68k's debug kernel configuration setup.
 
-(sorry for the delay, it seemed to have slipped through the cracks,
-thanks to Cristian for pointing this out)
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ arch/m68k/Kconfig.debug | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Applied to sudeep.holla/linux (for-next/scmi/fixes), thanks!
-
-[1/1] firmware: arm_scmi: Use the bitmap API to allocate bitmaps
-      https://git.kernel.org/sudeep.holla/c/d617808e3b83
---
-Regards,
-Sudeep
+diff --git a/arch/m68k/Kconfig.debug b/arch/m68k/Kconfig.debug
+index 465e28be0ce4..30638a6e8edc 100644
+--- a/arch/m68k/Kconfig.debug
++++ b/arch/m68k/Kconfig.debug
+@@ -36,11 +36,6 @@ config HIGHPROFILE
+ 	help
+ 	  Use a fast secondary clock to produce profiling information.
+ 
+-config NO_KERNEL_MSG
+-	bool "Suppress Kernel BUG Messages"
+-	help
+-	  Do not output any debug BUG messages within the kernel.
+-
+ config BDM_DISABLE
+ 	bool "Disable BDM signals"
+ 	depends on COLDFIRE
+-- 
+2.17.1
 
