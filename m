@@ -2,151 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9BDC7618D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 15:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E143C7618D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 16:21:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232195AbjCTPr5 (ORCPT
+        id S232178AbjCTQVu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 11:47:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54060 "EHLO
+        Mon, 20 Mar 2023 12:21:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232193AbjCTPrl (ORCPT
+        with ESMTP id S231994AbjCTQVd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 11:47:41 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A671D13501;
-        Mon, 20 Mar 2023 08:39:07 -0700 (PDT)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32KFHSFe022310;
-        Mon, 20 Mar 2023 15:38:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : in-reply-to : references : date : message-id : mime-version :
- content-type : content-transfer-encoding; s=pp1;
- bh=tF9DPR4BziRpIYNIxnHYz1rUjU1J1WPHeaPCtVN4Vy0=;
- b=H4ehmhdJR7vvqAhDkTDpDUy6pvdFwBfibNmi9y8msPYVIt6vt5PKMwfY2qgEkibBgjpV
- T054dBChtf7ChrcrxZttx/NZ3+0C8YB1hBetfc/+kr0tqm6A0N7sD7y2+3ZsBUcADfJN
- Vxl7AMy+EKN/JEuT6edr0R/wgjBvZ3GiIAfzpW1AB0cgnCBvAWM4Gp4z5WIAWilxKmW/
- KCakSYDRuuOiktmqvAoWjjGbtcN06/y6UybPhN260gFFE/OG/sNEDAaJ728BINJBPKXv
- Blu2Ekiz1sCWNaM+9bSDQ6jKX6hJkXAtR1j3Xc4aONug65o3JLselHC/4f66AItLXTb1 xA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pdqf3546u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Mar 2023 15:38:54 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 32KENu8h008070;
-        Mon, 20 Mar 2023 15:38:54 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3pdqf3546m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Mar 2023 15:38:54 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 32KF8i3C024217;
-        Mon, 20 Mar 2023 15:38:53 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
-        by ppma03dal.us.ibm.com (PPS) with ESMTPS id 3pd4x70x2a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Mar 2023 15:38:52 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32KFcppB63504820
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Mar 2023 15:38:51 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87D7058043;
-        Mon, 20 Mar 2023 15:38:51 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5EA375805D;
-        Mon, 20 Mar 2023 15:38:51 +0000 (GMT)
-Received: from localhost (unknown [9.211.100.146])
-        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 20 Mar 2023 15:38:51 +0000 (GMT)
-From:   Nathan Lynch <nathanl@linux.ibm.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
-Subject: Re: powerpc/pseries: Fix exception handling in
- pSeries_reconfig_add_node()
-In-Reply-To: <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de>
- <871qln8quw.fsf@linux.ibm.com>
- <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de>
- <87v8iz75ck.fsf@linux.ibm.com>
- <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de>
-Date:   Mon, 20 Mar 2023 10:38:50 -0500
-Message-ID: <87pm9377qt.fsf@linux.ibm.com>
+        Mon, 20 Mar 2023 12:21:33 -0400
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 434651CAC2
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Mar 2023 09:14:13 -0700 (PDT)
+Received: from localhost.localdomain ([109.190.253.11])
+        by smtp.orange.fr with ESMTPA
+        id eI9ApRTg9HAQ0eI9Bp8cwS; Mon, 20 Mar 2023 17:14:11 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 20 Mar 2023 17:14:11 +0100
+X-ME-IP: 109.190.253.11
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     amitkarwar@gmail.com, siva8118@gmail.com, kvalo@kernel.org,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next] rsi: Slightly simplify rsi_set_channel()
+Date:   Mon, 20 Mar 2023 17:13:42 +0100
+Message-Id: <29bf0296bd939e3f6952272bfdcc73b22edbc374.1679328588.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: F9folt-ke6hPsK5kwyUnxRyoAE_QFa5l
-X-Proofpoint-ORIG-GUID: oHG_wXOFkuavUcnxh9y4s7Bxzj34q6ny
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-20_10,2023-03-20_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 mlxscore=0 adultscore=0 mlxlogscore=587 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303200128
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Markus Elfring <Markus.Elfring@web.de> writes:
->>>>> The label =E2=80=9Cout_err=E2=80=9D was used to jump to another point=
-er check despite of
->>>>> the detail in the implementation of the function =E2=80=9CpSeries_rec=
-onfig_add_node=E2=80=9D
->>>>> that it was determined already that the corresponding variable contai=
-ned
->>>>> a null pointer (because of a failed function call in two cases).
->>>>>
->>>>> 1. Thus return directly after a call of the function =E2=80=9Ckzalloc=
-=E2=80=9D failed.
->>>>>
->>>>> 2. Use more appropriate labels instead.
->>>>>
->>>>> 3. Delete a redundant check.
->>>>>
->>>>> 4. Omit an explicit initialisation for the local variable =E2=80=9Cer=
-r=E2=80=9D.
->>>>>
->>>>> This issue was detected by using the Coccinelle software.
->>>> Is there a correctness or safety issue here?
->>> I got the impression that the application of only a single label like =
-=E2=80=9Cout_err=E2=80=9D
->>> resulted in improvable implementation details.
->> I don't understand what you're trying to say here.
->
-> What does hinder you to understand the presented change description better
-> at the moment?
->
->
->> It doesn't seem to answer my question.
->
->
-> I hope that my answer will trigger further helpful considerations.
+There is no point in allocating 'skb' and then freeing it if !channel.
 
-I don't consider this response constructive, but I want to get this back
-on track. It's been brought to my attention that there is in fact a
-crash bug in this function's error path:
+Make the sanity check first to slightly simplify the code.
 
-	np->parent =3D pseries_of_derive_parent(path);
-	if (IS_ERR(np->parent)) {
-		err =3D PTR_ERR(np->parent);
-		goto out_err;
-	}
-...
-out_err:
-	if (np) {
-		of_node_put(np->parent);
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/rsi/rsi_91x_mgmt.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-np->parent can be an encoded error value, we don't want to of_node_put()
-that.
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mgmt.c b/drivers/net/wireless/rsi/rsi_91x_mgmt.c
+index c14689266fec..be9ac252f804 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mgmt.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mgmt.c
+@@ -1127,6 +1127,9 @@ int rsi_set_channel(struct rsi_common *common,
+ 	rsi_dbg(MGMT_TX_ZONE,
+ 		"%s: Sending scan req frame\n", __func__);
+ 
++	if (!channel)
++		return 0;
++
+ 	skb = dev_alloc_skb(frame_len);
+ 	if (!skb) {
+ 		rsi_dbg(ERR_ZONE, "%s: Failed in allocation of skb\n",
+@@ -1134,10 +1137,6 @@ int rsi_set_channel(struct rsi_common *common,
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (!channel) {
+-		dev_kfree_skb(skb);
+-		return 0;
+-	}
+ 	memset(skb->data, 0, frame_len);
+ 	chan_cfg = (struct rsi_chan_config *)skb->data;
+ 
+-- 
+2.32.0
 
-I believe the patch as written happens to fix the issue. Will you please
-write it up as a bug fix and resubmit?
