@@ -2,97 +2,151 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228B0C6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 03:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D68DC6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 04:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbjCUDiS (ORCPT
+        id S229685AbjCUE0v (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 23:38:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57994 "EHLO
+        Tue, 21 Mar 2023 00:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjCUDiQ (ORCPT
+        with ESMTP id S229497AbjCUE0u (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 23:38:16 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42AE67AB9;
-        Mon, 20 Mar 2023 20:38:14 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id h8so54639709ede.8;
-        Mon, 20 Mar 2023 20:38:14 -0700 (PDT)
+        Tue, 21 Mar 2023 00:26:50 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABE9926587;
+        Mon, 20 Mar 2023 21:26:48 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id cn12so9269400edb.4;
+        Mon, 20 Mar 2023 21:26:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679369892;
+        d=gmail.com; s=20210112; t=1679372807;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d4reHO6m1QrpLcgDFWTCpHMyCc1+fqEZ3eH5LXVHOdU=;
-        b=He+Vpp6rzyqI5SGxD/bHXjf60Dgtj9rwsuwB2bcJ4AtceS9KDgbpLsF6H1jYPgxYuG
-         fj5SaN3Cd6uX+U2+a3xrNdOqt7U9jQoRvaFE5ZzE+tgBYn6MOLWfSUhHzi7GbplNuJRC
-         VxH1lXGWs0Ai7bl9nSUg9DqxfvhYHO5IUkPUofd/xmVVGd3EZFIG5WAHHWP0nJ1SPIpq
-         miEomaX2BFFyjEKltK+Mqab/ORjR5+leiHFQ6YrbVTN2uyvbSbYd1UGObUctxu6T8XSt
-         SO/pAReFppScBNXSGJF1uGFwOoXTlSBxVlZ8wtmkTFLLGF5NEfN4YvRKXDsugZBMMfYi
-         kKWA==
+        bh=B7LU1YRsXhbsqmPzCrst4NJ9fxlJXbbFdC3pa6Aj3+g=;
+        b=KgpA/xvxWtTEC+5M243SNSSdQ/sR5n8aNFQoCvZB980MdYygUQ3vXzNPhDGv+OEZHU
+         dJ8Vz0raQjqD76uK2yidCiOhvAH8/mLJrnkDZMFlCWLuWkWS7J0OVpyXsuxUwsg0nuMn
+         5yLRwbKNtmjoBK2L/3peR99Cl76PmC+Fpb5ZUUdHMHzmA858hwdrTIx6GHngMZlTKFx3
+         ryOsDFwKGAa/5fIw+vXxDPfSFz71jBUWNJb2wTnNW5NcqmIa3yZHq8ZpfTs4Y45x5qOq
+         qWbb6fMfAJsDFbdSFWpvnCvD2eiiiZTwTwmkMcX3/L3P8nXQsZwpgsB6ZsisfNzJCIkj
+         V8eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679369892;
+        d=1e100.net; s=20210112; t=1679372807;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d4reHO6m1QrpLcgDFWTCpHMyCc1+fqEZ3eH5LXVHOdU=;
-        b=pFwPJbf4+/ZxGa+2s3+ebDbZzETzXK+PD8keo5UoF7JoEfRefP13G+w6TyE9aDcyt7
-         NnHNERUF49Yy1hDkWD0/jUOcY5tVAvgF1nZEihCOicReTo4nhrI9koI4oDVKt8GniI9Q
-         zUnaBLii4hVa3oIUqfUQVJBSVj5AxbvZQkeZcFuziVB0QrjT4CY+0Pabb0snmKQHurHL
-         aePFhaB6/ln8smkfavAnVfV4p+XTlFbkSGk/PY0WSkgkVGjRXah+eZKIU3jfO66K9Vcr
-         E/tFCY43VuWx5HmVfX2ySB9mk7/QahRkfPtcOn+7hcjaWSVi26P3MjkwFyd6u+Dbu0Jf
-         TG/A==
-X-Gm-Message-State: AO0yUKUxEBjhpFs5kD/iplmEgh8YSEQtWZ24GgKC9D3cJ6trKzPJiMJQ
-        1B/kmlU91Qu5cXClIUAOcluGlBwCpHWZUg==
-X-Google-Smtp-Source: AK7set9i+KRlF5m1WFQ8OYQm5OEPDMoPwdjE/UJygioKJjSR3dYouu5FbnrEbcgt/Qd5COHT4kqmIw==
-X-Received: by 2002:a17:907:1def:b0:8b2:d30:e722 with SMTP id og47-20020a1709071def00b008b20d30e722mr1268754ejc.3.1679369892532;
-        Mon, 20 Mar 2023 20:38:12 -0700 (PDT)
+        bh=B7LU1YRsXhbsqmPzCrst4NJ9fxlJXbbFdC3pa6Aj3+g=;
+        b=B1Ejq/aL7P/XXaMLTU8Cr3wEwp7N4g/mHd8z6rvq8u5zoclkr10+NNgbhue8XBLWyc
+         quHLcqzkCZF9se2my7p2fpHY3/O7fhseb6KQSnPb9nA1Xqx5IsAOqcxuRp4bTjuzAA6G
+         d5rJXFZs4lIMsjKKbUH3/ByGa5QylW7PN1/EqXzfZUBIusadteIEBiJP+oXcUZS0A8Tg
+         xnw2/jLynVh7IkXxP5IBqjlXP4kdDztWYQ7ri/h58X/MuHnbnJ5bMThnjWk7oTVpC2//
+         6a5TupnXKw28p9vdiyekArgZ8o0sHGgsLgb8U9xM34MyY6QPhQgjCFyeRCV8KDMdG3RR
+         bWBw==
+X-Gm-Message-State: AO0yUKViqCEjX9jI/g9Au6ioYWZP0kM3tBgr2AngXo97GZILeeO//UXl
+        Qug2sXJ/1ZHSSQfgAbMpHholUSOwY95Sww==
+X-Google-Smtp-Source: AK7set/w/ExYAxonQFR20l6IlWAqcYeWwQuLWKpIzZRcDzIPrF57OQOXOYBsPxDLANdchya0fH5i5A==
+X-Received: by 2002:a17:906:5e43:b0:932:4990:2563 with SMTP id b3-20020a1709065e4300b0093249902563mr1496687eju.24.1679372807043;
+        Mon, 20 Mar 2023 21:26:47 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:6c2c:25d2:96b3:40e6])
-        by smtp.gmail.com with ESMTPSA id g25-20020a50d0d9000000b00501c2a9e16dsm2671755edf.74.2023.03.20.20.38.12
+        by smtp.gmail.com with ESMTPSA id s17-20020a170906961100b009316783c92csm5290434ejx.12.2023.03.20.21.26.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 20:38:12 -0700 (PDT)
+        Mon, 20 Mar 2023 21:26:46 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Daniel Palmer <daniel@thingy.jp>,
-        Romain Perier <romain.perier@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>, soc@kernel.org,
-        linux-arm-kernel@lists.infradead.org
+To:     Owen Chen <owen.chen@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Macpaul Lin <macpaul.lin@mediatek.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] ARM: mstar: remove unused config MACH_MERCURY
-Date:   Tue, 21 Mar 2023 04:38:10 +0100
-Message-Id: <20230321033810.22017-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] clk: mediatek: Remove unused configs with COMMON_CLK_MT6765 prefix
+Date:   Tue, 21 Mar 2023 05:26:41 +0100
+Message-Id: <20230321042641.21592-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 312b62b6610c ("ARM: mstar: Add machine for MStar/Sigmastar Armv7
-SoCs") adds the config MACH_INFINITY and MACH_MERCURY. The MACH_INFINITY
-config is used in the gpio-msc313 driver, but the MACH_MERCURY config is
-never used to configure anything in the kernel tree.
+Commit 1aca9939bf72 ("clk: mediatek: Add MT6765 clock support") adds
+fourteen configs with COMMON_CLK_MT6765 prefix, but only uses seven of them
+to configure inclusion of drivers.
 
-Remove the unused config MACH_MERCURY.
+Remove the seven unused COMMON_CLK_MT6765 configs.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- arch/arm/mach-mstar/Kconfig | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/clk/mediatek/Kconfig | 42 ------------------------------------
+ 1 file changed, 42 deletions(-)
 
-diff --git a/arch/arm/mach-mstar/Kconfig b/arch/arm/mach-mstar/Kconfig
-index 5dbea7b485af..fa9709f30b46 100644
---- a/arch/arm/mach-mstar/Kconfig
-+++ b/arch/arm/mach-mstar/Kconfig
-@@ -20,11 +20,4 @@ config MACH_INFINITY
- 	help
- 	  Support for MStar/Sigmastar infinity IP camera SoCs.
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 2d14855dd37e..ec87762bfb18 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -144,12 +144,6 @@ config COMMON_CLK_MT6765_CAMSYS
+        help
+          This driver supports MediaTek MT6765 camsys clocks.
  
--config MACH_MERCURY
--	bool "MStar/Sigmastar mercury SoC support"
--	default ARCH_MSTARV7
--	help
--	  Support for MStar/Sigmastar mercury dash camera SoCs.
--	  Note that older Mercury2 SoCs are ARM9 based and not supported.
+-config COMMON_CLK_MT6765_GCESYS
+-       bool "Clock driver for MediaTek MT6765 gcesys"
+-       depends on COMMON_CLK_MT6765
+-       help
+-         This driver supports MediaTek MT6765 gcesys clocks.
 -
- endif
+ config COMMON_CLK_MT6765_MMSYS
+        bool "Clock driver for MediaTek MT6765 mmsys"
+        depends on COMMON_CLK_MT6765
+@@ -168,48 +162,12 @@ config COMMON_CLK_MT6765_VCODECSYS
+        help
+          This driver supports MediaTek MT6765 vcodecsys clocks.
+ 
+-config COMMON_CLK_MT6765_MFGSYS
+-       bool "Clock driver for MediaTek MT6765 mfgsys"
+-       depends on COMMON_CLK_MT6765
+-       help
+-         This driver supports MediaTek MT6765 mfgsys clocks.
+-
+ config COMMON_CLK_MT6765_MIPI0ASYS
+        bool "Clock driver for MediaTek MT6765 mipi0asys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 mipi0asys clocks.
+ 
+-config COMMON_CLK_MT6765_MIPI0BSYS
+-       bool "Clock driver for MediaTek MT6765 mipi0bsys"
+-       depends on COMMON_CLK_MT6765
+-       help
+-         This driver supports MediaTek MT6765 mipi0bsys clocks.
+-
+-config COMMON_CLK_MT6765_MIPI1ASYS
+-       bool "Clock driver for MediaTek MT6765 mipi1asys"
+-       depends on COMMON_CLK_MT6765
+-       help
+-         This driver supports MediaTek MT6765 mipi1asys clocks.
+-
+-config COMMON_CLK_MT6765_MIPI1BSYS
+-       bool "Clock driver for MediaTek MT6765 mipi1bsys"
+-       depends on COMMON_CLK_MT6765
+-       help
+-         This driver supports MediaTek MT6765 mipi1bsys clocks.
+-
+-config COMMON_CLK_MT6765_MIPI2ASYS
+-       bool "Clock driver for MediaTek MT6765 mipi2asys"
+-       depends on COMMON_CLK_MT6765
+-      help
+-         This driver supports MediaTek MT6765 mipi2asys clocks.
+-
+-config COMMON_CLK_MT6765_MIPI2BSYS
+-       bool "Clock driver for MediaTek MT6765 mipi2bsys"
+-       depends on COMMON_CLK_MT6765
+-       help
+-         This driver supports MediaTek MT6765 mipi2bsys clocks.
+-
+ config COMMON_CLK_MT6779
+ 	tristate "Clock driver for MediaTek MT6779"
+ 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
 -- 
 2.17.1
 
