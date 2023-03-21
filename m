@@ -2,55 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D6FC76195
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 03:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228B0C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 03:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjCUD1F (ORCPT
+        id S229656AbjCUDiS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 23:27:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51934 "EHLO
+        Mon, 20 Mar 2023 23:38:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbjCUD1E (ORCPT
+        with ESMTP id S229550AbjCUDiQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 23:27:04 -0400
-Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97002726;
-        Mon, 20 Mar 2023 20:27:02 -0700 (PDT)
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1peSe6-006t9a-JC; Tue, 21 Mar 2023 11:26:47 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 21 Mar 2023 11:26:46 +0800
-Date:   Tue, 21 Mar 2023 11:26:46 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     horia.geanta@nxp.com, pankaj.gupta@nxp.com, gaurav.jain@nxp.com,
-        davem@davemloft.net, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: caam: Clear some memory in instantiate_rng()
-Message-ID: <ZBkj9tUFl8OJeoic@gondor.apana.org.au>
-References: <16d6bf3bd7a6e96a8262fcd4680e3ccbb5a50478.1679355849.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <16d6bf3bd7a6e96a8262fcd4680e3ccbb5a50478.1679355849.git.christophe.jaillet@wanadoo.fr>
+        Mon, 20 Mar 2023 23:38:16 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42AE67AB9;
+        Mon, 20 Mar 2023 20:38:14 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id h8so54639709ede.8;
+        Mon, 20 Mar 2023 20:38:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679369892;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d4reHO6m1QrpLcgDFWTCpHMyCc1+fqEZ3eH5LXVHOdU=;
+        b=He+Vpp6rzyqI5SGxD/bHXjf60Dgtj9rwsuwB2bcJ4AtceS9KDgbpLsF6H1jYPgxYuG
+         fj5SaN3Cd6uX+U2+a3xrNdOqt7U9jQoRvaFE5ZzE+tgBYn6MOLWfSUhHzi7GbplNuJRC
+         VxH1lXGWs0Ai7bl9nSUg9DqxfvhYHO5IUkPUofd/xmVVGd3EZFIG5WAHHWP0nJ1SPIpq
+         miEomaX2BFFyjEKltK+Mqab/ORjR5+leiHFQ6YrbVTN2uyvbSbYd1UGObUctxu6T8XSt
+         SO/pAReFppScBNXSGJF1uGFwOoXTlSBxVlZ8wtmkTFLLGF5NEfN4YvRKXDsugZBMMfYi
+         kKWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679369892;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d4reHO6m1QrpLcgDFWTCpHMyCc1+fqEZ3eH5LXVHOdU=;
+        b=pFwPJbf4+/ZxGa+2s3+ebDbZzETzXK+PD8keo5UoF7JoEfRefP13G+w6TyE9aDcyt7
+         NnHNERUF49Yy1hDkWD0/jUOcY5tVAvgF1nZEihCOicReTo4nhrI9koI4oDVKt8GniI9Q
+         zUnaBLii4hVa3oIUqfUQVJBSVj5AxbvZQkeZcFuziVB0QrjT4CY+0Pabb0snmKQHurHL
+         aePFhaB6/ln8smkfavAnVfV4p+XTlFbkSGk/PY0WSkgkVGjRXah+eZKIU3jfO66K9Vcr
+         E/tFCY43VuWx5HmVfX2ySB9mk7/QahRkfPtcOn+7hcjaWSVi26P3MjkwFyd6u+Dbu0Jf
+         TG/A==
+X-Gm-Message-State: AO0yUKUxEBjhpFs5kD/iplmEgh8YSEQtWZ24GgKC9D3cJ6trKzPJiMJQ
+        1B/kmlU91Qu5cXClIUAOcluGlBwCpHWZUg==
+X-Google-Smtp-Source: AK7set9i+KRlF5m1WFQ8OYQm5OEPDMoPwdjE/UJygioKJjSR3dYouu5FbnrEbcgt/Qd5COHT4kqmIw==
+X-Received: by 2002:a17:907:1def:b0:8b2:d30:e722 with SMTP id og47-20020a1709071def00b008b20d30e722mr1268754ejc.3.1679369892532;
+        Mon, 20 Mar 2023 20:38:12 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:6c2c:25d2:96b3:40e6])
+        by smtp.gmail.com with ESMTPSA id g25-20020a50d0d9000000b00501c2a9e16dsm2671755edf.74.2023.03.20.20.38.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Mar 2023 20:38:12 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Daniel Palmer <daniel@thingy.jp>,
+        Romain Perier <romain.perier@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>, soc@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] ARM: mstar: remove unused config MACH_MERCURY
+Date:   Tue, 21 Mar 2023 04:38:10 +0100
+Message-Id: <20230321033810.22017-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 12:45:43AM +0100, Christophe JAILLET wrote:
-> According to the comment at the end of the 'for' loop just a few lines
-> below, it looks needed to clear 'desc'.
-> 
-> So it should also be cleared for the first iteration.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is speculative, but can't hurt.
-> 
-> Maybe the memset() at the end of the 'for' loop could be removed instead.
+Commit 312b62b6610c ("ARM: mstar: Add machine for MStar/Sigmastar Armv7
+SoCs") adds the config MACH_INFINITY and MACH_MERCURY. The MACH_INFINITY
+config is used in the gpio-msc313 driver, but the MACH_MERCURY config is
+never used to configure anything in the kernel tree.
 
-I think the memset can be removed.  Horia?
+Remove the unused config MACH_MERCURY.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ arch/arm/mach-mstar/Kconfig | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/arch/arm/mach-mstar/Kconfig b/arch/arm/mach-mstar/Kconfig
+index 5dbea7b485af..fa9709f30b46 100644
+--- a/arch/arm/mach-mstar/Kconfig
++++ b/arch/arm/mach-mstar/Kconfig
+@@ -20,11 +20,4 @@ config MACH_INFINITY
+ 	help
+ 	  Support for MStar/Sigmastar infinity IP camera SoCs.
+ 
+-config MACH_MERCURY
+-	bool "MStar/Sigmastar mercury SoC support"
+-	default ARCH_MSTARV7
+-	help
+-	  Support for MStar/Sigmastar mercury dash camera SoCs.
+-	  Note that older Mercury2 SoCs are ARM9 based and not supported.
+-
+ endif
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
+
