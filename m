@@ -2,78 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4A6C761A6
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 08:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5AC7C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 09:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231420AbjCUI6A (ORCPT
+        id S230114AbjCUJ3l (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Mar 2023 04:58:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38026 "EHLO
+        Tue, 21 Mar 2023 05:29:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230369AbjCUI5W (ORCPT
+        with ESMTP id S229746AbjCUJ3j (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Mar 2023 04:57:22 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCC2C4740B;
-        Tue, 21 Mar 2023 01:56:03 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 13C3666030D5;
-        Tue, 21 Mar 2023 08:55:39 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1679388939;
-        bh=0ekjo5nMc8NxHpvolEsvhky3PM6gq3HIZIVq67wsqrA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=TlSedSI7TwYWON33HGI22cJ3b9NT1kNDMPLt/7jwSvxu1yymyMCtzV0csrbZ9HjBQ
-         lODVQ7mBB4G6NWNFX9IEUcwrv560Je2K/o91drzoXNQMhUrlURIMmaG8PUoXMF/Ryi
-         bxV3zIJCnpOlC0hf3Z/ZzUyHq0HqSUe+f351Lu/yTlH0EiVel0fhyveGkKQw/+jTn4
-         N66Zz6ZaYzusNuYOjfj3FPo6b8vFFbseM0//jucfSOoJBQ3qPPlgcLKl4F/S1jxHRB
-         6q7/L7qMarMwGwOOBibGCSR8Mhbhhq8lYYH4NunGm90ggjHsjw0p9hl7uQ/flC3v0K
-         kLXNxdh0zJ2JA==
-Message-ID: <98c0a46d-05da-7863-1a30-51727c20da23@collabora.com>
-Date:   Tue, 21 Mar 2023 09:55:36 +0100
+        Tue, 21 Mar 2023 05:29:39 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67AC76E99;
+        Tue, 21 Mar 2023 02:29:24 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so10667978wmb.5;
+        Tue, 21 Mar 2023 02:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679390963;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1uHph1RCcCMxEyyxylwFED3FpSIUdpvkqwOHRakgeag=;
+        b=oXXBPv3kh7GIgeLcExIahE9APHsSHas/UaQrRt9AMuuzuHVakzREsIZQV7qDXuzkwj
+         Aut2qvbeW7R6v+BcvX154IEXeCKhnn4h03KF7HJZHiBCJhH3A70Nq62Q1OI9nbQ1veDm
+         FQEg6mKS1/Y0K7Yt13u0V7uI5g6HM+kEOWk5Be1vbpTR+YYK33QRHTac/BcPI83/QIPF
+         I0atFE5bd9r/l0+WptE0Ofj4xBHBJYsysVQbfVhBJAq//cr0tvoe4HGMUpVxbTbOlNSp
+         j/WE2xXV9IkI6yasEvNWbCN/eiyhfBQ0hhECwWtpx/EcjekkgimvwdvK/sRtdvrW5k9K
+         kQSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679390963;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1uHph1RCcCMxEyyxylwFED3FpSIUdpvkqwOHRakgeag=;
+        b=NNDhpcUGNAQvK9HLf6yVKkgUPsylyJ1yINDBi1lujXHEcX4gIfMLeYSIo38IpGWrMC
+         NFshIMCBNAimg25AjSCEUmRSBtuqp+5B7Nm8bDLpLqyp6NUBm6X58/7tyCbgg8LbuV40
+         SL6kH4AFVCs2UqadFk+eCsGsaOm3a9ZAb33MvFbQjddj9ei7LwIJnM30Mr962/0T6TZd
+         2OseQqtK/XGfF0KKHpcyUgvg7DqMyvH320gd/5TByWx5x8quTyeoOST03EyyjyTkdtgA
+         2cMYX8Ibhd+fbCPlg9p8cgdtxR40bjv1DQ2+bwAgb+lPXRu/yJBshC8xE/VO6UZNZFaG
+         msgA==
+X-Gm-Message-State: AO0yUKX9vU+fBIbeAsb23M8bPWGj+ABBw/xgYUtlWVJeTU/YGbubGFdR
+        m7uRAjK/U2UAjD7KZeYeB6w=
+X-Google-Smtp-Source: AK7set8m8l1KBcrGaQeUuJdX8jUhoE7/xDwDdbfGpIbkxyiTXnYDnff4hqAzIRzWngx85WIaySIVsQ==
+X-Received: by 2002:a7b:cbc2:0:b0:3e1:374:8b66 with SMTP id n2-20020a7bcbc2000000b003e103748b66mr1609067wmi.40.1679390962873;
+        Tue, 21 Mar 2023 02:29:22 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id 4-20020a05600c028400b003eb192787bfsm12930779wmk.25.2023.03.21.02.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 02:29:22 -0700 (PDT)
+Date:   Tue, 21 Mar 2023 12:29:18 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Daniel Palmer <daniel@thingy.jp>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Romain Perier <romain.perier@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>, soc@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: mstar: remove unused config MACH_MERCURY
+Message-ID: <b8cdf7dc-9bd9-410b-a637-c63e1becc056@kili.mountain>
+References: <20230321033810.22017-1-lukas.bulwahn@gmail.com>
+ <CAFr9PXmKsequA3V7QWC2fKQYZgaNRj+q3q=UOBLmg6wxYKiVYg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] clk: mediatek: Remove unused configs with
- COMMON_CLK_MT6765 prefix
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Macpaul Lin <macpaul.lin@mediatek.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230321042641.21592-1-lukas.bulwahn@gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230321042641.21592-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFr9PXmKsequA3V7QWC2fKQYZgaNRj+q3q=UOBLmg6wxYKiVYg@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 21/03/23 05:26, Lukas Bulwahn ha scritto:
-> Commit 1aca9939bf72 ("clk: mediatek: Add MT6765 clock support") adds
-> fourteen configs with COMMON_CLK_MT6765 prefix, but only uses seven of them
-> to configure inclusion of drivers.
+On Tue, Mar 21, 2023 at 05:33:19PM +0900, Daniel Palmer wrote:
+> Hi Lukas
 > 
-> Remove the seven unused COMMON_CLK_MT6765 configs.
+> On Tue, 21 Mar 2023 at 12:38, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >
+> > Commit 312b62b6610c ("ARM: mstar: Add machine for MStar/Sigmastar Armv7
+> > SoCs") adds the config MACH_INFINITY and MACH_MERCURY. The MACH_INFINITY
+> > config is used in the gpio-msc313 driver, but the MACH_MERCURY config is
+> > never used to configure anything in the kernel tree.
+> >
+> > Remove the unused config MACH_MERCURY.
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Because work is still on going to push that stuff.
 
-Please add the required Fixes tag (you even reference the commit to fix already!),
-then you'll get my R-b at v2 :-)
+Is there a link to the patchset?
 
-Regards,
-Angelo
+> 
+> nak from me.
 
+This stuff hasn't been used for years.  We generally don't push dummy
+code.  It's super easy to add it back when the time comes.
+
+regards,
+dan carpenter
 
