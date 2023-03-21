@@ -2,76 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45460C6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 18:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3409CC6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 21:43:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229453AbjCUSAH (ORCPT
+        id S229808AbjCUVnU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Mar 2023 14:00:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59716 "EHLO
+        Tue, 21 Mar 2023 17:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbjCUR7g (ORCPT
+        with ESMTP id S229788AbjCUVnT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Mar 2023 13:59:36 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B21E1C7F3
-        for <kernel-janitors@vger.kernel.org>; Tue, 21 Mar 2023 10:59:34 -0700 (PDT)
-Received: from localhost.localdomain ([109.190.253.13])
+        Tue, 21 Mar 2023 17:43:19 -0400
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11EDD4483
+        for <kernel-janitors@vger.kernel.org>; Tue, 21 Mar 2023 14:43:17 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id egGTpZTNYNBsfegGWp5b3D; Tue, 21 Mar 2023 18:59:32 +0100
-X-ME-Helo: localhost.localdomain
+        id ejlCpyJDJQ3ZFejlDp7IvB; Tue, 21 Mar 2023 22:43:15 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 21 Mar 2023 18:59:32 +0100
-X-ME-IP: 109.190.253.13
+X-ME-Date: Tue, 21 Mar 2023 22:43:15 +0100
+X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     harry.wentland@amd.com, sunpeng.li@amd.com,
-        Rodrigo.Siqueira@amd.com, alexander.deucher@amd.com,
-        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
-        daniel@ffwll.ch, aurabindo.pillai@amd.com, roman.li@amd.com,
-        hersenxs.wu@amd.com, stylon.wang@amd.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] drm/amd/display: Slightly optimize dm_dmub_outbox1_low_irq()
-Date:   Tue, 21 Mar 2023 18:58:50 +0100
-Message-Id: <b7cff2c1976308c64951d466fd627989ef6e46fb.1679421347.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-usb@vger.kernel.org
+Subject: [PATCH 1/2] usb: pci-quirks: Reduce the length of a spinlock section in usb_amd_find_chipset_info()
+Date:   Tue, 21 Mar 2023 22:43:09 +0100
+Message-Id: <3850d93ff40ed12f4724621a540fb5993c0a0fa9.1679434951.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A kzalloc()+memcpy() can be optimized in a single kmemdup().
-This saves a few cycles because some memory doesn't need to be zeroed.
+'info' is local to the function. There is no need to zeroing it within
+a spin_lock section.
+
+Move the memset() after spin_unlock_irqrestore().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/usb/host/pci-quirks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 5bac5781a06b..57a5fbdab890 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -820,15 +820,14 @@ static void dm_dmub_outbox1_low_irq(void *interrupt_params)
- 					DRM_ERROR("Failed to allocate dmub_hpd_wrk");
- 					return;
- 				}
--				dmub_hpd_wrk->dmub_notify = kzalloc(sizeof(struct dmub_notification), GFP_ATOMIC);
-+				dmub_hpd_wrk->dmub_notify = kmemdup(&notify, sizeof(struct dmub_notification),
-+								    GFP_ATOMIC);
- 				if (!dmub_hpd_wrk->dmub_notify) {
- 					kfree(dmub_hpd_wrk);
- 					DRM_ERROR("Failed to allocate dmub_hpd_wrk->dmub_notify");
- 					return;
- 				}
- 				INIT_WORK(&dmub_hpd_wrk->handle_hpd_work, dm_handle_hpd_work);
--				if (dmub_hpd_wrk->dmub_notify)
--					memcpy(dmub_hpd_wrk->dmub_notify, &notify, sizeof(struct dmub_notification));
- 				dmub_hpd_wrk->adev = adev;
- 				if (notify.type == DMUB_NOTIFICATION_HPD) {
- 					plink = adev->dm.dc->links[notify.link_index];
+diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
+index ef08d68b9714..6b741327d2c4 100644
+--- a/drivers/usb/host/pci-quirks.c
++++ b/drivers/usb/host/pci-quirks.c
+@@ -218,9 +218,9 @@ static void usb_amd_find_chipset_info(void)
+ 		spin_unlock_irqrestore(&amd_lock, flags);
+ 		return;
+ 	}
+-	memset(&info, 0, sizeof(info));
+ 	spin_unlock_irqrestore(&amd_lock, flags);
+ 
++	memset(&info, 0, sizeof(info));
+ 	if (!amd_chipset_sb_type_init(&info)) {
+ 		goto commit;
+ 	}
 -- 
-2.32.0
+2.34.1
 
