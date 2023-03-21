@@ -2,103 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7773CC7619A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 14:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45460C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 18:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230221AbjCUOIe (ORCPT
+        id S229453AbjCUSAH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Mar 2023 10:08:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46962 "EHLO
+        Tue, 21 Mar 2023 14:00:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229754AbjCUOId (ORCPT
+        with ESMTP id S229998AbjCUR7g (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Mar 2023 10:08:33 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EBBEFF19;
-        Tue, 21 Mar 2023 07:08:30 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7524C200F3;
-        Tue, 21 Mar 2023 14:08:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1679407709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Hgrs5y/VT6hs8tD8O+b0+N8lxESgNGz+bZqlsP/eYdY=;
-        b=kRYbpSlJ4pyRc3CR2IHW95PvKXmJU4aod4jop8LU47EaMiucFXqciubn19PvNNezl7rL6d
-        4Hs+phZL2D4Qc5PZ8VS8wxCi8TICZqz7REmiOAd5bI+uKcdzv/C+x/lQny2iCW6CZpbMok
-        7eNxWaOjvB6wIoRLGNryTyXjZ0U0U5c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1679407709;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Hgrs5y/VT6hs8tD8O+b0+N8lxESgNGz+bZqlsP/eYdY=;
-        b=RyfmP/oXoleLf0eBNhRV/1ISQ3cD7VnsYSkbwhWGLWOqksZC24+lMtuvORLoKe/5pZmeUR
-        CH0qgdQuLFXZ/TAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5B4A013451;
-        Tue, 21 Mar 2023 14:08:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4GtAFl26GWSuJwAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 21 Mar 2023 14:08:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id DA892A071C; Tue, 21 Mar 2023 15:08:28 +0100 (CET)
-Date:   Tue, 21 Mar 2023 15:08:28 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ext2: remove redundant assignment to pointer end
-Message-ID: <20230321140828.5h6x4rccey4gktkr@quack3>
-References: <20230317143420.419005-1-colin.i.king@gmail.com>
+        Tue, 21 Mar 2023 13:59:36 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B21E1C7F3
+        for <kernel-janitors@vger.kernel.org>; Tue, 21 Mar 2023 10:59:34 -0700 (PDT)
+Received: from localhost.localdomain ([109.190.253.13])
+        by smtp.orange.fr with ESMTPA
+        id egGTpZTNYNBsfegGWp5b3D; Tue, 21 Mar 2023 18:59:32 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 21 Mar 2023 18:59:32 +0100
+X-ME-IP: 109.190.253.13
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     harry.wentland@amd.com, sunpeng.li@amd.com,
+        Rodrigo.Siqueira@amd.com, alexander.deucher@amd.com,
+        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+        daniel@ffwll.ch, aurabindo.pillai@amd.com, roman.li@amd.com,
+        hersenxs.wu@amd.com, stylon.wang@amd.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/amd/display: Slightly optimize dm_dmub_outbox1_low_irq()
+Date:   Tue, 21 Mar 2023 18:58:50 +0100
+Message-Id: <b7cff2c1976308c64951d466fd627989ef6e46fb.1679421347.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230317143420.419005-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri 17-03-23 14:34:20, Colin Ian King wrote:
-> Pointer is assigned a value that is never read, the assignment is
-> redundant and can be removed.
-> 
-> Cleans up clang-scan warning:
-> fs/ext2/xattr.c:555:3: warning: Value stored to 'end' is never read [deadcode.DeadStores]
->                 end = (char *)header + sb->s_blocksize;
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+A kzalloc()+memcpy() can be optimized in a single kmemdup().
+This saves a few cycles because some memory doesn't need to be zeroed.
 
-Thanks. I've picked the patch to my tree.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-								Honza
-
-> ---
->  fs/ext2/xattr.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
-> index b126af5f8b15..8906ba479aaf 100644
-> --- a/fs/ext2/xattr.c
-> +++ b/fs/ext2/xattr.c
-> @@ -552,7 +552,6 @@ ext2_xattr_set(struct inode *inode, int name_index, const char *name,
->  		error = -ENOMEM;
->  		if (header == NULL)
->  			goto cleanup;
-> -		end = (char *)header + sb->s_blocksize;
->  		header->h_magic = cpu_to_le32(EXT2_XATTR_MAGIC);
->  		header->h_blocks = header->h_refcount = cpu_to_le32(1);
->  		last = here = ENTRY(header+1);
-> -- 
-> 2.30.2
-> 
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 5bac5781a06b..57a5fbdab890 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -820,15 +820,14 @@ static void dm_dmub_outbox1_low_irq(void *interrupt_params)
+ 					DRM_ERROR("Failed to allocate dmub_hpd_wrk");
+ 					return;
+ 				}
+-				dmub_hpd_wrk->dmub_notify = kzalloc(sizeof(struct dmub_notification), GFP_ATOMIC);
++				dmub_hpd_wrk->dmub_notify = kmemdup(&notify, sizeof(struct dmub_notification),
++								    GFP_ATOMIC);
+ 				if (!dmub_hpd_wrk->dmub_notify) {
+ 					kfree(dmub_hpd_wrk);
+ 					DRM_ERROR("Failed to allocate dmub_hpd_wrk->dmub_notify");
+ 					return;
+ 				}
+ 				INIT_WORK(&dmub_hpd_wrk->handle_hpd_work, dm_handle_hpd_work);
+-				if (dmub_hpd_wrk->dmub_notify)
+-					memcpy(dmub_hpd_wrk->dmub_notify, &notify, sizeof(struct dmub_notification));
+ 				dmub_hpd_wrk->adev = adev;
+ 				if (notify.type == DMUB_NOTIFICATION_HPD) {
+ 					plink = adev->dm.dc->links[notify.link_index];
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.32.0
+
