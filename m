@@ -2,70 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EB8C6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Mar 2023 23:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 583C5C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 00:10:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229455AbjCTXrv (ORCPT
+        id S229778AbjCUAKD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 19:47:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45978 "EHLO
+        Mon, 20 Mar 2023 20:10:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbjCTXrt (ORCPT
+        with ESMTP id S229670AbjCUAKD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 19:47:49 -0400
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F334EE1
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 Mar 2023 16:47:11 -0700 (PDT)
-Received: from localhost.localdomain ([78.31.41.93])
-        by smtp.orange.fr with ESMTPA
-        id ePCEpUM95Kb31ePCGpjTnR; Tue, 21 Mar 2023 00:45:54 +0100
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 21 Mar 2023 00:45:54 +0100
-X-ME-IP: 78.31.41.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     horia.geanta@nxp.com, pankaj.gupta@nxp.com, gaurav.jain@nxp.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] crypto: caam: Clear some memory in instantiate_rng()
-Date:   Tue, 21 Mar 2023 00:45:43 +0100
-Message-Id: <16d6bf3bd7a6e96a8262fcd4680e3ccbb5a50478.1679355849.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Mon, 20 Mar 2023 20:10:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA791BACC;
+        Mon, 20 Mar 2023 17:10:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AC30D618CF;
+        Tue, 21 Mar 2023 00:10:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5D4C433EF;
+        Tue, 21 Mar 2023 00:09:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679357401;
+        bh=EJtjR7BOHMOTkea9e96bCqvYUnOPBRnLYJVtCK05GVQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=F4UeGaoOL8B0wGHYiiIYPUYr0BFjZsEXjh8pkkRJ12XDg/bDglH0WnxUz4D92yyy/
+         kVdBg25H4pZgCLUfbbPP3MfsO7jGlu5CoK8LxnXjk7m/Oth0GUAQL8NHge383aQdPO
+         /LKvhgJrtS87dmJ961VfOlbo6j3Sj8c2ushxe7OWXN6PZ+0OgcbMr6SVUhbz1X1vhG
+         QC3D1d5l7AyAjGMlKSXd7G2n3GCeD8HMiO9pEoRMAoVgY78iJhn5NP2jNXrOWkWCRj
+         F8gTW6+CVjidtD/S81dzRYE/wR7YNALnDVBxOB68MuLnFR/ix0H28/4n9pjXqY7fqP
+         AYaxhOxcuMMZQ==
+Message-ID: <cc53723d-e7ab-5e75-aaa1-33da75118d9d@kernel.org>
+Date:   Tue, 21 Mar 2023 10:09:57 +1000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] m68k: Kconfig.machine: remove obsolete configs ROMBASE
+ and ROMSIZE
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230320135418.2055-1-lukas.bulwahn@gmail.com>
+From:   Greg Ungerer <gerg@kernel.org>
+In-Reply-To: <20230320135418.2055-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-According to the comment at the end of the 'for' loop just a few lines
-below, it looks needed to clear 'desc'.
+Hi Lukas,
 
-So it should also be cleared for the first iteration.
+On 20/3/23 23:54, Lukas Bulwahn wrote:
+> The configs ROMBASE and ROMSIZE were used in arch/m68k/68360/head-ram.S,
+> which was removed with commit a3595962d824 ("m68knommu: remove obsolete
+> 68360 support").
+> 
+> Remove the obsolete configs ROMBASE and ROMSIZE.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative, but can't hurt.
+Looks good thanks.
 
-Maybe the memset() at the end of the 'for' loop could be removed instead.
----
- drivers/crypto/caam/ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have pushed this into the m68knommu git tree, for next branch,
+after adding Geerts Fixes and Reviewed-by tags.
 
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index 32253a064d0f..e4e971dc0f96 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -276,7 +276,7 @@ static int instantiate_rng(struct device *ctrldev, int state_handle_mask,
- 	int ret = 0, sh_idx;
- 
- 	ctrl = (struct caam_ctrl __iomem *)ctrlpriv->ctrl;
--	desc = kmalloc(CAAM_CMD_SZ * 7, GFP_KERNEL | GFP_DMA);
-+	desc = kzalloc(CAAM_CMD_SZ * 7, GFP_KERNEL | GFP_DMA);
- 	if (!desc)
- 		return -ENOMEM;
- 
--- 
-2.32.0
+Regards
+Greg
 
+
+> ---
+>   arch/m68k/Kconfig.machine | 17 -----------------
+>   1 file changed, 17 deletions(-)
+> 
+> diff --git a/arch/m68k/Kconfig.machine b/arch/m68k/Kconfig.machine
+> index e2f961208f18..255d50574065 100644
+> --- a/arch/m68k/Kconfig.machine
+> +++ b/arch/m68k/Kconfig.machine
+> @@ -439,15 +439,6 @@ config ROM
+>   	  that can be stored in flash, with possibly the text, and data
+>   	  regions being copied out to RAM at startup.
+>   
+> -config ROMBASE
+> -	hex "Address of the base of ROM device"
+> -	default "0"
+> -	depends on ROM
+> -	help
+> -	  Define the address that the ROM region starts at. Some platforms
+> -	  use this to set their chip select region accordingly for the boot
+> -	  device.
+> -
+>   config ROMVEC
+>   	hex "Address of the base of the ROM vectors"
+>   	default "0"
+> @@ -465,14 +456,6 @@ config ROMSTART
+>   	  Define the start address of the system image in ROM. Commonly this
+>   	  is strait after the ROM vectors.
+>   
+> -config ROMSIZE
+> -	hex "Size of the ROM device"
+> -	default "0x100000"
+> -	depends on ROM
+> -	help
+> -	  Size of the ROM device. On some platforms this is used to setup
+> -	  the chip select that controls the boot ROM device.
+> -
+>   choice
+>   	prompt "Kernel executes from"
+>   	help
