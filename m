@@ -2,114 +2,55 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 583C5C6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 00:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D6FC76195
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 03:27:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbjCUAKD (ORCPT
+        id S229572AbjCUD1F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Mar 2023 20:10:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44938 "EHLO
+        Mon, 20 Mar 2023 23:27:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjCUAKD (ORCPT
+        with ESMTP id S229497AbjCUD1E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Mar 2023 20:10:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA791BACC;
-        Mon, 20 Mar 2023 17:10:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AC30D618CF;
-        Tue, 21 Mar 2023 00:10:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5D4C433EF;
-        Tue, 21 Mar 2023 00:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679357401;
-        bh=EJtjR7BOHMOTkea9e96bCqvYUnOPBRnLYJVtCK05GVQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=F4UeGaoOL8B0wGHYiiIYPUYr0BFjZsEXjh8pkkRJ12XDg/bDglH0WnxUz4D92yyy/
-         kVdBg25H4pZgCLUfbbPP3MfsO7jGlu5CoK8LxnXjk7m/Oth0GUAQL8NHge383aQdPO
-         /LKvhgJrtS87dmJ961VfOlbo6j3Sj8c2ushxe7OWXN6PZ+0OgcbMr6SVUhbz1X1vhG
-         QC3D1d5l7AyAjGMlKSXd7G2n3GCeD8HMiO9pEoRMAoVgY78iJhn5NP2jNXrOWkWCRj
-         F8gTW6+CVjidtD/S81dzRYE/wR7YNALnDVBxOB68MuLnFR/ix0H28/4n9pjXqY7fqP
-         AYaxhOxcuMMZQ==
-Message-ID: <cc53723d-e7ab-5e75-aaa1-33da75118d9d@kernel.org>
-Date:   Tue, 21 Mar 2023 10:09:57 +1000
+        Mon, 20 Mar 2023 23:27:04 -0400
+Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97002726;
+        Mon, 20 Mar 2023 20:27:02 -0700 (PDT)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1peSe6-006t9a-JC; Tue, 21 Mar 2023 11:26:47 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 21 Mar 2023 11:26:46 +0800
+Date:   Tue, 21 Mar 2023 11:26:46 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     horia.geanta@nxp.com, pankaj.gupta@nxp.com, gaurav.jain@nxp.com,
+        davem@davemloft.net, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: caam: Clear some memory in instantiate_rng()
+Message-ID: <ZBkj9tUFl8OJeoic@gondor.apana.org.au>
+References: <16d6bf3bd7a6e96a8262fcd4680e3ccbb5a50478.1679355849.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] m68k: Kconfig.machine: remove obsolete configs ROMBASE
- and ROMSIZE
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230320135418.2055-1-lukas.bulwahn@gmail.com>
-From:   Greg Ungerer <gerg@kernel.org>
-In-Reply-To: <20230320135418.2055-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16d6bf3bd7a6e96a8262fcd4680e3ccbb5a50478.1679355849.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
-
-On 20/3/23 23:54, Lukas Bulwahn wrote:
-> The configs ROMBASE and ROMSIZE were used in arch/m68k/68360/head-ram.S,
-> which was removed with commit a3595962d824 ("m68knommu: remove obsolete
-> 68360 support").
+On Tue, Mar 21, 2023 at 12:45:43AM +0100, Christophe JAILLET wrote:
+> According to the comment at the end of the 'for' loop just a few lines
+> below, it looks needed to clear 'desc'.
 > 
-> Remove the obsolete configs ROMBASE and ROMSIZE.
+> So it should also be cleared for the first iteration.
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Looks good thanks.
-
-I have pushed this into the m68knommu git tree, for next branch,
-after adding Geerts Fixes and Reviewed-by tags.
-
-Regards
-Greg
-
-
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   arch/m68k/Kconfig.machine | 17 -----------------
->   1 file changed, 17 deletions(-)
+> This patch is speculative, but can't hurt.
 > 
-> diff --git a/arch/m68k/Kconfig.machine b/arch/m68k/Kconfig.machine
-> index e2f961208f18..255d50574065 100644
-> --- a/arch/m68k/Kconfig.machine
-> +++ b/arch/m68k/Kconfig.machine
-> @@ -439,15 +439,6 @@ config ROM
->   	  that can be stored in flash, with possibly the text, and data
->   	  regions being copied out to RAM at startup.
->   
-> -config ROMBASE
-> -	hex "Address of the base of ROM device"
-> -	default "0"
-> -	depends on ROM
-> -	help
-> -	  Define the address that the ROM region starts at. Some platforms
-> -	  use this to set their chip select region accordingly for the boot
-> -	  device.
-> -
->   config ROMVEC
->   	hex "Address of the base of the ROM vectors"
->   	default "0"
-> @@ -465,14 +456,6 @@ config ROMSTART
->   	  Define the start address of the system image in ROM. Commonly this
->   	  is strait after the ROM vectors.
->   
-> -config ROMSIZE
-> -	hex "Size of the ROM device"
-> -	default "0x100000"
-> -	depends on ROM
-> -	help
-> -	  Size of the ROM device. On some platforms this is used to setup
-> -	  the chip select that controls the boot ROM device.
-> -
->   choice
->   	prompt "Kernel executes from"
->   	help
+> Maybe the memset() at the end of the 'for' loop could be removed instead.
+
+I think the memset can be removed.  Horia?
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
