@@ -2,95 +2,134 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 806DBC7619A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Mar 2023 09:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B29C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Mar 2023 09:37:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbjCVJQW (ORCPT
+        id S231130AbjCVJhL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Mar 2023 05:16:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50798 "EHLO
+        Wed, 22 Mar 2023 05:37:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbjCVJQL (ORCPT
+        with ESMTP id S230491AbjCVJhI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Mar 2023 05:16:11 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C921CBCE
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Mar 2023 02:16:09 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1peuZi-0008Tz-Kl; Wed, 22 Mar 2023 10:16:06 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1peuZh-005t2v-GG; Wed, 22 Mar 2023 10:16:05 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1peuZg-0070yg-UF; Wed, 22 Mar 2023 10:16:04 +0100
-Date:   Wed, 22 Mar 2023 10:16:04 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Marian Cichy <m.cichy@pengutronix.de>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH] drm/imx/lcdc: fix a NULL vs IS_ERR() bug in probe
-Message-ID: <20230322091604.3zgzogskrtn3evur@pengutronix.de>
-References: <d0a1fc55-3ef6-444e-b3ef-fdc937d8d57a@kili.mountain>
+        Wed, 22 Mar 2023 05:37:08 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D0F25C110;
+        Wed, 22 Mar 2023 02:36:51 -0700 (PDT)
+Received: from [IPV6:2a01:e0a:120:3210:cd0d:1462:ffab:ab3a] (unknown [IPv6:2a01:e0a:120:3210:cd0d:1462:ffab:ab3a])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: benjamin.gaignard)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0FB7566003AE;
+        Wed, 22 Mar 2023 09:36:50 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1679477810;
+        bh=PG6CX5ajqtdLi2tzLr2luOtl3CwHO03O+WLnE2aRKAw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=lCP+okL1HpozS00eimFUyuYxd4HkDX0N6Bt75CbT7z5LnCZHxqXlEfTWHK56NJOF8
+         ptnN6IFaQFwWGCZysac0wJ2wfoHX5mMmGvw3ZCfCYxFvdfvdt1e2DItZ/2IxcishQn
+         65d/SIqvad1YHJWySE2W8pIuDOS1HvuUwVVcNoZ2HvUQe3k+8awhw6ZLw3li29Qn0a
+         kze1mDH6SI4qHQ9ounD46I5RAbU4ZEYYgxnI30HPf/r0dSzIHvqGkejiVCuVCBLmHi
+         gveFPCKOTMlT+GA9pz3jbprSIYyni/ocKC9WzoiVxpCjQ+imuUQTvxEvI3ZrO9iv2M
+         j1YwLxCp7CTOQ==
+Message-ID: <5d5c8c7b-b926-8397-7994-623ac9b37e83@collabora.com>
+Date:   Wed, 22 Mar 2023 10:36:47 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2c2aouyncpmczm5x"
-Content-Disposition: inline
-In-Reply-To: <d0a1fc55-3ef6-444e-b3ef-fdc937d8d57a@kili.mountain>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] media: hantro: HEVC: Fix exception handling in
+ tile_buffer_reallocate()
+Content-Language: en-US
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Adrian Ratiu <adrian.ratiu@collabora.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <e3aaeecf-8e74-2e74-c58a-d80e153e98f9@web.de>
+From:   Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <e3aaeecf-8e74-2e74-c58a-d80e153e98f9@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hi Markus,
 
---2c2aouyncpmczm5x
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your patch,
 
-On Wed, Mar 22, 2023 at 12:06:55PM +0300, Dan Carpenter wrote:
-> The devm_drm_dev_alloc() function returns error pointers.  It never
-> returns NULL.  Fix the check.
->=20
-> Fixes: c87e859cdeb5 ("drm/imx/lcdc: Implement DRM driver for imx25")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Le 20/03/2023 à 19:43, Markus Elfring a écrit :
+> Date: Mon, 20 Mar 2023 19:13:20 +0100
+>
+> The label “err_free_tile_buffers” was used to jump to another pointer
+> check despite of the detail in the implementation of the function
+> “tile_buffer_reallocate” that it was determined already that
+> a corresponding variable contained a null pointer because of a failed
+> function call “dma_alloc_coherent”.
+>
+> * Thus use an additional label instead.
+>
+> * Delete a redundant check.
+>
+>
+> This issue was detected by using the Coccinelle software.
 
-Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+If you want to optimize the error path I think the best
+option is to return -ENOMEM when hevc_dec->tile_filter.cpu is NULL,
+remove
+	if (hevc_dec->tile_bsd.cpu)
+		dma_free_coherent(vpu->dev, hevc_dec->tile_bsd.size,
+				  hevc_dec->tile_bsd.cpu,
+				  hevc_dec->tile_bsd.dma);
+and reorder the two other dma_free to get something clean.
 
-Thanks!
-Uwe
+Regards,
+Benjamin
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---2c2aouyncpmczm5x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQax1MACgkQj4D7WH0S
-/k5w6AgAt3c7qCqEfoFBiHx1LjSNf/8dLgvIMNKE0iknXsrDb1OLuwsS62vuZCH9
-0wCbQKZJnE1ym/maV3RTVu0UQNigJHNfqLjgX9L4O6+4dbttgPQwcS07VbNuirkD
-jsmpnQ4zJvOjmVWD3GnAb7IzEuw/uP3fddE/ArRKHHFhCfGrvj9FOKEmxoYdcXvq
-NpbrjQKqm96+X1TMqszm9p2XIYBg7IvzSDPMTLzUdyhPqxlD2617brWpmD5/Q+EY
-aI27L7HMS6jhizEsGRt218g9hCOq4vXMbRM8OkIlo667vx65u6+V34+2peVpe2O3
-WfBweZVxTz1+S20j4eYvKULxcAimow==
-=hwTs
------END PGP SIGNATURE-----
-
---2c2aouyncpmczm5x--
+>
+> Fixes: cb5dd5a0fa518dff14ff2b90837c3c8f98f4dd5c ("media: hantro: Introduce G2/HEVC decoder")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   drivers/media/platform/verisilicon/hantro_hevc.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/media/platform/verisilicon/hantro_hevc.c b/drivers/media/platform/verisilicon/hantro_hevc.c
+> index 9383fb7081f6..ac60df18efb7 100644
+> --- a/drivers/media/platform/verisilicon/hantro_hevc.c
+> +++ b/drivers/media/platform/verisilicon/hantro_hevc.c
+> @@ -109,7 +109,7 @@ static int tile_buffer_reallocate(struct hantro_ctx *ctx)
+>                                  &hevc_dec->tile_filter.dma,
+>                                  GFP_KERNEL);
+>       if (!hevc_dec->tile_filter.cpu)
+> -        goto err_free_tile_buffers;
+> +        goto recheck_tile_sao_cpu;
+>       hevc_dec->tile_filter.size = size;
+>   
+>       size = (VERT_SAO_RAM_SIZE * height64 * (num_tile_cols - 1) * ctx->bit_depth) / 8;
+> @@ -133,12 +133,12 @@ static int tile_buffer_reallocate(struct hantro_ctx *ctx)
+>       return 0;
+>   
+>   err_free_tile_buffers:
+> -    if (hevc_dec->tile_filter.cpu)
+> -        dma_free_coherent(vpu->dev, hevc_dec->tile_filter.size,
+> -                  hevc_dec->tile_filter.cpu,
+> -                  hevc_dec->tile_filter.dma);
+> +    dma_free_coherent(vpu->dev, hevc_dec->tile_filter.size,
+> +              hevc_dec->tile_filter.cpu,
+> +              hevc_dec->tile_filter.dma);
+>       hevc_dec->tile_filter.cpu = NULL;
+>   
+> +recheck_tile_sao_cpu:
+>       if (hevc_dec->tile_sao.cpu)
+>           dma_free_coherent(vpu->dev, hevc_dec->tile_sao.size,
+>                     hevc_dec->tile_sao.cpu,
+> --
+> 2.40.0
+>
+>
