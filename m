@@ -2,102 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D285C7619A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Mar 2023 09:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806DBC7619A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Mar 2023 09:16:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230258AbjCVJII (ORCPT
+        id S230362AbjCVJQW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Mar 2023 05:08:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57536 "EHLO
+        Wed, 22 Mar 2023 05:16:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230248AbjCVJHz (ORCPT
+        with ESMTP id S230425AbjCVJQL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Mar 2023 05:07:55 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECE65DEEA;
-        Wed, 22 Mar 2023 02:07:37 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id p34so5995313wms.3;
-        Wed, 22 Mar 2023 02:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679476055;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bvpf9FVCLctX7svqEM4yjqdyr40doXVNBus5SNiYttE=;
-        b=Zell6gVeqXqMOHVt1r10CO4gZWFcFTbZd0+ujzqF/TkD16wyZ4O2KVQWrhg4dPH4Na
-         +bj0qFQf7tnSPRsZU4m/Mabiz00PGEO1MhoJNen8HcmULlfl7EWgqrR5mq5oSv8aQrxJ
-         SOiqMk65DM9oxTZKmMIINSWSPBxIxuupgAGLg82bUAX7lILoj4NqVhmsVCKMqEendmlP
-         uhafYxbnqqToy8eaioZjxfvpeOddrVxYXpgTb8bss9MInyeaCC6sExXQTXLt4LCNdwp3
-         kGWoiP1uMT6DjSk/3bl4HJtGWDutclAVloc2x1aFLtI74BhyjXsSyRbNdRxEH5ACPc4I
-         crNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679476055;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bvpf9FVCLctX7svqEM4yjqdyr40doXVNBus5SNiYttE=;
-        b=mQYWXLZCaVoOKYcuZxpgB6Y8qX8kSZI1bYJwrTukSlKYML93o+SAD2TRHuWm/0QrFg
-         9NDo2ncrlzT7rjGXt1T016+5tdXVyz3geGTpMpFSUhdCrOcik496DvOK4ahSugPPkG+Z
-         BVT3zAd8l/2i++ZYd/bdwH78l7od4Ns8DbR9UaaGsL0cQAs/hRCvlOAuJI4B176t9vBj
-         7CvA3/3knpS+5+UjduvjDy7VyQGIfAMn+W5grA5Wg6LL/D3tU58aOOK+BYGgttwyHPJb
-         UxxzxDoivEKAwlglwU7LJ0wkQxEPUZDfcMeYdJcMovDajnyf3TzEmNayBj8PXjHJHqWj
-         EyKA==
-X-Gm-Message-State: AO0yUKUMVpBlQZ1pYiVlH53OtIohTkUsdEacQMLSqaFmN85TeM33TqEb
-        LhX05KK7q1AugvhGzruhcis=
-X-Google-Smtp-Source: AK7set+O/UO9Z7680nU7FoZxLH9tluBh6OoKi85gcUNBbK1DlkoQhkwHrxlrhEzOC7K9IUEATYHnsg==
-X-Received: by 2002:a7b:ce8a:0:b0:3ea:f883:53ea with SMTP id q10-20020a7bce8a000000b003eaf88353eamr4782665wmj.7.1679476055525;
-        Wed, 22 Mar 2023 02:07:35 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d8-20020a1c7308000000b003ed1f6878a5sm16282877wmb.5.2023.03.22.02.07.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 02:07:34 -0700 (PDT)
-Date:   Wed, 22 Mar 2023 12:07:31 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Jussi Kivilinna <jussi.kivilinna@iki.fi>
-Cc:     Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: legacy: rndis_wlan: clean up a type issue
-Message-ID: <d1f250a3-653a-497d-9c92-12dd628b7927@kili.mountain>
+        Wed, 22 Mar 2023 05:16:11 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C921CBCE
+        for <kernel-janitors@vger.kernel.org>; Wed, 22 Mar 2023 02:16:09 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1peuZi-0008Tz-Kl; Wed, 22 Mar 2023 10:16:06 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1peuZh-005t2v-GG; Wed, 22 Mar 2023 10:16:05 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1peuZg-0070yg-UF; Wed, 22 Mar 2023 10:16:04 +0100
+Date:   Wed, 22 Mar 2023 10:16:04 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Marian Cichy <m.cichy@pengutronix.de>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH] drm/imx/lcdc: fix a NULL vs IS_ERR() bug in probe
+Message-ID: <20230322091604.3zgzogskrtn3evur@pengutronix.de>
+References: <d0a1fc55-3ef6-444e-b3ef-fdc937d8d57a@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2c2aouyncpmczm5x"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <d0a1fc55-3ef6-444e-b3ef-fdc937d8d57a@kili.mountain>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The rndis_bss_info_update() returns type bool.  Change the NULL
-returns to false.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/net/wireless/legacy/rndis_wlan.c | 6 +++++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+--2c2aouyncpmczm5x
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/wireless/legacy/rndis_wlan.c b/drivers/net/wireless/legacy/rndis_wlan.c
-index bf72e5fd39cf..49e846a0fafd 100644
---- a/drivers/net/wireless/legacy/rndis_wlan.c
-+++ b/drivers/net/wireless/legacy/rndis_wlan.c
-@@ -1972,7 +1972,7 @@ static bool rndis_bss_info_update(struct usbnet *usbdev,
- 
- 	if (bssid_len < sizeof(struct ndis_80211_bssid_ex) +
- 			sizeof(struct ndis_80211_fixed_ies))
--		return NULL;
-+		return false;
- 
- 	fixed = (struct ndis_80211_fixed_ies *)bssid->ies;
- 
-@@ -1981,13 +1981,13 @@ static bool rndis_bss_info_update(struct usbnet *usbdev,
- 					(int)le32_to_cpu(bssid->ie_length));
- 	ie_len -= sizeof(struct ndis_80211_fixed_ies);
- 	if (ie_len < 0)
--		return NULL;
-+		return false;
- 
- 	/* extract data for cfg80211_inform_bss */
- 	channel = ieee80211_get_channel(priv->wdev.wiphy,
- 			KHZ_TO_MHZ(le32_to_cpu(bssid->config.ds_config)));
- 	if (!channel)
--		return NULL;
-+		return false;
- 
- 	signal = level_to_qual(le32_to_cpu(bssid->rssi));
- 	timestamp = le64_to_cpu(*(__le64 *)fixed->timestamp);
+On Wed, Mar 22, 2023 at 12:06:55PM +0300, Dan Carpenter wrote:
+> The devm_drm_dev_alloc() function returns error pointers.  It never
+> returns NULL.  Fix the check.
+>=20
+> Fixes: c87e859cdeb5 ("drm/imx/lcdc: Implement DRM driver for imx25")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Thanks!
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--2c2aouyncpmczm5x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQax1MACgkQj4D7WH0S
+/k5w6AgAt3c7qCqEfoFBiHx1LjSNf/8dLgvIMNKE0iknXsrDb1OLuwsS62vuZCH9
+0wCbQKZJnE1ym/maV3RTVu0UQNigJHNfqLjgX9L4O6+4dbttgPQwcS07VbNuirkD
+jsmpnQ4zJvOjmVWD3GnAb7IzEuw/uP3fddE/ArRKHHFhCfGrvj9FOKEmxoYdcXvq
+NpbrjQKqm96+X1TMqszm9p2XIYBg7IvzSDPMTLzUdyhPqxlD2617brWpmD5/Q+EY
+aI27L7HMS6jhizEsGRt218g9hCOq4vXMbRM8OkIlo667vx65u6+V34+2peVpe2O3
+WfBweZVxTz1+S20j4eYvKULxcAimow==
+=hwTs
+-----END PGP SIGNATURE-----
+
+--2c2aouyncpmczm5x--
