@@ -2,66 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F11C76195
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Mar 2023 21:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EC4C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Mar 2023 09:06:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229906AbjCUVnW (ORCPT
+        id S230081AbjCVJGB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Mar 2023 17:43:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39268 "EHLO
+        Wed, 22 Mar 2023 05:06:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbjCUVnU (ORCPT
+        with ESMTP id S230051AbjCVJF6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Mar 2023 17:43:20 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A51D3A274
-        for <kernel-janitors@vger.kernel.org>; Tue, 21 Mar 2023 14:43:19 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id ejlCpyJDJQ3ZFejlGp7IvP; Tue, 21 Mar 2023 22:43:18 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 21 Mar 2023 22:43:18 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH 2/2] usb: pci-quirks: Remove a useless initialization
-Date:   Tue, 21 Mar 2023 22:43:10 +0100
-Message-Id: <a3c703152d89a2c6b34b31f0158f84ba504e24d8.1679434951.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <3850d93ff40ed12f4724621a540fb5993c0a0fa9.1679434951.git.christophe.jaillet@wanadoo.fr>
-References: <3850d93ff40ed12f4724621a540fb5993c0a0fa9.1679434951.git.christophe.jaillet@wanadoo.fr>
+        Wed, 22 Mar 2023 05:05:58 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 301DE5D460;
+        Wed, 22 Mar 2023 02:05:56 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id v25so12729389wra.12;
+        Wed, 22 Mar 2023 02:05:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679475954;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tNSb6njbnC6E2KhzKme0YrMoOVs1TaPW5WrGVtWuHp8=;
+        b=HgigbtANxq4HrPqcft+7AzsYb4fSV4JVHsm8Vog5E2oGLkJvgZ3sMjna6a1r/VbuUu
+         2ItQsflpS+9ioBHEu8tEscJu9qf8DqtI7yyY4iP7UJTsBRnxEkz6ta8l7o7WN4iGOOJx
+         2lOJXRsOZYjXHovk+PGMB9hc8fXpBC64XFC+8jAZDY1M9UrAtX7Y0H5OuGITYu3ZEMWT
+         9rKG9jYD20XazJIwuW3hXnVU7tYrYcunS3eMV7IW7O+Q0wUDTe3fljqTsx+RmVcmpdYW
+         6XJjVeoieAXvv0POng3dqb9WzEbkJdWgZmM4VYMX2145PWhtwGbhXXY9fIeiN9TXftWU
+         1KfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679475954;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tNSb6njbnC6E2KhzKme0YrMoOVs1TaPW5WrGVtWuHp8=;
+        b=D17CHFpfP70wcFkWunyS4GFk3Izx1XBH6m0Q6I0BzNIZeB0rjPiJEA/0PLpURICOxV
+         S9U+lVzGluf9Xpd4KKjjtDVJ/8L/K8/gWjxg9MrgOHwYvyzZ62stP8Tnx2egxR35Lq7P
+         7/5ZUuUqMZJfrQPesnGU7+M/hAq9wITBRE/NMD14lRAXMwQWAN532FNIwtWtwdhOXqXT
+         600N5yzbaDdAHmHxl3wAMD4hyezRoQJusTP+yMwiB6gttpxrKX0DFCs6GiztADc9ecB/
+         0hjCOU7RTn/lBNeqsJPifZL7+jVwbKwCDWHkCOzVumJmJT4RbzaCiU5E7EzUNQub+/Wc
+         fBiQ==
+X-Gm-Message-State: AO0yUKVuwLcyfC30PmEI/h/np0+VLdLk7DI3KXlTLIiUlmweQOn23KE+
+        YyJUu5NGWyeQhv+LC6xcG4U=
+X-Google-Smtp-Source: AK7set/OvTqiyWwC9zGgC/8n00ZyCJIkBBARyh1VoCPJZRJt5uOxJrj1gXRYzcaB2NobXLA0oPSj8g==
+X-Received: by 2002:a05:6000:1a48:b0:2c5:3ccf:e99a with SMTP id t8-20020a0560001a4800b002c53ccfe99amr4183708wry.6.1679475954532;
+        Wed, 22 Mar 2023 02:05:54 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id b7-20020a5d4d87000000b002c707785da4sm13291214wru.107.2023.03.22.02.05.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Mar 2023 02:05:54 -0700 (PDT)
+Date:   Wed, 22 Mar 2023 12:05:49 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Fenglin Wu <quic_fenglinw@quicinc.com>
+Cc:     Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] leds: flash: qcom: Fix a signedness bug in
+ qcom_flash_register_led_device()
+Message-ID: <20aeda89-7ed2-4dd8-b707-404a15289fbc@kili.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'info' is memset()'ed a few lines below and is not use in the between.
+This bug is basically harmless at runtime because of the surrounding lines.
+Still the fwnode_property_count_u32() function returns negative error codes
+so storing them in an unsigned int will not work.
 
-There is no need to initialize one of its field to false here.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 96a2e242a5dc ("leds: flash: Add driver to support flash LED module in QCOM PMICs")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/usb/host/pci-quirks.c | 1 -
- 1 file changed, 1 deletion(-)
+The patch prefix on this was slightly tricky.  Ideally when people add a
+new driver the patch which adds the driver would use the patch prefix
+for the driver instead of the subsystem:
 
-diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
-index 6b741327d2c4..46f2412dcb40 100644
---- a/drivers/usb/host/pci-quirks.c
-+++ b/drivers/usb/host/pci-quirks.c
-@@ -208,7 +208,6 @@ static void usb_amd_find_chipset_info(void)
- {
- 	unsigned long flags;
- 	struct amd_chipset_info info;
--	info.need_pll_quirk = false;
+Not ideal: [PATCH] leds: Add new driver for QWERTY
+    Ideal: [PATCH] leds: qwerty: Add new driver
+
+ drivers/leds/flash/leds-qcom-flash.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/leds-qcom-flash.c
+index 406ed8761c78..4ea33ca88fa8 100644
+--- a/drivers/leds/flash/leds-qcom-flash.c
++++ b/drivers/leds/flash/leds-qcom-flash.c
+@@ -529,8 +529,9 @@ static int qcom_flash_register_led_device(struct device *dev,
+ 	struct led_init_data init_data;
+ 	struct led_classdev_flash *flash = &led->flash;
+ 	struct led_flash_setting *brightness, *timeout;
+-	u32 count, current_ua, timeout_us;
++	u32 current_ua, timeout_us;
+ 	u32 channels[4];
++	int count;
+ 	int i, rc;
  
- 	spin_lock_irqsave(&amd_lock, flags);
- 
+ 	count = fwnode_property_count_u32(node, "led-sources");
 -- 
-2.34.1
+2.39.1
 
