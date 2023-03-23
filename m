@@ -2,76 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5021EC74A5B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 16:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 177D6C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 19:17:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232087AbjCWQdy (ORCPT
+        id S231243AbjCWTRI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Mar 2023 12:33:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41480 "EHLO
+        Thu, 23 Mar 2023 15:17:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229682AbjCWQd1 (ORCPT
+        with ESMTP id S230350AbjCWTRH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Mar 2023 12:33:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BA6529413;
-        Thu, 23 Mar 2023 09:32:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B7D96627F5;
-        Thu, 23 Mar 2023 16:32:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C58E9C433D2;
-        Thu, 23 Mar 2023 16:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1679589136;
-        bh=Z+hK39DxAGT9ENxUSdUl1KEjAOL/mypmkO9p8VKVPHo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u2VL2lrMrkls9/9RsRHNlNP49f+/699035XtgRiplt6uuNdu4tw1d52CbgUZhJ54q
-         i9e0YVemSSNf2pxi9svB5tt8pK5oGgCBVbdRWBOlde27jYMaWpz8FdVUsWDGesnh55
-         QGv5AF0zuCRrM28Dam56m0hrLmWVtp1gtz82BnAA=
-Date:   Thu, 23 Mar 2023 17:32:13 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Thu, 23 Mar 2023 15:17:07 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835697AB9
+        for <kernel-janitors@vger.kernel.org>; Thu, 23 Mar 2023 12:17:05 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id fQQnplsmuTpvffQQnp31ME; Thu, 23 Mar 2023 20:17:03 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 23 Mar 2023 20:17:03 +0100
+X-ME-IP: 86.243.2.178
+Message-ID: <84b81ceb-1c7f-0dac-1988-0a9c0af2757c@wanadoo.fr>
+Date:   Thu, 23 Mar 2023 20:17:01 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 2/2] usb: pci-quirks: Remove a useless initialization
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mathias Nyman <mathias.nyman@intel.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-usb@vger.kernel.org
-Subject: Re: [PATCH 2/2] usb: pci-quirks: Remove a useless initialization
-Message-ID: <ZBx/DeY4rwX+4zg8@kroah.com>
 References: <3850d93ff40ed12f4724621a540fb5993c0a0fa9.1679434951.git.christophe.jaillet@wanadoo.fr>
  <a3c703152d89a2c6b34b31f0158f84ba504e24d8.1679434951.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3c703152d89a2c6b34b31f0158f84ba504e24d8.1679434951.git.christophe.jaillet@wanadoo.fr>
+ <ZBx/DeY4rwX+4zg8@kroah.com>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ZBx/DeY4rwX+4zg8@kroah.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 10:43:10PM +0100, Christophe JAILLET wrote:
-> 'info' is memset()'ed a few lines below and is not use in the between.
-> 
-> There is no need to initialize one of its field to false here.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/usb/host/pci-quirks.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
-> index 6b741327d2c4..46f2412dcb40 100644
-> --- a/drivers/usb/host/pci-quirks.c
-> +++ b/drivers/usb/host/pci-quirks.c
-> @@ -208,7 +208,6 @@ static void usb_amd_find_chipset_info(void)
->  {
->  	unsigned long flags;
->  	struct amd_chipset_info info;
-> -	info.need_pll_quirk = false;
 
-Why not just change the line above it to:
-	struct amd_chipset_info info = { };
-and drop the call to memset entirely?
+Le 23/03/2023 à 17:32, Greg Kroah-Hartman a écrit :
+> On Tue, Mar 21, 2023 at 10:43:10PM +0100, Christophe JAILLET wrote:
+>> 'info' is memset()'ed a few lines below and is not use in the between.
+>>
+>> There is no need to initialize one of its field to false here.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/usb/host/pci-quirks.c | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
+>> index 6b741327d2c4..46f2412dcb40 100644
+>> --- a/drivers/usb/host/pci-quirks.c
+>> +++ b/drivers/usb/host/pci-quirks.c
+>> @@ -208,7 +208,6 @@ static void usb_amd_find_chipset_info(void)
+>>   {
+>>   	unsigned long flags;
+>>   	struct amd_chipset_info info;
+>> -	info.need_pll_quirk = false;
+> Why not just change the line above it to:
+> 	struct amd_chipset_info info = { };
+> and drop the call to memset entirely?
 
-thanks,
+I find an explicit memset() more readable, but it's mostly a matter of 
+taste.
 
-greg k-h
+I'll send a v2.
+
+CJ
+
+
+> thanks,
+>
+> greg k-h
