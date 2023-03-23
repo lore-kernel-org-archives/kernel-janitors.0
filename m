@@ -2,91 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3500AC76196
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 14:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06A1C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 14:55:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231789AbjCWOpf (ORCPT
+        id S231918AbjCWOzP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Mar 2023 10:45:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43696 "EHLO
+        Thu, 23 Mar 2023 10:55:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbjCWOp2 (ORCPT
+        with ESMTP id S229548AbjCWOzN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Mar 2023 10:45:28 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C128523A79;
-        Thu, 23 Mar 2023 07:45:10 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id y4so87753494edo.2;
-        Thu, 23 Mar 2023 07:45:10 -0700 (PDT)
+        Thu, 23 Mar 2023 10:55:13 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB751A950
+        for <kernel-janitors@vger.kernel.org>; Thu, 23 Mar 2023 07:55:12 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id e71so25199429ybc.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 23 Mar 2023 07:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679582709;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1679583312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PkZtZRWwDV6yq9X5+ka1CKddoIkNJT/5gBkOd73Dzhk=;
-        b=fWbdg8d08k+UL2B3EdfqQaYnk+sH8AlzOL0Ttg/V8/ZeI+g5mp2Z0sAF9FbObBSTtF
-         U79d5sx/p22jFcT1c7JVwd1EKNNNfXUYUlM4Lr5DArSsbhciyU9fDXPSR3RXj2OoOj/x
-         wnANmmzmwam86O2UKvevVImuC4HMGit4j55hMoDljuvhQtJYwkPz66DGY14jGVfM167U
-         CZxapPbwqDjeko6BhDTXeiDPy+uN7naF99XskRQYxr+hSJDdXbMQ3y5S7Uw1scdfvsff
-         cXISSCqSfJ02ZCZnPAAjuR8lvY0DB7oxW/+Q7IiC9rZWISNsnRtMCaCEgVkh19bE0NOF
-         UKMw==
+        bh=gy7FFNSqm+7qYrseWG2QC5VYof+XLe7436xAkIcWYeQ=;
+        b=M40xzl8c+0MhuyYwNiU0o2bU6jntsFNDRQ9QAyLcljW/DYOysaJEYllZYOw5l1FuI7
+         2S+SDEYNza+/tLyZPAyZ6mdHPyz0WELslxJFRivKSE8ybZQCE0Fz6tLKX9lxZT8ult7G
+         Px98EB6t+qFNyxNXi8LbrBDpOr7CCUHO0raw2W+Po86WeAErVdRUlwCZ91SNtLjnHuQK
+         aHQ0hOHi9gmjHLCtTznYUTMZ5doiVVOyXitUDRn6+Gq6r/WHz4dinjpkf658JmOmjVys
+         gbUrxBGkHYHuG390a3tTxy7xnmXcjNf41sb3EcHqbzjQX5ov9aObcq62bcvIBcQg0S8K
+         rHoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679582709;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1679583312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PkZtZRWwDV6yq9X5+ka1CKddoIkNJT/5gBkOd73Dzhk=;
-        b=PF9tjZCkJh1M+IwD4KQLakI+AGt1UMQJebTKI3m8ixbo6TMg4L75XdCgN9fo7KA7uf
-         /qvHtn4htkcytLdWTuoH9la0DQEB4LEIZRIx09JBIwAtc6hEFNxiyCm8Va+4fYt5v1Zc
-         Ivrj7699kuBMf5tXAXPCozWwqoRFEEN1iM+/cegYpDT7vB0KssD/2N/33DqDhmCZHpzb
-         3GK5dgXFWhKZJvhvjhvNbvh5goPKQlRjb/AuK322fj501o+nzB3bGGhdiGq76MG+9yOl
-         arKyfPuhqJnYW4CZH6aQ636vdDGHKonVsi123q94gs6Tfi/3UaX3cc5HJZh3NaLraMI4
-         phWA==
-X-Gm-Message-State: AO0yUKX5/p0fJZBnNBzr7Jh7BRWFmmP4FCiXDUNNpdne9AuG8F7b18vj
-        3On4FRsDtR4GmaRT+Hyx6nw=
-X-Google-Smtp-Source: AK7set9v7wgfuKd5vWk9f/V+g771oktAijHifRK/8sWE88Bfmjt7S6cryPKpkXpWwONL9jVAl3Xieg==
-X-Received: by 2002:a17:907:118b:b0:939:c395:1b3 with SMTP id uz11-20020a170907118b00b00939c39501b3mr11028438ejb.31.1679582709113;
-        Thu, 23 Mar 2023 07:45:09 -0700 (PDT)
-Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id fi9-20020a170906da0900b00931faf03db0sm8458743ejb.27.2023.03.23.07.45.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Mar 2023 07:45:08 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, kernel@collabora.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] soc/tegra: cbb: remove linux/version.h
-Date:   Thu, 23 Mar 2023 15:45:05 +0100
-Message-Id: <167958269200.541422.1665611551980712106.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230303130346.2062989-1-usama.anjum@collabora.com>
-References: <20230303130346.2062989-1-usama.anjum@collabora.com>
+        bh=gy7FFNSqm+7qYrseWG2QC5VYof+XLe7436xAkIcWYeQ=;
+        b=4LZvMLmfHDzpvodfePctkcBruOuZ6GGhAkNAA9+T/I8udeS9Bcxjp1lNb91KgTLuxK
+         zlHJnWwixH2LejlbAXKo/1EuCZTgZtCEvKt4sBayTU5Y2ZyWwCD26G7jGSNdzkKIGh5l
+         4dAa8yJLAVtU9l1e8Mu2VHg2KZLoiCF7m58Wy4ASkuUvj2Ch7/R2ajT5vmcDoST01h+h
+         PJIwNintpOFCSoPVeoMQiDAh7H326MMvmFAtE3x/k2bJo975JnikAB+SWxPfWEsjRWhQ
+         oy2JqY7y97Y4ewjq+OObLkqaGAToCXdfCKQ374W224rd2xSuhwtBjQ18BpiYeY0rcPlN
+         uCUw==
+X-Gm-Message-State: AAQBX9cRP59O6iUeOax3f/YbEPTRrV0y1Kb6n6yeeEAnfW0XFEQJEITq
+        PhzI4o3R7uHSrOzU/TrrnmBg/tT4+Ud6gUNHz4FohCmLyC/PQeYtUw==
+X-Google-Smtp-Source: AKy350bJt5bMNPC0Xm+1IPMpOTEb2k1V4CfVzwTo1AvCxyUv7/kT2W5I1z7yBE+7demo9K6RS3MhizAampSlgqdSnww=
+X-Received: by 2002:a05:6902:1895:b0:b69:bf76:2243 with SMTP id
+ cj21-20020a056902189500b00b69bf762243mr2423097ybb.3.1679583311921; Thu, 23
+ Mar 2023 07:55:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230323051241.24841-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20230323051241.24841-1-lukas.bulwahn@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 23 Mar 2023 10:55:01 -0400
+Message-ID: <CAHC9VhQ7O-qSb18HeG3wjeYC97sQNd1dSYHqTncAcZK3mSPGrQ@mail.gmail.com>
+Subject: Re: [PATCH] selinux: clean up dead code after removing runtime disable
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, Mar 23, 2023 at 1:12=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gmail.=
+com> wrote:
+>
+> Commit f22f9aaf6c3d ("selinux: remove the runtime disable functionality")
+> removes the config SECURITY_SELINUX_DISABLE. This results in some dead co=
+de
+> in lsm_hooks.h and a reference in the ABI documentation leading nowhere a=
+s
+> the help text is simply gone.
+>
+> Remove the dead code and dead reference.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Paul, please pick this minor cleanup patch on top of your commit above.
 
-On Fri, 3 Mar 2023 18:03:46 +0500, Muhammad Usama Anjum wrote:
-> make versioncheck reports the following:
-> ./drivers/soc/tegra/cbb/tegra-cbb.c: 19 linux/version.h not needed.
-> ./drivers/soc/tegra/cbb/tegra194-cbb.c: 26 linux/version.h not needed.
-> ./drivers/soc/tegra/cbb/tegra234-cbb.c: 27 linux/version.h not needed.
-> 
-> So remove linux/version.h from these files.
-> 
-> [...]
+Hi Lukas, thanks for catching this and sending a patch!  For future
+reference, you don't need to add a note asking me to pick up this
+patch, as long as you send it to the right mailing list - you did -
+I'll see it and you'll either get a quick reply when I merge it or a
+longer reply with comments/feedback.
 
-Applied, thanks!
+One comment below ...
 
-[1/1] soc/tegra: cbb: remove linux/version.h
-      commit: 9737a63558deeec01ce202c6c06c96a0503a3128
+> diff --git a/Documentation/ABI/removed/sysfs-selinux-disable b/Documentat=
+ion/ABI/removed/sysfs-selinux-disable
+> index cb783c64cab3..1ae9587231e1 100644
+> --- a/Documentation/ABI/removed/sysfs-selinux-disable
+> +++ b/Documentation/ABI/removed/sysfs-selinux-disable
+> @@ -24,6 +24,3 @@ Description:
+>         SELinux at runtime.  Fedora is in the process of removing the
+>         selinuxfs "disable" node and once that is complete we will start =
+the
+>         slow process of removing this code from the kernel.
+> -
+> -       More information on /sys/fs/selinux/disable can be found under th=
+e
+> -       CONFIG_SECURITY_SELINUX_DISABLE Kconfig option.
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+When I moved the deprecation notice from the "obsolete" to the
+"removed" directory I added a note at the top which read:
+
+  "REMOVAL UPDATE: The SELinux checkreqprot functionality was
+   removed in March 2023, the original deprecation notice is
+   shown below."
+
+My goal was to preserve the original notice as much as possible,
+including the references to the now defunct Kconfig option, to help
+people who are trying to understand how things worked prior to the
+removal.
+
+If you can remove this part of your patch and resubmit I'll happily
+merge it into the selinux/next tree.
+
+Thanks!
+
+--=20
+paul-moore.com
