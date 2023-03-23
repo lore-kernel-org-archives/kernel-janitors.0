@@ -2,127 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 657E8C76196
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 05:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C86BC6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 05:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbjCWFMz (ORCPT
+        id S230205AbjCWFVM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Mar 2023 01:12:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38404 "EHLO
+        Thu, 23 Mar 2023 01:21:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230110AbjCWFMs (ORCPT
+        with ESMTP id S229597AbjCWFVK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Mar 2023 01:12:48 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D92292B297;
-        Wed, 22 Mar 2023 22:12:46 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id ek18so81722944edb.6;
-        Wed, 22 Mar 2023 22:12:46 -0700 (PDT)
+        Thu, 23 Mar 2023 01:21:10 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB85171E;
+        Wed, 22 Mar 2023 22:21:09 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id x3so81690961edb.10;
+        Wed, 22 Mar 2023 22:21:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679548365;
+        d=gmail.com; s=20210112; t=1679548868;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=whrG+gguDX8nlGRgJxXbZkIVF0D/vQIQyMAFq+Y5T48=;
-        b=BpLs1mlubkF+Y3+eFz9RDbRTudzOajXsuy0qcoKqU6L82B8CEv6+C6tbF7VUw8VYTY
-         Zn/r4dk0/D2dCl17NhSkSdcxXRONuIxG571RuOCqeOy5x8o9Dk+XWCKQ9S+zWSMVYHY3
-         r1z7+SaZ+4RBeCxzbI0cpvIcDh60UoSEYdQewkFMZIVPc+qb0f3vnh/qz0/QXEDVEvQq
-         PK0yhonnzsurHPgdKIFwF6se9XDS3QZjAELGA8+WM44ejk0NIDYXd/rbecyogL8kPy9k
-         6vnsDQeKu5genjszP4FTHEkaN4tr7/saY12TD56468yRW/6EognoDDQQ2IOlXqVP7S/C
-         X2pg==
+        bh=sQ3/MMrs7fOEw9Jd5dWKupgT3gzNQkdxihTCZGsPDmI=;
+        b=R2XOpoJZvRNESbyIOwefYoyfc6WUkceVZUIVpBLBAOW7WyAteGm/h4N7KM2wGvZqoU
+         AFKWLmbJB+GArg0LWMMSFDQ7/37Ada2q3ZfA7W2ZmuFdUird8ofOKovZkb3vsgSZhmAl
+         OQ36CvynrY5LHp4vtaBQFHRvmnHmaWrHAh0imAyaUheUdQx7h1u2k8fFjX2wSahR1+fA
+         od+i1FfFE4IcAZdvJo+WJtPQUBkhSHxgLnQMRPrdRQEOgHvtz3odeVSRAjCerawS24M2
+         w76HzsbCph0JgXSAAooO4yIzwvCleEgxjAW9Hd865zC3cu64/4anbFf0y+kW8CZwdkdo
+         Y4nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679548365;
+        d=1e100.net; s=20210112; t=1679548868;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=whrG+gguDX8nlGRgJxXbZkIVF0D/vQIQyMAFq+Y5T48=;
-        b=bpZ/bd78hY2GKqdD/wm8pKoKrvirpJA3LEXIOW2qrXx2NeFrC573gtEmFDvpLgiJkp
-         scKBRxgZszyMhuDLiR1QJfeVbfPL77t0oTbIRNfjhNz7Vb8FKi6qT5qbZWUPDuC2ndLd
-         il+D83EgrIyXFMD4EgkACYgEOyLeS8lXK9JHhVIQwt1gnNT3sm03zPCOu1OkwDX28WR2
-         FWQUyiSRf9YwD9sBpZZdQC1e0M6u8s9knIwTvBvUZKOOxDJr/DsbNmU5BSek5uEFbkeI
-         a7bRUYsQGOqdZTdAqWGwLc7gDTMUVBcnMGX3ixXihE079nNjlBKSzunwYKYSJTw4+Cau
-         KYsQ==
-X-Gm-Message-State: AO0yUKWgU1LuB4bWmQPkksIKuJvKLA8OsjF3Q1ZV45ZiJU3ym1xDOmVw
-        dBWM5lRDgo6xpWFF+tbRlpc=
-X-Google-Smtp-Source: AK7set8TGkvIr/ztWdhN99zc0Edsj6Aji2tAbnZ8CQjGqKiOpOy3zhFrG+v68BtyC+D7AEpOFH403w==
-X-Received: by 2002:a17:906:ce32:b0:939:7260:7f7e with SMTP id sd18-20020a170906ce3200b0093972607f7emr9718319ejb.49.1679548364907;
-        Wed, 22 Mar 2023 22:12:44 -0700 (PDT)
+        bh=sQ3/MMrs7fOEw9Jd5dWKupgT3gzNQkdxihTCZGsPDmI=;
+        b=AcQZuGmYSu+M9AqU7BiHduQqw7YRI8pb5fkpM4Ss0xA8bMCMkNIdVI0tbO6lmffLPV
+         wLg4aCgPg04rnHwrICGJR4YyJJD/2imIIQbO6AWKmSrMgS0MeM4B7DQX1voSdFLgA2Fu
+         HlKQv4rvT/ILF1CeIbae3w49c6PtlFENo1bXyvWoy7sALvI9JWhlrYwI+ZGSpyD7AfG3
+         xgaUWJJ338ZwdvN/9IrIP7qzkk9I9jIFxD/uENNY4cktNueeOg9+g/7bPGPhot0tL1zb
+         irYH45MJ4M9U3BIeKa2N1o9RwUoDXTWE0OqCpZMQphQdwz5HGlCefA1WAvx0rPhteINe
+         At2w==
+X-Gm-Message-State: AO0yUKVfZfCvmksf2oErMA8GYCkpBsv/3KWctqwXPgOH5ce6w3CZjoKf
+        Znr5atyKgYW96MZi9a+hZ+w=
+X-Google-Smtp-Source: AK7set8YQJ806nGRLwfgjJjKzD682xxAOm/YlSCIrumF/P9SMQ2CNzpYuaCr9Q7GhZbvdUTyErfoNQ==
+X-Received: by 2002:a05:6402:a53:b0:4bf:b2b1:84d8 with SMTP id bt19-20020a0564020a5300b004bfb2b184d8mr4481480edb.19.1679548867499;
+        Wed, 22 Mar 2023 22:21:07 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:d509:cbf0:f579:76f0])
-        by smtp.gmail.com with ESMTPSA id n15-20020a170906118f00b0092421bf4927sm8250052eja.95.2023.03.22.22.12.43
+        by smtp.gmail.com with ESMTPSA id y94-20020a50bb67000000b004be11e97ca2sm8603467ede.90.2023.03.22.22.21.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 22:12:43 -0700 (PDT)
+        Wed, 22 Mar 2023 22:21:07 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org
+To:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] selinux: clean up dead code after removing runtime disable
-Date:   Thu, 23 Mar 2023 06:12:41 +0100
-Message-Id: <20230323051241.24841-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] ethernet: broadcom/sb1250-mac: clean up after SIBYTE_BCM1x55 removal
+Date:   Thu, 23 Mar 2023 06:21:01 +0100
+Message-Id: <20230323052101.30111-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit f22f9aaf6c3d ("selinux: remove the runtime disable functionality")
-removes the config SECURITY_SELINUX_DISABLE. This results in some dead code
-in lsm_hooks.h and a reference in the ABI documentation leading nowhere as
-the help text is simply gone.
+With commit b984d7b56dfc ("MIPS: sibyte: Remove unused config option
+SIBYTE_BCM1x55"), some #if's in the Broadcom SiByte SOC built-in Ethernet
+driver can be simplified.
 
-Remove the dead code and dead reference.
+Simplify prepreprocessor conditions after config SIBYTE_BCM1x55 removal.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Paul, please pick this minor cleanup patch on top of your commit above.
+I looked around on lore.kernel.org and could not find a pending patch from
+Thomas Bogendoerfer related to cleaning up this network driver after he
+removed the config. So, to be on the safe side, I just sent this quick
+clean-up patch.
 
- .../ABI/removed/sysfs-selinux-disable         |  3 ---
- include/linux/lsm_hooks.h                     | 23 -------------------
- 2 files changed, 26 deletions(-)
+ drivers/net/ethernet/broadcom/sb1250-mac.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/ABI/removed/sysfs-selinux-disable b/Documentation/ABI/removed/sysfs-selinux-disable
-index cb783c64cab3..1ae9587231e1 100644
---- a/Documentation/ABI/removed/sysfs-selinux-disable
-+++ b/Documentation/ABI/removed/sysfs-selinux-disable
-@@ -24,6 +24,3 @@ Description:
- 	SELinux at runtime.  Fedora is in the process of removing the
- 	selinuxfs "disable" node and once that is complete we will start the
- 	slow process of removing this code from the kernel.
--
--	More information on /sys/fs/selinux/disable can be found under the
--	CONFIG_SECURITY_SELINUX_DISABLE Kconfig option.
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 2b04f94a31bd..ab2b2fafa4a4 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -117,29 +117,6 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
- 		__used __section(".early_lsm_info.init")		\
- 		__aligned(sizeof(unsigned long))
+diff --git a/drivers/net/ethernet/broadcom/sb1250-mac.c b/drivers/net/ethernet/broadcom/sb1250-mac.c
+index f02facb60fd1..3a6763c5e8b3 100644
+--- a/drivers/net/ethernet/broadcom/sb1250-mac.c
++++ b/drivers/net/ethernet/broadcom/sb1250-mac.c
+@@ -73,7 +73,7 @@ MODULE_PARM_DESC(int_timeout_rx, "RX timeout value");
  
--#ifdef CONFIG_SECURITY_SELINUX_DISABLE
--/*
-- * Assuring the safety of deleting a security module is up to
-- * the security module involved. This may entail ordering the
-- * module's hook list in a particular way, refusing to disable
-- * the module once a policy is loaded or any number of other
-- * actions better imagined than described.
-- *
-- * The name of the configuration option reflects the only module
-- * that currently uses the mechanism. Any developer who thinks
-- * disabling their module is a good idea needs to be at least as
-- * careful as the SELinux team.
-- */
--static inline void security_delete_hooks(struct security_hook_list *hooks,
--						int count)
--{
--	int i;
--
--	for (i = 0; i < count; i++)
--		hlist_del_rcu(&hooks[i].list);
--}
--#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
--
- extern int lsm_inode_alloc(struct inode *inode);
+ #include <asm/sibyte/board.h>
+ #include <asm/sibyte/sb1250.h>
+-#if defined(CONFIG_SIBYTE_BCM1x55) || defined(CONFIG_SIBYTE_BCM1x80)
++#if defined(CONFIG_SIBYTE_BCM1x80)
+ #include <asm/sibyte/bcm1480_regs.h>
+ #include <asm/sibyte/bcm1480_int.h>
+ #define R_MAC_DMA_OODPKTLOST_RX	R_MAC_DMA_OODPKTLOST
+@@ -87,7 +87,7 @@ MODULE_PARM_DESC(int_timeout_rx, "RX timeout value");
+ #include <asm/sibyte/sb1250_mac.h>
+ #include <asm/sibyte/sb1250_dma.h>
  
- #endif /* ! __LINUX_LSM_HOOKS_H */
+-#if defined(CONFIG_SIBYTE_BCM1x55) || defined(CONFIG_SIBYTE_BCM1x80)
++#if defined(CONFIG_SIBYTE_BCM1x80)
+ #define UNIT_INT(n)		(K_BCM1480_INT_MAC_0 + ((n) * 2))
+ #elif defined(CONFIG_SIBYTE_SB1250) || defined(CONFIG_SIBYTE_BCM112X)
+ #define UNIT_INT(n)		(K_INT_MAC_0 + (n))
+@@ -1527,7 +1527,7 @@ static void sbmac_channel_start(struct sbmac_softc *s)
+ 	 * Turn on the rest of the bits in the enable register
+ 	 */
+ 
+-#if defined(CONFIG_SIBYTE_BCM1x55) || defined(CONFIG_SIBYTE_BCM1x80)
++#if defined(CONFIG_SIBYTE_BCM1x80)
+ 	__raw_writeq(M_MAC_RXDMA_EN0 |
+ 		       M_MAC_TXDMA_EN0, s->sbm_macenable);
+ #elif defined(CONFIG_SIBYTE_SB1250) || defined(CONFIG_SIBYTE_BCM112X)
 -- 
 2.17.1
 
