@@ -2,117 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C86BC6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 05:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE6DC6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 07:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230205AbjCWFVM (ORCPT
+        id S230393AbjCWHLN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Mar 2023 01:21:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49376 "EHLO
+        Thu, 23 Mar 2023 03:11:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbjCWFVK (ORCPT
+        with ESMTP id S230027AbjCWHLG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Mar 2023 01:21:10 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB85171E;
-        Wed, 22 Mar 2023 22:21:09 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id x3so81690961edb.10;
-        Wed, 22 Mar 2023 22:21:09 -0700 (PDT)
+        Thu, 23 Mar 2023 03:11:06 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D1522A1F;
+        Thu, 23 Mar 2023 00:11:05 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id h8so82436006ede.8;
+        Thu, 23 Mar 2023 00:11:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679548868;
+        d=gmail.com; s=20210112; t=1679555464;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sQ3/MMrs7fOEw9Jd5dWKupgT3gzNQkdxihTCZGsPDmI=;
-        b=R2XOpoJZvRNESbyIOwefYoyfc6WUkceVZUIVpBLBAOW7WyAteGm/h4N7KM2wGvZqoU
-         AFKWLmbJB+GArg0LWMMSFDQ7/37Ada2q3ZfA7W2ZmuFdUird8ofOKovZkb3vsgSZhmAl
-         OQ36CvynrY5LHp4vtaBQFHRvmnHmaWrHAh0imAyaUheUdQx7h1u2k8fFjX2wSahR1+fA
-         od+i1FfFE4IcAZdvJo+WJtPQUBkhSHxgLnQMRPrdRQEOgHvtz3odeVSRAjCerawS24M2
-         w76HzsbCph0JgXSAAooO4yIzwvCleEgxjAW9Hd865zC3cu64/4anbFf0y+kW8CZwdkdo
-         Y4nQ==
+        bh=IJhxQ9eegIy8auIeHDgaLNjJt7iECL+UFcBbA1fy0hU=;
+        b=aVitLeOd4WiRjj3IOZQfgiuCBqHztWLdBxrUzyM+3kiC9kxQ37/OZXqHSqfODTsNQv
+         bYqS5l9cWv3DUUEeQnsVCm4Iu6dDag4GXMmtQozJE6cFmAaeDmouxmWkLPtX7OCfsqdc
+         eSBpshyYkB3GWtyrmfp/ltuvV9QejWqjUQad6r0HUb4ckwnguwGfa9kUrpjzU8hhimnu
+         GOlLaXFwwvBgaUkks5j1xzVeYqW/7azy4MxBw6gRwIRFW4xhloI9WinCvGJBCc3NiRwb
+         xBgUDzVyzxXwEoNPxfnj0rWZpcwUvKml4xL47+rxLuCOz46rkxX/+B00Vb8bV9/+YI/0
+         FKWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679548868;
+        d=1e100.net; s=20210112; t=1679555464;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sQ3/MMrs7fOEw9Jd5dWKupgT3gzNQkdxihTCZGsPDmI=;
-        b=AcQZuGmYSu+M9AqU7BiHduQqw7YRI8pb5fkpM4Ss0xA8bMCMkNIdVI0tbO6lmffLPV
-         wLg4aCgPg04rnHwrICGJR4YyJJD/2imIIQbO6AWKmSrMgS0MeM4B7DQX1voSdFLgA2Fu
-         HlKQv4rvT/ILF1CeIbae3w49c6PtlFENo1bXyvWoy7sALvI9JWhlrYwI+ZGSpyD7AfG3
-         xgaUWJJ338ZwdvN/9IrIP7qzkk9I9jIFxD/uENNY4cktNueeOg9+g/7bPGPhot0tL1zb
-         irYH45MJ4M9U3BIeKa2N1o9RwUoDXTWE0OqCpZMQphQdwz5HGlCefA1WAvx0rPhteINe
-         At2w==
-X-Gm-Message-State: AO0yUKVfZfCvmksf2oErMA8GYCkpBsv/3KWctqwXPgOH5ce6w3CZjoKf
-        Znr5atyKgYW96MZi9a+hZ+w=
-X-Google-Smtp-Source: AK7set8YQJ806nGRLwfgjJjKzD682xxAOm/YlSCIrumF/P9SMQ2CNzpYuaCr9Q7GhZbvdUTyErfoNQ==
-X-Received: by 2002:a05:6402:a53:b0:4bf:b2b1:84d8 with SMTP id bt19-20020a0564020a5300b004bfb2b184d8mr4481480edb.19.1679548867499;
-        Wed, 22 Mar 2023 22:21:07 -0700 (PDT)
+        bh=IJhxQ9eegIy8auIeHDgaLNjJt7iECL+UFcBbA1fy0hU=;
+        b=F8A8JIAYFREBsG6OdksNrCzSUFtG+SBemKrQdIpr74wusWatAhcu5mN6npEAjvXXZr
+         ++E3E9cVb7H4QKDoXZp8Ac3SZrlcOTaVzbjovZaMio0Mi647YfURB72USjanX+qLx67R
+         8qfBccdGTBaX/kpHM6TwKxoNCRAcUJkewlAx/oo1laaZQbosrLWy66/oHOZ6BzW9QZb1
+         +Z0WoNxvqG3h7vJWI78yJ7QLf9N/zdyPX02nUHyRDNM/zcmthTpMfmdEtrmRk8Ghxrrg
+         7cODCKxvNRi7Kdi21o8IXPyDwnssMEW/RNWtAx4FBnTGlUWo9oW/NOPK3N6t68nAuUgS
+         NOPQ==
+X-Gm-Message-State: AO0yUKUXqJ797i1ItVbnAT9pZv2+nJlud5sMxCmA4oA8FINzfNvV03lG
+        bocY6sn+vHbpxYicJJrFZ2g=
+X-Google-Smtp-Source: AK7set8JjIMI3M3MQ8kmGBM6/1q4GALj6FNnKbVN7GNh/M/c8BBNUJetqcy0nXuHa0jQ9Ir1ecy/FQ==
+X-Received: by 2002:a17:906:90cc:b0:930:18f5:d016 with SMTP id v12-20020a17090690cc00b0093018f5d016mr9996790ejw.15.1679555463531;
+        Thu, 23 Mar 2023 00:11:03 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:2a40:1104:d509:cbf0:f579:76f0])
-        by smtp.gmail.com with ESMTPSA id y94-20020a50bb67000000b004be11e97ca2sm8603467ede.90.2023.03.22.22.21.06
+        by smtp.gmail.com with ESMTPSA id a27-20020a170906245b00b008d173604d72sm8385061ejb.174.2023.03.23.00.11.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 22:21:07 -0700 (PDT)
+        Thu, 23 Mar 2023 00:11:03 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        netdev@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] ethernet: broadcom/sb1250-mac: clean up after SIBYTE_BCM1x55 removal
-Date:   Thu, 23 Mar 2023 06:21:01 +0100
-Message-Id: <20230323052101.30111-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] serial: sb1250-duart: clean up after SIBYTE_BCM1x55 removal
+Date:   Thu, 23 Mar 2023 08:10:53 +0100
+Message-Id: <20230323071053.417-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 With commit b984d7b56dfc ("MIPS: sibyte: Remove unused config option
-SIBYTE_BCM1x55"), some #if's in the Broadcom SiByte SOC built-in Ethernet
-driver can be simplified.
+SIBYTE_BCM1x55"), an #if in the Broadcom SiByte DUART driver can be
+simplified.
 
-Simplify prepreprocessor conditions after config SIBYTE_BCM1x55 removal.
+Simplify the prepreprocessor condition after config SIBYTE_BCM1x55 removal.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
 I looked around on lore.kernel.org and could not find a pending patch from
-Thomas Bogendoerfer related to cleaning up this network driver after he
+Thomas Bogendoerfer related to cleaning up this serial driver after he
 removed the config. So, to be on the safe side, I just sent this quick
 clean-up patch.
 
- drivers/net/ethernet/broadcom/sb1250-mac.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/tty/serial/sb1250-duart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/sb1250-mac.c b/drivers/net/ethernet/broadcom/sb1250-mac.c
-index f02facb60fd1..3a6763c5e8b3 100644
---- a/drivers/net/ethernet/broadcom/sb1250-mac.c
-+++ b/drivers/net/ethernet/broadcom/sb1250-mac.c
-@@ -73,7 +73,7 @@ MODULE_PARM_DESC(int_timeout_rx, "RX timeout value");
+diff --git a/drivers/tty/serial/sb1250-duart.c b/drivers/tty/serial/sb1250-duart.c
+index de56f383964e..b6de0dc51f29 100644
+--- a/drivers/tty/serial/sb1250-duart.c
++++ b/drivers/tty/serial/sb1250-duart.c
+@@ -41,7 +41,7 @@
+ #include <asm/sibyte/swarm.h>
  
- #include <asm/sibyte/board.h>
- #include <asm/sibyte/sb1250.h>
+ 
 -#if defined(CONFIG_SIBYTE_BCM1x55) || defined(CONFIG_SIBYTE_BCM1x80)
 +#if defined(CONFIG_SIBYTE_BCM1x80)
  #include <asm/sibyte/bcm1480_regs.h>
  #include <asm/sibyte/bcm1480_int.h>
- #define R_MAC_DMA_OODPKTLOST_RX	R_MAC_DMA_OODPKTLOST
-@@ -87,7 +87,7 @@ MODULE_PARM_DESC(int_timeout_rx, "RX timeout value");
- #include <asm/sibyte/sb1250_mac.h>
- #include <asm/sibyte/sb1250_dma.h>
  
--#if defined(CONFIG_SIBYTE_BCM1x55) || defined(CONFIG_SIBYTE_BCM1x80)
-+#if defined(CONFIG_SIBYTE_BCM1x80)
- #define UNIT_INT(n)		(K_BCM1480_INT_MAC_0 + ((n) * 2))
- #elif defined(CONFIG_SIBYTE_SB1250) || defined(CONFIG_SIBYTE_BCM112X)
- #define UNIT_INT(n)		(K_INT_MAC_0 + (n))
-@@ -1527,7 +1527,7 @@ static void sbmac_channel_start(struct sbmac_softc *s)
- 	 * Turn on the rest of the bits in the enable register
- 	 */
- 
--#if defined(CONFIG_SIBYTE_BCM1x55) || defined(CONFIG_SIBYTE_BCM1x80)
-+#if defined(CONFIG_SIBYTE_BCM1x80)
- 	__raw_writeq(M_MAC_RXDMA_EN0 |
- 		       M_MAC_TXDMA_EN0, s->sbm_macenable);
- #elif defined(CONFIG_SIBYTE_SB1250) || defined(CONFIG_SIBYTE_BCM112X)
 -- 
 2.17.1
 
