@@ -2,124 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D06A1C6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 14:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D933C76196
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 15:26:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231918AbjCWOzP (ORCPT
+        id S232128AbjCWP0T (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Mar 2023 10:55:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60740 "EHLO
+        Thu, 23 Mar 2023 11:26:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbjCWOzN (ORCPT
+        with ESMTP id S232093AbjCWP0S (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Mar 2023 10:55:13 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB751A950
-        for <kernel-janitors@vger.kernel.org>; Thu, 23 Mar 2023 07:55:12 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id e71so25199429ybc.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 23 Mar 2023 07:55:12 -0700 (PDT)
+        Thu, 23 Mar 2023 11:26:18 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC4CC1DB88;
+        Thu, 23 Mar 2023 08:26:17 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id l12so20942315wrm.10;
+        Thu, 23 Mar 2023 08:26:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1679583312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gy7FFNSqm+7qYrseWG2QC5VYof+XLe7436xAkIcWYeQ=;
-        b=M40xzl8c+0MhuyYwNiU0o2bU6jntsFNDRQ9QAyLcljW/DYOysaJEYllZYOw5l1FuI7
-         2S+SDEYNza+/tLyZPAyZ6mdHPyz0WELslxJFRivKSE8ybZQCE0Fz6tLKX9lxZT8ult7G
-         Px98EB6t+qFNyxNXi8LbrBDpOr7CCUHO0raw2W+Po86WeAErVdRUlwCZ91SNtLjnHuQK
-         aHQ0hOHi9gmjHLCtTznYUTMZ5doiVVOyXitUDRn6+Gq6r/WHz4dinjpkf658JmOmjVys
-         gbUrxBGkHYHuG390a3tTxy7xnmXcjNf41sb3EcHqbzjQX5ov9aObcq62bcvIBcQg0S8K
-         rHoQ==
+        d=gmail.com; s=20210112; t=1679585176;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F2AEpvtu2XG88P/VDWdqhpfYyJ4UOcOn6tPJNQTorBk=;
+        b=StMMyxjdB8B52QWahYfHHTXOaM9qHCRWRUcDu9g6vBIHgPDNQtBQ02gT5PnFRuC7X0
+         TPim4MQFiFC5Q4VAM1N0PiBgA5Nq5by2VmSY9Lri59gC/9oxdUYkouJh7gEAAjrcA3jP
+         BZTY+NP7aE9LU9XH1o95Ghr/8nprUz+E+SiaBOLCymAaKp5cncyx098vLJomRa44xAAl
+         HlF8tz6LMpw8LMh3W2MMPrO0J2ymcAhrDpgTNGooAjF4/QxkO+MGNgCblOq+5Fp6q+I+
+         IjK5FaIEKG0Wsm/lJ8Hp1/FnLqw6TSi2W00VUUxBeZC1sj4q9qfEqNwzPShHZXEcZuF1
+         /Ldg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679583312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gy7FFNSqm+7qYrseWG2QC5VYof+XLe7436xAkIcWYeQ=;
-        b=4LZvMLmfHDzpvodfePctkcBruOuZ6GGhAkNAA9+T/I8udeS9Bcxjp1lNb91KgTLuxK
-         zlHJnWwixH2LejlbAXKo/1EuCZTgZtCEvKt4sBayTU5Y2ZyWwCD26G7jGSNdzkKIGh5l
-         4dAa8yJLAVtU9l1e8Mu2VHg2KZLoiCF7m58Wy4ASkuUvj2Ch7/R2ajT5vmcDoST01h+h
-         PJIwNintpOFCSoPVeoMQiDAh7H326MMvmFAtE3x/k2bJo975JnikAB+SWxPfWEsjRWhQ
-         oy2JqY7y97Y4ewjq+OObLkqaGAToCXdfCKQ374W224rd2xSuhwtBjQ18BpiYeY0rcPlN
-         uCUw==
-X-Gm-Message-State: AAQBX9cRP59O6iUeOax3f/YbEPTRrV0y1Kb6n6yeeEAnfW0XFEQJEITq
-        PhzI4o3R7uHSrOzU/TrrnmBg/tT4+Ud6gUNHz4FohCmLyC/PQeYtUw==
-X-Google-Smtp-Source: AKy350bJt5bMNPC0Xm+1IPMpOTEb2k1V4CfVzwTo1AvCxyUv7/kT2W5I1z7yBE+7demo9K6RS3MhizAampSlgqdSnww=
-X-Received: by 2002:a05:6902:1895:b0:b69:bf76:2243 with SMTP id
- cj21-20020a056902189500b00b69bf762243mr2423097ybb.3.1679583311921; Thu, 23
- Mar 2023 07:55:11 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679585176;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F2AEpvtu2XG88P/VDWdqhpfYyJ4UOcOn6tPJNQTorBk=;
+        b=3iSa2M7lNlGLzr0DGmTXfkFRQg9fNXxnDR/vVHcJ4i/kLfgcperoVHClLbvweV7I/0
+         1WUynFIUeEtdmDG0PHa4pifNd2YbjZ7gRGV391eauHT3WNJcJm+h0q3clQyL06VaLcYI
+         6WRaRUGK1qp2E3fs9d3Zqr9pYhluBx7VehpazjD3u9MxZEf+nOK3swvRJho7FPpY0FXl
+         1h3+Mt2VjKwWTDWN01fDyYLacCahoRKtGep7M/7guHVpipy28oTKZojutvKO7/EBNn6H
+         AlRAdC9IDJJb1E52x9+VV6820Q+lBkVCeUX5oIc5xRkPsT7tYsOCVm4qlogOSlAoKs2v
+         SvJA==
+X-Gm-Message-State: AAQBX9dmqhl6Lh1E/XVlOiY3fpqYHfcnvcsPCHPbc7T2eqqbNfC9y6+u
+        RkjfLv2qN7+MiXkC8WJB28A=
+X-Google-Smtp-Source: AKy350aMt6oN6Jcj9qISEhLPHPa+5FVszw+vesojoxzv4NX5+dK1wsm84LY0J/skqkAe8UQzx5ytEA==
+X-Received: by 2002:adf:f1c1:0:b0:2da:1ac3:adfc with SMTP id z1-20020adff1c1000000b002da1ac3adfcmr3191787wro.60.1679585176142;
+        Thu, 23 Mar 2023 08:26:16 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id w2-20020a5d6802000000b002cfe687fc7asm16291460wru.67.2023.03.23.08.24.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Mar 2023 08:24:44 -0700 (PDT)
+Date:   Thu, 23 Mar 2023 18:23:56 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] iio: adc: ti-ads1100: fix error code in probe()
+Message-ID: <36fa2aeb-f392-4793-8b38-ae15514033c8@kili.mountain>
 MIME-Version: 1.0
-References: <20230323051241.24841-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20230323051241.24841-1-lukas.bulwahn@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 23 Mar 2023 10:55:01 -0400
-Message-ID: <CAHC9VhQ7O-qSb18HeG3wjeYC97sQNd1dSYHqTncAcZK3mSPGrQ@mail.gmail.com>
-Subject: Re: [PATCH] selinux: clean up dead code after removing runtime disable
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 1:12=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gmail.=
-com> wrote:
->
-> Commit f22f9aaf6c3d ("selinux: remove the runtime disable functionality")
-> removes the config SECURITY_SELINUX_DISABLE. This results in some dead co=
-de
-> in lsm_hooks.h and a reference in the ABI documentation leading nowhere a=
-s
-> the help text is simply gone.
->
-> Remove the dead code and dead reference.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Paul, please pick this minor cleanup patch on top of your commit above.
+This code has a copy and paste bug so it accidentally returns
+"PTR_ERR(data->reg_vdd)" which is a valid pointer cast to int. It
+should return "ret" instead.
 
-Hi Lukas, thanks for catching this and sending a patch!  For future
-reference, you don't need to add a note asking me to pick up this
-patch, as long as you send it to the right mailing list - you did -
-I'll see it and you'll either get a quick reply when I merge it or a
-longer reply with comments/feedback.
+Fixes: 541880542f2b ("iio: adc: Add TI ADS1100 and ADS1000")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/iio/adc/ti-ads1100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-One comment below ...
+diff --git a/drivers/iio/adc/ti-ads1100.c b/drivers/iio/adc/ti-ads1100.c
+index 6a478efb108b..6b5aebb82455 100644
+--- a/drivers/iio/adc/ti-ads1100.c
++++ b/drivers/iio/adc/ti-ads1100.c
+@@ -344,7 +344,7 @@ static int ads1100_probe(struct i2c_client *client)
+ 
+ 	ret = regulator_enable(data->reg_vdd);
+ 	if (ret < 0)
+-		return dev_err_probe(dev, PTR_ERR(data->reg_vdd),
++		return dev_err_probe(dev, ret,
+ 				     "Failed to enable vdd regulator\n");
+ 
+ 	ret = devm_add_action_or_reset(dev, ads1100_reg_disable, data->reg_vdd);
+-- 
+2.39.1
 
-> diff --git a/Documentation/ABI/removed/sysfs-selinux-disable b/Documentat=
-ion/ABI/removed/sysfs-selinux-disable
-> index cb783c64cab3..1ae9587231e1 100644
-> --- a/Documentation/ABI/removed/sysfs-selinux-disable
-> +++ b/Documentation/ABI/removed/sysfs-selinux-disable
-> @@ -24,6 +24,3 @@ Description:
->         SELinux at runtime.  Fedora is in the process of removing the
->         selinuxfs "disable" node and once that is complete we will start =
-the
->         slow process of removing this code from the kernel.
-> -
-> -       More information on /sys/fs/selinux/disable can be found under th=
-e
-> -       CONFIG_SECURITY_SELINUX_DISABLE Kconfig option.
-
-When I moved the deprecation notice from the "obsolete" to the
-"removed" directory I added a note at the top which read:
-
-  "REMOVAL UPDATE: The SELinux checkreqprot functionality was
-   removed in March 2023, the original deprecation notice is
-   shown below."
-
-My goal was to preserve the original notice as much as possible,
-including the references to the now defunct Kconfig option, to help
-people who are trying to understand how things worked prior to the
-removal.
-
-If you can remove this part of your patch and resubmit I'll happily
-merge it into the selinux/next tree.
-
-Thanks!
-
---=20
-paul-moore.com
