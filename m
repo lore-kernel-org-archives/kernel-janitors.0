@@ -2,92 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D933C76196
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 15:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5021EC74A5B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 16:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232128AbjCWP0T (ORCPT
+        id S232087AbjCWQdy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Mar 2023 11:26:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48048 "EHLO
+        Thu, 23 Mar 2023 12:33:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232093AbjCWP0S (ORCPT
+        with ESMTP id S229682AbjCWQd1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Mar 2023 11:26:18 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC4CC1DB88;
-        Thu, 23 Mar 2023 08:26:17 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id l12so20942315wrm.10;
-        Thu, 23 Mar 2023 08:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679585176;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F2AEpvtu2XG88P/VDWdqhpfYyJ4UOcOn6tPJNQTorBk=;
-        b=StMMyxjdB8B52QWahYfHHTXOaM9qHCRWRUcDu9g6vBIHgPDNQtBQ02gT5PnFRuC7X0
-         TPim4MQFiFC5Q4VAM1N0PiBgA5Nq5by2VmSY9Lri59gC/9oxdUYkouJh7gEAAjrcA3jP
-         BZTY+NP7aE9LU9XH1o95Ghr/8nprUz+E+SiaBOLCymAaKp5cncyx098vLJomRa44xAAl
-         HlF8tz6LMpw8LMh3W2MMPrO0J2ymcAhrDpgTNGooAjF4/QxkO+MGNgCblOq+5Fp6q+I+
-         IjK5FaIEKG0Wsm/lJ8Hp1/FnLqw6TSi2W00VUUxBeZC1sj4q9qfEqNwzPShHZXEcZuF1
-         /Ldg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679585176;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F2AEpvtu2XG88P/VDWdqhpfYyJ4UOcOn6tPJNQTorBk=;
-        b=3iSa2M7lNlGLzr0DGmTXfkFRQg9fNXxnDR/vVHcJ4i/kLfgcperoVHClLbvweV7I/0
-         1WUynFIUeEtdmDG0PHa4pifNd2YbjZ7gRGV391eauHT3WNJcJm+h0q3clQyL06VaLcYI
-         6WRaRUGK1qp2E3fs9d3Zqr9pYhluBx7VehpazjD3u9MxZEf+nOK3swvRJho7FPpY0FXl
-         1h3+Mt2VjKwWTDWN01fDyYLacCahoRKtGep7M/7guHVpipy28oTKZojutvKO7/EBNn6H
-         AlRAdC9IDJJb1E52x9+VV6820Q+lBkVCeUX5oIc5xRkPsT7tYsOCVm4qlogOSlAoKs2v
-         SvJA==
-X-Gm-Message-State: AAQBX9dmqhl6Lh1E/XVlOiY3fpqYHfcnvcsPCHPbc7T2eqqbNfC9y6+u
-        RkjfLv2qN7+MiXkC8WJB28A=
-X-Google-Smtp-Source: AKy350aMt6oN6Jcj9qISEhLPHPa+5FVszw+vesojoxzv4NX5+dK1wsm84LY0J/skqkAe8UQzx5ytEA==
-X-Received: by 2002:adf:f1c1:0:b0:2da:1ac3:adfc with SMTP id z1-20020adff1c1000000b002da1ac3adfcmr3191787wro.60.1679585176142;
-        Thu, 23 Mar 2023 08:26:16 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id w2-20020a5d6802000000b002cfe687fc7asm16291460wru.67.2023.03.23.08.24.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Mar 2023 08:24:44 -0700 (PDT)
-Date:   Thu, 23 Mar 2023 18:23:56 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Mike Looijmans <mike.looijmans@topic.nl>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: adc: ti-ads1100: fix error code in probe()
-Message-ID: <36fa2aeb-f392-4793-8b38-ae15514033c8@kili.mountain>
+        Thu, 23 Mar 2023 12:33:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BA6529413;
+        Thu, 23 Mar 2023 09:32:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B7D96627F5;
+        Thu, 23 Mar 2023 16:32:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C58E9C433D2;
+        Thu, 23 Mar 2023 16:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1679589136;
+        bh=Z+hK39DxAGT9ENxUSdUl1KEjAOL/mypmkO9p8VKVPHo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=u2VL2lrMrkls9/9RsRHNlNP49f+/699035XtgRiplt6uuNdu4tw1d52CbgUZhJ54q
+         i9e0YVemSSNf2pxi9svB5tt8pK5oGgCBVbdRWBOlde27jYMaWpz8FdVUsWDGesnh55
+         QGv5AF0zuCRrM28Dam56m0hrLmWVtp1gtz82BnAA=
+Date:   Thu, 23 Mar 2023 17:32:13 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: pci-quirks: Remove a useless initialization
+Message-ID: <ZBx/DeY4rwX+4zg8@kroah.com>
+References: <3850d93ff40ed12f4724621a540fb5993c0a0fa9.1679434951.git.christophe.jaillet@wanadoo.fr>
+ <a3c703152d89a2c6b34b31f0158f84ba504e24d8.1679434951.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <a3c703152d89a2c6b34b31f0158f84ba504e24d8.1679434951.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code has a copy and paste bug so it accidentally returns
-"PTR_ERR(data->reg_vdd)" which is a valid pointer cast to int. It
-should return "ret" instead.
+On Tue, Mar 21, 2023 at 10:43:10PM +0100, Christophe JAILLET wrote:
+> 'info' is memset()'ed a few lines below and is not use in the between.
+> 
+> There is no need to initialize one of its field to false here.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/usb/host/pci-quirks.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
+> index 6b741327d2c4..46f2412dcb40 100644
+> --- a/drivers/usb/host/pci-quirks.c
+> +++ b/drivers/usb/host/pci-quirks.c
+> @@ -208,7 +208,6 @@ static void usb_amd_find_chipset_info(void)
+>  {
+>  	unsigned long flags;
+>  	struct amd_chipset_info info;
+> -	info.need_pll_quirk = false;
 
-Fixes: 541880542f2b ("iio: adc: Add TI ADS1100 and ADS1000")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/iio/adc/ti-ads1100.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Why not just change the line above it to:
+	struct amd_chipset_info info = { };
+and drop the call to memset entirely?
 
-diff --git a/drivers/iio/adc/ti-ads1100.c b/drivers/iio/adc/ti-ads1100.c
-index 6a478efb108b..6b5aebb82455 100644
---- a/drivers/iio/adc/ti-ads1100.c
-+++ b/drivers/iio/adc/ti-ads1100.c
-@@ -344,7 +344,7 @@ static int ads1100_probe(struct i2c_client *client)
- 
- 	ret = regulator_enable(data->reg_vdd);
- 	if (ret < 0)
--		return dev_err_probe(dev, PTR_ERR(data->reg_vdd),
-+		return dev_err_probe(dev, ret,
- 				     "Failed to enable vdd regulator\n");
- 
- 	ret = devm_add_action_or_reset(dev, ads1100_reg_disable, data->reg_vdd);
--- 
-2.39.1
+thanks,
 
+greg k-h
