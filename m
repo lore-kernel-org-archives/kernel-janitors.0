@@ -2,96 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE64C6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 12:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EF6C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 14:26:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230430AbjCWMQA (ORCPT
+        id S231416AbjCWO0F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Mar 2023 08:16:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49182 "EHLO
+        Thu, 23 Mar 2023 10:26:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231531AbjCWMPk (ORCPT
+        with ESMTP id S231305AbjCWO0C (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Mar 2023 08:15:40 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCB00279A4;
-        Thu, 23 Mar 2023 05:14:44 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id ew6so22560609edb.7;
-        Thu, 23 Mar 2023 05:14:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679573683;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QtfyA5+0e27PBCjZwhJRtSv2XkdtikGY1iiyI1Ysvsc=;
-        b=CsTdLDaM4ckiOneovfOqYSr+RapnYsg0Em1LH78jxOaP8J8VJR/OlcupAihouHCkNk
-         uzr7h7GEN5zUAuqehdtnNOkxyi4A86b1qa+3Dagw1r4saZkPbGehuQOr+7k4MMZ3++SE
-         5oubKdfoYCPeM//ZXBsQ7l/4HBLgey5isd6A8mug/WyP+kM250QMYUKIZ5qVuKxMjvsE
-         aF84KmkCvBupLdx2IWP9uvUxYdOZfbQYV0vFj6zGbsXX6gHNxfegFmB24vvtjKbgeHx5
-         OOvqlUtB6t98UJzkuGD3gC9+FuhvYYw4zYdAjDvbc6xfBmGVWrMljb7LCrVhWWUTMj17
-         ulng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679573683;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QtfyA5+0e27PBCjZwhJRtSv2XkdtikGY1iiyI1Ysvsc=;
-        b=gAzaS4Ay/Iy9K3SFkbOtuVzcqA5gFHW2i2yFetTOrzkiI5QP65741E9rKiXv3VPxH7
-         QpjKGWgrN8GnMf2gCPNl7g0WEREvLRMrGoAbijrlWEO5XwbYNE0iGSt+h02DyEoNzuPU
-         qp0VXRk7Kinp6HTCBXZPrmLpkSGfmew83zbPMz5ypulOiXk9ClA2Yfc7Dwvz5VuJxHge
-         tsmHIGqYNxz+bKkAuwrDRMcqmR28o/JAP9ejXR9O4qs993hFZXZrcPGKoOrN9Kg5/kIK
-         8WZjSkQlz4ZYih7qedW5CxhvjSIwbFaxMw3Mr+xS+ciPmic3GTENr0DICWAiMWuxDSBQ
-         RoSQ==
-X-Gm-Message-State: AO0yUKW0mhJqO4vhnH2yyIXD/1n5qoLSmG0X3FCy6UGkhkBGrpBEd8hc
-        kYoqVCSS7qEkpQWtbnKx/WHmTPq2t+f2zA==
-X-Google-Smtp-Source: AK7set+HmNtTcwTYVRADBqYt9gkrEw4spWc+kfydjtrvRIb2Z0PVz5ZIdmiiy6REIw4t61dQidpwHQ==
-X-Received: by 2002:a17:907:1def:b0:8b2:d30:e722 with SMTP id og47-20020a1709071def00b008b20d30e722mr10074299ejc.3.1679573682628;
-        Thu, 23 Mar 2023 05:14:42 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:d509:cbf0:f579:76f0])
-        by smtp.gmail.com with ESMTPSA id z21-20020a1709064e1500b00930de1da701sm8772930eju.10.2023.03.23.05.14.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Mar 2023 05:14:42 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Keguang Zhang <keguang.zhang@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-mips@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: remove obsolete file entry in MIPS/LOONGSON1 ARCHITECTURE
-Date:   Thu, 23 Mar 2023 13:14:37 +0100
-Message-Id: <20230323121437.28239-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 23 Mar 2023 10:26:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 905DF1B324;
+        Thu, 23 Mar 2023 07:26:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BE8262752;
+        Thu, 23 Mar 2023 14:26:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDFBEC433D2;
+        Thu, 23 Mar 2023 14:25:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679581560;
+        bh=M6Edg5DjVsm8prUJbJkzARqPmvj6mxfT7u619ddSojA=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=JYTOD1uZKNXcfY8VFb6SK7++ItlPK5up7Gzype+kcNVqumPjCgW0dSKLWGGV/iFw5
+         zywQS3fyCzWEjb9eYXrq8eOtGD2bc/LRgNE8aGNd0rA8aCjbzJuPWcPmABIwYcfzby
+         BIHSBw/VVx56ipCOMzzTclvfH9SuL4xlqUa0Ai0dCwuInd70Cya/EncKX/C7SmUS7/
+         sME122FSz+8tADNb34utS7lF2UG5axYahPLU0lx88vI1rZoNR6wmKRpdRu/EaF8VvE
+         OAJVVuRZta1kXUHdqLXVT9vUNVI8pxzwIP8hpnA8kNDV/2ac5feWGaq56iqOC/M1jh
+         dUo5a6+WAgSQg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org,
+        Colin Ian King <colin.i.king@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20230323090531.67679-1-colin.i.king@gmail.com>
+References: <20230323090531.67679-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: SOF: ipc4/intel: Fix spelling mistake
+ "schduler" -> "scheduler"
+Message-Id: <167958155761.49176.5077860409181267820.b4-ty@kernel.org>
+Date:   Thu, 23 Mar 2023 14:25:57 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-bd1bf
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit c46496119ed0 ("clk: loongson1: Remove the outdated driver") removes
-all files matching the pattern drivers/*/*/*loongson1*, but misses to
-adjust the file entry for MIPS/LOONGSON1 ARCHITECTURE in MAINTAINERS.
+On Thu, 23 Mar 2023 09:05:31 +0000, Colin Ian King wrote:
+> There are two spelling mistakes in dev_warn messages. Fix them.
+> 
+> 
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+Applied to
 
-Remove this file entry in MIPS/LOONGSON1 ARCHITECTURE.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Keguang, please ack.
-Stephen, please pick this minor fix-up on the top of the commit above.
+Thanks!
 
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+[1/1] ASoC: SOF: ipc4/intel: Fix spelling mistake "schduler" -> "scheduler"
+      commit: 056db840115653659d86a3931a78b3c504edb2cc
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8f8e846fc453..4aac18b5d5c1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14047,7 +14047,6 @@ L:	linux-mips@vger.kernel.org
- S:	Maintained
- F:	arch/mips/include/asm/mach-loongson32/
- F:	arch/mips/loongson32/
--F:	drivers/*/*/*loongson1*
- F:	drivers/*/*loongson1*
- 
- MIPS/LOONGSON2EF ARCHITECTURE
--- 
-2.17.1
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
