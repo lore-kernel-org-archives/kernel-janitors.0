@@ -2,135 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D30C6FD20
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 08:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA25FC6FD20
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 08:27:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231307AbjCXISu (ORCPT
+        id S231127AbjCXI1C (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Mar 2023 04:18:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37596 "EHLO
+        Fri, 24 Mar 2023 04:27:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbjCXISt (ORCPT
+        with ESMTP id S231630AbjCXI1B (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Mar 2023 04:18:49 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0CDC7A80;
-        Fri, 24 Mar 2023 01:18:26 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id t10so4578494edd.12;
-        Fri, 24 Mar 2023 01:18:26 -0700 (PDT)
+        Fri, 24 Mar 2023 04:27:01 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B6525B9C
+        for <kernel-janitors@vger.kernel.org>; Fri, 24 Mar 2023 01:26:59 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id eg48so4626770edb.13
+        for <kernel-janitors@vger.kernel.org>; Fri, 24 Mar 2023 01:26:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679645905;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OjSUxUwRJucB2mvsJMNP8LiRg/5RwK8jwPvjNan6jTk=;
-        b=CU9IbzkGaEQy1zPpW4M09QBTedqvMXYo+Ug19vY7LnZy0DMaaZnKu/U13S/XHJDN0V
-         LsCcVqfIdsaDPENt+ABcX9hBhaWDgWZN9C1tcheyNCKgsaiFpJgpJhkUKPCyD+j1wtVF
-         gP2lzU+o1/gNiIp4ihhL6vvooIl9Q62mvCoUmRUuTc98reu4/NgoTPaQXxNmJvclosDL
-         PByTBDdYmusyPCl4IGrn0oJClHHB3MGwIrlf5n6Yup+fFCdxUv9c22+hYpcPSZrGYkl+
-         ofmNyj1e7XXbdIUGoAR+YbtAxj8KOLb4roZSki300CimupM3oT4LRO461/yRJ41VacKf
-         lRcg==
+        d=linaro.org; s=google; t=1679646418;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rMK8N+uW1xIMv8pFUrJlsRKDsRw1dlAiL2CT5NysWvI=;
+        b=VkJGjoZeet6GdGAtiIVqYDaZ+dGx2Kqi6tYlzgnCQaQFYRs7+4tgq90DqJCBithiUJ
+         GPWdhr+tFy+EkOV79dgC4rFZTHMQYrrkgxqgoTLir0xXGN/pvAvHFKrgSymkQKsujIfW
+         BczTBFzM6HWnWrEYDpXOrDr9f4fSdlTegq9rt7NUGAKD0jXXOFkRYRqcWgoblSO640g/
+         +vRo0K5BRjfMQVRnzileyjBc6McOSFlABMWkurFgEqZXb0MKCYfc12IsAaR5N2qn7bX/
+         i9RdDRPFTX5xW7tvz9CNR7bxr2vQmYrmCjl9XbC3yavvdGBW3aiyKxvzz0X8+0ClFvwo
+         aS3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679645905;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OjSUxUwRJucB2mvsJMNP8LiRg/5RwK8jwPvjNan6jTk=;
-        b=61LchpCLWPrOuGKr08rFPx12q7UFSWfZhs9xzTMlgBELgSc/h3VxJAr+wrO5W/LPNX
-         v9kcirkbeVILxcCh0D43R2Ez0XdrlG5Jwi2CkuQ9EwROxOJKiBOKbtCq5i5lF/0PXojg
-         BJF+/+8FfIMoytxlOYGa53S7C6bMI0fxKMkoAYfZv1TXE9YStfrJXJWdepTCIDyMHbwS
-         IuJwAaj1+/AGVcqmcuURm6GhkGEinrKDsQ8xhbiRGnG8tzmZSCKKI/gock4qGY5vUmzw
-         knskSCOHjlqXhmMcjozvOk6EGb+eGHymT1aTf1+8pL7q79tMW2l3SUVoKau+d1m/lH4M
-         3Liw==
-X-Gm-Message-State: AAQBX9eEmPuOFGq0Kn9V38MXNg7L6CL57UdNttFzdenXiIPdNNCMxwm3
-        jYLuAjnwMaQkNhPRip8mj0k=
-X-Google-Smtp-Source: AKy350Zq2gp7nz7LOBOMYjJFpLY8UPjh7A6bnyx0rpvamXXo+6aUhRnFQoe0p1mWugKR3uiXejUvmA==
-X-Received: by 2002:aa7:c74d:0:b0:4ac:bbaa:867a with SMTP id c13-20020aa7c74d000000b004acbbaa867amr1728744eds.24.1679645904555;
-        Fri, 24 Mar 2023 01:18:24 -0700 (PDT)
-Received: from felia.fritz.box (ipbcc1d920.dynamic.kabel-deutschland.de. [188.193.217.32])
-        by smtp.gmail.com with ESMTPSA id i17-20020a50d751000000b0050214930f5csm1682713edj.10.2023.03.24.01.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Mar 2023 01:18:24 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jakub Kicinski <kuba@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        netdev@vger.kernel.org
+        d=1e100.net; s=20210112; t=1679646418;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rMK8N+uW1xIMv8pFUrJlsRKDsRw1dlAiL2CT5NysWvI=;
+        b=uNKlTX4gfcKKU7w4hk0HcoRNmRSMSkCJduF/SEp//rNzs/Eh3OwLDB0ed3AlLXiUz0
+         iaUlxTsMvwFkopEBC/s6ugG5IS/rbL1fGbtVxriHviJ3+ih+V/lkQ4PXXFSOw3BNqlH2
+         1MaE8ejc0FzrEY77UeKBLwjETnOoKFGRyP2U5Cb0vQqpZIy6TbTMWdgCu4+GvD23Pgak
+         ILi1VDVGI+W+HA25hFNsk5VeHa5l+QtH4kVEPqHTRSC2ZUBIRA9h2lMzQnPcbIUjCOJx
+         1c3yrUp+ng07zgZnAwadbG4J+B7UPNO2n9r4sNPRvUmYWNitnWE4peyuzfUl+FsVzGF7
+         l7VQ==
+X-Gm-Message-State: AAQBX9cJ9zlaYosLKtlfQ9Blo3RPdcIBF/ywaUZpkN7vL4S2QtEpz9g6
+        dRkDAKnfwzHewCRI5HMnfO80dw==
+X-Google-Smtp-Source: AKy350aoXQWcPH+E3C+mxIDLEpYt9lK6TGHWgh3btJpBgFoZJKlnDgQa4HY94LxHDQITBl8eZGjdIA==
+X-Received: by 2002:a17:906:2484:b0:930:8a26:eed8 with SMTP id e4-20020a170906248400b009308a26eed8mr1798359ejb.71.1679646417983;
+        Fri, 24 Mar 2023 01:26:57 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:ce50:243f:54cc:5373? ([2a02:810d:15c0:828:ce50:243f:54cc:5373])
+        by smtp.gmail.com with ESMTPSA id v14-20020a1709063bce00b0093344ef3764sm8028317ejf.57.2023.03.24.01.26.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Mar 2023 01:26:57 -0700 (PDT)
+Message-ID: <eb05ac50-fda2-8324-1fd9-fda8579dfd8c@linaro.org>
+Date:   Fri, 24 Mar 2023 09:26:56 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] MAINTAINERS: remove the linux-nfc@lists.01.org list
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc:     Bongsu Jeon <bongsu.jeon@samsung.com>,
         Mark Greer <mgreer@animalcreek.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: remove the linux-nfc@lists.01.org list
-Date:   Fri, 24 Mar 2023 09:16:13 +0100
-Message-Id: <20230324081613.32000-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230324081613.32000-1-lukas.bulwahn@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230324081613.32000-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Some MAINTAINERS sections mention to mail patches to the list
-linux-nfc@lists.01.org. Probably due to changes on Intel's 01.org website
-and servers, the list server lists.01.org/ml01.01.org is simply gone.
+On 24/03/2023 09:16, Lukas Bulwahn wrote:
+> Some MAINTAINERS sections mention to mail patches to the list
+> linux-nfc@lists.01.org. Probably due to changes on Intel's 01.org website
+> and servers, the list server lists.01.org/ml01.01.org is simply gone.
+> 
+> Considering emails recorded on lore.kernel.org, only a handful of emails
+> where sent to the linux-nfc@lists.01.org list, and they are usually also
+> sent to the netdev mailing list as well, where they are then picked up.
+> So, there is no big benefit in restoring the linux-nfc elsewhere.
+> 
+> Remove all occurrences of the linux-nfc@lists.01.org list in MAINTAINERS.
+> 
+> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Link: https://lore.kernel.org/all/CAKXUXMzggxQ43DUZZRkPMGdo5WkzgA=i14ySJUFw4kZfE5ZaZA@mail.gmail.com/
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Considering emails recorded on lore.kernel.org, only a handful of emails
-where sent to the linux-nfc@lists.01.org list, and they are usually also
-sent to the netdev mailing list as well, where they are then picked up.
-So, there is no big benefit in restoring the linux-nfc elsewhere.
 
-Remove all occurrences of the linux-nfc@lists.01.org list in MAINTAINERS.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Link: https://lore.kernel.org/all/CAKXUXMzggxQ43DUZZRkPMGdo5WkzgA=i14ySJUFw4kZfE5ZaZA@mail.gmail.com/
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 617eed07496a..293f90229b72 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14703,10 +14703,8 @@ F:	net/ipv4/nexthop.c
- 
- NFC SUBSYSTEM
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
--L:	linux-nfc@lists.01.org (subscribers-only)
- L:	netdev@vger.kernel.org
- S:	Maintained
--B:	mailto:linux-nfc@lists.01.org
- F:	Documentation/devicetree/bindings/net/nfc/
- F:	drivers/nfc/
- F:	include/net/nfc/
-@@ -14716,7 +14714,6 @@ F:	net/nfc/
- NFC VIRTUAL NCI DEVICE DRIVER
- M:	Bongsu Jeon <bongsu.jeon@samsung.com>
- L:	netdev@vger.kernel.org
--L:	linux-nfc@lists.01.org (subscribers-only)
- S:	Supported
- F:	drivers/nfc/virtual_ncidev.c
- F:	tools/testing/selftests/nci/
-@@ -15088,7 +15085,6 @@ F:	Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
- F:	sound/soc/codecs/tfa989x.c
- 
- NXP-NCI NFC DRIVER
--L:	linux-nfc@lists.01.org (subscribers-only)
- S:	Orphan
- F:	Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml
- F:	drivers/nfc/nxp-nci
-@@ -18552,7 +18548,6 @@ F:	include/media/drv-intf/s3c_camif.h
- 
- SAMSUNG S3FWRN5 NFC DRIVER
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
--L:	linux-nfc@lists.01.org (subscribers-only)
- S:	Maintained
- F:	Documentation/devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml
- F:	drivers/nfc/s3fwrn5
-@@ -21054,7 +21049,6 @@ F:	drivers/iio/magnetometer/tmag5273.c
- TI TRF7970A NFC DRIVER
- M:	Mark Greer <mgreer@animalcreek.com>
- L:	linux-wireless@vger.kernel.org
--L:	linux-nfc@lists.01.org (subscribers-only)
- S:	Supported
- F:	Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml
- F:	drivers/nfc/trf7970a.c
--- 
-2.17.1
+Best regards,
+Krzysztof
 
