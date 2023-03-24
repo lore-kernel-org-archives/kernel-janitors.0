@@ -2,109 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC276C6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 20:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E41C76196
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 20:20:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231904AbjCXUIC (ORCPT
+        id S231913AbjCXUUa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Mar 2023 16:08:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47110 "EHLO
+        Fri, 24 Mar 2023 16:20:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbjCXUIA (ORCPT
+        with ESMTP id S231899AbjCXUU1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Mar 2023 16:08:00 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48F21B445;
-        Fri, 24 Mar 2023 13:07:59 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id x3so12203306edb.10;
-        Fri, 24 Mar 2023 13:07:59 -0700 (PDT)
+        Fri, 24 Mar 2023 16:20:27 -0400
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A37C1ACDE
+        for <kernel-janitors@vger.kernel.org>; Fri, 24 Mar 2023 13:20:15 -0700 (PDT)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-54184571389so53750257b3.4
+        for <kernel-janitors@vger.kernel.org>; Fri, 24 Mar 2023 13:20:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679688478;
+        d=paul-moore.com; s=google; t=1679689214;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vwDdbXQ+Kq3hsMLWwf0D7a7P6qWxTGqxL0bP6Pa+IhM=;
-        b=J+UaawPiJmMi7uhnTrF9yyvXI4oPYzXk+B7f7zlP7Z/XjkkNGDNM7O/BIVrKXqnMLB
-         oMHpezXAsxorxYJBpIePgj72FfEEGK5dEJTmgoGI0zwRl9lMxPaglrNH/GBjhNkA/d09
-         wY6eZRGiq5A8Ihmhqssqo4xt7BMiEu24az3eZ1/JmgJMT48nvdzMpVSQUUZ8mV4U1Imh
-         JMwbHhESbUAYPZ/rL9mHbE+Fskv/X0hBE4OKpYjaUr+v7QoYO39GvuY5y/KAGlvBmPp+
-         G4yi4YCiu0eAw9x3A4l9tcCF0ZgLzxumrQ9YlRyTe23cUOpJoZy+D6daNjaNyejPTFp5
-         KiAw==
+        bh=NE3yJDI+pYJuCMQv+LbLHvHpakC5z20Q31kT7kG1Coo=;
+        b=US49Rj0ujiV1sooDfFrHrBRZjgcRszsxXf3GeR9J081S3w7ZzTM6r5FO/PKKKbC4P7
+         JqVFTPdgA8dXgaKVQId6RAB2A+fZiRtEXfRwOCBeFLdEBGoomLmHC8smJW9HgWuQFSzn
+         o7BqQPMoH8a5waHthHsy0R/00uU769JgCEN6Wd0VaQl3gm2KkB4iwXIgolQz75n4PRZk
+         Rh5A5mgeRFFnC5UumzUemh3zi7kEvN1ZIv1sDcX9/9BraIwygvvrfBYVpOOZHfxE+QQA
+         xUrXbAfn7n9jpcTDrTbKgHCcjhonPev/X8vh9qvVQxXETWrlOsQfjcivSfReJHpLAS1K
+         vs4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679688478;
+        d=1e100.net; s=20210112; t=1679689214;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vwDdbXQ+Kq3hsMLWwf0D7a7P6qWxTGqxL0bP6Pa+IhM=;
-        b=zHINZTiuUc6yCf0J/bmXwlTkH1dNMFMWZRdhIWz2HmIHlOkulqJCNTiMR0wpUUn+db
-         UGM0Bmlkgpix6N6RCIcJgL69HMhnenMrV2w8Y9pTuhGH8VY2YPUWG0mKNUP9pCCSEkDt
-         ByOrJL0QjzlYnx4ybc+dhm+j/KftfszxCPuiEEGrH/oKajgrcRUaGW4cb3a1Sbl9inO8
-         Y8DA5Ay0ldVtOpCrnrq4ibIli0okiww7dCx+3LnCRGGddcB17ZbBJhei/aYGvlmCgfV+
-         /oXpcmfOuFdt/4BzMOivhOUhiIiuyei+4XxkDDrMr4Df+0kdtMosTmyw+dezULuKr9uy
-         HA9A==
-X-Gm-Message-State: AAQBX9cD60nqBr+c2AKtQk8r36k+8pDbvyY5+lqUiACcEE6l5bCJeOSw
-        UWJVeWbDcBjkFbM8Kvd76KTAeBlLw9OSO+l/CPg=
-X-Google-Smtp-Source: AKy350bw1yO8Awn13tAOWWEnh9YWbI9QxUzylFg2TH7Rj6K2NfRLMeoAbyrJYGZOr2oNNRiQeSpw8NqAuS97k7kVibk=
-X-Received: by 2002:a17:906:ee89:b0:92e:a234:110a with SMTP id
- wt9-20020a170906ee8900b0092ea234110amr2060398ejb.3.1679688477723; Fri, 24 Mar
- 2023 13:07:57 -0700 (PDT)
+        bh=NE3yJDI+pYJuCMQv+LbLHvHpakC5z20Q31kT7kG1Coo=;
+        b=I4gDjMzbd93GEoY/F20MobFaNVIalmrGi8I2s8aMys6mFoaEw/ppOAi0CQF6ohicd0
+         IbpG7+xMIP30TqFybC60pNGSMIS9EN02mNizAETKkCcdPLRK3XNKJ9tt1zI5e4K8SCfa
+         uQhS6MATjgf2VUij7PNQTgUrnu4+VwylgxquLhLjAlt7W6H4lo1oOjnXlNx6TT6cNnFA
+         /6qgfrYWASjROl40RbRy+pnWW1sL/jeDZs3ZfpfE3bHpP+HQcG7qXH9bkCqK2Fyq1hm8
+         e99jV7L5TFfTo7lqM4jajQYilPP+Uvvt76SxgPnHoBYbqzdxeQzxhLE4ti3IyG/Ne0W7
+         RxqQ==
+X-Gm-Message-State: AAQBX9fLiuaOKNGHgQOWc/CElOa72mKomNuUih+CftkUH6tb20VrBtri
+        SplqT95LvvTl2DaiLEH0mHRkATZYkHN5e9VpGxK8
+X-Google-Smtp-Source: AKy350aNTAC0qgpuAb8ntTTl8mLGMQTnxRclhRZIGJOBRGHivChNONp2c378J/aHROxYvUeUJPLKF0Ck6VdvcPwH4cE=
+X-Received: by 2002:a81:af18:0:b0:541:7f7b:a2ff with SMTP id
+ n24-20020a81af18000000b005417f7ba2ffmr1650801ywh.8.1679689214313; Fri, 24 Mar
+ 2023 13:20:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de> <9e0a7e6c-484d-92e0-ddf9-6e541403327e@web.de>
-In-Reply-To: <9e0a7e6c-484d-92e0-ddf9-6e541403327e@web.de>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 24 Mar 2023 13:07:46 -0700
-Message-ID: <CAADnVQKEivv6t+v9evOWptt=i4ddte4OmV=o-BNWPm-ZQ9YfdQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests/bpf: Improve exception handling in rbtree_add_and_remove()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Marchevsky <davemarchevsky@fb.com>,
-        David Vernet <void@manifault.com>, Hao Luo <haoluo@google.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Song Liu <song@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Yonghong Song <yhs@fb.com>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20230324092114.13907-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20230324092114.13907-1-lukas.bulwahn@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 24 Mar 2023 16:20:03 -0400
+Message-ID: <CAHC9VhT70JYNmE5ROhnYzqFv3UcYcP9mGdiD4X_kdiAspStr8A@mail.gmail.com>
+Subject: Re: [PATCH v2] selinux: clean up dead code after removing runtime disable
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 7:13=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
+On Fri, Mar 24, 2023 at 5:23=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gmail.=
+com> wrote:
 >
-> Date: Fri, 24 Mar 2023 14:54:18 +0100
+> Commit f22f9aaf6c3d ("selinux: remove the runtime disable functionality")
+> removes the config SECURITY_SELINUX_DISABLE. This results in some dead co=
+de
+> in lsm_hooks.h.
 >
-> The label =E2=80=9Cerr_out=E2=80=9D was used to jump to another pointer c=
-heck despite of
-> the detail in the implementation of the function =E2=80=9Crbtree_add_and_=
-remove=E2=80=9D
-> that it was determined already that a corresponding variable contained
-> a null pointer.
+> Remove this dead code.
 >
-> 1. Thus return directly after the first call of the function
->    =E2=80=9Cbpf_obj_new=E2=80=9D failed.
->
-> 2. Delete two questionable checks.
->
-> 3. Omit an extra initialisation (for the variable =E2=80=9Cm=E2=80=9D)
->    which became unnecessary with this refactoring.
->
->
-> This issue was detected by using the Coccinelle software.
->
-> Fixes: 215249f6adc0359e3546829e7ee622b5e309b0ad ("selftests/bpf: Add rbtr=
-ee selftests")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  include/linux/lsm_hooks.h | 23 -----------------------
+>  1 file changed, 23 deletions(-)
 
-Nack.
-Please stop sending such "cleanup" patches.
+Thanks Lukas, this looks much better.  Merged into selinux/next.
+
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 2b04f94a31bd..ab2b2fafa4a4 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -117,29 +117,6 @@ extern struct lsm_info __start_early_lsm_info[], __e=
+nd_early_lsm_info[];
+>                 __used __section(".early_lsm_info.init")                \
+>                 __aligned(sizeof(unsigned long))
+>
+> -#ifdef CONFIG_SECURITY_SELINUX_DISABLE
+> -/*
+> - * Assuring the safety of deleting a security module is up to
+> - * the security module involved. This may entail ordering the
+> - * module's hook list in a particular way, refusing to disable
+> - * the module once a policy is loaded or any number of other
+> - * actions better imagined than described.
+> - *
+> - * The name of the configuration option reflects the only module
+> - * that currently uses the mechanism. Any developer who thinks
+> - * disabling their module is a good idea needs to be at least as
+> - * careful as the SELinux team.
+> - */
+> -static inline void security_delete_hooks(struct security_hook_list *hook=
+s,
+> -                                               int count)
+> -{
+> -       int i;
+> -
+> -       for (i =3D 0; i < count; i++)
+> -               hlist_del_rcu(&hooks[i].list);
+> -}
+> -#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
+> -
+>  extern int lsm_inode_alloc(struct inode *inode);
+>
+>  #endif /* ! __LINUX_LSM_HOOKS_H */
+> --
+> 2.17.1
+
+--=20
+paul-moore.com
