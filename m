@@ -2,94 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B993C6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 10:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 629B4C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 13:13:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230482AbjCXKhE (ORCPT
+        id S231806AbjCXNNn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Mar 2023 06:37:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58294 "EHLO
+        Fri, 24 Mar 2023 09:13:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229734AbjCXKhC (ORCPT
+        with ESMTP id S231308AbjCXNNm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Mar 2023 06:37:02 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46DF922DD8;
-        Fri, 24 Mar 2023 03:37:01 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id x3so5977578edb.10;
-        Fri, 24 Mar 2023 03:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679654220;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gJuO8B0DxhrYpZaK8J9dfLUU2TS1IlGV+FseHR+oA+A=;
-        b=OwU3k8S0NtXx+KntpzccsesziTlWKynQGojMY+6Z66r+zDSXcFv6Bl7PL+rwKUeVFd
-         8vTaFMQnrWg0tjCYpeGLDpvYB7jT6L3DEwXnkX86E/ieGa/cMGFcQ4DzS5/pSWemIr4w
-         DY6VvbbOL4xpzzg2VxcxKvkTfGaiBjcJewt9RggiKlaMhUBzfBqzQbfuHM2GZKSaAIgg
-         YK26tNTV3Q0XTpUtJnE/eJILEfM+oh/+RC8MRbE1u3HIOls0picNOEK0M6cCWsE4MauR
-         BdjjM10u1oK1zlqFMNDuRmZRBNN3NTfKj5/hYHs2cKkj7XDK6geteVx2tyT84dAEfgPv
-         as9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679654220;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gJuO8B0DxhrYpZaK8J9dfLUU2TS1IlGV+FseHR+oA+A=;
-        b=ycAphv2u/0DepgSN+OgiZjH0SdiusoB1wnnDFetRUvpnMWQcx8PdYibWOnpgo74Jz1
-         H7n3+N4aj6qyBI4WDljQih4kB9Drz+2nnwpNHP5e9qO+9Dza2gFPD45FVK1AOVbUjBB0
-         2frn3xB45EJjHEVDpTuDz2hynVglx2V7ptgkdtExYqAEE1FfcIPiJSqLvICH0VC6dVgX
-         LfpVV3Dcwr5OCx9FAEEGCB9ZN+Wy+FKneVJBpzgUmlvkUpfIEJEypBoaOMX/Z3cV+dYi
-         x/LIYyzMvDyVBDcsAhVCRkbkVcHObI6QKcpma7nK2Ur5IT+kEZtDkX/b4yvfMRymolwK
-         xN7Q==
-X-Gm-Message-State: AAQBX9fEOsb4neaSHjHQVPub1lyZk/ueL2LJd5wXAswoGj/a/psmMJ4U
-        Dtqs8HhdgYteCR7jDzK9t+c=
-X-Google-Smtp-Source: AKy350a4WTRRlmlRHILMgnhOO7wrd4M/GHmUQbTlujDN09uAZN8/fvTZc3iv2Il82DJBIxT9RrE5RA==
-X-Received: by 2002:a17:906:5849:b0:931:4b0b:73e3 with SMTP id h9-20020a170906584900b009314b0b73e3mr2250971ejs.65.1679654219663;
-        Fri, 24 Mar 2023 03:36:59 -0700 (PDT)
-Received: from felia.fritz.box (ipbcc1d920.dynamic.kabel-deutschland.de. [188.193.217.32])
-        by smtp.gmail.com with ESMTPSA id i6-20020a170906250600b009306be6bed7sm9987951ejb.190.2023.03.24.03.36.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Mar 2023 03:36:59 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        sparclinux@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] sparc: remove obsolete config ARCH_ATU
-Date:   Fri, 24 Mar 2023 11:34:38 +0100
-Message-Id: <20230324103438.28563-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 24 Mar 2023 09:13:42 -0400
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B3D1D5FD6;
+        Fri, 24 Mar 2023 06:13:40 -0700 (PDT)
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1pfhEh-00010v-00; Fri, 24 Mar 2023 14:13:39 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 1C1CCC1B34; Fri, 24 Mar 2023 14:11:29 +0100 (CET)
+Date:   Fri, 24 Mar 2023 14:11:29 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mips: Remove obsolete configs IRQ_MSP_CIC and IRQ_MSP_SLP
+Message-ID: <20230324131129.GA15824@alpha.franken.de>
+References: <20230324100848.13127-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230324100848.13127-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Before consolidation of commit 4965a68780c5 ("arch: define the
-ARCH_DMA_ADDR_T_64BIT config symbol in lib/Kconfig"), the config ARCH_ATU
-was used to control the state of the config ARCH_DMA_ADDR_T_64BIT. After
-this consolidation, the config ARCH_ATU has been without use and effect.
+On Fri, Mar 24, 2023 at 11:08:48AM +0100, Lukas Bulwahn wrote:
+> Commit 1b00767fd8e1 ("MIPS: Remove PMC MSP71xx platform") removes all uses
+> of the config IRQ_MSP_CIC and IRQ_MSP_SLP.
+> 
+> Remove these two obsolete configs IRQ_MSP_CIC and IRQ_MSP_SLP.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/mips/Kconfig | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index f1dfc2fe2acb..26d254d125b6 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -1179,12 +1179,6 @@ config SYS_SUPPORTS_LITTLE_ENDIAN
+>  config MIPS_HUGE_TLB_SUPPORT
+>  	def_bool HUGETLB_PAGE || TRANSPARENT_HUGEPAGE
+>  
+> -config IRQ_MSP_SLP
+> -	bool
+> -
+> -config IRQ_MSP_CIC
+> -	bool
+> -
+>  config IRQ_TXX9
+>  	bool
+>  
+> -- 
+> 2.17.1
 
-Remove this obsolete config.
+applied to mips-next.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/sparc/Kconfig | 4 ----
- 1 file changed, 4 deletions(-)
+Thomas.
 
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index 84437a4c6545..7749392c9c7f 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -109,10 +109,6 @@ config ARCH_PROC_KCORE_TEXT
- config CPU_BIG_ENDIAN
- 	def_bool y
- 
--config ARCH_ATU
--	bool
--	default y if SPARC64
--
- config STACKTRACE_SUPPORT
- 	bool
- 	default y if SPARC64
 -- 
-2.17.1
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
