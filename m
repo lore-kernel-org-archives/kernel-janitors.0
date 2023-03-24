@@ -2,76 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F277BC76196
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Mar 2023 19:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E34EDC6FD20
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 08:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231831AbjCWTkf (ORCPT
+        id S229753AbjCXIKj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Mar 2023 15:40:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44052 "EHLO
+        Fri, 24 Mar 2023 04:10:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231473AbjCWTk2 (ORCPT
+        with ESMTP id S229484AbjCXIKi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Mar 2023 15:40:28 -0400
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E4DF20D22
-        for <kernel-janitors@vger.kernel.org>; Thu, 23 Mar 2023 12:40:27 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id fQnPptlrMzvWyfQnPpVPOc; Thu, 23 Mar 2023 20:40:25 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 23 Mar 2023 20:40:25 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH v2] usb: pci-quirks: Reduce the length of a spinlock section in usb_amd_find_chipset_info()
-Date:   Thu, 23 Mar 2023 20:40:22 +0100
-Message-Id: <08ee42fced6af6bd56892cd14f2464380ab071fa.1679600396.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Fri, 24 Mar 2023 04:10:38 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A74C6B74A;
+        Fri, 24 Mar 2023 01:10:34 -0700 (PDT)
+Received: from [IPV6:2a01:e0a:120:3210:1cb3:11e4:5834:9d5a] (unknown [IPv6:2a01:e0a:120:3210:1cb3:11e4:5834:9d5a])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: benjamin.gaignard)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0D3616603101;
+        Fri, 24 Mar 2023 08:10:32 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1679645432;
+        bh=lJ+hBP3Cg9URGS4sU7aN1R/NGhoudvSbdxIP0xXz8u8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=O2i/iVyff7pQlSOE94VwAALDTwGeZZpQvZmKW6n3IJM5G+JVmRbqrn5GPMLN05UGw
+         f/wm25SSnFPDL/kg3SK3yD5in67rNvMZX21U/Tab8mD5peYzO3v0+OxwgY0PMEb8HC
+         B8pfwJVAjfz2sflzkj1D/D9tkUoZE5Gm9mderLQeBVGjSs6Wz5Xt8ykYnQwfXmfV/j
+         ZGyWxLAyind9wdHrjSO7TjRDecarnghGlbLsWO/dVwBVNFRAb2NFB+8i1ngXz3FVaG
+         Ou+bXR3B/UDL/JQqp4x4q6RBdrKqzZuxiOe950ZRR7lkI3+wFCop5867NJPjtI4mmR
+         oiUE5Re8iXXgw==
+Message-ID: <bb638f1a-9d13-7331-9190-7470e98d05f7@collabora.com>
+Date:   Fri, 24 Mar 2023 09:10:29 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] media: verisilicon: Simplify error handling in
+ tile_buffer_reallocate()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        kernel-janitors@vger.kernel.org
+Cc:     linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+References: <20230323131704.414281-1-benjamin.gaignard@collabora.com>
+ <69159492-dced-a082-5f7e-3d8d0e880f58@web.de>
+Content-Language: en-US
+From:   Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <69159492-dced-a082-5f7e-3d8d0e880f58@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'info' is local to the function. There is no need to zeroing it within
-a spin_lock section. Moreover, there is no need to explicitly initialize
-the .need_pll_quirk field.
 
-Initialize the structure when defined and remove the now useless memset().
+Le 24/03/2023 à 07:37, Markus Elfring a écrit :
+>> Rework allocation errors cases handling to simply it
+>> by removing useless tests.
+> How do you think about to use a wording like “Simplify handling of allocation
+> error cases by removing useless tests.” for your change description?
+>
+>
+>> Reported-by: …
+>> ---
+>>   .../media/platform/verisilicon/hantro_hevc.c  | 23 ++++++++-----------
+> Would you like to add any links for corresponding information?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/usb/host/pci-quirks.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+No, it was just to show that you have reported the possible clean up
 
-diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
-index ef08d68b9714..2665832f9add 100644
---- a/drivers/usb/host/pci-quirks.c
-+++ b/drivers/usb/host/pci-quirks.c
-@@ -207,8 +207,7 @@ EXPORT_SYMBOL_GPL(sb800_prefetch);
- static void usb_amd_find_chipset_info(void)
- {
- 	unsigned long flags;
--	struct amd_chipset_info info;
--	info.need_pll_quirk = false;
-+	struct amd_chipset_info info = { };
- 
- 	spin_lock_irqsave(&amd_lock, flags);
- 
-@@ -218,7 +217,6 @@ static void usb_amd_find_chipset_info(void)
- 		spin_unlock_irqrestore(&amd_lock, flags);
- 		return;
- 	}
--	memset(&info, 0, sizeof(info));
- 	spin_unlock_irqrestore(&amd_lock, flags);
- 
- 	if (!amd_chipset_sb_type_init(&info)) {
--- 
-2.34.1
+Regards,
+Benjamin
 
+>
+> Regards,
+> Markus
+>
