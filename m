@@ -2,133 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90520C76195
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 09:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 080E1C6FD20
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 10:11:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232080AbjCXJZ7 (ORCPT
+        id S231513AbjCXKLE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Mar 2023 05:25:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58924 "EHLO
+        Fri, 24 Mar 2023 06:11:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231452AbjCXJZ6 (ORCPT
+        with ESMTP id S231444AbjCXKLD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Mar 2023 05:25:58 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E63233D1;
-        Fri, 24 Mar 2023 02:25:56 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id cn12so5287013edb.4;
-        Fri, 24 Mar 2023 02:25:56 -0700 (PDT)
+        Fri, 24 Mar 2023 06:11:03 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C03726C2F;
+        Fri, 24 Mar 2023 03:11:02 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id w9so5821824edc.3;
+        Fri, 24 Mar 2023 03:11:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679649955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20210112; t=1679652660;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QcCl5sc+j3IMfbUjl4CDmD357jwtZ469Lo5ySWTEjOU=;
-        b=LzVzu8f/aM6P108G/bMabhIJ01zrRiiqgdW1OWDw11RAIhCW1zh4s1G4SP1oG/2zn+
-         QfatooAsH+lgIhEPjDca0dB5aGn6WDG9z4KfN9viYmiJEdnp+aRf6+JClgILAV25xjDQ
-         ZAwkF2ed/eokvZIHP5LltaTHlB4kLsptLaVxASS1jVOqN77tPkVoVcTKm3mBGmmCA0Aw
-         VOxLPhaEe9ANpOJrj0E9pCO2DsuoIBiUPazwEJ+bUT4FDCwM9Waq+bvi1ngt2mW9IhpR
-         To1fY2C+mUJ8sNOOl5Et1wgOli9Isn/EtOhvee9T8RWkX8RoP34RlTotuJjk4pZGreJh
-         qqLw==
+        bh=evdlK2TGBDUZwBoMd27PncFntPqf8dN29Q/MhkQ6Vbw=;
+        b=dznHZO7lkSFUK+s8WndyI4DcgrTjLCpfT275eZ9bhSwMycl8lbNnKvNh9mLJk9Yk/c
+         cUdP6wFYQJzpe9lFAWcn7NpZD9VUsF5AAWkkX9CpeTk9qQ8Jb+ujNW9Y5XeR18PGbJdI
+         wogjwWk8T7mSjyiFZXuS3iP8i/3d74PAFRbUhxt5oBG8Qy5xMfd2e7N4RX12NvYhb4Wx
+         q0gqGXBKo8JyInrtcryQ/yt2sCgb8qepY+8OSX6R3BQlTi7hSE0yu1u+c558mj4gBfDR
+         I6lK8LeiT38pLnzTemwlcqzrQ6uziBwV9DnnwuJ2rloSB94rW6iX/9F7do4fDeCFvqoV
+         xkyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679649955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1679652660;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QcCl5sc+j3IMfbUjl4CDmD357jwtZ469Lo5ySWTEjOU=;
-        b=ybXDSN9k8CssqKo3CDBPoPnPRjvPsbRL/HSWA1An7BhfebH9CZ/eHaaOGrT8iD/RRF
-         OqI8qUcWeapwP49zOhzl7n6WF8X7QeznXZtIM380kpXCHD9ufA+Ao5VxNceE0a39bYFx
-         7xFWOZQqgEvy0tQ/KCxDcuPoykog5udc90PBTFioo4G5ovZacb0yRaDLgtAcentnX4KS
-         Cql2KwPOR33Ah+vzhqPaWysH49tM1ZEq5EmfAZuXGbS2QbWKTwYdwWqToKbeduyRGojh
-         E8+oMxSlqQqrWkQhLO33Q4wiUQdJyntFAzXwfMdPoxpKNA05W+Oclc6psXnF4F+6AdVp
-         4CAQ==
-X-Gm-Message-State: AO0yUKVsPDjFn+KxvUGJD05zISuVV6LMf5EQqw5yeZKAroBJq0pc4mio
-        MVS53px05gzEDSsJgWM+N+y5eVdu3th66rLMZBA=
-X-Google-Smtp-Source: AK7set/Yxupl4tVMQ7EWq+XrpLRbHsLGaTSlG2NHJPepGUqS2rL9HaCERXA8RoBXevKlEzCMBusGL5WrghCzQMyxXmw=
-X-Received: by 2002:a05:6402:3510:b0:4af:62ad:6099 with SMTP id
- b16-20020a056402351000b004af62ad6099mr6653339edd.2.1679649955024; Fri, 24 Mar
- 2023 02:25:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230323051241.24841-1-lukas.bulwahn@gmail.com> <CAHC9VhQ7O-qSb18HeG3wjeYC97sQNd1dSYHqTncAcZK3mSPGrQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQ7O-qSb18HeG3wjeYC97sQNd1dSYHqTncAcZK3mSPGrQ@mail.gmail.com>
+        bh=evdlK2TGBDUZwBoMd27PncFntPqf8dN29Q/MhkQ6Vbw=;
+        b=L8yQFQtkNP7JK3jeR3zSWkNRiLajpz92n57uzgb3lDm0/7KgK61Bc29xIt1LplanyQ
+         YXjhKTpUP/DFF23NNtM/oAZu9ud7VZpSzzwJgpcZcePdtpnXsOfPJHHjpBQEJei8QAGL
+         lUmXXoUmIJPN3vlHLajc+MtxK5XSCaHPmR9BEAfiKXmr/Ap5EMr+k4CIsWwOT5joUz+Q
+         rhWaLZ4tPqepRAV+tFbJbVemsZiu+71IL+HBcvXHeXN/IvOfvegztPn/Z1eahAEh+i0D
+         U7vcC6jQytPaVUvLmcs+u30w4pUrHCc8rJ1gYp7aCtexj4bf0DA6vR1R9qSFyYxy3R3t
+         PbrQ==
+X-Gm-Message-State: AAQBX9e4NnqmaM8iWt2Mtf5SFSsWN9o6/uQky/nS6TLZXRJZDnMG7zUh
+        wJJX5S/+e/Uuo9Wnz56+Sn4=
+X-Google-Smtp-Source: AKy350bSSu9MVW+4h7wFp+T2skX/v4XOI6/R0Pczs/23rI98NSiFTL7j4g1U1znI9HPwZfhgyOK5GA==
+X-Received: by 2002:aa7:d7d3:0:b0:501:d542:4d0c with SMTP id e19-20020aa7d7d3000000b00501d5424d0cmr2432392eds.22.1679652660688;
+        Fri, 24 Mar 2023 03:11:00 -0700 (PDT)
+Received: from felia.fritz.box (ipbcc1d920.dynamic.kabel-deutschland.de. [188.193.217.32])
+        by smtp.gmail.com with ESMTPSA id u20-20020a50c054000000b004aeeb476c5bsm10351126edd.24.2023.03.24.03.11.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Mar 2023 03:11:00 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Fri, 24 Mar 2023 10:25:43 +0100
-Message-ID: <CAKXUXMyj0kHj=5ifgrajy1bcZzTLk3iVsnRxLA_VEnjpu5WOpQ@mail.gmail.com>
-Subject: Re: [PATCH] selinux: clean up dead code after removing runtime disable
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] mips: Remove obsolete configs IRQ_MSP_CIC and IRQ_MSP_SLP
+Date:   Fri, 24 Mar 2023 11:08:48 +0100
+Message-Id: <20230324100848.13127-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 3:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Thu, Mar 23, 2023 at 1:12=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gmai=
-l.com> wrote:
-> >
-> > Commit f22f9aaf6c3d ("selinux: remove the runtime disable functionality=
-")
-> > removes the config SECURITY_SELINUX_DISABLE. This results in some dead =
-code
-> > in lsm_hooks.h and a reference in the ABI documentation leading nowhere=
- as
-> > the help text is simply gone.
-> >
-> > Remove the dead code and dead reference.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> > Paul, please pick this minor cleanup patch on top of your commit above.
->
-> Hi Lukas, thanks for catching this and sending a patch!  For future
-> reference, you don't need to add a note asking me to pick up this
-> patch, as long as you send it to the right mailing list - you did -
-> I'll see it and you'll either get a quick reply when I merge it or a
-> longer reply with comments/feedback.
->
-> One comment below ...
->
-> > diff --git a/Documentation/ABI/removed/sysfs-selinux-disable b/Document=
-ation/ABI/removed/sysfs-selinux-disable
-> > index cb783c64cab3..1ae9587231e1 100644
-> > --- a/Documentation/ABI/removed/sysfs-selinux-disable
-> > +++ b/Documentation/ABI/removed/sysfs-selinux-disable
-> > @@ -24,6 +24,3 @@ Description:
-> >         SELinux at runtime.  Fedora is in the process of removing the
-> >         selinuxfs "disable" node and once that is complete we will star=
-t the
-> >         slow process of removing this code from the kernel.
-> > -
-> > -       More information on /sys/fs/selinux/disable can be found under =
-the
-> > -       CONFIG_SECURITY_SELINUX_DISABLE Kconfig option.
->
-> When I moved the deprecation notice from the "obsolete" to the
-> "removed" directory I added a note at the top which read:
->
->   "REMOVAL UPDATE: The SELinux checkreqprot functionality was
->    removed in March 2023, the original deprecation notice is
->    shown below."
->
-> My goal was to preserve the original notice as much as possible,
-> including the references to the now defunct Kconfig option, to help
-> people who are trying to understand how things worked prior to the
-> removal.
->
-> If you can remove this part of your patch and resubmit I'll happily
-> merge it into the selinux/next tree.
->
+Commit 1b00767fd8e1 ("MIPS: Remove PMC MSP71xx platform") removes all uses
+of the config IRQ_MSP_CIC and IRQ_MSP_SLP.
 
-Okay, I reworked the patch as requested and sent out a PATCH v2:
+Remove these two obsolete configs IRQ_MSP_CIC and IRQ_MSP_SLP.
 
-https://lore.kernel.org/all/20230324092114.13907-1-lukas.bulwahn@gmail.com/=
-T/#u
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ arch/mips/Kconfig | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Thanks,
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index f1dfc2fe2acb..26d254d125b6 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -1179,12 +1179,6 @@ config SYS_SUPPORTS_LITTLE_ENDIAN
+ config MIPS_HUGE_TLB_SUPPORT
+ 	def_bool HUGETLB_PAGE || TRANSPARENT_HUGEPAGE
+ 
+-config IRQ_MSP_SLP
+-	bool
+-
+-config IRQ_MSP_CIC
+-	bool
+-
+ config IRQ_TXX9
+ 	bool
+ 
+-- 
+2.17.1
 
-Lukas
