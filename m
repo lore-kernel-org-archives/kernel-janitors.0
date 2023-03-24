@@ -2,124 +2,134 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E41C76196
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 20:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA19C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 22:03:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231913AbjCXUUa (ORCPT
+        id S232372AbjCXWD4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Mar 2023 16:20:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
+        Fri, 24 Mar 2023 18:03:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231899AbjCXUU1 (ORCPT
+        with ESMTP id S232343AbjCXWDv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Mar 2023 16:20:27 -0400
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A37C1ACDE
-        for <kernel-janitors@vger.kernel.org>; Fri, 24 Mar 2023 13:20:15 -0700 (PDT)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-54184571389so53750257b3.4
-        for <kernel-janitors@vger.kernel.org>; Fri, 24 Mar 2023 13:20:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1679689214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NE3yJDI+pYJuCMQv+LbLHvHpakC5z20Q31kT7kG1Coo=;
-        b=US49Rj0ujiV1sooDfFrHrBRZjgcRszsxXf3GeR9J081S3w7ZzTM6r5FO/PKKKbC4P7
-         JqVFTPdgA8dXgaKVQId6RAB2A+fZiRtEXfRwOCBeFLdEBGoomLmHC8smJW9HgWuQFSzn
-         o7BqQPMoH8a5waHthHsy0R/00uU769JgCEN6Wd0VaQl3gm2KkB4iwXIgolQz75n4PRZk
-         Rh5A5mgeRFFnC5UumzUemh3zi7kEvN1ZIv1sDcX9/9BraIwygvvrfBYVpOOZHfxE+QQA
-         xUrXbAfn7n9jpcTDrTbKgHCcjhonPev/X8vh9qvVQxXETWrlOsQfjcivSfReJHpLAS1K
-         vs4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679689214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NE3yJDI+pYJuCMQv+LbLHvHpakC5z20Q31kT7kG1Coo=;
-        b=I4gDjMzbd93GEoY/F20MobFaNVIalmrGi8I2s8aMys6mFoaEw/ppOAi0CQF6ohicd0
-         IbpG7+xMIP30TqFybC60pNGSMIS9EN02mNizAETKkCcdPLRK3XNKJ9tt1zI5e4K8SCfa
-         uQhS6MATjgf2VUij7PNQTgUrnu4+VwylgxquLhLjAlt7W6H4lo1oOjnXlNx6TT6cNnFA
-         /6qgfrYWASjROl40RbRy+pnWW1sL/jeDZs3ZfpfE3bHpP+HQcG7qXH9bkCqK2Fyq1hm8
-         e99jV7L5TFfTo7lqM4jajQYilPP+Uvvt76SxgPnHoBYbqzdxeQzxhLE4ti3IyG/Ne0W7
-         RxqQ==
-X-Gm-Message-State: AAQBX9fLiuaOKNGHgQOWc/CElOa72mKomNuUih+CftkUH6tb20VrBtri
-        SplqT95LvvTl2DaiLEH0mHRkATZYkHN5e9VpGxK8
-X-Google-Smtp-Source: AKy350aNTAC0qgpuAb8ntTTl8mLGMQTnxRclhRZIGJOBRGHivChNONp2c378J/aHROxYvUeUJPLKF0Ck6VdvcPwH4cE=
-X-Received: by 2002:a81:af18:0:b0:541:7f7b:a2ff with SMTP id
- n24-20020a81af18000000b005417f7ba2ffmr1650801ywh.8.1679689214313; Fri, 24 Mar
- 2023 13:20:14 -0700 (PDT)
+        Fri, 24 Mar 2023 18:03:51 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02olkn2102.outbound.protection.outlook.com [40.92.43.102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F8F017163
+        for <kernel-janitors@vger.kernel.org>; Fri, 24 Mar 2023 15:03:46 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=T7zms+6IEa33SKIm7rWzrAAM6XdhmsJ1FOxbG4FItRw939nQZg/BGYZZWzUrMZy5xP86EUQLPmNk0byo6tLB8j/JQZn8uuzflOr7si7IUbsyEpqNgtz2imE+KwouNQ0XevgbsOKZTQ60YsnyPVRyqWJ/7tJGvbYcQd5e8IPchutOQHIjiNxXsJmB0a/vg2LwJr6lJO+rfXDUwHO2MdQRVuuyZDRnrm91ku84KUnnU39H0iOOuxMYP5nAFxP8usIAagkGOmqoSdPEj0UzwEzI1Cl10eO1n8fp7x8mW2pqKqWPGtlD3/lD3ch0AeVB71EWqUv/EMtgSMsLHM5VykiLIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5+xMbvBcULKfnybauQHZeE37eRsLPURiFjmj+sbhvz8=;
+ b=ac7bIuBZin+A0kUlpxz/3He27HUAZhBrUFoz7sstm9Y1tf8IciOSOdGNsq43V1wZg2FQiREtxE4WRBpocGxHpfZdemKw3yVJ20kEkQf07B8FvlQtMTDcFhNCGimgZ4NPYnBB3fw6aU01DdcEdSo3nhed/m+/azswY2f+zj+/SGX4i5njh8IpBzLjZqWoaTYB/qnEc/LEGr0DfBG5MvPYRHbvnnLFOP4B03i0IgnxVyTjrXvUZ6rP2Q1YxQuUx+1Z6gFHZC0CmOc57RtLzWwV4afVqQyxFgDfWG3ekj6xSv6Ad6l+Uh54FmIPNWlccf6gfCxkavkZjEm9Ln3Dc5GTUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5+xMbvBcULKfnybauQHZeE37eRsLPURiFjmj+sbhvz8=;
+ b=JTOhYJ5lSPPaF8+PEX/KuILM1RjfCiTZPssYXApiyzhordsiVi41g9FJ6ybOiF06mb+Qp2Wgn6+gdoypVGzXac6R/6pd5y6Imo/sMT7tI+03rnbWJlHWuGmbVzIwHhY4GM3O0bRQyVkPmZu1ge2jEe8DoB+DBldEHMNXOb8GN1bQ1K5Si4mI0WP2hmK0YHXdDsHWbGRb6YcdtWUrpyBGbLn1emKUtVyDY95gIPpy/DEEhRKI5WQIosI/V2oNUopwWGu6rmtgLBqDKyKLGOQ/La6qdvLEkQNfMPWqFhE4H8CoxZkISAxhqzWLxRq1mtKi0PlsCEmYdP1CV61UfhNv1Q==
+Received: from SN6PR06MB5342.namprd06.prod.outlook.com (2603:10b6:805:f9::31)
+ by DM6PR06MB4410.namprd06.prod.outlook.com (2603:10b6:5:21::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Fri, 24 Mar
+ 2023 22:03:43 +0000
+Received: from SN6PR06MB5342.namprd06.prod.outlook.com
+ ([fe80::1ba2:9d51:aaa6:2f4a]) by SN6PR06MB5342.namprd06.prod.outlook.com
+ ([fe80::1ba2:9d51:aaa6:2f4a%6]) with mapi id 15.20.6178.039; Fri, 24 Mar 2023
+ 22:03:43 +0000
+Date:   Fri, 24 Mar 2023 17:03:38 -0500
+From:   Chris Morgan <macromorgan@hotmail.com>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maya Matuszczyk <maccraft123mc@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/panel: magnachip: Prevent error pointer dereference
+ in probe
+Message-ID: <SN6PR06MB53425022898EC5606281166BA5849@SN6PR06MB5342.namprd06.prod.outlook.com>
+References: <de0273a8-8910-4ac4-b4ed-f7691c4d2ca6@kili.mountain>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de0273a8-8910-4ac4-b4ed-f7691c4d2ca6@kili.mountain>
+X-TMN:  [J9rTSjtbBA/kkDMAQnGmf0ZcVWh7i47g]
+X-ClientProxiedBy: DM6PR08CA0044.namprd08.prod.outlook.com
+ (2603:10b6:5:1e0::18) To SN6PR06MB5342.namprd06.prod.outlook.com
+ (2603:10b6:805:f9::31)
+X-Microsoft-Original-Message-ID: <ZB4eOr5tWm1dxqut@wintermute.localhost.fail>
 MIME-Version: 1.0
-References: <20230324092114.13907-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20230324092114.13907-1-lukas.bulwahn@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 24 Mar 2023 16:20:03 -0400
-Message-ID: <CAHC9VhT70JYNmE5ROhnYzqFv3UcYcP9mGdiD4X_kdiAspStr8A@mail.gmail.com>
-Subject: Re: [PATCH v2] selinux: clean up dead code after removing runtime disable
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR06MB5342:EE_|DM6PR06MB4410:EE_
+X-MS-Office365-Filtering-Correlation-Id: ced5548f-4044-4af5-04a5-08db2cb3a1a8
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uTV7Tkwqi1g90O5BHRGh+4npfxdY3fa3DhcVsh4rvdLDwhWS9v+Cm/FEyJQG4pkRXQqKYafvxipph67kZA/sQdWlxQfXF+Iwnsx/TfhPrvgat03Mi4BORi1EKJY4u5eVmxHMeGeHnsdJjevzxxqg8MoJug811p2HeA7Go8GdTxEAiiDRYu7PwF5q5imb01adFWJfyRK8zk3ZE/ZqGYFRlLCFUUap+YA2aK+PvAwlIu/R8teB8aV884vDemH9czYkMfvrti3dXhyJu22hTbmu3gQvOD0et+kf9a7xMrJsk+rRnXek7LvLcm+yciDrIxNy66qGNxgpu1w/3/+GA+1mloO9qvNRzaiKfPkRXRt5imn7/q4ZMW8tHNXVqcLW/j45bBVsQN8JYS8Dv5H99rwlQcDgA5NBmMgXMMgrnDIQQE0OI4nV5LfS0qt6fYrYT4X0flGXJVUHMrgsNya/vgZUMMT+bgOVTezPJCbq33Ms/rIn49/G/LCuFOckrd/cQH1wtRC/khN/9RFzR8OZ7Ry+N4HsH1FOR2ksdW83nzphQQzc+z/nE0K9Duf6QPf24L5dL4rIRsI2ST6mbxE6IA9Otn1Puf7GqOmcLfB/b5OBwe9dQKFOHD3P08izaZ38U+TtAGJ5ZT8Hgy16PoKwexgh6A==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?v62Y0TzCeu1+C6FMqPxr4COhaA+0QFYi9CSV8V5VK/FDiS+msVu38FwgAGxD?=
+ =?us-ascii?Q?4dM/hPlRJzAS2aUp2gCgj/Cw53sQOf46Jr7vNOq5v9ASeGhuqn7GB9Fv30wG?=
+ =?us-ascii?Q?N5Ajel5AL27toAHpYxMgY3/hBDFU0+/A7G4q5ehGMmzYTlhtYxgLOWPlMihq?=
+ =?us-ascii?Q?5MB2S9QyxXuWP0ZG9QwQkHYGfv4MBueQNbCJPvkhmXxvxW3PEoBL+g4nujGJ?=
+ =?us-ascii?Q?zqb+DawuhZDWJquc4Vih0LWJKr9BFI00mSant5vyKeqF9qTCAQLSXP92nPz5?=
+ =?us-ascii?Q?j75Ua4+DcCee5+1ijOGyQ/truRcksm+gN9CAmtmB2XalXoCFnNiDDspwYi/v?=
+ =?us-ascii?Q?eU05LklVXDeJOFPBGuImgtDMv8pbHii1FQDK0Xg0Y7JqH9Eq9CbecHnX6UYh?=
+ =?us-ascii?Q?rWm1eySomS+mVNLNJMquBpcWGLHYnxxK5ijb7CPI+KdrtGNCpUqJsWF11iRy?=
+ =?us-ascii?Q?aOKkNQSm2M/YmMb2r2HGcUAz3tLOMw6fusrwUdcqoI3HSmxWIuxrwidb306i?=
+ =?us-ascii?Q?CNW92WU9nJw+1OeTMbsa1nKaJaG3+OdCAViLcrMiGTErJlT7j/+TEAXjXbDM?=
+ =?us-ascii?Q?1N/2dHZAzwwNrM42sHwljPPamps8hz211MKSI4TJ/m3BOnkPokXNYFx2NNsA?=
+ =?us-ascii?Q?4xA3bVmJUWJOmtHeQ2etqveBaNhxIBFCfR7HJlBxMkWegcd0Die8W6CoEPs2?=
+ =?us-ascii?Q?eRpiEyN2+ryKv/pdHXSAFarLvvbzoSJQjKWZrY3Ytbi6BDqxREWcWjTVSuTn?=
+ =?us-ascii?Q?yCc76Z9V2WwoNaBmNCbqYfuhNbhfeQalc9p1sbO1Z3wj1N4d/mPP+JsIEEA9?=
+ =?us-ascii?Q?qie09/2++dsSQ6flMpsyMHrQRWszeYydU/Gs0yk5Q9XdaPycJbAjNGTSd2vG?=
+ =?us-ascii?Q?/5ipWDO0/RN2KFujXeyLHA7pMNkwm5FDGYTawQtUtgblmvTW3TushdOiBDta?=
+ =?us-ascii?Q?8YwRIDt60wjPQwuZrWYfP6DvvW3eRr0DZ2skQVqaVHS70ZEAdNx89SB+bfk5?=
+ =?us-ascii?Q?oiUnzXpI4Gl5yE8RwxiaAarsULS8uXLwzmQfdgEHEDUmKgLx6EQaNv6co8yX?=
+ =?us-ascii?Q?AkKKz+vT4P3STM+714bQtxIUcq9v8cOKCesFboQPDwrwcUVxSl1lW9yMa7l7?=
+ =?us-ascii?Q?bw3o2puvg+HudK0WfJzuc7Bi4qZqLJUAx6nPKEHZZMX8v5WtA9OJC2+7K7zX?=
+ =?us-ascii?Q?8I0MK0fHKFw7ctm2VAH+ERzndnVenXvMvH32kaBxC1K/krwKXBtNuU4GuBkI?=
+ =?us-ascii?Q?NRKPWozRIspZZoiQJ6uxLAIujbvXCECnpSHnB6mZcA=3D=3D?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-89723.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: ced5548f-4044-4af5-04a5-08db2cb3a1a8
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR06MB5342.namprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2023 22:03:43.1436
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR06MB4410
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 5:23=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gmail.=
-com> wrote:
->
-> Commit f22f9aaf6c3d ("selinux: remove the runtime disable functionality")
-> removes the config SECURITY_SELINUX_DISABLE. This results in some dead co=
-de
-> in lsm_hooks.h.
->
-> Remove this dead code.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On Wed, Mar 22, 2023 at 12:07:10PM +0300, Dan Carpenter wrote:
+> Don't dereference "db->dsi_dev" when it is an error pointer.
+> 
+> Fixes: 249a4f5e663c ("drm/panel: Add Magnachip D53E6EA8966 Panel Driver")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 > ---
->  include/linux/lsm_hooks.h | 23 -----------------------
->  1 file changed, 23 deletions(-)
+>  drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c b/drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c
+> index 8c362c40227f..26d358b9b85a 100644
+> --- a/drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c
+> +++ b/drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c
+> @@ -418,7 +418,7 @@ static int d53e6ea8966_probe(struct spi_device *spi)
+>  	if (IS_ERR(db->dsi_dev)) {
+>  		dev_err(dev, "failed to register dsi device: %ld\n",
+>  			PTR_ERR(db->dsi_dev));
+> -		ret = PTR_ERR(db->dsi_dev);
+> +		return PTR_ERR(db->dsi_dev);
+>  	}
+>  
+>  	db->dsi_dev->lanes = 2;
+> -- 
+> 2.39.1
+> 
 
-Thanks Lukas, this looks much better.  Merged into selinux/next.
+Thank you for the patch, this looks good to me. Not sure how I
+missed that.
 
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 2b04f94a31bd..ab2b2fafa4a4 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -117,29 +117,6 @@ extern struct lsm_info __start_early_lsm_info[], __e=
-nd_early_lsm_info[];
->                 __used __section(".early_lsm_info.init")                \
->                 __aligned(sizeof(unsigned long))
->
-> -#ifdef CONFIG_SECURITY_SELINUX_DISABLE
-> -/*
-> - * Assuring the safety of deleting a security module is up to
-> - * the security module involved. This may entail ordering the
-> - * module's hook list in a particular way, refusing to disable
-> - * the module once a policy is loaded or any number of other
-> - * actions better imagined than described.
-> - *
-> - * The name of the configuration option reflects the only module
-> - * that currently uses the mechanism. Any developer who thinks
-> - * disabling their module is a good idea needs to be at least as
-> - * careful as the SELinux team.
-> - */
-> -static inline void security_delete_hooks(struct security_hook_list *hook=
-s,
-> -                                               int count)
-> -{
-> -       int i;
-> -
-> -       for (i =3D 0; i < count; i++)
-> -               hlist_del_rcu(&hooks[i].list);
-> -}
-> -#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
-> -
->  extern int lsm_inode_alloc(struct inode *inode);
->
->  #endif /* ! __LINUX_LSM_HOOKS_H */
-> --
-> 2.17.1
-
---=20
-paul-moore.com
+Chris Morgan
