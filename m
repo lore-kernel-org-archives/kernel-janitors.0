@@ -2,134 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA19C6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Mar 2023 22:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 777E0C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Mar 2023 07:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232372AbjCXWD4 (ORCPT
+        id S229621AbjCYHfK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Mar 2023 18:03:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
+        Sat, 25 Mar 2023 03:35:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232343AbjCXWDv (ORCPT
+        with ESMTP id S229486AbjCYHfJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Mar 2023 18:03:51 -0400
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02olkn2102.outbound.protection.outlook.com [40.92.43.102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F8F017163
-        for <kernel-janitors@vger.kernel.org>; Fri, 24 Mar 2023 15:03:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T7zms+6IEa33SKIm7rWzrAAM6XdhmsJ1FOxbG4FItRw939nQZg/BGYZZWzUrMZy5xP86EUQLPmNk0byo6tLB8j/JQZn8uuzflOr7si7IUbsyEpqNgtz2imE+KwouNQ0XevgbsOKZTQ60YsnyPVRyqWJ/7tJGvbYcQd5e8IPchutOQHIjiNxXsJmB0a/vg2LwJr6lJO+rfXDUwHO2MdQRVuuyZDRnrm91ku84KUnnU39H0iOOuxMYP5nAFxP8usIAagkGOmqoSdPEj0UzwEzI1Cl10eO1n8fp7x8mW2pqKqWPGtlD3/lD3ch0AeVB71EWqUv/EMtgSMsLHM5VykiLIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5+xMbvBcULKfnybauQHZeE37eRsLPURiFjmj+sbhvz8=;
- b=ac7bIuBZin+A0kUlpxz/3He27HUAZhBrUFoz7sstm9Y1tf8IciOSOdGNsq43V1wZg2FQiREtxE4WRBpocGxHpfZdemKw3yVJ20kEkQf07B8FvlQtMTDcFhNCGimgZ4NPYnBB3fw6aU01DdcEdSo3nhed/m+/azswY2f+zj+/SGX4i5njh8IpBzLjZqWoaTYB/qnEc/LEGr0DfBG5MvPYRHbvnnLFOP4B03i0IgnxVyTjrXvUZ6rP2Q1YxQuUx+1Z6gFHZC0CmOc57RtLzWwV4afVqQyxFgDfWG3ekj6xSv6Ad6l+Uh54FmIPNWlccf6gfCxkavkZjEm9Ln3Dc5GTUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5+xMbvBcULKfnybauQHZeE37eRsLPURiFjmj+sbhvz8=;
- b=JTOhYJ5lSPPaF8+PEX/KuILM1RjfCiTZPssYXApiyzhordsiVi41g9FJ6ybOiF06mb+Qp2Wgn6+gdoypVGzXac6R/6pd5y6Imo/sMT7tI+03rnbWJlHWuGmbVzIwHhY4GM3O0bRQyVkPmZu1ge2jEe8DoB+DBldEHMNXOb8GN1bQ1K5Si4mI0WP2hmK0YHXdDsHWbGRb6YcdtWUrpyBGbLn1emKUtVyDY95gIPpy/DEEhRKI5WQIosI/V2oNUopwWGu6rmtgLBqDKyKLGOQ/La6qdvLEkQNfMPWqFhE4H8CoxZkISAxhqzWLxRq1mtKi0PlsCEmYdP1CV61UfhNv1Q==
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com (2603:10b6:805:f9::31)
- by DM6PR06MB4410.namprd06.prod.outlook.com (2603:10b6:5:21::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Fri, 24 Mar
- 2023 22:03:43 +0000
-Received: from SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::1ba2:9d51:aaa6:2f4a]) by SN6PR06MB5342.namprd06.prod.outlook.com
- ([fe80::1ba2:9d51:aaa6:2f4a%6]) with mapi id 15.20.6178.039; Fri, 24 Mar 2023
- 22:03:43 +0000
-Date:   Fri, 24 Mar 2023 17:03:38 -0500
-From:   Chris Morgan <macromorgan@hotmail.com>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maya Matuszczyk <maccraft123mc@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/panel: magnachip: Prevent error pointer dereference
- in probe
-Message-ID: <SN6PR06MB53425022898EC5606281166BA5849@SN6PR06MB5342.namprd06.prod.outlook.com>
-References: <de0273a8-8910-4ac4-b4ed-f7691c4d2ca6@kili.mountain>
+        Sat, 25 Mar 2023 03:35:09 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1D493C5
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Mar 2023 00:35:07 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id y4so16281736edo.2
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Mar 2023 00:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679729706;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xq6cHljyVfxp4pPtvgru9AgrIGWOZ06TvlxxbjJmGjA=;
+        b=nl3zmvm81hbhPusJPRCZ9r290yh0BlBOc0WocGAKDuwrSVgnDBYEKh+0lGC2Nom3HS
+         T16eHuClIfhXWjGMVGXDIbbtGt2SIaN6TneVQz6AXgms1n8IXtHpk5mHz3NImQxoLJKD
+         WRICtQKP36Pu2LMpjBuLtzzzAXvZk/EB/L+iNc1lU+fjIrQyRU7F9HE5cpwF6zI2YkFz
+         VbtGlXVL7Ye9Q1TWoG/jWUh+fBe8mbFAq9UNRfH4qQKEUbhz4ZSlYHcJQ7tzclq/NHCf
+         dDRC+W3diWv9ZvmlMHC5KPJ/+YrGOf0q6hXOme+qcj/en0JhukluDOYHT0y5HcwmYvpz
+         E4vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679729706;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xq6cHljyVfxp4pPtvgru9AgrIGWOZ06TvlxxbjJmGjA=;
+        b=Q+1pBrdnvtX+S9IXFboSPPC3S90GqK7sQENhPBRAwq2YmZ1Kae0m87OaLuhKTBxWVH
+         AZ3271ke8RWwNNhIsro62RPlAssEHfZi0jz+twNkD5c7BwSQrM/vnlqLkXEnt4G5qNEw
+         2m1NY19Pne6/QI8qKiS8Ddhg1mxkgJsB2ZMHK/7lwN4fw2GnzW6HBq1cLfvDJ1lbfeCb
+         TaA4f9v1E4WV3r3H1vuP4jSryrWY1y722s90kE2NZHihyMUtw7S7udA/Lo6TC1u5x/hl
+         rYPMV7oOTsD5QAlapXDuVVKYz8Tvvv7yoHg5ETlaBcC2e8M8eMQAl53lNO8rlCwbtD1z
+         xl5Q==
+X-Gm-Message-State: AAQBX9evgV3iP65zGtYyTwQBY5mebmfN67rfVdz6wy9pnQ1tpmWC19VX
+        2zGsqsSGyvXXbvVJ4OwSyX5n8T1A7ekHrA==
+X-Google-Smtp-Source: AKy350bRlv9FWC65gE5N9A8TX/EOnF3JsUrlPtQvjycmaHrsJyMOl79SZQtP1nUlfH4ZWKqw44FdGg==
+X-Received: by 2002:aa7:c98b:0:b0:500:4c0e:cb8d with SMTP id c11-20020aa7c98b000000b005004c0ecb8dmr5451476edt.5.1679729706062;
+        Sat, 25 Mar 2023 00:35:06 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id y70-20020a50bb4c000000b004fa380a14e7sm11899460ede.77.2023.03.25.00.35.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Mar 2023 00:35:05 -0700 (PDT)
+Date:   Sat, 25 Mar 2023 10:35:01 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     steen.hegelund@microchip.com
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] net: microchip: sparx5: Adding KUNIT tests of
+ key/action values in VCAP API
+Message-ID: <7bffefc6-219a-4f71-baa0-ad4526e5c198@kili.mountain>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <de0273a8-8910-4ac4-b4ed-f7691c4d2ca6@kili.mountain>
-X-TMN:  [J9rTSjtbBA/kkDMAQnGmf0ZcVWh7i47g]
-X-ClientProxiedBy: DM6PR08CA0044.namprd08.prod.outlook.com
- (2603:10b6:5:1e0::18) To SN6PR06MB5342.namprd06.prod.outlook.com
- (2603:10b6:805:f9::31)
-X-Microsoft-Original-Message-ID: <ZB4eOr5tWm1dxqut@wintermute.localhost.fail>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR06MB5342:EE_|DM6PR06MB4410:EE_
-X-MS-Office365-Filtering-Correlation-Id: ced5548f-4044-4af5-04a5-08db2cb3a1a8
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: uTV7Tkwqi1g90O5BHRGh+4npfxdY3fa3DhcVsh4rvdLDwhWS9v+Cm/FEyJQG4pkRXQqKYafvxipph67kZA/sQdWlxQfXF+Iwnsx/TfhPrvgat03Mi4BORi1EKJY4u5eVmxHMeGeHnsdJjevzxxqg8MoJug811p2HeA7Go8GdTxEAiiDRYu7PwF5q5imb01adFWJfyRK8zk3ZE/ZqGYFRlLCFUUap+YA2aK+PvAwlIu/R8teB8aV884vDemH9czYkMfvrti3dXhyJu22hTbmu3gQvOD0et+kf9a7xMrJsk+rRnXek7LvLcm+yciDrIxNy66qGNxgpu1w/3/+GA+1mloO9qvNRzaiKfPkRXRt5imn7/q4ZMW8tHNXVqcLW/j45bBVsQN8JYS8Dv5H99rwlQcDgA5NBmMgXMMgrnDIQQE0OI4nV5LfS0qt6fYrYT4X0flGXJVUHMrgsNya/vgZUMMT+bgOVTezPJCbq33Ms/rIn49/G/LCuFOckrd/cQH1wtRC/khN/9RFzR8OZ7Ry+N4HsH1FOR2ksdW83nzphQQzc+z/nE0K9Duf6QPf24L5dL4rIRsI2ST6mbxE6IA9Otn1Puf7GqOmcLfB/b5OBwe9dQKFOHD3P08izaZ38U+TtAGJ5ZT8Hgy16PoKwexgh6A==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?v62Y0TzCeu1+C6FMqPxr4COhaA+0QFYi9CSV8V5VK/FDiS+msVu38FwgAGxD?=
- =?us-ascii?Q?4dM/hPlRJzAS2aUp2gCgj/Cw53sQOf46Jr7vNOq5v9ASeGhuqn7GB9Fv30wG?=
- =?us-ascii?Q?N5Ajel5AL27toAHpYxMgY3/hBDFU0+/A7G4q5ehGMmzYTlhtYxgLOWPlMihq?=
- =?us-ascii?Q?5MB2S9QyxXuWP0ZG9QwQkHYGfv4MBueQNbCJPvkhmXxvxW3PEoBL+g4nujGJ?=
- =?us-ascii?Q?zqb+DawuhZDWJquc4Vih0LWJKr9BFI00mSant5vyKeqF9qTCAQLSXP92nPz5?=
- =?us-ascii?Q?j75Ua4+DcCee5+1ijOGyQ/truRcksm+gN9CAmtmB2XalXoCFnNiDDspwYi/v?=
- =?us-ascii?Q?eU05LklVXDeJOFPBGuImgtDMv8pbHii1FQDK0Xg0Y7JqH9Eq9CbecHnX6UYh?=
- =?us-ascii?Q?rWm1eySomS+mVNLNJMquBpcWGLHYnxxK5ijb7CPI+KdrtGNCpUqJsWF11iRy?=
- =?us-ascii?Q?aOKkNQSm2M/YmMb2r2HGcUAz3tLOMw6fusrwUdcqoI3HSmxWIuxrwidb306i?=
- =?us-ascii?Q?CNW92WU9nJw+1OeTMbsa1nKaJaG3+OdCAViLcrMiGTErJlT7j/+TEAXjXbDM?=
- =?us-ascii?Q?1N/2dHZAzwwNrM42sHwljPPamps8hz211MKSI4TJ/m3BOnkPokXNYFx2NNsA?=
- =?us-ascii?Q?4xA3bVmJUWJOmtHeQ2etqveBaNhxIBFCfR7HJlBxMkWegcd0Die8W6CoEPs2?=
- =?us-ascii?Q?eRpiEyN2+ryKv/pdHXSAFarLvvbzoSJQjKWZrY3Ytbi6BDqxREWcWjTVSuTn?=
- =?us-ascii?Q?yCc76Z9V2WwoNaBmNCbqYfuhNbhfeQalc9p1sbO1Z3wj1N4d/mPP+JsIEEA9?=
- =?us-ascii?Q?qie09/2++dsSQ6flMpsyMHrQRWszeYydU/Gs0yk5Q9XdaPycJbAjNGTSd2vG?=
- =?us-ascii?Q?/5ipWDO0/RN2KFujXeyLHA7pMNkwm5FDGYTawQtUtgblmvTW3TushdOiBDta?=
- =?us-ascii?Q?8YwRIDt60wjPQwuZrWYfP6DvvW3eRr0DZ2skQVqaVHS70ZEAdNx89SB+bfk5?=
- =?us-ascii?Q?oiUnzXpI4Gl5yE8RwxiaAarsULS8uXLwzmQfdgEHEDUmKgLx6EQaNv6co8yX?=
- =?us-ascii?Q?AkKKz+vT4P3STM+714bQtxIUcq9v8cOKCesFboQPDwrwcUVxSl1lW9yMa7l7?=
- =?us-ascii?Q?bw3o2puvg+HudK0WfJzuc7Bi4qZqLJUAx6nPKEHZZMX8v5WtA9OJC2+7K7zX?=
- =?us-ascii?Q?8I0MK0fHKFw7ctm2VAH+ERzndnVenXvMvH32kaBxC1K/krwKXBtNuU4GuBkI?=
- =?us-ascii?Q?NRKPWozRIspZZoiQJ6uxLAIujbvXCECnpSHnB6mZcA=3D=3D?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-89723.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: ced5548f-4044-4af5-04a5-08db2cb3a1a8
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR06MB5342.namprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2023 22:03:43.1436
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR06MB4410
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 12:07:10PM +0300, Dan Carpenter wrote:
-> Don't dereference "db->dsi_dev" when it is an error pointer.
-> 
-> Fixes: 249a4f5e663c ("drm/panel: Add Magnachip D53E6EA8966 Panel Driver")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c b/drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c
-> index 8c362c40227f..26d358b9b85a 100644
-> --- a/drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c
-> +++ b/drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c
-> @@ -418,7 +418,7 @@ static int d53e6ea8966_probe(struct spi_device *spi)
->  	if (IS_ERR(db->dsi_dev)) {
->  		dev_err(dev, "failed to register dsi device: %ld\n",
->  			PTR_ERR(db->dsi_dev));
-> -		ret = PTR_ERR(db->dsi_dev);
-> +		return PTR_ERR(db->dsi_dev);
->  	}
->  
->  	db->dsi_dev->lanes = 2;
-> -- 
-> 2.39.1
-> 
+Hello Steen Hegelund,
 
-Thank you for the patch, this looks good to me. Not sure how I
-missed that.
+The patch c956b9b318d9: "net: microchip: sparx5: Adding KUNIT tests
+of key/action values in VCAP API" from Nov 9, 2022, leads to the
+following Smatch static checker warning:
 
-Chris Morgan
+	drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c:1416 vcap_api_encode_rule_test()
+	warn: 'rule' was already freed.
+
+drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+    1406 
+    1407         /* Check that the rule has been added */
+    1408         ret = list_empty(&is2_admin.rules);
+    1409         KUNIT_EXPECT_EQ(test, false, ret);
+    1410         KUNIT_EXPECT_EQ(test, 0, ret);
+    1411         vcap_free_rule(rule);
+    1412 
+    1413         /* Check that the rule has been freed: tricky to access since this
+    1414          * memory should not be accessible anymore
+    1415          */
+--> 1416         KUNIT_EXPECT_PTR_NE(test, NULL, rule);
+
+Obviously the comments say that this is already free so it's going to be
+"tricky".  :P  What's happening here?  This is to test that KASan will
+crash properly?  Could we put that in the normal KASan tset directory so
+that we can ignore those deliberate crashing bugs?
+
+    1417         ret = list_empty(&rule->keyfields);
+    1418         KUNIT_EXPECT_EQ(test, true, ret);
+    1419         ret = list_empty(&rule->actionfields);
+    1420         KUNIT_EXPECT_EQ(test, true, ret);
+    1421 }
+
+regards,
+dan carpenter
