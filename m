@@ -2,97 +2,128 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF17C6FD1F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Mar 2023 11:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A53C2C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Mar 2023 11:08:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231422AbjCYLIV (ORCPT
+        id S231539AbjCYLIi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Mar 2023 07:08:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59968 "EHLO
+        Sat, 25 Mar 2023 07:08:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231691AbjCYLIT (ORCPT
+        with ESMTP id S231433AbjCYLIg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Mar 2023 07:08:19 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1225916882;
-        Sat, 25 Mar 2023 04:08:14 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id er18so6117806edb.9;
-        Sat, 25 Mar 2023 04:08:13 -0700 (PDT)
+        Sat, 25 Mar 2023 07:08:36 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4C6B77D
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Mar 2023 04:08:35 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id x3so17272178edb.10
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Mar 2023 04:08:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679742492;
+        d=gmail.com; s=20210112; t=1679742514;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zk8doAfUl+ZfcEUfEPNWLVG3j4lJKm9U9m/sCbx1TNM=;
-        b=FtpzitCrL6ZLT62afUGqv+RGPSUb4kHMxanyPsMGCMcXHKtH0Lgwp0Yx80LkwKz4Du
-         dlhPXqebS5qcgKZhhNyNOJ4PCuRDjE0Lo8GIDutEPpUaXno7gV8LTMG2EX+1xzWOZQi7
-         wWXNGhELvKYj1duRtBUipj8qsPL+MdltXhA6jRJooW4XdV9RZySBiPg9TWccTWimAh2S
-         ah3ua9bPggPDDq1j/ue0UnrZNmKKfJsqTwBeevbv8/VWvosxPYQSJRrMWZ0lcJeIdd+t
-         VHANEh1R5Vh5/seHw1t1dgjo01Y2BzDHbqH5mgVl7VmX4WgZQfWZli0jNoJPinoo62j3
-         Rbew==
+        bh=1zJj1LSPaYk41ko5uT1au1gD7jweEsRNoLsEw/pT8LE=;
+        b=cf6F/CvGU6ogQBZDegs7IpW4+hRVVAGGp2Psg2iDHS8xCtxXEgzN4aGdRxkBHmUus2
+         jBtlP4rl2o0zq/uYOOwr+qS+TNExIspiafOFikeLZcqXsVkB85w9GFteIcfVWfvoS15L
+         v1BnsJ+/1X9TfGnu8fwbgzZRD3Mog9r6xfNz0QEh1HX8Ugg0giiUZ0VOl/RFjPWF95vG
+         m36HGAzCre6hA8x8I77MD2cL/JYhGm3okdxaEpDUfV3dilwUj0csASfK//GlkgTb8C//
+         WyihgVw2Csh8+ng9CgPmRU/BYTatTierb7ZM0jZgfiNC195fCv0yRXb4rojGhB5ryfSa
+         CYkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679742492;
+        d=1e100.net; s=20210112; t=1679742514;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zk8doAfUl+ZfcEUfEPNWLVG3j4lJKm9U9m/sCbx1TNM=;
-        b=11JnEFFVPh+PVymP4KA0VDkPEZg/Phc45Nw8muC1MVbjuu4ZJWPvBfDuqukR0vM+TE
-         nkFvmIQlLJ3xioZLK2NamipWQGLoyOtDW1AyDOks2a41nHYPy6aXGjW9VLL3La6F1JbU
-         1Hqi1s28Tg/sQj2FdjC7ALzRXN2GUx+lypcwBX+PyhNiMYqS6Dz69nryBaIu1TIYbb6X
-         fGTkSkjFkzb64M4RDSaJzbGr7GXgCIIL60xoOKVv9CLappUd3ifz44nptA4vlzWtGhrD
-         2oG8tMw57i/A5CzGFbNs2FWbllnw5bLwc6uChHc2xuW0C4lkHvVse8nWM6QXxKrXrsiu
-         TJIQ==
-X-Gm-Message-State: AAQBX9dLPZR35BEzjm1Pn5EYc7fbuVyXPDkO7BXe+W+BF5P1eCaYvYKs
-        aBIJdtnbITthzyMCyEITnco=
-X-Google-Smtp-Source: AKy350bKarJZNeSl4r8cIGS0LEIUQ8mxI9D8On4pGeX5NX/8Ff+M8ADXWPdn75wS7P4bOsm30hfZBA==
-X-Received: by 2002:a17:906:ecf4:b0:930:2e1c:97ba with SMTP id qt20-20020a170906ecf400b009302e1c97bamr6110457ejb.5.1679742492402;
-        Sat, 25 Mar 2023 04:08:12 -0700 (PDT)
+        bh=1zJj1LSPaYk41ko5uT1au1gD7jweEsRNoLsEw/pT8LE=;
+        b=59OLWI4xTs6Vsxi4wWdDia2g/MqsHZVx4qhuKU6ceJFSa6sWMmdm3VxzrCRhpwfPpV
+         0Wvw9XStQy+5AWR2dm/uQJ9HJlcfjtyW4Dh7MF0tHHmlOU0lphSA80KJoLBTAfAZZfcw
+         mRyL4Tme9XOCHTUjG81TSuJL1bLwgyUF+0sWSh8Lc7cjzQl8WFOZ8KLCb8xe9+ogiLho
+         96fFFz6YxD91iKPSTM/PE8gECH46ptK1CpRUVPkGbmzAxnyB3pZJZrF/gt4u2gNGcCDC
+         0eMULGtYGH/DNmQhnqmalFS0n8enkv/nrsP4F26uGTUGRDT/THu4p4qkk/WAbhXRVbaS
+         GdIQ==
+X-Gm-Message-State: AAQBX9ftAkvd9fYJ+yWBIlTSrn/T6qeOdSdl06rJgrdJ3+jPOG2w16No
+        9W4DNC1JHYptTkQd4wU4KkUD8SPl8yUUJg==
+X-Google-Smtp-Source: AKy350afxJqYhd/5GR4gmF2FFK5fVI/O1xTxIE3PcHghyhipZzkb+hZlbb6k17zKdYcqGDbyZ8eSeQ==
+X-Received: by 2002:a17:906:8c7:b0:922:6bde:2530 with SMTP id o7-20020a17090608c700b009226bde2530mr5705513eje.32.1679742514279;
+        Sat, 25 Mar 2023 04:08:34 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id xd10-20020a170907078a00b0093caa021528sm3999775ejb.85.2023.03.25.04.08.11
+        by smtp.gmail.com with ESMTPSA id a10-20020a1709065f8a00b0092595899cfcsm11615676eju.53.2023.03.25.04.08.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Mar 2023 04:08:12 -0700 (PDT)
-Date:   Sat, 25 Mar 2023 14:08:02 +0300
+        Sat, 25 Mar 2023 04:08:33 -0700 (PDT)
+Date:   Sat, 25 Mar 2023 14:08:10 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform/x86: ISST: unlock on error path in tpmi_sst_init()
-Message-ID: <dcdebbb7-7de6-4d04-8e7a-43d5ca043484@kili.mountain>
+To:     rick.p.edgecombe@intel.com
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] x86: Add PTRACE interface for shadow stack
+Message-ID: <90af27cc-6c9d-4fb9-be3b-fc4ef378766d@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Call mutex_unlock(&isst_tpmi_dev_lock) before returning on this
-error path.
+Hello Rick Edgecombe,
 
-Fixes: d805456c712f ("platform/x86: ISST: Enumerate TPMI SST and create framework")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+The patch d84e6ee122e5: "x86: Add PTRACE interface for shadow stack"
+from Mar 18, 2023, leads to the following Smatch static checker
+warning:
 
-diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-index cdb56a18ea17..664d2ee60385 100644
---- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-+++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-@@ -1399,8 +1399,10 @@ int tpmi_sst_init(void)
- 	isst_common.sst_inst = kcalloc(topology_max_packages(),
- 				       sizeof(*isst_common.sst_inst),
- 				       GFP_KERNEL);
--	if (!isst_common.sst_inst)
--		return -ENOMEM;
-+	if (!isst_common.sst_inst) {
-+		ret = -ENOMEM;
-+		goto init_done;
-+	}
- 
- 	memset(&cb, 0, sizeof(cb));
- 	cb.cmd_size = sizeof(struct isst_if_io_reg);
--- 
-2.39.1
+	arch/x86/kernel/fpu/regset.c:234 ssp_set()
+	error: uninitialized symbol 'user_ssp'.
 
+arch/x86/kernel/fpu/regset.c
+    212 int ssp_set(struct task_struct *target, const struct user_regset *regset,
+    213             unsigned int pos, unsigned int count,
+    214             const void *kbuf, const void __user *ubuf)
+    215 {
+    216         struct fpu *fpu = &target->thread.fpu;
+    217         struct xregs_state *xsave = &fpu->fpstate->regs.xsave;
+    218         struct cet_user_state *cetregs;
+    219         unsigned long user_ssp;
+    220         int r;
+    221 
+    222         if (!cpu_feature_enabled(X86_FEATURE_USER_SHSTK) ||
+    223             !ssp_active(target, regset))
+    224                 return -ENODEV;
+    225 
+    226         r = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &user_ssp, 0, -1);
+                                              ^^^^^
+"count" can be zero.  It comes from the user in ptrace_request().
+
+ptrace_request()
+-> ptrace_regset()
+   -> copy_regset_from_user()
+      -> ssp_set()
+
+    227         if (r)
+    228                 return r;
+    229 
+    230         /*
+    231          * Some kernel instructions (IRET, etc) can cause exceptions in the case
+    232          * of disallowed CET register values. Just prevent invalid values.
+    233          */
+--> 234         if (user_ssp >= TASK_SIZE_MAX || !IS_ALIGNED(user_ssp, 8))
+                    ^^^^^^^^
+Leading to an uninitialized variable here.
+
+    235                 return -EINVAL;
+    236 
+    237         fpu_force_restore(fpu);
+    238 
+    239         cetregs = get_xsave_addr(xsave, XFEATURE_CET_USER);
+    240         if (WARN_ON(!cetregs)) {
+    241                 /*
+    242                  * This shouldn't ever be NULL because shadow stack was
+    243                  * verified to be enabled above. This means
+    244                  * MSR_IA32_U_CET.CET_SHSTK_EN should be 1 and so
+    245                  * XFEATURE_CET_USER should not be in the init state.
+    246                  */
+    247                 return -ENODEV;
+    248         }
+    249 
+    250         cetregs->user_ssp = user_ssp;
+    251         return 0;
+    252 }
+
+regards,
+dan carpenter
