@@ -2,36 +2,40 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD12DC6FD1C
-	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Mar 2023 08:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B27C6FD1C
+	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Mar 2023 12:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231659AbjCZI3m (ORCPT
+        id S231681AbjCZMiC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 26 Mar 2023 04:29:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40506 "EHLO
+        Sun, 26 Mar 2023 08:38:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjCZI3l (ORCPT
+        with ESMTP id S230203AbjCZMiA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 26 Mar 2023 04:29:41 -0400
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C5C69ED5
-        for <kernel-janitors@vger.kernel.org>; Sun, 26 Mar 2023 01:29:39 -0700 (PDT)
+        Sun, 26 Mar 2023 08:38:00 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C47937A89
+        for <kernel-janitors@vger.kernel.org>; Sun, 26 Mar 2023 05:37:58 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id gLkupDy9ezvWygLkupaLgV; Sun, 26 Mar 2023 10:29:37 +0200
+        id gPd9pANE3TpvfgPd9p9CXS; Sun, 26 Mar 2023 14:37:56 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 26 Mar 2023 10:29:37 +0200
+X-ME-Date: Sun, 26 Mar 2023 14:37:56 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Philippe Schenker <philippe.schenker@toradex.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] regulator: Handle deferred clk
-Date:   Sun, 26 Mar 2023 10:29:33 +0200
-Message-Id: <18459fae3d017a66313699c7c8456b28158b2dd0.1679819354.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] iommu/exynos: Use the devm_clk_get_optional() helper
+Date:   Sun, 26 Mar 2023 14:37:50 +0200
+Message-Id: <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,30 +43,60 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-devm_clk_get() can return -EPROBE_DEFER. So it is better to return the
-error code from devm_clk_get(), instead of a hard coded -ENOENT.
+Use devm_clk_get_optional() instead of hand writing it.
+This saves some loC and improves the semantic.
 
-This gives more opportunities to successfully probe the driver.
-
-Fixes: 8959e5324485 ("regulator: fixed: add possibility to enable by clock")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/regulator/fixed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/exynos-iommu.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index e3436f49dea4..364d1a2683b7 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -215,7 +215,7 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
- 		drvdata->enable_clock = devm_clk_get(dev, NULL);
- 		if (IS_ERR(drvdata->enable_clock)) {
- 			dev_err(dev, "Can't get enable-clock from devicetree\n");
--			return -ENOENT;
-+			return PTR_ERR(drvdata->enable_clock);
- 		}
- 	} else if (drvtype && drvtype->has_performance_state) {
- 		drvdata->desc.ops = &fixed_voltage_domain_ops;
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 483aaaeb6dae..867f409e0325 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -747,22 +747,16 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	data->clk = devm_clk_get(dev, "sysmmu");
+-	if (PTR_ERR(data->clk) == -ENOENT)
+-		data->clk = NULL;
+-	else if (IS_ERR(data->clk))
++	data->clk = devm_clk_get_optional(dev, "sysmmu");
++	if (IS_ERR(data->clk))
+ 		return PTR_ERR(data->clk);
+ 
+-	data->aclk = devm_clk_get(dev, "aclk");
+-	if (PTR_ERR(data->aclk) == -ENOENT)
+-		data->aclk = NULL;
+-	else if (IS_ERR(data->aclk))
++	data->aclk = devm_clk_get_optional(dev, "aclk");
++	if (IS_ERR(data->aclk))
+ 		return PTR_ERR(data->aclk);
+ 
+-	data->pclk = devm_clk_get(dev, "pclk");
+-	if (PTR_ERR(data->pclk) == -ENOENT)
+-		data->pclk = NULL;
+-	else if (IS_ERR(data->pclk))
++	data->pclk = devm_clk_get_optional(dev, "pclk");
++	if (IS_ERR(data->pclk))
+ 		return PTR_ERR(data->pclk);
+ 
+ 	if (!data->clk && (!data->aclk || !data->pclk)) {
+@@ -770,10 +764,8 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+ 		return -ENOSYS;
+ 	}
+ 
+-	data->clk_master = devm_clk_get(dev, "master");
+-	if (PTR_ERR(data->clk_master) == -ENOENT)
+-		data->clk_master = NULL;
+-	else if (IS_ERR(data->clk_master))
++	data->clk_master = devm_clk_get_optional(dev, "master");
++	if (IS_ERR(data->clk_master))
+ 		return PTR_ERR(data->clk_master);
+ 
+ 	data->sysmmu = dev;
 -- 
 2.34.1
 
