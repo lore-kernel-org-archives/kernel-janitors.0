@@ -2,109 +2,120 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F69C7619A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 09:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40039C76195
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 10:27:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233108AbjC0JNf (ORCPT
+        id S233630AbjC0K1u (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Mar 2023 05:13:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57004 "EHLO
+        Mon, 27 Mar 2023 06:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233038AbjC0JNd (ORCPT
+        with ESMTP id S233710AbjC0K1h (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Mar 2023 05:13:33 -0400
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEFBC133;
-        Mon, 27 Mar 2023 02:13:31 -0700 (PDT)
-Received: by mail-qv1-f54.google.com with SMTP id qh28so6218224qvb.7;
-        Mon, 27 Mar 2023 02:13:31 -0700 (PDT)
+        Mon, 27 Mar 2023 06:27:37 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F0344B7
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 03:27:22 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id cf7so9872941ybb.5
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 03:27:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679912841;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/AKk+iS25sywgJr8Lm0vRuzBq3QzMeKXOB/nF8L9lmU=;
+        b=at0k2NZb1CCRsvhRDZ8Y6Ssn3yhBFVNIj7fetFkPc6JlOkQ0NA48s5IJr2ctgk/AjG
+         JErzLxFtgCAE+nRrUpq2ZzTVhpYVpYoo0Saab2hcAw0dKJAxF3qmaBtv/e2CSAx5EjEN
+         I0UggZRgw6KUumkE3l0sYZmDB7//NEe0XKZeXauMhNQJK9bMU1TENM6aX+4Q3+JA/+rr
+         AxFfCglAITFTRoGtlYn3nu8hq960AK8FB07SKIdZF2+7u7JP4myApaEsarcL7v6fqpxB
+         3+aX5KwckW3SbIaDYilbg9b6sIfybsOjmAhpZALlR4Y+MvcZ7EvxBW+KCHay/mZdWjSW
+         CN5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679908411;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1679912841;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Umb9hUbfu4RXL6KlGkF01LiyDptRngvjLvFGabW/70w=;
-        b=y1UaIbGx+4wKJ2wk2Hub37TFJ1cq0ubQFNw7MbfK5zJo7kamFg9kcUFo1bo6vX85GD
-         0NgtVXOjl3gB5GET1x1dEO1BbQ/CH9FmGeccEnci2nA2VVURepTTpTkSsoT8qaM4GJ3q
-         4ilX+X0FYhgvrI9fuHm3YDqUmmAPk+hEP0/bqbJ/2kdD4Wvj75zofWirmTv8jRSHgSF5
-         A3BuMEiadcNudFab+MhENmM2Liv1zZs473N+ffl8rb+t0sMIGsQJCz40ogT55jy66QKw
-         14hAnbjtRLZRQywLCBdnkCWOruVVgUNI6VVzsf0oaGpQ+gGMv1aVcDs1GOvdShvP2+CK
-         zXxg==
-X-Gm-Message-State: AAQBX9empRtKgnBzrEQiW2cufujT9sU1OJzbDNH4fokqny65V0xpg/3C
-        1s4HHHBMj8kT4Q8aU/J5Bi8=
-X-Google-Smtp-Source: AKy350Y06rMs/401uxhflhl8CYmN7DqjbNmD9t0V5jGwKE6OwXPeDLRcEQJJWCwLvw2M9hVJch4zPw==
-X-Received: by 2002:ad4:5dc1:0:b0:5ad:e777:1fc2 with SMTP id m1-20020ad45dc1000000b005ade7771fc2mr14569629qvh.15.1679908410637;
-        Mon, 27 Mar 2023 02:13:30 -0700 (PDT)
-Received: from maniforge ([24.1.27.177])
-        by smtp.gmail.com with ESMTPSA id t2-20020a374602000000b00746ac14e29asm6562753qka.5.2023.03.27.02.13.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 02:13:30 -0700 (PDT)
-Date:   Mon, 27 Mar 2023 04:13:27 -0500
-From:   David Vernet <void@manifault.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        Jay Kamat <jgkamat@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Shakeel Butt <shakeelb@google.com>,
-        Shuah Khan <shuah@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] selftests: cgroup: Fix exception handling in
- test_memcg_oom_group_score_events()
-Message-ID: <20230327091327.GK363182@maniforge>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <c383bdca-6f0d-4a75-e788-e1920faa0a62@web.de>
- <fffcd98a-bb73-41cd-8545-0f2c55dd38f9@lucifer.local>
- <5b7921c9-ee5d-c372-b19b-2701bcf33148@web.de>
- <20230326213900.GJ363182@maniforge>
- <c46dbb48-259b-1de9-2364-9bfaf1061944@web.de>
+        bh=/AKk+iS25sywgJr8Lm0vRuzBq3QzMeKXOB/nF8L9lmU=;
+        b=UK7dSL+F0MWnZxux26Gs9CY55FUHOTMnuhaNcTrxTrZSgRtJjPZ1v6Q4uqWxGqudOL
+         irwZq3AAj4hu5ILIxi3rxqylNMq7wS3BvlczvZCZgwTS8jVdUiGr7/sDMMj0VbGIMWHb
+         BfLECL9CWiaYz3XCt+bWGonCtX9DA8yHVbdAHnCffgyHvOdB6lGt6sY+9l9vErmqKI7y
+         p8uM0GtbF0reN6w47z1N5odXFLdkDH2Kg46l8ZDg4/gWZ5gWEeXKvDjS4vhSRUWUJLjN
+         57QGalUBqfXJA15T8sJvSzJEEn1cFF4Bk3XLUEs1Hr6ueuQZ1nFuSt510uv2eq1Vw7FX
+         Mbqw==
+X-Gm-Message-State: AAQBX9cAeq5GMkkqDKNR0p+aTvt1WLmjmOQY/6lZkD3Twt7/+gF3C6P+
+        MbW7Ujzks5TUQT+Oyc7LbF9+UK4iQt3hoUMUoYj5Bg==
+X-Google-Smtp-Source: AKy350bGJRe1FbSI2ye0OSLmmOYJRyLAiRf6B6fTziQxPmq5eQ+v3EhFMmsogRd38XF8AftUrM+qqarspefbkNqHUsY=
+X-Received: by 2002:a05:6902:18c2:b0:b78:5662:d5bb with SMTP id
+ ck2-20020a05690218c200b00b785662d5bbmr4402702ybb.3.1679912841227; Mon, 27 Mar
+ 2023 03:27:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c46dbb48-259b-1de9-2364-9bfaf1061944@web.de>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+References: <20230317064729.24407-1-yuzhe@nfschina.com> <CGME20230324132858eucas1p25cdd6af81a14bf40474f58fa16d087f5@eucas1p2.samsung.com>
+ <5b555935-5657-3f38-8a55-906dd32ad052@samsung.com> <528343af-50be-45dd-b34f-c8bc641f984c@kili.mountain>
+In-Reply-To: <528343af-50be-45dd-b34f-c8bc641f984c@kili.mountain>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 27 Mar 2023 12:26:45 +0200
+Message-ID: <CAPDyKFq6NGUtpLYNe4xwKrni8U+9+xR13ztDasTMP-8DVQLLNA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: remove unnecessary (void*) conversions
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Yu Zhe <yuzhe@nfschina.com>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 07:56:03AM +0200, Markus Elfring wrote:
-> >> 2. Can a cg_destroy() call ever work as expected if a cg_create() call failed?
+On Fri, 24 Mar 2023 at 17:39, Dan Carpenter <error27@gmail.com> wrote:
+>
+> On Fri, Mar 24, 2023 at 02:28:57PM +0100, Marek Szyprowski wrote:
+> > On 17.03.2023 07:47, Yu Zhe wrote:
+> > > Pointer variables of void * type do not require type cast.
+> > >
+> > > Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> > > ---
+> > >   drivers/mmc/core/debugfs.c  | 2 +-
+> > >   drivers/mmc/core/host.c     | 2 +-
+> > >   drivers/mmc/core/mmc_test.c | 6 +++---
+> > >   3 files changed, 5 insertions(+), 5 deletions(-)
+> > ...
+> > > diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> > > index 096093f7be00..76900f67c782 100644
+> > > --- a/drivers/mmc/core/host.c
+> > > +++ b/drivers/mmc/core/host.c
+> > > @@ -590,7 +590,7 @@ EXPORT_SYMBOL(mmc_alloc_host);
+> > >
+> > >   static void devm_mmc_host_release(struct device *dev, void *res)
+> > >   {
+> > > -   mmc_free_host(*(struct mmc_host **)res);
+> > > +   mmc_free_host(res);
 > >
-> > Perhaps next time you can answer your own question by spending 30
-> > seconds actually reading the code you're "fixing":
-> >
-> > int cg_destroy(const char *cgroup)
-> > {
-> …
-> >         ret = rmdir(cgroup);
-> …
-> >         if (ret && errno == ENOENT) <<< that case is explicitly handled here
-> >                 ret = 0;
-> >
-> >         return ret;
-> > }
-> 
-> Is it interesting somehow that a non-existing directory (which would occasionally
-> not be found) is tolerated so far?
-> https://elixir.bootlin.com/linux/v6.3-rc3/source/tools/testing/selftests/cgroup/cgroup_util.c#L285
-> 
-> Should such a function call be avoided because of a failed cg_create() call?
+> > The above chunk is wrong and causes following regression on today's
+> > Linux next-20230324:
+>
+> Ugh...
+>
+> Ok.  I have a script that I use to help review mechanical patches.  I
+> have added an '-r cast' option to help review "remove unnecessary cast"
+> patches.
+>
+> If you do `cat this_email.txt | rename_rev.pl -r cast` then the output
+> looks like:
+>
+> ================
+>  static void devm_mmc_host_release(struct device *dev, void *res)
+>  {
+> -       mmc_free_host(*res);
+> +       mmc_free_host(res);
+>  }
+>
+>  struct mmc_host *devm_mmc_alloc_host(struct device *dev, int extra)
+> ================
+>
+> I have gone through all of Yu Zhe's patches and the rest are okay.
+>
+> I've attached my rename_rev.pl script.
 
-The point is that (a) you were wrong that this is fixing anything, and
-(b) this patch is functionally useless. Sure, we could move some goto's
-around and subjectively improve "something". Why?  What's the point?
-It's highly debatable that what you're doing is even an improvement, and
-I'm not interested in wasting time pontificating about the merits of a
-trivial "fix" for a test cleanup function that isn't even broken.
+Thanks for helping out Dan! I will use your script next time!
 
-Several people have already either advised or directly asked you to stop
-sending these patches. I'm not sure why you're choosing to ignore them,
-but I'll throw my hat in the ring regardless and do the same. Please
-stop sending these fake cleanup patches.
+Kind regards
+Uffe
