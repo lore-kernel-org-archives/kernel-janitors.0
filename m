@@ -2,88 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5568C6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 17:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6180EC761A6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 21:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231840AbjC0R0B (ORCPT
+        id S230514AbjC0VXx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Mar 2023 13:26:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58450 "EHLO
+        Mon, 27 Mar 2023 17:23:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230328AbjC0RZ7 (ORCPT
+        with ESMTP id S229815AbjC0VXw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Mar 2023 13:25:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D6D40F3;
-        Mon, 27 Mar 2023 10:25:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E651D6142F;
-        Mon, 27 Mar 2023 17:25:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B68DC433EF;
-        Mon, 27 Mar 2023 17:25:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679937955;
-        bh=NN1rXg2/a4OR+Zj8dHIR9eD3NoyL52L9QcXdEkHp2FM=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=dQJ+0pqioxl3A/j3OH3nboyWh1VAvrMf2Vb5SSIKQtKUfsgDRviAHzf6WnMu2xeBq
-         Wb1xX0wmDiVQH1p57vOxdFs9kwhmuwORbecPJza0sm4s2jl/+aZzU7i0ub2bu3pM9V
-         Alvo4r2L/OSgZl+8GeB+7No19K/UmJDbyQCLBcaGk2oYEwWPaxZzxYAJW9srYoie7l
-         wBRP1LMfk/AE+TypdAkpqQmfQPu8iDzy6B0buGtmQlPEoUEntfAQ5e98CfBjyozFAJ
-         7nmTn5N4V+hHBr0ssfyRtLlgw7R01nBbDEZIVsS5ZQtIUMQb1eYCnNyeO7v2uUEhHS
-         lpCCnGaQkjJdA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <18459fae3d017a66313699c7c8456b28158b2dd0.1679819354.git.christophe.jaillet@wanadoo.fr>
-References: <18459fae3d017a66313699c7c8456b28158b2dd0.1679819354.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] regulator: Handle deferred clk
-Message-Id: <167993795372.3174190.274005765842328093.b4-ty@kernel.org>
-Date:   Mon, 27 Mar 2023 18:25:53 +0100
+        Mon, 27 Mar 2023 17:23:52 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F604199C
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 14:23:51 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id k17so12516212ybm.11
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 14:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679952230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wRwaPJdNjZmcm9hJp392EALqZkQqEkTeWD1wr6f42IY=;
+        b=CidMqviG1CVTU+wx0EfQQ3sUH/cjf8Dd7nelb7WgvTyS6PqzNdvqV0M4Lm9uwfolJl
+         +N1NLYxxIW+6N5TAJcMdNbcdhoPmRw1zEnmm7YM1OgvWMk33fzRPH7MFC9VOPwNvHUXy
+         4W6EEECa+7UfqFcaGPJ2NA1nx3gisuP3enofJkkdsGQaD4EcA54jU1DJ4F3xiFFxfd5p
+         ka6p3MaULmB0KeXkS/Gm7r+MAMKWbdKo5e2/Nn3Qi/NvAF/s1bnPjT8mCOs2V2EW48vp
+         4w+C9MjHfaf7F7I2OuSqnUPXZoJtMKoUWeDzkpZ07gWG0TX+zljVFlobcUM6O/1TMcko
+         9AHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679952230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wRwaPJdNjZmcm9hJp392EALqZkQqEkTeWD1wr6f42IY=;
+        b=fJGhbNrWVabuxKLk53y3hFLVAmWjUwvHs+EIVJpj46dEXieSNslKtWlU+lSmftvYl2
+         6viL0EVxVAKX83jR8vE3/+RSN86Mpt/zAIsNgzJNtifpPT2uGgRceygsCSGmxm7ISW+q
+         PfOfQ3I9Ktys1rHeRDMfL0liPhCgJ8efDYSgtQ2GCl8kNE1xwr33VF33rU9PlPdO4kYY
+         tZah0V5OIQ+p0bDmLNv8iQZmIqExrFg0Kswa+ULdQwfA5uDxeaCa0ZLTLaDJyDf+JXr9
+         Lg+o1JH2jty6WymjjUpdyeEY5bqseqixonvUbl4GCYJTZ+b0ViNSX+UY6bIKkUP8+RwB
+         Acpw==
+X-Gm-Message-State: AAQBX9chBtygxj1pOpMqf2loQIMoiDzdINtg/yIgCFfL86CiyRCXqXKg
+        ce0udS4grQEg8gFwncfs27cYGfIKGhElU5zgv0idQA==
+X-Google-Smtp-Source: AKy350aF5/L77S0EjVYQ52vhV3o7136405E00a7IO8owxz67hLYfSywE1LAZVDUR/2jjWTCviakaCuqAVj2MZkaWw5I=
+X-Received: by 2002:a05:6902:10c2:b0:b6e:b924:b96f with SMTP id
+ w2-20020a05690210c200b00b6eb924b96fmr10825453ybu.3.1679952230621; Mon, 27 Mar
+ 2023 14:23:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-2eb1a
+References: <de0273a8-8910-4ac4-b4ed-f7691c4d2ca6@kili.mountain>
+In-Reply-To: <de0273a8-8910-4ac4-b4ed-f7691c4d2ca6@kili.mountain>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 27 Mar 2023 23:23:39 +0200
+Message-ID: <CACRpkdY9+HbODoJYku1EN7Swr9C+NbeS-GLNb=CtNkdQHQ2EQg@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: magnachip: Prevent error pointer dereference
+ in probe
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Chris Morgan <macromorgan@hotmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maya Matuszczyk <maccraft123mc@gmail.com>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 26 Mar 2023 10:29:33 +0200, Christophe JAILLET wrote:
-> devm_clk_get() can return -EPROBE_DEFER. So it is better to return the
-> error code from devm_clk_get(), instead of a hard coded -ENOENT.
-> 
-> This gives more opportunities to successfully probe the driver.
-> 
-> 
+On Wed, Mar 22, 2023 at 10:07=E2=80=AFAM Dan Carpenter <error27@gmail.com> =
+wrote:
 
-Applied to
+> Don't dereference "db->dsi_dev" when it is an error pointer.
+>
+> Fixes: 249a4f5e663c ("drm/panel: Add Magnachip D53E6EA8966 Panel Driver")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-   broonie/regulator.git for-next
+Patch applied to drm-misc-next!
 
-Thanks!
-
-[1/1] regulator: Handle deferred clk
-      commit: 02bcba0b9f9da706d5bd1e8cbeb83493863e17b5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Yours,
+Linus Walleij
