@@ -2,128 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72283C761A6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 13:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5580C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 14:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230300AbjC0NTy (ORCPT
+        id S232532AbjC0OjC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Mar 2023 09:19:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59110 "EHLO
+        Mon, 27 Mar 2023 10:39:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231359AbjC0NTv (ORCPT
+        with ESMTP id S229653AbjC0OjB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Mar 2023 09:19:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493841985
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 06:19:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679923145;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EBgTYwgbbPBXMkcZFKPAHeZP7Jqx47wA107Cj1PA/QY=;
-        b=fEFM3kVGrzVCuB6nrPh5YBFkn/cbPx0B1ZyBPDi34QqpuNXWvgHOA11warVcXwZQQ7zCqc
-        C/IdIGtLX4h2K2wqlfFSiBMz5WfvD+wH2A0g1gxDEyR8kcOLunJwyp197EUr/lPJpeo/pD
-        9vxcGc0bBAA70fLR/93/3sMVj/uLlnw=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-330-j84r8jUxMU6CtnYptjvayg-1; Mon, 27 Mar 2023 09:19:04 -0400
-X-MC-Unique: j84r8jUxMU6CtnYptjvayg-1
-Received: by mail-ed1-f69.google.com with SMTP id q13-20020a5085cd000000b004af50de0bcfso12814101edh.15
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 06:19:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679923143;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EBgTYwgbbPBXMkcZFKPAHeZP7Jqx47wA107Cj1PA/QY=;
-        b=ychX/wDpzqkaMjEGW29zxtKy1yw5ZC5L0L1EZg2Zu+79//eeeWOIibIWXJnHFz8RWQ
-         GkYHiK+PvK06kA+5MqLRh2Jmw7ECcY7GD0mXGUa27UdHXGEr+VKCkmUU8+9NMbHniRHF
-         SIl3/sPM7PPNXhCRagOXE0Yuleft7pO49lVuvDaIkieCx3It48byBtPvmxnfJwUxmymM
-         yp8cPPfJo762G2hsD52FYiVtmOnABFqdPHFQmHE24J72r6V3D6hRbrxu3Xvh3VaLxtN3
-         S5j3M4cvbXxgbYhqFhviXJEUDNJANEz9L4+aodNdemO1Li5ImqfhBFMlKqP4yTNSJMZZ
-         vZeg==
-X-Gm-Message-State: AAQBX9f1MOiwaue264nmp1Xf8VCguqo2Nb7hhEV0GwuwMSh3NUI0Jytx
-        EpfGKYHrVN2UletbsBXVJ31awp6DlPFtwlLdjmeiaJz3je4eljTNjeF+7EF2W0zWQps1s0zdnEJ
-        S5oQdeHyvbvUsk0oX7hTyRc5Ku5FH
-X-Received: by 2002:a17:907:7718:b0:93d:c57f:b8b4 with SMTP id kw24-20020a170907771800b0093dc57fb8b4mr11701398ejc.26.1679923143157;
-        Mon, 27 Mar 2023 06:19:03 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Y8Affwbtww/oGzsLGTsjSTqCH5Zk+CjaVKRD6uvWJLEqdhLBKHVDkMb0S7T1uIFwf8Xha+PQ==
-X-Received: by 2002:a17:907:7718:b0:93d:c57f:b8b4 with SMTP id kw24-20020a170907771800b0093dc57fb8b4mr11701385ejc.26.1679923142910;
-        Mon, 27 Mar 2023 06:19:02 -0700 (PDT)
-Received: from [10.40.98.142] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id h27-20020a17090634db00b00933f31034f2sm11292321ejb.38.2023.03.27.06.19.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Mar 2023 06:19:02 -0700 (PDT)
-Message-ID: <a4ddfdeb-aa17-2e72-9c1d-5a7207ee8e47@redhat.com>
-Date:   Mon, 27 Mar 2023 15:19:01 +0200
+        Mon, 27 Mar 2023 10:39:01 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89277A1;
+        Mon, 27 Mar 2023 07:39:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 47BA0B8159F;
+        Mon, 27 Mar 2023 14:38:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC74C433D2;
+        Mon, 27 Mar 2023 14:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679927937;
+        bh=jGbljjZ6sYKW+hsa5vD5FzntKFGqn2nf7NT5nxgonnQ=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=jhgI7ezSTUi1ScYCNYo154omb7+Pe8JrT6VuOZ+Np5p4z7gGxcUJlw0TunGvqB2kn
+         CYQzMJZp7QTZnIULs2sUqNcTRmLk80lh+SRiJ3LVTxjL7RXo2V79denL3GuTltFgTe
+         2CgrtU5FEvIXj1gP790yNMDB3LJKYOoMDSB7KVMmqK3EC13KPwkJ7P+xWXUgLtJ2Dx
+         UrQZspoBfFlNELRz03lc2vWscyn/BiluW5Tv5R27cDbX4I2Lhe466x038cZbw+vnyX
+         5tbT818ScrWzBXy+rOP0Fn3kkznO4XBqlAvV/Zart9tWGKe/cDllSWrUYlGZ1WJCyM
+         Z2sXsBkMFlMCA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+In-Reply-To: <8dab942d6ce47657a9c038295959be80bb2ee09e.1679834598.git.christophe.jaillet@wanadoo.fr>
+References: <8dab942d6ce47657a9c038295959be80bb2ee09e.1679834598.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: meson: Use the devm_clk_get_optional() helper
+Message-Id: <167992793479.3167684.14938651737373308205.b4-ty@kernel.org>
+Date:   Mon, 27 Mar 2023 15:38:54 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH] platform/x86: ISST: unlock on error path in
- tpmi_sst_init()
-Content-Language: en-US
-To:     Dan Carpenter <error27@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     Mark Gross <markgross@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <dcdebbb7-7de6-4d04-8e7a-43d5ca043484@kili.mountain>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <dcdebbb7-7de6-4d04-8e7a-43d5ca043484@kili.mountain>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-2eb1a
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-On 3/25/23 12:08, Dan Carpenter wrote:
-> Call mutex_unlock(&isst_tpmi_dev_lock) before returning on this
-> error path.
+On Sun, 26 Mar 2023 14:43:38 +0200, Christophe JAILLET wrote:
+> Use devm_clk_get_optional() instead of hand writing it.
+> This saves some loC and improves the semantic.
 > 
-> Fixes: d805456c712f ("platform/x86: ISST: Enumerate TPMI SST and create framework")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
-> ---
->  drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> index cdb56a18ea17..664d2ee60385 100644
-> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> @@ -1399,8 +1399,10 @@ int tpmi_sst_init(void)
->  	isst_common.sst_inst = kcalloc(topology_max_packages(),
->  				       sizeof(*isst_common.sst_inst),
->  				       GFP_KERNEL);
-> -	if (!isst_common.sst_inst)
-> -		return -ENOMEM;
-> +	if (!isst_common.sst_inst) {
-> +		ret = -ENOMEM;
-> +		goto init_done;
-> +	}
->  
->  	memset(&cb, 0, sizeof(cb));
->  	cb.cmd_size = sizeof(struct isst_if_io_reg);
+
+Applied to
+
+   broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: meson: Use the devm_clk_get_optional() helper
+      commit: 65d4d7259bfec376b6b1483b4fe4058a5ba2259b
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
