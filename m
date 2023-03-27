@@ -2,93 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5580C6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 14:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1090BC761A6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 14:58:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232532AbjC0OjC (ORCPT
+        id S233035AbjC0O6u (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Mar 2023 10:39:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41006 "EHLO
+        Mon, 27 Mar 2023 10:58:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbjC0OjB (ORCPT
+        with ESMTP id S233121AbjC0O6r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Mar 2023 10:39:01 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89277A1;
-        Mon, 27 Mar 2023 07:39:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 47BA0B8159F;
-        Mon, 27 Mar 2023 14:38:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC74C433D2;
-        Mon, 27 Mar 2023 14:38:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679927937;
-        bh=jGbljjZ6sYKW+hsa5vD5FzntKFGqn2nf7NT5nxgonnQ=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=jhgI7ezSTUi1ScYCNYo154omb7+Pe8JrT6VuOZ+Np5p4z7gGxcUJlw0TunGvqB2kn
-         CYQzMJZp7QTZnIULs2sUqNcTRmLk80lh+SRiJ3LVTxjL7RXo2V79denL3GuTltFgTe
-         2CgrtU5FEvIXj1gP790yNMDB3LJKYOoMDSB7KVMmqK3EC13KPwkJ7P+xWXUgLtJ2Dx
-         UrQZspoBfFlNELRz03lc2vWscyn/BiluW5Tv5R27cDbX4I2Lhe466x038cZbw+vnyX
-         5tbT818ScrWzBXy+rOP0Fn3kkznO4XBqlAvV/Zart9tWGKe/cDllSWrUYlGZ1WJCyM
-         Z2sXsBkMFlMCA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-In-Reply-To: <8dab942d6ce47657a9c038295959be80bb2ee09e.1679834598.git.christophe.jaillet@wanadoo.fr>
-References: <8dab942d6ce47657a9c038295959be80bb2ee09e.1679834598.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: meson: Use the devm_clk_get_optional() helper
-Message-Id: <167992793479.3167684.14938651737373308205.b4-ty@kernel.org>
-Date:   Mon, 27 Mar 2023 15:38:54 +0100
+        Mon, 27 Mar 2023 10:58:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEFB149E9;
+        Mon, 27 Mar 2023 07:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=cE0RQJv+FQscAn7Kg18zI4d5MgKmBRB/NIb1/jav8Js=; b=Qjf6fdufszYfPvYeyKk/7u11qa
+        9K6I5TfacvrDxJyo0Sf077teARpsMFYaxJmPUM+beCxy0yUkgEI6uV1jo79+LWq0LFetIKlSHsYrG
+        eLggNARQNmV+huipzexYXs2GdFhqoV8pOKRRcuxbFljiEFsP/k1EIaljZhsmIGah/2mj459hIMbas
+        jRpzXJvJSdIb8R/EhpVgnu9jDMNCfIubiUXgfFnXy7Mp707oebFYE2XDNvwOnBcgU5FUOYQ70FmLy
+        8GAJVbV/rJ2J+8t/QU5CAqhj8wcYXf+RQxG+qBqodbdaFhVhU5n5lYVORJ6cGqaraUNDl1+chJGdF
+        7rvddM+A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pgoIZ-007UFv-V7; Mon, 27 Mar 2023 14:58:16 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5454A3001E5;
+        Mon, 27 Mar 2023 16:58:13 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 17AE62111BE15; Mon, 27 Mar 2023 16:58:13 +0200 (CEST)
+Date:   Mon, 27 Mar 2023 16:58:13 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ian Rogers <irogers@google.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Sandipan Das <sandipan.das@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zhouyi Zhou <zhouzhouyi@gmail.com>, x86@kernel.org,
+        cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH resent] perf/x86/amd/uncore: Fix exception handling in
+ amd_uncore_cpu_up_prepare()
+Message-ID: <20230327145813.GA11425@hirez.programming.kicks-ass.net>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <ab860edf-79ca-2035-c5a3-d25be6fd9dac@web.de>
+ <3a35fb28-5937-72f8-b2e8-b1d9899b5e43@web.de>
+ <d691d740-c172-a5cb-e4f0-5bc5687c8464@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-2eb1a
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d691d740-c172-a5cb-e4f0-5bc5687c8464@intel.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 26 Mar 2023 14:43:38 +0200, Christophe JAILLET wrote:
-> Use devm_clk_get_optional() instead of hand writing it.
-> This saves some loC and improves the semantic.
+On Mon, Mar 27, 2023 at 12:11:54PM +0300, Adrian Hunter wrote:
+> On 25/03/23 16:15, Markus Elfring wrote:
+> > Date: Fri, 17 Mar 2023 13:13:14 +0100
+> > 
+> > The label “fail” was used to jump to another pointer check despite of
+> > the detail in the implementation of the function “amd_uncore_cpu_up_prepare”
+> > that it was determined already that the corresponding variable contained
+> > a null pointer (because of a failed function call in two cases).
+> > 
+> > 1. Thus return directly after a call of the function “amd_uncore_alloc”
+> >    failed in the first if branch.
+> > 
+> > 2. Use more appropriate labels instead.
+> > 
+> > 3. Reorder jump targets at the end.
+> > 
+> > 4. Delete a redundant check and kfree() call.
+> > 
+> > 5. Omit an explicit initialisation for the local variable “uncore_llc”.
+> > 
+> > 
+> > This issue was detected by using the Coccinelle software.
+> > 
+> > Fixes: 39621c5808f5dda75d03dc4b2d4d2b13a5a1c34b ("perf/x86/amd/uncore: Use dynamic events array")
+> > Fixes: 503d3291a937b726757c1f7c45fa02389d2f4324 ("perf/x86/amd: Try to fix some mem allocation failure handling")
 > 
+> Commit should be only the first 12 characters of the hash.
+> Refer:	https://docs.kernel.org/process/submitting-patches.html
 > 
+> But this is not a fix. Redundant calls to kfree do not break
+> anything.
+> 
+> Also avoid using the term "exception" since, in x86, exceptions are
+> hardware events.  Better to just call it "error handling".
 
-Applied to
-
-   broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: meson: Use the devm_clk_get_optional() helper
-      commit: 65d4d7259bfec376b6b1483b4fe4058a5ba2259b
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Don't feed the trolls; Markus is a bot or other weird construct that's
+been banned from lkml.
