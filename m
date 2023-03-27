@@ -2,59 +2,59 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83654C6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 21:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5DCC76195
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 22:09:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230208AbjC0Vh3 (ORCPT
+        id S230033AbjC0WJI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Mar 2023 17:37:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52676 "EHLO
+        Mon, 27 Mar 2023 18:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230075AbjC0Vh1 (ORCPT
+        with ESMTP id S229746AbjC0WJH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Mar 2023 17:37:27 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E66726A3
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 14:37:25 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id i7so12632450ybt.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 14:37:25 -0700 (PDT)
+        Mon, 27 Mar 2023 18:09:07 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3C197
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 15:09:06 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id cf7so12697323ybb.5
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 15:09:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1679953044;
+        d=paul-moore.com; s=google; t=1679954945;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/Xm5gtyuxKZCMPw1HMGOtlJQVZR2OK69GXkaT/vqsKs=;
-        b=R4o2J90nGurrfzuTC7+oSjJ+0p6avJotUTIxGrwx/df4xGb8GPkasfcgZSYJp4uprh
-         gCT6Qd8kw7ODFj86V5MJX9HgR0r83mO4FuEq1ptDOUlK8Hs0y6TnzI+OL1lt6lpPC2j8
-         T79H5vfulR1cyjPMCHMwqtQkTrNTvUrLD17D/GZB298plP07aFJHd3RMcEU4ZXYvEMsQ
-         l51NibBQy60nK0sqeEHLjBzh7ZyOtPUkD2clfI2lIQuFkVmo45vF1Rgv1OKxz1fpsofB
-         IooB/3iXCkbNvhBnfJjCYc+NkMKtGJSL+hh3Zrq//DspbNDzI/U5pXHMi4jm5cNTQLWb
-         Fmzw==
+        bh=q1TlEx9QcMlZ3oxOM4oU1Tjm4fqebLyU8FiZyh0BXvM=;
+        b=dzZ5GnLfxajxluUn1Wgqto69XQEs0T5twz6tH0cdJgbBZA18HmrgoGc2ZFBdNysrXl
+         CVLhhQyoi+aP7DZLK85nej99NJcgbHf/IVD1NtpajWTfOzScvF8uIn9tgUAQCs1lJTpH
+         dAsemve+hswahlWABBR1/Y64GHOugX7L0RzkGmtm7a4+L+vXAA06FZYIhiqRSdcvOMlF
+         fb3l/g5zzVqJsntJ5hlUZ3Flp0PBRz/WCR38IlB4MqkhNx0MeCHb0cnAa0pH+tblYQao
+         saebexvbkiMxAZOYjWK4pgYXAe4SRaMB6jFzHA0OBVwuzmLFaiOL9Gck/6KqOqNZjCul
+         /Z1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679953044;
+        d=1e100.net; s=20210112; t=1679954945;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/Xm5gtyuxKZCMPw1HMGOtlJQVZR2OK69GXkaT/vqsKs=;
-        b=zYqPNQ0aEO64R/xgXp5duJH5cEY4DdQQl7VclEEmGFDvHg8uzuMWeMNSYU32DfrJGJ
-         zMc/URCfTl+yFbQ1c+HE141lwbIMCNkgQ/sSkZtmE1clf5bAFezbocKugpTm8lQb7kZm
-         jJ0ZkqDJbTrMyHbtgh+vAloxOwS3PkBwyiW4mk/3lzLTcBX9Yj9GX4CikQ+nmyYMBTtO
-         noc9hg0FSwjrvkioGQWQMwq/gcD+l0AXIJJ4yfjeps0GWyWLtGthRibgbPGHNuv6aaGG
-         j+W1qG94Q6Zy7M+MlajfC0sB8s7Yd33DFFHtSc4i4NSD3Wzrj5uH12GKX1UUa9GawtIH
-         enAQ==
-X-Gm-Message-State: AAQBX9dX66W9mYkKzW67XAZS6HYIOLSTej5Xn0i2zCyhykvGS+rHvOS5
-        vy4bFtO7pU113Tv7D2ih4TwpT5mHa7Iw+/3NL0wn
-X-Google-Smtp-Source: AKy350au2agJQlTOeaLLljcyGiOVu2K70TKj7p6HIc/lxld00if3ck6TEGGSGr+/sjLgXjtOnS36vO4BhC9HB5P2hsY=
-X-Received: by 2002:a25:344:0:b0:b27:4632:f651 with SMTP id
- 65-20020a250344000000b00b274632f651mr5884577ybd.3.1679953044604; Mon, 27 Mar
- 2023 14:37:24 -0700 (PDT)
+        bh=q1TlEx9QcMlZ3oxOM4oU1Tjm4fqebLyU8FiZyh0BXvM=;
+        b=bpXAfbp2l/bR+XqPA/sqcJ27a6NQfoS6FIC/aM9YrrbArw7tZSjNybZRD0EQetLWtz
+         MViVLIM/Fv068NkfRzqb125m2n58wvueTbyyTBgykFoLwJ/ZM0GgvImm31jvfdEPLw/x
+         oEu7LAQk3/O0Q4ngX0RAUm0ZCSRRnmvt8xqnk15GuqnR7QSoPTOj9u7bHlTNSLHNeDm5
+         whiFrz9DN8GP8Rnpdx9FmpP2jYGUuLH5zQnhJ5qrsRaO8JjYK2uXgjo8tjPrgG0eoaTL
+         3lUHFIB0k3RYZ4NsrIBcTpod1EjWppfkhIqEMWAPY8grGnC51LaJyZLG9aLOiFHiJABz
+         VZag==
+X-Gm-Message-State: AAQBX9cj9LEoZCISVK6XysiIMPqEQf4+lWMMOI5g068Fj3khxuuasoLu
+        bxxu4AUnAVAU4cXQ7DVRt/0ovYRg8suEbFQ60SRp
+X-Google-Smtp-Source: AKy350bMvVWZnkoZOYCDPEgJHRPmMhgknNlVozqs7cmjsw9ew8biTuseHCkzRf8XygI+S3Uet4jaQ4Q85e3m+A8qbO0=
+X-Received: by 2002:a05:6902:1586:b0:b76:ceb2:661b with SMTP id
+ k6-20020a056902158600b00b76ceb2661bmr8278162ybu.3.1679954945367; Mon, 27 Mar
+ 2023 15:09:05 -0700 (PDT)
 MIME-Version: 1.0
 References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de> <83763b78-453d-de21-9b48-1c226afa13a0@web.de>
- <57a97109-7a67-245b-8072-54aec3b5021d@web.de>
-In-Reply-To: <57a97109-7a67-245b-8072-54aec3b5021d@web.de>
+ <57a97109-7a67-245b-8072-54aec3b5021d@web.de> <CAHC9VhR=yK72JXW3hJR+gUQtGCNpF0Bzk5RDzPZR0MunC84AUQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhR=yK72JXW3hJR+gUQtGCNpF0Bzk5RDzPZR0MunC84AUQ@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 27 Mar 2023 17:37:13 -0400
-Message-ID: <CAHC9VhR=yK72JXW3hJR+gUQtGCNpF0Bzk5RDzPZR0MunC84AUQ@mail.gmail.com>
+Date:   Mon, 27 Mar 2023 18:08:54 -0400
+Message-ID: <CAHC9VhREfdgiCji=uEeCrc4w1kPGfnWGKnJuUYKXwTApdneSjQ@mail.gmail.com>
 Subject: Re: [PATCH v2] selinux: Adjust implementation of security_get_bools()
 To:     Markus Elfring <Markus.Elfring@web.de>
 Cc:     kernel-janitors@vger.kernel.org, selinux@vger.kernel.org,
@@ -73,137 +73,161 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 3:00=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> Date: Mon, 27 Mar 2023 08:50:56 +0200
->
-> The label =E2=80=9Cerr=E2=80=9D was used to jump to another pointer check=
- despite of
-> the detail in the implementation of the function =E2=80=9Csecurity_get_bo=
-ols=E2=80=9D
-> that it was determined already that a corresponding variable contained
-> a null pointer because of a failed memory allocation.
->
-> Thus perform the following adjustments:
->
-> 1. Convert the statement =E2=80=9Cpolicydb =3D &policy->policydb;=E2=80=
+On Mon, Mar 27, 2023 at 5:37=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Mon, Mar 27, 2023 at 3:00=E2=80=AFAM Markus Elfring <Markus.Elfring@we=
+b.de> wrote:
+> > Date: Mon, 27 Mar 2023 08:50:56 +0200
+> >
+> > The label =E2=80=9Cerr=E2=80=9D was used to jump to another pointer che=
+ck despite of
+> > the detail in the implementation of the function =E2=80=9Csecurity_get_=
+bools=E2=80=9D
+> > that it was determined already that a corresponding variable contained
+> > a null pointer because of a failed memory allocation.
+> >
+> > Thus perform the following adjustments:
+> >
+> > 1. Convert the statement =E2=80=9Cpolicydb =3D &policy->policydb;=E2=80=
 =9D into
->    a variable initialisation.
+> >    a variable initialisation.
+> >
+> > 2. Replace the statement =E2=80=9Cgoto out;=E2=80=9D by =E2=80=9Creturn=
+ -ENOMEM;=E2=80=9D.
+> >
+> > 3. Return zero directly at two places.
+> >
+> > 4. Omit the variable =E2=80=9Crc=E2=80=9D.
+> >
+> > 5. Use more appropriate labels instead.
+> >
+> > 6. Reorder the assignment targets for two kcalloc() calls.
+> >
+> > 7. Reorder jump targets at the end.
+> >
+> > 8. Assign a value element only after a name assignment succeeded.
+> >
+> > 9. Delete an extra pointer check which became unnecessary
+> >    with this refactoring.
+> >
+> >
+> > This issue was detected by using the Coccinelle software.
+> >
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > ---
+> >  security/selinux/ss/services.c | 52 ++++++++++++++--------------------
+> >  1 file changed, 22 insertions(+), 30 deletions(-)
 >
-> 2. Replace the statement =E2=80=9Cgoto out;=E2=80=9D by =E2=80=9Creturn -=
-ENOMEM;=E2=80=9D.
->
-> 3. Return zero directly at two places.
->
-> 4. Omit the variable =E2=80=9Crc=E2=80=9D.
->
-> 5. Use more appropriate labels instead.
->
-> 6. Reorder the assignment targets for two kcalloc() calls.
->
-> 7. Reorder jump targets at the end.
->
-> 8. Assign a value element only after a name assignment succeeded.
->
-> 9. Delete an extra pointer check which became unnecessary
->    with this refactoring.
->
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  security/selinux/ss/services.c | 52 ++++++++++++++--------------------
->  1 file changed, 22 insertions(+), 30 deletions(-)
+> Hmm, for some odd reason I don't see this patch in the SELinux mailing
+> list archive or the patchwork; replying here without comment (that
+> will come later) to make sure this hits the SELinux list.
 
-Hmm, for some odd reason I don't see this patch in the SELinux mailing
-list archive or the patchwork; replying here without comment (that
-will come later) to make sure this hits the SELinux list.
+For some reason the generated diff below is pretty messy, so I'm just
+going to put some of my comments here:
 
-> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/service=
-s.c
-> index f14d1ffe54c5..702282954bf9 100644
-> --- a/security/selinux/ss/services.c
-> +++ b/security/selinux/ss/services.c
-> @@ -2964,53 +2964,45 @@ int security_fs_use(struct super_block *sb)
->  int security_get_bools(struct selinux_policy *policy,
->                        u32 *len, char ***names, int **values)
->  {
-> -       struct policydb *policydb;
-> +       struct policydb *policydb =3D &policy->policydb;
->         u32 i;
-> -       int rc;
-> -
-> -       policydb =3D &policy->policydb;
->
->         *names =3D NULL;
->         *values =3D NULL;
-> -
-> -       rc =3D 0;
->         *len =3D policydb->p_bools.nprim;
->         if (!*len)
-> -               goto out;
-> -
-> -       rc =3D -ENOMEM;
-> -       *names =3D kcalloc(*len, sizeof(char *), GFP_ATOMIC);
-> -       if (!*names)
-> -               goto err;
-> +               return 0;
->
-> -       rc =3D -ENOMEM;
->         *values =3D kcalloc(*len, sizeof(int), GFP_ATOMIC);
->         if (!*values)
-> -               goto err;
-> +               goto reset_len;
->
-> -       for (i =3D 0; i < *len; i++) {
-> -               (*values)[i] =3D policydb->bool_val_to_struct[i]->state;
-> +       *names =3D kcalloc(*len, sizeof(char *), GFP_ATOMIC);
-> +       if (!*names)
-> +               goto free_values;
->
-> -               rc =3D -ENOMEM;
-> +       for (i =3D 0; i < *len; i++) {
->                 (*names)[i] =3D kstrdup(sym_name(policydb, SYM_BOOLS, i),
->                                       GFP_ATOMIC);
->                 if (!(*names)[i])
-> -                       goto err;
-> -       }
-> -       rc =3D 0;
-> -out:
-> -       return rc;
-> -err:
-> -       if (*names) {
-> -               for (i =3D 0; i < *len; i++)
-> -                       kfree((*names)[i]);
-> -               kfree(*names);
-> +                       goto free_names;
-> +
-> +               (*values)[i] =3D policydb->bool_val_to_struct[i]->state;
->         }
-> -       kfree(*values);
-> -       *len =3D 0;
-> +       return 0;
-> +
-> +free_names:
-> +       for (i =3D 0; i < *len; i++)
-> +               kfree((*names)[i]);
-> +
-> +       kfree(*names);
->         *names =3D NULL;
-> +free_values:
-> +       kfree(*values);
->         *values =3D NULL;
-> -       goto out;
-> +reset_len:
-> +       *len =3D 0;
-> +       return -ENOMEM;
->  }
->
+Given the fairly extensive refactoring here, and the frequency with
+which @len, @names, and @values are used in the function, I might
+simply create local variables for each and only assign them to the
+parameter pointers at the end when everything completes successfully
+(you could still reset @len at the start if you wanted).  If nothing
+else it will make the function easier to read, and I think it will
+simplify the code a bit too.
+
+I would probably also keep the combined @names/@values cleanup under
+one jump label; this function isn't complicated enough to warrant that
+many jump labels for error conditions.
+
+> > diff --git a/security/selinux/ss/services.c b/security/selinux/ss/servi=
+ces.c
+> > index f14d1ffe54c5..702282954bf9 100644
+> > --- a/security/selinux/ss/services.c
+> > +++ b/security/selinux/ss/services.c
+> > @@ -2964,53 +2964,45 @@ int security_fs_use(struct super_block *sb)
+> >  int security_get_bools(struct selinux_policy *policy,
+> >                        u32 *len, char ***names, int **values)
+> >  {
+> > -       struct policydb *policydb;
+> > +       struct policydb *policydb =3D &policy->policydb;
+> >         u32 i;
+> > -       int rc;
+> > -
+> > -       policydb =3D &policy->policydb;
+> >
+> >         *names =3D NULL;
+> >         *values =3D NULL;
+> > -
+> > -       rc =3D 0;
+> >         *len =3D policydb->p_bools.nprim;
+> >         if (!*len)
+> > -               goto out;
+> > -
+> > -       rc =3D -ENOMEM;
+> > -       *names =3D kcalloc(*len, sizeof(char *), GFP_ATOMIC);
+> > -       if (!*names)
+> > -               goto err;
+> > +               return 0;
+> >
+> > -       rc =3D -ENOMEM;
+> >         *values =3D kcalloc(*len, sizeof(int), GFP_ATOMIC);
+> >         if (!*values)
+> > -               goto err;
+> > +               goto reset_len;
+> >
+> > -       for (i =3D 0; i < *len; i++) {
+> > -               (*values)[i] =3D policydb->bool_val_to_struct[i]->state=
+;
+> > +       *names =3D kcalloc(*len, sizeof(char *), GFP_ATOMIC);
+> > +       if (!*names)
+> > +               goto free_values;
+> >
+> > -               rc =3D -ENOMEM;
+> > +       for (i =3D 0; i < *len; i++) {
+> >                 (*names)[i] =3D kstrdup(sym_name(policydb, SYM_BOOLS, i=
+),
+> >                                       GFP_ATOMIC);
+> >                 if (!(*names)[i])
+> > -                       goto err;
+> > -       }
+> > -       rc =3D 0;
+> > -out:
+> > -       return rc;
+> > -err:
+> > -       if (*names) {
+> > -               for (i =3D 0; i < *len; i++)
+> > -                       kfree((*names)[i]);
+> > -               kfree(*names);
+> > +                       goto free_names;
+> > +
+> > +               (*values)[i] =3D policydb->bool_val_to_struct[i]->state=
+;
+> >         }
+> > -       kfree(*values);
+> > -       *len =3D 0;
+> > +       return 0;
+> > +
+> > +free_names:
+> > +       for (i =3D 0; i < *len; i++)
+> > +               kfree((*names)[i]);
+> > +
+> > +       kfree(*names);
+> >         *names =3D NULL;
+> > +free_values:
+> > +       kfree(*values);
+> >         *values =3D NULL;
+> > -       goto out;
+> > +reset_len:
+> > +       *len =3D 0;
+> > +       return -ENOMEM;
+> >  }
+> >
+> >
+> > --
+> > 2.40.0
 >
 > --
-> 2.40.0
+> paul-moore.com
+
+
 
 --=20
 paul-moore.com
