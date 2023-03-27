@@ -2,82 +2,208 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6180EC761A6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 21:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83654C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 21:37:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbjC0VXx (ORCPT
+        id S230208AbjC0Vh3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Mar 2023 17:23:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41628 "EHLO
+        Mon, 27 Mar 2023 17:37:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229815AbjC0VXw (ORCPT
+        with ESMTP id S230075AbjC0Vh1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Mar 2023 17:23:52 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F604199C
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 14:23:51 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id k17so12516212ybm.11
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 14:23:51 -0700 (PDT)
+        Mon, 27 Mar 2023 17:37:27 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E66726A3
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 14:37:25 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id i7so12632450ybt.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 14:37:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679952230;
+        d=paul-moore.com; s=google; t=1679953044;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wRwaPJdNjZmcm9hJp392EALqZkQqEkTeWD1wr6f42IY=;
-        b=CidMqviG1CVTU+wx0EfQQ3sUH/cjf8Dd7nelb7WgvTyS6PqzNdvqV0M4Lm9uwfolJl
-         +N1NLYxxIW+6N5TAJcMdNbcdhoPmRw1zEnmm7YM1OgvWMk33fzRPH7MFC9VOPwNvHUXy
-         4W6EEECa+7UfqFcaGPJ2NA1nx3gisuP3enofJkkdsGQaD4EcA54jU1DJ4F3xiFFxfd5p
-         ka6p3MaULmB0KeXkS/Gm7r+MAMKWbdKo5e2/Nn3Qi/NvAF/s1bnPjT8mCOs2V2EW48vp
-         4w+C9MjHfaf7F7I2OuSqnUPXZoJtMKoUWeDzkpZ07gWG0TX+zljVFlobcUM6O/1TMcko
-         9AHw==
+        bh=/Xm5gtyuxKZCMPw1HMGOtlJQVZR2OK69GXkaT/vqsKs=;
+        b=R4o2J90nGurrfzuTC7+oSjJ+0p6avJotUTIxGrwx/df4xGb8GPkasfcgZSYJp4uprh
+         gCT6Qd8kw7ODFj86V5MJX9HgR0r83mO4FuEq1ptDOUlK8Hs0y6TnzI+OL1lt6lpPC2j8
+         T79H5vfulR1cyjPMCHMwqtQkTrNTvUrLD17D/GZB298plP07aFJHd3RMcEU4ZXYvEMsQ
+         l51NibBQy60nK0sqeEHLjBzh7ZyOtPUkD2clfI2lIQuFkVmo45vF1Rgv1OKxz1fpsofB
+         IooB/3iXCkbNvhBnfJjCYc+NkMKtGJSL+hh3Zrq//DspbNDzI/U5pXHMi4jm5cNTQLWb
+         Fmzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679952230;
+        d=1e100.net; s=20210112; t=1679953044;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wRwaPJdNjZmcm9hJp392EALqZkQqEkTeWD1wr6f42IY=;
-        b=fJGhbNrWVabuxKLk53y3hFLVAmWjUwvHs+EIVJpj46dEXieSNslKtWlU+lSmftvYl2
-         6viL0EVxVAKX83jR8vE3/+RSN86Mpt/zAIsNgzJNtifpPT2uGgRceygsCSGmxm7ISW+q
-         PfOfQ3I9Ktys1rHeRDMfL0liPhCgJ8efDYSgtQ2GCl8kNE1xwr33VF33rU9PlPdO4kYY
-         tZah0V5OIQ+p0bDmLNv8iQZmIqExrFg0Kswa+ULdQwfA5uDxeaCa0ZLTLaDJyDf+JXr9
-         Lg+o1JH2jty6WymjjUpdyeEY5bqseqixonvUbl4GCYJTZ+b0ViNSX+UY6bIKkUP8+RwB
-         Acpw==
-X-Gm-Message-State: AAQBX9chBtygxj1pOpMqf2loQIMoiDzdINtg/yIgCFfL86CiyRCXqXKg
-        ce0udS4grQEg8gFwncfs27cYGfIKGhElU5zgv0idQA==
-X-Google-Smtp-Source: AKy350aF5/L77S0EjVYQ52vhV3o7136405E00a7IO8owxz67hLYfSywE1LAZVDUR/2jjWTCviakaCuqAVj2MZkaWw5I=
-X-Received: by 2002:a05:6902:10c2:b0:b6e:b924:b96f with SMTP id
- w2-20020a05690210c200b00b6eb924b96fmr10825453ybu.3.1679952230621; Mon, 27 Mar
- 2023 14:23:50 -0700 (PDT)
+        bh=/Xm5gtyuxKZCMPw1HMGOtlJQVZR2OK69GXkaT/vqsKs=;
+        b=zYqPNQ0aEO64R/xgXp5duJH5cEY4DdQQl7VclEEmGFDvHg8uzuMWeMNSYU32DfrJGJ
+         zMc/URCfTl+yFbQ1c+HE141lwbIMCNkgQ/sSkZtmE1clf5bAFezbocKugpTm8lQb7kZm
+         jJ0ZkqDJbTrMyHbtgh+vAloxOwS3PkBwyiW4mk/3lzLTcBX9Yj9GX4CikQ+nmyYMBTtO
+         noc9hg0FSwjrvkioGQWQMwq/gcD+l0AXIJJ4yfjeps0GWyWLtGthRibgbPGHNuv6aaGG
+         j+W1qG94Q6Zy7M+MlajfC0sB8s7Yd33DFFHtSc4i4NSD3Wzrj5uH12GKX1UUa9GawtIH
+         enAQ==
+X-Gm-Message-State: AAQBX9dX66W9mYkKzW67XAZS6HYIOLSTej5Xn0i2zCyhykvGS+rHvOS5
+        vy4bFtO7pU113Tv7D2ih4TwpT5mHa7Iw+/3NL0wn
+X-Google-Smtp-Source: AKy350au2agJQlTOeaLLljcyGiOVu2K70TKj7p6HIc/lxld00if3ck6TEGGSGr+/sjLgXjtOnS36vO4BhC9HB5P2hsY=
+X-Received: by 2002:a25:344:0:b0:b27:4632:f651 with SMTP id
+ 65-20020a250344000000b00b274632f651mr5884577ybd.3.1679953044604; Mon, 27 Mar
+ 2023 14:37:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <de0273a8-8910-4ac4-b4ed-f7691c4d2ca6@kili.mountain>
-In-Reply-To: <de0273a8-8910-4ac4-b4ed-f7691c4d2ca6@kili.mountain>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 27 Mar 2023 23:23:39 +0200
-Message-ID: <CACRpkdY9+HbODoJYku1EN7Swr9C+NbeS-GLNb=CtNkdQHQ2EQg@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: magnachip: Prevent error pointer dereference
- in probe
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Chris Morgan <macromorgan@hotmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maya Matuszczyk <maccraft123mc@gmail.com>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de> <83763b78-453d-de21-9b48-1c226afa13a0@web.de>
+ <57a97109-7a67-245b-8072-54aec3b5021d@web.de>
+In-Reply-To: <57a97109-7a67-245b-8072-54aec3b5021d@web.de>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 27 Mar 2023 17:37:13 -0400
+Message-ID: <CAHC9VhR=yK72JXW3hJR+gUQtGCNpF0Bzk5RDzPZR0MunC84AUQ@mail.gmail.com>
+Subject: Re: [PATCH v2] selinux: Adjust implementation of security_get_bools()
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, selinux@vger.kernel.org,
+        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Michal Orzel <michalorzel.eng@gmail.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Ruiqi Gong <gongruiqi1@huawei.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>, cocci@inria.fr,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ruiqi Gong <ruiqi.gong@qq.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 10:07=E2=80=AFAM Dan Carpenter <error27@gmail.com> =
-wrote:
-
-> Don't dereference "db->dsi_dev" when it is an error pointer.
+On Mon, Mar 27, 2023 at 3:00=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
 >
-> Fixes: 249a4f5e663c ("drm/panel: Add Magnachip D53E6EA8966 Panel Driver")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> Date: Mon, 27 Mar 2023 08:50:56 +0200
+>
+> The label =E2=80=9Cerr=E2=80=9D was used to jump to another pointer check=
+ despite of
+> the detail in the implementation of the function =E2=80=9Csecurity_get_bo=
+ols=E2=80=9D
+> that it was determined already that a corresponding variable contained
+> a null pointer because of a failed memory allocation.
+>
+> Thus perform the following adjustments:
+>
+> 1. Convert the statement =E2=80=9Cpolicydb =3D &policy->policydb;=E2=80=
+=9D into
+>    a variable initialisation.
+>
+> 2. Replace the statement =E2=80=9Cgoto out;=E2=80=9D by =E2=80=9Creturn -=
+ENOMEM;=E2=80=9D.
+>
+> 3. Return zero directly at two places.
+>
+> 4. Omit the variable =E2=80=9Crc=E2=80=9D.
+>
+> 5. Use more appropriate labels instead.
+>
+> 6. Reorder the assignment targets for two kcalloc() calls.
+>
+> 7. Reorder jump targets at the end.
+>
+> 8. Assign a value element only after a name assignment succeeded.
+>
+> 9. Delete an extra pointer check which became unnecessary
+>    with this refactoring.
+>
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  security/selinux/ss/services.c | 52 ++++++++++++++--------------------
+>  1 file changed, 22 insertions(+), 30 deletions(-)
 
-Patch applied to drm-misc-next!
+Hmm, for some odd reason I don't see this patch in the SELinux mailing
+list archive or the patchwork; replying here without comment (that
+will come later) to make sure this hits the SELinux list.
 
-Yours,
-Linus Walleij
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/service=
+s.c
+> index f14d1ffe54c5..702282954bf9 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -2964,53 +2964,45 @@ int security_fs_use(struct super_block *sb)
+>  int security_get_bools(struct selinux_policy *policy,
+>                        u32 *len, char ***names, int **values)
+>  {
+> -       struct policydb *policydb;
+> +       struct policydb *policydb =3D &policy->policydb;
+>         u32 i;
+> -       int rc;
+> -
+> -       policydb =3D &policy->policydb;
+>
+>         *names =3D NULL;
+>         *values =3D NULL;
+> -
+> -       rc =3D 0;
+>         *len =3D policydb->p_bools.nprim;
+>         if (!*len)
+> -               goto out;
+> -
+> -       rc =3D -ENOMEM;
+> -       *names =3D kcalloc(*len, sizeof(char *), GFP_ATOMIC);
+> -       if (!*names)
+> -               goto err;
+> +               return 0;
+>
+> -       rc =3D -ENOMEM;
+>         *values =3D kcalloc(*len, sizeof(int), GFP_ATOMIC);
+>         if (!*values)
+> -               goto err;
+> +               goto reset_len;
+>
+> -       for (i =3D 0; i < *len; i++) {
+> -               (*values)[i] =3D policydb->bool_val_to_struct[i]->state;
+> +       *names =3D kcalloc(*len, sizeof(char *), GFP_ATOMIC);
+> +       if (!*names)
+> +               goto free_values;
+>
+> -               rc =3D -ENOMEM;
+> +       for (i =3D 0; i < *len; i++) {
+>                 (*names)[i] =3D kstrdup(sym_name(policydb, SYM_BOOLS, i),
+>                                       GFP_ATOMIC);
+>                 if (!(*names)[i])
+> -                       goto err;
+> -       }
+> -       rc =3D 0;
+> -out:
+> -       return rc;
+> -err:
+> -       if (*names) {
+> -               for (i =3D 0; i < *len; i++)
+> -                       kfree((*names)[i]);
+> -               kfree(*names);
+> +                       goto free_names;
+> +
+> +               (*values)[i] =3D policydb->bool_val_to_struct[i]->state;
+>         }
+> -       kfree(*values);
+> -       *len =3D 0;
+> +       return 0;
+> +
+> +free_names:
+> +       for (i =3D 0; i < *len; i++)
+> +               kfree((*names)[i]);
+> +
+> +       kfree(*names);
+>         *names =3D NULL;
+> +free_values:
+> +       kfree(*values);
+>         *values =3D NULL;
+> -       goto out;
+> +reset_len:
+> +       *len =3D 0;
+> +       return -ENOMEM;
+>  }
+>
+>
+> --
+> 2.40.0
+
+--=20
+paul-moore.com
