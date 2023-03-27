@@ -2,151 +2,138 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEBBC76195
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 10:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65790C7619A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 12:28:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233633AbjC0KaJ (ORCPT
+        id S232661AbjC0M2q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Mar 2023 06:30:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39366 "EHLO
+        Mon, 27 Mar 2023 08:28:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233666AbjC0K3b (ORCPT
+        with ESMTP id S229456AbjC0M2m (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Mar 2023 06:29:31 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85EA81FD2
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 03:29:13 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-54601d90118so5846837b3.12
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 03:29:13 -0700 (PDT)
+        Mon, 27 Mar 2023 08:28:42 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D6233AA2
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 05:28:41 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id m2so8603593wrh.6
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 05:28:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679912953;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCgemJkNZ/8ZgReBw5RuknBsH/Lb1un6tIfXEsMBnRE=;
-        b=T00DmUmQp4s6UJXSNo0z/g9VGiq2k8xZhpFTtnhRtcYMNQc1J5qpvxUodlAPFIe16b
-         gn9+CU1y2TlepUNOHJ3YB4XZ1rShk9QQTSNGdK5GY+VV/Bu3UtAzV0n50rdSDLAv4Yvy
-         ZDlGHHVABW649/cEc3amrO62uMG9SGMYHNESCjrY/eEOwQLE3Cq0FgmRDxgMSrswO2pz
-         xHzLIanMq/1UImwlJaE7cnQa/tZDFWS3pyhE9Hvnkg6N6ijqGpl2W3hq+XQoD15ebWE9
-         oZo44FlqxqnQxfXyb2Xh+ELIrxnEKNEDHiiWTJT7J4kxUsEFnvZoo0GHfJDznRYnrHoX
-         bJdQ==
+        d=linbit-com.20210112.gappssmtp.com; s=20210112; t=1679920120;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7JE7QdvKaZYNiC+EHD6Zp12m/upgFyEAxrLdJhc4mQQ=;
+        b=2L0cR5VE2NFhVPykwsr4iw3GlHlZuOz/yTvn7XLSW0BbgbuceoOqdTYO3ba2irsviG
+         tqODrs0635EEPHYkxxMW6IP5tFr+qNcFFuZsCaEN5jSFRvtzh4aodQEruC0iH7w8RGPf
+         w4v4HSAzC4/lTVdvhrdGUAHvQLybaEoXo0jQSluLK4+n8sBIGulmpBtWxlhiETyPS6+9
+         FDxT8anFyaMOG+pEsCtl34lHodYnMqdtqWKoNYT4DA+1PTHED3jOL4KcEavojhBrKQDM
+         3RkwnlBekLln7xj7/MPlqU+ZeUa//7ckmCFfRFueD1q8Opy3xng9vUWcSqI/5Jq09eFX
+         xBYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679912953;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uCgemJkNZ/8ZgReBw5RuknBsH/Lb1un6tIfXEsMBnRE=;
-        b=AbAR/Ycsi9p4+qw9bDYXUIRJGyFcMMPJbqprIswigOOQHDv8o8FSm/hgXQKHFCUygP
-         Qnc8PEuZ6fMUfXuNVa8oBGRMttkjX1GdygaVoUY7iwtlQdpdGsgpaeMwrQ5Vi910Es1F
-         gcQCV6oxF1Z2WqYag+t9O3adOKwv6UAwjw0SAUSV4ggUSS4ZE3YQk8Bc+70gI/LNY4UB
-         Val4+6sHMwHxoaxju959ULYF67QeJNvdJeS/grI9wKWf8+/hQjjqMK+mzRX9cUA2MtP8
-         /YdQysKMrSNJswBfqK7zmBtwS9JTGIRjn/rCWS0XJ16f+T0bAsfdLVEi7qPMg7eKB117
-         rZDA==
-X-Gm-Message-State: AAQBX9dsCizE1UfsrcPHPva0946Hx7Zb1unV4Y44GZYUHJasROsOhzLY
-        EletLOphUwENDHfXNJLQGTDp/kEdgQkYDkWQcR6Jxs4hQmpkBEtI
-X-Google-Smtp-Source: AKy350bpIkiOD9NGwPAFRgO5XvcrGL/wWfDMctgQnrZkQBHmjQb68cIUjLdR/JMWVPkuYrjGAYx0KqUp2kS3fqG5Oyo=
-X-Received: by 2002:a81:ae23:0:b0:52e:e095:d840 with SMTP id
- m35-20020a81ae23000000b0052ee095d840mr5152153ywh.0.1679912952661; Mon, 27 Mar
- 2023 03:29:12 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679920120;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7JE7QdvKaZYNiC+EHD6Zp12m/upgFyEAxrLdJhc4mQQ=;
+        b=XWhMM5H/8uSsfV31EeisfYROJc2rU/K9OaCjnb3Q/xRBGxXwNE16xV42WdLQ0gzI8I
+         NqZKM7P+Co3vLFE6IQjbrA38qK3xmFAJq1JbV+7pMxfMnJfHv4wRyEMf+B7peTYb3g5K
+         IFwdQkV1IM30+6UDXE+OHvXn+NdK4hPWOX5v4k7L1dTANrHR2OeGCTY9TtP4BcShqKc0
+         XUh1XtJ54pHoZbLZNsKnKoQeV0mwywwcO9gTaEA6dbxoTEFxaZwwzIFsNa9hh/6i4qsa
+         HNL+LbSYSk8ICJQkdKR77orpBJDj8guWM25Grk+lvyphN0GVjWJGzTDPxf3FzPMGZiq8
+         HZRQ==
+X-Gm-Message-State: AAQBX9dZYrTzUYcfsd3vK0pf/RmP5BwJRJm5ByRdNX6rzWIgtYH/++p6
+        qQxCJNESOOhpdOXnHsvCvN7/BGK1rfjXiYkFgydNjFRA
+X-Google-Smtp-Source: AKy350aYLU0BuXDE6SXKbUGRw51RJogCMJNwzIn8Anvk+Et3prniahCnvNWUrpjPpBnsQ7XeEp0+nQ==
+X-Received: by 2002:a5d:6a87:0:b0:2d0:c73d:ef2a with SMTP id s7-20020a5d6a87000000b002d0c73def2amr9184389wru.24.1679920119730;
+        Mon, 27 Mar 2023 05:28:39 -0700 (PDT)
+Received: from [192.168.178.55] (h082218028181.host.wavenet.at. [82.218.28.181])
+        by smtp.gmail.com with ESMTPSA id t13-20020adfe10d000000b002db1b66ea8fsm11525226wrz.57.2023.03.27.05.28.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Mar 2023 05:28:38 -0700 (PDT)
+Message-ID: <a989f01e-79a9-44a4-3603-ba4eeeb86dea@linbit.com>
+Date:   Mon, 27 Mar 2023 14:28:37 +0200
 MIME-Version: 1.0
-References: <95083698.3076.1679882851720@127.0.0.1>
-In-Reply-To: <95083698.3076.1679882851720@127.0.0.1>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 27 Mar 2023 12:28:37 +0200
-Message-ID: <CAPDyKFpLBz0_fRko2vQK8h4XSGtJFyK4a4YtRCym02oPXZWiew@mail.gmail.com>
-Subject: Re: Re: [PATCH] mmc: core: remove unnecessary (void*) conversions
-To:     yuzhe@nfschina.com
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        liqiong <liqiong@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH resent] drbd: Fix exception handling in
+ nla_put_drbd_cfg_context()
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Philipp Reisner <philipp.reisner@linbit.com>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <8d193937-532f-959f-9b84-d911984508aa@web.de>
+ <941709b5-d940-42c9-5f31-7ed56e3e6151@web.de>
+Content-Language: en-US
+From:   =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>
+In-Reply-To: <941709b5-d940-42c9-5f31-7ed56e3e6151@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 27 Mar 2023 at 04:07, yuzhe <yuzhe@nfschina.com> wrote:
->
-> <p><br /><br /><br />=E5=9C=A8 2023-03-24, =E6=98=9F=E6=9C=9F=E4=BA=94, 2=
-3:47:08 ,Ulf Hansson =E5=86=99=E5=88=B0=EF=BC=9A</p>
-> <pre>On Fri, 24 Mar 2023 at 14:28, Marek Szyprowski <m.szyprowski@samsung=
-.com> wrote:
-> >
-> > On 17.03.2023 07:47, Yu Zhe wrote:
-> > > Pointer variables of void * type do not require type cast.
-> > >
-> > > Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
-> > > ---
-> > > drivers/mmc/core/debugfs.c | 2 +-
-> > > drivers/mmc/core/host.c | 2 +-
-> > > drivers/mmc/core/mmc_test.c | 6 +++---
-> > > 3 files changed, 5 insertions(+), 5 deletions(-)
-> > ...
-> > > diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-> > > index 096093f7be00..76900f67c782 100644
-> > > --- a/drivers/mmc/core/host.c
-> > > +++ b/drivers/mmc/core/host.c
-> > > @@ -590,7 +590,7 @@ EXPORT_SYMBOL(mmc_alloc_host);
-> > >
-> > > static void devm_mmc_host_release(struct device *dev, void *res)
-> > > {
-> > > - mmc_free_host(*(struct mmc_host **)res);
-> > > + mmc_free_host(res);
-> >
-> > The above chunk is wrong and causes following regression on today's
-> > Linux next-20230324:
-> >
-> > Unable to handle kernel paging request at virtual address 0000000000001=
-020
-> > Mem abort info:
-> > meson-gx-mmc ffe07000.mmc: allocated mmc-pwrseq
-> > ...
-> > [0000000000001020] user address but active_mm is swapper
-> > Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> > Modules linked in:
-> > CPU: 3 PID: 10 Comm: kworker/u12:0 Not tainted 6.3.0-rc3-next-20230324+
-> > #13452
-> > Hardware name: Khadas VIM3 (DT)
-> > Workqueue: events_unbound async_run_entry_fn
-> > pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-> > pc : mmc_pwrseq_free+0x1c/0x38
-> > lr : devm_mmc_host_release+0x1c/0x34
-> > ...
-> > Call trace:
-> > mmc_pwrseq_free+0x1c/0x38
-> > devm_mmc_host_release+0x1c/0x34
-> > release_nodes+0x5c/0x90
-> > devres_release_all+0x8c/0xdc
-> > device_unbind_cleanup+0x18/0x68
-> > really_probe+0x11c/0x2b4
-> > __driver_probe_device+0x78/0xe0
-> > driver_probe_device+0xd8/0x160
-> > __device_attach_driver+0xb8/0x138
-> > bus_for_each_drv+0x84/0xe0
-> > __device_attach_async_helper+0xb0/0xd4
-> > async_run_entry_fn+0x34/0xe0
-> > process_one_work+0x288/0x5c0
-> > worker_thread+0x74/0x450
-> > kthread+0x124/0x128
-> > ret_from_fork+0x10/0x20
-> > Code: f9000bf3 aa0003f3 f9424c00 b4000080 (f9401000)
-> > ---[ end trace 0000000000000000 ]---
-> >
-> > Ulf: do You want me to send a partial revert or will you handle it by
-> > dropping this patch?
->
-> Thanks for the report, I will simply drop the patch!
->
-> Kind regards
-> Uffe
-> </pre>
->
-> sorry for making this mistake, I will check seriously next time.
+Am 25.03.23 um 15:07 schrieb Markus Elfring:
+> Date: Fri, 17 Mar 2023 18:32:05 +0100
+> 
+> The label “nla_put_failure” was used to jump to another pointer check
+> despite of the detail in the implementation of the function
+> “nla_put_drbd_cfg_context” that it was determined already that
+> the corresponding variable contained a null pointer.
+> 
+> * Thus return directly after a call of the function
+>   “nla_nest_start_noflag” failed.
+> 
+> * Delete an extra pointer check which became unnecessary
+>   with this refactoring.
+> 
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Fixes: 543cc10b4cc5c60aa9fcc62705ccfb9998bf4697 ("drbd: drbd_adm_get_status needs to show some more detail")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/block/drbd/drbd_nl.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+> index f49f2a5282e1..9cb947127472 100644
+> --- a/drivers/block/drbd/drbd_nl.c
+> +++ b/drivers/block/drbd/drbd_nl.c
+> @@ -3187,7 +3187,7 @@ static int nla_put_drbd_cfg_context(struct sk_buff *skb,
+>  	struct nlattr *nla;
+>  	nla = nla_nest_start_noflag(skb, DRBD_NLA_CFG_CONTEXT);
+>  	if (!nla)
+> -		goto nla_put_failure;
+> +		return -EMSGSIZE;
+>  	if (device &&
+>  	    nla_put_u32(skb, T_ctx_volume, device->vnr))
+>  		goto nla_put_failure;
+> @@ -3205,8 +3205,7 @@ static int nla_put_drbd_cfg_context(struct sk_buff *skb,
+>  	return 0;
+> 
+>  nla_put_failure:
+> -	if (nla)
+> -		nla_nest_cancel(skb, nla);
+> +	nla_nest_cancel(skb, nla);
+>  	return -EMSGSIZE;
+>  }
+> 
+> --
+> 2.40.0
+> 
 
-Np, things go wrong sometimes, even in the simple cases. Feel free to
-post an updated patch.
+Sorry, I fail to see how this is an improvement over the status quo,
+much less a "fix".
 
-Kind regards
-Uffe
+Can you identify the issue with the current code and can you explain how
+your patch makes it better?
+
+-- 
+Christoph Böhmwalder
+LINBIT | Keeping the Digital World Running
+DRBD HA —  Disaster Recovery — Software defined Storage
