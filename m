@@ -2,123 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56D4C761AF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 02:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E39B6C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 02:28:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230254AbjC0CHd convert rfc822-to-8bit (ORCPT
+        id S229565AbjC0C2S (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 26 Mar 2023 22:07:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37924 "EHLO
+        Sun, 26 Mar 2023 22:28:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjC0CHb (ORCPT
+        with ESMTP id S229677AbjC0C2R (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 26 Mar 2023 22:07:31 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.237])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A4204C38;
-        Sun, 26 Mar 2023 19:07:26 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 723E31A00A7A;
-        Mon, 27 Mar 2023 10:07:32 +0800 (CST)
-X-Virus-Scanned: amavisd-new at nfschina.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id T-yrv0qkjBf9; Mon, 27 Mar 2023 10:07:31 +0800 (CST)
-Received: from 127.0.0.1 (unknown [127.0.0.1])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id B108A1A009F3;
-        Mon, 27 Mar 2023 10:07:31 +0800 (CST)
-Date:   Mon, 27 Mar 2023 10:07:31 +0800 (CST)
-From:   yuzhe <yuzhe@nfschina.com>
-Reply-To: yuzhe@nfschina.com
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Yu Zhe <yuzhe@nfschina.com>, linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        liqiong <liqiong@nfschina.com>
-Message-ID: <95083698.3076.1679882851720@127.0.0.1>
-Subject: Re: Re: [PATCH] mmc: core: remove unnecessary (void*) conversions
+        Sun, 26 Mar 2023 22:28:17 -0400
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D44E98
+        for <kernel-janitors@vger.kernel.org>; Sun, 26 Mar 2023 19:27:55 -0700 (PDT)
+Received: from [172.16.75.132] (unknown [49.255.141.98])
+        by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 4E4F620033;
+        Mon, 27 Mar 2023 10:27:49 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=codeconstruct.com.au; s=2022a; t=1679884069;
+        bh=uFGAvwyrYhQY4AMr1setys0PCC4Np91HrNpE2rcuwZE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References;
+        b=HW/tyoTtIbgk8W6rWr9nJtBNg1T2mEiF8A3xvPhVWcPPffJS3cZlg0uidhfEKHdje
+         uKMCOXN1t4DlZrGgoy1iMPigtXUfNiR+EXBUTgFr6lrTQk4uTtCZFco1ZPJatVh75D
+         xREjoyR+nFmBwLNaGt7AAklvwQIZd/KQYBOs23DZftqwbM8SgYUPZFCa1ZZ0BngliT
+         6DC1XmLujwTcZWNKJjD5Lae7z/PBxNcVhD27ig1nwoODw6HCF5qAfVXwsNOo/y1BLV
+         r20G+DCWnDsduAKPWaY5VOGZAwh41vKV0QlyDzXOihK0gxj21bUww30TxcH8ZqFe8F
+         5PKCPnIobEZ6g==
+Message-ID: <b3d855c27656392984a95873c991540396068eb0.camel@codeconstruct.com.au>
+Subject: Re: [bug report] mctp: Add route input to socket tests
+From:   Jeremy Kerr <jk@codeconstruct.com.au>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org
+Date:   Mon, 27 Mar 2023 10:27:48 +0800
+In-Reply-To: <4ad204f0-94cf-46c5-bdab-49592addf315@kili.mountain>
+References: <4ad204f0-94cf-46c5-bdab-49592addf315@kili.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-X-NFS-GUID: ssqreoDnzK1SiXj1Du7b
-X-ISRICH: 0
-Content-ID: 96d1d1a3-6230-4603-a0a4-48f60747430f
-X-Mail-src: 21
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-<p><br /><br /><br />在 2023-03-24, 星期五, 23:47:08 ,Ulf Hansson 写到：</p>
-<pre>On Fri, 24 Mar 2023 at 14:28, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> On 17.03.2023 07:47, Yu Zhe wrote:
-> > Pointer variables of void * type do not require type cast.
-> >
-> > Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
-> > ---
-> > drivers/mmc/core/debugfs.c | 2 +-
-> > drivers/mmc/core/host.c | 2 +-
-> > drivers/mmc/core/mmc_test.c | 6 +++---
-> > 3 files changed, 5 insertions(+), 5 deletions(-)
-> ...
-> > diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-> > index 096093f7be00..76900f67c782 100644
-> > --- a/drivers/mmc/core/host.c
-> > +++ b/drivers/mmc/core/host.c
-> > @@ -590,7 +590,7 @@ EXPORT_SYMBOL(mmc_alloc_host);
-> >
-> > static void devm_mmc_host_release(struct device *dev, void *res)
-> > {
-> > - mmc_free_host(*(struct mmc_host **)res);
-> > + mmc_free_host(res);
->
-> The above chunk is wrong and causes following regression on today's
-> Linux next-20230324:
->
-> Unable to handle kernel paging request at virtual address 0000000000001020
-> Mem abort info:
-> meson-gx-mmc ffe07000.mmc: allocated mmc-pwrseq
-> ...
-> [0000000000001020] user address but active_mm is swapper
-> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 3 PID: 10 Comm: kworker/u12:0 Not tainted 6.3.0-rc3-next-20230324+
-> #13452
-> Hardware name: Khadas VIM3 (DT)
-> Workqueue: events_unbound async_run_entry_fn
-> pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : mmc_pwrseq_free+0x1c/0x38
-> lr : devm_mmc_host_release+0x1c/0x34
-> ...
-> Call trace:
-> mmc_pwrseq_free+0x1c/0x38
-> devm_mmc_host_release+0x1c/0x34
-> release_nodes+0x5c/0x90
-> devres_release_all+0x8c/0xdc
-> device_unbind_cleanup+0x18/0x68
-> really_probe+0x11c/0x2b4
-> __driver_probe_device+0x78/0xe0
-> driver_probe_device+0xd8/0x160
-> __device_attach_driver+0xb8/0x138
-> bus_for_each_drv+0x84/0xe0
-> __device_attach_async_helper+0xb0/0xd4
-> async_run_entry_fn+0x34/0xe0
-> process_one_work+0x288/0x5c0
-> worker_thread+0x74/0x450
-> kthread+0x124/0x128
-> ret_from_fork+0x10/0x20
-> Code: f9000bf3 aa0003f3 f9424c00 b4000080 (f9401000)
-> ---[ end trace 0000000000000000 ]---
->
-> Ulf: do You want me to send a partial revert or will you handle it by
-> dropping this patch?
+SGkgRGFuLAoKPiBUaGUgcGF0Y2ggODg5MmMwNDkwNzc5OiAibWN0cDogQWRkIHJvdXRlIGlucHV0
+IHRvIHNvY2tldCB0ZXN0cyIgZnJvbQo+IE9jdCAzLCAyMDIxLCBsZWFkcyB0byB0aGUgZm9sbG93
+aW5nIFNtYXRjaCBzdGF0aWMgY2hlY2tlciB3YXJuaW5nOgo+IAo+IMKgwqDCoMKgwqDCoMKgwqBu
+ZXQvbWN0cC90ZXN0L3JvdXRlLXRlc3QuYzozNTcgbWN0cF90ZXN0X3JvdXRlX2lucHV0X3NrKCkK
+PiDCoMKgwqDCoMKgwqDCoMKgZXJyb3I6IGRlcmVmZXJlbmNpbmcgZnJlZWQgbWVtb3J5ICdza2In
+CgpbLi4uXQoKPiDCoMKgwqAgMzUxIAo+IMKgwqDCoCAzNTLCoMKgwqDCoMKgwqDCoMKgIGlmIChw
+YXJhbXMtPmRlbGl2ZXIpIHsKPiDCoMKgwqAgMzUzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgS1VOSVRfRVhQRUNUX0VRKHRlc3QsIHJjLCAwKTsKPiDCoMKgwqAgMzU0IAo+IMKgwqDC
+oCAzNTXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBza2IyID0gc2tiX3JlY3ZfZGF0
+YWdyYW0oc29jay0+c2ssIE1TR19ET05UV0FJVCwgJnJjKTsKPiDCoMKgwqAgMzU2wqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgS1VOSVRfRVhQRUNUX05PVF9FUlJfT1JfTlVMTCh0ZXN0
+LCBza2IyKTsKPiAtLT4gMzU3wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgS1VOSVRf
+RVhQRUNUX0VRKHRlc3QsIHNrYi0+bGVuLCAxKTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgXl5eCj4gVXNlIGFmdGVyIGZyZWUuCgpZZXAsIHRoYXQgc2hvdWxkIGJlIHNrYjIu
+CgpUaGFua3MgZm9yIHRoZSByZXBvcnQhIEknbGwgc2VuZCBhIGZpeCBzb29uLgoKQ2hlZXJzLAoK
+CkplcmVteQo=
 
-Thanks for the report, I will simply drop the patch!
-
-Kind regards
-Uffe
-</pre>
-
-sorry for making this mistake, I will check seriously next time.
