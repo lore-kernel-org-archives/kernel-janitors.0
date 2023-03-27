@@ -2,138 +2,128 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65790C7619A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 12:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72283C761A6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 13:19:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232661AbjC0M2q (ORCPT
+        id S230300AbjC0NTy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Mar 2023 08:28:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58208 "EHLO
+        Mon, 27 Mar 2023 09:19:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjC0M2m (ORCPT
+        with ESMTP id S231359AbjC0NTv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Mar 2023 08:28:42 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D6233AA2
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 05:28:41 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id m2so8603593wrh.6
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 05:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20210112.gappssmtp.com; s=20210112; t=1679920120;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7JE7QdvKaZYNiC+EHD6Zp12m/upgFyEAxrLdJhc4mQQ=;
-        b=2L0cR5VE2NFhVPykwsr4iw3GlHlZuOz/yTvn7XLSW0BbgbuceoOqdTYO3ba2irsviG
-         tqODrs0635EEPHYkxxMW6IP5tFr+qNcFFuZsCaEN5jSFRvtzh4aodQEruC0iH7w8RGPf
-         w4v4HSAzC4/lTVdvhrdGUAHvQLybaEoXo0jQSluLK4+n8sBIGulmpBtWxlhiETyPS6+9
-         FDxT8anFyaMOG+pEsCtl34lHodYnMqdtqWKoNYT4DA+1PTHED3jOL4KcEavojhBrKQDM
-         3RkwnlBekLln7xj7/MPlqU+ZeUa//7ckmCFfRFueD1q8Opy3xng9vUWcSqI/5Jq09eFX
-         xBYw==
+        Mon, 27 Mar 2023 09:19:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493841985
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 06:19:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679923145;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EBgTYwgbbPBXMkcZFKPAHeZP7Jqx47wA107Cj1PA/QY=;
+        b=fEFM3kVGrzVCuB6nrPh5YBFkn/cbPx0B1ZyBPDi34QqpuNXWvgHOA11warVcXwZQQ7zCqc
+        C/IdIGtLX4h2K2wqlfFSiBMz5WfvD+wH2A0g1gxDEyR8kcOLunJwyp197EUr/lPJpeo/pD
+        9vxcGc0bBAA70fLR/93/3sMVj/uLlnw=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-330-j84r8jUxMU6CtnYptjvayg-1; Mon, 27 Mar 2023 09:19:04 -0400
+X-MC-Unique: j84r8jUxMU6CtnYptjvayg-1
+Received: by mail-ed1-f69.google.com with SMTP id q13-20020a5085cd000000b004af50de0bcfso12814101edh.15
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 06:19:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679920120;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20210112; t=1679923143;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7JE7QdvKaZYNiC+EHD6Zp12m/upgFyEAxrLdJhc4mQQ=;
-        b=XWhMM5H/8uSsfV31EeisfYROJc2rU/K9OaCjnb3Q/xRBGxXwNE16xV42WdLQ0gzI8I
-         NqZKM7P+Co3vLFE6IQjbrA38qK3xmFAJq1JbV+7pMxfMnJfHv4wRyEMf+B7peTYb3g5K
-         IFwdQkV1IM30+6UDXE+OHvXn+NdK4hPWOX5v4k7L1dTANrHR2OeGCTY9TtP4BcShqKc0
-         XUh1XtJ54pHoZbLZNsKnKoQeV0mwywwcO9gTaEA6dbxoTEFxaZwwzIFsNa9hh/6i4qsa
-         HNL+LbSYSk8ICJQkdKR77orpBJDj8guWM25Grk+lvyphN0GVjWJGzTDPxf3FzPMGZiq8
-         HZRQ==
-X-Gm-Message-State: AAQBX9dZYrTzUYcfsd3vK0pf/RmP5BwJRJm5ByRdNX6rzWIgtYH/++p6
-        qQxCJNESOOhpdOXnHsvCvN7/BGK1rfjXiYkFgydNjFRA
-X-Google-Smtp-Source: AKy350aYLU0BuXDE6SXKbUGRw51RJogCMJNwzIn8Anvk+Et3prniahCnvNWUrpjPpBnsQ7XeEp0+nQ==
-X-Received: by 2002:a5d:6a87:0:b0:2d0:c73d:ef2a with SMTP id s7-20020a5d6a87000000b002d0c73def2amr9184389wru.24.1679920119730;
-        Mon, 27 Mar 2023 05:28:39 -0700 (PDT)
-Received: from [192.168.178.55] (h082218028181.host.wavenet.at. [82.218.28.181])
-        by smtp.gmail.com with ESMTPSA id t13-20020adfe10d000000b002db1b66ea8fsm11525226wrz.57.2023.03.27.05.28.38
+        bh=EBgTYwgbbPBXMkcZFKPAHeZP7Jqx47wA107Cj1PA/QY=;
+        b=ychX/wDpzqkaMjEGW29zxtKy1yw5ZC5L0L1EZg2Zu+79//eeeWOIibIWXJnHFz8RWQ
+         GkYHiK+PvK06kA+5MqLRh2Jmw7ECcY7GD0mXGUa27UdHXGEr+VKCkmUU8+9NMbHniRHF
+         SIl3/sPM7PPNXhCRagOXE0Yuleft7pO49lVuvDaIkieCx3It48byBtPvmxnfJwUxmymM
+         yp8cPPfJo762G2hsD52FYiVtmOnABFqdPHFQmHE24J72r6V3D6hRbrxu3Xvh3VaLxtN3
+         S5j3M4cvbXxgbYhqFhviXJEUDNJANEz9L4+aodNdemO1Li5ImqfhBFMlKqP4yTNSJMZZ
+         vZeg==
+X-Gm-Message-State: AAQBX9f1MOiwaue264nmp1Xf8VCguqo2Nb7hhEV0GwuwMSh3NUI0Jytx
+        EpfGKYHrVN2UletbsBXVJ31awp6DlPFtwlLdjmeiaJz3je4eljTNjeF+7EF2W0zWQps1s0zdnEJ
+        S5oQdeHyvbvUsk0oX7hTyRc5Ku5FH
+X-Received: by 2002:a17:907:7718:b0:93d:c57f:b8b4 with SMTP id kw24-20020a170907771800b0093dc57fb8b4mr11701398ejc.26.1679923143157;
+        Mon, 27 Mar 2023 06:19:03 -0700 (PDT)
+X-Google-Smtp-Source: AKy350Y8Affwbtww/oGzsLGTsjSTqCH5Zk+CjaVKRD6uvWJLEqdhLBKHVDkMb0S7T1uIFwf8Xha+PQ==
+X-Received: by 2002:a17:907:7718:b0:93d:c57f:b8b4 with SMTP id kw24-20020a170907771800b0093dc57fb8b4mr11701385ejc.26.1679923142910;
+        Mon, 27 Mar 2023 06:19:02 -0700 (PDT)
+Received: from [10.40.98.142] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id h27-20020a17090634db00b00933f31034f2sm11292321ejb.38.2023.03.27.06.19.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Mar 2023 05:28:38 -0700 (PDT)
-Message-ID: <a989f01e-79a9-44a4-3603-ba4eeeb86dea@linbit.com>
-Date:   Mon, 27 Mar 2023 14:28:37 +0200
+        Mon, 27 Mar 2023 06:19:02 -0700 (PDT)
+Message-ID: <a4ddfdeb-aa17-2e72-9c1d-5a7207ee8e47@redhat.com>
+Date:   Mon, 27 Mar 2023 15:19:01 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH resent] drbd: Fix exception handling in
- nla_put_drbd_cfg_context()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <8d193937-532f-959f-9b84-d911984508aa@web.de>
- <941709b5-d940-42c9-5f31-7ed56e3e6151@web.de>
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] platform/x86: ISST: unlock on error path in
+ tpmi_sst_init()
 Content-Language: en-US
-From:   =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>
-In-Reply-To: <941709b5-d940-42c9-5f31-7ed56e3e6151@web.de>
+To:     Dan Carpenter <error27@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     Mark Gross <markgross@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        platform-driver-x86@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <dcdebbb7-7de6-4d04-8e7a-43d5ca043484@kili.mountain>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <dcdebbb7-7de6-4d04-8e7a-43d5ca043484@kili.mountain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 25.03.23 um 15:07 schrieb Markus Elfring:
-> Date: Fri, 17 Mar 2023 18:32:05 +0100
+Hi,
+
+On 3/25/23 12:08, Dan Carpenter wrote:
+> Call mutex_unlock(&isst_tpmi_dev_lock) before returning on this
+> error path.
 > 
-> The label “nla_put_failure” was used to jump to another pointer check
-> despite of the detail in the implementation of the function
-> “nla_put_drbd_cfg_context” that it was determined already that
-> the corresponding variable contained a null pointer.
-> 
-> * Thus return directly after a call of the function
->   “nla_nest_start_noflag” failed.
-> 
-> * Delete an extra pointer check which became unnecessary
->   with this refactoring.
-> 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 543cc10b4cc5c60aa9fcc62705ccfb9998bf4697 ("drbd: drbd_adm_get_status needs to show some more detail")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Fixes: d805456c712f ("platform/x86: ISST: Enumerate TPMI SST and create framework")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
 > ---
->  drivers/block/drbd/drbd_nl.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-> index f49f2a5282e1..9cb947127472 100644
-> --- a/drivers/block/drbd/drbd_nl.c
-> +++ b/drivers/block/drbd/drbd_nl.c
-> @@ -3187,7 +3187,7 @@ static int nla_put_drbd_cfg_context(struct sk_buff *skb,
->  	struct nlattr *nla;
->  	nla = nla_nest_start_noflag(skb, DRBD_NLA_CFG_CONTEXT);
->  	if (!nla)
-> -		goto nla_put_failure;
-> +		return -EMSGSIZE;
->  	if (device &&
->  	    nla_put_u32(skb, T_ctx_volume, device->vnr))
->  		goto nla_put_failure;
-> @@ -3205,8 +3205,7 @@ static int nla_put_drbd_cfg_context(struct sk_buff *skb,
->  	return 0;
-> 
->  nla_put_failure:
-> -	if (nla)
-> -		nla_nest_cancel(skb, nla);
-> +	nla_nest_cancel(skb, nla);
->  	return -EMSGSIZE;
->  }
-> 
-> --
-> 2.40.0
-> 
+> diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> index cdb56a18ea17..664d2ee60385 100644
+> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+> @@ -1399,8 +1399,10 @@ int tpmi_sst_init(void)
+>  	isst_common.sst_inst = kcalloc(topology_max_packages(),
+>  				       sizeof(*isst_common.sst_inst),
+>  				       GFP_KERNEL);
+> -	if (!isst_common.sst_inst)
+> -		return -ENOMEM;
+> +	if (!isst_common.sst_inst) {
+> +		ret = -ENOMEM;
+> +		goto init_done;
+> +	}
+>  
+>  	memset(&cb, 0, sizeof(cb));
+>  	cb.cmd_size = sizeof(struct isst_if_io_reg);
 
-Sorry, I fail to see how this is an improvement over the status quo,
-much less a "fix".
-
-Can you identify the issue with the current code and can you explain how
-your patch makes it better?
-
--- 
-Christoph Böhmwalder
-LINBIT | Keeping the Digital World Running
-DRBD HA —  Disaster Recovery — Software defined Storage
