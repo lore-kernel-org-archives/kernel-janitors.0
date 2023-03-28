@@ -2,175 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CE9C761A6
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 08:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457F0C76195
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 09:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232060AbjC1Iau (ORCPT
+        id S231970AbjC1JSE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Mar 2023 04:30:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49106 "EHLO
+        Tue, 28 Mar 2023 05:18:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230263AbjC1Ias (ORCPT
+        with ESMTP id S230347AbjC1JSC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Mar 2023 04:30:48 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7CDFC7;
-        Tue, 28 Mar 2023 01:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1679992245; x=1711528245;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bzUK80jztzjDzA1SZeBZahUFNGq7t3lGQg15wparD6c=;
-  b=rdl7gQjY85k472G5yU9f3vDBzDp0aPaReok335T7UbW5ISk0xpNeJ/34
-   4C5WivTyF75B+5FUPROLwKctE4wEsj49Sw6xvjK8Iq3wvzW9IGNXNr06c
-   6TX4xoYJus++Z51fJXgzxE2sy8VGfTzJcn7t2ssOiIOwM+83nnIfmeHyq
-   dO87/6y0bMJOAs/CAa4ptJap4KgbBtAnTEKmkeIGDjcaLKHoQxDDWTG3j
-   sz9ymcr/8jucrS6SHTR6I4pf67D/A4ofezEAkuhMi6OqtEs0qUVE7x+DY
-   kOqhhP9PY0njdbJTklFYq2vor7pJOvvQOjZxZcPSpVsqKKKjQAAV8J1JT
-   w==;
-X-IronPort-AV: E=Sophos;i="5.98,296,1673938800"; 
-   d="scan'208";a="144232728"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Mar 2023 01:30:43 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 28 Mar 2023 01:30:42 -0700
-Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
- Transport; Tue, 28 Mar 2023 01:30:40 -0700
-Message-ID: <7890284f-5809-2f46-9d5f-52e20a3ec327@microchip.com>
-Date:   Tue, 28 Mar 2023 10:30:34 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH resent] clk: at91: sama7g5: Add two jump labels in
- sama7g5_pmc_setup()
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        <kernel-janitors@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <cocci@inria.fr>, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <5ed1bc78-77a1-8eb8-43f9-6005d7de49c8@web.de>
- <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
-Content-Language: en-US
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 28 Mar 2023 05:18:02 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A8259C9;
+        Tue, 28 Mar 2023 02:17:46 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id cn12so46791840edb.4;
+        Tue, 28 Mar 2023 02:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679995065;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3K9oP7/yRfVILURsIVCn4qyL/bl9YxnAFWd0gdh12Pk=;
+        b=hsEY4XO3s4eORD7G5g5xh6HJHdnI2POCiTX+QoIY5l7mhUpRTBOsLeDW4NLwdUfw81
+         543bt0awuC2F+f8h1QY1nTyniGQJPzab8cF3XJ6MtzklMiH9b3M8qLoFuPu1WbVJv0sb
+         VWtOYf42OdI3dVfhNg0D0ght0hrc3hOvM1XzZywROJ7mVsbrfhq2niV5DUDEmeA+6fYb
+         2kKjvC7pAuPx7knYARdcSQqP+rblV1XjbUMQs/JNtR2ACapY+9StNATejJq+inQp2ND9
+         CYOpXS0T9XetX5PgK9HNw+Mxv92n9hIWTsJChpQpzBW9OvhRgEpBVVifEjgMroUV4Bct
+         yv8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679995065;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3K9oP7/yRfVILURsIVCn4qyL/bl9YxnAFWd0gdh12Pk=;
+        b=4p7SeN80xvha07D6DPxjYMVUOKzwKfnf0pcTB2tHTd1OKa4V0NX3A1agOMqgq2lX6/
+         5hx8y8+PKNguAdf3W6FunClwOwAOAil5bwP/RS2mzCK0vYa80E9AUCM84AJOMPWQowVC
+         mFRbAZsZXepUl+EnYGE1sU9J0Fv0PUXFc+JskqlICB2o3Rzv+bNocaX4ihB6U3R510c6
+         LPlWcWEGkZxr3Cr9TMA4Jvov1Q2Bqe2iwijeMmI7j8ClF+mm/29mrhxqCXNV5zjJdDNQ
+         xBqfpDZgsn0FiHlJVjfTef/VopzBe45Bd17dmN0JBV4t0cCKEx5Tre/4FzyTDExAfbkL
+         bCZw==
+X-Gm-Message-State: AAQBX9c5BjO8FKzLcsF0h4x6YuRns83GFKWH80imufW1LzX47yTT10wK
+        oX31LyFaoap6c0n007Z+cVs=
+X-Google-Smtp-Source: AKy350YWHO2hFdKwRwavXXq1uDnljv2JnTt4NK/8WlhJXRPTii2qp5bBsyLeBR2I4+rVcWDwLOnheQ==
+X-Received: by 2002:a50:fe94:0:b0:4f9:9e56:84bf with SMTP id d20-20020a50fe94000000b004f99e5684bfmr13882874edt.10.1679995065164;
+        Tue, 28 Mar 2023 02:17:45 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:6423:97b3:4a44:24c1])
+        by smtp.gmail.com with ESMTPSA id i24-20020a508718000000b004aef147add6sm15749141edb.47.2023.03.28.02.17.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Mar 2023 02:17:44 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org
+Cc:     Lukasz Luba <lukasz.luba@arm.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust entry in THERMAL/POWER_ALLOCATOR after header movement
+Date:   Tue, 28 Mar 2023 11:17:37 +0200
+Message-Id: <20230328091737.6785-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 25/03/2023 at 15:05, Markus Elfring wrote:
-> Date: Fri, 17 Mar 2023 20:02:34 +0100
-> 
-> The label “err_free” was used to jump to another pointer check despite of
-> the detail in the implementation of the function “sama7g5_pmc_setup”
-> that it was determined already that the corresponding variable contained
-> a null pointer (because of a failed memory allocation).
-> 
-> * Thus use additional labels.
-> 
-> * Delete an extra pointer check at the end which became unnecessary
->    with this refactoring.
-> 
-> This issue was detected by using the Coccinelle software.
+Commit e97b6e04095a ("thermal/core: Relocate the traces definition in
+thermal directory") moves include/trace/events/thermal_power_allocator.h to
+drivers/thermal/thermal_trace_ipa.h, but misses to adjust the file entry
+for the THERMAL/POWER_ALLOCATOR section.
 
-Fine, but I'm sorry that it complexity the function for no real value. 
-Other clk drivers have the same pattern so I want them to all stay the same.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-This is a NACK, sorry about that.
+Adjust this file entry in THERMAL/POWER_ALLOCATOR.
 
-Regards,
-   Nicolas
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Daniel, please apply this minor clean-up patch on top of the commit above. Thanks.
 
-> Fixes: cb783bbbcf54c36256006895c215e86c5e7266d8 ("clk: at91: sama7g5: add clock support for sama7g5")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/clk/at91/sama7g5.c | 23 +++++++++++------------
->   1 file changed, 11 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-> index f135b662f1ff..224b1f2ebef2 100644
-> --- a/drivers/clk/at91/sama7g5.c
-> +++ b/drivers/clk/at91/sama7g5.c
-> @@ -927,25 +927,25 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->                              (ARRAY_SIZE(sama7g5_mckx) + ARRAY_SIZE(sama7g5_gck)),
->                              GFP_KERNEL);
->          if (!alloc_mem)
-> -               goto err_free;
-> +               goto free_pmc;
-> 
->          hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
->                                             50000000);
->          if (IS_ERR(hw))
-> -               goto err_free;
-> +               goto free_alloc_mem;
-> 
->          bypass = of_property_read_bool(np, "atmel,osc-bypass");
-> 
->          hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
->                                          bypass);
->          if (IS_ERR(hw))
-> -               goto err_free;
-> +               goto free_alloc_mem;
-> 
->          parent_names[0] = "main_rc_osc";
->          parent_names[1] = "main_osc";
->          hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
->          if (IS_ERR(hw))
-> -               goto err_free;
-> +               goto free_alloc_mem;
-> 
->          sama7g5_pmc->chws[PMC_MAIN] = hw;
-> 
-> @@ -987,7 +987,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->                          }
-> 
->                          if (IS_ERR(hw))
-> -                               goto err_free;
-> +                               goto free_alloc_mem;
-> 
->                          if (sama7g5_plls[i][j].eid)
->                                  sama7g5_pmc->chws[sama7g5_plls[i][j].eid] = hw;
-> @@ -999,7 +999,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->                                            &mck0_layout, &mck0_characteristics,
->                                            &pmc_mck0_lock, CLK_GET_RATE_NOCACHE, 5);
->          if (IS_ERR(hw))
-> -               goto err_free;
-> +               goto free_alloc_mem;
-> 
->          sama7g5_pmc->chws[PMC_MCK] = hw;
-> 
-> @@ -1128,12 +1128,11 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->          return;
-> 
->   err_free:
-> -       if (alloc_mem) {
-> -               for (i = 0; i < alloc_mem_size; i++)
-> -                       kfree(alloc_mem[i]);
-> -               kfree(alloc_mem);
-> -       }
-> -
-> +       for (i = 0; i < alloc_mem_size; i++)
-> +               kfree(alloc_mem[i]);
-> +free_alloc_mem:
-> +       kfree(alloc_mem);
-> +free_pmc:
->          kfree(sama7g5_pmc);
->   }
-> 
-> --
-> 2.40.0
-> 
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3e61e3240758..3e0dbf8018d0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20847,7 +20847,7 @@ L:	linux-pm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/driver-api/thermal/power_allocator.rst
+ F:	drivers/thermal/gov_power_allocator.c
+-F:	include/trace/events/thermal_power_allocator.h
++F:	drivers/thermal/thermal_trace_ipa.h
+ 
+ THINKPAD ACPI EXTRAS DRIVER
+ M:	Henrique de Moraes Holschuh <hmh@hmh.eng.br>
 -- 
-Nicolas Ferre
+2.17.1
 
