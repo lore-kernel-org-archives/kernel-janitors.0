@@ -2,55 +2,55 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D670C77B61
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 14:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86326C761AF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 14:58:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233550AbjC1Oz7 (ORCPT
+        id S233646AbjC1O6D (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Mar 2023 10:55:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58628 "EHLO
+        Tue, 28 Mar 2023 10:58:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233554AbjC1Oz6 (ORCPT
+        with ESMTP id S233634AbjC1O6B (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Mar 2023 10:55:58 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A771DDBDB;
-        Tue, 28 Mar 2023 07:55:56 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id e18so12527911wra.9;
-        Tue, 28 Mar 2023 07:55:56 -0700 (PDT)
+        Tue, 28 Mar 2023 10:58:01 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D3213592;
+        Tue, 28 Mar 2023 07:57:59 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id n10-20020a05600c4f8a00b003ee93d2c914so9293973wmq.2;
+        Tue, 28 Mar 2023 07:57:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680015355;
+        d=gmail.com; s=20210112; t=1680015478;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VUCiRdt4G6e+AfKReFCxGYN4w7zp8icsBzsXAHuEF9Y=;
-        b=AnEidLE4LsraW87Q5tXYHYA5Ys+pGCCc9NsTQXztWYS7KfP0rtHSBjPdDzCPcul1og
-         XELjf9zZ/Ms/zQ0pafho6jHMsg1nH3aMdm7wdpgxuRZ6kbGRw4au/66oE8Lb/fKm0j7J
-         +zc7MS3DN/xKThJhGNbLGMcqzNza8rFIp+TBqxXD2bWnvWqrAYAb9BUXE3K805LX2HFJ
-         EONzt2P/PjRZ4gQeprxZGQWQUMXRx6PzH7jyU8+2Mm12q0/F5ZeIomd5uAj9PKq6iYwq
-         iCDZ8ZqZXdEFRZWeYVX1ZSWCYKcPOKi3oQ9AdLnWXmDXXrUTrFDbEblNK5uU0jMwCIh7
-         Zevg==
+        bh=DE5xgbwhRQpkJgfP8sEL5gZw3SNhWz8a/RrIbBfg2gk=;
+        b=ogWMrlr7I27p4FwSejAr7Q2c1/kXf0NR8Ec5k4be40g439cNGZ3OUCBDTwj2+EJLBS
+         +CVfoC11xm9nD86Y42TyBgqgb+BStWr/kyeLZir9gjK/HlHbgRrEkflNOaz65ZHPxbmi
+         BtgH1xfl3hZvUenIpKCRqNlBc8BQ8gLlNyiclLGWqIKb6rooabZlKaaDAncJ6Tgy5Eh4
+         0tz2uj+3IDTc6XqK5A0tMkM/SXWUDK687xJtClyW9GENsIrdj63nsd8OtjFVHRRcuOuB
+         64pbM0vG8buKzrZ3TeB+Ax78GJoerauv979g8hang2NObPVtppPe4vv+cfBz9CvdK8dT
+         ISuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680015355;
+        d=1e100.net; s=20210112; t=1680015478;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VUCiRdt4G6e+AfKReFCxGYN4w7zp8icsBzsXAHuEF9Y=;
-        b=AZ+rhQZhVtab+ThQ3v2dj5V6frD8sILNd/VlPSbjnu0eqPuBdcOMOOpaaRrLAau1WG
-         Pkwf6ZqkhjdfTxwhA3bFWOEjd1Uuj2804y06fvlWvr+gwXOxJ1Kz4ktDItiNbifYTrf5
-         S6rOCYIXonqwpwN9f/rO1s6wHF6pZhvtvuht7Ii7AD+IY4vWqEDNdM5/QOWFE3n15IYN
-         h34HiIFc0Yy7RMazcs3rk8GrJ19VoCFXCvc0yADGq8pw8YW9k+j5l/sWXaOTKqVkfPLK
-         ycCFT6aqQ15/In3+BtJzaMs1oIWPYj3woOXSTMDDMZnca53JAyIMVcYZjjWWEPMFJPRJ
-         n4Cw==
-X-Gm-Message-State: AAQBX9ezBkXi/uSDjuddMVdAlKE4Fm3YjDbJpLeRts3x1dB3Q97r40Hm
-        QqewvKLvxvnGtll09KiiWLZ07UkFeJwCoQ==
-X-Google-Smtp-Source: AKy350bMs0DBch9jE/m8/eX8EMBCWAe6OoNpwHgERBBzX5jfQ21HXjQ39PxugNSyKZ6Geg4jFjE/8Q==
-X-Received: by 2002:a5d:40cd:0:b0:2ce:da65:1e1d with SMTP id b13-20020a5d40cd000000b002ceda651e1dmr15466308wrq.24.1680015354964;
-        Tue, 28 Mar 2023 07:55:54 -0700 (PDT)
+        bh=DE5xgbwhRQpkJgfP8sEL5gZw3SNhWz8a/RrIbBfg2gk=;
+        b=Q0ZOVIXWHN+V9uwfNNPPmjtdriHSHvKjCD9aXU1LeqeG7zzWEpyIjcGTJvxDQIPsQG
+         hfIGciZsKAb97wLOK7ZaZfkmfrzKH6JX9n4AeCk6yb8sQ3bzI4ZD4bucxMQ7a9inNiyd
+         bcofC8fc4vkB3bHwf0gZSN+JzJpOoBfclx+Df5P/LL+Q780X4/A9ELdc0wRMPVbUeHTX
+         dHUpVvBMDsC5P+DkratmbQtMr9MWvdbMVHw2BVoJvXMdj+JXjAoXT5jqvCAq5Tky/ZUj
+         sK/9/RXOVrosO7xi46g2MGh9iRvON4FOuF7cRsENUs9U/oKk579F+tUJGxhDwvMEAscK
+         1XyA==
+X-Gm-Message-State: AO0yUKW0Hr/hqCZNCrOW7Iw88m7lv75n0scABAOK9AKiMqCrv0Q/+cSv
+        /6d+YTpGr++WR3bs/1o2YOg=
+X-Google-Smtp-Source: AK7set/I8CH/86E0q7PQNOZAnX2C+ynZld6z0EVam7znB2FfZDfuDS4nv55P+mN8t5DQ9YTt9sfnew==
+X-Received: by 2002:a05:600c:21da:b0:3ed:346d:452f with SMTP id x26-20020a05600c21da00b003ed346d452fmr13068122wmj.26.1680015477838;
+        Tue, 28 Mar 2023 07:57:57 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a6-20020a056000100600b002c8ed82c56csm27836188wrx.116.2023.03.28.07.55.53
+        by smtp.gmail.com with ESMTPSA id m15-20020a05600c3b0f00b003ee91eda67bsm12949511wms.12.2023.03.28.07.57.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 07:55:54 -0700 (PDT)
-Date:   Tue, 28 Mar 2023 17:55:40 +0300
+        Tue, 28 Mar 2023 07:57:57 -0700 (PDT)
+Date:   Tue, 28 Mar 2023 17:57:54 +0300
 From:   Dan Carpenter <error27@gmail.com>
 To:     Jeff Moyer <jmoyer@redhat.com>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
@@ -63,48 +63,54 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         cip-dev <cip-dev@lists.cip-project.org>,
         Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 Subject: Re: [PATCH v2] ACPI: NFIT: prevent underflow in acpi_nfit_ctl()
-Message-ID: <8a425108-3480-4a58-ba4f-727146a0cef7@kili.mountain>
+Message-ID: <ad63258f-cc13-4f6c-a2a7-aea783f60931@kili.mountain>
 References: <Y8ldQn1v4r5i5WLX@kadam>
  <x49y1py5wcd.fsf@segfault.boston.devel.redhat.com>
  <Y8ok/oCxzOhFDEQ+@kadam>
+ <8a425108-3480-4a58-ba4f-727146a0cef7@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y8ok/oCxzOhFDEQ+@kadam>
+In-Reply-To: <8a425108-3480-4a58-ba4f-727146a0cef7@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jan 20, 2023 at 08:22:06AM +0300, Dan Carpenter wrote:
-> On Thu, Jan 19, 2023 at 11:21:22AM -0500, Jeff Moyer wrote:
-> > Dan Carpenter <error27@gmail.com> writes:
+On Tue, Mar 28, 2023 at 05:55:40PM +0300, Dan Carpenter wrote:
+> On Fri, Jan 20, 2023 at 08:22:06AM +0300, Dan Carpenter wrote:
+> > On Thu, Jan 19, 2023 at 11:21:22AM -0500, Jeff Moyer wrote:
+> > > Dan Carpenter <error27@gmail.com> writes:
+> > > 
+> > > > The concern here would be that "family" is negative and we pass a
+> > > > negative value to test_bit() resulting in an out of bounds read
+> > > > and potentially a crash.
+> > > 
+> > > I don't see how this can happen.  Do you have a particular scenario in
+> > > mind?
+> > > 
 > > 
-> > > The concern here would be that "family" is negative and we pass a
-> > > negative value to test_bit() resulting in an out of bounds read
-> > > and potentially a crash.
+> > This is from static analysis.  My main thinking was:
 > > 
-> > I don't see how this can happen.  Do you have a particular scenario in
-> > mind?
+> > 1) The static checker says that this comes from the user.
+> > 2) Every upper bounds check should have a lower bounds check.
+> > 3) family is passed to array_index_nospec() so we must not trust it.
 > > 
+> > But looking closer today here is what the checker is concerned about:
+> > 
+> > 	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
+> > 
+> > Assume "nfit_mem" is NULL but "call_pkg" is non NULL (user input from
+> > __nd_ioctl() or ars_get_status().  In that case family is unchecked user
+> > input.
+> > 
+> > But probably, it's not possible for nfit_mem to be NULL in those caller
+> > functions?
 > 
-> This is from static analysis.  My main thinking was:
-> 
-> 1) The static checker says that this comes from the user.
-> 2) Every upper bounds check should have a lower bounds check.
-> 3) family is passed to array_index_nospec() so we must not trust it.
-> 
-> But looking closer today here is what the checker is concerned about:
-> 
-> 	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
-> 
-> Assume "nfit_mem" is NULL but "call_pkg" is non NULL (user input from
-> __nd_ioctl() or ars_get_status().  In that case family is unchecked user
-> input.
-> 
-> But probably, it's not possible for nfit_mem to be NULL in those caller
-> functions?
+> Did we ever figure out if it's possible for nfit_mem to be NULL?
 
-Did we ever figure out if it's possible for nfit_mem to be NULL?
+Another idea is I could send this patch as a static checker fix instead
+of a security vulnerability.  That way we would be safe going forward
+regardless.
 
 regards,
 dan carpenter
