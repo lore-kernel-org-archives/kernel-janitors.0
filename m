@@ -2,71 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD21C76196
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 21:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC33C761A6
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 22:03:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbjC1VQH (ORCPT
+        id S229966AbjC1WDE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Mar 2023 17:16:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52798 "EHLO
+        Tue, 28 Mar 2023 18:03:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229836AbjC1VQB (ORCPT
+        with ESMTP id S229739AbjC1WDD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Mar 2023 17:16:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8915B2110;
-        Tue, 28 Mar 2023 14:16:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0E3D761985;
-        Tue, 28 Mar 2023 21:16:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A801C4339B;
-        Tue, 28 Mar 2023 21:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680038159;
-        bh=VOeWe0h9yFDGcyaaFmvir9LfqYLRt1MqpO2nInP5fAY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PkaWhrxMhas3zbSk9/AmH8p4eaLnbUb7qxSHxHL+bs/FufDJG4W9v0kWHsPSM0aDQ
-         E4fnZ2n//6ykaoOjpoJxr5a1TXl35x88ODUPqCpkPLv7jluiaiQ6HHB/q5iGKNF5r+
-         TjVg9nxRwZMvol7iqHBVm8nYWZ+1f23w8hkx83sifY710Zw4Wc+pAzPL0yeJoUBVhW
-         q10MfTSeWCVZUCKt/M8A+QESoYlz/kv6Be9UTam/JxykVXpJrKG6ldQDYAKhhTGXeN
-         5UMcI8oDADnot48gjn7dk0BFfOkKzE1tqUvvTEtiowznZRk2NpDo+1TQqFAIVDBmWN
-         rIhkqBqXYfi1w==
-From:   Will Deacon <will@kernel.org>
-To:     Yu Zhe <yuzhe@nfschina.com>, keescook@chromium.org,
-        chenzhou10@huawei.com, catalin.marinas@arm.com,
-        samitolvanen@google.com
-Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        liqiong@nfschina.com, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] arm64: kexec: remove unnecessary (void*) conversions
-Date:   Tue, 28 Mar 2023 22:15:45 +0100
-Message-Id: <168001463799.1894790.8170678125449568357.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230303025715.32570-1-yuzhe@nfschina.com>
-References: <20230303025715.32570-1-yuzhe@nfschina.com>
+        Tue, 28 Mar 2023 18:03:03 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5BF2126;
+        Tue, 28 Mar 2023 15:03:01 -0700 (PDT)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 5C1E7100002;
+        Tue, 28 Mar 2023 22:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1680040980;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rLxkuolFWCKZXPrFlMPQjelZHZ3iSSYl5Tg09kEuqFw=;
+        b=d3DHupHtgpyZn5uk+D8NQEu58+ECXt01ErHNlny0J/E0YjfOAJaSOEjiG9TI/wnH/gW/ej
+        KPFXJy8WF0osovYQDJ34GWropPaupUo9/YOi6gsMeDHKr++/pLaN10oyBAtigCx98668at
+        FgALOR5hLwWMksRrX0XOvtsvxzlB0sfjdzzNvu3XJSVAoz0GFsnfgppZvcMJoDjjIG56z2
+        4Mp6ccWaJwIrozvs8ZWwLMD7+d2exHQ9My+7GZgMW1gwRA5sbaG2j+m0P/UU2qmJJwrJD0
+        8ahTaL/n6mgL8LGyTq+D2KKg6kYugZnevH6PVPEC5wAKjChLgpcrN3i2PEPnqA==
+Date:   Wed, 29 Mar 2023 00:02:59 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, cocci@inria.fr,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH resent] clk: at91: sama7g5: Add two jump labels in
+ sama7g5_pmc_setup()
+Message-ID: <202303282202593dfa4106@mail.local>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <5ed1bc78-77a1-8eb8-43f9-6005d7de49c8@web.de>
+ <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
+ <7890284f-5809-2f46-9d5f-52e20a3ec327@microchip.com>
+ <7985ac57-5b33-e7df-f319-ad6ee0788e2c@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7985ac57-5b33-e7df-f319-ad6ee0788e2c@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 3 Mar 2023 10:57:15 +0800, Yu Zhe wrote:
-> Pointer variables of void * type do not require type cast.
+On 28/03/2023 21:24:00+0200, Markus Elfring wrote:
+> >> The label “err_free” was used to jump to another pointer check despite of
+> >> the detail in the implementation of the function “sama7g5_pmc_setup”
+> >> that it was determined already that the corresponding variable contained
+> >> a null pointer (because of a failed memory allocation).
+> >>
+> >> * Thus use additional labels.
+> >>
+> >> * Delete an extra pointer check at the end which became unnecessary
+> >>    with this refactoring.
+> >>
+> >> This issue was detected by using the Coccinelle software.
+> >
+> > Fine, but I'm sorry that it complexity the function for no real value.
+> 
+> Under which circumstances can advice be taken better into account
+> also from another information source?
+> https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources#MEM12C.Considerusingagotochainwhenleavingafunctiononerrorwhenusingandreleasingresources-CompliantSolution%28POSIX,GotoChain%29
 > 
 > 
+> 
+> > Other clk drivers have the same pattern so I want them to all stay the same.
+> > This is a NACK, sorry about that.
+> 
+> I am curious if other contributors (or code reviewers) would like to influence
+> the software situation a bit more.
+> 
 
-Applied to arm64 (for-next/misc), thanks!
+I agree with Nicolas here, this is useless churn.
 
-[1/1] arm64: kexec: remove unnecessary (void*) conversions
-      https://git.kernel.org/arm64/c/6915cffd4889
 
-Cheers,
 -- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
