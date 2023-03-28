@@ -2,59 +2,175 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F921C76196
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 08:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CE9C761A6
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 08:30:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232734AbjC1IAe (ORCPT
+        id S232060AbjC1Iau (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Mar 2023 04:00:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52482 "EHLO
+        Tue, 28 Mar 2023 04:30:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232689AbjC1IA2 (ORCPT
+        with ESMTP id S230263AbjC1Ias (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Mar 2023 04:00:28 -0400
-Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0107040D7
-        for <kernel-janitors@vger.kernel.org>; Tue, 28 Mar 2023 01:00:26 -0700 (PDT)
-Received: by mail.corrib.pl (Postfix, from userid 1001)
-        id A0698A3ACA; Tue, 28 Mar 2023 08:59:45 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
-        t=1679990431; bh=85MOfYTjIHwki6Ys5IeFKzEzX5V7umZoL3TytLG0W/k=;
-        h=Date:From:To:Subject:From;
-        b=LlTqFL8pWW3x8eIuuJDBmUR+VOeXukmMXzwZp7+OsoPZsm1ogHj3Ye2HAOWY71xu1
-         gNJ860OwvEZxVzfXwawOffWB+hzHQPuQnySUuQ8xHBqFOJzxn/DY/Pvjjjgc6P5VJO
-         pIpM5Adjt/h09iyjmbP1pAGwEPdUoglWcrfeBRHJ45KnXSOIVFB40rskTHolWkjvpK
-         K5yhmI2kggsljrCB/dzkrN/9taccT4RkX3WWTuiV2Dtz9eOCcU4bZYr/6FWhOi6D6T
-         1rqhsmwRSDJrHoVXQl1ClE9QDhi/7I888VgkWMhSnRRhe3FgxiXWMeCrH/VRwBosQk
-         ACwg75Ubnjsyw==
-Received: by mail.corrib.pl for <kernel-janitors@vger.kernel.org>; Tue, 28 Mar 2023 07:59:20 GMT
-Message-ID: <20230328073001-0.1.6c.k9gn.0.6par9t2coc@corrib.pl>
-Date:   Tue, 28 Mar 2023 07:59:20 GMT
-From:   "Szczepan Andryszczuk" <szczepan.andryszczuk@corrib.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Faktoring
-X-Mailer: mail.corrib.pl
+        Tue, 28 Mar 2023 04:30:48 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7CDFC7;
+        Tue, 28 Mar 2023 01:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1679992245; x=1711528245;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bzUK80jztzjDzA1SZeBZahUFNGq7t3lGQg15wparD6c=;
+  b=rdl7gQjY85k472G5yU9f3vDBzDp0aPaReok335T7UbW5ISk0xpNeJ/34
+   4C5WivTyF75B+5FUPROLwKctE4wEsj49Sw6xvjK8Iq3wvzW9IGNXNr06c
+   6TX4xoYJus++Z51fJXgzxE2sy8VGfTzJcn7t2ssOiIOwM+83nnIfmeHyq
+   dO87/6y0bMJOAs/CAa4ptJap4KgbBtAnTEKmkeIGDjcaLKHoQxDDWTG3j
+   sz9ymcr/8jucrS6SHTR6I4pf67D/A4ofezEAkuhMi6OqtEs0qUVE7x+DY
+   kOqhhP9PY0njdbJTklFYq2vor7pJOvvQOjZxZcPSpVsqKKKjQAAV8J1JT
+   w==;
+X-IronPort-AV: E=Sophos;i="5.98,296,1673938800"; 
+   d="scan'208";a="144232728"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Mar 2023 01:30:43 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Tue, 28 Mar 2023 01:30:42 -0700
+Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
+ Transport; Tue, 28 Mar 2023 01:30:40 -0700
+Message-ID: <7890284f-5809-2f46-9d5f-52e20a3ec327@microchip.com>
+Date:   Tue, 28 Mar 2023 10:30:34 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH resent] clk: at91: sama7g5: Add two jump labels in
+ sama7g5_pmc_setup()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        <kernel-janitors@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <cocci@inria.fr>, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <5ed1bc78-77a1-8eb8-43f9-6005d7de49c8@web.de>
+ <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
+Content-Language: en-US
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On 25/03/2023 at 15:05, Markus Elfring wrote:
+> Date: Fri, 17 Mar 2023 20:02:34 +0100
+> 
+> The label “err_free” was used to jump to another pointer check despite of
+> the detail in the implementation of the function “sama7g5_pmc_setup”
+> that it was determined already that the corresponding variable contained
+> a null pointer (because of a failed memory allocation).
+> 
+> * Thus use additional labels.
+> 
+> * Delete an extra pointer check at the end which became unnecessary
+>    with this refactoring.
+> 
+> This issue was detected by using the Coccinelle software.
 
-rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
-ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
-wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
+Fine, but I'm sorry that it complexity the function for no real value. 
+Other clk drivers have the same pattern so I want them to all stay the same.
 
-Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
-stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
-z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
- kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
-adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
+This is a NACK, sorry about that.
 
-Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
+Regards,
+   Nicolas
 
+> Fixes: cb783bbbcf54c36256006895c215e86c5e7266d8 ("clk: at91: sama7g5: add clock support for sama7g5")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   drivers/clk/at91/sama7g5.c | 23 +++++++++++------------
+>   1 file changed, 11 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+> index f135b662f1ff..224b1f2ebef2 100644
+> --- a/drivers/clk/at91/sama7g5.c
+> +++ b/drivers/clk/at91/sama7g5.c
+> @@ -927,25 +927,25 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>                              (ARRAY_SIZE(sama7g5_mckx) + ARRAY_SIZE(sama7g5_gck)),
+>                              GFP_KERNEL);
+>          if (!alloc_mem)
+> -               goto err_free;
+> +               goto free_pmc;
+> 
+>          hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
+>                                             50000000);
+>          if (IS_ERR(hw))
+> -               goto err_free;
+> +               goto free_alloc_mem;
+> 
+>          bypass = of_property_read_bool(np, "atmel,osc-bypass");
+> 
+>          hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
+>                                          bypass);
+>          if (IS_ERR(hw))
+> -               goto err_free;
+> +               goto free_alloc_mem;
+> 
+>          parent_names[0] = "main_rc_osc";
+>          parent_names[1] = "main_osc";
+>          hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
+>          if (IS_ERR(hw))
+> -               goto err_free;
+> +               goto free_alloc_mem;
+> 
+>          sama7g5_pmc->chws[PMC_MAIN] = hw;
+> 
+> @@ -987,7 +987,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>                          }
+> 
+>                          if (IS_ERR(hw))
+> -                               goto err_free;
+> +                               goto free_alloc_mem;
+> 
+>                          if (sama7g5_plls[i][j].eid)
+>                                  sama7g5_pmc->chws[sama7g5_plls[i][j].eid] = hw;
+> @@ -999,7 +999,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>                                            &mck0_layout, &mck0_characteristics,
+>                                            &pmc_mck0_lock, CLK_GET_RATE_NOCACHE, 5);
+>          if (IS_ERR(hw))
+> -               goto err_free;
+> +               goto free_alloc_mem;
+> 
+>          sama7g5_pmc->chws[PMC_MCK] = hw;
+> 
+> @@ -1128,12 +1128,11 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>          return;
+> 
+>   err_free:
+> -       if (alloc_mem) {
+> -               for (i = 0; i < alloc_mem_size; i++)
+> -                       kfree(alloc_mem[i]);
+> -               kfree(alloc_mem);
+> -       }
+> -
+> +       for (i = 0; i < alloc_mem_size; i++)
+> +               kfree(alloc_mem[i]);
+> +free_alloc_mem:
+> +       kfree(alloc_mem);
+> +free_pmc:
+>          kfree(sama7g5_pmc);
+>   }
+> 
+> --
+> 2.40.0
+> 
 
-Pozdrawiam
-Szczepan Andryszczuk
+-- 
+Nicolas Ferre
+
