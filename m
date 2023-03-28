@@ -2,105 +2,138 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD78C761AF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 15:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF76FC76196
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 16:05:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233829AbjC1Ppp (ORCPT
+        id S229766AbjC1QFq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Mar 2023 11:45:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35920 "EHLO
+        Tue, 28 Mar 2023 12:05:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233379AbjC1Pp0 (ORCPT
+        with ESMTP id S229580AbjC1QFp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Mar 2023 11:45:26 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D787B1;
-        Tue, 28 Mar 2023 08:45:07 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id m2so12715129wrh.6;
-        Tue, 28 Mar 2023 08:45:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680018304;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YShaIEE2n1AP/XmAoZ6cI2525vmt3gMFMVbfTPWkEG4=;
-        b=op44MGXiytPNzHsMY8Qa562tKDkt6Zljv8o6X1578ufXQvVmLmWObICRLSanQNz/nK
-         L1njb3ISzi3LQnOF8trNxGLUfKP/VqwxKM9wpVkann+GFOQacxxiSH+aCQGP6o8QzCuf
-         A3vhh6TWd/wIsfmjFtEornFz4wGmErpHb1BAbMbeD09k6sMjn1g10IAUAYYvZ7DR8FNT
-         csr+XAieBMFXDw4H3lHd2TdOd7hBJyyo2q2IHy0/5M8fS9JRm/YJNzzB8MGMbZZruIin
-         Z6rqGAHXJZYfZlWNGhdKaTM1Uq9nsBAVQp0KVsbgQTY9GcODbP84gD+rrwVim53Di9A3
-         zPZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680018304;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YShaIEE2n1AP/XmAoZ6cI2525vmt3gMFMVbfTPWkEG4=;
-        b=0N35uUR7knAOFcsqPFFhurxYWm7/jFdC0h5Ty/ZxtlZ2JWZzHQ5vLAaB/Kjs05GuwK
-         uUh+yz51xs/nh4koK3+XCI1X8VfAGIV+Y5jTNpyFnCkHs7qcdrucNe3FDVezMfI9gVD9
-         K98ga/2e3P782pLr7XlblX+iaNNkjeCsx3ZEPiTWMRBR2gefd2fHNppBQQtwWqC3Ppkb
-         CMDmpxFGVBKkPotHWKwBlSUnse9hDm0L/ktU7tF8NL918/9HqKorXQQ1LpJO+O9QzWYB
-         3MWWqj0KzImKq2yiv7q7jHGCBb+qNx1af3zTZEbeO+qpNoI2U0ANlCwhFSiiHcb8iPpc
-         CT0g==
-X-Gm-Message-State: AAQBX9fUzpbyI6xygEnwq++plBBE12FxLbZmlmh2jhe9tgTuZ4WnGdeA
-        aLltCFZXWCjtsn92JvLGezo=
-X-Google-Smtp-Source: AKy350YJdoctHDsWO4ux7IHFatibNdv13QqeV0dtJJ2n415kxQijkrneQ55rqEfPfo7vXPQEfgxX1A==
-X-Received: by 2002:a5d:424a:0:b0:2d2:39d3:ce7c with SMTP id s10-20020a5d424a000000b002d239d3ce7cmr12517738wrr.70.1680018304116;
-        Tue, 28 Mar 2023 08:45:04 -0700 (PDT)
-Received: from [192.168.42.225] ([81.95.8.244])
-        by smtp.gmail.com with ESMTPSA id b3-20020a5d4d83000000b002dfca33ba36sm6440301wru.8.2023.03.28.08.45.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Mar 2023 08:45:02 -0700 (PDT)
-Message-ID: <78a6478d-b8c3-e46f-e995-c4813b6e76f7@gmail.com>
-Date:   Tue, 28 Mar 2023 17:45:02 +0200
+        Tue, 28 Mar 2023 12:05:45 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 884E6122
+        for <kernel-janitors@vger.kernel.org>; Tue, 28 Mar 2023 09:05:43 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2844B21A09;
+        Tue, 28 Mar 2023 16:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1680019542; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OKOOocGOd7AWllOsBVjHI/ZVfeO3uqy+Vk/EDmJpFwQ=;
+        b=LGkiHQPJn1sutNLT89SqgtBJJFQU+hisWQV2b3R9NFWrVHY9h3tDY8K57NHr0BkonRjFT6
+        WEvR3aAv3v6uD5WiKDCjwt6fz7FHwvRlrO6TCD8uX9KI9YLxgY8KcMK2Y5rilPoxX1Gu4H
+        BFVssSaQe+C/C8trfSWIxvcleBeE2ZU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1680019542;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OKOOocGOd7AWllOsBVjHI/ZVfeO3uqy+Vk/EDmJpFwQ=;
+        b=q92Gq+wjQHBf1ColWL71T694h0oi/jXyYRTWKHHU2C6of8vVz6wISU5CRpLk0wvfsbfm5O
+        xv6WYXkNa4QD+SCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 16B6D1390B;
+        Tue, 28 Mar 2023 16:05:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id baLaBFYQI2SpMAAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Tue, 28 Mar 2023 16:05:42 +0000
+Message-ID: <4a7d08d1-7328-047c-52f3-dc62755cdbaf@suse.cz>
+Date:   Tue, 28 Mar 2023 18:05:41 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH] clk: mediatek: Remove unused configs with
- COMMON_CLK_MT6765 prefix
+ Thunderbird/102.9.0
+Subject: Re: [cocci] Reconsidering kfree() calls for null pointers (with SmPL)
 Content-Language: en-US
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Macpaul Lin <macpaul.lin@mediatek.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230321042641.21592-1-lukas.bulwahn@gmail.com>
- <98c0a46d-05da-7863-1a30-51727c20da23@collabora.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <98c0a46d-05da-7863-1a30-51727c20da23@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     Markus Elfring <Markus.Elfring@web.de>, cocci@inria.fr,
+        kernel-janitors@vger.kernel.org
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 3/21/23 09:55, AngeloGioacchino Del Regno wrote:
-> Il 21/03/23 05:26, Lukas Bulwahn ha scritto:
->> Commit 1aca9939bf72 ("clk: mediatek: Add MT6765 clock support") adds
->> fourteen configs with COMMON_CLK_MT6765 prefix, but only uses seven of 
->> them
->> to configure inclusion of drivers.
->>
->> Remove the seven unused COMMON_CLK_MT6765 configs.
->>
->> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On 3/28/23 17:55, Markus Elfring wrote:
+> Hello,
 > 
-> Please add the required Fixes tag (you even reference the commit to fix 
-> already!),
-> then you'll get my R-b at v2 :-)
+> I tried the following SmPL script out also on the source files from
+> the software “Linux next-20230324”.
 > 
+> @display@
+> expression call, storage;
+> identifier target;
+> @@
+> *storage = call(...);
+> *if (!storage)
+>     goto target;
+>  ...
+> *target:
+> *kfree(storage)
+> 
+> 
+> 119 source files were found where a check was performed for a failed function call
+> and a kfree() call is immediately performed for the same variable.
+> Thus a null pointer is probably passed at these source code places.
 
-What bug get's fixed by this? This is just a code clean-up, no bug get's 
-fixed with it. So there is no reason to be backported to any stable or 
-distribution kernels.
+It is valid to pass a NULL pointer to kfree(), it checks for that.
 
-Regards,
-Matthias
+> I imagine that such code should be reconsidered once more and improved accordingly.
+
+The only potential downside in the scenario is checking storage == NULL
+twice. But this is an error handling path, not a fast path. On the other
+hand, the code may look like this:
+
+storage = call(...);
+if (!storage)
+    goto target;
+
+if (some_other_condition)
+    goto target;
+
+target:
+kfree(storage)
+
+
+For some_other_condition, we want the kfree(). If you changed the code, to
+remove the extra NULL pointer check, you would have:
+
+storage = call(...);
+if (!storage)
+    goto target1;
+
+if (some_other_condition)
+    goto target2;
+
+target2:
+kfree(storage)
+target1:
+
+The extra goto label and larger code is not worth saving the NULL pointer
+check, because this is error handling path.
+
+> How do you think about to achieve any adjustments in this design direction?
+
+Only in cases where it would not make the code more complex, i.e. if there
+are no "some_other_condition" that jumps to the same target after allocation
+to storage is successful.
+
+Vlastimil
+
+> Regards,
+> Markus
+
