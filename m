@@ -2,138 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF76FC76196
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 16:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE69DC6FD18
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 17:19:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbjC1QFq (ORCPT
+        id S230180AbjC1RTL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Mar 2023 12:05:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36842 "EHLO
+        Tue, 28 Mar 2023 13:19:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229580AbjC1QFp (ORCPT
+        with ESMTP id S229900AbjC1RTJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Mar 2023 12:05:45 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 884E6122
-        for <kernel-janitors@vger.kernel.org>; Tue, 28 Mar 2023 09:05:43 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 2844B21A09;
-        Tue, 28 Mar 2023 16:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1680019542; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OKOOocGOd7AWllOsBVjHI/ZVfeO3uqy+Vk/EDmJpFwQ=;
-        b=LGkiHQPJn1sutNLT89SqgtBJJFQU+hisWQV2b3R9NFWrVHY9h3tDY8K57NHr0BkonRjFT6
-        WEvR3aAv3v6uD5WiKDCjwt6fz7FHwvRlrO6TCD8uX9KI9YLxgY8KcMK2Y5rilPoxX1Gu4H
-        BFVssSaQe+C/C8trfSWIxvcleBeE2ZU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1680019542;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OKOOocGOd7AWllOsBVjHI/ZVfeO3uqy+Vk/EDmJpFwQ=;
-        b=q92Gq+wjQHBf1ColWL71T694h0oi/jXyYRTWKHHU2C6of8vVz6wISU5CRpLk0wvfsbfm5O
-        xv6WYXkNa4QD+SCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 16B6D1390B;
-        Tue, 28 Mar 2023 16:05:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id baLaBFYQI2SpMAAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Tue, 28 Mar 2023 16:05:42 +0000
-Message-ID: <4a7d08d1-7328-047c-52f3-dc62755cdbaf@suse.cz>
-Date:   Tue, 28 Mar 2023 18:05:41 +0200
+        Tue, 28 Mar 2023 13:19:09 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C7F0BB9E;
+        Tue, 28 Mar 2023 10:19:07 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2A7115C00E6;
+        Tue, 28 Mar 2023 13:19:04 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 28 Mar 2023 13:19:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=animalcreek.com;
+         h=cc:cc:content-type:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1680023944; x=
+        1680110344; bh=Q/g40OzEJquv4huUDAm+c8e4yUOS6UKgNKno06kWqks=; b=Q
+        3acXJ++9rZQrvryO4vdPMbqtWmWehs/ilG+pT0P78I44+4HAnpv9GqUvOt5vZUko
+        laC+3usbYbZxGcxBeuLr6DvogIo3Q8Tf/WsRIrMpeH4+IkITFHH6KgTeO28ymlEI
+        n/AvQ9k9Lk+TkedKWL0KsBbdlY8wlQw/7p7mt3glRxacCuPeFU7aIx3sshecDYHz
+        ImOi6I4lz1XtEyYaL0hFZtCkl+AVmQ0MT6F4JEPGwn2WuXNSyeUUT2m537UiATvi
+        L54MtHoGyT8RtW/OBf5qFhvtiCgZVHXe9oKe0PlwuNhxYh/7jYVRljF6sqNmqGzm
+        vbZ8VXCPX2QcPXQdgHOHQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1680023944; x=1680110344; bh=Q/g40OzEJquv4
+        huUDAm+c8e4yUOS6UKgNKno06kWqks=; b=LI1EuuQf9gzui4isgvA9FHAIk1tEc
+        qFefyqTM8yXMgjtJPv0ee6XvNoM4CJ/q6HwtSlI7b/MIIuynKdzy1AxCkWmPm6dR
+        C/kfl3qrQ/7YhMVNJHnXSC4bamKZFHBDVRw7NcwDGbc5Y+TAioduMCk+UM5A2MCi
+        4RbTc2ugJBNs3aDEfbN4hYzhkFypAIM7OwZiNLfPsqTt4YH3PJc6zgwqKYSHtEYo
+        bZj1mSy6XyNFPml1QqM8wwj8W4qMvV8iGO7Wj1+II0H/Z24rd+cq/wmETXR9Zy4S
+        GtjNeJDNqi8cQU35g8xHWeILHU6YdWcf3PvUz210AIVGMSVfPQGbOxCFA==
+X-ME-Sender: <xms:hyEjZFwL1L1JpmZujdIwKxGNFYLoDiVF3vHC3NOMUyU3113d5qJKpw>
+    <xme:hyEjZFSaQ95MC3OGpqE60edSUc46CtQwsI9DgOXl_iM7KW1GxoRrn8BEpHee8lkHj
+    KbzEYz_RHvTYCYDJg>
+X-ME-Received: <xmr:hyEjZPWFQHQs2pkWQDsfqEChcqK1oZhsurpsax9y6blVFZaDUaAqYsJ9rIGrIva3ezxI48OQenwcueqods2h1y7iTarW538JE4BrHth8GA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehgedguddutdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjohesthdtredttddtvdenucfhrhhomhepofgr
+    rhhkucfirhgvvghruceomhhgrhgvvghrsegrnhhimhgrlhgtrhgvvghkrdgtohhmqeenuc
+    ggtffrrghtthgvrhhnpeejjedufedvueelkefhfedvhfelvedtjeekieduhfejtedvuddv
+    tdefffefkeffhfenucffohhmrghinheptddurdhorhhgpdhkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmghhrvggv
+    rhesrghnihhmrghltghrvggvkhdrtghomh
+X-ME-Proxy: <xmx:hyEjZHiTkrCaLBCnkQMlBfBKoVCCiSH6fqhOwPiiewLJWaj35xjhlA>
+    <xmx:hyEjZHBeyh362ZrkJdPxz08fOMGaaEHDjl-QR181JB3BiSkzjKRrxw>
+    <xmx:hyEjZAJyKTA5J9H0Bperz3FtTfwZBCfqQn2oqA9AKzcLdR5QDv8buQ>
+    <xmx:iCEjZJBh2FZXLvKXJYtViermF1citDUleDAR3n4y7KPWfz-XmYNw0g>
+Feedback-ID: i9cc843c7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 Mar 2023 13:19:03 -0400 (EDT)
+Received: by blue.animalcreek.com (Postfix, from userid 1000)
+        id 24A6A521076; Tue, 28 Mar 2023 10:19:02 -0700 (MST)
+Date:   Tue, 28 Mar 2023 10:19:02 -0700
+From:   Mark Greer <mgreer@animalcreek.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Bongsu Jeon <bongsu.jeon@samsung.com>,
+        Mark Greer <mgreer@animalcreek.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: remove the linux-nfc@lists.01.org list
+Message-ID: <ZCMhho3Rc44TYPYz@animalcreek.com>
+References: <20230324081613.32000-1-lukas.bulwahn@gmail.com>
+ <eb05ac50-fda2-8324-1fd9-fda8579dfd8c@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [cocci] Reconsidering kfree() calls for null pointers (with SmPL)
-Content-Language: en-US
-To:     Markus Elfring <Markus.Elfring@web.de>, cocci@inria.fr,
-        kernel-janitors@vger.kernel.org
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb05ac50-fda2-8324-1fd9-fda8579dfd8c@linaro.org>
+Organization: Animal Creek Technologies, Inc.
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/28/23 17:55, Markus Elfring wrote:
-> Hello,
+On Fri, Mar 24, 2023 at 09:26:56AM +0100, Krzysztof Kozlowski wrote:
+> On 24/03/2023 09:16, Lukas Bulwahn wrote:
+> > Some MAINTAINERS sections mention to mail patches to the list
+> > linux-nfc@lists.01.org. Probably due to changes on Intel's 01.org website
+> > and servers, the list server lists.01.org/ml01.01.org is simply gone.
+> > 
+> > Considering emails recorded on lore.kernel.org, only a handful of emails
+> > where sent to the linux-nfc@lists.01.org list, and they are usually also
+> > sent to the netdev mailing list as well, where they are then picked up.
+> > So, there is no big benefit in restoring the linux-nfc elsewhere.
+> > 
+> > Remove all occurrences of the linux-nfc@lists.01.org list in MAINTAINERS.
+> > 
+> > Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Link: https://lore.kernel.org/all/CAKXUXMzggxQ43DUZZRkPMGdo5WkzgA=i14ySJUFw4kZfE5ZaZA@mail.gmail.com/
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > 
-> I tried the following SmPL script out also on the source files from
-> the software “Linux next-20230324”.
 > 
-> @display@
-> expression call, storage;
-> identifier target;
-> @@
-> *storage = call(...);
-> *if (!storage)
->     goto target;
->  ...
-> *target:
-> *kfree(storage)
-> 
-> 
-> 119 source files were found where a check was performed for a failed function call
-> and a kfree() call is immediately performed for the same variable.
-> Thus a null pointer is probably passed at these source code places.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-It is valid to pass a NULL pointer to kfree(), it checks for that.
+[Sorry, been traveling the last several days.]
 
-> I imagine that such code should be reconsidered once more and improved accordingly.
-
-The only potential downside in the scenario is checking storage == NULL
-twice. But this is an error handling path, not a fast path. On the other
-hand, the code may look like this:
-
-storage = call(...);
-if (!storage)
-    goto target;
-
-if (some_other_condition)
-    goto target;
-
-target:
-kfree(storage)
-
-
-For some_other_condition, we want the kfree(). If you changed the code, to
-remove the extra NULL pointer check, you would have:
-
-storage = call(...);
-if (!storage)
-    goto target1;
-
-if (some_other_condition)
-    goto target2;
-
-target2:
-kfree(storage)
-target1:
-
-The extra goto label and larger code is not worth saving the NULL pointer
-check, because this is error handling path.
-
-> How do you think about to achieve any adjustments in this design direction?
-
-Only in cases where it would not make the code more complex, i.e. if there
-are no "some_other_condition" that jumps to the same target after allocation
-to storage is successful.
-
-Vlastimil
-
-> Regards,
-> Markus
-
+Reviewed-by: Mark Greer <mgreer@animalcreek.com>
