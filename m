@@ -2,116 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86326C761AF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 14:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD78C761AF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 15:45:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233646AbjC1O6D (ORCPT
+        id S233829AbjC1Ppp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Mar 2023 10:58:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34100 "EHLO
+        Tue, 28 Mar 2023 11:45:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233634AbjC1O6B (ORCPT
+        with ESMTP id S233379AbjC1Pp0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Mar 2023 10:58:01 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D3213592;
-        Tue, 28 Mar 2023 07:57:59 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id n10-20020a05600c4f8a00b003ee93d2c914so9293973wmq.2;
-        Tue, 28 Mar 2023 07:57:59 -0700 (PDT)
+        Tue, 28 Mar 2023 11:45:26 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D787B1;
+        Tue, 28 Mar 2023 08:45:07 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id m2so12715129wrh.6;
+        Tue, 28 Mar 2023 08:45:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680015478;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DE5xgbwhRQpkJgfP8sEL5gZw3SNhWz8a/RrIbBfg2gk=;
-        b=ogWMrlr7I27p4FwSejAr7Q2c1/kXf0NR8Ec5k4be40g439cNGZ3OUCBDTwj2+EJLBS
-         +CVfoC11xm9nD86Y42TyBgqgb+BStWr/kyeLZir9gjK/HlHbgRrEkflNOaz65ZHPxbmi
-         BtgH1xfl3hZvUenIpKCRqNlBc8BQ8gLlNyiclLGWqIKb6rooabZlKaaDAncJ6Tgy5Eh4
-         0tz2uj+3IDTc6XqK5A0tMkM/SXWUDK687xJtClyW9GENsIrdj63nsd8OtjFVHRRcuOuB
-         64pbM0vG8buKzrZ3TeB+Ax78GJoerauv979g8hang2NObPVtppPe4vv+cfBz9CvdK8dT
-         ISuA==
+        d=gmail.com; s=20210112; t=1680018304;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YShaIEE2n1AP/XmAoZ6cI2525vmt3gMFMVbfTPWkEG4=;
+        b=op44MGXiytPNzHsMY8Qa562tKDkt6Zljv8o6X1578ufXQvVmLmWObICRLSanQNz/nK
+         L1njb3ISzi3LQnOF8trNxGLUfKP/VqwxKM9wpVkann+GFOQacxxiSH+aCQGP6o8QzCuf
+         A3vhh6TWd/wIsfmjFtEornFz4wGmErpHb1BAbMbeD09k6sMjn1g10IAUAYYvZ7DR8FNT
+         csr+XAieBMFXDw4H3lHd2TdOd7hBJyyo2q2IHy0/5M8fS9JRm/YJNzzB8MGMbZZruIin
+         Z6rqGAHXJZYfZlWNGhdKaTM1Uq9nsBAVQp0KVsbgQTY9GcODbP84gD+rrwVim53Di9A3
+         zPZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680015478;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DE5xgbwhRQpkJgfP8sEL5gZw3SNhWz8a/RrIbBfg2gk=;
-        b=Q0ZOVIXWHN+V9uwfNNPPmjtdriHSHvKjCD9aXU1LeqeG7zzWEpyIjcGTJvxDQIPsQG
-         hfIGciZsKAb97wLOK7ZaZfkmfrzKH6JX9n4AeCk6yb8sQ3bzI4ZD4bucxMQ7a9inNiyd
-         bcofC8fc4vkB3bHwf0gZSN+JzJpOoBfclx+Df5P/LL+Q780X4/A9ELdc0wRMPVbUeHTX
-         dHUpVvBMDsC5P+DkratmbQtMr9MWvdbMVHw2BVoJvXMdj+JXjAoXT5jqvCAq5Tky/ZUj
-         sK/9/RXOVrosO7xi46g2MGh9iRvON4FOuF7cRsENUs9U/oKk579F+tUJGxhDwvMEAscK
-         1XyA==
-X-Gm-Message-State: AO0yUKW0Hr/hqCZNCrOW7Iw88m7lv75n0scABAOK9AKiMqCrv0Q/+cSv
-        /6d+YTpGr++WR3bs/1o2YOg=
-X-Google-Smtp-Source: AK7set/I8CH/86E0q7PQNOZAnX2C+ynZld6z0EVam7znB2FfZDfuDS4nv55P+mN8t5DQ9YTt9sfnew==
-X-Received: by 2002:a05:600c:21da:b0:3ed:346d:452f with SMTP id x26-20020a05600c21da00b003ed346d452fmr13068122wmj.26.1680015477838;
-        Tue, 28 Mar 2023 07:57:57 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id m15-20020a05600c3b0f00b003ee91eda67bsm12949511wms.12.2023.03.28.07.57.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 07:57:57 -0700 (PDT)
-Date:   Tue, 28 Mar 2023 17:57:54 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, nvdimm@lists.linux.dev,
-        linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        cip-dev <cip-dev@lists.cip-project.org>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH v2] ACPI: NFIT: prevent underflow in acpi_nfit_ctl()
-Message-ID: <ad63258f-cc13-4f6c-a2a7-aea783f60931@kili.mountain>
-References: <Y8ldQn1v4r5i5WLX@kadam>
- <x49y1py5wcd.fsf@segfault.boston.devel.redhat.com>
- <Y8ok/oCxzOhFDEQ+@kadam>
- <8a425108-3480-4a58-ba4f-727146a0cef7@kili.mountain>
+        d=1e100.net; s=20210112; t=1680018304;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YShaIEE2n1AP/XmAoZ6cI2525vmt3gMFMVbfTPWkEG4=;
+        b=0N35uUR7knAOFcsqPFFhurxYWm7/jFdC0h5Ty/ZxtlZ2JWZzHQ5vLAaB/Kjs05GuwK
+         uUh+yz51xs/nh4koK3+XCI1X8VfAGIV+Y5jTNpyFnCkHs7qcdrucNe3FDVezMfI9gVD9
+         K98ga/2e3P782pLr7XlblX+iaNNkjeCsx3ZEPiTWMRBR2gefd2fHNppBQQtwWqC3Ppkb
+         CMDmpxFGVBKkPotHWKwBlSUnse9hDm0L/ktU7tF8NL918/9HqKorXQQ1LpJO+O9QzWYB
+         3MWWqj0KzImKq2yiv7q7jHGCBb+qNx1af3zTZEbeO+qpNoI2U0ANlCwhFSiiHcb8iPpc
+         CT0g==
+X-Gm-Message-State: AAQBX9fUzpbyI6xygEnwq++plBBE12FxLbZmlmh2jhe9tgTuZ4WnGdeA
+        aLltCFZXWCjtsn92JvLGezo=
+X-Google-Smtp-Source: AKy350YJdoctHDsWO4ux7IHFatibNdv13QqeV0dtJJ2n415kxQijkrneQ55rqEfPfo7vXPQEfgxX1A==
+X-Received: by 2002:a5d:424a:0:b0:2d2:39d3:ce7c with SMTP id s10-20020a5d424a000000b002d239d3ce7cmr12517738wrr.70.1680018304116;
+        Tue, 28 Mar 2023 08:45:04 -0700 (PDT)
+Received: from [192.168.42.225] ([81.95.8.244])
+        by smtp.gmail.com with ESMTPSA id b3-20020a5d4d83000000b002dfca33ba36sm6440301wru.8.2023.03.28.08.45.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Mar 2023 08:45:02 -0700 (PDT)
+Message-ID: <78a6478d-b8c3-e46f-e995-c4813b6e76f7@gmail.com>
+Date:   Tue, 28 Mar 2023 17:45:02 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8a425108-3480-4a58-ba4f-727146a0cef7@kili.mountain>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] clk: mediatek: Remove unused configs with
+ COMMON_CLK_MT6765 prefix
+Content-Language: en-US
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Macpaul Lin <macpaul.lin@mediatek.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230321042641.21592-1-lukas.bulwahn@gmail.com>
+ <98c0a46d-05da-7863-1a30-51727c20da23@collabora.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <98c0a46d-05da-7863-1a30-51727c20da23@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 05:55:40PM +0300, Dan Carpenter wrote:
-> On Fri, Jan 20, 2023 at 08:22:06AM +0300, Dan Carpenter wrote:
-> > On Thu, Jan 19, 2023 at 11:21:22AM -0500, Jeff Moyer wrote:
-> > > Dan Carpenter <error27@gmail.com> writes:
-> > > 
-> > > > The concern here would be that "family" is negative and we pass a
-> > > > negative value to test_bit() resulting in an out of bounds read
-> > > > and potentially a crash.
-> > > 
-> > > I don't see how this can happen.  Do you have a particular scenario in
-> > > mind?
-> > > 
-> > 
-> > This is from static analysis.  My main thinking was:
-> > 
-> > 1) The static checker says that this comes from the user.
-> > 2) Every upper bounds check should have a lower bounds check.
-> > 3) family is passed to array_index_nospec() so we must not trust it.
-> > 
-> > But looking closer today here is what the checker is concerned about:
-> > 
-> > 	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
-> > 
-> > Assume "nfit_mem" is NULL but "call_pkg" is non NULL (user input from
-> > __nd_ioctl() or ars_get_status().  In that case family is unchecked user
-> > input.
-> > 
-> > But probably, it's not possible for nfit_mem to be NULL in those caller
-> > functions?
+
+
+On 3/21/23 09:55, AngeloGioacchino Del Regno wrote:
+> Il 21/03/23 05:26, Lukas Bulwahn ha scritto:
+>> Commit 1aca9939bf72 ("clk: mediatek: Add MT6765 clock support") adds
+>> fourteen configs with COMMON_CLK_MT6765 prefix, but only uses seven of 
+>> them
+>> to configure inclusion of drivers.
+>>
+>> Remove the seven unused COMMON_CLK_MT6765 configs.
+>>
+>> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > 
-> Did we ever figure out if it's possible for nfit_mem to be NULL?
+> Please add the required Fixes tag (you even reference the commit to fix 
+> already!),
+> then you'll get my R-b at v2 :-)
+> 
 
-Another idea is I could send this patch as a static checker fix instead
-of a security vulnerability.  That way we would be safe going forward
-regardless.
+What bug get's fixed by this? This is just a code clean-up, no bug get's 
+fixed with it. So there is no reason to be backported to any stable or 
+distribution kernels.
 
-regards,
-dan carpenter
-
+Regards,
+Matthias
