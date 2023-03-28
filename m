@@ -2,232 +2,503 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5DCC76195
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Mar 2023 22:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9625C761A6
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 01:58:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbjC0WJI (ORCPT
+        id S230288AbjC1B6o (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Mar 2023 18:09:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45682 "EHLO
+        Mon, 27 Mar 2023 21:58:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbjC0WJH (ORCPT
+        with ESMTP id S229786AbjC1B6m (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Mar 2023 18:09:07 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3C197
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 15:09:06 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id cf7so12697323ybb.5
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Mar 2023 15:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1679954945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q1TlEx9QcMlZ3oxOM4oU1Tjm4fqebLyU8FiZyh0BXvM=;
-        b=dzZ5GnLfxajxluUn1Wgqto69XQEs0T5twz6tH0cdJgbBZA18HmrgoGc2ZFBdNysrXl
-         CVLhhQyoi+aP7DZLK85nej99NJcgbHf/IVD1NtpajWTfOzScvF8uIn9tgUAQCs1lJTpH
-         dAsemve+hswahlWABBR1/Y64GHOugX7L0RzkGmtm7a4+L+vXAA06FZYIhiqRSdcvOMlF
-         fb3l/g5zzVqJsntJ5hlUZ3Flp0PBRz/WCR38IlB4MqkhNx0MeCHb0cnAa0pH+tblYQao
-         saebexvbkiMxAZOYjWK4pgYXAe4SRaMB6jFzHA0OBVwuzmLFaiOL9Gck/6KqOqNZjCul
-         /Z1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679954945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q1TlEx9QcMlZ3oxOM4oU1Tjm4fqebLyU8FiZyh0BXvM=;
-        b=bpXAfbp2l/bR+XqPA/sqcJ27a6NQfoS6FIC/aM9YrrbArw7tZSjNybZRD0EQetLWtz
-         MViVLIM/Fv068NkfRzqb125m2n58wvueTbyyTBgykFoLwJ/ZM0GgvImm31jvfdEPLw/x
-         oEu7LAQk3/O0Q4ngX0RAUm0ZCSRRnmvt8xqnk15GuqnR7QSoPTOj9u7bHlTNSLHNeDm5
-         whiFrz9DN8GP8Rnpdx9FmpP2jYGUuLH5zQnhJ5qrsRaO8JjYK2uXgjo8tjPrgG0eoaTL
-         3lUHFIB0k3RYZ4NsrIBcTpod1EjWppfkhIqEMWAPY8grGnC51LaJyZLG9aLOiFHiJABz
-         VZag==
-X-Gm-Message-State: AAQBX9cj9LEoZCISVK6XysiIMPqEQf4+lWMMOI5g068Fj3khxuuasoLu
-        bxxu4AUnAVAU4cXQ7DVRt/0ovYRg8suEbFQ60SRp
-X-Google-Smtp-Source: AKy350bMvVWZnkoZOYCDPEgJHRPmMhgknNlVozqs7cmjsw9ew8biTuseHCkzRf8XygI+S3Uet4jaQ4Q85e3m+A8qbO0=
-X-Received: by 2002:a05:6902:1586:b0:b76:ceb2:661b with SMTP id
- k6-20020a056902158600b00b76ceb2661bmr8278162ybu.3.1679954945367; Mon, 27 Mar
- 2023 15:09:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de> <83763b78-453d-de21-9b48-1c226afa13a0@web.de>
- <57a97109-7a67-245b-8072-54aec3b5021d@web.de> <CAHC9VhR=yK72JXW3hJR+gUQtGCNpF0Bzk5RDzPZR0MunC84AUQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhR=yK72JXW3hJR+gUQtGCNpF0Bzk5RDzPZR0MunC84AUQ@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 27 Mar 2023 18:08:54 -0400
-Message-ID: <CAHC9VhREfdgiCji=uEeCrc4w1kPGfnWGKnJuUYKXwTApdneSjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] selinux: Adjust implementation of security_get_bools()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, selinux@vger.kernel.org,
-        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Michal Orzel <michalorzel.eng@gmail.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Ruiqi Gong <gongruiqi1@huawei.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ruiqi Gong <ruiqi.gong@qq.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 27 Mar 2023 21:58:42 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.237])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C58C211E;
+        Mon, 27 Mar 2023 18:58:40 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id BD2151A00AF5;
+        Tue, 28 Mar 2023 09:58:46 +0800 (CST)
+X-Virus-Scanned: amavisd-new at nfschina.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id uJEkwiY15rco; Tue, 28 Mar 2023 09:58:45 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id EC3BF1A0091B;
+        Tue, 28 Mar 2023 09:58:43 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     andersson@kernel.org, mathieu.poirier@linaro.org,
+        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH v3] remoteproc: remove unnecessary (void*) conversions
+Date:   Tue, 28 Mar 2023 09:57:49 +0800
+Message-Id: <20230328015749.1608-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20230320061157.29660-1-yuzhe@nfschina.com>
+References: <20230320061157.29660-1-yuzhe@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 5:37=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Mon, Mar 27, 2023 at 3:00=E2=80=AFAM Markus Elfring <Markus.Elfring@we=
-b.de> wrote:
-> > Date: Mon, 27 Mar 2023 08:50:56 +0200
-> >
-> > The label =E2=80=9Cerr=E2=80=9D was used to jump to another pointer che=
-ck despite of
-> > the detail in the implementation of the function =E2=80=9Csecurity_get_=
-bools=E2=80=9D
-> > that it was determined already that a corresponding variable contained
-> > a null pointer because of a failed memory allocation.
-> >
-> > Thus perform the following adjustments:
-> >
-> > 1. Convert the statement =E2=80=9Cpolicydb =3D &policy->policydb;=E2=80=
-=9D into
-> >    a variable initialisation.
-> >
-> > 2. Replace the statement =E2=80=9Cgoto out;=E2=80=9D by =E2=80=9Creturn=
- -ENOMEM;=E2=80=9D.
-> >
-> > 3. Return zero directly at two places.
-> >
-> > 4. Omit the variable =E2=80=9Crc=E2=80=9D.
-> >
-> > 5. Use more appropriate labels instead.
-> >
-> > 6. Reorder the assignment targets for two kcalloc() calls.
-> >
-> > 7. Reorder jump targets at the end.
-> >
-> > 8. Assign a value element only after a name assignment succeeded.
-> >
-> > 9. Delete an extra pointer check which became unnecessary
-> >    with this refactoring.
-> >
-> >
-> > This issue was detected by using the Coccinelle software.
-> >
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  security/selinux/ss/services.c | 52 ++++++++++++++--------------------
-> >  1 file changed, 22 insertions(+), 30 deletions(-)
->
-> Hmm, for some odd reason I don't see this patch in the SELinux mailing
-> list archive or the patchwork; replying here without comment (that
-> will come later) to make sure this hits the SELinux list.
+Pointer variables of void * type do not require type cast.
 
-For some reason the generated diff below is pretty messy, so I'm just
-going to put some of my comments here:
+Reported-by: kernel test robot <lkp@intel.com>
+Link: https://lore.kernel.org/oe-kbuild-all/202303272213.jOYrwBZu-lkp@intel.com/
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c     | 12 ++++++------
+ drivers/remoteproc/mtk_scp.c              | 12 ++++++------
+ drivers/remoteproc/qcom_q6v5_adsp.c       | 10 +++++-----
+ drivers/remoteproc/qcom_q6v5_mss.c        |  8 ++++----
+ drivers/remoteproc/qcom_q6v5_pas.c        | 14 +++++++-------
+ drivers/remoteproc/qcom_wcnss.c           | 10 +++++-----
+ drivers/remoteproc/remoteproc_core.c      |  2 +-
+ drivers/remoteproc/stm32_rproc.c          |  2 +-
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 +-
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 +-
+ drivers/remoteproc/xlnx_r5_remoteproc.c   | 16 ++++++++--------
+ 11 files changed, 45 insertions(+), 45 deletions(-)
 
-Given the fairly extensive refactoring here, and the frequency with
-which @len, @names, and @values are used in the function, I might
-simply create local variables for each and only assign them to the
-parameter pointers at the end when everything completes successfully
-(you could still reset @len at the start if you wanted).  If nothing
-else it will make the function easier to read, and I think it will
-simplify the code a bit too.
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 98e0be9476a4..768217f0f5cd 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -84,7 +84,7 @@ struct da8xx_rproc {
+  */
+ static irqreturn_t handle_event(int irq, void *p)
+ {
+-	struct rproc *rproc = (struct rproc *)p;
++	struct rproc *rproc = p;
+ 
+ 	/* Process incoming buffers on all our vrings */
+ 	rproc_vq_interrupt(rproc, 0);
+@@ -104,8 +104,8 @@ static irqreturn_t handle_event(int irq, void *p)
+  */
+ static irqreturn_t da8xx_rproc_callback(int irq, void *p)
+ {
+-	struct rproc *rproc = (struct rproc *)p;
+-	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
++	struct rproc *rproc = p;
++	struct da8xx_rproc *drproc = rproc->priv;
+ 	u32 chipsig;
+ 
+ 	chipsig = readl(drproc->chipsig);
+@@ -133,7 +133,7 @@ static irqreturn_t da8xx_rproc_callback(int irq, void *p)
+ static int da8xx_rproc_start(struct rproc *rproc)
+ {
+ 	struct device *dev = rproc->dev.parent;
+-	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
++	struct da8xx_rproc *drproc = rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
+ 	struct reset_control *dsp_reset = drproc->dsp_reset;
+ 	int ret;
+@@ -183,7 +183,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
+ /* kick a virtqueue */
+ static void da8xx_rproc_kick(struct rproc *rproc, int vqid)
+ {
+-	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
++	struct da8xx_rproc *drproc = rproc->priv;
+ 
+ 	/* Interrupt remote proc */
+ 	writel(SYSCFG_CHIPSIG2, drproc->chipsig);
+@@ -360,7 +360,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ static int da8xx_rproc_remove(struct platform_device *pdev)
+ {
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
+-	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
++	struct da8xx_rproc *drproc = rproc->priv;
+ 	struct device *dev = &pdev->dev;
+ 
+ 	/*
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 0861b76f185f..e1d93e63d7df 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -74,8 +74,8 @@ static void scp_wdt_handler(struct mtk_scp *scp, u32 scp_to_host)
+ 
+ static void scp_init_ipi_handler(void *data, unsigned int len, void *priv)
+ {
+-	struct mtk_scp *scp = (struct mtk_scp *)priv;
+-	struct scp_run *run = (struct scp_run *)data;
++	struct mtk_scp *scp = priv;
++	struct scp_run *run = data;
+ 
+ 	scp->run.signaled = run->signaled;
+ 	strscpy(scp->run.fw_ver, run->fw_ver, SCP_FW_VER_LEN);
+@@ -498,7 +498,7 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
+ 
+ static int scp_start(struct rproc *rproc)
+ {
+-	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
++	struct mtk_scp *scp = rproc->priv;
+ 	struct device *dev = scp->dev;
+ 	struct scp_run *run = &scp->run;
+ 	int ret;
+@@ -587,7 +587,7 @@ static void *mt8192_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
+ 
+ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ {
+-	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
++	struct mtk_scp *scp = rproc->priv;
+ 
+ 	return scp->data->scp_da_to_va(scp, da, len);
+ }
+@@ -627,7 +627,7 @@ static void mt8195_scp_stop(struct mtk_scp *scp)
+ 
+ static int scp_stop(struct rproc *rproc)
+ {
+-	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
++	struct mtk_scp *scp = rproc->priv;
+ 	int ret;
+ 
+ 	ret = clk_prepare_enable(scp->clk);
+@@ -829,7 +829,7 @@ static int scp_probe(struct platform_device *pdev)
+ 	if (!rproc)
+ 		return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
+ 
+-	scp = (struct mtk_scp *)rproc->priv;
++	scp = rproc->priv;
+ 	scp->rproc = rproc;
+ 	scp->dev = dev;
+ 	scp->data = of_device_get_match_data(dev);
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 08d8dad22ca7..d546ab9dc141 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -321,7 +321,7 @@ static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
+ 
+ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int ret;
+ 
+ 	ret = qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
+@@ -379,7 +379,7 @@ static int adsp_map_carveout(struct rproc *rproc)
+ 
+ static int adsp_start(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int ret;
+ 	unsigned int val;
+ 
+@@ -469,7 +469,7 @@ static void qcom_adsp_pil_handover(struct qcom_q6v5 *q6v5)
+ 
+ static int adsp_stop(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int handover;
+ 	int ret;
+ 
+@@ -492,7 +492,7 @@ static int adsp_stop(struct rproc *rproc)
+ 
+ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int offset;
+ 
+ 	offset = da - adsp->mem_reloc;
+@@ -696,7 +696,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	rproc->has_iommu = desc->has_iommu;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+-	adsp = (struct qcom_adsp *)rproc->priv;
++	adsp = rproc->priv;
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
+ 	adsp->info_name = desc->sysmon_name;
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index ab053084f7a2..e7a67c8c16a0 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1562,7 +1562,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 
+ static int q6v5_start(struct rproc *rproc)
+ {
+-	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	struct q6v5 *qproc = rproc->priv;
+ 	int xfermemop_ret;
+ 	int ret;
+ 
+@@ -1604,7 +1604,7 @@ static int q6v5_start(struct rproc *rproc)
+ 
+ static int q6v5_stop(struct rproc *rproc)
+ {
+-	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	struct q6v5 *qproc = rproc->priv;
+ 	int ret;
+ 
+ 	ret = qcom_q6v5_request_stop(&qproc->q6v5, qproc->sysmon);
+@@ -1662,7 +1662,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+ 
+ static unsigned long q6v5_panic(struct rproc *rproc)
+ {
+-	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	struct q6v5 *qproc = rproc->priv;
+ 
+ 	return qcom_q6v5_panic(&qproc->q6v5);
+ }
+@@ -1977,7 +1977,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	rproc->auto_boot = false;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+-	qproc = (struct q6v5 *)rproc->priv;
++	qproc = rproc->priv;
+ 	qproc->dev = &pdev->dev;
+ 	qproc->rproc = rproc;
+ 	qproc->hexagon_mdt_image = "modem.mdt";
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 0871108fb4dc..8eec88119fdd 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -186,7 +186,7 @@ static int adsp_shutdown_poll_decrypt(struct qcom_adsp *adsp)
+ 
+ static int adsp_unprepare(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 
+ 	/*
+ 	 * adsp_load() did pass pas_metadata to the SCM driver for storing
+@@ -203,7 +203,7 @@ static int adsp_unprepare(struct rproc *rproc)
+ 
+ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int ret;
+ 
+ 	/* Store firmware handle to be used in adsp_start() */
+@@ -244,7 +244,7 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ 
+ static int adsp_start(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int ret;
+ 
+ 	ret = qcom_q6v5_prepare(&adsp->q6v5);
+@@ -360,7 +360,7 @@ static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
+ 
+ static int adsp_stop(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int handover;
+ 	int ret;
+ 
+@@ -390,7 +390,7 @@ static int adsp_stop(struct rproc *rproc)
+ 
+ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int offset;
+ 
+ 	offset = da - adsp->mem_reloc;
+@@ -405,7 +405,7 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iom
+ 
+ static unsigned long adsp_panic(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 
+ 	return qcom_q6v5_panic(&adsp->q6v5);
+ }
+@@ -683,7 +683,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	rproc->auto_boot = desc->auto_boot;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+-	adsp = (struct qcom_adsp *)rproc->priv;
++	adsp = rproc->priv;
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
+ 	adsp->minidump_id = desc->minidump_id;
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 9d4d04fff8c6..0fc317265064 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -154,7 +154,7 @@ static const struct wcnss_data pronto_v3_data = {
+ 
+ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
+ {
+-	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	struct qcom_wcnss *wcnss = rproc->priv;
+ 	int ret;
+ 
+ 	ret = qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+@@ -227,7 +227,7 @@ static void wcnss_configure_iris(struct qcom_wcnss *wcnss)
+ 
+ static int wcnss_start(struct rproc *rproc)
+ {
+-	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	struct qcom_wcnss *wcnss = rproc->priv;
+ 	int ret, i;
+ 
+ 	mutex_lock(&wcnss->iris_lock);
+@@ -293,7 +293,7 @@ static int wcnss_start(struct rproc *rproc)
+ 
+ static int wcnss_stop(struct rproc *rproc)
+ {
+-	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	struct qcom_wcnss *wcnss = rproc->priv;
+ 	int ret;
+ 
+ 	if (wcnss->state) {
+@@ -320,7 +320,7 @@ static int wcnss_stop(struct rproc *rproc)
+ 
+ static void *wcnss_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ {
+-	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	struct qcom_wcnss *wcnss = rproc->priv;
+ 	int offset;
+ 
+ 	offset = da - wcnss->mem_reloc;
+@@ -566,7 +566,7 @@ static int wcnss_probe(struct platform_device *pdev)
+ 	}
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+-	wcnss = (struct qcom_wcnss *)rproc->priv;
++	wcnss = rproc->priv;
+ 	wcnss->dev = &pdev->dev;
+ 	wcnss->rproc = rproc;
+ 	platform_set_drvdata(pdev, wcnss);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 80072b6b6283..c48089e83026 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2584,7 +2584,7 @@ EXPORT_SYMBOL(rproc_del);
+ 
+ static void devm_rproc_free(struct device *dev, void *res)
+ {
+-	rproc_free(*(struct rproc **)res);
++	rproc_free(res);
+ }
+ 
+ /**
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 7d782ed9e589..22c0241c2c97 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -629,7 +629,7 @@ stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
+ 	 * entire area by overwriting it with the initial values stored in rproc->clean_table.
+ 	 */
+ 	*table_sz = RSC_TBL_SIZE;
+-	return (struct resource_table *)ddata->rsc_va;
++	return ddata->rsc_va;
+ }
+ 
+ static const struct rproc_ops st_rproc_ops = {
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index ec626a37fef6..4bee10acf6fa 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -429,7 +429,7 @@ static struct resource_table *k3_dsp_get_loaded_rsc_table(struct rproc *rproc,
+ 	 * the hard-coded value suffices to support the IPC-only mode.
+ 	 */
+ 	*rsc_table_sz = 256;
+-	return (struct resource_table *)kproc->rmem[0].cpu_addr;
++	return kproc->rmem[0].cpu_addr;
+ }
+ 
+ /*
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 0481926c6975..115901d1ea04 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -708,7 +708,7 @@ static struct resource_table *k3_r5_get_loaded_rsc_table(struct rproc *rproc,
+ 	 * the hard-coded value suffices to support the IPC-only mode.
+ 	 */
+ 	*rsc_table_sz = 256;
+-	return (struct resource_table *)kproc->rmem[0].cpu_addr;
++	return kproc->rmem[0].cpu_addr;
+ }
+ 
+ /*
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 2db57d394155..5dbc12bdc29e 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -242,7 +242,7 @@ static int add_mem_regions_carveout(struct rproc *rproc)
+ 	struct reserved_mem *rmem;
+ 	int i, num_mem_regions;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 	num_mem_regions = r5_core->rmem_count;
+ 
+ 	for (i = 0; i < num_mem_regions; i++) {
+@@ -363,7 +363,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+ 	size_t bank_size;
+ 	char *bank_name;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 	dev = r5_core->dev;
+ 	num_banks = r5_core->tcm_bank_count;
+ 
+@@ -432,7 +432,7 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
+ 	u32 pm_domain_id;
+ 	char *bank_name;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 	dev = r5_core->dev;
+ 
+ 	/* Go through zynqmp banks for r5 node */
+@@ -502,7 +502,7 @@ static int add_tcm_banks(struct rproc *rproc)
+ 	struct zynqmp_r5_core *r5_core;
+ 	struct device *dev;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 	if (!r5_core)
+ 		return -EINVAL;
+ 
+@@ -595,7 +595,7 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
+ 	u32 pm_domain_id;
+ 	int i;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 
+ 	for (i = 0; i < r5_core->tcm_bank_count; i++) {
+ 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+@@ -649,7 +649,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+ 	}
+ 
+ 	r5_rproc->auto_boot = false;
+-	r5_core = (struct zynqmp_r5_core *)r5_rproc->priv;
++	r5_core = r5_rproc->priv;
+ 	r5_core->dev = cdev;
+ 	r5_core->np = dev_of_node(cdev);
+ 	if (!r5_core->np) {
+@@ -978,12 +978,12 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
+ 
+ static void zynqmp_r5_cluster_exit(void *data)
+ {
+-	struct platform_device *pdev = (struct platform_device *)data;
++	struct platform_device *pdev = data;
+ 	struct zynqmp_r5_cluster *cluster;
+ 	struct zynqmp_r5_core *r5_core;
+ 	int i;
+ 
+-	cluster = (struct zynqmp_r5_cluster *)platform_get_drvdata(pdev);
++	cluster = platform_get_drvdata(pdev);
+ 	if (!cluster)
+ 		return;
+ 
+-- 
+2.11.0
 
-I would probably also keep the combined @names/@values cleanup under
-one jump label; this function isn't complicated enough to warrant that
-many jump labels for error conditions.
-
-> > diff --git a/security/selinux/ss/services.c b/security/selinux/ss/servi=
-ces.c
-> > index f14d1ffe54c5..702282954bf9 100644
-> > --- a/security/selinux/ss/services.c
-> > +++ b/security/selinux/ss/services.c
-> > @@ -2964,53 +2964,45 @@ int security_fs_use(struct super_block *sb)
-> >  int security_get_bools(struct selinux_policy *policy,
-> >                        u32 *len, char ***names, int **values)
-> >  {
-> > -       struct policydb *policydb;
-> > +       struct policydb *policydb =3D &policy->policydb;
-> >         u32 i;
-> > -       int rc;
-> > -
-> > -       policydb =3D &policy->policydb;
-> >
-> >         *names =3D NULL;
-> >         *values =3D NULL;
-> > -
-> > -       rc =3D 0;
-> >         *len =3D policydb->p_bools.nprim;
-> >         if (!*len)
-> > -               goto out;
-> > -
-> > -       rc =3D -ENOMEM;
-> > -       *names =3D kcalloc(*len, sizeof(char *), GFP_ATOMIC);
-> > -       if (!*names)
-> > -               goto err;
-> > +               return 0;
-> >
-> > -       rc =3D -ENOMEM;
-> >         *values =3D kcalloc(*len, sizeof(int), GFP_ATOMIC);
-> >         if (!*values)
-> > -               goto err;
-> > +               goto reset_len;
-> >
-> > -       for (i =3D 0; i < *len; i++) {
-> > -               (*values)[i] =3D policydb->bool_val_to_struct[i]->state=
-;
-> > +       *names =3D kcalloc(*len, sizeof(char *), GFP_ATOMIC);
-> > +       if (!*names)
-> > +               goto free_values;
-> >
-> > -               rc =3D -ENOMEM;
-> > +       for (i =3D 0; i < *len; i++) {
-> >                 (*names)[i] =3D kstrdup(sym_name(policydb, SYM_BOOLS, i=
-),
-> >                                       GFP_ATOMIC);
-> >                 if (!(*names)[i])
-> > -                       goto err;
-> > -       }
-> > -       rc =3D 0;
-> > -out:
-> > -       return rc;
-> > -err:
-> > -       if (*names) {
-> > -               for (i =3D 0; i < *len; i++)
-> > -                       kfree((*names)[i]);
-> > -               kfree(*names);
-> > +                       goto free_names;
-> > +
-> > +               (*values)[i] =3D policydb->bool_val_to_struct[i]->state=
-;
-> >         }
-> > -       kfree(*values);
-> > -       *len =3D 0;
-> > +       return 0;
-> > +
-> > +free_names:
-> > +       for (i =3D 0; i < *len; i++)
-> > +               kfree((*names)[i]);
-> > +
-> > +       kfree(*names);
-> >         *names =3D NULL;
-> > +free_values:
-> > +       kfree(*values);
-> >         *values =3D NULL;
-> > -       goto out;
-> > +reset_len:
-> > +       *len =3D 0;
-> > +       return -ENOMEM;
-> >  }
-> >
-> >
-> > --
-> > 2.40.0
->
-> --
-> paul-moore.com
-
-
-
---=20
-paul-moore.com
