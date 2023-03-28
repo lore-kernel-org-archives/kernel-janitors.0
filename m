@@ -2,87 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCA9C761A6
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 22:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D635C76196
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 23:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229682AbjC1WiL (ORCPT
+        id S229961AbjC1XXM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Mar 2023 18:38:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35386 "EHLO
+        Tue, 28 Mar 2023 19:23:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjC1WiK (ORCPT
+        with ESMTP id S229913AbjC1XWG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Mar 2023 18:38:10 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D87512137
-        for <kernel-janitors@vger.kernel.org>; Tue, 28 Mar 2023 15:38:04 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id q14so14164948ljm.11
-        for <kernel-janitors@vger.kernel.org>; Tue, 28 Mar 2023 15:38:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680043083;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g+xu6yRIN/bJys1fehbCkZUGMmMxxtuBrshP7xCnxko=;
-        b=Al5TIrR6q1JFc/h2LqAur7BsT/df2/oRMpHQNhGfUfvJhr/iaz9FKUsFhPkWaT3hOt
-         yVpY84Q7BPB60YlgRDkwLpmt2C3Le2UnwOYOgfVR5ssUJBz9F3bsjXsm5DgdaoBXZ+B/
-         xMJgOtXE7ibCa6/xgLZBYf9AQII0Dn4ai/pYB1zcS7SyWW7yTrFw74GX0r84tHZYt4RQ
-         zCFRo2RgvbiSzMPd2L3NsY+PWsBVI34IbOBv8trP1AyN+mH/GXOcX4F7Pp9ssRJPG+tj
-         meIfT1pFYHHPbH24cjii+Pqkb04i5IYJwa+Aht37Nkxie43zOQdzp14VRJwJozETYAKb
-         vLDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680043083;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g+xu6yRIN/bJys1fehbCkZUGMmMxxtuBrshP7xCnxko=;
-        b=3YxBvE8ohJlH36X1IPA2TLws06fdHv4z5CBtwNfg/d22FSl9XigrPLve8r/tzsIEom
-         NCLGsbUvUdkFZzagT0dRpOcykBs144EqxxIwVHuFK4y3qK2h0X5jIa7ZyoB1e/VcYjk/
-         pCMBZ1KRb4p7mEzuGcmtKQqAhhP2AwFdj6cXAhOJBF7OnEDL4kvxQ/uNlTDR9BTLd39b
-         BS1H4BlG2ckzGXIYhkwjV8bDOGEMnMu14WNeiz082GTqkSwLpaLSsNin3gqKnIJXLWkQ
-         dGxtu7d0No/mSDLLt5wAitG9SYfL3U+N+sZ+Q/nzc81XVf/w4zzf1zNIWNvYiu56l678
-         m46A==
-X-Gm-Message-State: AAQBX9eQnc15+d3/Bpzm+F7N+FzKKtUItbpc6IWb921Ucfty2+0a32jd
-        o92cUA4bH6N1BwCcSR9MVxHIqw==
-X-Google-Smtp-Source: AKy350bgyH8LOJ1ATAPftjuIwEIjk5RupKEXKKKMV/7TLrATqUiGPabaR9kv1V0d2QYXK9XVLWYPbg==
-X-Received: by 2002:a05:651c:22e:b0:2a1:2cb4:5f81 with SMTP id z14-20020a05651c022e00b002a12cb45f81mr5018981ljn.36.1680043083113;
-        Tue, 28 Mar 2023 15:38:03 -0700 (PDT)
-Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id t22-20020a2e9d16000000b002934d555783sm5199522lji.6.2023.03.28.15.38.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 15:38:02 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/msm/dp: Fix spelling mistake "Capabiity" -> "Capability"
-Date:   Wed, 29 Mar 2023 01:37:46 +0300
-Message-Id: <168004255462.1060915.681238407755431464.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230314082050.26331-1-colin.i.king@gmail.com>
-References: <20230314082050.26331-1-colin.i.king@gmail.com>
+        Tue, 28 Mar 2023 19:22:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42FD12705;
+        Tue, 28 Mar 2023 16:22:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B7CFA619FE;
+        Tue, 28 Mar 2023 23:22:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20ABDC4339C;
+        Tue, 28 Mar 2023 23:22:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680045722;
+        bh=co5fEGaVszuv812QVnnlYJe69TgJtRpilCHulLW9qFU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jPq81Ti0mF/9qwl4/eRRFfUBShZlyQA3FnMwB+u1M2XJOQ+xrey4dhCmnRNcnPSPg
+         HAUKzsSuCaK3bkjXtpKUbfwAcFSrJRb9Qt5Q2VSI7OpPsdQymqLlXC1cPaVyOlWXN6
+         DUQzO3Usg4EgT8EElxDYX0KbnWBZeOR5vhAcwzwM2qVto+zL19m7fniC83E1vq1XFP
+         TBKJWr0vb57mOoCydY9QEWC0B2J2plJz/11gD+YKmfw6yFTWx5mskBaGHMvqNqekhB
+         lNjoqR8Ssb7h4ohgwmZkk3g7iX0DaS6WwfYZ74fuM/SOTWvxmJzqRFIuQdBbzi4Xqe
+         HknP9mKYD+rDg==
+Received: by mail-lf1-f41.google.com with SMTP id j11so17856955lfg.13;
+        Tue, 28 Mar 2023 16:22:02 -0700 (PDT)
+X-Gm-Message-State: AAQBX9eKzJ2bj5qca/KbbMHhg4BhbOJ8Tk7TQ9h1qiXp+qIQ0g0sC0Om
+        +bVTBRkrAMLLxU3ltz3itnB0UPPwW1VTFv8sVgk=
+X-Google-Smtp-Source: AKy350bnP+To9f0vTNF3FRw9YcJvrhq6/6Y+OpkYwHV7o8Y8kbD9xs0OWp/mam3rNGg33T/z4SyQSdTTEjJi4E7sW2M=
+X-Received: by 2002:ac2:44a6:0:b0:4eb:d25:8686 with SMTP id
+ c6-20020ac244a6000000b004eb0d258686mr3182315lfm.3.1680045720118; Tue, 28 Mar
+ 2023 16:22:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de> <6ee3b703-2161-eacd-c12f-7fa3bedf82dc@web.de>
+ <49adf0c8-825a-018f-6d95-ce613944fc9b@web.de>
+In-Reply-To: <49adf0c8-825a-018f-6d95-ce613944fc9b@web.de>
+From:   Song Liu <song@kernel.org>
+Date:   Tue, 28 Mar 2023 16:21:48 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7JZDps_fTHyCabjfG4YjzDVEW_41u6d+9mdc2CAJv_Kw@mail.gmail.com>
+Message-ID: <CAPhsuW7JZDps_fTHyCabjfG4YjzDVEW_41u6d+9mdc2CAJv_Kw@mail.gmail.com>
+Subject: Re: [PATCH resent 0/2] md/raid: Adjustments for two function implementations
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Maciej Trela <Maciej.Trela@intel.com>,
+        Neil Brown <neilb@suse.de>, Shaohua Li <shli@fb.com>,
+        cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Sat, Mar 25, 2023 at 2:20=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> Date: Mon, 20 Mar 2023 17:28:05 +0100
+>
+> A few update suggestions were taken into account
+> from static source code analysis.
+>
+> Markus Elfring (2):
+>   raid1: Fix exception handling in setup_conf()
+>   raid10: Fix exception handling in setup_conf()
 
-On Tue, 14 Mar 2023 08:20:50 +0000, Colin Ian King wrote:
-> There is a spelling mistake in a drm_dbg_dp message. Fix it.
-> 
-> 
+The two functions look good to me as-is. I don't think anything is
+broken except that the code analysis tool complains. I don't think
+it is necessary to make these changes.
 
-Applied, thanks!
-
-[1/1] drm/msm/dp: Fix spelling mistake "Capabiity" -> "Capability"
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/6ee9666a4f4c
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Thanks,
+Song
