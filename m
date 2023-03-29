@@ -2,90 +2,126 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54ACDC6FD18
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 19:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B29C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 21:08:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbjC2TDu (ORCPT
+        id S229773AbjC2VIx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Mar 2023 15:03:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
+        Wed, 29 Mar 2023 17:08:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230038AbjC2TDt (ORCPT
+        with ESMTP id S229449AbjC2VIw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Mar 2023 15:03:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BEC71BEC;
-        Wed, 29 Mar 2023 12:03:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D881261DF4;
-        Wed, 29 Mar 2023 19:03:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F66C4339C;
-        Wed, 29 Mar 2023 19:03:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680116625;
-        bh=YGgwaQb1Yr5alEBeh50oaFn8YhIPQRRHYUsEM/NJD3o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=P2lmP8E33IXjzH4K/gd1MewJa5cVRw06HgrDUFB8rL+9UUFDaxSX79kGtHk15qHfn
-         +AwnoYTQBJ/Fmq9qyUoqwY5uO7vhVqhVwIwsssSN36Yx1Fe4kLS6uSB2Bdi+yGyoXp
-         +1yjYxdMyzRnXwkd20epYnEARRcYGiCp8pAOhzokhfC3/VHMkKsQsxf54yq0d4USwd
-         8Qw+FGDGlFfaSh47rGbT8hCClgnnu3NTb+hyqEvS2eMDfxx31h4wbbIDB3TiPbTIam
-         jcQOW6J9fNlXYb5A4gCakILz3mNRadydpZ8ucamPdndMjbpnY9809tMjYE65hkhFN9
-         /jjSO07Lvxl3g==
-Received: by mail-lj1-f181.google.com with SMTP id e9so1969009ljq.4;
-        Wed, 29 Mar 2023 12:03:45 -0700 (PDT)
-X-Gm-Message-State: AAQBX9eslECyDJW4PHzFT9rZZNQWFmXi87YoL/EkYly07tkAk5N7tDzw
-        MRvm61g4XmRtUDhswzYbAQKHc0G1QEnkxkSJd8o=
-X-Google-Smtp-Source: AKy350axvSqGy7GyrH8RKgEAR0+nNstDei6hLLlElkZD93z6FpVGXFrT2U64o7wib0jSGOlS/1QRWOI3Dofy8a+cm0s=
-X-Received: by 2002:a2e:6a0d:0:b0:295:93eb:e790 with SMTP id
- f13-20020a2e6a0d000000b0029593ebe790mr6348106ljc.5.1680116623266; Wed, 29 Mar
- 2023 12:03:43 -0700 (PDT)
+        Wed, 29 Mar 2023 17:08:52 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AEBA10F9
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Mar 2023 14:08:36 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id r16so12603489oij.5
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Mar 2023 14:08:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680124115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oPXWRFIoREXhZwsFskFZNeZ1+zPRfNX3xPUEorUWMOo=;
+        b=Tg29Bs8pX/s+4I8MqATYnsQDlFeRZbx1yOf7IFCVgtoP6sRvNM15VaJ75BGk4uPYkl
+         R091oIyuBzpmTaaQxjV5WUC/fFl/LaTU7AsVxYiuMQCm44Is4sVCvCdyMS4ZEO/p8LG9
+         c8UpKlHxZMFKsf5Bi976naIk2C7ZeVIgGRdSXlcMWh/Zn35zMjG3gp6JcNXF4rWGyqdy
+         Bof+J12aH5E+TPb6VkB087TjrPEKB5yNVvi88qpuzu8H1muzHIRLZ5GM7UOZsAkQLsgj
+         FpGlEeHNGheHopgdnmj0EyxML8iBPIXGMqGjgkhk2OsxN94r9dhJjF/SxM8ls0pjA0N5
+         BXzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680124115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oPXWRFIoREXhZwsFskFZNeZ1+zPRfNX3xPUEorUWMOo=;
+        b=ZxO6KA6eoI0DEjNtY1jky0SIsmYAS5gM/QfNqWeRub0q5Ixaa8Pg56aaZfoEw9IuG5
+         fkcJQDhf7P8LUFTEbxmJAH5yERFJ3KJ7JdGxB/uCFtI6AEYZ6s2VMq4KkmVeIUyS3kg5
+         NifDsfuJxvun7f7UXEkzbxNIsbUxrWOKhBt/hpc4TvnCPlsIqauaP2YdDnaX9MpjxFIJ
+         zDMw2XEVFvRXKkJYhtOr0w3tkzNnNy8PplAwBD0go1lyD0pDv3fEEeZSSbYSXB12LZe/
+         Ys0GSWBvw+cjcjcB7sloI1KFy6ZoGBu8cVK//74ckAAycl9ysNmLrBF4EWYRRUejjqsi
+         JJhw==
+X-Gm-Message-State: AAQBX9dPJFJyKPJR130vBMNVxbEwPn1FkkmfClCj5NIi6O7x9hJtdhMv
+        nYoJbExraJu9Oegw2+wgJBVgsuB1lunXnGe+Fng=
+X-Google-Smtp-Source: AKy350YOopVbnyRkX94ORtJ+sQy1ZS6t0Y8O/piyRsw7EmyXpLfeHqlsXwh+1YU3jAWuxZ5f/FYx3CtCqUHxSSlxQtg=
+X-Received: by 2002:a05:6808:15a3:b0:389:6d65:6215 with SMTP id
+ t35-20020a05680815a300b003896d656215mr485344oiw.3.1680124115221; Wed, 29 Mar
+ 2023 14:08:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de> <6ee3b703-2161-eacd-c12f-7fa3bedf82dc@web.de>
- <49adf0c8-825a-018f-6d95-ce613944fc9b@web.de> <CAPhsuW7JZDps_fTHyCabjfG4YjzDVEW_41u6d+9mdc2CAJv_Kw@mail.gmail.com>
- <2fbfc20a-71ee-ddaa-19d8-7beed559b491@web.de>
-In-Reply-To: <2fbfc20a-71ee-ddaa-19d8-7beed559b491@web.de>
-From:   Song Liu <song@kernel.org>
-Date:   Wed, 29 Mar 2023 12:03:30 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6pEK6mQbo=F7DWPhCW1ePkKP2WM8saoeAfMOCSF3CdOA@mail.gmail.com>
-Message-ID: <CAPhsuW6pEK6mQbo=F7DWPhCW1ePkKP2WM8saoeAfMOCSF3CdOA@mail.gmail.com>
-Subject: Re: [0/2] md/raid: Adjustments for two function implementations
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Maciej Trela <Maciej.Trela@intel.com>,
-        Neil Brown <neilb@suse.de>, Shaohua Li <shli@fb.com>,
-        cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <580414df-4adf-49cf-9930-743f7c539d46@kili.mountain> <BN9PR12MB52573A6551DD2E6464AA9AD5FC899@BN9PR12MB5257.namprd12.prod.outlook.com>
+In-Reply-To: <BN9PR12MB52573A6551DD2E6464AA9AD5FC899@BN9PR12MB5257.namprd12.prod.outlook.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 29 Mar 2023 17:08:23 -0400
+Message-ID: <CADnq5_PvS7Ltx4KdM+mYn4TugWgN7dNXx6Vb9sLECH0U3wvMeQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: fix AMDGPU_RAS_BLOCK__DF check
+To:     "Zhang, Hawking" <Hawking.Zhang@amd.com>
+Cc:     Dan Carpenter <error27@gmail.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        "Zhou1, Tao" <Tao.Zhou1@amd.com>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "Chai, Thomas" <YiPeng.Chai@amd.com>,
+        "Yang, Stanley" <Stanley.Yang@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "Zhao, Victor" <Victor.Zhao@amd.com>,
+        "Li, Candice" <Candice.Li@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 10:32=E2=80=AFPM Markus Elfring <Markus.Elfring@web=
-.de> wrote:
->
-> >>   raid1: Fix exception handling in setup_conf()
-> >>   raid10: Fix exception handling in setup_conf()
-> >
-> > The two functions look good to me as-is. I don't think anything is
-> > broken except that the code analysis tool complains. I don't think
-> > it is necessary to make these changes.
->
-> Will development interests ever grow also for advice from another informa=
-tion source?
-> https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+g=
-oto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
-es#MEM12C.Considerusingagotochainwhenleavingafunctiononerrorwhenusingandrel=
-easingresources-CompliantSolution%28POSIX,GotoChain%29
+Applied.  Thanks!
 
-While I understand "goto chain" is a good pattern for error handling, I am
-not convinced it is a better approach here. Specifically, the goto chain is=
- so
-long that it is hard to maintain. This also adds overhead for users of
-git-blame. Therefore, I would rather keep these two functions as-is.
-
-Thanks,
-Song
+On Wed, Mar 29, 2023 at 1:31=E2=80=AFAM Zhang, Hawking <Hawking.Zhang@amd.c=
+om> wrote:
+>
+> [AMD Official Use Only - General]
+>
+> Reviewed-by: Hawking Zhang <Hawking.Zhang@amd.com>
+>
+> Regards,
+> Hawking
+> -----Original Message-----
+> From: Dan Carpenter <error27@gmail.com>
+> Sent: Wednesday, March 29, 2023 13:28
+> To: Zhang, Hawking <Hawking.Zhang@amd.com>
+> Cc: Koenig, Christian <Christian.Koenig@amd.com>; Pan, Xinhui <Xinhui.Pan=
+@amd.com>; David Airlie <airlied@gmail.com>; Daniel Vetter <daniel@ffwll.ch=
+>; Zhang, Hawking <Hawking.Zhang@amd.com>; Zhou1, Tao <Tao.Zhou1@amd.com>; =
+Yang, Stanley <Stanley.Yang@amd.com>; Chai, Thomas <YiPeng.Chai@amd.com>; Z=
+hao, Victor <Victor.Zhao@amd.com>; Li, Candice <Candice.Li@amd.com>; amd-gf=
+x@lists.freedesktop.org; kernel-janitors@vger.kernel.org
+> Subject: [PATCH] drm/amdgpu: fix AMDGPU_RAS_BLOCK__DF check
+>
+> There is a mixup where AMDGPU_RAS_BLOCK__DF is used as a mask instead of =
+a shifter.  It means that this condition will be true for AMDGPU_RAS_BLOCK_=
+_MMHUB instead of for AMDGPU_RAS_BLOCK__DF.
+>
+> Fixes: b6f512168478 ("drm/amdgpu: Add fatal error handling in nbio v4_3")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> From static analysis.  Not tested at all.
+>
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_ras.c
+> index fac45f98145d..4069bce9479f 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
+> @@ -2564,7 +2564,7 @@ int amdgpu_ras_init(struct amdgpu_device *adev)
+>                         adev->nbio.ras =3D &nbio_v7_4_ras;
+>                 break;
+>         case IP_VERSION(4, 3, 0):
+> -               if (adev->ras_hw_enabled & AMDGPU_RAS_BLOCK__DF)
+> +               if (adev->ras_hw_enabled & (1 << AMDGPU_RAS_BLOCK__DF))
+>                         /* unlike other generation of nbio ras,
+>                          * nbio v4_3 only support fatal error interrupt
+>                          * to inform software that DF is freezed due to
+> --
+> 2.39.1
