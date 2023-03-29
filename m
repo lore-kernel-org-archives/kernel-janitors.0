@@ -2,91 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E20BC6FD18
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 09:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A470DC6FD18
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 09:38:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230359AbjC2Jea (ORCPT
+        id S230115AbjC2JiZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Mar 2023 05:34:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36062 "EHLO
+        Wed, 29 Mar 2023 05:38:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230422AbjC2JeS (ORCPT
+        with ESMTP id S229697AbjC2JiY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Mar 2023 05:34:18 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 066B83C10;
-        Wed, 29 Mar 2023 02:34:15 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id i5-20020a05600c354500b003edd24054e0so11020852wmq.4;
-        Wed, 29 Mar 2023 02:34:14 -0700 (PDT)
+        Wed, 29 Mar 2023 05:38:24 -0400
+Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 730072114
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Mar 2023 02:38:22 -0700 (PDT)
+Received: by mail-ua1-x932.google.com with SMTP id p2so10917064uap.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Mar 2023 02:38:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680082453;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f5L2cTIuCdaJiW3kAEBYG9/8fNy39SDv5isWb6sXKGM=;
-        b=I+fC0ydL01GfwIBgvIYgnfsZcoBEBUXq/KfNCmxkH3u+gUS+VPGwstWfzHntGT3s4D
-         06YRrPgW7vj8Km/bsEGuKU4bHs6m2PAITdcCl1w5PBaTJlMzeYeRslhYTHi2mvBWC274
-         kM3ecJrSgXUEPGvAMo9l55ZNepovGzob/ZJIb1WKDEIpGi1A9MkJW6t4MfRNPSwn0//h
-         qfcTsPzPwlWZHK9zOLgk/uvjgF8fTCFiEx1J12T8/tvFn1foix4OlgtBojtGhEThpHoj
-         ln3pLhz4N75RXQaPECr/FQuOf1h07MrSK7MatXwtnxIaWPI0pp0hTvBEzN4Zgj2P615W
-         jsaQ==
+        d=linaro.org; s=google; t=1680082701;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Kdo0962g9qjrK63Wmlr//5n9bFicAZn9s+ZEU+BxU8=;
+        b=q3onjpNwj7m5wtVnisBHU/iaWonRFIgMPOAw3rp3d/782pYTSYBWvY5LfgqPeNm2RN
+         gVM3r5bX4Cpl4OH9hB3g3HXP2qn9+/BjhXM22B5Uj+FxS7Q75IJp3n7osKdseE0QO5pQ
+         nHHtiu4UwkZEi6LvPj3FEaXJU3sWIIiNVhCaduhGxgY6wkgT2nlOK4Bv+4EDPK7JphgV
+         6TFzR7WXUBLKTS2Rud9/ilyyUZFVYeVdrgpK4hrKndbwlAlErwS2/5oGvjlDlKlzyDNx
+         YVqKoKEPhpCnRwt2ETHySzBH9Q2yOCNensInbY8tHBYYCmxSAU/RwWvu6d1qqFQNXFs+
+         8jhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680082453;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1680082701;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=f5L2cTIuCdaJiW3kAEBYG9/8fNy39SDv5isWb6sXKGM=;
-        b=RuWpfjWSzMuxcetCoH2uXtwnS+tFOVmht6vl0mvtHn1hZOK986IITc5GyOiy8qMhIJ
-         NIhMCp0aPF2H7wMJJupeVZ4Z9CTJh8HkTAF89WfTeldTFoF8kuI7ZR5raXTUn/tl1HR8
-         MkzaC72IthhTPCsSddqpJBNrm1i9L6T4avsSWBnwWgfT/gFVCCtCgHCJXClG3Kye69xa
-         WhJ4YMaEpD46uBicsoMZkRFTqwJqzPXkVg9YtOvhy9fXfF/RSO2RM++fOQPxhMhKf8Vs
-         XmOl1IIA1LhbUAQxQszlQS2/moONEnWv0MgF4YR1yBuQE4zmZz7lbS7pHQznAHOwj2un
-         ETjA==
-X-Gm-Message-State: AO0yUKUDJt0/soKxB5DerUzvCR7rdL4uWMyUM4xezglOsL+ohPuVbXIJ
-        ZQoAi6k6WY4iUIy33rckqJA=
-X-Google-Smtp-Source: AK7set8yccsbCx8knRfGBpGr70fkvWQCIQnYubRMqFF/G/oWX8LJbX8Xce/R3cgBARkf4tTb+lD0eg==
-X-Received: by 2002:a05:600c:114f:b0:3ed:5eed:555d with SMTP id z15-20020a05600c114f00b003ed5eed555dmr13587420wmz.10.1680082453537;
-        Wed, 29 Mar 2023 02:34:13 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a21-20020a05600c349500b003ee91eda67bsm1637214wmq.12.2023.03.29.02.34.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 02:34:13 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Shuah Khan <shuah@kernel.org>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Ivan Orlov <ivan.orlov0322@gmail.com>,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests: prctl: Fix spelling mistake "anonynous" -> "anonymous"
-Date:   Wed, 29 Mar 2023 10:34:12 +0100
-Message-Id: <20230329093412.419317-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        bh=5Kdo0962g9qjrK63Wmlr//5n9bFicAZn9s+ZEU+BxU8=;
+        b=pvPXJ7y8xwieJ1TI5OnQZVTMTU0x9xdSJ6HnJCgNNTWOOFpN50Fr6le5Ke4t89YyF7
+         6FzSoe5KX5NT68Zkq+NGNHHWJ2/oaGUfZIPTBIxsTpXyjpwFZgqH9U/W0SEliVceVgN+
+         Z3naZ7R5Sxcg7LZIvKsxCi9U3ZdkSQZIBQ8KZ6/wjy+fMYtDUGE+uThLFOyVkiaY362W
+         PKeKF8QPSgTxIUZkRo6WF9t2WOHO5s7NK3u7cf8pR0ZaHivh7N4X5Gt6JMu/8LxWMqm3
+         c96ESTccX91NJ5dYSF11AzEy4/Ny8zg8Imb5zHDroAgb0C1FwFOa1vW9nRIJfN02yrdW
+         eVpw==
+X-Gm-Message-State: AAQBX9cpJMZD8DpBPNucodBBMIz4OIX/a6Dy/gF3lKhrpQWrjAlhRbg/
+        mx599zlcbzB05r7QJAWiMWHdSVeFAlk0dH3iCqW2sA==
+X-Google-Smtp-Source: AKy350aFwmtLvugVS91SXWv58KL7rNgH36bP8Zd/ssQQS9euHnK+TiBtfXgpvNKAwXuEGqbYg0WQqyzlGYvf7hTsufM=
+X-Received: by 2002:a1f:9f52:0:b0:406:1ef2:7bc7 with SMTP id
+ i79-20020a1f9f52000000b004061ef27bc7mr10108602vke.2.1680082701571; Wed, 29
+ Mar 2023 02:38:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230329093200.419041-1-colin.i.king@gmail.com>
+In-Reply-To: <20230329093200.419041-1-colin.i.king@gmail.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Wed, 29 Mar 2023 15:08:10 +0530
+Message-ID: <CAFA6WYNOzJxwXA_RfAkHxp-w1Pu0UQpeZOoP7tyaGBSeBuERVQ@mail.gmail.com>
+Subject: Re: [PATCH][next] optee: Fix spelling mistake "Unuspported" -> "Unsupported"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
+        op-tee@lists.trustedfirmware.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an log message. Fix it.
+On Wed, 29 Mar 2023 at 15:02, Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> There is a spelling mistake in a #error message. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/prctl/set-anon-vma-name-test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for catching it, it has already been fixed as part of this PR [1].
 
-diff --git a/tools/testing/selftests/prctl/set-anon-vma-name-test.c b/tools/testing/selftests/prctl/set-anon-vma-name-test.c
-index 26d853c5a0c1..4275cb256dce 100644
---- a/tools/testing/selftests/prctl/set-anon-vma-name-test.c
-+++ b/tools/testing/selftests/prctl/set-anon-vma-name-test.c
-@@ -97,7 +97,7 @@ TEST_F(vma, renaming) {
- 	TH_LOG("Try to pass invalid name (with non-printable character \\1) to rename the VMA");
- 	EXPECT_EQ(rename_vma((unsigned long)self->ptr_anon, AREA_SIZE, BAD_NAME), -EINVAL);
- 
--	TH_LOG("Try to rename non-anonynous VMA");
-+	TH_LOG("Try to rename non-anonymous VMA");
- 	EXPECT_EQ(rename_vma((unsigned long) self->ptr_not_anon, AREA_SIZE, GOOD_NAME), -EINVAL);
- }
- 
--- 
-2.30.2
+[1] https://lore.kernel.org/lkml/20230314184441.GA2936721@rayden/T/
 
+-Sumit
+
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/tee/optee/call.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/tee/optee/call.c b/drivers/tee/optee/call.c
+> index 290b1bb0e9cd..df5fb5410b72 100644
+> --- a/drivers/tee/optee/call.c
+> +++ b/drivers/tee/optee/call.c
+> @@ -488,7 +488,7 @@ static bool is_normal_memory(pgprot_t p)
+>  #elif defined(CONFIG_ARM64)
+>         return (pgprot_val(p) & PTE_ATTRINDX_MASK) == PTE_ATTRINDX(MT_NORMAL);
+>  #else
+> -#error "Unuspported architecture"
+> +#error "Unsupported architecture"
+>  #endif
+>  }
+>
+> --
+> 2.30.2
+>
