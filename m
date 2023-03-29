@@ -2,93 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C2BC761A6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 10:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6956C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 14:33:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229482AbjC2KzP (ORCPT
+        id S230194AbjC2Odw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Mar 2023 06:55:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54388 "EHLO
+        Wed, 29 Mar 2023 10:33:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbjC2KzO (ORCPT
+        with ESMTP id S230189AbjC2Odf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Mar 2023 06:55:14 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD9D91FC3;
-        Wed, 29 Mar 2023 03:55:11 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id j18-20020a05600c1c1200b003ee5157346cso11157720wms.1;
-        Wed, 29 Mar 2023 03:55:11 -0700 (PDT)
+        Wed, 29 Mar 2023 10:33:35 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B29D79771
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Mar 2023 07:28:41 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id u8so8190965ilb.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Mar 2023 07:28:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680087310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BxWVSYNg3x9Lr51Q6bn5n72HMeWHBmcsrPZstVqCyrs=;
-        b=VByNFV754kE/eZ25qMrcu38DuGFTX/xp6ub/tU5fe0hFGPJ1aemzBDNAEjfKi9vYcJ
-         /nTqcFmhbNwmMDhoHAEPDVZbUcnAUU3NYchYF6spapngQYwqAUI+6qTIGOprLVBRcp/+
-         QMmfzCEE0c4jKkwGX1Yzu2es6052pBefuK3fkYPndyOJxxWeKxD79y1ArMxF3wovBKEE
-         wkRxDmDejC299H96F8ULKImKCv11Rd3iL139pvb6ey++pdb8w95pAmv4DuDKAgtQ+A6O
-         aXLF8ukAMlAZBXbnFMSYGUE0BH79pHeLLXs9NYdtAxL83DPPOA46RvmQh+9RJGnAk0eo
-         d0ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680087310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1680100053;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BxWVSYNg3x9Lr51Q6bn5n72HMeWHBmcsrPZstVqCyrs=;
-        b=duMp7mkvutkkQU43/jjglL3Vh7Whm0mJ5ylt69gOm2eyRcm8jWsYuLFSpdMheFYVlC
-         0Z9+R3/inlbuDxoO4XEfFC/hm2oeYhdhhVprkzW3pHdGxfmZN0evL+8pZ3RK68JHKwaY
-         Ya3JQ2bsoMfqL9ltdqA1jLehkCALg0z+EUTQz1dq9Tr/32uouY5oJKPgz9fwL0U7JFgX
-         cLfSFjSxyhBQWDaF7Gmf40PBLJ0UEuwMdQyez3eGDE7sxpHl3Hp8diAW2ssqYvTemIr7
-         3i68x7AAnqZWhFogHDESMpeyv5kE+rLDkmB8+GxAlEQUjx8W1KryLUDIBfmOYu24NvKu
-         G2Eg==
-X-Gm-Message-State: AAQBX9dYSNuAu6iRpguD3sbGYOiCjEsLmifeG0L5JMsYxY+kLu6d+Np5
-        bE0D7SPGapJ9EyekMNUFxTA=
-X-Google-Smtp-Source: AKy350ZJu7jp4nxoNA3PBt3BQ1lskpGA2HTjnMYG3XSyNpuQ7wI1e+c6pBNkeN/aR69zppzW9k/gMQ==
-X-Received: by 2002:a05:600c:3c94:b0:3ef:6989:19ef with SMTP id bg20-20020a05600c3c9400b003ef698919efmr1458736wmb.13.1680087310085;
-        Wed, 29 Mar 2023 03:55:10 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id t14-20020a05600c198e00b003ee1e07a14asm1940538wmq.45.2023.03.29.03.55.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 03:55:09 -0700 (PDT)
-Date:   Wed, 29 Mar 2023 13:55:05 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        dmaengine@vger.kernel.org
-Subject: Re: [PATCH 1/2] dmaengine: mv_xor_v2: Fix an error code.
-Message-ID: <73af278e-1fc7-43fb-87b9-f107ae533266@kili.mountain>
-References: <201170dff832a3c496d125772e10070cd834ebf2.1679814350.git.christophe.jaillet@wanadoo.fr>
- <e53e6f9a-09a9-42e4-8e81-dfe2ad2813ad@kili.mountain>
+        bh=Q4/N2vrJxKSPGNOo4Sdxe+Hpfi1jERAyjrq6Q8qDfAk=;
+        b=AzlYpc+XImozgpGsaPACDbUXKjhp9c9A6qcTKDzRCDni1+aFSgFFcxPekrjtKLm0d8
+         Ay0qm3J6ff/+kziNBdJN532CeJsuNYkAKc/iHi4DkKhPjY81gfptHuwj3ge51s1OmBDO
+         STVZVxxmh0IV5a6EWA+Y7L7WT9ix/ELAYOyB4izb/4qs7urt4IKLTuZ/oLJb/OO5Ye5x
+         pQgBiRheHzwox/x0UF3hX59gHn35qw16VHXLCfwqvOTY/TjzOC4Huq3AMDLtATNtbwnK
+         uh3+uricXGSMZfLK8f5Gohea9tKExyOW07LHaK2E/fhE0MV2UIqivBSyayCiT35m0FtC
+         FJAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680100053;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q4/N2vrJxKSPGNOo4Sdxe+Hpfi1jERAyjrq6Q8qDfAk=;
+        b=t5ptYDkjvdPf+2Xg6uNQSHF6ERFpUpfbwYeAUOGs/qGWjijZbwWdlXnj9qWZn7J/RW
+         fZCyY+owGmcTj/7vaXlKPYmhi4zjlQFHfLft4oIukW2QdwxZl/sF95ZpE9lkspxGJa60
+         HwthW3VuOqVFYYnshx+hzz/y+m2Nad8H4hZvb4G9/HE5WsjTW3lpprv6lIeSKkutUhXh
+         kuv61t7uM68DE9e8R8i/V8ZC19FfUyG3NRA+Y3ugHJPL0m6JW8Dycw3W+c07NA9dBczq
+         kNrwOrSVPajrt6SUsnts1MkSY6lWQq13wRLzQulXqpT7abxNJWhn+1ZrGWgWdqu7UHso
+         BauA==
+X-Gm-Message-State: AAQBX9dAHhjcmA7I4sd20d61MlKkX9k2f4JaGha1EuGBAwwLXmO1OocJ
+        zNL6aFne9Vt/ua+Y6kfjFC7vyX+sU4RZk5fKvVgQuAGh5HAoCPc=
+X-Google-Smtp-Source: AKy350ZXG/6vdtiRwb14rFlkSfYbi/rQ7HyN95sz22NFfzMEzzIVcrSq4Yj28sNoDp2O5+duQn4747E2fbAWADJ+YJg=
+X-Received: by 2002:a05:6902:18c2:b0:b78:5662:d5bb with SMTP id
+ ck2-20020a05690218c200b00b785662d5bbmr9370969ybb.3.1680099565020; Wed, 29 Mar
+ 2023 07:19:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e53e6f9a-09a9-42e4-8e81-dfe2ad2813ad@kili.mountain>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de> <83763b78-453d-de21-9b48-1c226afa13a0@web.de>
+ <57a97109-7a67-245b-8072-54aec3b5021d@web.de> <CAHC9VhR=yK72JXW3hJR+gUQtGCNpF0Bzk5RDzPZR0MunC84AUQ@mail.gmail.com>
+ <CAHC9VhREfdgiCji=uEeCrc4w1kPGfnWGKnJuUYKXwTApdneSjQ@mail.gmail.com>
+ <9e8bb69f-99e8-f204-6435-cc6e52816ebf@web.de> <CAHC9VhQfiNd_4uWBmKCC81UnOJb7Y=UFCDMXuqz3=UPr8QtqNw@mail.gmail.com>
+ <382bc6d8-7f75-822a-6c36-088b1d2f427a@web.de>
+In-Reply-To: <382bc6d8-7f75-822a-6c36-088b1d2f427a@web.de>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 29 Mar 2023 10:19:14 -0400
+Message-ID: <CAHC9VhRxjJ3WMNc=vwkLKGDjSN8G=P9ykMkYg9dAJs3SaxVYYA@mail.gmail.com>
+Subject: Re: selinux: Adjust implementation of security_get_bools()
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, selinux@vger.kernel.org,
+        =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Michal Orzel <michalorzel.eng@gmail.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Ruiqi Gong <gongruiqi1@huawei.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>, cocci@inria.fr,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ruiqi Gong <ruiqi.gong@qq.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A bunch of false positives could be silenced by changing the assign
-and return hooks to check for unsigned types:
+On Wed, Mar 29, 2023 at 1:20=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+> >> Would you like to take advice from another information source
+> >> better into account?
+> >
+> > In this case, I prefer what I suggested.
+>
+> What does hinder you to work with more jump labels for improved exception=
+ handling?
 
-static void match_assign(struct expression *expr)
-{
-        if (expr_unsigned(expr->left))
-                return;
-        warn_on_positive_error(expr->right);
-}
+I'm the one who has the responsibility to fix bugs in the code when no
+one else has the time or the desire, I'm also the one who shepherds
+these changes up to Linus and argues for contentious changes which are
+not popular outside the Linux Kernel security community.  Having to do
+this with patches that I find bothersome hinders me in ways which are
+sometimes difficult to explain, but easy to understand if you've ever
+been responsible for maintaining a significant code base.
 
-static void match_return(struct expression *expr)
-{
-        struct symbol *type;
-
-        type = cur_func_return_type();
-        if (type_unsigned(type))
-                return;
-
-        warn_on_positive_error(expr);
-}
-
-regards,
-dan carpenter
+--=20
+paul-moore.com
