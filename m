@@ -2,72 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A945EC74A5B
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 18:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33A4C761AF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 18:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbjC2SVp (ORCPT
+        id S229851AbjC2Sql (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Mar 2023 14:21:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52866 "EHLO
+        Wed, 29 Mar 2023 14:46:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjC2SVo (ORCPT
+        with ESMTP id S229489AbjC2Sqk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Mar 2023 14:21:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D447749D5;
-        Wed, 29 Mar 2023 11:21:43 -0700 (PDT)
+        Wed, 29 Mar 2023 14:46:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9074830ED;
+        Wed, 29 Mar 2023 11:46:39 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6B08061D6F;
-        Wed, 29 Mar 2023 18:21:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A421C433D2;
-        Wed, 29 Mar 2023 18:21:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D67A61D7A;
+        Wed, 29 Mar 2023 18:46:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85928C433EF;
+        Wed, 29 Mar 2023 18:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680114102;
-        bh=9PtUOZiKZ8i7ysVO6JVy+v53+cNNGqvHMWdAAkjxnd4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PqY8z812HDa1h/OBeBoEL6Nt+26vtPX5jfEhOzhyO6toxGjqfSJrgdC+Gz9UUDpD2
-         weTdI7vEu3GlrMcVv5/Ump/76LTDNUTQ3UVPFVPpUfb1Em45usn7msRCf3iVq9BS48
-         aEsSTBUSDm2kLW8sRshOat8tr73NpiBixXZ14mbg3pj85TJ+yUP7vojpxczeO8aKeS
-         6QkFvd8Ht8h8CTjOgJexbCcCRkt7UxzP3ZAEldKrAVTstlcrOOIhD71qbnsYIXrI7g
-         se5fKq5Lu65RUAH3+pCZa4Pcvqp0fhygef6IL/6Zw1+f3mEb/JU/NhJrr7uAAmZKOT
-         1s4BhWkMcyEUw==
-Date:   Wed, 29 Mar 2023 21:21:38 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Veerasenareddy Burru <vburru@marvell.com>,
-        Abhijit Ayarekar <aayarekar@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] octeon_ep: unlock the correct lock on error path
-Message-ID: <20230329182138.GX831478@unreal>
-References: <251aa2a2-913e-4868-aac9-0a90fc3eeeda@kili.mountain>
+        s=k20201202; t=1680115598;
+        bh=l/ZQEIg0r3dnpJOqbbYfQM5WM0p8Fh/Vcz3IqMRkfnE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=IivxkDO5tDlyb5I+0Frr1Ndni142zhBGjvQtkpL2SMsZZqAX20gkL1BrV2/1TFN+o
+         HAzSfLxfXoQuHr4wcmsgEBr/IvJxTSDPgU8aGOo22n4+Vnotkddw1POWZb5szug+Pk
+         YFWru+jEJtWYkjQefllaw9mTdf+FWsUPOR47TQI6V+EHlkkjLXGPaZz+KN2+UFpPxZ
+         KBtFXl9FkEyH2B+O2anstXVYgpLgABSYC9/DIH+b8o4WcJiaFAYeAo7deRvYIudPPK
+         lxDDvzw8Vd0Yv1hGkyjjAHqACrnf40uwESAgt3tSm/IB2OkTqck9fSvp1biNnRCHLi
+         TEBv0eYMXMyMA==
+Message-ID: <2e74c4c93f4bcc6a7af0c3ef5a8edd23.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <251aa2a2-913e-4868-aac9-0a90fc3eeeda@kili.mountain>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d1874eb8848d5f97f87337011188640a1463a666.1676649335.git.christophe.jaillet@wanadoo.fr>
+References: <d1874eb8848d5f97f87337011188640a1463a666.1676649335.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] clk: Reorder fields in 'struct clk_fractional_divider'
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-clk@vger.kernel.org
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Wed, 29 Mar 2023 11:46:36 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 29, 2023 at 09:51:37AM +0300, Dan Carpenter wrote:
-> The h and the f letters are swapped so it unlocks the wrong lock.
-> 
-> Fixes: 577f0d1b1c5f ("octeon_ep: add separate mailbox command and response queues")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Thees vairable nmaes are terirble.  The huamn mnid deos not raed ervey
-> lteter by istlef, but the wrod as a wlohe.
-> 
-> https://www.dictionary.com/e/typoglycemia/
-> 
->  drivers/net/ethernet/marvell/octeon_ep/octep_ctrl_mbox.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Quoting Christophe JAILLET (2023-02-17 07:55:55)
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index cf1adfeaf257..8cec844f5dde 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -1134,13 +1134,13 @@ struct clk_hw *clk_hw_register_fixed_factor_paren=
+t_hw(struct device *dev,
+>  struct clk_fractional_divider {
+>         struct clk_hw   hw;
+>         void __iomem    *reg;
+> +       u8              flags;
+>         u8              mshift;
+>         u8              mwidth;
+>         u32             mmask;
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+This member ...
+
+>         u8              nshift;
+>         u8              nwidth;
+>         u32             nmask;
+
+and this member can be calculated. Doing that would save more bytes when
+combined with this patch. Can you make this into a patch series?
+
+> -       u8              flags;
+>         void            (*approximation)(struct clk_hw *hw,
+>                                 unsigned long rate, unsigned long *parent=
+_rate,
+>                                 unsigned long *m, unsigned long *n);
