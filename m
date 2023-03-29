@@ -2,66 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D9AC6FD18
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 04:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D42D1C74A5B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 05:27:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229795AbjC2Efm (ORCPT
+        id S229564AbjC2F1x (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Mar 2023 00:35:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33594 "EHLO
+        Wed, 29 Mar 2023 01:27:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjC2Efk (ORCPT
+        with ESMTP id S229470AbjC2F1v (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Mar 2023 00:35:40 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D33982705;
-        Tue, 28 Mar 2023 21:35:38 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id e18so14287873wra.9;
-        Tue, 28 Mar 2023 21:35:38 -0700 (PDT)
+        Wed, 29 Mar 2023 01:27:51 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 106832D5E
+        for <kernel-janitors@vger.kernel.org>; Tue, 28 Mar 2023 22:27:50 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id v1so14384181wrv.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 28 Mar 2023 22:27:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680064537;
+        d=gmail.com; s=20210112; t=1680067668;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aO3iffgYttit+KiwJOjw8k7a3mJdpVLTgTWfTOHkxBc=;
-        b=OSQIyj5UMb+VqBOWmCUC4uqftFYo1FvjIVo/t8efei/yAJbjsWtvx75HuGP8Y6c2N6
-         lT6RSQL0gYpgFWNF+Jt3DSACrWm+H2A0YuS+xyY7rltgE3xWLUo7kjXbHyrFnugZ+fgg
-         yYy2KZ+ydlEX9y2JkgYqcQ55BbtqkxNWvAhYkYwHw2heFNXRRKn9wCYpGxujdi6ACr6r
-         sNkvQrcQMJhnyKupUHGu5qlnKdnsK5i/ZaOgWBFwi+ZvsPSwb32kwmXBRTkY5GZbL5LU
-         OmNvYzy/cHC/gYjev/hpBZZfOgmLp/NB9Mj2udP6NA0y/NL2hpGjFl9RDjvYp7nzrMWr
-         xZjg==
+        bh=WeQ/sOncvnANQNphvPs5lHLCwBueTwnNxBud57wwVnQ=;
+        b=g6dYsmufGz+mac52ggb7T1tx2HzETOO5bHT4DD5M8nZ6qyLNOEEGrF3EPJoRXv38Ep
+         5Fo1AahFWFeNLsdAo1mR4UZuSLEey1IxF7DeZp2a9cMouqiUdOAmbrTCchFV4oOwBwLe
+         4t8BSRmtu8e8xshqBl8RFb5KMFGpQR3nILgHo+U6rjTHowL/PNSq92x7Yzh/otaV4i0Q
+         VtJCdQhFwg78W+bJEbUXWGwOB4N2T9b1JqZU+EscUcPbz/ferrOYGhGLCuwvYYnPqmt1
+         /qDmBXiqjqU7smaEZpunjyqlJYxCjtyLvKcSPhHt+XBvirBIYfpXDbr9DYm+L+zjHiow
+         C9aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680064537;
+        d=1e100.net; s=20210112; t=1680067668;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aO3iffgYttit+KiwJOjw8k7a3mJdpVLTgTWfTOHkxBc=;
-        b=cWMpKbbJN49/UesEcqgotTebRUGmAPwcusFQQnUHNYoYhXPzGVWcnCGdGPPFUDjcT4
-         7uLfI5+jrWaitlxPYlEjjZ545Wa1tM3fHv4n3MFaw9PfHXJvIurbAphNl4jPVoEAdA8I
-         p8iMkK4wFN6xu4x5rlOlVvs4rCsC4nQj2VLInDbr4SGJw1CZwPgpf16RC+hx3reEbzHc
-         guTFlJCVT11/lcpCvq7uzlUHHXAn1Q1tmlCV9FPeQUy/ah04nNgAyz97feXMlC7d5NaK
-         SOqsih+c4uhgA/FgG3+4ZwmyvlMnHc/ssh+JnO/hd9JT5XQK/vpzCT6bhRSdwyWHdma6
-         Jd7g==
-X-Gm-Message-State: AAQBX9cEBmOGHwVhePl8UMW9y1PBTNcEvkizBiftJZTagD+92yu0M72G
-        y5XKk/il7azUK7XxJjV+UsQ=
-X-Google-Smtp-Source: AKy350YlW5rNRwSVW5XehFVdz8qPl2Zx0q16OVLZlfYmLNqT30jqo+K3VAkc6JJ3Ks773XQXjx6g4A==
-X-Received: by 2002:a5d:424a:0:b0:2d2:39d3:ce7c with SMTP id s10-20020a5d424a000000b002d239d3ce7cmr13870821wrr.70.1680064537161;
-        Tue, 28 Mar 2023 21:35:37 -0700 (PDT)
+        bh=WeQ/sOncvnANQNphvPs5lHLCwBueTwnNxBud57wwVnQ=;
+        b=zD05O7QUKuJihxfKcSA3LIAzJta9ssPeUqRaUkTlhLc19CooCcGssSd67c/Z6qHvy8
+         GPi8NLwKm2SUpMlNANSB+NilmVcNCuNzipd607bcROdlWUaEloluJL/d5WTSY4jywsEp
+         c8uIwy0S1ENQMNwrZk8CbQ/HN3MoZTK/R8+f0tFiPKK3OrqbMkf8ELnskZblosrK2QeD
+         WKYyNlXytmom8U8eBQkDPm4eAvGDD1fMKiaFkbm8VBNHf6Pl9rb/FlHRIz1mP5wk9Pm2
+         Lj8WRZ0Vg8FvnvDiftmxJl6YJcTUrnYKFOoRTWrj3mZEaHaiLxgNM3NRaa76329A8OT0
+         mlOw==
+X-Gm-Message-State: AAQBX9fck4UZ1AacNRDeWxQJeMEceNUGYVKNgPrjJZudJ0K6OJA+F/iS
+        lvzOZeeiaC/cqU3LG2/eAiI=
+X-Google-Smtp-Source: AKy350busIuXZ5du0beLTAckg2jZkMI5wGvgABsSD8Un2dej76ZAcUhY4TeLe/BmyRnFGNol7MfLCA==
+X-Received: by 2002:a5d:526a:0:b0:2d0:58f9:a6a with SMTP id l10-20020a5d526a000000b002d058f90a6amr14848429wrc.57.1680067668388;
+        Tue, 28 Mar 2023 22:27:48 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z6-20020a056000110600b002c557f82e27sm28961465wrw.99.2023.03.28.21.35.35
+        by smtp.gmail.com with ESMTPSA id o6-20020adfeac6000000b002c71a32394dsm29256299wrn.64.2023.03.28.22.27.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 21:35:36 -0700 (PDT)
-Date:   Wed, 29 Mar 2023 07:35:32 +0300
+        Tue, 28 Mar 2023 22:27:47 -0700 (PDT)
+Date:   Wed, 29 Mar 2023 08:27:39 +0300
 From:   Dan Carpenter <error27@gmail.com>
-To:     Eugen Hristev <eugen.hristev@collabora.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: adc: at91-sama5d2_adc: fix an error code in
- at91_adc_allocate_trigger()
-Message-ID: <5d728f9d-31d1-410d-a0b3-df6a63a2c8ba@kili.mountain>
+To:     Hawking Zhang <Hawking.Zhang@amd.com>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Tao Zhou <tao.zhou1@amd.com>,
+        "Stanley.Yang" <Stanley.Yang@amd.com>,
+        YiPeng Chai <YiPeng.Chai@amd.com>,
+        Victor Zhao <Victor.Zhao@amd.com>,
+        Candice Li <candice.li@amd.com>, amd-gfx@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amdgpu: fix AMDGPU_RAS_BLOCK__DF check
+Message-ID: <580414df-4adf-49cf-9930-743f7c539d46@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -70,28 +73,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The at91_adc_allocate_trigger() function is supposed to return error
-pointers.  Returning a NULL will cause an Oops.
+There is a mixup where AMDGPU_RAS_BLOCK__DF is used as a mask instead of
+a shifter.  It means that this condition will be true for
+AMDGPU_RAS_BLOCK__MMHUB instead of for AMDGPU_RAS_BLOCK__DF.
 
-Fixes: 5e1a1da0f8c9 ("iio: adc: at91-sama5d2_adc: add hw trigger and buffer support")
+Fixes: b6f512168478 ("drm/amdgpu: Add fatal error handling in nbio v4_3")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/iio/adc/at91-sama5d2_adc.c | 2 +-
+From static analysis.  Not tested at all.
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-index b5d0c9ee284c..2a9fdc5b7edf 100644
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -1409,7 +1409,7 @@ static struct iio_trigger *at91_adc_allocate_trigger(struct iio_dev *indio,
- 	trig = devm_iio_trigger_alloc(&indio->dev, "%s-dev%d-%s", indio->name,
- 				iio_device_id(indio), trigger_name);
- 	if (!trig)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	trig->dev.parent = indio->dev.parent;
- 	iio_trigger_set_drvdata(trig, indio);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
+index fac45f98145d..4069bce9479f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
+@@ -2564,7 +2564,7 @@ int amdgpu_ras_init(struct amdgpu_device *adev)
+ 			adev->nbio.ras = &nbio_v7_4_ras;
+ 		break;
+ 	case IP_VERSION(4, 3, 0):
+-		if (adev->ras_hw_enabled & AMDGPU_RAS_BLOCK__DF)
++		if (adev->ras_hw_enabled & (1 << AMDGPU_RAS_BLOCK__DF))
+ 			/* unlike other generation of nbio ras,
+ 			 * nbio v4_3 only support fatal error interrupt
+ 			 * to inform software that DF is freezed due to
 -- 
 2.39.1
 
