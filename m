@@ -2,82 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D635C76196
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Mar 2023 23:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D9AC6FD18
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 04:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbjC1XXM (ORCPT
+        id S229795AbjC2Efm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Mar 2023 19:23:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35764 "EHLO
+        Wed, 29 Mar 2023 00:35:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbjC1XWG (ORCPT
+        with ESMTP id S229457AbjC2Efk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Mar 2023 19:22:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42FD12705;
-        Tue, 28 Mar 2023 16:22:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B7CFA619FE;
-        Tue, 28 Mar 2023 23:22:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20ABDC4339C;
-        Tue, 28 Mar 2023 23:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680045722;
-        bh=co5fEGaVszuv812QVnnlYJe69TgJtRpilCHulLW9qFU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jPq81Ti0mF/9qwl4/eRRFfUBShZlyQA3FnMwB+u1M2XJOQ+xrey4dhCmnRNcnPSPg
-         HAUKzsSuCaK3bkjXtpKUbfwAcFSrJRb9Qt5Q2VSI7OpPsdQymqLlXC1cPaVyOlWXN6
-         DUQzO3Usg4EgT8EElxDYX0KbnWBZeOR5vhAcwzwM2qVto+zL19m7fniC83E1vq1XFP
-         TBKJWr0vb57mOoCydY9QEWC0B2J2plJz/11gD+YKmfw6yFTWx5mskBaGHMvqNqekhB
-         lNjoqR8Ssb7h4ohgwmZkk3g7iX0DaS6WwfYZ74fuM/SOTWvxmJzqRFIuQdBbzi4Xqe
-         HknP9mKYD+rDg==
-Received: by mail-lf1-f41.google.com with SMTP id j11so17856955lfg.13;
-        Tue, 28 Mar 2023 16:22:02 -0700 (PDT)
-X-Gm-Message-State: AAQBX9eKzJ2bj5qca/KbbMHhg4BhbOJ8Tk7TQ9h1qiXp+qIQ0g0sC0Om
-        +bVTBRkrAMLLxU3ltz3itnB0UPPwW1VTFv8sVgk=
-X-Google-Smtp-Source: AKy350bnP+To9f0vTNF3FRw9YcJvrhq6/6Y+OpkYwHV7o8Y8kbD9xs0OWp/mam3rNGg33T/z4SyQSdTTEjJi4E7sW2M=
-X-Received: by 2002:ac2:44a6:0:b0:4eb:d25:8686 with SMTP id
- c6-20020ac244a6000000b004eb0d258686mr3182315lfm.3.1680045720118; Tue, 28 Mar
- 2023 16:22:00 -0700 (PDT)
+        Wed, 29 Mar 2023 00:35:40 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D33982705;
+        Tue, 28 Mar 2023 21:35:38 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id e18so14287873wra.9;
+        Tue, 28 Mar 2023 21:35:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680064537;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aO3iffgYttit+KiwJOjw8k7a3mJdpVLTgTWfTOHkxBc=;
+        b=OSQIyj5UMb+VqBOWmCUC4uqftFYo1FvjIVo/t8efei/yAJbjsWtvx75HuGP8Y6c2N6
+         lT6RSQL0gYpgFWNF+Jt3DSACrWm+H2A0YuS+xyY7rltgE3xWLUo7kjXbHyrFnugZ+fgg
+         yYy2KZ+ydlEX9y2JkgYqcQ55BbtqkxNWvAhYkYwHw2heFNXRRKn9wCYpGxujdi6ACr6r
+         sNkvQrcQMJhnyKupUHGu5qlnKdnsK5i/ZaOgWBFwi+ZvsPSwb32kwmXBRTkY5GZbL5LU
+         OmNvYzy/cHC/gYjev/hpBZZfOgmLp/NB9Mj2udP6NA0y/NL2hpGjFl9RDjvYp7nzrMWr
+         xZjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680064537;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aO3iffgYttit+KiwJOjw8k7a3mJdpVLTgTWfTOHkxBc=;
+        b=cWMpKbbJN49/UesEcqgotTebRUGmAPwcusFQQnUHNYoYhXPzGVWcnCGdGPPFUDjcT4
+         7uLfI5+jrWaitlxPYlEjjZ545Wa1tM3fHv4n3MFaw9PfHXJvIurbAphNl4jPVoEAdA8I
+         p8iMkK4wFN6xu4x5rlOlVvs4rCsC4nQj2VLInDbr4SGJw1CZwPgpf16RC+hx3reEbzHc
+         guTFlJCVT11/lcpCvq7uzlUHHXAn1Q1tmlCV9FPeQUy/ah04nNgAyz97feXMlC7d5NaK
+         SOqsih+c4uhgA/FgG3+4ZwmyvlMnHc/ssh+JnO/hd9JT5XQK/vpzCT6bhRSdwyWHdma6
+         Jd7g==
+X-Gm-Message-State: AAQBX9cEBmOGHwVhePl8UMW9y1PBTNcEvkizBiftJZTagD+92yu0M72G
+        y5XKk/il7azUK7XxJjV+UsQ=
+X-Google-Smtp-Source: AKy350YlW5rNRwSVW5XehFVdz8qPl2Zx0q16OVLZlfYmLNqT30jqo+K3VAkc6JJ3Ks773XQXjx6g4A==
+X-Received: by 2002:a5d:424a:0:b0:2d2:39d3:ce7c with SMTP id s10-20020a5d424a000000b002d239d3ce7cmr13870821wrr.70.1680064537161;
+        Tue, 28 Mar 2023 21:35:37 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id z6-20020a056000110600b002c557f82e27sm28961465wrw.99.2023.03.28.21.35.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Mar 2023 21:35:36 -0700 (PDT)
+Date:   Wed, 29 Mar 2023 07:35:32 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Eugen Hristev <eugen.hristev@collabora.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] iio: adc: at91-sama5d2_adc: fix an error code in
+ at91_adc_allocate_trigger()
+Message-ID: <5d728f9d-31d1-410d-a0b3-df6a63a2c8ba@kili.mountain>
 MIME-Version: 1.0
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de> <6ee3b703-2161-eacd-c12f-7fa3bedf82dc@web.de>
- <49adf0c8-825a-018f-6d95-ce613944fc9b@web.de>
-In-Reply-To: <49adf0c8-825a-018f-6d95-ce613944fc9b@web.de>
-From:   Song Liu <song@kernel.org>
-Date:   Tue, 28 Mar 2023 16:21:48 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7JZDps_fTHyCabjfG4YjzDVEW_41u6d+9mdc2CAJv_Kw@mail.gmail.com>
-Message-ID: <CAPhsuW7JZDps_fTHyCabjfG4YjzDVEW_41u6d+9mdc2CAJv_Kw@mail.gmail.com>
-Subject: Re: [PATCH resent 0/2] md/raid: Adjustments for two function implementations
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Maciej Trela <Maciej.Trela@intel.com>,
-        Neil Brown <neilb@suse.de>, Shaohua Li <shli@fb.com>,
-        cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Mar 25, 2023 at 2:20=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> Date: Mon, 20 Mar 2023 17:28:05 +0100
->
-> A few update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (2):
->   raid1: Fix exception handling in setup_conf()
->   raid10: Fix exception handling in setup_conf()
+The at91_adc_allocate_trigger() function is supposed to return error
+pointers.  Returning a NULL will cause an Oops.
 
-The two functions look good to me as-is. I don't think anything is
-broken except that the code analysis tool complains. I don't think
-it is necessary to make these changes.
+Fixes: 5e1a1da0f8c9 ("iio: adc: at91-sama5d2_adc: add hw trigger and buffer support")
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/iio/adc/at91-sama5d2_adc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Song
+diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+index b5d0c9ee284c..2a9fdc5b7edf 100644
+--- a/drivers/iio/adc/at91-sama5d2_adc.c
++++ b/drivers/iio/adc/at91-sama5d2_adc.c
+@@ -1409,7 +1409,7 @@ static struct iio_trigger *at91_adc_allocate_trigger(struct iio_dev *indio,
+ 	trig = devm_iio_trigger_alloc(&indio->dev, "%s-dev%d-%s", indio->name,
+ 				iio_device_id(indio), trigger_name);
+ 	if (!trig)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	trig->dev.parent = indio->dev.parent;
+ 	iio_trigger_set_drvdata(trig, indio);
+-- 
+2.39.1
+
