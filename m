@@ -2,172 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 337E6C761AF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 05:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7954EC6FD18
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 06:51:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbjC2Fbb (ORCPT
+        id S229590AbjC2Gvu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Mar 2023 01:31:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56728 "EHLO
+        Wed, 29 Mar 2023 02:51:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjC2Fba (ORCPT
+        with ESMTP id S229481AbjC2Gvt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Mar 2023 01:31:30 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2086.outbound.protection.outlook.com [40.107.243.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1EB730FF
-        for <kernel-janitors@vger.kernel.org>; Tue, 28 Mar 2023 22:31:28 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X0cSTXFMgLwGr5xEr3/p3PgDiUwGJe6nT+jmDxYWypj4pLS6qWgbk9M7V9GsfzdKABLObLBe4FGn+Sy1Kt15nszMZIZgPkI80GTCLJ4hos+h8GTsqfIMqV7jH+Mfa4kxaX/n/tzB4yIamomKTIUPhVOi9mbhFBcgxUdiPNkLoZ7Hb4fLuxW67ksXbe7mwxiBPYClRlKp4JiU0QSlLCB0ObnYkkwcsPNeXGIe8dpnBm3bAKoqnDfQeLv/upyk2slOHrwvTZqmHxyVBeEwV9cq8BatBmtpyWlg3qU6IlEPZzF2qOx1vMwgFdY2MJAVi6a4DNZAZ5qurUfyugAqBEMWuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k2M2kr0iW/DuXF4l75+3fNW8vg+CPQct1ghljzE16Nc=;
- b=S9YbSgrVjsHwc5fIpnbqbVpH0SmU38z67e+EHCmjjAiqi6hzMDK3zSt0qVNkQtTMrdIX+oCG7veznSRzlMv6+y1F0zJmObeliTsOktZTdBI8V66XVcpw21PhhUYP2SsZKioCO8iGYLyZqc1WbZJQSmd6tEu5DDj0YnyokxejBIkk4PdzTfihMasniaxqamyzTs1VnaF9ekUHD1JV4hrMmMYBORhgkn8r0DsFUW1TyFngomkXvReJ+diC67Yz3wt0GMyiRiK5ByqYTXJ4ldOEY2JChOHGeKaBcGvgQzRqj/OyYCpHWl4fT2SPRPVrnjvQ5IXXh26Q7q53HE1KOxhoyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k2M2kr0iW/DuXF4l75+3fNW8vg+CPQct1ghljzE16Nc=;
- b=yqd1O1IT1llYN8k85nSXRvMMHsduqwgcsMPAiChlRCvpZ70QF8awh+HjYI9x3oZapmyPQI31QFr7xXAmR3MJL3yYSsMBVtN0KSH9BnDj8Qtkl6rgTTDMB0cR8mxHYiRyGI9rB0vlB4X8SNJFVgNUtVK1zVsWoNCVRqJFEAo70A0=
-Received: from BN9PR12MB5257.namprd12.prod.outlook.com (2603:10b6:408:11e::16)
- by DS0PR12MB8069.namprd12.prod.outlook.com (2603:10b6:8:f0::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6178.41; Wed, 29 Mar 2023 05:31:26 +0000
-Received: from BN9PR12MB5257.namprd12.prod.outlook.com
- ([fe80::21d5:1136:9380:46b7]) by BN9PR12MB5257.namprd12.prod.outlook.com
- ([fe80::21d5:1136:9380:46b7%6]) with mapi id 15.20.6222.035; Wed, 29 Mar 2023
- 05:31:25 +0000
-From:   "Zhang, Hawking" <Hawking.Zhang@amd.com>
-To:     Dan Carpenter <error27@gmail.com>
-CC:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "Zhou1, Tao" <Tao.Zhou1@amd.com>,
-        "Yang, Stanley" <Stanley.Yang@amd.com>,
-        "Chai, Thomas" <YiPeng.Chai@amd.com>,
-        "Zhao, Victor" <Victor.Zhao@amd.com>,
-        "Li, Candice" <Candice.Li@amd.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] drm/amdgpu: fix AMDGPU_RAS_BLOCK__DF check
-Thread-Topic: [PATCH] drm/amdgpu: fix AMDGPU_RAS_BLOCK__DF check
-Thread-Index: AQHZYf81oIRQslS8mkK3pzc1XoYbD68RO0Yg
-Date:   Wed, 29 Mar 2023 05:31:25 +0000
-Message-ID: <BN9PR12MB52573A6551DD2E6464AA9AD5FC899@BN9PR12MB5257.namprd12.prod.outlook.com>
-References: <580414df-4adf-49cf-9930-743f7c539d46@kili.mountain>
-In-Reply-To: <580414df-4adf-49cf-9930-743f7c539d46@kili.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Enabled=true;
- MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_SetDate=2023-03-29T05:31:21Z;
- MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Method=Standard;
- MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Name=General;
- MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
- MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_ActionId=8d4264d0-0be9-43dd-9dec-e2b7de4dbca4;
- MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_ContentBits=1
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR12MB5257:EE_|DS0PR12MB8069:EE_
-x-ms-office365-filtering-correlation-id: aad08b3c-801c-41a2-5eb0-08db3016d6d3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 1dsOgUo5rneT6fIZobytM9YKMRrsgBdJ4LGtw7vG2TBNoexZY//imGvtIUk5hgBFis3BtKL2SbUNlKiwdL7PNI7AyZ92bqwdxTF075dSt2qyzVWebJ6XStvcSIwq9pP5VIR5frmxyfPxeM6bclbRsYl+eF/fv8RXQjPZqwVLsq1y5JbHyWXOzj2hXiuPslfVj8IeP257RRcQyV5J2zxfdVA9U1l6PuBhzmrNl+SpVj1iP40+jVO8H8iCakXN6cRVZeRMBVAaPN593Ry5dIP/ftVBAnwBLrXL+Vbem3NLsA4Hg3Lrg9aNWB8b7NRqhNxoFydQOA3deendcMi2ki/iRg2f66C+hIP+vL51wFe65JJtPttjwySRd9ipO7NgDpV/nCy6Yy311SiK+ujpW6h5HPLfWrRruonmgGwSNifl75j5cTHlODfuQBTief8qPF6OuilSD0gP+pMc545Ol0snbfrHphshYmn5pQaMj7mx9TW8h3Yvh1EUO+JTezkGB2KH5vhnNiZxz+mGu4oF9teK/zIm+2GDrYgKXblDPISmNC38siL6JhD8NcytCv1W49Re86VxBI2Fv2eB+GfjwlrpsMcICYbSnScnIq7a2hf2ylampoSb+1rvCvphBTsc7QTwudDs4kdVzWzmplwaRuZTcg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5257.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(376002)(396003)(136003)(366004)(451199021)(26005)(2906002)(6916009)(71200400001)(83380400001)(86362001)(4326008)(38100700002)(186003)(8676002)(38070700005)(66556008)(64756008)(5660300002)(55016003)(41300700001)(66446008)(6506007)(66476007)(8936002)(66946007)(52536014)(122000001)(76116006)(53546011)(316002)(33656002)(7696005)(54906003)(478600001)(9686003)(101420200003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?mXQhgxb8zEFsTMa5G8UAJFvB5SLyrw1OnLuIUCDp2+iLrsPwZV7g7kdnkiEs?=
- =?us-ascii?Q?oeGIIt0qS3ZOwZlPPS5z14SWDLA9PX5v7uUdccwTnm0Rtc9OF+7Tl9gw076N?=
- =?us-ascii?Q?qop91F0TyPEJX4twcUwIGvLvHXEbHOi030RdPI3q3FrrmnamXrje3al0Cj6g?=
- =?us-ascii?Q?Jz/8ptRzofp4ThwAel7N06QooSU6lDYjhK+rl27pAdOEJsNn9s5Q/xLxZq81?=
- =?us-ascii?Q?h5JEYPSFpCH5Myv3vWVULk7Bqr5IdUWcVVjshQofzSENPcfKWbbinxICuXLT?=
- =?us-ascii?Q?e6Lc/xS4lg/heSNjxjJZoPNDPXDNSQpiYrYqDmj1HPnv2Yj/las8qcNkp+ul?=
- =?us-ascii?Q?2rn6JdGrkfI4BNAGc5I8a2rX/PMbTKSjAzU0a184EfnBqTGC+iD8RFEFbMPh?=
- =?us-ascii?Q?N+T2AEwgmN/1bJ+50k0tusOwThFqv6qRnz31vEiN4M9Ostkcxgbc/4oEJHfJ?=
- =?us-ascii?Q?NFkzftIuOZG7/OKEn63TfSm13G2SWMaMmsPf3grhmzlwX5ilV6o+sSQrgv8T?=
- =?us-ascii?Q?xWPRlfxppJ9uK/sfGhl3CWjcogd8otXup783JTZvyYd8EpyKk7fbWh8k2/7o?=
- =?us-ascii?Q?nTXyH699Y1EQisQ5MEpfgHeZDkL1/T0pUxPbtjNZXF+OkUU3rxXbIX5xUlpd?=
- =?us-ascii?Q?b3hFOtMRA/dug4NYc0vBsTDURGvOu6jzaaR/oh/insIrXbozIWA44Mg8s4cp?=
- =?us-ascii?Q?Nqo6W0ZfP7KeHCjyLQaFwvEKh9Kvdt+VwSHMJ4YWfCJhmI8c5V4kfUQ9QwZt?=
- =?us-ascii?Q?hziP5G0dgzqkXPSjKwhlOCbpi8/KCK4mzWQ7lZ+DJGLgRkQ4sIR5QLPy8lxA?=
- =?us-ascii?Q?eCHqHhHVydJ8XcGFJZ5SKjTIYlhmyvws8L9G+EMscdHWKJRXob/jH1DXqJY/?=
- =?us-ascii?Q?L+dvhVUtXPK9sCqou2qNTv+L48/Ld6b7g/aF3eJJeU0DPdCnT9zD5FdKEgQT?=
- =?us-ascii?Q?O2N0uSGn44uOhixv7SFaQfj2VLaxFjC406UJW6+iOSywiAHiQO/+lEx6b8Nw?=
- =?us-ascii?Q?2nvZDFjyG9EYFByEjahcd8Z4wpLeYQEv+ocT4VB2Hoj2ysol+JbBxBawhbBs?=
- =?us-ascii?Q?NQ9HbclvuST/+sQSefOCqZ80su354RTR10BbhQ88nnL0o+9QwxQ29TIfbQqu?=
- =?us-ascii?Q?MSax05M/EwPUEy1Pc+GEtjk0OaRxz2TET1yY/YwsbyvM7N3KoF+SHkSQWA4h?=
- =?us-ascii?Q?JB+E17GSfzhsPmutxRON63BJphhDzeMpDKCn0DSXYyX7ZbHxWs6E3x3Z2tlG?=
- =?us-ascii?Q?/qK4VlBi8RBXFKPyfIONa1BcfT9HPTjnG9Q12UKKpB23DUJPhhj2Y3z/D6TW?=
- =?us-ascii?Q?oeXbNAOBgOo8rzll5btTOs9p2sRcELdwq1fMenxHIzmkxRpeH0QBEV9tnDPI?=
- =?us-ascii?Q?NqDBNN0w6i66C9BwxHDlo/Z9+wDgfWRY0t/2vPhWZQPNA5YSAjq0Ki2zb/SI?=
- =?us-ascii?Q?geoYhP9N4Ny/puG73Ne6RE4Cu/gK4SgNkE5+xUu10zMkqMvDOBD9UjsH2bvl?=
- =?us-ascii?Q?VtsredAmkWlBY3mfVP3mwplsg6+UgAnTCOmAcMydVqKZlp2EA3plkMnrhXQz?=
- =?us-ascii?Q?Q+cwBTA0Qg0gbXrm54M/J1mk11wL2QexfztvS5m1?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 29 Mar 2023 02:51:49 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15499ED;
+        Tue, 28 Mar 2023 23:51:48 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id e18so14520061wra.9;
+        Tue, 28 Mar 2023 23:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680072706;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wNO5XYtDO9To2qYmyMq2g+OLzkP9KIoauMNo8WVsbjM=;
+        b=qc/ldFUmg+pKlj3x3qaztDtEw2ajppo85yBgRxykjcdJiTRCIIt1JFMcXWPtMMlhQ+
+         QrJEIAaBz1O5mgbfWJJi3OIfchnghb77dvYkwM+ZX87Edo1nAOnu5zqGuLetnUgYSW+D
+         BriDnb/8jyL4sROmYJ9ldSqBE3tx+r9/FSoTrj3UXYh2lsD3tjRIHy96lZSbl503gMbB
+         y0G3yPgTuXHUad9+zqyAunI5ut72VbsuJ6GLhDl0iDT+b5vgnbzYRf1W0ldkhwmeV7Ly
+         bTujQ7BtEzFrlfQRtb3BWOwHEPfA9FAMzFQ5GsMZbXjc/wbkWqOzER0oREXS0ZgGfIkf
+         J/Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680072706;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wNO5XYtDO9To2qYmyMq2g+OLzkP9KIoauMNo8WVsbjM=;
+        b=F23tm3HLetdZdF34JJJo5LeUbEsaxVgEp+x4DlGL08KQhej1fVe3fAtTxpIdxcrQvt
+         VF+wrIiAnRTh681O8GCkgCEWTC8lRWFv+WBx7DIj93Omtl2CwYmOIcDoC+o8urD51XcE
+         qU/qS7lsIg8hU5SLqXJFILrnALHy/sp/ZpJWI/uVGCzr4TTrtWixL5Qn5fD3nbD1ay/Y
+         VtDFdzLtm3B8UmA1isc/Cw2ofP5R+o+qBIm+9d2WgGXw9wh8lOzSKOh9kjM4jOQnH0ZI
+         w1P52AYMMlQQqFFCSfcCAvjNwlUHJW6DbjZzePtN/UE7RlB9TulHoflTsjJpr89mea3F
+         KyLw==
+X-Gm-Message-State: AAQBX9cqMy8IG6zAN4d0+VOS6I7b7Cz2GpyLrJMbDuLfi9u9v3nn4lSw
+        69uORtHaFkUS0+NQ7xne73M=
+X-Google-Smtp-Source: AKy350ZD6q8OH4oGBAzNhlW6NoCd36G3p0py/C6ppvOo0ZriqrCiUvpj9N2FlcY5inL3Ff2L1IzwJQ==
+X-Received: by 2002:adf:e288:0:b0:2ce:a93d:882d with SMTP id v8-20020adfe288000000b002cea93d882dmr14868026wri.11.1680072706471;
+        Tue, 28 Mar 2023 23:51:46 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d5-20020adfef85000000b002cfed482e9asm29392968wro.61.2023.03.28.23.51.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Mar 2023 23:51:46 -0700 (PDT)
+Date:   Wed, 29 Mar 2023 09:51:37 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Veerasenareddy Burru <vburru@marvell.com>
+Cc:     Abhijit Ayarekar <aayarekar@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] octeon_ep: unlock the correct lock on error path
+Message-ID: <251aa2a2-913e-4868-aac9-0a90fc3eeeda@kili.mountain>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5257.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aad08b3c-801c-41a2-5eb0-08db3016d6d3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2023 05:31:25.4503
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DeQ5CgqZYbLaODNwkP1CKwF+zzujeOJhYksVsCi3vcetAcj23/fluoM5LB4aaMAu6SvF/PE96XAv8TBaEHe4Bw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8069
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-[AMD Official Use Only - General]
+The h and the f letters are swapped so it unlocks the wrong lock.
 
-Reviewed-by: Hawking Zhang <Hawking.Zhang@amd.com>
-
-Regards,
-Hawking
------Original Message-----
-From: Dan Carpenter <error27@gmail.com>=20
-Sent: Wednesday, March 29, 2023 13:28
-To: Zhang, Hawking <Hawking.Zhang@amd.com>
-Cc: Koenig, Christian <Christian.Koenig@amd.com>; Pan, Xinhui <Xinhui.Pan@a=
-md.com>; David Airlie <airlied@gmail.com>; Daniel Vetter <daniel@ffwll.ch>;=
- Zhang, Hawking <Hawking.Zhang@amd.com>; Zhou1, Tao <Tao.Zhou1@amd.com>; Ya=
-ng, Stanley <Stanley.Yang@amd.com>; Chai, Thomas <YiPeng.Chai@amd.com>; Zha=
-o, Victor <Victor.Zhao@amd.com>; Li, Candice <Candice.Li@amd.com>; amd-gfx@=
-lists.freedesktop.org; kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: fix AMDGPU_RAS_BLOCK__DF check
-
-There is a mixup where AMDGPU_RAS_BLOCK__DF is used as a mask instead of a =
-shifter.  It means that this condition will be true for AMDGPU_RAS_BLOCK__M=
-MHUB instead of for AMDGPU_RAS_BLOCK__DF.
-
-Fixes: b6f512168478 ("drm/amdgpu: Add fatal error handling in nbio v4_3")
+Fixes: 577f0d1b1c5f ("octeon_ep: add separate mailbox command and response queues")
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
-From static analysis.  Not tested at all.
+Thees vairable nmaes are terirble.  The huamn mnid deos not raed ervey
+lteter by istlef, but the wrod as a wlohe.
 
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 2 +-
+https://www.dictionary.com/e/typoglycemia/
+
+ drivers/net/ethernet/marvell/octeon_ep/octep_ctrl_mbox.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/amd/=
-amdgpu/amdgpu_ras.c
-index fac45f98145d..4069bce9479f 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-@@ -2564,7 +2564,7 @@ int amdgpu_ras_init(struct amdgpu_device *adev)
- 			adev->nbio.ras =3D &nbio_v7_4_ras;
- 		break;
- 	case IP_VERSION(4, 3, 0):
--		if (adev->ras_hw_enabled & AMDGPU_RAS_BLOCK__DF)
-+		if (adev->ras_hw_enabled & (1 << AMDGPU_RAS_BLOCK__DF))
- 			/* unlike other generation of nbio ras,
- 			 * nbio v4_3 only support fatal error interrupt
- 			 * to inform software that DF is freezed due to
---
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_ctrl_mbox.c b/drivers/net/ethernet/marvell/octeon_ep/octep_ctrl_mbox.c
+index a4ee6f3ae354..035ead7935c7 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_ctrl_mbox.c
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_ctrl_mbox.c
+@@ -167,7 +167,7 @@ int octep_ctrl_mbox_send(struct octep_ctrl_mbox *mbox, struct octep_ctrl_mbox_ms
+ 	ci = readl(q->hw_cons);
+ 
+ 	if (octep_ctrl_mbox_circq_space(pi, ci, q->sz) < (msg->hdr.s.sz + mbox_hdr_sz)) {
+-		mutex_unlock(&mbox->f2hq_lock);
++		mutex_unlock(&mbox->h2fq_lock);
+ 		return -EAGAIN;
+ 	}
+ 
+-- 
 2.39.1
+
