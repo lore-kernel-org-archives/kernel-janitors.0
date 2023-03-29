@@ -2,68 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFDEC6FD18
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 07:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A14BC74A5B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 07:43:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229661AbjC2Hjd (ORCPT
+        id S229875AbjC2Hnt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Mar 2023 03:39:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54920 "EHLO
+        Wed, 29 Mar 2023 03:43:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbjC2Hj3 (ORCPT
+        with ESMTP id S229456AbjC2Hns (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Mar 2023 03:39:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E7CB2114;
-        Wed, 29 Mar 2023 00:39:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CACB861AEC;
-        Wed, 29 Mar 2023 07:39:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAAD9C433D2;
-        Wed, 29 Mar 2023 07:39:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1680075564;
-        bh=edy+QyqyJlv1bffU7gSQfZhq5Rdu7UqPovVDnvhDTXo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MrZsM/8b5bk8znF3kU1vp+w9wR5+urmf0dpl9D6xqdMLik3tQkHYR4LTdywl3NXNH
-         3+p2zTXtEVAaVAVEr0QfSUT8knB2GIthBgNoExVmi3vU9GWii6vx5Iuu+yL/9LxUwC
-         Nbb31Yv0So0Iw/xkn31w1RGcqOMiO0KtIpArtXHo=
-Date:   Wed, 29 Mar 2023 09:39:21 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] usb: move config USB_USS720 to usb's misc Kconfig
-Message-ID: <ZCPrKaIcsoj3Vvcs@kroah.com>
-References: <20230329071724.11082-1-lukas.bulwahn@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230329071724.11082-1-lukas.bulwahn@gmail.com>
+        Wed, 29 Mar 2023 03:43:48 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F083B1BF0;
+        Wed, 29 Mar 2023 00:43:46 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id r11so59639907edd.5;
+        Wed, 29 Mar 2023 00:43:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680075825;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zen1b21DPAgiDb/JdV+I5PElPjjV3TtfJQRRpDix7ow=;
+        b=VWcBQHDq5zsfv16n5zzKQK2Bb9jbHg9fWpBYN+m5ZTpdgnEr1dSDnghFpxYBlR86YR
+         Z0nIqNe2KbzrRsnzL4RTCOx8Nu6dDkCTrYXUp7Ax3dXVtjSOK97d9M62bUl1a1d/Ritd
+         FuBiHB0fU3X3SnmMEIdq0rHldhdm6Xa/fP7DpyhK9erg8Ll2BFijTKRYSIEJgbOqbi+W
+         msnPuQOWDTbsHcE/FMUbKqIXo4KTq2UgDAMw7Z8Pnxat727yTfV7JzzZJ+YaKMmOzyXG
+         naFQvNaqxKnh3hdLCT3zF3ibFWYUQUd58MnUOYqeveuVTq2031gCtunCZTPGlZjYjDdp
+         Llnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680075825;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zen1b21DPAgiDb/JdV+I5PElPjjV3TtfJQRRpDix7ow=;
+        b=hMKWhtnXVwe4H549lo5Ctv8icMI5CZ+FuNlhc1tBK1V/8BvWmXOlc19GG+T/SRSvTF
+         apKdH1qNtwqv9qALi/AJH76ExuAMjuA0n46dZAz8uBefQmBVTKuF+TnVd/UH+uFV80er
+         l7iJSOy1carN8HpcDKoicqwW4+u7RRwOB3kSnWr7RcGqh/AniU+Af3ajG2uiFJPUTXGY
+         lriKQCwGUBlfyc5uP6E9j23XQ9qGvExoLn+5M+77VKrqHKjn/+RAqV2LJmWbc8oZjY7G
+         OtV9+kKhoDnMi8dUX7+TNuoSB/aKW5yKtyTFo6rDwa3yUqIoitkP+GUJEoecU0dXTqtB
+         qMJA==
+X-Gm-Message-State: AAQBX9fX501/ET7ssNk2244IPGHoi0FCeKyIDqgIuTqjZJiv+nnZ+lxi
+        O6Av31x7/4uJswidqC0DajDyHq6OYgqOtA==
+X-Google-Smtp-Source: AKy350aAeHiFEjneLz2C3Z9n2ta/6jYIS3jFLR+7PWfmWLf42OYc8VTUgL1n1frOQb8xXiyywsfVcA==
+X-Received: by 2002:aa7:dcca:0:b0:4fe:97a2:4b86 with SMTP id w10-20020aa7dcca000000b004fe97a24b86mr18390243edu.8.1680075825090;
+        Wed, 29 Mar 2023 00:43:45 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:d1ab:705f:18f7:3e0a])
+        by smtp.gmail.com with ESMTPSA id f11-20020a50a6cb000000b00501c96564b5sm12816618edc.93.2023.03.29.00.43.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Mar 2023 00:43:44 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Martyn Welch <martyn@welchs.me.uk>,
+        Manohar Vanga <manohar.vanga@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] staging: vme: clean up duplicate definitions of dependencies
+Date:   Wed, 29 Mar 2023 09:43:42 +0200
+Message-Id: <20230329074342.27595-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 29, 2023 at 09:17:24AM +0200, Lukas Bulwahn wrote:
-> The USS720 parport driver source code is in drivers/usb/misc/, the
-> corresponding config is defined in drivers/usb/Kconfig. Some digging in the
-> kernel's history revealed no good reason why it needs to be defined in
-> USB's top-level Kconfig file, and why the config for the USS720 parport
-> driver should be the first in the list of USB port drivers, while all other
-> configs for drivers in drivers/usb/misc are in the USB Miscellaneous driver
-> configuration file.
+The file staging/vme_user/Kconfig is only included by the top-level
+staging/Kconfig if STAGING is enabled. So, there is no need to mention the
+dependency on STAGING within the vme_user Kconfig file. Further, the config
+VME_USER is already within the "if VME_BUS" block, so there is no need to
+mention the dependency on VME_BUS.
 
-It is that way because this was one of the first USB drivers we had, and
-we only had one Kconfig file at the time and no misc/ subdir in the usb
-directory.
+Clean up these duplications of dependencies. No semantic change.
 
-So it's just inertia, that's all.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/staging/vme_user/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Your change looks great to me, want to resend it without the RFC so that
-I can apply it?
+diff --git a/drivers/staging/vme_user/Kconfig b/drivers/staging/vme_user/Kconfig
+index c8eabf8f40f1..d65cc5510649 100644
+--- a/drivers/staging/vme_user/Kconfig
++++ b/drivers/staging/vme_user/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ menuconfig VME_BUS
+ 	bool "VME bridge support"
+-	depends on STAGING && PCI
++	depends on PCI
+ 	help
+ 	  If you say Y here you get support for the VME bridge Framework.
+ 
+@@ -28,7 +28,6 @@ comment "VME Device Drivers"
+ 
+ config VME_USER
+ 	tristate "VME user space access driver"
+-	depends on STAGING && VME_BUS
+ 	help
+ 	  If you say Y here you want to be able to access a limited number of
+ 	  VME windows in a manner at least semi-compatible with the interface
+-- 
+2.17.1
 
-thanks,
-
-greg k-h
