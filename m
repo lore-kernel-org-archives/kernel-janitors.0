@@ -2,155 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B305C6FD18
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 07:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFDEC6FD18
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Mar 2023 07:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229793AbjC2H2B (ORCPT
+        id S229661AbjC2Hjd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Mar 2023 03:28:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59420 "EHLO
+        Wed, 29 Mar 2023 03:39:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229765AbjC2H1J (ORCPT
+        with ESMTP id S229612AbjC2Hj3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Mar 2023 03:27:09 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD9149CC
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Mar 2023 00:25:48 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Wed, 29 Mar 2023 03:39:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E7CB2114;
+        Wed, 29 Mar 2023 00:39:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 721AF1FE00;
-        Wed, 29 Mar 2023 07:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1680074746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ShwHsB/KkELwzyEZDwa4XqP7hPtXAant2Ydr/uTw7CA=;
-        b=YWSGZo4L8d9hfQqbPv84f780i+phz4kSgUnkTiwJthtFaSJOCi0tKl9ro/NHEz0+15LQgQ
-        6OsC6kGgm9N/ZmWqbEBY+Rj71nXkN8Syul4DM9TrZ7W6GKTjVzC2ERv9DprOY/JCBbgLju
-        YczEXF9UUdQu2lsPROcBUQykrNgMIsg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1680074746;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ShwHsB/KkELwzyEZDwa4XqP7hPtXAant2Ydr/uTw7CA=;
-        b=tumkoantk15bKBa+IjxzbnshcQYtmizWvZ/3amdRGICZosf1qR4Je0p8AVt7Ig4MH3cJO8
-        rab7QDWYDJcXE4BA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5F110138FF;
-        Wed, 29 Mar 2023 07:25:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id lP2NFvrnI2SpPgAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Wed, 29 Mar 2023 07:25:46 +0000
-Message-ID: <4db2129a-835c-9943-c8c2-54d1d6eca898@suse.cz>
-Date:   Wed, 29 Mar 2023 09:25:45 +0200
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CACB861AEC;
+        Wed, 29 Mar 2023 07:39:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAAD9C433D2;
+        Wed, 29 Mar 2023 07:39:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1680075564;
+        bh=edy+QyqyJlv1bffU7gSQfZhq5Rdu7UqPovVDnvhDTXo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MrZsM/8b5bk8znF3kU1vp+w9wR5+urmf0dpl9D6xqdMLik3tQkHYR4LTdywl3NXNH
+         3+p2zTXtEVAaVAVEr0QfSUT8knB2GIthBgNoExVmi3vU9GWii6vx5Iuu+yL/9LxUwC
+         Nbb31Yv0So0Iw/xkn31w1RGcqOMiO0KtIpArtXHo=
+Date:   Wed, 29 Mar 2023 09:39:21 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] usb: move config USB_USS720 to usb's misc Kconfig
+Message-ID: <ZCPrKaIcsoj3Vvcs@kroah.com>
+References: <20230329071724.11082-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [cocci] Reconsidering kfree() calls for null pointers (with SmPL)
-To:     Markus Elfring <Markus.Elfring@web.de>, cocci@inria.fr,
-        kernel-janitors@vger.kernel.org
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <4a7d08d1-7328-047c-52f3-dc62755cdbaf@suse.cz>
- <e4ba5b28-77b6-8013-ed76-e22e090496cb@web.de>
-Content-Language: en-US
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <e4ba5b28-77b6-8013-ed76-e22e090496cb@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230329071724.11082-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/29/23 08:18, Markus Elfring wrote:
->> It is valid to pass a NULL pointer to kfree(), it checks for that.
->>
->>> I imagine that such code should be reconsidered once more and improved accordingly.
->>
->> The only potential downside in the scenario is checking storage == NULL twice.
-> 
-> Will programming concerns evolve any further?
+On Wed, Mar 29, 2023 at 09:17:24AM +0200, Lukas Bulwahn wrote:
+> The USS720 parport driver source code is in drivers/usb/misc/, the
+> corresponding config is defined in drivers/usb/Kconfig. Some digging in the
+> kernel's history revealed no good reason why it needs to be defined in
+> USB's top-level Kconfig file, and why the config for the USS720 parport
+> driver should be the first in the list of USB port drivers, while all other
+> configs for drivers in drivers/usb/misc are in the USB Miscellaneous driver
+> configuration file.
 
-It's very unlikely that the behavior of kfree(NULL) will change.
+It is that way because this was one of the first USB drivers we had, and
+we only had one Kconfig file at the time and no misc/ subdir in the usb
+directory.
 
->> But this is an error handling path, not a fast path.
-> 
-> I hope that also exception handling code can become efficient in more use cases.
+So it's just inertia, that's all.
 
-Nobody will notice the efficiency, and it's not the only goal, code
-readability is also important.
+Your change looks great to me, want to resend it without the RFC so that
+I can apply it?
 
->> On the other hand, the code may look like this:
->>
->> storage = call(...);
->> if (!storage)
->>     goto target;
->>
->> if (some_other_condition)
->>     goto target;
->>
->> target:
->> kfree(storage)
->>
->>
->> For some_other_condition, we want the kfree().
-> 
-> Allocated resources should be properly released.
+thanks,
 
-Sure. They are properly released in the above example.
-
->> If you changed the code, to remove the extra NULL pointer check, you would have:
->>
->> storage = call(...);
->> if (!storage)
->>     goto target1;
->>
->> if (some_other_condition)
->>     goto target2;
->>
->> target2:
->> kfree(storage)
-> 
-> A label like “free_this_resource” can be nicer, can't it?
-
-Sure, name was not the point. Just that there are now 2 labels.
-
->> target1:
->>
->> The extra goto label and larger code is not worth saving the NULL pointer check,
->> because this is error handling path.
-> 
-> Some code reviewers and programmers represent other development views.
-
-That's the universal truth :)
-
-> 
->>> How do you think about to achieve any adjustments in this design direction?
->>
->> Only in cases where it would not make the code more complex, i.e. if there
->> are no "some_other_condition" that jumps to the same target after allocation
->> to storage is successful.
-> 
-> Do you find any implementation details worth for another look also according to
-> a special information source?
-> https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources#MEM12C.Considerusingagotochainwhenleavingafunctiononerrorwhenusingandreleasingresources-CompliantSolution%28POSIX,GotoChain%29
-> 
-> 
-> Will circumstances evolve in ways so that you would adjust a desire to stick
-> to only a single jump label?
-
-Depends on specific code cleanup. But generally, not if the change is only
-to add an extra label to skip over kfree() - I will unlikely consider such
-patches as useful.
-
-> Regards,
-> Markus
-
+greg k-h
