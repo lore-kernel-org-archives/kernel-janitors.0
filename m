@@ -2,97 +2,120 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A12C77B6E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 31 Mar 2023 07:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F19EC6FD18
+	for <kernel-janitors@archiver.kernel.org>; Fri, 31 Mar 2023 07:22:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbjCaHET (ORCPT
+        id S229984AbjCaHWt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 31 Mar 2023 03:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50216 "EHLO
+        Fri, 31 Mar 2023 03:22:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230372AbjCaHEJ (ORCPT
+        with ESMTP id S231158AbjCaHWg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 31 Mar 2023 03:04:09 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C6A6DBC0;
-        Fri, 31 Mar 2023 00:04:04 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id h17so21344740wrt.8;
-        Fri, 31 Mar 2023 00:04:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680246242;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q76zbQtochwncIhZQ7riDl3gHgHlJYYkEWfwyJ/lNpY=;
-        b=qKNvf2gF/MwZtKDkInE84Zi4oN4T3JqsKXqmTGpzkCucunNaUfwyUCHpSL2cAZoRX6
-         OtY4Q5KPpWKWOhBPIGoTq8xDYVm0nEPh7hcO26GpLxwJ3af/vGAK/tBkM7ka0jCpRYSH
-         u8KoEtAbnY5BE+jADqIiQiFzINGe3znwoPqx9bYMzokq/Cx9ct8FO47Ap94YLaT3zFdz
-         dIeUsOdWc6GhhU5n32Gf/E6MUL7HGbG3p6d/3AnFvztYiyoBZFFFnLvLHirzOJnPngd4
-         CGp4BD5074ugTr+OoXZUxl3FYKbmaA8km5QB11ZC/7Fg5OXx6PV6qSCVWvTw0fOAnSxe
-         nK/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680246242;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q76zbQtochwncIhZQ7riDl3gHgHlJYYkEWfwyJ/lNpY=;
-        b=icf0gQQ/c6cO3qUlHclDaiTBsqnVgJaBthYms6YpBfuhkybw6Q3nTwPPRYa7f8wtVo
-         celhfdQYfYd9J91av7iBSIO/AtkVdFuptwfzF4ymTDtTmO+RXH1a0arDIHWndGfZwaQk
-         WAzuICF22fgIX0gkSzwaDJzA1qdnp0u1yTOZ7Z7xhazPz43HAUns0V1gw//Z85h0Vkjv
-         YX0CPlohL0olln2LS4Av86QFwjLhIHv8xDektYwgVrqRr+cNVkWQN9jjmSUMvU7hWapy
-         4k+iKqooqdewrGRYiceRz71OJKOPS6rwHwY5PyC5zsK/9cwoWP0iKgYNDAZaZpJo8/Ou
-         g86A==
-X-Gm-Message-State: AAQBX9feNJKam03SOB8AjuLw8ksSPO+z2bMabsNB9w/XW4reWZQAjpC3
-        i0l+h71Tv7joayLwHW9X2DY=
-X-Google-Smtp-Source: AKy350bdI8Q2NH/F7m6vHYXtic18Ow44dO9xjGWXAxzu6ncylxQ3s4eH+bA57APmJrDgPAl+G6TpxQ==
-X-Received: by 2002:a5d:464d:0:b0:2e5:5439:6b4c with SMTP id j13-20020a5d464d000000b002e554396b4cmr1985571wrs.27.1680246242351;
-        Fri, 31 Mar 2023 00:04:02 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id r16-20020a05600c35d000b003ee9f396dcesm8746643wmq.30.2023.03.31.00.03.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 00:04:01 -0700 (PDT)
-Date:   Fri, 31 Mar 2023 10:03:47 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Eli Cohen <elic@nvidia.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Shay Drory <shayd@nvidia.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net/mlx5: Fix check for allocation failure in
- comp_irqs_request_pci()
-Message-ID: <6652003b-e89c-4011-9e7d-a730a50bcfce@kili.mountain>
+        Fri, 31 Mar 2023 03:22:36 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA0281A950;
+        Fri, 31 Mar 2023 00:22:20 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32V57oh1027724;
+        Fri, 31 Mar 2023 09:22:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=+wyAJvtTWFE7AYjRIjp41mVE5cxKCWTjzNSgGis2MLI=;
+ b=P68Vr5rbII17Cvje5YgOIJSVoimJvI0wySrmf+1ChyNdCoD3EnwF1u+g6AnVUygZpbKg
+ Ry7PvNBAGAPcvJxb0oepKG2FfIiu4g8bQEQB9pFacFGkR93176CoVjhQAOCLn14nqIlU
+ 02QkeWiJD6CGh5aXB+fQX0saTnURFaUArb4knKSWl75l224znH7aIPZc1uDnT9d2UrU1
+ wMTWCsdiBq5EMgqsTHCLnL3qWpcpCYN6+Zp2ByxOE509+4qRW2EkrYDF6c6bToroMnPs
+ L5P1LkJ0Po89QVzV8psVmPvbSsq+g9RL11XZRaCrtjEzYbg22SIx/Syk/drg7cKMegr7 GQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pns3egr0v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 31 Mar 2023 09:22:07 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0480610002A;
+        Fri, 31 Mar 2023 09:22:06 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E78A82115F8;
+        Fri, 31 Mar 2023 09:22:06 +0200 (CEST)
+Received: from [10.201.21.26] (10.201.21.26) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Fri, 31 Mar
+ 2023 09:22:06 +0200
+Message-ID: <0b9e2bed-644c-a1f6-0d39-6b2e234717ae@foss.st.com>
+Date:   Fri, 31 Mar 2023 09:22:06 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 1/2] ARM: sti: remove configs SOC_STIH415 and SOC_STIH416
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230330112347.31137-1-lukas.bulwahn@gmail.com>
+From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20230330112347.31137-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.201.21.26]
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-31_03,2023-03-30_04,2023-02-09_01
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This function accidentally dereferences "cpus" instead of returning
-directly.
 
-Fixes: b48a0f72bc3e ("net/mlx5: Refactor completion irq request/release code")
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/eq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-index eb41f0abf798..13491246c9e9 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-@@ -824,7 +824,7 @@ static int comp_irqs_request_pci(struct mlx5_core_dev *dev)
- 	ncomp_eqs = table->num_comp_eqs;
- 	cpus = kcalloc(ncomp_eqs, sizeof(*cpus), GFP_KERNEL);
- 	if (!cpus)
--		ret = -ENOMEM;
-+		return -ENOMEM;
- 
- 	i = 0;
- 	rcu_read_lock();
--- 
-2.39.1
+On 3/30/23 13:23, Lukas Bulwahn wrote:
+> Commit b4bba92dfbe2 ("drm/sti: remove stih415-416 platform support")
+> removes the reference to configs SOC_STIH415 and SOC_STIH416 in the
+> config DRM_STI. Commit 64933513e461 ("reset: sti: Remove STiH415/6 reset
+> support") removes the two configs STIH41{5,6}_RESET.
+> 
+> With those changes, the two configs SOC_STIH415 and SOC_STIH416 has no
+> remaining effect. Remove them.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/arm/mach-sti/Kconfig | 18 ------------------
+>  1 file changed, 18 deletions(-)
+> 
+> diff --git a/arch/arm/mach-sti/Kconfig b/arch/arm/mach-sti/Kconfig
+> index b2d45cf10a3c..8c21dccb61b7 100644
+> --- a/arch/arm/mach-sti/Kconfig
+> +++ b/arch/arm/mach-sti/Kconfig
+> @@ -26,24 +26,6 @@ menuconfig ARCH_STI
+>  
+>  if ARCH_STI
+>  
+> -config SOC_STIH415
+> -	bool "STiH415 STMicroelectronics Consumer Electronics family"
+> -	default y
+> -	help
+> -	  This enables support for STMicroelectronics Digital Consumer
+> -	  Electronics family StiH415 parts, primarily targeted at set-top-box
+> -	  and other digital audio/video applications using Flattned Device
+> -	  Trees.
+> -
+> -config SOC_STIH416
+> -	bool "STiH416 STMicroelectronics Consumer Electronics family"
+> -	default y
+> -	help
+> -	  This enables support for STMicroelectronics Digital Consumer
+> -	  Electronics family StiH416 parts, primarily targeted at set-top-box
+> -	  and other digital audio/video applications using Flattened Device
+> -	  Trees.
+> -
+>  config SOC_STIH407
+>  	bool "STiH407 STMicroelectronics Consumer Electronics family"
+>  	default y
 
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+
+Thanks
+Patrice
