@@ -2,118 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94792C6FD18
-	for <kernel-janitors@archiver.kernel.org>; Fri, 31 Mar 2023 07:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDC7C77B6E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 31 Mar 2023 09:55:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbjCaHWx (ORCPT
+        id S232156AbjCaJzs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 31 Mar 2023 03:22:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
+        Fri, 31 Mar 2023 05:55:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230481AbjCaHWn (ORCPT
+        with ESMTP id S230412AbjCaJym (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 31 Mar 2023 03:22:43 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED681A464;
-        Fri, 31 Mar 2023 00:22:39 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32V6OcCp016236;
-        Fri, 31 Mar 2023 09:22:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=bP/5RW3i6naWflHN3PftdHEk430wto9gy+Tuw6UIrio=;
- b=qaGyz4XNS/l5Qe6GoGQbFAE0R5bGZi0+Eyn9C9/O1Ftq2VqkQwlTEcytiBQnpbRIedkf
- CELUpP45dcYZQ4WHmQLw5V01yYZ1kPVzNkLJd9uz9H8GSuxs5vpdbs2ZAN3Y1qgjyl+o
- 85sZNXOfCYmqgnCwX/FywuHGwvRar8ytGjYTjCreJsa2iv5zuEWyvlN+Nq2kZ2ZRTlVy
- 2fobL1uwzw+yjqvhOs43ySNDqvKdWHGOgwHXsTr++Z+oXvh1G7OykLgaYtHbFVZtokty
- NUAm17MMhnJzcTnL+YZltcqbpSRJhFRvC2Da8IQF8o1HwjkqMsjhP+nw1ZBAZeZu7sDD /Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pkwvsw30k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 09:22:29 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0DD5510002A;
-        Fri, 31 Mar 2023 09:22:29 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 074162115F8;
-        Fri, 31 Mar 2023 09:22:29 +0200 (CEST)
-Received: from [10.201.21.26] (10.201.21.26) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Fri, 31 Mar
- 2023 09:22:28 +0200
-Message-ID: <7b9864d9-dc36-f719-29ea-21036763c375@foss.st.com>
-Date:   Fri, 31 Mar 2023 09:22:28 +0200
+        Fri, 31 Mar 2023 05:54:42 -0400
+Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D96B21DFB8;
+        Fri, 31 Mar 2023 02:54:00 -0700 (PDT)
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1piBS3-00AlBo-Tq; Fri, 31 Mar 2023 17:53:44 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 31 Mar 2023 17:53:43 +0800
+Date:   Fri, 31 Mar 2023 17:53:43 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     horia.geanta@nxp.com, pankaj.gupta@nxp.com, gaurav.jain@nxp.com,
+        davem@davemloft.net, kim.phillips@freescale.com,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] crypto: caam: Clear some memory in instantiate_rng()
+Message-ID: <ZCatp5UWC/la+flQ@gondor.apana.org.au>
+References: <41a7e41bb5a14f1e6e68a81c16c90e3ad4542ab1.1679381782.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 2/2] reset: sti: simplify driver's config and build
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230330112347.31137-1-lukas.bulwahn@gmail.com>
- <20230330112347.31137-2-lukas.bulwahn@gmail.com>
-From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20230330112347.31137-2-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.201.21.26]
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-31_02,2023-03-30_04,2023-02-09_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41a7e41bb5a14f1e6e68a81c16c90e3ad4542ab1.1679381782.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 3/30/23 13:23, Lukas Bulwahn wrote:
-> With commit 64933513e461 ("reset: sti: Remove STiH415/6 reset support"),
-> there is only one sti reset driver left and there no need to define a
-> dedicated config STI_RESET_SYSCFG, which is selected by the config for the
-> STiH407 reset driver.
+On Tue, Mar 21, 2023 at 07:59:30AM +0100, Christophe JAILLET wrote:
+> According to the comment at the end of the 'for' loop just a few lines
+> below, it looks needed to clear 'desc'.
 > 
-> Simply add reset-syscfg.c to the build for the STiH407 reset driver.
+> So it should also be cleared for the first iteration.
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Move the memset() to the beginning of the loop to be safe.
+> 
+> Fixes: 281922a1d4f5 ("crypto: caam - add support for SEC v5.x RNG4")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/reset/sti/Kconfig  | 4 ----
->  drivers/reset/sti/Makefile | 4 +---
->  2 files changed, 1 insertion(+), 7 deletions(-)
+> v1 --> v2:
+>    - move the memset() instead of doing s/kmalloc/kzalloc/
+>    - adding a Fixes tag
 > 
-> diff --git a/drivers/reset/sti/Kconfig b/drivers/reset/sti/Kconfig
-> index 9455e1c7a5aa..a2622e146b8b 100644
-> --- a/drivers/reset/sti/Kconfig
-> +++ b/drivers/reset/sti/Kconfig
-> @@ -1,11 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  if ARCH_STI
->  
-> -config STI_RESET_SYSCFG
-> -	bool
-> -
->  config STIH407_RESET
->  	bool
-> -	select STI_RESET_SYSCFG
->  
->  endif
-> diff --git a/drivers/reset/sti/Makefile b/drivers/reset/sti/Makefile
-> index 3eb30f7e8e3d..5e833496cee3 100644
-> --- a/drivers/reset/sti/Makefile
-> +++ b/drivers/reset/sti/Makefile
-> @@ -1,4 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -obj-$(CONFIG_STI_RESET_SYSCFG) += reset-syscfg.o
-> -
-> -obj-$(CONFIG_STIH407_RESET) += reset-stih407.o
-> +obj-$(CONFIG_STIH407_RESET) += reset-stih407.o reset-syscfg.o
+> v1:
+>    https://lore.kernel.org/all/16d6bf3bd7a6e96a8262fcd4680e3ccbb5a50478.1679355849.git.christophe.jaillet@wanadoo.fr/
+> 
+> For for loop has been introduceD in commit 1005bccd7a4a ("crypto: caam -
+> enable instantiation of all RNG4 state handles"). But if 'desc' really
+> needs to be cleared, the issue was there before (thus the Fixes tag in
+> the commit log)
+> ---
+>  drivers/crypto/caam/ctrl.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
-
-Thanks
-Patrice
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
