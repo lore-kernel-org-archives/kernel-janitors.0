@@ -2,93 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58026C761A6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 31 Mar 2023 20:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9DFC761AF
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Apr 2023 02:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233110AbjCaUYE (ORCPT
+        id S233557AbjDACKi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 31 Mar 2023 16:24:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39458 "EHLO
+        Fri, 31 Mar 2023 22:10:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231159AbjCaUYC (ORCPT
+        with ESMTP id S233271AbjDACKh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 31 Mar 2023 16:24:02 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F47922208
-        for <kernel-janitors@vger.kernel.org>; Fri, 31 Mar 2023 13:23:58 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id iLHvp2hY8xuxqiLHvpWGqu; Fri, 31 Mar 2023 22:23:56 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 31 Mar 2023 22:23:56 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <4464e70f-71a3-3c04-7e53-8ccf2e143a04@wanadoo.fr>
-Date:   Fri, 31 Mar 2023 22:23:55 +0200
+        Fri, 31 Mar 2023 22:10:37 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E66F9E053;
+        Fri, 31 Mar 2023 19:10:35 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id h12-20020a17090aea8c00b0023d1311fab3so25335175pjz.1;
+        Fri, 31 Mar 2023 19:10:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680315035;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JnyrkYSNqls/jv3SFfexrWS8fA+F90l+8vMjnIu/dDk=;
+        b=Zbx/dep8b0wFaQ3ok5UKrG21PvLlbh9WImL3ZchBW30R5/PRXx/buvD7XGh8fSHdAH
+         hIIUQv+Nrqf4dM1kpecBU/zS+Aa9wPCOvJdyfT6HaZQsWuE5IkADp/7J17Wh563GZiC9
+         yVAHmpHI+qtqVDE64MNHozCweOXEKiKN1ltiknSJK3w4EM/6TW83R8b6KNNb81gfN294
+         zLGAGXIAyIkLQngGlR3YHzY4rOvUmnpq94XDrZJ9vRAX9bmXmVGyehyW0WrRuejn4Uhc
+         nWiZO4Vwdha5BThGqOwN2RHpdbz0naoOizq7ogefNVxA0p/T8ppIGEVeALfeN1Tb5E8/
+         4qpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680315035;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JnyrkYSNqls/jv3SFfexrWS8fA+F90l+8vMjnIu/dDk=;
+        b=V9EGAn+lG3gYCVQAx8kbSGurpmxq/w2pBB3M4+sbOWTZIznrGlu07cjbRFySPUfom0
+         gSUBScDEJibog6VUVZOD4W6ohXZDxc77uIonZYBUU6myDHZ086IxNq/QI306LIKWXlV9
+         ukeZqp7EdkuCuhoIbhcNMufwAC/SbhSOMacecGnqNLaf7exrfoTbpjbl5OFng2iT57gG
+         nPfqMLP/bqhQuh9uJf74BzgRkHtX6xgNDuCbTNpMkixOp3Y2EgJDr0px46de9xms/JS8
+         C1sksyASfkY0DK3QJRUGEGf5Ep8SuEw9tvjBWaPUHIJ7u+OrUJ/3NG5HI5ZqsAK8b5Kg
+         /bvQ==
+X-Gm-Message-State: AAQBX9d9qFiaqk30JWf2E3rh5ka48s9LFq6BD+LVUe0XIGeIfZa0YmNZ
+        gkh0UNbBHKys/B15Ctl271c=
+X-Google-Smtp-Source: AKy350YUq7DoV3rTzX8fP87JGF6Hj6ucie5EV59nAeF8Akr6nPpDbZfLyoj/v+V/DE4bWRR1yjsdJQ==
+X-Received: by 2002:a17:902:e546:b0:1a1:cc5a:b04 with SMTP id n6-20020a170902e54600b001a1cc5a0b04mr35087221plf.3.1680315035458;
+        Fri, 31 Mar 2023 19:10:35 -0700 (PDT)
+Received: from [192.168.43.80] (subs02-180-214-232-71.three.co.id. [180.214.232.71])
+        by smtp.gmail.com with ESMTPSA id ik30-20020a170902ab1e00b0019f1264c7d7sm2196638plb.103.2023.03.31.19.10.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Mar 2023 19:10:35 -0700 (PDT)
+Message-ID: <f3e29e72-240a-20ba-c301-5b6fe1ec777a@gmail.com>
+Date:   Sat, 1 Apr 2023 09:10:29 +0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 1/2] dmaengine: mv_xor_v2: Fix an error code.
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        dmaengine@vger.kernel.org
-References: <201170dff832a3c496d125772e10070cd834ebf2.1679814350.git.christophe.jaillet@wanadoo.fr>
- <16cfc681-7a08-4160-bd69-4c8b59774688@kili.mountain>
-Content-Language: fr, en-US
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <16cfc681-7a08-4160-bd69-4c8b59774688@kili.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ Thunderbird/102.9.1
+Subject: Re: [PATCH] docs/mm: Physical Memory: Fix grammar
+To:     Kim Phillips <kim.phillips@amd.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Rapoport <rppt@kernel.org>, linux-doc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230331165254.207526-1-kim.phillips@amd.com>
+Content-Language: en-US
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <20230331165254.207526-1-kim.phillips@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 29/03/2023 à 12:27, Dan Carpenter a écrit :
-> On Sun, Mar 26, 2023 at 09:06:37AM +0200, Christophe JAILLET wrote:
->> If the probe is deferred, -EPROBE_DEFER should be returned, not
->> +EPROBE_DEFER.
->>
->> Fixes: 3cd2c313f1d6 ("dmaengine: mv_xor_v2: Fix clock resource by adding a register clock")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/dma/mv_xor_v2.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/dma/mv_xor_v2.c b/drivers/dma/mv_xor_v2.c
->> index 89790beba305..0991b8265829 100644
->> --- a/drivers/dma/mv_xor_v2.c
->> +++ b/drivers/dma/mv_xor_v2.c
->> @@ -752,7 +752,7 @@ static int mv_xor_v2_probe(struct platform_device *pdev)
->>   
->>   	xor_dev->clk = devm_clk_get(&pdev->dev, NULL);
->>   	if (PTR_ERR(xor_dev->clk) == -EPROBE_DEFER) {
->> -		ret = EPROBE_DEFER;
->> +		ret = -EPROBE_DEFER;
->>   		goto disable_reg_clk;
-> 
-> Heh.  Looking through the Smatch results, I don't think this actually
-> affects runtime because driver_probe_device() checks for both positive
-> and negatives.  People shouldn't be returning positives, of course, but
-> it appears there is a work around for bugs built in already.
+On 3/31/23 23:52, Kim Phillips wrote:
+> diff --git a/Documentation/mm/physical_memory.rst b/Documentation/mm/physical_memory.rst
+> index 1bc888d36ea1..df2ed81e3639 100644
+> --- a/Documentation/mm/physical_memory.rst
+> +++ b/Documentation/mm/physical_memory.rst
+> @@ -19,7 +19,7 @@ a bank of memory very suitable for DMA near peripheral devices.
+>  
+>  Each bank is called a node and the concept is represented under Linux by a
+>  ``struct pglist_data`` even if the architecture is UMA. This structure is
+> -always referenced to by it's typedef ``pg_data_t``. ``A pg_data_t`` structure
+> +always referenced by its typedef ``pg_data_t``. A ``pg_data_t`` structure
+>  for a particular node can be referenced by ``NODE_DATA(nid)`` macro where
+>  ``nid`` is the ID of that node.
+>  
 
-Correct, but weird.
+LGTM, thanks!
 
-I've tried to look at the history of [1], but couldn't find any rational 
-for it.
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Apparently it was already in the v1 of the serie. [2]
-
-CJ
-
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=45ddcb42949f825f0caa25352e825cede94b6aba
-[2]: https://lore.kernel.org/all/20210614150846.4111871-5-hch@lst.de/
-
-> 
-> regards,
-> dan carpenter
-> 
-> 
+-- 
+An old man doll... just what I always wanted! - Clara
 
