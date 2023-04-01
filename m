@@ -2,89 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FAEC76196
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Apr 2023 14:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCF5C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Apr 2023 15:52:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbjDAOfi (ORCPT
+        id S229793AbjDAPwX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 Apr 2023 10:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54290 "EHLO
+        Sat, 1 Apr 2023 11:52:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjDAOfh (ORCPT
+        with ESMTP id S229518AbjDAPwW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 Apr 2023 10:35:37 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A6F21C1DE;
-        Sat,  1 Apr 2023 07:35:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E7256B80B2D;
-        Sat,  1 Apr 2023 14:35:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD48C433EF;
-        Sat,  1 Apr 2023 14:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680359730;
-        bh=Tu8K35e0xCyUqOn3xpFP8zgE3x43uoz1kDGNmUP3YLQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IRJwFDfjLJ7GtNbBo4oyMIs+uxn/9V+OgqAguZvfmAw/M5CqIGaEj2TrRKbfanpoK
-         jAIPPFUXNX5dj28ocYhf3AFeIBlewTemCBpKv9naP7+A9WwqDseWVTnLN0NR5Wl4Dh
-         kkKIywOwqEMY05EirGAgU15f11GUBPzBDBr6MLPmmIWyKu4Q7b506EzvbHQUTc/PSR
-         IkiX3ZCf45ftaZV81XwntN7Kj9Ic/wk6XP69qMiRaZwQ5T3aQbsyGsQdw7TOvvBOQR
-         HC7wLAVVv/NmHNjXPNNNJ+7GSHSsvnbWs073iGe5SMu5JEZ0MEVMcmzUZgC/EWr5d8
-         Gbe3L09qxONaQ==
-Date:   Sat, 1 Apr 2023 15:50:39 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Eugen Hristev <eugen.hristev@collabora.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: at91-sama5d2_adc: fix an error code in
- at91_adc_allocate_trigger()
-Message-ID: <20230401155039.6b6a8e4f@jic23-huawei>
-In-Reply-To: <5d728f9d-31d1-410d-a0b3-df6a63a2c8ba@kili.mountain>
-References: <5d728f9d-31d1-410d-a0b3-df6a63a2c8ba@kili.mountain>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
+        Sat, 1 Apr 2023 11:52:22 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FE3012CF7
+        for <kernel-janitors@vger.kernel.org>; Sat,  1 Apr 2023 08:52:20 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id idWapMwyLusWfidWap27kk; Sat, 01 Apr 2023 17:52:19 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 01 Apr 2023 17:52:19 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: stm32h7: Remove an unused field in struct stm32_fractional_divider
+Date:   Sat,  1 Apr 2023 17:52:12 +0200
+Message-Id: <e08a470fbd6151ebd83a548714c08807a80a8ad0.1680364296.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 29 Mar 2023 07:35:32 +0300
-Dan Carpenter <error27@gmail.com> wrote:
+'mmask' has never been used in this driver.
+Remove it.
 
-> The at91_adc_allocate_trigger() function is supposed to return error
-> pointers.  Returning a NULL will cause an Oops.
-> 
-> Fixes: 5e1a1da0f8c9 ("iio: adc: at91-sama5d2_adc: add hw trigger and buffer support")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-Seems obvious enough I've queued this up in the iio-fixes branch of iio.git.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/clk/clk-stm32h7.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/adc/at91-sama5d2_adc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-> index b5d0c9ee284c..2a9fdc5b7edf 100644
-> --- a/drivers/iio/adc/at91-sama5d2_adc.c
-> +++ b/drivers/iio/adc/at91-sama5d2_adc.c
-> @@ -1409,7 +1409,7 @@ static struct iio_trigger *at91_adc_allocate_trigger(struct iio_dev *indio,
->  	trig = devm_iio_trigger_alloc(&indio->dev, "%s-dev%d-%s", indio->name,
->  				iio_device_id(indio), trigger_name);
->  	if (!trig)
-> -		return NULL;
-> +		return ERR_PTR(-ENOMEM);
->  
->  	trig->dev.parent = indio->dev.parent;
->  	iio_trigger_set_drvdata(trig, indio);
+diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
+index 1a701eada0c1..04c18a1d45d3 100644
+--- a/drivers/clk/clk-stm32h7.c
++++ b/drivers/clk/clk-stm32h7.c
+@@ -667,7 +667,6 @@ struct stm32_fractional_divider {
+ 	void __iomem	*mreg;
+ 	u8		mshift;
+ 	u8		mwidth;
+-	u32		mmask;
+ 
+ 	void __iomem	*nreg;
+ 	u8		nshift;
+-- 
+2.34.1
 
