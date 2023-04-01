@@ -2,48 +2,52 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96971C6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Apr 2023 13:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FAEC76196
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Apr 2023 14:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbjDANXY (ORCPT
+        id S230037AbjDAOfi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 Apr 2023 09:23:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53144 "EHLO
+        Sat, 1 Apr 2023 10:35:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbjDANXY (ORCPT
+        with ESMTP id S229540AbjDAOfh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 Apr 2023 09:23:24 -0400
+        Sat, 1 Apr 2023 10:35:37 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 150491E73D;
-        Sat,  1 Apr 2023 06:22:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A6F21C1DE;
+        Sat,  1 Apr 2023 07:35:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 81BF6B80B4B;
-        Sat,  1 Apr 2023 13:22:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB37BC433EF;
-        Sat,  1 Apr 2023 13:22:44 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E7256B80B2D;
+        Sat,  1 Apr 2023 14:35:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD48C433EF;
+        Sat,  1 Apr 2023 14:35:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680355366;
-        bh=Ra/4hhwYWCbPyqLnOztSvMODqSrn8z/BivmlaVY6Q7A=;
+        s=k20201202; t=1680359730;
+        bh=Tu8K35e0xCyUqOn3xpFP8zgE3x43uoz1kDGNmUP3YLQ=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dfEJPBrM9UHPPWBWYkNQ5cfFMSycRxXTLablSZTXNPWnzi0KyEjqzlvaE6vNkKxuz
-         I3wPeZNuwPbLWfYRFdyOA+db0I8uWBuFX9luy9Uv76ArvU7qlaNlzJVkSfaUMuOcWm
-         x13+fCHO6kPPUDl4B+cBJVQ4y/wmO1eFFTObGVWE9poQe0cL1t9d32kYgXl2hQGU3N
-         u1h2RiHTTt/Bf41zdcRen8Ld5rvCAM8d6W/ASDTuirFRzz9cVWp/9o8hSA6Ou20Puw
-         98v+n+94oGvJNlfdqZDVQtPt8mzWohjXDOagS1FlyKdgCf+S2zTep8Yb22E1fnTQlR
-         bVUXq39e9yqbg==
-Date:   Sat, 1 Apr 2023 14:37:54 +0100
+        b=IRJwFDfjLJ7GtNbBo4oyMIs+uxn/9V+OgqAguZvfmAw/M5CqIGaEj2TrRKbfanpoK
+         jAIPPFUXNX5dj28ocYhf3AFeIBlewTemCBpKv9naP7+A9WwqDseWVTnLN0NR5Wl4Dh
+         kkKIywOwqEMY05EirGAgU15f11GUBPzBDBr6MLPmmIWyKu4Q7b506EzvbHQUTc/PSR
+         IkiX3ZCf45ftaZV81XwntN7Kj9Ic/wk6XP69qMiRaZwQ5T3aQbsyGsQdw7TOvvBOQR
+         HC7wLAVVv/NmHNjXPNNNJ+7GSHSsvnbWs073iGe5SMu5JEZ0MEVMcmzUZgC/EWr5d8
+         Gbe3L09qxONaQ==
+Date:   Sat, 1 Apr 2023 15:50:39 +0100
 From:   Jonathan Cameron <jic23@kernel.org>
 To:     Dan Carpenter <error27@gmail.com>
-Cc:     Mike Looijmans <mike.looijmans@topic.nl>,
+Cc:     Eugen Hristev <eugen.hristev@collabora.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
         linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ti-ads1100: fix error code in probe()
-Message-ID: <20230401143754.1e561d0b@jic23-huawei>
-In-Reply-To: <36fa2aeb-f392-4793-8b38-ae15514033c8@kili.mountain>
-References: <36fa2aeb-f392-4793-8b38-ae15514033c8@kili.mountain>
+Subject: Re: [PATCH] iio: adc: at91-sama5d2_adc: fix an error code in
+ at91_adc_allocate_trigger()
+Message-ID: <20230401155039.6b6a8e4f@jic23-huawei>
+In-Reply-To: <5d728f9d-31d1-410d-a0b3-df6a63a2c8ba@kili.mountain>
+References: <5d728f9d-31d1-410d-a0b3-df6a63a2c8ba@kili.mountain>
 X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -52,36 +56,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 23 Mar 2023 18:23:56 +0300
+On Wed, 29 Mar 2023 07:35:32 +0300
 Dan Carpenter <error27@gmail.com> wrote:
 
-> This code has a copy and paste bug so it accidentally returns
-> "PTR_ERR(data->reg_vdd)" which is a valid pointer cast to int. It
-> should return "ret" instead.
+> The at91_adc_allocate_trigger() function is supposed to return error
+> pointers.  Returning a NULL will cause an Oops.
 > 
-> Fixes: 541880542f2b ("iio: adc: Add TI ADS1100 and ADS1000")
+> Fixes: 5e1a1da0f8c9 ("iio: adc: at91-sama5d2_adc: add hw trigger and buffer support")
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
-Applied to the togreg branch of iio.git as this driver is not yet upstream.
+Seems obvious enough I've queued this up in the iio-fixes branch of iio.git.
 
 Thanks,
 
 Jonathan
 
 > ---
->  drivers/iio/adc/ti-ads1100.c | 2 +-
+>  drivers/iio/adc/at91-sama5d2_adc.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/iio/adc/ti-ads1100.c b/drivers/iio/adc/ti-ads1100.c
-> index 6a478efb108b..6b5aebb82455 100644
-> --- a/drivers/iio/adc/ti-ads1100.c
-> +++ b/drivers/iio/adc/ti-ads1100.c
-> @@ -344,7 +344,7 @@ static int ads1100_probe(struct i2c_client *client)
+> diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+> index b5d0c9ee284c..2a9fdc5b7edf 100644
+> --- a/drivers/iio/adc/at91-sama5d2_adc.c
+> +++ b/drivers/iio/adc/at91-sama5d2_adc.c
+> @@ -1409,7 +1409,7 @@ static struct iio_trigger *at91_adc_allocate_trigger(struct iio_dev *indio,
+>  	trig = devm_iio_trigger_alloc(&indio->dev, "%s-dev%d-%s", indio->name,
+>  				iio_device_id(indio), trigger_name);
+>  	if (!trig)
+> -		return NULL;
+> +		return ERR_PTR(-ENOMEM);
 >  
->  	ret = regulator_enable(data->reg_vdd);
->  	if (ret < 0)
-> -		return dev_err_probe(dev, PTR_ERR(data->reg_vdd),
-> +		return dev_err_probe(dev, ret,
->  				     "Failed to enable vdd regulator\n");
->  
->  	ret = devm_add_action_or_reset(dev, ads1100_reg_disable, data->reg_vdd);
+>  	trig->dev.parent = indio->dev.parent;
+>  	iio_trigger_set_drvdata(trig, indio);
 
