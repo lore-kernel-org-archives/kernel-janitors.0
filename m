@@ -2,94 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9DFC761AF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Apr 2023 02:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 043CAC761A6
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Apr 2023 02:51:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233557AbjDACKi (ORCPT
+        id S233338AbjDACvx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 31 Mar 2023 22:10:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42168 "EHLO
+        Fri, 31 Mar 2023 22:51:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233271AbjDACKh (ORCPT
+        with ESMTP id S231775AbjDACvw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 31 Mar 2023 22:10:37 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E66F9E053;
-        Fri, 31 Mar 2023 19:10:35 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id h12-20020a17090aea8c00b0023d1311fab3so25335175pjz.1;
-        Fri, 31 Mar 2023 19:10:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680315035;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JnyrkYSNqls/jv3SFfexrWS8fA+F90l+8vMjnIu/dDk=;
-        b=Zbx/dep8b0wFaQ3ok5UKrG21PvLlbh9WImL3ZchBW30R5/PRXx/buvD7XGh8fSHdAH
-         hIIUQv+Nrqf4dM1kpecBU/zS+Aa9wPCOvJdyfT6HaZQsWuE5IkADp/7J17Wh563GZiC9
-         yVAHmpHI+qtqVDE64MNHozCweOXEKiKN1ltiknSJK3w4EM/6TW83R8b6KNNb81gfN294
-         zLGAGXIAyIkLQngGlR3YHzY4rOvUmnpq94XDrZJ9vRAX9bmXmVGyehyW0WrRuejn4Uhc
-         nWiZO4Vwdha5BThGqOwN2RHpdbz0naoOizq7ogefNVxA0p/T8ppIGEVeALfeN1Tb5E8/
-         4qpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680315035;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JnyrkYSNqls/jv3SFfexrWS8fA+F90l+8vMjnIu/dDk=;
-        b=V9EGAn+lG3gYCVQAx8kbSGurpmxq/w2pBB3M4+sbOWTZIznrGlu07cjbRFySPUfom0
-         gSUBScDEJibog6VUVZOD4W6ohXZDxc77uIonZYBUU6myDHZ086IxNq/QI306LIKWXlV9
-         ukeZqp7EdkuCuhoIbhcNMufwAC/SbhSOMacecGnqNLaf7exrfoTbpjbl5OFng2iT57gG
-         nPfqMLP/bqhQuh9uJf74BzgRkHtX6xgNDuCbTNpMkixOp3Y2EgJDr0px46de9xms/JS8
-         C1sksyASfkY0DK3QJRUGEGf5Ep8SuEw9tvjBWaPUHIJ7u+OrUJ/3NG5HI5ZqsAK8b5Kg
-         /bvQ==
-X-Gm-Message-State: AAQBX9d9qFiaqk30JWf2E3rh5ka48s9LFq6BD+LVUe0XIGeIfZa0YmNZ
-        gkh0UNbBHKys/B15Ctl271c=
-X-Google-Smtp-Source: AKy350YUq7DoV3rTzX8fP87JGF6Hj6ucie5EV59nAeF8Akr6nPpDbZfLyoj/v+V/DE4bWRR1yjsdJQ==
-X-Received: by 2002:a17:902:e546:b0:1a1:cc5a:b04 with SMTP id n6-20020a170902e54600b001a1cc5a0b04mr35087221plf.3.1680315035458;
-        Fri, 31 Mar 2023 19:10:35 -0700 (PDT)
-Received: from [192.168.43.80] (subs02-180-214-232-71.three.co.id. [180.214.232.71])
-        by smtp.gmail.com with ESMTPSA id ik30-20020a170902ab1e00b0019f1264c7d7sm2196638plb.103.2023.03.31.19.10.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Mar 2023 19:10:35 -0700 (PDT)
-Message-ID: <f3e29e72-240a-20ba-c301-5b6fe1ec777a@gmail.com>
-Date:   Sat, 1 Apr 2023 09:10:29 +0700
+        Fri, 31 Mar 2023 22:51:52 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4924511E82;
+        Fri, 31 Mar 2023 19:51:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F08B9B832B2;
+        Sat,  1 Apr 2023 02:51:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D99CC433EF;
+        Sat,  1 Apr 2023 02:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680317507;
+        bh=ZJGSXjvvnz5W52E3CrV9StYn5zk+nNKPLbd9LzSV5kQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OEdgHiHGSYrvK78dI33PrrjoiBdkSdqy9d8v76n1X+jJzRRXZaRGih2g7otw1SBqm
+         qYcTIstp5C405BsXkXGZzcE6hbSnWAFlezWP+wke+3BZrBqnhhb5JY8WN2dIAQEtUf
+         9z0KdXBFHeYoY+l9jPqYis/e0VisTd1GIyvApmbgc61ZLpOicYmM+BpJaiA6kLP0I5
+         OQFgqnYqaxF+h0KITCM9COzAwbFeyZx1kmQo3KO3fn4JieSmROECRgb8Wac0cwAO6r
+         ZzzoCyFFd1mNQ5wAeTNNqKARdAf6mOuTWNduOlHUT767K9TjztMnljZgANYh/8B+md
+         0tidlbTEz414Q==
+Received: by mail-ed1-f42.google.com with SMTP id ew6so96933815edb.7;
+        Fri, 31 Mar 2023 19:51:46 -0700 (PDT)
+X-Gm-Message-State: AAQBX9c99BQYvtZwA0KlgW4+vTI3fM7aA7sZjzwiJX84buUCfakkaBtC
+        wlcfPAzL6mbIiy6xq+mTRkDlQCdMb6ZSjLlmDEw=
+X-Google-Smtp-Source: AKy350ZJfD8TE3sQxeFgTGPTpSByp8FZdipz5S9Q4l/zmHf3Kg16Xy5RgG1cDJLdtWRBifM9WIi4bkR9hcJkOA3FfNk=
+X-Received: by 2002:a50:8d57:0:b0:502:4a93:9c51 with SMTP id
+ t23-20020a508d57000000b005024a939c51mr8890460edt.5.1680317504640; Fri, 31 Mar
+ 2023 19:51:44 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH] docs/mm: Physical Memory: Fix grammar
-To:     Kim Phillips <kim.phillips@amd.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mike Rapoport <rppt@kernel.org>, linux-doc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230331165254.207526-1-kim.phillips@amd.com>
-Content-Language: en-US
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <20230331165254.207526-1-kim.phillips@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230330110710.20784-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20230330110710.20784-1-lukas.bulwahn@gmail.com>
+From:   Guo Ren <guoren@kernel.org>
+Date:   Fri, 31 Mar 2023 22:51:33 -0400
+X-Gmail-Original-Message-ID: <CAJF2gTSYJAK5X1=4HfjhL25P2cp-_jOMtW4h3=1GWJVDvZeh8w@mail.gmail.com>
+Message-ID: <CAJF2gTSYJAK5X1=4HfjhL25P2cp-_jOMtW4h3=1GWJVDvZeh8w@mail.gmail.com>
+Subject: Re: [PATCH] csky: remove obsolete config CPU_TLB_SIZE
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-csky@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/31/23 23:52, Kim Phillips wrote:
-> diff --git a/Documentation/mm/physical_memory.rst b/Documentation/mm/physical_memory.rst
-> index 1bc888d36ea1..df2ed81e3639 100644
-> --- a/Documentation/mm/physical_memory.rst
-> +++ b/Documentation/mm/physical_memory.rst
-> @@ -19,7 +19,7 @@ a bank of memory very suitable for DMA near peripheral devices.
->  
->  Each bank is called a node and the concept is represented under Linux by a
->  ``struct pglist_data`` even if the architecture is UMA. This structure is
-> -always referenced to by it's typedef ``pg_data_t``. ``A pg_data_t`` structure
-> +always referenced by its typedef ``pg_data_t``. A ``pg_data_t`` structure
->  for a particular node can be referenced by ``NODE_DATA(nid)`` macro where
->  ``nid`` is the ID of that node.
->  
+Thx, got it.
 
-LGTM, thanks!
+On Thu, Mar 30, 2023 at 7:07=E2=80=AFAM Lukas Bulwahn <lukas.bulwahn@gmail.=
+com> wrote:
+>
+> Commit 9d35dc3006a9 ("csky: Revert mmu ASID mechanism") removes the only
+> use of CONFIG_CPU_TLB_SIZE. Since then, this config has no effect and can
+> be deleted.
+>
+> Remove the obsolete config CPU_TLB_SIZE.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/csky/Kconfig | 5 -----
+>  1 file changed, 5 deletions(-)
+>
+> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
+> index dba02da6fa34..1fb5f066a885 100644
+> --- a/arch/csky/Kconfig
+> +++ b/arch/csky/Kconfig
+> @@ -166,11 +166,6 @@ config STACKTRACE_SUPPORT
+>  config TIME_LOW_RES
+>         def_bool y
+>
+> -config CPU_TLB_SIZE
+> -       int
+> -       default "128"   if (CPU_CK610 || CPU_CK807 || CPU_CK810)
+> -       default "1024"  if (CPU_CK860)
+> -
+>  config CPU_ASID_BITS
+>         int
+>         default "8"     if (CPU_CK610 || CPU_CK807 || CPU_CK810)
+> --
+> 2.17.1
+>
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
--- 
-An old man doll... just what I always wanted! - Clara
-
+--=20
+Best Regards
+ Guo Ren
