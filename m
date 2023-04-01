@@ -2,108 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8B2C6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Apr 2023 07:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96971C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Apr 2023 13:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232615AbjDAHt5 (ORCPT
+        id S229854AbjDANXY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 Apr 2023 03:49:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43022 "EHLO
+        Sat, 1 Apr 2023 09:23:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230092AbjDAHt4 (ORCPT
+        with ESMTP id S229807AbjDANXY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 Apr 2023 03:49:56 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F891D2FA
-        for <kernel-janitors@vger.kernel.org>; Sat,  1 Apr 2023 00:49:54 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l37so14201057wms.2
-        for <kernel-janitors@vger.kernel.org>; Sat, 01 Apr 2023 00:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680335393;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xQmX2mGScAue83vyZ+9kwTFOh7dPyEoancWAtKJ7oI4=;
-        b=Rr7V9UgoOhidBQezlE+jxr7wXOGStDfyaIeWP9n71WJ0LkcaHZlXZ1geay2TGYEZ9j
-         5fxrF8olF6m95IrIAmJZl3okUN3joUR7Rctcb5hesTOdgkwIDiiqLEs4VcATW310qdvp
-         mD+bnGqX1Hn1E2JAoD6tHAqXI9pq/msGN2J6W7IfCxuxrA8nuaS2GxnyOup2GIcDnXN0
-         9ng8MSfLrLl4FxGhTWYKv/HhX1vuI34e+jojgHTuxOh19UCUpz3Wo0CbJWepYUXg5LU2
-         G7bsG2N9gSN5GJrBjHlCj02aRLUexUWHPAC/yyEwS9JIK5MzZUZFh+EQ9kWzLnjBJejH
-         jpQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680335393;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xQmX2mGScAue83vyZ+9kwTFOh7dPyEoancWAtKJ7oI4=;
-        b=J1dYDahJEm6Sz4N3IE8ZxPmVoIo9cdlPys0ecCN1SAMPh1uCSRdmXqebNwETB0LK8J
-         tlt8gR4SnYtPxaiwPYJlhzAk46aILLegPaqHGu2O7fGsWHQ5/KDNUgHtJ/z3b+u8Om1a
-         rHDTfsRb8wojgAQYn8ZxXevA7NOfIeWD0ULaE+kSYaKmJE8XvhwA22IT99CXwGEuDiRC
-         shNDaCFzL1KB4fL72bm90HkHgu1cAtOiB9cnl4rdeJCFV8wCRaHvn7VewnOfTIOvp1Yi
-         3UggsBthzB12uk3Ao4HHX4pzqt93smO3GryJ25AUcmrpQUAC7KP7Bkt925t5KpZi6w3o
-         BhBg==
-X-Gm-Message-State: AAQBX9dGSPHZ0wn7peI3K4NRoqURGuid05BdJjcTffIjesRnuK0nqvY1
-        IHF/mm8ikEawCise8wrs3oUp7DGGZv4Y3A==
-X-Google-Smtp-Source: AKy350Zp5+yqaQjdmx9ycHomeI50vMh6iRVByFss10btpzLl2MABzcEUUaFbM/Xt9LNZs6uJ118Ebg==
-X-Received: by 2002:a1c:7714:0:b0:3ed:ea48:cd92 with SMTP id t20-20020a1c7714000000b003edea48cd92mr15766885wmi.15.1680335393191;
-        Sat, 01 Apr 2023 00:49:53 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id t15-20020a05600c450f00b003ef7795e5a3sm12533678wmo.20.2023.04.01.00.49.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Apr 2023 00:49:52 -0700 (PDT)
-Date:   Sat, 1 Apr 2023 10:49:49 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Edward Cree <ecree.xilinx@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org
-Subject: Re: [bug report] sfc: add functions to insert encap matches into the
- MAE
-Message-ID: <74d0a5a7-8806-4717-9fb4-71cc80092be4@kili.mountain>
-References: <e7b69fbb-370d-4b3d-a2a0-3762700fd175@kili.mountain>
- <f155a6f7-0f8e-3c2b-0d0b-1822422f8d20@gmail.com>
+        Sat, 1 Apr 2023 09:23:24 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 150491E73D;
+        Sat,  1 Apr 2023 06:22:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 81BF6B80B4B;
+        Sat,  1 Apr 2023 13:22:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB37BC433EF;
+        Sat,  1 Apr 2023 13:22:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680355366;
+        bh=Ra/4hhwYWCbPyqLnOztSvMODqSrn8z/BivmlaVY6Q7A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dfEJPBrM9UHPPWBWYkNQ5cfFMSycRxXTLablSZTXNPWnzi0KyEjqzlvaE6vNkKxuz
+         I3wPeZNuwPbLWfYRFdyOA+db0I8uWBuFX9luy9Uv76ArvU7qlaNlzJVkSfaUMuOcWm
+         x13+fCHO6kPPUDl4B+cBJVQ4y/wmO1eFFTObGVWE9poQe0cL1t9d32kYgXl2hQGU3N
+         u1h2RiHTTt/Bf41zdcRen8Ld5rvCAM8d6W/ASDTuirFRzz9cVWp/9o8hSA6Ou20Puw
+         98v+n+94oGvJNlfdqZDVQtPt8mzWohjXDOagS1FlyKdgCf+S2zTep8Yb22E1fnTQlR
+         bVUXq39e9yqbg==
+Date:   Sat, 1 Apr 2023 14:37:54 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Mike Looijmans <mike.looijmans@topic.nl>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ti-ads1100: fix error code in probe()
+Message-ID: <20230401143754.1e561d0b@jic23-huawei>
+In-Reply-To: <36fa2aeb-f392-4793-8b38-ae15514033c8@kili.mountain>
+References: <36fa2aeb-f392-4793-8b38-ae15514033c8@kili.mountain>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f155a6f7-0f8e-3c2b-0d0b-1822422f8d20@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 31, 2023 at 11:35:42AM +0100, Edward Cree wrote:
-> On 31/03/2023 07:54, Dan Carpenter wrote:
-> > Hello Edward Cree,
-> > 
-> > The patch 2245eb0086d8: "sfc: add functions to insert encap matches
-> > into the MAE" from Mar 27, 2023, leads to the following Smatch static
-> > checker warning:
-> > 
-> > 	drivers/net/ethernet/sfc/mae.c:1002 efx_mae_register_encap_match()
-> > 	warn: this cast is a no-op
-> ...
-> >     998         MCDI_STRUCT_SET_WORD_BE(match_crit, MAE_ENC_FIELD_PAIRS_ENC_ETHER_TYPE_BE_MASK,
-> >     999                                 ~(__be16)0);
-> > 
-> > But for these ones the u16 is type promoted to int and so ~0 is negative
-> > one and will be sign extended.  The cast does nothing.
-> > 
-> >     1000         MCDI_STRUCT_SET_WORD_BE(match_crit, MAE_ENC_FIELD_PAIRS_ENC_L4_DPORT_BE,
-> >     1001                                 encap->udp_dport);
-> > --> 1002         MCDI_STRUCT_SET_WORD_BE(match_crit, MAE_ENC_FIELD_PAIRS_ENC_L4_DPORT_BE_MASK,
-> >     1003                                 ~(__be16)0);
-> > 
-> > Same.
+On Thu, 23 Mar 2023 18:23:56 +0300
+Dan Carpenter <error27@gmail.com> wrote:
+
+> This code has a copy and paste bug so it accidentally returns
+> "PTR_ERR(data->reg_vdd)" which is a valid pointer cast to int. It
+> should return "ret" instead.
 > 
-> The casts are there for Sparse reasons (endianness), rather than
->  particularly caring about the size (although that conveniently
->  documents to the reader the width of the MCDI field).
-> We could instead use (__be16)~0 but I believe some versions of
->  sparse will warn on this (I forget the details).
+> Fixes: 541880542f2b ("iio: adc: Add TI ADS1100 and ADS1000")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Applied to the togreg branch of iio.git as this driver is not yet upstream.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/adc/ti-ads1100.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> To the compiler (i.e. outside of sparse) the cast is indeed a
->  no-op, but this is fine.  I would consider this Smatch warning
->  a false positive; lmk if you disagree.
-
-Fair enough...  I didn't know that Sparse printed a warning for this.
-
-regards,
-dan carpenter
-
+> diff --git a/drivers/iio/adc/ti-ads1100.c b/drivers/iio/adc/ti-ads1100.c
+> index 6a478efb108b..6b5aebb82455 100644
+> --- a/drivers/iio/adc/ti-ads1100.c
+> +++ b/drivers/iio/adc/ti-ads1100.c
+> @@ -344,7 +344,7 @@ static int ads1100_probe(struct i2c_client *client)
+>  
+>  	ret = regulator_enable(data->reg_vdd);
+>  	if (ret < 0)
+> -		return dev_err_probe(dev, PTR_ERR(data->reg_vdd),
+> +		return dev_err_probe(dev, ret,
+>  				     "Failed to enable vdd regulator\n");
+>  
+>  	ret = devm_add_action_or_reset(dev, ads1100_reg_disable, data->reg_vdd);
 
