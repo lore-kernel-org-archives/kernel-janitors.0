@@ -2,56 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A4BC7619A
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Apr 2023 20:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184B6C76196
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Apr 2023 20:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230141AbjDBUUQ (ORCPT
+        id S230176AbjDBUtS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Apr 2023 16:20:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51904 "EHLO
+        Sun, 2 Apr 2023 16:49:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjDBUUO (ORCPT
+        with ESMTP id S229933AbjDBUtR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Apr 2023 16:20:14 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 935F54C3B;
-        Sun,  2 Apr 2023 13:20:12 -0700 (PDT)
-Received: from ip4d1634d3.dynamic.kabel-deutschland.de ([77.22.52.211] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1pj4BE-0002YN-3t; Sun, 02 Apr 2023 22:20:00 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     mturquette@baylibre.com, sboyd@kernel.org, abelvesa@kernel.org,
-        peng.fan@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2 4/4] clk: Remove mmask and nmask fields in struct
- clk_fractional_divider
-Date:   Sun, 02 Apr 2023 22:19:44 +0200
-Message-ID: <13622701.uLZWGnKmhe@diego>
-In-Reply-To: <680357e5acb338433bfc94114b65b4a4ce2c99e2.1680423909.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1680423909.git.christophe.jaillet@wanadoo.fr>
- <680357e5acb338433bfc94114b65b4a4ce2c99e2.1680423909.git.christophe.jaillet@wanadoo.fr>
+        Sun, 2 Apr 2023 16:49:17 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D4E24217
+        for <kernel-janitors@vger.kernel.org>; Sun,  2 Apr 2023 13:49:15 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id j4dRpeQhaB8bjj4dRpk4Bs; Sun, 02 Apr 2023 22:49:12 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 Apr 2023 22:49:12 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-iio@vger.kernel.org
+Subject: [PATCH] iio: accel: bmi088: Correctly compute the address of the struct spi_device
+Date:   Sun,  2 Apr 2023 22:49:08 +0200
+Message-Id: <e3dea6f158c936fc3f0186965f4b8edd78241cd6.1680468525.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am Sonntag, 2. April 2023, 11:42:07 CEST schrieb Christophe JAILLET:
-> All users of these fields have been removed.
-> They are now computed when needed with [mn]shift and [mn]width.
-> 
-> This shrinks the size of struct clk_fractional_divider from 72 to 56 bytes.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+bmi088_regmap_spi_write() is said to be similar to the SPI generic write
+function.
+However, regmap_spi_write() calls to_spi_device() in order to find the
+reference to the "struct spi_device", instead of considering that 'context'
+is already the correct value.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+This works because "struct device	dev" is the first entry of
+"struct spi_device".
 
+Align bmi088_regmap_spi_write() and regmap_spi_write() to be more
+future proof, should "struct spi_device" be shuffled one day.
+
+Fixes: c19ae6be7555 ("iio: accel: Add support for the Bosch-Sensortec BMI088")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/iio/accel/bmi088-accel-spi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iio/accel/bmi088-accel-spi.c b/drivers/iio/accel/bmi088-accel-spi.c
+index ee540edd8412..e3447c277947 100644
+--- a/drivers/iio/accel/bmi088-accel-spi.c
++++ b/drivers/iio/accel/bmi088-accel-spi.c
+@@ -15,7 +15,8 @@
+ 
+ static int bmi088_regmap_spi_write(void *context, const void *data, size_t count)
+ {
+-	struct spi_device *spi = context;
++	struct device *dev = context;
++	struct spi_device *spi = to_spi_device(dev);
+ 
+ 	/* Write register is same as generic SPI */
+ 	return spi_write(spi, data, count);
+-- 
+2.34.1
 
