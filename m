@@ -2,25 +2,25 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E42C761AF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Apr 2023 14:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A4BC7619A
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Apr 2023 20:20:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231149AbjDBOfW (ORCPT
+        id S230141AbjDBUUQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Apr 2023 10:35:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44632 "EHLO
+        Sun, 2 Apr 2023 16:20:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230490AbjDBOfV (ORCPT
+        with ESMTP id S229498AbjDBUUO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Apr 2023 10:35:21 -0400
+        Sun, 2 Apr 2023 16:20:14 -0400
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A66611D;
-        Sun,  2 Apr 2023 07:35:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 935F54C3B;
+        Sun,  2 Apr 2023 13:20:12 -0700 (PDT)
 Received: from ip4d1634d3.dynamic.kabel-deutschland.de ([77.22.52.211] helo=diego.localnet)
         by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <heiko@sntech.de>)
-        id 1piynZ-0000Gv-Nv; Sun, 02 Apr 2023 16:35:13 +0200
+        id 1pj4BE-0002YN-3t; Sun, 02 Apr 2023 22:20:00 +0200
 From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
 To:     mturquette@baylibre.com, sboyd@kernel.org, abelvesa@kernel.org,
         peng.fan@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
@@ -30,13 +30,13 @@ Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2 3/4] clk: rockchip: Remove values for mmask and nmask in struct
+Subject: Re: [PATCH v2 4/4] clk: Remove mmask and nmask fields in struct
  clk_fractional_divider
-Date:   Sun, 02 Apr 2023 16:35:12 +0200
-Message-ID: <2235297.tdWV9SEqCh@diego>
-In-Reply-To: <58e1950566e40e2fbb31004baee57a164ca6a390.1680423909.git.christophe.jaillet@wanadoo.fr>
+Date:   Sun, 02 Apr 2023 22:19:44 +0200
+Message-ID: <13622701.uLZWGnKmhe@diego>
+In-Reply-To: <680357e5acb338433bfc94114b65b4a4ce2c99e2.1680423909.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1680423909.git.christophe.jaillet@wanadoo.fr>
- <58e1950566e40e2fbb31004baee57a164ca6a390.1680423909.git.christophe.jaillet@wanadoo.fr>
+ <680357e5acb338433bfc94114b65b4a4ce2c99e2.1680423909.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -44,9 +44,11 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am Sonntag, 2. April 2023, 11:42:06 CEST schrieb Christophe JAILLET:
-> Now that fractional_divider clk computes mmask and nmask when needed, there
-> is no more need to provide them explicitly anymore.
+Am Sonntag, 2. April 2023, 11:42:07 CEST schrieb Christophe JAILLET:
+> All users of these fields have been removed.
+> They are now computed when needed with [mn]shift and [mn]width.
+> 
+> This shrinks the size of struct clk_fractional_divider from 72 to 56 bytes.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
