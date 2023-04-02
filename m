@@ -2,73 +2,55 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4208C76196
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Apr 2023 09:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59816C761AF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Apr 2023 14:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230334AbjDBJmi (ORCPT
+        id S230460AbjDBO2p (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Apr 2023 05:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42700 "EHLO
+        Sun, 2 Apr 2023 10:28:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230349AbjDBJmg (ORCPT
+        with ESMTP id S229459AbjDBO2o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Apr 2023 05:42:36 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C24381D86D
-        for <kernel-janitors@vger.kernel.org>; Sun,  2 Apr 2023 02:42:29 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id iuDzpwm4hwFKBiuEFpeDju; Sun, 02 Apr 2023 11:42:28 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 02 Apr 2023 11:42:28 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Sun, 2 Apr 2023 10:28:44 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F82A59D2;
+        Sun,  2 Apr 2023 07:28:42 -0700 (PDT)
+Received: from ip4d1634d3.dynamic.kabel-deutschland.de ([77.22.52.211] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1piyh9-0000BO-3y; Sun, 02 Apr 2023 16:28:35 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
 To:     mturquette@baylibre.com, sboyd@kernel.org, abelvesa@kernel.org,
         peng.fan@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
         kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        heiko@sntech.de
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 4/4] clk: Remove mmask and nmask fields in struct clk_fractional_divider
-Date:   Sun,  2 Apr 2023 11:42:07 +0200
-Message-Id: <680357e5acb338433bfc94114b65b4a4ce2c99e2.1680423909.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1680423909.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2 1/4] clk: Compute masks for fractional_divider clk when needed.
+Date:   Sun, 02 Apr 2023 16:28:11 +0200
+Message-ID: <1733257.X513TT2pbd@diego>
+In-Reply-To: <0fd6357242c974259c9e034c6e28a0391c480bf0.1680423909.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1680423909.git.christophe.jaillet@wanadoo.fr>
+ <0fd6357242c974259c9e034c6e28a0391c480bf0.1680423909.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-All users of these fields have been removed.
-They are now computed when needed with [mn]shift and [mn]width.
+Am Sonntag, 2. April 2023, 11:42:04 CEST schrieb Christophe JAILLET:
+> There is no real need to pre-compute mmask and nmask when handling
+> fractional_divider clk.
+> 
+> They can be computed when needed.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This shrinks the size of struct clk_fractional_divider from 72 to 56 bytes.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- include/linux/clk-provider.h | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index faad3cdc1e48..eb6930ae550f 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1154,10 +1154,8 @@ struct clk_fractional_divider {
- 	void __iomem	*reg;
- 	u8		mshift;
- 	u8		mwidth;
--	u32		mmask;
- 	u8		nshift;
- 	u8		nwidth;
--	u32		nmask;
- 	u8		flags;
- 	void		(*approximation)(struct clk_hw *hw,
- 				unsigned long rate, unsigned long *parent_rate,
--- 
-2.34.1
 
