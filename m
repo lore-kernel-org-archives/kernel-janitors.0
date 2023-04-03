@@ -2,143 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1097C761A6
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 12:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9FCC761A6
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 17:28:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbjDCMgK (ORCPT
+        id S233151AbjDCR2j (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Apr 2023 08:36:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59668 "EHLO
+        Mon, 3 Apr 2023 13:28:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231875AbjDCMgJ (ORCPT
+        with ESMTP id S233125AbjDCR2i (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Apr 2023 08:36:09 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85EF93586
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Apr 2023 05:36:08 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id m16so14199293ybk.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Apr 2023 05:36:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680525367;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HTdGFGo72jT0G2z3qfuhKe8NQ7sFzB56HywL+T9phf0=;
-        b=n//QZ4XWVxmdZdtfcxtWZQfogUQH8NZ1n30agZwN8PvCKA7JF1tTnlxPKNBSvQUapS
-         NGdK3ZPoAzF9sLfhlJOlVEdMM/1ZGqM8zB88fVnIWa9uFcSHP1nEdWGwmTMpZ7DzJn7z
-         01vkKnSI4g/jiF4j7qcT2UD9py0cyfh35S+gy/5/tQIgm86dYQj6VOiL93xHLqIPZy1t
-         cd0Z9A4SI+XhNjCW6H+7xiyjvfCrONXKa5xV3RT3eKtqQaQ8VnIQ0h+eICzxYiyZs+th
-         c1EDkx66f29BX5o9rujrr/uhOSC0/MCIKwKvoFqIRXDUVys9ZlSpIij8wWHRBvTVXLpW
-         YZUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680525367;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HTdGFGo72jT0G2z3qfuhKe8NQ7sFzB56HywL+T9phf0=;
-        b=hmK+j0tiMY0ri4PbuKPV90jq8EYJNtoEEGrGU9PaZ/dKcx1dwY7QwI4AM2B0BhGY94
-         q8BzJJfbiZ9rbvMilJnalk9e+dFZJ+hWsmGCdiYRpEV9eTKEEWpvHfFBAdW4K+4KDlgj
-         TDXrrpL7AN29Mm4f9l2M1uJw9AwMpz4NnBmQdwnGTFzH+ZY0z4ZsmepFZwSl3G7/1io5
-         j+ekAzrWwX+ZLSiE1vUWPxJQRVOLLzJusLuTFCD8lz8MeLEqUaKvkQCgn4UNrua5pMW4
-         5Cbi3VYIGy+WvLCdQvfln4NvDecjnDnZpThEai1iovSdRVq2O+j/CZnf6FRsRBjiDlOE
-         3Bjg==
-X-Gm-Message-State: AAQBX9cbBzq6FxJTzs6UYc2mqKmM/Sy+OZcnmCOH2Yh2v8xyYcK9SeEN
-        5sXDX/mZJeJufk8YoVR9OhebP2nVImzilttySWuwpg==
-X-Google-Smtp-Source: AKy350aGB0ahI/fUaNW0BoHgcBvb/iADnkkKxVOCPgr2PYtuEuuF3boDBTjSZywA5BVAHNPv6R6cANKREHNU8ivW9Sc=
-X-Received: by 2002:a25:344:0:b0:b27:4632:f651 with SMTP id
- 65-20020a250344000000b00b274632f651mr17084702ybd.3.1680525367299; Mon, 03 Apr
- 2023 05:36:07 -0700 (PDT)
+        Mon, 3 Apr 2023 13:28:38 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE181BD0
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Apr 2023 10:28:35 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id jNynpkUGwB8bjjNyopm0fW; Mon, 03 Apr 2023 19:28:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1680542913;
+        bh=5Np8023Y6FAt/94NM8u49tVSNsULJ4IHT6grFImpIW4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=as3/9nh1jKYq0g3MGVyo9lUN2uMiXBM0L5xt++SqOqLzzQSfVoVGvMSKBBDUypyRZ
+         E2s4pAePuf/px+rmHV5ViDQ6jBD0Q+EYsj6/F2fgdOG4zCT+qoMwT8wecoMjh+g1M2
+         LrvAgfwDb2vgW1/WR64cZyysmPxae6YitJx74vtmYKwv/VVNAsRuWbasI0dD5zCbQU
+         OK3tOJHGr+d7cZr3chHZPEl5saqEDoRWBSA6SgcqvnWyvykPRo+HnjMsM13MDn3FCf
+         UeelKMtt4ik1qaGAoSfagDQtFr1FnxvnYjuvNyHeuDHtRa7zeV341oGj3c00ZV54jM
+         JRKCVeje8gFyg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 03 Apr 2023 19:28:33 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <9085c8bb-1419-9381-242f-98d8d5be5e8d@wanadoo.fr>
+Date:   Mon, 3 Apr 2023 19:28:29 +0200
 MIME-Version: 1.0
-References: <CAPDyKFrVuQwLfQZKx9x3PNKTYctWi7=e=vnUsdJgJLJ6=1o2iA@mail.gmail.com>
- <03265187-6336-9b1f-ea0d-ecbc3c8546f2@nfschina.com>
-In-Reply-To: <03265187-6336-9b1f-ea0d-ecbc3c8546f2@nfschina.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 3 Apr 2023 14:35:31 +0200
-Message-ID: <CAPDyKFrap_T3B6k=kUqfXCyJaW87sdEfsymmNm_pYRFLeX3n+A@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: core: remove unnecessary (void*) conversions
-To:     Yu Zhe <yuzhe@nfschina.com>
-Cc:     adrian.hunter@intel.com, quic_sayalil@quicinc.com,
-        quic_luliang@quicinc.com, m.szyprowski@samsung.com,
-        wsa+renesas@sang-engineering.com, yebin10@huawei.com,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v2] iio: accel: bmi088: Correctly compute the address of
+ the struct spi_device
+To:     Jonathan.Cameron@huawei.com, jic23@kernel.org, lars@metafoo.de,
+        linus.walleij@linaro.org, mike.looijmans@topic.nl
+Cc:     kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <8da05ad95015e048e3058f275bd57d382420b46f.1680469082.git.christophe.jaillet@wanadoo.fr>
+Content-Language: fr
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <8da05ad95015e048e3058f275bd57d382420b46f.1680469082.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 3 Apr 2023 at 14:13, Yu Zhe <yuzhe@nfschina.com> wrote:
->
->
-> > On Tue, 28 Mar 2023 at 05:11, Yu Zhe <yuzhe@nfschina.com> wrote:
-> >> Pointer variables of void * type do not require type cast.
-> >>
-> >> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
-> >> Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Did Marek give his reviewed-by tag offlist? I couldn't find his reply,
-> > just to make sure this is correct?
-> >
-> > Kind regards
-> > Uffe
->
->
-> Sorry, it may be a misuse of "reviewed-by" tag,  "Marek Szyprowski" gave the error
-> report at the previous patch, so, i put the name at reviewed-by tag.
+Le 02/04/2023 à 22:58, Christophe JAILLET a écrit :
+> bmi088_regmap_spi_write() is said to be similar to the SPI generic write
+> function.
+> However, regmap_spi_write() calls to_spi_device() in order to find the
+> reference to the "struct spi_device", instead of considering that 'context'
+> is already the correct value.
 
-Yes, you shouldn't put his tag like this, unless he explicitly has said so.
+Just NACK.
+The patch looks just plain wrong.
 
-For bug reports we use "Reported-by:", but in this case I decided it
-was better to drop the offending commit, which means this isn't
-applicable here.
+Sorry for the noise.
 
-Anyway, there is no need to resend, I will just drop the tag when applying.
+CJ
 
-Kind regards
-Uffe
 
->
-> >
-> >> ---
-> >>   drivers/mmc/core/debugfs.c  | 2 +-
-> >>   drivers/mmc/core/mmc_test.c | 6 +++---
-> >>   2 files changed, 4 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
-> >> index fe6808771bc7..2c97b94aab23 100644
-> >> --- a/drivers/mmc/core/debugfs.c
-> >> +++ b/drivers/mmc/core/debugfs.c
-> >> @@ -246,7 +246,7 @@ DEFINE_DEBUGFS_ATTRIBUTE(mmc_err_state, mmc_err_state_get, NULL, "%llu\n");
-> >>
-> >>   static int mmc_err_stats_show(struct seq_file *file, void *data)
-> >>   {
-> >> -       struct mmc_host *host = (struct mmc_host *)file->private;
-> >> +       struct mmc_host *host = file->private;
-> >>          const char *desc[MMC_ERR_MAX] = {
-> >>                  [MMC_ERR_CMD_TIMEOUT] = "Command Timeout Occurred",
-> >>                  [MMC_ERR_CMD_CRC] = "Command CRC Errors Occurred",
-> >> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-> >> index 156d34b2ed4d..0f6a563103fd 100644
-> >> --- a/drivers/mmc/core/mmc_test.c
-> >> +++ b/drivers/mmc/core/mmc_test.c
-> >> @@ -3045,7 +3045,7 @@ static LIST_HEAD(mmc_test_file_test);
-> >>
-> >>   static int mtf_test_show(struct seq_file *sf, void *data)
-> >>   {
-> >> -       struct mmc_card *card = (struct mmc_card *)sf->private;
-> >> +       struct mmc_card *card = sf->private;
-> >>          struct mmc_test_general_result *gr;
-> >>
-> >>          mutex_lock(&mmc_test_lock);
-> >> @@ -3079,8 +3079,8 @@ static int mtf_test_open(struct inode *inode, struct file *file)
-> >>   static ssize_t mtf_test_write(struct file *file, const char __user *buf,
-> >>          size_t count, loff_t *pos)
-> >>   {
-> >> -       struct seq_file *sf = (struct seq_file *)file->private_data;
-> >> -       struct mmc_card *card = (struct mmc_card *)sf->private;
-> >> +       struct seq_file *sf = file->private_data;
-> >> +       struct mmc_card *card = sf->private;
-> >>          struct mmc_test_card *test;
-> >>          long testcase;
-> >>          int ret;
-> >> --
-> >> 2.11.0
-> >>
+> 
+> This works because "struct device	dev" is the first entry of
+> "struct spi_device".
+> 
+> Align bmi088_regmap_spi_write() and regmap_spi_write() to be more
+> future proof, should "struct spi_device" be shuffled one day.
+> 
+> Also update bmi088_regmap_spi_read() in the same way.
+> 
+> Fixes: c19ae6be7555 ("iio: accel: Add support for the Bosch-Sensortec BMI088")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+> ---
+> v2: do the same for bmi088_regmap_spi_read()
+> ---
+>   drivers/iio/accel/bmi088-accel-spi.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/bmi088-accel-spi.c b/drivers/iio/accel/bmi088-accel-spi.c
+> index ee540edd8412..79e4b5392312 100644
+> --- a/drivers/iio/accel/bmi088-accel-spi.c
+> +++ b/drivers/iio/accel/bmi088-accel-spi.c
+> @@ -15,7 +15,8 @@
+>   
+>   static int bmi088_regmap_spi_write(void *context, const void *data, size_t count)
+>   {
+> -	struct spi_device *spi = context;
+> +	struct device *dev = context;
+> +	struct spi_device *spi = to_spi_device(dev);
+>   
+>   	/* Write register is same as generic SPI */
+>   	return spi_write(spi, data, count);
+> @@ -24,7 +25,8 @@ static int bmi088_regmap_spi_write(void *context, const void *data, size_t count
+>   static int bmi088_regmap_spi_read(void *context, const void *reg,
+>   				size_t reg_size, void *val, size_t val_size)
+>   {
+> -	struct spi_device *spi = context;
+> +	struct device *dev = context;
+> +	struct spi_device *spi = to_spi_device(dev);
+>   	u8 addr[2];
+>   
+>   	addr[0] = *(u8 *)reg;
+
