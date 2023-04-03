@@ -2,112 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9FCC761A6
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 17:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF44DC761A6
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 18:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233151AbjDCR2j (ORCPT
+        id S233060AbjDCSGK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Apr 2023 13:28:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34170 "EHLO
+        Mon, 3 Apr 2023 14:06:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233125AbjDCR2i (ORCPT
+        with ESMTP id S232990AbjDCSGH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Apr 2023 13:28:38 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE181BD0
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Apr 2023 10:28:35 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id jNynpkUGwB8bjjNyopm0fW; Mon, 03 Apr 2023 19:28:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1680542913;
-        bh=5Np8023Y6FAt/94NM8u49tVSNsULJ4IHT6grFImpIW4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=as3/9nh1jKYq0g3MGVyo9lUN2uMiXBM0L5xt++SqOqLzzQSfVoVGvMSKBBDUypyRZ
-         E2s4pAePuf/px+rmHV5ViDQ6jBD0Q+EYsj6/F2fgdOG4zCT+qoMwT8wecoMjh+g1M2
-         LrvAgfwDb2vgW1/WR64cZyysmPxae6YitJx74vtmYKwv/VVNAsRuWbasI0dD5zCbQU
-         OK3tOJHGr+d7cZr3chHZPEl5saqEDoRWBSA6SgcqvnWyvykPRo+HnjMsM13MDn3FCf
-         UeelKMtt4ik1qaGAoSfagDQtFr1FnxvnYjuvNyHeuDHtRa7zeV341oGj3c00ZV54jM
-         JRKCVeje8gFyg==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 03 Apr 2023 19:28:33 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <9085c8bb-1419-9381-242f-98d8d5be5e8d@wanadoo.fr>
-Date:   Mon, 3 Apr 2023 19:28:29 +0200
+        Mon, 3 Apr 2023 14:06:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F1A30D0;
+        Mon,  3 Apr 2023 11:06:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DF9EF621D5;
+        Mon,  3 Apr 2023 18:05:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B43C433D2;
+        Mon,  3 Apr 2023 18:05:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680545159;
+        bh=bQaOjfuXlS/fADZRDD4pGua1uw9DycIU4X61ab+46/k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OIbqJFPCTzHu5YCDZWaRfIOyF07aJs2Wp335tQ8qMZg+ouNVk0VU5CSNWxBySt/tQ
+         2SJI2lwYY0yQxiaJdKZvyMQCdaNhYw4iNqITcXtaP8BzSHUXxRQiKEaqk+27lTE46Y
+         yROcCgBj/aI8OH1t+k/6grPahvdyEyhXpej80yq/Nm556m/4B2EmnYsi78R99hyAqt
+         CCVY6JYS8mIfiS12PeR+2VOuDQ5h4OYD39vJGa5ELjwZnpdtNDzb3GWy0H0yE0x8d5
+         EprXF8X37+zVDQ2rtKDHEhgQJS0BlhnJuQaV1jmnBh6+XUAQJSIr6nIIw9aoZ2p8iO
+         ALmUE/LBn56/w==
+Date:   Mon, 3 Apr 2023 21:05:54 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Eli Cohen <elic@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Shay Drory <shayd@nvidia.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net/mlx5: Fix check for allocation failure in
+ comp_irqs_request_pci()
+Message-ID: <20230403180554.GA4514@unreal>
+References: <6652003b-e89c-4011-9e7d-a730a50bcfce@kili.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v2] iio: accel: bmi088: Correctly compute the address of
- the struct spi_device
-To:     Jonathan.Cameron@huawei.com, jic23@kernel.org, lars@metafoo.de,
-        linus.walleij@linaro.org, mike.looijmans@topic.nl
-Cc:     kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <8da05ad95015e048e3058f275bd57d382420b46f.1680469082.git.christophe.jaillet@wanadoo.fr>
-Content-Language: fr
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8da05ad95015e048e3058f275bd57d382420b46f.1680469082.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6652003b-e89c-4011-9e7d-a730a50bcfce@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 02/04/2023 à 22:58, Christophe JAILLET a écrit :
-> bmi088_regmap_spi_write() is said to be similar to the SPI generic write
-> function.
-> However, regmap_spi_write() calls to_spi_device() in order to find the
-> reference to the "struct spi_device", instead of considering that 'context'
-> is already the correct value.
-
-Just NACK.
-The patch looks just plain wrong.
-
-Sorry for the noise.
-
-CJ
-
-
+On Fri, Mar 31, 2023 at 10:03:47AM +0300, Dan Carpenter wrote:
+> This function accidentally dereferences "cpus" instead of returning
+> directly.
 > 
-> This works because "struct device	dev" is the first entry of
-> "struct spi_device".
-> 
-> Align bmi088_regmap_spi_write() and regmap_spi_write() to be more
-> future proof, should "struct spi_device" be shuffled one day.
-> 
-> Also update bmi088_regmap_spi_read() in the same way.
-> 
-> Fixes: c19ae6be7555 ("iio: accel: Add support for the Bosch-Sensortec BMI088")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+> Fixes: b48a0f72bc3e ("net/mlx5: Refactor completion irq request/release code")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 > ---
-> v2: do the same for bmi088_regmap_spi_read()
-> ---
->   drivers/iio/accel/bmi088-accel-spi.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/net/ethernet/mellanox/mlx5/core/eq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/iio/accel/bmi088-accel-spi.c b/drivers/iio/accel/bmi088-accel-spi.c
-> index ee540edd8412..79e4b5392312 100644
-> --- a/drivers/iio/accel/bmi088-accel-spi.c
-> +++ b/drivers/iio/accel/bmi088-accel-spi.c
-> @@ -15,7 +15,8 @@
->   
->   static int bmi088_regmap_spi_write(void *context, const void *data, size_t count)
->   {
-> -	struct spi_device *spi = context;
-> +	struct device *dev = context;
-> +	struct spi_device *spi = to_spi_device(dev);
->   
->   	/* Write register is same as generic SPI */
->   	return spi_write(spi, data, count);
-> @@ -24,7 +25,8 @@ static int bmi088_regmap_spi_write(void *context, const void *data, size_t count
->   static int bmi088_regmap_spi_read(void *context, const void *reg,
->   				size_t reg_size, void *val, size_t val_size)
->   {
-> -	struct spi_device *spi = context;
-> +	struct device *dev = context;
-> +	struct spi_device *spi = to_spi_device(dev);
->   	u8 addr[2];
->   
->   	addr[0] = *(u8 *)reg;
 
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
