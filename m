@@ -2,177 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33A2C761A6
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 07:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7E2C761A6
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 11:25:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231521AbjDCHE5 (ORCPT
+        id S231576AbjDCLZA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Apr 2023 03:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58796 "EHLO
+        Mon, 3 Apr 2023 07:25:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231628AbjDCHEe (ORCPT
+        with ESMTP id S231966AbjDCLYx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Apr 2023 03:04:34 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17699DBC1
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Apr 2023 00:04:01 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230403070356euoutp021cc59419d029ef584f50b5407468eb4a~SWsp0IKFM1326413264euoutp02W
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Apr 2023 07:03:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230403070356euoutp021cc59419d029ef584f50b5407468eb4a~SWsp0IKFM1326413264euoutp02W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1680505436;
-        bh=GqYSXkFFwqBFzhMRUvQBL+nFf4rkIeNW0LsEK9MUwI4=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=AQBNW8VL2TIfqp+8gAkFNmNTF41TI/csM1nVWiocYHZTOiOrkXMXgWHo+lgi427go
-         WIxC7UcJl6b7d6UR14Cr21HXNzARzZs1BqYu8BeBQrorTq+Cey1//SX+wM2FkqO97M
-         AzWY0wzJ9uwTOWZ7HzfOwXREU8T3+aKiG+JinRPo=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230403070356eucas1p25d23cdfe4080655555d0c77e27aa9fa0~SWspiwfwP2363523635eucas1p2Z;
-        Mon,  3 Apr 2023 07:03:56 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6D.EA.10014.C5A7A246; Mon,  3
-        Apr 2023 08:03:56 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230403070355eucas1p1d33a597fcef51a9889611a7c19fa6284~SWspPJmIj2947229472eucas1p1K;
-        Mon,  3 Apr 2023 07:03:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230403070355eusmtrp1cb77d3daf94d8f2f8e9a12806f23a9a8~SWspOkd_Y0449404494eusmtrp1u;
-        Mon,  3 Apr 2023 07:03:55 +0000 (GMT)
-X-AuditID: cbfec7f5-ba1ff7000000271e-37-642a7a5cebff
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 30.60.08862.B5A7A246; Mon,  3
-        Apr 2023 08:03:55 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230403070355eusmtip2c575d7b70c6251460ee28c1ca4416b1b~SWsorV-zD1953919539eusmtip21;
-        Mon,  3 Apr 2023 07:03:55 +0000 (GMT)
-Message-ID: <5f324b20-6710-4612-d78a-ea294ad283aa@samsung.com>
-Date:   Mon, 3 Apr 2023 09:03:54 +0200
+        Mon, 3 Apr 2023 07:24:53 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 206233C34
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Apr 2023 04:24:52 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-545cb3c9898so469973927b3.7
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Apr 2023 04:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680521091;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzK7du5TzgY9xSJq4SiAHiRgK3xy6VrwABQVZJYzTK0=;
+        b=zVJU6LNlYaSpvCUIHnOgOVXtOlaxsf3C0wZbQloD3xis0IqXn/sJokO5erOor6k+C9
+         VZWl3YLU4GlGOFit5YCHrAELmJjzpBs+7KBP9aJtFoWkxLMdowjQueZishRWA72OyJsE
+         ssxaCiskpLpCoDrVyj3fGO2e/SRdRlMeLFgmmv6C8/o9kYelqYLo2EK7MOAwNAPmwdbl
+         blCyH0gyKEVuR6l5u9yUyDS6Xg+lM5a6CyiY/vPeMU3HBsb9nMoXncJbIk5I6LsvS+ty
+         mdAlrenX3JRK+pLj6XWX3yoAzLn3qxFgYuht6VLCoFDMbkyF/8rwYlT1wy78bLrD2ld1
+         rbMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680521091;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tzK7du5TzgY9xSJq4SiAHiRgK3xy6VrwABQVZJYzTK0=;
+        b=BrlC3trOOxLe2YdUSYiQ4dIkffrzTarKHWiRkXPg63TvEDiPhDXw+03Z+FjGK/Kz7Z
+         1AAtZxTP+LodhWamj7JQLVmXFNYVBgD+uh5uIMumEcgaZQxbGJVDyk2zPQ8pHullEXge
+         bnBlzOW6rBm7Pa+svnXWHc24Rl9PvgIu3iD09V/WWbTNI+cP7SR9J+UIKe4YDjMEoDVz
+         YSCnQ13GoipbYe+rEqYS+KiIUJB0JyJTWGnAIKXZHDDP8x0RCx2Ons4yCX1d8giSdV1K
+         XsRqlbM10wtN6nZNswxskO5ESzZiHwMgNJxNaYfdmBEPInYSiJMqxO1i/nMLaIv4Puvt
+         bNHw==
+X-Gm-Message-State: AAQBX9ceyuxFifNKKpUxk8S9CxwNqLO1XhmBoqWOwK8JLpIgtPnCX59d
+        5uMVcDm7ttO2QFxEHBQ83z/Ovw6KojdQ20TZrxctn4Uvp8rGzQBH
+X-Google-Smtp-Source: AKy350aGuEBwRp65ybZjN0yySO/u0tnwI5OlcHo0wq/NRgZxYKQBmrBMe7idXT/X80GBQBhfimFhBsVrBi3HV2NrA4E=
+X-Received: by 2002:a81:aa05:0:b0:53c:6fda:835f with SMTP id
+ i5-20020a81aa05000000b0053c6fda835fmr6278526ywh.0.1680521091251; Mon, 03 Apr
+ 2023 04:24:51 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
-        Gecko/20100101 Thunderbird/102.9.1
-Subject: Re: [PATCH] iommu/exynos: Use the devm_clk_get_optional() helper
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsWy7djPc7oxVVopBl3fuS0ezNvGZrH14FxW
-        i19fLCw6Z29gt9h6S9pi7+ut7BabHl9jtbi8aw6bxYzz+5gsDn54wmrRcsfUgdvjycF5TB5r
-        5q1h9Ni0qpPN4861PWwem5fUe7zYPJPRo2/LKkaPz5vkPD7fXc8awBnFZZOSmpNZllqkb5fA
-        lbF30yGWgrMCFRseTGFsYDzB28XIySEhYCLx8ttu1i5GLg4hgRWMEk+n7meBcL4wSsy6MJcd
-        pEpI4DOjxPbPeTAdzV3tUB3LGSWWPloA1fGRUeLi2jPMIFW8AnYSJ37MZQGxWQRUJJqXLYOK
-        C0qcnPkELC4qkCKx++RTsA3CAp4SbxfvYgWxmQXEJW49mc8EMlRE4C+jxLoL69ggEksZJR5s
-        jgCx2QQMJbredoHFOYEG3W87wAxRIy+x/e0cZpBmCYF+TomHDRcZuxg5gBwXiYunhCFeEJZ4
-        dXwLO4QtI3F6cg8LRH07o8SC3/eZIJwJjBINz28xQlRZS9w594sNZBCzgKbE+l36EGFHiR+/
-        VzFDzOeTuPFWEOIGPolJ26ZDhXklOtqEIKrVJGYdXwe39uCFS8wTGJVmIQXLLCTvz0LyzSyE
-        vQsYWVYxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIEJrPT/45/3cG44tVHvUOMTByMhxgl
-        OJiVRHjtNTRThHhTEiurUovy44tKc1KLDzFKc7AoifNq255MFhJITyxJzU5NLUgtgskycXBK
-        NTBN/xAQzH/cqfNfqgVXgcoazS8RHw5c/6C5+f0/J273oGDmczYPnaxbxIQnddhdmmB5s+rJ
-        gmeW787p7tdc5DNvdv1v219Bi091vLvylUP5XtrDXal2q3X21FYwiK29dydI68KSf1zqH7g+
-        7vvH4t1qwPRX/+1MYaNDJx9Grv7xU8LPeHKzqOQ/JsGKzd+6wjMTag34c/g3RzDrXFuqFf2t
-        PqJacdqrsgCJ8pV7PrZK9nNOec3cqHl3xuSl2Zcdt07JC222zwuf2WGxIP2ivJ/03WlnS5Ky
-        Xl/k1255KPFumanyU21fw885kdUKua+fHznBlHf94sQJhyLTPNe67Ctaw9e6dLlLQZKy8CGf
-        tkNKLMUZiYZazEXFiQBp3dPL1QMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xe7rRVVopBlc3mVg8mLeNzWLrwbms
-        Fr++WFh0zt7AbrH1lrTF3tdb2S02Pb7GanF51xw2ixnn9zFZHPzwhNWi5Y6pA7fHk4PzmDzW
-        zFvD6LFpVSebx51re9g8Ni+p93ixeSajR9+WVYwenzfJeXy+u541gDNKz6Yov7QkVSEjv7jE
-        Vina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL2PvpkMsBWcFKjY8mMLYwHiC
-        t4uRk0NCwESiuaudtYuRi0NIYCmjRNfxycwQCRmJk9MaWCFsYYk/17rYIIreM0osfbWXDSTB
-        K2AnceLHXBYQm0VARaJ52TJmiLigxMmZT8DiogIpErsmLGUCsYUFPCXeLt4FNpRZQFzi1pP5
-        TCBDRQT+M0rsXHWaESIBdMblX/EQ27YzSjz//RtsEpuAoUTX2y6wzZxAU++3HWCGaDCT6Nra
-        BdUsL7H97RzmCYxCs5AcMgvJwllIWmYhaVnAyLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMj
-        MIK3Hfu5eQfjvFcf9Q4xMnEwHmKU4GBWEuG119BMEeJNSaysSi3Kjy8qzUktPsRoCgyNicxS
-        osn5wBSSVxJvaGZgamhiZmlgamlmrCTO61nQkSgkkJ5YkpqdmlqQWgTTx8TBKdXApM8t41Kv
-        z3jTff/2k5Yauxab5vTXVCd1GOysf19ToPhf6vIfleIUt01vE6Ky6w9k67z3T1+efXARo97c
-        wJZdizdkbXr2fePW1u2/L3tIpsUYHffV6NP8Pf2pW3jDtOPcR+8dM1qqM8do08mWB7nL+Op2
-        XPiunp9y0rFJSEv948Q8u9ebVVql54t+Oz2FN8Qljv/m2pl2ywSmTwrbqTFX7VXEx80eTPty
-        NTZdXL/3wqTN1fcjVOwXpD2UvpFkM31t8sMVrPcNbjy5PLWGy2TjYTnuDSXMLiui9py4prBS
-        Yzaj1N3W2Zvvxks6PC5OO6axy8AxKuNhww9F9TvCvz7ENAp9eF66fKFSMH+Dzud/k5RYijMS
-        DbWYi4oTAWLaIqRpAwAA
-X-CMS-MailID: 20230403070355eucas1p1d33a597fcef51a9889611a7c19fa6284
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230326123802eucas1p2f9e22c91fe4134d086d9dfe1d6bfd029
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230326123802eucas1p2f9e22c91fe4134d086d9dfe1d6bfd029
-References: <CGME20230326123802eucas1p2f9e22c91fe4134d086d9dfe1d6bfd029@eucas1p2.samsung.com>
-        <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
+References: <20230317064729.24407-1-yuzhe@nfschina.com> <20230328031049.22749-1-yuzhe@nfschina.com>
+In-Reply-To: <20230328031049.22749-1-yuzhe@nfschina.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 3 Apr 2023 13:24:15 +0200
+Message-ID: <CAPDyKFrVuQwLfQZKx9x3PNKTYctWi7=e=vnUsdJgJLJ6=1o2iA@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: core: remove unnecessary (void*) conversions
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     adrian.hunter@intel.com, quic_sayalil@quicinc.com,
+        quic_c_sbhanu@quicinc.com, quic_luliang@quicinc.com,
+        m.szyprowski@samsung.com, wsa+renesas@sang-engineering.com,
+        yebin10@huawei.com, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 26.03.2023 14:37, Christophe JAILLET wrote:
-> Use devm_clk_get_optional() instead of hand writing it.
-> This saves some loC and improves the semantic.
+On Tue, 28 Mar 2023 at 05:11, Yu Zhe <yuzhe@nfschina.com> wrote:
 >
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Pointer variables of void * type do not require type cast.
+>
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Did Marek give his reviewed-by tag offlist? I couldn't find his reply,
+just to make sure this is correct?
+
+Kind regards
+Uffe
+
 > ---
->   drivers/iommu/exynos-iommu.c | 24 ++++++++----------------
->   1 file changed, 8 insertions(+), 16 deletions(-)
+>  drivers/mmc/core/debugfs.c  | 2 +-
+>  drivers/mmc/core/mmc_test.c | 6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 483aaaeb6dae..867f409e0325 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -747,22 +747,16 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
->   		return ret;
->   	}
->   
-> -	data->clk = devm_clk_get(dev, "sysmmu");
-> -	if (PTR_ERR(data->clk) == -ENOENT)
-> -		data->clk = NULL;
-> -	else if (IS_ERR(data->clk))
-> +	data->clk = devm_clk_get_optional(dev, "sysmmu");
-> +	if (IS_ERR(data->clk))
->   		return PTR_ERR(data->clk);
->   
-> -	data->aclk = devm_clk_get(dev, "aclk");
-> -	if (PTR_ERR(data->aclk) == -ENOENT)
-> -		data->aclk = NULL;
-> -	else if (IS_ERR(data->aclk))
-> +	data->aclk = devm_clk_get_optional(dev, "aclk");
-> +	if (IS_ERR(data->aclk))
->   		return PTR_ERR(data->aclk);
->   
-> -	data->pclk = devm_clk_get(dev, "pclk");
-> -	if (PTR_ERR(data->pclk) == -ENOENT)
-> -		data->pclk = NULL;
-> -	else if (IS_ERR(data->pclk))
-> +	data->pclk = devm_clk_get_optional(dev, "pclk");
-> +	if (IS_ERR(data->pclk))
->   		return PTR_ERR(data->pclk);
->   
->   	if (!data->clk && (!data->aclk || !data->pclk)) {
-> @@ -770,10 +764,8 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
->   		return -ENOSYS;
->   	}
->   
-> -	data->clk_master = devm_clk_get(dev, "master");
-> -	if (PTR_ERR(data->clk_master) == -ENOENT)
-> -		data->clk_master = NULL;
-> -	else if (IS_ERR(data->clk_master))
-> +	data->clk_master = devm_clk_get_optional(dev, "master");
-> +	if (IS_ERR(data->clk_master))
->   		return PTR_ERR(data->clk_master);
->   
->   	data->sysmmu = dev;
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
+> index fe6808771bc7..2c97b94aab23 100644
+> --- a/drivers/mmc/core/debugfs.c
+> +++ b/drivers/mmc/core/debugfs.c
+> @@ -246,7 +246,7 @@ DEFINE_DEBUGFS_ATTRIBUTE(mmc_err_state, mmc_err_state_get, NULL, "%llu\n");
+>
+>  static int mmc_err_stats_show(struct seq_file *file, void *data)
+>  {
+> -       struct mmc_host *host = (struct mmc_host *)file->private;
+> +       struct mmc_host *host = file->private;
+>         const char *desc[MMC_ERR_MAX] = {
+>                 [MMC_ERR_CMD_TIMEOUT] = "Command Timeout Occurred",
+>                 [MMC_ERR_CMD_CRC] = "Command CRC Errors Occurred",
+> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+> index 156d34b2ed4d..0f6a563103fd 100644
+> --- a/drivers/mmc/core/mmc_test.c
+> +++ b/drivers/mmc/core/mmc_test.c
+> @@ -3045,7 +3045,7 @@ static LIST_HEAD(mmc_test_file_test);
+>
+>  static int mtf_test_show(struct seq_file *sf, void *data)
+>  {
+> -       struct mmc_card *card = (struct mmc_card *)sf->private;
+> +       struct mmc_card *card = sf->private;
+>         struct mmc_test_general_result *gr;
+>
+>         mutex_lock(&mmc_test_lock);
+> @@ -3079,8 +3079,8 @@ static int mtf_test_open(struct inode *inode, struct file *file)
+>  static ssize_t mtf_test_write(struct file *file, const char __user *buf,
+>         size_t count, loff_t *pos)
+>  {
+> -       struct seq_file *sf = (struct seq_file *)file->private_data;
+> -       struct mmc_card *card = (struct mmc_card *)sf->private;
+> +       struct seq_file *sf = file->private_data;
+> +       struct mmc_card *card = sf->private;
+>         struct mmc_test_card *test;
+>         long testcase;
+>         int ret;
+> --
+> 2.11.0
+>
