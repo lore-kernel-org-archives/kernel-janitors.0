@@ -2,183 +2,177 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2570C7619A
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 03:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33A2C761A6
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 07:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231229AbjDCDff (ORCPT
+        id S231521AbjDCHE5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Apr 2023 23:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45906 "EHLO
+        Mon, 3 Apr 2023 03:04:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231144AbjDCDfe (ORCPT
+        with ESMTP id S231628AbjDCHEe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Apr 2023 23:35:34 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D0006EB7
-        for <kernel-janitors@vger.kernel.org>; Sun,  2 Apr 2023 20:35:32 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id z18so16605924pgj.13
-        for <kernel-janitors@vger.kernel.org>; Sun, 02 Apr 2023 20:35:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680492932;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/D4pTl4jFzV4jgHwDP3sW1Lt1J55i00u3GAQnSTJoQQ=;
-        b=mDPqR5a6pMJJzyPRzXU8LTfrkGs2hUub739GYGKZRnBQ3D3+Ev6tXSvvmYnmW9n3Kb
-         W2cX8vNKSBSi9J0xnBiyb+hP5dayw9BPQD2Ydg+TZJEoWR1vux7je3WmHI4SlbWJ72Oo
-         WuMjgWDoECvTFfbeVmUL/yYP1xNm8EQvhBORJeYfAB4c0VWZ3LhrdyBn6yDivKSe7NJC
-         N0czeT3FUw/4IYpfTApoYqjk0nYpTfT25LQPu4svY2oEYhRSqqufDzzrDxteGJ2boTYy
-         xYYnlTV1LkQAhro3RadcySCGSI1+sB5a4TI+Ksp8ZQcWCSRDl+XI1LYO2AxhPhpwZRoE
-         PKbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680492932;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/D4pTl4jFzV4jgHwDP3sW1Lt1J55i00u3GAQnSTJoQQ=;
-        b=VJghxpXSBfdIpSvtcPp3wY7gDK7jOkxQ+BRM02Iqkxr9pFI1aL0YnJTjC48Biybr6d
-         MvJeE/ynTbUbvh5Jb9BVT4oBjVFw3vF/W+vQmjHZKXWPYtk/c1bIDr27MNCiEMdURSNs
-         XaSOsmLsqZup4rn+eY/XpMS7EvN6dh+GtnzsaJ7rmsb3jsiQMCt49gFnNrE4rq+xLxi2
-         VBQ3ilwgH+oaXpO2MUAha30C28f7pdgLlW+6L9LIVeQWFpcPNt4U/se/ztfW9G2t38hB
-         JQgRXlLanywEp8vJKl3znDOb0feakA44eI93lZde7mstO7ganh4r0oPHiwNsnysJ9BG/
-         WU3A==
-X-Gm-Message-State: AAQBX9d0/dpd1jDqN+1e4LFdruqvGa2JM+LFgwqLNNRt8zmzRWhtYaK6
-        EBAc1svZt33Hwtkr4IUeVHV4zw==
-X-Google-Smtp-Source: AKy350ZcXokqcVbSfXh0/U/C+8KTXx9rbwWKFpC4NaX5XoDdZvPnEORMc6ZhHnuCbOGGp7xwcmH40g==
-X-Received: by 2002:a62:1c45:0:b0:626:1523:b10d with SMTP id c66-20020a621c45000000b006261523b10dmr35575121pfc.4.1680492931885;
-        Sun, 02 Apr 2023 20:35:31 -0700 (PDT)
-Received: from localhost ([122.172.85.168])
-        by smtp.gmail.com with ESMTPSA id 9-20020aa79149000000b0062dd28aaca6sm5614107pfi.212.2023.04.02.20.35.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Apr 2023 20:35:31 -0700 (PDT)
-Date:   Mon, 3 Apr 2023 09:05:29 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH resent] cpufreq: sparc: Fix exception handling in two
- functions
-Message-ID: <20230403033529.x6n3ihhkypwizq3b@vireshk-i7>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <b3cce5b3-2e68-180c-c293-74d4d9d4032c@web.de>
- <2d125f3e-4de6-cfb4-2d21-6e1ec04bc412@web.de>
+        Mon, 3 Apr 2023 03:04:34 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17699DBC1
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Apr 2023 00:04:01 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230403070356euoutp021cc59419d029ef584f50b5407468eb4a~SWsp0IKFM1326413264euoutp02W
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Apr 2023 07:03:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230403070356euoutp021cc59419d029ef584f50b5407468eb4a~SWsp0IKFM1326413264euoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1680505436;
+        bh=GqYSXkFFwqBFzhMRUvQBL+nFf4rkIeNW0LsEK9MUwI4=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=AQBNW8VL2TIfqp+8gAkFNmNTF41TI/csM1nVWiocYHZTOiOrkXMXgWHo+lgi427go
+         WIxC7UcJl6b7d6UR14Cr21HXNzARzZs1BqYu8BeBQrorTq+Cey1//SX+wM2FkqO97M
+         AzWY0wzJ9uwTOWZ7HzfOwXREU8T3+aKiG+JinRPo=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230403070356eucas1p25d23cdfe4080655555d0c77e27aa9fa0~SWspiwfwP2363523635eucas1p2Z;
+        Mon,  3 Apr 2023 07:03:56 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6D.EA.10014.C5A7A246; Mon,  3
+        Apr 2023 08:03:56 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230403070355eucas1p1d33a597fcef51a9889611a7c19fa6284~SWspPJmIj2947229472eucas1p1K;
+        Mon,  3 Apr 2023 07:03:55 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230403070355eusmtrp1cb77d3daf94d8f2f8e9a12806f23a9a8~SWspOkd_Y0449404494eusmtrp1u;
+        Mon,  3 Apr 2023 07:03:55 +0000 (GMT)
+X-AuditID: cbfec7f5-ba1ff7000000271e-37-642a7a5cebff
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 30.60.08862.B5A7A246; Mon,  3
+        Apr 2023 08:03:55 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230403070355eusmtip2c575d7b70c6251460ee28c1ca4416b1b~SWsorV-zD1953919539eusmtip21;
+        Mon,  3 Apr 2023 07:03:55 +0000 (GMT)
+Message-ID: <5f324b20-6710-4612-d78a-ea294ad283aa@samsung.com>
+Date:   Mon, 3 Apr 2023 09:03:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2d125f3e-4de6-cfb4-2d21-6e1ec04bc412@web.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.9.1
+Subject: Re: [PATCH] iommu/exynos: Use the devm_clk_get_optional() helper
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsWy7djPc7oxVVopBl3fuS0ezNvGZrH14FxW
+        i19fLCw6Z29gt9h6S9pi7+ut7BabHl9jtbi8aw6bxYzz+5gsDn54wmrRcsfUgdvjycF5TB5r
+        5q1h9Ni0qpPN4861PWwem5fUe7zYPJPRo2/LKkaPz5vkPD7fXc8awBnFZZOSmpNZllqkb5fA
+        lbF30yGWgrMCFRseTGFsYDzB28XIySEhYCLx8ttu1i5GLg4hgRWMEk+n7meBcL4wSsy6MJcd
+        pEpI4DOjxPbPeTAdzV3tUB3LGSWWPloA1fGRUeLi2jPMIFW8AnYSJ37MZQGxWQRUJJqXLYOK
+        C0qcnPkELC4qkCKx++RTsA3CAp4SbxfvYgWxmQXEJW49mc8EMlRE4C+jxLoL69ggEksZJR5s
+        jgCx2QQMJbredoHFOYEG3W87wAxRIy+x/e0cZpBmCYF+TomHDRcZuxg5gBwXiYunhCFeEJZ4
+        dXwLO4QtI3F6cg8LRH07o8SC3/eZIJwJjBINz28xQlRZS9w594sNZBCzgKbE+l36EGFHiR+/
+        VzFDzOeTuPFWEOIGPolJ26ZDhXklOtqEIKrVJGYdXwe39uCFS8wTGJVmIQXLLCTvz0LyzSyE
+        vQsYWVYxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIEJrPT/45/3cG44tVHvUOMTByMhxgl
+        OJiVRHjtNTRThHhTEiurUovy44tKc1KLDzFKc7AoifNq255MFhJITyxJzU5NLUgtgskycXBK
+        NTBN/xAQzH/cqfNfqgVXgcoazS8RHw5c/6C5+f0/J273oGDmczYPnaxbxIQnddhdmmB5s+rJ
+        gmeW787p7tdc5DNvdv1v219Bi091vLvylUP5XtrDXal2q3X21FYwiK29dydI68KSf1zqH7g+
+        7vvH4t1qwPRX/+1MYaNDJx9Grv7xU8LPeHKzqOQ/JsGKzd+6wjMTag34c/g3RzDrXFuqFf2t
+        PqJacdqrsgCJ8pV7PrZK9nNOec3cqHl3xuSl2Zcdt07JC222zwuf2WGxIP2ivJ/03WlnS5Ky
+        Xl/k1255KPFumanyU21fw885kdUKua+fHznBlHf94sQJhyLTPNe67Ctaw9e6dLlLQZKy8CGf
+        tkNKLMUZiYZazEXFiQBp3dPL1QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xe7rRVVopBlc3mVg8mLeNzWLrwbms
+        Fr++WFh0zt7AbrH1lrTF3tdb2S02Pb7GanF51xw2ixnn9zFZHPzwhNWi5Y6pA7fHk4PzmDzW
+        zFvD6LFpVSebx51re9g8Ni+p93ixeSajR9+WVYwenzfJeXy+u541gDNKz6Yov7QkVSEjv7jE
+        Vina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL2PvpkMsBWcFKjY8mMLYwHiC
+        t4uRk0NCwESiuaudtYuRi0NIYCmjRNfxycwQCRmJk9MaWCFsYYk/17rYIIreM0osfbWXDSTB
+        K2AnceLHXBYQm0VARaJ52TJmiLigxMmZT8DiogIpErsmLGUCsYUFPCXeLt4FNpRZQFzi1pP5
+        TCBDRQT+M0rsXHWaESIBdMblX/EQ27YzSjz//RtsEpuAoUTX2y6wzZxAU++3HWCGaDCT6Nra
+        BdUsL7H97RzmCYxCs5AcMgvJwllIWmYhaVnAyLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMj
+        MIK3Hfu5eQfjvFcf9Q4xMnEwHmKU4GBWEuG119BMEeJNSaysSi3Kjy8qzUktPsRoCgyNicxS
+        osn5wBSSVxJvaGZgamhiZmlgamlmrCTO61nQkSgkkJ5YkpqdmlqQWgTTx8TBKdXApM8t41Kv
+        z3jTff/2k5Yauxab5vTXVCd1GOysf19ToPhf6vIfleIUt01vE6Ky6w9k67z3T1+efXARo97c
+        wJZdizdkbXr2fePW1u2/L3tIpsUYHffV6NP8Pf2pW3jDtOPcR+8dM1qqM8do08mWB7nL+Op2
+        XPiunp9y0rFJSEv948Q8u9ebVVql54t+Oz2FN8Qljv/m2pl2ywSmTwrbqTFX7VXEx80eTPty
+        NTZdXL/3wqTN1fcjVOwXpD2UvpFkM31t8sMVrPcNbjy5PLWGy2TjYTnuDSXMLiui9py4prBS
+        Yzaj1N3W2Zvvxks6PC5OO6axy8AxKuNhww9F9TvCvz7ENAp9eF66fKFSMH+Dzud/k5RYijMS
+        DbWYi4oTAWLaIqRpAwAA
+X-CMS-MailID: 20230403070355eucas1p1d33a597fcef51a9889611a7c19fa6284
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230326123802eucas1p2f9e22c91fe4134d086d9dfe1d6bfd029
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230326123802eucas1p2f9e22c91fe4134d086d9dfe1d6bfd029
+References: <CGME20230326123802eucas1p2f9e22c91fe4134d086d9dfe1d6bfd029@eucas1p2.samsung.com>
+        <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 25-03-23, 15:02, Markus Elfring wrote:
-> Date: Sat, 18 Mar 2023 11:40:11 +0100
-> 
-> The label “err_out” was used to jump to another pointer check despite of
-> the detail in the implementation of the functions “us2e_freq_init”
-> and “us3_freq_init” that it was determined already that the corresponding
-> variable contained a null pointer (because of a failed memory allocation).
-> 
-> 1. Use additional labels.
-> 
-> 2. Reorder jump targets at the end.
-> 
-> 3. Delete an extra pointer check which became unnecessary
->    with this refactoring.
-> 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac ("Linux-2.6.12-rc2")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On 26.03.2023 14:37, Christophe JAILLET wrote:
+> Use devm_clk_get_optional() instead of hand writing it.
+> This saves some loC and improves the semantic.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/cpufreq/sparc-us2e-cpufreq.c | 12 ++++++------
->  drivers/cpufreq/sparc-us3-cpufreq.c  | 12 ++++++------
->  2 files changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/sparc-us2e-cpufreq.c b/drivers/cpufreq/sparc-us2e-cpufreq.c
-> index 92acbb25abb3..8534d8b1af56 100644
-> --- a/drivers/cpufreq/sparc-us2e-cpufreq.c
-> +++ b/drivers/cpufreq/sparc-us2e-cpufreq.c
-> @@ -324,12 +324,12 @@ static int __init us2e_freq_init(void)
->  		ret = -ENOMEM;
->  		driver = kzalloc(sizeof(*driver), GFP_KERNEL);
->  		if (!driver)
-> -			goto err_out;
-> +			goto reset_freq_table;
+>   drivers/iommu/exynos-iommu.c | 24 ++++++++----------------
+>   1 file changed, 8 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 483aaaeb6dae..867f409e0325 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -747,22 +747,16 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+>   		return ret;
+>   	}
+>   
+> -	data->clk = devm_clk_get(dev, "sysmmu");
+> -	if (PTR_ERR(data->clk) == -ENOENT)
+> -		data->clk = NULL;
+> -	else if (IS_ERR(data->clk))
+> +	data->clk = devm_clk_get_optional(dev, "sysmmu");
+> +	if (IS_ERR(data->clk))
+>   		return PTR_ERR(data->clk);
+>   
+> -	data->aclk = devm_clk_get(dev, "aclk");
+> -	if (PTR_ERR(data->aclk) == -ENOENT)
+> -		data->aclk = NULL;
+> -	else if (IS_ERR(data->aclk))
+> +	data->aclk = devm_clk_get_optional(dev, "aclk");
+> +	if (IS_ERR(data->aclk))
+>   		return PTR_ERR(data->aclk);
+>   
+> -	data->pclk = devm_clk_get(dev, "pclk");
+> -	if (PTR_ERR(data->pclk) == -ENOENT)
+> -		data->pclk = NULL;
+> -	else if (IS_ERR(data->pclk))
+> +	data->pclk = devm_clk_get_optional(dev, "pclk");
+> +	if (IS_ERR(data->pclk))
+>   		return PTR_ERR(data->pclk);
+>   
+>   	if (!data->clk && (!data->aclk || !data->pclk)) {
+> @@ -770,10 +764,8 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+>   		return -ENOSYS;
+>   	}
+>   
+> -	data->clk_master = devm_clk_get(dev, "master");
+> -	if (PTR_ERR(data->clk_master) == -ENOENT)
+> -		data->clk_master = NULL;
+> -	else if (IS_ERR(data->clk_master))
+> +	data->clk_master = devm_clk_get_optional(dev, "master");
+> +	if (IS_ERR(data->clk_master))
+>   		return PTR_ERR(data->clk_master);
+>   
+>   	data->sysmmu = dev;
 
-I would just return error from here.
-
-> 
->  		us2e_freq_table = kzalloc((NR_CPUS * sizeof(*us2e_freq_table)),
->  			GFP_KERNEL);
->  		if (!us2e_freq_table)
-> -			goto err_out;
-> +			goto free_driver;
-> 
->  		driver->init = us2e_freq_cpu_init;
->  		driver->verify = cpufreq_generic_frequency_table_verify;
-> @@ -346,11 +346,11 @@ static int __init us2e_freq_init(void)
->  		return 0;
-> 
->  err_out:
-> -		if (driver) {
-> -			kfree(driver);
-> -			cpufreq_us2e_driver = NULL;
-> -		}
->  		kfree(us2e_freq_table);
-> +free_driver:
-> +		kfree(driver);
-> +		cpufreq_us2e_driver = NULL;
-> +reset_freq_table:
->  		us2e_freq_table = NULL;
-
-This wasn't set at this point, no point clearing it here. Also this
-clearing of global variables isn't required at all, as after this
-point no other function shall get called.
-
-similar comments for the other file.
-
->  		return ret;
->  	}
-> diff --git a/drivers/cpufreq/sparc-us3-cpufreq.c b/drivers/cpufreq/sparc-us3-cpufreq.c
-> index e41b35b16afd..325f61bb2e40 100644
-> --- a/drivers/cpufreq/sparc-us3-cpufreq.c
-> +++ b/drivers/cpufreq/sparc-us3-cpufreq.c
-> @@ -172,12 +172,12 @@ static int __init us3_freq_init(void)
->  		ret = -ENOMEM;
->  		driver = kzalloc(sizeof(*driver), GFP_KERNEL);
->  		if (!driver)
-> -			goto err_out;
-> +			goto reset_freq_table;
-> 
->  		us3_freq_table = kzalloc((NR_CPUS * sizeof(*us3_freq_table)),
->  			GFP_KERNEL);
->  		if (!us3_freq_table)
-> -			goto err_out;
-> +			goto free_driver;
-> 
->  		driver->init = us3_freq_cpu_init;
->  		driver->verify = cpufreq_generic_frequency_table_verify;
-> @@ -194,11 +194,11 @@ static int __init us3_freq_init(void)
->  		return 0;
-> 
->  err_out:
-> -		if (driver) {
-> -			kfree(driver);
-> -			cpufreq_us3_driver = NULL;
-> -		}
->  		kfree(us3_freq_table);
-> +free_driver:
-> +		kfree(driver);
-> +		cpufreq_us3_driver = NULL;
-> +reset_freq_table:
->  		us3_freq_table = NULL;
->  		return ret;
->  	}
-> --
-> 2.40.0
-
+Best regards
 -- 
-viresh
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
