@@ -2,65 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68A8C76196
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 21:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B6DC76196
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Apr 2023 23:04:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbjDCVLx (ORCPT
+        id S233723AbjDCXEi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Apr 2023 17:11:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54460 "EHLO
+        Mon, 3 Apr 2023 19:04:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232805AbjDCVLr (ORCPT
+        with ESMTP id S232401AbjDCXEh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Apr 2023 17:11:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 189D549CD;
-        Mon,  3 Apr 2023 14:11:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 81C3C61E21;
-        Mon,  3 Apr 2023 21:11:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D797DC433EF;
-        Mon,  3 Apr 2023 21:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680556276;
-        bh=3hxbwLfIPBSErZH0ZG4KR9ETcZ0/kYnkHQG9lfQbWlE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=m5M/pTq++F1ExgqRnygB2EGIaIg67uk+aaQxJRIbyxbDHnIkK2GC7r57PIcmmzo0g
-         Ba2ddfaBEb9WwjXQUnh/Xohe15O6d/Eo0iniBHC4kejB9dCLcAVBe43rVXHIT4TFOQ
-         mo5EUQf9egMSOC3mdC8k+rveF8QAilZVbHWEKyPqX4nR0hvDpRT0MMmfxjG/dcQlGm
-         9hUeTMCOLuTZIn7EuBJOBPj9IndtiAheTkN3iL72ZLzkI9M+jTitWS54YbU+Er336O
-         r2zeYRXiTC/xcMOAlwlBRCJIj5lttacpeUbFUQy+qVtm6RHErQXZZbNXOGpVJv5hCz
-         yECGqPHkv8rOw==
-Message-ID: <d93bd6ff1ce2401fd9a33c6a3ed065d2.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 3 Apr 2023 19:04:37 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5383EC3
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Apr 2023 16:04:36 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id om3-20020a17090b3a8300b0023efab0e3bfso34202405pjb.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Apr 2023 16:04:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680563076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VwmhPKb9BQJU26rgYsH2u7/1DgHEwu06/TKECDowtiE=;
+        b=hou2YZY7OgLNyFAx9q1sbZ87opOlNh/9O/7K+gYsBX5Ahf5gYTuKpYFDVsRb7192tq
+         UuTktxgqbHFly8D39nRoZo6SV4awTR0+wgf0Vhe1EaM5zbBvltR2+qv6HTg1TmIhlw/z
+         75sy54FiB9SKBAjgemngpDtDO05EiEAHIf3gC1/THD1PP2cgA0v0WP381VWuT/hKAQJD
+         Hy3CvAI0vqbGMWLvoMoj0nuywUdkhSunmt3LM9gbfjlFx8zo/y5dn2wrToxX0ZDRmM5H
+         KUspmdp6cF1OXkFKOOLwBR+CZK+e4o1uSr8ynRIrP3WYq4y+9Ztyk6jSeqRQE99LIlV5
+         Xnzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680563076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VwmhPKb9BQJU26rgYsH2u7/1DgHEwu06/TKECDowtiE=;
+        b=Fp4FIG5Z8gQTB+h7BbyDlru3oHpc1Tggt7D3sWzjSgB8u5SaGNXEcTG2TXduucHXz3
+         wFSWbJGv4msEOne2+Tw+blq8fqZRTjxXpjudE8UzClNZpdcxMvpn152Q1xt0sfx7H3nM
+         mZaAJTzGP+6dXe2MfXddo4ZI9RPhdBjUTVXPX0hp3NyliRMJWWcXlFw/GSIu2BhYS/iK
+         olxRE1YCVMf7RD4SaqtvDisA/XDynyS+3uQYxzQbgWkW7TU0verlKb/BQpAj//Ju1P7E
+         naWaaUz6L0G7Aj1UZ1gIJ+bE1ImMTmUvwGEOe9GY1nyGuZWc5oP3TKKL2Ddh54Etdmw8
+         DPWg==
+X-Gm-Message-State: AAQBX9cS8H4rkCrpPpvyMovPnzZZrpNih/lFxTbnpvidoZR3hFUu8pTy
+        0VdJmCsZsoG7MC/rqmxzOhO+AA==
+X-Google-Smtp-Source: AKy350bNwBJDFOjq8q8OLFBNmlWt2HkF2T/luEQ+bf38xgIQLszAY9m7eLvhuA1UPom4VMVQZBcDuA==
+X-Received: by 2002:a05:6a20:1e4d:b0:da:897b:ae40 with SMTP id cy13-20020a056a201e4d00b000da897bae40mr307835pzb.37.1680563075745;
+        Mon, 03 Apr 2023 16:04:35 -0700 (PDT)
+Received: from localhost ([122.172.85.8])
+        by smtp.gmail.com with ESMTPSA id bm17-20020a056a00321100b00625cfe645d0sm7516700pfb.7.2023.04.03.16.04.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Apr 2023 16:04:35 -0700 (PDT)
+Date:   Tue, 4 Apr 2023 04:34:32 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>, cocci@inria.fr,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cpufreq: sparc: Fix exception handling in two functions
+Message-ID: <20230403230432.xeubpa3cc2gt4mw3@vireshk-i7>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <b3cce5b3-2e68-180c-c293-74d4d9d4032c@web.de>
+ <2d125f3e-4de6-cfb4-2d21-6e1ec04bc412@web.de>
+ <20230403033529.x6n3ihhkypwizq3b@vireshk-i7>
+ <39342542-9353-6a7b-0aa9-f9c294b158cb@web.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e08a470fbd6151ebd83a548714c08807a80a8ad0.1680364296.git.christophe.jaillet@wanadoo.fr>
-References: <e08a470fbd6151ebd83a548714c08807a80a8ad0.1680364296.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] clk: stm32h7: Remove an unused field in struct stm32_fractional_divider
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-To:     Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 03 Apr 2023 14:11:14 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39342542-9353-6a7b-0aa9-f9c294b158cb@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Christophe JAILLET (2023-04-01 08:52:12)
-> 'mmask' has never been used in this driver.
-> Remove it.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+On 03-04-23, 14:50, Markus Elfring wrote:
+> >> +++ b/drivers/cpufreq/sparc-us2e-cpufreq.c
+> >> @@ -324,12 +324,12 @@ static int __init us2e_freq_init(void)
+> >>  		ret = -ENOMEM;
+> >>  		driver = kzalloc(sizeof(*driver), GFP_KERNEL);
+> >>  		if (!driver)
+> >> -			goto err_out;
+> >> +			goto reset_freq_table;
+> >
+> > I would just return error from here.
+> 
+> I got the impression from this function implementation that a bit of additional
+> resource release would be relevant so far (at the end of a corresponding if branch).
 
-Applied to clk-next
+That is exactly what you are looking to fix, so lets fix it once and
+for all.
+
+-- 
+viresh
