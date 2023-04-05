@@ -2,91 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68ADCC6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Apr 2023 01:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D839C6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Apr 2023 01:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235385AbjDEBAo (ORCPT
+        id S236563AbjDEBf4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Apr 2023 21:00:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40378 "EHLO
+        Tue, 4 Apr 2023 21:35:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236737AbjDEBAe (ORCPT
+        with ESMTP id S235302AbjDEBfz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Apr 2023 21:00:34 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CD04ED6
-        for <kernel-janitors@vger.kernel.org>; Tue,  4 Apr 2023 18:00:06 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id h25so44591129lfv.6
-        for <kernel-janitors@vger.kernel.org>; Tue, 04 Apr 2023 18:00:06 -0700 (PDT)
+        Tue, 4 Apr 2023 21:35:55 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16FC8199
+        for <kernel-janitors@vger.kernel.org>; Tue,  4 Apr 2023 18:35:54 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id h25so44672054lfv.6
+        for <kernel-janitors@vger.kernel.org>; Tue, 04 Apr 2023 18:35:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680656403;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GcoiMrViDnZHlrKyL7yBvDwh3HgZ08tXcqNo5+Sq0gY=;
-        b=IhVO4NXV9rPbDyCa4YIAqIVWEciYhWbG6JqaO5Qk9pT113glq332E9MZCWmHicRTms
-         Roe+goawdwXsFvBDJq9fpq/q1C28ctHI5vmQJ3AbLTdVZgpbFH3itOZKc0TqBhJx1Jvh
-         L0PRYGLb+/rs0C+j/UyzfTocqeBj0mPNaDQps7EtJegZ0OPv6KT/9ds5c90BtpHmyEKc
-         Qr5uNO5eFNODRPWuY8Zp3dl+KDKaSyc0JHNa2ihMDoMAideoxkQtlLBSKdmnOqYVPcjj
-         74tOPAsNd/pSB4kqFZvF7H1Ih8J3miAU/rnktCfh8idyPgNFzj88PXG31YHpOzwPU4eP
-         dncA==
+        d=linaro.org; s=google; t=1680658552;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FoyBCXStsqxpfmpVlFcXygr4xYwfXrntl6u3DwEVxas=;
+        b=rdBjaUsHhiuWUMKYoRit98wt2EcyiqcOLAn0u1YvUxr2ZxgM4Rdm4qHXFe95dBcN0Z
+         wo20Hj9faKL31PTxOTPM79L0PUmRVK39fWSsYjWdBQQSbF9jwxqTBOMjweqdpEBNA4IH
+         g0OFbxrZ5dTW7W+9HxloUtL40a2OPpOQoL6C10HxZhYwJ8m83JAcwRG60tLPaQ+UJwN+
+         GhhABgoHoQL8g1iERq+Zoklx10HfAI+XQ/DyQ+srcUxV6RhixnzzBQ+1IC1uNxHvdjzN
+         3IKYNNEA5bN37+altTVvwCikBAR6FkDsABRR1m/0bmBIkvSivfMejOb9G54x+VnQmHgW
+         n83g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680656403;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GcoiMrViDnZHlrKyL7yBvDwh3HgZ08tXcqNo5+Sq0gY=;
-        b=rMSVJjW3lxgTqBF6r5tOFWKePHmHlcKjtv2Yk/NXgCuewUpc4tTgJEHV3p6bJsq0Nf
-         Zk8a+EXDDvJGCu9rLq7B7RHNkME2qTyPJJHuwwMKeOxTeHurU4oSrDsh9s/duuEgmEXY
-         XSqTqB8V81+HMD+YzAh/nbKKsrEEZm16kkHTY7qPqoo6OY7U4Ss1j/hT7DdrwhKZMJdv
-         SF8OoJtUfodHGgpQTzXCO2yC00esPrv7bT6ZK5C1gY+EmK8YUuUMQOUsk+0VeuNsQG4F
-         XL/BKjmKGczbA858yny3BiPUBUlKYtL4grGjtX46ZKc3DnGryBTh3EgymU3UDeOJiziC
-         eqvQ==
-X-Gm-Message-State: AAQBX9e/bxf5foUy2ebEnsovqqlQ6K5iZjBEw0oYRyMpB/7MtsQjhJmn
-        sTiIMbM20utmuF7j7LjDb8rC/g==
-X-Google-Smtp-Source: AKy350bk28Ecr3+zl0vqVdiKvr+VWBUTdlhCWa7xakZAat4a+MhCn21kqM0agi3rq3dRhXJewwoLgg==
-X-Received: by 2002:a19:c50b:0:b0:4e9:a75b:cccb with SMTP id w11-20020a19c50b000000b004e9a75bcccbmr1149700lfe.28.1680656402964;
-        Tue, 04 Apr 2023 18:00:02 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id w9-20020ac24429000000b004eaf6181a32sm2570310lfl.75.2023.04.04.18.00.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Apr 2023 18:00:02 -0700 (PDT)
-Message-ID: <8a87358e-e17e-eb2f-4a21-082bb272537c@linaro.org>
-Date:   Wed, 5 Apr 2023 04:00:01 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH][next] drm/msm/mdss: Fix spelling mistake "Unuspported" ->
- "Unsupported"
-Content-Language: en-GB
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
+        d=1e100.net; s=20210112; t=1680658552;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FoyBCXStsqxpfmpVlFcXygr4xYwfXrntl6u3DwEVxas=;
+        b=1kiSLqwBMZ/5X2PpnHHHSaLcFlpWDagjVJBB2g3yLxmqY2PvunvzDW5b3qThGrw9+g
+         R+212wGEBrI0xREWpV9WOqOxw3e0w2gGgkcWwj/4DM0CWb/D2H7vcrW5xhWyAyUNNTiK
+         QehfamS+350ktpMCRriSv+5Xri3KWxYSC1MvpJpsXzITBu318okmACnFTUmCBawG2eYu
+         /eCtcHfnTcYv+7UXwxTFjmXOYavyENbSmEFpzXfySR516fHPdXOcqKSjzIxXuAd/KQUa
+         YSPAKf9lqP1nSYDC+8m3R++ArumUAq+h6W8yyqRPuSbJauGuUOZ5UhDj4XZiBiH5Ob/R
+         PPfg==
+X-Gm-Message-State: AAQBX9fIISGgmdu1lex6VaYGXpxtpDowdIfxLjSq6XAfl0+cNMmjJDUB
+        q0ujGauFBJkh8sQZvtNUrqW9Yw==
+X-Google-Smtp-Source: AKy350bpv2i7LVGztpCvL9K+IopcdFKdyv11QsqYGtjWIc1F6UdHNMt0SaBiG8OgKGj3TFFgu8uP0A==
+X-Received: by 2002:ac2:5083:0:b0:4de:d16f:3938 with SMTP id f3-20020ac25083000000b004ded16f3938mr979980lfm.53.1680658552391;
+        Tue, 04 Apr 2023 18:35:52 -0700 (PDT)
+Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id v26-20020ac2561a000000b004cb8de497ffsm2572326lfd.154.2023.04.04.18.35.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Apr 2023 18:35:52 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Rob Clark <robdclark@gmail.com>,
         Abhinav Kumar <quic_abhinavk@quicinc.com>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Colin Ian King <colin.i.king@gmail.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230329093026.418847-1-colin.i.king@gmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH][next] drm/msm/mdss: Fix spelling mistake "Unuspported" -> "Unsupported"
+Date:   Wed,  5 Apr 2023 04:35:48 +0300
+Message-Id: <168065850331.1260361.4926214097299835454.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230329093026.418847-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230329093026.418847-1-colin.i.king@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 29/03/2023 12:30, Colin Ian King wrote:
+
+On Wed, 29 Mar 2023 10:30:26 +0100, Colin Ian King wrote:
 > There is a spelling mistake in a dev_error message. Fix it.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/gpu/drm/msm/msm_mdss.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
+> 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Applied, thanks!
 
+[1/1] drm/msm/mdss: Fix spelling mistake "Unuspported" -> "Unsupported"
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/44310e2964f2
+
+Best regards,
 -- 
-With best wishes
-Dmitry
-
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
