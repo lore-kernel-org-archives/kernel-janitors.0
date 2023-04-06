@@ -2,110 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7F1C7618D
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 06:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E24FC77B6C
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 07:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235415AbjDFGc6 (ORCPT
+        id S235124AbjDFHqd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Apr 2023 02:32:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42942 "EHLO
+        Thu, 6 Apr 2023 03:46:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232896AbjDFGc5 (ORCPT
+        with ESMTP id S234878AbjDFHqS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Apr 2023 02:32:57 -0400
+        Thu, 6 Apr 2023 03:46:18 -0400
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FCB81712;
-        Wed,  5 Apr 2023 23:32:56 -0700 (PDT)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 335JJWx1008158;
-        Thu, 6 Apr 2023 06:32:38 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C701B0;
+        Thu,  6 Apr 2023 00:46:14 -0700 (PDT)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3366wSKC013882;
+        Thu, 6 Apr 2023 07:46:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2022-7-12; bh=W8fuFynOzEkF9xzS/VbiRUIeSynChenJ3AB3QoB4N/g=;
- b=WQphwdhhXEED5qe77ZO/7SUMTPoHKAIdN8UwY61lB+Gjk0waR7GH3DoGScEEOUIM6uBG
- dPAi72iyRMmvw/iXmzBxirZNLlO4rY8w1MYef0RSBxuiu/DhMWljx9YszyhGpxDaC2Ci
- 9DHUypxrK32bd4TuRl5Rjxq3Sky+rrUuqlQeOVyKasmmjiZl8zjFUrUVmqhHVVaSC0wO
- go5e1HDKbyXwLtxO6LdVOOQTMa0s1+ECDUJ4bnkUGcVsIEERVRhxRVk4odPqPkwSW7Nq
- zOS/fiG+PyDa2tZIYxt/tsGtcqi7NC4vMnw9/3QvG6MF6iwHO9kwpmh099cAKmFo7NHh uw== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ppc7u2276-1
+ s=corp-2022-7-12; bh=IyEmgHIUX6mQHOFxo3TU81FvsDpncR3Vt/+XHIZJcc0=;
+ b=jLyAe9fMXWMM45769fZXZ682Z+QRYXNNcFALPa/KaJumEYelxQ1UeoYi9NbMFhLRgHK5
+ npGF+5V/FJfshS4kP40xzkE6+mWhdQ1kxQuJsDP8S40QYCazTlw7kGfRDs1tZ/6pC5CH
+ SRIXV09yFfSPaudfrMWOQDpsUlrIvbmIGk6YzXEcViW0t+JRyivQUf35iV9LPTEwJBaE
+ pJ2qNVYcQ4/cG8afjA/2Qg8uIW8MaFy37D14VRYCgA1lkhCbkuhehIu9cROYdhawvyLo
+ rS0bMJzr8bmSwTdUdAPS+d9cgDmHvKHZXYXvQ/cD24Pnof3E6hC4B6rsmrvbHlTNaUXz Ow== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ppbd428fc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Apr 2023 06:32:38 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3366DYGG013990;
-        Thu, 6 Apr 2023 06:32:37 GMT
+        Thu, 06 Apr 2023 07:46:12 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3367jFkZ037592;
+        Thu, 6 Apr 2023 07:46:11 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ppt3jfjee-1
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3pptjuugdk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Apr 2023 06:32:37 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3366Sw9q021327;
-        Thu, 6 Apr 2023 06:32:36 GMT
+        Thu, 06 Apr 2023 07:46:11 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3367kBG6013933;
+        Thu, 6 Apr 2023 07:46:11 GMT
 Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ppt3jfjdf-1;
-        Thu, 06 Apr 2023 06:32:36 +0000
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3pptjuugd0-1;
+        Thu, 06 Apr 2023 07:46:10 +0000
 From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
         Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Leon Romanovsky <leon@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Rob Herring <robh@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] niu: Fix missing unwind goto in niu_alloc_channels()
-Date:   Wed,  5 Apr 2023 23:31:18 -0700
-Message-Id: <20230406063120.3626731-1-harshit.m.mogalapalli@oracle.com>
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        John Garry <john.g.garry@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH next] scsi: scsi_debug: Fix missing error code in scsi_debug_init()
+Date:   Thu,  6 Apr 2023 00:46:07 -0700
+Message-Id: <20230406074607.3637097-1-harshit.m.mogalapalli@oracle.com>
 X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-04-06_02,2023-04-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 adultscore=0
- suspectscore=0 spamscore=0 malwarescore=0 phishscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304060056
-X-Proofpoint-ORIG-GUID: wRQ8roJm4lBKfJBBFkGUyi5oUtON5QFe
-X-Proofpoint-GUID: wRQ8roJm4lBKfJBBFkGUyi5oUtON5QFe
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304060068
+X-Proofpoint-ORIG-GUID: RejnskUDGrw5vYzKs-DyvavE5uh8H8w5
+X-Proofpoint-GUID: RejnskUDGrw5vYzKs-DyvavE5uh8H8w5
 To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch reports: drivers/net/ethernet/sun/niu.c:4525
-	niu_alloc_channels() warn: missing unwind goto?
+Smatch reports: drivers/scsi/scsi_debug.c:6996
+	scsi_debug_init() warn: missing error code 'ret'
 
-If niu_rbr_fill() fails, then we are directly returning 'err' without
-freeing the channels.
+Although it is unlikely that KMEM_CACHE might fail, but if
+it does then ret might be zero. So to fix this explicitly
+mark ret as "-ENOMEM" and then goto driver_unreg.
 
-Fix this by changing direct return to a goto 'out_err'.
-
-Fixes: a3138df9f20e ("[NIU]: Add Sun Neptune ethernet driver.")
+Fixes: 1107c7b24ee3 ("scsi: scsi_debug: Dynamically allocate sdebug_queued_cmd")
 Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
-This is purely based on static analysis. Only compile tested.
+This is from static analysis, Only compile tested.
 ---
- drivers/net/ethernet/sun/niu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/scsi_debug.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
-index ab8b09a9ef61..7a2e76776297 100644
---- a/drivers/net/ethernet/sun/niu.c
-+++ b/drivers/net/ethernet/sun/niu.c
-@@ -4522,7 +4522,7 @@ static int niu_alloc_channels(struct niu *np)
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index cf3f58e8f733..f4fa1035a191 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -6992,8 +6992,10 @@ static int __init scsi_debug_init(void)
+ 	sdebug_add_host = 0;
  
- 		err = niu_rbr_fill(np, rp, GFP_KERNEL);
- 		if (err)
--			return err;
-+			goto out_err;
- 	}
+ 	queued_cmd_cache = KMEM_CACHE(sdebug_queued_cmd, SLAB_HWCACHE_ALIGN);
+-	if (!queued_cmd_cache)
++	if (!queued_cmd_cache) {
++		ret = -ENOMEM;
+ 		goto driver_unreg;
++	}
  
- 	tx_rings = kcalloc(num_tx_rings, sizeof(struct tx_ring_info),
+ 	for (k = 0; k < hosts_to_add; k++) {
+ 		if (want_store && k == 0) {
 -- 
 2.38.1
 
