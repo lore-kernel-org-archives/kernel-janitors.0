@@ -2,83 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92134C761A6
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 16:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED49C761A6
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 23:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238518AbjDFQaY (ORCPT
+        id S231411AbjDFXo6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Apr 2023 12:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44958 "EHLO
+        Thu, 6 Apr 2023 19:44:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237404AbjDFQaW (ORCPT
+        with ESMTP id S230227AbjDFXoZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Apr 2023 12:30:22 -0400
-X-Greylist: delayed 375 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 06 Apr 2023 09:30:18 PDT
-Received: from out-51.mta0.migadu.com (out-51.mta0.migadu.com [91.218.175.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9647A8D
-        for <kernel-janitors@vger.kernel.org>; Thu,  6 Apr 2023 09:30:18 -0700 (PDT)
-Date:   Thu, 6 Apr 2023 16:23:56 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1680798240;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zWTa+WmjvRizEenNCYTpznSZcah8zt6cqf7cKCxX7a0=;
-        b=YpT2Fq4n3IHoq0NhqGWEGK0xXZgdwSqB4fNw/EmbCwH+l+E/MrrjoaME/5opFFWMdi+c+R
-        ZE4p8Y5lVIJD1YkvcVRijUkT7UmIcs5v809lkhdseoQq1syH+eK2vgk7gXhKeHpyl6Zl0Z
-        QMSkBoDf4Wai6xmXfI6vbezrnWtEGTE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Oliver Upton <oliver.upton@linux.dev>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake
- "KVM_HYPERCAL_EXIT_SMC" -> "KVM_HYPERCALL_EXIT_SMC"
-Message-ID: <ZC7yHC+FIJgE4APf@linux.dev>
-References: <20230406080226.122955-1-colin.i.king@gmail.com>
+        Thu, 6 Apr 2023 19:44:25 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E95EB75D;
+        Thu,  6 Apr 2023 16:43:54 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id lj25so5014223ejb.11;
+        Thu, 06 Apr 2023 16:43:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680824619; x=1683416619;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sa4w2wBUhh2LraZYWTmyiXr2wBMjNJ8awyrNTkWw7lc=;
+        b=UtP1mBlhsggmxLoOvfJLtVEopzWRqIyYL8Ug49LHqTYjMM7HdUpcBqf2AbZxCkkB8A
+         jvND/qZdS+6SSw8zpJttAncyQ4bcQx9LgIaJUaAmEx8yQdzNrw3Y33t/j8nWL/dA5MIZ
+         opy45DYM/dPuGE433N4lBeMwH3kJX7HlpMjXxto94ocz4FwlRATpuKhYLn+gboUoJf6w
+         SUzOtHPzY3IxbBwa2Hx+89RhEZnfFk48t/sfSXsyOv8yQwxTecB63aII7hhy4/a01Ycj
+         9nAyMMDKfx/OfsrrZYtxwGwSBMoElAQ3d0E2N3XyENbPjoP3nevtwrUVxbzdRq0ycd98
+         Jhhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680824619; x=1683416619;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sa4w2wBUhh2LraZYWTmyiXr2wBMjNJ8awyrNTkWw7lc=;
+        b=0ck3Ev1WAqHE9TVMkytziDeQ60OiaC8PPYVyr6yCv4mVxCpFPBv9Kh2HiichVX8oML
+         P2XHumqeDHOXx7nI/BSBFCLMhn0Y3DZ7Nd/z5J66v1H5GKkamvGUwdvduWSewH5VjbTo
+         aiRjY9bhVFow8YJdcwvYhtHLg60dfoW98y6tf4JDYicmAh+J1BpiXWnGvSsddiypDxKN
+         2YQ8XCmYr6EJ9x1edqr2wEQ9EBTkMv6QziQACYezKjsK+Hb+T+u43SCYQ1emKPbJIoqz
+         aiRWgD8WN8MnVJvssTHiVU/aSF06rDmKLR9Kb6azELi8JzN6/5a15K1N0RJ9WtqiakE8
+         vaSA==
+X-Gm-Message-State: AAQBX9fM2QPb0fY7K8ziEhACzLefq+NqzKsNWupv/kLaAjUSP64KWRgD
+        pXx3oVGDJjYtsrnpU3VY38y7l8O5yvLvcDFknng=
+X-Google-Smtp-Source: AKy350aBEkf5TgGsv2J/0hdQg7fObnxz4RgvnMs2l7oi3Q8is/NrmWVmaPsJCNU+iGHcckbbHivvQg0JaDbaRmw6XcI=
+X-Received: by 2002:a17:907:6d99:b0:8d8:4578:18e0 with SMTP id
+ sb25-20020a1709076d9900b008d8457818e0mr253918ejc.10.1680824619045; Thu, 06
+ Apr 2023 16:43:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230406080226.122955-1-colin.i.king@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <ZC6JEx4dvWUvgcwW@kili> <8219c3dd87179df545fb6de4b89b2bbc.pc@manguebit.com>
+In-Reply-To: <8219c3dd87179df545fb6de4b89b2bbc.pc@manguebit.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 6 Apr 2023 18:43:27 -0500
+Message-ID: <CAH2r5muJwda_HxHvBR_riAjq65XHjs4Pbvc07i7ZQ76rU9GUNg@mail.gmail.com>
+Subject: Re: [PATCH] cifs: double lock in cifs_reconnect_tcon()
+To:     Paulo Alcantara <pc@manguebit.com>
+Cc:     Dan Carpenter <error27@gmail.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 09:02:26AM +0100, Colin Ian King wrote:
-> There is a spelling mistake in a test assert message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Added to cifs-2.6.git for-next
 
-Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+On Thu, Apr 6, 2023 at 7:10=E2=80=AFAM Paulo Alcantara <pc@manguebit.com> w=
+rote:
+>
+> Dan Carpenter <error27@gmail.com> writes:
+>
+> > This lock was supposed to be an unlock.
+> >
+> > Fixes: 6cc041e90c17 ("cifs: avoid races in parallel reconnects in smb1"=
+)
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > ---
+> >  fs/cifs/cifssmb.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Reviewed-by: Paulo Alcantara (SUSE) <pc@manguebit.com>
 
-> ---
->  tools/testing/selftests/kvm/aarch64/smccc_filter.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/aarch64/smccc_filter.c b/tools/testing/selftests/kvm/aarch64/smccc_filter.c
-> index 0f9db0641847..82650313451a 100644
-> --- a/tools/testing/selftests/kvm/aarch64/smccc_filter.c
-> +++ b/tools/testing/selftests/kvm/aarch64/smccc_filter.c
-> @@ -211,7 +211,7 @@ static void expect_call_fwd_to_user(struct kvm_vcpu *vcpu, uint32_t func_id,
->  			    "KVM_HYPERCALL_EXIT_SMC is not set");
->  	else
->  		TEST_ASSERT(!(run->hypercall.flags & KVM_HYPERCALL_EXIT_SMC),
-> -			    "KVM_HYPERCAL_EXIT_SMC is set");
-> +			    "KVM_HYPERCALL_EXIT_SMC is set");
->  }
->  
->  /* SMCCC calls forwarded to userspace cause KVM_EXIT_HYPERCALL exits */
-> -- 
-> 2.30.2
-> 
 
--- 
+
+--=20
 Thanks,
-Oliver
+
+Steve
