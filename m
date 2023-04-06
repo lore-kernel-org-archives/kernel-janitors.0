@@ -2,77 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E976C77B70
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 12:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0103C7618D
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 12:17:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236955AbjDFMJg (ORCPT
+        id S236610AbjDFMRu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Apr 2023 08:09:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47426 "EHLO
+        Thu, 6 Apr 2023 08:17:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236845AbjDFMJe (ORCPT
+        with ESMTP id S236537AbjDFMRs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Apr 2023 08:09:34 -0400
-Received: from mx.manguebit.com (mx.manguebit.com [IPv6:2a01:4f8:1c1e:a2ae::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3162681;
-        Thu,  6 Apr 2023 05:09:31 -0700 (PDT)
-Message-ID: <8219c3dd87179df545fb6de4b89b2bbc.pc@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-        s=dkim; t=1680782966;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=548kDFj4gIoUugd5f3FYvuQrAA/yoYohbrORtH8xrVk=;
-        b=WG6MoNIYST3leO8UG3+SBA1KImJjXJHiBms2FEDzjWadFiVyAuuFk3OicXaKSfwuZtHn3u
-        bqS6sDnzoJmjn5JhW0rXbD/1VmPPXqtSJGwLBYEuPqNq4axcIpzZw36sh/WFDlzhJcSxNl
-        5DBcWlFdMZZTAo9zFK/HtZ8/1mLx0HKsARVyrnvd4OauNAhQTC6lS910tZYlBdXdaHuMa1
-        gFr0nW6ZCsgCQcKQkpEduGC8m9Ocac+WZqCCizZbp/PqUMhOLAMjVR1z1CTQEB1kGraWm3
-        J7YrAVLnluy6pWwh2YBBWtNIlBYWKEObedkV2SCx0XYGV92HanF4LrX4Z8Jp+w==
-ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1680782966; a=rsa-sha256;
-        cv=none;
-        b=X+L8UmhLUdRCBAw9MWHAqu6ulQyTRO1vwEhwH4nMhXOY50ydAUQbV79F8R0krcT89qEq/e
-        sAhoVpan6GKLt1OWmZpfPfXst20ouAzbbEOvzY2W+vropoxvtYaVqycd+DLBlNw64kp/zV
-        QZdn9uwYphChBpz836Hh3cKz6lV5FGtyjBgJ6738RSClmOtg2VOwMeeXQ9SBfqbc40uSP7
-        ADzqy+rEisk421OWhVmi2sQ83zxi1P3c/ggm2uj6fdwMXS6+SzBrYuF3rf/6LkJHpOhMty
-        MpISUdKw6RD8VXXq4T+DdADeAZPpPu/R8ipyq4JmOPRVATu5C8Io1ysW0RnR1Q==
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=pc@manguebit.com smtp.mailfrom=pc@manguebit.com
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-        s=dkim; t=1680782966;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=548kDFj4gIoUugd5f3FYvuQrAA/yoYohbrORtH8xrVk=;
-        b=c4FeABY1c2gOAKYwLkzF0oDm8UHzqz72Q5G9vlCPwdcvI0VsuuRFVuWcFjX5YZ1nVkV5cj
-        nGo3qoG5a0j+b1/FNnHg5M5QqXbuXAGRWVIR6KBZyEtzWOzOnSUM7Mz06nnM5HMTr7he2Z
-        e0va26ZyVMdfqLHtFrZuHzVeqAcNjnomKMg91YXDogjEJUZSVaSd2W2sIqQo3mg5Q+NZ83
-        98MY4jfVONrbUutKxEXnpFG6H/JoSDirVmxuOk7WChTV559mSqTn8AlqGZ3gBr0KgWZtj9
-        FYCL5x6IQGqCUY2xH662o9SkyFd+xJjnGmfOzR1FI0g77YkAxRxNGgmr2k22wg==
-From:   Paulo Alcantara <pc@manguebit.com>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] cifs: double lock in cifs_reconnect_tcon()
-In-Reply-To: <ZC6JEx4dvWUvgcwW@kili>
-References: <ZC6JEx4dvWUvgcwW@kili>
-Date:   Thu, 06 Apr 2023 09:09:16 -0300
+        Thu, 6 Apr 2023 08:17:48 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BDBE5B83
+        for <kernel-janitors@vger.kernel.org>; Thu,  6 Apr 2023 05:17:46 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id q19so36244520wrc.5
+        for <kernel-janitors@vger.kernel.org>; Thu, 06 Apr 2023 05:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680783464; x=1683375464;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=n61jYAD6dPbw2otCpc4Oe8515REV5GC/8MPBAjpZGx4=;
+        b=pwP0uwEleAdlRfKZhE0uiqwhlnA3U7GlSgk3rUVwS5G/kOUN3xH+7PxvvgcidbdkMl
+         fENbAOvC1T6CvM7u4vNo2GgHMjhU78JDEJFjm0bfTpzGd+qzyZucl5A4cApaEe1Qekkl
+         lNj7skaOIVzE+UbjOoJm3Lv3XTKdSpeLQWAaUDYXRx7RpOnhWb/QTUX4XEhh06R90n3g
+         4kdIOBOejsNsTLZBPyvkP5G+jZg6auWR7qUGMu5AtUfGOvkjlHwvPRUO2kUdCX0UJkrS
+         siKJegkxUKRil3bxcciqkACy9fyWcjA94ik2BZCTiqCpQtFWyL9cKb4CzQ4XzABd7GTn
+         9aTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680783464; x=1683375464;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n61jYAD6dPbw2otCpc4Oe8515REV5GC/8MPBAjpZGx4=;
+        b=UEBl/SYX02MingCTgprnB1o+NeOakKxbeQaNT1BapsWU+1T7WvUIkj5qrADfnBRM2B
+         pem5Aoyva996mRuctGt8RAwYFY0Sx8CYWgVTsIocL6c6IWeymyCqnhkopGavWXnA4OqG
+         hlAFT5akV4Elvm1+/hBPjdmAjIaNDW3paa/sdMXssNap07Roo/d0moDmnTfdBa7WnHtn
+         8IsM/rQ7YRQjrkAeT3o5leTviPwjhQeL6em68CcCk+RkwI7yJlxW0D6C2sVock6cLcQi
+         F/OMJuBQ0oMg6+E29xPUdFFWwLBASgXu3miWk5Dp6k/nMm81DH7g5bjKuuTpQRIvBDLO
+         Afhw==
+X-Gm-Message-State: AAQBX9dOrO0HhCGFNiTURmfXzlpVPB0Ra6Hf7hoBZHOJPlLKsvuKtxTS
+        DtKX1j4z1dDPhlLxy29JD/8=
+X-Google-Smtp-Source: AKy350au71EVpD159cTUd4VgIxLFQjQvHIgjYwc5kQMc1R19GrugvM5hnbCNZANl56ZOuAii2H7xBA==
+X-Received: by 2002:a5d:604c:0:b0:2d7:6035:7d20 with SMTP id j12-20020a5d604c000000b002d760357d20mr7271212wrt.15.1680783464585;
+        Thu, 06 Apr 2023 05:17:44 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d7-20020adfef87000000b002daeb108304sm1634365wro.33.2023.04.06.05.17.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Apr 2023 05:17:44 -0700 (PDT)
+Date:   Thu, 6 Apr 2023 15:17:41 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+Cc:     Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] soundwire: amd: fix an IS_ERR() vs NULL bug
+Message-ID: <a668e9cd-d19d-4647-8ecd-6a9fc03f68c9@kili.mountain>
+References: <3be30516-a1b0-412b-8379-06011855e46f@kili.mountain>
+ <701bef7f-77bb-63a6-429f-1293519a6b21@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <701bef7f-77bb-63a6-429f-1293519a6b21@amd.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <error27@gmail.com> writes:
+On Thu, Apr 06, 2023 at 05:32:21PM +0530, Mukunda,Vijendar wrote:
+> On 06/04/23 14:26, Dan Carpenter wrote:
+> > The devm_ioremap() function returns NULL on error.  It never returns
+> > error pointers.  Update the error checking accordingly.
+> >
+> > Fixes: a673a8dfc214 ("soundwire: amd: Add support for AMD Manager driver")
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > ---
+> >  drivers/soundwire/amd_manager.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/soundwire/amd_manager.c b/drivers/soundwire/amd_manager.c
+> > index 9fb7f91ca182..9bb8ae8c5f32 100644
+> > --- a/drivers/soundwire/amd_manager.c
+> > +++ b/drivers/soundwire/amd_manager.c
+> > @@ -910,9 +910,9 @@ static int amd_sdw_manager_probe(struct platform_device *pdev)
+> >  		return -ENOMEM;
+> >  
+> >  	amd_manager->acp_mmio = devm_ioremap(dev, res->start, resource_size(res));
+> > -	if (IS_ERR(amd_manager->mmio)) {
+> > +	if (!amd_manager->mmio) {
+> This will break the functionality.  Condition should be
+> if (!amd_manager->acp_mmio)
+> 
+> >  		dev_err(dev, "mmio not found\n");
+> > -		return PTR_ERR(amd_manager->mmio);
+> > +		return -ENOMEM;
 
-> This lock was supposed to be an unlock.
->
-> Fixes: 6cc041e90c17 ("cifs: avoid races in parallel reconnects in smb1")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
->  fs/cifs/cifssmb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Ah crap.  You're right.  Thanks.  I will resend.
 
-Reviewed-by: Paulo Alcantara (SUSE) <pc@manguebit.com>
+regards,
+dan carpenter
+
