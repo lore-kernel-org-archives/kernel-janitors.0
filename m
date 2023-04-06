@@ -2,106 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E24FC77B6C
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 07:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46186C77B6E
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 08:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235124AbjDFHqd (ORCPT
+        id S236265AbjDFIDB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Apr 2023 03:46:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58814 "EHLO
+        Thu, 6 Apr 2023 04:03:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234878AbjDFHqS (ORCPT
+        with ESMTP id S236087AbjDFICj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Apr 2023 03:46:18 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C701B0;
-        Thu,  6 Apr 2023 00:46:14 -0700 (PDT)
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3366wSKC013882;
-        Thu, 6 Apr 2023 07:46:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2022-7-12; bh=IyEmgHIUX6mQHOFxo3TU81FvsDpncR3Vt/+XHIZJcc0=;
- b=jLyAe9fMXWMM45769fZXZ682Z+QRYXNNcFALPa/KaJumEYelxQ1UeoYi9NbMFhLRgHK5
- npGF+5V/FJfshS4kP40xzkE6+mWhdQ1kxQuJsDP8S40QYCazTlw7kGfRDs1tZ/6pC5CH
- SRIXV09yFfSPaudfrMWOQDpsUlrIvbmIGk6YzXEcViW0t+JRyivQUf35iV9LPTEwJBaE
- pJ2qNVYcQ4/cG8afjA/2Qg8uIW8MaFy37D14VRYCgA1lkhCbkuhehIu9cROYdhawvyLo
- rS0bMJzr8bmSwTdUdAPS+d9cgDmHvKHZXYXvQ/cD24Pnof3E6hC4B6rsmrvbHlTNaUXz Ow== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ppbd428fc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Apr 2023 07:46:12 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3367jFkZ037592;
-        Thu, 6 Apr 2023 07:46:11 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3pptjuugdk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Apr 2023 07:46:11 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3367kBG6013933;
-        Thu, 6 Apr 2023 07:46:11 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3pptjuugd0-1;
-        Thu, 06 Apr 2023 07:46:10 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        John Garry <john.g.garry@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH next] scsi: scsi_debug: Fix missing error code in scsi_debug_init()
-Date:   Thu,  6 Apr 2023 00:46:07 -0700
-Message-Id: <20230406074607.3637097-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.40.0
+        Thu, 6 Apr 2023 04:02:39 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D736E86B1;
+        Thu,  6 Apr 2023 01:02:30 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id l12so38583663wrm.10;
+        Thu, 06 Apr 2023 01:02:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680768149;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aV1ZnUUJLqxOvx3H0XRFtDasoGMKHSB5Y7fc9UvZtzk=;
+        b=YgAI2RKmmfNtFPE/EL3tY0mL4x4CM1XeV17+kFv+MwARKdbfDenoKaze/zdW1ShSez
+         4n9nQmcyv9Wm8Om/THcxFYGjdNVr8TQ63gFwBT3zhS1V+YvR7C4TWRsSv5hDmiesos1r
+         vHJ6Yk6rr+3LhneR3H2GCBqoRiJlvGn32SrrRhsWei72mN48CrOH766Ty2ApW+7FRSQg
+         X3VGA7dS47sideSdlPoLAXNoN5lEDQ9KKc+06Iky+TgJPQyBSdjNC8TJsxT4y+r2jIQT
+         RhN1SqAZlfj4CSG+T/XMW0CDZG/vL96vm09vw0FNrS5+kiGdvRWeOfDONaQgB6meiOWM
+         Jy0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680768149;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aV1ZnUUJLqxOvx3H0XRFtDasoGMKHSB5Y7fc9UvZtzk=;
+        b=Nmj3wDTV2Eyjl3GRJ1TFKrm8+NtElUdXZ/ljak0VCU+UgAf7b2x/EGn+LRUA5K6uEz
+         c5r407WVlu3iEVU2IF984ESgMyrQlCPaA/012OxqxHCyEndcZlifyn7F38xPokeWYz2U
+         yfiaVh+AXqTuo+dS0VVtWkgh3/EsKZmQNWH6mXYE8fhIMgJoOTxw63lCfOSFgnr/6dOf
+         moy2tk+wct/LT5p80Xf3jv3GeW2wavhLKhSJg6SfrJ42BfX7ZxNaH8l/bbCOxQsMTFS/
+         bcTz53C/3MlCPFtojjLKw+ybTOlJIjIz7wkzWGPaDz+y7whgb9Ea3u4J6VJhmssBFIew
+         fAsw==
+X-Gm-Message-State: AAQBX9eOw1r5DBOtpbsD5GfGxSaiDL1GvLKuS3Ec6yeycl8gkyuUSUgF
+        i8OoEU691SthZrIapxVmPKM=
+X-Google-Smtp-Source: AKy350b9h7ZEL2DRsB2Pm+8XOYlemA64X3N8kveF+ecbq572GltkKa28E4U1bJN1sMSfw1pXKqN7ug==
+X-Received: by 2002:a5d:4950:0:b0:2ce:fd37:9392 with SMTP id r16-20020a5d4950000000b002cefd379392mr5485266wrs.45.1680768148950;
+        Thu, 06 Apr 2023 01:02:28 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id b14-20020adfde0e000000b002d1bfe3269esm1008601wrm.59.2023.04.06.01.02.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Apr 2023 01:02:28 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] KVM: selftests: Fix spelling mistake "KVM_HYPERCAL_EXIT_SMC" -> "KVM_HYPERCALL_EXIT_SMC"
+Date:   Thu,  6 Apr 2023 09:02:26 +0100
+Message-Id: <20230406080226.122955-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-06_02,2023-04-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0
- phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304060068
-X-Proofpoint-ORIG-GUID: RejnskUDGrw5vYzKs-DyvavE5uh8H8w5
-X-Proofpoint-GUID: RejnskUDGrw5vYzKs-DyvavE5uh8H8w5
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch reports: drivers/scsi/scsi_debug.c:6996
-	scsi_debug_init() warn: missing error code 'ret'
+There is a spelling mistake in a test assert message. Fix it.
 
-Although it is unlikely that KMEM_CACHE might fail, but if
-it does then ret might be zero. So to fix this explicitly
-mark ret as "-ENOMEM" and then goto driver_unreg.
-
-Fixes: 1107c7b24ee3 ("scsi: scsi_debug: Dynamically allocate sdebug_queued_cmd")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-This is from static analysis, Only compile tested.
----
- drivers/scsi/scsi_debug.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/testing/selftests/kvm/aarch64/smccc_filter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index cf3f58e8f733..f4fa1035a191 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -6992,8 +6992,10 @@ static int __init scsi_debug_init(void)
- 	sdebug_add_host = 0;
+diff --git a/tools/testing/selftests/kvm/aarch64/smccc_filter.c b/tools/testing/selftests/kvm/aarch64/smccc_filter.c
+index 0f9db0641847..82650313451a 100644
+--- a/tools/testing/selftests/kvm/aarch64/smccc_filter.c
++++ b/tools/testing/selftests/kvm/aarch64/smccc_filter.c
+@@ -211,7 +211,7 @@ static void expect_call_fwd_to_user(struct kvm_vcpu *vcpu, uint32_t func_id,
+ 			    "KVM_HYPERCALL_EXIT_SMC is not set");
+ 	else
+ 		TEST_ASSERT(!(run->hypercall.flags & KVM_HYPERCALL_EXIT_SMC),
+-			    "KVM_HYPERCAL_EXIT_SMC is set");
++			    "KVM_HYPERCALL_EXIT_SMC is set");
+ }
  
- 	queued_cmd_cache = KMEM_CACHE(sdebug_queued_cmd, SLAB_HWCACHE_ALIGN);
--	if (!queued_cmd_cache)
-+	if (!queued_cmd_cache) {
-+		ret = -ENOMEM;
- 		goto driver_unreg;
-+	}
- 
- 	for (k = 0; k < hosts_to_add; k++) {
- 		if (want_store && k == 0) {
+ /* SMCCC calls forwarded to userspace cause KVM_EXIT_HYPERCALL exits */
 -- 
-2.38.1
+2.30.2
 
