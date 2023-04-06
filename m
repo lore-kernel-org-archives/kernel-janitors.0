@@ -2,55 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EEDFC7618D
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 15:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4335C761A6
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 16:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239683AbjDFPNW (ORCPT
+        id S239883AbjDFQGh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Apr 2023 11:13:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39824 "EHLO
+        Thu, 6 Apr 2023 12:06:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239642AbjDFPNV (ORCPT
+        with ESMTP id S239880AbjDFQGb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Apr 2023 11:13:21 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5154136;
-        Thu,  6 Apr 2023 08:13:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=mzTxus67G+HqHPbdQ1mLqZIyacXwzsFPjZE5/prUKD4=; b=XZMTRD+ZgQX+86RhozNq1WLVIC
-        cIUrP0ZzxTXoQrkl+SWxEbgup0ATEgXFT6m6xVDOwYqoBJ4JsiyNaIEA5iPhc3KGosKh0lTcyLg1E
-        qVCq7m78Eck7elbOQFm620lxaegCQ6iHfCSDrg0+PnhEV7B7IbINzWhhXLLLgq22dPNp8/T9SXhrC
-        W0mZxRUuLnVegx+8EdKI0Fb/UealRNhvBe2x3ZPx5nn448wME7HZzHAEvvYNCGgqwjn3yMq4G0iaY
-        Uii7HUd4sAvunSnCbJSjVADtyuddSI12GF29qAvVUNSnwHg6L+2dmIUJjy7OPLX+TtMut/NPBhpHU
-        zF+F0JOg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pkRIb-007llL-2K;
-        Thu, 06 Apr 2023 15:13:17 +0000
-Date:   Thu, 6 Apr 2023 08:13:17 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Qu Wenruo <wqu@suse.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
+        Thu, 6 Apr 2023 12:06:31 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FF3976F;
+        Thu,  6 Apr 2023 09:06:28 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 1FF681F7AB;
+        Thu,  6 Apr 2023 16:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1680797187;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aVV3RmEHolDPVdcV/kckRLrvlkisCHD6kofnIT3jEsE=;
+        b=T8HJvX+SVW4kQnpJRtHZr+8VpQq/7KUsKZvtqFrM2Qy+kqmpmyblnHrbESwqA+8ME1oGIH
+        va/ZBBpydMjLc9FYGpfkgXHy5328H+qPoEgfG5+awssG1kyhxFK2wI2oyxQjMzutY987TO
+        5wPuQWJh7sOcQKOQpHz9l+f8070YwDI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1680797187;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aVV3RmEHolDPVdcV/kckRLrvlkisCHD6kofnIT3jEsE=;
+        b=PG1RH/ULvwN2JlpmtD3qXbKZXNsrL6zigIbOO35+4E3FGnatOMiU0WnRlDImISlDYlu1/O
+        KLTOyZdH2OThjdAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E942D1351F;
+        Thu,  6 Apr 2023 16:06:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id T5U6OALuLmSQawAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Thu, 06 Apr 2023 16:06:26 +0000
+Date:   Thu, 6 Apr 2023 18:06:24 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dan Carpenter <error27@gmail.com>, Qu Wenruo <wqu@suse.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] btrfs: scrub: use safer allocation function in
  init_scrub_stripe()
-Message-ID: <ZC7hjYQOR7owkzmH@infradead.org>
+Message-ID: <20230406160624.GW19619@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
 References: <3174f3bc-f83f-4009-b062-45eadb5c73d6@kili.mountain>
+ <ZC7hjYQOR7owkzmH@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3174f3bc-f83f-4009-b062-45eadb5c73d6@kili.mountain>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <ZC7hjYQOR7owkzmH@infradead.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 11:56:44AM +0300, Dan Carpenter wrote:
-> It's just always better to use kcalloc() instead of open coding the
-> +	stripe->csums = kcalloc((BTRFS_STRIPE_LEN >> fs_info->sectorsize_bits),
+On Thu, Apr 06, 2023 at 08:13:17AM -0700, Christoph Hellwig wrote:
+> On Thu, Apr 06, 2023 at 11:56:44AM +0300, Dan Carpenter wrote:
+> > It's just always better to use kcalloc() instead of open coding the
+> > +	stripe->csums = kcalloc((BTRFS_STRIPE_LEN >> fs_info->sectorsize_bits),
+> 
+> The inner braces can and should go away now.
 
-The inner braces can and should go away now.
+Right, thanks, commit updated.
