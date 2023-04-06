@@ -2,80 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4335C761A6
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 16:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92134C761A6
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 16:30:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239883AbjDFQGh (ORCPT
+        id S238518AbjDFQaY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Apr 2023 12:06:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44248 "EHLO
+        Thu, 6 Apr 2023 12:30:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239880AbjDFQGb (ORCPT
+        with ESMTP id S237404AbjDFQaW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Apr 2023 12:06:31 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FF3976F;
-        Thu,  6 Apr 2023 09:06:28 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1FF681F7AB;
-        Thu,  6 Apr 2023 16:06:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1680797187;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
+        Thu, 6 Apr 2023 12:30:22 -0400
+X-Greylist: delayed 375 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 06 Apr 2023 09:30:18 PDT
+Received: from out-51.mta0.migadu.com (out-51.mta0.migadu.com [91.218.175.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9647A8D
+        for <kernel-janitors@vger.kernel.org>; Thu,  6 Apr 2023 09:30:18 -0700 (PDT)
+Date:   Thu, 6 Apr 2023 16:23:56 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1680798240;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=aVV3RmEHolDPVdcV/kckRLrvlkisCHD6kofnIT3jEsE=;
-        b=T8HJvX+SVW4kQnpJRtHZr+8VpQq/7KUsKZvtqFrM2Qy+kqmpmyblnHrbESwqA+8ME1oGIH
-        va/ZBBpydMjLc9FYGpfkgXHy5328H+qPoEgfG5+awssG1kyhxFK2wI2oyxQjMzutY987TO
-        5wPuQWJh7sOcQKOQpHz9l+f8070YwDI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1680797187;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=aVV3RmEHolDPVdcV/kckRLrvlkisCHD6kofnIT3jEsE=;
-        b=PG1RH/ULvwN2JlpmtD3qXbKZXNsrL6zigIbOO35+4E3FGnatOMiU0WnRlDImISlDYlu1/O
-        KLTOyZdH2OThjdAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E942D1351F;
-        Thu,  6 Apr 2023 16:06:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id T5U6OALuLmSQawAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Thu, 06 Apr 2023 16:06:26 +0000
-Date:   Thu, 6 Apr 2023 18:06:24 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dan Carpenter <error27@gmail.com>, Qu Wenruo <wqu@suse.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] btrfs: scrub: use safer allocation function in
- init_scrub_stripe()
-Message-ID: <20230406160624.GW19619@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <3174f3bc-f83f-4009-b062-45eadb5c73d6@kili.mountain>
- <ZC7hjYQOR7owkzmH@infradead.org>
+        bh=zWTa+WmjvRizEenNCYTpznSZcah8zt6cqf7cKCxX7a0=;
+        b=YpT2Fq4n3IHoq0NhqGWEGK0xXZgdwSqB4fNw/EmbCwH+l+E/MrrjoaME/5opFFWMdi+c+R
+        ZE4p8Y5lVIJD1YkvcVRijUkT7UmIcs5v809lkhdseoQq1syH+eK2vgk7gXhKeHpyl6Zl0Z
+        QMSkBoDf4Wai6xmXfI6vbezrnWtEGTE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Oliver Upton <oliver.upton@linux.dev>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake
+ "KVM_HYPERCAL_EXIT_SMC" -> "KVM_HYPERCALL_EXIT_SMC"
+Message-ID: <ZC7yHC+FIJgE4APf@linux.dev>
+References: <20230406080226.122955-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZC7hjYQOR7owkzmH@infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20230406080226.122955-1-colin.i.king@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 08:13:17AM -0700, Christoph Hellwig wrote:
-> On Thu, Apr 06, 2023 at 11:56:44AM +0300, Dan Carpenter wrote:
-> > It's just always better to use kcalloc() instead of open coding the
-> > +	stripe->csums = kcalloc((BTRFS_STRIPE_LEN >> fs_info->sectorsize_bits),
+On Thu, Apr 06, 2023 at 09:02:26AM +0100, Colin Ian King wrote:
+> There is a spelling mistake in a test assert message. Fix it.
 > 
-> The inner braces can and should go away now.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Right, thanks, commit updated.
+Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+
+> ---
+>  tools/testing/selftests/kvm/aarch64/smccc_filter.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/aarch64/smccc_filter.c b/tools/testing/selftests/kvm/aarch64/smccc_filter.c
+> index 0f9db0641847..82650313451a 100644
+> --- a/tools/testing/selftests/kvm/aarch64/smccc_filter.c
+> +++ b/tools/testing/selftests/kvm/aarch64/smccc_filter.c
+> @@ -211,7 +211,7 @@ static void expect_call_fwd_to_user(struct kvm_vcpu *vcpu, uint32_t func_id,
+>  			    "KVM_HYPERCALL_EXIT_SMC is not set");
+>  	else
+>  		TEST_ASSERT(!(run->hypercall.flags & KVM_HYPERCALL_EXIT_SMC),
+> -			    "KVM_HYPERCAL_EXIT_SMC is set");
+> +			    "KVM_HYPERCALL_EXIT_SMC is set");
+>  }
+>  
+>  /* SMCCC calls forwarded to userspace cause KVM_EXIT_HYPERCALL exits */
+> -- 
+> 2.30.2
+> 
+
+-- 
+Thanks,
+Oliver
