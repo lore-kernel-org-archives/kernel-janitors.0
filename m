@@ -2,83 +2,142 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D593EC6FD1D
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Apr 2023 07:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF0AC77B6E
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Apr 2023 07:54:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239592AbjDGHU0 (ORCPT
+        id S232753AbjDGHyj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Apr 2023 03:20:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50648 "EHLO
+        Fri, 7 Apr 2023 03:54:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239486AbjDGHUZ (ORCPT
+        with ESMTP id S230265AbjDGHyh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Apr 2023 03:20:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93134A5F6;
-        Fri,  7 Apr 2023 00:20:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 074FD60F7E;
-        Fri,  7 Apr 2023 07:20:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 55ADEC4339B;
-        Fri,  7 Apr 2023 07:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680852018;
-        bh=QnexnQFeAk6yLJjTDwsZq8ocAO5HizU4Vb2V68oXIEM=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=tK6qO2MiUHjjKaPBRgbZtdMEG3laO2l+TpF9hiP9L224zCtfX2Q9Hr3v3MbgO60v9
-         O7jSygudJGCW+MsEM38UB29dKzFVDLOk6dFB3/pd3oGzyUBqV9RPcueIOIJq9Z3rWW
-         a7xvkvC00yPvCV8x11VGGYXwtk4sHqNcpE6HJy11YH3bRyx4rUyFW0CJoocEMLYf7V
-         giFwFy3oHFNzhIfhS64dalBTNDdMOJstTbVRojrLVde1f05X2CmTX/DtOekFEa3vRX
-         LbOUWP4tQjBpXR+iGYcXupx1XCo4JttbVltdJ/Siu7lmV8N+q9NIj0mahvmsAh7EMy
-         hgWzhW1/V442Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 39754E4F14C;
-        Fri,  7 Apr 2023 07:20:18 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 7 Apr 2023 03:54:37 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77A06E82;
+        Fri,  7 Apr 2023 00:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1680854076; x=1712390076;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CZ/jCUb4kYCui3C/8u1ZqszGrltmw8qxX+93UuaVuMU=;
+  b=aJ6Dk3zNtcdKOQnR2wEyMH0dmJpqduCM3Fie0NX6MGZsh5qscUNlQ1Ah
+   XyQtS/kh09UdRoQ31OYkIs/LNDYv4pIhX1VGhFcYiJ2L8Rs1lSFyRA/1e
+   pyu/qLRxy1dP2r7hCkg4YzcLgrFV6MF1btBo+NxS5flMQ/B6s2usbjS3E
+   mgaQamO3HsOveNoelUd8wYqPJYkn1RIHxboh/94BCmozV8VkKvT4cEWva
+   nC2fBRL1dkWZaVyAYMkkGrHYoBW3V0jkwqOfZyKVZyMGnjDUr4rTjN9K5
+   2nJEvrDi96IwOFx01AA+vwFWd3MeuekCfwLy6E9rPlMeiuxDPKFLh7T5n
+   A==;
+X-IronPort-AV: E=Sophos;i="5.98,326,1673938800"; 
+   d="scan'208";a="208137635"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Apr 2023 00:54:35 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Fri, 7 Apr 2023 00:54:35 -0700
+Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
+ Transport; Fri, 7 Apr 2023 00:54:33 -0700
+Message-ID: <e3e704f5-3719-637a-8bc5-3a24e2e7cb92@microchip.com>
+Date:   Fri, 7 Apr 2023 09:54:32 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] spi: atmel: Improve exception handling in
+ atmel_spi_configure_dma()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        <kernel-janitors@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+        Yang Yingliang <yangyingliang@huawei.com>
+CC:     <cocci@inria.fr>, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <8f785de5-ebe2-edd9-2155-f440acacc643@web.de>
+ <82aebf6c-47ac-9d17-2d11-6245f582338e@web.de>
+Content-Language: en-US
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <82aebf6c-47ac-9d17-2d11-6245f582338e@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] niu: Fix missing unwind goto in niu_alloc_channels()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168085201823.13885.16010992572875922038.git-patchwork-notify@kernel.org>
-Date:   Fri, 07 Apr 2023 07:20:18 +0000
-References: <20230406063120.3626731-1-harshit.m.mogalapalli@oracle.com>
-In-Reply-To: <20230406063120.3626731-1-harshit.m.mogalapalli@oracle.com>
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, mkl@pengutronix.de, leon@kernel.org,
-        keescook@chromium.org, robh@kernel.org,
-        wsa+renesas@sang-engineering.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Wed,  5 Apr 2023 23:31:18 -0700 you wrote:
-> Smatch reports: drivers/net/ethernet/sun/niu.c:4525
-> 	niu_alloc_channels() warn: missing unwind goto?
+On 07/04/2023 at 08:22, Markus Elfring wrote:
+> Date: Fri, 7 Apr 2023 08:08:59 +0200
 > 
-> If niu_rbr_fill() fails, then we are directly returning 'err' without
-> freeing the channels.
+> The label “error” was used to jump to another pointer check despite of
+> the detail in the implementation of the function “atmel_spi_configure_dma”
+> that it was determined already that the corresponding variable
+> contained an error pointer because of a failed call of
+> the function “dma_request_chan”.
 > 
-> Fix this by changing direct return to a goto 'out_err'.
+> * Thus use more appropriate labels instead.
 > 
-> [...]
+> * Delete two redundant checks.
+> 
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Fixes: 398b6b310ec85eef9d98df5963d5ded18aa92ad8 ("spi: atmel: switch to use modern name")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Here is the summary with links:
-  - niu: Fix missing unwind goto in niu_alloc_channels()
-    https://git.kernel.org/netdev/net/c/8ce07be70345
+It's becoming a pattern, but still:
+NACK.
 
-You are awesome, thank you!
+Regards,
+   Nicolas
+
+> ---
+>   drivers/spi/spi-atmel.c | 14 +++++++-------
+>   1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
+> index 7f06305e16cb..ed8dc93c73e5 100644
+> --- a/drivers/spi/spi-atmel.c
+> +++ b/drivers/spi/spi-atmel.c
+> @@ -511,12 +511,12 @@ static int atmel_spi_configure_dma(struct spi_controller *host,
+>                   * requested tx channel.
+>                   */
+>                  dev_dbg(dev, "No RX DMA channel, DMA is disabled\n");
+> -               goto error;
+> +               goto release_channel_tx;
+>          }
+> 
+>          err = atmel_spi_dma_slave_config(as, 8);
+>          if (err)
+> -               goto error;
+> +               goto release_channel_rx;
+> 
+>          dev_info(&as->pdev->dev,
+>                          "Using %s (tx) and %s (rx) for DMA transfers\n",
+> @@ -524,11 +524,11 @@ static int atmel_spi_configure_dma(struct spi_controller *host,
+>                          dma_chan_name(host->dma_rx));
+> 
+>          return 0;
+> -error:
+> -       if (!IS_ERR(host->dma_rx))
+> -               dma_release_channel(host->dma_rx);
+> -       if (!IS_ERR(host->dma_tx))
+> -               dma_release_channel(host->dma_tx);
+> +
+> +release_channel_rx:
+> +       dma_release_channel(host->dma_rx);
+> +release_channel_tx:
+> +       dma_release_channel(host->dma_tx);
+>   error_clear:
+>          host->dma_tx = host->dma_rx = NULL;
+>          return err;
+> --
+> 2.40.0
+> 
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Nicolas Ferre
 
