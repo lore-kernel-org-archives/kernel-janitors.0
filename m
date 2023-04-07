@@ -2,92 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED49C761A6
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Apr 2023 23:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D593EC6FD1D
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Apr 2023 07:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231411AbjDFXo6 (ORCPT
+        id S239592AbjDGHU0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Apr 2023 19:44:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46832 "EHLO
+        Fri, 7 Apr 2023 03:20:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230227AbjDFXoZ (ORCPT
+        with ESMTP id S239486AbjDGHUZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Apr 2023 19:44:25 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E95EB75D;
-        Thu,  6 Apr 2023 16:43:54 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id lj25so5014223ejb.11;
-        Thu, 06 Apr 2023 16:43:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680824619; x=1683416619;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sa4w2wBUhh2LraZYWTmyiXr2wBMjNJ8awyrNTkWw7lc=;
-        b=UtP1mBlhsggmxLoOvfJLtVEopzWRqIyYL8Ug49LHqTYjMM7HdUpcBqf2AbZxCkkB8A
-         jvND/qZdS+6SSw8zpJttAncyQ4bcQx9LgIaJUaAmEx8yQdzNrw3Y33t/j8nWL/dA5MIZ
-         opy45DYM/dPuGE433N4lBeMwH3kJX7HlpMjXxto94ocz4FwlRATpuKhYLn+gboUoJf6w
-         SUzOtHPzY3IxbBwa2Hx+89RhEZnfFk48t/sfSXsyOv8yQwxTecB63aII7hhy4/a01Ycj
-         9nAyMMDKfx/OfsrrZYtxwGwSBMoElAQ3d0E2N3XyENbPjoP3nevtwrUVxbzdRq0ycd98
-         Jhhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680824619; x=1683416619;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sa4w2wBUhh2LraZYWTmyiXr2wBMjNJ8awyrNTkWw7lc=;
-        b=0ck3Ev1WAqHE9TVMkytziDeQ60OiaC8PPYVyr6yCv4mVxCpFPBv9Kh2HiichVX8oML
-         P2XHumqeDHOXx7nI/BSBFCLMhn0Y3DZ7Nd/z5J66v1H5GKkamvGUwdvduWSewH5VjbTo
-         aiRjY9bhVFow8YJdcwvYhtHLg60dfoW98y6tf4JDYicmAh+J1BpiXWnGvSsddiypDxKN
-         2YQ8XCmYr6EJ9x1edqr2wEQ9EBTkMv6QziQACYezKjsK+Hb+T+u43SCYQ1emKPbJIoqz
-         aiRWgD8WN8MnVJvssTHiVU/aSF06rDmKLR9Kb6azELi8JzN6/5a15K1N0RJ9WtqiakE8
-         vaSA==
-X-Gm-Message-State: AAQBX9fM2QPb0fY7K8ziEhACzLefq+NqzKsNWupv/kLaAjUSP64KWRgD
-        pXx3oVGDJjYtsrnpU3VY38y7l8O5yvLvcDFknng=
-X-Google-Smtp-Source: AKy350aBEkf5TgGsv2J/0hdQg7fObnxz4RgvnMs2l7oi3Q8is/NrmWVmaPsJCNU+iGHcckbbHivvQg0JaDbaRmw6XcI=
-X-Received: by 2002:a17:907:6d99:b0:8d8:4578:18e0 with SMTP id
- sb25-20020a1709076d9900b008d8457818e0mr253918ejc.10.1680824619045; Thu, 06
- Apr 2023 16:43:39 -0700 (PDT)
+        Fri, 7 Apr 2023 03:20:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93134A5F6;
+        Fri,  7 Apr 2023 00:20:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 074FD60F7E;
+        Fri,  7 Apr 2023 07:20:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 55ADEC4339B;
+        Fri,  7 Apr 2023 07:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680852018;
+        bh=QnexnQFeAk6yLJjTDwsZq8ocAO5HizU4Vb2V68oXIEM=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=tK6qO2MiUHjjKaPBRgbZtdMEG3laO2l+TpF9hiP9L224zCtfX2Q9Hr3v3MbgO60v9
+         O7jSygudJGCW+MsEM38UB29dKzFVDLOk6dFB3/pd3oGzyUBqV9RPcueIOIJq9Z3rWW
+         a7xvkvC00yPvCV8x11VGGYXwtk4sHqNcpE6HJy11YH3bRyx4rUyFW0CJoocEMLYf7V
+         giFwFy3oHFNzhIfhS64dalBTNDdMOJstTbVRojrLVde1f05X2CmTX/DtOekFEa3vRX
+         LbOUWP4tQjBpXR+iGYcXupx1XCo4JttbVltdJ/Siu7lmV8N+q9NIj0mahvmsAh7EMy
+         hgWzhW1/V442Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 39754E4F14C;
+        Fri,  7 Apr 2023 07:20:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <ZC6JEx4dvWUvgcwW@kili> <8219c3dd87179df545fb6de4b89b2bbc.pc@manguebit.com>
-In-Reply-To: <8219c3dd87179df545fb6de4b89b2bbc.pc@manguebit.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 6 Apr 2023 18:43:27 -0500
-Message-ID: <CAH2r5muJwda_HxHvBR_riAjq65XHjs4Pbvc07i7ZQ76rU9GUNg@mail.gmail.com>
-Subject: Re: [PATCH] cifs: double lock in cifs_reconnect_tcon()
-To:     Paulo Alcantara <pc@manguebit.com>
-Cc:     Dan Carpenter <error27@gmail.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] niu: Fix missing unwind goto in niu_alloc_channels()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168085201823.13885.16010992572875922038.git-patchwork-notify@kernel.org>
+Date:   Fri, 07 Apr 2023 07:20:18 +0000
+References: <20230406063120.3626731-1-harshit.m.mogalapalli@oracle.com>
+In-Reply-To: <20230406063120.3626731-1-harshit.m.mogalapalli@oracle.com>
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, mkl@pengutronix.de, leon@kernel.org,
+        keescook@chromium.org, robh@kernel.org,
+        wsa+renesas@sang-engineering.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Added to cifs-2.6.git for-next
+Hello:
 
-On Thu, Apr 6, 2023 at 7:10=E2=80=AFAM Paulo Alcantara <pc@manguebit.com> w=
-rote:
->
-> Dan Carpenter <error27@gmail.com> writes:
->
-> > This lock was supposed to be an unlock.
-> >
-> > Fixes: 6cc041e90c17 ("cifs: avoid races in parallel reconnects in smb1"=
-)
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > ---
-> >  fs/cifs/cifssmb.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Reviewed-by: Paulo Alcantara (SUSE) <pc@manguebit.com>
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Wed,  5 Apr 2023 23:31:18 -0700 you wrote:
+> Smatch reports: drivers/net/ethernet/sun/niu.c:4525
+> 	niu_alloc_channels() warn: missing unwind goto?
+> 
+> If niu_rbr_fill() fails, then we are directly returning 'err' without
+> freeing the channels.
+> 
+> Fix this by changing direct return to a goto 'out_err'.
+> 
+> [...]
+
+Here is the summary with links:
+  - niu: Fix missing unwind goto in niu_alloc_channels()
+    https://git.kernel.org/netdev/net/c/8ce07be70345
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-
---=20
-Thanks,
-
-Steve
