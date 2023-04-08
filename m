@@ -2,129 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3601BC7619A
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Apr 2023 06:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5A0C77B6C
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Apr 2023 14:44:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230080AbjDHG4p (ORCPT
+        id S230099AbjDHOoA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 Apr 2023 02:56:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42912 "EHLO
+        Sat, 8 Apr 2023 10:44:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjDHG4o (ORCPT
+        with ESMTP id S229732AbjDHOn7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 Apr 2023 02:56:44 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E64D501;
-        Fri,  7 Apr 2023 23:56:42 -0700 (PDT)
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3383Waqj004888;
-        Sat, 8 Apr 2023 06:56:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2022-7-12; bh=gBdQ9z3RMrgblYJEU2yJN27X4Pd/JfytWfb4t7Ya1bI=;
- b=0RnLr7l/yqpn5vpncGx9jls5z6Y9P+mjK5NJC7RYfUS++uuGKpHyf5yjWRqOeTDCABfT
- C09+TwoTg+HsHJyWEFyuu+abGeIZJbwUU4MS8Erjmqp/wORWoKAjIMyPHY4FkOWMqiRs
- yhnZlZhfsFMgqrtHgQrw6oeumZ/ImbX5bkUQeTa6zzqA32pV5YJBYmnJu7UcrSBknjjM
- w+5n4gCXfDqUrsNSJ5o/JJyaxdyrSaNqxdlAVnhqxnAHYp4yRPSeUzdH9+BCxIW90/ka
- 8wTC18c0J/eiyO0goRvHXv9SUG1FdsCYJ4vn6IeSddv8w1VOti3p414/7dUVqEebJCpa Og== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3pu0eq04b0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 08 Apr 2023 06:56:27 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3383IZDH038795;
-        Sat, 8 Apr 2023 06:56:26 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ptxq29n58-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 08 Apr 2023 06:56:26 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3386uP4w039417;
-        Sat, 8 Apr 2023 06:56:25 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3ptxq29n39-1;
-        Sat, 08 Apr 2023 06:56:25 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To:     m.chetan.kumar@intel.com, linuxwwan@intel.com,
-        loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
-        johannes@sipsolutions.net
-Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, error27@gmail.com,
-        simon.horman@corigine.com, kernel-janitors@vger.kernel.org,
-        vegard.nossum@oracle.com,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: [PATCH net] net: wwan: iosm: Fix error handling path in ipc_pcie_probe()
-Date:   Fri,  7 Apr 2023 23:56:07 -0700
-Message-Id: <20230408065607.1633970-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.40.0
+        Sat, 8 Apr 2023 10:43:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8080830CB;
+        Sat,  8 Apr 2023 07:43:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1CD0860A53;
+        Sat,  8 Apr 2023 14:43:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74966C433D2;
+        Sat,  8 Apr 2023 14:43:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680965037;
+        bh=qaFp4flueH7UQbqZO77QoHx6kPjhzYfOcp4ZUG6IkwA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=moOL4MTcV6WcWhX0Htu2e9xVtsuKvI6ndTeZIf1E1GwqSCAZr5c1XAkeVK+ThY+7R
+         Ji7VZusfmbfOnlPnqJ4bEMu4c8Rt1j3aS5WdnQ/4mCe7sTbHig6bwPu1K6wkdjO5k+
+         nCvJ8CFPWeTm1DqNiBdw4OnSKq53c391FMvnqExSJinvkVH4ZkwieJybRY0SPgu01N
+         OCZnLl6oHCJBu25W+PDQnGVzf2y4wMlGjBjNCmTQww3B8sncX+PEIvSGq6WmyVLcSy
+         01fP1xS7tB/LidGIbgCatOiFCVNlBoFy2ozLNgZKhaMiCqCgUjZ9Vf7/cTX1wsOM9A
+         /bLULB5uuCeEg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.95)
+        (envelope-from <maz@kernel.org>)
+        id 1pl9nH-006vvg-1e;
+        Sat, 08 Apr 2023 15:43:55 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     James Morse <james.morse@arm.com>, kvm@vger.kernel.org,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        Shuah Khan <shuah@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake "KVM_HYPERCAL_EXIT_SMC" -> "KVM_HYPERCALL_EXIT_SMC"
+Date:   Sat,  8 Apr 2023 15:43:52 +0100
+Message-Id: <168096502866.4154147.16883387096134090990.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230406080226.122955-1-colin.i.king@gmail.com>
+References: <20230406080226.122955-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-08_01,2023-04-06_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 phishscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304080061
-X-Proofpoint-GUID: OXpYRl3brXA8dabr4OUKqJvg65clH_IS
-X-Proofpoint-ORIG-GUID: OXpYRl3brXA8dabr4OUKqJvg65clH_IS
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: james.morse@arm.com, kvm@vger.kernel.org, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, shuah@kernel.org, oliver.upton@linux.dev, colin.i.king@gmail.com, suzuki.poulose@arm.com, pbonzini@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch reports:
-	drivers/net/wwan/iosm/iosm_ipc_pcie.c:298 ipc_pcie_probe()
-	warn: missing unwind goto?
+On Thu, 6 Apr 2023 09:02:26 +0100, Colin Ian King wrote:
+> There is a spelling mistake in a test assert message. Fix it.
 
-When dma_set_mask fails it directly returns without disabling pci
-device and freeing ipc_pcie. Fix this my calling a correct goto label
+Applied to next, thanks!
 
-As dma_set_mask returns either 0 or -EIO, we can use a goto label, as
-it finally returns -EIO.
+[1/1] KVM: selftests: Fix spelling mistake "KVM_HYPERCAL_EXIT_SMC" -> "KVM_HYPERCALL_EXIT_SMC"
+      commit: c5284f6d8ce2b9cf96643da441862434233a4ea3
 
-Renamed the goto label as name of the label before this patch is not
-relevant after this patch.
+Cheers,
 
-Fixes: 035e3befc191 ("net: wwan: iosm: fix driver not working with INTEL_IOMMU disabled")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis, only compile tested.
----
- drivers/net/wwan/iosm/iosm_ipc_pcie.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wwan/iosm/iosm_ipc_pcie.c b/drivers/net/wwan/iosm/iosm_ipc_pcie.c
-index 5bf5a93937c9..a6a6a0df1f7d 100644
---- a/drivers/net/wwan/iosm/iosm_ipc_pcie.c
-+++ b/drivers/net/wwan/iosm/iosm_ipc_pcie.c
-@@ -295,7 +295,7 @@ static int ipc_pcie_probe(struct pci_dev *pci,
- 	ret = dma_set_mask(ipc_pcie->dev, DMA_BIT_MASK(64));
- 	if (ret) {
- 		dev_err(ipc_pcie->dev, "Could not set PCI DMA mask: %d", ret);
--		return ret;
-+		goto err_disable_pci;
- 	}
- 
- 	ipc_pcie_config_aspm(ipc_pcie);
-@@ -308,7 +308,7 @@ static int ipc_pcie_probe(struct pci_dev *pci,
- 	ipc_pcie->suspend = 0;
- 
- 	if (ipc_pcie_resources_request(ipc_pcie))
--		goto resources_req_fail;
-+		goto err_disable_pci;
- 
- 	/* Establish the link to the imem layer. */
- 	ipc_pcie->imem = ipc_imem_init(ipc_pcie, pci->device,
-@@ -322,7 +322,7 @@ static int ipc_pcie_probe(struct pci_dev *pci,
- 
- imem_init_fail:
- 	ipc_pcie_resources_release(ipc_pcie);
--resources_req_fail:
-+err_disable_pci:
- 	pci_disable_device(pci);
- pci_enable_fail:
- 	kfree(ipc_pcie);
+	M.
 -- 
-2.38.1
+Without deviation from the norm, progress is not possible.
+
 
