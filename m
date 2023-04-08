@@ -2,142 +2,129 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF0AC77B6E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Apr 2023 07:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3601BC7619A
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Apr 2023 06:56:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232753AbjDGHyj (ORCPT
+        id S230080AbjDHG4p (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Apr 2023 03:54:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42244 "EHLO
+        Sat, 8 Apr 2023 02:56:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230265AbjDGHyh (ORCPT
+        with ESMTP id S229457AbjDHG4o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Apr 2023 03:54:37 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77A06E82;
-        Fri,  7 Apr 2023 00:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1680854076; x=1712390076;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CZ/jCUb4kYCui3C/8u1ZqszGrltmw8qxX+93UuaVuMU=;
-  b=aJ6Dk3zNtcdKOQnR2wEyMH0dmJpqduCM3Fie0NX6MGZsh5qscUNlQ1Ah
-   XyQtS/kh09UdRoQ31OYkIs/LNDYv4pIhX1VGhFcYiJ2L8Rs1lSFyRA/1e
-   pyu/qLRxy1dP2r7hCkg4YzcLgrFV6MF1btBo+NxS5flMQ/B6s2usbjS3E
-   mgaQamO3HsOveNoelUd8wYqPJYkn1RIHxboh/94BCmozV8VkKvT4cEWva
-   nC2fBRL1dkWZaVyAYMkkGrHYoBW3V0jkwqOfZyKVZyMGnjDUr4rTjN9K5
-   2nJEvrDi96IwOFx01AA+vwFWd3MeuekCfwLy6E9rPlMeiuxDPKFLh7T5n
-   A==;
-X-IronPort-AV: E=Sophos;i="5.98,326,1673938800"; 
-   d="scan'208";a="208137635"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Apr 2023 00:54:35 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Fri, 7 Apr 2023 00:54:35 -0700
-Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
- Transport; Fri, 7 Apr 2023 00:54:33 -0700
-Message-ID: <e3e704f5-3719-637a-8bc5-3a24e2e7cb92@microchip.com>
-Date:   Fri, 7 Apr 2023 09:54:32 +0200
+        Sat, 8 Apr 2023 02:56:44 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E64D501;
+        Fri,  7 Apr 2023 23:56:42 -0700 (PDT)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3383Waqj004888;
+        Sat, 8 Apr 2023 06:56:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2022-7-12; bh=gBdQ9z3RMrgblYJEU2yJN27X4Pd/JfytWfb4t7Ya1bI=;
+ b=0RnLr7l/yqpn5vpncGx9jls5z6Y9P+mjK5NJC7RYfUS++uuGKpHyf5yjWRqOeTDCABfT
+ C09+TwoTg+HsHJyWEFyuu+abGeIZJbwUU4MS8Erjmqp/wORWoKAjIMyPHY4FkOWMqiRs
+ yhnZlZhfsFMgqrtHgQrw6oeumZ/ImbX5bkUQeTa6zzqA32pV5YJBYmnJu7UcrSBknjjM
+ w+5n4gCXfDqUrsNSJ5o/JJyaxdyrSaNqxdlAVnhqxnAHYp4yRPSeUzdH9+BCxIW90/ka
+ 8wTC18c0J/eiyO0goRvHXv9SUG1FdsCYJ4vn6IeSddv8w1VOti3p414/7dUVqEebJCpa Og== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3pu0eq04b0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 08 Apr 2023 06:56:27 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3383IZDH038795;
+        Sat, 8 Apr 2023 06:56:26 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ptxq29n58-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 08 Apr 2023 06:56:26 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3386uP4w039417;
+        Sat, 8 Apr 2023 06:56:25 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3ptxq29n39-1;
+        Sat, 08 Apr 2023 06:56:25 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     m.chetan.kumar@intel.com, linuxwwan@intel.com,
+        loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
+        johannes@sipsolutions.net
+Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, error27@gmail.com,
+        simon.horman@corigine.com, kernel-janitors@vger.kernel.org,
+        vegard.nossum@oracle.com,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: [PATCH net] net: wwan: iosm: Fix error handling path in ipc_pcie_probe()
+Date:   Fri,  7 Apr 2023 23:56:07 -0700
+Message-Id: <20230408065607.1633970-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] spi: atmel: Improve exception handling in
- atmel_spi_configure_dma()
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        <kernel-janitors@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Tudor Ambarus" <tudor.ambarus@linaro.org>,
-        Yang Yingliang <yangyingliang@huawei.com>
-CC:     <cocci@inria.fr>, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <8f785de5-ebe2-edd9-2155-f440acacc643@web.de>
- <82aebf6c-47ac-9d17-2d11-6245f582338e@web.de>
-Content-Language: en-US
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <82aebf6c-47ac-9d17-2d11-6245f582338e@web.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-08_01,2023-04-06_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 phishscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2304080061
+X-Proofpoint-GUID: OXpYRl3brXA8dabr4OUKqJvg65clH_IS
+X-Proofpoint-ORIG-GUID: OXpYRl3brXA8dabr4OUKqJvg65clH_IS
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 07/04/2023 at 08:22, Markus Elfring wrote:
-> Date: Fri, 7 Apr 2023 08:08:59 +0200
-> 
-> The label “error” was used to jump to another pointer check despite of
-> the detail in the implementation of the function “atmel_spi_configure_dma”
-> that it was determined already that the corresponding variable
-> contained an error pointer because of a failed call of
-> the function “dma_request_chan”.
-> 
-> * Thus use more appropriate labels instead.
-> 
-> * Delete two redundant checks.
-> 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 398b6b310ec85eef9d98df5963d5ded18aa92ad8 ("spi: atmel: switch to use modern name")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Smatch reports:
+	drivers/net/wwan/iosm/iosm_ipc_pcie.c:298 ipc_pcie_probe()
+	warn: missing unwind goto?
 
-It's becoming a pattern, but still:
-NACK.
+When dma_set_mask fails it directly returns without disabling pci
+device and freeing ipc_pcie. Fix this my calling a correct goto label
 
-Regards,
-   Nicolas
+As dma_set_mask returns either 0 or -EIO, we can use a goto label, as
+it finally returns -EIO.
 
-> ---
->   drivers/spi/spi-atmel.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
-> index 7f06305e16cb..ed8dc93c73e5 100644
-> --- a/drivers/spi/spi-atmel.c
-> +++ b/drivers/spi/spi-atmel.c
-> @@ -511,12 +511,12 @@ static int atmel_spi_configure_dma(struct spi_controller *host,
->                   * requested tx channel.
->                   */
->                  dev_dbg(dev, "No RX DMA channel, DMA is disabled\n");
-> -               goto error;
-> +               goto release_channel_tx;
->          }
-> 
->          err = atmel_spi_dma_slave_config(as, 8);
->          if (err)
-> -               goto error;
-> +               goto release_channel_rx;
-> 
->          dev_info(&as->pdev->dev,
->                          "Using %s (tx) and %s (rx) for DMA transfers\n",
-> @@ -524,11 +524,11 @@ static int atmel_spi_configure_dma(struct spi_controller *host,
->                          dma_chan_name(host->dma_rx));
-> 
->          return 0;
-> -error:
-> -       if (!IS_ERR(host->dma_rx))
-> -               dma_release_channel(host->dma_rx);
-> -       if (!IS_ERR(host->dma_tx))
-> -               dma_release_channel(host->dma_tx);
-> +
-> +release_channel_rx:
-> +       dma_release_channel(host->dma_rx);
-> +release_channel_tx:
-> +       dma_release_channel(host->dma_tx);
->   error_clear:
->          host->dma_tx = host->dma_rx = NULL;
->          return err;
-> --
-> 2.40.0
-> 
+Renamed the goto label as name of the label before this patch is not
+relevant after this patch.
 
+Fixes: 035e3befc191 ("net: wwan: iosm: fix driver not working with INTEL_IOMMU disabled")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is based on static analysis, only compile tested.
+---
+ drivers/net/wwan/iosm/iosm_ipc_pcie.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wwan/iosm/iosm_ipc_pcie.c b/drivers/net/wwan/iosm/iosm_ipc_pcie.c
+index 5bf5a93937c9..a6a6a0df1f7d 100644
+--- a/drivers/net/wwan/iosm/iosm_ipc_pcie.c
++++ b/drivers/net/wwan/iosm/iosm_ipc_pcie.c
+@@ -295,7 +295,7 @@ static int ipc_pcie_probe(struct pci_dev *pci,
+ 	ret = dma_set_mask(ipc_pcie->dev, DMA_BIT_MASK(64));
+ 	if (ret) {
+ 		dev_err(ipc_pcie->dev, "Could not set PCI DMA mask: %d", ret);
+-		return ret;
++		goto err_disable_pci;
+ 	}
+ 
+ 	ipc_pcie_config_aspm(ipc_pcie);
+@@ -308,7 +308,7 @@ static int ipc_pcie_probe(struct pci_dev *pci,
+ 	ipc_pcie->suspend = 0;
+ 
+ 	if (ipc_pcie_resources_request(ipc_pcie))
+-		goto resources_req_fail;
++		goto err_disable_pci;
+ 
+ 	/* Establish the link to the imem layer. */
+ 	ipc_pcie->imem = ipc_imem_init(ipc_pcie, pci->device,
+@@ -322,7 +322,7 @@ static int ipc_pcie_probe(struct pci_dev *pci,
+ 
+ imem_init_fail:
+ 	ipc_pcie_resources_release(ipc_pcie);
+-resources_req_fail:
++err_disable_pci:
+ 	pci_disable_device(pci);
+ pci_enable_fail:
+ 	kfree(ipc_pcie);
 -- 
-Nicolas Ferre
+2.38.1
 
