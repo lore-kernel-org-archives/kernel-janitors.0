@@ -2,161 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CA7C76196
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Apr 2023 17:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F43C77B6F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Apr 2023 22:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230361AbjDJRoQ (ORCPT
+        id S229864AbjDJWn5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Apr 2023 13:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34668 "EHLO
+        Mon, 10 Apr 2023 18:43:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbjDJRoP (ORCPT
+        with ESMTP id S229693AbjDJWn4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Apr 2023 13:44:15 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F8CF26B8
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Apr 2023 10:44:13 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id 90-20020a17090a0fe300b0023b4bcf0727so5167468pjz.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Apr 2023 10:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681148653;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yWQNPjxOiH9ikIbp275JanF40njNYNR09cvqLl6jQAE=;
-        b=sFZiOJlR/azM1KLSZuC4d6gGG/o4LsLQldk2wiRC/oJSCDKReSANURRkcHhJRjUGuo
-         H/c5rEyrx9HHs8+u8Sy78D7L+5xreTcsA+Q9HJPJq05QMQvaRgmJ2p1nyab1jzHhnSoy
-         FZEyJM6XhjLXOHrSqVZgf7OIq6LK/HImYa4g3MxPlfoY1aZIU+APRSPTjoLnVtI88OrT
-         8NMRwNrfqXkZ1gMWcijAL94AnZBBMmg6mJrifl7ZRougbsRc7l4b5zS9AEwNpw4diQgI
-         Ui9aClbn6XG4G1ut+BTlF3CXakefy3trXxSqQZ2tITeG6l/FDCAFGWAkV8PTpDMD/Sit
-         WDsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681148653;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yWQNPjxOiH9ikIbp275JanF40njNYNR09cvqLl6jQAE=;
-        b=l+jvjrxAhTY/ZRfwuvK19otP5W3F1tDfgwu/dxuiup6GDexBl2ntGzh2dBlC70X7pv
-         gunJZvcE36AkM6o7cofbxoU4hCATKO3qjyzoGc/Fmpzi+9GHPWC/G6I7WozpX3VQFsUc
-         Psw9PfOlDMs+J7oarjjSjfqX4PR/HO8GE60BKh2g1TGNlpntntIjI5mwj/eYhFAUmHAj
-         v3/9Bj/Bi+7xcV7BV5dJ1PeNJusYtAFpXRXra1prW/PcYI1e9+oO+LuyDGhot6SyJ2TO
-         CMxTbSO/XZQZMCVnvaNg7YR2DK/JiKuPTP2Bb0Tb5wEw/f9RxIvtH5ATp+fuVrXwy4HN
-         TEpg==
-X-Gm-Message-State: AAQBX9eoNCCwlvQW0nudeuWHUS0HGZTmkQVmF0XxZL10EpYfimtRI+8z
-        lhJUhqoq1VhOpA6w1Z4EyBw0+Q==
-X-Google-Smtp-Source: AKy350a0UqbFHqt+Sl9q/bhoxYb7h3/xxccDs8RVv+EDn0SI5G+SHERF4W6kDbcDz5ySUIJzae8ALQ==
-X-Received: by 2002:a17:90a:bb89:b0:246:5780:ccf8 with SMTP id v9-20020a17090abb8900b002465780ccf8mr10743326pjr.4.1681148653018;
-        Mon, 10 Apr 2023 10:44:13 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:cecd:b1ee:70ec:874])
-        by smtp.gmail.com with ESMTPSA id t15-20020a17090ae50f00b0023377b98c7csm7753977pjy.38.2023.04.10.10.44.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Apr 2023 10:44:12 -0700 (PDT)
-Date:   Mon, 10 Apr 2023 11:44:10 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, Bjorn Andersson <andersson@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: Improve exception handling in
- imx_dsp_rproc_mbox_alloc()
-Message-ID: <20230410174410.GB4129213@p14s>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <8f785de5-ebe2-edd9-2155-f440acacc643@web.de>
- <d0e18bb1-afc4-8b6f-bb1c-b74b3bad908e@web.de>
+        Mon, 10 Apr 2023 18:43:56 -0400
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679E81BDB;
+        Mon, 10 Apr 2023 15:43:55 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 0692D7DA;
+        Mon, 10 Apr 2023 22:43:54 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0692D7DA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1681166635; bh=gkS9KbPedImrDMUJIjGSTAwqfmBYe3xmj/ydYeKdk84=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=oRQ6FM1D+yM7FQ719X7cgQHRefviYSxMcx6qVsMEYbrNC6vN3ZiZ5vbMFR1DiulaF
+         ipfgFP0NhohanjWdS4S2Abd8KEj+CwZXRKLNzsra4aYNQTLO2hi1l25azBvvlY9VBx
+         J2lhycmMOxztPL20yE59FO3VAj0JiNhUKWbb19ZNpkjJVNcVfdga0cHD1cyojKLxcM
+         6WTCHki4rXMg1or3e/VGbPeWUb+G1sAhe0pfyEmsYLtu5R2k7DLTnGnCcNdHPip+oW
+         IOaajIP0qdpOMLwuzDBqJOAbXQbvNCh6akh/vmaiNdQ4Eb2YTVlnIsXrJxyevK0Ohd
+         HADXnSjvVFMCQ==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Kim Phillips <kim.phillips@amd.com>,
+        Mike Rapoport <rppt@kernel.org>, linux-doc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kim Phillips <kim.phillips@amd.com>
+Subject: Re: [PATCH] docs/mm: Physical Memory: Fix grammar
+In-Reply-To: <20230331165254.207526-1-kim.phillips@amd.com>
+References: <20230331165254.207526-1-kim.phillips@amd.com>
+Date:   Mon, 10 Apr 2023 16:43:54 -0600
+Message-ID: <87ttxncq8l.fsf@meer.lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d0e18bb1-afc4-8b6f-bb1c-b74b3bad908e@web.de>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 10:12:50PM +0200, Markus Elfring wrote:
-> Date: Thu, 6 Apr 2023 22:00:24 +0200
-> 
-> The label “err_out” was used to jump to another pointer check
-> despite of the detail in the implementation of the function
-> “imx_dsp_rproc_mbox_alloc” that it was determined already
-> that the corresponding variable contained an error pointer
-> because of a failed call of the function “mbox_request_channel_byname”.
-> 
-> Thus perform the following adjustments:
-> 
-> 1. Return directly after a call of the function
->    “mbox_request_channel_byname” failed for the input parameter “tx”.
-> 
-> 2. Use more appropriate labels instead.
-> 
-> 3. Reorder jump targets at the end.
-> 
-> 4. Omit a function call and three extra checks.
-> 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
+Kim Phillips <kim.phillips@amd.com> writes:
+
+> it's -> its
+> referenced to by -> referenced by
 >
+> Fixes: 5d8c5e430a63 ("docs/mm: Physical Memory: add structure, introduction and nodes description")
+> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+> ---
+>  Documentation/mm/physical_memory.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/mm/physical_memory.rst b/Documentation/mm/physical_memory.rst
+> index 1bc888d36ea1..df2ed81e3639 100644
+> --- a/Documentation/mm/physical_memory.rst
+> +++ b/Documentation/mm/physical_memory.rst
+> @@ -19,7 +19,7 @@ a bank of memory very suitable for DMA near peripheral devices.
+>  
+>  Each bank is called a node and the concept is represented under Linux by a
+>  ``struct pglist_data`` even if the architecture is UMA. This structure is
+> -always referenced to by it's typedef ``pg_data_t``. ``A pg_data_t`` structure
+> +always referenced by its typedef ``pg_data_t``. A ``pg_data_t`` structure
+>  for a particular node can be referenced by ``NODE_DATA(nid)`` macro where
+>  ``nid`` is the ID of that node.
 
-Applied
+Applied, thanks.
 
-Thanks,
-Mathieu
-
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 21759d9e5b7b..a8ad15ef1da0 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -530,7 +530,7 @@ static int imx_dsp_rproc_mbox_alloc(struct imx_dsp_rproc *priv)
->  		ret = PTR_ERR(priv->tx_ch);
->  		dev_dbg(cl->dev, "failed to request tx mailbox channel: %d\n",
->  			ret);
-> -		goto err_out;
-> +		return ret;
->  	}
-> 
->  	/* Channel for receiving message */
-> @@ -539,7 +539,7 @@ static int imx_dsp_rproc_mbox_alloc(struct imx_dsp_rproc *priv)
->  		ret = PTR_ERR(priv->rx_ch);
->  		dev_dbg(cl->dev, "failed to request rx mailbox channel: %d\n",
->  			ret);
-> -		goto err_out;
-> +		goto free_channel_tx;
->  	}
-> 
->  	cl = &priv->cl_rxdb;
-> @@ -555,19 +555,15 @@ static int imx_dsp_rproc_mbox_alloc(struct imx_dsp_rproc *priv)
->  		ret = PTR_ERR(priv->rxdb_ch);
->  		dev_dbg(cl->dev, "failed to request mbox chan rxdb, ret %d\n",
->  			ret);
-> -		goto err_out;
-> +		goto free_channel_rx;
->  	}
-> 
->  	return 0;
-> 
-> -err_out:
-> -	if (!IS_ERR(priv->tx_ch))
-> -		mbox_free_channel(priv->tx_ch);
-> -	if (!IS_ERR(priv->rx_ch))
-> -		mbox_free_channel(priv->rx_ch);
-> -	if (!IS_ERR(priv->rxdb_ch))
-> -		mbox_free_channel(priv->rxdb_ch);
-> -
-> +free_channel_rx:
-> +	mbox_free_channel(priv->rx_ch);
-> +free_channel_tx:
-> +	mbox_free_channel(priv->tx_ch);
->  	return ret;
->  }
-> 
-> --
-> 2.40.0
-> 
+jon
