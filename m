@@ -2,145 +2,161 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6F9C76196
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Apr 2023 16:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CA7C76196
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Apr 2023 17:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbjDJQ5j (ORCPT
+        id S230361AbjDJRoQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Apr 2023 12:57:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57904 "EHLO
+        Mon, 10 Apr 2023 13:44:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229748AbjDJQ5j (ORCPT
+        with ESMTP id S230358AbjDJRoP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Apr 2023 12:57:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A86571BF9;
-        Mon, 10 Apr 2023 09:57:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 485F861298;
-        Mon, 10 Apr 2023 16:57:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9744C433EF;
-        Mon, 10 Apr 2023 16:57:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681145856;
-        bh=V+2awZdrW5NWIY63dz550FWGfXsfrH2zmYD+9pS+ywc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VyfnYV2637G6rpbAlfuGnh2PM0NFDdwkb1omUwhRm2PcwCQxnh43w3wsGfV3Mw7gd
-         XHw4dLa0ER3HwPkCk6arBoYvGuVzYfBgppMrUB8IOgIzclWv5Bc0/gyJarJ56qIA38
-         rWMDoLimpvgms3K5C628lSdjHF1JQPg1pcWSyjbyi6fO9IK73GTq1RJMiK/YGLQ2OX
-         KT9Gf7FBJyDzChtbYtlSH86jgGsFciynxvxEFOllgnNcp7/U500q1dhW1E2EFvL/fY
-         rVetN2yHA/afdBOzhW7obZGQ5WFDg+ieKPjqgpiKZ5emcp5xK6tffw9IYarrxBNsxm
-         MrmvHJlWVRLIQ==
-Date:   Mon, 10 Apr 2023 18:12:55 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Bough Chen <haibo.chen@nxp.com>
-Cc:     Dan Carpenter <error27@gmail.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Mon, 10 Apr 2023 13:44:15 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F8CF26B8
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Apr 2023 10:44:13 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id 90-20020a17090a0fe300b0023b4bcf0727so5167468pjz.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Apr 2023 10:44:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681148653;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yWQNPjxOiH9ikIbp275JanF40njNYNR09cvqLl6jQAE=;
+        b=sFZiOJlR/azM1KLSZuC4d6gGG/o4LsLQldk2wiRC/oJSCDKReSANURRkcHhJRjUGuo
+         H/c5rEyrx9HHs8+u8Sy78D7L+5xreTcsA+Q9HJPJq05QMQvaRgmJ2p1nyab1jzHhnSoy
+         FZEyJM6XhjLXOHrSqVZgf7OIq6LK/HImYa4g3MxPlfoY1aZIU+APRSPTjoLnVtI88OrT
+         8NMRwNrfqXkZ1gMWcijAL94AnZBBMmg6mJrifl7ZRougbsRc7l4b5zS9AEwNpw4diQgI
+         Ui9aClbn6XG4G1ut+BTlF3CXakefy3trXxSqQZ2tITeG6l/FDCAFGWAkV8PTpDMD/Sit
+         WDsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681148653;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yWQNPjxOiH9ikIbp275JanF40njNYNR09cvqLl6jQAE=;
+        b=l+jvjrxAhTY/ZRfwuvK19otP5W3F1tDfgwu/dxuiup6GDexBl2ntGzh2dBlC70X7pv
+         gunJZvcE36AkM6o7cofbxoU4hCATKO3qjyzoGc/Fmpzi+9GHPWC/G6I7WozpX3VQFsUc
+         Psw9PfOlDMs+J7oarjjSjfqX4PR/HO8GE60BKh2g1TGNlpntntIjI5mwj/eYhFAUmHAj
+         v3/9Bj/Bi+7xcV7BV5dJ1PeNJusYtAFpXRXra1prW/PcYI1e9+oO+LuyDGhot6SyJ2TO
+         CMxTbSO/XZQZMCVnvaNg7YR2DK/JiKuPTP2Bb0Tb5wEw/f9RxIvtH5ATp+fuVrXwy4HN
+         TEpg==
+X-Gm-Message-State: AAQBX9eoNCCwlvQW0nudeuWHUS0HGZTmkQVmF0XxZL10EpYfimtRI+8z
+        lhJUhqoq1VhOpA6w1Z4EyBw0+Q==
+X-Google-Smtp-Source: AKy350a0UqbFHqt+Sl9q/bhoxYb7h3/xxccDs8RVv+EDn0SI5G+SHERF4W6kDbcDz5ySUIJzae8ALQ==
+X-Received: by 2002:a17:90a:bb89:b0:246:5780:ccf8 with SMTP id v9-20020a17090abb8900b002465780ccf8mr10743326pjr.4.1681148653018;
+        Mon, 10 Apr 2023 10:44:13 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:cecd:b1ee:70ec:874])
+        by smtp.gmail.com with ESMTPSA id t15-20020a17090ae50f00b0023377b98c7csm7753977pjy.38.2023.04.10.10.44.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Apr 2023 10:44:12 -0700 (PDT)
+Date:   Mon, 10 Apr 2023 11:44:10 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, Bjorn Andersson <andersson@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] iio: adc: imx93: fix a signedness bug in
- imx93_adc_read_raw()
-Message-ID: <20230410181255.5035ea75@jic23-huawei>
-In-Reply-To: <DB7PR04MB40101ADA70EEDE9FE130714E90A39@DB7PR04MB4010.eurprd04.prod.outlook.com>
-References: <Y+utEvjfjQRQo2QB@kili>
-        <DB7PR04MB40101ADA70EEDE9FE130714E90A39@DB7PR04MB4010.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, cocci@inria.fr,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: Improve exception handling in
+ imx_dsp_rproc_mbox_alloc()
+Message-ID: <20230410174410.GB4129213@p14s>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <8f785de5-ebe2-edd9-2155-f440acacc643@web.de>
+ <d0e18bb1-afc4-8b6f-bb1c-b74b3bad908e@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d0e18bb1-afc4-8b6f-bb1c-b74b3bad908e@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 15 Feb 2023 02:16:40 +0000
-Bough Chen <haibo.chen@nxp.com> wrote:
+On Thu, Apr 06, 2023 at 10:12:50PM +0200, Markus Elfring wrote:
+> Date: Thu, 6 Apr 2023 22:00:24 +0200
+> 
+> The label “err_out” was used to jump to another pointer check
+> despite of the detail in the implementation of the function
+> “imx_dsp_rproc_mbox_alloc” that it was determined already
+> that the corresponding variable contained an error pointer
+> because of a failed call of the function “mbox_request_channel_byname”.
+> 
+> Thus perform the following adjustments:
+> 
+> 1. Return directly after a call of the function
+>    “mbox_request_channel_byname” failed for the input parameter “tx”.
+> 
+> 2. Use more appropriate labels instead.
+> 
+> 3. Reorder jump targets at the end.
+> 
+> 4. Omit a function call and three extra checks.
+> 
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
+>
 
-> > -----Original Message-----
-> > From: Dan Carpenter <error27@gmail.com>
-> > Sent: 2023=E5=B9=B42=E6=9C=8814=E6=97=A5 23:48
-> > To: Bough Chen <haibo.chen@nxp.com>
-> > Cc: Jonathan Cameron <jic23@kernel.org>; Lars-Peter Clausen
-> > <lars@metafoo.de>; Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
-> > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; dl-linux-i=
-mx
-> > <linux-imx@nxp.com>; linux-iio@vger.kernel.org;
-> > kernel-janitors@vger.kernel.org
-> > Subject: [PATCH] iio: adc: imx93: fix a signedness bug in imx93_adc_rea=
-d_raw()
-> >=20
-> > The problem is these lines:
-> >=20
-> > 	ret =3D vref_uv =3D regulator_get_voltage(adc->vref);
-> > 	if (ret < 0)
-> >=20
-> > The "ret" variable is type long and "vref_uv" is u32 so that means the =
-condition
-> > can never be true on a 64bit system.  A negative error code from
-> > regulator_get_voltage() would be cast to a high positive
-> > u32 value and then remain a high positive value when cast to a long.
-> >=20
-> > The "ret" variable only ever stores ints so it should be declared as an=
- int.  We
-> > can delete the "vref_uv" variable and use "ret" directly. =20
->=20
-> Thanks for the catching!
->=20
-> Reviewed-by: Haibo Chen <haibo.chen@nxp.com>
+Applied
 
-Applied to the fixes-togreg branch of iio.git.
+Thanks,
+Mathieu
 
-Thanks
-
-Jonathan
-
->=20
-> Best Regards
-> Haibo Chen
-> >=20
-> > Fixes: 7d02296ac8b8 ("iio: adc: add imx93 adc support")
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > ---
-> >  drivers/iio/adc/imx93_adc.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/adc/imx93_adc.c b/drivers/iio/adc/imx93_adc.c =
-index
-> > d8de8284e13d..8c68f0cd48f2 100644
-> > --- a/drivers/iio/adc/imx93_adc.c
-> > +++ b/drivers/iio/adc/imx93_adc.c
-> > @@ -236,8 +236,7 @@ static int imx93_adc_read_raw(struct iio_dev
-> > *indio_dev,  {
-> >  	struct imx93_adc *adc =3D iio_priv(indio_dev);
-> >  	struct device *dev =3D adc->dev;
-> > -	long ret;
-> > -	u32 vref_uv;
-> > +	int ret;
-> >=20
-> >  	switch (mask) {
-> >  	case IIO_CHAN_INFO_RAW:
-> > @@ -253,10 +252,10 @@ static int imx93_adc_read_raw(struct iio_dev
-> > *indio_dev,
-> >  		return IIO_VAL_INT;
-> >=20
-> >  	case IIO_CHAN_INFO_SCALE:
-> > -		ret =3D vref_uv =3D regulator_get_voltage(adc->vref);
-> > +		ret =3D regulator_get_voltage(adc->vref);
-> >  		if (ret < 0)
-> >  			return ret;
-> > -		*val =3D vref_uv / 1000;
-> > +		*val =3D ret / 1000;
-> >  		*val2 =3D 12;
-> >  		return IIO_VAL_FRACTIONAL_LOG2;
-> >=20
-> > --
-> > 2.35.1 =20
->=20
-
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index 21759d9e5b7b..a8ad15ef1da0 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -530,7 +530,7 @@ static int imx_dsp_rproc_mbox_alloc(struct imx_dsp_rproc *priv)
+>  		ret = PTR_ERR(priv->tx_ch);
+>  		dev_dbg(cl->dev, "failed to request tx mailbox channel: %d\n",
+>  			ret);
+> -		goto err_out;
+> +		return ret;
+>  	}
+> 
+>  	/* Channel for receiving message */
+> @@ -539,7 +539,7 @@ static int imx_dsp_rproc_mbox_alloc(struct imx_dsp_rproc *priv)
+>  		ret = PTR_ERR(priv->rx_ch);
+>  		dev_dbg(cl->dev, "failed to request rx mailbox channel: %d\n",
+>  			ret);
+> -		goto err_out;
+> +		goto free_channel_tx;
+>  	}
+> 
+>  	cl = &priv->cl_rxdb;
+> @@ -555,19 +555,15 @@ static int imx_dsp_rproc_mbox_alloc(struct imx_dsp_rproc *priv)
+>  		ret = PTR_ERR(priv->rxdb_ch);
+>  		dev_dbg(cl->dev, "failed to request mbox chan rxdb, ret %d\n",
+>  			ret);
+> -		goto err_out;
+> +		goto free_channel_rx;
+>  	}
+> 
+>  	return 0;
+> 
+> -err_out:
+> -	if (!IS_ERR(priv->tx_ch))
+> -		mbox_free_channel(priv->tx_ch);
+> -	if (!IS_ERR(priv->rx_ch))
+> -		mbox_free_channel(priv->rx_ch);
+> -	if (!IS_ERR(priv->rxdb_ch))
+> -		mbox_free_channel(priv->rxdb_ch);
+> -
+> +free_channel_rx:
+> +	mbox_free_channel(priv->rx_ch);
+> +free_channel_tx:
+> +	mbox_free_channel(priv->tx_ch);
+>  	return ret;
+>  }
+> 
+> --
+> 2.40.0
+> 
