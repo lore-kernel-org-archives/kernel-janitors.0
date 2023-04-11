@@ -2,141 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8713EC77B70
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Apr 2023 16:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C03C76196
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Apr 2023 18:10:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbjDKQqd (ORCPT
+        id S230306AbjDKSKE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Apr 2023 12:46:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52382 "EHLO
+        Tue, 11 Apr 2023 14:10:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbjDKQqY (ORCPT
+        with ESMTP id S230443AbjDKSJ7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Apr 2023 12:46:24 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAFFA59FA;
-        Tue, 11 Apr 2023 09:46:10 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33BFCKMc021594;
-        Tue, 11 Apr 2023 16:44:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=0CKCWoC0k7KLWRFjtiYq6s4O/Ry3B7Oq7ug3SOT91RI=;
- b=Hdtc46rjwn9ItMyK3znLdC9hJrUpik9xuAIewQ9vNgz/JORJXEt5KKc1mQvGHbXcyS3u
- G195KpLwjQIltRsUdMIQiVhZMo/HjLA9agqqSwWnT1FSrLL4/UvVkvsr5J73DTKTLrqN
- 9K0TjH9KwuiVDyFQKpT8y3GznCU5yLBtw4RP4fIja5vuGwxtAcxVjZJC8oShhSRCO58A
- l+hFwVk2lBBnFbjGgaAkwguzoS758WgfYizGHa/iT5iuCiP1w7gja8ha0zdX+3F+HD+B
- MX6ZQ6yHUopF6gRTfSMjSpoxaJEJUuhujwd1u23bvOpkFQgHJPmbqsqnNgTfUI6LI2uG KA== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pw0jpshe4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Apr 2023 16:44:57 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33BGiu46025508
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Apr 2023 16:44:56 GMT
-Received: from [10.110.115.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 11 Apr
- 2023 09:44:55 -0700
-Message-ID: <c7dc7a53-8f4b-1b83-ae80-fc6ab5a03263@quicinc.com>
-Date:   Tue, 11 Apr 2023 09:44:54 -0700
+        Tue, 11 Apr 2023 14:09:59 -0400
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 416D76A7A
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Apr 2023 11:09:44 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id mIR2plxDOpFivmIR2p9idX; Tue, 11 Apr 2023 20:09:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+        s=t20230301; t=1681236582;
+        bh=M7S+qYYKm3F1E+ZKhxHIt6xFK2OD6F3sGIISrUwFXqQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=bgdaZUdIDannUwcYDuOG2m7OtaTtOHCYjdl2FvDtWhXJRMo98O0OkPXgyoG5/7qru
+         3m6wxBKJ7wcXA1vjNwb2HNODxD26r0gPI28DBUp7AqQsTQ7UsLsHN1eqEnOd1ZXVKM
+         0oVcD7flwQ3loZ4xYsqejVTkA8p8mWXhAZCCh/WDEZVYhD8L2kytALajKGpjw+A4Hi
+         RoR6IxsndRcpH3bmnQ/xMd/MgC95L5IUwg9VQoiFjF6Jfzsc1eezuRrskSEIhpfZli
+         h/KCIZiB4FssH3Spz8mHvRAxH0IClcpCUqGxeWi0pJ37ZPTSwyqCIZwPXhnldTVDs6
+         03mR4gH5lT6qg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 11 Apr 2023 20:09:42 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <b3c82938-7db0-2c0b-7784-c2096570c940@wanadoo.fr>
+Date:   Tue, 11 Apr 2023 20:09:40 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Subject: Re: [PATCH] drm/msm/dpu: Delete a variable initialisation before a
- null pointer check in two functions
-Content-Language: en-US
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        <kernel-janitors@vger.kernel.org>,
-        <freedreno@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Vinod Koul <vkoul@kernel.org>
-CC:     <cocci@inria.fr>, LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
-From:   Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] drm/armada: Fix a potential double free in an error
+ handling path
+Content-Language: fr, en-US
+To:     linux@armlinux.org.uk, daniel@ffwll.ch,
+        David Airlie <airlied@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <c4f3c9207a9fce35cb6dd2cc60e755275961588a.1640536364.git.christophe.jaillet@wanadoo.fr>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <c4f3c9207a9fce35cb6dd2cc60e755275961588a.1640536364.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: X2UpLHKqjQEgmDCCvWadAWe8k_ojcOsu
-X-Proofpoint-ORIG-GUID: X2UpLHKqjQEgmDCCvWadAWe8k_ojcOsu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-11_11,2023-04-11_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- impostorscore=0 bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0
- adultscore=0 spamscore=0 priorityscore=1501 clxscore=1011 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304110152
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 4/11/2023 9:38 AM, Markus Elfring wrote:
-> Date: Tue, 11 Apr 2023 18:24:24 +0200
+Le 26/12/2021 à 17:34, Christophe JAILLET a écrit :
+> 'priv' is a managed resource, so there is no need to free it explicitly or
+> there will be a double free().
 > 
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the functions “dpu_hw_pp_enable_te” and “dpu_hw_pp_get_vsync_info”.
-> 
-> Thus avoid the risk for undefined behaviour by removing extra
-> initialisations for the variable “c” (also because it was already
-> reassigned with the same value behind this pointer check).
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 25fdd5933e4c0f5fe2ea5cd59994f8ac5fbe90ef ("drm/msm: Add SDM845 DPU support")
-
-Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
-
-We usually have 12 chars of the hash. Other than that,
-
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Fixes: 90ad200b4cbc ("drm/armada: Use devm_drm_dev_alloc")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   drivers/gpu/drm/armada/armada_drv.c | 1 -
+>   1 file changed, 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c
-> index 0fcad9760b6f..870ab3ebbc94 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c
-> @@ -176,7 +176,7 @@ static int dpu_hw_pp_enable_te(struct dpu_hw_pingpong *pp, bool enable)
->   static int dpu_hw_pp_connect_external_te(struct dpu_hw_pingpong *pp,
->   		bool enable_external_te)
->   {
-> -	struct dpu_hw_blk_reg_map *c = &pp->hw;
-> +	struct dpu_hw_blk_reg_map *c;
->   	u32 cfg;
->   	int orig;
-> 
-> @@ -221,7 +221,7 @@ static int dpu_hw_pp_get_vsync_info(struct dpu_hw_pingpong *pp,
-> 
->   static u32 dpu_hw_pp_get_line_count(struct dpu_hw_pingpong *pp)
->   {
-> -	struct dpu_hw_blk_reg_map *c = &pp->hw;
-> +	struct dpu_hw_blk_reg_map *c;
->   	u32 height, init;
->   	u32 line = 0xFFFF;
-> 
-> --
-> 2.40.0
-> 
+> diff --git a/drivers/gpu/drm/armada/armada_drv.c b/drivers/gpu/drm/armada/armada_drv.c
+> index 8e3e98f13db4..54168134d9b9 100644
+> --- a/drivers/gpu/drm/armada/armada_drv.c
+> +++ b/drivers/gpu/drm/armada/armada_drv.c
+> @@ -99,7 +99,6 @@ static int armada_drm_bind(struct device *dev)
+>   	if (ret) {
+>   		dev_err(dev, "[" DRM_NAME ":%s] can't kick out simple-fb: %d\n",
+>   			__func__, ret);
+> -		kfree(priv);
+>   		return ret;
+>   	}
+>   
+
+Hi,
+
+polite reminder. (I've updated the mails according to the output of 
+get_maintainer.pl)
+
+The patch still LGTM and should apply cleanly.
+
+CJ
