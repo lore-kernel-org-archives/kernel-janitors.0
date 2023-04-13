@@ -2,88 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 022C2C77B73
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Apr 2023 15:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57657C77B61
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Apr 2023 15:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231522AbjDMPO3 (ORCPT
+        id S231400AbjDMPt3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Apr 2023 11:14:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36558 "EHLO
+        Thu, 13 Apr 2023 11:49:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbjDMPO2 (ORCPT
+        with ESMTP id S229873AbjDMPt2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Apr 2023 11:14:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCA7F134;
-        Thu, 13 Apr 2023 08:14:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5800963F7B;
-        Thu, 13 Apr 2023 15:14:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D7FBC433EF;
-        Thu, 13 Apr 2023 15:14:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681398866;
-        bh=wHnJNHVmb7RqxHn81PnrsufS4lvuIofxtxlWj1muxss=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=haZCSPfIcIuOhMYMjYaPXwhiWiKE7R2JCpEVH3CTDM8noDd6o45zMQhk/M7iWA7fN
-         fTeTcgNPG20b83Ak8519RWPN5zxIfKbNmMiiP1zrXxVNQ8GcS9J89sIiYtRhw3nldf
-         FVBG+Rbdf0lxZkgarsc8czYRAnzczuRctsaFIynS6jf6P5tdYdvdqw2FyDRoENjpwg
-         pnfBZo8dBoVyMwTcfTRTNigVvQ7lhOqUMorwFJGFWGEHVuGNwOCOQdWc0YGVc0kZsr
-         HBwVl3s+d7jGiL4TqVPhZLmXzP7ArPyi1q7/Q6zKNVLYDWjaYRDr+tAT0Plg2ZjOr6
-         fr95PaEtlsBNA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org
-In-Reply-To: <51976b2515d7007ba5c8aa7524892f147d7cdd51.1681363691.git.christophe.jaillet@wanadoo.fr>
-References: <51976b2515d7007ba5c8aa7524892f147d7cdd51.1681363691.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: da7218: Use devm_clk_get_optional()
-Message-Id: <168139886490.3579559.9766383367823502218.b4-ty@kernel.org>
-Date:   Thu, 13 Apr 2023 16:14:24 +0100
+        Thu, 13 Apr 2023 11:49:28 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F291712
+        for <kernel-janitors@vger.kernel.org>; Thu, 13 Apr 2023 08:49:27 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f048b144eeso104725e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 13 Apr 2023 08:49:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1681400966; x=1683992966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A4sn6GCzgTLSVuwjc0X0HwtkDGk6cO+gZHnJUhGaRu4=;
+        b=EU0pNUYyvaYH0BwlANnHHkX7/88t5UnmQ8ob2MJi7m6RdWkkrVdBLB+5ti+wosU8Hp
+         64MCCS5lanIUhUFOrAZTi0HN3M0P9m9uo2Tm8tWX3i9SCC359ROmFb2iV5p5EX5XaTh/
+         S+zIrKyoe+NrjLNsnTVfeAOl8LF5271z8LKbKTxX2HvY5jwiiWisWqZs4qlnMr2oNqKE
+         46WfAjGGPqnB+C5QIjIQIB0EoviWnc/Sj00HoGCrCmeGTsFZ43a0ftc8SGpSV0NodMkk
+         hXfwu9yNnSpEBnhT+fhru2MEf60zUQ9snaxsFzXFpzo/vwH7J3MHgtaM7eRSkzHdv9Z6
+         qwkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681400966; x=1683992966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A4sn6GCzgTLSVuwjc0X0HwtkDGk6cO+gZHnJUhGaRu4=;
+        b=goc0rRq8SGOXMqJjITC7nH1+m4/bZ7WhJWhAwqLkzPpZGUcdL+NDlscOz/PI44cvX3
+         fT+bJYWGS5GR5C1u6lJni7EA6VUCg+V6K65wtEsnr8BvxaIo2prHaHtBTUH0ipfHN1Eq
+         zXt6lePE4nUrZRF3z7BwQ0FCq+T23TbPnvoJQvNpRD0fTTIAIW7W4vCWpAA4TuI4Kecp
+         0vReOBjLuptzdownX8XVMC3ncBtftd04mNqJKsNvcyDOM0VOFOM5kBcdDKMbhYFYFpdo
+         I8+Siyzp0ZwiyNd3fzAj+gDLGvc1mljm3RHpVEEJYk+4zgRdFEQ+0YOL44bTtCVNSKoD
+         k7eA==
+X-Gm-Message-State: AAQBX9f8BGj+IYT32bj7LXkODyi1pWxp5ISvP/Mz6QQkTlknmrX4uSZ8
+        e6W4zsBKNWEWb12R4W4Dtqj1LFM2a3WFt7yKHBNe6g==
+X-Google-Smtp-Source: AKy350avMDVRz9X07td8492agQ2aQWjRLwbxKM4KikLqgoTQEcfN+TUokW8ShUvWj/J1ak4nRePR0dTjMxqcmtegeBg=
+X-Received: by 2002:a05:600c:3b28:b0:3f0:3dd2:8c24 with SMTP id
+ m40-20020a05600c3b2800b003f03dd28c24mr750691wms.6.1681400965759; Thu, 13 Apr
+ 2023 08:49:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-00303
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de> <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <54a21fea-64e3-de67-82ef-d61b90ffad05@web.de>
+In-Reply-To: <54a21fea-64e3-de67-82ef-d61b90ffad05@web.de>
+From:   Ian Rogers <irogers@google.com>
+Date:   Thu, 13 Apr 2023 08:49:14 -0700
+Message-ID: <CAP-5=fW08PRXst_LdcM442ASGYs48b4B+0PnkLWCUcODB9Ju2w@mail.gmail.com>
+Subject: Re: [PATCH] perf map: Delete two variable initialisations before null
+ pointer checks in sort__sym_from_cmp()
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        German Gomez <german.gomez@arm.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>, cocci@inria.fr,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 13 Apr 2023 07:28:33 +0200, Christophe JAILLET wrote:
-> Use devm_clk_get_optional() instead of hand writing it.
-> 
-> 
+On Thu, Apr 13, 2023 at 6:03=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> Date: Thu, 13 Apr 2023 14:46:39 +0200
+>
+> Addresses of two data structure members were determined before
+> corresponding null pointer checks in the implementation of
+> the function =E2=80=9Csort__sym_from_cmp=E2=80=9D.
+>
+> Thus avoid the risk for undefined behaviour by removing extra
+> initialisations for the local variables =E2=80=9Cfrom_l=E2=80=9D and =E2=
+=80=9Cfrom_r=E2=80=9D
+> (also because they were already reassigned with the same value
+> behind this pointer check).
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Fixes: 1b9e97a2a95e4941dcfa968c4b2e04022e9a343e ("perf tools: Fix report =
+-F symbol_from for data without branch info")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: da7218: Use devm_clk_get_optional()
-      commit: c6c3581a3e178882c8815462ca129e60be50fde8
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Acked-by: Ian Rogers <irogers@google.com>
 
 Thanks,
-Mark
+Ian
 
+> ---
+>  tools/perf/util/sort.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+> index 80c9960c37e5..f2ffaf90648e 100644
+> --- a/tools/perf/util/sort.c
+> +++ b/tools/perf/util/sort.c
+> @@ -1020,8 +1020,7 @@ static int hist_entry__dso_to_filter(struct hist_en=
+try *he, int type,
+>  static int64_t
+>  sort__sym_from_cmp(struct hist_entry *left, struct hist_entry *right)
+>  {
+> -       struct addr_map_symbol *from_l =3D &left->branch_info->from;
+> -       struct addr_map_symbol *from_r =3D &right->branch_info->from;
+> +       struct addr_map_symbol *from_l, *from_r;
+>
+>         if (!left->branch_info || !right->branch_info)
+>                 return cmp_null(left->branch_info, right->branch_info);
+> --
+> 2.40.0
+>
