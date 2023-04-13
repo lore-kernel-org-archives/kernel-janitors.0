@@ -2,84 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F4EC77B61
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Apr 2023 05:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3A7C77B6C
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Apr 2023 09:50:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbjDMF2m (ORCPT
+        id S229836AbjDMJuZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Apr 2023 01:28:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47968 "EHLO
+        Thu, 13 Apr 2023 05:50:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjDMF2l (ORCPT
+        with ESMTP id S229766AbjDMJuY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Apr 2023 01:28:41 -0400
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DBB66EB7
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Apr 2023 22:28:39 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id mpVbpJJcvfW5impVbpzK6l; Thu, 13 Apr 2023 07:28:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681363717;
-        bh=HJ4uYohqhO5JqFEjEQUtiBcTsfOr+xM3+1DXKHvV6cY=;
-        h=From:To:Cc:Subject:Date;
-        b=nZEHyBk/1Xb/k7IkI84pd/6i44tpo4Ff3pgJ7RyPDu0zQ9KVAw6KdKGwes24HQdPI
-         w6YlUxHyK6JkpqatV0INzjTy6N+YkMSMRMrqtWJHM2mCK1VYOrHq9z0p7I6ajndQHf
-         /d1dOGA+w58EvmCp7euupSd7OKat3OelxhBa4+J9dqdpKdzsnHk51Q2nEmur/KaBZK
-         qeC+nP7l60AUlsbqGWWenboze1Bqbtdt8fHbZrz1UisCFQQYn+GTjSRql1TDN1fFG1
-         yWzXV6rBvtH+3CC8vta28nh9NoTwAMsQikBn8PaWEM9JAMDEThvxX2oHQULikFKlLp
-         V69Ur+VhEifvA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 13 Apr 2023 07:28:37 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH] ASoC: da7218: Use devm_clk_get_optional()
-Date:   Thu, 13 Apr 2023 07:28:33 +0200
-Message-Id: <51976b2515d7007ba5c8aa7524892f147d7cdd51.1681363691.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Thu, 13 Apr 2023 05:50:24 -0400
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2146155AB;
+        Thu, 13 Apr 2023 02:50:21 -0700 (PDT)
+Received: from 8bytes.org (p200300c27714bc0086ad4f9d2505dd0d.dip0.t-ipconnect.de [IPv6:2003:c2:7714:bc00:86ad:4f9d:2505:dd0d])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id 08FAA242A7C;
+        Thu, 13 Apr 2023 11:50:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1681379419;
+        bh=khKX1Kt8U0Nb+s4cjAnuHj6Kz00rGwbDEtCwE44xwB4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VAoH/0AhRaB1YmsjIYUgU1WtUxL7vKegIm2zyUKEp3pJe93JO4iM2A9ZE2xMxfz1V
+         NDGSb2hthiXRMuJhLEPiH7FtsPYCLkSKol/dEx9B0evxW+VmVr/rsqEh6ssGmdvh9W
+         S6ZrTgAg8yC/FzSOMzgA/lbc1DsfbttFOYQgf5p6lT0LsAiUNsvP53y+tfOs5SR29S
+         /1YUcmPcOtFT0xrbgdPYOVDkg5UYcIhL48IDpzBc3UAMiovcMlQwj2gkrgshYD25uI
+         XGt4y1j7nHdkuuqewckE5rukVRcRw3w29UNEq22xlJRUtuoWIjvqLu7vSQn6DmU8HF
+         kH7RXlCDGu2vg==
+Date:   Thu, 13 Apr 2023 11:50:15 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] iommu/exynos: Use the devm_clk_get_optional() helper
+Message-ID: <ZDfQV2Vbbaa4fRI4@8bytes.org>
+References: <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <99c0d5ce643737ee0952df41fd60433a0bbeb447.1679834256.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_clk_get_optional() instead of hand writing it.
+On Sun, Mar 26, 2023 at 02:37:50PM +0200, Christophe JAILLET wrote:
+> Use devm_clk_get_optional() instead of hand writing it.
+> This saves some loC and improves the semantic.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/iommu/exynos-iommu.c | 24 ++++++++----------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- sound/soc/codecs/da7218.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
-index 91372909d184..d9c28e701613 100644
---- a/sound/soc/codecs/da7218.c
-+++ b/sound/soc/codecs/da7218.c
-@@ -2893,14 +2893,10 @@ static int da7218_probe(struct snd_soc_component *component)
- 	da7218_handle_pdata(component);
- 
- 	/* Check if MCLK provided, if not the clock is NULL */
--	da7218->mclk = devm_clk_get(component->dev, "mclk");
-+	da7218->mclk = devm_clk_get_optional(component->dev, "mclk");
- 	if (IS_ERR(da7218->mclk)) {
--		if (PTR_ERR(da7218->mclk) != -ENOENT) {
--			ret = PTR_ERR(da7218->mclk);
--			goto err_disable_reg;
--		} else {
--			da7218->mclk = NULL;
--		}
-+		ret = PTR_ERR(da7218->mclk);
-+		goto err_disable_reg;
- 	}
- 
- 	/* Default PC to free-running */
--- 
-2.34.1
-
+Applied, thanks.
