@@ -2,83 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434B2C77B6E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 17:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C68C77B6E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 17:15:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230218AbjDNRNa (ORCPT
+        id S230146AbjDNRPr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Apr 2023 13:13:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38972 "EHLO
+        Fri, 14 Apr 2023 13:15:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229805AbjDNRN3 (ORCPT
+        with ESMTP id S229846AbjDNRPq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Apr 2023 13:13:29 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E4E26AB;
-        Fri, 14 Apr 2023 10:13:28 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="409720692"
+        Fri, 14 Apr 2023 13:15:46 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73DA526BB;
+        Fri, 14 Apr 2023 10:15:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681492545; x=1713028545;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=tg77TiFtWEw2ZRP1m55Sp0S/s2dVvmdXA4yXjOSsMVo=;
+  b=lJS2Yjdl3UeD/Gpr20J+saPK612crkeXhJ9yIUUs0EqrGqdTidh/dYJi
+   KfR5PBw/YmHVYD9jlGCKsdL3MxsWHxrr4Fx3/y/v24Lt5MT+MVOI8FaSU
+   X5wYxPeW+rkvd8An67MA9rYOsZSS/d/SQyI5ORR1s8TA9n5UIbajnDnEy
+   Jsp/jRPryqLlTSCil0xO8A68A7ir8khQ//P79DqIRgLrVnET/AFrwIP0f
+   GcheoSP4tREUVHrT7kbhD2qp9kb0CisTarUPR3MUUtn9xeIVbHBLVfbMw
+   w3UGeaAWnU1YNCbX0znmI7A6rqxFR9BrNleYp7Mh3p8M2ETdvgUKRpL00
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="407397611"
 X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
-   d="scan'208";a="409720692"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 10:13:27 -0700
+   d="scan'208";a="407397611"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 10:15:26 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="779249884"
+X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="813960433"
 X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
-   d="scan'208";a="779249884"
+   d="scan'208";a="813960433"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Apr 2023 10:13:24 -0700
+  by orsmga004.jf.intel.com with ESMTP; 14 Apr 2023 10:15:24 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andy@kernel.org>)
-        id 1pnMzC-00HDU9-0N;
-        Fri, 14 Apr 2023 20:13:22 +0300
-Date:   Fri, 14 Apr 2023 20:13:21 +0300
-From:   Andy Shevchenko <andy@kernel.org>
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1pnN18-00HDWx-0J;
+        Fri, 14 Apr 2023 20:15:22 +0300
+Date:   Fri, 14 Apr 2023 20:15:21 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-staging@lists.linux.dev,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Xiaomeng Tong <xiam0nd.tong@gmail.com>, cocci@inria.fr,
+Cc:     kernel-janitors@vger.kernel.org, nvdimm@lists.linux.dev,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Vishal Verma <vishal.l.verma@intel.com>, cocci@inria.fr,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: atomisp: Move a variable assignment behind a null
- pointer check in atomisp_cp_general_isp_parameters()
-Message-ID: <ZDmJsemYldOsMMrH@smile.fi.intel.com>
+Subject: Re: [PATCH] nvdimm: Replace the usage of a variable by a direct
+ function call in nd_pfn_validate()
+Message-ID: <ZDmKKadGjEwKMCcY@smile.fi.intel.com>
 References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
  <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <d8ed4e5d-49d4-ca7e-1283-1ec166bf643d@web.de>
+ <d2403b7a-c6cd-4ee9-2a35-86ea57554eec@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d8ed4e5d-49d4-ca7e-1283-1ec166bf643d@web.de>
+In-Reply-To: <d2403b7a-c6cd-4ee9-2a35-86ea57554eec@web.de>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 13, 2023 at 10:20:15PM +0200, Markus Elfring wrote:
-> Date: Thu, 13 Apr 2023 22:08:42 +0200
+On Fri, Apr 14, 2023 at 12:12:37PM +0200, Markus Elfring wrote:
+> Date: Fri, 14 Apr 2023 12:01:15 +0200
 > 
 > The address of a data structure member was determined before
 > a corresponding null pointer check in the implementation of
-> the function “atomisp_cp_general_isp_parameters”.
+> the function “nd_pfn_validate”.
 > 
-> Thus avoid the risk for undefined behaviour by moving the assignment
-> for the variable “cur_config” behind the null pointer check.
-
-I don't think this is what is happening here. The check might be removed by
-optimizer in the compiler.
+> Thus avoid the risk for undefined behaviour by replacing the usage of
+> the local variable “parent_uuid” by a direct function call within
+> a later condition check.
 
 > This issue was detected by using the Coccinelle software.
 > 
-> Fixes: ad85094b293e40e7a2f831b0311a389d952ebd5e ("Revert 'media: staging: atomisp: Remove driver'")
+> Fixes: d1c6e08e7503649e4a4f3f9e700e2c05300b6379 ("libnvdimm/labels: Add uuid helpers")
 
-Wrong tag format.
+Same issues as per patch 1.
 
-Code-wise I'm not against this, but it's up to Hans.
+...
+
+> -	if (memcmp(pfn_sb->parent_uuid, parent_uuid, 16) != 0)
+> +	if (memcmp(pfn_sb->parent_uuid, nd_dev_to_uuid(&ndns->dev), 16) != 0)
+
+If parent_uuid is of uuid_t type, you better to replace memcmp() with
+uuid_equal().
+
+>  		return -ENODEV;
 
 -- 
 With Best Regards,
