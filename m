@@ -2,129 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48468C77B72
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 19:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3754C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 20:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbjDNTPD (ORCPT
+        id S229994AbjDNUKY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Apr 2023 15:15:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46596 "EHLO
+        Fri, 14 Apr 2023 16:10:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbjDNTPC (ORCPT
+        with ESMTP id S229954AbjDNUKW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Apr 2023 15:15:02 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 408571BCE;
-        Fri, 14 Apr 2023 12:15:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681499700; x=1713035700;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=O/ZkdGkFWjPqCH3nbEJPSXJ9hN5Lx0sJbMbzI1w+lY4=;
-  b=cXBmXNB40jbee42SBqLCd+yDV5F+PULn5E4HnAkbqmp+Cgj8e6Kh4XKM
-   ohhlAtSXHlax2awOOmUpUOh7S/wib5GbqrA46+37FNn2r4Zvu2BH4e4PN
-   eHJgeaJrhR+NvAu3Pz8rKcAZ1fRM8m8u4ZUyycSkCX5zsAMhPHeg9jdmu
-   9mUOCdU3+r2gTmyGCtxuRtqrsZGYTJtO0Cqyv82h77jTEX/+WATifFmsT
-   SKFbaWt1pvEbjfvhP/qT2O7GQAQ8EN44u8y1+E6Ly7a7DFEuCneJAllGq
-   bY9iH8C7GUGmPJAG7H91KLAVwy8fd4+ev2ioWYuz2a684MsvpGW16rh3K
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="430841782"
-X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
-   d="scan'208";a="430841782"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 12:14:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="667304254"
-X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
-   d="scan'208";a="667304254"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.22.80])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 12:14:59 -0700
-Date:   Fri, 14 Apr 2023 12:14:58 -0700
-From:   Alison Schofield <alison.schofield@intel.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, nvdimm@lists.linux.dev,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Vishal Verma <vishal.l.verma@intel.com>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nvdimm: Replace the usage of a variable by a direct
- function call in nd_pfn_validate()
-Message-ID: <ZDmmMhFTg5TaikRl@aschofie-mobl2>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <d2403b7a-c6cd-4ee9-2a35-86ea57554eec@web.de>
- <ZDlvunCNe9yWykIE@aschofie-mobl2>
- <88f4dd20-4159-2b66-3adc-9a5a68f9eec7@web.de>
+        Fri, 14 Apr 2023 16:10:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 478E465B7;
+        Fri, 14 Apr 2023 13:10:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CD3DF649F5;
+        Fri, 14 Apr 2023 20:10:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3A3EBC4339E;
+        Fri, 14 Apr 2023 20:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681503020;
+        bh=VYAuLSJnEMAkX+vDzpaAVQk7hpPnKCfWHvAaAjXfvdg=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=gsKAMDFBUJWNqWSHN5AFNoRRNNjxJJjA1twtXZRN1g5o6D4g0KSxeQlWlqREaZs9R
+         QwqR3/X7Qtuj2GE3OKnFVyrFwKAP558IR4NZ5ZRy9ILqYwsINt0HqX26X30OWTOO+W
+         xGaBDqEqUvLesTgMCJpuNLoWVm/oKBJ1jg4WaVq2GgUD5fFE5AO4SgFUqMNLvcpKs7
+         TW6fLlardwox4xwOzefLmLf9tY4NGCuqkyrhSwWNQLZBi64Ls8c0hiE5smF6fr5F41
+         tUxvyZrwcB6c9RGOXazPqlzPnI09LtNbsftLKaVZSAuqxt56Fk8qNktuU3zJZSlpBS
+         suxhv/VClWftw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 21BA9E4D003;
+        Fri, 14 Apr 2023 20:10:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <88f4dd20-4159-2b66-3adc-9a5a68f9eec7@web.de>
+Subject: Re: [PATCH] Bluetooth: vhci: Fix info leak in force_devcd_write()
+From:   patchwork-bot+bluetooth@kernel.org
+Message-Id: <168150302013.15322.10506281113817205664.git-patchwork-notify@kernel.org>
+Date:   Fri, 14 Apr 2023 20:10:20 +0000
+References: <634ab328-3ef2-43b7-8f81-8a48c7661427@kili.mountain>
+In-Reply-To: <634ab328-3ef2-43b7-8f81-8a48c7661427@kili.mountain>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     mmandlik@google.com, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 06:50:59PM +0200, Markus Elfring wrote:
-> >> The address of a data structure member was determined before
-> >> a corresponding null pointer check in the implementation of
-> >> the function “nd_pfn_validate”.
-> >>
-> >> Thus avoid the risk for undefined behaviour by replacing the usage of
-> >> the local variable “parent_uuid” by a direct function call within
-> >> a later condition check.
-> >
-> > Hi Markus,
-> >
-> > I think I understand what you are saying above, but I don't follow
-> > how that applies here. This change seems to be a nice simplification,
-> > parent_uuid, is used once, just grab it when needed.
-> 
-> Thanks for your positive feedback.
+Hello:
 
-Hi Markus,
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-FYI - I'm a tiny bit taken aback that in response to me applying, and
-providing feedback, on your patch, you respond with 2 links for me to
-follow and cut off a chunk of my feedback.
+On Thu, 6 Apr 2023 11:55:17 +0300 you wrote:
+> There are a number of bugs here:
+> 
+> 1) If "count" is less than sizeof(dump_data.data) then it copies
+>    uninitialized data.
+> 2) If simple_write_to_buffer() returns -EFAULT then we run into a
+>    problem "ret < count" comparison.  "count" is an unsigned long so the
+>    comparison is type promoted to unsigned long and the negative returns
+>    become high positive values.  That also results in copying
+>    uninitialized data.
+> 3) If "*ppos" is non-zero then the first part of the dump_data
+>    buffer is uninitialized.  Using copy_from_user() instead of
+>    simple_write_to_buffer() is more appropriate here.
+> 
+> [...]
 
-Seems like it would taken the same amount of time to just answer my
-two questions directly.
+Here is the summary with links:
+  - Bluetooth: vhci: Fix info leak in force_devcd_write()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/0b1900708232
 
-Was this part of a larger patch set? Andy's comment seems to indicate
-that. Would have been nice to be CC'd on the cover letter.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-More below...
-
-> 
-> 
-> > What is the risk of undefined behavior?
-> 
-> See also:
-> https://wiki.sei.cmu.edu/confluence/display/c/EXP34-C.+Do+not+dereference+null+pointers?focusedCommentId=405504137#comment-405504137
-
-Where is the NULL pointer dereference here?
-
-> 
-> 
-> >> This issue was detected by using the Coccinelle software.
-> > Which cocci script?
-> 
-> See also:
-> Reconsidering pointer dereferences before null pointer checks (with SmPL)
-> https://lore.kernel.org/cocci/1a11455f-ab57-dce0-1677-6beb8492a257@web.de/
-> https://sympa.inria.fr/sympa/arc/cocci/2023-04/msg00021.html
-> 
-
-The cocci script linked above does not seem to apply here.
-
-> 
-> How do you think about to review and improve any similarly affected software components?
-> 
-> Regards,
-> Markus
-> 
