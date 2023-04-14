@@ -2,90 +2,50 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55237C77B71
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 08:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 553EEC77B6E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 10:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229836AbjDNIPL (ORCPT
+        id S230210AbjDNKTt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Apr 2023 04:15:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53012 "EHLO
+        Fri, 14 Apr 2023 06:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjDNIPK (ORCPT
+        with ESMTP id S230254AbjDNKTn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Apr 2023 04:15:10 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D25532738;
-        Fri, 14 Apr 2023 01:15:08 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id he11-20020a05600c540b00b003ef6d684102so7771463wmb.3;
-        Fri, 14 Apr 2023 01:15:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681460107; x=1684052107;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M+Mc35jdz5ILBLcNMehInkGDuRlm3RaMqvJWFISS8Gs=;
-        b=fJ6ou34jHaiMWNLtuawX7mHBaqkK6TXuLS+mClgQDS/pCt6KBhXf50G1/KigCySkKo
-         sf9RjSIdLKZDzrtaMUYG8QUUtsz7nSeHHvA0F+J2yiZWQ+E77OsbxUc/RR4ab+2Mb2A5
-         QZrf9MncKZDfePc6Pg5SU3zri17h8UxPzct9b4AJ/E4GOaisshApKiqVStv9y+Y5C69e
-         0bDHoyJMCFPBUis4g0zs7y8xN3g6CYIVkqJmXyohO8uoaa430a3NxlDiZ1W/cGCjlPeM
-         wodSxpSb3knU5WHQsbxVwDQweKfVFUe1SFMAkwlO6Jf3ESWfZHHg/H7ZE/qi8CdyFToA
-         Wyiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681460107; x=1684052107;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M+Mc35jdz5ILBLcNMehInkGDuRlm3RaMqvJWFISS8Gs=;
-        b=S/caZTcN7DfV41BP34DKQkzl0xzU41RBD8yTPIHJirIw7tmbM2zu8hcCNQA8IiBVjH
-         HGzpeWvTgijwQTHOt0dB/VSH+4Nz0wfEoS1nYoh+jGgz02tKhh2RYD+T6BvNscskJ7At
-         eD57d03Dz9ehrG5ZI7O9gT+IKbje2d5sj1Zu+OcnTOrnwGIk5Uz2DImUwXywGj2jQpiv
-         RgwzCsFv2UWB4MqPTu2+W2BZG5CZsVuh81CdX6f/NNgT7kiQHgBrt4pE20kDBZPhlJ7p
-         93ShxRyjaEXBV6h2ULhVQlUwFPxsls3PLlsY8+6psZcb2qzxaN3Btz9F4DmMzmWzGjGR
-         jnvQ==
-X-Gm-Message-State: AAQBX9dzWKqq8pWvK3HEPWWXk3m1UD/Dtmnn9HvfNPA42HhFPKmTtXmN
-        4tedUB1jlyGE2KegsxQd0K0=
-X-Google-Smtp-Source: AKy350bOMdDp96BK15a3UYiXi665269oi3btXKvL7ZjK1c9ND3w1cT12/3oW2EflVwF3Ue0hqJ+6Jg==
-X-Received: by 2002:a1c:4b0b:0:b0:3ef:4138:9eef with SMTP id y11-20020a1c4b0b000000b003ef41389eefmr3813109wma.36.1681460107213;
-        Fri, 14 Apr 2023 01:15:07 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id y1-20020a1c4b01000000b003ef5f77901dsm3678924wma.45.2023.04.14.01.15.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Apr 2023 01:15:06 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/mm: Fix spelling mistake "priviledge" -> "privilege"
-Date:   Fri, 14 Apr 2023 09:15:06 +0100
-Message-Id: <20230414081506.1678998-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Fri, 14 Apr 2023 06:19:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A80B4ECE;
+        Fri, 14 Apr 2023 03:19:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5AD9B64583;
+        Fri, 14 Apr 2023 10:19:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803FAC433D2;
+        Fri, 14 Apr 2023 10:19:24 +0000 (UTC)
+Date:   Fri, 14 Apr 2023 11:19:21 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: kmemleak: adjust to config renaming
+Message-ID: <ZDkoqZlrF2ORqRSx@arm.com>
+References: <20230414061241.12754-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230414061241.12754-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an error message string. Fix it.
+On Fri, Apr 14, 2023 at 08:12:41AM +0200, Lukas Bulwahn wrote:
+> Commit c87db8ca0902 ("kmemleak-test: fix kmemleak_test.c build logic")
+> essentially renames the config DEBUG_KMEMLEAK_TEST to SAMPLE_KMEMLEAK, but
+> misses to adjust the documentation.
+> 
+> Adjust kmemleak documentation to this config renaming.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/mm/uffd-common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index 61c6250adf93..54dfd92d86cf 100644
---- a/tools/testing/selftests/mm/uffd-common.c
-+++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -311,7 +311,7 @@ int uffd_test_ctx_init(uint64_t features, const char **errmsg)
- 	ret = userfaultfd_open(&features);
- 	if (ret) {
- 		if (errmsg)
--			*errmsg = "possible lack of priviledge";
-+			*errmsg = "possible lack of privilege";
- 		return ret;
- 	}
- 
--- 
-2.30.2
-
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
