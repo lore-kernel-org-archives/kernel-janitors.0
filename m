@@ -2,81 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A8BC77B71
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Apr 2023 19:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EDAC77B70
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 06:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbjDMTdk (ORCPT
+        id S229924AbjDNGOu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Apr 2023 15:33:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36888 "EHLO
+        Fri, 14 Apr 2023 02:14:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbjDMTdj (ORCPT
+        with ESMTP id S229476AbjDNGOt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Apr 2023 15:33:39 -0400
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 286A34EF6
-        for <kernel-janitors@vger.kernel.org>; Thu, 13 Apr 2023 12:33:36 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id n2hIpROm9XvOIn2hIpu4Sp; Thu, 13 Apr 2023 21:33:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681414414;
-        bh=p8tlc8IxZvfAdUY/OUcVwiltoaAGfLctXu29jYVg/I8=;
-        h=From:To:Cc:Subject:Date;
-        b=O1nSWm5I/r5qvZA21kpDd+5nm9utlh0pLDctDWI6qhe9pMxWHGl3FKFAkV9XIvdZe
-         O2rzxDasWVMEDDDqazKOsHUwLg/RL01XBSx30NTtQ+vODdZ30eikuQ7WdPzU6N8hUq
-         RyaiwbxXSQnx6wmRHLOA8wNOyiuhUESX6al0N9RLm1Z+VHWqGQJDvpB1oJVZllR4MW
-         NgwIjZdez5HmAyDpPgXqfrAxo8tEVU+JunpWeklzDgpVQHPOwm3P4fw3frTsJm8wOm
-         4CMU//G17rDAly5FRWiMlKfu5rvQTRLIfK0m7j04wMjF/8pP6s8wS9a8B7pPKJ3PpY
-         RFvqGJzpe32fg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 13 Apr 2023 21:33:34 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Helge Deller <deller@gmx.de>, Cai Huoqing <cai.huoqing@linux.dev>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH] video: fbdev: mmp: Fix deferred clk handling in mmphw_probe()
-Date:   Thu, 13 Apr 2023 21:33:17 +0200
-Message-Id: <685f452cacc74f4983aaff2bc28a02a95e8aa8b7.1681414375.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 14 Apr 2023 02:14:49 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D54240F1;
+        Thu, 13 Apr 2023 23:14:48 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-94e8cdbc8ebso118085366b.2;
+        Thu, 13 Apr 2023 23:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681452887; x=1684044887;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SSpS3E1S1nYKNPJCN4kTXWUVOYv1fhq7FSwOkeeQFww=;
+        b=ISgWTdiyNpFBy7MuqU0pcBtm8u4GyGxkGdFBiXH0rzYJsuDeVevS8CwtN8hvZkOB3d
+         Y7P+os7CF/gZfTJ1P1qsefQmWNRdj1rMeK4FKNJQQzW5Zg8ftHX4UsRIDak+AXOAk1/Y
+         HHjlfyUAMV0/LCzVMqb0OkNGsqSx7bHhw4KKrMMlqZD/Qyp9xBY4pnYNUTvAnCglnBlr
+         iNRgZxK32sILPM+SVdvshzZpiHFSiny5ZonEuOr7IFXgEa/NPn2qvuQU8nnO4WsQwBWm
+         q40jA03hKMsgn3AJBQv5alIYN8l2otYMFkRYYhLix10SY9/hUHdW3Xf+OuOgjg1SU3+l
+         dfoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681452887; x=1684044887;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SSpS3E1S1nYKNPJCN4kTXWUVOYv1fhq7FSwOkeeQFww=;
+        b=URS6+mQPpht9Rsp0y4NU0a/I6jH8dTFQjoQgB4SyFTwAAj+1XyHH3XhBOfuaSTNdhB
+         vMvVRlQ4vEcaSh/FLniaKQBMW6/Sal+wEdfNGQy1GiHXksG2do2NLYWHTFp70scdxJZM
+         DbBUTnpG7gSwpht/ggK/nxLrhjgTvTXbxYkNdiVxeIUhiKA8L6UCoJd391xCSdtuS4HJ
+         vQjhqQsPv/KSNcJuFFSpflSGk+rBJxCxZBidjYoXGXD7IrPFZuA1pPKplLFSOxp1+GPt
+         cHW8Q0ZJoeml0WuhsCrYv75yoUx3NKMgWG6WyAWab/IgqruTIVzesef+v2IspeRsk2vb
+         92yw==
+X-Gm-Message-State: AAQBX9fRpPF29ij7WejtTHmjyVM0UaR7QseW5dFKPoi69Wc+omyQVi7Q
+        3d8DoJr0S/GCcE252Icxc4c=
+X-Google-Smtp-Source: AKy350bX9VkTffd+1wd2KOcfBuyy5KFxp45M9mzaVbuj84Ms9sEoq7RAIMJdfCiwdLCF2Y0jk4OEyw==
+X-Received: by 2002:aa7:c38a:0:b0:504:8b5c:a961 with SMTP id k10-20020aa7c38a000000b005048b5ca961mr4954397edq.18.1681452886588;
+        Thu, 13 Apr 2023 23:14:46 -0700 (PDT)
+Received: from felia.fritz.box ([188.193.217.32])
+        by smtp.gmail.com with ESMTPSA id j19-20020a508a93000000b00501c2a9e16dsm1751294edj.74.2023.04.13.23.14.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Apr 2023 23:14:46 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] docs: kmemleak: adjust to config renaming
+Date:   Fri, 14 Apr 2023 08:12:41 +0200
+Message-Id: <20230414061241.12754-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When dev_err_probe() is called, 'ret' holds the value of the previous
-successful devm_request_irq() call.
-'ret' should be assigned with a meaningful value before being used in
-dev_err_probe().
+Commit c87db8ca0902 ("kmemleak-test: fix kmemleak_test.c build logic")
+essentially renames the config DEBUG_KMEMLEAK_TEST to SAMPLE_KMEMLEAK, but
+misses to adjust the documentation.
 
-While at it, use and return "PTR_ERR(ctrl->clk)" instead of a hard-coded
-"-ENOENT" so that -EPROBE_DEFER is handled and propagated correctly.
+Adjust kmemleak documentation to this config renaming.
 
-Fixes: 81b63420564d ("video: fbdev: mmp: Make use of the helper function dev_err_probe()")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 2 +-
+ Documentation/dev-tools/kmemleak.rst | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-index a9df8ee79810..51fbf02a0343 100644
---- a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-+++ b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-@@ -514,9 +514,9 @@ static int mmphw_probe(struct platform_device *pdev)
- 	/* get clock */
- 	ctrl->clk = devm_clk_get(ctrl->dev, mi->clk_name);
- 	if (IS_ERR(ctrl->clk)) {
-+		ret = PTR_ERR(ctrl->clk);
- 		dev_err_probe(ctrl->dev, ret,
- 			      "unable to get clk %s\n", mi->clk_name);
--		ret = -ENOENT;
- 		goto failed;
- 	}
- 	clk_prepare_enable(ctrl->clk);
+diff --git a/Documentation/dev-tools/kmemleak.rst b/Documentation/dev-tools/kmemleak.rst
+index 5483fd39ef29..2cb00b53339f 100644
+--- a/Documentation/dev-tools/kmemleak.rst
++++ b/Documentation/dev-tools/kmemleak.rst
+@@ -227,7 +227,7 @@ Testing with kmemleak-test
+ --------------------------
+ 
+ To check if you have all set up to use kmemleak, you can use the kmemleak-test
+-module, a module that deliberately leaks memory. Set CONFIG_DEBUG_KMEMLEAK_TEST
++module, a module that deliberately leaks memory. Set CONFIG_SAMPLE_KMEMLEAK
+ as module (it can't be used as built-in) and boot the kernel with kmemleak
+ enabled. Load the module and perform a scan with::
+ 
 -- 
-2.34.1
+2.17.1
 
