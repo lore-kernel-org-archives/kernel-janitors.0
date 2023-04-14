@@ -2,152 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 309DFC77B72
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 15:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5029C77B72
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 17:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230320AbjDNPWj (ORCPT
+        id S230192AbjDNRHG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Apr 2023 11:22:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42078 "EHLO
+        Fri, 14 Apr 2023 13:07:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229953AbjDNPWi (ORCPT
+        with ESMTP id S229786AbjDNRHE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Apr 2023 11:22:38 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B28EEAD36;
-        Fri, 14 Apr 2023 08:22:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681485757; x=1713021757;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=B0jHdxZzYwrgZFCx/7w9FS8F32WExkZ7+uG6frX+Lvc=;
-  b=V83k496Rx1j1geu0WtVEaz8fhj3D+3u5qTjZ1Jnk/WdR+WjrxRRK5ZN0
-   VyEmFkOpT6UENcbgpQyCE/cQQNxvp7LcPrR3aaGu5VAfRmZ1NAGGd/1GU
-   9FY4TDhPMUyu1V2Ttd1JSyHgKmYbwsIEa7lrlO5Cr6gCt6xK9Aq1ASjpO
-   8+LMIPc1b2s4X3SJTTQM2R8m/qKaXTT+lwPbBQO3VThMF9mAOHHTwHKYz
-   yOwrbmTOgyo0A8wiT06hQwgQeElWOUNcF7Q5O2BMqwNppp6PBxysO0Gz2
-   NHH/PSqfvHv4YJkamnqe3GpoNdZFxUUtohajHoiQ9c4rBIHHRWCV1RQeS
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="324116538"
-X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
-   d="scan'208";a="324116538"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 08:22:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="667220419"
-X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
-   d="scan'208";a="667220419"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.212.243.67])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 08:22:36 -0700
-Date:   Fri, 14 Apr 2023 08:22:34 -0700
-From:   Alison Schofield <alison.schofield@intel.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, nvdimm@lists.linux.dev,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Vishal Verma <vishal.l.verma@intel.com>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nvdimm: Replace the usage of a variable by a direct
- function call in nd_pfn_validate()
-Message-ID: <ZDlvunCNe9yWykIE@aschofie-mobl2>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <d2403b7a-c6cd-4ee9-2a35-86ea57554eec@web.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2403b7a-c6cd-4ee9-2a35-86ea57554eec@web.de>
+        Fri, 14 Apr 2023 13:07:04 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB3730FA
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Apr 2023 10:07:02 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 186-20020a2510c3000000b00b880000325bso36013967ybq.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Apr 2023 10:07:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1681492021; x=1684084021;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wDseySW9a2X7Qw1Sb9G9CgyISJMWN8rI1x6WKWTmJyo=;
+        b=ElymJGTZORqnkdX+LifBKgFphfCEVEy1d024fr+67V4qBmQ2e3LHA1P4/5AFoTDrAK
+         n7IeTEglCOD5+s9Yyf7odF0sgQBJAOceEBCkvOHysK1Dl26uWwXNooa3Ve2maOAA+EXa
+         RuG5yhvYFWVUEF2SNkkNkyGCSoP5fSF3F5I/76n4M6162VODJGGMZh3WfS0G6zfGm7Y9
+         MsflPZu+G+dRHRXNjxtOZ0Nk5BXHPlKlQuEeFvKDpRjhsJAVq8hLlE0vYdYy+AOavLsM
+         4VdepFJFp2OlkznQwbrZjvSXw35seTJPYZzNYNMwxIHzTUisJ4Fh7Yf6H2VC4/aVs3kX
+         33Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681492021; x=1684084021;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wDseySW9a2X7Qw1Sb9G9CgyISJMWN8rI1x6WKWTmJyo=;
+        b=N3KRaLh5wKprA8uHxg9sIzLdS5cwLh6FKT56Ua7fcwYJnyOlRCG0maA+b7Iooe9BLz
+         3lcQ70VtAfgABNfKSL7UFcUpF41yoGD4DdT/hfXF6oUOy3cwCu0Gs6D9tRYglxekVxQe
+         w27P3wj/z8IMHrg+BRvduHAqQDgsteWIGWo5Kj3Gq3psNnuI8WUWj6AKXt754NXC2GNJ
+         FgeziBHxMgLTw6zPj/Pn5DSdvmV8nrHPfi603d/vpgGkjYiqWmbD/Z50aZYPxnwlutTZ
+         JENG0djMxqjglQCikp0vwMBdtw8NE8gXAgZSdr1H2LKP4FOhmu7QSvhKNXLiKvEEKbmZ
+         8DKg==
+X-Gm-Message-State: AAQBX9fxtDS5AW0Uu24Jl+VOb2zAyttOCmUD3NEJIf6lylliVqHdPsL4
+        3YAeOD2YLzwzeIPn1BTLisTPNP9AXXQ=
+X-Google-Smtp-Source: AKy350Yat8GT3+tQtPKHn5QSYC3aQP0t7/vwRLFqPeHO7FhubHdEiGDN4FLO5CLDgp8jDvHiAI4diwo8Szo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:d28a:0:b0:b8f:359f:2a20 with SMTP id
+ j132-20020a25d28a000000b00b8f359f2a20mr3369573ybg.10.1681492021711; Fri, 14
+ Apr 2023 10:07:01 -0700 (PDT)
+Date:   Fri, 14 Apr 2023 10:05:28 -0700
+In-Reply-To: <20230414080809.1678603-1-colin.i.king@gmail.com>
+Mime-Version: 1.0
+References: <20230414080809.1678603-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.40.0.634.g4ca3ef3211-goog
+Message-ID: <168149189684.1511520.17004133772489176964.b4-ty@google.com>
+Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake "perrmited" -> "permitted"
+From:   Sean Christopherson <seanjc@google.com>
+To:     Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Colin Ian King <colin.i.king@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 12:12:37PM +0200, Markus Elfring wrote:
-> Date: Fri, 14 Apr 2023 12:01:15 +0200
-> 
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the function “nd_pfn_validate”.
-> 
-> Thus avoid the risk for undefined behaviour by replacing the usage of
-> the local variable “parent_uuid” by a direct function call within
-> a later condition check.
+On Fri, 14 Apr 2023 09:08:09 +0100, Colin Ian King wrote:
+> There is a spelling mistake in a test report message. Fix it.
 
-Hi Markus,
+Once again, your spell checker laughs dirisively at my futile attempts.
 
-I think I understand what you are saying above, but I don't follow
-how that applies here. This change seems to be a nice simplification,
-parent_uuid, is used once, just grab it when needed.
+Applied to kvm-x86 selftests, thanks!
 
-What is the risk of undefined behavior?
+[1/1] KVM: selftests: Fix spelling mistake "perrmited" -> "permitted"
+      https://github.com/kvm-x86/linux/commit/20aef201dafb
 
-> 
-> This issue was detected by using the Coccinelle software.
-Which cocci script?
-
-> 
-> Fixes: d1c6e08e7503649e4a4f3f9e700e2c05300b6379 ("libnvdimm/labels: Add uuid helpers")
-
-This fixes tag seems to be the wrong tag. It is a tag from when the
-uuid helpers were introduce, not where parent_uuid was first introduced
-and used. I'm not clear this warrants a Fixes tag anyway. Is there
-really a bug here? Perhaps I'm missing something in the previous
-explanation of risk.
-
-checkpatch is WARNING on the tag format:
-WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<title line>")' - ie: 'Fixes: d1c6e08e7503 ("libnvdimm/labels: Add uuid helpers")'
-#17:
-    Fixes: d1c6e08e7503649e4a4f3f9e700e2c05300b6379 ("libnvdimm/labels: Add uuid helpers")
-
-checkpatch is also WARNING on the commit msg:
-WARNING: Possible unwrapped commit description (prefer a maximum 75 chars per line)
-#5:
-    nvdimm: Replace the usage of a variable by a direct function call in nd_pfn_validate()
-
-Also, possible only my pet peeve, the long commit message spoils my
-pretty 80 column view. Please trim it to not wrap here:
-
-$git log --oneline pfn_devs.c
-52b639e56a46 nvdimm: Replace the usage of a variable by a direct function call in nd_pfn_validate()
-c91d71363084 nvdimm: Support sizeof(struct page) > MAX_STRUCT_PAGE_SIZE
-6e9f05dc66f9 libnvdimm/pfn_dev: increase MAX_STRUCT_PAGE_SIZE
-81beea55cb74 nvdimm: Drop nd_device_lock()
-4a0079bc7aae nvdimm: Replace lockdep_mutex with local lock classes
-322cbb50de71 block: remove genhd.h
-
-Alison
-
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/nvdimm/pfn_devs.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-> index af7d9301520c..f14cbfa500ed 100644
-> --- a/drivers/nvdimm/pfn_devs.c
-> +++ b/drivers/nvdimm/pfn_devs.c
-> @@ -456,7 +456,6 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
->  	unsigned long align, start_pad;
->  	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
->  	struct nd_namespace_common *ndns = nd_pfn->ndns;
-> -	const uuid_t *parent_uuid = nd_dev_to_uuid(&ndns->dev);
-> 
->  	if (!pfn_sb || !ndns)
->  		return -ENODEV;
-> @@ -476,7 +475,7 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
->  		return -ENODEV;
->  	pfn_sb->checksum = cpu_to_le64(checksum);
-> 
-> -	if (memcmp(pfn_sb->parent_uuid, parent_uuid, 16) != 0)
-> +	if (memcmp(pfn_sb->parent_uuid, nd_dev_to_uuid(&ndns->dev), 16) != 0)
->  		return -ENODEV;
-> 
->  	if (__le16_to_cpu(pfn_sb->version_minor) < 1) {
-> --
-> 2.40.0
-> 
+--
+https://github.com/kvm-x86/linux/tree/next
+https://github.com/kvm-x86/linux/tree/fixes
