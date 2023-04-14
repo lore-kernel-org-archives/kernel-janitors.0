@@ -2,80 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5029C77B72
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 17:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 434B2C77B6E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 17:13:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230192AbjDNRHG (ORCPT
+        id S230218AbjDNRNa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Apr 2023 13:07:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35448 "EHLO
+        Fri, 14 Apr 2023 13:13:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbjDNRHE (ORCPT
+        with ESMTP id S229805AbjDNRN3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Apr 2023 13:07:04 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB3730FA
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Apr 2023 10:07:02 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 186-20020a2510c3000000b00b880000325bso36013967ybq.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Apr 2023 10:07:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1681492021; x=1684084021;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wDseySW9a2X7Qw1Sb9G9CgyISJMWN8rI1x6WKWTmJyo=;
-        b=ElymJGTZORqnkdX+LifBKgFphfCEVEy1d024fr+67V4qBmQ2e3LHA1P4/5AFoTDrAK
-         n7IeTEglCOD5+s9Yyf7odF0sgQBJAOceEBCkvOHysK1Dl26uWwXNooa3Ve2maOAA+EXa
-         RuG5yhvYFWVUEF2SNkkNkyGCSoP5fSF3F5I/76n4M6162VODJGGMZh3WfS0G6zfGm7Y9
-         MsflPZu+G+dRHRXNjxtOZ0Nk5BXHPlKlQuEeFvKDpRjhsJAVq8hLlE0vYdYy+AOavLsM
-         4VdepFJFp2OlkznQwbrZjvSXw35seTJPYZzNYNMwxIHzTUisJ4Fh7Yf6H2VC4/aVs3kX
-         33Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681492021; x=1684084021;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wDseySW9a2X7Qw1Sb9G9CgyISJMWN8rI1x6WKWTmJyo=;
-        b=N3KRaLh5wKprA8uHxg9sIzLdS5cwLh6FKT56Ua7fcwYJnyOlRCG0maA+b7Iooe9BLz
-         3lcQ70VtAfgABNfKSL7UFcUpF41yoGD4DdT/hfXF6oUOy3cwCu0Gs6D9tRYglxekVxQe
-         w27P3wj/z8IMHrg+BRvduHAqQDgsteWIGWo5Kj3Gq3psNnuI8WUWj6AKXt754NXC2GNJ
-         FgeziBHxMgLTw6zPj/Pn5DSdvmV8nrHPfi603d/vpgGkjYiqWmbD/Z50aZYPxnwlutTZ
-         JENG0djMxqjglQCikp0vwMBdtw8NE8gXAgZSdr1H2LKP4FOhmu7QSvhKNXLiKvEEKbmZ
-         8DKg==
-X-Gm-Message-State: AAQBX9fxtDS5AW0Uu24Jl+VOb2zAyttOCmUD3NEJIf6lylliVqHdPsL4
-        3YAeOD2YLzwzeIPn1BTLisTPNP9AXXQ=
-X-Google-Smtp-Source: AKy350Yat8GT3+tQtPKHn5QSYC3aQP0t7/vwRLFqPeHO7FhubHdEiGDN4FLO5CLDgp8jDvHiAI4diwo8Szo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:d28a:0:b0:b8f:359f:2a20 with SMTP id
- j132-20020a25d28a000000b00b8f359f2a20mr3369573ybg.10.1681492021711; Fri, 14
- Apr 2023 10:07:01 -0700 (PDT)
-Date:   Fri, 14 Apr 2023 10:05:28 -0700
-In-Reply-To: <20230414080809.1678603-1-colin.i.king@gmail.com>
-Mime-Version: 1.0
-References: <20230414080809.1678603-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.40.0.634.g4ca3ef3211-goog
-Message-ID: <168149189684.1511520.17004133772489176964.b4-ty@google.com>
-Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake "perrmited" -> "permitted"
-From:   Sean Christopherson <seanjc@google.com>
-To:     Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 14 Apr 2023 13:13:29 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E4E26AB;
+        Fri, 14 Apr 2023 10:13:28 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="409720692"
+X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
+   d="scan'208";a="409720692"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 10:13:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="779249884"
+X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
+   d="scan'208";a="779249884"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Apr 2023 10:13:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andy@kernel.org>)
+        id 1pnMzC-00HDU9-0N;
+        Fri, 14 Apr 2023 20:13:22 +0300
+Date:   Fri, 14 Apr 2023 20:13:21 +0300
+From:   Andy Shevchenko <andy@kernel.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-staging@lists.linux.dev,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Xiaomeng Tong <xiam0nd.tong@gmail.com>, cocci@inria.fr,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: atomisp: Move a variable assignment behind a null
+ pointer check in atomisp_cp_general_isp_parameters()
+Message-ID: <ZDmJsemYldOsMMrH@smile.fi.intel.com>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <d8ed4e5d-49d4-ca7e-1283-1ec166bf643d@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d8ed4e5d-49d4-ca7e-1283-1ec166bf643d@web.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 14 Apr 2023 09:08:09 +0100, Colin Ian King wrote:
-> There is a spelling mistake in a test report message. Fix it.
+On Thu, Apr 13, 2023 at 10:20:15PM +0200, Markus Elfring wrote:
+> Date: Thu, 13 Apr 2023 22:08:42 +0200
+> 
+> The address of a data structure member was determined before
+> a corresponding null pointer check in the implementation of
+> the function “atomisp_cp_general_isp_parameters”.
+> 
+> Thus avoid the risk for undefined behaviour by moving the assignment
+> for the variable “cur_config” behind the null pointer check.
 
-Once again, your spell checker laughs dirisively at my futile attempts.
+I don't think this is what is happening here. The check might be removed by
+optimizer in the compiler.
 
-Applied to kvm-x86 selftests, thanks!
+> This issue was detected by using the Coccinelle software.
+> 
+> Fixes: ad85094b293e40e7a2f831b0311a389d952ebd5e ("Revert 'media: staging: atomisp: Remove driver'")
 
-[1/1] KVM: selftests: Fix spelling mistake "perrmited" -> "permitted"
-      https://github.com/kvm-x86/linux/commit/20aef201dafb
+Wrong tag format.
 
---
-https://github.com/kvm-x86/linux/tree/next
-https://github.com/kvm-x86/linux/tree/fixes
+Code-wise I'm not against this, but it's up to Hans.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
