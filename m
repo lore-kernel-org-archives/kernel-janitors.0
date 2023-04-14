@@ -2,52 +2,49 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C68C77B6E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 17:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48468C77B72
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Apr 2023 19:15:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbjDNRPr (ORCPT
+        id S229707AbjDNTPD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Apr 2023 13:15:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40180 "EHLO
+        Fri, 14 Apr 2023 15:15:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbjDNRPq (ORCPT
+        with ESMTP id S229628AbjDNTPC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Apr 2023 13:15:46 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73DA526BB;
-        Fri, 14 Apr 2023 10:15:45 -0700 (PDT)
+        Fri, 14 Apr 2023 15:15:02 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 408571BCE;
+        Fri, 14 Apr 2023 12:15:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681492545; x=1713028545;
+  t=1681499700; x=1713035700;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=tg77TiFtWEw2ZRP1m55Sp0S/s2dVvmdXA4yXjOSsMVo=;
-  b=lJS2Yjdl3UeD/Gpr20J+saPK612crkeXhJ9yIUUs0EqrGqdTidh/dYJi
-   KfR5PBw/YmHVYD9jlGCKsdL3MxsWHxrr4Fx3/y/v24Lt5MT+MVOI8FaSU
-   X5wYxPeW+rkvd8An67MA9rYOsZSS/d/SQyI5ORR1s8TA9n5UIbajnDnEy
-   Jsp/jRPryqLlTSCil0xO8A68A7ir8khQ//P79DqIRgLrVnET/AFrwIP0f
-   GcheoSP4tREUVHrT7kbhD2qp9kb0CisTarUPR3MUUtn9xeIVbHBLVfbMw
-   w3UGeaAWnU1YNCbX0znmI7A6rqxFR9BrNleYp7Mh3p8M2ETdvgUKRpL00
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="407397611"
+  bh=O/ZkdGkFWjPqCH3nbEJPSXJ9hN5Lx0sJbMbzI1w+lY4=;
+  b=cXBmXNB40jbee42SBqLCd+yDV5F+PULn5E4HnAkbqmp+Cgj8e6Kh4XKM
+   ohhlAtSXHlax2awOOmUpUOh7S/wib5GbqrA46+37FNn2r4Zvu2BH4e4PN
+   eHJgeaJrhR+NvAu3Pz8rKcAZ1fRM8m8u4ZUyycSkCX5zsAMhPHeg9jdmu
+   9mUOCdU3+r2gTmyGCtxuRtqrsZGYTJtO0Cqyv82h77jTEX/+WATifFmsT
+   SKFbaWt1pvEbjfvhP/qT2O7GQAQ8EN44u8y1+E6Ly7a7DFEuCneJAllGq
+   bY9iH8C7GUGmPJAG7H91KLAVwy8fd4+ev2ioWYuz2a684MsvpGW16rh3K
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="430841782"
 X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
-   d="scan'208";a="407397611"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 10:15:26 -0700
+   d="scan'208";a="430841782"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 12:14:59 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="813960433"
+X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="667304254"
 X-IronPort-AV: E=Sophos;i="5.99,197,1677571200"; 
-   d="scan'208";a="813960433"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga004.jf.intel.com with ESMTP; 14 Apr 2023 10:15:24 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pnN18-00HDWx-0J;
-        Fri, 14 Apr 2023 20:15:22 +0300
-Date:   Fri, 14 Apr 2023 20:15:21 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="667304254"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.22.80])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 12:14:59 -0700
+Date:   Fri, 14 Apr 2023 12:14:58 -0700
+From:   Alison Schofield <alison.schofield@intel.com>
 To:     Markus Elfring <Markus.Elfring@web.de>
 Cc:     kernel-janitors@vger.kernel.org, nvdimm@lists.linux.dev,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Jiang <dave.jiang@intel.com>,
         Ira Weiny <ira.weiny@intel.com>,
@@ -56,49 +53,78 @@ Cc:     kernel-janitors@vger.kernel.org, nvdimm@lists.linux.dev,
         LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] nvdimm: Replace the usage of a variable by a direct
  function call in nd_pfn_validate()
-Message-ID: <ZDmKKadGjEwKMCcY@smile.fi.intel.com>
+Message-ID: <ZDmmMhFTg5TaikRl@aschofie-mobl2>
 References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
  <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
  <d2403b7a-c6cd-4ee9-2a35-86ea57554eec@web.de>
+ <ZDlvunCNe9yWykIE@aschofie-mobl2>
+ <88f4dd20-4159-2b66-3adc-9a5a68f9eec7@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2403b7a-c6cd-4ee9-2a35-86ea57554eec@web.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <88f4dd20-4159-2b66-3adc-9a5a68f9eec7@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 14, 2023 at 12:12:37PM +0200, Markus Elfring wrote:
-> Date: Fri, 14 Apr 2023 12:01:15 +0200
+On Fri, Apr 14, 2023 at 06:50:59PM +0200, Markus Elfring wrote:
+> >> The address of a data structure member was determined before
+> >> a corresponding null pointer check in the implementation of
+> >> the function “nd_pfn_validate”.
+> >>
+> >> Thus avoid the risk for undefined behaviour by replacing the usage of
+> >> the local variable “parent_uuid” by a direct function call within
+> >> a later condition check.
+> >
+> > Hi Markus,
+> >
+> > I think I understand what you are saying above, but I don't follow
+> > how that applies here. This change seems to be a nice simplification,
+> > parent_uuid, is used once, just grab it when needed.
 > 
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the function “nd_pfn_validate”.
+> Thanks for your positive feedback.
+
+Hi Markus,
+
+FYI - I'm a tiny bit taken aback that in response to me applying, and
+providing feedback, on your patch, you respond with 2 links for me to
+follow and cut off a chunk of my feedback.
+
+Seems like it would taken the same amount of time to just answer my
+two questions directly.
+
+Was this part of a larger patch set? Andy's comment seems to indicate
+that. Would have been nice to be CC'd on the cover letter.
+
+
+More below...
+
 > 
-> Thus avoid the risk for undefined behaviour by replacing the usage of
-> the local variable “parent_uuid” by a direct function call within
-> a later condition check.
-
-> This issue was detected by using the Coccinelle software.
 > 
-> Fixes: d1c6e08e7503649e4a4f3f9e700e2c05300b6379 ("libnvdimm/labels: Add uuid helpers")
+> > What is the risk of undefined behavior?
+> 
+> See also:
+> https://wiki.sei.cmu.edu/confluence/display/c/EXP34-C.+Do+not+dereference+null+pointers?focusedCommentId=405504137#comment-405504137
 
-Same issues as per patch 1.
+Where is the NULL pointer dereference here?
 
-...
+> 
+> 
+> >> This issue was detected by using the Coccinelle software.
+> > Which cocci script?
+> 
+> See also:
+> Reconsidering pointer dereferences before null pointer checks (with SmPL)
+> https://lore.kernel.org/cocci/1a11455f-ab57-dce0-1677-6beb8492a257@web.de/
+> https://sympa.inria.fr/sympa/arc/cocci/2023-04/msg00021.html
+> 
 
-> -	if (memcmp(pfn_sb->parent_uuid, parent_uuid, 16) != 0)
-> +	if (memcmp(pfn_sb->parent_uuid, nd_dev_to_uuid(&ndns->dev), 16) != 0)
+The cocci script linked above does not seem to apply here.
 
-If parent_uuid is of uuid_t type, you better to replace memcmp() with
-uuid_equal().
-
->  		return -ENODEV;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> 
+> How do you think about to review and improve any similarly affected software components?
+> 
+> Regards,
+> Markus
+> 
