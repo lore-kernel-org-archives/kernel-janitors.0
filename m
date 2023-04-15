@@ -2,146 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7853C77B77
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Apr 2023 13:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D980C77B70
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Apr 2023 16:23:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbjDONJM (ORCPT
+        id S229752AbjDOQXp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Apr 2023 09:09:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56986 "EHLO
+        Sat, 15 Apr 2023 12:23:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbjDONJL (ORCPT
+        with ESMTP id S229630AbjDOQXo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 Apr 2023 09:09:11 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 672ED49F9;
-        Sat, 15 Apr 2023 06:09:09 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id si1so22292048ejb.10;
-        Sat, 15 Apr 2023 06:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681564148; x=1684156148;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MmkdB2m8LRfDVpq0AlbkUd9MRTLzgba0G5f/0MwvZKM=;
-        b=POTaPjGb3OHOUpgy5zifdsNyPIwXCKUxu7EPej3sqe/Z7BvGs/j5qFd8y4lQE1Jeui
-         IpgXJjIBYg6GkU2CfMmq6VH+QiSkhlLq6LSLMJsuc9ZylhrPbkYIpLk20a0NlNz/sQsH
-         r+/Y6G5nPslMwdbW7TSWyBFNtTnz7AjH5DTWBfapEjmADr5Z4PCjMwlAbiI8pJH5oLcG
-         94YiHkE4EUFJBh3lY4JgHTDHdB8tRxDb7J2OufrZS6sv7Ag+duA7rdZgp6kkVNlYguQq
-         cPcM6Ig3uV1+a8Xa99vwIz8SghLr8B/ueyi6bYxVnXIT5PQLcRuRdpMpo9edeReahm+a
-         /H9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681564148; x=1684156148;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MmkdB2m8LRfDVpq0AlbkUd9MRTLzgba0G5f/0MwvZKM=;
-        b=PP0NufdyECzYS7/qROGjEjIVPs7GyaXo51EzyRkUK8kvB+eC6NY5NOvEE17LmdUxHn
-         rANF/q47wvPkS3ggG3otJ9fmmjYbL1yezv6ujKI7i/ThNKTXukTGXaqRGUNjnBZhxyZa
-         NsVaXouma0HnBl4GLqehjLMTzuztXa5abLOxydN6ay/0/7YugUKaWWKKj6XdCAbHfA9l
-         GuD0MrtgOAOOjqepp+F9rDYV4GeJ6zGK2LrXbHaNDcxsiYppoNF98vbsuHMY7KUT34fH
-         ByFxpssOEPUt040F48tYZn22VSKfiVBwFRM/u39bhhje5XfkJO3tMvaAi6XJWL1nabG7
-         4fLQ==
-X-Gm-Message-State: AAQBX9cwahJ4CvxeAfSPVb31ikokZfzRzk8eR0RaPIdP3Nc27RQzeMQQ
-        8nVnlnPye3O3ztG0+gtODRmBGpntCBE=
-X-Google-Smtp-Source: AKy350ZhV6fvjwW6Xnvq0B7PDvaEeeE6aHsGUoHHDgmmqIjW4CB++PzEuCxne4xPtEYQWWzKgpqmoQ==
-X-Received: by 2002:a17:906:d20d:b0:949:797e:ea91 with SMTP id w13-20020a170906d20d00b00949797eea91mr1877911ejz.56.1681564147760;
-        Sat, 15 Apr 2023 06:09:07 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id fl3-20020a1709072a8300b0094f396c7a7asm74422ejc.214.2023.04.15.06.09.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Apr 2023 06:09:07 -0700 (PDT)
-Date:   Sat, 15 Apr 2023 16:09:03 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Helge Deller <deller@gmx.de>, Cai Huoqing <cai.huoqing@linux.dev>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] video: fbdev: mmp: Fix deferred clk handling in
- mmphw_probe()
-Message-ID: <67353089-4966-424c-99c2-8524818f0e37@kili.mountain>
-References: <685f452cacc74f4983aaff2bc28a02a95e8aa8b7.1681414375.git.christophe.jaillet@wanadoo.fr>
+        Sat, 15 Apr 2023 12:23:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 634F140FB
+        for <kernel-janitors@vger.kernel.org>; Sat, 15 Apr 2023 09:23:42 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id nigdpWagKzvWynigdpJpvG; Sat, 15 Apr 2023 18:23:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+        s=t20230301; t=1681575820;
+        bh=MAu6FtQocPfF7HLftUeIz5L/LjWmrKfwqCeX9Eip2zs=;
+        h=From:To:Cc:Subject:Date;
+        b=MQexySYLp4AK43xDaS2eH2jE+/tLInYnZZZtFldvpZqTrZ5vInwfiaB6Kw1DO/EpX
+         dcaFupj8Wl8wECUb5kxyydHW9OSUxvPzkWnxWFbKsXHi7Z78CPKmCztmeKjDkoLN9y
+         t+H9b19kkLUgVoaJV1qwuNL+ANuct4X8JwdHDZG8jF/bfRrQeZzePDpTQbkjGJNfxL
+         7O45Db1USkV7v5LBA0f8gmelrH1/1GwN6ughha1ZNTvemwKSIJAs+MLhECion1eyDI
+         c8JoUEelAIMTxU34c988bmnUM7qVMCJJb42zPpswesP23xOuXZnK9+6rrgp/LWp6NB
+         OdPo2ALpKyDQQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 15 Apr 2023 18:23:40 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Emil Renner Berthing <kernel@esmil.dk>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-hwmon@vger.kernel.org
+Subject: [PATCH] hwmon: (sfctemp) Simplify error message
+Date:   Sat, 15 Apr 2023 18:23:37 +0200
+Message-Id: <f32a6e877f399e11ca130476002f85c2b48ba7ec.1681575790.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <685f452cacc74f4983aaff2bc28a02a95e8aa8b7.1681414375.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 13, 2023 at 09:33:17PM +0200, Christophe JAILLET wrote:
-> When dev_err_probe() is called, 'ret' holds the value of the previous
-> successful devm_request_irq() call.
-> 'ret' should be assigned with a meaningful value before being used in
-> dev_err_probe().
-> 
-> While at it, use and return "PTR_ERR(ctrl->clk)" instead of a hard-coded
-> "-ENOENT" so that -EPROBE_DEFER is handled and propagated correctly.
-> 
-> Fixes: 81b63420564d ("video: fbdev: mmp: Make use of the helper function dev_err_probe()")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+dev_err_probe() already display the error code. There is no need to
+duplicate it explicitly in the error message.
 
-Presumably you already wrote a Coccinelle script for this but I've added
-it to Smatch as well.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hwmon/sfctemp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/hwmon/sfctemp.c b/drivers/hwmon/sfctemp.c
+index d7484e2b8100..fb1da93383d7 100644
+--- a/drivers/hwmon/sfctemp.c
++++ b/drivers/hwmon/sfctemp.c
+@@ -303,7 +303,7 @@ static int sfctemp_probe(struct platform_device *pdev)
+ 
+ 	ret = sfctemp_enable(sfctemp);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "error enabling temperature sensor: %d\n", ret);
++		return dev_err_probe(dev, ret, "error enabling temperature sensor\n");
+ 
+ 	hwmon_dev = devm_hwmon_device_register_with_info(dev, "sfctemp", sfctemp,
+ 							 &sfctemp_chip_info, NULL);
+-- 
+2.34.1
 
-diff --git a/check_zero_to_err_ptr.c b/check_zero_to_err_ptr.c
-index 88ca0285948a..fa2a1f1603b2 100644
---- a/check_zero_to_err_ptr.c
-+++ b/check_zero_to_err_ptr.c
-@@ -157,11 +157,12 @@ static void match_err_ptr(const char *fn, struct expression *expr, void *data)
- {
- 	struct expression *arg_expr;
- 	struct sm_state *sm, *tmp;
-+	int arg = PTR_INT(data);
- 
- 	if (is_impossible_path())
- 		return;
- 
--	arg_expr = get_argument_from_call_expr(expr->args, 0);
-+	arg_expr = get_argument_from_call_expr(expr->args, arg);
- 	sm = get_sm_state_expr(SMATCH_EXTRA, arg_expr);
- 	if (!sm)
- 		return;
-@@ -194,13 +195,36 @@ static void match_err_ptr(const char *fn, struct expression *expr, void *data)
- 	} END_FOR_EACH_PTR(tmp);
- }
- 
-+static void match_err_ptr_or_zero(const char *fn, struct expression *expr, void *data)
-+{
-+	struct expression *arg;
-+	struct range_list *rl;
-+	char *name;
-+
-+	if (is_impossible_path())
-+		return;
-+
-+	arg = get_argument_from_call_expr(expr->args, 0);
-+	get_absolute_rl(arg, &rl);
-+
-+	if (rl_intersection(rl, valid_ptr_rl))
-+		return;
-+
-+	name = expr_to_str(arg);
-+	sm_warning("'%s' is never a valid pointer", name);
-+	free_string(name);
-+}
-+
- void check_zero_to_err_ptr(int id)
- {
- 	if (option_project != PROJ_KERNEL)
- 		return;
- 
- 	my_id = id;
--	add_function_hook("ERR_PTR", &match_err_ptr, NULL);
--	add_function_hook("ERR_CAST", &match_err_ptr, NULL);
--	add_function_hook("PTR_ERR", &match_err_ptr, NULL);
-+	add_function_hook("ERR_PTR", &match_err_ptr, INT_PTR(0));
-+	add_function_hook("ERR_CAST", &match_err_ptr, INT_PTR(0));
-+	add_function_hook("PTR_ERR", &match_err_ptr, INT_PTR(0));
-+	add_function_hook("dev_err_probe", &match_err_ptr, INT_PTR(1));
-+
-+	add_function_hook("ERR_PTR_OR_ZERO", &match_err_ptr_or_zero, NULL);
- }
