@@ -2,46 +2,45 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F4EC77B70
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Apr 2023 16:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B65C7619A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Apr 2023 16:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbjDOQ3E (ORCPT
+        id S229563AbjDOQuD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Apr 2023 12:29:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51512 "EHLO
+        Sat, 15 Apr 2023 12:50:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjDOQ3D (ORCPT
+        with ESMTP id S229774AbjDOQuC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 Apr 2023 12:29:03 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22C0E4C06
-        for <kernel-janitors@vger.kernel.org>; Sat, 15 Apr 2023 09:29:01 -0700 (PDT)
+        Sat, 15 Apr 2023 12:50:02 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B87494699
+        for <kernel-janitors@vger.kernel.org>; Sat, 15 Apr 2023 09:49:59 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id nilnpmo5muZFDnilnpv4vy; Sat, 15 Apr 2023 18:29:00 +0200
+        id nj64psmg4JwBhnj64pAfJN; Sat, 15 Apr 2023 18:49:57 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681576140;
-        bh=YsiWv6bqCCOxDwt4FovLlKlpgNUCDzr+TCLIp5uyNw0=;
+        s=t20230301; t=1681577397;
+        bh=PSevjxPblNgenbQKclhvbfNSF7IweMAlAYEf2CBuRgI=;
         h=From:To:Cc:Subject:Date;
-        b=GAVwofU1F+a6cmdEitjtAipdJku2R+oAahfLTu7vabqbm/q2LPX9MKr2CMwU/jNwR
-         /Ia55aBwxSTRQFLF9aESomYpnQyn+y4rNYvyz2wbZ8nKbGDE04hLFMnqXw7eDLeXfR
-         sRmr5z5M4QM3Dx86XWNuvFtIuWL/FnH+Lo00rT3mnt7mfEnPzxxsZ+eFjUPSwvsb3R
-         L///3xfGzxAonw74NTwHO51DvST7KfgthCzF9A5E1ZnL4f6boqmoMyE6f0ohOVbkNh
-         KCbHTbFv+TXmXWZ8SSzqEhSRM8zdadxx8LooDqPMKTotkcrBKGDhnFAZfzaOSRAbVW
-         nTp/ljV2z65/g==
+        b=KKGBIGhD9lXBIwFZeZKGre86PbiDCK6j+Dc/9AfqcRqevTt08PxsIxkG0YWZBgALF
+         m4swg+MURqZ4W3QDjAxj8djlx7WOggTXQcUsFcM/ZA5Xg1zXw5VioEk3+XN6FwjXLY
+         rEgqcwnTTYsgO7WldbFrn5ppOtoOfNrV2c6bI7lkecNsjk3aQF/85YAoUyxZNw1uRF
+         g/Hr3VeabifR3/dI5L7oe/cIjC6cFfZm6FUbbu8mePCtVmwX/hNOofAjndYipu8kKw
+         sC7dYiDBPzz4JLOEE06Q5HBwwSjGy+99Gr5l7KL49hNOqNk6dDiq7l4bm1NhQKrsnt
+         O0mQEbg9FaBuw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 15 Apr 2023 18:29:00 +0200
+X-ME-Date: Sat, 15 Apr 2023 18:49:57 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Daniel Scally <djrscally@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Sebastian Reichel <sre@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: ov5693: Simplify an error message
-Date:   Sat, 15 Apr 2023 18:28:58 +0200
-Message-Id: <928f2f70de241d0fa66801b46d736ad0f881eb72.1681576102.git.christophe.jaillet@wanadoo.fr>
+        linux-pm@vger.kernel.org
+Subject: [PATCH] power: supply: rk817: Simplify an error message
+Date:   Sat, 15 Apr 2023 18:49:55 +0200
+Message-Id: <a9c0820c5af6b315ef3b3c2fd8d7be44008b0086.1681577370.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,24 +53,22 @@ duplicate it explicitly in the error message.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/i2c/ov5693.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/power/supply/rk817_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/ov5693.c b/drivers/media/i2c/ov5693.c
-index e3c3bed69ad6..d23786afd754 100644
---- a/drivers/media/i2c/ov5693.c
-+++ b/drivers/media/i2c/ov5693.c
-@@ -404,8 +404,8 @@ static int ov5693_read_reg(struct ov5693_device *ov5693, u32 addr, u32 *value)
- 	ret = i2c_transfer(client->adapter, msg, 2);
- 	if (ret < 0)
- 		return dev_err_probe(&client->dev, ret,
--				     "Failed to read register 0x%04x: %d\n",
--				     addr & OV5693_REG_ADDR_MASK, ret);
-+				     "Failed to read register 0x%04x\n",
-+				     addr & OV5693_REG_ADDR_MASK);
+diff --git a/drivers/power/supply/rk817_charger.c b/drivers/power/supply/rk817_charger.c
+index 1a2143641e66..8328bcea1a29 100644
+--- a/drivers/power/supply/rk817_charger.c
++++ b/drivers/power/supply/rk817_charger.c
+@@ -1134,7 +1134,7 @@ static int rk817_charger_probe(struct platform_device *pdev)
+ 					    &bat_info);
+ 	if (ret) {
+ 		return dev_err_probe(dev, ret,
+-				     "Unable to get battery info: %d\n", ret);
++				     "Unable to get battery info\n");
+ 	}
  
- 	*value = 0;
- 	for (i = 0; i < len; ++i) {
+ 	if ((bat_info->charge_full_design_uah <= 0) ||
 -- 
 2.34.1
 
