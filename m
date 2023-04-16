@@ -2,92 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B760C77B76
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 19:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A43C77B73
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 19:05:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230062AbjDPTCi (ORCPT
+        id S229513AbjDPTFn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 Apr 2023 15:02:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51308 "EHLO
+        Sun, 16 Apr 2023 15:05:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjDPTCh (ORCPT
+        with ESMTP id S229446AbjDPTFn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 Apr 2023 15:02:37 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8631FC3
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 12:02:35 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-63b875d0027so322664b3a.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 12:02:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1681671755; x=1684263755;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Sz194YkTjiHWHU6EwyUZFw+SUiZ9p2+4bs7KVCWW2A=;
-        b=YsXwiRJP0NXEjK+RH7+/TXmJTwfxsPnrrZbXOPSmesB18YcDroRhIOFx6C/ps+8Mnc
-         q+iCq5t5dVYp9Guj6BJW+jAPv5f1kw5yhqlWxZMV8UblOVUZSjOfk7uyhz7l84q5Fr9D
-         UJgrABdzODvM4SFCQ2FlKAd9oZ5WkL2E9IN+ADeqmftZ9XAEsB6J9tfWpM83R2Nwqii6
-         2RTlZlvl6iOdcDePuc1V51e1hxb9F+tN6gR1JhqcSMkPhVFKBwBovJojs2iRAfs+xHAE
-         iDUMYjMiA5g3DEUtGDGH1DTL6uG6F2xCtpsxW/ejixTfGz955R6CQvCJTx2/p1QZ4IK7
-         G2rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681671755; x=1684263755;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Sz194YkTjiHWHU6EwyUZFw+SUiZ9p2+4bs7KVCWW2A=;
-        b=FP7llsln3j4qy6fdomaiKAgQw/OPntwqqeK40xY1o3Ct2Q8C11scxgAPsJaFrOkuLg
-         sS5QS3XfMs5waI11IpPhvFgX4D6wnuYfmnH4VJE1h8OpCcWCHq/8htIEBSj4Uspcmxcc
-         /n514wkMR9EcEBO2HSQ+OzcqBuQMfC7iTiqYKfSfkVIqfPW7DbrUz3TJ1FpkhptR5elt
-         oPMPc6Ia9kVdLihwTxTzDwF+d0RFhXNmZ7TrszoZDHeQCy1VVxopFXifdEqwxPiVvJP8
-         7jAkrt8CprQcR4V/mQ1lhI6ydaoRndx2FoRUdiyqzbn5xI/eIJMZXU0f+tX7gEYcfbQs
-         /rsw==
-X-Gm-Message-State: AAQBX9fzOgkOF7zVIreVfQFQu8me0bW3AorQZ9mXMU7ZAVOLOIwv/5S6
-        rO5mSB9tPMe+mMX3RDvvkCnpLA==
-X-Google-Smtp-Source: AKy350av93xStztFUdvK3AKtRPAN1wDAeuFEmHUyxnhHxhRekskUPRnXfV1z9OQ8cQfmr6+qWUv67Q==
-X-Received: by 2002:a05:6a00:8018:b0:63b:61cc:5aaa with SMTP id eg24-20020a056a00801800b0063b61cc5aaamr9432015pfb.1.1681671755034;
-        Sun, 16 Apr 2023 12:02:35 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 12-20020aa7924c000000b006258dd63a3fsm6176156pfp.56.2023.04.16.12.02.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Apr 2023 12:02:34 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Paolo Valente <paolo.valente@linaro.org>,
-        linux-block@vger.kernel.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20230413133009.1605335-1-colin.i.king@gmail.com>
-References: <20230413133009.1605335-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] block, bfq: Fix division by zero error on zero wsum
-Message-Id: <168167175425.156307.13715193817993910123.b4-ty@kernel.dk>
-Date:   Sun, 16 Apr 2023 13:02:34 -0600
+        Sun, 16 Apr 2023 15:05:43 -0400
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 067DF1FE0
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 12:05:40 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id o7gupnSP89ijuo7gupFud6; Sun, 16 Apr 2023 21:05:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+        s=t20230301; t=1681671939;
+        bh=IVg6fEiAUlOm4eZf7hYcoOgAhxCwgPubM+tzVphnhWA=;
+        h=From:To:Cc:Subject:Date;
+        b=stcSMDrgerXIwGDnWbFTpJLich5sCmokXWajyYm+hTqyDWD1ySwkL80AfExFKq7Ei
+         bK7BYo5b4Ff1B5tdqZJ7aT4fjEPnexivEfJdFVzbqv4PvnmheT9h9rNayHAowfz+eL
+         I7KhMpmN21W8PHSti6gf5HunswVUeua7UZMD622kE+ajo0Gx/GResTiROqKUMaLiGj
+         ZwAFborjvoKnKsSUh7W5DzJOMwo7G3zmDosgiDOU9DO76gwcWXiXMHHNc9i1KErbXZ
+         LM/Ozs44yreCoWTzUahIRG2KBDIzvxCOaxg6ReIfKxz3nYp08I7njdCD+HvUpjLfhM
+         v+cg+PSIV0JPA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 16 Apr 2023 21:05:39 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-sh@vger.kernel.org
+Subject: [PATCH RESEND] sh: sq: Use the bitmap API when applicable
+Date:   Sun, 16 Apr 2023 21:05:14 +0200
+Message-Id: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-00303
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Using the bitmap API is less verbose than hand writing them.
+It also improves the semantic.
 
-On Thu, 13 Apr 2023 14:30:09 +0100, Colin Ian King wrote:
-> When the weighted sum is zero the calculation of limit causes
-> a division by zero error. Fix this by continuing to the next level.
-> 
-> This was discovered by running as root:
-> 
-> stress-ng --ioprio 0
-> 
-> [...]
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This is a resend of [1].
 
-Applied, thanks!
+Now cross-compile tested with CONFIG_CPU_SUBTYPE_SH7770=y
 
-[1/1] block, bfq: Fix division by zero error on zero wsum
-      commit: e53413f8deedf738a6782cc14cc00bd5852ccf18
+[1]: https://lore.kernel.org/all/521788e22ad8f7a5058c154f068b061525321841.1656142814.git.christophe.jaillet@wanadoo.fr/
+---
+ arch/sh/kernel/cpu/sh4/sq.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Best regards,
+diff --git a/arch/sh/kernel/cpu/sh4/sq.c b/arch/sh/kernel/cpu/sh4/sq.c
+index 27f2e3da5aa2..d289e99dc118 100644
+--- a/arch/sh/kernel/cpu/sh4/sq.c
++++ b/arch/sh/kernel/cpu/sh4/sq.c
+@@ -372,7 +372,6 @@ static struct subsys_interface sq_interface = {
+ static int __init sq_api_init(void)
+ {
+ 	unsigned int nr_pages = 0x04000000 >> PAGE_SHIFT;
+-	unsigned int size = (nr_pages + (BITS_PER_LONG - 1)) / BITS_PER_LONG;
+ 	int ret = -ENOMEM;
+ 
+ 	printk(KERN_NOTICE "sq: Registering store queue API.\n");
+@@ -382,7 +381,7 @@ static int __init sq_api_init(void)
+ 	if (unlikely(!sq_cache))
+ 		return ret;
+ 
+-	sq_bitmap = kzalloc(size, GFP_KERNEL);
++	sq_bitmap = bitmap_zalloc(nr_pages, GFP_KERNEL);
+ 	if (unlikely(!sq_bitmap))
+ 		goto out;
+ 
+@@ -393,7 +392,7 @@ static int __init sq_api_init(void)
+ 	return 0;
+ 
+ out:
+-	kfree(sq_bitmap);
++	bitmap_free(sq_bitmap);
+ 	kmem_cache_destroy(sq_cache);
+ 
+ 	return ret;
+@@ -402,7 +401,7 @@ static int __init sq_api_init(void)
+ static void __exit sq_api_exit(void)
+ {
+ 	subsys_interface_unregister(&sq_interface);
+-	kfree(sq_bitmap);
++	bitmap_free(sq_bitmap);
+ 	kmem_cache_destroy(sq_cache);
+ }
+ 
 -- 
-Jens Axboe
-
-
+2.34.1
 
