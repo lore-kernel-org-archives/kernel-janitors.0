@@ -2,51 +2,47 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A47C77B72
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 06:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BBAC77B61
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 08:32:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbjDPG3n (ORCPT
+        id S230338AbjDPIcd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 Apr 2023 02:29:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47236 "EHLO
+        Sun, 16 Apr 2023 04:32:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbjDPG3m (ORCPT
+        with ESMTP id S230298AbjDPIcc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 Apr 2023 02:29:42 -0400
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DEC3FB
-        for <kernel-janitors@vger.kernel.org>; Sat, 15 Apr 2023 23:29:39 -0700 (PDT)
+        Sun, 16 Apr 2023 04:32:32 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF9282D5F
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 01:32:30 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id nvtHpgynZXvOInvtIpyMwd; Sun, 16 Apr 2023 08:29:38 +0200
+        id nxoBpUp5GSbkVnxoBp6SVd; Sun, 16 Apr 2023 10:32:28 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681626578;
-        bh=4/y1p+J5P4sf9MxwjHggSXgJ0J0v9pbQqECTb6NgUf0=;
+        s=t20230301; t=1681633948;
+        bh=6Nh9SbNnwZaFDBB1P2bWoSGbGhDLyt3bjRnq7fv3tcQ=;
         h=From:To:Cc:Subject:Date;
-        b=SEYoFLJ6cBxSp77oZjHGudkSCN1Wdu0QQVaXUXyD9Tc7lStPCIDuudzD3KLpRMLp+
-         Pxw34MSPnY20YyCGeujLsredFK6iTizuhxu0H3P0Td9pvLCOZXzpigRMvq45ejxB3R
-         1blo9xNCmMMkqV7eRL48PBVqbiQFOxyhbxZUZlsBS8RGwGD3vKAcB03EiwF6wycErv
-         65wMuxCHWjOSFmughp/lS19wEEEXywu/G4DHvYkWAzVZebWM02j1cTkMlf1yHvLQeg
-         oYG8rJABQnn3qBdK7bVNkUYGVfgR4ZJ/oJgLgkohRx0lhhNJDl81g9uTJRicEwoFsV
-         17SKFihW4aQeA==
+        b=qFdGVJRwqDfnU9DfilquMgxQjV9J9mgxoH27+b8QY0gKrhl2ccxCYzou2MtAnD5ae
+         z0HourN8rMXV8JErxeZhIFcWiCliAqAmsA6WxwF5GMxRgHHQnoi+PrIBJKv7B0La23
+         8yjXbmlDHjyhgakbQSwaXyHW2dSD3Yv2u7Qvclm2aqU5in7R8jYE/daNW9A9u7NLsk
+         Nu6PfQA3Sl/DB+nFTc5vNzueEoyGmKmGzIt3nOnsBP63iFET/tYIyR/hPrHAt2esu/
+         bjNUGmEfRGEB3ilzvEdg0Uw1AEbRH2mbgjremW9TGWqPLQgQsjPIsJ6EaI2kboiSmc
+         qKbmfNnECzyHw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 Apr 2023 08:29:38 +0200
+X-ME-Date: Sun, 16 Apr 2023 10:32:28 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] ASoC: fsl: Simplify an error message
-Date:   Sun, 16 Apr 2023 08:29:34 +0200
-Message-Id: <c167c16a535049d56f817bbede9c9f6f0a0f4c68.1681626553.git.christophe.jaillet@wanadoo.fr>
+        linux-pwm@vger.kernel.org
+Subject: [PATCH] pwm: sti: Fix the error handling path of sti_pwm_probe()
+Date:   Sun, 16 Apr 2023 10:32:24 +0200
+Message-Id: <ef5d6301cb120db5d52175a7bf94b5095beaaeef.1681633924.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,27 +50,83 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-dev_err_probe() already display the error code. There is no need to
-duplicate it explicitly in the error message.
+Rewrite the error handing path of sti_pwm_probe() to avoid some leaks.
 
+Fixes: 3f0925b5a864 ("pwm: sti: Initialise PWM capture device data")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/fsl/fsl-asoc-card.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I also wonder if some clk_put() are also missing in the error handling path
+and in the remove function.
 
-diff --git a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
-index bffa1048d31e..40870668ee24 100644
---- a/sound/soc/fsl/fsl-asoc-card.c
-+++ b/sound/soc/fsl/fsl-asoc-card.c
-@@ -858,7 +858,7 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
+This could be split in several patches because some issues were
+introduced before 3f0925b5a864.
+But it is already nearly 7 years old, so it should be enough, should it be
+back-ported.
+---
+ drivers/pwm/pwm-sti.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/pwm/pwm-sti.c b/drivers/pwm/pwm-sti.c
+index b1d1373648a3..7e678cab2991 100644
+--- a/drivers/pwm/pwm-sti.c
++++ b/drivers/pwm/pwm-sti.c
+@@ -630,13 +630,14 @@ static int sti_pwm_probe(struct platform_device *pdev)
+ 		pc->cpt_clk = of_clk_get_by_name(dev->of_node, "capture");
+ 		if (IS_ERR(pc->cpt_clk)) {
+ 			dev_err(dev, "failed to get PWM capture clock\n");
+-			return PTR_ERR(pc->cpt_clk);
++			ret = PTR_ERR(pc->cpt_clk);
++			goto err_unprepare_pwm;
+ 		}
  
- 	ret = devm_snd_soc_register_card(&pdev->dev, &priv->card);
- 	if (ret) {
--		dev_err_probe(&pdev->dev, ret, "snd_soc_register_card failed: %d\n", ret);
-+		dev_err_probe(&pdev->dev, ret, "snd_soc_register_card failed\n");
- 		goto asrc_fail;
+ 		ret = clk_prepare(pc->cpt_clk);
+ 		if (ret) {
+ 			dev_err(dev, "failed to prepare clock\n");
+-			return ret;
++			goto err_unprepare_pwm;
+ 		}
  	}
  
+@@ -645,18 +646,17 @@ static int sti_pwm_probe(struct platform_device *pdev)
+ 	pc->chip.npwm = pc->cdata->pwm_num_devs;
+ 
+ 	ret = pwmchip_add(&pc->chip);
+-	if (ret < 0) {
+-		clk_unprepare(pc->pwm_clk);
+-		clk_unprepare(pc->cpt_clk);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto err_unprepare_cpt;
+ 
+ 	for (i = 0; i < cdata->cpt_num_devs; i++) {
+ 		struct sti_cpt_ddata *ddata;
+ 
+ 		ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
+-		if (!ddata)
+-			return -ENOMEM;
++		if (!ddata) {
++			ret = -ENOMEM;
++			goto err_remove_pwmchip;
++		}
+ 
+ 		init_waitqueue_head(&ddata->wait);
+ 		mutex_init(&ddata->lock);
+@@ -667,6 +667,14 @@ static int sti_pwm_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, pc);
+ 
+ 	return 0;
++
++err_remove_pwmchip:
++	pwmchip_remove(&pc->chip);
++err_unprepare_cpt:
++	clk_unprepare(pc->cpt_clk);
++err_unprepare_pwm:
++	clk_unprepare(pc->pwm_clk);
++	return ret;
+ }
+ 
+ static void sti_pwm_remove(struct platform_device *pdev)
 -- 
 2.34.1
 
