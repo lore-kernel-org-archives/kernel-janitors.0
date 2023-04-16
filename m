@@ -2,47 +2,47 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0805AC77B61
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 09:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A064C77B61
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 09:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230454AbjDPJCW (ORCPT
+        id S230233AbjDPJQp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 Apr 2023 05:02:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35922 "EHLO
+        Sun, 16 Apr 2023 05:16:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230457AbjDPJCU (ORCPT
+        with ESMTP id S229777AbjDPJQo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 Apr 2023 05:02:20 -0400
-Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F7122123
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 02:02:17 -0700 (PDT)
+        Sun, 16 Apr 2023 05:16:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49790211C
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 02:16:43 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id nyH0pbG1aZuz8nyH0pkDjf; Sun, 16 Apr 2023 11:02:15 +0200
+        id nyUwp2vt5Vj4inyUxptm50; Sun, 16 Apr 2023 11:16:41 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681635735;
-        bh=jElERW5oAW/BA/iWn/iMwYZcr8+bBQCwjgCK64tXWvg=;
+        s=t20230301; t=1681636601;
+        bh=34R78RzbMExczZJuYkzgabitAT4xEBq8BMfJDrQnJw0=;
         h=From:To:Cc:Subject:Date;
-        b=AIFyl+4LMWAYJKXQSaTaP5fgyO1X8fiTU5MY+pi2PUbnxU7yuDCdbbAqrdvqIoC2h
-         /Re8WzFeK5MuZBRZbUy9r5Cix6r43nGExGv8WCSS1eAQ+NgHVhiZkTN5DE4ewWCQDC
-         NbVJ6cEGaHYvwFd32K5yLQ6bNHg5xfO73Jevs/tYWvkserBdeLMwZdlLpWrePByJWn
-         XotY/Qt9wK/Om2MHEnD6yTzrjqBSz8r8V66GWYGXaF1q2DDJhWtr/82Az59vQsP4wj
-         r1lqMEBTl29BivO+S4LZCIC4h0isnAtjiYXkTBL8RA6Kjfqg27z7+pUBLJhM1C3Bgs
-         yLXACoYbAFv1w==
+        b=Y02O6fSLZ1OStPi3lYi2MwFNS7+N45Is2KC4Lw/JujtlFX0tH/K1484EKHJ4tPkCK
+         4/5MpAxubdix6f5fRmS9RjFQUZm5k7FmUw8ZKWz6S+4cGQcYCy7w5fYKb55an0S9Bd
+         EadVzTi5wIWHW2+5CQoUOSVprmD6R7FBSsmi9PEjljj9bSlOpLJ7n895dvPh8uz7ev
+         IPMHGFozHUg0nMi/dw0z/uTqQyjQUUMpG1WEBjmQHDqtsxUHRMrCTr59OdrPRDtpzE
+         gahhRNTWS4j6Ktfq1RyX+UwsDfJlIH2DB5Sp5jkJgh5+R2ah+k7qEoLlxVqRkx32M4
+         6O6vGGtW5UegQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 Apr 2023 11:02:15 +0200
+X-ME-Date: Sun, 16 Apr 2023 11:16:41 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pwm@vger.kernel.org
-Subject: [PATCH] pwm: clk: Use the devm_clk_get_prepared() helper function
-Date:   Sun, 16 Apr 2023 11:02:13 +0200
-Message-Id: <9281571825c365c1591fcf31527d45ec576c19b4.1681635694.git.christophe.jaillet@wanadoo.fr>
+        linux-mtd@lists.infradead.org
+Subject: [PATCH] mtd: st_spi_fsm: Use the devm_clk_get_enabled() helper function
+Date:   Sun, 16 Apr 2023 11:16:36 +0200
+Message-Id: <4025ec3980a956b0e776024e88ec960afc457501.1681636580.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,53 +50,90 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use the devm_clk_get_prepared() helper function instead of hand-writing it.
+Use the devm_clk_get_enabled() helper function instead of hand-writing it.
 It saves some line of codes.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/pwm/pwm-clk.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ drivers/mtd/devices/st_spi_fsm.c | 28 ++++++----------------------
+ 1 file changed, 6 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/pwm/pwm-clk.c b/drivers/pwm/pwm-clk.c
-index f1da99881adf..0ee4d2aee4df 100644
---- a/drivers/pwm/pwm-clk.c
-+++ b/drivers/pwm/pwm-clk.c
-@@ -89,7 +89,7 @@ static int pwm_clk_probe(struct platform_device *pdev)
- 	if (!pcchip)
- 		return -ENOMEM;
+diff --git a/drivers/mtd/devices/st_spi_fsm.c b/drivers/mtd/devices/st_spi_fsm.c
+index 54861d889c30..3dbb1aa80bfa 100644
+--- a/drivers/mtd/devices/st_spi_fsm.c
++++ b/drivers/mtd/devices/st_spi_fsm.c
+@@ -2046,34 +2046,26 @@ static int stfsm_probe(struct platform_device *pdev)
+ 		return PTR_ERR(fsm->base);
+ 	}
  
--	pcchip->clk = devm_clk_get(&pdev->dev, NULL);
-+	pcchip->clk = devm_clk_get_prepared(&pdev->dev, NULL);
- 	if (IS_ERR(pcchip->clk))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(pcchip->clk),
- 				     "Failed to get clock\n");
-@@ -98,15 +98,9 @@ static int pwm_clk_probe(struct platform_device *pdev)
- 	pcchip->chip.ops = &pwm_clk_ops;
- 	pcchip->chip.npwm = 1;
+-	fsm->clk = devm_clk_get(&pdev->dev, NULL);
++	fsm->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(fsm->clk)) {
+ 		dev_err(fsm->dev, "Couldn't find EMI clock.\n");
+ 		return PTR_ERR(fsm->clk);
+ 	}
  
--	ret = clk_prepare(pcchip->clk);
--	if (ret < 0)
--		return dev_err_probe(&pdev->dev, ret, "Failed to prepare clock\n");
--
- 	ret = pwmchip_add(&pcchip->chip);
--	if (ret < 0) {
--		clk_unprepare(pcchip->clk);
-+	if (ret < 0)
- 		return dev_err_probe(&pdev->dev, ret, "Failed to add pwm chip\n");
+-	ret = clk_prepare_enable(fsm->clk);
+-	if (ret) {
+-		dev_err(fsm->dev, "Failed to enable EMI clock.\n");
+-		return ret;
 -	}
- 
- 	platform_set_drvdata(pdev, pcchip);
- 	return 0;
-@@ -120,8 +114,6 @@ static void pwm_clk_remove(struct platform_device *pdev)
- 
- 	if (pcchip->clk_enabled)
- 		clk_disable(pcchip->clk);
 -
--	clk_unprepare(pcchip->clk);
+ 	mutex_init(&fsm->lock);
+ 
+ 	ret = stfsm_init(fsm);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to initialise FSM Controller\n");
+-		goto err_clk_unprepare;
++		return ret;
+ 	}
+ 
+ 	stfsm_fetch_platform_configs(pdev);
+ 
+ 	/* Detect SPI FLASH device */
+ 	info = stfsm_jedec_probe(fsm);
+-	if (!info) {
+-		ret = -ENODEV;
+-		goto err_clk_unprepare;
+-	}
++	if (!info)
++		return -ENODEV;
+ 	fsm->info = info;
+ 
+ 	/* Use device size to determine address width */
+@@ -2089,7 +2081,7 @@ static int stfsm_probe(struct platform_device *pdev)
+ 	else
+ 		ret = stfsm_prepare_rwe_seqs_default(fsm);
+ 	if (ret)
+-		goto err_clk_unprepare;
++		return ret;
+ 
+ 	fsm->mtd.name		= info->name;
+ 	fsm->mtd.dev.parent	= &pdev->dev;
+@@ -2112,13 +2104,7 @@ static int stfsm_probe(struct platform_device *pdev)
+ 		(long long)fsm->mtd.size, (long long)(fsm->mtd.size >> 20),
+ 		fsm->mtd.erasesize, (fsm->mtd.erasesize >> 10));
+ 
+-	ret = mtd_device_register(&fsm->mtd, NULL, 0);
+-	if (ret) {
+-err_clk_unprepare:
+-		clk_disable_unprepare(fsm->clk);
+-	}
+-
+-	return ret;
++	return mtd_device_register(&fsm->mtd, NULL, 0);
  }
  
- static const struct of_device_id pwm_clk_dt_ids[] = {
+ static int stfsm_remove(struct platform_device *pdev)
+@@ -2127,8 +2113,6 @@ static int stfsm_remove(struct platform_device *pdev)
+ 
+ 	WARN_ON(mtd_device_unregister(&fsm->mtd));
+ 
+-	clk_disable_unprepare(fsm->clk);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.34.1
 
