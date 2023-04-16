@@ -2,90 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E8FC77B61
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 21:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5025C77B61
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 22:14:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229769AbjDPVnx (ORCPT
+        id S229803AbjDPWOu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 Apr 2023 17:43:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59350 "EHLO
+        Sun, 16 Apr 2023 18:14:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbjDPVnw (ORCPT
+        with ESMTP id S230003AbjDPWOs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 Apr 2023 17:43:52 -0400
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFFB72113
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 14:43:50 -0700 (PDT)
+        Sun, 16 Apr 2023 18:14:48 -0400
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A27FB2123
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 15:14:47 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id oA9wpixEOfW5ioA9wp7C2p; Sun, 16 Apr 2023 23:43:48 +0200
+        id oAdvpfmXF7JnhoAdwpmfbm; Mon, 17 Apr 2023 00:14:45 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681681428;
-        bh=vF9mRhCUpfiJDniHjN1U8oMAgEUODJM62IemQiobv8s=;
+        s=t20230301; t=1681683285;
+        bh=f4Jh1YKOoXycqM/ekvBOa/gB5r5j8s3SNJI5ciLqyyU=;
         h=From:To:Cc:Subject:Date;
-        b=gK7vGpkIcnWsmBbMq6CGRAW+XbhDDYYOymGG1wfwAs7vVyxn91J1Mx95f0U3Os9eQ
-         guPsDh2gbxJS46QjmL+WgUsqXiTDztzb6vWYFLQVbYVvBl7hKfdaFiiUB3R90oS+hn
-         1MCgcTADMkGMV83yWe2LvmQy8BRClnOHr2I2PyXiLLp0N5aTlZLTgb6MxjlTyQ27yC
-         HyZhaGWX8phlPd9ARerhSwAwdFc620NA2qqSnEXXMQQiQBIdMKISxQ6GrJ3Ac3Keer
-         mDquEVicZfPMpY3TFz+AzAbBVVy1bfu5s2hCn15QgA6rhxbDzpeTt5i0CHg5GKdmEt
-         tX1e9sy1RpSQQ==
+        b=WfyEaNEIr5MFNeyZw6p+zChJC8j4ilHvVGniPI6rCLbM1VhXcmU2psKUNWjjGnmpf
+         5cFh3OlgrZYsfaIVVSvLt2S9qOgEm/Y8n+FKPjYELR3dkB98/IwcfB1/VRnlIpzYai
+         rlRQETn2jkZQPjTj9gVy0w/dlgWX6Zb7O53KiaKHjnYKElLd9xdSIpSuZr7YnOlzVs
+         MnkRg7MYy+DxqoR4CU9SUG+BYoBTZaae9ZRRmXtaLJreNRdPIQij8J9dQiuVxxZ6AC
+         VpJZ31qUQEcDetEzYF1hc+TPD+oNCd3gtKxPabN9a+sdijGrzIyVNqKrxRLtW2VdMs
+         zrBg1muOmQcpA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 Apr 2023 23:43:48 +0200
+X-ME-Date: Mon, 17 Apr 2023 00:14:45 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] pinctrl: bcm2835: Handle gpiochip_add_pin_range() errors
-Date:   Sun, 16 Apr 2023 23:43:41 +0200
-Message-Id: <98c3b5890bb72415145c9fe4e1d974711edae376.1681681402.git.christophe.jaillet@wanadoo.fr>
+        linux-media@vger.kernel.org
+Subject: [PATCH] media: i2c: imx296: Fix error handling while reading temperature
+Date:   Mon, 17 Apr 2023 00:14:42 +0200
+Message-Id: <827f94730c85b742f9ae66209b383a50ca79ec43.1681683246.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-gpiochip_add_pin_range() can fail, so better return its error code than
-a hard coded '0'.
+If imx296_read() returns an error, its returned value is a negative value.
+But because of the "& IMX296_TMDOUT_MASK" (i.e. 0x3ff), 'tmdout' can't be
+negative.
 
-Fixes: d2b67744fd99 ("pinctrl: bcm2835: implement hook for missing gpio-ranges")
+So the error handling does not work as expected and a wrong value is used
+to compute the temperature.
+
+Apply the IMX296_TMDOUT_MASK mask after checking for errors to fix it.
+
+Fixes: cb33db2b6ccf ("media: i2c: IMX296 camera sensor driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is speculative and compile tested only.
+ drivers/media/i2c/imx296.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-If it is wrong, maybe a comment explaining why 0 should be returned would
-be welcomed.
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 8e2551a08c37..cb298fad354a 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -366,10 +366,8 @@ static int bcm2835_add_pin_ranges_fallback(struct gpio_chip *gc)
- 	if (!pctldev)
- 		return 0;
+diff --git a/drivers/media/i2c/imx296.c b/drivers/media/i2c/imx296.c
+index 4f22c0515ef8..c3d6d52fc772 100644
+--- a/drivers/media/i2c/imx296.c
++++ b/drivers/media/i2c/imx296.c
+@@ -922,10 +922,12 @@ static int imx296_read_temperature(struct imx296 *sensor, int *temp)
+ 	if (ret < 0)
+ 		return ret;
  
--	gpiochip_add_pin_range(gc, pinctrl_dev_get_devname(pctldev), 0, 0,
--			       gc->ngpio);
--
--	return 0;
-+	return gpiochip_add_pin_range(gc, pinctrl_dev_get_devname(pctldev), 0, 0,
-+				      gc->ngpio);
- }
+-	tmdout = imx296_read(sensor, IMX296_TMDOUT) & IMX296_TMDOUT_MASK;
++	tmdout = imx296_read(sensor, IMX296_TMDOUT);
+ 	if (tmdout < 0)
+ 		return tmdout;
  
- static const struct gpio_chip bcm2835_gpio_chip = {
++	tmdout &= IMX296_TMDOUT_MASK;
++
+ 	/* T(°C) = 246.312 - 0.304 * TMDOUT */;
+ 	*temp = 246312 - 304 * tmdout;
+ 
 -- 
 2.34.1
 
