@@ -2,80 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FB6C77B77
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 14:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C74C77B73
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 17:02:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbjDPOj2 (ORCPT
+        id S229591AbjDPRCj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 Apr 2023 10:39:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50598 "EHLO
+        Sun, 16 Apr 2023 13:02:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbjDPOj1 (ORCPT
+        with ESMTP id S229500AbjDPRCh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 Apr 2023 10:39:27 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B5F5BA;
-        Sun, 16 Apr 2023 07:39:26 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id ca18e2360f4ac-7606cf9fc63so43166239f.0;
-        Sun, 16 Apr 2023 07:39:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681655965; x=1684247965;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w8ZkUiUebkjTrLhA1EwJs1l6uyjwxYDbX00ZSR/CmGU=;
-        b=KoRkjtb3WWSudJ8cPL8IWMqVW9q6LSpBtGBdqIcd/iAtxfnY7hIsogJuKhfY9Csxs4
-         VQz0WhTwwODj0ZknGpSg3UXSBAOaavllUKLZzV+lQelvUu8WXNV/eRv9iKJxj9wEra+7
-         2mayJ53t/dShfi+j+mvqKE3UoXXU8d1Ipi01UeJiyIf6zRxnIlvU4tPylCDpYrdxen1+
-         mj6t5j7GWz8ZG5QoZOupd/SJ0hQkTveuIKZ2LrzaS3SFfFdxwTpESMDbdgBAXSXtw9MI
-         /Z60L+9CgE1uYg17sUeI+qAZbfaF2WuBOiC/+8WAA25u5sHXioi+0LEwaYyikyMv5HaN
-         VALQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681655965; x=1684247965;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w8ZkUiUebkjTrLhA1EwJs1l6uyjwxYDbX00ZSR/CmGU=;
-        b=HTjtey3w5/xZW3lXlNMchq5Zh+CS4Nx6lhCSaPs7gqSwD6ix+B3cudem/JPNbZBJS3
-         ZQSjXpMj/ZzaM4pfESZstkful8jEukORzGjWp14bWB6KF5EInpmbk5ysmVlaBTG6kmTl
-         027357yPkUXPVKBfhkQk7qGZDg2B6kmqE9HwA/nuj0ptGB4QXkjqzwTBycGN5zOt6n/V
-         BmqQwVoduxugVXnmFL4Xbu9kYsKe1QYda3v9n+2Gm86qWEynropTxoeCyRTyQq7Ia1og
-         D0Qvm8bQ4Jo0NIJY42uzFvpTDD199nlsq4/61/5PLCMnkORtIS5o1jaAYkluCNamf/X1
-         jGDA==
-X-Gm-Message-State: AAQBX9eTtCwwPtHaPuNubUex5K5Svm6ORoYZ4brXKM2XJc+J0RgThVtf
-        yjw3U4AidsarayrsTFglTw3rF/6/RJw=
-X-Google-Smtp-Source: AKy350b7q5fGnvGl8yGQIHPpDZ5OFwlCVkm47u3RzbBXx0WRZsTSXDxHMB53CiwdwuEpdFGUQJYsUA==
-X-Received: by 2002:a92:d451:0:b0:325:cc57:df63 with SMTP id r17-20020a92d451000000b00325cc57df63mr7272769ilm.22.1681655965581;
-        Sun, 16 Apr 2023 07:39:25 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id cn11-20020a0566383a0b00b0040f72526b1fsm1463291jab.16.2023.04.16.07.39.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Apr 2023 07:39:25 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 16 Apr 2023 07:39:24 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
+        Sun, 16 Apr 2023 13:02:37 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA7661FF6
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 10:02:36 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1po5lq-0008Rd-5w; Sun, 16 Apr 2023 19:02:34 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1po5lo-00BgZu-Qe; Sun, 16 Apr 2023 19:02:32 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1po5lo-00Dgys-0x; Sun, 16 Apr 2023 19:02:32 +0200
+Date:   Sun, 16 Apr 2023 19:02:32 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Emil Renner Berthing <kernel@esmil.dk>,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (sfctemp) Simplify error message
-Message-ID: <cb54f91a-5b34-4e88-9afc-d2c714933e7d@roeck-us.net>
-References: <f32a6e877f399e11ca130476002f85c2b48ba7ec.1681575790.git.christophe.jaillet@wanadoo.fr>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH] pwm: sti: Fix the error handling path of sti_pwm_probe()
+Message-ID: <20230416170232.igjwawhnkgya2qee@pengutronix.de>
+References: <ef5d6301cb120db5d52175a7bf94b5095beaaeef.1681633924.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qichhjai5fq4p6s3"
 Content-Disposition: inline
-In-Reply-To: <f32a6e877f399e11ca130476002f85c2b48ba7ec.1681575790.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ef5d6301cb120db5d52175a7bf94b5095beaaeef.1681633924.git.christophe.jaillet@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Apr 15, 2023 at 06:23:37PM +0200, Christophe JAILLET wrote:
-> dev_err_probe() already display the error code. There is no need to
-> duplicate it explicitly in the error message.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied.
+--qichhjai5fq4p6s3
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Guenter
+Hello,
+
+On Sun, Apr 16, 2023 at 10:32:24AM +0200, Christophe JAILLET wrote:
+> Rewrite the error handing path of sti_pwm_probe() to avoid some leaks.
+
+There are also some clk_put()'s missing. See
+https://lore.kernel.org/linux-pwm/20201013081531.661528-1-uwe@kleine-koenig=
+=2Eorg
+for an older fix of the things you noticed.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--qichhjai5fq4p6s3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ8KicACgkQj4D7WH0S
+/k4rCgf+IgFiqYV/KJORdTuLVDP0Re0M+LXFE9SQ3feYlcXI4yGTxI+UQS3Is5mj
+QSjVvfU01PG4PHg1AeT88fR3XHDKHfecKoobE5vLJPkdawirsVBGDRIDSPGlRniG
+6ew05MYz2eQgNxN03KIFcIK2KQle8vgJBWVV2bgtFwkmc0gSbZtHfbr0KmtWUmpP
+7BUvcK7or4s/Kx7jpLIY0KRYvCpQXgOEyQcemzm7GVH8NL6vnNym0pveGlSEBqSa
+0ylrtOQ0mENxMAfRYxb4HMxdbZAb4uZkh/MAvDgcepsJF5/oFucCqiooz82vwkUZ
+VMzQlpU/5sisJaUqBt6F5ZZhn9zCIw==
+=amNk
+-----END PGP SIGNATURE-----
+
+--qichhjai5fq4p6s3--
