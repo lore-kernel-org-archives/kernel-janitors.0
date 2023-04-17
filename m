@@ -2,70 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CFBC77B72
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 10:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11733C77B72
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 10:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbjDQKet (ORCPT
+        id S231259AbjDQKlO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 06:34:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37026 "EHLO
+        Mon, 17 Apr 2023 06:41:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbjDQKer (ORCPT
+        with ESMTP id S230270AbjDQKlJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 06:34:47 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA5810D3;
-        Mon, 17 Apr 2023 03:33:48 -0700 (PDT)
-Received: from [IPV6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2] (unknown [IPv6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id A640666031ED;
-        Mon, 17 Apr 2023 11:33:28 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1681727609;
-        bh=QLUjIbjUcIOPLd9/HNG4iW89fNegx9KVDgzv+yvDcyc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=nzL9QRipUXU73q1MTpw4f0qNFUAEmxqXqnKReO2VZRRPU/UQbLY+1yMKYB+055EVV
-         A4CotFWYXRtiMBoTmYh2vHXmH3vV14lK1xbyLZfa21JjVThxkQ9Ytu7lbAcFQLiwUQ
-         L1olJSx9osoYRbn9/Zz0gdcPc+M8J7K22qqgFh2Qg+tq8Jbbm+azGr7psJg7mTW1El
-         KV/DQioS4fiI/BJBNXuLa8zkdAn6aRwZ3F1q2+Sp8wLvfQvXkgRZWt8qNNkPTbkwVc
-         9BuUSqtvxZwhgG7fjBdVlYhKiZr6eiGNVmjCRUQssId8F6tNdEwZIY/ZWM9qi3b21j
-         TSJLDgx0Qv8gA==
-Message-ID: <eba25ba2-0815-4461-416f-6b5ae5d5e5a2@collabora.com>
-Date:   Mon, 17 Apr 2023 12:33:25 +0200
+        Mon, 17 Apr 2023 06:41:09 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115F85FD8;
+        Mon, 17 Apr 2023 03:40:15 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f173af6712so5392655e9.1;
+        Mon, 17 Apr 2023 03:40:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681727988; x=1684319988;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HVv7DQKmipBRsAlvjF/Xgt2k292ApUl27jLAieToJD4=;
+        b=N2l7o0i/qr38pvN84zrzRmAVqphwalgLltPICajVbq3kBSm9Tp8tQPeGgj3gjH2JGB
+         GZB2pIhqNHGwVwRrznQTWJK0S2F1je3qU1SioBp3gw9d+yeARYYVMb5bEy2PATha9TB3
+         RpL+tfh7PDIObTykwpMwBw8zRypbjeMogmKLJhERbHU/wSlMEpH4PlQoXIXOF8AnT1Bh
+         nZ/LooqF/DU1YDodkwwO/KTeOMY2WL+CJLByGEakl2odWGfBQ2qYJQ9D0WE5DyurplLn
+         g16KOXuutH4S+M85pDPMNtomiozeo0vPjrnZQ4q70J/kHK4hVWxxS+W5x+A6fwAKSrsK
+         nMrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681727988; x=1684319988;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HVv7DQKmipBRsAlvjF/Xgt2k292ApUl27jLAieToJD4=;
+        b=dIDAAyeLUlEPrKpeAVya6EV5FNuacCmEbC4Jnobow97apgIHsITk2L5DSaEW+p8/eL
+         DPwMOlqJrtknkFrPkv2ooDHmRj6q3tDFYWcDz6E8sZBAgNBD6f5wDcpeCPsGT84ZK2Q5
+         yEMqIstav/qxhaO3sc7uVub2aOln0tDGm9QSO3hD6Y1HLRXUx3f8UGZgs1/21xjKbf1t
+         BbLaVZOxdyqpW/cUuthlrwz36QxiIlYScjrIq1g67V1fdi5y7OeJbrrNG0E1eX+ghrmL
+         w0i7+OMOWv7FlfC0HGRrfNade/xGw/uyUDolo9nvExoMx4tx5UJ23PYh7vGAmuBggnAS
+         GYLw==
+X-Gm-Message-State: AAQBX9fZ7/a2AM3a2906hMV0cUsGksPdhrtpS1KwYcty0nEfAP2d7oQ7
+        xxIOWS+kXc10RdNVaOZU+EEU9Gv9gZU=
+X-Google-Smtp-Source: AKy350Z5lAyV3pnznwWuZtRfw18LONrxC/g5uyKRxLw3mrLdNXhB50AMHcfjs+a8+G0oCSt8q6V3Qw==
+X-Received: by 2002:a05:6000:1049:b0:2f5:ae53:f558 with SMTP id c9-20020a056000104900b002f5ae53f558mr5899380wrx.31.1681727988398;
+        Mon, 17 Apr 2023 03:39:48 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id z18-20020adfd0d2000000b002da75c5e143sm10225757wrh.29.2023.04.17.03.39.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Apr 2023 03:39:47 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Daniel Bristot de Oliveira <bristot@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-trace-devel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rv: Fix addition on an uninitialized variable 'run'
+Date:   Mon, 17 Apr 2023 11:39:46 +0100
+Message-Id: <20230417103946.29594-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH] soc: qcom: ramp_controller: Fix an error handling path in
- qcom_ramp_controller_probe()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <84727a79d0261b4112411aec23b553504015c02c.1681684138.git.christophe.jaillet@wanadoo.fr>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <84727a79d0261b4112411aec23b553504015c02c.1681684138.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 17/04/23 00:29, Christophe JAILLET ha scritto:
-> 'qrc' is known to be non-NULL at this point.
-> Checking for 'qrc->desc' was expected instead, so use it.
-> 
-> Fixes: a723c95fa137 ("soc: qcom: Add Qualcomm Ramp Controller driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The variable run is not initialized however it is being accumulated
+by the return value from the call to ikm_run_monitor.  Fix this by
+replacing the += with an assignment since this is the first point
+where run is being assigned.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Fixes: 4bc4b131d44c ("rv: Add rv tool")
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/verification/rv/src/rv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tools/verification/rv/src/rv.c b/tools/verification/rv/src/rv.c
+index e601cd9c411e..da647ad4e733 100644
+--- a/tools/verification/rv/src/rv.c
++++ b/tools/verification/rv/src/rv.c
+@@ -111,7 +111,7 @@ static void rv_mon(int argc, char **argv)
+ 	 * Call all possible monitor implementations, looking
+ 	 * for the [monitor].
+ 	 */
+-	run += ikm_run_monitor(monitor_name, argc-1, &argv[1]);
++	run = ikm_run_monitor(monitor_name, argc-1, &argv[1]);
+ 
+ 	if (!run)
+ 		err_msg("rv: monitor %s does not exist\n", monitor_name);
+-- 
+2.30.2
 
