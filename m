@@ -2,95 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11733C77B72
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 10:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C626C77B72
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 10:44:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231259AbjDQKlO (ORCPT
+        id S230026AbjDQKoy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 06:41:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42088 "EHLO
+        Mon, 17 Apr 2023 06:44:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230270AbjDQKlJ (ORCPT
+        with ESMTP id S229634AbjDQKox (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 06:41:09 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115F85FD8;
-        Mon, 17 Apr 2023 03:40:15 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f173af6712so5392655e9.1;
-        Mon, 17 Apr 2023 03:40:14 -0700 (PDT)
+        Mon, 17 Apr 2023 06:44:53 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2479B5B9C;
+        Mon, 17 Apr 2023 03:43:50 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id d8-20020a05600c3ac800b003ee6e324b19so12847498wms.1;
+        Mon, 17 Apr 2023 03:43:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681727988; x=1684319988;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HVv7DQKmipBRsAlvjF/Xgt2k292ApUl27jLAieToJD4=;
-        b=N2l7o0i/qr38pvN84zrzRmAVqphwalgLltPICajVbq3kBSm9Tp8tQPeGgj3gjH2JGB
-         GZB2pIhqNHGwVwRrznQTWJK0S2F1je3qU1SioBp3gw9d+yeARYYVMb5bEy2PATha9TB3
-         RpL+tfh7PDIObTykwpMwBw8zRypbjeMogmKLJhERbHU/wSlMEpH4PlQoXIXOF8AnT1Bh
-         nZ/LooqF/DU1YDodkwwO/KTeOMY2WL+CJLByGEakl2odWGfBQ2qYJQ9D0WE5DyurplLn
-         g16KOXuutH4S+M85pDPMNtomiozeo0vPjrnZQ4q70J/kHK4hVWxxS+W5x+A6fwAKSrsK
-         nMrA==
+        d=gmail.com; s=20221208; t=1681728145; x=1684320145;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FSsTNaAxDVrnnWZoYzSsuW1bfOx2KirKh1RVOBinvY=;
+        b=bImlZtJsk9iREVOmEf/RbWim78bXjszsA+dO0JytrrS7kWGgf/T8r2bAZugCyK3Hzu
+         JbjVo8JYuYY//n4ElWQCvFHPRWlWsFgXSgyFR0G7BSYfzyELmgCT5RMU+kTSaVqojf6b
+         +mGH1Ej5yCIoLM5//rhimXdrtyqhZJlSZW7BbsItuvx1XOCYSS3EhnQIdTJjsx2F2DZ+
+         f2rSsW5nMMQu0CcMvCAGc9eRRjST1LPPxhOsqUzzLf7RZeZAGy+TKtbceMbq6Gtspg0+
+         P/l3Bh4dATWSrKGsKUyw/JGU6CTblM+GD0u1lfvT6eidKtUXvDjGAaa81mHlMArX/qXL
+         BH1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681727988; x=1684319988;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HVv7DQKmipBRsAlvjF/Xgt2k292ApUl27jLAieToJD4=;
-        b=dIDAAyeLUlEPrKpeAVya6EV5FNuacCmEbC4Jnobow97apgIHsITk2L5DSaEW+p8/eL
-         DPwMOlqJrtknkFrPkv2ooDHmRj6q3tDFYWcDz6E8sZBAgNBD6f5wDcpeCPsGT84ZK2Q5
-         yEMqIstav/qxhaO3sc7uVub2aOln0tDGm9QSO3hD6Y1HLRXUx3f8UGZgs1/21xjKbf1t
-         BbLaVZOxdyqpW/cUuthlrwz36QxiIlYScjrIq1g67V1fdi5y7OeJbrrNG0E1eX+ghrmL
-         w0i7+OMOWv7FlfC0HGRrfNade/xGw/uyUDolo9nvExoMx4tx5UJ23PYh7vGAmuBggnAS
-         GYLw==
-X-Gm-Message-State: AAQBX9fZ7/a2AM3a2906hMV0cUsGksPdhrtpS1KwYcty0nEfAP2d7oQ7
-        xxIOWS+kXc10RdNVaOZU+EEU9Gv9gZU=
-X-Google-Smtp-Source: AKy350Z5lAyV3pnznwWuZtRfw18LONrxC/g5uyKRxLw3mrLdNXhB50AMHcfjs+a8+G0oCSt8q6V3Qw==
-X-Received: by 2002:a05:6000:1049:b0:2f5:ae53:f558 with SMTP id c9-20020a056000104900b002f5ae53f558mr5899380wrx.31.1681727988398;
-        Mon, 17 Apr 2023 03:39:48 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z18-20020adfd0d2000000b002da75c5e143sm10225757wrh.29.2023.04.17.03.39.47
+        d=1e100.net; s=20221208; t=1681728145; x=1684320145;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+FSsTNaAxDVrnnWZoYzSsuW1bfOx2KirKh1RVOBinvY=;
+        b=BsPN7jrwPXzugNd9H9qI6UZ+sNs7R3wS5nEM2WB5JpJVQb0TosE8aZ/YT+Lg8dhnGL
+         anluikO9oGYVUgPTafUaqNYs5ZUcy+0TWNIm0+1vo2M3aBjI/L196cvsGqQlh3Hw1TW6
+         4/tggKdUJrMyamLiAUrroWt6gyabq/SPkPq8UErR7wl1GrbYZG1iqv3Bi4XFGo7CcgXQ
+         2XAuyeiv/GwmSPpppMyGfp7OhyCVeACirCwc8BoNSnIIiLcZ9JINXSK0ZAzrp4o4LP5K
+         Y6oCBobAwjj29aKPzYcC7qDb96TZAHtZ0E/dYP/R2EUmPMoK5g6nOhGQIgsNrl+BqTio
+         p6dA==
+X-Gm-Message-State: AAQBX9dvw6a1RI61cOZjl8tVScb9h1eotKZ1N7/v84Li0yX6vCfpRpA7
+        aq7M8Etx24fXxEx1gf2Wgmg=
+X-Google-Smtp-Source: AKy350YgtqidShU+Z+BRMWKOzSY0N6RpgZt7pJjc0/NbbrBY/lJjWRKH94XwvA30WZXkQLYokVa9XQ==
+X-Received: by 2002:a1c:7717:0:b0:3f1:75d2:a6a7 with SMTP id t23-20020a1c7717000000b003f175d2a6a7mr760219wmi.36.1681728145521;
+        Mon, 17 Apr 2023 03:42:25 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id 15-20020a05600c230f00b003f16fdc6233sm5189129wmo.47.2023.04.17.03.42.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 03:39:47 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Daniel Bristot de Oliveira <bristot@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-trace-devel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rv: Fix addition on an uninitialized variable 'run'
-Date:   Mon, 17 Apr 2023 11:39:46 +0100
-Message-Id: <20230417103946.29594-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 17 Apr 2023 03:42:25 -0700 (PDT)
+Date:   Mon, 17 Apr 2023 13:42:21 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Dongliang Mu <dzm91@hust.edu.cn>, Vicki Pfau <vi@endrift.com>,
+        kernel-janitors@vger.kernel.org
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Pavel Rojtberg <rojtberg@gmail.com>,
+        Nate Yocom <nate@yocom.org>,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        John Butler <radon86dev@gmail.com>,
+        Matthias Benkmann <matthias.benkmann@gmail.com>,
+        Christopher Crockett <chaorace@gmail.com>,
+        Santosh De Massari <s.demassari@gmail.com>,
+        hust-os-kernel-patches@googlegroups.com,
+        syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: xpad - fix GPF in xpad_probe
+Message-ID: <011c00e7-c351-4331-8be4-1c184d5773e1@kili.mountain>
+References: <20230414125603.686123-1-dzm91@hust.edu.cn>
+ <c3e0823b-2b03-4dab-b7cb-a8bc5151f0b1@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3e0823b-2b03-4dab-b7cb-a8bc5151f0b1@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable run is not initialized however it is being accumulated
-by the return value from the call to ikm_run_monitor.  Fix this by
-replacing the += with an assignment since this is the first point
-where run is being assigned.
+Btw, we should be thinking about how to detect these sorts of issues
+using static analysis.  Unfortunately, it's not as simple as saying
+"We know this variable is NULL so don't dereference it."  The problem
+with that is that many times Smatch sees where a pointer is set to NULL
+but not when it is assigned to a different value.
 
-Fixes: 4bc4b131d44c ("rv: Add rv tool")
+What we could do instead is say:
+1) If a pointer is dereferenced and we know it is NULL then:
+    set_state_expr(my_id, expr, &suspicious);
+2) If we set a pointer to non-NULL and it is marked as suspicious then
+   print a warning.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/verification/rv/src/rv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This would generate a warning for cases where we dereference a pointer
+before it has been initialized.
 
-diff --git a/tools/verification/rv/src/rv.c b/tools/verification/rv/src/rv.c
-index e601cd9c411e..da647ad4e733 100644
---- a/tools/verification/rv/src/rv.c
-+++ b/tools/verification/rv/src/rv.c
-@@ -111,7 +111,7 @@ static void rv_mon(int argc, char **argv)
- 	 * Call all possible monitor implementations, looking
- 	 * for the [monitor].
- 	 */
--	run += ikm_run_monitor(monitor_name, argc-1, &argv[1]);
-+	run = ikm_run_monitor(monitor_name, argc-1, &argv[1]);
- 
- 	if (!run)
- 		err_msg("rv: monitor %s does not exist\n", monitor_name);
--- 
-2.30.2
+It is not hard to write a Smatch check like this.  The first draft
+approach is only three functions long.
+
+regards,
+dan carpenter
 
