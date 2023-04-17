@@ -2,88 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E0EC77B76
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 18:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 883A6C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 18:27:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbjDQSTo (ORCPT
+        id S229643AbjDQS1U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 14:19:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37294 "EHLO
+        Mon, 17 Apr 2023 14:27:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjDQSTn (ORCPT
+        with ESMTP id S230014AbjDQS1R (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 14:19:43 -0400
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4B4E48
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 11:19:41 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id oTRuppJ6EjYHDoTRupnJXY; Mon, 17 Apr 2023 20:19:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681755579;
-        bh=y0spckrc7ta0K605nXj/b2AqFl80Yy12cQ6kS116dzM=;
-        h=From:To:Cc:Subject:Date;
-        b=AfNloPvJiO3xmvBS09ZuOQjvx+6u9dWeTwKbcTYn4JlO6q0rI8LXxqxdfMA3jHLQE
-         X4xXr986pGtd5lFsK/BD779Cnjht4+RSFeJjL0eq0myseNiouJxcv0oC0p9SWPdBrK
-         ISLxYqOiVehkzAcFB/edmx60L0e37321NgbcYVp1Hu1Ed7XclXEzo2F9WOM81MlHiP
-         HNpjF5eC2un3sUnp//MYfFI51SVVWVmuW+76rYkJ+IozRNKCGL06juPXgeWr2TI1bT
-         Yy69/h7qR1XqII+cKkUZV5gzZlGd5ILBfge987nNLU3nZ8sd/WU7KcZstu9X4pW2tc
-         abwG8t1dIV7wg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 Apr 2023 20:19:39 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Arun Ramadoss <arun.ramadoss@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH net] net: dsa: microchip: ksz8795: Correctly handle huge frame configuration
-Date:   Mon, 17 Apr 2023 20:19:33 +0200
-Message-Id: <43107d9e8b5b8b05f0cbd4e1f47a2bb88c8747b2.1681755535.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 17 Apr 2023 14:27:17 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC7F646AF;
+        Mon, 17 Apr 2023 11:27:15 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Q0bB8339fz9sW5;
+        Mon, 17 Apr 2023 20:27:12 +0200 (CEST)
+Date:   Mon, 17 Apr 2023 20:27:07 +0200
+From:   Hagen Paul Pfeifer <hagen@jauu.net>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Petar Gligoric <petar.gligoric@rohde-schwarz.com>,
+        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] perf script: task-analyzer: Fix spelling mistake
+ "miliseconds" -> "millseconds"
+Message-ID: <20230417182707.bgvx2os4bbihjamb@ic1101>
+X-Key-Id: 98350C22
+X-Key-Fingerprint: 490F 557B 6C48 6D7E 5706 2EA2 4A22 8D45 9835 0C22
+X-GPG-Key: gpg --recv-keys --keyserver wwwkeys.eu.pgp.net 98350C22
+X-Operating-System: Linux ic1101 6.2.0-hgn
+References: <20230417174826.52963-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230417174826.52963-1-colin.i.king@gmail.com>
+X-Rspamd-Queue-Id: 4Q0bB8339fz9sW5
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Because of the logic in place, SW_HUGE_PACKET can never be set.
-(If the first condition is true, then the 2nd one is also true, but is not
-executed)
+* Colin Ian King | 2023-04-17 18:48:26 [+0100]:
 
-Change the logic and update each bit individually.
+>There is a spelling mistake in the help for the --ms option. Fix it.
+>
+>Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Fixes: 29d1e85f45e0 ("net: dsa: microchip: ksz8: add MTU configuration support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Untested.
----
- drivers/net/dsa/microchip/ksz8795.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Good catch - thank you Colin!
 
-diff --git a/drivers/net/dsa/microchip/ksz8795.c b/drivers/net/dsa/microchip/ksz8795.c
-index 23614a937cc3..f56fca1b1a22 100644
---- a/drivers/net/dsa/microchip/ksz8795.c
-+++ b/drivers/net/dsa/microchip/ksz8795.c
-@@ -96,7 +96,7 @@ static int ksz8795_change_mtu(struct ksz_device *dev, int frame_size)
- 
- 	if (frame_size > KSZ8_LEGAL_PACKET_SIZE)
- 		ctrl2 |= SW_LEGAL_PACKET_DISABLE;
--	else if (frame_size > KSZ8863_NORMAL_PACKET_SIZE)
-+	if (frame_size > KSZ8863_NORMAL_PACKET_SIZE)
- 		ctrl1 |= SW_HUGE_PACKET;
- 
- 	ret = ksz_rmw8(dev, REG_SW_CTRL_1, SW_HUGE_PACKET, ctrl1);
--- 
-2.34.1
+Acked-by: Hagen Paul Pfeifer <hagen@jauu.net>
 
