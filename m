@@ -2,84 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73827C77B72
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 06:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE09C77B72
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 07:45:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230175AbjDQGv0 convert rfc822-to-8bit (ORCPT
+        id S230045AbjDQHpD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 02:51:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44760 "EHLO
+        Mon, 17 Apr 2023 03:45:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbjDQGvY (ORCPT
+        with ESMTP id S229658AbjDQHpC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 02:51:24 -0400
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D151729;
-        Sun, 16 Apr 2023 23:51:22 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id v9so4155784ybm.0;
-        Sun, 16 Apr 2023 23:51:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681714282; x=1684306282;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zJYvk4q6mS1dys9tzSECyNKgl5eo32ZFDWFyFDVmtjY=;
-        b=RnfTbd5H6dkXV/mD0ZC8t7VCAp3goMQ4x2Y2lM9+rkKsORuuiAzFzBciWsSjf/VIRk
-         Nl8kLE5IA2czObaDz1xq6jAkf8BE3ZgjpgXvXB07sFKIBr2neTfqlo9Lr0nnE7W7IHrG
-         j/78yhiNMtKN6zsuRalRifaXLwiSECwx5mehGhgmJXo+gC1DJpTqub1+ZrXIdAfmoW9+
-         7qtUdKcx1kFIEvrEiSiBdzGxJZ550MiqOcNSTz2fRiRKe9xHXxqm8vbhtKI0BJ3/0pbF
-         V4aKgud6uwJt0UeQkd6PJYrLN+siLcFhbi8Js1569vRLc3mcLbqCB7IvEZMzAWgjiw67
-         SwWg==
-X-Gm-Message-State: AAQBX9dLPOP70CSqof+xRIVUXV7nw8Xn+BX24/7hPKhbkTATbhCfMG/w
-        vKEMQgAyyhgQsNrGV3PI0sltyJVx2wy2fg==
-X-Google-Smtp-Source: AKy350YWz1jv13TTchreG9vqWHZmwbICSJh68YwLDY7uSb4o+t5DST05ed+03H29pUqLJq5vIrAo0A==
-X-Received: by 2002:a05:6902:114d:b0:b8f:384b:4f83 with SMTP id p13-20020a056902114d00b00b8f384b4f83mr15847354ybu.33.1681714282007;
-        Sun, 16 Apr 2023 23:51:22 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id h82-20020a252155000000b00b8d65899d76sm2826046ybh.47.2023.04.16.23.51.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Apr 2023 23:51:21 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-54fbb713301so165320867b3.11;
-        Sun, 16 Apr 2023 23:51:21 -0700 (PDT)
-X-Received: by 2002:a81:b71c:0:b0:54f:b931:adf7 with SMTP id
- v28-20020a81b71c000000b0054fb931adf7mr9260584ywh.4.1681714281276; Sun, 16 Apr
- 2023 23:51:21 -0700 (PDT)
+        Mon, 17 Apr 2023 03:45:02 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F37C358E;
+        Mon, 17 Apr 2023 00:44:44 -0700 (PDT)
+Received: from [IPV6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2] (unknown [IPv6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id AD2346602F91;
+        Mon, 17 Apr 2023 08:44:41 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1681717482;
+        bh=4ju2sjdECGeN8KyDD+a8vUNcwUjOKUkgswflyYi99Wg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=md97EAfMLICLqvYW/f+XUwyoMyVlvKHug1PQ/NPDtwv+z02yXSSAB24+d5spuEXxG
+         OMYX1Gt2+6g6KY/ZvjT5sQ/TQaGoQtjZFPLuQdAOW5RC/IO0eelyn/5eeOgZ5+SRDh
+         zKl1F5FCEZSyBAWVq3Td3sl0pH3wbh6IqdsCL/oRw2mM9ln1izz8BA+rdnamGIJFTL
+         +QckzYq0H5ePOVfjZ24MhoV95jSxUwF0rXH7VtLxh0Z48j1DTZGN13FkYqVwXxvmk4
+         aeQ57ikMa3pS1XWYHJIKEKSZ9F7bJxT9BJ0HVBtjksrzvwIT4sEnAyZ8bVhR/M/1yb
+         +jH9qa2cndHKQ==
+Message-ID: <ad088fd1-d96e-76df-4c9d-07e0929813f7@collabora.com>
+Date:   Mon, 17 Apr 2023 09:44:39 +0200
 MIME-Version: 1.0
-References: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Apr 2023 08:51:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXGgxYubHe7dcJgLa9gsZdvPdOdpBUh1ppMnJbc=VTj+Q@mail.gmail.com>
-Message-ID: <CAMuHMdXGgxYubHe7dcJgLa9gsZdvPdOdpBUh1ppMnJbc=VTj+Q@mail.gmail.com>
-Subject: Re: [PATCH RESEND] sh: sq: Use the bitmap API when applicable
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-sh@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH] media: mediatek: vcodec: Move a variable assignment
+ behind condition checks in vdec_vp9_slice_single_decode()
+Content-Language: en-US
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Guo Zhengkui <guozhengkui@vivo.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Haowen Bai <baihaowen@meizu.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mingjia Zhang <mingjia.zhang@mediatek.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Xiaoyong Lu <xiaoyong.lu@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>
+Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <b98dcc94-13f3-a6cb-f5bd-f1f8644d87d1@web.de>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <b98dcc94-13f3-a6cb-f5bd-f1f8644d87d1@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Apr 16, 2023 at 9:10 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> Using the bitmap API is less verbose than hand writing them.
-> It also improves the semantic.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Il 14/04/23 20:30, Markus Elfring ha scritto:
+> Date: Fri, 14 Apr 2023 20:07:01 +0200
+> 
+> The address of a data structure member was determined before
+> a corresponding null pointer check in the implementation of
+> the function “vdec_vp9_slice_single_decode”.
+> 
+> Thus avoid the risk for undefined behaviour by moving the assignment
+> for the variable “pfc” behind some condition checks.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Fixes: b0f407c19648ae9110c932c91d6e1b9381ec0aeb ("media: mediatek: vcodec: add vp9 decoder driver for mt8186")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
