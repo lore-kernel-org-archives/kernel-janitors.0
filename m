@@ -2,81 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B40C77B76
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 08:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A692C77B77
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 10:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230491AbjDQIFl (ORCPT
+        id S231220AbjDQKDm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 04:05:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51116 "EHLO
+        Mon, 17 Apr 2023 06:03:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230430AbjDQIFk (ORCPT
+        with ESMTP id S230476AbjDQKDR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 04:05:40 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5926D1BF;
-        Mon, 17 Apr 2023 01:05:39 -0700 (PDT)
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B160BDE6;
-        Mon, 17 Apr 2023 10:05:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1681718733;
-        bh=mo5Aedmwo7B/5nq+EOr9wBxYL7ukqoSB5JP37ZRi/wQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ZrNfc7d2g05GOS/efqpXBEHL5CjqhcFXWku5y8mPUBG7LmtOLxPdIGOZfjdY9BFTD
-         EO7bGfUiWhjLDWXeu/7gZ1UL46XlGl+4mFiSFHLuKXTQTutwrh537rJ+XpoQg+OA18
-         rLb8dsNH+tszbXw839lo7QIb5rRI6AbvQ1+pIbIQ=
-Message-ID: <bc48ef67-dbe2-47c8-4bb9-854bcab5c168@ideasonboard.com>
-Date:   Mon, 17 Apr 2023 09:05:34 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] media: ov5693: Simplify an error message
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Daniel Scally <djrscally@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Mon, 17 Apr 2023 06:03:17 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F5493FF;
+        Mon, 17 Apr 2023 03:02:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681725742; x=1713261742;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zvjET+jzN2hNNHCvxTti35dlNkZroCmFXuHR9aPW1gI=;
+  b=d9+LbDgnJhUHfWqjZF5yVFetvIHM/Ihq1xGZHA+pnjUnbvonETVA77bj
+   E4PItE065HZBiAZ622sbqvG7T2gH+89SoJaGf7PHZM7otcQN/D/Ef/0Y4
+   NHnvhKimoeB3kyetqpl93edeXJq78wsqzv8HPcjLKKQdFAHBClRh13xGt
+   wuALpAOk45shKkY38w1c6xRWPPtxN0vJ+xonoPEqa9iPz04CTasaDx0Ad
+   V1OZkGQ7k5qeEO21GgG70Sb3J0SXHm1NsrX+pPfFgGa6Izd3nOmZd1Z0i
+   /p63mOx+Pxf1M67oVRixF84DmAksSxiqhRrL7DZeP3Ib9mu3/94wQXExj
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10682"; a="329019079"
+X-IronPort-AV: E=Sophos;i="5.99,203,1677571200"; 
+   d="scan'208";a="329019079"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2023 03:00:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10682"; a="759894444"
+X-IronPort-AV: E=Sophos;i="5.99,203,1677571200"; 
+   d="scan'208";a="759894444"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2023 03:00:17 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+        by kekkonen.fi.intel.com (Postfix) with SMTP id 8BBE012227A;
+        Mon, 17 Apr 2023 13:00:14 +0300 (EEST)
+Date:   Mon, 17 Apr 2023 13:00:14 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-media@vger.kernel.org
-References: <928f2f70de241d0fa66801b46d736ad0f881eb72.1681576102.git.christophe.jaillet@wanadoo.fr>
-From:   Dan Scally <dan.scally@ideasonboard.com>
-In-Reply-To: <928f2f70de241d0fa66801b46d736ad0f881eb72.1681576102.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] media: i2c: imx296: Fix error handling while reading
+ temperature
+Message-ID: <ZD0YrkVOoxPL7TrB@kekkonen.localdomain>
+References: <827f94730c85b742f9ae66209b383a50ca79ec43.1681683246.git.christophe.jaillet@wanadoo.fr>
+ <20230417053059.GC28551@pendragon.ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230417053059.GC28551@pendragon.ideasonboard.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe
+Hi Laurent,
 
-On 15/04/2023 17:28, Christophe JAILLET wrote:
-> dev_err_probe() already display the error code. There is no need to
-> duplicate it explicitly in the error message.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+On Mon, Apr 17, 2023 at 08:30:59AM +0300, Laurent Pinchart wrote:
+> Hi Christophe,
+> 
+> Thank you for the patch.
+> 
+> On Mon, Apr 17, 2023 at 12:14:42AM +0200, Christophe JAILLET wrote:
+> > If imx296_read() returns an error, its returned value is a negative value.
+> > But because of the "& IMX296_TMDOUT_MASK" (i.e. 0x3ff), 'tmdout' can't be
+> > negative.
+> > 
+> > So the error handling does not work as expected and a wrong value is used
+> > to compute the temperature.
+> > 
+> > Apply the IMX296_TMDOUT_MASK mask after checking for errors to fix it.
+> > 
+> > Fixes: cb33db2b6ccf ("media: i2c: IMX296 camera sensor driver")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Dan Carpenter has submitted the same fix in
+> https://lore.kernel.org/linux-media/Y%2FYf19AE78jn5YW7@kili/. Sakari,
+> could you please pick it up ?
 
+Oops, thanks for notifying me. This slipped from my hands somehow. It's in
+my tree now.
 
-Thanks for the patch:
-
-
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-
->   drivers/media/i2c/ov5693.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/i2c/ov5693.c b/drivers/media/i2c/ov5693.c
-> index e3c3bed69ad6..d23786afd754 100644
-> --- a/drivers/media/i2c/ov5693.c
-> +++ b/drivers/media/i2c/ov5693.c
-> @@ -404,8 +404,8 @@ static int ov5693_read_reg(struct ov5693_device *ov5693, u32 addr, u32 *value)
->   	ret = i2c_transfer(client->adapter, msg, 2);
->   	if (ret < 0)
->   		return dev_err_probe(&client->dev, ret,
-> -				     "Failed to read register 0x%04x: %d\n",
-> -				     addr & OV5693_REG_ADDR_MASK, ret);
-> +				     "Failed to read register 0x%04x\n",
-> +				     addr & OV5693_REG_ADDR_MASK);
->   
->   	*value = 0;
->   	for (i = 0; i < len; ++i) {
+-- 
+Sakari Ailus
