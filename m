@@ -2,94 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A692C77B77
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 10:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CFBC77B72
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 10:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231220AbjDQKDm (ORCPT
+        id S229894AbjDQKet (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 06:03:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34978 "EHLO
+        Mon, 17 Apr 2023 06:34:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230476AbjDQKDR (ORCPT
+        with ESMTP id S230425AbjDQKer (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 06:03:17 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F5493FF;
-        Mon, 17 Apr 2023 03:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681725742; x=1713261742;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zvjET+jzN2hNNHCvxTti35dlNkZroCmFXuHR9aPW1gI=;
-  b=d9+LbDgnJhUHfWqjZF5yVFetvIHM/Ihq1xGZHA+pnjUnbvonETVA77bj
-   E4PItE065HZBiAZ622sbqvG7T2gH+89SoJaGf7PHZM7otcQN/D/Ef/0Y4
-   NHnvhKimoeB3kyetqpl93edeXJq78wsqzv8HPcjLKKQdFAHBClRh13xGt
-   wuALpAOk45shKkY38w1c6xRWPPtxN0vJ+xonoPEqa9iPz04CTasaDx0Ad
-   V1OZkGQ7k5qeEO21GgG70Sb3J0SXHm1NsrX+pPfFgGa6Izd3nOmZd1Z0i
-   /p63mOx+Pxf1M67oVRixF84DmAksSxiqhRrL7DZeP3Ib9mu3/94wQXExj
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10682"; a="329019079"
-X-IronPort-AV: E=Sophos;i="5.99,203,1677571200"; 
-   d="scan'208";a="329019079"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2023 03:00:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10682"; a="759894444"
-X-IronPort-AV: E=Sophos;i="5.99,203,1677571200"; 
-   d="scan'208";a="759894444"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2023 03:00:17 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-        by kekkonen.fi.intel.com (Postfix) with SMTP id 8BBE012227A;
-        Mon, 17 Apr 2023 13:00:14 +0300 (EEST)
-Date:   Mon, 17 Apr 2023 13:00:14 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: imx296: Fix error handling while reading
- temperature
-Message-ID: <ZD0YrkVOoxPL7TrB@kekkonen.localdomain>
-References: <827f94730c85b742f9ae66209b383a50ca79ec43.1681683246.git.christophe.jaillet@wanadoo.fr>
- <20230417053059.GC28551@pendragon.ideasonboard.com>
+        Mon, 17 Apr 2023 06:34:47 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA5810D3;
+        Mon, 17 Apr 2023 03:33:48 -0700 (PDT)
+Received: from [IPV6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2] (unknown [IPv6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A640666031ED;
+        Mon, 17 Apr 2023 11:33:28 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1681727609;
+        bh=QLUjIbjUcIOPLd9/HNG4iW89fNegx9KVDgzv+yvDcyc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=nzL9QRipUXU73q1MTpw4f0qNFUAEmxqXqnKReO2VZRRPU/UQbLY+1yMKYB+055EVV
+         A4CotFWYXRtiMBoTmYh2vHXmH3vV14lK1xbyLZfa21JjVThxkQ9Ytu7lbAcFQLiwUQ
+         L1olJSx9osoYRbn9/Zz0gdcPc+M8J7K22qqgFh2Qg+tq8Jbbm+azGr7psJg7mTW1El
+         KV/DQioS4fiI/BJBNXuLa8zkdAn6aRwZ3F1q2+Sp8wLvfQvXkgRZWt8qNNkPTbkwVc
+         9BuUSqtvxZwhgG7fjBdVlYhKiZr6eiGNVmjCRUQssId8F6tNdEwZIY/ZWM9qi3b21j
+         TSJLDgx0Qv8gA==
+Message-ID: <eba25ba2-0815-4461-416f-6b5ae5d5e5a2@collabora.com>
+Date:   Mon, 17 Apr 2023 12:33:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230417053059.GC28551@pendragon.ideasonboard.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH] soc: qcom: ramp_controller: Fix an error handling path in
+ qcom_ramp_controller_probe()
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <84727a79d0261b4112411aec23b553504015c02c.1681684138.git.christophe.jaillet@wanadoo.fr>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <84727a79d0261b4112411aec23b553504015c02c.1681684138.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Laurent,
-
-On Mon, Apr 17, 2023 at 08:30:59AM +0300, Laurent Pinchart wrote:
-> Hi Christophe,
+Il 17/04/23 00:29, Christophe JAILLET ha scritto:
+> 'qrc' is known to be non-NULL at this point.
+> Checking for 'qrc->desc' was expected instead, so use it.
 > 
-> Thank you for the patch.
-> 
-> On Mon, Apr 17, 2023 at 12:14:42AM +0200, Christophe JAILLET wrote:
-> > If imx296_read() returns an error, its returned value is a negative value.
-> > But because of the "& IMX296_TMDOUT_MASK" (i.e. 0x3ff), 'tmdout' can't be
-> > negative.
-> > 
-> > So the error handling does not work as expected and a wrong value is used
-> > to compute the temperature.
-> > 
-> > Apply the IMX296_TMDOUT_MASK mask after checking for errors to fix it.
-> > 
-> > Fixes: cb33db2b6ccf ("media: i2c: IMX296 camera sensor driver")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Dan Carpenter has submitted the same fix in
-> https://lore.kernel.org/linux-media/Y%2FYf19AE78jn5YW7@kili/. Sakari,
-> could you please pick it up ?
+> Fixes: a723c95fa137 ("soc: qcom: Add Qualcomm Ramp Controller driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Oops, thanks for notifying me. This slipped from my hands somehow. It's in
-my tree now.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
--- 
-Sakari Ailus
+
+
