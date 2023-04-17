@@ -2,103 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E53C77B77
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 05:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73827C77B72
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 06:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbjDQFl4 (ORCPT
+        id S230175AbjDQGv0 convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 01:41:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33538 "EHLO
+        Mon, 17 Apr 2023 02:51:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbjDQFlz (ORCPT
+        with ESMTP id S229664AbjDQGvY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 01:41:55 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 779BB186
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 22:41:52 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id oHcbphe3Z7JnhoHcbpmzfe; Mon, 17 Apr 2023 07:41:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681710110;
-        bh=sEYIqrDOhNyLMdiTxKCtoht7+kSYTCD6ktbTcZil0+w=;
-        h=From:To:Cc:Subject:Date;
-        b=h2icvuNGfnX0QFaJHHSig4FFCB1cMfbshNi5NVWSETKCWjW7O0rhH0azthFF/3hkw
-         axbW6bIUYO+SF1H2FyEhzrK++EBFeXGh6U1SQOD/dY3EqdS6+CxIwDJJEgg9Di0mN2
-         nGGnN7Sa4doqgnfNtRe1bFDO0odjWP3mAgWSoUdLPLh4bwW+tHW3uOXcHiwtnsgHkD
-         sh4ll6TNiyPjV7s47pFc7seP9HdZvUEhQCZcO01FjlB8gOL4AmMUfxNEFqN7ua3ILT
-         aGp5uz3PPjwfl+aUdL12Mpm7C15qj5BGbINA33NSqMprWi4kabhMLhTQALl7vbqdai
-         xKGyt5f0R1GVA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 Apr 2023 07:41:50 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH] ALSA: hda/hdmi: Remove some dead code
-Date:   Mon, 17 Apr 2023 07:41:48 +0200
-Message-Id: <91a31341f32d493bcc6c4515178ce0755ac1aa70.1681710069.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 17 Apr 2023 02:51:24 -0400
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D151729;
+        Sun, 16 Apr 2023 23:51:22 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id v9so4155784ybm.0;
+        Sun, 16 Apr 2023 23:51:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681714282; x=1684306282;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zJYvk4q6mS1dys9tzSECyNKgl5eo32ZFDWFyFDVmtjY=;
+        b=RnfTbd5H6dkXV/mD0ZC8t7VCAp3goMQ4x2Y2lM9+rkKsORuuiAzFzBciWsSjf/VIRk
+         Nl8kLE5IA2czObaDz1xq6jAkf8BE3ZgjpgXvXB07sFKIBr2neTfqlo9Lr0nnE7W7IHrG
+         j/78yhiNMtKN6zsuRalRifaXLwiSECwx5mehGhgmJXo+gC1DJpTqub1+ZrXIdAfmoW9+
+         7qtUdKcx1kFIEvrEiSiBdzGxJZ550MiqOcNSTz2fRiRKe9xHXxqm8vbhtKI0BJ3/0pbF
+         V4aKgud6uwJt0UeQkd6PJYrLN+siLcFhbi8Js1569vRLc3mcLbqCB7IvEZMzAWgjiw67
+         SwWg==
+X-Gm-Message-State: AAQBX9dLPOP70CSqof+xRIVUXV7nw8Xn+BX24/7hPKhbkTATbhCfMG/w
+        vKEMQgAyyhgQsNrGV3PI0sltyJVx2wy2fg==
+X-Google-Smtp-Source: AKy350YWz1jv13TTchreG9vqWHZmwbICSJh68YwLDY7uSb4o+t5DST05ed+03H29pUqLJq5vIrAo0A==
+X-Received: by 2002:a05:6902:114d:b0:b8f:384b:4f83 with SMTP id p13-20020a056902114d00b00b8f384b4f83mr15847354ybu.33.1681714282007;
+        Sun, 16 Apr 2023 23:51:22 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id h82-20020a252155000000b00b8d65899d76sm2826046ybh.47.2023.04.16.23.51.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Apr 2023 23:51:21 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-54fbb713301so165320867b3.11;
+        Sun, 16 Apr 2023 23:51:21 -0700 (PDT)
+X-Received: by 2002:a81:b71c:0:b0:54f:b931:adf7 with SMTP id
+ v28-20020a81b71c000000b0054fb931adf7mr9260584ywh.4.1681714281276; Sun, 16 Apr
+ 2023 23:51:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 17 Apr 2023 08:51:10 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXGgxYubHe7dcJgLa9gsZdvPdOdpBUh1ppMnJbc=VTj+Q@mail.gmail.com>
+Message-ID: <CAMuHMdXGgxYubHe7dcJgLa9gsZdvPdOdpBUh1ppMnJbc=VTj+Q@mail.gmail.com>
+Subject: Re: [PATCH RESEND] sh: sq: Use the bitmap API when applicable
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-These snd_BUG_ON() can never trigger, so just remove them to save a few
-LoC.
+On Sun, Apr 16, 2023 at 9:10 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> Using the bitmap API is less verbose than hand writing them.
+> It also improves the semantic.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative. Maybe the other "if"s should be removed and the
-error code returned instead.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I chose to remove these ones and the corresponding error code, because it
-seems that it is already handled this way in hdmi_pcm_open().
+Gr{oetje,eeting}s,
 
-I don't know the code enough, so it is only my guess.
+                        Geert
 
-Review with care :)
----
- sound/pci/hda/patch_hdmi.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
-index 5c6980394dce..ee051bdfaff6 100644
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -2104,10 +2104,6 @@ static int generic_hdmi_playback_pcm_prepare(struct hda_pcm_stream *hinfo,
- 		goto unlock;
- 	}
- 
--	if (snd_BUG_ON(pin_idx < 0)) {
--		err = -EINVAL;
--		goto unlock;
--	}
- 	per_pin = get_pin(spec, pin_idx);
- 
- 	/* Verify pin:cvt selections to avoid silent audio after S3.
-@@ -2199,13 +2195,13 @@ static int hdmi_pcm_close(struct hda_pcm_stream *hinfo,
- 		snd_hda_spdif_ctls_unassign(codec, pcm_idx);
- 		clear_bit(pcm_idx, &spec->pcm_in_use);
- 		pin_idx = hinfo_to_pin_index(codec, hinfo);
-+		/*
-+		 * In such a case, return 0 to match the behavior in
-+		 * hdmi_pcm_open()
-+		 */
- 		if (pin_idx < 0)
- 			goto unlock;
- 
--		if (snd_BUG_ON(pin_idx < 0)) {
--			err = -EINVAL;
--			goto unlock;
--		}
- 		per_pin = get_pin(spec, pin_idx);
- 
- 		if (spec->dyn_pin_out) {
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
