@@ -2,89 +2,114 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46024C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 17:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED0FC77B7A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 18:15:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231171AbjDQRxa (ORCPT
+        id S229884AbjDQSPt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 13:53:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47066 "EHLO
+        Mon, 17 Apr 2023 14:15:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjDQRx0 (ORCPT
+        with ESMTP id S229652AbjDQSPr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 13:53:26 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3C5E40FC;
-        Mon, 17 Apr 2023 10:53:25 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-2f86ee42669so1678053f8f.2;
-        Mon, 17 Apr 2023 10:53:25 -0700 (PDT)
+        Mon, 17 Apr 2023 14:15:47 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEEAABF
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 11:15:46 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f08b6a9f8aso235425e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 11:15:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681754004; x=1684346004;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nq+GSUtY07nXKsb+LMvbAc04Nto3jy5+/BqE9bmMBQw=;
-        b=mLyDT106lgI3JkUxXqjXu/14cLoANqEm7VF6qqd1J4CAX0FwyL5K1AKUKNcU81exNt
-         By7q8Rly/BNhyhoIsCH2Wv1g5BfttWZ96eudEoefNGpjtsqFbJH8qj0SFzTc+lxlzncS
-         PSVMG9Puqz/9m+ztFyX6E9N95rpfZ3KMMlpDEV6uDt/aReVscBXL8NaX0GnTeL3BVzzy
-         xDnm68Zguj6VuDIN/UJndbgzxQ+W2y0qf0NU3N2KfYksX47NqDPiDncGF+ercpFPlfpg
-         aofEHe/10YhE8PV4s1P7+LFguVg9m/KbljMveSkV7knjYQE9qtDpNb1e0eASnWUNqDuf
-         iIjw==
+        d=google.com; s=20221208; t=1681755345; x=1684347345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5i2Qp6Zr5XsS0CkLKra0Q0zJ95GqTdwX7aDuJtPt47E=;
+        b=hxWA9n7SM3eZcOdOSnHgGTaqGBDH8UEf70WwoLwr1I8nnzudNiiaPLEBEKZP/EgVmO
+         cBgI4FJskvQqjHLE3HU8qgn7XmNrhCIn4NmzFYXVE1vymztu2q4yNPJc6ZFCyETC01hH
+         L8Bk6iDtrvZTP6CqOg9KBs/aqshbI15/8Wd4roF0iC74lSu6VllAZdEReERLYUB8hnur
+         bSBF6E9E5M71Ur6ocP2kCdIiJvQwSkA06ucqTPs1NjutznFAShVKXOJvYDFzhvb7FbWB
+         plQuW2swiXwqxSUZdU1hPlTrrkYh2TYfLyP20/5qRgFCkbJpAfdXYTmCYB6u6tCFDxVX
+         YyIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681754004; x=1684346004;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nq+GSUtY07nXKsb+LMvbAc04Nto3jy5+/BqE9bmMBQw=;
-        b=lwUEmse2ykj7n+HEexfeeNCQcbdd8+9MnOxk3FJ2fzyJhw4Kz5G8DjNNLUL/qut1cR
-         /ZhDsa+QbG38z8bDNZoplXUrzbFkeqlysFmwROMpJkHPsjc8I4IjIJpygpDD3KvS4gK9
-         VetxyDLGs5TaOUCPPSPSeIr8Hwa87vIUG0miJWPz8ozF2UTdVGccYg1rD3vCSyWZHUy9
-         cqDUxTqT2Mr/JQYAvFTDYDCVSXOn1H2xFnu75b/v0kyGqtjLvtBELoG7zhIxCxbweAwI
-         XF6n7L+TaN5JZ5uERvQcJ56g8Bp+acsW3+5EV6FqMLKF2sPzJ0VmBoU1N7rWDC6ODDgv
-         rZsA==
-X-Gm-Message-State: AAQBX9d2BhvNf6JhohpJ1qVVyxw6VuCgra00I09Mgrallm8WrzgE9xga
-        YXo0SrANMAOr6ETLBShFzZg=
-X-Google-Smtp-Source: AKy350aXL5MEyc8XH2SRgcbhu00laZ9yC3vGnqTeUfzCrN0M+96kfkxOMmGkTnf64AeqE1qVhFrcfw==
-X-Received: by 2002:a05:6000:1049:b0:2f5:ae53:f558 with SMTP id c9-20020a056000104900b002f5ae53f558mr6896797wrx.31.1681754003931;
-        Mon, 17 Apr 2023 10:53:23 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v11-20020a5d678b000000b002fa834e1c69sm3011658wru.52.2023.04.17.10.53.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 10:53:23 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] KVM: selftests: Fix spelling mistake "miliseconds" -> "milliseconds"
-Date:   Mon, 17 Apr 2023 18:53:22 +0100
-Message-Id: <20230417175322.53249-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        d=1e100.net; s=20221208; t=1681755345; x=1684347345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5i2Qp6Zr5XsS0CkLKra0Q0zJ95GqTdwX7aDuJtPt47E=;
+        b=f+alHAhq0gghn9H77JgMpgGta9jsn+NpdJ/ivnTLknAvpIm4dGW2zNYE2xktHp1LYV
+         xZ9tQpjBFYqS+zbeXzMzIu/JbRrzPf9rEFyF92WMGfz7K7mkjruj750nKuoWWujELRT5
+         p5v6er/gKjw0LXaVK7wuKe8+zFExrKRUMgorxkBZZsguKFnTBuB16LGDjM7sRJoVAxoh
+         yXX+ueGNyvigKk14N/Ziwe4bAtZVcJnrxPb9lgBFILEfaCl3nWA1FOL6jc7/wNpe0ghp
+         RCLJmWno+r3yAWNwVuztrDnflEmL/8+2KRD4C7CepCLXCgaLZkC1u402pxN9Fdjecnir
+         VHMQ==
+X-Gm-Message-State: AAQBX9eYDmffJp4dwOgbsh1F0PER6Z+F+mBhKHD0Uu5Ut7VPGCxmyedG
+        fRoMIeGEJO8FgAGWZWri8Cl/DY+3y8aOB2M5qVQ+1A==
+X-Google-Smtp-Source: AKy350bKF8wLcEzplp4odtufmBi5eHxdPS6L+IFSKj8xFo7s1pmhW8Xqpb36IJ5eB1bmgLlXSrN8lfj63F/vNGJ7KgE=
+X-Received: by 2002:a05:600c:4e03:b0:3f0:9ff0:3b1c with SMTP id
+ b3-20020a05600c4e0300b003f09ff03b1cmr16042wmq.2.1681755345051; Mon, 17 Apr
+ 2023 11:15:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230417174826.52963-1-colin.i.king@gmail.com>
+In-Reply-To: <20230417174826.52963-1-colin.i.king@gmail.com>
+From:   Ian Rogers <irogers@google.com>
+Date:   Mon, 17 Apr 2023 11:15:31 -0700
+Message-ID: <CAP-5=fV2Lb33hf9o+HcErYn=SuLmy3smkeOoDy6BnX5-w=SYtQ@mail.gmail.com>
+Subject: Re: [PATCH][next] perf script: task-analyzer: Fix spelling mistake
+ "miliseconds" -> "millseconds"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Petar Gligoric <petar.gligoric@rohde-schwarz.com>,
+        Hagen Paul Pfeifer <hagen@jauu.net>,
+        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the help for the -p option. Fix it.
+On Mon, Apr 17, 2023 at 10:48=E2=80=AFAM Colin Ian King <colin.i.king@gmail=
+.com> wrote:
+>
+> There is a spelling mistake in the help for the --ms option. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Seems like a similar fix is needed to the patch Subject of
+"millseconds" :-) Other than that:
+Acked-by: Ian Rogers <irogers@google.com>
 
-diff --git a/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c b/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
-index 251794f83719..7f36c32fa760 100644
---- a/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
-@@ -226,7 +226,7 @@ static void help(char *name)
- 	puts("");
- 	printf("usage: %s [-h] [-p period_ms] [-t token]\n", name);
- 	puts("");
--	printf(" -p: The NX reclaim period in miliseconds.\n");
-+	printf(" -p: The NX reclaim period in milliseconds.\n");
- 	printf(" -t: The magic token to indicate environment setup is done.\n");
- 	printf(" -r: The test has reboot permissions and can disable NX huge pages.\n");
- 	puts("");
--- 
-2.30.2
+Thanks,
+Ian
 
+> ---
+>  tools/perf/scripts/python/task-analyzer.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/scripts/python/task-analyzer.py b/tools/perf/scri=
+pts/python/task-analyzer.py
+> index 52e8dae9b1f0..3f1df9894246 100755
+> --- a/tools/perf/scripts/python/task-analyzer.py
+> +++ b/tools/perf/scripts/python/task-analyzer.py
+> @@ -114,7 +114,7 @@ def _parse_args():
+>          "--ns", action=3D"store_true", help=3D"show timestamps in nanose=
+conds"
+>      )
+>      parser.add_argument(
+> -        "--ms", action=3D"store_true", help=3D"show timestamps in milise=
+conds"
+> +        "--ms", action=3D"store_true", help=3D"show timestamps in millis=
+econds"
+>      )
+>      parser.add_argument(
+>          "--extended-times",
+> --
+> 2.30.2
+>
