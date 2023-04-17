@@ -2,156 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E74BC77B70
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 11:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93242C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 16:26:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230239AbjDQL3O (ORCPT
+        id S230089AbjDQQ0P (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 07:29:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
+        Mon, 17 Apr 2023 12:26:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230185AbjDQL3H (ORCPT
+        with ESMTP id S229602AbjDQQ0L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 07:29:07 -0400
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on20609.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe16::609])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03B1E7683;
-        Mon, 17 Apr 2023 04:28:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hdSVjlC8tne4FsyVG71P2eWZRlvddfscE5pT494/MpaMOqS1AEoF1M2IdQ1mrKOa0M1trSKzF2j/flxVP2IalS1EyvOIg3U9aklRZOsp8w+rlOb1TeGTpm0j4c9M04Iy0nvUqFMkyWu+Yafhj5GIP85xuBRbXApsCQ9AkXSv9Ks6kb0ICd8agQpSxYk7FWx20OloKZVfHHqzazvUp5BcVYbFMKh6tE8biOxgOswHt1O2jXzJSja60oe/b/BqGzyeVUK5hfbmI+BdRqXG/78DDZe5pYvYSxSXNYyyyGvS4CUkqahsJd1hmKvbCKVS3/v42JJSQ9FmsR7ZhVvCtQzzSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dc+y43GbovzjVbicJR3poCkcfjapDAnNMoaUGiQ0GKM=;
- b=EhpmtujTfqANholESUtWcjw5OF/QqnBUykEf2Vqu4NNv6bjLpxF21pH9OA+Z1P1J1oiSKRRvegnlE2Ta/6o4JBFogzUyXGS+N2fKcoK+hdjtFdPKKcS7GOJv8V2L0oeq1H1tYOFcr2mmxH9U889UYE0YDTQL/a5Na+3fvfRt2RjuR37AnK/HytLPUcutiNtUaKp9e31QNAHQi8zBrHNl1opL+jGP84spbL8yGcZ+UKTKxrUnILlBVIPVZ0p7vPfV7wIkbbGfW5dbYu3MhwZ6KBXCg0Gw2u0R1wtkqVy1+fzJrcScaFc6w4NZ1tAfQpbSNgdDhNez14PLuiP185zeOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dc+y43GbovzjVbicJR3poCkcfjapDAnNMoaUGiQ0GKM=;
- b=lLb7P13CFjkoGWOHJ5iWaf3Fdj14qeLlJU0P/dNzYe91z166fproFGhRJn1gwSL62IPL4B85/9gmuImAVFOuIzQgGgUuXZxnoa/L/O9DBMktNNpgfrrTOVwvS4veICpp1bb9v4Jql35q2jctG9okWv4B6knHvHJPQfbDOx2reyc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
- by GVXPR04MB9928.eurprd04.prod.outlook.com (2603:10a6:150:117::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.30; Mon, 17 Apr
- 2023 11:27:08 +0000
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::b6a5:b35f:94f8:ff53]) by DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::b6a5:b35f:94f8:ff53%8]) with mapi id 15.20.6298.045; Mon, 17 Apr 2023
- 11:27:08 +0000
-Message-ID: <55bd4292-7abf-dee1-9ce3-94dfb5b4b19a@nxp.com>
-Date:   Mon, 17 Apr 2023 14:27:05 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH] ASoC: fsl: Simplify an error message
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-References: <c167c16a535049d56f817bbede9c9f6f0a0f4c68.1681626553.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-In-Reply-To: <c167c16a535049d56f817bbede9c9f6f0a0f4c68.1681626553.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR07CA0014.eurprd07.prod.outlook.com
- (2603:10a6:208:ac::27) To DU2PR04MB8774.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::21)
+        Mon, 17 Apr 2023 12:26:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E734E53
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 09:25:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681748728;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xTTtRzBVTjjwCLzyfJV4ohTaunXWOeVeAb2RjGQ5vZ8=;
+        b=JPovfLpN6rsP36yHVJEseLbPND/Rb4f60TGA+sbCElNCvXgczjhmY3Au4GUZ9gKYD6V0iC
+        /mfJ6JhfS8RXbc1nGtdOHsi3ZlWdOeskBVI5crmfzZ22/xk+p/eTXEB5QK9LqliWnpXN2E
+        M9gB6sspjvxzIOQVT7rDMt88oXtrkLY=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-395-CQvSvsKjOyyKVQ5F_juVzA-1; Mon, 17 Apr 2023 12:25:27 -0400
+X-MC-Unique: CQvSvsKjOyyKVQ5F_juVzA-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-4edb884cdc2so581694e87.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 09:25:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681748725; x=1684340725;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xTTtRzBVTjjwCLzyfJV4ohTaunXWOeVeAb2RjGQ5vZ8=;
+        b=DnIwxe503RhUk2g8CGWQ7DrBKt2ynqnNK8qP6lGF4i3IsGrXjONblKH/tM5x4hW4Le
+         4u9d6OcN709cQ2Td7QtxN/S+qf5wUVhwwNuNr+fAZtdNO4VO54s7lvZbbXlBhPi23t/9
+         qQsA6yFNkC1PUhemLUH3mYZvIvnhGE+Qp22DWngl1Vq3PWLr3QUN6ZP9HLRSLDJ8sS3q
+         HKlwgBcTyAKhi1WmS3vJh6hxFBANjNKZwOG0IzfytWKJWwP8AnhOVdhKPrhZz0GRnt4D
+         v04J+2Hg6TdZMyr9AtGnFaeyer9bX66oq7Wm6ZGLPn+H8h99/bZ9eBm3AIdj/b8MUdgU
+         iC0Q==
+X-Gm-Message-State: AAQBX9fqjQyv6hp0Cm5oU2Z8X7twHjc1XTj0absvP+e74poYwzwrVx8j
+        eBGUs/dAI+7mRIQ20qozOw5L+aozWiaeF5w/3p60d4p3dFehDPf/Ol2cvnZpcHNfmnNTgetDi4V
+        w1AKt7MYsfWTFOTso6I4jJg2naicKKq6WU1rOaDK7NCG0
+X-Received: by 2002:ac2:5dea:0:b0:4ec:e32f:3d1f with SMTP id z10-20020ac25dea000000b004ece32f3d1fmr2308544lfq.11.1681748725394;
+        Mon, 17 Apr 2023 09:25:25 -0700 (PDT)
+X-Google-Smtp-Source: AKy350Y+bsYZfdQ0YbXRNUdAiXrEC617Co8M6Ae9OYtGyQ7Z0JTehg+Oxteoxe+dPaIDFHLfU5sWj8/W0mxSAgomtgA=
+X-Received: by 2002:ac2:5dea:0:b0:4ec:e32f:3d1f with SMTP id
+ z10-20020ac25dea000000b004ece32f3d1fmr2308529lfq.11.1681748725093; Mon, 17
+ Apr 2023 09:25:25 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|GVXPR04MB9928:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3a9479c0-0d5b-4ef3-4aa4-08db3f36ae3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NipD/ATflIMs9/bZgxMmfDesn6w0DoQVnbpXEN8qveM6gd+rqdroBQUpmZOEM7T8ACD6stfdYk7UkXMx8ETRfjSju7kowLMbFMnqMn6IsKHKneIQzLJAvGmsqJGknt2cWLV55XayV+6T2VT191njcOEa45DjItPGcRcMacN6MXSK1GUpaTrQPd77HsbvjlVY+gMpvZ+d7esR4kYZBVCiRqdYeJrZD6y8bOq9ALCiYo3DYFi/V7MudMlZmsIXuDFt3NrYBAwTKpmwMj+kw8semNxayF+xZf2NSTFNXhWcxfkixMco8HOoBXAp95+Ya1kGldt9NtxLdKE7GoxhDAf86yeiHvWSlkJnL5MB/+p5zGfMQq4AMQncPslW3s1kiEUccTBTWPRBM2oxAUQis1VGo4crQO6FdRaYq7Bl0wKVyzgyiMGGj9cTkdGmdFafjyXv7ZBenDjmPTITe3x6JgHgxX0EDC2d7K0osqW/6Oyu+vQbnWSrdxIETNNkhx2EOoYt5MpN+Vy5YHFRyjGqZUrqOpuSlidBKrowFUmC+TqpMMs0HNno9s0GAFnFwIyQk4IbqaJwOlEA0c4N1DXQx4gMfbIU4zNMG9HlR7JXyC2lvZ6+WwAvr0kHjhrnK5VhD2IA1229mrsaX6GXuzUaq+HAAg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(136003)(376002)(396003)(346002)(451199021)(4326008)(66556008)(66946007)(66476007)(110136005)(316002)(8676002)(8936002)(7416002)(44832011)(5660300002)(41300700001)(4744005)(2906002)(38100700002)(15650500001)(6512007)(6506007)(53546011)(55236004)(26005)(186003)(36756003)(83380400001)(86362001)(31686004)(2616005)(478600001)(31696002)(6666004)(6486002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NVplQXN1Ui9RVWxVcVp6TERIQjdHczl1L1czdlJGUmoxZURsbEg0ckx4RFFO?=
- =?utf-8?B?QzRFM3czYlRjRGhnSmphbUhiMTl3OVZmWE9mSmpKQURoeXNhYWtkUkwyYlNZ?=
- =?utf-8?B?KzE3bmZjUXpmQURLQjhzNnhtMW00RjdybWplY0ovNmp1Y3dVZlMrL290bGtr?=
- =?utf-8?B?eUx4c0cyUGs3aFMwN04vK1VFamtqZCtBenJERTQ4eklreFBHUGpFbTU2MnJG?=
- =?utf-8?B?SnRWZjFCYnFiVFNNSkw5eXRtK1l3bXZ0WEUzWmk0SjJ0U092M3pON3JqR1o4?=
- =?utf-8?B?ZGlBS3RTeVlwTzRheDYzRThKN3V2bzBoZ09sUUxFM2JzQTNiekxLa3pLaksx?=
- =?utf-8?B?ZTNDOGp6eEpWT1k5cXgyelRHTWdDeWlEcUFTaGt3VFZBVFlQQmNTNHoyQTIv?=
- =?utf-8?B?NjFiSXJOU1dhbkUvWVJNM09KN0FTZlhoOHN4bHhON1RscnRDSWhQSFJCWjJo?=
- =?utf-8?B?andUSzgzKzVydDhFTHMwbFdFb1NpV0dvdk44cXhNT1cyajhxTnA4YUJhMHNh?=
- =?utf-8?B?L0I2QzRoTjF2MkE2U0J6TXpzc0dmOE9sVUlqaFFTRE8yMGZOT2xVcFQvMDVy?=
- =?utf-8?B?N3d5NFF1THE4RE5SY0V6dTMrQ3NRV21pdWdCU2dHenBkTzRRcldweCtueWF0?=
- =?utf-8?B?OEhOV0J1ektRNGgyK1RZaGgxUGxXQkJadHdxc09lb042bUpXdVN5WW1Pb3dL?=
- =?utf-8?B?SjBkdU1QS2xiUlEyU2xhY1dlTnB5MGMyWXVNTEIyais1bVdqNXZHTGtDbllR?=
- =?utf-8?B?REZPR0gxbjJWNVlUeHJ2TXlPaEd3Y01EemdsVUxzaGNweitMMllPVnE3UjA1?=
- =?utf-8?B?dng3SitGY0JkekFta3NTdGQ4N3B0cGlORDU0MWw3a0NhTzhXc0wxd25LV3Nw?=
- =?utf-8?B?Q01pQzNSZDBqbEZxUXY3bUZreUl1SmRPUkw3WUJYRVdUMmNxQys4dnRPMlhi?=
- =?utf-8?B?ajYvV29RSW5QS3dWKzFaNEJOQzNuTStCZ2x5QU1Ga0E0bG9Cemo3eVdYazY0?=
- =?utf-8?B?empxVTJhSVRJZks0ak9SVjBHUmlCTVhWNW9kNk83dHpqMElYUGdyb2FkZlFQ?=
- =?utf-8?B?YU1mUnJ1SHJVMTdXS25oelU3UFdxei94WkhUcU5aK2VURUxGRy9Oamd6eFdH?=
- =?utf-8?B?VGNUOXlpVUdtS0VpaVBMZ1RsYUxpS01PQVJaVjF2SFphNHRSVjkyQVM4Q3lU?=
- =?utf-8?B?Y29QU1YvRmVFVmhLVlpHYllmbzdiWGttMThXVXlkU0lEaWc4YS9tNHo4VDYr?=
- =?utf-8?B?N1VnVnI2NFlzZzZNVzljSVBBS0FRb056TkVhZzJZTk1NSHlpcUJyY2ZEeVFk?=
- =?utf-8?B?K2lxUG5OYnQ3dW5WMTdxcEV5UENjRFpVQzhEcmUrcXZZcGluU09jb1lpd3hE?=
- =?utf-8?B?MDI3bjFpeUFnZkdtS3dZbWlQVkcra3pxN0tSMVNIVkcwd1I1NHZQcEd0ajQr?=
- =?utf-8?B?ektXWHVuK21MWldKd0o4TXc5MEJyVGRnOG1wMHM1WVVhTk1Rd1dMVm4wODNt?=
- =?utf-8?B?V3pOVDZnVEhxZ3lhQlVHVGE1bkxqTWRuVDlQYktlQlN6bVE0TDMxcWFHT0Nm?=
- =?utf-8?B?YlFDdlFwMHREZHE3OHZIS1c1TFl0bXoxMjlPbjROQWlzaCtBRWFFSDFmMEdG?=
- =?utf-8?B?RmwwdGRkVkpIVll1WW82QmNWMXhOdktWZWRLc2E2Nmw3YXlJUWZOdVdhU1JY?=
- =?utf-8?B?dXllaHNodVNLUGsraFB2VzVVN0VTNThvaFk3N1BRNG1zZ1hrNFpIemVQMDdU?=
- =?utf-8?B?c2ZrMEUzTkxmRERacExRN2NkUUxoUUtGQlhsM1orOVRRZTM2U2tDaVpSU3JM?=
- =?utf-8?B?Z3c2cHVya0kzR1RETmhqbEdxNU54eU82ZjZzc1ViVmgrTEZYdzJIMHE3c2Nh?=
- =?utf-8?B?TExQM3dMR3N3MjlBNGNVYndEYXE3UklnRFNTbjZwbGdPR3JiMyswbFppZnhz?=
- =?utf-8?B?b3h3KzYxbnZSQkYwWXBJRkNscFg4OVl0dDNlc2FXeklhbkNaL3dBR05lVTFE?=
- =?utf-8?B?Um9obHVqc1RNOVJrMzQrYkNxQWQxbXM4OFIvOGxkUFNhNjdKRS91YkJTUjY4?=
- =?utf-8?B?T3dWYVhUak1uMEZtWWloZFR0UmlBbC9GUVVZMXl0Tmd6VmpEdHlPWENCZ1Bl?=
- =?utf-8?B?SmdBS2J0M25QVkZ6THlabjlXU2dqSU9yb0x6aWJ6eDdTSGIremVQVVZ4YVNx?=
- =?utf-8?B?eUE9PQ==?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a9479c0-0d5b-4ef3-4aa4-08db3f36ae3a
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2023 11:27:08.8372
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qvXXJISxkiYTLmPuPpMarK7D1plYLPzYH+fckpyHjkTypNVpcMa21jlwJmEBCpiPUuXk00ao5ARgUC+/FXDgJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9928
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de> <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <2a746461-844a-2ad6-7b52-03f13fe1b9bf@web.de>
+In-Reply-To: <2a746461-844a-2ad6-7b52-03f13fe1b9bf@web.de>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Mon, 17 Apr 2023 18:25:13 +0200
+Message-ID: <CACO55ttSoyhgjqMdtiEfhMP1YKFFTZJRXEv17F-WRWPzLF2Uvw@mail.gmail.com>
+Subject: Re: [PATCH 0/9] GPU-DRM-nouveau: Adjustments for seven function implementations
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     kernel-janitors@vger.kernel.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@gmail.com>,
+        Lyude Paul <lyude@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/16/2023 9:29 AM, Christophe JAILLET wrote:
-> dev_err_probe() already display the error code. There is no need to
-> duplicate it explicitly in the error message.
+On Sun, Apr 16, 2023 at 11:30=E2=80=AFAM Markus Elfring <Markus.Elfring@web=
+.de> wrote:
 >
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-
-Thanks,
-Iulia
-
-> ---
->   sound/soc/fsl/fsl-asoc-card.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Date: Sun, 16 Apr 2023 11:22:23 +0200
 >
-> diff --git a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
-> index bffa1048d31e..40870668ee24 100644
-> --- a/sound/soc/fsl/fsl-asoc-card.c
-> +++ b/sound/soc/fsl/fsl-asoc-card.c
-> @@ -858,7 +858,7 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
->   
->   	ret = devm_snd_soc_register_card(&pdev->dev, &priv->card);
->   	if (ret) {
-> -		dev_err_probe(&pdev->dev, ret, "snd_soc_register_card failed: %d\n", ret);
-> +		dev_err_probe(&pdev->dev, ret, "snd_soc_register_card failed\n");
->   		goto asrc_fail;
->   	}
->   
+> Several update suggestions were taken into account
+> from static source code analysis.
+>
+
+Reviewed-by: Karol Herbst <kherbst@redhat.com>
+
+> Markus Elfring (9):
+>   debugfs: Move an expression into a function call parameter
+>     in nouveau_debugfs_pstate_set()
+>   debugfs: Move a variable assignment behind a null pointer check
+>     in nouveau_debugfs_pstate_get()
+>   debugfs: Use seq_putc()
+>     in nouveau_debugfs_pstate_get()
+>   debugfs: Replace five seq_printf() calls by seq_puts()
+>     in nouveau_debugfs_pstate_get()
+>   power_budget: Move an expression into a macro call parameter
+>     in nvbios_power_budget_header()
+>   clk: Move a variable assignment behind a null pointer check
+>     in nvkm_pstate_new()
+>   pci: Move a variable assignment behind condition checks
+>     in nvkm_pcie_set_link()
+>   pci: Move an expression into a function call parameter
+>     in nvkm_pcie_set_link()
+>   therm: Move an assignment statement behind a null pointer check
+>     in two functions
+>
+>  drivers/gpu/drm/nouveau/nouveau_debugfs.c     | 19 ++++++++++---------
+>  .../nouveau/nvkm/subdev/bios/power_budget.c   |  3 +--
+>  .../gpu/drm/nouveau/nvkm/subdev/clk/base.c    |  2 +-
+>  .../gpu/drm/nouveau/nvkm/subdev/pci/pcie.c    |  7 +++----
+>  .../drm/nouveau/nvkm/subdev/therm/fanpwm.c    |  2 +-
+>  .../drm/nouveau/nvkm/subdev/therm/fantog.c    |  2 +-
+>  6 files changed, 17 insertions(+), 18 deletions(-)
+>
+> --
+> 2.40.0
+>
+
