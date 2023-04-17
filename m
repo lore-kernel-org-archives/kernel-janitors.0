@@ -2,96 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D349C77B70
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 05:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E53C77B77
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 05:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbjDQFaz (ORCPT
+        id S229849AbjDQFl4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 01:30:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53432 "EHLO
+        Mon, 17 Apr 2023 01:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjDQFax (ORCPT
+        with ESMTP id S229542AbjDQFlz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 01:30:53 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B33126B8;
-        Sun, 16 Apr 2023 22:30:49 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (133-32-181-51.west.xps.vectant.ne.jp [133.32.181.51])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AF1DB75B;
-        Mon, 17 Apr 2023 07:30:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1681709442;
-        bh=eovj2G78JXYDRcIrgt0oiYQ6nuD4yXkGQthiJoaUxDg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M+6TLzFYs7Qu8jtTZSt3cj4EjETYc6y6Vld85joRJSvPhQP3neSnGZrve8zfxONvR
-         OgALy57ujP5SxzozDU3/ZCKyA1N3NBLPa8EAfzuvJTWtdDOHZht118RYSiZfseQwHO
-         z8q+dGnM+gzmrIbYqsJOqJK4xGkSRct8IA+InNDg=
-Date:   Mon, 17 Apr 2023 08:30:59 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: imx296: Fix error handling while reading
- temperature
-Message-ID: <20230417053059.GC28551@pendragon.ideasonboard.com>
-References: <827f94730c85b742f9ae66209b383a50ca79ec43.1681683246.git.christophe.jaillet@wanadoo.fr>
+        Mon, 17 Apr 2023 01:41:55 -0400
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 779BB186
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 22:41:52 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id oHcbphe3Z7JnhoHcbpmzfe; Mon, 17 Apr 2023 07:41:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+        s=t20230301; t=1681710110;
+        bh=sEYIqrDOhNyLMdiTxKCtoht7+kSYTCD6ktbTcZil0+w=;
+        h=From:To:Cc:Subject:Date;
+        b=h2icvuNGfnX0QFaJHHSig4FFCB1cMfbshNi5NVWSETKCWjW7O0rhH0azthFF/3hkw
+         axbW6bIUYO+SF1H2FyEhzrK++EBFeXGh6U1SQOD/dY3EqdS6+CxIwDJJEgg9Di0mN2
+         nGGnN7Sa4doqgnfNtRe1bFDO0odjWP3mAgWSoUdLPLh4bwW+tHW3uOXcHiwtnsgHkD
+         sh4ll6TNiyPjV7s47pFc7seP9HdZvUEhQCZcO01FjlB8gOL4AmMUfxNEFqN7ua3ILT
+         aGp5uz3PPjwfl+aUdL12Mpm7C15qj5BGbINA33NSqMprWi4kabhMLhTQALl7vbqdai
+         xKGyt5f0R1GVA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 17 Apr 2023 07:41:50 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH] ALSA: hda/hdmi: Remove some dead code
+Date:   Mon, 17 Apr 2023 07:41:48 +0200
+Message-Id: <91a31341f32d493bcc6c4515178ce0755ac1aa70.1681710069.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <827f94730c85b742f9ae66209b383a50ca79ec43.1681683246.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+These snd_BUG_ON() can never trigger, so just remove them to save a few
+LoC.
 
-Thank you for the patch.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is speculative. Maybe the other "if"s should be removed and the
+error code returned instead.
 
-On Mon, Apr 17, 2023 at 12:14:42AM +0200, Christophe JAILLET wrote:
-> If imx296_read() returns an error, its returned value is a negative value.
-> But because of the "& IMX296_TMDOUT_MASK" (i.e. 0x3ff), 'tmdout' can't be
-> negative.
-> 
-> So the error handling does not work as expected and a wrong value is used
-> to compute the temperature.
-> 
-> Apply the IMX296_TMDOUT_MASK mask after checking for errors to fix it.
-> 
-> Fixes: cb33db2b6ccf ("media: i2c: IMX296 camera sensor driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+I chose to remove these ones and the corresponding error code, because it
+seems that it is already handled this way in hdmi_pcm_open().
 
-Dan Carpenter has submitted the same fix in
-https://lore.kernel.org/linux-media/Y%2FYf19AE78jn5YW7@kili/. Sakari,
-could you please pick it up ?
+I don't know the code enough, so it is only my guess.
 
-> ---
->  drivers/media/i2c/imx296.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/imx296.c b/drivers/media/i2c/imx296.c
-> index 4f22c0515ef8..c3d6d52fc772 100644
-> --- a/drivers/media/i2c/imx296.c
-> +++ b/drivers/media/i2c/imx296.c
-> @@ -922,10 +922,12 @@ static int imx296_read_temperature(struct imx296 *sensor, int *temp)
->  	if (ret < 0)
->  		return ret;
->  
-> -	tmdout = imx296_read(sensor, IMX296_TMDOUT) & IMX296_TMDOUT_MASK;
-> +	tmdout = imx296_read(sensor, IMX296_TMDOUT);
->  	if (tmdout < 0)
->  		return tmdout;
->  
-> +	tmdout &= IMX296_TMDOUT_MASK;
-> +
->  	/* T(°C) = 246.312 - 0.304 * TMDOUT */;
->  	*temp = 246312 - 304 * tmdout;
->  
+Review with care :)
+---
+ sound/pci/hda/patch_hdmi.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index 5c6980394dce..ee051bdfaff6 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -2104,10 +2104,6 @@ static int generic_hdmi_playback_pcm_prepare(struct hda_pcm_stream *hinfo,
+ 		goto unlock;
+ 	}
+ 
+-	if (snd_BUG_ON(pin_idx < 0)) {
+-		err = -EINVAL;
+-		goto unlock;
+-	}
+ 	per_pin = get_pin(spec, pin_idx);
+ 
+ 	/* Verify pin:cvt selections to avoid silent audio after S3.
+@@ -2199,13 +2195,13 @@ static int hdmi_pcm_close(struct hda_pcm_stream *hinfo,
+ 		snd_hda_spdif_ctls_unassign(codec, pcm_idx);
+ 		clear_bit(pcm_idx, &spec->pcm_in_use);
+ 		pin_idx = hinfo_to_pin_index(codec, hinfo);
++		/*
++		 * In such a case, return 0 to match the behavior in
++		 * hdmi_pcm_open()
++		 */
+ 		if (pin_idx < 0)
+ 			goto unlock;
+ 
+-		if (snd_BUG_ON(pin_idx < 0)) {
+-			err = -EINVAL;
+-			goto unlock;
+-		}
+ 		per_pin = get_pin(spec, pin_idx);
+ 
+ 		if (spec->dyn_pin_out) {
 -- 
-Regards,
+2.34.1
 
-Laurent Pinchart
