@@ -2,71 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875E6C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 17:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46024C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 17:53:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231134AbjDQRsb (ORCPT
+        id S231171AbjDQRxa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 13:48:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44244 "EHLO
+        Mon, 17 Apr 2023 13:53:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230026AbjDQRsa (ORCPT
+        with ESMTP id S229579AbjDQRx0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 13:48:30 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B879C3;
-        Mon, 17 Apr 2023 10:48:29 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f167d2941fso16521045e9.1;
-        Mon, 17 Apr 2023 10:48:29 -0700 (PDT)
+        Mon, 17 Apr 2023 13:53:26 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3C5E40FC;
+        Mon, 17 Apr 2023 10:53:25 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-2f86ee42669so1678053f8f.2;
+        Mon, 17 Apr 2023 10:53:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681753707; x=1684345707;
+        d=gmail.com; s=20221208; t=1681754004; x=1684346004;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jB1xSXNmpwcA25uvh5ZQdPIIhw+Ev7b4/mxTIIm4AO0=;
-        b=lSI324OV20WxE+4pdlggDyXcDT/VEUFW8FVXZsfbs+n4pBxxucr180XtKo4hREUnq+
-         KU4V2muCy1QinMcBtb97XXmB3bLeF8C8bld/ouxAMaCgzTU9trFkqvs5W4qWOvKHnyLi
-         j0KoTzKnKOksW9o9rhyh4tpKdqyXPTTyzVYPePDFrO57awuQFgBCPBsNlWgKOI6Lq35Z
-         I4xLZQkZGim8RQcvnhPjQnm544A59NIJ1M4OK1onvfPd9WBtLtXM47Bm3zDGsIwgPNig
-         EAHVOa+BY4zer6PHF1oUAzxci6wWtlhmW/7DHTGUOA2bqAfrJgg6CDJnUKY4Z2nn2kxs
-         xWZg==
+        bh=Nq+GSUtY07nXKsb+LMvbAc04Nto3jy5+/BqE9bmMBQw=;
+        b=mLyDT106lgI3JkUxXqjXu/14cLoANqEm7VF6qqd1J4CAX0FwyL5K1AKUKNcU81exNt
+         By7q8Rly/BNhyhoIsCH2Wv1g5BfttWZ96eudEoefNGpjtsqFbJH8qj0SFzTc+lxlzncS
+         PSVMG9Puqz/9m+ztFyX6E9N95rpfZ3KMMlpDEV6uDt/aReVscBXL8NaX0GnTeL3BVzzy
+         xDnm68Zguj6VuDIN/UJndbgzxQ+W2y0qf0NU3N2KfYksX47NqDPiDncGF+ercpFPlfpg
+         aofEHe/10YhE8PV4s1P7+LFguVg9m/KbljMveSkV7knjYQE9qtDpNb1e0eASnWUNqDuf
+         iIjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681753707; x=1684345707;
+        d=1e100.net; s=20221208; t=1681754004; x=1684346004;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jB1xSXNmpwcA25uvh5ZQdPIIhw+Ev7b4/mxTIIm4AO0=;
-        b=Dn9KitkXEgCPo9TyIV0JRj3efLkw/FSNbQ5eILdJeKzW+7RumgYTmmS5Q44Dgx68kB
-         yNMUN1JyCP9ViscLgJxfSEVykL4HLXEr+3VS3eF8o7WY6h6QQlRR9bDp3ET+wsFsrCXM
-         BO2WR3MKhU+uP24+uo04wMpFtGVVHTtDZxGuqhW14r3OYdUkZwYLvM/sTc0JwC7cPSkO
-         gQgM2MPPAxWRn8Ie2y+NJnWhEK9a2SIgYUYO92RTJaIs1JDDqL3x1TXoxswbqpTIjoEw
-         1ufCIFIkgyPMK5WFBlgVn2Cpc6f1gIkqEJhJ2NzPdx7njuL83vm9WzvdCAyFdCJ+0iUX
-         iJGQ==
-X-Gm-Message-State: AAQBX9eTpfot5g4FANcR3xQvBQgZH1qMvZr3nkNm/4GvbE1NNFBYIh/R
-        e5fbQ64IfXb2nPjxU8lNbdg=
-X-Google-Smtp-Source: AKy350ahiiHUo1uqxBOzXUyQQEt0O2gqBfeI9Mvh4CfLe0d0j4P+xmpQQgYWZwk76slIUaWEKk8iRA==
-X-Received: by 2002:adf:df85:0:b0:2f7:825c:9db0 with SMTP id z5-20020adfdf85000000b002f7825c9db0mr5712911wrl.52.1681753707456;
-        Mon, 17 Apr 2023 10:48:27 -0700 (PDT)
+        bh=Nq+GSUtY07nXKsb+LMvbAc04Nto3jy5+/BqE9bmMBQw=;
+        b=lwUEmse2ykj7n+HEexfeeNCQcbdd8+9MnOxk3FJ2fzyJhw4Kz5G8DjNNLUL/qut1cR
+         /ZhDsa+QbG38z8bDNZoplXUrzbFkeqlysFmwROMpJkHPsjc8I4IjIJpygpDD3KvS4gK9
+         VetxyDLGs5TaOUCPPSPSeIr8Hwa87vIUG0miJWPz8ozF2UTdVGccYg1rD3vCSyWZHUy9
+         cqDUxTqT2Mr/JQYAvFTDYDCVSXOn1H2xFnu75b/v0kyGqtjLvtBELoG7zhIxCxbweAwI
+         XF6n7L+TaN5JZ5uERvQcJ56g8Bp+acsW3+5EV6FqMLKF2sPzJ0VmBoU1N7rWDC6ODDgv
+         rZsA==
+X-Gm-Message-State: AAQBX9d2BhvNf6JhohpJ1qVVyxw6VuCgra00I09Mgrallm8WrzgE9xga
+        YXo0SrANMAOr6ETLBShFzZg=
+X-Google-Smtp-Source: AKy350aXL5MEyc8XH2SRgcbhu00laZ9yC3vGnqTeUfzCrN0M+96kfkxOMmGkTnf64AeqE1qVhFrcfw==
+X-Received: by 2002:a05:6000:1049:b0:2f5:ae53:f558 with SMTP id c9-20020a056000104900b002f5ae53f558mr6896797wrx.31.1681754003931;
+        Mon, 17 Apr 2023 10:53:23 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id f16-20020a05600c155000b003f177cda5ebsm398199wmg.33.2023.04.17.10.48.26
+        by smtp.gmail.com with ESMTPSA id v11-20020a5d678b000000b002fa834e1c69sm3011658wru.52.2023.04.17.10.53.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 10:48:27 -0700 (PDT)
+        Mon, 17 Apr 2023 10:53:23 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Petar Gligoric <petar.gligoric@rohde-schwarz.com>,
-        Hagen Paul Pfeifer <hagen@jauu.net>,
-        linux-perf-users@vger.kernel.org
+To:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] perf script: task-analyzer: Fix spelling mistake "miliseconds" -> "millseconds"
-Date:   Mon, 17 Apr 2023 18:48:26 +0100
-Message-Id: <20230417174826.52963-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] KVM: selftests: Fix spelling mistake "miliseconds" -> "milliseconds"
+Date:   Mon, 17 Apr 2023 18:53:22 +0100
+Message-Id: <20230417175322.53249-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -75,26 +65,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the help for the --ms option. Fix it.
+There is a spelling mistake in the help for the -p option. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- tools/perf/scripts/python/task-analyzer.py | 2 +-
+ tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/scripts/python/task-analyzer.py b/tools/perf/scripts/python/task-analyzer.py
-index 52e8dae9b1f0..3f1df9894246 100755
---- a/tools/perf/scripts/python/task-analyzer.py
-+++ b/tools/perf/scripts/python/task-analyzer.py
-@@ -114,7 +114,7 @@ def _parse_args():
-         "--ns", action="store_true", help="show timestamps in nanoseconds"
-     )
-     parser.add_argument(
--        "--ms", action="store_true", help="show timestamps in miliseconds"
-+        "--ms", action="store_true", help="show timestamps in milliseconds"
-     )
-     parser.add_argument(
-         "--extended-times",
+diff --git a/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c b/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
+index 251794f83719..7f36c32fa760 100644
+--- a/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
++++ b/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
+@@ -226,7 +226,7 @@ static void help(char *name)
+ 	puts("");
+ 	printf("usage: %s [-h] [-p period_ms] [-t token]\n", name);
+ 	puts("");
+-	printf(" -p: The NX reclaim period in miliseconds.\n");
++	printf(" -p: The NX reclaim period in milliseconds.\n");
+ 	printf(" -t: The magic token to indicate environment setup is done.\n");
+ 	printf(" -r: The test has reboot permissions and can disable NX huge pages.\n");
+ 	puts("");
 -- 
 2.30.2
 
