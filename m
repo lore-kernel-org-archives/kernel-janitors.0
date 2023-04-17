@@ -2,65 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F461C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 17:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 875E6C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 17:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230347AbjDQRmr (ORCPT
+        id S231134AbjDQRsb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 13:42:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37772 "EHLO
+        Mon, 17 Apr 2023 13:48:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjDQRmq (ORCPT
+        with ESMTP id S230026AbjDQRsa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 13:42:46 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD3ED6E93;
-        Mon, 17 Apr 2023 10:42:40 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-2fa36231b1cso662577f8f.2;
-        Mon, 17 Apr 2023 10:42:40 -0700 (PDT)
+        Mon, 17 Apr 2023 13:48:30 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B879C3;
+        Mon, 17 Apr 2023 10:48:29 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f167d2941fso16521045e9.1;
+        Mon, 17 Apr 2023 10:48:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681753359; x=1684345359;
+        d=gmail.com; s=20221208; t=1681753707; x=1684345707;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oIDH6QLW9GMl0SUIgFXpcL60wep3vko9cwbetNFih7Q=;
-        b=hnZdPQ4bSnn7IM8OzetvjfY2BXRKa7KvAD32v0r1j4vHr6zQ/fo3vz25ufxSghM4FK
-         TGiF9r8hUN3SJJxjj1v+CEteYAcnl5jtnABWOmagTdog0heWPB6OpJHpH5OOwFSj48+1
-         IvLFwyylUzEuV/qqJGUF/i0plTiLfnFiw7ZppVPYaBqkUPJiEvd7M2wq05v3e8L+uOyf
-         qN16CUGNuettXdrR5t0SHdfyZGuIV4Yizs/zfk1brEtR2cO+DNnQJyjVlUXikNvRQHGO
-         LmVz54SWxenhz0ItD8BndOOMKVMN2ZGpM7xpQTuSRTs8yUoHTRHM1CrJ8mPR1E8f1Vsp
-         OfTg==
+        bh=jB1xSXNmpwcA25uvh5ZQdPIIhw+Ev7b4/mxTIIm4AO0=;
+        b=lSI324OV20WxE+4pdlggDyXcDT/VEUFW8FVXZsfbs+n4pBxxucr180XtKo4hREUnq+
+         KU4V2muCy1QinMcBtb97XXmB3bLeF8C8bld/ouxAMaCgzTU9trFkqvs5W4qWOvKHnyLi
+         j0KoTzKnKOksW9o9rhyh4tpKdqyXPTTyzVYPePDFrO57awuQFgBCPBsNlWgKOI6Lq35Z
+         I4xLZQkZGim8RQcvnhPjQnm544A59NIJ1M4OK1onvfPd9WBtLtXM47Bm3zDGsIwgPNig
+         EAHVOa+BY4zer6PHF1oUAzxci6wWtlhmW/7DHTGUOA2bqAfrJgg6CDJnUKY4Z2nn2kxs
+         xWZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681753359; x=1684345359;
+        d=1e100.net; s=20221208; t=1681753707; x=1684345707;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oIDH6QLW9GMl0SUIgFXpcL60wep3vko9cwbetNFih7Q=;
-        b=S8RSinLsRV+h/RlSkLIoxm1TYQ3goAbocbGpYtPIOfVswYi3ItAqKGCjYlB75VB9bz
-         cqg8pd7aZ2/cOQr0gdvjploCETR/BAd2A/PKAqthtFL3wwQJhqTULnRADEgLqRji/FiN
-         P6eT9BZyMKxwddUeq67W7aAl6WiOTUAuy4kWiHQbg94VNt7KIPgOHxVGjKraa7CE+qhu
-         xCgnUnyNkzbolNDqDk34a/Qij2AG9LJGUcK9J2viBsRlJ1XXqyYxk717qHVvM92JvTSK
-         7u82obonoPQ6C/xHzFiwfxxJ+9VqlR+snp9UmKGI2Jos96jDL6agHYppG1tY00GyU2bH
-         sY2A==
-X-Gm-Message-State: AAQBX9fQjJgasMGGg9VRc+iH6TzYQ83rycfcF/JfS5CaybkJf7/ksuab
-        tNGBGydPLL7p+hdpwnPkJ6c=
-X-Google-Smtp-Source: AKy350aIJeioHbqYsZwsjs2wu7mqk/RIk0YjL7wRrWriUPu2VJKeMsMLs0JBPaKIE17WoXikYfOlwA==
-X-Received: by 2002:adf:f5c3:0:b0:2fb:be8b:133b with SMTP id k3-20020adff5c3000000b002fbbe8b133bmr912525wrp.25.1681753359042;
-        Mon, 17 Apr 2023 10:42:39 -0700 (PDT)
+        bh=jB1xSXNmpwcA25uvh5ZQdPIIhw+Ev7b4/mxTIIm4AO0=;
+        b=Dn9KitkXEgCPo9TyIV0JRj3efLkw/FSNbQ5eILdJeKzW+7RumgYTmmS5Q44Dgx68kB
+         yNMUN1JyCP9ViscLgJxfSEVykL4HLXEr+3VS3eF8o7WY6h6QQlRR9bDp3ET+wsFsrCXM
+         BO2WR3MKhU+uP24+uo04wMpFtGVVHTtDZxGuqhW14r3OYdUkZwYLvM/sTc0JwC7cPSkO
+         gQgM2MPPAxWRn8Ie2y+NJnWhEK9a2SIgYUYO92RTJaIs1JDDqL3x1TXoxswbqpTIjoEw
+         1ufCIFIkgyPMK5WFBlgVn2Cpc6f1gIkqEJhJ2NzPdx7njuL83vm9WzvdCAyFdCJ+0iUX
+         iJGQ==
+X-Gm-Message-State: AAQBX9eTpfot5g4FANcR3xQvBQgZH1qMvZr3nkNm/4GvbE1NNFBYIh/R
+        e5fbQ64IfXb2nPjxU8lNbdg=
+X-Google-Smtp-Source: AKy350ahiiHUo1uqxBOzXUyQQEt0O2gqBfeI9Mvh4CfLe0d0j4P+xmpQQgYWZwk76slIUaWEKk8iRA==
+X-Received: by 2002:adf:df85:0:b0:2f7:825c:9db0 with SMTP id z5-20020adfdf85000000b002f7825c9db0mr5712911wrl.52.1681753707456;
+        Mon, 17 Apr 2023 10:48:27 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id x17-20020a5d4911000000b002e55cc69169sm11024585wrq.38.2023.04.17.10.42.38
+        by smtp.gmail.com with ESMTPSA id f16-20020a05600c155000b003f177cda5ebsm398199wmg.33.2023.04.17.10.48.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 10:42:38 -0700 (PDT)
+        Mon, 17 Apr 2023 10:48:27 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Petar Gligoric <petar.gligoric@rohde-schwarz.com>,
+        Hagen Paul Pfeifer <hagen@jauu.net>,
+        linux-perf-users@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/pm: Fix spelling mistake "aquire" -> "acquire"
-Date:   Mon, 17 Apr 2023 18:42:37 +0100
-Message-Id: <20230417174237.52638-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] perf script: task-analyzer: Fix spelling mistake "miliseconds" -> "millseconds"
+Date:   Mon, 17 Apr 2023 18:48:26 +0100
+Message-Id: <20230417174826.52963-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,26 +75,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the smu_i2c_bus_access prototype. Fix it.
+There is a spelling mistake in the help for the --ms option. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/amd/pm/powerplay/inc/hwmgr.h | 2 +-
+ tools/perf/scripts/python/task-analyzer.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/inc/hwmgr.h b/drivers/gpu/drm/amd/pm/powerplay/inc/hwmgr.h
-index 5ce433e2c16a..f1580a26a850 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/inc/hwmgr.h
-+++ b/drivers/gpu/drm/amd/pm/powerplay/inc/hwmgr.h
-@@ -359,7 +359,7 @@ struct pp_hwmgr_func {
- 	int (*set_ppfeature_status)(struct pp_hwmgr *hwmgr, uint64_t ppfeature_masks);
- 	int (*set_mp1_state)(struct pp_hwmgr *hwmgr, enum pp_mp1_state mp1_state);
- 	int (*asic_reset)(struct pp_hwmgr *hwmgr, enum SMU_ASIC_RESET_MODE mode);
--	int (*smu_i2c_bus_access)(struct pp_hwmgr *hwmgr, bool aquire);
-+	int (*smu_i2c_bus_access)(struct pp_hwmgr *hwmgr, bool acquire);
- 	int (*set_df_cstate)(struct pp_hwmgr *hwmgr, enum pp_df_cstate state);
- 	int (*set_xgmi_pstate)(struct pp_hwmgr *hwmgr, uint32_t pstate);
- 	int (*disable_power_features_for_compute_performance)(struct pp_hwmgr *hwmgr,
+diff --git a/tools/perf/scripts/python/task-analyzer.py b/tools/perf/scripts/python/task-analyzer.py
+index 52e8dae9b1f0..3f1df9894246 100755
+--- a/tools/perf/scripts/python/task-analyzer.py
++++ b/tools/perf/scripts/python/task-analyzer.py
+@@ -114,7 +114,7 @@ def _parse_args():
+         "--ns", action="store_true", help="show timestamps in nanoseconds"
+     )
+     parser.add_argument(
+-        "--ms", action="store_true", help="show timestamps in miliseconds"
++        "--ms", action="store_true", help="show timestamps in milliseconds"
+     )
+     parser.add_argument(
+         "--extended-times",
 -- 
 2.30.2
 
