@@ -2,101 +2,156 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70AAC77B76
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 10:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E74BC77B70
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 11:29:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbjDQKuY (ORCPT
+        id S230239AbjDQL3O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 06:50:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50280 "EHLO
+        Mon, 17 Apr 2023 07:29:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjDQKuX (ORCPT
+        with ESMTP id S230185AbjDQL3H (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 06:50:23 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A8E33A82;
-        Mon, 17 Apr 2023 03:49:39 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-2f8405b3dc1so834728f8f.3;
-        Mon, 17 Apr 2023 03:49:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681728465; x=1684320465;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aObB3gJrc6daE2Ub3D70WFvZc+MAMO7dkXaerkKuI3s=;
-        b=RXtnXeZZXh+VYZJiHO88aK0CSgdCnLOoMdEuRCkY9HvdqoQOpy2yOdn2VbYysVhQEo
-         Qp3qQWty1Awi//NPEO2vjwxvnTunFZEh9JGMiPRZUbbo91duK52ft167gIsvd4SoSAZP
-         g2+UMw+9aEMMIuHjthxFdI4y/ffXjJtbbCHQaycZsrxO9XubnFo5FXbb92ZqW85yXFzT
-         XYIZd0AAJkP+bCshzIFAZ5k0U5ek3spTLDa26+TcErtP1d2/KveQe5VcKXD4YClmjZpe
-         CBhTG0XqkXen+uqzAifVeYjxEFJxVEVJ5f6nVylsLEJXv6u2KQehZmTwTVN7yC0Ayy3s
-         cAJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681728465; x=1684320465;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aObB3gJrc6daE2Ub3D70WFvZc+MAMO7dkXaerkKuI3s=;
-        b=elJqsQ0SpPyuu0zpbttoYly9NrPpRK8SzOJh9SU/pWth8FJELhnLGIn4qGmfK39+zm
-         oy1CE1qIbb4vnH6ZrzWhFPdhZGwsacgBm/MNUDhRsOmm81yZPK+t6T9hHWfjp0JfXm7p
-         wf6N4NuyfdkjufUkByFQIDsDb7YygVHUE7KwhO12QAM2E/EYvEQ9cw109I+KqUb62Lkm
-         VUHqA8odmP+FnhBw0lXdBfXeb80l8owNPqIiOuU/YhhLh98ColNOvKDXUnhhN0wXluY7
-         3iM/kJofcflwsZn0EXs4mDwUtNN7PQfuyosD7uzDd2jEsnH7m0tUsKOKVrUktm1MqHPO
-         lCSQ==
-X-Gm-Message-State: AAQBX9eA6lbuctPyrlcjybttNpmg/l9cbQyjSU2BBsfr3q4vwDSUib6R
-        fehvYlDdXMJUPZ8lSbIQeug=
-X-Google-Smtp-Source: AKy350Z7+uQlEP1XtKOD7AoJ+k93bSPkZQhD/9C7egiwqE5TiutJFDy9XPkoBQK2c265G8aUDx1Rbw==
-X-Received: by 2002:adf:ce12:0:b0:2ef:b137:37fe with SMTP id p18-20020adfce12000000b002efb13737femr4862686wrn.0.1681728464622;
-        Mon, 17 Apr 2023 03:47:44 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v11-20020a5d43cb000000b002f490a0cd1asm10138510wrr.92.2023.04.17.03.47.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 03:47:44 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kselftest: vDSO: Fix accumulation of uninitialized ret when CLOCK_REALTIME is undefined
-Date:   Mon, 17 Apr 2023 11:47:43 +0100
-Message-Id: <20230417104743.30018-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 17 Apr 2023 07:29:07 -0400
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on20609.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe16::609])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03B1E7683;
+        Mon, 17 Apr 2023 04:28:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hdSVjlC8tne4FsyVG71P2eWZRlvddfscE5pT494/MpaMOqS1AEoF1M2IdQ1mrKOa0M1trSKzF2j/flxVP2IalS1EyvOIg3U9aklRZOsp8w+rlOb1TeGTpm0j4c9M04Iy0nvUqFMkyWu+Yafhj5GIP85xuBRbXApsCQ9AkXSv9Ks6kb0ICd8agQpSxYk7FWx20OloKZVfHHqzazvUp5BcVYbFMKh6tE8biOxgOswHt1O2jXzJSja60oe/b/BqGzyeVUK5hfbmI+BdRqXG/78DDZe5pYvYSxSXNYyyyGvS4CUkqahsJd1hmKvbCKVS3/v42JJSQ9FmsR7ZhVvCtQzzSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dc+y43GbovzjVbicJR3poCkcfjapDAnNMoaUGiQ0GKM=;
+ b=EhpmtujTfqANholESUtWcjw5OF/QqnBUykEf2Vqu4NNv6bjLpxF21pH9OA+Z1P1J1oiSKRRvegnlE2Ta/6o4JBFogzUyXGS+N2fKcoK+hdjtFdPKKcS7GOJv8V2L0oeq1H1tYOFcr2mmxH9U889UYE0YDTQL/a5Na+3fvfRt2RjuR37AnK/HytLPUcutiNtUaKp9e31QNAHQi8zBrHNl1opL+jGP84spbL8yGcZ+UKTKxrUnILlBVIPVZ0p7vPfV7wIkbbGfW5dbYu3MhwZ6KBXCg0Gw2u0R1wtkqVy1+fzJrcScaFc6w4NZ1tAfQpbSNgdDhNez14PLuiP185zeOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dc+y43GbovzjVbicJR3poCkcfjapDAnNMoaUGiQ0GKM=;
+ b=lLb7P13CFjkoGWOHJ5iWaf3Fdj14qeLlJU0P/dNzYe91z166fproFGhRJn1gwSL62IPL4B85/9gmuImAVFOuIzQgGgUuXZxnoa/L/O9DBMktNNpgfrrTOVwvS4veICpp1bb9v4Jql35q2jctG9okWv4B6knHvHJPQfbDOx2reyc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
+ by GVXPR04MB9928.eurprd04.prod.outlook.com (2603:10a6:150:117::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.30; Mon, 17 Apr
+ 2023 11:27:08 +0000
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::b6a5:b35f:94f8:ff53]) by DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::b6a5:b35f:94f8:ff53%8]) with mapi id 15.20.6298.045; Mon, 17 Apr 2023
+ 11:27:08 +0000
+Message-ID: <55bd4292-7abf-dee1-9ce3-94dfb5b4b19a@nxp.com>
+Date:   Mon, 17 Apr 2023 14:27:05 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH] ASoC: fsl: Simplify an error message
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+References: <c167c16a535049d56f817bbede9c9f6f0a0f4c68.1681626553.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+In-Reply-To: <c167c16a535049d56f817bbede9c9f6f0a0f4c68.1681626553.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR07CA0014.eurprd07.prod.outlook.com
+ (2603:10a6:208:ac::27) To DU2PR04MB8774.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e1::21)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|GVXPR04MB9928:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a9479c0-0d5b-4ef3-4aa4-08db3f36ae3a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: NipD/ATflIMs9/bZgxMmfDesn6w0DoQVnbpXEN8qveM6gd+rqdroBQUpmZOEM7T8ACD6stfdYk7UkXMx8ETRfjSju7kowLMbFMnqMn6IsKHKneIQzLJAvGmsqJGknt2cWLV55XayV+6T2VT191njcOEa45DjItPGcRcMacN6MXSK1GUpaTrQPd77HsbvjlVY+gMpvZ+d7esR4kYZBVCiRqdYeJrZD6y8bOq9ALCiYo3DYFi/V7MudMlZmsIXuDFt3NrYBAwTKpmwMj+kw8semNxayF+xZf2NSTFNXhWcxfkixMco8HOoBXAp95+Ya1kGldt9NtxLdKE7GoxhDAf86yeiHvWSlkJnL5MB/+p5zGfMQq4AMQncPslW3s1kiEUccTBTWPRBM2oxAUQis1VGo4crQO6FdRaYq7Bl0wKVyzgyiMGGj9cTkdGmdFafjyXv7ZBenDjmPTITe3x6JgHgxX0EDC2d7K0osqW/6Oyu+vQbnWSrdxIETNNkhx2EOoYt5MpN+Vy5YHFRyjGqZUrqOpuSlidBKrowFUmC+TqpMMs0HNno9s0GAFnFwIyQk4IbqaJwOlEA0c4N1DXQx4gMfbIU4zNMG9HlR7JXyC2lvZ6+WwAvr0kHjhrnK5VhD2IA1229mrsaX6GXuzUaq+HAAg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(136003)(376002)(396003)(346002)(451199021)(4326008)(66556008)(66946007)(66476007)(110136005)(316002)(8676002)(8936002)(7416002)(44832011)(5660300002)(41300700001)(4744005)(2906002)(38100700002)(15650500001)(6512007)(6506007)(53546011)(55236004)(26005)(186003)(36756003)(83380400001)(86362001)(31686004)(2616005)(478600001)(31696002)(6666004)(6486002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NVplQXN1Ui9RVWxVcVp6TERIQjdHczl1L1czdlJGUmoxZURsbEg0ckx4RFFO?=
+ =?utf-8?B?QzRFM3czYlRjRGhnSmphbUhiMTl3OVZmWE9mSmpKQURoeXNhYWtkUkwyYlNZ?=
+ =?utf-8?B?KzE3bmZjUXpmQURLQjhzNnhtMW00RjdybWplY0ovNmp1Y3dVZlMrL290bGtr?=
+ =?utf-8?B?eUx4c0cyUGs3aFMwN04vK1VFamtqZCtBenJERTQ4eklreFBHUGpFbTU2MnJG?=
+ =?utf-8?B?SnRWZjFCYnFiVFNNSkw5eXRtK1l3bXZ0WEUzWmk0SjJ0U092M3pON3JqR1o4?=
+ =?utf-8?B?ZGlBS3RTeVlwTzRheDYzRThKN3V2bzBoZ09sUUxFM2JzQTNiekxLa3pLaksx?=
+ =?utf-8?B?ZTNDOGp6eEpWT1k5cXgyelRHTWdDeWlEcUFTaGt3VFZBVFlQQmNTNHoyQTIv?=
+ =?utf-8?B?NjFiSXJOU1dhbkUvWVJNM09KN0FTZlhoOHN4bHhON1RscnRDSWhQSFJCWjJo?=
+ =?utf-8?B?andUSzgzKzVydDhFTHMwbFdFb1NpV0dvdk44cXhNT1cyajhxTnA4YUJhMHNh?=
+ =?utf-8?B?L0I2QzRoTjF2MkE2U0J6TXpzc0dmOE9sVUlqaFFTRE8yMGZOT2xVcFQvMDVy?=
+ =?utf-8?B?N3d5NFF1THE4RE5SY0V6dTMrQ3NRV21pdWdCU2dHenBkTzRRcldweCtueWF0?=
+ =?utf-8?B?OEhOV0J1ektRNGgyK1RZaGgxUGxXQkJadHdxc09lb042bUpXdVN5WW1Pb3dL?=
+ =?utf-8?B?SjBkdU1QS2xiUlEyU2xhY1dlTnB5MGMyWXVNTEIyais1bVdqNXZHTGtDbllR?=
+ =?utf-8?B?REZPR0gxbjJWNVlUeHJ2TXlPaEd3Y01EemdsVUxzaGNweitMMllPVnE3UjA1?=
+ =?utf-8?B?dng3SitGY0JkekFta3NTdGQ4N3B0cGlORDU0MWw3a0NhTzhXc0wxd25LV3Nw?=
+ =?utf-8?B?Q01pQzNSZDBqbEZxUXY3bUZreUl1SmRPUkw3WUJYRVdUMmNxQys4dnRPMlhi?=
+ =?utf-8?B?ajYvV29RSW5QS3dWKzFaNEJOQzNuTStCZ2x5QU1Ga0E0bG9Cemo3eVdYazY0?=
+ =?utf-8?B?empxVTJhSVRJZks0ak9SVjBHUmlCTVhWNW9kNk83dHpqMElYUGdyb2FkZlFQ?=
+ =?utf-8?B?YU1mUnJ1SHJVMTdXS25oelU3UFdxei94WkhUcU5aK2VURUxGRy9Oamd6eFdH?=
+ =?utf-8?B?VGNUOXlpVUdtS0VpaVBMZ1RsYUxpS01PQVJaVjF2SFphNHRSVjkyQVM4Q3lU?=
+ =?utf-8?B?Y29QU1YvRmVFVmhLVlpHYllmbzdiWGttMThXVXlkU0lEaWc4YS9tNHo4VDYr?=
+ =?utf-8?B?N1VnVnI2NFlzZzZNVzljSVBBS0FRb056TkVhZzJZTk1NSHlpcUJyY2ZEeVFk?=
+ =?utf-8?B?K2lxUG5OYnQ3dW5WMTdxcEV5UENjRFpVQzhEcmUrcXZZcGluU09jb1lpd3hE?=
+ =?utf-8?B?MDI3bjFpeUFnZkdtS3dZbWlQVkcra3pxN0tSMVNIVkcwd1I1NHZQcEd0ajQr?=
+ =?utf-8?B?ektXWHVuK21MWldKd0o4TXc5MEJyVGRnOG1wMHM1WVVhTk1Rd1dMVm4wODNt?=
+ =?utf-8?B?V3pOVDZnVEhxZ3lhQlVHVGE1bkxqTWRuVDlQYktlQlN6bVE0TDMxcWFHT0Nm?=
+ =?utf-8?B?YlFDdlFwMHREZHE3OHZIS1c1TFl0bXoxMjlPbjROQWlzaCtBRWFFSDFmMEdG?=
+ =?utf-8?B?RmwwdGRkVkpIVll1WW82QmNWMXhOdktWZWRLc2E2Nmw3YXlJUWZOdVdhU1JY?=
+ =?utf-8?B?dXllaHNodVNLUGsraFB2VzVVN0VTNThvaFk3N1BRNG1zZ1hrNFpIemVQMDdU?=
+ =?utf-8?B?c2ZrMEUzTkxmRERacExRN2NkUUxoUUtGQlhsM1orOVRRZTM2U2tDaVpSU3JM?=
+ =?utf-8?B?Z3c2cHVya0kzR1RETmhqbEdxNU54eU82ZjZzc1ViVmgrTEZYdzJIMHE3c2Nh?=
+ =?utf-8?B?TExQM3dMR3N3MjlBNGNVYndEYXE3UklnRFNTbjZwbGdPR3JiMyswbFppZnhz?=
+ =?utf-8?B?b3h3KzYxbnZSQkYwWXBJRkNscFg4OVl0dDNlc2FXeklhbkNaL3dBR05lVTFE?=
+ =?utf-8?B?Um9obHVqc1RNOVJrMzQrYkNxQWQxbXM4OFIvOGxkUFNhNjdKRS91YkJTUjY4?=
+ =?utf-8?B?T3dWYVhUak1uMEZtWWloZFR0UmlBbC9GUVVZMXl0Tmd6VmpEdHlPWENCZ1Bl?=
+ =?utf-8?B?SmdBS2J0M25QVkZ6THlabjlXU2dqSU9yb0x6aWJ6eDdTSGIremVQVVZ4YVNx?=
+ =?utf-8?B?eUE9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a9479c0-0d5b-4ef3-4aa4-08db3f36ae3a
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2023 11:27:08.8372
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qvXXJISxkiYTLmPuPpMarK7D1plYLPzYH+fckpyHjkTypNVpcMa21jlwJmEBCpiPUuXk00ao5ARgUC+/FXDgJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9928
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In the unlikely case that CLOCK_REALTIME is not defined, variable ret is
-not initialized and further accumulation of return values to ret can leave
-ret in an undefined state. Fix this by initialized ret to zero and changing
-the assignment of ret to an accumulation for the CLOCK_REALTIME case.
+On 4/16/2023 9:29 AM, Christophe JAILLET wrote:
+> dev_err_probe() already display the error code. There is no need to
+> duplicate it explicitly in the error message.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fixes: 03f55c7952c9 ("kselftest: Extend vDSO selftest to clock_getres")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/vDSO/vdso_test_clock_getres.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
 
-diff --git a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
-index 15dcee16ff72..38d46a8bf7cb 100644
---- a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
-@@ -84,12 +84,12 @@ static inline int vdso_test_clock(unsigned int clock_id)
- 
- int main(int argc, char **argv)
- {
--	int ret;
-+	int ret = 0;
- 
- #if _POSIX_TIMERS > 0
- 
- #ifdef CLOCK_REALTIME
--	ret = vdso_test_clock(CLOCK_REALTIME);
-+	ret += vdso_test_clock(CLOCK_REALTIME);
- #endif
- 
- #ifdef CLOCK_BOOTTIME
--- 
-2.30.2
+Thanks,
+Iulia
 
+> ---
+>   sound/soc/fsl/fsl-asoc-card.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
+> index bffa1048d31e..40870668ee24 100644
+> --- a/sound/soc/fsl/fsl-asoc-card.c
+> +++ b/sound/soc/fsl/fsl-asoc-card.c
+> @@ -858,7 +858,7 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
+>   
+>   	ret = devm_snd_soc_register_card(&pdev->dev, &priv->card);
+>   	if (ret) {
+> -		dev_err_probe(&pdev->dev, ret, "snd_soc_register_card failed: %d\n", ret);
+> +		dev_err_probe(&pdev->dev, ret, "snd_soc_register_card failed\n");
+>   		goto asrc_fail;
+>   	}
+>   
