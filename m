@@ -2,106 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 170B2C77B76
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 19:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF151C77B72
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 20:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbjDQT0b (ORCPT
+        id S229713AbjDQU0W (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 15:26:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42678 "EHLO
+        Mon, 17 Apr 2023 16:26:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbjDQT0X (ORCPT
+        with ESMTP id S229568AbjDQU0V (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 15:26:23 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC56C6A63;
-        Mon, 17 Apr 2023 12:26:21 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id j12so17527751oij.3;
-        Mon, 17 Apr 2023 12:26:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681759581; x=1684351581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JgR9yWNpXpcXRujoJTOWZN4Ac0PmAsb3IYAK2OBiNYA=;
-        b=A8POwEXBtxt+z9gTMk5vE9Iw0O2L50tlrIpIBNPihPRGY7iBhlfQHgpQV6cMdIguFV
-         Zc7g/Mr6qy2w/TL+uwD/XDpQIRYhH/ZwzlmUvA+j3NNU8FdP4OWsfnhrwwrL2pykM1bV
-         qEkfNp/kQFga0y8gsJYNwNPF5gOJRRBDyCQLoK9+GJLxNd8YZOVCUMBLxXMyYZjP63XF
-         /7n09KvbS0laZg1caprKHGE6Mm2+/UgcR4wfeTHxPXGqi0BAHGl64bQKA7VFgpIAYYa7
-         sBR5CsJrsBSSTKsK7OtL04IfWLFtkNo53bRHTAotAV7mhQtYwR9SOj+KjFuJum5Pha8g
-         jW3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681759581; x=1684351581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JgR9yWNpXpcXRujoJTOWZN4Ac0PmAsb3IYAK2OBiNYA=;
-        b=bO4njCABvp8SM908V6GHC3KPYWfLnBeXBhlKV9ynql+2Hz9m56sE3qsq+CH+SMbQRL
-         Mzkv+0b3WwjOOQ49lqWBnzGIUJintqXMrtMU1pBWdLVx5Rral2MwIE/F7glCqM+H8T1s
-         +n+WUzUDB7qxXv1tR6jh6xwccU0maNB1Hwp4dfREqQNL8QFqF1PbWJ+NKpuMmCqIeCu5
-         LuLnyWz0F4eHKTNd+BQv9V0owsFBDGMYzyMmJ8295umvDP9x3LAhS8SDw1ApI9ObIZGO
-         eML5v9yKgKvPNBcsSC6gswBdZia2hVmokfdLM3GiB/+V8JHRVw7S6Dl1Drlv9yaRsUwo
-         WvTw==
-X-Gm-Message-State: AAQBX9cWHGuW5THqcrMxdoXxQmzKq43EQ/xMfrAA/+ioLYYAiyOQ8o71
-        4T94wmP/zTMcE2OOOLzawh/GZBL2oeNc3mucFJU=
-X-Google-Smtp-Source: AKy350Z22GK6kLG6tHEeqc6xa37gCtz2jfI4yCVpFEw8uzuKlFwUL0hIMP6R+pDki+ZmMO2BdQwHr9XWxrdFNQRgufI=
-X-Received: by 2002:aca:f0c2:0:b0:38d:c10a:e7b6 with SMTP id
- o185-20020acaf0c2000000b0038dc10ae7b6mr13624oih.3.1681759579651; Mon, 17 Apr
- 2023 12:26:19 -0700 (PDT)
+        Mon, 17 Apr 2023 16:26:21 -0400
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA3E749DD
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 13:25:58 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id oVPSpee2zSbkVoVPTp9Pz8; Mon, 17 Apr 2023 22:25:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+        s=t20230301; t=1681763116;
+        bh=3onsbqZgKfvrXgPm/nW/ZF4q8OzaHmYxJu4RGrC1D6U=;
+        h=From:To:Cc:Subject:Date;
+        b=ZYJegovxU/r5wUZqc2AuOcLGEoKUXh8XzjZN4HvUyxJJ4fd6Mo0DqAD5RiL4ThcHe
+         l0pvp/0p8CBXDXEypDegzNS+/+Gi0TT5KQ+Gibg9vtvmnUxcdX+dR6846L+Vt9f+Ub
+         7e1xkbitW9ZhgbZQNrK5wXfkImsHx7p6Zt6229Vt0bJel826+2haY12YdBeX2bJjaV
+         zPW4YxdGdepDialzEASqca1Fp2ngjd7dYIBy3wonShZ0dnO39VhZWATr2G3vdYhoxf
+         8WP7Eo+OfkhbZEN6SFuST7GuVxuH0/r79URE/7CfyJnYvAKGZ6unibwMYWwduZr8Vj
+         zoZz0/c8mFf4g==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 17 Apr 2023 22:25:16 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev
+Subject: [PATCH] crypto: sun8i-ss - Fix a test in sun8i_ss_setup_ivs()
+Date:   Mon, 17 Apr 2023 22:25:09 +0200
+Message-Id: <bedaeefc8e2099ab255e7542e7d671889678de86.1681763086.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230417174237.52638-1-colin.i.king@gmail.com>
-In-Reply-To: <20230417174237.52638-1-colin.i.king@gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 17 Apr 2023 15:26:08 -0400
-Message-ID: <CADnq5_MCRciy+zvVmJ0_HeAsYV-g9cMjNoyezhtZP77erFrGsw@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/pm: Fix spelling mistake "aquire" -> "acquire"
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+SS_ENCRYPTION is (0 << 7 = 0), so the test can never be true.
+Use a direct comparison to SS_ENCRYPTION instead.
 
-Alex
+The same king of test is already done the same way in sun8i_ss_run_task().
 
-On Mon, Apr 17, 2023 at 1:42=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> There is a spelling mistake in the smu_i2c_bus_access prototype. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpu/drm/amd/pm/powerplay/inc/hwmgr.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/inc/hwmgr.h b/drivers/gpu/d=
-rm/amd/pm/powerplay/inc/hwmgr.h
-> index 5ce433e2c16a..f1580a26a850 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/inc/hwmgr.h
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/inc/hwmgr.h
-> @@ -359,7 +359,7 @@ struct pp_hwmgr_func {
->         int (*set_ppfeature_status)(struct pp_hwmgr *hwmgr, uint64_t ppfe=
-ature_masks);
->         int (*set_mp1_state)(struct pp_hwmgr *hwmgr, enum pp_mp1_state mp=
-1_state);
->         int (*asic_reset)(struct pp_hwmgr *hwmgr, enum SMU_ASIC_RESET_MOD=
-E mode);
-> -       int (*smu_i2c_bus_access)(struct pp_hwmgr *hwmgr, bool aquire);
-> +       int (*smu_i2c_bus_access)(struct pp_hwmgr *hwmgr, bool acquire);
->         int (*set_df_cstate)(struct pp_hwmgr *hwmgr, enum pp_df_cstate st=
-ate);
->         int (*set_xgmi_pstate)(struct pp_hwmgr *hwmgr, uint32_t pstate);
->         int (*disable_power_features_for_compute_performance)(struct pp_h=
-wmgr *hwmgr,
-> --
-> 2.30.2
->
+Fixes: 359e893e8af4 ("crypto: sun8i-ss - rework handling of IV")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Untested
+---
+ drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c
+index 83c6dfad77e1..16966cc94e24 100644
+--- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c
++++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c
+@@ -151,7 +151,7 @@ static int sun8i_ss_setup_ivs(struct skcipher_request *areq)
+ 		}
+ 		rctx->p_iv[i] = a;
+ 		/* we need to setup all others IVs only in the decrypt way */
+-		if (rctx->op_dir & SS_ENCRYPTION)
++		if (rctx->op_dir == SS_ENCRYPTION)
+ 			return 0;
+ 		todo = min(len, sg_dma_len(sg));
+ 		len -= todo;
+-- 
+2.34.1
+
