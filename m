@@ -2,79 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B715CC77B61
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Apr 2023 22:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D349C77B70
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 05:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbjDPW3n (ORCPT
+        id S229560AbjDQFaz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 Apr 2023 18:29:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39478 "EHLO
+        Mon, 17 Apr 2023 01:30:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjDPW3m (ORCPT
+        with ESMTP id S229458AbjDQFax (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 Apr 2023 18:29:42 -0400
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB6726A8
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Apr 2023 15:29:40 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id oAsKpjB2PjYHDoAsLpkxww; Mon, 17 Apr 2023 00:29:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681684179;
-        bh=8Wl/JXKwfD+OAzKNoPx7F3mXgRxtmTroNRADhZKqXe4=;
-        h=From:To:Cc:Subject:Date;
-        b=GibIBA27D/+YTPuxLJnn/hNkdxnNIF3BJmRdISCt+noAh0UTCAzfO3t8WfvwIb3yp
-         ntquYxOsazbUzvEfjpey6c4LAou25FFuyH9s0+QKj0DMnxgy7kQJcK26g4G7+bpViR
-         +YAYSVjAxfkQybX5AjeHsdW8nRJnoT/++aaOfVrClAZZpyTm5Cb/f04zm//+UPcGsI
-         9tkKE4INTIHJWPGnFXf50Td+PVkYy+LKUNYp2nMnEZMf6VHfy0BgV0WgzTvrnyepMI
-         /4E81MajRpVZp2CL4u3ktfjX6YnZDNlxbvxeR1iSzz03yq/laK4N6/d3a8rjy66Qtp
-         gHgOv7rq3RHzA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 Apr 2023 00:29:39 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH] soc: qcom: ramp_controller: Fix an error handling path in qcom_ramp_controller_probe()
-Date:   Mon, 17 Apr 2023 00:29:35 +0200
-Message-Id: <84727a79d0261b4112411aec23b553504015c02c.1681684138.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 17 Apr 2023 01:30:53 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B33126B8;
+        Sun, 16 Apr 2023 22:30:49 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (133-32-181-51.west.xps.vectant.ne.jp [133.32.181.51])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AF1DB75B;
+        Mon, 17 Apr 2023 07:30:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1681709442;
+        bh=eovj2G78JXYDRcIrgt0oiYQ6nuD4yXkGQthiJoaUxDg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M+6TLzFYs7Qu8jtTZSt3cj4EjETYc6y6Vld85joRJSvPhQP3neSnGZrve8zfxONvR
+         OgALy57ujP5SxzozDU3/ZCKyA1N3NBLPa8EAfzuvJTWtdDOHZht118RYSiZfseQwHO
+         z8q+dGnM+gzmrIbYqsJOqJK4xGkSRct8IA+InNDg=
+Date:   Mon, 17 Apr 2023 08:30:59 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Manivannan Sadhasivam <mani@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: imx296: Fix error handling while reading
+ temperature
+Message-ID: <20230417053059.GC28551@pendragon.ideasonboard.com>
+References: <827f94730c85b742f9ae66209b383a50ca79ec43.1681683246.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <827f94730c85b742f9ae66209b383a50ca79ec43.1681683246.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'qrc' is known to be non-NULL at this point.
-Checking for 'qrc->desc' was expected instead, so use it.
+Hi Christophe,
 
-Fixes: a723c95fa137 ("soc: qcom: Add Qualcomm Ramp Controller driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/soc/qcom/ramp_controller.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you for the patch.
 
-diff --git a/drivers/soc/qcom/ramp_controller.c b/drivers/soc/qcom/ramp_controller.c
-index dc74d2a19de2..5e3ba0be0903 100644
---- a/drivers/soc/qcom/ramp_controller.c
-+++ b/drivers/soc/qcom/ramp_controller.c
-@@ -296,7 +296,7 @@ static int qcom_ramp_controller_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	qrc->desc = device_get_match_data(&pdev->dev);
--	if (!qrc)
-+	if (!qrc->desc)
- 		return -EINVAL;
- 
- 	qrc->regmap = devm_regmap_init_mmio(&pdev->dev, base, &qrc_regmap_config);
+On Mon, Apr 17, 2023 at 12:14:42AM +0200, Christophe JAILLET wrote:
+> If imx296_read() returns an error, its returned value is a negative value.
+> But because of the "& IMX296_TMDOUT_MASK" (i.e. 0x3ff), 'tmdout' can't be
+> negative.
+> 
+> So the error handling does not work as expected and a wrong value is used
+> to compute the temperature.
+> 
+> Apply the IMX296_TMDOUT_MASK mask after checking for errors to fix it.
+> 
+> Fixes: cb33db2b6ccf ("media: i2c: IMX296 camera sensor driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Dan Carpenter has submitted the same fix in
+https://lore.kernel.org/linux-media/Y%2FYf19AE78jn5YW7@kili/. Sakari,
+could you please pick it up ?
+
+> ---
+>  drivers/media/i2c/imx296.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/imx296.c b/drivers/media/i2c/imx296.c
+> index 4f22c0515ef8..c3d6d52fc772 100644
+> --- a/drivers/media/i2c/imx296.c
+> +++ b/drivers/media/i2c/imx296.c
+> @@ -922,10 +922,12 @@ static int imx296_read_temperature(struct imx296 *sensor, int *temp)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	tmdout = imx296_read(sensor, IMX296_TMDOUT) & IMX296_TMDOUT_MASK;
+> +	tmdout = imx296_read(sensor, IMX296_TMDOUT);
+>  	if (tmdout < 0)
+>  		return tmdout;
+>  
+> +	tmdout &= IMX296_TMDOUT_MASK;
+> +
+>  	/* T(°C) = 246.312 - 0.304 * TMDOUT */;
+>  	*temp = 246312 - 304 * tmdout;
+>  
+
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
