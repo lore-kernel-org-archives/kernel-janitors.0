@@ -2,36 +2,36 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B764C77B72
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 21:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00485C77B76
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 21:41:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbjDQVfP (ORCPT
+        id S230416AbjDQVlt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 17:35:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38704 "EHLO
+        Mon, 17 Apr 2023 17:41:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229838AbjDQVfN (ORCPT
+        with ESMTP id S230232AbjDQVls (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 17:35:13 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB86E4C3B
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 14:35:12 -0700 (PDT)
+        Mon, 17 Apr 2023 17:41:48 -0400
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 991577A91
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 14:41:17 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id oWVBpmySP7JnhoWVBpp7Yo; Mon, 17 Apr 2023 23:35:11 +0200
+        id oWb2plnaxzvWyoWb2pO3Ap; Mon, 17 Apr 2023 23:41:14 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681767311;
-        bh=exdfx2AQYI+d3tNi/ZWU6Qg32IUD8RC19Z/dcWtgLqs=;
+        s=t20230301; t=1681767674;
+        bh=hmKpFuD4ncU+rcAtBi5ifTB/BJFqTFHbSAvPEjZcz3w=;
         h=From:To:Cc:Subject:Date;
-        b=NdxG2WsGN31gVPGEViY7Gfx6CGXCETw38SsVxY6IMCbDTSfxJfXScMtFpUjcrKaKG
-         NVgFyLzcDAenFlcjEu92emWpI0WggHaWsRMRyb1j5k0GqiAzyRgTYoXhNLRHvnRR9C
-         k/uxWrNaiTFNq1C8OBkSyax8cLOpnVn5gXA0002el4r+WuB58lXuybGxlgyZQVdbYU
-         nnjfp7Zw2UQWmUDflTkQ34Dr3CEm02FFBu8uwmhsaHf/kv586EWgib/eHTjbpLtnDF
-         jVSer0ib8ZfQ6hgF0MOUutTWNMqpSOHW6rhUWpXZNwfNO9BecmslqM1kij833b97lQ
-         KUlMW8ZxR2/hw==
+        b=Ndv3FWjnt02YRKTfsZ2vbwcNqVmy7vEKr+nkYGk6v06OlVMmVmfhdeZJH5u6X1xJH
+         CXMA0vfkC+bgSCUisSpkMH+DuB1yV/+g5/JPNWybSxeZyek7WyY/8Y5ZVCOaXjfl/A
+         2MaL1KMBkxxn9gDyThLO7YFz+GxhquOA5w5PbDUqF94R+7YH9PGWkr+fk4sqnaNRUg
+         nYNFVMlO3/5+l8wsG2P3L9ACpmg1uU+6j9AKq7nPrKGj/65+240vsDZxKhhSnCTM5/
+         PKpSAzzOxbsbBsy2zy8XIDoJYBdmmzj2i8ZlJ3qa4OmieEvMnxnbMDZXhiAxwJdgFP
+         DgmumidLM/epA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 Apr 2023 23:35:11 +0200
+X-ME-Date: Mon, 17 Apr 2023 23:41:14 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     Harry Wentland <harry.wentland@amd.com>,
@@ -42,15 +42,13 @@ To:     Harry Wentland <harry.wentland@amd.com>,
         "Pan, Xinhui" <Xinhui.Pan@amd.com>,
         David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Pavle Kotarac <Pavle.Kotarac@amd.com>,
-        Nevenko Stupar <Nevenko.Stupar@amd.com>,
-        Aric Cyr <aric.cyr@amd.com>
+        Aurabindo Pillai <aurabindo.pillai@amd.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/amd/display: Fix a test CalculatePrefetchSchedule()
-Date:   Mon, 17 Apr 2023 23:35:08 +0200
-Message-Id: <13ab79d7a6c7ec6292c803ce1e52c8ac12af320f.1681767298.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/amd/display: Fix a test dml32_rq_dlg_get_rq_reg()
+Date:   Mon, 17 Apr 2023 23:41:11 +0200
+Message-Id: <3ba86bbe8cca149774835659885ddf39034a4306.1681767659.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,29 +56,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It is likely Height was expected here, instead of Width.
+It is likely p1_min_meta_chunk_bytes was expected here, instead of
+min_meta_chunk_bytes.
 
 Test the correct variable.
 
-Fixes: 17529ea2acfa ("drm/amd/display: Optimizations for DML math")
+Fixes: dda4fb85e433 ("drm/amd/display: DML changes for DCN32/321")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c | 2 +-
+ .../gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c   | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c b/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c
-index b7c2844d0cbe..f294f2f8c75b 100644
---- a/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c
-@@ -810,7 +810,7 @@ static bool CalculatePrefetchSchedule(
- 			*swath_width_chroma_ub = dml_ceil(SwathWidthY / 2 - 1, myPipe->BlockWidth256BytesC) + myPipe->BlockWidth256BytesC;
- 	} else {
- 		*swath_width_luma_ub = dml_ceil(SwathWidthY - 1, myPipe->BlockHeight256BytesY) + myPipe->BlockHeight256BytesY;
--		if (myPipe->BlockWidth256BytesC > 0)
-+		if (myPipe->BlockHeight256BytesC > 0)
- 			*swath_width_chroma_ub = dml_ceil(SwathWidthY / 2 - 1, myPipe->BlockHeight256BytesC) + myPipe->BlockHeight256BytesC;
- 	}
+diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c b/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c
+index 395ae8761980..9ba6cb67655f 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c
++++ b/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c
+@@ -116,7 +116,7 @@ void dml32_rq_dlg_get_rq_reg(display_rq_regs_st *rq_regs,
+ 	else
+ 		rq_regs->rq_regs_l.min_meta_chunk_size = dml_log2(min_meta_chunk_bytes) - 6 + 1;
  
+-	if (min_meta_chunk_bytes == 0)
++	if (p1_min_meta_chunk_bytes == 0)
+ 		rq_regs->rq_regs_c.min_meta_chunk_size = 0;
+ 	else
+ 		rq_regs->rq_regs_c.min_meta_chunk_size = dml_log2(p1_min_meta_chunk_bytes) - 6 + 1;
 -- 
 2.34.1
 
