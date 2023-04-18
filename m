@@ -2,78 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 529C4C77B76
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 09:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB67C77B78
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 10:11:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231509AbjDRJm5 convert rfc822-to-8bit (ORCPT
+        id S231166AbjDRKLO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Apr 2023 05:42:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43536 "EHLO
+        Tue, 18 Apr 2023 06:11:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231325AbjDRJmS (ORCPT
+        with ESMTP id S230521AbjDRKLL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Apr 2023 05:42:18 -0400
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3AA62107;
-        Tue, 18 Apr 2023 02:42:10 -0700 (PDT)
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.95)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1pohqe-003U8u-HX; Tue, 18 Apr 2023 11:42:04 +0200
-Received: from p5b13a017.dip0.t-ipconnect.de ([91.19.160.23] helo=[192.168.178.81])
-          by inpost2.zedat.fu-berlin.de (Exim 4.95)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1pohqe-0022J9-9Z; Tue, 18 Apr 2023 11:42:04 +0200
-Message-ID: <d341bd38a304b4ca9b703073a658f312b1fa6657.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH RESEND] sh: sq: Use the bitmap API when applicable
-From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 18 Apr 2023 11:42:03 +0200
-In-Reply-To: <837e9f5e-ca8d-4c93-9a89-d7bdb9bb0240@kili.mountain>
-References: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
-         <b5fea49d68e1e2a702b0050f73582526e205cfa2.camel@physik.fu-berlin.de>
-         <14788dbc-c2a6-4d1d-8ae3-1be53b0daf17@kili.mountain>
-         <837e9f5e-ca8d-4c93-9a89-d7bdb9bb0240@kili.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.48.0 
+        Tue, 18 Apr 2023 06:11:11 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9D9593AA0;
+        Tue, 18 Apr 2023 03:10:48 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25119168F;
+        Tue, 18 Apr 2023 03:11:32 -0700 (PDT)
+Received: from [192.168.4.21] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 43FFF3F587;
+        Tue, 18 Apr 2023 03:10:47 -0700 (PDT)
+Message-ID: <20487c94-7f81-cbf5-7136-c7f266eaf60d@arm.com>
+Date:   Tue, 18 Apr 2023 11:10:48 +0100
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-Originating-IP: 91.19.160.23
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] kselftest: vDSO: Fix accumulation of uninitialized ret
+ when CLOCK_REALTIME is undefined
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230417104743.30018-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <20230417104743.30018-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan!
+Hi Colin,
 
-On Tue, 2023-04-18 at 12:39 +0300, Dan Carpenter wrote:
-> On Tue, Apr 18, 2023 at 10:30:01AM +0300, Dan Carpenter wrote:
-> > I have some unpublished Smatch stuff which tries to track "variable x
-> > is in terms of bit units or byte units etc."  I will try to make a
-> > static checker rule for this.
+On 4/17/23 11:47, Colin Ian King wrote:
+> In the unlikely case that CLOCK_REALTIME is not defined, variable ret is
+> not initialized and further accumulation of return values to ret can leave
+> ret in an undefined state. Fix this by initialized ret to zero and changing
+> the assignment of ret to an accumulation for the CLOCK_REALTIME case.
 > 
-> Attached.  It prints a warning like this:
-> 
-> drivers/net/ethernet/broadcom/cnic.c:667 cnic_init_id_tbl() warn: allocating units of longs instead of bytes 'test_var'
-> 
-> I'll test it out tonight.
 
-Nice job, thanks for creating this very handy script!
+I was wondering how did you find this.
 
-Adrian
+Apart that:
+
+Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+> Fixes: 03f55c7952c9 ("kselftest: Extend vDSO selftest to clock_getres")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  tools/testing/selftests/vDSO/vdso_test_clock_getres.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
+> index 15dcee16ff72..38d46a8bf7cb 100644
+> --- a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
+> +++ b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
+> @@ -84,12 +84,12 @@ static inline int vdso_test_clock(unsigned int clock_id)
+>  
+>  int main(int argc, char **argv)
+>  {
+> -	int ret;
+> +	int ret = 0;
+>  
+>  #if _POSIX_TIMERS > 0
+>  
+>  #ifdef CLOCK_REALTIME
+> -	ret = vdso_test_clock(CLOCK_REALTIME);
+> +	ret += vdso_test_clock(CLOCK_REALTIME);
+>  #endif
+>  
+>  #ifdef CLOCK_BOOTTIME
 
 -- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Regards,
+Vincenzo
