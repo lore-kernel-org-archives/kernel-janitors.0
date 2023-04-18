@@ -2,95 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05491C77B75
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 15:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 329ECC77B75
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 18:06:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231657AbjDRPgf (ORCPT
+        id S232062AbjDRSGE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Apr 2023 11:36:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52894 "EHLO
+        Tue, 18 Apr 2023 14:06:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231367AbjDRPgd (ORCPT
+        with ESMTP id S230070AbjDRSGD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Apr 2023 11:36:33 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FC2946BA;
-        Tue, 18 Apr 2023 08:36:10 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id n43-20020a05600c502b00b003f17466a9c1so58422wmr.2;
-        Tue, 18 Apr 2023 08:36:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681832169; x=1684424169;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LkJVegcK4RPCubdgAGwJFimoe2y53+6saI3D05sGsLI=;
-        b=H+69oanFfCKcrI2xj4bC576D35a2NUqQk8XzSkv2ciEMm4d1bBj9fR5+fHThPQpfC6
-         +y6DbXC3zQAcFQcFpjL8V76kPv2aiTyyUrh5RlG0UHPBnHQ11hY6Kgy7SfkPJGMK9dB5
-         09z5BEFDpc5Mxq1FY6OFaxZKXquZlG3aQN1RLvwK3hLrwcadA697EDBPYs8PUOxL5exj
-         eiJu5eSEUPfI69PyD/wsYu3Adjy9jdbDN4wmODLYe1QdaKArJ/MEC5plIs9o74rzb5wX
-         Ehw6LGlXsY2F54ZTsgw7yid215g5GgoFq2w1TqqSa/WHC/SqjiNus3RELSzXpoVWT7dS
-         4rdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681832169; x=1684424169;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LkJVegcK4RPCubdgAGwJFimoe2y53+6saI3D05sGsLI=;
-        b=f9/rW7iQtByPhp6xL4zijHiHSmY+6U02cG0U/QVo+yOChmDI7V146JU1OU57sQ8Dxw
-         ubC/MdbfPLdRHKXyAQBA/lcKaMKaRAuQFcAb+Vw7BDsQkLziDKWvpV+IXGezYCr9SSEV
-         lrlXNl6vLu40NgZjcrdc0BE0QndzcHmpOvFN+hj+F6NB3/QCYT5J2CI4kbBYVh/HvEkL
-         iafWtE2FBc61YT7fzsFUGbHeB8bsXIBGV7VL7QhHqEsPAyH2jmDeEt7t5GD3EH53/7rh
-         mH5tIwbMxlf7/aXRGnVrxKpVPtXqCuzptiItOCuK07pCohpdSsC+6l5/Bfi+lUIbubDa
-         rvyQ==
-X-Gm-Message-State: AAQBX9el3pZxmILPjmpJlW4RRtE/evI2d+hVXbPaD45IbuEYEPHaw/UX
-        smZJy8mJP2MyX3oe4i+cBW8Wd949cYunRA==
-X-Google-Smtp-Source: AKy350ZVp3fSqaY94ZPunCrFUD3kVEZ6PAQGitpq8zuWnC2Mb9fhEsm7VFomjBqsoPCs2KmOqCKj6Q==
-X-Received: by 2002:a7b:c44a:0:b0:3eb:42fc:fb30 with SMTP id l10-20020a7bc44a000000b003eb42fcfb30mr14538454wmi.32.1681832168560;
-        Tue, 18 Apr 2023 08:36:08 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d16-20020a5d6dd0000000b002d6f285c0a2sm13385333wrz.42.2023.04.18.08.36.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 08:36:07 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Anton Altaparmakov <anton@tuxera.com>,
-        linux-ntfs-dev@lists.sourceforge.net
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ntfs: remove redundant initialization to pointer cb_sb_start
-Date:   Tue, 18 Apr 2023 16:36:07 +0100
-Message-Id: <20230418153607.3125704-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 18 Apr 2023 14:06:03 -0400
+Received: from smtp.smtpout.orange.fr (smtp-12.smtpout.orange.fr [80.12.242.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1829E2717
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Apr 2023 11:05:59 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id opiEpZRwNpD2AopiEpj41M; Tue, 18 Apr 2023 20:05:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+        s=t20230301; t=1681841157;
+        bh=GctzAXq88S367TGXB24PxESHXE0rCHGQao6MmRQJ5s4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=iQPsGxG2ccQpIpDHBiSK9ttsZ+xkAE70wIBuy8olOQYB+BfdA6Ftk6ZMhYc6ogekz
+         nsOlnqEbHYVXJA1iKdnrj74ew/Qld7mqDhsVs+7G69l61sOHcF6+q1D3xkWUG/WG2h
+         Jd+NF74/as2IMeU+t6kw2m1UGlZHyAwYt3lLmSa0bcpCjWnCLX5F7XHSmjUVhBCotr
+         oMxGuJZLlIi3EN2YkXmorzMGT7ptgkvsVRRS3ArFzChyPWJx7gCZrXj+/81Mwv0q+q
+         Fd5E4Hucok6O0bhyDBpfgNPAJaKORMNWSNcr2Va2r/EZ+jyfsKOfOlRO+1e5KF+MGj
+         KSUwXyNuB+BFQ==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 18 Apr 2023 20:05:57 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <d2b2baca-589d-83ef-04b0-0f64b18f9d95@wanadoo.fr>
+Date:   Tue, 18 Apr 2023 20:05:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH RESEND] sh: sq: Use the bitmap API when applicable
+Content-Language: fr, en-GB
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-sh@vger.kernel.org
+References: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
+ <b5fea49d68e1e2a702b0050f73582526e205cfa2.camel@physik.fu-berlin.de>
+ <CAMuHMdWz7YJ4ifkxU2GGdoj46fTsjS5WE66R0YzvOYr1ZKY=4w@mail.gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAMuHMdWz7YJ4ifkxU2GGdoj46fTsjS5WE66R0YzvOYr1ZKY=4w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer cb_sb_start is being initialized with a value that is never
-read, it is being re-assigned the same value later on when it is first
-being used. The initialization is redundant and can be removed.
+Le 18/04/2023 à 09:14, Geert Uytterhoeven a écrit :
+> 
+> Nice catch!
+> 
+> Looking more deeply at the code, the intention is to allocate a bitmap
+> with nr_pages bits, so the code fater Christophe's patch is correct.
+> However, the old code is indeed wrong:
+> 
+>      (nr_pages + (BITS_PER_LONG - 1)) / BITS_PER_LONG
+> 
+> The aim is to calculate the size in bytes, rounded up to an integral
+> number of longs, but it lacks a final multiplication by BITS_PER_BYTE,
+> so it's off by a factor of 4.
+> 
+> Fixes: d7c30c682a278abe ("sh: Store Queue API rework.")
+> 
+> As we didn't have bitmap_zalloc() until commit c42b65e363ce97a8
+> ("bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()")
+> in v4.19, it would be good to fix the bug first in a separate patch,
+> not using
+> 
+> BTW, interesting how this got missed when fixing the other out-of-range
+> bug in commit 9f650cf2b811cfb6 ("sh: Fix store queue bitmap end.",
+> s/marc.theaimsgroup.com/marc.info/ when following the link).
 
-Cleans up clang scan build warning:
-fs/ntfs/compress.c:164:6: warning: Value stored to 'cb_sb_start' during its initialization is never read [deadcode.DeadStores]
-        u8 *cb_sb_start = cb;   /* Beginning of the current sb in the cb. */
+So, this means that this got unnoticed for 16 years?
+Waouh!
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/ntfs/compress.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I would never have thought that a "trivial" clean-up that I took time to 
+repost could trigger such a thing!
 
-diff --git a/fs/ntfs/compress.c b/fs/ntfs/compress.c
-index f9cb180b6f6b..761aaa0195d6 100644
---- a/fs/ntfs/compress.c
-+++ b/fs/ntfs/compress.c
-@@ -161,7 +161,7 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
- 	 */
- 	u8 *cb_end = cb_start + cb_size; /* End of cb. */
- 	u8 *cb = cb_start;	/* Current position in cb. */
--	u8 *cb_sb_start = cb;	/* Beginning of the current sb in the cb. */
-+	u8 *cb_sb_start;	/* Beginning of the current sb in the cb. */
- 	u8 *cb_sb_end;		/* End of current sb / beginning of next sb. */
- 
- 	/* Variables for uncompressed data / destination. */
--- 
-2.30.2
+Again.
+Waouh!
+
+
+Maybe, 0x04000000 is way to big?
+Anyone knows where this value comes from?
+
+Could there have been some memory corruption in real world application?
+
+CJ
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
 
