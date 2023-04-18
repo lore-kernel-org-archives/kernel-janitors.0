@@ -2,55 +2,55 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB38DC77B71
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 07:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E67C77B71
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 09:40:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbjDRHaK (ORCPT
+        id S231167AbjDRJkt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Apr 2023 03:30:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42344 "EHLO
+        Tue, 18 Apr 2023 05:40:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230093AbjDRHaJ (ORCPT
+        with ESMTP id S231436AbjDRJkR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Apr 2023 03:30:09 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 958A23C0D;
-        Tue, 18 Apr 2023 00:30:07 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id m39-20020a05600c3b2700b003f170e75bd3so407760wms.1;
-        Tue, 18 Apr 2023 00:30:07 -0700 (PDT)
+        Tue, 18 Apr 2023 05:40:17 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2107C7D84;
+        Tue, 18 Apr 2023 02:39:59 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f0a00a5880so14036885e9.0;
+        Tue, 18 Apr 2023 02:39:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681803005; x=1684395005;
+        d=gmail.com; s=20221208; t=1681810797; x=1684402797;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yOJRGSqkhaY3rQWlxd3RmTgIRfKZ5fa+Xd7KjcydsNM=;
-        b=TVgKWILagxML1a75tWb7Ep3iMUAZJMzToSyBJtw/YksyvAR6Da4M4TW71v1HT5c0dj
-         WfxWcMEwhm9VVvcV0Z1eWo+3tavRBfUTf2uFsmRhUrfJUwCPrR/QnhMEYZLHrnV5Ko7v
-         3F6LJ+QYvzBVlCFe+7QV4Qi8DRwPJFiZ1tddzMzq274lgStRJjfwvPae9jbnXDTJsaDa
-         x39W5x9jhcmcLFQTT42CiW3WXhN4+j6VTzCbMKA5MiS7Pi+jsmwKcbmKKppi2C3HyZdm
-         4ZpiwMUdUA7H69R+jp43jJqdQvInc9d8hOoZEeXpP0Z8Dogg2I+rJTlvBCyh1SxZKSXl
-         D1Bw==
+        bh=zzQBmhBycWm3Z62ZlfZCa618OpeoVEJ5/aiYxN8jq8g=;
+        b=Y8X8UNZ3w6OP7zNvJtK8S//kpaupljHwfXHt1s4mtjajbW+xW7UhtBZ06YIMp2AAu8
+         cq9xxNTjCkt7qUgqteV4MJ54oxoAbc7Tw82xsj5RIRtAbbEDygewA5bcaopcldsde0Ov
+         LcEpUgVX6qf2/5Iq0q7bHGRtzsN3EBDdgH+jzCMfm6MaSeQljGUIxoPREBkehDCdSMFT
+         fnHFsBDaw4lPYCU5ljyfN9q+DeRO3osc7bhUUM1eh6q/FMKY8e68Wsp8NV+cd9ykRC22
+         736BNbfhsW8wwYJ1Jls/UqzT+xI0UJjA7bvliZwnmfSI/Nh4Qcmfr7wpKBtgiXr6IthU
+         EzpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681803005; x=1684395005;
+        d=1e100.net; s=20221208; t=1681810797; x=1684402797;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yOJRGSqkhaY3rQWlxd3RmTgIRfKZ5fa+Xd7KjcydsNM=;
-        b=JR5Va3BOiw75/00zNA9Z5FtuUHlJ8tFpJhYif3L1jyurEmrn5N3rRbjS7cFc0sxZ0Y
-         fVSXH5fnhUP9FeVaWJ2ybtpHX2PKQKWXUWMQ2dqWxFiTLnpkWzCTgM37uZNXE2pNnSol
-         IIM5+ymsB0WvMMecgL8EJ3l67aATz2PfvWVWIXyGJE2jkRxid/4m/yyTyZxEQBQVeoXd
-         A+/XVkpRvxBKpsN5jtYE36cRb6qn1sghFcTxbbsS4KckVOgNDpfU7MlZ5gwL/IEYrjf0
-         KhYT8NH4jjGJExRap4I6m7NvhILCV/Y/mZl5SjvRoWClu0+HFQTMMbMieaaJsn24sie2
-         Pd0w==
-X-Gm-Message-State: AAQBX9cXq7uJMtIVvG8+qOMGNtb2+wUHiMvr+OdjB00UOG4nWFC+Saln
-        1/UerTJKJf23wN77GHVpqzg=
-X-Google-Smtp-Source: AKy350Y/TrEPOE+CjJuBbXWpjuo8DS3MAVJfP4BYilpIghd/5fCeKzhPLL4CLcwoPVRYCTpzetEojw==
-X-Received: by 2002:a7b:c012:0:b0:3ed:2e02:1c02 with SMTP id c18-20020a7bc012000000b003ed2e021c02mr12102114wmb.23.1681803005357;
-        Tue, 18 Apr 2023 00:30:05 -0700 (PDT)
+        bh=zzQBmhBycWm3Z62ZlfZCa618OpeoVEJ5/aiYxN8jq8g=;
+        b=lFG03HGy2BBXErV3uFHBGB3ECcncp48biwiVdGmB6S8NS3JrdylL/1CuVhbLJ5I0BE
+         ErQjIjRN5TNTBEWklxmK4GgB5dExmZEFWKCniys/Lj8XJ9VrURy1XiS9jDDh25YrvwT2
+         rNl2DTSmb73vinbPjaz5QEnpdnrknrt3w6J3kC1atvZWGkMMyrspopmKswYr8Kwch4ZJ
+         NzMmKKelF/dlL9LsIN3dcrk0PB1XPb9RRbVCskT96OnCow1Kt1AIsF4cO1i94Ozv6BSU
+         z+7IouMTk9oixAVtu8hN7YD37zhtPzXNMoaLCteGODKLBKHlIfyUKJkdBBe6Cngw8rBT
+         JCwg==
+X-Gm-Message-State: AAQBX9c+haF+PbpLxOi2AErFrhwOecBQQhkwj+r9GwSwgMuFFpLFd7l8
+        ohlVJy3zno171JzwuR37Mwo=
+X-Google-Smtp-Source: AKy350ZQeQOBzR2NxmiWEuG7qicyB6tgVhfnjd7tiafeRzyIisX1X4roYNyApYsHl9lPDW+mjo0PuA==
+X-Received: by 2002:adf:ea8b:0:b0:2f2:c46b:1eb5 with SMTP id s11-20020adfea8b000000b002f2c46b1eb5mr1491650wrm.59.1681810797486;
+        Tue, 18 Apr 2023 02:39:57 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id r4-20020adfda44000000b002f598008d50sm12276459wrl.34.2023.04.18.00.30.04
+        by smtp.gmail.com with ESMTPSA id m14-20020a056000008e00b002c71b4d476asm12576888wrx.106.2023.04.18.02.39.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 00:30:04 -0700 (PDT)
-Date:   Tue, 18 Apr 2023 10:30:01 +0300
+        Tue, 18 Apr 2023 02:39:56 -0700 (PDT)
+Date:   Tue, 18 Apr 2023 12:39:43 +0300
 From:   Dan Carpenter <error27@gmail.com>
 To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
@@ -59,77 +59,84 @@ Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         kernel-janitors@vger.kernel.org, linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCH RESEND] sh: sq: Use the bitmap API when applicable
-Message-ID: <14788dbc-c2a6-4d1d-8ae3-1be53b0daf17@kili.mountain>
+Message-ID: <837e9f5e-ca8d-4c93-9a89-d7bdb9bb0240@kili.mountain>
 References: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
  <b5fea49d68e1e2a702b0050f73582526e205cfa2.camel@physik.fu-berlin.de>
+ <14788dbc-c2a6-4d1d-8ae3-1be53b0daf17@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="V2iJ7csRRNqcDySa"
 Content-Disposition: inline
-In-Reply-To: <b5fea49d68e1e2a702b0050f73582526e205cfa2.camel@physik.fu-berlin.de>
+In-Reply-To: <14788dbc-c2a6-4d1d-8ae3-1be53b0daf17@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 18, 2023 at 08:36:40AM +0200, John Paul Adrian Glaubitz wrote:
-> Hi Christophe!
-> 
-> Thanks for your patch. The changes look good to me. However, I have
-> one question, see below.
-> 
-> On Sun, 2023-04-16 at 21:05 +0200, Christophe JAILLET wrote:
-> > Using the bitmap API is less verbose than hand writing them.
-> > It also improves the semantic.
-> > 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > This is a resend of [1].
-> > 
-> > Now cross-compile tested with CONFIG_CPU_SUBTYPE_SH7770=y
-> > 
-> > [1]: https://lore.kernel.org/all/521788e22ad8f7a5058c154f068b061525321841.1656142814.git.christophe.jaillet@wanadoo.fr/
-> > ---
-> >  arch/sh/kernel/cpu/sh4/sq.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/sh/kernel/cpu/sh4/sq.c b/arch/sh/kernel/cpu/sh4/sq.c
-> > index 27f2e3da5aa2..d289e99dc118 100644
-> > --- a/arch/sh/kernel/cpu/sh4/sq.c
-> > +++ b/arch/sh/kernel/cpu/sh4/sq.c
-> > @@ -372,7 +372,6 @@ static struct subsys_interface sq_interface = {
-> >  static int __init sq_api_init(void)
-> >  {
-> >  	unsigned int nr_pages = 0x04000000 >> PAGE_SHIFT;
-> > -	unsigned int size = (nr_pages + (BITS_PER_LONG - 1)) / BITS_PER_LONG;
-> >  	int ret = -ENOMEM;
-> >  
-> >  	printk(KERN_NOTICE "sq: Registering store queue API.\n");
-> > @@ -382,7 +381,7 @@ static int __init sq_api_init(void)
-> >  	if (unlikely(!sq_cache))
-> >  		return ret;
-> >  
-> > -	sq_bitmap = kzalloc(size, GFP_KERNEL);
-> > +	sq_bitmap = bitmap_zalloc(nr_pages, GFP_KERNEL);
-> >  	if (unlikely(!sq_bitmap))
-> >  		goto out;
-> > 
-> 
-> I have look through other patches where k{z,c,m}alloc() were replaced with
-> bitmap_zalloc() and I noticed that in the other cases such as [1], kcalloc()
-> was used instead of kzalloc() in our cases with the element size set to
-> sizeof(long) while kzalloc() is using an element size equal to a byte.
-> 
-> Wouldn't that mean that the current code in sq is allocating a buffer that is
-> too small by a factor of 1/sizeof(long) or am I missing something?
 
-Yes.  You are correct.  The original code is buggy.
+--V2iJ7csRRNqcDySa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-size is the number of longs we need so kzalloc() is allocating a too
-small buffer.  It should be kzalloc(size * sizeof(long), ... etc as you
-say.
+On Tue, Apr 18, 2023 at 10:30:01AM +0300, Dan Carpenter wrote:
+> I have some unpublished Smatch stuff which tries to track "variable x
+> is in terms of bit units or byte units etc."  I will try to make a
+> static checker rule for this.
 
-I have some unpublished Smatch stuff which tries to track "variable x
-is in terms of bit units or byte units etc."  I will try to make a
-static checker rule for this.
+Attached.  It prints a warning like this:
+
+drivers/net/ethernet/broadcom/cnic.c:667 cnic_init_id_tbl() warn: allocating units of longs instead of bytes 'test_var'
+
+I'll test it out tonight.
 
 regards,
 dan carpenter
+
+--V2iJ7csRRNqcDySa
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="check_allocating_longs.c"
+
+/*
+ * Copyright 2023 Linaro Ltd.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
+ */
+
+#include "smatch.h"
+#include "smatch_slist.h"
+
+static int my_id;
+
+static void match_allocation(struct expression *expr,
+			     const char *name, struct symbol *sym,
+			     struct allocation_info *info)
+{
+	struct smatch_state *units;
+	char *str;
+
+	units = get_units(info->total_size);
+	if (!units || strcmp(units->name, "longs") != 0)
+		return;
+
+	str = expr_to_str(info->total_size);
+	sm_warning("allocating units of longs instead of bytes '%s'", str);
+	free_string(str);
+}
+
+void check_allocating_longs(int id)
+{
+	my_id = id;
+
+	add_allocation_hook(&match_allocation);
+}
+
+--V2iJ7csRRNqcDySa--
