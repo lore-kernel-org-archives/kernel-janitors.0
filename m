@@ -2,84 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00485C77B76
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Apr 2023 21:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2E2C77B78
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 01:25:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230416AbjDQVlt (ORCPT
+        id S229687AbjDRBY7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 17:41:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41950 "EHLO
+        Mon, 17 Apr 2023 21:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230232AbjDQVls (ORCPT
+        with ESMTP id S230317AbjDRBYx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 17:41:48 -0400
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 991577A91
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 14:41:17 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id oWb2plnaxzvWyoWb2pO3Ap; Mon, 17 Apr 2023 23:41:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681767674;
-        bh=hmKpFuD4ncU+rcAtBi5ifTB/BJFqTFHbSAvPEjZcz3w=;
-        h=From:To:Cc:Subject:Date;
-        b=Ndv3FWjnt02YRKTfsZ2vbwcNqVmy7vEKr+nkYGk6v06OlVMmVmfhdeZJH5u6X1xJH
-         CXMA0vfkC+bgSCUisSpkMH+DuB1yV/+g5/JPNWybSxeZyek7WyY/8Y5ZVCOaXjfl/A
-         2MaL1KMBkxxn9gDyThLO7YFz+GxhquOA5w5PbDUqF94R+7YH9PGWkr+fk4sqnaNRUg
-         nYNFVMlO3/5+l8wsG2P3L9ACpmg1uU+6j9AKq7nPrKGj/65+240vsDZxKhhSnCTM5/
-         PKpSAzzOxbsbBsy2zy8XIDoJYBdmmzj2i8ZlJ3qa4OmieEvMnxnbMDZXhiAxwJdgFP
-         DgmumidLM/epA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 Apr 2023 23:41:14 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Aurabindo Pillai <aurabindo.pillai@amd.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/amd/display: Fix a test dml32_rq_dlg_get_rq_reg()
-Date:   Mon, 17 Apr 2023 23:41:11 +0200
-Message-Id: <3ba86bbe8cca149774835659885ddf39034a4306.1681767659.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 17 Apr 2023 21:24:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2988F46A8;
+        Mon, 17 Apr 2023 18:24:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BD23962B8C;
+        Tue, 18 Apr 2023 01:24:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0851CC433EF;
+        Tue, 18 Apr 2023 01:24:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681781091;
+        bh=32K0Q1HerQG3csJxlpFXO/0Ud2VIwzHH5+OXkXOd0/U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HOF+vm+sF4UcDMoaPWRO321Tj0buTOVFxEOsOk49qppbLCqvQoFqhbW8dFAwYobgj
+         unEcgvnMNVectQ6qFCjDLIZNdjGzBAo8o1UFmAz3Sdf9DoEBFyM1YST3QSnSBTUCp3
+         Sxgl5s9bW/SrjnoRWJcTtof5FjR8izX28SnNc/s9M3R1mpZ5qdsSv5uEAhTpOPh5cu
+         M8ajK9Q7Tn4nR4ocPDoktgyBC5dijh0at4zF0C1yDS8FsrnUSnFb3ApPq6GeY3ytNM
+         Fg93i/N5zvMUjOk3F255vIAT2/FS/Vi1V6J4R29r6Xr+mIiJSuGw28LnSqnbQqzlty
+         vm8UZDYaMZ+oA==
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 87605403B5; Mon, 17 Apr 2023 22:24:48 -0300 (-03)
+Date:   Mon, 17 Apr 2023 22:24:48 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Hagen Paul Pfeifer <hagen@jauu.net>
+Cc:     Colin Ian King <colin.i.king@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Petar Gligoric <petar.gligoric@rohde-schwarz.com>,
+        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] perf script: task-analyzer: Fix spelling mistake
+ "miliseconds" -> "millseconds"
+Message-ID: <ZD3xYFRrdjEdzQJC@kernel.org>
+References: <20230417174826.52963-1-colin.i.king@gmail.com>
+ <20230417182707.bgvx2os4bbihjamb@ic1101>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230417182707.bgvx2os4bbihjamb@ic1101>
+X-Url:  http://acmel.wordpress.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It is likely p1_min_meta_chunk_bytes was expected here, instead of
-min_meta_chunk_bytes.
+Em Mon, Apr 17, 2023 at 08:27:07PM +0200, Hagen Paul Pfeifer escreveu:
+> * Colin Ian King | 2023-04-17 18:48:26 [+0100]:
+> 
+> >There is a spelling mistake in the help for the --ms option. Fix it.
+> >
+> >Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> 
+> Good catch - thank you Colin!
+> 
+> Acked-by: Hagen Paul Pfeifer <hagen@jauu.net>
 
-Test the correct variable.
+Thanks, applied, and fixed the subject line typo.
 
-Fixes: dda4fb85e433 ("drm/amd/display: DML changes for DCN32/321")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- .../gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c   | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c b/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c
-index 395ae8761980..9ba6cb67655f 100644
---- a/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c
-@@ -116,7 +116,7 @@ void dml32_rq_dlg_get_rq_reg(display_rq_regs_st *rq_regs,
- 	else
- 		rq_regs->rq_regs_l.min_meta_chunk_size = dml_log2(min_meta_chunk_bytes) - 6 + 1;
- 
--	if (min_meta_chunk_bytes == 0)
-+	if (p1_min_meta_chunk_bytes == 0)
- 		rq_regs->rq_regs_c.min_meta_chunk_size = 0;
- 	else
- 		rq_regs->rq_regs_c.min_meta_chunk_size = dml_log2(p1_min_meta_chunk_bytes) - 6 + 1;
--- 
-2.34.1
-
+- Arnaldo
