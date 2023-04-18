@@ -2,109 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED66C77B75
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 04:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27963C77B75
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 04:43:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbjDREWL (ORCPT
+        id S229930AbjDREnc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Apr 2023 00:22:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38494 "EHLO
+        Tue, 18 Apr 2023 00:43:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230036AbjDREWJ (ORCPT
+        with ESMTP id S229517AbjDREnb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Apr 2023 00:22:09 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC8AE4EDD
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 21:22:07 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pocqe-0007Xi-Nc; Tue, 18 Apr 2023 06:21:44 +0200
-Received: from ore by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pocqc-0001NI-0V; Tue, 18 Apr 2023 06:21:42 +0200
-Date:   Tue, 18 Apr 2023 06:21:41 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
+        Tue, 18 Apr 2023 00:43:31 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF5EC272C;
+        Mon, 17 Apr 2023 21:43:30 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id he11-20020a05600c540b00b003ef6d684102so12998455wmb.3;
+        Mon, 17 Apr 2023 21:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681793009; x=1684385009;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eo1dY/ttewg13qVvGQdVcJPBa1hUmnXLA4fbsLDnKVc=;
+        b=P2/wTxe/u056PKJtPuL+KjH/34N8gvJxmrFOtAFqIhFBOsZrLDojAOAHd6fzN2Qe7a
+         iGzXEXksMsxKSwLZ6PYwwLsaj/Gg8uo251YpzBYC63H0h1MwJ+bw6QgSDSq+dghzmgF8
+         4oyNsZ+xVBQ2uqyY1YX9XunXPDDw57AWSoarIHh0vT6NCnQlDYnV6F22KXHwlqhMYe1Z
+         iz/7pzgOmLEwwEFG40MbXfCaSzNZE/VPyaD1tWmDhr3jM2qQ8J0H7y6OMzFa6bilAVrv
+         fghW8rKmIhFUyT1XwLBvI9Ju4aguPPoFW7pLsUfQY2kPak/hdAN70gKw5nVWkPJ9zt8t
+         B2Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681793009; x=1684385009;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eo1dY/ttewg13qVvGQdVcJPBa1hUmnXLA4fbsLDnKVc=;
+        b=N1wb0bMzwiYvBRqE5eGJWTnhrAcpCQPvIqMIMPbz06lOz5ifXPQR0V9Vwc5FMTYsOJ
+         Ncwq0A+Q17fxS8pOz5FEJmRHlXq/gyk/L+HphZYFMdluJXr2+rTJu6LYn5OfSGvj0AQU
+         pkwxZP/lHbkyUrhsFPUSKv7D1wHWADX3onpLl2Ia4sEEP8s/qiCBtpn0zWlF+scEuG1X
+         YbIAbeI5zGyOZvqyYc3n/DP8W/TNFT6vDZyAW1+yNlx21Ng1Xmw1tezC4BYWN7xxzkpc
+         9sqQuhEhjpuEypuKfifvxoLzqxNcULMrdlEp93TL1n4Rn+zAtITWRo7ifhtmjmnII4D/
+         OyIg==
+X-Gm-Message-State: AAQBX9e9Usl7PxxkIogbpmA/WYznN2TcMQaTQ8xqQ3GincWcKWNwzu7h
+        nyEFRgAZNUVpc6BTJvd9QTdezq6s4faF4PAY
+X-Google-Smtp-Source: AKy350YCgcQ296ja4deDMuyoPZgAFD/KiSBIyP+WT9ox0lGEwO7mXcoadEYNo8ROEFvprJ8PD0y6tg==
+X-Received: by 2002:a7b:c38a:0:b0:3f1:6fba:b69a with SMTP id s10-20020a7bc38a000000b003f16fbab69amr6614091wmj.11.1681793009247;
+        Mon, 17 Apr 2023 21:43:29 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id r4-20020a05600c458400b003f0a090d798sm15629180wmo.18.2023.04.17.21.43.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Apr 2023 21:43:28 -0700 (PDT)
+Date:   Tue, 18 Apr 2023 07:43:25 +0300
+From:   Dan Carpenter <error27@gmail.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Arun Ramadoss <arun.ramadoss@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net] net: dsa: microchip: ksz8795: Correctly handle huge
- frame configuration
-Message-ID: <20230418042141.GA30964@pengutronix.de>
-References: <43107d9e8b5b8b05f0cbd4e1f47a2bb88c8747b2.1681755535.git.christophe.jaillet@wanadoo.fr>
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH] f2fs: remove some dead code
+Message-ID: <2867d5b3-c6cb-49fa-854a-0f58f9a5adb5@kili.mountain>
+References: <523ec4b037d064e92e19203e3ab9a161e3d9aa71.1681764681.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <43107d9e8b5b8b05f0cbd4e1f47a2bb88c8747b2.1681755535.git.christophe.jaillet@wanadoo.fr>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+In-Reply-To: <523ec4b037d064e92e19203e3ab9a161e3d9aa71.1681764681.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
-
-On Mon, Apr 17, 2023 at 08:19:33PM +0200, Christophe JAILLET wrote:
-> Because of the logic in place, SW_HUGE_PACKET can never be set.
-> (If the first condition is true, then the 2nd one is also true, but is not
-> executed)
-> 
-> Change the logic and update each bit individually.
->
-> Fixes: 29d1e85f45e0 ("net: dsa: microchip: ksz8: add MTU configuration support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
-
-Thank you!
-
-> ---
-> Untested.
-
-I do not have access to this HW too.
-
-> ---
->  drivers/net/dsa/microchip/ksz8795.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/dsa/microchip/ksz8795.c b/drivers/net/dsa/microchip/ksz8795.c
-> index 23614a937cc3..f56fca1b1a22 100644
-> --- a/drivers/net/dsa/microchip/ksz8795.c
-> +++ b/drivers/net/dsa/microchip/ksz8795.c
-> @@ -96,7 +96,7 @@ static int ksz8795_change_mtu(struct ksz_device *dev, int frame_size)
+On Mon, Apr 17, 2023 at 10:51:46PM +0200, Christophe JAILLET wrote:
 >  
->  	if (frame_size > KSZ8_LEGAL_PACKET_SIZE)
->  		ctrl2 |= SW_LEGAL_PACKET_DISABLE;
-> -	else if (frame_size > KSZ8863_NORMAL_PACKET_SIZE)
-> +	if (frame_size > KSZ8863_NORMAL_PACKET_SIZE)
->  		ctrl1 |= SW_HUGE_PACKET;
+> -	ret2 = filemap_check_errors(NODE_MAPPING(sbi));
+> -	if (!ret)
+> -		ret = ret2;
+> +	ret = filemap_check_errors(NODE_MAPPING(sbi));
 >  
->  	ret = ksz_rmw8(dev, REG_SW_CTRL_1, SW_HUGE_PACKET, ctrl1);
-> -- 
-> 2.34.1
-> 
-> 
+>  	return ret;
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Let's get rid of "ret" as well:
+
+	return filemap_check_errors(NODE_MAPPING(sbi));
+
+regards,
+dan carpenter
+
