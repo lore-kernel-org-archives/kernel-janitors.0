@@ -2,79 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2E2C77B78
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 01:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 371F5C77B76
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 01:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229687AbjDRBY7 (ORCPT
+        id S230386AbjDRB6Z (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Apr 2023 21:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44476 "EHLO
+        Mon, 17 Apr 2023 21:58:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230317AbjDRBYx (ORCPT
+        with ESMTP id S229822AbjDRB6Y (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Apr 2023 21:24:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2988F46A8;
-        Mon, 17 Apr 2023 18:24:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BD23962B8C;
-        Tue, 18 Apr 2023 01:24:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0851CC433EF;
-        Tue, 18 Apr 2023 01:24:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681781091;
-        bh=32K0Q1HerQG3csJxlpFXO/0Ud2VIwzHH5+OXkXOd0/U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HOF+vm+sF4UcDMoaPWRO321Tj0buTOVFxEOsOk49qppbLCqvQoFqhbW8dFAwYobgj
-         unEcgvnMNVectQ6qFCjDLIZNdjGzBAo8o1UFmAz3Sdf9DoEBFyM1YST3QSnSBTUCp3
-         Sxgl5s9bW/SrjnoRWJcTtof5FjR8izX28SnNc/s9M3R1mpZ5qdsSv5uEAhTpOPh5cu
-         M8ajK9Q7Tn4nR4ocPDoktgyBC5dijh0at4zF0C1yDS8FsrnUSnFb3ApPq6GeY3ytNM
-         Fg93i/N5zvMUjOk3F255vIAT2/FS/Vi1V6J4R29r6Xr+mIiJSuGw28LnSqnbQqzlty
-         vm8UZDYaMZ+oA==
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 87605403B5; Mon, 17 Apr 2023 22:24:48 -0300 (-03)
-Date:   Mon, 17 Apr 2023 22:24:48 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Hagen Paul Pfeifer <hagen@jauu.net>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Petar Gligoric <petar.gligoric@rohde-schwarz.com>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] perf script: task-analyzer: Fix spelling mistake
- "miliseconds" -> "millseconds"
-Message-ID: <ZD3xYFRrdjEdzQJC@kernel.org>
-References: <20230417174826.52963-1-colin.i.king@gmail.com>
- <20230417182707.bgvx2os4bbihjamb@ic1101>
+        Mon, 17 Apr 2023 21:58:24 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1730D619C
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 18:57:50 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id 41be03b00d2f7-51452556acdso1894010a12.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Apr 2023 18:57:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20221208.gappssmtp.com; s=20221208; t=1681783069; x=1684375069;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K7vLZY5J50FSt8lwsCIHqb0KqBwYt8YdqEgV1/N0h/I=;
+        b=NOiNaHH5RvWGgDQE3cwC4NK+sGVh4LMa60CHcMcMk0Ns8/Yq5MGld5dWUjwTse7vyl
+         sKC5+TdqTJ0g1DA3AJel0DSxVVoIfHlh6fzn60kvCJygfZLA3ZNhsNlH90HskcfW8wyr
+         aEM0bRz+roJWmD5kJK1PECX7UrfFX9MGO6zUqJiSiv6N3eBLNsftiuRiFL/zWvI75fC+
+         oZ7uEWVRwepxdfHNbdJIMcfw1NY97WRjW4XrMM06UeI+bfDM4s9VuKIC+wiCKVhur8qy
+         qgcsF5dR0mHZLPLlOBV3tsbo+zGRrlytO+pk1VNiCHWtagqs7/gi0BKWFu2SiZdVeUK9
+         tu/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681783069; x=1684375069;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K7vLZY5J50FSt8lwsCIHqb0KqBwYt8YdqEgV1/N0h/I=;
+        b=bEE6PyqiILtEMcgtEWdpOO0Wr8bowOaH1VfEmu/Oby0+o5cYlCI4bWXcAsAH/CKriR
+         fq7Sgsqj85NhirEPMNChkw0oMwY8qCPVOEjOOYYNxsxQjqwGwBvXsaMmzkPAGLLT5fos
+         O2mAREk42gw3aIvU1HoU+zkb/2QvFubS9YmoxhEMjF+2SMAtTuxjLWpmxZV+yA4iE5Mx
+         AgoHUKvQb8yLL2IuZ3ErcQhrliOm6SVGoVFeohUTyBc2XRIWnuzYJAAGm19KzSBgUrc0
+         wwjm8uLss2QJOmfd2OvCf3zS6Rrtoc8+QvQnzLg1ZhITrx6jdfzBc65ZZ4cs64J3j7vh
+         Tkcw==
+X-Gm-Message-State: AAQBX9fAwegIffJtnzBK7ui/M6rurhxg3QA9Mvj0Jgezftj8kc+WvnyZ
+        bM7wXzoBLuaoP3I3J900q6cGHn6FjLflSbuWyiKWpw==
+X-Google-Smtp-Source: AKy350aHPlYlChJxF4HQlAb3s/ccQQXKkLuj/0YwpGffvcRq+tpfEP9ObhroKMearnzP07TrPYVfAw==
+X-Received: by 2002:a17:903:230c:b0:1a6:b78e:de0f with SMTP id d12-20020a170903230c00b001a6b78ede0fmr590735plh.51.1681783069405;
+        Mon, 17 Apr 2023 18:57:49 -0700 (PDT)
+Received: from [192.168.33.147] (124-110-25-102.east.xps.vectant.ne.jp. [124.110.25.102])
+        by smtp.gmail.com with ESMTPSA id jf7-20020a170903268700b001a2135e7eabsm8342694plb.16.2023.04.17.18.57.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Apr 2023 18:57:49 -0700 (PDT)
+Message-ID: <4e5a887d-1c8a-5592-9dcc-fcc85ec7e319@landley.net>
+Date:   Mon, 17 Apr 2023 21:13:02 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230417182707.bgvx2os4bbihjamb@ic1101>
-X-Url:  http://acmel.wordpress.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH RESEND] sh: sq: Use the bitmap API when applicable
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-sh@vger.kernel.org
+References: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
+From:   Rob Landley <rob@landley.net>
+In-Reply-To: <071e9f32c19a007f4922903282c9121898641400.1681671848.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Em Mon, Apr 17, 2023 at 08:27:07PM +0200, Hagen Paul Pfeifer escreveu:
-> * Colin Ian King | 2023-04-17 18:48:26 [+0100]:
+On 4/16/23 14:05, Christophe JAILLET wrote:
+> Using the bitmap API is less verbose than hand writing them.
+> It also improves the semantic.
 > 
-> >There is a spelling mistake in the help for the --ms option. Fix it.
-> >
-> >Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> Good catch - thank you Colin!
-> 
-> Acked-by: Hagen Paul Pfeifer <hagen@jauu.net>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Thanks, applied, and fixed the subject line typo.
+Tested-by: Rob Landley <rob@landley.net>
 
-- Arnaldo
+It booted and ran for me.
+
+Rob
