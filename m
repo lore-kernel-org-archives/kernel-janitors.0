@@ -2,161 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C60F6C6FD18
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 19:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECB5C6FD18
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 21:21:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231335AbjDSTDv (ORCPT
+        id S232536AbjDSVVo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Apr 2023 15:03:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59156 "EHLO
+        Wed, 19 Apr 2023 17:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbjDSTDt (ORCPT
+        with ESMTP id S232649AbjDSVVb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Apr 2023 15:03:49 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C1442120;
-        Wed, 19 Apr 2023 12:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681931026; x=1713467026;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1Hh8WUIR6eeK+AxsczOGGcqyUNQHx9FNhheYlsKci2Y=;
-  b=Da/AF8m2fHuY++heJ9dpgsxTj33jirSNiKuchiw9Bw4flgLt3reOAfIK
-   8rp5ONU3pnB5PZ6Y3lQI3D3RIgpwF08UMnkSxIBQLuwWduM/5u85Bwc13
-   uurHU0QVvp3F4CJg/jG8nzYSJ5w//jkenvjjbnEme8dQvbjBJxqbvvDpD
-   XjbdCCLLZREO0XABbtTSH59PviPp4bJZSymZANrZaNn7YhBgqYord+DZE
-   h0nL6vWOFssX9/3wYUAdPWYCZymYWQ57ZdMAX9xHoKFLdQMcJcNlsB6b8
-   SCuN4MIXg83FESU4U6UPuaKJmr/ukr3icLveG5YcZeTssSDog/yjIcCdM
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="325148265"
-X-IronPort-AV: E=Sophos;i="5.99,210,1677571200"; 
-   d="scan'208";a="325148265"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2023 12:03:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="1021319731"
-X-IronPort-AV: E=Sophos;i="5.99,210,1677571200"; 
-   d="scan'208";a="1021319731"
-Received: from gargicha-mobl1.amr.corp.intel.com (HELO [10.209.74.38]) ([10.209.74.38])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2023 12:03:19 -0700
-Message-ID: <fbdee94e-b731-0471-e18f-b334ab0db7f5@linux.intel.com>
-Date:   Wed, 19 Apr 2023 14:03:18 -0500
+        Wed, 19 Apr 2023 17:21:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26097AD35;
+        Wed, 19 Apr 2023 14:21:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 867056306A;
+        Wed, 19 Apr 2023 21:20:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E3A8BC433D2;
+        Wed, 19 Apr 2023 21:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681939218;
+        bh=IZje+2r+GnRqX9Nu6Qa+XAyYOT6tBOuoqnWCr7UOMjE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=r4LfYUKvfz9Z9fUzoVZtkNVrrxHe793IfAF2rgPvPdg1qc/V7N2EDPzCarj7gglQ8
+         POimW8R3ACtXXIbILzlGRHxJ0ddXvApX7s5lWPXfOl/CZfXW5VF9Vj0o8ORNB7wf58
+         KMrYn8wS7P6hAhhdQJSWcKROZHUhl9kDqU2UPt4oKr4Nwotp/6AxeAszdWR5PwIm2N
+         rSn1yLANPmIR2WONurP693MHh00CF8C2nYzV0eADrruXvq89VDtZ5Bb/kCMlEky2lz
+         J3zAqTdNC7yQxPKK42N88efOWtMQSpMXEgX64788fPSCraGWdwbHPMLkPzTR/NgrP8
+         2mElmz372vHfA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C61F3E4D033;
+        Wed, 19 Apr 2023 21:20:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.10.0
-Subject: Re: [PATCH] ASoC: SOF: Intel: hda-stream: Move three variable
- assignments behind condition checks in hda_dsp_iccmax_stream_hw_params()
-Content-Language: en-US
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
-        sound-open-firmware@alsa-project.org,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Rander Wang <rander.wang@intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>
-Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <c18331ca-3de9-d433-f477-b04103958b9c@web.de>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <c18331ca-3de9-d433-f477-b04103958b9c@web.de>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: dsa: microchip: ksz8795: Correctly handle huge frame
+ configuration
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168193921880.10989.3291332705872506866.git-patchwork-notify@kernel.org>
+Date:   Wed, 19 Apr 2023 21:20:18 +0000
+References: <43107d9e8b5b8b05f0cbd4e1f47a2bb88c8747b2.1681755535.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <43107d9e8b5b8b05f0cbd4e1f47a2bb88c8747b2.1681755535.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     woojung.huh@microchip.com, UNGLinuxDriver@microchip.com,
+        andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, arun.ramadoss@microchip.com,
+        linux@rempel-privat.de, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 17 Apr 2023 20:19:33 +0200 you wrote:
+> Because of the logic in place, SW_HUGE_PACKET can never be set.
+> (If the first condition is true, then the 2nd one is also true, but is not
+> executed)
+> 
+> Change the logic and update each bit individually.
+> 
+> Fixes: 29d1e85f45e0 ("net: dsa: microchip: ksz8: add MTU configuration support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] net: dsa: microchip: ksz8795: Correctly handle huge frame configuration
+    https://git.kernel.org/netdev/net/c/3d2f8f1f184c
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-On 4/19/23 13:54, Markus Elfring wrote:
-> Date: Wed, 19 Apr 2023 20:42:19 +0200
-> 
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the function “hda_dsp_iccmax_stream_hw_params”.
-> 
-> Thus avoid the risk for undefined behaviour by moving the assignment
-> for three local variables behind some condition checks.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 7d88b9608142f95ccdd3dfb190da4a5faddb1cc7 ("ASoC: SOF: Intel: hdac_ext_stream: consistent prefixes for variables/members")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Yes indeed, for some reason this was fixed in
-hda_dsp_stream_hw_params() but not in the
-hda_dsp_iccmax_stream_hw_params() variant.
-
-Could we however use the same code as in hda_dsp_stream_hw_params() for
-consistency?
-
-	if (!hext_stream) {
-		dev_err(sdev->dev, "error: no stream available\n");
-		return -ENODEV;
-	}
-
-	if (!dmab) {
-		dev_err(sdev->dev, "error: no dma buffer allocated!\n");
-		return -ENODEV;
-	}
-
-	hstream = &hext_stream->hstream;
-	sd_offset = SOF_STREAM_SD_OFFSET(hstream);
-	mask = BIT(hstream->index);
-
-Thanks!
-
-> ---
->  sound/soc/sof/intel/hda-stream.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/sof/intel/hda-stream.c b/sound/soc/sof/intel/hda-stream.c
-> index 79d818e6a0fa..9c44127014fc 100644
-> --- a/sound/soc/sof/intel/hda-stream.c
-> +++ b/sound/soc/sof/intel/hda-stream.c
-> @@ -407,10 +407,10 @@ int hda_dsp_iccmax_stream_hw_params(struct snd_sof_dev *sdev, struct hdac_ext_st
->  				    struct snd_dma_buffer *dmab,
->  				    struct snd_pcm_hw_params *params)
->  {
-> -	struct hdac_stream *hstream = &hext_stream->hstream;
-> -	int sd_offset = SOF_STREAM_SD_OFFSET(hstream);
-> +	struct hdac_stream *hstream;
-> +	int sd_offset;
->  	int ret;
-> -	u32 mask = 0x1 << hstream->index;
-> +	u32 mask;
-> 
->  	if (!hext_stream) {
->  		dev_err(sdev->dev, "error: no stream available\n");
-> @@ -422,9 +422,12 @@ int hda_dsp_iccmax_stream_hw_params(struct snd_sof_dev *sdev, struct hdac_ext_st
->  		return -ENODEV;
->  	}
-> 
-> +	hstream = &hext_stream->hstream;
->  	if (hstream->posbuf)
->  		*hstream->posbuf = 0;
-> 
-> +	sd_offset = SOF_STREAM_SD_OFFSET(hstream);
-> +
->  	/* reset BDL address */
->  	snd_sof_dsp_write(sdev, HDA_DSP_HDA_BAR,
->  			  sd_offset + SOF_HDA_ADSP_REG_SD_BDLPL,
-> @@ -459,6 +462,8 @@ int hda_dsp_iccmax_stream_hw_params(struct snd_sof_dev *sdev, struct hdac_ext_st
->  				sd_offset + SOF_HDA_ADSP_REG_SD_LVI,
->  				0xffff, (hstream->frags - 1));
-> 
-> +	mask = 0x1 << hstream->index;
-> +
->  	/* decouple host and link DMA, enable DSP features */
->  	snd_sof_dsp_update_bits(sdev, HDA_DSP_PP_BAR, SOF_HDA_REG_PP_PPCTL,
->  				mask, mask);
-> --
-> 2.40.0
-> 
