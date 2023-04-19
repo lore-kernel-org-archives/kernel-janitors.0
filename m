@@ -2,95 +2,161 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D986C6FD18
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 17:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60F6C6FD18
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 19:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230507AbjDSRq7 (ORCPT
+        id S231335AbjDSTDv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Apr 2023 13:46:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47566 "EHLO
+        Wed, 19 Apr 2023 15:03:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbjDSRq6 (ORCPT
+        with ESMTP id S229514AbjDSTDt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Apr 2023 13:46:58 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2FA66EB5;
-        Wed, 19 Apr 2023 10:46:53 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-63b5c48ea09so138120b3a.1;
-        Wed, 19 Apr 2023 10:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681926413; x=1684518413;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gN1jXwBzB0d4vJ3HAROf5vGP/BoUprWYOVnYD2aX2+g=;
-        b=oM07+JMt+/vxm37e1dPbnODzICttFXthG8YW6h/nv1QxOzfkX37h5PQIw7zeHAWpZO
-         wcHC818fTaFJ9zuPmVWbsV0XoGfreo38u9mnwTNvvTw+2md2yBH5Arv55j6Zc4LxrJno
-         TICz12BjikX50UdWFK5yXU5oRwCDh2gZnJEu/Hg9/CfahMZG/TkKy3CiUwC1BxsnVl2i
-         KfUi4/VeBmMe3CGrMQxP5l1R90jyffUsFV/t4tTgBWJHwrJUX5QYbrqXWHkZI29/8lPZ
-         PC1doq5cOUbQWkoUd8Hbyo4sPgWBnuI+nkGycS9BmsbPgZfA+kjuIpiaPHjGp/Zsw8qB
-         WxkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681926413; x=1684518413;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gN1jXwBzB0d4vJ3HAROf5vGP/BoUprWYOVnYD2aX2+g=;
-        b=QQy0+IW3ICBIPAmgm9YNhFBSxMGyA2m66J+Wp63Mn1a2oPmx8VPBDeA2kQNJBSksc8
-         BdoxrdRZZDG/uuBa5xoOUt8Wv5lTq9V7UObn9L+MlFuDq2TNp9c/65Sca9xTAChkWJwE
-         +Mejr7NDFbFW3T+wE4ZdT0+KwASZ+3nVYNRBIsR0YQKcQgSxbRv/nHPoSg4CLCrNOgs/
-         WwnENFUAitfhDvosSRUTmW9C69ZsW9qPT/KbL3ijztNf4G7PJw8UQtqJ5zjGNc1tIhp3
-         CJDuO4tUb0cBuVuAldu3AbOgydyVz8RPX8pZ0YBT5jYCgnhaW4ujbdvem18AUVJf0A/y
-         P6+A==
-X-Gm-Message-State: AAQBX9fFY0AUeAbXSGd1C6hNvGMUglZmB3Qn6dvx1Rd3tnU6YQsLzc8H
-        0UgafzSLzjQ78wvWqJ5rkfY=
-X-Google-Smtp-Source: AKy350Z/bc3KGlsrFe6N7bC4r053yRhgstgCOEdWANmdqR2nX7TH+utlPdMOt9PcXswrVw7tHZfj9g==
-X-Received: by 2002:a17:902:dac9:b0:1a6:3af1:9c3a with SMTP id q9-20020a170902dac900b001a63af19c3amr7518632plx.22.1681926413115;
-        Wed, 19 Apr 2023 10:46:53 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id jw19-20020a170903279300b0019f3cc463absm11757546plb.0.2023.04.19.10.46.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Apr 2023 10:46:52 -0700 (PDT)
-Message-ID: <a42c2a76-0a70-8544-16d4-0d1ce5c53ef7@gmail.com>
-Date:   Wed, 19 Apr 2023 10:46:46 -0700
+        Wed, 19 Apr 2023 15:03:49 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C1442120;
+        Wed, 19 Apr 2023 12:03:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681931026; x=1713467026;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1Hh8WUIR6eeK+AxsczOGGcqyUNQHx9FNhheYlsKci2Y=;
+  b=Da/AF8m2fHuY++heJ9dpgsxTj33jirSNiKuchiw9Bw4flgLt3reOAfIK
+   8rp5ONU3pnB5PZ6Y3lQI3D3RIgpwF08UMnkSxIBQLuwWduM/5u85Bwc13
+   uurHU0QVvp3F4CJg/jG8nzYSJ5w//jkenvjjbnEme8dQvbjBJxqbvvDpD
+   XjbdCCLLZREO0XABbtTSH59PviPp4bJZSymZANrZaNn7YhBgqYord+DZE
+   h0nL6vWOFssX9/3wYUAdPWYCZymYWQ57ZdMAX9xHoKFLdQMcJcNlsB6b8
+   SCuN4MIXg83FESU4U6UPuaKJmr/ukr3icLveG5YcZeTssSDog/yjIcCdM
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="325148265"
+X-IronPort-AV: E=Sophos;i="5.99,210,1677571200"; 
+   d="scan'208";a="325148265"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2023 12:03:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="1021319731"
+X-IronPort-AV: E=Sophos;i="5.99,210,1677571200"; 
+   d="scan'208";a="1021319731"
+Received: from gargicha-mobl1.amr.corp.intel.com (HELO [10.209.74.38]) ([10.209.74.38])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2023 12:03:19 -0700
+Message-ID: <fbdee94e-b731-0471-e18f-b334ab0db7f5@linux.intel.com>
+Date:   Wed, 19 Apr 2023 14:03:18 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH net] net: dsa: microchip: ksz8795: Correctly handle huge
- frame configuration
+ Firefox/102.0 Thunderbird/102.10.0
+Subject: Re: [PATCH] ASoC: SOF: Intel: hda-stream: Move three variable
+ assignments behind condition checks in hda_dsp_iccmax_stream_hw_params()
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Arun Ramadoss <arun.ramadoss@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <43107d9e8b5b8b05f0cbd4e1f47a2bb88c8747b2.1681755535.git.christophe.jaillet@wanadoo.fr>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <43107d9e8b5b8b05f0cbd4e1f47a2bb88c8747b2.1681755535.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
+        sound-open-firmware@alsa-project.org,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Rander Wang <rander.wang@intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>
+Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <c18331ca-3de9-d433-f477-b04103958b9c@web.de>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <c18331ca-3de9-d433-f477-b04103958b9c@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/17/23 11:19, Christophe JAILLET wrote:
-> Because of the logic in place, SW_HUGE_PACKET can never be set.
-> (If the first condition is true, then the 2nd one is also true, but is not
-> executed)
-> 
-> Change the logic and update each bit individually.
-> 
-> Fixes: 29d1e85f45e0 ("net: dsa: microchip: ksz8: add MTU configuration support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
 
+On 4/19/23 13:54, Markus Elfring wrote:
+> Date: Wed, 19 Apr 2023 20:42:19 +0200
+> 
+> The address of a data structure member was determined before
+> a corresponding null pointer check in the implementation of
+> the function “hda_dsp_iccmax_stream_hw_params”.
+> 
+> Thus avoid the risk for undefined behaviour by moving the assignment
+> for three local variables behind some condition checks.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Fixes: 7d88b9608142f95ccdd3dfb190da4a5faddb1cc7 ("ASoC: SOF: Intel: hdac_ext_stream: consistent prefixes for variables/members")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Yes indeed, for some reason this was fixed in
+hda_dsp_stream_hw_params() but not in the
+hda_dsp_iccmax_stream_hw_params() variant.
+
+Could we however use the same code as in hda_dsp_stream_hw_params() for
+consistency?
+
+	if (!hext_stream) {
+		dev_err(sdev->dev, "error: no stream available\n");
+		return -ENODEV;
+	}
+
+	if (!dmab) {
+		dev_err(sdev->dev, "error: no dma buffer allocated!\n");
+		return -ENODEV;
+	}
+
+	hstream = &hext_stream->hstream;
+	sd_offset = SOF_STREAM_SD_OFFSET(hstream);
+	mask = BIT(hstream->index);
+
+Thanks!
+
+> ---
+>  sound/soc/sof/intel/hda-stream.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/sound/soc/sof/intel/hda-stream.c b/sound/soc/sof/intel/hda-stream.c
+> index 79d818e6a0fa..9c44127014fc 100644
+> --- a/sound/soc/sof/intel/hda-stream.c
+> +++ b/sound/soc/sof/intel/hda-stream.c
+> @@ -407,10 +407,10 @@ int hda_dsp_iccmax_stream_hw_params(struct snd_sof_dev *sdev, struct hdac_ext_st
+>  				    struct snd_dma_buffer *dmab,
+>  				    struct snd_pcm_hw_params *params)
+>  {
+> -	struct hdac_stream *hstream = &hext_stream->hstream;
+> -	int sd_offset = SOF_STREAM_SD_OFFSET(hstream);
+> +	struct hdac_stream *hstream;
+> +	int sd_offset;
+>  	int ret;
+> -	u32 mask = 0x1 << hstream->index;
+> +	u32 mask;
+> 
+>  	if (!hext_stream) {
+>  		dev_err(sdev->dev, "error: no stream available\n");
+> @@ -422,9 +422,12 @@ int hda_dsp_iccmax_stream_hw_params(struct snd_sof_dev *sdev, struct hdac_ext_st
+>  		return -ENODEV;
+>  	}
+> 
+> +	hstream = &hext_stream->hstream;
+>  	if (hstream->posbuf)
+>  		*hstream->posbuf = 0;
+> 
+> +	sd_offset = SOF_STREAM_SD_OFFSET(hstream);
+> +
+>  	/* reset BDL address */
+>  	snd_sof_dsp_write(sdev, HDA_DSP_HDA_BAR,
+>  			  sd_offset + SOF_HDA_ADSP_REG_SD_BDLPL,
+> @@ -459,6 +462,8 @@ int hda_dsp_iccmax_stream_hw_params(struct snd_sof_dev *sdev, struct hdac_ext_st
+>  				sd_offset + SOF_HDA_ADSP_REG_SD_LVI,
+>  				0xffff, (hstream->frags - 1));
+> 
+> +	mask = 0x1 << hstream->index;
+> +
+>  	/* decouple host and link DMA, enable DSP features */
+>  	snd_sof_dsp_update_bits(sdev, HDA_DSP_PP_BAR, SOF_HDA_REG_PP_PPCTL,
+>  				mask, mask);
+> --
+> 2.40.0
+> 
