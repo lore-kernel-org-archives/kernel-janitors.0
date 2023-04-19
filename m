@@ -2,117 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F36C77B73
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 15:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8C2C77B78
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 15:55:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233642AbjDSPp0 (ORCPT
+        id S233707AbjDSPzn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Apr 2023 11:45:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37120 "EHLO
+        Wed, 19 Apr 2023 11:55:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233654AbjDSPpN (ORCPT
+        with ESMTP id S233605AbjDSPzl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Apr 2023 11:45:13 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60BD1A24D
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 08:45:03 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-54fe82d8bf5so5531737b3.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 08:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681919102; x=1684511102;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eyhlWMXoH44WDstFWiTA4QlzY4pBtmy2mH012w04/m8=;
-        b=zMgMa3F5wCIWgTcXboKeQEH2xooiIA+A3HHznMvqCbE4hQx2VN/KJ5K6zwjuDmHZM9
-         gPCy+9kbmrRqcgvttueq2TE6q4yeoBLf3lb8TZTqa6XV2fLmTBXU8rhJMcI0hfYmVf4q
-         OcRrhQ/MJQss6esYwt7g9s3shoL56cAqkaXbIw93zYaUnS6Gnzc/nazJZTc+/P/EbqOE
-         +klF3dV9ood0DAa+IzjSEikAtzawZ3oNjA8wGIM++y+X4VkMnR2UBjgW+Ekk3vZxqOl0
-         YS6mT6vQKEmRFwGyNUBlf8sU75So7mGlHc5u5VNutwaHhAW+szdMQrmPnptar9DAwUTx
-         ausA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681919102; x=1684511102;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eyhlWMXoH44WDstFWiTA4QlzY4pBtmy2mH012w04/m8=;
-        b=OTEaA/7ZaM8hoKzX+eHAcIHaemMVrcUy1v6Lj5O8KfuNGtgyo5gVHhBcrqo4dH3ScC
-         BWyb0EBenbPxldAD7k37A3ycBqCV38n15+mPf7xJiczxyeUNj061XlN1IXV+H5q0cBxn
-         h/cybN4wPh0+Y7g7daoGTFIx8fmbhFoPTmKVIRSKuNEpSyobOIEHbbZvVXYurPsE6efa
-         cahHOv2lLZoKDDRssP86qU7u2V/4Xi0A1449mtnBTPcZALDALpcKKW+13erzX7VAX6ot
-         kvxzLKUhKpjfSXMV65r7ETSfKbx/N4H4qnAQmZQZQs9PGyXo4XP7QHAtfN2otX55Wt5R
-         0pww==
-X-Gm-Message-State: AAQBX9dRIeRcK/sUqLY/mr19KXzHl45aMmAq+/ksquqgEF5yf/Or/CXs
-        ao/BnfsEQpKpVq1Ie441VdLXig==
-X-Google-Smtp-Source: AKy350bDSmYOlc3GxuAgCRs2h5bnpeXsTOIvKCvY5+GheSwGnGIdeXMRzrI27tuFwGXTfg4HeE4u0w==
-X-Received: by 2002:a81:80c6:0:b0:54f:b4cc:cdb7 with SMTP id q189-20020a8180c6000000b0054fb4cccdb7mr3538915ywf.29.1681919102594;
-        Wed, 19 Apr 2023 08:45:02 -0700 (PDT)
-Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id d123-20020a811d81000000b0054f856bdc4dsm4592785ywd.38.2023.04.19.08.45.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 08:45:02 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 11:30:30 -0400
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, Lee Jones <lee@kernel.org>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] counter: rz-mtu3-cnt: Unlock on error in
- rz_mtu3_count_write()
-Message-ID: <ZEAJFnNiAE+L5ht4@fedora>
-References: <93ec19d1-3b74-4644-9f67-b88c08e79752@kili.mountain>
- <ZD/8gbcin4RQYd+A@fedora>
- <0859b9d5-c504-4f46-83ad-dcd7ada6b81b@kili.mountain>
+        Wed, 19 Apr 2023 11:55:41 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECEE561B3;
+        Wed, 19 Apr 2023 08:55:36 -0700 (PDT)
+Received: from [192.168.1.141] ([37.4.248.58]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MKKlN-1pbk8T2YO7-00Liy8; Wed, 19 Apr 2023 17:55:14 +0200
+Message-ID: <1dcd711f-681a-a80d-4007-b808a29e46b9@i2se.com>
+Date:   Wed, 19 Apr 2023 17:55:12 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Ts09cfLE1/4Fjsr2"
-Content-Disposition: inline
-In-Reply-To: <0859b9d5-c504-4f46-83ad-dcd7ada6b81b@kili.mountain>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] clk: bcm: rpi: Fix off by one in
+ raspberrypi_discover_clocks()
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "Ivan T. Ivanov" <iivanov@suse.de>,
+        Dom Cobley <popcornmix@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+References: <9d4496c2-e102-4fc6-afe2-5a917930d15a@kili.mountain>
+Content-Language: en-US
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <9d4496c2-e102-4fc6-afe2-5a917930d15a@kili.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:uH5fIfUmZHx7tfVaT8DUZ3SZefMG4UEeNkEX4vQxqgYVFrvJg50
+ +vIp3nXgrlW1DhF1TNZOK61NVcPQK/7Ih47M6p86EnJg4DUM8upHUZoWY9MrXiKVAYxYnKm
+ jTC4YlyPGiNNz+0VcFyMiyzQGcx34KbG9KilGOTBefhq1FTmpIYOVwkZnQut5JUPx+fKULx
+ XNq4zfrDtrMQuLN66oowA==
+UI-OutboundReport: notjunk:1;M01:P0:8kHETrSuQ+Q=;9jtWSrAHHqtrXqADL8qYyoRZ0V1
+ /lA6NGzbw2I4eeEWCy1R7NxO7WwtDCbXS3bK0VLDNJk1NaE5Wqp9Uf+QBp0DWKP6NqWnCoIYv
+ CBrzQO5Y0Y1P9CSJtWVnrL6cHBNVZTaLT8Vwbd4DD2EPOJZPH7pwGc+fMqxnfgQD/7/kCtFaY
+ dJhT62Q+W2q72BQPfXBQE4zraOe6nIb/KJvb7X46bMfOAhVUX376cXRVNYrBvj5zu0+A7WY6+
+ oCcgMioZtIOHLPNDe3UAxQ8mem62VLhJv3GVAFZY9z9Y/TirPhXSNla6zZwBAcUOuUcVG+mmu
+ 2umP7Ibkc+JGH1GIFAoAU/tstTdkYtvyey02BQr+s81tiVEIThK6jyKqjmo+fk/VDFxwvVo/h
+ VJYQOsGFXsVs+Swo8HPyFn9d8P/+tmKD2BK9fvz4j12oqqXHSRSyykDXY32mSfXNBsayE4DER
+ RWuo2x8xavIgA0MhXswMww+ocoTi05zxJ6D5CQvOWOHpz8fs8ne3VETbD/lTYVZiQQwNKjQIx
+ UnQrzP29Af30ieA6j7poIO96okexm/5JIpPJOoPuwfBqfHZPaAb5XTQKOEab9SQlfwPx2UmAy
+ IUoMsWfqznat9H/6OnGrOfN07QEWER5XbBMetAtMjM8uvZ22evnXAXjnIIcJ0HV6XHEfhwb2u
+ dcFmvMWbNZbyQS2iVQeWnHjALa/TXagRSzpZp50WyQ==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hi Dan,
 
---Ts09cfLE1/4Fjsr2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Am 19.04.23 um 09:56 schrieb Dan Carpenter:
+> Smatch detected an off by one in this code:
+> 
+>      drivers/clk/bcm/clk-raspberrypi.c:374 raspberrypi_discover_clocks()
+>      error: buffer overflow 'data->hws' 16 <= 16
+> 
+> The data->hws[] array has RPI_FIRMWARE_NUM_CLK_ID elements so the >
+> comparison needs to changed to >=.
+> 
+> Fixes: 12c90f3f27bb ("clk: bcm: rpi: Add variant structure")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> The clks[] array, on the other hand, is correct.  It allocates
+> RPI_FIRMWARE_NUM_CLK_ID + 1 elements because the last element is a
+> sentinal.
+> 
+>   drivers/clk/bcm/clk-raspberrypi.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+> index eb399a4d141b..d4b43e33035c 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -356,7 +356,7 @@ static int raspberrypi_discover_clocks(struct raspberrypi_clk *rpi,
+>   	while (clks->id) {
+>   		struct raspberrypi_clk_variant *variant;
+>   
+> -		if (clks->id > RPI_FIRMWARE_NUM_CLK_ID) {
+> +		if (clks->id >= RPI_FIRMWARE_NUM_CLK_ID) {
+>   			dev_err(rpi->dev, "Unknown clock id: %u (max: %u)\n",
+>   					   clks->id, RPI_FIRMWARE_NUM_CLK_ID);
 
-On Wed, Apr 19, 2023 at 06:37:05PM +0300, Dan Carpenter wrote:
-> On Wed, Apr 19, 2023 at 10:36:49AM -0400, William Breathitt Gray wrote:
-> > The lock is acquired by rz_mtu3_lock_if_counter_is_valid(), so that
-> > function needs a sparse __acquires(&priv->lock) annotation too.
->=20
-> I found this bug using Smatch.  It's a competing static checker which
-> uses Sparse as a parser.  I am the author of Smatch so I am naturally
-> biased.
->=20
-> I don't think it's as simple as that.  I don't think Sparse has
-> annotations for mutexes, only for spinlocks?  Also it's really
-> complicated to annotate something as taking the lock on the success path
-> but not on the failure path.  You have to set up a wrapper and use
-> __cond_lock().
->=20
-> Every other feature in Sparse is awesome, but for locking, it's better
-> to just use Smatch.
->=20
-> regards,
-> dan carpenter
+the change looks good, but shouldn't we also reduce the max in the error 
+message by one?
 
-Ah that's a fair point, I can see how involved that would be to set up a
-wrapper and handle the various paths correctly. The marginal benefit
-just doesn't seem worth the effort afterall.
-
-William Breathitt Gray
-
---Ts09cfLE1/4Fjsr2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZEAJFgAKCRC1SFbKvhIj
-K31tAP9rMkos8pM/xo/eC8/rsg/aV7L0nWCz6RhKw+wwQ0S+LgD/X8uFj8/AomGa
-yh5ld/VSceAZnU6YNCxbszieEMUe8gk=
-=dWsD
------END PGP SIGNATURE-----
-
---Ts09cfLE1/4Fjsr2--
+>   			return -EINVAL;
