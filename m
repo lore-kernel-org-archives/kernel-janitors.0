@@ -2,68 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0430BC77B73
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 07:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 580EFC6FD18
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 08:07:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232017AbjDSH6y (ORCPT
+        id S231393AbjDSIHC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Apr 2023 03:58:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44932 "EHLO
+        Wed, 19 Apr 2023 04:07:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231264AbjDSH6x (ORCPT
+        with ESMTP id S231788AbjDSIHB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Apr 2023 03:58:53 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82EC84C35
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 00:58:51 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id he11-20020a05600c540b00b003ef6d684102so968326wmb.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 00:58:51 -0700 (PDT)
+        Wed, 19 Apr 2023 04:07:01 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86071AD02
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 01:06:49 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id o9-20020a05600c510900b003f17012276fso978695wms.4
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 01:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681891130; x=1684483130;
+        d=linaro.org; s=google; t=1681891608; x=1684483608;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=v9nhWTNFUot8DhVxJTGVf8U7r1UFd9xR4G2cjz6ra5U=;
-        b=EGBfyPyJHJotUnoVy1IkY/z6izta25ZfsN2JEoy7WTUfA2I/BsJnN1O/cGBb9O6axs
-         Q+SZT3mKAnoCtliZ+TRB+QWM9K5ES5jHA2a6j9xIpoo+tWdQvuF4XBrDs3085yMn2ajB
-         XI5+iIOwoaCrXk1FmUiH+A4Sf9SnQvAjRjfzbKH2gFO5cCvpjvfRKxsXtSRaCJfGjG0I
-         AaYKERq25347rd+waTxa58Ifxf5rRW5e+g8Q48fpTjblXj1heahw1x+1JG4b80FE2k33
-         Q70fMZmKlNPuox0UJjNcIVPNS2gW0xmt+EN73JafKqhsrE8EFhtyP/MXLWBtBhEBXQEM
-         vK9Q==
+        bh=5OSy/8KzIeE0uT9f/JXeORSJpU/CYejtTTaWQ7l0cpk=;
+        b=I8aI/cLLjYoF3kyrKmp9YJiuCEi4+DaA0/Tf1Wlln3rCKFpfdw2256mLJX0HaWUoNK
+         xW4PWvfMz83BrqmG3fo+l9pem/lnSXQ+cD99N/RIzI7LH+1jumcHIKAxgUx6t6gsKcu2
+         eOGQO7G1/crQL3gXYxjOAuGMtnLaD3Gj/GFKOgfF+KY2l9rF38QZnfx3p6U/yHiZOlku
+         B2/Dbw+4Z4ajzhpGGRJQQth5rzjUJHOldvXVSBAO3N6/44yd830J6oSARQlZwJonMg1j
+         G/PrUVBpAUBdcxU07zzD/uu/yNhwmRxzRy6mtZKGZNpONul/NLciyp8+mNV5BD2v/Wio
+         H4Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681891130; x=1684483130;
+        d=1e100.net; s=20221208; t=1681891608; x=1684483608;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v9nhWTNFUot8DhVxJTGVf8U7r1UFd9xR4G2cjz6ra5U=;
-        b=TTFyQy4O2tsUkkclULG4ThMx0OxS/a9W6Rn7nfRXnFc/4z1UnfVfcK+L1F2jnqIPqe
-         gVM2S5nl0ejD3Ey5uxh6Nq8OhmwDpybQlJIyBDvEEoZTxfZnRmOgRt1p8F/Go2GjF4u1
-         CLEqpk+GmhbkjTls/qIcBZBTzs9KfI9zO3x2JS/C8096FZtw1lsf2uHJdh+aZhl4FLb+
-         TVzDPc05cCBlcjwk+y+bX4NTh2aoj6pvRaO9NGjqE/HSM4VrYEgT4ecQoSpuDNoWoeUu
-         IB9r1ZZKUBJtaaiL1otwytG8RVuxatrccp72MzLKN38jOmsLBnt+SGa8ifVlbWA1px+n
-         obKA==
-X-Gm-Message-State: AAQBX9dcVll2GOxrD3fuGbXCSNruD1XMOKIjzM/8/jrJjswgATnFwzIX
-        w7HIemRdlTdnlPHGeBDPnLGtvg==
-X-Google-Smtp-Source: AKy350YWB4M+Tend0JFwwajhPdp0/tpo8ptDFpbt4km0eviie9q/Xfu+JpYBnj4Dy9cuZ/Ktki9wBA==
-X-Received: by 2002:a7b:cbd0:0:b0:3f1:75b3:60df with SMTP id n16-20020a7bcbd0000000b003f175b360dfmr5955964wmi.41.1681891129997;
-        Wed, 19 Apr 2023 00:58:49 -0700 (PDT)
+        bh=5OSy/8KzIeE0uT9f/JXeORSJpU/CYejtTTaWQ7l0cpk=;
+        b=TOu8zSpu5AU7K12H8G/Zm1OEZwQDkatkrs0jDkdyt3y8H1342Z5wOerWB9qKOylUmr
+         KwMj77KLmXnGfHbzATY45VrhTst1aQtGEtxXDDjtPx4/+H2dkTO5QgzvwiJEWPmI0+ov
+         +ippy6ZtsPn4eXkevh/sxgLSotS9VxAqeKLLVXe+OSNCV5gqsSCNsyIEZQW8HR4CUyrr
+         0Bucoits8KB7dnzcBLB0hmJyy+tJ2SEZRb54XNhJ/AhezmCA9r9N6wp8yJhr9x/AhfYs
+         nrSM9R6BhXADhxOnWuZ3lq8/ue1Ke8F1sv2JQmnIQ1zv3wlhIMa0TukIviN+D+qOytCr
+         lv2w==
+X-Gm-Message-State: AAQBX9cqsed/CSezvbIaXYo8H1D+lrID0EsZy016qHhb/2S+Fg3aK0d9
+        oykPOSaMgZ+kC2H+4bAJUxm0pdGkg/hHYAsSw0cvzd1O
+X-Google-Smtp-Source: AKy350bsXyYLNtU1VpGGhfXi3kZDPExX20afgftMWFgCyE1KG7y4AfQzl/Q5ztY1W9WRfVoR4ylEnw==
+X-Received: by 2002:a7b:c404:0:b0:3f0:a785:f0e0 with SMTP id k4-20020a7bc404000000b003f0a785f0e0mr14741958wmi.40.1681891608041;
+        Wed, 19 Apr 2023 01:06:48 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p19-20020a05600c205300b003f173a00304sm1330043wmg.17.2023.04.19.00.58.48
+        by smtp.gmail.com with ESMTPSA id q18-20020a7bce92000000b003f09d7b6e20sm1386729wmj.2.2023.04.19.01.06.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 00:58:49 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 10:58:43 +0300
+        Wed, 19 Apr 2023 01:06:47 -0700 (PDT)
+Date:   Wed, 19 Apr 2023 11:06:44 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     James Morse <james.morse@arm.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Liu Song <liusong@linux.alibaba.com>,
-        D Scott Phillips <scott@os.amperecomputing.com>,
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     Oliver Upton <oliver.upton@linux.dev>,
         James Morse <james.morse@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] arm64: delete dead code in this_cpu_set_vectors()
-Message-ID: <73859c9e-dea0-4764-bf01-7ae694fa2e37@kili.mountain>
+Subject: [PATCH] KVM: arm64: Fix buffer overflow in kvm_arm_set_fw_reg()
+Message-ID: <ab7b9caf-5c90-4616-8517-b38637293639@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -72,30 +73,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "slot" variable is an enum, and in this context it is an unsigned
-int.  So the type means it can never be negative and also we never pass
-invalid data to this function.  If something did pass invalid data then
-this check would be insufficient protection.
+The KVM_REG_SIZE() comes from the ioctl and it can be a power of two
+between 0-32768 but if it is more than sizeof(long) this will corrupt
+memory.
 
+Fixes: 99adb567632b ("KVM: arm/arm64: Add save/restore support for firmware workaround state")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- arch/arm64/kernel/proton-pack.c | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm64/kvm/hypercalls.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pack.c
-index fca9cc6f5581..05f40c4e18fd 100644
---- a/arch/arm64/kernel/proton-pack.c
-+++ b/arch/arm64/kernel/proton-pack.c
-@@ -966,9 +966,6 @@ static void this_cpu_set_vectors(enum arm64_bp_harden_el1_vectors slot)
- {
- 	const char *v = arm64_get_bp_hardening_vector(slot);
+diff --git a/arch/arm64/kvm/hypercalls.c b/arch/arm64/kvm/hypercalls.c
+index 2e16fc7b31bf..4f5767fcaca5 100644
+--- a/arch/arm64/kvm/hypercalls.c
++++ b/arch/arm64/kvm/hypercalls.c
+@@ -544,6 +544,8 @@ int kvm_arm_set_fw_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+ 	u64 val;
+ 	int wa_level;
  
--	if (slot < 0)
--		return;
--
- 	__this_cpu_write(this_cpu_vector, v);
++	if (KVM_REG_SIZE(reg->id) > sizeof(val))
++		return -EINVAL;
+ 	if (copy_from_user(&val, uaddr, KVM_REG_SIZE(reg->id)))
+ 		return -EFAULT;
  
- 	/*
 -- 
 2.39.2
 
