@@ -2,90 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F117C77B75
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Apr 2023 21:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FAAC77B76
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 03:20:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233117AbjDRVsR (ORCPT
+        id S231362AbjDSDU3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Apr 2023 17:48:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35708 "EHLO
+        Tue, 18 Apr 2023 23:20:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233100AbjDRVsN (ORCPT
+        with ESMTP id S230027AbjDSDU1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Apr 2023 17:48:13 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D271CA275
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Apr 2023 14:47:58 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id otAtpDm3iuZFDotB6p5a64; Tue, 18 Apr 2023 23:47:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-        s=t20230301; t=1681854476;
-        bh=5nFJR0h70GQR0Ko+nO0rkf5eZC65EX0faGidYQRY60g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=SGJD6kpdcFG3siGXwXatSPSLgp8ejiM/DpsU0DRCShAFXF9p75I4D6Aaz2ihl6++H
-         E6lzkMtgp0OsHmvBfHFDxDGsb9mZaKAYhQ+CnA7R+FHXsOSQrZoVLpabWLWqOgra31
-         fSKjYs7qP7X1P8ulYsxPOdohKYUAr6CEei+GuDPN1+Jk87Yhp5ox7fGRGhW48aESB2
-         UnCkTxU9mT9eiAN9Vb9HftEWxgU51GMkuYxnCME4YJveOcX1bOcaHKHrtlbR0ft7wt
-         D7sQPGwr0/6w0a0knZazPO3JTDTjVLj8Bbvb7dwabaHPxa1LuGY+EMyrHfOj/YWGvU
-         Sg/Yrjj49e+8Q==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 18 Apr 2023 23:47:56 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
-Subject: [PATCH 2/2] KVM: arm64: Use the bitmap API to allocate bitmaps
-Date:   Tue, 18 Apr 2023 23:47:38 +0200
-Message-Id: <3c5043731db4d3635383e9326bc7e98e25de3288.1681854412.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <97bf2743f3a302b3066aced02218b9da60690dd3.1681854412.git.christophe.jaillet@wanadoo.fr>
-References: <97bf2743f3a302b3066aced02218b9da60690dd3.1681854412.git.christophe.jaillet@wanadoo.fr>
+        Tue, 18 Apr 2023 23:20:27 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24D8110CF;
+        Tue, 18 Apr 2023 20:20:26 -0700 (PDT)
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33ILqAPH031839;
+        Wed, 19 Apr 2023 03:20:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2023-03-30;
+ bh=sL7n544M2FFx8zOMKVb8XqVFksAtc7Bt0XJozZeFb8U=;
+ b=fLo+neFQYgBy4L/+1t9vg9kyb/DRLnJKCpYq77PDGzXjUhWs82/MtnxVKtPriBxnnorj
+ FFDmaDFpoP2He7jYEci7t56I0C5/FgHxoNE8d8R7PtvIjv2m0vPAMoMYlWe7yr3hquCC
+ hsLvHtXdCTvuY/bOakpf6esBhwB5m3Gg8q4zmF/Z3OTLASOOMVBcZQa6SOxLxbvbH9oL
+ vj9oDdQEvkkEGZC9ONicCiaWsw6cOfMG0vBng3Xp0XXj1b10St0kCCwE1DMJXs6uqlFX
+ QORlRIqaYZXOm0fjHAV2BX7DIy5Zb9j4SKU6TaF+3SGVSdTrc+Pc5PdFJiBwaXFxiCH4 DQ== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3pykycy92y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Apr 2023 03:20:24 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 33J0LGWi037066;
+        Wed, 19 Apr 2023 03:20:23 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3pyjcccvv8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Apr 2023 03:20:23 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33J3KLpC012748;
+        Wed, 19 Apr 2023 03:20:23 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3pyjcccvts-4;
+        Wed, 19 Apr 2023 03:20:23 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        error27@gmail.com, kernel-janitors@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        John Garry <john.g.garry@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH next] scsi: scsi_debug: Fix missing error code in scsi_debug_init()
+Date:   Tue, 18 Apr 2023 23:20:13 -0400
+Message-Id: <168187437337.702980.15149771115917556403.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230406074607.3637097-1-harshit.m.mogalapalli@oracle.com>
+References: <20230406074607.3637097-1-harshit.m.mogalapalli@oracle.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-18_17,2023-04-18_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=801 adultscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2304190029
+X-Proofpoint-GUID: MPrdhA1pkuzGGh3vAzFJGXTPAFJOc7Nl
+X-Proofpoint-ORIG-GUID: MPrdhA1pkuzGGh3vAzFJGXTPAFJOc7Nl
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+On Thu, 06 Apr 2023 00:46:07 -0700, Harshit Mogalapalli wrote:
 
-It is less verbose and it improves the semantic.
+> Smatch reports: drivers/scsi/scsi_debug.c:6996
+> 	scsi_debug_init() warn: missing error code 'ret'
+> 
+> Although it is unlikely that KMEM_CACHE might fail, but if
+> it does then ret might be zero. So to fix this explicitly
+> mark ret as "-ENOMEM" and then goto driver_unreg.
+> 
+> [...]
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/arm64/kvm/vmid.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Applied to 6.4/scsi-queue, thanks!
 
-diff --git a/arch/arm64/kvm/vmid.c b/arch/arm64/kvm/vmid.c
-index bbf0677cfefa..7fe8ba1a2851 100644
---- a/arch/arm64/kvm/vmid.c
-+++ b/arch/arm64/kvm/vmid.c
-@@ -182,8 +182,7 @@ int __init kvm_arm_vmid_alloc_init(void)
- 	 */
- 	WARN_ON(NUM_USER_VMIDS - 1 <= num_possible_cpus());
- 	atomic64_set(&vmid_generation, VMID_FIRST_VERSION);
--	vmid_map = kcalloc(BITS_TO_LONGS(NUM_USER_VMIDS),
--			   sizeof(*vmid_map), GFP_KERNEL);
-+	vmid_map = bitmap_zalloc(NUM_USER_VMIDS, GFP_KERNEL);
- 	if (!vmid_map)
- 		return -ENOMEM;
- 
-@@ -192,5 +191,5 @@ int __init kvm_arm_vmid_alloc_init(void)
- 
- void __init kvm_arm_vmid_alloc_free(void)
- {
--	kfree(vmid_map);
-+	bitmap_free(vmid_map);
- }
+[1/1] scsi: scsi_debug: Fix missing error code in scsi_debug_init()
+      https://git.kernel.org/mkp/scsi/c/b32283d75335
+
 -- 
-2.34.1
-
+Martin K. Petersen	Oracle Linux Engineering
