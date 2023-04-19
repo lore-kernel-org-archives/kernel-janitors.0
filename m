@@ -2,62 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC13C77B75
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 14:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F35C6FD18
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 14:26:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232613AbjDSOYy (ORCPT
+        id S231591AbjDSO0q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Apr 2023 10:24:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53640 "EHLO
+        Wed, 19 Apr 2023 10:26:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232727AbjDSOYn (ORCPT
+        with ESMTP id S232065AbjDSO0p (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Apr 2023 10:24:43 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F1BC83E2
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 07:24:08 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-2f4c431f69cso2067619f8f.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 07:24:08 -0700 (PDT)
+        Wed, 19 Apr 2023 10:26:45 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D98A459D7
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 07:26:11 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id v3so4178107wml.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 07:26:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681914239; x=1684506239;
+        d=linaro.org; s=google; t=1681914368; x=1684506368;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=k375mImuFX7RvFPMD+W8Uv0GumlkBkCMlh4NRkIhfPo=;
-        b=DhmzPMlsp3UGY7lGuPlcLaKkdspjY3pqaGycQ91WQuLnd9Zh3QyQrPh1HE0qRVoWID
-         J9mKGxoCpEQeO/HEHsEAU1KgUcpA8qtqOW+5QzDiALWN0JI371bWxhQU3DI688oveOMi
-         g7EuWiLzsTTzjqCz3a7GFVSrPElx4Vc/YVpAhHqv6r8k7gFkhzd4NMzhOJk+SYAAb243
-         piNFgkxAYviXg3EOPHz7yuzbq5QFIH+ARXNEgqGelW/Z7LoZlVtIDnTze3uROLELqmtF
-         NuYEdPNQAMi1wdrqEUBTFRUs7RJS/HVgj/HRe7l742p67coHYbnn/5yvWJY5c+sKxcgY
-         tt4w==
+        bh=JeZNA1s0QESP/I0CqxVMnzYwGVuCPAunM/8r509Fe9w=;
+        b=ShYYRDYCGQc99t8l2LBANPb2KPl6FYJ/5rLLIlr+3iIn1nHXCsMf4hGejSQOch/iW/
+         KLpdrkwNzuaTyHCMVmD7SRamW7oNIwqrQxddFKuoYjuWaeWs1JctAxvvF+FVkoCR5Xmk
+         EsjvFK1/q9h+Z46Fz0f7p6Er60x57Bhfe76eECK8ykW0ocL22TW+KW30LsboBIN9nl1N
+         3fgoDWK/zC+RMJUFVqA4ACiOOldMhuVvGsgHQsZbBuP13xPWcbOIzIGiD0jP1z7b2lSJ
+         H19z+Gm8Yj2/gpsCFTa0Kq3ks8UzOQfQwbggkHmzn4dxtVcCiDcS+6zBGChjWOVIlQCU
+         F/Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681914239; x=1684506239;
+        d=1e100.net; s=20221208; t=1681914368; x=1684506368;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k375mImuFX7RvFPMD+W8Uv0GumlkBkCMlh4NRkIhfPo=;
-        b=jow5pursi7tuDh7vtUEwLg82CLqykkgvKRUhTepiOyb0hK/DIo5EeajLO6/GsxFDzX
-         6gWjntTLDIdgudvr+5V/HDp+sqQAPxVhIjRYxLmLLOH5JHAY4EdLltFyc9sTt5AIqS97
-         l/ObQ6N2lHwIQ4coCVThkBWgDEN6q+YjpOINLOY7Lg0Tng3A4pP5L6WqjFzd8i23ON1m
-         08H0yyWvubKjH2eSQXVbk2ja9u9nuNpoX6h4bCTNXmSfoiQzQmVadKeVX7+X0awSGZs9
-         oYZWZMFuMOsEnWgQVpobo8BQNM8/TGIfPl2NniikrcnXRoNtCgDFHrUTP+IVimCNfeJp
-         84Dw==
-X-Gm-Message-State: AAQBX9fq6wdDeBOD6BKQqOdU0CBkRqFeRMjZAoipECxMrWJwnOw+nQT8
-        9Y/iVREraEmeQLFoo/+D7XgpZvflRUTojb/v1hp4t/Ng
-X-Google-Smtp-Source: AKy350ZMasfAd3+9m6Eg8aPN0o0uc3rX9l2h6oIk4fFVRJGRU1cw/FsFe2xAlFYTC9Z3gBxoCsSFYQ==
-X-Received: by 2002:a05:6000:18c6:b0:2fe:d6a1:f377 with SMTP id w6-20020a05600018c600b002fed6a1f377mr2181013wrq.33.1681914239396;
-        Wed, 19 Apr 2023 07:23:59 -0700 (PDT)
+        bh=JeZNA1s0QESP/I0CqxVMnzYwGVuCPAunM/8r509Fe9w=;
+        b=fP5CgpDPUgZm1lJu7+3gkZpd+v1Qv/0eSIbRmTFNMj2nWhBC3KYZ0KmURO4XAI4hnE
+         imi2oNNXE8/auwVXeNq4kEmRI6SABwQegk2dr2pSoxxeteFQEUDx7Zo+p5lef7XkSMuq
+         3IGowz2+FNZSlWWC4LTyxI7yrXWzC6l3Z3tmcH2BtGV8fw611Sk5+MRRjas9sw1facz0
+         TNM7tPzo4h5U57oJnOkzKiIRJijYEmTeiagdGUPpk9nXhG5ueuETaHNpdIabDcAnXQOJ
+         jJQwG6Y2DIlF+KOUkV/HVsxXUZf/Mfs2kIQ0qsuovK7iYVwUR5A7BmqYw3U6/WUnGavL
+         sIzQ==
+X-Gm-Message-State: AAQBX9fcSvFsvXLus7xpCT1DDOpYoxBdmdjzUoYKlagZviS7dxWjtT6D
+        pCnV6ozD+s8hs5K4HiXUAfD/QQ==
+X-Google-Smtp-Source: AKy350YovrybGst8hzvGzmZDFWnh2USQWtHYaasH+1FyJ6ozgojeUQ2NlRYNyrYogEORRcf/pt5p1Q==
+X-Received: by 2002:a1c:7c04:0:b0:3ed:2ae9:6c75 with SMTP id x4-20020a1c7c04000000b003ed2ae96c75mr16934529wmc.37.1681914368188;
+        Wed, 19 Apr 2023 07:26:08 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z14-20020adff1ce000000b002f28de9f73bsm15890106wro.55.2023.04.19.07.23.58
+        by smtp.gmail.com with ESMTPSA id u19-20020a05600c211300b003f17316ab46sm2343548wml.13.2023.04.19.07.26.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 07:23:58 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 17:23:55 +0300
+        Wed, 19 Apr 2023 07:26:07 -0700 (PDT)
+Date:   Wed, 19 Apr 2023 17:26:04 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     William Breathitt Gray <william.gray@linaro.org>,
-        Lee Jones <lee@kernel.org>, linux-iio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] counter: rz-mtu3-cnt: Unlock on error in
- rz_mtu3_count_write()
-Message-ID: <93ec19d1-3b74-4644-9f67-b88c08e79752@kili.mountain>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] crypto: ixp4xx - silence uninitialized variable warning
+Message-ID: <7de7d932-d01b-4ada-ae07-827c32438e00@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -66,61 +68,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The return -ERANGE error paths need to call mutex_unlock(&priv->lock);
-before returning.
+Smatch complains that "dma" is uninitialized if dma_pool_alloc() fails.
+This is true, but also harmless.  Anyway, move the assignment after the
+error checking to silence this warning.
 
-Fixes: 25d21447d896 ("counter: Add Renesas RZ/G2L MTU3a counter driver")
+Fixes: 586d492f2856 ("crypto: ixp4xx - fix building wiht 64-bit dma_addr_t")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/counter/rz-mtu3-cnt.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/crypto/intel/ixp4xx/ixp4xx_crypto.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cnt.c
-index a371bab68499..aeadce5e2853 100644
---- a/drivers/counter/rz-mtu3-cnt.c
-+++ b/drivers/counter/rz-mtu3-cnt.c
-@@ -358,19 +358,23 @@ static int rz_mtu3_count_ceiling_write(struct counter_device *counter,
- 	switch (count->id) {
- 	case RZ_MTU3_16_BIT_MTU1_CH:
- 	case RZ_MTU3_16_BIT_MTU2_CH:
--		if (ceiling > U16_MAX)
--			return -ERANGE;
-+		if (ceiling > U16_MAX) {
-+			ret = -ERANGE;
-+			goto unlock;
-+		}
- 		priv->mtu_16bit_max[ch_id] = ceiling;
- 		break;
- 	case RZ_MTU3_32_BIT_CH:
--		if (ceiling > U32_MAX)
--			return -ERANGE;
-+		if (ceiling > U32_MAX) {
-+			ret = -ERANGE;
-+			goto unlock;
-+		}
- 		priv->mtu_32bit_max = ceiling;
- 		break;
- 	default:
- 		/* should never reach this path */
--		mutex_unlock(&priv->lock);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto unlock;
- 	}
- 
- 	pm_runtime_get_sync(ch->dev);
-@@ -381,9 +385,9 @@ static int rz_mtu3_count_ceiling_write(struct counter_device *counter,
- 
- 	rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TCR, RZ_MTU3_TCR_CCLR_TGRA);
- 	pm_runtime_put(ch->dev);
-+unlock:
- 	mutex_unlock(&priv->lock);
--
--	return 0;
-+	return ret;
- }
- 
- static void rz_mtu3_32bit_cnt_setting(struct counter_device *counter)
+diff --git a/drivers/crypto/intel/ixp4xx/ixp4xx_crypto.c b/drivers/crypto/intel/ixp4xx/ixp4xx_crypto.c
+index ed15379a9818..4a18095ae5d8 100644
+--- a/drivers/crypto/intel/ixp4xx/ixp4xx_crypto.c
++++ b/drivers/crypto/intel/ixp4xx/ixp4xx_crypto.c
+@@ -1175,9 +1175,9 @@ static int aead_perform(struct aead_request *req, int encrypt,
+ 		/* The 12 hmac bytes are scattered,
+ 		 * we need to copy them into a safe buffer */
+ 		req_ctx->hmac_virt = dma_pool_alloc(buffer_pool, flags, &dma);
+-		crypt->icv_rev_aes = dma;
+ 		if (unlikely(!req_ctx->hmac_virt))
+ 			goto free_buf_dst;
++		crypt->icv_rev_aes = dma;
+ 		if (!encrypt) {
+ 			scatterwalk_map_and_copy(req_ctx->hmac_virt,
+ 						 req->src, cryptlen, authsize, 0);
 -- 
 2.39.2
 
