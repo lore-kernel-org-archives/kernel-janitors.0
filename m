@@ -2,92 +2,155 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34713C6FD18
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 14:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97ABEC77B75
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 14:36:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231797AbjDSOfS (ORCPT
+        id S232433AbjDSOg7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Apr 2023 10:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36464 "EHLO
+        Wed, 19 Apr 2023 10:36:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231618AbjDSOfQ (ORCPT
+        with ESMTP id S231667AbjDSOg5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Apr 2023 10:35:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AF15CE;
-        Wed, 19 Apr 2023 07:35:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F35FF6238A;
-        Wed, 19 Apr 2023 14:35:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2F1C433D2;
-        Wed, 19 Apr 2023 14:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681914914;
-        bh=sBYbUiJ6GlCWj4lYqLlaskm6OAopEbc4bQC5luPU9Tg=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=OKKeavw9KAKCyJMFID/gsexph94AvBnlqXJYcXH8ScMbhtZRBm/XzDjUamvrscn/t
-         lANg4Ig3Te4XIhTywIcanyOf0gdNLui07r9YSDxXwHHcizz7wYdUMimUisEQPCW/23
-         WUB3ETEuam2/O71qFvPHRLhTZpJpYqDEQxCDZiaaCGn3tPN954phonD8c/xtOLzIru
-         vs1kpvSYFr0JcIH5xwQRmgs7lkDCW4I9qVMuMupi6bq0UnxRcLK2urzhE69QvPoZ5u
-         stDFtMNvNMyomVbDSe/XFbJmTDRhtP6RaMFYB1M2xewMzPslHBcyl+kEtV/lmE+CLn
-         9a/JSMhue0uTA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-In-Reply-To: <c167c16a535049d56f817bbede9c9f6f0a0f4c68.1681626553.git.christophe.jaillet@wanadoo.fr>
-References: <c167c16a535049d56f817bbede9c9f6f0a0f4c68.1681626553.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: fsl: Simplify an error message
-Message-Id: <168191491177.87831.11926959447891085887.b4-ty@kernel.org>
-Date:   Wed, 19 Apr 2023 15:35:11 +0100
+        Wed, 19 Apr 2023 10:36:57 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DE911D
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 07:36:52 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id o11so12860931ybk.11
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Apr 2023 07:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681915012; x=1684507012;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yyOsfgBclPLx0AOTQZvY65cyQNRQS8FVzcRQkF9DgsE=;
+        b=XgodfPaBgWp5PF+6z3ygSRBMH5BQU1NQ1twrWSxtBiXb+ip+4I3sgCx+ADGWsapttx
+         SqYSVZzokTb/9l49Wy4UELftVLH2vlWgPpI6QpXfbeoi84E01k/5gXpZloBHY2Wp67+c
+         BMSpheGT24V2Mc/HKuteWOV+KCgsHElmoULzOp3g8guTEvWEuNAdoNTYipKzI1Abp9e3
+         Wxanc3v3oEbdiU6JOm06YM12s74Tks4pRuIEhrx6R9HN9bm8a6RWqHG134zSYGlKSQ4h
+         SkuDRvMRhUqKnflJ2yORxDekAf8UJm9LkahWsHyRwMhx/vlhXE9+v0Pu2mVBSIGXX7mg
+         6aow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681915012; x=1684507012;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yyOsfgBclPLx0AOTQZvY65cyQNRQS8FVzcRQkF9DgsE=;
+        b=M3hnLfOfNbzSVpL9pwYVooEFE3+1jrWkRDTzDhF+sTrTjKA9HuE6NP3eowvlGGAA+g
+         7Pdprke3KmdTplHcA2Tkmr5WRdh6k8KER2ETfcktcTdiy1dDXLXMJ2eILtluNYm6q+2D
+         kGtEwDsqQs0aK8tvtELIdKFeNm0d6TGicCHXbOZErdgetNNUSDIDg3Pa3rmd+tQb/TH4
+         ZhxCK1l6Z9S/vD4bJGMkctIKVs8ezACw6ELh6FnzNcqTlqgOIdH6Bx8li4n5iZi9CkLQ
+         y672s03XpDx2kx8SnqkkEigGP9wpRnSHu5ifwKzxYIq0PbNnQ3umGAaMlFVCpsujUvyi
+         t4oA==
+X-Gm-Message-State: AAQBX9ci505Lic2xU8XP1NGIsnea9+G1wtoosI3wZ3jkk8lp1UCVSH+U
+        /ETsUz06tVT1yyYxTHjNrRYcbw==
+X-Google-Smtp-Source: AKy350aDAXrUsHV+fpPbTGseY8bsUobjjG6apQoGGU/aZVgQxA7x/qSX9F7YLZA5Xfee+boB9ZNjlQ==
+X-Received: by 2002:a25:2302:0:b0:b97:1e2e:a4e5 with SMTP id j2-20020a252302000000b00b971e2ea4e5mr979307ybj.40.1681915012013;
+        Wed, 19 Apr 2023 07:36:52 -0700 (PDT)
+Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id b126-20020a253484000000b00b96ae6e1f57sm342611yba.41.2023.04.19.07.36.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Apr 2023 07:36:51 -0700 (PDT)
+Date:   Wed, 19 Apr 2023 10:36:49 -0400
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, Lee Jones <lee@kernel.org>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] counter: rz-mtu3-cnt: Unlock on error in
+ rz_mtu3_count_write()
+Message-ID: <ZD/8gbcin4RQYd+A@fedora>
+References: <93ec19d1-3b74-4644-9f67-b88c08e79752@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-00303
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ZpW/ZxYIlzkFmkhs"
+Content-Disposition: inline
+In-Reply-To: <93ec19d1-3b74-4644-9f67-b88c08e79752@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 16 Apr 2023 08:29:34 +0200, Christophe JAILLET wrote:
-> dev_err_probe() already display the error code. There is no need to
-> duplicate it explicitly in the error message.
-> 
-> 
 
-Applied to
+--ZpW/ZxYIlzkFmkhs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+On Wed, Apr 19, 2023 at 05:23:55PM +0300, Dan Carpenter wrote:
+> The return -ERANGE error paths need to call mutex_unlock(&priv->lock);
+> before returning.
+>=20
+> Fixes: 25d21447d896 ("counter: Add Renesas RZ/G2L MTU3a counter driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/counter/rz-mtu3-cnt.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cnt.c
+> index a371bab68499..aeadce5e2853 100644
+> --- a/drivers/counter/rz-mtu3-cnt.c
+> +++ b/drivers/counter/rz-mtu3-cnt.c
+> @@ -358,19 +358,23 @@ static int rz_mtu3_count_ceiling_write(struct count=
+er_device *counter,
+>  	switch (count->id) {
+>  	case RZ_MTU3_16_BIT_MTU1_CH:
+>  	case RZ_MTU3_16_BIT_MTU2_CH:
+> -		if (ceiling > U16_MAX)
+> -			return -ERANGE;
+> +		if (ceiling > U16_MAX) {
+> +			ret =3D -ERANGE;
+> +			goto unlock;
+> +		}
+>  		priv->mtu_16bit_max[ch_id] =3D ceiling;
+>  		break;
+>  	case RZ_MTU3_32_BIT_CH:
+> -		if (ceiling > U32_MAX)
+> -			return -ERANGE;
+> +		if (ceiling > U32_MAX) {
+> +			ret =3D -ERANGE;
+> +			goto unlock;
+> +		}
+>  		priv->mtu_32bit_max =3D ceiling;
+>  		break;
+>  	default:
+>  		/* should never reach this path */
+> -		mutex_unlock(&priv->lock);
+> -		return -EINVAL;
+> +		ret =3D -EINVAL;
+> +		goto unlock;
+>  	}
+> =20
+>  	pm_runtime_get_sync(ch->dev);
+> @@ -381,9 +385,9 @@ static int rz_mtu3_count_ceiling_write(struct counter=
+_device *counter,
+> =20
+>  	rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TCR, RZ_MTU3_TCR_CCLR_TGRA);
+>  	pm_runtime_put(ch->dev);
+> +unlock:
+>  	mutex_unlock(&priv->lock);
+> -
+> -	return 0;
+> +	return ret;
+>  }
+> =20
+>  static void rz_mtu3_32bit_cnt_setting(struct counter_device *counter)
+> --=20
+> 2.39.2
+>=20
 
-Thanks!
+The lock is acquired by rz_mtu3_lock_if_counter_is_valid(), so that
+function needs a sparse __acquires(&priv->lock) annotation too.
 
-[1/1] ASoC: fsl: Simplify an error message
-      commit: 574399f4c997ad71fab95dd875a9ff55424f9a3d
+William Breathitt Gray
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+--ZpW/ZxYIlzkFmkhs
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-----BEGIN PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZD/8gQAKCRC1SFbKvhIj
+K4PrAP9S/rhqvPndnREAS7jj+Syv1v7AZIZQlVV2YF9MRlYMsAEA5bw2L2zyGPm1
+htIurAWb+TWnY3iXsL4yTVbh0LiyLQ4=
+=Lq3O
+-----END PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--ZpW/ZxYIlzkFmkhs--
