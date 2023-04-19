@@ -2,81 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F248C6FD18
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 16:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D986C6FD18
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Apr 2023 17:47:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233375AbjDSQOw (ORCPT
+        id S230507AbjDSRq7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Apr 2023 12:14:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60880 "EHLO
+        Wed, 19 Apr 2023 13:46:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233156AbjDSQOo (ORCPT
+        with ESMTP id S229719AbjDSRq6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Apr 2023 12:14:44 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D12FB3593;
-        Wed, 19 Apr 2023 09:14:42 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id u3so31176952ejj.12;
-        Wed, 19 Apr 2023 09:14:42 -0700 (PDT)
+        Wed, 19 Apr 2023 13:46:58 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2FA66EB5;
+        Wed, 19 Apr 2023 10:46:53 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-63b5c48ea09so138120b3a.1;
+        Wed, 19 Apr 2023 10:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681920881; x=1684512881;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5cwJ0UmCYArDsKBv05I7BkZrL0WgHeOIlgOTNM8h1M=;
-        b=PIOuCXQikALwZjhYwOzEXVtrq8sHXxLDIrvxY4661QPnS83FREhv0Usz9dziDf3kk3
-         9YamjbKA+Z0Njtd7jv7XDpdjo9VOktQWi0+3mVYw+qDXUnwWpd8lu5cszVSBpG5Vuj1R
-         xXoQLMULOCf04qMdmkCLRoKr3sPNSvODC4vWx55VBRT/xCXuST9N9iCJA1RJdqUvFnXz
-         rGAel1L6OfC+g7kA3FAekIMl0DxXAqDsQjtlM3VzHS/z2XKOLmC/rISKuMOwuvDzssit
-         Ut3yyWDgJETeeZG4lYPQlnKL2daY4EbCGTft6MYWXuKoQTC4ZTyPhSf+Tpau7XSgW3Pu
-         CuwA==
+        d=gmail.com; s=20221208; t=1681926413; x=1684518413;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gN1jXwBzB0d4vJ3HAROf5vGP/BoUprWYOVnYD2aX2+g=;
+        b=oM07+JMt+/vxm37e1dPbnODzICttFXthG8YW6h/nv1QxOzfkX37h5PQIw7zeHAWpZO
+         wcHC818fTaFJ9zuPmVWbsV0XoGfreo38u9mnwTNvvTw+2md2yBH5Arv55j6Zc4LxrJno
+         TICz12BjikX50UdWFK5yXU5oRwCDh2gZnJEu/Hg9/CfahMZG/TkKy3CiUwC1BxsnVl2i
+         KfUi4/VeBmMe3CGrMQxP5l1R90jyffUsFV/t4tTgBWJHwrJUX5QYbrqXWHkZI29/8lPZ
+         PC1doq5cOUbQWkoUd8Hbyo4sPgWBnuI+nkGycS9BmsbPgZfA+kjuIpiaPHjGp/Zsw8qB
+         WxkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681920881; x=1684512881;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M5cwJ0UmCYArDsKBv05I7BkZrL0WgHeOIlgOTNM8h1M=;
-        b=PzZSbg45A6jpoOCgbkmvHs1v4AL8GA/b49b0gSiSjWvMyUtsg0RXdVSPTr7BEDOFlv
-         ZsR90MnUESsTtZggkdfy7AT5OPnOtASYb8rxP75HYxfFbaKPCyCSqafoee52DfzTTrOl
-         xNB+RMg2fYpAeg/owoSsbqnyTkBgmNLyGWbIjck5P3hJZM4/ppJlf+sVDczece1YyqgO
-         r5CgDXM6ST7hzDoIVWSmZH5eTlfwaGjbZ0kKsHGTHKdbXPbQKs+UWyo1z0sqVhmU1Ogu
-         AbiOkn6Dvb1L97AbXvM0N/DPAWKJ+83ki9dCCMlnLhfNVZaaZe2xNRKzghnd1ylHLIai
-         /Svg==
-X-Gm-Message-State: AAQBX9cCBEsExNu8w62cwDeumv2yQrYB4wnVDiWJEcvj+0qhk+9YKRoD
-        5/4wE+3epX0GfTnvwic/WSc=
-X-Google-Smtp-Source: AKy350Yqw2aIathrGyjGnmUW1U4n2MeS1w8MmXVb/utKcOpm+RBnyEpkE3yuEZplw2i8N5+CHoIlcw==
-X-Received: by 2002:a17:906:e2cd:b0:94a:6de2:ba9 with SMTP id gr13-20020a170906e2cd00b0094a6de20ba9mr14004683ejb.68.1681920880956;
-        Wed, 19 Apr 2023 09:14:40 -0700 (PDT)
-Received: from skbuf ([188.27.184.189])
-        by smtp.gmail.com with ESMTPSA id b17-20020a1709063f9100b00953331b086csm1795401ejj.91.2023.04.19.09.14.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 09:14:40 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 19:14:38 +0300
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Woojung Huh <woojung.huh@microchip.com>,
+        d=1e100.net; s=20221208; t=1681926413; x=1684518413;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gN1jXwBzB0d4vJ3HAROf5vGP/BoUprWYOVnYD2aX2+g=;
+        b=QQy0+IW3ICBIPAmgm9YNhFBSxMGyA2m66J+Wp63Mn1a2oPmx8VPBDeA2kQNJBSksc8
+         BdoxrdRZZDG/uuBa5xoOUt8Wv5lTq9V7UObn9L+MlFuDq2TNp9c/65Sca9xTAChkWJwE
+         +Mejr7NDFbFW3T+wE4ZdT0+KwASZ+3nVYNRBIsR0YQKcQgSxbRv/nHPoSg4CLCrNOgs/
+         WwnENFUAitfhDvosSRUTmW9C69ZsW9qPT/KbL3ijztNf4G7PJw8UQtqJ5zjGNc1tIhp3
+         CJDuO4tUb0cBuVuAldu3AbOgydyVz8RPX8pZ0YBT5jYCgnhaW4ujbdvem18AUVJf0A/y
+         P6+A==
+X-Gm-Message-State: AAQBX9fFY0AUeAbXSGd1C6hNvGMUglZmB3Qn6dvx1Rd3tnU6YQsLzc8H
+        0UgafzSLzjQ78wvWqJ5rkfY=
+X-Google-Smtp-Source: AKy350Z/bc3KGlsrFe6N7bC4r053yRhgstgCOEdWANmdqR2nX7TH+utlPdMOt9PcXswrVw7tHZfj9g==
+X-Received: by 2002:a17:902:dac9:b0:1a6:3af1:9c3a with SMTP id q9-20020a170902dac900b001a63af19c3amr7518632plx.22.1681926413115;
+        Wed, 19 Apr 2023 10:46:53 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id jw19-20020a170903279300b0019f3cc463absm11757546plb.0.2023.04.19.10.46.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Apr 2023 10:46:52 -0700 (PDT)
+Message-ID: <a42c2a76-0a70-8544-16d4-0d1ce5c53ef7@gmail.com>
+Date:   Wed, 19 Apr 2023 10:46:46 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH net] net: dsa: microchip: ksz8795: Correctly handle huge
+ frame configuration
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Woojung Huh <woojung.huh@microchip.com>,
         UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
         Arun Ramadoss <arun.ramadoss@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Oleksij Rempel <linux@rempel-privat.de>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: Re: [PATCH net] net: dsa: microchip: ksz8795: Correctly handle huge
- frame configuration
-Message-ID: <20230419161438.lasmfqboy77evbn3@skbuf>
 References: <43107d9e8b5b8b05f0cbd4e1f47a2bb88c8747b2.1681755535.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From:   Florian Fainelli <f.fainelli@gmail.com>
 In-Reply-To: <43107d9e8b5b8b05f0cbd4e1f47a2bb88c8747b2.1681755535.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 17, 2023 at 08:19:33PM +0200, Christophe JAILLET wrote:
+On 4/17/23 11:19, Christophe JAILLET wrote:
 > Because of the logic in place, SW_HUGE_PACKET can never be set.
 > (If the first condition is true, then the 2nd one is also true, but is not
 > executed)
@@ -85,29 +89,8 @@ On Mon, Apr 17, 2023 at 08:19:33PM +0200, Christophe JAILLET wrote:
 > 
 > Fixes: 29d1e85f45e0 ("net: dsa: microchip: ksz8: add MTU configuration support")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Untested.
-> ---
->  drivers/net/dsa/microchip/ksz8795.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/dsa/microchip/ksz8795.c b/drivers/net/dsa/microchip/ksz8795.c
-> index 23614a937cc3..f56fca1b1a22 100644
-> --- a/drivers/net/dsa/microchip/ksz8795.c
-> +++ b/drivers/net/dsa/microchip/ksz8795.c
-> @@ -96,7 +96,7 @@ static int ksz8795_change_mtu(struct ksz_device *dev, int frame_size)
->  
->  	if (frame_size > KSZ8_LEGAL_PACKET_SIZE)
->  		ctrl2 |= SW_LEGAL_PACKET_DISABLE;
-> -	else if (frame_size > KSZ8863_NORMAL_PACKET_SIZE)
-> +	if (frame_size > KSZ8863_NORMAL_PACKET_SIZE)
->  		ctrl1 |= SW_HUGE_PACKET;
->  
->  	ret = ksz_rmw8(dev, REG_SW_CTRL_1, SW_HUGE_PACKET, ctrl1);
-> -- 
-> 2.34.1
-> 
 
-After checking with the datasheet, the change looks indeed correct.
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
