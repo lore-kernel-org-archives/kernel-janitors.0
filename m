@@ -2,80 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E675C77B73
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Apr 2023 17:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22862C77B72
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Apr 2023 19:19:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230338AbjDTRFH (ORCPT
+        id S231990AbjDTTT1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Apr 2023 13:05:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44696 "EHLO
+        Thu, 20 Apr 2023 15:19:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231368AbjDTRFE (ORCPT
+        with ESMTP id S230435AbjDTTTZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Apr 2023 13:05:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73CF9D2;
-        Thu, 20 Apr 2023 10:05:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EE45F60EDF;
-        Thu, 20 Apr 2023 17:05:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6DACC433D2;
-        Thu, 20 Apr 2023 17:04:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682010301;
-        bh=l1TvL8OQdBavurwxDnbzlunPMrvFhKPpWvlZWHCIJ1I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I+QMus2rDlnVPcrRRoWKNDM+23YVIIkNirhXKyPWUiSxOiyWJjMr08ficsZIv1zYE
-         yf7aeyhUZ4g+W8Fcnjy10lKAp88V8ZefY9TJnqRzm9VEAYesehjYylC7bLq+fHzRct
-         x4DlX0ehxz50yhw0AZVg5s6wSCF2drrVPqX9WP5BEZvbjuVOpXXJcXrk3DZmS/NmrC
-         1jufINtZhfAAudfIP2VlqulP0U6Mw8nnMcTxv+AbP+hKiOcu5kLObQro7mddVCVGG4
-         1b21tflgrhXmwaA4h3Lusm3HmuylI1IzVOmJXkBrAyNcuzSItdU8aWcdz+BNsDcUWa
-         UgbnI4W2CPQrQ==
-From:   Will Deacon <will@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        James Morse <james.morse@arm.com>
-Cc:     catalin.marinas@arm.com, kernel-team@android.com,
-        Will Deacon <will@kernel.org>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Liu Song <liusong@linux.alibaba.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        D Scott Phillips <scott@os.amperecomputing.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: delete dead code in this_cpu_set_vectors()
-Date:   Thu, 20 Apr 2023 18:04:52 +0100
-Message-Id: <168198389444.147011.7790274772825720678.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <73859c9e-dea0-4764-bf01-7ae694fa2e37@kili.mountain>
-References: <73859c9e-dea0-4764-bf01-7ae694fa2e37@kili.mountain>
+        Thu, 20 Apr 2023 15:19:25 -0400
+Received: from smtp.smtpout.orange.fr (smtp-12.smtpout.orange.fr [80.12.242.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E7D455B3
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 12:19:07 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id pZo7pjZIVLbpDpZo8pVyl8; Thu, 20 Apr 2023 21:19:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682018345;
+        bh=xEO8CI9H9WDO+PWu0PIXBsB8fTZqe2/3Shi9OjFKgUE=;
+        h=From:To:Cc:Subject:Date;
+        b=d7DupFV1mk554xgT7ZmeBZ2PilYiuqaqFgfYq0DWlJN6USgDG1I1rM+fUGT1I363i
+         O6Rw+b7pIRwd+G7hHsbBPvD9a0gZyfvMFh5utXc3AgnRd6snMLZXdBEl3SAZ9jH1N/
+         PTCrhMoNKF1fojEC6NgjF+l/Y+meLDIoemkomHDNCrAPIpYYnyV0SZFyHm7w4KDV/S
+         ZBzejECVQ4bEAMlYRl6Yc5LKHSUvXbvYUiEzsKf+WSk8t8W8XPosEqA0iSLF9xAqn+
+         IkSAonHcDssNK8l5dglnOu4/0H6AJnvH7OyGZYElA122UtSW2eSe/CrrSE+rUgEbFB
+         tb5Hu+LNwIv+w==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 20 Apr 2023 21:19:05 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-sh@vger.kernel.org
+Subject: [PATCH v2] sh: sq: Use the bitmap API when applicable
+Date:   Thu, 20 Apr 2023 21:19:03 +0200
+Message-Id: <a51e9f32c19a007f4922943282cb12c89064440d.1681671848.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 19 Apr 2023 10:58:43 +0300, Dan Carpenter wrote:
-> The "slot" variable is an enum, and in this context it is an unsigned
-> int.  So the type means it can never be negative and also we never pass
-> invalid data to this function.  If something did pass invalid data then
-> this check would be insufficient protection.
-> 
-> 
+Using the bitmap API is less verbose than hand writing it.
+It also improves the semantic.
 
-Applied to arm64 (for-next/misc), thanks!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2:
+   - synch with latest linux-next because of 80f746e2bd0e which fixes a bug
+---
+ arch/sh/kernel/cpu/sh4/sq.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-[1/1] arm64: delete dead code in this_cpu_set_vectors()
-      https://git.kernel.org/arm64/c/460e70e2dc9a
-
-Cheers,
+diff --git a/arch/sh/kernel/cpu/sh4/sq.c b/arch/sh/kernel/cpu/sh4/sq.c
+index 27f2e3da5aa2..d289e99dc118 100644
+--- a/arch/sh/kernel/cpu/sh4/sq.c
++++ b/arch/sh/kernel/cpu/sh4/sq.c
+@@ -372,7 +372,6 @@ static struct subsys_interface sq_interface = {
+ static int __init sq_api_init(void)
+ {
+ 	unsigned int nr_pages = 0x04000000 >> PAGE_SHIFT;
+-	unsigned int size = (nr_pages + (BITS_PER_LONG - 1)) / BITS_PER_LONG;
+ 	int ret = -ENOMEM;
+ 
+ 	printk(KERN_NOTICE "sq: Registering store queue API.\n");
+@@ -382,7 +381,7 @@ static int __init sq_api_init(void)
+ 	if (unlikely(!sq_cache))
+ 		return ret;
+ 
+-	sq_bitmap = kcalloc(size, sizeof(long), GFP_KERNEL);
++	sq_bitmap = bitmap_zalloc(nr_pages, GFP_KERNEL);
+ 	if (unlikely(!sq_bitmap))
+ 		goto out;
+ 
+@@ -393,7 +392,7 @@ static int __init sq_api_init(void)
+ 	return 0;
+ 
+ out:
+-	kfree(sq_bitmap);
++	bitmap_free(sq_bitmap);
+ 	kmem_cache_destroy(sq_cache);
+ 
+ 	return ret;
+@@ -402,7 +401,7 @@ static int __init sq_api_init(void)
+ static void __exit sq_api_exit(void)
+ {
+ 	subsys_interface_unregister(&sq_interface);
+-	kfree(sq_bitmap);
++	bitmap_free(sq_bitmap);
+ 	kmem_cache_destroy(sq_cache);
+ }
+ 
 -- 
-Will
+2.34.1
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
