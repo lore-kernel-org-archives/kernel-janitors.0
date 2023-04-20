@@ -2,60 +2,59 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4F8C77B72
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Apr 2023 08:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90703C77B73
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Apr 2023 08:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233868AbjDTI12 (ORCPT
+        id S234258AbjDTIdd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Apr 2023 04:27:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57548 "EHLO
+        Thu, 20 Apr 2023 04:33:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233880AbjDTI11 (ORCPT
+        with ESMTP id S233914AbjDTIdb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Apr 2023 04:27:27 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 627C13A9B
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 01:27:25 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f17b967bfbso12859335e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 01:27:25 -0700 (PDT)
+        Thu, 20 Apr 2023 04:33:31 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C99F9D
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 01:33:30 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id o29-20020a05600c511d00b003f1739de43cso709114wms.4
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 01:33:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681979244; x=1684571244;
+        d=linaro.org; s=google; t=1681979609; x=1684571609;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5oJvG7bYWn+8aug7ZgdAASHVZFthA+onSEdwypKEW3k=;
-        b=Y0JpUpdxUHVu93dMbeuH4vlS9lZMXy5S4MuqFu9qox1kn2kjvmgLjrPpmy6JNjIe7F
-         67n+SvfFjZaXpupXMQtXChq+qOTIaesiRQxbnb3C18yw4HGxPZNXZLrmc6YazbnR3GNd
-         fSdmo43Ox1UJOFR6CDDrowYdmqL+whUi623mFzeb76nvx+QGmDC4otQEMnEftF6pjuOR
-         BrXiFnafcKrvavOeldD+ooAn7I0NX99iMCFBeKXm2O8VoxEU7yaJnL+ZLOED69k8ywec
-         j+RqAeVNkU2B7qVff8ryCoYrtS5WinO7dMBdpNIbeZhJnA/GCPAMo4flA196ba6VSHUp
-         7QSA==
+        bh=woHSg1kHD9P+uwP6r4Cn6r0KTjKAlW+V2NCjsW/6MOo=;
+        b=HMr4aq0ZLdLQicdWNgra3lbVYJWoFYR4geIvV1wBhOT6XqRru70KXLzSXmK2dEzBIJ
+         4FLFB1eaxN6HlZyCRobKNCIs4jnmkoe8m+OjUtEpv8/pMt7jTDJtd7lRxy2JbabOMVpk
+         iyQvWR+xGNL0evmGwyk5UQcrc9IkwB0inIT054OajHKNZ1LehrD7MORwf0D3N0bbF7su
+         EyFHsCWP9UEKCmJm7ezZlKsezeSo5z65NeNX7llBkVVHrzLoKDx9h1w5fdcHPB2+ZGG6
+         8mEzHwK3qNZf6BadJBM9y18YV1o2RWzEVO+ZNhxVHfrZIQ78/dZkMjLW6ozlO+qiiDTe
+         20OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681979244; x=1684571244;
+        d=1e100.net; s=20221208; t=1681979609; x=1684571609;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5oJvG7bYWn+8aug7ZgdAASHVZFthA+onSEdwypKEW3k=;
-        b=hZ/rk/B44M4PGRd+IEiCh51m1fnvvMz/SZ22F1Egllt1y22ShhowF6fBUNIPDfinhg
-         xHFbr7eIoVM9S87NcpgyA1SCLkLDJpwmk4zOXyPqsqvaXK2UD++is9NHUhrQyBHDEleC
-         bHGAv7GHEEkUJP6AzGaHyaJIzBrAFwyhxPngNQeK/7qYtGy/IUwrgOei10///EzDYxHj
-         cI029pAdtp71DqqpjzxCZYKpsODIsPAmlbeZkDyA6GzwZ/emqD3dtBh/Ys8ydqxm3C/6
-         NRDuOMxbKvQfbzZsyV+UXSfUbjUHVMdoARTu7q9xsMl6fjf3E2o76iMtqIZTycifhUn4
-         LHNg==
-X-Gm-Message-State: AAQBX9dvoKDmw8C7fHAWXXq/3hTfhXn8QWQQijmlIgD/ca/NElPxAR3e
-        ROnHrP48cfHk+JfqFHFqumRCjXQntQZsi8BefC9RrpCY
-X-Google-Smtp-Source: AKy350Ys51NSXRRxpuJzebuaZqRKIpcomXuUSQjdciLt2dFubn3V61xZRtNA/H2Fw9SVkuYhDvTXyA==
-X-Received: by 2002:adf:fc0b:0:b0:2f0:2d96:1c5a with SMTP id i11-20020adffc0b000000b002f02d961c5amr714472wrr.32.1681979243844;
-        Thu, 20 Apr 2023 01:27:23 -0700 (PDT)
+        bh=woHSg1kHD9P+uwP6r4Cn6r0KTjKAlW+V2NCjsW/6MOo=;
+        b=IfW/dap8M9WocGNvnHRwiOeakvKgaMfCTMaRgxybbOlqkV9v9COM8RCDJTHoKhjpf2
+         qKyc7NKPc1U4MUL8nW4NpPni/FYPSFkteYuC7goWVeex+g1Y3ZfTUaFFc07T2Jc1u2wm
+         /nWjylOsdeYnCQfln09K2ek7yfVXulfx/XQdZmr2yjMwrfdn+EKz2IDBN4Xi5vMrHlb7
+         2nEu3BolqbRH018aRKUEB79FCB5qsoEDJ2u/OGZnQT1i1+69/9wc13mSnPpHFxJdL8Sa
+         gPF7EvFCfbh3X5niHW+sDUKXH8EFHqrxFqNYfw311zKHW3DGIgJuZcXiV6nUuvF/ykWk
+         Xn3A==
+X-Gm-Message-State: AAQBX9c/x4FCTuxQ43ereUZTzGJiu6F3FlSjZvv+iIMfHpopK+Yr7CDD
+        VBOm8dn7MmEtxK9rGj3sDScKMWM0D8mzB5BlVsz8SZsX
+X-Google-Smtp-Source: AKy350Z7tXpuxC+GVtQh+mE45SV2strjtSOCTrdrZ/Pkb6eO2/4KTghv3dUAn30zRUotPvolZRj/Pw==
+X-Received: by 2002:a1c:f70b:0:b0:3f0:a3cb:c750 with SMTP id v11-20020a1cf70b000000b003f0a3cbc750mr552647wmh.40.1681979608735;
+        Thu, 20 Apr 2023 01:33:28 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id t15-20020adfe44f000000b002f00793bd7asm1328903wrm.27.2023.04.20.01.27.22
+        by smtp.gmail.com with ESMTPSA id k25-20020a05600c081900b003f17122587bsm4603620wmp.36.2023.04.20.01.33.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 01:27:23 -0700 (PDT)
-Date:   Thu, 20 Apr 2023 11:27:20 +0300
+        Thu, 20 Apr 2023 01:33:28 -0700 (PDT)
+Date:   Thu, 20 Apr 2023 11:33:25 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     grygorii.strashko@ti.com
+To:     vigneshr@ti.com
 Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] net: ethernet: ti: am65-cpsw-nuss: restore vlan
- configuration while down/up
-Message-ID: <b528a774-4a46-4d08-85d3-fe47de129f9b@kili.mountain>
+Subject: [bug report] net: ti: am65-cpsw-nuss: Add switchdev support
+Message-ID: <5c7bae37-3e0a-4f84-9d23-cd8f0d859823@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -63,53 +62,73 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Grygorii Strashko,
+Hello Vignesh Raghavendra,
 
-The patch 7bcffde02152: "net: ethernet: ti: am65-cpsw-nuss: restore
-vlan configuration while down/up" from Jun 26, 2020, leads to the
-following Smatch static checker warning:
+The patch 86e8b070b25e: "net: ti: am65-cpsw-nuss: Add switchdev
+support" from Feb 11, 2021, leads to the following Smatch static
+checker warning:
 
-	drivers/net/ethernet/ti/am65-cpsw-nuss.c:188 am65_cpsw_nuss_ndo_slave_add_vid()
-	warn: duplicate check 'vid' (previous on line 180)
+	drivers/net/ethernet/ti/am65-cpsw-switchdev.c:187 am65_cpsw_port_vlan_add()
+	warn: missing error code? 'ret'
 
-drivers/net/ethernet/ti/am65-cpsw-nuss.c
-    169 static int am65_cpsw_nuss_ndo_slave_add_vid(struct net_device *ndev,
-    170                                             __be16 proto, u16 vid)
-    171 {
-    172         struct am65_cpsw_common *common = am65_ndev_to_common(ndev);
-    173         struct am65_cpsw_port *port = am65_ndev_to_port(ndev);
-    174         u32 port_mask, unreg_mcast = 0;
-    175         int ret;
-    176 
-    177         if (!common->is_emac_mode)
-    178                 return 0;
-    179 
-    180         if (!netif_running(ndev) || !vid)
-                                            ^^^^
-If "vid" is zero then we return here.
+drivers/net/ethernet/ti/am65-cpsw-switchdev.c
+    149 static int am65_cpsw_port_vlan_add(struct am65_cpsw_port *port, bool untag, bool pvid,
+    150                                    u16 vid, struct net_device *orig_dev)
+    151 {
+    152         bool cpu_port = netif_is_bridge_master(orig_dev);
+    153         struct am65_cpsw_common *cpsw = port->common;
+    154         int unreg_mcast_mask = 0;
+    155         int reg_mcast_mask = 0;
+    156         int untag_mask = 0;
+    157         int port_mask;
+    158         int ret = 0;
+    159         u32 flags;
+    160 
+    161         if (cpu_port) {
+    162                 port_mask = BIT(HOST_PORT_NUM);
+    163                 flags = orig_dev->flags;
+    164                 unreg_mcast_mask = port_mask;
+    165         } else {
+    166                 port_mask = BIT(port->port_id);
+    167                 flags = port->ndev->flags;
+    168         }
+    169 
+    170         if (flags & IFF_MULTICAST)
+    171                 reg_mcast_mask = port_mask;
+    172 
+    173         if (untag)
+    174                 untag_mask = port_mask;
+    175 
+    176         ret = cpsw_ale_vlan_add_modify(cpsw->ale, vid, port_mask, untag_mask,
+    177                                        reg_mcast_mask, unreg_mcast_mask);
+    178         if (ret) {
+                    ^^^
+ret is zero.
 
-    181                 return 0;
+    179                 netdev_err(port->ndev, "Unable to add vlan\n");
+    180                 return ret;
+    181         }
     182 
-    183         ret = pm_runtime_resume_and_get(common->dev);
-    184         if (ret < 0)
-    185                 return ret;
-    186 
-    187         port_mask = BIT(port->port_id) | ALE_PORT_HOST;
---> 188         if (!vid)
-    189                 unreg_mcast = port_mask;
-    190         dev_info(common->dev, "Adding vlan %d to vlan filter\n", vid);
-    191         ret = cpsw_ale_vlan_add_modify(common->ale, vid, port_mask,
-    192                                        unreg_mcast, port_mask, 0);
+    183         if (cpu_port)
+    184                 cpsw_ale_add_ucast(cpsw->ale, port->slave.mac_addr,
+    185                                    HOST_PORT_NUM, ALE_VLAN | ALE_SECURE, vid);
+    186         if (!pvid)
+--> 187                 return ret;
 
-So we chould just remove the unreg_mcast variable and call?:
+I think returning zero might have been intentional here, but it would
+be better to do an explicit "return 0;"
 
-	ret = cpsw_ale_vlan_add_modify(common->ale, vid, port_mask,
-				       port_mask, port_mask, 0);
-
+    188 
+    189         am65_cpsw_set_pvid(port, vid, 0, 0);
+    190 
+    191         netdev_dbg(port->ndev, "VID add: %s: vid:%u ports:%X\n",
+    192                    port->ndev->name, vid, port_mask);
     193 
-    194         pm_runtime_put(common->dev);
-    195         return ret;
-    196 }
+    194         return ret;
+
+Same here too, I suppose, although Smatch doesn't care about this.
+
+    195 }
 
 regards,
 dan carpenter
