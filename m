@@ -2,145 +2,165 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0B2C77B72
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Apr 2023 13:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B39C77B76
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 Apr 2023 14:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230081AbjDTNWc (ORCPT
+        id S231911AbjDTOTE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 Apr 2023 09:22:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36182 "EHLO
+        Thu, 20 Apr 2023 10:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229963AbjDTNWb (ORCPT
+        with ESMTP id S230464AbjDTOSj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 Apr 2023 09:22:31 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A28DE49CE
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 06:22:29 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 33KDMRdk038847;
-        Thu, 20 Apr 2023 08:22:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1681996947;
-        bh=XU7JDYXj4tuyjTJCQ2kUQvx69J3GAho4PNAyATsoNqc=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=fz7s0YsSEgidnf+YpWUzZXfFj5YP3q3C/XEMCxkH/BkN9ixQ9llF6gkHHTnQKFm/7
-         H54wa423cEtQYtRAGs+5jPYyX37e24SdRzkl+t/d1E2CxQtvY1zICWNgx9MQSrIkwt
-         705nTL2fO6TEUmfm6pEK5vW5KG00FyOD1aTPqmkc=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 33KDMRQi104648
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Apr 2023 08:22:27 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Thu, 20
- Apr 2023 08:22:26 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Thu, 20 Apr 2023 08:22:26 -0500
-Received: from [10.249.133.214] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 33KDMOZE031811;
-        Thu, 20 Apr 2023 08:22:25 -0500
-Message-ID: <722a2b1d-2989-13cf-3986-1eac8121b8a4@ti.com>
-Date:   Thu, 20 Apr 2023 18:52:23 +0530
+        Thu, 20 Apr 2023 10:18:39 -0400
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02154902B
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 07:18:03 -0700 (PDT)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-54fa9da5e5bso44324877b3.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 07:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1682000244; x=1684592244;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N4OthiTQi5MIchWRHYG+fyP1OoqMBojWRgyyG0qq6qA=;
+        b=fNW/7REMOGl8bXgyhZlXFxndSbuVW9aF1h8gobbj0hcW8289ZHmg8kT8EwDokrFtmF
+         Q9XO4QA0y9hbP6q/6B8OIEzPU7jnRWYVL2KqJTWGAWPPF5MBlClRBjk/NFco5ni8m0x9
+         Ej1ojUdxTh+kCXHKfaciBYHdPqUeHfORVu7nJCKShbiKzRWQZZ2TFkq9/bK/TDPmDnaD
+         M76Fbbq9sQDdMD/o0/xOOxxXS/kgSFoG/vD0HmVWTzkrOSw/wZ6v/1+00nsfWENwcyyJ
+         u5IHQNpTmPD/xADC7PYd0t57m1K6Cqj9ltSXO1Arkmp3gCowgAk5qiYodovOkO0mw50w
+         0NEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682000244; x=1684592244;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N4OthiTQi5MIchWRHYG+fyP1OoqMBojWRgyyG0qq6qA=;
+        b=XC1eWKcrlz2xb2lFk9ysxjg8wGjkqZsUjNSlStgZdkqHpJWkkXWAeML6V82CeGfNGR
+         6XSuX6j2YuKDcd/Bq5caduBCsZZxz9rfS28RixVmgE0mkqXBYJx8XlCW6NvYjZWPx7g1
+         JbhKCrQc2SrzwaCs1ouK1ZtM4goKZdA7ASti+KMxqdF+r17Fr6ra05Jz9WnCZz121QIQ
+         Ka6nZsljZlo+Hdq2VkuGyzICKKekYhsIqyh3nmYKI1oP37K7hYnXLHNL71ENGQGfrtS7
+         nySNdDV2EnypxrX0RkqmAskI8lEyvQlNkkYutWr98uZnlxYrVC2BGnAWpcjI3/RNi9lu
+         Cv2Q==
+X-Gm-Message-State: AAQBX9eUnq/65RB1ajcbaAfHRtvxVEj78kvScrwjPez9YfYZpt2YdC3S
+        5XTiiP8dzDRjIOTuXeo6+VcplnFiQY9gtSd6gwQ=
+X-Google-Smtp-Source: AKy350YfTTxwKL6uu24U8dl2ICwdqz7fY1800aEL2ixgQRNkC5iEJHvea1OVRyMV0W4j0bKrCTmjGw==
+X-Received: by 2002:a0d:e442:0:b0:54b:fe8c:350 with SMTP id n63-20020a0de442000000b0054bfe8c0350mr806084ywe.19.1682000244204;
+        Thu, 20 Apr 2023 07:17:24 -0700 (PDT)
+Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id h185-20020a0dc5c2000000b005463f6ae720sm356978ywd.68.2023.04.20.07.17.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Apr 2023 07:17:23 -0700 (PDT)
+Date:   Thu, 20 Apr 2023 10:17:21 -0400
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, Lee Jones <lee@kernel.org>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] counter: rz-mtu3-cnt: Unlock on error in
+ rz_mtu3_count_write()
+Message-ID: <ZEFJcak7Gd/Xygf7@fedora>
+References: <93ec19d1-3b74-4644-9f67-b88c08e79752@kili.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [bug report] net: ti: am65-cpsw-nuss: Add switchdev support
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>
-CC:     <kernel-janitors@vger.kernel.org>
-References: <5c7bae37-3e0a-4f84-9d23-cd8f0d859823@kili.mountain>
-From:   "Raghavendra, Vignesh" <vigneshr@ti.com>
-In-Reply-To: <5c7bae37-3e0a-4f84-9d23-cd8f0d859823@kili.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="uEJ5we3pG0TuqLXx"
+Content-Disposition: inline
+In-Reply-To: <93ec19d1-3b74-4644-9f67-b88c08e79752@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
 
-+ Siddharth
+--uEJ5we3pG0TuqLXx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 4/20/2023 2:03 PM, Dan Carpenter wrote:
-> Hello Vignesh Raghavendra,
-> 
-> The patch 86e8b070b25e: "net: ti: am65-cpsw-nuss: Add switchdev
-> support" from Feb 11, 2021, leads to the following Smatch static
-> checker warning:
-> 
-> 	drivers/net/ethernet/ti/am65-cpsw-switchdev.c:187 am65_cpsw_port_vlan_add()
-> 	warn: missing error code? 'ret'
-> 
-> drivers/net/ethernet/ti/am65-cpsw-switchdev.c
->     149 static int am65_cpsw_port_vlan_add(struct am65_cpsw_port *port, bool untag, bool pvid,
->     150                                    u16 vid, struct net_device *orig_dev)
->     151 {
->     152         bool cpu_port = netif_is_bridge_master(orig_dev);
->     153         struct am65_cpsw_common *cpsw = port->common;
->     154         int unreg_mcast_mask = 0;
->     155         int reg_mcast_mask = 0;
->     156         int untag_mask = 0;
->     157         int port_mask;
->     158         int ret = 0;
->     159         u32 flags;
->     160 
->     161         if (cpu_port) {
->     162                 port_mask = BIT(HOST_PORT_NUM);
->     163                 flags = orig_dev->flags;
->     164                 unreg_mcast_mask = port_mask;
->     165         } else {
->     166                 port_mask = BIT(port->port_id);
->     167                 flags = port->ndev->flags;
->     168         }
->     169 
->     170         if (flags & IFF_MULTICAST)
->     171                 reg_mcast_mask = port_mask;
->     172 
->     173         if (untag)
->     174                 untag_mask = port_mask;
->     175 
->     176         ret = cpsw_ale_vlan_add_modify(cpsw->ale, vid, port_mask, untag_mask,
->     177                                        reg_mcast_mask, unreg_mcast_mask);
->     178         if (ret) {
->                     ^^^
-> ret is zero.
-> 
->     179                 netdev_err(port->ndev, "Unable to add vlan\n");
->     180                 return ret;
->     181         }
->     182 
->     183         if (cpu_port)
->     184                 cpsw_ale_add_ucast(cpsw->ale, port->slave.mac_addr,
->     185                                    HOST_PORT_NUM, ALE_VLAN | ALE_SECURE, vid);
->     186         if (!pvid)
-> --> 187                 return ret;
-> 
-> I think returning zero might have been intentional here, but it would
-> be better to do an explicit "return 0;"
-> 
+On Wed, Apr 19, 2023 at 05:23:55PM +0300, Dan Carpenter wrote:
+> The return -ERANGE error paths need to call mutex_unlock(&priv->lock);
+> before returning.
+>=20
+> Fixes: 25d21447d896 ("counter: Add Renesas RZ/G2L MTU3a counter driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Correct
+The changes in this patch are for rz_mtu3_count_ceiling_write(), so the
+title of this patch should be fixed.
 
->     188 
->     189         am65_cpsw_set_pvid(port, vid, 0, 0);
->     190 
->     191         netdev_dbg(port->ndev, "VID add: %s: vid:%u ports:%X\n",
->     192                    port->ndev->name, vid, port_mask);
->     193 
->     194         return ret;
-> 
-> Same here too, I suppose, although Smatch doesn't care about this.
+> ---
+>  drivers/counter/rz-mtu3-cnt.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/counter/rz-mtu3-cnt.c b/drivers/counter/rz-mtu3-cnt.c
+> index a371bab68499..aeadce5e2853 100644
+> --- a/drivers/counter/rz-mtu3-cnt.c
+> +++ b/drivers/counter/rz-mtu3-cnt.c
+> @@ -358,19 +358,23 @@ static int rz_mtu3_count_ceiling_write(struct count=
+er_device *counter,
+>  	switch (count->id) {
+>  	case RZ_MTU3_16_BIT_MTU1_CH:
+>  	case RZ_MTU3_16_BIT_MTU2_CH:
+> -		if (ceiling > U16_MAX)
+> -			return -ERANGE;
+> +		if (ceiling > U16_MAX) {
+> +			ret =3D -ERANGE;
+> +			goto unlock;
+> +		}
+>  		priv->mtu_16bit_max[ch_id] =3D ceiling;
+>  		break;
+>  	case RZ_MTU3_32_BIT_CH:
+> -		if (ceiling > U32_MAX)
+> -			return -ERANGE;
+> +		if (ceiling > U32_MAX) {
+> +			ret =3D -ERANGE;
+> +			goto unlock;
+> +		}
+>  		priv->mtu_32bit_max =3D ceiling;
+>  		break;
+>  	default:
+>  		/* should never reach this path */
+> -		mutex_unlock(&priv->lock);
+> -		return -EINVAL;
+> +		ret =3D -EINVAL;
+> +		goto unlock;
+>  	}
 
-Your suggestions make sense. Thanks for the report. I or Siddharth will
-send a fix.
+Normally, I like "goto unlock" patterns, but I think in this context it
+makes the flow of code confusing with the mix-match of the switch cases;
+default case jumps with a goto, but RZ_MTU3_* cases passes will break,
+yet RZ_MUT3_* failures have a goto path. Rather than a "goto unlock"
+pattern, I'd prefer to see simply mutex_lock() called for these ceiling
+checks. That also has the benefit of reducing the number of changes we
+have to make for this fix.
 
-> 
->     195 }
-> 
+William Breathitt Gray
 
-Regards
-Vignesh
+> =20
+>  	pm_runtime_get_sync(ch->dev);
+> @@ -381,9 +385,9 @@ static int rz_mtu3_count_ceiling_write(struct counter=
+_device *counter,
+> =20
+>  	rz_mtu3_8bit_ch_write(ch, RZ_MTU3_TCR, RZ_MTU3_TCR_CCLR_TGRA);
+>  	pm_runtime_put(ch->dev);
+> +unlock:
+>  	mutex_unlock(&priv->lock);
+> -
+> -	return 0;
+> +	return ret;
+>  }
+> =20
+>  static void rz_mtu3_32bit_cnt_setting(struct counter_device *counter)
+> --=20
+> 2.39.2
+>=20
+
+--uEJ5we3pG0TuqLXx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZEFJcQAKCRC1SFbKvhIj
+KwaWAQDrtAE9A2EV+jVUpAgaX49P4TZY3wFhb63I7ZQGEAxUbQD/fM/ZD3XvATwM
++l3FQ5J1LbG7YkKqDg+eF1CuSsNB/wc=
+=+Bjj
+-----END PGP SIGNATURE-----
+
+--uEJ5we3pG0TuqLXx--
