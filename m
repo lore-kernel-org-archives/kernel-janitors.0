@@ -2,62 +2,65 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 631BEC77B75
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 10:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC38C77B75
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 10:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231171AbjDUKmF (ORCPT
+        id S230145AbjDUKmu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 06:42:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36216 "EHLO
+        Fri, 21 Apr 2023 06:42:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbjDUKmE (ORCPT
+        with ESMTP id S229640AbjDUKmt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 06:42:04 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F8589EF4
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:42:01 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f1957e80a2so5314405e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:42:01 -0700 (PDT)
+        Fri, 21 Apr 2023 06:42:49 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B493C07
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:42:47 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f191c1a8a7so3701025e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:42:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682073720; x=1684665720;
+        d=linaro.org; s=google; t=1682073766; x=1684665766;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0Lud2bmV2Dni/HQ7LD8dzY1T7ghtMyeOGVVq6vz/KY4=;
-        b=tGrpluEyBAL+tKGdC8h9q2vZiZG0p6utHNQyjpOyR2anTmwu1WfD/UckRVHYfxdoJq
-         P2cOBlafdR2Q2clqrJ3GH7BaxsDsQ4Y0g+Tcqc03ZdQhLFr2D7hUs2R85/9Ys1Ufez6+
-         teKLz1ILIAW4v0TE3x+gk9tZlcqa7NyMsyJjw8++a1JPfQTbAXRIyEXqpxpOCgW18wZ6
-         q87Ql7IMwrpBkTptIQ196ldv/8h9vjwsPAsJ3TwJcb6o1weaa2ZIqXJ1qj+vuwq41Js5
-         UhLbq51nEhro4w7KxmUQW5DwTV78/MhrFwX54SjB4dj7Bo+rfvf51lsxKAROZAKfewCj
-         f6bA==
+        bh=pJNQPIVgpo0k9cBK3eiufu4iuPFearoW+KRcZ0E6+uI=;
+        b=IYMMMjpIZLIomm55FS+rS8rQ7TVENxzCZe9RE21cg3V2H9Fa7p1Ypv94kV9wEchh1X
+         v2BwrXdmzv4T3NdfBpoX+Nc/VZTiD6dkBPQgKN9I6AOd7Tr3zWKC2Ii7UhSnna/uFbWn
+         KR1UFyqA7YJhbYhmhWw2U23PU38axed/QRyRKUbMEC7IVfXqR8ooqtXqltZTDcmGCRKL
+         ATcJ/C/a2vTrJGLRcjW/MPdj+38PlV6QfbgHPhd6yhNjjzY0CG6La5Cn1mnKlVLvLCOD
+         v13Qla9s3gkzI6qiC/xJm+J+QN0fVkPUDq/GvPrvzq0EJA2f9xO6uBi2WsY3ILJnzB7C
+         v8Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682073720; x=1684665720;
+        d=1e100.net; s=20221208; t=1682073766; x=1684665766;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Lud2bmV2Dni/HQ7LD8dzY1T7ghtMyeOGVVq6vz/KY4=;
-        b=jXpwCDkr8DY0z8r3jR4Y6ugNZO7kguXbS6Iti0jUTqpMvKyBwch+BdaobOfsuDzqO9
-         XdCW8X0mM769Va9fRN2Y3CJDhjTpzC0wi5KuReopiFchAkI6qoEflgrEJcX2gRonlitW
-         Nxtx34LTU/e8HYIlqy7OPHJZPJtuKnzKsFiR7he4ueodoUsgGMpg9BwyA+eJx/zInUSe
-         lIRf8eRSMycBXF5h1CcwIyegK/dyJRTFu4yhu6gSgBzMwXXo6fV7mFP/cp730y8tWbpb
-         0l581JLA/NeB91o7Ghxup3cO410222032b1CbQBAWkjeorPGDgUBunBgVSjabCFKesVo
-         zqiQ==
-X-Gm-Message-State: AAQBX9fTd322m+m5eCzXBlR4pvGqMSeRBJyT1jPZOzhTrL1CSLvHenfT
-        rGjLCpqS7KJEvD8PMb8IWws1IA==
-X-Google-Smtp-Source: AKy350bznL3GobRNm+vZ+J+z0NJYOZaKI8retP0kCANmsk/cd8wh0xmZXckN8Di3uX26NjL8hy/h9w==
-X-Received: by 2002:a5d:594c:0:b0:2e5:8874:d883 with SMTP id e12-20020a5d594c000000b002e58874d883mr7219791wri.8.1682073719821;
-        Fri, 21 Apr 2023 03:41:59 -0700 (PDT)
+        bh=pJNQPIVgpo0k9cBK3eiufu4iuPFearoW+KRcZ0E6+uI=;
+        b=FNOemUMd1WrKn3RY6Ef3OsQ/Fb5H47oQiKZl5GbPX5ZAH8DvRCbWN2ezZaTCB+bpdI
+         fXurV62GMp7GsDGof7DOgl+/AbOFpCaOSlPcr6nLHywkXmBzJuvCQHS8i72Sxhx//AHZ
+         CEHOeRcbQUBIFIpWjgNZMd3g7zJElJAzpEeECQ81AmSmU7dwLErPQ2jM4NSS5uJGqcSi
+         ap5StipfklvqH/ryirAVeenHYqaW4+NTWrvBBOuwu5ygIFbLrmKFdW0IPyGmlUzFE1qV
+         VWmlhH2xmHI1ua78hQeyV5N0uK3KmksOf9azDBm8/6QwX7ni5OOWahwSCihHVWqyb8bG
+         UIJg==
+X-Gm-Message-State: AAQBX9fOC+TTAwC4e3FroUwWI2yRdXgqMLF5ZU96OqAQecd6dZrTgF+3
+        2Ixm6DX+I4QxsGd8va1Ytu3Jng==
+X-Google-Smtp-Source: AKy350ZUgw0vyBnmYLAjQqosc1capWBtzz8s55MJdq3C/+B8SVk0KS7JInXHSLo4bzQ4SKP5lxzGsg==
+X-Received: by 2002:a7b:ca4c:0:b0:3f1:91fc:564 with SMTP id m12-20020a7bca4c000000b003f191fc0564mr1334442wml.7.1682073766311;
+        Fri, 21 Apr 2023 03:42:46 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l9-20020a05600c1d0900b003f17eded97bsm7920120wms.19.2023.04.21.03.41.58
+        by smtp.gmail.com with ESMTPSA id u19-20020a05600c00d300b003f17eaae2c9sm4513810wmm.1.2023.04.21.03.42.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 03:41:59 -0700 (PDT)
-Date:   Fri, 21 Apr 2023 13:41:56 +0300
+        Fri, 21 Apr 2023 03:42:45 -0700 (PDT)
+Date:   Fri, 21 Apr 2023 13:42:41 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Patrik =?iso-8859-1?Q?Dahlstr=F6m?= <risca@dalakolonin.se>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: adc: palmas: fix off by one bugs
-Message-ID: <14fee94a-7db7-4371-b7d6-e94d86b9561e@kili.mountain>
+Subject: [PATCH] coresight: Fix signedness bug in
+ tmc_etr_buf_insert_barrier_packet()
+Message-ID: <7d33e244-d8b9-4c27-9653-883a13534b01@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -66,70 +69,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Valid values for "adc_chan" are zero to (PALMAS_ADC_CH_MAX - 1).
-Smatch detects some buffer overflows caused by this:
-drivers/iio/adc/palmas_gpadc.c:721 palmas_gpadc_read_event_value() error: buffer overflow 'adc->thresholds' 16 <= 16
-drivers/iio/adc/palmas_gpadc.c:758 palmas_gpadc_write_event_value() error: buffer overflow 'adc->thresholds' 16 <= 16
+This code generates a Smatch warning:
 
-The effect of this bug in other functions is more complicated but
-obviously we should fix all of them.
+    drivers/hwtracing/coresight/coresight-tmc-etr.c:947 tmc_etr_buf_insert_barrier_packet()
+    error: uninitialized symbol 'bufp'.
 
-Fixes: a99544c6c883 ("iio: adc: palmas: add support for iio threshold events")
+The problem is that if tmc_sg_table_get_data() returns -EINVAL, then
+when we test if "len < CORESIGHT_BARRIER_PKT_SIZE", the negative "len"
+value is type promoted to a high unsigned long value which is greater
+than CORESIGHT_BARRIER_PKT_SIZE.  Fix this bug by adding an explicit
+check for error codes.
+
+Fixes: 75f4e3619fe2 ("coresight: tmc-etr: Add transparent buffer management")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
----
- drivers/iio/adc/palmas_gpadc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
-index c1c439215aeb..7dfc9c927a23 100644
---- a/drivers/iio/adc/palmas_gpadc.c
-+++ b/drivers/iio/adc/palmas_gpadc.c
-@@ -547,7 +547,7 @@ static int palmas_gpadc_read_raw(struct iio_dev *indio_dev,
- 	int adc_chan = chan->channel;
- 	int ret = 0;
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index 918d461fcf4a..eaa296ced167 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -942,7 +942,7 @@ tmc_etr_buf_insert_barrier_packet(struct etr_buf *etr_buf, u64 offset)
  
--	if (adc_chan > PALMAS_ADC_CH_MAX)
-+	if (adc_chan >= PALMAS_ADC_CH_MAX)
+ 	len = tmc_etr_buf_get_data(etr_buf, offset,
+ 				   CORESIGHT_BARRIER_PKT_SIZE, &bufp);
+-	if (WARN_ON(len < CORESIGHT_BARRIER_PKT_SIZE))
++	if (WARN_ON(len < 0 || len < CORESIGHT_BARRIER_PKT_SIZE))
  		return -EINVAL;
- 
- 	mutex_lock(&adc->lock);
-@@ -595,7 +595,7 @@ static int palmas_gpadc_read_event_config(struct iio_dev *indio_dev,
- 	int adc_chan = chan->channel;
- 	int ret = 0;
- 
--	if (adc_chan > PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
-+	if (adc_chan >= PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
- 		return -EINVAL;
- 
- 	mutex_lock(&adc->lock);
-@@ -684,7 +684,7 @@ static int palmas_gpadc_write_event_config(struct iio_dev *indio_dev,
- 	int adc_chan = chan->channel;
- 	int ret;
- 
--	if (adc_chan > PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
-+	if (adc_chan >= PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
- 		return -EINVAL;
- 
- 	mutex_lock(&adc->lock);
-@@ -710,7 +710,7 @@ static int palmas_gpadc_read_event_value(struct iio_dev *indio_dev,
- 	int adc_chan = chan->channel;
- 	int ret;
- 
--	if (adc_chan > PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
-+	if (adc_chan >= PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
- 		return -EINVAL;
- 
- 	mutex_lock(&adc->lock);
-@@ -744,7 +744,7 @@ static int palmas_gpadc_write_event_value(struct iio_dev *indio_dev,
- 	int old;
- 	int ret;
- 
--	if (adc_chan > PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
-+	if (adc_chan >= PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
- 		return -EINVAL;
- 
- 	mutex_lock(&adc->lock);
+ 	coresight_insert_barrier_packet(bufp);
+ 	return offset + CORESIGHT_BARRIER_PKT_SIZE;
 -- 
 2.39.2
 
