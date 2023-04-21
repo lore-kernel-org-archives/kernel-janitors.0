@@ -2,77 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD62DC77B78
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 11:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 717D9C77B75
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 11:49:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231345AbjDULFz (ORCPT
+        id S230050AbjDULs7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 07:05:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45968 "EHLO
+        Fri, 21 Apr 2023 07:48:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbjDULFx (ORCPT
+        with ESMTP id S229657AbjDULs6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 07:05:53 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D76FA5ED;
-        Fri, 21 Apr 2023 04:05:50 -0700 (PDT)
-Received: from [192.168.1.141] ([37.4.248.58]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MAfMc-1q0lrW2CjY-00B1GQ; Fri, 21 Apr 2023 13:05:30 +0200
-Message-ID: <bb8bf083-1d00-616d-f25d-44b4b362399b@i2se.com>
-Date:   Fri, 21 Apr 2023 13:05:29 +0200
+        Fri, 21 Apr 2023 07:48:58 -0400
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07F6C5;
+        Fri, 21 Apr 2023 04:48:53 -0700 (PDT)
+Authenticated-By: 
+X-SpamFilter-By: ArmorX SpamTrap 5.77 with qID 33LBmiWbB011385, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+        by rtits2.realtek.com.tw (8.15.2/2.81/5.90) with ESMTPS id 33LBmiWbB011385
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+        Fri, 21 Apr 2023 19:48:44 +0800
+Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.17; Fri, 21 Apr 2023 19:48:44 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Fri, 21 Apr 2023 19:48:44 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::e138:e7f1:4709:ff4d]) by
+ RTEXMBS04.realtek.com.tw ([fe80::e138:e7f1:4709:ff4d%5]) with mapi id
+ 15.01.2375.007; Fri, 21 Apr 2023 19:48:44 +0800
+From:   Ping-Ke Shih <pkshih@realtek.com>
+To:     "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>
+CC:     "kvalo@kernel.org" <kvalo@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] wifi: rtw89: fix rtw89_read_chip_ver() for RTL8852B and RTL8851B
+Thread-Topic: [PATCH] wifi: rtw89: fix rtw89_read_chip_ver() for RTL8852B and
+ RTL8851B
+Thread-Index: AQHZdD43WaZmTDQ5E0ygpx3lZG6afa81H82A
+Date:   Fri, 21 Apr 2023 11:48:43 +0000
+Message-ID: <7475bff70fd50c7e8527e66080e126b4eff440bb.camel@realtek.com>
+References: <e4d912a2-37f8-4068-8861-7b9494ae731b@kili.mountain>
+In-Reply-To: <e4d912a2-37f8-4068-8861-7b9494ae731b@kili.mountain>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.36.1-2 
+x-originating-ip: [125.224.86.223]
+x-kse-serverinfo: RTEXMBS05.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A43E60BD68A6D74AA0CB8FD21FED96C6@realtek.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2] clk: bcm: rpi: Fix off by one in
- raspberrypi_discover_clocks()
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Maxime Ripard <maxime@cerno.tech>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "Ivan T. Ivanov" <iivanov@suse.de>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Dom Cobley <popcornmix@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-References: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
-Content-Language: en-US
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:CQ0YM4GSV0XDqdNu4e3uiMJ+r1RDUIfRVgwvNT8+9Q8rs32aGhI
- basyO+nttfkSvq+yKSWd5BpSDnM4BsFiN9WNbT5SCYkKQUV8hnVQF8jQb8JbNwCOTdeFuB8
- r3tVCq7hbbbTnpq/9euhX61uwEJ1Tqh54RFQecJXC+JkzEhueNrWVwkeOIDqX2gvuKRE5Ew
- JtgZBIruRoSDGEZXLMRKw==
-UI-OutboundReport: notjunk:1;M01:P0:qIwRPYCkjoM=;1/CRKEk9pp6U36vKDdsSD1qi6Yj
- xkSST/6PhyI1MRT85tSbTU4eCYwJvBYc8EOoXQE9dry/V1FNXq0EwX3m48UveDaAWXklGaZ5O
- feMmcV7NwuIyOR/6wE8vCj8a3e7gBma39QLxOI/Mqo6ilixtzluhQpOh46WcUSblD6rsQlY4j
- a86opJL9lf3860cLmrGe1gVxp0h1LqEZgyAafTAenrOiPwwETjkuJMM5PFyvON02EelE4Bw0T
- SqeoiQA7LALaqzj3wqQu3tQoJd58pSvwnQadUiEQlczMW7dcEm/w5ENCDzE21jmWP8uUl7Al3
- u/eSPxjTrjuZT/F0FakIlX1kI9+ZV+KWVj4TdEyJPlI9f2Nr6C56XsVPEhOkhsimAplBKL4eB
- 16G5fk4laRHdDDpUfgOgHipZaz66X8Y57qfBemqzWgWqrQcDh/ZKCt0q8hMZFz3q4LCfw/9uq
- p2FaGi5AIH0fq+CN8o1/9Uyeg7fNhfJiubQj3YwKa1z/hK8ah8Q1dYvcEClC+Gx8nukf21rnT
- Wm0Gei+6Dot6sl/ZTTpatQUOnS+CrzNyafa/uC9c/K4ZOu1JCgAeHIgI2sLuVHPRl1195L8GD
- 87mFwmS6stX8nSAhtB3r1zopi/TfvjmR42pPsXUobH2ku8zoVpJqwon/8d+YXURMcGzsiXlSI
- BCYhQQxOMddk0+rxAfSws0IDAplM46dJiegaIzrpng==
+X-KSE-AntiSpam-Interceptor-Info: fallback
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-Am 21.04.23 um 12:41 schrieb Dan Carpenter:
-> Smatch detected an off by one in this code:
->      drivers/clk/bcm/clk-raspberrypi.c:374 raspberrypi_discover_clocks()
->      error: buffer overflow 'data->hws' 16 <= 16
-> 
-> The data->hws[] array has RPI_FIRMWARE_NUM_CLK_ID elements so the >
-> comparison needs to changed to >=.
-> 
-> Fixes: 12c90f3f27bb ("clk: bcm: rpi: Add variant structure")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Stefan Wahren <stefan.wahren@i2se.com>
+T24gRnJpLCAyMDIzLTA0LTIxIGF0IDEzOjQ0ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiANCj4gVGhlIGlmIHN0YXRlbWVudCBpcyByZXZlcnNlZCBzbyBpdCB3aWxsIG5vdCByZWNvcmQg
+dGhlIGNoaXAgdmVyc2lvbi4NCj4gVGhpcyB3YXMgZGV0ZWN0ZWQgdXNpbmcgU21hdGNoOg0KPiAN
+Cj4gICAgIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODkvY29yZS5jOjM1OTMgcnR3
+ODlfcmVhZF9jaGlwX3ZlcigpDQo+ICAgICBlcnJvcjogdW5pbml0aWFsaXplZCBzeW1ib2wgJ3Zh
+bCcuDQoNCkkgdXNlIHNtYXRjaCB0byBjaGVjayBvdXIgZHJpdmVyIHJlZ3VsYXJseSwgYnV0IEkg
+Y2FuJ3QgZmluZCB0aGlzIGVycm9yLg0KV2l0aCB0aGUgbGF0ZXN0IHZlcnNpb24gdjAuNS4wLTgz
+MjEtZzU1NjA2NGNhLCBJIHN0aWxsIGNhbid0IGZpbmQgaXQuDQpEbyBJIG5lZWQgdG8gc3BlY2lm
+eSBhZGRpdGlvbmFsIGFyZ3VtZW50cz8gVGhhbmtzLiANCg0KPiANCj4gRml4ZXM6IGE2ZmIyYmI4
+NDY1NCAoIndpZmk6IHJ0dzg5OiByZWFkIHZlcnNpb24gb2YgYW5hbG9nIGhhcmR3YXJlIikNCj4g
+U2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBsaW5hcm8ub3JnPg0K
+DQpBY2tlZC1ieTogUGluZy1LZSBTaGloIDxwa3NoaWhAcmVhbHRlay5jb20+DQoNCj4gLS0tDQo+
+ICBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L2NvcmUuYyB8IDIgKy0NCj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODkvY29yZS5jIGIvZHJpdmVy
+cy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OS9jb3JlLmMNCj4gaW5kZXggN2ZjMGEyNmE0ZDcz
+Li4xZDQ2MmM5ZTQ2ZDkgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0
+ZWsvcnR3ODkvY29yZS5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3
+ODkvY29yZS5jDQo+IEBAIC0zNTg3LDcgKzM1ODcsNyBAQCBzdGF0aWMgdm9pZCBydHc4OV9yZWFk
+X2NoaXBfdmVyKHN0cnVjdCBydHc4OV9kZXYgKnJ0d2RldikNCj4gDQo+ICAgICAgICAgaWYgKGNo
+aXAtPmNoaXBfaWQgPT0gUlRMODg1MkIgfHwgY2hpcC0+Y2hpcF9pZCA9PSBSVEw4ODUxQikgew0K
+PiAgICAgICAgICAgICAgICAgcmV0ID0gcnR3ODlfbWFjX3JlYWRfeHRhbF9zaShydHdkZXYsIFhU
+QUxfU0lfQ1YsICZ2YWwpOw0KPiAtICAgICAgICAgICAgICAgaWYgKCFyZXQpDQo+ICsgICAgICAg
+ICAgICAgICBpZiAocmV0KQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm47DQo+IA0K
+PiAgICAgICAgICAgICAgICAgcnR3ZGV2LT5oYWwuYWN2ID0gdThfZ2V0X2JpdHModmFsLCBYVEFM
+X1NJX0FDVl9NQVNLKTsNCj4gLS0NCj4gMi4zOS4yDQo+IA0KPiANCj4gLS0tLS0tUGxlYXNlIGNv
+bnNpZGVyIHRoZSBlbnZpcm9ubWVudCBiZWZvcmUgcHJpbnRpbmcgdGhpcyBlLW1haWwuDQoNCg0K
