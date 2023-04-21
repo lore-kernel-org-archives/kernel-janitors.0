@@ -2,117 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7363CC77B78
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 10:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD62DC77B78
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 11:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231432AbjDUKpN (ORCPT
+        id S231345AbjDULFz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 06:45:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37634 "EHLO
+        Fri, 21 Apr 2023 07:05:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231404AbjDUKo7 (ORCPT
+        with ESMTP id S229657AbjDULFx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 06:44:59 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 418C38A52
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:44:58 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f09b9ac51dso44905065e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682073897; x=1684665897;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BmqSgoVn+4GYHbRCGkxih6mgI9KXrJS4qZaVx99YBF0=;
-        b=FTOGGLy/4aVVYGpSAWcxoSFoKy7NS1c2I4lPWKmOr+cOGefYqCAripq+GvJz0clFvc
-         gdD/ZSwGjGsoiQa4M4qnk4eQ6o+oJj+yYItNqCY3FXuDVQcVzGHOUAXMXKkth89GctPQ
-         DNmYACDMfspf2v+ljSPoWQG+S4BUzXpw/z9RMmNBYw9+D8EQe60F+m2RdU48JhipyJNu
-         KjiD9hDj7MJAGsfXrIzxlFM2N0D1u4HnNshGC49W64Bm8/R98GFr/4fg1D9TDZF4IDgx
-         1WgS3afclE8xJWSc+iqu9sJq29VdfKLAvTVcvAgnriEM/lX+qshDkUWZuf5f1rfzKAKC
-         FyYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682073897; x=1684665897;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BmqSgoVn+4GYHbRCGkxih6mgI9KXrJS4qZaVx99YBF0=;
-        b=Q1DgAm9T87DaDYkHMKMKaiJvwkrBWyKSkNGxv2yaUIPBG7l1ERhskVGMgs3FIyGlZJ
-         xepFd6bVWSooz6cA6ILYKBwpdbhLEvqBmS39p1A9x7mrzhOGUC4cETWgj/mdunz9lHvV
-         hEKpoMdI+5TGnxDeTNBFpUrUwlukLqbV+0b3CqVxklfSJRp1xQVEAwigWWNpV4jLbKxy
-         ttFLGUTsmXdevBWRqkBmcgA75d6PMn94wAsE0DZeaMcCb3IrnIyYsN3Ulmqu5pJM0LQB
-         Bd9mCkpKYe3sp1ZmKhOc7ZL1hl1td9G4lhFQQU7YSGJykoIk8Lb1NaJIAt9/fllbmEX0
-         CTaw==
-X-Gm-Message-State: AAQBX9e87IWmLrjVadV+oHLkeD/k5AMV+QX5vPXtlADIY1jWe7YUZVeM
-        AVY2kQM9PpeJZQQ1/dwM4oTKSQ==
-X-Google-Smtp-Source: AKy350ZaT1G0S2zY1VUe0Yq2m3hK6Ma2A+K1oVpKfU0a6Bwjve9Lz1EVu8IMAzOCGQdABY03xmatBQ==
-X-Received: by 2002:a5d:6a11:0:b0:2f6:661:c03c with SMTP id m17-20020a5d6a11000000b002f60661c03cmr4068864wru.28.1682073896851;
-        Fri, 21 Apr 2023 03:44:56 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p17-20020a056000019100b002fda1b12a0bsm4192642wrx.2.2023.04.21.03.44.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 03:44:56 -0700 (PDT)
-Date:   Fri, 21 Apr 2023 13:44:54 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Abhyuday Godhasara <abhyuday.godhasara@xilinx.com>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejas Patel <tejas.patel@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] driver: soc: xilinx: use _safe loop iterator to avoid a use
- after free
-Message-ID: <761e0e4a-4caf-4a71-8f47-1c6ad908a848@kili.mountain>
+        Fri, 21 Apr 2023 07:05:53 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D76FA5ED;
+        Fri, 21 Apr 2023 04:05:50 -0700 (PDT)
+Received: from [192.168.1.141] ([37.4.248.58]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MAfMc-1q0lrW2CjY-00B1GQ; Fri, 21 Apr 2023 13:05:30 +0200
+Message-ID: <bb8bf083-1d00-616d-f25d-44b4b362399b@i2se.com>
+Date:   Fri, 21 Apr 2023 13:05:29 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2] clk: bcm: rpi: Fix off by one in
+ raspberrypi_discover_clocks()
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Maxime Ripard <maxime@cerno.tech>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "Ivan T. Ivanov" <iivanov@suse.de>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Dom Cobley <popcornmix@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+References: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
+Content-Language: en-US
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:CQ0YM4GSV0XDqdNu4e3uiMJ+r1RDUIfRVgwvNT8+9Q8rs32aGhI
+ basyO+nttfkSvq+yKSWd5BpSDnM4BsFiN9WNbT5SCYkKQUV8hnVQF8jQb8JbNwCOTdeFuB8
+ r3tVCq7hbbbTnpq/9euhX61uwEJ1Tqh54RFQecJXC+JkzEhueNrWVwkeOIDqX2gvuKRE5Ew
+ JtgZBIruRoSDGEZXLMRKw==
+UI-OutboundReport: notjunk:1;M01:P0:qIwRPYCkjoM=;1/CRKEk9pp6U36vKDdsSD1qi6Yj
+ xkSST/6PhyI1MRT85tSbTU4eCYwJvBYc8EOoXQE9dry/V1FNXq0EwX3m48UveDaAWXklGaZ5O
+ feMmcV7NwuIyOR/6wE8vCj8a3e7gBma39QLxOI/Mqo6ilixtzluhQpOh46WcUSblD6rsQlY4j
+ a86opJL9lf3860cLmrGe1gVxp0h1LqEZgyAafTAenrOiPwwETjkuJMM5PFyvON02EelE4Bw0T
+ SqeoiQA7LALaqzj3wqQu3tQoJd58pSvwnQadUiEQlczMW7dcEm/w5ENCDzE21jmWP8uUl7Al3
+ u/eSPxjTrjuZT/F0FakIlX1kI9+ZV+KWVj4TdEyJPlI9f2Nr6C56XsVPEhOkhsimAplBKL4eB
+ 16G5fk4laRHdDDpUfgOgHipZaz66X8Y57qfBemqzWgWqrQcDh/ZKCt0q8hMZFz3q4LCfw/9uq
+ p2FaGi5AIH0fq+CN8o1/9Uyeg7fNhfJiubQj3YwKa1z/hK8ah8Q1dYvcEClC+Gx8nukf21rnT
+ Wm0Gei+6Dot6sl/ZTTpatQUOnS+CrzNyafa/uC9c/K4ZOu1JCgAeHIgI2sLuVHPRl1195L8GD
+ 87mFwmS6stX8nSAhtB3r1zopi/TfvjmR42pPsXUobH2ku8zoVpJqwon/8d+YXURMcGzsiXlSI
+ BCYhQQxOMddk0+rxAfSws0IDAplM46dJiegaIzrpng==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The hash_for_each_possible() loop dereferences "eve_data" to get the
-next item on the list.  However the loop frees eve_data so it leads to
-a use after free.  Use hash_for_each_possible_safe() instead.
 
-Fixes: c7fdb2404f66 ("drivers: soc: xilinx: add xilinx event management driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-Found by static analysis and not tested.
+Am 21.04.23 um 12:41 schrieb Dan Carpenter:
+> Smatch detected an off by one in this code:
+>      drivers/clk/bcm/clk-raspberrypi.c:374 raspberrypi_discover_clocks()
+>      error: buffer overflow 'data->hws' 16 <= 16
+> 
+> The data->hws[] array has RPI_FIRMWARE_NUM_CLK_ID elements so the >
+> comparison needs to changed to >=.
+> 
+> Fixes: 12c90f3f27bb ("clk: bcm: rpi: Add variant structure")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
- drivers/soc/xilinx/xlnx_event_manager.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/xilinx/xlnx_event_manager.c b/drivers/soc/xilinx/xlnx_event_manager.c
-index c76381899ef4..f9d9b82b562d 100644
---- a/drivers/soc/xilinx/xlnx_event_manager.c
-+++ b/drivers/soc/xilinx/xlnx_event_manager.c
-@@ -192,11 +192,12 @@ static int xlnx_remove_cb_for_suspend(event_cb_func_t cb_fun)
- 	struct registered_event_data *eve_data;
- 	struct agent_cb *cb_pos;
- 	struct agent_cb *cb_next;
-+	struct hlist_node *tmp;
- 
- 	is_need_to_unregister = false;
- 
- 	/* Check for existing entry in hash table for given cb_type */
--	hash_for_each_possible(reg_driver_map, eve_data, hentry, PM_INIT_SUSPEND_CB) {
-+	hash_for_each_possible_safe(reg_driver_map, eve_data, tmp, hentry, PM_INIT_SUSPEND_CB) {
- 		if (eve_data->cb_type == PM_INIT_SUSPEND_CB) {
- 			/* Delete the list of callback */
- 			list_for_each_entry_safe(cb_pos, cb_next, &eve_data->cb_list_head, list) {
-@@ -228,11 +229,12 @@ static int xlnx_remove_cb_for_notify_event(const u32 node_id, const u32 event,
- 	u64 key = ((u64)node_id << 32U) | (u64)event;
- 	struct agent_cb *cb_pos;
- 	struct agent_cb *cb_next;
-+	struct hlist_node *tmp;
- 
- 	is_need_to_unregister = false;
- 
- 	/* Check for existing entry in hash table for given key id */
--	hash_for_each_possible(reg_driver_map, eve_data, hentry, key) {
-+	hash_for_each_possible_safe(reg_driver_map, eve_data, tmp, hentry, key) {
- 		if (eve_data->key == key) {
- 			/* Delete the list of callback */
- 			list_for_each_entry_safe(cb_pos, cb_next, &eve_data->cb_list_head, list) {
--- 
-2.39.2
-
+Reviewed-by: Stefan Wahren <stefan.wahren@i2se.com>
