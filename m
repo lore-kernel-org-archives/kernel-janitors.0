@@ -2,133 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBD9C7618E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 05:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D35C77B75
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 07:22:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233546AbjDUFkJ (ORCPT
+        id S230105AbjDUHWJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 01:40:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40056 "EHLO
+        Fri, 21 Apr 2023 03:22:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233380AbjDUFkI (ORCPT
+        with ESMTP id S229533AbjDUHWH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 01:40:08 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8471444A4
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 22:40:05 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id pjV2pQlJ0YD96pjV2pjQ2t; Fri, 21 Apr 2023 07:40:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1682055603;
-        bh=7qKZ3uxvb0ZRE+YpwV4WbK5yMlZJV1gsOrqwFy3n2zE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=KOEQaCde+tDiFzYb8LGwh9OhPXUh73UetQ/YZaZtt3UT4E4M9pkvj5Og4I9M2g2QK
-         u1L1z0BYUFqNC3hPg1/H51ZONoH2ulxC6Asivzgm9X0r5u/uSy+aQxNpGsxG+KzuVA
-         s+Ulzm/7aWRMa77voDeSrnzJeccEJ7JTrZx5q4P4bt65OIJTPUfGc9rbYGb0nhyRB7
-         X5efAPbgVCLEgfKBIyxdHuvr4fY/mSqyaJOICDQqY/3dOhatez5V2W627blzulupeE
-         w3G7ofXAOfp1e+rsvjeM1H+uHWlVKSzlKG2S2PPlrTrWZHeBDuZSUpBDyyuy0j+3+i
-         AJxMwTAk18VHQ==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 21 Apr 2023 07:40:03 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <4385d07a-e124-d2f2-fbd0-eda1d602167b@wanadoo.fr>
-Date:   Fri, 21 Apr 2023 07:40:00 +0200
+        Fri, 21 Apr 2023 03:22:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03364DC;
+        Fri, 21 Apr 2023 00:22:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 873E064E3E;
+        Fri, 21 Apr 2023 07:22:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF63C433EF;
+        Fri, 21 Apr 2023 07:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682061725;
+        bh=FwLRxDR9MFCxG4/NR6xh4TDXmQe9nb8mtDHLKN1BZSQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qp7++j3JGmtObLdpT13iUFGXw1QbAZR0Jm5Na31sND5LkUn6cBcS/PFJ2Mx2niEov
+         AksVgTx6c5F3WgReSzZH1lzxGvMeKLpaiDyQJ80Ob/stoQoKZK/kML5DJ/97G8K9mu
+         ZjF1kGEW0WlIMVncDayxtIDYvlctYXW7knRkC9uuq35YDJ3dZP5nKaE5/3qmYWHrQt
+         ii/MU5WQ/47q1R6S3CUhana5GdZ9nTC3hKudvD1/AUL3qaXd60uDiYSwlbYsMehvoE
+         8D4L7XJ57zycx/WTaw2HKn+Y8nWkTWhSy8uc8mQNMdbryo03i+b/4gCySN0DzUvTHN
+         2H3YmP9DqdDfQ==
+Date:   Fri, 21 Apr 2023 08:22:01 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        William Breathitt Gray <william.gray@linaro.org>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] counter: rz-mtu3-cnt: Unlock on error in
+ rz_mtu3_count_ceiling_write()
+Message-ID: <20230421072201.GJ996918@google.com>
+References: <7b535d6b-6031-493a-84f6-82842089e637@kili.mountain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH net-next] net: dsa: b53: Slightly optimize b53_arl_read()
-Content-Language: fr, en-GB
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <c94fb1b4dcd9a04eff08cf9ba2444c348477e554.1682023416.git.christophe.jaillet@wanadoo.fr>
- <be0d976a-2219-d007-617d-6865c0344335@gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <be0d976a-2219-d007-617d-6865c0344335@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7b535d6b-6031-493a-84f6-82842089e637@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 21/04/2023 à 02:40, Florian Fainelli a écrit :
+On Thu, 20 Apr 2023, Dan Carpenter wrote:
+
+> These error paths need to call mutex_unlock(&priv->lock) before
+> returning.  The lock is taken in rz_mtu3_lock_if_counter_is_valid().
 > 
+> Fixes: 25d21447d896 ("counter: Add Renesas RZ/G2L MTU3a counter driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: I had the wrong function in the subject.  Also style changes.
 > 
-> On 4/20/2023 1:44 PM, Christophe JAILLET wrote:
->> When the 'free_bins' bitmap is cleared, it is better to use its full
->> maximum size instead of only the needed size.
->> This lets the compiler optimize it because the size is now known at 
->> compile
->> time. B53_ARLTBL_MAX_BIN_ENTRIES is small (i.e. currently 4), so a 
->> call to
->> memset() is saved.
->>
->> Also, as 'free_bins' is local to the function, the non-atomic __set_bit()
->> can also safely be used here.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/net/dsa/b53/b53_common.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/dsa/b53/b53_common.c 
->> b/drivers/net/dsa/b53/b53_common.c
->> index 3464ce5e7470..8c55fe0e0747 100644
->> --- a/drivers/net/dsa/b53/b53_common.c
->> +++ b/drivers/net/dsa/b53/b53_common.c
->> @@ -1627,7 +1627,7 @@ static int b53_arl_read(struct b53_device *dev, 
->> u64 mac,
->>       if (ret)
->>           return ret;
->> -    bitmap_zero(free_bins, dev->num_arl_bins);
->> +    bitmap_zero(free_bins, B53_ARLTBL_MAX_BIN_ENTRIES);
-> 
-> That one I am not a big fan, as the number of ARL bins is a function of 
-> the switch model, and this illustrates it well.
+>  drivers/counter/rz-mtu3-cnt.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
-Ok, up to you to take or not what looks the better solution.
+Applied, thanks
 
- From my point of view, the "for (i = 0; i < dev->num_arl_bins" below 
-illustrates it better.
-
-
-Maybe, another approach to save the memset() call would be remove the 
-bitmap_zero() call, and declare 'free_bins' as:
-
-    DECLARE_BITMAP(free_bins, B53_ARLTBL_MAX_BIN_ENTRIES) = { };
-(this syntax is already used in b53_configure_vlan())
-
-
-The compiler should still be able to optimize the initialisation and 
-this wouldn't, IMHO, introduce confusion about the intent.
-
-Let me know if you prefer to leave this hunk as-is, or if this other 
-alternative pleases you.
-
-
-CJ
-
-> 
->>       /* Read the bins */
->>       for (i = 0; i < dev->num_arl_bins; i++) {
->> @@ -1641,7 +1641,7 @@ static int b53_arl_read(struct b53_device *dev, 
->> u64 mac,
->>           b53_arl_to_entry(ent, mac_vid, fwd_entry);
->>           if (!(fwd_entry & ARLTBL_VALID)) {
->> -            set_bit(i, free_bins);
->> +            __set_bit(i, free_bins);
-> 
-> I would be keen on taking that hunk but keep the other as-is. Does that 
-> work for you?
-> -- 
-> Florian
-> 
-
+-- 
+Lee Jones [李琼斯]
