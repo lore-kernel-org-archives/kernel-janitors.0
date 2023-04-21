@@ -2,61 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBD8C77B75
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 10:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E71C7618E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 10:44:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231148AbjDUKoM (ORCPT
+        id S231386AbjDUKob (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 06:44:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37102 "EHLO
+        Fri, 21 Apr 2023 06:44:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbjDUKoK (ORCPT
+        with ESMTP id S230150AbjDUKoa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 06:44:10 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A507C49E1
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:44:09 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f18123d9f6so10989135e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:44:09 -0700 (PDT)
+        Fri, 21 Apr 2023 06:44:30 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E5849E1
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:44:29 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-2fe3fb8e25fso976021f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:44:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682073848; x=1684665848;
+        d=linaro.org; s=google; t=1682073868; x=1684665868;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=h9MeXQGQNttAKEG/2Uafkn62wt8R8L4SBm0zKSGewls=;
-        b=x3ujMZWszN2R7Xq37gf2sInr4NEdk+/poPUHTl0m+nCFLhvdAWnAYwzzF5xF6mWRxh
-         iGY1VEsPpB0CML7KQdPQNql1tte6dwKKXmLu5kbzYnJezKHOi45mNRzcjVwLgLl9lutX
-         2uoI2Wcc4hpgb05yNQwbcSVbyOveS7EBek95ek+AVrDk7WDlVK6f2aHZe+q5aRRnJCQp
-         Kfr7BQfeM51E/Rci4nylNs7/JL5/frAQ6YX2/ua/CoKurwzQlo0910Ta5L5KeDu0bY+z
-         QX/r00EstL044iQEHRUsoHU5uNy0c19MDwSvFmD3VvPaKFaRUqv7iC0+S0wse1SBCDpV
-         oxjw==
+        bh=mRR8QtsSmxjRIku5DkJBFiN+Snm7HpPNejtlu92e2h4=;
+        b=As8nZXfVquw9bOEdzULHA3Not2GSqD1l15CQ2M3BHZeFQF6QIhBuJXv4rKzXgnCf/x
+         hwwmG7K23HRwX4QLME9tdAlnvkQ5pFHWXSMFkDCmffcB0ezeQb80rpw56nYijTG4a66Q
+         Z2A+KWB90RYWJ6dVCC9psjN5cJ5O2DAUcyhWPFUHQ93Tz0tfx9OjOOY/jwFRD8YQMzpS
+         fQ3cjYV1u4B8kwAGZXKUMWfP4+JLDtEtwufk39DOkVyS27SbYEGiL846EQJucn6CzKdn
+         dMhtwuxshqN4keKtc8HQCIILdGRh/C4ZosfNLrYNh5w4F5uJ9NeQxpJlrSxHGohHVs68
+         YYsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682073848; x=1684665848;
+        d=1e100.net; s=20221208; t=1682073868; x=1684665868;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h9MeXQGQNttAKEG/2Uafkn62wt8R8L4SBm0zKSGewls=;
-        b=Rf7J0bRKb4oiSKPCQG7QihWayqDOAAW5lVzUC4hmiFd20s/sOFNjv9HuupExeHOOuu
-         xsvjdZr6pdyrKqBt3c1IQdlF0jw15NMu7nNYJsx8fkp3xiPWK30FYgs6aPvW5LRIjdbd
-         EJFJwPARhDganlKmRKdXy6KQ7axhAVSBdumFO5hR09jIsgq40z3stXlZNqoP8XrbW6gp
-         madMuCjP35QqrqX8o9OrcYD6L1IUFCTiRW0e80YGWQA6chwokOqZHEYGr9HxN34gASfS
-         CiXA10+KrdAM4PA8/8yF4gX1spzms9OIT9LXaxM3LU99f8XFCwSdNldxJtD9eQslXcc0
-         Gzyw==
-X-Gm-Message-State: AAQBX9eNAnMCqEczZ5oA5oVq27ZXX7RSvELIA3it5tzx+hMsZ7SMmdEy
-        Nxdf3QzwwHfcrsoxLBl417NqpQ==
-X-Google-Smtp-Source: AKy350Y688eh9yj2svLW6NLije/X+twIT+EVi+I5h4sY3AU+gdC6bKWTV48BhOI6aw0XAvYH/h2iDQ==
-X-Received: by 2002:a1c:4b09:0:b0:3f1:8f05:3b82 with SMTP id y9-20020a1c4b09000000b003f18f053b82mr1443312wma.38.1682073848113;
-        Fri, 21 Apr 2023 03:44:08 -0700 (PDT)
+        bh=mRR8QtsSmxjRIku5DkJBFiN+Snm7HpPNejtlu92e2h4=;
+        b=X94Ohyqup08thVi2/iYp1ewqfCaV93cf6BzoR3irTvE3IBVi/Lf+Y1YLxtY9ySQA1b
+         VcNLVzWXneQh56pTdBY2rULBb2Chl8JIijSjPmLtaHWsHW+y7BpaMDCokkNCB8w8T912
+         LqvP6ZIsfW1QiIIlhIiTcSxf0/WFMCwFNWpIe5p3AcUNPX5Qww0jBcmKiuz5G7mwiQnr
+         eBLtrQy7lAXS49qSjo801N1ZjclvoH2FcgLe1R60jDC3mzggoUqke5/cdXxRuwXmZ/8f
+         NSAhoS1TufcR4fgK53FWWMGJPMUL8YjA5Zz2PoOXwdG9s9tOtQilIGr0BL0xNRSQUcX/
+         OEcA==
+X-Gm-Message-State: AAQBX9cpA7G2kLEdL+Hi+QGMxLtWI3P61KWED7r/zzeuF2pqdndY6dAW
+        gyqfI02Zd+bfH8UgLWHv9c51Hw==
+X-Google-Smtp-Source: AKy350YqVVHeM1QoSPRQ7nVBEFDSMpaL/Zr5lSpChBMc9Htj57WjFH3Pkfbx1Vrf+uv56OTMxBtPBg==
+X-Received: by 2002:adf:fecb:0:b0:2cb:2775:6e6 with SMTP id q11-20020adffecb000000b002cb277506e6mr3369289wrs.45.1682073867970;
+        Fri, 21 Apr 2023 03:44:27 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o2-20020a05600c4fc200b003f1738e64c0sm7906521wmq.20.2023.04.21.03.44.07
+        by smtp.gmail.com with ESMTPSA id f17-20020a5d50d1000000b002e5f6f8fc4fsm4085509wrt.100.2023.04.21.03.44.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 03:44:07 -0700 (PDT)
-Date:   Fri, 21 Apr 2023 13:44:04 +0300
+        Fri, 21 Apr 2023 03:44:27 -0700 (PDT)
+Date:   Fri, 21 Apr 2023 13:44:21 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Ping-Ke Shih <pkshih@realtek.com>
-Cc:     Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+To:     Loic Poulain <loic.poulain@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: rtw89: fix rtw89_read_chip_ver() for RTL8852B and
- RTL8851B
-Message-ID: <e4d912a2-37f8-4068-8861-7b9494ae731b@kili.mountain>
+Subject: [PATCH] soc: qcom: rmtfs: Fix error code in probe()
+Message-ID: <76b21a14-70ff-4ca9-927d-587543c6699c@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -65,31 +67,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The if statement is reversed so it will not record the chip version.
-This was detected using Smatch:
+Return an error code if of_property_count_u32_elems() fails.  Don't
+return success.
 
-    drivers/net/wireless/realtek/rtw89/core.c:3593 rtw89_read_chip_ver()
-    error: uninitialized symbol 'val'.
-
-Fixes: a6fb2bb84654 ("wifi: rtw89: read version of analog hardware")
+Fixes: e656cd0bcf3d ("soc: qcom: rmtfs: Optionally map RMTFS to more VMs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/wireless/realtek/rtw89/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/qcom/rmtfs_mem.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-index 7fc0a26a4d73..1d462c9e46d9 100644
---- a/drivers/net/wireless/realtek/rtw89/core.c
-+++ b/drivers/net/wireless/realtek/rtw89/core.c
-@@ -3587,7 +3587,7 @@ static void rtw89_read_chip_ver(struct rtw89_dev *rtwdev)
- 
- 	if (chip->chip_id == RTL8852B || chip->chip_id == RTL8851B) {
- 		ret = rtw89_mac_read_xtal_si(rtwdev, XTAL_SI_CV, &val);
--		if (!ret)
-+		if (ret)
- 			return;
- 
- 		rtwdev->hal.acv = u8_get_bits(val, XTAL_SI_ACV_MASK);
+diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
+index ce48a9f3b4c8..f83811f51175 100644
+--- a/drivers/soc/qcom/rmtfs_mem.c
++++ b/drivers/soc/qcom/rmtfs_mem.c
+@@ -233,6 +233,7 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
+ 		num_vmids = 0;
+ 	} else if (num_vmids < 0) {
+ 		dev_err(&pdev->dev, "failed to count qcom,vmid elements: %d\n", num_vmids);
++		ret = num_vmids;
+ 		goto remove_cdev;
+ 	} else if (num_vmids > NUM_MAX_VMIDS) {
+ 		dev_warn(&pdev->dev,
 -- 
 2.39.2
 
