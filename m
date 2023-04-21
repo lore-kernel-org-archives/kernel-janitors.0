@@ -2,71 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D35C77B75
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 07:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E10FC77B78
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 07:29:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230105AbjDUHWJ (ORCPT
+        id S230521AbjDUH3z convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 03:22:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60960 "EHLO
+        Fri, 21 Apr 2023 03:29:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjDUHWH (ORCPT
+        with ESMTP id S231136AbjDUH3x (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 03:22:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03364DC;
-        Fri, 21 Apr 2023 00:22:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 873E064E3E;
-        Fri, 21 Apr 2023 07:22:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF63C433EF;
-        Fri, 21 Apr 2023 07:22:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682061725;
-        bh=FwLRxDR9MFCxG4/NR6xh4TDXmQe9nb8mtDHLKN1BZSQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qp7++j3JGmtObLdpT13iUFGXw1QbAZR0Jm5Na31sND5LkUn6cBcS/PFJ2Mx2niEov
-         AksVgTx6c5F3WgReSzZH1lzxGvMeKLpaiDyQJ80Ob/stoQoKZK/kML5DJ/97G8K9mu
-         ZjF1kGEW0WlIMVncDayxtIDYvlctYXW7knRkC9uuq35YDJ3dZP5nKaE5/3qmYWHrQt
-         ii/MU5WQ/47q1R6S3CUhana5GdZ9nTC3hKudvD1/AUL3qaXd60uDiYSwlbYsMehvoE
-         8D4L7XJ57zycx/WTaw2HKn+Y8nWkTWhSy8uc8mQNMdbryo03i+b/4gCySN0DzUvTHN
-         2H3YmP9DqdDfQ==
-Date:   Fri, 21 Apr 2023 08:22:01 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        William Breathitt Gray <william.gray@linaro.org>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] counter: rz-mtu3-cnt: Unlock on error in
- rz_mtu3_count_ceiling_write()
-Message-ID: <20230421072201.GJ996918@google.com>
-References: <7b535d6b-6031-493a-84f6-82842089e637@kili.mountain>
+        Fri, 21 Apr 2023 03:29:53 -0400
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AE12132;
+        Fri, 21 Apr 2023 00:29:51 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-b8f549d36e8so2246155276.3;
+        Fri, 21 Apr 2023 00:29:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682062190; x=1684654190;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mtuOdz7tU5+YoOdrdSdLBBwOK8V97jXWFycy5r6znBE=;
+        b=GEWJdIxw4/jDX6EbMvYnk48qkdY4wPdPWBOvxV5bMIlQNd/SuSkLGJt26fjJegzgF3
+         jnUXAPlABEVLqDbrGPd9GQMr3CgIbnACRIsRwg6rMgF/NYxX6mBJhtmxiZoSJmjOjvkU
+         krwSRePaA9gZxR5VKKIFHuT6sIYFrCHs29rbKAz84t/DhMDPpJomY0s6aoBlJVC2CTKf
+         XGqswM2nHPmwLzG+Zw+zA2rYdt0f8CcA5CtKlj38IDpgqOi6SKzAWgLwErgyqxDCvFj4
+         NpbiuGSROfhZzvAi55L6PK1ECFQLdtLGlo2AR1NIY/YFSFs3LyGgqXI9MJryZEkgmeQQ
+         EJ2Q==
+X-Gm-Message-State: AAQBX9exw/O4rruUgkeFkeszUF1qWqe3twDdWnvfFa1FwUsvv6QWwxgK
+        RSQScvmtz9L8sXbbTg28SEog8fKFtFlIVXMl
+X-Google-Smtp-Source: AKy350Y9ehpan2PHH1CyBB9KHWFQIvC4H/B/ypkMUdyZAmybOatR+niH6Dl1gOreOlA6H5Ea3/lj6Q==
+X-Received: by 2002:a25:c094:0:b0:b8f:4c0a:b28d with SMTP id c142-20020a25c094000000b00b8f4c0ab28dmr1390167ybf.46.1682062190524;
+        Fri, 21 Apr 2023 00:29:50 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id a3-20020a256603000000b00b8ed4bee6absm793002ybc.48.2023.04.21.00.29.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Apr 2023 00:29:50 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-54fe25c2765so20675667b3.3;
+        Fri, 21 Apr 2023 00:29:50 -0700 (PDT)
+X-Received: by 2002:a0d:fec5:0:b0:555:c5d2:1647 with SMTP id
+ o188-20020a0dfec5000000b00555c5d21647mr1040236ywf.31.1682062189819; Fri, 21
+ Apr 2023 00:29:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7b535d6b-6031-493a-84f6-82842089e637@kili.mountain>
+References: <a51e9f32c19a007f4922943282cb12c89064440d.1681671848.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <a51e9f32c19a007f4922943282cb12c89064440d.1681671848.git.christophe.jaillet@wanadoo.fr>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 21 Apr 2023 09:29:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXN2Lv_O1cRqUofDrn-4Xe9o-ex81KmojDWBqyiBVwGmw@mail.gmail.com>
+Message-ID: <CAMuHMdXN2Lv_O1cRqUofDrn-4Xe9o-ex81KmojDWBqyiBVwGmw@mail.gmail.com>
+Subject: Re: [PATCH v2] sh: sq: Use the bitmap API when applicable
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 20 Apr 2023, Dan Carpenter wrote:
-
-> These error paths need to call mutex_unlock(&priv->lock) before
-> returning.  The lock is taken in rz_mtu3_lock_if_counter_is_valid().
-> 
-> Fixes: 25d21447d896 ("counter: Add Renesas RZ/G2L MTU3a counter driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Thu, Apr 20, 2023 at 9:41 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> Using the bitmap API is less verbose than hand writing it.
+> It also improves the semantic.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> v2: I had the wrong function in the subject.  Also style changes.
-> 
->  drivers/counter/rz-mtu3-cnt.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> v2:
+>    - synch with latest linux-next because of 80f746e2bd0e which fixes a bug
 
-Applied, thanks
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
