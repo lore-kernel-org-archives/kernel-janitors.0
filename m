@@ -2,110 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C096C7EE20
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 07:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A064BC7618E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 07:38:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbjDUHam convert rfc822-to-8bit (ORCPT
+        id S231298AbjDUHiX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 03:30:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39156 "EHLO
+        Fri, 21 Apr 2023 03:38:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230042AbjDUHal (ORCPT
+        with ESMTP id S229818AbjDUHiW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 03:30:41 -0400
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A82C57EE7;
-        Fri, 21 Apr 2023 00:30:16 -0700 (PDT)
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.95)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1pplDd-00039t-Uq; Fri, 21 Apr 2023 09:30:09 +0200
-Received: from p57bd9bea.dip0.t-ipconnect.de ([87.189.155.234] helo=[192.168.178.81])
-          by inpost2.zedat.fu-berlin.de (Exim 4.95)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1pplDd-000TX6-Ne; Fri, 21 Apr 2023 09:30:09 +0200
-Message-ID: <7d6733e9b7f4dc624699eb2c72ec3c22d9bd47ef.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v2] sh: sq: Use the bitmap API when applicable
-From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-sh@vger.kernel.org
-Date:   Fri, 21 Apr 2023 09:30:08 +0200
-In-Reply-To: <a51e9f32c19a007f4922943282cb12c89064440d.1681671848.git.christophe.jaillet@wanadoo.fr>
-References: <a51e9f32c19a007f4922943282cb12c89064440d.1681671848.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.48.0 
+        Fri, 21 Apr 2023 03:38:22 -0400
+Received: from smtp.gentoo.org (dev.gentoo.org [IPv6:2001:470:ea4a:1:5054:ff:fec7:86e4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435D686BA;
+        Fri, 21 Apr 2023 00:38:21 -0700 (PDT)
+Message-ID: <b4aea4b5-d86a-1604-c646-346ea7b59476@gentoo.org>
+Date:   Fri, 21 Apr 2023 09:38:21 +0200
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-Originating-IP: 87.189.155.234
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+From:   Matthias Schwarzott <zzam@gentoo.org>
+Subject: Re: [PATCH] media: ov5693: Simplify an error message
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Daniel Scally <djrscally@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-media@vger.kernel.org
+References: <928f2f70de241d0fa66801b46d736ad0f881eb72.1681576102.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-GB
+In-Reply-To: <928f2f70de241d0fa66801b46d736ad0f881eb72.1681576102.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 2023-04-20 at 21:19 +0200, Christophe JAILLET wrote:
-> Using the bitmap API is less verbose than hand writing it.
-> It also improves the semantic.
+Am 15.04.23 um 18:28 schrieb Christophe JAILLET:
+> dev_err_probe() already display the error code. There is no need to
+> duplicate it explicitly in the error message.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> v2:
->    - synch with latest linux-next because of 80f746e2bd0e which fixes a bug
-> ---
->  arch/sh/kernel/cpu/sh4/sq.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>   drivers/media/i2c/ov5693.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/sh/kernel/cpu/sh4/sq.c b/arch/sh/kernel/cpu/sh4/sq.c
-> index 27f2e3da5aa2..d289e99dc118 100644
-> --- a/arch/sh/kernel/cpu/sh4/sq.c
-> +++ b/arch/sh/kernel/cpu/sh4/sq.c
-> @@ -372,7 +372,6 @@ static struct subsys_interface sq_interface = {
->  static int __init sq_api_init(void)
->  {
->  	unsigned int nr_pages = 0x04000000 >> PAGE_SHIFT;
-> -	unsigned int size = (nr_pages + (BITS_PER_LONG - 1)) / BITS_PER_LONG;
->  	int ret = -ENOMEM;
->  
->  	printk(KERN_NOTICE "sq: Registering store queue API.\n");
-> @@ -382,7 +381,7 @@ static int __init sq_api_init(void)
->  	if (unlikely(!sq_cache))
->  		return ret;
->  
-> -	sq_bitmap = kcalloc(size, sizeof(long), GFP_KERNEL);
-> +	sq_bitmap = bitmap_zalloc(nr_pages, GFP_KERNEL);
->  	if (unlikely(!sq_bitmap))
->  		goto out;
->  
-> @@ -393,7 +392,7 @@ static int __init sq_api_init(void)
->  	return 0;
->  
->  out:
-> -	kfree(sq_bitmap);
-> +	bitmap_free(sq_bitmap);
->  	kmem_cache_destroy(sq_cache);
->  
->  	return ret;
-> @@ -402,7 +401,7 @@ static int __init sq_api_init(void)
->  static void __exit sq_api_exit(void)
->  {
->  	subsys_interface_unregister(&sq_interface);
-> -	kfree(sq_bitmap);
-> +	bitmap_free(sq_bitmap);
->  	kmem_cache_destroy(sq_cache);
->  }
->  
+> diff --git a/drivers/media/i2c/ov5693.c b/drivers/media/i2c/ov5693.c
+> index e3c3bed69ad6..d23786afd754 100644
+> --- a/drivers/media/i2c/ov5693.c
+> +++ b/drivers/media/i2c/ov5693.c
+> @@ -404,8 +404,8 @@ static int ov5693_read_reg(struct ov5693_device *ov5693, u32 addr, u32 *value)
+>   	ret = i2c_transfer(client->adapter, msg, 2);
+>   	if (ret < 0)
 
-Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+i2c_transfer returns the number of transmitted messages. So I think the 
+values 0 <= ret < 2 also need to be handled.
 
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+>   		return dev_err_probe(&client->dev, ret,
+> -				     "Failed to read register 0x%04x: %d\n",
+> -				     addr & OV5693_REG_ADDR_MASK, ret);
+> +				     "Failed to read register 0x%04x\n",
+> +				     addr & OV5693_REG_ADDR_MASK);
+>   
+>   	*value = 0;
+>   	for (i = 0; i < len; ++i) {
+
