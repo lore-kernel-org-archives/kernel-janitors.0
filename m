@@ -2,85 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAA1C7618E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 12:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90007C77B71
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 15:51:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230504AbjDUMxq (ORCPT
+        id S232515AbjDUPvH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 08:53:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56666 "EHLO
+        Fri, 21 Apr 2023 11:51:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbjDUMxp (ORCPT
+        with ESMTP id S230151AbjDUPvF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 08:53:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E660A10FD;
-        Fri, 21 Apr 2023 05:53:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6EAF9615AE;
-        Fri, 21 Apr 2023 12:53:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0249C433D2;
-        Fri, 21 Apr 2023 12:53:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682081623;
-        bh=M++VIMNmaVWIzCgybL4bENpdg0Qjt9D7WbUzfJowSDc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kkDz6aRrIXaUxlJaVIY9a3UZo6G9mR1qEuwvpOfgE1EhZdF3I8/HU2c6MH5zfdY0K
-         C1I7GN/4A5gACQautDwJ7hcP6R46wd0geekXt5FgcQFjcnkwYup/udDXyFtafWlv0A
-         G7lRxNq8O0Ww+ZQxY2lDXUPV9+2mHbtn+8/y5Y325l5erPh7l7M6284JUlMm93Ykp9
-         vAgbZSoMGaO1TA2YNT0I5Oqy8LUibswbTSp/rSgoDE3V+Ur8AH60QFZ31H5cUur+1m
-         7eZ5Z/A3cGvEbhzSOaUcBd8b0YwcEDe99cAcST0FOh/anl2RLEgI7+umDX+pI4hWCT
-         zHXREaDyHkxZg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.95)
-        (envelope-from <maz@kernel.org>)
-        id 1ppqGj-00AAr7-FR;
-        Fri, 21 Apr 2023 13:53:41 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Will Deacon <will@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Zenghui Yu <yuzenghui@huawei.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH 1/2] KVM: arm64: Slightly optimize flush_context()
-Date:   Fri, 21 Apr 2023 13:53:38 +0100
-Message-Id: <168208160323.3020266.2140087436255343350.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <97bf2743f3a302b3066aced02218b9da60690dd3.1681854412.git.christophe.jaillet@wanadoo.fr>
-References: <97bf2743f3a302b3066aced02218b9da60690dd3.1681854412.git.christophe.jaillet@wanadoo.fr>
+        Fri, 21 Apr 2023 11:51:05 -0400
+Received: from smtp.smtpout.orange.fr (smtp-12.smtpout.orange.fr [80.12.242.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1005118FE
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 08:50:55 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id pt2CpbpyDXlCrpt2DpoK8S; Fri, 21 Apr 2023 17:50:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682092254;
+        bh=t1TEmUYnBQfKUk9IiYey2KXGx45GAaChHBRzn6BO3a8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=j14T+T1kdzz0//YQVODDpDsTeza50Migo5+JdIpjWJdMyDW2l9NBrX6JSxBgz+3dR
+         HVkWeQVDeLYD4jxpM1TS7KGXt1h+13kDyJKAzbV3CTZnMKnLG/zPBCvlFJx1TQ3CPs
+         i7eBmzb6pHkL0uu8DLMQfpLggnw7Wfr51HZMcn5zdbMHHp4C5kdeFmYJbl2d6QZvAb
+         mtgSAAvb3w4S+Ime0sfS3VfL0bMKNlu5/H0bzJDDRExtKyd22V9DR8/BPWqg0nSGq1
+         IroJieFdKwLw3zkklWdUqk8qo/9BPZ7kU7+1v6a44uP1CIjWeOTj3G1JuUt1fRFiy8
+         7tqNT17hggl3w==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 21 Apr 2023 17:50:53 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <c140045b-967f-df56-22b7-8df11da97884@wanadoo.fr>
+Date:   Fri, 21 Apr 2023 17:50:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] media: ov5693: Simplify an error message
+To:     Matthias Schwarzott <zzam@gentoo.org>,
+        Daniel Scally <djrscally@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-media@vger.kernel.org
+References: <928f2f70de241d0fa66801b46d736ad0f881eb72.1681576102.git.christophe.jaillet@wanadoo.fr>
+ <b4aea4b5-d86a-1604-c646-346ea7b59476@gentoo.org>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <b4aea4b5-d86a-1604-c646-346ea7b59476@gentoo.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: will@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, christophe.jaillet@wanadoo.fr, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 18 Apr 2023 23:47:37 +0200, Christophe JAILLET wrote:
-> bitmap_zero() is faster than bitmap_clear(), so use it to save a few
-> cycles.
+Le 21/04/2023 à 09:38, Matthias Schwarzott a écrit :
+> Am 15.04.23 um 18:28 schrieb Christophe JAILLET:
+>> dev_err_probe() already display the error code. There is no need to
+>> duplicate it explicitly in the error message.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/media/i2c/ov5693.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/media/i2c/ov5693.c b/drivers/media/i2c/ov5693.c
+>> index e3c3bed69ad6..d23786afd754 100644
+>> --- a/drivers/media/i2c/ov5693.c
+>> +++ b/drivers/media/i2c/ov5693.c
+>> @@ -404,8 +404,8 @@ static int ov5693_read_reg(struct ov5693_device 
+>> *ov5693, u32 addr, u32 *value)
+>>       ret = i2c_transfer(client->adapter, msg, 2);
+>>       if (ret < 0)
+> 
+> i2c_transfer returns the number of transmitted messages. So I think the 
+> values 0 <= ret < 2 also need to be handled.
 
-Applied to next, thanks!
+Ok, agreed.
 
-[1/2] KVM: arm64: Slightly optimize flush_context()
-      commit: 4be8ddb48b1b6c6067fb59c846b9c6e19d6efe14
-[2/2] KVM: arm64: Use the bitmap API to allocate bitmaps
-      commit: a00e9e4319c2a8a8b166da028292de83190e39a4
+If ok for you, I'll send a follow-up patch when/if this one is applied,
+because what you spotted is unrelated to the dev_err_probe() behavior.
 
-Cheers,
-
-	M.
--- 
-Without deviation from the norm, progress is not possible.
-
+CJ
+> 
+>>           return dev_err_probe(&client->dev, ret,
+>> -                     "Failed to read register 0x%04x: %d\n",
+>> -                     addr & OV5693_REG_ADDR_MASK, ret);
+>> +                     "Failed to read register 0x%04x\n",
+>> +                     addr & OV5693_REG_ADDR_MASK);
+>>       *value = 0;
+>>       for (i = 0; i < len; ++i) {
+> 
+> 
 
