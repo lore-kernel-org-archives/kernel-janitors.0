@@ -2,105 +2,133 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C50C77B75
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 05:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBD9C7618E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 05:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233204AbjDUFdD (ORCPT
+        id S233546AbjDUFkJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 01:33:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37770 "EHLO
+        Fri, 21 Apr 2023 01:40:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbjDUFdA (ORCPT
+        with ESMTP id S233380AbjDUFkI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 01:33:00 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A18061B3;
-        Thu, 20 Apr 2023 22:32:55 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-94a342f4c8eso42133666b.0;
-        Thu, 20 Apr 2023 22:32:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682055174; x=1684647174;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FFW7Gg1SgGBbBJt5owgBHTN5D7RxDmj2irhm6z31MIQ=;
-        b=VxiYdLrE1afaqY5HkATYYMkJb8GawuWMByr4Cnuu4TCSxIO9qF4emDfIiTguKIRkD3
-         7QBWafFYwaVQseFDu2qMwMedVO4LFCSbENEVcUdyfTniSaC5eq6N1wxvsGlZajUzkl1H
-         e7ljqj5zbwu858s53seRVTSKP2l5FFGynKhpJ/eAQu1eJs3CMwY0nqNiIwjDXB6SqdJ1
-         QBNTeeh9ogt9JVHMkEMfTlQ6N53PkAHY+cUlhG95De4FKk8ZogU6+QdTMGOQj762UiYH
-         1xIGvodhYAeTSIV+493oDYJbdhvWx7nYTRTD50c04793W47IUhpTTvRcfPXbEghJIict
-         RMrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682055174; x=1684647174;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FFW7Gg1SgGBbBJt5owgBHTN5D7RxDmj2irhm6z31MIQ=;
-        b=MXhF7F1WKbVpWkyHxFGgjeQ66Mn1FefXxsbdNzxiswBMWYGkJTB2R375yntnlqfx4c
-         Fd9FzMK4CQ0Z4ifbGf/oNOaioe4EKf6fw4mkGstURexRHjD4JaQg2QBA0oRUhqYpXyQT
-         9Q6NyHygoVibApK84RBtJo1RITJQWlRI9OYZphdjdHyEg/cOFtvkjL/GjuvW205A+vwC
-         W+GakXVoJfdx1brj7OA5BHhxwwdKqVJ4KevkPs9tF4MtKZG51x6rkhkuXlf61i/9ml4r
-         b2LtXdeTV6/cK3YX/aYb5QTWIKvdg2edunCgOSfJLfxquRVNaiqpB4Yee89zpZJ8IYKO
-         ctWA==
-X-Gm-Message-State: AAQBX9dIH8o/H71cC6FhLqZ7AoqGQefuT9z1rCZxRFQ+3r2GQFTjvkfn
-        eqGuebvH39TBCpuh6dxlnWk=
-X-Google-Smtp-Source: AKy350Z/TfHG2ZHB6XiI5P2UxmdymQ0V+AbYUHsq26ml8FoULXU8BIx3YGBKeVyQ+boAr4AqINfHOw==
-X-Received: by 2002:a17:906:35d1:b0:94f:4ec3:f0f5 with SMTP id p17-20020a17090635d100b0094f4ec3f0f5mr3504174ejb.4.1682055173642;
-        Thu, 20 Apr 2023 22:32:53 -0700 (PDT)
-Received: from [192.168.0.101] (p57935146.dip0.t-ipconnect.de. [87.147.81.70])
-        by smtp.gmail.com with ESMTPSA id d13-20020a170906174d00b0094e477eb441sm1573171eje.110.2023.04.20.22.32.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Apr 2023 22:32:53 -0700 (PDT)
-Message-ID: <d5140404-6b11-6755-a086-7e473d093494@gmail.com>
-Date:   Fri, 21 Apr 2023 07:32:52 +0200
+        Fri, 21 Apr 2023 01:40:08 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8471444A4
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Apr 2023 22:40:05 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id pjV2pQlJ0YD96pjV2pjQ2t; Fri, 21 Apr 2023 07:40:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682055603;
+        bh=7qKZ3uxvb0ZRE+YpwV4WbK5yMlZJV1gsOrqwFy3n2zE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=KOEQaCde+tDiFzYb8LGwh9OhPXUh73UetQ/YZaZtt3UT4E4M9pkvj5Og4I9M2g2QK
+         u1L1z0BYUFqNC3hPg1/H51ZONoH2ulxC6Asivzgm9X0r5u/uSy+aQxNpGsxG+KzuVA
+         s+Ulzm/7aWRMa77voDeSrnzJeccEJ7JTrZx5q4P4bt65OIJTPUfGc9rbYGb0nhyRB7
+         X5efAPbgVCLEgfKBIyxdHuvr4fY/mSqyaJOICDQqY/3dOhatez5V2W627blzulupeE
+         w3G7ofXAOfp1e+rsvjeM1H+uHWlVKSzlKG2S2PPlrTrWZHeBDuZSUpBDyyuy0j+3+i
+         AJxMwTAk18VHQ==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 21 Apr 2023 07:40:03 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <4385d07a-e124-d2f2-fbd0-eda1d602167b@wanadoo.fr>
+Date:   Fri, 21 Apr 2023 07:40:00 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH 0/4] staging: rtl8712: Adjustments for process_link_qual()
-Content-Language: en-US
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Nam Cao <namcaov@gmail.com>
-Cc:     cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <93913f0c-4699-cf9a-0f10-8edd478fd2b3@web.de>
-From:   Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <93913f0c-4699-cf9a-0f10-8edd478fd2b3@web.de>
+Subject: Re: [PATCH net-next] net: dsa: b53: Slightly optimize b53_arl_read()
+Content-Language: fr, en-GB
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <c94fb1b4dcd9a04eff08cf9ba2444c348477e554.1682023416.git.christophe.jaillet@wanadoo.fr>
+ <be0d976a-2219-d007-617d-6865c0344335@gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <be0d976a-2219-d007-617d-6865c0344335@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/20/23 12:54, Markus Elfring wrote:
-> Date: Thu, 20 Apr 2023 12:05:12 +0200
+Le 21/04/2023 à 02:40, Florian Fainelli a écrit :
 > 
-> A few update suggestions were taken into account
-> from static source code analysis.
 > 
-> Markus Elfring (4):
->    Delete null pointer checks
->    Delete two variables
->    Reduce scope for the variable “sqd”
->    Simplify the usage of an expression
+> On 4/20/2023 1:44 PM, Christophe JAILLET wrote:
+>> When the 'free_bins' bitmap is cleared, it is better to use its full
+>> maximum size instead of only the needed size.
+>> This lets the compiler optimize it because the size is now known at 
+>> compile
+>> time. B53_ARLTBL_MAX_BIN_ENTRIES is small (i.e. currently 4), so a 
+>> call to
+>> memset() is saved.
+>>
+>> Also, as 'free_bins' is local to the function, the non-atomic __set_bit()
+>> can also safely be used here.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/net/dsa/b53/b53_common.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/dsa/b53/b53_common.c 
+>> b/drivers/net/dsa/b53/b53_common.c
+>> index 3464ce5e7470..8c55fe0e0747 100644
+>> --- a/drivers/net/dsa/b53/b53_common.c
+>> +++ b/drivers/net/dsa/b53/b53_common.c
+>> @@ -1627,7 +1627,7 @@ static int b53_arl_read(struct b53_device *dev, 
+>> u64 mac,
+>>       if (ret)
+>>           return ret;
+>> -    bitmap_zero(free_bins, dev->num_arl_bins);
+>> +    bitmap_zero(free_bins, B53_ARLTBL_MAX_BIN_ENTRIES);
 > 
->   drivers/staging/rtl8712/rtl8712_recv.c | 24 +++++++++++-------------
->   1 file changed, 11 insertions(+), 13 deletions(-)
+> That one I am not a big fan, as the number of ARL bins is a function of 
+> the switch model, and this illustrates it well.
+
+Ok, up to you to take or not what looks the better solution.
+
+ From my point of view, the "for (i = 0; i < dev->num_arl_bins" below 
+illustrates it better.
+
+
+Maybe, another approach to save the memset() call would be remove the 
+bitmap_zero() call, and declare 'free_bins' as:
+
+    DECLARE_BITMAP(free_bins, B53_ARLTBL_MAX_BIN_ENTRIES) = { };
+(this syntax is already used in b53_configure_vlan())
+
+
+The compiler should still be able to optimize the initialisation and 
+this wouldn't, IMHO, introduce confusion about the intent.
+
+Let me know if you prefer to leave this hunk as-is, or if this other 
+alternative pleases you.
+
+
+CJ
+
 > 
-> --
-> 2.40.0
+>>       /* Read the bins */
+>>       for (i = 0; i < dev->num_arl_bins; i++) {
+>> @@ -1641,7 +1641,7 @@ static int b53_arl_read(struct b53_device *dev, 
+>> u64 mac,
+>>           b53_arl_to_entry(ent, mac_vid, fwd_entry);
+>>           if (!(fwd_entry & ARLTBL_VALID)) {
+>> -            set_bit(i, free_bins);
+>> +            __set_bit(i, free_bins);
 > 
+> I would be keen on taking that hunk but keep the other as-is. Does that 
+> work for you?
+> -- 
+> Florian
 > 
 
-Hi, you get the following checkpatch warning. Is this wanted?
-
-WARNING: From:/Signed-off-by: email address mismatch: 'From: Markus 
-Elfring <Markus.Elfring@web.de>' != 'Signed-off-by: Markus Elfring 
-<elfring@users.sourceforge.net>'
-
-
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com> AW-NU120
