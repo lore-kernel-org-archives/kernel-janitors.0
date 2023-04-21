@@ -2,65 +2,61 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC38C77B75
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 10:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBD8C77B75
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 10:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230145AbjDUKmu (ORCPT
+        id S231148AbjDUKoM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 06:42:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36934 "EHLO
+        Fri, 21 Apr 2023 06:44:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbjDUKmt (ORCPT
+        with ESMTP id S229640AbjDUKoK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 06:42:49 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B493C07
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:42:47 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f191c1a8a7so3701025e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:42:47 -0700 (PDT)
+        Fri, 21 Apr 2023 06:44:10 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A507C49E1
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:44:09 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f18123d9f6so10989135e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 03:44:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682073766; x=1684665766;
+        d=linaro.org; s=google; t=1682073848; x=1684665848;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pJNQPIVgpo0k9cBK3eiufu4iuPFearoW+KRcZ0E6+uI=;
-        b=IYMMMjpIZLIomm55FS+rS8rQ7TVENxzCZe9RE21cg3V2H9Fa7p1Ypv94kV9wEchh1X
-         v2BwrXdmzv4T3NdfBpoX+Nc/VZTiD6dkBPQgKN9I6AOd7Tr3zWKC2Ii7UhSnna/uFbWn
-         KR1UFyqA7YJhbYhmhWw2U23PU38axed/QRyRKUbMEC7IVfXqR8ooqtXqltZTDcmGCRKL
-         ATcJ/C/a2vTrJGLRcjW/MPdj+38PlV6QfbgHPhd6yhNjjzY0CG6La5Cn1mnKlVLvLCOD
-         v13Qla9s3gkzI6qiC/xJm+J+QN0fVkPUDq/GvPrvzq0EJA2f9xO6uBi2WsY3ILJnzB7C
-         v8Bw==
+        bh=h9MeXQGQNttAKEG/2Uafkn62wt8R8L4SBm0zKSGewls=;
+        b=x3ujMZWszN2R7Xq37gf2sInr4NEdk+/poPUHTl0m+nCFLhvdAWnAYwzzF5xF6mWRxh
+         iGY1VEsPpB0CML7KQdPQNql1tte6dwKKXmLu5kbzYnJezKHOi45mNRzcjVwLgLl9lutX
+         2uoI2Wcc4hpgb05yNQwbcSVbyOveS7EBek95ek+AVrDk7WDlVK6f2aHZe+q5aRRnJCQp
+         Kfr7BQfeM51E/Rci4nylNs7/JL5/frAQ6YX2/ua/CoKurwzQlo0910Ta5L5KeDu0bY+z
+         QX/r00EstL044iQEHRUsoHU5uNy0c19MDwSvFmD3VvPaKFaRUqv7iC0+S0wse1SBCDpV
+         oxjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682073766; x=1684665766;
+        d=1e100.net; s=20221208; t=1682073848; x=1684665848;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJNQPIVgpo0k9cBK3eiufu4iuPFearoW+KRcZ0E6+uI=;
-        b=FNOemUMd1WrKn3RY6Ef3OsQ/Fb5H47oQiKZl5GbPX5ZAH8DvRCbWN2ezZaTCB+bpdI
-         fXurV62GMp7GsDGof7DOgl+/AbOFpCaOSlPcr6nLHywkXmBzJuvCQHS8i72Sxhx//AHZ
-         CEHOeRcbQUBIFIpWjgNZMd3g7zJElJAzpEeECQ81AmSmU7dwLErPQ2jM4NSS5uJGqcSi
-         ap5StipfklvqH/ryirAVeenHYqaW4+NTWrvBBOuwu5ygIFbLrmKFdW0IPyGmlUzFE1qV
-         VWmlhH2xmHI1ua78hQeyV5N0uK3KmksOf9azDBm8/6QwX7ni5OOWahwSCihHVWqyb8bG
-         UIJg==
-X-Gm-Message-State: AAQBX9fOC+TTAwC4e3FroUwWI2yRdXgqMLF5ZU96OqAQecd6dZrTgF+3
-        2Ixm6DX+I4QxsGd8va1Ytu3Jng==
-X-Google-Smtp-Source: AKy350ZUgw0vyBnmYLAjQqosc1capWBtzz8s55MJdq3C/+B8SVk0KS7JInXHSLo4bzQ4SKP5lxzGsg==
-X-Received: by 2002:a7b:ca4c:0:b0:3f1:91fc:564 with SMTP id m12-20020a7bca4c000000b003f191fc0564mr1334442wml.7.1682073766311;
-        Fri, 21 Apr 2023 03:42:46 -0700 (PDT)
+        bh=h9MeXQGQNttAKEG/2Uafkn62wt8R8L4SBm0zKSGewls=;
+        b=Rf7J0bRKb4oiSKPCQG7QihWayqDOAAW5lVzUC4hmiFd20s/sOFNjv9HuupExeHOOuu
+         xsvjdZr6pdyrKqBt3c1IQdlF0jw15NMu7nNYJsx8fkp3xiPWK30FYgs6aPvW5LRIjdbd
+         EJFJwPARhDganlKmRKdXy6KQ7axhAVSBdumFO5hR09jIsgq40z3stXlZNqoP8XrbW6gp
+         madMuCjP35QqrqX8o9OrcYD6L1IUFCTiRW0e80YGWQA6chwokOqZHEYGr9HxN34gASfS
+         CiXA10+KrdAM4PA8/8yF4gX1spzms9OIT9LXaxM3LU99f8XFCwSdNldxJtD9eQslXcc0
+         Gzyw==
+X-Gm-Message-State: AAQBX9eNAnMCqEczZ5oA5oVq27ZXX7RSvELIA3it5tzx+hMsZ7SMmdEy
+        Nxdf3QzwwHfcrsoxLBl417NqpQ==
+X-Google-Smtp-Source: AKy350Y688eh9yj2svLW6NLije/X+twIT+EVi+I5h4sY3AU+gdC6bKWTV48BhOI6aw0XAvYH/h2iDQ==
+X-Received: by 2002:a1c:4b09:0:b0:3f1:8f05:3b82 with SMTP id y9-20020a1c4b09000000b003f18f053b82mr1443312wma.38.1682073848113;
+        Fri, 21 Apr 2023 03:44:08 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u19-20020a05600c00d300b003f17eaae2c9sm4513810wmm.1.2023.04.21.03.42.45
+        by smtp.gmail.com with ESMTPSA id o2-20020a05600c4fc200b003f1738e64c0sm7906521wmq.20.2023.04.21.03.44.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 03:42:45 -0700 (PDT)
-Date:   Fri, 21 Apr 2023 13:42:41 +0300
+        Fri, 21 Apr 2023 03:44:07 -0700 (PDT)
+Date:   Fri, 21 Apr 2023 13:44:04 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+To:     Ping-Ke Shih <pkshih@realtek.com>
+Cc:     Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] coresight: Fix signedness bug in
- tmc_etr_buf_insert_barrier_packet()
-Message-ID: <7d33e244-d8b9-4c27-9653-883a13534b01@kili.mountain>
+Subject: [PATCH] wifi: rtw89: fix rtw89_read_chip_ver() for RTL8852B and
+ RTL8851B
+Message-ID: <e4d912a2-37f8-4068-8861-7b9494ae731b@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -69,36 +65,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code generates a Smatch warning:
+The if statement is reversed so it will not record the chip version.
+This was detected using Smatch:
 
-    drivers/hwtracing/coresight/coresight-tmc-etr.c:947 tmc_etr_buf_insert_barrier_packet()
-    error: uninitialized symbol 'bufp'.
+    drivers/net/wireless/realtek/rtw89/core.c:3593 rtw89_read_chip_ver()
+    error: uninitialized symbol 'val'.
 
-The problem is that if tmc_sg_table_get_data() returns -EINVAL, then
-when we test if "len < CORESIGHT_BARRIER_PKT_SIZE", the negative "len"
-value is type promoted to a high unsigned long value which is greater
-than CORESIGHT_BARRIER_PKT_SIZE.  Fix this bug by adding an explicit
-check for error codes.
-
-Fixes: 75f4e3619fe2 ("coresight: tmc-etr: Add transparent buffer management")
+Fixes: a6fb2bb84654 ("wifi: rtw89: read version of analog hardware")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-tmc-etr.c | 2 +-
+ drivers/net/wireless/realtek/rtw89/core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index 918d461fcf4a..eaa296ced167 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -942,7 +942,7 @@ tmc_etr_buf_insert_barrier_packet(struct etr_buf *etr_buf, u64 offset)
+diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
+index 7fc0a26a4d73..1d462c9e46d9 100644
+--- a/drivers/net/wireless/realtek/rtw89/core.c
++++ b/drivers/net/wireless/realtek/rtw89/core.c
+@@ -3587,7 +3587,7 @@ static void rtw89_read_chip_ver(struct rtw89_dev *rtwdev)
  
- 	len = tmc_etr_buf_get_data(etr_buf, offset,
- 				   CORESIGHT_BARRIER_PKT_SIZE, &bufp);
--	if (WARN_ON(len < CORESIGHT_BARRIER_PKT_SIZE))
-+	if (WARN_ON(len < 0 || len < CORESIGHT_BARRIER_PKT_SIZE))
- 		return -EINVAL;
- 	coresight_insert_barrier_packet(bufp);
- 	return offset + CORESIGHT_BARRIER_PKT_SIZE;
+ 	if (chip->chip_id == RTL8852B || chip->chip_id == RTL8851B) {
+ 		ret = rtw89_mac_read_xtal_si(rtwdev, XTAL_SI_CV, &val);
+-		if (!ret)
++		if (ret)
+ 			return;
+ 
+ 		rtwdev->hal.acv = u8_get_bits(val, XTAL_SI_ACV_MASK);
 -- 
 2.39.2
 
