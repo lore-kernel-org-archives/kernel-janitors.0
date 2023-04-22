@@ -2,95 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90007C77B71
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Apr 2023 15:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47057C77B61
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Apr 2023 03:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232515AbjDUPvH (ORCPT
+        id S229644AbjDVDkX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Apr 2023 11:51:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44476 "EHLO
+        Fri, 21 Apr 2023 23:40:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230151AbjDUPvF (ORCPT
+        with ESMTP id S229447AbjDVDkW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Apr 2023 11:51:05 -0400
-Received: from smtp.smtpout.orange.fr (smtp-12.smtpout.orange.fr [80.12.242.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1005118FE
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Apr 2023 08:50:55 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id pt2CpbpyDXlCrpt2DpoK8S; Fri, 21 Apr 2023 17:50:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1682092254;
-        bh=t1TEmUYnBQfKUk9IiYey2KXGx45GAaChHBRzn6BO3a8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=j14T+T1kdzz0//YQVODDpDsTeza50Migo5+JdIpjWJdMyDW2l9NBrX6JSxBgz+3dR
-         HVkWeQVDeLYD4jxpM1TS7KGXt1h+13kDyJKAzbV3CTZnMKnLG/zPBCvlFJx1TQ3CPs
-         i7eBmzb6pHkL0uu8DLMQfpLggnw7Wfr51HZMcn5zdbMHHp4C5kdeFmYJbl2d6QZvAb
-         mtgSAAvb3w4S+Ime0sfS3VfL0bMKNlu5/H0bzJDDRExtKyd22V9DR8/BPWqg0nSGq1
-         IroJieFdKwLw3zkklWdUqk8qo/9BPZ7kU7+1v6a44uP1CIjWeOTj3G1JuUt1fRFiy8
-         7tqNT17hggl3w==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 21 Apr 2023 17:50:53 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <c140045b-967f-df56-22b7-8df11da97884@wanadoo.fr>
-Date:   Fri, 21 Apr 2023 17:50:52 +0200
+        Fri, 21 Apr 2023 23:40:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC5619BE;
+        Fri, 21 Apr 2023 20:40:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ECB5364286;
+        Sat, 22 Apr 2023 03:40:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 53783C4339B;
+        Sat, 22 Apr 2023 03:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682134820;
+        bh=RLP/2m8RwSH8R2aiYXsHT+BntgUWUSNouFWYyBylVtg=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=eiJVvPZJbAuZZ3xaTPn6hcnlf2KSDVsDNh4E3tKddE7sZ2cH8ucQ99vC/GF1Gl6tI
+         ELavVOE5K0EZTjOD8P6uorEV+Vd1hQlpsF6vn/TvpiFqiOmPr5YWq+6XRkHYfywL8j
+         H/kCZboQxBDmx1faY6WeSJOx4jwJLD0uCvla1n+YiH6ohZ8idBFKmD52DcWDY/+BKX
+         H/8AaSWikGkTJkRywADq8cMlF4DBrFrX9Y9w338MlnryPfn0nAQDK8QS/2lytwykmB
+         FMY9cwnd2iTQ3VIPfmElX6BmeO3YsEuCDafZ5bfqoXXZ6eYsEiuAS91U8Dx8G7deFh
+         6ewKuQ4d5+TbA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 33D16E270E1;
+        Sat, 22 Apr 2023 03:40:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] media: ov5693: Simplify an error message
-To:     Matthias Schwarzott <zzam@gentoo.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org
-References: <928f2f70de241d0fa66801b46d736ad0f881eb72.1681576102.git.christophe.jaillet@wanadoo.fr>
- <b4aea4b5-d86a-1604-c646-346ea7b59476@gentoo.org>
-Content-Language: fr, en-US
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <b4aea4b5-d86a-1604-c646-346ea7b59476@gentoo.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: dpaa: Fix uninitialized variable in dpaa_stop()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168213482020.27640.7528389434326358303.git-patchwork-notify@kernel.org>
+Date:   Sat, 22 Apr 2023 03:40:20 +0000
+References: <8c9dc377-8495-495f-a4e5-4d2d0ee12f0c@kili.mountain>
+In-Reply-To: <8c9dc377-8495-495f-a4e5-4d2d0ee12f0c@kili.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     sean.anderson@seco.com, madalin.bucur@nxp.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        camelia.groza@nxp.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 21/04/2023 à 09:38, Matthias Schwarzott a écrit :
-> Am 15.04.23 um 18:28 schrieb Christophe JAILLET:
->> dev_err_probe() already display the error code. There is no need to
->> duplicate it explicitly in the error message.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/media/i2c/ov5693.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/media/i2c/ov5693.c b/drivers/media/i2c/ov5693.c
->> index e3c3bed69ad6..d23786afd754 100644
->> --- a/drivers/media/i2c/ov5693.c
->> +++ b/drivers/media/i2c/ov5693.c
->> @@ -404,8 +404,8 @@ static int ov5693_read_reg(struct ov5693_device 
->> *ov5693, u32 addr, u32 *value)
->>       ret = i2c_transfer(client->adapter, msg, 2);
->>       if (ret < 0)
-> 
-> i2c_transfer returns the number of transmitted messages. So I think the 
-> values 0 <= ret < 2 also need to be handled.
+Hello:
 
-Ok, agreed.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-If ok for you, I'll send a follow-up patch when/if this one is applied,
-because what you spotted is unrelated to the dev_err_probe() behavior.
+On Thu, 20 Apr 2023 15:36:07 +0300 you wrote:
+> The return value is not initialized on the success path.
+> 
+> Fixes: 901bdff2f529 ("net: fman: Change return type of disable to void")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> Applies to net.
+> 
+> [...]
 
-CJ
-> 
->>           return dev_err_probe(&client->dev, ret,
->> -                     "Failed to read register 0x%04x: %d\n",
->> -                     addr & OV5693_REG_ADDR_MASK, ret);
->> +                     "Failed to read register 0x%04x\n",
->> +                     addr & OV5693_REG_ADDR_MASK);
->>       *value = 0;
->>       for (i = 0; i < len; ++i) {
-> 
-> 
+Here is the summary with links:
+  - [net] net: dpaa: Fix uninitialized variable in dpaa_stop()
+    https://git.kernel.org/netdev/net/c/461bb5b97049
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
