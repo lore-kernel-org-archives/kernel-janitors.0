@@ -2,90 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FACC77B7E
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Apr 2023 19:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 864E2C7618E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Apr 2023 19:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbjDVTsq (ORCPT
+        id S229803AbjDVT4r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 Apr 2023 15:48:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33120 "EHLO
+        Sat, 22 Apr 2023 15:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbjDVTsp (ORCPT
+        with ESMTP id S229509AbjDVT4p (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 Apr 2023 15:48:45 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF1F91FD8
-        for <kernel-janitors@vger.kernel.org>; Sat, 22 Apr 2023 12:48:43 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-2f4c431f69cso1753736f8f.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 22 Apr 2023 12:48:43 -0700 (PDT)
+        Sat, 22 Apr 2023 15:56:45 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 937B31998
+        for <kernel-janitors@vger.kernel.org>; Sat, 22 Apr 2023 12:56:44 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-2f86ee42669so2850390f8f.2
+        for <kernel-janitors@vger.kernel.org>; Sat, 22 Apr 2023 12:56:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682192922; x=1684784922;
+        d=linaro.org; s=google; t=1682193403; x=1684785403;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UQMSHOEXy4dd32S1UV0ZhNWB6VKkhN22gnwR9IMusl0=;
-        b=nHmMObR7x3FiUkaAPIlaQyocvvgn5cZjZnvZUAlj19vRreiBRr0OrjVYcp34NcAoNu
-         9cdqrSazGuGiOA7k/p+EN9YMJFHSFkLxHLQH2DwgDlnX4sM6jZa3oJyPytw1Mwy05Nto
-         d5dQO1GKskQ4xoRCKnZaysBDP4R17bnTwmnNFBcoMesrDyLesbWmpJIsImdGvku+Hp3X
-         2wtM6bY/iq7tieTgsAPDLaFtxkcbUyqtyThPb1eNAPyowHojVgKL9R3TP3oUvIeVy/Cq
-         JS/jFKMN/GdYACkctrawwhLvQrne6MhmV7qhNGmqQ9/+7qwGfUWEj9PSm0JxNLaFWXYH
-         Zgrg==
+        bh=X9yZH5jobw+2NxtflHbFeViB++WpgYUG8lLecB6Yof4=;
+        b=CtthS9YsA6btqa4JO6vI8qG6Ei18swg2oPFg8KSHXvYFTzsNah2B3GZZ2DkXLIK3Bu
+         WM0pmmAqy8lmu8V5P5lBn6SpKmEQLfSQRnN9RvwhNc6BvTCdoCQ0A8lMUYzZCukwctyR
+         aHCIqkRnqpEv6uttQW+6QMeoM+SujZq10TVVXX8rdWR6DXNqDEHeemDTMcLHjoTM9FqD
+         doVI7jomezoHjx23hxLkDztftgUtxd1JXMvb2eIKQW5Ntoilq1SiNUJUzrOmd9GQkQoP
+         hzz2hmyx516OXcG72SALiwE7+ltPW0o7cRxRdqn5nMsGaCPULJuP4JTnjbysaF57fbUW
+         1L/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682192922; x=1684784922;
+        d=1e100.net; s=20221208; t=1682193403; x=1684785403;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UQMSHOEXy4dd32S1UV0ZhNWB6VKkhN22gnwR9IMusl0=;
-        b=CunGkYQ3xivJhEbZhGaMx7x5fsA+G+WnCHRw5DoJdRKZiTJr5Gx6ierJxmJJWHvE7f
-         wWDpyfcXUE5vgixudT6BSLHLF/IKP3NZYmuKfSVxRz6K+VeFyWiFNox2Mjw2YIF1M1IS
-         10U9FKNAqSUE+uneCHJaqgcUpdKjLFSMzd5zK2lsOT7dlZvNYql5IpGs+tBy1Rg7KoET
-         QZVVv9Xmv/b69x8sPZlLnW04Gv7cW6o9xkpYkoVFrqCIT86QrMPf1xGLxgrpIHMWF0ec
-         Mf0rbP9WYrB74ghiTxKMioD7FpS7I6V16VlSA879Fu7Kz+dMJItQYjg/CUo9Q04WjCYt
-         5WUg==
-X-Gm-Message-State: AAQBX9eegIQEih5ID+FcmL0zKw6/zu7iNxVrUXJC/bgdPsgCMEIYo5QP
-        YTElcbjU0umOeblSKIcEj3Mm9w==
-X-Google-Smtp-Source: AKy350aLYJew3ugaktSPtVTFee5OZkYC67M5r+9LtUdpkJB3mKDc49tydAixWUKxvVGhL43y2CuajQ==
-X-Received: by 2002:adf:f3cb:0:b0:2f2:7adf:3c67 with SMTP id g11-20020adff3cb000000b002f27adf3c67mr6362132wrp.61.1682192922260;
-        Sat, 22 Apr 2023 12:48:42 -0700 (PDT)
+        bh=X9yZH5jobw+2NxtflHbFeViB++WpgYUG8lLecB6Yof4=;
+        b=E2ocAyidsHEAJ8SVVJin56ecBJ51qmS7j5tLKWnRbw2BShNNgHknvvmOI0Qqc+EV10
+         2rJEzcD+XKTK747UtHwiwoFEDtn5fkT+YtiBRdgQMTBTVv33+jqxTmRmpC3ocwEk1nJe
+         1DMonoQxEF8JZ6yjZNrDw9OKcwTN15VIbthxd71x68DRiuxI1CrFgqg1HjxceyN7TWoQ
+         wCwfteKCWq6i3SrOlDhpg0D+nMyRCM19wi1gj6Xmg3PGwPz7GDOCClgctXBKcJ7i78zU
+         GVPqa29RDokoDSeAc4G5M4mkiLzUch6QhKbRbi5Macael2JqVJWsddnoEutb86ibYT5/
+         sbig==
+X-Gm-Message-State: AAQBX9fnCLF/piBwGnwY13xBvf8crjeGtDhY0qfR7QOSMZWzMBC8TOqm
+        LIUjoYw+j+Y0l1j65h9wSUkCbw==
+X-Google-Smtp-Source: AKy350aU1g4P2e/Je3n5HyLAU9lTZT6CKyVdRbmopfPN/a5RVwo2XdTRo1sK9qdXYS1MlABzSAFFUA==
+X-Received: by 2002:adf:e2c8:0:b0:2ef:bc0b:e70 with SMTP id d8-20020adfe2c8000000b002efbc0b0e70mr7197653wrj.54.1682193403110;
+        Sat, 22 Apr 2023 12:56:43 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u6-20020adff886000000b002f28de9f73bsm7159089wrp.55.2023.04.22.12.48.40
+        by smtp.gmail.com with ESMTPSA id i3-20020adff303000000b002f4cf72fce6sm7206104wro.46.2023.04.22.12.56.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Apr 2023 12:48:41 -0700 (PDT)
-Date:   Fri, 21 Apr 2023 15:39:45 +0300
+        Sat, 22 Apr 2023 12:56:42 -0700 (PDT)
+Date:   Sat, 22 Apr 2023 22:56:39 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Ping-Ke Shih <pkshih@realtek.com>
-Cc:     "kvalo@kernel.org" <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] wifi: rtw89: fix rtw89_read_chip_ver() for RTL8852B and
- RTL8851B
-Message-ID: <3b1ed718-ce01-4a98-ae8b-3c042851c3f5@kili.mountain>
-References: <e4d912a2-37f8-4068-8861-7b9494ae731b@kili.mountain>
- <7475bff70fd50c7e8527e66080e126b4eff440bb.camel@realtek.com>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Dongliang Mu <dzm91@hust.edu.cn>, Vicki Pfau <vi@endrift.com>,
+        kernel-janitors@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Pavel Rojtberg <rojtberg@gmail.com>,
+        Nate Yocom <nate@yocom.org>,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        John Butler <radon86dev@gmail.com>,
+        Matthias Benkmann <matthias.benkmann@gmail.com>,
+        Christopher Crockett <chaorace@gmail.com>,
+        Santosh De Massari <s.demassari@gmail.com>,
+        hust-os-kernel-patches@googlegroups.com,
+        syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: xpad - fix GPF in xpad_probe
+Message-ID: <c12873b2-d2e5-4fbc-987f-fa96cbe926da@kili.mountain>
+References: <20230414125603.686123-1-dzm91@hust.edu.cn>
+ <c3e0823b-2b03-4dab-b7cb-a8bc5151f0b1@kili.mountain>
+ <011c00e7-c351-4331-8be4-1c184d5773e1@kili.mountain>
+ <3ccc85bd-0541-4ffb-a207-dfc533a2c0aa@kili.mountain>
+ <d49bb5a2-ed78-4b16-b7ea-b9c7748ca0e4@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7475bff70fd50c7e8527e66080e126b4eff440bb.camel@realtek.com>
+In-Reply-To: <d49bb5a2-ed78-4b16-b7ea-b9c7748ca0e4@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 11:48:43AM +0000, Ping-Ke Shih wrote:
-> On Fri, 2023-04-21 at 13:44 +0300, Dan Carpenter wrote:
-> > 
-> > The if statement is reversed so it will not record the chip version.
-> > This was detected using Smatch:
-> > 
-> >     drivers/net/wireless/realtek/rtw89/core.c:3593 rtw89_read_chip_ver()
-> >     error: uninitialized symbol 'val'.
-> 
-> I use smatch to check our driver regularly, but I can't find this error.
-> With the latest version v0.5.0-8321-g556064ca, I still can't find it.
-> Do I need to specify additional arguments? Thanks. 
-> 
+On Sat, Apr 22, 2023 at 10:48:32PM +0300, Dan Carpenter wrote:
+> The warnings from this are quite promising.
 
-You need the cross function database (which takes like 9 hours to build).
-
-~/smatch/smatch_scripts/build_kernel_data.sh
+Well...  The results are over 90% false positives.  But there are still
+probably 15 bugs in there.  The printk warning trick would probably
+work.
 
 regards,
 dan carpenter
