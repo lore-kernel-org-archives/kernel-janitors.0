@@ -2,109 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 145BEC77B78
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Apr 2023 02:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1D5C77B73
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Apr 2023 08:10:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230009AbjDWCfB (ORCPT
+        id S229526AbjDWIKR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 Apr 2023 22:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44924 "EHLO
+        Sun, 23 Apr 2023 04:10:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229771AbjDWCfA (ORCPT
+        with ESMTP id S229470AbjDWIKP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 Apr 2023 22:35:00 -0400
-Received: from hust.edu.cn (unknown [202.114.0.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B1A1BF0;
-        Sat, 22 Apr 2023 19:34:58 -0700 (PDT)
-Received: from [IPV6:2001:250:4000:5113:78e9:d35:fdff:4057] ([172.16.0.254])
-        (user=dzm91@hust.edu.cn mech=PLAIN bits=0)
-        by mx1.hust.edu.cn  with ESMTP id 33N2XTsv018716-33N2XTsw018716
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Sun, 23 Apr 2023 10:33:29 +0800
-Message-ID: <f71f3012-916c-5271-b908-feeee5a85a46@hust.edu.cn>
-Date:   Sun, 23 Apr 2023 10:33:29 +0800
+        Sun, 23 Apr 2023 04:10:15 -0400
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCE12173F
+        for <kernel-janitors@vger.kernel.org>; Sun, 23 Apr 2023 01:10:13 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id qUnQpJWEt3pfeqUnQpzkaa; Sun, 23 Apr 2023 10:10:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682237412;
+        bh=eUw6lwCqRPFGvEY7KIEtjH9lv7Qyusv4qg87RM8p+Os=;
+        h=From:To:Cc:Subject:Date;
+        b=ba51sbsnfIixWqGK5DHuJtf4xIHn7siFvpLbbsut35d2LZflItCMtJxXNagucBove
+         /zVsrmifLGr0fmdPLXwp4uR7xFLHtb4Mlg3gQubufLRNCUGj3ZtecOUCWGdlgi2K59
+         Wt5uMSCYPBMpkWY1fZaeTeS87dqKC0Ocx8/lHCUXOTSfx6CJnOtAo08+Q7y4nhhn0S
+         Xd5CgZo6E8dKic7bYuLgA6K8w5EwZUrtb3PgwXARyFRIhSNDneaoEOdyG7puE4wiSJ
+         TNkPCzsBKDfGLdO2ztWV3/OQeTw9n6Gj5d0xACkL/1OxvBlpFKz/Zh8L+7wauB0/zK
+         4c5FZ2++bSFQw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 Apr 2023 10:10:12 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        patches@opensource.cirrus.com, linux-hwmon@vger.kernel.org
+Subject: [PATCH] hwmon: lochnagar: Remove the unneeded include <linux/i2c.h>
+Date:   Sun, 23 Apr 2023 10:10:07 +0200
+Message-Id: <df555e724d1b52bd9958c0bd729a774dfe0cf150.1682237387.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: [PATCH] Input: xpad - fix GPF in xpad_probe
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Dan Carpenter <error27@gmail.com>
-Cc:     Vicki Pfau <vi@endrift.com>, kernel-janitors@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Pavel Rojtberg <rojtberg@gmail.com>,
-        Nate Yocom <nate@yocom.org>,
-        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-        John Butler <radon86dev@gmail.com>,
-        Matthias Benkmann <matthias.benkmann@gmail.com>,
-        Christopher Crockett <chaorace@gmail.com>,
-        Santosh De Massari <s.demassari@gmail.com>,
-        hust-os-kernel-patches@googlegroups.com,
-        syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230414125603.686123-1-dzm91@hust.edu.cn>
- <c3e0823b-2b03-4dab-b7cb-a8bc5151f0b1@kili.mountain>
- <011c00e7-c351-4331-8be4-1c184d5773e1@kili.mountain>
- <3ccc85bd-0541-4ffb-a207-dfc533a2c0aa@kili.mountain>
- <d49bb5a2-ed78-4b16-b7ea-b9c7748ca0e4@kili.mountain>
-From:   Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <d49bb5a2-ed78-4b16-b7ea-b9c7748ca0e4@kili.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-FEAS-AUTH-USER: dzm91@hust.edu.cn
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+This driver does not use i2c, so there is no point in including
+<linux/i2c.h>
 
-On 2023/4/23 03:48, Dan Carpenter wrote:
-> The warnings from this are quite promising.
->
-> When you're writing a check, you start with a simple idea and then try
-> it and then filter out the common false positives.
->
-> The first 10 warnings are from loops like:
->
-> 	p = NULL;
->
-> 	for (i = 0; i < limit; i++) {
-> 		if (i == 0)
-> 			p = non_null();
-> 		else
-> 			*p = something();
-> 	}
->
-> Smatch doesn't handle loops correctly.  (I know how to fix this but I've
-> never gotten around to it because it would make Smatch slow)...
->
-> So instead of that maybe I would do a hack to silence this type of
-> warning.  Not sure what...
->
-> drivers/usb/gadget/udc/amd5536udc_pci.c:61 udc_pci_remove() warn: pointer dereferenced without being set '&udc->gadget'
-> This one is interesting.  Seems like a real bug.
->
-> drivers/mtd/ubi/block.c:391 ubiblock_create() warn: pointer dereferenced without being set 'dev->gd'
->
-> This one too.  So maybe we could make this a separate warning where
-> NULL dereferences happen on error paths.  Or maybe when they happen in
-> printks.
->
-> So there are ways to take this first draft and massage it and get
-> fewer false positives, by filtering false positives or taking things
-> which work and creating new checks instead.
+Remove it.
 
-Hi Dan,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hwmon/lochnagar-hwmon.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-thanks for your efforts. After finishing the current task list, we can 
-first ask senior students to check this result quickly and then assign 
-highly-to-be True Positive to students.
+diff --git a/drivers/hwmon/lochnagar-hwmon.c b/drivers/hwmon/lochnagar-hwmon.c
+index 9948e2f7208d..6350904a8a8b 100644
+--- a/drivers/hwmon/lochnagar-hwmon.c
++++ b/drivers/hwmon/lochnagar-hwmon.c
+@@ -11,7 +11,6 @@
+ #include <linux/delay.h>
+ #include <linux/hwmon.h>
+ #include <linux/hwmon-sysfs.h>
+-#include <linux/i2c.h>
+ #include <linux/math64.h>
+ #include <linux/mfd/lochnagar.h>
+ #include <linux/mfd/lochnagar2_regs.h>
+-- 
+2.34.1
 
-BTW, do you have any plans to improve the code readability, directory 
-orgranization, documentation etc. of Smatch? It's hard even for senior 
-students to start with.
-
-> Anyway, results attached.
->
-> regards,
-> dan carpenter
->
