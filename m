@@ -2,94 +2,116 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE69C77B76
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 11:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC1AC77B61
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 11:51:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231299AbjDXLlC (ORCPT
+        id S231438AbjDXLvn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Apr 2023 07:41:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41042 "EHLO
+        Mon, 24 Apr 2023 07:51:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231405AbjDXLlB (ORCPT
+        with ESMTP id S230289AbjDXLvl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Apr 2023 07:41:01 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ECB83A8C;
-        Mon, 24 Apr 2023 04:40:55 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-959a3e2dc72so197505366b.2;
-        Mon, 24 Apr 2023 04:40:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682336453; x=1684928453;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Atxqe0IIK6VDLPs1BwgFpTOFx3cvy6f167JM1AHQk1Y=;
-        b=rqR0Aznkpa/KhuYo7EPT5kkIe8+ouuxZJ9sHP4Qho9DYWp83KM6BlUpNAnn0xSGLIo
-         ZFVgRHM6edU8MKhCgxxayxrDx5z7ZXNEcV5POFrJmPqOxzDgrG682DZ/ooLUjTJgqcSl
-         SzIE183YMcanum737awhw51qB+Co0uWiRBMs2e8j/YldO2S7gwzBC8wKYptf02p0y5jg
-         kSO7SjXB6h+RAHwXHci9NHdgrdwZdOtEUZaP8AWEYGsXYxJd8Qml/TsX1vpUfSV5ejM1
-         4k/Pxlt1hskBtIrYsBYKUMXL5GIodI7MJCJuzU41DiBP/l1sVmqQgSRo/ysdB5P+YFaa
-         ynhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682336453; x=1684928453;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Atxqe0IIK6VDLPs1BwgFpTOFx3cvy6f167JM1AHQk1Y=;
-        b=HvVFyB4IVRnFukspLClR1EqpjRnmK7oR0EXF+k3fvnr1n+iiHFzEM3fgXSc7TFOU8b
-         kdHNai8YGtN7oE+gtrsQFP0YrsYKPOFhgbSX1K4OQQtyHSxb9ZLoCQj6PC6G4yjse5YO
-         wqhQTHmyNQVxfgxohZsSzVI5Iy7O+XfQeqHj2z2/hyi2AXOPp3c1qK2cK9nn5aNwMHq5
-         EJDtxFNMUQtJtPCyfIRSm5QHlM/0MxQeIy5+WKBprSdejQpJ0oUAlAVThCgZA8VGYbqJ
-         wuojjrc1Xyo7eWMqJJGZ+9jHavV8QRH1AV14a38/lyOhbySy0NqjusTnr7PvXMW3tF1f
-         PD7w==
-X-Gm-Message-State: AAQBX9fr7cHoct82UuAKVG3TER8Xus/nWuE3FIbaidNbTTcfuUOkN1GR
-        X0b0thfhWShrSadS5vx+Hf1IVQemhxc=
-X-Google-Smtp-Source: AKy350aX/xBxpt1PnTgQ8kFjllzm6KAbnrCFnpuubj37N4v9I3qsOO7RD9Jp4Yeguir8tzDIEGhL1w==
-X-Received: by 2002:a17:906:cb94:b0:94a:826c:df57 with SMTP id mf20-20020a170906cb9400b0094a826cdf57mr8242043ejb.39.1682336453548;
-        Mon, 24 Apr 2023 04:40:53 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:d8ac:5455:8f1f:51ef])
-        by smtp.gmail.com with ESMTPSA id a8-20020a170906670800b0094f257e3e05sm5415705ejp.168.2023.04.24.04.40.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Apr 2023 04:40:53 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Sasha Finkelstein <7d578vix8hzw@opayq.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        asahi@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry for ARM/APPLE MACHINE SUPPORT
-Date:   Mon, 24 Apr 2023 13:40:43 +0200
-Message-Id: <20230424114043.22475-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 24 Apr 2023 07:51:41 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 716983A9A;
+        Mon, 24 Apr 2023 04:51:39 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Q4k4Q2cmLz4x84;
+        Mon, 24 Apr 2023 21:51:34 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1682337094;
+        bh=KBQL8ssMthEHvYa5VPiSMs/LCpDXnzoIeuAfczo++Wk=;
+        h=From:To:Subject:In-Reply-To:References:Date:From;
+        b=VoP7HDp8HB4SCi0gEWSiahq1b/7MV/1HwUEH+OlIrekgbc1ZRlfgkHoW+nu+3GVG9
+         1KfeE8n463Mq+HObgJARtJqK+UBKVsOGHyDb8NyR3RBmJs1Cc2LPfooEFn0Ipz3abA
+         BejkuFWPr0ZAuTAPBHvGogrlfJhjLqgB1oidF7yxdWKDi7eOVqZ4vK3U7Kj/bw7kAf
+         oCgmFBBm4mHeKxDJ7I7p5RR/n7ztqSMsCKdt+1wVp/gWRmoQVqE7DxWV0FjQyUseC3
+         kn++9p4u+OcyN0Rju+tuqiRzWt9toKQvbypI8TcMP4Ljzqn8twPgJuSBp0NUocYO9A
+         4rAY1Bk/OMeaQ==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Mark Brown <broonie@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: In-flight collision: DRM_AMD_DC_DCN renaming
+In-Reply-To: <CAKXUXMziSWC9oGVQxCPs6U5GsnuA2KbKsobj1Feo_eNUn3e4dg@mail.gmail.com>
+References: <CAKXUXMziSWC9oGVQxCPs6U5GsnuA2KbKsobj1Feo_eNUn3e4dg@mail.gmail.com>
+Date:   Mon, 24 Apr 2023 21:51:30 +1000
+Message-ID: <87ildlzef1.fsf@mail.concordia>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit de614ac31955 ("MAINTAINERS: Add entries for Apple PWM driver") adds
-an entry for Documentation/devicetree/bindings/pwm/pwm-apple.yaml, but
-commit 87a3a3929c71 ("dt-bindings: pwm: Add Apple PWM controller") from
-the same patch series actually adds the devicetree binding file with the
-name apple,s5l-fpwm.yaml.
+Hi Lukas,
 
-Adjust the file entry to the file actually added.
+Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+> Dear Michael, dear Harry, dear Alex,
+>
+> The commit 4652ae7a51b7 ("drm/amd/display: Rename DCN config to FP")
+> renames config DRM_AMD_DC_DCN to config DRM_AMD_DC_FP. The concurrent
+> commit 78f0929884d4 ("powerpc/64: Always build with 128-bit long
+> double") overrides the renaming change for the select in config
+> DRM_AMD_DC, and this leads to selecting the non-existent
+> DRM_AMD_DC_DCN.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The powerpc commit doesn't override the name change, in the powerpc tree
+where it's applied the name change hasn't happened yet, see the diff:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 82bea269e242..a430ea8018ff 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1961,7 +1961,7 @@ F:	Documentation/devicetree/bindings/nvmem/apple,efuses.yaml
- F:	Documentation/devicetree/bindings/pci/apple,pcie.yaml
- F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
- F:	Documentation/devicetree/bindings/power/apple*
--F:	Documentation/devicetree/bindings/pwm/pwm-apple.yaml
-+F:	Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
- F:	Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
- F:	arch/arm64/boot/dts/apple/
- F:	drivers/bluetooth/hci_bcm4377.c
--- 
-2.17.1
+diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
+index 0c9bd0a53e60..e36261d546af 100644
+--- a/drivers/gpu/drm/amd/display/Kconfig
++++ b/drivers/gpu/drm/amd/display/Kconfig
+@@ -8,7 +8,7 @@ config DRM_AMD_DC
+ 	depends on BROKEN || !CC_IS_CLANG || X86_64 || SPARC64 || ARM64
+ 	select SND_HDA_COMPONENT if SND_HDA_CORE
+ 	# !CC_IS_CLANG: https://github.com/ClangBuiltLinux/linux/issues/1752
+-	select DRM_AMD_DC_DCN if (X86 || PPC_LONG_DOUBLE_128 || (ARM64 && KERNEL_MODE_NEON && !CC_IS_CLANG))
++	select DRM_AMD_DC_DCN if (X86 || (PPC64 && ALTIVEC) || (ARM64 && KERNEL_MODE_NEON && !CC_IS_CLANG))
+ 	help
+ 	  Choose this option if you want to use the new display engine
+ 	  support for AMDGPU. This adds required support for Vega and
 
+
+The problem is that the resolution of the merge conflict in linux-next
+is incorrect, it takes the powerpc change without taking into account
+the rename from the amdgpu commit.
+
+The correct resolution is:
+
+diff --cc drivers/gpu/drm/amd/display/Kconfig
+index e36261d546af,06b438217c61..000000000000
+--- a/drivers/gpu/drm/amd/display/Kconfig
++++ b/drivers/gpu/drm/amd/display/Kconfig
+@@@ -8,7 -8,7 +8,7 @@@ config DRM_AMD_D
+        depends on BROKEN || !CC_IS_CLANG || X86_64 || SPARC64 || ARM64
+        select SND_HDA_COMPONENT if SND_HDA_CORE
+        # !CC_IS_CLANG: https://github.com/ClangBuiltLinux/linux/issues/1752
+-       select DRM_AMD_DC_DCN if (X86 || (PPC64 && ALTIVEC) || (ARM64 && KERNEL_MODE_NEON && !CC_IS_CLANG))
+ -      select DRM_AMD_DC_FP if (X86 || PPC64 || (ARM64 && KERNEL_MODE_NEON && !CC_IS_CLANG))
+++      select DRM_AMD_DC_FP if (X86 || (PPC64 && ALTIVEC) || (ARM64 && KERNEL_MODE_NEON && !CC_IS_CLANG))
+        help
+          Choose this option if you want to use the new display engine
+          support for AMDGPU. This adds required support for Vega and
+
+
+(Note that 4652ae7a51b7 incorrectly changed PPC_LONG_DOUBLE_128 to plain
+ PPC64, which is why PPC_LONG_DOUBLE_128 doesn't appear in the diff above.)
+
+Possibly the merge resoulution can be fixed in linux-next.
+
+And ultimately the fix is for Linus to do the proper merge resolution
+when he eventually merges the two trees.
+
+cheers
