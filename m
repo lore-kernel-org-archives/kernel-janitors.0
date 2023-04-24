@@ -2,75 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED86C7618E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 04:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813EAC77B61
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 06:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230228AbjDXEUn (ORCPT
+        id S231137AbjDXGsb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Apr 2023 00:20:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49668 "EHLO
+        Mon, 24 Apr 2023 02:48:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjDXEUm (ORCPT
+        with ESMTP id S230373AbjDXGsa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Apr 2023 00:20:42 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 06BCC1726;
-        Sun, 23 Apr 2023 21:20:39 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 620EC180120C7B;
-        Mon, 24 Apr 2023 12:20:30 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Suhui <suhui@nfschina.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Suhui <suhui@nfschina.com>
-Subject: [PATCH] usb: typec: tcpm: remove unnecessary (void*) conversions
-Date:   Mon, 24 Apr 2023 12:19:40 +0800
-Message-Id: <20230424041940.132866-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 24 Apr 2023 02:48:30 -0400
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BC99E
+        for <kernel-janitors@vger.kernel.org>; Sun, 23 Apr 2023 23:48:18 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id qpzipjLlVMX1TqpzipkQeM; Mon, 24 Apr 2023 08:48:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682318895;
+        bh=gyBmJlBy0glVXFW89nzgTxh1+ZjN6Gif/sbRlhQAcyU=;
+        h=From:To:Cc:Subject:Date;
+        b=gbmDBljLWzQVCxTBr/GwXL2ntQ7y0nnD/8dvAJ+a5u8j8xMBY8tIYOlmkjdhB2cgo
+         vxk81PJSfmfiXaxWFSqqxQFZR939QwdPIz5dNbERTUwOL5MFwu/ENlho1Aski92m8f
+         roU5JFrKChWxJQqzWKhO48ToZCx9bZyncgqmz0KUr+t39O7JSEQjzIgGXnOnPNGSi6
+         datd/hb+bg1OzlCArYaEl6+9BOPWhcwsmqvyiCdvU6em6hwUt17p4TEChvTf8XMu1Y
+         l8qPrSlSr8MiRkJmj6ZQvIo+8s1Ef5yiBhI9VxmaMMySyUcm+YYOvxP4PdNWe1eSQN
+         DfhQjsKUltKEQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 24 Apr 2023 08:48:15 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Lee Jones <lee@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] mfd: dln2: Remove the unneeded include <linux/i2c.h>
+Date:   Mon, 24 Apr 2023 08:48:12 +0200
+Message-Id: <baf28e7f0fb57e918b76eaa92b94a2ae1a02cce0.1682318879.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-No need cast (void*) to (struct fusb302_chip *) or (struct tcpm_port *).
+This driver does not use i2c, so there is no point in including
+<linux/i2c.h>
 
-Signed-off-by: Suhui <suhui@nfschina.com>
+Remove it.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/typec/tcpm/fusb302.c | 2 +-
- drivers/usb/typec/tcpm/tcpm.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/mfd/dln2.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
-index 1ffce00d94b4..4b7b8f6af3ca 100644
---- a/drivers/usb/typec/tcpm/fusb302.c
-+++ b/drivers/usb/typec/tcpm/fusb302.c
-@@ -190,7 +190,7 @@ static void fusb302_log(struct fusb302_chip *chip, const char *fmt, ...)
- 
- static int fusb302_debug_show(struct seq_file *s, void *v)
- {
--	struct fusb302_chip *chip = (struct fusb302_chip *)s->private;
-+	struct fusb302_chip *chip = s->private;
- 	int tail;
- 
- 	mutex_lock(&chip->logbuffer_lock);
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index 1ee774c263f0..ab3a54662ed9 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -737,7 +737,7 @@ static void tcpm_log_source_caps(struct tcpm_port *port)
- 
- static int tcpm_debug_show(struct seq_file *s, void *v)
- {
--	struct tcpm_port *port = (struct tcpm_port *)s->private;
-+	struct tcpm_port *port = s->private;
- 	int tail;
- 
- 	mutex_lock(&port->logbuffer_lock);
+diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
+index c3149729cec2..c7510434380a 100644
+--- a/drivers/mfd/dln2.c
++++ b/drivers/mfd/dln2.c
+@@ -14,7 +14,6 @@
+ #include <linux/types.h>
+ #include <linux/slab.h>
+ #include <linux/usb.h>
+-#include <linux/i2c.h>
+ #include <linux/mutex.h>
+ #include <linux/platform_device.h>
+ #include <linux/mfd/core.h>
 -- 
-2.30.2
+2.34.1
 
