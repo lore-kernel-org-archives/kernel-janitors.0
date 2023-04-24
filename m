@@ -2,44 +2,45 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06509C77B61
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 06:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B334C7618E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 07:01:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230432AbjDXG4x (ORCPT
+        id S230479AbjDXHA7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Apr 2023 02:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59298 "EHLO
+        Mon, 24 Apr 2023 03:00:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230382AbjDXG4v (ORCPT
+        with ESMTP id S230432AbjDXHA6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Apr 2023 02:56:51 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ACF130C3
-        for <kernel-janitors@vger.kernel.org>; Sun, 23 Apr 2023 23:56:38 -0700 (PDT)
+        Mon, 24 Apr 2023 03:00:58 -0400
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C8911A
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Apr 2023 00:00:57 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id qq7npmbKSs9Agqq7oprqv5; Mon, 24 Apr 2023 08:56:36 +0200
+        id qqBypjQGQMX1TqqBzpkSDy; Mon, 24 Apr 2023 09:00:56 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1682319396;
-        bh=sv4+9V+79L7JIkIFQr4LHHxT2Rej6AyKPx3VrA1kgYY=;
+        s=t20230301; t=1682319656;
+        bh=wimltcHWO++ccTmg1YhHLldcbR0vJLqg7EEkwCCKOd4=;
         h=From:To:Cc:Subject:Date;
-        b=KjzVa0KUsTUUxW75B+QaBRVX2IB/LaPlhbU9LpOf40XLRm4wddYLfaI61b4zq9yhc
-         hMOQgUXUhUq/7RNkDJ0kB18PD6PslFnCqaJ5taYbtMzH/NwqVxf69akBHu9EEpn7rj
-         mrNIwv1awCRkC0YU4WC00qsm+RZkqhVluqphOdyG3mSTgzi9D8peC2jyqqJcPLR7by
-         OZ+FYaBvxABwCOgX++jZHtPN44ukx0rsG6o5EBtdVI4AYWTag4YKoNvOOfkcZrhtxu
-         QJjjo0ImDfNu1ONfXPQ7kMqRuP9HdxJ1RCe2szaNM0fWvITZi96aBSZ2pIfUK8ntwE
-         kwzA8gKI/IhBw==
+        b=tYFGVyJamE+84N6Du0duGjtA45vtpH3lXYr/wBG5zP91KQsm8wCKhcoJuilFFoH5p
+         3VfQMqkGe2Adk43j0dqVoiYo6ZaTt5BDeR9eaNwfwwPeCZGhKvzGlV7K8F8Ae2a05c
+         wwDvkkm0dGyGRiJWikGBJxINKVt6Nckb5207iOv266Zg+TTizPcwJbe18YP8sNkaQF
+         zo2qjmGFhbXmY90vofUAfSUxKCVpbk40t2KNOZ+SZ2PRhFL/moXpVKdlzi0l/3HNrn
+         vTXMiaparxw5xNTivlk16QdkBx7qBxelHzV546NEpQxbAoQHuCDCYRdAU4nPHFIfGp
+         147PLus3An8Gw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Apr 2023 08:56:36 +0200
+X-ME-Date: Mon, 24 Apr 2023 09:00:56 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Lee Jones <lee@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mfd: rc5t583-irq: Remove the unneeded include <linux/i2c.h>
-Date:   Mon, 24 Apr 2023 08:56:34 +0200
-Message-Id: <128025bf5b81f5424db2202b0c8cfd9722c28aab.1682319383.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] misc: smpro-errmon: Remove the unneeded include <linux/i2c.h>
+Date:   Mon, 24 Apr 2023 09:00:53 +0200
+Message-Id: <002f7afb1a2935bc2357c4b1450b757f40902a8c.1682319647.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,29 +51,25 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 This driver does not use i2c, so there is no point in including
 <linux/i2c.h>
 
-Remove it and add the needed <linux/device.h> instead, which is much more
-lightweight.
+Remove it.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/mfd/rc5t583-irq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/smpro-errmon.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mfd/rc5t583-irq.c b/drivers/mfd/rc5t583-irq.c
-index 621ea61fa7c6..97f52b671520 100644
---- a/drivers/mfd/rc5t583-irq.c
-+++ b/drivers/mfd/rc5t583-irq.c
-@@ -8,9 +8,9 @@
-  * based on code
-  *      Copyright (C) 2011 RICOH COMPANY,LTD
+diff --git a/drivers/misc/smpro-errmon.c b/drivers/misc/smpro-errmon.c
+index a1f0b2c77fac..c12035a46585 100644
+--- a/drivers/misc/smpro-errmon.c
++++ b/drivers/misc/smpro-errmon.c
+@@ -6,7 +6,6 @@
+  *
   */
-+#include <linux/device.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
--#include <linux/i2c.h>
- #include <linux/mfd/rc5t583.h>
  
- enum int_type {
+-#include <linux/i2c.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
 -- 
 2.34.1
 
