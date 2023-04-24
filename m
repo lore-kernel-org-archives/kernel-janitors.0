@@ -2,63 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5C9C7618E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 11:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE69C77B76
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 11:41:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231411AbjDXLOz (ORCPT
+        id S231299AbjDXLlC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Apr 2023 07:14:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
+        Mon, 24 Apr 2023 07:41:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbjDXLOy (ORCPT
+        with ESMTP id S231405AbjDXLlB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Apr 2023 07:14:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC7830DB;
-        Mon, 24 Apr 2023 04:14:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3954861E02;
-        Mon, 24 Apr 2023 11:14:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 035B4C433D2;
-        Mon, 24 Apr 2023 11:14:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682334892;
-        bh=cwGo+ngdI1ixtzZcTiwtleXirbr7LoJyLktw2MG3xC4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BaUFbWjXQ8bRFJpd/oSqzF+N5hRMTZ9yCtdSMyuiqDXrVH4ViEDmgK1NcYJmpgsiH
-         In1s3zRge+ok6le+mXb2Q8WnWdWKMIMyp3N9OaL34yUYAiYbitKaxTken+8KiJGuPl
-         h0NfB+mTw2XI6C2Ye5fUaLknfPjKNA4JAJZIL0yv3kENvyIQLSSbZsGLp7+WY05+tB
-         nc2ecrXsxq5loaDucHRhkKJ8+39cs64T0/xyxwHWGBvpK89xtXsr98ns7/JTfckZFl
-         hMhWr+5uYKnPu0AVzwIPsa32DFEAhjuSzY8kT4Ov2hTZ/MdD7SyhqGQnC73N7xldhJ
-         E1GrjooV+ff3g==
-Date:   Mon, 24 Apr 2023 14:14:49 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     wuych <yunchuan@nfschina.com>
-Cc:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        linux@armlinux.org.uk, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] net: phy: dp83867: Remove unnecessary (void*) conversions
-Message-ID: <20230424111449.GB10583@unreal>
-References: <20230424101550.664319-1-yunchuan@nfschina.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230424101550.664319-1-yunchuan@nfschina.com>
+        Mon, 24 Apr 2023 07:41:01 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ECB83A8C;
+        Mon, 24 Apr 2023 04:40:55 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-959a3e2dc72so197505366b.2;
+        Mon, 24 Apr 2023 04:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682336453; x=1684928453;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Atxqe0IIK6VDLPs1BwgFpTOFx3cvy6f167JM1AHQk1Y=;
+        b=rqR0Aznkpa/KhuYo7EPT5kkIe8+ouuxZJ9sHP4Qho9DYWp83KM6BlUpNAnn0xSGLIo
+         ZFVgRHM6edU8MKhCgxxayxrDx5z7ZXNEcV5POFrJmPqOxzDgrG682DZ/ooLUjTJgqcSl
+         SzIE183YMcanum737awhw51qB+Co0uWiRBMs2e8j/YldO2S7gwzBC8wKYptf02p0y5jg
+         kSO7SjXB6h+RAHwXHci9NHdgrdwZdOtEUZaP8AWEYGsXYxJd8Qml/TsX1vpUfSV5ejM1
+         4k/Pxlt1hskBtIrYsBYKUMXL5GIodI7MJCJuzU41DiBP/l1sVmqQgSRo/ysdB5P+YFaa
+         ynhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682336453; x=1684928453;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Atxqe0IIK6VDLPs1BwgFpTOFx3cvy6f167JM1AHQk1Y=;
+        b=HvVFyB4IVRnFukspLClR1EqpjRnmK7oR0EXF+k3fvnr1n+iiHFzEM3fgXSc7TFOU8b
+         kdHNai8YGtN7oE+gtrsQFP0YrsYKPOFhgbSX1K4OQQtyHSxb9ZLoCQj6PC6G4yjse5YO
+         wqhQTHmyNQVxfgxohZsSzVI5Iy7O+XfQeqHj2z2/hyi2AXOPp3c1qK2cK9nn5aNwMHq5
+         EJDtxFNMUQtJtPCyfIRSm5QHlM/0MxQeIy5+WKBprSdejQpJ0oUAlAVThCgZA8VGYbqJ
+         wuojjrc1Xyo7eWMqJJGZ+9jHavV8QRH1AV14a38/lyOhbySy0NqjusTnr7PvXMW3tF1f
+         PD7w==
+X-Gm-Message-State: AAQBX9fr7cHoct82UuAKVG3TER8Xus/nWuE3FIbaidNbTTcfuUOkN1GR
+        X0b0thfhWShrSadS5vx+Hf1IVQemhxc=
+X-Google-Smtp-Source: AKy350aX/xBxpt1PnTgQ8kFjllzm6KAbnrCFnpuubj37N4v9I3qsOO7RD9Jp4Yeguir8tzDIEGhL1w==
+X-Received: by 2002:a17:906:cb94:b0:94a:826c:df57 with SMTP id mf20-20020a170906cb9400b0094a826cdf57mr8242043ejb.39.1682336453548;
+        Mon, 24 Apr 2023 04:40:53 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:2a40:1104:d8ac:5455:8f1f:51ef])
+        by smtp.gmail.com with ESMTPSA id a8-20020a170906670800b0094f257e3e05sm5415705ejp.168.2023.04.24.04.40.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Apr 2023 04:40:53 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Sasha Finkelstein <7d578vix8hzw@opayq.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        asahi@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry for ARM/APPLE MACHINE SUPPORT
+Date:   Mon, 24 Apr 2023 13:40:43 +0200
+Message-Id: <20230424114043.22475-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 06:15:50PM +0800, wuych wrote:
-> Pointer variables of void * type do not require type cast.
-> 
-> Signed-off-by: wuych <yunchuan@nfschina.com>
-> ---
->  drivers/net/phy/dp83867.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
+Commit de614ac31955 ("MAINTAINERS: Add entries for Apple PWM driver") adds
+an entry for Documentation/devicetree/bindings/pwm/pwm-apple.yaml, but
+commit 87a3a3929c71 ("dt-bindings: pwm: Add Apple PWM controller") from
+the same patch series actually adds the devicetree binding file with the
+name apple,s5l-fpwm.yaml.
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+Adjust the file entry to the file actually added.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 82bea269e242..a430ea8018ff 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1961,7 +1961,7 @@ F:	Documentation/devicetree/bindings/nvmem/apple,efuses.yaml
+ F:	Documentation/devicetree/bindings/pci/apple,pcie.yaml
+ F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
+ F:	Documentation/devicetree/bindings/power/apple*
+-F:	Documentation/devicetree/bindings/pwm/pwm-apple.yaml
++F:	Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
+ F:	Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
+ F:	arch/arm64/boot/dts/apple/
+ F:	drivers/bluetooth/hci_bcm4377.c
+-- 
+2.17.1
+
