@@ -2,84 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 118E6C77B76
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 08:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95497C77B76
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 09:09:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231142AbjDXIkE (ORCPT
+        id S231532AbjDXJJr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Apr 2023 04:40:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32818 "EHLO
+        Mon, 24 Apr 2023 05:09:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230396AbjDXIkD (ORCPT
+        with ESMTP id S231243AbjDXJJq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Apr 2023 04:40:03 -0400
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F37E51
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Apr 2023 01:40:01 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id qrjpp9pdVS2Yhqrjqpy8BT; Mon, 24 Apr 2023 10:39:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1682325599;
-        bh=vgMfnD5w8L8osmiEQCPKAcBxZ5zFalY5WsdQV5PqFVU=;
-        h=From:To:Cc:Subject:Date;
-        b=X9QChUa0hH2ybgHWlFRyPLmC5Dd0l0eKvnf5G6fJo66FWer4zD/ICt0pjXKSaN76J
-         y/J8oE8QazQDRAZkQvMnNDELOuZq66MPu0VaRSnO45ebxzG1gTBVSf6vQqtMTiVdBq
-         9xoBjg6jyAfzx8JfM3fWaXhAeOcm6qfWGI7jkifXS6CSNXBFJnF7KIusxzgwfWO70n
-         HdvGnUzH2/g3MnX5YgfksRY636m0p6Tc/h4YufQzqyEsAhQ81hgMsLZCI6sYAyX0Zb
-         eIrWarETpt4fDopYH99zjv38VHPTW4mYE60syRYxi45Sii3+sZccwAy4t3U2WATTOD
-         uOREdSNVtKMWw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Apr 2023 10:39:59 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH] usb: typec: mux: Remove some unneeded includes
-Date:   Mon, 24 Apr 2023 10:39:56 +0200
-Message-Id: <1db1e8bd253cbb652835c0cef6a0a2bb9a4970eb.1682325582.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 24 Apr 2023 05:09:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02048E55;
+        Mon, 24 Apr 2023 02:09:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 93BA461F31;
+        Mon, 24 Apr 2023 09:09:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FEE1C433EF;
+        Mon, 24 Apr 2023 09:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682327384;
+        bh=yV2sGi32MWGtguiaQhYp/hYKcUQB0aF3VYck+w+tbHo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=aR9JKCwa+38DptzFFGWTd27h1DSRt0D2u1W9etisVGNmSnXYE5TGyj57VhkSal7P/
+         pNGE1dU+Sm8nFJch/mQGMOkcNs1e+8R4bjj1sKEuulMlBrTmwSpwehAMJZ7HpbrvPr
+         GXrh5ZCb+5vmyWvuUPiiFdWLQWbN9nzzNuXeOoTSeX2wHgS6WxdeP+TH4ezHPte518
+         OT3nTDYE7QCPE/QcHBche51qat72KgluL81WuWdTEfYZWrvk484xZKoddhx6rledg6
+         iBI1h7HPylKnBZuRkX8KOVW/HZaKS0159YknfeQGISzIHZglDli4PtaWr41jmd9Uva
+         0VozqQQjyjY2A==
+Message-ID: <a19df26e-7c0c-e48e-8611-6035c8c7f1a4@kernel.org>
+Date:   Mon, 24 Apr 2023 11:09:38 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH] rv: Fix addition on an uninitialized variable 'run'
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-trace-devel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230417103946.29594-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From:   Daniel Bristot de Oliveira <bristot@kernel.org>
+In-Reply-To: <20230417103946.29594-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This driver includes many header files that are unneeded.
-Remove them and add <linux/device.h> where devm_kzalloc() is defined.
+On 4/17/23 12:39, Colin Ian King wrote:
+> The variable run is not initialized
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Based on one of my script, this reduces the number of included files
-during the build process of this file from 551 to 345.
----
- drivers/usb/typec/mux/gpio-sbu-mux.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/usb/typec/mux/gpio-sbu-mux.c b/drivers/usb/typec/mux/gpio-sbu-mux.c
-index f62516dafe8f..c07856069d43 100644
---- a/drivers/usb/typec/mux/gpio-sbu-mux.c
-+++ b/drivers/usb/typec/mux/gpio-sbu-mux.c
-@@ -3,14 +3,11 @@
-  * Copyright (C) 2022 Linaro Ltd.
-  */
- 
--#include <linux/bits.h>
--#include <linux/i2c.h>
--#include <linux/kernel.h>
-+#include <linux/device.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/gpio/consumer.h>
- #include <linux/platform_device.h>
--#include <linux/regmap.h>
- #include <linux/usb/typec_dp.h>
- #include <linux/usb/typec_mux.h>
- 
--- 
-2.34.1
+Oops, that is a problem, it should be initialized as 0.
+
+however it is being accumulated
+> by the return value from the call to ikm_run_monitor.  Fix this by
+> replacing the += with an assignment since this is the first point
+> where run is being assigned.
+> 
+> Fixes: 4bc4b131d44c ("rv: Add rv tool")
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  tools/verification/rv/src/rv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/verification/rv/src/rv.c b/tools/verification/rv/src/rv.c
+> index e601cd9c411e..da647ad4e733 100644
+> --- a/tools/verification/rv/src/rv.c
+> +++ b/tools/verification/rv/src/rv.c
+> @@ -111,7 +111,7 @@ static void rv_mon(int argc, char **argv)
+>  	 * Call all possible monitor implementations, looking
+>  	 * for the [monitor].
+>  	 */
+> -	run += ikm_run_monitor(monitor_name, argc-1, &argv[1]);
+> +	run = ikm_run_monitor(monitor_name, argc-1, &argv[1]);
+
+So, in the future, there will be more monitors types, and so we will check
+other functions to see if they find the monitor by name. Thus, the += is correct,
+what is not correct the run not being initialized.
+
+Mind sending a patch initializing the run = 0?
+
+Thanks!
+-- Daniel
+
+  
+>  	if (!run)
+>  		err_msg("rv: monitor %s does not exist\n", monitor_name);
 
