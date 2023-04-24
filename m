@@ -2,160 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6738FC7618E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 20:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DD0C77B61
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 22:37:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232443AbjDXUMc (ORCPT
+        id S232681AbjDXWhX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Apr 2023 16:12:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37460 "EHLO
+        Mon, 24 Apr 2023 18:37:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbjDXUMa (ORCPT
+        with ESMTP id S233134AbjDXWhE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Apr 2023 16:12:30 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CA3083DC;
-        Mon, 24 Apr 2023 13:12:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bAJHdIflK84B6J5bH8eTyhJwBY+Oe+IGVpvN7JlG9L0ECTeB6q2Z1a4mU2hWbBw3f1WYQ+EJcdhqxAhNUX8RczrqZZOtIsICB/boeOepyPPh6iIyu4d6fFwW+XAa47GbKYToD/L0FeA1grMhbUU8u/q5UL1BZeh+66fTQB2rlhuk88vYZltNbymy2L/jDo8ncso5qkU5zCcHd8a6Agm9tURGkXSyRwCj22ZcBS1Fk/d161bx43od9G7+90dxBD6KadSGmsxnzJE/2sKZuzzqSoGuovMq9YtlSUTRksLhpQHWLdV6JHcYngVtYf5jgnoCmJ27ttDOibrQ5UybKR0cMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B8JMNhUDPRgmbYsnaf7D4ahQKq3z65iGwiNwvB071PU=;
- b=CTbpUQ165p0knL88wN8rruPcZ4lRRHhtR27Y5RSgWSVLityHV+k81z/HJG7nIdHm5z4zYFwPshA+DrfGgelox7t+7sTZEQDClwxhVH2YQCKfoUL8tm8qbT8PgCAo9Sy6As6blQG0etz23HPQH7/5AMhWJXcFvyZbJFnT48Z/YLwEyHj9HGoz5sg4fMdytfYdcKFtYBMTRhFjWy7DacZB7yNVY93EgNz9gs+mdwN3i2+PHV49gfjsVIWbUSoWhxmlPCDrkjVHjAEkYsWqtV+ua+54ppS9lVeqq80ELRczQIcL9R/E6GtA4SpbaNjQfXhTtTodJ7BXvZn2sF4uQzGaMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B8JMNhUDPRgmbYsnaf7D4ahQKq3z65iGwiNwvB071PU=;
- b=LdB3vQHmVaXe58kjPvjt0IbfC9VhuRdTICSJmqRcZ4wsVlN3BzsCf4/vMCcuFKiOXbBb+5/FtXv6yUo24uu8Gx8AthfJlL22gFU3oAH6qt2yiCFJv4lH6eC86ThwUB9Fwv1ukCms3RsUbGcHWWwQmUhl2b+tjv5fiWeA9Z30mC0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6280.namprd12.prod.outlook.com (2603:10b6:8:a2::11) by
- MW4PR12MB8610.namprd12.prod.outlook.com (2603:10b6:303:1ef::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.33; Mon, 24 Apr
- 2023 20:12:15 +0000
-Received: from DM4PR12MB6280.namprd12.prod.outlook.com
- ([fe80::fe53:2742:10f9:b8f1]) by DM4PR12MB6280.namprd12.prod.outlook.com
- ([fe80::fe53:2742:10f9:b8f1%9]) with mapi id 15.20.6319.022; Mon, 24 Apr 2023
- 20:12:14 +0000
-Message-ID: <6b686a90-d4b5-5f02-92f2-270637736680@amd.com>
-Date:   Mon, 24 Apr 2023 16:13:40 -0400
+        Mon, 24 Apr 2023 18:37:04 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CA5126;
+        Mon, 24 Apr 2023 15:37:03 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-63b7b54642cso3776359b3a.0;
+        Mon, 24 Apr 2023 15:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682375822; x=1684967822;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TfVuBjqbPrda2V4JgOmJGuE9f+TlylUgWhlc/W6i9V0=;
+        b=FPQSG90ZXSUc5P/yeV7Ty842LoGViNqLiRh835nar/kqyUOmMd3Sdfd473qwlVozKO
+         G9fJYG46Ml8SwmmrRAXtovGGPNVv3BtZHM1l5+rkPfUvfi204l1aNR1eP03GEM4Eyca+
+         l6e8tFFdiaah8ENGQ1jLztg8EbSXXtpV/DPEOGLK81XLZQO5tFxYBT6hyZQoQkyAyPkE
+         sUnS3iP5uhRkjrsypQF5m3VmwyOQd7U4TKamduNKTYDV22X54R2uPf3OUaxzOyjUrzAM
+         6Z4op/Cf5aC6TscrRxhdNgpoNxWrZkvN1PHv8kdAV1wgQ7/Xi5KB+BV3WGCWX+Y8BqaR
+         2sew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682375822; x=1684967822;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TfVuBjqbPrda2V4JgOmJGuE9f+TlylUgWhlc/W6i9V0=;
+        b=K5OnKvuwkmkMQ9frrzwU5Kl22tsjMTvruof3TNyrQO9EU9mnDapWXe1BNsLtCj+26+
+         YHhmouBM/niPw/oLadvQRcvJOPot4tw9VkRxi0vz0TZg+liEleXht86uWsgeLIKEpXTE
+         LQdHr3hYyl9vgZScrt4LZVzTrd8QM48HSO/C8tuzosxl8Yj16CAnEZbJjI/Uf/FIrHa1
+         +9xw/TgMwJZwmuwUiediap633Ir0bJeYadMI5u492o8MjMjTmo11RlDBTTZargbSs/C0
+         o6uggZ+2tsjptISLtWADPVQuQwh6Lg4NPTBUo18Ewwc0iaKukJfx+D8yvMcZraJ5N52Y
+         ja3A==
+X-Gm-Message-State: AAQBX9c1hRPetwNLlJ4HgFldVlpxmq/AzVMdl0KgU5cBLK5ye7ruUoMX
+        0YwQuY+eUx2OkgZmC6sV43I=
+X-Google-Smtp-Source: AKy350bQkD9qEKt0AXaIEoQV+2YVispEViRqtBeF0JlyRIcvdnq3SzLC7lBttdklkKb+7Mpd7n7YGQ==
+X-Received: by 2002:aa7:888a:0:b0:637:f1ae:d3e with SMTP id z10-20020aa7888a000000b00637f1ae0d3emr21117099pfe.25.1682375822356;
+        Mon, 24 Apr 2023 15:37:02 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id i64-20020a62c143000000b0063d328a690fsm7821812pfg.25.2023.04.24.15.36.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Apr 2023 15:37:01 -0700 (PDT)
+Message-ID: <185ac214-a94e-682e-0ec2-2beb25ec16fb@gmail.com>
+Date:   Mon, 24 Apr 2023 15:36:56 -0700
+MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH] drm/amd/display: Fix a test dml32_rq_dlg_get_rq_reg()
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2] clk: bcm: rpi: Fix off by one in
+ raspberrypi_discover_clocks()
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Aurabindo Pillai <aurabindo.pillai@amd.com>
-Cc:     dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
-References: <3ba86bbe8cca149774835659885ddf39034a4306.1681767659.git.christophe.jaillet@wanadoo.fr>
-From:   Hamza Mahfooz <hamza.mahfooz@amd.com>
-In-Reply-To: <3ba86bbe8cca149774835659885ddf39034a4306.1681767659.git.christophe.jaillet@wanadoo.fr>
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Maxime Ripard <maxime@cerno.tech>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "Ivan T. Ivanov" <iivanov@suse.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Dom Cobley <popcornmix@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+References: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT4PR01CA0305.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10e::13) To DM4PR12MB6280.namprd12.prod.outlook.com
- (2603:10b6:8:a2::11)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6280:EE_|MW4PR12MB8610:EE_
-X-MS-Office365-Filtering-Correlation-Id: 000194a7-4bcd-465e-0d31-08db450031df
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wovGoGeZR7NhTPdSfweayQY9imd8d54IAMc79PicB29RRqbykTgBbNs3L9AsrbZvu4d0lQxH5QsG2MYFy1oKUS/C6fCetOV+CUhfUvamDB33Ql1dhbXKZOtmv8xkNIlEI7tGT/2qJZg8d8SVEan3kGkIlqghJJVtr8GIvvvH3llgUOFCl5pQ0VTcfb/nPl76R/9I9tHEPATeR7fwrqIyggZocUiexi38pNkmSAAJzbYLb7F+jECh8WaNYY8fNMegA14ITyD2yVYVkOGBvey70xlEC+5Ygz2NTosE4GjjWbVqjoqX7My+U3W41eknJ9XlZYrqPX4dsNx5tR/f8M4j31GY0L+q2M1yKxtagVD1y0JY+YEKhIwacOivjKUjeY8nWyR0kDRA550HO11e6kRu8QQK0S+1qo+sZiG66DoZ11Cszo/ze6l2PiMxnVRfHOB/wnMCPjn0zgUCGITEQDFWVrvutIvUjHPA1tXhHKzk0Wk09dVXsDW8a+70lRfNd3LfDXi3is3M8xQX1Z4bIh0eqepfuofQdjTOQMLf9n4s36CoYdcrm5+bEzFzhGoK2cCY922yNZdrTMM62uzVKsa5L5KQ09ftbU4q3kqqjIMTpm+RLeA7e/cXypNtnAGKzUONyu4eZRtHFwWrVRMjrLlv5BWIQhNQcrAtcTLNdKg6sYQ=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6280.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(136003)(366004)(396003)(376002)(451199021)(31686004)(2906002)(6486002)(83380400001)(86362001)(36756003)(31696002)(8676002)(8936002)(66946007)(66556008)(66476007)(478600001)(41300700001)(4326008)(316002)(6666004)(2616005)(6512007)(6506007)(26005)(53546011)(186003)(921005)(38100700002)(44832011)(110136005)(5660300002)(6636002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c3p6Rmt2Rk9NWDZPUWZwRGtmbXEwOXUwUjd1NWM5YTM4VG1Hd0RWQTVWaEsw?=
- =?utf-8?B?dHhyZXp6UVI5R0JsUnNhK2xlUzlnZXpZZDZ3eURVdk0vc1NmUTZrZWdnTDFV?=
- =?utf-8?B?eE0rQkhVdWxkT3ZQMjFOUlhNeEhld1NMbVF5WnVzWWd2Z09rTEd2dnJNaFpz?=
- =?utf-8?B?YmdiNFhOem5XU3BRT3U3ZEZUVjdUa1hDcG9vRmUwRUZYV2JoTjFrMGxYNmlC?=
- =?utf-8?B?d0FyaEFUUmdtVVgwbTR3dWZXd3lHQUtLYWF2TXlEVkRQMnNpVHFuZFB1SUE1?=
- =?utf-8?B?WjVmOURWSTNGS0ZnQlFkak1zRFZsV1VXOStvczNWdmlHK01CS1ZmTkwyRDRx?=
- =?utf-8?B?OVlXNnhrcWN0ODMxbVF1UnlNVFFybnFwWitLSGFFQUs2b1cxZmFreWlKRk5v?=
- =?utf-8?B?b1dzc2pjS3VnZ1RMbUtNcXREWWFqWVpoNDVJMU9oT0N2dytTTXdXbkNDbWhs?=
- =?utf-8?B?ejV2MjR1M1d0R3B6U3hGdk5HaHZ6S1poVFZoeE91SWxMZ3MyY0RPZmdaY0FT?=
- =?utf-8?B?T1FEenp6Y0FUTlNrYnJtK3NiZTN1QXVqZm5vZG80WDdtZnFLZDNaTURBakth?=
- =?utf-8?B?WkY1S1B1eGNlcWVwRkFoOHVtZmw4OXBQTGljMkJYaU1CYnBMWURPZUluMHFq?=
- =?utf-8?B?RmpTS3N1eGE1YXh4b0tmV1JZdGoyK1RhSVhOQzJhVk1SazVjdXJqc0lWOWRm?=
- =?utf-8?B?eFc2aldEbFFwSEtMWWR0eWlSWHlVU3pWMFJTYU9FUG5ZNEF0UjN3cHFqa1J0?=
- =?utf-8?B?aURyMk5zQWFzWWlKK0pNN211LytnL1g2TUdTbDZjcmlUYklkNW1nbzNHbmxL?=
- =?utf-8?B?VmRvdENxd1hadzk5dFZDUHg0UXpPSkN4TFdwRXY5QklWVzZpM1pGT3ErbXhY?=
- =?utf-8?B?WHFveEpDRzNEVW9uMjRGcVRvZDIxVDdDeUIrbE5wLzVNVjJoRVVPNng3a1lX?=
- =?utf-8?B?RXEyOVplam9FMDFXNlNoQ3FIUnVkaVdlWlYvaTZDZ1djdWF3NUxPaTZudDV5?=
- =?utf-8?B?WWJ0RnhVWlFKTHJ0Rzg0Y1lVcUV0Q2I1Vm1UMnBvM21iaDVYWTN1Yi90ckR6?=
- =?utf-8?B?eEFJTmt3MWd3aWUwcng1M1VtZGl0MVZQaW9nSFgrdjJySnFwUWo1WVpyMmJw?=
- =?utf-8?B?UktHSlphRHdhVWJGcktXR0N6U0N6WUllZDZ3YVVKZERLYVg0YnQxYUxwRTQr?=
- =?utf-8?B?UDRORzRxS0c0Sng3Vk1KbVRqVFR3K3Y2RFQzckRvSmV0WldBSlBoN3pFeWsx?=
- =?utf-8?B?Y0dpdmFNNnZBMGFiL1NPZzQxRWhpRXVkRk1qZjVjYmtDYjVMSHV1dmhUTGxi?=
- =?utf-8?B?MWVMM1pDeDYxVXBBMlZiUllick1lSlpOdXF4WEVLV25Kb2ZiQ1MrVG1FcUdH?=
- =?utf-8?B?eWJ1bWVSWlpqK0xQL3pQV25vTVZoVlBMb3VhbkJ6QXBZTUtYbjVRcnBtclZL?=
- =?utf-8?B?Y1BVM0lqYXk3aUhHeTA0bkNYRDlXZnM4KzkyZkc4NXR4QmNpcEhNUTFBM21z?=
- =?utf-8?B?N2RwTXg1aE85ejd0eU52U2lPWFEzQm80SEcxeGlKSmdwSVVESEJSaEtoVFcx?=
- =?utf-8?B?WThkTHY3aDdpY3hiaGRuakxTR2d5L3JkVVREQm1sd1F1c0ErZ09qdWtGei9Z?=
- =?utf-8?B?NkFUM0VsNjhwSGJiQ040SUJqcW5KZDR4ektZRytpTnIxaEJMRU53TmRjWVpQ?=
- =?utf-8?B?Wm1EZHpsdjdnaCsvVUNHTXlyYWV1bEVqcC80aHJpNUxMUEdsSFlad1lPNExQ?=
- =?utf-8?B?MVhaZTFmeEJYSGpmSGNHZlEycFh5eWp3RkYyUitSeEoybk43WXJDRmJTR3Fj?=
- =?utf-8?B?U2ZZUWFrNzRsNGZOTUxnaWlpNE5OQk9vckpxTmYwbG5vTWhXa29hOEp1YzNv?=
- =?utf-8?B?N2lvdXh1bEltbG5ySzE3SndRSlgxcndHcWRDUCt2YXdUZ0oxVVNLTjFIQjFN?=
- =?utf-8?B?ZnlmNmJLQVhXVWtiMU5PNDZzQWpQdHRJaTJ4WkprMnl4UXh2OHljY2s2QmtW?=
- =?utf-8?B?bzF5dlpteHhwakFCWExxRTFnNFVaS3RTUXVCT2htK09xKzZqcjU4SjFhOExZ?=
- =?utf-8?B?eFU0OXZ6NWpoaDcyL1lDdU4xMzR3NHVyNUpBNjAzZC9zVEtyazZDMHVJaEti?=
- =?utf-8?Q?YwlKp47+PEumprJ0/b4l+Sh5s?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 000194a7-4bcd-465e-0d31-08db450031df
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6280.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2023 20:12:14.4463
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 746D6BtPNnVctWtISD+UgHM7MHS3Xe0tisawu6joWbs/r19+jmH4nswTWm3uCRhg4impjVeyknRk49hHGTY6gQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB8610
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/17/23 17:41, Christophe JAILLET wrote:
-> It is likely p1_min_meta_chunk_bytes was expected here, instead of
-> min_meta_chunk_bytes.
+On 4/21/23 03:41, Dan Carpenter wrote:
+> Smatch detected an off by one in this code:
+>      drivers/clk/bcm/clk-raspberrypi.c:374 raspberrypi_discover_clocks()
+>      error: buffer overflow 'data->hws' 16 <= 16
 > 
-> Test the correct variable.
+> The data->hws[] array has RPI_FIRMWARE_NUM_CLK_ID elements so the >
+> comparison needs to changed to >=.
 > 
-> Fixes: dda4fb85e433 ("drm/amd/display: DML changes for DCN32/321")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 12c90f3f27bb ("clk: bcm: rpi: Add variant structure")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Applied, thanks!
-
-> ---
->   .../gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c   | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c b/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c
-> index 395ae8761980..9ba6cb67655f 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_rq_dlg_calc_32.c
-> @@ -116,7 +116,7 @@ void dml32_rq_dlg_get_rq_reg(display_rq_regs_st *rq_regs,
->   	else
->   		rq_regs->rq_regs_l.min_meta_chunk_size = dml_log2(min_meta_chunk_bytes) - 6 + 1;
->   
-> -	if (min_meta_chunk_bytes == 0)
-> +	if (p1_min_meta_chunk_bytes == 0)
->   		rq_regs->rq_regs_c.min_meta_chunk_size = 0;
->   	else
->   		rq_regs->rq_regs_c.min_meta_chunk_size = dml_log2(p1_min_meta_chunk_bytes) - 6 + 1;
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-Hamza
+Florian
 
