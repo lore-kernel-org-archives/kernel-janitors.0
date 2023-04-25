@@ -2,81 +2,131 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E72F3C77B71
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 11:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C77B6C77B61
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 12:19:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233992AbjDYL5r (ORCPT
+        id S234042AbjDYMTZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Apr 2023 07:57:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58972 "EHLO
+        Tue, 25 Apr 2023 08:19:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233259AbjDYL5p (ORCPT
+        with ESMTP id S233929AbjDYMTX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Apr 2023 07:57:45 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66404D33C
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 04:57:25 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id rHIOpwV85Od5IrHIOpk006; Tue, 25 Apr 2023 13:57:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1682423843;
-        bh=t3xAngYVnplShoMkDBT5wxr82rgMk9+s4xEzp+xQcGk=;
-        h=From:To:Cc:Subject:Date;
-        b=sLPw0Pw00uQk6bgsbUFMY+a4XjocYbk7duiHnLMdWW1BUkx9fWjVLP1NbmvOG8Gx5
-         Vi64m3fz2Gb18SOghspqNFubQlmjD+Usnvswdh5OFSbdGdaItUIlFhNkBdhxPYTDGp
-         0EQ0AG/mRUeuUjKQd2I4wbh2Z9EsPhzxoiQlBYuSJWuFt9gAdVkD0S3ClkPctw2/gz
-         cyj7XhOoTsRh9UpiZZkMD5xlLlHIoUa35C+Op3twgEMNobeEEwsTicbCeAZEfU69nQ
-         gPhVQLauG1wjWlUwecBQ/mCQ3coZ0bx/783BiRYLC4z20BU5IU+Bj6ONHlt7hbHK1m
-         zSHIxeo2nNRCQ==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 25 Apr 2023 13:57:23 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        ath12k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH] wifi: ath12k: Remove some dead code
-Date:   Tue, 25 Apr 2023 13:57:19 +0200
-Message-Id: <c17edf0811156a33bae6c5cf1906d751cc87edd4.1682423828.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Tue, 25 Apr 2023 08:19:23 -0400
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4218FD307;
+        Tue, 25 Apr 2023 05:19:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        Content-ID:Content-Description;
+        bh=7kx1qUQxgga2/a3bSbV5m/RprEGXZf8Y2L0EBWV11Fo=; b=hb4B9WReqAkGQoCg8EskPjo3W1
+        aFJr1z5R3YHuK88lyFwj7/dEHV9/odC/FZo8/EMub9qjH/5OZAFT71VdAtBr30I0xn8/dHlLyUYY7
+        pycDt1EvjYR/3h/r+zcNLJ/t4Mlh1NpwXaDT3dVwS2pDYqtywZDEouchKheqgdJw6osgFa1CYDYqO
+        JFH/4pn938hlPFNo0TsG7P8nfAX0nQv/Jo4PWb6+SttjyuhS0mrtKferBqqpt480fNAjJ8bZeHbt0
+        E9bLpYTvxWTCIlCoLUvSkCX/CecuAMyrU3udkynCuth7koDiC9XEA9OGRsnVDruS3b37lwOKNMPjW
+        tpxwvFbkzBTFX8N5UwEIU6go7wIY38wXFJrqCjvD+vVuFBPEYQKdANHH6bPP9AwF/18u1SUHE071z
+        joH7Xy9pIM5R7YlNnMuTx+iEYidTym2ixgrPsXHXJeue06og4k+DvjTCj6TRT0+ssBAWn/9yeCIQ6
+        Pt+/GyR/siHs05bSGu0+JzxKhnzVsCv6Gi1Nfcpc9Iu+HbfRExUZUgD3HN8p/GPPJWWAz0YhQexoA
+        MR5Gs6OTUQzGPE6iH60LGZhM4+D22/plq7vMB2nG4/sq6OR1KIR8MHteHSh4Xtpa4g+4N3UH9s2gD
+        og7eN964d7OtS3cLFLbuzNwFsVkuQT3QuhuEbaqLY=;
+From:   Christian Schoenebeck <linux_oss@crudebyte.com>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        v9fs@lists.linux.dev
+Subject: Re: [PATCH] fs/9p: Fix a datatype used with V9FS_DIRECT_IO
+Date:   Tue, 25 Apr 2023 14:19:09 +0200
+Message-ID: <7975041.c8dSIL3S0B@silver>
+In-Reply-To: <ZEeuFlEAaARGqZol@codewreck.org>
+References: <80bae984fd5ca49b691bb35f2fd8f345f8bb67f1.1682405206.git.christophe.jaillet@wanadoo.fr>
+ <2755033.v0V8SJffbf@silver> <ZEeuFlEAaARGqZol@codewreck.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-ATH12K_HE_MCS_MAX = 11, so this test and the following one are the same.
-Remove the one with the hard coded 11 value.
+On Tuesday, April 25, 2023 12:40:22 PM CEST Dominique Martinet wrote:
+> Christian Schoenebeck wrote on Tue, Apr 25, 2023 at 11:18:37AM +0200:
+> > > I'm surprised W=1 doesn't catch this... and now I'm checking higher
+> > > (noisy) W=, or even clang doesn't seem to print anything about e.g.
+> > > 'v9ses->flags & V9FS_DIRECT_IO is never true' or other warnings I'd have
+> > > expected to come up -- out of curiosity how did you find this?
+> > 
+> > Both gcc and clang only trigger an implicit conversion warning if the value of
+> > the expression can be evaluated at compile time (i.e. all operands are
+> > constant), then compiler realizes that the compile-time evaluated constant
+> > value is too big for the assignment destination and triggers the warning.
+> 
+> Right, `v9ses->flags = V9FS_DIRECT_IO` would have triggered it but not
+> with `|=` -- but in this case I was also expecting the check
+> `v9ses->flags & V9fs_DIRECT_IO` to flag something odd...
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/wireless/ath/ath12k/dp_rx.c | 5 -----
- 1 file changed, 5 deletions(-)
+No, because before that binary expression is "reduced" by the compiler,
+`v9ses->flags` is already auto-promoted from `char` to `int`. So it is
+effectively:
 
-diff --git a/drivers/net/wireless/ath/ath12k/dp_rx.c b/drivers/net/wireless/ath/ath12k/dp_rx.c
-index e78478a5b978..79386562562f 100644
---- a/drivers/net/wireless/ath/ath12k/dp_rx.c
-+++ b/drivers/net/wireless/ath/ath12k/dp_rx.c
-@@ -1362,11 +1362,6 @@ ath12k_update_per_peer_tx_stats(struct ath12k *ar,
- 	 * Firmware rate's control to be skipped for this?
- 	 */
- 
--	if (flags == WMI_RATE_PREAMBLE_HE && mcs > 11) {
--		ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
--		return;
--	}
--
- 	if (flags == WMI_RATE_PREAMBLE_HE && mcs > ATH12K_HE_MCS_MAX) {
- 		ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
- 		return;
--- 
-2.34.1
+  INT_RVALUE BITWISE_AND INT_LITERAL
+
+And not:
+
+  CHAR_LVALUE BITWISE_AND INT_LITERAL
+
+And up to this parser state that's absolutely valid.
+
+The compiler would only able to detect this issue if it would carry the
+information (min. used bits at runtime) along over multiple reductions,
+up to the parser state where it eventually reduces the assignment, which is
+apparently not implemented ATM.
+
+I am however more suprised that neither clang's sanitizer, nor static analyzer
+detect this issue either.
+
+> But nothing seems to care; testing with this snippet:
+> ---
+> int foo(char x) {
+> 	if (x & 0x200)
+> 		return 1;
+> 	return 0;
+> }
+> int foo2(unsigned char x) {
+> 	if (x < 0)
+> 		return 1;
+> 	return 0;
+> }
+> ---
+> gcc warns that the x < 0 is always false (clang actually doesn't, even
+> with scan-build, I must be missing a flag?), but I didn't find anything
+> complaining about the &.
+
+-Wtype-limits (or specifically -Wtautological-unsigned-zero-compare) does it.
+
+> I'd expect something like coverity to perform a bit better here but it's
+> a pain to use the "free for open source" version (... I just requested
+> access to https://scan.coverity.com/projects/128 but I have no idea if
+> they build next or not)
+> 
+> Oh, well; glad Christophe noticed anyway.
+> 
+> > > Would probably be interesting to run some form of the same in our
+> > > automation.
+> > 
+> > If there is any ATM? I als tried this issue with clang's undefined behaviour
+> > sanitizer and with the clang static analyzer. Both did not detect it.
+> 
+> There's at least the intel bot building with W=1 and warning if any new
+> such warning pops up (and I'd like to say I check myself, but I probably
+> forget about half the time; I looked at making W=1 default for our part
+> of the tree but it didn't look trivial? I'll try to have another look);
+> but I'm not aware of anyone testing with scan-build or something else
+> that'd contact us on new defects.
+> 
+> 
+
+
+
 
