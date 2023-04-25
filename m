@@ -2,79 +2,58 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A00C77B61
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 08:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FD8C6FD18
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 09:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233451AbjDYIuZ (ORCPT
+        id S233361AbjDYJXU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Apr 2023 04:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42912 "EHLO
+        Tue, 25 Apr 2023 05:23:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233264AbjDYIuV (ORCPT
+        with ESMTP id S233329AbjDYJXR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Apr 2023 04:50:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8940C35B7;
-        Tue, 25 Apr 2023 01:50:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 04E9B62CEC;
-        Tue, 25 Apr 2023 08:50:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5845DC433A0;
-        Tue, 25 Apr 2023 08:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682412619;
-        bh=Mfq8yrxnuMMNRYzupPlRcoJpox8xhQLPPCGmRCRHJ/4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=c0PuCEPKicdGzchx3Of5e7Iln5M0hRCqnElvFj7guEKzvTE8bZ9CM2dgtW5DTyIwI
-         Q7dKPtD5pY+o4o3M0oSsKhtwlvtePG071TrpkFZiK/CjVPfJE6ZmZx5G3q1hMdY4QD
-         aqAuZ5faA2ax6M9a6HC+NvD5up+WJSwhamqWvNLCT1iYY0lOo5xSN48GLXRfdVpHLe
-         b8L8ZMIn3pplLTV4fgF8tZGEGOjdEegs/N+QMmntAEE73dbpkai6REZ7dyAnzdiZbH
-         eRrBi+4g78J8nVK9jUeqEDd+0Xi8Yqety+b00J8hCRs8TIpi55TSv3cUSuY3mLBOwf
-         j4WYZKLWKcmPg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 40C25E5FFCA;
-        Tue, 25 Apr 2023 08:50:19 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 25 Apr 2023 05:23:17 -0400
+Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A1E40F6
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 02:23:16 -0700 (PDT)
+Received: by mail.lokoho.com (Postfix, from userid 1001)
+        id C4E8C7E934; Tue, 25 Apr 2023 10:23:11 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
+        t=1682414592; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
+        h=Date:From:To:Subject:From;
+        b=fuoV8IB65f2N46w/w2timtVIeI0NPtx0ILVDEsX8ttqfTHDmCthMmvYX/Ylv+uBT6
+         f9Ng3MzOBSRZJaTSr1ZHow5yvn5g28dAlawRRLFyWKWol/u5E48m3HKmrZ7DIM/m/y
+         DQvvsVqSBld5pRB7LKcFIp8XVIshdZUtd1Yz9t+1lShLL4mf+ksCb7F7SQb6ddM1q/
+         Sgc+c1xmrsams1Y2vYCD8AZOFwAIVnjuJPGJdJ4ZzqGhXzIpkllRUyz+RZZzdsNlu4
+         khv9CpZmdvQYfA2+Bao4+pYkQbRnP8aMa06Zn+/tE5G2YvY201lG2WR/WqK5K5OHQK
+         ApF6ABMv84DCg==
+Received: by mail.lokoho.com for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 09:23:02 GMT
+Message-ID: <20230425102243-0.1.5k.1zpv4.0.rrvm2ryq1k@lokoho.com>
+Date:   Tue, 25 Apr 2023 09:23:02 GMT
+From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.lokoho.com
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: phy: marvell-88x2222: remove unnecessary (void*)
- conversions
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168241261926.1225.2701872674893598922.git-patchwork-notify@kernel.org>
-Date:   Tue, 25 Apr 2023 08:50:19 +0000
-References: <20230425051532.44830-1-yunchuan@nfschina.com>
-In-Reply-To: <20230425051532.44830-1-yunchuan@nfschina.com>
-To:     wuych <yunchuan@nfschina.com>
-Cc:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        linux@armlinux.org.uk, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Dzie=C5=84 dobry,
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
 
-On Tue, 25 Apr 2023 13:15:32 +0800 you wrote:
-> Pointer variables of void * type do not require type cast.
-> 
-> Signed-off-by: wuych <yunchuan@nfschina.com>
-> ---
->  drivers/net/phy/marvell-88x2222.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
 
-Here is the summary with links:
-  - net: phy: marvell-88x2222: remove unnecessary (void*) conversions
-    https://git.kernel.org/netdev/net-next/c/28b17f6270f1
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
 
 
+Pozdrawiam
+Adam Charachuta
