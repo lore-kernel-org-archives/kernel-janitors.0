@@ -2,85 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF468C6FD18
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 13:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C2FC6FD18
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 13:15:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234037AbjDYNL1 (ORCPT
+        id S233925AbjDYNPI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Apr 2023 09:11:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40350 "EHLO
+        Tue, 25 Apr 2023 09:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233989AbjDYNL1 (ORCPT
+        with ESMTP id S233976AbjDYNPG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Apr 2023 09:11:27 -0400
-Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6E7D313
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 06:11:24 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id rIS0pfcRMLf5zrIS0p4TSz; Tue, 25 Apr 2023 15:11:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1682428281;
-        bh=WXiKOTUweT4dQBcURtN4IPuxsbpAL9eY85lFUMFtYlY=;
-        h=From:To:Cc:Subject:Date;
-        b=hbpLJFvCsemS0Uu45T4qTVqdi6a3ZqQQ+8kgeY1JgGuAqYlNDAdj6kEkBbXH2Sn1E
-         CbPD7bQGrDkA8WZ8qXAHkNi5BxTR9wy167CR12PDQlv/IZICEwocqLw2dhHjwiYFBL
-         wphRORSM/lG3G8wQ9Vn23Zxi8AOvB84be+HoU/Q2xfwZiBRmpsKiYMb3FMkFyrNp5I
-         2QzSqucKwZgi+TWyd5J6f0cITlGWj5pCuOFgy3LWA98ADXpBw+xWoQtQwLpuiRdZQv
-         o6xowQaW5SnjZJby0ENTYyye77DpXRGCR9VgZlvVVOnxNpJmrJWZiCO/sZkLCNhl+b
-         C2lrLVzZ0Au+Q==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 25 Apr 2023 15:11:21 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] cpufreq: tegra194: Fix an error handling path in tegra194_cpufreq_probe()
-Date:   Tue, 25 Apr 2023 15:11:19 +0200
-Message-Id: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Tue, 25 Apr 2023 09:15:06 -0400
+Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CC3313C1A;
+        Tue, 25 Apr 2023 06:15:04 -0700 (PDT)
+Received: by mail-vk1-xa30.google.com with SMTP id 71dfb90a1353d-440403d34a4so2070344e0c.0;
+        Tue, 25 Apr 2023 06:15:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682428503; x=1685020503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wqv8r/KFOBnoNWbUFUiDZTpYWxmph2Y+u4MhHtRun0M=;
+        b=ctzWSSvCj4vVhD0Ybx0qlOxNqi9C5x7m7v/8XFMMh9Es8CtzsbZ1zqBQi3LBduNHZg
+         sUusmouGhQJLLIcVoQYK27s1UZWgfu+K7Jrrdn3K6qFA1hIb1vtlpus2ZjCKSzW+r8Nn
+         +pjxutdbxj6cZFtWfE6ILgKqpOUIh0banzxMPqR72qQ1bGSFJ7/0nnATmOA4kwzBMODQ
+         FfPHoVA+jAHaK+TgCZJuLKhxw2C1hlV95n525LxdKY+QC/8EVs42fURaJ6GTK30/Q4Qy
+         y4Pg2DTxOR+BnufXAPk+AD/WcPPcpkqmZWAvdqcrCG+ZfaNM49pIO4UEwKtlLyNYGaz+
+         XnHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682428503; x=1685020503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wqv8r/KFOBnoNWbUFUiDZTpYWxmph2Y+u4MhHtRun0M=;
+        b=YMILMFGQPtqfXTz0JLoNwXmDZCTlLvlv7gJjiTwoOJPnIYHAgYOiAhnNuqytY9iLqp
+         HaHAcYub9tAISAqZoSnGeYSKB7YVjcXdpmxzL+XO5ba0g8aprh/P9OFwkqj6K0cGa+lm
+         7wxPylD0BQqkEmm/eZHMAOVK8BmuwBivdOIhb+pxo56//oNTgdjJeQkZzY3iF5nzk5Qa
+         AgAX3+rBWzY2sujIpi8KuxdCvLnbi+C9zs3EkoQO33hN4LHTP5l4OozwHiPMytaEBmho
+         Ih9YKZGDQ+Ct+cXBamrNLB2weQ3qD4MNSbpu4o7KZ/fvFNK7h4IrXV1yF8CRJewMabUb
+         YLXw==
+X-Gm-Message-State: AAQBX9crboL8EM7cFK+GwJAYhiHvD86cdNy/YXP/EssGv5LmG8MDR2id
+        J5LA6Ns8DgEgTygxAb0K81RI2pVVTJOq79dfQQEo/6nyXOnOIA==
+X-Google-Smtp-Source: AKy350aanME0nMTNiM5fr4DFHHkaaB3EACxyhrJA3uB0MY8jl99vfng8dUxqcDxlYYiue3Q6E7DZYBnfyNJxlG5eh68=
+X-Received: by 2002:a1f:c506:0:b0:43f:9aa5:a15b with SMTP id
+ v6-20020a1fc506000000b0043f9aa5a15bmr4311156vkf.9.1682428503125; Tue, 25 Apr
+ 2023 06:15:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <80bae984fd5ca49b691bb35f2fd8f345f8bb67f1.1682405206.git.christophe.jaillet@wanadoo.fr>
+ <ZEd8d7W6HnHE_66m@codewreck.org>
+In-Reply-To: <ZEd8d7W6HnHE_66m@codewreck.org>
+From:   Dan Carpenter <error27@gmail.com>
+Date:   Tue, 25 Apr 2023 14:14:52 +0100
+Message-ID: <CA+_b7DK1s87y-_-D3sQxteqJ+78uvKza-vgWGv9SmGm-tqz7DA@mail.gmail.com>
+Subject: Re: [PATCH] fs/9p: Fix a datatype used with V9FS_DIRECT_IO
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If the probe needs to be deferred, some resources still need to be
-released. So branch to the error handling path instead of returning
-directly.
+On Tue, Apr 25, 2023 at 8:12=E2=80=AFAM Dominique Martinet
+<asmadeus@codewreck.org> wrote:
+>
+> Christophe JAILLET wrote on Tue, Apr 25, 2023 at 08:47:27AM +0200:
+> > Fixes: 6deffc8924b5 ("fs/9p: Add new mount modes")
+>
+> (Not a problem per se: but note this commit hasn't been merged yet, so
+> using commit IDs is a bit dangerous. Might want to remark this in the
+> free comment section so Eric pays attention to not break that when applyi=
+ng)
 
-Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/cpufreq/tegra194-cpufreq.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+This is fine.
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index c8d03346068a..36dad5ea5947 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -686,8 +686,10 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
- 
- 	/* Check for optional OPPv2 and interconnect paths on CPU0 to enable ICC scaling */
- 	cpu_dev = get_cpu_device(0);
--	if (!cpu_dev)
--		return -EPROBE_DEFER;
-+	if (!cpu_dev) {
-+		err = -EPROBE_DEFER;
-+		goto err_free_res;
-+	}
- 
- 	if (dev_pm_opp_of_get_opp_desc_node(cpu_dev)) {
- 		err = dev_pm_opp_of_find_icc_paths(cpu_dev, NULL);
--- 
-2.34.1
+The hash is constant unless Eric does a rebase.  When a maintainer rebases
+then updating the fixes tags is just part of the process.  Often they end u=
+p
+folding the fix into the original patch at that point so the Fixes tag is n=
+ot
+required.  If a maintainer doesn't update the tags then the linux-next
+maintainers
+will notice and complain.
 
+#GitMagic
+
+regards,
+dan carpenter
