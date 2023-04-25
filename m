@@ -2,70 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1EAC6FD18
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 05:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5471C77B76
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 06:47:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233167AbjDYFP5 (ORCPT
+        id S233509AbjDYGrg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Apr 2023 01:15:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44190 "EHLO
+        Tue, 25 Apr 2023 02:47:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232741AbjDYFPv (ORCPT
+        with ESMTP id S233240AbjDYGrf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Apr 2023 01:15:51 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 6104C8682;
-        Mon, 24 Apr 2023 22:15:49 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 7DB9B180509A0C;
-        Tue, 25 Apr 2023 13:15:46 +0800 (CST)
-X-MD-Sfrom: yunchuan@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   wuych <yunchuan@nfschina.com>
-To:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc:     linux@armlinux.org.uk, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        wuych <yunchuan@nfschina.com>
-Subject: [PATCH] net: phy: marvell-88x2222: remove unnecessary (void*) conversions
-Date:   Tue, 25 Apr 2023 13:15:32 +0800
-Message-Id: <20230425051532.44830-1-yunchuan@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 25 Apr 2023 02:47:35 -0400
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 536BA5FFE
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Apr 2023 23:47:33 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id rCSWpcq9sDWp7rCSXpOke8; Tue, 25 Apr 2023 08:47:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682405251;
+        bh=xSNUhNscxEqVyr5Wkr8JJ5bNbQGHTG7dlAH1ZVdGGxI=;
+        h=From:To:Cc:Subject:Date;
+        b=Nw6mZSkYmqbR8DzTe0qATHJxdNCoJ2gaAENwPMxB70pbs2cD4zwXyPJC+RhvtWI8M
+         jJ1yeE5sYoUUQP8rAZmfYjMpJMcHavsiDcGRNdJ1J8yGVRq6k7SqJPfFAO6+ZmAgi1
+         1KuRbXiH+JkmNeZpp5pzShHo5lhGnW7FqFpUlBnPX6TUALps2hNzPRYLdJtFR8FSta
+         jOlXI3E4EL9JIU6OlPcbO9T9rk3N8WraSZeVZQniIcen58IO3fFzAvJFCR0pyZpTZI
+         QDOWvg0AJliSCA3NB5SlKQ1G1J8onJmmePwqFgOV2RYJyDIXXe2TqefrAEMGIo+M6F
+         gfwiaFfcU01Jg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 25 Apr 2023 08:47:31 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        v9fs@lists.linux.dev
+Subject: [PATCH] fs/9p: Fix a datatype used with V9FS_DIRECT_IO
+Date:   Tue, 25 Apr 2023 08:47:27 +0200
+Message-Id: <80bae984fd5ca49b691bb35f2fd8f345f8bb67f1.1682405206.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer variables of void * type do not require type cast.
+The commit in Fixes has introduced some "enum p9_session_flags" values
+larger than a char.
+Such values are stored in "v9fs_session_info->flags" which is a char only.
 
-Signed-off-by: wuych <yunchuan@nfschina.com>
+Turn it into an int so that the "enum p9_session_flags" values can fit in
+it.
+
+Fixes: 6deffc8924b5 ("fs/9p: Add new mount modes")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/phy/marvell-88x2222.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Un-tested
+---
+ fs/9p/v9fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/marvell-88x2222.c b/drivers/net/phy/marvell-88x2222.c
-index fd9ad4820192..f83cae64585d 100644
---- a/drivers/net/phy/marvell-88x2222.c
-+++ b/drivers/net/phy/marvell-88x2222.c
-@@ -487,7 +487,7 @@ static int mv2222_sfp_insert(void *upstream, const struct sfp_eeprom_id *id)
+diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
+index 06a2514f0d88..698c43dd5dc8 100644
+--- a/fs/9p/v9fs.h
++++ b/fs/9p/v9fs.h
+@@ -108,7 +108,7 @@ enum p9_cache_bits {
  
- 	__ETHTOOL_DECLARE_LINK_MODE_MASK(sfp_supported) = { 0, };
- 
--	priv = (struct mv2222_data *)phydev->priv;
-+	priv = phydev->priv;
- 	dev = &phydev->mdio.dev;
- 
- 	sfp_parse_support(phydev->sfp_bus, id, sfp_supported, interfaces);
-@@ -524,7 +524,7 @@ static void mv2222_sfp_remove(void *upstream)
- 	struct phy_device *phydev = upstream;
- 	struct mv2222_data *priv;
- 
--	priv = (struct mv2222_data *)phydev->priv;
-+	priv = phydev->priv;
- 
- 	priv->line_interface = PHY_INTERFACE_MODE_NA;
- 	linkmode_zero(priv->supported);
+ struct v9fs_session_info {
+ 	/* options */
+-	unsigned char flags;
++	unsigned int flags;
+ 	unsigned char nodev;
+ 	unsigned short debug;
+ 	unsigned int afid;
 -- 
-2.30.2
+2.34.1
 
