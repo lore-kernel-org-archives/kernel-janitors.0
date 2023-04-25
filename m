@@ -2,116 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB4BC77B61
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 10:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E72F3C77B71
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 11:57:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbjDYKkv (ORCPT
+        id S233992AbjDYL5r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Apr 2023 06:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43018 "EHLO
+        Tue, 25 Apr 2023 07:57:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233381AbjDYKku (ORCPT
+        with ESMTP id S233259AbjDYL5p (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Apr 2023 06:40:50 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D93FF;
-        Tue, 25 Apr 2023 03:40:47 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 4D6A0C009; Tue, 25 Apr 2023 12:40:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1682419244; bh=ZtUogD1otBOP6kURYBx3pL/G2akgZ11aunENuUap21A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ea4nQ4yP9RS5+PxI0r2yOum4JZ65bRlYfOBtlMGMpcsBeHv3Y92W0tvFbuGrFb5hV
-         Bqh4037KSjMUq+sWLVOvKrn1hIEjw3BnJ1yqy+faNDfr2ZzdmBjEVfB5SxDVxvZnn3
-         V/RfqUIw3W1t6TLosOT1hc9Hzi0fxlGCgpen+yNzHcDwvGmD4avwf7DGfqS1Ga1l/E
-         hTommrx5erHeho+Rq0vLxKR5Dd5ZGEAo5XhYk/+HGGgFVQCFiJ4/s70O+5P8HS56dP
-         lfCto8u3Dtie5kKqT5e3UavAWtCTbv8CLddrmUN2EfcHmvx6/jnHh7xulLazrAdsXw
-         +T1rlwi1DydQA==
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 3C7EFC009;
-        Tue, 25 Apr 2023 12:40:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1682419243; bh=ZtUogD1otBOP6kURYBx3pL/G2akgZ11aunENuUap21A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Kh2cpVHP26YL9D35y0r40N5bKMrNH1NEQtXE++rE4A9ZlUsu45EjYX0MVCKdLWJDJ
-         OH4zfqg006yWltmtQzLulaIhgemHDkacx+39/cjceFJ/DiaCWU3A60VXtlVX5G8JQV
-         z+zsexYpCP5Hka+Jv2mYlyQPWkwMNCaZkJQrfEQVGqSauUFxnWA3CfvuWLQjp4Elpo
-         LVU2VyPBORNQPC30yypDCiQbYO4DORYDHEEzsC+RUuZtz3CAS9C76vruiybxubZtTQ
-         dcMoFpficVtmHVyxgB8kYhxsY7KWRv0/KrzkXNUOTj8rQNOIAIucgb8xv1Fte/JgYL
-         v8bTk384VrBdw==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id fd4651ec;
-        Tue, 25 Apr 2023 10:40:37 +0000 (UTC)
-Date:   Tue, 25 Apr 2023 19:40:22 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        v9fs@lists.linux.dev
-Subject: Re: [PATCH] fs/9p: Fix a datatype used with V9FS_DIRECT_IO
-Message-ID: <ZEeuFlEAaARGqZol@codewreck.org>
-References: <80bae984fd5ca49b691bb35f2fd8f345f8bb67f1.1682405206.git.christophe.jaillet@wanadoo.fr>
- <ZEd8d7W6HnHE_66m@codewreck.org>
- <2755033.v0V8SJffbf@silver>
+        Tue, 25 Apr 2023 07:57:45 -0400
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66404D33C
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 04:57:25 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id rHIOpwV85Od5IrHIOpk006; Tue, 25 Apr 2023 13:57:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682423843;
+        bh=t3xAngYVnplShoMkDBT5wxr82rgMk9+s4xEzp+xQcGk=;
+        h=From:To:Cc:Subject:Date;
+        b=sLPw0Pw00uQk6bgsbUFMY+a4XjocYbk7duiHnLMdWW1BUkx9fWjVLP1NbmvOG8Gx5
+         Vi64m3fz2Gb18SOghspqNFubQlmjD+Usnvswdh5OFSbdGdaItUIlFhNkBdhxPYTDGp
+         0EQ0AG/mRUeuUjKQd2I4wbh2Z9EsPhzxoiQlBYuSJWuFt9gAdVkD0S3ClkPctw2/gz
+         cyj7XhOoTsRh9UpiZZkMD5xlLlHIoUa35C+Op3twgEMNobeEEwsTicbCeAZEfU69nQ
+         gPhVQLauG1wjWlUwecBQ/mCQ3coZ0bx/783BiRYLC4z20BU5IU+Bj6ONHlt7hbHK1m
+         zSHIxeo2nNRCQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 25 Apr 2023 13:57:23 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        ath12k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH] wifi: ath12k: Remove some dead code
+Date:   Tue, 25 Apr 2023 13:57:19 +0200
+Message-Id: <c17edf0811156a33bae6c5cf1906d751cc87edd4.1682423828.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2755033.v0V8SJffbf@silver>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christian Schoenebeck wrote on Tue, Apr 25, 2023 at 11:18:37AM +0200:
-> > I'm surprised W=1 doesn't catch this... and now I'm checking higher
-> > (noisy) W=, or even clang doesn't seem to print anything about e.g.
-> > 'v9ses->flags & V9FS_DIRECT_IO is never true' or other warnings I'd have
-> > expected to come up -- out of curiosity how did you find this?
-> 
-> Both gcc and clang only trigger an implicit conversion warning if the value of
-> the expression can be evaluated at compile time (i.e. all operands are
-> constant), then compiler realizes that the compile-time evaluated constant
-> value is too big for the assignment destination and triggers the warning.
+ATH12K_HE_MCS_MAX = 11, so this test and the following one are the same.
+Remove the one with the hard coded 11 value.
 
-Right, `v9ses->flags = V9FS_DIRECT_IO` would have triggered it but not
-with `|=` -- but in this case I was also expecting the check
-`v9ses->flags & V9fs_DIRECT_IO` to flag something odd...
-But nothing seems to care; testing with this snippet:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-int foo(char x) {
-	if (x & 0x200)
-		return 1;
-	return 0;
-}
-int foo2(unsigned char x) {
-	if (x < 0)
-		return 1;
-	return 0;
-}
----
-gcc warns that the x < 0 is always false (clang actually doesn't, even
-with scan-build, I must be missing a flag?), but I didn't find anything
-complaining about the &.
-I'd expect something like coverity to perform a bit better here but it's
-a pain to use the "free for open source" version (... I just requested
-access to https://scan.coverity.com/projects/128 but I have no idea if
-they build next or not)
+ drivers/net/wireless/ath/ath12k/dp_rx.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Oh, well; glad Christophe noticed anyway.
-
-> > Would probably be interesting to run some form of the same in our
-> > automation.
-> 
-> If there is any ATM? I als tried this issue with clang's undefined behaviour
-> sanitizer and with the clang static analyzer. Both did not detect it.
-
-There's at least the intel bot building with W=1 and warning if any new
-such warning pops up (and I'd like to say I check myself, but I probably
-forget about half the time; I looked at making W=1 default for our part
-of the tree but it didn't look trivial? I'll try to have another look);
-but I'm not aware of anyone testing with scan-build or something else
-that'd contact us on new defects.
-
+diff --git a/drivers/net/wireless/ath/ath12k/dp_rx.c b/drivers/net/wireless/ath/ath12k/dp_rx.c
+index e78478a5b978..79386562562f 100644
+--- a/drivers/net/wireless/ath/ath12k/dp_rx.c
++++ b/drivers/net/wireless/ath/ath12k/dp_rx.c
+@@ -1362,11 +1362,6 @@ ath12k_update_per_peer_tx_stats(struct ath12k *ar,
+ 	 * Firmware rate's control to be skipped for this?
+ 	 */
+ 
+-	if (flags == WMI_RATE_PREAMBLE_HE && mcs > 11) {
+-		ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
+-		return;
+-	}
+-
+ 	if (flags == WMI_RATE_PREAMBLE_HE && mcs > ATH12K_HE_MCS_MAX) {
+ 		ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
+ 		return;
 -- 
-Dominique Martinet | Asmadeus
+2.34.1
+
