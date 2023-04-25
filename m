@@ -2,78 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E88EC77B61
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 01:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A256C6FD18
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 03:38:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232950AbjDYBUW (ORCPT
+        id S233263AbjDYDiG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Apr 2023 21:20:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60946 "EHLO
+        Mon, 24 Apr 2023 23:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232854AbjDYBUU (ORCPT
+        with ESMTP id S229637AbjDYDiF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Apr 2023 21:20:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D88C5276;
-        Mon, 24 Apr 2023 18:20:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 16E1262AB4;
-        Tue, 25 Apr 2023 01:20:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 60A8EC4339C;
-        Tue, 25 Apr 2023 01:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682385618;
-        bh=f4AcqI+qCMXP20DaWFRyma1XjY4NWgPRRbKwYC28C74=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=XkAmmc/cAVwViZjdZjn16PwTUssL0gygA4nMeYwV5lqUNz6+7Rb+L5EDFTP/kQzKn
-         DeM0Vcg7J2kgyeXvr2nieIbdBTIayrrreHs43AUo0ZrxUXvBYBbVvJct5tihzByyYl
-         uIgJ2Rxh+0qUvh+V48WPWFHoLYq+AacPTQyELYS0lR6cwMXDTO7pwvWUMNw4TYugLy
-         c4mf5hdPI+l1cyHeGGMtjZyZPrAi6YI4xDK5Ray9zOeiAhZ9iTprjneXsGA5Kqr6Ew
-         mhLku+E0NCj2y/arZLDyPhrV1gcfqOsHSa3y4WDZc/HZoOIKpT+VXgGR02DbRIP7xg
-         1IgIUZBdueLag==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 42FE7E5FFCB;
-        Tue, 25 Apr 2023 01:20:18 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 24 Apr 2023 23:38:05 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id E777D49D0;
+        Mon, 24 Apr 2023 20:38:03 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 1B76D180506E2B;
+        Tue, 25 Apr 2023 11:37:55 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Suhui <suhui@nfschina.com>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Suhui <suhui@nfschina.com>
+Subject: [PATCH] iommu/vt-d: Remove unnecessary (void*) conversions
+Date:   Tue, 25 Apr 2023 11:37:43 +0800
+Message-Id: <20230425033743.75986-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: phy: dp83867: Remove unnecessary (void*) conversions
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168238561827.11483.3510600412139981916.git-patchwork-notify@kernel.org>
-Date:   Tue, 25 Apr 2023 01:20:18 +0000
-References: <20230424101550.664319-1-yunchuan@nfschina.com>
-In-Reply-To: <20230424101550.664319-1-yunchuan@nfschina.com>
-To:     wuych <yunchuan@nfschina.com>
-Cc:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        linux@armlinux.org.uk, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+No need cast (void*) to (struct root_entry *).
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Suhui <suhui@nfschina.com>
+---
+ drivers/iommu/intel/iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, 24 Apr 2023 18:15:50 +0800 you wrote:
-> Pointer variables of void * type do not require type cast.
-> 
-> Signed-off-by: wuych <yunchuan@nfschina.com>
-> ---
->  drivers/net/phy/dp83867.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-
-Here is the summary with links:
-  - net: phy: dp83867: Remove unnecessary (void*) conversions
-    https://git.kernel.org/netdev/net-next/c/86c2b51f203e
-
-You are awesome, thank you!
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 7c2f4bd33582..c72cf46207a2 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -1187,7 +1187,7 @@ static int iommu_alloc_root_entry(struct intel_iommu *iommu)
+ {
+ 	struct root_entry *root;
+ 
+-	root = (struct root_entry *)alloc_pgtable_page(iommu->node, GFP_ATOMIC);
++	root = alloc_pgtable_page(iommu->node, GFP_ATOMIC);
+ 	if (!root) {
+ 		pr_err("Allocating root entry for %s failed\n",
+ 			iommu->name);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.30.2
 
