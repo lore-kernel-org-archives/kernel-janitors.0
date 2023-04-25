@@ -2,97 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DD0C77B61
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Apr 2023 22:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E88EC77B61
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 01:20:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232681AbjDXWhX (ORCPT
+        id S232950AbjDYBUW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Apr 2023 18:37:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
+        Mon, 24 Apr 2023 21:20:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233134AbjDXWhE (ORCPT
+        with ESMTP id S232854AbjDYBUU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Apr 2023 18:37:04 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CA5126;
-        Mon, 24 Apr 2023 15:37:03 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-63b7b54642cso3776359b3a.0;
-        Mon, 24 Apr 2023 15:37:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682375822; x=1684967822;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TfVuBjqbPrda2V4JgOmJGuE9f+TlylUgWhlc/W6i9V0=;
-        b=FPQSG90ZXSUc5P/yeV7Ty842LoGViNqLiRh835nar/kqyUOmMd3Sdfd473qwlVozKO
-         G9fJYG46Ml8SwmmrRAXtovGGPNVv3BtZHM1l5+rkPfUvfi204l1aNR1eP03GEM4Eyca+
-         l6e8tFFdiaah8ENGQ1jLztg8EbSXXtpV/DPEOGLK81XLZQO5tFxYBT6hyZQoQkyAyPkE
-         sUnS3iP5uhRkjrsypQF5m3VmwyOQd7U4TKamduNKTYDV22X54R2uPf3OUaxzOyjUrzAM
-         6Z4op/Cf5aC6TscrRxhdNgpoNxWrZkvN1PHv8kdAV1wgQ7/Xi5KB+BV3WGCWX+Y8BqaR
-         2sew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682375822; x=1684967822;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TfVuBjqbPrda2V4JgOmJGuE9f+TlylUgWhlc/W6i9V0=;
-        b=K5OnKvuwkmkMQ9frrzwU5Kl22tsjMTvruof3TNyrQO9EU9mnDapWXe1BNsLtCj+26+
-         YHhmouBM/niPw/oLadvQRcvJOPot4tw9VkRxi0vz0TZg+liEleXht86uWsgeLIKEpXTE
-         LQdHr3hYyl9vgZScrt4LZVzTrd8QM48HSO/C8tuzosxl8Yj16CAnEZbJjI/Uf/FIrHa1
-         +9xw/TgMwJZwmuwUiediap633Ir0bJeYadMI5u492o8MjMjTmo11RlDBTTZargbSs/C0
-         o6uggZ+2tsjptISLtWADPVQuQwh6Lg4NPTBUo18Ewwc0iaKukJfx+D8yvMcZraJ5N52Y
-         ja3A==
-X-Gm-Message-State: AAQBX9c1hRPetwNLlJ4HgFldVlpxmq/AzVMdl0KgU5cBLK5ye7ruUoMX
-        0YwQuY+eUx2OkgZmC6sV43I=
-X-Google-Smtp-Source: AKy350bQkD9qEKt0AXaIEoQV+2YVispEViRqtBeF0JlyRIcvdnq3SzLC7lBttdklkKb+7Mpd7n7YGQ==
-X-Received: by 2002:aa7:888a:0:b0:637:f1ae:d3e with SMTP id z10-20020aa7888a000000b00637f1ae0d3emr21117099pfe.25.1682375822356;
-        Mon, 24 Apr 2023 15:37:02 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id i64-20020a62c143000000b0063d328a690fsm7821812pfg.25.2023.04.24.15.36.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Apr 2023 15:37:01 -0700 (PDT)
-Message-ID: <185ac214-a94e-682e-0ec2-2beb25ec16fb@gmail.com>
-Date:   Mon, 24 Apr 2023 15:36:56 -0700
+        Mon, 24 Apr 2023 21:20:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D88C5276;
+        Mon, 24 Apr 2023 18:20:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 16E1262AB4;
+        Tue, 25 Apr 2023 01:20:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 60A8EC4339C;
+        Tue, 25 Apr 2023 01:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682385618;
+        bh=f4AcqI+qCMXP20DaWFRyma1XjY4NWgPRRbKwYC28C74=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=XkAmmc/cAVwViZjdZjn16PwTUssL0gygA4nMeYwV5lqUNz6+7Rb+L5EDFTP/kQzKn
+         DeM0Vcg7J2kgyeXvr2nieIbdBTIayrrreHs43AUo0ZrxUXvBYBbVvJct5tihzByyYl
+         uIgJ2Rxh+0qUvh+V48WPWFHoLYq+AacPTQyELYS0lR6cwMXDTO7pwvWUMNw4TYugLy
+         c4mf5hdPI+l1cyHeGGMtjZyZPrAi6YI4xDK5Ray9zOeiAhZ9iTprjneXsGA5Kqr6Ew
+         mhLku+E0NCj2y/arZLDyPhrV1gcfqOsHSa3y4WDZc/HZoOIKpT+VXgGR02DbRIP7xg
+         1IgIUZBdueLag==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 42FE7E5FFCB;
+        Tue, 25 Apr 2023 01:20:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2] clk: bcm: rpi: Fix off by one in
- raspberrypi_discover_clocks()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Maxime Ripard <maxime@cerno.tech>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "Ivan T. Ivanov" <iivanov@suse.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Dom Cobley <popcornmix@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-References: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: phy: dp83867: Remove unnecessary (void*) conversions
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168238561827.11483.3510600412139981916.git-patchwork-notify@kernel.org>
+Date:   Tue, 25 Apr 2023 01:20:18 +0000
+References: <20230424101550.664319-1-yunchuan@nfschina.com>
+In-Reply-To: <20230424101550.664319-1-yunchuan@nfschina.com>
+To:     wuych <yunchuan@nfschina.com>
+Cc:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        linux@armlinux.org.uk, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/21/23 03:41, Dan Carpenter wrote:
-> Smatch detected an off by one in this code:
->      drivers/clk/bcm/clk-raspberrypi.c:374 raspberrypi_discover_clocks()
->      error: buffer overflow 'data->hws' 16 <= 16
-> 
-> The data->hws[] array has RPI_FIRMWARE_NUM_CLK_ID elements so the >
-> comparison needs to changed to >=.
-> 
-> Fixes: 12c90f3f27bb ("clk: bcm: rpi: Add variant structure")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Hello:
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 24 Apr 2023 18:15:50 +0800 you wrote:
+> Pointer variables of void * type do not require type cast.
+> 
+> Signed-off-by: wuych <yunchuan@nfschina.com>
+> ---
+>  drivers/net/phy/dp83867.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+
+Here is the summary with links:
+  - net: phy: dp83867: Remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/86c2b51f203e
+
+You are awesome, thank you!
 -- 
-Florian
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
