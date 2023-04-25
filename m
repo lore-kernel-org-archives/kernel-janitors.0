@@ -2,92 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FABC6FD18
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 07:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 569B0C77B71
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 07:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233453AbjDYHJG (ORCPT
+        id S233255AbjDYHxm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Apr 2023 03:09:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34974 "EHLO
+        Tue, 25 Apr 2023 03:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233366AbjDYHJF (ORCPT
+        with ESMTP id S231189AbjDYHxk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Apr 2023 03:09:05 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30CE84ED5;
-        Tue, 25 Apr 2023 00:09:03 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id BEBFBC01F; Tue, 25 Apr 2023 09:09:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1682406540; bh=WcQrJlJzF6e/odauxjm74X7K3OwhiQWeXCWu83AFdcw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PiJGFvOHQZTf0Betqp9PjDJZWrqAaJTYR13lkIjHOy/Aoo904+6j3GvfoIEyY7N3k
-         V6x1VZoiM7RbYUnQ3FmQhCKIvkwYzd1z8D+LNibRl6xRH1au7PTLQgwJbseZF6gbt4
-         +kcSq/FHSt+YqwzHJJG4ohJ+m1cVN5CGJJwU2dzKffQNhfMtkqh9pOekq29UlXTLZ5
-         lkQ/Oe1vQSukedyvrtP7JV34I3xN8JdrLwUQput0WupZy6L7eV0YkLRALeYrijBIj/
-         mcFcPnTXB/48ILL+qRTWuEvivTJFi+N6tGDecBiQ9E7/M+uMUe7GdyuaVrxQHq1FtY
-         uzx8tTpb07hwQ==
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id DBE66C009;
-        Tue, 25 Apr 2023 09:08:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1682406540; bh=WcQrJlJzF6e/odauxjm74X7K3OwhiQWeXCWu83AFdcw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PiJGFvOHQZTf0Betqp9PjDJZWrqAaJTYR13lkIjHOy/Aoo904+6j3GvfoIEyY7N3k
-         V6x1VZoiM7RbYUnQ3FmQhCKIvkwYzd1z8D+LNibRl6xRH1au7PTLQgwJbseZF6gbt4
-         +kcSq/FHSt+YqwzHJJG4ohJ+m1cVN5CGJJwU2dzKffQNhfMtkqh9pOekq29UlXTLZ5
-         lkQ/Oe1vQSukedyvrtP7JV34I3xN8JdrLwUQput0WupZy6L7eV0YkLRALeYrijBIj/
-         mcFcPnTXB/48ILL+qRTWuEvivTJFi+N6tGDecBiQ9E7/M+uMUe7GdyuaVrxQHq1FtY
-         uzx8tTpb07hwQ==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 8f084e71;
-        Tue, 25 Apr 2023 07:08:54 +0000 (UTC)
-Date:   Tue, 25 Apr 2023 16:08:39 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        v9fs@lists.linux.dev
-Subject: Re: [PATCH] fs/9p: Fix a datatype used with V9FS_DIRECT_IO
-Message-ID: <ZEd8d7W6HnHE_66m@codewreck.org>
-References: <80bae984fd5ca49b691bb35f2fd8f345f8bb67f1.1682405206.git.christophe.jaillet@wanadoo.fr>
+        Tue, 25 Apr 2023 03:53:40 -0400
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE92793
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 00:53:38 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id rDUWpfoNtvolhrDUWpTpgz; Tue, 25 Apr 2023 09:53:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682409217;
+        bh=5mXZM2+8CUq1MLkMg5pCYcpJ5YHT+aXC4TWjV894QWw=;
+        h=From:To:Cc:Subject:Date;
+        b=TnvJO9+WncBBDJvXwGxUGPZpoAVDCM9dCNOGEU0rqOTlm0gCl3atNvsuo/MZ8D0rH
+         hc0nxV3G5j9dk4MjnbEt5pxtRu3a51zzcVgZfeMTyvBzTvsvj1AxTgp4ivP59Mm0x8
+         bKanJ+IA/L/Kx3eKki/wsL6JLYoQy/dlOeOJxG4J4y04j1lanRs8//O8NRG9KlgURY
+         20CRQc+UCFa85ucEXacBZQbNhRusWfHXpxn9PfQP84aFcZSoEV2jbnfW0vHdun4dpF
+         1DSX9oeWmHjOJ25XWrYw+0p17UkCu0dT4oyE3FMZLHjSAxnNTE4pAjHCH4IF1g3u1v
+         xLNqU7hYp7wzw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 25 Apr 2023 09:53:37 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/amd/display: Correctly initialize some memory in get_available_dsc_slices()
+Date:   Tue, 25 Apr 2023 09:53:34 +0200
+Message-Id: <f7953bb41b7d5e28ec6bc3abfa06c8aaa0193ca4.1682409190.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <80bae984fd5ca49b691bb35f2fd8f345f8bb67f1.1682405206.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET wrote on Tue, Apr 25, 2023 at 08:47:27AM +0200:
-> The commit in Fixes has introduced some "enum p9_session_flags" values
-> larger than a char.
-> Such values are stored in "v9fs_session_info->flags" which is a char only.
-> 
-> Turn it into an int so that the "enum p9_session_flags" values can fit in
-> it.
+The intent here is to clear the 'available_slices' buffer before setting
+some values in it.
 
-Good catch, thanks!
+This is an array of int, so in order to fully initialize it, we must clear
+MIN_AVAILABLE_SLICES_SIZE * sizeof(int) bytes.
 
-I'm surprised W=1 doesn't catch this... and now I'm checking higher
-(noisy) W=, or even clang doesn't seem to print anything about e.g.
-'v9ses->flags & V9FS_DIRECT_IO is never true' or other warnings I'd have
-expected to come up -- out of curiosity how did you find this?
+Compute the right length of the buffer when calling memset().
 
-Would probably be interesting to run some form of the same in our
-automation.
+Fixes: 97bda0322b8a ("drm/amd/display: Add DSC support for Navi (v2)")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+NOT even compile-tested.
 
-> Fixes: 6deffc8924b5 ("fs/9p: Add new mount modes")
+make -j7  drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.o
 
-(Not a problem per se: but note this commit hasn't been merged yet, so
-using commit IDs is a bit dangerous. Might want to remark this in the
-free comment section so Eric pays attention to not break that when applying)
+on my setup, it fails with:
+  CC      drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.o
+drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c:27:10: fatal error: dc_hw_types.h: Aucun fichier ou dossier de ce type
+   27 | #include "dc_hw_types.h"
+      |          ^~~~~~~~~~~~~~~
 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+I've not investigated why.
+---
+ drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
-
+diff --git a/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c b/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
+index b9a05bb025db..1d7384b2be28 100644
+--- a/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
++++ b/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
+@@ -645,7 +645,7 @@ static int get_available_dsc_slices(union dsc_enc_slice_caps slice_caps, int *av
+ {
+ 	int idx = 0;
+ 
+-	memset(available_slices, -1, MIN_AVAILABLE_SLICES_SIZE);
++	memset(available_slices, -1, MIN_AVAILABLE_SLICES_SIZE * sizeof(*available_slices));
+ 
+ 	if (slice_caps.bits.NUM_SLICES_1)
+ 		available_slices[idx++] = 1;
 -- 
-Dominique
+2.34.1
+
