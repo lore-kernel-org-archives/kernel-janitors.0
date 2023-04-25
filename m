@@ -2,136 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E64FC6FD18
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 13:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520E0C6FD18
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 13:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233888AbjDYNbU (ORCPT
+        id S234069AbjDYNlc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Apr 2023 09:31:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56596 "EHLO
+        Tue, 25 Apr 2023 09:41:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234189AbjDYNbH (ORCPT
+        with ESMTP id S233762AbjDYNlb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Apr 2023 09:31:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5911D13FB7
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 06:31:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 816CB62E83
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 13:31:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B0AC43445
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 13:31:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682429462;
-        bh=wmID8emQw+is79zlL5AF9o/8qFWaAe9tV8o9bZxfmd8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fxGwf6b9V0b29A2x9MYnoTsl71mf4LD1BQ5xiSM87TifE9z+pWZOrX+W2UgCNWodL
-         LDAckxfK7xvn5rR3VGWy7Xf9PjSO/4Gc26E0cEDgdVhBMNHS5kcPxdxQh06Ilqfybb
-         ohF0NOnTIRVVfTTOUB5OKFBf1WBzmhWjo2ZeoOqSFFdkfonHXrywEgr1kkHur0paBC
-         WjwYMBBGYQAGJ4drv36Zn11BsfiIhkIh8pdIb3SlTVEhoWT6YA635pCaJW4z7mxoVH
-         IIFvFUJp4nALyM0B8XIQ5mkCFxAHt0KvfOaxyQccLSpyJc0w5MyCrqaJIpbvBmdWm5
-         ZWt2L5dzcDSNA==
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-63b4a64c72bso4624132b3a.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 06:31:02 -0700 (PDT)
-X-Gm-Message-State: AAQBX9eRi3Tx/Hc4IbGak9fMXJoI8ZBlxlwfHojeS3u6Z32rSD+NrSIV
-        FHFVZrSMnzjBC7tMKwnqr5zxUnZcPfWHELWIA+wiwA==
-X-Google-Smtp-Source: AKy350aIvPvFU11G6qOuvvWHhyxXmANsSsmKypyebe+yKmS7qPVlrUVJUhVNvRKDlhe6tff+0goq4lc4uY0rFxX3mp8=
-X-Received: by 2002:a05:6a20:3d94:b0:f3:6b70:2dd7 with SMTP id
- s20-20020a056a203d9400b000f36b702dd7mr12684872pzi.34.1682429462222; Tue, 25
- Apr 2023 06:31:02 -0700 (PDT)
+        Tue, 25 Apr 2023 09:41:31 -0400
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C88E58
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 06:41:30 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id rIv9pfJUpNW2mrIv9pVpBo; Tue, 25 Apr 2023 15:41:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682430088;
+        bh=rXrzLrO3vGjGiwYLBA1OdhCadEqnB23+J7DLeIwxJkU=;
+        h=From:To:Cc:Subject:Date;
+        b=rPqKGAgtC97DC+4ysW4ox64hT/KD/gHMevtma70trjnkFd1NqMVAogdG1plzShqgQ
+         pSYo24zJia4wYKcxJa9ZCBA8SYnbuYKiy5bptaRtpOSxK1ZP9zKPL7FWToeSsIWR/9
+         vlnV41mZ4tT9AhtPvUrHUkEUodsqqQ7tsraISuACtctXk8Fa2d3fNe4Muj3HIc3Kq7
+         1Ujzxaq9ARCLrKsqNVIeom7pXugqo9pVvCKyWsgvPqo669tqd4aiwUVZem3myMnTr4
+         DGV3ccRiGUPsy+7hkw2CkgbjjYK0C0fl78AMX2nvJNfujPCK7veZ2XV/2Nu8TkbsYe
+         dis3Zm/LCSWkw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 25 Apr 2023 15:41:28 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Brad Larson <blarson@amd.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-mmc@vger.kernel.org
+Subject: [PATCH] mmc: sdhci-cadence: Fix an error handling path in sdhci_cdns_probe()
+Date:   Tue, 25 Apr 2023 15:41:26 +0200
+Message-Id: <f61599a9ef23767c2d66e5af9c975f05ef1cec6b.1682430069.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de> <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <14636275-4d26-d639-5f6e-293fc6d1c4c6@web.de>
-In-Reply-To: <14636275-4d26-d639-5f6e-293fc6d1c4c6@web.de>
-From:   Robert Foss <rfoss@kernel.org>
-Date:   Tue, 25 Apr 2023 15:30:51 +0200
-X-Gmail-Original-Message-ID: <CAN6tsi7caOQZLLvbL7phMEtNvBLaWgJuHLkLo3YWdqQw7Vxnaw@mail.gmail.com>
-Message-ID: <CAN6tsi7caOQZLLvbL7phMEtNvBLaWgJuHLkLo3YWdqQw7Vxnaw@mail.gmail.com>
-Subject: Re: [PATCH] drm/bridge: it6505: Move a variable assignment behind a
- null pointer check in receive_timing_debugfs_show()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Allen Chen <allen.chen@ite.com.tw>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        Hermes Wu <hermes.wu@ite.com.tw>,
-        Hsin-yi Wang <hsinyi@chromium.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hey Markus,
+If devm_reset_control_get_optional_exclusive() fails, some resources still
+need to be released. So branch to the error handling path instead of
+returning directly.
 
-This patch seems to be a part of a series without being marked as
-such, this causes issues when importing this patch with maintainer
-tools like b4 which automatically pull in the entire series and not
-just the specific patch. Either label the patch as being part of a
-series ( [PATCH 1/XX] ), or submit it separately.
+Fixes: aad53d4ee756 ("mmc: sdhci-cadence: Support mmc hardware reset")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mmc/host/sdhci-cadence.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-On Sun, Apr 16, 2023 at 5:47=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> Date: Sun, 16 Apr 2023 17:30:46 +0200
->
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the function =E2=80=9Creceive_timing_debugfs_show=E2=80=9D.
->
-> Thus avoid the risk for undefined behaviour by moving the assignment
-> for the variable =E2=80=9Cvid=E2=80=9D behind the null pointer check.
->
-> This issue was detected by using the Coccinelle software.
->
-> Fixes: b5c84a9edcd418cd055becad6a22439e7c5e3bf8 ("drm/bridge: add it6505 =
-driver")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+index b24aa27da50c..d2f625054689 100644
+--- a/drivers/mmc/host/sdhci-cadence.c
++++ b/drivers/mmc/host/sdhci-cadence.c
+@@ -540,9 +540,11 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
+ 
+ 	if (host->mmc->caps & MMC_CAP_HW_RESET) {
+ 		priv->rst_hw = devm_reset_control_get_optional_exclusive(dev, NULL);
+-		if (IS_ERR(priv->rst_hw))
+-			return dev_err_probe(mmc_dev(host->mmc), PTR_ERR(priv->rst_hw),
+-					     "reset controller error\n");
++		if (IS_ERR(priv->rst_hw)) {
++			ret = dev_err_probe(mmc_dev(host->mmc), PTR_ERR(priv->rst_hw),
++					    "reset controller error\n");
++			goto free;
++		}
+ 		if (priv->rst_hw)
+ 			host->mmc_host_ops.card_hw_reset = sdhci_cdns_mmc_hw_reset;
+ 	}
+-- 
+2.34.1
 
-The email in the Signed-off tag should match the email of the sender,
-which it doesn't.
-
-With the two above issues fixed, please add my r-b.
-Reviewed-by: Robert Foss <rfoss@kernel.org>
-
-> ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge=
-/ite-it6505.c
-> index abaf6e23775e..45f579c365e7 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> @@ -3207,7 +3207,7 @@ static ssize_t receive_timing_debugfs_show(struct f=
-ile *file, char __user *buf,
->                                            size_t len, loff_t *ppos)
->  {
->         struct it6505 *it6505 =3D file->private_data;
-> -       struct drm_display_mode *vid =3D &it6505->video_info;
-> +       struct drm_display_mode *vid;
->         u8 read_buf[READ_BUFFER_SIZE];
->         u8 *str =3D read_buf, *end =3D read_buf + READ_BUFFER_SIZE;
->         ssize_t ret, count;
-> @@ -3216,6 +3216,7 @@ static ssize_t receive_timing_debugfs_show(struct f=
-ile *file, char __user *buf,
->                 return -ENODEV;
->
->         it6505_calc_video_info(it6505);
-> +       vid =3D &it6505->video_info;
->         str +=3D scnprintf(str, end - str, "---video timing---\n");
->         str +=3D scnprintf(str, end - str, "PCLK:%d.%03dMHz\n",
->                          vid->clock / 1000, vid->clock % 1000);
-> --
-> 2.40.0
->
