@@ -2,134 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF2EC6FD18
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 12:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF468C6FD18
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 13:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233985AbjDYMUh (ORCPT
+        id S234037AbjDYNL1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Apr 2023 08:20:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44020 "EHLO
+        Tue, 25 Apr 2023 09:11:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233516AbjDYMUg (ORCPT
+        with ESMTP id S233989AbjDYNL1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Apr 2023 08:20:36 -0400
-X-Greylist: delayed 600 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 25 Apr 2023 05:20:33 PDT
-Received: from mx01-sz.bfs.de (mx01-sz.bfs.de [194.94.69.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 725F5CC2A
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 05:20:33 -0700 (PDT)
-Received: from SRVEX01-MUC.bfs.intern (unknown [10.161.90.31])
-        by mx01-sz.bfs.de (Postfix) with ESMTPS id A6FD420752;
-        Tue, 25 Apr 2023 14:10:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1682424631;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ce7NVq8nwePgbuk3nSva2AqTwHTxJcrzIkM0P/5Y34w=;
-        b=TgqJ8YTZyVEgVXuZue1WypK+dEUgaK6TZy2NMGxIobSduAxBio2ruUOPS3CmuRtjs1cJbY
-        0Nm2tkAd1z9LzveQVowC+ijV7/6CDjQW3fQIPQRl2zMBlhvb541YYiSoysvR/Tgz8amYb4
-        oX47TG0pyF6upnuh+fYBBQ3Raev8L7ePnE2WjyXkzvk3zp7eYwk+zi0HCR0PbZTSGLnjmx
-        /MdKyKFTxhukgsrL1kYdBWPpBvX9AI2VZ+k2UotnXZfwynIPH9ZZ7kyhtEShyFHA1e0gnd
-        JvWwV49+8hyB9BTUL0GWDs5PTIX16ixcCRiV5jl/I0YbH0gLvKkniTuFIT0RiQ==
-Authentication-Results: mx01-sz.bfs.de;
-        none
-Received: from SRVEX01-MUC.bfs.intern (10.161.90.31) by SRVEX01-MUC.bfs.intern
- (10.161.90.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.23; Tue, 25 Apr
- 2023 14:10:31 +0200
-Received: from SRVEX01-MUC.bfs.intern ([fe80::e8ba:5ab1:557f:4aad]) by
- SRVEX01-MUC.bfs.intern ([fe80::e8ba:5ab1:557f:4aad%5]) with mapi id
- 15.01.2507.023; Tue, 25 Apr 2023 14:10:31 +0200
-From:   Walter Harms <wharms@bfs.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "ath12k@lists.infradead.org" <ath12k@lists.infradead.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: AW: [PATCH] wifi: ath12k: Remove some dead code
-Thread-Topic: [PATCH] wifi: ath12k: Remove some dead code
-Thread-Index: AQHZd20t3s5fXpiW0UuWPmJZ+6i/x6877q83
-Date:   Tue, 25 Apr 2023 12:10:31 +0000
-Message-ID: <d0c5ed33fb1644328fbdc5d7aba20a97@bfs.de>
-References: <c17edf0811156a33bae6c5cf1906d751cc87edd4.1682423828.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <c17edf0811156a33bae6c5cf1906d751cc87edd4.1682423828.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.177.128.48]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 25 Apr 2023 09:11:27 -0400
+Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6E7D313
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Apr 2023 06:11:24 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id rIS0pfcRMLf5zrIS0p4TSz; Tue, 25 Apr 2023 15:11:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682428281;
+        bh=WXiKOTUweT4dQBcURtN4IPuxsbpAL9eY85lFUMFtYlY=;
+        h=From:To:Cc:Subject:Date;
+        b=hbpLJFvCsemS0Uu45T4qTVqdi6a3ZqQQ+8kgeY1JgGuAqYlNDAdj6kEkBbXH2Sn1E
+         CbPD7bQGrDkA8WZ8qXAHkNi5BxTR9wy167CR12PDQlv/IZICEwocqLw2dhHjwiYFBL
+         wphRORSM/lG3G8wQ9Vn23Zxi8AOvB84be+HoU/Q2xfwZiBRmpsKiYMb3FMkFyrNp5I
+         2QzSqucKwZgi+TWyd5J6f0cITlGWj5pCuOFgy3LWA98ADXpBw+xWoQtQwLpuiRdZQv
+         o6xowQaW5SnjZJby0ENTYyye77DpXRGCR9VgZlvVVOnxNpJmrJWZiCO/sZkLCNhl+b
+         C2lrLVzZ0Au+Q==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 25 Apr 2023 15:11:21 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] cpufreq: tegra194: Fix an error handling path in tegra194_cpufreq_probe()
+Date:   Tue, 25 Apr 2023 15:11:19 +0200
+Message-Id: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-18.00 / 7.00];
-        WHITELIST_LOCAL_IP(-15.00)[10.161.90.31];
-        BAYES_HAM(-3.00)[99.99%];
-        RCVD_NO_TLS_LAST(0.10)[];
-        MIME_GOOD(-0.10)[text/plain];
-        FREEMAIL_TO(0.00)[wanadoo.fr,kernel.org,davemloft.net,google.com,redhat.com];
-        NEURAL_HAM(-0.00)[-1.000];
-        HAS_XOIP(0.00)[];
-        MIME_TRACE(0.00)[0:+];
-        FROM_EQ_ENVFROM(0.00)[];
-        RCVD_COUNT_TWO(0.00)[2];
-        TO_DN_EQ_ADDR_SOME(0.00)[];
-        RCPT_COUNT_SEVEN(0.00)[11];
-        DKIM_SIGNED(0.00)[bfs.de:s=dkim201901];
-        FROM_HAS_DN(0.00)[];
-        MID_RHS_MATCH_FROM(0.00)[];
-        TO_DN_SOME(0.00)[];
-        TO_MATCH_ENVRCPT_ALL(0.00)[];
-        FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-        ARC_NA(0.00)[]
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Does  mcs =3D ATH12K_HE_MCS_MAX make sense ?
+If the probe needs to be deferred, some resources still need to be
+released. So branch to the error handling path instead of returning
+directly.
 
-re,
- wh
-________________________________________
-Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Gesendet: Dienstag, 25. April 2023 13:57:19
-An: Kalle Valo; David S. Miller; Eric Dumazet; Jakub Kicinski; Paolo Abeni
-Cc: linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christop=
-he JAILLET; ath12k@lists.infradead.org; linux-wireless@vger.kernel.org; net=
-dev@vger.kernel.org
-Betreff: [PATCH] wifi: ath12k: Remove some dead code
-
-ATH12K_HE_MCS_MAX =3D 11, so this test and the following one are the same.
-Remove the one with the hard coded 11 value.
-
+Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/wireless/ath/ath12k/dp_rx.c | 5 -----
- 1 file changed, 5 deletions(-)
+Compile tested-only
+---
+ drivers/cpufreq/tegra194-cpufreq.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath12k/dp_rx.c b/drivers/net/wireless=
-/ath/ath12k/dp_rx.c
-index e78478a5b978..79386562562f 100644
---- a/drivers/net/wireless/ath/ath12k/dp_rx.c
-+++ b/drivers/net/wireless/ath/ath12k/dp_rx.c
-@@ -1362,11 +1362,6 @@ ath12k_update_per_peer_tx_stats(struct ath12k *ar,
-         * Firmware rate's control to be skipped for this?
-         */
-
--       if (flags =3D=3D WMI_RATE_PREAMBLE_HE && mcs > 11) {
--               ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
--               return;
--       }
--
-        if (flags =3D=3D WMI_RATE_PREAMBLE_HE && mcs > ATH12K_HE_MCS_MAX) {
-                ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
-                return;
---
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index c8d03346068a..36dad5ea5947 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -686,8 +686,10 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
+ 
+ 	/* Check for optional OPPv2 and interconnect paths on CPU0 to enable ICC scaling */
+ 	cpu_dev = get_cpu_device(0);
+-	if (!cpu_dev)
+-		return -EPROBE_DEFER;
++	if (!cpu_dev) {
++		err = -EPROBE_DEFER;
++		goto err_free_res;
++	}
+ 
+ 	if (dev_pm_opp_of_get_opp_desc_node(cpu_dev)) {
+ 		err = dev_pm_opp_of_find_icc_paths(cpu_dev, NULL);
+-- 
 2.34.1
 
