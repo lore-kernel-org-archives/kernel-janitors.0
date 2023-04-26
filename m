@@ -2,122 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A34C77B78
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Apr 2023 19:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 481B4C77B78
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Apr 2023 19:32:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234927AbjDZTYq (ORCPT
+        id S239633AbjDZTcs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Apr 2023 15:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54718 "EHLO
+        Wed, 26 Apr 2023 15:32:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234643AbjDZTYo (ORCPT
+        with ESMTP id S239381AbjDZTco (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Apr 2023 15:24:44 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 667946E81;
-        Wed, 26 Apr 2023 12:24:22 -0700 (PDT)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33QGwraf017013;
-        Wed, 26 Apr 2023 19:24:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-03-30; bh=q2mNaPnyPQXXOVMMyGNZC0+Exw9ul90KlaFLguRPbSE=;
- b=JTI3gr9Jfaw0OpyNVhlii954Oj6UeFNzJrFkR1cAXaIfNkWeWtSouV/SpKwHTdEQJMWw
- /X98SRnlDp7sHfDH6KUMIymcVxVpCLY0ijU347uq+8i/JWmX/6LpOkna0PfRTsMcC1i5
- 9O9EDUtwf9ndhJccOCb7XH2fBR0/zFDUJSc8pL60V/e8Ip0BEPEVgvE+0ylpnJ3OoDP0
- 2LCBvL3mVIYp4T1V25oMFXhVaOlXOLIUEkRs4940xpQ/4Ff8EQ4ly8QqKLQFm8GDwsN5
- ISUzrjPsG/S3o67CD8kFldecx7sdISs5nUEya1HA22vUxB6YT1K0i9ugOM1F8iDvnaVB /A== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q476u28gj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Apr 2023 19:24:18 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 33QILsg2032779;
-        Wed, 26 Apr 2023 19:24:17 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3q4618kp2a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Apr 2023 19:24:17 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33QJOGXc020578;
-        Wed, 26 Apr 2023 19:24:16 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3q4618kp1p-1;
-        Wed, 26 Apr 2023 19:24:16 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alvin Lee <Alvin.Lee2@amd.com>, Jun Lei <Jun.Lei@amd.com>,
-        Qingqing Zhuo <qingqing.zhuo@amd.com>,
-        Josip Pavic <Josip.Pavic@amd.com>,
-        Max Tseng <Max.Tseng@amd.com>, Eric Yang <Eric.Yang2@amd.com>,
-        Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH next] drm/amd/display: Fix possible NULL dereference in dc_dmub_srv_cmd_run_list()
-Date:   Wed, 26 Apr 2023 12:24:12 -0700
-Message-Id: <20230426192413.143971-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.40.0
+        Wed, 26 Apr 2023 15:32:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CB8B114
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 Apr 2023 12:32:42 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id rksYpIGw9LshbrksYpobJM; Wed, 26 Apr 2023 21:32:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682537560;
+        bh=wlSC+PaHzigWU6qH53gedUKBlVlTHJVVwjozTSCNOBU=;
+        h=From:To:Cc:Subject:Date;
+        b=AmxP+3a6mMIwJvFptDVDzWQUXhJN1unPFvehlRknwq+U7+g9MrFJXY3biuB21/HkZ
+         bPdPKYNGuaSzqdjMYp8YY+PhGyvH08FHLhIy+F7acXdx3UEKGH6PEzac1PUpOovlv9
+         w/tmurXhFpms5N+0huiLLvZ6qu5lnPav67elRlBRmaLBuvIYph3YGIga8H6oZN6H8x
+         HYFgCdNNU/N2mbfaXWXh50NH85bu952Fs9OkTeEmRZH8Ikb0BQWZ/a69GrWjxmJXpP
+         goJnEhGfJ99ae92lX5L+JtaHeVAYNAvG1gtrXmagknv78HmwK8Jg4Mo0ayg+9QYpad
+         5gF5cTiCsbM8A==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 26 Apr 2023 21:32:40 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Ganapathi Bhat <ganapathi017@gmail.com>,
+        Sharvari Harisangam <sharvari.harisangam@nxp.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH net-next] wifi: mwifiex: Use list_count_nodes()
+Date:   Wed, 26 Apr 2023 21:32:36 +0200
+Message-Id: <e77ed7f719787cb8836a93b6a6972f4147e40bc6.1682537509.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-26_10,2023-04-26_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304260173
-X-Proofpoint-GUID: Mog46ec3betvlKJ3ZxvRDkD0ckgkGrie
-X-Proofpoint-ORIG-GUID: Mog46ec3betvlKJ3ZxvRDkD0ckgkGrie
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-We have a NULL check for 'dc_dmub_srv' in dc_dmub_srv_cmd_run_list()
-but we are dereferencing it before checking.
+mwifiex_wmm_list_len() is the same as list_count_nodes(), so use the latter
+instead of hand writing it.
 
-Fix this moving the dereference next to NULL check.
+Turn 'ba_stream_num' and 'ba_stream_max' in size_t to keep the same type
+as what is returned by list_count_nodes().
 
-This issue is found with Smatch(static analysis tool).
-
-Fixes: e97cc04fe0fb ("drm/amd/display: refactor dmub commands into single function")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Only compile tested.
----
- drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/marvell/mwifiex/11n.h |  4 ++--
+ drivers/net/wireless/marvell/mwifiex/wmm.h | 15 ---------------
+ 2 files changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
-index d15ec32243e2..62d3473c32bc 100644
---- a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
-+++ b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
-@@ -125,7 +125,7 @@ bool dc_dmub_srv_cmd_run(struct dc_dmub_srv *dc_dmub_srv, union dmub_rb_cmd *cmd
- 
- bool dc_dmub_srv_cmd_run_list(struct dc_dmub_srv *dc_dmub_srv, unsigned int count, union dmub_rb_cmd *cmd_list, enum dm_dmub_wait_type wait_type)
+diff --git a/drivers/net/wireless/marvell/mwifiex/11n.h b/drivers/net/wireless/marvell/mwifiex/11n.h
+index 94b5e3e4ba08..7738ebe1fec1 100644
+--- a/drivers/net/wireless/marvell/mwifiex/11n.h
++++ b/drivers/net/wireless/marvell/mwifiex/11n.h
+@@ -102,14 +102,14 @@ static inline u8 mwifiex_space_avail_for_new_ba_stream(
  {
--	struct dc_context *dc_ctx = dc_dmub_srv->ctx;
-+	struct dc_context *dc_ctx;
- 	struct dmub_srv *dmub;
- 	enum dmub_status status;
- 	int i;
-@@ -133,6 +133,7 @@ bool dc_dmub_srv_cmd_run_list(struct dc_dmub_srv *dc_dmub_srv, unsigned int coun
- 	if (!dc_dmub_srv || !dc_dmub_srv->dmub)
- 		return false;
+ 	struct mwifiex_private *priv;
+ 	u8 i;
+-	u32 ba_stream_num = 0, ba_stream_max;
++	size_t ba_stream_num = 0, ba_stream_max;
  
-+	dc_ctx = dc_dmub_srv->ctx;
- 	dmub = dc_dmub_srv->dmub;
+ 	ba_stream_max = MWIFIEX_MAX_TX_BASTREAM_SUPPORTED;
  
- 	for (i = 0 ; i < count; i++) {
+ 	for (i = 0; i < adapter->priv_num; i++) {
+ 		priv = adapter->priv[i];
+ 		if (priv)
+-			ba_stream_num += mwifiex_wmm_list_len(
++			ba_stream_num += list_count_nodes(
+ 				&priv->tx_ba_stream_tbl_ptr);
+ 	}
+ 
+diff --git a/drivers/net/wireless/marvell/mwifiex/wmm.h b/drivers/net/wireless/marvell/mwifiex/wmm.h
+index 4f53a271dae0..d7659e688933 100644
+--- a/drivers/net/wireless/marvell/mwifiex/wmm.h
++++ b/drivers/net/wireless/marvell/mwifiex/wmm.h
+@@ -38,21 +38,6 @@ mwifiex_get_tid(struct mwifiex_ra_list_tbl *ptr)
+ 	return skb->priority;
+ }
+ 
+-/*
+- * This function gets the length of a list.
+- */
+-static inline int
+-mwifiex_wmm_list_len(struct list_head *head)
+-{
+-	struct list_head *pos;
+-	int count = 0;
+-
+-	list_for_each(pos, head)
+-		++count;
+-
+-	return count;
+-}
+-
+ /*
+  * This function checks if a RA list is empty or not.
+  */
 -- 
-2.38.1
+2.34.1
 
