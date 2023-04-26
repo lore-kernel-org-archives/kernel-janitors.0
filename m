@@ -2,59 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB508C7618E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Apr 2023 07:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAEFC77B78
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Apr 2023 13:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239381AbjDZHcz (ORCPT
+        id S241065AbjDZNq5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Apr 2023 03:32:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39582 "EHLO
+        Wed, 26 Apr 2023 09:46:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239677AbjDZHcy (ORCPT
+        with ESMTP id S229744AbjDZNq4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Apr 2023 03:32:54 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A042701
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Apr 2023 00:32:53 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1prZds-0000C9-I5; Wed, 26 Apr 2023 09:32:44 +0200
-Received: from pza by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1prZdr-0001IB-4x; Wed, 26 Apr 2023 09:32:43 +0200
-Date:   Wed, 26 Apr 2023 09:32:43 +0200
-From:   Philipp Zabel <p.zabel@pengutronix.de>
+        Wed, 26 Apr 2023 09:46:56 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E2649FA;
+        Wed, 26 Apr 2023 06:46:53 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-63b73203e0aso43211640b3a.1;
+        Wed, 26 Apr 2023 06:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682516813; x=1685108813;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6HOqBk1UlEcgm2Kf38PAS6YSfqtoyj6leA2i8Xni3cU=;
+        b=hKlyJwuCjKjSlG7MX/ZQbo0uLhclgmUlGqyrTng/F7fGntOAtJYmueJDG31t60h/71
+         XEQq5GpYVzOrjx+QFwRiTAgQhFgsPkPG3+c0pzoII8MukvEA9Gq0xehazR8nMdemZ3pw
+         TN2+6XQjKdVYQaFtTuqddqQ3NSeIR/cD0dk3H63PxljrY9p9u2geid11J23AH+WM/vhG
+         NAsQjd0y6vVfr/dsH5SzGszIMJP9gPcFIfvxcUdXS/MGpKsCqjRV99xSKwhiCtROK+jY
+         Cey2lQBJKzMXrYBlHGJr4PzThDGiqEZqMfXdToevYx8Js+P0QJy3qjhs1/Akxin1rkju
+         CCDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682516813; x=1685108813;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6HOqBk1UlEcgm2Kf38PAS6YSfqtoyj6leA2i8Xni3cU=;
+        b=Zf/3cISWjcSzAzdzww73oU96USDMdYN16DgVITNBFx9axzoobTgB3oQRBNPsQpsE85
+         M1P5SHQ9abM2zJrCFgnU6ttrXn1ep6nh5dpv6j3fMw0JHtwhHX6DpXMlIHyevQs9CNDI
+         zE9mt+16MR8TJcXWVV03UBXaDpRvEq0/935s5f+Dzk2RNHCK5vmnihX8DNULp0HTDPXF
+         wvs92kkMtSXcTxZF5oI2UJCz3a8EdJQgdihefcJnsCmDs3Q1LGf2ymXrlZeyk5IGzw1W
+         UvNk9QEleXAdVRvF0mtEncBCcDnJgIzirKo98RHHnlHdKbl3k8vEX/DwuaxD8Ys1y2r7
+         CRmg==
+X-Gm-Message-State: AC+VfDxfYAZ2lXkjOAtMhD0HLsrFI3meomCxAE3xYqzIR1+y9wjSM5BJ
+        7MDD75HDMYoENoD6p5M13KT/hm5wfq8=
+X-Google-Smtp-Source: ACHHUZ7RYk6DH3HP8+DJ5dcBFidAC4UWydn7vFoRUwx5IDtmg3Klzwh2am44w7r6rz0FG8uKx5swiw==
+X-Received: by 2002:a17:902:dacd:b0:1a2:a904:c42e with SMTP id q13-20020a170902dacd00b001a2a904c42emr2938434plx.24.1682516812701;
+        Wed, 26 Apr 2023 06:46:52 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2-20020a170902654200b00192aa53a7d5sm10016419pln.8.2023.04.26.06.46.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Apr 2023 06:46:52 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Wed, 26 Apr 2023 06:46:50 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Steffen Trumtrar <s.trumtrar@pengutronix.de>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Wim Van Sebroeck <wim@iguana.be>,
         linux-watchdog@vger.kernel.org
 Subject: Re: [PATCH 1/2] watchdog: dw_wdt: Fix the error handling path of
  dw_wdt_drv_probe()
-Message-ID: <20230426073243.GA4724@pengutronix.de>
+Message-ID: <61138390-378d-499d-bb62-7c944f0569c3@roeck-us.net>
 References: <fbb650650bbb33a8fa2fd028c23157bedeed50e1.1682491863.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <fbb650650bbb33a8fa2fd028c23157bedeed50e1.1682491863.git.christophe.jaillet@wanadoo.fr>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: pza@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
-
-Hi Christophe,
 
 On Wed, Apr 26, 2023 at 08:52:48AM +0200, Christophe JAILLET wrote:
 > The commit in Fixes has only updated the remove function and missed the
@@ -65,7 +82,42 @@ On Wed, Apr 26, 2023 at 08:52:48AM +0200, Christophe JAILLET wrote:
 > Fixes: 65a3b6935d92 ("watchdog: dw_wdt: get reset lines from dt")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-regards
-Philipp
+> ---
+>  drivers/watchdog/dw_wdt.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
+> index 6f88bd81f8a1..a1354a59eb37 100644
+> --- a/drivers/watchdog/dw_wdt.c
+> +++ b/drivers/watchdog/dw_wdt.c
+> @@ -635,7 +635,7 @@ static int dw_wdt_drv_probe(struct platform_device *pdev)
+>  
+>  	ret = dw_wdt_init_timeouts(dw_wdt, dev);
+>  	if (ret)
+> -		goto out_disable_clk;
+> +		goto out_assert_rst;
+>  
+>  	wdd = &dw_wdt->wdd;
+>  	wdd->ops = &dw_wdt_ops;
+> @@ -667,12 +667,15 @@ static int dw_wdt_drv_probe(struct platform_device *pdev)
+>  
+>  	ret = watchdog_register_device(wdd);
+>  	if (ret)
+> -		goto out_disable_pclk;
+> +		goto out_assert_rst;
+>  
+>  	dw_wdt_dbgfs_init(dw_wdt);
+>  
+>  	return 0;
+>  
+> +out_assert_rst:
+> +	reset_control_assert(dw_wdt->rst);
+> +
+>  out_disable_pclk:
+>  	clk_disable_unprepare(dw_wdt->pclk);
+>  
+> -- 
+> 2.34.1
+> 
