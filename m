@@ -2,129 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F96CC77B71
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Apr 2023 20:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6885C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Apr 2023 00:35:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236223AbjDYUGP (ORCPT
+        id S238451AbjDZAfs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Apr 2023 16:06:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34014 "EHLO
+        Tue, 25 Apr 2023 20:35:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231735AbjDYUGO (ORCPT
+        with ESMTP id S236933AbjDZAfr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Apr 2023 16:06:14 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2050.outbound.protection.outlook.com [40.107.94.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F101419A2;
-        Tue, 25 Apr 2023 13:06:12 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jIULEJG4q0g/HOIGObOj9wjJYoGb18EWM5eVBoDKQUnXwIRg7pPbZw1c8thvi9SetDq74JriEryh1rEL8HY15mPUXii4v/+vuLjuXbJ4r7Z+nEhj+95wySYt15MRQJem9uJ2eU4+vJdwyof2YvDiJ8qRMsids85kPSxjX0z6jeau7Y833f6+eOaCoFHrSjZi/BmLL8APyzd/ql9vq8phrlJ/dzf5HOr/CbQ+caXUVWMFnnB7D4FRBL3sMF7VfAjcQI6v5VDstKeN3UlTq9tNbdP3P6MZouhdc8xGnxixJxvfdiWofyMa2A18fcLbunL1X207+fqFI5LJcpqoHTQofw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fKv1aYo1TDnKjSOQOUMkd3D2kQ9kh1cE9EoXYpX2v5k=;
- b=JGCNzwLdnfk3+3k/4ho8U0CICibdfSPdTa/n1bFx8n9R1hfmpPEz0x6WSjgNaaUjEebMZZcQphxu/6yWnusKLP6UGeEZFtlNgKsQ+UxECUehyjvY9+UmvYuhzLkELxbg1KzHHRMHuc9z1OG1aKpfoozyLEN75D6jRs30XdjqpdrFGfhZcHefvT/eAEZyR6ds6dJsGW1fJo9efpHPeLF/au97pGm8Aa0RiJyzoQZsc6xgFBbSccNO+nh4yS25c+W3D5J3Fr4V0nciJ8MQL38kj32fRp1zc4Sk44dZ8JMEap+XtWyo+Izsitg3cBLPxzXG3wj49LTM+CsXbYDVBxYHwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=wanadoo.fr smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fKv1aYo1TDnKjSOQOUMkd3D2kQ9kh1cE9EoXYpX2v5k=;
- b=I+6P58VmCHsl44uEgpn0VeQsz+BiEbfbI/sDft2LAduUI9Jt5iobOsprtWWmwVR2diH4i+xoZeqmfIVCCYfqSrXtDQ2jGazG7RtwF6ZmyOagWP1qivJm8/En/fvYYDSfVUv6sBziyFvUafJg0rKFjKy5Zhh3s5M2reyKyKU/u6M=
-Received: from MW4P220CA0027.NAMP220.PROD.OUTLOOK.COM (2603:10b6:303:115::32)
- by DM4PR12MB5246.namprd12.prod.outlook.com (2603:10b6:5:399::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.33; Tue, 25 Apr
- 2023 20:06:08 +0000
-Received: from CO1NAM11FT056.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:115:cafe::c1) by MW4P220CA0027.outlook.office365.com
- (2603:10b6:303:115::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.34 via Frontend
- Transport; Tue, 25 Apr 2023 20:06:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT056.mail.protection.outlook.com (10.13.175.107) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6340.20 via Frontend Transport; Tue, 25 Apr 2023 20:06:08 +0000
-Received: from platform-dev1.pensando.io (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.34; Tue, 25 Apr 2023 15:06:06 -0500
-From:   Brad Larson <blarson@amd.com>
-To:     <christophe.jaillet@wanadoo.fr>
-CC:     <adrian.hunter@intel.com>, <blarson@amd.com>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>, <p.zabel@pengutronix.de>,
-        <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: sdhci-cadence: Fix an error handling path in sdhci_cdns_probe()
-Date:   Tue, 25 Apr 2023 13:06:00 -0700
-Message-ID: <20230425200600.54806-1-blarson@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <f61599a9ef23767c2d66e5af9c975f05ef1cec6b.1682430069.git.christophe.jaillet@wanadoo.fr>
-References: <f61599a9ef23767c2d66e5af9c975f05ef1cec6b.1682430069.git.christophe.jaillet@wanadoo.fr>
+        Tue, 25 Apr 2023 20:35:47 -0400
+X-Greylist: delayed 50100 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 25 Apr 2023 17:35:46 PDT
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 163D4BB;
+        Tue, 25 Apr 2023 17:35:45 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 97E92C01D; Wed, 26 Apr 2023 02:35:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682469344; bh=WkAOxd1G4B7WbFDuFK2jnLsO97agfT/cj1gWYlIL73s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kZe68lAlyVt/HxiPSMN5GL0FDy6zoCEybHQtU6iqUo9/hXQJcYBY/VBz129sC0YfY
+         +DLMPoNQRxR/SUjiW6quXyPGN/zE1LPBrtFpomRyvokxCODmyNyHxF0UMF+4H3lCzV
+         F/LU6RCVi9K5TxLgH1j3h0KaryRrew+22D/W9Gxf4wteizilrS74EBniHU+rDW9fQb
+         3RFe/dMwz3vTsNJNK2NbZ167Qf+lzIiNuIjsIt+ODytYuAlmSdE/9a2BmqwfFZsn5O
+         LUcnxkJLRcnJ/KJ31VSx/clx9QqnIjM8qPIXDNTlQMIHJXZWFw1H6Ab4uv6g7po+A7
+         ee0ymPbYmDLww==
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 77F15C009;
+        Wed, 26 Apr 2023 02:35:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682469343; bh=WkAOxd1G4B7WbFDuFK2jnLsO97agfT/cj1gWYlIL73s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mF/VMeuCx6NWy3dSCaV6givEULXRt8VNNvme65N08336Ai4m5pz2D+6DxOMy4VyJH
+         0F1xBHRmSk1rsge9RJ+Qo6ABiol5LtD42GTcfKKtPYic+feaEzWOK3+GZOtmfonf4n
+         BySOYF1NvS05EdhvFZrnwmoVElYMWdI0O1Xf2Ql2FcBGbCWQ3hoqXtmhq/2bKjohf6
+         SPyAKlbg+6aZA+HCfgU0WkxIVP0fCisuusfpH31GeTARl2KZPNX5wf6Ks+7GXvLW5n
+         XhMe7s3u9ccMiFgfcOZumBZzMczNniufG/e3RoHZHeJI/NUGRxKIr6OSTZfaYKjMwG
+         XP1egKzDRErUQ==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 2208154f;
+        Wed, 26 Apr 2023 00:35:37 +0000 (UTC)
+Date:   Wed, 26 Apr 2023 09:35:22 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        v9fs@lists.linux.dev
+Subject: Re: [PATCH] fs/9p: Fix a datatype used with V9FS_DIRECT_IO
+Message-ID: <ZEhxygpFsFstKlrX@codewreck.org>
+References: <80bae984fd5ca49b691bb35f2fd8f345f8bb67f1.1682405206.git.christophe.jaillet@wanadoo.fr>
+ <ZEd8d7W6HnHE_66m@codewreck.org>
+ <CA+_b7DK1s87y-_-D3sQxteqJ+78uvKza-vgWGv9SmGm-tqz7DA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT056:EE_|DM4PR12MB5246:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc03148f-30f8-4cd5-ddbe-08db45c88235
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: eFQ11h5/ON4bsa7ugStYLOLDLvlH6/9UjOsflQ3PSMfjVLnf/qE0V+nUBjL9DwbObjGwnUCL3SuRHVaim6LCMhvbccZBTTS1YclZOLeWwfavcKS4vPpOWex0smS8UcODwgkq93aupX5QBO0F3xCUI4fkoso9ZMRAOex5jRA6Hhd44J0DC8z4iXHaZ6S+Jnu5xAjNb4+66TDX8QflUkt6pf5pvyVCRdd163yIMWkXoRTz6mXWYMM+CG5VQpI8R3EJg+EVPJ4xYl4oNF2pJOLzNB1HM/AVMQ8dfLX0d160PfaF5Mq+LseFPvjAcaFgHDznq/rhlrDjOd+ZMSeESYlSR5JfvikKlIGgza/TqT6A9ML9rf2fdA5c0BbCUQKI0JOD/K8jZqL6pwNLYoNfQfiORq4bHu1rPz2nEFR9+3auDjoUvgcBmWvuaDNJB9hNZ2f3ImM54nxhVqn/9189dgtsXe7g3gwlMUQmwJTUslTTHUZCAN0cVH1TyTCWVc3E7oYQfyDaxhdw/qF7Jnp1rTFGUHgd8JAvY+XT7RoodaKcX15EWvDfVEaK+qIB/QMLUeY8HqRbfToQ0rcrpZ1cGKD+HEAKNUqsAAFjiT9pOuIapXbm89CZZDNJNjh0E1/XC8+0QGo8J2gF0f55jSn/zalW6VP6KnpnixeYWm0VxdF5LFU5yJvXDIoLEJsY9c/HXHuTdTC38gsVY0gpVdBG68MrxsMv+AGdAgqWFU74RJhI55g=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(376002)(346002)(136003)(451199021)(46966006)(36840700001)(40470700004)(336012)(356005)(426003)(53546011)(82740400003)(81166007)(1076003)(26005)(186003)(16526019)(2616005)(40480700001)(8936002)(83380400001)(47076005)(36860700001)(2906002)(8676002)(5660300002)(36756003)(40460700003)(316002)(6666004)(54906003)(478600001)(4326008)(6916009)(41300700001)(70586007)(70206006)(82310400005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2023 20:06:08.1838
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc03148f-30f8-4cd5-ddbe-08db45c88235
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT056.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5246
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+_b7DK1s87y-_-D3sQxteqJ+78uvKza-vgWGv9SmGm-tqz7DA@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 25/04/23 16:41, Christophe JAILLET wrote:
-> If devm_reset_control_get_optional_exclusive() fails, some resources still
-> need to be released. So branch to the error handling path instead of
-> returning directly.
-> 
-> Fixes: aad53d4ee756 ("mmc: sdhci-cadence: Support mmc hardware reset")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Dan Carpenter wrote on Tue, Apr 25, 2023 at 02:14:52PM +0100:
+> The hash is constant unless Eric does a rebase.  When a maintainer rebases
+> then updating the fixes tags is just part of the process.  Often they end up
+> folding the fix into the original patch at that point so the Fixes tag is not
+> required.  If a maintainer doesn't update the tags then the linux-next
+> maintainers will notice and complain.
 
-Acked-by: Brad Larson <blarson@amd.com>
+Good to know this is checked as part of the linux-next tree checks.
 
-> ---
->  drivers/mmc/host/sdhci-cadence.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-> index b24aa27da50c..d2f625054689 100644
-> --- a/drivers/mmc/host/sdhci-cadence.c
-> +++ b/drivers/mmc/host/sdhci-cadence.c
-> @@ -540,9 +540,11 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
->  
->  	if (host->mmc->caps & MMC_CAP_HW_RESET) {
->  		priv->rst_hw = devm_reset_control_get_optional_exclusive(dev, NULL);
-> -		if (IS_ERR(priv->rst_hw))
-> -			return dev_err_probe(mmc_dev(host->mmc), PTR_ERR(priv->rst_hw),
-> -					     "reset controller error\n");
-> +		if (IS_ERR(priv->rst_hw)) {
-> +			ret = dev_err_probe(mmc_dev(host->mmc), PTR_ERR(priv->rst_hw),
-> +					    "reset controller error\n");
-> +			goto free;
-> +		}
->  		if (priv->rst_hw)
->  			host->mmc_host_ops.card_hw_reset = sdhci_cdns_mmc_hw_reset;
->  	}
+> #GitMagic
+
+This isn't magic, this is painful to update manually and easy to forget,
+which is why as a maintainer I'd appreciate having a heads up here and
+why I mentioned it.
+(I'm sure Eric would have noticed anyway given this is fixing one of the
+patchs he really wants to get in this merge window... But, well, in
+general)
+
+
+Re: folding into the original patch or not is also tricky as it weakens
+recognition to the contributor, so I tend to keep such fixes separate
+unless the tree becomes completely unusable (e.g. doesn't build) for
+bisectability.
+
+(I really, really wish there was a more mainlined maintainer process
+though, so each maintainer wouldn't have to come up with their own rules
+and tricks for everything... But I think that's a lost battle at this
+point)
+
+-- 
+Dominique Martinet | Asmadeus
