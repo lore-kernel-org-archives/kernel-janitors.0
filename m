@@ -2,176 +2,122 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB784C77B7C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Apr 2023 17:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A34C77B78
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 Apr 2023 19:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235168AbjDZR1h (ORCPT
+        id S234927AbjDZTYq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Apr 2023 13:27:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53038 "EHLO
+        Wed, 26 Apr 2023 15:24:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234139AbjDZR1f (ORCPT
+        with ESMTP id S234643AbjDZTYo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Apr 2023 13:27:35 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2086.outbound.protection.outlook.com [40.107.237.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D25407DB0;
-        Wed, 26 Apr 2023 10:27:31 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MTRV6mZ6hTL/Ww2nch3C0Xnx6nFSMCkMj2S8zj5pOtY7lnqIkWwTfitAZ+VUOra8KPpMQGj/NCqzfMPv5y6FC1vmAoF5dwhe8oalcKZ7DB1AFpSRLDmPeoxf1x5oI4G0/uhR8jP+75oYf+vEkJ3+CPq1x8DcQ6UmMFsYmVui1mGMQK9d8Fuh70Nce3ErapAUSkFmMOGT4AQ/gM3Mjc10q9XtNvJ+US/Na9I3tOKe0SK2T8e/wxvokPvLCuSTkLQhDd5GvDwZ9Up3R1RxclCshXJkFKpsuUzo0Hz/7JXwDNSXa6hp5ISsTMaKlLQe1xjdRgAQKLYRR+tU7Y2gcYv77g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QRcA6KQFeRb3isEh+ZXnkTbPfm3mzvIcwZae34g/RLE=;
- b=oDnkyYXyqGTDQX05QvJ88oLPndavyr6DUyzIB9ui+gu4tBUIXQoOKMZc+rnld0s/FJ6XoPpJfGC1f3uH+oE05Fhv0Z5TS0MAsCZFXsAS5lnkP+ys1GnPqXztHYkAJFzWcRF58NnmIKV7RFPpyC0yBegkEB77qVw24lWktzeltj2nTRLae8aF3uW7GD5qf/JZTKRxrh78/4w+IKwfYmp5dqrJ46MZq8muR/mVCis3GdOuxU6tT7k2S3Uxjc0t8dh2HYoxL995S07IAAD1rUFdZDrroebFzBFwFkB8anJMNvptIuBg5Q8+sBTU9BEzP6Hu/f+OJ7KhQq/verEDB/WSyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QRcA6KQFeRb3isEh+ZXnkTbPfm3mzvIcwZae34g/RLE=;
- b=MwfL25LRTH/XcsCLuH8DjvEBXOLUq2ew9wvpLAVNkgEDg8c9wwmWURkDP0ZzAPWq41E7xxch/ievslLWLzyKV0cX/T8N0KDpXqDXAmTrhIwWXyZf67AI/RLhqm3XWY1tFmlC8pBXwUZEzZRyK8ohMfIfa3QIWl/gQrbDtdo3K5c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6280.namprd12.prod.outlook.com (2603:10b6:8:a2::11) by
- IA0PR12MB8746.namprd12.prod.outlook.com (2603:10b6:208:490::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6340.21; Wed, 26 Apr 2023 17:27:29 +0000
-Received: from DM4PR12MB6280.namprd12.prod.outlook.com
- ([fe80::fe53:2742:10f9:b8f1]) by DM4PR12MB6280.namprd12.prod.outlook.com
- ([fe80::fe53:2742:10f9:b8f1%9]) with mapi id 15.20.6340.021; Wed, 26 Apr 2023
- 17:27:29 +0000
-Message-ID: <20b45faa-bc4f-3e90-f61a-f6d7407df6c0@amd.com>
-Date:   Wed, 26 Apr 2023 13:28:53 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH] drm/amd/display: Correctly initialize some memory in
- get_available_dsc_slices()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Wed, 26 Apr 2023 15:24:44 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 667946E81;
+        Wed, 26 Apr 2023 12:24:22 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33QGwraf017013;
+        Wed, 26 Apr 2023 19:24:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=q2mNaPnyPQXXOVMMyGNZC0+Exw9ul90KlaFLguRPbSE=;
+ b=JTI3gr9Jfaw0OpyNVhlii954Oj6UeFNzJrFkR1cAXaIfNkWeWtSouV/SpKwHTdEQJMWw
+ /X98SRnlDp7sHfDH6KUMIymcVxVpCLY0ijU347uq+8i/JWmX/6LpOkna0PfRTsMcC1i5
+ 9O9EDUtwf9ndhJccOCb7XH2fBR0/zFDUJSc8pL60V/e8Ip0BEPEVgvE+0ylpnJ3OoDP0
+ 2LCBvL3mVIYp4T1V25oMFXhVaOlXOLIUEkRs4940xpQ/4Ff8EQ4ly8QqKLQFm8GDwsN5
+ ISUzrjPsG/S3o67CD8kFldecx7sdISs5nUEya1HA22vUxB6YT1K0i9ugOM1F8iDvnaVB /A== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q476u28gj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Apr 2023 19:24:18 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 33QILsg2032779;
+        Wed, 26 Apr 2023 19:24:17 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3q4618kp2a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Apr 2023 19:24:17 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33QJOGXc020578;
+        Wed, 26 Apr 2023 19:24:16 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3q4618kp1p-1;
+        Wed, 26 Apr 2023 19:24:16 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
         Harry Wentland <harry.wentland@amd.com>,
         Leo Li <sunpeng.li@amd.com>,
         Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         "Pan, Xinhui" <Xinhui.Pan@amd.com>,
         David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
-References: <f7953bb41b7d5e28ec6bc3abfa06c8aaa0193ca4.1682409190.git.christophe.jaillet@wanadoo.fr>
-From:   Hamza Mahfooz <hamza.mahfooz@amd.com>
-In-Reply-To: <f7953bb41b7d5e28ec6bc3abfa06c8aaa0193ca4.1682409190.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0043.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c00:1::20) To DM4PR12MB6280.namprd12.prod.outlook.com
- (2603:10b6:8:a2::11)
+        Daniel Vetter <daniel@ffwll.ch>,
+        Alvin Lee <Alvin.Lee2@amd.com>, Jun Lei <Jun.Lei@amd.com>,
+        Qingqing Zhuo <qingqing.zhuo@amd.com>,
+        Josip Pavic <Josip.Pavic@amd.com>,
+        Max Tseng <Max.Tseng@amd.com>, Eric Yang <Eric.Yang2@amd.com>,
+        Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH next] drm/amd/display: Fix possible NULL dereference in dc_dmub_srv_cmd_run_list()
+Date:   Wed, 26 Apr 2023 12:24:12 -0700
+Message-Id: <20230426192413.143971-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6280:EE_|IA0PR12MB8746:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c520c29-5029-4299-6e94-08db467b82b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: c8RZG3biDl2ytXVkKii3rPq+5WyCnNqgS9wwCaRaRvWl8FIh/v8eXOjXK2rx3OwUvZ7TXBFcgS8CDai4n23mdl0bt5qqNBwpjUxnwbuw69n0oSfLGKsbb4M/S+TRvirrHOe5+SGArClzWLriUZgzgknvvyzjYfjoreB2wECHEvm4syJ6IWzzWlQevIjMWfbnUyPpxdT/Qufh2ZCD/eP3qUYNSk5Hn+wI/d6zewTvmTXYGpRNNMZF/2IqIHpWH5ah37B1oEXh+YDrl/sIlrrK2GY63r3vyndzK6wX4NkYPHJ/gyJ53/3mn5Rfd9FfEX9lIlJ820hpiII5CeZ/XPM2mJazeTExAAOhgnP8skQY45z/n8QbB71gzzrlztWpkZy52O9y1g5IexCDvQSxx2K6owYQJno4Y4H8g3dlmQnYfLbgCD1e7+yYLiAID0cvAN819PxF988CYHo+L2bADS6MGObrKuS1sT9teBBTnU5zAk+uHbH9EgP/fcLKIISbFvyuxhhwRfz4g5lk+/6wSlC4HopJ3nRWgwfrw25jdjxmx3NrpdaCttdvif8FeRQUrtdayiYFdGWmN1l8kg1LOrtHaESZluCmiNGq4b0w8+uY80CAGqwkFLDtb1UGb2JkYyNpOrZszKr6Rv6Q4zNAy+T2rhx0iWf+WkD5UWuu31tMcOo=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6280.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(136003)(366004)(39860400002)(376002)(451199021)(5660300002)(38100700002)(66946007)(8676002)(8936002)(31696002)(66476007)(66556008)(86362001)(921005)(41300700001)(4326008)(316002)(44832011)(2906002)(6506007)(26005)(186003)(6512007)(53546011)(6486002)(36756003)(6666004)(83380400001)(2616005)(31686004)(478600001)(110136005)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eWFCQ2s1eVpjeFVMMnBub0Q4NVV3cjc0TUZ1UWFObXRIdHZ5dmhTeDFTUFNJ?=
- =?utf-8?B?U1ordnlKNnAvMk9pbnlTcUViSm1zWU9DZzZvVnFFdGwvOEZZVVllaGJiRE41?=
- =?utf-8?B?OGF0TnJGKzcvN1d3VHJUbndqbnZyazA3N3VyeHNRNTNML0FLSzdOSDh2WWdJ?=
- =?utf-8?B?MkYyWlU4UlFsYVRMdDlPQldsSHlQOGFOMUp1emJZWDZTN015a3J4RGFSYXZ5?=
- =?utf-8?B?aHdTWGJuYllDTS9iaWo0c0VXOHF3OWNZWXFOVDJzVXJOSXN2bjgvb09aYnRU?=
- =?utf-8?B?cEZEZnMxWEU4bGxwMEFlS1ZVWmMyVjE2Y0pBeGMwMEtISXJYaklvUU9NaHRy?=
- =?utf-8?B?SFNFeldzUG96bDdwdzlRTmpEOFQ2Tk1iUXlNQUxqSGlrUDFrNEhtaEJMWnpx?=
- =?utf-8?B?ZFV3NmtZZGNFMjdUMHd0UzI0MjQrTS8rQ2FBRTZIN2cxS05HUnFsSk43ZlIv?=
- =?utf-8?B?S0tERE9NS0pTWHY5VDhaM3FwbjFtcTJNS0RMeU0yOUhZMEVjdFNkTk9IMFJQ?=
- =?utf-8?B?bEw1eVpraXhNNDMwSTAzcTV5S3hWenRzelpnNlZsc1VKWCtrbVdscWxHNy81?=
- =?utf-8?B?L3dDbWpCbi91S0ZGR1E5WmIrQ2dzNXdrSnFzRmI0U2Q2N1BBWUo0YU4xaXRm?=
- =?utf-8?B?MlBYLzBTa3Y3ZXFrYkpMelp6em95NFhuNFpYYzhuSE5YdU94LzVsWUJPSUJG?=
- =?utf-8?B?a3JCcTBpT2dYTXRXT1hrMTI0cjhWZitKcTJKdEd4cTI5azZPcEtBZnBXV0tq?=
- =?utf-8?B?M2tRYi8yVFUrYjFpdTFqVndCbzFkYUNDRFR3YzE4bzIrb1dNa2VxdFVYYzgy?=
- =?utf-8?B?bm5hbys5K1gyd2ZoejNKM1E1aDZGZTBNaUZmTDNVOVB0M2VteFl3Yk11c01W?=
- =?utf-8?B?NzNwOUdmbmtwakI2ZlNlSFNJb1BPalNPUmkyTkVMOXFLNDFQN3A1RCtwc3BZ?=
- =?utf-8?B?blV5UDlNeXBVZ3VyR0RjSDdJQjM3VVREZlZwUitUM0R3aVh6MFY2amZhZmxM?=
- =?utf-8?B?WXN4SWxXRFFYZmhVZGliU0MrWDNVajF6YmFudW9DUjR4akFPY0hZZVQ5ZnJz?=
- =?utf-8?B?M3dVVi8vaVJGMzRFNTFvckZPK2tESVQraVYzTTJVNVN6ejFmcy96emVLMlUv?=
- =?utf-8?B?UGpwYVM3bjdXdkJKOTFyNk9YVFdoenIxMWhoOGlBVzVDRlRiT2hjcEtPVUMx?=
- =?utf-8?B?VXJpVnRwMDNLd1p6eGM0ZEIwTE9UcWR0WHpPYmhzTWQ2SitITUpIRm8zOGo4?=
- =?utf-8?B?ckNuVmVZVEtoWnBqRFVENEZjQXdvYTVtOFR2VHh5TTRYTTF4NVl4TktkMjAz?=
- =?utf-8?B?ZW1BeDRkczhFRlFvSDRCT3BhVm02VXcvQUg0a2Fvd2VQTjRURFo4c0JLMGk1?=
- =?utf-8?B?N1BlQjVkdmt5VHkxbWRqTzljMFZBbm1KZWNsSTUwQlNvc04wV0JMUjhLNHhz?=
- =?utf-8?B?akdqVGUxS24yaVZOMGdjOTVYWWJHd0pHRFFXSjc2MjRyNEh2TlNNYTB5Zlpt?=
- =?utf-8?B?QmU3YjExY1Y5c3IyclVRL1VTU0hxUGU0dkliQi83UkhtV2VTUFFKY09zMDVh?=
- =?utf-8?B?ZHRkRkYxdVNvMDRzMjBvMGQ1bUdLZ29na1FZQXJhalF3N2daRXJmcUZreGh3?=
- =?utf-8?B?cDAxN3MwdXVGbi9TQWVIaEJWeHRBSXgxUWsvYk1VY0hGbkc2Z0RRbEorMmg4?=
- =?utf-8?B?alpZa0JhKzJiK1EyQkY1Q3lXL25jK2RPWGN6SGJWUnYvQmp5RFpYUzNhYWMw?=
- =?utf-8?B?WVd0K3NLN0drSDVRR1IxM044TVhCbGsyQU1yZVkxYWcxNUVNbGlNYmNmM3BN?=
- =?utf-8?B?RC95QmlmdmU2Mk4vdHNnZ3l2NVhuRzNOaUU1Y3psOU9hVW15TFh0Z2ROWU4v?=
- =?utf-8?B?eERmcS8wRVZpcWFrRi91dUsvUDduNndDTXBVU1YvRG95RUxBTU9XVUJ3aTlM?=
- =?utf-8?B?NWhKODFnQzNueE5sMldQV2wzaHNSRCtmRzlJVGZLY1BGWkwwdlVydHdQcU45?=
- =?utf-8?B?N0VrdjRSMFRvOUN3NUh2cWRCdG1EaGZPVGNVNjNVQUxyRldhYnRzQ2FWZll0?=
- =?utf-8?B?R2Z5VzRNazAzZHk1SzIxc0pMRTNqWHl0aHBDRWQrNXRiVmt2VHltYWRpVyt2?=
- =?utf-8?Q?6k9MNlGoQRDNBsr8kdWLFqpZd?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c520c29-5029-4299-6e94-08db467b82b5
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6280.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2023 17:27:29.2687
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L5WYKHZjipbYKfBcvQd6lLfvNXM+lxGtCF43qDr4x8yOoe69xo/1YKnzCHelZ2uRM2ady70JPMGveTytplzwdw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8746
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-26_10,2023-04-26_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2304260173
+X-Proofpoint-GUID: Mog46ec3betvlKJ3ZxvRDkD0ckgkGrie
+X-Proofpoint-ORIG-GUID: Mog46ec3betvlKJ3ZxvRDkD0ckgkGrie
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/25/23 03:53, Christophe JAILLET wrote:
-> The intent here is to clear the 'available_slices' buffer before setting
-> some values in it.
-> 
-> This is an array of int, so in order to fully initialize it, we must clear
-> MIN_AVAILABLE_SLICES_SIZE * sizeof(int) bytes.
-> 
-> Compute the right length of the buffer when calling memset().
-> 
-> Fixes: 97bda0322b8a ("drm/amd/display: Add DSC support for Navi (v2)")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> NOT even compile-tested.
-> 
-> make -j7  drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.o
-> 
-> on my setup, it fails with:
->    CC      drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.o
-> drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c:27:10: fatal error: dc_hw_types.h: Aucun fichier ou dossier de ce type
->     27 | #include "dc_hw_types.h"
->        |          ^~~~~~~~~~~~~~~
-> 
-> I've not investigated why.
-> ---
->   drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c b/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
-> index b9a05bb025db..1d7384b2be28 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
-> @@ -645,7 +645,7 @@ static int get_available_dsc_slices(union dsc_enc_slice_caps slice_caps, int *av
->   {
->   	int idx = 0;
->   
-> -	memset(available_slices, -1, MIN_AVAILABLE_SLICES_SIZE);
-> +	memset(available_slices, -1, MIN_AVAILABLE_SLICES_SIZE * sizeof(*available_slices));
+We have a NULL check for 'dc_dmub_srv' in dc_dmub_srv_cmd_run_list()
+but we are dereferencing it before checking.
 
-Actually, I believe we can drop this memset(). Since,
-get_available_dsc_slices() returns the number of indices set, and all of
-the users of get_available_dsc_slices() don't cross that bound.
+Fix this moving the dereference next to NULL check.
 
->   
->   	if (slice_caps.bits.NUM_SLICES_1)
->   		available_slices[idx++] = 1;
+This issue is found with Smatch(static analysis tool).
+
+Fixes: e97cc04fe0fb ("drm/amd/display: refactor dmub commands into single function")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+Only compile tested.
+---
+ drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
+index d15ec32243e2..62d3473c32bc 100644
+--- a/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
++++ b/drivers/gpu/drm/amd/display/dc/dc_dmub_srv.c
+@@ -125,7 +125,7 @@ bool dc_dmub_srv_cmd_run(struct dc_dmub_srv *dc_dmub_srv, union dmub_rb_cmd *cmd
+ 
+ bool dc_dmub_srv_cmd_run_list(struct dc_dmub_srv *dc_dmub_srv, unsigned int count, union dmub_rb_cmd *cmd_list, enum dm_dmub_wait_type wait_type)
+ {
+-	struct dc_context *dc_ctx = dc_dmub_srv->ctx;
++	struct dc_context *dc_ctx;
+ 	struct dmub_srv *dmub;
+ 	enum dmub_status status;
+ 	int i;
+@@ -133,6 +133,7 @@ bool dc_dmub_srv_cmd_run_list(struct dc_dmub_srv *dc_dmub_srv, unsigned int coun
+ 	if (!dc_dmub_srv || !dc_dmub_srv->dmub)
+ 		return false;
+ 
++	dc_ctx = dc_dmub_srv->ctx;
+ 	dmub = dc_dmub_srv->dmub;
+ 
+ 	for (i = 0 ; i < count; i++) {
 -- 
-Hamza
+2.38.1
 
