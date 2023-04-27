@@ -2,85 +2,184 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADB7C77B73
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 18:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA04EC77B73
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 19:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243881AbjD0S6x (ORCPT
+        id S1344023AbjD0Tr4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 Apr 2023 14:58:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
+        Thu, 27 Apr 2023 15:47:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbjD0S6v (ORCPT
+        with ESMTP id S231563AbjD0Try (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 Apr 2023 14:58:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B8740C4;
-        Thu, 27 Apr 2023 11:58:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C68EB63EEB;
-        Thu, 27 Apr 2023 18:58:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 833B6C433EF;
-        Thu, 27 Apr 2023 18:58:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682621930;
-        bh=SVsj2YP3hE7lt1kgMPLknB0++p0vIzw5HpKUgiTODzk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=cScbz/eRiBMpqKqFxaAvJvqmx5L/N4qkJIeM7wOPnP6GP5hT7jh7FCVez20ehZmNB
-         mQIwInBOiEk8YBJc22sWm3/EqKpaqceG9ah7UvFbVBAwbmHlrDNQ5hzxE/OcdT/5Iw
-         BRrFc15iVsaqUnobe/cQSKl7Pb8Fto0d+8hiZoE4PNOdT5IxzQzAoZlfE6zTB8J7xg
-         qimPzSSGrrColVxmB7IBMqkpr1t9YQ7AxnId53iZCFXNOZK5qUn8GiqjVcRBYOiqf6
-         ak4+j7ZK7expzvbPww6mii4vW0e045l4Gv+Vjl8peI1u4rE9kwgqU/G+aI21oLQNUf
-         WSNRYI4EM34Gg==
-Message-ID: <1fd47550-ba39-9755-e0ce-8c377cecb2c4@kernel.org>
-Date:   Thu, 27 Apr 2023 13:58:47 -0500
+        Thu, 27 Apr 2023 15:47:54 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C8D2701
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 Apr 2023 12:47:51 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id s7akpPtNdcXjrs7akpwwwP; Thu, 27 Apr 2023 21:47:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682624869;
+        bh=uWyb1m5f2X+6JFDK/HL+2kWjKi4n1QTlW4WSNRqI008=;
+        h=From:To:Cc:Subject:Date;
+        b=qmgSftFaXDoIy7rJcvHk/NEwLPV7x7AwfqnZ4JDXCWvDFcI22zViC8G4u9voe2XMC
+         DmrhpMpkwIMvZcqbj+VAdoGWSgG13yFpXKrVrIS14WHb2441bwb02mOodFEqX8cGWc
+         TOtKBD3dzDN+X376TuGZhEV4bZCpkXruag3avFeyR4gOkQO2xfv1+xlFePN6HyKJwU
+         g5FGI5/rFQC7aNnZFU+LUaG8jp21KDjWm4HlxaBemF1f/hndmMLRkQoX/kxwqUK+IF
+         FhBLn9/Ahkn/0NAVTUeKRoaa2jCBbgRrPnA+6nIM4VZ8IuepiSTOjO617jyHPvPSGU
+         kTgZrEc9glp7Q==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 27 Apr 2023 21:47:49 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-nvme@lists.infradead.org
+Subject: [PATCH] nvmet: Reorder fields in 'struct nvmet_ns'
+Date:   Thu, 27 Apr 2023 21:47:45 +0200
+Message-Id: <aea924d31f2bd2f740b1ccc6f462905bd6cab763.1682624855.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] firmware: stratix10-svc: Fix an NULL vs IS_ERR() bug in
- probe
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Richard Gong <richard.gong@intel.com>
-Cc:     Alan Tull <atull@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <5f9a8cb4-5a4f-460b-9cdc-2fae6c5b7922@kili.mountain>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <5f9a8cb4-5a4f-460b-9cdc-2fae6c5b7922@kili.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Group some variables based on their sizes to reduce holes.
+On x86_64, this shrinks the size of 'struct nvmet_ns' from 520 to 512
+bytes.
+
+When such a structure is allocated in nvmet_ns_alloc(), because of the way
+memory allocation works, when 520 bytes were requested, 1024 bytes were
+allocated.
+
+So, on x86_64, this change saves 512 bytes per allocation.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+More aggressive grouping could be done to be more future proof, but the
+way the struct nvmet_ns is written suggest that some fields should be
+kept together. So keep grouping as-is.
 
 
-On 4/19/23 09:27, Dan Carpenter wrote:
-> The svc_create_memory_pool() function returns error pointers.  It never
-> returns NULL.  Fix the check.
-> 
-> Fixes: 7ca5ce896524 ("firmware: add Intel Stratix10 service layer driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/firmware/stratix10-svc.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-> index bde1f543f529..80f4e2d14e04 100644
-> --- a/drivers/firmware/stratix10-svc.c
-> +++ b/drivers/firmware/stratix10-svc.c
-> @@ -1133,8 +1133,8 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
->   		return ret;
->   
->   	genpool = svc_create_memory_pool(pdev, sh_memory);
-> -	if (!genpool)
-> -		return -ENOMEM;
-> +	if (IS_ERR(genpool))
-> +		return PTR_ERR(genpool);
->   
->   	/* allocate service controller and supporting channel */
->   	controller = devm_kzalloc(dev, sizeof(*controller), GFP_KERNEL);
+Using pahole
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+Before:
+======
+struct nvmet_ns {
+	struct percpu_ref          ref;                  /*     0    16 */
+	struct block_device *      bdev;                 /*    16     8 */
+	struct file *              file;                 /*    24     8 */
+	bool                       readonly;             /*    32     1 */
+
+	/* XXX 3 bytes hole, try to pack */
+
+	u32                        nsid;                 /*    36     4 */
+	u32                        blksize_shift;        /*    40     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	loff_t                     size;                 /*    48     8 */
+	u8                         nguid[16];            /*    56    16 */
+	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
+	uuid_t                     uuid;                 /*    72    16 */
+	u32                        anagrpid;             /*    88     4 */
+	bool                       buffered_io;          /*    92     1 */
+	bool                       enabled;              /*    93     1 */
+
+	/* XXX 2 bytes hole, try to pack */
+
+	struct nvmet_subsys *      subsys;               /*    96     8 */
+	const char  *              device_path;          /*   104     8 */
+	struct config_group        device_group;         /*   112   136 */
+	/* --- cacheline 3 boundary (192 bytes) was 56 bytes ago --- */
+	struct config_group        group;                /*   248   136 */
+	/* --- cacheline 6 boundary (384 bytes) --- */
+	struct completion          disable_done;         /*   384    96 */
+	/* --- cacheline 7 boundary (448 bytes) was 32 bytes ago --- */
+	mempool_t *                bvec_pool;            /*   480     8 */
+	int                        use_p2pmem;           /*   488     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	struct pci_dev *           p2p_dev;              /*   496     8 */
+	int                        pi_type;              /*   504     4 */
+	int                        metadata_size;        /*   508     4 */
+	/* --- cacheline 8 boundary (512 bytes) --- */
+	u8                         csi;                  /*   512     1 */
+
+	/* size: 520, cachelines: 9, members: 23 */
+	/* sum members: 500, holes: 4, sum holes: 13 */
+	/* padding: 7 */
+	/* last cacheline: 8 bytes */
+};
+
+After:
+=====
+struct nvmet_ns {
+	struct percpu_ref          ref;                  /*     0    16 */
+	struct block_device *      bdev;                 /*    16     8 */
+	struct file *              file;                 /*    24     8 */
+	bool                       readonly;             /*    32     1 */
+
+	/* XXX 3 bytes hole, try to pack */
+
+	u32                        nsid;                 /*    36     4 */
+	u32                        blksize_shift;        /*    40     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	loff_t                     size;                 /*    48     8 */
+	u8                         nguid[16];            /*    56    16 */
+	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
+	uuid_t                     uuid;                 /*    72    16 */
+	u32                        anagrpid;             /*    88     4 */
+	bool                       buffered_io;          /*    92     1 */
+	bool                       enabled;              /*    93     1 */
+
+	/* XXX 2 bytes hole, try to pack */
+
+	struct nvmet_subsys *      subsys;               /*    96     8 */
+	const char  *              device_path;          /*   104     8 */
+	struct config_group        device_group;         /*   112   136 */
+	/* --- cacheline 3 boundary (192 bytes) was 56 bytes ago --- */
+	struct config_group        group;                /*   248   136 */
+	/* --- cacheline 6 boundary (384 bytes) --- */
+	struct completion          disable_done;         /*   384    96 */
+	/* --- cacheline 7 boundary (448 bytes) was 32 bytes ago --- */
+	mempool_t *                bvec_pool;            /*   480     8 */
+	struct pci_dev *           p2p_dev;              /*   488     8 */
+	int                        use_p2pmem;           /*   496     4 */
+	int                        pi_type;              /*   500     4 */
+	int                        metadata_size;        /*   504     4 */
+	u8                         csi;                  /*   508     1 */
+
+	/* size: 512, cachelines: 8, members: 23 */
+	/* sum members: 500, holes: 3, sum holes: 9 */
+	/* padding: 3 */
+};
+---
+ drivers/nvme/target/nvmet.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+index dc60a22646f7..c50146085fb5 100644
+--- a/drivers/nvme/target/nvmet.h
++++ b/drivers/nvme/target/nvmet.h
+@@ -79,8 +79,8 @@ struct nvmet_ns {
+ 	struct completion	disable_done;
+ 	mempool_t		*bvec_pool;
+ 
+-	int			use_p2pmem;
+ 	struct pci_dev		*p2p_dev;
++	int			use_p2pmem;
+ 	int			pi_type;
+ 	int			metadata_size;
+ 	u8			csi;
+-- 
+2.34.1
+
