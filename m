@@ -2,72 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 927F7C77B61
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 16:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C643C77B61
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 17:48:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244083AbjD0Q2F (ORCPT
+        id S243639AbjD0RsC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 Apr 2023 12:28:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57548 "EHLO
+        Thu, 27 Apr 2023 13:48:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233236AbjD0Q2E (ORCPT
+        with ESMTP id S243558AbjD0RsA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 Apr 2023 12:28:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABEDB10E;
-        Thu, 27 Apr 2023 09:28:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 465A360F51;
-        Thu, 27 Apr 2023 16:28:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D74BC433D2;
-        Thu, 27 Apr 2023 16:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682612882;
-        bh=sygxyc6bJpU/G8GGd4Uas2ekQmIkPh/RJ/FhruQwGxM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tFjZdV7zhl9uUumZNfu0wBVvnGeZ2hwcuYdUN4cf//dFpowtme6rbXEsEHLh0YcRK
-         vU5p9Kzih3lZmZRRAj1SbjOi3YRch9UCalQ5Bh9EzjKrjEwZ35lrNsCEHRhn5DGrFZ
-         LU38paKFxKW0TjPidBaqC25hjJO5Z/+QIb8uXcfLVQgdcssXoxGd2MqSvWpBd18ZMz
-         dqU5CwLLn/8kT1jvVgKHx5gB78yePAFm+ObHhRtGGYbRURiXn0Rw2m4VdYWnrH+jaX
-         OBqdRS6XqwMn99jLMcKHqI1I+a9Q1ZljRMmASgfnIvLx5VY3fqDP1DmCoMUj1+PbRu
-         DpT4sC3ILgVGw==
-Date:   Thu, 27 Apr 2023 09:28:00 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Dan Carpenter <error27@gmail.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH] f2fs: remove some dead code
-Message-ID: <ZEqikAnNmjMxuSoU@google.com>
-References: <523ec4b037d064e92e19203e3ab9a161e3d9aa71.1681764681.git.christophe.jaillet@wanadoo.fr>
- <2867d5b3-c6cb-49fa-854a-0f58f9a5adb5@kili.mountain>
+        Thu, 27 Apr 2023 13:48:00 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41194ECD
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 Apr 2023 10:47:35 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id 98e67ed59e1d1-2496863c2c7so7394297a91.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 Apr 2023 10:47:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1682617650; x=1685209650;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AowLft9EBX5gUxctKSIUsNiudl4F28FeVro2d7oaOEM=;
+        b=K4EdX966gif7u1ukpy0llJYHxfFkYWdfFwMYcKVy6usRHt/PkkR2YDimen8qEqOwE8
+         fGzRXODQ5CUo/tjE5+XIHaBeRBSqAYhjo9uObcaIaNjCodLXxRbWT9aG3cBAoPuBk5OL
+         mNdKOFueqrBJqJbPEXDVDz55E7hKGLTusoanE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682617650; x=1685209650;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AowLft9EBX5gUxctKSIUsNiudl4F28FeVro2d7oaOEM=;
+        b=boq/IxB7h7ClHzJ/LB2CiTWrySJ3Y2jfWr8na3Gnxx6cLUzC2usGhURaBYeAuMLYjP
+         hM+KdJLcExJrf/GzgvGTZ3y/+mbq9bPqGeZwUgnQrQ4yHlmZMqccytP4Iif9MFjGw0p/
+         TiTRpYpW4uO4WsPdsEKREDwnkNq1uax2A9U0H7eyoHMJW5/p+GM8F0uY0jHrF95UQ2Pm
+         o81bEgX3neVceX0p22JloWcDg2eucyfCfWgJinYoMyt7ijc3yyjUF8TURON7R8oqPjLS
+         hnj6Jfb+Ws36K3e2dNw6ehkl/xPfQYro4xLdG9xVFqFf/SYqkEsyFgzQ2IBUpa7+QUR4
+         SiQQ==
+X-Gm-Message-State: AC+VfDxqdMwFIB3CcIn1tDliDytUCG1gf3OkKZ7xh07OBCH1Rbolnyr6
+        zhMgSOV2PH9tDClX8LqSUSfnkA==
+X-Google-Smtp-Source: ACHHUZ7oDO17oEmp71hXDgibg5WFVW2Jl6Z+LeyB/FPq2+qXtjm2demldilHFox1tX28JgToNRGZYA==
+X-Received: by 2002:a17:90b:3e82:b0:246:c223:14ab with SMTP id rj2-20020a17090b3e8200b00246c22314abmr2645491pjb.41.1682617650051;
+        Thu, 27 Apr 2023 10:47:30 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:17bc:8fd4:f9e:3e41])
+        by smtp.gmail.com with ESMTPSA id fv23-20020a17090b0e9700b0023d0290afbdsm13597610pjb.4.2023.04.27.10.47.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Apr 2023 10:47:29 -0700 (PDT)
+Date:   Thu, 27 Apr 2023 10:47:27 -0700
+From:   Brian Norris <briannorris@chromium.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Ganapathi Bhat <ganapathi017@gmail.com>,
+        Sharvari Harisangam <sharvari.harisangam@nxp.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] wifi: mwifiex: Use list_count_nodes()
+Message-ID: <ZEq1L4LAXvY6yXbw@google.com>
+References: <e77ed7f719787cb8836a93b6a6972f4147e40bc6.1682537509.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2867d5b3-c6cb-49fa-854a-0f58f9a5adb5@kili.mountain>
+In-Reply-To: <e77ed7f719787cb8836a93b6a6972f4147e40bc6.1682537509.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 04/18, Dan Carpenter wrote:
-> On Mon, Apr 17, 2023 at 10:51:46PM +0200, Christophe JAILLET wrote:
-> >  
-> > -	ret2 = filemap_check_errors(NODE_MAPPING(sbi));
-> > -	if (!ret)
-> > -		ret = ret2;
-> > +	ret = filemap_check_errors(NODE_MAPPING(sbi));
-> >  
-> >  	return ret;
+On Wed, Apr 26, 2023 at 09:32:36PM +0200, Christophe JAILLET wrote:
+> mwifiex_wmm_list_len() is the same as list_count_nodes(), so use the latter
+> instead of hand writing it.
 > 
-> Let's get rid of "ret" as well:
+> Turn 'ba_stream_num' and 'ba_stream_max' in size_t to keep the same type
+> as what is returned by list_count_nodes().
 > 
-> 	return filemap_check_errors(NODE_MAPPING(sbi));
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/wireless/marvell/mwifiex/11n.h |  4 ++--
+>  drivers/net/wireless/marvell/mwifiex/wmm.h | 15 ---------------
+>  2 files changed, 2 insertions(+), 17 deletions(-)
 
-Applied with this modification. Thanks.
+FWIW:
 
-> 
-> regards,
-> dan carpenter
+Reviewed-by: Brian Norris <briannorris@chromium.org>
