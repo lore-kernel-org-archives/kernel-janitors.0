@@ -2,64 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F573C77B60
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 01:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4D5C77B7E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 04:35:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242809AbjD0BkH (ORCPT
+        id S242881AbjD0EfY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 Apr 2023 21:40:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
+        Thu, 27 Apr 2023 00:35:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242808AbjD0BkF (ORCPT
+        with ESMTP id S242831AbjD0EfU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 Apr 2023 21:40:05 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 63FF43AA1
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Apr 2023 18:40:04 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 379C1180118167;
-        Thu, 27 Apr 2023 09:39:51 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     kernel-janitors@vger.kernel.org, Suhui <suhui@nfschina.com>
-Subject: [PATCH] tpm: Remove unnecessary (void*) conversions
-Date:   Thu, 27 Apr 2023 09:39:26 +0800
-Message-Id: <20230427013926.28873-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        Thu, 27 Apr 2023 00:35:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FFB420E;
+        Wed, 26 Apr 2023 21:35:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 06CFC63A88;
+        Thu, 27 Apr 2023 04:35:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DEE9C433D2;
+        Thu, 27 Apr 2023 04:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682570117;
+        bh=ZWJxz5ju6P+OVD/7NyM+5pJxespwIzDbwPpmWrff8AQ=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=g0cjfv5y37f+NrSBWiH89ab/8q42L903hYb7ePaa9kPABfrRO61HbYi8vC4lkNUCs
+         bvXgXyB+CcQc9K1w6M6nkkG30PqNzKs5L9NI+u0p1vVLxY8b1xuTzSXVbKUVGMZ8/h
+         s7qfaR3rBfICkl1OSC99qK3+emSwvaRGM8Hs6aAVVDEA86pvQPGJPxWhS1BQ0t8zXG
+         mGOPMiy560BfH5hrfUzfs3MJc+1swAWe5yMVIvHjn0+Ns+Xvk9x/mKzzSJnLAZANtv
+         FlyFprBecySuLn85aHHzWXvgybWFeUzYZ2Xk/PMIq7CYIEkZ0CVp9QsdzRA59pI+Fa
+         lgs7YxiTamPOA==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] wifi: ath11k: Use list_count_nodes()
+References: <941484caae24b89d20524b1a5661dd1fd7025492.1682542084.git.christophe.jaillet@wanadoo.fr>
+Date:   Thu, 27 Apr 2023 07:35:09 +0300
+In-Reply-To: <941484caae24b89d20524b1a5661dd1fd7025492.1682542084.git.christophe.jaillet@wanadoo.fr>
+        (Christophe JAILLET's message of "Wed, 26 Apr 2023 22:48:59 +0200")
+Message-ID: <87v8hiosci.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Suhui <suhui@nfschina.com>
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
 
-No need cast (void*) to (struct seq_file*) or (struct tpm_chip*).
+> ath11k_wmi_fw_stats_num_vdevs() and ath11k_wmi_fw_stats_num_bcn() really
+> look the same as list_count_nodes(), so use the latter instead of hand
+> writing it.
+>
+> The first ones use list_for_each_entry() and the other list_for_each(), but
+> they both count the number of nodes in the list.
+>
+> While at it, also remove to prototypes of non-existent functions.
+> Based on the names and prototypes, it is likely that they should be
+> equivalent to list_count_nodes().
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Un-tested
 
-Signed-off-by: Suhui <suhui@nfschina.com>
----
- drivers/char/tpm/eventlog/common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'll run sanity tests on ath11k patches. I'll also add "Compile tested
+only" to the commit log.
 
-diff --git a/drivers/char/tpm/eventlog/common.c b/drivers/char/tpm/eventlog/common.c
-index 8512ec76d526..df6eb8167e30 100644
---- a/drivers/char/tpm/eventlog/common.c
-+++ b/drivers/char/tpm/eventlog/common.c
-@@ -55,8 +55,8 @@ static int tpm_bios_measurements_open(struct inode *inode,
- static int tpm_bios_measurements_release(struct inode *inode,
- 					 struct file *file)
- {
--	struct seq_file *seq = (struct seq_file *)file->private_data;
--	struct tpm_chip *chip = (struct tpm_chip *)seq->private;
-+	struct seq_file *seq = file->private_data;
-+	struct tpm_chip *chip = seq->private;
- 
- 	put_device(&chip->dev);
- 
+Oh, and ath11k patches go to ath tree, not net-next.
+
 -- 
-2.30.2
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
