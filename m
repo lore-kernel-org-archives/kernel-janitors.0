@@ -2,112 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B97C77B73
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 15:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC242C77B61
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 16:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244102AbjD0PLL (ORCPT
+        id S243525AbjD0QWA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 Apr 2023 11:11:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42906 "EHLO
+        Thu, 27 Apr 2023 12:22:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbjD0PLK (ORCPT
+        with ESMTP id S243678AbjD0QV6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 Apr 2023 11:11:10 -0400
+        Thu, 27 Apr 2023 12:21:58 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE1CA2733
-        for <kernel-janitors@vger.kernel.org>; Thu, 27 Apr 2023 08:11:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B8610EA;
+        Thu, 27 Apr 2023 09:21:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 599C663CA2
-        for <kernel-janitors@vger.kernel.org>; Thu, 27 Apr 2023 15:11:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B655CC4339C
-        for <kernel-janitors@vger.kernel.org>; Thu, 27 Apr 2023 15:11:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C3B7763E3D;
+        Thu, 27 Apr 2023 16:21:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7372EC4339C;
+        Thu, 27 Apr 2023 16:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682608268;
-        bh=l6laNL5+185Lj5BlHWSsODPn1E0DbC9F8Y6d9W1UyDo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=c7NNP4wfVjJFXqpVRwA0XeibAdJY77QyeZGs8xSxQzCBbSJHlzrR+NrSxlg4Ky9uX
-         RvMD+KeIWgrALoNz9mkmozZMW5cRhiCa/Uja3HxUgPEUcIcoSIjk08zrv9hIm4CUn2
-         eL+GD2PWs3zIin4Z/O4jEaSu8NuoNBYTdDGPMbDFEm0mx0CnmMOKWx/OrNbpMFTit1
-         R3WdRWcaC6sVxRu5Noi3C+QtoG1PEOo2ak3kzHXxcR7ETm9OX7VIQziQ/ZxztxI5N2
-         PD722DVNMAaiTZ/XfCQNRJ/pFrIaUNYWj/Epnvh2KfbmkU6S6ANH6BYCm+Cq810y5s
-         jgYBSRmn6Ttkg==
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-51b6d0b9430so6454131a12.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 27 Apr 2023 08:11:08 -0700 (PDT)
-X-Gm-Message-State: AC+VfDywIEMjYZfRlM8xRlyRfoUUSAFteZP2Ox6PpqV/JCg3PSftcidV
-        MR0beuGV9pqolwIQukobntLUpy9wOFQxkH/CClitOA==
-X-Google-Smtp-Source: ACHHUZ5NxyJDUO4FTy/bs7agRCtWpiWaSIyWZoCCTaOxbDS+Kd/2JIfrEGWJsq3KErFabBaP4K4k3JalnBiKfr02Gio=
-X-Received: by 2002:a17:90a:f481:b0:23d:bbcb:c97f with SMTP id
- bx1-20020a17090af48100b0023dbbcbc97fmr2267524pjb.1.1682608268270; Thu, 27 Apr
- 2023 08:11:08 -0700 (PDT)
+        s=k20201202; t=1682612517;
+        bh=JiVVx1DtdOQF5TVqOPyCPt4x4HrBUjTJovXEhSgv+nc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S/K2kwEXv2OBiR3ef3WGjtEy0ugeAkANUVtiygVU6REmR+QgUCc1SCKRHjNgjUHIl
+         sFBfe8ssUBmPA8+UwLJAxGPh+7NaCstpdqID8+2hcaJDIHbJCse+1FG8sB8eYwfgEj
+         X8XIc9yyHXTR5vcWoNzYhnRySP3cbhpjsrx0jWqKcJpHR9HTPnis8K1vuapzhtp8Vk
+         1r7zqizW5vK2hXKgz9wSk81ESxwBGoBEPLbX6aOf7EUUy39IAu5/hPA1kFtG1Qry5c
+         IweljPEfR99Mhw4mDdPo3chW8nUjMDl84o9SZj9oknn/M4SJedBrVDcNQ6Oh76fxxZ
+         4rHNmUxpC0IDg==
+Date:   Thu, 27 Apr 2023 17:21:53 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mfd: rc5t583-irq: Remove the unneeded include
+ <linux/i2c.h>
+Message-ID: <20230427162153.GD50521@google.com>
+References: <128025bf5b81f5424db2202b0c8cfd9722c28aab.1682319383.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de> <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <14636275-4d26-d639-5f6e-293fc6d1c4c6@web.de> <CAN6tsi7caOQZLLvbL7phMEtNvBLaWgJuHLkLo3YWdqQw7Vxnaw@mail.gmail.com>
- <6f758653-36c9-91a2-7bbc-278ae3f8ccee@web.de>
-In-Reply-To: <6f758653-36c9-91a2-7bbc-278ae3f8ccee@web.de>
-From:   Robert Foss <rfoss@kernel.org>
-Date:   Thu, 27 Apr 2023 17:10:57 +0200
-X-Gmail-Original-Message-ID: <CAN6tsi4WBDOyzvXJ8vV=xJYay1JbBGo+UzZ+vudTBm5Fk5nB=A@mail.gmail.com>
-Message-ID: <CAN6tsi4WBDOyzvXJ8vV=xJYay1JbBGo+UzZ+vudTBm5Fk5nB=A@mail.gmail.com>
-Subject: Re: drm/bridge: it6505: Move a variable assignment behind a null
- pointer check in receive_timing_debugfs_show()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Allen Chen <allen.chen@ite.com.tw>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        Hermes Wu <hermes.wu@ite.com.tw>,
-        Hsin-yi Wang <hsinyi@chromium.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <128025bf5b81f5424db2202b0c8cfd9722c28aab.1682319383.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 25, 2023 at 4:16=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> > This patch seems to be a part of a series without being marked as such,
->
-> The mentioned patch affects only a single function implementation.
->
->
-> > this causes issues when importing this patch with maintainer tools
-> > like b4 which automatically pull in the entire series and not
-> > just the specific patch.
->
-> It is a pity that there are special technical difficulties.
->
->
-> > Either label the patch as being part of a series ( [PATCH 1/XX] ),
->
-> Further software modules were similarly affected.
->
-> See also:
-> Reconsidering pointer dereferences before null pointer checks (with SmPL)
-> https://lore.kernel.org/cocci/1a11455f-ab57-dce0-1677-6beb8492a257@web.de=
-/
-> https://sympa.inria.fr/sympa/arc/cocci/2023-04/msg00021.html
->
->
-> > or submit it separately.
->
-> I thought that I did that (in principle).
+On Mon, 24 Apr 2023, Christophe JAILLET wrote:
 
-You can have a look at LKML for the email message-id to see the whole
-thread of patches.
-https://lore.kernel.org/all/14636275-4d26-d639-5f6e-293fc6d1c4c6@web.de/#r
+> This driver does not use i2c, so there is no point in including
+> <linux/i2c.h>
+> 
+> Remove it and add the needed <linux/device.h> instead, which is much more
+> lightweight.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/mfd/rc5t583-irq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Or https://lore.kernel.org/all/$MSG_ID
+Applied, thanks
 
-Fix the email Sign-off email !=3D Sender email issue, resubmit and I'll
-be able to apply this.
+-- 
+Lee Jones [李琼斯]
