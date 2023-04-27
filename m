@@ -2,66 +2,72 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D11C77B61
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 16:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 927F7C77B61
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 Apr 2023 16:28:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244030AbjD0QWh (ORCPT
+        id S244083AbjD0Q2F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 Apr 2023 12:22:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54934 "EHLO
+        Thu, 27 Apr 2023 12:28:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244318AbjD0QW3 (ORCPT
+        with ESMTP id S233236AbjD0Q2E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 Apr 2023 12:22:29 -0400
+        Thu, 27 Apr 2023 12:28:04 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D73CA4494;
-        Thu, 27 Apr 2023 09:22:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABEDB10E;
+        Thu, 27 Apr 2023 09:28:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 63C0A631B5;
-        Thu, 27 Apr 2023 16:22:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060FCC433D2;
-        Thu, 27 Apr 2023 16:22:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 465A360F51;
+        Thu, 27 Apr 2023 16:28:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D74BC433D2;
+        Thu, 27 Apr 2023 16:28:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682612541;
-        bh=NoC/metQtWxNwH0RosbcVrJNpcQq74+J/8p742KjPbg=;
+        s=k20201202; t=1682612882;
+        bh=sygxyc6bJpU/G8GGd4Uas2ekQmIkPh/RJ/FhruQwGxM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ByACusj3r6+++FnuK3u3nUrdfts8io0ExE9wtpf/gAkvoqsg6OCeMgjZxQthXepX/
-         OAOIoMLodUPtiz9i9GPdhwqHck/61yT4YHGIzZyQKvpoeQUzq0L8+esJJ2t9Buu7dM
-         RZJPcQbK3JPo6Ko0ZuaDcZ3hfqNGehi5Jxu1EWi4KWXe2/H3iB54cIZXs1oSuZqHE4
-         MSXoklDQeSomJOmMgRxlcEPMGzP2sKgdq9a02uVmwCR8Kco0CPVjFtFRFxBmopojWK
-         xcpLY3ugbnyeOuECZbRIrDxCE2LO67mgKfl8ZVs7pIkom1mOeRKo6uIYICRF02VQdE
-         tZehBWygtJwqQ==
-Date:   Thu, 27 Apr 2023 17:22:17 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mfd: dln2: Remove the unneeded include <linux/i2c.h>
-Message-ID: <20230427162217.GE50521@google.com>
-References: <baf28e7f0fb57e918b76eaa92b94a2ae1a02cce0.1682318879.git.christophe.jaillet@wanadoo.fr>
+        b=tFjZdV7zhl9uUumZNfu0wBVvnGeZ2hwcuYdUN4cf//dFpowtme6rbXEsEHLh0YcRK
+         vU5p9Kzih3lZmZRRAj1SbjOi3YRch9UCalQ5Bh9EzjKrjEwZ35lrNsCEHRhn5DGrFZ
+         LU38paKFxKW0TjPidBaqC25hjJO5Z/+QIb8uXcfLVQgdcssXoxGd2MqSvWpBd18ZMz
+         dqU5CwLLn/8kT1jvVgKHx5gB78yePAFm+ObHhRtGGYbRURiXn0Rw2m4VdYWnrH+jaX
+         OBqdRS6XqwMn99jLMcKHqI1I+a9Q1ZljRMmASgfnIvLx5VY3fqDP1DmCoMUj1+PbRu
+         DpT4sC3ILgVGw==
+Date:   Thu, 27 Apr 2023 09:28:00 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH] f2fs: remove some dead code
+Message-ID: <ZEqikAnNmjMxuSoU@google.com>
+References: <523ec4b037d064e92e19203e3ab9a161e3d9aa71.1681764681.git.christophe.jaillet@wanadoo.fr>
+ <2867d5b3-c6cb-49fa-854a-0f58f9a5adb5@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <baf28e7f0fb57e918b76eaa92b94a2ae1a02cce0.1682318879.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2867d5b3-c6cb-49fa-854a-0f58f9a5adb5@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 24 Apr 2023, Christophe JAILLET wrote:
-
-> This driver does not use i2c, so there is no point in including
-> <linux/i2c.h>
+On 04/18, Dan Carpenter wrote:
+> On Mon, Apr 17, 2023 at 10:51:46PM +0200, Christophe JAILLET wrote:
+> >  
+> > -	ret2 = filemap_check_errors(NODE_MAPPING(sbi));
+> > -	if (!ret)
+> > -		ret = ret2;
+> > +	ret = filemap_check_errors(NODE_MAPPING(sbi));
+> >  
+> >  	return ret;
 > 
-> Remove it.
+> Let's get rid of "ret" as well:
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/mfd/dln2.c | 1 -
->  1 file changed, 1 deletion(-)
+> 	return filemap_check_errors(NODE_MAPPING(sbi));
 
-Applied, thanks
+Applied with this modification. Thanks.
 
--- 
-Lee Jones [李琼斯]
+> 
+> regards,
+> dan carpenter
