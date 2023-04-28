@@ -2,124 +2,149 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CECC77B60
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 11:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF09C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 11:34:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345755AbjD1LKx (ORCPT
+        id S1345905AbjD1Le6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Apr 2023 07:10:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50528 "EHLO
+        Fri, 28 Apr 2023 07:34:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345700AbjD1LKw (ORCPT
+        with ESMTP id S1345899AbjD1Ley (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Apr 2023 07:10:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C75D44B6;
-        Fri, 28 Apr 2023 04:10:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B9305642E2;
-        Fri, 28 Apr 2023 11:10:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C2E4C433A8;
-        Fri, 28 Apr 2023 11:10:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682680248;
-        bh=MgfPMfiKjI0tNegcTrXd2ZOXVx68i9D4rnYhMXY2OtQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=niadc1KLJ5jjSy0V0s6jR4CaWAsX8tkW40W47LEu5MIozrpJDPc6i0Bk3UfrXFU7M
-         PMBJLMGq1KJJKyhZchZOrcVhuZKTLZSLRgMjj5Rlfd2JkLGde8S/KyqJ3n20J+0T1M
-         RyTdZoiWogIYYfh2reQi5ZTGhPUGFbWph2Pvz33D/HbBQf9KeL2Q4GaO2VKoVjOWqI
-         W8LqGxtaYWQA0yAwNReSVWBbQq54BbeV8m//2LoLXfchQleIz2SQUwpwDrXmMhvYOw
-         vbJH81jhp/7aZF4V9Xzuui2E1GGxemmZPm47ROf0IBHloCDg1lgbCk/i00fAFiC7Ka
-         f5tYb9qf+C6/Q==
-Message-ID: <3328747ef568361bd3bd5f053ec9a2c27e7f9c48.camel@kernel.org>
-Subject: Re: [PATCH] ceph: Reorder fields in 'struct ceph_snapid_map'
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        ceph-devel@vger.kernel.org
-Date:   Fri, 28 Apr 2023 07:10:46 -0400
-In-Reply-To: <f6b869ea-979c-efda-d454-8dc688d1986b@redhat.com>
-References: <559c9a70419846e0cfc319505d3d5fffd45b3358.1682618727.git.christophe.jaillet@wanadoo.fr>
-         <f6b869ea-979c-efda-d454-8dc688d1986b@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        Fri, 28 Apr 2023 07:34:54 -0400
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02hn2226.outbound.protection.outlook.com [52.100.159.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 358CC527E;
+        Fri, 28 Apr 2023 04:34:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=W6nFBmnpI1ZIdRepd++Q6kblusNVgO58mMpvkld861igCDAN3v9qd+SkRXyLV4XfOT1J50uji6FLbJiET0n1sDSrTnHS5b8bf8CFqctTw8IiXKZDQZSAuEe/joFgk1LFJmev80PJ6xSOPGIN7i7fT/IfJfIHL8xGv4jJVHgo5y00uJIs26pT2rqiBklCYHdWZJbuMnp4lKtwJzyBNSh2ZqOJ2kn6hQYPphQDc+5wfz/3c8pLBtq8R9kjmWTav/jSqziJc9w1lmcW5SYczZdp9WvD0JGq5koJdSHNaEdrCNkvlYyxOCekKUS9Y6rRgMHz2zYz7BT/r1Bh4i4Kzb8RAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3xbVv2VbX8npSIfd19zIuhI6419HjHm0TKvlkAeOJFA=;
+ b=MtaS0RZYe8A/5I1euTgwa/yt8pTR7TJuHyuX3RymwAo3kF/U3MGC04CEEWyBJ0jqZ58IfoUI8QuQswcn6gIkE5oxZn2RVplIDwL/1OHHYfmO32jEASRA81fhb2KTP6CQdF82GEv66KMe2hfyDm/rRAjEkBrs9QN19NsOwkC+6z+S8BT2kdv3+oue9LRM2U+jv/d/LXysHfWhLkVKd4cYPNdHuAE1a/bkgArc/M7rjpi03sy1cBegcPiUMyKAp56Em01jAX5nlB6fVstIrFosbzBmEkGz8goWvKvQR7W8O37bNeRRvsEkctoNpFVyCIhpQoW48RAaDV6feGQFnAFptQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=wanadoo.fr smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3xbVv2VbX8npSIfd19zIuhI6419HjHm0TKvlkAeOJFA=;
+ b=BQx+kqzc3v0xRZqCxqIInK8AdEPPie3f9h5IFNfgKhsnF/wH+BJREKR1w+joBUzUU9Ttyl84JSRI58c6hoI/I2TkYZJi5WtPRgwT0ccpHt9bLkqgiJpodedf7XVGce5P09nGZUP5WUetdGeNTrsURyjL7wvPiTaiK9IjORZzPFaVy8sWiQ0TpuLDu0eYJBvczuyL1vYAKTUNjQwTpme1xR1IPD11DcCodRw+QMEVeRg7H4jtOlgjIto8YpFtJwMxQ1vh2D9sfCJn0Ke/U5BVkzNb0Xrz883dCQuajs6uewQ+E1MhCe3zugTbo7GR1F5UOjRoe/yoWBm3OeqVT+cwYQ==
+Received: from DS0PR17CA0018.namprd17.prod.outlook.com (2603:10b6:8:191::18)
+ by DS0PR12MB8317.namprd12.prod.outlook.com (2603:10b6:8:f4::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.22; Fri, 28 Apr
+ 2023 11:34:51 +0000
+Received: from DM6NAM11FT018.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:8:191:cafe::60) by DS0PR17CA0018.outlook.office365.com
+ (2603:10b6:8:191::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.24 via Frontend
+ Transport; Fri, 28 Apr 2023 11:34:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DM6NAM11FT018.mail.protection.outlook.com (10.13.172.110) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6340.24 via Frontend Transport; Fri, 28 Apr 2023 11:34:50 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 28 Apr 2023
+ 04:34:40 -0700
+Received: from [10.41.21.79] (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 28 Apr
+ 2023 04:34:37 -0700
+Message-ID: <e16e96a2-cb81-ee1d-c3e9-fade09c59bd5@nvidia.com>
+Date:   Fri, 28 Apr 2023 17:04:34 +0530
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] cpufreq: tegra194: Fix an error handling path in
+ tegra194_cpufreq_probe()
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Sumit Gupta <sumitg@nvidia.com>
+References: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT018:EE_|DS0PR12MB8317:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10ee6cad-bf97-4289-7cbe-08db47dc9469
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Mcca9jJMUiZf3la5JKTMe3bBwg7oX0nbVPqpkaPfUnS20eskQxgLnwT06T6Y4UQ41+VswiO8v3+jwM5tAT2AcQjegy4xzihK7sUHyQrIoaqEdU/+FJt6J5cdbFifphNzTejUb76BL85ktuDz2Z1uyR71g0m9nS1hNgtxcagDW4Wc9h20HMrkowXPVJXGjHbPtjYTRdFRj8xmdiG9v3VRgK6Wl500VC21DKILTDHQvOEEpdoFQl8cea2UyUjUn/QXlml8ysDfVAY2CHitVxbS9W8gnQ9jXNmOnfgsg3Tp7XcxXubLnZveJZ7sYyc9r/XYkyqpSWwfxv58L5pWSIO5EmKlGG5S+UVlem1xIV88pvKpI0k7hJKQgBGCFdoRWSpXbsJIOzr/Io1cXbY2mt1Mgrc/EnbLf7iJA6hHYqweA/eN+CNJavHvDPuTlutHLSK0RNubJ+uXrQmuviZ/tPp3E51pVE545Nqy/f8nxEJ42kJDKwFyfLpCA9aV4YTGLj0SNzu/b0V03C9/B2WffVd2dT14G7VuQdJtdq3HvdxGWafGZcBKfSDigs6tHRvLziWYYGiqqvEDdg7LwRYXgjAiiJ2yo+/nvUFydW/9W/vDOvONT37qWYD199ew4ZI7f04MEMyalAFE0azdyjt7mEW1kUjygRKcGttbEHSBNmNFDbZjUVDBSvT1Jud+UJjQQhsHXvVZ9nklHNqPMiKFISEOxK/AKnQXMoBt185236hC7Jii2EycRkgXXhx6/shotNMww5+HPetctjQz2qhBliJ9ESAZMlwUrW+9b7u/RioGpHU=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(136003)(39860400002)(396003)(451199021)(5400799015)(40470700004)(36840700001)(46966006)(6666004)(82740400003)(16576012)(31686004)(478600001)(83380400001)(7636003)(356005)(34020700004)(54906003)(110136005)(186003)(16526019)(2616005)(70586007)(70206006)(316002)(36860700001)(82310400005)(4326008)(6636002)(41300700001)(26005)(107886003)(86362001)(53546011)(36756003)(336012)(8676002)(40460700003)(40480700001)(8936002)(31696002)(426003)(47076005)(2906002)(5660300002)(43740500002)(12100799030);DIR:OUT;SFP:1501;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2023 11:34:50.9969
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10ee6cad-bf97-4289-7cbe-08db47dc9469
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT018.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8317
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2023-04-28 at 08:53 +0800, Xiubo Li wrote:
-> On 4/28/23 02:05, Christophe JAILLET wrote:
-> > Group some variables based on their sizes to reduce holes.
-> > On x86_64, this shrinks the size of 'struct ceph_snapid_map' from 72 to=
- 64
-> > bytes.
-> >=20
-> > When such a structure is allocated, because of the way memory allocatio=
-n
-> > works, when 72 bytes were requested, 96 bytes were allocated.
-> >=20
-> > So, on x86_64, this change saves 32 bytes per allocation and has the
-> > structure fit in a single cacheline.
-> >=20
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > Using pahole
-> >=20
-> > Before:
-> > =3D=3D=3D=3D=3D=3D
-> > struct ceph_snapid_map {
-> > 	struct rb_node             node __attribute__((__aligned__(8))); /*   =
-  0    24 */
-> > 	struct list_head           lru;                  /*    24    16 */
-> > 	atomic_t                   ref;                  /*    40     4 */
-> >=20
-> > 	/* XXX 4 bytes hole, try to pack */
-> >=20
-> > 	u64                        snap;                 /*    48     8 */
-> > 	dev_t                      dev;                  /*    56     4 */
-> >=20
-> > 	/* XXX 4 bytes hole, try to pack */
-> >=20
-> > 	/* --- cacheline 1 boundary (64 bytes) --- */
-> > 	long unsigned int          last_used;            /*    64     8 */
-> >=20
-> > 	/* size: 72, cachelines: 2, members: 6 */
-> > 	/* sum members: 64, holes: 2, sum holes: 8 */
-> > 	/* forced alignments: 1 */
-> > 	/* last cacheline: 8 bytes */
-> > } __attribute__((__aligned__(8)));
-> > ---
-> >   fs/ceph/mds_client.h | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> > index 0598faa50e2e..2328dbda5ab6 100644
-> > --- a/fs/ceph/mds_client.h
-> > +++ b/fs/ceph/mds_client.h
-> > @@ -355,8 +355,8 @@ struct ceph_snapid_map {
-> >   	struct rb_node node;
-> >   	struct list_head lru;
-> >   	atomic_t ref;
-> > -	u64 snap;
-> >   	dev_t dev;
-> > +	u64 snap;
-> >   	unsigned long last_used;
-> >   };
-> >  =20
->=20
-> This looks good to me. Thanks.
->=20
-> Will apply it to the testing branch.
->=20
-> - Xiubo
->=20
->=20
->=20
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+
+On 25/04/23 18:41, Christophe JAILLET wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> If the probe needs to be deferred, some resources still need to be
+> released. So branch to the error handling path instead of returning
+> directly.
+> 
+> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
+
+> ---
+> Compile tested-only
+> ---
+>   drivers/cpufreq/tegra194-cpufreq.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+> index c8d03346068a..36dad5ea5947 100644
+> --- a/drivers/cpufreq/tegra194-cpufreq.c
+> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> @@ -686,8 +686,10 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
+> 
+>          /* Check for optional OPPv2 and interconnect paths on CPU0 to enable ICC scaling */
+>          cpu_dev = get_cpu_device(0);
+> -       if (!cpu_dev)
+> -               return -EPROBE_DEFER;
+> +       if (!cpu_dev) {
+> +               err = -EPROBE_DEFER;
+> +               goto err_free_res;
+> +       }
+> 
+>          if (dev_pm_opp_of_get_opp_desc_node(cpu_dev)) {
+>                  err = dev_pm_opp_of_find_icc_paths(cpu_dev, NULL);
+> --
+> 2.34.1
+> 
