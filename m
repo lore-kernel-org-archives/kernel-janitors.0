@@ -2,187 +2,79 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D83C77B61
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 08:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F10C77B61
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 08:50:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345410AbjD1IrA (ORCPT
+        id S1345547AbjD1Iuh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Apr 2023 04:47:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56514 "EHLO
+        Fri, 28 Apr 2023 04:50:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjD1Iq6 (ORCPT
+        with ESMTP id S1345494AbjD1Iub (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Apr 2023 04:46:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9981A2728;
-        Fri, 28 Apr 2023 01:46:55 -0700 (PDT)
+        Fri, 28 Apr 2023 04:50:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B1B61FCF;
+        Fri, 28 Apr 2023 01:50:21 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A11A61411;
-        Fri, 28 Apr 2023 08:46:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A446EC433D2;
-        Fri, 28 Apr 2023 08:46:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DBE5864219;
+        Fri, 28 Apr 2023 08:50:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4AF98C433D2;
+        Fri, 28 Apr 2023 08:50:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682671614;
-        bh=mCUVhJ/yf9+Zbv9PHEQScTzGuHyq2YKo5CQGfRfHFO4=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=tAsTEcSc1JhvpjJ7q2pg2Tbuj+oBgVxElnaZU/eNVxkK6Vz28K0BxFJ0bO31XlKgL
-         +i2F0zVN1UneePAdwdRF4xkW5sV90huXHKjnR3MnJGTAhhgpCkfJnsGNqriD4hcR/b
-         0Uded35/Yc9GVWH4/fhpO4o33E+BzoANK4NT8X9A5c2GEKy8QC3MCBQl6XWwvIC8+o
-         0C44Mn8BEQ7G6HevgAlIBTxQdQ8F8LS6yg01ZiGpRvGX3A8gMxBfzf83EDS6lp4EA8
-         yTbFmwZe7X0zHB1muNlh590CUEDTbWVJG1BfWzYZnDM6+CW4Mon0jSC5HnphtUcUTQ
-         AkwxDH6UKkJPQ==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     davem@davemloft.net, edumazet@google.com, johannes.berg@intel.com,
-        johannes@sipsolutions.net, kernel-janitors@vger.kernel.org,
-        kuba@kernel.org, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        pabeni@redhat.com, quic_alokad@quicinc.com,
-        quic_msinada@quicinc.com
-Subject: Re: [PATCH net] wifi: mac80211: Fix puncturing bitmap handling in __ieee80211_csa_finalize()
-References: <e84a3f80fe536787f7a2c7180507efc36cd14f95.1682358088.git.christophe.jaillet@wanadoo.fr>
-        <87mt2sppgs.fsf@kernel.org>
-        <a94ce60d-423a-5f8e-5f8e-9b462854db54@wanadoo.fr>
-Date:   Fri, 28 Apr 2023 11:46:48 +0300
-In-Reply-To: <a94ce60d-423a-5f8e-5f8e-9b462854db54@wanadoo.fr> (Christophe
-        JAILLET's message of "Fri, 28 Apr 2023 10:19:56 +0200")
-Message-ID: <87pm7os8av.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        s=k20201202; t=1682671820;
+        bh=8Tw+5rhC7oKIe4JFe7tcfXKZPFVqlfnT3qVqfqKTdqo=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=kCkUSmKh4oVdbcfxeCGgU7cllaBbvFIjFBXFv8DKLGFO/YJUWGWUAhk3NhYSUkfYF
+         yqE83t2xDIQYlOB3w3SDIGxi+JgGi6IJGB8pXVPzzN5nI+rER02rs46268gZS+QWBT
+         fy0LdUrI6k9m/D7pIcLYDQJFB8oxEHYL1x7GYbY0TGQ0Q/wr9ZspB/VJ3Z4Rx9Ca7U
+         vPvAoodIssyUh7RoCkRN/Ur+tnB6OYY4JB5FPGC1lU351gpNgvcz9R1ONT0TXVXIeT
+         LadqwSmcfEB3Z9gLQ5TZnuok1uiTBQDV9LpLPpknSjlD1dkGTuWa/miXxmQX7Zy9tj
+         F3jbbDcu0Qe8A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 367F3C41677;
+        Fri, 28 Apr 2023 08:50:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] mISDN: Use list_count_nodes()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168267182021.3488.8534134513892654385.git-patchwork-notify@kernel.org>
+Date:   Fri, 28 Apr 2023 08:50:20 +0000
+References: <886a6fe86cfc3d787a2e3a5062ce8bd92323ed66.1682602766.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <886a6fe86cfc3d787a2e3a5062ce8bd92323ed66.1682602766.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     isdn@linux-pingi.de, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+Hello:
 
-> Le 28/04/2023 =C3=A0 07:04, Kalle Valo a =C3=A9crit=C2=A0:
->> Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gma=
-ne.org> writes:
->>
->>> 'changed' can be OR'ed with BSS_CHANGED_EHT_PUNCTURING which is larger =
-than
->>> an u32.
->>> So, turn 'changed' into an u64 and update ieee80211_set_after_csa_beaco=
-n()
->>> accordingly.
->>>
->>> In the commit in Fixes, only ieee80211_start_ap() was updated.
->>>
->>> Fixes: 2cc25e4b2a04 ("wifi: mac80211: configure puncturing bitmap")
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb=
-5QawA@public.gmane.org>
->>
->> FWIW mac80211 patches go to wireless tree, not net.
->
-> net/<something> or drivers/net/<something> goes to 'net'.
-> drivers/net/wireless/<something> goes to 'wireless'.
->
-> now:
-> net/mac80211/ goes also to 'wireless' as well.
-> ath11 and ath12 are special cases that goes to 'ath'.
->
-> Based on the get_maintainer.pl, my last patch against drivers/isdn
-> looks well suited to deserve a -net-next as well?
->
->
-> without speaking of -next variations.
->
->
-> How many other oddities are there?
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Oddities? We have had separate wireless trees for something like 15
-years now, so not a new thing :D
+On Thu, 27 Apr 2023 15:39:48 +0200 you wrote:
+> count_list_member() really looks the same as list_count_nodes(), so use the
+> latter instead of hand writing it.
+> 
+> The first one return an int and the other a size_t, but that should be
+> fine. It is really unlikely that we get so many parties in a conference.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
-But we have also separate trees for most active wireless drivers. For
-example, Felix has a tree for mt76, Intel for iwlwifi, I have for
-ath9k/ath10k/ath11k/ath12k and so on.
+Here is the summary with links:
+  - mISDN: Use list_count_nodes()
+    https://git.kernel.org/netdev/net-next/c/e0807c430239
 
-> I try to make my best to add net or net-next.
-> I could do the same with wireless. (I guess that there is also a
-> wireless-next?)
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Yes, there is also wireless-next.
 
-> I can do it when rules are SIMPLE.
->
-> Is there a place where ALL these "rules" are described?
-> Could MAINTAINERS and scripts be instrumented for that?
-
-The maintainers file should document what tree to use:
-
-QUALCOMM ATHEROS ATH11K WIRELESS DRIVER
-M:      Kalle Valo <kvalo@kernel.org>
-L:      ath11k@lists.infradead.org
-S:      Supported
-T:      git git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git
-F:      Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
-F:      drivers/net/wireless/ath/ath11k/
-
-If a wireless driver has no git tree then you can use the tree from the
-top level entry:
-
-NETWORKING DRIVERS (WIRELESS)
-M:      Kalle Valo <kvalo@kernel.org>
-L:      linux-wireless@vger.kernel.org
-S:      Maintained
-W:      https://wireless.wiki.kernel.org/
-Q:      https://patchwork.kernel.org/project/linux-wireless/list/
-T:      git
-git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless.git
-T:      git
-git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git
-F:      Documentation/devicetree/bindings/net/wireless/
-F:      drivers/net/wireless/
-
-But of course some of the entries could be out-of-date. Patches welcome
-if you see those :)
-
-> I DO understand that the easiest it is for maintainers, the better for
-> them, but please stop asking for casual contributors to know that and
-> follow your, not that easy to find or remember, rules.
->
-> I'm tempt not to TRY to put the right branch in the subject of my
-> commits anymore, because even when I try to do it right and follow
-> simple rules for that, it is not enough and I'm WRONG.
->
-> Most of my contributions are related to error handling paths.
-> The remaining ones are mostly related to number of LoC reduction.
->
-> Should my contributions be ignored because of the lack of tools to
-> help me target the correct branch, then keep the bugs and keep the
-> LoC.
-
-I don't see anyone saying anything about ignoring your fixes, at least I
-have always valued your fixes and I hope you can continue submitting
-them.
-
-> git log --oneline --author=3Djaillet --grep Fixes: drivers/net | wc -l
-> 97
-> git log --oneline --author=3Djaillet drivers/net | wc -l
-> 341
->
-> git log --oneline --author=3Djaillet --grep Fixes: net | wc -l
-> 7
-> git log --oneline --author=3Djaillet net | wc -l
-> 327
->
-> No hard feelings, but slightly upset.
-
-No need to be upset really, this is just coordination between
-maintainers so that we don't accidentally take wrong patches. Please
-don't take it personally.
-
-If you are not familiar with network trees, I have seen some
-contributors just using '-next' without specifying the actual tree and
-letting the maintainers deal with what tree to take it. I consider that
-as a safe option.
-
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
