@@ -2,77 +2,111 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B094C77B61
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 05:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40091C77B7E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 05:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345165AbjD1FE1 (ORCPT
+        id S1345220AbjD1F76 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Apr 2023 01:04:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46620 "EHLO
+        Fri, 28 Apr 2023 01:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbjD1FE0 (ORCPT
+        with ESMTP id S229645AbjD1F75 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Apr 2023 01:04:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DEEA26A2;
-        Thu, 27 Apr 2023 22:04:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D7A8660AB4;
-        Fri, 28 Apr 2023 05:04:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC619C433D2;
-        Fri, 28 Apr 2023 05:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682658264;
-        bh=1jG17+/ymFzEo1DeDLBm4GJ1/6GRzCzGRAUyoi4cchE=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=WUpZRmPs+HS5nSEp2lgOEhgiHzBXVP1F5Zeods3BiFK9ogpLPHdf6SR0TF9cclENd
-         2CULicHnBKqko0P9GmyZEe12EJbf8lzw+htBtqEHGxIEXSwwJGNacj8gWksXnJ6tv6
-         ot5hv+spL+5dy7gZUtoFtXO+0bD2GiCBvUqLTqvFTRp0tbl5x364LID+luPvwzdzx2
-         bfFK2sRD9evMxl2EB13Sr3ocNoHujQ2e9rdNXFRd0DkJvKK5g24wYcROTh7DNhcIEj
-         oLhONSt6TrVDjBBNxLA5uorU3GIK5gQjl8X88DnKc3JB18CdvHGDRIFuMqxK9tuGHv
-         khXWAXkfdsqPA==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Aloka Dixit <quic_alokad@quicinc.com>,
-        Muna Sinada <quic_msinada@quicinc.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Johannes Berg <johannes.berg@intel.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net] wifi: mac80211: Fix puncturing bitmap handling in __ieee80211_csa_finalize()
-References: <e84a3f80fe536787f7a2c7180507efc36cd14f95.1682358088.git.christophe.jaillet@wanadoo.fr>
-Date:   Fri, 28 Apr 2023 08:04:19 +0300
-In-Reply-To: <e84a3f80fe536787f7a2c7180507efc36cd14f95.1682358088.git.christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Mon, 24 Apr 2023 19:42:04 +0200")
-Message-ID: <87mt2sppgs.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 28 Apr 2023 01:59:57 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCA62689;
+        Thu, 27 Apr 2023 22:59:55 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33RKPCrD031856;
+        Fri, 28 Apr 2023 05:59:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=fUeCGzF2E/MJpwwWsgeCABFqdUqiBLxFGm1C7ZyiMnU=;
+ b=CRVuBVELEk0nDpCg8ePKt3xe+lEoLxsuSnoHdkmKLnsG7OkE0+zM85dghSwtfjeH8Shq
+ s/QonyhCHF4I+XCh9MJjYUHl2UEQ/iB7/zifzVvaS3mcBosBS2hdObzRZxlk07QNbD8r
+ gPfwVAAiqzSW67NalW8304EbrjkbKnLiVK/10D3Grkl3zMzNcly7lLyVepyfWJjYw9Pk
+ kDkA3F+/5mqSLo/hNUpCGcnmiFkvEgNmULzuIXfJXNmOy7qm3N2gqxVLpya7wsDFCntF
+ ALRalrrV7eZ/w8VExUBJGZLb60N/UhCjF1F32MXAcxLZfYfcDKw1teNoslohauPMUXWD HA== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q476u5e9b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Apr 2023 05:59:52 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 33S4XU2E008644;
+        Fri, 28 Apr 2023 05:59:51 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3q461ahpm8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Apr 2023 05:59:51 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33S5v0aN014799;
+        Fri, 28 Apr 2023 05:59:50 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3q461ahpm4-1;
+        Fri, 28 Apr 2023 05:59:50 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     mcgrof@kernel.org, linux-modules@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, error27@gmail.com,
+        kernel-janitors@vger.kernel.org,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: [PATCH] module: Fix use-after-free bug in read_file_mod_stats()
+Date:   Thu, 27 Apr 2023 22:59:33 -0700
+Message-Id: <20230428055933.2699308-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-28_02,2023-04-27_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304280048
+X-Proofpoint-GUID: _VFUwZeukZMWnvtc5VMW4LkaK160HGLs
+X-Proofpoint-ORIG-GUID: _VFUwZeukZMWnvtc5VMW4LkaK160HGLs
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+Smatch warns:
+	kernel/module/stats.c:394 read_file_mod_stats()
+	warn: passing freed memory 'buf'
 
-> 'changed' can be OR'ed with BSS_CHANGED_EHT_PUNCTURING which is larger than
-> an u32.
-> So, turn 'changed' into an u64 and update ieee80211_set_after_csa_beacon()
-> accordingly.
->
-> In the commit in Fixes, only ieee80211_start_ap() was updated.
->
-> Fixes: 2cc25e4b2a04 ("wifi: mac80211: configure puncturing bitmap")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+We are passing 'buf' to simple_read_from_buffer() after freeing it.
 
-FWIW mac80211 patches go to wireless tree, not net.
+Fix this by changing the order of 'simple_read_from_buffer' and 'kfree'.
 
+Fixes: df3e764d8e5c ("module: add debug stats to help identify memory pressure")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+Found with statis analysis, only compile tested.
+---
+ kernel/module/stats.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/module/stats.c b/kernel/module/stats.c
+index ad7b6ada29f2..6ab2c94d6bc3 100644
+--- a/kernel/module/stats.c
++++ b/kernel/module/stats.c
+@@ -276,6 +276,7 @@ static ssize_t read_file_mod_stats(struct file *file, char __user *user_buf,
+ 	struct mod_fail_load *mod_fail;
+ 	unsigned int len, size, count_failed = 0;
+ 	char *buf;
++	int ret;
+ 	u32 live_mod_count, fkreads, fdecompress, fbecoming, floads;
+ 	unsigned long total_size, text_size, ikread_bytes, ibecoming_bytes,
+ 		idecompress_bytes, imod_bytes, total_virtual_lost;
+@@ -390,8 +391,9 @@ static ssize_t read_file_mod_stats(struct file *file, char __user *user_buf,
+ out_unlock:
+ 	mutex_unlock(&module_mutex);
+ out:
++	ret = simple_read_from_buffer(user_buf, count, ppos, buf, len);
+ 	kfree(buf);
+-        return simple_read_from_buffer(user_buf, count, ppos, buf, len);
++	return ret;
+ }
+ #undef MAX_PREAMBLE
+ #undef MAX_FAILED_MOD_PRINT
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.40.0
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
