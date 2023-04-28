@@ -2,111 +2,87 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40091C77B7E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 05:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE13C77B60
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 07:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345220AbjD1F76 (ORCPT
+        id S1345445AbjD1HdK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Apr 2023 01:59:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59402 "EHLO
+        Fri, 28 Apr 2023 03:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjD1F75 (ORCPT
+        with ESMTP id S230025AbjD1HdH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Apr 2023 01:59:57 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCA62689;
-        Thu, 27 Apr 2023 22:59:55 -0700 (PDT)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33RKPCrD031856;
-        Fri, 28 Apr 2023 05:59:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-03-30; bh=fUeCGzF2E/MJpwwWsgeCABFqdUqiBLxFGm1C7ZyiMnU=;
- b=CRVuBVELEk0nDpCg8ePKt3xe+lEoLxsuSnoHdkmKLnsG7OkE0+zM85dghSwtfjeH8Shq
- s/QonyhCHF4I+XCh9MJjYUHl2UEQ/iB7/zifzVvaS3mcBosBS2hdObzRZxlk07QNbD8r
- gPfwVAAiqzSW67NalW8304EbrjkbKnLiVK/10D3Grkl3zMzNcly7lLyVepyfWJjYw9Pk
- kDkA3F+/5mqSLo/hNUpCGcnmiFkvEgNmULzuIXfJXNmOy7qm3N2gqxVLpya7wsDFCntF
- ALRalrrV7eZ/w8VExUBJGZLb60N/UhCjF1F32MXAcxLZfYfcDKw1teNoslohauPMUXWD HA== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q476u5e9b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Apr 2023 05:59:52 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 33S4XU2E008644;
-        Fri, 28 Apr 2023 05:59:51 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3q461ahpm8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Apr 2023 05:59:51 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33S5v0aN014799;
-        Fri, 28 Apr 2023 05:59:50 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3q461ahpm4-1;
-        Fri, 28 Apr 2023 05:59:50 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To:     mcgrof@kernel.org, linux-modules@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, error27@gmail.com,
-        kernel-janitors@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: [PATCH] module: Fix use-after-free bug in read_file_mod_stats()
-Date:   Thu, 27 Apr 2023 22:59:33 -0700
-Message-Id: <20230428055933.2699308-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.40.0
+        Fri, 28 Apr 2023 03:33:07 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C854D26BC
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Apr 2023 00:33:05 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id sIbGpc4gTOW4ksIbGpuCv5; Fri, 28 Apr 2023 09:33:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682667183;
+        bh=7thGFqsXnUZKI/1GxZfW7o8p/ReedXSSfe8i9pCipgs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=W/MU0nZsswz7tKo/OpfB9j7+U2zS8ZLcDusNlR+tmaYK5ToFBDm8l0kUCGc5BHcSy
+         JU871dzu1Np1bK6lqhKwYmqZ10xHQwSEdihP+NfHIS9piV+AdIjDyvCeE/7a/Qf8EQ
+         csSgwnWvGxESp9lXBU8bqEcEo1MJKOQ6nDzm+PDLjoZsQ+rcyIOIA39uyprJkLzPFP
+         xY3MNgmGjHRpxoHINrU9/edpEhNzTZGiU9dWZ4xfxZway0HDMUeF6qPEV9Frg33NCp
+         /2K8N2fABk5atlpUTIOi08clwPQF2lBPWWX7kbSGPMuXDnjHlSzXYBUmk7q/ZnTflJ
+         xiFHA6Z2M22wA==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 28 Apr 2023 09:33:03 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <c704568d-16d1-bbd8-2b59-1d719f2bcf8c@wanadoo.fr>
+Date:   Fri, 28 Apr 2023 09:33:01 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] nvmet: Reorder fields in 'struct nvmet_ns'
+To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "kbusch@kernel.org" <kbusch@kernel.org>
+References: <aea924d31f2bd2f740b1ccc6f462905bd6cab763.1682624855.git.christophe.jaillet@wanadoo.fr>
+ <67a9e53e-4ac9-7ba8-9713-96c1dfe1e341@nvidia.com>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <67a9e53e-4ac9-7ba8-9713-96c1dfe1e341@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-28_02,2023-04-27_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304280048
-X-Proofpoint-GUID: _VFUwZeukZMWnvtc5VMW4LkaK160HGLs
-X-Proofpoint-ORIG-GUID: _VFUwZeukZMWnvtc5VMW4LkaK160HGLs
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch warns:
-	kernel/module/stats.c:394 read_file_mod_stats()
-	warn: passing freed memory 'buf'
+Le 28/04/2023 à 01:12, Chaitanya Kulkarni a écrit :
+> (+Keith, for host side)
+>> ---
+>> More aggressive grouping could be done to be more future proof, but the
+>> way the struct nvmet_ns is written suggest that some fields should be
+>> kept together. So keep grouping as-is.
+>>
+>>
+> 
+> you can send RFC and I'll be happy to take a look if it's going
+> have any benefit, it will take some time though..
+> 
+> for host side :-
+> 
+> while you are at it, it might be useful to take a look at the structures
+> that are accessed in the fast path on the host side ?
 
-We are passing 'buf' to simple_read_from_buffer() after freeing it.
+Ok, why not, but can you help identifying these structures or places 
+considered as fast path?
 
-Fix this by changing the order of 'simple_read_from_buffer' and 'kfree'.
+CJ
 
-Fixes: df3e764d8e5c ("module: add debug stats to help identify memory pressure")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-Found with statis analysis, only compile tested.
----
- kernel/module/stats.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/module/stats.c b/kernel/module/stats.c
-index ad7b6ada29f2..6ab2c94d6bc3 100644
---- a/kernel/module/stats.c
-+++ b/kernel/module/stats.c
-@@ -276,6 +276,7 @@ static ssize_t read_file_mod_stats(struct file *file, char __user *user_buf,
- 	struct mod_fail_load *mod_fail;
- 	unsigned int len, size, count_failed = 0;
- 	char *buf;
-+	int ret;
- 	u32 live_mod_count, fkreads, fdecompress, fbecoming, floads;
- 	unsigned long total_size, text_size, ikread_bytes, ibecoming_bytes,
- 		idecompress_bytes, imod_bytes, total_virtual_lost;
-@@ -390,8 +391,9 @@ static ssize_t read_file_mod_stats(struct file *file, char __user *user_buf,
- out_unlock:
- 	mutex_unlock(&module_mutex);
- out:
-+	ret = simple_read_from_buffer(user_buf, count, ppos, buf, len);
- 	kfree(buf);
--        return simple_read_from_buffer(user_buf, count, ppos, buf, len);
-+	return ret;
- }
- #undef MAX_PREAMBLE
- #undef MAX_FAILED_MOD_PRINT
--- 
-2.40.0
+> 
+> unless there is some reason for not doing that ...
+> 
+> -ck
+> 
+> 
 
