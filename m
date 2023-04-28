@@ -2,52 +2,54 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F10C77B61
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 08:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88106C77B7E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 09:00:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345547AbjD1Iuh (ORCPT
+        id S1345584AbjD1JA3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Apr 2023 04:50:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58096 "EHLO
+        Fri, 28 Apr 2023 05:00:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345494AbjD1Iub (ORCPT
+        with ESMTP id S1345507AbjD1JA0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Apr 2023 04:50:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B1B61FCF;
-        Fri, 28 Apr 2023 01:50:21 -0700 (PDT)
+        Fri, 28 Apr 2023 05:00:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C2D1BC;
+        Fri, 28 Apr 2023 02:00:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DBE5864219;
-        Fri, 28 Apr 2023 08:50:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4AF98C433D2;
-        Fri, 28 Apr 2023 08:50:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 82D6764223;
+        Fri, 28 Apr 2023 09:00:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DD736C433A8;
+        Fri, 28 Apr 2023 09:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682671820;
-        bh=8Tw+5rhC7oKIe4JFe7tcfXKZPFVqlfnT3qVqfqKTdqo=;
+        s=k20201202; t=1682672421;
+        bh=lJw+O90a6v3rkXnEzhO4UQOIEMF91DQf47yecoODgrI=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=kCkUSmKh4oVdbcfxeCGgU7cllaBbvFIjFBXFv8DKLGFO/YJUWGWUAhk3NhYSUkfYF
-         yqE83t2xDIQYlOB3w3SDIGxi+JgGi6IJGB8pXVPzzN5nI+rER02rs46268gZS+QWBT
-         fy0LdUrI6k9m/D7pIcLYDQJFB8oxEHYL1x7GYbY0TGQ0Q/wr9ZspB/VJ3Z4Rx9Ca7U
-         vPvAoodIssyUh7RoCkRN/Ur+tnB6OYY4JB5FPGC1lU351gpNgvcz9R1ONT0TXVXIeT
-         LadqwSmcfEB3Z9gLQ5TZnuok1uiTBQDV9LpLPpknSjlD1dkGTuWa/miXxmQX7Zy9tj
-         F3jbbDcu0Qe8A==
+        b=bosqTgTcY9zv3LNq51CKyzmoll6svv1MUfN0T6Tg0MvohQlXz2gLcqvJg1ZRwP6gE
+         vYdylGMySHZw0ecwy12FZ8DaVObUx6ba0pOBIcR6YIbOZ/FZvDk56FxYhCl8vMjfyb
+         uYT/VIRsC1NB31ZPCpFKYFo45hdAE0o1M9+8H837YIqRkqu0b/JPwSRsA5b+b6XOkx
+         WW0wYakjpgmVDwINaoyGgWE2U/ZVzAGWIO5yBMbTTOrUg5RHAraWTUc5bWRnJs/o9J
+         hGEYVWWuVkGC2yl6gcEgtMh+T34I4F1pThfG4roHV0d8yovXjrzWEuS34r69PwFTTL
+         xeZlraRnxjwmA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 367F3C41677;
-        Fri, 28 Apr 2023 08:50:20 +0000 (UTC)
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C860BC41677;
+        Fri, 28 Apr 2023 09:00:21 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] mISDN: Use list_count_nodes()
+Subject: Re: [PATCH] atlantic:hw_atl2:hw_atl2_utils_fw:  Remove unnecessary
+ (void*) conversions
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168267182021.3488.8534134513892654385.git-patchwork-notify@kernel.org>
-Date:   Fri, 28 Apr 2023 08:50:20 +0000
-References: <886a6fe86cfc3d787a2e3a5062ce8bd92323ed66.1682602766.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <886a6fe86cfc3d787a2e3a5062ce8bd92323ed66.1682602766.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     isdn@linux-pingi.de, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Message-Id: <168267242181.9185.7527374858338578640.git-patchwork-notify@kernel.org>
+Date:   Fri, 28 Apr 2023 09:00:21 +0000
+References: <20230427102531.14783-1-yunchuan@nfschina.com>
+In-Reply-To: <20230427102531.14783-1-yunchuan@nfschina.com>
+To:     wuych <yunchuan@nfschina.com>
+Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, irusskikh@marvell.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -57,20 +59,17 @@ Hello:
 This patch was applied to netdev/net-next.git (main)
 by David S. Miller <davem@davemloft.net>:
 
-On Thu, 27 Apr 2023 15:39:48 +0200 you wrote:
-> count_list_member() really looks the same as list_count_nodes(), so use the
-> latter instead of hand writing it.
+On Thu, 27 Apr 2023 18:25:31 +0800 you wrote:
+> Pointer variables of void * type do not require type cast.
 > 
-> The first one return an int and the other a size_t, but that should be
-> fine. It is really unlikely that we get so many parties in a conference.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+> Signed-off-by: wuych <yunchuan@nfschina.com>
+> ---
+>  .../net/ethernet/aquantia/atlantic/hw_atl2/hw_atl2_utils_fw.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Here is the summary with links:
-  - mISDN: Use list_count_nodes()
-    https://git.kernel.org/netdev/net-next/c/e0807c430239
+  - atlantic:hw_atl2:hw_atl2_utils_fw: Remove unnecessary (void*) conversions
+    https://git.kernel.org/netdev/net-next/c/042334a8d424
 
 You are awesome, thank you!
 -- 
