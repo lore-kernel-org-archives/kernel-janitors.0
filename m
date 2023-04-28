@@ -2,126 +2,128 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCEFC77B61
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 17:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A0FC77B60
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 19:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346335AbjD1R2T (ORCPT
+        id S230402AbjD1Tr2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Apr 2023 13:28:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57248 "EHLO
+        Fri, 28 Apr 2023 15:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346315AbjD1R2R (ORCPT
+        with ESMTP id S229578AbjD1Tr1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Apr 2023 13:28:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2F144B6
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Apr 2023 10:28:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 60DC260B65
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Apr 2023 17:28:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB331C433AC
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Apr 2023 17:28:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682702886;
-        bh=awzlaeaMJVwFKmd4eU3dpKmk4Ck+BaGjudrb7tg482Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mpSa/cBmj2Xf/Og6E2MVuM86bg7KoArkd+R9npdtcWIZdgS/QlvNlN7HApdJJPj+o
-         QEp0ofqOZ7XUCRgIBYE6AbzDFPs9eZjH+wYSg3ypO/SREJVl8KkYDV1VSUgD52ZVoM
-         pck/f1RtXnV6kgHUIvN7Yt1ioFpeuPB5972rTqzB7k0eiTT8yU1jxkYp35TtvcyaWD
-         c9Jni6GuGbFCbHokR6cls9ft9asL6vONlZa1jhqVXNP8ZziJ1voZkXDQyA2AbH4hYq
-         3PEIc9yi/bxTKvh8V8ODYC81+7t7NpYfZLs3z52jPpMhEGWF8HHm4I77LbXs/1n/a+
-         XHkWyLYcTq3sw==
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-24762b39b0dso170002a91.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Apr 2023 10:28:06 -0700 (PDT)
-X-Gm-Message-State: AC+VfDyb8+cNPqFavjk621t80tPumVD28OMN5f3n4/sNyJfe+Af6txLY
-        o326vOKUr5s/G97gfC/r/qgAbRfN7s5LrjrcGk+cEQ==
-X-Google-Smtp-Source: ACHHUZ4EzFJTkyoWOCd5UTE8lkquxKZMsfmdTvY1kPMRpButj1PQ3EvMJaw4oZOSH7LC5CPepwlb1PcWF+Mg7++5nVc=
-X-Received: by 2002:a17:90b:4ac3:b0:24c:1de9:493 with SMTP id
- mh3-20020a17090b4ac300b0024c1de90493mr4272026pjb.47.1682702885951; Fri, 28
- Apr 2023 10:28:05 -0700 (PDT)
+        Fri, 28 Apr 2023 15:47:27 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2127.outbound.protection.outlook.com [40.107.220.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EF8B19B9;
+        Fri, 28 Apr 2023 12:47:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ApTpUO2cFlyC1FQhC0J+wfJc2XcBBhtNJ8vkOGZpzyu2shXyRdppMqw2oD79z6z5P1g7UXyaQWDsse0Bq9mY5ARcf2TsvqLjYPnKDo836ooagZp8PkCW4lfSrc97yL7rZaov8TEvUYk3UzQlrpxFcwPuicj3FFsVicdqy3RLe6FIY+h/hIUgLYBAY48v/BLdCSghjLQO8fm/ErgmKrhumU0gHj+h5XMzg1UHvqEf1Icwu3hn6X7NLQ9qMUTcaKhcwm7e1PP8b6j+gWA2RAwJJOa+ZQyGJrCz6cDfZ8lpznhZirSaDVZIKOpSswzMfWzx2KcJcpNXYKFrkOKYI6VD2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RaFl4fqMIYsj9k8l7A1XUu8w29DTpzfQPosA5TF2tMw=;
+ b=PKppm9prbd2EOdNlK+XcNN1SdqFA56wQWRgzjNy445InnLcIkujln9YAr9Ypzk46t5vDYiO3BMc/5el9LCUrmLO7KsppdaSE5AjNL+2oPIxnDzQMg7fZHJhzLs0OpYmq13fVFpFLKZwptQZCQF0oyGiZdiTJ1S1BhwS0cjcYbCfOvPvJWhZ7LEB9kemHylA4RmfIu9RaQc133ZHpNYLlm/g2LUIy6rig/EeCLmPInzePtVhCN2ryaPaWMi5DSfhshEoyxcvcbEchhrHGRnAHWHtxjukSOgsg3giE98MUsQgkRnpZU4zibfgrFPtQ/2xox0RTIkcV91VvzLxAbUqlew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RaFl4fqMIYsj9k8l7A1XUu8w29DTpzfQPosA5TF2tMw=;
+ b=oH4vLaEjNZOAfQBJvXPFIcavxJ77oj9ken4Vl7nzJi6Y6V/OPo2ilB2oCN/uJpZuKyqPY6J2GJex6DX3Di+l/h0Ld/oNDVQgsQ9QOidW6Q0TtB2UE13P3uViajHFK18ZlejNBoTelEfz5OxyA8ALPtDEXEShiutfyDqiElh5or8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by DS7PR13MB4752.namprd13.prod.outlook.com (2603:10b6:5:3a4::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.22; Fri, 28 Apr
+ 2023 19:47:23 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::f416:544d:18b7:bb34]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::f416:544d:18b7:bb34%5]) with mapi id 15.20.6340.022; Fri, 28 Apr 2023
+ 19:47:23 +0000
+Date:   Fri, 28 Apr 2023 21:47:15 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] wifi: ath10k: Use list_count_nodes()
+Message-ID: <ZEwiw+zPc7Wdyixf@corigine.com>
+References: <e6ec525c0c5057e97e33a63f8a4aa482e5c2da7f.1682541872.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6ec525c0c5057e97e33a63f8a4aa482e5c2da7f.1682541872.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: AM9P193CA0006.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21e::11) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
 MIME-Version: 1.0
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de> <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <14636275-4d26-d639-5f6e-293fc6d1c4c6@web.de> <CAN6tsi7caOQZLLvbL7phMEtNvBLaWgJuHLkLo3YWdqQw7Vxnaw@mail.gmail.com>
- <6f758653-36c9-91a2-7bbc-278ae3f8ccee@web.de> <CAN6tsi4WBDOyzvXJ8vV=xJYay1JbBGo+UzZ+vudTBm5Fk5nB=A@mail.gmail.com>
- <14083012-2f19-3760-a840-d685fcedc15e@web.de> <CAN6tsi7263VnTba+WUUWR171Y+CsOKAb=it8cofPQGRk26K=aA@mail.gmail.com>
- <fa69384f-1485-142b-c4ee-3df54ac68a89@web.de>
-In-Reply-To: <fa69384f-1485-142b-c4ee-3df54ac68a89@web.de>
-From:   Robert Foss <rfoss@kernel.org>
-Date:   Fri, 28 Apr 2023 19:27:54 +0200
-X-Gmail-Original-Message-ID: <CAN6tsi5vukABCxWMNtUHokXj3+xObnX_aKvP-oQDde+M+Biv4g@mail.gmail.com>
-Message-ID: <CAN6tsi5vukABCxWMNtUHokXj3+xObnX_aKvP-oQDde+M+Biv4g@mail.gmail.com>
-Subject: Re: [PATCH resent] drm/bridge: it6505: Move a variable assignment
- behind a null pointer check in receive_timing_debugfs_show()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        Hermes Wu <hermes.wu@ite.com.tw>,
-        Hsin-yi Wang <hsinyi@chromium.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|DS7PR13MB4752:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14456666-8ee1-47d2-2b73-08db482162ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uXAQ5g7KFywjQGWKrzVfFcx8OmHxeICAOBvUeauFiu+iNiULf9Bq1qsWhY+8L5Jh21qK9/NGOPo1tkrTzHpIjAlMPcM8GhGl7bnkX8xliU3FRpUnxyLiz2+ja3vTqY0yANrFEnEStWd4l/+VKU7gquCuOL7Z+OzC6lxUWn8JoncpP4EmpsOoYYktPclw6Njl4ayeg697l2/7TdI0BjkzhOPmV2csMVRrSD69ZNoZ4XmOC69ZzbW80pOoG4N0PZPMb7L9VnvhLaDcbf9jsX9tCu0HzStrUN0dAeDFXHoNAWz+1EhMT5nAa7soE8j4hdesOaj0aTdLGzNgODM3HHmVvXYg1hIOLQl5bBZ9geH/XsixBliyEARmOJaNE0fqEyre89meuh8FOCzrV+iAyKu2cEYwYlN0+rPMj5X6Vaam/ufmUPDhLgl9BQQXV3LtC3Vjx31sTmDFyobTP4m/AVZUgR3tgl7WV6hJGcUtq4tSHqtMU++PM1DQySbsydweoJNLFxSCdDxe6/F5ksgmqo7JuuskwENaYquyZWytTM5o9/M0/1tFP60in5aobJ3ZrH/yKBZWqSrnHDjLzUFoeEZTN8v8q1B9WbC3Kk9FhhG5istgJUF66gqjKyqXP1nSexBZZNHKAOikpAuaHyBVsPpU0w==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(39840400004)(366004)(136003)(346002)(451199021)(86362001)(4744005)(2906002)(36756003)(44832011)(186003)(6486002)(6666004)(6512007)(6506007)(66556008)(4326008)(6916009)(2616005)(478600001)(66476007)(316002)(5660300002)(38100700002)(41300700001)(66946007)(54906003)(8936002)(8676002)(7416002)(67856001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?HmNHl4RPj92g1vhf4WQAgv3QcIE6ZEzZdgxb9HCKTv93e5YD190iyxlDw5uJ?=
+ =?us-ascii?Q?c2Yrke+T/ZZPVhiJZR5Va23aem8D5l42h6wDFJtWVSB76NpWLpfeHDX4tPI6?=
+ =?us-ascii?Q?F4xnrRfIFWGUHHcIRnCMqiCgElcihBOD4TuimeltVjYpvN0nUet4rlCoHd+J?=
+ =?us-ascii?Q?vkemYcPSvqgCEWcRkIz2Li7I90k/mUDVYOIHIkSAfKKxtMSkkDeVHDMAFNbA?=
+ =?us-ascii?Q?ZzdjKQPPVI5I++ysV9UeJ3LKO7gopZLUiTGlmdI+sVCA9C9hXsIVrQS0Mvzo?=
+ =?us-ascii?Q?wHrCosrNLUU+HVrV3U+A2VAIiWX4DacFAAchQvug5YIRlUVhffVrxYKYPgt7?=
+ =?us-ascii?Q?U19anPUtnJnvbuukDyIrwktuPIjZy0RpfDNJmWdmHmh9GYmUZmITGG0Y1+Qk?=
+ =?us-ascii?Q?7ZKuLnmZ+JYfafh3DNXOn/RREuAtnzMOMZc9ZWSP5Zf8z74L8z7V3ewWptsK?=
+ =?us-ascii?Q?EUbE76WMikINX7xVpq+E10+6J24GD0Ki1GniV7sXs8eNHrZsdhBNPAS+3uZC?=
+ =?us-ascii?Q?9jY43DlPq4nviiyjYHS9itbGQftPqCzA7QQGylmeIFLOhA4WSJw9Dczq5yFk?=
+ =?us-ascii?Q?h3+HgDqe43CUG1GJbAGC8GZx9ENF3QBj+mNYuyHOBqw2HO9jroZxA1ll20WI?=
+ =?us-ascii?Q?t7s4+RdhjwirlJzTZznyNDNStSbQvDnGDKl0PykuHB1UCMtPekcfo0s8ydl6?=
+ =?us-ascii?Q?YL0kCJ6R6ZfF+X4H5NeFpaq/ZJdMm9bnGutk0C5niID36AQtPhsbuYPKysfZ?=
+ =?us-ascii?Q?P5UcJ3UPKlJ6u0Rk+XLYaqZuUWZW4u+1/GhG1qRWBBcWdiDfN2KTVbV14kYg?=
+ =?us-ascii?Q?zcPjwlHQ+KBxCWOV+9YlXWZ+AkRBvV27h7b/FLtTCzQc7U6pMZ82osnfXaQt?=
+ =?us-ascii?Q?cSO2OKzXIOLxNDWn+QNVIT9+3JUa06LE0CpPse1O7MMiF8f5gCBK2FcljiHL?=
+ =?us-ascii?Q?PU2C1b3gUhsEIO8svd0zGJFb7Br4RYMShivfeGQ26FCpVSaFX1xKlIxQrDIt?=
+ =?us-ascii?Q?3OkXL1EDqXJd8q+EC739lX5biB1QiPrAugjCQ0iXj/Z4vGCBhPAqUrLwAcVS?=
+ =?us-ascii?Q?irWMxmfWqoM9rheR4EfJDAd52qIz0rA0wnuiIuvFvZ0dQIEWoCEs4U6uS9Fb?=
+ =?us-ascii?Q?QKKPQIEba5o1uvtzsYeTRsMuYY1G8bq+J24BgaJKX1vBP5yrPFIVtdvZAJHQ?=
+ =?us-ascii?Q?Ibu5qjB2Gjv1W3uFYTE7X8YyNx+G3ozkWXvYB9Xvn/cGxXS7ivj1aRVpgy/r?=
+ =?us-ascii?Q?hxE/Bxw1ai4KSwhVXnzeVEunuE1emckXlt4pQTraRwgMEd6d1AFIOhJo5XSa?=
+ =?us-ascii?Q?PY7do0G/LwAXCqc+Ah8UbOozWXsq91XhfXb7/lxHet7S093bEp7HXCXatGc3?=
+ =?us-ascii?Q?vvD+CcyQj+YLqUBN8Ae8MAKCdqXt8bmZAhqoZVQmC/rnHc4mfjLl720GP+5R?=
+ =?us-ascii?Q?06ZaaGk0ANl+4Z+PBJ/hTMEQIpvdlOwCzLD4aDfLP8n8IQNblScHFPNnf3rY?=
+ =?us-ascii?Q?6NWW4V5dXgMDn5o+JgVVWNe6f/WNMgsAZPzJxynP7TWaQ9MgsgHyEEOqAoXv?=
+ =?us-ascii?Q?5Y5dN3fznFmoPAlOKavLQLweSrv2HMM3sPv0YL2eF3Id5Ywxh1fAKva5xr7d?=
+ =?us-ascii?Q?PUzevG8fdyvI9rl91Gh2gaD4SOR05y8l9XEXQsyiSBb91xKU1rPl5BbAntzl?=
+ =?us-ascii?Q?Yk+YiA=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14456666-8ee1-47d2-2b73-08db482162ba
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2023 19:47:23.2073
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MSWPTu+lAtrWK3G64Tia3etA7gEsDw4UNWdlGPelNAbGMmV/dtsaHocrW40Kpqc+i4fXW/J3BOWRvmx8zCH9VQIqatnsvaaEqnxh2j2FFlk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR13MB4752
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 28, 2023 at 5:56=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 16 Apr 2023 17:30:46 +0200
->
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the function =E2=80=9Creceive_timing_debugfs_show=E2=80=9D.
->
-> Thus avoid the risk for undefined behaviour by moving the assignment
-> for the variable =E2=80=9Cvid=E2=80=9D behind the null pointer check.
->
-> This issue was detected by using the Coccinelle software.
->
-> Fixes: b5c84a9edcd418cd055becad6a22439e7c5e3bf8 ("drm/bridge: add it6505 =
-driver")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge=
-/ite-it6505.c
-> index abaf6e23775e..45f579c365e7 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> @@ -3207,7 +3207,7 @@ static ssize_t receive_timing_debugfs_show(struct f=
-ile *file, char __user *buf,
->                                            size_t len, loff_t *ppos)
->  {
->         struct it6505 *it6505 =3D file->private_data;
-> -       struct drm_display_mode *vid =3D &it6505->video_info;
-> +       struct drm_display_mode *vid;
->         u8 read_buf[READ_BUFFER_SIZE];
->         u8 *str =3D read_buf, *end =3D read_buf + READ_BUFFER_SIZE;
->         ssize_t ret, count;
-> @@ -3216,6 +3216,7 @@ static ssize_t receive_timing_debugfs_show(struct f=
-ile *file, char __user *buf,
->                 return -ENODEV;
->
->         it6505_calc_video_info(it6505);
-> +       vid =3D &it6505->video_info;
->         str +=3D scnprintf(str, end - str, "---video timing---\n");
->         str +=3D scnprintf(str, end - str, "PCLK:%d.%03dMHz\n",
->                          vid->clock / 1000, vid->clock % 1000);
-> --
-> 2.40.0
->
+On Wed, Apr 26, 2023 at 10:49:07PM +0200, Christophe JAILLET wrote:
+> ath10k_wmi_fw_stats_num_peers() and ath10k_wmi_fw_stats_num_vdevs() really
+> look the same as list_count_nodes(), so use the latter instead of hand
+> writing it.
+> 
+> The first ones use list_for_each_entry() and the other list_for_each(), but
+> they both count the number of nodes in the list.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to drm-misc-next.
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
+
