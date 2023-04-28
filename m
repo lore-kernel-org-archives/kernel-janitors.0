@@ -2,81 +2,77 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1FCC77B73
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 01:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B094C77B61
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 05:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344599AbjD1BBO (ORCPT
+        id S1345165AbjD1FE1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 Apr 2023 21:01:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46162 "EHLO
+        Fri, 28 Apr 2023 01:04:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229965AbjD1BBN (ORCPT
+        with ESMTP id S229570AbjD1FE0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 Apr 2023 21:01:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A87812703;
-        Thu, 27 Apr 2023 18:01:12 -0700 (PDT)
+        Fri, 28 Apr 2023 01:04:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DEEA26A2;
+        Thu, 27 Apr 2023 22:04:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4AA7A640A4;
-        Fri, 28 Apr 2023 01:01:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59A3BC433EF;
-        Fri, 28 Apr 2023 01:01:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D7A8660AB4;
+        Fri, 28 Apr 2023 05:04:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC619C433D2;
+        Fri, 28 Apr 2023 05:04:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682643671;
-        bh=Ze7Rmxv3LKtkH1ANVKux+0dOMHgCVGFP+y01bt0LlkU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=I6rWayZl6SuHVCf/8UBr11n1a1asSocPamkSOaGi6vbj06tj8muEqTW404vkSnR3+
-         TsdZQ5VpiOkBMAWX6jtwTdbcX5p1jKctK+QC6fn2c1gHpr85U2511koywBTjOidwHE
-         /Ie8UdGjW9VynvGZrVkg9wJRa3yMJDhtShIAH0CEVxB0117CRDdXT6Y5pQiLlIEeKn
-         P6BOJjMKmEV4+C5zxFDgyALRpGMYux6cUE8Vg8pNnUJ0qXxV+JKngDVkUE4vIDuLIg
-         RJ4SNU3Y5Jzba7bMjtwNTRue43/yScFebLfH9tf3BYxeAFUjKdugRhAVv79iHe8vPg
-         8j+LAdk1NMw3w==
-Message-ID: <ed6409e8-1ae9-e567-9117-4e9ac7cd7d69@kernel.org>
-Date:   Fri, 28 Apr 2023 09:01:08 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] f2fs: remove some dead code
-Content-Language: en-US
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Dan Carpenter <error27@gmail.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        s=k20201202; t=1682658264;
+        bh=1jG17+/ymFzEo1DeDLBm4GJ1/6GRzCzGRAUyoi4cchE=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=WUpZRmPs+HS5nSEp2lgOEhgiHzBXVP1F5Zeods3BiFK9ogpLPHdf6SR0TF9cclENd
+         2CULicHnBKqko0P9GmyZEe12EJbf8lzw+htBtqEHGxIEXSwwJGNacj8gWksXnJ6tv6
+         ot5hv+spL+5dy7gZUtoFtXO+0bD2GiCBvUqLTqvFTRp0tbl5x364LID+luPvwzdzx2
+         bfFK2sRD9evMxl2EB13Sr3ocNoHujQ2e9rdNXFRd0DkJvKK5g24wYcROTh7DNhcIEj
+         oLhONSt6TrVDjBBNxLA5uorU3GIK5gQjl8X88DnKc3JB18CdvHGDRIFuMqxK9tuGHv
+         khXWAXkfdsqPA==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Aloka Dixit <quic_alokad@quicinc.com>,
+        Muna Sinada <quic_msinada@quicinc.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <523ec4b037d064e92e19203e3ab9a161e3d9aa71.1681764681.git.christophe.jaillet@wanadoo.fr>
- <2867d5b3-c6cb-49fa-854a-0f58f9a5adb5@kili.mountain>
- <ZEqikAnNmjMxuSoU@google.com>
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <ZEqikAnNmjMxuSoU@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Johannes Berg <johannes.berg@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net] wifi: mac80211: Fix puncturing bitmap handling in __ieee80211_csa_finalize()
+References: <e84a3f80fe536787f7a2c7180507efc36cd14f95.1682358088.git.christophe.jaillet@wanadoo.fr>
+Date:   Fri, 28 Apr 2023 08:04:19 +0300
+In-Reply-To: <e84a3f80fe536787f7a2c7180507efc36cd14f95.1682358088.git.christophe.jaillet@wanadoo.fr>
+        (Christophe JAILLET's message of "Mon, 24 Apr 2023 19:42:04 +0200")
+Message-ID: <87mt2sppgs.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023/4/28 0:28, Jaegeuk Kim wrote:
-> On 04/18, Dan Carpenter wrote:
->> On Mon, Apr 17, 2023 at 10:51:46PM +0200, Christophe JAILLET wrote:
->>>   
->>> -	ret2 = filemap_check_errors(NODE_MAPPING(sbi));
->>> -	if (!ret)
->>> -		ret = ret2;
->>> +	ret = filemap_check_errors(NODE_MAPPING(sbi));
->>>   
->>>   	return ret;
->>
->> Let's get rid of "ret" as well:
->>
->> 	return filemap_check_errors(NODE_MAPPING(sbi));
-> 
-> Applied with this modification. Thanks.
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+> 'changed' can be OR'ed with BSS_CHANGED_EHT_PUNCTURING which is larger than
+> an u32.
+> So, turn 'changed' into an u64 and update ieee80211_set_after_csa_beacon()
+> accordingly.
+>
+> In the commit in Fixes, only ieee80211_start_ap() was updated.
+>
+> Fixes: 2cc25e4b2a04 ("wifi: mac80211: configure puncturing bitmap")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Thanks,
+FWIW mac80211 patches go to wireless tree, not net.
 
-> 
->>
->> regards,
->> dan carpenter
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
