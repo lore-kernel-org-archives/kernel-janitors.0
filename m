@@ -2,132 +2,170 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61410C77B7E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Apr 2023 20:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B620C77B7E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Apr 2023 13:47:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345869AbjD1UVV (ORCPT
+        id S231294AbjD2Nrr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Apr 2023 16:21:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43534 "EHLO
+        Sat, 29 Apr 2023 09:47:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjD1UVT (ORCPT
+        with ESMTP id S229658AbjD2Nrq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Apr 2023 16:21:19 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2122.outbound.protection.outlook.com [40.107.243.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9BE41FE6;
-        Fri, 28 Apr 2023 13:21:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HkKxWPfQEx7gLewLqVKTN24XUHSAHQAIIC0fpofMBHEOrZYrNrKIew26tVB6XlkvVlBOIPsAk+Sd8UyBArmI6oMPQpUEUaRUwjZ4sFPBKyVRo/0rR+MZIoGHOyDCeVJhnp5OgB+SDItyi/Ni5OMoX0eO4bXLuPRP/8jcw1nT293m2rxCS3uzLnEpHE3SvUkt6Zu3WJ0gWbCQHb1Vhgjlug9JjyjTMoXNTL59eEmRf7cxb72QWp9T9Mbn/TvuagsAchOgLTnQ6S4mc4ipqp/dh3wJgAog5JvYkgpnowasvp/hIplBSOebRbfUIcmN3rUaY3x4gGQsj8J9rdoFmpshrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DtNeKrUgHWgybUZiwFn9ZUfLZPf1mFcItNAAG+dA7hk=;
- b=dpMVVlZIcRmccmfiJgTr6bHlHKiTsntVmP8p8/GkXFU5SL2YFEj49B8xGBCYltLjn3wS//rrE740ShQJGbJcO20nQBqG5R4UvRca/oWA3wctKqZzMHHrUSZ6eAuMNhxu7+odlMI8D3QoDH9abj9SoLLScRVvRIYPMUXI/cOK/1Ia/JReVzqJIV/zJPvpCWISfgRsbQbWsphpAwCt7CPEhQ8qkDLUomG1PDRU1KMCxd27ehVmvDjg9LyM4AewcOjFegwHvYi7fVr//Yqqz9aEQ4wxVSuOfntPutxS8OX72EYemL3mXNu//4lyotPL5oGUi8yFL40EWtK1Z1yGnX+Khg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DtNeKrUgHWgybUZiwFn9ZUfLZPf1mFcItNAAG+dA7hk=;
- b=Mkgog0ehn9Aau+MxIt/2tQ+I8n+/oV7VCUl//1iyhpC8CoCnZ5mlerGxpzgZCK0PZS6ixLpBG6rkW2Dhg5moK+04DQv3bomeL4eQzYLKh2rKzX/IXYKmfGaeA19Z38zuB6xEdVyIo06yb7pInKbVuOHAAm+nut9IZJG5Z4vuYqE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by BLAPR13MB4675.namprd13.prod.outlook.com (2603:10b6:208:321::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.22; Fri, 28 Apr
- 2023 20:21:15 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34%5]) with mapi id 15.20.6340.022; Fri, 28 Apr 2023
- 20:21:15 +0000
-Date:   Fri, 28 Apr 2023 22:21:07 +0200
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] wifi: ath11k: Use list_count_nodes()
-Message-ID: <ZEwqs0B9FSarvYS6@corigine.com>
-References: <941484caae24b89d20524b1a5661dd1fd7025492.1682542084.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <941484caae24b89d20524b1a5661dd1fd7025492.1682542084.git.christophe.jaillet@wanadoo.fr>
-X-ClientProxiedBy: AS4P251CA0029.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d3::19) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        Sat, 29 Apr 2023 09:47:46 -0400
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE6819A1
+        for <kernel-janitors@vger.kernel.org>; Sat, 29 Apr 2023 06:47:43 -0700 (PDT)
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-32aebb6134eso4447715ab.1
+        for <kernel-janitors@vger.kernel.org>; Sat, 29 Apr 2023 06:47:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682776063; x=1685368063;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sJBbSPNx33O3Uic3H5MvMN9TsVhJ4u9iqfXiFHPsAdM=;
+        b=D7IpOwVR8sEXGMW4XOyRuFjJqYoBtNUy37R1b58RXzeg7qjNwtF9vsfjUQ/S5Pys2C
+         GtehnPxVD0KKzwMtQYeXXgxG7ZplyM1+AKSZnkR1OAIS7Wq07FVU9e3xm9c8I0WL9Eea
+         qySZe+YyffITgoM3NyD44SqZFJu8Th+RWso5NXQ5s53XKWD0qIubtMf4sFMaHb3poou2
+         MuuF7ou33b65+mh6CESSrLaZHlJgYf/SQU2NCFm7sMYP9HvTzXCXYwkfhL5rn1drhoOn
+         fA0kBNapYk+ajNfBGcIdto0O4Lx5528IW8gb/r2vHewQ2Xh9hgHDxJWLSuBjhPeiU8zF
+         N5dw==
+X-Gm-Message-State: AC+VfDxI0YFHLZyo5bsIjhXBnDuGp0LeEZsM6LdGjl4i8VI3TVKyiuk5
+        /qSzWa26XrsSwAR48tKyFPagaDkYqbd6PrgnVuXWJ2qv4V12
+X-Google-Smtp-Source: ACHHUZ6NrAij3mdCxRTCsmmtSLAFpBUg1S40oGpD56jfCLH3ICqiTN+yRX8KpM01UvB32tDIGixdQO14FzvUNrhq519S4Gj0iyLs
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|BLAPR13MB4675:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f5094f4-aafa-48de-027c-08db48261dfe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: VjM/JXx14lSGvdZA807urD+wP0UqxfHJQkbppjjLUtjsfxE3gfhk5/gSrL0GZ/IvmLwn9cVGndSKXVsdJfkzO3ILWncR6f9NwoehJTucsJcENYchJGpl4DKTz7jFhsQzbzCxS7ELF0pFlNQhjJ0kgujvXxnCoSryolxxPsW5SF0XuDPazU0bv9PyKActrx/8ub5RDXFY+vUwdYBEY4VXV2g/+1Hnb3+vCRv48Jh9klOlkITqk4oqIdXPe70GJclS/lN5nlOIgO6T0WHWjR2uFmecNOpJgJswak0kFetU0UwonewJcKpq+PCzUCrdY0Hz/HFYwQnzymQH0er++olFz3wQXfBMQauLNmvfJDqckw88wegGv+kgQLsjXtq/XQQVZqjDdc1rMLQthEf25zRR5X2NJxeQlzZGWwM6HNMp6JeOEGez+jWtWYZ5WGrau3PnSaf3unQY9cOIzMgolb7B9islzBG3cm+SrcCk67UptGsxvVFt+KWLHV7uazcHNIfKrl5qFs41+RCLrHxZaCs/GCfpyIu6JHOhGGwBfMXj/CW6OmcHhZzJPDOmq5hLYNVR
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39840400004)(376002)(366004)(136003)(346002)(396003)(451199021)(186003)(6512007)(6506007)(2616005)(66476007)(44832011)(66946007)(6916009)(66556008)(7416002)(316002)(41300700001)(38100700002)(5660300002)(4744005)(4326008)(2906002)(86362001)(54906003)(478600001)(8936002)(6666004)(8676002)(6486002)(36756003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KZRZdbQH3vaTK6Yab+jIUvny66vZkD+xK34jdIK3FBTuY29GdMWDTGe2pO4q?=
- =?us-ascii?Q?fyPHA2/L/SAEeQp7Rfuo70IYVlhUMx+FU6eXdNnZ4AsjWnq7ltcK1p3xFPbS?=
- =?us-ascii?Q?2Q7r4xDEiavYyZyim4Hq45v1j6rML/xxvObkLnCn8HqTTgEHyJAjWTitZeqO?=
- =?us-ascii?Q?D7zLs/KcwEOGpEf8S2lSWxEq/p4u68K8PUqQtnfZ8vru76AtAlMam7ahp9vT?=
- =?us-ascii?Q?KyzqHkBoHH6axxxJ+pZri1+iphykBLQU/9TCoYD1yGeYQl4V4fSkGAH2T65n?=
- =?us-ascii?Q?x8kGq4VePlryfKRQS6yiTbW+1pdU8sisbVfwKipVgbC26hPJG32+hTn/EmHs?=
- =?us-ascii?Q?k3P5l6+tAMN9ue2IarhMpiWAuxeYjpHqpQ0oV/a3wLcXBWdJG/MJVQeTno2J?=
- =?us-ascii?Q?oT7WiuhUojx42YB7aSdc2jBg3Bz+UNd9xXl+68Ga69Op5w7Pc6xvZz46hk++?=
- =?us-ascii?Q?UWwmc4Jsg2QUqQsFECjFuCBsRHuYSA85UmIx/WimnAknm2O5k3mInqBGG5oU?=
- =?us-ascii?Q?ljwB6IpiFWKP7fftjYdosPk6igLzHoaCMCxBDbzwZMFfM6x3Xk6C065S07Rl?=
- =?us-ascii?Q?PFw+HnsJ5SfoRQB2lj/NbcwqXpsImms1Bhg06ZbEsa5I/uklunRBY6QhFOI8?=
- =?us-ascii?Q?T/NEFRE0vVpexRI8q3CJOZP+x1OuxyqYdd6QBSkMxDCa7MNANMEp6QecwLf7?=
- =?us-ascii?Q?LxdPtrBWcks69SeQ5VYxlfofdAd0HwxseGcSOva22ZGHVupO6H5bxSSFFkEV?=
- =?us-ascii?Q?tK292Nb/6PfgV8cFdVNXacanZ/JNmpEnW7Doun1CMi8hcvtyPKwjPjjltYM4?=
- =?us-ascii?Q?g+IvAc50E/ztDHd7WKy4q6dsRgV0u6eXTve4ReiYfCBuR8uhHBhaRtAMLQZl?=
- =?us-ascii?Q?bjQfNQkSeY8lfQT4W/nw6Y+2hwWfw9hEOICspcbUufdCq8Ug6iJ34wf6y3de?=
- =?us-ascii?Q?P2vh5pJrmwy1x1KU5eGmPBMO4h9TypSS9DjaFbV2noQNealxwc0hZ7yvdbdd?=
- =?us-ascii?Q?TYGPCWT1oN91vt/zLU0jBJgoErtcV0C/iJ/wWqXwFvnaB36LAX6QQViVFo1M?=
- =?us-ascii?Q?p7cbJqiKcyzjr35xd/4/U+++wQFe8YMVtiifSYe0jTbaSE7CVTLFc52bxfS6?=
- =?us-ascii?Q?4qt3BdtibHxNDHxfmVYWvEJsdReAiJWwfNt7pV3GD5Rb7UoYTeYirxhpw/Oe?=
- =?us-ascii?Q?C4+HmmCkJj26CB3wwxQ2iUNu05pTK/D1xdl9ABXlmxqh1eTYlBwb8kT2FQgK?=
- =?us-ascii?Q?KPFYZmQuKwvjlYg0NFGGkoUvuDAA3iDNmYYMfde38mPuYK2EuQdZpvO/dh7Y?=
- =?us-ascii?Q?O/pH494o0w4GVBL5Qjp8qi89C6+9Mmbol0JpcPuTOV89X+X1FZzlTftj7h5X?=
- =?us-ascii?Q?hO17lBhXP4bukR60gnOAonZKLHAk+Ef55/J65mpq9YO6G/MExV3TNt879qz9?=
- =?us-ascii?Q?LKnlr00eqGwbEy99Ze9YKQV/uGPiPNC1KV6OLUnNFq0dhlMdVgI+iLnPv0nw?=
- =?us-ascii?Q?NPkvgqlD1vC4VjTPXAJOIFlVKSUKyvTJg5Vgw5QtmVc4oWC/hlcQXlfsZQ+v?=
- =?us-ascii?Q?KCyqK1rnDoNr9oxbaxe5vXrdpKSP3ykOB/Ec1I9BQ2M9zqZ5gfYhVmB+dcK7?=
- =?us-ascii?Q?9QPjzwidn3MQ+oIGHBghMQOu37dDiuhQb9QdOxj1Eg8svDlbqXkHWYDoAKBY?=
- =?us-ascii?Q?vl1lQA=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f5094f4-aafa-48de-027c-08db48261dfe
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2023 20:21:15.3698
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 34zwtlkeyK24Y8+7caO3KN9DUB395jFAC+5lRYmtoiaXf5N5YpPlwkU+AHvqOPYDrBKo+slPsOZRA1I4tqwsdndubXpXY8Xk4FnC76X/K1o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR13MB4675
+X-Received: by 2002:a92:d448:0:b0:32b:4584:7316 with SMTP id
+ r8-20020a92d448000000b0032b45847316mr4656801ilm.3.1682776063227; Sat, 29 Apr
+ 2023 06:47:43 -0700 (PDT)
+Date:   Sat, 29 Apr 2023 06:47:43 -0700
+In-Reply-To: <00000000000083d76d05f909f716@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007c3e1f05fa79d594@google.com>
+Subject: Re: [syzbot] [usb?] general protection fault in xpad_probe
+From:   syzbot <syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com>
+To:     chaorace@gmail.com, dan.carpenter@linaro.org,
+        dmitry.torokhov@gmail.com, dzm91@hust.edu.cn, error27@gmail.com,
+        gregkh@linuxfoundation.org,
+        hust-os-kernel-patches@googlegroups.com,
+        kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        matthias.benkmann@gmail.com, mkorpershoek@baylibre.com,
+        mudongliangabcd@gmail.com, nate@yocom.org,
+        pgriffais@valvesoftware.com, radon86dev@gmail.com,
+        rafael@kernel.org, rojtberg@gmail.com, s.demassari@gmail.com,
+        syzkaller-bugs@googlegroups.com, vi@endrift.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 26, 2023 at 10:48:59PM +0200, Christophe JAILLET wrote:
-> ath11k_wmi_fw_stats_num_vdevs() and ath11k_wmi_fw_stats_num_bcn() really
-> look the same as list_count_nodes(), so use the latter instead of hand
-> writing it.
-> 
-> The first ones use list_for_each_entry() and the other list_for_each(), but
-> they both count the number of nodes in the list.
-> 
-> While at it, also remove to prototypes of non-existent functions.
-> Based on the names and prototypes, it is likely that they should be
-> equivalent to list_count_nodes().
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+syzbot has found a reproducer for the following issue on:
 
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
+HEAD commit:    92e815cf07ed Add linux-next specific files for 20230428
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=104cb844280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8c8ae4d47d23592
+dashboard link: https://syzkaller.appspot.com/bug?extid=a3f758b8d8cb7e49afec
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a5408c280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d3b0e4280000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c9e94856e6c9/disk-92e815cf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4c1c05a548a7/vmlinux-92e815cf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2a1bff6a133b/bzImage-92e815cf.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com
+
+usb 1-1: config 0 has no interface number 0
+usb 1-1: New USB device found, idVendor=1949, idProduct=5e70, bcdDevice=d7.a2
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+usb 1-1: string descriptor 0 read error: -71
+general protection fault, probably for non-canonical address 0xdffffc0000000068: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000340-0x0000000000000347]
+CPU: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.3.0-next-20230428-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:dev_name include/linux/device.h:706 [inline]
+RIP: 0010:__dev_printk+0x3b/0x270 drivers/base/core.c:4863
+Code: f5 53 e8 c8 c3 6b fc 48 85 ed 0f 84 cb 01 00 00 e8 ba c3 6b fc 48 8d 7d 50 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d7 01 00 00 48 8b 5d 50 48 85 db 0f 84 b5 00 00
+RSP: 0018:ffffc900000e6f70 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: fffff5200001cdf5 RCX: 0000000000000000
+RDX: 0000000000000068 RSI: ffffffff85188a06 RDI: 0000000000000340
+RBP: 00000000000002f0 R08: 0000000000000005 R09: 0000000000000000
+R10: 00000000ffffffb9 R11: ffffffff81d6ff05 R12: ffffffff8ace98e0
+R13: ffffc900000e6fc8 R14: ffff88801ed25a64 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1361dc1111 CR3: 00000000210fe000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ _dev_warn+0xdc/0x120 drivers/base/core.c:4907
+ xpad_probe+0x197e/0x2020 drivers/input/joystick/xpad.c:2053
+ usb_probe_interface+0x30f/0x960 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x240/0xca0 drivers/base/dd.c:658
+ __driver_probe_device+0x1df/0x4b0 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1a0 drivers/base/dd.c:830
+ __device_attach_driver+0x1d4/0x2e0 drivers/base/dd.c:958
+ bus_for_each_drv+0x149/0x1d0 drivers/base/bus.c:457
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17c/0x1c0 drivers/base/bus.c:532
+ device_add+0x112d/0x1a40 drivers/base/core.c:3625
+ usb_set_configuration+0x1196/0x1bc0 drivers/usb/core/message.c:2211
+ usb_generic_driver_probe+0xcf/0x130 drivers/usb/core/generic.c:238
+ usb_probe_device+0xd8/0x2c0 drivers/usb/core/driver.c:293
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x240/0xca0 drivers/base/dd.c:658
+ __driver_probe_device+0x1df/0x4b0 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1a0 drivers/base/dd.c:830
+ __device_attach_driver+0x1d4/0x2e0 drivers/base/dd.c:958
+ bus_for_each_drv+0x149/0x1d0 drivers/base/bus.c:457
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17c/0x1c0 drivers/base/bus.c:532
+ device_add+0x112d/0x1a40 drivers/base/core.c:3625
+ usb_new_device+0xcb2/0x19d0 drivers/usb/core/hub.c:2575
+ hub_port_connect drivers/usb/core/hub.c:5407 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5551 [inline]
+ port_event drivers/usb/core/hub.c:5711 [inline]
+ hub_event+0x2d9e/0x4e40 drivers/usb/core/hub.c:5793
+ process_one_work+0x99a/0x15e0 kernel/workqueue.c:2405
+ worker_thread+0x67d/0x10c0 kernel/workqueue.c:2552
+ kthread+0x344/0x440 kernel/kthread.c:379
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:dev_name include/linux/device.h:706 [inline]
+RIP: 0010:__dev_printk+0x3b/0x270 drivers/base/core.c:4863
+Code: f5 53 e8 c8 c3 6b fc 48 85 ed 0f 84 cb 01 00 00 e8 ba c3 6b fc 48 8d 7d 50 48 b8 00 00 00 00 00 fc ff df 48 89
+----------------
+Code disassembly (best guess):
+   0:	f5                   	cmc
+   1:	53                   	push   %rbx
+   2:	e8 c8 c3 6b fc       	callq  0xfc6bc3cf
+   7:	48 85 ed             	test   %rbp,%rbp
+   a:	0f 84 cb 01 00 00    	je     0x1db
+  10:	e8 ba c3 6b fc       	callq  0xfc6bc3cf
+  15:	48 8d 7d 50          	lea    0x50(%rbp),%rdi
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 d7 01 00 00    	jne    0x20b
+  34:	48 8b 5d 50          	mov    0x50(%rbp),%rbx
+  38:	48 85 db             	test   %rbx,%rbx
+  3b:	0f                   	.byte 0xf
+  3c:	84                   	.byte 0x84
+  3d:	b5 00                	mov    $0x0,%ch
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
