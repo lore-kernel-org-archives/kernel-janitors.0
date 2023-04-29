@@ -2,104 +2,164 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7B6C77B60
-	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Apr 2023 18:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0E3C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Apr 2023 20:33:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229441AbjD2SJl (ORCPT
+        id S229580AbjD2Udx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 29 Apr 2023 14:09:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43462 "EHLO
+        Sat, 29 Apr 2023 16:33:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbjD2SJk (ORCPT
+        with ESMTP id S229489AbjD2Udw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 29 Apr 2023 14:09:40 -0400
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 1E2E01703
-        for <kernel-janitors@vger.kernel.org>; Sat, 29 Apr 2023 11:09:37 -0700 (PDT)
-Received: (qmail 245150 invoked by uid 1000); 29 Apr 2023 14:09:36 -0400
-Date:   Sat, 29 Apr 2023 14:09:36 -0400
-From:   Alan Stern <stern@rowland.harvard.edu>
-To:     syzbot <syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com>,
-        dmitry.torokhov@gmail.com
-Cc:     chaorace@gmail.com, dan.carpenter@linaro.org, dzm91@hust.edu.cn,
-        error27@gmail.com, gregkh@linuxfoundation.org,
-        hust-os-kernel-patches@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        matthias.benkmann@gmail.com, mkorpershoek@baylibre.com,
-        mudongliangabcd@gmail.com, nate@yocom.org,
-        pgriffais@valvesoftware.com, radon86dev@gmail.com,
-        rafael@kernel.org, rojtberg@gmail.com, s.demassari@gmail.com,
-        syzkaller-bugs@googlegroups.com, vi@endrift.com
-Subject: Re: [syzbot] [usb?] general protection fault in xpad_probe
-Message-ID: <606e7f3a-8ad5-43b3-b3c9-e75aa0180e8a@rowland.harvard.edu>
-References: <00000000000083d76d05f909f716@google.com>
- <0000000000007c3e1f05fa79d594@google.com>
+        Sat, 29 Apr 2023 16:33:52 -0400
+X-Greylist: delayed 484 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 29 Apr 2023 13:33:51 PDT
+Received: from pio-pvt-msa2.bahnhof.se (pio-pvt-msa2.bahnhof.se [79.136.2.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1117510E3
+        for <kernel-janitors@vger.kernel.org>; Sat, 29 Apr 2023 13:33:50 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 5552F3F3E9;
+        Sat, 29 Apr 2023 22:25:44 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+Authentication-Results: pio-pvt-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (2048-bit key) header.d=dalakolonin.se
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id g91uDSAk5U-I; Sat, 29 Apr 2023 22:25:43 +0200 (CEST)
+Received: by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 4BC073F225;
+        Sat, 29 Apr 2023 22:25:43 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.dalakolonin.se (Postfix) with ESMTP id DA242A0CDD;
+        Sat, 29 Apr 2023 20:25:42 +0000 (UTC)
+Received: from zimbra.dalakolonin.se ([127.0.0.1])
+        by localhost (zimbra.dalakolonin.se [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id GLtElPNrzDkS; Sat, 29 Apr 2023 20:25:41 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.dalakolonin.se (Postfix) with ESMTP id 78AA9A0CD7;
+        Sat, 29 Apr 2023 20:25:40 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra.dalakolonin.se 78AA9A0CD7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dalakolonin.se;
+        s=D374B428-D0A7-11ED-A657-75977B426508; t=1682799940;
+        bh=YnIJQOsfQm0efxbzTbCvVv9yuvHN4d+rjyJLsyaUdL8=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=QcCtWINQBr/FaGw6vE3x7dynIh7YcWCKEf/AZEQhRJEqIUtWVOAWj6Euu3PtQoYnA
+         UZSEBfM1EMkTbGS30B215/ufxORvkeqDx0Q9KRgZE3YkFBwDY+2Djsx9/5x9lTjoVq
+         hJehaas5tF/Ub1YjOL/0hLmWFJBXzl0mRIFIszj0MNapvp43PFs27I5eX+vMgZItLB
+         wJyxZkGsURc23rzLJqn9PE2cdq6oXeyLvjT1sgoUVC0CqfZ++93b7CavD7N92JZG1V
+         kqH3YsGjWVcs0iGYfl00FXCoseqLm8WQrsma6A002QXQZxQFIHb2h2ebHXB8eRGCiX
+         cLtj8J+Z7fBHQ==
+X-Virus-Scanned: amavisd-new at dalakolonin.se
+Received: from zimbra.dalakolonin.se ([127.0.0.1])
+        by localhost (zimbra.dalakolonin.se [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 0LVYyFRwZBmi; Sat, 29 Apr 2023 20:25:40 +0000 (UTC)
+Received: from dalakolonin.se (unknown [172.17.0.1])
+        by zimbra.dalakolonin.se (Postfix) with ESMTPSA id 0783CA0CCF;
+        Sat, 29 Apr 2023 20:25:40 +0000 (UTC)
+Date:   Sat, 29 Apr 2023 22:25:38 +0200
+From:   Patrik =?iso-8859-1?Q?Dahlstr=F6m?= <risca@dalakolonin.se>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: palmas: fix off by one bugs
+Message-ID: <20230429202538.GC1404696@dalakolonin.se>
+References: <14fee94a-7db7-4371-b7d6-e94d86b9561e@kili.mountain>
+ <20230423141124.3d4dc91d@jic23-huawei>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000007c3e1f05fa79d594@google.com>
+In-Reply-To: <20230423141124.3d4dc91d@jic23-huawei>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dmitry:
-
-On Sat, Apr 29, 2023 at 06:47:43AM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
+On Sun, Apr 23, 2023 at 02:11:24PM +0100, Jonathan Cameron wrote:
+> On Fri, 21 Apr 2023 13:41:56 +0300
+> Dan Carpenter <dan.carpenter@linaro.org> wrote:
 > 
-> HEAD commit:    92e815cf07ed Add linux-next specific files for 20230428
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=104cb844280000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c8c8ae4d47d23592
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a3f758b8d8cb7e49afec
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a5408c280000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d3b0e4280000
+> > Valid values for "adc_chan" are zero to (PALMAS_ADC_CH_MAX - 1).
+> > Smatch detects some buffer overflows caused by this:
+> > drivers/iio/adc/palmas_gpadc.c:721 palmas_gpadc_read_event_value() error: buffer overflow 'adc->thresholds' 16 <= 16
+> > drivers/iio/adc/palmas_gpadc.c:758 palmas_gpadc_write_event_value() error: buffer overflow 'adc->thresholds' 16 <= 16
+> > 
+> > The effect of this bug in other functions is more complicated but
+> > obviously we should fix all of them.
+> > 
+> > Fixes: a99544c6c883 ("iio: adc: palmas: add support for iio threshold events")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/c9e94856e6c9/disk-92e815cf.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/4c1c05a548a7/vmlinux-92e815cf.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/2a1bff6a133b/bzImage-92e815cf.xz
+> Looks good to me.  Slight shuffle at the moment will delay me applying this.
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com
+> I'll wait for Linus to pick up Greg's pull request then rebase my fixes branch
+> on top of that.  Otherwise I make a mess of linux-next ordering and things might
+> blow up.
 > 
-> usb 1-1: config 0 has no interface number 0
-> usb 1-1: New USB device found, idVendor=1949, idProduct=5e70, bcdDevice=d7.a2
-> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-> usb 1-1: config 0 descriptor??
-> usb 1-1: string descriptor 0 read error: -71
-> general protection fault, probably for non-canonical address 0xdffffc0000000068: 0000 [#1] PREEMPT SMP KASAN
-> KASAN: null-ptr-deref in range [0x0000000000000340-0x0000000000000347]
-> CPU: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.3.0-next-20230428-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
-> Workqueue: usb_hub_wq hub_event
-> RIP: 0010:dev_name include/linux/device.h:706 [inline]
-> RIP: 0010:__dev_printk+0x3b/0x270 drivers/base/core.c:4863
-> Code: f5 53 e8 c8 c3 6b fc 48 85 ed 0f 84 cb 01 00 00 e8 ba c3 6b fc 48 8d 7d 50 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d7 01 00 00 48 8b 5d 50 48 85 db 0f 84 b5 00 00
-> RSP: 0018:ffffc900000e6f70 EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: fffff5200001cdf5 RCX: 0000000000000000
-> RDX: 0000000000000068 RSI: ffffffff85188a06 RDI: 0000000000000340
-> RBP: 00000000000002f0 R08: 0000000000000005 R09: 0000000000000000
-> R10: 00000000ffffffb9 R11: ffffffff81d6ff05 R12: ffffffff8ace98e0
-> R13: ffffc900000e6fc8 R14: ffff88801ed25a64 R15: 0000000000000000
-> FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f1361dc1111 CR3: 00000000210fe000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  _dev_warn+0xdc/0x120 drivers/base/core.c:4907
->  xpad_probe+0x197e/0x2020 drivers/input/joystick/xpad.c:2053
->  usb_probe_interface+0x30f/0x960 drivers/usb/core/driver.c:396
+> In meantime, Patrik, please take a look.
 
-It looks like the problem is caused by commit db7220c48d8d ("Input: 
-xpad - fix support for some third-party controllers").  In the line
+Sorry for the long delay.
 
-			dev_warn(&xpad->dev->dev,
+The changes look good to me. I've checked all other uses of adc_chan in the
+code and they all seem to be guarded by the checks below.
 
-the xpad->dev ought to be xpad->udev.
+Best regards
+Patrik
 
-Alan Stern
+> 
+> Jonathan
+> 
+> > ---
+> > ---
+> >  drivers/iio/adc/palmas_gpadc.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
+> > index c1c439215aeb..7dfc9c927a23 100644
+> > --- a/drivers/iio/adc/palmas_gpadc.c
+> > +++ b/drivers/iio/adc/palmas_gpadc.c
+> > @@ -547,7 +547,7 @@ static int palmas_gpadc_read_raw(struct iio_dev *indio_dev,
+> >  	int adc_chan = chan->channel;
+> >  	int ret = 0;
+> >  
+> > -	if (adc_chan > PALMAS_ADC_CH_MAX)
+> > +	if (adc_chan >= PALMAS_ADC_CH_MAX)
+> >  		return -EINVAL;
+> >  
+> >  	mutex_lock(&adc->lock);
+> > @@ -595,7 +595,7 @@ static int palmas_gpadc_read_event_config(struct iio_dev *indio_dev,
+> >  	int adc_chan = chan->channel;
+> >  	int ret = 0;
+> >  
+> > -	if (adc_chan > PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
+> > +	if (adc_chan >= PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
+> >  		return -EINVAL;
+> >  
+> >  	mutex_lock(&adc->lock);
+> > @@ -684,7 +684,7 @@ static int palmas_gpadc_write_event_config(struct iio_dev *indio_dev,
+> >  	int adc_chan = chan->channel;
+> >  	int ret;
+> >  
+> > -	if (adc_chan > PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
+> > +	if (adc_chan >= PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
+> >  		return -EINVAL;
+> >  
+> >  	mutex_lock(&adc->lock);
+> > @@ -710,7 +710,7 @@ static int palmas_gpadc_read_event_value(struct iio_dev *indio_dev,
+> >  	int adc_chan = chan->channel;
+> >  	int ret;
+> >  
+> > -	if (adc_chan > PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
+> > +	if (adc_chan >= PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
+> >  		return -EINVAL;
+> >  
+> >  	mutex_lock(&adc->lock);
+> > @@ -744,7 +744,7 @@ static int palmas_gpadc_write_event_value(struct iio_dev *indio_dev,
+> >  	int old;
+> >  	int ret;
+> >  
+> > -	if (adc_chan > PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
+> > +	if (adc_chan >= PALMAS_ADC_CH_MAX || type != IIO_EV_TYPE_THRESH)
+> >  		return -EINVAL;
+> >  
+> >  	mutex_lock(&adc->lock);
+> 
