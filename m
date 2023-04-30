@@ -2,82 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F292CC77B7C
-	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Apr 2023 07:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9F0C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Apr 2023 09:35:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbjD3HRK (ORCPT
+        id S230118AbjD3Jft (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 30 Apr 2023 03:17:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39286 "EHLO
+        Sun, 30 Apr 2023 05:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjD3HRJ (ORCPT
+        with ESMTP id S229904AbjD3Jfr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 30 Apr 2023 03:17:09 -0400
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [IPv6:2001:470:ea4a:1:5054:ff:fec7:86e4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F0E110DC;
-        Sun, 30 Apr 2023 00:17:07 -0700 (PDT)
-Message-ID: <bc9bcf4f-5075-8a60-e554-593df22d4a52@gentoo.org>
-Date:   Sun, 30 Apr 2023 09:17:09 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-From:   Matthias Schwarzott <zzam@gentoo.org>
-Subject: Re: [PATCH] media: ov5693: Simplify an error message
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Daniel Scally <djrscally@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
+        Sun, 30 Apr 2023 05:35:47 -0400
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7486B2693
+        for <kernel-janitors@vger.kernel.org>; Sun, 30 Apr 2023 02:35:40 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id t3SzpqrC7QSvkt3SzpzF7s; Sun, 30 Apr 2023 11:35:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682847337;
+        bh=RqDQjPSPVAS9useuh9rd9llDLOh/Ap8G6Tllign/gys=;
+        h=From:To:Cc:Subject:Date;
+        b=RUNDth6gqurw4DEOjvsaRSu2xq/FQHGVT+f3/JQu3U9X7FY7BvbutZrLNpzIXOu0x
+         kkBDTyeLSBa5AqdDaF93rjDvd4/2+m+wjBBI062L/SJyXcN1LBHJ069Qw6vfQMzZzt
+         VEB3od6qm5hASCf+X/c0g3Ljj5Qvt6TithpzQnDwWFalPal929YXvKCzV7u51le/T5
+         4/zfvqdclM01Gv9HwrEQ//HeOq/6c2VPuUblv/OnkF6Rnu0D0C4mx41XbV97JDPVTZ
+         TtwsX44gQSoW+vDqTsSmC3XnxpMakMIdJ/faCcRssRu5p4nxISu0mrMq4RAk1jgFMV
+         S5Hb6uMU/zPTg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 30 Apr 2023 11:35:37 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Mark Brown <broonie@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-media@vger.kernel.org
-References: <928f2f70de241d0fa66801b46d736ad0f881eb72.1681576102.git.christophe.jaillet@wanadoo.fr>
- <b4aea4b5-d86a-1604-c646-346ea7b59476@gentoo.org>
- <c140045b-967f-df56-22b7-8df11da97884@wanadoo.fr>
-Content-Language: en-GB
-In-Reply-To: <c140045b-967f-df56-22b7-8df11da97884@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-spi@vger.kernel.org
+Subject: [PATCH] spi: Use non-atomic xxx_bit() functions
+Date:   Sun, 30 Apr 2023 11:35:35 +0200
+Message-Id: <6b8f405145d3d57a8026dc61ca3f1ae70d690990.1682847325.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 21.04.23 um 17:50 schrieb Christophe JAILLET:
-> Le 21/04/2023 à 09:38, Matthias Schwarzott a écrit :
->> Am 15.04.23 um 18:28 schrieb Christophe JAILLET:
->>> dev_err_probe() already display the error code. There is no need to
->>> duplicate it explicitly in the error message.
->>>
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>>   drivers/media/i2c/ov5693.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/media/i2c/ov5693.c b/drivers/media/i2c/ov5693.c
->>> index e3c3bed69ad6..d23786afd754 100644
->>> --- a/drivers/media/i2c/ov5693.c
->>> +++ b/drivers/media/i2c/ov5693.c
->>> @@ -404,8 +404,8 @@ static int ov5693_read_reg(struct ov5693_device 
->>> *ov5693, u32 addr, u32 *value)
->>>       ret = i2c_transfer(client->adapter, msg, 2);
->>>       if (ret < 0)
->>
->> i2c_transfer returns the number of transmitted messages. So I think 
->> the values 0 <= ret < 2 also need to be handled.
-> 
-> Ok, agreed.
-> 
-> If ok for you, I'll send a follow-up patch when/if this one is applied,
-> because what you spotted is unrelated to the dev_err_probe() behavior.
-> 
-Sure, fine for me.
-> CJ
->>
->>>           return dev_err_probe(&client->dev, ret,
->>> -                     "Failed to read register 0x%04x: %d\n",
->>> -                     addr & OV5693_REG_ADDR_MASK, ret);
->>> +                     "Failed to read register 0x%04x\n",
->>> +                     addr & OV5693_REG_ADDR_MASK);
->>>       *value = 0;
->>>       for (i = 0; i < len; ++i) {
->>
->>
-> 
+Accesses to 'minors' are guarded by the 'device_list_lock' mutex. So, it is
+safe to use the non-atomic version of (set|clear)_bit() in the
+corresponding sections.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/spi/spidev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index 39d94c850839..132fecc02eba 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -812,7 +812,7 @@ static int spidev_probe(struct spi_device *spi)
+ 		status = -ENODEV;
+ 	}
+ 	if (status == 0) {
+-		set_bit(minor, minors);
++		__set_bit(minor, minors);
+ 		list_add(&spidev->device_entry, &device_list);
+ 	}
+ 	mutex_unlock(&device_list_lock);
+@@ -840,7 +840,7 @@ static void spidev_remove(struct spi_device *spi)
+ 
+ 	list_del(&spidev->device_entry);
+ 	device_destroy(spidev_class, spidev->devt);
+-	clear_bit(MINOR(spidev->devt), minors);
++	__clear_bit(MINOR(spidev->devt), minors);
+ 	if (spidev->users == 0)
+ 		kfree(spidev);
+ 	mutex_unlock(&device_list_lock);
+-- 
+2.34.1
 
