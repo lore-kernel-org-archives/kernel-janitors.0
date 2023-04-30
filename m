@@ -2,82 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D60C77B73
-	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Apr 2023 16:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A4FC77B73
+	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Apr 2023 16:48:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230458AbjD3QVn (ORCPT
+        id S229725AbjD3Qsn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 30 Apr 2023 12:21:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59962 "EHLO
+        Sun, 30 Apr 2023 12:48:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjD3QVm (ORCPT
+        with ESMTP id S229478AbjD3Qsm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 30 Apr 2023 12:21:42 -0400
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452E42D52
-        for <kernel-janitors@vger.kernel.org>; Sun, 30 Apr 2023 09:21:40 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id t9nspEGk8GGqgt9nspRtpg; Sun, 30 Apr 2023 18:21:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1682871698;
-        bh=DeAGfZvHN94lPiUZiy7bZbEf4KghIhOEFbkJpiyOKIQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=ZJ3ZqHX6UGnsh+HN03vKMp5SOZj+PTWdSOjNmMMGyzCpKtCUWIRncuZTPFek5wv1R
-         r8aAxKlRG5rgJ01aVc9/LxTE38riT3NxJSLUzKwVqwili4sBZh0NxWB/oyMxSM5ro1
-         CXa8BAlDh/+AhQAgN/PkBGKKHnzwAPlSFYFfjFl/bNgeDcbZbc8DsWqPh5o27QZGo5
-         uCi1mQ3FMe0tasUn9sNFeaaIhBESANdi7Q/Oe5bVIb6U87H93wdVwxSMFVVzB/TOSY
-         Zfq6UdZWvSjDjXmKmLjqV/rrSS5sU3rYodJay6dsz4qgH1ggiIL96oyudoLk9EBLMP
-         OCMUQTOt0W0OQ==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 30 Apr 2023 18:21:37 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <10a2d725-7721-f0af-3e2e-de5816730e5d@wanadoo.fr>
-Date:   Sun, 30 Apr 2023 18:21:36 +0200
+        Sun, 30 Apr 2023 12:48:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C585170A;
+        Sun, 30 Apr 2023 09:48:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D6CC560BB5;
+        Sun, 30 Apr 2023 16:48:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23940C433D2;
+        Sun, 30 Apr 2023 16:48:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682873320;
+        bh=CdEnRycpTGBamvpmQPy4FWzWBCWU+VEI1Rx4obR2oaQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nlA0mh4fVXVBkO4jFy/ES39lJW6RhDhxGZzNpx3Rl8PzKqYOtGhBXNyiUJNFNT+CP
+         pZustGXR3R6JjOqO6oKu5TaDGUAcSISdaAVVmBZxutG4paEfESJ9ZclQKgu3PtFts2
+         1rA/NoZML2SnKziT45N3DUgRj4RGl6awXqeWgFS/joz2Ht7r2duuwL+Tz/IKxVXnUN
+         vgDrphwdZUOJuZt3Jb/d7DNrIcGkFoFGwXGwmLNsNt2T7F/Ba0ovcpnP5ltq8gsk/G
+         QgwrRS5SGJkXPxt3EYDLcUlQd9nutoHA23RMTnNGKwJn3jr6xEgqN58mHQq96xsA9U
+         2AEyqi2dYYVmg==
+Date:   Sun, 30 Apr 2023 18:04:25 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: palmas: Remove the unneeded include
+ <linux/i2c.h>
+Message-ID: <20230430180425.3d24ec12@jic23-huawei>
+In-Reply-To: <9d23cd04d7f99dc8d813584aae5268b57f92fcd8.1682320298.git.christophe.jaillet@wanadoo.fr>
+References: <9d23cd04d7f99dc8d813584aae5268b57f92fcd8.1682320298.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] spi: Use non-atomic xxx_bit() functions
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-spi@vger.kernel.org
-References: <6b8f405145d3d57a8026dc61ca3f1ae70d690990.1682847325.git.christophe.jaillet@wanadoo.fr>
- <ZE6N/oZ5DFI6td/0@finisterre.sirena.org.uk>
-Content-Language: fr, en-GB
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ZE6N/oZ5DFI6td/0@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 30/04/2023 à 17:49, Mark Brown a écrit :
-> On Sun, Apr 30, 2023 at 11:35:35AM +0200, Christophe JAILLET wrote:
+On Mon, 24 Apr 2023 09:11:51 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+
+> This driver does not use i2c, so there is no point in including
+> <linux/i2c.h>
 > 
->> Accesses to 'minors' are guarded by the 'device_list_lock' mutex. So, it is
->> safe to use the non-atomic version of (set|clear)_bit() in the
->> corresponding sections.
+> Remove it.
 > 
-> Is it a problem to use the atomic version?
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Hard to argue with that logic :)
 
-Not at all. It just wastes a few cycles (in a place where it doesn't 
-matter).
+I guess some long ago cut and paste..
 
-I spotted it while looking for some other patterns, so I sent a patch 
-for it.
+Applied,
 
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/adc/palmas_gpadc.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
->>   	if (status == 0) {
->> -		set_bit(minor, minors);
->> +		__set_bit(minor, minors);
->>   		list_add(&spidev->device_entry, &device_list);
-> 
-> The __ usually means something is the more complicated and less
-> preferred API.
+> diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
+> index c1c439215aeb..42c519504529 100644
+> --- a/drivers/iio/adc/palmas_gpadc.c
+> +++ b/drivers/iio/adc/palmas_gpadc.c
+> @@ -14,7 +14,6 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>  #include <linux/delay.h>
+> -#include <linux/i2c.h>
+>  #include <linux/pm.h>
+>  #include <linux/mfd/palmas.h>
+>  #include <linux/completion.h>
 
-Ok, let keep things as-is and simple then.
-Performance doesn't matter here, anyway.
-
-CJ
