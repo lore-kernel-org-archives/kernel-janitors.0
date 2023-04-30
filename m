@@ -2,83 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 687B6C77B73
-	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Apr 2023 05:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F292CC77B7C
+	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Apr 2023 07:17:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231701AbjD3FT1 (ORCPT
+        id S229581AbjD3HRK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 30 Apr 2023 01:19:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52944 "EHLO
+        Sun, 30 Apr 2023 03:17:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231688AbjD3FT0 (ORCPT
+        with ESMTP id S229451AbjD3HRJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 30 Apr 2023 01:19:26 -0400
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728F71BFD
-        for <kernel-janitors@vger.kernel.org>; Sat, 29 Apr 2023 22:19:25 -0700 (PDT)
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-32b4303da0cso7853235ab.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 29 Apr 2023 22:19:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682831964; x=1685423964;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jbgNg7bzEOiE+PpMY9EfhvJTml8HBUQsJEoVcCv5c8Q=;
-        b=ZqzZWo79lG+Ms6qzRud2V3XhAY1ttyynPNdQZUztO0xnAIsMW1LrJgf4zWAfX/XmL0
-         VF2N7DBEIQs+fl9mN24Ot8sHaiy/DgabNO7Vp1CaKgpFUr/HEpLs3nokoE1Ut7iRPVfH
-         t+VPm7thVVKv8F4oLX6KuJ29I2UEUTI+xKszN30xulr+wQXulGpmHglWNIgiVfaPXQGP
-         wAGbsI+NpCuPJNqNe+a8LDg9AUNwxhK3G8EhQ+EEW2yf64oMNUApDYLKNdMuGnhYGRLv
-         jG5eOygemzGm2vGbW51QwHpAY9poDhTv8cqRyexOXv9lyzoYDGraEBZaXaBimliXx6Yl
-         IeaA==
-X-Gm-Message-State: AC+VfDzEBBbXkJb0g82uIR48DhiFTchgJ2OJHM+Zo92RqBKhmb183mC0
-        RVDEPDZUNe6c0pwGjtnNgUxAhIvNZFjoKf8cr09qVDWOy3qE
-X-Google-Smtp-Source: ACHHUZ7ExN+zShsIJc2XiFG2sXg9LR6zZCWJUqmWpaBVinskpdR+1L/m2w4P7/W7ipfQJwevuqU8oEbPVxYZNAFl3zT5ZpDJfNwZ
+        Sun, 30 Apr 2023 03:17:09 -0400
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [IPv6:2001:470:ea4a:1:5054:ff:fec7:86e4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F0E110DC;
+        Sun, 30 Apr 2023 00:17:07 -0700 (PDT)
+Message-ID: <bc9bcf4f-5075-8a60-e554-593df22d4a52@gentoo.org>
+Date:   Sun, 30 Apr 2023 09:17:09 +0200
 MIME-Version: 1.0
-X-Received: by 2002:a92:d143:0:b0:330:a575:37e2 with SMTP id
- t3-20020a92d143000000b00330a57537e2mr852781ilg.4.1682831963878; Sat, 29 Apr
- 2023 22:19:23 -0700 (PDT)
-Date:   Sat, 29 Apr 2023 22:19:23 -0700
-In-Reply-To: <00000000000083d76d05f909f716@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006c7b6b05fa86d9ee@google.com>
-Subject: Re: [syzbot] [usb?] general protection fault in xpad_probe
-From:   syzbot <syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com>
-To:     chaorace@gmail.com, dan.carpenter@linaro.org,
-        dmitry.torokhov@gmail.com, dzm91@hust.edu.cn, error27@gmail.com,
-        gregkh@linuxfoundation.org, hdanton@sina.com,
-        hust-os-kernel-patches@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        matthias.benkmann@gmail.com, mkorpershoek@baylibre.com,
-        mudongliangabcd@gmail.com, nate@yocom.org,
-        pgriffais@valvesoftware.com, radon86dev@gmail.com,
-        rafael@kernel.org, rojtberg@gmail.com, s.demassari@gmail.com,
-        stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com,
-        vi@endrift.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+From:   Matthias Schwarzott <zzam@gentoo.org>
+Subject: Re: [PATCH] media: ov5693: Simplify an error message
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Daniel Scally <djrscally@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-media@vger.kernel.org
+References: <928f2f70de241d0fa66801b46d736ad0f881eb72.1681576102.git.christophe.jaillet@wanadoo.fr>
+ <b4aea4b5-d86a-1604-c646-346ea7b59476@gentoo.org>
+ <c140045b-967f-df56-22b7-8df11da97884@wanadoo.fr>
+Content-Language: en-GB
+In-Reply-To: <c140045b-967f-df56-22b7-8df11da97884@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-syzbot has bisected this issue to:
+Am 21.04.23 um 17:50 schrieb Christophe JAILLET:
+> Le 21/04/2023 à 09:38, Matthias Schwarzott a écrit :
+>> Am 15.04.23 um 18:28 schrieb Christophe JAILLET:
+>>> dev_err_probe() already display the error code. There is no need to
+>>> duplicate it explicitly in the error message.
+>>>
+>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>> ---
+>>>   drivers/media/i2c/ov5693.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/media/i2c/ov5693.c b/drivers/media/i2c/ov5693.c
+>>> index e3c3bed69ad6..d23786afd754 100644
+>>> --- a/drivers/media/i2c/ov5693.c
+>>> +++ b/drivers/media/i2c/ov5693.c
+>>> @@ -404,8 +404,8 @@ static int ov5693_read_reg(struct ov5693_device 
+>>> *ov5693, u32 addr, u32 *value)
+>>>       ret = i2c_transfer(client->adapter, msg, 2);
+>>>       if (ret < 0)
+>>
+>> i2c_transfer returns the number of transmitted messages. So I think 
+>> the values 0 <= ret < 2 also need to be handled.
+> 
+> Ok, agreed.
+> 
+> If ok for you, I'll send a follow-up patch when/if this one is applied,
+> because what you spotted is unrelated to the dev_err_probe() behavior.
+> 
+Sure, fine for me.
+> CJ
+>>
+>>>           return dev_err_probe(&client->dev, ret,
+>>> -                     "Failed to read register 0x%04x: %d\n",
+>>> -                     addr & OV5693_REG_ADDR_MASK, ret);
+>>> +                     "Failed to read register 0x%04x\n",
+>>> +                     addr & OV5693_REG_ADDR_MASK);
+>>>       *value = 0;
+>>>       for (i = 0; i < len; ++i) {
+>>
+>>
+> 
 
-commit db7220c48d8d71476f881a7ae1285e1df4105409
-Author: Vicki Pfau <vi@endrift.com>
-Date:   Fri Mar 24 17:42:27 2023 +0000
-
-    Input: xpad - fix support for some third-party controllers
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1028a1f8280000
-start commit:   92e815cf07ed Add linux-next specific files for 20230428
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1228a1f8280000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1428a1f8280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c8c8ae4d47d23592
-dashboard link: https://syzkaller.appspot.com/bug?extid=a3f758b8d8cb7e49afec
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a5408c280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d3b0e4280000
-
-Reported-by: syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com
-Fixes: db7220c48d8d ("Input: xpad - fix support for some third-party controllers")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
