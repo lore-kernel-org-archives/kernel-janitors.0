@@ -2,88 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A4FC77B73
-	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Apr 2023 16:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC01C77B73
+	for <kernel-janitors@archiver.kernel.org>; Mon,  1 May 2023 12:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229725AbjD3Qsn (ORCPT
+        id S232444AbjEAMla (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 30 Apr 2023 12:48:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35004 "EHLO
+        Mon, 1 May 2023 08:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjD3Qsm (ORCPT
+        with ESMTP id S232370AbjEAMl3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 30 Apr 2023 12:48:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C585170A;
-        Sun, 30 Apr 2023 09:48:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D6CC560BB5;
-        Sun, 30 Apr 2023 16:48:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23940C433D2;
-        Sun, 30 Apr 2023 16:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682873320;
-        bh=CdEnRycpTGBamvpmQPy4FWzWBCWU+VEI1Rx4obR2oaQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nlA0mh4fVXVBkO4jFy/ES39lJW6RhDhxGZzNpx3Rl8PzKqYOtGhBXNyiUJNFNT+CP
-         pZustGXR3R6JjOqO6oKu5TaDGUAcSISdaAVVmBZxutG4paEfESJ9ZclQKgu3PtFts2
-         1rA/NoZML2SnKziT45N3DUgRj4RGl6awXqeWgFS/joz2Ht7r2duuwL+Tz/IKxVXnUN
-         vgDrphwdZUOJuZt3Jb/d7DNrIcGkFoFGwXGwmLNsNt2T7F/Ba0ovcpnP5ltq8gsk/G
-         QgwrRS5SGJkXPxt3EYDLcUlQd9nutoHA23RMTnNGKwJn3jr6xEgqN58mHQq96xsA9U
-         2AEyqi2dYYVmg==
-Date:   Sun, 30 Apr 2023 18:04:25 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: palmas: Remove the unneeded include
- <linux/i2c.h>
-Message-ID: <20230430180425.3d24ec12@jic23-huawei>
-In-Reply-To: <9d23cd04d7f99dc8d813584aae5268b57f92fcd8.1682320298.git.christophe.jaillet@wanadoo.fr>
-References: <9d23cd04d7f99dc8d813584aae5268b57f92fcd8.1682320298.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
+        Mon, 1 May 2023 08:41:29 -0400
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45671986
+        for <kernel-janitors@vger.kernel.org>; Mon,  1 May 2023 05:41:01 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id tSpZpM6hwpwRItSpZpInaY; Mon, 01 May 2023 14:40:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1682944841;
+        bh=EUEJrGSU9dbvr4t0fqCm6zFszLF/bFGwTNtIbcqD6dc=;
+        h=From:To:Cc:Subject:Date;
+        b=nMsOv6yUj20FO78qx7cQuyqhpBbMv1MDjFjIyx23VIP1d/rxsNuHlNzevfdXkRLn3
+         IvQPtzTfUBM8ikx6ycI5t6ZAOZKII//KTEfwXglID6qMJIWUJX26whoYTczGcOsiQp
+         F+AxN4H0xgpoB4M3s2h1NAmSFaC9cMJlrF1guBP+XIzbAKaoEdzhybYsDW8sAyQaye
+         1j1upBoLJWU3kzWzhoNcM0JWTL4FmXdOK/5voGA+52uS5VBTxPG0Nb0iFKdNK7M0gf
+         1k4Xp2BnVmI58dVP6QZc18ZVec9T4PBpNBOMDUTkySsJCruKDYrsXfBepf0LLrS20X
+         BdAq+togyimJg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 01 May 2023 14:40:40 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     hch@lst.de, sagi@grimberg.me, kch@nvidia.com
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/5] optimize some data structure in nvme
+Date:   Mon,  1 May 2023 14:40:24 +0200
+Message-Id: <cover.1682941568.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 24 Apr 2023 09:11:51 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+This serie is a proposal to slighly optimize the memory needed for some
+structures used in nvme.
 
-> This driver does not use i2c, so there is no point in including
-> <linux/i2c.h>
-> 
-> Remove it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Hard to argue with that logic :)
+This follows the discussion in [1].
 
-I guess some long ago cut and paste..
+Honnestly, I'm not convinced that this serie really brings semething.
+Because of the way memory alocation works, and its over-allocation to try to
+avoid memory fragmentation, some limited gains are most of the time useless.
 
-Applied,
+It could still help:
+   - many holes in structure can, at some point, have its size reach a threshold
+     (this is specially true if such structures are allocated with kcalloc() or
+     kmalloc_array())
+   - it can save some space in some other structures if embedded in them
+   - it can save a few cycles if the structure is memcpy()'ed or zeroed, for
+     example
+   - can reduce cache usage
 
-Thanks,
+With that in mind, patch 3 is a win, patch 4 is likely a win, the other ones are
+much more theorical.
 
-Jonathan
+The changes are really limited, so even if the gain is marginal, maybe it still
+makes sense to merge them.
 
-> ---
->  drivers/iio/adc/palmas_gpadc.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
-> index c1c439215aeb..42c519504529 100644
-> --- a/drivers/iio/adc/palmas_gpadc.c
-> +++ b/drivers/iio/adc/palmas_gpadc.c
-> @@ -14,7 +14,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/delay.h>
-> -#include <linux/i2c.h>
->  #include <linux/pm.h>
->  #include <linux/mfd/palmas.h>
->  #include <linux/completion.h>
+Each patch gives the layout generated by pahole before and after the patch.
+
+[1]: https://lore.kernel.org/all/67a9e53e-4ac9-7ba8-9713-96c1dfe1e341@nvidia.com/
+
+Christophe JAILLET (5):
+  nvmet: Reorder fields in 'struct nvmet_sq'
+  nvmet: Reorder fields in 'struct nvme_ctrl'
+  nvmet: Reorder fields in 'struct nvmf_ctrl_options'
+  nvmet: Reorder fields in 'struct nvme_dhchap_queue_context'
+  nvmet: Reorder fields in 'struct nvmefc_fcp_req'
+
+ drivers/nvme/host/auth.c       |  6 +++---
+ drivers/nvme/host/fabrics.h    |  8 ++++----
+ drivers/nvme/host/nvme.h       |  6 +++---
+ drivers/nvme/target/nvmet.h    |  4 ++--
+ include/linux/nvme-fc-driver.h | 10 +++++-----
+ 5 files changed, 17 insertions(+), 17 deletions(-)
+
+-- 
+2.34.1
 
