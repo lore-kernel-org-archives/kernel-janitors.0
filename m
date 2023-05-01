@@ -2,88 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 100EAC77B61
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 May 2023 13:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6904C77B61
+	for <kernel-janitors@archiver.kernel.org>; Mon,  1 May 2023 13:58:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231249AbjEAN5Q (ORCPT
+        id S232281AbjEAN6n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 1 May 2023 09:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33976 "EHLO
+        Mon, 1 May 2023 09:58:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbjEAN5P (ORCPT
+        with ESMTP id S232193AbjEAN6m (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 1 May 2023 09:57:15 -0400
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47396BA;
-        Mon,  1 May 2023 06:57:13 -0700 (PDT)
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-3f16f792384so6723725e9.0;
-        Mon, 01 May 2023 06:57:13 -0700 (PDT)
+        Mon, 1 May 2023 09:58:42 -0400
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FB461BC;
+        Mon,  1 May 2023 06:58:41 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-3f1745b7132so3791945e9.1;
+        Mon, 01 May 2023 06:58:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682949431; x=1685541431;
+        d=1e100.net; s=20221208; t=1682949520; x=1685541520;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5J9a5kf3kmdYh2Ndj6S+0+amm34/1HJ3W1fY7sBGzIs=;
-        b=LZxMJrM2C7J9bQAOdA3/N3QYg6V+sfGRaA3KO85cin79k5AtY6HnfSbHcxuQJXIQjM
-         qOfdcvEItIOq7bqUYMVf4mHBo746P7a1cdY9pXuYEXgH7v1XZcXr/tBsf1sUJEdsjLsF
-         0Z6kEUhj7kZSUOTqxoyC3dlA+GFvHTlU+5RknXGPASbvPcqOA4tL2k2KX7Z38D6HHu9j
-         Zmz/s/YK58o3zJ26pJSvcWAIcs1Xv4hyTZOdDdFiH82+jiNMwEBQcycmzDWYLffTSGoL
-         0qru1T9oAVsoUMViIYPyr31+QPCcA6gzjUbTtC+5AUONhIqV2VZOkOZCHODbItJgsF72
-         azlg==
-X-Gm-Message-State: AC+VfDzJTLxVVX9yZvOxRQDEoYafs8uFFF+hnG9sRi/KYj0klYZ+decc
-        kkzM5Drhm/d5WDMXDcP3KFU=
-X-Google-Smtp-Source: ACHHUZ7huY9T4MZzSyl932OZ5qbrifrmg+VePH2kBZVD2pNW6t9H7hY3XxVgttyySFZmhsuk8n5wWw==
-X-Received: by 2002:a05:600c:310a:b0:3f1:960d:68ce with SMTP id g10-20020a05600c310a00b003f1960d68cemr10825464wmo.3.1682949430985;
-        Mon, 01 May 2023 06:57:10 -0700 (PDT)
+        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
+        b=ijQQGKpKGzJkq7hiQ6xNldhpmNiHXpblT5WSwTjdtQ8tekm6mVlL93G2QaYQJop3jc
+         Fh3F3BUAr4Kurcoez4PgWXNCqe+119nAWjdYjl46g90zgpn8IK5CQzvm44VkqWia2bx5
+         Oi8oUcD3v0xJ+ndHXW9Lu7TYRPIdyIcP6wGyz3FeWn/Dx0B8xCnqnkpgtMh+LlpUMQPS
+         /s6xpDLUt0hfaIsygRnFFHVS4RQfQECdEDwoUUCw6EAsI8hZClOzi3F2JZUqzzbTuSOu
+         man/LQC/zimAGjI70LhHWKCv/DtVhzG2TW4cwyUa+CggWkefOhewDqGgvBVacKnVSTZ3
+         Dxkw==
+X-Gm-Message-State: AC+VfDwf50YbWJoHb/rBzt2LAMbxJBlt1+9qlKcGz5fJeS8PEM338No1
+        0SZcdzZ08FCGChFovmd3TKw=
+X-Google-Smtp-Source: ACHHUZ5fmsGRmunTeUxurbFpwCadLNtuqYQAughrYQ2hG1yAOPYRFXmf0DIBqc2nXwyFjfO8/Ir9zg==
+X-Received: by 2002:a05:600c:3d95:b0:3f2:571a:9bce with SMTP id bi21-20020a05600c3d9500b003f2571a9bcemr8430563wmb.4.1682949519978;
+        Mon, 01 May 2023 06:58:39 -0700 (PDT)
 Received: from [192.168.64.192] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id v9-20020a05600c444900b003f173be2ccfsm47590803wmn.2.2023.05.01.06.57.09
+        by smtp.gmail.com with ESMTPSA id 11-20020a05600c228b00b003f1736fdfedsm32605561wmf.10.2023.05.01.06.58.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 May 2023 06:57:10 -0700 (PDT)
-Message-ID: <012a86ad-933a-2948-29d3-764346afbd6e@grimberg.me>
-Date:   Mon, 1 May 2023 16:57:09 +0300
+        Mon, 01 May 2023 06:58:39 -0700 (PDT)
+Message-ID: <4e66d227-ca14-667f-faa5-b471886caa1b@grimberg.me>
+Date:   Mon, 1 May 2023 16:58:38 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH 0/5] optimize some data structure in nvme
+Subject: Re: [PATCH] nvmet: Reorder fields in 'struct nvmet_ns'
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>, hch@lst.de,
-        kch@nvidia.com
-Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <cover.1682941568.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Christoph Hellwig <hch@lst.de>,
+        Chaitanya Kulkarni <kch@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+References: <aea924d31f2bd2f740b1ccc6f462905bd6cab763.1682624855.git.christophe.jaillet@wanadoo.fr>
 From:   Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <cover.1682941568.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <aea924d31f2bd2f740b1ccc6f462905bd6cab763.1682624855.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
-
-
-> This serie is a proposal to slighly optimize the memory needed for some
-> structures used in nvme.
-> 
-> This follows the discussion in [1].
-> 
-> Honnestly, I'm not convinced that this serie really brings semething.
-> Because of the way memory alocation works, and its over-allocation to try to
-> avoid memory fragmentation, some limited gains are most of the time useless.
-> 
-> It could still help:
->     - many holes in structure can, at some point, have its size reach a threshold
->       (this is specially true if such structures are allocated with kcalloc() or
->       kmalloc_array())
->     - it can save some space in some other structures if embedded in them
->     - it can save a few cycles if the structure is memcpy()'ed or zeroed, for
->       example
->     - can reduce cache usage
-> 
-> With that in mind, patch 3 is a win, patch 4 is likely a win, the other ones are
-> much more theorical.
-> 
-> The changes are really limited, so even if the gain is marginal, maybe it still
-> makes sense to merge them.
-
-Don't see why not, given they make do the structures smaller.
 
 Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
