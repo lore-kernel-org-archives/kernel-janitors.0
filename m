@@ -2,169 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA44C77B61
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 May 2023 14:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3732C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 May 2023 06:04:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232568AbjEAOuf (ORCPT
+        id S233602AbjEBGEM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 1 May 2023 10:50:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57210 "EHLO
+        Tue, 2 May 2023 02:04:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232249AbjEAOud (ORCPT
+        with ESMTP id S229449AbjEBGEF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 1 May 2023 10:50:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 065E01701;
-        Mon,  1 May 2023 07:50:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 2 May 2023 02:04:05 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D746273A;
+        Mon,  1 May 2023 23:04:03 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8D96961191;
-        Mon,  1 May 2023 14:50:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBCE5C433EF;
-        Mon,  1 May 2023 14:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682952624;
-        bh=uFo5D/hKo2Cb0E3C50X08BuXfEGAwYmK9E6G2PVtDG0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VoRY9R+ygwBCVH6oj9e7Z9osb0H10X0uZfI5HOm3xHzbAh0kD0KpmOMFYoru3cqZ5
-         E9xk+jaMv7lYy5M0m+vZhWQ6aUIScbQFXJSMamNcTZtGivQTDbrDQAXVseEgfbAn9z
-         5OSeZm0wQ6AGwp/0kNzWCJBeuAHQTScd3bIY011ZZT+N4zGh9P3+e+R+ITyKxe2WI+
-         X+C4ybjDozKWXENtZR8eE0jDIMvcO7G+RGZaJIhyWR5R+P6h9kwBFgo5kdrlNg/jph
-         5DW/4zjRG0CBPvjjigH32u/fqDM11j3mUIVOphg9BbzOyvC246xbo6s7qrpBcCNaLd
-         Q4c4zRXhMvsUQ==
-Date:   Mon, 1 May 2023 16:06:09 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Patrik =?UTF-8?B?RGFobHN0csO2bQ==?= <risca@dalakolonin.se>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: palmas: fix off by one bugs
-Message-ID: <20230501160609.4f2d8aab@jic23-huawei>
-In-Reply-To: <20230429202538.GC1404696@dalakolonin.se>
-References: <14fee94a-7db7-4371-b7d6-e94d86b9561e@kili.mountain>
-        <20230423141124.3d4dc91d@jic23-huawei>
-        <20230429202538.GC1404696@dalakolonin.se>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-pc-linux-gnu)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id AA2312245A;
+        Tue,  2 May 2023 06:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1683007442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=abkpTL2IrkzdKT1kp6lWlfq+hjGdGVNZtS/id2U7OuE=;
+        b=uabnDJZz/iSXCFySLeqSs3/rcgaXWLjRcLWLAdj+p4MTjxDkEhYqjFqZSAuYJaiSNY9wmF
+        +6KxxJDiALoa1Ep9lv2bruqX5tVDEEDSzJf9YXZJcbpbdeP3GPwGWxpOKjm5thzSLovsxl
+        uncaCW1VD5fGVadJsPGwf9e94sau8x8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1683007442;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=abkpTL2IrkzdKT1kp6lWlfq+hjGdGVNZtS/id2U7OuE=;
+        b=h2vkopyRLBeb5pgeINDylCcNMUJGDcK6Wnvnd/IdQZzl/M7gHalUhX4Kl9KPJqhd0/FwGP
+        7WosUh+3/HRZ9vBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 76F15134FB;
+        Tue,  2 May 2023 06:04:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0hLMAtKnUGTeaAAAMHmgww
+        (envelope-from <hare@suse.de>); Tue, 02 May 2023 06:04:02 +0000
+Message-ID: <379eb282-843d-2b64-554a-8505aee263c2@suse.de>
+Date:   Tue, 2 May 2023 08:04:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH] nvmet-auth: remove some dead code
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+References: <e6f0e506459eaec9dad74946c1e01aac74874054.1681764032.git.christophe.jaillet@wanadoo.fr>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <e6f0e506459eaec9dad74946c1e01aac74874054.1681764032.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 29 Apr 2023 22:25:38 +0200
-Patrik Dahlstr=C3=B6m <risca@dalakolonin.se> wrote:
+On 4/17/23 22:41, Christophe JAILLET wrote:
+> 'status' is known to be 0 at the point.
+> And nvmet_auth_challenge() return a -E<ERROR_CODE> or 0.
+> So these lines of code should just be removed.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> The dead code became obvious after commit be2ada6d0ed0 ("nvmet-auth: fix
+> return value check in auth receive")
+> ---
+>   drivers/nvme/target/fabrics-cmd-auth.c | 9 ---------
+>   1 file changed, 9 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-> On Sun, Apr 23, 2023 at 02:11:24PM +0100, Jonathan Cameron wrote:
-> > On Fri, 21 Apr 2023 13:41:56 +0300
-> > Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >  =20
-> > > Valid values for "adc_chan" are zero to (PALMAS_ADC_CH_MAX - 1).
-> > > Smatch detects some buffer overflows caused by this:
-> > > drivers/iio/adc/palmas_gpadc.c:721 palmas_gpadc_read_event_value() er=
-ror: buffer overflow 'adc->thresholds' 16 <=3D 16
-> > > drivers/iio/adc/palmas_gpadc.c:758 palmas_gpadc_write_event_value() e=
-rror: buffer overflow 'adc->thresholds' 16 <=3D 16
-> > >=20
-> > > The effect of this bug in other functions is more complicated but
-> > > obviously we should fix all of them.
-> > >=20
-> > > Fixes: a99544c6c883 ("iio: adc: palmas: add support for iio threshold=
- events")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org> =20
-> >=20
-> > Looks good to me.  Slight shuffle at the moment will delay me applying =
-this.
-> >=20
-> > I'll wait for Linus to pick up Greg's pull request then rebase my fixes=
- branch
-> > on top of that.  Otherwise I make a mess of linux-next ordering and thi=
-ngs might
-> > blow up.
-> >=20
-> > In meantime, Patrik, please take a look. =20
->=20
-> Sorry for the long delay.
->=20
-> The changes look good to me. I've checked all other uses of adc_chan in t=
-he
-> code and they all seem to be guarded by the checks below.
->=20
-> Best regards
-> Patrik
->=20
-My tree has now advanced appropriately.
+Cheers,
 
-Applied to the fixes-togreg branch of iio.git.
-
-Thanks,
-
-Jonathan
-
-> >=20
-> > Jonathan
-> >  =20
-> > > ---
-> > > ---
-> > >  drivers/iio/adc/palmas_gpadc.c | 10 +++++-----
-> > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > >=20
-> > > diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_=
-gpadc.c
-> > > index c1c439215aeb..7dfc9c927a23 100644
-> > > --- a/drivers/iio/adc/palmas_gpadc.c
-> > > +++ b/drivers/iio/adc/palmas_gpadc.c
-> > > @@ -547,7 +547,7 @@ static int palmas_gpadc_read_raw(struct iio_dev *=
-indio_dev,
-> > >  	int adc_chan =3D chan->channel;
-> > >  	int ret =3D 0;
-> > > =20
-> > > -	if (adc_chan > PALMAS_ADC_CH_MAX)
-> > > +	if (adc_chan >=3D PALMAS_ADC_CH_MAX)
-> > >  		return -EINVAL;
-> > > =20
-> > >  	mutex_lock(&adc->lock);
-> > > @@ -595,7 +595,7 @@ static int palmas_gpadc_read_event_config(struct =
-iio_dev *indio_dev,
-> > >  	int adc_chan =3D chan->channel;
-> > >  	int ret =3D 0;
-> > > =20
-> > > -	if (adc_chan > PALMAS_ADC_CH_MAX || type !=3D IIO_EV_TYPE_THRESH)
-> > > +	if (adc_chan >=3D PALMAS_ADC_CH_MAX || type !=3D IIO_EV_TYPE_THRESH)
-> > >  		return -EINVAL;
-> > > =20
-> > >  	mutex_lock(&adc->lock);
-> > > @@ -684,7 +684,7 @@ static int palmas_gpadc_write_event_config(struct=
- iio_dev *indio_dev,
-> > >  	int adc_chan =3D chan->channel;
-> > >  	int ret;
-> > > =20
-> > > -	if (adc_chan > PALMAS_ADC_CH_MAX || type !=3D IIO_EV_TYPE_THRESH)
-> > > +	if (adc_chan >=3D PALMAS_ADC_CH_MAX || type !=3D IIO_EV_TYPE_THRESH)
-> > >  		return -EINVAL;
-> > > =20
-> > >  	mutex_lock(&adc->lock);
-> > > @@ -710,7 +710,7 @@ static int palmas_gpadc_read_event_value(struct i=
-io_dev *indio_dev,
-> > >  	int adc_chan =3D chan->channel;
-> > >  	int ret;
-> > > =20
-> > > -	if (adc_chan > PALMAS_ADC_CH_MAX || type !=3D IIO_EV_TYPE_THRESH)
-> > > +	if (adc_chan >=3D PALMAS_ADC_CH_MAX || type !=3D IIO_EV_TYPE_THRESH)
-> > >  		return -EINVAL;
-> > > =20
-> > >  	mutex_lock(&adc->lock);
-> > > @@ -744,7 +744,7 @@ static int palmas_gpadc_write_event_value(struct =
-iio_dev *indio_dev,
-> > >  	int old;
-> > >  	int ret;
-> > > =20
-> > > -	if (adc_chan > PALMAS_ADC_CH_MAX || type !=3D IIO_EV_TYPE_THRESH)
-> > > +	if (adc_chan >=3D PALMAS_ADC_CH_MAX || type !=3D IIO_EV_TYPE_THRESH)
-> > >  		return -EINVAL;
-> > > =20
-> > >  	mutex_lock(&adc->lock); =20
-> >  =20
+Hannes
+-- 
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
+Myers, Andrew McDonald, Martje Boudien Moerman
 
