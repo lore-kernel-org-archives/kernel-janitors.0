@@ -2,141 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F7FC77B7E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 May 2023 10:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD33C77B7E
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 May 2023 10:35:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234022AbjEBKcx (ORCPT
+        id S234022AbjEBKfe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 May 2023 06:32:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38196 "EHLO
+        Tue, 2 May 2023 06:35:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234023AbjEBKcD (ORCPT
+        with ESMTP id S233852AbjEBKel (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 May 2023 06:32:03 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EBE75273;
-        Tue,  2 May 2023 03:30:15 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-956ff2399b1so747256666b.3;
-        Tue, 02 May 2023 03:30:15 -0700 (PDT)
+        Tue, 2 May 2023 06:34:41 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB8184C0E
+        for <kernel-janitors@vger.kernel.org>; Tue,  2 May 2023 03:34:20 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3f18335a870so21295085e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 02 May 2023 03:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683023414; x=1685615414;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yoz9JAbN5f+BVMAIJU5OP6UpMSWt3PXfSC9zASQ8+H0=;
-        b=qPJ2Hw6amNfB8lmXOrdvIl9FoT5xySIqwZYWNum7nfccE3LyonUmxVC4xvOcGkIACz
-         307kXPO/NEqxiW/gL534TetAjXFMoxa712gCWzKQ9ryZyTyQGMomA1FstyAd9rudnxDJ
-         7fxgC6AH+COjiSwLoolMULeoK+VOXPx+4clNKCXfmDkRZ6m4hSGBl+TNH9oRewB4vJ7s
-         GGDFrB5+hrF9djGr072zaTtShx1WWAkMkalYHIxnaA/YwcHurRqoQVgEEGcgHzSDCIV5
-         TcF93MCyDjYjmn8HxsAncCUR7fkPNCJmvVqGqCCZtOSZA9/R8phHp/VwRwXcb4ea7wMM
-         ejrg==
+        d=linaro.org; s=google; t=1683023659; x=1685615659;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MuOjRmgjtLhSlTYCy2tb4/lYCbxRspWajmTs/M9Mi5o=;
+        b=kCk2ro6a6YQX9+tLrqSnk2dY0vqPBD7XtM6X7zlR7e6aO8TX8mHsbm9ij8O3z6T9LZ
+         +CosefXJJij23PSJfFdeb4YvWiu1Y74TIZGHqygaG1JT74s3wjtumzVFUj0VFzGi3qVA
+         XOxqkvw3yEKx08Q2ua61LBfY+gcUsOj/qic1XTGva4Zw4vrZILrB7MGxPnNu/NC9Uz2L
+         jKfgofFg7AP556IKUGSC+aM6R+gy6NNTZE6+HAqYzuZqtRu+w+aJoxtRtBYqmqgl2Qy4
+         8sOo6pnaDmf3NgP5uB6tDXhKxY/P9NHsN5IsVBMZ4FOUGMOlW08Dar51dnzxlYQRoIHe
+         kiWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683023414; x=1685615414;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yoz9JAbN5f+BVMAIJU5OP6UpMSWt3PXfSC9zASQ8+H0=;
-        b=gcGVJyfRTWBVUL0f08RkYXuHH1NBWUH2YB1Fis8XfVFwAEUOJ6nW8mBf0E4Tqt5G9G
-         mQFCADBwfhiHM9W2KtheliLn1y3HFPOQw8PymzWvCfoCzjyT9XVIViN4nB54JOr4MvA8
-         wXS83Ruckb1wHrZ/RFl4JUDfQ3VFkcFYmxq6ecu7SDq7xLrOG6uc6htPylPAWIs/oyD1
-         eOAfAy6ubMwuXULdHicAsC1Q+hug630Og1h7tnwcJARt+E2FG4bdy3PKt16xnoJcOIS2
-         Cmg3rFVPAtlvLlYDYReNGJU8PCIHVfBB2Vjcq3+q+gdU4duyv5kS6p8U8NiNDU7py5T3
-         U0Jg==
-X-Gm-Message-State: AC+VfDzGE23YqpQJwx3aKVBw+jdUi1sU9M7Mgbcm/k0qSvIwZ/XPYKWr
-        MMR+2tSB+gGzqUMa+PzqksU=
-X-Google-Smtp-Source: ACHHUZ6YZ5pgw9VrLJ2fqMsSEx0tEiCLwIYXUGSFpKeEuP8/APOwu3MjFq79vENWW/sdJ/Brfn0IHw==
-X-Received: by 2002:a17:907:94cc:b0:948:b9ea:3302 with SMTP id dn12-20020a17090794cc00b00948b9ea3302mr15065573ejc.1.1683023413633;
-        Tue, 02 May 2023 03:30:13 -0700 (PDT)
-Received: from orome (p200300e41f053a00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f05:3a00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id u13-20020a170906c40d00b0094aa087578csm16154555ejz.171.2023.05.02.03.30.12
+        d=1e100.net; s=20221208; t=1683023659; x=1685615659;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MuOjRmgjtLhSlTYCy2tb4/lYCbxRspWajmTs/M9Mi5o=;
+        b=auK2deqkXrbkEtDCyjomF1lBQQt3JsVkJBXKsUJkf3vCHfMca2LuAbg+ex29zcm/+E
+         Na9RhUccy9WvwPGi6So6aUsuH9+xvOZghcQc9m8/1xOAqd7DDkvTIVpPfPSDC+IGj/Gx
+         qJpv3qsZbyxtpmp5vMK3YFdoBN/G79CSVns1NKG/x72qLyBVoZO/j0sSaF41FJ9UyU+v
+         mixhoo8p5m0MD1ELazPNJ/NTxE1Lj7DH2EwgIP+H3v28np21Vco8e9gbiz8GIexK+VkD
+         RcxpQFIfa77Ly7fkabal4CxefKKFK/uinwKl4ulpKyy9B6VOLeg8wUXgrId5OmVLBKVb
+         Menw==
+X-Gm-Message-State: AC+VfDyo3zCEZKoPR/rC+sYTA8/UVWpV4Z4EtCVa3jVYK6eTKX1hWVoJ
+        vYEMKn0yKOuFKXVlUyjet4Sezw==
+X-Google-Smtp-Source: ACHHUZ6ZiPvrIz6K4tB6CuVEa8QYxHChq5vidOfq3eJKi3df1TSayp6eW6FGNotvbq1v9eD8ZGAIcQ==
+X-Received: by 2002:adf:ec4e:0:b0:2ef:ba4f:c821 with SMTP id w14-20020adfec4e000000b002efba4fc821mr12223707wrn.36.1683023659238;
+        Tue, 02 May 2023 03:34:19 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id u7-20020a5d5147000000b002cde25fba30sm30764590wrt.1.2023.05.02.03.34.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 May 2023 03:30:13 -0700 (PDT)
-Date:   Tue, 2 May 2023 12:30:11 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: tegra194: Fix an error handling path in
- tegra194_cpufreq_probe()
-Message-ID: <ZFDmMydAy4CiJjfQ@orome>
-References: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
+        Tue, 02 May 2023 03:34:17 -0700 (PDT)
+Date:   Tue, 2 May 2023 13:34:12 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Dongliang Mu <dzm91@hust.edu.cn>, smatch@vger.kernel.org
+Cc:     Dan Carpenter <error27@gmail.com>, Vicki Pfau <vi@endrift.com>,
+        kernel-janitors@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Pavel Rojtberg <rojtberg@gmail.com>,
+        Nate Yocom <nate@yocom.org>,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+        John Butler <radon86dev@gmail.com>,
+        Matthias Benkmann <matthias.benkmann@gmail.com>,
+        Christopher Crockett <chaorace@gmail.com>,
+        Santosh De Massari <s.demassari@gmail.com>,
+        hust-os-kernel-patches@googlegroups.com,
+        syzbot+a3f758b8d8cb7e49afec@syzkaller.appspotmail.com,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: xpad - fix GPF in xpad_probe
+Message-ID: <f103fc8e-8cf5-435a-92db-56691c8164fe@kili.mountain>
+References: <20230414125603.686123-1-dzm91@hust.edu.cn>
+ <c3e0823b-2b03-4dab-b7cb-a8bc5151f0b1@kili.mountain>
+ <011c00e7-c351-4331-8be4-1c184d5773e1@kili.mountain>
+ <3ccc85bd-0541-4ffb-a207-dfc533a2c0aa@kili.mountain>
+ <d49bb5a2-ed78-4b16-b7ea-b9c7748ca0e4@kili.mountain>
+ <f71f3012-916c-5271-b908-feeee5a85a46@hust.edu.cn>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gK1WG8+Pg3vMnVql"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+In-Reply-To: <f71f3012-916c-5271-b908-feeee5a85a46@hust.edu.cn>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Sun, Apr 23, 2023 at 10:33:29AM +0800, Dongliang Mu wrote:
+> BTW, do you have any plans to improve the code readability, directory
+> orgranization, documentation etc. of Smatch? It's hard even for senior
+> students to start with.
 
---gK1WG8+Pg3vMnVql
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I have created some documentation.  Read the following blogs in order:
 
-On Tue, Apr 25, 2023 at 03:11:19PM +0200, Christophe JAILLET wrote:
-> If the probe needs to be deferred, some resources still need to be
-> released. So branch to the error handling path instead of returning
-> directly.
->=20
-> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidt=
-h")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only
-> ---
->  drivers/cpufreq/tegra194-cpufreq.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra19=
-4-cpufreq.c
-> index c8d03346068a..36dad5ea5947 100644
-> --- a/drivers/cpufreq/tegra194-cpufreq.c
-> +++ b/drivers/cpufreq/tegra194-cpufreq.c
-> @@ -686,8 +686,10 @@ static int tegra194_cpufreq_probe(struct platform_de=
-vice *pdev)
-> =20
->  	/* Check for optional OPPv2 and interconnect paths on CPU0 to enable IC=
-C scaling */
->  	cpu_dev =3D get_cpu_device(0);
-> -	if (!cpu_dev)
-> -		return -EPROBE_DEFER;
-> +	if (!cpu_dev) {
-> +		err =3D -EPROBE_DEFER;
-> +		goto err_free_res;
-> +	}
+https://staticthinking.wordpress.com/2023/04/24/smatch-data-types/
+https://staticthinking.wordpress.com/2023/04/25/first-smatch-check/
+https://staticthinking.wordpress.com/2023/04/25/merging-states/
+https://staticthinking.wordpress.com/2023/05/02/the-cross-function-db/
+https://staticthinking.wordpress.com/2023/05/02/the-param-key-api/
+https://staticthinking.wordpress.com/2023/05/02/smatch-hooks-and-modules/
+https://staticthinking.wordpress.com/2023/05/02/debugging-smatch-checks/
 
-I think ultimately it'd be better to try get_cpu_device(0) earlier so
-that we don't do all that work upfront before we fail. However, it looks
-like there's some other improvements that could be done in that area, so
-this looks like a good fix in the meantime:
+Email the smatch@vger.kernel.org mailing list with any questions.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+regards,
+dan carpenter
 
---gK1WG8+Pg3vMnVql
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRQ5jMACgkQ3SOs138+
-s6G2Wg//TRLHO0MURhGFW5IfnB5xXcvKaHVeurXxBdRWI4KuA8CQv5+2plHnEci6
-BlU7+GHpOB+3Ch+bfnUVuhFN4WleYecoD69FS9GxwLaYukg7R7ynqVhYX/tccT1w
-lzkZFUzYqrJMxY4ZAKMD14PmnY7tm/DFQO8Ht7Iu1DWKCRVZTd1udfXpqw4z8spc
-ndm1uxVz3d2ojvkhevIWOpHYpsCXgbzYMasi1lHpbui/RGUyr6JE1L2CY23+Ne4s
-KcF/QrhXWRXs6+s40Xi7rQrAgtj/evq0wOlly/YGLBtP4mKpQB1T/o8MlF0NfW3x
-iQoKEAfBIbmOYodXCYjrZvj8ftq7pOtQbzXWW67wzjOxyDuXc/j2XVodHdoDtJ+0
-VSabbpTT+RQsXDM61RxBqeH56mXl6TpJaBLL/reh6BVRESmTPfaqXOkw12BXLYhZ
-IHDOfbuXvHAT1fhJjOWj2yxiqOhwcsIJVIyQlrBfUIjjf1AKOkaUGgiO4jffHjSG
-uYyglby74dbDWqLXnotxaMpSNRSCY94kxEw99p2MtsAb/HTOzCpw2SX/PGBePjwI
-XJCyZ54FOIBBvi+0LBZhjbDitkbILO0zvPZ6etx99jFC2ZRndIqLks22WO/B0h34
-mHYcuakHBmhjbnPK+Yt8YbNQtgUo2O401FTHT/Cm78Y5vYybem4=
-=WBsp
------END PGP SIGNATURE-----
-
---gK1WG8+Pg3vMnVql--
