@@ -2,85 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94055C77B78
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 May 2023 14:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7E5C77B75
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 May 2023 15:09:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbjECOrW (ORCPT
+        id S230316AbjECPJ2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 May 2023 10:47:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33774 "EHLO
+        Wed, 3 May 2023 11:09:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbjECOrW (ORCPT
+        with ESMTP id S230249AbjECPJ1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 May 2023 10:47:22 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 380CA5263;
-        Wed,  3 May 2023 07:47:20 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4eff4ea8e39so6041993e87.1;
-        Wed, 03 May 2023 07:47:20 -0700 (PDT)
+        Wed, 3 May 2023 11:09:27 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CBF5593
+        for <kernel-janitors@vger.kernel.org>; Wed,  3 May 2023 08:09:26 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f18dacd392so33896885e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 03 May 2023 08:09:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683125238; x=1685717238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C3xAax5UMMKBBrbDbSmOKKPeFKZ83BBHuKP/eeSu5p4=;
-        b=rkCbtRN1t07+/Mm/qp9LWT08mpQB23zqZwKxH/Jugd/NMBBtfp3x2iR88DiiT4MTau
-         0hLjGt4gooDQzdKm/zMhrQOZmt3kYs5BJh/OpiH8gfeO9ZedFFpE6IQckWfdbSWH+MJf
-         fa35lSUFY1CHzRfoZFZmGVxHsgF24HRkm69VfOYsOdnRxmJikPHeCfRHhZhTr+rHTGAd
-         IrCrDkqqi/kFC+V4GhkpIEIMJiUr5KyQfTDoWnd4ATqB/+XK5Xf6u3dHkgW5FBnD2IDc
-         FvfBa9HEGeJDQ1eu+X6q3cPFg1J0JDh1Jl85QNVwKUlnyJQl03KGvLy6eGElL8xrC0nD
-         jvwg==
+        d=linaro.org; s=google; t=1683126564; x=1685718564;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hrqzZ7cl8VrtR/TAxnvpJyyUePNXIse9aaN0F9mcED8=;
+        b=k+mEvhkF3uKpEJD2wjFkUiNyY14LN6OGYP9piujHBpmYpEqYvzmS4UT95OzVxmlRjK
+         QBUXbRpMvjzzliHlpDfc7taXh1uGmew5OHFFAwWoBzQP8zLfvfCHXJrpBr0Vc4OYaUpY
+         +YEpKVW/Yp0UFr9HsI5NR97FwRlBF3aPjPaxVn91pRQ6lSLVKknj4s+DjpsM0e4ngb99
+         +xixWMDGLb0cXiDgj+DbtYYFz+Ue8W/rmqTyf7HU2/X5yszZ7Qzl/3QxgUL9FADCJv7g
+         JdBfkq89Yq9wKRRyZCiAveWgnvWXG9afgSLq3CtfCUR/uN4tep/ZTH0bdI/LxfGVGNyF
+         6LRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683125238; x=1685717238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C3xAax5UMMKBBrbDbSmOKKPeFKZ83BBHuKP/eeSu5p4=;
-        b=J/dJjCD3h/BLw2MRnmNbWQrl2+sF9dgs/0Utvgdz0di2BwF0eaaDsJb60kJHb0xpqb
-         OrRKG/LSY9XG1E7GN/ZkZ1fNT+fLYw79euX1hqQPVlskGWpGpmepqfgsW7iEuQSNwa9/
-         0JywSuAxsCayIE2YJBWnapgvkn49VF8dF+SfiaTWZl6zo5WOum3N7+eUmAXztCbJVGq4
-         rGnTRf6s2rxePC9O1Hr44j73Yu0CYAxQGDhoqlLADyqvgj1M4ZV9A4EbgG6UqmRDe2iI
-         9ESkeIi437xSB7lLa/AkV3VTnljmy639kKV1LsVILBi5VN5OzlDVT+iqXRqS9MuaD1PU
-         ypCA==
-X-Gm-Message-State: AC+VfDwsOJXO9+ql1E8Xb8MWMxmySuX5wH1yExVdr6K9W9IjlegeCscS
-        XUHrjgLenMCUiDWCJwx/y4uLbL8hb3xs9KWgag==
-X-Google-Smtp-Source: ACHHUZ4wJk4FWZJ47z3eWowcIPsdV23tHhs0Q+a5X+3y6nD0P4oucFwMYwXky460hcvVU2vX04y8rfMGBaSfdbr64fM=
-X-Received: by 2002:ac2:414a:0:b0:4ef:d41d:637 with SMTP id
- c10-20020ac2414a000000b004efd41d0637mr957607lfi.39.1683125238146; Wed, 03 May
- 2023 07:47:18 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683126564; x=1685718564;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hrqzZ7cl8VrtR/TAxnvpJyyUePNXIse9aaN0F9mcED8=;
+        b=i5rrbpmlRpQqgbNlIhGMj4o7bh6LX9HYJjMyBB6b0QAZ9UNPwHWnMfw3sGMM2AVRmr
+         VBF0HPwWI7VLwerQgk3TOkzMHwsUrA6AuWbW2htSBgv3lRJ/ljSPUZYvw53ubkXREdqL
+         5CH5Xwkf1uNB3I92/9CATSd41b+H3R+k/GvqINv3a5R2SKIDhZTPcFGmQfoAisXtW1ja
+         NE6pZ11lNLNc1x1e6l1rc/WaMUYI1AiW91xPs3HUzFcGaLL2kbVDzIHUZKAxPIYBNXt3
+         RjieEYOnZHVItvm0Sgi3TqDUzGT1vH4eqtX9Q5h3b8v1/iEmXXNLQVxPjGGUD54P4sNj
+         nqrw==
+X-Gm-Message-State: AC+VfDwogkLjWT5VveKpm52IhDOB4xPb05qRB0So40A4I3YkxiiB+qvR
+        KRELlbnRrrdtJzPn2PtBY7k2bQ==
+X-Google-Smtp-Source: ACHHUZ59pkQEr7QUrGFWqjZnRra9u6FwHuf75XZEu80zdhinKzCq+M1Huv7BZqixQDqcC0WMwmTArQ==
+X-Received: by 2002:a05:600c:2212:b0:3f1:7aff:e14a with SMTP id z18-20020a05600c221200b003f17affe14amr15227267wml.39.1683126564433;
+        Wed, 03 May 2023 08:09:24 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id z18-20020a1c4c12000000b003f188f608b9sm2164834wmf.8.2023.05.03.08.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 May 2023 08:09:23 -0700 (PDT)
+Date:   Wed, 3 May 2023 18:09:18 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Le Ma <le.ma@amd.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Tao Zhou <tao.zhou1@amd.com>, Jack Xiao <Jack.Xiao@amd.com>,
+        Lang Yu <Lang.Yu@amd.com>,
+        Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
+        Likun Gao <Likun.Gao@amd.com>,
+        YiPeng Chai <YiPeng.Chai@amd.com>,
+        =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+        amd-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amdgpu: unlock the correct lock in
+ amdgpu_gfx_enable_kcq()
+Message-ID: <072c8bbb-76bd-42f8-bb97-ebc38acad470@kili.mountain>
 MIME-Version: 1.0
-References: <68fce64f-4970-45f1-807e-6c0eecdfcdc2@kili.mountain>
-In-Reply-To: <68fce64f-4970-45f1-807e-6c0eecdfcdc2@kili.mountain>
-From:   Stanley Chu <chu.stanley@gmail.com>
-Date:   Wed, 3 May 2023 22:47:06 +0800
-Message-ID: <CAGaU9a8eRPyMo9hUekiVL9ppZQspwsqk9RQTtmqHsTPBD7mcjA@mail.gmail.com>
-Subject: Re: [PATCH] scsi: ufs: ufs-mediatek: delete some dead code
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Stanley Chu <stanley.chu@mediatek.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andy Teng <andy.teng@mediatek.com>, linux-scsi@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@linaro.org> =E6=96=BC 2023=E5=B9=B45=E6=9C=883=
-=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=886:41=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> There is already a test for "if (val =3D=3D state)" earlier so it's not
-> possible here.  Delete the dead code.
->
-> Fixes: 9006e3986f66 ("scsi: ufs-mediatek: Do not gate clocks if auto-hibe=
-rn8 is not entered yet")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+We changed which lock we are supposed to take but this error path
+was accidentally over looked so it still drops the old lock.
 
-Reviewed-by: Stanley Chu <stanley.chu@mediatek.com>
+Fixes: def799c6596d ("drm/amdgpu: add multi-xcc support to amdgpu_gfx interfaces (v4)")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+index 60bb4bba1994..1de3fffae9d7 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+@@ -566,7 +566,7 @@ int amdgpu_gfx_enable_kcq(struct amdgpu_device *adev, int xcc_id)
+ 						kiq->pmf->set_resources_size);
+ 		if (r) {
+ 			DRM_ERROR("Failed to lock KIQ (%d).\n", r);
+-			spin_unlock(&adev->gfx.kiq[0].ring_lock);
++			spin_unlock(&kiq->ring_lock);
+ 			return r;
+ 		}
+ 
+-- 
+2.39.2
+
