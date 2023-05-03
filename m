@@ -2,100 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E29C77B7F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 May 2023 08:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B56EEC77B7F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 May 2023 10:41:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbjECIwy (ORCPT
+        id S229810AbjECKlL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 May 2023 04:52:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40088 "EHLO
+        Wed, 3 May 2023 06:41:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbjECIwx (ORCPT
+        with ESMTP id S229526AbjECKlK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 May 2023 04:52:53 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8356991
-        for <kernel-janitors@vger.kernel.org>; Wed,  3 May 2023 01:52:51 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f19afc4fbfso48492495e9.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 03 May 2023 01:52:51 -0700 (PDT)
+        Wed, 3 May 2023 06:41:10 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DD0B3C01
+        for <kernel-janitors@vger.kernel.org>; Wed,  3 May 2023 03:41:08 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-2f86ee42669so4783435f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 03 May 2023 03:41:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683103970; x=1685695970;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bgZG6p8PNZ6MATQQt6+bk7YMAD3dFVDJrGkYCew0g4I=;
-        b=w2RS2+8sxdUDA/qFtitCK0siba+4RRLmTowVPqcV+GjUVJx5/otLasDXC56j+5vux7
-         rjT2NEa8Y614Ao93r6l0ikGfPsAxLldVkXm8oJvqXXh+LIYk7AFsmAtp4lkN15ReX2xG
-         fwvTO6j4hgdH6q6+/hNgYHkg8cQU85IfQurGV8FbJWQxOvHS8HByDNLWldP5zvr9RxzS
-         Bxyrp8gDX+X5VxdOISt1R6BDtrNWGXwpbJ9dQFoVWc/+GjeQrT7MxLF0b9oAv1jB1lhB
-         4K2yAmO81g2+GAOraz/SDDS0hAXjASqOlfV1FnqOx+ojuNA/vFfkRp30pGaFaAgYb0U+
-         7E/Q==
+        d=linaro.org; s=google; t=1683110466; x=1685702466;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=18+zD8zJYi3/Cfjv44S8LZuiPVGNRYG6CxrA5L7f37c=;
+        b=pJJ5gpIVOdGJhMps7tKZauJYNEF32/NT8iGK0CuyrDEMVE/+NBU3KOqSMTj9UrNyxH
+         yh/mmvEsDhCerh0pN6S2YvvP317oQzB7NpLlxLEMd8exJoQ3WtTLvenIe8rrvw5tksJI
+         9bMdxotUdgPuRgbPr53Q0DIRKEwizOkOpgz4WPR2SaYSgLLJQAqJCT/fXY1dYluBqQr5
+         sL7lU3SPvBjKCj5N5RDsALucCOjJ9LZg9edK22h+/i+33pi/ryAYptI8g2Ye0C4pmGy1
+         IIrZkCMo02AhdeWs9zNglu94SXjxtdSx5EY0EvurVmzqaZ4gdLFAnnM9FlXJ7iZmTjlr
+         VgBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683103970; x=1685695970;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1683110466; x=1685702466;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bgZG6p8PNZ6MATQQt6+bk7YMAD3dFVDJrGkYCew0g4I=;
-        b=ljYy3H1VTA8Rab58+Tz6WeI+lUKUTiikQs1KctF+R+Mp10+JFFGOtYjHS9vRXCI2fM
-         7ISJaIVf0r91BUL/9xhQ722qYKe11Zdah7G3K2Lia/GrJOIUi9E11Q027KUYLitz7+3z
-         7KklIx0793qy8GEf1zWP6XcNkAGXfVGEYn2GGYXWpIDKIxtLYUEzsDMpOI7nDRCAyljw
-         vnGQZwFmtxkEIQ0VIqCn9eqPdnfMknawxYVMEsaTDEzD9TGKMOtHLmCVzcFMon65YfDR
-         cg1ZNGpkLDsktqTeKa1CkJVrGhjLjDGkAaQi2EB0JLpoWgtAFki0Q85TM1fhID9oxTh9
-         egOg==
-X-Gm-Message-State: AC+VfDwItDW6RU7AMwD4uTZ2lwJxNRxzHX3idY+fsF+n8FnvT6XYRtqX
-        WY2q1HX4ng2Vgm+83XkEeESiyw==
-X-Google-Smtp-Source: ACHHUZ7IuHqLkguJmyEjKv+a7FMneToE2XeOnN/XjtYZacKF42HAUzTus3XG0kc34KAQnMEqu9sFug==
-X-Received: by 2002:a5d:4841:0:b0:2fa:ce3:9a0 with SMTP id n1-20020a5d4841000000b002fa0ce309a0mr13462825wrs.36.1683103969920;
-        Wed, 03 May 2023 01:52:49 -0700 (PDT)
+        bh=18+zD8zJYi3/Cfjv44S8LZuiPVGNRYG6CxrA5L7f37c=;
+        b=Lbp24Gmb4H08KaGlmNPD9TJq/rcZZKB3AMNQyfWHyKzwyuoKJFq+SNrmrqvhohepN/
+         MTNrenmkdPeVg16Hyk07dAQRLuEv7ke4ZAfO9MygecVJa9y9RrGTaSOEqum755JnfBhw
+         d1Am7QCHBqB3S83/NYtfwjv9aCMVXwVk+Hwtqcqj9s5C0xuOaF+r79Qcb8BG9njUcuUN
+         iBAJXvSkHeCn9lrgw76XtDQ64VO7oZaynW0wpQ0Yb88ItAYo0VAkZlH9w2Pnsr1ktCKr
+         uo0V3knPcP64GdrlXgvku3bJTAe/R74iuX15nvftcw9NL8yXrJCbTg8Tf9/BKlW/SRE5
+         ORwA==
+X-Gm-Message-State: AC+VfDyfIzE6MWHjK23X8ldLYDF/rmTvBkwbHEYl62srfae7bd/guJon
+        xMMxZZiRHndQC6w9f99V49RmZw==
+X-Google-Smtp-Source: ACHHUZ5WMJai/7lvt00NBo93bMqGBV8AwVXXrIpyWqT8UcwT9B2mcylhVQ9xuSDVl+13JhaF2VwWsQ==
+X-Received: by 2002:a5d:448a:0:b0:306:459b:f575 with SMTP id j10-20020a5d448a000000b00306459bf575mr554124wrq.12.1683110466641;
+        Wed, 03 May 2023 03:41:06 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id w12-20020a5d680c000000b0030630120e56sm6526300wru.57.2023.05.03.01.52.47
+        by smtp.gmail.com with ESMTPSA id h13-20020adffd4d000000b0030631dcbea6sm6450573wrs.77.2023.05.03.03.41.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 May 2023 01:52:48 -0700 (PDT)
-Date:   Wed, 3 May 2023 11:52:44 +0300
+        Wed, 03 May 2023 03:41:04 -0700 (PDT)
+Date:   Wed, 3 May 2023 13:40:59 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Javier Martinez Canillas <javierm@redhat.com>
-Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Dan Carpenter <error27@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Marian Cichy <m.cichy@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH] drm/imx/lcdc: fix a NULL vs IS_ERR() bug in probe
-Message-ID: <2834501b-636c-423f-8d13-7a1a35fd3810@kili.mountain>
-References: <d0a1fc55-3ef6-444e-b3ef-fdc937d8d57a@kili.mountain>
- <20230322091604.3zgzogskrtn3evur@pengutronix.de>
- <875y9wg6fz.fsf@minerva.mail-host-address-is-not-set>
+To:     Stanley Chu <stanley.chu@mediatek.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Andy Teng <andy.teng@mediatek.com>, linux-scsi@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] scsi: ufs: ufs-mediatek: delete some dead code
+Message-ID: <68fce64f-4970-45f1-807e-6c0eecdfcdc2@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <875y9wg6fz.fsf@minerva.mail-host-address-is-not-set>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Apr 15, 2023 at 11:51:28PM +0200, Javier Martinez Canillas wrote:
-> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> writes:
-> 
-> > On Wed, Mar 22, 2023 at 12:06:55PM +0300, Dan Carpenter wrote:
-> >> The devm_drm_dev_alloc() function returns error pointers.  It never
-> >> returns NULL.  Fix the check.
-> >> 
-> >> Fixes: c87e859cdeb5 ("drm/imx/lcdc: Implement DRM driver for imx25")
-> >> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> >
-> > Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> >
-> 
-> Pushed to drm-misc (drm-misc-next). Thanks!
-> 
+There is already a test for "if (val == state)" earlier so it's not
+possible here.  Delete the dead code.
 
-This still hasn't hit linux-next (although the latest linux-next is
-from last Friday, Apr 28, so maybe it will soon?)
+Fixes: 9006e3986f66 ("scsi: ufs-mediatek: Do not gate clocks if auto-hibern8 is not entered yet")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/ufs/host/ufs-mediatek.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
+index 73e217260390..a054810e321d 100644
+--- a/drivers/ufs/host/ufs-mediatek.c
++++ b/drivers/ufs/host/ufs-mediatek.c
+@@ -410,9 +410,6 @@ static int ufs_mtk_wait_link_state(struct ufs_hba *hba, u32 state,
+ 		usleep_range(100, 200);
+ 	} while (ktime_before(time_checked, timeout));
+ 
+-	if (val == state)
+-		return 0;
+-
+ 	return -ETIMEDOUT;
+ }
+ 
+-- 
+2.39.2
 
