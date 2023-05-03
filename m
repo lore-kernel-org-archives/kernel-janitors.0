@@ -2,139 +2,85 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEA4C77B7F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 May 2023 14:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94055C77B78
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 May 2023 14:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230265AbjECOfI (ORCPT
+        id S229889AbjECOrW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 May 2023 10:35:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56804 "EHLO
+        Wed, 3 May 2023 10:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbjECOfF (ORCPT
+        with ESMTP id S229490AbjECOrW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 May 2023 10:35:05 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F737296
-        for <kernel-janitors@vger.kernel.org>; Wed,  3 May 2023 07:34:41 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 1DB1A228FA;
-        Wed,  3 May 2023 14:34:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1683124465; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Bgp5FvF4QGWmZGIFXar9mUREceWHPttZvhBXr/qSGhM=;
-        b=ghJWwgHkp5yOcUbwj5tAu9i6IxJHOCOBHXXzKIVhF9dchjs0Oy7f8DfOoXg3rPnBXQnsO/
-        4gGiDludsgsNQd++aiFYGPlvPrmZ9CRvqDBSqPVXexypfBCNpIIKva54ANC6y8lhs9Iafu
-        /BrUesvpfuKDYQdAn1rRD7Q0/EcoXWw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1683124465;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Bgp5FvF4QGWmZGIFXar9mUREceWHPttZvhBXr/qSGhM=;
-        b=/72xW2gI00fW3O4Y/wLb0NqGU9SNiqVMdTZxDhlsr91yt00pGpSlno6grW2K5pndYgTsv+
-        rJYEruHQPUCnkBAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EADC41331F;
-        Wed,  3 May 2023 14:34:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id pI1tOPBwUmS9RwAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 03 May 2023 14:34:24 +0000
-Message-ID: <635b4dfa-8f9c-5926-1ed6-acfba6f673d0@suse.de>
-Date:   Wed, 3 May 2023 16:34:24 +0200
+        Wed, 3 May 2023 10:47:22 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 380CA5263;
+        Wed,  3 May 2023 07:47:20 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4eff4ea8e39so6041993e87.1;
+        Wed, 03 May 2023 07:47:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683125238; x=1685717238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C3xAax5UMMKBBrbDbSmOKKPeFKZ83BBHuKP/eeSu5p4=;
+        b=rkCbtRN1t07+/Mm/qp9LWT08mpQB23zqZwKxH/Jugd/NMBBtfp3x2iR88DiiT4MTau
+         0hLjGt4gooDQzdKm/zMhrQOZmt3kYs5BJh/OpiH8gfeO9ZedFFpE6IQckWfdbSWH+MJf
+         fa35lSUFY1CHzRfoZFZmGVxHsgF24HRkm69VfOYsOdnRxmJikPHeCfRHhZhTr+rHTGAd
+         IrCrDkqqi/kFC+V4GhkpIEIMJiUr5KyQfTDoWnd4ATqB/+XK5Xf6u3dHkgW5FBnD2IDc
+         FvfBa9HEGeJDQ1eu+X6q3cPFg1J0JDh1Jl85QNVwKUlnyJQl03KGvLy6eGElL8xrC0nD
+         jvwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683125238; x=1685717238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C3xAax5UMMKBBrbDbSmOKKPeFKZ83BBHuKP/eeSu5p4=;
+        b=J/dJjCD3h/BLw2MRnmNbWQrl2+sF9dgs/0Utvgdz0di2BwF0eaaDsJb60kJHb0xpqb
+         OrRKG/LSY9XG1E7GN/ZkZ1fNT+fLYw79euX1hqQPVlskGWpGpmepqfgsW7iEuQSNwa9/
+         0JywSuAxsCayIE2YJBWnapgvkn49VF8dF+SfiaTWZl6zo5WOum3N7+eUmAXztCbJVGq4
+         rGnTRf6s2rxePC9O1Hr44j73Yu0CYAxQGDhoqlLADyqvgj1M4ZV9A4EbgG6UqmRDe2iI
+         9ESkeIi437xSB7lLa/AkV3VTnljmy639kKV1LsVILBi5VN5OzlDVT+iqXRqS9MuaD1PU
+         ypCA==
+X-Gm-Message-State: AC+VfDwsOJXO9+ql1E8Xb8MWMxmySuX5wH1yExVdr6K9W9IjlegeCscS
+        XUHrjgLenMCUiDWCJwx/y4uLbL8hb3xs9KWgag==
+X-Google-Smtp-Source: ACHHUZ4wJk4FWZJ47z3eWowcIPsdV23tHhs0Q+a5X+3y6nD0P4oucFwMYwXky460hcvVU2vX04y8rfMGBaSfdbr64fM=
+X-Received: by 2002:ac2:414a:0:b0:4ef:d41d:637 with SMTP id
+ c10-20020ac2414a000000b004efd41d0637mr957607lfi.39.1683125238146; Wed, 03 May
+ 2023 07:47:18 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] drm/udl: delete dead code
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Dave Airlie <airlied@redhat.com>, Takashi Iwai <tiwai@suse.de>
-Cc:     Sean Paul <sean@poorly.run>, kernel-janitors@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <e0e35421-8746-43b6-971e-e25d1cd1d6a7@kili.mountain>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <e0e35421-8746-43b6-971e-e25d1cd1d6a7@kili.mountain>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------qQTmuzsE4bbyaaVYioIKBfU1"
+References: <68fce64f-4970-45f1-807e-6c0eecdfcdc2@kili.mountain>
+In-Reply-To: <68fce64f-4970-45f1-807e-6c0eecdfcdc2@kili.mountain>
+From:   Stanley Chu <chu.stanley@gmail.com>
+Date:   Wed, 3 May 2023 22:47:06 +0800
+Message-ID: <CAGaU9a8eRPyMo9hUekiVL9ppZQspwsqk9RQTtmqHsTPBD7mcjA@mail.gmail.com>
+Subject: Re: [PATCH] scsi: ufs: ufs-mediatek: delete some dead code
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Stanley Chu <stanley.chu@mediatek.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Andy Teng <andy.teng@mediatek.com>, linux-scsi@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------qQTmuzsE4bbyaaVYioIKBfU1
-Content-Type: multipart/mixed; boundary="------------EPWoBo0E0IQymTXVyBy04oUZ";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Dave Airlie
- <airlied@redhat.com>, Takashi Iwai <tiwai@suse.de>
-Cc: Sean Paul <sean@poorly.run>, kernel-janitors@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Message-ID: <635b4dfa-8f9c-5926-1ed6-acfba6f673d0@suse.de>
-Subject: Re: [PATCH] drm/udl: delete dead code
-References: <e0e35421-8746-43b6-971e-e25d1cd1d6a7@kili.mountain>
-In-Reply-To: <e0e35421-8746-43b6-971e-e25d1cd1d6a7@kili.mountain>
+Dan Carpenter <dan.carpenter@linaro.org> =E6=96=BC 2023=E5=B9=B45=E6=9C=883=
+=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=886:41=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> There is already a test for "if (val =3D=3D state)" earlier so it's not
+> possible here.  Delete the dead code.
+>
+> Fixes: 9006e3986f66 ("scsi: ufs-mediatek: Do not gate clocks if auto-hibe=
+rn8 is not entered yet")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
---------------EPWoBo0E0IQymTXVyBy04oUZ
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-TWVyZ2VkLCB0aGFua3MhDQoNCkFtIDAyLjA1LjIzIHVtIDE0OjU5IHNjaHJpZWIgRGFuIENh
-cnBlbnRlcjoNCj4gVGhlICJ1bm9kZSIgcG9pbnRlciBjYW5ub3QgYmUgTlVMTCBoZXJlIGFu
-ZCBjaGVja2luZyBmb3IgaXQgY2F1c2VzDQo+IFNtYXRjaCB3YXJuaW5nczoNCj4gDQo+ICAg
-ICBkcml2ZXJzL2dwdS9kcm0vdWRsL3VkbF9tYWluLmM6MjU5IHVkbF9nZXRfdXJiX2xvY2tl
-ZCgpDQo+ICAgICB3YXJuOiBjYW4gJ3Vub2RlJyBldmVuIGJlIE5VTEw/DQo+IA0KPiBGb3J0
-dW5hdGVseSwgaXQncyBqdXN0IGhhcm1sZXNzIGRlYWQgY29kZSB3aGljaCBjYW4gYmUgcmVt
-b3ZlZC4gIEl0J3MNCj4gbGVmdCBvdmVyIGZyb20gY29tbWl0IGM1YzM1NGEzYTQ3MiAoImRy
-bS91ZGw6IEZpeCBpbmNvbnNpc3RlbnQgdXJicy5jb3VudA0KPiB2YWx1ZSBkdXJpbmcgdWRs
-X2ZyZWVfdXJiX2xpc3QoKSIpLg0KPiANCj4gUmVwb3J0ZWQtYnk6IGtlcm5lbCB0ZXN0IHJv
-Ym90IDxsa3BAaW50ZWwuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxk
-YW4uY2FycGVudGVyQGxpbmFyby5vcmc+DQo+IC0tLQ0KPiAgIGRyaXZlcnMvZ3B1L2RybS91
-ZGwvdWRsX21haW4uYyB8IDIgKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
-KyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-dWRsL3VkbF9tYWluLmMgYi9kcml2ZXJzL2dwdS9kcm0vdWRsL3VkbF9tYWluLmMNCj4gaW5k
-ZXggMDYxY2I4OGMwOGEyLi4zZWJlMmNlNTVkZmQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMv
-Z3B1L2RybS91ZGwvdWRsX21haW4uYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdWRsL3Vk
-bF9tYWluLmMNCj4gQEAgLTI1NSw3ICsyNTUsNyBAQCBzdGF0aWMgc3RydWN0IHVyYiAqdWRs
-X2dldF91cmJfbG9ja2VkKHN0cnVjdCB1ZGxfZGV2aWNlICp1ZGwsIGxvbmcgdGltZW91dCkN
-Cj4gICAJbGlzdF9kZWxfaW5pdCgmdW5vZGUtPmVudHJ5KTsNCj4gICAJdWRsLT51cmJzLmF2
-YWlsYWJsZS0tOw0KPiAgIA0KPiAtCXJldHVybiB1bm9kZSA/IHVub2RlLT51cmIgOiBOVUxM
-Ow0KPiArCXJldHVybiB1bm9kZS0+dXJiOw0KPiAgIH0NCj4gICANCj4gICAjZGVmaW5lIEdF
-VF9VUkJfVElNRU9VVAlIWg0KDQotLSANClRob21hcyBaaW1tZXJtYW5uDQpHcmFwaGljcyBE
-cml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdtYkgN
-CkZyYW5rZW5zdHJhc3NlIDE0NiwgOTA0NjEgTnVlcm5iZXJnLCBHZXJtYW55DQpHRjogSXZv
-IFRvdGV2LCBBbmRyZXcgTXllcnMsIEFuZHJldyBNY0RvbmFsZCwgQm91ZGllbiBNb2VybWFu
-DQpIUkIgMzY4MDkgKEFHIE51ZXJuYmVyZykNCg==
-
---------------EPWoBo0E0IQymTXVyBy04oUZ--
-
---------------qQTmuzsE4bbyaaVYioIKBfU1
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmRScPAFAwAAAAAACgkQlh/E3EQov+A1
-CRAAgDe1hu/HItpbBdJpKj8MmYtemdtgPkUS7O4N4fLBodSnFIfE+kTU4SaxuAmaSKFL9PpUIDQr
-EH98I32lXyhAOQ5VuCeyGK/h8uLMZi/AYkvtTw6SejbhG6Nd333vJvBFxJqb+ULsM/fxVi31B1L3
-hpQU17Si6lHuiiOxnrdJ167sLoI+Pur6YFe9muMSHuDPVJRv2kbbeyAwQyy+cqI5eUDBAdg8CqcR
-GmMbqkjnMjOuaWXi354NAilCfQo5GcsJ9cMtcQoH7+zWtb6BedXeyciPf2WupyEMPpaoru/dpxWM
-+i6usNX6Rr7A3vfK7x0L7P4GjHwX34JFEsLsk/o0dFV/qXGC1YrOlqUO/6OKgiWNOUGoOZ5oqwPW
-ZgefUlkThjTUgBUW8s5EGfYMcjDiDwiwfWFVj6RxCDSDjf5r4B0mWuBaSkkCae5YtcjaGmRJsDK0
-NwH8pjlK/jYNnR3jFGbu34+uOpIOMjkVW39cTgpDdqDkYxUqqrStaIHD2ITzj4T5dEbcf/rA6yO6
-HZ0aD/q1m/9tllohl8YrDpm7QxI9NIRen9H/EMh5bEX1706P3MUUfti40GPnvqbMS/7nhOpRjEYs
-IfmEnEIsDqaCncvMyZ0amSstCAdWy9hJFRSeMarQbleFHlBQOEXjQNGHuOr0uj9kuPt/hctO5PE/
-5yI=
-=sXUQ
------END PGP SIGNATURE-----
-
---------------qQTmuzsE4bbyaaVYioIKBfU1--
+Reviewed-by: Stanley Chu <stanley.chu@mediatek.com>
