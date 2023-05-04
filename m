@@ -2,88 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B53C77B75
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 May 2023 01:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F59BC7EE21
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 May 2023 04:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbjEDBQe convert rfc822-to-8bit (ORCPT
+        id S229684AbjEDEtp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 May 2023 21:16:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36742 "EHLO
+        Thu, 4 May 2023 00:49:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229761AbjEDBQd (ORCPT
+        with ESMTP id S229553AbjEDEto (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 May 2023 21:16:33 -0400
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A4B8101;
-        Wed,  3 May 2023 18:16:29 -0700 (PDT)
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.77 with qID 3441GA4H0026212, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-        by rtits2.realtek.com.tw (8.15.2/2.81/5.90) with ESMTPS id 3441GA4H0026212
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
-        Thu, 4 May 2023 09:16:10 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.32; Thu, 4 May 2023 09:16:14 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Thu, 4 May 2023 09:16:13 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::e138:e7f1:4709:ff4d]) by
- RTEXMBS04.realtek.com.tw ([fe80::e138:e7f1:4709:ff4d%5]) with mapi id
- 15.01.2375.007; Thu, 4 May 2023 09:16:13 +0800
-From:   Ping-Ke Shih <pkshih@realtek.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Bernie Huang <phhuang@realtek.com>
-CC:     Yan-Hsuan Chuang <tony0620emma@gmail.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] wifi: rtw88: unlock on error path in rtw_ops_add_interface()
-Thread-Topic: [PATCH] wifi: rtw88: unlock on error path in
- rtw_ops_add_interface()
-Thread-Index: AQHZfdFZxTos89hEMEC3CDV8yFWan69JUEdA
-Date:   Thu, 4 May 2023 01:16:13 +0000
-Message-ID: <4f09ff0dd95143a3a70f6fa641a66fca@realtek.com>
-References: <ddd10a74-5982-4f65-8c59-c1cca558d239@kili.mountain>
-In-Reply-To: <ddd10a74-5982-4f65-8c59-c1cca558d239@kili.mountain>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.188]
-x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 4 May 2023 00:49:44 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 25331199E;
+        Wed,  3 May 2023 21:49:42 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 9998B180126FE4;
+        Thu,  4 May 2023 12:49:40 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
+Subject: [PATCH] media: dvb-usb: pctv452e: remove unnecessary (void*) conversions
+Date:   Thu,  4 May 2023 12:48:22 +0800
+Message-Id: <20230504044823.89197-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+No need cast (void*) to (struct pctv452e_state *).
 
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/media/usb/dvb-usb/pctv452e.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: Wednesday, May 3, 2023 11:10 PM
-> To: Bernie Huang <phhuang@realtek.com>
-> Cc: Yan-Hsuan Chuang <tony0620emma@gmail.com>; Kalle Valo <kvalo@kernel.org>; Ping-Ke Shih
-> <pkshih@realtek.com>; linux-wireless@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH] wifi: rtw88: unlock on error path in rtw_ops_add_interface()
-> 
-> Call mutex_unlock(&rtwdev->mutex); before returning on this error path.
-> 
-> Fixes: f0e741e4ddbc ("wifi: rtw88: add bitmap for dynamic port settings")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Ping-Ke Shih <pkshih@realtek.com>
-
-[...]
+diff --git a/drivers/media/usb/dvb-usb/pctv452e.c b/drivers/media/usb/dvb-usb/pctv452e.c
+index da42c989e071..42763c12cf29 100644
+--- a/drivers/media/usb/dvb-usb/pctv452e.c
++++ b/drivers/media/usb/dvb-usb/pctv452e.c
+@@ -108,7 +108,7 @@ struct pctv452e_state {
+ static int tt3650_ci_msg(struct dvb_usb_device *d, u8 cmd, u8 *data,
+ 			 unsigned int write_len, unsigned int read_len)
+ {
+-	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
++	struct pctv452e_state *state = d->priv;
+ 	u8 *buf;
+ 	u8 id;
+ 	unsigned int rlen;
+@@ -160,7 +160,7 @@ static int tt3650_ci_msg_locked(struct dvb_ca_en50221 *ca,
+ 				unsigned int read_len)
+ {
+ 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
+-	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
++	struct pctv452e_state *state = d->priv;
+ 	int ret;
+ 
+ 	mutex_lock(&state->ca_mutex);
+@@ -293,7 +293,7 @@ static int tt3650_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+ static int tt3650_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
+ {
+ 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
+-	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
++	struct pctv452e_state *state = d->priv;
+ 	u8 buf[1];
+ 	int ret;
+ 
+@@ -361,7 +361,7 @@ static void tt3650_ci_uninit(struct dvb_usb_device *d)
+ 	if (NULL == d)
+ 		return;
+ 
+-	state = (struct pctv452e_state *)d->priv;
++	state = d->priv;
+ 	if (NULL == state)
+ 		return;
+ 
+@@ -379,7 +379,7 @@ static void tt3650_ci_uninit(struct dvb_usb_device *d)
+ static int tt3650_ci_init(struct dvb_usb_adapter *a)
+ {
+ 	struct dvb_usb_device *d = a->dev;
+-	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
++	struct pctv452e_state *state = d->priv;
+ 	int ret;
+ 
+ 	ci_dbg("%s", __func__);
+@@ -417,7 +417,7 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
+ 				const u8 *snd_buf, u8 snd_len,
+ 				u8 *rcv_buf, u8 rcv_len)
+ {
+-	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
++	struct pctv452e_state *state = d->priv;
+ 	u8 *buf;
+ 	u8 id;
+ 	int ret;
+@@ -516,7 +516,7 @@ static u32 pctv452e_i2c_func(struct i2c_adapter *adapter)
+ 
+ static int pctv452e_power_ctrl(struct dvb_usb_device *d, int i)
+ {
+-	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
++	struct pctv452e_state *state = d->priv;
+ 	u8 *b0, *rx;
+ 	int ret;
+ 
+@@ -567,7 +567,7 @@ static int pctv452e_power_ctrl(struct dvb_usb_device *d, int i)
+ 
+ static int pctv452e_rc_query(struct dvb_usb_device *d)
+ {
+-	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
++	struct pctv452e_state *state = d->priv;
+ 	u8 *b, *rx;
+ 	int ret, i;
+ 	u8 id;
+-- 
+2.30.2
 
