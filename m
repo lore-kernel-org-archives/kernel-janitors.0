@@ -2,124 +2,126 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F59BC7EE21
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 May 2023 04:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A647AC77B7C
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 May 2023 07:35:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbjEDEtp (ORCPT
+        id S230112AbjEDHfa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 4 May 2023 00:49:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43492 "EHLO
+        Thu, 4 May 2023 03:35:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbjEDEto (ORCPT
+        with ESMTP id S230099AbjEDHfE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 4 May 2023 00:49:44 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 25331199E;
-        Wed,  3 May 2023 21:49:42 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 9998B180126FE4;
-        Thu,  4 May 2023 12:49:40 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
-Subject: [PATCH] media: dvb-usb: pctv452e: remove unnecessary (void*) conversions
-Date:   Thu,  4 May 2023 12:48:22 +0800
-Message-Id: <20230504044823.89197-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        Thu, 4 May 2023 03:35:04 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105DEA9
+        for <kernel-janitors@vger.kernel.org>; Thu,  4 May 2023 00:34:52 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f19afc4fbfso1130905e9.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 May 2023 00:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683185688; x=1685777688;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Za+jysiocl3gVmRTjG+aEvTv3Xef3mrr/GUrOSxgNFQ=;
+        b=UA+1uagHCa2dUxEAngNnr9PBevBl9xnEFXiyojr+4xb2NzG+HqjvPB+pY8EMCaNuoC
+         ILChyffJcUTMPrzYZkC6uQpFi8XiFhYTJ4JnODDnvXSuAsvXVc3iWDc/RCNAGsnPL5Ht
+         1IAs13MCroOBTDOJKITc4di5afYGVkzBE9jmMoL1/B6wvHO+m6J6KG04yRWA4WTaXxBz
+         MqIsChGwVBiaQuJxQ3RbG7ZgUietadBh0+k/2oV6HJ3f86+wjEcLS1MSSYubdHONYcYu
+         xnM3QKP2BBdOsEioOAYKq/1+VnQD1Ayv/iExlD/wnhupEJSthTeczZUxontw7BrCfzx0
+         oK8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683185688; x=1685777688;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Za+jysiocl3gVmRTjG+aEvTv3Xef3mrr/GUrOSxgNFQ=;
+        b=i89/9V+R6zEsuuuI6XouwYLNUgRP/at3QvbYXPpqO62HvIuM6Ff3DQ3voT3BqYq1qK
+         XKloFsJJvXMEeymlXcOiNZ9L9zXzIOumR+yLUe9OWi/ND4RVm5jx8qLtOCSBofdcZAIw
+         r34s3Vtm6mkqY6T1+0x8ViZQxL19w/STHkJyP5Ye2yh3dkIxuATXROfZ9fjFaDiJprAm
+         N2Fa63XePX5Li34iEmR3u2M0+zI5SqPJ6aSSCzNTjwnxrFieweEhfajw25MvHHZkakvn
+         f3IDTs5DqZEJ4SXI++fUnHaIzo4kZaRv+yxWYn/gATNiCphVg5OmuE9ZcEwQ9iGhF/et
+         rHqg==
+X-Gm-Message-State: AC+VfDx+e9Hl1aOa344Q/uUHsfVoSURMqw9XvwT4IcyaFpFiCp+0qCTI
+        avBg2XdaE/CxlVAXla6OQGoJBQ==
+X-Google-Smtp-Source: ACHHUZ7IG60nK06WtdV7ny6cSZssVT0FLQ0wkqxxlBboPx7IS4Js7H8Gcbv2gbzBStRg0C6b9o32FQ==
+X-Received: by 2002:a1c:7203:0:b0:3f1:7b8d:38ec with SMTP id n3-20020a1c7203000000b003f17b8d38ecmr15861433wmc.35.1683185687734;
+        Thu, 04 May 2023 00:34:47 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id j37-20020a05600c1c2500b003f173be2ccfsm2105697wms.2.2023.05.04.00.34.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 May 2023 00:34:45 -0700 (PDT)
+Date:   Thu, 4 May 2023 10:34:25 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Ma Jun <majun258@huawei.com>,
+        Ming Lei <ming.lei@canonical.com>,
+        kernel-janitors@vger.kernel.org
+Subject: [bug report] irqchip/mbigen: move to use bus_get_dev_root()
+Message-ID: <adb006bb-1352-4e9d-a763-66c0ac778201@kili.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-No need cast (void*) to (struct pctv452e_state *).
+Hello Greg Kroah-Hartman,
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/media/usb/dvb-usb/pctv452e.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+The patch fea087fc291b: "irqchip/mbigen: move to use
+bus_get_dev_root()" from Mar 13, 2023, leads to the following Smatch
+static checker warning:
 
-diff --git a/drivers/media/usb/dvb-usb/pctv452e.c b/drivers/media/usb/dvb-usb/pctv452e.c
-index da42c989e071..42763c12cf29 100644
---- a/drivers/media/usb/dvb-usb/pctv452e.c
-+++ b/drivers/media/usb/dvb-usb/pctv452e.c
-@@ -108,7 +108,7 @@ struct pctv452e_state {
- static int tt3650_ci_msg(struct dvb_usb_device *d, u8 cmd, u8 *data,
- 			 unsigned int write_len, unsigned int read_len)
- {
--	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
-+	struct pctv452e_state *state = d->priv;
- 	u8 *buf;
- 	u8 id;
- 	unsigned int rlen;
-@@ -160,7 +160,7 @@ static int tt3650_ci_msg_locked(struct dvb_ca_en50221 *ca,
- 				unsigned int read_len)
- {
- 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
--	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
-+	struct pctv452e_state *state = d->priv;
- 	int ret;
- 
- 	mutex_lock(&state->ca_mutex);
-@@ -293,7 +293,7 @@ static int tt3650_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
- static int tt3650_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
- {
- 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
--	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
-+	struct pctv452e_state *state = d->priv;
- 	u8 buf[1];
- 	int ret;
- 
-@@ -361,7 +361,7 @@ static void tt3650_ci_uninit(struct dvb_usb_device *d)
- 	if (NULL == d)
- 		return;
- 
--	state = (struct pctv452e_state *)d->priv;
-+	state = d->priv;
- 	if (NULL == state)
- 		return;
- 
-@@ -379,7 +379,7 @@ static void tt3650_ci_uninit(struct dvb_usb_device *d)
- static int tt3650_ci_init(struct dvb_usb_adapter *a)
- {
- 	struct dvb_usb_device *d = a->dev;
--	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
-+	struct pctv452e_state *state = d->priv;
- 	int ret;
- 
- 	ci_dbg("%s", __func__);
-@@ -417,7 +417,7 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
- 				const u8 *snd_buf, u8 snd_len,
- 				u8 *rcv_buf, u8 rcv_len)
- {
--	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
-+	struct pctv452e_state *state = d->priv;
- 	u8 *buf;
- 	u8 id;
- 	int ret;
-@@ -516,7 +516,7 @@ static u32 pctv452e_i2c_func(struct i2c_adapter *adapter)
- 
- static int pctv452e_power_ctrl(struct dvb_usb_device *d, int i)
- {
--	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
-+	struct pctv452e_state *state = d->priv;
- 	u8 *b0, *rx;
- 	int ret;
- 
-@@ -567,7 +567,7 @@ static int pctv452e_power_ctrl(struct dvb_usb_device *d, int i)
- 
- static int pctv452e_rc_query(struct dvb_usb_device *d)
- {
--	struct pctv452e_state *state = (struct pctv452e_state *)d->priv;
-+	struct pctv452e_state *state = d->priv;
- 	u8 *b, *rx;
- 	int ret, i;
- 	u8 id;
--- 
-2.30.2
+	drivers/irqchip/irq-mbigen.c:258 mbigen_of_create_domain()
+	error: potentially dereferencing uninitialized 'child'.
 
+drivers/irqchip/irq-mbigen.c
+    235 static int mbigen_of_create_domain(struct platform_device *pdev,
+    236                                    struct mbigen_device *mgn_chip)
+    237 {
+    238         struct device *parent;
+    239         struct platform_device *child;
+    240         struct irq_domain *domain;
+    241         struct device_node *np;
+    242         u32 num_pins;
+    243 
+    244         for_each_child_of_node(pdev->dev.of_node, np) {
+    245                 if (!of_property_read_bool(np, "interrupt-controller"))
+    246                         continue;
+    247 
+    248                 parent = bus_get_dev_root(&platform_bus_type);
+    249                 if (parent) {
+
+Smatch is concerned that "parent" can be NULL.  Probably unlikely in
+real life.
+
+    250                         child = of_platform_device_create(np, NULL, parent);
+    251                         put_device(parent);
+    252                         if (!child) {
+    253                                 of_node_put(np);
+    254                                 return -ENOMEM;
+    255                         }
+    256                 }
+    257 
+--> 258                 if (of_property_read_u32(child->dev.of_node, "num-pins",
+    259                                          &num_pins) < 0) {
+    260                         dev_err(&pdev->dev, "No num-pins property\n");
+    261                         of_node_put(np);
+    262                         return -EINVAL;
+    263                 }
+    264 
+    265                 domain = platform_msi_create_device_domain(&child->dev, num_pins,
+    266                                                            mbigen_write_msg,
+    267                                                            &mbigen_domain_ops,
+    268                                                            mgn_chip);
+    269                 if (!domain) {
+    270                         of_node_put(np);
+    271                         return -ENOMEM;
+    272                 }
+    273         }
+    274 
+    275         return 0;
+    276 }
+
+regards,
+dan carpenter
