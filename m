@@ -2,113 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6A1C77B78
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 May 2023 15:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B53C77B75
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 May 2023 01:16:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230247AbjECPfw (ORCPT
+        id S229788AbjEDBQe convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 May 2023 11:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57234 "EHLO
+        Wed, 3 May 2023 21:16:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230126AbjECPft (ORCPT
+        with ESMTP id S229761AbjEDBQd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 May 2023 11:35:49 -0400
-Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51DBD65BE
-        for <kernel-janitors@vger.kernel.org>; Wed,  3 May 2023 08:35:48 -0700 (PDT)
-Received: by mail-oi1-x22e.google.com with SMTP id 5614622812f47-38e3a1a07c8so3108728b6e.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 03 May 2023 08:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683128147; x=1685720147;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N66tuvo9MUa9M/fdhmVpGOul3K8h34H937ChdJxtfW0=;
-        b=TwuyjpC6rnxJTcq6JSniaOx4qDAh92sBct2qkr/CjJfCZ75MjUg0vtJFs7JilNQ1e/
-         5AKtQmqa/usyzDMxO2ZC+JOSFB/7vDNijOmZAj/Ufn+s4P/NsrN9NJNCocb6g7WKsx9D
-         666ECo+fyvgRajpJXyxNIwT0MuIBGmrXCSTj/olDQSqIdW5A9Q0N2vyEET1KOyCyiMfQ
-         /AFvBbwJbWNC4E8/5R5vbm0GJlFnODtaxSJGp5OdLlN/mW1cc3gZ221EHsHwmsDHsnhe
-         LI+c5AArQLf5l515P4taTTznWHDpd9PKvk0gMY5ySny4aU3kY1MozvIkd558RAbcKlZV
-         NFGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683128147; x=1685720147;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N66tuvo9MUa9M/fdhmVpGOul3K8h34H937ChdJxtfW0=;
-        b=Q3Ewc6AAPTyxJWSqaLfk4ss76fwU7167wyfFay1jQjvj2Mt6fpxydq1lR8ayTnVAWh
-         vdg3ZzyE/yv7/URAWfHRvggPqsLdvNdbkSDKWe3FMq1or8x78sySi7y93qTs15NDW2d0
-         3mfoaO2Gte1BRYRNI96QsO+dWq8GA5jFRkznKS8ABkTmrfH8lI92ZJW6FMFIBdBBJ3tS
-         MgZsaRsOtPnkoUMvgwIf85msb2UtlbihdjKybnnfIlfoFgvCmR18GhN8ugJat8Entwkj
-         b8o3DIyBkZfL3T0cO4RGYznA74xOcnscEUihjAcKz/BRTtAjBIeGCVy4M33ZJJ7Gv67X
-         R8ow==
-X-Gm-Message-State: AC+VfDwmgL8Dh3EdpBItJ0PfSw9X8k18NSttIzf/h3NIGuRlW32jjyqc
-        x1/dwP6KluW3+uixlM2wiKUKZ7eNcTguH3udrCxt9kuc
-X-Google-Smtp-Source: ACHHUZ6eePrhA/wDgseDCOtU13YUT9fnksyCK+IuKRLgtkaw5ORBNcGN3YKyfZD27AHqBcM8v+Knj+duEYpLvP/rb+E=
-X-Received: by 2002:a05:6808:278e:b0:392:6077:e36e with SMTP id
- es14-20020a056808278e00b003926077e36emr119275oib.44.1683128147636; Wed, 03
- May 2023 08:35:47 -0700 (PDT)
+        Wed, 3 May 2023 21:16:33 -0400
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A4B8101;
+        Wed,  3 May 2023 18:16:29 -0700 (PDT)
+Authenticated-By: 
+X-SpamFilter-By: ArmorX SpamTrap 5.77 with qID 3441GA4H0026212, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+        by rtits2.realtek.com.tw (8.15.2/2.81/5.90) with ESMTPS id 3441GA4H0026212
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+        Thu, 4 May 2023 09:16:10 +0800
+Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.32; Thu, 4 May 2023 09:16:14 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Thu, 4 May 2023 09:16:13 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::e138:e7f1:4709:ff4d]) by
+ RTEXMBS04.realtek.com.tw ([fe80::e138:e7f1:4709:ff4d%5]) with mapi id
+ 15.01.2375.007; Thu, 4 May 2023 09:16:13 +0800
+From:   Ping-Ke Shih <pkshih@realtek.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Bernie Huang <phhuang@realtek.com>
+CC:     Yan-Hsuan Chuang <tony0620emma@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] wifi: rtw88: unlock on error path in rtw_ops_add_interface()
+Thread-Topic: [PATCH] wifi: rtw88: unlock on error path in
+ rtw_ops_add_interface()
+Thread-Index: AQHZfdFZxTos89hEMEC3CDV8yFWan69JUEdA
+Date:   Thu, 4 May 2023 01:16:13 +0000
+Message-ID: <4f09ff0dd95143a3a70f6fa641a66fca@realtek.com>
+References: <ddd10a74-5982-4f65-8c59-c1cca558d239@kili.mountain>
+In-Reply-To: <ddd10a74-5982-4f65-8c59-c1cca558d239@kili.mountain>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.188]
+x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <cb48ef1c-5f1a-449f-a9f6-909042661ce6@kili.mountain>
-In-Reply-To: <cb48ef1c-5f1a-449f-a9f6-909042661ce6@kili.mountain>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 3 May 2023 11:35:36 -0400
-Message-ID: <CADnq5_Np18c8T=jy6OEcKU3GejoWFn8V-crf+70Sz7rq05b7_g@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: unlock on error in gfx_v9_4_3_kiq_resume()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Le Ma <le.ma@amd.com>, "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        kernel-janitors@vger.kernel.org,
-        Morris Zhang <Shiwu.Zhang@amd.com>,
-        amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Hawking Zhang <Hawking.Zhang@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-KSE-AntiSpam-Interceptor-Info: fallback
+X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
+X-KSE-AntiSpam-Interceptor-Info: fallback
+X-KSE-Antivirus-Interceptor-Info: fallback
+X-KSE-AntiSpam-Interceptor-Info: fallback
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
 
-Alex
 
-On Wed, May 3, 2023 at 11:29=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> Smatch complains that we need to drop this lock before returning.
->
->     drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c:1838 gfx_v9_4_3_kiq_resume()
->     warn: inconsistent returns 'ring->mqd_obj->tbo.base.resv'.
->
-> Fixes: 86301129698b ("drm/amdgpu: split gc v9_4_3 functionality from gc v=
-9_0")
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: Wednesday, May 3, 2023 11:10 PM
+> To: Bernie Huang <phhuang@realtek.com>
+> Cc: Yan-Hsuan Chuang <tony0620emma@gmail.com>; Kalle Valo <kvalo@kernel.org>; Ping-Ke Shih
+> <pkshih@realtek.com>; linux-wireless@vger.kernel.org; kernel-janitors@vger.kernel.org
+> Subject: [PATCH] wifi: rtw88: unlock on error path in rtw_ops_add_interface()
+> 
+> Call mutex_unlock(&rtwdev->mutex); before returning on this error path.
+> 
+> Fixes: f0e741e4ddbc ("wifi: rtw88: add bitmap for dynamic port settings")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> The Fixes tag is weird, but I think it's correct?
->
->  drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c b/drivers/gpu/drm/am=
-d/amdgpu/gfx_v9_4_3.c
-> index 56a415e151d4..552729a514d3 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
-> @@ -1827,8 +1827,10 @@ static int gfx_v9_4_3_kiq_resume(struct amdgpu_dev=
-ice *adev, int xcc_id)
->                 return r;
->
->         r =3D amdgpu_bo_kmap(ring->mqd_obj, (void **)&ring->mqd_ptr);
-> -       if (unlikely(r !=3D 0))
-> +       if (unlikely(r !=3D 0)) {
-> +               amdgpu_bo_unreserve(ring->mqd_obj);
->                 return r;
-> +       }
->
->         gfx_v9_4_3_kiq_init_queue(ring, xcc_id);
->         amdgpu_bo_kunmap(ring->mqd_obj);
-> --
-> 2.39.2
->
+
+Reviewed-by: Ping-Ke Shih <pkshih@realtek.com>
+
+[...]
+
