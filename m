@@ -2,99 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E28C77B7C
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 18:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33419C77B7F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 19:01:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232948AbjEESjy (ORCPT
+        id S233443AbjEETBy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 14:39:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47824 "EHLO
+        Fri, 5 May 2023 15:01:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232012AbjEESjn (ORCPT
+        with ESMTP id S233468AbjEETBr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 14:39:43 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76B731E996
-        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 11:39:41 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id v0L9pk2E0Gtqgv0L9pZwJH; Fri, 05 May 2023 20:39:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1683311979;
-        bh=mnw6geelSaRq346Pzls6ofHvmuoLhwJOFudxBY6bbI8=;
-        h=From:To:Cc:Subject:Date;
-        b=HNyqmFrTormmtYO1mKS6qptrkzhC39BrHqC9jF3blBVbhK2TbhTTgNuCo94rx0J9K
-         6hBRWsiD/e+zisqWN/uxReWAtn5HDIS/M7SWxq85LhDBdwnDX6vVahdn179f9WAD9M
-         j7pUd4x1S+Q4sxpvtlY/ubPb4OTkig2uv+jzXREk1pJJ+cgEFAiVJkb5e1zX4h3+iC
-         ydc2TMMhmSvhdSFwgDsfuD+Htn1OwaE4iIPK0B8U2Al6bio7FHcn9V/6Cwu3ejoyRr
-         e51zKNApddwBEw95Net0SVx8JMDxA/7IpZkUpM/lnnoPBAnk2yj6wsCET6lSrvcOQ+
-         Kngrr0jYJCexg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 05 May 2023 20:39:39 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Tobias Waldekranz <tobias@waldekranz.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH net] net: mdio: mvusb: Fix an error handling path in mvusb_mdio_probe()
-Date:   Fri,  5 May 2023 20:39:33 +0200
-Message-Id: <bd2244d44b914dec1aeccee4eba2e7e8135b585b.1683311885.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Fri, 5 May 2023 15:01:47 -0400
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E83E522699;
+        Fri,  5 May 2023 12:01:42 -0700 (PDT)
+Received: by mail-qv1-xf30.google.com with SMTP id 6a1803df08f44-619ca08c166so10856026d6.1;
+        Fri, 05 May 2023 12:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683313302; x=1685905302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=utzjw63SBeUo2l6wme7ZDttQA5cHTz0UiDYP6i+9Li8=;
+        b=f55euq4Jf/X8DPxhk26pDBq0q+QwdKPSYAR/vPS+iyO0Em8rZ1cFauM2Jd5wFHCB49
+         TcKDQlwSChaWETlEQhO0nr6EcXxPOtoKMZbsd52LI8w2n4HasMK07UzmHVU3JgrGsEVK
+         i39zstorAARUTDeL9045h+dzxOiCUVEdF+iHqO3/qaSE9PWd/7Av4arBLcCLLfkNCEmE
+         8DdmNX9usjgd3V150r6ch1y510OMXJYijfr5PSka75RGIWVtT9OaahTnDoeIpJb8sBQH
+         +a2uMFvWpy3UwxBsCiqsHWDZremvMTxpvKf/qdO8G380UZGNBSUE+OOD5h/BNY8Tq9gD
+         DV2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683313302; x=1685905302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=utzjw63SBeUo2l6wme7ZDttQA5cHTz0UiDYP6i+9Li8=;
+        b=cYyfXMD8W1XevVFN7GCIeziq5ETU4rvpEgGxigKuxIp5dBJzY2lAE5OSxB71cvgIpu
+         m4uENcWm4AbfDHCDiekeiq9/RbgQAEhUQ9my6bf7AXjmL+3Th8NayqZ7BeMdjwgyIuVS
+         Ec+iQaV4cQvUh4q50DHP4LnBTA5ue37/zhLOoY7ThC3VHNxNWzVuUNokwm6b124PtSh+
+         qtl4cdotlJboAOzIxYFo8vP5fze2Id4IrQolBZVusOov8vSDJjqjpCwxetvRWk6xAbQe
+         AAvD+91HzJ5PwsOWWgle8/POGQemI7mPLrRGfr8DD9ANdeoLrmCn+JQsDclEwxcdLjBQ
+         2DlA==
+X-Gm-Message-State: AC+VfDxkzno/E7FK4giSeYixdt2cMV4/rZOCEfTJKBWpv0kisV3EW73p
+        Zoa42u2zRCO/K4Bffo4oZfY6vDVN1gqdOhHeUfA=
+X-Google-Smtp-Source: ACHHUZ4xQUk11W2pL4jRbxt4jurLZwJ+givNPytNvNSQomnEJRk79G4+EgqdjMQfQOn61EuN3rpjB9ipOmwXCQL8Vh8=
+X-Received: by 2002:a05:6214:400e:b0:5ef:9b22:dc88 with SMTP id
+ kd14-20020a056214400e00b005ef9b22dc88mr3417840qvb.0.1683313301839; Fri, 05
+ May 2023 12:01:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230505110855.2493457-1-colin.i.king@gmail.com>
+In-Reply-To: <20230505110855.2493457-1-colin.i.king@gmail.com>
+From:   Nhat Pham <nphamcs@gmail.com>
+Date:   Fri, 5 May 2023 12:01:31 -0700
+Message-ID: <CAKEwX=M8gL=XocVdDuo4NmFgv8_SRu-wvSZqcwxradVqS5kBZg@mail.gmail.com>
+Subject: Re: [PATCH][next] selftests: Fix spelling mistake "trucate" -> "truncate"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Should of_mdiobus_register() fail, a previous usb_get_dev() call should be
-undone as in the .disconnect function.
+On Fri, May 5, 2023 at 4:08=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
+om> wrote:
+>
+> There is a spelling mistake in a message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  tools/testing/selftests/cachestat/test_cachestat.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/t=
+esting/selftests/cachestat/test_cachestat.c
+> index c3823b809c25..9be2262e5c17 100644
+> --- a/tools/testing/selftests/cachestat/test_cachestat.c
+> +++ b/tools/testing/selftests/cachestat/test_cachestat.c
+> @@ -191,7 +191,7 @@ bool test_cachestat_shmem(void)
+>         }
+>
+>         if (ftruncate(fd, filesize)) {
+> -               ksft_print_msg("Unable to trucate shmem file.\n");
+> +               ksft_print_msg("Unable to truncate shmem file.\n");
+>                 ret =3D false;
+>                 goto close_fd;
+>         }
+> --
+> 2.30.2
+>
 
-Fixes: 04e37d92fbed ("net: phy: add marvell usb to mdio controller")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/mdio/mdio-mvusb.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 
-diff --git a/drivers/net/mdio/mdio-mvusb.c b/drivers/net/mdio/mdio-mvusb.c
-index 68fc55906e78..554837c21e73 100644
---- a/drivers/net/mdio/mdio-mvusb.c
-+++ b/drivers/net/mdio/mdio-mvusb.c
-@@ -67,6 +67,7 @@ static int mvusb_mdio_probe(struct usb_interface *interface,
- 	struct device *dev = &interface->dev;
- 	struct mvusb_mdio *mvusb;
- 	struct mii_bus *mdio;
-+	int ret;
- 
- 	mdio = devm_mdiobus_alloc_size(dev, sizeof(*mvusb));
- 	if (!mdio)
-@@ -87,7 +88,15 @@ static int mvusb_mdio_probe(struct usb_interface *interface,
- 	mdio->write = mvusb_mdio_write;
- 
- 	usb_set_intfdata(interface, mvusb);
--	return of_mdiobus_register(mdio, dev->of_node);
-+	ret = of_mdiobus_register(mdio, dev->of_node);
-+	if (ret)
-+		goto put_dev;
-+
-+	return 0;
-+
-+put_dev:
-+	usb_put_dev(mvusb->udev);
-+	return ret;
- }
- 
- static void mvusb_mdio_disconnect(struct usb_interface *interface)
--- 
-2.34.1
+Thanks, Colin! I'm forwarding this to Andrew.
+Andrew, could you fold this misspelling fix into the patch
+as well? I think it's this commit in mm-unstable:
 
+f2277ac105b4 selftests: add selftests for cachestat
