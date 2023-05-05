@@ -2,99 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C862C77B7C
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 08:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F7BC77B7F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 09:10:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230449AbjEEIzu (ORCPT
+        id S231591AbjEEJKZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 04:55:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45494 "EHLO
+        Fri, 5 May 2023 05:10:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbjEEIzs (ORCPT
+        with ESMTP id S231555AbjEEJKX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 04:55:48 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C5016340
-        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 01:55:47 -0700 (PDT)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4QCPYH1H1CzTkKq;
-        Fri,  5 May 2023 16:51:15 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Fri, 5 May 2023 16:55:45 +0800
-Message-ID: <14c59fcf-1ee2-7c02-b236-b649ce43987d@huawei.com>
-Date:   Fri, 5 May 2023 16:55:44 +0800
+        Fri, 5 May 2023 05:10:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61BF110FE
+        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 02:10:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E47F663C9C
+        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 09:10:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 38839C433EF;
+        Fri,  5 May 2023 09:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683277821;
+        bh=0hAoMe/RkHIXSGpv4lIQ+zDfTDe6qsEo7o6Ru3YcTPo=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=lXajDlLXogBU3vWVGna76OveOKHrXjjKSxX/ShzneLodaMVEVornsctHyEoD7GWRO
+         d+2JYmFAS3rH4amdLRCNQG+GDDSzaYU/PDXVrlorprwO3l+O6Wxl3/kwhwBmsFYIuv
+         deV0xnOkBshlG2F581EWTDPeD+QNMuTnKujvz5h+e7DWgjQcremrgWeCGKqs87Tbnx
+         JnYMvoyJI9Kb122VtxvhAFrYCn9VSaixtMLZKyTiA8JFPFEuk22NHZ/LN/bULM3tR5
+         19zNhaHIl9UFIHza+e+G72W7EFoZFW1NnwlR4k1F6/hzA6kfEh8W2PNKw05OujTh1y
+         4lX0Q9lj5zs0w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 11238E5FFCE;
+        Fri,  5 May 2023 09:10:21 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [bug report] irqchip/mbigen: move to use bus_get_dev_root()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     <gregkh@linuxfoundation.org>, Ming Lei <ming.lei@canonical.com>,
-        <kernel-janitors@vger.kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>
-References: <adb006bb-1352-4e9d-a763-66c0ac778201@kili.mountain>
- <5154e620-7638-8bdd-a261-83ee7d5adfe5@huawei.com>
- <08ee85b9-67cd-485a-9f1d-61d92aad6204@kili.mountain>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <08ee85b9-67cd-485a-9f1d-61d92aad6204@kili.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.177.243]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] pds_core: fix mutex double unlock in error path
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168327782106.8511.9840821021018679324.git-patchwork-notify@kernel.org>
+Date:   Fri, 05 May 2023 09:10:21 +0000
+References: <20230504204459.56454-1-shannon.nelson@amd.com>
+In-Reply-To: <20230504204459.56454-1-shannon.nelson@amd.com>
+To:     Shannon Nelson <shannon.nelson@amd.com>
+Cc:     brett.creeley@amd.com, davem@davemloft.net, netdev@vger.kernel.org,
+        kuba@kernel.org, dan.carpenter@linaro.org, drivers@pensando.io,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Thu, 4 May 2023 13:44:59 -0700 you wrote:
+> Fix a double unlock in an error handling path by unlocking as soon as
+> the error is seen and removing unlocks in the error cleanup path.
+> 
+> Link: https://lore.kernel.org/kernel-janitors/209a09f6-5ec6-40c7-a5ec-6260d8f54d25@kili.mountain/
+> Fixes: 523847df1b37 ("pds_core: add devcmd device interfaces")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Shannon Nelson <shannon.nelson@amd.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] pds_core: fix mutex double unlock in error path
+    https://git.kernel.org/netdev/net/c/1e76f42779d6
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-On 2023/5/4 22:46, Dan Carpenter wrote:
-> On Thu, May 04, 2023 at 07:56:07PM +0800, Kefeng Wang wrote:
->>
->>
->> On 2023/5/4 15:34, Dan Carpenter wrote:
->>> Hello Greg Kroah-Hartman,
->>>
->>> The patch fea087fc291b: "irqchip/mbigen: move to use
->>> bus_get_dev_root()" from Mar 13, 2023, leads to the following Smatch
->>> static checker warning:
->>>
->>> 	drivers/irqchip/irq-mbigen.c:258 mbigen_of_create_domain()
->>> 	error: potentially dereferencing uninitialized 'child'.
->>>
->>> drivers/irqchip/irq-mbigen.c
->>>       235 static int mbigen_of_create_domain(struct platform_device *pdev,
->>>       236                                    struct mbigen_device *mgn_chip)
->>>       237 {
->>>       238         struct device *parent;
->>>       239         struct platform_device *child;
->>>       240         struct irq_domain *domain;
->>>       241         struct device_node *np;
->>>       242         u32 num_pins;
->>>       243
->>>       244         for_each_child_of_node(pdev->dev.of_node, np) {
->>>       245                 if (!of_property_read_bool(np, "interrupt-controller"))
->>>       246                         continue;
->>>       247
->>>       248                 parent = bus_get_dev_root(&platform_bus_type);
->>>       249                 if (parent) {
->>>
->>> Smatch is concerned that "parent" can be NULL.  Probably unlikely in
->>> real life.
->>
->> How about move bus_get_dev_root() out of the loop.
->>
-> 
-> Sounds good to me, but I don't know this code at all.
-Post a patch[1], let's wait for review, and could you help to test it,
-man thanks.
-
-[1] 
-https://lore.kernel.org/all/20230505090654.12793-1-wangkefeng.wang@huawei.com/
-> 
-> regards,
-> dan carpenter
-> 
