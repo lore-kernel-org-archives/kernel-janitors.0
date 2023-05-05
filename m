@@ -2,86 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85698C77B75
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 11:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02E0C7EE26
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 12:02:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231795AbjEELjH (ORCPT
+        id S232073AbjEEMCU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 07:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42678 "EHLO
+        Fri, 5 May 2023 08:02:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbjEELjB (ORCPT
+        with ESMTP id S232057AbjEEMCH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 07:39:01 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2702F2694
-        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 04:39:00 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-b9daef8681fso1481735276.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 05 May 2023 04:39:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683286739; x=1685878739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=puWCJyuFf3yp6BwyAz5qUYq78oF9e+xdSzj78gCEdNE=;
-        b=Y0Y/0YC+7QL81nt9H9hIuiBWkuL7s/MD2CaHmSwYjTa9/pP1nMLmCAYN5YYZLHeY+9
-         QHRWhAZFPTLqMLBuQGfw3+7GQMtw8hx+rr6QOcZOEx/Q1WC8Ep7HZXRnUmuxoDm7jt71
-         rgSHQqKW9BTHsYCkUySzUGBr8ro5MavFn09rFJcUazJXA1O5PIUOKhUIuM/I+cWuNTqF
-         TJEGOZW422cFvc4OOlja9+727aErAFw25YusDW1D5aFJoZsjbHCzcJQTKSnq7dtz6Fe+
-         TAuBu9qis9CBMPOcHnexsoS/bHvgGbNhxmXURDjYr/BOhUMysnln/dG3efrq/VdfG4hN
-         jsOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683286739; x=1685878739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=puWCJyuFf3yp6BwyAz5qUYq78oF9e+xdSzj78gCEdNE=;
-        b=LFS78sAYO3VJb0FxxpXBVUsz500c9ZeaP+6l+bk7Oat7fMc1fKORDLNCbIC+kvNmtX
-         v6XnGWLemjUsOz5ses9jcel65vl/v3DCu7ktlqwTC+BgbzF61NJiaEWn0TlyoxKQNKWi
-         2CxsfuMeKABTgd/5GmGGfsmjGFe1aKwEi3kKwIhxWHMp+h1OfhhY7mpLpyCnjiJCw74R
-         ExdFrfISD5YuGdyaBp9CFYP3xsaVCxEWvYKiO2FUqhLeKKMEz3WkMwto1wvuv/8/ZYJi
-         FwbSu9OJ6nqR7LlEzHHyvXM6cnd7Vh/w5zrNvggp1BFlnSTFsp6J0qiI5f45g8AJsgYF
-         webQ==
-X-Gm-Message-State: AC+VfDzmzbIrYlsoTKkfADD5Zf5KrA80gAJy6sUSSHqmmk1AnHute4LQ
-        /8SAWxEExu7rkoFsvfWT6VquLrDIXgVDQ1YdR9WNwQ==
-X-Google-Smtp-Source: ACHHUZ7URXttrI5x/goP9FFi/xqVcIK9Vs/9Rym9CIhV8xMlCn+jPRw8C8kuiLQGeBOCQaw3GehxNG8DWIICXQgQaeU=
-X-Received: by 2002:a25:c7ce:0:b0:b95:941a:86c4 with SMTP id
- w197-20020a25c7ce000000b00b95941a86c4mr1291465ybe.26.1683286739409; Fri, 05
- May 2023 04:38:59 -0700 (PDT)
+        Fri, 5 May 2023 08:02:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D3C1C0E8;
+        Fri,  5 May 2023 05:01:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 95E9563D98;
+        Fri,  5 May 2023 12:01:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1538EC4339B;
+        Fri,  5 May 2023 12:01:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683288111;
+        bh=5mLh7jfZI1nfWLVwYkSpPhEzk5XtMGt0LfKmDL5kA/g=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=af8ibFnj7doVZmxVcbqEpsn8LJ7lVystx1XcVNeuYnVZxuCGYxCwBesY//RNgy3zo
+         IdzABBRLfqbimsQo9mWhsH3FQGscjPnwIWpSi7mDPZsZY+VRj+FVHKq3rk0HDINMsF
+         Fyd8sbdAdY3XxGVSBlyZFV5NzCxx5wLDR2w31FPwC2JiD12jHny9+bnI9CZwBgJQjm
+         LFlhrPWlKLkWVlUBnG6hKcx2vuEmAtIKNcKjsLzvgzDB2Dr5LhDUtqPOOwiSurzlU5
+         B2HnBfmAgpMK6dv3+78BQyT4ZD4A2VHPiRcO+YMz8eAYHnFlb7uUg8IY9E38Syy9pa
+         BKiQyKAfhfMcw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <98c3b5890bb72415145c9fe4e1d974711edae376.1681681402.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <98c3b5890bb72415145c9fe4e1d974711edae376.1681681402.git.christophe.jaillet@wanadoo.fr>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 5 May 2023 13:38:48 +0200
-Message-ID: <CACRpkdZYeHUkFC6U-abk=-e-3MO6DwTqE4WSc+rnHv5teQcdyA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: bcm2835: Handle gpiochip_add_pin_range() errors
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: rtw89: fix rtw89_read_chip_ver() for RTL8852B and
+ RTL8851B
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <e4d912a2-37f8-4068-8861-7b9494ae731b@kili.mountain>
+References: <e4d912a2-37f8-4068-8861-7b9494ae731b@kili.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <168328810808.30117.5754345043778347753.kvalo@kernel.org>
+Date:   Fri,  5 May 2023 12:01:49 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Apr 16, 2023 at 11:43=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-> gpiochip_add_pin_range() can fail, so better return its error code than
-> a hard coded '0'.
->
-> Fixes: d2b67744fd99 ("pinctrl: bcm2835: implement hook for missing gpio-r=
-anges")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> The if statement is reversed so it will not record the chip version.
+> This was detected using Smatch:
+> 
+>     drivers/net/wireless/realtek/rtw89/core.c:3593 rtw89_read_chip_ver()
+>     error: uninitialized symbol 'val'.
+> 
+> Fixes: a6fb2bb84654 ("wifi: rtw89: read version of analog hardware")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-Patch applied for the next kernel cycle (becoming v6.5)
+Patch applied to wireless-next.git, thanks.
 
-Yours,
-Linus Walleij
+9d4f491b860e wifi: rtw89: fix rtw89_read_chip_ver() for RTL8852B and RTL8851B
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/e4d912a2-37f8-4068-8861-7b9494ae731b@kili.mountain/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
