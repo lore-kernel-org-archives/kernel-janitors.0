@@ -2,95 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 322A4C77B7D
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 08:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E57FC7EE2A
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 08:28:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230473AbjEEIHf (ORCPT
+        id S230063AbjEEI2r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 04:07:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46130 "EHLO
+        Fri, 5 May 2023 04:28:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbjEEIHe (ORCPT
+        with ESMTP id S231451AbjEEI2X (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 04:07:34 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E914810F3
-        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 01:07:32 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f19b9d5358so14449635e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 05 May 2023 01:07:32 -0700 (PDT)
+        Fri, 5 May 2023 04:28:23 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84EB01A122;
+        Fri,  5 May 2023 01:27:18 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-64115eef620so17933997b3a.1;
+        Fri, 05 May 2023 01:27:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683274051; x=1685866051;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8hKMUg8kY6OgOJ0A/p1H2ALtJ2wJO7O/AuoZxwxYfCA=;
-        b=PzJywIow4UKwbTK4d4AgvE1NR61+yyyexpRfj+sB+TesvStRQ9QfPF5ujoeHFGwBPz
-         /glCzUbkPSGU6o3d6jaHvCnXdPaj3RZORRo8TsEBGft4hbXAR9vJdsMv2U+//iZVaL8J
-         gEViC3Z1rzHirCgr58u/9OF/18V8kjMNGTUK5sBbMltdVGfCMYOX9HgrR4ydp1cZhCtr
-         cemFPxNCQ7C+kKyHIHaHnz4pBZ7rzs/OkZVshg1f3iTpVwMjmJ+nHBQtQomCxjTVbVVX
-         Ir6eSaDsm/SJ/K12120Sab0z/8SPUhD06Su+cx6txCTBs3KuuxyEbjHJ3G+s/G5gyTn4
-         VArw==
+        d=gmail.com; s=20221208; t=1683275237; x=1685867237;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=el/Rn7qzup/497ytaREh2DImIqrYtRSHCU5jaoJYhms=;
+        b=Iyf4GbJlx14NUP+57ckxFwh5TzvX8eMEKwjajIAGWX4UjGhM/SAV61BJ6vUaIL/YjV
+         lKg8sk/u6zp4qHfTiyA2zwSnBu6sCg0FFsGuwFBregRmVW/ba8p0MUEHtVmZnyiE0F/G
+         q74XuzMO2Ek7aw571eR3OZpb9fiRP2Hc5EeEUoGmwgU2125XrVHc4NKanACv5myZhNOg
+         ygThbAaBC08/sYEXJ1aafJhqEkdBsFSSHuen7bVmtgfjWxSC4GRg4BonT2tKYjMAtS2W
+         yz4fk4KbX5r0R//jEFRUcnVYJSC9e3NZhsgLiV9F2CZMGBbw5Mm7V2EvN+R6WnoEDtmG
+         UojA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683274051; x=1685866051;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hKMUg8kY6OgOJ0A/p1H2ALtJ2wJO7O/AuoZxwxYfCA=;
-        b=HkuowvTFAKMMRmaAG0D0L+3e9WzKkw6uxkv5/vfcUxqb970oRExaaRhUxbvnLFjiED
-         QO8kss2cqtqpBVfrb8oPz3VatdLLU0FrOItnaQErz0G1qW9e+LbnnFLXhBgsAYx8zbtV
-         +/MQYE97bLVFOrSuI71gqexo7uVDJvL6jf5qU2ZGcZiB+mJoWdYtJeXpYT1tx67Xk1v3
-         9Owm1z66C1Fnl4vpkxNtXVx7ze4thXAziZUUCrOruOVgOaiA5C9G8eSuVOdQUMssuz38
-         9PwZE9zOrqulvNttjoDVvfAkQBH36g6D1mm/CQFf+cz/3V069p7n6y/TP6q7lpBKDtBZ
-         zsrw==
-X-Gm-Message-State: AC+VfDxrSkZwYT5qZSva1TRoojVUonNvMNJ0z32pvkRyQ+O8wlH9wof3
-        JerbfZL1BGN6575RLi4g7Vzl8A==
-X-Google-Smtp-Source: ACHHUZ6M+Dy9gFlV/bqvpt4/bPlP+RTeLl1mzxJ2kLJ7V5vhBPI5W6oofUjwXreM5tfFeFADUYbrMA==
-X-Received: by 2002:a1c:7412:0:b0:3f3:fff7:1d96 with SMTP id p18-20020a1c7412000000b003f3fff71d96mr402357wmc.29.1683274051238;
-        Fri, 05 May 2023 01:07:31 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o11-20020a1c750b000000b003f1712b1402sm7164765wmc.30.2023.05.05.01.07.28
+        d=1e100.net; s=20221208; t=1683275237; x=1685867237;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=el/Rn7qzup/497ytaREh2DImIqrYtRSHCU5jaoJYhms=;
+        b=dV8uY3xk24lfH7XU7YnQ5/ZFGpXzNxEVCwiuFq4i4rUydC2nUYlKZx774kQ2wPnF1t
+         gCf+wenfsDZDLySUygxcFPCqnfGwyaEBLbYIK6DQrL6DXhug39yuVoMul25qqdUQPinV
+         R2Kb2xEcDcPyN9IO3VPCzhSMJ/zmlw5I+NesJCzByrfplFt4haGThPDAD3Kv6yvOQJJZ
+         bD+BTzC82EMgYpx4S6GY4ycWV8mrrh6d2shYikYm7zxehNOoaqHd3eglaA/SXMy0ud0P
+         IkF4VSl9HvXxYTxugvEpoad5Mq8bCJx5BbXwBupx20SxV++ggTYqZaS6BUkLd8SfR1t0
+         +VkA==
+X-Gm-Message-State: AC+VfDyZNXC6gKLdfBvcCtP4yJCFKJ2cRLmV/lMx/JYmxAwzwch3WSqM
+        j0BevlcDx2ezg86SrLyNxdk=
+X-Google-Smtp-Source: ACHHUZ6U1yKFWRfgcLq5hhCullhfXhzyXSkcylWLS/d1geITMe7fLICBHN3EiylDtt7kpx3RmhVryw==
+X-Received: by 2002:a05:6a00:2d0b:b0:5a8:9858:750a with SMTP id fa11-20020a056a002d0b00b005a89858750amr1140902pfb.13.1683275237537;
+        Fri, 05 May 2023 01:27:17 -0700 (PDT)
+Received: from debian.me (subs32-116-206-28-14.three.co.id. [116.206.28.14])
+        by smtp.gmail.com with ESMTPSA id r15-20020a63440f000000b0051b8172fa68sm1068333pga.38.2023.05.05.01.27.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 May 2023 01:07:29 -0700 (PDT)
-Date:   Fri, 5 May 2023 11:07:25 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     sbhatta@marvell.com
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] octeontx2-pf: Disable packet I/O for graceful exit
-Message-ID: <3a065906-24a5-417b-b59f-fa35596bdf16@kili.mountain>
+        Fri, 05 May 2023 01:27:16 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 5473F106280; Fri,  5 May 2023 15:27:12 +0700 (WIB)
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Linux SCSI <linux-scsi@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc:     Oliver Neukum <oliver@neukum.org>, Ali Akcaagac <aliakc@web.de>,
+        Jamie Lenehan <lenehan@twibble.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH 3/3] Documentation: scsi: dc395x: Remove reference to 2.4 driver
+Date:   Fri,  5 May 2023 15:27:04 +0700
+Message-Id: <20230505082704.16228-4-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230505082704.16228-1-bagasdotme@gmail.com>
+References: <20230505082704.16228-1-bagasdotme@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=968; i=bagasdotme@gmail.com; h=from:subject; bh=+UknXRJJBadqLnLOgfRQbspacSVeqok6a0BQmw70Uac=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDCkhe29sL9oa+4xJVH2qyvINTQcWzubVu1eao9wwa1/Ak vqCefszO0pZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjARTxlGhhlafzJCz4XcKGK4 N/XD5rj1f9wDcvVjWCo2ij7myw5+kczwT/HH1/uKnbzpdp/Zj0ofnPD5erGW/UFG7zULLWU9v3l P4AQA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Subbaraya Sundeep,
+The 2.4 driver link returns 404. As no one runs 2.4 kernel anymore,
+remove the stale reference.
 
-The patch c926252205c4: "octeontx2-pf: Disable packet I/O for
-graceful exit" from May 3, 2023, leads to the following Smatch static
-checker warning:
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/scsi/dc395x.rst | 4 ----
+ 1 file changed, 4 deletions(-)
 
-	drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:1843 otx2_open()
-	warn: was negative '-EIO' intended?
+diff --git a/Documentation/scsi/dc395x.rst b/Documentation/scsi/dc395x.rst
+index c413b629809bcd..a6320561543650 100644
+--- a/Documentation/scsi/dc395x.rst
++++ b/Documentation/scsi/dc395x.rst
+@@ -11,10 +11,6 @@ be safe to use. Testing with hard disks has not been done to any
+ great degree and caution should be exercised if you want to attempt
+ to use this driver with hard disks.
+ 
+-This is a 2.5 only driver. For a 2.4 driver please see the original
+-driver (which this driver started from) at
+-http://www.garloff.de/kurt/linux/dc395/
+-
+ Problems, questions and patches should be submitted to the `Linux SCSI
+ mailing list <linux-scsi@vger.kernel.org>`_.
+ 
+-- 
+An old man doll... just what I always wanted! - Clara
 
-drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-    1833         /* Install DMAC Filters */
-    1834         if (pf->flags & OTX2_FLAG_DMACFLTR_SUPPORT)
-    1835                 otx2_dmacflt_reinstall_flows(pf);
-    1836 
-    1837         err = otx2_rxtx_enable(pf, true);
-    1838         /* If a mbox communication error happens at this point then interface
-    1839          * will end up in a state such that it is in down state but hardware
-    1840          * mcam entries are enabled to receive the packets. Hence disable the
-    1841          * packet I/O.
-    1842          */
---> 1843         if (err == EIO)
-                            ^^^
-This should be negative -EIO?  I think it's the return from the
-MBOX_MESSAGES functions which return negatives.
-
-    1844                 goto err_disable_rxtx;
-    1845         else if (err)
-    1846                 goto err_tx_stop_queues;
-    1847 
-
-regards,
-dan carpenter
