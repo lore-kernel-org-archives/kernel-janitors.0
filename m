@@ -2,99 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE89BC77B7D
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 21:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6009CC77B7D
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 22:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233544AbjEEV1E (ORCPT
+        id S233486AbjEEWje (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 17:27:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58612 "EHLO
+        Fri, 5 May 2023 18:39:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233488AbjEEV0u (ORCPT
+        with ESMTP id S233501AbjEEWjX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 17:26:50 -0400
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF855BA6
-        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 14:26:40 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id v2wmpgtTUjS6ev2wmpHBJS; Fri, 05 May 2023 23:26:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1683321998;
-        bh=E2v+yIcHWIZqIecJEid9w22BOXg0tscR0zgy0Dp1DYA=;
-        h=From:To:Cc:Subject:Date;
-        b=LeMZR1zPtPMdM61turqmYF1aIOD9UBzNZ2wATj6ZBtx1ZbUJEqpyugjFah6wVA8rI
-         iLf0xbXuhrZTroKF/NrQ09nT/Xj8CFidKYwR9HoJokXzFiIBwdQaOs0S3UUJwEjgJd
-         vCwh6FZdlao7Grr44RazyzIPSMQOOnqOw8THagp9bcxwwZ7c/kPxQ8FlrE4z1J7t9S
-         NfmmqZhjxdfY661SdJnt4hqidfdHfreKlZujo40oZsr63t7T8RkUjxSzppWOUV7M0L
-         Ey6xyFGZm0Ofdjb2JCkbtKCRBfwvk8SJXh+1Quw8DokmM7YPDG9ALVGXfDcctDYDXS
-         mr7mZhvgQGpTw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 05 May 2023 23:26:38 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH v2 net-next] netfilter: nft_set_pipapo: Use struct_size()
-Date:   Fri,  5 May 2023 23:26:34 +0200
-Message-Id: <687973f7f0f77a456ee2ebabd75cec61cba2eb98.1683321933.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 5 May 2023 18:39:23 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125835FE4;
+        Fri,  5 May 2023 15:39:22 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-965c3f9af2aso317952766b.0;
+        Fri, 05 May 2023 15:39:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683326360; x=1685918360;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jt099z2QMJcxc7Q+biY7Y79PMQomakQC7INI8LnvLJ8=;
+        b=NYiYTCRU3YD6QhKlE6q0yojg8/gSj0qhx6mrN5Ad4oFYRFoVYTk/Lbk+lMysGbXMm7
+         NO0NqEKLrM33ZHgprpUVLjWD0MoEe9UWkyuB/wNRdHluXgcWBmX4iUZSqWaDP/E5vXZq
+         sXOK5a+L9J1FXZoMLkuiQC2IyUbkIffNQvvK8pUbY4bDsyi9HKefbpUHBFECVZ6XO5Z5
+         z4u6iNyzbns+diH9/0+8tORNBAA+SEjvDc+WoomRy/VwSh8HfSy896QPcdPSvKL755fy
+         x6MqE8YM2bCIVqJbxyZuyOCRVf8gGFWJViqMYD4nvlkZzTwPhH7CJezMUIUtEVe2NqS0
+         tNDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683326360; x=1685918360;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jt099z2QMJcxc7Q+biY7Y79PMQomakQC7INI8LnvLJ8=;
+        b=E6pKG0AHn8/rvv0NabVzMcDOLMBgZJaLLov3ze+c7SkCXVtsOvCP9borKvJFQP/qo5
+         efHzPlKJ+XlY8qsw3PmSyGzbYkPDFQuMoKya9jkoyaOUtcW8e4fxOyQGMtoedmgpIUGA
+         RAlnWTzhz3qkfwu5pug3meeTgjPUkLpCVx7lXGFSpZg40RKGpppjXa/z08DtZxk4R6AV
+         9zqGhs6hAPJteTrSg0Byfzwqtp87qJpqAtFcpjLSJWEdtjY8SL6vt6UcWh2aiJsfkS71
+         /EKZI99XRN45zEFS1iD5N8VwW81YWFfB1AGUzLgBt0yWjDJG/fQIgvxOGItvfA0ULQRV
+         w1YQ==
+X-Gm-Message-State: AC+VfDzouivhIU8b7KZ2cIUY6H8RxCXJ3dJ2b37bw5VaThxa15Fvi2iD
+        4OKChAbovUnaQeOuKKMuHKU=
+X-Google-Smtp-Source: ACHHUZ6E32pgWuQFXc0VVJd+m1ZUe7uD3fHBny+wFxkhGjxN3a64ihm7hkYU2AtQlCC1JEzh3zLpSQ==
+X-Received: by 2002:a17:907:2d12:b0:965:cf39:ed87 with SMTP id gs18-20020a1709072d1200b00965cf39ed87mr2910650ejc.6.1683326360134;
+        Fri, 05 May 2023 15:39:20 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:cc49:1b8b:99c2:aef7])
+        by smtp.gmail.com with ESMTPSA id hf27-20020a1709072c5b00b00965ddf2e221sm1411650ejc.93.2023.05.05.15.39.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 May 2023 15:39:19 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] s390: remove the unneeded select GCC12_NO_ARRAY_BOUNDS
+Date:   Sat,  6 May 2023 00:39:09 +0200
+Message-Id: <20230505223909.29150-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use struct_size() instead of hand writing it.
-This is less verbose and more informative.
+Commit 0da6e5fd6c37 ("gcc: disable '-Warray-bounds' for gcc-13 too") makes
+config GCC11_NO_ARRAY_BOUNDS to be for disabling -Warray-bounds in any gcc
+version 11 and upwards, and with that, removes the GCC12_NO_ARRAY_BOUNDS
+config as it is now covered by the semantics of GCC11_NO_ARRAY_BOUNDS.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+As GCC11_NO_ARRAY_BOUNDS is yes by default, there is no need for the s390
+architecture to explicitly select GCC11_NO_ARRAY_BOUNDS. Hence, the select
+GCC12_NO_ARRAY_BOUNDS in arch/s390/Kconfig can simply be dropped.
+
+Remove the unneeded "select GCC12_NO_ARRAY_BOUNDS".
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-It will also help scripts when __counted_by macro will be added.
-See [1].
+Linus, as this is just a quick clean-up improvement to your commit
+"gcc: disable '-Warray-bounds' for gcc-13 too", this can probably just
+go directly to your tree.
 
-[1]: https://lore.kernel.org/all/6453f739.170a0220.62695.7785@mx.google.com/
+ arch/s390/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-
-v2: Fix another occurrence
----
- net/netfilter/nft_set_pipapo.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/net/netfilter/nft_set_pipapo.c b/net/netfilter/nft_set_pipapo.c
-index 06d46d182634..34c684e121d3 100644
---- a/net/netfilter/nft_set_pipapo.c
-+++ b/net/netfilter/nft_set_pipapo.c
-@@ -1274,8 +1274,7 @@ static struct nft_pipapo_match *pipapo_clone(struct nft_pipapo_match *old)
- 	struct nft_pipapo_match *new;
- 	int i;
- 
--	new = kmalloc(sizeof(*new) + sizeof(*dst) * old->field_count,
--		      GFP_KERNEL);
-+	new = kmalloc(struct_size(new, f, old->field_count), GFP_KERNEL);
- 	if (!new)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -2059,8 +2058,7 @@ static int nft_pipapo_init(const struct nft_set *set,
- 	if (field_count > NFT_PIPAPO_MAX_FIELDS)
- 		return -EINVAL;
- 
--	m = kmalloc(sizeof(*priv->match) + sizeof(*f) * field_count,
--		    GFP_KERNEL);
-+	m = kmalloc(struct_size(m, f, field_count), GFP_KERNEL);
- 	if (!m)
- 		return -ENOMEM;
- 
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index beb62f744c61..db20c1589a98 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -133,7 +133,6 @@ config S390
+ 	select DYNAMIC_FTRACE if FUNCTION_TRACER
+ 	select FUNCTION_ALIGNMENT_8B if CC_IS_GCC
+ 	select FUNCTION_ALIGNMENT_16B if !CC_IS_GCC
+-	select GCC12_NO_ARRAY_BOUNDS
+ 	select GENERIC_ALLOCATOR
+ 	select GENERIC_CPU_AUTOPROBE
+ 	select GENERIC_CPU_VULNERABILITIES
 -- 
-2.34.1
+2.17.1
 
