@@ -2,130 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C04C7EE22
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 10:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE224C7EE22
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 11:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231593AbjEEKIT (ORCPT
+        id S231650AbjEELJA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 06:08:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33484 "EHLO
+        Fri, 5 May 2023 07:09:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjEEKIS (ORCPT
+        with ESMTP id S229904AbjEELI7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 06:08:18 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E902813859;
-        Fri,  5 May 2023 03:08:16 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8F2165C028C;
-        Fri,  5 May 2023 06:08:14 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 05 May 2023 06:08:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1683281294; x=1683367694; bh=V4D6xLrOnK5ka
-        emJE3ljBJy5a0XXQgxZIK3WV5Xq8Vo=; b=ZeqM/lChYCWtP5MuNAloVu5jSa7pW
-        9EaB8Ti9632juuvtWwdhVdcUkFa0+vWz8zuI2mHh7ys8X3YlYs4Ls0CQBEmgrKoJ
-        DSZqQngcz8Vb8HhmR3Qq0pqGfO8MdJngDKwF7gL8yAjN+xdMk1NyoPyygIykXj+g
-        jeqLX6huhwyQqjR+DLhnAwRY5fd9ux8jM94r0Diao2M1NIGmkCFqOIRMBHqVGtNW
-        ZkxayzR2Rl+teGzFMLyO5s7bTlo3qwShGr6h5w9scDgk+MRXl7sYD9GqtsFME7nT
-        86C8vOHXY1NeSvThG9zQojWjYdyxmMwAdYNsE4NOkzpOOR5EFACYyTK3g==
-X-ME-Sender: <xms:jdVUZEorJkSV_4mNlEMk0iXx-Z3RJ4w5EOfeGpv1qRc9ZEouNDVONQ>
-    <xme:jdVUZKoGU6uOamTKpd6aIdVjuqxpicADC7PI23lMazBf9bHHkmu4d1lFJOeWQV5Ml
-    a1phVbf-ZWD8JMFn1Y>
-X-ME-Received: <xmr:jdVUZJPqbhJ3vBaG-1646VCVacn8kSr5Fp8QgEzv3z8C3yoCda8LqOg2Auyodqz___VjL_AENpwzqNoDQwdIhOlQmaOD8S-5nQs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeefvddgvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcu
-    vfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrg
-    htthgvrhhnpeeuiefguedvuedtveduffegieehkeejjedttddvvedtvdfhueduhfeifedt
-    teehhfenucffohhmrghinheprghrtghhihhvvgdrohhrghdpghgrrhhlohhffhdruggvne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgr
-    ihhnsehlihhnuhigqdhmieekkhdrohhrgh
-X-ME-Proxy: <xmx:jdVUZL5eYX6p2fJtrTToM6eIviIcBk-3PzFeXuqLfM3J_TurTLTMZQ>
-    <xmx:jdVUZD7P_6GgdliHCw3aVVSnmajBpZfNzKztUHKJxnJwlm2NdV23Vw>
-    <xmx:jdVUZLiNKyB1jkuECO69MIPoodYlGrU8tTUespAuVyJBeqjWlwCeMw>
-    <xmx:jtVUZNudSS7vlAdZR5ewbq3SDVTAh-tEnnQwrZ5u9ahrWVD_zC3Dcg>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 May 2023 06:08:10 -0400 (EDT)
-Date:   Fri, 5 May 2023 20:12:08 +1000 (AEST)
-From:   Finn Thain <fthain@linux-m68k.org>
-To:     Bagas Sanjaya <bagasdotme@gmail.com>
-cc:     Linux SCSI <linux-scsi@vger.kernel.org>,
-        Linux Documentation <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
-        Oliver Neukum <oliver@neukum.org>,
-        Ali Akcaagac <aliakc@web.de>,
-        Jamie Lenehan <lenehan@twibble.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH 3/3] Documentation: scsi: dc395x: Remove reference to
- 2.4 driver
-In-Reply-To: <20230505082704.16228-4-bagasdotme@gmail.com>
-Message-ID: <d919a2e1-5749-13f8-7867-1f17277190f4@linux-m68k.org>
-References: <20230505082704.16228-1-bagasdotme@gmail.com> <20230505082704.16228-4-bagasdotme@gmail.com>
+        Fri, 5 May 2023 07:08:59 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B8218DFA;
+        Fri,  5 May 2023 04:08:58 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-2fa0ce30ac2so1522387f8f.3;
+        Fri, 05 May 2023 04:08:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683284937; x=1685876937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Egg8JLOnnpq+lsDJAxwILwTlZTsXYBB4sQaBEoTtEhA=;
+        b=K+9tlciuQ0YsQdelmaHJvbYoj6zxrRfGHGXm3U7n5dVc4Q5lEchsQbhc1DM51GZoCk
+         R7Sj36dxB26xue851hVw7HN01OOnypGXU96PW94M2aN4FjpmBIkNGnkSa9xUPDce/NxA
+         cBzj7I6vjGZKsXYsXTdPAHpF8hxKXc4wqL2HKf3c/GRA9UoJjgnC6ljaQ0H9Fs+NbqCO
+         unR+iO7qDdWhS8HtVFydJUH0cyiCyGio3mFFF3BIUbiAGl10Bck5foe3yv4cTiVOP5VN
+         X+AeBy4kb1uaCV3OEhLsbQyy8MTL0FHAhO9z1JXAW0gANQDCxmnEN1Bi5KOts+XAYy19
+         plCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683284937; x=1685876937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Egg8JLOnnpq+lsDJAxwILwTlZTsXYBB4sQaBEoTtEhA=;
+        b=P6A82Kg1zFrlKEYgq+XfmHliezLqgTA6mbcUox7nENWJHhHCIVaQ47Tc8ZdpC13Gzw
+         Ua7aEEIDvUJ0/MxtQVGAl0iAj1HIfLqyBu9qaVP8Mj+tzjbqTwGpggCpSVbflMjzPdws
+         vwinBEAVpcTTqw/w7oRHLshduz6dDJlxu8No0SaT4qsz6rCEBd6KYhS7swfaj1mbHeH5
+         q/AJbjuXZirbuuVBYtoNA+58Y+NjmSXS6060ZJmh/y9l2/c+dlcEch2pftVHGSyy/kyI
+         9w/DvLII7CkkxqftbDr0dxhKwHURi8r9tPUN2lzcHE3Cfh/gsiBmRh5juteA6mrxyUUN
+         JrgQ==
+X-Gm-Message-State: AC+VfDzKQ0DJmA14w9Hg5SDLIfAAUl5t/YPxshbHckVnDA0dGgbEGcKm
+        QcCBPRSvrVY02KplIgwIvQnOZPX8iXw=
+X-Google-Smtp-Source: ACHHUZ4pBXYp+e7KXBdE2OE1qLBdbPVLsr7cqOsE/3NymtwG27Sz4Wj2SD+mYkflle4zi7W599TqjQ==
+X-Received: by 2002:adf:ce91:0:b0:2f8:ba03:6dec with SMTP id r17-20020adfce91000000b002f8ba036decmr1112374wrn.20.1683284936900;
+        Fri, 05 May 2023 04:08:56 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o5-20020adfeac5000000b003065f2a8a63sm2067130wrn.27.2023.05.05.04.08.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 May 2023 04:08:56 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Nhat Pham <nphamcs@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests: Fix spelling mistake "trucate" -> "truncate"
+Date:   Fri,  5 May 2023 12:08:55 +0100
+Message-Id: <20230505110855.2493457-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+There is a spelling mistake in a message. Fix it.
 
-On Fri, 5 May 2023, Bagas Sanjaya wrote:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/cachestat/test_cachestat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> The 2.4 driver link returns 404. 
+diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/testing/selftests/cachestat/test_cachestat.c
+index c3823b809c25..9be2262e5c17 100644
+--- a/tools/testing/selftests/cachestat/test_cachestat.c
++++ b/tools/testing/selftests/cachestat/test_cachestat.c
+@@ -191,7 +191,7 @@ bool test_cachestat_shmem(void)
+ 	}
+ 
+ 	if (ftruncate(fd, filesize)) {
+-		ksft_print_msg("Unable to trucate shmem file.\n");
++		ksft_print_msg("Unable to truncate shmem file.\n");
+ 		ret = false;
+ 		goto close_fd;
+ 	}
+-- 
+2.30.2
 
-It's still potentially useful:
-https://web.archive.org/web/20140129181343/http://www.garloff.de/kurt/linux/dc395/
-
-> As no one runs 2.4 kernel anymore,
-
-Would it make a difference if someone does run that? Were you planning to 
-delete the source code for the 2.4 kernel too?
-
-> remove the stale reference.
-> 
-
-It was always stale inasmuch as it is apparently there to give credit for 
-prior contributions, plus a changelog (see archive.org).
-
-Any published link should probably be accompanied by a "retrieved on 
-yyyy-mm-dd" qualification. But no qualification is better than no link at 
-all, IMO.
-
-Of course, there is a reason for an edit here. Yet it's not the one you 
-gave. "This is a 2.5 only driver" is simply incorrect. (If it was correct 
-you'd get to delete the whole thing.)
-
-This is not a nak as I'm not the maintainer. But this patch just looks 
-like churn with no justification. Perhaps I'm not the only one who can't 
-see it.
-
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/scsi/dc395x.rst | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/Documentation/scsi/dc395x.rst b/Documentation/scsi/dc395x.rst
-> index c413b629809bcd..a6320561543650 100644
-> --- a/Documentation/scsi/dc395x.rst
-> +++ b/Documentation/scsi/dc395x.rst
-> @@ -11,10 +11,6 @@ be safe to use. Testing with hard disks has not been done to any
->  great degree and caution should be exercised if you want to attempt
->  to use this driver with hard disks.
->  
-> -This is a 2.5 only driver. For a 2.4 driver please see the original
-> -driver (which this driver started from) at
-> -http://www.garloff.de/kurt/linux/dc395/
-> -
->  Problems, questions and patches should be submitted to the `Linux SCSI
->  mailing list <linux-scsi@vger.kernel.org>`_.
->  
-> 
