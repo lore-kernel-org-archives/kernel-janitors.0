@@ -2,103 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33419C77B7F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 19:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A191C77B75
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 21:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233443AbjEETBy (ORCPT
+        id S232290AbjEEVU0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 15:01:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39132 "EHLO
+        Fri, 5 May 2023 17:20:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233468AbjEETBr (ORCPT
+        with ESMTP id S231902AbjEEVUZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 15:01:47 -0400
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E83E522699;
-        Fri,  5 May 2023 12:01:42 -0700 (PDT)
-Received: by mail-qv1-xf30.google.com with SMTP id 6a1803df08f44-619ca08c166so10856026d6.1;
-        Fri, 05 May 2023 12:01:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683313302; x=1685905302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=utzjw63SBeUo2l6wme7ZDttQA5cHTz0UiDYP6i+9Li8=;
-        b=f55euq4Jf/X8DPxhk26pDBq0q+QwdKPSYAR/vPS+iyO0Em8rZ1cFauM2Jd5wFHCB49
-         TcKDQlwSChaWETlEQhO0nr6EcXxPOtoKMZbsd52LI8w2n4HasMK07UzmHVU3JgrGsEVK
-         i39zstorAARUTDeL9045h+dzxOiCUVEdF+iHqO3/qaSE9PWd/7Av4arBLcCLLfkNCEmE
-         8DdmNX9usjgd3V150r6ch1y510OMXJYijfr5PSka75RGIWVtT9OaahTnDoeIpJb8sBQH
-         +a2uMFvWpy3UwxBsCiqsHWDZremvMTxpvKf/qdO8G380UZGNBSUE+OOD5h/BNY8Tq9gD
-         DV2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683313302; x=1685905302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=utzjw63SBeUo2l6wme7ZDttQA5cHTz0UiDYP6i+9Li8=;
-        b=cYyfXMD8W1XevVFN7GCIeziq5ETU4rvpEgGxigKuxIp5dBJzY2lAE5OSxB71cvgIpu
-         m4uENcWm4AbfDHCDiekeiq9/RbgQAEhUQ9my6bf7AXjmL+3Th8NayqZ7BeMdjwgyIuVS
-         Ec+iQaV4cQvUh4q50DHP4LnBTA5ue37/zhLOoY7ThC3VHNxNWzVuUNokwm6b124PtSh+
-         qtl4cdotlJboAOzIxYFo8vP5fze2Id4IrQolBZVusOov8vSDJjqjpCwxetvRWk6xAbQe
-         AAvD+91HzJ5PwsOWWgle8/POGQemI7mPLrRGfr8DD9ANdeoLrmCn+JQsDclEwxcdLjBQ
-         2DlA==
-X-Gm-Message-State: AC+VfDxkzno/E7FK4giSeYixdt2cMV4/rZOCEfTJKBWpv0kisV3EW73p
-        Zoa42u2zRCO/K4Bffo4oZfY6vDVN1gqdOhHeUfA=
-X-Google-Smtp-Source: ACHHUZ4xQUk11W2pL4jRbxt4jurLZwJ+givNPytNvNSQomnEJRk79G4+EgqdjMQfQOn61EuN3rpjB9ipOmwXCQL8Vh8=
-X-Received: by 2002:a05:6214:400e:b0:5ef:9b22:dc88 with SMTP id
- kd14-20020a056214400e00b005ef9b22dc88mr3417840qvb.0.1683313301839; Fri, 05
- May 2023 12:01:41 -0700 (PDT)
+        Fri, 5 May 2023 17:20:25 -0400
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40D415262
+        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 14:20:23 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id v2qdp5aQuunMHv2qdp7iGj; Fri, 05 May 2023 23:20:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1683321621;
+        bh=Chl4Ea7MDMRy9oRAihtzEgVAW8tW0wY55Exuo89iUjU=;
+        h=From:To:Cc:Subject:Date;
+        b=VDmL2/yuUszQrahjQktLhU7UmxDcIthT3Kc3BmfKrkF8v1782xc9gi1rsKzBV6Jr1
+         alZVo4TUS4OSxk54mCx7g5LYdf3/Nip8dvgxVYeN6LblIQaIRlazqJTWCpio4Gl5aV
+         uKqf2ARkccMFeSBGoAsCBvQxLVlZPo0NgDT2GfRfo/JlX7ztVvUKDBIqNRfkUPGIAo
+         ynpOk3+EU75vOS4ct1Wr5VdIahz9RHzlIVXnclq3j0hFoVlUYHgRq2f31dvcoIIxF2
+         I2qmwfpqK1fPCxlZpwvCT1oeAuQG3A+GBnuJy1IGLl8u2yzxlynYpJtXVEfPMjRxIK
+         zTeb+4SWWUqOQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 05 May 2023 23:20:21 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH net-next] netfilter: nft_set_pipapo: Use struct_size()
+Date:   Fri,  5 May 2023 23:20:14 +0200
+Message-Id: <28e34aff5c8ee86411b5ebab6ff223c99935047a.1683321566.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230505110855.2493457-1-colin.i.king@gmail.com>
-In-Reply-To: <20230505110855.2493457-1-colin.i.king@gmail.com>
-From:   Nhat Pham <nphamcs@gmail.com>
-Date:   Fri, 5 May 2023 12:01:31 -0700
-Message-ID: <CAKEwX=M8gL=XocVdDuo4NmFgv8_SRu-wvSZqcwxradVqS5kBZg@mail.gmail.com>
-Subject: Re: [PATCH][next] selftests: Fix spelling mistake "trucate" -> "truncate"
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 5, 2023 at 4:08=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
-om> wrote:
->
-> There is a spelling mistake in a message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/cachestat/test_cachestat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/t=
-esting/selftests/cachestat/test_cachestat.c
-> index c3823b809c25..9be2262e5c17 100644
-> --- a/tools/testing/selftests/cachestat/test_cachestat.c
-> +++ b/tools/testing/selftests/cachestat/test_cachestat.c
-> @@ -191,7 +191,7 @@ bool test_cachestat_shmem(void)
->         }
->
->         if (ftruncate(fd, filesize)) {
-> -               ksft_print_msg("Unable to trucate shmem file.\n");
-> +               ksft_print_msg("Unable to truncate shmem file.\n");
->                 ret =3D false;
->                 goto close_fd;
->         }
-> --
-> 2.30.2
->
+Use struct_size() instead of hand writing it.
+This is less verbose and more informative.
 
-Acked-by: Nhat Pham <nphamcs@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+It will also help scripts when __counted_by macro will be added.
+See [1].
 
-Thanks, Colin! I'm forwarding this to Andrew.
-Andrew, could you fold this misspelling fix into the patch
-as well? I think it's this commit in mm-unstable:
+[1]: https://lore.kernel.org/all/6453f739.170a0220.62695.7785@mx.google.com/
+---
+ net/netfilter/nft_set_pipapo.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-f2277ac105b4 selftests: add selftests for cachestat
+diff --git a/net/netfilter/nft_set_pipapo.c b/net/netfilter/nft_set_pipapo.c
+index 06d46d182634..bf290cb53c76 100644
+--- a/net/netfilter/nft_set_pipapo.c
++++ b/net/netfilter/nft_set_pipapo.c
+@@ -1274,8 +1274,7 @@ static struct nft_pipapo_match *pipapo_clone(struct nft_pipapo_match *old)
+ 	struct nft_pipapo_match *new;
+ 	int i;
+ 
+-	new = kmalloc(sizeof(*new) + sizeof(*dst) * old->field_count,
+-		      GFP_KERNEL);
++	new = kmalloc(struct_size(new, f, old->field_count), GFP_KERNEL);
+ 	if (!new)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.34.1
+
