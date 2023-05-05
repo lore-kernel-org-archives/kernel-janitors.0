@@ -2,91 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE224C7EE22
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 11:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85698C77B75
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 11:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231650AbjEELJA (ORCPT
+        id S231795AbjEELjH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 07:09:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55366 "EHLO
+        Fri, 5 May 2023 07:39:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229904AbjEELI7 (ORCPT
+        with ESMTP id S230358AbjEELjB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 07:08:59 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B8218DFA;
-        Fri,  5 May 2023 04:08:58 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-2fa0ce30ac2so1522387f8f.3;
-        Fri, 05 May 2023 04:08:58 -0700 (PDT)
+        Fri, 5 May 2023 07:39:01 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2702F2694
+        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 04:39:00 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-b9daef8681fso1481735276.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 05 May 2023 04:39:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683284937; x=1685876937;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Egg8JLOnnpq+lsDJAxwILwTlZTsXYBB4sQaBEoTtEhA=;
-        b=K+9tlciuQ0YsQdelmaHJvbYoj6zxrRfGHGXm3U7n5dVc4Q5lEchsQbhc1DM51GZoCk
-         R7Sj36dxB26xue851hVw7HN01OOnypGXU96PW94M2aN4FjpmBIkNGnkSa9xUPDce/NxA
-         cBzj7I6vjGZKsXYsXTdPAHpF8hxKXc4wqL2HKf3c/GRA9UoJjgnC6ljaQ0H9Fs+NbqCO
-         unR+iO7qDdWhS8HtVFydJUH0cyiCyGio3mFFF3BIUbiAGl10Bck5foe3yv4cTiVOP5VN
-         X+AeBy4kb1uaCV3OEhLsbQyy8MTL0FHAhO9z1JXAW0gANQDCxmnEN1Bi5KOts+XAYy19
-         plCg==
+        d=linaro.org; s=google; t=1683286739; x=1685878739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=puWCJyuFf3yp6BwyAz5qUYq78oF9e+xdSzj78gCEdNE=;
+        b=Y0Y/0YC+7QL81nt9H9hIuiBWkuL7s/MD2CaHmSwYjTa9/pP1nMLmCAYN5YYZLHeY+9
+         QHRWhAZFPTLqMLBuQGfw3+7GQMtw8hx+rr6QOcZOEx/Q1WC8Ep7HZXRnUmuxoDm7jt71
+         rgSHQqKW9BTHsYCkUySzUGBr8ro5MavFn09rFJcUazJXA1O5PIUOKhUIuM/I+cWuNTqF
+         TJEGOZW422cFvc4OOlja9+727aErAFw25YusDW1D5aFJoZsjbHCzcJQTKSnq7dtz6Fe+
+         TAuBu9qis9CBMPOcHnexsoS/bHvgGbNhxmXURDjYr/BOhUMysnln/dG3efrq/VdfG4hN
+         jsOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683284937; x=1685876937;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Egg8JLOnnpq+lsDJAxwILwTlZTsXYBB4sQaBEoTtEhA=;
-        b=P6A82Kg1zFrlKEYgq+XfmHliezLqgTA6mbcUox7nENWJHhHCIVaQ47Tc8ZdpC13Gzw
-         Ua7aEEIDvUJ0/MxtQVGAl0iAj1HIfLqyBu9qaVP8Mj+tzjbqTwGpggCpSVbflMjzPdws
-         vwinBEAVpcTTqw/w7oRHLshduz6dDJlxu8No0SaT4qsz6rCEBd6KYhS7swfaj1mbHeH5
-         q/AJbjuXZirbuuVBYtoNA+58Y+NjmSXS6060ZJmh/y9l2/c+dlcEch2pftVHGSyy/kyI
-         9w/DvLII7CkkxqftbDr0dxhKwHURi8r9tPUN2lzcHE3Cfh/gsiBmRh5juteA6mrxyUUN
-         JrgQ==
-X-Gm-Message-State: AC+VfDzKQ0DJmA14w9Hg5SDLIfAAUl5t/YPxshbHckVnDA0dGgbEGcKm
-        QcCBPRSvrVY02KplIgwIvQnOZPX8iXw=
-X-Google-Smtp-Source: ACHHUZ4pBXYp+e7KXBdE2OE1qLBdbPVLsr7cqOsE/3NymtwG27Sz4Wj2SD+mYkflle4zi7W599TqjQ==
-X-Received: by 2002:adf:ce91:0:b0:2f8:ba03:6dec with SMTP id r17-20020adfce91000000b002f8ba036decmr1112374wrn.20.1683284936900;
-        Fri, 05 May 2023 04:08:56 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o5-20020adfeac5000000b003065f2a8a63sm2067130wrn.27.2023.05.05.04.08.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 May 2023 04:08:56 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Nhat Pham <nphamcs@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests: Fix spelling mistake "trucate" -> "truncate"
-Date:   Fri,  5 May 2023 12:08:55 +0100
-Message-Id: <20230505110855.2493457-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        d=1e100.net; s=20221208; t=1683286739; x=1685878739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=puWCJyuFf3yp6BwyAz5qUYq78oF9e+xdSzj78gCEdNE=;
+        b=LFS78sAYO3VJb0FxxpXBVUsz500c9ZeaP+6l+bk7Oat7fMc1fKORDLNCbIC+kvNmtX
+         v6XnGWLemjUsOz5ses9jcel65vl/v3DCu7ktlqwTC+BgbzF61NJiaEWn0TlyoxKQNKWi
+         2CxsfuMeKABTgd/5GmGGfsmjGFe1aKwEi3kKwIhxWHMp+h1OfhhY7mpLpyCnjiJCw74R
+         ExdFrfISD5YuGdyaBp9CFYP3xsaVCxEWvYKiO2FUqhLeKKMEz3WkMwto1wvuv/8/ZYJi
+         FwbSu9OJ6nqR7LlEzHHyvXM6cnd7Vh/w5zrNvggp1BFlnSTFsp6J0qiI5f45g8AJsgYF
+         webQ==
+X-Gm-Message-State: AC+VfDzmzbIrYlsoTKkfADD5Zf5KrA80gAJy6sUSSHqmmk1AnHute4LQ
+        /8SAWxEExu7rkoFsvfWT6VquLrDIXgVDQ1YdR9WNwQ==
+X-Google-Smtp-Source: ACHHUZ7URXttrI5x/goP9FFi/xqVcIK9Vs/9Rym9CIhV8xMlCn+jPRw8C8kuiLQGeBOCQaw3GehxNG8DWIICXQgQaeU=
+X-Received: by 2002:a25:c7ce:0:b0:b95:941a:86c4 with SMTP id
+ w197-20020a25c7ce000000b00b95941a86c4mr1291465ybe.26.1683286739409; Fri, 05
+ May 2023 04:38:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <98c3b5890bb72415145c9fe4e1d974711edae376.1681681402.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <98c3b5890bb72415145c9fe4e1d974711edae376.1681681402.git.christophe.jaillet@wanadoo.fr>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 5 May 2023 13:38:48 +0200
+Message-ID: <CACRpkdZYeHUkFC6U-abk=-e-3MO6DwTqE4WSc+rnHv5teQcdyA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: bcm2835: Handle gpiochip_add_pin_range() errors
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a message. Fix it.
+On Sun, Apr 16, 2023 at 11:43=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/cachestat/test_cachestat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> gpiochip_add_pin_range() can fail, so better return its error code than
+> a hard coded '0'.
+>
+> Fixes: d2b67744fd99 ("pinctrl: bcm2835: implement hook for missing gpio-r=
+anges")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/testing/selftests/cachestat/test_cachestat.c
-index c3823b809c25..9be2262e5c17 100644
---- a/tools/testing/selftests/cachestat/test_cachestat.c
-+++ b/tools/testing/selftests/cachestat/test_cachestat.c
-@@ -191,7 +191,7 @@ bool test_cachestat_shmem(void)
- 	}
- 
- 	if (ftruncate(fd, filesize)) {
--		ksft_print_msg("Unable to trucate shmem file.\n");
-+		ksft_print_msg("Unable to truncate shmem file.\n");
- 		ret = false;
- 		goto close_fd;
- 	}
--- 
-2.30.2
+Patch applied for the next kernel cycle (becoming v6.5)
 
+Yours,
+Linus Walleij
