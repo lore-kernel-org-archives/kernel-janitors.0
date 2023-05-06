@@ -2,64 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5F9C77B73
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 13:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 379ADC77B75
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 13:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232228AbjEFNSh (ORCPT
+        id S232521AbjEFNxZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 May 2023 09:18:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46276 "EHLO
+        Sat, 6 May 2023 09:53:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231956AbjEFNSf (ORCPT
+        with ESMTP id S232305AbjEFNxY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 May 2023 09:18:35 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 433C81CFC1;
-        Sat,  6 May 2023 06:18:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=copZqT4Awq3JwFogujKYu6Qa/kRT3sXtwa10VzFrQvY=; b=2tldN4awosLIqOjCnZf2PjXhX9
-        PWeflNPxop0MlRw+lJxVriLGxYmbxqNy5Q4lfN16rlw61echF1/7/RNaZuGDh7Q9BGh5j+l1LdBDr
-        lKcIrLap1x272E+VwU11eEoKthzAAl5bamizgCKZ4VnIAmhY8FFaJjhN6Zy2s8yAIXM4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1pvHnm-00C4D0-JH; Sat, 06 May 2023 15:18:18 +0200
-Date:   Sat, 6 May 2023 15:18:18 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Tobias Waldekranz <tobias@waldekranz.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Sat, 6 May 2023 09:53:24 -0400
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4712823A17
+        for <kernel-janitors@vger.kernel.org>; Sat,  6 May 2023 06:53:22 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id vILdpZJ7QLshbvILdpEMnX; Sat, 06 May 2023 15:53:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1683381200;
+        bh=r2E/7o27DlnpjDgt/7U4i84YKnHKe8gQvEkHYS6ZEo4=;
+        h=From:To:Cc:Subject:Date;
+        b=lHlfvw7vCLJXsOvSEVtTEc2wvFWkD4EblArPxqrOu5YDJrRsXSR4s5ZSksWAVkdZv
+         55glhtQuraGZycXpPsAWNDnlCpjsF7iI9pc+PHoXZr1Blt+WtwgTPjM8wwfGVImAz7
+         DalbgVM/UlkBgGUuGOOYCcugmBKHHG+5wN1eeH7h6OQSkQ9On742MD7fG+MBCjwcAI
+         gg3/DueVXVN9832W8oFD09ckXazRl0t5AbhLGWIw5oNU4D2ucn0BXTM1HO4dbW/K5O
+         jO1e5fFIBx7HOAkq3GgASHeePGwU347WIkFlQAO1vbLTB43Cuhm4oJpTmcb34uzFLV
+         zUwL97u8QjFUA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 06 May 2023 15:53:20 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Ganapathi Bhat <ganapathi017@gmail.com>,
+        Sharvari Harisangam <sharvari.harisangam@nxp.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net] net: mdio: mvusb: Fix an error handling path in
- mvusb_mdio_probe()
-Message-ID: <ea4446fa-124f-4410-91bb-c4fd291b8e34@lunn.ch>
-References: <bd2244d44b914dec1aeccee4eba2e7e8135b585b.1683311885.git.christophe.jaillet@wanadoo.fr>
+        chunfan chen <jeffc@marvell.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Xinming Hu <huxm@marvell.com>,
+        Amitkumar Karwar <akarwar@marvell.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH wireless] mwifiex: Fix the size of a memory allocation in mwifiex_ret_802_11_scan()
+Date:   Sat,  6 May 2023 15:53:15 +0200
+Message-Id: <7a6074fb056d2181e058a3cc6048d8155c20aec7.1683371982.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd2244d44b914dec1aeccee4eba2e7e8135b585b.1683311885.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 05, 2023 at 08:39:33PM +0200, Christophe JAILLET wrote:
-> Should of_mdiobus_register() fail, a previous usb_get_dev() call should be
-> undone as in the .disconnect function.
-> 
-> Fixes: 04e37d92fbed ("net: phy: add marvell usb to mdio controller")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The type of "mwifiex_adapter->nd_info" is "struct cfg80211_wowlan_nd_info",
+not "struct cfg80211_wowlan_nd_match".
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Use struct_size() to ease the computation of the needed size.
 
-    Andrew
+The current code over-allocates some memory, so is safe.
+But it wastes 32 bytes.
+
+Fixes: 7d7f07d8c5d3 ("mwifiex: add wowlan net-detect support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/marvell/mwifiex/scan.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
+index ac8001c84293..dd73ade4ddf1 100644
+--- a/drivers/net/wireless/marvell/mwifiex/scan.c
++++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+@@ -2187,9 +2187,9 @@ int mwifiex_ret_802_11_scan(struct mwifiex_private *priv,
+ 
+ 	if (nd_config) {
+ 		adapter->nd_info =
+-			kzalloc(sizeof(struct cfg80211_wowlan_nd_match) +
+-				sizeof(struct cfg80211_wowlan_nd_match *) *
+-				scan_rsp->number_of_sets, GFP_ATOMIC);
++			kzalloc(struct_size(adapter->nd_info, matches,
++					    scan_rsp->number_of_sets),
++				GFP_ATOMIC);
+ 
+ 		if (adapter->nd_info)
+ 			adapter->nd_info->n_matches = scan_rsp->number_of_sets;
+-- 
+2.34.1
+
