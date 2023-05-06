@@ -2,87 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EA3C77B7C
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 01:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01CCC7EE26
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 02:22:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232919AbjEFB53 (ORCPT
+        id S231536AbjEFCWC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 21:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38428 "EHLO
+        Fri, 5 May 2023 22:22:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbjEFB52 (ORCPT
+        with ESMTP id S229649AbjEFCWB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 21:57:28 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C204C05
-        for <kernel-janitors@vger.kernel.org>; Fri,  5 May 2023 18:57:25 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-50bc394919cso3702222a12.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 05 May 2023 18:57:25 -0700 (PDT)
+        Fri, 5 May 2023 22:22:01 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693645BBF;
+        Fri,  5 May 2023 19:22:00 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1aae5c2423dso23935245ad.3;
+        Fri, 05 May 2023 19:22:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1683338243; x=1685930243;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NEWaeK4UyXB7rn8ZKDm/RsGKdWKXNNR3xA3d9AaLO1U=;
-        b=GmfPET2O+02898hXe2z1+kP7Igio9e43DX+g6z2VKvEdB2Mcc1VjCtYFtdnS+tg6P9
-         ZdmPQx9xoD8oPhoKZtl2DqDcJd5B14p8d6bRYRBU3z7lF+/nFIXHx/LlKM2a37aqtCyX
-         Dl+aNmjn98L/CFOHghjNrTuSBcmz+oCJwVh/c=
+        d=gmail.com; s=20221208; t=1683339720; x=1685931720;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+FxmBS7vEJe0OVAA86LRv6d0E9ry7bbdeZBgxQdXBzQ=;
+        b=a/mMHM6bkbRka4DJw8dmRS67IB4IYDi9APMMCfUbNLTVHPJxts6AyKMB0KPil1+pPQ
+         BLLQCOYVf2AlrPRxYBX/Mi/Cc6A5chFuacfqZv1qtCJPCdnWwiy0xrbp1cz6Wf4EC8T6
+         eHgQjlI/ZeK16qLQbEajbThyBXZFqX/PnkHb01Ctr0XMqL46u9XPQQP7j0jwnGmI51XD
+         bkILdJQmyzNZVV8w/tWamUrnigpFlackGhEGabuV4uOvHcuHaFU8EKkh5uSlk8F8O009
+         uTnYchGFcPFsv0GYnEzyO/rucJO1pgbvN0iH7PQa7Nx4YyDkHRoiKS2b4pEej0SRRz3E
+         T87g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683338243; x=1685930243;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NEWaeK4UyXB7rn8ZKDm/RsGKdWKXNNR3xA3d9AaLO1U=;
-        b=E3pcnLqbAB3FIRf1U7D5Ihikk6/L8hoPYexZnFOT5jZr2Yk79HnMlvh/4cj2ubn+oh
-         V/p2dDuZkpEgQkbVdBQCgjF7tTA/R7Hz1IOrCQQt3UvsOxVok3aeHMbIGgqTTfnFlxP6
-         2MhgQKSNBvP5tvl5k8Jhib9wqNC4Y32BmbCeVB/Bvc42aq0z5pWaHDz1pESkpfmezgVz
-         FomuSjjT2R8LVF834Z8okN/qjf49zRe1pQlRXH0zRvXv59DdTXhm83kGgLlJDV5Y7p2C
-         FstGElzwdj8pYrnCwMfCACgRfHG1GdqKX/r+gmZ9sCWfA79MRTp7wEOjZ33Ft/gyNqJb
-         yW5A==
-X-Gm-Message-State: AC+VfDxK1y2WkuEfFL2eugufG2KktKdL3PJ4BuYjUkCtuihzzHjJOVD3
-        rSzrzrut/mJyGrnUysnZDn+/rqpTZ/T+5ZNLUsvVJw==
-X-Google-Smtp-Source: ACHHUZ6x4gm4A4q2hlK1s1w4iX2XtisHXbimS+lG9dU2s0e7beM/Dw9oYYm+2H6iPQM/XSBq5HWnbg==
-X-Received: by 2002:aa7:c719:0:b0:504:b228:878d with SMTP id i25-20020aa7c719000000b00504b228878dmr3192383edq.25.1683338243463;
-        Fri, 05 May 2023 18:57:23 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id i5-20020aa7c705000000b0050673b13b58sm3447404edq.56.2023.05.05.18.57.22
-        for <kernel-janitors@vger.kernel.org>
+        d=1e100.net; s=20221208; t=1683339720; x=1685931720;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FxmBS7vEJe0OVAA86LRv6d0E9ry7bbdeZBgxQdXBzQ=;
+        b=CJmRdARuMTEhO4LeVVauPvt7j562hZWGW2I7b2gNI3ArwbMTdovNs3c68wKM3mtumR
+         Vvl5AjZKAwAItDzuOwS0MBHjqZthJy7azPiD5Pa9OUWmcRkainZTTi6AU3BkIDNvu+Tp
+         342MFogNfytyTLChK5ooF/p9eka/2v1JEhJ3wE20fOuwoS49X6Kl1yrHWICUQOdOTV/2
+         zE0KMdbRTXzpPM7r4n8weRhIICk9EgyEIfNSKtJkRGoOHmydD8IHEoe9X7YrQRE2IIX+
+         m02eYqWwVdlfAsRgVv6uqkW8ZWulZYB6iJtlipiHEDd/tcwWy11r35XrbdhId94OE2cz
+         KOHA==
+X-Gm-Message-State: AC+VfDzjqyuA4VhUcnmpGzmCKYdN863IBW2hLMs/CZUpe0VcA15teGFF
+        BnlhTuy482nZIHLkSICNBC4gCkp/IZoZ8w==
+X-Google-Smtp-Source: ACHHUZ44ar1a/lCGZfPX03Vc9Q5AlYWOIMXh+tJx1xkSRn6+Q37HVXsuWb2aXf7zP1UH8PcxZm4eTg==
+X-Received: by 2002:a17:902:d4c1:b0:1a5:167f:620f with SMTP id o1-20020a170902d4c100b001a5167f620fmr2714178plg.15.1683339719750;
+        Fri, 05 May 2023 19:21:59 -0700 (PDT)
+Received: from [192.168.43.80] (subs02-180-214-232-14.three.co.id. [180.214.232.14])
+        by smtp.gmail.com with ESMTPSA id x15-20020a170902820f00b001aaefe48b93sm2372304pln.295.2023.05.05.19.21.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 May 2023 18:57:22 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-50bc456cc39so3711447a12.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 05 May 2023 18:57:22 -0700 (PDT)
-X-Received: by 2002:a17:907:6eaa:b0:94a:9ae2:1642 with SMTP id
- sh42-20020a1709076eaa00b0094a9ae21642mr3442159ejc.46.1683338242456; Fri, 05
- May 2023 18:57:22 -0700 (PDT)
+        Fri, 05 May 2023 19:21:59 -0700 (PDT)
+Message-ID: <8f5aee17-510c-ed1b-c854-e6dc00c7095a@gmail.com>
+Date:   Sat, 6 May 2023 09:21:49 +0700
 MIME-Version: 1.0
-References: <20230505223909.29150-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20230505223909.29150-1-lukas.bulwahn@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 5 May 2023 18:57:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiX6xj9ck9u7_iN6HRFbLtpXSGfHtidUZSHfddx87FLdg@mail.gmail.com>
-Message-ID: <CAHk-=wiX6xj9ck9u7_iN6HRFbLtpXSGfHtidUZSHfddx87FLdg@mail.gmail.com>
-Subject: Re: [PATCH] s390: remove the unneeded select GCC12_NO_ARRAY_BOUNDS
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 1/3] MAINTAINERS: Drop DC395x list and site
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Linux SCSI <linux-scsi@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
+        Oliver Neukum <oliver@neukum.org>,
+        Ali Akcaagac <aliakc@web.de>,
+        Jamie Lenehan <lenehan@twibble.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <20230505082704.16228-1-bagasdotme@gmail.com>
+ <20230505082704.16228-2-bagasdotme@gmail.com>
+ <b86a4837-3c31-4bf4-aff3-67abd7a4f5f2@kili.mountain>
+Content-Language: en-US
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <b86a4837-3c31-4bf4-aff3-67abd7a4f5f2@kili.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 5, 2023 at 3:39=E2=80=AFPM Lukas Bulwahn <lukas.bulwahn@gmail.c=
-om> wrote:
->
-> Linus, as this is just a quick clean-up improvement to your commit
-> "gcc: disable '-Warray-bounds' for gcc-13 too", this can probably just
-> go directly to your tree.
+On 5/5/23 16:16, Dan Carpenter wrote:
+> Other people do this too, but is there really any reason to include
+> the linux-scsi@vger.kernel.org list?  drivers/scsi/ will already
+> include it.
+> 
 
-Done.
+I prefer to be explicit in this case.
 
-               Linus
+-- 
+An old man doll... just what I always wanted! - Clara
+
