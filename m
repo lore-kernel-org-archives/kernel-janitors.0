@@ -2,92 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E01CCC7EE26
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 02:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A06FEC7EE22
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 07:11:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231536AbjEFCWC (ORCPT
+        id S230203AbjEFHL3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 22:22:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
+        Sat, 6 May 2023 03:11:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjEFCWB (ORCPT
+        with ESMTP id S229460AbjEFHL2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 22:22:01 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693645BBF;
-        Fri,  5 May 2023 19:22:00 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1aae5c2423dso23935245ad.3;
-        Fri, 05 May 2023 19:22:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683339720; x=1685931720;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+FxmBS7vEJe0OVAA86LRv6d0E9ry7bbdeZBgxQdXBzQ=;
-        b=a/mMHM6bkbRka4DJw8dmRS67IB4IYDi9APMMCfUbNLTVHPJxts6AyKMB0KPil1+pPQ
-         BLLQCOYVf2AlrPRxYBX/Mi/Cc6A5chFuacfqZv1qtCJPCdnWwiy0xrbp1cz6Wf4EC8T6
-         eHgQjlI/ZeK16qLQbEajbThyBXZFqX/PnkHb01Ctr0XMqL46u9XPQQP7j0jwnGmI51XD
-         bkILdJQmyzNZVV8w/tWamUrnigpFlackGhEGabuV4uOvHcuHaFU8EKkh5uSlk8F8O009
-         uTnYchGFcPFsv0GYnEzyO/rucJO1pgbvN0iH7PQa7Nx4YyDkHRoiKS2b4pEej0SRRz3E
-         T87g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683339720; x=1685931720;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+FxmBS7vEJe0OVAA86LRv6d0E9ry7bbdeZBgxQdXBzQ=;
-        b=CJmRdARuMTEhO4LeVVauPvt7j562hZWGW2I7b2gNI3ArwbMTdovNs3c68wKM3mtumR
-         Vvl5AjZKAwAItDzuOwS0MBHjqZthJy7azPiD5Pa9OUWmcRkainZTTi6AU3BkIDNvu+Tp
-         342MFogNfytyTLChK5ooF/p9eka/2v1JEhJ3wE20fOuwoS49X6Kl1yrHWICUQOdOTV/2
-         zE0KMdbRTXzpPM7r4n8weRhIICk9EgyEIfNSKtJkRGoOHmydD8IHEoe9X7YrQRE2IIX+
-         m02eYqWwVdlfAsRgVv6uqkW8ZWulZYB6iJtlipiHEDd/tcwWy11r35XrbdhId94OE2cz
-         KOHA==
-X-Gm-Message-State: AC+VfDzjqyuA4VhUcnmpGzmCKYdN863IBW2hLMs/CZUpe0VcA15teGFF
-        BnlhTuy482nZIHLkSICNBC4gCkp/IZoZ8w==
-X-Google-Smtp-Source: ACHHUZ44ar1a/lCGZfPX03Vc9Q5AlYWOIMXh+tJx1xkSRn6+Q37HVXsuWb2aXf7zP1UH8PcxZm4eTg==
-X-Received: by 2002:a17:902:d4c1:b0:1a5:167f:620f with SMTP id o1-20020a170902d4c100b001a5167f620fmr2714178plg.15.1683339719750;
-        Fri, 05 May 2023 19:21:59 -0700 (PDT)
-Received: from [192.168.43.80] (subs02-180-214-232-14.three.co.id. [180.214.232.14])
-        by smtp.gmail.com with ESMTPSA id x15-20020a170902820f00b001aaefe48b93sm2372304pln.295.2023.05.05.19.21.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 May 2023 19:21:59 -0700 (PDT)
-Message-ID: <8f5aee17-510c-ed1b-c854-e6dc00c7095a@gmail.com>
-Date:   Sat, 6 May 2023 09:21:49 +0700
+        Sat, 6 May 2023 03:11:28 -0400
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B703211567
+        for <kernel-janitors@vger.kernel.org>; Sat,  6 May 2023 00:11:25 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id vC4bpnvtnGGqgvC4bpbPWL; Sat, 06 May 2023 09:11:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1683357083;
+        bh=LCwtFRx+YxY+EmtN+x8N93lmLUJnBu1GrjughYec7hk=;
+        h=From:To:Cc:Subject:Date;
+        b=dPDRr9NJWUcumThQ3K8vmGoeFthoe40EmUuljc44kB6Db1/nur+r3j+irmyyDY6fJ
+         FmKTLTebxollA+5WkjbG2hHYBh5hFwz3qxCz8BDkV87L2Wuu23WF7DKfRW1Ial90IE
+         nbOfhNAHOwV+1ohcE2SbHWbX2vvLqqkeXTFS9yu0Rty0IZZgHs4RQpkMXHpBuPSZlQ
+         EYiSdWajeq+wLrAAIe8ZbciQvBNHEWi02kTHh2743MgdarwyrNThgKMAXI8MQ5WFbx
+         bpdXtTSUSISBEm98bDhfFG5cIyjrNgJIaKWxKHfQIhn1LYLohibYm2U8NrvfMspNZN
+         gChnjeggQqtTw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 06 May 2023 09:11:23 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-pci@vger.kernel.org
+Subject: [PATCH 1/2] x86/PCI: Fix a sanity check in pirq_convert_irt_table()
+Date:   Sat,  6 May 2023 09:11:09 +0200
+Message-Id: <bc8422a8bf3ff99809413eb62dd12aacc85a9950.1683356951.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 1/3] MAINTAINERS: Drop DC395x list and site
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Linux SCSI <linux-scsi@vger.kernel.org>,
-        Linux Documentation <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
-        Oliver Neukum <oliver@neukum.org>,
-        Ali Akcaagac <aliakc@web.de>,
-        Jamie Lenehan <lenehan@twibble.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20230505082704.16228-1-bagasdotme@gmail.com>
- <20230505082704.16228-2-bagasdotme@gmail.com>
- <b86a4837-3c31-4bf4-aff3-67abd7a4f5f2@kili.mountain>
-Content-Language: en-US
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <b86a4837-3c31-4bf4-aff3-67abd7a4f5f2@kili.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/5/23 16:16, Dan Carpenter wrote:
-> Other people do this too, but is there really any reason to include
-> the linux-scsi@vger.kernel.org list?  drivers/scsi/ will already
-> include it.
-> 
+We compare the size in bytes of a struct (and its ending flexible array)
+with the number of elements in a flexible array.
 
-I prefer to be explicit in this case.
+This is wrong and "ir->size < ir->used" is likely to be always false.
 
+Compute the number of possible entries instead, as already done in other
+places, and compare it to the number of used entries.
+
+Fixes: b584db0c84db ("x86/PCI: Add $IRT PIRQ routing table support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+
+/!\  This patch is speculative. Review with care  /!\
+
+
+I'm not sure that this sanity check is needed at all.
+
+If 'used' was the size of the flexible array, I think it would simplify
+the code in other places. It will also help scripts when __counted_by macro
+will be added.
+See [1].
+
+[1]: https://lore.kernel.org/all/6453f739.170a0220.62695.7785@mx.google.com/
+---
+ arch/x86/pci/irq.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
+index a498b847d740..e29b487cc069 100644
+--- a/arch/x86/pci/irq.c
++++ b/arch/x86/pci/irq.c
+@@ -128,12 +128,16 @@ static inline struct irq_routing_table *pirq_convert_irt_table(u8 *addr,
+ {
+ 	struct irt_routing_table *ir;
+ 	struct irq_routing_table *rt;
++	int entries;
+ 	u16 size;
+ 	u8 sum;
+ 	int i;
+ 
+ 	ir = (struct irt_routing_table *)addr;
+-	if (ir->signature != IRT_SIGNATURE || !ir->used || ir->size < ir->used)
++	entries = (ir->size - sizeof(struct irq_routing_table)) /
++		sizeof(struct irq_info);
++
++	if (ir->signature != IRT_SIGNATURE || !ir->used || entries < ir->used)
+ 		return NULL;
+ 
+ 	size = sizeof(*ir) + ir->used * sizeof(ir->slots[0]);
 -- 
-An old man doll... just what I always wanted! - Clara
+2.34.1
 
