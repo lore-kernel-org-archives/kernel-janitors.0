@@ -2,94 +2,141 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FDDC7EE24
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 16:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3225EC77B75
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 18:12:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjEFQWO (ORCPT
+        id S229842AbjEFSMx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 May 2023 12:22:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40414 "EHLO
+        Sat, 6 May 2023 14:12:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229655AbjEFQWM (ORCPT
+        with ESMTP id S229692AbjEFSMv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 May 2023 12:22:12 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9F283FA
-        for <kernel-janitors@vger.kernel.org>; Sat,  6 May 2023 09:22:10 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id vKfgpvoXUU7B5vKfgpeMVi; Sat, 06 May 2023 18:22:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1683390128;
-        bh=tQOt5gblo50yrL9JEVMTC1Kl+IqfyNk1DzG+I68m8IY=;
-        h=From:To:Cc:Subject:Date;
-        b=p94vS1C8N7HOUEeVIz25beGwN21Adr6ZEyGrZH1UiycC2XTuLJfojX0oAmsxnfUTG
-         K6Bn6vSB4JOcVBKwZvms6vjwwMB5tkSZO0oQBB30wqDI/KIZWuNYkq3lHSJVlfKWOW
-         QLgcKeEQ2HhdDzGIuuOQ3GB4He4KFEFb0PjUZq5rY6od5MLPQXJm2Xxr8IYh2EiDh+
-         wg02zCSDzpiJ8xnx0Nqo5XvFu7iXUGxMiqY8p0KP0GIX5LNljM4h6SWX2V88tH0YsG
-         CZdvRYpRcnyiWCRZmwo7Fky/mq9mv4fQWPxCpV7XpqompwmJQ1vbskmotOrahPl815
-         KaRIfIk+Rg2Eg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 06 May 2023 18:22:08 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH] dmaengine: mcf-edma: Use struct_size()
-Date:   Sat,  6 May 2023 18:22:06 +0200
-Message-Id: <97c2bb1c9b69d0739da3762a7752ae6582c4ad02.1683390112.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 6 May 2023 14:12:51 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2122.outbound.protection.outlook.com [40.107.94.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95DCC1941A;
+        Sat,  6 May 2023 11:12:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g3g8tIuM/9VFtJJgtVfJ3jMFiEdGmNZnPDVbGORUHnv7vURT+70aouP679zfUcfEM0OGTF9rxc8X28iI8ZghcGiRufSnfOYR6LwRAq7aJmHqC+eIXbOxVwhWAI9E2keAm8qqq1DJrrCpLSeH0SDjT29WKc2zHD+ZPZKZ2QR7B2zZrERpvTK6crtEDleMPHJ7sgFtCSLFTtPE7Y+PkUrBuHp+eTAFPZO3mA0Ip3+U8buAaH6BkIQuN/wU3sGKqpg+OABLK5zTcJIVvmvL7o58XOvGKjzH95t1yG2el0+RcHYRKBOaTEjcIhInTffYriM+u50AzORZXsIxouCs1dR3IA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vA8KRBKjbl6Q65bHVf8PNMOuVVY29AVdfuEeJAKOoY8=;
+ b=mR6L20+v2CiMQ98Xhumski4HWFggY0/f1WQdoESEeoOxlyrBe2YemRAddGKhtFtNDhHX4zOgSziU09lsmCjrwCCGeC2G+vGCpu2PzYHFjQ+Vfh+RTLoG4CEor8frWZOcHW56eYGDfpTkTCC5uFPm1st2ujnod7LGw0ZLfFROhyFQZtRPXaa7eLBchj+QZ4WyCEjC34HirzhA2OuGj1CqVTuKHBm5qPYHB4bZttrDqZHc5SAT69KnY15shOMcBaEB8HjR/FDiVmRkwvjEcMvghWcCdfnTArSqD9oLiQo9UiRUFJDyLT/uKoZKErKMqBSWAdQy2W/C37ZQv82BEeXKIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vA8KRBKjbl6Q65bHVf8PNMOuVVY29AVdfuEeJAKOoY8=;
+ b=URSKZTh/W3GykF17lGCnIw+GZ+57PpmotsQi8dHTYQ/yXs+IpAkOK1k448JzpoRMaGoFGdt8HtJ4bgOW++o+BeA/EY8ctzk3fT46d8PdY8wm1jHCk4j+2gmEB/M6h8H7LTHAZs6jERie7KxfvEeyfICmMjMZsY7A5OnHuLywN0c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by DM8PR13MB5126.namprd13.prod.outlook.com (2603:10b6:8:31::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.29; Sat, 6 May
+ 2023 18:12:46 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::f416:544d:18b7:bb34]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::f416:544d:18b7:bb34%5]) with mapi id 15.20.6363.029; Sat, 6 May 2023
+ 18:12:45 +0000
+Date:   Sat, 6 May 2023 20:12:38 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Pravin B Shelar <pshelar@ovn.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        dev@openvswitch.org
+Subject: Re: [PATCH net-next] net: openvswitch: Use struct_size()
+Message-ID: <ZFaYlnSJdMQXQ+VN@corigine.com>
+References: <e7746fbbd62371d286081d5266e88bbe8d3fe9f0.1683388991.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7746fbbd62371d286081d5266e88bbe8d3fe9f0.1683388991.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: AM0PR02CA0098.eurprd02.prod.outlook.com
+ (2603:10a6:208:154::39) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|DM8PR13MB5126:EE_
+X-MS-Office365-Filtering-Correlation-Id: 234781dc-77a6-44d1-eb7c-08db4e5d7da9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: NkBDCEk7e/8K9nSFLoo3sIFdqb0l3l7PY8dm/e5xzFkGNMbdaAHVfiz2rJS6gO8vlxEuEHtWzG7GNuet46lX+vXBHd5M2dBnAKofq+91wi0CFFeSVOjeFRmvT2QcqpaN6FsyTCW8pnoTXaNnWx6ySnhJNSxMS/3Oz1CJijC09plbjmNQ62XfYGZyJia7N84xuNjiEYG51qAJxKS7p5QdfROR6IopaUPRuJ9YRaGQMO0lrpsuCYFHBBRcCXOHnJBoBSNF9JTJX3RC6ibtEHGRCfdTCSR23ni2IxTOzqnH+nniTZ58AeImWq53CNkPtvl0agQ/oTNHlkfnSQjfJC5jpUsRDw31PcGpJd+0LfsoOGiMSE8bEJ+A3hM5mR4RFJrMPgRb1ZfJz/1zIkmH9O245ypAhI33W+T0QgK7tiDEiCdAU5K1bRD/mG+yMOIK72cTVXtaGyb5p0piUQ4Cd9WfDIiSFGB/26WeyLZ16FEzAWVBP1S3zVAjkDH5wt7LfxBMR8Pt2IEEeyWY4QHI3A+X/+s06dS/nt48LhlutuK8lAQWyjvbZE5JoufuvIBAnfc5b2zFgJ920/gm7WhfkkY65CdUaB/5cIOdJW64egaEIidCyENfHCHBA/uC48NiLb8t/4dYH3itMOOV7qXyHcCEQA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39840400004)(136003)(366004)(346002)(376002)(396003)(451199021)(7416002)(86362001)(8676002)(8936002)(966005)(6916009)(6486002)(66556008)(66946007)(66476007)(4326008)(5660300002)(36756003)(38100700002)(478600001)(83380400001)(2616005)(41300700001)(2906002)(4744005)(186003)(316002)(6512007)(6506007)(54906003)(66899021)(6666004)(44832011)(67856001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?p4Ln735i95yJMBrXqDWHq35LcQECnFA9z95Mnsf1252fClFEepu7uilIFXxx?=
+ =?us-ascii?Q?3ygZ83C0t9XfmirkAzP79dQkTMJba83ReKOd9SU4BD7Fu3R67Bhr6SWAW8H5?=
+ =?us-ascii?Q?jJN/G41cfOB3JPAV/5Pi2fw2a63mq7hYt9R0i46VCgD81HhOlhuiDfFIK23t?=
+ =?us-ascii?Q?3Fyie9KnRVHFL/XBKOgZ4TUCInzxu4c9XsuD6BHhPy3xiNOZ88QCgDZa40KK?=
+ =?us-ascii?Q?LCJgC3tCNxSlkXlB99EGuPf2/xjzJiVZic2gYBVSMdjzqipXwK94/rftrtL7?=
+ =?us-ascii?Q?XPcZrBEE/1KCo0um7jBXZmIMwXP6AflBp6VlRb0LWK7H5yn+iX6dR+s6L86C?=
+ =?us-ascii?Q?IHfN38P9LvJbj3Q1G2PSAhS3XIMJoEte6/TlFo3+OL0hAPwsmWk4OUG7g5Xm?=
+ =?us-ascii?Q?IkUsag0YrOWzbsFGIcUa+Oc5cF0iAGKJpER/WBvRA+wYyddyoyFFZkkV5xTC?=
+ =?us-ascii?Q?1ARQ0fcAoRpbZH5mRatRMVYwFA/6LPIrcuxT+gwd5Bp/SAfP/7faofXJY5ik?=
+ =?us-ascii?Q?Y5wMZaCb4nUZ4RRuqxr0uiVlpg6J22h1mly9Xz8cBTeBMm5OfqZcHK1QFmdV?=
+ =?us-ascii?Q?V++svkOAn1WmefGjibvltWm7ltGuLY3ndp4kZo02E/oXsUPITXyd/K7ymYWt?=
+ =?us-ascii?Q?7ePvxabe9irRZe9mizQlUFPy8nvhhOvlZCi8MDNEcetZwxGmio3R+M4XF71A?=
+ =?us-ascii?Q?grOwES2qGgiie6tR8yIoSN+nDWft4rBUt4IqUpI5xSPPl5k5ai4zhl1McoFg?=
+ =?us-ascii?Q?hdvzQajVk6d9hUDscuxgC66Sg0VCV3T7ZCdTcQ7K/RxbEgAYZoNP5UzFKpl+?=
+ =?us-ascii?Q?IKaIbxMAJ+b6hO3HgkJFBFKORK0MZDhz02qLuOsqEkvUAUc+hJvU6kYWsiqF?=
+ =?us-ascii?Q?4rSCi7gZwmGDs/TN7qaMqQTCB0rdvRTgtM78wuMOO+gGiOclE1xqpsGroIlE?=
+ =?us-ascii?Q?k8m/Hkp1F9Gvqtf1TED/9FJeZA2Byg5JKPgsYG92o8eJ37elFSMJBVCQAc6Q?=
+ =?us-ascii?Q?ExxVCE8RWz3ILjw3HQXbkM2YMcDcbZw7YjF8z0rXfZQVJZKnbVkMwksMzXnk?=
+ =?us-ascii?Q?5psSpxiGRqIwXvJgUSEZmhV2k5jZopRLR0V1lZ2SL7guQSELqhNrOHG3INVs?=
+ =?us-ascii?Q?cmiH7HbbNOtHXfE87nP7mDuQeaaBCjFM8ZTcth/wDy57SGDLvc/KHSbJtz2u?=
+ =?us-ascii?Q?16QtTbbvyaM0e//qcDEJbVzNo6vc71Hx7PBX6jaQZlRL8BYYPdJrZv1LMbEn?=
+ =?us-ascii?Q?eBgFfZuo/OUMaa4A9P2mZ/RDwOS9kveDNF1B+dzsnKiAcp+qSLjsqiKurUJW?=
+ =?us-ascii?Q?on9/o+2cY/X6Tz+R2x7qB2aN05Rp7VihazlQZNrGI9Jpqo0rdsd9XPQY6sZc?=
+ =?us-ascii?Q?JUmHqHGKajDF6RRjCWQW7NO1vq5ROKs0efUaYPY3z3hfz6+lGrCB0HOEMtvj?=
+ =?us-ascii?Q?3YC49j6bB27ZigzI1iGG2/7vofHPr1eZOZA2btSywRvSJ4zMz6P1l70wKZ8b?=
+ =?us-ascii?Q?aTvPDvSW5K89u/eNHfwxicHAVNOUwuNgx6w1sWYzYwbAfdi8YdhNnuOqxDYH?=
+ =?us-ascii?Q?F25jGjAqdU63AIlOU1xo2I9TSW69EBgqOtVYxIfjosPdDHMUzbWnYIEeXIDI?=
+ =?us-ascii?Q?oqouA8z7mIW6aukl5Ij5rT4Vez5MTNBEBi1tri7FGFvdDHAuE2uPbNddzNVm?=
+ =?us-ascii?Q?d6N33A=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 234781dc-77a6-44d1-eb7c-08db4e5d7da9
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2023 18:12:45.2224
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8eevlI2xSOzHFoqCEkCtH133Z6lTFtDBfKfjSBpIIt8PyIlESHfuk/rk8GVitIGptEi0z0GzQZK9AATU67E6Y/4mpnlzj7iUweCvmewXpi8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR13MB5126
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use struct_size() instead of hand writing it.
-This is less verbose and more informative.
+On Sat, May 06, 2023 at 06:04:16PM +0200, Christophe JAILLET wrote:
+> Use struct_size() instead of hand writing it.
+> This is less verbose and more informative.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> It will also help scripts when __counted_by macro will be added.
+> See [1].
+> 
+> [1]: https://lore.kernel.org/all/6453f739.170a0220.62695.7785@mx.google.com/
 
-'mcf_chan' is now unused and can be removed. In fact, it is shadowed by
-another variable in the 'for' loop below. Keep this one.
+This looks fine to me, but:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-It will also help scripts when __counted_by macro will be added.
-See [1].
+## Form letter - net-next-closed (text borrowed from others)
 
-[1]: https://lore.kernel.org/all/6453f739.170a0220.62695.7785@mx.google.com/
----
- drivers/dma/mcf-edma.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+The merge window for v6.3 has begun and therefore net-next is closed
+for new drivers, features, code refactoring and optimizations.
+We are currently accepting bug fixes only.
 
-diff --git a/drivers/dma/mcf-edma.c b/drivers/dma/mcf-edma.c
-index ebd8733f72ad..28304dd8763a 100644
---- a/drivers/dma/mcf-edma.c
-+++ b/drivers/dma/mcf-edma.c
-@@ -180,9 +180,8 @@ static int mcf_edma_probe(struct platform_device *pdev)
- {
- 	struct mcf_edma_platform_data *pdata;
- 	struct fsl_edma_engine *mcf_edma;
--	struct fsl_edma_chan *mcf_chan;
- 	struct edma_regs *regs;
--	int ret, i, len, chans;
-+	int ret, i, chans;
- 
- 	pdata = dev_get_platdata(&pdev->dev);
- 	if (!pdata) {
-@@ -191,8 +190,8 @@ static int mcf_edma_probe(struct platform_device *pdev)
- 	}
- 
- 	chans = pdata->dma_channels;
--	len = sizeof(*mcf_edma) + sizeof(*mcf_chan) * chans;
--	mcf_edma = devm_kzalloc(&pdev->dev, len, GFP_KERNEL);
-+	mcf_edma = devm_kzalloc(&pdev->dev, struct_size(mcf_edma, chans, chans),
-+				GFP_KERNEL);
- 	if (!mcf_edma)
- 		return -ENOMEM;
- 
--- 
-2.34.1
+Please repost when net-next reopens after May 8th.
+
+RFC patches sent for review only are obviously welcome at any time.
+
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
 
