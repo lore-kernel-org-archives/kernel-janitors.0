@@ -2,75 +2,147 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 638D0C77B75
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 00:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779F7C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 01:45:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbjEFA6E (ORCPT
+        id S232735AbjEFBpP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 20:58:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41854 "EHLO
+        Fri, 5 May 2023 21:45:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbjEFA6D (ORCPT
+        with ESMTP id S231936AbjEFBpN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 20:58:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4287B4EDC;
-        Fri,  5 May 2023 17:58:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CAA93641C4;
-        Sat,  6 May 2023 00:58:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38324C4339B;
-        Sat,  6 May 2023 00:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683334681;
-        bh=wgggxoVbNtlVdcXO0Ax3pj4nhil23DvQ1A9wlVlVeQ4=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=lpLzTM8/JnMtWyQ9X4e0qXZgoErI42AtbzP27YDrsCupD0WnySjgS8JrtF/xxMPFb
-         UWYx5lUvg+SsYvs8e+U0dgutu7lQdyxYUr6ZbOzqr7d39KQkOgLdZ1xlKPNzfWvJSI
-         kwlTVNN56MlGRo3oYxlA4/AWgTRnKBWiItZXZOFr0NKbiACvTzzhGKbrmDS1Cyhfdg
-         vKGw6Eo6o7LfDC1LVJfPFNOxxvQX7OyjRug/Y1xdFTK0ERq1+HYFaVbRq/Pxps/HAb
-         VLE8PWjmrCUnnM2HimoY9IBfOg75B8QgF8C3wdavteFk8kUftu1B8427mJGSIWAmqD
-         zIKPWvPquKXTg==
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-1928ec49077so2136459fac.0;
-        Fri, 05 May 2023 17:58:01 -0700 (PDT)
-X-Gm-Message-State: AC+VfDzixcgD0wKPVnrIPe317VMhIUJNsdKw8I0VFwW7k6wWS6ELsThw
-        YfWPKPcu8eR4wA9Uxylm8baErWQyYs0xdyzctX4=
-X-Google-Smtp-Source: ACHHUZ7zsJxfjNhg/nJ43uSvbg6FNLpbTm6V3Ns4Npc9MAawrTvPErrJDgr1LyRZ60bFZ5Ap5M8YiLUIauICA8NtBxk=
-X-Received: by 2002:a05:6870:4293:b0:18b:15cd:9b45 with SMTP id
- y19-20020a056870429300b0018b15cd9b45mr1693587oah.40.1683334680405; Fri, 05
- May 2023 17:58:00 -0700 (PDT)
+        Fri, 5 May 2023 21:45:13 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id CA0C249D4;
+        Fri,  5 May 2023 18:45:11 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id E76F8180104BD0;
+        Sat,  6 May 2023 09:44:55 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Baisong Zhong <zhongbaisong@huawei.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
+Subject: [PATCH]  media: dvb-usb: remove unnecessary (void*) conversions
+Date:   Sat,  6 May 2023 09:44:47 +0800
+Message-Id: <20230506014447.32746-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Received: by 2002:a8a:981:0:b0:4d3:d9bf:b562 with HTTP; Fri, 5 May 2023
- 17:57:59 -0700 (PDT)
-In-Reply-To: <20230418153607.3125704-1-colin.i.king@gmail.com>
-References: <20230418153607.3125704-1-colin.i.king@gmail.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Sat, 6 May 2023 09:57:59 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd93MfgCxX8it9OmrTBU7yS3phsu4nv++J=pRAKYzqGEYg@mail.gmail.com>
-Message-ID: <CAKYAXd93MfgCxX8it9OmrTBU7yS3phsu4nv++J=pRAKYzqGEYg@mail.gmail.com>
-Subject: Re: [PATCH] ntfs: remove redundant initialization to pointer cb_sb_start
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Anton Altaparmakov <anton@tuxera.com>,
-        linux-ntfs-dev@lists.sourceforge.net,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-2023-04-19 0:36 GMT+09:00, Colin Ian King <colin.i.king@gmail.com>:
-> The pointer cb_sb_start is being initialized with a value that is never
-> read, it is being re-assigned the same value later on when it is first
-> being used. The initialization is redundant and can be removed.
->
-> Cleans up clang scan build warning:
-> fs/ntfs/compress.c:164:6: warning: Value stored to 'cb_sb_start' during its
-> initialization is never read [deadcode.DeadStores]
->         u8 *cb_sb_start = cb;   /* Beginning of the current sb in the cb.
-> */
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
+No need cast (void*) to (struct az6027_device_state *) or
+(struct dw2102_state *).
+
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/media/usb/dvb-usb/az6027.c | 16 ++++++++--------
+ drivers/media/usb/dvb-usb/dw2102.c |  4 ++--
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/media/usb/dvb-usb/az6027.c b/drivers/media/usb/dvb-usb/az6027.c
+index 7d78ee09be5e..f7a6ab29e530 100644
+--- a/drivers/media/usb/dvb-usb/az6027.c
++++ b/drivers/media/usb/dvb-usb/az6027.c
+@@ -408,7 +408,7 @@ static int az6027_ci_read_attribute_mem(struct dvb_ca_en50221 *ca,
+ 					int address)
+ {
+ 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
+-	struct az6027_device_state *state = (struct az6027_device_state *)d->priv;
++	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret;
+ 	u8 req;
+@@ -481,7 +481,7 @@ static int az6027_ci_read_cam_control(struct dvb_ca_en50221 *ca,
+ 				      u8 address)
+ {
+ 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
+-	struct az6027_device_state *state = (struct az6027_device_state *)d->priv;
++	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret;
+ 	u8 req;
+@@ -527,7 +527,7 @@ static int az6027_ci_write_cam_control(struct dvb_ca_en50221 *ca,
+ 				       u8 value)
+ {
+ 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
+-	struct az6027_device_state *state = (struct az6027_device_state *)d->priv;
++	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret;
+ 	u8 req;
+@@ -589,7 +589,7 @@ static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
+ static int az6027_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
+ {
+ 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
+-	struct az6027_device_state *state = (struct az6027_device_state *)d->priv;
++	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret, i;
+ 	u8 req;
+@@ -645,7 +645,7 @@ static int az6027_ci_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
+ static int az6027_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+ {
+ 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
+-	struct az6027_device_state *state = (struct az6027_device_state *)d->priv;
++	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret;
+ 	u8 req;
+@@ -674,7 +674,7 @@ static int az6027_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+ static int az6027_ci_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
+ {
+ 	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
+-	struct az6027_device_state *state = (struct az6027_device_state *)d->priv;
++	struct az6027_device_state *state = d->priv;
+ 	int ret;
+ 	u8 req;
+ 	u16 value;
+@@ -719,7 +719,7 @@ static void az6027_ci_uninit(struct dvb_usb_device *d)
+ 	if (NULL == d)
+ 		return;
+ 
+-	state = (struct az6027_device_state *)d->priv;
++	state = d->priv;
+ 	if (NULL == state)
+ 		return;
+ 
+@@ -735,7 +735,7 @@ static void az6027_ci_uninit(struct dvb_usb_device *d)
+ static int az6027_ci_init(struct dvb_usb_adapter *a)
+ {
+ 	struct dvb_usb_device *d = a->dev;
+-	struct az6027_device_state *state = (struct az6027_device_state *)d->priv;
++	struct az6027_device_state *state = d->priv;
+ 	int ret;
+ 
+ 	deb_info("%s", __func__);
+diff --git a/drivers/media/usb/dvb-usb/dw2102.c b/drivers/media/usb/dvb-usb/dw2102.c
+index 0ca764282c76..d34d53c651c2 100644
+--- a/drivers/media/usb/dvb-usb/dw2102.c
++++ b/drivers/media/usb/dvb-usb/dw2102.c
+@@ -903,7 +903,7 @@ static int su3000_streaming_ctrl(struct dvb_usb_adapter *adap, int onoff)
+ 
+ static int su3000_power_ctrl(struct dvb_usb_device *d, int i)
+ {
+-	struct dw2102_state *state = (struct dw2102_state *)d->priv;
++	struct dw2102_state *state = d->priv;
+ 	int ret = 0;
+ 
+ 	info("%s: %d, initialized %d", __func__, i, state->initialized);
+@@ -2576,7 +2576,7 @@ static int dw2102_probe(struct usb_interface *intf,
+ static void dw2102_disconnect(struct usb_interface *intf)
+ {
+ 	struct dvb_usb_device *d = usb_get_intfdata(intf);
+-	struct dw2102_state *st = (struct dw2102_state *)d->priv;
++	struct dw2102_state *st = d->priv;
+ 	struct i2c_client *client;
+ 
+ 	/* remove I2C client for tuner */
+-- 
+2.30.2
+
