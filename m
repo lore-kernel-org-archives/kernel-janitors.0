@@ -2,102 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6009CC77B7D
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 May 2023 22:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 326D9C77B75
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 00:13:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233486AbjEEWje (ORCPT
+        id S231694AbjEFAN4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 18:39:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49570 "EHLO
+        Fri, 5 May 2023 20:13:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233501AbjEEWjX (ORCPT
+        with ESMTP id S229990AbjEFANv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 18:39:23 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125835FE4;
-        Fri,  5 May 2023 15:39:22 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-965c3f9af2aso317952766b.0;
-        Fri, 05 May 2023 15:39:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683326360; x=1685918360;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jt099z2QMJcxc7Q+biY7Y79PMQomakQC7INI8LnvLJ8=;
-        b=NYiYTCRU3YD6QhKlE6q0yojg8/gSj0qhx6mrN5Ad4oFYRFoVYTk/Lbk+lMysGbXMm7
-         NO0NqEKLrM33ZHgprpUVLjWD0MoEe9UWkyuB/wNRdHluXgcWBmX4iUZSqWaDP/E5vXZq
-         sXOK5a+L9J1FXZoMLkuiQC2IyUbkIffNQvvK8pUbY4bDsyi9HKefbpUHBFECVZ6XO5Z5
-         z4u6iNyzbns+diH9/0+8tORNBAA+SEjvDc+WoomRy/VwSh8HfSy896QPcdPSvKL755fy
-         x6MqE8YM2bCIVqJbxyZuyOCRVf8gGFWJViqMYD4nvlkZzTwPhH7CJezMUIUtEVe2NqS0
-         tNDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683326360; x=1685918360;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jt099z2QMJcxc7Q+biY7Y79PMQomakQC7INI8LnvLJ8=;
-        b=E6pKG0AHn8/rvv0NabVzMcDOLMBgZJaLLov3ze+c7SkCXVtsOvCP9borKvJFQP/qo5
-         efHzPlKJ+XlY8qsw3PmSyGzbYkPDFQuMoKya9jkoyaOUtcW8e4fxOyQGMtoedmgpIUGA
-         RAlnWTzhz3qkfwu5pug3meeTgjPUkLpCVx7lXGFSpZg40RKGpppjXa/z08DtZxk4R6AV
-         9zqGhs6hAPJteTrSg0Byfzwqtp87qJpqAtFcpjLSJWEdtjY8SL6vt6UcWh2aiJsfkS71
-         /EKZI99XRN45zEFS1iD5N8VwW81YWFfB1AGUzLgBt0yWjDJG/fQIgvxOGItvfA0ULQRV
-         w1YQ==
-X-Gm-Message-State: AC+VfDzouivhIU8b7KZ2cIUY6H8RxCXJ3dJ2b37bw5VaThxa15Fvi2iD
-        4OKChAbovUnaQeOuKKMuHKU=
-X-Google-Smtp-Source: ACHHUZ6E32pgWuQFXc0VVJd+m1ZUe7uD3fHBny+wFxkhGjxN3a64ihm7hkYU2AtQlCC1JEzh3zLpSQ==
-X-Received: by 2002:a17:907:2d12:b0:965:cf39:ed87 with SMTP id gs18-20020a1709072d1200b00965cf39ed87mr2910650ejc.6.1683326360134;
-        Fri, 05 May 2023 15:39:20 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:cc49:1b8b:99c2:aef7])
-        by smtp.gmail.com with ESMTPSA id hf27-20020a1709072c5b00b00965ddf2e221sm1411650ejc.93.2023.05.05.15.39.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 May 2023 15:39:19 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] s390: remove the unneeded select GCC12_NO_ARRAY_BOUNDS
-Date:   Sat,  6 May 2023 00:39:09 +0200
-Message-Id: <20230505223909.29150-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 5 May 2023 20:13:51 -0400
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A58E56E86;
+        Fri,  5 May 2023 17:13:50 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 6E1B232009C0;
+        Fri,  5 May 2023 20:13:49 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 05 May 2023 20:13:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1683332029; x=1683418429; bh=gDkdPLFGHEgwB
+        a8neDNDtTbJzRE+q/3RtYLzD+Pf+P8=; b=Q8XG2AWQgyCMi09ZyMm+KsQ0hhprv
+        mpooklDQKeung+QWuBSAj/oCp/IpivM2K7XnXh3Qvn8lhOiJOYAxClS/rU1xwfwl
+        9dGWxnIg16hEvLdtmI/FetfUGGPZpda4XCQrrmaOZPxJfuDg9NuFQq3OY3pYceFb
+        nSdkV0WKCNuVg1u7V5B8bZok6hBXsOVjmSxeze5cGpq0tN+o78IZzjqnxwqf04uy
+        8EBcx3yLS09+94+6vwFIdokFBhtS+BY3E4hh2mxo7dOWvNWUOpIkEyXYg4VeQ46X
+        auuC21N7RCmqsHgckHBJyd0kMyFOJaOhquTZCyFSFOXRUdQR9l9YL9Sjw==
+X-ME-Sender: <xms:vJtVZBVPnIqEOgCqg_3spi5O9XaYxlINvSVNPFF-6wMKYr8Tw6NYvQ>
+    <xme:vJtVZBmm7NgizshS73-0dCWFNwuHp4CDeHi5diuKl0O-TnpNZWTzKGPczmba8BN6G
+    MGl9-c1RHZf7B1UFCY>
+X-ME-Received: <xmr:vJtVZNaGab57ZUrcx3TfzKo09FoQAHfp3DD3zs27ubhW4Gei8IZbs_IOq3mhtMYPDq5FYqzPW1yyGuMo1U0xnqZ_K_yr-n0wzgE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeffedgfedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcu
+    vfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrg
+    htthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeu
+    heeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hfthhhrghinheslhhinhhugidqmheikehkrdhorhhg
+X-ME-Proxy: <xmx:vJtVZEUZPgiEpg2x6w3Azv88oWdLHzeSPodKg674KG6mwKHRCi23mA>
+    <xmx:vJtVZLmEBKuMujz-5ZtXZOhtAcSnvFTfGlAeINZX6f1jUJCmS2fvdw>
+    <xmx:vJtVZBdVnSljclkUTxiHxNm_nvOyJbxx-vRCuoAgJM7aubXmZK3AKQ>
+    <xmx:vZtVZN7Qf7xlD-4-tjP1jkpQMKvw0AMBmVdG21SE5EYlSVA1Qa-i4w>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 5 May 2023 20:13:45 -0400 (EDT)
+Date:   Sat, 6 May 2023 10:17:44 +1000 (AEST)
+From:   Finn Thain <fthain@linux-m68k.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
+        Linux SCSI <linux-scsi@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
+        Oliver Neukum <oliver@neukum.org>,
+        Ali Akcaagac <aliakc@web.de>,
+        Jamie Lenehan <lenehan@twibble.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH 3/3] Documentation: scsi: dc395x: Remove reference to
+ 2.4 driver
+In-Reply-To: <87pm7enbpo.fsf@meer.lwn.net>
+Message-ID: <3ad2962e-ff1f-4fe6-76e9-21c3936578a9@linux-m68k.org>
+References: <20230505082704.16228-1-bagasdotme@gmail.com> <20230505082704.16228-4-bagasdotme@gmail.com> <d919a2e1-5749-13f8-7867-1f17277190f4@linux-m68k.org> <87pm7enbpo.fsf@meer.lwn.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 0da6e5fd6c37 ("gcc: disable '-Warray-bounds' for gcc-13 too") makes
-config GCC11_NO_ARRAY_BOUNDS to be for disabling -Warray-bounds in any gcc
-version 11 and upwards, and with that, removes the GCC12_NO_ARRAY_BOUNDS
-config as it is now covered by the semantics of GCC11_NO_ARRAY_BOUNDS.
+On Fri, 5 May 2023, Jonathan Corbet wrote:
 
-As GCC11_NO_ARRAY_BOUNDS is yes by default, there is no need for the s390
-architecture to explicitly select GCC11_NO_ARRAY_BOUNDS. Hence, the select
-GCC12_NO_ARRAY_BOUNDS in arch/s390/Kconfig can simply be dropped.
+> 
+> Most of the 2.4 code has indeed been deleted *from current kernels*. 
 
-Remove the unneeded "select GCC12_NO_ARRAY_BOUNDS".
+Is it okay to delete old code from -stable kernels?
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Linus, as this is just a quick clean-up improvement to your commit
-"gcc: disable '-Warray-bounds' for gcc-13 too", this can probably just
-go directly to your tree.
+> It's not clear to me why 2.4 documentation should be immune to that same 
+> process.
 
- arch/s390/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+My message argued for removing 2.5 documentation and retaining the link 
+that gives credit to prior contributions.
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index beb62f744c61..db20c1589a98 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -133,7 +133,6 @@ config S390
- 	select DYNAMIC_FTRACE if FUNCTION_TRACER
- 	select FUNCTION_ALIGNMENT_8B if CC_IS_GCC
- 	select FUNCTION_ALIGNMENT_16B if !CC_IS_GCC
--	select GCC12_NO_ARRAY_BOUNDS
- 	select GENERIC_ALLOCATOR
- 	select GENERIC_CPU_AUTOPROBE
- 	select GENERIC_CPU_VULNERABILITIES
--- 
-2.17.1
+> If we keep every 20-year-old reference, our docs will be even cruftier 
+> and less useful than they are now.
+> 
 
+Since you're obviously being facetious, it's tempting to respond that 
+"churn is good because it reduces the average age of the code". But that 
+kind of exchange gets us nowhere.
+
+I'd be curious to see an age histogram of the commentary in the source 
+code in the mainline kernel repository (or any other long-lived project). 
+I wonder if that has ever been measured.
