@@ -2,101 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 326D9C77B75
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 00:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 638D0C77B75
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 00:58:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231694AbjEFAN4 (ORCPT
+        id S229942AbjEFA6E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 May 2023 20:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55958 "EHLO
+        Fri, 5 May 2023 20:58:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229990AbjEFANv (ORCPT
+        with ESMTP id S229668AbjEFA6D (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 May 2023 20:13:51 -0400
-Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A58E56E86;
-        Fri,  5 May 2023 17:13:50 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 6E1B232009C0;
-        Fri,  5 May 2023 20:13:49 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 05 May 2023 20:13:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1683332029; x=1683418429; bh=gDkdPLFGHEgwB
-        a8neDNDtTbJzRE+q/3RtYLzD+Pf+P8=; b=Q8XG2AWQgyCMi09ZyMm+KsQ0hhprv
-        mpooklDQKeung+QWuBSAj/oCp/IpivM2K7XnXh3Qvn8lhOiJOYAxClS/rU1xwfwl
-        9dGWxnIg16hEvLdtmI/FetfUGGPZpda4XCQrrmaOZPxJfuDg9NuFQq3OY3pYceFb
-        nSdkV0WKCNuVg1u7V5B8bZok6hBXsOVjmSxeze5cGpq0tN+o78IZzjqnxwqf04uy
-        8EBcx3yLS09+94+6vwFIdokFBhtS+BY3E4hh2mxo7dOWvNWUOpIkEyXYg4VeQ46X
-        auuC21N7RCmqsHgckHBJyd0kMyFOJaOhquTZCyFSFOXRUdQR9l9YL9Sjw==
-X-ME-Sender: <xms:vJtVZBVPnIqEOgCqg_3spi5O9XaYxlINvSVNPFF-6wMKYr8Tw6NYvQ>
-    <xme:vJtVZBmm7NgizshS73-0dCWFNwuHp4CDeHi5diuKl0O-TnpNZWTzKGPczmba8BN6G
-    MGl9-c1RHZf7B1UFCY>
-X-ME-Received: <xmr:vJtVZNaGab57ZUrcx3TfzKo09FoQAHfp3DD3zs27ubhW4Gei8IZbs_IOq3mhtMYPDq5FYqzPW1yyGuMo1U0xnqZ_K_yr-n0wzgE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeffedgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcu
-    vfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrg
-    htthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeu
-    heeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hfthhhrghinheslhhinhhugidqmheikehkrdhorhhg
-X-ME-Proxy: <xmx:vJtVZEUZPgiEpg2x6w3Azv88oWdLHzeSPodKg674KG6mwKHRCi23mA>
-    <xmx:vJtVZLmEBKuMujz-5ZtXZOhtAcSnvFTfGlAeINZX6f1jUJCmS2fvdw>
-    <xmx:vJtVZBdVnSljclkUTxiHxNm_nvOyJbxx-vRCuoAgJM7aubXmZK3AKQ>
-    <xmx:vZtVZN7Qf7xlD-4-tjP1jkpQMKvw0AMBmVdG21SE5EYlSVA1Qa-i4w>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 May 2023 20:13:45 -0400 (EDT)
-Date:   Sat, 6 May 2023 10:17:44 +1000 (AEST)
-From:   Finn Thain <fthain@linux-m68k.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
-        Linux SCSI <linux-scsi@vger.kernel.org>,
-        Linux Documentation <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
-        Oliver Neukum <oliver@neukum.org>,
-        Ali Akcaagac <aliakc@web.de>,
-        Jamie Lenehan <lenehan@twibble.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH 3/3] Documentation: scsi: dc395x: Remove reference to
- 2.4 driver
-In-Reply-To: <87pm7enbpo.fsf@meer.lwn.net>
-Message-ID: <3ad2962e-ff1f-4fe6-76e9-21c3936578a9@linux-m68k.org>
-References: <20230505082704.16228-1-bagasdotme@gmail.com> <20230505082704.16228-4-bagasdotme@gmail.com> <d919a2e1-5749-13f8-7867-1f17277190f4@linux-m68k.org> <87pm7enbpo.fsf@meer.lwn.net>
+        Fri, 5 May 2023 20:58:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4287B4EDC;
+        Fri,  5 May 2023 17:58:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CAA93641C4;
+        Sat,  6 May 2023 00:58:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38324C4339B;
+        Sat,  6 May 2023 00:58:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683334681;
+        bh=wgggxoVbNtlVdcXO0Ax3pj4nhil23DvQ1A9wlVlVeQ4=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=lpLzTM8/JnMtWyQ9X4e0qXZgoErI42AtbzP27YDrsCupD0WnySjgS8JrtF/xxMPFb
+         UWYx5lUvg+SsYvs8e+U0dgutu7lQdyxYUr6ZbOzqr7d39KQkOgLdZ1xlKPNzfWvJSI
+         kwlTVNN56MlGRo3oYxlA4/AWgTRnKBWiItZXZOFr0NKbiACvTzzhGKbrmDS1Cyhfdg
+         vKGw6Eo6o7LfDC1LVJfPFNOxxvQX7OyjRug/Y1xdFTK0ERq1+HYFaVbRq/Pxps/HAb
+         VLE8PWjmrCUnnM2HimoY9IBfOg75B8QgF8C3wdavteFk8kUftu1B8427mJGSIWAmqD
+         zIKPWvPquKXTg==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-1928ec49077so2136459fac.0;
+        Fri, 05 May 2023 17:58:01 -0700 (PDT)
+X-Gm-Message-State: AC+VfDzixcgD0wKPVnrIPe317VMhIUJNsdKw8I0VFwW7k6wWS6ELsThw
+        YfWPKPcu8eR4wA9Uxylm8baErWQyYs0xdyzctX4=
+X-Google-Smtp-Source: ACHHUZ7zsJxfjNhg/nJ43uSvbg6FNLpbTm6V3Ns4Npc9MAawrTvPErrJDgr1LyRZ60bFZ5Ap5M8YiLUIauICA8NtBxk=
+X-Received: by 2002:a05:6870:4293:b0:18b:15cd:9b45 with SMTP id
+ y19-20020a056870429300b0018b15cd9b45mr1693587oah.40.1683334680405; Fri, 05
+ May 2023 17:58:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: by 2002:a8a:981:0:b0:4d3:d9bf:b562 with HTTP; Fri, 5 May 2023
+ 17:57:59 -0700 (PDT)
+In-Reply-To: <20230418153607.3125704-1-colin.i.king@gmail.com>
+References: <20230418153607.3125704-1-colin.i.king@gmail.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Sat, 6 May 2023 09:57:59 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd93MfgCxX8it9OmrTBU7yS3phsu4nv++J=pRAKYzqGEYg@mail.gmail.com>
+Message-ID: <CAKYAXd93MfgCxX8it9OmrTBU7yS3phsu4nv++J=pRAKYzqGEYg@mail.gmail.com>
+Subject: Re: [PATCH] ntfs: remove redundant initialization to pointer cb_sb_start
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Anton Altaparmakov <anton@tuxera.com>,
+        linux-ntfs-dev@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 5 May 2023, Jonathan Corbet wrote:
-
-> 
-> Most of the 2.4 code has indeed been deleted *from current kernels*. 
-
-Is it okay to delete old code from -stable kernels?
-
-> It's not clear to me why 2.4 documentation should be immune to that same 
-> process.
-
-My message argued for removing 2.5 documentation and retaining the link 
-that gives credit to prior contributions.
-
-> If we keep every 20-year-old reference, our docs will be even cruftier 
-> and less useful than they are now.
-> 
-
-Since you're obviously being facetious, it's tempting to respond that 
-"churn is good because it reduces the average age of the code". But that 
-kind of exchange gets us nowhere.
-
-I'd be curious to see an age histogram of the commentary in the source 
-code in the mainline kernel repository (or any other long-lived project). 
-I wonder if that has ever been measured.
+2023-04-19 0:36 GMT+09:00, Colin Ian King <colin.i.king@gmail.com>:
+> The pointer cb_sb_start is being initialized with a value that is never
+> read, it is being re-assigned the same value later on when it is first
+> being used. The initialization is redundant and can be removed.
+>
+> Cleans up clang scan build warning:
+> fs/ntfs/compress.c:164:6: warning: Value stored to 'cb_sb_start' during its
+> initialization is never read [deadcode.DeadStores]
+>         u8 *cb_sb_start = cb;   /* Beginning of the current sb in the cb.
+> */
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
