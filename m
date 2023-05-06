@@ -2,141 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3225EC77B75
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 18:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 137F9C77B73
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 May 2023 21:02:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbjEFSMx (ORCPT
+        id S229670AbjEFVCK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 May 2023 14:12:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32820 "EHLO
+        Sat, 6 May 2023 17:02:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbjEFSMv (ORCPT
+        with ESMTP id S229446AbjEFVCJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 May 2023 14:12:51 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2122.outbound.protection.outlook.com [40.107.94.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95DCC1941A;
-        Sat,  6 May 2023 11:12:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g3g8tIuM/9VFtJJgtVfJ3jMFiEdGmNZnPDVbGORUHnv7vURT+70aouP679zfUcfEM0OGTF9rxc8X28iI8ZghcGiRufSnfOYR6LwRAq7aJmHqC+eIXbOxVwhWAI9E2keAm8qqq1DJrrCpLSeH0SDjT29WKc2zHD+ZPZKZ2QR7B2zZrERpvTK6crtEDleMPHJ7sgFtCSLFTtPE7Y+PkUrBuHp+eTAFPZO3mA0Ip3+U8buAaH6BkIQuN/wU3sGKqpg+OABLK5zTcJIVvmvL7o58XOvGKjzH95t1yG2el0+RcHYRKBOaTEjcIhInTffYriM+u50AzORZXsIxouCs1dR3IA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vA8KRBKjbl6Q65bHVf8PNMOuVVY29AVdfuEeJAKOoY8=;
- b=mR6L20+v2CiMQ98Xhumski4HWFggY0/f1WQdoESEeoOxlyrBe2YemRAddGKhtFtNDhHX4zOgSziU09lsmCjrwCCGeC2G+vGCpu2PzYHFjQ+Vfh+RTLoG4CEor8frWZOcHW56eYGDfpTkTCC5uFPm1st2ujnod7LGw0ZLfFROhyFQZtRPXaa7eLBchj+QZ4WyCEjC34HirzhA2OuGj1CqVTuKHBm5qPYHB4bZttrDqZHc5SAT69KnY15shOMcBaEB8HjR/FDiVmRkwvjEcMvghWcCdfnTArSqD9oLiQo9UiRUFJDyLT/uKoZKErKMqBSWAdQy2W/C37ZQv82BEeXKIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vA8KRBKjbl6Q65bHVf8PNMOuVVY29AVdfuEeJAKOoY8=;
- b=URSKZTh/W3GykF17lGCnIw+GZ+57PpmotsQi8dHTYQ/yXs+IpAkOK1k448JzpoRMaGoFGdt8HtJ4bgOW++o+BeA/EY8ctzk3fT46d8PdY8wm1jHCk4j+2gmEB/M6h8H7LTHAZs6jERie7KxfvEeyfICmMjMZsY7A5OnHuLywN0c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by DM8PR13MB5126.namprd13.prod.outlook.com (2603:10b6:8:31::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.29; Sat, 6 May
- 2023 18:12:46 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34%5]) with mapi id 15.20.6363.029; Sat, 6 May 2023
- 18:12:45 +0000
-Date:   Sat, 6 May 2023 20:12:38 +0200
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        dev@openvswitch.org
-Subject: Re: [PATCH net-next] net: openvswitch: Use struct_size()
-Message-ID: <ZFaYlnSJdMQXQ+VN@corigine.com>
-References: <e7746fbbd62371d286081d5266e88bbe8d3fe9f0.1683388991.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7746fbbd62371d286081d5266e88bbe8d3fe9f0.1683388991.git.christophe.jaillet@wanadoo.fr>
-X-ClientProxiedBy: AM0PR02CA0098.eurprd02.prod.outlook.com
- (2603:10a6:208:154::39) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        Sat, 6 May 2023 17:02:09 -0400
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18FF840C7;
+        Sat,  6 May 2023 14:02:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+        t=1683406910; i=aliakc@web.de;
+        bh=Ayt8xy4rT0Xw3V4pKS4yIFdBYB0BoER4mhhWIMTOCXM=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=b5xncVfT0Dbs8YWIV3mHnvLtm7ah/95MtTWaKkisXTFgXwxslfJGAjFlnz6jZJ8bU
+         9Dwx2Y7D6cOanxmcub5dpvxKzBHdQtjOrp8NoZOyIzf+PMr+cYUhwTMe76v/Glbmqh
+         //W+TRgu9skF+Sc6j+8g5A6AWd8KSLfqrG6RbtYCAeE5viSuEAeB1OXKmhhJ5sAiVk
+         EBycpl9i9cD7GHxywdBeulkwsVuG52SEX925jg0rdJEsn0Wis1h068sr+sC6d1YvjW
+         BkX1TYsWI/P5EZnOQEy8NxBoeXmhQQwm/KWWhhaMWP7H3Tng/6Qy+pRe7NItP+1rIc
+         rgXvGA3bFBJbw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from ulixys ([95.91.196.23]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnG2Q-1qcCYz3GQm-00jLEF; Sat, 06
+ May 2023 23:01:49 +0200
+Date:   Sat, 6 May 2023 23:01:43 +0200
+From:   Ali Akcaagac <aliakc@web.de>
+To:     Bagas Sanjaya <bagasdotme@gmail.com>
+Cc:     Linux SCSI <linux-scsi@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
+        Oliver Neukum <oliver@neukum.org>,
+        Jamie Lenehan <lenehan@twibble.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH 1/3] MAINTAINERS: Drop DC395x list and site
+Message-ID: <20230506230143.13969f82@ulixys>
+In-Reply-To: <20230505082704.16228-2-bagasdotme@gmail.com>
+References: <20230505082704.16228-1-bagasdotme@gmail.com>
+        <20230505082704.16228-2-bagasdotme@gmail.com>
+X-Mailer: Claws Mail 4.1.1git999 (GTK 3.24.37; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|DM8PR13MB5126:EE_
-X-MS-Office365-Filtering-Correlation-Id: 234781dc-77a6-44d1-eb7c-08db4e5d7da9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NkBDCEk7e/8K9nSFLoo3sIFdqb0l3l7PY8dm/e5xzFkGNMbdaAHVfiz2rJS6gO8vlxEuEHtWzG7GNuet46lX+vXBHd5M2dBnAKofq+91wi0CFFeSVOjeFRmvT2QcqpaN6FsyTCW8pnoTXaNnWx6ySnhJNSxMS/3Oz1CJijC09plbjmNQ62XfYGZyJia7N84xuNjiEYG51qAJxKS7p5QdfROR6IopaUPRuJ9YRaGQMO0lrpsuCYFHBBRcCXOHnJBoBSNF9JTJX3RC6ibtEHGRCfdTCSR23ni2IxTOzqnH+nniTZ58AeImWq53CNkPtvl0agQ/oTNHlkfnSQjfJC5jpUsRDw31PcGpJd+0LfsoOGiMSE8bEJ+A3hM5mR4RFJrMPgRb1ZfJz/1zIkmH9O245ypAhI33W+T0QgK7tiDEiCdAU5K1bRD/mG+yMOIK72cTVXtaGyb5p0piUQ4Cd9WfDIiSFGB/26WeyLZ16FEzAWVBP1S3zVAjkDH5wt7LfxBMR8Pt2IEEeyWY4QHI3A+X/+s06dS/nt48LhlutuK8lAQWyjvbZE5JoufuvIBAnfc5b2zFgJ920/gm7WhfkkY65CdUaB/5cIOdJW64egaEIidCyENfHCHBA/uC48NiLb8t/4dYH3itMOOV7qXyHcCEQA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39840400004)(136003)(366004)(346002)(376002)(396003)(451199021)(7416002)(86362001)(8676002)(8936002)(966005)(6916009)(6486002)(66556008)(66946007)(66476007)(4326008)(5660300002)(36756003)(38100700002)(478600001)(83380400001)(2616005)(41300700001)(2906002)(4744005)(186003)(316002)(6512007)(6506007)(54906003)(66899021)(6666004)(44832011)(67856001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?p4Ln735i95yJMBrXqDWHq35LcQECnFA9z95Mnsf1252fClFEepu7uilIFXxx?=
- =?us-ascii?Q?3ygZ83C0t9XfmirkAzP79dQkTMJba83ReKOd9SU4BD7Fu3R67Bhr6SWAW8H5?=
- =?us-ascii?Q?jJN/G41cfOB3JPAV/5Pi2fw2a63mq7hYt9R0i46VCgD81HhOlhuiDfFIK23t?=
- =?us-ascii?Q?3Fyie9KnRVHFL/XBKOgZ4TUCInzxu4c9XsuD6BHhPy3xiNOZ88QCgDZa40KK?=
- =?us-ascii?Q?LCJgC3tCNxSlkXlB99EGuPf2/xjzJiVZic2gYBVSMdjzqipXwK94/rftrtL7?=
- =?us-ascii?Q?XPcZrBEE/1KCo0um7jBXZmIMwXP6AflBp6VlRb0LWK7H5yn+iX6dR+s6L86C?=
- =?us-ascii?Q?IHfN38P9LvJbj3Q1G2PSAhS3XIMJoEte6/TlFo3+OL0hAPwsmWk4OUG7g5Xm?=
- =?us-ascii?Q?IkUsag0YrOWzbsFGIcUa+Oc5cF0iAGKJpER/WBvRA+wYyddyoyFFZkkV5xTC?=
- =?us-ascii?Q?1ARQ0fcAoRpbZH5mRatRMVYwFA/6LPIrcuxT+gwd5Bp/SAfP/7faofXJY5ik?=
- =?us-ascii?Q?Y5wMZaCb4nUZ4RRuqxr0uiVlpg6J22h1mly9Xz8cBTeBMm5OfqZcHK1QFmdV?=
- =?us-ascii?Q?V++svkOAn1WmefGjibvltWm7ltGuLY3ndp4kZo02E/oXsUPITXyd/K7ymYWt?=
- =?us-ascii?Q?7ePvxabe9irRZe9mizQlUFPy8nvhhOvlZCi8MDNEcetZwxGmio3R+M4XF71A?=
- =?us-ascii?Q?grOwES2qGgiie6tR8yIoSN+nDWft4rBUt4IqUpI5xSPPl5k5ai4zhl1McoFg?=
- =?us-ascii?Q?hdvzQajVk6d9hUDscuxgC66Sg0VCV3T7ZCdTcQ7K/RxbEgAYZoNP5UzFKpl+?=
- =?us-ascii?Q?IKaIbxMAJ+b6hO3HgkJFBFKORK0MZDhz02qLuOsqEkvUAUc+hJvU6kYWsiqF?=
- =?us-ascii?Q?4rSCi7gZwmGDs/TN7qaMqQTCB0rdvRTgtM78wuMOO+gGiOclE1xqpsGroIlE?=
- =?us-ascii?Q?k8m/Hkp1F9Gvqtf1TED/9FJeZA2Byg5JKPgsYG92o8eJ37elFSMJBVCQAc6Q?=
- =?us-ascii?Q?ExxVCE8RWz3ILjw3HQXbkM2YMcDcbZw7YjF8z0rXfZQVJZKnbVkMwksMzXnk?=
- =?us-ascii?Q?5psSpxiGRqIwXvJgUSEZmhV2k5jZopRLR0V1lZ2SL7guQSELqhNrOHG3INVs?=
- =?us-ascii?Q?cmiH7HbbNOtHXfE87nP7mDuQeaaBCjFM8ZTcth/wDy57SGDLvc/KHSbJtz2u?=
- =?us-ascii?Q?16QtTbbvyaM0e//qcDEJbVzNo6vc71Hx7PBX6jaQZlRL8BYYPdJrZv1LMbEn?=
- =?us-ascii?Q?eBgFfZuo/OUMaa4A9P2mZ/RDwOS9kveDNF1B+dzsnKiAcp+qSLjsqiKurUJW?=
- =?us-ascii?Q?on9/o+2cY/X6Tz+R2x7qB2aN05Rp7VihazlQZNrGI9Jpqo0rdsd9XPQY6sZc?=
- =?us-ascii?Q?JUmHqHGKajDF6RRjCWQW7NO1vq5ROKs0efUaYPY3z3hfz6+lGrCB0HOEMtvj?=
- =?us-ascii?Q?3YC49j6bB27ZigzI1iGG2/7vofHPr1eZOZA2btSywRvSJ4zMz6P1l70wKZ8b?=
- =?us-ascii?Q?aTvPDvSW5K89u/eNHfwxicHAVNOUwuNgx6w1sWYzYwbAfdi8YdhNnuOqxDYH?=
- =?us-ascii?Q?F25jGjAqdU63AIlOU1xo2I9TSW69EBgqOtVYxIfjosPdDHMUzbWnYIEeXIDI?=
- =?us-ascii?Q?oqouA8z7mIW6aukl5Ij5rT4Vez5MTNBEBi1tri7FGFvdDHAuE2uPbNddzNVm?=
- =?us-ascii?Q?d6N33A=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 234781dc-77a6-44d1-eb7c-08db4e5d7da9
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2023 18:12:45.2224
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8eevlI2xSOzHFoqCEkCtH133Z6lTFtDBfKfjSBpIIt8PyIlESHfuk/rk8GVitIGptEi0z0GzQZK9AATU67E6Y/4mpnlzj7iUweCvmewXpi8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR13MB5126
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zVUr/Xdcx8CLnrXfPuLDZDbXaYHCkhB7LbwXolPronW+XQhEk00
+ 9CHgnUNzB+c7YCNwd8wSAJuUpDmNBLrUIYw8II5R+9ny7zCiveglY4vgXfen3DU3a2Z1lNL
+ fXDES2T5UU6DTYPZ34FNkpt2WwgJlHiohnK0a6csu1UXPeK4t2MtDDHmDUv2vmpGG1VYosF
+ pfgGgh/a1cgf5cUQMP1Qw==
+UI-OutboundReport: notjunk:1;M01:P0:ELLbd5n2A1I=;oCofWlLB3RZeKhK5BxIWjo5pjdR
+ EwM0neQEKTQHEVE7QdgUl13BdxB0ZU7ghrCBv7X/cP5w9z/50dFbxGPGrSqOa9I2bmbaWfmMb
+ Sdz03ifVxhh0u0HtEaz/v+9IkwGZBL4ETOruTrRzCEKsFnjVqyyCYUa3BkLegGqIprBip6/2C
+ BpAiAKYZIWZFT25YoT85YwgKO6Bxl5IdXmNiQYefGDF/tnN6PwxDaL8+FQzh80Gi5D+p1lQl1
+ lb12epzS0tm34VfFXnEff5pAda2s/pFOtRVndD38+1/Y2PGL9UMJPzwdojUyh+CWwsGLahIJd
+ +YXyEfUbLFVxUWDC2SuFAevmCbfYQRRuHG0EzA05H6K1+zIagG+H5U9JHc4E8lS6AKX0jl+Di
+ T9+/eBK7xPHtNPitazauWqf/KS1SRcPhyEEig0S8ovDkSTPoRIrjZA2DLRf32YXInSyblTBuZ
+ YvbMC/FCFrf6BANYGM5CJS3QOB72yxC7GTsZlS9r3qYqfwNaaC3ncRi2EtCEnj40aFxZJjzf6
+ D6OZQADOH3yGWlc4YlHxsyJIE0S/lij1smsMDSk4lFpPJ897RoQQToPREqll6JwH68e99gUUU
+ hGh0stY9gMqmNxV8T5zS/8a3K1bmTeHInRvkOmodBC7SLaTdzRMgW80pWD+OglYI6M1rP42PA
+ aSY9KuBaA9mb+SY4x6I42KKKeHDmW3SrHH7kC3GTtr1uvct2KoL6C89y9SloSoKJDY2h43mZP
+ q71UJLeIYa7J4E/937D4/kobyaVOcK+VXZE/X4vIRXIBD70H5E5vB7+TD2VQf2FMc0A3GAZJf
+ sXAxrnM91VbEkI4Q8mCvPO4Rz4ET7fpyKdOVa9wU+p9lqDO2R2Xzl1Sr8Oih1zPOWgMfm4SHK
+ KnnM+bzLcP8r1rPatjmINXheWMeSS26DuFNRSGzkvxzbq3BYDV1MyTVwWeJzFJzH7SBqEtE47
+ I6y3brvEEEJsrT/TW1XgTVrbdb0=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 06, 2023 at 06:04:16PM +0200, Christophe JAILLET wrote:
-> Use struct_size() instead of hand writing it.
-> This is less verbose and more informative.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Hi,
+
+the dc395x list has gone long long looooong ago from what I recall. It
+was set up during the transition phase from the 2.4.x Kernel to 2.5.x
+-> 2.6.x where a few people wanted to communicate the changes necessary
+to get that driver ported. I remember that it was around 2003 (more or
+less) and I sometimes still wonder whether the hardware still exists,
+still works or someone still uses it. It's funny to see that this kind
+of topic is cooking up 20 years later :)
+
+Regards
+
+Ali
+
+On Fri,  5 May 2023 15:27:02 +0700
+Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+
+> Emails to DC395x list bounce (550 error) and visiting the site returns
+> 404 page.
+>
+> Drop both twibble.org links, replacing the list with linux-scsi list.
+>
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 > ---
-> It will also help scripts when __counted_by macro will be added.
-> See [1].
-> 
-> [1]: https://lore.kernel.org/all/6453f739.170a0220.62695.7785@mx.google.com/
-
-This looks fine to me, but:
-
-## Form letter - net-next-closed (text borrowed from others)
-
-The merge window for v6.3 has begun and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations.
-We are currently accepting bug fixes only.
-
-Please repost when net-next reopens after May 8th.
-
-RFC patches sent for review only are obviously welcome at any time.
-
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+>  MAINTAINERS | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8d5bc223f3053b..35de3289a8af04 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5692,10 +5692,8 @@ DC395x SCSI driver
+>  M:	Oliver Neukum <oliver@neukum.org>
+>  M:	Ali Akcaagac <aliakc@web.de>
+>  M:	Jamie Lenehan <lenehan@twibble.org>
+> -L:	dc395x@twibble.org
+> +L:	linux-scsi@vger.kernel.org
+>  S:	Maintained
+> -W:	http://twibble.org/dist/dc395x/
+> -W:	http://lists.twibble.org/mailman/listinfo/dc395x/
+>  F:	Documentation/scsi/dc395x.rst
+>  F:	drivers/scsi/dc395x.*
+>
 
