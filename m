@@ -2,80 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A49C77B75
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 May 2023 08:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B547DC77B75
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 May 2023 14:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230527AbjEGIRA (ORCPT
+        id S231219AbjEGOAW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 May 2023 04:17:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54602 "EHLO
+        Sun, 7 May 2023 10:00:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230048AbjEGIQ7 (ORCPT
+        with ESMTP id S229757AbjEGOAV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 May 2023 04:16:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 546A9100D9
-        for <kernel-janitors@vger.kernel.org>; Sun,  7 May 2023 01:16:58 -0700 (PDT)
+        Sun, 7 May 2023 10:00:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 560761156A;
+        Sun,  7 May 2023 07:00:20 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C648460A24
-        for <kernel-janitors@vger.kernel.org>; Sun,  7 May 2023 08:16:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64DB7C4339B;
-        Sun,  7 May 2023 08:16:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DF84C60E95;
+        Sun,  7 May 2023 14:00:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 41E80C433D2;
+        Sun,  7 May 2023 14:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683447417;
-        bh=pk+gMcvuNBgi+w1ujp4aIcnAky8R6DcTjrv1pw+rtu0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vQqihPiDdT/ZMEuxk/s5GNd77dQXgRLZw12WEEbLKHEbVkhP6boP7z+NyCP1NqD0u
-         bvGTw/xsJ8GOaao+RVoLJWZ6PZNdeoY5YHDRid0E3QX/wJ7BKCQfZ9o6g/oopkxz+R
-         as2dS3DdqWyHKKQCIjmllvCu6xRYZKvFhAhIqy8i7DUYV0F2dOKeO9eUTmHJ4BsQqs
-         DZocYz1aLLbWU2DIbV4+MP8cImF7DMYySamW4OpoKPVRUWyLDFX2rKrvoLMshvvBWv
-         O5De22MM/nymzDYHT6iHoZMY1+VaCbCc+HvmKc5J5M9173MDOTjePFt53wu8WHTlpR
-         5eaDO5TfzivSQ==
-Date:   Sun, 7 May 2023 11:16:52 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Simon Horman <simon.horman@corigine.com>,
-        wuych <yunchuan@nfschina.com>
-Cc:     ioana.ciornei@nxp.com, davem@davemloft.net, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] net:ethernet:freescale:dpaa2:Remove unnecessary (void*)
- conversions
-Message-ID: <20230507081652.GE525452@unreal>
-References: <20230506094428.772239-1-yunchuan@nfschina.com>
- <ZFY0rlWDt1421Tvo@corigine.com>
+        s=k20201202; t=1683468019;
+        bh=OuidcnJd5hMJxH1EcvWcJkNvgPAxboXRAstzxaj582k=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=a23XcLD7+JtGWM0ThOHnn8TSxtjN6gX42ZWtKK2curydB8F5TiuC5miECS1AKUY++
+         JMuC+Fqjucw19QZrKAyfc/DAqRZSs15x6ihr6WkqkHbSfZ+yHkiKTGZK2IBCCe/ZYA
+         YSfbizxfNG6x0E8gJnme0HhESQr8Olb0VowE3QPbSZK2ADHBCEy9vgqn2uMGESuR2l
+         BztgKRND7G5lhb+o0AWXorK7Ybw9tzykjWNQqhtDULaSx4DG4BlXfTQeJalpTMvxzm
+         vgSBAI8ycK3driyeUrjH9J9SPApV2nAyZndjjbXKc8RZ150A1m9qcmLgOSItlT7nlZ
+         hSF3H1GBdfB5g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 207CBC395FD;
+        Sun,  7 May 2023 14:00:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZFY0rlWDt1421Tvo@corigine.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: mdio: mvusb: Fix an error handling path in
+ mvusb_mdio_probe()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168346801912.32578.9019263062117258004.git-patchwork-notify@kernel.org>
+Date:   Sun, 07 May 2023 14:00:19 +0000
+References: <bd2244d44b914dec1aeccee4eba2e7e8135b585b.1683311885.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bd2244d44b914dec1aeccee4eba2e7e8135b585b.1683311885.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     tobias@waldekranz.com, andrew@lunn.ch, hkallweit1@gmail.com,
+        linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, f.fainelli@gmail.com,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 06, 2023 at 01:06:22PM +0200, Simon Horman wrote:
-> On Sat, May 06, 2023 at 05:44:28PM +0800, wuych wrote:
-> > Pointer variables of void * type do not require type cast.
-> > 
-> > Signed-off-by: wuych <yunchuan@nfschina.com>
-> 
-> Hi,
-> 
-> this looks good, but a few things to improve:
-> 
-> * Did you miss the instance in  dpaa2_dbg_bp_show()
-> * For networking patches, please set the target tree in the subject.
->   As this is not a fix it should be 'net-next' (if it was a fix it would be
->   'net')
->   [PATCH net-next v2] ...
-> * As per the form letter below, -net-next is currently closed,
->   so please repost after May 8th.
-> * I think the subject prefix should be dpaa2-eth:
->   [PATCH net-next v2] dpaa2: ...
-> * I think the patch subject could be a bit clearer
->   [PATCH net-next v2] dpaa2: Remove unnecessary cast of void pointers
+Hello:
 
-Plus, another thing to consider is to take seriously feedback for other
-patches https://lore.kernel.org/netdev/19409d2b4222b3a5c6fc0cedbfa7844b6eb3440f.camel@redhat.com/
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Thanks
+On Fri,  5 May 2023 20:39:33 +0200 you wrote:
+> Should of_mdiobus_register() fail, a previous usb_get_dev() call should be
+> undone as in the .disconnect function.
+> 
+> Fixes: 04e37d92fbed ("net: phy: add marvell usb to mdio controller")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/mdio/mdio-mvusb.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+
+Here is the summary with links:
+  - [net] net: mdio: mvusb: Fix an error handling path in mvusb_mdio_probe()
+    https://git.kernel.org/netdev/net/c/27c1eaa07283
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
