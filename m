@@ -2,96 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A82DC7EE24
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 04:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F7DC77B7F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 04:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232430AbjEHECQ (ORCPT
+        id S232455AbjEHEEu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 May 2023 00:02:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
+        Mon, 8 May 2023 00:04:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230348AbjEHECP (ORCPT
+        with ESMTP id S231654AbjEHEEr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 May 2023 00:02:15 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49FF54224;
-        Sun,  7 May 2023 21:02:14 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-965a68abfd4so761799466b.2;
-        Sun, 07 May 2023 21:02:14 -0700 (PDT)
+        Mon, 8 May 2023 00:04:47 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823605FDA;
+        Sun,  7 May 2023 21:04:42 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-50bc4ba28cbso7443273a12.0;
+        Sun, 07 May 2023 21:04:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683518533; x=1686110533;
+        d=gmail.com; s=20221208; t=1683518681; x=1686110681;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gRDFA2Oq3a7TFMTFPjEDpCf3c96bA2T/fIIJ3Z+9UNA=;
-        b=Kl05KRFvCTs1ljKqfwvJrspDTYYwuJGHUrj/k2AEMXP5zWezRj2mMKeoDLxEbbYhj/
-         BXla76hGiGt9Lpa5vpm7n8JT19kABnpbgZjyrvBFTG0IIWdLcZEVdy7vkwj/QuC/MCtf
-         vKmHEjjOWbtRW14l3jLavWEddU0f8j+sxo4Ph0wppOvlu4oq6jxi36VmcN2nJnJ0/czc
-         9mJ8TTqJkQdQjbcwqWhnlFXtnQVjdMAd2cBmADh/nKHoYD4I1SAU3EUN3aduq32oiOp0
-         +f8iOWov9rEqda5MA3dAZrE5AQ/LWoQHWGN3sGC78pTo78XHPXAC3s+HqGChNKt9Nyf7
-         LO7Q==
+        bh=7EHAT0FpwV3AmMbV3FwWi0IRotmMH++8ZC/lSzkodBA=;
+        b=geMSnh2vDesRtQzP5cZ6uRXFnNtww8hlBA5Kugl8KRxENtX4dpqiYLyiabSZXjdEy/
+         ePuWKENTV+KkKm2iRoxfYfUSxoIxVmjrH8Gm5BDDonPp3mWBCOmMS9AJF1zpecHhqSCD
+         oXg5GMaEtLifWEbN8Mg9SzthetubwvBBOkLF8nM8Zb4xgqu5gTGFDJjTkxveeXbUWN35
+         elKFwv2kbqzDLfAjr4fBBUD+3coxi1uQlmriHN5eC7ntDZAw6u2CzCgZsAhp3RgX9vA6
+         fnpJTaHPV4VaK9RTG/TPmjAhZi9fJX+zfjhTMc2soBA7TMzM9b5QyRPYami7MCmuG1Ij
+         6CDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683518533; x=1686110533;
+        d=1e100.net; s=20221208; t=1683518681; x=1686110681;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gRDFA2Oq3a7TFMTFPjEDpCf3c96bA2T/fIIJ3Z+9UNA=;
-        b=bqQlqWPcES9e1N/ydjGZz7+CWw39qAqrSWI7K6WM/aOA9TMfLGkbiJqMLOsRV1u76J
-         reWTlGEytuW0UUUIvi89ptdwfr316qhAZ1SZ8J/4ZmFKRAswIt6b22JBRIk7jUk5d+Yx
-         1rJIfNNi1c2wD4ekfPHsHqO/N4U+4Eh/zEI7Tb6fy+l9rOkwqwhK4428qnpx6t8OYueo
-         TBp8Cwpm6S9PMygBsKJOxJ5CKog5yvuPXQ537EkCUbTjGDT3IJVH9KtH54voRAHL2EW2
-         rjzGM6prGvgYLNSAxIV12cK3HVVQuEU89lv9S9aZsO+hnD7xHkCFd8+Vum2Mss/ZxJyw
-         +hQg==
-X-Gm-Message-State: AC+VfDxXHTwWK8G9fZbpIrAM3To/J5n+xUv+J0h8tqMIAR12BmOYb3SL
-        vNPhGeGxbS09TVq5A6EkoWs=
-X-Google-Smtp-Source: ACHHUZ5Vm0lEgqoo2PiIBq8J3bwbjgKEAhZ5fqiRC1wZTDsdtsIHBU1VlBQFNoJtAsw9IkhspAYJEQ==
-X-Received: by 2002:a17:906:9b8a:b0:961:272d:bdbe with SMTP id dd10-20020a1709069b8a00b00961272dbdbemr8053329ejc.35.1683518532543;
-        Sun, 07 May 2023 21:02:12 -0700 (PDT)
+        bh=7EHAT0FpwV3AmMbV3FwWi0IRotmMH++8ZC/lSzkodBA=;
+        b=OrHWHsmvjTMett/EZreNU6ibWeSG2mgM3JGpAPbCiQFYwkL9y0TPb3hXLNl2yA5NsA
+         nfMuj8nwRtFK8MWMhz6FzbG6XpjTvZpDFM7VpGzaQE1A3yqtKLYSoW9xijTy5ROBV5Zo
+         +m33Je7L2iUKqc3g+wy3APrsC79yhlhqEOI/Zncn6GliGsDI1jNmAWYGCymVfVqBJKGC
+         I/Ull9STCckSYa1v9hFxFn2p6HHaj34DC7WFlThM4DYpU1+Cl2V9WaJrmPFW3WYe9Sen
+         HTZR+8NlFC8MDz/BWiM/QngoU3WskK6QsKt6h9/QvZdoJ7KAvygqxXKCptoMlmBCuHmP
+         zN2g==
+X-Gm-Message-State: AC+VfDz5hy468p1KFhYf7cPxyST7j2Wi7uqJ3KgL61kXeGHWFW5tYHI0
+        4SFo9U8Eh3Wdz1sFm7bKeZ8=
+X-Google-Smtp-Source: ACHHUZ7S7/kq9jz38RlRxFDhe5+6ko5+I6KvU/mC4gq9bmtvxlog+Hpmw1DjqBpVwlOOqJKu63i2Kw==
+X-Received: by 2002:aa7:d5d5:0:b0:508:4f66:e70d with SMTP id d21-20020aa7d5d5000000b005084f66e70dmr6512173eds.36.1683518680757;
+        Sun, 07 May 2023 21:04:40 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:8906:f99a:ce33:2033])
-        by smtp.gmail.com with ESMTPSA id ka7-20020a170907990700b00947ed087a2csm4391606ejc.154.2023.05.07.21.02.11
+        by smtp.gmail.com with ESMTPSA id f12-20020a05640214cc00b005068fe6f3d8sm5645242edx.87.2023.05.07.21.04.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 May 2023 21:02:11 -0700 (PDT)
+        Sun, 07 May 2023 21:04:40 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Stefan Popa <stefan.popa@analog.com>, linux-iio@vger.kernel.org
+To:     Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        soc@kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] iio: dac: build ad5758 driver when AD5758 is selected
-Date:   Mon,  8 May 2023 06:02:08 +0200
-Message-Id: <20230508040208.12033-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] ARM: s3c: remove obsolete config S3C64XX_SETUP_IDE
+Date:   Mon,  8 May 2023 06:04:33 +0200
+Message-Id: <20230508040433.13648-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 28d1a7ac2a0d ("iio: dac: Add AD5758 support") adds the config AD5758
-and the corresponding driver ad5758.c. In the Makefile, the ad5758 driver
-is however included when AD5755 is selected, not when AD5758 is selected.
+Commit 0d297df03890 ("ARM: s3c: simplify platform code") removes the line
+in Makefile.s3c64xx to configure the inclusion of setup-ide-s3c64xx.c,
+with CONFIG_S3C64XX_SETUP_IDE. So, since then, config S3C64XX_SETUP_IDE has
+no effect and any further purpose.
 
-Probably, this was simply a mistake that happened by copy-and-paste and
-forgetting to adjust the actual line. Surprisingly, no one has ever noticed
-that this driver is actually only included when AD5755 is selected and that
-the config AD5758 has actually no effect on the build.
+Remove the obsolete config S3C64XX_SETUP_IDE.
 
-Fixes: 28d1a7ac2a0d ("iio: dac: Add AD5758 support")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/iio/dac/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-s3c/Kconfig.s3c64xx | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-index 6c74fea21736..addd97a78838 100644
---- a/drivers/iio/dac/Makefile
-+++ b/drivers/iio/dac/Makefile
-@@ -17,7 +17,7 @@ obj-$(CONFIG_AD5592R_BASE) += ad5592r-base.o
- obj-$(CONFIG_AD5592R) += ad5592r.o
- obj-$(CONFIG_AD5593R) += ad5593r.o
- obj-$(CONFIG_AD5755) += ad5755.o
--obj-$(CONFIG_AD5755) += ad5758.o
-+obj-$(CONFIG_AD5758) += ad5758.o
- obj-$(CONFIG_AD5761) += ad5761.o
- obj-$(CONFIG_AD5764) += ad5764.o
- obj-$(CONFIG_AD5766) += ad5766.o
+diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
+index 01a7a8eec6e8..8f40af063ad6 100644
+--- a/arch/arm/mach-s3c/Kconfig.s3c64xx
++++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
+@@ -69,11 +69,6 @@ config S3C64XX_SETUP_I2C1
+ 	help
+ 	  Common setup code for i2c bus 1.
+ 
+-config S3C64XX_SETUP_IDE
+-	bool
+-	help
+-	  Common setup code for S3C64XX IDE.
+-
+ config S3C64XX_SETUP_FB_24BPP
+ 	bool
+ 	help
+@@ -110,7 +105,6 @@ config MACH_WLF_CRAGG_6410
+ 	select S3C64XX_DEV_SPI0
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C64XX_SETUP_I2C1
+-	select S3C64XX_SETUP_IDE
+ 	select S3C64XX_SETUP_KEYPAD
+ 	select S3C64XX_SETUP_SDHCI
+ 	select S3C64XX_SETUP_SPI
 -- 
 2.17.1
 
