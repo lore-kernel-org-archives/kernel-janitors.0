@@ -2,115 +2,175 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B979C7EE2C
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 16:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D007CC77B7F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 16:53:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234412AbjEHQhr (ORCPT
+        id S233594AbjEHQxa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 May 2023 12:37:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36238 "EHLO
+        Mon, 8 May 2023 12:53:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234331AbjEHQhi (ORCPT
+        with ESMTP id S229614AbjEHQx2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 May 2023 12:37:38 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D0B96E9A;
-        Mon,  8 May 2023 09:37:35 -0700 (PDT)
-Received: from mercury (195-23-45-170.net.novis.pt [195.23.45.170])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 773B5660563B;
-        Mon,  8 May 2023 17:37:32 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1683563852;
-        bh=vcmfL6fa26+uv3p8sjY6y3BGVWfx6diz9FJorLd91Cc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N69ZAaKWBmsLvDqXuNkVnTsY6dpRIw2R70zrj5+H7T5ZI+pxE3yP+OnYDGF5/TXGP
-         53xFA8MR0ArfnMxh9+XCbdZDFUoKnLG9V4R2bZ/kSLeEC5k/J6ZvzzyUyEHjXLv47p
-         d739UGLhQBpD/imjD1ZcBk4fvduiaD0iSWHuAqE0/Lzh7eHVchP7Nnj2IObvUveg49
-         6TgjQOAVt2FbAT+jtRFAwk7mewb7hmrA3MD+YuyebeiY8zwIORQc1Uf2t3pOv6ahzc
-         HztJbjR3mu0i6bRGmkxJKtnZ6KvZEdbBBf6QJEIzDgkXkdJSCo11ATgGP45FKQTP/G
-         eAv7Csm8Qk7Yw==
-Received: by mercury (Postfix, from userid 1000)
-        id CE5011067062; Mon,  8 May 2023 14:43:59 +0200 (CEST)
-Date:   Mon, 8 May 2023 14:43:59 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Mon, 8 May 2023 12:53:28 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 324FD49DA
+        for <kernel-janitors@vger.kernel.org>; Mon,  8 May 2023 09:53:25 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id w46xpAkeMfMwtw46xpf0cB; Mon, 08 May 2023 18:53:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1683564803;
+        bh=lm5x+NwYR0+zI73AdgqIwZ7OxGK1VHk4xnXiyrCtxyI=;
+        h=From:To:Cc:Subject:Date;
+        b=TffSdUf8plGRs/fzLhYW2m+zoyex7bE0y+J2jIt9i6EFeFdGap/wrfNTUt4hfOAD4
+         6hg7Rja0JgT98UjFX9lI6MgVAXfJiboQ01sQiV+qLQimAy6cwkQKY4Adg1/3BvV1Eq
+         Pe2qRSRCcKRv9jmq52vGIYVZpSvXRPAVQNa7qo7RBmglCKs8YvpWqTe7RaUhZ1sDfD
+         wGtE1gdhkYosYQlcn9jhjeQZUFOCPtfeyVpTuH7P/eqkdcw16IU/pllrekehtUXHme
+         iXKoxhMMWioWmwV/MGsDSmDLJ6df2NpYxfqA+pMTxJE1OyRoc3lrMQ2+6zh42oqw8s
+         9ZxmWry12MF5g==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 08 May 2023 18:53:23 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH] power: supply: rk817: Simplify an error message
-Message-ID: <20230508124359.hl7kwixxforqexnl@mercury.elektranox.org>
-References: <a9c0820c5af6b315ef3b3c2fd8d7be44008b0086.1681577370.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH net-next] netfilter: Reorder fields in 'struct nf_conntrack_expect'
+Date:   Mon,  8 May 2023 18:53:14 +0200
+Message-Id: <5cdb1f50f2e9dc80dbf86cf8667056eacfd36a09.1683564754.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lq2ocncfggcksedr"
-Content-Disposition: inline
-In-Reply-To: <a9c0820c5af6b315ef3b3c2fd8d7be44008b0086.1681577370.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Group some variables based on their sizes to reduce holes.
+On x86_64, this shrinks the size of 'struct nf_conntrack_expect' from 264
+to 256 bytes.
 
---lq2ocncfggcksedr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This structure deserve a dedicated cache, so reducing its size looks nice.
 
-Hi,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Using pahole
 
-On Sat, Apr 15, 2023 at 06:49:55PM +0200, Christophe JAILLET wrote:
-> dev_err_probe() already display the error code. There is no need to
-> duplicate it explicitly in the error message.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Before:
+======
+struct nf_conntrack_expect {
+	struct hlist_node          lnode;                /*     0    16 */
+	struct hlist_node          hnode;                /*    16    16 */
+	struct nf_conntrack_tuple  tuple;                /*    32    40 */
+	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
+	struct nf_conntrack_tuple_mask mask;             /*    72    20 */
 
-Thanks, queued.
+	/* XXX 4 bytes hole, try to pack */
 
--- Sebastian
+	void                       (*expectfn)(struct nf_conn *, struct nf_conntrack_expect *); /*    96     8 */
+	struct nf_conntrack_helper * helper;             /*   104     8 */
+	struct nf_conn *           master;               /*   112     8 */
+	struct timer_list          timeout;              /*   120    88 */
+	/* --- cacheline 3 boundary (192 bytes) was 16 bytes ago --- */
+	refcount_t                 use;                  /*   208     4 */
+	unsigned int               flags;                /*   212     4 */
+	unsigned int               class;                /*   216     4 */
+	union nf_inet_addr         saved_addr;           /*   220    16 */
+	union nf_conntrack_man_proto saved_proto;        /*   236     2 */
 
->  drivers/power/supply/rk817_charger.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/rk817_charger.c b/drivers/power/supply/=
-rk817_charger.c
-> index 1a2143641e66..8328bcea1a29 100644
-> --- a/drivers/power/supply/rk817_charger.c
-> +++ b/drivers/power/supply/rk817_charger.c
-> @@ -1134,7 +1134,7 @@ static int rk817_charger_probe(struct platform_devi=
-ce *pdev)
->  					    &bat_info);
->  	if (ret) {
->  		return dev_err_probe(dev, ret,
-> -				     "Unable to get battery info: %d\n", ret);
-> +				     "Unable to get battery info\n");
->  	}
-> =20
->  	if ((bat_info->charge_full_design_uah <=3D 0) ||
-> --=20
-> 2.34.1
->=20
+	/* XXX 2 bytes hole, try to pack */
 
---lq2ocncfggcksedr
-Content-Type: application/pgp-signature; name="signature.asc"
+	enum ip_conntrack_dir      dir;                  /*   240     4 */
 
------BEGIN PGP SIGNATURE-----
+	/* XXX 4 bytes hole, try to pack */
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmRY7o8ACgkQ2O7X88g7
-+prG9hAAmn4pxl5HZ4OqQt18Tgu7ZNPcNtFpreppljXLJ6rPXcfSUk4mz9SlYhG4
-s+ck3MZY+gGfYRQD03zzymgsmTs6kmx6Tt+G3g3wb/QhjRfn3ltJfJWdP3DAJGyC
-XzQ7bfX3d4q+m8GQlLDBJgvjHrOCzsGOkI8iixEr+909kSkPYcfszQ9dBWfd/qj6
-DMedjPrTOAsjKyAnbSqmnSCBw8lERFwjRZrdI5S7ii3eCmMuOhe01FkDaVRPlfX/
-s845/VzJyhHTxTcoYx6V6jY6FgKqsXzMJn5HUYm0QdkVAI3pHDUhHapZz7+yDQg5
-xRLOUvzhbHX6si5QHTiIFhaxvZW7QdILfuMOj/30PHITb0aanmZc9mNEctKGwdX8
-ywOd4eGfrTBaF1HPGQXb+29h0JHSQ0znMMC/eCs2R3rDphu3rK7Zkx27poSUMw6C
-V5A5PAy9plyvmOSXyR2PiQhYvVw/XXeU9OIlsi4w7pWIA7bnZuI+HNKz9KaEuqIT
-LQWZivk7aMBHQjzoy5e1qnLRdubvsyEuQt469G2vci7J6gFUpc2ucaAUDMk/0aDQ
-ARtbyZiU4+qyZbhawrCetQy0x2gBQ0eDxDNfuAnvAAbe2j/5L2bF1HMD51t5izYX
-/jGyVpq5yfZ1lHx0BeStBJWOBPeVeQjBomCpveTPPYzq5RQtC9k=
-=TBBs
------END PGP SIGNATURE-----
+	struct callback_head       rcu __attribute__((__aligned__(8))); /*   248    16 */
 
---lq2ocncfggcksedr--
+	/* size: 264, cachelines: 5, members: 15 */
+	/* sum members: 254, holes: 3, sum holes: 10 */
+	/* forced alignments: 1, forced holes: 1, sum forced holes: 4 */
+	/* last cacheline: 8 bytes */
+} __attribute__((__aligned__(8)));
+
+
+After:
+=====
+struct nf_conntrack_expect {
+	struct hlist_node          lnode;                /*     0    16 */
+	struct hlist_node          hnode;                /*    16    16 */
+	struct nf_conntrack_tuple  tuple;                /*    32    40 */
+	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
+	struct nf_conntrack_tuple_mask mask;             /*    72    20 */
+	refcount_t                 use;                  /*    92     4 */
+	unsigned int               flags;                /*    96     4 */
+	unsigned int               class;                /*   100     4 */
+	void                       (*expectfn)(struct nf_conn *, struct nf_conntrack_expect *); /*   104     8 */
+	struct nf_conntrack_helper * helper;             /*   112     8 */
+	struct nf_conn *           master;               /*   120     8 */
+	/* --- cacheline 2 boundary (128 bytes) --- */
+	struct timer_list          timeout;              /*   128    88 */
+	/* --- cacheline 3 boundary (192 bytes) was 24 bytes ago --- */
+	union nf_inet_addr         saved_addr;           /*   216    16 */
+	union nf_conntrack_man_proto saved_proto;        /*   232     2 */
+
+	/* XXX 2 bytes hole, try to pack */
+
+	enum ip_conntrack_dir      dir;                  /*   236     4 */
+	struct callback_head       rcu __attribute__((__aligned__(8))); /*   240    16 */
+
+	/* size: 256, cachelines: 4, members: 15 */
+	/* sum members: 254, holes: 1, sum holes: 2 */
+	/* forced alignments: 1 */
+} __attribute__((__aligned__(8)));
+---
+ include/net/netfilter/nf_conntrack_expect.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/include/net/netfilter/nf_conntrack_expect.h b/include/net/netfilter/nf_conntrack_expect.h
+index 0855b60fba17..cf0d81be5a96 100644
+--- a/include/net/netfilter/nf_conntrack_expect.h
++++ b/include/net/netfilter/nf_conntrack_expect.h
+@@ -26,6 +26,15 @@ struct nf_conntrack_expect {
+ 	struct nf_conntrack_tuple tuple;
+ 	struct nf_conntrack_tuple_mask mask;
+ 
++	/* Usage count. */
++	refcount_t use;
++
++	/* Flags */
++	unsigned int flags;
++
++	/* Expectation class */
++	unsigned int class;
++
+ 	/* Function to call after setup and insertion */
+ 	void (*expectfn)(struct nf_conn *new,
+ 			 struct nf_conntrack_expect *this);
+@@ -39,15 +48,6 @@ struct nf_conntrack_expect {
+ 	/* Timer function; deletes the expectation. */
+ 	struct timer_list timeout;
+ 
+-	/* Usage count. */
+-	refcount_t use;
+-
+-	/* Flags */
+-	unsigned int flags;
+-
+-	/* Expectation class */
+-	unsigned int class;
+-
+ #if IS_ENABLED(CONFIG_NF_NAT)
+ 	union nf_inet_addr saved_addr;
+ 	/* This is the original per-proto part, used to map the
+-- 
+2.34.1
+
