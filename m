@@ -2,106 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F7DC77B7F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 04:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8946FC77B75
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 04:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232455AbjEHEEu (ORCPT
+        id S232217AbjEHEJb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 May 2023 00:04:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58824 "EHLO
+        Mon, 8 May 2023 00:09:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231654AbjEHEEr (ORCPT
+        with ESMTP id S229448AbjEHEJ3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 May 2023 00:04:47 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823605FDA;
-        Sun,  7 May 2023 21:04:42 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-50bc4ba28cbso7443273a12.0;
-        Sun, 07 May 2023 21:04:42 -0700 (PDT)
+        Mon, 8 May 2023 00:09:29 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2526EB5;
+        Sun,  7 May 2023 21:09:28 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-965ac4dd11bso814618466b.2;
+        Sun, 07 May 2023 21:09:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683518681; x=1686110681;
+        d=gmail.com; s=20221208; t=1683518967; x=1686110967;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7EHAT0FpwV3AmMbV3FwWi0IRotmMH++8ZC/lSzkodBA=;
-        b=geMSnh2vDesRtQzP5cZ6uRXFnNtww8hlBA5Kugl8KRxENtX4dpqiYLyiabSZXjdEy/
-         ePuWKENTV+KkKm2iRoxfYfUSxoIxVmjrH8Gm5BDDonPp3mWBCOmMS9AJF1zpecHhqSCD
-         oXg5GMaEtLifWEbN8Mg9SzthetubwvBBOkLF8nM8Zb4xgqu5gTGFDJjTkxveeXbUWN35
-         elKFwv2kbqzDLfAjr4fBBUD+3coxi1uQlmriHN5eC7ntDZAw6u2CzCgZsAhp3RgX9vA6
-         fnpJTaHPV4VaK9RTG/TPmjAhZi9fJX+zfjhTMc2soBA7TMzM9b5QyRPYami7MCmuG1Ij
-         6CDQ==
+        bh=/stI2xLuu/+Bk6mWcj3fMw5988PC9cZKxhWWqcngefs=;
+        b=mndtmghHF96zxCkNPDH6VwIjXKnoqgwMjPfLFKD/dUxB0glA3xAfF2p1khIxjmE8qr
+         BdrL2dWgtian5sbp8iFlVxtrWB7so2gIYt/3RZVhCYJO+fJGHy39GgrkBpBpkslLtuAL
+         giVbUmj9KM2X795y53Neve9sU2sqy8z9CMgtsDOOWxUwBItQyzG7bw2rDZQ0UfTLw/XK
+         XMvu5QcyN815kquC13wN/TpcWvizsuVdV31Wev9nU12dFPSc4QtvBjo+IdyLL43H4g39
+         LKfaqd5OBbO/8lR17GyXSV+WvDEztieHhgwIdzPxCkI3Stxl+htge11G6Y45Mop5K+/f
+         bDVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683518681; x=1686110681;
+        d=1e100.net; s=20221208; t=1683518967; x=1686110967;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7EHAT0FpwV3AmMbV3FwWi0IRotmMH++8ZC/lSzkodBA=;
-        b=OrHWHsmvjTMett/EZreNU6ibWeSG2mgM3JGpAPbCiQFYwkL9y0TPb3hXLNl2yA5NsA
-         nfMuj8nwRtFK8MWMhz6FzbG6XpjTvZpDFM7VpGzaQE1A3yqtKLYSoW9xijTy5ROBV5Zo
-         +m33Je7L2iUKqc3g+wy3APrsC79yhlhqEOI/Zncn6GliGsDI1jNmAWYGCymVfVqBJKGC
-         I/Ull9STCckSYa1v9hFxFn2p6HHaj34DC7WFlThM4DYpU1+Cl2V9WaJrmPFW3WYe9Sen
-         HTZR+8NlFC8MDz/BWiM/QngoU3WskK6QsKt6h9/QvZdoJ7KAvygqxXKCptoMlmBCuHmP
-         zN2g==
-X-Gm-Message-State: AC+VfDz5hy468p1KFhYf7cPxyST7j2Wi7uqJ3KgL61kXeGHWFW5tYHI0
-        4SFo9U8Eh3Wdz1sFm7bKeZ8=
-X-Google-Smtp-Source: ACHHUZ7S7/kq9jz38RlRxFDhe5+6ko5+I6KvU/mC4gq9bmtvxlog+Hpmw1DjqBpVwlOOqJKu63i2Kw==
-X-Received: by 2002:aa7:d5d5:0:b0:508:4f66:e70d with SMTP id d21-20020aa7d5d5000000b005084f66e70dmr6512173eds.36.1683518680757;
-        Sun, 07 May 2023 21:04:40 -0700 (PDT)
+        bh=/stI2xLuu/+Bk6mWcj3fMw5988PC9cZKxhWWqcngefs=;
+        b=KjMJGAEqgqVdKsGxBx04XXfJPdqdrZzOyL1YOaeyukARs8oNS8nZsPu7F7Tr8YbNJB
+         PF/uD7rDe1khYBuWsyQ0uC8Q9t4RhojohFrHP9zpdc7Jgmqy631x8Ff3Dze3GIM/Vp19
+         iHUfWjhYhxdCBFpnQOHIhlS/wz/pWzGjnxH9ViR/aewl6G53/AMFIM12xph8OnzK9DBm
+         0x/Ph9veNKPfkq8YXgZdNg+7rR2j5xjKBSiSR6u9LJBX/Q7mIPYCpp3vmRtHS/Tlg+St
+         GenRyAuo5oxhA7fuazz0FhvFCAEedJMIzWfrdcmxsOwdz6QXgqN3Y4RLgmoiIhzRK2xB
+         boUA==
+X-Gm-Message-State: AC+VfDydpb2rbJELGlyimqHCnfnN/c0RsL6YV3WVKI7cMNUJnj6qwkCe
+        uQNswcXBpZdrn3WIU5Wvqio=
+X-Google-Smtp-Source: ACHHUZ5Dr2OhNvFUs+sEGJt4AGYVYn1QPnGShhbOuQHlv02lNyCrmoMRYODTfIKd9tYYio1GPProyA==
+X-Received: by 2002:a17:907:a41e:b0:94a:4b7a:9886 with SMTP id sg30-20020a170907a41e00b0094a4b7a9886mr8664774ejc.12.1683518967237;
+        Sun, 07 May 2023 21:09:27 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:8906:f99a:ce33:2033])
-        by smtp.gmail.com with ESMTPSA id f12-20020a05640214cc00b005068fe6f3d8sm5645242edx.87.2023.05.07.21.04.40
+        by smtp.gmail.com with ESMTPSA id h23-20020a17090619d700b008cecb8f374asm4372475ejd.0.2023.05.07.21.09.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 May 2023 21:04:40 -0700 (PDT)
+        Sun, 07 May 2023 21:09:26 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        soc@kernel.org
+To:     Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] ARM: s3c: remove obsolete config S3C64XX_SETUP_IDE
-Date:   Mon,  8 May 2023 06:04:33 +0200
-Message-Id: <20230508040433.13648-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] s390/Kconfig: remove obsolete configs SCHED_{BOOK,DRAWER}
+Date:   Mon,  8 May 2023 06:09:16 +0200
+Message-Id: <20230508040916.16733-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 0d297df03890 ("ARM: s3c: simplify platform code") removes the line
-in Makefile.s3c64xx to configure the inclusion of setup-ide-s3c64xx.c,
-with CONFIG_S3C64XX_SETUP_IDE. So, since then, config S3C64XX_SETUP_IDE has
-no effect and any further purpose.
+Commit f1045056c726 ("topology/sysfs: rework book and drawer topology
+ifdefery") activates the book and drawer topology, previously activated by
+CONFIG_SCHED_{BOOK,DRAWER}, dependent on the existence of certain macro
+definitions. Hence, since then, CONFIG_SCHED_{BOOK,DRAWER} have no effect
+and any further purpose.
 
-Remove the obsolete config S3C64XX_SETUP_IDE.
+Remove the obsolete configs SCHED_{BOOK,DRAWER}.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- arch/arm/mach-s3c/Kconfig.s3c64xx | 6 ------
- 1 file changed, 6 deletions(-)
+ arch/s390/Kconfig | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
-index 01a7a8eec6e8..8f40af063ad6 100644
---- a/arch/arm/mach-s3c/Kconfig.s3c64xx
-+++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
-@@ -69,11 +69,6 @@ config S3C64XX_SETUP_I2C1
- 	help
- 	  Common setup code for i2c bus 1.
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 548b5b587003..1627c7f841d3 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -468,19 +468,11 @@ config SCHED_SMT
+ config SCHED_MC
+ 	def_bool n
  
--config S3C64XX_SETUP_IDE
--	bool
--	help
--	  Common setup code for S3C64XX IDE.
+-config SCHED_BOOK
+-	def_bool n
 -
- config S3C64XX_SETUP_FB_24BPP
- 	bool
+-config SCHED_DRAWER
+-	def_bool n
+-
+ config SCHED_TOPOLOGY
+ 	def_bool y
+ 	prompt "Topology scheduler support"
+ 	select SCHED_SMT
+ 	select SCHED_MC
+-	select SCHED_BOOK
+-	select SCHED_DRAWER
  	help
-@@ -110,7 +105,6 @@ config MACH_WLF_CRAGG_6410
- 	select S3C64XX_DEV_SPI0
- 	select S3C64XX_SETUP_FB_24BPP
- 	select S3C64XX_SETUP_I2C1
--	select S3C64XX_SETUP_IDE
- 	select S3C64XX_SETUP_KEYPAD
- 	select S3C64XX_SETUP_SDHCI
- 	select S3C64XX_SETUP_SPI
+ 	  Topology scheduler support improves the CPU scheduler's decision
+ 	  making when dealing with machines that have multi-threading,
 -- 
 2.17.1
 
