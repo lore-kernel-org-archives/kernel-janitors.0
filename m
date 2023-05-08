@@ -2,175 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D007CC77B7F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 16:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E0EC77B7F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 17:37:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233594AbjEHQxa (ORCPT
+        id S232241AbjEHRhw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 May 2023 12:53:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50954 "EHLO
+        Mon, 8 May 2023 13:37:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbjEHQx2 (ORCPT
+        with ESMTP id S233491AbjEHRht (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 May 2023 12:53:28 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 324FD49DA
-        for <kernel-janitors@vger.kernel.org>; Mon,  8 May 2023 09:53:25 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id w46xpAkeMfMwtw46xpf0cB; Mon, 08 May 2023 18:53:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1683564803;
-        bh=lm5x+NwYR0+zI73AdgqIwZ7OxGK1VHk4xnXiyrCtxyI=;
-        h=From:To:Cc:Subject:Date;
-        b=TffSdUf8plGRs/fzLhYW2m+zoyex7bE0y+J2jIt9i6EFeFdGap/wrfNTUt4hfOAD4
-         6hg7Rja0JgT98UjFX9lI6MgVAXfJiboQ01sQiV+qLQimAy6cwkQKY4Adg1/3BvV1Eq
-         Pe2qRSRCcKRv9jmq52vGIYVZpSvXRPAVQNa7qo7RBmglCKs8YvpWqTe7RaUhZ1sDfD
-         wGtE1gdhkYosYQlcn9jhjeQZUFOCPtfeyVpTuH7P/eqkdcw16IU/pllrekehtUXHme
-         iXKoxhMMWioWmwV/MGsDSmDLJ6df2NpYxfqA+pMTxJE1OyRoc3lrMQ2+6zh42oqw8s
-         9ZxmWry12MF5g==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 08 May 2023 18:53:23 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH net-next] netfilter: Reorder fields in 'struct nf_conntrack_expect'
-Date:   Mon,  8 May 2023 18:53:14 +0200
-Message-Id: <5cdb1f50f2e9dc80dbf86cf8667056eacfd36a09.1683564754.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 8 May 2023 13:37:49 -0400
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F06FE55
+        for <kernel-janitors@vger.kernel.org>; Mon,  8 May 2023 10:37:48 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id ca18e2360f4ac-763740a7f31so26105839f.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 May 2023 10:37:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1683567467; x=1686159467;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BT18Gf5nwhyEngZhDe8k3tgWx6qSJn3mcFYTsDGe+OQ=;
+        b=TaoJ0RlfRDuZDdtYJ1yBPne0RMl7nV6wCU1oxUH3WIAT0vE51H3y37Ce4mC4O9Sr8/
+         brA3Z+CwXmMCzWyi57TK570A4dnjyotGEQx529oEQT5NYhophQ1uU9UD4DeKFqQWovWc
+         VOdRiwAWjhvu/qN51rEy1W0j5iABTfZJ4pHdE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683567467; x=1686159467;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BT18Gf5nwhyEngZhDe8k3tgWx6qSJn3mcFYTsDGe+OQ=;
+        b=OMXneY0Y6buhnJsQ1rCo0XwvxxW9rY8BsnRhz1CZiKFOt0QN3R1N0blWDv48UIzHEp
+         4HCTyuDVb2ywBi47yJHa9SghI+6dondC8/bkA9f0OTSU6DUTzjr9OniLFP9DesVUiio+
+         9aFsbZo2GEKJcjNejUvfkkwJfv/KD2FFe1GbbDtEymCAPUnYpS9Clock5yzwKff/O1A7
+         Ts5NlNZuiMKCbfHcLcS57TGaBKRlloVeNlzS6hWOg8msbb5RJK7jhyRz+uQFt7JwOLy5
+         1MMpfep0Q4yYeISfesYv2Q8i3bONu3Y3LrDGVplT0/DGk1YqycDqzvxzm3EAJXV1qsKF
+         JGsg==
+X-Gm-Message-State: AC+VfDwG5jLLXJWgeq+WjdTiVS40ir3KyqBvT5mU2+ApagB4Tz5WBYo3
+        HEXwykdKmTSkzhJs3KEL2K7+Wg==
+X-Google-Smtp-Source: ACHHUZ76KjNl3Y/fkgFcbRHJzMkozNBw3nRD6kwkMe8nV7IKTdU6L3wxiidH8FpQehWmCwthwmhfbg==
+X-Received: by 2002:a05:6602:2c8f:b0:760:dfd3:208d with SMTP id i15-20020a0566022c8f00b00760dfd3208dmr7445248iow.0.1683567467626;
+        Mon, 08 May 2023 10:37:47 -0700 (PDT)
+Received: from [192.168.1.128] ([38.15.45.1])
+        by smtp.gmail.com with ESMTPSA id h30-20020a056602131e00b0076373f90e46sm2410118iov.33.2023.05.08.10.37.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 May 2023 10:37:47 -0700 (PDT)
+Message-ID: <f06b953c-5bc2-f46a-581f-c2ff87d2bbd5@linuxfoundation.org>
+Date:   Mon, 8 May 2023 11:37:46 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] kselftest: vDSO: Fix accumulation of uninitialized ret
+ when CLOCK_REALTIME is undefined
+Content-Language: en-US
+To:     "Colin King (gmail)" <colin.i.king@gmail.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20230417104743.30018-1-colin.i.king@gmail.com>
+ <20487c94-7f81-cbf5-7136-c7f266eaf60d@arm.com>
+ <530b12f1-b0d2-1183-c9a9-0f5f9d6e178d@gmail.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <530b12f1-b0d2-1183-c9a9-0f5f9d6e178d@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Group some variables based on their sizes to reduce holes.
-On x86_64, this shrinks the size of 'struct nf_conntrack_expect' from 264
-to 256 bytes.
+On 4/18/23 04:14, Colin King (gmail) wrote:
+> On 18/04/2023 11:10, Vincenzo Frascino wrote:
+>> Hi Colin,
+>>
+>> On 4/17/23 11:47, Colin Ian King wrote:
+>>> In the unlikely case that CLOCK_REALTIME is not defined, variable ret is
+>>> not initialized and further accumulation of return values to ret can leave
+>>> ret in an undefined state. Fix this by initialized ret to zero and changing
+>>> the assignment of ret to an accumulation for the CLOCK_REALTIME case.
+>>>
+>>
+>> I was wondering how did you find this.
+> 
+> I used cppcheck --force --enable=all, this examines the #if defined() paths.
+> 
+>>
+>> Apart that:
+>>
+>> Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+>>
 
-This structure deserve a dedicated cache, so reducing its size looks nice.
+Applied to linux-kselftest next
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Using pahole
-
-Before:
-======
-struct nf_conntrack_expect {
-	struct hlist_node          lnode;                /*     0    16 */
-	struct hlist_node          hnode;                /*    16    16 */
-	struct nf_conntrack_tuple  tuple;                /*    32    40 */
-	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
-	struct nf_conntrack_tuple_mask mask;             /*    72    20 */
-
-	/* XXX 4 bytes hole, try to pack */
-
-	void                       (*expectfn)(struct nf_conn *, struct nf_conntrack_expect *); /*    96     8 */
-	struct nf_conntrack_helper * helper;             /*   104     8 */
-	struct nf_conn *           master;               /*   112     8 */
-	struct timer_list          timeout;              /*   120    88 */
-	/* --- cacheline 3 boundary (192 bytes) was 16 bytes ago --- */
-	refcount_t                 use;                  /*   208     4 */
-	unsigned int               flags;                /*   212     4 */
-	unsigned int               class;                /*   216     4 */
-	union nf_inet_addr         saved_addr;           /*   220    16 */
-	union nf_conntrack_man_proto saved_proto;        /*   236     2 */
-
-	/* XXX 2 bytes hole, try to pack */
-
-	enum ip_conntrack_dir      dir;                  /*   240     4 */
-
-	/* XXX 4 bytes hole, try to pack */
-
-	struct callback_head       rcu __attribute__((__aligned__(8))); /*   248    16 */
-
-	/* size: 264, cachelines: 5, members: 15 */
-	/* sum members: 254, holes: 3, sum holes: 10 */
-	/* forced alignments: 1, forced holes: 1, sum forced holes: 4 */
-	/* last cacheline: 8 bytes */
-} __attribute__((__aligned__(8)));
-
-
-After:
-=====
-struct nf_conntrack_expect {
-	struct hlist_node          lnode;                /*     0    16 */
-	struct hlist_node          hnode;                /*    16    16 */
-	struct nf_conntrack_tuple  tuple;                /*    32    40 */
-	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
-	struct nf_conntrack_tuple_mask mask;             /*    72    20 */
-	refcount_t                 use;                  /*    92     4 */
-	unsigned int               flags;                /*    96     4 */
-	unsigned int               class;                /*   100     4 */
-	void                       (*expectfn)(struct nf_conn *, struct nf_conntrack_expect *); /*   104     8 */
-	struct nf_conntrack_helper * helper;             /*   112     8 */
-	struct nf_conn *           master;               /*   120     8 */
-	/* --- cacheline 2 boundary (128 bytes) --- */
-	struct timer_list          timeout;              /*   128    88 */
-	/* --- cacheline 3 boundary (192 bytes) was 24 bytes ago --- */
-	union nf_inet_addr         saved_addr;           /*   216    16 */
-	union nf_conntrack_man_proto saved_proto;        /*   232     2 */
-
-	/* XXX 2 bytes hole, try to pack */
-
-	enum ip_conntrack_dir      dir;                  /*   236     4 */
-	struct callback_head       rcu __attribute__((__aligned__(8))); /*   240    16 */
-
-	/* size: 256, cachelines: 4, members: 15 */
-	/* sum members: 254, holes: 1, sum holes: 2 */
-	/* forced alignments: 1 */
-} __attribute__((__aligned__(8)));
----
- include/net/netfilter/nf_conntrack_expect.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/include/net/netfilter/nf_conntrack_expect.h b/include/net/netfilter/nf_conntrack_expect.h
-index 0855b60fba17..cf0d81be5a96 100644
---- a/include/net/netfilter/nf_conntrack_expect.h
-+++ b/include/net/netfilter/nf_conntrack_expect.h
-@@ -26,6 +26,15 @@ struct nf_conntrack_expect {
- 	struct nf_conntrack_tuple tuple;
- 	struct nf_conntrack_tuple_mask mask;
- 
-+	/* Usage count. */
-+	refcount_t use;
-+
-+	/* Flags */
-+	unsigned int flags;
-+
-+	/* Expectation class */
-+	unsigned int class;
-+
- 	/* Function to call after setup and insertion */
- 	void (*expectfn)(struct nf_conn *new,
- 			 struct nf_conntrack_expect *this);
-@@ -39,15 +48,6 @@ struct nf_conntrack_expect {
- 	/* Timer function; deletes the expectation. */
- 	struct timer_list timeout;
- 
--	/* Usage count. */
--	refcount_t use;
--
--	/* Flags */
--	unsigned int flags;
--
--	/* Expectation class */
--	unsigned int class;
--
- #if IS_ENABLED(CONFIG_NF_NAT)
- 	union nf_inet_addr saved_addr;
- 	/* This is the original per-proto part, used to map the
--- 
-2.34.1
+thanks,
+-- Shuah
 
