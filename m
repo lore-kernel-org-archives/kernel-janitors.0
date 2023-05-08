@@ -2,137 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF62AC77B75
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 07:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DF7C77B75
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 08:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233529AbjEHHmo (ORCPT
+        id S230076AbjEHIkQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 May 2023 03:42:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
+        Mon, 8 May 2023 04:40:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233496AbjEHHmd (ORCPT
+        with ESMTP id S233184AbjEHIkE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 May 2023 03:42:33 -0400
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75D591A1E5
-        for <kernel-janitors@vger.kernel.org>; Mon,  8 May 2023 00:42:29 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id vvVppzG33MVk3vvVppHiv1; Mon, 08 May 2023 09:42:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1683531747;
-        bh=40maiApoVL/VucoidkRFV2whGpUtUx6B9fd6pg++S/k=;
-        h=From:To:Cc:Subject:Date;
-        b=D2QwQF0t8cox0Q93u6udOg/olj4OPRQGaaAENj0UmMDsvgDLzBWCH3cE6bmbAyuKQ
-         bvLaFuAkqOKH/UwLzQFofyuseYHHIh+TA+MUVCaSVTLx3TuPKXWqOKJxZC0ATO2BT2
-         vKTMCE0F86h72lgVM7tUmYr/WN8a5SEcOBm0uRCqRXO4M2AoejHdP3KuiwPRxS1LSX
-         KYzGSXcJDCZdTAc1gETCk/6dLjZMtrDBzat/2hCe9ugYjAYQbwk9URoZkw+oFwSFE/
-         i7zzY14k74ruBB3uDB9LpJ1EGsrC5cMGm3VsQnqTkymlqiIpnnZTC8xLjPOM+VDF7B
-         iWBgEmEjapEZg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 08 May 2023 09:42:27 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] PM / devfreq: Reorder fields in 'struct devfreq_dev_status'
-Date:   Mon,  8 May 2023 09:42:15 +0200
-Message-Id: <6b1611f1440c8b73feb475723ad25f390cad3480.1683531691.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 8 May 2023 04:40:04 -0400
+X-Greylist: delayed 1481 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 08 May 2023 01:39:59 PDT
+Received: from mail.camacfoy.pl (mail.camacfoy.pl [195.231.80.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DE9415EFC
+        for <kernel-janitors@vger.kernel.org>; Mon,  8 May 2023 01:39:59 -0700 (PDT)
+Received: by mail.camacfoy.pl (Postfix, from userid 1001)
+        id B75B1A4540; Mon,  8 May 2023 09:06:21 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=camacfoy.pl; s=mail;
+        t=1683533261; bh=0DnDcjJl846YrSvLcp0W7cMkWp4Lfhp/OZAq4oBoaY8=;
+        h=Date:From:To:Subject:From;
+        b=SLsUPfrAI8+1KeQOr+QHBh68a86/0yvQqgDdsMJabe1udbPJK4PyjIjAJSBIKTqPC
+         XySxx9aeK+cAaxNS5FUNv1Sz9B/rTV42KeIKXai9/vCQePSFFxGnvR6wt5mefbZB4c
+         l8LumBlgRiwQRbc4m4MdaCjLY1d5HMMf+/0WRVM/ljl5pdQSjlnGh+kF2X6VNQjHA+
+         e4Dm/kIoE1mDrpJyCH2qTIYJnrI4bEVzuc+EUDUGc0FoPzI4PTLuN5/kugwGJS/V4E
+         qTiBx/Nf/rYs0bo3Bty+kLzUS4MFtlamgYK9EshsJPs9AebIcwKDZgwpOVbc/Ch03I
+         orIIbOGl2OtlA==
+Received: by mail.camacfoy.pl for <kernel-janitors@vger.kernel.org>; Mon,  8 May 2023 08:05:50 GMT
+Message-ID: <20230508074503-0.1.8b.erzc.0.mxtlnf3p43@camacfoy.pl>
+Date:   Mon,  8 May 2023 08:05:50 GMT
+From:   "Krzysztof Maj" <krzysztof.maj@camacfoy.pl>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: biznesowy angielski 
+X-Mailer: mail.camacfoy.pl
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Group some variables based on their sizes to reduce holes.
-On x86_64, this shrinks the size of 'struct devfreq_dev_status' from 72 to
-64 bytes.
+Dzie=C5=84 dobry,=20
 
-This structure is used both to allocate static variables or is embedded in
-some other structures. In both cases, reducing its size is nice to have.
+czy rozwa=C5=BCali Pa=C5=84stwo rozw=C3=B3j kwalifikacji j=C4=99zykowych =
+swoich pracownik=C3=B3w?
 
-Moreover, the whole structure now fits in a single cache line on x86_64.
+Opracowali=C5=9Bmy kursy j=C4=99zykowe dla r=C3=B3=C5=BCnych bran=C5=BC, =
+w kt=C3=B3rych koncentrujemy si=C4=99 na podniesieniu poziomu s=C5=82owni=
+ctwa i jako=C5=9Bci komunikacji wykorzystuj=C4=85c autorsk=C4=85 metod=C4=
+=99, stworzon=C4=85 specjalnie dla wymagaj=C4=85cego biznesu.=20
 
-Finally, it makes the order of code match the order of the above kernel
-doc.
+Niestandardowy kurs on-line, dopasowany do profilu firmy i obszar=C3=B3w =
+=C5=9Bwiadczonych us=C5=82ug, w szybkim czasie przyniesie efekty, kt=C3=B3=
+re zwi=C4=99ksz=C4=85 komfort i jako=C5=9B=C4=87 pracy, rozwijaj=C4=85c m=
+o=C5=BCliwo=C5=9Bci biznesowe.=20
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Using pahole
+Zdalne szkolenie j=C4=99zykowe to m.in. zaj=C4=99cia z native speakerami,=
+ kt=C3=B3re w szybkim czasie naucz=C4=85 pracownik=C3=B3w rozmawia=C4=87 =
+za pomoc=C4=85 jasnego i zwi=C4=99z=C5=82ego j=C4=99zyka Business English=
+=2E
 
-Before:
-======
-struct devfreq_dev_profile {
-	long unsigned int          initial_freq;         /*     0     8 */
-	unsigned int               polling_ms;           /*     8     4 */
-	enum devfreq_timer         timer;                /*    12     4 */
-	bool                       is_cooling_device;    /*    16     1 */
-
-	/* XXX 7 bytes hole, try to pack */
-
-	int                        (*target)(struct device *, long unsigned int *, u32); /*    24     8 */
-	int                        (*get_dev_status)(struct device *, struct devfreq_dev_status *); /*    32     8 */
-	int                        (*get_cur_freq)(struct device *, long unsigned int *); /*    40     8 */
-	void                       (*exit)(struct device *); /*    48     8 */
-	long unsigned int *        freq_table;           /*    56     8 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	unsigned int               max_state;            /*    64     4 */
-
-	/* size: 72, cachelines: 2, members: 10 */
-	/* sum members: 61, holes: 1, sum holes: 7 */
-	/* padding: 4 */
-	/* last cacheline: 8 bytes */
-};
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 wi=C4=99cej szczeg=C3=B3=C5=82=C3=B3=
+w i opowiedzie=C4=87 jak dzia=C5=82amy?
 
 
-After:
-=====
-struct devfreq_dev_profile {
-	long unsigned int          initial_freq;         /*     0     8 */
-	unsigned int               polling_ms;           /*     8     4 */
-	enum devfreq_timer         timer;                /*    12     4 */
-	int                        (*target)(struct device *, long unsigned int *, u32); /*    16     8 */
-	int                        (*get_dev_status)(struct device *, struct devfreq_dev_status *); /*    24     8 */
-	int                        (*get_cur_freq)(struct device *, long unsigned int *); /*    32     8 */
-	void                       (*exit)(struct device *); /*    40     8 */
-	long unsigned int *        freq_table;           /*    48     8 */
-	unsigned int               max_state;            /*    56     4 */
-	bool                       is_cooling_device;    /*    60     1 */
-
-	/* size: 64, cachelines: 1, members: 10 */
-	/* padding: 3 */
-};
----
- include/linux/devfreq.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index 7fd704bb8f3d..d312ffbac4dd 100644
---- a/include/linux/devfreq.h
-+++ b/include/linux/devfreq.h
-@@ -108,7 +108,6 @@ struct devfreq_dev_profile {
- 	unsigned long initial_freq;
- 	unsigned int polling_ms;
- 	enum devfreq_timer timer;
--	bool is_cooling_device;
- 
- 	int (*target)(struct device *dev, unsigned long *freq, u32 flags);
- 	int (*get_dev_status)(struct device *dev,
-@@ -118,6 +117,8 @@ struct devfreq_dev_profile {
- 
- 	unsigned long *freq_table;
- 	unsigned int max_state;
-+
-+	bool is_cooling_device;
- };
- 
- /**
--- 
-2.34.1
-
+Pozdrawiam
+Krzysztof Maj
