@@ -2,110 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E97BEC77B7C
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 May 2023 15:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A82DC7EE24
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 May 2023 04:02:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231727AbjEGPX5 (ORCPT
+        id S232430AbjEHECQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 May 2023 11:23:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59920 "EHLO
+        Mon, 8 May 2023 00:02:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231685AbjEGPX4 (ORCPT
+        with ESMTP id S230348AbjEHECP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 May 2023 11:23:56 -0400
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9C4017FC5
-        for <kernel-janitors@vger.kernel.org>; Sun,  7 May 2023 08:23:54 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id vgEopnCQ5xJDXvgEopiFxi; Sun, 07 May 2023 17:23:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1683473033;
-        bh=AycFl3TvTFQR8JMUPxB7ny9rxzvemcvxjVhoUuNuY3g=;
-        h=From:To:Cc:Subject:Date;
-        b=FJhCsrPnMWRaKzE0BgeW7FTqT+wVIic/9IlzqY7WYYIul8w1QKn07alf5sWlQ01Rq
-         1B7RFI0ZTDTR2NGrsbWF9BNycY7z8Np8pa7rVmwnv12IEQjePqkz+N9S/Kpb+ORyI5
-         eaVQHLdlLbm/0UJrpnUVUPS/7KpIGjvogYjVuB+AWicfKyLH+ckjAW1a9hoeBiRXEQ
-         FPsOF2/hcPYJzCXN62X4LDAtMFvl81RhED4QtyolUn9hesXKAiqe0kB1/LTFeB/OTp
-         VNXFMNAGLgjDJ76wCs2mVVlNZmM9RCcSUPeGdxdPTV1acWEH83lkwWXtTGxHM5Kc87
-         pOodiyjFETJhA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 07 May 2023 17:23:53 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        mpi3mr-linuxdrv.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Subject: [PATCH v2] scsi: mpi3mr: Fix the type used for pointers to bitmap
-Date:   Sun,  7 May 2023 17:23:49 +0200
-Message-Id: <8bdf9148ce1a5d01aac11c46c8617b477813457e.1683473011.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 8 May 2023 00:02:15 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49FF54224;
+        Sun,  7 May 2023 21:02:14 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-965a68abfd4so761799466b.2;
+        Sun, 07 May 2023 21:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683518533; x=1686110533;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gRDFA2Oq3a7TFMTFPjEDpCf3c96bA2T/fIIJ3Z+9UNA=;
+        b=Kl05KRFvCTs1ljKqfwvJrspDTYYwuJGHUrj/k2AEMXP5zWezRj2mMKeoDLxEbbYhj/
+         BXla76hGiGt9Lpa5vpm7n8JT19kABnpbgZjyrvBFTG0IIWdLcZEVdy7vkwj/QuC/MCtf
+         vKmHEjjOWbtRW14l3jLavWEddU0f8j+sxo4Ph0wppOvlu4oq6jxi36VmcN2nJnJ0/czc
+         9mJ8TTqJkQdQjbcwqWhnlFXtnQVjdMAd2cBmADh/nKHoYD4I1SAU3EUN3aduq32oiOp0
+         +f8iOWov9rEqda5MA3dAZrE5AQ/LWoQHWGN3sGC78pTo78XHPXAC3s+HqGChNKt9Nyf7
+         LO7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683518533; x=1686110533;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gRDFA2Oq3a7TFMTFPjEDpCf3c96bA2T/fIIJ3Z+9UNA=;
+        b=bqQlqWPcES9e1N/ydjGZz7+CWw39qAqrSWI7K6WM/aOA9TMfLGkbiJqMLOsRV1u76J
+         reWTlGEytuW0UUUIvi89ptdwfr316qhAZ1SZ8J/4ZmFKRAswIt6b22JBRIk7jUk5d+Yx
+         1rJIfNNi1c2wD4ekfPHsHqO/N4U+4Eh/zEI7Tb6fy+l9rOkwqwhK4428qnpx6t8OYueo
+         TBp8Cwpm6S9PMygBsKJOxJ5CKog5yvuPXQ537EkCUbTjGDT3IJVH9KtH54voRAHL2EW2
+         rjzGM6prGvgYLNSAxIV12cK3HVVQuEU89lv9S9aZsO+hnD7xHkCFd8+Vum2Mss/ZxJyw
+         +hQg==
+X-Gm-Message-State: AC+VfDxXHTwWK8G9fZbpIrAM3To/J5n+xUv+J0h8tqMIAR12BmOYb3SL
+        vNPhGeGxbS09TVq5A6EkoWs=
+X-Google-Smtp-Source: ACHHUZ5Vm0lEgqoo2PiIBq8J3bwbjgKEAhZ5fqiRC1wZTDsdtsIHBU1VlBQFNoJtAsw9IkhspAYJEQ==
+X-Received: by 2002:a17:906:9b8a:b0:961:272d:bdbe with SMTP id dd10-20020a1709069b8a00b00961272dbdbemr8053329ejc.35.1683518532543;
+        Sun, 07 May 2023 21:02:12 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:8906:f99a:ce33:2033])
+        by smtp.gmail.com with ESMTPSA id ka7-20020a170907990700b00947ed087a2csm4391606ejc.154.2023.05.07.21.02.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 May 2023 21:02:11 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Stefan Popa <stefan.popa@analog.com>, linux-iio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] iio: dac: build ad5758 driver when AD5758 is selected
+Date:   Mon,  8 May 2023 06:02:08 +0200
+Message-Id: <20230508040208.12033-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Bitmaps are "unsigned long[]", so better use "unsigned long *" instead of
-a plain "void *" when dealing with pointers to bitmaps.
+Commit 28d1a7ac2a0d ("iio: dac: Add AD5758 support") adds the config AD5758
+and the corresponding driver ad5758.c. In the Makefile, the ad5758 driver
+is however included when AD5755 is selected, not when AD5758 is selected.
 
-This is more informative.
+Probably, this was simply a mistake that happened by copy-and-paste and
+forgetting to adjust the actual line. Surprisingly, no one has ever noticed
+that this driver is actually only included when AD5755 is selected and that
+the config AD5758 has actually no effect on the build.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 28d1a7ac2a0d ("iio: dac: Add AD5758 support")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-v2: Fix some other declaration
----
- drivers/scsi/mpi3mr/mpi3mr.h    | 8 ++++----
- drivers/scsi/mpi3mr/mpi3mr_fw.c | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/iio/dac/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/mpi3mr/mpi3mr.h b/drivers/scsi/mpi3mr/mpi3mr.h
-index dfe6b87fe288..0afb687402e1 100644
---- a/drivers/scsi/mpi3mr/mpi3mr.h
-+++ b/drivers/scsi/mpi3mr/mpi3mr.h
-@@ -1133,18 +1133,18 @@ struct mpi3mr_ioc {
- 	u32 chain_buf_count;
- 	struct dma_pool *chain_buf_pool;
- 	struct chain_element *chain_sgl_list;
--	void *chain_bitmap;
-+	unsigned long *chain_bitmap;
- 	spinlock_t chain_buf_lock;
- 
- 	struct mpi3mr_drv_cmd bsg_cmds;
- 	struct mpi3mr_drv_cmd host_tm_cmds;
- 	struct mpi3mr_drv_cmd dev_rmhs_cmds[MPI3MR_NUM_DEVRMCMD];
- 	struct mpi3mr_drv_cmd evtack_cmds[MPI3MR_NUM_EVTACKCMD];
--	void *devrem_bitmap;
-+	unsigned long *devrem_bitmap;
- 	u16 dev_handle_bitmap_bits;
--	void *removepend_bitmap;
-+	unsigned long *removepend_bitmap;
- 	struct list_head delayed_rmhs_list;
--	void *evtack_cmds_bitmap;
-+	unsigned long *evtack_cmds_bitmap;
- 	struct list_head delayed_evtack_cmds_list;
- 
- 	u32 ts_update_counter;
-diff --git a/drivers/scsi/mpi3mr/mpi3mr_fw.c b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-index 075fa67e95ee..9b56d13821c6 100644
---- a/drivers/scsi/mpi3mr/mpi3mr_fw.c
-+++ b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-@@ -1134,7 +1134,7 @@ static int mpi3mr_issue_and_process_mur(struct mpi3mr_ioc *mrioc,
- static int
- mpi3mr_revalidate_factsdata(struct mpi3mr_ioc *mrioc)
- {
--	void *removepend_bitmap;
-+	unsigned long *removepend_bitmap;
- 
- 	if (mrioc->facts.reply_sz > mrioc->reply_sz) {
- 		ioc_err(mrioc,
+diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+index 6c74fea21736..addd97a78838 100644
+--- a/drivers/iio/dac/Makefile
++++ b/drivers/iio/dac/Makefile
+@@ -17,7 +17,7 @@ obj-$(CONFIG_AD5592R_BASE) += ad5592r-base.o
+ obj-$(CONFIG_AD5592R) += ad5592r.o
+ obj-$(CONFIG_AD5593R) += ad5593r.o
+ obj-$(CONFIG_AD5755) += ad5755.o
+-obj-$(CONFIG_AD5755) += ad5758.o
++obj-$(CONFIG_AD5758) += ad5758.o
+ obj-$(CONFIG_AD5761) += ad5761.o
+ obj-$(CONFIG_AD5764) += ad5764.o
+ obj-$(CONFIG_AD5766) += ad5766.o
 -- 
-2.34.1
+2.17.1
 
