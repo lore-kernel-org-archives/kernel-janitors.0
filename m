@@ -2,170 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E28CCC77B75
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 07:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE42CC77B75
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 07:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235241AbjEIHMR (ORCPT
+        id S233108AbjEIH3B (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 03:12:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42002 "EHLO
+        Tue, 9 May 2023 03:29:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235240AbjEIHMP (ORCPT
+        with ESMTP id S232223AbjEIH3A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 03:12:15 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA6226B8;
-        Tue,  9 May 2023 00:12:13 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-965ac4dd11bso1086285766b.2;
-        Tue, 09 May 2023 00:12:13 -0700 (PDT)
+        Tue, 9 May 2023 03:29:00 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFC40210D;
+        Tue,  9 May 2023 00:28:58 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-306281edf15so5095545f8f.1;
+        Tue, 09 May 2023 00:28:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683616332; x=1686208332;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e+aAIP8ajfLei8y315mzvfv242eDfozwQdKlXY70z4I=;
-        b=XDgkfCPWZ5DargSfyQlY3d6DnlIJgh/UruzjxNkJhDmTGgB77hY9SyEWDSodWX9W9U
-         NQaX3ksDR2muJpVt8fYGVrIs/BlzmP2yy9hRcJ4du4yawDE1rWV1t2qfUhrQU2TtipeL
-         aQGI7qXn/N4ckElhSwF/RKyx0rxSaTKbO3HW/AvRD1CIxfq/ANQL/KYXACifHN7pocOb
-         jq1cQaRu2LnKnEuZ2QQfLjo46od2p2+dcBRnsMqGUju1gIkRct1+O6IkEtoiPFBa1J1H
-         yzNvGfv5PUfAdwPSaUyw/t/+sS3ZMgi/LHEbqIa1IkOeVHhbYVjrhukAN+QNBBM2pnpf
-         tN7Q==
+        d=gmail.com; s=20221208; t=1683617337; x=1686209337;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZ9NuQkeXU4fNX7iBYzOS07LZkDDq4TEk1a9dRD5OwI=;
+        b=WuM5pudY0UqsP46LjTI8WpnLOV8nN2P+Qon8Lyta6Mr/3rEJHnoJBlFaw2vhAL48mC
+         voOwJ6181tWnwuyAgPn+V0EcNkd3MlB10CzlY4+tNaxMA9CPFqMnw6SMNvINi0kNQv6y
+         6W8X3pRPQIVvakeu2uLtI2s6BU3HO8DiJPiAEop463HKeqCyvLcZJN62f/WaVaygXth7
+         1cjk4MGdIUaI//1oY/VbQJOZt9xCOrmv9d4SKI+3TNdbVhxp/ggghajkFa6JQ7tSoFAr
+         9XYYZD6x8VaM8aDOAe8spO1er3riawEbhfroBAABSo2eeG1gyholwPqAXNv+aRJk3AGD
+         BUyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683616332; x=1686208332;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e+aAIP8ajfLei8y315mzvfv242eDfozwQdKlXY70z4I=;
-        b=igJTTKZrSg8WSBU0+vZtN49M+aqoHp8AQ3y4GsozWcXzOxs16xtsAP1hNQe1mgHsx/
-         yolbdcd/Vnf4bS7wcZm+D153oGq0twKpnwOCXf1DfM5G+iN5XPIIfKTiqXC3LVxGj6+H
-         Bwx+cvDSN9Z4XYBmSI8ZtN+KLOyzVr/M1GXXhyk+VXolZ6sCjxmephNNDjwWHVh0sRmp
-         kZOdwFmnE+VVeLFnPN1oL452aGPpX9DFq+Tyz2jmubCMtNJQ/g18AKLYdf50S0DlLnmY
-         MAMemLOZU4bcMdS5sHZa1zyjEDFn7UyMINu9JwyKZKdKNQS5U5s7LcZ0zAMRs4SPSB66
-         I9jQ==
-X-Gm-Message-State: AC+VfDw8Sh+JW1b2isz4X4hZixgyryVppWt4a0cAEYx+1FPpKd0w04JO
-        b9mGqSD2J7Vb4zBLtOz/raY=
-X-Google-Smtp-Source: ACHHUZ7tVsDsrIvQZCyzO3IbZvqJmpg9O2zw45SMLd9uUvgRfE5Fsnwqe3oI+i0zBauKKHLajoLbiQ==
-X-Received: by 2002:a17:907:983:b0:94f:2c22:a7a2 with SMTP id bf3-20020a170907098300b0094f2c22a7a2mr10646421ejc.68.1683616331548;
-        Tue, 09 May 2023 00:12:11 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:b892:8631:69c7:ec2c])
-        by smtp.gmail.com with ESMTPSA id s3-20020a170906bc4300b0095fde299e83sm919706ejv.214.2023.05.09.00.12.10
+        d=1e100.net; s=20221208; t=1683617337; x=1686209337;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TZ9NuQkeXU4fNX7iBYzOS07LZkDDq4TEk1a9dRD5OwI=;
+        b=WKpNW4hrCKWBPG5NEC4httV1kC588Yc3P1YClQqjsAS4I8p4G2L4ZutaQ44H4vJkac
+         dDFXUlSJYE2sRXelGzYP0QhSdsSU0RGgeDaNZdXMM0i52ar2c8tdxnw9ipy8/9PJygAq
+         MK3vzhbo8d2IJvws37AOos4Pv8Di1174tPnSE4XfmzyP7jaqVGhP3I0kAUJq53/RHfoO
+         HilJAa4KYaoUmz1fEXhJodu8VKNLV/DScEZjXfSMuRt0/I0ARMYURm2zXLDs1cJkHVNt
+         XZZCp8Us6/HjdvO81rMluFQ9h2qWtoQRvtmkJaFe0GvxKHW6AaAvyDMkLIr7nUF9fBZ5
+         jMUw==
+X-Gm-Message-State: AC+VfDzGwibD5L7NBjvZGErus+EN/qMwBtlqB9ccCibWHOn42uv6LwvQ
+        CB8DaB/+C6GpLmn0t7hxEfQgFFfPmHI=
+X-Google-Smtp-Source: ACHHUZ4aprA8jaV+02OALul3CdrPdHuejsbTRnfgW+TaIxH+q45taetODg6awx4MtB1jJAj852Yabg==
+X-Received: by 2002:a05:6000:c1:b0:307:9473:fe26 with SMTP id q1-20020a05600000c100b003079473fe26mr4379251wrx.26.1683617337199;
+        Tue, 09 May 2023 00:28:57 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id t9-20020a7bc3c9000000b003f1958eeadcsm784243wmj.17.2023.05.09.00.28.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 00:12:11 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] net: skbuff: remove special handling for SLOB
-Date:   Tue,  9 May 2023 09:12:07 +0200
-Message-Id: <20230509071207.28942-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 09 May 2023 00:28:56 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] fs/ntfs3: Fix spelling mistake "recommened" -> "recommended"
+Date:   Tue,  9 May 2023 08:28:55 +0100
+Message-Id: <20230509072855.2908731-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit c9929f0e344a ("mm/slob: remove CONFIG_SLOB") removes CONFIG_SLOB.
-Now, we can also remove special handling for socket buffers with the SLOB
-allocator. The code with HAVE_SKB_SMALL_HEAD_CACHE=1 is now the default
-behavior for all allocators.
+There is a spelling mistake in a ntfs_info message. Fix it.
 
-Remove an unnecessary distinction between SLOB and SLAB/SLUB allocator
-after the SLOB allocator is gone.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- net/core/skbuff.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+ fs/ntfs3/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 515ec5cdc79c..01b48e68aca0 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -92,15 +92,7 @@ static struct kmem_cache *skbuff_fclone_cache __ro_after_init;
- static struct kmem_cache *skbuff_ext_cache __ro_after_init;
- #endif
- 
--/* skb_small_head_cache and related code is only supported
-- * for CONFIG_SLAB and CONFIG_SLUB.
-- * As soon as SLOB is removed from the kernel, we can clean up this.
-- */
--#if !defined(CONFIG_SLOB)
--# define HAVE_SKB_SMALL_HEAD_CACHE 1
--#endif
- 
--#ifdef HAVE_SKB_SMALL_HEAD_CACHE
- static struct kmem_cache *skb_small_head_cache __ro_after_init;
- 
- #define SKB_SMALL_HEAD_SIZE SKB_HEAD_ALIGN(MAX_TCP_HEADER)
-@@ -117,7 +109,6 @@ static struct kmem_cache *skb_small_head_cache __ro_after_init;
- 
- #define SKB_SMALL_HEAD_HEADROOM						\
- 	SKB_WITH_OVERHEAD(SKB_SMALL_HEAD_CACHE_SIZE)
--#endif /* HAVE_SKB_SMALL_HEAD_CACHE */
- 
- int sysctl_max_skb_frags __read_mostly = MAX_SKB_FRAGS;
- EXPORT_SYMBOL(sysctl_max_skb_frags);
-@@ -562,7 +553,6 @@ static void *kmalloc_reserve(unsigned int *size, gfp_t flags, int node,
- 	void *obj;
- 
- 	obj_size = SKB_HEAD_ALIGN(*size);
--#ifdef HAVE_SKB_SMALL_HEAD_CACHE
- 	if (obj_size <= SKB_SMALL_HEAD_CACHE_SIZE &&
- 	    !(flags & KMALLOC_NOT_NORMAL_BITS)) {
- 		obj = kmem_cache_alloc_node(skb_small_head_cache,
-@@ -576,7 +566,6 @@ static void *kmalloc_reserve(unsigned int *size, gfp_t flags, int node,
- 		obj = kmem_cache_alloc_node(skb_small_head_cache, flags, node);
- 		goto out;
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index e36769eac7de..8323911fe274 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -1191,7 +1191,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sbi->volume.ni = ni;
+ 	if (info->flags & VOLUME_FLAG_DIRTY) {
+ 		sbi->volume.real_dirty = true;
+-		ntfs_info(sb, "It is recommened to use chkdsk.");
++		ntfs_info(sb, "It is recommended to use chkdsk.");
  	}
--#endif
- 	*size = obj_size = kmalloc_size_roundup(obj_size);
- 	/*
- 	 * Try a regular allocation, when that fails and we're not entitled
-@@ -898,11 +887,9 @@ static bool skb_pp_recycle(struct sk_buff *skb, void *data, bool napi_safe)
  
- static void skb_kfree_head(void *head, unsigned int end_offset)
- {
--#ifdef HAVE_SKB_SMALL_HEAD_CACHE
- 	if (end_offset == SKB_SMALL_HEAD_HEADROOM)
- 		kmem_cache_free(skb_small_head_cache, head);
- 	else
--#endif
- 		kfree(head);
- }
- 
-@@ -2160,7 +2147,6 @@ int __skb_unclone_keeptruesize(struct sk_buff *skb, gfp_t pri)
- 	if (likely(skb_end_offset(skb) == saved_end_offset))
- 		return 0;
- 
--#ifdef HAVE_SKB_SMALL_HEAD_CACHE
- 	/* We can not change skb->end if the original or new value
- 	 * is SKB_SMALL_HEAD_HEADROOM, as it might break skb_kfree_head().
- 	 */
-@@ -2174,7 +2160,6 @@ int __skb_unclone_keeptruesize(struct sk_buff *skb, gfp_t pri)
- 		WARN_ON_ONCE(1);
- 		return 0;
- 	}
--#endif
- 
- 	shinfo = skb_shinfo(skb);
- 
-@@ -4768,7 +4753,6 @@ void __init skb_init(void)
- 						0,
- 						SLAB_HWCACHE_ALIGN|SLAB_PANIC,
- 						NULL);
--#ifdef HAVE_SKB_SMALL_HEAD_CACHE
- 	/* usercopy should only access first SKB_SMALL_HEAD_HEADROOM bytes.
- 	 * struct skb_shared_info is located at the end of skb->head,
- 	 * and should not be copied to/from user.
-@@ -4780,7 +4764,6 @@ void __init skb_init(void)
- 						0,
- 						SKB_SMALL_HEAD_HEADROOM,
- 						NULL);
--#endif
- 	skb_extensions_init();
- }
- 
+ 	/* Load $MFTMirr to estimate recs_mirr. */
 -- 
-2.17.1
+2.30.2
 
