@@ -2,106 +2,142 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B43B5C7EE22
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 10:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A713DC77B7C
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 10:59:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235148AbjEIKZm (ORCPT
+        id S235311AbjEIK72 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 06:25:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57176 "EHLO
+        Tue, 9 May 2023 06:59:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234971AbjEIKZ1 (ORCPT
+        with ESMTP id S234861AbjEIK7Y (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 06:25:27 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 2B8F3D87E;
-        Tue,  9 May 2023 03:25:24 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id BA7E2180140432;
-        Tue,  9 May 2023 18:25:02 +0800 (CST)
-X-MD-Sfrom: yunchuan@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   wuych <yunchuan@nfschina.com>
-To:     davem@davemloft.net, edumazet@google.com, pabeni@redhat.com
-Cc:     andrew@lunn.ch, michael@walle.cc, zhaoxiao@uniontech.com,
-        andrew@aj.id.au, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        wuych <yunchuan@nfschina.com>
-Subject: [PATCH net-next] freescale:Remove unnecessary (void*) conversions
-Date:   Tue,  9 May 2023 18:25:01 +0800
-Message-Id: <20230509102501.41685-1-yunchuan@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 9 May 2023 06:59:24 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8647A106D5;
+        Tue,  9 May 2023 03:58:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1683629934; x=1715165934;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oepJVOVH68CBYtXIJCDRmO6N5dpmZ6x7a1EFLw/yItU=;
+  b=KQN7zJHdh1Z0wPzGdpwLS4IvwBhnBhfvEDunkbN01dOGbVWmFaR/doQA
+   KkaBwgUtlELbD36pQsT0SVNNjab/CBrgtpN0LZqTIVyOqkrgmVQ88Z+EQ
+   wgpe8yRrF0kFfcNrQXHFv3ubKaqotfQXapDFd0S19ViA6a+tzZnE8sgY2
+   XbuaVRUxII475Uaeu0CYdPO9vCczV9dHSt6F/MbAUBOk6oeaOcyHMeLaW
+   3+86adcZk7autCOJ+btfHwXPanxhrgc8pzl2vKufumCpsg7GKJMi4T7Wc
+   RcCVYEd33T+tKS8s6cG4AliLUtqEPtjaHN6iymR8ut863P1nJOQzr2LRb
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.99,261,1677567600"; 
+   d="scan'208";a="213074737"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 May 2023 03:58:49 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Tue, 9 May 2023 03:58:48 -0700
+Received: from localhost (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
+ Transport; Tue, 9 May 2023 03:58:47 -0700
+Date:   Tue, 9 May 2023 12:58:47 +0200
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+To:     wuych <yunchuan@nfschina.com>
+CC:     <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <andrew@lunn.ch>, <michael@walle.cc>, <zhaoxiao@uniontech.com>,
+        <andrew@aj.id.au>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH net-next] freescale:Remove unnecessary (void*) conversions
+Message-ID: <20230509105847.qow6jmmfub3ynfzs@soft-dev3-1>
+References: <20230509102501.41685-1-yunchuan@nfschina.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20230509102501.41685-1-yunchuan@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer variables of void * type do not require type cast.
+The 05/09/2023 18:25, wuych wrote:
 
-Signed-off-by: wuych <yunchuan@nfschina.com>
----
- drivers/net/ethernet/freescale/xgmac_mdio.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Hi wuych,
 
-diff --git a/drivers/net/ethernet/freescale/xgmac_mdio.c b/drivers/net/ethernet/freescale/xgmac_mdio.c
-index a13b4ba4d6e1..167a7fe04853 100644
---- a/drivers/net/ethernet/freescale/xgmac_mdio.c
-+++ b/drivers/net/ethernet/freescale/xgmac_mdio.c
-@@ -131,7 +131,7 @@ static int xgmac_wait_until_done(struct device *dev,
- static int xgmac_mdio_write_c22(struct mii_bus *bus, int phy_id, int regnum,
- 				u16 value)
- {
--	struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-+	struct mdio_fsl_priv *priv = bus->priv;
- 	struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
- 	bool endian = priv->is_little_endian;
- 	u16 dev_addr = regnum & 0x1f;
-@@ -163,7 +163,7 @@ static int xgmac_mdio_write_c22(struct mii_bus *bus, int phy_id, int regnum,
- static int xgmac_mdio_write_c45(struct mii_bus *bus, int phy_id, int dev_addr,
- 				int regnum, u16 value)
- {
--	struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-+	struct mdio_fsl_priv *priv = bus->priv;
- 	struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
- 	bool endian = priv->is_little_endian;
- 	u32 mdio_ctl, mdio_stat;
-@@ -205,7 +205,7 @@ static int xgmac_mdio_write_c45(struct mii_bus *bus, int phy_id, int dev_addr,
-  */
- static int xgmac_mdio_read_c22(struct mii_bus *bus, int phy_id, int regnum)
- {
--	struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-+	struct mdio_fsl_priv *priv = bus->priv;
- 	struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
- 	bool endian = priv->is_little_endian;
- 	u16 dev_addr = regnum & 0x1f;
-@@ -265,7 +265,7 @@ static int xgmac_mdio_read_c22(struct mii_bus *bus, int phy_id, int regnum)
- static int xgmac_mdio_read_c45(struct mii_bus *bus, int phy_id, int dev_addr,
- 			       int regnum)
- {
--	struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-+	struct mdio_fsl_priv *priv = bus->priv;
- 	struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
- 	bool endian = priv->is_little_endian;
- 	u32 mdio_stat, mdio_ctl;
-@@ -326,7 +326,7 @@ static int xgmac_mdio_read_c45(struct mii_bus *bus, int phy_id, int dev_addr,
- 
- static int xgmac_mdio_set_mdc_freq(struct mii_bus *bus)
- {
--	struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-+	struct mdio_fsl_priv *priv = bus->priv;
- 	struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
- 	struct device *dev = bus->parent;
- 	u32 mdio_stat, div;
-@@ -355,7 +355,7 @@ static int xgmac_mdio_set_mdc_freq(struct mii_bus *bus)
- 
- static void xgmac_mdio_set_suppress_preamble(struct mii_bus *bus)
- {
--	struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-+	struct mdio_fsl_priv *priv = bus->priv;
- 	struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
- 	struct device *dev = bus->parent;
- 	u32 mdio_stat;
+> 
+> Pointer variables of void * type do not require type cast.
+> 
+> Signed-off-by: wuych <yunchuan@nfschina.com>
+> ---
+>  drivers/net/ethernet/freescale/xgmac_mdio.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/freescale/xgmac_mdio.c b/drivers/net/ethernet/freescale/xgmac_mdio.c
+> index a13b4ba4d6e1..167a7fe04853 100644
+> --- a/drivers/net/ethernet/freescale/xgmac_mdio.c
+> +++ b/drivers/net/ethernet/freescale/xgmac_mdio.c
+> @@ -131,7 +131,7 @@ static int xgmac_wait_until_done(struct device *dev,
+>  static int xgmac_mdio_write_c22(struct mii_bus *bus, int phy_id, int regnum,
+>                                 u16 value)
+>  {
+> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
+> +       struct mdio_fsl_priv *priv = bus->priv;
+
+Don't forget to use the reverse x-mas notation.
+The longer lines should be at top.
+The same applies to the other changes that you have done in this patch.
+
+>         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
+>         bool endian = priv->is_little_endian;
+>         u16 dev_addr = regnum & 0x1f;
+> @@ -163,7 +163,7 @@ static int xgmac_mdio_write_c22(struct mii_bus *bus, int phy_id, int regnum,
+>  static int xgmac_mdio_write_c45(struct mii_bus *bus, int phy_id, int dev_addr,
+>                                 int regnum, u16 value)
+>  {
+> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
+> +       struct mdio_fsl_priv *priv = bus->priv;
+>         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
+>         bool endian = priv->is_little_endian;
+>         u32 mdio_ctl, mdio_stat;
+> @@ -205,7 +205,7 @@ static int xgmac_mdio_write_c45(struct mii_bus *bus, int phy_id, int dev_addr,
+>   */
+>  static int xgmac_mdio_read_c22(struct mii_bus *bus, int phy_id, int regnum)
+>  {
+> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
+> +       struct mdio_fsl_priv *priv = bus->priv;
+>         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
+>         bool endian = priv->is_little_endian;
+>         u16 dev_addr = regnum & 0x1f;
+> @@ -265,7 +265,7 @@ static int xgmac_mdio_read_c22(struct mii_bus *bus, int phy_id, int regnum)
+>  static int xgmac_mdio_read_c45(struct mii_bus *bus, int phy_id, int dev_addr,
+>                                int regnum)
+>  {
+> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
+> +       struct mdio_fsl_priv *priv = bus->priv;
+>         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
+>         bool endian = priv->is_little_endian;
+>         u32 mdio_stat, mdio_ctl;
+> @@ -326,7 +326,7 @@ static int xgmac_mdio_read_c45(struct mii_bus *bus, int phy_id, int dev_addr,
+> 
+>  static int xgmac_mdio_set_mdc_freq(struct mii_bus *bus)
+>  {
+> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
+> +       struct mdio_fsl_priv *priv = bus->priv;
+>         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
+>         struct device *dev = bus->parent;
+>         u32 mdio_stat, div;
+> @@ -355,7 +355,7 @@ static int xgmac_mdio_set_mdc_freq(struct mii_bus *bus)
+> 
+>  static void xgmac_mdio_set_suppress_preamble(struct mii_bus *bus)
+>  {
+> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
+> +       struct mdio_fsl_priv *priv = bus->priv;
+>         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
+>         struct device *dev = bus->parent;
+>         u32 mdio_stat;
+> --
+> 2.30.2
+> 
+> 
+
 -- 
-2.30.2
-
+/Horatiu
