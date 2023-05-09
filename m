@@ -2,108 +2,170 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B34FC77B75
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 06:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E28CCC77B75
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 07:12:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234729AbjEIGHb (ORCPT
+        id S235241AbjEIHMR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 02:07:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58634 "EHLO
+        Tue, 9 May 2023 03:12:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjEIGHa (ORCPT
+        with ESMTP id S235240AbjEIHMP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 02:07:30 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A0DA83E5;
-        Mon,  8 May 2023 23:07:29 -0700 (PDT)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 348Nx6Dl023318;
-        Tue, 9 May 2023 06:07:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-03-30; bh=zc6EEEn1oYKcQyCcTdpQ0tg3EWfoYrDwYkY4xNPZ6lM=;
- b=uYMHKPuPi4RQ2yt5I21hqMmUjFVKl9YPGb0fF73b3dM4Dovira4htF0CpJ93rsHC+rPr
- EAl09QGEsbPppm4bSbE6JKov3cFhGf59Dek/DGIvSmvM/CUa0m7EUsuwqSeodT+g5Zyp
- bmYkHsfKj/z6vx9Gnc2q4oD/UJ51rDLR8nq8pH1rDgCMUIOTpLdF3QL78cLhrDlWmgXv
- zIcjbfO6p+pNspkPICrCBWM50H9bDl9UogDgYwX5hdI2dt1ZN/DPOoWph1YdpM1LDZMR
- XCiezHPh6HwINo4Q5wbRHcwhxRattI4SKs6j9w3MWpZRptG5EICujE3hIH0Urp3hkcpq Fg== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qf7770wbq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 09 May 2023 06:07:23 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3495YbvY001626;
-        Tue, 9 May 2023 06:07:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qf82v67hr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 09 May 2023 06:07:22 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34967Mp6003662;
-        Tue, 9 May 2023 06:07:22 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3qf82v67h9-1;
-        Tue, 09 May 2023 06:07:22 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
-        dan.carpenter@linaro.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] dmaengine: idxd: Fix passing freed memory in idxd_cdev_open()
-Date:   Mon,  8 May 2023 23:07:16 -0700
-Message-Id: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.40.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-09_03,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305090046
-X-Proofpoint-GUID: gOlNjW3nC6OWyAlF8Vfp01P1ROCOomG5
-X-Proofpoint-ORIG-GUID: gOlNjW3nC6OWyAlF8Vfp01P1ROCOomG5
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 9 May 2023 03:12:15 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA6226B8;
+        Tue,  9 May 2023 00:12:13 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-965ac4dd11bso1086285766b.2;
+        Tue, 09 May 2023 00:12:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683616332; x=1686208332;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e+aAIP8ajfLei8y315mzvfv242eDfozwQdKlXY70z4I=;
+        b=XDgkfCPWZ5DargSfyQlY3d6DnlIJgh/UruzjxNkJhDmTGgB77hY9SyEWDSodWX9W9U
+         NQaX3ksDR2muJpVt8fYGVrIs/BlzmP2yy9hRcJ4du4yawDE1rWV1t2qfUhrQU2TtipeL
+         aQGI7qXn/N4ckElhSwF/RKyx0rxSaTKbO3HW/AvRD1CIxfq/ANQL/KYXACifHN7pocOb
+         jq1cQaRu2LnKnEuZ2QQfLjo46od2p2+dcBRnsMqGUju1gIkRct1+O6IkEtoiPFBa1J1H
+         yzNvGfv5PUfAdwPSaUyw/t/+sS3ZMgi/LHEbqIa1IkOeVHhbYVjrhukAN+QNBBM2pnpf
+         tN7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683616332; x=1686208332;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e+aAIP8ajfLei8y315mzvfv242eDfozwQdKlXY70z4I=;
+        b=igJTTKZrSg8WSBU0+vZtN49M+aqoHp8AQ3y4GsozWcXzOxs16xtsAP1hNQe1mgHsx/
+         yolbdcd/Vnf4bS7wcZm+D153oGq0twKpnwOCXf1DfM5G+iN5XPIIfKTiqXC3LVxGj6+H
+         Bwx+cvDSN9Z4XYBmSI8ZtN+KLOyzVr/M1GXXhyk+VXolZ6sCjxmephNNDjwWHVh0sRmp
+         kZOdwFmnE+VVeLFnPN1oL452aGPpX9DFq+Tyz2jmubCMtNJQ/g18AKLYdf50S0DlLnmY
+         MAMemLOZU4bcMdS5sHZa1zyjEDFn7UyMINu9JwyKZKdKNQS5U5s7LcZ0zAMRs4SPSB66
+         I9jQ==
+X-Gm-Message-State: AC+VfDw8Sh+JW1b2isz4X4hZixgyryVppWt4a0cAEYx+1FPpKd0w04JO
+        b9mGqSD2J7Vb4zBLtOz/raY=
+X-Google-Smtp-Source: ACHHUZ7tVsDsrIvQZCyzO3IbZvqJmpg9O2zw45SMLd9uUvgRfE5Fsnwqe3oI+i0zBauKKHLajoLbiQ==
+X-Received: by 2002:a17:907:983:b0:94f:2c22:a7a2 with SMTP id bf3-20020a170907098300b0094f2c22a7a2mr10646421ejc.68.1683616331548;
+        Tue, 09 May 2023 00:12:11 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:b892:8631:69c7:ec2c])
+        by smtp.gmail.com with ESMTPSA id s3-20020a170906bc4300b0095fde299e83sm919706ejv.214.2023.05.09.00.12.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 May 2023 00:12:11 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] net: skbuff: remove special handling for SLOB
+Date:   Tue,  9 May 2023 09:12:07 +0200
+Message-Id: <20230509071207.28942-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch warns:
-	drivers/dma/idxd/cdev.c:327:
-		idxd_cdev_open() warn: 'sva' was already freed.
+Commit c9929f0e344a ("mm/slob: remove CONFIG_SLOB") removes CONFIG_SLOB.
+Now, we can also remove special handling for socket buffers with the SLOB
+allocator. The code with HAVE_SKB_SMALL_HEAD_CACHE=1 is now the default
+behavior for all allocators.
 
-When idxd_wq_set_pasid() fails, the current code unbinds sva and then
-goes to 'failed_set_pasid' where iommu_sva_unbind_device is called
-again causing the above warning.
-[ device_user_pasid_enabled(idxd) is still true when calling
-failed_set_pasid ]
+Remove an unnecessary distinction between SLOB and SLAB/SLUB allocator
+after the SLOB allocator is gone.
 
-Fix this by removing additional unbind when idxd_wq_set_pasid() fails
-
-Fixes: b022f59725f0 ("dmaengine: idxd: add idxd_copy_cr() to copy user completion record during page fault handling")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-This is purely based on static analysis. Only compile tested.
----
- drivers/dma/idxd/cdev.c | 1 -
- 1 file changed, 1 deletion(-)
+ net/core/skbuff.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
-index ecbf67c2ad2b..d32deb9b4e3d 100644
---- a/drivers/dma/idxd/cdev.c
-+++ b/drivers/dma/idxd/cdev.c
-@@ -277,7 +277,6 @@ static int idxd_cdev_open(struct inode *inode, struct file *filp)
- 		if (wq_dedicated(wq)) {
- 			rc = idxd_wq_set_pasid(wq, pasid);
- 			if (rc < 0) {
--				iommu_sva_unbind_device(sva);
- 				dev_err(dev, "wq set pasid failed: %d\n", rc);
- 				goto failed_set_pasid;
- 			}
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 515ec5cdc79c..01b48e68aca0 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -92,15 +92,7 @@ static struct kmem_cache *skbuff_fclone_cache __ro_after_init;
+ static struct kmem_cache *skbuff_ext_cache __ro_after_init;
+ #endif
+ 
+-/* skb_small_head_cache and related code is only supported
+- * for CONFIG_SLAB and CONFIG_SLUB.
+- * As soon as SLOB is removed from the kernel, we can clean up this.
+- */
+-#if !defined(CONFIG_SLOB)
+-# define HAVE_SKB_SMALL_HEAD_CACHE 1
+-#endif
+ 
+-#ifdef HAVE_SKB_SMALL_HEAD_CACHE
+ static struct kmem_cache *skb_small_head_cache __ro_after_init;
+ 
+ #define SKB_SMALL_HEAD_SIZE SKB_HEAD_ALIGN(MAX_TCP_HEADER)
+@@ -117,7 +109,6 @@ static struct kmem_cache *skb_small_head_cache __ro_after_init;
+ 
+ #define SKB_SMALL_HEAD_HEADROOM						\
+ 	SKB_WITH_OVERHEAD(SKB_SMALL_HEAD_CACHE_SIZE)
+-#endif /* HAVE_SKB_SMALL_HEAD_CACHE */
+ 
+ int sysctl_max_skb_frags __read_mostly = MAX_SKB_FRAGS;
+ EXPORT_SYMBOL(sysctl_max_skb_frags);
+@@ -562,7 +553,6 @@ static void *kmalloc_reserve(unsigned int *size, gfp_t flags, int node,
+ 	void *obj;
+ 
+ 	obj_size = SKB_HEAD_ALIGN(*size);
+-#ifdef HAVE_SKB_SMALL_HEAD_CACHE
+ 	if (obj_size <= SKB_SMALL_HEAD_CACHE_SIZE &&
+ 	    !(flags & KMALLOC_NOT_NORMAL_BITS)) {
+ 		obj = kmem_cache_alloc_node(skb_small_head_cache,
+@@ -576,7 +566,6 @@ static void *kmalloc_reserve(unsigned int *size, gfp_t flags, int node,
+ 		obj = kmem_cache_alloc_node(skb_small_head_cache, flags, node);
+ 		goto out;
+ 	}
+-#endif
+ 	*size = obj_size = kmalloc_size_roundup(obj_size);
+ 	/*
+ 	 * Try a regular allocation, when that fails and we're not entitled
+@@ -898,11 +887,9 @@ static bool skb_pp_recycle(struct sk_buff *skb, void *data, bool napi_safe)
+ 
+ static void skb_kfree_head(void *head, unsigned int end_offset)
+ {
+-#ifdef HAVE_SKB_SMALL_HEAD_CACHE
+ 	if (end_offset == SKB_SMALL_HEAD_HEADROOM)
+ 		kmem_cache_free(skb_small_head_cache, head);
+ 	else
+-#endif
+ 		kfree(head);
+ }
+ 
+@@ -2160,7 +2147,6 @@ int __skb_unclone_keeptruesize(struct sk_buff *skb, gfp_t pri)
+ 	if (likely(skb_end_offset(skb) == saved_end_offset))
+ 		return 0;
+ 
+-#ifdef HAVE_SKB_SMALL_HEAD_CACHE
+ 	/* We can not change skb->end if the original or new value
+ 	 * is SKB_SMALL_HEAD_HEADROOM, as it might break skb_kfree_head().
+ 	 */
+@@ -2174,7 +2160,6 @@ int __skb_unclone_keeptruesize(struct sk_buff *skb, gfp_t pri)
+ 		WARN_ON_ONCE(1);
+ 		return 0;
+ 	}
+-#endif
+ 
+ 	shinfo = skb_shinfo(skb);
+ 
+@@ -4768,7 +4753,6 @@ void __init skb_init(void)
+ 						0,
+ 						SLAB_HWCACHE_ALIGN|SLAB_PANIC,
+ 						NULL);
+-#ifdef HAVE_SKB_SMALL_HEAD_CACHE
+ 	/* usercopy should only access first SKB_SMALL_HEAD_HEADROOM bytes.
+ 	 * struct skb_shared_info is located at the end of skb->head,
+ 	 * and should not be copied to/from user.
+@@ -4780,7 +4764,6 @@ void __init skb_init(void)
+ 						0,
+ 						SKB_SMALL_HEAD_HEADROOM,
+ 						NULL);
+-#endif
+ 	skb_extensions_init();
+ }
+ 
 -- 
-2.38.1
+2.17.1
 
