@@ -2,242 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC72C77B7C
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 07:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7585FC7EE22
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 07:48:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234092AbjEIHkO (ORCPT
+        id S234452AbjEIHst (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 03:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56466 "EHLO
+        Tue, 9 May 2023 03:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjEIHkN (ORCPT
+        with ESMTP id S229579AbjEIHsn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 03:40:13 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 3C0C183D2;
-        Tue,  9 May 2023 00:40:08 -0700 (PDT)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 3A4C418013AEE1;
-        Tue,  9 May 2023 15:40:05 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     auro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Baisong Zhong <zhongbaisong@huawei.com>,
-        Jakub Kicinski <kuba@kernel.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Su Hui <suhui@nfschina.com>
-Subject: [PATCH] media: usb: remove unnecessary (void*) conversions
-Date:   Tue,  9 May 2023 15:40:01 +0800
-Message-Id: <20230509074001.136455-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 9 May 2023 03:48:43 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E62E49;
+        Tue,  9 May 2023 00:48:42 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-956ff2399c9so1039951466b.3;
+        Tue, 09 May 2023 00:48:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683618521; x=1686210521;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ruBSrhAa2KCe3xFq+h2PyQJl3quIhNNbbuTeyicMoY0=;
+        b=qCck0pvQnTHjF+mFNSS17wB49c/kbITc2B14Rdb/hl2R4GXApQ6flXgxiAjIf+3K4L
+         GZFf7R/s/j4yyHAPd800Que5ia1XNbrzRocXBlgGSlVEdmWzIoloP+I0wNHSpMaore8H
+         wC2AwGxii5uDjraRT6Q2qtWCgG+seZLzd8qUWv2zUgKxB1K3+ZrB/pfOsQDHd1WAcn7d
+         lUXojHgxFwrRZUxcUaA5unSpy5W4juvU1N3siqbquUR6GDid5ELNSPzWpfnHaUyHvg1R
+         HbV57mkcOewzLwcMgqryFo0GSxuhzqrUaA9mRJQBmFAJ7UkiGkhDY4MZnKA3ELCOwr6f
+         xDjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683618521; x=1686210521;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ruBSrhAa2KCe3xFq+h2PyQJl3quIhNNbbuTeyicMoY0=;
+        b=esKqWariAsWbGaNxekmdh+gBN5ZFDIJfekYf1seqWzlH8ruYtGXtxe38TZfUGLUHO9
+         90oHZw4sQiXCJkuzQ+ZBLc//toR/piI6mgVSlZR/zL2U5eYChWH9A6jlMzS4xZY9cGH+
+         uuILmg5Z8bNqtFs6qM87wj/LNcXGWovPkqj1ZC3Q9e3NLVpUDwaySCJiWSeRrjaesYWw
+         1GFxC+nhSDNET+TnLodZubtJKysgrNYQAE9tGTpvd9RlLlCiUvvl2HxDKdjGhJ97bpXG
+         BKJzIepWD52O32twRt/fxEo017lFq+4Sc7XJtb68eJy/WVB7bzqesCph5xO2I66vc99X
+         Rk2g==
+X-Gm-Message-State: AC+VfDxHokd0pi3k5xnVW4ps7KGB65Ztbr8l39LCfX+IyYihEKRMNCbX
+        ffe/lh9k+aZ/Yzyb+g9IjHQ=
+X-Google-Smtp-Source: ACHHUZ6w0fJfY4rQJX3oXSXo3rY6SmQgVX5Rs578thAo292MEFdNF9hZAsEo+j8ho+ZeAH7ROoubew==
+X-Received: by 2002:a17:907:1c85:b0:94e:48ac:9a51 with SMTP id nb5-20020a1709071c8500b0094e48ac9a51mr12509959ejc.4.1683618520899;
+        Tue, 09 May 2023 00:48:40 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:b892:8631:69c7:ec2c])
+        by smtp.gmail.com with ESMTPSA id tc19-20020a1709078d1300b00969f2d5267asm397659ejc.114.2023.05.09.00.48.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 May 2023 00:48:40 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: repair pattern in DIALOG SEMICONDUCTOR DRIVERS
+Date:   Tue,  9 May 2023 09:48:34 +0200
+Message-Id: <20230509074834.21521-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-No need cast (void*) to (struct dvb_usb_device *),
-(struct filter_info *) or (struct az6027_device_state *).
+Commit 441613662db7 ("dt-bindings: mfd: Convert da9063 to yaml") converts
+da9063.txt to dlg,da9063.yaml and adds a new file pattern in MAINTAINERS.
+Unfortunately, the file pattern matches da90*.yaml, but the yaml file is
+prefixed with dlg,da90.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken file pattern.
+
+Repair this file pattern in DIALOG SEMICONDUCTOR DRIVERS.
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/media/usb/dvb-usb-v2/az6007.c   | 16 ++++++++--------
- drivers/media/usb/dvb-usb/az6027.c      | 18 +++++++++---------
- drivers/media/usb/dvb-usb/pctv452e.c    |  4 ++--
- drivers/media/usb/ttusb-dec/ttusb_dec.c |  2 +-
- 4 files changed, 20 insertions(+), 20 deletions(-)
+Andrew, please pick this minor MAINTAINERS patch.
 
-diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
-index 62ee09f28a0b..81a498d24075 100644
---- a/drivers/media/usb/dvb-usb-v2/az6007.c
-+++ b/drivers/media/usb/dvb-usb-v2/az6007.c
-@@ -248,7 +248,7 @@ static int az6007_ci_read_attribute_mem(struct dvb_ca_en50221 *ca,
- 					int slot,
- 					int address)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6007_device_state *state = d_to_priv(d);
- 
- 	int ret;
-@@ -290,7 +290,7 @@ static int az6007_ci_write_attribute_mem(struct dvb_ca_en50221 *ca,
- 					 int address,
- 					 u8 value)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6007_device_state *state = d_to_priv(d);
- 
- 	int ret;
-@@ -321,7 +321,7 @@ static int az6007_ci_read_cam_control(struct dvb_ca_en50221 *ca,
- 				      int slot,
- 				      u8 address)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6007_device_state *state = d_to_priv(d);
- 
- 	int ret;
-@@ -367,7 +367,7 @@ static int az6007_ci_write_cam_control(struct dvb_ca_en50221 *ca,
- 				       u8 address,
- 				       u8 value)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6007_device_state *state = d_to_priv(d);
- 
- 	int ret;
-@@ -398,7 +398,7 @@ static int az6007_ci_write_cam_control(struct dvb_ca_en50221 *ca,
- 
- static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 
- 	int ret;
- 	u8 req;
-@@ -429,7 +429,7 @@ static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
- 
- static int az6007_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6007_device_state *state = d_to_priv(d);
- 
- 	int ret, i;
-@@ -485,7 +485,7 @@ static int az6007_ci_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
- 
- static int az6007_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6007_device_state *state = d_to_priv(d);
- 
- 	int ret;
-@@ -514,7 +514,7 @@ static int az6007_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
- 
- static int az6007_ci_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6007_device_state *state = d_to_priv(d);
- 	int ret;
- 	u8 req;
-diff --git a/drivers/media/usb/dvb-usb/az6027.c b/drivers/media/usb/dvb-usb/az6027.c
-index f7a6ab29e530..9d0847190748 100644
---- a/drivers/media/usb/dvb-usb/az6027.c
-+++ b/drivers/media/usb/dvb-usb/az6027.c
-@@ -407,7 +407,7 @@ static int az6027_ci_read_attribute_mem(struct dvb_ca_en50221 *ca,
- 					int slot,
- 					int address)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6027_device_state *state = d->priv;
- 
- 	int ret;
-@@ -449,8 +449,8 @@ static int az6027_ci_write_attribute_mem(struct dvb_ca_en50221 *ca,
- 					 int address,
- 					 u8 value)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
--	struct az6027_device_state *state = (struct az6027_device_state *)d->priv;
-+	struct dvb_usb_device *d = ca->data;
-+	struct az6027_device_state *state = d->priv;
- 
- 	int ret;
- 	u8 req;
-@@ -480,7 +480,7 @@ static int az6027_ci_read_cam_control(struct dvb_ca_en50221 *ca,
- 				      int slot,
- 				      u8 address)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6027_device_state *state = d->priv;
- 
- 	int ret;
-@@ -526,7 +526,7 @@ static int az6027_ci_write_cam_control(struct dvb_ca_en50221 *ca,
- 				       u8 address,
- 				       u8 value)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6027_device_state *state = d->priv;
- 
- 	int ret;
-@@ -557,7 +557,7 @@ static int az6027_ci_write_cam_control(struct dvb_ca_en50221 *ca,
- 
- static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 
- 	int ret;
- 	u8 req;
-@@ -588,7 +588,7 @@ static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
- 
- static int az6027_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6027_device_state *state = d->priv;
- 
- 	int ret, i;
-@@ -644,7 +644,7 @@ static int az6027_ci_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
- 
- static int az6027_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6027_device_state *state = d->priv;
- 
- 	int ret;
-@@ -673,7 +673,7 @@ static int az6027_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
- 
- static int az6027_ci_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct az6027_device_state *state = d->priv;
- 	int ret;
- 	u8 req;
-diff --git a/drivers/media/usb/dvb-usb/pctv452e.c b/drivers/media/usb/dvb-usb/pctv452e.c
-index 42763c12cf29..2aab49003493 100644
---- a/drivers/media/usb/dvb-usb/pctv452e.c
-+++ b/drivers/media/usb/dvb-usb/pctv452e.c
-@@ -159,7 +159,7 @@ static int tt3650_ci_msg_locked(struct dvb_ca_en50221 *ca,
- 				u8 cmd, u8 *data, unsigned int write_len,
- 				unsigned int read_len)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct pctv452e_state *state = d->priv;
- 	int ret;
- 
-@@ -292,7 +292,7 @@ static int tt3650_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
- 
- static int tt3650_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
- {
--	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
-+	struct dvb_usb_device *d = ca->data;
- 	struct pctv452e_state *state = d->priv;
- 	u8 buf[1];
- 	int ret;
-diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-index 38822cedd93a..6bf2e7e0f6d2 100644
---- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
-+++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-@@ -1128,7 +1128,7 @@ static int ttusb_dec_stop_sec_feed(struct dvb_demux_feed *dvbdmxfeed)
- {
- 	struct ttusb_dec *dec = dvbdmxfeed->demux->priv;
- 	u8 b0[] = { 0x00, 0x00 };
--	struct filter_info *finfo = (struct filter_info *)dvbdmxfeed->priv;
-+	struct filter_info *finfo = dvbdmxfeed->priv;
- 	unsigned long flags;
- 
- 	b0[1] = finfo->stream_id;
+
+Note: The patch was sent three times to Lee Jones to be picked up, but it wasn't. 
+
+v1: https://lore.kernel.org/all/20220623104456.27144-1-lukas.bulwahn@gmail.com/
+v1-resend: https://lore.kernel.org/all/20230110154901.20223-1-lukas.bulwahn@gmail.com/
+v1-resend2: https://lore.kernel.org/all/20230313050903.29416-1-lukas.bulwahn@gmail.com/
+
+v1 to resend:
+ - added the Acked-by from Conor Dooley.
+
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 460f953f331b..c10dd7aa8ed9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6026,7 +6026,7 @@ W:	http://www.dialog-semiconductor.com/products
+ F:	Documentation/devicetree/bindings/input/da90??-onkey.txt
+ F:	Documentation/devicetree/bindings/input/dlg,da72??.txt
+ F:	Documentation/devicetree/bindings/mfd/da90*.txt
+-F:	Documentation/devicetree/bindings/mfd/da90*.yaml
++F:	Documentation/devicetree/bindings/mfd/dlg,da90*.yaml
+ F:	Documentation/devicetree/bindings/regulator/dlg,da9*.yaml
+ F:	Documentation/devicetree/bindings/regulator/da92*.txt
+ F:	Documentation/devicetree/bindings/regulator/slg51000.txt
 -- 
-2.30.2
+2.17.1
 
