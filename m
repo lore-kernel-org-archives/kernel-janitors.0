@@ -2,62 +2,63 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEF5C77B7C
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 08:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE3FC77B7C
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 08:40:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233637AbjEIIgD (ORCPT
+        id S234485AbjEIIkS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 04:36:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47768 "EHLO
+        Tue, 9 May 2023 04:40:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbjEIIgC (ORCPT
+        with ESMTP id S234520AbjEIIkP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 04:36:02 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B3D64217;
-        Tue,  9 May 2023 01:36:01 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-50bdd7b229cso10436923a12.0;
-        Tue, 09 May 2023 01:36:01 -0700 (PDT)
+        Tue, 9 May 2023 04:40:15 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59458A73;
+        Tue,  9 May 2023 01:40:11 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-965e93f915aso832178666b.2;
+        Tue, 09 May 2023 01:40:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683621359; x=1686213359;
+        d=gmail.com; s=20221208; t=1683621610; x=1686213610;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1WY12/+GxrYuE6ZT7p+AVfSbRBwrZRvdjfIL9M7i5HM=;
-        b=QT2z/op7Lqack6xreaSOyUZYU1BMlssDbGqPlRrhFCvvOPRJW56SCj/eKK89gc2ta0
-         +2MUyVPqkys+omRFSclviFqTBASSEBO3yf4sHOqwlwiBwE8sI0mxpc02iZN7v/PNx7Tr
-         3W7s6D6NVDFgurOaKt5xo01JD/pxX94XmxlsQf4DBVji0KCrlRbuZvcfK/snTbzaQgBr
-         h7AnHkinJVQZDTRoD4ci1GoIUQZrpfdnlNvikrpWBwcPSP0OCvll3UDHAhA2O7dFElQy
-         Oi2KZt5q07xDaX0rxYbcj1siVSuzAlCvLDO+6yKPbzR4rXPFFRad/FyAYD9GNPySYvEb
-         Kk9Q==
+        bh=vYoqIspga6VVNOgplfkhPgEKyUSoYEOyFaJeyHtCIVY=;
+        b=A77DX7ZtfU7QIwGEFQSjIJesTCiBnNHx8wrqCC+fw4j0m3ZZeWDLZRS/OH/HZo/OoO
+         ADIP+rovYCEJg4TLshImyx9xHZ6IYsVATXYdi4Wg9/EzlA8NETijV9V74XeSOPhPsqH7
+         Bx0TNnvkfxwseeotB2JFyRZMyZ9WcM6A9O7iNuxhwi7gdIHmNiGVr4MEUj4CbN/bUh8Q
+         dER1M2wjyiH7idl7dfPEC34GZgHgjHWMuvz3RHC3RIcsdnH76OZaz5IZwVeqhmmqQHcp
+         zz5XmWhw22HqTSFJJkq+1qef6eKStN+8+zPu59/yDOi2LXNs8AcJ913dCnny9EG6CS/Q
+         W39A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683621359; x=1686213359;
+        d=1e100.net; s=20221208; t=1683621610; x=1686213610;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1WY12/+GxrYuE6ZT7p+AVfSbRBwrZRvdjfIL9M7i5HM=;
-        b=Im4bpyYNbvytNJrPTS8lc6K9y0afRyPY/dY23jX3RWM7WoOYMobFQU6lZVDRPEhWOT
-         3og/OD+1OUNre60ZAxNxaptpb1nFJfNzHYpeTZB5aradJsewfwtO3vK1BvbbW5RqUwLg
-         WnXRhdrYi+CYBzBVAgL+39qVvQtITeyskh1lGhE7LmGwaK2Y/K2epL7v6gHsAwvD+mky
-         zoc09VAZSFrKKbF+L+ao+24Iz8baucXiT8PBMhgygzXTS7BG57Bm/H9+Mwipfe/CVtpF
-         3iEr3ZEbexnH6+zAfoXNpvBWrERpY4DNvh6JMkFnj4t7GRFW51wiI+7ydHrN0VxEFeCN
-         bjYA==
-X-Gm-Message-State: AC+VfDw4rjh00465R9ZsLAnJSUAYDfd6uJknTe6rGZGPp9gPjgqbr46d
-        lw2hF7cpkyMv2aWjDVlZsU1UGQD6Xjw=
-X-Google-Smtp-Source: ACHHUZ7C64+cxBG2eumDiQf6O7mnUOKrDkKwK2bveM4s4XIH7V8//1WBrSVg2RslWGvU5PJraH01Fg==
-X-Received: by 2002:aa7:dc12:0:b0:506:9805:7b56 with SMTP id b18-20020aa7dc12000000b0050698057b56mr10734030edu.32.1683621359548;
-        Tue, 09 May 2023 01:35:59 -0700 (PDT)
+        bh=vYoqIspga6VVNOgplfkhPgEKyUSoYEOyFaJeyHtCIVY=;
+        b=jN7oO3AsZnRVDO0kT5wkVNoFUoP3U1si4c+T/ZBihVFklT3U6sWmkrVbe6TBt5ALDq
+         KprO515eLDmTvTruAuTtrU3u0fkZrKQd9DXgzN/oSZV+BhpB33O30blzs6Inmq0CVBuT
+         E90Bou7p2ccjb9EhvI9W9Ek7yiZ7WxkIS0Tr4o7Q7DnQjOlSs8SHlBu7PdGUREnxcyuc
+         ewCTD+DpUULOjX3D6wy61cG03wAXbQcK9Hu8nByHguYXqRtXBgLSgNAuXDC28qWNxR25
+         Q1tItQfi/L1c91O+GELSuH1LrOJClbVfkMe3gVFq65w+ONNr2IGrp87leOaAZc/c9fcb
+         h5ZQ==
+X-Gm-Message-State: AC+VfDzytQEgICdA4yGOTCemlJN6347rWvoxRI8J/iezm+4iAJJ0uZaD
+        2m4naSU3gTKZ034x4UoPqyQ=
+X-Google-Smtp-Source: ACHHUZ6hd93FZWtWtg4ZJBvGGApThiqmx/hX5hZ9HWlOvaz6jcwkWlqtSy2ZX+qPpm4TQEMtHJRM0w==
+X-Received: by 2002:a17:907:1c85:b0:94e:48ac:9a51 with SMTP id nb5-20020a1709071c8500b0094e48ac9a51mr12668621ejc.4.1683621609994;
+        Tue, 09 May 2023 01:40:09 -0700 (PDT)
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:b892:8631:69c7:ec2c])
-        by smtp.gmail.com with ESMTPSA id n10-20020aa7db4a000000b005027d31615dsm482865edt.62.2023.05.09.01.35.58
+        by smtp.gmail.com with ESMTPSA id w15-20020a50fa8f000000b0050d89daaa70sm501447edr.2.2023.05.09.01.40.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 01:35:59 -0700 (PDT)
+        Tue, 09 May 2023 01:40:09 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] arm: make config ARM_PATCH_PHYS_VIRT visible with EXPERT
-Date:   Tue,  9 May 2023 10:35:54 +0200
-Message-Id: <20230509083554.21514-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] x86: make config X86_FEATURE_NAMES visible with EXPERT
+Date:   Tue,  9 May 2023 10:40:07 +0200
+Message-Id: <20230509084007.24373-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -117,30 +118,31 @@ beyond CONFIG_EXPERT, such as CONFIG_EMBEDDED attempted to do. For now, it
 is much more reasonable to simply make those additional seven options that
 are visible with CONFIG_EMBEDDED visible with CONFIG_EXPERT, and then
 remove CONFIG_EMBEDDED. If anyone spends significant effort in structuring
-the visibility of config options, they may re-introduce suitable new config
-options simply as they see fit.
+the visibility of config options, they may re-introduce suitable new
+config options simply as they see fit.
 
-Make the config ARM_PATCH_PHYS_VIRT visible when CONFIG_EXPERT is enabled.
+Make the config X86_FEATURE_NAMES visible when CONFIG_EXPERT is enabled.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
 Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/Kconfig | 2 +-
+ arch/x86/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 0fb4b218f665..0456afcebabb 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -247,7 +247,7 @@ config ARCH_MTD_XIP
- 	bool
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index ce460d6b4e25..595f6696281c 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -442,7 +442,7 @@ config SMP
+ 	  If you don't know what to do here, say N.
  
- config ARM_PATCH_PHYS_VIRT
--	bool "Patch physical to virtual translations at runtime" if EMBEDDED
-+	bool "Patch physical to virtual translations at runtime" if EXPERT
+ config X86_FEATURE_NAMES
+-	bool "Processor feature human-readable names" if EMBEDDED
++	bool "Processor feature human-readable names" if EXPERT
  	default y
- 	depends on MMU
  	help
+ 	  This option compiles in a table of x86 feature bits and corresponding
 -- 
 2.17.1
 
