@@ -2,102 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B25C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 15:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FD8C77B75
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 18:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235902AbjEIPNs (ORCPT
+        id S233992AbjEISVH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 11:13:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39178 "EHLO
+        Tue, 9 May 2023 14:21:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235664AbjEIPNr (ORCPT
+        with ESMTP id S229543AbjEISVF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 11:13:47 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7FED44AC;
-        Tue,  9 May 2023 08:13:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1683645224; x=1715181224;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=sDIaRhN9LwUxhy8X7r7FslkiOl4KGP7DqZP3VkptV7U=;
-  b=D17WbPDl5viGwTJ0ndZm1m8n/00/GDY/YOaf9cP0tHtlDqiDT8tOIUvN
-   QnCmvn4cnh7n6uSlNV0hM+9/n5Df8DOBewYMBwykoC0KtWb9xplLVbi13
-   s9N3dMp3mTDFvMKnajyOZYQ0j7kCYvOTj5xWqtf5uxCJGGCgxC0mbuoeQ
-   vJ/3Dl8LSTxtpskHlPzVgElXYpdPCszrcvT49E/gQt0k7tDMaU4sZVX5Q
-   22zwuo7WEYOPOIT31llPlde9g4lV7ypwpiG9pz4wqG4/llXlu9+hlYHWx
-   gVMESM1AdHb+Ct7ADkHfL2lwYl0QYAX9vOHGHCmdl4jdZh23/zNNrLgz/
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="329580623"
-X-IronPort-AV: E=Sophos;i="5.99,262,1677571200"; 
-   d="scan'208";a="329580623"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 08:13:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="873220589"
-X-IronPort-AV: E=Sophos;i="5.99,262,1677571200"; 
-   d="scan'208";a="873220589"
-Received: from dcovax-mobl.amr.corp.intel.com (HELO [10.212.97.226]) ([10.212.97.226])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 08:13:43 -0700
-Message-ID: <a33ff0bb-28c8-0bdf-4367-8354a9e1af9d@intel.com>
-Date:   Tue, 9 May 2023 08:13:42 -0700
+        Tue, 9 May 2023 14:21:05 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FED10D4;
+        Tue,  9 May 2023 11:21:03 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-965d2749e2eso853066766b.1;
+        Tue, 09 May 2023 11:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683656462; x=1686248462;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XAU/TKhzNSlOY/Os7CAfOCmst5luRw79pGJePyYkmjI=;
+        b=Q8iWOLG5uyCKkbR+lm2anl3kCm8BNUVgJ+ifPXKKV8jNNhtFglfYnbqyQguZRWbpho
+         Siy9U83QD4C1BYdtwNRxa0i92Ut29ckJAn7oWa5OopTy63BszzXrEb+Evhar8i6w60AT
+         IArC0db4KqzpBSvBNLrv9qzDEvWAX0ji5jc5qIU05O+nOiGP+nfBuvF8DzzhLCLDT41J
+         BE6pkpp9AM8c7lhSKv9OoOlCHjeSEGRJHNlDKn270ma8/bmJxGKrRlJPI4VY+0ujToEh
+         P7vvlgnejBaNWfHtar3tFXRjdtnNIZpQM0psYne8nrr2EPzRXq8SZCgBzuHpGai3AG0x
+         6NVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683656462; x=1686248462;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XAU/TKhzNSlOY/Os7CAfOCmst5luRw79pGJePyYkmjI=;
+        b=CD2ZbhqXase0JwUm93CxRSx/OZN1uSGdm0pNLXpbxPcvzOuwzi8yC3akL8+r/toErz
+         E2aTRZVivvHPtne9fL6JxDY6SdaN91sEsZtqKruPSIKBE7cVX2it156y6nhAhzeM08w8
+         b1ThDhwQIM2hFzrcGjUIdDwh6usoYz5UxMUlUmbvozq9LbTnqtoVKDDjSq0CSP4VkrAi
+         eKjmZtN4lONdzSoQeOA0Rb2gK20LGvd1uUUpqZa/nQVe4GpDek/rEpC3R6wmH+F9vozJ
+         sWebRTJPgSe27dQa4W5e3bmLoL9g2m3Hf+v1pFQD0bLg/YZXRO68YIuNOis6TQKAtpEZ
+         brTg==
+X-Gm-Message-State: AC+VfDyeOGDhICJjwCQuk4QnLimLMTCSrK2cVrR55i8Iw0Y5n4ZakvlM
+        +NkDrtQxNI7bvkrVIImuQi2v17et3Ik+DdOW4RGpguUQgpY=
+X-Google-Smtp-Source: ACHHUZ6OjM7PCpD8/z2IYotZln1D2/7FpG9nyZ1pFrknkuSvitkhoy9/WsrSb21c+NIg37IKCXXJQTyeNhQBNAekXSQ=
+X-Received: by 2002:a17:907:5ca:b0:965:6cb9:b768 with SMTP id
+ wg10-20020a17090705ca00b009656cb9b768mr10866237ejb.31.1683656462080; Tue, 09
+ May 2023 11:21:02 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.10.0
-Subject: Re: [PATCH] dmaengine: idxd: Fix passing freed memory in
- idxd_cdev_open()
-Content-Language: en-US
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
-        dan.carpenter@linaro.org, Fenghua Yu <fenghua.yu@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+References: <20230509084007.24373-1-lukas.bulwahn@gmail.com> <7cbe80f0-dcc3-bfc3-3bd8-c9f96704618d@intel.com>
+In-Reply-To: <7cbe80f0-dcc3-bfc3-3bd8-c9f96704618d@intel.com>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Tue, 9 May 2023 20:20:50 +0200
+Message-ID: <CAKXUXMxO4b-8wT-88fJ=++woH-p79_4R-vUr=aELNFYinGcEuw@mail.gmail.com>
+Subject: Re: [PATCH] x86: make config X86_FEATURE_NAMES visible with EXPERT
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
-From:   Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Tue, May 9, 2023 at 4:07=E2=80=AFPM Dave Hansen <dave.hansen@intel.com> =
+wrote:
+>
+> On 5/9/23 01:40, Lukas Bulwahn wrote:
+> > Commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to CONFIG_EXPERT"=
+)
+> > introduces CONFIG_EXPERT to carry the previous intent of CONFIG_EMBEDDE=
+D
+> > and just gives that intent a much better name.
+>
+> That was quite the changelog, and I'm still not quite sure:
+>
+> What is the problem with the existing code?
+>
+> What is the end user visible impact of this problem and of this proposed
+> change?
+>
+
+Thanks, Dave, for your feedback.
+
+The commit message is so lengthy, as I copied it from the original
+cover letter into each commit, but I agree with your feedback.
+
+So maybe this commit message fits better:
+
+To simplify build configurations, the CONFIG_EMBEDDED is to be
+removed. All configs that are only visible with CONFIG_EMBEDDED=3Dy
+shall be now visible with CONFIG_EXPERT=3Dy.
+
+In the x86 architecture, the config X86_FEATURE_NAMES is visible when
+CONFIG_EMBEDDED is enabled. Now, make the config X86_FEATURE_NAMES
+visible when CONFIG_EXPERT is enabled.
 
 
-On 5/8/23 11:07 PM, Harshit Mogalapalli wrote:
-> Smatch warns:
-> 	drivers/dma/idxd/cdev.c:327:
-> 		idxd_cdev_open() warn: 'sva' was already freed.
-> 
-> When idxd_wq_set_pasid() fails, the current code unbinds sva and then
-> goes to 'failed_set_pasid' where iommu_sva_unbind_device is called
-> again causing the above warning.
-> [ device_user_pasid_enabled(idxd) is still true when calling
-> failed_set_pasid ]
-> 
-> Fix this by removing additional unbind when idxd_wq_set_pasid() fails
-> 
-> Fixes: b022f59725f0 ("dmaengine: idxd: add idxd_copy_cr() to copy user completion record during page fault handling")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Dave, what do you think? If that is good enough for you, I will send
+an updated patch with that commit message.
 
-Acked-by: Dave Jiang <dave.jiang@intel.com>
-
-Thank you!
-> ---
-> This is purely based on static analysis. Only compile tested.
-> ---
->   drivers/dma/idxd/cdev.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
-> index ecbf67c2ad2b..d32deb9b4e3d 100644
-> --- a/drivers/dma/idxd/cdev.c
-> +++ b/drivers/dma/idxd/cdev.c
-> @@ -277,7 +277,6 @@ static int idxd_cdev_open(struct inode *inode, struct file *filp)
->   		if (wq_dedicated(wq)) {
->   			rc = idxd_wq_set_pasid(wq, pasid);
->   			if (rc < 0) {
-> -				iommu_sva_unbind_device(sva);
->   				dev_err(dev, "wq set pasid failed: %d\n", rc);
->   				goto failed_set_pasid;
->   			}
+Lukas
