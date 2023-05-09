@@ -2,72 +2,108 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9A8C77B7F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 02:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B34FC77B75
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 06:07:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232212AbjEICQW (ORCPT
+        id S234729AbjEIGHb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 May 2023 22:16:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58882 "EHLO
+        Tue, 9 May 2023 02:07:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229995AbjEICQS (ORCPT
+        with ESMTP id S229672AbjEIGHa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 May 2023 22:16:18 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id E01A9D047;
-        Mon,  8 May 2023 19:15:48 -0700 (PDT)
-Received: from [172.30.38.103] (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 2A34F180119BDF;
-        Tue,  9 May 2023 10:14:47 +0800 (CST)
-Message-ID: <44d14534-b6ec-4fa6-fb0d-1a3e75fc594c@nfschina.com>
-Date:   Tue, 9 May 2023 10:14:46 +0800
+        Tue, 9 May 2023 02:07:30 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A0DA83E5;
+        Mon,  8 May 2023 23:07:29 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 348Nx6Dl023318;
+        Tue, 9 May 2023 06:07:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=zc6EEEn1oYKcQyCcTdpQ0tg3EWfoYrDwYkY4xNPZ6lM=;
+ b=uYMHKPuPi4RQ2yt5I21hqMmUjFVKl9YPGb0fF73b3dM4Dovira4htF0CpJ93rsHC+rPr
+ EAl09QGEsbPppm4bSbE6JKov3cFhGf59Dek/DGIvSmvM/CUa0m7EUsuwqSeodT+g5Zyp
+ bmYkHsfKj/z6vx9Gnc2q4oD/UJ51rDLR8nq8pH1rDgCMUIOTpLdF3QL78cLhrDlWmgXv
+ zIcjbfO6p+pNspkPICrCBWM50H9bDl9UogDgYwX5hdI2dt1ZN/DPOoWph1YdpM1LDZMR
+ XCiezHPh6HwINo4Q5wbRHcwhxRattI4SKs6j9w3MWpZRptG5EICujE3hIH0Urp3hkcpq Fg== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qf7770wbq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 May 2023 06:07:23 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3495YbvY001626;
+        Tue, 9 May 2023 06:07:22 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qf82v67hr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 May 2023 06:07:22 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34967Mp6003662;
+        Tue, 9 May 2023 06:07:22 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3qf82v67h9-1;
+        Tue, 09 May 2023 06:07:22 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
+        dan.carpenter@linaro.org,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: idxd: Fix passing freed memory in idxd_cdev_open()
+Date:   Mon,  8 May 2023 23:07:16 -0700
+Message-Id: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] usb: typec: tcpm: remove unnecessary (void*) conversions
-Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-Cc:     linux@roeck-us.net, heikki.krogerus@linux.intel.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <2023050841-pedicure-magnify-bea5@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-09_03,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305090046
+X-Proofpoint-GUID: gOlNjW3nC6OWyAlF8Vfp01P1ROCOomG5
+X-Proofpoint-ORIG-GUID: gOlNjW3nC6OWyAlF8Vfp01P1ROCOomG5
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-I am so sorry for this. I will modify my name format to Su Hui.
+Smatch warns:
+	drivers/dma/idxd/cdev.c:327:
+		idxd_cdev_open() warn: 'sva' was already freed.
 
-This patch is for v6.3. It seems not be modified by others when I view 
-source code.
+When idxd_wq_set_pasid() fails, the current code unbinds sva and then
+goes to 'failed_set_pasid' where iommu_sva_unbind_device is called
+again causing the above warning.
+[ device_user_pasid_enabled(idxd) is still true when calling
+failed_set_pasid ]
 
-I didn't know someone else had sent the same patch which wasn't merged 
-in to
+Fix this by removing additional unbind when idxd_wq_set_pasid() fails
 
-mainline git source.
+Fixes: b022f59725f0 ("dmaengine: idxd: add idxd_copy_cr() to copy user completion record during page fault handling")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is purely based on static analysis. Only compile tested.
+---
+ drivers/dma/idxd/cdev.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks for your reply.
+diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
+index ecbf67c2ad2b..d32deb9b4e3d 100644
+--- a/drivers/dma/idxd/cdev.c
++++ b/drivers/dma/idxd/cdev.c
+@@ -277,7 +277,6 @@ static int idxd_cdev_open(struct inode *inode, struct file *filp)
+ 		if (wq_dedicated(wq)) {
+ 			rc = idxd_wq_set_pasid(wq, pasid);
+ 			if (rc < 0) {
+-				iommu_sva_unbind_device(sva);
+ 				dev_err(dev, "wq set pasid failed: %d\n", rc);
+ 				goto failed_set_pasid;
+ 			}
+-- 
+2.38.1
 
-Su Hui
-
-On 2023/5/8 22:55, Greg Kroah-Hartman wrote:
-> On Mon, Apr 24, 2023 at 12:19:40PM +0800, Suhui wrote:
->> No need cast (void*) to (struct fusb302_chip *) or (struct tcpm_port *).
->>
->> Signed-off-by: Suhui <suhui@nfschina.com>
-> Is that your full name?  If not, please always use whatever you sign
-> documents with.
->
->> ---
->>   drivers/usb/typec/tcpm/fusb302.c | 2 +-
->>   drivers/usb/typec/tcpm/tcpm.c    | 2 +-
->>   2 files changed, 2 insertions(+), 2 deletions(-)
-> This does not apply to 6.4-rc1, what did you make it against?
->
-> thanks,
->
-> greg k-h
