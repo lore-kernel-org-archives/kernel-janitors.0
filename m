@@ -2,101 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C298C7EE22
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 14:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B25C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 15:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbjEIOVW (ORCPT
+        id S235902AbjEIPNs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 10:21:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34032 "EHLO
+        Tue, 9 May 2023 11:13:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235195AbjEIOVV (ORCPT
+        with ESMTP id S235664AbjEIPNr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 10:21:21 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35355198
-        for <kernel-janitors@vger.kernel.org>; Tue,  9 May 2023 07:21:20 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f19ab994ccso59623925e9.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 09 May 2023 07:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683642078; x=1686234078;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tKxPPgYNyYSo5DBFq3CPZcdXe5HoTU5bwZzAoSKP9zY=;
-        b=OI1NQ1W5f3mp3fG4eqJ6ffb5S2ZxWAYinNYSgokbDOyIyzElP3DIhIGYbKhJIRXgzJ
-         88VJJWxaA8RuyLjFV/GM7Ib+6JRBnY9QLzPSajNT8rHPKEykxRi9h8DGbOON6aF+ruL4
-         pyZxn/Ri+JNaWnmG5uz4XzM3wgHhavhHWeow2sfcbviZrlil9eSPdC9gKh9Z3fDtudbh
-         Na/ohNQPN+HV+b2whejPpA/e3+TTGp3k0Dq6bIGBW2urdyd5JaIxn+xNzHyJev3ZlN0Z
-         dKNct4vUDCpQZ0EPo2CAoLQ6J74rMLBkHYNXz9y2z06LGLzOrmir75/3EDbTYE/FMnSs
-         9hIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683642078; x=1686234078;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKxPPgYNyYSo5DBFq3CPZcdXe5HoTU5bwZzAoSKP9zY=;
-        b=Toqxz4MhV6VR5dOShlPBp+fuSCKuIlED7Alzuf3T82crMtI8axvoyR+fzJ8RgPd38d
-         t4Q5GYoojUxtvCGX+MzgX7pBtQ6pAEbm2pGJZkn5V8dKv4aENdYzTS+orP8hF8FL55tZ
-         DahxE5Rfq3LGU5ct/Jg9y8rVF6OTSOVCWB5ihcvnNAbCNtzLTe5BfwwLVVvztFynTtZG
-         loUQuqBC6HG+L8gp237daLRLy4edxq3/g+B+mKTdNUhHkJp8/8Xeupf4GFwu82Swl9SG
-         TjjAsjsuoCN9ncEsl9U2HfUl5HzUo6G8k213JlTwGDsRCR7YSmEj5jgtoimCruOXPPo+
-         jWaw==
-X-Gm-Message-State: AC+VfDy4ZmcQgouirLvy+UVo3jCkVh14CyMBghF9duGTQ/10AvCUYcs8
-        +dI8JaEwHg3ijcoj/gkIUlKfzA==
-X-Google-Smtp-Source: ACHHUZ5yT9mNx0iVJS45hDO9GhW7CW1PKVcX2BFfRjBmKez5Mh/Sl4r98fbSYl4QoCE8fpT3gu2Mgg==
-X-Received: by 2002:a1c:720e:0:b0:3f0:7e15:f8fc with SMTP id n14-20020a1c720e000000b003f07e15f8fcmr10417276wmc.14.1683642078664;
-        Tue, 09 May 2023 07:21:18 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d10-20020a1c730a000000b003f325f0e020sm19879491wmb.47.2023.05.09.07.21.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 07:21:17 -0700 (PDT)
-Date:   Tue, 9 May 2023 17:21:14 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Alex Deucher <alexander.deucher@amd.com>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Hawking Zhang <Hawking.Zhang@amd.com>, Le Ma <le.ma@amd.com>,
-        Tao Zhou <tao.zhou1@amd.com>,
-        Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
-        Lang Yu <Lang.Yu@amd.com>, Likun Gao <Likun.Gao@amd.com>,
-        YiPeng Chai <YiPeng.Chai@amd.com>,
-        amd-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: release correct lock in amdgpu_gfx_enable_kgq()
-Message-ID: <75e5d2a6-9be4-4530-b8f8-c98d1bd96b03@kili.mountain>
+        Tue, 9 May 2023 11:13:47 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7FED44AC;
+        Tue,  9 May 2023 08:13:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1683645224; x=1715181224;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sDIaRhN9LwUxhy8X7r7FslkiOl4KGP7DqZP3VkptV7U=;
+  b=D17WbPDl5viGwTJ0ndZm1m8n/00/GDY/YOaf9cP0tHtlDqiDT8tOIUvN
+   QnCmvn4cnh7n6uSlNV0hM+9/n5Df8DOBewYMBwykoC0KtWb9xplLVbi13
+   s9N3dMp3mTDFvMKnajyOZYQ0j7kCYvOTj5xWqtf5uxCJGGCgxC0mbuoeQ
+   vJ/3Dl8LSTxtpskHlPzVgElXYpdPCszrcvT49E/gQt0k7tDMaU4sZVX5Q
+   22zwuo7WEYOPOIT31llPlde9g4lV7ypwpiG9pz4wqG4/llXlu9+hlYHWx
+   gVMESM1AdHb+Ct7ADkHfL2lwYl0QYAX9vOHGHCmdl4jdZh23/zNNrLgz/
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="329580623"
+X-IronPort-AV: E=Sophos;i="5.99,262,1677571200"; 
+   d="scan'208";a="329580623"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 08:13:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="873220589"
+X-IronPort-AV: E=Sophos;i="5.99,262,1677571200"; 
+   d="scan'208";a="873220589"
+Received: from dcovax-mobl.amr.corp.intel.com (HELO [10.212.97.226]) ([10.212.97.226])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 08:13:43 -0700
+Message-ID: <a33ff0bb-28c8-0bdf-4367-8354a9e1af9d@intel.com>
+Date:   Tue, 9 May 2023 08:13:42 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.10.0
+Subject: Re: [PATCH] dmaengine: idxd: Fix passing freed memory in
+ idxd_cdev_open()
+Content-Language: en-US
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
+        dan.carpenter@linaro.org, Fenghua Yu <fenghua.yu@intel.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
+From:   Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This function was releasing the incorrect lock on the error path.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Fixes: 9bfa241d1289 ("drm/amdgpu: add [en/dis]able_kgq() functions")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-The LKP robot sent me an email about this after I had already written
-the patch.  (I review LKP Smatch emails and hit forward).
 
- drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 5/8/23 11:07 PM, Harshit Mogalapalli wrote:
+> Smatch warns:
+> 	drivers/dma/idxd/cdev.c:327:
+> 		idxd_cdev_open() warn: 'sva' was already freed.
+> 
+> When idxd_wq_set_pasid() fails, the current code unbinds sva and then
+> goes to 'failed_set_pasid' where iommu_sva_unbind_device is called
+> again causing the above warning.
+> [ device_user_pasid_enabled(idxd) is still true when calling
+> failed_set_pasid ]
+> 
+> Fix this by removing additional unbind when idxd_wq_set_pasid() fails
+> 
+> Fixes: b022f59725f0 ("dmaengine: idxd: add idxd_copy_cr() to copy user completion record during page fault handling")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
-index 969f256aa003..7d2f119d9223 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
-@@ -644,7 +644,7 @@ int amdgpu_gfx_enable_kgq(struct amdgpu_device *adev, int xcc_id)
- 						adev->gfx.num_gfx_rings);
- 		if (r) {
- 			DRM_ERROR("Failed to lock KIQ (%d).\n", r);
--			spin_unlock(&adev->gfx.kiq[0].ring_lock);
-+			spin_unlock(&kiq->ring_lock);
- 			return r;
- 		}
- 
--- 
-2.39.2
+Acked-by: Dave Jiang <dave.jiang@intel.com>
 
+Thank you!
+> ---
+> This is purely based on static analysis. Only compile tested.
+> ---
+>   drivers/dma/idxd/cdev.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
+> index ecbf67c2ad2b..d32deb9b4e3d 100644
+> --- a/drivers/dma/idxd/cdev.c
+> +++ b/drivers/dma/idxd/cdev.c
+> @@ -277,7 +277,6 @@ static int idxd_cdev_open(struct inode *inode, struct file *filp)
+>   		if (wq_dedicated(wq)) {
+>   			rc = idxd_wq_set_pasid(wq, pasid);
+>   			if (rc < 0) {
+> -				iommu_sva_unbind_device(sva);
+>   				dev_err(dev, "wq set pasid failed: %d\n", rc);
+>   				goto failed_set_pasid;
+>   			}
