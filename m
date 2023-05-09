@@ -2,142 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A713DC77B7C
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 10:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBD4C7EE22
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 12:05:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235311AbjEIK72 (ORCPT
+        id S235374AbjEIMFR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 06:59:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50674 "EHLO
+        Tue, 9 May 2023 08:05:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234861AbjEIK7Y (ORCPT
+        with ESMTP id S235359AbjEIMFQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 06:59:24 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8647A106D5;
-        Tue,  9 May 2023 03:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1683629934; x=1715165934;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oepJVOVH68CBYtXIJCDRmO6N5dpmZ6x7a1EFLw/yItU=;
-  b=KQN7zJHdh1Z0wPzGdpwLS4IvwBhnBhfvEDunkbN01dOGbVWmFaR/doQA
-   KkaBwgUtlELbD36pQsT0SVNNjab/CBrgtpN0LZqTIVyOqkrgmVQ88Z+EQ
-   wgpe8yRrF0kFfcNrQXHFv3ubKaqotfQXapDFd0S19ViA6a+tzZnE8sgY2
-   XbuaVRUxII475Uaeu0CYdPO9vCczV9dHSt6F/MbAUBOk6oeaOcyHMeLaW
-   3+86adcZk7autCOJ+btfHwXPanxhrgc8pzl2vKufumCpsg7GKJMi4T7Wc
-   RcCVYEd33T+tKS8s6cG4AliLUtqEPtjaHN6iymR8ut863P1nJOQzr2LRb
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.99,261,1677567600"; 
-   d="scan'208";a="213074737"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 May 2023 03:58:49 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 9 May 2023 03:58:48 -0700
-Received: from localhost (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
- Transport; Tue, 9 May 2023 03:58:47 -0700
-Date:   Tue, 9 May 2023 12:58:47 +0200
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+        Tue, 9 May 2023 08:05:16 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA6F1BC7;
+        Tue,  9 May 2023 05:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=3Qs2Qwd1unjmDZV7UVMVZ7LHI9e7CBXfk5Zsx17orGA=; b=3NPjVmIVUtQLaM0MeI52Hbq6QU
+        K2bmbPX4VYwb4PJRYkCM9qs/r2IZPH5hZI0P4gPf5/ny8qacy10WZnuITbF0vNlQHpDO1o8n3ShoF
+        vaRl2BnXvCv9lTjO7jkdkdjje+MZzbWCnWR3RN/h0MZrgMvJEHOlT87qKeHtxzzQs/9o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1pwM5N-00CIRh-S5; Tue, 09 May 2023 14:04:53 +0200
+Date:   Tue, 9 May 2023 14:04:53 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
 To:     wuych <yunchuan@nfschina.com>
-CC:     <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <andrew@lunn.ch>, <michael@walle.cc>, <zhaoxiao@uniontech.com>,
-        <andrew@aj.id.au>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Cc:     davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+        michael@walle.cc, zhaoxiao@uniontech.com, andrew@aj.id.au,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH net-next] freescale:Remove unnecessary (void*) conversions
-Message-ID: <20230509105847.qow6jmmfub3ynfzs@soft-dev3-1>
+Message-ID: <b959308c-e8ea-46e3-9277-ed8b4a610e06@lunn.ch>
 References: <20230509102501.41685-1-yunchuan@nfschina.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20230509102501.41685-1-yunchuan@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 05/09/2023 18:25, wuych wrote:
-
-Hi wuych,
-
-> 
+On Tue, May 09, 2023 at 06:25:01PM +0800, wuych wrote:
 > Pointer variables of void * type do not require type cast.
 > 
 > Signed-off-by: wuych <yunchuan@nfschina.com>
-> ---
->  drivers/net/ethernet/freescale/xgmac_mdio.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/xgmac_mdio.c b/drivers/net/ethernet/freescale/xgmac_mdio.c
-> index a13b4ba4d6e1..167a7fe04853 100644
-> --- a/drivers/net/ethernet/freescale/xgmac_mdio.c
-> +++ b/drivers/net/ethernet/freescale/xgmac_mdio.c
-> @@ -131,7 +131,7 @@ static int xgmac_wait_until_done(struct device *dev,
->  static int xgmac_mdio_write_c22(struct mii_bus *bus, int phy_id, int regnum,
->                                 u16 value)
->  {
-> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-> +       struct mdio_fsl_priv *priv = bus->priv;
 
-Don't forget to use the reverse x-mas notation.
-The longer lines should be at top.
-The same applies to the other changes that you have done in this patch.
+Hi Wuych
 
->         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
->         bool endian = priv->is_little_endian;
->         u16 dev_addr = regnum & 0x1f;
-> @@ -163,7 +163,7 @@ static int xgmac_mdio_write_c22(struct mii_bus *bus, int phy_id, int regnum,
->  static int xgmac_mdio_write_c45(struct mii_bus *bus, int phy_id, int dev_addr,
->                                 int regnum, u16 value)
->  {
-> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-> +       struct mdio_fsl_priv *priv = bus->priv;
->         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
->         bool endian = priv->is_little_endian;
->         u32 mdio_ctl, mdio_stat;
-> @@ -205,7 +205,7 @@ static int xgmac_mdio_write_c45(struct mii_bus *bus, int phy_id, int dev_addr,
->   */
->  static int xgmac_mdio_read_c22(struct mii_bus *bus, int phy_id, int regnum)
->  {
-> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-> +       struct mdio_fsl_priv *priv = bus->priv;
->         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
->         bool endian = priv->is_little_endian;
->         u16 dev_addr = regnum & 0x1f;
-> @@ -265,7 +265,7 @@ static int xgmac_mdio_read_c22(struct mii_bus *bus, int phy_id, int regnum)
->  static int xgmac_mdio_read_c45(struct mii_bus *bus, int phy_id, int dev_addr,
->                                int regnum)
->  {
-> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-> +       struct mdio_fsl_priv *priv = bus->priv;
->         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
->         bool endian = priv->is_little_endian;
->         u32 mdio_stat, mdio_ctl;
-> @@ -326,7 +326,7 @@ static int xgmac_mdio_read_c45(struct mii_bus *bus, int phy_id, int dev_addr,
-> 
->  static int xgmac_mdio_set_mdc_freq(struct mii_bus *bus)
->  {
-> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-> +       struct mdio_fsl_priv *priv = bus->priv;
->         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
->         struct device *dev = bus->parent;
->         u32 mdio_stat, div;
-> @@ -355,7 +355,7 @@ static int xgmac_mdio_set_mdc_freq(struct mii_bus *bus)
-> 
->  static void xgmac_mdio_set_suppress_preamble(struct mii_bus *bus)
->  {
-> -       struct mdio_fsl_priv *priv = (struct mdio_fsl_priv *)bus->priv;
-> +       struct mdio_fsl_priv *priv = bus->priv;
->         struct tgec_mdio_controller __iomem *regs = priv->mdio_base;
->         struct device *dev = bus->parent;
->         u32 mdio_stat;
-> --
-> 2.30.2
-> 
-> 
+Please be a bit more specific with your subject prefix.
 
--- 
-/Horatiu
+To get an idea what others have used, you can do:
+
+git log --oneline drivers/net/ethernet/freescale/
+
+c248b27cfc0a Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+e2fdfd711912 net: dpaa: avoid one skb_reset_mac_header() in dpaa_enable_tx_csum()
+461bb5b97049 net: dpaa: Fix uninitialized variable in dpaa_stop()
+16a2c7634442 net: enetc: include MAC Merge / FP registers in register dump
+827145392a4a net: enetc: only commit preemptible TCs to hardware when MM TX is active
+153b5b1d030d net: enetc: report mm tx-active based on tx-enabled and verify-status
+59be75db5966 net: enetc: fix MAC Merge layer remaining enabled until a link down event
+01e23b2b3bad net: enetc: add support for preemptible traffic classes
+50764da37cbe net: enetc: rename "mqprio" to "qopt"
+800e68c44ffe Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+5b7be2d4fd6e net: enetc: workaround for unresponsive pMAC after receiving express traffic
+37f9b2a6c086 net: ethernet: Add missing depends on MDIO_DEVRES
+d9c960675adc Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+abc33494ddd5 net: fec: make use of MDIO C45 quirk
+dc0a7b520071 Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+99d0f3a1095f net: dpaa2-mac: use Autoneg bit rather than an_enabled
+c79493c3ccf0 net: enetc: fix aggregate RMON counters not showing the ranges
+1a87e641d8a5 net: Use of_property_read_bool() for boolean properties
+8ff99ad04c2e Merge tag 'phy-for-6.3' of git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy
+1c93e48cc391 net: dpaa2-eth: do not always set xsk support in xdp_features flag
+
+So at least add net. And since you only touch xgmac, you could use
+
+net: xgmac: 
+
+If you had touch multiple drivers within freescale then net:
+freescale: would be better.
+
+These prefixes are important. Reviewers tend to have interest in
+specific parts of the kernel. The prefix is what draws their
+attention, makes them look at a patch or not.
+
+	   Andrew
