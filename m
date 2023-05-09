@@ -2,109 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7585FC7EE22
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 07:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C60C7EE22
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 08:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234452AbjEIHst (ORCPT
+        id S234872AbjEIILl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 03:48:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34126 "EHLO
+        Tue, 9 May 2023 04:11:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjEIHsn (ORCPT
+        with ESMTP id S235073AbjEIILY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 03:48:43 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E62E49;
-        Tue,  9 May 2023 00:48:42 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-956ff2399c9so1039951466b.3;
-        Tue, 09 May 2023 00:48:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683618521; x=1686210521;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ruBSrhAa2KCe3xFq+h2PyQJl3quIhNNbbuTeyicMoY0=;
-        b=qCck0pvQnTHjF+mFNSS17wB49c/kbITc2B14Rdb/hl2R4GXApQ6flXgxiAjIf+3K4L
-         GZFf7R/s/j4yyHAPd800Que5ia1XNbrzRocXBlgGSlVEdmWzIoloP+I0wNHSpMaore8H
-         wC2AwGxii5uDjraRT6Q2qtWCgG+seZLzd8qUWv2zUgKxB1K3+ZrB/pfOsQDHd1WAcn7d
-         lUXojHgxFwrRZUxcUaA5unSpy5W4juvU1N3siqbquUR6GDid5ELNSPzWpfnHaUyHvg1R
-         HbV57mkcOewzLwcMgqryFo0GSxuhzqrUaA9mRJQBmFAJ7UkiGkhDY4MZnKA3ELCOwr6f
-         xDjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683618521; x=1686210521;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ruBSrhAa2KCe3xFq+h2PyQJl3quIhNNbbuTeyicMoY0=;
-        b=esKqWariAsWbGaNxekmdh+gBN5ZFDIJfekYf1seqWzlH8ruYtGXtxe38TZfUGLUHO9
-         90oHZw4sQiXCJkuzQ+ZBLc//toR/piI6mgVSlZR/zL2U5eYChWH9A6jlMzS4xZY9cGH+
-         uuILmg5Z8bNqtFs6qM87wj/LNcXGWovPkqj1ZC3Q9e3NLVpUDwaySCJiWSeRrjaesYWw
-         1GFxC+nhSDNET+TnLodZubtJKysgrNYQAE9tGTpvd9RlLlCiUvvl2HxDKdjGhJ97bpXG
-         BKJzIepWD52O32twRt/fxEo017lFq+4Sc7XJtb68eJy/WVB7bzqesCph5xO2I66vc99X
-         Rk2g==
-X-Gm-Message-State: AC+VfDxHokd0pi3k5xnVW4ps7KGB65Ztbr8l39LCfX+IyYihEKRMNCbX
-        ffe/lh9k+aZ/Yzyb+g9IjHQ=
-X-Google-Smtp-Source: ACHHUZ6w0fJfY4rQJX3oXSXo3rY6SmQgVX5Rs578thAo292MEFdNF9hZAsEo+j8ho+ZeAH7ROoubew==
-X-Received: by 2002:a17:907:1c85:b0:94e:48ac:9a51 with SMTP id nb5-20020a1709071c8500b0094e48ac9a51mr12509959ejc.4.1683618520899;
-        Tue, 09 May 2023 00:48:40 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:b892:8631:69c7:ec2c])
-        by smtp.gmail.com with ESMTPSA id tc19-20020a1709078d1300b00969f2d5267asm397659ejc.114.2023.05.09.00.48.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 00:48:40 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     Conor Dooley <conor.dooley@microchip.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: repair pattern in DIALOG SEMICONDUCTOR DRIVERS
-Date:   Tue,  9 May 2023 09:48:34 +0200
-Message-Id: <20230509074834.21521-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 9 May 2023 04:11:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E59561BF;
+        Tue,  9 May 2023 01:11:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E72F644F2;
+        Tue,  9 May 2023 08:10:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04613C433EF;
+        Tue,  9 May 2023 08:10:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683619858;
+        bh=WXMC7u/DQzxADg0YM9i8LeJYiu5SJNEj74paM0J7l50=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kj5o24cUk7Fa6tWkPQ+fy3OzF18n7Rb3TJ3AknPltp0rmPFfRqJ0DZsguxTC1cZtb
+         ir8aVE+Miud7+m014RyDeZeQFlsx1u9ddcOTB1rMprGWG02iQf8RgcJPujrpbAwJvz
+         9ONuXZtFnKT9NtoKpbzt8c6/AW0RiUNadhQVfg2U9UqSZoMlvKXLGegWtIBdBjTBqm
+         11k8jlRXmdgDQD0v2dsmAw1u1gcT0LoyiwwmW41d51MPriwGHVqkbMaGRjuHjc1jTG
+         1+3EB47ENNLW4fJkSzXHutMml0UCCrKg/aXyFg2REz5YJgW99/3BkmMhZ8l+X7lYGW
+         LuCAHd1Z19YlQ==
+Date:   Tue, 9 May 2023 11:10:54 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: skbuff: remove special handling for SLOB
+Message-ID: <20230509081054.GH38143@unreal>
+References: <20230509071207.28942-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230509071207.28942-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 441613662db7 ("dt-bindings: mfd: Convert da9063 to yaml") converts
-da9063.txt to dlg,da9063.yaml and adds a new file pattern in MAINTAINERS.
-Unfortunately, the file pattern matches da90*.yaml, but the yaml file is
-prefixed with dlg,da90.
+On Tue, May 09, 2023 at 09:12:07AM +0200, Lukas Bulwahn wrote:
+> Commit c9929f0e344a ("mm/slob: remove CONFIG_SLOB") removes CONFIG_SLOB.
+> Now, we can also remove special handling for socket buffers with the SLOB
+> allocator. The code with HAVE_SKB_SMALL_HEAD_CACHE=1 is now the default
+> behavior for all allocators.
+> 
+> Remove an unnecessary distinction between SLOB and SLAB/SLUB allocator
+> after the SLOB allocator is gone.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  net/core/skbuff.c | 17 -----------------
+>  1 file changed, 17 deletions(-)
+> 
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken file pattern.
-
-Repair this file pattern in DIALOG SEMICONDUCTOR DRIVERS.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Andrew, please pick this minor MAINTAINERS patch.
-
-
-Note: The patch was sent three times to Lee Jones to be picked up, but it wasn't. 
-
-v1: https://lore.kernel.org/all/20220623104456.27144-1-lukas.bulwahn@gmail.com/
-v1-resend: https://lore.kernel.org/all/20230110154901.20223-1-lukas.bulwahn@gmail.com/
-v1-resend2: https://lore.kernel.org/all/20230313050903.29416-1-lukas.bulwahn@gmail.com/
-
-v1 to resend:
- - added the Acked-by from Conor Dooley.
-
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 460f953f331b..c10dd7aa8ed9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6026,7 +6026,7 @@ W:	http://www.dialog-semiconductor.com/products
- F:	Documentation/devicetree/bindings/input/da90??-onkey.txt
- F:	Documentation/devicetree/bindings/input/dlg,da72??.txt
- F:	Documentation/devicetree/bindings/mfd/da90*.txt
--F:	Documentation/devicetree/bindings/mfd/da90*.yaml
-+F:	Documentation/devicetree/bindings/mfd/dlg,da90*.yaml
- F:	Documentation/devicetree/bindings/regulator/dlg,da9*.yaml
- F:	Documentation/devicetree/bindings/regulator/da92*.txt
- F:	Documentation/devicetree/bindings/regulator/slg51000.txt
--- 
-2.17.1
-
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
