@@ -2,106 +2,120 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FD8C77B75
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 18:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7327C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 18:38:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233992AbjEISVH (ORCPT
+        id S234507AbjEISia (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 14:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46216 "EHLO
+        Tue, 9 May 2023 14:38:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbjEISVF (ORCPT
+        with ESMTP id S230070AbjEISi3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 14:21:05 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FED10D4;
-        Tue,  9 May 2023 11:21:03 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-965d2749e2eso853066766b.1;
-        Tue, 09 May 2023 11:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683656462; x=1686248462;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XAU/TKhzNSlOY/Os7CAfOCmst5luRw79pGJePyYkmjI=;
-        b=Q8iWOLG5uyCKkbR+lm2anl3kCm8BNUVgJ+ifPXKKV8jNNhtFglfYnbqyQguZRWbpho
-         Siy9U83QD4C1BYdtwNRxa0i92Ut29ckJAn7oWa5OopTy63BszzXrEb+Evhar8i6w60AT
-         IArC0db4KqzpBSvBNLrv9qzDEvWAX0ji5jc5qIU05O+nOiGP+nfBuvF8DzzhLCLDT41J
-         BE6pkpp9AM8c7lhSKv9OoOlCHjeSEGRJHNlDKn270ma8/bmJxGKrRlJPI4VY+0ujToEh
-         P7vvlgnejBaNWfHtar3tFXRjdtnNIZpQM0psYne8nrr2EPzRXq8SZCgBzuHpGai3AG0x
-         6NVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683656462; x=1686248462;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XAU/TKhzNSlOY/Os7CAfOCmst5luRw79pGJePyYkmjI=;
-        b=CD2ZbhqXase0JwUm93CxRSx/OZN1uSGdm0pNLXpbxPcvzOuwzi8yC3akL8+r/toErz
-         E2aTRZVivvHPtne9fL6JxDY6SdaN91sEsZtqKruPSIKBE7cVX2it156y6nhAhzeM08w8
-         b1ThDhwQIM2hFzrcGjUIdDwh6usoYz5UxMUlUmbvozq9LbTnqtoVKDDjSq0CSP4VkrAi
-         eKjmZtN4lONdzSoQeOA0Rb2gK20LGvd1uUUpqZa/nQVe4GpDek/rEpC3R6wmH+F9vozJ
-         sWebRTJPgSe27dQa4W5e3bmLoL9g2m3Hf+v1pFQD0bLg/YZXRO68YIuNOis6TQKAtpEZ
-         brTg==
-X-Gm-Message-State: AC+VfDyeOGDhICJjwCQuk4QnLimLMTCSrK2cVrR55i8Iw0Y5n4ZakvlM
-        +NkDrtQxNI7bvkrVIImuQi2v17et3Ik+DdOW4RGpguUQgpY=
-X-Google-Smtp-Source: ACHHUZ6OjM7PCpD8/z2IYotZln1D2/7FpG9nyZ1pFrknkuSvitkhoy9/WsrSb21c+NIg37IKCXXJQTyeNhQBNAekXSQ=
-X-Received: by 2002:a17:907:5ca:b0:965:6cb9:b768 with SMTP id
- wg10-20020a17090705ca00b009656cb9b768mr10866237ejb.31.1683656462080; Tue, 09
- May 2023 11:21:02 -0700 (PDT)
+        Tue, 9 May 2023 14:38:29 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B826359A;
+        Tue,  9 May 2023 11:38:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1683657509; x=1715193509;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8KLofvuwjuzCeRiT9wzzuN9VTnSIeEnud3i/p91LRjg=;
+  b=EEOwMyjwrg5wBo6sXmXavLyvRgkwrcYWnYrGXN9ZM9cAflCWLWpz/yh3
+   vQB+vZF70IgIsZGB4WducxZ6FMh8mscc40wVZcIdSF0GwC1PQcCg+q5LA
+   lXtLPQslWCGay0zirhZ9wJI0tfDc3GrhFlC2StrYc2J2enavGhjIaUQ5M
+   p/28raFDFOk/4nuDixN3nhvNV1yegAx6EJ6KbTlEfe4Rz0jsEFEiDYBv2
+   Qb5fwx9F39+NWxUIZgPYt8PVV2AczIwL0zh4gy4KXTmD1Cv8B7CPYYN26
+   m9aOfXDwllF18GysfL9V9ZJHCuGioj/vhA9CyC7VIrSQYSY2q8vNyr8vo
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="330385097"
+X-IronPort-AV: E=Sophos;i="5.99,262,1677571200"; 
+   d="scan'208";a="330385097"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 11:38:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="698998155"
+X-IronPort-AV: E=Sophos;i="5.99,262,1677571200"; 
+   d="scan'208";a="698998155"
+Received: from dcourtn1-desk1.amr.corp.intel.com (HELO [10.212.182.218]) ([10.212.182.218])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 11:38:28 -0700
+Message-ID: <ea00d762-b0df-ab72-988b-98c62ffc7949@intel.com>
+Date:   Tue, 9 May 2023 11:38:27 -0700
 MIME-Version: 1.0
-References: <20230509084007.24373-1-lukas.bulwahn@gmail.com> <7cbe80f0-dcc3-bfc3-3bd8-c9f96704618d@intel.com>
-In-Reply-To: <7cbe80f0-dcc3-bfc3-3bd8-c9f96704618d@intel.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 9 May 2023 20:20:50 +0200
-Message-ID: <CAKXUXMxO4b-8wT-88fJ=++woH-p79_4R-vUr=aELNFYinGcEuw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
 Subject: Re: [PATCH] x86: make config X86_FEATURE_NAMES visible with EXPERT
-To:     Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
         "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20230509084007.24373-1-lukas.bulwahn@gmail.com>
+ <7cbe80f0-dcc3-bfc3-3bd8-c9f96704618d@intel.com>
+ <CAKXUXMxO4b-8wT-88fJ=++woH-p79_4R-vUr=aELNFYinGcEuw@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <CAKXUXMxO4b-8wT-88fJ=++woH-p79_4R-vUr=aELNFYinGcEuw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 9, 2023 at 4:07=E2=80=AFPM Dave Hansen <dave.hansen@intel.com> =
-wrote:
->
-> On 5/9/23 01:40, Lukas Bulwahn wrote:
-> > Commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to CONFIG_EXPERT"=
-)
-> > introduces CONFIG_EXPERT to carry the previous intent of CONFIG_EMBEDDE=
-D
-> > and just gives that intent a much better name.
->
-> That was quite the changelog, and I'm still not quite sure:
->
-> What is the problem with the existing code?
->
-> What is the end user visible impact of this problem and of this proposed
-> change?
->
+On 5/9/23 11:20, Lukas Bulwahn wrote:
+> On Tue, May 9, 2023 at 4:07 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>>
+>> On 5/9/23 01:40, Lukas Bulwahn wrote:
+>>> Commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to CONFIG_EXPERT")
+>>> introduces CONFIG_EXPERT to carry the previous intent of CONFIG_EMBEDDED
+>>> and just gives that intent a much better name.
+>>
+>> That was quite the changelog, and I'm still not quite sure:
+>>
+>> What is the problem with the existing code?
+>>
+>> What is the end user visible impact of this problem and of this proposed
+>> change?
+>>
+> 
+> Thanks, Dave, for your feedback.
+> 
+> The commit message is so lengthy, as I copied it from the original
+> cover letter into each commit, but I agree with your feedback.
 
-Thanks, Dave, for your feedback.
+Uhh...  *What* cover letter?  A cover letter is usually the 0/NN message
+in a patch series.  It is not obvious at *all* that this plain
+non-numbered patch is part of a series.
 
-The commit message is so lengthy, as I copied it from the original
-cover letter into each commit, but I agree with your feedback.
+> So maybe this commit message fits better:
+> 
+> To simplify build configurations, the CONFIG_EMBEDDED is to be
+> removed. All configs that are only visible with CONFIG_EMBEDDED=y
+> shall be now visible with CONFIG_EXPERT=y.
+> 
+> In the x86 architecture, the config X86_FEATURE_NAMES is visible when
+> CONFIG_EMBEDDED is enabled. Now, make the config X86_FEATURE_NAMES
+> visible when CONFIG_EXPERT is enabled.
+> 
+> Dave, what do you think? If that is good enough for you, I will send
+> an updated patch with that commit message.
 
-So maybe this commit message fits better:
+CONFIG_EMBEDDED is being removed:
 
-To simplify build configurations, the CONFIG_EMBEDDED is to be
-removed. All configs that are only visible with CONFIG_EMBEDDED=3Dy
-shall be now visible with CONFIG_EXPERT=3Dy.
+	<INSERT LINK HERE>
 
-In the x86 architecture, the config X86_FEATURE_NAMES is visible when
-CONFIG_EMBEDDED is enabled. Now, make the config X86_FEATURE_NAMES
-visible when CONFIG_EXPERT is enabled.
+That means that everything in Kconfig that uses CONFIG_EMBEDDED needs to
+switch over to something else.
 
+Move X86_FEATURE_NAMES over to CONFIG_EXPERT instead of CONFIG_EMBEDDED.
 
-Dave, what do you think? If that is good enough for you, I will send
-an updated patch with that commit message.
+--
 
-Lukas
+This actually isn't _great_ for x86.  We hid X86_FEATURE_NAMES behind
+EMBEDDED because we didn't want to see it 99% of the time.  But just
+about everyone uses EXPERT=y, so the end result here is that everyone
+will now see X86_FEATURE_NAMES.
+
+Oh well.  It's just one Kconfig option.  Not a big deal.
