@@ -2,89 +2,242 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE42CC77B75
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 07:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC72C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 07:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233108AbjEIH3B (ORCPT
+        id S234092AbjEIHkO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 03:29:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50726 "EHLO
+        Tue, 9 May 2023 03:40:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232223AbjEIH3A (ORCPT
+        with ESMTP id S229484AbjEIHkN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 03:29:00 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFC40210D;
-        Tue,  9 May 2023 00:28:58 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-306281edf15so5095545f8f.1;
-        Tue, 09 May 2023 00:28:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683617337; x=1686209337;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TZ9NuQkeXU4fNX7iBYzOS07LZkDDq4TEk1a9dRD5OwI=;
-        b=WuM5pudY0UqsP46LjTI8WpnLOV8nN2P+Qon8Lyta6Mr/3rEJHnoJBlFaw2vhAL48mC
-         voOwJ6181tWnwuyAgPn+V0EcNkd3MlB10CzlY4+tNaxMA9CPFqMnw6SMNvINi0kNQv6y
-         6W8X3pRPQIVvakeu2uLtI2s6BU3HO8DiJPiAEop463HKeqCyvLcZJN62f/WaVaygXth7
-         1cjk4MGdIUaI//1oY/VbQJOZt9xCOrmv9d4SKI+3TNdbVhxp/ggghajkFa6JQ7tSoFAr
-         9XYYZD6x8VaM8aDOAe8spO1er3riawEbhfroBAABSo2eeG1gyholwPqAXNv+aRJk3AGD
-         BUyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683617337; x=1686209337;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TZ9NuQkeXU4fNX7iBYzOS07LZkDDq4TEk1a9dRD5OwI=;
-        b=WKpNW4hrCKWBPG5NEC4httV1kC588Yc3P1YClQqjsAS4I8p4G2L4ZutaQ44H4vJkac
-         dDFXUlSJYE2sRXelGzYP0QhSdsSU0RGgeDaNZdXMM0i52ar2c8tdxnw9ipy8/9PJygAq
-         MK3vzhbo8d2IJvws37AOos4Pv8Di1174tPnSE4XfmzyP7jaqVGhP3I0kAUJq53/RHfoO
-         HilJAa4KYaoUmz1fEXhJodu8VKNLV/DScEZjXfSMuRt0/I0ARMYURm2zXLDs1cJkHVNt
-         XZZCp8Us6/HjdvO81rMluFQ9h2qWtoQRvtmkJaFe0GvxKHW6AaAvyDMkLIr7nUF9fBZ5
-         jMUw==
-X-Gm-Message-State: AC+VfDzGwibD5L7NBjvZGErus+EN/qMwBtlqB9ccCibWHOn42uv6LwvQ
-        CB8DaB/+C6GpLmn0t7hxEfQgFFfPmHI=
-X-Google-Smtp-Source: ACHHUZ4aprA8jaV+02OALul3CdrPdHuejsbTRnfgW+TaIxH+q45taetODg6awx4MtB1jJAj852Yabg==
-X-Received: by 2002:a05:6000:c1:b0:307:9473:fe26 with SMTP id q1-20020a05600000c100b003079473fe26mr4379251wrx.26.1683617337199;
-        Tue, 09 May 2023 00:28:57 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id t9-20020a7bc3c9000000b003f1958eeadcsm784243wmj.17.2023.05.09.00.28.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 00:28:56 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] fs/ntfs3: Fix spelling mistake "recommened" -> "recommended"
-Date:   Tue,  9 May 2023 08:28:55 +0100
-Message-Id: <20230509072855.2908731-1-colin.i.king@gmail.com>
+        Tue, 9 May 2023 03:40:13 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 3C0C183D2;
+        Tue,  9 May 2023 00:40:08 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 3A4C418013AEE1;
+        Tue,  9 May 2023 15:40:05 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     auro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Baisong Zhong <zhongbaisong@huawei.com>,
+        Jakub Kicinski <kuba@kernel.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Su Hui <suhui@nfschina.com>
+Subject: [PATCH] media: usb: remove unnecessary (void*) conversions
+Date:   Tue,  9 May 2023 15:40:01 +0800
+Message-Id: <20230509074001.136455-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a ntfs_info message. Fix it.
+No need cast (void*) to (struct dvb_usb_device *),
+(struct filter_info *) or (struct az6027_device_state *).
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- fs/ntfs3/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/dvb-usb-v2/az6007.c   | 16 ++++++++--------
+ drivers/media/usb/dvb-usb/az6027.c      | 18 +++++++++---------
+ drivers/media/usb/dvb-usb/pctv452e.c    |  4 ++--
+ drivers/media/usb/ttusb-dec/ttusb_dec.c |  2 +-
+ 4 files changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index e36769eac7de..8323911fe274 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -1191,7 +1191,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sbi->volume.ni = ni;
- 	if (info->flags & VOLUME_FLAG_DIRTY) {
- 		sbi->volume.real_dirty = true;
--		ntfs_info(sb, "It is recommened to use chkdsk.");
-+		ntfs_info(sb, "It is recommended to use chkdsk.");
- 	}
+diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
+index 62ee09f28a0b..81a498d24075 100644
+--- a/drivers/media/usb/dvb-usb-v2/az6007.c
++++ b/drivers/media/usb/dvb-usb-v2/az6007.c
+@@ -248,7 +248,7 @@ static int az6007_ci_read_attribute_mem(struct dvb_ca_en50221 *ca,
+ 					int slot,
+ 					int address)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6007_device_state *state = d_to_priv(d);
  
- 	/* Load $MFTMirr to estimate recs_mirr. */
+ 	int ret;
+@@ -290,7 +290,7 @@ static int az6007_ci_write_attribute_mem(struct dvb_ca_en50221 *ca,
+ 					 int address,
+ 					 u8 value)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6007_device_state *state = d_to_priv(d);
+ 
+ 	int ret;
+@@ -321,7 +321,7 @@ static int az6007_ci_read_cam_control(struct dvb_ca_en50221 *ca,
+ 				      int slot,
+ 				      u8 address)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6007_device_state *state = d_to_priv(d);
+ 
+ 	int ret;
+@@ -367,7 +367,7 @@ static int az6007_ci_write_cam_control(struct dvb_ca_en50221 *ca,
+ 				       u8 address,
+ 				       u8 value)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6007_device_state *state = d_to_priv(d);
+ 
+ 	int ret;
+@@ -398,7 +398,7 @@ static int az6007_ci_write_cam_control(struct dvb_ca_en50221 *ca,
+ 
+ static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 
+ 	int ret;
+ 	u8 req;
+@@ -429,7 +429,7 @@ static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
+ 
+ static int az6007_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6007_device_state *state = d_to_priv(d);
+ 
+ 	int ret, i;
+@@ -485,7 +485,7 @@ static int az6007_ci_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
+ 
+ static int az6007_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6007_device_state *state = d_to_priv(d);
+ 
+ 	int ret;
+@@ -514,7 +514,7 @@ static int az6007_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+ 
+ static int az6007_ci_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6007_device_state *state = d_to_priv(d);
+ 	int ret;
+ 	u8 req;
+diff --git a/drivers/media/usb/dvb-usb/az6027.c b/drivers/media/usb/dvb-usb/az6027.c
+index f7a6ab29e530..9d0847190748 100644
+--- a/drivers/media/usb/dvb-usb/az6027.c
++++ b/drivers/media/usb/dvb-usb/az6027.c
+@@ -407,7 +407,7 @@ static int az6027_ci_read_attribute_mem(struct dvb_ca_en50221 *ca,
+ 					int slot,
+ 					int address)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret;
+@@ -449,8 +449,8 @@ static int az6027_ci_write_attribute_mem(struct dvb_ca_en50221 *ca,
+ 					 int address,
+ 					 u8 value)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
+-	struct az6027_device_state *state = (struct az6027_device_state *)d->priv;
++	struct dvb_usb_device *d = ca->data;
++	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret;
+ 	u8 req;
+@@ -480,7 +480,7 @@ static int az6027_ci_read_cam_control(struct dvb_ca_en50221 *ca,
+ 				      int slot,
+ 				      u8 address)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret;
+@@ -526,7 +526,7 @@ static int az6027_ci_write_cam_control(struct dvb_ca_en50221 *ca,
+ 				       u8 address,
+ 				       u8 value)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret;
+@@ -557,7 +557,7 @@ static int az6027_ci_write_cam_control(struct dvb_ca_en50221 *ca,
+ 
+ static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 
+ 	int ret;
+ 	u8 req;
+@@ -588,7 +588,7 @@ static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
+ 
+ static int az6027_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret, i;
+@@ -644,7 +644,7 @@ static int az6027_ci_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
+ 
+ static int az6027_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6027_device_state *state = d->priv;
+ 
+ 	int ret;
+@@ -673,7 +673,7 @@ static int az6027_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+ 
+ static int az6027_ci_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct az6027_device_state *state = d->priv;
+ 	int ret;
+ 	u8 req;
+diff --git a/drivers/media/usb/dvb-usb/pctv452e.c b/drivers/media/usb/dvb-usb/pctv452e.c
+index 42763c12cf29..2aab49003493 100644
+--- a/drivers/media/usb/dvb-usb/pctv452e.c
++++ b/drivers/media/usb/dvb-usb/pctv452e.c
+@@ -159,7 +159,7 @@ static int tt3650_ci_msg_locked(struct dvb_ca_en50221 *ca,
+ 				u8 cmd, u8 *data, unsigned int write_len,
+ 				unsigned int read_len)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct pctv452e_state *state = d->priv;
+ 	int ret;
+ 
+@@ -292,7 +292,7 @@ static int tt3650_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+ 
+ static int tt3650_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
+ {
+-	struct dvb_usb_device *d = (struct dvb_usb_device *)ca->data;
++	struct dvb_usb_device *d = ca->data;
+ 	struct pctv452e_state *state = d->priv;
+ 	u8 buf[1];
+ 	int ret;
+diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+index 38822cedd93a..6bf2e7e0f6d2 100644
+--- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
++++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+@@ -1128,7 +1128,7 @@ static int ttusb_dec_stop_sec_feed(struct dvb_demux_feed *dvbdmxfeed)
+ {
+ 	struct ttusb_dec *dec = dvbdmxfeed->demux->priv;
+ 	u8 b0[] = { 0x00, 0x00 };
+-	struct filter_info *finfo = (struct filter_info *)dvbdmxfeed->priv;
++	struct filter_info *finfo = dvbdmxfeed->priv;
+ 	unsigned long flags;
+ 
+ 	b0[1] = finfo->stream_id;
 -- 
 2.30.2
 
