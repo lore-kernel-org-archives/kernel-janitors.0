@@ -2,92 +2,76 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBD4C7EE22
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 12:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6CBC7EE2A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 May 2023 14:07:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235374AbjEIMFR (ORCPT
+        id S235724AbjEIOHS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 08:05:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49402 "EHLO
+        Tue, 9 May 2023 10:07:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235359AbjEIMFQ (ORCPT
+        with ESMTP id S235695AbjEIOHS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 08:05:16 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA6F1BC7;
-        Tue,  9 May 2023 05:05:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=3Qs2Qwd1unjmDZV7UVMVZ7LHI9e7CBXfk5Zsx17orGA=; b=3NPjVmIVUtQLaM0MeI52Hbq6QU
-        K2bmbPX4VYwb4PJRYkCM9qs/r2IZPH5hZI0P4gPf5/ny8qacy10WZnuITbF0vNlQHpDO1o8n3ShoF
-        vaRl2BnXvCv9lTjO7jkdkdjje+MZzbWCnWR3RN/h0MZrgMvJEHOlT87qKeHtxzzQs/9o=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1pwM5N-00CIRh-S5; Tue, 09 May 2023 14:04:53 +0200
-Date:   Tue, 9 May 2023 14:04:53 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     wuych <yunchuan@nfschina.com>
-Cc:     davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-        michael@walle.cc, zhaoxiao@uniontech.com, andrew@aj.id.au,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] freescale:Remove unnecessary (void*) conversions
-Message-ID: <b959308c-e8ea-46e3-9277-ed8b4a610e06@lunn.ch>
-References: <20230509102501.41685-1-yunchuan@nfschina.com>
+        Tue, 9 May 2023 10:07:18 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FBF1FE3;
+        Tue,  9 May 2023 07:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1683641236; x=1715177236;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=itta2RabQFLCVWDvddFM5G10qfVra9oGOcBsE7R9+is=;
+  b=hXldW5HE10/ofCLJGrc2WHVuc7pzdnsq+uxeu8Xq8Lkq4VRL4drlaz49
+   cl2rnZ2c+ViY9t5u+0CP8d4E0zERjHKMBSw7enr9Zf/R5n6oHB2Nh6MLh
+   gi1bJC1YIhmJ3O14d7xkREPsink/0r6geE+mwgApLVhfcE1Oy9ZH+2CFN
+   TEbCvZQtTa4EoNW9D6W2MN6m4e08NYOs1l3hKwLIrzUar5+E1OwT/SjdG
+   N8PP5eGDZqCOK573R2Jfbh8hgsCLGUOvM5uFe8Du6AaF5g1IKrL10VeA+
+   ls0WYNXUJO3qTRSTFQZu/GgYsxLuIT0JmcGWFi0avxB2qU/RIZP/wSm4a
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="436252058"
+X-IronPort-AV: E=Sophos;i="5.99,262,1677571200"; 
+   d="scan'208";a="436252058"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 07:07:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="788543999"
+X-IronPort-AV: E=Sophos;i="5.99,262,1677571200"; 
+   d="scan'208";a="788543999"
+Received: from dcourtn1-desk1.amr.corp.intel.com (HELO [10.212.182.218]) ([10.212.182.218])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 07:07:15 -0700
+Message-ID: <7cbe80f0-dcc3-bfc3-3bd8-c9f96704618d@intel.com>
+Date:   Tue, 9 May 2023 07:07:15 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230509102501.41685-1-yunchuan@nfschina.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] x86: make config X86_FEATURE_NAMES visible with EXPERT
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230509084007.24373-1-lukas.bulwahn@gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <20230509084007.24373-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 09, 2023 at 06:25:01PM +0800, wuych wrote:
-> Pointer variables of void * type do not require type cast.
-> 
-> Signed-off-by: wuych <yunchuan@nfschina.com>
+On 5/9/23 01:40, Lukas Bulwahn wrote:
+> Commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to CONFIG_EXPERT")
+> introduces CONFIG_EXPERT to carry the previous intent of CONFIG_EMBEDDED
+> and just gives that intent a much better name.
 
-Hi Wuych
+That was quite the changelog, and I'm still not quite sure:
 
-Please be a bit more specific with your subject prefix.
+What is the problem with the existing code?
 
-To get an idea what others have used, you can do:
+What is the end user visible impact of this problem and of this proposed
+change?
 
-git log --oneline drivers/net/ethernet/freescale/
 
-c248b27cfc0a Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-e2fdfd711912 net: dpaa: avoid one skb_reset_mac_header() in dpaa_enable_tx_csum()
-461bb5b97049 net: dpaa: Fix uninitialized variable in dpaa_stop()
-16a2c7634442 net: enetc: include MAC Merge / FP registers in register dump
-827145392a4a net: enetc: only commit preemptible TCs to hardware when MM TX is active
-153b5b1d030d net: enetc: report mm tx-active based on tx-enabled and verify-status
-59be75db5966 net: enetc: fix MAC Merge layer remaining enabled until a link down event
-01e23b2b3bad net: enetc: add support for preemptible traffic classes
-50764da37cbe net: enetc: rename "mqprio" to "qopt"
-800e68c44ffe Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-5b7be2d4fd6e net: enetc: workaround for unresponsive pMAC after receiving express traffic
-37f9b2a6c086 net: ethernet: Add missing depends on MDIO_DEVRES
-d9c960675adc Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-abc33494ddd5 net: fec: make use of MDIO C45 quirk
-dc0a7b520071 Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-99d0f3a1095f net: dpaa2-mac: use Autoneg bit rather than an_enabled
-c79493c3ccf0 net: enetc: fix aggregate RMON counters not showing the ranges
-1a87e641d8a5 net: Use of_property_read_bool() for boolean properties
-8ff99ad04c2e Merge tag 'phy-for-6.3' of git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy
-1c93e48cc391 net: dpaa2-eth: do not always set xsk support in xdp_features flag
-
-So at least add net. And since you only touch xgmac, you could use
-
-net: xgmac: 
-
-If you had touch multiple drivers within freescale then net:
-freescale: would be better.
-
-These prefixes are important. Reviewers tend to have interest in
-specific parts of the kernel. The prefix is what draws their
-attention, makes them look at a patch or not.
-
-	   Andrew
