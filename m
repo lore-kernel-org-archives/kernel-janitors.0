@@ -2,108 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1197C77B7C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 09:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B66BC7EE22
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 13:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229754AbjEJJkX (ORCPT
+        id S237151AbjEJNf0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 May 2023 05:40:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47538 "EHLO
+        Wed, 10 May 2023 09:35:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236612AbjEJJj4 (ORCPT
+        with ESMTP id S237147AbjEJNfZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 May 2023 05:39:56 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E4E422A;
-        Wed, 10 May 2023 02:39:49 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id 98e67ed59e1d1-24de3a8bfcfso6676289a91.1;
-        Wed, 10 May 2023 02:39:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683711589; x=1686303589;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kMvk/yJ9Ztc5I/rIEaDIj5l97963wi6uopL4aQkb6yY=;
-        b=S5QBHK3KhGGzEGhFSKb86oVdUfuPuQ8acnDGPiLD6GlgFPsSlkvLbXr9TjRvM6zngE
-         WnsopU+90NLK5ponMzp7i1UFIS9WqDFoKuWV4iGcMfnhgJy8EoNB4tCh72uamPb3ItPv
-         jFwvtgiic/1kj4ruj+QQFfuXBbwUR7Tkaaw1l8J1kWreA3NL+nnP3KzjF4eKF0XNk2W7
-         Rz4cr+jaoUxEogKDfzEQR3tWrUOL0X6oF6Bxm2014e813SXoHpXX+eYHUZX7+BI9uK5i
-         VXmRYqqHABN91awT2jt2S15csaujCdaVxP5aFEetX60rFbg9T0e2r5Accnx39xXxhIry
-         z9mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683711589; x=1686303589;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kMvk/yJ9Ztc5I/rIEaDIj5l97963wi6uopL4aQkb6yY=;
-        b=VXpnHaKNWIUWYQks/mwfFGIib7bu1HA9bebmt6nlTqOYg02LHUMPvqtp7Jf2M0mNtP
-         Cr/Jcg2d3zVD2+lonUpM9DfwUgY/JIAZN6hKpt1aVgGY+x0lLqKdWH+tXZ8lH0eRjW1V
-         LtuLiwnLO60ZUCjs9KNRlqeV12CEuHUVJ2ts1JyFn22C7vfyxuri4QkbofB0pV+hhUyM
-         GTLCOUXpzBMnF9wNMV1SenCuxxJgcUubvF4RV2Cvga88eSJ/Ja47p3YiWd6H9URJh3+m
-         PWWisnPuwWY/OHdrQrlTp2aVCI6LbonZt4T9duYRVqHwXqQBJTTg2h/iMdpQUvIwGGbm
-         9WsA==
-X-Gm-Message-State: AC+VfDwvT1Xd1lhgF/6b+WMhTwlVM+waNH2QqWMoTx90X0SRg81kwCmv
-        u5+6nvoyN95VXgrYSDtopw8=
-X-Google-Smtp-Source: ACHHUZ7/pJ5iKFW1gtkDQyricf57yut+qiP3Nh+xTYPw5FujIY6L6cObgGTjBatkHGTeJjcLygghBg==
-X-Received: by 2002:a17:902:b18a:b0:1a2:98b1:1ee3 with SMTP id s10-20020a170902b18a00b001a298b11ee3mr16269110plr.12.1683711589291;
-        Wed, 10 May 2023 02:39:49 -0700 (PDT)
-Received: from debian.me (subs02-180-214-232-71.three.co.id. [180.214.232.71])
-        by smtp.gmail.com with ESMTPSA id jn22-20020a170903051600b001a80ad9c599sm3273831plb.294.2023.05.10.02.39.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 May 2023 02:39:48 -0700 (PDT)
-Received: by debian.me (Postfix, from userid 1000)
-        id EF79B10688D; Wed, 10 May 2023 16:39:44 +0700 (WIB)
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-To:     Linux SCSI <linux-scsi@vger.kernel.org>,
-        Linux Documentation <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc:     Oliver Neukum <oliver@neukum.org>, Ali Akcaagac <aliakc@web.de>,
-        Jamie Lenehan <lenehan@twibble.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH v2 3/3] Documentation: scsi: dc395x: Reword original driver attribution
-Date:   Wed, 10 May 2023 16:39:33 +0700
-Message-Id: <20230510093933.19985-4-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230510093933.19985-1-bagasdotme@gmail.com>
-References: <20230510093933.19985-1-bagasdotme@gmail.com>
+        Wed, 10 May 2023 09:35:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFD661B2;
+        Wed, 10 May 2023 06:35:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CE1206115D;
+        Wed, 10 May 2023 13:35:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30192C433EF;
+        Wed, 10 May 2023 13:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683725716;
+        bh=rvr/wktaXUQdbZyUNVM6L1zlwE98uUFOn7vnuHwakgo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PMx8eQdEgir55rrWh8cmLsVWjb9ETd1apymlvypdlcEhNjP3uJuBNRKo/V6+VQYaN
+         VjuHIT/udJGZml2gcO1Gr0UDifQWm6Lk9M0s84e8by3b5YOSXT0U5W3s4e1wp4PMDP
+         AJo7UiSVXIjj0bikAQeVvmKq3sFL3+6FTm/hCm4wUdLtFoEMiiDzMkF/ljGQ+7DmJx
+         6I6eBDMokdyiK9rFpMu//KNlNWmZlcQnIzIvsfnK6g3yv2J1kRzwlKQYSX/T6Pzpcj
+         wI8jfA8VHThRRWzpvL5pPoyDQzt+qsGu8Hrxq3doy3g5fuSBxX4iJuubz4cBSbx2oa
+         x2BQBfUzygPfw==
+Date:   Wed, 10 May 2023 14:35:11 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mailbox: mailbox-test: fix a locking issue in
+ mbox_test_message_write()
+Message-ID: <20230510133511.GB8963@google.com>
+References: <c3b517eb-3805-48bf-be89-0082bff65913@kili.mountain>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1334; i=bagasdotme@gmail.com; h=from:subject; bh=gGRYebnn2/spyEd/CK1GKcx94mEICbH99NKg8eQtQb8=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDCnRaaEv/PQqZc2MiuZKtbro3zU8Xcl3OPMi910fmdXmJ 7ljD9R1lLIwiHExyIopskxK5Gs6vctI5EL7WkeYOaxMIEMYuDgFYCK2sxn+u2xPKSq8KLKz4qj6 dbuje4rmN+xNMLyTy8p1N1A04HTGG4Z/ikrbAzmbUux9sl9Of7eOW8qkuGhHYVuJrEeg6aXLW97 zAQA=
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c3b517eb-3805-48bf-be89-0082bff65913@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The Linux kernel isn't in 2.6.x anymore, but rather the major version
-has advanced much (currently 6.x). Reword the attribution.
+Good catch, thanks Dan.
 
-Also, replace 404'ed 2.4 driver link with web.archive.org snapshot [1].
+On Fri, 05 May 2023, Dan Carpenter wrote:
 
-Link: https://web.archive.org/web/20140129181343/http://www.garloff.de/kurt/linux/dc395/ [1]
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/scsi/dc395x.rst | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> There was a bug where this code forgot to unlock the tdev->mutex if the
+> kzalloc() failed.  Fix this issue, by moving the allocation outside the
+> lock.
+> 
+> Fixes: 2d1e952a2b8e ("mailbox: mailbox-test: Fix potential double-free in mbox_test_message_write()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/mailbox/mailbox-test.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/scsi/dc395x.rst b/Documentation/scsi/dc395x.rst
-index c413b629809bcd..8b06d8fc7a9c42 100644
---- a/Documentation/scsi/dc395x.rst
-+++ b/Documentation/scsi/dc395x.rst
-@@ -11,10 +11,8 @@ be safe to use. Testing with hard disks has not been done to any
- great degree and caution should be exercised if you want to attempt
- to use this driver with hard disks.
- 
--This is a 2.5 only driver. For a 2.4 driver please see the original
--driver (which this driver started from) at
--http://www.garloff.de/kurt/linux/dc395/
--
-+This driver is evolved from `the original 2.4 driver
-+<https://web.archive.org/web/20140129181343/http://www.garloff.de/kurt/linux/dc395/>`_.
- Problems, questions and patches should be submitted to the `Linux SCSI
- mailing list <linux-scsi@vger.kernel.org>`_.
- 
+Reviewed-by: Lee Jones <lee@kernel.org>
+
+> diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
+> index c4a705c30331..fc6a12a51b40 100644
+> --- a/drivers/mailbox/mailbox-test.c
+> +++ b/drivers/mailbox/mailbox-test.c
+> @@ -98,6 +98,7 @@ static ssize_t mbox_test_message_write(struct file *filp,
+>  				       size_t count, loff_t *ppos)
+>  {
+>  	struct mbox_test_device *tdev = filp->private_data;
+> +	char *message;
+>  	void *data;
+>  	int ret;
+>  
+> @@ -113,12 +114,13 @@ static ssize_t mbox_test_message_write(struct file *filp,
+>  		return -EINVAL;
+>  	}
+>  
+> -	mutex_lock(&tdev->mutex);
+> -
+> -	tdev->message = kzalloc(MBOX_MAX_MSG_LEN, GFP_KERNEL);
+> -	if (!tdev->message)
+> +	message = kzalloc(MBOX_MAX_MSG_LEN, GFP_KERNEL);
+> +	if (!message)
+>  		return -ENOMEM;
+>  
+> +	mutex_lock(&tdev->mutex);
+> +
+> +	tdev->message = message;
+>  	ret = copy_from_user(tdev->message, userbuf, count);
+>  	if (ret) {
+>  		ret = -EFAULT;
+> -- 
+> 2.39.2
+> 
+
 -- 
-An old man doll... just what I always wanted! - Clara
-
+Lee Jones [李琼斯]
