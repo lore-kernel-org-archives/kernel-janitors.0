@@ -2,152 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C517DC77B7C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 01:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 221CEC77B7C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 01:29:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234919AbjEJBIQ (ORCPT
+        id S235013AbjEJB36 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 May 2023 21:08:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48544 "EHLO
+        Tue, 9 May 2023 21:29:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234520AbjEJBIQ (ORCPT
+        with ESMTP id S230199AbjEJB35 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 May 2023 21:08:16 -0400
-Received: from mail.zytor.com (unknown [IPv6:2607:7c80:54:3::138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8A5E49C1;
-        Tue,  9 May 2023 18:08:13 -0700 (PDT)
-Received: from [127.0.0.1] ([73.231.166.163])
-        (authenticated bits=0)
-        by mail.zytor.com (8.17.1/8.17.1) with ESMTPSA id 34A17fsp1731854
-        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-        Tue, 9 May 2023 18:07:42 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 34A17fsp1731854
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2023040901; t=1683680863;
-        bh=jhDLoIM7dHdYgcyfud1uL2JJD5Oew+jXsTMBNuzR3AE=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=Ii52SNMvSq477fqw2TQHlbh3Y1fT1pknMIoJLzYPHJ+cF4zd7lUCMNqByda5YevD/
-         fn7zDUnlgRaeybBm9s1ZiU0k47Vzq8BkV63vBNkYIzwOdPaJd0neecYr01E+l2XNGo
-         /m61uzeVgxVKAZ2u+2xgvcvvejGPQNomluFIMdjrSvqLAVf25e4nvd3mjtTEk5VPp2
-         Kurtk7BoegbK5zWPSRlSZAFhKMyZPW9Qsc09fxLPuY6o4EvJWHXMEioglnjGijbyrZ
-         FcVIh+WdfZshGBvelb6AVCdDHm9EN+vc/CZyWXSrybKuEHy5hBC4uLpV5AppSiH7Mb
-         ULCDi10ZWtC3Q==
-Date:   Tue, 09 May 2023 18:07:40 -0700
-From:   "H. Peter Anvin" <hpa@zytor.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-CC:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: make config X86_FEATURE_NAMES visible with EXPERT
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20230509084007.24373-1-lukas.bulwahn@gmail.com>
-References: <20230509084007.24373-1-lukas.bulwahn@gmail.com>
-Message-ID: <0A466BA5-BB85-4254-9D1C-7E6B077E7725@zytor.com>
+        Tue, 9 May 2023 21:29:57 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 04ED03AAF;
+        Tue,  9 May 2023 18:29:52 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 7BE33180081FD7;
+        Wed, 10 May 2023 09:29:49 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     Patrice Chotard <patrice.chotard@foss.st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Su Hui <suhui@nfschina.com>
+Subject: [PATCH] media: platform: Remove unnecessary (void*) conversions
+Date:   Wed, 10 May 2023 09:29:44 +0800
+Message-Id: <20230510012944.42240-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On May 9, 2023 1:40:07 AM PDT, Lukas Bulwahn <lukas=2Ebulwahn@gmail=2Ecom> =
-wrote:
->Commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to CONFIG_EXPERT")
->introduces CONFIG_EXPERT to carry the previous intent of CONFIG_EMBEDDED
->and just gives that intent a much better name=2E That has been clearly a =
-good
->and long overdue renaming, and it is clearly an improvement to the kernel
->build configuration that has shown to help managing the kernel build
->configuration in the last decade=2E
->
->However, rather than bravely and radically just deleting CONFIG_EMBEDDED,
->this commit gives CONFIG_EMBEDDED a new intended semantics, but keeps it
->open for future contributors to implement that intended semantics:
->
->    A new CONFIG_EMBEDDED option is added that automatically selects
->    CONFIG_EXPERT when enabled and can be used in the future to isolate
->    options that should only be considered for embedded systems (RISC
->    architectures, SLOB, etc)=2E
->
->Since then, this CONFIG_EMBEDDED implicitly had two purposes:
->
->  - It can make even more options visible beyond what CONFIG_EXPERT makes
->    visible=2E In other words, it may introduce another level of enabling=
- the
->    visibility of configuration options: always visible, visible with
->    CONFIG_EXPERT and visible with CONFIG_EMBEDDED=2E
->
->  - Set certain default values of some configurations differently,
->    following the assumption that configuring a kernel build for an
->    embedded system generally starts with a different set of default valu=
-es
->    compared to kernel builds for all other kind of systems=2E
->
->Considering the first purpose, at the point in time where CONFIG_EMBEDDED
->was renamed to CONFIG_EXPERT, CONFIG_EXPERT already made 130 more options
->become visible throughout all different menus for the kernel configuratio=
-n=2E
->Over the last decade, this has gradually increased, so that currently, wi=
-th
->CONFIG_EXPERT, roughly 170 more options become visible throughout all
->different menus for the kernel configuration=2E In comparison, currently =
-with
->CONFIG_EMBEDDED enabled, just seven more options are visible, one in x86,
->one in arm, and five for the ChipIdea Highspeed Dual Role Controller=2E
->
->As the numbers suggest, these two levels of enabling the visibility of ev=
-en
->more configuration options---beyond what CONFIG_EXPERT enables---never
->evolved to a good solution in the last decade=2E In other words, this
->additional level of visibility of configuration option with CONFIG_EMBEDD=
-ED
->compared to CONFIG_EXPERT has since its introduction never become really
->valuable=2E It requires quite some investigation to actually understand w=
-hat
->is additionally visible and it does not differ significantly in complexit=
-y
->compared to just enabling CONFIG_EXPERT=2E This CONFIG_EMBEDDED---or any
->other config to show more detailed options beyond CONFIG_EXPERT---is
->unlikely to be valuable unless somebody puts significant effort in
->identifying how such visibility options can be properly split and creatin=
-g
->clear criteria, when some config option is visible with CONFIG_EXPERT and
->when some config option is visible only with some further option enabled
->beyond CONFIG_EXPERT, such as CONFIG_EMBEDDED attempted to do=2E For now,=
- it
->is much more reasonable to simply make those additional seven options tha=
-t
->are visible with CONFIG_EMBEDDED visible with CONFIG_EXPERT, and then
->remove CONFIG_EMBEDDED=2E If anyone spends significant effort in structur=
-ing
->the visibility of config options, they may re-introduce suitable new
->config options simply as they see fit=2E
->
->Make the config X86_FEATURE_NAMES visible when CONFIG_EXPERT is enabled=
-=2E
->
->Signed-off-by: Lukas Bulwahn <lukas=2Ebulwahn@gmail=2Ecom>
->Reviewed-by: Masahiro Yamada <masahiroy@kernel=2Eorg>
->Acked-by: Arnd Bergmann <arnd@arndb=2Ede>
->---
-> arch/x86/Kconfig | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->index ce460d6b4e25=2E=2E595f6696281c 100644
->--- a/arch/x86/Kconfig
->+++ b/arch/x86/Kconfig
->@@ -442,7 +442,7 @@ config SMP
-> 	  If you don't know what to do here, say N=2E
->=20
-> config X86_FEATURE_NAMES
->-	bool "Processor feature human-readable names" if EMBEDDED
->+	bool "Processor feature human-readable names" if EXPERT
-> 	default y
-> 	help
-> 	  This option compiles in a table of x86 feature bits and corresponding
+No need cast (void*) to (struct stdemux *),(struct hva_h264_ctx *)
+or (struct hva_h264_task *).
 
-You know it used to be named that, and it was changed exactly because it w=
-as a terrible name, right?
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c | 4 ++--
+ drivers/media/platform/st/sti/hva/hva-h264.c             | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
+index 45ade7210d26..120830973d22 100644
+--- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
++++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
+@@ -135,7 +135,7 @@ static void channel_swdemux_tsklet(struct tasklet_struct *t)
+ static int c8sectpfe_start_feed(struct dvb_demux_feed *dvbdmxfeed)
+ {
+ 	struct dvb_demux *demux = dvbdmxfeed->demux;
+-	struct stdemux *stdemux = (struct stdemux *)demux->priv;
++	struct stdemux *stdemux = demux->priv;
+ 	struct c8sectpfei *fei = stdemux->c8sectpfei;
+ 	struct channel_info *channel;
+ 	u32 tmp;
+@@ -256,7 +256,7 @@ static int c8sectpfe_stop_feed(struct dvb_demux_feed *dvbdmxfeed)
+ {
+ 
+ 	struct dvb_demux *demux = dvbdmxfeed->demux;
+-	struct stdemux *stdemux = (struct stdemux *)demux->priv;
++	struct stdemux *stdemux = demux->priv;
+ 	struct c8sectpfei *fei = stdemux->c8sectpfei;
+ 	struct channel_info *channel;
+ 	int idlereq;
+diff --git a/drivers/media/platform/st/sti/hva/hva-h264.c b/drivers/media/platform/st/sti/hva/hva-h264.c
+index 98cb00d2d868..196e631fa4b8 100644
+--- a/drivers/media/platform/st/sti/hva/hva-h264.c
++++ b/drivers/media/platform/st/sti/hva/hva-h264.c
+@@ -591,7 +591,7 @@ static int hva_h264_prepare_task(struct hva_ctx *pctx,
+ {
+ 	struct hva_dev *hva = ctx_to_hdev(pctx);
+ 	struct device *dev = ctx_to_dev(pctx);
+-	struct hva_h264_ctx *ctx = (struct hva_h264_ctx *)pctx->priv;
++	struct hva_h264_ctx *ctx = pctx->priv;
+ 	struct hva_buffer *seq_info = ctx->seq_info;
+ 	struct hva_buffer *fwd_ref_frame = ctx->ref_frame;
+ 	struct hva_buffer *loc_rec_frame = ctx->rec_frame;
+@@ -984,7 +984,7 @@ static int hva_h264_open(struct hva_ctx *pctx)
+ 
+ static int hva_h264_close(struct hva_ctx *pctx)
+ {
+-	struct hva_h264_ctx *ctx = (struct hva_h264_ctx *)pctx->priv;
++	struct hva_h264_ctx *ctx = pctx->priv;
+ 	struct device *dev = ctx_to_dev(pctx);
+ 
+ 	if (ctx->seq_info)
+@@ -1007,8 +1007,8 @@ static int hva_h264_close(struct hva_ctx *pctx)
+ static int hva_h264_encode(struct hva_ctx *pctx, struct hva_frame *frame,
+ 			   struct hva_stream *stream)
+ {
+-	struct hva_h264_ctx *ctx = (struct hva_h264_ctx *)pctx->priv;
+-	struct hva_h264_task *task = (struct hva_h264_task *)ctx->task->vaddr;
++	struct hva_h264_ctx *ctx = pctx->priv;
++	struct hva_h264_task *task = ctx->task->vaddr;
+ 	u32 stuffing_bytes = 0;
+ 	int ret = 0;
+ 
+-- 
+2.30.2
+
