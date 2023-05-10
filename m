@@ -2,98 +2,106 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7A4C7EE24
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 08:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A54BAC7EE22
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 09:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236862AbjEJI6A (ORCPT
+        id S236451AbjEJJjy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 May 2023 04:58:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48538 "EHLO
+        Wed, 10 May 2023 05:39:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235541AbjEJI56 (ORCPT
+        with ESMTP id S231207AbjEJJjw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 May 2023 04:57:58 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADB27C7;
-        Wed, 10 May 2023 01:57:57 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-64115e652eeso48699281b3a.0;
-        Wed, 10 May 2023 01:57:57 -0700 (PDT)
+        Wed, 10 May 2023 05:39:52 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6C84207;
+        Wed, 10 May 2023 02:39:49 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-643990c5319so4943790b3a.2;
+        Wed, 10 May 2023 02:39:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683709077; x=1686301077;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4LgiY91SCDw/qvHZBPA87wfua9PTLmx+fPMF0dnUHEU=;
-        b=gxPv8nGZx9abnewODkwJuJeHbUhbTT30cPBXlyH6/krljpNRFKhy4Lkwjvv/4ZD1yH
-         TB3l5btaSAOpWJ28+akCQo6kfF27ryGnUxYINQ/ABNYH4+0KuSAWf4awJ19OwOoZlqF/
-         GNTf05mrHIvB8LRgooJjxEM1s1DqE+4hrAobSDDlhYgr0acZB/mg0F8N5m1x5DcutAuy
-         VIdiWkBWxEuCuO09PiqIgj1/4DqXsF1M5tTYJdhnjSPd7jLYnDcqiU8bgfb+eKoDvjDl
-         3L4fL08X1OOq8T5otzoboSro99YY9M7nV7UQtfAhk2AHMnYY3YUBbp7mTscOa2I+tP9X
-         k+Rw==
+        d=gmail.com; s=20221208; t=1683711589; x=1686303589;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ckUkgH/LBnma6i9Vpo625SXqSP6maiHgE6xir4pKJms=;
+        b=m/7g9q2gDUy79+/IGUGORh8Y7n3vgTLW1eXsaskk5Y2v+SDrACdtEW0NrPgmqHqvT4
+         /TYZukg4HzB7OWEn2AZLtStG8gudqMhFlRNDduE1MhQFES079vi0huIstWLDZVTrhnFO
+         o3RFIhoVKf4iAwTU5gaS/HJhMoUs5giGua0N4DAzCU6ZkQgN4C6WZMcDYPjjCAJwcOF+
+         r8GqJJJfm6BHrB6GwsqWXic4Of2MhHIBoQLhfYcBxGIa9uxJvKj9yyDhBIRsVGE1Bx/H
+         8PJjQsScIUQw0WvTw3ViQLc2a+eLc0Q/Nkt/ue7YW2zrT4YZgF5L56/oMZYKCsurLtGA
+         E54A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683709077; x=1686301077;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4LgiY91SCDw/qvHZBPA87wfua9PTLmx+fPMF0dnUHEU=;
-        b=f97z3e03s3e+GoUMCd/VvtQg0oOoLKkj7Ia/NCbvBPXQLnzL4Xl+hvy0sscgB+nWVx
-         BFIT9r+t3GW+bYcsL5gG+f3gQ638hH9D7WJXlXCyo2MYRBG71Fs0yRzIMWUyjZZCLHby
-         nTdWGKy1qbxsNETvew99sLk6c2N8Z1i/XUe7V92iBqKVgDQ8yW0QL5XwjKmvDupiKRTZ
-         WBvNKLPTvpWjdH0ahOB5eagkY3vEHlRWZ7w3Zug47NI+CvwupHukp4wzXEP8Uv5hCsmX
-         W1EzbAbjZ6ZJi7AKV6PR/eOvwlECqe7H3+dsNKBblWMIJoBMb1jy39BUgBJbtu/C29Pb
-         aeGA==
-X-Gm-Message-State: AC+VfDwzN+dUp+iq0/DOaqXG55rxYmy8AhOSdf1Akil0tWvFYc3Vy85i
-        /bjada2ATho4DiTy0M/OLng=
-X-Google-Smtp-Source: ACHHUZ7Ycs0i1IoirPPY7K0VFg5JBsZc1QYMtbKlTLB7E4Xn6WIzg1DvmT687DG5glzD9PgjjVP3jw==
-X-Received: by 2002:a17:902:ec87:b0:19c:3d78:6a54 with SMTP id x7-20020a170902ec8700b0019c3d786a54mr19484051plg.14.1683709077168;
-        Wed, 10 May 2023 01:57:57 -0700 (PDT)
-Received: from [192.168.43.80] (subs03-180-214-233-68.three.co.id. [180.214.233.68])
-        by smtp.gmail.com with ESMTPSA id m17-20020a170902bb9100b001aaef9d0102sm3180669pls.197.2023.05.10.01.57.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 May 2023 01:57:56 -0700 (PDT)
-Message-ID: <7e3e90f2-49bd-46f6-ce1e-bd3263e6eb32@gmail.com>
-Date:   Wed, 10 May 2023 15:57:51 +0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 3/3] Documentation: scsi: dc395x: Remove reference to 2.4
- driver
-Content-Language: en-US
-To:     Oliver Neukum <oneukum@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-        Finn Thain <fthain@linux-m68k.org>
-Cc:     Linux SCSI <linux-scsi@vger.kernel.org>,
+        d=1e100.net; s=20221208; t=1683711589; x=1686303589;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ckUkgH/LBnma6i9Vpo625SXqSP6maiHgE6xir4pKJms=;
+        b=cQAQyE/lyh5JOLqe2KFLLHRriKPxHASULR2iap211Fkv1mIfdsgSCoreiNo/PWW/ZM
+         ZeLIHNw/u6XEXNHw2OTjGFWaqg4TvyxKoD7WglUDPdFVNIodUWFnSjX7K6AKiZNYd2QL
+         bgzXeR+kS6Uy5LN6uaupJjtBpXWU9sZnHLWSlZ39SxeWTryf4shpUWUi6qJ1LyVt/j9J
+         vg4cqgHLM/CWlI8r2IcMRZFVsuwts0PRPdtCFeU8DeZ9XEP5fE+ubK4IIDNvboE447ST
+         aTV3Wo6RK4X4x1Pz4m7/iY0ktNwQUwydTiRmSCey7cBPYB/xX4K1ROKMMIzTcZIQN7Df
+         6vNQ==
+X-Gm-Message-State: AC+VfDxJllXtnkhKKYT9Z4HO91+ImdN2DDqM+M2Lj1VwBiU0DyOp6duF
+        Zzxvu6wvNdSk1xJKwakett4=
+X-Google-Smtp-Source: ACHHUZ5h1CcuHuK9TqFByVj4+TJuybYkXRAb2fs0LdBAx6tO7lb8dtKMK754kG524icZ86ZmFh6e/A==
+X-Received: by 2002:a05:6a21:9987:b0:102:1083:b4aa with SMTP id ve7-20020a056a21998700b001021083b4aamr3086031pzb.25.1683711589075;
+        Wed, 10 May 2023 02:39:49 -0700 (PDT)
+Received: from debian.me (subs02-180-214-232-71.three.co.id. [180.214.232.71])
+        by smtp.gmail.com with ESMTPSA id y14-20020a17090a784e00b00246b7b8b43asm3099735pjl.49.2023.05.10.02.39.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 May 2023 02:39:48 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 9DCE0103AAB; Wed, 10 May 2023 16:39:43 +0700 (WIB)
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Linux SCSI <linux-scsi@vger.kernel.org>,
         Linux Documentation <linux-doc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
-        Ali Akcaagac <aliakc@web.de>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc:     Oliver Neukum <oliver@neukum.org>, Ali Akcaagac <aliakc@web.de>,
         Jamie Lenehan <lenehan@twibble.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20230505082704.16228-1-bagasdotme@gmail.com>
- <20230505082704.16228-4-bagasdotme@gmail.com>
- <d919a2e1-5749-13f8-7867-1f17277190f4@linux-m68k.org>
- <87pm7enbpo.fsf@meer.lwn.net> <8536273d-20a4-1993-1381-b50e44701835@suse.com>
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <8536273d-20a4-1993-1381-b50e44701835@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Jonathan Corbet <corbet@lwn.net>,
+        Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH v2 1/3] MAINTAINERS: Drop DC395x list and site
+Date:   Wed, 10 May 2023 16:39:31 +0700
+Message-Id: <20230510093933.19985-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230510093933.19985-1-bagasdotme@gmail.com>
+References: <20230510093933.19985-1-bagasdotme@gmail.com>
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=823; i=bagasdotme@gmail.com; h=from:subject; bh=Sn0BZ1jABONtyvPtSO4/uSeRQGjS1WJByjZ9y+aap0Q=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDCnRaaHrrmYb2P5RaVsWKBx55HR38UHhyplnZgdzdtQoc IQL/73XUcrCIMbFICumyDIpka/p9C4jkQvtax1h5rAygQxh4OIUgIlMvcXIcNJgvn/olRAFqaV/ bDfePM6VJRN5IvP5rvsT5jc8O7tvwRNGhodnTLM6RfsPfXBgvPW3amtOKedvcT3uM1Ixp4yToyU f8gEA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/9/23 15:55, Oliver Neukum wrote:
-> Hi,
-> 
-> the documentation of a kernel should document that kernel.
-> 
-> Now, we have a perfectly fine tool named "git" which allows
-> for metadocumentation. May I suggest that you respin the patch
-> and include a link to the old stuff, which somebody has been
-> nice enough to find, in the change log?
-> 
+Emails to DC395x list bounce (550 error) and visiting the site returns
+404 page.
 
-OK, thanks!
+Drop both twibble.org links. The driver should now be covered by
+linux-scsi list.
 
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ MAINTAINERS | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7e0b87d5aa2e57..ca88932ee04e2f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5716,10 +5716,7 @@ DC395x SCSI driver
+ M:	Oliver Neukum <oliver@neukum.org>
+ M:	Ali Akcaagac <aliakc@web.de>
+ M:	Jamie Lenehan <lenehan@twibble.org>
+-L:	dc395x@twibble.org
+ S:	Maintained
+-W:	http://twibble.org/dist/dc395x/
+-W:	http://lists.twibble.org/mailman/listinfo/dc395x/
+ F:	Documentation/scsi/dc395x.rst
+ F:	drivers/scsi/dc395x.*
+ 
 -- 
 An old man doll... just what I always wanted! - Clara
 
