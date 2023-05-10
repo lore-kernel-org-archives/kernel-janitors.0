@@ -2,91 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AEAC77B7D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 14:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A20C7EE24
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 16:48:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237606AbjEJO5O (ORCPT
+        id S231313AbjEJQs1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 May 2023 10:57:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
+        Wed, 10 May 2023 12:48:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237146AbjEJO5N (ORCPT
+        with ESMTP id S229826AbjEJQs0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 May 2023 10:57:13 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C201DF;
-        Wed, 10 May 2023 07:57:11 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34AE8D0k014769;
-        Wed, 10 May 2023 14:57:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=sM0lPnSnMR85dWalCPE6DM0jV4KlJsaqVN8HJDT/jJI=;
- b=HccFqMlxfqarfy4KiEqPD+LE6H8SSUECSowCbYHa/CELhlaOlLxqwWGXLHh+2ONzJKyT
- jOw689IWLCk+KY5iDo6oo6wzw4Ey2TZqMEpAeUnEZwYv9B8uvzkJzIPQsEj1ufkYCJ7X
- gyBqE81K0cAXufwF3Eb6ZzQGbHxfH55VLQIwUFiTeEuSenP5KXmOWeI5a1ml8MFZAy2g
- w/8rqVYSoYZLNoo+CjPKlC0H23rI+LZWRW9SK31xsVWwR78lU/c36VH+oCHRwh3PKN5G
- NnouW4Ic3YobTe1gMtRcAnAEbP7Arf0ZqaCdkS8KR+WVgD42Go7E3E/4cAFV6UdYqa77 yg== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qfw3d1s17-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 May 2023 14:57:05 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34AEv49n028154
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 May 2023 14:57:04 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 10 May
- 2023 07:57:04 -0700
-Message-ID: <2d1fb58f-f98b-ba17-65e9-9ea4b467102a@quicinc.com>
-Date:   Wed, 10 May 2023 08:57:03 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
+        Wed, 10 May 2023 12:48:26 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E508C30F4
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 May 2023 09:48:24 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f315712406so255049875e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 May 2023 09:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683737303; x=1686329303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MwVVyzBwHFgq5mjt1+OBVM71N6e1slDHiUKoKcjYW0Q=;
+        b=yy0HCIvUH4Sd4z+3E6svVggUDeh72opPe44l+Bem25petIjeKIIYzQqIWoBHzl0UNL
+         u8N7qm1cfYKJD1Ud9Mt207BcE7wIRoHy5kG7p3GN6XH5gbPk9a9QsPQFB8wRk7t3ofPb
+         irL1km6PsxvZruvN922JFOGjHAm15x9jXWprgf38trxk65/fHgrIdA5B21I1Eaxx5U5U
+         Vr9vc6Ht/FGK2UikGQRSwBVMjn+MURFnJaJB+b6VjaIY9OW2l6qZWYznyy4flM8XPjzv
+         T7OLdbQBdX4JqZsW5cTIjUhOJ0XTVn+QRau4Lu2oA7/p/THSVE1O6yCmsl+0iv+PveoN
+         oQdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683737303; x=1686329303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MwVVyzBwHFgq5mjt1+OBVM71N6e1slDHiUKoKcjYW0Q=;
+        b=Sd2U92e4+/tHArq9v0FKf72BBA/HlLKWdN08D5/wPKqXtzBxMAzFbPjp9OUEs3Kdoa
+         jcIEFzXuuvQhq0ftR0f0UVLr9z2nVXpldJGgtySICi++GPIkX+0L+HAOT4bbSg9ISQnB
+         71V/Tw2fVg5neMEIdZT169Q7uYdAaqVlgW4Q1MClvYGLEG3MOjVKBXufeSPffmKp6GjO
+         UbRUMn+Cfs3fRcUV4u+B0+WilEba9620aTuW0onLCSNjoWB4Tw8LihdXpISB9K/P8S3/
+         oFMr0p8XWQnwgoC5LE/YNevxMkz9MUU4+gDahDu4xQwf66svmE5Ig2MWpJ2sP91mW2Iz
+         /nfQ==
+X-Gm-Message-State: AC+VfDwEwEIWGxCty9RmrrSbVoikO7Phs0gTZuFyANUUrFR+2mrAmc4t
+        eTQDhI6LH/+QAYB32YEHydOE/Q==
+X-Google-Smtp-Source: ACHHUZ6pAsUXjnPzQPlETYmn2EITVP8Au3ALpgkfd7X43evubc0YmSsEetI21aWFcNDrnelF4WvqLw==
+X-Received: by 2002:a05:600c:3b91:b0:3f1:7b63:bf0e with SMTP id n17-20020a05600c3b9100b003f17b63bf0emr12869963wms.18.1683737303342;
+        Wed, 10 May 2023 09:48:23 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id y5-20020a1c4b05000000b003f429d59e37sm6135075wma.34.2023.05.10.09.48.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 May 2023 09:48:21 -0700 (PDT)
+Date:   Wed, 10 May 2023 19:48:16 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc:     Oded Gabbay <ogabbay@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] accel/qaic: silence some uninitialized variable warnings
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     Oded Gabbay <ogabbay@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
+Message-ID: <d4c73c29-b604-4b0c-92bb-000369b0a5d7@kili.mountain>
 References: <d11ee378-7b06-4b5e-b56f-d66174be1ab3@kili.mountain>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <d11ee378-7b06-4b5e-b56f-d66174be1ab3@kili.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Mug3i2VXkPTwLSIbbbTCpYZj0m2y0eCw
-X-Proofpoint-GUID: Mug3i2VXkPTwLSIbbbTCpYZj0m2y0eCw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-10_04,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
- mlxlogscore=846 mlxscore=0 bulkscore=0 suspectscore=0 phishscore=0
- spamscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2304280000 definitions=main-2305100121
+ <2d1fb58f-f98b-ba17-65e9-9ea4b467102a@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d1fb58f-f98b-ba17-65e9-9ea4b467102a@quicinc.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/3/2023 4:41 AM, Dan Carpenter wrote:
-> Smatch complains that these are not initialized if get_cntl_version()
-> fails but we still print them in the debug message.  Not the end of
-> the world, but true enough.  Let's just initialize them to a dummy value
-> to make the checker happy.
+On Wed, May 10, 2023 at 08:57:03AM -0600, Jeffrey Hugo wrote:
+> On 5/3/2023 4:41 AM, Dan Carpenter wrote:
+> > Smatch complains that these are not initialized if get_cntl_version()
+> > fails but we still print them in the debug message.  Not the end of
+> > the world, but true enough.  Let's just initialize them to a dummy value
+> > to make the checker happy.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Thanks for the cleanup.
+> 
+> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+> 
+> Could use a fixes tag
 
-Thanks for the cleanup.
+The fixes tag thing could have gone either way.  It's really minor.
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+> and also I'd prefer to maintain the style of sorting
+> the variable declaration lines by line length.  Given the minor nature of
+> these nits, I plan to address them.
 
-Could use a fixes tag, and also I'd prefer to maintain the style of 
-sorting the variable declaration lines by line length.  Given the minor 
-nature of these nits, I plan to address them.
+Thanks!
+
+regards,
+dan carpenter
