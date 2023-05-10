@@ -2,158 +2,182 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E51C77B7C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 07:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 326BBC77B7D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 07:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236294AbjEJHrA (ORCPT
+        id S236272AbjEJHvb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 May 2023 03:47:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39842 "EHLO
+        Wed, 10 May 2023 03:51:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236250AbjEJHq5 (ORCPT
+        with ESMTP id S236223AbjEJHv3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 May 2023 03:46:57 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B41181BC0;
-        Wed, 10 May 2023 00:46:53 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-50bc0117683so12347909a12.1;
-        Wed, 10 May 2023 00:46:53 -0700 (PDT)
+        Wed, 10 May 2023 03:51:29 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D33041FD7;
+        Wed, 10 May 2023 00:51:26 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-965cc5170bdso990342366b.2;
+        Wed, 10 May 2023 00:51:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683704812; x=1686296812;
+        d=gmail.com; s=20221208; t=1683705085; x=1686297085;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/9F5lRR3nU5ik1iM4JNGpvgMBHRkuI2L2MRe+HsWM1E=;
-        b=aCASxiNmtfiQlCFgg8xxPUHhOz7p4P4u9H2Q1iTujydnsKu3Bz9hBklBJXY0awyi8I
-         ltJc7Cd8bXfpfdJxdf64J70/9q09t2K4E/5ZRImL9y0ynQNDjQBCzJyH3YEQRfALOIp7
-         U6HteAyd+2lpYdzKDHPgESvWKxr+knuvXNwLD/XK8Lv8ov6ioTZMjPtM6Q0KV/KGuvkG
-         WQ7lgs/ygWrvyMf8pXEuceC7Y+4r9YFXXynHYL3mIh0cZEJEEyDhW89isordRH6PMW5U
-         6WoYiGiF8rGTE1ZtMVW0kH1TF10MLOO462pbo3Q9M2ZkKfwVukKZtpNGBc2H0CCdYPOL
-         eq7Q==
+        bh=4uA7jc9Vw5Ix6vqrunAFgCIKFiZvoEgrPuoVqTgb1PQ=;
+        b=ZYK5miUprEUK2vN6aa5uHlomKH0I/OboeUIVm24i2S0HV/7DTG8k1q8B2VjLfQAz/F
+         RJ2lpMQY6kQxwiAy+7AWW7CjwYdFn65Qr0UsDkdIhkaCsgzTbTBXfZr50Z0o4DH+OPpt
+         WbGrzw1kAQh94zkA1IbyikXWTjLjATiGr1DBxo0k3eN5qffL6QwuPV6++YJjALm2QaU+
+         kEhCVzcQKsJNbRyCTqkUtvrAmtO70laJLmdV/M250X/WDKk7NPBV8K5yCJi5VtKvEDZt
+         SV5SPWzsni3g5lokErGKI3moxjuIYneGRMuEuPQzgYAmR8olZkDqzbNClyVNcUd9FDNv
+         2gIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683704812; x=1686296812;
+        d=1e100.net; s=20221208; t=1683705085; x=1686297085;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/9F5lRR3nU5ik1iM4JNGpvgMBHRkuI2L2MRe+HsWM1E=;
-        b=bBxW5eVnKo2d/MJQhfJawXBsWpq/FQwXdUOkcMO5B+y+66hPmsYPqrdA2C06F7XxAH
-         dz8IZaNDSA64/HvwZA0YequVoPkZPNlTDLmL0SG8hHhtRoU8Z0soCzToRYERNl/7wgmR
-         40UKL8hnhu0o/0L//IzE3N5uQ6WopRP4z1Md/eFwwBlD/5p0JDn1Twgs49dLq6uSg8EC
-         /DflA72G6y3AD6S9MzO4dFjGd54pRSkOSlYflhR2z48crWIGNrBKiQHcaNOZIo4CbMTI
-         Imv02d1OczKVByeLZ2/wHt6ZHXIbmX5pVsKouDhnB/Cv6k5WkLEH60YhjIpjUIeZxt1m
-         Rf4A==
-X-Gm-Message-State: AC+VfDzN1J/oqfc7cIakLMnAQUjiIIecssWxCxqgJnpunmEO4qPYGFWH
-        +w4Tl1xrT62zX3kEc+GhKTOBQlmYqFNhRPVny1k=
-X-Google-Smtp-Source: ACHHUZ7V22GIOu7lJOvWYzYqpjjEK3G8zDUJN0y/VJbHuKqGgm1lyKTw9GfZ1eU4EpYlN0vi4unZNpSF1sNcdyAaQ5E=
-X-Received: by 2002:a17:907:6ea0:b0:958:801b:9945 with SMTP id
- sh32-20020a1709076ea000b00958801b9945mr15111309ejc.31.1683704812032; Wed, 10
- May 2023 00:46:52 -0700 (PDT)
+        bh=4uA7jc9Vw5Ix6vqrunAFgCIKFiZvoEgrPuoVqTgb1PQ=;
+        b=jFGUSmgDAZ13COhhwoCJYH++2Lsp0hgWblNj5PnNjtdlZJzt0A2HeBvg4KnGN2IDgo
+         14PNkd1N7OQR6Vst0bIuwUzJQ8Aic474D7e/Mi0YlvFyTrFOQnLdPVNl+qqYVdH0dwMV
+         PJsZLM2jRqtaSIURdItm+nagU2NmYahEe2bm0ruHZu56AbxfAOxNXBhZkUJu+d928/xS
+         e1eHnazlFg2bg/vyUfoimbtSR/mky5yra9VulZW16Q7CNzNQOoIc64uIW51Ez4YU87BN
+         QBpDo1da06fy7WglRdg9eWsMPa6tpjR09G5+XEvhOFutOE/t5zajYdorQgrnkQh8CI5a
+         UocQ==
+X-Gm-Message-State: AC+VfDx8Vamy7EoixI1R25qbxmeMH77QNnFYJGHusys0i0EDi7FLELQt
+        cb90PrgiTPBX4IJOYYlB/seSoKTGtd/HPuKosUw=
+X-Google-Smtp-Source: ACHHUZ5ls2CuE62J7QEcALQ3YsLNq4iisKEzR2EZL9facu9nh742G81gJGIhm8zFi76MuXDwS94dSmou2hXmRaj3Fdw=
+X-Received: by 2002:a17:906:dac1:b0:961:8fcd:53cc with SMTP id
+ xi1-20020a170906dac100b009618fcd53ccmr13241080ejb.42.1683705085149; Wed, 10
+ May 2023 00:51:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230509084007.24373-1-lukas.bulwahn@gmail.com>
- <7cbe80f0-dcc3-bfc3-3bd8-c9f96704618d@intel.com> <CAKXUXMxO4b-8wT-88fJ=++woH-p79_4R-vUr=aELNFYinGcEuw@mail.gmail.com>
- <ea00d762-b0df-ab72-988b-98c62ffc7949@intel.com>
-In-Reply-To: <ea00d762-b0df-ab72-988b-98c62ffc7949@intel.com>
+References: <20230509084007.24373-1-lukas.bulwahn@gmail.com> <0A466BA5-BB85-4254-9D1C-7E6B077E7725@zytor.com>
+In-Reply-To: <0A466BA5-BB85-4254-9D1C-7E6B077E7725@zytor.com>
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Wed, 10 May 2023 09:46:40 +0200
-Message-ID: <CAKXUXMw77cSBz6nBF4K5BT3AUU2Ac3JGTj6qXJ5mDnUFmRrWeg@mail.gmail.com>
+Date:   Wed, 10 May 2023 09:51:14 +0200
+Message-ID: <CAKXUXMwo-oH=kYYtNjgWbQK-Yrb-NkxB+LjraOGQoKbA22Zwwg@mail.gmail.com>
 Subject: Re: [PATCH] x86: make config X86_FEATURE_NAMES visible with EXPERT
-To:     Dave Hansen <dave.hansen@intel.com>
+To:     "H. Peter Anvin" <hpa@zytor.com>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 9, 2023 at 8:38=E2=80=AFPM Dave Hansen <dave.hansen@intel.com> =
-wrote:
+On Wed, May 10, 2023 at 3:07=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> wrot=
+e:
 >
-> On 5/9/23 11:20, Lukas Bulwahn wrote:
-> > On Tue, May 9, 2023 at 4:07=E2=80=AFPM Dave Hansen <dave.hansen@intel.c=
-om> wrote:
-> >>
-> >> On 5/9/23 01:40, Lukas Bulwahn wrote:
-> >>> Commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to CONFIG_EXPER=
-T")
-> >>> introduces CONFIG_EXPERT to carry the previous intent of CONFIG_EMBED=
+> On May 9, 2023 1:40:07 AM PDT, Lukas Bulwahn <lukas.bulwahn@gmail.com> wr=
+ote:
+> >Commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to CONFIG_EXPERT")
+> >introduces CONFIG_EXPERT to carry the previous intent of CONFIG_EMBEDDED
+> >and just gives that intent a much better name. That has been clearly a g=
+ood
+> >and long overdue renaming, and it is clearly an improvement to the kerne=
+l
+> >build configuration that has shown to help managing the kernel build
+> >configuration in the last decade.
+> >
+> >However, rather than bravely and radically just deleting CONFIG_EMBEDDED=
+,
+> >this commit gives CONFIG_EMBEDDED a new intended semantics, but keeps it
+> >open for future contributors to implement that intended semantics:
+> >
+> >    A new CONFIG_EMBEDDED option is added that automatically selects
+> >    CONFIG_EXPERT when enabled and can be used in the future to isolate
+> >    options that should only be considered for embedded systems (RISC
+> >    architectures, SLOB, etc).
+> >
+> >Since then, this CONFIG_EMBEDDED implicitly had two purposes:
+> >
+> >  - It can make even more options visible beyond what CONFIG_EXPERT make=
+s
+> >    visible. In other words, it may introduce another level of enabling =
+the
+> >    visibility of configuration options: always visible, visible with
+> >    CONFIG_EXPERT and visible with CONFIG_EMBEDDED.
+> >
+> >  - Set certain default values of some configurations differently,
+> >    following the assumption that configuring a kernel build for an
+> >    embedded system generally starts with a different set of default val=
+ues
+> >    compared to kernel builds for all other kind of systems.
+> >
+> >Considering the first purpose, at the point in time where CONFIG_EMBEDDE=
+D
+> >was renamed to CONFIG_EXPERT, CONFIG_EXPERT already made 130 more option=
+s
+> >become visible throughout all different menus for the kernel configurati=
+on.
+> >Over the last decade, this has gradually increased, so that currently, w=
+ith
+> >CONFIG_EXPERT, roughly 170 more options become visible throughout all
+> >different menus for the kernel configuration. In comparison, currently w=
+ith
+> >CONFIG_EMBEDDED enabled, just seven more options are visible, one in x86=
+,
+> >one in arm, and five for the ChipIdea Highspeed Dual Role Controller.
+> >
+> >As the numbers suggest, these two levels of enabling the visibility of e=
+ven
+> >more configuration options---beyond what CONFIG_EXPERT enables---never
+> >evolved to a good solution in the last decade. In other words, this
+> >additional level of visibility of configuration option with CONFIG_EMBED=
 DED
-> >>> and just gives that intent a much better name.
-> >>
-> >> That was quite the changelog, and I'm still not quite sure:
-> >>
-> >> What is the problem with the existing code?
-> >>
-> >> What is the end user visible impact of this problem and of this propos=
-ed
-> >> change?
-> >>
+> >compared to CONFIG_EXPERT has since its introduction never become really
+> >valuable. It requires quite some investigation to actually understand wh=
+at
+> >is additionally visible and it does not differ significantly in complexi=
+ty
+> >compared to just enabling CONFIG_EXPERT. This CONFIG_EMBEDDED---or any
+> >other config to show more detailed options beyond CONFIG_EXPERT---is
+> >unlikely to be valuable unless somebody puts significant effort in
+> >identifying how such visibility options can be properly split and creati=
+ng
+> >clear criteria, when some config option is visible with CONFIG_EXPERT an=
+d
+> >when some config option is visible only with some further option enabled
+> >beyond CONFIG_EXPERT, such as CONFIG_EMBEDDED attempted to do. For now, =
+it
+> >is much more reasonable to simply make those additional seven options th=
+at
+> >are visible with CONFIG_EMBEDDED visible with CONFIG_EXPERT, and then
+> >remove CONFIG_EMBEDDED. If anyone spends significant effort in structuri=
+ng
+> >the visibility of config options, they may re-introduce suitable new
+> >config options simply as they see fit.
 > >
-> > Thanks, Dave, for your feedback.
+> >Make the config X86_FEATURE_NAMES visible when CONFIG_EXPERT is enabled.
 > >
-> > The commit message is so lengthy, as I copied it from the original
-> > cover letter into each commit, but I agree with your feedback.
->
-> Uhh...  *What* cover letter?  A cover letter is usually the 0/NN message
-> in a patch series.  It is not obvious at *all* that this plain
-> non-numbered patch is part of a series.
->
-
-Yeah, sending out the patch isolated that originated from a larger
-patch series was a bad idea. I got that.
-
-> > So maybe this commit message fits better:
+> >Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> >Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+> >Acked-by: Arnd Bergmann <arnd@arndb.de>
+> >---
+> > arch/x86/Kconfig | 2 +-
+> > 1 file changed, 1 insertion(+), 1 deletion(-)
 > >
-> > To simplify build configurations, the CONFIG_EMBEDDED is to be
-> > removed. All configs that are only visible with CONFIG_EMBEDDED=3Dy
-> > shall be now visible with CONFIG_EXPERT=3Dy.
+> >diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> >index ce460d6b4e25..595f6696281c 100644
+> >--- a/arch/x86/Kconfig
+> >+++ b/arch/x86/Kconfig
+> >@@ -442,7 +442,7 @@ config SMP
+> >         If you don't know what to do here, say N.
 > >
-> > In the x86 architecture, the config X86_FEATURE_NAMES is visible when
-> > CONFIG_EMBEDDED is enabled. Now, make the config X86_FEATURE_NAMES
-> > visible when CONFIG_EXPERT is enabled.
-> >
-> > Dave, what do you think? If that is good enough for you, I will send
-> > an updated patch with that commit message.
+> > config X86_FEATURE_NAMES
+> >-      bool "Processor feature human-readable names" if EMBEDDED
+> >+      bool "Processor feature human-readable names" if EXPERT
+> >       default y
+> >       help
+> >         This option compiles in a table of x86 feature bits and corresp=
+onding
 >
-> CONFIG_EMBEDDED is being removed:
->
->         <INSERT LINK HERE>
->
-> That means that everything in Kconfig that uses CONFIG_EMBEDDED needs to
-> switch over to something else.
->
-> Move X86_FEATURE_NAMES over to CONFIG_EXPERT instead of CONFIG_EMBEDDED.
->
+> You know it used to be named that, and it was changed exactly because it =
+was a terrible name, right?
 
-Just for completeness of the mailing list archive, I will add the link:
-
-CONFIG_EMBEDDED is being removed:
-
-https://lore.kernel.org/all/20220908104337.11940-1-lukas.bulwahn@gmail.com/
-
-Following Boris' suggestion, I have now created a different patch to
-make the option non-visible in the prompt (see Link below). So, this
-patch may not be required at all if the other patch is accepted. In
-case there is a critical number of users out there that really want to
-tinker with this option and we decide to make it visible with
-CONFIG_EXPERT, I will propose this patch with the commit message you
-provided. For now, this patch is superseded by the patch 1 of 2 below:
-
-Link: https://lore.kernel.org/all/20230510065713.10996-1-lukas.bulwahn@gmai=
-l.com/
-
-Thanks for all the help.
+Yes, I do (commit 6a108a14fa35 ("kconfig: rename CONFIG_EMBEDDED to
+CONFIG_EXPERT")); and keeping CONFIG_EMBEDDED after that renaming was
+not the best idea in retrospect.
 
 Lukas
-
-> --
->
-> This actually isn't _great_ for x86.  We hid X86_FEATURE_NAMES behind
-> EMBEDDED because we didn't want to see it 99% of the time.  But just
-> about everyone uses EXPERT=3Dy, so the end result here is that everyone
-> will now see X86_FEATURE_NAMES.
->
-> Oh well.  It's just one Kconfig option.  Not a big deal.
