@@ -2,104 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B66BC7EE22
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 13:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AEAC77B7D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 May 2023 14:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237151AbjEJNf0 (ORCPT
+        id S237606AbjEJO5O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 May 2023 09:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41908 "EHLO
+        Wed, 10 May 2023 10:57:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237147AbjEJNfZ (ORCPT
+        with ESMTP id S237146AbjEJO5N (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 May 2023 09:35:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFD661B2;
-        Wed, 10 May 2023 06:35:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CE1206115D;
-        Wed, 10 May 2023 13:35:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30192C433EF;
-        Wed, 10 May 2023 13:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683725716;
-        bh=rvr/wktaXUQdbZyUNVM6L1zlwE98uUFOn7vnuHwakgo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PMx8eQdEgir55rrWh8cmLsVWjb9ETd1apymlvypdlcEhNjP3uJuBNRKo/V6+VQYaN
-         VjuHIT/udJGZml2gcO1Gr0UDifQWm6Lk9M0s84e8by3b5YOSXT0U5W3s4e1wp4PMDP
-         AJo7UiSVXIjj0bikAQeVvmKq3sFL3+6FTm/hCm4wUdLtFoEMiiDzMkF/ljGQ+7DmJx
-         6I6eBDMokdyiK9rFpMu//KNlNWmZlcQnIzIvsfnK6g3yv2J1kRzwlKQYSX/T6Pzpcj
-         wI8jfA8VHThRRWzpvL5pPoyDQzt+qsGu8Hrxq3doy3g5fuSBxX4iJuubz4cBSbx2oa
-         x2BQBfUzygPfw==
-Date:   Wed, 10 May 2023 14:35:11 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mailbox: mailbox-test: fix a locking issue in
- mbox_test_message_write()
-Message-ID: <20230510133511.GB8963@google.com>
-References: <c3b517eb-3805-48bf-be89-0082bff65913@kili.mountain>
+        Wed, 10 May 2023 10:57:13 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C201DF;
+        Wed, 10 May 2023 07:57:11 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34AE8D0k014769;
+        Wed, 10 May 2023 14:57:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=sM0lPnSnMR85dWalCPE6DM0jV4KlJsaqVN8HJDT/jJI=;
+ b=HccFqMlxfqarfy4KiEqPD+LE6H8SSUECSowCbYHa/CELhlaOlLxqwWGXLHh+2ONzJKyT
+ jOw689IWLCk+KY5iDo6oo6wzw4Ey2TZqMEpAeUnEZwYv9B8uvzkJzIPQsEj1ufkYCJ7X
+ gyBqE81K0cAXufwF3Eb6ZzQGbHxfH55VLQIwUFiTeEuSenP5KXmOWeI5a1ml8MFZAy2g
+ w/8rqVYSoYZLNoo+CjPKlC0H23rI+LZWRW9SK31xsVWwR78lU/c36VH+oCHRwh3PKN5G
+ NnouW4Ic3YobTe1gMtRcAnAEbP7Arf0ZqaCdkS8KR+WVgD42Go7E3E/4cAFV6UdYqa77 yg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qfw3d1s17-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 May 2023 14:57:05 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34AEv49n028154
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 May 2023 14:57:04 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 10 May
+ 2023 07:57:04 -0700
+Message-ID: <2d1fb58f-f98b-ba17-65e9-9ea4b467102a@quicinc.com>
+Date:   Wed, 10 May 2023 08:57:03 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c3b517eb-3805-48bf-be89-0082bff65913@kili.mountain>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH] accel/qaic: silence some uninitialized variable warnings
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+CC:     Oded Gabbay <ogabbay@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <d11ee378-7b06-4b5e-b56f-d66174be1ab3@kili.mountain>
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <d11ee378-7b06-4b5e-b56f-d66174be1ab3@kili.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Mug3i2VXkPTwLSIbbbTCpYZj0m2y0eCw
+X-Proofpoint-GUID: Mug3i2VXkPTwLSIbbbTCpYZj0m2y0eCw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-10_04,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ mlxlogscore=846 mlxscore=0 bulkscore=0 suspectscore=0 phishscore=0
+ spamscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2304280000 definitions=main-2305100121
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Good catch, thanks Dan.
-
-On Fri, 05 May 2023, Dan Carpenter wrote:
-
-> There was a bug where this code forgot to unlock the tdev->mutex if the
-> kzalloc() failed.  Fix this issue, by moving the allocation outside the
-> lock.
+On 5/3/2023 4:41 AM, Dan Carpenter wrote:
+> Smatch complains that these are not initialized if get_cntl_version()
+> fails but we still print them in the debug message.  Not the end of
+> the world, but true enough.  Let's just initialize them to a dummy value
+> to make the checker happy.
 > 
-> Fixes: 2d1e952a2b8e ("mailbox: mailbox-test: Fix potential double-free in mbox_test_message_write()")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/mailbox/mailbox-test.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
 
-Reviewed-by: Lee Jones <lee@kernel.org>
+Thanks for the cleanup.
 
-> diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
-> index c4a705c30331..fc6a12a51b40 100644
-> --- a/drivers/mailbox/mailbox-test.c
-> +++ b/drivers/mailbox/mailbox-test.c
-> @@ -98,6 +98,7 @@ static ssize_t mbox_test_message_write(struct file *filp,
->  				       size_t count, loff_t *ppos)
->  {
->  	struct mbox_test_device *tdev = filp->private_data;
-> +	char *message;
->  	void *data;
->  	int ret;
->  
-> @@ -113,12 +114,13 @@ static ssize_t mbox_test_message_write(struct file *filp,
->  		return -EINVAL;
->  	}
->  
-> -	mutex_lock(&tdev->mutex);
-> -
-> -	tdev->message = kzalloc(MBOX_MAX_MSG_LEN, GFP_KERNEL);
-> -	if (!tdev->message)
-> +	message = kzalloc(MBOX_MAX_MSG_LEN, GFP_KERNEL);
-> +	if (!message)
->  		return -ENOMEM;
->  
-> +	mutex_lock(&tdev->mutex);
-> +
-> +	tdev->message = message;
->  	ret = copy_from_user(tdev->message, userbuf, count);
->  	if (ret) {
->  		ret = -EFAULT;
-> -- 
-> 2.39.2
-> 
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 
--- 
-Lee Jones [李琼斯]
+Could use a fixes tag, and also I'd prefer to maintain the style of 
+sorting the variable declaration lines by line length.  Given the minor 
+nature of these nits, I plan to address them.
