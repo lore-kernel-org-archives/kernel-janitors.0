@@ -2,34 +2,34 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F8BC77B7F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 May 2023 01:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49946C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 May 2023 02:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239768AbjELBm0 (ORCPT
+        id S239738AbjELCoM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 May 2023 21:42:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43026 "EHLO
+        Thu, 11 May 2023 22:44:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229763AbjELBmZ (ORCPT
+        with ESMTP id S233568AbjELCoL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 May 2023 21:42:25 -0400
+        Thu, 11 May 2023 22:44:11 -0400
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id EED0C3C02;
-        Thu, 11 May 2023 18:42:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id CC2CF55A2;
+        Thu, 11 May 2023 19:44:09 -0700 (PDT)
 Received: from localhost.localdomain (unknown [180.167.10.98])
-        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 7DEA9180022049;
-        Fri, 12 May 2023 09:42:01 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id B0960180028342;
+        Fri, 12 May 2023 10:44:05 +0800 (CST)
+X-MD-Sfrom: yunchuan@nfschina.com
 X-MD-SrcIP: 180.167.10.98
-From:   Su Hui <suhui@nfschina.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Andy Walls <awalls@md.metrocast.net>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
-Subject: [PATCH] media: pci: remove unnecessary (void*) conversions
-Date:   Fri, 12 May 2023 09:41:59 +0800
-Message-Id: <20230512014159.30770-1-suhui@nfschina.com>
+From:   wuych <yunchuan@nfschina.com>
+To:     dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, wuych <yunchuan@nfschina.com>
+Subject: [PATCH net-next] net: liquidio: lio_main: Remove unnecessary (void*) conversions
+Date:   Fri, 12 May 2023 10:44:03 +0800
+Message-Id: <20230512024403.691018-1-yunchuan@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -37,97 +37,77 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-No need cast (void*) to (struct dst_state *),
-(struct cx18_stream *), (struct saa7164_port *)
-or (struct budget *).
+Pointer variables of void * type do not require type cast.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
+Signed-off-by: wuych <yunchuan@nfschina.com>
 ---
- drivers/media/pci/bt8xx/dst_ca.c        | 2 +-
- drivers/media/pci/cx18/cx18-dvb.c       | 4 ++--
- drivers/media/pci/saa7164/saa7164-dvb.c | 4 ++--
- drivers/media/pci/ttpci/budget-core.c   | 4 ++--
- 4 files changed, 7 insertions(+), 7 deletions(-)
+ .../net/ethernet/cavium/liquidio/lio_main.c    | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/pci/bt8xx/dst_ca.c b/drivers/media/pci/bt8xx/dst_ca.c
-index 85fcdc59f0d1..d234a0f404d6 100644
---- a/drivers/media/pci/bt8xx/dst_ca.c
-+++ b/drivers/media/pci/bt8xx/dst_ca.c
-@@ -534,7 +534,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+index 9bd1d2d7027d..100daadbea2a 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+@@ -191,8 +191,7 @@ static void octeon_droq_bh(struct tasklet_struct *t)
  
- 	mutex_lock(&dst_ca_mutex);
- 	dvbdev = file->private_data;
--	state = (struct dst_state *)dvbdev->priv;
-+	state = dvbdev->priv;
- 	p_ca_message = kmalloc(sizeof (struct ca_msg), GFP_KERNEL);
- 	p_ca_slot_info = kmalloc(sizeof (struct ca_slot_info), GFP_KERNEL);
- 	p_ca_caps = kmalloc(sizeof (struct ca_caps), GFP_KERNEL);
-diff --git a/drivers/media/pci/cx18/cx18-dvb.c b/drivers/media/pci/cx18/cx18-dvb.c
-index 33e5a5b5fab4..cf82360a503d 100644
---- a/drivers/media/pci/cx18/cx18-dvb.c
-+++ b/drivers/media/pci/cx18/cx18-dvb.c
-@@ -234,7 +234,7 @@ static int dvb_register(struct cx18_stream *stream);
- static int cx18_dvb_start_feed(struct dvb_demux_feed *feed)
+ static int lio_wait_for_oq_pkts(struct octeon_device *oct)
  {
- 	struct dvb_demux *demux = feed->demux;
--	struct cx18_stream *stream = (struct cx18_stream *) demux->priv;
-+	struct cx18_stream *stream = demux->priv;
- 	struct cx18 *cx;
- 	int ret;
- 	u32 v;
-@@ -305,7 +305,7 @@ static int cx18_dvb_start_feed(struct dvb_demux_feed *feed)
- static int cx18_dvb_stop_feed(struct dvb_demux_feed *feed)
- {
- 	struct dvb_demux *demux = feed->demux;
--	struct cx18_stream *stream = (struct cx18_stream *)demux->priv;
-+	struct cx18_stream *stream = demux->priv;
- 	struct cx18 *cx;
- 	int ret = -EINVAL;
+-	struct octeon_device_priv *oct_priv =
+-		(struct octeon_device_priv *)oct->priv;
++	struct octeon_device_priv *oct_priv = oct->priv;
+ 	int retry = 100, pkt_cnt = 0, pending_pkts = 0;
+ 	int i;
  
-diff --git a/drivers/media/pci/saa7164/saa7164-dvb.c b/drivers/media/pci/saa7164/saa7164-dvb.c
-index 24421c116b0b..3eb749db1ca7 100644
---- a/drivers/media/pci/saa7164/saa7164-dvb.c
-+++ b/drivers/media/pci/saa7164/saa7164-dvb.c
-@@ -280,7 +280,7 @@ static int saa7164_dvb_start_port(struct saa7164_port *port)
- static int saa7164_dvb_start_feed(struct dvb_demux_feed *feed)
+@@ -950,8 +949,7 @@ static void octeon_destroy_resources(struct octeon_device *oct)
  {
- 	struct dvb_demux *demux = feed->demux;
--	struct saa7164_port *port = (struct saa7164_port *) demux->priv;
-+	struct saa7164_port *port = demux->priv;
- 	struct saa7164_dvb *dvb = &port->dvb;
- 	struct saa7164_dev *dev = port->dev;
+ 	int i, refcount;
+ 	struct msix_entry *msix_entries;
+-	struct octeon_device_priv *oct_priv =
+-		(struct octeon_device_priv *)oct->priv;
++	struct octeon_device_priv *oct_priv = oct->priv;
+ 
+ 	struct handshake *hs;
+ 
+@@ -1211,8 +1209,7 @@ static int send_rx_ctrl_cmd(struct lio *lio, int start_stop)
+ static void liquidio_destroy_nic_device(struct octeon_device *oct, int ifidx)
+ {
+ 	struct net_device *netdev = oct->props[ifidx].netdev;
+-	struct octeon_device_priv *oct_priv =
+-		(struct octeon_device_priv *)oct->priv;
++	struct octeon_device_priv *oct_priv = oct->priv;
+ 	struct napi_struct *napi, *n;
+ 	struct lio *lio;
+ 
+@@ -1774,8 +1771,7 @@ static int liquidio_open(struct net_device *netdev)
+ {
+ 	struct lio *lio = GET_LIO(netdev);
+ 	struct octeon_device *oct = lio->oct_dev;
+-	struct octeon_device_priv *oct_priv =
+-		(struct octeon_device_priv *)oct->priv;
++	struct octeon_device_priv *oct_priv = oct->priv;
+ 	struct napi_struct *napi, *n;
  	int ret = 0;
-@@ -307,7 +307,7 @@ static int saa7164_dvb_start_feed(struct dvb_demux_feed *feed)
- static int saa7164_dvb_stop_feed(struct dvb_demux_feed *feed)
+ 
+@@ -1855,8 +1851,7 @@ static int liquidio_stop(struct net_device *netdev)
  {
- 	struct dvb_demux *demux = feed->demux;
--	struct saa7164_port *port = (struct saa7164_port *) demux->priv;
-+	struct saa7164_port *port = demux->priv;
- 	struct saa7164_dvb *dvb = &port->dvb;
- 	struct saa7164_dev *dev = port->dev;
+ 	struct lio *lio = GET_LIO(netdev);
+ 	struct octeon_device *oct = lio->oct_dev;
+-	struct octeon_device_priv *oct_priv =
+-		(struct octeon_device_priv *)oct->priv;
++	struct octeon_device_priv *oct_priv = oct->priv;
+ 	struct napi_struct *napi, *n;
  	int ret = 0;
-diff --git a/drivers/media/pci/ttpci/budget-core.c b/drivers/media/pci/ttpci/budget-core.c
-index 5d5796f24469..710595987522 100644
---- a/drivers/media/pci/ttpci/budget-core.c
-+++ b/drivers/media/pci/ttpci/budget-core.c
-@@ -308,7 +308,7 @@ int ttpci_budget_debiwrite(struct budget *budget, u32 config, int addr,
- static int budget_start_feed(struct dvb_demux_feed *feed)
- {
- 	struct dvb_demux *demux = feed->demux;
--	struct budget *budget = (struct budget *) demux->priv;
-+	struct budget *budget = demux->priv;
- 	int status = 0;
  
- 	dprintk(2, "budget: %p\n", budget);
-@@ -327,7 +327,7 @@ static int budget_start_feed(struct dvb_demux_feed *feed)
- static int budget_stop_feed(struct dvb_demux_feed *feed)
- {
- 	struct dvb_demux *demux = feed->demux;
--	struct budget *budget = (struct budget *) demux->priv;
-+	struct budget *budget = demux->priv;
- 	int status = 0;
+@@ -4057,8 +4052,7 @@ static int octeon_device_init(struct octeon_device *octeon_dev)
+ 	char bootcmd[] = "\n";
+ 	char *dbg_enb = NULL;
+ 	enum lio_fw_state fw_state;
+-	struct octeon_device_priv *oct_priv =
+-		(struct octeon_device_priv *)octeon_dev->priv;
++	struct octeon_device_priv *oct_priv = octeon_dev->priv;
+ 	atomic_set(&octeon_dev->status, OCT_DEV_BEGIN_STATE);
  
- 	dprintk(2, "budget: %p\n", budget);
+ 	/* Enable access to the octeon device and make its DMA capability
 -- 
 2.30.2
 
