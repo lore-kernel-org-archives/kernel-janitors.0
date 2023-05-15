@@ -2,63 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DE8C77B7D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 10:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FE1C7EE25
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 10:32:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231730AbjEOKca (ORCPT
+        id S240214AbjEOKcc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 May 2023 06:32:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59432 "EHLO
+        Mon, 15 May 2023 06:32:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240485AbjEOKc2 (ORCPT
+        with ESMTP id S230080AbjEOKca (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 May 2023 06:32:28 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B0E10F
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 03:32:23 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f420618d5bso61343815e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 03:32:23 -0700 (PDT)
+        Mon, 15 May 2023 06:32:30 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5601FC6
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 03:32:29 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3078d1c8828so9416285f8f.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 03:32:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684146741; x=1686738741;
+        d=linaro.org; s=google; t=1684146748; x=1686738748;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=L1uXgLj8iPGCwduhIKMsuLtvmuyqdXZ/CxPIhn1qFmA=;
-        b=pi0y4lOzq4/450RClq+BDvTeDV2t6iajtGmlSRRzcHbUFRnSJKdnNRe42swrRqrggr
-         VMMlPpxQfU37gmCrqqK0mxVVKRnn2wn/a1Fj7f5dwRoYIuPfnbXSqV+nBUiWhvE14zMn
-         CKsW9LQ67RGazioVNP+eG2vHwNDQkGCUcGSeYGb8SL9gCIr5sOrFJ3wuWEWVDh9b+LGF
-         tneEVrb3D6ybO78mZkTPm+CZ1B83YffNX3FyY9M4FjvpNanTTlZX+W6jMlLbbNX5owRA
-         xEmnqho9yNirij+G+N7pzE3TSHqcABzxWdrri5XisclKIFmhtPonkGQ+ZNGlcAdhZi2M
-         EjlQ==
+        bh=BqAu0JmjDleKQlM543bGZcHgQbf6Z8XGhiW21a09aAQ=;
+        b=Tz4La/hO+jiAlAXOH2ZQPLEXyK4CwN1/aan7v+r101w9HvEn2CkZQkAqag98DqXpnN
+         DLZ9uN9nCH7tQLRyNRsYTLC7CNSyoTgtobulW1+WTFGJPrt+8H6dqDkMdKaQmK6nD3JI
+         4cl5v3Q6ncTJKY8gs8Lg5PwgkUme/zfa3RQT0spyGVFQVoo3bzcMKtaCxPMNdCC2Uken
+         1gkbMVClWvPPDOGY2o1fP37CYvKqQWC8hLlHfsW7SnSvAIu7YVpQYtE3456F/loZs8Mm
+         KGGF3/nI+L/cyIIMahMjIDZpVh3M3n6JwCQCLEhI79AKH/QhMTvELSrxvyAce8wQreMV
+         6xFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684146741; x=1686738741;
+        d=1e100.net; s=20221208; t=1684146748; x=1686738748;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1uXgLj8iPGCwduhIKMsuLtvmuyqdXZ/CxPIhn1qFmA=;
-        b=RwQc6Cb/U8m5JGxU3UplvMO4g+3BQMfpJBa2nXMhZyIo4b5etIXj9HEM0L89ybSln/
-         BSpkrS/WTCoOfbScKyEHEradSZH1kpR3673+EuZhAXl5ssLEsHCAUpKAE4R/sNXGRb3n
-         S4+jfgqt0x7oV6IhDyMVv0lsC5GKaUaZGjtCA2aiAQfFBw7dEjsL/OGzPtcnF17dSjb5
-         6s2LfDsit8wXrNdjZIxdhEQMUD9dhsLFB7yDy6jScGAMLuh6I43ayqn2FWIYD6pAEtmY
-         rrfp1/AD4kByfXxgUflMFBmcIR1PYTbzufWGcd319EHLeiHA55c04tZynAqtaA+ECY3F
-         irHw==
-X-Gm-Message-State: AC+VfDzFCCUixuVx6ay0eut3WyGazwj6XIka9AKp3JCO48o29iKqTTtL
-        AadYbjEQIxIAKEkm/c834ellIQ==
-X-Google-Smtp-Source: ACHHUZ5Jw/e3Q3oIgdeZwGiSB3oKjSwO/pjQ8SVjBamplOMGoa89M2zcwYYWJZQS5Hcf+E8LSKosCA==
-X-Received: by 2002:a7b:cb89:0:b0:3f4:2174:b29b with SMTP id m9-20020a7bcb89000000b003f42174b29bmr19495202wmi.2.1684146741618;
-        Mon, 15 May 2023 03:32:21 -0700 (PDT)
+        bh=BqAu0JmjDleKQlM543bGZcHgQbf6Z8XGhiW21a09aAQ=;
+        b=PHa+cEwuDA+wPsqQihdKAjzGLMYj5Zd7AMtube/YP/9XLL7cMrWlUuLzXYydJoag0T
+         Xbhcz2qCH5FO4z4W63+LO3rYdwzhrSEPgOhfopWmpnpO/C4mJI9VGLyow0ACKNzHmyT4
+         delQFycBhr3GuwDwNDqM5mUAVdj0+oTEo0T1OjOzx8k4GcL6kYYjq7moKfs3SyvSApSe
+         R7vZy1iucI0zIVL670fCYzel1opqWeF/CP6FI/bIL0HS/uGJFs6+fbXRSVrAphJPgZhE
+         xBD40EDKZnorGC28uVCvdKZvsddZmLyJCeXvXjH0MgHlzKDYeFkllgDR+Dwtsb6DOnTh
+         FJyg==
+X-Gm-Message-State: AC+VfDyq6KqOThPuTx6tiJuxIxH+nfBvJWmJR3pixd9E+fuwK4b/SYa0
+        H+D+Y1+6rL3OltafhBy1o0TxGw==
+X-Google-Smtp-Source: ACHHUZ7KZ13Xu/SKezwjzKAinEgmeswPWWjWo9a3m9hp12Jl8Iklcxp1Jheflnku8GT5jGlAoVZgsw==
+X-Received: by 2002:adf:ef8c:0:b0:306:8034:b2e4 with SMTP id d12-20020adfef8c000000b003068034b2e4mr22445723wro.69.1684146747805;
+        Mon, 15 May 2023 03:32:27 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id j15-20020a05600c1c0f00b003f1738d0d13sm27867104wms.1.2023.05.15.03.32.18
+        by smtp.gmail.com with ESMTPSA id c1-20020adffb01000000b00309257ad16csm1223820wrr.29.2023.05.15.03.32.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 03:32:19 -0700 (PDT)
-Date:   Mon, 15 May 2023 13:32:10 +0300
+        Mon, 15 May 2023 03:32:26 -0700 (PDT)
+Date:   Mon, 15 May 2023 13:32:18 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Maxime Ripard <mripard@kernel.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc:     Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] dmaengine: at_xdmac: fix potential Oops in
- at_xdmac_prep_interleaved()
-Message-ID: <21282b66-9860-410a-83df-39c17fcf2f1b@kili.mountain>
+To:     Koby Elbaz <kelbaz@habana.ai>
+Cc:     Oded Gabbay <ogabbay@kernel.org>, Ofir Bitton <obitton@habana.ai>,
+        Tomer Tayar <ttayar@habana.ai>,
+        Dani Liberman <dliberman@habana.ai>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        Dafna Hirschfeld <dhirschfeld@habana.ai>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] accel/habanalabs: fix gaudi2_get_tpc_idle_status() return
+Message-ID: <c8000ec5-18e9-4e25-aeb1-3a6ce467d5f6@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -67,45 +68,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are two place if the at_xdmac_interleaved_queue_desc() fails which
-could lead to a NULL dereference where "first" is NULL and we call
-list_add_tail(&first->desc_node, ...).  In the first caller, the return
-is not checked so add a check for that.  In the next caller, the return
-is checked but if it fails on the first iteration through the loop then
-it will lead to a NULL pointer dereference.
+The gaudi2_get_tpc_idle_status() function returned the incorrect variable
+so it always returned true.
 
-Fixes: 4e5385784e69 ("dmaengine: at_xdmac: handle numf > 1")
-Fixes: 62b5cb757f1d ("dmaengine: at_xdmac: fix memory leak in interleaved mode")
+Fixes: d85f0531b928 ("accel/habanalabs: break is_idle function into per-engine sub-routines")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/dma/at_xdmac.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+From static analysis.  Not tested.
 
-diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
-index 7da6d9b6098e..c3b37168b21f 100644
---- a/drivers/dma/at_xdmac.c
-+++ b/drivers/dma/at_xdmac.c
-@@ -1102,6 +1102,8 @@ at_xdmac_prep_interleaved(struct dma_chan *chan,
- 							NULL,
- 							src_addr, dst_addr,
- 							xt, xt->sgl);
-+		if (!first)
-+			return NULL;
+ drivers/accel/habanalabs/gaudi2/gaudi2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+index b778cf764a68..5539c84ee717 100644
+--- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
++++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+@@ -7231,7 +7231,7 @@ static bool gaudi2_get_tpc_idle_status(struct hl_device *hdev, u64 *mask_arr, u8
  
- 		/* Length of the block is (BLEN+1) microblocks. */
- 		for (i = 0; i < xt->numf - 1; i++)
-@@ -1132,8 +1134,9 @@ at_xdmac_prep_interleaved(struct dma_chan *chan,
- 							       src_addr, dst_addr,
- 							       xt, chunk);
- 			if (!desc) {
--				list_splice_tail_init(&first->descs_list,
--						      &atchan->free_descs_list);
-+				if (first)
-+					list_splice_tail_init(&first->descs_list,
-+							      &atchan->free_descs_list);
- 				return NULL;
- 			}
+ 	gaudi2_iterate_tpcs(hdev, &tpc_iter);
  
+-	return tpc_idle_data.is_idle;
++	return *tpc_idle_data.is_idle;
+ }
+ 
+ static bool gaudi2_get_decoder_idle_status(struct hl_device *hdev, u64 *mask_arr, u8 mask_len,
 -- 
 2.39.2
 
