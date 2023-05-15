@@ -2,102 +2,104 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0492DC7EE22
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 12:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A54C7EE26
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 12:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241919AbjEOMje (ORCPT
+        id S241988AbjEOMk7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 May 2023 08:39:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58682 "EHLO
+        Mon, 15 May 2023 08:40:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241917AbjEOMhc (ORCPT
+        with ESMTP id S241489AbjEOMja (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 May 2023 08:37:32 -0400
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A471FC1;
-        Mon, 15 May 2023 05:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-        t=1684154031; bh=0yXiPXLG1mE9Cp0QFJsDToPAJuYXk6I4juqB/x64HMM=;
-        h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-        b=NmbH2EXdkDST+t545oWgvXbyEH2Wd6r/DrYWrzyAsN23XGFDWHKA7pxlCAsCS6+IV
-         Zw+JPcfhIAFVp67PipJyizpQpACFp9LNF4bnbYreZrVNqlz02nBiCkBYFv+73twX9R
-         qh9CbPY8WSaaQofjqHpNE6BAzwhfwJoJElQbnlD4=
-Date:   Mon, 15 May 2023 14:33:51 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2] thermal/drivers/sun8i: Fix some error handling paths
- in sun8i_ths_probe()
-Message-ID: <u7mmywm63bm5q4zlsbnooeplscn4rrd3qnslkfq2xnquxgnkkd@n3tsnrutmfjp>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-        Maxime Ripard <maxime@cerno.tech>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-        Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, 
-        "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-        Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Chen-Yu Tsai <wens@csie.org>, 
-        Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-        Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-        linux-sunxi@lists.linux.dev
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <a8ae84bd2dc4b55fe428f8e20f31438bf8bb6762.1684089931.git.christophe.jaillet@wanadoo.fr>
- <ucnnixemxbpkjlbyenboydicslozt5jpyjjfbd4gjk4oye52et@fgyd3zqdqsh2>
+        Mon, 15 May 2023 08:39:30 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A066710D4;
+        Mon, 15 May 2023 05:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1684154265; x=1715690265;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=mZ2YyYt7WidnvyPtpMEr2s/eyGsg7AR64W9NENyNm7c=;
+  b=gwa566qz3oIRuMNsAmLSstZWeW8NbuU1FKGrlCOEBII02agnKiOaH0Zg
+   Cl/60oeLCol6zpQOznR8okBm7/miSjVHuGum+V+aY97c4GzGNnqLDMbWO
+   JhV3QkNlEGLeotsAPsX+/KzxC8Ua4taTuzUej8y/T0X7JbrQ3aI7BJhmE
+   f4mqShDIZjlXYxvxF8Srqw5eRVoUIKTidyjvLRuXiTkoGP2/pw5AecOJ/
+   YF2q/SDbado7zz9BqmxGt3JD16mH6jRqDhNbPfKc1vnk9PCueJNHgv3yZ
+   nZFNz900gxsfsaFx78MAJQiGEC3MNa1J29gv925hVOX8SKiThN8zE+h1V
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10711"; a="437529136"
+X-IronPort-AV: E=Sophos;i="5.99,276,1677571200"; 
+   d="scan'208";a="437529136"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2023 05:37:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10711"; a="765905347"
+X-IronPort-AV: E=Sophos;i="5.99,276,1677571200"; 
+   d="scan'208";a="765905347"
+Received: from fsamelis-mobl.ger.corp.intel.com ([10.252.42.18])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2023 05:37:38 -0700
+Date:   Mon, 15 May 2023 15:37:36 +0300 (EEST)
+From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+cc:     Shravan Kumar Ramani <shravankr@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        platform-driver-x86@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/mellanox: mlxbf-pmc: fix sscanf() error
+ checking
+In-Reply-To: <4ccdfd28-099b-40bf-8d77-ad4ea2e76b93@kili.mountain>
+Message-ID: <b1187d38-a390-4934-1d30-f069a1a4a730@linux.intel.com>
+References: <4ccdfd28-099b-40bf-8d77-ad4ea2e76b93@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ucnnixemxbpkjlbyenboydicslozt5jpyjjfbd4gjk4oye52et@fgyd3zqdqsh2>
+Content-Type: multipart/mixed; boundary="8323329-1529726389-1684154260=:2173"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Maxime,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Mon, May 15, 2023 at 01:54:41PM +0200, Maxime Ripard wrote:
-> Hi,
+--8323329-1529726389-1684154260=:2173
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+
+On Mon, 15 May 2023, Dan Carpenter wrote:
+
+> The sscanf() function never returns negatives.  It returns the number of
+> items successfully read.
 > 
-> On Sun, May 14, 2023 at 08:46:05PM +0200, Christophe JAILLET wrote:
-> > Should an error occur after calling sun8i_ths_resource_init() in the probe
-> > function, some resources need to be released, as already done in the
-> > .remove() function.
-> > 
-> > Switch to the devm_clk_get_enabled() helper and add a new devm_action to
-> > turn sun8i_ths_resource_init() into a fully managed function.
-> > 
-> > Move the place where reset_control_deassert() is called so that the
-> > recommended order of reset release/clock enable steps is kept.
-> > A64 manual states that:
-> > 
-> > 	3.3.6.4. Gating and reset
-> > 
-> > 	Make sure that the reset signal has been released before the release of
-> > 	module clock gating;
-> > 
-> > This fixes the issue and removes some LoC at the same time.
+> Fixes: 1a218d312e65 ("platform/mellanox: mlxbf-pmc: Add Mellanox BlueField PMC driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/platform/mellanox/mlxbf-pmc.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> It should really be three different patches:
->  - One to fix the resource release, that can be backported to stable
->    releases
->  - One to switch to devm_clk_get_enabled
->  - and one to change the order of clock enable vs reset deassertion
+> diff --git a/drivers/platform/mellanox/mlxbf-pmc.c b/drivers/platform/mellanox/mlxbf-pmc.c
+> index c2c9b0d3244c..be967d797c28 100644
+> --- a/drivers/platform/mellanox/mlxbf-pmc.c
+> +++ b/drivers/platform/mellanox/mlxbf-pmc.c
+> @@ -1348,9 +1348,8 @@ static int mlxbf_pmc_map_counters(struct device *dev)
+>  
+>  	for (i = 0; i < pmc->total_blocks; ++i) {
+>  		if (strstr(pmc->block_name[i], "tile")) {
+> -			ret = sscanf(pmc->block_name[i], "tile%d", &tile_num);
+> -			if (ret < 0)
+> -				return ret;
+> +			if (sscanf(pmc->block_name[i], "tile%d", &tile_num) != 1)
+> +				return -EINVAL;
+>  
+>  			if (tile_num >= pmc->tile_count)
+>  				continue;
 
-The order was correct before this patch. I don't think an incorrect order
-should be intorduced, even if temporarily between two patches.
-
-regards,
-	o.
-
-> Maxime
+Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
 
+-- 
+ i.
+
+--8323329-1529726389-1684154260=:2173--
