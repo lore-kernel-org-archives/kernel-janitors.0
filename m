@@ -2,195 +2,141 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50797C77B7F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 May 2023 18:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01288C77B7F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 01:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234652AbjENSq2 (ORCPT
+        id S237997AbjEOBek (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 14 May 2023 14:46:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39402 "EHLO
+        Sun, 14 May 2023 21:34:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233108AbjENSq0 (ORCPT
+        with ESMTP id S230501AbjEOBei (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 14 May 2023 14:46:26 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0A03AAA
-        for <kernel-janitors@vger.kernel.org>; Sun, 14 May 2023 11:46:23 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id yGjOpRl6UIsg1yGjOpZsJM; Sun, 14 May 2023 20:46:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684089981;
-        bh=Lq4t2RwZUg9fe1YN6jfcFon281FtXbX0H4guo24wo8k=;
-        h=From:To:Cc:Subject:Date;
-        b=hXeuGLKNFeHpsYz+fvzZqeiCvPflHPwRkHXULJ8mRGrX2/heUijF1P8r73TpJx1gZ
-         aqtjB4mpQ2tixtMWiQgqK2069ugLiudfgr/DFS1R99EuQS+AltGot/3LPEpLqtJiw0
-         dO/vfAZA1ojigki+G6qRjyy7MdPPLFULTNnywkBzD6VF7qfQhZX+1iG+qgFsl+JX9N
-         Ykdy4FtAKZe9BJIxjVSTQLxMhSK2DpRRtjp+a8lOhnAJZxHZwOJjbhaVQ6uQ6B8vTZ
-         pe3S28Cq0HnliU4Y0B+pDC8zuVctzlN3DJ0v9i7nfM9JxjvgODMRKb5Smr0qlnBY4j
-         jI1BCynuUTmvw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 May 2023 20:46:21 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ondrej Jirman <megous@megous.com>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev
-Subject: [PATCH v2] thermal/drivers/sun8i: Fix some error handling paths in sun8i_ths_probe()
-Date:   Sun, 14 May 2023 20:46:05 +0200
-Message-Id: <a8ae84bd2dc4b55fe428f8e20f31438bf8bb6762.1684089931.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 14 May 2023 21:34:38 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 772D7E73;
+        Sun, 14 May 2023 18:34:36 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 5E51618011A402;
+        Mon, 15 May 2023 09:34:32 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com,
+        Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Su Hui <suhui@nfschina.com>
+Subject: [PATCH] drm/amdgpu: remove unnecessary (void*) conversions
+Date:   Mon, 15 May 2023 09:34:28 +0800
+Message-Id: <20230515013428.38798-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Should an error occur after calling sun8i_ths_resource_init() in the probe
-function, some resources need to be released, as already done in the
-.remove() function.
+No need cast (void*) to (struct amdgpu_device *).
 
-Switch to the devm_clk_get_enabled() helper and add a new devm_action to
-turn sun8i_ths_resource_init() into a fully managed function.
-
-Move the place where reset_control_deassert() is called so that the
-recommended order of reset release/clock enable steps is kept.
-A64 manual states that:
-
-	3.3.6.4. Gating and reset
-
-	Make sure that the reset signal has been released before the release of
-	module clock gating;
-
-This fixes the issue and removes some LoC at the same time.
-
-Fixes: dccc5c3b6f30 ("thermal/drivers/sun8i: Add thermal driver for H6/H5/H3/A64/A83T/R40")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
-Changes in v2:
-   - move reset_control_deassert() next to devm_reset_control_get()
+ drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c | 4 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c   | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c     | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c      | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c     | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c     | 2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
 
-v1: https://lore.kernel.org/all/26f9e3bb3fcd0c12ea24a44c75b7960da993b68b.1684077651.git.christophe.jaillet@wanadoo.fr/
----
- drivers/thermal/sun8i_thermal.c | 55 +++++++++++----------------------
- 1 file changed, 18 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
-index 793ddce72132..d4d241686c81 100644
---- a/drivers/thermal/sun8i_thermal.c
-+++ b/drivers/thermal/sun8i_thermal.c
-@@ -319,6 +319,11 @@ static int sun8i_ths_calibrate(struct ths_device *tmdev)
- 	return ret;
- }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+index f60753f97ac5..c837e0bf2cfc 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+@@ -1470,7 +1470,7 @@ int amdgpu_debugfs_regs_init(struct amdgpu_device *adev)
  
-+static void sun8i_ths_reset_control_assert(void *data)
-+{
-+	reset_control_assert(data);
-+}
-+
- static int sun8i_ths_resource_init(struct ths_device *tmdev)
+ static int amdgpu_debugfs_test_ib_show(struct seq_file *m, void *unused)
  {
- 	struct device *dev = tmdev->dev;
-@@ -339,47 +344,35 @@ static int sun8i_ths_resource_init(struct ths_device *tmdev)
- 		if (IS_ERR(tmdev->reset))
- 			return PTR_ERR(tmdev->reset);
+-	struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
++	struct amdgpu_device *adev = m->private;
+ 	struct drm_device *dev = adev_to_drm(adev);
+ 	int r = 0, i;
  
--		tmdev->bus_clk = devm_clk_get(&pdev->dev, "bus");
-+		ret = reset_control_deassert(tmdev->reset);
-+		if (ret)
-+			return ret;
-+
-+		ret = devm_add_action_or_reset(dev, sun8i_ths_reset_control_assert,
-+					       tmdev->reset);
-+		if (ret)
-+			return ret;
-+
-+		tmdev->bus_clk = devm_clk_get_enabled(&pdev->dev, "bus");
- 		if (IS_ERR(tmdev->bus_clk))
- 			return PTR_ERR(tmdev->bus_clk);
- 	}
+@@ -1581,7 +1581,7 @@ static int amdgpu_debugfs_benchmark(void *data, u64 val)
  
- 	if (tmdev->chip->has_mod_clk) {
--		tmdev->mod_clk = devm_clk_get(&pdev->dev, "mod");
-+		tmdev->mod_clk = devm_clk_get_enabled(&pdev->dev, "mod");
- 		if (IS_ERR(tmdev->mod_clk))
- 			return PTR_ERR(tmdev->mod_clk);
- 	}
+ static int amdgpu_debugfs_vm_info_show(struct seq_file *m, void *unused)
+ {
+-	struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
++	struct amdgpu_device *adev = m->private;
+ 	struct drm_device *dev = adev_to_drm(adev);
+ 	struct drm_file *file;
+ 	int r;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
+index f52d0ba91a77..f0615a43b3cc 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
+@@ -835,7 +835,7 @@ static const struct dma_fence_ops amdgpu_job_fence_ops = {
+ #if defined(CONFIG_DEBUG_FS)
+ static int amdgpu_debugfs_fence_info_show(struct seq_file *m, void *unused)
+ {
+-	struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
++	struct amdgpu_device *adev = m->private;
+ 	int i;
  
--	ret = reset_control_deassert(tmdev->reset);
--	if (ret)
--		return ret;
--
--	ret = clk_prepare_enable(tmdev->bus_clk);
--	if (ret)
--		goto assert_reset;
--
- 	ret = clk_set_rate(tmdev->mod_clk, 24000000);
- 	if (ret)
--		goto bus_disable;
--
--	ret = clk_prepare_enable(tmdev->mod_clk);
--	if (ret)
--		goto bus_disable;
-+		return ret;
+ 	for (i = 0; i < AMDGPU_MAX_RINGS; ++i) {
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+index 863cb668e000..28f79cf8c3fb 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+@@ -948,7 +948,7 @@ int amdgpu_mode_dumb_create(struct drm_file *file_priv,
+ #if defined(CONFIG_DEBUG_FS)
+ static int amdgpu_debugfs_gem_info_show(struct seq_file *m, void *unused)
+ {
+-	struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
++	struct amdgpu_device *adev = m->private;
+ 	struct drm_device *dev = adev_to_drm(adev);
+ 	struct drm_file *file;
+ 	int r;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
+index 4ff348e10e4d..49a4238a120e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
+@@ -436,7 +436,7 @@ int amdgpu_ib_ring_tests(struct amdgpu_device *adev)
  
- 	ret = sun8i_ths_calibrate(tmdev);
- 	if (ret)
--		goto mod_disable;
-+		return ret;
+ static int amdgpu_debugfs_sa_info_show(struct seq_file *m, void *unused)
+ {
+-	struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
++	struct amdgpu_device *adev = m->private;
  
- 	return 0;
--
--mod_disable:
--	clk_disable_unprepare(tmdev->mod_clk);
--bus_disable:
--	clk_disable_unprepare(tmdev->bus_clk);
--assert_reset:
--	reset_control_assert(tmdev->reset);
--
--	return ret;
+ 	seq_printf(m, "--------------------- DELAYED --------------------- \n");
+ 	amdgpu_sa_bo_dump_debug_info(&adev->ib_pools[AMDGPU_IB_POOL_DELAYED],
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+index 0efb38539d70..9f9274249b57 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+@@ -1441,7 +1441,7 @@ void amdgpu_disable_vblank_kms(struct drm_crtc *crtc)
+ 
+ static int amdgpu_debugfs_firmware_info_show(struct seq_file *m, void *unused)
+ {
+-	struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
++	struct amdgpu_device *adev = m->private;
+ 	struct drm_amdgpu_info_firmware fw_info;
+ 	struct drm_amdgpu_query_fw query_fw;
+ 	struct atom_context *ctx = adev->mode_info.atom_context;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index 2cd081cbf706..21f340ed4cca 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -2164,7 +2164,7 @@ int amdgpu_ttm_evict_resources(struct amdgpu_device *adev, int mem_type)
+ 
+ static int amdgpu_ttm_page_pool_show(struct seq_file *m, void *unused)
+ {
+-	struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
++	struct amdgpu_device *adev = m->private;
+ 
+ 	return ttm_pool_debugfs(&adev->mman.bdev.pool, m);
  }
- 
- static int sun8i_h3_thermal_init(struct ths_device *tmdev)
-@@ -530,17 +523,6 @@ static int sun8i_ths_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int sun8i_ths_remove(struct platform_device *pdev)
--{
--	struct ths_device *tmdev = platform_get_drvdata(pdev);
--
--	clk_disable_unprepare(tmdev->mod_clk);
--	clk_disable_unprepare(tmdev->bus_clk);
--	reset_control_assert(tmdev->reset);
--
--	return 0;
--}
--
- static const struct ths_thermal_chip sun8i_a83t_ths = {
- 	.sensor_num = 3,
- 	.scale = 705,
-@@ -642,7 +624,6 @@ MODULE_DEVICE_TABLE(of, of_ths_match);
- 
- static struct platform_driver ths_driver = {
- 	.probe = sun8i_ths_probe,
--	.remove = sun8i_ths_remove,
- 	.driver = {
- 		.name = "sun8i-thermal",
- 		.of_match_table = of_ths_match,
 -- 
-2.34.1
+2.30.2
 
