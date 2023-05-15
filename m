@@ -2,94 +2,140 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C92DC7EE25
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 10:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 727E8C7EE22
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 11:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240575AbjEOKdG (ORCPT
+        id S241718AbjEOL5w (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 May 2023 06:33:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59646 "EHLO
+        Mon, 15 May 2023 07:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240673AbjEOKdF (ORCPT
+        with ESMTP id S238242AbjEOL53 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 May 2023 06:33:05 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F53C6
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 03:33:03 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f4ad71b00eso35514665e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 03:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684146782; x=1686738782;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VLsqNqohQaSlzi4qCFEM4zyQpH9q5HKdLX9afXF2oaw=;
-        b=KQVEDxj2SBeTF0e5HSoVKmXTQNAm6vP6/NPwYxfOORJkDSyvrzQfj8AWV+9e0h0wjZ
-         M3g0BJYfp6p9eZ1w8KY7CoIIIA/pNyZM1yCZVhZcTgc8f1n6iikO976qqN2Hv3rqpMmG
-         pZNDg0D4WRny5FjsQ9kWnrf9TSQOhMP/BctuABfwkDdndzajkAaUTiG4P5uTNVWJBPLK
-         NrsYJ6QRkWPA6E6VM2Ixr1ftSh4MPARusAl9+vbbbfu/OW1Jk0Z/aJISlymVxfQttEFE
-         7ulZK5ca8wG36lGNpuSs1ArYaXGiiRJ+0AHT6e1RRk5hHqgN94TF/UjmPJPXOifDDNOq
-         oBrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684146782; x=1686738782;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VLsqNqohQaSlzi4qCFEM4zyQpH9q5HKdLX9afXF2oaw=;
-        b=IZmswFR6ItaafFH3neLar5Jjmcarmk6hOw3U+4sbmLlAeJnUmHe/Vn/yb4E0MdmcJW
-         QzeS7JyY4T/2wjT2utKugw0f0XIZfQ6tACxkMdvAmnR7KaSvYqEmYpDVtKdMyD4FgvU6
-         8OqExdkLzZeVPQZ76+tv8CL+uV4BHsIiPmkdC3EA05SZZxsc2HCv/d6ItdakQmjlk2DO
-         ZRqkMONREGjvM5SQYfTVgJOWebFQ4zeOtY3+5lCPVg+MGtHmyiaFUFnzMEOK0ycojRWM
-         2rrIXdl4hbCucOEsBDfY6oOWE9e85TucsJlIq8TB6gab/CyVq8lMkYZV6nNye253KpJA
-         4ecg==
-X-Gm-Message-State: AC+VfDwK1xTGor1DV3oCcKF31sO6NO2wTlP26sCO1oapaVQxx36H26YJ
-        nTJfrFdcL49hRt3NpkX2MSGbFA==
-X-Google-Smtp-Source: ACHHUZ7KtZCye39Dr+WYjRXdcXbUksTilRBAuhufweF558lW2QerbCdOooNF2e7tBbAgKxnnqNFsPA==
-X-Received: by 2002:a7b:c314:0:b0:3ef:6b97:f0c3 with SMTP id k20-20020a7bc314000000b003ef6b97f0c3mr23631619wmj.15.1684146782068;
-        Mon, 15 May 2023 03:33:02 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e1-20020adfdbc1000000b0030795249ffasm24511774wrj.92.2023.05.15.03.32.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 03:33:00 -0700 (PDT)
-Date:   Mon, 15 May 2023 13:32:47 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Cai Huoqing <cai.huoqing@linux.dev>
-Cc:     Helge Deller <deller@gmx.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] fbdev: omapfb: panel-tpo-td043mtea1: fix error code in
- probe()
-Message-ID: <6f80089a-9223-4434-8da1-c071dd9367b5@kili.mountain>
+        Mon, 15 May 2023 07:57:29 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 762B526B6;
+        Mon, 15 May 2023 04:54:44 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id D091B5C010F;
+        Mon, 15 May 2023 07:54:43 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 15 May 2023 07:54:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1684151683; x=1684238083; bh=YN
+        2hehfhebmIswf1/JIgo//Dtk1KbSx4NssivhFQ048=; b=dkUb9tOVLQsK1ucevf
+        PxqBQ9/HL1CaFY8DERKLlLvBKWesFX3to23gFbHHn/PU2hCbKbUsGWGnovWK+sdO
+        mZTMnndEiGxt+KDOqwPtF4gu51pGo8iFmjsHragoMjW9Sw52DKTj6yXPVeR+uQY6
+        BuXIFC777I/xSBANw72S9AUmatINBBrPtw4BPhsksGBnezW7BDkxUuQ3iJzZuMs1
+        ew/ltpk44IYQDTEQxuAQppC1K+ejD+PfaPsWAswv49cx0mLvST7LeDyMc/lGSJKL
+        oi5j/NYbZgX2/4tWeEQtdVEkIhaanQIZkmRJFIbyRAUA34HZWhH0+2anhZfEvVRT
+        nPZw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1684151683; x=1684238083; bh=YN2hehfhebmIs
+        wf1/JIgo//Dtk1KbSx4NssivhFQ048=; b=DTiL8tEDchy/0FstCPucVIhziirSW
+        yO+pzo+dbqz7u35lHvfvktCJDhPnKbn/YOgJ5/tG+zHUye7C3t3Pt2TxcpQpn+VL
+        HNo+mcpzemSMyVU6f8bf6Iyq3JrVirlKDnlHDtilOoaIIAci3GZS4D2VhEgl94eX
+        Htn4XjGmXRa9sUxPS3r5Gzg/XH83AV9/BHI/SYkV6T0KxAmHuGWjOl/RC4ljEEGK
+        V8fXpxAH0rxHl69b99hly5vW1qjH/VpHqMdYZ3jSF7AfJCPDI9YnTcDpQDMjPIrg
+        Y0I9Wc8WdeFo+9ALMuxMlrzC+6hhHOGNtkGNOqe/7HfAAEIaspoGZdRtQ==
+X-ME-Sender: <xms:gx1iZF9En5sG5LkrrOiCKPNbCB9Hz7bpGredNE7j3ZP5y8vQdP0drA>
+    <xme:gx1iZJuSxwvB1bqp0yi3dsxfPvigvS4VJsahzndOe5W6qEj65kteXw2wcKfU5pyDo
+    fu3bJbGnZgfXn7cr1s>
+X-ME-Received: <xmr:gx1iZDAG9dkMp2Sl2_qOD6x-OG_XDWwdwD76nwYNeGquJs8jvxuj23SIDwEGslxctBead6w0m696ZVKyQR-Z6g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeehjedggeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeeuveduheeutdekvefgudevjeeufedvvdevhfejgfelgfdtkeevueegteek
+    gfelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:gx1iZJcuBoqTUTRg551tq_CoQwBJNHWl99GKruhtBlLuB4seTxaO8g>
+    <xmx:gx1iZKNE9XMXZTU1acdRHkBpH2HnRBQy94WfighePUtG77Wvav3KCw>
+    <xmx:gx1iZLlHQ9wB4S6h4qZhBskAiJt5F6zZLc-wAglyBVYcl1x3smwM3g>
+    <xmx:gx1iZHsBDIWUXjk5uflsw_7BiqdU9XlqMy7dUXeqYejdcb-1yPZGKg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 15 May 2023 07:54:42 -0400 (EDT)
+Date:   Mon, 15 May 2023 13:54:41 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ondrej Jirman <megous@megous.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2] thermal/drivers/sun8i: Fix some error handling paths
+ in sun8i_ths_probe()
+Message-ID: <ucnnixemxbpkjlbyenboydicslozt5jpyjjfbd4gjk4oye52et@fgyd3zqdqsh2>
+References: <a8ae84bd2dc4b55fe428f8e20f31438bf8bb6762.1684089931.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="va3mhj5nkg6jbttn"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <a8ae84bd2dc4b55fe428f8e20f31438bf8bb6762.1684089931.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This was using the wrong variable, "r", instead of "ddata->vcc_reg", so
-it returned success instead of a negative error code.
 
-Fixes: 0d3dbeb8142a ("video: fbdev: omapfb: panel-tpo-td043mtea1: Make use of the helper function dev_err_probe()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- .../video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.c   | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--va3mhj5nkg6jbttn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.c
-index 1eaa35c27835..477789cff8e0 100644
---- a/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.c
-+++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.c
-@@ -491,7 +491,8 @@ static int tpo_td043_probe(struct spi_device *spi)
- 
- 	ddata->vcc_reg = devm_regulator_get(&spi->dev, "vcc");
- 	if (IS_ERR(ddata->vcc_reg)) {
--		r = dev_err_probe(&spi->dev, r, "failed to get LCD VCC regulator\n");
-+		r = dev_err_probe(&spi->dev, PTR_ERR(ddata->vcc_reg),
-+				  "failed to get LCD VCC regulator\n");
- 		goto err_regulator;
- 	}
- 
--- 
-2.39.2
+Hi,
 
+On Sun, May 14, 2023 at 08:46:05PM +0200, Christophe JAILLET wrote:
+> Should an error occur after calling sun8i_ths_resource_init() in the probe
+> function, some resources need to be released, as already done in the
+> .remove() function.
+>=20
+> Switch to the devm_clk_get_enabled() helper and add a new devm_action to
+> turn sun8i_ths_resource_init() into a fully managed function.
+>=20
+> Move the place where reset_control_deassert() is called so that the
+> recommended order of reset release/clock enable steps is kept.
+> A64 manual states that:
+>=20
+> 	3.3.6.4. Gating and reset
+>=20
+> 	Make sure that the reset signal has been released before the release of
+> 	module clock gating;
+>=20
+> This fixes the issue and removes some LoC at the same time.
+
+It should really be three different patches:
+ - One to fix the resource release, that can be backported to stable
+   releases
+ - One to switch to devm_clk_get_enabled
+ - and one to change the order of clock enable vs reset deassertion
+
+Maxime
+
+--va3mhj5nkg6jbttn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZGIdgQAKCRDj7w1vZxhR
+xdmkAP9r4P7s+lWbUxXVJ+/Zx6Wfdpi7/HSi+H/K9rivRGupwAD/VW72Kfz4XlEp
+oAzjFCvvawU+fc7nkk/gA4tjCfH5MQ0=
+=KQEQ
+-----END PGP SIGNATURE-----
+
+--va3mhj5nkg6jbttn--
