@@ -2,91 +2,99 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB7CC77B7D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 20:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF5AC7EE24
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 20:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245153AbjEOUgh (ORCPT
+        id S245158AbjEOUwP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 May 2023 16:36:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50112 "EHLO
+        Mon, 15 May 2023 16:52:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234487AbjEOUgg (ORCPT
+        with ESMTP id S231876AbjEOUwO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 May 2023 16:36:36 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68FCFD84D
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 13:36:33 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id yevlpfkLqarguyevlp1xx0; Mon, 15 May 2023 22:36:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684182992;
-        bh=kB1RD+4WplvIWh7fw3+/GdX+k7JLdrHPlj+idk3PIbE=;
-        h=From:To:Cc:Subject:Date;
-        b=J5Pigy85+HmGNs0GS2F6HLphCoLP0S7NibMZAauZTrWNyHEN3RIg+r3U9Tx5qbDZN
-         WcHC3AbzXyYUl8XZhf5yEfgrlcnrfZueGGx8720ABz6C9hwPJFcdpEOmEOqepS1ZNq
-         d5WdVm+YnBxDM7gXZGjCO262mrJAj3waSrA+CTwoQeX/efsXHBwxXOzI13RxaR/FFk
-         5R/zQdFQAQUxuXDmhvksnVscuU6EmcF6e/WWQ25gGsCef1CogVHWdf5bAAioP3bYNY
-         uQ1Kii5ELDl1MiRzL2aOnjW1hY3uItYvfIekuv0K9aN1bA7z/9UaTSoQvPW0waHgj/
-         ezA13kKQFL+sA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 15 May 2023 22:36:32 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Pavel Pisa <pisa@cmp.felk.cvut.cz>,
+        Mon, 15 May 2023 16:52:14 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3710393E8
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 13:52:13 -0700 (PDT)
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1pyfAm-0005zl-2x; Mon, 15 May 2023 22:52:00 +0200
+Received: from pengutronix.de (unknown [172.20.34.65])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id C20C11C5CA7;
+        Mon, 15 May 2023 20:51:58 +0000 (UTC)
+Date:   Mon, 15 May 2023 22:51:58 +0200
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Pavel Pisa <pisa@cmp.felk.cvut.cz>,
         Ondrej Ille <ondrej.ille@gmail.com>,
         Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
-        Martin Jerabek <martin.jerabek01@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Martin Jerabek <martin.jerabek01@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-can@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH] can: ctucanfd: Fix an error handling path in ctucan_probe_common()
-Date:   Mon, 15 May 2023 22:36:28 +0200
-Message-Id: <4b78c848826fde1b8a3ccd53f32b80674812cb12.1684182962.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH] can: ctucanfd: Fix an error handling path in
+ ctucan_probe_common()
+Message-ID: <20230515-finisher-plating-8ab57747fea5-mkl@pengutronix.de>
+References: <4b78c848826fde1b8a3ccd53f32b80674812cb12.1684182962.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="e2jyg7v42mrpg4qu"
+Content-Disposition: inline
+In-Reply-To: <4b78c848826fde1b8a3ccd53f32b80674812cb12.1684182962.git.christophe.jaillet@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:b01:1d::7b
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If register_candev() fails, a previous netif_napi_add() needs to be undone.
-Add the missing netif_napi_del() in the error handling path.
 
-Fixes: 2dcb8e8782d8 ("can: ctucanfd: add support for CTU CAN FD open-source IP core - bus independent part.")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/can/ctucanfd/ctucanfd_base.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+--e2jyg7v42mrpg4qu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/can/ctucanfd/ctucanfd_base.c b/drivers/net/can/ctucanfd/ctucanfd_base.c
-index 64c349fd4600..59e1708e43d6 100644
---- a/drivers/net/can/ctucanfd/ctucanfd_base.c
-+++ b/drivers/net/can/ctucanfd/ctucanfd_base.c
-@@ -1429,7 +1429,7 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr, int irq, unsigne
- 	ret = register_candev(ndev);
- 	if (ret) {
- 		dev_err(dev, "fail to register failed (err=%d)\n", ret);
--		goto err_deviceoff;
-+		goto err_del_napi;
- 	}
- 
- 	pm_runtime_put(dev);
-@@ -1439,6 +1439,8 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr, int irq, unsigne
- 
- 	return 0;
- 
-+err_del_napi:
-+	netif_napi_del(&priv->napi);
- err_deviceoff:
- 	pm_runtime_put(priv->dev);
- err_pmdisable:
--- 
-2.34.1
+On 15.05.2023 22:36:28, Christophe JAILLET wrote:
+> If register_candev() fails, a previous netif_napi_add() needs to be undon=
+e.
+> Add the missing netif_napi_del() in the error handling path.
 
+What about this path:
+free_candev(ndev) -> free_netdev() -> netif_napi_del()
+
+| https://elixir.bootlin.com/linux/v6.3.2/source/net/core/dev.c#L10714
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--e2jyg7v42mrpg4qu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmRim2sACgkQvlAcSiqK
+BOjuAwf6A4GauV2RYDb0DKtBocZA6JCTFpxr+DJK7LK19G344FjrZMVvb9Tch5iO
+Z280B9XDtr4dERafr3H5Eu7GxJVOvuI15TM09c1W4Rx5lpo4a7pUYnKrsmu8JAdX
+2Jl8DCIF61Pzv+5HnFuefw8e+twXjmD3Htie4zFUVUeZ52Bm60+H5reYeMPxUOcV
+P27GtPBrEx7N5tJjedlb+E2EqpqLRl3RCNgdpizUBGCoUZqlr7Hv2YXTcyet0SV/
+wovJpqmyFDKT3k6r8rXFJuZMp4xBQZibGQJX3f6hYqF7C1QsXcriRUL5h6cRsFCh
+jnY6LSzFQSrj7ca6rvFv67dmymX+Dw==
+=WizN
+-----END PGP SIGNATURE-----
+
+--e2jyg7v42mrpg4qu--
