@@ -2,110 +2,102 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AACBC7EE23
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 14:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49049C77B7D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 May 2023 14:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241784AbjEOOm2 (ORCPT
+        id S240110AbjEOO45 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 May 2023 10:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35544 "EHLO
+        Mon, 15 May 2023 10:56:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241730AbjEOOmX (ORCPT
+        with ESMTP id S241380AbjEOO4v (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 May 2023 10:42:23 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A094E1FCE
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 07:42:21 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f42c865535so71510145e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 07:42:21 -0700 (PDT)
+        Mon, 15 May 2023 10:56:51 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B72EA210D
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 07:56:28 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3063afa2372so12050312f8f.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 May 2023 07:56:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684161740; x=1686753740;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mbrnFaoPoV6auTnbAVlCpOChJelNMoaQ+2iKpw9ZQo8=;
-        b=WDeApaIrAr+nh2FVyb9Z6WeHppbkgOb2aoo76JB8r2GU2gpn+xDvf7iEja0Uj0t0sq
-         zz0SGP3rV8EL7vCCnmHRoibOo1wwNfGhKLNX6fXr7gM+0pHjPzO006kxoI+hIkXfmz5c
-         NznoxgDGdmZD13gTlnhlFeDdUhiCFnqKSxYiKicqCHNTCElJKDOAZe/CEr5kiOuHifN1
-         lza/YD10Z1BKY+HNIwjR6juaMTHLKcbCnJfk3+ZWTnOv0TORHgQ5tG9z2Ut+ruizi+3+
-         QXLO1JoIOQenBxAoHqQprCf0TyWBUfSby8bdxjv03ewsdWp1wFbq2QMJEv9nEuPxDcPy
-         Uweg==
+        d=linaro.org; s=google; t=1684162587; x=1686754587;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UKdQljelele47fGhlCDtFyRrYOqvsvKHSxZYQmiGNRs=;
+        b=Hn29fxuNMyby+YmQYnHiOhftbcHGmxehKzHtB7YzQD7v/sceIbhluaRt8wSdlJJJWW
+         rYxh0eyDlDa3kfYLGhU0UbUOBzmTKnmuDJaUeb6gs8Cg3XSI32vksTKtxZ/DPf+Wv/jz
+         6g7f33Af+mM8iEK5njYrtDiH+fb///gfth7NgjgLVYobaoY6p/ugrq3V+8CUQOLiJ4jm
+         o0ej63/zA/PuxrUudmBd2t5GWqb5iX2lr2pfM36Mm3DYvZXLV+XD6oeihMT07MIw1tct
+         7ztFaxRSccEK503l2NlgWVizWJ0tgN66uJnr011LOYo/QivoD2AH9G9y2QVT+33V7JP2
+         /vzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684161740; x=1686753740;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mbrnFaoPoV6auTnbAVlCpOChJelNMoaQ+2iKpw9ZQo8=;
-        b=Zg8xb/JGh17j4vEwMDRf2a99XlKXfPJOWnU6fzybF8I1gTcEr7NfDGZqHXzm9rHTMV
-         F0vy2Jrdk714KWCf1FFEX2HgsYmc5I2g0UL0tYXdMxlUhA45DmYfW4+bnwSxrmtJ/j1H
-         ZtILXHVijZWVsSqRwxMLGdIwUVstn9kMrranVNH1cv2oF5LiuCVXYqbX4EQOdNfTnybM
-         6X3mEmYKBtH8I1oM/7dIUfdL7zFEALTGbS9BkDVjzOVy7Zf3c/Wlq+CshNCN8xAJRjwn
-         PwCu4UntsxQe+KTMnJia1dRrRvZ8GNjG8viiMdFqt50Vn3WNmEaWOpwCOJgmMGEK9AaS
-         EYoQ==
-X-Gm-Message-State: AC+VfDz75akRb7/AJromLOBzDQ1Fg5ja1GkwuTQB5NKsjBhDtq5LqqTS
-        fzniRRq1iQ/19E9OhW8ygtgveQ==
-X-Google-Smtp-Source: ACHHUZ4ZdYo0QmdipmTJhbkhtqheg8LHZCjI5dchfxlFIwk6dZAR0+yhLfsv/+iAKWWM7rlClTMNrQ==
-X-Received: by 2002:a05:6000:1191:b0:306:462a:b78d with SMTP id g17-20020a056000119100b00306462ab78dmr21924023wrx.53.1684161740075;
-        Mon, 15 May 2023 07:42:20 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684162587; x=1686754587;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UKdQljelele47fGhlCDtFyRrYOqvsvKHSxZYQmiGNRs=;
+        b=iCL54tavpJnIiddwBTx4YeBKAZihxdvyiF084yhKv7tvv/u2oiF+TvL/NrkoQRZi8Y
+         XrplxHBWg2QucVxq9SVbeF+ZSqfgF1g94SNqJVn51ISbs28OO3caTysJwJUIgHBHT5X+
+         CbaA1rmi+AnvqK6kI59AXFV8K/LLlG8CdgEIEHVYY+8UMrYIkwLUDKOYKXAW8BdmNr4w
+         +sudx76ndtVuqgt5V1jNAOzc4RvWlwcMROlnakyBCt0PExNaHNSt1yYXpWFNten85bvd
+         uyNO4NqBnWkvyXCyU/J/7nD6Gb+Q2SaYmTsVUGM45CeRQVVWW82A4u8oni7ToV16nXyX
+         k8vw==
+X-Gm-Message-State: AC+VfDwjfSuK3heSZjQ8mK3bkyUcUs3W/aAFlzec2u4CiKy7pOyvf1fI
+        uR7HeOmOsTkq/ByV1X/SJ+vN/g==
+X-Google-Smtp-Source: ACHHUZ6GgrO8jcM5d3saW4J4IAVcPfC4QhJI1fiDa7hJz6KmjkRa3o1EhVVQMxnA/Z2etk4iReXBIQ==
+X-Received: by 2002:a5d:6086:0:b0:306:2671:7cad with SMTP id w6-20020a5d6086000000b0030626717cadmr27241216wrt.55.1684162587152;
+        Mon, 15 May 2023 07:56:27 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id i6-20020adfdec6000000b002c70ce264bfsm32690343wrn.76.2023.05.15.07.42.16
+        by smtp.gmail.com with ESMTPSA id j17-20020a5d6051000000b002e5ff05765esm32745232wrt.73.2023.05.15.07.56.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 07:42:18 -0700 (PDT)
-Date:   Mon, 15 May 2023 17:42:14 +0300
+        Mon, 15 May 2023 07:56:25 -0700 (PDT)
+Date:   Mon, 15 May 2023 17:56:21 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Su Hui <suhui@nfschina.com>, Xinhui.Pan@amd.com,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        christian.koenig@amd.com
-Subject: Re: [PATCH] drm/amdgpu: remove unnecessary (void*) conversions
-Message-ID: <be331480-4ea1-4798-81ec-540cb662c8b7@kili.mountain>
-References: <20230515013428.38798-1-suhui@nfschina.com>
- <ebe9d98c-148d-4694-8f97-96bacd0b9f7d@kili.mountain>
- <CADnq5_Nei-XHsD8DQkpUGZwZAik5X-S1R3znOJGD1X2jAxD6_g@mail.gmail.com>
+To:     wuych <yunchuan@nfschina.com>
+Cc:     dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: liquidio: lio_core: Remove unnecessary
+ (void*) conversions
+Message-ID: <2c8a5e3f-965e-422a-b347-741bcc7d33ce@kili.mountain>
+References: <20230515084906.61491-1-yunchuan@nfschina.com>
+ <61522ef5-7c7a-4bee-bcf6-6905a3290e76@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADnq5_Nei-XHsD8DQkpUGZwZAik5X-S1R3znOJGD1X2jAxD6_g@mail.gmail.com>
+In-Reply-To: <61522ef5-7c7a-4bee-bcf6-6905a3290e76@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 15, 2023 at 10:11:39AM -0400, Alex Deucher wrote:
-> On Mon, May 15, 2023 at 3:17 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > On Mon, May 15, 2023 at 09:34:28AM +0800, Su Hui wrote:
-> > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-> > > index f60753f97ac5..c837e0bf2cfc 100644
-> > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-> > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-> > > @@ -1470,7 +1470,7 @@ int amdgpu_debugfs_regs_init(struct amdgpu_device *adev)
-> > >
-> > >  static int amdgpu_debugfs_test_ib_show(struct seq_file *m, void *unused)
-> > >  {
-> > > -     struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
-> > > +     struct amdgpu_device *adev = m->private;
-> > >       struct drm_device *dev = adev_to_drm(adev);
-> > >       int r = 0, i;
-> > >
-> >
-> > This declaration block was originally written in reverse Christmas tree
-> > order:
-> >
-> >         long long long variable name;
-> >         medium length name;
-> >         short name;
-> >
-> > So you probably want to change the order now that the lengths have
-> > changed.  Same in the other places as well.
+On Mon, May 15, 2023 at 12:28:19PM +0300, Dan Carpenter wrote:
+> On Mon, May 15, 2023 at 04:49:06PM +0800, wuych wrote:
+> > Pointer variables of void * type do not require type cast.
+> > 
+> > Signed-off-by: wuych <yunchuan@nfschina.com>
+> > ---
+> >  drivers/net/ethernet/cavium/liquidio/lio_core.c | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/cavium/liquidio/lio_core.c b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+> > index 882b2be06ea0..10d9dab26c92 100644
+> > --- a/drivers/net/ethernet/cavium/liquidio/lio_core.c
+> > +++ b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+> > @@ -904,8 +904,7 @@ static
+> >  int liquidio_schedule_msix_droq_pkt_handler(struct octeon_droq *droq, u64 ret)
+> >  {
+> >  	struct octeon_device *oct = droq->oct_dev;
+> > -	struct octeon_device_priv *oct_priv =
+> > -	    (struct octeon_device_priv *)oct->priv;
+> > +	struct octeon_device_priv *oct_priv = oct->priv;
+> >  
 > 
-> I don't think it's possible due to the variable dependencies unless
-> you separate the declarations and assignments which doesn't seem like
-> a net win to me.
+> Networking code needs to be in Reverse Christmas Tree order.  Longest
+> lines first.  This code wasn't really in Reverse Christmas Tree order
+> to begine with but now it's more obvious.
 
-Gar.  I'm dumb.  Sorry for the noise.
+Oh, duh.  This obviously can't be reversed because it depends on the
+first declaration.  Sorry for the noise.
 
 regards,
 dan carpenter
