@@ -2,85 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FFDC7EE25
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 May 2023 16:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D226AC77B75
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 May 2023 17:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230038AbjEPQr0 (ORCPT
+        id S230419AbjEPRvJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 May 2023 12:47:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51974 "EHLO
+        Tue, 16 May 2023 13:51:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbjEPQr0 (ORCPT
+        with ESMTP id S229600AbjEPRvI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 May 2023 12:47:26 -0400
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 650483A9C
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 May 2023 09:47:24 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id yxpWppJUeNhDHyxpWpID6D; Tue, 16 May 2023 18:47:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684255641;
-        bh=7CfQRDvvwjhMVgiqSklBjw+t8X5eImK79qbg+xMooIA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=gUAxXW2E6dmUuYm6M0lQ0IvcXGTXAODy0RjazM/n9+9ZhGnKt2+diSTFSaq53JssM
-         NUNkEsLxOK4tsTp3qZxTHbOdUVRWZSvYGyHIsIWhCz4/B386m8wwwBY21tbxgE8Om+
-         fzcG6Y1MV0lRs0bafoUEVSJLrnZRkvNKRc1JCPIv7r5z65ctkiXF8XDeyQRlQfr9EY
-         RGqIHF+KZxKXDgNB/WkSxDLZ22Xwn/5wJ1E6rULf+8SLGHPHe8alPS2jINeCcTQXHk
-         eEPEF3RQSnfPWQI+rL/tXpYpMhnvPBoMo81YXTKOYIgisZbLTdadm6b5qQJqbs7fVO
-         MnFnVogKAHJpw==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 16 May 2023 18:47:21 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <86ff131e-c1d2-ca1f-89a4-37cec62877f4@wanadoo.fr>
-Date:   Tue, 16 May 2023 18:47:17 +0200
+        Tue, 16 May 2023 13:51:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 275A62105;
+        Tue, 16 May 2023 10:51:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B96E863374;
+        Tue, 16 May 2023 17:51:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93DE3C433D2;
+        Tue, 16 May 2023 17:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684259466;
+        bh=tFdn3U26VrkcjKuupCgxoRxeva+b+ssaUCHapcmlff0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kC4NYC37cO55tO/3rz9SvIk+5fK/J/ORYx/7ReL1ZQHNfm9wqOgXQKgXKiDRv0qjT
+         85D5l0naX6Ogapi8dpJmS3I7gWA3G1h23ntf1MMXM26B5ugPTgUXdaQWRSGTznd6hu
+         YigJyXEjPTHK6dSVlIg+QH8wh7Vk3BYa+DiIIAgO16WxmPqu/VpnsewF16CMxVEHlx
+         kFOLFHiApLk0P7wO0LnOyANBynrkXbwHf+FXcXFuJgU/12FtywzB+dXLiUIVEYjaG7
+         QBZNzrgczC2XRCNjm4lQCoOzn1JTc/VfQMcZCh750TrE4bVTaFE/O/DjmsOrJc22nt
+         Qr3l9+L+tnQ9A==
+Date:   Tue, 16 May 2023 23:21:01 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
+        dan.carpenter@linaro.org, Fenghua Yu <fenghua.yu@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: idxd: Fix passing freed memory in
+ idxd_cdev_open()
+Message-ID: <ZGPChVyCDwX2wEJs@matsya>
+References: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] can: ctucanfd: Fix an error handling path in
- ctucan_probe_common()
-Content-Language: fr, en-GB
-To:     Marc Kleine-Budde <mkl@pengutronix.de>
-Cc:     Pavel Pisa <pisa@cmp.felk.cvut.cz>,
-        Ondrej Ille <ondrej.ille@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Martin Jerabek <martin.jerabek01@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org
-References: <4b78c848826fde1b8a3ccd53f32b80674812cb12.1684182962.git.christophe.jaillet@wanadoo.fr>
- <20230515-finisher-plating-8ab57747fea5-mkl@pengutronix.de>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20230515-finisher-plating-8ab57747fea5-mkl@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 15/05/2023 à 22:51, Marc Kleine-Budde a écrit :
-> On 15.05.2023 22:36:28, Christophe JAILLET wrote:
->> If register_candev() fails, a previous netif_napi_add() needs to be undone.
->> Add the missing netif_napi_del() in the error handling path.
+On 08-05-23, 23:07, Harshit Mogalapalli wrote:
+> Smatch warns:
+> 	drivers/dma/idxd/cdev.c:327:
+> 		idxd_cdev_open() warn: 'sva' was already freed.
 > 
-> What about this path:
-> free_candev(ndev) -> free_netdev() -> netif_napi_del()
-> 
-> | https://elixir.bootlin.com/linux/v6.3.2/source/net/core/dev.c#L10714
-> 
-> Marc
-> 
+> When idxd_wq_set_pasid() fails, the current code unbinds sva and then
+> goes to 'failed_set_pasid' where iommu_sva_unbind_device is called
+> again causing the above warning.
+> [ device_user_pasid_enabled(idxd) is still true when calling
+> failed_set_pasid ]
 
-Ok, thanks for the review,
+Applied, thanks
 
-so in fact this is the netif_napi_del() call in ctucan_platform_remove() 
-that can be removed instead.
-
-Harmless, but would be more consistent.
-I'll send a patch for that.
-
-CJ
+-- 
+~Vinod
