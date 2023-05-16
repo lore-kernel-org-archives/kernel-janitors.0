@@ -2,130 +2,174 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82187C77B75
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 May 2023 10:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1D9C7EE2A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 May 2023 15:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232212AbjEPKoT (ORCPT
+        id S233766AbjEPPVI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 May 2023 06:44:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41060 "EHLO
+        Tue, 16 May 2023 11:21:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232409AbjEPKoQ (ORCPT
+        with ESMTP id S233997AbjEPPU7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 May 2023 06:44:16 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2101.outbound.protection.outlook.com [40.107.237.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1E1E8;
-        Tue, 16 May 2023 03:44:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hV3cI2CNRwI76jlS53biIo7ZLLqL1S0fejZEbiiDuStuBITSzM66IgsDfg14qnX+1p231Xs0j1pju27NvpWr5gQtvzQMzqyX+Y/qcTp16FeaKgyfZ9wKSR31/L8+XPjBZBsTMKQBlmFGUh9vTFKKrKSE5LZ0bOW1tg6hEdXqs2MLBEqAPFmaRwdmXPNAhfYYZbOK4K+b+xSrxHKA052p+3EEkfGcgmj/WSa3SaN6GMzwsfMrI+inuFsYf1PU/LyBqaL3IyfqjFtAUACyoHaxE5bNiwX2ENOCWrZc6nTdbOUeeHyFwfFEizWYMqPlf98RT1GZrqTh4f6YBrBvqNMZrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C+fi44/vVXyC0D4eK30g7wWePVL6bsBf/E/JsmvLIvE=;
- b=k6nmF6npwY498u6I/Wk5hWw/cBzo4vEa9gSupPpuvg5eQ4uVgMIlEYfXJouWs2212t5DKdAfsWDTblg2RUO/DIHFIkLAoGfYVcy8K1hDDs3HPI1onkZQd9zs86m2Tz7ZGp7Ax6wSfXfzwFpPuKGhlnxxWr5beVVqbMwttF5FOZj67okBOjDOMauh+00d816Hcj3T7YmiEQgPtZvt6BQhHoI1Qv0vpef3HHa0sTmsEw7P22Gmyrv54SfcpfNtnLpQDPzlrPMYEEtVHD/EQLL3mb/uiVgrkLlflqgr3i6B/nljgGyFDO1WouDJ3/mveiSZmMULW5nmmAXuVCy/UZpNuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C+fi44/vVXyC0D4eK30g7wWePVL6bsBf/E/JsmvLIvE=;
- b=d3CU/FEWu7VQDyGebIna6dRI5Gkw29fygZIhBudk4GeJS6ZCs+dqEfXyCSvQvTtclVMZFy7j4ZWx6PDvAwEC76qlu5XlCNtNOD2gLuMjSWFXU1iyytGfR+uJ4EWFlseBBMqjdipBSQEl0A8FcE/Xr9Bn3q0Fj0uBq7bmCvJZ1gI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by SA3PR13MB6209.namprd13.prod.outlook.com (2603:10b6:806:2f9::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.30; Tue, 16 May
- 2023 10:44:12 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34%5]) with mapi id 15.20.6387.033; Tue, 16 May 2023
- 10:44:12 +0000
-Date:   Tue, 16 May 2023 12:44:05 +0200
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jaswinder Singh <jaswinder@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] cassini: Fix a memory leak in the error handling path of
- cas_init_one()
-Message-ID: <ZGNedY5UltgPtqjN@corigine.com>
-References: <de2bb89d2c9c49198353c3d66fa9b67ce6c0f191.1684177731.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de2bb89d2c9c49198353c3d66fa9b67ce6c0f191.1684177731.git.christophe.jaillet@wanadoo.fr>
-X-ClientProxiedBy: AM3PR05CA0133.eurprd05.prod.outlook.com
- (2603:10a6:207:3::11) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        Tue, 16 May 2023 11:20:59 -0400
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2202040E8;
+        Tue, 16 May 2023 08:20:58 -0700 (PDT)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 34GFKhRJ047095;
+        Tue, 16 May 2023 10:20:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1684250443;
+        bh=jnLrcu0eOUoX1UidnkX2uPXFwv9flHOtRKmBMNOjhAI=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=bhckaHOEV0Vrwx7IZ+/23oJZnmI7dTTw665ZvvcCmCeGt5S9S4XBc4YFGjir2ZyTD
+         vDU/4eZ6V7dEpdi4rI1g46EBeWcy2jbAG3cwzVfKcsWEnW3T33PSgtPs3fdp8/aKNP
+         eFgI934y+kxcs9IAu6sF2r2CWAJCBftJh9COu98c=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 34GFKhxm019444
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 16 May 2023 10:20:43 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 16
+ May 2023 10:20:43 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 16 May 2023 10:20:43 -0500
+Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 34GFKhJ7061028;
+        Tue, 16 May 2023 10:20:43 -0500
+Date:   Tue, 16 May 2023 10:20:43 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+CC:     <kernel-janitors@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, <cocci@inria.fr>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [cocci] [PATCH] firmware: ti_sci: Fix exception handling in
+ ti_sci_probe()
+Message-ID: <20230516152043.bq2hnessstrhbc6s@distort>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <8f785de5-ebe2-edd9-2155-f440acacc643@web.de>
+ <f1eaec48-cabb-5fc6-942b-f1ef7af9bb57@web.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|SA3PR13MB6209:EE_
-X-MS-Office365-Filtering-Correlation-Id: f55dde41-b050-4950-19f3-08db55fa7c8e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rbQvdFCr4zluIFCuBOLuRPo+R89+nznyp8qx/7vWiEq92voYLckKI8WIosimYFiJ6S0A0xGy++dgaDieEMFME9VhjYUzXQE+TSmGS/XNB5CL022rg1WpXW9LgUGCt8zxQ+vYUbzOlr3weK6YYgM7K/dGqsy1A5ZYBLAuANjIXd0A8uyuu9KSFaK9OSNGAaEuO2Jt3xx3cKeQbnAgKBE44QRKMz+nPYP1yYjkeNcp2dpAtUrYT95rZloqSGU/MNJOmbCIMvTFFqXE0nBRu7WrefLpnHbz9lgSvbZ84R5U09FU9StwIi+i3VlKXaONQPIv2Ia9QJ2xgP/Nd9HEoymGpyW+eBbeArcViX97d99cKmbcEyr+ynNlNfV0t0ePMbQ2R6a91RfkFy+82c+6obXG2We5RaXAJynnT1LeWIcSi7jt99HbbEk1KnyO2Vfc9MRdIveVQOHNXZIa69hb2YKNjtwxDqkslcoNwzqvHW+WoD8MuUfSpf5iXQx8BLyO+RwUTJFjkmBINPa8Dr4TDOThEWA/BhiRprXneficl7U/WGhu0Ii4M4Fyli5wNscXTTtc
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(346002)(39840400004)(376002)(366004)(451199021)(316002)(4326008)(6916009)(66556008)(66946007)(66476007)(6486002)(6666004)(83380400001)(38100700002)(86362001)(54906003)(5660300002)(2616005)(7416002)(8676002)(8936002)(44832011)(478600001)(2906002)(4744005)(36756003)(186003)(6506007)(41300700001)(6512007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?74Gmn8fCeSDChq0yA7YGEcXcZlBr4r4b9nfhWLxn+2dq/1EYqqXaeHJowWYH?=
- =?us-ascii?Q?ctInC7hvcHkJalOD4/IvHWsxlujD7X7u9Opl0WBMROtDSn0MG3KaaV88/UL+?=
- =?us-ascii?Q?eOsA0vpD74yrDs132WKvxL5XRjdVyiQR9t2PmrY9UKgQtZ475f3iLVpgMYLu?=
- =?us-ascii?Q?QjcJShCqMOuS+hG6xe2QD+TlumVlgN9khu0VFNJDg7oOz80bchyJgJ1eQcmv?=
- =?us-ascii?Q?0/yE9gWK413byvBff6VqyVrBCSIyT++NvDE93Rf4uNU1Wo9lb6ziar6F/75h?=
- =?us-ascii?Q?zslW9xixds+0TUe00yvQ5j5L2XyDnczL5Asrdi2BcQPQE5h2hE+i4J60TNF4?=
- =?us-ascii?Q?KBmezVSoHDuOCExxHAATiYZOnm9CuPJVsWu+MVjaHxC2QxebIl3vuiAex+mg?=
- =?us-ascii?Q?Zcdg6bJkntCyp6gaPcMC314uzePxaHwgM5P58Y7OJZ4e8HQnoIL8THzxuDkP?=
- =?us-ascii?Q?Y42dj/19bbnn/3GVR0Wz/AzfTnqWP7bCPpY3t/Qcnwx0AT3kyt7mEQwXyFbQ?=
- =?us-ascii?Q?ZZjBSI1gG1Nfzyyy34hFVeJw95DahA7mScnwUL8MXKH+IR9wIOT+WUuJ3EvY?=
- =?us-ascii?Q?phkFMGluJ4Nme4gapTf5BbibHGmc83cO46yncy1Koet6g9X0Wzy++Ifo661S?=
- =?us-ascii?Q?r6PTC6TyJDI1SDfvi/avEPGT0G3JfZ/jf0zNazGA5WQW6DdPnwqegdYXLMfO?=
- =?us-ascii?Q?gOY8CD+bLumMFqKL6hkm5q2eYTV/T0yeqLM80c0k8r5aXZBfOeyE/8g+Nzll?=
- =?us-ascii?Q?Ydp9FdaHAAJ5lLzifAaC6ZX9FfvCxe61vrKe1aeBFBgfdek+6GdOezCIorXM?=
- =?us-ascii?Q?eXrvF0+w1Q5rSas7KuCaGcAngeeCTAvRyeOhbbfU6l2IrljLBNDIIIHTzrgp?=
- =?us-ascii?Q?aAvh9120S0Kz310MJN3ej8+Y6edJCEK+IjnmcBgkZ+Gp+nn0boLWWsO5dNec?=
- =?us-ascii?Q?omRTvQ/plbbFdws38qTTjvsLLQLgfYj+PfGKU4bQnNM+RdIhq1RmRTfILBHs?=
- =?us-ascii?Q?adU0jbGa+3qZPW87GjDqQrQStFym7rgKSS9JkXwJFVyQXMxTAufPUOvFG4ra?=
- =?us-ascii?Q?QzQSjVa+MDO9KLddnLhsA3d8uUocqm1nwVurHxX0tWbyk5jvw4aAdk635zO7?=
- =?us-ascii?Q?gqb8V2AHvMO6ZLnH3C6c0eycP+rB07fVAi1xcwpIr5ioU6dzd5ZeEQDwOv//?=
- =?us-ascii?Q?kfmRWcQWUk0nAs6blYHuiyAesAADJ4nGSVrTOIn/cGC+R0gVy+bL+OHPM4Dl?=
- =?us-ascii?Q?KQIvXWdYKoTYsd6V/EQgYgscSu5c76AtA8ol575KtiTXV42tBJ/1rAFxQKJg?=
- =?us-ascii?Q?11Myzii/eM67+GZWRfxc4opWbcCG2WHg9O1jYlMMnJxsPrGxgAH4TN1+dDaI?=
- =?us-ascii?Q?POqsrX33azQATK04g8iVxpNsWrj7htyyf96K/Igw+ycAoj60z9hPDTCbPIzz?=
- =?us-ascii?Q?zU6zUBgphhCctHdtUrNhJbZlFER7UnG2sFxS8fqAnqvSntBPAJKGuI3MnTAg?=
- =?us-ascii?Q?OLOKck0rp3LMSpXmuYEjwTz+srE4sueixkd8/goUiGf1LAE19vhGWVlrp46V?=
- =?us-ascii?Q?0noxRwAar9U+DOuD4cSQ12FgSO+tDNzwMq5vOIU4BgokgiS4nZ9Zo9+BcMRw?=
- =?us-ascii?Q?N6jk9WzZ2D80kPehkVvYc1wsPtoPcjTACxo5mQVE8IcJB66FgTY7Q89eMPiq?=
- =?us-ascii?Q?cQxucw=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f55dde41-b050-4950-19f3-08db55fa7c8e
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2023 10:44:12.5007
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: was5O363kt2e8fCInFPCkXnsNKbF7M6xEkcha4K+CatxsigOTfrWPN5uPsR6m3zSZT2q+5Fs/A6zr9G+F26d9N+H/5jKV7Tx5KSUIyRjqqk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR13MB6209
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f1eaec48-cabb-5fc6-942b-f1ef7af9bb57@web.de>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 15, 2023 at 09:09:11PM +0200, Christophe JAILLET wrote:
-> cas_saturn_firmware_init() allocates some memory using vmalloc(). This
-> memory is freed in the .remove() function but not it the error handling
-> path of the probe.
-> 
-> Add the missing vfree() to avoid a memory leak, should an error occur.
-> 
-> Fixes: fcaa40669cd7 ("cassini: use request_firmware")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On 22:10-20230405, Markus Elfring wrote:
+> Date: Wed, 5 Apr 2023 22:00:18 +0200
 
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
+B4 does'nt pick this patch up cleanly. And for some reason, I get
+mangled patch from public-inbox as well :( a clean git-send-email might
+help.
 
+> 
+> The label “out” was used to jump to another pointer check despite of
+
+Please use " for quotes.
+
+> the detail in the implementation of the function “ti_sci_probe”
+> that it was determined already that the corresponding variable
+> contained an error pointer because of a failed call of
+> the function “mbox_request_channel_byname”.
+
+> 
+> * Thus use more appropriate labels instead.
+> 
+> * Delete two redundant checks.
+> 
+
+How about this:
+
+Optimize out the redundant pointer check in exit path of "out" using
+appropriate labels to jump in the error path
+> 
+Drop the extra EoL
+
+> This issue was detected by using the Coccinelle software.
+
+Curious: what rule of coccicheck caught this?
+
+> 
+> Fixes: aa276781a64a5f15ecc21e920960c5b1f84e5fee ("firmware: Add basic support for TI System Control Interface (TI-SCI) protocol")
+
+12 char sha please. Please read Documentation/process/submitting-patches.rst
+
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/firmware/ti_sci.c | 19 ++++++++++---------
+>  1 file changed, 10 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+> index 039d92a595ec..77012d2f4160 100644
+> --- a/drivers/firmware/ti_sci.c
+turns out as =2D-- instead of -- (might check the git format-patch
+output closer).
+
+> +++ b/drivers/firmware/ti_sci.c
+> @@ -3433,18 +3433,18 @@ static int ti_sci_probe(struct platform_device *pdev)
+>  	info->chan_rx = mbox_request_channel_byname(cl, "rx");
+>  	if (IS_ERR(info->chan_rx)) {
+>  		ret = PTR_ERR(info->chan_rx);
+> -		goto out;
+> +		goto remove_debugfs;
+>  	}
+> 
+>  	info->chan_tx = mbox_request_channel_byname(cl, "tx");
+>  	if (IS_ERR(info->chan_tx)) {
+>  		ret = PTR_ERR(info->chan_tx);
+> -		goto out;
+> +		goto free_mbox_channel_rx;
+>  	}
+>  	ret = ti_sci_cmd_get_revision(info);
+>  	if (ret) {
+>  		dev_err(dev, "Unable to communicate with TISCI(%d)\n", ret);
+> -		goto out;
+> +		goto free_mbox_channel_tx;
+>  	}
+> 
+>  	ti_sci_setup_ops(info);
+> @@ -3456,7 +3456,7 @@ static int ti_sci_probe(struct platform_device *pdev)
+>  		ret = register_restart_handler(&info->nb);
+>  		if (ret) {
+>  			dev_err(dev, "reboot registration fail(%d)\n", ret);
+> -			goto out;
+> +			goto free_mbox_channel_tx;
+>  		}
+>  	}
+> 
+> @@ -3470,11 +3470,12 @@ static int ti_sci_probe(struct platform_device *pdev)
+>  	mutex_unlock(&ti_sci_list_mutex);
+> 
+>  	return of_platform_populate(dev->of_node, NULL, NULL, dev);
+> -out:
+> -	if (!IS_ERR(info->chan_tx))
+> -		mbox_free_channel(info->chan_tx);
+> -	if (!IS_ERR(info->chan_rx))
+> -		mbox_free_channel(info->chan_rx);
+> +
+> +free_mbox_channel_tx:
+> +	mbox_free_channel(info->chan_tx);
+> +free_mbox_channel_rx:
+> +	mbox_free_channel(info->chan_rx);
+> +remove_debugfs:
+>  	debugfs_remove(info->d);
+>  	return ret;
+>  }
+> --
+> 2.40.0
+> 
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
