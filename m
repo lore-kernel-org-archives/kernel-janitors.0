@@ -2,68 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D226AC77B75
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 May 2023 17:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3743C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 May 2023 19:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbjEPRvJ (ORCPT
+        id S229667AbjEPTYm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 May 2023 13:51:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41386 "EHLO
+        Tue, 16 May 2023 15:24:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbjEPRvI (ORCPT
+        with ESMTP id S229539AbjEPTYl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 May 2023 13:51:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 275A62105;
-        Tue, 16 May 2023 10:51:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B96E863374;
-        Tue, 16 May 2023 17:51:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93DE3C433D2;
-        Tue, 16 May 2023 17:51:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684259466;
-        bh=tFdn3U26VrkcjKuupCgxoRxeva+b+ssaUCHapcmlff0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kC4NYC37cO55tO/3rz9SvIk+5fK/J/ORYx/7ReL1ZQHNfm9wqOgXQKgXKiDRv0qjT
-         85D5l0naX6Ogapi8dpJmS3I7gWA3G1h23ntf1MMXM26B5ugPTgUXdaQWRSGTznd6hu
-         YigJyXEjPTHK6dSVlIg+QH8wh7Vk3BYa+DiIIAgO16WxmPqu/VpnsewF16CMxVEHlx
-         kFOLFHiApLk0P7wO0LnOyANBynrkXbwHf+FXcXFuJgU/12FtywzB+dXLiUIVEYjaG7
-         QBZNzrgczC2XRCNjm4lQCoOzn1JTc/VfQMcZCh750TrE4bVTaFE/O/DjmsOrJc22nt
-         Qr3l9+L+tnQ9A==
-Date:   Tue, 16 May 2023 23:21:01 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     error27@gmail.com, kernel-janitors@vger.kernel.org,
-        dan.carpenter@linaro.org, Fenghua Yu <fenghua.yu@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: idxd: Fix passing freed memory in
- idxd_cdev_open()
-Message-ID: <ZGPChVyCDwX2wEJs@matsya>
-References: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
+        Tue, 16 May 2023 15:24:41 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C914C3C;
+        Tue, 16 May 2023 12:24:40 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34GJOaId006175;
+        Tue, 16 May 2023 19:24:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=8vviqZhmlTEEOY5Xhpd6Q0/A7Ui0Wl7KPzyxgmh5lsc=;
+ b=WYDQcjGouc1wq/j0YLbugNDu5j1nZ5mVejPI/AZ1jP9jj3i6apdCCgYa8PjC1cbFWbQM
+ TMe+7xUipwtrPkbxY9jfMgp353YPo7qQUo1vgJkE0w2wUnf0lBMIQYvNFYdt3QYCihd4
+ XRhQuWlRzrXfJwOVfZLzSeITe2zAZ6BTGmEtkqmDXn3dcXtBIwbSJoswi9ypJJroowqU
+ PZ+9rQsC0A8O7WQ8u4yxwBAT9DYQ0xm5jvBz5r1XL+jz2aKZter9sQyUnw+Ukpu/ZtHn
+ wYw0Crc3LrhhBeApjhFhlb8o6SMvglvL+c8WMieTFun9AlUT+9ktkk4jdHJS3Jz/j7bv dg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qme0m88cj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 May 2023 19:24:35 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34GJOYAV001293
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 May 2023 19:24:34 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 16 May
+ 2023 12:24:33 -0700
+Message-ID: <e31ec9bc-7b18-8711-2b63-b3fb4177abcb@quicinc.com>
+Date:   Tue, 16 May 2023 13:24:33 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230509060716.2830630-1-harshit.m.mogalapalli@oracle.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH] accel/qaic: silence some uninitialized variable warnings
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+CC:     Oded Gabbay <ogabbay@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <d11ee378-7b06-4b5e-b56f-d66174be1ab3@kili.mountain>
+ <2d1fb58f-f98b-ba17-65e9-9ea4b467102a@quicinc.com>
+ <d4c73c29-b604-4b0c-92bb-000369b0a5d7@kili.mountain>
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <d4c73c29-b604-4b0c-92bb-000369b0a5d7@kili.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5G8ovkwBvnpcHAJ343cCXZs5G7-5UddB
+X-Proofpoint-ORIG-GUID: 5G8ovkwBvnpcHAJ343cCXZs5G7-5UddB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-16_11,2023-05-16_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0
+ spamscore=0 adultscore=0 mlxlogscore=856 mlxscore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305160163
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 08-05-23, 23:07, Harshit Mogalapalli wrote:
-> Smatch warns:
-> 	drivers/dma/idxd/cdev.c:327:
-> 		idxd_cdev_open() warn: 'sva' was already freed.
+On 5/10/2023 10:48 AM, Dan Carpenter wrote:
+> On Wed, May 10, 2023 at 08:57:03AM -0600, Jeffrey Hugo wrote:
+>> On 5/3/2023 4:41 AM, Dan Carpenter wrote:
+>>> Smatch complains that these are not initialized if get_cntl_version()
+>>> fails but we still print them in the debug message.  Not the end of
+>>> the world, but true enough.  Let's just initialize them to a dummy value
+>>> to make the checker happy.
+>>>
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>>
+>> Thanks for the cleanup.
+>>
+>> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+>>
+>> Could use a fixes tag
 > 
-> When idxd_wq_set_pasid() fails, the current code unbinds sva and then
-> goes to 'failed_set_pasid' where iommu_sva_unbind_device is called
-> again causing the above warning.
-> [ device_user_pasid_enabled(idxd) is still true when calling
-> failed_set_pasid ]
+> The fixes tag thing could have gone either way.  It's really minor.
+> 
+>> and also I'd prefer to maintain the style of sorting
+>> the variable declaration lines by line length.  Given the minor nature of
+>> these nits, I plan to address them.
+> 
+> Thanks!
 
-Applied, thanks
+Pushed to drm-misc-fixes
 
--- 
-~Vinod
+-Jeff
