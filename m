@@ -2,49 +2,53 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 544B0C7EE24
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 03:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D408AC77B7D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 03:22:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231860AbjEQDRo (ORCPT
+        id S231808AbjEQDVk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 May 2023 23:17:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50454 "EHLO
+        Tue, 16 May 2023 23:21:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231783AbjEQDRn (ORCPT
+        with ESMTP id S231838AbjEQDVV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 May 2023 23:17:43 -0400
+        Tue, 16 May 2023 23:21:21 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7248D1BC3;
-        Tue, 16 May 2023 20:17:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4749420A;
+        Tue, 16 May 2023 20:21:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F07C36370E;
-        Wed, 17 May 2023 03:17:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D43F6C433D2;
-        Wed, 17 May 2023 03:17:40 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6454563B86;
+        Wed, 17 May 2023 03:21:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59E22C433EF;
+        Wed, 17 May 2023 03:21:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684293461;
-        bh=iFD+DYOWkfeczPPjNdnXp8SDy5OJDTWmunWJyEwuxQk=;
+        s=k20201202; t=1684293660;
+        bh=b8ppDmEIaTnXIk/SW60spPG5VJdPpOY7pKL70uyLalg=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=EtrcOesYJl6GG6P4m3mD0bLmmE7MM71sTiX0A8JK6U1SGs2xbGUEIFhRNMl9O4TJ9
-         5tHsCnjXVihnNg4m9DLHgIg9hZ6LKb7Y81TBFxthWJ+tx4Cylvtnn658y0Uxy+ZEh+
-         FsIA8N1D0JghuMyjdaZb/r8ElJiR5ZL4dbEwKDAZfnFiOzhYXG7oBjWq8fM2QxVm2b
-         dBXUUvGZLN+lxsVJT8E+P+kzn+AlTVfiyksrH1TnJ9eldsqLn1VDpIHMjk89XlPPuy
-         v7h64xDRr0uJZ/fpprjCgCGDCwKWSoeeccAEb9N28NFQNEIpXfWyLNT6CnmttBCEJ1
-         Lv7xQP1qFuYxA==
-Date:   Tue, 16 May 2023 20:17:39 -0700
+        b=GLmOJd/IhPXHU/VrBXs/eQuyxrt7RhgP4ss9zIJnezsMFH2Mpi85XpiydHpdPpcjA
+         S2R2yNz8hwvkptdI4EHISBf5RnFSlsjL2/bjOLGeOMjjqWJM2xN8NOKg/xDSEJuPJZ
+         RI/qtKWLZhfrjX2gZl2fvnqkBTddlOhuJrV4pm9AO53QwWG94yMf1GN7lNB5UfESZT
+         v5Nh1HON40Tfdms7mzJokGItxLPLtTVgKPxf8rinOQt1kvf6dbfI26/dMr8CeS7FQo
+         fNmU6J5TQKyISi0adkUfBMzX07LdhBXlg5wBIh6ZdXiN4iQUdGIoRIRIFv8+9Ezx7v
+         QCHOszeuT5DJQ==
+Date:   Tue, 16 May 2023 20:20:59 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
-To:     wuych <yunchuan@nfschina.com>
-Cc:     rmody@marvell.com, skalluru@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net,
+To:     Simon Horman <simon.horman@corigine.com>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        wuych <yunchuan@nfschina.com>, dchickles@marvell.com,
+        sburla@marvell.com, fmanlunas@marvell.com, davem@davemloft.net,
         edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: bna: bnad:  Remove unnecessary (void*)
- conversions
-Message-ID: <20230516201739.21c37850@kernel.org>
-In-Reply-To: <20230517022705.112448-1-yunchuan@nfschina.com>
-References: <20230517022705.112448-1-yunchuan@nfschina.com>
+Subject: Re: [PATCH net-next] net: liquidio: lio_core: Remove unnecessary
+ (void*) conversions
+Message-ID: <20230516202059.09aab4d0@kernel.org>
+In-Reply-To: <ZGKT01kLOQNRqx9I@corigine.com>
+References: <20230515084906.61491-1-yunchuan@nfschina.com>
+        <61522ef5-7c7a-4bee-bcf6-6905a3290e76@kili.mountain>
+        <2c8a5e3f-965e-422a-b347-741bcc7d33ce@kili.mountain>
+        <ZGKT01kLOQNRqx9I@corigine.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -52,10 +56,22 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 17 May 2023 10:27:05 +0800 wuych wrote:
-> Pointer variables of void * type do not require type cast.
+On Mon, 15 May 2023 22:19:31 +0200 Simon Horman wrote:
+> On Mon, May 15, 2023 at 05:56:21PM +0300, Dan Carpenter wrote:
+> > On Mon, May 15, 2023 at 12:28:19PM +0300, Dan Carpenter wrote:  
+> > > Networking code needs to be in Reverse Christmas Tree order.  Longest
+> > > lines first.  This code wasn't really in Reverse Christmas Tree order
+> > > to begine with but now it's more obvious.  
+> > 
+> > Oh, duh.  This obviously can't be reversed because it depends on the
+> > first declaration.  Sorry for the noise.  
+> 
+> FWIIW, I think the preferred approach for such cases is to
+> separate the declaration and initialisation. Something like:
+> 
+> 	struct octeon_device *oct = droq->oct_dev;
+> 	struct octeon_device_priv *oct_priv;
+> 
+> 	oct_priv = oct->priv;
 
-What tool are you using to find these.
-How many of such patches will it take to clean up the entire tree?
--- 
-pw-bot: reject
+I don't think these changes are worth bothering with at all, TBH.
