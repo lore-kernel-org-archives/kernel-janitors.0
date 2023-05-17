@@ -2,196 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C64C77B7D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 06:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B95C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 07:06:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229654AbjEQGoC (ORCPT
+        id S229769AbjEQHGH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 May 2023 02:44:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58862 "EHLO
+        Wed, 17 May 2023 03:06:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjEQGoB (ORCPT
+        with ESMTP id S229638AbjEQHGB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 May 2023 02:44:01 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E5ECE
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 May 2023 23:44:00 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f42d937d61so3628615e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 May 2023 23:43:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684305838; x=1686897838;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BYh5QIQtk4kmFE1xMQJyAJuDhOQqL6TYhGJxqGSU/rI=;
-        b=V2z0EA6Y9sZUBXjA8aV9Qwb+urdngocKOnk3tisuUQBqBvymqx9kMH85aqmor6lc9m
-         82//pVd5pkK32RB+25T5kLmoXp0OjGakbP4aXnrmitpbuCsvGB/X4wcOb6hZjLHOTRqO
-         atbIgc6cERpei+vdAOIj5bFUaxSWZeGc1O810XrFMWz/tRIVT15BaBoISxumVCkvCPJ9
-         qe+w7thGz9gygazDAH5jZaCDkvJ7tuC/q+B5RcLuBryqggyAu3ooFftSN9vr8IP1gcaT
-         pY727dXSMTN/WZqdNZFwZSPOmCYM0Aa38oeCFK04EFhjuZqHcQukhb0156DcW6vhGADb
-         tXYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684305838; x=1686897838;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BYh5QIQtk4kmFE1xMQJyAJuDhOQqL6TYhGJxqGSU/rI=;
-        b=JA4189PlMbXxXzS3Cq0GQhiEbEaUEzTzepSb1PYADKMLyMkxdyHnSAm4AryRlRNndu
-         O1Rlm6WRgC6XneqlS6o/tEJZRZNYArSb9kRiwamxtI9UgmFQpZNK1tyDMOK41NyFncpV
-         j5f820yxBvsFabyCfOyIirc+YA+2RgwRgb73hes9lZQExtet7iWyRj4KLpk2u3QMKwMG
-         ol8a6R0Y3x9pWyzPSaJEhG/q/NOrEiSQXDbp2fXfGGN2YpUSWviXsqztErenucn+L+Zb
-         on13R6yZ4s/XsBT9rl5QRxW5V1zB/8lwZNNJBSNfbEJDJN9OQcE3uqgPsJNNX+AKKG0T
-         TLtg==
-X-Gm-Message-State: AC+VfDwfmxP0ouyDo5QWfeqx1GH8LwyxOtDUtLEYzEHCBu0duDakDLmn
-        WLhVL80Q0M057SMeBaOgKcd2SQQoyBprxiQRDwk=
-X-Google-Smtp-Source: ACHHUZ5oF9sWrtoOmyRCmE4Py+UM6kGi80A5+mVJo6ihWlsyf3Xwd2FqXPUuK7pw8noGbdlcmt/tlQ==
-X-Received: by 2002:a1c:7913:0:b0:3f4:2e13:ccdc with SMTP id l19-20020a1c7913000000b003f42e13ccdcmr20339518wme.0.1684305838473;
-        Tue, 16 May 2023 23:43:58 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id f2-20020a1cc902000000b003f50237bd9csm1176690wmb.19.2023.05.16.23.43.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 May 2023 23:43:56 -0700 (PDT)
-Date:   Wed, 17 May 2023 09:43:53 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Nishanth Menon <nm@ti.com>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <kristo@kernel.org>, cocci@inria.fr,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [cocci] [PATCH] firmware: ti_sci: Fix exception handling in
- ti_sci_probe()
-Message-ID: <afe15264-c05c-417c-9492-29b271e05747@kili.mountain>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <8f785de5-ebe2-edd9-2155-f440acacc643@web.de>
- <f1eaec48-cabb-5fc6-942b-f1ef7af9bb57@web.de>
- <20230516152043.bq2hnessstrhbc6s@distort>
+        Wed, 17 May 2023 03:06:01 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F2640EF
+        for <kernel-janitors@vger.kernel.org>; Wed, 17 May 2023 00:05:57 -0700 (PDT)
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1pzBEI-0003Y1-5h; Wed, 17 May 2023 09:05:46 +0200
+Received: from pengutronix.de (unknown [172.20.34.65])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 23D171C6CDD;
+        Wed, 17 May 2023 07:05:44 +0000 (UTC)
+Date:   Wed, 17 May 2023 09:05:43 +0200
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Pavel Pisa <pisa@cmp.felk.cvut.cz>,
+        Ondrej Ille <ondrej.ille@gmail.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Martin Jerabek <martin.jerabek01@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] can: ctucanfd: Fix an error handling path in
+ ctucan_probe_common()
+Message-ID: <20230517-lugged-wreckage-65f6d28379ac-mkl@pengutronix.de>
+References: <4b78c848826fde1b8a3ccd53f32b80674812cb12.1684182962.git.christophe.jaillet@wanadoo.fr>
+ <20230515-finisher-plating-8ab57747fea5-mkl@pengutronix.de>
+ <86ff131e-c1d2-ca1f-89a4-37cec62877f4@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cb56oybfxv4tulij"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230516152043.bq2hnessstrhbc6s@distort>
+In-Reply-To: <86ff131e-c1d2-ca1f-89a4-37cec62877f4@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:b01:1d::7b
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 16, 2023 at 10:20:43AM -0500, Nishanth Menon wrote:
-> On 22:10-20230405, Markus Elfring wrote:
-> > Date: Wed, 5 Apr 2023 22:00:18 +0200
-> 
-> B4 does'nt pick this patch up cleanly. And for some reason, I get
-> mangled patch from public-inbox as well :( a clean git-send-email might
-> help.
-> 
 
-It's an awkward thing.  B4 doesn't work because Markus was banned from
-LKML because he doesn't listen to feedback.
+--cb56oybfxv4tulij
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > The label “out” was used to jump to another pointer check despite of
-> 
-> Please use " for quotes.
-> 
-> > the detail in the implementation of the function “ti_sci_probe”
-> > that it was determined already that the corresponding variable
-> > contained an error pointer because of a failed call of
-> > the function “mbox_request_channel_byname”.
-> 
-> > 
-> > * Thus use more appropriate labels instead.
-> > 
-> > * Delete two redundant checks.
-> > 
-> 
-> How about this:
-> 
-> Optimize out the redundant pointer check in exit path of "out" using
-> appropriate labels to jump in the error path
-> > 
-> Drop the extra EoL
-> 
-> > This issue was detected by using the Coccinelle software.
-> 
-> Curious: what rule of coccicheck caught this?
-> 
-> > 
-> > Fixes: aa276781a64a5f15ecc21e920960c5b1f84e5fee ("firmware: Add basic support for TI System Control Interface (TI-SCI) protocol")
-> 
-> 12 char sha please. Please read Documentation/process/submitting-patches.rst
-> 
+On 16.05.2023 18:47:17, Christophe JAILLET wrote:
+> Le 15/05/2023 =C3=A0 22:51, Marc Kleine-Budde a =C3=A9crit=C2=A0:
+> > On 15.05.2023 22:36:28, Christophe JAILLET wrote:
+> > > If register_candev() fails, a previous netif_napi_add() needs to be u=
+ndone.
+> > > Add the missing netif_napi_del() in the error handling path.
+> >=20
+> > What about this path:
+> > free_candev(ndev) -> free_netdev() -> netif_napi_del()
+> >=20
+> > | https://elixir.bootlin.com/linux/v6.3.2/source/net/core/dev.c#L10714
+> >=20
+> > Marc
+> >=20
+>=20
+> Ok, thanks for the review,
+>=20
+> so in fact this is the netif_napi_del() call in ctucan_platform_remove()
+> that can be removed instead.
+>=20
+> Harmless, but would be more consistent.
+> I'll send a patch for that.
 
-For example, Markus has been told to use 12 char shas several times
-before.
-
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  drivers/firmware/ti_sci.c | 19 ++++++++++---------
-> >  1 file changed, 10 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> > index 039d92a595ec..77012d2f4160 100644
-> > --- a/drivers/firmware/ti_sci.c
-> turns out as =2D-- instead of -- (might check the git format-patch
-> output closer).
-> 
-> > +++ b/drivers/firmware/ti_sci.c
-> > @@ -3433,18 +3433,18 @@ static int ti_sci_probe(struct platform_device *pdev)
-> >  	info->chan_rx = mbox_request_channel_byname(cl, "rx");
-> >  	if (IS_ERR(info->chan_rx)) {
-> >  		ret = PTR_ERR(info->chan_rx);
-> > -		goto out;
-> > +		goto remove_debugfs;
-> >  	}
-> > 
-> >  	info->chan_tx = mbox_request_channel_byname(cl, "tx");
-> >  	if (IS_ERR(info->chan_tx)) {
-> >  		ret = PTR_ERR(info->chan_tx);
-> > -		goto out;
-> > +		goto free_mbox_channel_rx;
-> >  	}
-> >  	ret = ti_sci_cmd_get_revision(info);
-> >  	if (ret) {
-> >  		dev_err(dev, "Unable to communicate with TISCI(%d)\n", ret);
-> > -		goto out;
-> > +		goto free_mbox_channel_tx;
-> >  	}
-> > 
-> >  	ti_sci_setup_ops(info);
-> > @@ -3456,7 +3456,7 @@ static int ti_sci_probe(struct platform_device *pdev)
-> >  		ret = register_restart_handler(&info->nb);
-> >  		if (ret) {
-> >  			dev_err(dev, "reboot registration fail(%d)\n", ret);
-> > -			goto out;
-> > +			goto free_mbox_channel_tx;
-> >  		}
-> >  	}
-> > 
-> > @@ -3470,11 +3470,12 @@ static int ti_sci_probe(struct platform_device *pdev)
-> >  	mutex_unlock(&ti_sci_list_mutex);
-> > 
-> >  	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-
-There is a bug here because the resources are not freed if
-of_platform_populate() fails.  The "info" struct is devm_ allocated but
-it's still on the &ti_sci_list list, so that will lead to a use after
-free.
+Make it so!
 
 regards,
-dan carpenter
+Marc
 
-> > -out:
-> > -	if (!IS_ERR(info->chan_tx))
-> > -		mbox_free_channel(info->chan_tx);
-> > -	if (!IS_ERR(info->chan_rx))
-> > -		mbox_free_channel(info->chan_rx);
-> > +
-> > +free_mbox_channel_tx:
-> > +	mbox_free_channel(info->chan_tx);
-> > +free_mbox_channel_rx:
-> > +	mbox_free_channel(info->chan_rx);
-> > +remove_debugfs:
-> >  	debugfs_remove(info->d);
-> >  	return ret;
-> >  }
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
+--cb56oybfxv4tulij
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmRkfMQACgkQvlAcSiqK
+BOgosQf/XCnxCLojV+HufFxherLeMBZXjrkGa6+8BZsdUIlbCtcwNnEu9Zg2kSyH
+dz6D/3L9JPbkedMiJvoExn+Rw5vMPmPLR2+uVwvUIppjZcvCXKTwzRfPx2XqeH4h
+zlGG+RziMo+yxWI/zE4DIMfuTzcETxkPsceifGxIdkxKJopdXzkojo6/I2bGtjOg
+ZDbrcrGy7KYHDErY0j0gKgjzsRcR0mP8wrsQJO33VtRuGnUIiOrTWysJlqzU0gt8
+nH8a/Se7jgFJ6mNjGChPykhCASUDKNFxtxrSPW0yb2YIUvE2DnhbpDdkJcOFxdaU
+G/BSiE3NUIIl+xF7oXOAnthhrNCBDQ==
+=YZRf
+-----END PGP SIGNATURE-----
+
+--cb56oybfxv4tulij--
