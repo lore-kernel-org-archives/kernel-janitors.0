@@ -2,117 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B95C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 07:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C97BC77B75
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 07:36:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229769AbjEQHGH (ORCPT
+        id S230160AbjEQHgQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 May 2023 03:06:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43036 "EHLO
+        Wed, 17 May 2023 03:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbjEQHGB (ORCPT
+        with ESMTP id S230005AbjEQHff (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 May 2023 03:06:01 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F2640EF
-        for <kernel-janitors@vger.kernel.org>; Wed, 17 May 2023 00:05:57 -0700 (PDT)
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1pzBEI-0003Y1-5h; Wed, 17 May 2023 09:05:46 +0200
-Received: from pengutronix.de (unknown [172.20.34.65])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id 23D171C6CDD;
-        Wed, 17 May 2023 07:05:44 +0000 (UTC)
-Date:   Wed, 17 May 2023 09:05:43 +0200
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Pavel Pisa <pisa@cmp.felk.cvut.cz>,
-        Ondrej Ille <ondrej.ille@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Martin Jerabek <martin.jerabek01@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] can: ctucanfd: Fix an error handling path in
- ctucan_probe_common()
-Message-ID: <20230517-lugged-wreckage-65f6d28379ac-mkl@pengutronix.de>
-References: <4b78c848826fde1b8a3ccd53f32b80674812cb12.1684182962.git.christophe.jaillet@wanadoo.fr>
- <20230515-finisher-plating-8ab57747fea5-mkl@pengutronix.de>
- <86ff131e-c1d2-ca1f-89a4-37cec62877f4@wanadoo.fr>
+        Wed, 17 May 2023 03:35:35 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC41E49C2
+        for <kernel-janitors@vger.kernel.org>; Wed, 17 May 2023 00:35:24 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f427118644so4228495e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 17 May 2023 00:35:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684308923; x=1686900923;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dK1qv6PTlG33tVF6LejuDZcQpm3iw6AWanbA02wz/VY=;
+        b=anc8ybdUeP1Ognop/ssH+1oWNTJ81X6LjRzXon+WVPLcekwvWPZLnN4EZV8NDt/KsS
+         7KfKVNz63fFTPvMjSlpuNWE0cv+ux7J8BfCQ3WBkQ9gSTUFTgb3U7DoVfZyIGwPUhBQL
+         kKbKYJdvfVzugcSOI8u1TcU5degGe6kUUqLuDrvAM34/X0Jhmhhn/mYHBLHGbRWtqgEK
+         0B6NMDM0RsVwBxelEgXzWh3pjje+7LBiC/4AnU+Xxij0fnLbKQ8kKOeWYM5/fOzw65dg
+         KQoiYvgKLjUy8KcnfqYF6ge7NyxS1Qsdc/G9RHg//3ZIflaMY6tjorniSs8UiXKifsKn
+         y0Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684308923; x=1686900923;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dK1qv6PTlG33tVF6LejuDZcQpm3iw6AWanbA02wz/VY=;
+        b=ioVD2ULles07oafNg0wTQ7roGtA9Cryvl6WKhAVsDaLOSU9KUwk7qn2LjVj56cHCFE
+         5yrKzKPQLpQvaVPnrVlJQ9fIrhAN6zk270pzmgkJZ2t7ueUxwI+zhGLcYdLIVrmeczXV
+         WCefUW68Tr0E1YtXyUsirbp2c82LN4584X2yQWqkLp/vvbZi24XaTscw6w/skz/CqL5N
+         h56A0HPjNH0UMgluQnbV+XmSuLbSpzmWIwIFBiF2MzxKjSnvyNIphaa87Xd2OelIqopc
+         HB1SZiKjy/g8leVhVn1e2aV2UBt45gr55vvHfVOpKhwI1AAQMbQg5V3wOUgjP/S+Tm4B
+         n9pg==
+X-Gm-Message-State: AC+VfDyqoEsRKwnPcPUZfmJT/iZEa0jdlt/GtArHnPiOx5crNtXvFtqP
+        aUsO9yYrXpem9FRmOTAvD8+31g==
+X-Google-Smtp-Source: ACHHUZ6H+L6QE/vULJkNVhapgIYEXj5BemZlb73fN5cX5dGG11keKU97ilhFMZCYOfACEaxTAjRKRQ==
+X-Received: by 2002:a1c:f202:0:b0:3f2:5be3:cd6a with SMTP id s2-20020a1cf202000000b003f25be3cd6amr32890504wmc.4.1684308923113;
+        Wed, 17 May 2023 00:35:23 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.230])
+        by smtp.gmail.com with ESMTPSA id z23-20020a7bc7d7000000b003f1957ace1fsm1269737wmk.13.2023.05.17.00.35.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 May 2023 00:35:22 -0700 (PDT)
+Message-ID: <ac65ea9c-12a9-a5d0-5023-8935d780cdf2@linaro.org>
+Date:   Wed, 17 May 2023 08:35:21 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cb56oybfxv4tulij"
-Content-Disposition: inline
-In-Reply-To: <86ff131e-c1d2-ca1f-89a4-37cec62877f4@wanadoo.fr>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:b01:1d::7b
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] dmaengine: at_xdmac: fix potential Oops in
+ at_xdmac_prep_interleaved()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <21282b66-9860-410a-83df-39c17fcf2f1b@kili.mountain>
+From:   Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <21282b66-9860-410a-83df-39c17fcf2f1b@kili.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---cb56oybfxv4tulij
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 16.05.2023 18:47:17, Christophe JAILLET wrote:
-> Le 15/05/2023 =C3=A0 22:51, Marc Kleine-Budde a =C3=A9crit=C2=A0:
-> > On 15.05.2023 22:36:28, Christophe JAILLET wrote:
-> > > If register_candev() fails, a previous netif_napi_add() needs to be u=
-ndone.
-> > > Add the missing netif_napi_del() in the error handling path.
-> >=20
-> > What about this path:
-> > free_candev(ndev) -> free_netdev() -> netif_napi_del()
-> >=20
-> > | https://elixir.bootlin.com/linux/v6.3.2/source/net/core/dev.c#L10714
-> >=20
-> > Marc
-> >=20
->=20
-> Ok, thanks for the review,
->=20
-> so in fact this is the netif_napi_del() call in ctucan_platform_remove()
-> that can be removed instead.
->=20
-> Harmless, but would be more consistent.
-> I'll send a patch for that.
+On 5/15/23 11:32, Dan Carpenter wrote:
+> There are two place if the at_xdmac_interleaved_queue_desc() fails which
+> could lead to a NULL dereference where "first" is NULL and we call
+> list_add_tail(&first->desc_node, ...).  In the first caller, the return
+> is not checked so add a check for that.  In the next caller, the return
+> is checked but if it fails on the first iteration through the loop then
+> it will lead to a NULL pointer dereference.
+> 
+> Fixes: 4e5385784e69 ("dmaengine: at_xdmac: handle numf > 1")
+> Fixes: 62b5cb757f1d ("dmaengine: at_xdmac: fix memory leak in interleaved mode")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Make it so!
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---cb56oybfxv4tulij
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmRkfMQACgkQvlAcSiqK
-BOgosQf/XCnxCLojV+HufFxherLeMBZXjrkGa6+8BZsdUIlbCtcwNnEu9Zg2kSyH
-dz6D/3L9JPbkedMiJvoExn+Rw5vMPmPLR2+uVwvUIppjZcvCXKTwzRfPx2XqeH4h
-zlGG+RziMo+yxWI/zE4DIMfuTzcETxkPsceifGxIdkxKJopdXzkojo6/I2bGtjOg
-ZDbrcrGy7KYHDErY0j0gKgjzsRcR0mP8wrsQJO33VtRuGnUIiOrTWysJlqzU0gt8
-nH8a/Se7jgFJ6mNjGChPykhCASUDKNFxtxrSPW0yb2YIUvE2DnhbpDdkJcOFxdaU
-G/BSiE3NUIIl+xF7oXOAnthhrNCBDQ==
-=YZRf
------END PGP SIGNATURE-----
-
---cb56oybfxv4tulij--
+> ---
+>  drivers/dma/at_xdmac.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
+> index 7da6d9b6098e..c3b37168b21f 100644
+> --- a/drivers/dma/at_xdmac.c
+> +++ b/drivers/dma/at_xdmac.c
+> @@ -1102,6 +1102,8 @@ at_xdmac_prep_interleaved(struct dma_chan *chan,
+>  							NULL,
+>  							src_addr, dst_addr,
+>  							xt, xt->sgl);
+> +		if (!first)
+> +			return NULL;
+>  
+>  		/* Length of the block is (BLEN+1) microblocks. */
+>  		for (i = 0; i < xt->numf - 1; i++)
+> @@ -1132,8 +1134,9 @@ at_xdmac_prep_interleaved(struct dma_chan *chan,
+>  							       src_addr, dst_addr,
+>  							       xt, chunk);
+>  			if (!desc) {
+> -				list_splice_tail_init(&first->descs_list,
+> -						      &atchan->free_descs_list);
+> +				if (first)
+> +					list_splice_tail_init(&first->descs_list,
+> +							      &atchan->free_descs_list);
+>  				return NULL;
+>  			}
+>  
