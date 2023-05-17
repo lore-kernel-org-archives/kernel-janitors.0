@@ -2,67 +2,338 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6497C77B7D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 15:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E443C77B75
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 21:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230332AbjEQPSG (ORCPT
+        id S229751AbjEQVDN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 May 2023 11:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48602 "EHLO
+        Wed, 17 May 2023 17:03:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbjEQPSE (ORCPT
+        with ESMTP id S229453AbjEQVDM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 May 2023 11:18:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1666FCC;
-        Wed, 17 May 2023 08:18:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FE4760FBD;
-        Wed, 17 May 2023 15:18:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58C00C433D2;
-        Wed, 17 May 2023 15:18:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684336682;
-        bh=cWcgy+WXrTxYPzrTHi3+xEB3IMvot8diduwzGD+rAso=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Muyi2vS/UZSeib2ZIaK3A6mhcUzwDoUbr430Vj/VgbMDPlC3VtXusO6AFKADj13Ae
-         nce3X9fosN7mCH8Z/Mriu/yKFbDEStAJwvQB3LBsOPpsGKxvjSYIkaY4sH/jxqSgtN
-         U5HhKEyL7kthKjPRqQLsZ3BFOhUZGlYPIlfZx68cYZREnygb62F7W8iW7xZwb1Zs14
-         Zw1iM4OHEI3nwFXOkkvZooXjGLhc891+Vqy74qFNcjTbQ73ePph2CyLj88aQF+RN/d
-         t3RztcR+0HOoiOiZJa9eklzDMxFp9oxvxPuV6rxkY+H/qW4voVA3zGts/6Whkp8aLi
-         1OibkELrhSwiA==
-Date:   Wed, 17 May 2023 08:18:01 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     yunchuan <yunchuan@nfschina.com>
-Cc:     rmody@marvell.com, skalluru@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net,
-        edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: bna: bnad: Remove unnecessary (void*)
- conversions
-Message-ID: <20230517081801.508322e7@kernel.org>
-In-Reply-To: <bea72de9-5f97-16a9-6703-05789ed53c1d@nfschina.com>
-References: <20230516201739.21c37850@kernel.org>
-        <bea72de9-5f97-16a9-6703-05789ed53c1d@nfschina.com>
+        Wed, 17 May 2023 17:03:12 -0400
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E74B45B85;
+        Wed, 17 May 2023 14:03:08 -0700 (PDT)
+Received: by mail-ot1-x330.google.com with SMTP id 46e09a7af769-6ab38a85a1eso980956a34.1;
+        Wed, 17 May 2023 14:03:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684357388; x=1686949388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yscgqUTR1f75Dpuvdyvo/LM34y7Four8Xo8HFyqJqAY=;
+        b=r8L8WhCz6Txtq/XEy+HNrrarx7HTmEQu439citQF4p5Mdk3EEsgCPmSsOvvX19LnMT
+         vEreCjsqyDqs6Y9By4M+3kESJn2SA7gTR4gcQ+eU4PoWeTWcsRmdPFfqMnhotQhVAXpo
+         Sm677HmP+sZTO0CeNvUMQS7WmqSbyhol6IJt/OcGOSmf4pd9jITNdZj+0hQfTdI+0EaO
+         46PGtor8YGm4aRqS1ASJ3Oet4fchvtwYqOrEjoTubAxkXycU+QwTnn+StM77wUb15D/M
+         fkB5+paBMWac5lP7pYgJvRQmAmhjW0Mm87QH/nnpcMLUjMTMaY2YGD3sd4ZdCkKIO1Or
+         FbHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684357388; x=1686949388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yscgqUTR1f75Dpuvdyvo/LM34y7Four8Xo8HFyqJqAY=;
+        b=RnhjgPo29VhJnK2E5Ip52HxD51zw3VBjj0oROCAPmNSyv969T/NAzSs6fg6Z3SELpy
+         n8NT3ls4b/hz0d+KxXCXEU4IpBwfOj7lsZUh0pwxNXAP47C0j4vk0coyz3dpwMFkLRIZ
+         HoFGbSD7w1LRUKnDAsX55TeRjWViK8qhwSPFc8BQVhDXhYKAN4ErnEv5d75E4MnYkeAP
+         8KLDpaTBVu9hdPbLZBnYN//+kMV/h4if5bq1qKCTmbPeoT/cCeqou7eJAD0djnv67+jd
+         C3LvtOpIBi5KVzbRAlbzYgYQTewuWvANSilIGV8AKhE5PmdY0RdYW6xk1dp4Hs7FnUe1
+         sKCg==
+X-Gm-Message-State: AC+VfDxZ6kwXoYSH8q5TsA+Gx96C5OaZ2qGqChma+mfpP9efkOf4xTFd
+        w9NDdalLSGQtuC7PRWPBOjFjIA9i9yoWDw7fQwHdXk6K
+X-Google-Smtp-Source: ACHHUZ7cTEQNg9F2+W+6DvNoiF+0D+SrpOPXBFq2tbsF5THQLDHAxo0D0ITWyUZNPSHBWYdZyNVmQZWpguWLBq2VYkk=
+X-Received: by 2002:a05:6870:e281:b0:18e:d237:9693 with SMTP id
+ v1-20020a056870e28100b0018ed2379693mr72228oad.46.1684357388082; Wed, 17 May
+ 2023 14:03:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20230517025219.50281-1-suhui@nfschina.com>
+In-Reply-To: <20230517025219.50281-1-suhui@nfschina.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 17 May 2023 17:02:57 -0400
+Message-ID: <CADnq5_OjW+hzwSBox5ApEHO0HPPt_gfHsNydMDZPpOHCgdY0FQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: Remove unnecessary (void*) conversions
+To:     Su Hui <suhui@nfschina.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com,
+        Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 17 May 2023 13:14:11 +0800 yunchuan wrote:
-> =E5=9C=A8 2023/5/17 11:17, Jakub Kicinski =E5=86=99=E9=81=93:
-> > On Wed, 17 May 2023 10:27:05 +0800 wuych wrote: =20
-> >> Pointer variables of void * type do not require type cast. =20
-> > What tool are you using to find these.
-> > How many of such patches will it take to clean up the entire tree? =20
->=20
-> I use the scripts I found on the=C2=A0 kernel Newbies to find these.
->=20
-> website: https://kernelnewbies.org/KernelJanitors/Todo/VoidPointerConvs
+On Wed, May 17, 2023 at 3:08=E2=80=AFAM Su Hui <suhui@nfschina.com> wrote:
+>
+> No need cast (void*) to (struct radeon_device *)
+> or (struct radeon_ring *).
+>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 
-How many of such patches will it take to clean up all of net/ and drivers/n=
-et ?=20
+Applied.  thanks!
+
+Alex
+
+> ---
+>  drivers/gpu/drm/radeon/r100.c         | 8 ++++----
+>  drivers/gpu/drm/radeon/r300.c         | 2 +-
+>  drivers/gpu/drm/radeon/r420.c         | 2 +-
+>  drivers/gpu/drm/radeon/r600.c         | 2 +-
+>  drivers/gpu/drm/radeon/radeon_fence.c | 2 +-
+>  drivers/gpu/drm/radeon/radeon_gem.c   | 2 +-
+>  drivers/gpu/drm/radeon/radeon_ib.c    | 2 +-
+>  drivers/gpu/drm/radeon/radeon_pm.c    | 2 +-
+>  drivers/gpu/drm/radeon/radeon_ring.c  | 2 +-
+>  drivers/gpu/drm/radeon/radeon_ttm.c   | 2 +-
+>  drivers/gpu/drm/radeon/rs400.c        | 2 +-
+>  drivers/gpu/drm/radeon/rv515.c        | 4 ++--
+>  12 files changed, 16 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.=
+c
+> index d4f09ecc3d22..affa9e0309b2 100644
+> --- a/drivers/gpu/drm/radeon/r100.c
+> +++ b/drivers/gpu/drm/radeon/r100.c
+> @@ -2929,7 +2929,7 @@ static void r100_set_safe_registers(struct radeon_d=
+evice *rdev)
+>  #if defined(CONFIG_DEBUG_FS)
+>  static int r100_debugfs_rbbm_info_show(struct seq_file *m, void *unused)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         uint32_t reg, value;
+>         unsigned i;
+>
+> @@ -2948,7 +2948,7 @@ static int r100_debugfs_rbbm_info_show(struct seq_f=
+ile *m, void *unused)
+>
+>  static int r100_debugfs_cp_ring_info_show(struct seq_file *m, void *unus=
+ed)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         struct radeon_ring *ring =3D &rdev->ring[RADEON_RING_TYPE_GFX_IND=
+EX];
+>         uint32_t rdp, wdp;
+>         unsigned count, i, j;
+> @@ -2974,7 +2974,7 @@ static int r100_debugfs_cp_ring_info_show(struct se=
+q_file *m, void *unused)
+>
+>  static int r100_debugfs_cp_csq_fifo_show(struct seq_file *m, void *unuse=
+d)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         uint32_t csq_stat, csq2_stat, tmp;
+>         unsigned r_rptr, r_wptr, ib1_rptr, ib1_wptr, ib2_rptr, ib2_wptr;
+>         unsigned i;
+> @@ -3022,7 +3022,7 @@ static int r100_debugfs_cp_csq_fifo_show(struct seq=
+_file *m, void *unused)
+>
+>  static int r100_debugfs_mc_info_show(struct seq_file *m, void *unused)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         uint32_t tmp;
+>
+>         tmp =3D RREG32(RADEON_CONFIG_MEMSIZE);
+> diff --git a/drivers/gpu/drm/radeon/r300.c b/drivers/gpu/drm/radeon/r300.=
+c
+> index 7b0cfeaddcec..9c1a92fa2af6 100644
+> --- a/drivers/gpu/drm/radeon/r300.c
+> +++ b/drivers/gpu/drm/radeon/r300.c
+> @@ -589,7 +589,7 @@ int rv370_get_pcie_lanes(struct radeon_device *rdev)
+>  #if defined(CONFIG_DEBUG_FS)
+>  static int rv370_debugfs_pcie_gart_info_show(struct seq_file *m, void *u=
+nused)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         uint32_t tmp;
+>
+>         tmp =3D RREG32_PCIE(RADEON_PCIE_TX_GART_CNTL);
+> diff --git a/drivers/gpu/drm/radeon/r420.c b/drivers/gpu/drm/radeon/r420.=
+c
+> index 7e6320e8c6a0..eae8a6389f5e 100644
+> --- a/drivers/gpu/drm/radeon/r420.c
+> +++ b/drivers/gpu/drm/radeon/r420.c
+> @@ -474,7 +474,7 @@ int r420_init(struct radeon_device *rdev)
+>  #if defined(CONFIG_DEBUG_FS)
+>  static int r420_debugfs_pipes_info_show(struct seq_file *m, void *unused=
+)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         uint32_t tmp;
+>
+>         tmp =3D RREG32(R400_GB_PIPE_SELECT);
+> diff --git a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.=
+c
+> index dd78fc499402..382795a8b3c0 100644
+> --- a/drivers/gpu/drm/radeon/r600.c
+> +++ b/drivers/gpu/drm/radeon/r600.c
+> @@ -4345,7 +4345,7 @@ int r600_irq_process(struct radeon_device *rdev)
+>
+>  static int r600_debugfs_mc_info_show(struct seq_file *m, void *unused)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>
+>         DREG32_SYS(m, rdev, R_000E50_SRBM_STATUS);
+>         DREG32_SYS(m, rdev, VM_L2_STATUS);
+> diff --git a/drivers/gpu/drm/radeon/radeon_fence.c b/drivers/gpu/drm/rade=
+on/radeon_fence.c
+> index 73e3117420bf..2749dde5838f 100644
+> --- a/drivers/gpu/drm/radeon/radeon_fence.c
+> +++ b/drivers/gpu/drm/radeon/radeon_fence.c
+> @@ -955,7 +955,7 @@ void radeon_fence_driver_force_completion(struct rade=
+on_device *rdev, int ring)
+>  #if defined(CONFIG_DEBUG_FS)
+>  static int radeon_debugfs_fence_info_show(struct seq_file *m, void *data=
+)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         int i, j;
+>
+>         for (i =3D 0; i < RADEON_NUM_RINGS; ++i) {
+> diff --git a/drivers/gpu/drm/radeon/radeon_gem.c b/drivers/gpu/drm/radeon=
+/radeon_gem.c
+> index bdc5af23f005..5de99ffa072f 100644
+> --- a/drivers/gpu/drm/radeon/radeon_gem.c
+> +++ b/drivers/gpu/drm/radeon/radeon_gem.c
+> @@ -879,7 +879,7 @@ int radeon_mode_dumb_create(struct drm_file *file_pri=
+v,
+>  #if defined(CONFIG_DEBUG_FS)
+>  static int radeon_debugfs_gem_info_show(struct seq_file *m, void *unused=
+)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         struct radeon_bo *rbo;
+>         unsigned i =3D 0;
+>
+> diff --git a/drivers/gpu/drm/radeon/radeon_ib.c b/drivers/gpu/drm/radeon/=
+radeon_ib.c
+> index 6a45a72488f9..fb9ecf5dbe2b 100644
+> --- a/drivers/gpu/drm/radeon/radeon_ib.c
+> +++ b/drivers/gpu/drm/radeon/radeon_ib.c
+> @@ -292,7 +292,7 @@ int radeon_ib_ring_tests(struct radeon_device *rdev)
+>
+>  static int radeon_debugfs_sa_info_show(struct seq_file *m, void *unused)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>
+>         radeon_sa_bo_dump_debug_info(&rdev->ring_tmp_bo, m);
+>
+> diff --git a/drivers/gpu/drm/radeon/radeon_pm.c b/drivers/gpu/drm/radeon/=
+radeon_pm.c
+> index cbc554928bcc..b73fd9ab0252 100644
+> --- a/drivers/gpu/drm/radeon/radeon_pm.c
+> +++ b/drivers/gpu/drm/radeon/radeon_pm.c
+> @@ -1916,7 +1916,7 @@ static void radeon_dynpm_idle_work_handler(struct w=
+ork_struct *work)
+>
+>  static int radeon_debugfs_pm_info_show(struct seq_file *m, void *unused)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         struct drm_device *ddev =3D rdev->ddev;
+>
+>         if  ((rdev->flags & RADEON_IS_PX) &&
+> diff --git a/drivers/gpu/drm/radeon/radeon_ring.c b/drivers/gpu/drm/radeo=
+n/radeon_ring.c
+> index 7e207276df37..e6534fa9f1fb 100644
+> --- a/drivers/gpu/drm/radeon/radeon_ring.c
+> +++ b/drivers/gpu/drm/radeon/radeon_ring.c
+> @@ -464,7 +464,7 @@ void radeon_ring_fini(struct radeon_device *rdev, str=
+uct radeon_ring *ring)
+>
+>  static int radeon_debugfs_ring_info_show(struct seq_file *m, void *unuse=
+d)
+>  {
+> -       struct radeon_ring *ring =3D (struct radeon_ring *) m->private;
+> +       struct radeon_ring *ring =3D m->private;
+>         struct radeon_device *rdev =3D ring->rdev;
+>
+>         uint32_t rptr, wptr, rptr_next;
+> diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/radeon=
+/radeon_ttm.c
+> index 2220cdf6a3f6..06a53ecc04a2 100644
+> --- a/drivers/gpu/drm/radeon/radeon_ttm.c
+> +++ b/drivers/gpu/drm/radeon/radeon_ttm.c
+> @@ -780,7 +780,7 @@ void radeon_ttm_set_active_vram_size(struct radeon_de=
+vice *rdev, u64 size)
+>
+>  static int radeon_ttm_page_pool_show(struct seq_file *m, void *data)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>
+>         return ttm_pool_debugfs(&rdev->mman.bdev.pool, m);
+>  }
+> diff --git a/drivers/gpu/drm/radeon/rs400.c b/drivers/gpu/drm/radeon/rs40=
+0.c
+> index 6383f7a34bd8..922a29e58880 100644
+> --- a/drivers/gpu/drm/radeon/rs400.c
+> +++ b/drivers/gpu/drm/radeon/rs400.c
+> @@ -307,7 +307,7 @@ void rs400_mc_wreg(struct radeon_device *rdev, uint32=
+_t reg, uint32_t v)
+>  #if defined(CONFIG_DEBUG_FS)
+>  static int rs400_debugfs_gart_info_show(struct seq_file *m, void *unused=
+)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         uint32_t tmp;
+>
+>         tmp =3D RREG32(RADEON_HOST_PATH_CNTL);
+> diff --git a/drivers/gpu/drm/radeon/rv515.c b/drivers/gpu/drm/radeon/rv51=
+5.c
+> index 63fb06e8e2d7..76260fdfbaa7 100644
+> --- a/drivers/gpu/drm/radeon/rv515.c
+> +++ b/drivers/gpu/drm/radeon/rv515.c
+> @@ -221,7 +221,7 @@ void rv515_mc_wreg(struct radeon_device *rdev, uint32=
+_t reg, uint32_t v)
+>  #if defined(CONFIG_DEBUG_FS)
+>  static int rv515_debugfs_pipes_info_show(struct seq_file *m, void *unuse=
+d)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         uint32_t tmp;
+>
+>         tmp =3D RREG32(GB_PIPE_SELECT);
+> @@ -237,7 +237,7 @@ static int rv515_debugfs_pipes_info_show(struct seq_f=
+ile *m, void *unused)
+>
+>  static int rv515_debugfs_ga_info_show(struct seq_file *m, void *unused)
+>  {
+> -       struct radeon_device *rdev =3D (struct radeon_device *)m->private=
+;
+> +       struct radeon_device *rdev =3D m->private;
+>         uint32_t tmp;
+>
+>         tmp =3D RREG32(0x2140);
+> --
+> 2.30.2
+>
