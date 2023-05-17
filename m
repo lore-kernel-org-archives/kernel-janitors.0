@@ -2,76 +2,108 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D408AC77B7D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 03:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E55DC77B7A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 May 2023 05:14:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231808AbjEQDVk (ORCPT
+        id S232103AbjEQFOc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 May 2023 23:21:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51848 "EHLO
+        Wed, 17 May 2023 01:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231838AbjEQDVV (ORCPT
+        with ESMTP id S229931AbjEQFOb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 May 2023 23:21:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4749420A;
-        Tue, 16 May 2023 20:21:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6454563B86;
-        Wed, 17 May 2023 03:21:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59E22C433EF;
-        Wed, 17 May 2023 03:21:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684293660;
-        bh=b8ppDmEIaTnXIk/SW60spPG5VJdPpOY7pKL70uyLalg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GLmOJd/IhPXHU/VrBXs/eQuyxrt7RhgP4ss9zIJnezsMFH2Mpi85XpiydHpdPpcjA
-         S2R2yNz8hwvkptdI4EHISBf5RnFSlsjL2/bjOLGeOMjjqWJM2xN8NOKg/xDSEJuPJZ
-         RI/qtKWLZhfrjX2gZl2fvnqkBTddlOhuJrV4pm9AO53QwWG94yMf1GN7lNB5UfESZT
-         v5Nh1HON40Tfdms7mzJokGItxLPLtTVgKPxf8rinOQt1kvf6dbfI26/dMr8CeS7FQo
-         fNmU6J5TQKyISi0adkUfBMzX07LdhBXlg5wBIh6ZdXiN4iQUdGIoRIRIFv8+9Ezx7v
-         QCHOszeuT5DJQ==
-Date:   Tue, 16 May 2023 20:20:59 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Simon Horman <simon.horman@corigine.com>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        wuych <yunchuan@nfschina.com>, dchickles@marvell.com,
-        sburla@marvell.com, fmanlunas@marvell.com, davem@davemloft.net,
+        Wed, 17 May 2023 01:14:31 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 87D8C35A8;
+        Tue, 16 May 2023 22:14:28 -0700 (PDT)
+Received: from [172.30.38.111] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 36E23180120DC3;
+        Wed, 17 May 2023 13:14:12 +0800 (CST)
+Content-Type: multipart/mixed; boundary="------------6RiRB9aWvOzrHmmlk1Za6Ipu"
+Message-ID: <bea72de9-5f97-16a9-6703-05789ed53c1d@nfschina.com>
+Date:   Wed, 17 May 2023 13:14:11 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH net-next] net: bna: bnad: Remove unnecessary (void*)
+ conversions
+Content-Language: en-US
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     rmody@marvell.com, skalluru@marvell.com,
+        GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net,
         edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: liquidio: lio_core: Remove unnecessary
- (void*) conversions
-Message-ID: <20230516202059.09aab4d0@kernel.org>
-In-Reply-To: <ZGKT01kLOQNRqx9I@corigine.com>
-References: <20230515084906.61491-1-yunchuan@nfschina.com>
-        <61522ef5-7c7a-4bee-bcf6-6905a3290e76@kili.mountain>
-        <2c8a5e3f-965e-422a-b347-741bcc7d33ce@kili.mountain>
-        <ZGKT01kLOQNRqx9I@corigine.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MD-Sfrom: yunchuan@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   yunchuan <yunchuan@nfschina.com>
+In-Reply-To: <20230516201739.21c37850@kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 15 May 2023 22:19:31 +0200 Simon Horman wrote:
-> On Mon, May 15, 2023 at 05:56:21PM +0300, Dan Carpenter wrote:
-> > On Mon, May 15, 2023 at 12:28:19PM +0300, Dan Carpenter wrote:  
-> > > Networking code needs to be in Reverse Christmas Tree order.  Longest
-> > > lines first.  This code wasn't really in Reverse Christmas Tree order
-> > > to begine with but now it's more obvious.  
-> > 
-> > Oh, duh.  This obviously can't be reversed because it depends on the
-> > first declaration.  Sorry for the noise.  
-> 
-> FWIIW, I think the preferred approach for such cases is to
-> separate the declaration and initialisation. Something like:
-> 
-> 	struct octeon_device *oct = droq->oct_dev;
-> 	struct octeon_device_priv *oct_priv;
-> 
-> 	oct_priv = oct->priv;
+This is a multi-part message in MIME format.
+--------------6RiRB9aWvOzrHmmlk1Za6Ipu
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-I don't think these changes are worth bothering with at all, TBH.
+
+在 2023/5/17 11:17, Jakub Kicinski 写道:
+> On Wed, 17 May 2023 10:27:05 +0800 wuych wrote:
+>> Pointer variables of void * type do not require type cast.
+> What tool are you using to find these.
+> How many of such patches will it take to clean up the entire tree?
+
+
+I use the scripts I found on the  kernel Newbies to find these.
+
+website: https://kernelnewbies.org/KernelJanitors/Todo/VoidPointerConvs
+
+
+--------------6RiRB9aWvOzrHmmlk1Za6Ipu
+Content-Type: application/x-perl; name="type-convs.pl"
+Content-Disposition: attachment; filename="type-convs.pl"
+Content-Transfer-Encoding: 7bit
+
+#!/usr/bin/perl
+# This scripts goes through the kernel sources and
+# prints assignments of (void*) functions that
+# get type-changed:
+#   type *x = (type*) function().
+# The first argument is the kernel source directory, additional 
+# arguments override the embedded function name list.
+
+
+$kernel_dir=shift || die "Need a directory argument (kernel sources),\n" .
+"and optionally function names.\n" .
+"If none are given, a default list is taken.\n";
+
+# Get source files
+@ARGV=split(/\0/, `find "$kernel_dir" -type f -iname "*.c" -print0`);
+die "No sources found.\n" unless @ARGV;
+
+# Read whole files, and look for such assignments.
+$/=undef;
+while (<>)
+{
+	$changes=0;
+#		- struct netdev_private *np = (struct netdev_private *)dev->priv;
+#		+ struct netdev_private *np = dev->priv;
+#	or just
+#	   lp = (struct i596_private *) dev->priv;
+	$changes++ while 
+		s{ 
+			( (?: struct \s+ \w+ \s* \* \s*)? \w+ \s+ = ) \s* 
+				\( [\w\s\*]+ \* \s* \) \s* 
+				( \w+ \s* -> \s* priv(?:ate)? \s* ; )
+		}{$1 $2}xgo;
+
+	if ($changes)
+	{
+		open(DIFF, qq(| diff -up --label "$ARGV" "$ARGV" --label "$ARGV" -)) 
+		|| die "Cannot start diff program: $!\n";
+		print DIFF $_;
+		close DIFF;
+	}
+}
+
+--------------6RiRB9aWvOzrHmmlk1Za6Ipu--
