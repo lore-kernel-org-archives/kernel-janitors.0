@@ -2,100 +2,164 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F988C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 10:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E658C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 10:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbjERKJO (ORCPT
+        id S230096AbjERKzS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 May 2023 06:09:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41414 "EHLO
+        Thu, 18 May 2023 06:55:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbjERKJM (ORCPT
+        with ESMTP id S230025AbjERKzR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 May 2023 06:09:12 -0400
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D4E31BD3;
-        Thu, 18 May 2023 03:09:11 -0700 (PDT)
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ae50da739dso12997235ad.1;
-        Thu, 18 May 2023 03:09:11 -0700 (PDT)
+        Thu, 18 May 2023 06:55:17 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF1BE6E
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 May 2023 03:55:15 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-30781184e78so734858f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 May 2023 03:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684407314; x=1686999314;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vMcqYvOV/DDzDm3ULLmvI4rkB/W5L6UYkp2ooKsRI20=;
+        b=LBmkoaq6pirbGlhFNihSXHUTZLd+LN0tjSB0gOLNmadjCgpag8pyhyApkiDXdP+b1f
+         9Kh3ylSo9gXLtkefNQUAk2QbRqiRx2WHmp3Boate6jifLi9c9cV2Mt8WD6+A8EMxJOFX
+         pqxdOHvBLLUzeBHSDlYFlU+0tDZjz88oLT7uxiCuvIw+9zhoa9+EpUBda67XRSCd9Y0n
+         VLJMjM3EEOabFDoVzF6OhpPu8Fv6sJ+rPgLZXf01mvp/PmaEo4zFmbzP3OzPsMzbOqlz
+         McKAltiSpJGac0yKy7CpEYb1RR3Mg7cjT/3VC/7qSFScNv+15wIj40VyT7gEu79sZylL
+         1Bgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684404551; x=1686996551;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rTItOvZyqAvodhACTuaNIkuq7MW1RtbhnQpTTB2wrgw=;
-        b=jn9hQcaq7D7/lxJF6u+hVoHQAA8EnZuDuCN/MY1RX5EgDe622Q3MHWmNJuA7aMjSt+
-         E0wnE6OrjBwMYNEtu7YVDq8Vpcco/LDMtMuSSJveXz6gcZlrtJN8P8J8HeGj/LV9m41O
-         ihGYfWWEE9vrbqBRIav7E5ClC7AxnBDjCdGkkb3bSjxIP11HJ69eruv1wsBJgm5WnYfa
-         lDkzqPTH6qLIISoBXbJTFxPrc3Zcq4MNq1egUHu0ehnEIYi0eS629cBOMSZr9YJBymkj
-         1Ck0JTNMuEbbiwDWExtXm0EopiZjgLN+73sfb+CexCVxpRIAH2g0KdnQ9KsXCOX7TeVc
-         9Yaw==
-X-Gm-Message-State: AC+VfDzmpUDQb6EY8ylfTd1foD2/HkoJWW7SIeZK6mZPVbDIlte+W91z
-        Cy3s6PtY5+SeqKhMgHekGXw=
-X-Google-Smtp-Source: ACHHUZ73of32hG9wDgV5ePpSUzHNcqrDv7Hd9jW7P8x8SqynUFgsnmCcOOGAPUgmgr+4d84YZuFWaQ==
-X-Received: by 2002:a17:903:24e:b0:1ae:32d3:43b2 with SMTP id j14-20020a170903024e00b001ae32d343b2mr2046272plh.25.1684404550505;
-        Thu, 18 May 2023 03:09:10 -0700 (PDT)
-Received: from dev-linux.lan (cpe-70-95-21-110.san.res.rr.com. [70.95.21.110])
-        by smtp.gmail.com with ESMTPSA id jb15-20020a170903258f00b001ae626d051bsm1031202plb.70.2023.05.18.03.09.09
+        d=1e100.net; s=20221208; t=1684407314; x=1686999314;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vMcqYvOV/DDzDm3ULLmvI4rkB/W5L6UYkp2ooKsRI20=;
+        b=bGhpt8NTKqRrT5FWQzhWr5HbnrGM1nFPbtWzS7JpBgdLl9C435hU8XMbMv/Irz/Fdh
+         7wcCPgwvZoEE5d8DYHvbLPEihIjiFoXsEj5PysqKq5Gx8KJuhsd0vQh/Et658COkjtyK
+         g895h54utcbPlZ+qJVvtgvqMCvPJ7SMX52Sghois5TekV6rJl/ZA8cCtDOoLZEQh+VfT
+         6VxXWDXEWS7DkS35jGAty3kpdHKut6+55xqpPVo6Cfqw0u2R9xqhtNpCLK2KBzgHvZo3
+         LweSZ0KIn3hmsYToQ4qNOL7poIoYdrQ0jcIU+7+htAlYhMxpgWEIN3snWN0lP6PNeiUU
+         7BJg==
+X-Gm-Message-State: AC+VfDzJAD9G85a636jB1Ptqo6sSzp1j9inhMNx6VRNoLFyzuKEzvH/o
+        85kmFunH9tDdYKg5x132eGqKiA==
+X-Google-Smtp-Source: ACHHUZ50xVsV4Bi+LS6CtjJ52WnW+axOFMr6u/Cg4D3UlKNEv5uJA4hwy7vmthITSO//KJfSXMJJbw==
+X-Received: by 2002:adf:f64f:0:b0:2f8:33bd:a170 with SMTP id x15-20020adff64f000000b002f833bda170mr1179953wrp.32.1684407313958;
+        Thu, 18 May 2023 03:55:13 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id c8-20020adfef48000000b003062b57ffd1sm1804632wrp.50.2023.05.18.03.55.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 May 2023 03:09:10 -0700 (PDT)
-From:   Sukrut Bellary <sukrut.bellary@linux.com>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Thu, 18 May 2023 03:55:12 -0700 (PDT)
+Date:   Thu, 18 May 2023 13:55:07 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Sukrut Bellary <sukrut.bellary@linux.com>,
+        Abel Vesa <abel.vesa@linaro.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Amol Maheshwari <amahesh@qti.qualcomm.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Sukrut Bellary <sukrut.bellary@linux.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Shuah Khan <skhan@linuxfoundation.org>
-Subject: [PATCH] misc: fastrpc: Fix double free of 'buf' in error path
-Date:   Thu, 18 May 2023 03:08:29 -0700
-Message-Id: <20230518100829.515143-1-sukrut.bellary@linux.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH] misc: fastrpc: Fix double free of 'buf' in error path
+Message-ID: <9194ebdf-f335-4cd6-bf89-bb4f86a57784@kili.mountain>
+References: <20230518100829.515143-1-sukrut.bellary@linux.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230518100829.515143-1-sukrut.bellary@linux.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-smatch warning:
-drivers/misc/fastrpc.c:1926 fastrpc_req_mmap() error: double free of 'buf'
+On Thu, May 18, 2023 at 03:08:29AM -0700, Sukrut Bellary wrote:
+> smatch warning:
+> drivers/misc/fastrpc.c:1926 fastrpc_req_mmap() error: double free of 'buf'
+> 
+> In fastrpc_req_mmap() error path, the fastrpc buffer is freed in
+> fastrpc_req_munmap_impl() if unmap is successful.
+> 
+> But in the end, there is an unconditional call to fastrpc_buf_free().
+> So the above case triggers the double free of fastrpc buf.
+> 
+> Fix this by avoiding the call to the second fastrpc_buf_free() if
+> fastrpc_req_munmap_impl() is successful.
+> 'err' is not updated as it needs to retain the err returned by
+> qcom_scm_assign_mem(), which is the starting point of this error path.
+> 
+> This is based on static analysis only. Compilation tested.
 
-In fastrpc_req_mmap() error path, the fastrpc buffer is freed in
-fastrpc_req_munmap_impl() if unmap is successful.
+Please don't put this in the commit message.  We want everyone reading
+the git log to believe everything is 100% rock solid.  :P
 
-But in the end, there is an unconditional call to fastrpc_buf_free().
-So the above case triggers the double free of fastrpc buf.
+We need a Fixes tag.
+Fixes: 72fa6f7820c4 ("misc: fastrpc: Rework fastrpc_req_munmap")
 
-Fix this by avoiding the call to the second fastrpc_buf_free() if
-fastrpc_req_munmap_impl() is successful.
-'err' is not updated as it needs to retain the err returned by
-qcom_scm_assign_mem(), which is the starting point of this error path.
+Let's add Abel to the CC list.
 
-This is based on static analysis only. Compilation tested.
+> 
+> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+> Signed-off-by: Sukrut Bellary <sukrut.bellary@linux.com>
+> ---
+  ^^^
+Put testing caveats here instead, where it will be removed from the
+git log.
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Sukrut Bellary <sukrut.bellary@linux.com>
----
- drivers/misc/fastrpc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+>  drivers/misc/fastrpc.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index f48466960f1b..1c3ab78f274f 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -1921,7 +1921,10 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
+>  	return 0;
+>  
+>  err_assign:
+> -	fastrpc_req_munmap_impl(fl, buf);
+> +	if (!fastrpc_req_munmap_impl(fl, buf)) {
+> +		/* buf is freed */
+> +		return err;
+> +	}
+>  err_invoke:
+>  	fastrpc_buf_free(buf);
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index f48466960f1b..1c3ab78f274f 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -1921,7 +1921,10 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
- 	return 0;
- 
- err_assign:
--	fastrpc_req_munmap_impl(fl, buf);
-+	if (!fastrpc_req_munmap_impl(fl, buf)) {
-+		/* buf is freed */
-+		return err;
-+	}
- err_invoke:
- 	fastrpc_buf_free(buf);
- 
--- 
-2.34.1
+This bug is real but the fix is not complete.
 
+drivers/misc/fastrpc.c
+  1911                  if (err) {
+  1912                          dev_err(fl->sctx->dev, "Failed to assign memory phys 0x%llx size 0x%llx err %d",
+  1913                                          buf->phys, buf->size, err);
+  1914                          goto err_assign;
+  1915                  }
+  1916          }
+  1917  
+  1918          spin_lock(&fl->lock);
+  1919          list_add_tail(&buf->node, &fl->mmaps);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+buf needs to be removed from the list before we free it, otherwise it
+leads to a use after free.  The fastrpc_req_munmap_impl() function does
+that but here this function just calls fastrpc_buf_free().
+
+  1920          spin_unlock(&fl->lock);
+  1921  
+  1922          if (copy_to_user((void __user *)argp, &req, sizeof(req))) {
+  1923                  err = -EFAULT;
+  1924                  goto err_assign;
+  1925          }
+  1926  
+  1927          dev_dbg(dev, "mmap\t\tpt 0x%09lx OK [len 0x%08llx]\n",
+  1928                  buf->raddr, buf->size);
+  1929  
+  1930          return 0;
+  1931  
+  1932  err_assign:
+  1933          fastrpc_req_munmap_impl(fl, buf);
+  1934  err_invoke:
+  1935          fastrpc_buf_free(buf);
+  1936  
+  1937          return err;
+  1938  }
+
+regards,
+dan carpenter
