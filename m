@@ -2,81 +2,110 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 213F3C7EE24
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 04:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E41EEC7EE25
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 06:17:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbjEREkY (ORCPT
+        id S229869AbjERGRU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 May 2023 00:40:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42062 "EHLO
+        Thu, 18 May 2023 02:17:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbjEREkX (ORCPT
+        with ESMTP id S229774AbjERGRT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 May 2023 00:40:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69701BD2;
-        Wed, 17 May 2023 21:40:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D5F364D00;
-        Thu, 18 May 2023 04:40:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 90550C4339C;
-        Thu, 18 May 2023 04:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684384821;
-        bh=nti3XKfDu6OHjOeDxESq78YvWzofdVpLUXmq0Sk1hbQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ISU+E69gGMn6fc69IsSO03wXmLqB+YpaafbpURA31u2lrC/Qac8OgNKKQ+1FW7YYL
-         QDAHZDHLwnHP2wvHE7tp2iIo+VRBXFxG+NLtl8Se1vceOxyd2hqBOqxYqwtxq/utO9
-         w5anzTn/sInRoQE7PCoPinar7/BzaSUzdS7+/gYqafK7Sb5/VxwE9YqlIAJp+MgG2W
-         8fzj4Lk2ioy7/LmUt2mYg15ci7/D7h1xW8c97V+m2zEcOo4qrf09+y+5HU1b/UImqp
-         sG3sAWSTo7OSu0/qEAfckPOSND0wCaQzmRUuuCF4a65MDPrkD15LOm9NdzIUbgjcMO
-         Bk0lliyrz/Kgw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7C88BE54223;
-        Thu, 18 May 2023 04:40:21 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 18 May 2023 02:17:19 -0400
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31DA31FD8
+        for <kernel-janitors@vger.kernel.org>; Wed, 17 May 2023 23:17:15 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id zWwipDLQ5jCyEzWwiphDGq; Thu, 18 May 2023 08:17:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1684390627;
+        bh=lHzeDDfUlQX3RH1HXK0XsiQwqk7lqO7xwS/nUPsFcJ8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=QOwSADmn96OEyVdr0c7A5uO5YPGAzWOZyiU0QJi2BiJnl6Pt/jVDU1puyRiTyZws/
+         Y5tgDazDLcZP61+sofQWEaUzFmCo0OO3KL5ppkUwxna38ivSWqlzxe/mUZZ1rXkBfp
+         6Rp4irTvkCaJn4X3tLsg6SoKwxS/gR8ua5sEN23+I8R5pTd+oCUXqHYeCsDOp8mY76
+         97Tem981S6ocQ5+IaqA1Mwtaxs0IIs8nu2gCVPx6XIXtmRs4DujC8efA6TySfcKIym
+         vV87QeD5I5LOb2G3S8Te7GQQOpsBUbwlMG0xvsE9ME3RHih7r/o0HiJ8GPUNYWfPtB
+         Qu9l6av+Y2AHg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 18 May 2023 08:17:07 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <bd9f392c-93e5-7147-0f21-f6732b210df5@wanadoo.fr>
+Date:   Thu, 18 May 2023 08:17:03 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: AW: [PATCH] wifi: ath12k: Remove some dead code
+Content-Language: fr
+To:     Walter Harms <wharms@bfs.de>, Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "ath12k@lists.infradead.org" <ath12k@lists.infradead.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <c17edf0811156a33bae6c5cf1906d751cc87edd4.1682423828.git.christophe.jaillet@wanadoo.fr>
+ <d0c5ed33fb1644328fbdc5d7aba20a97@bfs.de>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <d0c5ed33fb1644328fbdc5d7aba20a97@bfs.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: openvswitch: Use struct_size()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168438482150.9978.1427720181079235563.git-patchwork-notify@kernel.org>
-Date:   Thu, 18 May 2023 04:40:21 +0000
-References: <e7746fbbd62371d286081d5266e88bbe8d3fe9f0.1683388991.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <e7746fbbd62371d286081d5266e88bbe8d3fe9f0.1683388991.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     pshelar@ovn.org, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        dev@openvswitch.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Le 25/04/2023 à 14:10, Walter Harms a écrit :
+> Does  mcs = ATH12K_HE_MCS_MAX make sense ?
+> 
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Based on [1], I would say yes, WMI_RATE_PREAMBLE_HE (i.e. 11) looks like 
+a valid value.
 
-On Sat,  6 May 2023 18:04:16 +0200 you wrote:
-> Use struct_size() instead of hand writing it.
-> This is less verbose and more informative.
+CJ
+
+[1]: https://www.7signal.com/info/mcs
+
+> re,
+>   wh
+> ________________________________________
+> Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Gesendet: Dienstag, 25. April 2023 13:57:19
+> An: Kalle Valo; David S. Miller; Eric Dumazet; Jakub Kicinski; Paolo Abeni
+> Cc: linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe JAILLET; ath12k@lists.infradead.org; linux-wireless@vger.kernel.org; netdev@vger.kernel.org
+> Betreff: [PATCH] wifi: ath12k: Remove some dead code
+> 
+> ATH12K_HE_MCS_MAX = 11, so this test and the following one are the same.
+> Remove the one with the hard coded 11 value.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> It will also help scripts when __counted_by macro will be added.
-> See [1].
+>   drivers/net/wireless/ath/ath12k/dp_rx.c | 5 -----
+>   1 file changed, 5 deletions(-)
 > 
-> [...]
-
-Here is the summary with links:
-  - [net-next] net: openvswitch: Use struct_size()
-    https://git.kernel.org/netdev/net-next/c/b50a8b0d57ab
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+> diff --git a/drivers/net/wireless/ath/ath12k/dp_rx.c b/drivers/net/wireless/ath/ath12k/dp_rx.c
+> index e78478a5b978..79386562562f 100644
+> --- a/drivers/net/wireless/ath/ath12k/dp_rx.c
+> +++ b/drivers/net/wireless/ath/ath12k/dp_rx.c
+> @@ -1362,11 +1362,6 @@ ath12k_update_per_peer_tx_stats(struct ath12k *ar,
+>           * Firmware rate's control to be skipped for this?
+>           */
+> 
+> -       if (flags == WMI_RATE_PREAMBLE_HE && mcs > 11) {
+> -               ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
+> -               return;
+> -       }
+> -
+>          if (flags == WMI_RATE_PREAMBLE_HE && mcs > ATH12K_HE_MCS_MAX) {
+>                  ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
+>                  return;
+> --
+> 2.34.1
+> 
+> 
 
