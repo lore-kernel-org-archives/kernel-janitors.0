@@ -2,98 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E8DAC7EE23
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 08:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E35A1C77B7D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 09:18:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230250AbjERIkw (ORCPT
+        id S230138AbjERJSR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 May 2023 04:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35634 "EHLO
+        Thu, 18 May 2023 05:18:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbjERIks (ORCPT
+        with ESMTP id S230126AbjERJSR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 May 2023 04:40:48 -0400
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F9E9173F;
-        Thu, 18 May 2023 01:40:47 -0700 (PDT)
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-25367154308so220423a91.1;
-        Thu, 18 May 2023 01:40:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684399247; x=1686991247;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vw6xt/y7AkFMPkBEKOtYpyNZ0+8RMoG8PhpY+gjYbQY=;
-        b=dlXpIdPn6Xoo+PhNh+4FNQo2SisOp+4ua6JE9Er3VE5xxRFjx2IEG3xPdfGpBtJz3E
-         xARWlf3ceSzUn1Wvn9V9CbKJpplc5ynn6vJwLg+QmJ9ZGqwBx0J+HfgvcSQejbRDpTVF
-         PuE7sN1dKV+TYZ17nYLjZyHS8qCQvITA71veDxQIscKdHPyCls160zU6UsS3lRH/TP0y
-         iapO4Glupa9GXNZ+RqT17wKwTbk0n84pzNUzkViiabf2vIZAzcr8PcrDK+ayy8IAKi8w
-         LHjOZaS8BrD34ue29FV05hQ6dEcdA4AYexgqFwJScT/fAG5rouQP0ASjUuKGaOXod4l2
-         03vA==
-X-Gm-Message-State: AC+VfDwahlTrvyc+NMs1VULVGKAzuMxE/47hzxu0VIt2a0ptZPa1a/zo
-        VxYRY6q81k85jZ1PQx27On7ejm9Tcbd0bUQB
-X-Google-Smtp-Source: ACHHUZ6vsmiXjXFwyKM5gSEb2mIhlorpplmKrEeHCicuDLzKL9PpRqXmtu4/cLEmy8KkytUqs1myJw==
-X-Received: by 2002:a17:90a:1481:b0:24e:102e:edbf with SMTP id k1-20020a17090a148100b0024e102eedbfmr1660044pja.13.1684399246734;
-        Thu, 18 May 2023 01:40:46 -0700 (PDT)
-Received: from dev-linux.lan (cpe-70-95-21-110.san.res.rr.com. [70.95.21.110])
-        by smtp.gmail.com with ESMTPSA id t6-20020a17090ad50600b0024dee5cbe29sm889946pju.27.2023.05.18.01.40.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 May 2023 01:40:46 -0700 (PDT)
-From:   Sukrut Bellary <sukrut.bellary@linux.com>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Sukrut Bellary <sukrut.bellary@linux.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH5b51a54ae2fa1cc8459b68a28b3c8ca7b7203994] PM / devfreq: mtk-cci: Fix variable deferencing before NULL check
-Date:   Thu, 18 May 2023 01:40:33 -0700
-Message-Id: <20230518084033.508711-1-sukrut.bellary@linux.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 18 May 2023 05:18:17 -0400
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE421FEB;
+        Thu, 18 May 2023 02:17:58 -0700 (PDT)
+Date:   Thu, 18 May 2023 09:17:47 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atinb.me;
+        s=protonmail; t=1684401473; x=1684660673;
+        bh=YWVeRBOpdAvOw0Rrw80vuaESvT2YD9shQDDbBZIXc50=;
+        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+        b=t7esdlbVj3JHuVNwJjDNaU3HW1NjX7O1DcQ68u0MCZEc7BfVDZMqmNbPcqhNSR1La
+         FDxHiQxNsm6svpv02TQ8oFYiWZQOvnUbQwXsT0yCenOI9Rwb6+7+JwlshSc5Sl2eAB
+         4lyD9ECmAag8ZbtYr4IfKG4roN1noILYT2VShw5QewYHxqmQLBooBqqoY3tuu35VIx
+         ePaQt+g9lLAUCk46t2ut7vGrPElG7iNBG2pjgiOj37l3hAsfEYYPgbsegbB9l79Rck
+         lugJ9aI+jn5MY5b5z3x9d7VChuj4hqWt5wuSDZyPVv+VfwoTrNCg7C8ryP3rIlNPwF
+         AH63y8O97+FWw==
+To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl
+From:   Atin Bainada <hi@atinb.me>
+Cc:     linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Atin Bainada <hi@atinb.me>
+Subject: [PATCH] media: av7110: Remove unnecessary (void*) conversions
+Message-ID: <20230518091729.2431-1-hi@atinb.me>
+Feedback-ID: 64551405:user:proton
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-smatch warning:
-drivers/devfreq/mtk-cci-devfreq.c:135 mtk_ccifreq_target()
-warn: variable dereferenced before check 'drv' (see line 130)
+No need cast (void*) to (struct dvb_demux_feed *) or (struct av7110 *).
 
-This is based on static analysis only. Compilation tested.
-
-Signed-off-by: Sukrut Bellary <sukrut.bellary@linux.com>
+Signed-off-by: Atin Bainada <hi@atinb.me>
 ---
- drivers/devfreq/mtk-cci-devfreq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/media/av7110/av7110_av.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/devfreq/mtk-cci-devfreq.c b/drivers/devfreq/mtk-cci-devfreq.c
-index e5458ada5197..6354622eda65 100644
---- a/drivers/devfreq/mtk-cci-devfreq.c
-+++ b/drivers/devfreq/mtk-cci-devfreq.c
-@@ -127,7 +127,7 @@ static int mtk_ccifreq_target(struct device *dev, unsigned long *freq,
- 			      u32 flags)
+diff --git a/drivers/staging/media/av7110/av7110_av.c b/drivers/staging/med=
+ia/av7110/av7110_av.c
+index a5c5bebad306..00dd6a7fea64 100644
+--- a/drivers/staging/media/av7110/av7110_av.c
++++ b/drivers/staging/media/av7110/av7110_av.c
+@@ -78,7 +78,7 @@ static int write_ts_to_decoder(struct av7110 *av7110, int=
+ type, const u8 *buf, s
+=20
+ int av7110_record_cb(struct dvb_filter_pes2ts *p2t, u8 *buf, size_t len)
  {
- 	struct mtk_ccifreq_drv *drv = dev_get_drvdata(dev);
--	struct clk *cci_pll = clk_get_parent(drv->cci_clk);
-+	struct clk *cci_pll;
- 	struct dev_pm_opp *opp;
- 	unsigned long opp_rate;
- 	int voltage, pre_voltage, inter_voltage, target_voltage, ret;
-@@ -139,6 +139,7 @@ static int mtk_ccifreq_target(struct device *dev, unsigned long *freq,
- 		return 0;
- 
- 	inter_voltage = drv->inter_voltage;
-+	cci_pll = clk_get_parent(drv->cci_clk);
- 
- 	opp_rate = *freq;
- 	opp = devfreq_recommended_opp(dev, &opp_rate, 1);
--- 
-2.34.1
+-=09struct dvb_demux_feed *dvbdmxfeed =3D (struct dvb_demux_feed *) p2t->pr=
+iv;
++=09struct dvb_demux_feed *dvbdmxfeed =3D p2t->priv;
+=20
+ =09if (!(dvbdmxfeed->ts_type & TS_PACKET))
+ =09=09return 0;
+@@ -837,7 +837,7 @@ static int write_ts_to_decoder(struct av7110 *av7110, i=
+nt type, const u8 *buf, s
+ int av7110_write_to_decoder(struct dvb_demux_feed *feed, const u8 *buf, si=
+ze_t len)
+ {
+ =09struct dvb_demux *demux =3D feed->demux;
+-=09struct av7110 *av7110 =3D (struct av7110 *) demux->priv;
++=09struct av7110 *av7110 =3D demux->priv;
+=20
+ =09dprintk(2, "av7110:%p, \n", av7110);
+=20
+--=20
+2.40.0
+
 
