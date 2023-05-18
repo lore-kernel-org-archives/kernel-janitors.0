@@ -2,110 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E41EEC7EE25
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 06:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74C1C77B7D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 07:10:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229869AbjERGRU (ORCPT
+        id S230056AbjERHKx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 May 2023 02:17:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39128 "EHLO
+        Thu, 18 May 2023 03:10:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbjERGRT (ORCPT
+        with ESMTP id S229997AbjERHKw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 May 2023 02:17:19 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31DA31FD8
-        for <kernel-janitors@vger.kernel.org>; Wed, 17 May 2023 23:17:15 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
+        Thu, 18 May 2023 03:10:52 -0400
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 925D310F5
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 May 2023 00:10:46 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id zWwipDLQ5jCyEzWwiphDGq; Thu, 18 May 2023 08:17:07 +0200
+        id zXmapJCyDEQ0YzXmbpoAuZ; Thu, 18 May 2023 09:10:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684390627;
-        bh=lHzeDDfUlQX3RH1HXK0XsiQwqk7lqO7xwS/nUPsFcJ8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=QOwSADmn96OEyVdr0c7A5uO5YPGAzWOZyiU0QJi2BiJnl6Pt/jVDU1puyRiTyZws/
-         Y5tgDazDLcZP61+sofQWEaUzFmCo0OO3KL5ppkUwxna38ivSWqlzxe/mUZZ1rXkBfp
-         6Rp4irTvkCaJn4X3tLsg6SoKwxS/gR8ua5sEN23+I8R5pTd+oCUXqHYeCsDOp8mY76
-         97Tem981S6ocQ5+IaqA1Mwtaxs0IIs8nu2gCVPx6XIXtmRs4DujC8efA6TySfcKIym
-         vV87QeD5I5LOb2G3S8Te7GQQOpsBUbwlMG0xvsE9ME3RHih7r/o0HiJ8GPUNYWfPtB
-         Qu9l6av+Y2AHg==
-X-ME-Helo: [192.168.1.18]
+        s=t20230301; t=1684393844;
+        bh=F+zInelYRTBn1Bc3nl++TZglWSkvYGCgphkwfxYXGUI=;
+        h=From:To:Cc:Subject:Date;
+        b=jj5h5i+UBg8mXjxtMytCz3rOb/3ZuplCgQI7Qtmube/kc/QQnYDVSVNeRw4htK//5
+         JtCtXmMUqbJq96EQ2dpuiOHjg3Is7ZG3zDKWOUrK+ko4kGTcuDsrPINQ6qhP5Q0q70
+         yCn5VgPnQDvFvZ/NgNCMuopUozdGtPGJWiSWC+634Ft55qDtM1WNMC+fpjx/BEnGQ/
+         GTzk4kULOfnMzjSEIk14pCoEN08qbs9IO0TWBuIvrauEetjnYGh36xT/pXmczco7lV
+         6obaf4B7UzFX1Vln9AD8XW0fvSx3pgLG21OZTLdYyeIWjG0M4m4dIHHhdVnU2JUzOb
+         AkY+DDx1mDgkA==
+X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 18 May 2023 08:17:07 +0200
+X-ME-Date: Thu, 18 May 2023 09:10:44 +0200
 X-ME-IP: 86.243.2.178
-Message-ID: <bd9f392c-93e5-7147-0f21-f6732b210df5@wanadoo.fr>
-Date:   Thu, 18 May 2023 08:17:03 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: AW: [PATCH] wifi: ath12k: Remove some dead code
-Content-Language: fr
-To:     Walter Harms <wharms@bfs.de>, Kalle Valo <kvalo@kernel.org>,
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Pavel Pisa <pisa@cmp.felk.cvut.cz>,
+        Ondrej Ille <ondrej.ille@gmail.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "ath12k@lists.infradead.org" <ath12k@lists.infradead.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-References: <c17edf0811156a33bae6c5cf1906d751cc87edd4.1682423828.git.christophe.jaillet@wanadoo.fr>
- <d0c5ed33fb1644328fbdc5d7aba20a97@bfs.de>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <d0c5ed33fb1644328fbdc5d7aba20a97@bfs.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH] can: ctucanfd: Remove a useless netif_napi_del() call
+Date:   Thu, 18 May 2023 09:10:39 +0200
+Message-Id: <58500052a6740806e8af199ece45e97cb5eeb1b8.1684393811.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 25/04/2023 à 14:10, Walter Harms a écrit :
-> Does  mcs = ATH12K_HE_MCS_MAX make sense ?
-> 
+free_candev() already calls netif_napi_del(), so there is no need to call
+it explicitly. It is harmless, but useless.
 
-Based on [1], I would say yes, WMI_RATE_PREAMBLE_HE (i.e. 11) looks like 
-a valid value.
+This makes the code mode consistent with the error handling path of
+ctucan_probe_common().
 
-CJ
+While at it, remove a wrong comment about the return value of this
+function.
 
-[1]: https://www.7signal.com/info/mcs
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The comment went wrong after 45413bf75919 ("can: ctucanfd: Convert to platform remove callback returning void")
+---
+ drivers/net/can/ctucanfd/ctucanfd_platform.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> re,
->   wh
-> ________________________________________
-> Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Gesendet: Dienstag, 25. April 2023 13:57:19
-> An: Kalle Valo; David S. Miller; Eric Dumazet; Jakub Kicinski; Paolo Abeni
-> Cc: linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe JAILLET; ath12k@lists.infradead.org; linux-wireless@vger.kernel.org; netdev@vger.kernel.org
-> Betreff: [PATCH] wifi: ath12k: Remove some dead code
-> 
-> ATH12K_HE_MCS_MAX = 11, so this test and the following one are the same.
-> Remove the one with the hard coded 11 value.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/net/wireless/ath/ath12k/dp_rx.c | 5 -----
->   1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath12k/dp_rx.c b/drivers/net/wireless/ath/ath12k/dp_rx.c
-> index e78478a5b978..79386562562f 100644
-> --- a/drivers/net/wireless/ath/ath12k/dp_rx.c
-> +++ b/drivers/net/wireless/ath/ath12k/dp_rx.c
-> @@ -1362,11 +1362,6 @@ ath12k_update_per_peer_tx_stats(struct ath12k *ar,
->           * Firmware rate's control to be skipped for this?
->           */
-> 
-> -       if (flags == WMI_RATE_PREAMBLE_HE && mcs > 11) {
-> -               ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
-> -               return;
-> -       }
-> -
->          if (flags == WMI_RATE_PREAMBLE_HE && mcs > ATH12K_HE_MCS_MAX) {
->                  ath12k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
->                  return;
-> --
-> 2.34.1
-> 
-> 
+diff --git a/drivers/net/can/ctucanfd/ctucanfd_platform.c b/drivers/net/can/ctucanfd/ctucanfd_platform.c
+index 55bb10b157b4..8fe224b8dac0 100644
+--- a/drivers/net/can/ctucanfd/ctucanfd_platform.c
++++ b/drivers/net/can/ctucanfd/ctucanfd_platform.c
+@@ -84,7 +84,6 @@ static int ctucan_platform_probe(struct platform_device *pdev)
+  * @pdev:	Handle to the platform device structure
+  *
+  * This function frees all the resources allocated to the device.
+- * Return: 0 always
+  */
+ static void ctucan_platform_remove(struct platform_device *pdev)
+ {
+@@ -95,7 +94,6 @@ static void ctucan_platform_remove(struct platform_device *pdev)
+ 
+ 	unregister_candev(ndev);
+ 	pm_runtime_disable(&pdev->dev);
+-	netif_napi_del(&priv->napi);
+ 	free_candev(ndev);
+ }
+ 
+-- 
+2.34.1
 
