@@ -2,81 +2,159 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E35A1C77B7D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 09:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D26FBC77B7D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 May 2023 09:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbjERJSR (ORCPT
+        id S230112AbjERJwD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 May 2023 05:18:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47332 "EHLO
+        Thu, 18 May 2023 05:52:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230126AbjERJSR (ORCPT
+        with ESMTP id S229726AbjERJwB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 May 2023 05:18:17 -0400
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE421FEB;
-        Thu, 18 May 2023 02:17:58 -0700 (PDT)
-Date:   Thu, 18 May 2023 09:17:47 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atinb.me;
-        s=protonmail; t=1684401473; x=1684660673;
-        bh=YWVeRBOpdAvOw0Rrw80vuaESvT2YD9shQDDbBZIXc50=;
-        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-        b=t7esdlbVj3JHuVNwJjDNaU3HW1NjX7O1DcQ68u0MCZEc7BfVDZMqmNbPcqhNSR1La
-         FDxHiQxNsm6svpv02TQ8oFYiWZQOvnUbQwXsT0yCenOI9Rwb6+7+JwlshSc5Sl2eAB
-         4lyD9ECmAag8ZbtYr4IfKG4roN1noILYT2VShw5QewYHxqmQLBooBqqoY3tuu35VIx
-         ePaQt+g9lLAUCk46t2ut7vGrPElG7iNBG2pjgiOj37l3hAsfEYYPgbsegbB9l79Rck
-         lugJ9aI+jn5MY5b5z3x9d7VChuj4hqWt5wuSDZyPVv+VfwoTrNCg7C8ryP3rIlNPwF
-         AH63y8O97+FWw==
-To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl
-From:   Atin Bainada <hi@atinb.me>
-Cc:     linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Atin Bainada <hi@atinb.me>
-Subject: [PATCH] media: av7110: Remove unnecessary (void*) conversions
-Message-ID: <20230518091729.2431-1-hi@atinb.me>
-Feedback-ID: 64551405:user:proton
+        Thu, 18 May 2023 05:52:01 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823C2198E
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 May 2023 02:51:59 -0700 (PDT)
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1pzaIW-0000e7-ON; Thu, 18 May 2023 11:51:48 +0200
+Received: from pengutronix.de (unknown [172.20.34.65])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id CDEF01C7B63;
+        Thu, 18 May 2023 09:51:46 +0000 (UTC)
+Date:   Thu, 18 May 2023 11:51:46 +0200
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Pavel Pisa <pisa@cmp.felk.cvut.cz>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Ondrej Ille <ondrej.ille@gmail.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] can: ctucanfd: Remove a useless netif_napi_del() call
+Message-ID: <20230518-satisfied-smugness-dc5a06faa865-mkl@pengutronix.de>
+References: <58500052a6740806e8af199ece45e97cb5eeb1b8.1684393811.git.christophe.jaillet@wanadoo.fr>
+ <202305180932.38815.pisa@cmp.felk.cvut.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7emi62ptsndis2qr"
+Content-Disposition: inline
+In-Reply-To: <202305180932.38815.pisa@cmp.felk.cvut.cz>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:b01:1d::7b
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-No need cast (void*) to (struct dvb_demux_feed *) or (struct av7110 *).
 
-Signed-off-by: Atin Bainada <hi@atinb.me>
----
- drivers/staging/media/av7110/av7110_av.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--7emi62ptsndis2qr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/staging/media/av7110/av7110_av.c b/drivers/staging/med=
-ia/av7110/av7110_av.c
-index a5c5bebad306..00dd6a7fea64 100644
---- a/drivers/staging/media/av7110/av7110_av.c
-+++ b/drivers/staging/media/av7110/av7110_av.c
-@@ -78,7 +78,7 @@ static int write_ts_to_decoder(struct av7110 *av7110, int=
- type, const u8 *buf, s
-=20
- int av7110_record_cb(struct dvb_filter_pes2ts *p2t, u8 *buf, size_t len)
- {
--=09struct dvb_demux_feed *dvbdmxfeed =3D (struct dvb_demux_feed *) p2t->pr=
-iv;
-+=09struct dvb_demux_feed *dvbdmxfeed =3D p2t->priv;
-=20
- =09if (!(dvbdmxfeed->ts_type & TS_PACKET))
- =09=09return 0;
-@@ -837,7 +837,7 @@ static int write_ts_to_decoder(struct av7110 *av7110, i=
-nt type, const u8 *buf, s
- int av7110_write_to_decoder(struct dvb_demux_feed *feed, const u8 *buf, si=
-ze_t len)
- {
- =09struct dvb_demux *demux =3D feed->demux;
--=09struct av7110 *av7110 =3D (struct av7110 *) demux->priv;
-+=09struct av7110 *av7110 =3D demux->priv;
-=20
- =09dprintk(2, "av7110:%p, \n", av7110);
-=20
+On 18.05.2023 09:32:38, Pavel Pisa wrote:
+> Dear Christophe,
+>=20
+> On Thursday 18 of May 2023 09:10:39 Christophe JAILLET wrote:
+> > free_candev() already calls netif_napi_del(), so there is no need to ca=
+ll
+> > it explicitly. It is harmless, but useless.
+> >
+> > This makes the code mode consistent with the error handling path of
+> > ctucan_probe_common().
+>=20
+> OK, but I would suggest to consider to keep sequence in sync with
+>=20
+> linux/drivers/net/can/ctucanfd/ctucanfd_pci.c
+>=20
+> where is netif_napi_del() used as well
+>=20
+>         while ((priv =3D list_first_entry_or_null(&bdata->ndev_list_head,=
+ struct ctucan_priv,
+>                                                 peers_on_pdev)) !=3D NULL=
+) {
+>                 ndev =3D priv->can.dev;
+>=20
+>                 unregister_candev(ndev);
+>=20
+>                 netif_napi_del(&priv->napi);
+>=20
+>                 list_del_init(&priv->peers_on_pdev);
+>                 free_candev(ndev);
+>         }
+>=20
+> On the other hand, if interrupt can be called for device between
+> unregister_candev() and free_candev()
+
+At least the case of an "interrupt during ctucan_pci_remove()" is a bug,
+as there is no IRQ handler registered. The IRQ handler is registered in
+ctucan_open() and freed in ctucan_close().
+
+> or some other callback
+> which is prevented by netif_napi_del() now then I would consider
+> to keep explicit netif_napi_del() to ensure that no callback
+> is activated to driver there.
+
+Napi itself is shut down, too, as there is a call to napi_disable() in
+ctucan_close().
+
+> And for PCI integration it is more
+> critical because list_del_init(&priv->peers_on_pdev); appears in
+> between and I would prefer that no interrupt appears when instance
+> is not on the peers list anymore. Even that would not be a problem
+> for actual CTU CAN FD implementation, peers are accessed only during
+> physical device remove, but I have worked on other controllers
+> in past, which required to coordinate with peers in interrupt
+> handling...
+>=20
+> So I would be happy for some feedback what is actual guarantee
+> when device is stopped.
+
+After a ifup; ifdown;, which corresponds to ctucan_open(),
+ctucan_close() in the driver, the device should be shut down, no
+interrupts active. You might even power down the device, although things
+get a little more complicated with HW timestamping or even PTP enabled.
+
+> May it be that it would be even more robust to run removal
+> with two loop where the first one calls unregister_candev()
+> and netif_napi_del() and only the second one removes from peers
+> and call free_candev()... But I am not sure there and it is not
+> problem in actual driver because peers are not used in any
+> other place...
+
+regards,
+Marc
+
 --=20
-2.40.0
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
+--7emi62ptsndis2qr
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmRl9S8ACgkQvlAcSiqK
+BOgDpAgAnI3Osy8Fx5vffOkPSdz+b193idfd/nM1NjJAYnsAaPObGXK3zWGMg58W
+Qhxr3+W28VBJU/ucksBHROZIOiAm1a2Y69y92pChXdZd2+Lrhz2xZhw2aqkwQkn8
+F1tBieRVWy0T0P3BogFsKXwdLCURMBqhSZmmLRptxx6k+H7QlqPRh21tmqun2+Dm
+1KAd4xr97px5EqOha3Jtr3HP4iWiVx7DYS6R7sFRr3ZX7lzu4YkUkO5Xg33R0cwa
+yxMOmXM49IKwr59gxjXydCoD6BwOI39fKbCVHkOtG2XRQapuDCRyyDf+uBelFQeQ
+X0nEPjuBUVtCexN5ArBdnKNxdEW1Ew==
+=rkgc
+-----END PGP SIGNATURE-----
+
+--7emi62ptsndis2qr--
