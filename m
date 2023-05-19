@@ -2,127 +2,119 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 457DDC77B7A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 06:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7ACC77B7F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 08:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229980AbjESGox (ORCPT
+        id S230433AbjESImT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 May 2023 02:44:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46460 "EHLO
+        Fri, 19 May 2023 04:42:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbjESGow (ORCPT
+        with ESMTP id S230435AbjESImR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 May 2023 02:44:52 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2325912C;
-        Thu, 18 May 2023 23:44:51 -0700 (PDT)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34IIwuPT031081;
-        Fri, 19 May 2023 06:44:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-03-30; bh=4oNhK5bI3ELvlGqoTiZpXVakPRt4I4zhn01DypkCTuU=;
- b=vHpJsLtOCuGjDVvI+Grka5J69Lq73Mo5k1ajAMUbJlV6/cigVbSQDK9PwrdCaXhcQ2Zq
- Ep/RqTrmUhXvU/AtokzjlzJNidDEsJM3aRfTPZzFxRrUQV7fEq1DjboyRJUFUWMoE/x4
- yyalZGSFJTxL9lau1Xo1tHpCE1RzbatfQ+44pv7ax0qYQu/sQZGh4rpd1b3Mz+/owabY
- 4pnVZeH1pW9+lipLHGLoPwQh/ke8jW5R4lqb+kXs9PJrfCCQDbOueioD0QDl3CXN+6nv
- u7qBCd/xn0yRdbpuHYbXGlHtOCt9BIAt43k4gdVHRTOGpdE250T2/QG9rZrjBXaHyrAg HQ== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qj0ye9dw8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 May 2023 06:44:11 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34J4sQX0032130;
-        Fri, 19 May 2023 06:44:10 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3qj10ds5s0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 May 2023 06:44:10 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34J6i9Sp020634;
-        Fri, 19 May 2023 06:44:09 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3qj10ds5rg-1;
-        Fri, 19 May 2023 06:44:09 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Rander Wang <rander.wang@intel.com>,
-        Jyri Sarha <jyri.sarha@intel.com>,
-        sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Cc:     harshit.m.mogalapalli@oracle.com, error27@gmail.com,
-        dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] ASoC: SOF: Intel: hda-dai: Fix locking in hda_ipc4_pre_trigger()
-Date:   Thu, 18 May 2023 23:44:01 -0700
-Message-Id: <20230519064404.1659637-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.40.0
+        Fri, 19 May 2023 04:42:17 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31CE5E5D
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 May 2023 01:42:15 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-30626f4d74aso1980362f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 May 2023 01:42:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684485733; x=1687077733;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qj6uQgN1+vxh9RZBPkG03bBIocorGgNPBI/qslQJ5s8=;
+        b=FsxZ051YRylQq/5B4oscm9IUNqPtK0o/St+buTVwQzm+nnIlhcPRbnZ1EhwwSjOrou
+         NJ6/UnPeWArc04donPKQJt8JAALcSxZQ9eMU6jRp7vGkprLOzzmYOiIUoiOO6bFCZRKu
+         H0Xk88MYGfXQ5xTUff7hxGT/rdRJWs3B2T69dCV6ofeiPsoJLhdPcKlHz8rppCTgrCfu
+         Hy62FW1esfpeZHB8C/zVX16sKZ1FB9BaEpvNZGNs0GVJzRp/b/QDZWQ39AC4fdK3t0ZP
+         kf2D8uUC5WeW0YsVlOXpBHXYN1zmvxf5xVh46RtqZDzTkhLIF8Sl4rJ0xGL5sfn5L43C
+         LBIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684485733; x=1687077733;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qj6uQgN1+vxh9RZBPkG03bBIocorGgNPBI/qslQJ5s8=;
+        b=jHXq056ozCjIrlh5iihbnEqK49I/9o1gaZCa7kkWzVa9CyaiMWYI/J/wpbK8EZAqtx
+         cbfRL+AIRTy8sTl/DjIvQYCmrN/MkHwh8zHd536vEuTISLTR1n7vhk80vwtYB2C7JYUR
+         0tGaofNWQM+MeGKlIsDRnraunmBe5vZrjaoOm3WgKSfRz2wk5UZBRPpIq3HPOed65pMV
+         vjMQVleexNuqwl+vQvRCVJOpQQprQuv+nuGEITuBThzyZU/LpXCnZaRUcNWaXlIlLfXE
+         UlDrsewQ74BS5qUy4ucGP/OZ17pVB7BvkCEcvPro8Go6VwM+wXCtzW7BkMSNm5r+51mq
+         kHtQ==
+X-Gm-Message-State: AC+VfDydS/1ncZCtoM9LzIv9jmhQpI1tp/n7TUNfLKzMQKsjyu/dkmSg
+        VUIjiAhgrOSBbfpW5hlWOGsfuw==
+X-Google-Smtp-Source: ACHHUZ4pYqnT+QNSgIw7tLCyKnqAJpSKnRj3817DB9WLtNNuVND7AG9ya5U08W4gvbQi0+CNP9XOMg==
+X-Received: by 2002:adf:e64d:0:b0:307:979f:736e with SMTP id b13-20020adfe64d000000b00307979f736emr1344667wrn.55.1684485733660;
+        Fri, 19 May 2023 01:42:13 -0700 (PDT)
+Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id x15-20020adfec0f000000b002cea9d931e6sm4624731wrn.78.2023.05.19.01.42.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 May 2023 01:42:13 -0700 (PDT)
+Message-ID: <50c285e2-2212-45c9-e62c-1b3804ec2cec@linaro.org>
+Date:   Fri, 19 May 2023 09:42:12 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-19_04,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- malwarescore=0 mlxscore=0 spamscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305190057
-X-Proofpoint-ORIG-GUID: wCdIePPxMFhs_7bZc9g6lp4a3Jb7qIx4
-X-Proofpoint-GUID: wCdIePPxMFhs_7bZc9g6lp4a3Jb7qIx4
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] MAINTAINERS: remove broken entries in QUALCOMM TYPEC PORT
+ MANAGER DRIVER
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Caleb Connolly <caleb.connolly@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230519041307.32322-1-lukas.bulwahn@gmail.com>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20230519041307.32322-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-hda_ipc4_pre_trigger() has two issues:
- 1. In the default case, we are returning without unlocking the mutex.
- 2. In case SNDRV_PCM_TRIGGER_STOP: when ret is less than zero it goes
-    to out, unlocks but returns zero instead of a negative value.
+On 19/05/2023 05:13, Lukas Bulwahn wrote:
+> Commit a4422ff22142 ("usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
+> adds the section QUALCOMM TYPEC PORT MANAGER DRIVER in MAINTAINERS with
+> two file entries for header files in include/dt-bindings/usb/typec/.
+> 
+> However, these files are not added to the repository with this commit or
+> any commit in the related patch series. Probably, these file entries are
+> just needless leftover after the work went through some refactoring.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> Remove the two file entries for non-existent header files.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Bryan, please ack.
+> 
+> Greg, please pick this minor cleanup patch on your usb-next tree.
+> 
+>   MAINTAINERS | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3182992769aa..a987ed462d64 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17559,8 +17559,6 @@ L:	linux-usb@vger.kernel.org
+>   S:	Maintained
+>   F:	Documentation/devicetree/bindings/usb/qcom,pmic-*.yaml
+>   F:	drivers/usb/typec/tcpm/qcom/
+> -F:	include/dt-bindings/usb/typec/qcom,pmic-pdphy.h
+> -F:	include/dt-bindings/usb/typec/qcom,pmic-typec.h
+>   
+>   QUALCOMM VENUS VIDEO ACCELERATOR DRIVER
+>   M:	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
 
-Fix this by changing the final return value to 'ret' instead of zero,
-and initialize 'ret' to zero in the start of the function.
+Oops
 
-Fixes: 225f37b578a9 ("ASoC: SOF: ipc4-pcm: reset all pipelines during FE DAI hw_free")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-Only compile tested. This is found using static anlysis with Smatch.
----
- sound/soc/sof/intel/hda-dai-ops.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/sof/intel/hda-dai-ops.c b/sound/soc/sof/intel/hda-dai-ops.c
-index 5a508e118e3d..1e58256c8003 100644
---- a/sound/soc/sof/intel/hda-dai-ops.c
-+++ b/sound/soc/sof/intel/hda-dai-ops.c
-@@ -183,7 +183,7 @@ static int hda_ipc4_pre_trigger(struct snd_sof_dev *sdev, struct snd_soc_dai *cp
- 	struct sof_ipc4_pipeline *pipeline;
- 	struct snd_sof_widget *swidget;
- 	struct snd_soc_dapm_widget *w;
--	int ret;
-+	int ret = 0;
- 
- 	w = snd_soc_dai_get_widget(cpu_dai, substream->stream);
- 	swidget = w->dobj.private;
-@@ -208,11 +208,11 @@ static int hda_ipc4_pre_trigger(struct snd_sof_dev *sdev, struct snd_soc_dai *cp
- 		break;
- 	default:
- 		dev_err(sdev->dev, "unknown trigger command %d\n", cmd);
--		return -EINVAL;
-+		ret = -EINVAL;
- 	}
- out:
- 	mutex_unlock(&ipc4_data->pipeline_state_mutex);
--	return 0;
-+	return ret;
- }
- 
- static int hda_trigger(struct snd_sof_dev *sdev, struct snd_soc_dai *cpu_dai,
--- 
-2.31.1
-
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
