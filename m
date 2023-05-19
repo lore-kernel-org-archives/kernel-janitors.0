@@ -2,94 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 526BCC77B7F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 06:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457DDC77B7A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 06:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229616AbjESGMo (ORCPT
+        id S229980AbjESGox (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 May 2023 02:12:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41084 "EHLO
+        Fri, 19 May 2023 02:44:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjESGMm (ORCPT
+        with ESMTP id S229597AbjESGow (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 May 2023 02:12:42 -0400
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 347B11AC;
-        Thu, 18 May 2023 23:12:41 -0700 (PDT)
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-64d2e8a842cso433162b3a.3;
-        Thu, 18 May 2023 23:12:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684476760; x=1687068760;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+4SN79Akj+b85DVae9qGC3BAR6GQduEBcnLj3YcjnHU=;
-        b=Qsb3/9IqTkYzB+lUSxJ3cVvE7+1MtyMYPtChMAICXWgpxGqT+vots9SpUmib8an714
-         CZJz52v24Gzp+BRDWKn3BM7tdT9D2EN/iD47wYLypxm39ptgwW4nFyFTV3jiH5lcKlHr
-         rq+Ba+zrI0cqk0f5S5h+j8EXlYBrksIn467kc+T0ClnjpH5NoPDldgsFIRFiGCF9eiaH
-         XvE24lXpVzmV6py7P5dFXzmdoQt4H+MlLITh5xUl1uOBbR8W+dhXHooALgqdPjnVZjZM
-         8XLn3WgE4BAJ4wetf/lCDVnNe0Fbl8y9+mzZsPuCeC3VqTeDIhkU60eWmLmGqI7qtsIw
-         dzzg==
-X-Gm-Message-State: AC+VfDwxL3kxIHPp5tt9eEEi6SELX7qwDtJaTeJ4nOubsoZaEM2JWWCG
-        gMag0pJ+/xy/WXJL5oe0Zkk=
-X-Google-Smtp-Source: ACHHUZ4ofhRJDj2vK6lAjY0g6mcB8/BlvmqrFVReEtZMOaB2HN6AWPaKGIiMWBSj5LRDoL1gK+4qgg==
-X-Received: by 2002:a05:6a00:804:b0:647:d698:56d2 with SMTP id m4-20020a056a00080400b00647d69856d2mr1842354pfk.27.1684476759789;
-        Thu, 18 May 2023 23:12:39 -0700 (PDT)
-Received: from dev-linux.lan (cpe-70-95-21-110.san.res.rr.com. [70.95.21.110])
-        by smtp.gmail.com with ESMTPSA id f12-20020aa78b0c000000b0063b7f3250e9sm2283595pfd.7.2023.05.18.23.12.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 May 2023 23:12:39 -0700 (PDT)
-Date:   Thu, 18 May 2023 23:12:37 -0700
-From:   Sukrut Bellary <sukrut.bellary@linux.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Abel Vesa <abel.vesa@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] misc: fastrpc: Fix double free of 'buf' in error path
-Message-ID: <ZGcTVfAQeRcOSjO8@dev-linux.lan>
-References: <20230518100829.515143-1-sukrut.bellary@linux.com>
- <9194ebdf-f335-4cd6-bf89-bb4f86a57784@kili.mountain>
- <ZGbiwqMxnFFvS7y8@dev-linux.lan>
- <28c6814d-1863-41fa-a471-35a3ccf4447c@kili.mountain>
+        Fri, 19 May 2023 02:44:52 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2325912C;
+        Thu, 18 May 2023 23:44:51 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34IIwuPT031081;
+        Fri, 19 May 2023 06:44:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=4oNhK5bI3ELvlGqoTiZpXVakPRt4I4zhn01DypkCTuU=;
+ b=vHpJsLtOCuGjDVvI+Grka5J69Lq73Mo5k1ajAMUbJlV6/cigVbSQDK9PwrdCaXhcQ2Zq
+ Ep/RqTrmUhXvU/AtokzjlzJNidDEsJM3aRfTPZzFxRrUQV7fEq1DjboyRJUFUWMoE/x4
+ yyalZGSFJTxL9lau1Xo1tHpCE1RzbatfQ+44pv7ax0qYQu/sQZGh4rpd1b3Mz+/owabY
+ 4pnVZeH1pW9+lipLHGLoPwQh/ke8jW5R4lqb+kXs9PJrfCCQDbOueioD0QDl3CXN+6nv
+ u7qBCd/xn0yRdbpuHYbXGlHtOCt9BIAt43k4gdVHRTOGpdE250T2/QG9rZrjBXaHyrAg HQ== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qj0ye9dw8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 May 2023 06:44:11 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34J4sQX0032130;
+        Fri, 19 May 2023 06:44:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3qj10ds5s0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 May 2023 06:44:10 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34J6i9Sp020634;
+        Fri, 19 May 2023 06:44:09 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3qj10ds5rg-1;
+        Fri, 19 May 2023 06:44:09 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rander Wang <rander.wang@intel.com>,
+        Jyri Sarha <jyri.sarha@intel.com>,
+        sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Cc:     harshit.m.mogalapalli@oracle.com, error27@gmail.com,
+        dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] ASoC: SOF: Intel: hda-dai: Fix locking in hda_ipc4_pre_trigger()
+Date:   Thu, 18 May 2023 23:44:01 -0700
+Message-Id: <20230519064404.1659637-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28c6814d-1863-41fa-a471-35a3ccf4447c@kili.mountain>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-19_04,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 bulkscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305190057
+X-Proofpoint-ORIG-GUID: wCdIePPxMFhs_7bZc9g6lp4a3Jb7qIx4
+X-Proofpoint-GUID: wCdIePPxMFhs_7bZc9g6lp4a3Jb7qIx4
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 19, 2023 at 07:16:14AM +0300, Dan Carpenter wrote:
-> On Thu, May 18, 2023 at 07:45:22PM -0700, Sukrut Bellary wrote:
-> > > > 
-> > > > Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-> > > > Signed-off-by: Sukrut Bellary <sukrut.bellary@linux.com>
-> > > > ---
-> > >   ^^^
-> > > Put testing caveats here instead, where it will be removed from the
-> > > git log.
-> > >
-> > 
-> > Shall I add "This is based on static analysis only. Compilation tested"
-> > here 
-> > or 
-> > is it not required to mention this for all the fixes?
-> > Can you please recommend what's is the preferred method I need to follow?
-> 
-> You can't go wrong with always adding it.  The untested part is useful
-> to know.  Also it's good to know how a bug is found so we can say if
-> it's affecting user and so we can improve our processes going forward.
->
-Ok, that's clear. Thanks for the input.
+hda_ipc4_pre_trigger() has two issues:
+ 1. In the default case, we are returning without unlocking the mutex.
+ 2. In case SNDRV_PCM_TRIGGER_STOP: when ret is less than zero it goes
+    to out, unlocks but returns zero instead of a negative value.
 
-Regards,
-Sukrut Bellary
+Fix this by changing the final return value to 'ret' instead of zero,
+and initialize 'ret' to zero in the start of the function.
 
-> regards,
-> dan carpenter
-> 
+Fixes: 225f37b578a9 ("ASoC: SOF: ipc4-pcm: reset all pipelines during FE DAI hw_free")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+Only compile tested. This is found using static anlysis with Smatch.
+---
+ sound/soc/sof/intel/hda-dai-ops.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/sof/intel/hda-dai-ops.c b/sound/soc/sof/intel/hda-dai-ops.c
+index 5a508e118e3d..1e58256c8003 100644
+--- a/sound/soc/sof/intel/hda-dai-ops.c
++++ b/sound/soc/sof/intel/hda-dai-ops.c
+@@ -183,7 +183,7 @@ static int hda_ipc4_pre_trigger(struct snd_sof_dev *sdev, struct snd_soc_dai *cp
+ 	struct sof_ipc4_pipeline *pipeline;
+ 	struct snd_sof_widget *swidget;
+ 	struct snd_soc_dapm_widget *w;
+-	int ret;
++	int ret = 0;
+ 
+ 	w = snd_soc_dai_get_widget(cpu_dai, substream->stream);
+ 	swidget = w->dobj.private;
+@@ -208,11 +208,11 @@ static int hda_ipc4_pre_trigger(struct snd_sof_dev *sdev, struct snd_soc_dai *cp
+ 		break;
+ 	default:
+ 		dev_err(sdev->dev, "unknown trigger command %d\n", cmd);
+-		return -EINVAL;
++		ret = -EINVAL;
+ 	}
+ out:
+ 	mutex_unlock(&ipc4_data->pipeline_state_mutex);
+-	return 0;
++	return ret;
+ }
+ 
+ static int hda_trigger(struct snd_sof_dev *sdev, struct snd_soc_dai *cpu_dai,
+-- 
+2.31.1
+
