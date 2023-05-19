@@ -2,63 +2,108 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B49C77B7D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 02:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3CAC77B7F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 04:13:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229701AbjESCqd (ORCPT
+        id S229956AbjESENV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 May 2023 22:46:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49838 "EHLO
+        Fri, 19 May 2023 00:13:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjESCqc (ORCPT
+        with ESMTP id S229694AbjESENT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 May 2023 22:46:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68520E4E;
-        Thu, 18 May 2023 19:46:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EDAE8611E2;
-        Fri, 19 May 2023 02:46:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2B0C433EF;
-        Fri, 19 May 2023 02:46:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684464389;
-        bh=HzVlejBquU/mmb9N9LGZsXPzxTgiTeUltfg3wkB5enM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=JhsZps5y3teN7o2Ub3gAIL2XQCJvqlWWYqZ2xtzU5BJXtYcVL9XMJPOBN9lMJi9mU
-         QUkFMTyPOSIBWgDONh14j0KxzOLvTiOkLCVPQtLwq1ySN4fTU5b8kw2CqIR3Lyzybt
-         KgXdkF9rvq5usZ8xfj+vC5YeE6K5zFGofP6WDpTAZEhVOc0AuY67kxUB0ZiU1SpNP6
-         SxeLTNagpcmrUxnDTdPVx52iqvEcgNEUgfV6/FUuGiZqKOoeS/elhLwtWRbqJ22mVj
-         3cPiKKnIqxaPy9CvUbzmbvknoH2gmff0lVldsFohSwvdv6do4igJaCdGQ8LoHgu0WA
-         kjkMU9yhd5hHQ==
-Date:   Thu, 18 May 2023 19:46:27 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     yunchuan <yunchuan@nfschina.com>
-Cc:     rmody@marvell.com, skalluru@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net,
-        edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: bna: bnad: Remove unnecessary (void*)
- conversions
-Message-ID: <20230518194627.4f9a6b04@kernel.org>
-In-Reply-To: <f65fe4d6-7877-fd70-9e26-e94b4ebdde38@nfschina.com>
-References: <20230517081801.508322e7@kernel.org>
-        <f65fe4d6-7877-fd70-9e26-e94b4ebdde38@nfschina.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 19 May 2023 00:13:19 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6903B10EA;
+        Thu, 18 May 2023 21:13:18 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9659f452148so529294666b.1;
+        Thu, 18 May 2023 21:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684469597; x=1687061597;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LrcvNl9atwbaW1k9X95ljqmJldbIG/iywgMh4yMoDfM=;
+        b=GGodfivCHSnFwM5Axova+wchu7kt4iW3YiEJKx8JonToADWamINBlFj4STqUZU1Xy4
+         IGl/uoXkPfPzzGxTcoO1omSUWWoJtSVxe/J3v/Hg8q7PsObEo4riWksAdYiYNG8O6Cax
+         fEReM7ol/DUAAUxioHOxe3ZOt8eRZHXTrtoioN3yl6cRMKupVD/GtNp1OrotfZDlAQfK
+         /SnbwlSbpgpLiOEvtYY0SW0T1xUi15y559v3XaL6A08c411E3J2VdiWjQT25YYvRyLTn
+         T7N8qmcFtq3upi/kEcWQ+2tF37//n9En0KRi2OZExg5MrnIQ4tMwQfrL8W7dbRAj+HuU
+         M+hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684469597; x=1687061597;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LrcvNl9atwbaW1k9X95ljqmJldbIG/iywgMh4yMoDfM=;
+        b=R1sMc4pmZQ7szIuueyYLvLpsmfHfPOXmDL0i+FceyKIqLZL6me8CFls/M7iyQggjfS
+         p03GAR8kL42nYP2VwmYxqBVcrINg1BzsA9MW67KIh8xw51Rl8MHg9L5uoTE9fKHp1f7P
+         fuMt23W/4iT9rrZ18qyQaYkLtYCdYGoo9SALiMWOq687D68UiYdYjVNGSgLWQ7fz2IhI
+         5BaLo7xraExHVydMShKW1wKWToamdgFq3QGgCUp/awKjQ20lH65F13dKVDPzDEPynVAr
+         mp8jhf75SdGWwRcHL2EoLrBqQ3x67gUi7EHTuKTHaBagUgP5BJvZcAOxeR/dYv4z9bXb
+         AXBA==
+X-Gm-Message-State: AC+VfDwq9oIKPdYqsBRf/xhBJQeoa379dcPht3WZgQFOlTj5Lz4nye1P
+        tfIDY5WfUTNRxJ2xdH7bHqnFVDlBUyw=
+X-Google-Smtp-Source: ACHHUZ60TyXBhznQXFeygSMzxImdpYgfWzTepX/yEGme4rJ4Bq27UeQq+Ukv+TPSOx9yHx91zjsHhQ==
+X-Received: by 2002:a17:907:9614:b0:966:2fdf:f66c with SMTP id gb20-20020a170907961400b009662fdff66cmr605789ejc.3.1684469596509;
+        Thu, 18 May 2023 21:13:16 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:cd27:98d3:5e2d:5b95])
+        by smtp.gmail.com with ESMTPSA id s9-20020a1709066c8900b0094f124a37c4sm1799505ejr.18.2023.05.18.21.13.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 May 2023 21:13:15 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Caleb Connolly <caleb.connolly@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove broken entries in QUALCOMM TYPEC PORT MANAGER DRIVER
+Date:   Fri, 19 May 2023 06:13:07 +0200
+Message-Id: <20230519041307.32322-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 19 May 2023 09:38:49 +0800 yunchuan wrote:
-> >> website: https://kernelnewbies.org/KernelJanitors/Todo/VoidPointerConvs  
-> > How many of such patches will it take to clean up all of net/ and drivers/net ?  
-> 
-> I have identified 48 areas that need to be modified using the script, 
-> and have not yet confirmed whether all of them need to be modified.
+Commit a4422ff22142 ("usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
+adds the section QUALCOMM TYPEC PORT MANAGER DRIVER in MAINTAINERS with
+two file entries for header files in include/dt-bindings/usb/typec/.
 
-Once you have worked thru all - please send the changes in series of 
-10 patches at a time.
+However, these files are not added to the repository with this commit or
+any commit in the related patch series. Probably, these file entries are
+just needless leftover after the work went through some refactoring.
+
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
+
+Remove the two file entries for non-existent header files.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Bryan, please ack.
+
+Greg, please pick this minor cleanup patch on your usb-next tree.
+
+ MAINTAINERS | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3182992769aa..a987ed462d64 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17559,8 +17559,6 @@ L:	linux-usb@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/usb/qcom,pmic-*.yaml
+ F:	drivers/usb/typec/tcpm/qcom/
+-F:	include/dt-bindings/usb/typec/qcom,pmic-pdphy.h
+-F:	include/dt-bindings/usb/typec/qcom,pmic-typec.h
+ 
+ QUALCOMM VENUS VIDEO ACCELERATOR DRIVER
+ M:	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+-- 
+2.17.1
+
