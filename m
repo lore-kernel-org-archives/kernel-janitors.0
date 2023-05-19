@@ -2,106 +2,86 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F704C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 14:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6D7C7EE29
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 17:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231991AbjESONB (ORCPT
+        id S232099AbjESReE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 May 2023 10:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41952 "EHLO
+        Fri, 19 May 2023 13:34:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230116AbjESONB (ORCPT
+        with ESMTP id S232052AbjESRd5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 May 2023 10:13:01 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9E0A3;
-        Fri, 19 May 2023 07:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-        t=1684505573; i=deller@gmx.de;
-        bh=tbCcr/2mh99Kp/T8oPTjqL/r2ONKQOr37+TIk6y2YvU=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=QU3rSZnyziskHwpFiMvdLKp5YBwf+mDuFOKF2b9yKtQDrqCd9HdARJlKLsX6b1FpT
-         ufahe5XBrB5bF8QWMY8TT34Aq4UlAFZlU8Q5FrOVNudcCl4/5Xk/xExoGLvOq8XwDa
-         mduTZFYQTi2FnR/tdfkdEfQw765C2p28Q0oZ0mr+uXTJxFS8C1f1+GttT+Xvxf4/sl
-         GsbjHMAJzlYbwch+oKVhadqd48ZdfcCd2b+7Mbi7RXQvWr4t9KaZevR7rJEagN9rx4
-         X90LAg0G1Z6q+U2ninmOijB1kSMv2MTLnPFqHY+vnpwDWbPUTwEVes2zarxgkzx799
-         jAm6hyZQNAdtw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([94.134.152.232]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MtOGU-1qI6Qt1MQo-00urQa; Fri, 19
- May 2023 16:12:53 +0200
-Message-ID: <3f3878f0-70c6-1f87-2257-30dfce8411e6@gmx.de>
-Date:   Fri, 19 May 2023 16:12:52 +0200
+        Fri, 19 May 2023 13:33:57 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47ED8E42
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 May 2023 10:33:34 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 03yTqTToaqmw803yUqQMYM; Fri, 19 May 2023 19:33:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1684517588;
+        bh=axl0zhsvpOM6Fxxob2rDzGKPa3FDR+vU6oCHaOjC7nk=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=LhUmCPjqjFRrzSgpetc6BLMo5HV9JGPDZKReX7utFpQcGXqk9CrF05Xmi4ocCv7Rm
+         A03Pj1M9tXhjMr3lYU0EUSLBffJtkkkEHZ+lk2jKYI+pINbTdgMRtatuopHZwOux0B
+         asNIJX1rZuitNY1XTKyZODeFlf2qfc9R4wgB7dkQV8G5SRDbJEuBHK3GaM0ckGw0Lf
+         tbQce+LrhfA1iiIDbEUivumHleLZS1iejFP73gBWiQOv6M4371SjgDKJtk93JKAmFe
+         BmBMszFt7s3gDU8ymOMLm7GSv/OrfJG47u0XC9sWW+NQobJ6b6UVKBt6Yg6lKYCloo
+         Iuq3oFKRwOyBQ==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 19 May 2023 19:33:08 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <193a5d30-dd0c-fadb-3358-2fd46fa47e60@wanadoo.fr>
+Date:   Fri, 19 May 2023 19:33:05 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] fbdev: omapfb: panel-tpo-td043mtea1: fix error code in
- probe()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Cai Huoqing <cai.huoqing@linux.dev>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <6f80089a-9223-4434-8da1-c071dd9367b5@kili.mountain>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <6f80089a-9223-4434-8da1-c071dd9367b5@kili.mountain>
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/2] x86/PCI: Fix a sanity check in
+ pirq_convert_irt_table()
+To:     "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
+References: <bc8422a8bf3ff99809413eb62dd12aacc85a9950.1683356951.git.christophe.jaillet@wanadoo.fr>
+ <alpine.DEB.2.21.2305190345331.50034@angie.orcam.me.uk>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <alpine.DEB.2.21.2305190345331.50034@angie.orcam.me.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SW9PeyO7xD6f74VQh7991XhZwZncZqqfMuIV/Dw7/bDivEfCyfj
- BcLXCaIVITjdqwhFGe5/OJ4Sn5849L2C8SJFeFbLhaX/t2J5rwDWOgdrQkfkPg8+qFiPsAs
- hJFlsh3/wK79LWiuBvplR6t/RO2bIhU1UiVxBcnP6OLivXHtw2mm4+KbBpJajU3JkIkmPcO
- b48qKRFnk/KmT1wguYUWA==
-UI-OutboundReport: notjunk:1;M01:P0:Z7TPJaraKlQ=;ZC+NnIOEKEAP0RToH8ucaYAC7oP
- h2vRmVC49MXbQkTcgg1rl4zOZ5nn6eVWqo4mzWPaLAvnvllGneDqglToZVMqacotmzfFDpQ3v
- 4TUAZveJk2NKiTwOsuoxgrE0szrb5ZOGx1KoN4GXA0B3JxS15MlLUUs3OBJHl1e/Rz6s1Qpcf
- kkKtjggT9zZyzCwXxpQcmsOiirKZPgjAadJ9mJTQI4PvIVgLuxqIO+c7BVEDMtISy0B/+YKJX
- Qzt71JrzdiVb5oc/UNRLi19b1wf2FFTZDiNscQpVjmhm+yfK7OJs+nqNHmeTf8PxPWKjfsyw/
- lVT1b9mDlF5NN6ZcOdx+6FCsOxNl0HfZYZi7hPPPubkJtK9Sy2dc5jGGxBgUMVLu4tEiPUGMu
- 8mlHJsju3yyV828KEtdvJRlfZ4oxMLoj7U3v+JW1N2qKDPB6KmGWIY6zXFTLWl8XskMoMZQi2
- mpNrwujxFdA0ASzMnF7tdQEfjtnsIY9bt7aPlx9lX9ChLbhTefhL3FRou38bcZ6HPttFEUVk6
- Zsby1PQmCpDnHOsXAvwJzy/VYeHh6p5721LDXYVLSsbNO0vBcGjKTz/EiNhbMbf4MW/TKPhXH
- 9Jna7TGF12GzZOdJDNHQa506nJ33FSXEjuqKrahho/eGp6v2Oqpo/466rwy4qlTMsA+ojkNdI
- H4N7GW3+7irmpv5NEgiPKm7VTGhiBY4Zp6F74HrWnFOg1L9hr4UanPeQecVgOdfY5gAgll3pc
- y6MMjMxLg5kMY48yekfbUdCaq/P89MzPYzSskhHoXLwdANtsTEeUNBKL/DtaNolnc/IU7PMOg
- 9bOi7SG5Gzv1VD4Tw3Wu5ZO2WxU2hKe97KX0qVoIBMTwLleRbbpOjb7cq3bFOl0kNBaVos3yj
- ATDYcRtVmJAY+q9xsyUAlvau0G0Puz7XFmXnH6gp6SJHMMx5ofTNjsFw0tlqyWmW5XdpxQfct
- rFUKrKVcEPUEMfkmmcDRcrHRac4=
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/15/23 12:32, Dan Carpenter wrote:
-> This was using the wrong variable, "r", instead of "ddata->vcc_reg", so
-> it returned success instead of a negative error code.
->
-> Fixes: 0d3dbeb8142a ("video: fbdev: omapfb: panel-tpo-td043mtea1: Make u=
-se of the helper function dev_err_probe()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   .../video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.c   | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+Le 19/05/2023 à 13:21, Maciej W. Rozycki a écrit :
+> On Sat, 6 May 2023, Christophe JAILLET wrote:
+> 
+>> We compare the size in bytes of a struct (and its ending flexible array)
+>> with the number of elements in a flexible array.
+> 
+>   Incorrect, see the inline documentation for the struct.
 
-applied.
+Ouch.
 
-Thanks!
-Helge
+As you explained in your reply for the 2nd patch:
+     irT_routing_table != irQ_routing_table
 
->
-> diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mt=
-ea1.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.c
-> index 1eaa35c27835..477789cff8e0 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.c
-> @@ -491,7 +491,8 @@ static int tpo_td043_probe(struct spi_device *spi)
->
->   	ddata->vcc_reg =3D devm_regulator_get(&spi->dev, "vcc");
->   	if (IS_ERR(ddata->vcc_reg)) {
-> -		r =3D dev_err_probe(&spi->dev, r, "failed to get LCD VCC regulator\n"=
-);
-> +		r =3D dev_err_probe(&spi->dev, PTR_ERR(ddata->vcc_reg),
-> +				  "failed to get LCD VCC regulator\n");
->   		goto err_regulator;
->   	}
->
+Sorry for the noise.
+
+CJ
+
+> 
+>> This is wrong and "ir->size < ir->used" is likely to be always false.
+> 
+>   Hopefully, but we've seen all kinds of rubbish in PC BIOS data, and this
+> data structure seems available for OEMs to program with a tool called BCP.
+> Better safe than sorry.  Therefore, NAK.
+> 
+>    Maciej
+> 
 
