@@ -2,65 +2,59 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F31C7EE30
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 11:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7D5C7EE31
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 11:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231575AbjESLY2 (ORCPT
+        id S231536AbjESLY1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 May 2023 07:24:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58126 "EHLO
+        Fri, 19 May 2023 07:24:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230486AbjESLYZ (ORCPT
+        with ESMTP id S230477AbjESLYZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Fri, 19 May 2023 07:24:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26251197;
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [IPv6:2001:4190:8020::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A16F11B7;
         Fri, 19 May 2023 04:24:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AA9766173F;
-        Fri, 19 May 2023 11:24:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 937D0C433D2;
-        Fri, 19 May 2023 11:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684495457;
-        bh=vmX06VEz6omqeOYpQw5Dp7ZfuSOpXePDzpnGIckooBM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k1E7i3I38ZI0Bi8GRfZbUCK1RLbV6b27Z4T2VCYJX9ImbYT2XwVgl8+xIQ859MVPI
-         vnzUzBiuZw1ZNqrCuLp7DRLQLDJiZDzlRWynDnROiHJQIPL3y4rU+wXLFXccJ8h/lx
-         Lqrds/wHejWNjF19SnUsseP5MfsABezNwXhx4d5rlYt5aUSbs7Pw5KnuIBkrK6ui10
-         VSqbbJizgMyjvHsCujsLw4pTI6rZhNojBzHMPAZYCG8lik/R2/Oj9E3O1MqqNi5VaA
-         xIGq2awVkCMuuIG9k+L2tIBbYGdAOWzQQlDPXtZjVb/duIjoa7Q0torzApRhSvaMZc
-         +fe8PcSwN5hGQ==
-Date:   Fri, 19 May 2023 16:54:13 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: at_xdmac: fix potential Oops in
- at_xdmac_prep_interleaved()
-Message-ID: <ZGdcXc7GdvoYnYzD@matsya>
-References: <21282b66-9860-410a-83df-39c17fcf2f1b@kili.mountain>
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+        id CAE0892009E; Fri, 19 May 2023 13:24:17 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by angie.orcam.me.uk (Postfix) with ESMTP id C3C2892009B;
+        Fri, 19 May 2023 12:24:17 +0100 (BST)
+Date:   Fri, 19 May 2023 12:24:17 +0100 (BST)
+From:   "Maciej W. Rozycki" <macro@orcam.me.uk>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/PCI: Slightly simplify
+ pirq_convert_irt_table()
+In-Reply-To: <84bf047b01452a72642dbe355b02ef016c985a91.1683356951.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <alpine.DEB.2.21.2305190334330.50034@angie.orcam.me.uk>
+References: <bc8422a8bf3ff99809413eb62dd12aacc85a9950.1683356951.git.christophe.jaillet@wanadoo.fr> <84bf047b01452a72642dbe355b02ef016c985a91.1683356951.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21282b66-9860-410a-83df-39c17fcf2f1b@kili.mountain>
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 15-05-23, 13:32, Dan Carpenter wrote:
-> There are two place if the at_xdmac_interleaved_queue_desc() fails which
-> could lead to a NULL dereference where "first" is NULL and we call
-> list_add_tail(&first->desc_node, ...).  In the first caller, the return
-> is not checked so add a check for that.  In the next caller, the return
-> is checked but if it fails on the first iteration through the loop then
-> it will lead to a NULL pointer dereference.
+On Sat, 6 May 2023, Christophe JAILLET wrote:
 
-Applied, thanks
+> 'size' if computed twice. *ir and *it being the same, the result is the
+> same as well.
 
--- 
-~Vinod
+ There is no `it' data object in this function; I presume you meant `rt'. 
+Then `*ir' and `*rt' are of a different type each, hence the calculations 
+are not the same.  If they were the same, the function wouldn't be needed 
+at all in the first place.  Therefore, NAK.
+
+> While at it, also use struct_size() which is less verbose, more robust and
+> more informative.
+
+ This might be a valuable clean-up, thank you, please submit separately.
+
+  Maciej
