@@ -2,103 +2,116 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57BCC7EE26
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 19:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04643C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 22:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231294AbjESTnT (ORCPT
+        id S230496AbjESW6O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 May 2023 15:43:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40728 "EHLO
+        Fri, 19 May 2023 18:58:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbjESTnS (ORCPT
+        with ESMTP id S229449AbjESW6M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 May 2023 15:43:18 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15FFDE5D
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 May 2023 12:43:13 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-3063891d61aso3462451f8f.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 May 2023 12:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684525392; x=1687117392;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T7jXzBlv/x7knTLTZdsLaKRxP5YKCfI/UXXz7YCoBcM=;
-        b=AAMELdw1xlnh4GC6SpyFNwIYZQ5R9G3EWmccd9Cxd60tUlESVZ7mnnAstuqu3fSEFl
-         la1heueb27DGnNSC7ZjfouoB5el3sO46TXpJXLE7cV6HCXo3T4HmJa7/Y7IODVpubD3u
-         XcBWObJj/odhut67KgjlDRnVUZEMXSu2iosu4G9oqQQoLdSkgpwVIJCIoPhlQ6ah1LMv
-         cDpD55jSRg+hWivaNtJnYyQwnleuMvxAl4zmuoIYDySUvh8t7p61vZiQ4lyUJJhAf8H0
-         EzA9YnflDWtxhCBk6AkHCfbWV3ISIPoeRpZbmd+XhdgHi3XXnOA0ZL5V2sx7lkCXTsv/
-         dnjg==
+        Fri, 19 May 2023 18:58:12 -0400
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF9B1E46;
+        Fri, 19 May 2023 15:58:02 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-64d247a023aso1663259b3a.2;
+        Fri, 19 May 2023 15:58:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684525392; x=1687117392;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T7jXzBlv/x7knTLTZdsLaKRxP5YKCfI/UXXz7YCoBcM=;
-        b=Tj58r89ABLrivsqTo5nDOsbVSv0GTfYm4m8L1motek0YgADg3d6wB3HwkSC54dxtv2
-         YoAeHMZcsz5JeuBUP/qDkULSNHxf+ngSahDAxfo/zf7vxYNgmUI4mKMTEHjlZCRQ6WdV
-         Ibex1K4SJdi8mU0Y/2TBIb75PoPIGwB7buE/dEIsbxto3gw7W/F2NqPG9Eop2b5xYMRG
-         7Jzhm/DTCCvZCrYT5TBhLokz3H9z1hkHGgzaG2XinC0b15E3Z0PCG0tfhBYWuvKsUf+w
-         Ro6aA/Ux2uwRANfbeNv6eRuIKOOFUBrp+iJ9XwocS0h6uhcyysbH1U4xkj/Na195sjvn
-         85gw==
-X-Gm-Message-State: AC+VfDzfnYDsh44aPrliTEcT73rGpCH7Z6nxlLGS3Ar1epo2gTFpYPzv
-        R0RGNe7Dy7nV4AKCGrJ8EzangA==
-X-Google-Smtp-Source: ACHHUZ4Dldx3i06cCQyq05HLtiBc9WOfjvyjvCQsAw5LF/bDperqlV+k+zCeVD/Ej7ZkEZzfElsqEw==
-X-Received: by 2002:a5d:6091:0:b0:306:3361:6cbf with SMTP id w17-20020a5d6091000000b0030633616cbfmr2476488wrt.21.1684525392266;
-        Fri, 19 May 2023 12:43:12 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d2-20020a5d6442000000b002c70ce264bfsm6149863wrw.76.2023.05.19.12.43.06
+        d=1e100.net; s=20221208; t=1684537082; x=1687129082;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lT3nVX8BOP6xdFUAxxsGq0VwKjJtQEdxnV8AqojOVvE=;
+        b=G4zQo875H6QgGCt/ELHZWPc5M13RsMIMJUenfmaNPxgrTdnvpli3cJ5sKr1qpgurNx
+         f/Frs0t8etXo5EjkBgXJsuB5loRA4uqRsQEqh+4GHlurCVCCSMFXLct0mS3vP18ylg3i
+         ykpedVuBytPy1c7+dxGr4+TWeif95YpsQigav/oDY7utpu4WDx/YtadLsL/OuiQfj9AP
+         aSzfW2QtZDhnKIfODzqZLacTKkd1ydOuPNN+DTbMNvsAAErHY3D3KTXqw0VMqHu3k5j6
+         1d216j+6xkRxWHfmMJmlLle07TUZ3Gi6ZmCwMnkn7KC21XHU90OAbQTPs45L3759Ng6C
+         hhzw==
+X-Gm-Message-State: AC+VfDzLTWFRrQRAkOB4W1I1oA0HFbBeULZMq5NVd9Ilgw1GU0SAlH2D
+        eVVocdfxZuWf/63bwV891kc=
+X-Google-Smtp-Source: ACHHUZ4dpJa1bPQdCUzlU6b8KGnb61gD8PYkuxGZtcIWM6wwJnGwKzbgeY8t6vG1yKx/SWkXHSVUuA==
+X-Received: by 2002:a05:6a00:1914:b0:648:b185:efd9 with SMTP id y20-20020a056a00191400b00648b185efd9mr4424120pfi.11.1684537081838;
+        Fri, 19 May 2023 15:58:01 -0700 (PDT)
+Received: from dev-linux.lan (cpe-70-95-21-110.san.res.rr.com. [70.95.21.110])
+        by smtp.gmail.com with ESMTPSA id e24-20020a62aa18000000b0064d3a9def35sm166486pff.188.2023.05.19.15.58.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 May 2023 12:43:09 -0700 (PDT)
-Date:   Fri, 19 May 2023 22:43:03 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Eli Cohen <elic@nvidia.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Shay Drory <shayd@nvidia.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net RESEND] net/mlx5: Fix check for allocation failure in
- comp_irqs_request_pci()
-Message-ID: <ZGfRR//to6FusOLq@kili>
+        Fri, 19 May 2023 15:58:01 -0700 (PDT)
+Date:   Fri, 19 May 2023 15:57:59 -0700
+From:   Sukrut Bellary <sukrut.bellary@linux.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH] misc: fastrpc: Fix double free of 'buf' in error path
+Message-ID: <ZGf+99vmXpN5nJ2f@dev-linux.lan>
+References: <20230518100829.515143-1-sukrut.bellary@linux.com>
+ <9194ebdf-f335-4cd6-bf89-bb4f86a57784@kili.mountain>
+ <f47b17c1-1c02-2aa3-ba10-fcef70cb25a8@linaro.org>
+ <b0115d7d-d15a-4948-8726-09a8b37f3f36@kili.mountain>
+ <4aa42c38-e0e2-4d2d-bfe2-15bc151f7117@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <4aa42c38-e0e2-4d2d-bfe2-15bc151f7117@linaro.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This function accidentally dereferences "cpus" instead of returning
-directly.
+On Fri, May 19, 2023 at 11:39:59AM +0100, Srinivas Kandagatla wrote:
+> 
+> 
+> On 19/05/2023 11:22, Dan Carpenter wrote:
+> > > ----------------------->cut<---------------------------
+> > > diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> > > index f60bbf99485c..3fdd326e1ae8 100644
+> > > --- a/drivers/misc/fastrpc.c
+> > > +++ b/drivers/misc/fastrpc.c
+> > > @@ -1891,7 +1891,8 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl,
+> > > char __user *argp)
+> > >                                        &args[0]);
+> > >          if (err) {
+> > >                  dev_err(dev, "mmap error (len 0x%08llx)\n", buf->size);
+> > > -               goto err_invoke;
+> > > +               fastrpc_buf_free(buf);
+> > > +               return err;
+> > >          }
+> > > 
+> > >          /* update the buffer to be able to deallocate the memory on the DSP
+> > > */
+> > > @@ -1930,11 +1931,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl,
+> > > char __user *argp)
+> > >          return 0;
+> > > 
+> > >   err_assign:
+> > > -       fastrpc_req_munmap_impl(fl, buf);
+> > > -err_invoke:
+> > > -       fastrpc_buf_free(buf);
+> > > -
+> > > -       return err;
+> > > +       return fastrpc_req_munmap_impl(fl, buf);
+> > 
+> > This will return success if copy_to_user() fails.
+> > 
+> that is true, using return value of fastrpc_req_munmap_impl does not really
+> make sense here we should just return err in either case to the user.
+>
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202305200354.KV3jU94w-lkp@intel.com/
-Fixes: b48a0f72bc3e ("net/mlx5: Refactor completion irq request/release code")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
----
-I sent this earlier, but it wasn't applied and the kbuild caught it.
-https://lore.kernel.org/all/6652003b-e89c-4011-9e7d-a730a50bcfce@kili.mountain/
+Thanks, Srini and Dan, for reviewing the patch and suggestions.
+I will add this in v2.
 
- drivers/net/ethernet/mellanox/mlx5/core/eq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
+Sukrut Bellary
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-index eb41f0abf798..13491246c9e9 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-@@ -824,7 +824,7 @@ static int comp_irqs_request_pci(struct mlx5_core_dev *dev)
- 	ncomp_eqs = table->num_comp_eqs;
- 	cpus = kcalloc(ncomp_eqs, sizeof(*cpus), GFP_KERNEL);
- 	if (!cpus)
--		ret = -ENOMEM;
-+		return -ENOMEM;
- 
- 	i = 0;
- 	rcu_read_lock();
--- 
-2.39.1
-
+> --srini
+> 
+> > regards,
+> > dan carpenter
+> > 
