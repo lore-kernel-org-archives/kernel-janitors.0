@@ -2,47 +2,47 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04643C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 22:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1E8C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 23:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230496AbjESW6O (ORCPT
+        id S229452AbjESXjy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 May 2023 18:58:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60546 "EHLO
+        Fri, 19 May 2023 19:39:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjESW6M (ORCPT
+        with ESMTP id S230221AbjESXjw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 May 2023 18:58:12 -0400
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF9B1E46;
-        Fri, 19 May 2023 15:58:02 -0700 (PDT)
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-64d247a023aso1663259b3a.2;
-        Fri, 19 May 2023 15:58:02 -0700 (PDT)
+        Fri, 19 May 2023 19:39:52 -0400
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B97A1B3;
+        Fri, 19 May 2023 16:39:51 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-51b0f9d7d70so3530272a12.1;
+        Fri, 19 May 2023 16:39:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684537082; x=1687129082;
+        d=1e100.net; s=20221208; t=1684539591; x=1687131591;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lT3nVX8BOP6xdFUAxxsGq0VwKjJtQEdxnV8AqojOVvE=;
-        b=G4zQo875H6QgGCt/ELHZWPc5M13RsMIMJUenfmaNPxgrTdnvpli3cJ5sKr1qpgurNx
-         f/Frs0t8etXo5EjkBgXJsuB5loRA4uqRsQEqh+4GHlurCVCCSMFXLct0mS3vP18ylg3i
-         ykpedVuBytPy1c7+dxGr4+TWeif95YpsQigav/oDY7utpu4WDx/YtadLsL/OuiQfj9AP
-         aSzfW2QtZDhnKIfODzqZLacTKkd1ydOuPNN+DTbMNvsAAErHY3D3KTXqw0VMqHu3k5j6
-         1d216j+6xkRxWHfmMJmlLle07TUZ3Gi6ZmCwMnkn7KC21XHU90OAbQTPs45L3759Ng6C
-         hhzw==
-X-Gm-Message-State: AC+VfDzLTWFRrQRAkOB4W1I1oA0HFbBeULZMq5NVd9Ilgw1GU0SAlH2D
-        eVVocdfxZuWf/63bwV891kc=
-X-Google-Smtp-Source: ACHHUZ4dpJa1bPQdCUzlU6b8KGnb61gD8PYkuxGZtcIWM6wwJnGwKzbgeY8t6vG1yKx/SWkXHSVUuA==
-X-Received: by 2002:a05:6a00:1914:b0:648:b185:efd9 with SMTP id y20-20020a056a00191400b00648b185efd9mr4424120pfi.11.1684537081838;
-        Fri, 19 May 2023 15:58:01 -0700 (PDT)
+        bh=j+/I1DakxPrd+okwwNtUEXRwJ7ucYEoX+rOCHphwT6I=;
+        b=B4U12YwCYTeNLFHf+F6NnDTiONqlnERt6n4jt+H00j4OT/7WnLUBOFVSve7MZHPsAc
+         ZaHn2Pu2wT8QFbrH2uXUG12KjsLeqfHtjkuGchc/B49nW3FsIdcvFKdDVoISs8vkPd2g
+         39Hv+OQ0gqBbU/KMrTnHQjHV/mKMZBmcYrewkAF1tloXWajUi6AZvKYlYkuwDqx45v3q
+         qQy01bhau/+1mLLUKrpOin/W8W7vai43rGMnUHAWxKx1m2TGKFje2BbylHP2a73klI9y
+         pn9QwOQknSR+yGKYKSOs/mmNKcXcpIKRkbjvtZTb+JbhADCsWFrLLDqOIC02Qudc1YBa
+         volw==
+X-Gm-Message-State: AC+VfDzZEqG1MZAW5kj2oZe8W1WP/NaBi391i2HdbVV9vLwSMIOrpN7+
+        1lw/0wesZPNfnSorOD1c8d5EnsrDZMIeSrVO
+X-Google-Smtp-Source: ACHHUZ70tJtQIqEYhaAi+PGMl9f8G8LSCKi3EFC8z7gNKkwLrwkpzW/lG6RgAB29zE9TPARoQtOpMg==
+X-Received: by 2002:a17:902:d4c6:b0:1a5:150f:8558 with SMTP id o6-20020a170902d4c600b001a5150f8558mr4038822plg.17.1684539590542;
+        Fri, 19 May 2023 16:39:50 -0700 (PDT)
 Received: from dev-linux.lan (cpe-70-95-21-110.san.res.rr.com. [70.95.21.110])
-        by smtp.gmail.com with ESMTPSA id e24-20020a62aa18000000b0064d3a9def35sm166486pff.188.2023.05.19.15.58.00
+        by smtp.gmail.com with ESMTPSA id t5-20020a170902e84500b001960706141fsm170742plg.149.2023.05.19.16.39.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 May 2023 15:58:01 -0700 (PDT)
-Date:   Fri, 19 May 2023 15:57:59 -0700
+        Fri, 19 May 2023 16:39:49 -0700 (PDT)
+Date:   Fri, 19 May 2023 16:39:47 -0700
 From:   Sukrut Bellary <sukrut.bellary@linux.com>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Abel Vesa <abel.vesa@linaro.org>,
         Amol Maheshwari <amahesh@qti.qualcomm.com>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -51,67 +51,63 @@ Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
         kernel-janitors@vger.kernel.org,
         Shuah Khan <skhan@linuxfoundation.org>
 Subject: Re: [PATCH] misc: fastrpc: Fix double free of 'buf' in error path
-Message-ID: <ZGf+99vmXpN5nJ2f@dev-linux.lan>
+Message-ID: <ZGgIw3rzigqI92BO@dev-linux.lan>
 References: <20230518100829.515143-1-sukrut.bellary@linux.com>
  <9194ebdf-f335-4cd6-bf89-bb4f86a57784@kili.mountain>
  <f47b17c1-1c02-2aa3-ba10-fcef70cb25a8@linaro.org>
  <b0115d7d-d15a-4948-8726-09a8b37f3f36@kili.mountain>
- <4aa42c38-e0e2-4d2d-bfe2-15bc151f7117@linaro.org>
+ <fa0e9d9d-6362-456b-87f7-990ccf7e8930@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4aa42c38-e0e2-4d2d-bfe2-15bc151f7117@linaro.org>
+In-Reply-To: <fa0e9d9d-6362-456b-87f7-990ccf7e8930@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 19, 2023 at 11:39:59AM +0100, Srinivas Kandagatla wrote:
+On Fri, May 19, 2023 at 01:58:10PM +0300, Dan Carpenter wrote:
+> This is unrelated but I was looking through the driver and I notice
+> a bunch of code doing:
 > 
+> grep 'return ret ?' drivers/firmware/ -R
 > 
-> On 19/05/2023 11:22, Dan Carpenter wrote:
-> > > ----------------------->cut<---------------------------
-> > > diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> > > index f60bbf99485c..3fdd326e1ae8 100644
-> > > --- a/drivers/misc/fastrpc.c
-> > > +++ b/drivers/misc/fastrpc.c
-> > > @@ -1891,7 +1891,8 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl,
-> > > char __user *argp)
-> > >                                        &args[0]);
-> > >          if (err) {
-> > >                  dev_err(dev, "mmap error (len 0x%08llx)\n", buf->size);
-> > > -               goto err_invoke;
-> > > +               fastrpc_buf_free(buf);
-> > > +               return err;
-> > >          }
-> > > 
-> > >          /* update the buffer to be able to deallocate the memory on the DSP
-> > > */
-> > > @@ -1930,11 +1931,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl,
-> > > char __user *argp)
-> > >          return 0;
-> > > 
-> > >   err_assign:
-> > > -       fastrpc_req_munmap_impl(fl, buf);
-> > > -err_invoke:
-> > > -       fastrpc_buf_free(buf);
-> > > -
-> > > -       return err;
-> > > +       return fastrpc_req_munmap_impl(fl, buf);
-> > 
-> > This will return success if copy_to_user() fails.
-> > 
-> that is true, using return value of fastrpc_req_munmap_impl does not really
-> make sense here we should just return err in either case to the user.
->
+> 	return ret ? : res.result[0];
+> 
+> "ret" here is a kernel error code, and res.result[0] is a firmware
+> error code.  Mixing error codes is a dangerous thing.  I was reviewing
+> some of the callers and the firmware error code gets passed quite far
+> back into the kernel to where we would only expect kernel error codes.
+> 
+> Presumably the firmware is returning positive error codes?  To be honest,
+> I am just guessing.  It's better to convert custom error codes to kernel
+> error codes as soon as possible.  I am just guessing.  Sukrut, do you
+> think you could take a look?  If the callers do not differentiate
+> between negative kernel error codes and positive custom error codes then
+> probably just do:
+> 
+> 	if (res.result[0])
+> 		ret = -EIO; // -EINVAL?
+> 	return ret;
+> 
 
-Thanks, Srini and Dan, for reviewing the patch and suggestions.
-I will add this in v2.
+Thanks, Dan, for sharing your findings.
+Yes, sure, I will take a look.
 
 Regards,
 Sukrut Bellary
 
-> --srini
+> Also there are a couple places which do:
 > 
-> > regards,
-> > dan carpenter
-> > 
+> 	return ret ? false : !!res.result[0];
+> 
+> Here true means success and false means failure.  So the !! converts
+> a firmware error code to true when it should be false so that's a bug.
+> Quadruple negatives are confusing...  It should be:
+> 
+> 	if (ret || res.result[0])
+> 		return false;
+> 	return true;
+> 
+> regards,
+> dan carpenter
+> 
