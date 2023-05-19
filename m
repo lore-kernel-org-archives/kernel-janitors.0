@@ -2,85 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B46FC77B75
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 17:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E57BCC7EE26
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 19:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231319AbjESRmj (ORCPT
+        id S231294AbjESTnT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 May 2023 13:42:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47920 "EHLO
+        Fri, 19 May 2023 15:43:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230178AbjESRmh (ORCPT
+        with ESMTP id S229788AbjESTnS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 May 2023 13:42:37 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF17FA
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 May 2023 10:42:34 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 047Zqh2d1ln91047ZqYTB1; Fri, 19 May 2023 19:42:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684518152;
-        bh=mAaO/WBbYiwwJShzEiCb+5IddAiptsLyN04MdP2OqLA=;
-        h=From:To:Cc:Subject:Date;
-        b=H3CtDD3+Pj6GAN5+IziYhhQ43auTun8QEHu+PODCpbpFNWxka/yOMP5BimHMJhh5s
-         lBHmslKC7aU9q4GFO/15SKg9uZWve9BNm75A8VSTMUEOpeNlVcD9fwJAHmExobhQK6
-         q16gz/LLg4Bhl2UFCVn2BlgX7GiPrxMxFiDwLRduECWS1vfsEC6bah6Aq7KR1X8jr5
-         TUmXEXfVw51CEGaR39ZYxTzVDnC/3mN02yhJEV98H8zQbRCfa3j+HxSvd0GBYcCLCT
-         APQPim1923PLfgxiJ13Pn6+RHh9m7EwnG7k4mGlV5oM/Fmg9GVnPksi788Y4/yHFdv
-         wsfmwtALvcfmA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 19 May 2023 19:42:32 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pci@vger.kernel.org
-Subject: [PATCH] x86/PCI: Use struct_size()
-Date:   Fri, 19 May 2023 19:42:28 +0200
-Message-Id: <00a5cc2cd322e7dea26579916ac6dda9c637aa57.1684518118.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Fri, 19 May 2023 15:43:18 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15FFDE5D
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 May 2023 12:43:13 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-3063891d61aso3462451f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 May 2023 12:43:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684525392; x=1687117392;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T7jXzBlv/x7knTLTZdsLaKRxP5YKCfI/UXXz7YCoBcM=;
+        b=AAMELdw1xlnh4GC6SpyFNwIYZQ5R9G3EWmccd9Cxd60tUlESVZ7mnnAstuqu3fSEFl
+         la1heueb27DGnNSC7ZjfouoB5el3sO46TXpJXLE7cV6HCXo3T4HmJa7/Y7IODVpubD3u
+         XcBWObJj/odhut67KgjlDRnVUZEMXSu2iosu4G9oqQQoLdSkgpwVIJCIoPhlQ6ah1LMv
+         cDpD55jSRg+hWivaNtJnYyQwnleuMvxAl4zmuoIYDySUvh8t7p61vZiQ4lyUJJhAf8H0
+         EzA9YnflDWtxhCBk6AkHCfbWV3ISIPoeRpZbmd+XhdgHi3XXnOA0ZL5V2sx7lkCXTsv/
+         dnjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684525392; x=1687117392;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T7jXzBlv/x7knTLTZdsLaKRxP5YKCfI/UXXz7YCoBcM=;
+        b=Tj58r89ABLrivsqTo5nDOsbVSv0GTfYm4m8L1motek0YgADg3d6wB3HwkSC54dxtv2
+         YoAeHMZcsz5JeuBUP/qDkULSNHxf+ngSahDAxfo/zf7vxYNgmUI4mKMTEHjlZCRQ6WdV
+         Ibex1K4SJdi8mU0Y/2TBIb75PoPIGwB7buE/dEIsbxto3gw7W/F2NqPG9Eop2b5xYMRG
+         7Jzhm/DTCCvZCrYT5TBhLokz3H9z1hkHGgzaG2XinC0b15E3Z0PCG0tfhBYWuvKsUf+w
+         Ro6aA/Ux2uwRANfbeNv6eRuIKOOFUBrp+iJ9XwocS0h6uhcyysbH1U4xkj/Na195sjvn
+         85gw==
+X-Gm-Message-State: AC+VfDzfnYDsh44aPrliTEcT73rGpCH7Z6nxlLGS3Ar1epo2gTFpYPzv
+        R0RGNe7Dy7nV4AKCGrJ8EzangA==
+X-Google-Smtp-Source: ACHHUZ4Dldx3i06cCQyq05HLtiBc9WOfjvyjvCQsAw5LF/bDperqlV+k+zCeVD/Ej7ZkEZzfElsqEw==
+X-Received: by 2002:a5d:6091:0:b0:306:3361:6cbf with SMTP id w17-20020a5d6091000000b0030633616cbfmr2476488wrt.21.1684525392266;
+        Fri, 19 May 2023 12:43:12 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d2-20020a5d6442000000b002c70ce264bfsm6149863wrw.76.2023.05.19.12.43.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 May 2023 12:43:09 -0700 (PDT)
+Date:   Fri, 19 May 2023 22:43:03 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Eli Cohen <elic@nvidia.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Shay Drory <shayd@nvidia.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net RESEND] net/mlx5: Fix check for allocation failure in
+ comp_irqs_request_pci()
+Message-ID: <ZGfRR//to6FusOLq@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use struct_size() instead of hand-writing it. It is less verbose, more
-robust and more informative.
+This function accidentally dereferences "cpus" instead of returning
+directly.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/r/202305200354.KV3jU94w-lkp@intel.com/
+Fixes: b48a0f72bc3e ("net/mlx5: Refactor completion irq request/release code")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
 ---
- arch/x86/pci/irq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I sent this earlier, but it wasn't applied and the kbuild caught it.
+https://lore.kernel.org/all/6652003b-e89c-4011-9e7d-a730a50bcfce@kili.mountain/
 
-diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
-index a498b847d740..0de436316a1d 100644
---- a/arch/x86/pci/irq.c
-+++ b/arch/x86/pci/irq.c
-@@ -136,14 +136,14 @@ static inline struct irq_routing_table *pirq_convert_irt_table(u8 *addr,
- 	if (ir->signature != IRT_SIGNATURE || !ir->used || ir->size < ir->used)
- 		return NULL;
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+index eb41f0abf798..13491246c9e9 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+@@ -824,7 +824,7 @@ static int comp_irqs_request_pci(struct mlx5_core_dev *dev)
+ 	ncomp_eqs = table->num_comp_eqs;
+ 	cpus = kcalloc(ncomp_eqs, sizeof(*cpus), GFP_KERNEL);
+ 	if (!cpus)
+-		ret = -ENOMEM;
++		return -ENOMEM;
  
--	size = sizeof(*ir) + ir->used * sizeof(ir->slots[0]);
-+	size = struct_size(ir, slots, ir->used);
- 	if (size > limit - addr)
- 		return NULL;
- 
- 	DBG(KERN_DEBUG "PCI: $IRT Interrupt Routing Table found at 0x%lx\n",
- 	    __pa(ir));
- 
--	size = sizeof(*rt) + ir->used * sizeof(rt->slots[0]);
-+	size = struct_size(rt, slots, ir->used);
- 	rt = kzalloc(size, GFP_KERNEL);
- 	if (!rt)
- 		return NULL;
+ 	i = 0;
+ 	rcu_read_lock();
 -- 
-2.34.1
+2.39.1
 
