@@ -2,54 +2,47 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3EDC77B7D
-	for <kernel-janitors@archiver.kernel.org>; Sat, 20 May 2023 15:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7F6C77B7D
+	for <kernel-janitors@archiver.kernel.org>; Sat, 20 May 2023 15:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231643AbjETPA5 (ORCPT
+        id S231779AbjETPRu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 20 May 2023 11:00:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56178 "EHLO
+        Sat, 20 May 2023 11:17:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbjETPA4 (ORCPT
+        with ESMTP id S231416AbjETPRt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 20 May 2023 11:00:56 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 394EE116
-        for <kernel-janitors@vger.kernel.org>; Sat, 20 May 2023 08:00:55 -0700 (PDT)
+        Sat, 20 May 2023 11:17:49 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F1B107
+        for <kernel-janitors@vger.kernel.org>; Sat, 20 May 2023 08:17:47 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 0O4hqFQmweM6M0O4iqgCiP; Sat, 20 May 2023 17:00:53 +0200
+        id 0OL2qxEf9KkqR0OL3qE16C; Sat, 20 May 2023 17:17:45 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684594853;
-        bh=5VvxviU32EnF0yUc09qoA4jqdLeStDT9+mAuA1G4mT8=;
+        s=t20230301; t=1684595865;
+        bh=NYS0+POCoqp3fqggV8ajYmceozpIyaDAzScoVhfOmvk=;
         h=From:To:Cc:Subject:Date;
-        b=QyT70HvV0e5RPfiuGIrnDb/2Rni0o2JNkfLH9Xnif4lQWNXymjTE4Pp8pXFvUuufv
-         jAodpg9v2ARZslta04J0XOkseNB0plN7Gta57uvW+RwcGBsd7ANChzHaTYEYD67/A+
-         t7RPE59bhX6x1mwoaaOB9xIzomKA+h3J9Mw4f5dlJAjBzp6AiAP6HfM/kYYjfUe2ag
-         KFSdS66CHdYGz8ctvva/4/sAhcqImOmUZ59GMfyExKNsrSFaXWfWd6daxlaVOaP392
-         1TdFD5Xk+Tz2/xAKb3gbZoPbaFloiA5dtXhg6vRLml1TapBPcqtUSMNUmu+as7ZIf6
-         MOMw8Bb4h58YQ==
+        b=c5vX2GpYoQNcaWitUgGn3tivkOqJmcaiO0iuBAdXG/MnjO3qH054AmA+C/wZ+dCHN
+         Ze7m2ICI3C+0CHlL9VUY1aifbWkBESuetxWtC6oj2c9jfhbHJemxIcg6ibupNyMXDr
+         wE336W9rOvgvhUZJn7lnE4yKOKdZXXKVrBJ+xe0ExGMWAxZot0Dm+9h3GqrCiCWqMe
+         uFRMYpYz2Ee0NgkQLPJAEB1yK3QvQHJjS322ZlWf6m30Taxy7g80uyx9vxPfmR+o2q
+         1NjtWgePMGXiN8O9Pq4cUwGQT5sBgxoerF6WFrQJ3MbKYMkGsatlFbn4yPKKYb/KNR
+         4/O+QYx2GOBhg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 May 2023 17:00:53 +0200
+X-ME-Date: Sat, 20 May 2023 17:17:45 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Olivier Moysan <olivier.moysan@foss.st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        alsa-devel@alsa-project.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ASoC: stm32: sai: Use the devm_clk_get_optional() helper
-Date:   Sat, 20 May 2023 17:00:50 +0200
-Message-Id: <f7987f18dadf77bfa09969fd4c82d5a0f4e4e3b7.1684594838.git.christophe.jaillet@wanadoo.fr>
+        linux-bluetooth@vger.kernel.org
+Subject: [PATCH] Bluetooth: hci_ll: Use the devm_clk_get_optional() helper
+Date:   Sat, 20 May 2023 17:17:43 +0200
+Message-Id: <2035c65977818626011f512d17cd018b6d877925.1684595848.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,33 +51,41 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Use devm_clk_get_optional() instead of hand writing it.
-This saves some LoC and improves the semantic.
+This is slightly less verbose and improves the semantic.
+
+This also simplifies ll_open() because clk_prepare_enable() already handles
+NULL clk.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/stm/stm32_sai_sub.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/bluetooth/hci_ll.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index f6695dee353b..271ec5b3378d 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -1485,12 +1485,9 @@ static int stm32_sai_sub_parse_of(struct platform_device *pdev,
- 		if (ret < 0)
- 			return ret;
- 	} else {
--		sai->sai_mclk = devm_clk_get(&pdev->dev, "MCLK");
--		if (IS_ERR(sai->sai_mclk)) {
--			if (PTR_ERR(sai->sai_mclk) != -ENOENT)
--				return PTR_ERR(sai->sai_mclk);
--			sai->sai_mclk = NULL;
--		}
-+		sai->sai_mclk = devm_clk_get_optional(&pdev->dev, "MCLK");
-+		if (IS_ERR(sai->sai_mclk))
-+			return PTR_ERR(sai->sai_mclk);
+diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
+index 4a0b5c3160c2..de463d8bf265 100644
+--- a/drivers/bluetooth/hci_ll.c
++++ b/drivers/bluetooth/hci_ll.c
+@@ -129,8 +129,7 @@ static int ll_open(struct hci_uart *hu)
+ 	if (hu->serdev) {
+ 		struct ll_device *lldev = serdev_device_get_drvdata(hu->serdev);
+ 
+-		if (!IS_ERR(lldev->ext_clk))
+-			clk_prepare_enable(lldev->ext_clk);
++		clk_prepare_enable(lldev->ext_clk);
  	}
  
  	return 0;
+@@ -703,8 +702,8 @@ static int hci_ti_probe(struct serdev_device *serdev)
+ 	if (IS_ERR(lldev->enable_gpio))
+ 		return PTR_ERR(lldev->enable_gpio);
+ 
+-	lldev->ext_clk = devm_clk_get(&serdev->dev, "ext_clock");
+-	if (IS_ERR(lldev->ext_clk) && PTR_ERR(lldev->ext_clk) != -ENOENT)
++	lldev->ext_clk = devm_clk_get_optional(&serdev->dev, "ext_clock");
++	if (IS_ERR(lldev->ext_clk))
+ 		return PTR_ERR(lldev->ext_clk);
+ 
+ 	of_property_read_u32(serdev->dev.of_node, "max-speed", &max_speed);
 -- 
 2.34.1
 
