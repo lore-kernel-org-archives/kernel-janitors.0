@@ -2,50 +2,48 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 153C8C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 20 May 2023 14:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1573C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 20 May 2023 14:56:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231460AbjETOyN (ORCPT
+        id S231628AbjETO4J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 20 May 2023 10:54:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54006 "EHLO
+        Sat, 20 May 2023 10:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231318AbjETOyM (ORCPT
+        with ESMTP id S231611AbjETO4I (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 20 May 2023 10:54:12 -0400
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE3710A
-        for <kernel-janitors@vger.kernel.org>; Sat, 20 May 2023 07:54:11 -0700 (PDT)
+        Sat, 20 May 2023 10:56:08 -0400
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 542E613E
+        for <kernel-janitors@vger.kernel.org>; Sat, 20 May 2023 07:56:05 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 0NyCq5nVtRkO40NyCqQaRc; Sat, 20 May 2023 16:54:10 +0200
+        id 0O00q7RjWHWsH0O01qRG48; Sat, 20 May 2023 16:56:03 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684594450;
-        bh=4Jkf7tHnTYvxjLJZ8lnVCybLulN7KeUyeXRkBsmgzrk=;
+        s=t20230301; t=1684594563;
+        bh=bpLpYwHdElG8Zrz72XZdWqpkdWbasWrKHm81qJngWNM=;
         h=From:To:Cc:Subject:Date;
-        b=CQsi4hW5hW8Fi6yChUdbDdgH8S3NNSLxiKVNSkKVHPjl1VoDPJ3kAezwkUamXg7xr
-         pkaR5tD7fPeTqTejMYZzMX/7m8DJVFCGqyaQCSqeYsgzI82E7SRHweAZ20iyS7w2dH
-         nYO2sdq/e4yK91+N5su1cuC89GaajG3e/UWjY546vTZUA87XOsZyzuKD3fd9UgNNrR
-         x5pGqWAH12CrIanHxxFo6dKPWxXeEUF14DEQfLngxmh3Sh0JzwQdjN+jIuqwQE7Wjq
-         VlI5LLoNDS2sXTny/zYkgNBE6yxnY8ro3IQhCR43HUtxCpYSQ5w3gs4LPtEx7k4TfH
-         8qQDCVAbS+96w==
+        b=esUdMWBLA/phoUXHm4JrlWfMI2UdxVyfevFMmMduOK0jOBFkLSDf3VzJpbi/iO2Rj
+         9Jv1y74+6CMKzngQNBOl0ul5oJ2dlSxrYU/mJA3ZcNelQjj4wcZBpWrDDdNv/oP49q
+         C2PTMQmDBu1OfRWeknabq78rfQE57kp8AWWXK1dXMuIzqIzn9OF34r5Hq76d+3oX3u
+         BTa8VDKgyir2/HrIH5zN+xuhTQrmM/D6GyWdZn2lWHBaqblzqZHKY7jcCcRfebZ7il
+         M/WvdvtmLtie2wXciOf/Ey6Xgi/3I3eV36zXk6ZfRr7WPx64IfaX+08f3glUi9AP1N
+         1yvBcMnrcPc7Q==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 May 2023 16:54:10 +0200
+X-ME-Date: Sat, 20 May 2023 16:56:03 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     James Schulman <james.schulman@cirrus.com>,
-        David Rhodes <david.rhodes@cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
+To:     Oder Chiou <oder_chiou@realtek.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com
-Subject: [PATCH] ASoC: cs53l30: Use the devm_clk_get_optional() helper
-Date:   Sat, 20 May 2023 16:54:06 +0200
-Message-Id: <3219effee5c7f190530bdb1ef8ec35cb142e3611.1684594433.git.christophe.jaillet@wanadoo.fr>
+        alsa-devel@alsa-project.org
+Subject: [PATCH] ASoC: rt5659: Use the devm_clk_get_optional() helper
+Date:   Sat, 20 May 2023 16:56:00 +0200
+Message-Id: <5b44b2fddd8973e949e4ae2132971b147cfd1ec1.1684594544.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,31 +56,30 @@ This saves some LoC and improves the semantic.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/codecs/cs53l30.c | 10 +++-------
+ sound/soc/codecs/rt5659.c | 10 +++-------
  1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/codecs/cs53l30.c b/sound/soc/codecs/cs53l30.c
-index 51ca66e7b3ea..21962b828ab1 100644
---- a/sound/soc/codecs/cs53l30.c
-+++ b/sound/soc/codecs/cs53l30.c
-@@ -990,14 +990,10 @@ static int cs53l30_i2c_probe(struct i2c_client *client)
- 	}
+diff --git a/sound/soc/codecs/rt5659.c b/sound/soc/codecs/rt5659.c
+index 22bb57029bc0..df6f0d769bbd 100644
+--- a/sound/soc/codecs/rt5659.c
++++ b/sound/soc/codecs/rt5659.c
+@@ -4141,13 +4141,9 @@ static int rt5659_i2c_probe(struct i2c_client *i2c)
+ 	regmap_write(rt5659->regmap, RT5659_RESET, 0);
  
  	/* Check if MCLK provided */
--	cs53l30->mclk = devm_clk_get(dev, "mclk");
-+	cs53l30->mclk = devm_clk_get_optional(dev, "mclk");
- 	if (IS_ERR(cs53l30->mclk)) {
--		if (PTR_ERR(cs53l30->mclk) != -ENOENT) {
--			ret = PTR_ERR(cs53l30->mclk);
--			goto error;
--		}
+-	rt5659->mclk = devm_clk_get(&i2c->dev, "mclk");
+-	if (IS_ERR(rt5659->mclk)) {
+-		if (PTR_ERR(rt5659->mclk) != -ENOENT)
+-			return PTR_ERR(rt5659->mclk);
 -		/* Otherwise mark the mclk pointer to NULL */
--		cs53l30->mclk = NULL;
-+		ret = PTR_ERR(cs53l30->mclk);
-+		goto error;
- 	}
+-		rt5659->mclk = NULL;
+-	}
++	rt5659->mclk = devm_clk_get_optional(&i2c->dev, "mclk");
++	if (IS_ERR(rt5659->mclk))
++		return PTR_ERR(rt5659->mclk);
  
- 	/* Fetch the MUTE control */
+ 	rt5659_calibrate(rt5659);
+ 
 -- 
 2.34.1
 
