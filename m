@@ -2,112 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1E8C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 May 2023 23:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F946C7EE26
+	for <kernel-janitors@archiver.kernel.org>; Sat, 20 May 2023 07:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbjESXjy (ORCPT
+        id S229832AbjETHLF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 May 2023 19:39:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48416 "EHLO
+        Sat, 20 May 2023 03:11:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230221AbjESXjw (ORCPT
+        with ESMTP id S229512AbjETHLE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 May 2023 19:39:52 -0400
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B97A1B3;
-        Fri, 19 May 2023 16:39:51 -0700 (PDT)
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-51b0f9d7d70so3530272a12.1;
-        Fri, 19 May 2023 16:39:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684539591; x=1687131591;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j+/I1DakxPrd+okwwNtUEXRwJ7ucYEoX+rOCHphwT6I=;
-        b=B4U12YwCYTeNLFHf+F6NnDTiONqlnERt6n4jt+H00j4OT/7WnLUBOFVSve7MZHPsAc
-         ZaHn2Pu2wT8QFbrH2uXUG12KjsLeqfHtjkuGchc/B49nW3FsIdcvFKdDVoISs8vkPd2g
-         39Hv+OQ0gqBbU/KMrTnHQjHV/mKMZBmcYrewkAF1tloXWajUi6AZvKYlYkuwDqx45v3q
-         qQy01bhau/+1mLLUKrpOin/W8W7vai43rGMnUHAWxKx1m2TGKFje2BbylHP2a73klI9y
-         pn9QwOQknSR+yGKYKSOs/mmNKcXcpIKRkbjvtZTb+JbhADCsWFrLLDqOIC02Qudc1YBa
-         volw==
-X-Gm-Message-State: AC+VfDzZEqG1MZAW5kj2oZe8W1WP/NaBi391i2HdbVV9vLwSMIOrpN7+
-        1lw/0wesZPNfnSorOD1c8d5EnsrDZMIeSrVO
-X-Google-Smtp-Source: ACHHUZ70tJtQIqEYhaAi+PGMl9f8G8LSCKi3EFC8z7gNKkwLrwkpzW/lG6RgAB29zE9TPARoQtOpMg==
-X-Received: by 2002:a17:902:d4c6:b0:1a5:150f:8558 with SMTP id o6-20020a170902d4c600b001a5150f8558mr4038822plg.17.1684539590542;
-        Fri, 19 May 2023 16:39:50 -0700 (PDT)
-Received: from dev-linux.lan (cpe-70-95-21-110.san.res.rr.com. [70.95.21.110])
-        by smtp.gmail.com with ESMTPSA id t5-20020a170902e84500b001960706141fsm170742plg.149.2023.05.19.16.39.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 May 2023 16:39:49 -0700 (PDT)
-Date:   Fri, 19 May 2023 16:39:47 -0700
-From:   Sukrut Bellary <sukrut.bellary@linux.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] misc: fastrpc: Fix double free of 'buf' in error path
-Message-ID: <ZGgIw3rzigqI92BO@dev-linux.lan>
-References: <20230518100829.515143-1-sukrut.bellary@linux.com>
- <9194ebdf-f335-4cd6-bf89-bb4f86a57784@kili.mountain>
- <f47b17c1-1c02-2aa3-ba10-fcef70cb25a8@linaro.org>
- <b0115d7d-d15a-4948-8726-09a8b37f3f36@kili.mountain>
- <fa0e9d9d-6362-456b-87f7-990ccf7e8930@kili.mountain>
+        Sat, 20 May 2023 03:11:04 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C8031BC
+        for <kernel-janitors@vger.kernel.org>; Sat, 20 May 2023 00:11:00 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 0GjwqX2OKqmw80GjwqRTUl; Sat, 20 May 2023 09:10:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1684566657;
+        bh=ZdHX2ENYCr6jKauhqqWQ2NeyEOo+ci9pQnDa5o7LLQ4=;
+        h=From:To:Cc:Subject:Date;
+        b=Lk3CsbJVD1weK7t2DnluWEMeMdnfgTokN57Q4M8Rs72nRj7L4EOzrkvxTXgWYSvln
+         Zm66Mc+/RVfnJboMdS4gBpCsp/5JMLEx2hFbsKG+jATGGKz5tyTCfCHI7QI4anoBhe
+         xukQZEsVLRTX7+d/WtHelmOP8KAIsWPuPHOd+qvJ9ltpYmM5pBDBwl0fhqstShZnkt
+         3sNTOWJpZ+6HQLpvlAXzguCz/CO4aNmCAWRdaCprMTunXlgQRm7w3aKSfqmyGpWQtn
+         8+MUFequeh3R28ei4LNT9E4qBZSWhd7OFDThXv13JmbzzTyD60gZPwOK+a4f8Lp+ME
+         6qwfTmIjIGn0Q==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 20 May 2023 09:10:57 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Lee Jones <lee@kernel.org>,
+        =?UTF-8?q?Ma=C3=ADra=20Canal?= <maira.canal@usp.br>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 1/2] mfd: wcd934x: Fix an error handling path in wcd934x_slim_probe()
+Date:   Sat, 20 May 2023 09:10:54 +0200
+Message-Id: <02d8447f6d1df52cc8357aae698152e9a9be67c6.1684565021.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa0e9d9d-6362-456b-87f7-990ccf7e8930@kili.mountain>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 19, 2023 at 01:58:10PM +0300, Dan Carpenter wrote:
-> This is unrelated but I was looking through the driver and I notice
-> a bunch of code doing:
-> 
-> grep 'return ret ?' drivers/firmware/ -R
-> 
-> 	return ret ? : res.result[0];
-> 
-> "ret" here is a kernel error code, and res.result[0] is a firmware
-> error code.  Mixing error codes is a dangerous thing.  I was reviewing
-> some of the callers and the firmware error code gets passed quite far
-> back into the kernel to where we would only expect kernel error codes.
-> 
-> Presumably the firmware is returning positive error codes?  To be honest,
-> I am just guessing.  It's better to convert custom error codes to kernel
-> error codes as soon as possible.  I am just guessing.  Sukrut, do you
-> think you could take a look?  If the callers do not differentiate
-> between negative kernel error codes and positive custom error codes then
-> probably just do:
-> 
-> 	if (res.result[0])
-> 		ret = -EIO; // -EINVAL?
-> 	return ret;
-> 
+If devm_gpiod_get_optional() fails, some resources need to be released, as
+already done in the .remove() function.
 
-Thanks, Dan, for sharing your findings.
-Yes, sure, I will take a look.
+While at it, remove the unneeded error code from a dev_err_probe() call.
+It is already added in a human readable way by dev_err_probe() itself.
 
-Regards,
-Sukrut Bellary
+Fixes: 6a0ee2a61a31 ("mfd: wcd934x: Replace legacy gpio interface for gpiod")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mfd/wcd934x.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-> Also there are a couple places which do:
-> 
-> 	return ret ? false : !!res.result[0];
-> 
-> Here true means success and false means failure.  So the !! converts
-> a firmware error code to true when it should be false so that's a bug.
-> Quadruple negatives are confusing...  It should be:
-> 
-> 	if (ret || res.result[0])
-> 		return false;
-> 	return true;
-> 
-> regards,
-> dan carpenter
-> 
+diff --git a/drivers/mfd/wcd934x.c b/drivers/mfd/wcd934x.c
+index 07e884087f2c..281470d6b0b9 100644
+--- a/drivers/mfd/wcd934x.c
++++ b/drivers/mfd/wcd934x.c
+@@ -258,8 +258,9 @@ static int wcd934x_slim_probe(struct slim_device *sdev)
+ 	usleep_range(600, 650);
+ 	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+ 	if (IS_ERR(reset_gpio)) {
+-		return dev_err_probe(dev, PTR_ERR(reset_gpio),
+-				"Failed to get reset gpio: err = %ld\n", PTR_ERR(reset_gpio));
++		ret = dev_err_probe(dev, PTR_ERR(reset_gpio),
++				    "Failed to get reset gpio\n");
++		goto err_disable_regulators;
+ 	}
+ 	msleep(20);
+ 	gpiod_set_value(reset_gpio, 1);
+@@ -269,6 +270,10 @@ static int wcd934x_slim_probe(struct slim_device *sdev)
+ 	dev_set_drvdata(dev, ddata);
+ 
+ 	return 0;
++
++err_disable_regulators:
++	regulator_bulk_disable(WCD934X_MAX_SUPPLY, ddata->supplies);
++	return ret;
+ }
+ 
+ static void wcd934x_slim_remove(struct slim_device *sdev)
+-- 
+2.34.1
+
