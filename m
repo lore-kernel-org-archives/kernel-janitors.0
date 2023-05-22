@@ -2,111 +2,103 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DA7C7EE2A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 22:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 849A5C7EE29
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 22:30:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234673AbjEVWVa (ORCPT
+        id S234716AbjEVWaN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 May 2023 18:21:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36670 "EHLO
+        Mon, 22 May 2023 18:30:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233045AbjEVWU4 (ORCPT
+        with ESMTP id S231819AbjEVWaL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 May 2023 18:20:56 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12F11BF;
-        Mon, 22 May 2023 15:20:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1684794054; x=1716330054;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JZjQTVs1TZ5kTgg/xR+HBi/yoYC47r3zfGn11eJKA+8=;
-  b=qfXVRymmKsc1Q1XOvmWBfTs9e4XeSWU8iaQHJQza/Af6eARrOaDcAPUJ
-   qhMLwJ5AiWLippzlUnYj8Ektt/Rahj/8iggCrH8qr4pSex+/BpptJjzl3
-   14GaHcQcM35bYxiqVjzroOszLHivpyDQVhyeM0Ta6oIRwLkBmDFSzw9bA
-   OGLLbCs91NOdW8xEeNCkwoDEgP6fheUeks9qmj/On3IPnwi/2ofNMuLkk
-   77YBbDMHw/hRpaXv2xcP0Qhost2P1AjCpF4hBgt9ci5NABZMJSvpP7nZD
-   A68OxAhKFuUNCos5pFwL3yZJn9ra3xjVXNWkURd1i3im1QbT+dC/E4Te1
-   A==;
-X-IronPort-AV: E=Sophos;i="6.00,184,1681196400"; 
-   d="scan'208";a="153385720"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 May 2023 15:20:54 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 22 May 2023 15:20:53 -0700
-Received: from [10.14.52.160] (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
- Transport; Mon, 22 May 2023 15:20:53 -0700
-Message-ID: <8931f046-561c-1aae-fab3-1c572002b86f@microchip.com>
-Date:   Mon, 22 May 2023 15:20:55 -0700
+        Mon, 22 May 2023 18:30:11 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 390E5109;
+        Mon, 22 May 2023 15:30:08 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id 41be03b00d2f7-52caed90d17so4665277a12.0;
+        Mon, 22 May 2023 15:30:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684794607; x=1687386607;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i0BADrMgNcqHGvZTXAFhgG6p0QoADWfiDby7KN9sF5g=;
+        b=O0UWeL3wu6o5g5vDi3RXmw+3yYGM3Kg0rknQV9z9mHgrkDZI5nhOhn90kqFa4HM9X+
+         TpE+0CXWNhNc7MPDFXXaunuyhU0mJVUVVnFOsTLEtqr4ySen8TZrthJgOxBruZExz4L2
+         hmj1tTOHCVNXCTyQr9R47Ol4YfZwqkMuISDp5a10rcalYpEArAihBf/o/skPQdhzLvTA
+         UrwFjRYctIcLTMYdvQCOnzhYIv4ONH+aYD96Cpje/21UydboAPkBFyclQYgbwfsuetL6
+         63+uuNgkD1zY22Wy2kUCCk7CiOT9ngqpz7sPE94eFGHv4KprxS2EhZgacK2mtyJ2cs2l
+         BBXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684794607; x=1687386607;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i0BADrMgNcqHGvZTXAFhgG6p0QoADWfiDby7KN9sF5g=;
+        b=TYhumdIt9YDdDqlMRA6HUODVaGm9OVozzYJlfO469f91sgOr+6YG4tsOxC6wGKCuCu
+         q5DdDlMFjW3vGOv2YPYmeJkvsBtLpiBd+GUDQ9FcxckJBnyyUx9S6Zut9zxnTlbJR3W2
+         eVZPRpM/AUvIlYoMSFBH7pBObN0OvuFQiU0jsZd9o7OXTUN19gHF5fLsQ8CWIo2+GEen
+         rZ2efQyEffZvWSonY6E4SE6stccpwCR40L5UETcvB4F2hPbDigMNR+UYW83N3UGCy863
+         0zlacegrFwPXdG5wXLh735Rd/eZPYQlwo25oa9K2wu7qpLqj3ZjP/jzWa8Ijup9va13M
+         jt9A==
+X-Gm-Message-State: AC+VfDwewBeO75878AiB21i6TT+pWqavFqQWO1ITrMeveM1I2+iwYqyb
+        /XgVB8Ie2GVvYVcIbSlHpXQ=
+X-Google-Smtp-Source: ACHHUZ6gdI+c8iqtPZufgDopEpdoUnu/Ac9M4z335puf/ipJaw+/sO0zu1KRRWPDUKZ3knOcS11eCw==
+X-Received: by 2002:a17:90b:1d03:b0:246:5968:43f0 with SMTP id on3-20020a17090b1d0300b00246596843f0mr11554054pjb.10.1684794607605;
+        Mon, 22 May 2023 15:30:07 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f6-20020a17090a9b0600b0024b79a69361sm6223734pjp.32.2023.05.22.15.30.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 May 2023 15:30:07 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Mon, 22 May 2023 15:30:06 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Su Hui <suhui@nfschina.com>
+Cc:     Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
+        Alistar Popple <alistair@popple.id.au>,
+        Eddie James <eajames@linux.ibm.com>, eajames@us.ibm.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cbostic@linux.vnet.ibm.com, linux-fsi@lists.ozlabs.org
+Subject: Re: [PATCH] drivers/fsi/scom: Return -EFAULT if copy fails
+Message-ID: <de9a7ffe-bedd-4181-886d-c9a3006b7be8@roeck-us.net>
+References: <20230519013710.34954-1-suhui@nfschina.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] pinctrl: at91: fix a couple NULL vs IS_ERR() checks
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <linux-gpio@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <5697980e-f687-47a7-9db8-2af34ae464bd@kili.mountain>
-From:   Ryan Wanner <ryan.wanner@microchip.com>
-In-Reply-To: <5697980e-f687-47a7-9db8-2af34ae464bd@kili.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230519013710.34954-1-suhui@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/22/23 00:44, Dan Carpenter wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+On Fri, May 19, 2023 at 09:37:10AM +0800, Su Hui wrote:
+> The copy_to/from_user() functions return the number of bytes remaining
+> to be copied, but we want to return -EFAULT to the user.
 > 
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> The devm_kasprintf_strarray() function doesn't return NULL on error,
-> it returns error pointers.  Update the checks accordingly.
-> 
-> Fixes: f494c1913cbb ("pinctrl: at91: use devm_kasprintf() to avoid potential leaks (part 2)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Acked-by: Ryan Wanner <ryan.wanner@microchip.com>
-> ---
->  drivers/pinctrl/pinctrl-at91.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-> index 871209c24153..39956d821ad7 100644
-> --- a/drivers/pinctrl/pinctrl-at91.c
-> +++ b/drivers/pinctrl/pinctrl-at91.c
-> @@ -1389,8 +1389,8 @@ static int at91_pinctrl_probe(struct platform_device *pdev)
->                 char **names;
-> 
->                 names = devm_kasprintf_strarray(dev, "pio", MAX_NB_GPIO_PER_BANK);
-> -               if (!names)
-> -                       return -ENOMEM;
-> +               if (IS_ERR(names))
-> +                       return PTR_ERR(names);
-> 
->                 for (j = 0; j < MAX_NB_GPIO_PER_BANK; j++, k++) {
->                         char *name = names[j];
-> @@ -1870,8 +1870,8 @@ static int at91_gpio_probe(struct platform_device *pdev)
->         }
-> 
->         names = devm_kasprintf_strarray(dev, "pio", chip->ngpio);
-> -       if (!names)
-> -               return -ENOMEM;
-> +       if (IS_ERR(names))
-> +               return PTR_ERR(names);
-> 
->         for (i = 0; i < chip->ngpio; i++)
->                 strreplace(names[i], '-', alias_idx + 'A');
-> --
-> 2.39.2
-> 
+Why ? EFAULT means that a bad address was provided, and it is not
+immediately obvious why that would be the case.
 
+Guenter
+
+> Fixes: 680ca6dcf5c2 ("drivers/fsi: Add SCOM FSI client device driver")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  drivers/fsi/fsi-scom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
+> index bcb756dc9866..caaf7738eb98 100644
+> --- a/drivers/fsi/fsi-scom.c
+> +++ b/drivers/fsi/fsi-scom.c
+> @@ -335,7 +335,7 @@ static ssize_t scom_read(struct file *filep, char __user *buf, size_t len,
+>  	if (rc)
+>  		dev_dbg(dev, "copy to user failed:%d\n", rc);
+>  
+> -	return rc ? rc : len;
+> +	return rc ? -EFAULT : len;
+>  }
+>  
+>  static ssize_t scom_write(struct file *filep, const char __user *buf,
+> -- 
+> 2.30.2
+> 
