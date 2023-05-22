@@ -2,118 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF77BC77B73
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 15:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FECC77B73
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 16:00:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234450AbjEVPDa (ORCPT
+        id S233883AbjEVQAA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 May 2023 11:03:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43774 "EHLO
+        Mon, 22 May 2023 12:00:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234098AbjEVPDN (ORCPT
+        with ESMTP id S229654AbjEVP77 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 May 2023 11:03:13 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E8F10D3;
-        Mon, 22 May 2023 08:02:39 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id 5614622812f47-397fe20a2b5so437669b6e.3;
-        Mon, 22 May 2023 08:02:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684767756; x=1687359756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l9+Z/yo/990FPPh1vM0WhcUYxVkl6LMnyPg5rFTfhAY=;
-        b=oC+ddbUeJBq0b9XNhZ2dJmn6tG665zNZ21gthPPJvPvZJNfEuCpE4hfp7iJu4EM+5K
-         7M+hg2Zbnrae9ugnC4AE3qM3JjDAgwYY3mVWUPvKudlsZZa5ng+QVoOzzJZxfzc4seAk
-         Gwuv2jDItPCzIbIoFNii0/Iolc8vspBvcukjrgOh32ZBo6B0aXs+cT3aZbqSNg53xUxK
-         7fFqCQazjUTzSFH6I2XSGQfAXxDz+3vWDxWKDTYYTsgCZnAX16yU/FsvZGvD7zRoOEhK
-         2ffXfbT0JXROF8unVfKSleowQHrNdA4+VcR7Pymo/YlIPVoKrDwByyiodz0yZ5Ho7HAS
-         1WiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684767756; x=1687359756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l9+Z/yo/990FPPh1vM0WhcUYxVkl6LMnyPg5rFTfhAY=;
-        b=ESoYcCW8xbfOxO/uOcsrJgmfVoyfRuEbTUgj59hRu3vg3hmvenX96UFU5x7YvbwxRc
-         DAXDJrpRHiijOyvKONAkm9YyeYodmVhNL5hPGU1xebSE65D1QMhXbX+McgRtYGKyex0V
-         l2TdHHYONBqfH/Ad/C7SKxHbPISYhVXA6Jd748flOBtpCM2r6N2NCvrg/ROXbVfVE19h
-         J0kAFT+RYFWtduyv9KEaYodu2EIbYIqYt8KtHLhsmdoDZxht/1T1BBtQx2zdlf3lkt65
-         AUKfrtBCVp6W0Ahwp/J527+LaHtngjCFbxz3auTykZEG3/sCJC00fJSdjXhAlzGTyMj8
-         dPXg==
-X-Gm-Message-State: AC+VfDyHQUCr9uqc4UKpQRT6PFGFL0qOO402EoOkVjjb0yZW5CL/tY+t
-        4rRmkYcCmvgStd+Kvh3XEb0/voUNZQ3ADmM4d+s=
-X-Google-Smtp-Source: ACHHUZ7FhR1W38qAX9keSG9AdoCA3HHMg6j/6hWjxx9ZqXD+09z6pWBBypZbjGdOdHVeiSngkYqWdO5ffL1zVtNEXc0=
-X-Received: by 2002:a05:6808:613:b0:396:2bbe:b0c0 with SMTP id
- y19-20020a056808061300b003962bbeb0c0mr5773273oih.18.1684767756342; Mon, 22
- May 2023 08:02:36 -0700 (PDT)
+        Mon, 22 May 2023 11:59:59 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E2D8B0;
+        Mon, 22 May 2023 08:59:58 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 25E971BF206;
+        Mon, 22 May 2023 15:59:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1684771196;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VijY4DoUw40fbRYdmVVSksPIq3IaGyWU7geZrDi9jVY=;
+        b=gJdAt2AxCyojcPac3vYSG5L9kgkvZ45+X1jCPtnISIjGf8w8v4bfEXbg+xnrHYrV+vz37P
+        h4Fczbm62E4yzY8K49bNaCnwIHn6K6eBD7a1q+ZU0jFYwpp+LjuavdECHFo0S16juy7zx0
+        /BDeWyoGoWPotVQ9qtwAAbMPT8IX/eq8jVHgcKndvbwden3PdIcB9XOplbckbQrqxcSu4h
+        zf4Sd5dG3bbf2I4srFuCMqb8MlPeD/YzhDLh1J1c6TVt12gdOhwduZ4yEoTc3lNtdJX61p
+        PCuLsH82GJ+Om+MP/sggqHShHJnIBpGDuSaiaKHfqvGq2cejWWc2KGxy+ArjSw==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: st_spi_fsm: Use the devm_clk_get_enabled() helper function
+Date:   Mon, 22 May 2023 17:59:55 +0200
+Message-Id: <20230522155955.119637-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To:  <4025ec3980a956b0e776024e88ec960afc457501.1681636580.git.christophe.jaillet@wanadoo.fr>
+References: 
 MIME-Version: 1.0
-References: <20230522073017.1782984-1-harshit.m.mogalapalli@oracle.com>
-In-Reply-To: <20230522073017.1782984-1-harshit.m.mogalapalli@oracle.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 22 May 2023 11:02:25 -0400
-Message-ID: <CADnq5_Oqnc1vHNp5QFNA82W4Ja+ua+Xj6Feku06VG6O6bkDztg@mail.gmail.com>
-Subject: Re: [PATCH next] drm/amdgpu: Fix unsigned comparison with zero in gmc_v9_0_process_interrupt()
-To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Hawking Zhang <Hawking.Zhang@amd.com>, Le Ma <le.ma@amd.com>,
-        Lijo Lazar <lijo.lazar@amd.com>,
-        Mukul Joshi <mukul.joshi@amd.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>,
-        Graham Sider <Graham.Sider@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
-        kernel-janitors@vger.kernel.org, error27@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'a2c2690f0d747c973c6a384ab8cd88faa806e5a5'
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+On Sun, 2023-04-16 at 09:16:36 UTC, Christophe JAILLET wrote:
+> Use the devm_clk_get_enabled() helper function instead of hand-writing it.
+> It saves some line of codes.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, May 22, 2023 at 3:30=E2=80=AFAM Harshit Mogalapalli
-<harshit.m.mogalapalli@oracle.com> wrote:
->
-> Smatch warns:
->         drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c:579:
->         unsigned 'xcc_id' is never less than zero.
->
-> gfx_v9_4_3_ih_to_xcc_inst() returns negative numbers as well.
-> Fix this by changing type of xcc_id to int.
->
-> Fixes: faf96b9b602d ("drm/amdgpu: correct the vmhub index when page fault=
- occurs")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> ---
-> This is from static analysis, only compile tested.
-> ---
->  drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/=
-amdgpu/gmc_v9_0.c
-> index f70e666cecf2..1e8b2aaa48c1 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-> @@ -557,8 +557,8 @@ static int gmc_v9_0_process_interrupt(struct amdgpu_d=
-evice *adev,
->         const char *hub_name;
->         u64 addr;
->         uint32_t cam_index =3D 0;
-> -       int ret;
-> -       uint32_t node_id, xcc_id =3D 0;
-> +       int ret, xcc_id =3D 0;
-> +       uint32_t node_id;
->
->         node_id =3D entry->node_id;
->
-> --
-> 2.38.1
->
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+
+Miquel
