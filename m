@@ -2,81 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27880C7EE29
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 13:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47ACCC7EE23
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 14:35:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233825AbjEVNgJ (ORCPT
+        id S233420AbjEVOfu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 May 2023 09:36:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53158 "EHLO
+        Mon, 22 May 2023 10:35:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233659AbjEVNgF (ORCPT
+        with ESMTP id S229486AbjEVOfu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 May 2023 09:36:05 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B7EABE
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 May 2023 06:36:01 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-561bd0d31c1so52700137b3.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 May 2023 06:36:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684762560; x=1687354560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mm6AtU2+OuBX4llFg1IO4pE7VkjWX7FicmeHdP7xHo8=;
-        b=kjyW5gc66/F3uTbXesgGX49WSw+dIl51v4d/Va824zEUdwv/PfUv+MSIoJ0bvul5fO
-         4GDCS2cij488fH+RgarG2Nkip2cdL4Q4WXqi78BnvfItHa4krK1XgEunE3PyPng/X//j
-         sCAKGeYG2LYtOyqwzJmQffEcCi2uhjuvZN88hiFe+x42HxB7ZXAdxlP8MGHteJS9aiCg
-         JJyjzdamE/qO6nYWlv6dw8c/yfES6DHR5ZFYjSFeJdlhulosXxL+jk23AfgCVX168mVt
-         lXirdCfJQwYieQ2ZNtw/iNcWTyfmydWkd/sS8a/xUfW+rTfziwo+zjLbcDzy/gl27d/Y
-         NGZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684762560; x=1687354560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mm6AtU2+OuBX4llFg1IO4pE7VkjWX7FicmeHdP7xHo8=;
-        b=mBXinU9hxqMFNE/bKISXE3iTiZDqJH6iydgdPWYe7RvDBxv8kLuqRvkmixiitf2wG5
-         G6UR2gjjaVAjFHxPbC7NbRt5blF1t1wKkp/3yZqtto2eI7ljvRaoJmitH6krhOd4zj7i
-         3BtfvHHiCnuAs17HrPDTQpHymGPjl1PwSoGFg40yruUO3I6jclhYqtNhbSwfbf+/rVF+
-         uUlhZTk29TZ0svNI5n3NdS4lw7jl7WqTdreB40W3CLI0wFrXyxuyR3AGfSLWOy77AXZJ
-         fTI9x9YCnWIiaZ4zShm92Br246HX3+ZiOYdpHfE/sIL0jN0+I25KiIRLNvMywhsjkNWm
-         umtA==
-X-Gm-Message-State: AC+VfDwSSJZtB6VtUhMRtMk4MJQuwV4lLNrsLRHVywgYGIJE1xKhdvpb
-        NHthvXbSDQLhi7R+YEIiKafFNwLrDoOQlQu91Vqkng==
-X-Google-Smtp-Source: ACHHUZ7cEG8y3tp8stsvn7L0Bpoi51bVVFj6a4KIR3GU6ZdWQMI2zycbhRo/A0NMAiSWxeSPAr7uN2ggRaMlsBN0JdY=
-X-Received: by 2002:a81:8390:0:b0:561:e71d:2618 with SMTP id
- t138-20020a818390000000b00561e71d2618mr10734264ywf.8.1684762560692; Mon, 22
- May 2023 06:36:00 -0700 (PDT)
+        Mon, 22 May 2023 10:35:50 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5444699;
+        Mon, 22 May 2023 07:35:48 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MCoF6N012204;
+        Mon, 22 May 2023 16:35:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=cEOZ7WjnkjivkHr7iyIWSN+hqpzOlsxlVfbvB3wThg0=;
+ b=EJw6zAg6EocWvo6DeRfXUyGc3ZuDXjih62I7VhYyZ98jhI0vNnjhkbJEWXo55h4y7YHc
+ KcZrQFiXr0Vk9KJKfEuY+s9gUnImB1mFWBMkq4xO4aKAWgrr0vOsNgBMOa3Y4mWm+Zwk
+ wr1urIcm0PQSpvoNonjdC9B+so9YPg6rQ5XXVFl+0A9mu13U/wBUsJ48TywApCSRimH5
+ nlHN850giap4pHnfI811c+aW8Jiso0VmbKnTcl8/PDAZaVnQ+Z4ParLNbSZDXygPTFbn
+ v6jd9QUusUpamSo5Tyn4PtFMnCHVZhc0wSa+wbtp2bR5aGvvOQOwvxZlsLq8EOZaer4q BA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qpn3gbx8d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 May 2023 16:35:37 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C7D4710002A;
+        Mon, 22 May 2023 16:35:36 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C06EE25E507;
+        Mon, 22 May 2023 16:35:36 +0200 (CEST)
+Received: from [10.252.27.80] (10.252.27.80) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Mon, 22 May
+ 2023 16:35:35 +0200
+Message-ID: <035e7e15-6450-627b-0ea8-3339836c1b7d@foss.st.com>
+Date:   Mon, 22 May 2023 16:35:35 +0200
 MIME-Version: 1.0
-References: <ffc1e98d-0db4-4b8a-9e49-eb87ef844cbd@kili.mountain>
-In-Reply-To: <ffc1e98d-0db4-4b8a-9e49-eb87ef844cbd@kili.mountain>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 22 May 2023 15:35:49 +0200
-Message-ID: <CACRpkdYogcTJ7LLD8Fh-=KjvRJuBFP3=pi9=Pv3E9tvuk3X1Cw@mail.gmail.com>
-Subject: Re: [PATCH] pwm: ab8500: Fix error code in probe()
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] remoteproc: stm32: Fix error code in
+ stm32_rproc_parse_dt()
+Content-Language: en-US
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org
+CC:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <kernel-janitors@vger.kernel.org>
+References: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.252.27.80]
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-22_10,2023-05-22_03,2023-05-22_02
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 22, 2023 at 1:07=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+Hello Dan,
 
-> This code accidentally return positive EINVAL instead of negative
-> -EINVAL.
->
-> Fixes: eb41f334589d ("pwm: ab8500: Fix register offset calculation to not=
- depend on probe order")
+On 5/22/23 09:46, Dan Carpenter wrote:
+> There is a cut and paste bug so this code was returning the wrong
+> variable.  It should have been "ddata->hold_boot_rst" instead of
+> "ddata->rst".
+> 
+> Fixes: de598695a2ad ("remoteproc: stm32: Allow hold boot management by the SCMI reset controller")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 0e322697d210..a7457777aae4 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -755,7 +755,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+>  
+>  	ddata->hold_boot_rst = devm_reset_control_get_optional(dev, "hold_boot");
+>  	if (IS_ERR(ddata->hold_boot_rst))
+> -		return dev_err_probe(dev, PTR_ERR(ddata->rst),
+> +		return dev_err_probe(dev, PTR_ERR(ddata->hold_boot_rst),
+>  				     "failed to get hold_boot reset\n");
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Good catch!
 
-Yours,
-Linus Walleij
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+
+Thanks,
+Arnaud
+
+>  
+>  	if (!ddata->hold_boot_rst && IS_ENABLED(CONFIG_HAVE_ARM_SMCCC)) {
