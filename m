@@ -2,103 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 849A5C7EE29
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 22:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ECCAC7EE2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 22:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234716AbjEVWaN (ORCPT
+        id S234924AbjEVWqr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 May 2023 18:30:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41768 "EHLO
+        Mon, 22 May 2023 18:46:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231819AbjEVWaL (ORCPT
+        with ESMTP id S234703AbjEVWqm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 May 2023 18:30:11 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 390E5109;
-        Mon, 22 May 2023 15:30:08 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id 41be03b00d2f7-52caed90d17so4665277a12.0;
-        Mon, 22 May 2023 15:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684794607; x=1687386607;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i0BADrMgNcqHGvZTXAFhgG6p0QoADWfiDby7KN9sF5g=;
-        b=O0UWeL3wu6o5g5vDi3RXmw+3yYGM3Kg0rknQV9z9mHgrkDZI5nhOhn90kqFa4HM9X+
-         TpE+0CXWNhNc7MPDFXXaunuyhU0mJVUVVnFOsTLEtqr4ySen8TZrthJgOxBruZExz4L2
-         hmj1tTOHCVNXCTyQr9R47Ol4YfZwqkMuISDp5a10rcalYpEArAihBf/o/skPQdhzLvTA
-         UrwFjRYctIcLTMYdvQCOnzhYIv4ONH+aYD96Cpje/21UydboAPkBFyclQYgbwfsuetL6
-         63+uuNgkD1zY22Wy2kUCCk7CiOT9ngqpz7sPE94eFGHv4KprxS2EhZgacK2mtyJ2cs2l
-         BBXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684794607; x=1687386607;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i0BADrMgNcqHGvZTXAFhgG6p0QoADWfiDby7KN9sF5g=;
-        b=TYhumdIt9YDdDqlMRA6HUODVaGm9OVozzYJlfO469f91sgOr+6YG4tsOxC6wGKCuCu
-         q5DdDlMFjW3vGOv2YPYmeJkvsBtLpiBd+GUDQ9FcxckJBnyyUx9S6Zut9zxnTlbJR3W2
-         eVZPRpM/AUvIlYoMSFBH7pBObN0OvuFQiU0jsZd9o7OXTUN19gHF5fLsQ8CWIo2+GEen
-         rZ2efQyEffZvWSonY6E4SE6stccpwCR40L5UETcvB4F2hPbDigMNR+UYW83N3UGCy863
-         0zlacegrFwPXdG5wXLh735Rd/eZPYQlwo25oa9K2wu7qpLqj3ZjP/jzWa8Ijup9va13M
-         jt9A==
-X-Gm-Message-State: AC+VfDwewBeO75878AiB21i6TT+pWqavFqQWO1ITrMeveM1I2+iwYqyb
-        /XgVB8Ie2GVvYVcIbSlHpXQ=
-X-Google-Smtp-Source: ACHHUZ6gdI+c8iqtPZufgDopEpdoUnu/Ac9M4z335puf/ipJaw+/sO0zu1KRRWPDUKZ3knOcS11eCw==
-X-Received: by 2002:a17:90b:1d03:b0:246:5968:43f0 with SMTP id on3-20020a17090b1d0300b00246596843f0mr11554054pjb.10.1684794607605;
-        Mon, 22 May 2023 15:30:07 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f6-20020a17090a9b0600b0024b79a69361sm6223734pjp.32.2023.05.22.15.30.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 May 2023 15:30:07 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Mon, 22 May 2023 15:30:06 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Su Hui <suhui@nfschina.com>
-Cc:     Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
-        Alistar Popple <alistair@popple.id.au>,
-        Eddie James <eajames@linux.ibm.com>, eajames@us.ibm.com,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cbostic@linux.vnet.ibm.com, linux-fsi@lists.ozlabs.org
-Subject: Re: [PATCH] drivers/fsi/scom: Return -EFAULT if copy fails
-Message-ID: <de9a7ffe-bedd-4181-886d-c9a3006b7be8@roeck-us.net>
-References: <20230519013710.34954-1-suhui@nfschina.com>
+        Mon, 22 May 2023 18:46:42 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA26109;
+        Mon, 22 May 2023 15:46:40 -0700 (PDT)
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MKOOQj021249;
+        Mon, 22 May 2023 22:46:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2023-03-30;
+ bh=jBkF9Iwl3VGmV4YD/DiO7Vduyh84oEogKnoF2BSAbdk=;
+ b=tvUqootR64P7mDuxM5OykobdagzGnAw+ADfTCi9RNxb9dkiJxc1YUDlm5axOiW7cgzRg
+ M3Y8S2TE/RQ/lek1d30fJpqr0MA0Y4faT8yBvmg2hGtE4XIf5eNlODNpz/DQOdB9pGPV
+ zEas6JNS7AtiATTJvnJrTgZb/8I+LpHOITNQ94K/5e887c2vZN3PLv0EmWbJljEhzfUQ
+ dOsHKDoJMF/CdJ7nyr9rSZU09ad5T3mBMqshba/DOv1fgdaUEeME5aJcvrso/8Ja9eL8
+ 5R1MjwjSlOhZymJCmRRCJ3w/bl6gVhrtugKIsKV+e9Ns9VdBmTrEr92ZcuoRGimYsHzL bg== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qpp5bku4s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 May 2023 22:46:32 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34MLrZsC027323;
+        Mon, 22 May 2023 22:46:31 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qqk2ctfcj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 May 2023 22:46:31 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34MMkPxc017332;
+        Mon, 22 May 2023 22:46:30 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3qqk2ctfa8-5;
+        Mon, 22 May 2023 22:46:30 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Linux SCSI <linux-scsi@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
+        Bagas Sanjaya <bagasdotme@gmail.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Oliver Neukum <oliver@neukum.org>,
+        Ali Akcaagac <aliakc@web.de>,
+        Jamie Lenehan <lenehan@twibble.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v2 0/3] dc395x stale reference cleanup
+Date:   Mon, 22 May 2023 18:46:16 -0400
+Message-Id: <168479035950.1118074.6844851556275166076.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230510093933.19985-1-bagasdotme@gmail.com>
+References: <20230510093933.19985-1-bagasdotme@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230519013710.34954-1-suhui@nfschina.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-22_16,2023-05-22_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=614 phishscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305220192
+X-Proofpoint-GUID: k3t2HNhSIWTlQrDQzIPa6gTrpTd65s_8
+X-Proofpoint-ORIG-GUID: k3t2HNhSIWTlQrDQzIPa6gTrpTd65s_8
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 19, 2023 at 09:37:10AM +0800, Su Hui wrote:
-> The copy_to/from_user() functions return the number of bytes remaining
-> to be copied, but we want to return -EFAULT to the user.
-> 
-Why ? EFAULT means that a bad address was provided, and it is not
-immediately obvious why that would be the case.
+On Wed, 10 May 2023 16:39:30 +0700, Bagas Sanjaya wrote:
 
-Guenter
+> A small stale reference cleanup series for DC395x driver. The shortlog
+> below should be self-explanatory.
+> 
+> This series is based on fixes branch of scsi tree.
+> 
+> Changes since v1 [1]:
+>   * Do not explicitly mention linux-scsi list in MAINTAINERS
+>   * Keep the attribution to the 2.4 driver but reword it to remove mention
+>     to 2.5/2.6 version
+>   * Use web.archive.org snapshot of 2.4 driver link.
+> 
+> [...]
 
-> Fixes: 680ca6dcf5c2 ("drivers/fsi: Add SCOM FSI client device driver")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/fsi/fsi-scom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
-> index bcb756dc9866..caaf7738eb98 100644
-> --- a/drivers/fsi/fsi-scom.c
-> +++ b/drivers/fsi/fsi-scom.c
-> @@ -335,7 +335,7 @@ static ssize_t scom_read(struct file *filep, char __user *buf, size_t len,
->  	if (rc)
->  		dev_dbg(dev, "copy to user failed:%d\n", rc);
->  
-> -	return rc ? rc : len;
-> +	return rc ? -EFAULT : len;
->  }
->  
->  static ssize_t scom_write(struct file *filep, const char __user *buf,
-> -- 
-> 2.30.2
-> 
+Applied to 6.5/scsi-queue, thanks!
+
+[1/3] MAINTAINERS: Drop DC395x list and site
+      https://git.kernel.org/mkp/scsi/c/332aac6f0dc0
+[2/3] Documentation: scsi: dc395x: Replace non-functional twibble.org list
+      https://git.kernel.org/mkp/scsi/c/7a94a131aa10
+[3/3] Documentation: scsi: dc395x: Reword original driver attribution
+      https://git.kernel.org/mkp/scsi/c/16853cd8f6d4
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
