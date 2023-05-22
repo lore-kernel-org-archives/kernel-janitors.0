@@ -2,129 +2,122 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB3DC77B75
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 12:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B703C7EE2D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 13:02:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234101AbjEVMgZ (ORCPT
+        id S234154AbjEVNCl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 May 2023 08:36:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38048 "EHLO
+        Mon, 22 May 2023 09:02:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232917AbjEVMgD (ORCPT
+        with ESMTP id S233529AbjEVNCj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 May 2023 08:36:03 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on20727.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe59::727])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABEF6E64;
-        Mon, 22 May 2023 05:35:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aQ9lKavhlfnER2LrrmdGW1+7IC7q8SsluSKRRVGSdDUZ5S6dJhxFwYrrTgBWpq8DocsP6oarfgjYcBqmt2aXZaFVRXz1C4/QFyb8gVPoyQzfrHwHxHsDSc6KSIK2AokTnPTLfRbi4E/BRUlkpTA/wC5Rb+G9u5dtP8gd1xUCsflAPjG/ZIPI4CkeNj5H96QSibvEKQZGjRUmhBUDQY3+UXpG0bgws+1I4XKe4VwRqTNqgndYORcf88lRvTYrDpXZveqlcNjirsjFJCohV8FRbFgGY2nCL/wbb2rRSQHO9TFDDNdJAqJumqz+Evu7L0ckukRjePAvT1WNfqmWtRTqvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HafZaPh+MyFkhRubGiI0uk2krqbFrC/TONXNFuz8q/k=;
- b=NczYqfbwiGcVCk3Zb27XsH4EGKiIYfgJCcuuyLSCgdlzDv8tvqP3FISd6K3TcHQoq6dFN9O8M4yG2UfHl0jLctI5R6gyLPQ2v22olzbSz6jDc3LbnLqU4Q2PW8Dt3VHUpiNVWnGuC9isoi+3oZVEXO4tdEUZl/4x1Al3fdKCjntI5qeQsZ2zaHYxRJhtBpj4NDtvlAnx5VWLj5x57M3XvF24X1GOLxWPvbO8Rbd90FxyVhItUzUmlWv7LbCLU6HYwUzqT7azA5t5HQ46hfF/Fdl9XpnvYXzpW0DwA2R+PCAafb1+S5iA3kQ8mq3lFRwbE2TvVNIFphq0rMc4mUyedQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
+        Mon, 22 May 2023 09:02:39 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39B14B7
+        for <kernel-janitors@vger.kernel.org>; Mon, 22 May 2023 06:02:33 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-561bb2be5f8so75132597b3.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 22 May 2023 06:02:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HafZaPh+MyFkhRubGiI0uk2krqbFrC/TONXNFuz8q/k=;
- b=b2VyHi332YKbv/0zF4iE1f6BN0cbqFwjxh1omfL9drZvbasDFhwYX/zci06IBs4iWWV9650MBU4d12oNUJjX6OJcX3un18FIdz5ZnHU+4KM4M+E6tREeUsA4GH5wYI95/7Pr2XuVaT4xjIs8R/06zeIhU0Rutikbx9xdtGE941U=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by PH7PR13MB6391.namprd13.prod.outlook.com (2603:10b6:510:2ea::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.13; Mon, 22 May
- 2023 12:34:37 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34%5]) with mapi id 15.20.6411.028; Mon, 22 May 2023
- 12:34:36 +0000
-Date:   Mon, 22 May 2023 14:34:30 +0200
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net] 3c589_cs: Fix an error handling path in tc589_probe()
-Message-ID: <ZGthVr9FppjWDA9F@corigine.com>
-References: <d8593ae867b24c79063646e36f9b18b0790107cb.1684575975.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d8593ae867b24c79063646e36f9b18b0790107cb.1684575975.git.christophe.jaillet@wanadoo.fr>
-X-ClientProxiedBy: AM0PR10CA0050.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:150::30) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        d=linaro.org; s=google; t=1684760552; x=1687352552;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=y3TaDGc6UXdBjXXUtkfSo09wA01+Q0Bb6oG2mEWLoBY=;
+        b=a3q9I6ts05CGT64isT+VAGu13MrUb94QEknKnCkNCrNZT9XINRxdaOJ5zX/9KZM3Nm
+         dWkmaVgrgzNj+uKJcIOORFHDcL5q5tn7fR8v0OOXuITVRHgHp2aXXvyHzkYomcBV1cQm
+         FIMKvuy1K+SdV73Lxlw7ONkrGejYngLk3PECXA/S37pIRZLBvEHwWMYxTDQqBbM7S13h
+         VP9Dol047gDeJmw26Pr+bAZ3+h6z4ElzhIsoPByCzn1fY3wD/EahA1RL/y7FEiJOdu7P
+         tXPeoVlkfJfl9/g0e2cg96jPWWgZS+H+phjmFSRksMFjJY/yZ3ldmbHgnRSzGHBvsxY1
+         DALQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684760552; x=1687352552;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y3TaDGc6UXdBjXXUtkfSo09wA01+Q0Bb6oG2mEWLoBY=;
+        b=CTpzGfcoAB+KyhfGZRNJ7QeC2dOGQ8H0ayHAGgjHiFVZw6ZvJsITDZr5yehKsQQXIQ
+         N9UHR197aeJ5ENPCU39PJ0Q1Aeet4wUaxDLwTHuj+37Ee9YZldAFO2UugBGjqUNqgnbp
+         yYVJeAGNzg+h6Oo0xbqr1dV4lfTicftdKMLennsfUon2PVnibDHdVx9GjrjAHUZsG7jK
+         v/+TqxuP+CDcNQrRx5UuOIqFX5NoxYTzFO6JSTitAfoNUXqd1ERHU3n8ngyVclPl8gJv
+         zBesbFNJX+wfDcX3I1riafR5C6p/DF+Uvi2rmaX149JK/3RWeeOr5zUbiK3laX0EcrRx
+         eCDw==
+X-Gm-Message-State: AC+VfDzhslxWypIjeWcHwQeEvxEaZq+wc8eQ6lerooeHMPLxJOzXHMqV
+        B+mHJx+Q/wk2JFqMrWyfLgOXsMH4XpKdYC0jl2V5lA==
+X-Google-Smtp-Source: ACHHUZ6xF8+yKnUQDlQX7TXAUwQ8uC6kK3HwVT1ocx55TFzO8Yb1WnEXK2/2ib6EIQI+S7jGcPE6z/35OsxRNvqqKpc=
+X-Received: by 2002:a81:494e:0:b0:561:e67d:8a35 with SMTP id
+ w75-20020a81494e000000b00561e67d8a35mr12130944ywa.35.1684760552308; Mon, 22
+ May 2023 06:02:32 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|PH7PR13MB6391:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2584fd1f-64da-4bef-dc49-08db5ac0e776
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: uFTa6gqWSe35i9/1HCrLVYUCxogoIy8MwgnVojR3T3wnmk7NKAp8k/0cz/d/1JwiTrAomiayDzRgOnEOOjdBlG6tSljfCw2qwFVbxsNqw5lARwYxwNxDe58/AtoZPrYbLFMi4PRqZQM7KDeIERSQXyzjcZTB0O2cZn9vRjZSoCBbu5UDErseoVW1g61Lw52ZtFwAHw6I8AoYEUzZaTwU7Ya0L8MxmPjouFg35Hc48q+SqPb3ulklEjxJcv6Y1HLVTKR2oq76Mn4P9pftOPsk3dd00CXcUY5t9JD/rM8NMTwgpdmRrD73wk71hhbJt/Ljeg1AA1/wws8AbYT9grDBQ5mTOyFpsgDpGkr2S2RG3JcbdjxteMMumvE2rre9ckLvYxbam3IEmIOW4SYGTCxNydFtYvHk1GyK50Ya3vDaT4fRoCD+D4DItXJlMXwMgCI2opw7fQd9DrMXQp7S7Kznjbs/qAPTn2WmQgulgvDRf81GbS+/J1FQgENHAZlcvR523yy9Uek5GB0QPzvMyVzyTf2XohZGva4rgQ5zU7A7V3WlXJfb7qWBID1d30RXIhFm
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39840400004)(136003)(366004)(376002)(346002)(396003)(451199021)(6666004)(86362001)(316002)(54906003)(478600001)(41300700001)(6486002)(66946007)(4326008)(66556008)(66476007)(6916009)(38100700002)(8676002)(8936002)(5660300002)(2616005)(36756003)(44832011)(2906002)(4744005)(186003)(6512007)(6506007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gdGOuw61RfUDnmu4y/Ky80yjsab8zH+GknGm+80gLxquiW6x+vXyab+g7vHn?=
- =?us-ascii?Q?OlLa/JwPG04YtQn/lMHZy7lK2B8Z2bBjN26M6DdymNgvHxDbOvlYWmaAe2AK?=
- =?us-ascii?Q?cSG5Heym1PQHXKDQqXXpCqYtDLaShSYkONyr8+sOZ6Efvu++lKxIbgIy/e6X?=
- =?us-ascii?Q?J+Ks6CByD5d4PCXLVzxd8I3bAkJCK43jAfX4WXj5X6bMONcII6B/0z2oEqsf?=
- =?us-ascii?Q?6n961+CPN8MCiqGZgDt2xmdh5fMQ1pVy8b/C2UJqAii0AXkAViT/5OETj7o8?=
- =?us-ascii?Q?+7DIh9HwBfxdfoSTW0aohyMm5fP19i3xhEIxYTCHn1orCe7ZOYuoXRA/ZsGT?=
- =?us-ascii?Q?4cvRpnJi+n5JhPErDOBJScEnhpXgeus72bsG4yMklfoPDymwZd+MSKOKTdCX?=
- =?us-ascii?Q?XipWqZehGTxqde/KjNDvESRw+OeqHtm9PjoHTj0px6Od5zfoJrE0IU27ovZA?=
- =?us-ascii?Q?zONqV68roLeNpla9BPO13coi7K0EODGeQuQyE2ceE6OKqXj2IyETwqdSUNir?=
- =?us-ascii?Q?TA3q3MM3YIibwZKQKDl36TdWyKtiqTTbA6lZklOWFevJIaWO2chUu+ZSosWN?=
- =?us-ascii?Q?ribw/+TItj0xr5GJnutnp523EJRuurZ0QwiWPYJk9vE56luUrFNgy6eCESFd?=
- =?us-ascii?Q?QFooinRcEz4qzJHhOUkcS/KMzN/FguJCJrBHsAKlpegCdXqiGKA8SAWyaswH?=
- =?us-ascii?Q?CgG9VZjwSRpt6ycJvEsFEQuXTSZsmpbKg1uszetGeWLacG4gKwKnvo1zuJc3?=
- =?us-ascii?Q?uAqk+HZ/NRw3WghEK/Q8J68xRTkBDdwurGlAV9NP9OmrUY3vbEpAXtyt/B5Y?=
- =?us-ascii?Q?MQTQI+Ejoal2yGOouTuCNNFOQ9xVHYbcXff6B8TEqiOWS28t7MEfkUdUsHMY?=
- =?us-ascii?Q?uCK6UBOqhT7xXzTNiPGrQks6Euuftu8F667xyJAEG41K5/cWrXbXEIIhcJSv?=
- =?us-ascii?Q?zlZihhxtvFL99e5tK722cy8HBXhp8Nv2jaujpV4Pp7BzWCVIyuuYfqrSUqYm?=
- =?us-ascii?Q?mNWp2mdDscxC7X0WxE9s+L2xA0y5mgy8Bh/EQKoUfCmH2Eb5/Av4YezdWSjS?=
- =?us-ascii?Q?y0e1Y2C/KX067O7byrGAjkc4tGgHTCpKrczVrCQ39hfMdQXrXdapW+k8Ww6A?=
- =?us-ascii?Q?Uh34WO6e3tSKRsQvNHlBcYo5nzw1a4IPBlVfa+7TW9aX8rbzgPhh7mqODN3n?=
- =?us-ascii?Q?q1BuJCPfK2CNrUawTqbmE2nME9mYOTiZTsk5Zhq5kceRI3m60H4X0EU05re+?=
- =?us-ascii?Q?sFEDC+FEAG2YjVsLnj3AqOFCN/qt71ogYo/sK6qeK5l+pFlqjl+pmdf09VX0?=
- =?us-ascii?Q?83LiRzCXzYVN8exsXFlZacSMWVEPn+7kZnMU0jQ85dm5Nps4JInoJ8E+G8EG?=
- =?us-ascii?Q?tJzvwrgNwu2ho/GCUp5DzNxvBY7nvlhtpKekuLiWd7fyvWkx8GDoH5KH1DQA?=
- =?us-ascii?Q?dmU77rFkt8TeJB2sHbRbA0jVJhXOU534jP23GD7dVaGHu9GlMsYSg346ovkQ?=
- =?us-ascii?Q?ODe/IudBrzC9FBWMSsx2JJFcrsGE6BoHJm70wY65e0Q3pwnFwAKsmBGk7m13?=
- =?us-ascii?Q?/WZEGn7V9UVNqBCJY/hdg8oY2G873/ZIsqGUvgjR2NY42AUC8Nug/OIWsXaG?=
- =?us-ascii?Q?lv/Q/f4jd91spDCcUES5Yd3dZEvw4vMMRoW+65uQQ9qMpbE2r8jkXXDDD8UA?=
- =?us-ascii?Q?cEXWlQ=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2584fd1f-64da-4bef-dc49-08db5ac0e776
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2023 12:34:36.8691
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OTVNv+6DhKhh5rXvC1Cb4obATK3E4b3SkswvmVuf/oQflFZRm2Bhb6zNvBNZgp3L7FIhv8tr+ibvzIHPntCs57vv29TSXT+ILLGawbrVN2Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR13MB6391
+References: <897779a0-1a1f-4193-9dd3-bc4f87e73e3c@kili.mountain> <wxfpgm77uxae5mhpht35m4kgrcx2givdp2duncxduz7hrlcofz@sp5wxfqx63fg>
+In-Reply-To: <wxfpgm77uxae5mhpht35m4kgrcx2givdp2duncxduz7hrlcofz@sp5wxfqx63fg>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Mon, 22 May 2023 16:02:21 +0300
+Message-ID: <CAA8EJpo+9M7SgaNk7qd-Z1_e_WBVFRLLr9hGk5n0hLjRpyA4yw@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/dpu: signedness bug in dpu_encoder_phys_cmd_tearcheck_config()
+To:     Marijn Suijten <marijn.suijten@somainline.org>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 20, 2023 at 11:48:55AM +0200, Christophe JAILLET wrote:
-> Should tc589_config() fail, some resources need to be released as already
-> done in the remove function.
-> 
-> Fixes: 15b99ac17295 ("[PATCH] pcmcia: add return value to _config() functions")
+On Mon, 22 May 2023 at 11:47, Marijn Suijten
+<marijn.suijten@somainline.org> wrote:
+>
+> On 2023-05-22 10:48:01, Dan Carpenter wrote:
+> > The "vsync_hz" variable is used to store negative error codes so it
+> > needs to be signed for the error checking to work correctly.
+>
+> Nicely spotted, but it it looks like we have more to fix then.  The type
+> returned by dpu_kms_get_clk_rate() is u64:
+>
+> - Perhaps the int used in this patch is too small (though 19.2MHz vsync
+>   clock ought to fit);
+> - That function should also return a signed number as part of this
+>   contract.
 
-That commit is probably going back far enough, but I actually
-suspect the problem has been there since the beginning of git history.
+Please also include freedreno@ to the cc list when sending v2.
 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>
+> - Marijn
+>
+> >
+> > Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> > index 74470d068622..b29e6d1ba7f6 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> > @@ -320,7 +320,7 @@ static void dpu_encoder_phys_cmd_tearcheck_config(
+> >       struct dpu_hw_tear_check tc_cfg = { 0 };
+> >       struct drm_display_mode *mode;
+> >       bool tc_enable = true;
+> > -     u32 vsync_hz;
+> > +     int vsync_hz;
+> >       struct dpu_kms *dpu_kms;
+> >
+> >       if (!phys_enc->hw_pp) {
+> > --
+> > 2.39.2
+> >
 
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
 
+
+-- 
+With best wishes
+Dmitry
