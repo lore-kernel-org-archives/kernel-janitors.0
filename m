@@ -2,95 +2,118 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2BCC7EE2E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 15:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF77BC77B73
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 15:03:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234421AbjEVPDU (ORCPT
+        id S234450AbjEVPDa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 May 2023 11:03:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43638 "EHLO
+        Mon, 22 May 2023 11:03:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234416AbjEVPDF (ORCPT
+        with ESMTP id S234098AbjEVPDN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 May 2023 11:03:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE2B0E73;
-        Mon, 22 May 2023 08:02:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B8618623BB;
-        Mon, 22 May 2023 15:01:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7AFFC433D2;
-        Mon, 22 May 2023 15:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684767715;
-        bh=Cb7wYsL4GyXP/HGoxz6KSl4qGY9mIiX9Yg7CdwhMpu4=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=fROP6QjYw1cwPrTFMPPa52tHByCRAnAEYRJKYY/vLIZKUtsKCM8abpK46pBkHFgJu
-         V19r5mGgnv288GhjqNer5i+YZVov8RrPjn4Uj8HIS+c9cHE/PRTbCzZEz1AFLJXUPI
-         gy4i0ddWfVyErmnVB1L8Vgx7P3qJY4N/SV9TJ5c7eiF37I6WHHwBEtYHOBV3lVGQ1v
-         WiI9AItD9+w5zZpV0yVSNzVbWx+NwIAyJCyfwnp+r/zMlPNPgIQv77tJFUltMjZBJa
-         lWh4dwXhkC7qVpEy1Bf4rNYoW60hPhehkP5Y0GT/SJE5APF5VCWlARCJx3+pPG6Jfm
-         p2hfVEskU2NKw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Olivier Moysan <olivier.moysan@foss.st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-In-Reply-To: <f7987f18dadf77bfa09969fd4c82d5a0f4e4e3b7.1684594838.git.christophe.jaillet@wanadoo.fr>
-References: <f7987f18dadf77bfa09969fd4c82d5a0f4e4e3b7.1684594838.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: stm32: sai: Use the devm_clk_get_optional()
- helper
-Message-Id: <168476771240.849172.17021857411511988497.b4-ty@kernel.org>
-Date:   Mon, 22 May 2023 16:01:52 +0100
+        Mon, 22 May 2023 11:03:13 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E8F10D3;
+        Mon, 22 May 2023 08:02:39 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id 5614622812f47-397fe20a2b5so437669b6e.3;
+        Mon, 22 May 2023 08:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684767756; x=1687359756;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l9+Z/yo/990FPPh1vM0WhcUYxVkl6LMnyPg5rFTfhAY=;
+        b=oC+ddbUeJBq0b9XNhZ2dJmn6tG665zNZ21gthPPJvPvZJNfEuCpE4hfp7iJu4EM+5K
+         7M+hg2Zbnrae9ugnC4AE3qM3JjDAgwYY3mVWUPvKudlsZZa5ng+QVoOzzJZxfzc4seAk
+         Gwuv2jDItPCzIbIoFNii0/Iolc8vspBvcukjrgOh32ZBo6B0aXs+cT3aZbqSNg53xUxK
+         7fFqCQazjUTzSFH6I2XSGQfAXxDz+3vWDxWKDTYYTsgCZnAX16yU/FsvZGvD7zRoOEhK
+         2ffXfbT0JXROF8unVfKSleowQHrNdA4+VcR7Pymo/YlIPVoKrDwByyiodz0yZ5Ho7HAS
+         1WiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684767756; x=1687359756;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l9+Z/yo/990FPPh1vM0WhcUYxVkl6LMnyPg5rFTfhAY=;
+        b=ESoYcCW8xbfOxO/uOcsrJgmfVoyfRuEbTUgj59hRu3vg3hmvenX96UFU5x7YvbwxRc
+         DAXDJrpRHiijOyvKONAkm9YyeYodmVhNL5hPGU1xebSE65D1QMhXbX+McgRtYGKyex0V
+         l2TdHHYONBqfH/Ad/C7SKxHbPISYhVXA6Jd748flOBtpCM2r6N2NCvrg/ROXbVfVE19h
+         J0kAFT+RYFWtduyv9KEaYodu2EIbYIqYt8KtHLhsmdoDZxht/1T1BBtQx2zdlf3lkt65
+         AUKfrtBCVp6W0Ahwp/J527+LaHtngjCFbxz3auTykZEG3/sCJC00fJSdjXhAlzGTyMj8
+         dPXg==
+X-Gm-Message-State: AC+VfDyHQUCr9uqc4UKpQRT6PFGFL0qOO402EoOkVjjb0yZW5CL/tY+t
+        4rRmkYcCmvgStd+Kvh3XEb0/voUNZQ3ADmM4d+s=
+X-Google-Smtp-Source: ACHHUZ7FhR1W38qAX9keSG9AdoCA3HHMg6j/6hWjxx9ZqXD+09z6pWBBypZbjGdOdHVeiSngkYqWdO5ffL1zVtNEXc0=
+X-Received: by 2002:a05:6808:613:b0:396:2bbe:b0c0 with SMTP id
+ y19-20020a056808061300b003962bbeb0c0mr5773273oih.18.1684767756342; Mon, 22
+ May 2023 08:02:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bfdf5
+References: <20230522073017.1782984-1-harshit.m.mogalapalli@oracle.com>
+In-Reply-To: <20230522073017.1782984-1-harshit.m.mogalapalli@oracle.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 22 May 2023 11:02:25 -0400
+Message-ID: <CADnq5_Oqnc1vHNp5QFNA82W4Ja+ua+Xj6Feku06VG6O6bkDztg@mail.gmail.com>
+Subject: Re: [PATCH next] drm/amdgpu: Fix unsigned comparison with zero in gmc_v9_0_process_interrupt()
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>, Le Ma <le.ma@amd.com>,
+        Lijo Lazar <lijo.lazar@amd.com>,
+        Mukul Joshi <mukul.joshi@amd.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>,
+        Graham Sider <Graham.Sider@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
+        kernel-janitors@vger.kernel.org, error27@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 20 May 2023 17:00:50 +0200, Christophe JAILLET wrote:
-> Use devm_clk_get_optional() instead of hand writing it.
-> This saves some LoC and improves the semantic.
-> 
-> 
+Applied.  Thanks!
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: stm32: sai: Use the devm_clk_get_optional() helper
-      commit: 374628fb668e50b42fe81f2a63af616182415bcd
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+On Mon, May 22, 2023 at 3:30=E2=80=AFAM Harshit Mogalapalli
+<harshit.m.mogalapalli@oracle.com> wrote:
+>
+> Smatch warns:
+>         drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c:579:
+>         unsigned 'xcc_id' is never less than zero.
+>
+> gfx_v9_4_3_ih_to_xcc_inst() returns negative numbers as well.
+> Fix this by changing type of xcc_id to int.
+>
+> Fixes: faf96b9b602d ("drm/amdgpu: correct the vmhub index when page fault=
+ occurs")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is from static analysis, only compile tested.
+> ---
+>  drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/=
+amdgpu/gmc_v9_0.c
+> index f70e666cecf2..1e8b2aaa48c1 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> @@ -557,8 +557,8 @@ static int gmc_v9_0_process_interrupt(struct amdgpu_d=
+evice *adev,
+>         const char *hub_name;
+>         u64 addr;
+>         uint32_t cam_index =3D 0;
+> -       int ret;
+> -       uint32_t node_id, xcc_id =3D 0;
+> +       int ret, xcc_id =3D 0;
+> +       uint32_t node_id;
+>
+>         node_id =3D entry->node_id;
+>
+> --
+> 2.38.1
+>
