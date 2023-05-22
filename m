@@ -2,50 +2,56 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAC9C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 15:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2BCC7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 15:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234369AbjEVPCy (ORCPT
+        id S234421AbjEVPDU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 May 2023 11:02:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43384 "EHLO
+        Mon, 22 May 2023 11:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234424AbjEVPCo (ORCPT
+        with ESMTP id S234416AbjEVPDF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 May 2023 11:02:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF59E18F;
-        Mon, 22 May 2023 08:02:12 -0700 (PDT)
+        Mon, 22 May 2023 11:03:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE2B0E73;
+        Mon, 22 May 2023 08:02:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B8047623C2;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B8618623BB;
+        Mon, 22 May 2023 15:01:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7AFFC433D2;
         Mon, 22 May 2023 15:01:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD9DC433EF;
-        Mon, 22 May 2023 15:01:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684767712;
-        bh=ZzCrfWXY7FxJ0s2FjGH0TL7QTy+9v4JSvkeEVCTndqw=;
+        s=k20201202; t=1684767715;
+        bh=Cb7wYsL4GyXP/HGoxz6KSl4qGY9mIiX9Yg7CdwhMpu4=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=tfgobSaIOSHpTwW0PLhFpvBjgFoEtYOui1gIFUGOc/WebAOEty04B4Tdk4Iuphk4K
-         /5n/jOVqHJnqaSgXAqUZrZBdzj+ElKXzzMUuSSZIMdo4Ib3YdvDYA4lNlhzQ0p1Bbe
-         O3yO8fN8gg4QSCPNtOnoFe7WfzRVpJR2HPNVR4cycPhhgk63UOMmv4Piv3I+ASwP4e
-         GAcRV/BQUzsKDJuOWn4sUH8l+LnO7JhxPPxmrDPJdOaE1a4UaibOOUaxFNCCGjm0pX
-         8zYLZUMen7s6P8T3Y1zxXIP+0IVBwRXVHmXnNoNzqHdOze/wnMBSXL2rG8fs/Fn0zA
-         AlreJyxRfioVA==
+        b=fROP6QjYw1cwPrTFMPPa52tHByCRAnAEYRJKYY/vLIZKUtsKCM8abpK46pBkHFgJu
+         V19r5mGgnv288GhjqNer5i+YZVov8RrPjn4Uj8HIS+c9cHE/PRTbCzZEz1AFLJXUPI
+         gy4i0ddWfVyErmnVB1L8Vgx7P3qJY4N/SV9TJ5c7eiF37I6WHHwBEtYHOBV3lVGQ1v
+         WiI9AItD9+w5zZpV0yVSNzVbWx+NwIAyJCyfwnp+r/zMlPNPgIQv77tJFUltMjZBJa
+         lWh4dwXhkC7qVpEy1Bf4rNYoW60hPhehkP5Y0GT/SJE5APF5VCWlARCJx3+pPG6Jfm
+         p2hfVEskU2NKw==
 From:   Mark Brown <broonie@kernel.org>
-To:     Oder Chiou <oder_chiou@realtek.com>,
+To:     Olivier Moysan <olivier.moysan@foss.st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org
-In-Reply-To: <f538c24ad7b1926478347a03b5b7f0432e195e3b.1684594691.git.christophe.jaillet@wanadoo.fr>
-References: <f538c24ad7b1926478347a03b5b7f0432e195e3b.1684594691.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: rt5682s: Use the devm_clk_get_optional() helper
-Message-Id: <168476771031.849172.218735201462158916.b4-ty@kernel.org>
-Date:   Mon, 22 May 2023 16:01:50 +0100
+        alsa-devel@alsa-project.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+In-Reply-To: <f7987f18dadf77bfa09969fd4c82d5a0f4e4e3b7.1684594838.git.christophe.jaillet@wanadoo.fr>
+References: <f7987f18dadf77bfa09969fd4c82d5a0f4e4e3b7.1684594838.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: stm32: sai: Use the devm_clk_get_optional()
+ helper
+Message-Id: <168476771240.849172.17021857411511988497.b4-ty@kernel.org>
+Date:   Mon, 22 May 2023 16:01:52 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -54,7 +60,7 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 20 May 2023 16:58:24 +0200, Christophe JAILLET wrote:
+On Sat, 20 May 2023 17:00:50 +0200, Christophe JAILLET wrote:
 > Use devm_clk_get_optional() instead of hand writing it.
 > This saves some LoC and improves the semantic.
 > 
@@ -66,8 +72,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: rt5682s: Use the devm_clk_get_optional() helper
-      commit: 17cf9faeba463d24e7c497ff8137a8c8414644dc
+[1/1] ASoC: stm32: sai: Use the devm_clk_get_optional() helper
+      commit: 374628fb668e50b42fe81f2a63af616182415bcd
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
