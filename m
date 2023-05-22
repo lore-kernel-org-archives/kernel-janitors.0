@@ -2,90 +2,139 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7F6C77B7D
-	for <kernel-janitors@archiver.kernel.org>; Sat, 20 May 2023 15:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4B2C77B73
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 01:32:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231779AbjETPRu (ORCPT
+        id S231241AbjEVBck (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 20 May 2023 11:17:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60702 "EHLO
+        Sun, 21 May 2023 21:32:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231416AbjETPRt (ORCPT
+        with ESMTP id S229481AbjEVBcj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 20 May 2023 11:17:49 -0400
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F1B107
-        for <kernel-janitors@vger.kernel.org>; Sat, 20 May 2023 08:17:47 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 0OL2qxEf9KkqR0OL3qE16C; Sat, 20 May 2023 17:17:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684595865;
-        bh=NYS0+POCoqp3fqggV8ajYmceozpIyaDAzScoVhfOmvk=;
-        h=From:To:Cc:Subject:Date;
-        b=c5vX2GpYoQNcaWitUgGn3tivkOqJmcaiO0iuBAdXG/MnjO3qH054AmA+C/wZ+dCHN
-         Ze7m2ICI3C+0CHlL9VUY1aifbWkBESuetxWtC6oj2c9jfhbHJemxIcg6ibupNyMXDr
-         wE336W9rOvgvhUZJn7lnE4yKOKdZXXKVrBJ+xe0ExGMWAxZot0Dm+9h3GqrCiCWqMe
-         uFRMYpYz2Ee0NgkQLPJAEB1yK3QvQHJjS322ZlWf6m30Taxy7g80uyx9vxPfmR+o2q
-         1NjtWgePMGXiN8O9Pq4cUwGQT5sBgxoerF6WFrQJ3MbKYMkGsatlFbn4yPKKYb/KNR
-         4/O+QYx2GOBhg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 May 2023 17:17:45 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-bluetooth@vger.kernel.org
-Subject: [PATCH] Bluetooth: hci_ll: Use the devm_clk_get_optional() helper
-Date:   Sat, 20 May 2023 17:17:43 +0200
-Message-Id: <2035c65977818626011f512d17cd018b6d877925.1684595848.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 21 May 2023 21:32:39 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 75FC5C1;
+        Sun, 21 May 2023 18:32:37 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 16BFC1800B7C44;
+        Mon, 22 May 2023 09:32:24 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
+Subject: [PATCH] drm/msm: Remove unnecessary (void*) conversions
+Date:   Mon, 22 May 2023 09:32:13 +0800
+Message-Id: <20230522013213.25876-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_clk_get_optional() instead of hand writing it.
-This is slightly less verbose and improves the semantic.
+Pointer variables of (void*) type do not require type cast.
 
-This also simplifies ll_open() because clk_prepare_enable() already handles
-NULL clk.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/bluetooth/hci_ll.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/msm/adreno/a5xx_debugfs.c | 2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c   | 2 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c  | 2 +-
+ drivers/gpu/drm/msm/msm_debugfs.c         | 6 +++---
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
-index 4a0b5c3160c2..de463d8bf265 100644
---- a/drivers/bluetooth/hci_ll.c
-+++ b/drivers/bluetooth/hci_ll.c
-@@ -129,8 +129,7 @@ static int ll_open(struct hci_uart *hu)
- 	if (hu->serdev) {
- 		struct ll_device *lldev = serdev_device_get_drvdata(hu->serdev);
+diff --git a/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c b/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c
+index 6bd397a85834..169b8fe688f8 100644
+--- a/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c
++++ b/drivers/gpu/drm/msm/adreno/a5xx_debugfs.c
+@@ -69,7 +69,7 @@ static void roq_print(struct msm_gpu *gpu, struct drm_printer *p)
  
--		if (!IS_ERR(lldev->ext_clk))
--			clk_prepare_enable(lldev->ext_clk);
-+		clk_prepare_enable(lldev->ext_clk);
- 	}
+ static int show(struct seq_file *m, void *arg)
+ {
+-	struct drm_info_node *node = (struct drm_info_node *) m->private;
++	struct drm_info_node *node = m->private;
+ 	struct drm_device *dev = node->minor->dev;
+ 	struct msm_drm_private *priv = dev->dev_private;
+ 	struct drm_printer p = drm_seq_file_printer(m);
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index cc66ddffe672..6e684a7b49a1 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -1392,7 +1392,7 @@ DEFINE_SHOW_ATTRIBUTE(_dpu_debugfs_status);
  
- 	return 0;
-@@ -703,8 +702,8 @@ static int hci_ti_probe(struct serdev_device *serdev)
- 	if (IS_ERR(lldev->enable_gpio))
- 		return PTR_ERR(lldev->enable_gpio);
+ static int dpu_crtc_debugfs_state_show(struct seq_file *s, void *v)
+ {
+-	struct drm_crtc *crtc = (struct drm_crtc *) s->private;
++	struct drm_crtc *crtc = s->private;
+ 	struct dpu_crtc *dpu_crtc = to_dpu_crtc(crtc);
  
--	lldev->ext_clk = devm_clk_get(&serdev->dev, "ext_clock");
--	if (IS_ERR(lldev->ext_clk) && PTR_ERR(lldev->ext_clk) != -ENOENT)
-+	lldev->ext_clk = devm_clk_get_optional(&serdev->dev, "ext_clock");
-+	if (IS_ERR(lldev->ext_clk))
- 		return PTR_ERR(lldev->ext_clk);
+ 	seq_printf(s, "client type: %d\n", dpu_crtc_get_client_type(crtc));
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+index 0e7a68714e9e..3b307ce637a6 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+@@ -57,8 +57,8 @@ static void _dpu_kms_mmu_destroy(struct dpu_kms *dpu_kms);
+ static int _dpu_danger_signal_status(struct seq_file *s,
+ 		bool danger_status)
+ {
+-	struct dpu_kms *kms = (struct dpu_kms *)s->private;
+ 	struct dpu_danger_safe_status status;
++	struct dpu_kms *kms = s->private;
+ 	int i;
  
- 	of_property_read_u32(serdev->dev.of_node, "max-speed", &max_speed);
+ 	if (!kms->hw_mdp) {
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+index 29ae5c9613f3..323079cfd698 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+@@ -229,7 +229,7 @@ static void mdp5_kms_destroy(struct msm_kms *kms)
+ #ifdef CONFIG_DEBUG_FS
+ static int smp_show(struct seq_file *m, void *arg)
+ {
+-	struct drm_info_node *node = (struct drm_info_node *) m->private;
++	struct drm_info_node *node = m->private;
+ 	struct drm_device *dev = node->minor->dev;
+ 	struct msm_drm_private *priv = dev->dev_private;
+ 	struct mdp5_kms *mdp5_kms = to_mdp5_kms(to_mdp_kms(priv->kms));
+diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
+index 9c0e633a3a61..a0a936f80ae3 100644
+--- a/drivers/gpu/drm/msm/msm_debugfs.c
++++ b/drivers/gpu/drm/msm/msm_debugfs.c
+@@ -211,7 +211,7 @@ DEFINE_DEBUGFS_ATTRIBUTE(shrink_fops,
+ 
+ static int msm_gem_show(struct seq_file *m, void *arg)
+ {
+-	struct drm_info_node *node = (struct drm_info_node *) m->private;
++	struct drm_info_node *node = m->private;
+ 	struct drm_device *dev = node->minor->dev;
+ 	struct msm_drm_private *priv = dev->dev_private;
+ 	int ret;
+@@ -229,7 +229,7 @@ static int msm_gem_show(struct seq_file *m, void *arg)
+ 
+ static int msm_mm_show(struct seq_file *m, void *arg)
+ {
+-	struct drm_info_node *node = (struct drm_info_node *) m->private;
++	struct drm_info_node *node = m->private;
+ 	struct drm_device *dev = node->minor->dev;
+ 	struct drm_printer p = drm_seq_file_printer(m);
+ 
+@@ -240,7 +240,7 @@ static int msm_mm_show(struct seq_file *m, void *arg)
+ 
+ static int msm_fb_show(struct seq_file *m, void *arg)
+ {
+-	struct drm_info_node *node = (struct drm_info_node *) m->private;
++	struct drm_info_node *node = m->private;
+ 	struct drm_device *dev = node->minor->dev;
+ 	struct drm_framebuffer *fb, *fbdev_fb = NULL;
+ 
 -- 
-2.34.1
+2.30.2
 
