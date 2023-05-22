@@ -2,62 +2,64 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81739C77B73
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 11:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DABC77B73
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 11:15:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233214AbjEVLMe (ORCPT
+        id S231286AbjEVLPL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 May 2023 07:12:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54164 "EHLO
+        Mon, 22 May 2023 07:15:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231354AbjEVLMM (ORCPT
+        with ESMTP id S232931AbjEVLOW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 May 2023 07:12:12 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F921723
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 May 2023 04:07:48 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f6077660c6so3536625e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 May 2023 04:07:48 -0700 (PDT)
+        Mon, 22 May 2023 07:14:22 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAEC1E4F
+        for <kernel-janitors@vger.kernel.org>; Mon, 22 May 2023 04:09:23 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f41dceb93bso38277115e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 22 May 2023 04:09:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684753667; x=1687345667;
+        d=linaro.org; s=google; t=1684753762; x=1687345762;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aK6Kf0asRV464IBaYiptxo3f4bLbCIHnLoUffj6qAuc=;
-        b=lSDHfK3dISOhvvh1/paEMv8h5AylGLL8BfeaeZqoX3NLO/a1SEC9I6YkwVA+DJPzfq
-         ASo0tR7IwTsonPeakI+1nwokLtIyFqHMCb6d9jQq+ySDoq+g1d0x/gBGNuNorkT30jAO
-         ELxAKqGtlbmOPoEPBL3IqIwNTUkBSb2GpprVbqti9jECNxFa8BFYHaMDgAltkDSyAC+2
-         Igw7PdXEEzRNZfY0JjZn7iDVHh8pggHBiO1/kOQh58OuMlUZAxdrGQRlj+QDZjIkUhar
-         ftmgYRqmWP9A+j5fSlqSfVvupufsDEioxnEXlbe0qPL8SIU5OP/307k3kkC1Gn8StQZ4
-         Z8Mw==
+        bh=sLT0FiEH6oouW8EPbLKNIG4DOpkfuz+O0fMu7cMLcHk=;
+        b=nu3YM0iUXLIuTadpg9XfeL2HO5Cy8+Ply9Xz3glZP7fDt9bfdPnXfKgA5uAbFVKarv
+         s1Qr1kNxovzWjRWgiwFuak7bLwf5LRdYMo55YNDYrCUe0Pz1XLCq+0RumEQ6bPZ3BkXK
+         u/7Z/b0j5ob0gKnMTyeKBlbkFLdabjDqWo1Hd34CSsuQseCzLjXKdCeqAYWnhMToNaGh
+         knWgyPR1I7mVLPqRrnNcyvn+26j2wLb78p1tv0r+8EGYGhgprd+Ac1uMpeJ0RuNN7ft7
+         EfOiXCQn3D8RqEsWnwqGJoBeZhVd1WdTcVTIn00orON/rUKvg6BBuIR9Ecl+MFqD1q8I
+         XeJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684753667; x=1687345667;
+        d=1e100.net; s=20221208; t=1684753762; x=1687345762;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aK6Kf0asRV464IBaYiptxo3f4bLbCIHnLoUffj6qAuc=;
-        b=lRPO28ULZt/hHz20uHGNa8PUPSJuJ/VpT++2Ldptr/Qeaq8Mlo8lL8R/DAE50qn7FA
-         9aSFdjrWdhgu3SAMUpbjUxXGIhTBl33kJ3+7Kk7E4/33xLdE1BYD/JI3ds7Yk3EmMyUq
-         IFsGjerxWYxj5ViYVpbJ82XyWerokgJ5S28sppwRV3Vr8SOK7GNB66M1oGLdjxpC9Scs
-         gwzjO2vdzYmXl+hNUXbVPbt4Yd+tAMf+Z3HRs9pg0LAkWs/c9r0BjWJQOXGvZQDRYhII
-         u6GI2V8oEkOrgyK7Mqza94cKMSmzVPxQ+wqggcF7ZmQO3PBlgG5tz2pBJWSbXL6KNO07
-         x7qQ==
-X-Gm-Message-State: AC+VfDxs3LH0x7kDZTtB1jQ5GbbIY0VQvMh5Qt3kKGCGGpa5XtTwLhQQ
-        ezo2xbQAmD2LXpeFALLIvSnBKA==
-X-Google-Smtp-Source: ACHHUZ5hL20G23vQVzQIDwJ2x9rWWfu4TzDI5xAEjRyuSUCFKgghRcCSDnguIQAgDfGwoOSQ3rPe6g==
-X-Received: by 2002:a05:600c:24d3:b0:3f4:298b:d925 with SMTP id 19-20020a05600c24d300b003f4298bd925mr6548094wmu.41.1684753667109;
-        Mon, 22 May 2023 04:07:47 -0700 (PDT)
+        bh=sLT0FiEH6oouW8EPbLKNIG4DOpkfuz+O0fMu7cMLcHk=;
+        b=K3uOxjVlH7dO1Aqb+QCouHXa4FvnoJa/7VtbjZ9ooaaMd0fITvW1/d8dJaXT8cksT3
+         RlIRBRHwuUknm7DTpNgpA2eO3vV1559m0POgKCBh/6BAiDUxHneqK477On7xdqvpgio1
+         EWAD/sU5N0jhIC9KFrBA/6HlLzTe5ZCyda/INo8W2OALPzsxYc9i9toCbiKcmpF+lQNC
+         GdgSoZJnnpNyfZ2KnGYoQu1WjmSnCcUMGL4EY+oOXgZIEmmTYFzN1sVGv30cgcIBVf5v
+         XU5WUrZ0UfiaEem6YKgGnkEKVS6t2aQvdTd49uZdNnRdpzpk4rageY5cPqdyrBKELOAR
+         otZQ==
+X-Gm-Message-State: AC+VfDxegKlXtpCD+I6GoA1c/oa6yChI7eWlXT7ddwaxD1j9xiAwFzjd
+        P/1bRTNBAUjl0HIDoD8+d7lJpA==
+X-Google-Smtp-Source: ACHHUZ5XZTB4dlHa/+0NY4wJX7D5N/1kzLzsT7k7gh+ItHCgz6w/oGeocYFtmuMAPvcdrflAo0GEuQ==
+X-Received: by 2002:a7b:c014:0:b0:3f4:fd67:6d7c with SMTP id c20-20020a7bc014000000b003f4fd676d7cmr6140295wmb.40.1684753762341;
+        Mon, 22 May 2023 04:09:22 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z10-20020a05600c220a00b003f50e29bce3sm7901485wml.48.2023.05.22.04.07.44
+        by smtp.gmail.com with ESMTPSA id j3-20020a5d4483000000b003062b57ffd1sm7374058wrq.50.2023.05.22.04.09.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 May 2023 04:07:45 -0700 (PDT)
-Date:   Mon, 22 May 2023 14:07:42 +0300
+        Mon, 22 May 2023 04:09:21 -0700 (PDT)
+Date:   Mon, 22 May 2023 14:09:17 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] pwm: ab8500: Fix error code in probe()
-Message-ID: <ffc1e98d-0db4-4b8a-9e49-eb87ef844cbd@kili.mountain>
+To:     Quinn Tran <qutran@marvell.com>
+Cc:     Nilesh Javali <njavali@marvell.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Himanshu Madhani <himanshu.madhani@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] scsi: qla2xxx: fix end of loop test
+Message-ID: <cea5a62f-b873-4347-8f8e-c67527ced8d2@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -66,28 +68,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code accidentally return positive EINVAL instead of negative
--EINVAL.
+This loop will exit successfully when "found" is false or in the failure
+case it times out with "wait_iter" set to -1.  The test for timeouts is
+impossible as is.
 
-Fixes: eb41f334589d ("pwm: ab8500: Fix register offset calculation to not depend on probe order")
+Fixes: b843adde8d49 ("scsi: qla2xxx: Fix mem access after free")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/pwm/pwm-ab8500.c | 2 +-
+ drivers/scsi/qla2xxx/qla_os.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/pwm-ab8500.c b/drivers/pwm/pwm-ab8500.c
-index 507ff0d5f7bd..583a7d69c741 100644
---- a/drivers/pwm/pwm-ab8500.c
-+++ b/drivers/pwm/pwm-ab8500.c
-@@ -190,7 +190,7 @@ static int ab8500_pwm_probe(struct platform_device *pdev)
- 	int err;
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index bc89d3da8fd0..952fd2b5e6da 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -1409,7 +1409,7 @@ __qla2x00_eh_wait_for_pending_commands(struct qla_qpair *qpair, unsigned int t,
+ 			break;
+ 	}
  
- 	if (pdev->id < 1 || pdev->id > 31)
--		return dev_err_probe(&pdev->dev, EINVAL, "Invalid device id %d\n", pdev->id);
-+		return dev_err_probe(&pdev->dev, -EINVAL, "Invalid device id %d\n", pdev->id);
+-	if (!wait_iter && found)
++	if (wait_iter == -1)
+ 		status = QLA_FUNCTION_FAILED;
  
- 	/*
- 	 * Nothing to be done in probe, this is required to get the
+ 	return status;
 -- 
 2.39.2
 
