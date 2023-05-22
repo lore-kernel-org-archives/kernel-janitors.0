@@ -2,107 +2,159 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 679CCC7EE26
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 09:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0C0C77B73
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 May 2023 10:13:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232745AbjEVJDV (ORCPT
+        id S232157AbjEVKNN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 May 2023 05:03:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45778 "EHLO
+        Mon, 22 May 2023 06:13:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232739AbjEVJC4 (ORCPT
+        with ESMTP id S232348AbjEVKNG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 May 2023 05:02:56 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84112103;
-        Mon, 22 May 2023 02:02:55 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-307d58b3efbso3669028f8f.0;
-        Mon, 22 May 2023 02:02:55 -0700 (PDT)
+        Mon, 22 May 2023 06:13:06 -0400
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2102.outbound.protection.outlook.com [40.107.96.102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C471A8;
+        Mon, 22 May 2023 03:12:59 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C0fiKbhnJaGDfyI06PdQC+HrRiHj6kCSsqYtFCLA82pedAvm9pD9fffkEZBRM7pPQlDWtmJevNWcXCvNx8DOB4vAsN947K4nzhK30ekcFTOrY7kbEniChjz/dBTw7oXu21+NbCuaMivQc+Xf+fC/nTifXGbyaOYe09gOcDgLCvkBo0y9670dY03Y5nkuFPfDrMEo5Uyf7GW4tlk+AEWNCRbuuzIuj0dJ5hGmu0NB3gib+YRqv4uwu7YKdnnodUTM/o+Kl4qBfkn70H9r9FL1aKxnc5mMRysE+MSnLrhRexzIzwQbbhuCntkJS6A7CunUFe/2nct5d983eUCgD4KMdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ljb8ZHnMYk3jRb+F4Gc8fuedpob2eALgXU0k9eIBRk0=;
+ b=EfR+Lfs2ftvNRTjG1VIkTeRonv8SGKb3MYub4sUIhiIlFXrs4+80bamlzZ7aXSoInkp0DeuJdoH61jinF96byxd42m8mboGVY+wPBxV3+PguPy4iXETrIg1JnUq8vmVglF/rff2SVVCpisHq63a2VLfO64MtTa7VHSuhxFQ2MA0WrIGTZUREx0FeDl00e35ggr9DT9bx0hrL2YjPd3o9Odsi+1xQBTIhXFuj/SbxgNeBCo5UI5hQgHupnz4tPUugL1rQd97N5uXfJRtfQGzK7hNTYkTkummIvwenJkn/9PJm/MKUnI7VGsnl/ElL/sCi5bUI1wZzpD1gAdne/d5xfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684746174; x=1687338174;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GTDKY6/9ENFcphD0A+7aTVSdeQLL9fouAnjj5/0OnPQ=;
-        b=MYUZN/wCmh9X1fSvCh9oPN4J7b/z7BMV8a8MHZAR4o5JE9ezVNXoveoammn0QIjS6k
-         5X+Kh2/p3CdPl0EwhHai2i6+utokA0V/Whm621SQ8Okns8SAA+fOxk/Z06hRC/39zcYY
-         RUxQHYc9Fy3/Wrrosptw78yruNxeHZyTwcMSOJF4Nb6yYJHfbf+uOIE0WSLTgO9wSBuz
-         BE/JfU1GbKvhwWKgnPfeR2inHkmfcty1jNGyL/Kka4imbo8ujxJVd6r9Pnft8hEVMK00
-         BDLe4FKE7aGTMVsZVGPpKtyjJO24qbjoOdQlakX9xbVzkjU+9hLHo1NxO9ainsOdcplo
-         wLiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684746174; x=1687338174;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GTDKY6/9ENFcphD0A+7aTVSdeQLL9fouAnjj5/0OnPQ=;
-        b=FicWoHa+ALy9JhfdWS1Evenjzu9FWGRepl5vtHp/c8uVwm9S+zn+F7Qjde00zezuRX
-         bJVBxwfczSALFS/KYNgj7kLpJGmk5Co3D2k9si9rkcntFCC3U7/lumHAAUwHx/lC0oHb
-         lK3Y8y1x/j9j3l0Xa4hUqqE+aLefPrBWmQBYcu2M2BD7zwqeBvl84Q2lzX/KJec58qd0
-         0xJZPuBlz7SQwwoeE3XaeUW6t5eCBEZIk1tfqgdzg2h6dqXOUCTN0G04yhL4rHIXug/W
-         WKOp8uwh5MMr3O3SSfBs5uKTM8g6bKhETwg+c9Fc+F8IZDmMs5Tp9dmxISokcpVcDDIo
-         7zWg==
-X-Gm-Message-State: AC+VfDzIFyPLFMfANQ+k+wkx1j2K/BUgVeDb79bBEQZhMUbLDiOKaWNQ
-        +SiGefAZZA2Jlwf5Vi3SaH680UmmmRknFw==
-X-Google-Smtp-Source: ACHHUZ5gZYD/yXE4cCwhckJvb9r3xORQCbJOvZ38Bpu5Pe5i5C13W84yXqg9CPy7CUhXhpAZPYjFwg==
-X-Received: by 2002:a5d:4e84:0:b0:309:3ce9:d7a7 with SMTP id e4-20020a5d4e84000000b003093ce9d7a7mr6564810wru.28.1684746173824;
-        Mon, 22 May 2023 02:02:53 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z10-20020a05600c220a00b003f50e29bce3sm7547427wml.48.2023.05.22.02.02.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 May 2023 02:02:53 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amdgpu: Fix a couple of spelling mistakes in info and debug messages
-Date:   Mon, 22 May 2023 10:02:52 +0100
-Message-Id: <20230522090252.913910-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ljb8ZHnMYk3jRb+F4Gc8fuedpob2eALgXU0k9eIBRk0=;
+ b=GjCFMDEVFrGM3cxINReAODBOn/ZqG46MUgSTK7ua3CDcjW4WbJVVPON4duazAlSjHdkCf5/DvB1vzZzjhU2h1nNqJj7gfqMNVmbFkBYBuKP6kddqxtgR2Izgb46I55YVyxNDKHa6Ur01HFiXFvc8pHoghJdhTEY22AxjksLFV+s=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by SJ0PR13MB6027.namprd13.prod.outlook.com (2603:10b6:a03:3df::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.28; Mon, 22 May
+ 2023 10:12:55 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::f416:544d:18b7:bb34]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::f416:544d:18b7:bb34%5]) with mapi id 15.20.6411.028; Mon, 22 May 2023
+ 10:12:55 +0000
+Date:   Mon, 22 May 2023 12:12:48 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Rain River <rain.1986.08.12@gmail.com>,
+        Zhu Yanjun <zyjzyj2000@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Ayaz Abdulla <aabdulla@nvidia.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net] forcedeth: Fix an error handling path in nv_probe()
+Message-ID: <ZGtAIJZ3QzkBJgHI@corigine.com>
+References: <355e9a7d351b32ad897251b6f81b5886fcdc6766.1684571393.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <355e9a7d351b32ad897251b6f81b5886fcdc6766.1684571393.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: AM3PR03CA0066.eurprd03.prod.outlook.com
+ (2603:10a6:207:5::24) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|SJ0PR13MB6027:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0fc312aa-6707-46d2-7b9b-08db5aad1bfc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: aTvqHTtx1mRxcheKiotuBmdy9YzISvOfsUp/f7kNDfNgfwMpULJFwGeYoW+A9kl+fiEyC3Y6Aj9sCg1pLHr0QqPZCD+26t5oXRCP8RbDUUHcSOq+6CG2P7dkYalP/utxEYj6SaE/+3gKIFj2HGYB6pWrRkgcKsssXx8B4nmBaCisCtGS3qe5/2+iC7Lo6jffVxzXeLQTQQn2AP7S8CRPYMwTfijJPAgbaDK74rYb/nHkoSqGgK2miS50T3c9O9nvEPmPAPlnw/ootMNccHxWg19LlsSkWj5zVYxU+FjSGA/wG5h+gvFQVY4sTAAP4lmR3dyQk1m9qo+ijCO3OSopuP5NXsW4KDSlwht8n02xTGF803Pirid6yzTpTTmU7OJlaJ2dYyffnkBwq0Z1Sf0SqcRPeP2qsPefR0UB6LrEskpSYCEBEiIIDVgzltUh2p3n5JSxpYIaqIUt5Y9QewNEbr0B8qwt5KENAo5onb+K8JLPILeYlOWfVYYd/YwAsdOhCPYpNgyYyPHfLvyJvJiL9UXA0WKXReOgSkJtOm1nHyqOjF3BbYdiLyXauOTHqVx/+DGv3Ko4jKrmWpzHKVKWTrJchzA/ZOWajFOnQul2lb0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(366004)(39830400003)(346002)(136003)(451199021)(6486002)(6666004)(478600001)(2616005)(36756003)(186003)(6512007)(6506007)(38100700002)(86362001)(66946007)(66556008)(4326008)(6916009)(66476007)(7416002)(2906002)(8676002)(8936002)(316002)(5660300002)(41300700001)(54906003)(44832011);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Va3hUDnTPkxTfMk/m27xw/VOyBwfkcT3eDSbdDie2sCHgl7W4vOw688ik7rL?=
+ =?us-ascii?Q?K8yLiVCu56PGlzaQXBAUOBXW11UIHxKHzz8p+h2zpcRQMsNpaiWDiaPFEZg6?=
+ =?us-ascii?Q?PBkjRSfpgoIByYIXFozQSH7kM/OhAPC8ViIfXMNlOlsO2aGRiKjdD6T6+7Wi?=
+ =?us-ascii?Q?l8TGnx9E1bTx7T0FCvoC2vInPyP4gHznrwjDJUp3ArEpHDpI2NPf/Dx5nBib?=
+ =?us-ascii?Q?YRio8mbn7JAINht04yXGdfyA5Ipb98bBsQq0u1ZcMRo82Z7jvy2BjPj6QMH9?=
+ =?us-ascii?Q?5fDh6KUq+yRuOO/iOYQTnpEAi5g49YnLMKllY6Lz9R5Kz9LzW+nlweHGFsx4?=
+ =?us-ascii?Q?lZZbTLBKh6Aa3hUxF6ekOlz8Edf24nmpjXUaBQjMPs4s/q5V0Ka3pWKx1NtL?=
+ =?us-ascii?Q?FZ/AnzVzBTlVAlJ2FlPa2znrzvStMbKmAXROjLjf3mv9bZ9OgbG9Dep/duty?=
+ =?us-ascii?Q?0HLlPac6RX2E1fa36zzCKSCRL/p60nDkMpdibksRGBwfJTJ50xmVBGGW+igj?=
+ =?us-ascii?Q?01wK6J/PXC+q2TUPcHxg1iHi1s89aL8abhr0+2Lt3al3Ffl9xw9SXLgqEgia?=
+ =?us-ascii?Q?Og9vbOw30KRMGgOcQ6fW7mCmxLRIde1lq5MBpaG5sc7XNxWZLUwW2OCl14E4?=
+ =?us-ascii?Q?+O5MCLFk6Sq5IDdDiKrNEAIn2LnVR76z5DKhQauatJmR3Tm0dNEusQnPNTzn?=
+ =?us-ascii?Q?cL2tvF1JmnfI2lH3wemoR4pc+UIX+TRgshEQDTFQxq9Igp6XLSKLY0mSv/eo?=
+ =?us-ascii?Q?UBhVr/y3S08dHY5aZton3qbUNcznm46YGsLVMIclF+5UQOngJWc6czI1rDms?=
+ =?us-ascii?Q?mbliyeojQqE6aapV17AV3ANlAb736RA/zYWW+bunyjpUtFVYIJIbrNbXrI2V?=
+ =?us-ascii?Q?9GwwBtHFkU/SGJTHkt/sWtPXh1QMw+PzprHO19rds/a2kWt79hgOOwn4w5Ik?=
+ =?us-ascii?Q?eqGyQRWqy49oJ/9ZJIYciMRIz0Txf+/Im+8Uy6xnq6TgROKgAUPiKJQeZsic?=
+ =?us-ascii?Q?IT6PX2bIogGqtuDmOYENqUlv+ZulvavoyDIHdeakcdU3kPxZdsYNWovOVRA6?=
+ =?us-ascii?Q?4LrtHBJZeTO8xFqDF9AmOQeJgVFRfRXMsIPAGKT58SpEpTQXwUGExvn8W4zJ?=
+ =?us-ascii?Q?w7GMKid5z++2ZdVLsVWdGrIXqnlrX9g0P2BViSMevDQ+xjc9zgpP+dUYW8F+?=
+ =?us-ascii?Q?B7Z2xD18sAHZnqzYbtI8FbWctN9Jnv8S6xcI9TR1jYyUkZLhuTbaikWGp7iI?=
+ =?us-ascii?Q?G85rg9HaHmsb7lA1a5l0TEC8YC9KU4WyjrS6n9rHUQP6V2ZNYRnyYHsarw8W?=
+ =?us-ascii?Q?7r9KRJi00LXhT3zsQ5MD8S7wqRu8zKst4CYtpOTBTuXJTRIhi4521cVFWnhT?=
+ =?us-ascii?Q?MXiPmVKIF7tJKBjJ7mlrlDzxOt18uwtcG59yIv7Cfd2VMc/vnObdzC+9mPik?=
+ =?us-ascii?Q?aH2R8r4Id9/EC9tp/YqNlElEYUpSbUX2oXDcGRcJaHXdhYJKWBOMKULNlEnv?=
+ =?us-ascii?Q?M1qwJDIZQJQZVoXlfacCnmS3OQVbaLaUvKlyOVx+ch7hYspyyTPJJ3QhJnm3?=
+ =?us-ascii?Q?MiuCLP5yYsVYh9esuKatcYUf32dFeEvGDfiaGiXBd+Njc2HYTW9YYFnbTR4Q?=
+ =?us-ascii?Q?1GAGvOML9Q8hLIpQKZ29bFVaPPp08OizIzXLp9+f6GyPmIU/DgjEXZcXmrf/?=
+ =?us-ascii?Q?KXwhCw=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fc312aa-6707-46d2-7b9b-08db5aad1bfc
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2023 10:12:55.2675
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LtPOJ+0X/8MSmc2XRKjb597SlI+2Fa83cTjm42TKpccVuRNlizapHqjoUmAmLop7cPF/GsaLg20xA91M02jPK0qz84/4g9c1Nrbn3O9SaLc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR13MB6027
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are a couple of spelling mistakes, one in a dev_info message
-and the other in a dev_debug message. Fix them.
+On Sat, May 20, 2023 at 10:30:17AM +0200, Christophe JAILLET wrote:
+> If an error occures after calling nv_mgmt_acquire_sema(), it should be
+> undone with a corresponding nv_mgmt_release_sema() call.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c | 2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+nit: s/occures/occurs/
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-index 59b8b26e2caf..789cc16e1be7 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
-@@ -1007,7 +1007,7 @@ int psp_spatial_partition(struct psp_context *psp, int mode)
- 	cmd->cmd_id = GFX_CMD_ID_SRIOV_SPATIAL_PART;
- 	cmd->cmd.cmd_spatial_part.mode = mode;
- 
--	dev_info(psp->adev->dev, "Requesting %d paritions through PSP", mode);
-+	dev_info(psp->adev->dev, "Requesting %d partitions through PSP", mode);
- 	ret = psp_cmd_submit_buf(psp, NULL, cmd, psp->fence_buf_mc_addr);
- 
- 	release_psp_cmd_buf(psp);
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.c
-index daeb6bcc9245..e9586a0dc335 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xcp.c
-@@ -359,7 +359,7 @@ int amdgpu_xcp_open_device(struct amdgpu_device *adev,
- 						file_priv->minor->index, i);
- 				return -ENOENT;
- 			}
--			dev_dbg(adev->dev, "renderD%d partition %d openned!",
-+			dev_dbg(adev->dev, "renderD%d partition %d opened!",
- 					file_priv->minor->index, i);
- 			fpriv->xcp_id = i;
- 			break;
--- 
-2.30.2
+> 
+> Add it in the error handling path of the probe as already done in the
+> remove function.
 
+I was going to ask what happens if nv_mgmt_acquire_sema() fails.
+Then I realised that it always returns 0.
+
+Perhaps it would be worth changing it's return type to void at some point.
+
+> Fixes: cac1c52c3621 ("forcedeth: mgmt unit interface")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> I don't think that the Fixes tag is really accurate, but
+> nv_mgmt_release_sema() was introduced here. And cac1c52c3621 is already old
+> so should be good enough.
+> ---
+>  drivers/net/ethernet/nvidia/forcedeth.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/net/ethernet/nvidia/forcedeth.c b/drivers/net/ethernet/nvidia/forcedeth.c
+> index 0605d1ee490d..7a549b834e97 100644
+> --- a/drivers/net/ethernet/nvidia/forcedeth.c
+> +++ b/drivers/net/ethernet/nvidia/forcedeth.c
+> @@ -6138,6 +6138,7 @@ static int nv_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
+>  	return 0;
+>  
+>  out_error:
+> +	nv_mgmt_release_sema(dev);
+>  	if (phystate_orig)
+>  		writel(phystate|NVREG_ADAPTCTL_RUNNING, base + NvRegAdapterControl);
+>  out_freering:
+> -- 
+> 2.34.1
+> 
+> 
