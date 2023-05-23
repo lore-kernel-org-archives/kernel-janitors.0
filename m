@@ -2,94 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9A6C7EE2D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 May 2023 08:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E449C7EE2D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 May 2023 08:35:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235357AbjEWINT (ORCPT
+        id S232476AbjEWIfa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 May 2023 04:13:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34832 "EHLO
+        Tue, 23 May 2023 04:35:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236110AbjEWIMg (ORCPT
+        with ESMTP id S236171AbjEWIeC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 May 2023 04:12:36 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE1AF1AD
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 01:11:18 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-307d20548adso4489107f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 01:11:18 -0700 (PDT)
+        Tue, 23 May 2023 04:34:02 -0400
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E7FFE53
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 01:32:30 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-4f00d41df22so5552403e87.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 01:32:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684829473; x=1687421473;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=linaro.org; s=google; t=1684830688; x=1687422688;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dGUDGH7rhz14YCB1cVpAZLKAtrf81F9TTztogU96Cm0=;
-        b=EvnGzmJUPfQ8KdtpEigUXryImN6v0v/3K7eIiy7Ar6Nv7RtCwMROvVxOUOAALvft7s
-         g8flhowqXn1kaqGSjamvwA16iTu8BIR29qrnUQ5Fx0hXpDWI19+U9rDrOt6ZXpV4it2n
-         xVjPiehnMvYulSHcDUNmztqZM0+ImwrMimMPE7o/PoAlvyI6+GFbKjVO2nJmimvP3Tkr
-         EHHixinnO8VmqTlKt1jOKf2yfsNJLFO1ohhWiLvvbK32GmG0zLTnU9f8EXj+zORGCq33
-         0pO/LtCHjw9Ycy1k2km2jN8HMHCTGBcrZDmFyxAB+lMMu6MRjtRcEFsT/RVgpR7ZnqeG
-         rsoA==
+        bh=aqoLnPSfzNBEJLzNJAPohzVk9qbOTTKvfqApSvbpZ+c=;
+        b=ELy+Lp+OvEhcap5C0YrUMC1dMKfxBvdVuOJFeYxBcIYZBR+8ScE4WnTd21oY5McKlP
+         1QdyGlR4Hxw+sdMXaL4IcbKIgS4RT4yWZDHkhxKLrSwVjkx9kSsitjC/e1g3MgjqJgd0
+         Kn+Lrn77TkmOlvWiIZ2wpKIazbIxqCdFc8n0SUKOvA+SdNkbzSfJqrEtKXtj1rMyB+eG
+         asr48JKDGCvPPZOnXUE/hiP8EregYHs+mfhz0qNEfV63YLpFvg6QI6rvK8OGXdfsVTqy
+         sum6j6GzqE8JeRiM/NBQeJDIaWRUmN771jtV+YCD/V0nX9PNtxZXvojMeVVd9xl7We8i
+         beKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684829473; x=1687421473;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1684830688; x=1687422688;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dGUDGH7rhz14YCB1cVpAZLKAtrf81F9TTztogU96Cm0=;
-        b=AV09fvqx0KxhYWqltxeQl0i11PG5GyoumCWX4MnagnQp7u3liLfPtqEhfMAE/3UUuD
-         CpMZoCFGnK8RTMF5udLvtj0FgBGZUwrvv1QLyHWetE0YIcv/Dg7BzvtyxxWuPmNRzL2+
-         Alm5QEe0jNbpVBtQ+euL985tMunbWxAiFg1JWAZ75YySgvTYBhf1T0gjVjz2fmZuCUD0
-         bwADEtZDnlpALAlIj/WbjSS95+E93c2wE9HzhWvPMO0470s/M92Dk65hCl8TiowpAKI5
-         808/hyTllMyoNRwe7rPeHGU+ct7efgpGvgvmR2q8iEpu3W5otdkruXv10pIVV0qb0kjs
-         CBHw==
-X-Gm-Message-State: AC+VfDzpXLUI8BAXfXkcMZ7S8YMMDWp643+ewh/fYWZic3p7CFCCHf18
-        qCWiBoLfF3K0YJqTBpHaMb5uNpnlvLOuynzmzXg=
-X-Google-Smtp-Source: ACHHUZ74BDXgDTVesfh4PK5yfNReO97zBxk9tr7IB8NXqFzhBagMkPdIOkquK4+vZRWk9dR79qOjzQ==
-X-Received: by 2002:adf:f1ce:0:b0:306:64b7:5413 with SMTP id z14-20020adff1ce000000b0030664b75413mr8935653wro.71.1684829472945;
-        Tue, 23 May 2023 01:11:12 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o16-20020a5d62d0000000b002fb60c7995esm10343562wrv.8.2023.05.23.01.11.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 May 2023 01:11:11 -0700 (PDT)
-Date:   Tue, 23 May 2023 11:11:08 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+        bh=aqoLnPSfzNBEJLzNJAPohzVk9qbOTTKvfqApSvbpZ+c=;
+        b=LD31RV9WBm95FjhkJKNpdt41hZgU9ZkLJ92V71gkTj1bShyMxFI0P59d4gqhAaHGJk
+         /kN78NhI50eLFYobfZV3Nw5c2BkFLsWMLSlV14LXhBtfoLVvBcnjirxmjwE7MRhHXFVa
+         22638v8a59BDZWr0XvUKregj4wsgf1N7MIbwBhCdzDOQccraLXWq1Kyv952/GGWLhY9F
+         9bJwZI+NwGn3wy0+TVKRYf9sI1y+svfuzgRKx2EzJpq94Or9ZzYd1ccA35CAyBeetFTP
+         KK3+A0GJFFtL4a18MTzzt7T7ik/AL85Mqwz2rtdlfKfQot69NOvSizaBqLtBgYGRofzj
+         0KzQ==
+X-Gm-Message-State: AC+VfDz0mKXvXJS4IBMFQpYRVvFX/YHuC39MqO8dM6+r9B9WMbFweLCd
+        TeguAGe64aMavX0nB82hGnMQCQ==
+X-Google-Smtp-Source: ACHHUZ7JyrwZTrtDlI3Rdt3V59245cL6RCr1E3O4A6gzrvtZmmfKgGhM1zhi1+TwYl6PjHb0U6btSA==
+X-Received: by 2002:a05:6512:24e:b0:4eb:e8e:4139 with SMTP id b14-20020a056512024e00b004eb0e8e4139mr4888297lfo.2.1684830688603;
+        Tue, 23 May 2023 01:31:28 -0700 (PDT)
+Received: from [192.168.1.101] (abyk138.neoplus.adsl.tpnet.pl. [83.9.30.138])
+        by smtp.gmail.com with ESMTPSA id h26-20020a19701a000000b004ece331c830sm1259533lfc.206.2023.05.23.01.31.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 May 2023 01:31:28 -0700 (PDT)
+Message-ID: <2f03fa9a-1b4b-d208-f399-a31ab8c5b4cc@linaro.org>
+Date:   Tue, 23 May 2023 10:31:27 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] interconnect: qcom: rpm: allocate enough data in probe()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Georgi Djakov <djakov@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] interconnect: qcom: rpm: allocate enough data in probe()
-Message-ID: <a0f6184c-c2b5-4e8d-9b8a-867ae83f3094@kili.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <a0f6184c-c2b5-4e8d-9b8a-867ae83f3094@kili.mountain>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <a0f6184c-c2b5-4e8d-9b8a-867ae83f3094@kili.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This was allocating "sizeof(qp->intf_clks)" which is the size of a
-pointer instead of "sizeof(*qp->intf_clks)" which is the size of the
-struct (8 bytes vs 16 bytes on a 64bit system).
 
-Fixes: 2e2113c8a64f ("interconnect: qcom: rpm: Handle interface clocks")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/interconnect/qcom/icc-rpm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-index f4627c4a1bdd..7a21a03a0382 100644
---- a/drivers/interconnect/qcom/icc-rpm.c
-+++ b/drivers/interconnect/qcom/icc-rpm.c
-@@ -436,7 +436,7 @@ int qnoc_probe(struct platform_device *pdev)
- 	if (!qp)
- 		return -ENOMEM;
- 
--	qp->intf_clks = devm_kzalloc(dev, sizeof(qp->intf_clks), GFP_KERNEL);
-+	qp->intf_clks = devm_kzalloc(dev, sizeof(*qp->intf_clks), GFP_KERNEL);
- 	if (!qp->intf_clks)
- 		return -ENOMEM;
- 
--- 
-2.39.2
+On 23.05.2023 10:11, Dan Carpenter wrote:
+> This was allocating "sizeof(qp->intf_clks)" which is the size of a
+> pointer instead of "sizeof(*qp->intf_clks)" which is the size of the
+> struct (8 bytes vs 16 bytes on a 64bit system).
+> 
+> Fixes: 2e2113c8a64f ("interconnect: qcom: rpm: Handle interface clocks")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Whoops. Guess I was just really really lucky that nothing blew up for me.
 
+Thanks.
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+> ---
+>  drivers/interconnect/qcom/icc-rpm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+> index f4627c4a1bdd..7a21a03a0382 100644
+> --- a/drivers/interconnect/qcom/icc-rpm.c
+> +++ b/drivers/interconnect/qcom/icc-rpm.c
+> @@ -436,7 +436,7 @@ int qnoc_probe(struct platform_device *pdev)
+>  	if (!qp)
+>  		return -ENOMEM;
+>  
+> -	qp->intf_clks = devm_kzalloc(dev, sizeof(qp->intf_clks), GFP_KERNEL);
+> +	qp->intf_clks = devm_kzalloc(dev, sizeof(*qp->intf_clks), GFP_KERNEL);
+>  	if (!qp->intf_clks)
+>  		return -ENOMEM;
+>  
