@@ -2,101 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F08C7EE2A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 May 2023 10:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 701EAC77B75
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 May 2023 18:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236048AbjEWKyy (ORCPT
+        id S233378AbjEWSSF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 May 2023 06:54:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38080 "EHLO
+        Tue, 23 May 2023 14:18:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232091AbjEWKyw (ORCPT
+        with ESMTP id S229476AbjEWSSF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 May 2023 06:54:52 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D8B5FD
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 03:54:51 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f60804faf4so11342765e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 03:54:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684839289; x=1687431289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/3WjXgsNuqa7/WDZdFims98+tDEhGOYyjkquS66fJPs=;
-        b=GRPH6+30lAf//AJM9pWiPwjzF5resuZuGFlvxrJZigGSKauVKhCG67QuBSxJIpJm9U
-         UqO8OPb6Abqjc4UsG8oYtlAIVKSqo2vxyuSfQyWCumvIMPaR4MwQJ7Z0Ju+VoZTxeBkO
-         EVsOiQ08u3o1NpB8UMrRYa9vZDkXWkoowif5QStMG5MDDhTyatuwZIjDeaUeaXd+LFPl
-         WGsxrky31gmDvppGRukw6KgXVPFf1ZjQBRuky5u4p7SmyiU17zYITeNa/9JloaRpIv9d
-         v5SgyDMHDqwKmIQG8gD3aogHnsCvpF1NiJ+OODHOl7+VXJvQ8iCL3fFJ+AZeaMK0d+1H
-         UrbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684839289; x=1687431289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/3WjXgsNuqa7/WDZdFims98+tDEhGOYyjkquS66fJPs=;
-        b=eEj6OG5uZsCKvb6jkwoxGSuPjz5HotAX/iOqfquIyk3PdniSFwQaVchXwmO16q56NB
-         rVylD5gxQ7FxyK/7UBNs0pyfwFjtjMKyS8gtmSEweNFkqIWARcyO33w7psWwMfPiMe0d
-         UhuNkeLBl2Mep92i8RdteE071//jyL2tzywqhK12v6XTKqtuXKicXM3XoANZmcDwyT7z
-         BTGNcsEPgiAYuLd4clhWCzgaLuWShDkptAUg7eN48dKVfKs5/OfGF5HTMCkFEARnqw6s
-         XgPSwgjbsxRWlkIkxW4mhNTD461waDlxZ0feC059Ri3e9tbNTnQc4tbJtO2qozlfmhQv
-         0k1g==
-X-Gm-Message-State: AC+VfDwpViL+6BzvKHOTiCM6J1mAvhGSmE/XQzVd76+K9o+GBnIW6Av/
-        QM7SPWmoPn4bKJnq5EgXDrF7Ag==
-X-Google-Smtp-Source: ACHHUZ6b5/OXboW+vGmX4shXePUEyDe7NDvlwNpoxezhMOSU58x9BGVbiVKV8bYmalzS4dohoNrkqQ==
-X-Received: by 2002:a05:600c:2152:b0:3f6:938:1001 with SMTP id v18-20020a05600c215200b003f609381001mr2059704wml.8.1684839289624;
-        Tue, 23 May 2023 03:54:49 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n22-20020a1c7216000000b003f60482024fsm6072367wmc.30.2023.05.23.03.54.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 May 2023 03:54:48 -0700 (PDT)
-Date:   Tue, 23 May 2023 13:54:23 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: signedness bug in
- dpu_encoder_phys_cmd_tearcheck_config()
-Message-ID: <4abf38cc-20ab-4606-bc39-85255b8bdee8@kili.mountain>
-References: <897779a0-1a1f-4193-9dd3-bc4f87e73e3c@kili.mountain>
- <wxfpgm77uxae5mhpht35m4kgrcx2givdp2duncxduz7hrlcofz@sp5wxfqx63fg>
+        Tue, 23 May 2023 14:18:05 -0400
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F8211A
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 11:18:03 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 1Wa2qKmmo8aX91Wa2qCkXv; Tue, 23 May 2023 20:17:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1684865876;
+        bh=xOjN030f+KivSx43oy6ENyMrMHsfizHgf8zgnaV+c+4=;
+        h=From:To:Cc:Subject:Date;
+        b=aDKiYuO8+10YmMH1IU69GSOhnG5Fn+PgSBg6glntAZ+sc3eVkGzE+xPs9s33q7MWd
+         QivsqPba4wkHoVOBLp4UFvElk742rEW64go+mrjnhmycUPgRt6GdDepa7Dkc9PZX8s
+         Ts+ZUH9uls0NF9rMYJfEuf34fDM3e3DnBt8di/dpQ1G9A8G5EaZabUclcdtVlnG8ct
+         dS1jPsbIFTooru+9weUFNViCcdnZCD3hzZePzTv/hHUFWJnWMKLKFSn1/QFzp97jP/
+         PNlqKmGddvNzsfVGqJJWlJWeZcXJ0p7aNFjYP7xZ4cVqDaiXFJMmuKnaa5vKz/VxlV
+         T4nKQSvRIFCng==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 23 May 2023 20:17:56 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Tariq Toukan <tariqt@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: [PATCH net-next] net/mlx4: Use bitmap_weight_and()
+Date:   Tue, 23 May 2023 20:17:52 +0200
+Message-Id: <a29c2348a062408bec45cee2601b2417310e5ea7.1684865809.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <wxfpgm77uxae5mhpht35m4kgrcx2givdp2duncxduz7hrlcofz@sp5wxfqx63fg>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 22, 2023 at 10:47:50AM +0200, Marijn Suijten wrote:
-> On 2023-05-22 10:48:01, Dan Carpenter wrote:
-> > The "vsync_hz" variable is used to store negative error codes so it
-> > needs to be signed for the error checking to work correctly.
-> 
-> Nicely spotted, but it it looks like we have more to fix then.  The type
-> returned by dpu_kms_get_clk_rate() is u64:
-> 
+Use bitmap_weight_and() instead of hand writing it.
 
-That's a good point.  Although the type of clk_get_rate() is unsigned
-long so probably unsigned long is enough.
+This saves a few LoC and is slightly faster, should it mater.
 
-> - Perhaps the int used in this patch is too small (though 19.2MHz vsync
->   clock ought to fit);
-> - That function should also return a signed number as part of this
->   contract.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/mellanox/mlx4/main.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-What about if we just return 0 instead of -EINVAL?  That would match
-what clk_get_rate() does.  Also let me change the type to unsigned long.
+diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
+index 277738c50c56..28c435ce98d8 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -1374,16 +1374,13 @@ static int mlx4_mf_bond(struct mlx4_dev *dev)
+ 	int nvfs;
+ 	struct mlx4_slaves_pport slaves_port1;
+ 	struct mlx4_slaves_pport slaves_port2;
+-	DECLARE_BITMAP(slaves_port_1_2, MLX4_MFUNC_MAX);
+ 
+ 	slaves_port1 = mlx4_phys_to_slaves_pport(dev, 1);
+ 	slaves_port2 = mlx4_phys_to_slaves_pport(dev, 2);
+-	bitmap_and(slaves_port_1_2,
+-		   slaves_port1.slaves, slaves_port2.slaves,
+-		   dev->persist->num_vfs + 1);
+ 
+ 	/* only single port vfs are allowed */
+-	if (bitmap_weight(slaves_port_1_2, dev->persist->num_vfs + 1) > 1) {
++	if (bitmap_weight_and(slaves_port1.slaves, slaves_port2.slaves,
++			      dev->persist->num_vfs + 1) > 1) {
+ 		mlx4_warn(dev, "HA mode unsupported for dual ported VFs\n");
+ 		return -EINVAL;
+ 	}
+-- 
+2.34.1
 
-regards,
-dan carpenter
