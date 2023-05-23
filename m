@@ -2,99 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56488C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 May 2023 09:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE282C7EE2A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 May 2023 10:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236373AbjEWJrp (ORCPT
+        id S236195AbjEWKGy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 May 2023 05:47:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34172 "EHLO
+        Tue, 23 May 2023 06:06:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236166AbjEWJrk (ORCPT
+        with ESMTP id S236362AbjEWKGw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 May 2023 05:47:40 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61720130
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 02:47:35 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f606912ebaso18159845e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 02:47:35 -0700 (PDT)
+        Tue, 23 May 2023 06:06:52 -0400
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A2E6FA
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 03:06:50 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-4f4b80bf93aso1065975e87.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 03:06:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684835254; x=1687427254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6UUzrqfAn41OiLpwzHZwDoyliBOjoCFp0nDGKcNdfLk=;
-        b=Ggfqdim8OknxGiaS8cpoROMYx1uKDod+xlzodv2Uyyj8LUUUFj1XKQepmWq3ya0r89
-         SCo7bMYKY0PRlAmehGpJz7LjH5ttyqoJEdhcsJc1W81WHcvXM1ppc/C+Vz9s0D0uETpf
-         tUlpmH49ONsebsCFlBouNpSw1l4gfbPeH2iSIUtM7nULniCQcUDmXbIZS4d3F16b3r14
-         aGPiY+yrY6TF/IKobuxEHNvhP2wQHt3Kf4efeI2u/sd9wUInf800wRP6/feF5vOsbzNJ
-         xdyvz48MK8UPYprsmPy4AJH0t50FZIpUPvK8CEL9ZSrLAGGVOaSNUZcXciDL/JlqViJR
-         tzQQ==
+        d=linaro.org; s=google; t=1684836349; x=1687428349;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qy1qU8NvcGvI+3YDitV00fdotx7KraYx0th7XNX5GWo=;
+        b=n1QSm7meBl8nT/2dWnq0KvenJvRUYw7rwxnXnHuv2ZJpQF0T5oY4hAnjlL1Bph4FBO
+         puKx43VotTCJ5zdPs98qa5kFewQpBV67ZCxpVUBa16d+wEcilZlk3ORdsx9zcpTNMoVT
+         lXPYSkHCyeP2yV4gfslgPm5lHYG33aCJfd8G2JLrDkJXU01JLXAui6AjZfcyShEJVmz2
+         0WVLy4UlhFPlseQ6FpSqG3U2ASCGc810yHIpBPsuxwIZhzTeZjesle2EyPDXMlYLAu3q
+         ZedhkD3xM9d9ThOHC6j0/w1Ics6VwxfT2GgRubP3vtOzTx+8FN+U81iROKP66DVer0HL
+         //LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684835254; x=1687427254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6UUzrqfAn41OiLpwzHZwDoyliBOjoCFp0nDGKcNdfLk=;
-        b=PMJdmhgKjGZpV5Zet3Wqm3nDlED/GO2UcVaYjwL3LbEhy0hibhSvGrg+qjutBNBQ6k
-         EiVqkpx3t0mOIrdR7gMEnAUn6uXZQg8UafjXsrXBJ6W3lEbVXZpLofp6yqa//HIznqEd
-         +nA9Tes25R0gUbhAgTBQqmGlxXZIOQhjLAFqDysNpOTyZ+JVgt0yqbVGH6O/OetQ6aLv
-         YXuvHh/1JjsAjdGeerww6pRo/p/VN6ds0gzLX38yWcZnOZb/5mvljTaim/LB50bHDbHQ
-         KeOVihb2AxLWNX5OP/b9YoOHHtVqB1YXqDtyOCC+CYk4HGHtkmw0Xtx2E/vpLEW+2Ycj
-         +++g==
-X-Gm-Message-State: AC+VfDwq+XrMjMd73Dzm14m7u0FrpDzw0MoGCQjXoVJ2B1bDfCfoFHNK
-        i75daoE0Rncc/3/6HS6oMSUsOA==
-X-Google-Smtp-Source: ACHHUZ6bd1TERP2fQjRKpOW5RESnGSzbaSxaNEv0OuJwROCIKwwJpiJ/Jd574GsAVtOJTW6dZhgJMQ==
-X-Received: by 2002:adf:f542:0:b0:309:4368:a8a0 with SMTP id j2-20020adff542000000b003094368a8a0mr8733321wrp.68.1684835253786;
-        Tue, 23 May 2023 02:47:33 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id b10-20020adfde0a000000b003021288a56dsm10627696wrm.115.2023.05.23.02.47.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 May 2023 02:47:30 -0700 (PDT)
-Date:   Tue, 23 May 2023 12:47:27 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+        d=1e100.net; s=20221208; t=1684836349; x=1687428349;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qy1qU8NvcGvI+3YDitV00fdotx7KraYx0th7XNX5GWo=;
+        b=k+DCTsItXTNd4xm3/e+7VwUUg1WltJMM84Vx+s3F3SxHwoVeH0WFpPEvRJkmi4UMXY
+         eG4lROXGoNY2WPV25Na0b/2zf6YrNyh0YORHbcJogXMLxj/gKPo9sN7FaTU0S5FtiK1T
+         oMxE3jDQlGno8KkW9H7DTCQqc9R2FctuqlViBqJMgvDnNEtV8viTFlMO3cDIuDTtG9ci
+         9dRd8R0boY1g/PbIxX/Tq/2hKCwJMnkzqPhmWmz5LHdhh75M2WbY5RRKECz3KoTuMIRi
+         NLEU/7E3JiBhtsdttJ08GZBkqOeXLBLwl3L0uZuNWb55Wp+PDF5XJnkxyzOlU9pP+npn
+         unNQ==
+X-Gm-Message-State: AC+VfDzMe0XxEFP6fEzumHrVvZzasCTS5bEi5z8EXALxtabfvb9OJIvn
+        3ZigyMef2eVS71ScfAysleiEYA==
+X-Google-Smtp-Source: ACHHUZ709/zCZUuy2zE6yzDZvvdoH16A8BVN5S2NdiszPLJGnLV6EX44akDp8b7p5ro4oBr0H7KnLw==
+X-Received: by 2002:a19:7501:0:b0:4f2:5d61:a04d with SMTP id y1-20020a197501000000b004f25d61a04dmr4094032lfe.63.1684836348939;
+        Tue, 23 May 2023 03:05:48 -0700 (PDT)
+Received: from [192.168.1.101] (abyk138.neoplus.adsl.tpnet.pl. [83.9.30.138])
+        by smtp.gmail.com with ESMTPSA id v11-20020ac2560b000000b004f25c29f64esm1289083lfd.176.2023.05.23.03.05.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 May 2023 03:05:48 -0700 (PDT)
+Message-ID: <ad76a7b6-55aa-a20c-f678-75887f437be5@linaro.org>
+Date:   Tue, 23 May 2023 12:05:47 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Georgi Djakov <djakov@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] interconnect: qcom: rpm: allocate enough data in probe()
-Message-ID: <d5c41227-21d8-4f64-9433-a774ecfa5685@kili.mountain>
 References: <a0f6184c-c2b5-4e8d-9b8a-867ae83f3094@kili.mountain>
  <2f03fa9a-1b4b-d208-f399-a31ab8c5b4cc@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f03fa9a-1b4b-d208-f399-a31ab8c5b4cc@linaro.org>
+ <d5c41227-21d8-4f64-9433-a774ecfa5685@kili.mountain>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH] interconnect: qcom: rpm: allocate enough data in probe()
+In-Reply-To: <d5c41227-21d8-4f64-9433-a774ecfa5685@kili.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 23, 2023 at 10:31:27AM +0200, Konrad Dybcio wrote:
+
+
+On 23.05.2023 11:47, Dan Carpenter wrote:
+> On Tue, May 23, 2023 at 10:31:27AM +0200, Konrad Dybcio wrote:
+>>
+>>
+>> On 23.05.2023 10:11, Dan Carpenter wrote:
+>>> This was allocating "sizeof(qp->intf_clks)" which is the size of a
+>>> pointer instead of "sizeof(*qp->intf_clks)" which is the size of the
+>>> struct (8 bytes vs 16 bytes on a 64bit system).
+>>>
+>>> Fixes: 2e2113c8a64f ("interconnect: qcom: rpm: Handle interface clocks")
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> Whoops. Guess I was just really really lucky that nothing blew up for me.
+>>
+>> Thanks.
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+> Hold up.  Wait...  Let's not apply this.  The bug is more severe than I
+> saw initially.  It should be:
+> 
+> 	qp->intf_clks = devm_kcalloc(dev, cd_num, sizeof(*qp->intf_clks),
+> 				     GFP_KERNEL);
+> 
+> Did we only test with cd_num set to zero?
+No, I also had buses using cd_num >= 1..
+
+Interestingly enough the clocks with the higher indices *did*
+in fact get enabled (the platform would otherwise crash on set_bw
+during sync_state if they didn't), at least in the
+
+probe (-> allocate) -> sync_state
+
+path.
+
+
+But there's not a whole lot of allocations in between, so perhaps
+it must have been luck as well..
+
+TYSM for catching this..
+
+Konrad
+> 
+> regards,
+> dan carpenter
 > 
 > 
-> On 23.05.2023 10:11, Dan Carpenter wrote:
-> > This was allocating "sizeof(qp->intf_clks)" which is the size of a
-> > pointer instead of "sizeof(*qp->intf_clks)" which is the size of the
-> > struct (8 bytes vs 16 bytes on a 64bit system).
-> > 
-> > Fixes: 2e2113c8a64f ("interconnect: qcom: rpm: Handle interface clocks")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Whoops. Guess I was just really really lucky that nothing blew up for me.
-> 
-> Thanks.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Hold up.  Wait...  Let's not apply this.  The bug is more severe than I
-saw initially.  It should be:
-
-	qp->intf_clks = devm_kcalloc(dev, cd_num, sizeof(*qp->intf_clks),
-				     GFP_KERNEL);
-
-Did we only test with cd_num set to zero?
-
-regards,
-dan carpenter
-
-
