@@ -2,108 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E71DC7EE26
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 May 2023 10:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F08C7EE2A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 May 2023 10:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236249AbjEWKam (ORCPT
+        id S236048AbjEWKyy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 May 2023 06:30:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57240 "EHLO
+        Tue, 23 May 2023 06:54:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236041AbjEWKal (ORCPT
+        with ESMTP id S232091AbjEWKyw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 May 2023 06:30:41 -0400
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23555FD
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 03:30:40 -0700 (PDT)
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-4f3b314b1d7so4230505e87.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 03:30:40 -0700 (PDT)
+        Tue, 23 May 2023 06:54:52 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D8B5FD
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 03:54:51 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f60804faf4so11342765e9.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 03:54:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684837778; x=1687429778;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/T9opHzMSw2R0AZ40N9B37p3pMgsnkJKDx5J8AZzmBw=;
-        b=tRCziY5FD1lkGf8nKeQnWUtC2+ERps6DDPpk5yUmC55lO42H5ojtarEofe+3Xcm6rP
-         2bjfgs8JMr68U5JjKwaCkXMaSWFL8LCooihu9NoITjoxZ9kN6KTw+Jdb9fz8NCY5H5Qy
-         Gup1Tnx01gCFsPphfjbRg4/TJ8awUbbHTEbHchk3A+Nz4EBhFkgOEYUo23fnR7kH/2Yw
-         1mPYJSAx77KMtXmkTcPX9tR/nbVjhbcTYHpL1YTHQQGiuc0SqyU1Jc69dmPjBZsw5M75
-         7AwwsfE5NOWtWBw9HcnUPDCBj6ubXCvCsflSUGoWYlYA/96SJNIdMztOnNL4MnTTdLB3
-         cL8A==
+        d=linaro.org; s=google; t=1684839289; x=1687431289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/3WjXgsNuqa7/WDZdFims98+tDEhGOYyjkquS66fJPs=;
+        b=GRPH6+30lAf//AJM9pWiPwjzF5resuZuGFlvxrJZigGSKauVKhCG67QuBSxJIpJm9U
+         UqO8OPb6Abqjc4UsG8oYtlAIVKSqo2vxyuSfQyWCumvIMPaR4MwQJ7Z0Ju+VoZTxeBkO
+         EVsOiQ08u3o1NpB8UMrRYa9vZDkXWkoowif5QStMG5MDDhTyatuwZIjDeaUeaXd+LFPl
+         WGsxrky31gmDvppGRukw6KgXVPFf1ZjQBRuky5u4p7SmyiU17zYITeNa/9JloaRpIv9d
+         v5SgyDMHDqwKmIQG8gD3aogHnsCvpF1NiJ+OODHOl7+VXJvQ8iCL3fFJ+AZeaMK0d+1H
+         UrbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684837778; x=1687429778;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/T9opHzMSw2R0AZ40N9B37p3pMgsnkJKDx5J8AZzmBw=;
-        b=ctLobPMYyFyqLH+LkIMWE/IzqXd9wdwH6Ho9E6RBOVNTPyxwc6k8ALt4NPFisoXTqM
-         xffXlyZnCRw20iA/GTGtMSiLA1UxUI68atA/KfTbc7FOdsMzOtLgP+t87jwzt4MCo+jo
-         jh0rgxf0Bg4P0TRBBS6b3or0IZfKL85JrdTstO3n2gFpTSdswmsju5dzo+bwpPo31qtj
-         /3TZVvuaHh1C2B1QN0QX130AJVhOsLjGl26a02Kupg52fyL+n0xOpr98wJ04JB/i1vL4
-         LIqP5p2PpEME060F8UE0Ru87BtqxNYtrNuZ74ozVLQO/3WKnK2AB6yqxXN1pKzpc1htS
-         SfjQ==
-X-Gm-Message-State: AC+VfDyz47nrPkKC19xzM1ZOOh2PGI3uEopzzRbXKD2V9V3E33NqOAVb
-        5HwJ8OP7tsZhOOehbUyLTABf0AlSlcgT8//uQZE=
-X-Google-Smtp-Source: ACHHUZ7NlztXsyfEPG7uRIrR/BDOKoTQuncAxl6jYjrOJQ0nYDERu3ZThn0B0l/rvpMhua0FzNqdag==
-X-Received: by 2002:ac2:4c8e:0:b0:4f3:b97c:2d88 with SMTP id d14-20020ac24c8e000000b004f3b97c2d88mr3307217lfl.63.1684837778508;
-        Tue, 23 May 2023 03:29:38 -0700 (PDT)
-Received: from [192.168.1.101] (abyk138.neoplus.adsl.tpnet.pl. [83.9.30.138])
-        by smtp.gmail.com with ESMTPSA id b1-20020ac25e81000000b004f14591a942sm1279869lfq.271.2023.05.23.03.29.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 May 2023 03:29:38 -0700 (PDT)
-Message-ID: <87b5dda1-be2b-d123-e026-176d4c732b3f@linaro.org>
-Date:   Tue, 23 May 2023 12:29:36 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2] interconnect: qcom: rpm: allocate enough data in
- probe()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        d=1e100.net; s=20221208; t=1684839289; x=1687431289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/3WjXgsNuqa7/WDZdFims98+tDEhGOYyjkquS66fJPs=;
+        b=eEj6OG5uZsCKvb6jkwoxGSuPjz5HotAX/iOqfquIyk3PdniSFwQaVchXwmO16q56NB
+         rVylD5gxQ7FxyK/7UBNs0pyfwFjtjMKyS8gtmSEweNFkqIWARcyO33w7psWwMfPiMe0d
+         UhuNkeLBl2Mep92i8RdteE071//jyL2tzywqhK12v6XTKqtuXKicXM3XoANZmcDwyT7z
+         BTGNcsEPgiAYuLd4clhWCzgaLuWShDkptAUg7eN48dKVfKs5/OfGF5HTMCkFEARnqw6s
+         XgPSwgjbsxRWlkIkxW4mhNTD461waDlxZ0feC059Ri3e9tbNTnQc4tbJtO2qozlfmhQv
+         0k1g==
+X-Gm-Message-State: AC+VfDwpViL+6BzvKHOTiCM6J1mAvhGSmE/XQzVd76+K9o+GBnIW6Av/
+        QM7SPWmoPn4bKJnq5EgXDrF7Ag==
+X-Google-Smtp-Source: ACHHUZ6b5/OXboW+vGmX4shXePUEyDe7NDvlwNpoxezhMOSU58x9BGVbiVKV8bYmalzS4dohoNrkqQ==
+X-Received: by 2002:a05:600c:2152:b0:3f6:938:1001 with SMTP id v18-20020a05600c215200b003f609381001mr2059704wml.8.1684839289624;
+        Tue, 23 May 2023 03:54:49 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id n22-20020a1c7216000000b003f60482024fsm6072367wmc.30.2023.05.23.03.54.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 May 2023 03:54:48 -0700 (PDT)
+Date:   Tue, 23 May 2023 13:54:23 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Marijn Suijten <marijn.suijten@somainline.org>
+Cc:     Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         kernel-janitors@vger.kernel.org
-References: <e0fa275c-ae63-4342-9c9e-0ffaf6314da1@kili.mountain>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <e0fa275c-ae63-4342-9c9e-0ffaf6314da1@kili.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] drm/msm/dpu: signedness bug in
+ dpu_encoder_phys_cmd_tearcheck_config()
+Message-ID: <4abf38cc-20ab-4606-bc39-85255b8bdee8@kili.mountain>
+References: <897779a0-1a1f-4193-9dd3-bc4f87e73e3c@kili.mountain>
+ <wxfpgm77uxae5mhpht35m4kgrcx2givdp2duncxduz7hrlcofz@sp5wxfqx63fg>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wxfpgm77uxae5mhpht35m4kgrcx2givdp2duncxduz7hrlcofz@sp5wxfqx63fg>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 23.05.2023 12:27, Dan Carpenter wrote:
-> This was not allocating enough bytes.  There are two issue here.
-> First, there was a typo where it was taking the size of the pointer
-> instead of the size of the struct, "sizeof(qp->intf_clks)" vs
-> "sizeof(*qp->intf_clks)".  Second, it's an array of "cd_num" clocks so
-> we need to allocate space for more than one element.
+On Mon, May 22, 2023 at 10:47:50AM +0200, Marijn Suijten wrote:
+> On 2023-05-22 10:48:01, Dan Carpenter wrote:
+> > The "vsync_hz" variable is used to store negative error codes so it
+> > needs to be signed for the error checking to work correctly.
 > 
-> Fixes: 2e2113c8a64f ("interconnect: qcom: rpm: Handle interface clocks")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Nicely spotted, but it it looks like we have more to fix then.  The type
+> returned by dpu_kms_get_clk_rate() is u64:
+> 
 
-Konrad
-> v2: allocate enough space for the array
-> 
->  drivers/interconnect/qcom/icc-rpm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-> index f4627c4a1bdd..6acc7686ed38 100644
-> --- a/drivers/interconnect/qcom/icc-rpm.c
-> +++ b/drivers/interconnect/qcom/icc-rpm.c
-> @@ -436,7 +436,7 @@ int qnoc_probe(struct platform_device *pdev)
->  	if (!qp)
->  		return -ENOMEM;
->  
-> -	qp->intf_clks = devm_kzalloc(dev, sizeof(qp->intf_clks), GFP_KERNEL);
-> +	qp->intf_clks = devm_kcalloc(dev, cd_num, sizeof(*qp->intf_clks), GFP_KERNEL);
->  	if (!qp->intf_clks)
->  		return -ENOMEM;
->  
+That's a good point.  Although the type of clk_get_rate() is unsigned
+long so probably unsigned long is enough.
+
+> - Perhaps the int used in this patch is too small (though 19.2MHz vsync
+>   clock ought to fit);
+> - That function should also return a signed number as part of this
+>   contract.
+
+What about if we just return 0 instead of -EINVAL?  That would match
+what clk_get_rate() does.  Also let me change the type to unsigned long.
+
+regards,
+dan carpenter
