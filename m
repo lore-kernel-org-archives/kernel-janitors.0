@@ -2,125 +2,123 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FDDC77B73
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 May 2023 10:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12CEC7EE2D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 May 2023 18:11:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231810AbjEXKfY (ORCPT
+        id S236848AbjEXSLJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 May 2023 06:35:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52438 "EHLO
+        Wed, 24 May 2023 14:11:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231357AbjEXKfU (ORCPT
+        with ESMTP id S236057AbjEXSLI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 May 2023 06:35:20 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2100.outbound.protection.outlook.com [40.107.236.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 351B0A3;
-        Wed, 24 May 2023 03:35:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ATMByAwUmTYSTxMaGEGe91rkLIs2fuXyJ/1WlIS307j8ICk1I2z/FdEeZi1rVTz7BPC01Byl9vsfsxphwPqjyGjVDleLzwJlfLWxF/JcAA5lgJdX8qUb+MjeuqLi8rtPpnfI5pwukZlWACKKsL6iJWZk8wNMTHrn3F+RdDjpdyyIOVkYZvLRir3A/9RMwNt9blCC9z/WZUEEeW/i0R3GngXd/z56dP3xDxmSh5/xScxE4WBaqBQs17cYzuANNnmPCEtq1JkDpbitvSCzBiqOY4UGStJ5gmINUNqpDIuz0mhnLjINb0apNhHKWq4V8d8Vj9by/2p3Qk1Bxu3yyo24Yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mtU5KZnDQZwAS/wpJhWyTeH06dlDNtoAFN7Wz0pgxq0=;
- b=VMLsWytIB5UxBdpEcPrg0UF3SPiCUPofyo2kNDnTx5AkMyHXTeNlQ+suzQIfYgYHsphXcVQ/HFBIDhxRyRBE2HCiOIXHyzspMj56ZmOmd7A1sTTNkW3XJkVKuZmt+vnVyqeIw6sO+54TBEtOSXNO+LouV0QFRRdMK2LbqVmSZqweB0RKZgVhfHoH/1p+9WJrOltSoP1ZdhLLNbgBJB2ss1A4k7Q5mwsi6/OArmchjUb1Cyp//2qlXkFzwrp+GbXDuXugxBYfl7CQfVdBUwZKuRsF0OxUagJX/9ggZIjZ19BDtMy7ygrQUxBs8fPijper5xcjf3B/TqF4RfsceZLuRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mtU5KZnDQZwAS/wpJhWyTeH06dlDNtoAFN7Wz0pgxq0=;
- b=fUw5i1gdjm6O45nWNZzOvxotlcmUQPZZ346RENTTX68alpW9zah2QQCEklEg9TE6vWXi6Bnh25rAZsnjm0lkvKZy7qldG3CzSL96/L5m8coS3uESB2KWpeKxDDh8zGDaEQcuCFtbhhuWoAQYwVOC8FPMdxWXCca5/gk0ltlqpkQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by SN4PR13MB5277.namprd13.prod.outlook.com (2603:10b6:806:204::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.19; Wed, 24 May
- 2023 10:35:16 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::f416:544d:18b7:bb34%5]) with mapi id 15.20.6411.029; Wed, 24 May 2023
- 10:35:16 +0000
-Date:   Wed, 24 May 2023 12:34:50 +0200
-From:   Simon Horman <simon.horman@corigine.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Tariq Toukan <tariqt@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH net-next] net/mlx4: Use bitmap_weight_and()
-Message-ID: <ZG3oSvGumQRklkyO@corigine.com>
-References: <a29c2348a062408bec45cee2601b2417310e5ea7.1684865809.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a29c2348a062408bec45cee2601b2417310e5ea7.1684865809.git.christophe.jaillet@wanadoo.fr>
-X-ClientProxiedBy: AM0PR06CA0097.eurprd06.prod.outlook.com
- (2603:10a6:208:fa::38) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        Wed, 24 May 2023 14:11:08 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2E8B6;
+        Wed, 24 May 2023 11:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
+ s=s31663417; t=1684951856; x=1685556656; i=deller@gmx.de;
+ bh=PX6l2+dRfCXuhXDmiXC0qZdP0ZuQhXi2T02P+uceBMA=;
+ h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+ b=egy1v9c4H/TCIUb3R1jINF01kAoJ/wzFLbOmKS56ifrELGra9tfg3RG+XArT5f409UVTc9c
+ mukLagydXi/1exUwqljACh0G1J7RN1QVc/AyuO+W6WOM65wbii1qC8+78FpZWy4E4WL34AJRR
+ P3wDItMQ9u1QpYOUUwb/IYW8wZVbyJP44dr19/0jTT42ptOijcRW5l3OzZeaqVrxkzp2yN3J+
+ vYyZiFokaVcH0HBkw5r+h1qtJrN9+S0dPsV5mjYX3q/6GV8j3dtTk9LJnsPBtksW1lS4uLDpR
+ 5C4i40i/jTktWU65/Bgq1NW7YW5sveGUp+bm2JAufBTkdkJbXEyw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.60] ([94.134.145.4]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M8ygO-1q4cVC1PFO-0068mJ; Wed, 24
+ May 2023 20:10:56 +0200
+Message-ID: <35bb7db7-bf14-20ba-3bff-80d05c42e28b@gmx.de>
+Date:   Wed, 24 May 2023 20:10:55 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|SN4PR13MB5277:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12f12473-51bd-47aa-2c36-08db5c42901c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RajsxcRTLInY0Ly7lwKROhGyRBKVfMMSKJxShIHW5pBAgioxjYwfwVbmAQeJ+l7FoGPvT1ekJQ4aQBG/UWZ9vk53lZ+WvYyrSyHoQSSczIR8mTRmRil/l9bhDejWYfijBI9RvOAQ4rOz7sna9AGTA7apqtZ4kRhTmPlrOA1aej9tU05YXa43NUyujiu4DMMsgiF493G7qCCKq8OBnMpc/mzHsALNN5+Wn+hVjyDjueQ1tWu97016gTfx+mOgYe1rtoFt2beoz9a/Un9C2/3w1QobMbYpghrF9IkMPK5+bc3O5rYbC9cPrpLQivwXBekxpFcAlPiNiLSCPvufSNG481IaC1KnoBgbZd8LQxcyTpwKzhipKY+QLsSaFvVfsTCzAAogpdpyBtJDPSy7BbS54N0/YkFrYmgCMvyRXfVcV7kac3J1/851tCj2WIuO1TKaFMYecAaSTgJaF+P7pyT6T06HSLIiR8jNyM9G/w706XRZKBkPw7Ie1wbi5U6l+T52MgbBDGonP2HpLlXOVBc3SUm0z4zPqlDD6MnIpRL91EP/rxBP6ISm2yzQ/x057P3/6JUYtXvvm/0TcqbcZNtDWIYHJMsT0AgTaZ44D+i+CcQ=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(376002)(366004)(39840400004)(396003)(346002)(451199021)(41300700001)(66476007)(66946007)(66556008)(2906002)(4744005)(186003)(44832011)(478600001)(6486002)(6666004)(4326008)(316002)(6916009)(5660300002)(54906003)(6512007)(8936002)(7416002)(8676002)(36756003)(2616005)(6506007)(86362001)(38100700002)(16393002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RxdVprLan9J4ryjBedpYTf6Zqli0FdX5a2qetR/j/MEMxlwKFH/1cHAa/e+w?=
- =?us-ascii?Q?kopbD0vdi8pwg+fX8h/1a3Y/M+98LxdCTayudD2Kc0KoSVmGchOz5Z+cbch1?=
- =?us-ascii?Q?fka7L7sFChN7wgDewbS+1Z+EyMNoC7IGNekZ3xlZvAHmWCd7ZW8OiblZnDHl?=
- =?us-ascii?Q?DUv9ue0lxAquE5mgzMtxJmgYHLgjJ8hAAC5kbKy1hjm+09G103R8s+oAPoVO?=
- =?us-ascii?Q?VysFrWPi44a9XUiplyFrV4oeWtEJf+zdH6QcfwAWeuCz4lQT43kQ9PL2ejuu?=
- =?us-ascii?Q?OaKHUK99MecCzhnrjJwZutUHqqRXCALJNX56OqtB3pQcXXcarm/cDcnG+h0O?=
- =?us-ascii?Q?4QCWqIZIbLzzVsILVHlSO/2UBqsI4zaXkrgXxysdPwd/pUnwJ9yzIzddX7et?=
- =?us-ascii?Q?PboiDo2+Ae9Cnzduay9yCkWpsmzReKscZVlOvtLCJ4iQvSGaJkVbUQ8PLM+9?=
- =?us-ascii?Q?KbqaUprr77W0sTsGr56BCkJAR5atZuGkgtSE/C273O2tYNqYwmBq/XvsXXfY?=
- =?us-ascii?Q?j7FxYd6I+dMbFd+TkZjCP7IYwqLhucBxrQHaWJDMY3qC6QG/fOVg99KBFBvP?=
- =?us-ascii?Q?ZTaOaqWOk1FLgnmSrulp39VvPUQyftXH89dcEwGqkQT/HCtNeY1KcQciUdXp?=
- =?us-ascii?Q?v9ZXiO9QCoUWkQcRCShwHoIzuZdTHxKRfaWW/C4N5xsGxncm2tsrq/g/11OV?=
- =?us-ascii?Q?1Omh2ugcVsBNKCeRW5P7hbGEpV7z4GGrKRuWZOOJAleFuj1Xh/LJg3KuDLqX?=
- =?us-ascii?Q?XVjinnVh6fKlqcq9JZOHP4JblJ6kgkAc7JA3SD+aqKSVUaw5pFlviCiX/QhU?=
- =?us-ascii?Q?6Uy0xYGwnhw8gpczUNwmQsl/VlHIXNNLT4Mb8VEfyDRXiAlMR3/75IVdhimG?=
- =?us-ascii?Q?PU6qwTYQq/syIqtnCg3ueYSr+027lcpZ5YQ+ic+Y2RhUz5BPKIVAgRhQnuiv?=
- =?us-ascii?Q?t7U5u6r24MOgtvKpgT0936MrdX0/BQq+Dtr7gwnGA4rW41ItsE+/3K3Ivh4F?=
- =?us-ascii?Q?JZOZIS3H+arGNcgn7VhfQNGkWHYGw0J6N5T1ZL/gSad3YYdIcP62eZfiiBQ2?=
- =?us-ascii?Q?UUzRCP1WmffhY59HaX/gYDu6do8A7VGEGF+95XpMWP4mE8fQsp0g1lTMy72Z?=
- =?us-ascii?Q?4GfRefbB1HBxsM36LzDkmkGJBbbgs8dhllicrfobBGodNFCeb7AjpGaMfX9B?=
- =?us-ascii?Q?Gk6hArLL78ktQb48ZpLToVPYkgrk6oB04S40GNwiMQfGZjqAyfXJDvB7Gf40?=
- =?us-ascii?Q?PK6lCM7+WacXPQC/adVeeL2G7sTC4Cbad2c4U3C41mmHsGuCexyKn1yaO988?=
- =?us-ascii?Q?yuoWWscU19KKeb1KPzl8Efxpk8sOOwcDcjESYCVmm1WCOlfNunkQiKpwF1F/?=
- =?us-ascii?Q?Xe5X05mpAw7I7q2ZQKKiew7CVV2wsPM4z2V48YaR13GVRTStwiNUWqGZQyXo?=
- =?us-ascii?Q?45vUe4h+Oa0mGgFV1uE+4LC6JVXxJOBNh9v9jAC8CVP8d2NKudWPKX+jGQW3?=
- =?us-ascii?Q?NP6eBtUMWJRxjpIxtTr38w3eAupnxzuQ8mh2Bzj5otf6BovW376VfGHQLPR1?=
- =?us-ascii?Q?hZl5a+PmvaBTT/w3CBSbvEdblqjsHE4u/ioPPOv2KM969oqmweLBIxn7Ib9F?=
- =?us-ascii?Q?O0Xfq6f6wZNLiKUlvk731aUIb55czG24lb9QTYG64zjANsS1yUP8N/kfcxUH?=
- =?us-ascii?Q?4L7cqA=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12f12473-51bd-47aa-2c36-08db5c42901c
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2023 10:35:16.0147
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L+WGiAyijmdieuxYLTsFZ1eRHgh+RN+vQg68fx4EE2YL8Ux/40AlIs393qfw1uDRkzUo3AoqnNvLM2aRpbrbmJkikFm4jQqq+80Dvme0S8o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR13MB5277
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 1/2] fbdev: Move two variable assignments in
+ fb_alloc_cmap_gfp()
+Content-Language: en-US
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+References: <8f0bcb48-7677-340d-282e-27f6fe063c6b@web.de>
+ <341b4af7-5c6c-cbd2-6fe3-c0e4e58f3c7d@web.de>
+From:   Helge Deller <deller@gmx.de>
+In-Reply-To: <341b4af7-5c6c-cbd2-6fe3-c0e4e58f3c7d@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:L50JDaxHIw1ErP6ds8mw4snHYBR9Vh3lZepm9cyz+wRsl5vmDPv
+ W18dS73RGm8bZ8n8r1KcWYHjMA8XsR+8E1LKIXRFhPdAe/ZOikI4sgxMzcLVdOqryCNsaoS
+ 2hLnXBcH/EGsX90g3TMg04vEhGBD7gffu+W7duwP2MGMwqfU8TqDzdm+3bjiKIZmRXvdCF7
+ eZiQN0NkGx9Gj3lFqw1wg==
+UI-OutboundReport: notjunk:1;M01:P0:dcabAtqFmMo=;MRsvEB2fpSzJcl5nWEe4w2X/Jtx
+ 0B2Y/RksUjIPlyQu4WcW6V8LZKjKVzeI/S57lvHrIwqNB15PrDorg5wVYXZTs2mB/MNuNMkiN
+ 3Y6UB+BOVVTKk7hxm2rcRPjiLwB3fEm/0djO1yapE7Ou2SOn2CpBFpSeSwfMVZx56xSb1F+ih
+ o8QCYbZqkY5T28Sflhk+x0CPDJsUhnW44XfwdWzS+RQ5UP+7JBeUTEijTJxKqt0Y94sbqoN+a
+ 54eB31VavK0+Y+HV4VK3LSRhRTrJ7ADKpIP7lwutrn8sWzE6z1DACtbyy4vLh1pQ8PwQLzosl
+ 4JhKZFjZP8vrPdFGvJNLV7t5OPrij8hxQEPysGZtzCgXfvdmPqRGJ8f6m1Su874HrVDPVeE2B
+ h47ho3NWRmlzCztoXwvXzDuBbLFoj/nHMbWKzP3aTHArM3jftIK7y+grQtTwqkfnsCkBworxI
+ mGG82+1odfV6U4PErnFJi84TmklaB1lQyxDdWYlvRp2ONbZIIa19Auew0PJmKXRl2AUi48mnz
+ RMWpXnfXJac3q0IW9fn+5cd6CB+VHk7i5M2YLz24tKFOLgunc9kV5TG5i/DdRrGFwcmugjW57
+ IdgG6pXGLNzCnM3Sz4B7AquTqU+Q0YfPQcBDPahc1M/d9gIb1gyVno488qbMCoZDabOT1oRXF
+ 3YKh2kKhoJNMXH1uvoljUZ4OOKdfjLc/n5LLWhDrOdA0GsBw3M/n87ZuLdCMG2qH4FXAfR/Xq
+ scxwASeoJ1xjZtspuffLKEMyxCimTnC0B10iBwZbIb9dFkMGre5caCYLYMWNlktE4uMNVJaOx
+ hrj6157DSLw8XZCoa7p7D52xnZggHvbYHOC34JBgoZqkx8kFg1x3BocfCHXAnMZ67Ww2gfLg4
+ 3gDCh/8EohJ4axKQRDWBEuFJvi6+SOYna0GeQaT7Dq7qUFT+5Vy0c/J5PVo8CWXFTcq74Wc5h
+ CFAoCw==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 23, 2023 at 08:17:52PM +0200, Christophe JAILLET wrote:
-> Use bitmap_weight_and() instead of hand writing it.
-> 
-> This saves a few LoC and is slightly faster, should it mater.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On 5/23/23 22:15, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 23 May 2023 21:30:29 +0200
+>
+> Move the assignment for the local variables =E2=80=9Csize=E2=80=9D and =
+=E2=80=9Cflags=E2=80=9D
+> because the computed values were only used in a single if branch.
 
-Reviewed-by: Simon Horman <simon.horman@corigine.com>
+Please do not move such variables without real need.
+It makes backporting (of this and maybe follow-up patches) much more
+complicated and the compiler will optimize it anyway.
+
+Thanks!
+Helge
+
+
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   drivers/video/fbdev/core/fbcmap.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/video/fbdev/core/fbcmap.c b/drivers/video/fbdev/cor=
+e/fbcmap.c
+> index ff09e57f3c38..5c1075ed28ab 100644
+> --- a/drivers/video/fbdev/core/fbcmap.c
+> +++ b/drivers/video/fbdev/core/fbcmap.c
+> @@ -91,16 +91,17 @@ static const struct fb_cmap default_16_colors =3D {
+>
+>   int fb_alloc_cmap_gfp(struct fb_cmap *cmap, int len, int transp, gfp_t=
+ flags)
+>   {
+> -	int size =3D len * sizeof(u16);
+>   	int ret =3D -ENOMEM;
+>
+> -	flags |=3D __GFP_NOWARN;
+> -
+>   	if (cmap->len !=3D len) {
+> +		int size;
+> +
+>   		fb_dealloc_cmap(cmap);
+>   		if (!len)
+>   			return 0;
+>
+> +		size =3D len * sizeof(u16);
+> +		flags |=3D __GFP_NOWARN;
+>   		cmap->red =3D kzalloc(size, flags);
+>   		if (!cmap->red)
+>   			goto fail;
+> --
+> 2.40.1
+>
 
