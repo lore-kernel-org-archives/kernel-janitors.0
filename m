@@ -2,106 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF9AC7EE2E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 May 2023 20:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A372C7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 May 2023 01:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237038AbjEWUFb (ORCPT
+        id S230411AbjEXB1y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 May 2023 16:05:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56394 "EHLO
+        Tue, 23 May 2023 21:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbjEWUFa (ORCPT
+        with ESMTP id S238962AbjEXB1w (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 May 2023 16:05:30 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1484911D
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 13:05:29 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-64d2981e3abso177852b3a.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 May 2023 13:05:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684872328; x=1687464328;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xxXVUOaFN1Qv+6eAQzosOhjOl+94anVe0xXKbzcrKW0=;
-        b=Z1UfLh8zwQ4gGkVeoNzdf7gNB+vkVFBoxp+/Y2vwDp7ns/GM5u9C4vSDIBCs/fw/ii
-         92XGpa8kQFDw88Bqx0REdQVhQafzDeGATQcQ0YHuOKOLO2CMYCZXEq54VBggA+mOUuX5
-         lH5Yi8VSe62WZpgb57rw12rbw2hpSeuwCummsJiFzJlU7+d7wQD9iSPC4p0gbzcvLIDj
-         FiOUA1ZN0NdQSh09ZL4AcUFBu5es2ubK87MmrFdarhGIe8sfph8Pi47Ry9BenJBVDDz2
-         SMe+pwJBaqXAQbwk5+Nh5qNcr4kYcfczdiGNEEXco2r/tDa/tDbefbTvoQgStRxxTgZg
-         EV4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684872328; x=1687464328;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xxXVUOaFN1Qv+6eAQzosOhjOl+94anVe0xXKbzcrKW0=;
-        b=gE6RpiBxXi8o2ZuZVsJKt5RTs7SwUBtZGkuIthHl+zxVKVu/6kh01XWHEmu/cC1jm9
-         U6L7vaGWoOLyYRvBrKAoQ18Xhj6rFKhkzYGNain92u0x94E23yPEPs9iAZL2Gv97fSKZ
-         eje8LYe+qvamk0sM7p3lCES5TV223ETFz1YwxSY2zr6xKJhO8rHjcC5fiZvMjORNNQ/h
-         J6fome/qMmvxgv+fFZxTEV8lPTmi/wxLdoGpSxi6wALPHK07d1lFLE8r5zfAWG4nrrH9
-         obUSEgz6zYKNq9EaHPPbz0qMKAPjKvtUhnb6uTCoudZ2mQ6AZqDSYgSc5GkkjCen3r1j
-         8RLw==
-X-Gm-Message-State: AC+VfDyDroQ6VVBpkSu8XUPi29azkUvYMf2rOsRBorRWCuT4dr9zoHRv
-        WauhNmGwdZzx7buzzc/jE4tg+w==
-X-Google-Smtp-Source: ACHHUZ49fyumpSoubA/QSL2euXQxNkK8YT8+yIAjR9IgC5rGDCadGOaus7RUj9TiIgEIp6v5Xzd0HQ==
-X-Received: by 2002:a05:6a00:23cc:b0:645:c730:f826 with SMTP id g12-20020a056a0023cc00b00645c730f826mr201405pfc.24.1684872328385;
-        Tue, 23 May 2023 13:05:28 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:7a5b:c1e7:4298:b147])
-        by smtp.gmail.com with ESMTPSA id x10-20020a056a00270a00b00640e64aa9b7sm6370805pfv.10.2023.05.23.13.05.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 May 2023 13:05:27 -0700 (PDT)
-Date:   Tue, 23 May 2023 14:05:24 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: stm32: Fix error code in
- stm32_rproc_parse_dt()
-Message-ID: <ZG0chM7o2f7gTNyg@p14s>
-References: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
+        Tue, 23 May 2023 21:27:52 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 54346126;
+        Tue, 23 May 2023 18:27:49 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 932E018002B642;
+        Wed, 24 May 2023 09:27:35 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     YongSu Yoo <yongsuyoo0215@gmail.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Su Hui <suhui@nfschina.com>
+Subject: [PATCH] media: dvb_ringbuffer: Return -EFAULT if copy fails
+Date:   Wed, 24 May 2023 09:27:33 +0800
+Message-Id: <20230524012733.414441-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 22, 2023 at 10:46:11AM +0300, Dan Carpenter wrote:
-> There is a cut and paste bug so this code was returning the wrong
-> variable.  It should have been "ddata->hold_boot_rst" instead of
-> "ddata->rst".
-> 
-> Fixes: de598695a2ad ("remoteproc: stm32: Allow hold boot management by the SCMI reset controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/remoteproc/stm32_rproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 0e322697d210..a7457777aae4 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -755,7 +755,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
->  
->  	ddata->hold_boot_rst = devm_reset_control_get_optional(dev, "hold_boot");
->  	if (IS_ERR(ddata->hold_boot_rst))
-> -		return dev_err_probe(dev, PTR_ERR(ddata->rst),
-> +		return dev_err_probe(dev, PTR_ERR(ddata->hold_boot_rst),
->  				     "failed to get hold_boot reset\n");
+The copy_to/from_user() functions return the number of bytes remaining
+to be copied, but we want to return -EFAULT to the user.
 
-I have applied this patch.
+Fixes: 04da2daee383 ("[media] ngene: properly handle __user ptr")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/media/dvb-core/dvb_ringbuffer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Mathieu
+diff --git a/drivers/media/dvb-core/dvb_ringbuffer.c b/drivers/media/dvb-core/dvb_ringbuffer.c
+index 7d4558de8e83..f132578840ad 100644
+--- a/drivers/media/dvb-core/dvb_ringbuffer.c
++++ b/drivers/media/dvb-core/dvb_ringbuffer.c
+@@ -216,7 +216,7 @@ ssize_t dvb_ringbuffer_write_user(struct dvb_ringbuffer *rbuf,
+ 	if (split > 0) {
+ 		status = copy_from_user(rbuf->data+rbuf->pwrite, buf, split);
+ 		if (status)
+-			return len - todo;
++			return -EFAULT;
+ 		buf += split;
+ 		todo -= split;
+ 		/* smp_store_release() for write pointer update to ensure that
+@@ -228,7 +228,7 @@ ssize_t dvb_ringbuffer_write_user(struct dvb_ringbuffer *rbuf,
+ 	}
+ 	status = copy_from_user(rbuf->data+rbuf->pwrite, buf, todo);
+ 	if (status)
+-		return len - todo;
++		return -EFAULT;
+ 	/* smp_store_release() for write pointer update, see above */
+ 	smp_store_release(&rbuf->pwrite, (rbuf->pwrite + todo) % rbuf->size);
+ 
+-- 
+2.30.2
 
->  
->  	if (!ddata->hold_boot_rst && IS_ENABLED(CONFIG_HAVE_ARM_SMCCC)) {
-> -- 
-> 2.39.2
-> 
