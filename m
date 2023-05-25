@@ -2,91 +2,178 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33B5C7EE2C
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 May 2023 08:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4A1C7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 May 2023 08:55:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238828AbjEYIFd (ORCPT
+        id S240453AbjEYIzP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 May 2023 04:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42878 "EHLO
+        Thu, 25 May 2023 04:55:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235188AbjEYIFc (ORCPT
+        with ESMTP id S231382AbjEYIzN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 May 2023 04:05:32 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C470122
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 01:05:30 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f655a8135bso1936175e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 01:05:30 -0700 (PDT)
+        Thu, 25 May 2023 04:55:13 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08BC318D
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 01:55:11 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f6e13940daso420915e9.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 01:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685001929; x=1687593929;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685004909; x=1687596909;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XEaBmzb77Yfj4NT5Cv6mQfZ6VRH3pcFg5KkRGTmBOZ8=;
-        b=A0u68dVhg/5A0DP6/oeFiqIA7ss/S/4G1tOj0bHIIenfPcYcQZ1xGxadrD02u80RVR
-         Nmido22xyDD7a8nwx6X/pSQ7u1cEe69fpyAtMHCHbuJ+MY507gqScGIa6P2kpuyRNPhe
-         CZrrJr8Oblb0+VCOStG4Sf0Rc9R+/ZssjRk/eYS+0Db8b1GJSN1rlb5/IEizYjS0RyMw
-         +O3NZcV3rt2w+cZyr8Ip4nH6yxzD1nqrfBAvoPF6ZwTQgGlZc5HgONcAlMklThl+5eq/
-         ULmAYlWEWFbtEgNwT8WL3aP2z/wFQptVVKsOD/48OlpBB+delvkNHL+pDyvMSzzlkSCm
-         QiSQ==
+        bh=QtDjcqj8z1Plq2b8p/rVfpFVt89quubK5nag52Q/T+k=;
+        b=U4gsbWe1BbtxwEM7W66xmy9HNLFI3gdQevrGWZXD135Jf0wsJF23wGd0Iy92GM+xsH
+         pBqhI47yxBlCWFv2AQjJhTgbEucGXUoODNbKB2kGmmxdyHXPdVdSgzeDDCRcDclEI+4O
+         3DC110zUHqkJXwPq05AW3j/48uY9TeNvhgTvySlue0ZiEouDx11QN3d7M5Otw7EopIkB
+         Br9HNt6uFtRjL9u97esQ3TOiQXq8/Wg5jy045HLadZ9Lst6h/SjVVPJfMEZukFIJJTGx
+         xiwQ7tSR4AS1B561Cnyxz7TCbaQQVXWj345yhyoZGMngo5gg1IbYCEOp/vcxTLD3e1Tj
+         wl1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685001929; x=1687593929;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1685004909; x=1687596909;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XEaBmzb77Yfj4NT5Cv6mQfZ6VRH3pcFg5KkRGTmBOZ8=;
-        b=dDvW4gDKcSdOv0Lc1ZwjEZVNGrOOjFn/yKPx777NAyQJ05uv/V3lhwAbDVmxK4kIeR
-         UGpD/Mc+GLGTMezgh7TNQlx7fIkY2WT8vnGOQi5NhFe6Ie2GIAHIDYKbcyEZ+MnCgh3m
-         yuSOzhc1gqVOuuk5HLIfjGNpqd225egCTac8bEzrY95DSsIHPXPTzkyTdowte5LKD4VP
-         bZJ9TmsSsBK6G+BDy2c9Ic2/mQLILAwZrjZiKbZSeeB7Btn5yfuJl0cT9X3K65GuFl3q
-         OEOBV+YfvuJMYcYcBxDdHMi1yseO2iCwQ11fV6opRYmjiPwCBC1isdFogCrUvtisX5R+
-         8bVg==
-X-Gm-Message-State: AC+VfDzhChVFzZCK+FaxdqlBf8nhoS5DFDZ/EEIbWnX35LtLD74JaqPV
-        y9v6+UBFWJzuXgFH65hXN6b/ZA==
-X-Google-Smtp-Source: ACHHUZ5O8zLR7hgpDa++vgvNxVPsuKlJj3giFo2RNRpcZa5gxEBB6tIO3W6VDK0VNufvUi9m4R2EJA==
-X-Received: by 2002:a1c:7415:0:b0:3f6:11cb:4926 with SMTP id p21-20020a1c7415000000b003f611cb4926mr2255542wmc.22.1685001929090;
-        Thu, 25 May 2023 01:05:29 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s15-20020a7bc38f000000b003f6028a4c85sm4779312wmj.16.2023.05.25.01.05.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 May 2023 01:05:27 -0700 (PDT)
-Date:   Thu, 25 May 2023 11:05:24 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Felipe Balbi <balbi@kernel.org>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: phy: tahvo: release resources on error in probe()
-Message-ID: <80496b6d-990e-4fb3-808b-daf3143cef15@kili.mountain>
+        bh=QtDjcqj8z1Plq2b8p/rVfpFVt89quubK5nag52Q/T+k=;
+        b=KZxYTPaqKjLdVDGTo8B5yKwrArDCIXaHygqI1hPVv1NlhxEvTTs5qvu0ZqAjetJY9d
+         UzJQ62l8tdPEnAQhwo2rYAaeJisNmH5vixikwQYaEJWhAj9lcW+/mvNJKKUjr3qJ+fKz
+         +YmgzG4AGTLDp/Xb/YRAMBhOnMVE27bktGVaMTJG8k5LbxwfqF2DtHXEqstR88yLvffd
+         Th1LWy9c1OLiesIMGi1dV5jijINdKHA1Ow2Tae+CmFwWf2qCGs2aVupPCTMpanA3wAm4
+         xgP7aimNXYYGHv+pqHuH0YEmg/RgwGGq+X27neGxKnrbuJ0Rq5LWhwSJf5NfHhsN4H6N
+         pVOQ==
+X-Gm-Message-State: AC+VfDwXSxrtDA9htKqtzzc+CiBRqLnA3mKTIydiRNRAuerVpOW5Gxgo
+        qRs0ZC+souXhY10WPSnTZkseWmy3wCRGI7CNycs=
+X-Google-Smtp-Source: ACHHUZ7MKkmEvS8XAlRhJ9e7nLGPgpi1xHXKsIVhLDqVOloaGU+KPvnCmhA+6ocXZxBOPSCef8GgxA==
+X-Received: by 2002:a7b:cb91:0:b0:3f6:45d:28a1 with SMTP id m17-20020a7bcb91000000b003f6045d28a1mr2373900wmi.14.1685004909469;
+        Thu, 25 May 2023 01:55:09 -0700 (PDT)
+Received: from [192.168.1.70] (29.31.102.84.rev.sfr.net. [84.102.31.29])
+        by smtp.gmail.com with ESMTPSA id i5-20020a5d4385000000b003062b57ffd1sm1033766wrq.50.2023.05.25.01.55.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 May 2023 01:55:09 -0700 (PDT)
+Message-ID: <44024069-723a-9726-7cdb-6c10a3ce2c7f@baylibre.com>
+Date:   Thu, 25 May 2023 10:55:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [bug report] mfd: tps6594: Add driver for TI TPS6594 PMIC
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Lee Jones <lee@kernel.org>, kernel-janitors@vger.kernel.org
+References: <afd9a078-1002-4a26-a9b2-d92406912af5@kili.mountain>
+From:   Julien Panis <jpanis@baylibre.com>
+In-Reply-To: <afd9a078-1002-4a26-a9b2-d92406912af5@kili.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-We need to do some clean up before returning on this error path.
+Hello Dan,
 
-Fixes: 0d45a1373e66 ("usb: phy: tahvo: add IRQ check")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/usb/phy/phy-tahvo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 5/25/23 09:46, Dan Carpenter wrote:
+> Hello Julien Panis,
+>
+> The patch 325bec7157b3: "mfd: tps6594: Add driver for TI TPS6594
+> PMIC" from May 11, 2023, leads to the following Smatch static checker
+> warning:
+>
+> 	drivers/mfd/tps6594-i2c.c:159 tps6594_i2c_write()
+> 	warn: 'count - 2' negative user limit promoted to high
+>
+> drivers/mfd/tps6594-i2c.c
+>      142 static int tps6594_i2c_write(void *context, const void *data, size_t count)
+>      143 {
+>      144         struct i2c_client *client = context;
+>      145         struct tps6594 *tps = i2c_get_clientdata(client);
+>      146         struct i2c_msg msg;
+>      147         const u8 *bytes = data;
+>      148         u8 *buf;
+>      149         const u8 page = bytes[1];
+>      150         const u8 reg = bytes[0];
+>      151         int ret = 0;
+>      152         int i;
+>      153
+>      154         if (tps->use_crc) {
+>      155                 /*
+>      156                  * Auto-increment feature does not support CRC protocol.
+>      157                  * Converts the bulk write operation into a series of single write operations.
+>      158                  */
+> --> 159                 for (i = 0 ; ret == 0 && i < count - 2 ; i++)
+>
+> TL;DR Smatch is correctly complaining that "count - 2" can underflow.
+>
+> Smatch finds this code hard to parse.  It says that "count" is a user
+> controlled number between 0-u64max which has an upperbound (but the
+> upper bound is variable instead of a constant).
+>
+> Can count actually be zero?  Smatch is normally good at tracking that...
 
-diff --git a/drivers/usb/phy/phy-tahvo.c b/drivers/usb/phy/phy-tahvo.c
-index 47562d49dfc1..5cac31c6029b 100644
---- a/drivers/usb/phy/phy-tahvo.c
-+++ b/drivers/usb/phy/phy-tahvo.c
-@@ -391,7 +391,7 @@ static int tahvo_usb_probe(struct platform_device *pdev)
- 
- 	tu->irq = ret = platform_get_irq(pdev, 0);
- 	if (ret < 0)
--		return ret;
-+		goto err_remove_phy;
- 	ret = request_threaded_irq(tu->irq, NULL, tahvo_usb_vbus_interrupt,
- 				   IRQF_ONESHOT,
- 				   "tahvo-vbus", tu);
--- 
-2.39.2
+'count' is the total number of bytes in i2c frame: it takes into account
+the number of bytes for address ('reg_bits / 8') + the number of bytes
+for data (which is at least 'val_bits / 8')
+So, with 'reg_bits = 16' and 'val_bits = 8' in 'tps6594_i2c_regmap_config'
+struct, 'count' should be at least 3. It cannot be zero.
 
+> The other limitation that Smatch does not track is from regmap_raw_write()
+>
+> 	if (val_len % map->format.val_bytes)
+>
+> In this case the value of map->format.val_bytes comes from:
+>
+> drivers/mfd/tps6594-i2c.c
+>     186  static const struct regmap_config tps6594_i2c_regmap_config = {
+>     187          .reg_bits = 16,
+>     188          .val_bits = 8,
+>                  ^^^^^^^^^^^^^^
+>
+>     189          .max_register = TPS6594_REG_DWD_FAIL_CNT_REG,
+>     190          .volatile_reg = tps6594_is_volatile_reg,
+>     191          .read = tps6594_i2c_read,
+>     192          .write = tps6594_i2c_write,
+>     193  };
+>
+> So we either need to add some special handling for count == 1 or change
+> .val_bits = 16 or something.
+
+Special handling for 'count == 1' (or 'count < 2') makes sense indeed.
+
+I'm not sure that I fully understand, though. Will Smatch stop complaining
+for both things that you mentioned above with a patch for handling 'count < 2' ?
+Or will we consider either that warnings are handled, even if they are still there.
+
+About upstream process, should I submit a new driver version or should I
+just send to Lee a patch fixing these warnings ? (I am not familiar with this
+situation actually).
+
+>
+>      160                         ret = tps6594_i2c_reg_write_with_crc(client, page, reg + i, bytes[i + 2]);
+>      161
+>      162                 return ret;
+>      163         }
+>      164
+>      165         /* Setup buffer: page byte is not sent */
+>      166         buf = kzalloc(--count, GFP_KERNEL);
+>      167         if (!buf)
+>      168                 return -ENOMEM;
+>      169
+>      170         buf[0] = reg;
+>      171         for (i = 0 ; i < count - 1 ; i++)
+>      172                 buf[i + 1] = bytes[i + 2];
+>      173
+>      174         /* Write register and data: I2C address = I2C base address + Page index */
+>      175         msg.addr = client->addr + page;
+>      176         msg.flags = client->flags & I2C_M_TEN;
+>      177         msg.len = count;
+>      178         msg.buf = buf;
+>      179
+>      180         ret = tps6594_i2c_transfer(client->adapter, &msg, 1);
+>      181
+>      182         kfree(buf);
+>      183         return ret;
+>      184 }
+>
+> regards,
+> dan carpenter
+
+Julien Panis
