@@ -2,80 +2,105 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB04C7EE2D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 May 2023 11:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E2BC77B7E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 May 2023 12:25:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241047AbjEYLki (ORCPT
+        id S240891AbjEYMZw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 May 2023 07:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33026 "EHLO
+        Thu, 25 May 2023 08:25:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240805AbjEYLkg (ORCPT
+        with ESMTP id S231599AbjEYMZv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 May 2023 07:40:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D55EE1A7;
-        Thu, 25 May 2023 04:40:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6635B64528;
-        Thu, 25 May 2023 11:40:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A8587C433EF;
-        Thu, 25 May 2023 11:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685014821;
-        bh=3v/jzca5/u4ZdT2KhsBW54pILYScwd01Wld0+qVzkHA=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=EvKRc2TurnOSl3xDZJMlDV7sHXUitzdowhhbVRLhqdcDAHqgdkslYYvt6d1EPLkei
-         btiTJ0fK7dXbKtp36nyJA1jUXnuPI/UTYVkzHIKKDt5j01oKAnG2CGPPDfLpiIUrvN
-         +7isdJ/17VueY7MT1WjXfadvgdYh0lnqV0xnop3bMrqr2R226SuPUMo7YdnZE2Vsem
-         rXnniDHjs90eX6ngf3Hczw8mkxppBnpjxexAEb3qfuv1Dchk//C+1ka7QW1Tg8e6g5
-         OCQQCGdCrms72nlupL/Cm+l5LKOrRpitPcnVNFf49QfyI0MBIdl9mzKcoJCp3AtOfO
-         Qi+DL2V0GxMzQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8B1DFC4166F;
-        Thu, 25 May 2023 11:40:21 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 25 May 2023 08:25:51 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C77812E;
+        Thu, 25 May 2023 05:25:50 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1ae40dcdc18so10007015ad.2;
+        Thu, 25 May 2023 05:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685017550; x=1687609550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ymi8+ESyr5hcPy4jkcXXjlbBsSht1Su+Vk/ZbjlIT7s=;
+        b=MtMY9L1x0yFzPt+64KeTsJs6E7QNOtUtKr+nV1PG0mW9QbIdXDl1bFgJP0fLKtFZIf
+         h9r9533BBS7DkhP4JhYN5qaiYJUORnWw+dHjfM0P3khXnsvMN169n+zjXdJo645mdOC4
+         H2wTM14Im/gvkTq/BfL+dTsYflaf187P6UwEMdRwp7oh2jjnWW05JX6Lq3sYKufnN4DO
+         3Ok7wlldXcZIAcJHDHtJqMucE2/1hL5MtX5wFa9huy91SllUFPUaYClVQp0+6+NyXss+
+         DHch+E/L1TMhR2Yo8Po5uborvj8iiRDfn/zkrZ/83nzIG/vgJ+7qJ++tj6d8hZYeBWHx
+         F4rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685017550; x=1687609550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ymi8+ESyr5hcPy4jkcXXjlbBsSht1Su+Vk/ZbjlIT7s=;
+        b=V2II3DAZtC5x3siDS2JAtWTCfh8o+ZEUJgnRr1pZTo9gdYg1TsPOZkTFZPyL+jDXtn
+         r1fe/6sIZdvVo8a4bjwFretrEbNWQlAZljZcPIQwupdKMKR83w1schspokgFIG+cFx/+
+         /qwj1x+qQ5HpmeVLH41sDI3emb96F3Ocec6tGVFzdfEfDp3TELPyAQeUm5M+SsSmbwiN
+         KQTxITMT//Z1urPknMV1vgU2KmDhRnBsvFekiCU3d4/YHO3VA2bnSBYFr+1rGjAkJINV
+         emNg27/7IYhzSgDgAAqd2sZo0z/xIYloQUl6K0go1bzzFP2Zc8ab/LjtZX4LT2BfrAkH
+         Rpbw==
+X-Gm-Message-State: AC+VfDyZJwuhgiUJ1t1W64ni57QSLVJRaOejdqVTRNZrZQRmWsqbocD6
+        8d/5ySiIQ3jtDX8kjdwWK4kuFEO/B/UN3cVTkPg=
+X-Google-Smtp-Source: ACHHUZ6nkRBt2arGuTFntOI08nshgppWIKNKBkg/W4bziUDYoQB6qd4FobSOVhcYt61bwNFjevGUG9a/GQrfyxsvABg=
+X-Received: by 2002:a17:902:988c:b0:1af:d3b2:4eb7 with SMTP id
+ s12-20020a170902988c00b001afd3b24eb7mr1137397plp.21.1685017549501; Thu, 25
+ May 2023 05:25:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net/mlx4: Use bitmap_weight_and()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168501482156.11061.4458413113759538534.git-patchwork-notify@kernel.org>
-Date:   Thu, 25 May 2023 11:40:21 +0000
-References: <a29c2348a062408bec45cee2601b2417310e5ea7.1684865809.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <a29c2348a062408bec45cee2601b2417310e5ea7.1684865809.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     tariqt@nvidia.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
+References: <80496b6d-990e-4fb3-808b-daf3143cef15@kili.mountain>
+In-Reply-To: <80496b6d-990e-4fb3-808b-daf3143cef15@kili.mountain>
+From:   Dongliang Mu <mudongliangabcd@gmail.com>
+Date:   Thu, 25 May 2023 20:22:15 +0800
+Message-ID: <CAD-N9QXOXrHRg+_-ZqPtcqokQvkgVBDEucMW91+xzt8Jm1c80A@mail.gmail.com>
+Subject: Re: [PATCH] usb: phy: tahvo: release resources on error in probe()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Felipe Balbi <balbi@kernel.org>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Thu, May 25, 2023 at 4:12=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> We need to do some clean up before returning on this error path.
+>
+> Fixes: 0d45a1373e66 ("usb: phy: tahvo: add IRQ check")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Hi Dan,
 
-On Tue, 23 May 2023 20:17:52 +0200 you wrote:
-> Use bitmap_weight_and() instead of hand writing it.
-> 
-> This saves a few LoC and is slightly faster, should it mater.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+it seems this patch is already submitted with Yang Li from our mailing
+list. Please refer to:
+
+https://www.spinics.net/lists/linux-usb/msg240531.html
+
 > ---
->  drivers/net/ethernet/mellanox/mlx4/main.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-
-Here is the summary with links:
-  - [net-next] net/mlx4: Use bitmap_weight_and()
-    https://git.kernel.org/netdev/net-next/c/623a71385312
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>  drivers/usb/phy/phy-tahvo.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/usb/phy/phy-tahvo.c b/drivers/usb/phy/phy-tahvo.c
+> index 47562d49dfc1..5cac31c6029b 100644
+> --- a/drivers/usb/phy/phy-tahvo.c
+> +++ b/drivers/usb/phy/phy-tahvo.c
+> @@ -391,7 +391,7 @@ static int tahvo_usb_probe(struct platform_device *pd=
+ev)
+>
+>         tu->irq =3D ret =3D platform_get_irq(pdev, 0);
+>         if (ret < 0)
+> -               return ret;
+> +               goto err_remove_phy;
+>         ret =3D request_threaded_irq(tu->irq, NULL, tahvo_usb_vbus_interr=
+upt,
+>                                    IRQF_ONESHOT,
+>                                    "tahvo-vbus", tu);
+> --
+> 2.39.2
+>
