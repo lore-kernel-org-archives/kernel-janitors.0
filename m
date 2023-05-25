@@ -2,90 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE98C77B7E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 May 2023 15:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F903C7EE29
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 May 2023 16:14:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241556AbjEYPis (ORCPT
+        id S234582AbjEYQOF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 May 2023 11:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36298 "EHLO
+        Thu, 25 May 2023 12:14:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241327AbjEYPir (ORCPT
+        with ESMTP id S233856AbjEYQOE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 May 2023 11:38:47 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1406899
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 08:38:45 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f6a6b9c079so5762875e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 08:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685029123; x=1687621123;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ViAjcjtsfDoFKXKSJ3cJEJ7NDXZzNYfQtt5Kb/3P/+w=;
-        b=CgoK4GviG131uj619Y9xyuXh0pQZFPhsIXacQP0MxCDyMKE1/ms0lv237rN/rNyKv3
-         N2SSP6ijMSj3O1x9YL1yZ9hw4HyQupnF8RBg1eYPEU2dQHI93gF8h0oJe6eduzH/AnF4
-         oN0kJb+890cfo2qhWvPuGeL90XvanWMarQA8DXPJHZddx52rohzYCYeklsiCis9noHr7
-         PiNUhNVj+t0WZ2hdrcAdPfo+pKPBi5ZjDoaMayGVkKxL/p4Hjq3N/TPcvoTyDfLZ9cIv
-         v9nF8NJoobbNfbo+sjaejTrAIbH4wZPOhsqVV9SL1C1yKXTgcHIxK+g8CVEef7Xzi9FU
-         aQ5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685029123; x=1687621123;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ViAjcjtsfDoFKXKSJ3cJEJ7NDXZzNYfQtt5Kb/3P/+w=;
-        b=RD3/ovtfE4h2vIYDfmjyLdr1qwSXEPJYig2wDMow3h9XBXHon75dS2ADrIsoz6DQ1D
-         bLrJxfp8g5qzfq6ftTBLVdDQik8MIY1b6zmtccggwo9nl7Cn8Zndq4eqx7SJKLxeQeBg
-         Ewe7nBXa2EBBKlK6eUgppjrH5KdCgFiElz2zQV20mH7YA8LoRBERuIJZ+6uN4YOQ8NNu
-         HRgKnMXBdVKCJ6nOVNCgZmL7rxZA9iBMp/+TBQgLrlu+SmT8oMo2zaFTuzQ6HXQf7MoQ
-         6lJhPbcr5UWDZAhfY0PTkuDkmfH7h8RpjOzP1JlpWAi+NggEfWDIrlHPynDf8EOt6iWL
-         xI6w==
-X-Gm-Message-State: AC+VfDz/U3IpotTj+/sYrx0z77n8dMsr3vRbNwGZx5+FYjOJvk4/A7Vt
-        r5Zog2iLUo6MVs1ekOkp0vx/Hw==
-X-Google-Smtp-Source: ACHHUZ4T02fMIl2HNUangLGDmcFcniOBW7c472wfdeCybtytDzrlfTCgWO2oLCOLi39BEq6NomkBbw==
-X-Received: by 2002:a05:600c:224d:b0:3f6:ad84:e603 with SMTP id a13-20020a05600c224d00b003f6ad84e603mr2926993wmm.28.1685029123569;
-        Thu, 25 May 2023 08:38:43 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u20-20020a05600c211400b003f4ebeaa970sm2465178wml.25.2023.05.25.08.38.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 May 2023 08:38:42 -0700 (PDT)
-Date:   Thu, 25 May 2023 18:38:37 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: gadget: udc: fix NULL dereference in remove()
-Message-ID: <ZG+A/dNpFWAlCChk@kili>
+        Thu, 25 May 2023 12:14:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 517E313A;
+        Thu, 25 May 2023 09:14:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DD647646FC;
+        Thu, 25 May 2023 16:14:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3001FC433EF;
+        Thu, 25 May 2023 16:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685031242;
+        bh=ZB5EPQUbKqDpfb9ok4JwrHH51/rqG188wIZzix5/NQ0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=XB4c5j8hRx3foYptlaefAIhjOCtnnU1WoNMQdO5TdWDnE52Ie+NLFh7JtYyFRgIf9
+         4OOTLgi6tvEQCzIczWVaRl4MTN4u0vGE9euJdpag+gu9x5Cgwe6kjHB+J3Nwpi19KR
+         c8/JKsUbo1T0vg/rgbsOek9rIPdICv+of1JJcZkET7uqr200/ZGzYB62StezUoLVk2
+         WMbLWCHzweQyxNc1If7kmvx5Sfa9iAGJfPGFlqlKsStOQP/aeeH3OrqdgWaOngYoYB
+         on1rpG7yTCxYztLoc+U2HMa8X3VgacRE35n9csTdGtA7jTviy12J7xgloq6UnBMPNb
+         s/T1bN6sy2+jQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] wifi: rtw89: 8851b: rfk: Fix spelling mistake
+ KIP_RESOTRE -> KIP_RESTORE
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20230522085924.913649-1-colin.i.king@gmail.com>
+References: <20230522085924.913649-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <168503123937.22756.15706511892404618610.kvalo@kernel.org>
+Date:   Thu, 25 May 2023 16:14:01 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "udc" pointer was never set in the probe() function so it will
-lead to a NULL dereference in udc_pci_remove() when we do:
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-	usb_del_gadget_udc(&udc->gadget);
+> There is a spelling mistake in a literal string. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Reviewed-by: Simon Horman <simon.horman@corigine.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/usb/gadget/udc/amd5536udc_pci.c | 3 +++
- 1 file changed, 3 insertions(+)
+Patch applied to wireless-next.git, thanks.
 
-diff --git a/drivers/usb/gadget/udc/amd5536udc_pci.c b/drivers/usb/gadget/udc/amd5536udc_pci.c
-index c80f9bd51b75..a36913ae31f9 100644
---- a/drivers/usb/gadget/udc/amd5536udc_pci.c
-+++ b/drivers/usb/gadget/udc/amd5536udc_pci.c
-@@ -170,6 +170,9 @@ static int udc_pci_probe(
- 		retval = -ENODEV;
- 		goto err_probe;
- 	}
-+
-+	udc = dev;
-+
- 	return 0;
- 
- err_probe:
+56fc4d482783 wifi: rtw89: 8851b: rfk: Fix spelling mistake KIP_RESOTRE -> KIP_RESTORE
+
 -- 
-2.34.1
+https://patchwork.kernel.org/project/linux-wireless/patch/20230522085924.913649-1-colin.i.king@gmail.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
