@@ -2,73 +2,62 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335F6C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 May 2023 08:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33B5C7EE2C
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 May 2023 08:05:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234519AbjEYIFB (ORCPT
+        id S238828AbjEYIFd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 May 2023 04:05:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42812 "EHLO
+        Thu, 25 May 2023 04:05:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjEYIFA (ORCPT
+        with ESMTP id S235188AbjEYIFc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 May 2023 04:05:00 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02F1E6
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 01:04:58 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f6d38a140bso1843215e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 01:04:58 -0700 (PDT)
+        Thu, 25 May 2023 04:05:32 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C470122
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 01:05:30 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f655a8135bso1936175e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 May 2023 01:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685001897; x=1687593897;
+        d=linaro.org; s=google; t=1685001929; x=1687593929;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=X9umes8XISbIusyvA0kgjtSvDb/BpqYd/IdRr2QRP+U=;
-        b=LBoXwcKwwosXKjASUGjXThGnq4/uabFkaVvjc2ybnlwL7IfetKEolw8aOAzAJXnOJC
-         vyyurtXYn+3HtvsGReWUQ2NuxcbR6V0MsgX2x2Fise5PadAlWSFzV8Vb0lmtAtVoT478
-         8xu/JEmD1K5apoDkFQLQ3K9wZk0ti5YW9XqBw+UusB4JaYm0byM/626xs+qC0jfodzUu
-         HehNFznp9qP51fvHVnsAtUHwZOQ7mZugzGomcpUZFM9DpcwWy9lRe0OKTyXCTelGSCgV
-         s6K+LFzRgkgkfy+JpKPnb4VIiYhBLScbKIpBUAZaP48rik050xyLZJ5c68Yl5OVo9txY
-         DIIw==
+        bh=XEaBmzb77Yfj4NT5Cv6mQfZ6VRH3pcFg5KkRGTmBOZ8=;
+        b=A0u68dVhg/5A0DP6/oeFiqIA7ss/S/4G1tOj0bHIIenfPcYcQZ1xGxadrD02u80RVR
+         Nmido22xyDD7a8nwx6X/pSQ7u1cEe69fpyAtMHCHbuJ+MY507gqScGIa6P2kpuyRNPhe
+         CZrrJr8Oblb0+VCOStG4Sf0Rc9R+/ZssjRk/eYS+0Db8b1GJSN1rlb5/IEizYjS0RyMw
+         +O3NZcV3rt2w+cZyr8Ip4nH6yxzD1nqrfBAvoPF6ZwTQgGlZc5HgONcAlMklThl+5eq/
+         ULmAYlWEWFbtEgNwT8WL3aP2z/wFQptVVKsOD/48OlpBB+delvkNHL+pDyvMSzzlkSCm
+         QiSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685001897; x=1687593897;
+        d=1e100.net; s=20221208; t=1685001929; x=1687593929;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X9umes8XISbIusyvA0kgjtSvDb/BpqYd/IdRr2QRP+U=;
-        b=ahM0fF6huxmH5S1NmIapi/YVfNilR+SywNdO6mxXaKKfac1BGHkiBaUwQRm5WYBev3
-         5QaL+615HqstyKkp/zzYyUHRWWO5HRTPpuapkZ8fwU9TRPQAEWP+VBxPowtRiXh1b5Fp
-         C9EjMg+bqPySZW+jGSuk49oECRj/XtArHjV0ehxO2tfMUbfcnL+jjzxuVNu4KZZklH2O
-         eBCQkWOz0VA+X5D2jJAhoPYkJh1uEJryDvZcb6/rDYiVDiqzXer3FUeiGwm1FCUHVksj
-         Bs/fWIoSkNvXSYXDqA5GG9k6HLsNDWgGy4ZdL0tM8SSlDv7FywlbozJT9nBXx2NgCI56
-         wsEg==
-X-Gm-Message-State: AC+VfDzORfV8/Qo/4oynmrhq+Q4yrf86H9I1L/m3vaO5rnrLoN/6z3ak
-        iLDrvEBvkdnSWr7sSl3jfPU2TA==
-X-Google-Smtp-Source: ACHHUZ4jvFv2dvB/8oIkBX3T35h24vm5rz4vxKJzmZmi2frn0oX3g2PZrOcndOeytuhkyXa+v1fyqQ==
-X-Received: by 2002:a05:600c:35c7:b0:3f6:557:6893 with SMTP id r7-20020a05600c35c700b003f605576893mr1290274wmq.19.1685001897163;
-        Thu, 25 May 2023 01:04:57 -0700 (PDT)
+        bh=XEaBmzb77Yfj4NT5Cv6mQfZ6VRH3pcFg5KkRGTmBOZ8=;
+        b=dDvW4gDKcSdOv0Lc1ZwjEZVNGrOOjFn/yKPx777NAyQJ05uv/V3lhwAbDVmxK4kIeR
+         UGpD/Mc+GLGTMezgh7TNQlx7fIkY2WT8vnGOQi5NhFe6Ie2GIAHIDYKbcyEZ+MnCgh3m
+         yuSOzhc1gqVOuuk5HLIfjGNpqd225egCTac8bEzrY95DSsIHPXPTzkyTdowte5LKD4VP
+         bZJ9TmsSsBK6G+BDy2c9Ic2/mQLILAwZrjZiKbZSeeB7Btn5yfuJl0cT9X3K65GuFl3q
+         OEOBV+YfvuJMYcYcBxDdHMi1yseO2iCwQ11fV6opRYmjiPwCBC1isdFogCrUvtisX5R+
+         8bVg==
+X-Gm-Message-State: AC+VfDzhChVFzZCK+FaxdqlBf8nhoS5DFDZ/EEIbWnX35LtLD74JaqPV
+        y9v6+UBFWJzuXgFH65hXN6b/ZA==
+X-Google-Smtp-Source: ACHHUZ5O8zLR7hgpDa++vgvNxVPsuKlJj3giFo2RNRpcZa5gxEBB6tIO3W6VDK0VNufvUi9m4R2EJA==
+X-Received: by 2002:a1c:7415:0:b0:3f6:11cb:4926 with SMTP id p21-20020a1c7415000000b003f611cb4926mr2255542wmc.22.1685001929090;
+        Thu, 25 May 2023 01:05:29 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id 24-20020a05600c22d800b003f4e47c6504sm4875434wmg.21.2023.05.25.01.04.54
+        by smtp.gmail.com with ESMTPSA id s15-20020a7bc38f000000b003f6028a4c85sm4779312wmj.16.2023.05.25.01.05.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 May 2023 01:04:55 -0700 (PDT)
-Date:   Thu, 25 May 2023 11:04:51 +0300
+        Thu, 25 May 2023 01:05:27 -0700 (PDT)
+Date:   Thu, 25 May 2023 11:05:24 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Tom St Denis <tom.stdenis@amd.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-        Victor Zhao <Victor.Zhao@amd.com>,
-        Lijo Lazar <lijo.lazar@amd.com>,
-        Sebin Sebastian <mailmesebin00@gmail.com>,
-        Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-        Le Ma <le.ma@amd.com>,
-        Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amd/amdgpu: Fix up locking etc in
- amdgpu_debugfs_gprwave_ioctl()
-Message-ID: <bd6a37e2-438d-4292-81e8-5a8f0b10d647@kili.mountain>
+To:     Sergey Shtylyov <s.shtylyov@omp.ru>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Felipe Balbi <balbi@kernel.org>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: phy: tahvo: release resources on error in probe()
+Message-ID: <80496b6d-990e-4fb3-808b-daf3143cef15@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -77,45 +66,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are two bugs here.
-1) Drop the lock if copy_from_user() fails.
-2) If the copy fails then the correct error code is -EFAULT instead of
-   -EINVAL.
+We need to do some clean up before returning on this error path.
 
-I also broke up the long line and changed "sizeof rd->id" to
-"sizeof(rd->id)".
-
-Fixes: 164fb2940933 ("drm/amd/amdgpu: Update debugfs for XCC support (v3)")
+Fixes: 0d45a1373e66 ("usb: phy: tahvo: add IRQ check")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/usb/phy/phy-tahvo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-index c657bed350ac..56e89e76ff17 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-@@ -478,15 +478,16 @@ static ssize_t amdgpu_debugfs_gprwave_read(struct file *f, char __user *buf, siz
- static long amdgpu_debugfs_gprwave_ioctl(struct file *f, unsigned int cmd, unsigned long data)
- {
- 	struct amdgpu_debugfs_gprwave_data *rd = f->private_data;
--	int r;
-+	int r = 0;
+diff --git a/drivers/usb/phy/phy-tahvo.c b/drivers/usb/phy/phy-tahvo.c
+index 47562d49dfc1..5cac31c6029b 100644
+--- a/drivers/usb/phy/phy-tahvo.c
++++ b/drivers/usb/phy/phy-tahvo.c
+@@ -391,7 +391,7 @@ static int tahvo_usb_probe(struct platform_device *pdev)
  
- 	mutex_lock(&rd->lock);
- 
- 	switch (cmd) {
- 	case AMDGPU_DEBUGFS_GPRWAVE_IOC_SET_STATE:
--		r = copy_from_user(&rd->id, (struct amdgpu_debugfs_gprwave_iocdata *)data, sizeof rd->id);
--		if (r)
--			return r ? -EINVAL : 0;
-+		if (copy_from_user(&rd->id,
-+				   (struct amdgpu_debugfs_gprwave_iocdata *)data,
-+				   sizeof(rd->id)))
-+			r = -EFAULT;
- 		goto done;
- 	default:
- 		r = -EINVAL;
+ 	tu->irq = ret = platform_get_irq(pdev, 0);
+ 	if (ret < 0)
+-		return ret;
++		goto err_remove_phy;
+ 	ret = request_threaded_irq(tu->irq, NULL, tahvo_usb_vbus_interrupt,
+ 				   IRQF_ONESHOT,
+ 				   "tahvo-vbus", tu);
 -- 
 2.39.2
 
