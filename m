@@ -2,107 +2,317 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A29C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 08:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D04C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 10:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236792AbjEZIA0 (ORCPT
+        id S242405AbjEZKS1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 May 2023 04:00:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50862 "EHLO
+        Fri, 26 May 2023 06:18:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230061AbjEZIAZ (ORCPT
+        with ESMTP id S230248AbjEZKSZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 May 2023 04:00:25 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA72125
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 01:00:22 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f6094cb2d2so4723155e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 01:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685088021; x=1687680021;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d718yMB4xrTXCokPERZD0i0TdWYAZqU1eyBOi2yuTyU=;
-        b=OrxfSrenEJzkhMtZ+DBsKsJLVZ0/77yIbLhdg5TzjtuFC6DIAy8OSs/DWjYvMn0rGm
-         c0zHw1JETE5r9EFI5j1yVesHWlgiSi7xmxIk5T5+rCZaYYqzZi1QZgmDWQsNDHuGfEMx
-         4Ja8Sz6fbXScf3UIj8OkUKw7rQaBMkw3vf2+ZDl8pHmmSCqb9DRzFLMFKgRV0A+N3YS2
-         BWxY5HFPP910jArwF/481XRBkEFpq1nKwdYQht0SCmrsjnvKRGFysPqnLkj6mNYf3Suy
-         PzMbZbam8NDZ5rRFxx6VWjV9snGxHE/sKLWpgRL/aymU6FbcqdL+E7pI2j9RDktwLoAI
-         aJwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685088021; x=1687680021;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d718yMB4xrTXCokPERZD0i0TdWYAZqU1eyBOi2yuTyU=;
-        b=gd2KKlLDa7pa3PYXArs5ta5EKwZMg5KCHR68QAtyCSbhGTwKZES+t0fgHl2iaMhhau
-         SigJNxZ0KYV7H+dEicXbZM2F/Ks47/qUAmkL1dtecQCG5fhDO39aa2ox6SU98WFOClo1
-         hXNHHjwDkglQDvKzTkM7B0liySc2rxzQDY5zHxxmMyhYbur5RJ0BcIpgFallWdmCJ5DP
-         9eNh+w0jx9oO1OuiEQ4qOVhkdMtcyrttLd2EObe0xoEuE8sMtq4fNU42AI79Odu1ZY9G
-         beQuHQB9h0Mz0Tkxh8jGY8sqKqJ5CCPOxKL8hEjcnBpL3knVQeq2GTLkntL7sU2mKsPc
-         dTdQ==
-X-Gm-Message-State: AC+VfDziTjDyj1xPuUAsi1SIHkGMbv5YO7XNhbogtlqjseNYQAR6OQPx
-        EqBmYlQFDTA3P8DIRHq8PTavKGEglR06f0vP8dc=
-X-Google-Smtp-Source: ACHHUZ6ldoVRN76ue/78HgIhZLD+VNdhL0NVvT0+9X+ADcTeeB5IBJzfGsytqfpu1I9rEAbfiGJ9uQ==
-X-Received: by 2002:a7b:c40f:0:b0:3f6:cf3:dba8 with SMTP id k15-20020a7bc40f000000b003f60cf3dba8mr830738wmi.34.1685088021341;
-        Fri, 26 May 2023 01:00:21 -0700 (PDT)
-Received: from [192.168.1.70] (29.31.102.84.rev.sfr.net. [84.102.31.29])
-        by smtp.gmail.com with ESMTPSA id p19-20020a1c7413000000b003f60e143d38sm4352370wmc.11.2023.05.26.01.00.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 May 2023 01:00:20 -0700 (PDT)
-Message-ID: <5d9f2dee-7c56-0220-48fb-c9fbdec1af29@baylibre.com>
-Date:   Fri, 26 May 2023 10:00:19 +0200
+        Fri, 26 May 2023 06:18:25 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id D0689DF;
+        Fri, 26 May 2023 03:18:21 -0700 (PDT)
+Received: from [172.30.38.103] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id CBC5B1801278C3;
+        Fri, 26 May 2023 18:18:09 +0800 (CST)
+Message-ID: <5f2f2e0e-506d-8527-dd8f-2ec6da4601a6@nfschina.com>
+Date:   Fri, 26 May 2023 18:18:09 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [bug report] mfd: tps6594: Add driver for TI TPS6594 PMIC
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] drm: Remove unnecessary (void*) conversions
 Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Lee Jones <lee@kernel.org>, kernel-janitors@vger.kernel.org
-References: <afd9a078-1002-4a26-a9b2-d92406912af5@kili.mountain>
- <44024069-723a-9726-7cdb-6c10a3ce2c7f@baylibre.com>
- <cf3ada2f-0c44-4389-9758-b72af9d138db@kili.mountain>
-From:   Julien Panis <jpanis@baylibre.com>
-In-Reply-To: <cf3ada2f-0c44-4389-9758-b72af9d138db@kili.mountain>
+To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>, Xinhui.Pan@amd.com,
+        airlied@gmail.com, daniel@ffwll.ch, evan.quan@amd.com,
+        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+        christian.gmeiner@gmail.com, bskeggs@redhat.com,
+        kherbst@redhat.com, lyude@redhat.com, tomba@kernel.org,
+        emma@anholt.net, airlied@redhat.com, kraxel@redhat.com,
+        abrodkin@synopsys.com, ray.huang@amd.com,
+        gurchetansingh@chromium.org, olvaffe@gmail.com, zackr@vmware.com,
+        linux-graphics-maintainer@vmware.com, sumit.semwal@linaro.org
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, etnaviv@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <5b5c7b06-ef99-d275-3693-b2e3d114cac9@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On 2023/5/26 15:27, Christian König wrote:
+> Am 26.05.23 um 05:32 schrieb Su Hui:
+>> Pointer variables of (void*) type do not require type cast.
+>
+> Please split that up by subsystem/driver. Taking it through the misc 
+> tree might just cause merge conflicts.
+>
+Sorry for that, I will split it and send again.
+Thanks for your reply!
 
->> Special handling for 'count == 1' (or 'count < 2') makes sense indeed.
+Su Hui
+
+> Christian.
+>
 >>
->> I'm not sure that I fully understand, though. Will Smatch stop complaining
->> for both things that you mentioned above with a patch for handling 'count < 2' ?
->> Or will we consider either that warnings are handled, even if they are still there.
-> No, don't do anything to silence the warning.  Always fix the checker
-> instead of working around it.
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 2 +-
+>>   drivers/gpu/drm/amd/pm/amdgpu_pm.c                        | 2 +-
+>>   drivers/gpu/drm/etnaviv/etnaviv_drv.c                     | 4 ++--
+>>   drivers/gpu/drm/nouveau/nouveau_debugfs.c                 | 2 +-
+>>   drivers/gpu/drm/omapdrm/omap_debugfs.c                    | 6 +++---
+>>   drivers/gpu/drm/pl111/pl111_debugfs.c                     | 2 +-
+>>   drivers/gpu/drm/qxl/qxl_debugfs.c                         | 4 ++--
+>>   drivers/gpu/drm/tiny/arcpgu.c                             | 2 +-
+>>   drivers/gpu/drm/ttm/ttm_resource.c                        | 3 +--
+>>   drivers/gpu/drm/virtio/virtgpu_debugfs.c                  | 6 +++---
+>>   drivers/gpu/drm/vmwgfx/ttm_object.c                       | 5 ++---
+>>   drivers/gpu/drm/vmwgfx/vmwgfx_gem.c                       | 2 +-
+>>   12 files changed, 19 insertions(+), 21 deletions(-)
+>>
+>> diff --git 
+>> a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c 
+>> b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+>> index 827fcb4fb3b3..8a2c39927167 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+>> @@ -3312,7 +3312,7 @@ static ssize_t dtn_log_write(
+>>     static int mst_topo_show(struct seq_file *m, void *unused)
+>>   {
+>> -    struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
+>> +    struct amdgpu_device *adev = m->private;
+>>       struct drm_device *dev = adev_to_drm(adev);
+>>       struct drm_connector *connector;
+>>       struct drm_connector_list_iter conn_iter;
+>> diff --git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c 
+>> b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+>> index 58c2246918fd..e6c870bd307b 100644
+>> --- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+>> +++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+>> @@ -3671,7 +3671,7 @@ static void amdgpu_parse_cg_state(struct 
+>> seq_file *m, u64 flags)
+>>     static int amdgpu_debugfs_pm_info_show(struct seq_file *m, void 
+>> *unused)
+>>   {
+>> -    struct amdgpu_device *adev = (struct amdgpu_device *)m->private;
+>> +    struct amdgpu_device *adev = m->private;
+>>       struct drm_device *dev = adev_to_drm(adev);
+>>       u64 flags = 0;
+>>       int r;
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c 
+>> b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> index 31a7f59ccb49..dd57f7164e9a 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> @@ -198,7 +198,7 @@ static int etnaviv_ring_show(struct etnaviv_gpu 
+>> *gpu, struct seq_file *m)
+>>     static int show_unlocked(struct seq_file *m, void *arg)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *) m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct drm_device *dev = node->minor->dev;
+>>       int (*show)(struct drm_device *dev, struct seq_file *m) =
+>>               node->info_ent->data;
+>> @@ -208,7 +208,7 @@ static int show_unlocked(struct seq_file *m, void 
+>> *arg)
+>>     static int show_each_gpu(struct seq_file *m, void *arg)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *) m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct drm_device *dev = node->minor->dev;
+>>       struct etnaviv_drm_private *priv = dev->dev_private;
+>>       struct etnaviv_gpu *gpu;
+>> diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c 
+>> b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+>> index 2a36d1ca8fda..96b59d5d68ed 100644
+>> --- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+>> +++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+>> @@ -37,7 +37,7 @@
+>>   static int
+>>   nouveau_debugfs_vbios_image(struct seq_file *m, void *data)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *) m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct nouveau_drm *drm = nouveau_drm(node->minor->dev);
+>>       int i;
+>>   diff --git a/drivers/gpu/drm/omapdrm/omap_debugfs.c 
+>> b/drivers/gpu/drm/omapdrm/omap_debugfs.c
+>> index a3d470468e5b..a94ce502e152 100644
+>> --- a/drivers/gpu/drm/omapdrm/omap_debugfs.c
+>> +++ b/drivers/gpu/drm/omapdrm/omap_debugfs.c
+>> @@ -19,7 +19,7 @@
+>>     static int gem_show(struct seq_file *m, void *arg)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *) m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct drm_device *dev = node->minor->dev;
+>>       struct omap_drm_private *priv = dev->dev_private;
+>>   @@ -33,7 +33,7 @@ static int gem_show(struct seq_file *m, void *arg)
+>>     static int mm_show(struct seq_file *m, void *arg)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *) m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct drm_device *dev = node->minor->dev;
+>>       struct drm_printer p = drm_seq_file_printer(m);
+>>   @@ -45,7 +45,7 @@ static int mm_show(struct seq_file *m, void *arg)
+>>   #ifdef CONFIG_DRM_FBDEV_EMULATION
+>>   static int fb_show(struct seq_file *m, void *arg)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *) m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct drm_device *dev = node->minor->dev;
+>>       struct drm_fb_helper *helper = dev->fb_helper;
+>>       struct drm_framebuffer *fb;
+>> diff --git a/drivers/gpu/drm/pl111/pl111_debugfs.c 
+>> b/drivers/gpu/drm/pl111/pl111_debugfs.c
+>> index 6744fa16f464..4df03ec5d368 100644
+>> --- a/drivers/gpu/drm/pl111/pl111_debugfs.c
+>> +++ b/drivers/gpu/drm/pl111/pl111_debugfs.c
+>> @@ -32,7 +32,7 @@ static const struct {
+>>     static int pl111_debugfs_regs(struct seq_file *m, void *unused)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *)m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct drm_device *dev = node->minor->dev;
+>>       struct pl111_drm_dev_private *priv = dev->dev_private;
+>>       int i;
+>> diff --git a/drivers/gpu/drm/qxl/qxl_debugfs.c 
+>> b/drivers/gpu/drm/qxl/qxl_debugfs.c
+>> index 2d9ed3b94574..5b4fe3049529 100644
+>> --- a/drivers/gpu/drm/qxl/qxl_debugfs.c
+>> +++ b/drivers/gpu/drm/qxl/qxl_debugfs.c
+>> @@ -38,7 +38,7 @@
+>>   static int
+>>   qxl_debugfs_irq_received(struct seq_file *m, void *data)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *) m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct qxl_device *qdev = to_qxl(node->minor->dev);
+>>         seq_printf(m, "%d\n", atomic_read(&qdev->irq_received));
+>> @@ -52,7 +52,7 @@ qxl_debugfs_irq_received(struct seq_file *m, void 
+>> *data)
+>>   static int
+>>   qxl_debugfs_buffers_info(struct seq_file *m, void *data)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *) m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct qxl_device *qdev = to_qxl(node->minor->dev);
+>>       struct qxl_bo *bo;
+>>   diff --git a/drivers/gpu/drm/tiny/arcpgu.c 
+>> b/drivers/gpu/drm/tiny/arcpgu.c
+>> index e5b10e41554a..09f728355aba 100644
+>> --- a/drivers/gpu/drm/tiny/arcpgu.c
+>> +++ b/drivers/gpu/drm/tiny/arcpgu.c
+>> @@ -338,7 +338,7 @@ static int arcpgu_unload(struct drm_device *drm)
+>>   #ifdef CONFIG_DEBUG_FS
+>>   static int arcpgu_show_pxlclock(struct seq_file *m, void *arg)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *)m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct drm_device *drm = node->minor->dev;
+>>       struct arcpgu_drm_private *arcpgu = dev_to_arcpgu(drm);
+>>       unsigned long clkrate = clk_get_rate(arcpgu->clk);
+>> diff --git a/drivers/gpu/drm/ttm/ttm_resource.c 
+>> b/drivers/gpu/drm/ttm/ttm_resource.c
+>> index 7333f7a87a2f..540faabcf8a4 100644
+>> --- a/drivers/gpu/drm/ttm/ttm_resource.c
+>> +++ b/drivers/gpu/drm/ttm/ttm_resource.c
+>> @@ -727,9 +727,8 @@ ttm_kmap_iter_linear_io_fini(struct 
+>> ttm_kmap_iter_linear_io *iter_io,
+>>     static int ttm_resource_manager_show(struct seq_file *m, void 
+>> *unused)
+>>   {
+>> -    struct ttm_resource_manager *man =
+>> -        (struct ttm_resource_manager *)m->private;
+>>       struct drm_printer p = drm_seq_file_printer(m);
+>> +    struct ttm_resource_manager *man = m->private;
+>>       ttm_resource_manager_debug(man, &p);
+>>       return 0;
+>>   }
+>> diff --git a/drivers/gpu/drm/virtio/virtgpu_debugfs.c 
+>> b/drivers/gpu/drm/virtio/virtgpu_debugfs.c
+>> index 853dd9aa397e..577691af9707 100644
+>> --- a/drivers/gpu/drm/virtio/virtgpu_debugfs.c
+>> +++ b/drivers/gpu/drm/virtio/virtgpu_debugfs.c
+>> @@ -43,7 +43,7 @@ static void virtio_gpu_add_int(struct seq_file *m, 
+>> const char *name, int value)
+>>     static int virtio_gpu_features(struct seq_file *m, void *data)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *)m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct virtio_gpu_device *vgdev = node->minor->dev->dev_private;
+>>         virtio_gpu_add_bool(m, "virgl", vgdev->has_virgl_3d);
+>> @@ -68,7 +68,7 @@ static int virtio_gpu_features(struct seq_file *m, 
+>> void *data)
+>>   static int
+>>   virtio_gpu_debugfs_irq_info(struct seq_file *m, void *data)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *) m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct virtio_gpu_device *vgdev = node->minor->dev->dev_private;
+>>         seq_printf(m, "fence %llu %lld\n",
+>> @@ -80,7 +80,7 @@ virtio_gpu_debugfs_irq_info(struct seq_file *m, 
+>> void *data)
+>>   static int
+>>   virtio_gpu_debugfs_host_visible_mm(struct seq_file *m, void *data)
+>>   {
+>> -    struct drm_info_node *node = (struct drm_info_node *)m->private;
+>> +    struct drm_info_node *node = m->private;
+>>       struct virtio_gpu_device *vgdev = node->minor->dev->dev_private;
+>>       struct drm_printer p;
+>>   diff --git a/drivers/gpu/drm/vmwgfx/ttm_object.c 
+>> b/drivers/gpu/drm/vmwgfx/ttm_object.c
+>> index ddf8373c1d77..e9e3cc8f5b49 100644
+>> --- a/drivers/gpu/drm/vmwgfx/ttm_object.c
+>> +++ b/drivers/gpu/drm/vmwgfx/ttm_object.c
+>> @@ -513,8 +513,7 @@ static void ttm_prime_refcount_release(struct 
+>> ttm_base_object **p_base)
+>>    */
+>>   static void ttm_prime_dmabuf_release(struct dma_buf *dma_buf)
+>>   {
+>> -    struct ttm_prime_object *prime =
+>> -        (struct ttm_prime_object *) dma_buf->priv;
+>> +    struct ttm_prime_object *prime = dma_buf->priv;
+>>       struct ttm_base_object *base = &prime->base;
+>>       struct ttm_object_device *tdev = base->tfile->tdev;
+>>   @@ -554,7 +553,7 @@ int ttm_prime_fd_to_handle(struct 
+>> ttm_object_file *tfile,
+>>       if (dma_buf->ops != &tdev->ops)
+>>           return -ENOSYS;
+>>   -    prime = (struct ttm_prime_object *) dma_buf->priv;
+>> +    prime = dma_buf->priv;
+>>       base = &prime->base;
+>>       *handle = base->handle;
+>>       ret = ttm_ref_object_add(tfile, base, NULL, false);
+>> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_gem.c 
+>> b/drivers/gpu/drm/vmwgfx/vmwgfx_gem.c
+>> index c0da89e16e6f..3267a4e61382 100644
+>> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_gem.c
+>> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_gem.c
+>> @@ -220,7 +220,7 @@ static void vmw_bo_print_info(int id, struct 
+>> vmw_bo *bo, struct seq_file *m)
+>>     static int vmw_debugfs_gem_info_show(struct seq_file *m, void 
+>> *unused)
+>>   {
+>> -    struct vmw_private *vdev = (struct vmw_private *)m->private;
+>> +    struct vmw_private *vdev = m->private;
+>>       struct drm_device *dev = &vdev->drm;
+>>       struct drm_file *file;
+>>       int r;
 >
-> Handling the "map->format.reg_bytes + map->format.pad_bytes + val_len"
-> is kind of complicated but still easier than handling the:
->
-> 	if (val_len % map->format.val_bytes)
->
-> condition in regmap_raw_write() just because it's closer together.  It's
-> quite a bit of code to write to silence this false positive but it's
-> something which could be done.
->
-
-Who must fix 'smart' ? Me ?
-
-I run 'smart' on my side and did not see the warnings you mentioned.
-Here are the commands I run:
-- [path to]/smatch/smatch_scripts/build_kernel_data.sh
-- [path to]/smatch/smatch_scripts/test_kernel.sh.sh
-   -> no warning for tps6594 mfd drivers in 'smatch_warns.txt'
-[path to]/smatch/smatch_scripts/kchecker tps6594-i2c.c
-   -> no warning
-[path to]/smatch/smatch_scripts/kchecker regmap.c
-   -> no warning related to tps6594 mfd driver
-   -> 2 errors for "uninitialized symbol 'ret'" in _regmap_raw_write/read()
-
-Maybe I did not use the tool properly (?)
-
-Julien
