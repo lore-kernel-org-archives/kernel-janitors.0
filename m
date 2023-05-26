@@ -2,66 +2,70 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E2BC77B7A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 11:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42948C77B73
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 11:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242638AbjEZLxb (ORCPT
+        id S230064AbjEZL7j (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 May 2023 07:53:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43118 "EHLO
+        Fri, 26 May 2023 07:59:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236478AbjEZLxa (ORCPT
+        with ESMTP id S229610AbjEZL7i (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 May 2023 07:53:30 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C28495
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:53:29 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3090d3e9c92so592832f8f.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:53:29 -0700 (PDT)
+        Fri, 26 May 2023 07:59:38 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F2C125
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:59:37 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-30a8c4afa46so569806f8f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685102007; x=1687694007;
+        d=linaro.org; s=google; t=1685102376; x=1687694376;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JA3Z031EuYV7G9C1xFF3gOewbaEqhRavFGyCZzLQ4k0=;
-        b=dp/JrIV318+le9Ak1KhpMRXxRp1rnWIJLBmLEngjbOuEFXT4n/tfxEQlpXoZQf5+Ln
-         ztVO6WxXHSCwsa3wV3vCndy2xtRfhS8aeIYZyImCG5ZcKosXsH93mfIktYV+svbe3u9M
-         0QOfrno/Z9EUL5/7CcO9cHMVQYr0ZcekO7zQmyinYcBuWGtHdyydXjZANFhnnro2Zdzg
-         7a7Ea2B1bglkabSyU7GZTcEGLWGcYhL8bKaApIsakPFLQXmOI41NgyJqCS0lxkmMklbu
-         0ji48BfrQiEq/DI7d8dEEJ1er+qpTWUQ0teWQeTJHs41oKkHPh7dsjHA0nE339frw0IF
-         1Ipg==
+        bh=xmuBDrlBpQbtrys/Qf8AocII7gV0XMhC8+i/ej21270=;
+        b=HtZKWKl6N4Hu9jhvdgpgoBwmpeb0KQxF6iy25p4ERux2pJYIJQbc74jN/4Z6Wh49DJ
+         OkolH5SrvNC3axkhttZ7uy0n6eA4Rw1aKcNKRw8ySrqVJoEf1sleGn16+OLzFpSHtXbn
+         WwgBETxaKo/ymJvkuMiomvLYwZiyJuTDiLB78oNxBnFhkfMfWkdxczLQpHStsmeZuX84
+         yLSozzy9hs4GzjV5aG4+HqQTrjOEjJnxTNUFikz1NmmPKy/YNtBe5GcU3G8k85n5Y9Mz
+         QwGbfk3eaZSh25DHpM+wNFiEKyHqvGmmVsWYCqn2CT+pPoNoELnh8mIwuIVsM4tEknfx
+         M9oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685102007; x=1687694007;
+        d=1e100.net; s=20221208; t=1685102376; x=1687694376;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JA3Z031EuYV7G9C1xFF3gOewbaEqhRavFGyCZzLQ4k0=;
-        b=WartGKVbTTYODUoKJtSmsC8ODHd2JdII/fY1fTqLxhSNextwrwB9yHZOJCbd5kshzt
-         D8+1fxnvu9HJL9uV5iYWNxpYNc112m813FW6xOWwncVqFSut6fRxnfneKIDM0b7i4eVZ
-         0/hZ1CNGo71IeH9fScfG9X4gGjxYyAzVue145a7Xjct1G8Ms5JLUsN/00WG0XbWPv1QD
-         3tv93ZIdFrOae1kUJw/Kk80BV74Ohe8LRtfzLZBgL3qD5RKULE38oVeE+qnh/2IFZN39
-         4uzUMA4MLU+dDlJJ1JhTFx1EF/QZpFwhwUVhqp0uTnKpVZFjKtJcMPYyZN/fa9qM67mG
-         v87g==
-X-Gm-Message-State: AC+VfDx7aJinzl/0qv1mBPf5VVjH1t5pedrG7SRAv2cgSPd5WkpmI/Vg
-        9xz+OAorVaV5ouIkERF50DV73Q==
-X-Google-Smtp-Source: ACHHUZ5A65Cfn9A34sTFV6Uw0LxcLFBMzuZVTgqdX73nwws6y2XfvNz69/bHKDGYRGRa/4yegmQmpw==
-X-Received: by 2002:a5d:6a44:0:b0:2dc:cad4:87b9 with SMTP id t4-20020a5d6a44000000b002dccad487b9mr1237941wrw.68.1685102007583;
-        Fri, 26 May 2023 04:53:27 -0700 (PDT)
+        bh=xmuBDrlBpQbtrys/Qf8AocII7gV0XMhC8+i/ej21270=;
+        b=HiWcdt1SC2lel6J+ZpGubu1EZJ5wCk4OGWLc9V07+Sr1Dyp2Ktkj9pbSgEy2LfyS5D
+         skuqPzKbBiZsGGS79UXc7hmLvB6hilHSLtoSdTaJ9qe+xPwDlFo2X9vbiYTIdAkSUFnH
+         rnfLsznlSrzuVTRUXoUDVjlNN5xtAH4d9YCyU5zSHw2aBt98dpQ2oqb1shFtMnqgaDzo
+         5RHjDd8tKOM08OjVMGrIOOrvJcaeQw8OKmkHmCUM9LacnH5f+uhMt70/IUreZigbObwO
+         0JSTnmkITXAHwZEdykfLEaOmHlGaKYgecV34Zrbc2gLDxHmAqdorp9WJ/XxFuK5tOFkW
+         Zt2A==
+X-Gm-Message-State: AC+VfDw3KsQod+VhOyXMkdoClPCq1RP+2XhJEnUSLqoBYaZJERu2Sk1S
+        ToZOAou4zFY+hISF2InKH4u3WA==
+X-Google-Smtp-Source: ACHHUZ6KQQagZsTWWsJi4zpOqN7RHhUd2mr8Ex4eBHrdpPfHi/9Qg5DZ7Po3996wiMzpzGgjNg3P+A==
+X-Received: by 2002:adf:e2c8:0:b0:309:4642:8795 with SMTP id d8-20020adfe2c8000000b0030946428795mr4663108wrj.12.1685102376168;
+        Fri, 26 May 2023 04:59:36 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u4-20020adfdd44000000b003063176ef09sm4924229wrm.6.2023.05.26.04.53.25
+        by smtp.gmail.com with ESMTPSA id s26-20020a7bc39a000000b003f42328b5d9sm4992147wmj.39.2023.05.26.04.59.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 May 2023 04:53:26 -0700 (PDT)
-Date:   Fri, 26 May 2023 14:53:23 +0300
+        Fri, 26 May 2023 04:59:34 -0700 (PDT)
+Date:   Fri, 26 May 2023 14:59:31 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ard Biesheuvel <ardb@kernel.org>, linux-media@vger.kernel.org,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: [PATCH] media: atomisp: gmin_platform: fix out_len in
- gmin_get_config_dsm_var()
-Message-ID: <26124bcd-8132-4483-9d67-225c87d424e8@kili.mountain>
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Andi Shyti <andi.shyti@linux.intel.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Thomas =?iso-8859-1?Q?Hellstr=F6m?= 
+        <thomas.hellstrom@linux.intel.com>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/i915/selftests: fix an error code in copy()
+Message-ID: <f6b876f1-4dd7-4d96-bee5-966817cc1644@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -70,30 +74,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Ideally, strlen(cur->string.pointer) and strlen(out) would be the same.
-But this code is using strscpy() to avoid a potential buffer overflow.
-So in the same way we should take the strlen() of the smaller string to
-avoid a buffer overflow in the caller, gmin_get_var_int().
+Return the error code if i915_gem_object_create_internal() fails,
+instead of returning success.
 
-Fixes: 387041cda44e ("media: atomisp: improve sensor detection code to use _DSM table")
+Fixes: cf586021642d ("drm/i915/gt: Pipelined page migration")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/i915/gt/selftest_migrate.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-index c718a74ea70a..88d4499233b9 100644
---- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-@@ -1357,7 +1357,7 @@ static int gmin_get_config_dsm_var(struct device *dev,
- 	dev_info(dev, "found _DSM entry for '%s': %s\n", var,
- 		 cur->string.pointer);
- 	strscpy(out, cur->string.pointer, *out_len);
--	*out_len = strlen(cur->string.pointer);
-+	*out_len = strlen(out);
+diff --git a/drivers/gpu/drm/i915/gt/selftest_migrate.c b/drivers/gpu/drm/i915/gt/selftest_migrate.c
+index e677f2da093d..a26429fd5326 100644
+--- a/drivers/gpu/drm/i915/gt/selftest_migrate.c
++++ b/drivers/gpu/drm/i915/gt/selftest_migrate.c
+@@ -55,8 +55,10 @@ static int copy(struct intel_migrate *migrate,
  
- 	ACPI_FREE(obj);
- 	return 0;
+ 	sz = src->base.size;
+ 	dst = i915_gem_object_create_internal(i915, sz);
+-	if (IS_ERR(dst))
++	if (IS_ERR(dst)) {
++		err = PTR_ERR(dst);
+ 		goto err_free_src;
++	}
+ 
+ 	for_i915_gem_ww(&ww, err, true) {
+ 		err = i915_gem_object_lock(src, &ww);
 -- 
 2.39.2
 
