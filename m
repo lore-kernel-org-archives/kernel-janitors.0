@@ -2,82 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8424FC77B73
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 14:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 461D2C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 14:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237328AbjEZOAK (ORCPT
+        id S237253AbjEZOwl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 May 2023 10:00:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46380 "EHLO
+        Fri, 26 May 2023 10:52:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbjEZOAJ (ORCPT
+        with ESMTP id S231470AbjEZOwk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 May 2023 10:00:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D66F3
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 06:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685109569;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AZR+i/KA4SM5MJbNxGgeo60QfZYJs7gffgNmM3EOr+0=;
-        b=Bq9sJ2AS63Bpq0+cAGexhWtnmp0k6DR1JhQKaQi7uOWxiJzrPyPggNFebNEBAxFuhQVkSm
-        xyfTF1MVoIZhhQyF1EzrCC1XdowYnFRZhPF8KmING+UVCjCXEubxNOrxq/ycBPs9O5vztm
-        H+qkZIpPPrha55E7wmtqOsqvFKtiIdU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-466-NAJcYUu3MISI0BN9tbIX4w-1; Fri, 26 May 2023 09:59:26 -0400
-X-MC-Unique: NAJcYUu3MISI0BN9tbIX4w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B145985A5A8;
-        Fri, 26 May 2023 13:59:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 29A307C2A;
-        Fri, 26 May 2023 13:59:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <366861a7-87c8-4bbf-9101-69dd41021d07@kili.mountain>
-References: <366861a7-87c8-4bbf-9101-69dd41021d07@kili.mountain>
+        Fri, 26 May 2023 10:52:40 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2459D8
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 07:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685112759; x=1716648759;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TYHqY+6uZ4K+/S+mfbbQc3Y3deF/UlFCP2XDrRIQibQ=;
+  b=O/lvJNfeE7uYMmbCYrnCTSJRAfn8FJs0LrvVTO6o5Cf5mzpym3wCLM0S
+   r9PqSQvg8RzcU4HHlONs5imLFQIfXaMio6sgO74vLTm21foU89G1JUgyV
+   aTl9Wf7WVRDh2ybXNyscy+MQnYOGZGHkbyeMyaQkgncHawQkL3a0bo++H
+   Iau0S2HgBKytwurR8nbSDpllBJ/HQ47blzl4jyn5eY2uxhNGrVrd76WOR
+   be0Sh/djFuiv9mZUI5D5IZWhFcVFLoTBzbX9P5Kkh2aG1GLRIecZ3AT4U
+   HkRWkO9qXjg5NbAbxErhFcFAVGDQ7HYWnt6VLzT+sGGxE1/4uLDeUvH+F
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10722"; a="440572345"
+X-IronPort-AV: E=Sophos;i="6.00,194,1681196400"; 
+   d="scan'208";a="440572345"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2023 07:52:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10722"; a="655662574"
+X-IronPort-AV: E=Sophos;i="6.00,194,1681196400"; 
+   d="scan'208";a="655662574"
+Received: from schoenfm-mobl1.ger.corp.intel.com (HELO intel.com) ([10.249.39.253])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2023 07:52:35 -0700
+Date:   Fri, 26 May 2023 16:52:32 +0200
+From:   Andi Shyti <andi.shyti@linux.intel.com>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     dhowells@redhat.com, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Alexander Duyck <alexanderduyck@fb.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jiri Benc <jbenc@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: fix signedness bug in skb_splice_from_iter()
+Cc:     Andi Shyti <andi.shyti@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Thomas =?iso-8859-15?Q?Hellstr=F6m?= 
+        <thomas.hellstrom@linux.intel.com>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/i915/selftests: fix an error code in copy()
+Message-ID: <ZHDHsPpw5TRIbLkn@ashyti-mobl2.lan>
+References: <f6b876f1-4dd7-4d96-bee5-966817cc1644@kili.mountain>
+ <ZHCs2RU6+SNkq0GA@ashyti-mobl2.lan>
+ <6b5fd74c-b98f-4e97-a562-e9739fd03873@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <881536.1685109556.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 26 May 2023 14:59:16 +0100
-Message-ID: <881537.1685109556@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b5fd74c-b98f-4e97-a562-e9739fd03873@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+Hi Dan,
 
-> The "len" variable needs to be signed for the error handling to work
-> correctly.
-> =
+On Fri, May 26, 2023 at 04:14:25PM +0300, Dan Carpenter wrote:
+> On Fri, May 26, 2023 at 02:58:01PM +0200, Andi Shyti wrote:
+> > Hi Dan,
+> > 
+> > On Fri, May 26, 2023 at 02:59:31PM +0300, Dan Carpenter wrote:
+> > > Return the error code if i915_gem_object_create_internal() fails,
+> > > instead of returning success.
+> > > 
+> > > Fixes: cf586021642d ("drm/i915/gt: Pipelined page migration")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/i915/gt/selftest_migrate.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/i915/gt/selftest_migrate.c b/drivers/gpu/drm/i915/gt/selftest_migrate.c
+> > > index e677f2da093d..a26429fd5326 100644
+> > > --- a/drivers/gpu/drm/i915/gt/selftest_migrate.c
+> > > +++ b/drivers/gpu/drm/i915/gt/selftest_migrate.c
+> > > @@ -55,8 +55,10 @@ static int copy(struct intel_migrate *migrate,
+> > >  
+> > >  	sz = src->base.size;
+> > >  	dst = i915_gem_object_create_internal(i915, sz);
+> > > -	if (IS_ERR(dst))
+> > > +	if (IS_ERR(dst)) {
+> > > +		err = PTR_ERR(dst);
+> > >  		goto err_free_src;
+> > > +	}
+> > 
+> > I think it was intentional to return '0' when
+> > i915_gem_object_create_internal() failed, as we are not testing
+> > object creation here.
+> > 
+> > I don't really mind this patch, but, on the other hand, returning
+> > an error value here might provide a biased information.
+> 
+> Something we could consider is to make it more obvious that it's
+> intentional.  Smatch counts it as intentional if there is an "err = 0;"
+> within a few lines of the goto.
+> 
+> But let's just leave it.  I've already marked this static checker
+> warning as dealt with.  If I see it again and maybe that will motivate
+> me to add an err = 0; assignment.  People imagine that kernel code must
+> be 100% perfect with no static checker warnings etc but really it's
+> almost the weekend and this is fine.
 
-> Fixes: 2e910b95329c ("net: Add a function to splice pages into an skbuff=
- for MSG_SPLICE_PAGES")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+yes, I can accept an explicit "err = 0" with a comment on it. I
+think it totally makes sense.
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+Do you want to do it or shall I take care of it?
 
+Thanks,
+Andi
