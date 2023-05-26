@@ -2,124 +2,110 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 461D2C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 14:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1CDC77B73
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 15:37:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237253AbjEZOwl (ORCPT
+        id S244070AbjEZPho (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 May 2023 10:52:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45490 "EHLO
+        Fri, 26 May 2023 11:37:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbjEZOwk (ORCPT
+        with ESMTP id S237407AbjEZPhl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 May 2023 10:52:40 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2459D8
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 07:52:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685112759; x=1716648759;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TYHqY+6uZ4K+/S+mfbbQc3Y3deF/UlFCP2XDrRIQibQ=;
-  b=O/lvJNfeE7uYMmbCYrnCTSJRAfn8FJs0LrvVTO6o5Cf5mzpym3wCLM0S
-   r9PqSQvg8RzcU4HHlONs5imLFQIfXaMio6sgO74vLTm21foU89G1JUgyV
-   aTl9Wf7WVRDh2ybXNyscy+MQnYOGZGHkbyeMyaQkgncHawQkL3a0bo++H
-   Iau0S2HgBKytwurR8nbSDpllBJ/HQ47blzl4jyn5eY2uxhNGrVrd76WOR
-   be0Sh/djFuiv9mZUI5D5IZWhFcVFLoTBzbX9P5Kkh2aG1GLRIecZ3AT4U
-   HkRWkO9qXjg5NbAbxErhFcFAVGDQ7HYWnt6VLzT+sGGxE1/4uLDeUvH+F
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10722"; a="440572345"
-X-IronPort-AV: E=Sophos;i="6.00,194,1681196400"; 
-   d="scan'208";a="440572345"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2023 07:52:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10722"; a="655662574"
-X-IronPort-AV: E=Sophos;i="6.00,194,1681196400"; 
-   d="scan'208";a="655662574"
-Received: from schoenfm-mobl1.ger.corp.intel.com (HELO intel.com) ([10.249.39.253])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2023 07:52:35 -0700
-Date:   Fri, 26 May 2023 16:52:32 +0200
-From:   Andi Shyti <andi.shyti@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Andi Shyti <andi.shyti@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Thomas =?iso-8859-15?Q?Hellstr=F6m?= 
-        <thomas.hellstrom@linux.intel.com>,
-        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/i915/selftests: fix an error code in copy()
-Message-ID: <ZHDHsPpw5TRIbLkn@ashyti-mobl2.lan>
-References: <f6b876f1-4dd7-4d96-bee5-966817cc1644@kili.mountain>
- <ZHCs2RU6+SNkq0GA@ashyti-mobl2.lan>
- <6b5fd74c-b98f-4e97-a562-e9739fd03873@kili.mountain>
+        Fri, 26 May 2023 11:37:41 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A28DE4F;
+        Fri, 26 May 2023 08:37:04 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34QEbxv4025620;
+        Fri, 26 May 2023 15:36:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=kZNtTCCv0u/7c3//dp1mIaU7SU4oaIwEAQwigVk+u+M=;
+ b=exMgJ9BaZc+guin1FQWgrIs9DEAHWZj9MNVXacyEDmgnL0LPI7GNe4YFYu+5OwvHCLNk
+ nXp3bhZIEMzecEi7Yr5Ky5llRnyY5W37UXUSM5Ew8UErW7/+Yltj4VOzY5yZVinF9lEU
+ gAdmRUz8xno7X5IyjgONwxtpTgLYeHsD0XnztCbXOwxhrGNx1fWjZbH6HBdlBnZYk9Zy
+ 5+VWESLdjG8j+En++AgCIjyEHVOJ2VV474UnY8vWeMo57FfXaw7qK6NLb2Yapu5hRLVX
+ hxX5EyepaJIsNbH4jP19gACCdgFxXCGJCCn7Mx9uTrxTchqy/U5Qtw/qYJoJaYc0+URS BA== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qttejgqm9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 May 2023 15:36:27 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34QFaQOo003018
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 May 2023 15:36:26 GMT
+Received: from [10.216.41.197] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 26 May
+ 2023 08:36:23 -0700
+Message-ID: <ee9c0ab3-028f-cadf-c577-e57a139de5ce@quicinc.com>
+Date:   Fri, 26 May 2023 21:06:19 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6b5fd74c-b98f-4e97-a562-e9739fd03873@kili.mountain>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] smb: delete an unnecessary statement
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Steve French <sfrench@samba.org>
+CC:     Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>, <linux-cifs@vger.kernel.org>,
+        <samba-technical@lists.samba.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <077d93ae-adbf-4425-9cc4-eea5163b050c@kili.mountain>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <077d93ae-adbf-4425-9cc4-eea5163b050c@kili.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: v9vSqF_tcM5W4jTL6G08fKyzXQS3qZlO
+X-Proofpoint-ORIG-GUID: v9vSqF_tcM5W4jTL6G08fKyzXQS3qZlO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-26_06,2023-05-25_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=995
+ suspectscore=0 impostorscore=0 bulkscore=0 mlxscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305260131
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
 
-On Fri, May 26, 2023 at 04:14:25PM +0300, Dan Carpenter wrote:
-> On Fri, May 26, 2023 at 02:58:01PM +0200, Andi Shyti wrote:
-> > Hi Dan,
-> > 
-> > On Fri, May 26, 2023 at 02:59:31PM +0300, Dan Carpenter wrote:
-> > > Return the error code if i915_gem_object_create_internal() fails,
-> > > instead of returning success.
-> > > 
-> > > Fixes: cf586021642d ("drm/i915/gt: Pipelined page migration")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/i915/gt/selftest_migrate.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/i915/gt/selftest_migrate.c b/drivers/gpu/drm/i915/gt/selftest_migrate.c
-> > > index e677f2da093d..a26429fd5326 100644
-> > > --- a/drivers/gpu/drm/i915/gt/selftest_migrate.c
-> > > +++ b/drivers/gpu/drm/i915/gt/selftest_migrate.c
-> > > @@ -55,8 +55,10 @@ static int copy(struct intel_migrate *migrate,
-> > >  
-> > >  	sz = src->base.size;
-> > >  	dst = i915_gem_object_create_internal(i915, sz);
-> > > -	if (IS_ERR(dst))
-> > > +	if (IS_ERR(dst)) {
-> > > +		err = PTR_ERR(dst);
-> > >  		goto err_free_src;
-> > > +	}
-> > 
-> > I think it was intentional to return '0' when
-> > i915_gem_object_create_internal() failed, as we are not testing
-> > object creation here.
-> > 
-> > I don't really mind this patch, but, on the other hand, returning
-> > an error value here might provide a biased information.
+
+On 5/26/2023 5:31 PM, Dan Carpenter wrote:
+> We don't need to set the list iterators to NULL before a
+> list_for_each_entry() loop because they are assigned inside the
+> macro.
 > 
-> Something we could consider is to make it more obvious that it's
-> intentional.  Smatch counts it as intentional if there is an "err = 0;"
-> within a few lines of the goto.
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+
+Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+
+-Mukesh
+
+> ---
+>   fs/smb/client/smb2ops.c | 1 -
+>   1 file changed, 1 deletion(-)
 > 
-> But let's just leave it.  I've already marked this static checker
-> warning as dealt with.  If I see it again and maybe that will motivate
-> me to add an err = 0; assignment.  People imagine that kernel code must
-> be 100% perfect with no static checker warnings etc but really it's
-> almost the weekend and this is fine.
-
-yes, I can accept an explicit "err = 0" with a comment on it. I
-think it totally makes sense.
-
-Do you want to do it or shall I take care of it?
-
-Thanks,
-Andi
+> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+> index 5065398665f1..6e3be58cfe49 100644
+> --- a/fs/smb/client/smb2ops.c
+> +++ b/fs/smb/client/smb2ops.c
+> @@ -618,7 +618,6 @@ parse_server_interfaces(struct network_interface_info_ioctl_rsp *buf,
+>   		 * Add a new one instead
+>   		 */
+>   		spin_lock(&ses->iface_lock);
+> -		iface = niface = NULL;
+>   		list_for_each_entry_safe(iface, niface, &ses->iface_list,
+>   					 iface_head) {
+>   			ret = iface_cmp(iface, &tmp_iface);
