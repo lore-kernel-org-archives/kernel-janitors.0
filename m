@@ -2,57 +2,52 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBFBC77B73
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 13:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8424FC77B73
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 14:00:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243629AbjEZNjZ (ORCPT
+        id S237328AbjEZOAK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 May 2023 09:39:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39642 "EHLO
+        Fri, 26 May 2023 10:00:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231533AbjEZNjY (ORCPT
+        with ESMTP id S231470AbjEZOAJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 May 2023 09:39:24 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B0DF3
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 06:39:23 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-307d58b3efbso480207f8f.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 06:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685108361; x=1687700361;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IQe4D67cLwl8q+STJZyTgJruFga6QG8sQ8P+KxpYejc=;
-        b=jc7V1YMBetwGSRvkKFZ+6dh8gJrr5wiQWRWwN8i3KAl27iedIHi+G+Bo1SclUN2ICY
-         cqNx6JxMG4d31ML3G4MnsjjmN93dk234eFpRf3y2aXAMZd6X+WLFqBbGSd/cAmTJ4msq
-         WnDrzQTLsrFINzP71zxQ6u+oUeYusxOoQW6olGTTqqiXP9UrJQuctZ3c9MsZhzSakHM0
-         xqxfHzkwoVejRegr4S4uAdPcgTRsF5awHoo0A647hCiMe1jH0FhsnOlY//jkbTSLtTLG
-         aBRxwRYI8qbFrQ5FqRPqAiVvipEkWQjhbXEVBBWqlZleXvtmYzxrGdLjoemJIKxPihkH
-         l8lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685108361; x=1687700361;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IQe4D67cLwl8q+STJZyTgJruFga6QG8sQ8P+KxpYejc=;
-        b=B4Y0HQOZAd1HbQggnMHauvDkyFVdkm8pyHceR11HAEUbfZyTUAIf1Cs1Pwx6gvIGw/
-         PYhQ2ctIaDVYOtHmQVCHwyLc98uejPElErvrQsshfaMv3YAL6JVbZQVEYI2bWWigGgCs
-         yP0SVjSSYgfuv3uucm7Vo0CMNHhBD1DFbtR2QCIeYAj92izRd217qbwXwf1V1n7FgEcT
-         iAMLxjwZ2E1ffPv8sOw2uave1knihktAB8vDaw2/qXsWCxAKq7D5egoa2nkgJZaEBtXK
-         2afloKC9cPfkz2uj8yTBGH/7JvbB/JMbxsuqQVtA/tHuUFHrCQ0Zsq8t8CwogERnwyUX
-         GnfA==
-X-Gm-Message-State: AC+VfDwH3MBOnMKrSd4LH79n4nWJ1Z/3smMRjYe1EDbqGug1wOM+arj6
-        iDqfCH5XohY2x7E1FRxCuen3iA==
-X-Google-Smtp-Source: ACHHUZ567Rfv8QITDsWSQhkOFgWyFK5JKKFtFu5uduajc0RdjdJBTa5ULiFPBK1LMD77u6Y+hEJFrQ==
-X-Received: by 2002:adf:e8cc:0:b0:309:419b:925d with SMTP id k12-20020adfe8cc000000b00309419b925dmr1549281wrn.70.1685108361469;
-        Fri, 26 May 2023 06:39:21 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a16-20020a5d4d50000000b003047ea78b42sm5185266wru.43.2023.05.26.06.39.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 May 2023 06:39:18 -0700 (PDT)
-Date:   Fri, 26 May 2023 16:39:15 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+        Fri, 26 May 2023 10:00:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D66F3
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 06:59:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685109569;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AZR+i/KA4SM5MJbNxGgeo60QfZYJs7gffgNmM3EOr+0=;
+        b=Bq9sJ2AS63Bpq0+cAGexhWtnmp0k6DR1JhQKaQi7uOWxiJzrPyPggNFebNEBAxFuhQVkSm
+        xyfTF1MVoIZhhQyF1EzrCC1XdowYnFRZhPF8KmING+UVCjCXEubxNOrxq/ycBPs9O5vztm
+        H+qkZIpPPrha55E7wmtqOsqvFKtiIdU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-466-NAJcYUu3MISI0BN9tbIX4w-1; Fri, 26 May 2023 09:59:26 -0400
+X-MC-Unique: NAJcYUu3MISI0BN9tbIX4w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B145985A5A8;
+        Fri, 26 May 2023 13:59:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 29A307C2A;
+        Fri, 26 May 2023 13:59:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <366861a7-87c8-4bbf-9101-69dd41021d07@kili.mountain>
+References: <366861a7-87c8-4bbf-9101-69dd41021d07@kili.mountain>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     dhowells@redhat.com, "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
@@ -62,42 +57,27 @@ Cc:     "David S. Miller" <davem@davemloft.net>,
         Kees Cook <keescook@chromium.org>,
         Jiri Benc <jbenc@redhat.com>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next v2] net: fix signedness bug in skb_splice_from_iter()
-Message-ID: <366861a7-87c8-4bbf-9101-69dd41021d07@kili.mountain>
+Subject: Re: [PATCH net-next v2] net: fix signedness bug in skb_splice_from_iter()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <881536.1685109556.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 26 May 2023 14:59:16 +0100
+Message-ID: <881537.1685109556@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "len" variable needs to be signed for the error handling to work
-correctly.
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-Fixes: 2e910b95329c ("net: Add a function to splice pages into an skbuff for MSG_SPLICE_PAGES")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: tidy up a style mistake in v1.
+> The "len" variable needs to be signed for the error handling to work
+> correctly.
+> =
 
- net/core/skbuff.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Fixes: 2e910b95329c ("net: Add a function to splice pages into an skbuff=
+ for MSG_SPLICE_PAGES")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 653abd8a6975..7c4338221b17 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -6931,8 +6931,8 @@ ssize_t skb_splice_from_iter(struct sk_buff *skb, struct iov_iter *iter,
- 	unsigned int i;
- 
- 	while (iter->count > 0) {
--		ssize_t space, nr;
--		size_t off, len;
-+		ssize_t space, nr, len;
-+		size_t off;
- 
- 		ret = -EMSGSIZE;
- 		space = frag_limit - skb_shinfo(skb)->nr_frags;
--- 
-2.39.2
+Reviewed-by: David Howells <dhowells@redhat.com>
 
