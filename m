@@ -2,55 +2,54 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EDBC7EE23
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 13:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBFBC77B73
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 13:39:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243618AbjEZNUX (ORCPT
+        id S243629AbjEZNjZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 May 2023 09:20:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57062 "EHLO
+        Fri, 26 May 2023 09:39:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243593AbjEZNUW (ORCPT
+        with ESMTP id S231533AbjEZNjY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 May 2023 09:20:22 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F05B2
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 06:20:18 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f6094cb2ebso5333455e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 06:20:18 -0700 (PDT)
+        Fri, 26 May 2023 09:39:24 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B0DF3
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 06:39:23 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-307d58b3efbso480207f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 06:39:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685107217; x=1687699217;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tQINrp1rONXCHe6H7w31VOnQpsmpECV30LxfyZoDH2Y=;
-        b=JTDy1xUZtbNZlQ9HcX37vK8x0vbwOmwLJsTbFNflWUwQDQOuvfDLkBLAE3ivmNfh2y
-         KYi2jCkxbBH5tFJCxTSuSWLybm77b1bilX1bAugvVkeJzs1IohVvTV4Z07wQJOKEG5CG
-         thkIC9PZKDTfkOVsTanhUTgTD0+twGawjr26IhfL2oIj85yOJU7Fp2DQbIfjmRRbjCNf
-         qs15ZZC52Nvdy8AESOCd9tbQEmuEZK9BircVrWbbX+gdU4vORL6cOxVl6vtetQruRrmU
-         HJf90Q0xUMlSZS77b1FW85uw+DdFTW3vQKDIZItfBjOYPvNmNQ6Wud+UQdc7x/DFlRSR
-         nGlg==
+        d=linaro.org; s=google; t=1685108361; x=1687700361;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IQe4D67cLwl8q+STJZyTgJruFga6QG8sQ8P+KxpYejc=;
+        b=jc7V1YMBetwGSRvkKFZ+6dh8gJrr5wiQWRWwN8i3KAl27iedIHi+G+Bo1SclUN2ICY
+         cqNx6JxMG4d31ML3G4MnsjjmN93dk234eFpRf3y2aXAMZd6X+WLFqBbGSd/cAmTJ4msq
+         WnDrzQTLsrFINzP71zxQ6u+oUeYusxOoQW6olGTTqqiXP9UrJQuctZ3c9MsZhzSakHM0
+         xqxfHzkwoVejRegr4S4uAdPcgTRsF5awHoo0A647hCiMe1jH0FhsnOlY//jkbTSLtTLG
+         aBRxwRYI8qbFrQ5FqRPqAiVvipEkWQjhbXEVBBWqlZleXvtmYzxrGdLjoemJIKxPihkH
+         l8lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685107217; x=1687699217;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tQINrp1rONXCHe6H7w31VOnQpsmpECV30LxfyZoDH2Y=;
-        b=SnEH8qXRGxMtI4oeaAVuKONmOtgz+do+0ToJ2RIcgJAnRbgeD2czIyGfvFuWR9dgfO
-         Ox9XPcNmjHlp7pd2puT/lOhUsM0E3X9xSXzdAkSjY01NavpxRGFRzHIfBttHYoZypjre
-         7FXQYyCfLoQKbKeIE4OqNuDmWATVOQ0M+Kn+k10MBYSa9XATfK+jqvVrn5n02aCxZsOU
-         cBhczeQJvObv81DAgMx6cb4A5DJ7wDCMGLPa+FXzx1k8fXBpwAbWhioTS0+YX19Sbuxp
-         H3U0wQtT1qlk3cLfVJp8GOD2wS8RjTE44eG3kWbzDpmv77/9l1UihFYwOiQJEGDNGoBS
-         /nUA==
-X-Gm-Message-State: AC+VfDzrwrXDOEliLMU3+NUHmawEyH2rCMmja/x9qRb0sXIvAQOrzjVr
-        QM/FrpRfLTnfF6iXZ9xt0r9KqQ==
-X-Google-Smtp-Source: ACHHUZ4ikW6D+KwftA6eC2t2dnn3IFyHnr3g07LynxCsbGEY7IY1kHvQ4Ngg1rKR5dNrpnyTgCur8A==
-X-Received: by 2002:a05:600c:2948:b0:3f1:92aa:4eb8 with SMTP id n8-20020a05600c294800b003f192aa4eb8mr1450790wmd.16.1685107216850;
-        Fri, 26 May 2023 06:20:16 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1685108361; x=1687700361;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IQe4D67cLwl8q+STJZyTgJruFga6QG8sQ8P+KxpYejc=;
+        b=B4Y0HQOZAd1HbQggnMHauvDkyFVdkm8pyHceR11HAEUbfZyTUAIf1Cs1Pwx6gvIGw/
+         PYhQ2ctIaDVYOtHmQVCHwyLc98uejPElErvrQsshfaMv3YAL6JVbZQVEYI2bWWigGgCs
+         yP0SVjSSYgfuv3uucm7Vo0CMNHhBD1DFbtR2QCIeYAj92izRd217qbwXwf1V1n7FgEcT
+         iAMLxjwZ2E1ffPv8sOw2uave1knihktAB8vDaw2/qXsWCxAKq7D5egoa2nkgJZaEBtXK
+         2afloKC9cPfkz2uj8yTBGH/7JvbB/JMbxsuqQVtA/tHuUFHrCQ0Zsq8t8CwogERnwyUX
+         GnfA==
+X-Gm-Message-State: AC+VfDwH3MBOnMKrSd4LH79n4nWJ1Z/3smMRjYe1EDbqGug1wOM+arj6
+        iDqfCH5XohY2x7E1FRxCuen3iA==
+X-Google-Smtp-Source: ACHHUZ567Rfv8QITDsWSQhkOFgWyFK5JKKFtFu5uduajc0RdjdJBTa5ULiFPBK1LMD77u6Y+hEJFrQ==
+X-Received: by 2002:adf:e8cc:0:b0:309:419b:925d with SMTP id k12-20020adfe8cc000000b00309419b925dmr1549281wrn.70.1685108361469;
+        Fri, 26 May 2023 06:39:21 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id g10-20020a5d554a000000b002e5ff05765esm5229256wrw.73.2023.05.26.06.20.14
+        by smtp.gmail.com with ESMTPSA id a16-20020a5d4d50000000b003047ea78b42sm5185266wru.43.2023.05.26.06.39.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 May 2023 06:20:15 -0700 (PDT)
-Date:   Fri, 26 May 2023 16:20:12 +0300
+        Fri, 26 May 2023 06:39:18 -0700 (PDT)
+Date:   Fri, 26 May 2023 16:39:15 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
 To:     David Howells <dhowells@redhat.com>
 Cc:     "David S. Miller" <davem@davemloft.net>,
@@ -63,38 +62,42 @@ Cc:     "David S. Miller" <davem@davemloft.net>,
         Kees Cook <keescook@chromium.org>,
         Jiri Benc <jbenc@redhat.com>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: fix signedness bug in
- skb_splice_from_iter()
-Message-ID: <337838b4-e264-4d4a-87c5-548d49efc5b6@kili.mountain>
-References: <99284df8-9190-4deb-ad7c-c0557614a1c8@kili.mountain>
- <760142.1685107058@warthog.procyon.org.uk>
+Subject: [PATCH net-next v2] net: fix signedness bug in skb_splice_from_iter()
+Message-ID: <366861a7-87c8-4bbf-9101-69dd41021d07@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <760142.1685107058@warthog.procyon.org.uk>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 26, 2023 at 02:17:38PM +0100, David Howells wrote:
-> Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> 
-> >  	while (iter->count > 0) {
-> >  		ssize_t space, nr;
-> > -		size_t off, len;
-> > +		ssize_t len;
-> > +		size_t off;
-> 
-> Good point, but why not just move len onto the preceding line?
-> 
->  	while (iter->count > 0) {
-> -		ssize_t space, nr;
-> -		size_t off, len;
-> +		ssize_t space, nr, len;
-> +		size_t off;
+The "len" variable needs to be signed for the error handling to work
+correctly.
 
-Sure.  Will do.
+Fixes: 2e910b95329c ("net: Add a function to splice pages into an skbuff for MSG_SPLICE_PAGES")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: tidy up a style mistake in v1.
 
-regards,
-dan carpenter
+ net/core/skbuff.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 653abd8a6975..7c4338221b17 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -6931,8 +6931,8 @@ ssize_t skb_splice_from_iter(struct sk_buff *skb, struct iov_iter *iter,
+ 	unsigned int i;
+ 
+ 	while (iter->count > 0) {
+-		ssize_t space, nr;
+-		size_t off, len;
++		ssize_t space, nr, len;
++		size_t off;
+ 
+ 		ret = -EMSGSIZE;
+ 		space = frag_limit - skb_shinfo(skb)->nr_frags;
+-- 
+2.39.2
 
