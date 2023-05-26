@@ -2,139 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82A8C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 10:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C07C77B73
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 11:46:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242834AbjEZKpv (ORCPT
+        id S237263AbjEZLqG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 May 2023 06:45:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46846 "EHLO
+        Fri, 26 May 2023 07:46:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230525AbjEZKpu (ORCPT
+        with ESMTP id S236478AbjEZLqF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 May 2023 06:45:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 189E912C;
-        Fri, 26 May 2023 03:45:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95E0364F2F;
-        Fri, 26 May 2023 10:45:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0FBC433EF;
-        Fri, 26 May 2023 10:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685097944;
-        bh=dfAaeLj5t+MmibfplLN35mTLwtHUE9bQ76Qg0stUzCI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=EJjEtYiEV/mM1EyR5mgPJ1n3JH+G4XaS/+wanSXWM5wXwXE9flyKloKlTOJy0Ulxz
-         koS5F3mDhm3LOhOAYSRJR/uGWCjGELZzJeGzNaT8zpcDJVTWt9nDRCkbfO5O8B6nTl
-         U3iA01qft45qfT+Wl8awwVSecXPYIl7z8ak+31CiY2bNpNWFT/6mGZMEuCTGp62nhU
-         a2o7iePCurKQfqd0gLLosqg4ZHhvUIRegwshr35IRVj3Q6rz1rGD1Qj+axc4Rkme2R
-         Z+qpim3QD3nBBI6K48VF/oesYM8L0/iQl+04Esq5b6S7z3dZ9Y7VlJ4VS1xep/iArK
-         yacCH6iLw/Obw==
-Date:   Fri, 26 May 2023 11:45:39 +0100
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Su Hui <suhui@nfschina.com>, YongSu Yoo <yongsuyoo0215@gmail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 26 May 2023 07:46:05 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B0EF116
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:46:02 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-96fb45a5258so111226666b.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685101561; x=1687693561;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+vlt+5VLC7KI/CuMwSmVCoc1T0RjObSqqBqBI2FUoWI=;
+        b=abDSY2fbWfc/NpEno6lPCk1ECWzGdg/c0ZJO1PungQgyLhJWQl76dcMVxO/+NkvkJ7
+         ZTKZo5jTqwHAtIdUBhtv500uC6LwwqfGjYiV4Ry6kQ0Is86AoPfmVdbb9h/eIgxfTg1G
+         oIAQlFz+0mGelva57WyQqGHh/KnU31DZfuHcoZYZ2IlK4VsjOBqZe2Y2gvYnbseYN6fW
+         +pGTpXqPckNIAIZ54bUgFRmD+KnJMzxN3QL4ZH8yvSGe3cM4sTudhN2WbKPDDU8gSgU0
+         BG/GtnHtMVHl7nu2rnG6WtFou89Qovc8MDTLSJ3MmzQxUUZe7XXOmgKLILHD5l5C4DSs
+         3+CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685101561; x=1687693561;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vlt+5VLC7KI/CuMwSmVCoc1T0RjObSqqBqBI2FUoWI=;
+        b=NamsIgVQemitBAcEyKNRwZfOZmvVlxSxon1eGpHYc34KOEpdrrai3oj5vjIl4Jdv62
+         NJDKAnx2MAUFCeHw0XqjPK7RPVgVqcGm5p82i3FJ70MOq3itM3nngmX2DypkotslaW+x
+         WES3VL9an46zFrtRS1aus+woofnH+vD6EZlYS+olxGK5/nzHw7oJw3iJrnOjRYYOQQ3C
+         tGPhW7RFO8kEEkfNb9SfFogK9STBAfKC4W9lKu5y3f3C+hcs7Ya3O6euvLN6l2Zwfyru
+         CfmbNLPEZe5A2IMwMyFsgCl915AJooEHLX0BtjD09YaaL1hCJ2/l31JWFjQ66VEEea4j
+         uq0w==
+X-Gm-Message-State: AC+VfDxtJQvQ9DxnsUGnLayA7mOwqi0Nh6/5sUahomGnEm3GrlwWYr0A
+        68aQvy0e6NBxYsvlFWj5TR8N3w==
+X-Google-Smtp-Source: ACHHUZ582mOEkzgQjppredkDpk8pe+heNFACxpfj1l33/h7T9wXg7DUZDmFAfhnCrlTTCh4EwAFbMw==
+X-Received: by 2002:a17:907:9708:b0:970:925:6563 with SMTP id jg8-20020a170907970800b0097009256563mr1837879ejc.8.1685101560854;
+        Fri, 26 May 2023 04:46:00 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id w24-20020a17090649d800b009666523d52dsm2043491ejv.156.2023.05.26.04.45.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 May 2023 04:45:59 -0700 (PDT)
+Date:   Fri, 26 May 2023 14:45:54 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Oleksij Rempel <linux@rempel-privat.de>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: dvb_ringbuffer: Return -EFAULT if copy fails
-Message-ID: <20230526114539.0520dcbf@sal.lan>
-In-Reply-To: <7466fead-1b99-4a78-86cb-5dd8a9baec19@kili.mountain>
-References: <41a9c6a6-4b9a-4d84-9e32-09bf64c65b6c@kili.mountain>
-        <aab14cc4-0400-c114-f180-6db943fd7e32@nfschina.com>
-        <7466fead-1b99-4a78-86cb-5dd8a9baec19@kili.mountain>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-redhat-linux-gnu)
+Subject: [PATCH net] net: phy: fix a signedness bug in genphy_loopback()
+Message-ID: <d7bb312e-2428-45f6-b9b3-59ba544e8b94@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Em Wed, 24 May 2023 10:20:38 +0300
-Dan Carpenter <dan.carpenter@linaro.org> escreveu:
+The "val" variable is used to store error codes from phy_read() so
+it needs to be signed for the error handling to work as expected.
 
-> On Wed, May 24, 2023 at 01:20:27PM +0800, Su Hui wrote:
-> > It's confusing about the comment on function declaration.
-> >=20
-> > =C2=A0=C2=A0=C2=A0 /**
-> > =C2=A0=C2=A0=C2=A0=C2=A0 * dvb_ringbuffer_write_user - Writes a buffer =
-received via a user
-> > pointer
-> >=20
-> > =C2=A0=C2=A0=C2=A0 ..........
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0 * Return: number of bytes transferred or -EFAU=
-LT
-> >=20
-> > But the function Only returns=C2=A0 the number of bytes transferred.
-> >=20
-> > Maybe the comment should be modified because it never returns -EFAULT. =
-=20
->=20
-> To be honest, I think that -EFAULT is probably a better return.  But
-> there is no way we could apply the patch with that commit message.  The
-> commit message doesn't explain the problem for the user or why returning
-> the number of bytes copied is not correct in this case.
->=20
-> I think that maybe it's not too late to change this to return -EFAULT,
-> but it would have been easier to make the change in 2014 before there
-> were many users.  Also it would be easier if you were testing this on
-> real hardware.
+Fixes: 014068dcb5b1 ("net: phy: genphy_loopback: add link speed configuration")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/phy/phy_device.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It is too late to change the API here, as this could break userspace.
-
-Basically, DVB subsystem normally works with a Kernel-implemented ringbuffer
-that transfers MPEG TS data between kernelspace/userspace. The size is
-set via an ioctl (DMX_SET_BUFFER_SIZE). By the way, such uAPI is older=20
-than 2014. It was added upstream on Kernel 2.6.
-
-The buffer size is usually big. For instance, dvbv5-zap uses:
-
-	#define DVB_BUF_SIZE      (4096 * 8 * 188)
-
-The normal operation is that data will be received from a MPEG-TS
-stream, although it is also possible to send data on cable TV, when
-using dvb net interface.
-
-While on several boards, the hardware<->kernel transfer happens on
-188-bytes packages, there are some hardware out there where the
-data passed from/to kernel is not 188-bytes aligned.
-
-The normal operation (receiving a TV broadcast) means that the Kernel=20
-will be filling a ringbuffer containing the data passed from the
-hardware. The size of the such buffer is adjusted via DMX_SET_BUFFER_SIZE
-and contains MPEG TS packets of 188-bytes. Userspace will be in an
-endless loop that will be waiting for data to arrive at the ringbuffer,
-copying received data its own userspace buffer. If the buffer is not set
-to a multiple of 188, it should be up to userspace to handle incomplete
-frames. The same occurs if the data is 204-bytes aligned. Btw, userspace
-can detect the packet size, based on the frame content.
-
-On such example, if a ringbuffer transfer would be passing 1554 bytes,
-it means that 8 MPEG-TS frames are complete, and that 50 bytes of the
-next frame was also transfered from/to userspace.
-
-It should be up to userspace to ensure that those extra 50 bytes will
-be probably taken into account by the application and ensure that the
-remaining 138 bytes will be handled at the next from/to userspace
-data transfer.
-
-Not the best API, but any change there will break userspace.
-
-In particular, this patch will completely break transfers if the
-buffer size is not 188-bytes aligned.
-
-so,
-
-NACK.
-
-Su,
-
-Did you find any real problem with this? On what hardware/application?
-
-Regards,
-Mauro
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 2cad9cc3f6b8..d52dd699ae0b 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -2700,8 +2700,8 @@ EXPORT_SYMBOL(genphy_resume);
+ int genphy_loopback(struct phy_device *phydev, bool enable)
+ {
+ 	if (enable) {
+-		u16 val, ctl = BMCR_LOOPBACK;
+-		int ret;
++		u16 ctl = BMCR_LOOPBACK;
++		int val, ret;
+ 
+ 		ctl |= mii_bmcr_encode_fixed(phydev->speed, phydev->duplex);
+ 
+-- 
+2.39.2
 
