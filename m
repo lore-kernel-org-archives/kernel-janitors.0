@@ -2,69 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3450BC77B73
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 11:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E2BC77B7A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 11:53:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243038AbjEZLwI (ORCPT
+        id S242638AbjEZLxb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 May 2023 07:52:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42810 "EHLO
+        Fri, 26 May 2023 07:53:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243021AbjEZLwH (ORCPT
+        with ESMTP id S236478AbjEZLxa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 May 2023 07:52:07 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DCA9116
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:52:05 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f6e4554453so4745225e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:52:05 -0700 (PDT)
+        Fri, 26 May 2023 07:53:30 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C28495
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:53:29 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3090d3e9c92so592832f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 04:53:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685101924; x=1687693924;
+        d=linaro.org; s=google; t=1685102007; x=1687694007;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=94lOxsLEFjNeUwsBx4SaU5IrAwgtw5WWI0FQECJPg/E=;
-        b=QR7LsiBBs85Pai0DwtnlFfzUYDkkQShckxJbj9SwuLSADIADR2i/l3xHaMffLEBgTl
-         R/k1RCTFIy/O+2RwsmkE3olt01XOPwMziGfMhCe/dpNWkAvP+C01U4YWkzYjnH+m9aUQ
-         f1UK1ZLyeilbWyknk6yf94kITZErWvpbTiQmKvOvUjoniQr+HZO2HYNdBdVxQ01u58ob
-         jtwXybedyR8jCAkpeP7ZtnAtJeRv7PBVjck+frZlndqi/n7wCpVBXHchYmmIZfIqT2KT
-         tsnfKDqmIuOCXMRukK5a5r7NameVHM3ElYDWEqS9sRzbk/hBTAfIoTmPrTmsjLmBXhME
-         PxXQ==
+        bh=JA3Z031EuYV7G9C1xFF3gOewbaEqhRavFGyCZzLQ4k0=;
+        b=dp/JrIV318+le9Ak1KhpMRXxRp1rnWIJLBmLEngjbOuEFXT4n/tfxEQlpXoZQf5+Ln
+         ztVO6WxXHSCwsa3wV3vCndy2xtRfhS8aeIYZyImCG5ZcKosXsH93mfIktYV+svbe3u9M
+         0QOfrno/Z9EUL5/7CcO9cHMVQYr0ZcekO7zQmyinYcBuWGtHdyydXjZANFhnnro2Zdzg
+         7a7Ea2B1bglkabSyU7GZTcEGLWGcYhL8bKaApIsakPFLQXmOI41NgyJqCS0lxkmMklbu
+         0ji48BfrQiEq/DI7d8dEEJ1er+qpTWUQ0teWQeTJHs41oKkHPh7dsjHA0nE339frw0IF
+         1Ipg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685101924; x=1687693924;
+        d=1e100.net; s=20221208; t=1685102007; x=1687694007;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=94lOxsLEFjNeUwsBx4SaU5IrAwgtw5WWI0FQECJPg/E=;
-        b=Ogeb2oUZLe7E2EpkMnAq6FRIJGG+0K5Rhj63qAlJ73Jcn+zAG+1gIblt0bnANRUgUl
-         jVKbRUIy+krq80lP+wHjy0SlgzmTmI8tSOZHJF9OAgV03VPRDSIxIIbDQQQT732g4p02
-         tH+OIYxnbjZwoY8eR+jgX3giWeOmtM29HSWCOLciinRHV1acMNd/aPn2QHFKfjIUjzSC
-         PzE+IU66fAmIcPiPNFtk+xzOSXQcXl5t9pNx6T/q0Av+aHoSmRd7zIO3wBhBhy/GemnQ
-         HToFIzZmuuLolnm31caOziAp+W4zcv0xeH8DYDg0Eb7mM3TP09C3wtEbFoLwF9EhgvKm
-         nWhA==
-X-Gm-Message-State: AC+VfDw/iz12FGhanm+3XsX5Agz5nHp5BXfrs4UCmC16BMCIvbwwlt12
-        m1v+kphT1WU+FQlQFUz+7qWe1g==
-X-Google-Smtp-Source: ACHHUZ6/7YDYu2DrYFOko7cae4ceje+2MQW67ePdGrI9Wdm3un67/ARE6Gcse9uzeVtUdeAVlrmvkA==
-X-Received: by 2002:adf:dcc4:0:b0:306:2b5a:d8db with SMTP id x4-20020adfdcc4000000b003062b5ad8dbmr1112003wrm.23.1685101923983;
-        Fri, 26 May 2023 04:52:03 -0700 (PDT)
+        bh=JA3Z031EuYV7G9C1xFF3gOewbaEqhRavFGyCZzLQ4k0=;
+        b=WartGKVbTTYODUoKJtSmsC8ODHd2JdII/fY1fTqLxhSNextwrwB9yHZOJCbd5kshzt
+         D8+1fxnvu9HJL9uV5iYWNxpYNc112m813FW6xOWwncVqFSut6fRxnfneKIDM0b7i4eVZ
+         0/hZ1CNGo71IeH9fScfG9X4gGjxYyAzVue145a7Xjct1G8Ms5JLUsN/00WG0XbWPv1QD
+         3tv93ZIdFrOae1kUJw/Kk80BV74Ohe8LRtfzLZBgL3qD5RKULE38oVeE+qnh/2IFZN39
+         4uzUMA4MLU+dDlJJ1JhTFx1EF/QZpFwhwUVhqp0uTnKpVZFjKtJcMPYyZN/fa9qM67mG
+         v87g==
+X-Gm-Message-State: AC+VfDx7aJinzl/0qv1mBPf5VVjH1t5pedrG7SRAv2cgSPd5WkpmI/Vg
+        9xz+OAorVaV5ouIkERF50DV73Q==
+X-Google-Smtp-Source: ACHHUZ5A65Cfn9A34sTFV6Uw0LxcLFBMzuZVTgqdX73nwws6y2XfvNz69/bHKDGYRGRa/4yegmQmpw==
+X-Received: by 2002:a5d:6a44:0:b0:2dc:cad4:87b9 with SMTP id t4-20020a5d6a44000000b002dccad487b9mr1237941wrw.68.1685102007583;
+        Fri, 26 May 2023 04:53:27 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v15-20020a5d4a4f000000b00307c0afc030sm4920185wrs.4.2023.05.26.04.52.01
+        by smtp.gmail.com with ESMTPSA id u4-20020adfdd44000000b003063176ef09sm4924229wrm.6.2023.05.26.04.53.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 May 2023 04:52:02 -0700 (PDT)
-Date:   Fri, 26 May 2023 14:51:59 +0300
+        Fri, 26 May 2023 04:53:26 -0700 (PDT)
+Date:   Fri, 26 May 2023 14:53:23 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] drm/msm/dpu: clean up dpu_kms_get_clk_rate() returns
-Message-ID: <28644c5e-950e-41cd-8389-67f37b067bdc@kili.mountain>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ard Biesheuvel <ardb@kernel.org>, linux-media@vger.kernel.org,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: atomisp: gmin_platform: fix out_len in
+ gmin_get_config_dsm_var()
+Message-ID: <26124bcd-8132-4483-9d67-225c87d424e8@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -73,53 +70,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Static analysis tools complain about the -EINVAL error code being
-stored in an unsigned variable.  Let's change this to match
-the clk_get_rate() function which is type unsigned long and returns
-zero on error.
+Ideally, strlen(cur->string.pointer) and strlen(out) would be the same.
+But this code is using strscpy() to avoid a potential buffer overflow.
+So in the same way we should take the strlen() of the smaller string to
+avoid a buffer overflow in the caller, gmin_get_var_int().
 
-Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+Fixes: 387041cda44e ("media: atomisp: improve sensor detection code to use _DSM table")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-v2: In v1 I change the type to int which was wrong.  This is a different
-    approach.  CC the freedreno list this time too.
+ drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 4 ++--
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 0e7a68714e9e..25e6a15eaf9f 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -979,13 +979,13 @@ static int _dpu_kms_mmu_init(struct dpu_kms *dpu_kms)
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+index c718a74ea70a..88d4499233b9 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+@@ -1357,7 +1357,7 @@ static int gmin_get_config_dsm_var(struct device *dev,
+ 	dev_info(dev, "found _DSM entry for '%s': %s\n", var,
+ 		 cur->string.pointer);
+ 	strscpy(out, cur->string.pointer, *out_len);
+-	*out_len = strlen(cur->string.pointer);
++	*out_len = strlen(out);
+ 
+ 	ACPI_FREE(obj);
  	return 0;
- }
- 
--u64 dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name)
-+unsigned long dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name)
- {
- 	struct clk *clk;
- 
- 	clk = msm_clk_bulk_get_clock(dpu_kms->clocks, dpu_kms->num_clocks, clock_name);
- 	if (!clk)
--		return -EINVAL;
-+		return 0;
- 
- 	return clk_get_rate(clk);
- }
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-index aca39a4689f4..961918e5a5b3 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-@@ -201,6 +201,6 @@ void dpu_disable_vblank(struct msm_kms *kms, struct drm_crtc *crtc);
-  *
-  * Return: current clock rate
-  */
--u64 dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name);
-+unsigned long dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name);
- 
- #endif /* __dpu_kms_H__ */
 -- 
 2.39.2
 
