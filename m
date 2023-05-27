@@ -2,49 +2,51 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2B4C77B7E
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 May 2023 18:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CDCC77B7C
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 May 2023 19:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230434AbjE0SG6 (ORCPT
+        id S230434AbjE0TkS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 May 2023 14:06:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37742 "EHLO
+        Sat, 27 May 2023 15:40:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjE0SG4 (ORCPT
+        with ESMTP id S229596AbjE0TkQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 May 2023 14:06:56 -0400
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D005AD9
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 May 2023 11:06:45 -0700 (PDT)
+        Sat, 27 May 2023 15:40:16 -0400
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 555BFBE
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 May 2023 12:40:14 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 2yJMqqEHp8aX92yJMqPEHz; Sat, 27 May 2023 20:06:44 +0200
+        id 2zlqqt6LYzb8g2zlqqY7Te; Sat, 27 May 2023 21:40:12 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685210804;
-        bh=LJo0suhqS2HfE3uE26k/aOFLowEtiIxwmm1VGEPy9mU=;
+        s=t20230301; t=1685216412;
+        bh=VKthlyn9E+U4rCBy7ij6kRftfxuaXpwhoHRrC4eHBog=;
         h=From:To:Cc:Subject:Date;
-        b=GtlK9/SBhQJvW/RLCYpHPWPXzFqNL8XuXBBiKHP1H2vkKfA31txL/BLtCSyJRT8ej
-         rmFEyhSfEvKEj/UcNlGPKmndDT/d9FXM+wWhqdYDrdzIZeOCkVwnJxbrENX0ZdlD9r
-         ZXI4ERzvBEAWEhF9mFAYelsTMSf9w8G3kWLGa0NAcHtisIQEnDD/zFSgUzBz7QMifd
-         aeGM16vRAZeeCYQ6zyPe5c5CaqI47wjWFWtOKhzSGZNvWueBZcPnE/j9h/0W28EaeN
-         VCP+RAPPolitHxKpjtxiQOReUwU9YzoEGZQVHoJ1BaaX7am+g13Tn7iQl+NKZ/YUea
-         W9CKSq0eZ8VkQ==
+        b=mG4kTaBcbdVgJxb642fw9xT4sANB4RsAO2haUtUX9fe7eNV41iuffXUFBlfXvzRCa
+         xm5NRBMB1GSBRPb0Kb6/cY2F/Ikzq99aceXqkcXapTgNDYe5awbRfSTnYi3BRMtJ+u
+         7XXWgSEo+20gE6IjEEIEAJ7tjBM8EWA+AQrD2uGJ9o9iBSr0mN/cssERJj15ZgwBiB
+         WWZNRBYsoYGlEarqTmPGoCmdocT5A6ohz/htXTajhFihPOvw7XoSZZmU7IFZ1ZHr8y
+         y1fDYxAo0fnLkBX5B1ctnql9gHDL2Cy+rrplV+XFhX4UpwN3Q9N/1NWzuXs+fYc0q+
+         cNnm/rZj5BovA==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 27 May 2023 20:06:44 +0200
+X-ME-Date: Sat, 27 May 2023 21:40:12 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Satish Kharat <satishkh@cisco.com>,
-        Sesidhar Baddela <sebaddel@cisco.com>,
-        Karan Tilak Kumar <kartilak@cisco.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Derek Chickles <dchickles@marvell.com>,
+        Satanand Burla <sburla@marvell.com>,
+        Felix Manlunas <fmanlunas@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH] scsi: fnic: Use vzalloc()
-Date:   Sat, 27 May 2023 20:06:37 +0200
-Message-Id: <a1179941a6d440140513e681f4f3a1b92c8d83ae.1685210773.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org
+Subject: [PATCH net-next] liquidio: Use vzalloc()
+Date:   Sat, 27 May 2023 21:40:08 +0200
+Message-Id: <93b010824d9d92376e8d49b9eb396a0fa0c0ac80.1685216322.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -55,45 +57,48 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 Use vzalloc() instead of hand writing it with vmalloc()+memset().
 This is less verbose.
 
-This also fixes some style issues :)
-
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/scsi/fnic/fnic_debugfs.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 4 +---
+ drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debugfs.c
-index 6fedc3b7d1ab..c4d9ed0d7d75 100644
---- a/drivers/scsi/fnic/fnic_debugfs.c
-+++ b/drivers/scsi/fnic/fnic_debugfs.c
-@@ -201,25 +201,21 @@ static int fnic_trace_debugfs_open(struct inode *inode,
- 		return -ENOMEM;
+diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+index 9ed3d1ab2ca5..285d3825cad3 100644
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+@@ -719,12 +719,10 @@ static int cn23xx_setup_pf_mbox(struct octeon_device *oct)
+ 	for (i = 0; i < oct->sriov_info.max_vfs; i++) {
+ 		q_no = i * oct->sriov_info.rings_per_vf;
  
- 	if (*rdata_ptr == fc_trc_flag->fnic_trace) {
--		fnic_dbg_prt->buffer = vmalloc(array3_size(3, trace_max_pages,
-+		fnic_dbg_prt->buffer = vzalloc(array3_size(3, trace_max_pages,
- 							   PAGE_SIZE));
- 		if (!fnic_dbg_prt->buffer) {
- 			kfree(fnic_dbg_prt);
- 			return -ENOMEM;
- 		}
--		memset((void *)fnic_dbg_prt->buffer, 0,
--		3 * (trace_max_pages * PAGE_SIZE));
- 		fnic_dbg_prt->buffer_len = fnic_get_trace_data(fnic_dbg_prt);
- 	} else {
- 		fnic_dbg_prt->buffer =
--			vmalloc(array3_size(3, fnic_fc_trace_max_pages,
-+			vzalloc(array3_size(3, fnic_fc_trace_max_pages,
- 					    PAGE_SIZE));
- 		if (!fnic_dbg_prt->buffer) {
- 			kfree(fnic_dbg_prt);
- 			return -ENOMEM;
- 		}
--		memset((void *)fnic_dbg_prt->buffer, 0,
--			3 * (fnic_fc_trace_max_pages * PAGE_SIZE));
- 		fnic_dbg_prt->buffer_len =
- 			fnic_fc_trace_get_data(fnic_dbg_prt, *rdata_ptr);
- 	}
+-		mbox = vmalloc(sizeof(*mbox));
++		mbox = vzalloc(sizeof(*mbox));
+ 		if (!mbox)
+ 			goto free_mbox;
+ 
+-		memset(mbox, 0, sizeof(struct octeon_mbox));
+-
+ 		spin_lock_init(&mbox->lock);
+ 
+ 		mbox->oct_dev = oct;
+diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
+index fda49404968c..b3bd2767d3dd 100644
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
+@@ -279,12 +279,10 @@ static int cn23xx_setup_vf_mbox(struct octeon_device *oct)
+ {
+ 	struct octeon_mbox *mbox = NULL;
+ 
+-	mbox = vmalloc(sizeof(*mbox));
++	mbox = vzalloc(sizeof(*mbox));
+ 	if (!mbox)
+ 		return 1;
+ 
+-	memset(mbox, 0, sizeof(struct octeon_mbox));
+-
+ 	spin_lock_init(&mbox->lock);
+ 
+ 	mbox->oct_dev = oct;
 -- 
 2.34.1
 
