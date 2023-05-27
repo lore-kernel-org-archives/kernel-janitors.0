@@ -2,55 +2,51 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7918AC77B73
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 May 2023 07:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5DAC77B73
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 May 2023 07:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232035AbjE0Hgj (ORCPT
+        id S231802AbjE0Hkq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 May 2023 03:36:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39072 "EHLO
+        Sat, 27 May 2023 03:40:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230342AbjE0Hgh (ORCPT
+        with ESMTP id S232498AbjE0HkI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 May 2023 03:36:37 -0400
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B113DBC
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 May 2023 00:36:34 -0700 (PDT)
+        Sat, 27 May 2023 03:40:08 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A8BC3BC
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 May 2023 00:40:05 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 2oTXqn1098aX92oTYqO5DH; Sat, 27 May 2023 09:36:32 +0200
+        id 2oPXqAGCabOsk2oPXqWnKS; Sat, 27 May 2023 09:32:24 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685172992;
-        bh=jfcq+JgA5tqsNjhJdIRr8u+hc7+NPdvjx/XHhop2/Is=;
+        s=t20230301; t=1685172744;
+        bh=1DnlnxUFmb7Ce2qQomfF/gfxLcnmnomwsXhnW/Y+iQc=;
         h=From:To:Cc:Subject:Date;
-        b=oP99AC7iTJ4UihSNEW/pzpRz9iPotcP9k/mZw954h9q8LA73LTHHJczpFnk/qBRMl
-         lTgFns4cYPAN0ZS5x6mLvkGA9aHf/LGVs7PHK1WyQ8FgT/PZKljP8D+qV/VWCj7u1O
-         y5T3byDZuJIiQbpJBgaR92HwVRQk/zMZXh293hilGGGDolrRYqEnnUFkcBH4y5uhzX
-         OtG9D7FE7fw1Hosi0RDUdPhpi8F+sq2tb94BpW43lwxRQvXp28WrHCZ0geIHiwbcMM
-         EjqY4iW+4nNJFKZbDd+TQdHrgZQFQnnyLnhnvL8JjrLtwL1J2V7JuMPHNCPcY7yrnF
-         Pe4WX+B0QtlnA==
+        b=YabGio0sAEIf5b3AOEYIBoyE/y6rGkRNrsKyEzHCn/Qjvj8u6eK//P3rpc2P4/yy2
+         SNO9EIhjPRAUcvKGYB1zASP9Y5/xf42oklYIeGd/Q7tloqQmIQptzrJz0B85mXPY9U
+         q/d9tEewX67XPpOn0IvOQmw3VWpBP2/n6Bwbw0klhfVuwMeHYgPrO/WYRRBPfJJ62Q
+         EXggz4fWpvZs33IHFUfiYHdbsUtF8YfhYlXrXAXYeCgwNQFQ7aIEHBCPRukpbzi1HX
+         Df5AukzanHz/ryaqjWhVtgWMSCZFZnNssrVP+9Ys1n1JPmD9ve4ggp0n1mC5qfVbCe
+         uZt+IR3Fx6HgQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 27 May 2023 09:36:32 +0200
+X-ME-Date: Sat, 27 May 2023 09:32:24 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     vkoul@kernel.org
 Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] dmaengine: mcf-edma: Fix a potential un-allocated memory access
-Date:   Sat, 27 May 2023 09:36:31 +0200
-Message-Id: <f55d914407c900828f6fad3ea5fa791a5f17b9a4.1685172449.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] When 'mcf_edma' is allocated, some space is allocated for a flexible array at the end of the struct. 'chans' item are allocated, that is to say 'pdata->dma_channels'.
+Date:   Sat, 27 May 2023 09:32:22 +0200
+Message-Id: <f55d9154b7c600828f6fad3ea5fa791a5f17b9a4.1685172449.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
-
-When 'mcf_edma' is allocated, some space is allocated for a
-flexible array at the end of the struct. 'chans' item are allocated, that is
-to say 'pdata->dma_channels'.
 
 Then, this number of item is stored in 'mcf_edma->n_chans'.
 
@@ -85,9 +81,6 @@ Maybe, maybe, maybe, but me, I don't know :(
 All I know is that this patch compiles :)
 and that it can gives Dan an idea for smatch for checking access to un-allocated
 memory related to flexible array :)
-
-
-v2: I forgot the subject in v1...
 ---
  drivers/dma/mcf-edma.c | 13 +++++++------
  1 file changed, 7 insertions(+), 6 deletions(-)
