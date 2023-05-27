@@ -2,85 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8ECC77B73
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 May 2023 16:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7918AC77B73
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 May 2023 07:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244186AbjEZQKq (ORCPT
+        id S232035AbjE0Hgj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 May 2023 12:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56528 "EHLO
+        Sat, 27 May 2023 03:36:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbjEZQKp (ORCPT
+        with ESMTP id S230342AbjE0Hgh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 May 2023 12:10:45 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4220610A
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 09:10:36 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2af30d10d8fso9186441fa.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 May 2023 09:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1685117434; x=1687709434;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gRqtf20Zyw/eUJigoBjplcoiLQHtDmcweGJHFBjhwxw=;
-        b=G9QwBt5smZ2pr868PDTwGskX9AEfSOkOccrEEw9aL8IgbmTTmePzjioIOfu8aMUJ3j
-         xok3/sCPu0lRngMIb/kKzS/tztrNdsoFQYPgaB1vRypxUwaNgsMe6bIlEMbbh6GBd3lr
-         q4fGWWFGyN336Y+eMn0+l9Qqlj88Pz6JDQomcmomBR7Qyb4dTJ7Au+liBaNEFoZ0rIiL
-         Lu+f2xfbwyzeJcurhx7WbbibUIgHvk+q4cIOM1YxHXFZJ5/t/D/yHiMhP2dRvRpCZa9g
-         0ZQcHOvRXw/q1mgJoh3gkUAGYrL5B5CXoQnKxQqKvCQLWUIkZbm3AXWZiPWQwwUx3x3k
-         3hDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685117434; x=1687709434;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gRqtf20Zyw/eUJigoBjplcoiLQHtDmcweGJHFBjhwxw=;
-        b=HmXxHX2ocVvOWbdYZ8LMIrUKfA2PFV0cU86ruyKX68JugIGb4nVc/gBrxx1JBdb8Lu
-         R4i9BIWRSLMyscHNIWuclAVfOy4RjK98wY1PCWSheiVs48zuEMhROQAD7MrgAF1MzdHe
-         tTahlRb12pIiFYWW5HDwFMpE6x0DUJ4fw+l8O0RzXsNbzRYy71eheoSeduZujs6D2I4u
-         f7fix+9Nk7a7186w3ziVXN0Ebp7uBT15SS249SD95F5sZyauuc25OmTI+CyDEojoI/Dc
-         Wvb1nabMcYMM+88iDa9cpbZ8G4IpAwijPbgGAIH4EuuTHMcfnh4hnvCP5FxkeDQRwBmZ
-         xoag==
-X-Gm-Message-State: AC+VfDxmxW+MUVyiUhENdHQHraZB/xGM4KbYwEaJDYi38kWGdiaFffnO
-        i3DTtmwVRRUOm0JbSOmcmFOncA==
-X-Google-Smtp-Source: ACHHUZ5N2NAgrMVINU3eq0ZhD3xFOoGgyWy1XrAbjL42a3dgVehAoxgdTwxyg1A9sG7VK8/37Zr4oQ==
-X-Received: by 2002:ac2:51ad:0:b0:4e0:a426:6ddc with SMTP id f13-20020ac251ad000000b004e0a4266ddcmr776070lfk.0.1685117434326;
-        Fri, 26 May 2023 09:10:34 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id y16-20020ac255b0000000b004eed8de597csm679541lfg.32.2023.05.26.09.10.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 May 2023 09:10:33 -0700 (PDT)
-Date:   Fri, 26 May 2023 18:10:32 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Alexander Duyck <alexanderduyck@fb.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jiri Benc <jbenc@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: fix signedness bug in
- skb_splice_from_iter()
-Message-ID: <ZHDZ+G51wKK3/XMi@nanopsycho>
-References: <366861a7-87c8-4bbf-9101-69dd41021d07@kili.mountain>
+        Sat, 27 May 2023 03:36:37 -0400
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B113DBC
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 May 2023 00:36:34 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 2oTXqn1098aX92oTYqO5DH; Sat, 27 May 2023 09:36:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1685172992;
+        bh=jfcq+JgA5tqsNjhJdIRr8u+hc7+NPdvjx/XHhop2/Is=;
+        h=From:To:Cc:Subject:Date;
+        b=oP99AC7iTJ4UihSNEW/pzpRz9iPotcP9k/mZw954h9q8LA73LTHHJczpFnk/qBRMl
+         lTgFns4cYPAN0ZS5x6mLvkGA9aHf/LGVs7PHK1WyQ8FgT/PZKljP8D+qV/VWCj7u1O
+         y5T3byDZuJIiQbpJBgaR92HwVRQk/zMZXh293hilGGGDolrRYqEnnUFkcBH4y5uhzX
+         OtG9D7FE7fw1Hosi0RDUdPhpi8F+sq2tb94BpW43lwxRQvXp28WrHCZ0geIHiwbcMM
+         EjqY4iW+4nNJFKZbDd+TQdHrgZQFQnnyLnhnvL8JjrLtwL1J2V7JuMPHNCPcY7yrnF
+         Pe4WX+B0QtlnA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 27 May 2023 09:36:32 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     vkoul@kernel.org
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2] dmaengine: mcf-edma: Fix a potential un-allocated memory access
+Date:   Sat, 27 May 2023 09:36:31 +0200
+Message-Id: <f55d914407c900828f6fad3ea5fa791a5f17b9a4.1685172449.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <366861a7-87c8-4bbf-9101-69dd41021d07@kili.mountain>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fri, May 26, 2023 at 03:39:15PM CEST, dan.carpenter@linaro.org wrote:
->The "len" variable needs to be signed for the error handling to work
->correctly.
->
->Fixes: 2e910b95329c ("net: Add a function to splice pages into an skbuff for MSG_SPLICE_PAGES")
->Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+When 'mcf_edma' is allocated, some space is allocated for a
+flexible array at the end of the struct. 'chans' item are allocated, that is
+to say 'pdata->dma_channels'.
 
-Reviewed-by: Jiri Pirko <jiri@nvidia.com>
+Then, this number of item is stored in 'mcf_edma->n_chans'.
+
+A few lines later, if 'mcf_edma->n_chans' is 0, then a default value of 64
+is set.
+
+This ends to no space allocated by devm_kzalloc() because chans was 0, but
+64 items are read and/or written in some not allocated memory.
+
+Change the logic to define a default value before allocating the memory.
+
+Fixes: e7a3ff92eaf1 ("dmaengine: fsl-edma: add ColdFire mcf5441x edma support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If I'm correct, then:
+
+   - the default value is hard-coded as 64. There is also a
+        #define EDMA_CHANNELS 64
+     which maybe could be used, or renamed as EDMA_DEFAULT_CHANNELS
+
+   - mcf_edma_err_handler() looks bogus, because it considers that
+     mcf_edma->chans has EDMA_CHANNELS items.
+     I guess that something related to mcf_edma->n_chans is what is
+     expected, but how should this be done?
+
+Maybe, the EDMA_CHANNELS value should be used all the time?
+Maybe, the number of chans should be limited to EDMA_CHANNELS?
+Maybe, the number of chans should be at least EDMA_CHANNELS?
+
+Maybe, maybe, maybe, but me, I don't know :(
+
+All I know is that this patch compiles :)
+and that it can gives Dan an idea for smatch for checking access to un-allocated
+memory related to flexible array :)
+
+
+v2: I forgot the subject in v1...
+---
+ drivers/dma/mcf-edma.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/dma/mcf-edma.c b/drivers/dma/mcf-edma.c
+index ebd8733f72ad..9413fad08a60 100644
+--- a/drivers/dma/mcf-edma.c
++++ b/drivers/dma/mcf-edma.c
+@@ -190,7 +190,13 @@ static int mcf_edma_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	chans = pdata->dma_channels;
++	if (!pdata->dma_channels) {
++		dev_info(&pdev->dev, "setting default channel number to 64");
++		chans = 64;
++	} else {
++		chans = pdata->dma_channels;
++	}
++
+ 	len = sizeof(*mcf_edma) + sizeof(*mcf_chan) * chans;
+ 	mcf_edma = devm_kzalloc(&pdev->dev, len, GFP_KERNEL);
+ 	if (!mcf_edma)
+@@ -202,11 +208,6 @@ static int mcf_edma_probe(struct platform_device *pdev)
+ 	mcf_edma->drvdata = &mcf_data;
+ 	mcf_edma->big_endian = 1;
+ 
+-	if (!mcf_edma->n_chans) {
+-		dev_info(&pdev->dev, "setting default channel number to 64");
+-		mcf_edma->n_chans = 64;
+-	}
+-
+ 	mutex_init(&mcf_edma->fsl_edma_mutex);
+ 
+ 	mcf_edma->membase = devm_platform_ioremap_resource(pdev, 0);
+-- 
+2.34.1
+
