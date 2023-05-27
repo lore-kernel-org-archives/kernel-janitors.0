@@ -2,98 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47936C77B73
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 May 2023 07:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989F7C77B73
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 May 2023 15:49:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232081AbjE0HoH (ORCPT
+        id S232575AbjE0PtH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 May 2023 03:44:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
+        Sat, 27 May 2023 11:49:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237518AbjE0Hnz (ORCPT
+        with ESMTP id S232655AbjE0PtG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 May 2023 03:43:55 -0400
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8FD1E4E
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 May 2023 00:43:51 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 2oabqe6Y9wiD92oabqxMKz; Sat, 27 May 2023 09:43:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685173430;
-        bh=uyWOW8D3AJ7mCDV73zgAucJmFUmSlFpt34Ibvt6so7E=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=IyYZWLsKeM7pci4vGAotaHENz1XD92Y+YzWdHMd5zMr2yMgsopzM71wMcgKP8YPa8
-         W0uZlB9NOJ4W6ZoERcALcmwnDOWhwTNtyMIU1HCdxhnaBy1AGBTug1qfkEuUa21Jl0
-         9wIVN3y4IBL2ZmCNXQQZ9UXyH4SCj+um104csw8OMX1MNi2rUV88ccfohrzVMFoS2S
-         8g+Pn3S3yHAwTLANQ/a48bDVHmAQczSgwNz+hhuhSotYD6ktyXsEU97xnVMD0/HJPV
-         9pf5JwbDVRGjEwmD1n2lsP4rOCXh0BgBVjW6tBqJ1QLEeJob5YTk0C+lDEb2hDAz+E
-         mz1hH2EYNBUIQ==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 27 May 2023 09:43:50 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <963bad8f-11d7-ce02-ad01-d925a4ac8771@wanadoo.fr>
-Date:   Sat, 27 May 2023 09:43:49 +0200
+        Sat, 27 May 2023 11:49:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59BF2E4
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 May 2023 08:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685202493;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X/O1MpqEOZzuixz/P/whtACWNhl6nb37DODJ17M4M+Q=;
+        b=h3cBppVlVyrCEraas7Gc4PnT1nR/YL0GFmLj0i/57Fmdn4sfVDHNJYl4W/Ircb5x3lki41
+        E6GzmKYs2uTiZVI06V/Kb22ndoi1NV2zjqzNktuzXqM00LZ/CO+dkqPNpX0YXCw2cv/ok7
+        k5N64TiPm8z0WaWQpVdbuFmre53t7nY=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-199-GLAp32OMMz-n-DexjxD2Xg-1; Sat, 27 May 2023 11:48:12 -0400
+X-MC-Unique: GLAp32OMMz-n-DexjxD2Xg-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-96fa4c724fdso321982066b.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 May 2023 08:48:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685202491; x=1687794491;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X/O1MpqEOZzuixz/P/whtACWNhl6nb37DODJ17M4M+Q=;
+        b=AVRAOyCTcd9hVVULlukhHPIGbRRbWBWilEiRFxUU4DEGzsoslgmyspioNpCwF3bPVx
+         EaAuEKWkxd8k1HEw6dDbfiZhiymPtcZKyPKIZmrAj0x9vvYyQQ1qDTGsyMXB69A5IBP0
+         kXIXw4ABO2gdRi/G3X2YgCbNQfAWUO9L6aKuy4r7uiQc0HKpKUVVx8XLI25NVufsIg8L
+         tomBp7WZH5wMEtI2kZtvTo03pV3o1zjB6JTOqOP32uqX6J7Lj6929Ck4zKshKpUQGhRe
+         2XPde7DWW9DIOKVLGmYTQ/oQ72ZdNN7f1Ayr3ENtBWFof/gWi2IfaDwFNEVaWQ2TusoD
+         UYGQ==
+X-Gm-Message-State: AC+VfDzGRDYAFhWA3W3pPbInh/0JtnKDldn7D59zKzUJFz/pPwbcrHF1
+        mfLZBI8R855lxx9z6V+r7BedTae8Do7j9f02uEPuWAek+DMiUJnbzYfTicQCPjla8u46zpebs+R
+        4DPCSwHcmjV+qdeoyx5AzgmBwaNWl
+X-Received: by 2002:a17:906:ef05:b0:96f:7d0a:5981 with SMTP id f5-20020a170906ef0500b0096f7d0a5981mr1896896ejs.36.1685202491177;
+        Sat, 27 May 2023 08:48:11 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7v1grDXcy8stnhzDrUAF04Y8v8KpvQLbkSsVjAvB5J6Zm36T78KzlGZMg+Pbaa2c+xPuxebw==
+X-Received: by 2002:a17:906:ef05:b0:96f:7d0a:5981 with SMTP id f5-20020a170906ef0500b0096f7d0a5981mr1896883ejs.36.1685202490920;
+        Sat, 27 May 2023 08:48:10 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id bh1-20020a170906a0c100b00965f6ad266bsm3530345ejb.119.2023.05.27.08.48.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 27 May 2023 08:48:10 -0700 (PDT)
+Message-ID: <d8e5d438-16d8-64ca-d856-a11de6e9ba45@redhat.com>
+Date:   Sat, 27 May 2023 17:48:09 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] When 'mcf_edma' is allocated, some space is allocated for
- a flexible array at the end of the struct. 'chans' item are allocated, that
- is to say 'pdata->dma_channels'.
-To:     vkoul@kernel.org
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <f55d9154b7c600828f6fad3ea5fa791a5f17b9a4.1685172449.git.christophe.jaillet@wanadoo.fr>
-Content-Language: fr
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f55d9154b7c600828f6fad3ea5fa791a5f17b9a4.1685172449.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] media: atomisp: gmin_platform: fix out_len in
+ gmin_get_config_dsm_var()
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ard Biesheuvel <ardb@kernel.org>, linux-media@vger.kernel.org,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
+References: <26124bcd-8132-4483-9d67-225c87d424e8@kili.mountain>
+Content-Language: en-US, nl
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <26124bcd-8132-4483-9d67-225c87d424e8@kili.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 27/05/2023 à 09:32, Christophe JAILLET a écrit :
-> Then, this number of item is stored in 'mcf_edma->n_chans'.
-> 
-> A few lines later, if 'mcf_edma->n_chans' is 0, then a default value of 64
-> is set.
-> 
-> This ends to no space allocated by devm_kzalloc() because chans was 0, but
-> 64 items are read and/or written in some not allocated memory.
-> 
-> Change the logic to define a default value before allocating the memory.
-> 
-> Fixes: e7a3ff92eaf1 ("dmaengine: fsl-edma: add ColdFire mcf5441x edma support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> If I'm correct, then:
-> 
->     - the default value is hard-coded as 64. There is also a
->          #define EDMA_CHANNELS 64
->       which maybe could be used, or renamed as EDMA_DEFAULT_CHANNELS
-> 
->     - mcf_edma_err_handler() looks bogus, because it considers that
->       mcf_edma->chans has EDMA_CHANNELS items.
->       I guess that something related to mcf_edma->n_chans is what is
->       expected, but how should this be done?
-> 
-> Maybe, the EDMA_CHANNELS value should be used all the time?
-> Maybe, the number of chans should be limited to EDMA_CHANNELS?
-> Maybe, the number of chans should be at least EDMA_CHANNELS?
-> 
-> Maybe, maybe, maybe, but me, I don't know :(
-> 
-> All I know is that this patch compiles :)
-> and that it can gives Dan an idea for smatch for checking access to un-allocated
-> memory related to flexible array :)
-> ---
->   drivers/dma/mcf-edma.c | 13 +++++++------
->   1 file changed, 7 insertions(+), 6 deletions(-)
-> 
+Hi,
 
-NAK, subject line missing.
+On 5/26/23 13:53, Dan Carpenter wrote:
+> Ideally, strlen(cur->string.pointer) and strlen(out) would be the same.
+> But this code is using strscpy() to avoid a potential buffer overflow.
+> So in the same way we should take the strlen() of the smaller string to
+> avoid a buffer overflow in the caller, gmin_get_var_int().
+> 
+> Fixes: 387041cda44e ("media: atomisp: improve sensor detection code to use _DSM table")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-A better V2 has been sent.
+Thank you I have applied this to my media-atomisp branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git/log/?h=media-atomisp
+
+And this will be included in my next pull-req to Mauro
+for merging this into the linux-media tree.
+
+Regards,
+
+Hans
+
+
+
+
+> ---
+>  drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+> index c718a74ea70a..88d4499233b9 100644
+> --- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+> +++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+> @@ -1357,7 +1357,7 @@ static int gmin_get_config_dsm_var(struct device *dev,
+>  	dev_info(dev, "found _DSM entry for '%s': %s\n", var,
+>  		 cur->string.pointer);
+>  	strscpy(out, cur->string.pointer, *out_len);
+> -	*out_len = strlen(cur->string.pointer);
+> +	*out_len = strlen(out);
+>  
+>  	ACPI_FREE(obj);
+>  	return 0;
 
