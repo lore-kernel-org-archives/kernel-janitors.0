@@ -2,47 +2,48 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E06C0C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Sun, 28 May 2023 14:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE76C7EE31
+	for <kernel-janitors@archiver.kernel.org>; Sun, 28 May 2023 16:20:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229616AbjE1OMB (ORCPT
+        id S229461AbjE1QUd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 28 May 2023 10:12:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60242 "EHLO
+        Sun, 28 May 2023 12:20:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbjE1OMA (ORCPT
+        with ESMTP id S229528AbjE1QUc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 28 May 2023 10:12:00 -0400
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27DC9BD
-        for <kernel-janitors@vger.kernel.org>; Sun, 28 May 2023 07:11:58 -0700 (PDT)
+        Sun, 28 May 2023 12:20:32 -0400
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EDEDBE
+        for <kernel-janitors@vger.kernel.org>; Sun, 28 May 2023 09:20:31 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 3H7jq4uCWZO7A3H7jqkgSo; Sun, 28 May 2023 16:11:56 +0200
+        id 3J87qJcsWrDwx3J87qjZRk; Sun, 28 May 2023 18:20:29 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685283116;
-        bh=y3+xzWyNMJI6Fo1vf7HM2FwwEMDemy6nUMbYmtfSJAo=;
+        s=t20230301; t=1685290829;
+        bh=a2vlfOS/zd156pwgWbEvLCkl+o6nZ4EPHRWlCYI1/Dc=;
         h=From:To:Cc:Subject:Date;
-        b=MkqYroq869dWCNPUaGO8IPR2Eei6nlkHrBoAFM8ZtoR7LOZesAA/wfZThpcPpNDA0
-         APsGbRNmo+0lERhGQ4/FjUenENWDqx4vGreOPNIxs4kcdqVrkGP1olHL+qIIwLKN82
-         N+BMfwz78eTUdtkQMesHOA5mhVy+8Bevnp/ND9tWOxcLbwhfMdt7fpho2vY9KPyv8o
-         gjdbB3+OsaRuThkxSvxhQtBdpWp7Qr3KU7I/VS/gqp8DP7RhOwDnb6dOMzdZdd8pDz
-         FcqL/aijEt0h12vC6pT/Ywxtb9nufUKaty2CLRlDyIrSOsYEr5tLh99CXD2LbNo4Rf
-         o7YxqqMVgcqMQ==
+        b=KVeczUZ2SyAWnA9n3+aJnOifGCiTgEBfhm1Wso9EJlktFte7I/K8YRWaX0PD1LAA+
+         TyZ45qzvlxznn3FHzzU/LgAHEWWLn5J1J/FW9lQFLfhvBA0W+f/l2ZD5tz2osdtA0x
+         Rnzuzet0WwEtNtln/r545IpoMMkikmB/3McAaG56VrZucC2AFhJN8xHSvcCce5aDU0
+         kdMGUJzsigwyY+rtfN2seE6H1bMQFwOB248InKFtDuqb5TAvEqi/l4PGejxwsz8Hwl
+         CHwz7QDQcX+mOs3cme9JFRxThY7U6uqMBO1tMEipxYN4CAgH/WOy+9Tcc2IRhAjSne
+         iXOfKYaNp6gfw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 28 May 2023 16:11:56 +0200
+X-ME-Date: Sun, 28 May 2023 18:20:29 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Fenghua Yu <fenghua.yu@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Vinod Koul <vkoul@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH] dmaengine: idxd: No need to clear memory after a dma_alloc_coherent() call
-Date:   Sun, 28 May 2023 16:11:54 +0200
-Message-Id: <f44be04317387f8936d31d5470963541615f30ef.1685283065.git.christophe.jaillet@wanadoo.fr>
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH 1/2] binfmt: Use struct_size()
+Date:   Sun, 28 May 2023 18:20:24 +0200
+Message-Id: <53150beae5dc04dac513dba391a2e4ae8696a7f3.1685290790.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,27 +51,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-dma_alloc_coherent() already clear the allocated memory, there is no need
-to explicitly call memset().
+Use struct_size() instead of hand-writing it. It is less verbose, more
+robust and more informative.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/dma/idxd/device.c | 2 --
- 1 file changed, 2 deletions(-)
+Compile tested on arm
+---
+ fs/binfmt_elf_fdpic.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
-index 5abbcc61c528..7c74bc60f582 100644
---- a/drivers/dma/idxd/device.c
-+++ b/drivers/dma/idxd/device.c
-@@ -786,8 +786,6 @@ static int idxd_device_evl_setup(struct idxd_device *idxd)
- 		goto err_alloc;
- 	}
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index d76ad3d4f676..237ce388d06d 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -748,7 +748,6 @@ static int elf_fdpic_map_file(struct elf_fdpic_params *params,
+ 	struct elf32_phdr *phdr;
+ 	unsigned long load_addr, stop;
+ 	unsigned nloads, tmp;
+-	size_t size;
+ 	int loop, ret;
  
--	memset(addr, 0, size);
--
- 	spin_lock(&evl->lock);
- 	evl->log = addr;
- 	evl->dma = dma_addr;
+ 	/* allocate a load map table */
+@@ -760,8 +759,7 @@ static int elf_fdpic_map_file(struct elf_fdpic_params *params,
+ 	if (nloads == 0)
+ 		return -ELIBBAD;
+ 
+-	size = sizeof(*loadmap) + nloads * sizeof(*seg);
+-	loadmap = kzalloc(size, GFP_KERNEL);
++	loadmap = kzalloc(struct_size(loadmap, segs, nloads), GFP_KERNEL);
+ 	if (!loadmap)
+ 		return -ENOMEM;
+ 
 -- 
 2.34.1
 
