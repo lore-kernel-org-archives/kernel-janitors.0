@@ -2,51 +2,47 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CDCC77B7C
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 May 2023 19:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E06C0C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Sun, 28 May 2023 14:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230434AbjE0TkS (ORCPT
+        id S229616AbjE1OMB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 May 2023 15:40:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46996 "EHLO
+        Sun, 28 May 2023 10:12:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbjE0TkQ (ORCPT
+        with ESMTP id S229565AbjE1OMA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 May 2023 15:40:16 -0400
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 555BFBE
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 May 2023 12:40:14 -0700 (PDT)
+        Sun, 28 May 2023 10:12:00 -0400
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27DC9BD
+        for <kernel-janitors@vger.kernel.org>; Sun, 28 May 2023 07:11:58 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 2zlqqt6LYzb8g2zlqqY7Te; Sat, 27 May 2023 21:40:12 +0200
+        id 3H7jq4uCWZO7A3H7jqkgSo; Sun, 28 May 2023 16:11:56 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685216412;
-        bh=VKthlyn9E+U4rCBy7ij6kRftfxuaXpwhoHRrC4eHBog=;
+        s=t20230301; t=1685283116;
+        bh=y3+xzWyNMJI6Fo1vf7HM2FwwEMDemy6nUMbYmtfSJAo=;
         h=From:To:Cc:Subject:Date;
-        b=mG4kTaBcbdVgJxb642fw9xT4sANB4RsAO2haUtUX9fe7eNV41iuffXUFBlfXvzRCa
-         xm5NRBMB1GSBRPb0Kb6/cY2F/Ikzq99aceXqkcXapTgNDYe5awbRfSTnYi3BRMtJ+u
-         7XXWgSEo+20gE6IjEEIEAJ7tjBM8EWA+AQrD2uGJ9o9iBSr0mN/cssERJj15ZgwBiB
-         WWZNRBYsoYGlEarqTmPGoCmdocT5A6ohz/htXTajhFihPOvw7XoSZZmU7IFZ1ZHr8y
-         y1fDYxAo0fnLkBX5B1ctnql9gHDL2Cy+rrplV+XFhX4UpwN3Q9N/1NWzuXs+fYc0q+
-         cNnm/rZj5BovA==
+        b=MkqYroq869dWCNPUaGO8IPR2Eei6nlkHrBoAFM8ZtoR7LOZesAA/wfZThpcPpNDA0
+         APsGbRNmo+0lERhGQ4/FjUenENWDqx4vGreOPNIxs4kcdqVrkGP1olHL+qIIwLKN82
+         N+BMfwz78eTUdtkQMesHOA5mhVy+8Bevnp/ND9tWOxcLbwhfMdt7fpho2vY9KPyv8o
+         gjdbB3+OsaRuThkxSvxhQtBdpWp7Qr3KU7I/VS/gqp8DP7RhOwDnb6dOMzdZdd8pDz
+         FcqL/aijEt0h12vC6pT/Ywxtb9nufUKaty2CLRlDyIrSOsYEr5tLh99CXD2LbNo4Rf
+         o7YxqqMVgcqMQ==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 27 May 2023 21:40:12 +0200
+X-ME-Date: Sun, 28 May 2023 16:11:56 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Derek Chickles <dchickles@marvell.com>,
-        Satanand Burla <sburla@marvell.com>,
-        Felix Manlunas <fmanlunas@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
+To:     Fenghua Yu <fenghua.yu@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Vinod Koul <vkoul@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH net-next] liquidio: Use vzalloc()
-Date:   Sat, 27 May 2023 21:40:08 +0200
-Message-Id: <93b010824d9d92376e8d49b9eb396a0fa0c0ac80.1685216322.git.christophe.jaillet@wanadoo.fr>
+        dmaengine@vger.kernel.org
+Subject: [PATCH] dmaengine: idxd: No need to clear memory after a dma_alloc_coherent() call
+Date:   Sun, 28 May 2023 16:11:54 +0200
+Message-Id: <f44be04317387f8936d31d5470963541615f30ef.1685283065.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,51 +50,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use vzalloc() instead of hand writing it with vmalloc()+memset().
-This is less verbose.
+dma_alloc_coherent() already clear the allocated memory, there is no need
+to explicitly call memset().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 4 +---
- drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/dma/idxd/device.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-index 9ed3d1ab2ca5..285d3825cad3 100644
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-@@ -719,12 +719,10 @@ static int cn23xx_setup_pf_mbox(struct octeon_device *oct)
- 	for (i = 0; i < oct->sriov_info.max_vfs; i++) {
- 		q_no = i * oct->sriov_info.rings_per_vf;
+diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
+index 5abbcc61c528..7c74bc60f582 100644
+--- a/drivers/dma/idxd/device.c
++++ b/drivers/dma/idxd/device.c
+@@ -786,8 +786,6 @@ static int idxd_device_evl_setup(struct idxd_device *idxd)
+ 		goto err_alloc;
+ 	}
  
--		mbox = vmalloc(sizeof(*mbox));
-+		mbox = vzalloc(sizeof(*mbox));
- 		if (!mbox)
- 			goto free_mbox;
- 
--		memset(mbox, 0, sizeof(struct octeon_mbox));
+-	memset(addr, 0, size);
 -
- 		spin_lock_init(&mbox->lock);
- 
- 		mbox->oct_dev = oct;
-diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-index fda49404968c..b3bd2767d3dd 100644
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-@@ -279,12 +279,10 @@ static int cn23xx_setup_vf_mbox(struct octeon_device *oct)
- {
- 	struct octeon_mbox *mbox = NULL;
- 
--	mbox = vmalloc(sizeof(*mbox));
-+	mbox = vzalloc(sizeof(*mbox));
- 	if (!mbox)
- 		return 1;
- 
--	memset(mbox, 0, sizeof(struct octeon_mbox));
--
- 	spin_lock_init(&mbox->lock);
- 
- 	mbox->oct_dev = oct;
+ 	spin_lock(&evl->lock);
+ 	evl->log = addr;
+ 	evl->dma = dma_addr;
 -- 
 2.34.1
 
