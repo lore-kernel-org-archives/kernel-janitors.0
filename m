@@ -2,178 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A5AC77B7A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 11:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA762C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 13:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230340AbjE2Lh0 (ORCPT
+        id S229750AbjE2N2N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 May 2023 07:37:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58944 "EHLO
+        Mon, 29 May 2023 09:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjE2LhZ (ORCPT
+        with ESMTP id S229796AbjE2N2M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 May 2023 07:37:25 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06D51B3
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 04:36:47 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f60804faf4so20126075e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 04:36:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685360162; x=1687952162;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w/urOUHJPIKnLFNjMtmkB4N3xW2SaZY6xqW4O6ymt0M=;
-        b=sDaMNLqT8/P/xE2h/h5b3Ms4tPQW6X8UsvXq3htM8liMtCXFc+p4MUGdc7d3I9w7/5
-         QCAeSQUG60Vy3hREYdDUWHSZ4UXvcY9LE/hIox+0r6M17vTySYzSJ99Rs2A5gqNm8tYp
-         Nu6A/rP72UgOev9zeLiwgfA7hgn/4IdW4+DJZ/W7XPQP2tpFDZK0ryQhx1F90aw7Zk0D
-         g0EIum7MB1LKuV/6zmzU01DH0LqufOBjOj2E4s4sAu8eROeoICctuiEN4vmeOVflKBWi
-         b7F3f22TYwul1dBW5el/87YzeE8+a6AUQ4AYMOzYVeNeB0ZhXxOQyTWcTSPqnSV8NEBg
-         SynA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685360162; x=1687952162;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w/urOUHJPIKnLFNjMtmkB4N3xW2SaZY6xqW4O6ymt0M=;
-        b=cSir1t6JCwa/4fWrjlUNPnqn3QolNVuzWeRHUOkPEnNc1K+/9LPTvmhdZrZVBMFVEI
-         Wm91yFmvXX3ePjHcUS4JBSxKsG72sslHgPU+QokWG4ABIKcOrgsbv19TnXfxlET7/zAA
-         nNtZLhrH7g0Zd391X2AJxQ2vpBs1Ae2+qBZ9glqhLGhJD/Dya8Qh/WC36iIERRyBPRPx
-         RNZI8b4o1fduvHOkVvOMi0ZC3WKGupHYwk0KBjSVZ4Ga3VZZokugPBKj3rfOC0/OFM3H
-         4/Mx5ZNk9mGXVz/ISfpaP1AUWzhfwmz7GVLf93/ZwPPvZOCcTza0mFLYtLi+7EQfXj54
-         ervQ==
-X-Gm-Message-State: AC+VfDyHhy8AZYf2ogb10F0OAIcw7AVLzfEhYn5TKqQHwLIvM7cO8G8C
-        8GLnwWkIPpv0xjWHkESsa1elnQ==
-X-Google-Smtp-Source: ACHHUZ4Xp7Ie0fG+BLijqglWXvK8WUkmxqKCXYVeFoVJ6u31XJEKq+4EKbavvAfXtoy6UhJLxIITiQ==
-X-Received: by 2002:a7b:cb98:0:b0:3f6:e42:8f93 with SMTP id m24-20020a7bcb98000000b003f60e428f93mr8682186wmi.11.1685360161884;
-        Mon, 29 May 2023 04:36:01 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id u5-20020a05600c00c500b003f0ad8d1c69sm17514712wmm.25.2023.05.29.04.35.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 May 2023 04:35:59 -0700 (PDT)
-Date:   Mon, 29 May 2023 14:35:55 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Stanislav Kinsbursky <skinsbursky@parallels.com>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] nfsd: fix double fget() bug in __write_ports_addfd()
-Message-ID: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>
+        Mon, 29 May 2023 09:28:12 -0400
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDFC2A7
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 06:28:09 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 3curqP39nbOsk3curqbTYb; Mon, 29 May 2023 15:28:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1685366887;
+        bh=8jgS5F8T526jeYM/4dx15aEEqAiDrCFfIRkSTI7woqQ=;
+        h=From:To:Cc:Subject:Date;
+        b=B1CYNAU5uH+zmapITZq52yzJm53tatvYvMoVN94JNW5oCzjeueGEMalpu1Bo+SQfb
+         Y3kQLtegL41jHSu1+SQh9c7l4c949VyIPcCo+AOO/ayW6f33RmhiWBMBk4tSP8ViPM
+         6ySkrEY3GBWekUIBp9+I67G6KwVC4WB8dRvocF6dKizbtpjjctbnlIq6fe09ijEoFI
+         VYmhDpdU64IivgTJbognPSyAQBWqQjbGXkbD7OyAGhOh/J6zoLG2FEyGwGDmLaF3wm
+         DTcVDAxIM4uLtzJeEnBU1LYwenDgu2AGtvVCBryFVg5RczCdduOArwj0b3Qrkr+IIb
+         l66aNe9gB5F2w==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 29 May 2023 15:28:07 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+        Oded Gabbay <ogabbay@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH] accel/ivpu: Use struct_size()
+Date:   Mon, 29 May 2023 15:28:04 +0200
+Message-Id: <0ae53be873c27c9a8740c4fe6d8e7cd1b1224994.1685366864.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The bug here is that you cannot rely on getting the same socket
-from multiple calls to fget() because userspace can influence
-that.  This is a kind of double fetch bug.
+Use struct_size() instead of hand-writing it. It is less verbose, more
+robust and more informative.
 
-The fix is to delete the svc_alien_sock() function and insted do
-the checking inside the svc_addsock() function.
-
-Fixes: 3064639423c4 ("nfsd: check passed socket's net matches NFSd superblock's one")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Based on static analysis and untested.  This goes through the NFS tree. 
-Inspired by CVE-2023-1838.
+ drivers/accel/ivpu/ivpu_job.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- include/linux/sunrpc/svcsock.h |  7 +++----
- fs/nfsd/nfsctl.c               |  7 +------
- net/sunrpc/svcsock.c           | 23 +++++------------------
- 3 files changed, 9 insertions(+), 28 deletions(-)
-
-diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
-index d16ae621782c..a7116048a4d4 100644
---- a/include/linux/sunrpc/svcsock.h
-+++ b/include/linux/sunrpc/svcsock.h
-@@ -61,10 +61,9 @@ int		svc_recv(struct svc_rqst *, long);
- void		svc_send(struct svc_rqst *rqstp);
- void		svc_drop(struct svc_rqst *);
- void		svc_sock_update_bufs(struct svc_serv *serv);
--bool		svc_alien_sock(struct net *net, int fd);
--int		svc_addsock(struct svc_serv *serv, const int fd,
--					char *name_return, const size_t len,
--					const struct cred *cred);
-+int		svc_addsock(struct svc_serv *serv, struct net *net,
-+			    const int fd, char *name_return, const size_t len,
-+			    const struct cred *cred);
- void		svc_init_xprt_sock(void);
- void		svc_cleanup_xprt_sock(void);
- struct svc_xprt *svc_sock_create(struct svc_serv *serv, int prot);
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index e0e98b40a6e5..1489e0b703b4 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -698,16 +698,11 @@ static ssize_t __write_ports_addfd(char *buf, struct net *net, const struct cred
- 		return -EINVAL;
- 	trace_nfsd_ctl_ports_addfd(net, fd);
- 
--	if (svc_alien_sock(net, fd)) {
--		printk(KERN_ERR "%s: socket net is different to NFSd's one\n", __func__);
--		return -EINVAL;
--	}
--
- 	err = nfsd_create_serv(net);
- 	if (err != 0)
- 		return err;
- 
--	err = svc_addsock(nn->nfsd_serv, fd, buf, SIMPLE_TRANSACTION_LIMIT, cred);
-+	err = svc_addsock(nn->nfsd_serv, net, fd, buf, SIMPLE_TRANSACTION_LIMIT, cred);
- 
- 	if (err >= 0 &&
- 	    !nn->nfsd_serv->sv_nrthreads && !xchg(&nn->keep_active, 1))
-diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-index 46845cb6465d..e4184e40793c 100644
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -1474,22 +1474,6 @@ static struct svc_sock *svc_setup_socket(struct svc_serv *serv,
- 	return svsk;
- }
- 
--bool svc_alien_sock(struct net *net, int fd)
--{
--	int err;
--	struct socket *sock = sockfd_lookup(fd, &err);
--	bool ret = false;
--
--	if (!sock)
--		goto out;
--	if (sock_net(sock->sk) != net)
--		ret = true;
--	sockfd_put(sock);
--out:
--	return ret;
--}
--EXPORT_SYMBOL_GPL(svc_alien_sock);
--
- /**
-  * svc_addsock - add a listener socket to an RPC service
-  * @serv: pointer to RPC service to which to add a new listener
-@@ -1502,8 +1486,8 @@ EXPORT_SYMBOL_GPL(svc_alien_sock);
-  * Name is terminated with '\n'.  On error, returns a negative errno
-  * value.
-  */
--int svc_addsock(struct svc_serv *serv, const int fd, char *name_return,
--		const size_t len, const struct cred *cred)
-+int svc_addsock(struct svc_serv *serv, struct net *net, const int fd,
-+		char *name_return, const size_t len, const struct cred *cred)
+diff --git a/drivers/accel/ivpu/ivpu_job.c b/drivers/accel/ivpu/ivpu_job.c
+index 3c6f1e16cf2f..0a09bba8da24 100644
+--- a/drivers/accel/ivpu/ivpu_job.c
++++ b/drivers/accel/ivpu/ivpu_job.c
+@@ -289,15 +289,13 @@ ivpu_create_job(struct ivpu_file_priv *file_priv, u32 engine_idx, u32 bo_count)
  {
- 	int err = 0;
- 	struct socket *so = sockfd_lookup(fd, &err);
-@@ -1514,6 +1498,9 @@ int svc_addsock(struct svc_serv *serv, const int fd, char *name_return,
+ 	struct ivpu_device *vdev = file_priv->vdev;
+ 	struct ivpu_job *job;
+-	size_t buf_size;
+ 	int ret;
  
- 	if (!so)
- 		return err;
-+	err = -EINVAL;
-+	if (sock_net(so->sk) != net)
-+		goto out;
- 	err = -EAFNOSUPPORT;
- 	if ((so->sk->sk_family != PF_INET) && (so->sk->sk_family != PF_INET6))
- 		goto out;
+ 	ret = ivpu_rpm_get(vdev);
+ 	if (ret < 0)
+ 		return NULL;
+ 
+-	buf_size = sizeof(*job) + bo_count * sizeof(struct ivpu_bo *);
+-	job = kzalloc(buf_size, GFP_KERNEL);
++	job = kzalloc(struct_size(job, bos, bo_count), GFP_KERNEL);
+ 	if (!job)
+ 		goto err_rpm_put;
+ 
 -- 
-2.39.2
+2.34.1
 
