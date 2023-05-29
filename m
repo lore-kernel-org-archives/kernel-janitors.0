@@ -2,46 +2,47 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25648C7EE29
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 06:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA8CC7EE23
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 06:22:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231493AbjE2GSS (ORCPT
+        id S231520AbjE2GWL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 May 2023 02:18:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46542 "EHLO
+        Mon, 29 May 2023 02:22:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231460AbjE2GSP (ORCPT
+        with ESMTP id S229692AbjE2GWK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 May 2023 02:18:15 -0400
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64421107
-        for <kernel-janitors@vger.kernel.org>; Sun, 28 May 2023 23:17:49 -0700 (PDT)
+        Mon, 29 May 2023 02:22:10 -0400
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2218492
+        for <kernel-janitors@vger.kernel.org>; Sun, 28 May 2023 23:22:08 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 3WC0q1f0vZvWO3WC0qfklE; Mon, 29 May 2023 08:17:22 +0200
+        id 3WGaqT3FDsdVE3WGaqliG4; Mon, 29 May 2023 08:22:06 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685341042;
-        bh=LMsxEc3jzv9WRfxtgBWJr+2up3zRX/dSTarm2zC7inQ=;
+        s=t20230301; t=1685341326;
+        bh=heLRroh3CNUr9htV1zv4nneIJNvGBNjdwo/3UP94dsE=;
         h=From:To:Cc:Subject:Date;
-        b=gi6/9Y3BHoprXzB1QmpY0l7JSneYVDhaJtKS42KT08OOYih3CNQZe2o+xGWLGGQ2P
-         IPizhyvuUSVqgUfgccbqmgypYzMDED6uDiO+Fjk4/bwv86QtekVzH62640Gzqf4Wjb
-         sTqcTCXDneuOqmYJYJJy2hKGfV5w6Y+xHJBetUzkN4Jp0mVLH8HuQQvSioZdQ1X9hA
-         k+cyRePBjlmwiobd5KDUWdqgdOGZ6ItqpNdoFvtEiRP+C8aOIdTek0LoL81tdjB/Dh
-         ssOZLKRDkpfqIndPScmjh67ONpCxVdqNP1C0WwmXqq5X9DhRrGthC+eB+BbDuAWPYt
-         n+04tTi8+jGsQ==
+        b=btPa7tEYR3wji3B48+qtsDvNhW+06Wj/DppAKuqLoJKXBAOt16OnpHCx92Kpwe3z5
+         J2UuVDEpW1l+c2zCqsm3vLRGXBf78dY2HCOelqcLAV3yG9FgFexkDr2kirFpGuV/xk
+         jCIKPGp313eOanwqlzwb/ENKyu1BZE+6ocLDuLx+bkUj6yF+BWgWEQCfR+gu6r/5Hd
+         k3my2hmg3LFEAR4zDlxTl5dXwKJHWD3z+TWxsYDtJWOU0/1vB8SmH2N8/gR631u9p7
+         oFRTGBYrlE8gzBEGyH2hTjU32hr8232P8LXMrQFbRzdMWpLSrSrudpR3m5Zzu/z45s
+         GfX2z8KLQGm5A==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 29 May 2023 08:17:22 +0200
+X-ME-Date: Mon, 29 May 2023 08:22:06 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Robert Moore <robert.moore@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Len Brown <lenb@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: v4l2-core: Fix a potential resource leak in v4l2_fwnode_parse_link()
-Date:   Mon, 29 May 2023 08:17:18 +0200
-Message-Id: <2ddd10ec9e009bbb85518355f1e09e1ecd349925.1685340968.git.christophe.jaillet@wanadoo.fr>
+        linux-acpi@vger.kernel.org, acpica-devel@lists.linuxfoundation.org
+Subject: [PATCH] ACPICA: Slightly simplify an error message in acpi_ds_result_push()
+Date:   Mon, 29 May 2023 08:22:02 +0200
+Message-Id: <4464371bc72147e10a392a1873466c8df033039c.1685341309.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -49,32 +50,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'fwnode is known to be NULL, at this point, so fwnode_handle_put() is a
-no-op.
+'object' is known to be NULL at this point. There is little value to log
+it twice in the error message.
 
-Release the reference taken from a previous fwnode_graph_get_port_parent()
-call instead.
-
-Fixes: ca50c197bd96 ("[media] v4l: fwnode: Support generic fwnode for parsing standardised properties")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-/!\  THIS PATCH IS SPECULATIVE  /!\
-         review with care
----
- drivers/media/v4l2-core/v4l2-fwnode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpica/dswstate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index 049c2f2001ea..b7dd467c53fd 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -571,7 +571,7 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *fwnode,
+diff --git a/drivers/acpi/acpica/dswstate.c b/drivers/acpi/acpica/dswstate.c
+index d3841ded3a81..75338a13c802 100644
+--- a/drivers/acpi/acpica/dswstate.c
++++ b/drivers/acpi/acpica/dswstate.c
+@@ -146,8 +146,8 @@ acpi_ds_result_push(union acpi_operand_object *object,
  
- 	fwnode = fwnode_graph_get_remote_endpoint(fwnode);
- 	if (!fwnode) {
--		fwnode_handle_put(fwnode);
-+		fwnode_handle_put(link->local_node);
- 		return -ENOLINK;
+ 	if (!object) {
+ 		ACPI_ERROR((AE_INFO,
+-			    "Null Object! Obj=%p State=%p Num=%u",
+-			    object, walk_state, walk_state->result_count));
++			    "Null Object! State=%p Num=%u",
++			    walk_state, walk_state->result_count));
+ 		return (AE_BAD_PARAMETER);
  	}
  
 -- 
