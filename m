@@ -2,94 +2,170 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A901FC77B7E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 14:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A61CC7EE29
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 14:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229944AbjE2ONp convert rfc822-to-8bit (ORCPT
+        id S230019AbjE2OXx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 May 2023 10:13:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55302 "EHLO
+        Mon, 29 May 2023 10:23:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229896AbjE2ONo (ORCPT
+        with ESMTP id S229667AbjE2OXv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 May 2023 10:13:44 -0400
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C6BAD;
-        Mon, 29 May 2023 07:13:42 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-9740c1c4a24so14477966b.1;
-        Mon, 29 May 2023 07:13:42 -0700 (PDT)
+        Mon, 29 May 2023 10:23:51 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4190FA0;
+        Mon, 29 May 2023 07:23:50 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id 98e67ed59e1d1-2566e60cc5aso1217693a91.3;
+        Mon, 29 May 2023 07:23:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685370230; x=1687962230;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QqJeUFI0e/XUEdlHTY4e2wDrM7CepfDC9k/Dx+kj8ME=;
+        b=b+E42wo3vgI4jYGQ3xuQ9baGkNjBVT1Kt5aR+UQ0p2b8Fln0i8SIoxVZDgLgpfSulN
+         zsmDLiWsxJfjgX9laEEmTKAcQ0e7Vd/Raii9SNkwCEauNF19mzefCuZPT+xdNLPND9RV
+         JGd/dJ9+oSoaUtEfyoHWdZfv0FajPjkp9gCvFulxVr04ke7Gq+WWzuDQOibektfWx+Sf
+         pCKTLK7CT9RFBrdD97d6KaEQ4uc9QcI6jtWt6eCbNsqG3E6saQagHN+q9+rNtznE6Gi0
+         C+jUSLACU5VuZ0ofiuRBSy7gJlTcuiBbFrB8j95CahtlVUlG9V2YLvZM52+M3elMCvYx
+         PEFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685369621; x=1687961621;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=26NjF04cMsMDS8klff31uqLdZAIm9ImX4dVMC32z4z4=;
-        b=MfrK594lEAcfKeFD9SHcdUPlVR/+3YEOGjeaSEwnp7Y5wl3sR810uuSBPatIVg5urc
-         5Z/mk/m2ySe7lABBrbuNu8+6BhqU4UBeYVq8+qfhFK7Xdgfon9QAhwrIQWDuLsevNcAf
-         9un8HCAnHzMncfmJyCUixz/dm5ugYtwaW5xsIiJSFNOfCiHIWfK9X0TcTGZ9Fx4YfJ4J
-         ZeUAIwyb66abSKsr66kGE7sOt8bD2PLaKSjv3kSWNf3InsGVGI0fUYxsBqhEz5/gQ6vU
-         txF7d8s5EHHCquwjcCmYGn2UGwK7e3U45ZhuWMnIYnyzYUBoi4V/DO3CJYNI5zbJsAZD
-         dgkg==
-X-Gm-Message-State: AC+VfDxPeV69nNT84A/yyKb2ewXiFyfbWrgKWE7c+NDGrjTcbKFfQY1j
-        92l6KTGvvNG2Iv4lshk1BlWX7KEgN0NwTdRsgdw=
-X-Google-Smtp-Source: ACHHUZ5A5h0rdHchN5D5aqNIGja/yKWlLLcAJsn6CyLak4s9T7I/PUv8BsikHYLDTp0eTbjMk4WWFOb8fF0+s8YZG3A=
-X-Received: by 2002:a17:906:729e:b0:94f:66af:b1f7 with SMTP id
- b30-20020a170906729e00b0094f66afb1f7mr10353306ejl.1.1685369620628; Mon, 29
- May 2023 07:13:40 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1685370230; x=1687962230;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QqJeUFI0e/XUEdlHTY4e2wDrM7CepfDC9k/Dx+kj8ME=;
+        b=eL2/vflUl17UqlH9IPsJYJoIMu9VXmfI/nvrU8dvkHSaTdpyUuSQA1CMPwjuFkmWIg
+         wXD8Ky9E7890eCeZs3i3g0RiNkbO6xnot4Hqh2cuTsJmwWEN2Phq5+9jLr5wBiJZlfdZ
+         y3dt7pTXXDRBo/pxHT27sMiznExdTgZDKUcM3zR7RA5jPdGbWiMBK/a3ujH9EHDBRwCN
+         fio9ZhvKnb20j2MNu4kEJ5rCEC37PJXnwOBLhMORFIaxIVBc5JZUN9LTTl8QIYdwli+N
+         9iHzEs+OyIKTSEQkYDF6/ZXQcXm+T2gQh399mDRLIp926RGbJgYsjh/QJYUF6t+f8WYu
+         yIIQ==
+X-Gm-Message-State: AC+VfDxaozpLBRybV57UUZEGHCFpk6TnwYyodyAsxsT281lOcRdV1GON
+        gJD6eobKwitChR81XUafbkU=
+X-Google-Smtp-Source: ACHHUZ6/DiWFb6+BGVzq9xdTbPAP5aNtypk8M4u2Z+kqbqRBFIXQBRs7+9cy1Ks97fWUToCt7hYrAQ==
+X-Received: by 2002:a17:90a:748:b0:24d:f992:5286 with SMTP id s8-20020a17090a074800b0024df9925286mr10873036pje.36.1685370229465;
+        Mon, 29 May 2023 07:23:49 -0700 (PDT)
+Received: from [172.30.1.35] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id 25-20020a17090a199900b0024e4f169931sm9846519pji.2.2023.05.29.07.23.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 May 2023 07:23:48 -0700 (PDT)
+Message-ID: <1d8df8d2-f44a-dd66-8e01-7e50fa147660@gmail.com>
+Date:   Mon, 29 May 2023 23:23:45 +0900
 MIME-Version: 1.0
-References: <4464371bc72147e10a392a1873466c8df033039c.1685341309.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <4464371bc72147e10a392a1873466c8df033039c.1685341309.git.christophe.jaillet@wanadoo.fr>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 29 May 2023 16:13:25 +0200
-Message-ID: <CAJZ5v0g2=iYThmRzJXofUXSMrVPM-T2Ck8-HxiS=2_cn3Hv52g@mail.gmail.com>
-Subject: Re: [PATCH] ACPICA: Slightly simplify an error message in acpi_ds_result_push()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Robert Moore <robert.moore@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-acpi@vger.kernel.org,
-        acpica-devel@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] PM / devfreq: Reorder fields in 'struct
+ devfreq_dev_status'
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <6b1611f1440c8b73feb475723ad25f390cad3480.1683531691.git.christophe.jaillet@wanadoo.fr>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Content-Language: en-US
+In-Reply-To: <6b1611f1440c8b73feb475723ad25f390cad3480.1683531691.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 29, 2023 at 8:31 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> 'object' is known to be NULL at this point. There is little value to log
-> it twice in the error message.
->
+On 23. 5. 8. 16:42, Christophe JAILLET wrote:
+> Group some variables based on their sizes to reduce holes.
+> On x86_64, this shrinks the size of 'struct devfreq_dev_status' from 72 to
+> 64 bytes.
+> 
+> This structure is used both to allocate static variables or is embedded in
+> some other structures. In both cases, reducing its size is nice to have.
+> 
+> Moreover, the whole structure now fits in a single cache line on x86_64.
+> 
+> Finally, it makes the order of code match the order of the above kernel
+> doc.
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-ACPICA changes require (at least) a pull request submitted to the
-upstream ACPICA project on GitHub.
-
-If you have submitted one, please resend the Linux patch with a Link
-tag pointing to the corresponding upstream ACPICA pull request.
-
-Thanks!
-
 > ---
->  drivers/acpi/acpica/dswstate.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/acpi/acpica/dswstate.c b/drivers/acpi/acpica/dswstate.c
-> index d3841ded3a81..75338a13c802 100644
-> --- a/drivers/acpi/acpica/dswstate.c
-> +++ b/drivers/acpi/acpica/dswstate.c
-> @@ -146,8 +146,8 @@ acpi_ds_result_push(union acpi_operand_object *object,
->
->         if (!object) {
->                 ACPI_ERROR((AE_INFO,
-> -                           "Null Object! Obj=%p State=%p Num=%u",
-> -                           object, walk_state, walk_state->result_count));
-> +                           "Null Object! State=%p Num=%u",
-> +                           walk_state, walk_state->result_count));
->                 return (AE_BAD_PARAMETER);
->         }
->
-> --
-> 2.34.1
->
+> Using pahole
+> 
+> Before:
+> ======
+> struct devfreq_dev_profile {
+> 	long unsigned int          initial_freq;         /*     0     8 */
+> 	unsigned int               polling_ms;           /*     8     4 */
+> 	enum devfreq_timer         timer;                /*    12     4 */
+> 	bool                       is_cooling_device;    /*    16     1 */
+> 
+> 	/* XXX 7 bytes hole, try to pack */
+> 
+> 	int                        (*target)(struct device *, long unsigned int *, u32); /*    24     8 */
+> 	int                        (*get_dev_status)(struct device *, struct devfreq_dev_status *); /*    32     8 */
+> 	int                        (*get_cur_freq)(struct device *, long unsigned int *); /*    40     8 */
+> 	void                       (*exit)(struct device *); /*    48     8 */
+> 	long unsigned int *        freq_table;           /*    56     8 */
+> 	/* --- cacheline 1 boundary (64 bytes) --- */
+> 	unsigned int               max_state;            /*    64     4 */
+> 
+> 	/* size: 72, cachelines: 2, members: 10 */
+> 	/* sum members: 61, holes: 1, sum holes: 7 */
+> 	/* padding: 4 */
+> 	/* last cacheline: 8 bytes */
+> };
+> 
+> 
+> After:
+> =====
+> struct devfreq_dev_profile {
+> 	long unsigned int          initial_freq;         /*     0     8 */
+> 	unsigned int               polling_ms;           /*     8     4 */
+> 	enum devfreq_timer         timer;                /*    12     4 */
+> 	int                        (*target)(struct device *, long unsigned int *, u32); /*    16     8 */
+> 	int                        (*get_dev_status)(struct device *, struct devfreq_dev_status *); /*    24     8 */
+> 	int                        (*get_cur_freq)(struct device *, long unsigned int *); /*    32     8 */
+> 	void                       (*exit)(struct device *); /*    40     8 */
+> 	long unsigned int *        freq_table;           /*    48     8 */
+> 	unsigned int               max_state;            /*    56     4 */
+> 	bool                       is_cooling_device;    /*    60     1 */
+> 
+> 	/* size: 64, cachelines: 1, members: 10 */
+> 	/* padding: 3 */
+> };
+> ---
+>  include/linux/devfreq.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+> index 7fd704bb8f3d..d312ffbac4dd 100644
+> --- a/include/linux/devfreq.h
+> +++ b/include/linux/devfreq.h
+> @@ -108,7 +108,6 @@ struct devfreq_dev_profile {
+>  	unsigned long initial_freq;
+>  	unsigned int polling_ms;
+>  	enum devfreq_timer timer;
+> -	bool is_cooling_device;
+>  
+>  	int (*target)(struct device *dev, unsigned long *freq, u32 flags);
+>  	int (*get_dev_status)(struct device *dev,
+> @@ -118,6 +117,8 @@ struct devfreq_dev_profile {
+>  
+>  	unsigned long *freq_table;
+>  	unsigned int max_state;
+> +
+> +	bool is_cooling_device;
+>  };
+>  
+>  /**
+
+
+Applied it.
+
+Thanks.
+
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
+
