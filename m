@@ -2,83 +2,115 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA762C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 13:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C13C1C7EE29
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 13:53:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229750AbjE2N2N (ORCPT
+        id S229795AbjE2Nxa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 May 2023 09:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51030 "EHLO
+        Mon, 29 May 2023 09:53:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbjE2N2M (ORCPT
+        with ESMTP id S229636AbjE2Nw5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 May 2023 09:28:12 -0400
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDFC2A7
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 06:28:09 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
+        Mon, 29 May 2023 09:52:57 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F34D81B4
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 06:52:43 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 3curqP39nbOsk3curqbTYb; Mon, 29 May 2023 15:28:07 +0200
+        id 3dIdqr1UCe9XV3dIeq7Nxy; Mon, 29 May 2023 15:52:42 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685366887;
-        bh=8jgS5F8T526jeYM/4dx15aEEqAiDrCFfIRkSTI7woqQ=;
-        h=From:To:Cc:Subject:Date;
-        b=B1CYNAU5uH+zmapITZq52yzJm53tatvYvMoVN94JNW5oCzjeueGEMalpu1Bo+SQfb
-         Y3kQLtegL41jHSu1+SQh9c7l4c949VyIPcCo+AOO/ayW6f33RmhiWBMBk4tSP8ViPM
-         6ySkrEY3GBWekUIBp9+I67G6KwVC4WB8dRvocF6dKizbtpjjctbnlIq6fe09ijEoFI
-         VYmhDpdU64IivgTJbognPSyAQBWqQjbGXkbD7OyAGhOh/J6zoLG2FEyGwGDmLaF3wm
-         DTcVDAxIM4uLtzJeEnBU1LYwenDgu2AGtvVCBryFVg5RczCdduOArwj0b3Qrkr+IIb
-         l66aNe9gB5F2w==
-X-ME-Helo: pop-os.home
+        s=t20230301; t=1685368362;
+        bh=ekUc6/kpoNVqqDDHA37r3P9ofoCJir8xdVgamOnTUws=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=LG8iRBb8j9/7yJeCsjr2RPI/UFdcVBgJkne3mBmtqwaKTuHbSMRzCW/3JNXco4Vl2
+         h+GGvtqNJy6X0RrxtSXUMVFof37JY+onNWTpy11A8RbpTCvwkty1ynEWBPA5dJdJ7M
+         8UmCXsobvUwfxQMNPw0TyRv4A8zWqoEgQgFBX9NtT36X8VQMCoVYRKwS0kfApyCqNL
+         BXg7Us/6Zmav5cMnbYnLoc5m4aQZKnda1evhE0OTz3lrtH6xu39qGnzlkbuLOo+TT2
+         bZPVy2a12TlpkcRXRV6Jm429amrrsZC8mfgcfF/Zq7II976s8Dn9+/TmWwUrDtilay
+         KYrIVbQkYzS2A==
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 29 May 2023 15:28:07 +0200
+X-ME-Date: Mon, 29 May 2023 15:52:42 +0200
 X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-        Oded Gabbay <ogabbay@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] accel/ivpu: Use struct_size()
-Date:   Mon, 29 May 2023 15:28:04 +0200
-Message-Id: <0ae53be873c27c9a8740c4fe6d8e7cd1b1224994.1685366864.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <733f7cc6-a651-2457-3ffc-6ac116c27213@wanadoo.fr>
+Date:   Mon, 29 May 2023 15:52:39 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] soc: xilinx: Fix a memory leak in zynqmp_pm_remove()
+Content-Language: fr
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Michal Simek <michal.simek@amd.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Tejas Patel <tejas.patel@xilinx.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <93ef923496b6c45a0baa59458099aed3a20b771a.1685346792.git.christophe.jaillet@wanadoo.fr>
+ <8355a10b-e365-485f-810f-0c3001a0406a@kili.mountain>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <8355a10b-e365-485f-810f-0c3001a0406a@kili.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use struct_size() instead of hand-writing it. It is less verbose, more
-robust and more informative.
+Le 29/05/2023 à 11:59, Dan Carpenter a écrit :
+> On Mon, May 29, 2023 at 09:53:24AM +0200, Christophe JAILLET wrote:
+>> 'rx_chan' is known to be NULL here.
+>> Reverse the logic to free the mbox if it has been allocated.
+>>
+>> Fixes: ffdbae28d9d1 ("drivers: soc: xilinx: Use mailbox IPI callback")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> 'rx_chan' may be NULL, but mbox_free_channel() handles it.
+>> Maybe it is more informative to keep a (useless) "if (rx_chan)" to tell
+>> that it may not be allocated.
+>>
+>>
+>> On my machine, compilation fails with gcc (Ubuntu 12.1.0-2ubuntu1~22.04):
+>>
+>>    CC      drivers/soc/xilinx/zynqmp_power.o
+>> drivers/soc/xilinx/zynqmp_power.c: In function ‘zynqmp_pm_probe’:
+>> drivers/soc/xilinx/zynqmp_power.c:193:12: error: ‘pm_api_version’ is used uninitialized [-Werror=uninitialized]
+>>    193 |         if (pm_api_version < ZYNQMP_PM_VERSION)
+>>        |            ^
+>> drivers/soc/xilinx/zynqmp_power.c:187:13: note: ‘pm_api_version’ was declared here
+>>    187 |         u32 pm_api_version;
+>>        |             ^~~~~~~~~~~~~~
+>> cc1: all warnings being treated as errors
+>>
+>> I think that this warning is bogus and gcc is wrong.
+>>
+>> But I don't know what to do with it :/
+>> Anyway, it is un-realated to this patch.
+> 
+> I bet GCC is correct.
+> 
+> Do you have CONFIG_ZYNQMP_FIRMWARE enabled in your .config?  This driver
+> can only be compiled with that enabled, but I've seen some of your
+> other patches depend on CONFIG_BROKEN so I think you're going outside of
+> the Kconfig rules.
+> 
+> regards,
+> dan carpenter
+> 
+> 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/accel/ivpu/ivpu_job.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Ok, got it. This is for arm64.
 
-diff --git a/drivers/accel/ivpu/ivpu_job.c b/drivers/accel/ivpu/ivpu_job.c
-index 3c6f1e16cf2f..0a09bba8da24 100644
---- a/drivers/accel/ivpu/ivpu_job.c
-+++ b/drivers/accel/ivpu/ivpu_job.c
-@@ -289,15 +289,13 @@ ivpu_create_job(struct ivpu_file_priv *file_priv, u32 engine_idx, u32 bo_count)
- {
- 	struct ivpu_device *vdev = file_priv->vdev;
- 	struct ivpu_job *job;
--	size_t buf_size;
- 	int ret;
- 
- 	ret = ivpu_rpm_get(vdev);
- 	if (ret < 0)
- 		return NULL;
- 
--	buf_size = sizeof(*job) + bo_count * sizeof(struct ivpu_bo *);
--	job = kzalloc(buf_size, GFP_KERNEL);
-+	job = kzalloc(struct_size(job, bos, bo_count), GFP_KERNEL);
- 	if (!job)
- 		goto err_rpm_put;
- 
--- 
-2.34.1
+make does not behave the same when you build a file or a directory.
+Sometimes it is convenient, sometimes it is surprising.
 
+On x86:
+make -j7 drivers/soc/xilinx/zynqmp_power.o		--> fail
+make -j7 drivers/soc/xilinx/				--> build nothing because I'm not on arm64
+
+
+export ARCH=arm64
+./make.cross -j7 drivers/soc/xilinx/zynqmp_power.o	--> OK
+
+Thanks for the pointer.
+
+CJ
