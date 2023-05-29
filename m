@@ -2,93 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93067C77B7E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 07:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6608EC77B7A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 07:35:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231435AbjE2HTW (ORCPT
+        id S230249AbjE2HfW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 May 2023 03:19:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44974 "EHLO
+        Mon, 29 May 2023 03:35:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231445AbjE2HTU (ORCPT
+        with ESMTP id S229678AbjE2HfV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 May 2023 03:19:20 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E5DB2
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 00:19:17 -0700 (PDT)
+        Mon, 29 May 2023 03:35:21 -0400
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B5E9AB
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 00:35:20 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 3X9eqYgEzMDzt3X9vq4QNv; Mon, 29 May 2023 09:19:15 +0200
+        id 3XPKqHvCt7PLm3XPKqcUIc; Mon, 29 May 2023 09:35:13 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685344755;
-        bh=QHA/Y0t0+ZEe+OD0y5zfwImt3ZyVK3OrMC3Z9s2pa1M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=W7r6xtOwhhzprrKfnZGh0T9qW6D98nODcTPYdrrsDy8UKp9fEcacSAXQkx7QVuWsz
-         vE44t8MRi8+dK7gLek1AWrWxPl2qATJxc8HrbjAGOwLvfuSOuHMg8DP6xMcVD+Q/hF
-         /zkkum9tvQek+TK7Z7XtphlqTNEWEXI55kvwobij7TzAVfmh+PJgyMsTYhyjUXYimY
-         Evlsvd/Mq++SUL8fVPRhVdmAdbSLzHn0uzjvyRgyt9LioGM/9JBO4zihT7xxKHZ/If
-         NW7ybU0zzERVByEtGA9ueYwMHYxdLYXlp9F7FUWyRqUTynkURq6ySZq3E7kKqkpFHx
-         sSecbvRt+wSiw==
+        s=t20230301; t=1685345713;
+        bh=2bdE5rxx0WNW70pykzA3LEgDROeECRTKYNJpXeGJheA=;
+        h=From:To:Cc:Subject:Date;
+        b=Cd9iq3K/CU8lcBda2pvGwM8YS8As0QUQU9FdZ5ldnukC40VE3f0SzxYU5LOuKwGvx
+         hVP5ReGttXo7LC71uSjjMO38DQ6S8N0zcoirt+/GPGacR2L55UAJYZGnuk5GeS3h77
+         Z7avrHlEZM8W2qmTeHLY3QqK7p+3atNl1ixZyxJsbUzLDjs2qysoL+ORkAXyeRAwkb
+         +GIMo6vGGsKR/MzzlL7LPO2nj+nN7g5+5Mlm9sVNXKmnbS2lFZ97+nreUdSlPno89j
+         sCp40vhU8/yCOin6MujsXWCujiGjP5o70epm/YUmfQI0sPSr6yr/CCFKpD0LR7g95Q
+         PRifGMxA9exbg==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 29 May 2023 09:19:15 +0200
+X-ME-Date: Mon, 29 May 2023 09:35:13 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH 3/3] drm/amd/display: Use USEC_PER_SEC
-Date:   Mon, 29 May 2023 09:18:56 +0200
-Message-Id: <c168fac9fdde872a4f4d047f12a6a7c19185f47c.1685342739.git.christophe.jaillet@wanadoo.fr>
+        virtualization@lists.linux-foundation.org,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: virtio_scsi: Remove a useless function call
+Date:   Mon, 29 May 2023 09:35:08 +0200
+Message-Id: <08740635cdb0f8293e57c557b22e048daae50961.1685345683.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <e0a2240f863279b65a1fdc7f8c27ede9f8e37893.1685342739.git.christophe.jaillet@wanadoo.fr>
-References: <e0a2240f863279b65a1fdc7f8c27ede9f8e37893.1685342739.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use USEC_PER_SEC instead of defining an equivalent local 'us_in_sec'.
+'inq_result' is known to be NULL. There is no point calling kfree().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-NOT compile tested. Because of some BROKEN in KConfig files.
-Some header may be missing for USEC_PER_SEC!
----
- drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c | 4 +---
+ drivers/scsi/virtio_scsi.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c b/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
-index eafe8561e55e..9b82ee3e06d0 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c
-@@ -678,7 +678,6 @@ static uint32_t get_dmif_switch_time_us(
- 	uint32_t pixels_per_second;
- 	uint32_t pixels_per_frame;
- 	uint32_t refresh_rate;
--	const uint32_t us_in_sec = 1000000;
- 	const uint32_t min_single_frame_time_us = 30000;
- 	/*return double of frame time*/
- 	const uint32_t single_frame_time_multiplier = 2;
-@@ -691,8 +690,7 @@ static uint32_t get_dmif_switch_time_us(
- 	pixels_per_frame = h_total * v_total;
+diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
+index 58498da9869a..bd5633667d01 100644
+--- a/drivers/scsi/virtio_scsi.c
++++ b/drivers/scsi/virtio_scsi.c
+@@ -338,10 +338,8 @@ static int virtscsi_rescan_hotunplug(struct virtio_scsi *vscsi)
+ 	int result, inquiry_len, inq_result_len = 256;
+ 	char *inq_result = kmalloc(inq_result_len, GFP_KERNEL);
  
- 	refresh_rate = pixels_per_second / pixels_per_frame;
--
--	frame_time = us_in_sec / refresh_rate;
-+	frame_time = USEC_PER_SEC / refresh_rate;
+-	if (!inq_result) {
+-		kfree(inq_result);
++	if (!inq_result)
+ 		return -ENOMEM;
+-	}
  
- 	if (frame_time < min_single_frame_time_us)
- 		frame_time = min_single_frame_time_us;
+ 	shost_for_each_device(sdev, shost) {
+ 		inquiry_len = sdev->inquiry_len ? sdev->inquiry_len : 36;
 -- 
 2.34.1
 
