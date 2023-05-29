@@ -2,111 +2,178 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F2EC7EE29
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 10:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A5AC77B7A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 11:37:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231526AbjE2J75 (ORCPT
+        id S230340AbjE2Lh0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 May 2023 05:59:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51740 "EHLO
+        Mon, 29 May 2023 07:37:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231879AbjE2J7u (ORCPT
+        with ESMTP id S229592AbjE2LhZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 May 2023 05:59:50 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB942A7
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 02:59:48 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-30959c0dfd6so3006259f8f.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 02:59:48 -0700 (PDT)
+        Mon, 29 May 2023 07:37:25 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06D51B3
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 04:36:47 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f60804faf4so20126075e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 04:36:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685354387; x=1687946387;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0RbtsRS6lbAOQy47hVSuc0QHPvxMe8cs0M24teto58A=;
-        b=Ar8P7xtKnNKUt0knv8le9zAvdKRj27Cvtv7ZwbskI179t5uZMfOQhHuk592athm+ri
-         ZdTuvunZryKu+Qpew7V2uBzZ1FpW+DpOJEVFHoc1hvyVz5uraOqDf4EtY0pciNcEWx8u
-         8wF20n7Ea78TOuKaYZMa/v3q4/sc/0wofWPzeBqIe5kULcrKSy7OnWbyLw9MA514QeIB
-         rjrNsUlNbnDOu92a7M5CxVt/z+k6uZDWcjPErmwFK+riwoOhk7O23NW4CT6abtK6SKSX
-         IcusyAGkO/jI1UIidgzZbHYwLU53fjoDaSQk4VFtpuRjNW00fiFWLujq8yA9Ex+tBnF/
-         eevQ==
+        d=linaro.org; s=google; t=1685360162; x=1687952162;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w/urOUHJPIKnLFNjMtmkB4N3xW2SaZY6xqW4O6ymt0M=;
+        b=sDaMNLqT8/P/xE2h/h5b3Ms4tPQW6X8UsvXq3htM8liMtCXFc+p4MUGdc7d3I9w7/5
+         QCAeSQUG60Vy3hREYdDUWHSZ4UXvcY9LE/hIox+0r6M17vTySYzSJ99Rs2A5gqNm8tYp
+         Nu6A/rP72UgOev9zeLiwgfA7hgn/4IdW4+DJZ/W7XPQP2tpFDZK0ryQhx1F90aw7Zk0D
+         g0EIum7MB1LKuV/6zmzU01DH0LqufOBjOj2E4s4sAu8eROeoICctuiEN4vmeOVflKBWi
+         b7F3f22TYwul1dBW5el/87YzeE8+a6AUQ4AYMOzYVeNeB0ZhXxOQyTWcTSPqnSV8NEBg
+         SynA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685354387; x=1687946387;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1685360162; x=1687952162;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0RbtsRS6lbAOQy47hVSuc0QHPvxMe8cs0M24teto58A=;
-        b=SfZpOf6DhkHAQofgAtgbmAJINRZsjj07zXBhzxTOnilsK+kxHGHkLPQyByhBm4uEXS
-         p2iWSVb/juE8WjTkxqpc7/YLI4RmGRB7U/llgUMz98Ug2FW6K9COkLwQR//qMYeNldn1
-         TF1018FKvrMEjuQJnlz9U6vgRGvQ9pHEjJWQIamAqM+QCy/jZ5oFMEElhEueWKV/fmFs
-         RCcHhmVNa2c/ZTss7IJzi1QWHqfji7nyQW63Bvg0sYCR8iXdFa7CKRcyW8Sqr7cf2VUx
-         o+F/HjP4MbZjYHkqL5JmBaKfRtAek8jwFfCluuJ8iI/NO6WMbhFMIgrSlZdPU2ko+YBF
-         rfug==
-X-Gm-Message-State: AC+VfDzyKQghgPwEF6ooqPm2LmjLFGz31zNkYM9x0pH2FEJmL0DKchUu
-        Z6Ynj3cVLLZHPzjmEAWF41P9H5hc6lH3y43t3JQ=
-X-Google-Smtp-Source: ACHHUZ6Fxfkt4PsVueAZ/VALeISHrqvtKqFYDfSWj7GtiFgGIcrwnSSR9flweNKYso6Ajst40PL9Qg==
-X-Received: by 2002:a05:6000:1a43:b0:30a:dcba:2d81 with SMTP id t3-20020a0560001a4300b0030adcba2d81mr7785541wry.38.1685354387450;
-        Mon, 29 May 2023 02:59:47 -0700 (PDT)
+        bh=w/urOUHJPIKnLFNjMtmkB4N3xW2SaZY6xqW4O6ymt0M=;
+        b=cSir1t6JCwa/4fWrjlUNPnqn3QolNVuzWeRHUOkPEnNc1K+/9LPTvmhdZrZVBMFVEI
+         Wm91yFmvXX3ePjHcUS4JBSxKsG72sslHgPU+QokWG4ABIKcOrgsbv19TnXfxlET7/zAA
+         nNtZLhrH7g0Zd391X2AJxQ2vpBs1Ae2+qBZ9glqhLGhJD/Dya8Qh/WC36iIERRyBPRPx
+         RNZI8b4o1fduvHOkVvOMi0ZC3WKGupHYwk0KBjSVZ4Ga3VZZokugPBKj3rfOC0/OFM3H
+         4/Mx5ZNk9mGXVz/ISfpaP1AUWzhfwmz7GVLf93/ZwPPvZOCcTza0mFLYtLi+7EQfXj54
+         ervQ==
+X-Gm-Message-State: AC+VfDyHhy8AZYf2ogb10F0OAIcw7AVLzfEhYn5TKqQHwLIvM7cO8G8C
+        8GLnwWkIPpv0xjWHkESsa1elnQ==
+X-Google-Smtp-Source: ACHHUZ4Xp7Ie0fG+BLijqglWXvK8WUkmxqKCXYVeFoVJ6u31XJEKq+4EKbavvAfXtoy6UhJLxIITiQ==
+X-Received: by 2002:a7b:cb98:0:b0:3f6:e42:8f93 with SMTP id m24-20020a7bcb98000000b003f60e428f93mr8682186wmi.11.1685360161884;
+        Mon, 29 May 2023 04:36:01 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v1-20020a5d6781000000b002fae7408544sm13150275wru.108.2023.05.29.02.59.44
+        by smtp.gmail.com with ESMTPSA id u5-20020a05600c00c500b003f0ad8d1c69sm17514712wmm.25.2023.05.29.04.35.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 May 2023 02:59:45 -0700 (PDT)
-Date:   Mon, 29 May 2023 12:59:42 +0300
+        Mon, 29 May 2023 04:35:59 -0700 (PDT)
+Date:   Mon, 29 May 2023 14:35:55 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Michal Simek <michal.simek@amd.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Tejas Patel <tejas.patel@xilinx.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] soc: xilinx: Fix a memory leak in zynqmp_pm_remove()
-Message-ID: <8355a10b-e365-485f-810f-0c3001a0406a@kili.mountain>
-References: <93ef923496b6c45a0baa59458099aed3a20b771a.1685346792.git.christophe.jaillet@wanadoo.fr>
+To:     Stanislav Kinsbursky <skinsbursky@parallels.com>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] nfsd: fix double fget() bug in __write_ports_addfd()
+Message-ID: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <93ef923496b6c45a0baa59458099aed3a20b771a.1685346792.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 29, 2023 at 09:53:24AM +0200, Christophe JAILLET wrote:
-> 'rx_chan' is known to be NULL here.
-> Reverse the logic to free the mbox if it has been allocated.
-> 
-> Fixes: ffdbae28d9d1 ("drivers: soc: xilinx: Use mailbox IPI callback")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> 'rx_chan' may be NULL, but mbox_free_channel() handles it.
-> Maybe it is more informative to keep a (useless) "if (rx_chan)" to tell
-> that it may not be allocated.
-> 
-> 
-> On my machine, compilation fails with gcc (Ubuntu 12.1.0-2ubuntu1~22.04):
-> 
->   CC      drivers/soc/xilinx/zynqmp_power.o
-> drivers/soc/xilinx/zynqmp_power.c: In function ‘zynqmp_pm_probe’:
-> drivers/soc/xilinx/zynqmp_power.c:193:12: error: ‘pm_api_version’ is used uninitialized [-Werror=uninitialized]
->   193 |         if (pm_api_version < ZYNQMP_PM_VERSION)
->       |            ^
-> drivers/soc/xilinx/zynqmp_power.c:187:13: note: ‘pm_api_version’ was declared here
->   187 |         u32 pm_api_version;
->       |             ^~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
-> 
-> I think that this warning is bogus and gcc is wrong.
-> 
-> But I don't know what to do with it :/
-> Anyway, it is un-realated to this patch.
+The bug here is that you cannot rely on getting the same socket
+from multiple calls to fget() because userspace can influence
+that.  This is a kind of double fetch bug.
 
-I bet GCC is correct.
+The fix is to delete the svc_alien_sock() function and insted do
+the checking inside the svc_addsock() function.
 
-Do you have CONFIG_ZYNQMP_FIRMWARE enabled in your .config?  This driver
-can only be compiled with that enabled, but I've seen some of your
-other patches depend on CONFIG_BROKEN so I think you're going outside of
-the Kconfig rules.
+Fixes: 3064639423c4 ("nfsd: check passed socket's net matches NFSd superblock's one")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+Based on static analysis and untested.  This goes through the NFS tree. 
+Inspired by CVE-2023-1838.
 
-regards,
-dan carpenter
+ include/linux/sunrpc/svcsock.h |  7 +++----
+ fs/nfsd/nfsctl.c               |  7 +------
+ net/sunrpc/svcsock.c           | 23 +++++------------------
+ 3 files changed, 9 insertions(+), 28 deletions(-)
+
+diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
+index d16ae621782c..a7116048a4d4 100644
+--- a/include/linux/sunrpc/svcsock.h
++++ b/include/linux/sunrpc/svcsock.h
+@@ -61,10 +61,9 @@ int		svc_recv(struct svc_rqst *, long);
+ void		svc_send(struct svc_rqst *rqstp);
+ void		svc_drop(struct svc_rqst *);
+ void		svc_sock_update_bufs(struct svc_serv *serv);
+-bool		svc_alien_sock(struct net *net, int fd);
+-int		svc_addsock(struct svc_serv *serv, const int fd,
+-					char *name_return, const size_t len,
+-					const struct cred *cred);
++int		svc_addsock(struct svc_serv *serv, struct net *net,
++			    const int fd, char *name_return, const size_t len,
++			    const struct cred *cred);
+ void		svc_init_xprt_sock(void);
+ void		svc_cleanup_xprt_sock(void);
+ struct svc_xprt *svc_sock_create(struct svc_serv *serv, int prot);
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index e0e98b40a6e5..1489e0b703b4 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -698,16 +698,11 @@ static ssize_t __write_ports_addfd(char *buf, struct net *net, const struct cred
+ 		return -EINVAL;
+ 	trace_nfsd_ctl_ports_addfd(net, fd);
+ 
+-	if (svc_alien_sock(net, fd)) {
+-		printk(KERN_ERR "%s: socket net is different to NFSd's one\n", __func__);
+-		return -EINVAL;
+-	}
+-
+ 	err = nfsd_create_serv(net);
+ 	if (err != 0)
+ 		return err;
+ 
+-	err = svc_addsock(nn->nfsd_serv, fd, buf, SIMPLE_TRANSACTION_LIMIT, cred);
++	err = svc_addsock(nn->nfsd_serv, net, fd, buf, SIMPLE_TRANSACTION_LIMIT, cred);
+ 
+ 	if (err >= 0 &&
+ 	    !nn->nfsd_serv->sv_nrthreads && !xchg(&nn->keep_active, 1))
+diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
+index 46845cb6465d..e4184e40793c 100644
+--- a/net/sunrpc/svcsock.c
++++ b/net/sunrpc/svcsock.c
+@@ -1474,22 +1474,6 @@ static struct svc_sock *svc_setup_socket(struct svc_serv *serv,
+ 	return svsk;
+ }
+ 
+-bool svc_alien_sock(struct net *net, int fd)
+-{
+-	int err;
+-	struct socket *sock = sockfd_lookup(fd, &err);
+-	bool ret = false;
+-
+-	if (!sock)
+-		goto out;
+-	if (sock_net(sock->sk) != net)
+-		ret = true;
+-	sockfd_put(sock);
+-out:
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(svc_alien_sock);
+-
+ /**
+  * svc_addsock - add a listener socket to an RPC service
+  * @serv: pointer to RPC service to which to add a new listener
+@@ -1502,8 +1486,8 @@ EXPORT_SYMBOL_GPL(svc_alien_sock);
+  * Name is terminated with '\n'.  On error, returns a negative errno
+  * value.
+  */
+-int svc_addsock(struct svc_serv *serv, const int fd, char *name_return,
+-		const size_t len, const struct cred *cred)
++int svc_addsock(struct svc_serv *serv, struct net *net, const int fd,
++		char *name_return, const size_t len, const struct cred *cred)
+ {
+ 	int err = 0;
+ 	struct socket *so = sockfd_lookup(fd, &err);
+@@ -1514,6 +1498,9 @@ int svc_addsock(struct svc_serv *serv, const int fd, char *name_return,
+ 
+ 	if (!so)
+ 		return err;
++	err = -EINVAL;
++	if (sock_net(so->sk) != net)
++		goto out;
+ 	err = -EAFNOSUPPORT;
+ 	if ((so->sk->sk_family != PF_INET) && (so->sk->sk_family != PF_INET6))
+ 		goto out;
+-- 
+2.39.2
 
