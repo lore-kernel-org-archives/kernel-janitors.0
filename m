@@ -2,100 +2,80 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDCEC77B7A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 07:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C88FFC7EE2C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 08:35:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231562AbjE2Hxc (ORCPT
+        id S231475AbjE2IfH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 May 2023 03:53:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58006 "EHLO
+        Mon, 29 May 2023 04:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjE2Hxb (ORCPT
+        with ESMTP id S229453AbjE2IfG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 May 2023 03:53:31 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4723AD
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 00:53:29 -0700 (PDT)
+        Mon, 29 May 2023 04:35:06 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E76FEB5
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 01:35:04 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 3Xh0qNNQ6bOsk3Xh0qatrx; Mon, 29 May 2023 09:53:27 +0200
+        id 3YLEqMBiidqvJ3YLEqNSes; Mon, 29 May 2023 10:35:02 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685346807;
-        bh=H3ch+1sM2uCmnqikyZRtBFR3E4UWkyikm5gSoo9tMEw=;
+        s=t20230301; t=1685349302;
+        bh=AugTDYeUrgYVPU+UhwnDyYDQ1NS0yzyFbGk6wtykwr8=;
         h=From:To:Cc:Subject:Date;
-        b=Ca+i/7Xd8fUTtOSPS5ZtF6/eN31g6TQw804cqrMM2lMjXpHJ9myreRtfPe0MwTz5H
-         gOwZ0qhXNQFMi8Vmb5TWrAlplx3j48gdpLdhvaoNgvx4QZj1bJrsQuOfcAmcMSTHXv
-         4fwrBXcJfSDMGMKkFVuLJzWhbBezJYol8FyxkAUxa8LxbHoTFUqVlf1yYjx7EBj795
-         OkfOXDBRObkLgAFMEWca4kMrXTi1z+xSV+9UmN2s85MhhnnrsGlgHIEztesd7bQuGo
-         0pzUzFUKdEEotX+ilQzPdO5Jw++pQ91CrHAy8IX6e64C6Ynx62yzVqV4LcmLQS/qQQ
-         YdnIjkd3bMDMw==
+        b=Fy9a4XVTNFNs6Oz3bZxhAdqcmQ3HJaQc8jhkHb31k1p2J0kMFRF9y51tPBkti4Me/
+         UwJ4GLS63q9pb/md+lydpgA/Cekhiu0HHY9lv2ig8OcsW1e9WHbpq9MrMhYRNf+5wE
+         BUcE0/+6wrp3BvFsm07/p+EprzX68DAFWLw8ayglqEXTFV3gIkCewyVJqi0sw9ZFMi
+         16qpwnYrtprS7MRvMYweOwi+8q6yqBLBFv/Ud0NQMGYYAJwIpTspccE2o2WHda/V4O
+         krXzPyZQ6kW0cu/gSYxMzrc1lM6ndVvi9/J33kqxDbue6MJIGwBHrAr4Vf5h/VLRKt
+         v7TD8aFYZABdw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 29 May 2023 09:53:27 +0200
+X-ME-Date: Mon, 29 May 2023 10:35:02 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Michal Simek <michal.simek@amd.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Tejas Patel <tejas.patel@xilinx.com>
+To:     Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] soc: xilinx: Fix a memory leak in zynqmp_pm_remove()
-Date:   Mon, 29 May 2023 09:53:24 +0200
-Message-Id: <93ef923496b6c45a0baa59458099aed3a20b771a.1685346792.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: [PATCH net-next] net/mlx5e: Remove a useless function call
+Date:   Mon, 29 May 2023 10:34:59 +0200
+Message-Id: <fc535be629990acef5e2a3dfecd64a5f9661fd25.1685349266.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'rx_chan' is known to be NULL here.
-Reverse the logic to free the mbox if it has been allocated.
+'handle' is known to be NULL here. There is no need to kfree() it.
 
-Fixes: ffdbae28d9d1 ("drivers: soc: xilinx: Use mailbox IPI callback")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-'rx_chan' may be NULL, but mbox_free_channel() handles it.
-Maybe it is more informative to keep a (useless) "if (rx_chan)" to tell
-that it may not be allocated.
+ drivers/net/ethernet/mellanox/mlx5/core/en/tc/post_act.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-
-On my machine, compilation fails with gcc (Ubuntu 12.1.0-2ubuntu1~22.04):
-
-  CC      drivers/soc/xilinx/zynqmp_power.o
-drivers/soc/xilinx/zynqmp_power.c: In function ‘zynqmp_pm_probe’:
-drivers/soc/xilinx/zynqmp_power.c:193:12: error: ‘pm_api_version’ is used uninitialized [-Werror=uninitialized]
-  193 |         if (pm_api_version < ZYNQMP_PM_VERSION)
-      |            ^
-drivers/soc/xilinx/zynqmp_power.c:187:13: note: ‘pm_api_version’ was declared here
-  187 |         u32 pm_api_version;
-      |             ^~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-
-I think that this warning is bogus and gcc is wrong.
-
-But I don't know what to do with it :/
-Anyway, it is un-realated to this patch.
----
- drivers/soc/xilinx/zynqmp_power.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
-index 641dcc958911..62a7f6af9544 100644
---- a/drivers/soc/xilinx/zynqmp_power.c
-+++ b/drivers/soc/xilinx/zynqmp_power.c
-@@ -280,8 +280,7 @@ static int zynqmp_pm_remove(struct platform_device *pdev)
- 	if (event_registered)
- 		xlnx_unregister_event(PM_INIT_SUSPEND_CB, 0, 0, suspend_event_callback, NULL);
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/tc/post_act.c b/drivers/net/ethernet/mellanox/mlx5/core/en/tc/post_act.c
+index 0290e0dea539..4e923a2874ae 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/tc/post_act.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/tc/post_act.c
+@@ -112,10 +112,8 @@ mlx5e_tc_post_act_add(struct mlx5e_post_act *post_act, struct mlx5_flow_attr *po
+ 	int err;
  
--	if (!rx_chan)
--		mbox_free_channel(rx_chan);
-+	mbox_free_channel(rx_chan);
+ 	handle = kzalloc(sizeof(*handle), GFP_KERNEL);
+-	if (!handle) {
+-		kfree(handle);
++	if (!handle)
+ 		return ERR_PTR(-ENOMEM);
+-	}
  
- 	return 0;
- }
+ 	post_attr->chain = 0;
+ 	post_attr->prio = 0;
 -- 
 2.34.1
 
