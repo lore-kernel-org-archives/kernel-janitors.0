@@ -2,90 +2,154 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 551DEC77B7E
-	for <kernel-janitors@archiver.kernel.org>; Sun, 28 May 2023 16:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 203AFC7EE2F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 01:08:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229756AbjE1Q4w (ORCPT
+        id S229760AbjE2BI2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 28 May 2023 12:56:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35266 "EHLO
+        Sun, 28 May 2023 21:08:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbjE1Q4v (ORCPT
+        with ESMTP id S229610AbjE2BI1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 28 May 2023 12:56:51 -0400
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4206ED8;
-        Sun, 28 May 2023 09:56:48 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:46880)
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1q3JKa-00Ciru-2q; Sun, 28 May 2023 10:33:20 -0600
-Received: from ip68-110-29-46.om.om.cox.net ([68.110.29.46]:56530 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1q3JKZ-005jqW-4W; Sun, 28 May 2023 10:33:19 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <53150beae5dc04dac513dba391a2e4ae8696a7f3.1685290790.git.christophe.jaillet@wanadoo.fr>
-Date:   Sun, 28 May 2023 11:32:52 -0500
-In-Reply-To: <53150beae5dc04dac513dba391a2e4ae8696a7f3.1685290790.git.christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Sun, 28 May 2023 18:20:24 +0200")
-Message-ID: <871qj0l8ln.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Sun, 28 May 2023 21:08:27 -0400
+Received: from smtp.tom.com (smtprz25.163.net [106.38.219.110])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E8BBE
+        for <kernel-janitors@vger.kernel.org>; Sun, 28 May 2023 18:08:24 -0700 (PDT)
+Received: from my-app02.tom.com (my-app02.tom.com [127.0.0.1])
+        by freemail02.tom.com (Postfix) with ESMTP id 21B5BB00D33
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 09:08:23 +0800 (CST)
+Received: from my-app02.tom.com (HELO smtp.tom.com) ([127.0.0.1])
+          by my-app02 (TOM SMTP Server) with SMTP ID -1654277655
+          for <kernel-janitors@vger.kernel.org>;
+          Mon, 29 May 2023 09:08:23 +0800 (CST)
+Received: from antispam1.tom.com (unknown [172.25.16.55])
+        by freemail02.tom.com (Postfix) with ESMTP id 133D1B00D30
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 09:08:23 +0800 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tom.com; s=201807;
+        t=1685322503; bh=6+v18S+49ZmwsY7ArmeI7lTtnBWs6GUHMqy2kd4a530=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=U4Dirvv/EZFAPQ+x73uw0d8AefzdCJte43iKWsUQ+MZ2AG6Dveu6l1vyxezkJAIir
+         q31Ve0Z2zAwcYS2wapMc0GwYJf0yjM35Zy6PWFD9ZYMvMBjpdCxkDlzd2BLXdAh+vd
+         IW0qTSLMxhZy4BrL7/Wy6IgrK5cMoP0KPyM8qAAU=
+Received: from antispam1.tom.com (antispam1.tom.com [127.0.0.1])
+        by antispam1.tom.com (Postfix) with ESMTP id EF4D9D41AC6
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 09:08:22 +0800 (CST)
+X-Virus-Scanned: Debian amavisd-new at antispam1.tom.com
+Received: from antispam1.tom.com ([127.0.0.1])
+        by antispam1.tom.com (antispam1.tom.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id QiWy5wK9Yhz5 for <kernel-janitors@vger.kernel.org>;
+        Mon, 29 May 2023 09:08:19 +0800 (CST)
+Received: from [172.30.38.103] (unknown [180.167.10.98])
+        by antispam1.tom.com (Postfix) with ESMTPA id F3F90D416AE;
+        Mon, 29 May 2023 09:08:18 +0800 (CST)
+Message-ID: <65d4f191-6823-b65e-c570-4180993c67f3@tom.com>
+Date:   Mon, 29 May 2023 09:08:18 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1q3JKZ-005jqW-4W;;;mid=<871qj0l8ln.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.110.29.46;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+tXXgu/hTVpYUB13NneAVqnHHTh5F4BPI=
-X-SA-Exim-Connect-IP: 68.110.29.46
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 1/2] binfmt: Use struct_size()
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] media: dvb_ringbuffer: Return -EFAULT if copy fails
+Content-Language: en-US
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     YongSu Yoo <yongsuyoo0215@gmail.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>
+References: <41a9c6a6-4b9a-4d84-9e32-09bf64c65b6c@kili.mountain>
+ <aab14cc4-0400-c114-f180-6db943fd7e32@nfschina.com>
+ <7466fead-1b99-4a78-86cb-5dd8a9baec19@kili.mountain>
+ <20230526114539.0520dcbf@sal.lan>
+From:   Longsuhui <Jack_sun@tom.com>
+In-Reply-To: <20230526114539.0520dcbf@sal.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+On 2023/5/26 18:45, Mauro Carvalho Chehab wrote:
+> Em Wed, 24 May 2023 10:20:38 +0300
+> Dan Carpenter <dan.carpenter@linaro.org> escreveu:
+>
+>> On Wed, May 24, 2023 at 01:20:27PM +0800, Su Hui wrote:
+>>> It's confusing about the comment on function declaration.
+>>>
+>>>      /**
+>>>       * dvb_ringbuffer_write_user - Writes a buffer received via a user
+>>> pointer
+>>>
+>>>      ..........
+>>>
+>>>       * Return: number of bytes transferred or -EFAULT
+>>>
+>>> But the function Only returns  the number of bytes transferred.
+>>>
+>>> Maybe the comment should be modified because it never returns -EFAULT.
+>> To be honest, I think that -EFAULT is probably a better return.  But
+>> there is no way we could apply the patch with that commit message.  The
+>> commit message doesn't explain the problem for the user or why returning
+>> the number of bytes copied is not correct in this case.
+>>
+>> I think that maybe it's not too late to change this to return -EFAULT,
+>> but it would have been easier to make the change in 2014 before there
+>> were many users.  Also it would be easier if you were testing this on
+>> real hardware.
+> It is too late to change the API here, as this could break userspace.
+>
+> Basically, DVB subsystem normally works with a Kernel-implemented ringbuffer
+> that transfers MPEG TS data between kernelspace/userspace. The size is
+> set via an ioctl (DMX_SET_BUFFER_SIZE). By the way, such uAPI is older
+> than 2014. It was added upstream on Kernel 2.6.
+>
+> The buffer size is usually big. For instance, dvbv5-zap uses:
+>
+> 	#define DVB_BUF_SIZE      (4096 * 8 * 188)
+>
+> The normal operation is that data will be received from a MPEG-TS
+> stream, although it is also possible to send data on cable TV, when
+> using dvb net interface.
+>
+> While on several boards, the hardware<->kernel transfer happens on
+> 188-bytes packages, there are some hardware out there where the
+> data passed from/to kernel is not 188-bytes aligned.
+>
+> The normal operation (receiving a TV broadcast) means that the Kernel
+> will be filling a ringbuffer containing the data passed from the
+> hardware. The size of the such buffer is adjusted via DMX_SET_BUFFER_SIZE
+> and contains MPEG TS packets of 188-bytes. Userspace will be in an
+> endless loop that will be waiting for data to arrive at the ringbuffer,
+> copying received data its own userspace buffer. If the buffer is not set
+> to a multiple of 188, it should be up to userspace to handle incomplete
+> frames. The same occurs if the data is 204-bytes aligned. Btw, userspace
+> can detect the packet size, based on the frame content.
+>
+> On such example, if a ringbuffer transfer would be passing 1554 bytes,
+> it means that 8 MPEG-TS frames are complete, and that 50 bytes of the
+> next frame was also transfered from/to userspace.
+>
+> It should be up to userspace to ensure that those extra 50 bytes will
+> be probably taken into account by the application and ensure that the
+> remaining 138 bytes will be handled at the next from/to userspace
+> data transfer.
+>
+> Not the best API, but any change there will break userspace.
+>
+> In particular, this patch will completely break transfers if the
+> buffer size is not 188-bytes aligned.
+>
+> so,
+>
+> NACK.
+>
+> Su,
+>
+> Did you find any real problem with this? On what hardware/application?
+There is no real problem with this.
+I understand, and this patch is wrong.
+Sorry to bother you.
 
-> Use struct_size() instead of hand-writing it. It is less verbose, more
-> robust and more informative.
-
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Obviously correct transform.
+Su Hui
 
 >
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested on arm
-> ---
->  fs/binfmt_elf_fdpic.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> Regards,
+> Mauro
 >
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index d76ad3d4f676..237ce388d06d 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -748,7 +748,6 @@ static int elf_fdpic_map_file(struct elf_fdpic_params *params,
->  	struct elf32_phdr *phdr;
->  	unsigned long load_addr, stop;
->  	unsigned nloads, tmp;
-> -	size_t size;
->  	int loop, ret;
->  
->  	/* allocate a load map table */
-> @@ -760,8 +759,7 @@ static int elf_fdpic_map_file(struct elf_fdpic_params *params,
->  	if (nloads == 0)
->  		return -ELIBBAD;
->  
-> -	size = sizeof(*loadmap) + nloads * sizeof(*seg);
-> -	loadmap = kzalloc(size, GFP_KERNEL);
-> +	loadmap = kzalloc(struct_size(loadmap, segs, nloads), GFP_KERNEL);
->  	if (!loadmap)
->  		return -ENOMEM;
