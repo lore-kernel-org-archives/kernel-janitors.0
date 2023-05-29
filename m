@@ -2,81 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F29A7C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 15:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 026B3C77B7E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 15:26:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbjE2PQE (ORCPT
+        id S229873AbjE2P0f (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 May 2023 11:16:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54848 "EHLO
+        Mon, 29 May 2023 11:26:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjE2PQD (ORCPT
+        with ESMTP id S229871AbjE2P0d (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 May 2023 11:16:03 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89193CF
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 08:15:57 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 3ebBqRDyGfPgg3ebBqe9kc; Mon, 29 May 2023 17:15:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685373355;
-        bh=BltMKT3kn+lp68ycQvoOpDcBVtIurMfM0OHRUsxk4vg=;
-        h=From:To:Cc:Subject:Date;
-        b=Je23+tjFXIoQFK7nljsPigyn8btd5HgWlTRRcug7vc0TAY6XIxdjphHuC107i9Mky
-         CrseczmHneG/8QLu1s2ax/qTB5lMGB3duWGtHvm5igrbr/UH8fbaNUVyMyihdnUpvJ
-         Y4A8LSAsFBEra+B75VdrSE5ze7VDe3hhhgcGkSGU6LyKX7TDtWqjDncTccYylX13sx
-         PKx7dwpl72hW0MPGX2ba/P2H2yWsza8wPwHzBm/QKaESbgPVQo6jK3skPdAP9mbQ0E
-         jvpm4ThqKDPoW1IyF3RCWf8NVybC0GtqCYlLVGwqMK0rBCy+SKKGm/xdk/bX4p4hSP
-         NGuQg16efvztw==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 29 May 2023 17:15:55 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Robert Moore <robert.moore@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-acpi@vger.kernel.org, acpica-devel@lists.linuxfoundation.org
-Subject: [PATCH V2] ACPICA: Slightly simplify an error message in acpi_ds_result_push()
-Date:   Mon, 29 May 2023 17:15:52 +0200
-Message-Id: <1464371bc72147e10a392a18734e6c8dff330a9c.1685341309.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 29 May 2023 11:26:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1336ECF
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 08:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685373951;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eSBcv+NaPNMlCQs57n9r+zaM6oZYLbvvoNzuJOFQqGM=;
+        b=XGnQmiB3UA1uX4L4+BIgOeZFkxvK/90NPif/HeyxooPNFaD2gT4dnp04EfbbrmIbFgSlEg
+        AXB7dqnv3KsXNHkyb0Mn1EN2alq92v5yfW9O3+YkFw7JXmWBmmkRbqOD4iZFakvGwwadqY
+        Wg0tqMsK2ne/o9RRT4tXgKRCPVv3LS4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-100-XH7gUsQvNB-qQ486QlxvLg-1; Mon, 29 May 2023 11:25:45 -0400
+X-MC-Unique: XH7gUsQvNB-qQ486QlxvLg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 66225811E78;
+        Mon, 29 May 2023 15:25:45 +0000 (UTC)
+Received: from localhost (unknown [10.39.192.115])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E1A5040CFD45;
+        Mon, 29 May 2023 15:25:44 +0000 (UTC)
+Date:   Mon, 29 May 2023 11:25:43 -0400
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] scsi: virtio_scsi: Remove a useless function call
+Message-ID: <20230529152543.GA889095@fedora>
+References: <08740635cdb0f8293e57c557b22e048daae50961.1685345683.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="e47TU4KlPcthwDds"
+Content-Disposition: inline
+In-Reply-To: <08740635cdb0f8293e57c557b22e048daae50961.1685345683.git.christophe.jaillet@wanadoo.fr>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'object' is known to be NULL at this point. There is little value to log
-it twice in the error message.
 
-Link: https://github.com/acpica/acpica/pull/875
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v2: Add a link to the PR on github
-Patch below and in the PR are slightly different because if CamelCase.
+--e47TU4KlPcthwDds
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/acpi/acpica/dswstate.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Mon, May 29, 2023 at 09:35:08AM +0200, Christophe JAILLET wrote:
+> 'inq_result' is known to be NULL. There is no point calling kfree().
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/scsi/virtio_scsi.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/acpica/dswstate.c b/drivers/acpi/acpica/dswstate.c
-index d3841ded3a81..75338a13c802 100644
---- a/drivers/acpi/acpica/dswstate.c
-+++ b/drivers/acpi/acpica/dswstate.c
-@@ -146,8 +146,8 @@ acpi_ds_result_push(union acpi_operand_object *object,
- 
- 	if (!object) {
- 		ACPI_ERROR((AE_INFO,
--			    "Null Object! Obj=%p State=%p Num=%u",
--			    object, walk_state, walk_state->result_count));
-+			    "Null Object! State=%p Num=%u",
-+			    walk_state, walk_state->result_count));
- 		return (AE_BAD_PARAMETER);
- 	}
- 
--- 
-2.34.1
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--e47TU4KlPcthwDds
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmR0w/YACgkQnKSrs4Gr
+c8hJeAf/WmB2oYBwLIM+8TSkvLF5FqEfpmrlGGWzY/u8GJU2N9vYRbK3hj8XopAx
+/5QW9+w4nhzQiA6OajCWTD2H7ppbl0LyP2dyazgxpbclTy3onUcZ6zAkNVboh35j
+8D8cucD4Hr92ZCMyw/39x5V7Gh7N4CDvtHJEMwWE7exufpzKmB+9r+qRV2LlYxNf
+JmdCwXDR+0jOxLUFr1yl9WpvHQlU+28ElDdDcJXliAoIRljDsIk2rbWafuxDKzH1
+UPkM7/iR0dFFMK97WGs/ibwrwCVCjA/yejo4GTl6K0sUFazHYVJkseq3869jJma2
+7ZgTO+y4fyt7XodklSvimt2hWFPkIg==
+=m2E9
+-----END PGP SIGNATURE-----
+
+--e47TU4KlPcthwDds--
 
