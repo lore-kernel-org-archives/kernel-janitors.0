@@ -2,80 +2,82 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF28C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 11:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CB4C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 12:26:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230518AbjE3LKW (ORCPT
+        id S230282AbjE3M0W (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 May 2023 07:10:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53990 "EHLO
+        Tue, 30 May 2023 08:26:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbjE3LKV (ORCPT
+        with ESMTP id S230202AbjE3M0M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 May 2023 07:10:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E08AD9;
-        Tue, 30 May 2023 04:10:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3377A62DE5;
-        Tue, 30 May 2023 11:10:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8C382C4339C;
-        Tue, 30 May 2023 11:10:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685445019;
-        bh=ooyqEstCDpnfy3AudKZDgbG8bndnmzjIz/C+/3PODfw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=QKvtcKbhic/Ekw82tXjeLyznXnThWH9YMBiOVxx3hdVRw8sY3dD0nIM//grgv/lvd
-         Ji60MhaqNyzYc62Nwkz7MNXOwN8AlRAoXmJxoVJBM68p2g6hGnEJAmEUvL1/4sHIEY
-         jlwCWr1aP1w9Dw0bGmleqjf2Rd6aGXkVaFXGJFNarmXmfE5UDFk1KTt7xbqhrSHyg/
-         ZkJj+YyBRBNjsGusbW56JivUDHrxKVCK+DzkmQLy8DjgrPLOh3AdMz3RtBtg140Ges
-         /oUdJwHPDUxuN0j6AkY8Evxwy8KYcmJqM+B48prUdwXS52sjwxGmwfbinS+3N9Emaj
-         cnO1IJ2fAKYjg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 70DA5E52BF6;
-        Tue, 30 May 2023 11:10:19 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 30 May 2023 08:26:12 -0400
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A7CC9;
+        Tue, 30 May 2023 05:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=M9A0vcVF8IA1gHsjyEyXBJrCT9Za4gxMa+ZTE7U7qVE=;
+  b=S8e5VGyaP6g2R9mOEPLhyj18/8JGVlYxb98B1EIH4hYpbvfXw/pAAmyo
+   xRTI1+QWbryrP7oH9mhubm2Wze5aLoWbch/0xeyA9LOTj/20Ou1xB076V
+   UctW7tJw7+bKXPZHBOJ0G8soZFesMwdQaUjGaHS4ZzgQ6ZkekMLFppMcm
+   4=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.00,204,1681164000"; 
+   d="scan'208";a="110279814"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2023 14:26:08 +0200
+Date:   Tue, 30 May 2023 14:26:09 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     Claudiu Beznea <claudiu.beznea@microchip.com>, cocci@inria.fr,
+        kernel-janitors@vger.kernel.org,
+        Julia Lawall <julia.lawall@inria.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [cocci] [PATCH] Coccinelle: kmerr: increase check list
+In-Reply-To: <f16a66f7-460e-3577-ec5c-e4ccf00065f2@web.de>
+Message-ID: <7f63dd13-f69a-8171-90f7-5a4f46ed5790@inria.fr>
+References: <20230530074044.1603426-1-claudiu.beznea@microchip.com> <f16a66f7-460e-3577-ec5c-e4ccf00065f2@web.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] liquidio: Use vzalloc()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168544501945.15349.1447654214399471646.git-patchwork-notify@kernel.org>
-Date:   Tue, 30 May 2023 11:10:19 +0000
-References: <93b010824d9d92376e8d49b9eb396a0fa0c0ac80.1685216322.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <93b010824d9d92376e8d49b9eb396a0fa0c0ac80.1685216322.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: multipart/mixed; boundary="8323329-1892626257-1685449569=:3727"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Sat, 27 May 2023 21:40:08 +0200 you wrote:
-> Use vzalloc() instead of hand writing it with vmalloc()+memset().
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 4 +---
->  drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
-
-Here is the summary with links:
-  - [net-next] liquidio: Use vzalloc()
-    https://git.kernel.org/netdev/net-next/c/bb269633f3da
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+--8323329-1892626257-1685449569=:3727
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
 
+
+On Tue, 30 May 2023, Markus Elfring wrote:
+
+> …
+> > +++ b/scripts/coccinelle/null/kmerr.cocci
+> …
+> > @@ -51,7 +51,7 @@ position any withtest.p;
+> >  identifier f;
+> >  @@
+> >
+> > -x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+> > +x@p1 = \(kmalloc\|devm_kmalloc\|kmalloc_array\|devm_kmalloc_array\|krealloc_array\|kzalloc\|devm_kzalloc\|kcalloc\|devm_kcalloc\|kasprintf\|devm_kasprintf\|kstrdup\|kstrdup_const\)(...);
+> >  ...
+> >  x1@p = f@p2(...);
+> >  if (!x1) S
+>
+> Can it be nicer to specify desired function names on multiple lines
+> for such a SmPL disjunction?
+>
+> Would you sort them according to their call probability?
+
+Please don't follow either of these suggestions.
+
+julia
+--8323329-1892626257-1685449569=:3727--
