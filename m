@@ -2,157 +2,209 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2558C77B73
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 21:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12138C7EE24
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 22:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231499AbjE3V2Q (ORCPT
+        id S233732AbjE3W2L (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 May 2023 17:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50626 "EHLO
+        Tue, 30 May 2023 18:28:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbjE3V2P (ORCPT
+        with ESMTP id S233745AbjE3W2I (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 May 2023 17:28:15 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5D40E5;
-        Tue, 30 May 2023 14:28:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rtMOiQ1B6T7dYB7FwbV1KNs7Z9hwONAQYl5x937amzk=; b=U0hCUVtBCNQ//NjLHwtyoRJ2Sm
-        EG7nrYN1OdOJvbYm2BIwRPwmtjWiwITDzqzCVUudTdqJXEuge4sk+NhOM4gGzGR6dP7Ox71yfZDrL
-        EcyK9dskHLmOjf5IESag0VmsngOXITkQn26MjifhuNOgnfphlVhIPjsYPaCEi8Teo5ejaN0FYa+NF
-        cilZYBO8nm9+yi5HD+nEcGdxhwrSLwD34DDigORiVvPhJl9QqBIjLUbDQhS2VsR/DtUTg3iSpBJr5
-        XNpmjpuyFvnIP+vnfZFMcO4ZPDgzsKwbkRU2JwFVYWLWJvNN0EMdRIcm6czwYnxYsLjphMyhsLia2
-        4KRC22tA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45726)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1q46sy-0003Us-PD; Tue, 30 May 2023 22:28:08 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1q46sx-0008PF-3F; Tue, 30 May 2023 22:28:07 +0100
-Date:   Tue, 30 May 2023 22:28:07 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: phy: fix a signedness bug in genphy_loopback()
-Message-ID: <ZHZqZyCJGZjraJ6P@shell.armlinux.org.uk>
-References: <d7bb312e-2428-45f6-b9b3-59ba544e8b94@kili.mountain>
- <20230529215802.70710036@kernel.org>
- <90b1107b-7ea0-4d8f-ad88-ec14fd149582@lunn.ch>
- <20230530121910.05b9f837@kernel.org>
- <ZHZQ+1KNGB7KYZGi@shell.armlinux.org.uk>
- <0851bc91-6a7c-4333-ad8a-3a18083411e3@lunn.ch>
- <ZHZmBBDSVMf1WQWI@shell.armlinux.org.uk>
+        Tue, 30 May 2023 18:28:08 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FA1FF7;
+        Tue, 30 May 2023 15:27:52 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id ED0192187B;
+        Tue, 30 May 2023 22:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1685485670; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=18j5tvDaSV7ASsBeBkyrZ2rlsJmZg7DSojVFhv89dpY=;
+        b=wehyXkwRpGMJYML5r49f7V+U/SzLmqJ/KAVFN7Xq+OjsdqBPJize1K2t44Nzy5DRxVpg6O
+        20iLwewLOp05gvuvmILokAfctIoWmf+H5Xykz1w3ePQz6ACKcSI/ZJXfYaCg7OmQ8iwNa8
+        idvYVycOqq67drFpxBnTwUbBTGRMyyg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1685485670;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=18j5tvDaSV7ASsBeBkyrZ2rlsJmZg7DSojVFhv89dpY=;
+        b=FZ8v9KB0G9DsDm6MV0OJE9QBBCpcRZhcMVQCwb6Xx9X9YL78StXG1gCuT+xmaCDl5pKl9S
+        TIh4+NpA6NzIJqBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7D50E13478;
+        Tue, 30 May 2023 22:27:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id PgUxDGN4dmS5VgAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 30 May 2023 22:27:47 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZHZmBBDSVMf1WQWI@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Dan Carpenter" <dan.carpenter@linaro.org>
+Cc:     "Stanislav Kinsbursky" <skinsbursky@parallels.com>,
+        "Chuck Lever" <chuck.lever@oracle.com>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
+        "Anna Schumaker" <anna@kernel.org>,
+        "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nfsd: fix double fget() bug in __write_ports_addfd()
+In-reply-to: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>
+References: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>
+Date:   Wed, 31 May 2023 08:27:43 +1000
+Message-id: <168548566376.23533.14778348024215909777@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 30, 2023 at 10:09:24PM +0100, Russell King (Oracle) wrote:
-> Having thought about this, the best I can come up with is this, which
-> I think gives us everything we want without needing BUILD_BUG_ONs:
-> 
-> #define phy_read_poll_timeout(phydev, regnum, val, cond, sleep_us, \
->                                 timeout_us, sleep_before_read) \
-> ({ \
->         int __ret, __val;
-> 	__ret = read_poll_timeout(__val = phy_read, val, __val < 0 || (cond), \
->                 sleep_us, timeout_us, sleep_before_read, phydev, regnum); \
->         if (__val < 0) \
->                 __ret = __val; \
->         if (__ret) \
->                 phydev_err(phydev, "%s failed: %d\n", __func__, __ret); \
->         __ret; \
-> })
-> 
-> This looks rather horrid, but what it essentially does is:
-> 
->                 (val) = op(args); \
->                 if (cond) \
->                         break; \
-> 
-> expands to:
-> 
-> 		(val) = __val = phy_read(args);
-> 		if (__val < 0 || (cond))
-> 			break;
-> 
-> As phy_read() returns an int, there is no cast or loss assigning it
-> to __val, since that is also an int. The conversion from int to
-> something else happens at the same point it always has.
+On Mon, 29 May 2023, Dan Carpenter wrote:
+> The bug here is that you cannot rely on getting the same socket
+> from multiple calls to fget() because userspace can influence
+> that.  This is a kind of double fetch bug.
+>=20
+> The fix is to delete the svc_alien_sock() function and insted do
+> the checking inside the svc_addsock() function.
 
-... and actually produces nicer code on 32-bit ARM:
+Hi,
+ I definitely agree with the change to pass the 'net' into
+ svc_addsock(), and check the the fd has the correct net.
 
-Old (with the u16 val changed to an int val):
+ I'm not sure I agree with the removal of the svc_alien_sock() test.  It
+ is best to perform sanity tests before allocation things, and
+ nfsd_create_serv() can create a new 'serv' - though most often it just
+ incs the refcount.
 
- 2f8:   ebfffffe        bl      0 <mdiobus_read>
- 2fc:   e7e03150        ubfx    r3, r0, #2, #1		extract bit 2 into r3
- 300:   e1a04000        mov     r4, r0			save return value
- 304:   e2002004        and     r2, r0, #4		extract bit 2 again
- 308:   e1933fa0        orrs    r3, r3, r0, lsr #31	grab sign bit
- 30c:   1a00000d        bne     348 <genphy_loopback+0xd8>
-		breaks out of loop if r3 is nonzero
-	... rest of loop ...
-...
- 348:   e3520000        cmp     r2, #0
- 34c:   0a00000b        beq     380 <genphy_loopback+0x110>
-		basically tests whether bit 2 was zero, and jumps if it
-		was. Basically (cond) is false.
+ Maybe instead svc_alien_sock() could return the struct socket (if
+ successful), and it could be passed to svc_addsock()???
 
- 350:   e3540000        cmp     r4, #0
- 354:   a3a04000        movge   r4, #0
- 358:   ba00000a        blt     388 <genphy_loopback+0x118>
-		tests whether a phy_read returned an error and jumps
-		if it did. r4 is basically __ret.
-...
+ I would probably then change the name of svc_alien_sock()
 
- 380:   e3540000        cmp     r4, #0
- 384:   a3e0406d        mvnge   r4, #109        ; 0x6d
-		if r4 (__ret) was >= 0, sets an error code (-ETIMEDOUT).
- 388:   e1a03004        mov     r3, r4
- ... dev_err() bit.
+Thanks,
+NeilBrown
 
-The new generated code is:
 
- 2f8:   ebfffffe        bl      0 <mdiobus_read>
-                        2f8: R_ARM_CALL mdiobus_read
- 2fc:   e2504000        subs    r4, r0, #0		__val assignment
- 300:   ba000014        blt     358 <genphy_loopback+0xe8>
-		if <0, go direct to dev_err code
- 304:   e3140004        tst     r4, #4			cond test within loop
- 308:   1a00000d        bne     344 <genphy_loopback+0xd4>
-	... rest of loop ...
+>=20
+> Fixes: 3064639423c4 ("nfsd: check passed socket's net matches NFSd superblo=
+ck's one")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> Based on static analysis and untested.  This goes through the NFS tree.=20
+> Inspired by CVE-2023-1838.
+>=20
+>  include/linux/sunrpc/svcsock.h |  7 +++----
+>  fs/nfsd/nfsctl.c               |  7 +------
+>  net/sunrpc/svcsock.c           | 23 +++++------------------
+>  3 files changed, 9 insertions(+), 28 deletions(-)
+>=20
+> diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
+> index d16ae621782c..a7116048a4d4 100644
+> --- a/include/linux/sunrpc/svcsock.h
+> +++ b/include/linux/sunrpc/svcsock.h
+> @@ -61,10 +61,9 @@ int		svc_recv(struct svc_rqst *, long);
+>  void		svc_send(struct svc_rqst *rqstp);
+>  void		svc_drop(struct svc_rqst *);
+>  void		svc_sock_update_bufs(struct svc_serv *serv);
+> -bool		svc_alien_sock(struct net *net, int fd);
+> -int		svc_addsock(struct svc_serv *serv, const int fd,
+> -					char *name_return, const size_t len,
+> -					const struct cred *cred);
+> +int		svc_addsock(struct svc_serv *serv, struct net *net,
+> +			    const int fd, char *name_return, const size_t len,
+> +			    const struct cred *cred);
+>  void		svc_init_xprt_sock(void);
+>  void		svc_cleanup_xprt_sock(void);
+>  struct svc_xprt *svc_sock_create(struct svc_serv *serv, int prot);
+> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> index e0e98b40a6e5..1489e0b703b4 100644
+> --- a/fs/nfsd/nfsctl.c
+> +++ b/fs/nfsd/nfsctl.c
+> @@ -698,16 +698,11 @@ static ssize_t __write_ports_addfd(char *buf, struct =
+net *net, const struct cred
+>  		return -EINVAL;
+>  	trace_nfsd_ctl_ports_addfd(net, fd);
+> =20
+> -	if (svc_alien_sock(net, fd)) {
+> -		printk(KERN_ERR "%s: socket net is different to NFSd's one\n", __func__);
+> -		return -EINVAL;
+> -	}
+> -
+>  	err =3D nfsd_create_serv(net);
+>  	if (err !=3D 0)
+>  		return err;
+> =20
+> -	err =3D svc_addsock(nn->nfsd_serv, fd, buf, SIMPLE_TRANSACTION_LIMIT, cre=
+d);
+> +	err =3D svc_addsock(nn->nfsd_serv, net, fd, buf, SIMPLE_TRANSACTION_LIMIT=
+, cred);
+> =20
+>  	if (err >=3D 0 &&
+>  	    !nn->nfsd_serv->sv_nrthreads && !xchg(&nn->keep_active, 1))
+> diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
+> index 46845cb6465d..e4184e40793c 100644
+> --- a/net/sunrpc/svcsock.c
+> +++ b/net/sunrpc/svcsock.c
+> @@ -1474,22 +1474,6 @@ static struct svc_sock *svc_setup_socket(struct svc_=
+serv *serv,
+>  	return svsk;
+>  }
+> =20
+> -bool svc_alien_sock(struct net *net, int fd)
+> -{
+> -	int err;
+> -	struct socket *sock =3D sockfd_lookup(fd, &err);
+> -	bool ret =3D false;
+> -
+> -	if (!sock)
+> -		goto out;
+> -	if (sock_net(sock->sk) !=3D net)
+> -		ret =3D true;
+> -	sockfd_put(sock);
+> -out:
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL_GPL(svc_alien_sock);
+> -
+>  /**
+>   * svc_addsock - add a listener socket to an RPC service
+>   * @serv: pointer to RPC service to which to add a new listener
+> @@ -1502,8 +1486,8 @@ EXPORT_SYMBOL_GPL(svc_alien_sock);
+>   * Name is terminated with '\n'.  On error, returns a negative errno
+>   * value.
+>   */
+> -int svc_addsock(struct svc_serv *serv, const int fd, char *name_return,
+> -		const size_t len, const struct cred *cred)
+> +int svc_addsock(struct svc_serv *serv, struct net *net, const int fd,
+> +		char *name_return, const size_t len, const struct cred *cred)
+>  {
+>  	int err =3D 0;
+>  	struct socket *so =3D sockfd_lookup(fd, &err);
+> @@ -1514,6 +1498,9 @@ int svc_addsock(struct svc_serv *serv, const int fd, =
+char *name_return,
+> =20
+>  	if (!so)
+>  		return err;
+> +	err =3D -EINVAL;
+> +	if (sock_net(so->sk) !=3D net)
+> +		goto out;
+>  	err =3D -EAFNOSUPPORT;
+>  	if ((so->sk->sk_family !=3D PF_INET) && (so->sk->sk_family !=3D PF_INET6))
+>  		goto out;
+> --=20
+> 2.39.2
+>=20
+>=20
 
- 344:   e6ff4074        uxth    r4, r4			cast to 16-bit uint
- 348:   e3140004        tst     r4, #4			test
- 34c:   13a04000        movne   r4, #0			__ret is zero if bit set
- 350:   1a000007        bne     374 <genphy_loopback+0x104> basically returns
- 354:   e3e0406d        mvn     r4, #109        ; 0x6d
-	... otherwise sets __ret to -ETIMEDOUT
-	... dev_err() code
-
-Is there a reason why it was written (cond) || val < 0 rather than
-val < 0 || (cond) ? Note that the order of these tests makes no
-difference in this situation, but I'm wondering whether it was
-intentional?
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
