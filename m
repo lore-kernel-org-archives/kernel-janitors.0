@@ -2,228 +2,125 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 976E3C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 06:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDAEC77B73
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 07:35:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbjE3Gfi (ORCPT
+        id S229937AbjE3Hff (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 May 2023 02:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58336 "EHLO
+        Tue, 30 May 2023 03:35:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229915AbjE3Gfh (ORCPT
+        with ESMTP id S231322AbjE3HfG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 May 2023 02:35:37 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 407CBF1
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 23:35:35 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f6dfc4dffaso27282985e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 23:35:35 -0700 (PDT)
+        Tue, 30 May 2023 03:35:06 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2128.outbound.protection.outlook.com [40.107.102.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09312F9;
+        Tue, 30 May 2023 00:35:00 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R8RDs3vZQDHVYh24FSSXKQ+O7KaNkoF1rESjk2D69/5Zp+JrVZgjenlpc68e3wbsl/XNr1z2fkhlpDcu1biKBhDJJzxZW6UdYjo9/3kMXIbzPHKj2Ar7EixXZpZCgXzn58L+WetEBqBXbHAo92H17FYkqMwXBN0X+ycoA2F1soEQx5pJAV/xNbcoLNEgQYNFZC0KHCZQxmA+fYW2ANrTO666VmiVMWreRfU9rmw54Q0Uds5lBbsmHcsybNF6vxq+2iMFlk7XS5J2gigKEo7qq9bkXc6DIlqVPN0Y+FyHk0L77p2nuk0s/dJS4m5AAm4MSGCiPLxILI5awU2rB2t2+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hbFq7JLrAprxFHUM5JAvHZ/OAwbgxUU6S1QOcXwRk/A=;
+ b=gGADhpLDwEmKxgmKEXMmFG5u90s6aYoqpavXmj0rdqS+G3dMyQz6wikwGM6HiogefcpRk8mzqDN8lVOVRHU3ti79Dpg8PZwbREeB8WQ28Jp0wUXyg2XVQaojS1IYjqjQAJnbY1N7VOrJFm7CN000J6jPMN/Z2g/wn4kB22yIizFUA+4LZrMZmk9M4qO0ZAyNI31U/fUqcl4lVdNV/J/eWpElJ+TilcUkVePqA5LOGW/KYF082bxU0dp4FSguCqAcsygygR0h6AOenJJ5XPbEzmEkpkjPTX5mJF6kHXGQjSX6MMsUmGBCHM17l/KeiCZYs/svl/XS9U/XbZ8iC9m7nQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685428533; x=1688020533;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=55ZCWeFVfRDjQ05GnX/F+STnRavqIcQ2VYdd77KKqp4=;
-        b=tutQjCisopkCpD5wYYwkWAYtOPB2ufq9Vtf/ppOb5goByihL6LbJIAmPpyUv4n+euf
-         +XAw/zIWG+dUVZz5xYxa53c4nuPxx4S8u9LRDiUIhtW2eho2hIBv1TJQC+pswd2r8RvD
-         sxeYGeFNm6DxmZmTv6200aFeO/OC2Vu0DPiPEgJaI8DECU4pHA9Aya5UMzB3TtaOVO1L
-         rrjzKt9K0ExDjRy5lkGPus/GACM2QenOXTWrzaYzCTDIE+R9dmo8rSztyARS6AfNGDLl
-         JrB5vaA9C/9U7TUxlYLubiJL4In7sxnsF1MPq9j9uL3c4XqIgnverDfv48EIp3bDX/Rm
-         vciw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685428533; x=1688020533;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=55ZCWeFVfRDjQ05GnX/F+STnRavqIcQ2VYdd77KKqp4=;
-        b=WouptWO90wmZ0p9OMeyP1tyecUoCZ/KBa7vgr/qFq8vv/msScn9jQ1LNPna0K6Ga09
-         +Y50UWJYuIhfcykQzzEsFyuuKNTsluZZ9w/Uwc1GAmYfe22steM2ZAcOv9E4Yho9qSNh
-         kOoJQvVnarSnbxNPJd/xqVh+Hf+B2nl8xM8cvHcYFN33BhsExsAt/tH2sBBihSwtqrgD
-         VRwBTpNFXQPxBIea4aQx3e6VvpK8eiSiMGfnEpDwGA8KpsU+0xzXDm/hTMn1WholoGl+
-         LURMNEKKXkSdS8KKBlgAny/jvr/Tecrh1BJUlphxTRupn8t1/sVNEOt8/ovN5ZsJeyTS
-         q69Q==
-X-Gm-Message-State: AC+VfDxFsWGC8q7TqWXRaVGFMkemexiIvEQsgE7tN5Z+bqA7KhKkTNWd
-        Lj3K07kIk0CQg/GjH2G9VIHUsG2RNts2dUGVZOo=
-X-Google-Smtp-Source: ACHHUZ7eORmmH8VljKaW+EPl8NgpTAfnSJgSygghBsbeWXcChcLDKGLwO8LQU4TW/6f1pT8g6eiXXQ==
-X-Received: by 2002:a1c:7918:0:b0:3f6:244:55e3 with SMTP id l24-20020a1c7918000000b003f6024455e3mr664438wme.35.1685428533703;
-        Mon, 29 May 2023 23:35:33 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id 9-20020a05600c028900b003f42a75ac2asm16409818wmk.23.2023.05.29.23.35.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 May 2023 23:35:31 -0700 (PDT)
-Date:   Tue, 30 May 2023 09:35:28 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Julien Panis <jpanis@baylibre.com>
-Cc:     Lee Jones <lee@kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [bug report] mfd: tps6594: Add driver for TI TPS6594 PMIC
-Message-ID: <65b0fe53-ec91-479e-b55b-06af0678159b@kili.mountain>
-References: <afd9a078-1002-4a26-a9b2-d92406912af5@kili.mountain>
- <44024069-723a-9726-7cdb-6c10a3ce2c7f@baylibre.com>
- <cf3ada2f-0c44-4389-9758-b72af9d138db@kili.mountain>
- <5d9f2dee-7c56-0220-48fb-c9fbdec1af29@baylibre.com>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="jiB5S75U0rohqi0T"
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hbFq7JLrAprxFHUM5JAvHZ/OAwbgxUU6S1QOcXwRk/A=;
+ b=mq0wW6JwK9sZ4MX/ZsGfd/OhJf5aY3CW/UuVbxrD6mS12w+EgE+8oMT8Nim9fgZDYYqt1MrBwKL32f9JLVcRTkXcpskUJTFvieMYXzuQp3XDgAzt7He2yW8NQn4i7f+69wHjxkj3aQffMSV3Pqq4gjMv4fEDN0tfTsZafH0IbZc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by MW4PR13MB5508.namprd13.prod.outlook.com (2603:10b6:303:183::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.23; Tue, 30 May
+ 2023 07:34:57 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::5e55:9a39:751f:55f6]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::5e55:9a39:751f:55f6%3]) with mapi id 15.20.6433.022; Tue, 30 May 2023
+ 07:34:56 +0000
+Date:   Tue, 30 May 2023 09:34:50 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Derek Chickles <dchickles@marvell.com>,
+        Satanand Burla <sburla@marvell.com>,
+        Felix Manlunas <fmanlunas@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] liquidio: Use vzalloc()
+Message-ID: <ZHWnGuK0nGhS+G+7@corigine.com>
+References: <93b010824d9d92376e8d49b9eb396a0fa0c0ac80.1685216322.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5d9f2dee-7c56-0220-48fb-c9fbdec1af29@baylibre.com>
+In-Reply-To: <93b010824d9d92376e8d49b9eb396a0fa0c0ac80.1685216322.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: AS4PR09CA0022.eurprd09.prod.outlook.com
+ (2603:10a6:20b:5d4::14) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|MW4PR13MB5508:EE_
+X-MS-Office365-Filtering-Correlation-Id: 107538d8-402d-4e1a-b8b8-08db60e05dd4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ScvWQ2NW5SV9xrBb1bHzx7apXQxF9NLtDIiacHGTgX4+1tx+ijtw1hiiOgZpA9EpMT+v4XdQoRAkvYgn7HRv98Sb8ckXBPKiGWrygwPvvBCFiL9sYwieQfyy4nylKLYjZXOQpzcLfy/5ejTrBuHo5I2oh03zSQDBlF2asxxXBJzEWh5+/4tCsQOOv7+24uHasbMVE/jfqBk4Amy1b0f/mJW1pBubDuDs90AW4VcyryRsJfV8EwYb9yseZncL+FLzjtEhEth398M31pq57pEFzgMBSupMXV9ZLksXTFJQNKCIFZcikXvutI4ZhV/kK8ZmhUOLtkybZjl7NxjU9HFlOks/ITh9RMOtWPsTM5GUcflZsOAcQGdXxS0zubHMt9/5HZpNdTHtulhZx5BkDzVSQTaTBCdIufcGrbQjmCusFLPKCbk0F9U8WWXn2YlkrohPO/jtj+Y91+quN6h3lIcwn8bXQmpGUfK0j5GwuGSgIKa2lJYep+eZN53bl2MKwLpD9hNJEWrdlDc+1UilHcGt63e5wDEcz3uVFxLX4lNn6HOsNuw9xCS3FF7eqICEyBvg2vnMMABPhQgBTFmUDdtGUeacx4qLN9eyTsCRf1ji1jo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(376002)(346002)(39830400003)(396003)(136003)(451199021)(36756003)(86362001)(66946007)(66556008)(66476007)(6916009)(4326008)(54906003)(316002)(478600001)(558084003)(6512007)(6506007)(186003)(41300700001)(8936002)(8676002)(44832011)(7416002)(2906002)(6486002)(6666004)(5660300002)(38100700002)(2616005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3M+j8V59YBYcXUuYRfvhzj0r6tcffK4huzi+aXlVya59W4ED5IsQ9vSq3bA9?=
+ =?us-ascii?Q?oE/6hBWgeMoVe93ZOnAXNsdXiId7urqVBlb0Qk80Dpn8NfgfoTaMCYt9Ih47?=
+ =?us-ascii?Q?TVd334VyJRFkkddISfsNkGgMCr0Pug0rbEUdVEzeSrRzgSHraDQ5QW4fp9SD?=
+ =?us-ascii?Q?bE5VQARdXoFQxNtsuP8h3mkCAZUOUQ3PWqdHHzRxADUmzzD2Rm+5qlW6oaVH?=
+ =?us-ascii?Q?pAFFgBJLmCx8JQbpqdOpYM3uCiT4dVruRTYr5VnGZuc/ktNY4Mm9Qo87PegJ?=
+ =?us-ascii?Q?Z85HSWc5aorZ5BPLsNczP/WM9cnResrLsuLTb0tL0KOyjB4jFo1Tjl9McEd5?=
+ =?us-ascii?Q?FpsA1atIo0nvNvKXfL33U2jCFFn81qlQTsucO/1Ka3xUGQ6F5oUsEALtKoMw?=
+ =?us-ascii?Q?BcjfVnGvHtyJy1pkk6a1COsSHtIIZT8Qu3srFgo3iTNGdZqy99mi55uLoCIN?=
+ =?us-ascii?Q?kaxQYQErMT1RtpnHp65WWPU2R4+Kl1FpiC76Ex1309QB6adcT13exM/h9JNn?=
+ =?us-ascii?Q?5G4I52nTFor8Z0ovcYxVhdplBoPGsWa3J272p8faFQE5wjTaYwMqhi4VO2AO?=
+ =?us-ascii?Q?RjA+j5iU3ykworknfuJSrfGhCIwx0Q7qVS0ZSFkvjgjfZw3Y7Ep/uSiWukIX?=
+ =?us-ascii?Q?PKXco28Fg+IacQR4DTu9Ge2bEVoEGk6Lx0EM8QN8HwTTpLgMmiKc7uhvnVN7?=
+ =?us-ascii?Q?lU3W7lAOhszEyYmpC8tMHpsN+BgPc08W8TWEIP/dMHPtB756zzGQNUwR7/h1?=
+ =?us-ascii?Q?HcbIdWxFs4xXafy8ULFaymPO6RrNrjaLdmk2mBgI2w0M/X0uRW8KhZ5r1P9T?=
+ =?us-ascii?Q?zlwfJKHjgVQ8ySsta+JF8b5sBHtvuzkIhSOe9nyVybR+wsTqk57Ylt7KaFTM?=
+ =?us-ascii?Q?NnzJjQlvmsQQvR0Ux0S2xJdDRRAE8n5fdST6oPZpzYQKzJPu3CPE5pyP/aCJ?=
+ =?us-ascii?Q?S5WabeioAFcf069vArLXVg3w92AffbhYI63jRbv6LHNFEKUXen/gLWuridJH?=
+ =?us-ascii?Q?/1u+rmhG9mFoflHml7zX7W4YAR/hdr23jBGdBETR4zFSzgulKusVr7LnJpzI?=
+ =?us-ascii?Q?GJfbQNfi94WPhDvpQVxo86oFepf+85a+MEmZfzBMKriR23JLyZ1kgGSFkDlo?=
+ =?us-ascii?Q?OcEG2N+/+68OkWuNhPs/RfONwuWiTicvxS0QIQUIIMv5p/ILPN6v17o00Dk2?=
+ =?us-ascii?Q?9ZC5C9SoVUD7yJzutCD+gWloqHeA5n608aUUmd8sn/yBJt2QKKD/baWLttyM?=
+ =?us-ascii?Q?LJ9swQrfVjkq2R83TOsgtdW7ND1M5SEMBQxcom/gS/9KUuL5E6F7fiBriX1N?=
+ =?us-ascii?Q?doj2edIEJv832QY9Mf+rZ3dunUtuZ4PkcytaTU5V+VPGjPbjv5ytr8QWC9AW?=
+ =?us-ascii?Q?TydHbDcqPQXxASG9MtSDpl0ic2eDz6bwcsGVbV3aGP2zeAzkJJlqYs5IQ4s/?=
+ =?us-ascii?Q?A7O7JmKrkUkXxvwbn7gtmlUrd94wJDbPzSJ7mWUe3VcO5xsjeswzvMmO+mRw?=
+ =?us-ascii?Q?9arB6QMXl+Yo1UcoXgo7Y0utFsQecw/wzPnW9YugQ36bmzN+yB62z1cHIzEe?=
+ =?us-ascii?Q?ZDYA8HWxyPheufvwmFG3dwP3VKBhrCHQjMDCzPj2NW48knD5zWE061vlSIfD?=
+ =?us-ascii?Q?Ll/Q+y6lX30xyL3F4OxtYiCJljF88d7AQ2XltdKGWYc1d2Nb+66oko1cj+f4?=
+ =?us-ascii?Q?weccPQ=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 107538d8-402d-4e1a-b8b8-08db60e05dd4
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2023 07:34:56.7673
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Au6Qgd9rolvo8dF3F6d98/BimgRaWKh/b2glAb/yLIhZD/tFBI7GLfgwylYcel7OIx1oxeqiMxggpdGY+thaZgPE1/DuqH8e6Y31HQreJe8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR13MB5508
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
---jiB5S75U0rohqi0T
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-
-On Fri, May 26, 2023 at 10:00:19AM +0200, Julien Panis wrote:
+On Sat, May 27, 2023 at 09:40:08PM +0200, Christophe JAILLET wrote:
+> Use vzalloc() instead of hand writing it with vmalloc()+memset().
+> This is less verbose.
 > 
-> > > Special handling for 'count == 1' (or 'count < 2') makes sense indeed.
-> > > 
-> > > I'm not sure that I fully understand, though. Will Smatch stop complaining
-> > > for both things that you mentioned above with a patch for handling 'count < 2' ?
-> > > Or will we consider either that warnings are handled, even if they are still there.
-> > No, don't do anything to silence the warning.  Always fix the checker
-> > instead of working around it.
-> > 
-> > Handling the "map->format.reg_bytes + map->format.pad_bytes + val_len"
-> > is kind of complicated but still easier than handling the:
-> > 
-> > 	if (val_len % map->format.val_bytes)
-> > 
-> > condition in regmap_raw_write() just because it's closer together.  It's
-> > quite a bit of code to write to silence this false positive but it's
-> > something which could be done.
-> > 
-> 
-> Who must fix 'smart' ? Me ?
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Heh.  I wish.  I'll fix it.  (Eventually.  It's complicated).
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
 
-> 
-> I run 'smart' on my side and did not see the warnings you mentioned.
-> Here are the commands I run:
-> - [path to]/smatch/smatch_scripts/build_kernel_data.sh
-> - [path to]/smatch/smatch_scripts/test_kernel.sh.sh
->   -> no warning for tps6594 mfd drivers in 'smatch_warns.txt'
-> [path to]/smatch/smatch_scripts/kchecker tps6594-i2c.c
->   -> no warning
-> [path to]/smatch/smatch_scripts/kchecker regmap.c
->   -> no warning related to tps6594 mfd driver
->   -> 2 errors for "uninitialized symbol 'ret'" in _regmap_raw_write/read()
-> 
-> Maybe I did not use the tool properly (?)
-
-Sorry!  These underflow flow check isn't released.  I probably could
-though.  It doesn't create too many false positives.  See attached.
-
-drivers/clk/qcom/clk-rcg.c:618 clk_rcg_pixel_determine_rate() warn: 'request - delta' negative user limit promoted to high
-drivers/clk/qcom/clk-rcg2.c:617 clk_edp_pixel_determine_rate() warn: 'request - delta' negative user limit promoted to high
-drivers/clk/qcom/clk-rcg2.c:794 clk_pixel_determine_rate() warn: 'request - delta' negative user limit promoted to high
-drivers/mfd/tps6594-i2c.c:159 tps6594_i2c_write() warn: 'count - 2' negative user limit promoted to high
-drivers/gpu/drm/radeon/si.c:4594 si_vm_packet3_gfx_check() warn: 'pkt->count - 2' negative user limit promoted to high
-drivers/gpu/drm/radeon/si.c:4697 si_vm_packet3_compute_check() warn: 'pkt->count - 2' negative user limit promoted to high
-drivers/net/dsa/microchip/ksz8863_smi.c:66 ksz8863_mdio_write() warn: 'count - 4' negative user limit promoted to high
-net/wireless/chan.c:456 cfg80211_set_chans_dfs_state() warn: 'center_freq + bandwidth / 2 - 10' negative user limit promoted to high
-mm/page_isolation.c:558 start_isolate_page_range() warn: '(null)' negative user limit promoted to high
-
-I think the radeon and wireless warnings look like real bugs.  The
-rest are false positives.
-
-I've looked at all these warnings before so they should have all been
-false positives... :/
-
-regards,
-dan carpenter
-
-
---jiB5S75U0rohqi0T
-Content-Type: text/x-csrc; charset=us-ascii
-Content-Disposition: attachment;
-	filename="check_negative_user_loop_promoted.c"
-
-/*
- * Copyright (C) 2018 Oracle.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
- */
-
-#include "smatch.h"
-#include "smatch_extra.h"
-#include "smatch_slist.h"
-
-static int my_id;
-
-static struct expression *warned;
-static void match_condition(struct expression *expr)
-{
-	struct expression *right;
-	struct range_list *rl;
-	struct symbol *type;
-	char *str;
-	sval_t sval;
-
-	if (warned == expr)
-		return;
-	if (expr->type != EXPR_COMPARE)
-		return;
-
-	switch (expr->op) {
-	case '<':
-	case SPECIAL_LTE:
-	case SPECIAL_UNSIGNED_LT:
-	case SPECIAL_UNSIGNED_LTE:
-		break;
-	default:
-		return;
-	}
-
-	right = strip_expr(expr->right);
-	if (right->type != EXPR_BINOP || right->op != '-')
-		return;
-	if (!get_user_rl(right->left, &rl))
-		return;
-	if (!get_implied_value(right->right, &sval))
-		return;
-	/*
-	 * Unfortunately subtracting 1 to underflow is often done deliberately.
-	 * It could be a bug or it could be not.  Silence everything.
-	 */
-	if (sval.value == 1)
-		return;
-	if (sval_cmp(rl_min(rl), sval) >= 0)
-		return;
-
-	type = get_type(expr);
-	if (!type)
-		return;
-	if (type_is_ptr(type))
-		return;
-	if (!type_unsigned(type) || type_positive_bits(type) < 32)
-		return;
-
-	warned = expr;
-	str = expr_to_str(right);
-	sm_msg("warn: '%s' negative user limit promoted to high", str);
-	free_string(str);
-}
-
-void check_negative_user_loop_promoted(int id)
-{
-	my_id = id;
-
-	add_hook(&match_condition, CONDITION_HOOK);
-}
-
---jiB5S75U0rohqi0T--
