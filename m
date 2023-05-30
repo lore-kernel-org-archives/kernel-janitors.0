@@ -2,209 +2,84 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12138C7EE24
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 22:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B78C7EE2C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 22:53:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233732AbjE3W2L (ORCPT
+        id S233626AbjE3WxQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 May 2023 18:28:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49234 "EHLO
+        Tue, 30 May 2023 18:53:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233745AbjE3W2I (ORCPT
+        with ESMTP id S233582AbjE3WxK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 May 2023 18:28:08 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FA1FF7;
-        Tue, 30 May 2023 15:27:52 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id ED0192187B;
-        Tue, 30 May 2023 22:27:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1685485670; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=18j5tvDaSV7ASsBeBkyrZ2rlsJmZg7DSojVFhv89dpY=;
-        b=wehyXkwRpGMJYML5r49f7V+U/SzLmqJ/KAVFN7Xq+OjsdqBPJize1K2t44Nzy5DRxVpg6O
-        20iLwewLOp05gvuvmILokAfctIoWmf+H5Xykz1w3ePQz6ACKcSI/ZJXfYaCg7OmQ8iwNa8
-        idvYVycOqq67drFpxBnTwUbBTGRMyyg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1685485670;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=18j5tvDaSV7ASsBeBkyrZ2rlsJmZg7DSojVFhv89dpY=;
-        b=FZ8v9KB0G9DsDm6MV0OJE9QBBCpcRZhcMVQCwb6Xx9X9YL78StXG1gCuT+xmaCDl5pKl9S
-        TIh4+NpA6NzIJqBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7D50E13478;
-        Tue, 30 May 2023 22:27:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id PgUxDGN4dmS5VgAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 30 May 2023 22:27:47 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 30 May 2023 18:53:10 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1CF0192
+        for <kernel-janitors@vger.kernel.org>; Tue, 30 May 2023 15:52:55 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-64f47448aeaso3726101b3a.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 30 May 2023 15:52:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1685487175; x=1688079175;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ueHzQ8Wa2okWJ0fmfLLo52MhtIRbhBte5ZK2h7JXro=;
+        b=Uq6HIEJPqhlC136Vr3uDaJx/LiLYTMr0ktJdq1gXrz3vbtj1rUBgix8iIftoJRJE0u
+         s0n2ZmNyvaXfahlPmLFPgKGLTC1R/PE/AexOHlFF+h4qCqm1X8Gzxt4UGEys9DU2AxMw
+         qJLvr9ylGvgEI/uCFvZqM2M+37XDZ6hkc6iNA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685487175; x=1688079175;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2ueHzQ8Wa2okWJ0fmfLLo52MhtIRbhBte5ZK2h7JXro=;
+        b=Gs6+OScyhWVJPQbA1EPpMytjcrS+KYSWK1V2d1ayxD9THMvsGiVL/z5YcuG1VpoT7I
+         hQJ26wg2NcN2EDIMS3zYhhGFlBbMPLFu+v779pEcm8VgumvPBqd2Ifdncbvij6ZL5MFO
+         oeEg1QOSK3Khy0Y+z4SqxYmAd9pONfprSfcl227lgokXMhbsPdoxv05Uutj5ZtfxS6dW
+         7vFKDdOzvMiwhByoaJ7MVE3NeZ/n2yscZSZ81jGAXE8Jj3xxV258Hb6VhbhgSN30di26
+         avioAfVwIzVUHZxFLBNn0pkNoRxBm+W9qhKjesdojlZOMWSXG5201V6Z4TgcwW7cg/2J
+         a4IA==
+X-Gm-Message-State: AC+VfDxCAyJvjX62lw70gBbZpkG+okglck4MBjMZ2oFgj1zzNMLobU1k
+        FNVa0T+w45fjEzzN3Y0BAQt/Zw==
+X-Google-Smtp-Source: ACHHUZ5su34kJvySFp+kM+iyarUXA7DMydBxSrLfDVvbUYdac46CqF1AixOCK5hkgoXXlYbWPcfdPA==
+X-Received: by 2002:a17:902:d4c8:b0:1b1:76c2:296a with SMTP id o8-20020a170902d4c800b001b176c2296amr312445plg.60.1685487175088;
+        Tue, 30 May 2023 15:52:55 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id bg6-20020a1709028e8600b001a4fe00a8d4sm10829640plb.90.2023.05.30.15.52.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 May 2023 15:52:54 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     christophe.jaillet@wanadoo.fr, Al Viro <viro@zeniv.linux.org.uk>,
+        brauner@kernel.org, ebiederm@xmission.com
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] binfmt: Use struct_size()
+Date:   Tue, 30 May 2023 15:52:50 -0700
+Message-Id: <168548716819.1348275.7939799619978451997.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <53150beae5dc04dac513dba391a2e4ae8696a7f3.1685290790.git.christophe.jaillet@wanadoo.fr>
+References: <53150beae5dc04dac513dba391a2e4ae8696a7f3.1685290790.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Dan Carpenter" <dan.carpenter@linaro.org>
-Cc:     "Stanislav Kinsbursky" <skinsbursky@parallels.com>,
-        "Chuck Lever" <chuck.lever@oracle.com>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
-        "Anna Schumaker" <anna@kernel.org>,
-        "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] nfsd: fix double fget() bug in __write_ports_addfd()
-In-reply-to: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>
-References: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>
-Date:   Wed, 31 May 2023 08:27:43 +1000
-Message-id: <168548566376.23533.14778348024215909777@noble.neil.brown.name>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 29 May 2023, Dan Carpenter wrote:
-> The bug here is that you cannot rely on getting the same socket
-> from multiple calls to fget() because userspace can influence
-> that.  This is a kind of double fetch bug.
->=20
-> The fix is to delete the svc_alien_sock() function and insted do
-> the checking inside the svc_addsock() function.
+On Sun, 28 May 2023 18:20:24 +0200, Christophe JAILLET wrote:
+> Use struct_size() instead of hand-writing it. It is less verbose, more
+> robust and more informative.
+> 
+> 
 
-Hi,
- I definitely agree with the change to pass the 'net' into
- svc_addsock(), and check the the fd has the correct net.
+Applied to for-next/execve, thanks!
 
- I'm not sure I agree with the removal of the svc_alien_sock() test.  It
- is best to perform sanity tests before allocation things, and
- nfsd_create_serv() can create a new 'serv' - though most often it just
- incs the refcount.
+[1/2] binfmt: Use struct_size()
+      https://git.kernel.org/kees/c/e6302d5a285b
+[2/2] binfmt: Slightly simplify elf_fdpic_map_file()
+      https://git.kernel.org/kees/c/36650a357eac
 
- Maybe instead svc_alien_sock() could return the struct socket (if
- successful), and it could be passed to svc_addsock()???
-
- I would probably then change the name of svc_alien_sock()
-
-Thanks,
-NeilBrown
-
-
->=20
-> Fixes: 3064639423c4 ("nfsd: check passed socket's net matches NFSd superblo=
-ck's one")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> Based on static analysis and untested.  This goes through the NFS tree.=20
-> Inspired by CVE-2023-1838.
->=20
->  include/linux/sunrpc/svcsock.h |  7 +++----
->  fs/nfsd/nfsctl.c               |  7 +------
->  net/sunrpc/svcsock.c           | 23 +++++------------------
->  3 files changed, 9 insertions(+), 28 deletions(-)
->=20
-> diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
-> index d16ae621782c..a7116048a4d4 100644
-> --- a/include/linux/sunrpc/svcsock.h
-> +++ b/include/linux/sunrpc/svcsock.h
-> @@ -61,10 +61,9 @@ int		svc_recv(struct svc_rqst *, long);
->  void		svc_send(struct svc_rqst *rqstp);
->  void		svc_drop(struct svc_rqst *);
->  void		svc_sock_update_bufs(struct svc_serv *serv);
-> -bool		svc_alien_sock(struct net *net, int fd);
-> -int		svc_addsock(struct svc_serv *serv, const int fd,
-> -					char *name_return, const size_t len,
-> -					const struct cred *cred);
-> +int		svc_addsock(struct svc_serv *serv, struct net *net,
-> +			    const int fd, char *name_return, const size_t len,
-> +			    const struct cred *cred);
->  void		svc_init_xprt_sock(void);
->  void		svc_cleanup_xprt_sock(void);
->  struct svc_xprt *svc_sock_create(struct svc_serv *serv, int prot);
-> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> index e0e98b40a6e5..1489e0b703b4 100644
-> --- a/fs/nfsd/nfsctl.c
-> +++ b/fs/nfsd/nfsctl.c
-> @@ -698,16 +698,11 @@ static ssize_t __write_ports_addfd(char *buf, struct =
-net *net, const struct cred
->  		return -EINVAL;
->  	trace_nfsd_ctl_ports_addfd(net, fd);
-> =20
-> -	if (svc_alien_sock(net, fd)) {
-> -		printk(KERN_ERR "%s: socket net is different to NFSd's one\n", __func__);
-> -		return -EINVAL;
-> -	}
-> -
->  	err =3D nfsd_create_serv(net);
->  	if (err !=3D 0)
->  		return err;
-> =20
-> -	err =3D svc_addsock(nn->nfsd_serv, fd, buf, SIMPLE_TRANSACTION_LIMIT, cre=
-d);
-> +	err =3D svc_addsock(nn->nfsd_serv, net, fd, buf, SIMPLE_TRANSACTION_LIMIT=
-, cred);
-> =20
->  	if (err >=3D 0 &&
->  	    !nn->nfsd_serv->sv_nrthreads && !xchg(&nn->keep_active, 1))
-> diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-> index 46845cb6465d..e4184e40793c 100644
-> --- a/net/sunrpc/svcsock.c
-> +++ b/net/sunrpc/svcsock.c
-> @@ -1474,22 +1474,6 @@ static struct svc_sock *svc_setup_socket(struct svc_=
-serv *serv,
->  	return svsk;
->  }
-> =20
-> -bool svc_alien_sock(struct net *net, int fd)
-> -{
-> -	int err;
-> -	struct socket *sock =3D sockfd_lookup(fd, &err);
-> -	bool ret =3D false;
-> -
-> -	if (!sock)
-> -		goto out;
-> -	if (sock_net(sock->sk) !=3D net)
-> -		ret =3D true;
-> -	sockfd_put(sock);
-> -out:
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL_GPL(svc_alien_sock);
-> -
->  /**
->   * svc_addsock - add a listener socket to an RPC service
->   * @serv: pointer to RPC service to which to add a new listener
-> @@ -1502,8 +1486,8 @@ EXPORT_SYMBOL_GPL(svc_alien_sock);
->   * Name is terminated with '\n'.  On error, returns a negative errno
->   * value.
->   */
-> -int svc_addsock(struct svc_serv *serv, const int fd, char *name_return,
-> -		const size_t len, const struct cred *cred)
-> +int svc_addsock(struct svc_serv *serv, struct net *net, const int fd,
-> +		char *name_return, const size_t len, const struct cred *cred)
->  {
->  	int err =3D 0;
->  	struct socket *so =3D sockfd_lookup(fd, &err);
-> @@ -1514,6 +1498,9 @@ int svc_addsock(struct svc_serv *serv, const int fd, =
-char *name_return,
-> =20
->  	if (!so)
->  		return err;
-> +	err =3D -EINVAL;
-> +	if (sock_net(so->sk) !=3D net)
-> +		goto out;
->  	err =3D -EAFNOSUPPORT;
->  	if ((so->sk->sk_family !=3D PF_INET) && (so->sk->sk_family !=3D PF_INET6))
->  		goto out;
-> --=20
-> 2.39.2
->=20
->=20
+-- 
+Kees Cook
 
