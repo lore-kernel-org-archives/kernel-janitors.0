@@ -2,96 +2,73 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026B3C77B7E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 May 2023 15:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD58FC7EE23
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 04:58:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229873AbjE2P0f (ORCPT
+        id S229557AbjE3E6U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 May 2023 11:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58596 "EHLO
+        Tue, 30 May 2023 00:58:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229871AbjE2P0d (ORCPT
+        with ESMTP id S229614AbjE3E6H (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 May 2023 11:26:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1336ECF
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 08:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685373951;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eSBcv+NaPNMlCQs57n9r+zaM6oZYLbvvoNzuJOFQqGM=;
-        b=XGnQmiB3UA1uX4L4+BIgOeZFkxvK/90NPif/HeyxooPNFaD2gT4dnp04EfbbrmIbFgSlEg
-        AXB7dqnv3KsXNHkyb0Mn1EN2alq92v5yfW9O3+YkFw7JXmWBmmkRbqOD4iZFakvGwwadqY
-        Wg0tqMsK2ne/o9RRT4tXgKRCPVv3LS4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-100-XH7gUsQvNB-qQ486QlxvLg-1; Mon, 29 May 2023 11:25:45 -0400
-X-MC-Unique: XH7gUsQvNB-qQ486QlxvLg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 30 May 2023 00:58:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5B1EC9
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 May 2023 21:58:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 66225811E78;
-        Mon, 29 May 2023 15:25:45 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.115])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E1A5040CFD45;
-        Mon, 29 May 2023 15:25:44 +0000 (UTC)
-Date:   Mon, 29 May 2023 11:25:43 -0400
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] scsi: virtio_scsi: Remove a useless function call
-Message-ID: <20230529152543.GA889095@fedora>
-References: <08740635cdb0f8293e57c557b22e048daae50961.1685345683.git.christophe.jaillet@wanadoo.fr>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 904E062A23
+        for <kernel-janitors@vger.kernel.org>; Tue, 30 May 2023 04:58:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 886ABC433EF;
+        Tue, 30 May 2023 04:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685422684;
+        bh=ZGGpOq+uObnkcEWx80C+FBZ6VsPfRaAQ73HUlsFkY1A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VBswMtimzeTP8Fd10/OL6GTPRpKzRUnATE3+6olxdkhiPtO4nEC9ZDt7lzA5AySHs
+         iHLgVkrgi7bTNkVZWbrwoYBpiS69N1wuwW7ribHBV01G1uBWfAj2qZ5rrGqLHuNLob
+         CHcPJ/glWbgAxnS0fATEt+5kvIJex/91STY53qsgo6aiYKRjI1zl2Zn/Iqd6j8OMMw
+         GZsQ0gyhNF0ANL7GLCgRhPREG5+mUrfo5A47URyejc2ogEfejt2pgx3p4pQkHoj/gS
+         /99cUDEnL5HZ2l29iJO5uJHB/G2CwvsfFZlyUAzbiFMtE3+qjR2jK7NxcfvMN6NcLv
+         J0HjjvsOykriw==
+Date:   Mon, 29 May 2023 21:58:02 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net: phy: fix a signedness bug in genphy_loopback()
+Message-ID: <20230529215802.70710036@kernel.org>
+In-Reply-To: <d7bb312e-2428-45f6-b9b3-59ba544e8b94@kili.mountain>
+References: <d7bb312e-2428-45f6-b9b3-59ba544e8b94@kili.mountain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="e47TU4KlPcthwDds"
-Content-Disposition: inline
-In-Reply-To: <08740635cdb0f8293e57c557b22e048daae50961.1685345683.git.christophe.jaillet@wanadoo.fr>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, 26 May 2023 14:45:54 +0300 Dan Carpenter wrote:
+> The "val" variable is used to store error codes from phy_read() so
+> it needs to be signed for the error handling to work as expected.
+> 
+> Fixes: 014068dcb5b1 ("net: phy: genphy_loopback: add link speed configuration")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
---e47TU4KlPcthwDds
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is it going to be obvious to PHY-savvy folks that the val passed to
+phy_read_poll_timeout() must be an int? Is it a very common pattern?
+My outsider intuition is that since regs are 16b, u16 is reasonable,
+and more people may make the same mistake. Therefore we should try to
+fix phy_read_poll_timeout() instead to use a local variable like it
+does for __ret. 
 
-On Mon, May 29, 2023 at 09:35:08AM +0200, Christophe JAILLET wrote:
-> 'inq_result' is known to be NULL. There is no point calling kfree().
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/scsi/virtio_scsi.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+Weaker version would be to add a compile time check to ensure val 
+is signed (assert(typeof(val)~0ULL < 0) or such?).
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---e47TU4KlPcthwDds
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmR0w/YACgkQnKSrs4Gr
-c8hJeAf/WmB2oYBwLIM+8TSkvLF5FqEfpmrlGGWzY/u8GJU2N9vYRbK3hj8XopAx
-/5QW9+w4nhzQiA6OajCWTD2H7ppbl0LyP2dyazgxpbclTy3onUcZ6zAkNVboh35j
-8D8cucD4Hr92ZCMyw/39x5V7Gh7N4CDvtHJEMwWE7exufpzKmB+9r+qRV2LlYxNf
-JmdCwXDR+0jOxLUFr1yl9WpvHQlU+28ElDdDcJXliAoIRljDsIk2rbWafuxDKzH1
-UPkM7/iR0dFFMK97WGs/ibwrwCVCjA/yejo4GTl6K0sUFazHYVJkseq3869jJma2
-7ZgTO+y4fyt7XodklSvimt2hWFPkIg==
-=m2E9
------END PGP SIGNATURE-----
-
---e47TU4KlPcthwDds--
-
+Opinions?
