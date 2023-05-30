@@ -2,41 +2,41 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7297C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 21:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2558C77B73
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 21:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232555AbjE3VJg (ORCPT
+        id S231499AbjE3V2Q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 May 2023 17:09:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41808 "EHLO
+        Tue, 30 May 2023 17:28:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbjE3VJf (ORCPT
+        with ESMTP id S230045AbjE3V2P (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 May 2023 17:09:35 -0400
+        Tue, 30 May 2023 17:28:15 -0400
 Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 510CF97;
-        Tue, 30 May 2023 14:09:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5D40E5;
+        Tue, 30 May 2023 14:28:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Xv/on1soQm2WiaudXE9Ed1L5dqZ5lX/VHutFpckjEf8=; b=v/F0MO7kTnFLgfWviJwwuTazXY
-        35YFXB+g6jUUg4Ee0LruI/Ve2e+42tdpOAVL/B4+bEuljps5xkStKaz+JfGbA7nN5mws95kqAP4s9
-        RrjYw+D3BSlrzx1G0zbRsD8nBfBo22n0/Wl23WCv7omNXNSc/T1VP1IrTjC350Hj6EypFue65IvlY
-        PhZ8LPqVCzY88KVrRjElX9ETMFVx1Y6j7gtmUEO1olNRk+6s4FWSMhOpIRIDkz6/eoGhF+XDxojSH
-        jdTvJaiyb8iEZvkMrA9AUdokGZw0fLfvecA10AYKh3MWjwNwobuGiib86IH+m8PB02O7RBhgvqdA9
-        oAngFbcw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58388)
+        bh=rtMOiQ1B6T7dYB7FwbV1KNs7Z9hwONAQYl5x937amzk=; b=U0hCUVtBCNQ//NjLHwtyoRJ2Sm
+        EG7nrYN1OdOJvbYm2BIwRPwmtjWiwITDzqzCVUudTdqJXEuge4sk+NhOM4gGzGR6dP7Ox71yfZDrL
+        EcyK9dskHLmOjf5IESag0VmsngOXITkQn26MjifhuNOgnfphlVhIPjsYPaCEi8Teo5ejaN0FYa+NF
+        cilZYBO8nm9+yi5HD+nEcGdxhwrSLwD34DDigORiVvPhJl9QqBIjLUbDQhS2VsR/DtUTg3iSpBJr5
+        XNpmjpuyFvnIP+vnfZFMcO4ZPDgzsKwbkRU2JwFVYWLWJvNN0EMdRIcm6czwYnxYsLjphMyhsLia2
+        4KRC22tA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45726)
         by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <linux@armlinux.org.uk>)
-        id 1q46at-0003TZ-G4; Tue, 30 May 2023 22:09:27 +0100
+        id 1q46sy-0003Us-PD; Tue, 30 May 2023 22:28:08 +0100
 Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
         (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1q46aq-0008Ov-UE; Tue, 30 May 2023 22:09:24 +0100
-Date:   Tue, 30 May 2023 22:09:24 +0100
+        id 1q46sx-0008PF-3F; Tue, 30 May 2023 22:28:07 +0100
+Date:   Tue, 30 May 2023 22:28:07 +0100
 From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
 To:     Andrew Lunn <andrew@lunn.ch>
 Cc:     Jakub Kicinski <kuba@kernel.org>,
@@ -48,101 +48,110 @@ Cc:     Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH net] net: phy: fix a signedness bug in genphy_loopback()
-Message-ID: <ZHZmBBDSVMf1WQWI@shell.armlinux.org.uk>
+Message-ID: <ZHZqZyCJGZjraJ6P@shell.armlinux.org.uk>
 References: <d7bb312e-2428-45f6-b9b3-59ba544e8b94@kili.mountain>
  <20230529215802.70710036@kernel.org>
  <90b1107b-7ea0-4d8f-ad88-ec14fd149582@lunn.ch>
  <20230530121910.05b9f837@kernel.org>
  <ZHZQ+1KNGB7KYZGi@shell.armlinux.org.uk>
  <0851bc91-6a7c-4333-ad8a-3a18083411e3@lunn.ch>
+ <ZHZmBBDSVMf1WQWI@shell.armlinux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0851bc91-6a7c-4333-ad8a-3a18083411e3@lunn.ch>
+In-Reply-To: <ZHZmBBDSVMf1WQWI@shell.armlinux.org.uk>
 Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 30, 2023 at 10:04:52PM +0200, Andrew Lunn wrote:
-> > > This is what I meant FWIW:
-> > > 
-> > > diff --git a/include/linux/phy.h b/include/linux/phy.h
-> > > index 7addde5d14c0..829bd57b8794 100644
-> > > --- a/include/linux/phy.h
-> > > +++ b/include/linux/phy.h
-> > > @@ -1206,10 +1206,13 @@ static inline int phy_read(struct phy_device *phydev, u32 regnum)
-> > >  #define phy_read_poll_timeout(phydev, regnum, val, cond, sleep_us, \
-> > >  				timeout_us, sleep_before_read) \
-> > >  ({ \
-> > > -	int __ret = read_poll_timeout(phy_read, val, val < 0 || (cond), \
-> > > +	int __ret, __val;						\
-> > > +									\
-> > > +	__ret = read_poll_timeout(phy_read, __val, __val < 0 || (cond),	\
-> > >  		sleep_us, timeout_us, sleep_before_read, phydev, regnum); \
-> > > -	if (val < 0) \
-> > > -		__ret = val; \
-> > > +	val = __val;
+On Tue, May 30, 2023 at 10:09:24PM +0100, Russell King (Oracle) wrote:
+> Having thought about this, the best I can come up with is this, which
+> I think gives us everything we want without needing BUILD_BUG_ONs:
 > 
-> This results in the sign being discarded if val is unsigned. Yes, the
-> test is remove, which i assume will stop Smatch complaining, but it is
-> still broken.
+> #define phy_read_poll_timeout(phydev, regnum, val, cond, sleep_us, \
+>                                 timeout_us, sleep_before_read) \
+> ({ \
+>         int __ret, __val;
+> 	__ret = read_poll_timeout(__val = phy_read, val, __val < 0 || (cond), \
+>                 sleep_us, timeout_us, sleep_before_read, phydev, regnum); \
+>         if (__val < 0) \
+>                 __ret = __val; \
+>         if (__ret) \
+>                 phydev_err(phydev, "%s failed: %d\n", __func__, __ret); \
+>         __ret; \
+> })
+> 
+> This looks rather horrid, but what it essentially does is:
+> 
+>                 (val) = op(args); \
+>                 if (cond) \
+>                         break; \
+> 
+> expands to:
+> 
+> 		(val) = __val = phy_read(args);
+> 		if (__val < 0 || (cond))
+> 			break;
+> 
+> As phy_read() returns an int, there is no cast or loss assigning it
+> to __val, since that is also an int. The conversion from int to
+> something else happens at the same point it always has.
 
-I was going to ask you to explain that, but having thought about
-this more, there's much bigger problems with the proposal.
+... and actually produces nicer code on 32-bit ARM:
 
-First, if I'm understanding you correctly, your point doesn't seem
-relevant, because if val is unsigned, we have an implicit cast from a
-signed int to an unsigned int _at_ _some_ _point_. With the existing
-code, that implicit cast is buried inside read_poll_timeout(), here
-to be exact:
+Old (with the u16 val changed to an int val):
 
-	(val) = op(args);
+ 2f8:   ebfffffe        bl      0 <mdiobus_read>
+ 2fc:   e7e03150        ubfx    r3, r0, #2, #1		extract bit 2 into r3
+ 300:   e1a04000        mov     r4, r0			save return value
+ 304:   e2002004        and     r2, r0, #4		extract bit 2 again
+ 308:   e1933fa0        orrs    r3, r3, r0, lsr #31	grab sign bit
+ 30c:   1a00000d        bne     348 <genphy_loopback+0xd8>
+		breaks out of loop if r3 is nonzero
+	... rest of loop ...
+...
+ 348:   e3520000        cmp     r2, #0
+ 34c:   0a00000b        beq     380 <genphy_loopback+0x110>
+		basically tests whether bit 2 was zero, and jumps if it
+		was. Basically (cond) is false.
 
-because "op" will be one of the phy_read*() functions that returns an
-"int", but "val" is unsigned - which means there's an implicit cast
-here. Jakub's patch moves that cast after read_poll_timeout().
+ 350:   e3540000        cmp     r4, #0
+ 354:   a3a04000        movge   r4, #0
+ 358:   ba00000a        blt     388 <genphy_loopback+0x118>
+		tests whether a phy_read returned an error and jumps
+		if it did. r4 is basically __ret.
+...
 
-The elephant in the room has nothing to do with this, but everything
-to do with "cond". "cond" is an expression to be evaluated inside the
-loop, which must have access to the value read from the phy_read*()
-function, and that value is referenced via whatever variable was
-provided via "val". So changing "val" immediately breaks "cond".
+ 380:   e3540000        cmp     r4, #0
+ 384:   a3e0406d        mvnge   r4, #109        ; 0x6d
+		if r4 (__ret) was >= 0, sets an error code (-ETIMEDOUT).
+ 388:   e1a03004        mov     r3, r4
+ ... dev_err() bit.
 
+The new generated code is:
 
-Having thought about this, the best I can come up with is this, which
-I think gives us everything we want without needing BUILD_BUG_ONs:
+ 2f8:   ebfffffe        bl      0 <mdiobus_read>
+                        2f8: R_ARM_CALL mdiobus_read
+ 2fc:   e2504000        subs    r4, r0, #0		__val assignment
+ 300:   ba000014        blt     358 <genphy_loopback+0xe8>
+		if <0, go direct to dev_err code
+ 304:   e3140004        tst     r4, #4			cond test within loop
+ 308:   1a00000d        bne     344 <genphy_loopback+0xd4>
+	... rest of loop ...
 
-#define phy_read_poll_timeout(phydev, regnum, val, cond, sleep_us, \
-                                timeout_us, sleep_before_read) \
-({ \
-        int __ret, __val;
-	__ret = read_poll_timeout(__val = phy_read, val, __val < 0 || (cond), \
-                sleep_us, timeout_us, sleep_before_read, phydev, regnum); \
-        if (__val < 0) \
-                __ret = __val; \
-        if (__ret) \
-                phydev_err(phydev, "%s failed: %d\n", __func__, __ret); \
-        __ret; \
-})
+ 344:   e6ff4074        uxth    r4, r4			cast to 16-bit uint
+ 348:   e3140004        tst     r4, #4			test
+ 34c:   13a04000        movne   r4, #0			__ret is zero if bit set
+ 350:   1a000007        bne     374 <genphy_loopback+0x104> basically returns
+ 354:   e3e0406d        mvn     r4, #109        ; 0x6d
+	... otherwise sets __ret to -ETIMEDOUT
+	... dev_err() code
 
-This looks rather horrid, but what it essentially does is:
-
-                (val) = op(args); \
-                if (cond) \
-                        break; \
-
-expands to:
-
-		(val) = __val = phy_read(args);
-		if (__val < 0 || (cond))
-			break;
-
-As phy_read() returns an int, there is no cast or loss assigning it
-to __val, since that is also an int. The conversion from int to
-something else happens at the same point it always has.
-
-Hmm?
+Is there a reason why it was written (cond) || val < 0 rather than
+val < 0 || (cond) ? Note that the order of these tests makes no
+difference in this situation, but I'm wondering whether it was
+intentional?
 
 -- 
 RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
