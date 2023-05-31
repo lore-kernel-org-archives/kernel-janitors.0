@@ -2,84 +2,69 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B78C7EE2C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 May 2023 22:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D684C77B73
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 May 2023 04:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233626AbjE3WxQ (ORCPT
+        id S232081AbjEaEeY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 May 2023 18:53:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59684 "EHLO
+        Wed, 31 May 2023 00:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233582AbjE3WxK (ORCPT
+        with ESMTP id S229682AbjEaEeX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 May 2023 18:53:10 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1CF0192
-        for <kernel-janitors@vger.kernel.org>; Tue, 30 May 2023 15:52:55 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-64f47448aeaso3726101b3a.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 30 May 2023 15:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1685487175; x=1688079175;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ueHzQ8Wa2okWJ0fmfLLo52MhtIRbhBte5ZK2h7JXro=;
-        b=Uq6HIEJPqhlC136Vr3uDaJx/LiLYTMr0ktJdq1gXrz3vbtj1rUBgix8iIftoJRJE0u
-         s0n2ZmNyvaXfahlPmLFPgKGLTC1R/PE/AexOHlFF+h4qCqm1X8Gzxt4UGEys9DU2AxMw
-         qJLvr9ylGvgEI/uCFvZqM2M+37XDZ6hkc6iNA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685487175; x=1688079175;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ueHzQ8Wa2okWJ0fmfLLo52MhtIRbhBte5ZK2h7JXro=;
-        b=Gs6+OScyhWVJPQbA1EPpMytjcrS+KYSWK1V2d1ayxD9THMvsGiVL/z5YcuG1VpoT7I
-         hQJ26wg2NcN2EDIMS3zYhhGFlBbMPLFu+v779pEcm8VgumvPBqd2Ifdncbvij6ZL5MFO
-         oeEg1QOSK3Khy0Y+z4SqxYmAd9pONfprSfcl227lgokXMhbsPdoxv05Uutj5ZtfxS6dW
-         7vFKDdOzvMiwhByoaJ7MVE3NeZ/n2yscZSZ81jGAXE8Jj3xxV258Hb6VhbhgSN30di26
-         avioAfVwIzVUHZxFLBNn0pkNoRxBm+W9qhKjesdojlZOMWSXG5201V6Z4TgcwW7cg/2J
-         a4IA==
-X-Gm-Message-State: AC+VfDxCAyJvjX62lw70gBbZpkG+okglck4MBjMZ2oFgj1zzNMLobU1k
-        FNVa0T+w45fjEzzN3Y0BAQt/Zw==
-X-Google-Smtp-Source: ACHHUZ5su34kJvySFp+kM+iyarUXA7DMydBxSrLfDVvbUYdac46CqF1AixOCK5hkgoXXlYbWPcfdPA==
-X-Received: by 2002:a17:902:d4c8:b0:1b1:76c2:296a with SMTP id o8-20020a170902d4c800b001b176c2296amr312445plg.60.1685487175088;
-        Tue, 30 May 2023 15:52:55 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id bg6-20020a1709028e8600b001a4fe00a8d4sm10829640plb.90.2023.05.30.15.52.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 May 2023 15:52:54 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     christophe.jaillet@wanadoo.fr, Al Viro <viro@zeniv.linux.org.uk>,
-        brauner@kernel.org, ebiederm@xmission.com
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] binfmt: Use struct_size()
-Date:   Tue, 30 May 2023 15:52:50 -0700
-Message-Id: <168548716819.1348275.7939799619978451997.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <53150beae5dc04dac513dba391a2e4ae8696a7f3.1685290790.git.christophe.jaillet@wanadoo.fr>
-References: <53150beae5dc04dac513dba391a2e4ae8696a7f3.1685290790.git.christophe.jaillet@wanadoo.fr>
+        Wed, 31 May 2023 00:34:23 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 905F78F;
+        Tue, 30 May 2023 21:34:21 -0700 (PDT)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 69B04180106EEA;
+        Wed, 31 May 2023 12:32:53 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
+Subject: [PATCH] bpf/tests: Use struct_size()
+Date:   Wed, 31 May 2023 12:32:51 +0800
+Message-Id: <20230531043251.989312-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 28 May 2023 18:20:24 +0200, Christophe JAILLET wrote:
-> Use struct_size() instead of hand-writing it. It is less verbose, more
-> robust and more informative.
-> 
-> 
+Use struct_size() instead of hand writing it.
+This is less verbose and more informative.
 
-Applied to for-next/execve, thanks!
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ lib/test_bpf.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-[1/2] binfmt: Use struct_size()
-      https://git.kernel.org/kees/c/e6302d5a285b
-[2/2] binfmt: Slightly simplify elf_fdpic_map_file()
-      https://git.kernel.org/kees/c/36650a357eac
-
+diff --git a/lib/test_bpf.c b/lib/test_bpf.c
+index ade9ac672adb..fa0833410ac1 100644
+--- a/lib/test_bpf.c
++++ b/lib/test_bpf.c
+@@ -15056,8 +15056,7 @@ static __init int prepare_tail_call_tests(struct bpf_array **pprogs)
+ 	int which, err;
+ 
+ 	/* Allocate the table of programs to be used for tall calls */
+-	progs = kzalloc(sizeof(*progs) + (ntests + 1) * sizeof(progs->ptrs[0]),
+-			GFP_KERNEL);
++	progs = kzalloc(struct_size(progs, ptrs, ntests + 1), GFP_KERNEL);
+ 	if (!progs)
+ 		goto out_nomem;
+ 
 -- 
-Kees Cook
+2.30.2
 
