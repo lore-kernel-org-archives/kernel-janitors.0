@@ -2,109 +2,90 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD51C7EE24
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 May 2023 08:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79243C77B73
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 May 2023 08:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234626AbjEaIBI (ORCPT
+        id S234756AbjEaIZT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 May 2023 04:01:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60174 "EHLO
+        Wed, 31 May 2023 04:25:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235096AbjEaH72 (ORCPT
+        with ESMTP id S235235AbjEaIY6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 May 2023 03:59:28 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EBAE52
-        for <kernel-janitors@vger.kernel.org>; Wed, 31 May 2023 00:58:58 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f6094cb2d2so56844565e9.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 31 May 2023 00:58:58 -0700 (PDT)
+        Wed, 31 May 2023 04:24:58 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20C5F125;
+        Wed, 31 May 2023 01:24:55 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f6042d610fso56023425e9.1;
+        Wed, 31 May 2023 01:24:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685519937; x=1688111937;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LGoVMkHiLGD64s03Y6+AFjuEJ/YkfPkSNgwpozijN6E=;
-        b=qpRVmSbM34qqrH3gCx8n/suiBR131xb9ZKYYmYExMuWV3Awb1ou96gvKFE8WKkLtWy
-         6ynBunEvz5k0ixVtgEpDcABbi1n57mZJZbs6ilqM8FMO+P5RzD2xBAjeKJT02Fq8lyfK
-         POpe/MwOY4D58UyuaPJAhgZNxm0+O+Cqpoa5ZlQd2tE9wXmfHOo0EIRcB4zG7RDWNRs1
-         FZDRZlEJA/fMYbTUzYf8RlOvpAodqgxr//acmFAASaD8EcKa1CaqNfrccXDETzaLWwn4
-         P5WUgvzSn630/95baknVapsYOZTwgIrev04E6KJ6IBCY0NENQIewnXwSNuHnEcr4d08A
-         UXgQ==
+        d=gmail.com; s=20221208; t=1685521493; x=1688113493;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=utJCKiNlXUA/gWjsI7HdQdSp3MeurH44qM3nLVX+hY0=;
+        b=PTlfQP7IUZsTEtaz0c4g9Detm2V9gbJYhJZ5z2ZLjvonIOD4NKdqwV0eFaKZTTpjoc
+         23irp+luD2uadA6RYWrq5c/5oiEYYjTOGrvxcn42XwKilBLJtWu1Jwzvu/5xgGfNT70b
+         GRrVFZB+JHbIEzvv8UcMDWBthQbdM6tM+jbATX+2l8MeelqYZ6kbbKVN48UdNjLo2tgL
+         Fxp7+nLezAI/1Z2GXD0TQSPTbFY1gdK8fj9l/D5IsiCvGCgbudCEOL5SUNP8hBTYSDVv
+         iFLS11D9bgkNq43ZGlr1pzu6j4UsmThsZxfqPHedLRVrNmdGlHv+/pyDKu02TFAxerbx
+         qMrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685519937; x=1688111937;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LGoVMkHiLGD64s03Y6+AFjuEJ/YkfPkSNgwpozijN6E=;
-        b=WTlvmDME4mZIrxxK3F2l7dJiEoR/tKSwSRH7Mey1PVd3HItLqVPxuZYgsoPTQ8X4+p
-         c2Hh2lqn8jdAUiTBpi1zivWDqoFFlB9dCkOSSal4Pu9LM+IIGlLd+TAEOCc3rR9byEOX
-         de3vZZJrtIYLlhJqhCRV/+QMbCmXHKHATTznf4xmr6mr3WqxyRwSaP/ZYoHqC6RJkK6P
-         Q3+WDjZw7MvjxVF4JLknrJj7W+cNnmJ7+yqtaHFJ33ZNu9AW1DQYoHNIZQCM34oP3hcb
-         qvx92T7suFlL/GWmuur0d20l4RJJDYu4fEjaayF/nMdjQYFY8+9OhFpZ4iJI1r/Rm6UA
-         jEQg==
-X-Gm-Message-State: AC+VfDyy3wD6C5m1HknWqzvatv1QigGPk6fApSGse8/G/Y9lHe8LzXvb
-        nwY11oAANZw84ZhBUJoA4Xqg9Q==
-X-Google-Smtp-Source: ACHHUZ58AYa3MbtCcRUbj2mx8+2x0cns1qme0y7htZXh4dwN06OjOF6OPHWMbG5Q32MOUvkb2dNK7Q==
-X-Received: by 2002:a05:600c:b44:b0:3f2:48dc:5e02 with SMTP id k4-20020a05600c0b4400b003f248dc5e02mr3192671wmr.27.1685519937097;
-        Wed, 31 May 2023 00:58:57 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s26-20020a7bc39a000000b003f42328b5d9sm19765106wmj.39.2023.05.31.00.58.53
+        d=1e100.net; s=20221208; t=1685521493; x=1688113493;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=utJCKiNlXUA/gWjsI7HdQdSp3MeurH44qM3nLVX+hY0=;
+        b=Hh91b6hEtPAi3Yq4Y7Ayqa3cj6Veu36ZdhsdsfDhDQNugBD1FbPTjhRatXDvx85+l6
+         iRu0ALfpEnj5ZkyAvn/3eqBl2hVgqtsdCsrnXiKcVhtY8JCJ+cj/Vxmjb3bxyTxLtFkP
+         kSLO1d1mRSFUU60ytWmGYKS1yowv00fnoOK/WsObT129J5UXBylnIi9RvmF6ShX8/K2L
+         kM1/XHacdmNUbE5cZgrZ/S1LxV0bEGySw/8ZhshOOSnqubwW3KNzZf/jsW65T1fs8Mdh
+         987qX7xCVIDa5+h/8hV6+ko6fdBjDUar6dNpwTmWnWoNTwbStCEKOEMzUz+nxAZ5+skv
+         042g==
+X-Gm-Message-State: AC+VfDy2hKhgIpz/fAq04JQxs/UawcJYyNvghfA5ZRN2V3PaqvJu7mXI
+        UCXtTbDYOcAY4mlugKIOGBw=
+X-Google-Smtp-Source: ACHHUZ7PUGs/Uxa9l4rdaQUYMezCcHdiXfd4HHyQE3BDwd2sPC8GwvnkmOIS6dLbMlTZ3BvhJ08UfQ==
+X-Received: by 2002:a05:6000:90d:b0:309:fcbe:748a with SMTP id cw13-20020a056000090d00b00309fcbe748amr3540491wrb.11.1685521493253;
+        Wed, 31 May 2023 01:24:53 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id y4-20020a056000108400b0030abe7c36b1sm5824554wrw.93.2023.05.31.01.24.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 May 2023 00:58:54 -0700 (PDT)
-Date:   Wed, 31 May 2023 10:58:51 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Stanislav Kinsbursky <skinsbursky@parallels.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] nfsd: fix double fget() bug in __write_ports_addfd()
-Message-ID: <9279444f-b113-41ad-afaa-c6b550104906@kili.mountain>
-References: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>
- <168548566376.23533.14778348024215909777@noble.neil.brown.name>
- <58fd7e35-ba6c-432e-8e02-9c5476c854b4@kili.mountain>
+        Wed, 31 May 2023 01:24:52 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] usb: musb: tusb6010: Fix spelling mistake "respones" -> "response"
+Date:   Wed, 31 May 2023 09:24:51 +0100
+Message-Id: <20230531082451.1572058-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <58fd7e35-ba6c-432e-8e02-9c5476c854b4@kili.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 31, 2023 at 10:48:09AM +0300, Dan Carpenter wrote:
->  	err = nfsd_create_serv(net);
->  	if (err != 0)
-> -		return err;
-> +		goto out_put_sock;
->  
-> -	err = svc_addsock(nn->nfsd_serv, fd, buf, SIMPLE_TRANSACTION_LIMIT, cred);
-> +	err = svc_addsock(nn->nfsd_serv, so, buf, SIMPLE_TRANSACTION_LIMIT, cred);
-> +	if (err)
-> +		goto out_put_net;
+There is a spelling mistake in a pr_err message. Fix it.
 
-Oops.  This change is wrong.  svc_addsock() actually does return
-positive values on success.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/usb/musb/tusb6010.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  
-> -	if (err >= 0 &&
-> -	    !nn->nfsd_serv->sv_nrthreads && !xchg(&nn->keep_active, 1))
-> +	if (!nn->nfsd_serv->sv_nrthreads && !xchg(&nn->keep_active, 1))
->  		svc_get(nn->nfsd_serv);
->  
->  	nfsd_put(net);
-> +	return 0;
+diff --git a/drivers/usb/musb/tusb6010.c b/drivers/usb/musb/tusb6010.c
+index cbc707fe570f..6ab081c1b5eb 100644
+--- a/drivers/usb/musb/tusb6010.c
++++ b/drivers/usb/musb/tusb6010.c
+@@ -1046,7 +1046,7 @@ static int tusb_musb_start(struct musb *musb)
+ 		i--;
+ 	}
+ 	if (!i) {
+-		pr_err("tusb: Powerup respones failed\n");
++		pr_err("tusb: Powerup response failed\n");
+ 		return -ENODEV;
+ 	}
+ 
+-- 
+2.30.2
 
-Also wrong (same bug).
-
-> +
-> +out_put_net:
-> +	nfsd_put(net);
-> +out_put_sock:
-> +	sockfd_put(so);
->  	return err;
->  }
-
-regards,
-dan carpenter
