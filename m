@@ -2,154 +2,269 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3959C77B73
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 May 2023 06:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE83C77B7C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 May 2023 07:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234025AbjEaGJL (ORCPT
+        id S234758AbjEaHsY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 May 2023 02:09:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33362 "EHLO
+        Wed, 31 May 2023 03:48:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230201AbjEaGJK (ORCPT
+        with ESMTP id S234777AbjEaHsU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 May 2023 02:09:10 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F10DB9F;
-        Tue, 30 May 2023 23:09:06 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34UGZuOb011807;
-        Tue, 30 May 2023 23:08:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=s2048-2021-q4;
- bh=/bg3st2m2RfBZgSF21C6frsqiRRoDOI2uQ5lo1PIRXo=;
- b=YK5qtLn90AHm7a98xQ/Da6rGM1D505UKryAiXqc+FH2eNdlAUDGkbiuB+Gjz9f4zlqS9
- QZ0bDTMDOcJhRQ2heA9rS5q78EXfn2Lteq1xFrwPp5cmKItnDmThyya5DOxYo3r8jgck
- Ps9wJj4tE8ESxcM9M0YBa6T7B+S1Yz2BJLc5St08uyZcDskVkShEsxczuPhIWTlUalIb
- pvJ6adxUCGw+XsjaKHxuWCZfUoH2Z1sgUPIyAH/x9XhHkh6aPagGFe6zQP5zJLNHGGp4
- CU/sJWMNOjHWi8EhbMe4Vko7tGQFnnFOjuhGanl2JgApNbH3WC7ahu+YJso/xNqfCqiq Ig== 
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2171.outbound.protection.outlook.com [104.47.55.171])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3qw7mjger8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 May 2023 23:08:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MwGN0qNWel91h/1ipmQp3BXDHwDEYLlwPp0meJH6oz6o+Sy/v+Q49scqaI+oddZ297GrwGi6QQiVcgGuXg+lo2NWLh9dIzll5CXmg4V5HWbpZLivWdYRMPa0LHWEh69j2O9QPKsqOd99ey6W88rdwRVsb7jB8j5M9hBUB2Ke0/8rKIRLiignDvlgQvv6I3znRZE88syYtsayxEcwZErwxIlibelWJUI8HzrNWT2iyjD7HbvsrGbL4aiL4YH9hJCxUlBJfk41DVPAsUtXGNmzTytGnmBzaCY18yHIvuQZ5sPPEnunqDnuPFqmF+MmAuZFeie1XKYKA4imxpTQA5nqcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/bg3st2m2RfBZgSF21C6frsqiRRoDOI2uQ5lo1PIRXo=;
- b=OiMcj76yt+1HI6netNlXaLzesqEsAeyvjt7ljOijC6eEEun7RAs9VfGfnMumd+X1D4aOwKUIF8K25wYc15eXNm8kp7HMFB7k+JlUIaQv4GFzyABtNMLB5w45mqS7KTUtPuXPxeQADCmzYRIGY5ioYUSOgccsX+25hvfo3iZDkl4kH+rLDwwOrTLhx5TOpMmS03UG2EneLLyYGPUgbMVmF3Q2BCCIY3Pb4Kk+qoARRCT8lv7oBApwZaGoxpPCrMAVYzHgczpTkgTYJomav6D2nuGYI//HCDohCiL8nqEHCX5V2eyHssmOo+ueLg/mrvgpUrY7zHO8+0wyDPEvAPqjqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from SN6PR1501MB2064.namprd15.prod.outlook.com (2603:10b6:805:d::27)
- by CH3PR15MB6213.namprd15.prod.outlook.com (2603:10b6:610:159::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.23; Wed, 31 May
- 2023 06:08:43 +0000
-Received: from SN6PR1501MB2064.namprd15.prod.outlook.com
- ([fe80::bf7d:a453:b8d9:cf0]) by SN6PR1501MB2064.namprd15.prod.outlook.com
- ([fe80::bf7d:a453:b8d9:cf0%6]) with mapi id 15.20.6433.022; Wed, 31 May 2023
- 06:08:42 +0000
-Message-ID: <c920ff12-8674-0847-3486-35e63fdb546c@meta.com>
-Date:   Tue, 30 May 2023 23:08:38 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.11.2
-Subject: Re: [PATCH] bpf/tests: Use struct_size()
-Content-Language: en-US
-To:     Su Hui <suhui@nfschina.com>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>
-Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20230531043251.989312-1-suhui@nfschina.com>
-From:   Yonghong Song <yhs@meta.com>
-In-Reply-To: <20230531043251.989312-1-suhui@nfschina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0184.namprd05.prod.outlook.com
- (2603:10b6:a03:330::9) To SN6PR1501MB2064.namprd15.prod.outlook.com
- (2603:10b6:805:d::27)
+        Wed, 31 May 2023 03:48:20 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7B9113
+        for <kernel-janitors@vger.kernel.org>; Wed, 31 May 2023 00:48:17 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-30ac4e7f37bso3782499f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 31 May 2023 00:48:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685519296; x=1688111296;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+tRSEdxP8IM2jGH9SQvtWqET/153WHbcp/+/2iayQMU=;
+        b=YXbMxXdWgXfUU0qf80s17Bl0IXn2Mnyry5L1rrzIdyXr3fLNdZCXDGRehczX0f16VP
+         bRBIEGNElh8ih3eLiHyFGF1LIxYeY4J2BT+vd2c2CXwVadyYRWh/dpUmLwCAHeEuWB2H
+         bgEEoFZ0XujkJfdKZbc61voLWN+nrcT2vxLK8lCAya/kyjZ+qcFpfUTLqg0MWZgt+pms
+         r4I2n7bXr0impDYuk8TngNUPYJJtzBl7U2bTb7q9WIyqoBQMil7u+hQ2IV9O8oq/pCcC
+         YQpcxb4Z9vSlB6kQa/jjczflaR+190dcR/sINyQ6iMmbDibLluP4TUjv40cGcbvreu8h
+         CerA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685519296; x=1688111296;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+tRSEdxP8IM2jGH9SQvtWqET/153WHbcp/+/2iayQMU=;
+        b=B4sOcjtVivXE2sWjsOLDm9C8iiI7/BTE2YUQDl/v3yRKPmjBK2eojYIdhPtG2y5r7h
+         tfxPWZnMeSqI0AfYjb9w3AkfV+vpBtPc0MsFHb1SJza7iSD/Wp70S9ueZwSQxXk89eKB
+         LLu8C9WPJukYBSQkOugrrmWgn2Ta7irQV4eXFkxNeCGlq10wg6x1ChnlTBrqaQFZcKvg
+         IL3M/STpUIT6WwzoFuhXMWt1d//PRCz/UTSkHMZDh/+suf1Q3t80I43QkuAygMMkXoxU
+         WCiigxWt3MiEwreWtzl7CZGFiD6DCDh2Puqlwsm/5z4CKf/SMCtdRRk2LTUaMwpiwwVP
+         3e8A==
+X-Gm-Message-State: AC+VfDwGQRg8HHSGm3jTVlFb1lyKdy0/TEhkn6l133v5R9oTBPOUcxZo
+        dOaktcQKBlNMgrwEL6SdXIgv9A==
+X-Google-Smtp-Source: ACHHUZ77exca1531RsIDO/3C7eTHQt1nH/831RLyq6v8yb3Cqd/T8FdVYe6PeAe+nlDYDJAtMNHy2Q==
+X-Received: by 2002:a05:6000:1245:b0:306:297b:927f with SMTP id j5-20020a056000124500b00306297b927fmr3203075wrx.25.1685519295779;
+        Wed, 31 May 2023 00:48:15 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id b17-20020adff251000000b002c71b4d476asm5757981wrp.106.2023.05.31.00.48.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 May 2023 00:48:13 -0700 (PDT)
+Date:   Wed, 31 May 2023 10:48:09 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Stanislav Kinsbursky <skinsbursky@parallels.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nfsd: fix double fget() bug in __write_ports_addfd()
+Message-ID: <58fd7e35-ba6c-432e-8e02-9c5476c854b4@kili.mountain>
+References: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>
+ <168548566376.23533.14778348024215909777@noble.neil.brown.name>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR1501MB2064:EE_|CH3PR15MB6213:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53530790-0f43-4eb4-fb47-08db619d7c50
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4geBexDk/IKsPFmuDlXiSiBA2Uy0sVKsfd6ecP20824DDBkxSnEe4iFKMNK3POO19TsGzNVoDneJ1PaYvMHWdUrDu6lxlmwi6IkE1jK3inQAp/wqF4oqlCoQmwEohALhA6Kv2q8PmqtD1uqEFO3X2X9pveKTn6dXh1p4uujHFd5uOZArKyOlvMrpvYE++NqIV0dbRqsELT3x05YULt5z0F+a5VoZhYHHx79UNtpod6eXThCmivCjAC5bhXwZvuOi171/403LFQfs62fLWOmS4wqSizQJBL95ZwjiNWt2IPo5YQkaFZ+ecOWxoGoSGy8chg8AwZ9x5l6lX9Fb5CKYeLK1jkcJj9n2ywC5Qn8QNvFgb1xydVD7WdaeCHTdArcwWuXDeSamRpN0flztcqhqxZJZylRvAitLZjOOKDSUcmzeCR7JGzvzTPbFGXpnKNYby9rr5Av7JPudlKsvpdsV0Jge+8GLh9dsrl/+jc/2FFeBPqsr7HLdl0HVMDqzhEqswcCZj3SU/FL6HA/yvVuIuijdPgRR33JLvTr8U9KdtPFsdIdn6wJ6nOsSlUnKwQgJvMLDO0QQ0dGBHOJovD0W/qxWooa3jZctMC310PixbvldRvUu+cYwThbNV8zas9FNlQVFPcuNjaVDNH1RMdTw5LmoLZt4FpWH6j/ietE/vvI=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR1501MB2064.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(396003)(376002)(346002)(136003)(39860400002)(451199021)(558084003)(31696002)(86362001)(110136005)(4326008)(478600001)(316002)(66476007)(66946007)(66556008)(36756003)(6666004)(6486002)(5660300002)(8676002)(8936002)(7416002)(41300700001)(2906002)(38100700002)(921005)(2616005)(186003)(53546011)(6506007)(6512007)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YnZ2MEVFdFMyN2QzUVk0VHhlZUl6djBqRG5CYVB0dkY1a1Jvd1hrVm5vQTJq?=
- =?utf-8?B?a25NQzUyTUoydk1wL2tLbEVLSEtxQi83NFk3VDZhcnNkRFRIZFR3dDM3cC8z?=
- =?utf-8?B?UkMrTlJDZ241NXBZVTc0RU5qQy9aNkpyOGdzNE9IcXNiOFh5VUxsQmFHZ0Jp?=
- =?utf-8?B?cTZBYmo4R3lwMFlmSktGQllNTUVRS0dNOUhGanA3cFNPS1RQQ1NURFcxY2hQ?=
- =?utf-8?B?Nk5lZm8wK2lxUEpZWklGMmFYVWpCUVl5ZjhKd21iMGZtV2NiRDVFQWYyOFUx?=
- =?utf-8?B?MkVQRllFYkhOL1lkWlRDR1VsdHNJNkFlNWNXUk83ZjBzV1hhcFdXT2VxZmlL?=
- =?utf-8?B?NTNBRU5QVWw1ZDMxQnJKTWhtM2lFYmNqNnhUYTNCTjJ3dnYxZmRFR1NPZDNx?=
- =?utf-8?B?d0pTOE16QUZlVnlOUEEzbStBNU1BSjVTQWFySG1ZTFNYcVlBTEIxdVVZS3VF?=
- =?utf-8?B?RFZpaXlCWG45Z3BKVjZlc0hlZW9WZWpxT012UFdYZ01HYXI5NWVxZ0RSdUww?=
- =?utf-8?B?Q0JWb3AwN2wwemZoNk5TRHF0VE0waDZMcWZzTDhzVXVESHN5RHpRVzh1TnRY?=
- =?utf-8?B?cS85VllPTVQ4UWs5dlJOOHkvb1VSOGQ5UUMrQ2s5UG93R05hdHZHbUszVGVw?=
- =?utf-8?B?cjZwUGkwaFQwRVhyNUZtaHBFaFppVXA2SzM5eTdHc2lLdCtLTlV0Q25oZ1FN?=
- =?utf-8?B?dnIxSDhxTVk1UnJWNHA3czkrL0RjVnBSU2laa1pVSW1zWVNva2RDU2R1Wk93?=
- =?utf-8?B?R0xJYnJGNzBYMmJrRjF2U2I4Z0V4L2pKRVErOWsrTXZqZlV4d1I3cDUvTFdr?=
- =?utf-8?B?aEt2U2o5bktEWmtjVHRSRzFQUzJQdTlvZ0RsTTRxeSt4ZG1QdnBTTnVuOWgy?=
- =?utf-8?B?alRzUGw2ejNhSUVOWjVjWU9WQjBLRm5qR0NTaEpaV0pWWmkvNHhxZFRHUU5M?=
- =?utf-8?B?WDBpaGlDN0ZzUXRIWFdKeW5JTHpVQjZiODlIS25WOGFka0RtdWZyUFRNa3VY?=
- =?utf-8?B?M1VMdTRVd0tKald4UWNZM3JlMURNZ1pLbWd5Rm1VUWZXc04wR1M4eXZ5dUZX?=
- =?utf-8?B?VlFCNk56YlNhNnErUU5hZ0hSTmVudkUyNGpnc2J5eDZnclorejR5cjJTRWw0?=
- =?utf-8?B?VEtxNWkvSmthaTdOay9lTVpGQzNxR2hxV2cxNmhoZHdmR0x6cXNYSUNITjJo?=
- =?utf-8?B?bmU5WWhsdjVFQllyVzlFRjNBcWpTa0FFOW9GZ2JqNkdpU1dsUWxFUlNyODc0?=
- =?utf-8?B?Tkt5WGJlRDk0eTcvZWxQZUt0NXQzN0FZdnJtMVVkN1ZTQkJBSTFjSi9haWJG?=
- =?utf-8?B?Yk1zZGgrUFMwVTM5UUdyVk5kQWV1aXpmVTduMElRSmhHM2t6TkZXbDZHaEVk?=
- =?utf-8?B?dVFic3dXeGczc0dCckNoR3ZRR3pQQ0U2ZDVtcmYzQVUySzdxWElTU3VYUG56?=
- =?utf-8?B?Smx3QmN2WG5OY1UyMHVlcy8xOGdxRWVsckdKVGVmVmtnOWZiYUpzcVlzVHhD?=
- =?utf-8?B?c0ZEeW5HMmlCZHZkc3A5am4xSXUwQzcvS0dRbFZVNEJzTU9PRHdRSEx6WUhr?=
- =?utf-8?B?OWVnZ014Z2hlcUNnRkhxL2pFLzRRNDZ5c3pxNmhBZ2xBRzhtcUk5ZHdtZzR5?=
- =?utf-8?B?bnR1clRyQXNoY21nQ3VUOGVmaTdWelA5K20wbFZwTGdraFB4U1h1ZmdxbSt6?=
- =?utf-8?B?ajZMelJYUWFDYmpIRlM0MnBNbS9lR3B5dmR5R0c4Y00xVG85NTRVdGtXTlZw?=
- =?utf-8?B?UDV3Ri9KZWNPRzZLOU5CelNMc0lEekVwNjNaeXNLdnVQOG11dndTd0NxaGpx?=
- =?utf-8?B?c3pFMDZveWVtaElLWVB1NkZPMDVEQXRGc0dKKzZhMHAxdUVPUkFIOWlrbElZ?=
- =?utf-8?B?ZURVb3dBZWpFMWo5QmwvdlBwbHdtNDRZYmhUeFZIMExOQnplOTdraHY5STha?=
- =?utf-8?B?ekc1TjlBRWNHT3BaTFpyWTQ4VmwwU3BQRThWUC9pUHc4TEt2cDljTGUwWHZn?=
- =?utf-8?B?bzhoWEFPQUhsblByUjRRRVFVNkhUdjIvUU41cEtxYzhMMFYzK1Q2RWhHYWZY?=
- =?utf-8?B?OVQ4OFdQS2plTmlreWNCK2VNWFpiOS82TjJUazVBL3lVejU0UG8vMEg0YTJu?=
- =?utf-8?B?Zk1rK2dsQTdvM0Y1R3F0ek9henJWOVNZYXFtNk5DVFN3djRVSkhtMURZNG9F?=
- =?utf-8?B?L1E9PQ==?=
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53530790-0f43-4eb4-fb47-08db619d7c50
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR1501MB2064.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2023 06:08:42.8070
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LRUDfOTBzynOYPIFlE0AulHqPY91nJdZrUhHJkmaMvqLI7MAl4SIIJfzET5uOB/f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR15MB6213
-X-Proofpoint-ORIG-GUID: vkREIp9Onc81-7MAXgA7NiNkmuzuCb9d
-X-Proofpoint-GUID: vkREIp9Onc81-7MAXgA7NiNkmuzuCb9d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-31_02,2023-05-30_01,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <168548566376.23533.14778348024215909777@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 5/30/23 9:32 PM, Su Hui wrote:
-> Use struct_size() instead of hand writing it.
-> This is less verbose and more informative.
+On Wed, May 31, 2023 at 08:27:43AM +1000, NeilBrown wrote:
+> On Mon, 29 May 2023, Dan Carpenter wrote:
+> > The bug here is that you cannot rely on getting the same socket
+> > from multiple calls to fget() because userspace can influence
+> > that.  This is a kind of double fetch bug.
+> > 
+> > The fix is to delete the svc_alien_sock() function and insted do
+> > the checking inside the svc_addsock() function.
 > 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+> Hi,
+>  I definitely agree with the change to pass the 'net' into
+>  svc_addsock(), and check the the fd has the correct net.
+> 
+>  I'm not sure I agree with the removal of the svc_alien_sock() test.  It
+>  is best to perform sanity tests before allocation things, and
+>  nfsd_create_serv() can create a new 'serv' - though most often it just
+>  incs the refcount.
 
-Acked-by: Yonghong Song <yhs@fb.com>
+That's true.  But the other philosophical rule is that we shouldn't
+optimize for the failure path.  If someone gives us bad data they
+deserve a slow down.
+
+I also think leaving svc_alien_sock() is a trap for the unwary because
+it will lead to more double fget() bugs.  The svc_alien_sock() function
+is weird because it returns false on success and false on failure and
+true for alien sock.
+
+> 
+>  Maybe instead svc_alien_sock() could return the struct socket (if
+>  successful), and it could be passed to svc_addsock()???
+> 
+>  I would probably then change the name of svc_alien_sock()
+
+Yeah, because we don't want alien sockets, we want Earth sockets.
+Doing this is much more complicated...  The name svc_get_earth_sock()
+is just a joke.  Tell me what name to use if we decide to go this
+route.
+
+To be honest, I would probably still go with my v1 patch.
+
+regards,
+dan carpenter
+
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index e0e98b40a6e5d..affcd44f03d6b 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -689,6 +689,7 @@ static ssize_t __write_ports_names(char *buf, struct net *net)
+  */
+ static ssize_t __write_ports_addfd(char *buf, struct net *net, const struct cred *cred)
+ {
++	struct socket *so;
+ 	char *mesg = buf;
+ 	int fd, err;
+ 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
+@@ -698,22 +699,30 @@ static ssize_t __write_ports_addfd(char *buf, struct net *net, const struct cred
+ 		return -EINVAL;
+ 	trace_nfsd_ctl_ports_addfd(net, fd);
+ 
+-	if (svc_alien_sock(net, fd)) {
++	so = svc_get_earth_sock(net, fd);
++	if (!so) {
+ 		printk(KERN_ERR "%s: socket net is different to NFSd's one\n", __func__);
+ 		return -EINVAL;
+ 	}
+ 
+ 	err = nfsd_create_serv(net);
+ 	if (err != 0)
+-		return err;
++		goto out_put_sock;
+ 
+-	err = svc_addsock(nn->nfsd_serv, fd, buf, SIMPLE_TRANSACTION_LIMIT, cred);
++	err = svc_addsock(nn->nfsd_serv, so, buf, SIMPLE_TRANSACTION_LIMIT, cred);
++	if (err)
++		goto out_put_net;
+ 
+-	if (err >= 0 &&
+-	    !nn->nfsd_serv->sv_nrthreads && !xchg(&nn->keep_active, 1))
++	if (!nn->nfsd_serv->sv_nrthreads && !xchg(&nn->keep_active, 1))
+ 		svc_get(nn->nfsd_serv);
+ 
+ 	nfsd_put(net);
++	return 0;
++
++out_put_net:
++	nfsd_put(net);
++out_put_sock:
++	sockfd_put(so);
+ 	return err;
+ }
+ 
+diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
+index d16ae621782c0..2422d260591bb 100644
+--- a/include/linux/sunrpc/svcsock.h
++++ b/include/linux/sunrpc/svcsock.h
+@@ -61,8 +61,8 @@ int		svc_recv(struct svc_rqst *, long);
+ void		svc_send(struct svc_rqst *rqstp);
+ void		svc_drop(struct svc_rqst *);
+ void		svc_sock_update_bufs(struct svc_serv *serv);
+-bool		svc_alien_sock(struct net *net, int fd);
+-int		svc_addsock(struct svc_serv *serv, const int fd,
++struct socket	*svc_get_earth_sock(struct net *net, int fd);
++int		svc_addsock(struct svc_serv *serv, struct socket *so,
+ 					char *name_return, const size_t len,
+ 					const struct cred *cred);
+ void		svc_init_xprt_sock(void);
+diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
+index 46845cb6465d7..78f6ae9fa42d4 100644
+--- a/net/sunrpc/svcsock.c
++++ b/net/sunrpc/svcsock.c
+@@ -1474,21 +1474,20 @@ static struct svc_sock *svc_setup_socket(struct svc_serv *serv,
+ 	return svsk;
+ }
+ 
+-bool svc_alien_sock(struct net *net, int fd)
++struct socket *svc_get_earth_sock(struct net *net, int fd)
+ {
+ 	int err;
+ 	struct socket *sock = sockfd_lookup(fd, &err);
+-	bool ret = false;
+ 
+ 	if (!sock)
+-		goto out;
+-	if (sock_net(sock->sk) != net)
+-		ret = true;
+-	sockfd_put(sock);
+-out:
+-	return ret;
++		return NULL;
++	if (sock_net(sock->sk) != net) {
++		sockfd_put(sock);
++		return NULL;
++	}
++	return sock;
+ }
+-EXPORT_SYMBOL_GPL(svc_alien_sock);
++EXPORT_SYMBOL_GPL(svc_get_earth_sock);
+ 
+ /**
+  * svc_addsock - add a listener socket to an RPC service
+@@ -1502,36 +1501,27 @@ EXPORT_SYMBOL_GPL(svc_alien_sock);
+  * Name is terminated with '\n'.  On error, returns a negative errno
+  * value.
+  */
+-int svc_addsock(struct svc_serv *serv, const int fd, char *name_return,
++int svc_addsock(struct svc_serv *serv, struct socket *so, char *name_return,
+ 		const size_t len, const struct cred *cred)
+ {
+-	int err = 0;
+-	struct socket *so = sockfd_lookup(fd, &err);
+ 	struct svc_sock *svsk = NULL;
+ 	struct sockaddr_storage addr;
+ 	struct sockaddr *sin = (struct sockaddr *)&addr;
+ 	int salen;
+ 
+-	if (!so)
+-		return err;
+-	err = -EAFNOSUPPORT;
+ 	if ((so->sk->sk_family != PF_INET) && (so->sk->sk_family != PF_INET6))
+-		goto out;
+-	err =  -EPROTONOSUPPORT;
++		return -EAFNOSUPPORT;
+ 	if (so->sk->sk_protocol != IPPROTO_TCP &&
+ 	    so->sk->sk_protocol != IPPROTO_UDP)
+-		goto out;
+-	err = -EISCONN;
++		return -EPROTONOSUPPORT;
+ 	if (so->state > SS_UNCONNECTED)
+-		goto out;
+-	err = -ENOENT;
++		return -EISCONN;
+ 	if (!try_module_get(THIS_MODULE))
+-		goto out;
++		return -ENOENT;
+ 	svsk = svc_setup_socket(serv, so, SVC_SOCK_DEFAULTS);
+ 	if (IS_ERR(svsk)) {
+ 		module_put(THIS_MODULE);
+-		err = PTR_ERR(svsk);
+-		goto out;
++		return PTR_ERR(svsk);
+ 	}
+ 	salen = kernel_getsockname(svsk->sk_sock, sin);
+ 	if (salen >= 0)
+@@ -1539,9 +1529,6 @@ int svc_addsock(struct svc_serv *serv, const int fd, char *name_return,
+ 	svsk->sk_xprt.xpt_cred = get_cred(cred);
+ 	svc_add_new_perm_xprt(serv, &svsk->sk_xprt);
+ 	return svc_one_sock_name(svsk, name_return, len);
+-out:
+-	sockfd_put(so);
+-	return err;
+ }
+ EXPORT_SYMBOL_GPL(svc_addsock);
+ 
+
+
+
