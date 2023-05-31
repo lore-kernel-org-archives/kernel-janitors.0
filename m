@@ -2,61 +2,78 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF19C77B7C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 May 2023 10:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4E2C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 May 2023 11:07:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235776AbjEaKGT (ORCPT
+        id S235161AbjEaLHX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 May 2023 06:06:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59982 "EHLO
+        Wed, 31 May 2023 07:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234859AbjEaKGR (ORCPT
+        with ESMTP id S234606AbjEaLHW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 May 2023 06:06:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15ED8E5;
-        Wed, 31 May 2023 03:06:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 31 May 2023 07:07:22 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7770DE48;
+        Wed, 31 May 2023 04:06:48 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E4B363874;
-        Wed, 31 May 2023 10:06:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F36EC433EF;
-        Wed, 31 May 2023 10:06:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685527575;
-        bh=CAfGkoCX7jrzOItNlPZnfGyufMo84Rg7e0vHaI13f/A=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=KhgoJxyih2pvUkn5EDeCJabDLgTI9qwBerUzpsc4EWFHjvRrVUQksByMzWn0cVimH
-         ZuHKgD1UhMpG/Fk+mDPa5MeNmUPri96kGJDZFxm0poacVcWm6LAyChH7i0c7zQ6tRY
-         gcM6UiphUXy8IV/j/u0pTAngJf4RvgeG5yNOXHvsmXshlOSzsyl0Bb+VF1yD2aAKLi
-         08cfkMucNYsgO4pBza8WtkarrFbSFyuf8v+/Ev0rCDvuK5UdiFPYwUUCyfCK4ZyLN2
-         J+6O0aQAduDPwnsr79YAn64sU8xpRn8+F9dqdjhlawFkq8Sh5Z1WJDGxjO5fSsOmAK
-         aasB4l9pPtMKA==
-Message-ID: <655a378d4b71942e19473caa00ba7d44e12641a5.camel@kernel.org>
-Subject: Re: [PATCH] nfsd: fix double fget() bug in __write_ports_addfd()
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>, NeilBrown <neilb@suse.de>
-Cc:     Stanislav Kinsbursky <skinsbursky@parallels.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 09C2E1F8C0;
+        Wed, 31 May 2023 11:06:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1685531207; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+Nr/NuqqGqgkwNG/KVEGuQftlK0/QlcBLem3DSmweM0=;
+        b=u4i/y25BDJtdCciBJGt0FpRkA6Q9CFzrv8RvSS6lQ3u61+wuQjgwJqdvPz8b4hlim3lIIU
+        cpWeqRP398cZ9ujtQgnsfvgf8BvMdJfy2BGPgT6bppf+tfOA+HCSJDOw8+MuwrFYvq5hGj
+        KPU4lVr3vw5OK4zE/nz4UWH8l6PSUCk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1685531207;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+Nr/NuqqGqgkwNG/KVEGuQftlK0/QlcBLem3DSmweM0=;
+        b=BNmkYln0qzKkWE6LugNqCVtkJRUe7kppnH5XwdMtO1dS93hLotRQ6jjv2560XsacWccZKW
+        hreSKU7RvPhjXrBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 69EA813488;
+        Wed, 31 May 2023 11:06:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id MIeMB0Mqd2QCNwAAMHmgww
+        (envelope-from <neilb@suse.de>); Wed, 31 May 2023 11:06:43 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Dan Carpenter" <dan.carpenter@linaro.org>
+Cc:     "Stanislav Kinsbursky" <skinsbursky@parallels.com>,
+        "Chuck Lever" <chuck.lever@oracle.com>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
+        "Anna Schumaker" <anna@kernel.org>,
         "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
         netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date:   Wed, 31 May 2023 06:06:12 -0400
-In-Reply-To: <58fd7e35-ba6c-432e-8e02-9c5476c854b4@kili.mountain>
-References: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>
-         <168548566376.23533.14778348024215909777@noble.neil.brown.name>
-         <58fd7e35-ba6c-432e-8e02-9c5476c854b4@kili.mountain>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.2 (3.48.2-1.fc38) 
-MIME-Version: 1.0
+Subject: Re: [PATCH] nfsd: fix double fget() bug in __write_ports_addfd()
+In-reply-to: <58fd7e35-ba6c-432e-8e02-9c5476c854b4@kili.mountain>
+References: <9c90e813-c7fb-4c90-b52b-131481640a78@kili.mountain>,
+ <168548566376.23533.14778348024215909777@noble.neil.brown.name>,
+ <58fd7e35-ba6c-432e-8e02-9c5476c854b4@kili.mountain>
+Date:   Wed, 31 May 2023 21:06:39 +1000
+Message-id: <168553119969.627.10385222679537474034@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2023-05-31 at 10:48 +0300, Dan Carpenter wrote:
+On Wed, 31 May 2023, Dan Carpenter wrote:
 > On Wed, May 31, 2023 at 08:27:43AM +1000, NeilBrown wrote:
 > > On Mon, 29 May 2023, Dan Carpenter wrote:
 > > > The bug here is that you cannot rely on getting the same socket
@@ -70,8 +87,7 @@ On Wed, 2023-05-31 at 10:48 +0300, Dan Carpenter wrote:
 > >  I definitely agree with the change to pass the 'net' into
 > >  svc_addsock(), and check the the fd has the correct net.
 > >=20
-> >  I'm not sure I agree with the removal of the svc_alien_sock() test.  I=
-t
+> >  I'm not sure I agree with the removal of the svc_alien_sock() test.  It
 > >  is best to perform sanity tests before allocation things, and
 > >  nfsd_create_serv() can create a new 'serv' - though most often it just
 > >  incs the refcount.
@@ -79,11 +95,14 @@ t
 > That's true.  But the other philosophical rule is that we shouldn't
 > optimize for the failure path.  If someone gives us bad data they
 > deserve a slow down.
-
+>=20
 > I also think leaving svc_alien_sock() is a trap for the unwary because
 > it will lead to more double fget() bugs.  The svc_alien_sock() function
 > is weird because it returns false on success and false on failure and
 > true for alien sock.
+
+That's alien logic for you!
+
 >=20
 > >=20
 > >  Maybe instead svc_alien_sock() could return the struct socket (if
@@ -97,16 +116,15 @@ t
 > route.
 >=20
 > To be honest, I would probably still go with my v1 patch.
+
+Thanks for trying it out.  Maybe it's not such a good idea after all.
+I'm happy to accept your original.
+  Revewied-by: NeilBrown <neilb@suse.com>
+
+Thanks,
+NeilBrown
+
 >=20
-
-+1.  I don't see a need to do this check twice. Let's optimize for the
-success case and if someone sends down bogus data, then they just go
-slower.
-
-I too suggest we just go with Dan's original patch.
-
-
-
 > regards,
 > dan carpenter
 >=20
@@ -114,26 +132,25 @@ I too suggest we just go with Dan's original patch.
 > index e0e98b40a6e5d..affcd44f03d6b 100644
 > --- a/fs/nfsd/nfsctl.c
 > +++ b/fs/nfsd/nfsctl.c
-> @@ -689,6 +689,7 @@ static ssize_t __write_ports_names(char *buf, struct =
-net *net)
+> @@ -689,6 +689,7 @@ static ssize_t __write_ports_names(char *buf, struct ne=
+t *net)
 >   */
->  static ssize_t __write_ports_addfd(char *buf, struct net *net, const str=
-uct cred *cred)
+>  static ssize_t __write_ports_addfd(char *buf, struct net *net, const struc=
+t cred *cred)
 >  {
 > +	struct socket *so;
 >  	char *mesg =3D buf;
 >  	int fd, err;
 >  	struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
-> @@ -698,22 +699,30 @@ static ssize_t __write_ports_addfd(char *buf, struc=
-t net *net, const struct cred
+> @@ -698,22 +699,30 @@ static ssize_t __write_ports_addfd(char *buf, struct =
+net *net, const struct cred
 >  		return -EINVAL;
 >  	trace_nfsd_ctl_ports_addfd(net, fd);
 > =20
 > -	if (svc_alien_sock(net, fd)) {
 > +	so =3D svc_get_earth_sock(net, fd);
 > +	if (!so) {
->  		printk(KERN_ERR "%s: socket net is different to NFSd's one\n", __func_=
-_);
+>  		printk(KERN_ERR "%s: socket net is different to NFSd's one\n", __func__);
 >  		return -EINVAL;
 >  	}
 > =20
@@ -142,10 +159,10 @@ _);
 > -		return err;
 > +		goto out_put_sock;
 > =20
-> -	err =3D svc_addsock(nn->nfsd_serv, fd, buf, SIMPLE_TRANSACTION_LIMIT, c=
-red);
-> +	err =3D svc_addsock(nn->nfsd_serv, so, buf, SIMPLE_TRANSACTION_LIMIT, c=
-red);
+> -	err =3D svc_addsock(nn->nfsd_serv, fd, buf, SIMPLE_TRANSACTION_LIMIT, cre=
+d);
+> +	err =3D svc_addsock(nn->nfsd_serv, so, buf, SIMPLE_TRANSACTION_LIMIT, cre=
+d);
 > +	if (err)
 > +		goto out_put_net;
 > =20
@@ -164,8 +181,7 @@ red);
 >  	return err;
 >  }
 > =20
-> diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsoc=
-k.h
+> diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
 > index d16ae621782c0..2422d260591bb 100644
 > --- a/include/linux/sunrpc/svcsock.h
 > +++ b/include/linux/sunrpc/svcsock.h
@@ -184,8 +200,8 @@ k.h
 > index 46845cb6465d7..78f6ae9fa42d4 100644
 > --- a/net/sunrpc/svcsock.c
 > +++ b/net/sunrpc/svcsock.c
-> @@ -1474,21 +1474,20 @@ static struct svc_sock *svc_setup_socket(struct s=
-vc_serv *serv,
+> @@ -1474,21 +1474,20 @@ static struct svc_sock *svc_setup_socket(struct svc=
+_serv *serv,
 >  	return svsk;
 >  }
 > =20
@@ -220,8 +236,8 @@ vc_serv *serv,
 >   * value.
 >   */
 > -int svc_addsock(struct svc_serv *serv, const int fd, char *name_return,
-> +int svc_addsock(struct svc_serv *serv, struct socket *so, char *name_ret=
-urn,
+> +int svc_addsock(struct svc_serv *serv, struct socket *so, char *name_retur=
+n,
 >  		const size_t len, const struct cred *cred)
 >  {
 > -	int err =3D 0;
@@ -234,8 +250,7 @@ urn,
 > -	if (!so)
 > -		return err;
 > -	err =3D -EAFNOSUPPORT;
->  	if ((so->sk->sk_family !=3D PF_INET) && (so->sk->sk_family !=3D PF_INET=
-6))
+>  	if ((so->sk->sk_family !=3D PF_INET) && (so->sk->sk_family !=3D PF_INET6))
 > -		goto out;
 > -	err =3D  -EPROTONOSUPPORT;
 > +		return -EAFNOSUPPORT;
@@ -260,8 +275,8 @@ urn,
 >  	}
 >  	salen =3D kernel_getsockname(svsk->sk_sock, sin);
 >  	if (salen >=3D 0)
-> @@ -1539,9 +1529,6 @@ int svc_addsock(struct svc_serv *serv, const int fd=
-, char *name_return,
+> @@ -1539,9 +1529,6 @@ int svc_addsock(struct svc_serv *serv, const int fd, =
+char *name_return,
 >  	svsk->sk_xprt.xpt_cred =3D get_cred(cred);
 >  	svc_add_new_perm_xprt(serv, &svsk->sk_xprt);
 >  	return svc_one_sock_name(svsk, name_return, len);
@@ -274,6 +289,5 @@ urn,
 >=20
 >=20
 >=20
+>=20
 
---=20
-Jeff Layton <jlayton@kernel.org>
