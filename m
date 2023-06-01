@@ -2,52 +2,45 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D10C77B7E
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jun 2023 17:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB72AC7EE23
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jun 2023 17:57:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232823AbjFARkB (ORCPT
+        id S231691AbjFAR5d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Jun 2023 13:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36620 "EHLO
+        Thu, 1 Jun 2023 13:57:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232984AbjFARjp (ORCPT
+        with ESMTP id S232250AbjFAR5c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Jun 2023 13:39:45 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB98136;
-        Thu,  1 Jun 2023 10:39:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685641184; x=1717177184;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=T10NFGdSOn3kZ70NkVkGG3eMfGwDT3os3Zr2NIy+93g=;
-  b=ZuD627PUfZaFsEtHe7IPsdmeTmtY6K8pYCC57eOGS6EdUJZDGnxrgmoR
-   HtSNgSJP35SBx96J7W3WVBPX0Tyz7FlsIQweH+xxMOTQ8Ey3wkFMK9Bll
-   N+ZtgIWx9nzO48T1YJszHvXnT+LACxiA4jrfTwlBDy4A/fg7jGnF8EVDz
-   azk7m9IOC2dGI3gE+Xd15SjQCMxoZGijbOp2VpNDwA2rC0bsEdJRebEJQ
-   afj1AThRpGd2NLfvc+02fcnN9q3VKYf/hVmhqcY8/BjemOAc5LXdrpwZH
-   PXj1xwUWY8nSXnQ0gwZy8QQdOp5Zndf2MCFctLGMB5Fz4Wy73GGqc4yUX
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="335253627"
-X-IronPort-AV: E=Sophos;i="6.00,210,1681196400"; 
-   d="scan'208";a="335253627"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2023 10:39:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="737197106"
-X-IronPort-AV: E=Sophos;i="6.00,210,1681196400"; 
-   d="scan'208";a="737197106"
-Received: from rcelisco-mobl.amr.corp.intel.com (HELO [10.212.207.82]) ([10.212.207.82])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2023 10:39:42 -0700
-Message-ID: <2720a80a-4496-0ba9-e545-046ed2529f7d@linux.intel.com>
-Date:   Thu, 1 Jun 2023 12:39:42 -0500
+        Thu, 1 Jun 2023 13:57:32 -0400
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90AD119B
+        for <kernel-janitors@vger.kernel.org>; Thu,  1 Jun 2023 10:57:24 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 4mXxqV4hJZvWO4mXxqrkEg; Thu, 01 Jun 2023 19:57:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1685642237;
+        bh=7vt9+fLVrJ0DcwYcq+OdF4MOQmmWuiozZXmgqPSyP9w=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=gaAu0HoiO+QyAxiOQKP1BGQtfBxDsExDWKFv/pCSfTswi3suLyp4hehNCsJ/IYNA3
+         QRd9xIN3lFZ5Hx3jD2P/fMLcQZ/tCA5gW38G3WQTIH9Hq3ImmwQcLA+5Cu/eapwSPk
+         ZmWmyQVIVw1HzA4efx2xUR1MGwImvTX0I807GB2gi4lunf5P7PwUv8nInUNPC50cC6
+         uNjuq582gY1Hv1UqopuJ/Z4BNTKzRA14ktud2dFDNgLn0CCsm6YKmpp/bFdzDHAVct
+         GYA6tk60qS2k9QWqzeTXZqjAmZ0JGuLxujS6ANiuETu+BnDEXeerlVv38k3P+fdxkK
+         uiPwdXV7rtqbg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 01 Jun 2023 19:57:17 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <f3aa01d9-7dc5-ded4-1a9a-07634afc0726@wanadoo.fr>
+Date:   Thu, 1 Jun 2023 19:57:13 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.11.0
+ Thunderbird/102.11.0
 Subject: Re: [PATCH] ASoC: SOF: ipc4-topology: Use size_t for variable passed
  to kzalloc()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
         Bard Liao <yung-chuan.liao@linux.intel.com>,
@@ -61,58 +54,80 @@ To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org
 References: <a311e4ae83406f714c9d1f7f2f857284265e581c.1685640591.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <a311e4ae83406f714c9d1f7f2f857284265e581c.1685640591.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <2720a80a-4496-0ba9-e545-046ed2529f7d@linux.intel.com>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2720a80a-4496-0ba9-e545-046ed2529f7d@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 6/1/23 12:30, Christophe JAILLET wrote:
-> struct_size() checks for overflow, but assigning its result to just a u32
-> may still overflow after a successful check.
+Le 01/06/2023 à 19:39, Pierre-Louis Bossart a écrit :
 > 
-> Use a size_t instead in order to be cleaner.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Based on analysis from Dan Carpenter on another patch (see [1]).
+> On 6/1/23 12:30, Christophe JAILLET wrote:
+>> struct_size() checks for overflow, but assigning its result to just a u32
+>> may still overflow after a successful check.
+>>
+>> Use a size_t instead in order to be cleaner.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Based on analysis from Dan Carpenter on another patch (see [1]).
+>>
+>> [1]: https://lore.kernel.org/all/00e84595-e2c9-48ea-8737-18da34eaafbf@kili.mountain/
 > 
-> [1]: https://lore.kernel.org/all/00e84595-e2c9-48ea-8737-18da34eaafbf@kili.mountain/
-
-looks like there are similar cases of struct_size -> u32 conversions in
-other places:
-
-struct snd_sof_control {
-    u32 size;	/* cdata size */
-
-ipc3-topology.c:        scontrol->size = struct_size(cdata, chanv,
-scontrol->num_channels);
-ipc3-topology.c:        scontrol->size = struct_size(cdata, chanv,
-scontrol->num_channels);
-ipc4-topology.c:        scontrol->size = struct_size(control_data,
-chanv, scontrol->num_channels);
-
-not sure how much of an issue this really is though?
-
-> ---
->  sound/soc/sof/ipc4-topology.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> looks like there are similar cases of struct_size -> u32 conversions in
+> other places:
 > 
-> diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
-> index db64e0cb8663..50faa4c88b97 100644
-> --- a/sound/soc/sof/ipc4-topology.c
-> +++ b/sound/soc/sof/ipc4-topology.c
-> @@ -881,7 +881,7 @@ static int sof_ipc4_widget_setup_comp_process(struct snd_sof_widget *swidget)
->  	/* allocate memory for base config extension if needed */
->  	if (process->init_config == SOF_IPC4_MODULE_INIT_CONFIG_TYPE_BASE_CFG_WITH_EXT) {
->  		struct sof_ipc4_base_module_cfg_ext *base_cfg_ext;
-> -		u32 ext_size = struct_size(base_cfg_ext, pin_formats,
-> +		size_t ext_size = struct_size(base_cfg_ext, pin_formats,
->  						swidget->num_input_pins + swidget->num_output_pins);
->  
->  		base_cfg_ext = kzalloc(ext_size, GFP_KERNEL);
+> struct snd_sof_control {
+>      u32 size;	/* cdata size */
+> 
+> ipc3-topology.c:        scontrol->size = struct_size(cdata, chanv,
+> scontrol->num_channels);
+> ipc3-topology.c:        scontrol->size = struct_size(cdata, chanv,
+> scontrol->num_channels);
+> ipc4-topology.c:        scontrol->size = struct_size(control_data,
+> chanv, scontrol->num_channels);
+
+My coccinelle script does not handle such cases.
+
+> 
+> not sure how much of an issue this really is though?
+
+I agree that in practice it should be safe as-is, but it can't hurt :).
+I don't know this code well, but should [2] be part of the call chain, 
+it is obvious that it CAN'T overflow.
+
+
+I checked for places where such pattern occurs after Dan's comment on 
+another patch. I'll see if I find better candidates.
+
+
+CJ
+
+[2]: 
+https://elixir.bootlin.com/linux/v6.4-rc1/source/sound/soc/sof/topology.c#L1404
+
+> 
+>> ---
+>>   sound/soc/sof/ipc4-topology.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
+>> index db64e0cb8663..50faa4c88b97 100644
+>> --- a/sound/soc/sof/ipc4-topology.c
+>> +++ b/sound/soc/sof/ipc4-topology.c
+>> @@ -881,7 +881,7 @@ static int sof_ipc4_widget_setup_comp_process(struct snd_sof_widget *swidget)
+>>   	/* allocate memory for base config extension if needed */
+>>   	if (process->init_config == SOF_IPC4_MODULE_INIT_CONFIG_TYPE_BASE_CFG_WITH_EXT) {
+>>   		struct sof_ipc4_base_module_cfg_ext *base_cfg_ext;
+>> -		u32 ext_size = struct_size(base_cfg_ext, pin_formats,
+>> +		size_t ext_size = struct_size(base_cfg_ext, pin_formats,
+>>   						swidget->num_input_pins + swidget->num_output_pins);
+>>   
+>>   		base_cfg_ext = kzalloc(ext_size, GFP_KERNEL);
+> 
+
