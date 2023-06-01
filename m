@@ -2,94 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D80EBC77B73
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jun 2023 00:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B9CC77B73
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jun 2023 00:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230363AbjFAAni (ORCPT
+        id S230124AbjFAA7j (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 May 2023 20:43:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56418 "EHLO
+        Wed, 31 May 2023 20:59:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbjFAAnh (ORCPT
+        with ESMTP id S229562AbjFAA7j (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 May 2023 20:43:37 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D2DE123;
-        Wed, 31 May 2023 17:43:36 -0700 (PDT)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34VKIEYi032508;
-        Thu, 1 Jun 2023 00:43:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2023-03-30;
- bh=kgrZrmMdCGW4zNKNzukArbvw+ik9UIZSCqtlU1iZmRg=;
- b=T3PYg3ayunKdr2RiVkSN1BMAWYP5BdMOj8j7+pzk5JRXGwyxzexwmaBoiypOM/3guJ8t
- p+2uL/bTOQMVEpCP7S9PhPShXEfWVCQJa3zWu6zvesDWySrrWvKmWB+irU6eawNz9Y3B
- l6hTUJ1AJwTy2r9xSmyv/nBT/j6KXi/UyJogS+fNlpkMQwGfM8RCmrPrn3RDyK+8x9B3
- 7NRMu6REUD/ei05YGcZ8jxinyJIvz9NYfEIR8ed6qzvudEvWvWPWkipIfjm2py07PQLm
- o0EjVT/Rsj4iCqT4Izmf6datyYfUyJiF0QzdbJ2/DtKomNnJJgyo8t1kXEDTuvR/sl9j FA== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qvhb97d72-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 01 Jun 2023 00:43:33 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34VMsRoS003775;
-        Thu, 1 Jun 2023 00:43:32 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3qv4ye2ea6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 01 Jun 2023 00:43:32 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3510hV9H008516;
-        Thu, 1 Jun 2023 00:43:32 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3qv4ye2e6s-1;
-        Thu, 01 Jun 2023 00:43:31 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        mpi3mr-linuxdrv.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: mpi3mr: Fix the type used for pointers to bitmap
-Date:   Wed, 31 May 2023 20:43:10 -0400
-Message-Id: <168558000059.2461197.2174919171880641930.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <8bdf9148ce1a5d01aac11c46c8617b477813457e.1683473011.git.christophe.jaillet@wanadoo.fr>
-References: <8bdf9148ce1a5d01aac11c46c8617b477813457e.1683473011.git.christophe.jaillet@wanadoo.fr>
+        Wed, 31 May 2023 20:59:39 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 2BD15119;
+        Wed, 31 May 2023 17:59:36 -0700 (PDT)
+Received: from [172.30.38.103] (unknown [180.167.10.98])
+        by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 80066180000131;
+        Thu,  1 Jun 2023 08:59:33 +0800 (CST)
+Message-ID: <a3905de3-265a-b69b-10f7-044bc18808b0@nfschina.com>
+Date:   Thu, 1 Jun 2023 08:59:32 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-31_18,2023-05-31_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=824
- adultscore=0 malwarescore=0 bulkscore=0 suspectscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2306010004
-X-Proofpoint-GUID: T0gnqpk8oTm01hYHDRNJBwves-_unOzd
-X-Proofpoint-ORIG-GUID: T0gnqpk8oTm01hYHDRNJBwves-_unOzd
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] drm/nouveau/nvif: use struct_size()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Ben Skeggs <bskeggs@redhat.com>, Karol Herbst <kherbst@redhat.com>,
+        Lyude Paul <lyude@redhat.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, airlied@redhat.com,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From:   Su Hui <suhui@nfschina.com>
+In-Reply-To: <00e84595-e2c9-48ea-8737-18da34eaafbf@kili.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 07 May 2023 17:23:49 +0200, Christophe JAILLET wrote:
+On 2023/5/31 16:31, Dan Carpenter wrote:
+> On Wed, May 31, 2023 at 12:38:26PM +0800, Su Hui wrote:
+>> Use struct_size() instead of hand writing it.
+>> This is less verbose and more informative.
+>>
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>>   drivers/gpu/drm/nouveau/nvif/object.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/nouveau/nvif/object.c b/drivers/gpu/drm/nouveau/nvif/object.c
+>> index 4d1aaee8fe15..4bd693aa4ee0 100644
+>> --- a/drivers/gpu/drm/nouveau/nvif/object.c
+>> +++ b/drivers/gpu/drm/nouveau/nvif/object.c
+>> @@ -65,7 +65,7 @@ nvif_object_sclass_get(struct nvif_object *object, struct nvif_sclass **psclass)
+>>   	u32 size;
+>>   
+>>   	while (1) {
+>> -		size = sizeof(*args) + cnt * sizeof(args->sclass.oclass[0]);
+>> +		size = struct_size(args, sclass.oclass, cnt);
+> This is from the original code, but now that you are using the
+> struct_size() macro static checkers will complain about it.  (Maybe they
+> don't yet?).  size is a u32.  Never save struct_size() returns to
+> anything except unsigned long or size_t.  (ssize_t is also fine, I
+> suppose).  Otherwise, you do not benefit from the integer overflow
+> checking.
+Sorry, I don't notice the issue caused by type size.
+You are right, this patch is wrong because of the type mismatch.
+Thanks for your reply!
 
-> Bitmaps are "unsigned long[]", so better use "unsigned long *" instead of
-> a plain "void *" when dealing with pointers to bitmaps.
-> 
-> This is more informative.
-> 
-> 
+Su Hui
 
-Applied to 6.5/scsi-queue, thanks!
-
-[1/1] scsi: mpi3mr: Fix the type used for pointers to bitmap
-      https://git.kernel.org/mkp/scsi/c/144679dfb584
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+>>   		if (!(args = kmalloc(size, GFP_KERNEL)))
+>>   			return -ENOMEM;
+>>   		args->ioctl.version = 0;
+> regards,
+> dan carpenter
