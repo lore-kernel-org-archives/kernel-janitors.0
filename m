@@ -2,39 +2,39 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF59C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jun 2023 07:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D0AC77B7E
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jun 2023 08:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231466AbjFAHvC (ORCPT
+        id S231956AbjFAIU2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Jun 2023 03:51:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50522 "EHLO
+        Thu, 1 Jun 2023 04:20:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231667AbjFAHs7 (ORCPT
+        with ESMTP id S231823AbjFAIU0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Jun 2023 03:48:59 -0400
-X-Greylist: delayed 511 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 01 Jun 2023 00:44:58 PDT
-Received: from mail.skinslets.pl (mail.skinslets.pl [217.61.106.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87301E73
-        for <kernel-janitors@vger.kernel.org>; Thu,  1 Jun 2023 00:44:58 -0700 (PDT)
-Received: by mail.skinslets.pl (Postfix, from userid 1001)
-        id BE7D882903; Thu,  1 Jun 2023 08:36:23 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=skinslets.pl; s=mail;
-        t=1685604984; bh=JJd72U5AtZrHR9SeqK1UDVm01g5kDxdKL8vygXAgI08=;
+        Thu, 1 Jun 2023 04:20:26 -0400
+X-Greylist: delayed 837 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 01 Jun 2023 01:20:23 PDT
+Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7538E9F
+        for <kernel-janitors@vger.kernel.org>; Thu,  1 Jun 2023 01:20:23 -0700 (PDT)
+Received: by mail.ettrick.pl (Postfix, from userid 1002)
+        id 16949AA2AB; Thu,  1 Jun 2023 08:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
+        t=1685606516; bh=ZOVeXw1jXE9TbyZP9aLdRwM96AORcRfum8b+rry5JMw=;
         h=Date:From:To:Subject:From;
-        b=CTBqBg8wYVJ7gqhy+4gfTNHCJiE0kXPyqhoij5YxsbAC95r5QXQgKGqrec4c7qoSD
-         z1TtstT9BWkW27BpR79ajNsavrFOT9FfvQz2wf0V8t/Sqs36NpTSjBBnoNMhCJo0Bq
-         nsj0b52r19soTF8Tp63Vp66UJqp2Yc0+caf9RsVC/Xuv10jnz6nliYFlmBgBXiPiyo
-         fq0cOYIhOWTlCHARjZdjPhdFJZl6SEXh2JNON3+w0INqcVOEn+t2fo8SKHf4KbnR9M
-         zuN3LFd/y+z6LAueUDAcdrVJsOQvLYLtNdovraSTjJIOmyst172mXWdN0L0hSklaYJ
-         zcSROnenVNETg==
-Received: by mail.skinslets.pl for <kernel-janitors@vger.kernel.org>; Thu,  1 Jun 2023 07:36:03 GMT
-Message-ID: <20230601074500-0.1.5p.9qad.0.3kbn66jqpe@skinslets.pl>
-Date:   Thu,  1 Jun 2023 07:36:03 GMT
-From:   "Jakub Goll" <jakub.goll@skinslets.pl>
+        b=PXJBNXvoe7Ywr8SEtHN+ydXfJO21YCKEOXtYYrVqyrUt2fQPimLRXsBTqVBZT0YEO
+         T3W1W/mQawo+tdJt2GtrhWREAMieDEivMWIJeSdtti0J6ndhPzXNwlE4r1Tp3sCnJj
+         DbPTiBUI/+20cG80uXcuWQibCHBIZcVuDDJsG5fM+wAMGyZbxuPyOJ85nf2DtX+AQ/
+         N7GXUfbdk2IjWqnRPELQ3xK/n0ZpoKxEO/10X8PFoH5vBK/V9EZT+tzBJLMI+D0i4J
+         AFGgRqDP5EMO3GXOmYdCdjTXtJjuJgrRpQKrUCn6D4gg6ZF0P31rGq9+MI+NFhD1z0
+         ldOKQCXMJkidQ==
+Received: by mail.ettrick.pl for <kernel-janitors@vger.kernel.org>; Thu,  1 Jun 2023 08:00:09 GMT
+Message-ID: <20230601064500-0.1.ay.4c43r.0.bqajqcudu0@ettrick.pl>
+Date:   Thu,  1 Jun 2023 08:00:09 GMT
+From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
 To:     <kernel-janitors@vger.kernel.org>
-Subject: =?UTF-8?Q?Badanie_=C5=9Brodowiska_gruntowo-wodnego?=
-X-Mailer: mail.skinslets.pl
+Subject: Fotowoltaika- propozycja instalacji
+X-Mailer: mail.ettrick.pl
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -42,23 +42,23 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
-
-oferujemy us=C5=82ugi zwi=C4=85zane z wykonywaniem bada=C5=84 laboratoryj=
-nych potencjalnie zanieczyszczonego gruntu pod nowo planowan=C4=85 inwest=
-ycj=C4=99 lub pod ju=C5=BC istniej=C4=85c=C4=85.=20
-
-Klienci korzystaj=C4=85 z naszych us=C5=82ug podczas budowy lub przebudow=
-y obiektu budowlanego, liniowego, czy te=C5=BC przy przy=C5=82=C4=85czach=
- instalacji w zak=C5=82adach przemys=C5=82owych.=20
-
-Kompleksowo realizujemy przedsi=C4=99wzi=C4=99cia od ustalenia zakresu ba=
-da=C5=84 przez wykonanie map, wskazania punktu poboru, mobilizacja ekipy =
-z wiertnic=C4=85, pobieranie pr=C3=B3bek, interpretacja wynik=C3=B3w. =20
-
-Czy maj=C4=85 Pa=C5=84stwo zapotrzebowanie na us=C5=82ugi w tym obszarze?=
+Dzie=C5=84 dobry,
 =20
+Czy rozwa=C5=BCali Pa=C5=84stwo monta=C5=BC systemu fotowoltaicznego?
+=20
+Instalacja fotowoltaiczna jest najlepszym sposobem na obni=C5=BCenie wyso=
+ko=C5=9Bci rachunk=C3=B3w za pr=C4=85d (pozostaj=C4=85 tylko op=C5=82aty =
+sta=C5=82e) i zabezpieczenie si=C4=99 przed rosn=C4=85cymi cenami energii=
+ elektrycznej. Jest to w pe=C5=82ni odnawialne i bezemisyjne =C5=BAr=C3=B3=
+d=C5=82o energii, dzi=C4=99ki czemu przyczyniamy si=C4=99 do ochrony =C5=9B=
+rodowiska naturalnego.
+=20
+Dzia=C5=82amy od wielu lat na rynku energetycznym. Przygotujemy projekt, =
+wycen=C4=99 oraz kompleksowo wykonamy i zg=C5=82osimy realizacj=C4=99 do =
+zak=C5=82adu energetycznego.=20
+=20
+Czy chc=C4=85 Pa=C5=84stwo pozna=C4=87 nasz=C4=85 propozycj=C4=99? =20
 
 
-Z pozdrowieniami
-Jakub Goll
+Pozdrawiam,
+Norbert Karecki
