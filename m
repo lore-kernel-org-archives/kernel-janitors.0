@@ -2,124 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C00B2C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jun 2023 09:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BD3C7EE2C
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jun 2023 10:25:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234920AbjFBJve (ORCPT
+        id S235374AbjFBKZT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Jun 2023 05:51:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57302 "EHLO
+        Fri, 2 Jun 2023 06:25:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234879AbjFBJvc (ORCPT
+        with ESMTP id S235364AbjFBKYH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Jun 2023 05:51:32 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D08C0
-        for <kernel-janitors@vger.kernel.org>; Fri,  2 Jun 2023 02:51:31 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f70fc4682aso17514225e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 02 Jun 2023 02:51:31 -0700 (PDT)
+        Fri, 2 Jun 2023 06:24:07 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B49B6170B;
+        Fri,  2 Jun 2023 03:23:33 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f603ff9c02so18047845e9.2;
+        Fri, 02 Jun 2023 03:23:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685699490; x=1688291490;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zGtSPD/KSvWTuHa/AA+uczmQU/ENOiQMfRsZQeajJ5I=;
-        b=P+KNl/NxHb1htEUlM/JYGx6KvK0eHnRM1/FNkMDOULUzpQN5tQYzbSeWXp3UJz/mpr
-         EQm1ZN77g2419QZCiDqctQYEzlaus5armw/606j9Rrxu4M3n3btbrexCK7Rp6QGfj6gS
-         mOHrDofQiL181qUvzVK7sItn/sbDLHtqL/QX/EVic5HLWHr1NCYlK0G131KduHfxRcjH
-         SMqnAgmXBnVv3L6y+jnIOWVk1CPIHPa6gre93EgFakek5vS8YyOlLQSjA2+1z39qZU+X
-         SYVslyW20kz2S1z75HvMLjKPMk64OoPwK+hJPy2UchNMx70/lB+0qvlOVmraGe3QZIGF
-         DM3g==
+        d=gmail.com; s=20221208; t=1685701412; x=1688293412;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zsWsO0SYQc2zuAFXTltDM4jvFhQ6oDnJCWqcpd786g=;
+        b=LU4R41oGxlkBy98OrlbBVW7Wp8pbWnN6DV/EvdZHvc0d8DC+O4FAonI4plWiMFQX2q
+         A8HwU2Ls79uqvm1sfiKvAhBjIpi1uwEKKwH3EUZjlxTN1j4hC0+agvXp3q5gbBSsdvqw
+         znYnMg1FtuRK/AeZP+IJTHPwqh1mrubdM+6yTfZVgkzzIAJeO652mvrCSK6VzJjBfOpN
+         X1dlI7Ah9o5e9uWO5ihIJwN7OkVgX5ZU8t+Q1m29BBnmXFQIb/2v3bTUcmn7J3t8w5nK
+         legiO/tChDYMMStOX01s3fJ//cgXFv2yaPrYhVesAyZPqThUIhpbqwEYxOAbKTLfJPhb
+         XKwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685699490; x=1688291490;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zGtSPD/KSvWTuHa/AA+uczmQU/ENOiQMfRsZQeajJ5I=;
-        b=J2lAZOJA0OdK/Vlphw3pde6C0StCc21+h+pkoYi1crSel2J/0v3/BZWlhJZPslmR5s
-         ar34jpXz1sCpTl1j4sXOcZzprMk3rkIvt4hwbi8h7Ysz+elG+BNoV0H1YnSN0sqfd1zP
-         /qGtnxdqbW05ktv/nJNLQzFXJZNMGrA1YfOlMKXHuW3/jdRdPK6WRPeoRLGG9Lwr76Mk
-         67NTepig9MH1E3Z/ac4PvpOc0SmffNwi8Tur7EcP000mI16o/rvF7ilDKc+HXnwoaeEn
-         Ak0xBsqzvGwqaeKoR16FZjthE/IAk9UkpAxQ5mtHlYKpgFwjoRB8oVVxgWGqv0gYh2+w
-         O8oQ==
-X-Gm-Message-State: AC+VfDxv+5IfodOvJ9xcdwneMeK/U7Y999uKIktf/sTiPbiq91wV8LQz
-        5EC3Q+23enmUu4jtjNi4et18yQ==
-X-Google-Smtp-Source: ACHHUZ6A1brfLCWWqQzljL7Mxmx2fPEHJx0/q/zn0bbgPiI4NqAwmYm0kU04EGZGKPiNYZHBwKX3cw==
-X-Received: by 2002:adf:e988:0:b0:307:95d1:d7d0 with SMTP id h8-20020adfe988000000b0030795d1d7d0mr4253499wrm.39.1685699489831;
-        Fri, 02 Jun 2023 02:51:29 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p5-20020a5d4585000000b003078354f774sm1185082wrq.36.2023.06.02.02.51.27
+        d=1e100.net; s=20221208; t=1685701412; x=1688293412;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7zsWsO0SYQc2zuAFXTltDM4jvFhQ6oDnJCWqcpd786g=;
+        b=dvHT3lpxCBUwsDsRwja6yk8OkU/gZDK7chnfzUYcWrGU+lz/V5SizKPpFZ/jDXZSvz
+         AwRW4hNI8CsWmsJGauMAvm5OKKC2EWU9UPttXM0isBWrMHag8fwVDFFbOZ9s/5YZFWn7
+         0zhZ0fllKToRY8OisKy/V9T/w+sLEFHeO5XMbCJb8mGxfp5PKrm6Y3/Ay4bLAfz0Nfd6
+         uT7t/XT7veJnLiKcE94d3KzhopsUkz8OJQaC+xfA806BuQ+/sSLsQnLGdiUQYk+CgLqp
+         3Ts1jwZUTzgudVQxlFHr84F9GwnlmYU3fqGi/5nQMENl0m7lniXoFyEvOXZENoFL/b24
+         H4Gw==
+X-Gm-Message-State: AC+VfDwZ4sVbUvo/H6uBNk73euXY8s/3CewQ1l133VFa+wXr41mTxW54
+        DWfF53Vkc5aaFYo+nlXnruC5f13j2IC6yQ==
+X-Google-Smtp-Source: ACHHUZ4Fl3gljkQdCDOjzrgPzwI2Pjo+30dGKXdJ0cCSR8AkNPESiVXzE3/y3lx+UGWXjhGjLZC/Kg==
+X-Received: by 2002:a5d:4a52:0:b0:309:3b8d:16a8 with SMTP id v18-20020a5d4a52000000b003093b8d16a8mr3808046wrs.50.1685701411933;
+        Fri, 02 Jun 2023 03:23:31 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id g9-20020adfe409000000b0030ae53550f5sm1245989wrm.51.2023.06.02.03.23.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Jun 2023 02:51:28 -0700 (PDT)
-Date:   Fri, 2 Jun 2023 12:51:24 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH] ASoC: SOF: ipc4-topology: Use size_t for variable passed
- to kzalloc()
-Message-ID: <311dd225-9d30-4100-a779-bd0a9499535f@kadam.mountain>
-References: <a311e4ae83406f714c9d1f7f2f857284265e581c.1685640591.git.christophe.jaillet@wanadoo.fr>
+        Fri, 02 Jun 2023 03:23:31 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] KVM: s390: selftests: Fix spelling mistake "initally" -> "initially"
+Date:   Fri,  2 Jun 2023 11:23:30 +0100
+Message-Id: <20230602102330.1230734-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a311e4ae83406f714c9d1f7f2f857284265e581c.1685640591.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 01, 2023 at 07:30:12PM +0200, Christophe JAILLET wrote:
-> struct_size() checks for overflow, but assigning its result to just a u32
-> may still overflow after a successful check.
-> 
-> Use a size_t instead in order to be cleaner.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Based on analysis from Dan Carpenter on another patch (see [1]).
-> 
-> [1]: https://lore.kernel.org/all/00e84595-e2c9-48ea-8737-18da34eaafbf@kili.mountain/
-> ---
->  sound/soc/sof/ipc4-topology.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
-> index db64e0cb8663..50faa4c88b97 100644
-> --- a/sound/soc/sof/ipc4-topology.c
-> +++ b/sound/soc/sof/ipc4-topology.c
-> @@ -881,7 +881,7 @@ static int sof_ipc4_widget_setup_comp_process(struct snd_sof_widget *swidget)
->  	/* allocate memory for base config extension if needed */
->  	if (process->init_config == SOF_IPC4_MODULE_INIT_CONFIG_TYPE_BASE_CFG_WITH_EXT) {
->  		struct sof_ipc4_base_module_cfg_ext *base_cfg_ext;
-> -		u32 ext_size = struct_size(base_cfg_ext, pin_formats,
-> +		size_t ext_size = struct_size(base_cfg_ext, pin_formats,
->  						swidget->num_input_pins + swidget->num_output_pins);
+There is a spelling mistake in literal string. Fix it.
 
-The temptation would be to change the addition as well:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/kvm/s390x/cmma_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	size_t ext_size = struct_size(base_cfg_ext, pin_formats,
-				      size_add(swidget->num_input_pins, swidget->num_output_pins);
+diff --git a/tools/testing/selftests/kvm/s390x/cmma_test.c b/tools/testing/selftests/kvm/s390x/cmma_test.c
+index 6d0751ea224b..576fe8ee0aec 100644
+--- a/tools/testing/selftests/kvm/s390x/cmma_test.c
++++ b/tools/testing/selftests/kvm/s390x/cmma_test.c
+@@ -656,7 +656,7 @@ struct testdef {
+ } testlist[] = {
+ 	{ "migration mode and dirty tracking", test_migration_mode },
+ 	{ "GET_CMMA_BITS: basic calls", test_get_cmma_basic },
+-	{ "GET_CMMA_BITS: all pages are dirty initally", test_get_inital_dirty },
++	{ "GET_CMMA_BITS: all pages are dirty initially", test_get_inital_dirty },
+ 	{ "GET_CMMA_BITS: holes are skipped", test_get_skip_holes },
+ };
+ 
+-- 
+2.30.2
 
-These values can only be in the 0-8 range so it's not a real bug.
-
-Smatch cannot parse this data correctly to verify that it is safe.
-Maybe in two years Smatch will be able to.  Probably a human who is
-unfamiliar with this code can figure out that it is safe within 15
-minutes?
-
-I think the change to size_t doesn't hurt anyone and there isn't any
-downside to it.  The size_add() change is slightly less readable than
-just adding the numbers but I think eventually people will just get used
-to it.
-
-regards,
-dan carpenter
