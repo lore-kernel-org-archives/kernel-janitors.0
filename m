@@ -2,104 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDD8C7EE29
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jun 2023 11:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976A7C7EE29
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jun 2023 12:07:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234460AbjFBLlT (ORCPT
+        id S235730AbjFBMHi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Jun 2023 07:41:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34338 "EHLO
+        Fri, 2 Jun 2023 08:07:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233858AbjFBLlR (ORCPT
+        with ESMTP id S235686AbjFBMHM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Jun 2023 07:41:17 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C624194;
-        Fri,  2 Jun 2023 04:41:16 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-30aebe2602fso1742481f8f.3;
-        Fri, 02 Jun 2023 04:41:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685706075; x=1688298075;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S5hQQFCwShPSSScGGAdLrTYkT/tD/8Ppruf6EVNZak0=;
-        b=lpbCdDPo8oqAMBTDL1Pyq7/5WqGuqEiJgj6UDO6zCALtYKOEEhbYxfHnIp1i1ZLcyE
-         C40XPj7gAbyUo6iTXQPbCO6OT5vlmnUb2ogK8faQhMMWcojPmoYlRhaYpYS5bN/Xtcoy
-         ABi6uOJuhwhxw+CPNvQkzbEu/vr76XgYSF6x3HTzVqes7CH+8A456Z2EDsMr8HWOutey
-         NNohMcpJt414mu62Ey0YzRoKMBshp+dJQ3WF4LzT+KHtbnQCEip8pp1HbW9tok62g9UY
-         7F1f1GloeQzzaDywlH8EREfajW55km7Zv21qkDjyHQNMXd6Le5y5/K7C3uPVmj09Tgzs
-         +YQA==
+        Fri, 2 Jun 2023 08:07:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C2591B8
+        for <kernel-janitors@vger.kernel.org>; Fri,  2 Jun 2023 05:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685707586;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=r3eog2jJ180dc325mkmwjwsvnRZJ4iih8R1ZCYZSotw=;
+        b=Rl3j/R+Bm4gPVp/56VMMFLpas+Sqg9tE4bHDRmeTKhoIkd32GndZY+5X00IDn7Vaskff/y
+        nzn0bJi7RayrHPmzLAhoZ+WDNB48nM+RGXxz7QXs+fYKYxDaoLzxUfrFV4pQZ4rDVCAv9b
+        uhbln82g2CucncyYC1+qM5BOHIG+3pQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-rPi9D3suP8md619_3IwQEA-1; Fri, 02 Jun 2023 08:06:20 -0400
+X-MC-Unique: rPi9D3suP8md619_3IwQEA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-3f603b8eb61so11566735e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 02 Jun 2023 05:06:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685706075; x=1688298075;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S5hQQFCwShPSSScGGAdLrTYkT/tD/8Ppruf6EVNZak0=;
-        b=KEvhg64piE2PBr2lLAXaYzP2iTxVQ11v/aWuKkTL0IIGTIJM1Xchr1M44ucoPGE8Y0
-         GtjcbH+O5QN6OZSEZuoLNAzPbk/fI9FN+Rq3acq8u/w0+DB1uuAybKmrfjFG+kln6C9W
-         Vm1LrWvBjuX+6JyIZzY1yFd2LWzRIWbk/nmt04eAbu+ZSHz4/aaK7DcG59S58Zm7/IIV
-         ySHxFirGH02gh2tRvjshB24CaAsoK5q3S9Nb9P0cW0T8pSeFAkNWbR9XYSTNFSsNqnJ6
-         3/wAGrIScMextxOSukhR0A4CKTm77gtuWeBvQXSUN4YUAXnOhDvXdTSnroMBNGaA1tRc
-         QXLA==
-X-Gm-Message-State: AC+VfDyHIIIUHYD10NB71iJDmMbVKcFHWdQLj6JhGVeQ8t0P4i6vzFFI
-        +T85riF6323NaodnP+a+Iyg=
-X-Google-Smtp-Source: ACHHUZ6hh2gZb9y18fFjrWO/Hxn65WfbcwBixv/26O788m4ZGG3U1oJHAl9uReT5uWDiXo28Y4Augw==
-X-Received: by 2002:adf:edc2:0:b0:30a:ceb3:26bd with SMTP id v2-20020adfedc2000000b0030aceb326bdmr4045669wro.56.1685706074839;
-        Fri, 02 Jun 2023 04:41:14 -0700 (PDT)
-Received: from [192.168.0.210] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.googlemail.com with ESMTPSA id d6-20020a5d5386000000b00307c46f4f08sm1443538wrv.79.2023.06.02.04.41.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Jun 2023 04:41:14 -0700 (PDT)
-Message-ID: <b7b32af9-993c-2f88-30b6-3af9ed87c7af@gmail.com>
-Date:   Fri, 2 Jun 2023 12:41:13 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH][next] KVM: s390: selftests: Fix spelling mistake
- "initally" -> "initially"
-Content-Language: en-US
-To:     Janosch Frank <frankja@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
+        d=1e100.net; s=20221208; t=1685707579; x=1688299579;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r3eog2jJ180dc325mkmwjwsvnRZJ4iih8R1ZCYZSotw=;
+        b=UG/OcPZM2Wv6twBq90oxpQr+kjLtTEM2cwgsRxH+WSICG9MQJaZXpTDlLF3dmbNWD6
+         R/ITpi+BwmuZkhs99MD1dfbisqg2kZWDLHYGgnOD16yUU9RqevX4yIPLh2bXxQMgdLFi
+         w15NQMCNRyF0g400U+JllqU/4o18csRDRc5Oh3LiMuWbRmLEraNYkOFItQA6cUCVavFK
+         pO/pqoj52sj4I0yVb/sKNaGKPEBz74/a85UeWW5Ba5FY7iAGyjb57drc/aPT5e3azoge
+         RMpkF/XvvUxHH5B/2BhuUQ+v7IMAweftUgzZTYUpgfnbrtl87YCeCbqEq4wIaEd4r4lN
+         z26w==
+X-Gm-Message-State: AC+VfDwrFuyf6gMpom2Hx8iq/LL2a5ozqSyFxg4IIcK7rajHBtnii6nX
+        WkB0iTkqOW8Ay6WACmGxLmRZX+HCJbrwd41g2wIpGUdlhnSzKcYOu6cDWoYioIx/ZgYOeZROQir
+        hOFliO0/g6BIXRLTzLjqkeWf0xIxy
+X-Received: by 2002:a1c:6a15:0:b0:3f6:89e:2716 with SMTP id f21-20020a1c6a15000000b003f6089e2716mr1982208wmc.33.1685707579182;
+        Fri, 02 Jun 2023 05:06:19 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5208596q5G59Oc8rJfdmFIY+/Vvnx/JmMv3Fx9NDu17J8RLqtPrBw/B/kjXPHSnF2ttJ7m/A==
+X-Received: by 2002:a1c:6a15:0:b0:3f6:89e:2716 with SMTP id f21-20020a1c6a15000000b003f6089e2716mr1982190wmc.33.1685707578902;
+        Fri, 02 Jun 2023 05:06:18 -0700 (PDT)
+Received: from redhat.com ([2.55.4.169])
+        by smtp.gmail.com with ESMTPSA id y20-20020a05600c365400b003f60a446fe5sm1760836wmq.29.2023.06.02.05.06.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Jun 2023 05:06:18 -0700 (PDT)
+Date:   Fri, 2 Jun 2023 08:06:15 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jason Wang <jasowang@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
-        Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230602102330.1230734-1-colin.i.king@gmail.com>
- <f0f0587b-5f19-82bd-3d58-bdb89ff59f8c@linux.ibm.com>
-From:   "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <f0f0587b-5f19-82bd-3d58-bdb89ff59f8c@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] scsi: virtio_scsi: Remove a useless function call
+Message-ID: <20230602080607-mutt-send-email-mst@kernel.org>
+References: <08740635cdb0f8293e57c557b22e048daae50961.1685345683.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08740635cdb0f8293e57c557b22e048daae50961.1685345683.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 02/06/2023 12:07, Janosch Frank wrote:
-> On 6/2/23 12:23, Colin Ian King wrote:
->> There is a spelling mistake in literal string. Fix it.
->>
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Mon, May 29, 2023 at 09:35:08AM +0200, Christophe JAILLET wrote:
+> 'inq_result' is known to be NULL. There is no point calling kfree().
 > 
-> Hey Colin,
-> 
-> I'm not a big fan of such fixes since they are most of the time more 
-> work for the maintainers than they are worth and accepting one can 
-> result in a flood of similar new patches. If this would have been your 
-> first ever patch I might have considered picking this but that's not the 
-> case.
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I understand. However, customer facing typos make the kernel look 
-shabby, hence the fix.
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-Colin
-
+> ---
+>  drivers/scsi/virtio_scsi.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> That being said, if one of the other maintainers choose to pick it I 
-> won't stand in their way.
-> 
-> Cheers,
-> Janosch
+> diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
+> index 58498da9869a..bd5633667d01 100644
+> --- a/drivers/scsi/virtio_scsi.c
+> +++ b/drivers/scsi/virtio_scsi.c
+> @@ -338,10 +338,8 @@ static int virtscsi_rescan_hotunplug(struct virtio_scsi *vscsi)
+>  	int result, inquiry_len, inq_result_len = 256;
+>  	char *inq_result = kmalloc(inq_result_len, GFP_KERNEL);
+>  
+> -	if (!inq_result) {
+> -		kfree(inq_result);
+> +	if (!inq_result)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	shost_for_each_device(sdev, shost) {
+>  		inquiry_len = sdev->inquiry_len ? sdev->inquiry_len : 36;
+> -- 
+> 2.34.1
 
