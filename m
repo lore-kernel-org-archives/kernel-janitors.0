@@ -2,77 +2,148 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7531FC7EE2A
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Jun 2023 04:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFDBC7EE2A
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Jun 2023 08:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230157AbjFDExE (ORCPT
+        id S230358AbjFDImY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Jun 2023 00:53:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56412 "EHLO
+        Sun, 4 Jun 2023 04:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbjFDExA (ORCPT
+        with ESMTP id S229879AbjFDImX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Jun 2023 00:53:00 -0400
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F101F2
-        for <kernel-janitors@vger.kernel.org>; Sat,  3 Jun 2023 21:52:57 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 5fjZqns8y8SAU5fjZqOpgA; Sun, 04 Jun 2023 06:52:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685854375;
-        bh=lyyRlrC3KmRbFllkxLGkBpc9Qfqgsg8QHBWroitmBNg=;
-        h=From:To:Cc:Subject:Date;
-        b=BjuY3g6VMj9Z54gwTuPn+Zznrg4H2rJPBowIME/+4rVatdQx6UCiJiqTEoU5bLoMn
-         rlaVunUL0vtQ2lQA6mkbmCx2OoLs6JrezKqwp06PqILz6Hx2S5bYS3RTIiKMSbi9Hh
-         RClM/PsViCQTwrpXTd+99qAP31Zk7wFkL4rKHS4rG+t2Qb0EizBJaXrq+yxGE71xKZ
-         EZhJNZBWHYmZDcmm/o+Cw5u8DOtZLiv8b1fEV9cxl3J4Q5MDmB44dcjLd27RJr/5NE
-         MPT/rxGbXjUQNz2j7pTpiYfeGWXAxypdz0GcP0ljt4szhIT86J99fW6V9xFQoyk7U8
-         Rctm0kGx3OEWA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 04 Jun 2023 06:52:55 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Nilesh Javali <njavali@marvell.com>,
-        GR-QLogic-Storage-Upstream@marvell.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH] qla2xxx: Drop useless LIST_HEAD
-Date:   Sun,  4 Jun 2023 06:52:42 +0200
-Message-Id: <49bb77624c9edc8d9bf8fe71d0c8a4cd7e582175.1685854354.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 4 Jun 2023 04:42:23 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAA5DDA;
+        Sun,  4 Jun 2023 01:42:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685868141; x=1717404141;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ol4jthsEZQ6jVMwcAd4LFYahEFGdZmy7s4uUbJjAyYM=;
+  b=iFwUW/O38/0/sNRYzQNPHCuX3DJ6WhhA1ACYqMpb5x6VrfUATyKPqRJM
+   SZGehlJSE7QoMIzVOydhoLfTRioh+0zRiAG4XJxg/fMAcf7qrbiV2c1By
+   rJHWbGV0mCDWDs65JT+fFjeV3f4Bal2V8s8+qPf00JqECeXa1k8OjdiJY
+   EUv0wAFvqgZFMOae37qFAqvQzF/GeZPf+VUs34AWJMF+/6Ol+liNzcTlz
+   2/TjNxNKrsBAYaYV69jb3z0OGrQ+rqq0TOvHrUJQIUOdc8nelTtFtVxFx
+   fXSI62loJW3sGD/V2CWeOGwXCBIXy7iNOU7dN6qNWy7y81bhAa3HZAT3m
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10730"; a="356179024"
+X-IronPort-AV: E=Sophos;i="6.00,217,1681196400"; 
+   d="scan'208";a="356179024"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2023 01:42:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10730"; a="708313688"
+X-IronPort-AV: E=Sophos;i="6.00,217,1681196400"; 
+   d="scan'208";a="708313688"
+Received: from lkp-server01.sh.intel.com (HELO 15ab08e44a81) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 04 Jun 2023 01:42:19 -0700
+Received: from kbuild by 15ab08e44a81 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1q5jJb-0002Uw-0n;
+        Sun, 04 Jun 2023 08:42:19 +0000
+Date:   Sun, 4 Jun 2023 16:42:12 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] cdx: Drop useless LIST_HEAD
+Message-ID: <202306041613.FCYOdhUW-lkp@intel.com>
+References: <cee692c7babd754c1c36186af116c4bb4dad0a17.1685853842.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cee692c7babd754c1c36186af116c4bb4dad0a17.1685853842.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'new_fcports' is unused, so drop it.
+Hi Christophe,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Usage of new_fcports has been removed in commit 726b85487067 ("qla2xxx: Add
-framework for async fabric discovery")
----
- drivers/scsi/qla2xxx/qla_init.c | 1 -
- 1 file changed, 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index 95ae754582e7..f1724c7d39d5 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -6220,7 +6220,6 @@ qla2x00_configure_fabric(scsi_qla_host_t *vha)
- 	fc_port_t	*fcport;
- 	uint16_t	mb[MAILBOX_REGISTER_COUNT];
- 	uint16_t	loop_id;
--	LIST_HEAD(new_fcports);
- 	struct qla_hw_data *ha = vha->hw;
- 	int		discovery_gen;
- 
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.4-rc4 next-20230602]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/cdx-Drop-useless-LIST_HEAD/20230604-124432
+base:   linus/master
+patch link:    https://lore.kernel.org/r/cee692c7babd754c1c36186af116c4bb4dad0a17.1685853842.git.christophe.jaillet%40wanadoo.fr
+patch subject: [PATCH] cdx: Drop useless LIST_HEAD
+config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20230604/202306041613.FCYOdhUW-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 12.3.0
+reproduce (this is a W=1 build):
+        mkdir -p ~/bin
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/0836d9a86cf6d803585f7d9810ec8622ec81b2f7
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Christophe-JAILLET/cdx-Drop-useless-LIST_HEAD/20230604-124432
+        git checkout 0836d9a86cf6d803585f7d9810ec8622ec81b2f7
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arm64 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306041613.FCYOdhUW-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/cdx/controller/mcdi.c: In function 'cdx_mcdi_process_cmd':
+>> drivers/cdx/controller/mcdi.c:637:64: error: 'cleanup_list' undeclared (first use in this function)
+     637 |                 cdx_mcdi_complete_cmd(mcdi, cmd, outbuf, len, &cleanup_list);
+         |                                                                ^~~~~~~~~~~~
+   drivers/cdx/controller/mcdi.c:637:64: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +/cleanup_list +637 drivers/cdx/controller/mcdi.c
+
+eb96b740192b2a0 Nipun Gupta 2023-03-13  609  
+eb96b740192b2a0 Nipun Gupta 2023-03-13  610  void cdx_mcdi_process_cmd(struct cdx_mcdi *cdx, struct cdx_dword *outbuf, int len)
+eb96b740192b2a0 Nipun Gupta 2023-03-13  611  {
+eb96b740192b2a0 Nipun Gupta 2023-03-13  612  	struct cdx_mcdi_iface *mcdi;
+eb96b740192b2a0 Nipun Gupta 2023-03-13  613  	struct cdx_mcdi_cmd *cmd;
+eb96b740192b2a0 Nipun Gupta 2023-03-13  614  	unsigned int respseq;
+eb96b740192b2a0 Nipun Gupta 2023-03-13  615  
+eb96b740192b2a0 Nipun Gupta 2023-03-13  616  	if (!len || !outbuf) {
+eb96b740192b2a0 Nipun Gupta 2023-03-13  617  		pr_err("Got empty MC response\n");
+eb96b740192b2a0 Nipun Gupta 2023-03-13  618  		return;
+eb96b740192b2a0 Nipun Gupta 2023-03-13  619  	}
+eb96b740192b2a0 Nipun Gupta 2023-03-13  620  
+eb96b740192b2a0 Nipun Gupta 2023-03-13  621  	mcdi = cdx_mcdi_if(cdx);
+eb96b740192b2a0 Nipun Gupta 2023-03-13  622  	if (!mcdi)
+eb96b740192b2a0 Nipun Gupta 2023-03-13  623  		return;
+eb96b740192b2a0 Nipun Gupta 2023-03-13  624  
+eb96b740192b2a0 Nipun Gupta 2023-03-13  625  	respseq = CDX_DWORD_FIELD(outbuf[0], MCDI_HEADER_SEQ);
+eb96b740192b2a0 Nipun Gupta 2023-03-13  626  
+eb96b740192b2a0 Nipun Gupta 2023-03-13  627  	mutex_lock(&mcdi->iface_lock);
+eb96b740192b2a0 Nipun Gupta 2023-03-13  628  	cmd = mcdi->seq_held_by[respseq];
+eb96b740192b2a0 Nipun Gupta 2023-03-13  629  
+eb96b740192b2a0 Nipun Gupta 2023-03-13  630  	if (cmd) {
+eb96b740192b2a0 Nipun Gupta 2023-03-13  631  		if (cmd->state == MCDI_STATE_FINISHED) {
+eb96b740192b2a0 Nipun Gupta 2023-03-13  632  			mutex_unlock(&mcdi->iface_lock);
+eb96b740192b2a0 Nipun Gupta 2023-03-13  633  			kref_put(&cmd->ref, cdx_mcdi_cmd_release);
+eb96b740192b2a0 Nipun Gupta 2023-03-13  634  			return;
+eb96b740192b2a0 Nipun Gupta 2023-03-13  635  		}
+eb96b740192b2a0 Nipun Gupta 2023-03-13  636  
+eb96b740192b2a0 Nipun Gupta 2023-03-13 @637  		cdx_mcdi_complete_cmd(mcdi, cmd, outbuf, len, &cleanup_list);
+eb96b740192b2a0 Nipun Gupta 2023-03-13  638  	} else {
+eb96b740192b2a0 Nipun Gupta 2023-03-13  639  		pr_err("MC response unexpected for seq : %0X\n", respseq);
+eb96b740192b2a0 Nipun Gupta 2023-03-13  640  	}
+eb96b740192b2a0 Nipun Gupta 2023-03-13  641  
+eb96b740192b2a0 Nipun Gupta 2023-03-13  642  	mutex_unlock(&mcdi->iface_lock);
+eb96b740192b2a0 Nipun Gupta 2023-03-13  643  
+eb96b740192b2a0 Nipun Gupta 2023-03-13  644  	cdx_mcdi_process_cleanup_list(mcdi->cdx, &cleanup_list);
+eb96b740192b2a0 Nipun Gupta 2023-03-13  645  }
+eb96b740192b2a0 Nipun Gupta 2023-03-13  646  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
