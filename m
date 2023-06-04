@@ -2,51 +2,49 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10333C7EE2D
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Jun 2023 15:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACECC7EE23
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Jun 2023 15:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbjFDPEp (ORCPT
+        id S231355AbjFDPmi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Jun 2023 11:04:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36750 "EHLO
+        Sun, 4 Jun 2023 11:42:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230070AbjFDPEo (ORCPT
+        with ESMTP id S230153AbjFDPmh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Jun 2023 11:04:44 -0400
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63BC1BC
-        for <kernel-janitors@vger.kernel.org>; Sun,  4 Jun 2023 08:04:43 -0700 (PDT)
+        Sun, 4 Jun 2023 11:42:37 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC84EDA
+        for <kernel-janitors@vger.kernel.org>; Sun,  4 Jun 2023 08:42:36 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 5pHaqkubz3VqD5pHaqmLaW; Sun, 04 Jun 2023 17:04:41 +0200
+        id 5psGqNLaQt9zc5psGqXS2j; Sun, 04 Jun 2023 17:42:35 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685891081;
-        bh=NfjbgkAX/VWQ3hWeynVgd6EdQsxLuZ5+rb8DZm9QVqs=;
+        s=t20230301; t=1685893355;
+        bh=KSBCYH83xSlnxT9AqAr79v1PKm1DqpwXR0ggzhv2kFU=;
         h=From:To:Cc:Subject:Date;
-        b=hULECYwvTeJyaJ2a7O6eNOVCbIezpWGQL6hghC6xVzVT2MYnklEtC0aLHdKHN+5FO
-         3VFeh//4tZktLv43+8sEoGBgPk+goBtMM3L2cmRfH/ow65WiqS6Hm5zE10g1DhMMhM
-         HC46iYgxTbWhp9Gq0SUgAC6lgOUYPtZY5XyyrJ6iyiT3ukanR9KvY0NgBb679/qFtK
-         t/7hUCAKXCqk4HY7DG/oB/eJGNbVLBM8gNM91J7NX9lXfI73kUMT2tYfh05wAU7JKS
-         yVLWamHgANOWVhShruMjwn4L3PrQGI87lX7gsSLVERMHd1JrR+X1d5JPWVSf8x17bY
-         wBu6qbf39zZoA==
+        b=ZnL1ytK8458koQso49BCpWyOcEi755OnD8/aYZ70UWHbQUaXQ+XkwqFZLGG5+hG3Z
+         yaXTsYtK78QlhCXUpeznPk5AA2jU+eMpncJPkdKMUeAq8OcE53BPbyQ+T7f6CiQ7YP
+         zaQ6Wn66OPz1XYNoYQZH1LfM5PZRmm/Xg+BUaWjIxN9fHA97i0qZD7zpcpg7E+8+LX
+         UULF2+Wtpp9xj9ZFJyAa0pMqitEleMxEPKAUnIVNlsEpfr3PmbaXLiDiLnHrLjkNkk
+         Z6TIBh6/JrK674jq06KhMIcKUqxWNsn5aFWtT93SOOx+NN4lk8Ao7QlFbeKf9msp5Y
+         m4SnGCinLe35A==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 04 Jun 2023 17:04:41 +0200
+X-ME-Date: Sun, 04 Jun 2023 17:42:35 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Lee Jones <lee@kernel.org>
+To:     Helge Deller <deller@gmx.de>, Imre Deak <imre.deak@nokia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Krzysztof Helt <krzysztof.h1@wp.pl>,
+        Juha Yrjola <juha.yrjola@solidboot.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH] usb: dwc3: qcom: Release the correct resources in dwc3_qcom_remove()
-Date:   Sun,  4 Jun 2023 17:04:37 +0200
-Message-Id: <c0215a84cdf18fb3514c81842783ec53cf149deb.1685891059.git.christophe.jaillet@wanadoo.fr>
+        linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH] video: fbdev: omapfb: lcd_mipid: Fix an error handling path in mipid_spi_probe()
+Date:   Sun,  4 Jun 2023 17:42:28 +0200
+Message-Id: <f17221571f619c0829db56354f2b74d22f6702a7.1685893329.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,40 +52,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In the probe, some resources are allocated with
-dwc3_qcom_of_register_core() or dwc3_qcom_acpi_register_core(). The
-corresponding resources are already coorectly freed in the error handling
-path of the probe, but not in the remove function.
+If 'mipid_detect()' fails, we must free 'md' to avoid a memory leak.
 
-Fix it.
-
-Fixes: 2bc02355f8ba ("usb: dwc3: qcom: Add support for booting with ACPI")
+Fixes: 66d2f99d0bb5 ("omapfb: add support for MIPI-DCS compatible LCDs")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/dwc3/dwc3-qcom.c | 6 +++++-
+ drivers/video/fbdev/omap/lcd_mipid.c | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index aa96c473f839..9c95f1d909ba 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -942,11 +942,15 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- static void dwc3_qcom_remove(struct platform_device *pdev)
- {
- 	struct dwc3_qcom *qcom = platform_get_drvdata(pdev);
-+	struct device_node *np = pdev->dev.of_node;
- 	struct device *dev = &pdev->dev;
- 	int i;
+diff --git a/drivers/video/fbdev/omap/lcd_mipid.c b/drivers/video/fbdev/omap/lcd_mipid.c
+index e4a7f0b824ff..a0fc4570403b 100644
+--- a/drivers/video/fbdev/omap/lcd_mipid.c
++++ b/drivers/video/fbdev/omap/lcd_mipid.c
+@@ -571,11 +571,15 @@ static int mipid_spi_probe(struct spi_device *spi)
  
- 	device_remove_software_node(&qcom->dwc3->dev);
--	of_platform_depopulate(dev);
-+	if (np)
-+		of_platform_depopulate(&pdev->dev);
-+	else
-+		platform_device_put(pdev);
+ 	r = mipid_detect(md);
+ 	if (r < 0)
+-		return r;
++		goto free_md;
  
- 	for (i = qcom->num_clocks - 1; i >= 0; i--) {
- 		clk_disable_unprepare(qcom->clks[i]);
+ 	omapfb_register_panel(&md->panel);
+ 
+ 	return 0;
++
++free_md:
++	kfree(md);
++	return r;
+ }
+ 
+ static void mipid_spi_remove(struct spi_device *spi)
 -- 
 2.34.1
 
