@@ -2,85 +2,109 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACECC7EE23
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Jun 2023 15:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AC1C77B73
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Jun 2023 22:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231355AbjFDPmi (ORCPT
+        id S230367AbjFDWAc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Jun 2023 11:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42472 "EHLO
+        Sun, 4 Jun 2023 18:00:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230153AbjFDPmh (ORCPT
+        with ESMTP id S229670AbjFDWAa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Jun 2023 11:42:37 -0400
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC84EDA
-        for <kernel-janitors@vger.kernel.org>; Sun,  4 Jun 2023 08:42:36 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 5psGqNLaQt9zc5psGqXS2j; Sun, 04 Jun 2023 17:42:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1685893355;
-        bh=KSBCYH83xSlnxT9AqAr79v1PKm1DqpwXR0ggzhv2kFU=;
-        h=From:To:Cc:Subject:Date;
-        b=ZnL1ytK8458koQso49BCpWyOcEi755OnD8/aYZ70UWHbQUaXQ+XkwqFZLGG5+hG3Z
-         yaXTsYtK78QlhCXUpeznPk5AA2jU+eMpncJPkdKMUeAq8OcE53BPbyQ+T7f6CiQ7YP
-         zaQ6Wn66OPz1XYNoYQZH1LfM5PZRmm/Xg+BUaWjIxN9fHA97i0qZD7zpcpg7E+8+LX
-         UULF2+Wtpp9xj9ZFJyAa0pMqitEleMxEPKAUnIVNlsEpfr3PmbaXLiDiLnHrLjkNkk
-         Z6TIBh6/JrK674jq06KhMIcKUqxWNsn5aFWtT93SOOx+NN4lk8Ao7QlFbeKf9msp5Y
-         m4SnGCinLe35A==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 04 Jun 2023 17:42:35 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Helge Deller <deller@gmx.de>, Imre Deak <imre.deak@nokia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Krzysztof Helt <krzysztof.h1@wp.pl>,
-        Juha Yrjola <juha.yrjola@solidboot.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] video: fbdev: omapfb: lcd_mipid: Fix an error handling path in mipid_spi_probe()
-Date:   Sun,  4 Jun 2023 17:42:28 +0200
-Message-Id: <f17221571f619c0829db56354f2b74d22f6702a7.1685893329.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 4 Jun 2023 18:00:30 -0400
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97CE7B0
+        for <kernel-janitors@vger.kernel.org>; Sun,  4 Jun 2023 15:00:29 -0700 (PDT)
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id F38743E761;
+        Mon,  5 Jun 2023 00:00:25 +0200 (CEST)
+Date:   Mon, 5 Jun 2023 00:00:24 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] drm/msm/dpu: clean up dpu_kms_get_clk_rate() returns
+Message-ID: <kpxutvwb57ufiveujewgzqotnnx6xgdcws5e5r6lpl6qipadh7@umn3l2l2z3j3>
+References: <28644c5e-950e-41cd-8389-67f37b067bdc@kili.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28644c5e-950e-41cd-8389-67f37b067bdc@kili.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If 'mipid_detect()' fails, we must free 'md' to avoid a memory leak.
+On 2023-05-26 14:51:59, Dan Carpenter wrote:
+> Static analysis tools complain about the -EINVAL error code being
+> stored in an unsigned variable.  Let's change this to match
+> the clk_get_rate() function which is type unsigned long and returns
+> zero on error.
+> 
+> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: In v1 I change the type to int which was wrong.  This is a different
+>     approach.  CC the freedreno list this time too.
 
-Fixes: 66d2f99d0bb5 ("omapfb: add support for MIPI-DCS compatible LCDs")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/video/fbdev/omap/lcd_mipid.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Just like v1, should we clean up the <= in
+dpu_encoder_phys_cmd_tearcheck_config (to just `if (!vsync_hz)`),
+because doing a <=0 on a u32 has a more limited meaning?
 
-diff --git a/drivers/video/fbdev/omap/lcd_mipid.c b/drivers/video/fbdev/omap/lcd_mipid.c
-index e4a7f0b824ff..a0fc4570403b 100644
---- a/drivers/video/fbdev/omap/lcd_mipid.c
-+++ b/drivers/video/fbdev/omap/lcd_mipid.c
-@@ -571,11 +571,15 @@ static int mipid_spi_probe(struct spi_device *spi)
- 
- 	r = mipid_detect(md);
- 	if (r < 0)
--		return r;
-+		goto free_md;
- 
- 	omapfb_register_panel(&md->panel);
- 
- 	return 0;
-+
-+free_md:
-+	kfree(md);
-+	return r;
- }
- 
- static void mipid_spi_remove(struct spi_device *spi)
--- 
-2.34.1
+> 
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 4 ++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+> index 0e7a68714e9e..25e6a15eaf9f 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+> @@ -979,13 +979,13 @@ static int _dpu_kms_mmu_init(struct dpu_kms *dpu_kms)
+>  	return 0;
+>  }
+>  
+> -u64 dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name)
+> +unsigned long dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name)
+>  {
+>  	struct clk *clk;
+>  
+>  	clk = msm_clk_bulk_get_clock(dpu_kms->clocks, dpu_kms->num_clocks, clock_name);
+>  	if (!clk)
+> -		return -EINVAL;
+> +		return 0;
+>  
+>  	return clk_get_rate(clk);
+>  }
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+> index aca39a4689f4..961918e5a5b3 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+> @@ -201,6 +201,6 @@ void dpu_disable_vblank(struct msm_kms *kms, struct drm_crtc *crtc);
+>   *
+>   * Return: current clock rate
 
+Or 0 if this clock is not available/present.
+
+- Marijn
+
+>   */
+> -u64 dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name);
+> +unsigned long dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name);
+>  
+>  #endif /* __dpu_kms_H__ */
+> -- 
+> 2.39.2
+> 
