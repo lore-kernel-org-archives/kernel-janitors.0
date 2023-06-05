@@ -2,109 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AC1C77B73
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Jun 2023 22:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED75C77B73
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Jun 2023 07:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230367AbjFDWAc (ORCPT
+        id S229974AbjFEH2I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Jun 2023 18:00:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40926 "EHLO
+        Mon, 5 Jun 2023 03:28:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjFDWAa (ORCPT
+        with ESMTP id S230159AbjFEH1u (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Jun 2023 18:00:30 -0400
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97CE7B0
-        for <kernel-janitors@vger.kernel.org>; Sun,  4 Jun 2023 15:00:29 -0700 (PDT)
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id F38743E761;
-        Mon,  5 Jun 2023 00:00:25 +0200 (CEST)
-Date:   Mon, 5 Jun 2023 00:00:24 +0200
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] drm/msm/dpu: clean up dpu_kms_get_clk_rate() returns
-Message-ID: <kpxutvwb57ufiveujewgzqotnnx6xgdcws5e5r6lpl6qipadh7@umn3l2l2z3j3>
-References: <28644c5e-950e-41cd-8389-67f37b067bdc@kili.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28644c5e-950e-41cd-8389-67f37b067bdc@kili.mountain>
+        Mon, 5 Jun 2023 03:27:50 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84B3098;
+        Mon,  5 Jun 2023 00:27:48 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b1a46ad09fso51084121fa.2;
+        Mon, 05 Jun 2023 00:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685950067; x=1688542067;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TsP0n5juNyauxV4ZzGiEHcjUixvHobJ7dhZs4yRrqJI=;
+        b=h/7XCXusn51Z8gchWhBGbEfoI1f8wXzjmCmwyAV+YdrxWmws2wUFCK+9WUMNXmxLM3
+         A5lDIMH5vr7hiosRq4hrPBbLukoEG1FWYPzLBBG41IPfIvt/ESeOWkL6QliA+x7rrhI/
+         Vn7oGdOSfbgaP4hcSAxiwAtoHGA1PGC5mvOuMbH9oAcXDlJwSwUtGYSX6AcqbNrNMiNi
+         E4V7csdznjg3FFvDMQv8UuATgEC07xMSCkb56wkAVhyDXbecGj+5y3LcPvfCwIGUQTWL
+         fq+QB8K2iI5d2AFTy1avYEcBAX6OzrdeZDiB2FhvUcPbI0HEGOy36kLuRYehMhzZvA5w
+         ZG1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685950067; x=1688542067;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TsP0n5juNyauxV4ZzGiEHcjUixvHobJ7dhZs4yRrqJI=;
+        b=doeI1FvRhi2PJT59GBt5LLKl4c5B5E7nnnUx/yi6Z0OlBvCHpO+g2gwHTBe+OIsVmd
+         qwT7K1jM+uVAcMYK46xD2+FpR/0709TC9/e0bFbU6muqlFOXZC+iDuIaY//1fQcmSeQh
+         eQNisn0jyt2zGrNnxsNlTGSoJXe7/6nJv7eiV8DP7tmoKrR+OCAULoLVkjmVh7pIKsFL
+         QPt9OkDrgUk0wEQDWsPR8fYYc4TFpVqtYIKMEf0I844DnphKIWThu+sRQTsidCsaSaiI
+         /GYGKom/tcQahqcr9l/4TmIU5kqq41ULac1Aktj91QC1ipTiZ6pbPNoQvxn8yVfHMTh+
+         evdQ==
+X-Gm-Message-State: AC+VfDz+nB3szubGDdjtgZIcfhT7zepN0O8Jaq4emQe6+w+j2QJgTR7F
+        QGRdbprw2pEXC3uwlCbOvw0=
+X-Google-Smtp-Source: ACHHUZ4Wz4q+jZu5kAv6QOPm74HoKeM8yyFcMAonyqnL8xCKX2S2QjaBAoS+jo+0EcG7yzxfafXP/Q==
+X-Received: by 2002:a2e:9d18:0:b0:2b0:3343:1c0a with SMTP id t24-20020a2e9d18000000b002b033431c0amr3192634lji.31.1685950066428;
+        Mon, 05 Jun 2023 00:27:46 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:91ce:1f9c:f9d4:7837])
+        by smtp.gmail.com with ESMTPSA id kj24-20020a170907765800b00965f5d778e3sm3911553ejc.120.2023.06.05.00.27.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Jun 2023 00:27:45 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jaco Kroon <jaco@uls.co.za>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] net/pppoe: fix a typo for the PPPOE_HASH_BITS_1 definition
+Date:   Mon,  5 Jun 2023 09:27:43 +0200
+Message-Id: <20230605072743.11247-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2023-05-26 14:51:59, Dan Carpenter wrote:
-> Static analysis tools complain about the -EINVAL error code being
-> stored in an unsigned variable.  Let's change this to match
-> the clk_get_rate() function which is type unsigned long and returns
-> zero on error.
-> 
-> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: In v1 I change the type to int which was wrong.  This is a different
->     approach.  CC the freedreno list this time too.
+Instead of its intention to define PPPOE_HASH_BITS_1, commit 96ba44c637b0
+("net/pppoe: make number of hash bits configurable") actually defined
+config PPPOE_HASH_BITS_2 twice in the ppp's Kconfig file due to a quick
+typo with the numbers.
 
-Just like v1, should we clean up the <= in
-dpu_encoder_phys_cmd_tearcheck_config (to just `if (!vsync_hz)`),
-because doing a <=0 on a u32 has a more limited meaning?
+Fix the typo and define PPPOE_HASH_BITS_1.
 
-> 
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 4 ++--
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-> index 0e7a68714e9e..25e6a15eaf9f 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-> @@ -979,13 +979,13 @@ static int _dpu_kms_mmu_init(struct dpu_kms *dpu_kms)
->  	return 0;
->  }
->  
-> -u64 dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name)
-> +unsigned long dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name)
->  {
->  	struct clk *clk;
->  
->  	clk = msm_clk_bulk_get_clock(dpu_kms->clocks, dpu_kms->num_clocks, clock_name);
->  	if (!clk)
-> -		return -EINVAL;
-> +		return 0;
->  
->  	return clk_get_rate(clk);
->  }
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-> index aca39a4689f4..961918e5a5b3 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-> @@ -201,6 +201,6 @@ void dpu_disable_vblank(struct msm_kms *kms, struct drm_crtc *crtc);
->   *
->   * Return: current clock rate
+Fixes: 96ba44c637b0 ("net/pppoe: make number of hash bits configurable")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/net/ppp/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Or 0 if this clock is not available/present.
+diff --git a/drivers/net/ppp/Kconfig b/drivers/net/ppp/Kconfig
+index 2fbcae31fc02..8c9ed1889d1a 100644
+--- a/drivers/net/ppp/Kconfig
++++ b/drivers/net/ppp/Kconfig
+@@ -141,7 +141,7 @@ choice
+ 
+ 		This hash table is on a per outer ethernet interface.
+ 
+-config PPPOE_HASH_BITS_2
++config PPPOE_HASH_BITS_1
+ 	bool "1 bit (2 buckets)"
+ 
+ config PPPOE_HASH_BITS_2
+-- 
+2.17.1
 
-- Marijn
-
->   */
-> -u64 dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name);
-> +unsigned long dpu_kms_get_clk_rate(struct dpu_kms *dpu_kms, char *clock_name);
->  
->  #endif /* __dpu_kms_H__ */
-> -- 
-> 2.39.2
-> 
