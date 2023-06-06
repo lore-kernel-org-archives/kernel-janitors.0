@@ -2,117 +2,126 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD1EC77B73
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 11:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE5DC77B7A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 11:36:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236306AbjFFLdm (ORCPT
+        id S236520AbjFFLgu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 07:33:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55726 "EHLO
+        Tue, 6 Jun 2023 07:36:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236236AbjFFLdl (ORCPT
+        with ESMTP id S235498AbjFFLgt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 07:33:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64320E52
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 04:32:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686051175;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Hj/oCZqRIaRss8Q4LgDlhtbf+IZqBpz4PwoZPwys/yQ=;
-        b=HirrFCdCmhAXa1gsa6oD0zMAPPrUJrFWabjttwvzz+zqHMqOTiYOMbMjs2kGvXZ0rvlmmo
-        a502j7AQYXt3PSbbG11SSZJP0fNL4ry+hbB8qC9RS9N31oBJIN/9s5OxgWzULo2H1b28yl
-        W63AVNuYxMyETN3bWY4lIN7bcqIXpJE=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-493-9kH51lgKOlu6L7tT-4-b6w-1; Tue, 06 Jun 2023 07:32:54 -0400
-X-MC-Unique: 9kH51lgKOlu6L7tT-4-b6w-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-9744659b7b5so495044166b.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 04:32:54 -0700 (PDT)
+        Tue, 6 Jun 2023 07:36:49 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C428F196;
+        Tue,  6 Jun 2023 04:36:48 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-39c503bc770so306517b6e.0;
+        Tue, 06 Jun 2023 04:36:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686051408; x=1688643408;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R92KuS7gawSx2LWw+ooVWTPC6JkJv9bdowpbo01HVAw=;
+        b=KWM8ThY/M3uM372kffwhthc6oRXcuseLvAve9vjPRRuzhSZxcV1WgKQCyntbH7Esu7
+         cZlAzbtguAWGAxejMBdHHv7Ibvu3VWnpXyGRw51hrlfbOSnejVz5vCPbsh/1WI68Tp91
+         +2zdkEy/aDO0dcopt49vPZlstLrxUbp3PTlfEZTa6+LPHMdIllJ4PoXLh07CjiT7nuQ8
+         zvPy+HIydi7yjsqanQcMr/fRwI8lILVvDkxnyN3ALPKafYzdFFsXqpoREvA2TTNqZd8Q
+         qPXyI1Qq9XWu8GIrE7whBTX+FxVv/27CHPmeIfnsdcKICNNIHkymjVSYNnEZNgQMLg8X
+         E+xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686051173; x=1688643173;
-        h=content-transfer-encoding:in-reply-to:references:to
-         :content-language:subject:cc:user-agent:mime-version:date:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hj/oCZqRIaRss8Q4LgDlhtbf+IZqBpz4PwoZPwys/yQ=;
-        b=YkWK4wHOLUKOrnECJsCLaLLkiEUwgOf5Dmo+CptWI8DwZ9HI5q+AXMtCx4r0kpfkRU
-         OUfoYFa3/8cnUqyPJV0ckPH0UP1Lg4FBepxhSWbunIl3jU4KjQjhaAgUqb5kzdadRlSt
-         gFJa+ePKtbaxnrcWLcoMyo3UpD6jzXm8CKOvUVBJnjxC9Yg0viFVA/v/UhO5CnqhxoQH
-         spT7kK7rEIK5Oibn60Cvqn0gd3ARxZSWK5iitQ8qc8SSNXP+lJdY5B/in0g9NneO15y3
-         wIdf2JH+n49SyemB4yuOW0BnYUOggZsTH4JITWhWS4ToBVhrXlHUB/gGs2opKrKlZciU
-         /KSw==
-X-Gm-Message-State: AC+VfDzdw6qrVf0RITRoIUrTJMpOaiG8seo+Xo8kFTZ8ztXgPTNOmD+t
-        PS0AkFwEUHZ+NrI4osG4BraV//DxO6NW/aKUNxk0YuZD+fuhMQ7+4bvS0uU7HMI9J9DmO8usnLM
-        9+ANyK6MRVp3+Qs9SGjMgAMAwH1yU
-X-Received: by 2002:a17:907:a42c:b0:974:1c90:2205 with SMTP id sg44-20020a170907a42c00b009741c902205mr2200642ejc.13.1686051173364;
-        Tue, 06 Jun 2023 04:32:53 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4RPPPPFthYe4DwksyqkYkoUYRCGX6sEiUsyi9TszOqGKteH/2fL/6aokjXcd3QP/WDawUH7g==
-X-Received: by 2002:a17:907:a42c:b0:974:1c90:2205 with SMTP id sg44-20020a170907a42c00b009741c902205mr2200628ejc.13.1686051173071;
-        Tue, 06 Jun 2023 04:32:53 -0700 (PDT)
-Received: from [192.168.42.222] (194-45-78-10.static.kviknet.net. [194.45.78.10])
-        by smtp.gmail.com with ESMTPSA id b27-20020a1709062b5b00b0097381fe7aaasm5445787ejg.180.2023.06.06.04.32.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jun 2023 04:32:52 -0700 (PDT)
-From:   Jesper Dangaard Brouer <jbrouer@redhat.com>
-X-Google-Original-From: Jesper Dangaard Brouer <brouer@redhat.com>
-Message-ID: <fae329d4-2599-d677-2ace-81bc137a758f@redhat.com>
-Date:   Tue, 6 Jun 2023 13:32:51 +0200
+        d=1e100.net; s=20221208; t=1686051408; x=1688643408;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R92KuS7gawSx2LWw+ooVWTPC6JkJv9bdowpbo01HVAw=;
+        b=V5w5nPzymjIZOVSOF9Cwjg4LjVkKPXDyEP+xAa+sRAnzh3fipUAf1Rm/bPV0vpRAzO
+         j+XgWfnPX33SIZcsiQdt+rWHDSUl9thhVznhypkSF1tTo+e+L7sBaJf27YEiyzg5Z1oR
+         xE6Vpl5eizeopF6jMplH6q7tiKx/CXLBnhUvRAGfGToLfJku45C0PkZL8biAy7MVh+AP
+         HwEsP2wR2S7ncBlR1blrF07Dmpiu74wwIMpBB8iCFn+5X3k+WUyOKbdPyYQw0w/rYR3N
+         UcpBhbOrfyvaUAsmLSN9IPSkclx0Zam+O5Qmt7hJwR3lhwK53cRQWxMknrQdA4GM/XHV
+         zsJA==
+X-Gm-Message-State: AC+VfDxlULC5abDy8BDp/keCUxy3OCjOF305h0DbpOIoklTtBIPOqvHp
+        X5e3LKc/3//j5dkcxLkxlHzoTEhOnv4=
+X-Google-Smtp-Source: ACHHUZ6076hhAKQCiN1ZGGrVzz/fYBz/bp2CAfqnll20uGWpIG1MlOWX50Uveq2xE2o3dLht+3Ugsw==
+X-Received: by 2002:aca:130c:0:b0:396:3b9b:d217 with SMTP id e12-20020aca130c000000b003963b9bd217mr2133146oii.18.1686051407914;
+        Tue, 06 Jun 2023 04:36:47 -0700 (PDT)
+Received: from debian.me (subs09a-223-255-225-71.three.co.id. [223.255.225.71])
+        by smtp.gmail.com with ESMTPSA id g12-20020a63e60c000000b00502ecc282e2sm7244378pgh.5.2023.06.06.04.36.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jun 2023 04:36:47 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id BD9E2106A3A; Tue,  6 Jun 2023 18:36:43 +0700 (WIB)
+Date:   Tue, 6 Jun 2023 18:36:43 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Franziska Naepelt <franziska.naepelt@googlemail.com>,
+        linux-crypto@vger.kernel.org
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        linux-kernel@vger.kernel.org,
+        Franziska Naepelt <franziska.naepelt@gmail.com>,
+        Linux SPDX Licenses <linux-spdx@vger.kernel.org>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH] crypto: frcypt Fix checkpatch warnings
+Message-ID: <ZH8aS-rMMKaxRD50@debian.me>
+References: <20230606111042.96855-1-franziska.naepelt@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Cc:     brouer@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH bpf-next V1] selftests/bpf: Fix check_mtu using wrong
- variable type
-Content-Language: en-US
-To:     Daniel Borkmann <borkmann@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        bpf@vger.kernel.org
-References: <168605104733.3636467.17945947801753092590.stgit@firesoul>
-In-Reply-To: <168605104733.3636467.17945947801753092590.stgit@firesoul>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dC9uVHJs6Xkabe7S"
+Content-Disposition: inline
+In-Reply-To: <20230606111042.96855-1-franziska.naepelt@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
+--dC9uVHJs6Xkabe7S
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 06/06/2023 13.30, Jesper Dangaard Brouer wrote:
-> Dan Carpenter found via Smatch static checker, that unsigned
-> 'mtu_lo' is never less than zero.
-> 
-> Variable mtu_lo should have been an 'int', because read_mtu_device_lo()
-> uses minus as error indications.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
-> ---
->   tools/testing/selftests/bpf/prog_tests/check_mtu.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+[Also Cc: linux-spdx list and original author mentioned in the license
+boilerplate]
 
-Providing the fixes like that I forgot.
+On Tue, Jun 06, 2023 at 01:10:42PM +0200, Franziska Naepelt wrote:
+> The following checkpatch warnings have been fixed:
+> - WARNING: Missing or malformed SPDX-License-Identifier tag
+> - WARNING: Block comments use a trailing */ on a separate line
 
-Fixes: b62eba563229 ("selftests/bpf: Tests using bpf_check_mtu BPF-helper")
+Two different logical changes in a patch - please break them into a
+2-patch series, with each patch do one job. And please write the patch
+description in imperative mood instead (e.g. "Do foo").
 
-> diff --git a/tools/testing/selftests/bpf/prog_tests/check_mtu.c b/tools/testing/selftests/bpf/prog_tests/check_mtu.c
-> index 5338d2ea0460..2a9a30650350 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/check_mtu.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/check_mtu.c
-> @@ -183,7 +183,7 @@ static void test_check_mtu_tc(__u32 mtu, __u32 ifindex)
->   
->   void serial_test_check_mtu(void)
->   {
-> -	__u32 mtu_lo;
-> +	int mtu_lo;
->   
->   	if (test__start_subtest("bpf_check_mtu XDP-attach"))
->   		test_check_mtu_xdp_attach();
-> 
-> 
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+>  /* FCrypt encryption algorithm
+>   *
+>   * Copyright (C) 2006 Red Hat, Inc. All Rights Reserved.
 
+NAK!
+
+There is also BSD 3-clause boilerplate (from original code that fcrypt.c
+is based on). Thus, the proper SPDX tag should have been:
+
+```
+// SPDX-License-Identifier: GPL-2.0-or-later AND BSD-3-Clause
+```
+
+And please also delete the boilerplate.
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--dC9uVHJs6Xkabe7S
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZH8aSAAKCRD2uYlJVVFO
+o+5nAQDtfVmY2eW2DPOLirsfAmVGuQiWkV0+NL/MsYP9RNXafwD/ZPj7b2dzkhai
+PZb6kQJeq9muOKeXuk5Bf4e3ZxhizAI=
+=p0tN
+-----END PGP SIGNATURE-----
+
+--dC9uVHJs6Xkabe7S--
