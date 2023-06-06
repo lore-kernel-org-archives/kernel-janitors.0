@@ -2,60 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 444FFC77B73
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 08:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2C4C77B73
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 08:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236349AbjFFIXn (ORCPT
+        id S236429AbjFFIYX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 04:23:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50322 "EHLO
+        Tue, 6 Jun 2023 04:24:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231830AbjFFIXh (ORCPT
+        with ESMTP id S236301AbjFFIYV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 04:23:37 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C3A910EA
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 01:23:18 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f6ef9a928fso48406515e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 01:23:18 -0700 (PDT)
+        Tue, 6 Jun 2023 04:24:21 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B06E47
+        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 01:24:03 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-30ad458f085so5141106f8f.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 01:24:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686039788; x=1688631788;
+        d=linaro.org; s=google; t=1686039841; x=1688631841;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tqU663avBDGtNA+7qj15+8XcwDxuXpyjVCXFjA4/lfE=;
-        b=Qd5AVRy6jVBxdNVPSb++sWTkyA+QxF3QBQC1QWbDnQIAq5K4gIs1F+pwzH6q3EzBKX
-         lXQ9CakK0PrnhUxg3QcDl66mR5gp3RcFOAYxayLAGEEYQP3++tb6Q3I/FMWj2n4b9T3Z
-         PwihFZgG2GiILNk5IdBq9LuASU2CYN//RPC8PdQGrN6gTQo7DOFrHclOnTObIUZ738CX
-         KtFa4ArHdCzrxK1Akmay5A82wviSo02bldl6jsKC8w19oGVFXdsEPdmv6J9w76lzHyoK
-         wyEOGn/ek+IPbkzD0+v8blH4hjLWlkUqbeciMffzYu3Z99vaY8PgIJ6hljXI9OqhrUfx
-         Qjbw==
+        bh=Cu00erad5bhnLhrnHtwRHa2XDxNFsi3EuA1QgEK2MPg=;
+        b=izIWW1PrYM03lQFHH/qXUTUE4kbL8MXfzNUe7V1iIEoaSdn3we/K/6t9S+ZqkRZqln
+         1jy6J4W7vFxq15cjA6LgJOb2yy2bCKrdllkpO9NNqIsTtnWdBDPMfQ1Iaxb6ZM38y8sa
+         Fp9GGLui/y1XXnx6xgV68OJAj8lAU43Lnmgh6fQk9szZ+Vbl6wOsDC90u2z84fWDop1r
+         kvo0TzjnXu1deUqfoOrfsukbgD7qEBnjYuNg7vdfcS/fU6n0Rqwii/IhkGwfqaFXHu96
+         qUy4+c1cIY46Cf0KFcSUPij1lDsdV2KzRqa334LylXd4aHZv0r5l0ZnkluBBA2WAP4lu
+         v5GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686039788; x=1688631788;
+        d=1e100.net; s=20221208; t=1686039841; x=1688631841;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tqU663avBDGtNA+7qj15+8XcwDxuXpyjVCXFjA4/lfE=;
-        b=Gql184bkoCus2K8gHimH/HMPoeB9WurSJk6sMxLKJ/ySxpCJda2F6jWiMEESMrj4sq
-         P5rKaYOs3g8xccehjwafCjazAXDcdJbYk57YWbAYDo1G+hz8Yvqz+QezQCfjs+b0Q2iG
-         QD7KeYK8FIgA+HGDjsOyZ+vMwPVpZnPLtmPeE8VYYnZxn9wHGqduWNV5YTgIRL4NP4ZZ
-         KjA62At8CT6vKs6OMn5S3BBAeEHjfxzqDLHWjKDmtA0XDuxn1gtwPeiCt32LwCYtuaxB
-         ndNLS1RFCeDYqQroJhfr+oUJ5M2p7FzcuzVM5pwueqtlRusSKIgTm5vQy7qrlfFa7Cqn
-         5LsA==
-X-Gm-Message-State: AC+VfDwPyhA40tNRODB48pBQCAHXv0GxQ3pVest2MFq5vPAiPs6gqWVH
-        4PmZJS4pdIG3yj1YI8thgWIfkA==
-X-Google-Smtp-Source: ACHHUZ7l32Vj376IpODe04w+e0XBjtDxWNN8qfepBmt6+3to7r/g/Tbpwud1itYVQS0iQk7K1RdT/Q==
-X-Received: by 2002:a7b:cd97:0:b0:3f4:2973:b8c8 with SMTP id y23-20020a7bcd97000000b003f42973b8c8mr1293139wmj.26.1686039787945;
-        Tue, 06 Jun 2023 01:23:07 -0700 (PDT)
+        bh=Cu00erad5bhnLhrnHtwRHa2XDxNFsi3EuA1QgEK2MPg=;
+        b=d8uyoCfpRtbDyTmVPNJ32RHOai+lQqoO5+2oFAmd9npQVKDYDNUzgeJ6HIU7rd/hjg
+         E3zUFI4s4eBWCB/dPDvW5nX+ewcG3Ii9gG3l4TI66Q6HHeEKN8v3tLQSEBRRsr+ComfE
+         VU014gVr0AgsOeZGmSK29kcHghA21zSpWIB94oJj9YtEbOIDBxVteKEmI8mTRazAfSa8
+         TjapERVFEaPGtB4CJrnpXkq+LiqTInE9Vep4K5o6kUfnRU5P2vP0NYCZ6N18pDQw0djl
+         JZIyOnZiiHVF8HOFd2uajuRY+AramaPEOWbHw7UTIdODvjbEptAjmUX0Fmvkv+MDDXgp
+         rylg==
+X-Gm-Message-State: AC+VfDx55vArKMG+xEsJb2yp3vJVOg+q61mzOdtWMZzu0b+CPy8BvgKm
+        IqCvfCdFojEUeKGRj9FwfzVKwQ==
+X-Google-Smtp-Source: ACHHUZ4+U56Oim5d9z0fzzpQFWt87wPRBPzyCzagTvFDjwvOyFAFiNq+4kkmkNkoElYtiOJuv5pJvw==
+X-Received: by 2002:adf:f7c8:0:b0:30a:f20b:e71 with SMTP id a8-20020adff7c8000000b0030af20b0e71mr1198004wrq.33.1686039841487;
+        Tue, 06 Jun 2023 01:24:01 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id t14-20020a7bc3ce000000b003f60e143d38sm13144596wmj.11.2023.06.06.01.23.06
+        by smtp.gmail.com with ESMTPSA id h14-20020a5d504e000000b00300aee6c9cesm11936977wrt.20.2023.06.06.01.23.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 01:23:06 -0700 (PDT)
-Date:   Tue, 6 Jun 2023 11:22:42 +0300
+        Tue, 06 Jun 2023 01:24:00 -0700 (PDT)
+Date:   Tue, 6 Jun 2023 11:23:56 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Zhang Rui <rui.zhang@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] powercap: intel_rapl: Fix a NULL vs IS_ERR() bug
-Message-ID: <ZH7s0qNJ8a/KHjvQ@moroto>
+To:     Nirmoy Das <nirmoy.das@intel.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andi Shyti <andi.shyti@linux.intel.com>,
+        Anshuman Gupta <anshuman.gupta@intel.com>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Fei Yang <fei.yang@intel.com>,
+        Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/i915: Fix a NULL vs IS_ERR() bug
+Message-ID: <ZH7tHLRZ9oBjedjN@moroto>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -63,30 +74,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The devm_ioremap_resource() function returns error pointers on error,
-it never returns NULL.  Update the check accordingly.
+The mmap_offset_attach() function returns error pointers, it doesn't
+return NULL.
 
-Fixes: 9eef7f9da928 ("powercap: intel_rapl: Introduce RAPL TPMI interface driver")
+Fixes: eaee1c085863 ("drm/i915: Add a function to mmap framebuffer obj")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/powercap/intel_rapl_tpmi.c | 4 ++--
+ drivers/gpu/drm/i915/gem/i915_gem_mman.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/powercap/intel_rapl_tpmi.c b/drivers/powercap/intel_rapl_tpmi.c
-index c016127b3497..4f4f13ded225 100644
---- a/drivers/powercap/intel_rapl_tpmi.c
-+++ b/drivers/powercap/intel_rapl_tpmi.c
-@@ -255,8 +255,8 @@ static int intel_rapl_tpmi_probe(struct auxiliary_device *auxdev,
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+index 4e7a838ab7bd..aa4d842d4c5a 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_mman.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+@@ -1085,8 +1085,8 @@ int i915_gem_fb_mmap(struct drm_i915_gem_object *obj, struct vm_area_struct *vma
+ 		/* handle stolen and smem objects */
+ 		mmap_type = i915_ggtt_has_aperture(ggtt) ? I915_MMAP_TYPE_GTT : I915_MMAP_TYPE_WC;
+ 		mmo = mmap_offset_attach(obj, mmap_type, NULL);
+-		if (!mmo)
+-			return -ENODEV;
++		if (IS_ERR(mmo))
++			return PTR_ERR(mmo);
  	}
  
- 	trp->base = devm_ioremap_resource(&auxdev->dev, res);
--	if (!trp->base) {
--		ret = -ENOMEM;
-+	if (IS_ERR(trp->base)) {
-+		ret = PTR_ERR(trp->base);
- 		goto err;
- 	}
- 
+ 	/*
 -- 
 2.39.2
 
