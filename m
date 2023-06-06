@@ -2,118 +2,59 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B74C7EE2A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 16:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E9EC7EE24
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 16:19:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237776AbjFFQDj (ORCPT
+        id S236940AbjFFQTW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 12:03:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42420 "EHLO
+        Tue, 6 Jun 2023 12:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232450AbjFFQDi (ORCPT
+        with ESMTP id S238347AbjFFQTI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 12:03:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A53E310D5;
-        Tue,  6 Jun 2023 09:03:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 422DF60C04;
-        Tue,  6 Jun 2023 16:03:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 382D9C433EF;
-        Tue,  6 Jun 2023 16:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686067415;
-        bh=8ux32c/+XVEBKmqishWBgDV5JYIrpFiRxA/mzTyLgUI=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=eQR7PQqPjKltjxrHubDrbI35A+fxP3AQh6x2EDo9c0HKA2z2EY0sJrBmrwN3rKd3M
-         5GZHYeyRriHiIO4EgGkSgP57qZ4I4pMaDkFeRwdAPMcNH/FBI4w75EL37UcMFLf+XJ
-         YBYY/GawCjFGACunEld47H3TxG1PLHwtgKY4+ZRI63NlhYJyTdk/MT7X8sb96+Fb55
-         c1PK++jvmFNM4iVyxCbSV7OFQbLzeISULEBYB+cV4n+zQaeFghCQiR8tz5sBTv6Smk
-         tYDVwni/W9o0EKaOvExqjZvKkxo5NIGiSvE4XrAMVP8G39G52bhJPJ17oq9gl6MHgI
-         LOwBky869em6A==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 06 Jun 2023 19:03:30 +0300
-Message-Id: <CT5P0JH7NOTO.3P08AWR6O128R@suppilovahvero>
-Cc:     "Bagas Sanjaya" <bagasdotme@gmail.com>,
-        "Franziska Naepelt" <franziska.naepelt@googlemail.com>,
-        <keyrings@vger.kernel.org>, <dhowells@redhat.com>,
-        <dwmw2@infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Franziska Naepelt" <franziska.naepelt@gmail.com>,
-        "kernel test robot" <lkp@intel.com>,
-        "Linux SPDX Licenses" <linux-spdx@vger.kernel.org>,
-        "Linux Kernel Janitors" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] certs/extract-cert: Fix checkpatch issues
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Dan Carpenter" <dan.carpenter@linaro.org>
-X-Mailer: aerc 0.15.2-33-gedd4752268b2
-References: <20230601190508.56610-1-franziska.naepelt@gmail.com>
- <20230602085902.59006-1-franziska.naepelt@gmail.com>
- <ZH8mhIrjyBvTF4oZ@debian.me>
- <e39efb7f-5d8f-4433-83b3-8eea8a6c0486@kadam.mountain>
- <CT5NH4XXIYQF.5XXJE6JA5FZP@suppilovahvero>
- <e44d03cf-9993-483c-b3d4-6185f5c028cc@kadam.mountain>
-In-Reply-To: <e44d03cf-9993-483c-b3d4-6185f5c028cc@kadam.mountain>
+        Tue, 6 Jun 2023 12:19:08 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7289A1723;
+        Tue,  6 Jun 2023 09:18:42 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 8EAA380AE;
+        Tue,  6 Jun 2023 16:18:41 +0000 (UTC)
+Date:   Tue, 6 Jun 2023 19:18:40 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] serial: core: don't kfree device managed data
+Message-ID: <20230606161840.GL56720@atomide.com>
+References: <ZH7tsTmWY5b/4m+6@moroto>
+ <ZH8xwKuI9WqRUu5H@smile.fi.intel.com>
+ <c1a2467b-7a30-4eaa-9206-3b47d3ae64e6@kadam.mountain>
+ <ZH9I1DCyfa8tEzIz@smile.fi.intel.com>
+ <dbd168c0-1ef2-4270-b6e2-3a489cdf6a14@kadam.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbd168c0-1ef2-4270-b6e2-3a489cdf6a14@kadam.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue Jun 6, 2023 at 6:25 PM EEST, Dan Carpenter wrote:
-> On Tue, Jun 06, 2023 at 05:51:09PM +0300, Jarkko Sakkinen wrote:
-> > On Tue Jun 6, 2023 at 4:38 PM EEST, Dan Carpenter wrote:
-> > > On Tue, Jun 06, 2023 at 07:28:52PM +0700, Bagas Sanjaya wrote:
-> > > > On Fri, Jun 02, 2023 at 10:59:02AM +0200, Franziska Naepelt wrote:
-> > > > > The following issues are fixed:
-> > > > > - WARNING: Missing or malformed SPDX-License-Identifier tag
-> > > > > - ERROR: trailing statements should be on next line
-> > > > > - WARNING: braces {} are not necessary for single statement block=
-s
-> > > > > - ERROR: space required before the open parenthesis '('
-> > > > > - ERROR: code indent should use tabs where possible
-> > > > > - WARNING: please, no spaces at the start of a line
-> > > > > - WARNING: Missing a blank line after declarations
-> > > >=20
-> > > > Again, write the patch description in imperative mood (e.g. "Do foo=
-").
-> > > >=20
-> > >
-> > > Why do you care about imperative tense?  Imperative tense doesn't
-> > > matter.  What matters is that you can understand the issue and how it
-> > > looks like to the user.  I was working with a group of foreign studen=
-ts
-> > > and it was painful to see the contortions that they went through to m=
-ake
-> > > a commit message imperative.  It's like saying "Bake a cake", "Ok, no=
-w
-> > > bake it while juggling."  The cake ends up worse.  And the commit
-> > > message end up worse when we force nonsense rules like this.
-> >=20
-> > How about a simple and stupid reason?
-> >=20
-> > Usually I write commit message without caring about this. Then I rewrit=
-e
-> > the commit message and 9/10 it gets shorter. Based on empirical
-> > experience, imperative form has minimum amount of extra words.
-> >=20
->
-> I'm looking through the git log to see if it's true the imperative tense
-> commit message are shorter and better and neither one of those things is
-> obvious to me.
->
-> This patch had an imperative subject already so it was already kind of
-> imperative.  Does every sentence have to be imperative or can you just
-> add a "Fix it." to the end?
->
-> I don't want to belittle the challenges you face around the English
-> language but I think students were less fluent than you are.  So maybe
-> imperative tense works for you but it definitely made their commit
-> messages far worse.
+* Dan Carpenter <dan.carpenter@linaro.org> [230606 15:01]:
+> On Tue, Jun 06, 2023 at 05:55:16PM +0300, Andy Shevchenko wrote:
+> > 
+> > I'm okay with the above, but it seems at the same time we need to limit the
+> > messages:
+> > 
+> > 	dev_err_once(port->dev, "uart_add_one_port() called before arch_initcall()?\n");
+> > 
+> 
+> Yeah.  I would prefer if that was only printed as a debug message.
+> -EPROBE_DEFER is supposed to be a normal part of the process.
 
-Yeah, I was not trying to oppose, just reasoning why I like it more.
+Debug here should do the trick yeah.
 
-For a single patch, this does not really matter anyway :-)
+Regards,
 
-BR, Jarkko
+Tony
