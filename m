@@ -2,87 +2,127 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0168C7EE29
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 15:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A282BC7EE24
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 15:05:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237506AbjFFPB7 (ORCPT
+        id S236640AbjFFPFd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 11:01:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37574 "EHLO
+        Tue, 6 Jun 2023 11:05:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237194AbjFFPB6 (ORCPT
+        with ESMTP id S238645AbjFFPFQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 11:01:58 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AAAA10FB
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 08:01:51 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f6d7abe934so54038555e9.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 08:01:51 -0700 (PDT)
+        Tue, 6 Jun 2023 11:05:16 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2092.outbound.protection.outlook.com [40.107.102.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1435E90;
+        Tue,  6 Jun 2023 08:05:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Yw9WTUSCyAOpsGu0+TyTSR78ulp+Dv319ZDV4joHxBV8FeFEPtJM9bAwu8mj9BtcrCmFVlxMo2uIWV0rzxp9lFlvh9dlf5AQz0ISopC+/4wCk1/mL8YM7A4/1XSVXhbBRy11HMuLmgj8UkNoNSnAaco12seiSL45voKj7rDFEdJ0iti5Ur43wFLI4J1mkvjLLllIcV2C+9VLCoy68TMoIpRoiEBFNgFepUoPU7snPDQzypiJkYln0cUq9ns9tvvX3F/zXNP9P2aFVVVSuMnUcfKVzak3R2UnrqHTuv2iHgOfBhRKJgrNxJpHjSflsHJnFqyPaNRnLcMrQXwrJLdfCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PpVYCCy0ekKz08GaGgoGaDsN7OcXxAxX71r0OJpgY9g=;
+ b=anCqw1UClJvkkyTQFPy6MoaHfWJqmd4+gRwqFny2U51GDj3u8FzuqwaKtSBrcXN5fEPmvsMhJEDPAwWGqMXwWyFkPA1O18CRGOZvdy0/3YxqI94pueSM2IqOi1Wx5j+NidyXq8ksh+iaG3Zo4QlLqhq8qJ9wGM7NBQCHSIy1leMfZjibYbNb3i5Jc41xerLHtU+yOgPJu3Cp9to6EYO8hcsuLfZhRpQyucuIupo66FZBsdQzw0btOX1EZntfwz0MQ8tF9d7l+8nYAGxBhOeD+0q52oATAPLNsaenC+xmFxrUuFMMCDDMcjrjfTNoOccx8joWlQa6waCjXWR/M7wG+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686063710; x=1688655710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DllZqK788w6lqoCKOwRGo9snKT873aGYAMBr/jTSFaM=;
-        b=DtcE+BMkqh2t65sw5zab1/Q+N4M6AcXcCG9J6lFDcCdCUCujsejYYtDbwlB7oaKCPS
-         Z0x45pm7jxvMIBQO4jkVX6xK0pG7L/dd+nvY3KC2kI9Zh8YDYE2sNSCbQveLwA4R09aP
-         XPkoyV86ufGMq0/gQr5irwG3Lc/GHnCk1yKHanPoivvlBMynJFOdiFt9SyQpHND6VEO7
-         dbHYA1QJid/XCYEr9QyEid3Dj8TiuZpmAZ9Z/IUQZ5BXs8wF8sOJE59FL7/zgaPe9Fr7
-         OrqIPj2AjWyW/kbFwA6cRpZbvMbXQpNgqk0xZWtzTFKUBQ4BfUBoLLChoQKk/N+LkG69
-         IH6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686063710; x=1688655710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DllZqK788w6lqoCKOwRGo9snKT873aGYAMBr/jTSFaM=;
-        b=L7MNGIyIRdCtaNcKT9id9R00169exPILz9i8n176a9YG9Cqx7em/lPuZBKnrYnIu59
-         dzTtNgbpoOge22uRL7SLl9E75Uabj0+Pcyh1Wl6pskPQahCJcE70JAf4xPJxu3fuHi3S
-         eQezzRY2nndkA7q1uBWmf4kMSWqgtKcJR2g3eOH92Ujhgt8bcuEfh1IjgUMSUEIvU1PD
-         CnDNfKiv+ELvVcTIUTe3NoxEmSvdCQ92emN6HJceshrMG2bR05Dpem5QseutxSTOSqDA
-         lU7gWk7bIRbzhf/W+o8euvp3UTVd3R2hTh4wdYIG3R+NzNfP+3raqk5YaFB1p7v1DqfG
-         4tHg==
-X-Gm-Message-State: AC+VfDyfeWClzzxznNGgV6NM+xdFc2ZAA4y7f/Nwo5eE7Fx86Oyho/IH
-        RJrQBg8WuTaaF+w/VYY8bf63zA==
-X-Google-Smtp-Source: ACHHUZ4qzbypF0nT0mHFkVdJEANMGfUEPXHfME6cvYeI1fogjWGZdl3GHFSipaKd2zIy4jaOmi0Q7g==
-X-Received: by 2002:a1c:f20b:0:b0:3f6:389:73b1 with SMTP id s11-20020a1cf20b000000b003f6038973b1mr2242931wmc.6.1686063709983;
-        Tue, 06 Jun 2023 08:01:49 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id 6-20020a05600c228600b003f7ec54d900sm1396635wmf.9.2023.06.06.08.01.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 08:01:48 -0700 (PDT)
-Date:   Tue, 6 Jun 2023 18:01:45 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] serial: core: don't kfree device managed data
-Message-ID: <dbd168c0-1ef2-4270-b6e2-3a489cdf6a14@kadam.mountain>
-References: <ZH7tsTmWY5b/4m+6@moroto>
- <ZH8xwKuI9WqRUu5H@smile.fi.intel.com>
- <c1a2467b-7a30-4eaa-9206-3b47d3ae64e6@kadam.mountain>
- <ZH9I1DCyfa8tEzIz@smile.fi.intel.com>
-MIME-Version: 1.0
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PpVYCCy0ekKz08GaGgoGaDsN7OcXxAxX71r0OJpgY9g=;
+ b=Vq/w2oBXfjqwOO0rZPveLFtNeKKg5z5Wpimfl5av1ZFd1FptZm713hQ48ibQYWUPa9PpA52Bcy7RGTNoMLShWbO632LapCyVhYDrwDo53hs5UOLdQdpMQbHipNCFL5N2RqypeReZVgaKokeZo804EfTWRMOWopHSf3HOkQ7pSRI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by CH0PR13MB4715.namprd13.prod.outlook.com (2603:10b6:610:de::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.33; Tue, 6 Jun
+ 2023 15:05:10 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::eb8f:e482:76e0:fe6e]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::eb8f:e482:76e0:fe6e%4]) with mapi id 15.20.6455.030; Tue, 6 Jun 2023
+ 15:05:10 +0000
+Date:   Tue, 6 Jun 2023 17:05:04 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Jesper Dangaard Brouer <brouer@redhat.com>
+Cc:     Daniel Borkmann <borkmann@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        bpf@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH bpf-next V1] selftests/bpf: Fix check_mtu using wrong
+ variable type
+Message-ID: <ZH9LINLJm6oLS4Ys@corigine.com>
+References: <168605104733.3636467.17945947801753092590.stgit@firesoul>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZH9I1DCyfa8tEzIz@smile.fi.intel.com>
+In-Reply-To: <168605104733.3636467.17945947801753092590.stgit@firesoul>
+X-ClientProxiedBy: AM0PR06CA0088.eurprd06.prod.outlook.com
+ (2603:10a6:208:fa::29) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|CH0PR13MB4715:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0526ce93-286d-40cc-6bd1-08db669f6bf3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: t0l2TXr1ETb872WYwThfKOeXWufJTvDhixMU8+pxObv6GipQWiyRF26E4J9DVIxWrqqlwYmcaj2K6Zn4kLKF28wuDZwQsGmSzY56AEUzcvkrprOHsYNpNfFnjHqtaUooxJXpv4oa6iWmIZvjsOzz2zZW80pMIacdvKZLoQGmGV4vwGwQWGvkx4A1K+Z82bXnVMmRZLz/caS0Rqyoj7sIcNvokEZgcjAIl+1vzSU6hnQ0lBT25PrJQiT+0Bxl3D7R+yCvaSYiD1wcos8+K0nINEKZ4szxehN8y9LJWIkLjHM/AEU++JNpU2kRiO2rOFTV+tHw/k49FNjMJN9XlOKQmz63GKnRXvpYn3S/r8MbyS9OHnjmaZuQKkRNCJieHsVh/lhPs3lXaRLkk42A24y5FHn8KpYRYegPgn11XjAh+cMTyfJoTPMaVr3Ad9uYPpJk4tYTyc7pnmI+AlTLdmk4dKv6Uy2GoqxtR7po+L4hw7m1iCe5pC+nxQWBhY5vZiMnJd4TqnUTwhuvwEE3RtALgosYlTWBxBMPV7JPVMqsS5TOBmS/UuHccGBE9+IrQT/YA60DRdcjjPwbEV3yvSzyAr3Sgkk67uAP0ofYIQZj2Mw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(39840400004)(346002)(366004)(136003)(451199021)(4744005)(2906002)(478600001)(2616005)(6512007)(186003)(6506007)(86362001)(38100700002)(6486002)(6666004)(36756003)(5660300002)(6916009)(4326008)(316002)(8676002)(8936002)(66476007)(66556008)(54906003)(66946007)(44832011)(41300700001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zYmMaV8UTLgoP0bMvspG0dJfzUvv6dpkbTf1aJ4RB8+ScvE7NP6aPMKN0t88?=
+ =?us-ascii?Q?TDq3AVlec2EE3tmzzwroAdjJlOrQ9VpZUr087ODbP7JsCUgM7rZMXOtZPkkE?=
+ =?us-ascii?Q?r4oMwYvOM1d7a0lDgb7HdnhMGN/Fx7gv0ObYlkKc2HXZh18gfoLzcsE1cbh7?=
+ =?us-ascii?Q?ohhZpoRB37POCA+6b5czuj3RzHvY7PGhjbL1IIdL8NyLaD0bxQQ2EHOyeHhR?=
+ =?us-ascii?Q?P9bnjpGDyGAHihbFcclV8Y6BQbWw3EyQvw17kLP1vJ+tZJOX+gr6n4utUhpg?=
+ =?us-ascii?Q?/eg1O81bOJv8phH0xZxO7GLBNFJ7fxZEykXZthPcnap5EduszLE2TX3MrEvS?=
+ =?us-ascii?Q?TX9qrnXF/Dvk2dhiMSY5UfTU+JVDAFa0wfu/IYb6unu/Yxg4KdzwysYps5rD?=
+ =?us-ascii?Q?r12A2m/cazZmWgMInuWRmGQ7neZvDP26Y5Kk6ns4rSzWlaMVGKAW74NSW1OG?=
+ =?us-ascii?Q?l7Ak3aVx6IL9FohniF4e++6cQPA9C4VPY5bQjKit6cjzABev0pc8J5eS/8b8?=
+ =?us-ascii?Q?sIV8e6udOu4kCLvNKT5bJabZURvcw4eVdOsbgmDbJSDPa2HiJSdWjRSvoe6j?=
+ =?us-ascii?Q?QX6VLkw1abgdZBDplUYj+5HNMx84gRIfKMyMPYomkMfJcf2abO5cumZoBYWP?=
+ =?us-ascii?Q?MVUFQc+acFIoKAYyfjybzgpWanWRcq3a6WoZUz1K+kvlyxXIwyf0zKR4AXtO?=
+ =?us-ascii?Q?ie6od6EGV+mMQzO5AzO64uq4BbYNduZS+z1A/ZeVLYm+zqT8dtCtI7s5M0C0?=
+ =?us-ascii?Q?XRBkpHK+pVNBKZ93blLtxYWSR3UbGDt4glLNEYeNmhyneRRYyF/KCbj81fGD?=
+ =?us-ascii?Q?7qibdpKX2ERHn92rhgWDr5Z47qlPOOge1aaU4NzAvZ6Vh54CiRIgl9RpgTTl?=
+ =?us-ascii?Q?4ltUo1AUts2heJCcZepMKPLpZinSgiyKG9lQZ5ZkvvmKsW2xPXfpn+zTQhk8?=
+ =?us-ascii?Q?bRL+cfH0gzBbIg7MhYuRcqoZ6xsk4RvTw8CHE/t0hqYBr3jlQaPaTHzB99T1?=
+ =?us-ascii?Q?Lwew4F//9UskTj+NaZONdTsT3h3deM1Qn/ATqGuLleqevWCZQqVMXbN+r+Ls?=
+ =?us-ascii?Q?lCCa5tCuR2aetHLiyUyHvaf/oD+UTJPXFju17DfLBmC3pAv8gWviL0wN7kCJ?=
+ =?us-ascii?Q?ewq+6BXZ0bTyuBiMkWLqdXD3Hk8J32a5GYcM9cz2ReOhxbF7TD4/khSITi2E?=
+ =?us-ascii?Q?dgzIa7Hlsdi8cvVae/UNWBE6xB8njic7oPTmzO5uh5ZtdBC0ohLnq/ldtP4z?=
+ =?us-ascii?Q?sEw/dS8QEyNp3aEBMPLGv3+Jq0ZHDKXxYyRrpWYysLCzFwxrGsBqaQBYFD4x?=
+ =?us-ascii?Q?hJux6hEu+M7FnjhrAnm0NHnmTlOUTMCYeq5nud2jegEe2ImACStzB4j5Vxnj?=
+ =?us-ascii?Q?X0W0Vgnel94/YoGibGayogEsmwaWdc/7QuTGFM5HKtSkL05u8Hz7OLjkPHwd?=
+ =?us-ascii?Q?zWVMYVH4jT8fD+ndVUYsuTFntvSlPKJSkoQyZRVKBv1nDXAU20jpC6Am06ji?=
+ =?us-ascii?Q?EJ+d/XeZBN+nVlNchnjHwKz6OPXS80Zp+EXtmTwk6iCKvPORMoTBLEJBU07n?=
+ =?us-ascii?Q?ocHd8nkqoG49QnCRAupYBGmHK+JbuI6m3nlQhGlhNXtbkDSvrNKJnOusio01?=
+ =?us-ascii?Q?VXo+SgYw7jdJPc5RAcrvul9MQ98jxx7SBaP8K99mVutmzjNrjPvVoBLL+bsH?=
+ =?us-ascii?Q?6iKd1g=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0526ce93-286d-40cc-6bd1-08db669f6bf3
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2023 15:05:10.1782
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yt/fEutyFrXmYoyEfsMVdA9haKLJxVEQrh7O6SAjGY8eNr6HU9fUD5YgVWVIBLC9UkcOcPEKZuCZ3jNjCJwCRvjdFHAZqMJ1PM82eKD/gvk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR13MB4715
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 05:55:16PM +0300, Andy Shevchenko wrote:
+On Tue, Jun 06, 2023 at 01:30:47PM +0200, Jesper Dangaard Brouer wrote:
+> Dan Carpenter found via Smatch static checker, that unsigned
+> 'mtu_lo' is never less than zero.
 > 
-> I'm okay with the above, but it seems at the same time we need to limit the
-> messages:
+> Variable mtu_lo should have been an 'int', because read_mtu_device_lo()
+> uses minus as error indications.
 > 
-> 	dev_err_once(port->dev, "uart_add_one_port() called before arch_initcall()?\n");
-> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
 
-Yeah.  I would prefer if that was only printed as a debug message.
--EPROBE_DEFER is supposed to be a normal part of the process.
-
-regards,
-dan carpenter
-
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
 
