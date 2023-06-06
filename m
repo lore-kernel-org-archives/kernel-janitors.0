@@ -2,66 +2,71 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A1CC7EE2A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 08:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA789C77B73
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 08:34:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237042AbjFFIdt (ORCPT
+        id S236788AbjFFIeT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 04:33:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59642 "EHLO
+        Tue, 6 Jun 2023 04:34:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236698AbjFFIdo (ORCPT
+        with ESMTP id S236914AbjFFIeO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 04:33:44 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E77BEE7E
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 01:33:15 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f735bfcbbbso22008095e9.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 01:33:15 -0700 (PDT)
+        Tue, 6 Jun 2023 04:34:14 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D966411B
+        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 01:33:53 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-3063433fa66so5097869f8f.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 01:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686040388; x=1688632388;
+        d=linaro.org; s=google; t=1686040432; x=1688632432;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HGNvezJMXfjn7ToqqZuXUFZItGnK+ZI8rSYUZp66fL0=;
-        b=ebW+dZ4PFwVmuzs+A/1mErcEfwlk42eaHMnN0FTXdU4DToHNMqjg4hps7BaomOmmnG
-         ULeztuZ667nKmYkB8ryIIMId0Ya0i1cXnLd/2Jms6MjS7sKP1cyJAOU6jeF085HhLoTY
-         lRn40UYUUe074EBieFDm8LmII0z3VjGADQOBO416duu0D4HLC/dxSxgOShk3e9tnQu6G
-         z7cIOOTpWmTUCCKwHUfk/AY8KznVOufjFOyrDOcxDNKRzEAmuKQ+1SEEhsDwkOAvnlKK
-         SOeWPzLVkwYxz5X6SCq/3oB97ZfRVn3MS5PjBh6rNiLAom3mBQQdr8q4n7gRCRwvF5dc
-         wi9A==
+        bh=ixVKLJG1J3IvnujzAUwpwAiWuL5lceT9xTDyP3ttmAs=;
+        b=Ft1ai+Nebad4F1ztgqj/bHSM3UpcMV0hLzfc2Yvd1I8NsAhtx50lHj67VHwCCLIoS3
+         zNm0f8obTd2fFypVUKb7KY0w3taJk3vB7UA4CUuO4ada24UHRB4JZWpS2aEZOquwgB+s
+         CsGyN97LMcMvXpkjPF+Ki2OAbf6RTjBbDlypjNdCKMAj9c74b5E9U8JkDmFz342c5VO/
+         8bmgd0IrjRLWbibgv+EuXAo2FDSQnu5QpWK8cZrgwmEEnE/aV/zD7O/7Hql6ZIi2h1n8
+         LD8HAwrfM++ZMlJ5ZyEHkZFKW/Z9KLI4x8OF78zPrRRfmzEmY25Nm3MdGrrzAziqYDc8
+         qmiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686040388; x=1688632388;
+        d=1e100.net; s=20221208; t=1686040432; x=1688632432;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HGNvezJMXfjn7ToqqZuXUFZItGnK+ZI8rSYUZp66fL0=;
-        b=FnJcIjDp3Rav5tR9dUA7tIv9X8xAOXtxo+mHtoqn2cyW/78r0+r8zz4mLkr6VgXBLD
-         6QJ6M1iI3jLaemb/HS7qmGLOEJnRJxStuwXgN/WxckoPVH5VvkpD92RNYQ0u68fd47v4
-         cbKEFvuEek3V4UNN2DmqBC4ucRPE3NAj61zBgVSAvyDf/FEVgWa/ZEloJg0g4g6RgfiN
-         HBKZ4xb+ijQkjGq05Rty7v3/QtyBi20Kx1PevVzkRBZzd2PiWlrYjumPIO9LdJaxqgaI
-         gecYR3KJWxNmpEVUaJXADeKc4LQO7LhLllp9se4/o6JVznqJwIb9ulsUBTVLYbn3iZHT
-         KTBg==
-X-Gm-Message-State: AC+VfDylMZrxkT0ie8WWBX2aLTYwjHEb6ZKH4U+SIwAdd5RkgTTPk8s6
-        ipZ/5tmOim8JK3n0Li3U9MHEJg==
-X-Google-Smtp-Source: ACHHUZ69J8r5vJcWEWXn2VmWqlCRB7PTWJZj88krqf7/cGT0YE5tj+fKqFHTvwx1gzn5SpOc8uSZ5g==
-X-Received: by 2002:adf:fccb:0:b0:30c:2bbf:bf75 with SMTP id f11-20020adffccb000000b0030c2bbfbf75mr1071217wrs.26.1686040388227;
-        Tue, 06 Jun 2023 01:33:08 -0700 (PDT)
+        bh=ixVKLJG1J3IvnujzAUwpwAiWuL5lceT9xTDyP3ttmAs=;
+        b=H/+sPecZI644xeFOCGVaON8VrT4o055iYW8IZvPqcybDWd/+zLtveS8Cf44eUgUeYh
+         fwFRHSpudw3Hzbh799Jua22gRjp7x8KxdxCvu50lPZS34/zVyN7TTXW8lErA+dNLNgUm
+         v+uK914pn/fT8zNfCMHCcbfWBi3m0Abqqyhg+sKlr8iS/wqzabHZgTl3yGMoFWrqdGwR
+         HmP2vfChvSp4WBAb/ozgDu0mWKjcCuEttpAC6hKxbvUOxLWDaTJBw7Cn4VU17N/DOiqD
+         0kxsTEsiu7LXVeFm5zIjB8kWkUlwr6a8ALxMDfZG8uwfmuUDALi9IheFkI0ZsFeC0UO1
+         jh1A==
+X-Gm-Message-State: AC+VfDxLQZL82Q/UzSS9c+zEZssNNvRsPiN8j6AhfQWCerm4hZHAt8b9
+        xioyfIehybGCC5KZmWHw5fkJhg==
+X-Google-Smtp-Source: ACHHUZ6lXzUpAjlfOeWOwBgeuDEnlhI2XzFjrVsD3GMCZ2NqsCr9yljQBRIfLU53A7J1i47n26l4xw==
+X-Received: by 2002:adf:dec3:0:b0:309:49e3:efb4 with SMTP id i3-20020adfdec3000000b0030949e3efb4mr1196426wrn.63.1686040431927;
+        Tue, 06 Jun 2023 01:33:51 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l24-20020a1ced18000000b003f31cb7a203sm13443342wmh.14.2023.06.06.01.33.06
+        by smtp.gmail.com with ESMTPSA id d8-20020adff848000000b0030ae849c70csm11965924wrq.37.2023.06.06.01.33.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 01:33:07 -0700 (PDT)
-Date:   Tue, 6 Jun 2023 11:33:03 +0300
+        Tue, 06 Jun 2023 01:33:50 -0700 (PDT)
+Date:   Tue, 6 Jun 2023 11:33:46 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Rob Clark <robdclark@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+To:     Evan Quan <evan.quan@amd.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/msm/dpu: tidy up some error checking
-Message-ID: <ZH7vP2Swu8CYpgUL@moroto>
+        Lijo Lazar <lijo.lazar@amd.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Kenneth Feng <kenneth.feng@amd.com>,
+        Candice Li <candice.li@amd.com>,
+        YiPeng Chai <YiPeng.Chai@amd.com>,
+        Yang Wang <KevinYang.Wang@amd.com>,
+        Horatio Zhang <Hongkun.Zhang@amd.com>,
+        amd-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amd/pm: Fix memory some memory corruption
+Message-ID: <ZH7vaonsPEHJpy1j@moroto>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -69,53 +74,62 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "vsync_hz" variable is unsigned int so it can't be less
-than zero.  The dpu_kms_get_clk_rate() function used to return a u64
-but I previously changed it to return an unsigned long and zero on
-error so it matches clk_get_rate().
+The "od_table" is a pointer to a large struct, but this code is doing
+pointer math as if it were pointing to bytes.  It results in writing
+far outside the struct.
 
-Change the "vsync_hz" type to unsigned long as well and change the
-error checking to check for zero instead of negatives.  This change
-does not affect runtime at all.  It's just a clean up.
-
+Fixes: f0a0c659fb96 ("drm/amd/pm: fulfill the OD support for SMU13.0.0")
+Fixes: e3afa4f988b3 ("drm/amd/pm: fulfill the OD support for SMU13.0.7")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c | 4 ++--
+ drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
-index d8ed85a238af..6aecaba14e7e 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
-@@ -324,7 +324,7 @@ static void dpu_encoder_phys_cmd_tearcheck_config(
- 	struct dpu_hw_tear_check tc_cfg = { 0 };
- 	struct drm_display_mode *mode;
- 	bool tc_enable = true;
--	u32 vsync_hz;
-+	unsigned long vsync_hz;
- 	struct dpu_kms *dpu_kms;
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
+index 5ac5ea770c1c..413e592f0ed6 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
+@@ -1535,7 +1535,7 @@ static int smu_v13_0_0_od_edit_dpm_table(struct smu_context *smu,
+ 		 * settings. Thus we do not cache it.
+ 		 */
+ 		offset_of_featurectrlmask = offsetof(OverDriveTable_t, FeatureCtrlMask);
+-		if (memcmp(od_table + offset_of_featurectrlmask,
++		if (memcmp((u8 *)od_table + offset_of_featurectrlmask,
+ 			   table_context->user_overdrive_table + offset_of_featurectrlmask,
+ 			   sizeof(OverDriveTableExternal_t) - offset_of_featurectrlmask)) {
+ 			smu_v13_0_0_dump_od_table(smu, od_table);
+@@ -1548,7 +1548,7 @@ static int smu_v13_0_0_od_edit_dpm_table(struct smu_context *smu,
  
- 	if (phys_enc->has_intf_te) {
-@@ -359,8 +359,8 @@ static void dpu_encoder_phys_cmd_tearcheck_config(
- 	 * frequency divided by the no. of rows (lines) in the LCDpanel.
- 	 */
- 	vsync_hz = dpu_kms_get_clk_rate(dpu_kms, "vsync");
--	if (vsync_hz <= 0) {
--		DPU_DEBUG_CMDENC(cmd_enc, "invalid - vsync_hz %u\n",
-+	if (!vsync_hz) {
-+		DPU_DEBUG_CMDENC(cmd_enc, "invalid - vsync_hz %lu\n",
- 				 vsync_hz);
- 		return;
- 	}
-@@ -381,7 +381,7 @@ static void dpu_encoder_phys_cmd_tearcheck_config(
- 	tc_cfg.rd_ptr_irq = mode->vdisplay + 1;
+ 			od_table->OverDriveTable.FeatureCtrlMask = 0;
+ 			memcpy(table_context->user_overdrive_table + offset_of_featurectrlmask,
+-			       od_table + offset_of_featurectrlmask,
++			       (u8 *)od_table + offset_of_featurectrlmask,
+ 			       sizeof(OverDriveTableExternal_t) - offset_of_featurectrlmask);
  
- 	DPU_DEBUG_CMDENC(cmd_enc,
--		"tc vsync_clk_speed_hz %u vtotal %u vrefresh %u\n",
-+		"tc vsync_clk_speed_hz %lu vtotal %u vrefresh %u\n",
- 		vsync_hz, mode->vtotal, drm_mode_vrefresh(mode));
- 	DPU_DEBUG_CMDENC(cmd_enc,
- 		"tc enable %u start_pos %u rd_ptr_irq %u\n",
+ 			if (!memcmp(table_context->user_overdrive_table,
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c
+index 0bd086360efa..cda4e818aab7 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c
+@@ -1524,7 +1524,7 @@ static int smu_v13_0_7_od_edit_dpm_table(struct smu_context *smu,
+ 		 * settings. Thus we do not cache it.
+ 		 */
+ 		offset_of_featurectrlmask = offsetof(OverDriveTable_t, FeatureCtrlMask);
+-		if (memcmp(od_table + offset_of_featurectrlmask,
++		if (memcmp((u8 *)od_table + offset_of_featurectrlmask,
+ 			   table_context->user_overdrive_table + offset_of_featurectrlmask,
+ 			   sizeof(OverDriveTableExternal_t) - offset_of_featurectrlmask)) {
+ 			smu_v13_0_7_dump_od_table(smu, od_table);
+@@ -1537,7 +1537,7 @@ static int smu_v13_0_7_od_edit_dpm_table(struct smu_context *smu,
+ 
+ 			od_table->OverDriveTable.FeatureCtrlMask = 0;
+ 			memcpy(table_context->user_overdrive_table + offset_of_featurectrlmask,
+-			       od_table + offset_of_featurectrlmask,
++			       (u8 *)od_table + offset_of_featurectrlmask,
+ 			       sizeof(OverDriveTableExternal_t) - offset_of_featurectrlmask);
+ 
+ 			if (!memcmp(table_context->user_overdrive_table,
 -- 
 2.39.2
 
