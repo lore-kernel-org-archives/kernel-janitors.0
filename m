@@ -2,79 +2,48 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF075C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 11:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C38D2C7EE24
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 12:28:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237034AbjFFLkr (ORCPT
+        id S233748AbjFFM2s (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 07:40:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33260 "EHLO
+        Tue, 6 Jun 2023 08:28:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237239AbjFFLkf (ORCPT
+        with ESMTP id S233475AbjFFM2q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 07:40:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B1D5171A;
-        Tue,  6 Jun 2023 04:40:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C936763122;
-        Tue,  6 Jun 2023 11:40:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 33BA7C4339B;
-        Tue,  6 Jun 2023 11:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686051620;
-        bh=F96W65/kp0pYuxxub3VzJI+MDAnRLbTnnznxvpKHbnQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=IEaSL9UXuY+op75LnSh73czdwfJgcmNpzWjRo4mwvEQ8QZi53N4sYyQRTi1Ifih7R
-         58dtQnjfS9jKjOvvl61yclRbQDz78AEKRlVXI7jODvYzPAHvV0wyUp5jdy3tTn/jHX
-         rnKYXgFbny/uY+jev89RaLvEy/nlfEyaaNq+I9eD9MQNYwyWccTZfxa9zf8IlA2Go8
-         qTact6BV/DNFJlpwSuPkkTa2EJxCzVz0ez+f10KssV9Bq6lgSE+BoLQUNzNGRkl5Sg
-         fIy2wo78bgxS5XfQnjHFtFgHdCrnuvd+8sFNrV27hP2/76W8H3BYDe5gBvh5sB51Ku
-         I0E4qRvHAF+LQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 15F68C4166F;
-        Tue,  6 Jun 2023 11:40:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 6 Jun 2023 08:28:46 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3889010D1;
+        Tue,  6 Jun 2023 05:28:44 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 7024E80AE;
+        Tue,  6 Jun 2023 12:28:44 +0000 (UTC)
+Date:   Tue, 6 Jun 2023 15:28:43 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] serial: core: don't kfree device managed data
+Message-ID: <20230606122843.GJ56720@atomide.com>
+References: <ZH7tsTmWY5b/4m+6@moroto>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net/pppoe: fix a typo for the PPPOE_HASH_BITS_1 definition
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168605162008.20364.14177645531084252768.git-patchwork-notify@kernel.org>
-Date:   Tue, 06 Jun 2023 11:40:20 +0000
-References: <20230605072743.11247-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20230605072743.11247-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     jaco@uls.co.za, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZH7tsTmWY5b/4m+6@moroto>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Mon,  5 Jun 2023 09:27:43 +0200 you wrote:
-> Instead of its intention to define PPPOE_HASH_BITS_1, commit 96ba44c637b0
-> ("net/pppoe: make number of hash bits configurable") actually defined
-> config PPPOE_HASH_BITS_2 twice in the ppp's Kconfig file due to a quick
-> typo with the numbers.
+* Dan Carpenter <dan.carpenter@linaro.org> [230606 08:26]:
+> The put_device() function will call serial_base_ctrl_release() or
+> serial_base_port_release() so these kfrees() are a double free bug.
 > 
-> Fix the typo and define PPPOE_HASH_BITS_1.
-> 
-> [...]
+> Fixes: 84a9582fd203 ("serial: core: Start managing serial controllers to enable runtime PM")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Here is the summary with links:
-  - net/pppoe: fix a typo for the PPPOE_HASH_BITS_1 definition
-    https://git.kernel.org/netdev/net-next/c/ae91f7e436f8
+Thanks for catching it:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Tony Lindgren <tony@atomide.com>
