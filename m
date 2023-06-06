@@ -2,60 +2,98 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23644C7EE24
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 16:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096DBC7EE2A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 17:20:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231700AbjFFQYN (ORCPT
+        id S238693AbjFFRUB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 12:24:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57398 "EHLO
+        Tue, 6 Jun 2023 13:20:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233287AbjFFQYM (ORCPT
+        with ESMTP id S238677AbjFFRT7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 12:24:12 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E39AC1726;
-        Tue,  6 Jun 2023 09:23:36 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 35F3F80AE;
-        Tue,  6 Jun 2023 16:23:36 +0000 (UTC)
-Date:   Tue, 6 Jun 2023 19:23:35 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] serial: core: don't kfree device managed data
-Message-ID: <20230606162335.GN56720@atomide.com>
-References: <ZH7tsTmWY5b/4m+6@moroto>
- <20230606122843.GJ56720@atomide.com>
- <ZH8x3eNGB6DBg96L@smile.fi.intel.com>
+        Tue, 6 Jun 2023 13:19:59 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF7110F2;
+        Tue,  6 Jun 2023 10:19:56 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id 41be03b00d2f7-53404873a19so3337168a12.3;
+        Tue, 06 Jun 2023 10:19:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686071996; x=1688663996;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ERF5+hQlnPez7dXcfFeWn7GA7KiKyMH6r434v62Amsc=;
+        b=delAFlazMbLk1K0XGgek1YtDgjIRUkr/zm2D1LJw1AKmTZUafugOV6VfGhmLtX6UL5
+         u3BbAUCYHh5hiIiaiuU5QLo+NHok0MmNFVp3kKGS62gBL8Xzy0TH29FIOrapGj8NxLqs
+         aol2FQoHZvKxWMCTS1DoQzJrpqmeQxrcQgbe/kog3gftb4wc7EgkPmchI0pOrz/ojKWu
+         sw18/tEEBAzVSm7dPv+RSQF2x4EKP+CtBY9Z5lekTRhufdgdtWGilaB3UefseswLlXNi
+         aQOcSJ6KA2Ey8UxxpBQd4DwMtBsb2nPs5e5wPNNTVo0nQGg4dYCHfQfaOdeti+7gtA/4
+         iRtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686071996; x=1688663996;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ERF5+hQlnPez7dXcfFeWn7GA7KiKyMH6r434v62Amsc=;
+        b=TT61U6cIHKF/3vZ4XbI4IB+1N1ayC9xJrzri6gmsdXb66BbVi08JZvKhviEifIQewg
+         njx7jpzt4h0Ozy2FDRFE3aA0P5rsW/fVjc/v6kE9SKykzLQJwlgFh378q/2KYWh7Ve5w
+         B2VPtzMYGF5bKQlWcg5J2dbECrjI78tbTpZrcotITW2EOyMguhnoXSfJ/8GRCK7p3lBH
+         UhbXClDdLiufpXNgSIzCDnmJQhrzwahYG5wnhz+v8nRiLcGtGBCMNcWBqHdQalW6zGlQ
+         xJNk1XNqDIwJZiXziHy2PvH5xESe/Z7Pm9wcSaDIErXt9Iafr3YPra52yENoBF/yM34P
+         JzbQ==
+X-Gm-Message-State: AC+VfDzLrqu6g7fHj1+8A6+LbccnPNF7YJiEZYMkFwI+i2CgwVYP94FG
+        8MgAqC55KyP/TmHx8HCLCwA=
+X-Google-Smtp-Source: ACHHUZ75D/YMa8uCuXG2GbJw9mMGruQdTLxWzl7/6sRNAWF1SfwoitUo6qpaJiSpvdfie+uZpqV2MA==
+X-Received: by 2002:a05:6a20:a112:b0:114:af27:41dd with SMTP id q18-20020a056a20a11200b00114af2741ddmr261713pzk.34.1686071996197;
+        Tue, 06 Jun 2023 10:19:56 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:f59e:5ad5:28cc:2003])
+        by smtp.gmail.com with ESMTPSA id e12-20020a62aa0c000000b0064fc715b380sm4412084pff.176.2023.06.06.10.19.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jun 2023 10:19:55 -0700 (PDT)
+Date:   Tue, 6 Jun 2023 10:19:52 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] HID: fix an error code in hid_check_device_match()
+Message-ID: <ZH9quFTvZndM7Yd8@google.com>
+References: <ZH7sZv4PEovkMxNP@moroto>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZH8x3eNGB6DBg96L@smile.fi.intel.com>
+In-Reply-To: <ZH7sZv4PEovkMxNP@moroto>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-* Andy Shevchenko <andriy.shevchenko@linux.intel.com> [230606 13:17]:
-> On Tue, Jun 06, 2023 at 03:28:43PM +0300, Tony Lindgren wrote:
-> > * Dan Carpenter <dan.carpenter@linaro.org> [230606 08:26]:
-> > > The put_device() function will call serial_base_ctrl_release() or
-> > > serial_base_port_release() so these kfrees() are a double free bug.
-> > > 
-> > > Fixes: 84a9582fd203 ("serial: core: Start managing serial controllers to enable runtime PM")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > 
-> > Thanks for catching it:
-> > 
-> > Reviewed-by: Tony Lindgren <tony@atomide.com>
+On Tue, Jun 06, 2023 at 11:20:54AM +0300, Dan Carpenter wrote:
+> The hid_check_device_match() returns true if we find a match and false
+> if we don't.  But here it returns -ENODEV which becomes true instead
+> of false.
 > 
-> Be careful, we can now get memory leaks :-)
+> Fixes: 207733f92661 ("HID: split apart hid_device_probe to make logic more apparent")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/hid/hid-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 4b7062dcefec..8992e3c1e769 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -2593,7 +2593,7 @@ static bool hid_check_device_match(struct hid_device *hdev,
+>  {
+>  	*id = hid_match_device(hdev, hdrv);
+>  	if (!*id)
+> -		return -ENODEV;
+> +		return false;
 
-I'll start doing Reviewed-by-my-hazy-understanding :)
+Ugh, I goofed up, thank you for noticing this Dan.
 
-Regards,
+Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Tony
+Thanks.
+
+-- 
+Dmitry
