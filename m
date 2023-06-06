@@ -2,101 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DE0C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 14:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7F1C7EE33
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 14:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238303AbjFFOvd (ORCPT
+        id S238339AbjFFOzh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 10:51:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52370 "EHLO
+        Tue, 6 Jun 2023 10:55:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238405AbjFFOvT (ORCPT
+        with ESMTP id S238455AbjFFOyx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 10:51:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188B8172C;
-        Tue,  6 Jun 2023 07:51:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D5E66348F;
-        Tue,  6 Jun 2023 14:51:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1D2C433EF;
-        Tue,  6 Jun 2023 14:51:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686063074;
-        bh=nfqOrjU8YRBzYZiLUr/vnc22t/tHDv39YnrTW/1MP5A=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=iB9nsuxVxWHVvdY0/JHlwVIYsWD9VFHeair/EbUwpuTkIOxqpf1RIo7cX1G+D9dZ7
-         hmZB456oL67+hgnuiA/CVjQ/xF8gLKCtfm0gxC3pYbP867oNSE4D5Vft8Qs7y6yNu2
-         rHpGt3J+/w/LmNRqS5ysLIYxCu/8wqDOwWBT4owdlCBx263u+KsUzllvENM0Qv1oxv
-         qUhMnqAietjxVR08RvuZ/qYjnVjvAX//1dvQhVBSBhejRKAwXVEuXqTRGhp0WMUMaY
-         DN5sx1oP5C+OUqDMKFnYmdj3ZzLar4VC/2TMZihmmb5l+8pjBjp17gEsCl72/56yTA
-         qobBoutoqIn0A==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 06 Jun 2023 17:51:09 +0300
-Message-Id: <CT5NH4XXIYQF.5XXJE6JA5FZP@suppilovahvero>
-Cc:     "Franziska Naepelt" <franziska.naepelt@googlemail.com>,
-        <keyrings@vger.kernel.org>, <dhowells@redhat.com>,
-        <dwmw2@infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Franziska Naepelt" <franziska.naepelt@gmail.com>,
-        "kernel test robot" <lkp@intel.com>,
-        "Linux SPDX Licenses" <linux-spdx@vger.kernel.org>,
-        "Linux Kernel Janitors" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] certs/extract-cert: Fix checkpatch issues
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Dan Carpenter" <dan.carpenter@linaro.org>,
-        "Bagas Sanjaya" <bagasdotme@gmail.com>
-X-Mailer: aerc 0.15.2-33-gedd4752268b2
-References: <20230601190508.56610-1-franziska.naepelt@gmail.com>
- <20230602085902.59006-1-franziska.naepelt@gmail.com>
- <ZH8mhIrjyBvTF4oZ@debian.me>
- <e39efb7f-5d8f-4433-83b3-8eea8a6c0486@kadam.mountain>
-In-Reply-To: <e39efb7f-5d8f-4433-83b3-8eea8a6c0486@kadam.mountain>
+        Tue, 6 Jun 2023 10:54:53 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B36CE10CA;
+        Tue,  6 Jun 2023 07:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686063287; x=1717599287;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QtaV5Iu8s7V9dQfO9oleupwHmFU2xDZG9go1SNSm9fY=;
+  b=aQyVwwegESQ9pnpxVwOmJEnEv1SZ35ByahSUV1QVRWZeGUwUQpQKsK/O
+   pev0+Cf+gzxTXQAbpHuOGPPvoQqg2CWCQD8+LmxpqHQFZsFD/O7eZn41X
+   VWBuUjKtg8clZq3zCSahwtvXXW4Q2SFl2fDYKbLHQctbxHLrkhPEUf05x
+   ISMZksaNAfjW4TZkolIMBIqpJLRYi08+rVakvNR+j33oRwwt9a2eNa9AJ
+   EZbl89ObZmxdYVOJI7J0Peh5wcw35OYVmtp7JS+udvyFStDQ++Mn9py4/
+   Z4o48KMoOqha9x+zB7Tl/0E8MckzyjAahO7nq/qB9qIyKvyWppMA/QXMc
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="336322201"
+X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
+   d="scan'208";a="336322201"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 07:54:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="712235772"
+X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
+   d="scan'208";a="712235772"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga007.fm.intel.com with ESMTP; 06 Jun 2023 07:54:02 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1q6Y4O-001gKi-2j;
+        Tue, 06 Jun 2023 17:54:00 +0300
+Date:   Tue, 6 Jun 2023 17:54:00 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] serial: core: don't kfree device managed data
+Message-ID: <ZH9IiAUeIf/pi+E1@smile.fi.intel.com>
+References: <ZH7tsTmWY5b/4m+6@moroto>
+ <ZH8xwKuI9WqRUu5H@smile.fi.intel.com>
+ <20230606133749.GK56720@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230606133749.GK56720@atomide.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue Jun 6, 2023 at 4:38 PM EEST, Dan Carpenter wrote:
-> On Tue, Jun 06, 2023 at 07:28:52PM +0700, Bagas Sanjaya wrote:
-> > On Fri, Jun 02, 2023 at 10:59:02AM +0200, Franziska Naepelt wrote:
-> > > The following issues are fixed:
-> > > - WARNING: Missing or malformed SPDX-License-Identifier tag
-> > > - ERROR: trailing statements should be on next line
-> > > - WARNING: braces {} are not necessary for single statement blocks
-> > > - ERROR: space required before the open parenthesis '('
-> > > - ERROR: code indent should use tabs where possible
-> > > - WARNING: please, no spaces at the start of a line
-> > > - WARNING: Missing a blank line after declarations
-> >=20
-> > Again, write the patch description in imperative mood (e.g. "Do foo").
-> >=20
->
-> Why do you care about imperative tense?  Imperative tense doesn't
-> matter.  What matters is that you can understand the issue and how it
-> looks like to the user.  I was working with a group of foreign students
-> and it was painful to see the contortions that they went through to make
-> a commit message imperative.  It's like saying "Bake a cake", "Ok, now
-> bake it while juggling."  The cake ends up worse.  And the commit
-> message end up worse when we force nonsense rules like this.
+On Tue, Jun 06, 2023 at 04:37:49PM +0300, Tony Lindgren wrote:
+> * Andy Shevchenko <andriy.shevchenko@linux.intel.com> [230606 13:16]:
+> > On Tue, Jun 06, 2023 at 11:26:25AM +0300, Dan Carpenter wrote:
+> > > The put_device() function will call serial_base_ctrl_release() or
+> > > serial_base_port_release() so these kfrees() are a double free bug.
 
-How about a simple and stupid reason?
+...
 
-Usually I write commit message without caring about this. Then I rewrite
-the commit message and 9/10 it gets shorter. Based on empirical
-experience, imperative form has minimum amount of extra words.
+> > These labels are also called without device being even added.
+> > So, this is not good enough as far as I can tell.
+> 
+> I guess you mean the possibe error returned from the call to
+> serial_base_device_init()?
+> 
+> If serial_base_device_init() fails, we return error and end up doing
+> the put_device().
+> 
+> We have serial_base_device_init() call device_initialize(), is that
+> not enough for put_device()?
 
-I came up with this convention first when submitting patches to x86, and
-over time it has started to make sense to me.
+It's not. The error is returned when device release callback is not assigned
+yet.
 
-Especially for multi patch sets too verbose language tends to be super
-tiring for non-native English speaker. One should optimize the language
-in those: say *exactly* what is needed, and not more. If this not the
-case, I tend to move these patch sets very last in my queue.
+And also just noticed since we return deferred probe, the message there should
+be ratelimited or given only _once().
 
-It's not a "punishment". It's more like that I really have to take the
-time to read the prose...
+-- 
+With Best Regards,
+Andy Shevchenko
 
-BR, Jarkko
+
