@@ -2,97 +2,108 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 848A4C77B73
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 09:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E51C7EE2F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 09:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232971AbjFFJju (ORCPT
+        id S236597AbjFFJme (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 05:39:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45494 "EHLO
+        Tue, 6 Jun 2023 05:42:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236858AbjFFJjg (ORCPT
+        with ESMTP id S236657AbjFFJmQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 05:39:36 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B404010D4
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 02:39:30 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f736e0c9b1so27572285e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 02:39:30 -0700 (PDT)
+        Tue, 6 Jun 2023 05:42:16 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FBE410D7
+        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 02:41:54 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f736e0c9a8so21261595e9.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 02:41:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686044369; x=1688636369;
+        d=linaro.org; s=google; t=1686044513; x=1688636513;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3pcpf/nfQVH5o9facm5XUNp2bt00pqpfnjAL4iH2IMM=;
-        b=beJ6GCQJb6JI6oKdiz3NKI8YCeSybCSjnTfoMc6HKJ+Vn97C++pEV6NF7CuVSQK3h7
-         H0v/X+EeDg6g5qSw3LBfJEDMPnM4sUJ3zI0DjC0TM5iFqSiVsYtfhMEiT9qj/OlWvoZo
-         fvj0qg+g2gfZ7QaGwlNJ2PURIbTejfYjWqohWjPbyZgyMcb7QdzNf8RCPfD430gj1ge0
-         m7+rjaO1G+fG0HXd4KNAyAbHTuxYhjd4cRPOhVDeau3J+Qve5Dp1Q3ScesCl9hQQkwjF
-         qDDT6AOp0nGQlvttdWB0ODcxYD22wNNWlne6INISoTasGpf9nMznWxXTznN+v2GLhejj
-         ePQg==
+        bh=mw1OtvOTs4pqnPQwqkGs6h9kUAoFI81KHh1ZGaOg3OM=;
+        b=xM8SOEUNXYgI2yKBIXfmL1zvOScv2PHece9Ks5ICvbTDZy8mXmukMW7svRDcCOZV8F
+         EdaG+eQILS3cJZmaLrKpvHCJTbFd4KHRnOThflr9zMXG7dgBoWiaK0bjaP03FkEpEEG7
+         U4CMpVSVhHILfdMiJDx3Kne0HR+SsBF6ClugcJrL8l8nwuxVoDA2aadZm6QZAFD7OnnB
+         UHQJJBmLoRFohJLSPKfWCGlobj6N3XshBfbF0yiKRKgHJjB/BpXjyXyLEe+dyGMuJlBi
+         nSdB/OgiaC3WkxGXtK3WkCIBKpYQ+LaBNyAhgLZoOadCOOiw1SQZC9991M7Xuri4SXTQ
+         4Egg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686044369; x=1688636369;
+        d=1e100.net; s=20221208; t=1686044513; x=1688636513;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3pcpf/nfQVH5o9facm5XUNp2bt00pqpfnjAL4iH2IMM=;
-        b=I8sYyizya+AXqDySibR+9vu8UKER+2iBbjCJvrGmb6X/7w73JPJuO90f84iExBHbRX
-         Fsbqr7A8HN+7Xek7lU7EDI06EpJt86qmqHM5xW43b8CjIrofGYuD/ue2BhUc+hrL+L/o
-         SCdTrJ9ZCKjKAggT/rVfzK69s1KIlvBaVc0MRQyBvefsxAdPfTcXt5kEvIyRt8aMfU1P
-         fNvzxUndLshtYLpat1GchPJCHcUXuUilN5hnGFJuknQ0AEFsGOiI5xL5pTDn8sxU/5q7
-         z3U31WzJybmyIAMHF4IHL/vdFyijdfIxi1iHWJM5xHjjWR+xcMXH89jZRXBwH3qKUWDx
-         D9NA==
-X-Gm-Message-State: AC+VfDyK/Q0uBJpQQit2/ykDIr0MW/gEmQWFwwtnxgfqoJvGNpkX2gWq
-        FyIqgmxbsXSju4/0MMxnMc/Gwg==
-X-Google-Smtp-Source: ACHHUZ41HJ6rW3Fz/mRlF/N2UzQtVkUG53X11gx31hlxm3xq9Lx8k1QIH1/a7kpTIkj1up6tOyzTgw==
-X-Received: by 2002:a05:600c:3783:b0:3f5:fb98:729e with SMTP id o3-20020a05600c378300b003f5fb98729emr1634542wmr.22.1686044369181;
-        Tue, 06 Jun 2023 02:39:29 -0700 (PDT)
+        bh=mw1OtvOTs4pqnPQwqkGs6h9kUAoFI81KHh1ZGaOg3OM=;
+        b=HBtBq2C86XryDzQSHd2j60FDE+IoppFK4oD4fOr9F9i7UaxmOac0DfxDCGRbCILbZ2
+         Oz148Q9fdlbyRhmHk84VFYy63Jk67ZWtbprFuOxxkdnjbMuNoUNgiyy6ksqbdnu/g36z
+         iTSYy19a0yvkTWAxZDzJetW1lzwJk2i/wx2WrVCDmVGpXV6tirn11nVWtNgOpMsGKgaQ
+         t8l9IgC3drDGpbtJ1C8o4v/JZdbbDlH/qCWp7s9qWmOmop6l6MhRhP6fLPZv49qwSbf8
+         eyfoidmcrR1SA4ONuIgQh4yWybZ32iBu/GYaoZW4HhUQCeXFlQ1njcrNJurJU8UvOZYm
+         eiaA==
+X-Gm-Message-State: AC+VfDyqp17Q+jWBFxe4nbChWLZTM3eoX5iP4XGMAU5Xi4lBnGZTiqf4
+        rvIym81vrABRS8NnQrCath9bSA==
+X-Google-Smtp-Source: ACHHUZ79oYF1EX46QtpLLI7AAjVK4DSEivHLKCQuiAKUhGKLWhpCNXspc4d8JmOr1K4nKnwXlfi4eg==
+X-Received: by 2002:a7b:c30c:0:b0:3f7:310a:3ffc with SMTP id k12-20020a7bc30c000000b003f7310a3ffcmr1628911wmj.5.1686044513160;
+        Tue, 06 Jun 2023 02:41:53 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id k14-20020a7bc40e000000b003f605566610sm16972165wmi.13.2023.06.06.02.39.26
+        by smtp.gmail.com with ESMTPSA id g11-20020a7bc4cb000000b003f735ba7736sm8748460wmk.46.2023.06.06.02.41.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 02:39:26 -0700 (PDT)
-Date:   Tue, 6 Jun 2023 12:39:24 +0300
+        Tue, 06 Jun 2023 02:41:51 -0700 (PDT)
+Date:   Tue, 6 Jun 2023 12:41:49 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Michal Simek <michal.simek@amd.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clocksource/drivers/timer-cadence-ttc: fix a signedness
- bug in probe()
-Message-ID: <afedc49d-7a6b-40ea-acee-744d92718f3e@kadam.mountain>
-References: <ZH7rMgjh+z3TUKGu@moroto>
- <0cc62a35-8dcc-01ad-8db1-e9a1ee2f4e4b@amd.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Raviteja Garimella <raviteja.garimella@broadcom.com>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget/snps_udc_plat: Fix a signedness bug in probe
+Message-ID: <2b40b7b9-af84-4165-9115-c006c707bd79@kadam.mountain>
+References: <ZH7sIkbSZg1rAJpJ@moroto>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0cc62a35-8dcc-01ad-8db1-e9a1ee2f4e4b@amd.com>
+In-Reply-To: <ZH7sIkbSZg1rAJpJ@moroto>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 11:26:20AM +0200, Michal Simek wrote:
+On Tue, Jun 06, 2023 at 11:19:46AM +0300, Dan Carpenter wrote:
+> The irq_of_parse_and_map() function returns negative error codes
+> but "udc->irq" is an unsigned int so the error handling doesn't work.
 > 
+> Fixes: 1b9f35adb0ff ("usb: gadget: udc: Add Synopsys UDC Platform driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/usb/gadget/udc/snps_udc_plat.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> On 6/6/23 10:15, Dan Carpenter wrote:
-> > Make the "irq" variable signed so the error handling can work.
-> 
-> urq_of_parse_and_map returns unsigned type.
-> 
+> diff --git a/drivers/usb/gadget/udc/snps_udc_plat.c b/drivers/usb/gadget/udc/snps_udc_plat.c
+> index 0ed685db149d..37edd6c35077 100644
+> --- a/drivers/usb/gadget/udc/snps_udc_plat.c
+> +++ b/drivers/usb/gadget/udc/snps_udc_plat.c
+> @@ -103,7 +103,7 @@ static int udc_plat_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct resource *res;
+>  	struct udc *udc;
+> -	int ret;
+> +	int irq, ret;
+>  
+>  	udc = devm_kzalloc(dev, sizeof(*udc), GFP_KERNEL);
+>  	if (!udc)
+> @@ -132,11 +132,12 @@ static int udc_plat_probe(struct platform_device *pdev)
+>  
+>  	udc->phys_addr = (unsigned long)res->start;
+>  
+> -	udc->irq = irq_of_parse_and_map(dev->of_node, 0);
+> -	if (udc->irq <= 0) {
+> +	irq = irq_of_parse_and_map(dev->of_node, 0);
+> +	if (irq <= 0) {
 
-Ugh...  You're right.  This is one of those return zero on error IRQ
-functions.
-
-> include/linux/of_irq.h:118:extern unsigned int irq_of_parse_and_map(struct
-> device_node *node, int index);
-> 
-> instead of this condition should be fixed to
-> 
->         irq = irq_of_parse_and_map(timer, 1);
->         if (!irq) {
-> 		...
-> 
-
-Sure.  I can resend.
+Oops.  It turns out that irq_of_parse_and_map() returns zero on error,
+not negatives so this patch isn't needed and probably the correct thing
+is to change the error check to if (!irq) { instead.
 
 regards,
 dan carpenter
