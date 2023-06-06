@@ -2,138 +2,190 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 640DCC7EE24
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 17:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C784FC7EE24
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 18:07:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238447AbjFFR7S (ORCPT
+        id S237503AbjFFSH3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 13:59:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53744 "EHLO
+        Tue, 6 Jun 2023 14:07:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238028AbjFFR7P (ORCPT
+        with ESMTP id S233468AbjFFSH2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 13:59:15 -0400
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20D3610F8;
-        Tue,  6 Jun 2023 10:59:14 -0700 (PDT)
-Received: by mail-vs1-xe35.google.com with SMTP id ada2fe7eead31-43c1e5978e4so309766137.1;
-        Tue, 06 Jun 2023 10:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1686074353; x=1688666353;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JYq8kaJ2RB9RXyaMdQYUWfY+ygasp2eONssKUmLHTZI=;
-        b=hqHBn18UMUosvkpX9pz+Y6rsS4UMWZoFG2VwNtxGnnDpZNq/lhwkRTPbMMqik6EZFe
-         5nsTkuXOy9pyW9Zn8xiL1qdjLR0E124veGavMyq3Jy0JqXaie7zbs26oh5UAIMoTc40r
-         MFyOp9rg98QbjuujmiyA3JK7SGX1dlSVQUBdQDR1paObBHdMlLyKdp1mecbikUDvmGml
-         1KE5kEQn0wNEcpZPJWOsM7IN/tTMK+XQs74/DzA1t8D+aUn4lN+JTY7JXlmzDllxT/f/
-         2SJpSZwFtiQ6BSloMPjiHdIvM6qmitvzNwDXl/95QJR6n0THRFzUimQii6+X7xgkKOIw
-         MgSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686074353; x=1688666353;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JYq8kaJ2RB9RXyaMdQYUWfY+ygasp2eONssKUmLHTZI=;
-        b=cFPNqF7cj98LsbPTjy2ftugr8OZoOHaTOZyKBxNSuuye0se3J+NuI1aeCEuCXmtB5p
-         q3ZCEGvdaPrG56lSot1fn0izZwfz39PIJnUOChg6Gz0ilBgIbiHaJ8Dc4dsoLvSEypuI
-         lY1BViJCAEfTnMy7WdT6G+IZyX4U3+7RtxRWPDnl1cRiIKYPRtVypKDEtcpBeWxj8zTM
-         MwqyP6BzpWgrLDKoDhX0mbjy+6wMb22/SKaMVZoUoqIJ0z01dZhNXDiBPOaYehYNc8qb
-         KIUf8JbRCSGUIx1KF08RdcUwyjNXndnPKE9v5f4ogk1qCFBloJP1R/fHzozTFJcBvtrQ
-         sNmQ==
-X-Gm-Message-State: AC+VfDz3budrDEYyrIqQTIgEslbDdP8kxPmymRhQ50LqnynyecNYmumc
-        n9DO66qxreP51GjZa2e/s493tmSZ21c7yHeE+RM=
-X-Google-Smtp-Source: ACHHUZ6XV7FNTI9IXULFRO/fknoKV1VuqA0s1kTybjmUeeu6wHnvSJtwOFAzTmTqjQKnwmaKZ/PiXmmhlYL6PmX1C34=
-X-Received: by 2002:a67:f545:0:b0:43b:15b6:18d0 with SMTP id
- z5-20020a67f545000000b0043b15b618d0mr242299vsn.10.1686074353178; Tue, 06 Jun
- 2023 10:59:13 -0700 (PDT)
+        Tue, 6 Jun 2023 14:07:28 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E79BB1B5
+        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 11:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686074845; x=1717610845;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=YydFIfxX8U0Wt9zzsdJyy8xOzzjfDx1vBr8DXJCPatY=;
+  b=EKOtHlJHD1pUW/8fH5DMzYO+MV7V+nkgVBNZ0kY2gPbGD4tdjPjl27dH
+   U2iiIXJwTYKBF6XpRds9o6ewE1J/KsEcRz3ErRl/PS4cjcUcRbt/ycmc0
+   k65K8O0K36dnqe+TAP2q7QbWmgfvhDSjDOc0V9T56dpgqT9wLr7GNdIkj
+   TJN+MTG5XQVjcgZoEMIn0FaHME1Qz30pt6TA4Yg3BvKUpeku2kccdBsd/
+   gyRLj+4RXQOxZVc/pwnJUcCCXTftIvie7CqmCC4SZKlE8MG7X3CCMlNUk
+   oTRYRTtXVBycndwhwR5y8jy4ztHK4/MUrMWGBfNkZtPEpDYzvXeW0mSU9
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="337121330"
+X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
+   d="scan'208";a="337121330"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 11:07:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="955880007"
+X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
+   d="scan'208";a="955880007"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Jun 2023 11:07:23 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Tue, 6 Jun 2023 11:07:22 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23 via Frontend Transport; Tue, 6 Jun 2023 11:07:22 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.43) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.23; Tue, 6 Jun 2023 11:07:22 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jPwCZLW95ARjDVbM5al9eVywFAIujh9t+qWVuoIB8GpfNWkyERJprW1SbBLo7Og0WiNm7qz0PSNcXtzZ31m+zn5X+hfvIooppy8fb73vm+6RkVcKCXLWUubJT5Uz3dXHRdqWe3+Wius7eDtlfRrJCK0KJu5kbbTswq8ukpasf0mNmdzbTAotCNkcDw1e1xei0CTuzUyYlReJ+zKobAQSflU4HTPAfH3/ooOir47t5FzaM/30s0xiv1Zia/gSEVHKpNjN77RE9clx6mLBtT/4coC7qBkaVMpqGHpBOh06BhTnOlMGEniSI2xFwx5ga12hcZwI3UlMqP9GGjM4U1TMvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YydFIfxX8U0Wt9zzsdJyy8xOzzjfDx1vBr8DXJCPatY=;
+ b=bGWbXtSeoU5pSkRX0O2KI8/BolJyTs508Ufc2TpCxuTpXdeCJfDhzT2eOfSA+EvVJONu9+xDAceIDONRJaodZcf+QfLyUj/BGOMqZydodVupUdtUWRVDhKWAGkyd6czfiIF3dUAiYulU40PfwLC48ZU3Wl6m6t4SoBQ7/vmFmw/X2eAjf0IuxCkh8Am0nT5pJ/Vdeb3EtL4lQT+jqTlSi361wG775SiACflCgD2g02RfoYMWKbBMi2HYrozrXzspyw4VF3J6ZOFMpMTJroyihaSTpnRUlavBJL+4Prcrhyq9mpJzyvFLB7qlzaTEIJ6uu9ZYQqpa5/UnN5Oil3NIRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM8PR11MB5751.namprd11.prod.outlook.com (2603:10b6:8:12::16) by
+ PH7PR11MB6030.namprd11.prod.outlook.com (2603:10b6:510:1d1::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.32; Tue, 6 Jun
+ 2023 18:07:20 +0000
+Received: from DM8PR11MB5751.namprd11.prod.outlook.com
+ ([fe80::749a:b0c8:4930:5a2]) by DM8PR11MB5751.namprd11.prod.outlook.com
+ ([fe80::749a:b0c8:4930:5a2%6]) with mapi id 15.20.6477.016; Tue, 6 Jun 2023
+ 18:07:20 +0000
+From:   "Teres Alexis, Alan Previn" <alan.previn.teres.alexis@intel.com>
+To:     "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>
+CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+        "Sripada, Radhakrishna" <radhakrishna.sripada@intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "Shankar, Uma" <uma.shankar@intel.com>,
+        "airlied@gmail.com" <airlied@gmail.com>,
+        "tvrtko.ursulin@linux.intel.com" <tvrtko.ursulin@linux.intel.com>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "Ceraolo Spurio, Daniele" <daniele.ceraolospurio@intel.com>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "Kandpal, Suraj" <suraj.kandpal@intel.com>
+Subject: Re: [PATCH] drm/i915/gsc: Fix error code in
+ intel_gsc_uc_heci_cmd_submit_nonpriv()
+Thread-Topic: [PATCH] drm/i915/gsc: Fix error code in
+ intel_gsc_uc_heci_cmd_submit_nonpriv()
+Thread-Index: AQHZmFAJBhtJ4PFcek6IoppIV21Ue69+EtYA
+Date:   Tue, 6 Jun 2023 18:07:19 +0000
+Message-ID: <15829bd2d58a7439d416e2e36c5c4a17281b9fc2.camel@intel.com>
+References: <ZH7sr+Vs4zOQoouU@moroto>
+In-Reply-To: <ZH7sr+Vs4zOQoouU@moroto>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.46.1-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM8PR11MB5751:EE_|PH7PR11MB6030:EE_
+x-ms-office365-filtering-correlation-id: 4a7ddf21-163e-4430-5e13-08db66b8debb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Os6P6M6ZvWIsCASv823rlWpWjuqJDVeMQB0FuMAR61nFHoy3SSBQaOr5GULXc9QjGuT65xVyYewoFdxDCv7EAgeWVKGvQAtyiaFrl7owRB7pP/4sQiL4rMp00IjbufoLdRkw6DE+1Oosesmo6pEdfennZN2Eh6CLIxs9XRnsef/YiY4BlPaQBDqrL4CO6J8FTZZuRXKz0IghgJW6oqzhv2qbfK6W8SHdTnuLoIaK7zYIKJPcixcd5wu4RAlqGdXes/V5DTv/bGybQPLZbYnwsC/RyXDkOIm7t46iORGP1ZzKORf7Wm3lMoQzFRJmK0klFDz3q2120UYotPWYKHsF3UREJSxemoNRjhcNlR6JunjBBV0g4tuhblVrMKczky+vHOQi5DAN+0hZegrdBP3B9P82vtJCJJdV7ozHa133q+I9po+o7raLvPeVJnWCDvxLudx7WYhTRUUEUd2qGala6cTDoIJjHxmsyVdON6CSj7NplyjECQNwjCxy2Ff14nIzADIR/f5QK3Fkv2QlxcS36yF1xMUH/GyzoeIQ7XSfpCQqMtFbajiYtLjlJ+sY0+SmmHGMtP6yNcduffl2AGkvzOOYgANWq4ukfgJWRPkbFDk=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5751.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(396003)(346002)(366004)(376002)(39860400002)(451199021)(6506007)(6512007)(26005)(36756003)(83380400001)(122000001)(38070700005)(86362001)(38100700002)(82960400001)(186003)(2616005)(54906003)(41300700001)(2906002)(66446008)(478600001)(91956017)(66946007)(76116006)(66476007)(6916009)(4326008)(8936002)(64756008)(8676002)(316002)(5660300002)(71200400001)(6486002)(66556008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?czljdVQrMXFUMGFXcFFuYi83aW9wNDJXM3VLODRPZVBzZWxDdm1uRGw1cW5Y?=
+ =?utf-8?B?WXZ6bjFuQUpnWXhBdDBwbFVhbS85dkljQ1dmRCt1VGRTTnhjUWQrQ2c4S01n?=
+ =?utf-8?B?czNsWUZBMmhoOGVnUUsxWDFGSnVmVmVGQkdlY2w3bEdUa05ITXorQ253dFFL?=
+ =?utf-8?B?cU1kNkV2RDlmZnhQbHkxeXJrdXBkNEhaTXc0NjVYbmNXVmVlUWo5RTd4MW5L?=
+ =?utf-8?B?R3JSUjU3TG1OQzhWTTFQeU5FVGUxcUhTaWpyaE5Mc2M4NVExVlp4c1hVaGwz?=
+ =?utf-8?B?cnF5SnN4NzBpZU5NSFJHQ3ptVzZRNnR4cFBET1VjNFB6ejByV1Y0UE1zWm9h?=
+ =?utf-8?B?cktBaHQ1ZFZtZ21MeXJQTk8wOG42eDdqL2RlNE5TTUE2OExuWjl4ekt0Rity?=
+ =?utf-8?B?SFNWdW1La1Z1dU0xb2Y2ZEI5TjdJUEtueUphVWJPZE5ZYUJXbU1nZjJ0Ull5?=
+ =?utf-8?B?VloreXhkdGpIN3ZPMFNzTThsOXArL0hxZ0RNRGYrUCtwSzRZZnhtK084c3Fq?=
+ =?utf-8?B?VXNGaE1ZanpsWGQzRVFpVktZOW12NzlGQmU3OWhvYTIxUHNhSVRkVTlYYUVk?=
+ =?utf-8?B?Y2krR2tIcE5rQWk5ZkRMRzRxWkJNalZ4SnRCT0VJSzZiZlhXTVVHSjdaUTNU?=
+ =?utf-8?B?dUY1SjNmVmxlclpOYW5WUnFSVGVzM3BJYWdETjBTZ2tQUS9GRmJlSkhMUzhu?=
+ =?utf-8?B?UlI4TmtLMDUwTy9pdThrckkxSWNPOXVKd280bHFnK0tnb0hzY2ZEeHlwMzhL?=
+ =?utf-8?B?OEQvYysxdSs3T2cyYm1OK2t5ZUtYdGFzODBZWTRnbzBrRGhKUVN0eUNKSjNO?=
+ =?utf-8?B?L3UvYW1UTjkxSzhsUzBCaDRiby9VaUZEY3R2c0Jyc214MGdLNWwwV3FxREdF?=
+ =?utf-8?B?MENJL2lBYmcralZONUh2NU5qR1NRamhqZzg4N0lTQTYrL1Q4UmF1VlV0ZVFV?=
+ =?utf-8?B?WU50U2d3dUFZYWRaZW40dWEzdVhibkZGUzlMT1pFSDY4YmYyY2ZQd3JTRGQ1?=
+ =?utf-8?B?RHRBM2RWWlJkQURJeTNBb3M3R3l4OXdvWmVOSmFXYlFyMzFqb1V6OGF1bTUy?=
+ =?utf-8?B?WVVoeVlEWFlDYTRYeGI0NWFEMVFkaW4rVkV2QSt1SXg2L0hhZWF5WlhTRHpU?=
+ =?utf-8?B?T2s1Nmc5Qk0zN0xlVWlsNmwrQ0ZYQldRNStISXUzN2JqZkYwZ1MrMWFGT0ls?=
+ =?utf-8?B?SUlCM0EyTjdQTEpKYnMvTFg4K0FrYlcxZmdYbHVXZGpnUVZqdHNMTkxFZ2Vi?=
+ =?utf-8?B?c3NNeUdSQUdsbUUwb0Uwb1VHeFhqTFhaL1Q4cWxrSFFBTm9nWWpXaTFWSzJS?=
+ =?utf-8?B?ZFN0bHRtdVl4TGIwQ0lqZ3NBTGNjZW11MHF1NWYrQWlJeDZWVCtmZDFKdCtO?=
+ =?utf-8?B?VkJSNFZHcWdzWDJob2NyNzQxejF1VXVDOTRyODllS09pcE9Fb2ExZnNNWW5x?=
+ =?utf-8?B?VzN5YXNpZm4yQmYwaUpNSGdhVlBrYUp3a3Z2dDYwYXRNNFRRKzZkaDF6SEhN?=
+ =?utf-8?B?MGZ3N0EwWTIyemg0T1JPTHhYZGlXY1hZMElkc3RnZElIZVhRTFRtWEFzMWlo?=
+ =?utf-8?B?dWVLYlRtTFczU01KUDkrTnJhV3A2TTcyMmVoRG1hbG1LZjNrQ3pmRWpqbkgy?=
+ =?utf-8?B?UGVzOVlkMDhqZHU4M3ZsNnppZXZKUjRGcGttWDVLZ3g4QWVwMGR1V3QzQmRT?=
+ =?utf-8?B?ZWN3Y2ozd214UUNlbHFoTkZ4eWdRUVk0UGp6TjFPNm01Z3VaU0xCMi9HMjhK?=
+ =?utf-8?B?VkRTUW9KSmN3KzVrYzBpNTNPeWd4S2xwUmNqV2d6UWMwZTVJUUpnV0tRZlBU?=
+ =?utf-8?B?YXVLMFNnTFJ0eVhXQzdLMzBySkp6L1dmL0ErZ0lRSjMrV1BGNVZhTzBaVTF0?=
+ =?utf-8?B?aG9URWgzb1YreGZKYzZMWnEyeHIya0JSc2lBOXp2OS9JUG5vODlSTnZ5OFEr?=
+ =?utf-8?B?anNadlNpVGs1THkwR0tNSldVMFQ1TENiQVN0VzF2RjZSUk9QMEJheGpINzNw?=
+ =?utf-8?B?d3ludy81ViszYWJQSmdGa0pINTd1NmVibXl1Z1V4R3RDUGF6SmhydnJWSmx1?=
+ =?utf-8?B?b0x4aE52Ty80dGRBaGNRdEhDdTZyalNOT1FqNWZGNWNYSCs0MTRneDVUNHVn?=
+ =?utf-8?B?Z3dEVnFISk9lWm5tdGtIa1M1VWppMFBqK1I5ZUhLZDBTREwyRWE1OE04NDZK?=
+ =?utf-8?Q?DeEWa8Hg5tlPoU8OsJmRzdo=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A7FA5AB683A8564088DCDD24BA697BE2@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20230601190508.56610-1-franziska.naepelt@gmail.com>
- <20230602085902.59006-1-franziska.naepelt@gmail.com> <ZH8mhIrjyBvTF4oZ@debian.me>
- <e39efb7f-5d8f-4433-83b3-8eea8a6c0486@kadam.mountain> <CT5NH4XXIYQF.5XXJE6JA5FZP@suppilovahvero>
- <e44d03cf-9993-483c-b3d4-6185f5c028cc@kadam.mountain> <CT5P0JH7NOTO.3P08AWR6O128R@suppilovahvero>
-In-Reply-To: <CT5P0JH7NOTO.3P08AWR6O128R@suppilovahvero>
-From:   =?UTF-8?Q?Franziska_N=C3=A4pelt?= 
-        <franziska.naepelt@googlemail.com>
-Date:   Tue, 6 Jun 2023 19:59:02 +0200
-Message-ID: <CAAUT3iPVFZEQE+bFk4HhWbaAtnsbQLYrzggeD2Va4mC0Q09SNQ@mail.gmail.com>
-Subject: Re: [PATCH v2] certs/extract-cert: Fix checkpatch issues
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Bagas Sanjaya <bagasdotme@gmail.com>, keyrings@vger.kernel.org,
-        dhowells@redhat.com, dwmw2@infradead.org,
-        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Linux SPDX Licenses <linux-spdx@vger.kernel.org>,
-        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5751.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a7ddf21-163e-4430-5e13-08db66b8debb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2023 18:07:19.9681
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GX6E50jzAopWvO+72nYF+b31ZlvQqDKcTDjZFJpeqKU3+sq4k/FzCf97jpaYfcUgUCK1rjUZIrJpjpmr/MK1arcl4GRABbdWe87szYm04SePuSvFw3HudCi9hlKZ+uRk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6030
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am Di., 6. Juni 2023 um 18:03 Uhr schrieb Jarkko Sakkinen <jarkko@kernel.org>:
-> On Tue Jun 6, 2023 at 6:25 PM EEST, Dan Carpenter wrote:
-> > On Tue, Jun 06, 2023 at 05:51:09PM +0300, Jarkko Sakkinen wrote:
-> > > On Tue Jun 6, 2023 at 4:38 PM EEST, Dan Carpenter wrote:
-> > > > On Tue, Jun 06, 2023 at 07:28:52PM +0700, Bagas Sanjaya wrote:
-> > > > > On Fri, Jun 02, 2023 at 10:59:02AM +0200, Franziska Naepelt wrote:
-> > > > > > The following issues are fixed:
-> > > > > > - WARNING: Missing or malformed SPDX-License-Identifier tag
-> > > > > > - ERROR: trailing statements should be on next line
-> > > > > > - WARNING: braces {} are not necessary for single statement blocks
-> > > > > > - ERROR: space required before the open parenthesis '('
-> > > > > > - ERROR: code indent should use tabs where possible
-> > > > > > - WARNING: please, no spaces at the start of a line
-> > > > > > - WARNING: Missing a blank line after declarations
-> > > > >
-> > > > > Again, write the patch description in imperative mood (e.g. "Do foo").
-> > > > >
-> > > >
-> > > > Why do you care about imperative tense?  Imperative tense doesn't
-> > > > matter.  What matters is that you can understand the issue and how it
-> > > > looks like to the user.  I was working with a group of foreign students
-> > > > and it was painful to see the contortions that they went through to make
-> > > > a commit message imperative.  It's like saying "Bake a cake", "Ok, now
-> > > > bake it while juggling."  The cake ends up worse.  And the commit
-> > > > message end up worse when we force nonsense rules like this.
-> > >
-> > > How about a simple and stupid reason?
-> > >
-> > > Usually I write commit message without caring about this. Then I rewrite
-> > > the commit message and 9/10 it gets shorter. Based on empirical
-> > > experience, imperative form has minimum amount of extra words.
-> > >
-> >
-> > I'm looking through the git log to see if it's true the imperative tense
-> > commit message are shorter and better and neither one of those things is
-> > obvious to me.
-> >
-> > This patch had an imperative subject already so it was already kind of
-> > imperative.  Does every sentence have to be imperative or can you just
-> > add a "Fix it." to the end?
-> >
-> > I don't want to belittle the challenges you face around the English
-> > language but I think students were less fluent than you are.  So maybe
-> > imperative tense works for you but it definitely made their commit
-> > messages far worse.
->
-> Yeah, I was not trying to oppose, just reasoning why I like it more.
->
-> For a single patch, this does not really matter anyway :-)
->
-> BR, Jarkko
-
-I'm a bit puzzled now since there are different opinions on my patch.
-I'm struggling to draw a conclusion whether to split the patch into smaller
-single line patches or not.
-
-I'd propose to split it into two patches:
-* One for SPDX license tag fix
-* One for spacing, tab, blank line, unnecessary braces etc.
-And fix the remarks related to SPDX license tag and the use of imperative.
-
-If you agree I'm happy to provide two new patches.
-
-Anyway, as per Dan's proposal I'll continue to work in drivers/staging.
-
-Thanks,
-Franziska
+VGhhdCB3YXMgbXkgYmFkLCBpIGNvdWxkIGhhdmUgc3dvcmQgaSdkIGZpeGVkIHRoYXQgYmVmb3Jl
+IHRoZSBmaW5hbCByZXYuIFRoYW5rcyBmb3IgZml4aW5nIHRoaXMuDQpuaXQ6IGJlbG93IGZ1bmN0
+aW9uIGFwcGxpZXMgdG8gTVRMIG9ubHkgd2hpY2ggYXQgdGhlIG1vbWVudCBpcyBzdGlsbCBmb3Jj
+ZS1wcm9iZWQsIHNvIG5vdCBzdXJlIGlmIHRoZSBmaXhlcyB0YWcgaXMgc2lnbmlmaWNhbnQuDQoN
+ClJldmlld2VkLWJ5OiBBbGFuIFByZXZpbiA8YWxhbi5wcmV2aW4udGVyZXMuYWxleGlzQGludGVs
+LmNvbT4NCg0KT24gVHVlLCAyMDIzLTA2LTA2IGF0IDExOjIyICswMzAwLCBEYW4gQ2FycGVudGVy
+IHdyb3RlOg0KPiBUaGlzIHNob3VsZCByZXR1cm4gbmVnYXRpdmUgLUVBR0FJTiBpbnN0ZWFkIG9m
+IHBvc2l0aXZlIEVBR0FJTi4NCj4gDQo+IEZpeGVzOiBlNWUxZTZkMjhlYmMgKCJkcm0vaTkxNS9w
+eHA6IEFkZCBNVEwgaGVscGVycyB0byBzdWJtaXQgSGVjaS1DbWQtUGFja2V0IHRvIEdTQyIpDQo+
+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAbGluYXJvLm9yZz4N
+Cj4gLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9ndC91Yy9pbnRlbF9nc2NfdWNfaGVjaV9j
+bWRfc3VibWl0LmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
+ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9ndC91
+Yy9pbnRlbF9nc2NfdWNfaGVjaV9jbWRfc3VibWl0LmMgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9n
+dC91Yy9pbnRlbF9nc2NfdWNfaGVjaV9jbWRfc3VibWl0LmMNCj4gaW5kZXggNTc5YzBmNWExNDM4
+Li40MjIxOGFlNmVmMTMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2d0L3Vj
+L2ludGVsX2dzY191Y19oZWNpX2NtZF9zdWJtaXQuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
+aTkxNS9ndC91Yy9pbnRlbF9nc2NfdWNfaGVjaV9jbWRfc3VibWl0LmMNCj4gQEAgLTIwMiw3ICsy
+MDIsNyBAQCBpbnRlbF9nc2NfdWNfaGVjaV9jbWRfc3VibWl0X25vbnByaXYoc3RydWN0IGludGVs
+X2dzY191YyAqZ3NjLA0KPiAgCQkJaWYgKCsrdHJpYWxzIDwgMTApDQo+ICAJCQkJZ290byByZXRy
+eTsNCj4gIAkJCWVsc2UNCj4gLQkJCQllcnIgPSBFQUdBSU47DQo+ICsJCQkJZXJyID0gLUVBR0FJ
+TjsNCg0K
