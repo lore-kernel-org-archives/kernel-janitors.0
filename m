@@ -2,101 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB8BC7EE2A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 08:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD15C7EE2C
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 08:50:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236758AbjFFIeb (ORCPT
+        id S237269AbjFFIu4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 04:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60412 "EHLO
+        Tue, 6 Jun 2023 04:50:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231715AbjFFIe3 (ORCPT
+        with ESMTP id S231977AbjFFIuz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 04:34:29 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E1BB10EC
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 01:34:13 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-30e3caa6aa7so2912405f8f.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 01:34:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686040451; x=1688632451;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2izjzTKrsvyjgmHREHIuV3DhydL97IdDiRxRMnOeXt8=;
-        b=OErqnzweEJnhsaaPFaP7VZfLkSbPfX5qAZa28ojnzyelYj5YhqnntN6oV1OS9dkSaN
-         G0ei+K2YXyGAGBrgE9XvDk+RPWt/BgtmQtOyyswysU7r/Q9EEFswS5CrABv/6nobBw9g
-         yDqfNxCkaNFY/LaJp9W00iklyVLBn2l3MZyJLQCKONlBxICL8oqJ6P6cevqL0n564ZJj
-         Tqi0d/FVYsPMXgJs+84uh4raeWnTP251t5LRhfviIOKkZna8VpZK7QqCdIwV97v9qXsJ
-         2Po1FKgZaF0rKNixgfymwyvLILi/1/VepJMHiV7kBAFe1oqwLyTyrJClXOoRcZiqDz1u
-         kw6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686040451; x=1688632451;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2izjzTKrsvyjgmHREHIuV3DhydL97IdDiRxRMnOeXt8=;
-        b=XDp0knBfn5AUzGLOUn+jarh+ruVxD6/P9xLpHMWrzzLo2hbhQSA8/QpRBDxhFCzYF8
-         V8bKWBmEulTiJymv8F1lEY0gk1zTX8LqVOi6hIMZiEwAP3O8iU6WgfreWYOFH5Zzb9zr
-         GzRHxhvFHcbhDZi0Gmc0K+U0xnxNBuOd/Z//j6WYDZjqtSZHSlsT4Q9TO/oIX4Q/O9jX
-         2EVs+zcGv7QrBKjrxQT9SR3i8mFAlke56aMxZTfUg/IeQft7XH4wExXgDXuufPTzKkRs
-         fYUZO/W//gQMJBbeiooPUyrC5Gw1Wn0vbc3Gxsu+CHTgTYWfQ7lhJthsdOJCa10JzN8h
-         iYwQ==
-X-Gm-Message-State: AC+VfDzeYAV0wfX1wjaSbYcluORGEqyZprm0xCImOw4IVyLW0icnUy39
-        3ih8LLfWZ0LKp9mvgqdw0Vkvlw==
-X-Google-Smtp-Source: ACHHUZ6SaR69anAz6NDuX/nLXmGxPow6vG6jR9hOpA0mGvflQ36v0mirre/H1zIBhvPfirSph2+hMA==
-X-Received: by 2002:adf:df91:0:b0:309:51ec:b6e2 with SMTP id z17-20020adfdf91000000b0030951ecb6e2mr1281097wrl.21.1686040450791;
-        Tue, 06 Jun 2023 01:34:10 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s2-20020a5d5102000000b0030ab5ebefa8sm11910258wrt.46.2023.06.06.01.34.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 01:34:09 -0700 (PDT)
-Date:   Tue, 6 Jun 2023 11:34:05 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Jonathan Kim <jonathan.kim@amd.com>
-Cc:     Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        Tue, 6 Jun 2023 04:50:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB4E1E40
+        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 01:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686041409;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cEKrV5Ld6c5X6gTrzyzGWaWRap8Na3txP7EpTR/xTbE=;
+        b=VzSRJxBcr7YJFkNF5+BSeK6cipiHiLZMEdLPiNEKs7qrnqc7SIFZeAh8cR8VYMBmxxpMVl
+        LmEofGe3bZ0kAPpl3hMheD3W/or6vbHWf+8Frx97UAJT1a/4f2CopRSVlNYLTToemmaFpX
+        Vwt163+BB+WYyukkd253VnyiL4NQEyw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-329-JW1Iv0tNOeOOp8encjhKkg-1; Tue, 06 Jun 2023 04:50:06 -0400
+X-MC-Unique: JW1Iv0tNOeOOp8encjhKkg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7819D185A7A5;
+        Tue,  6 Jun 2023 08:50:05 +0000 (UTC)
+Received: from mail.corp.redhat.com (unknown [10.45.224.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 12A0D40CFD16;
+        Tue,  6 Jun 2023 08:50:03 +0000 (UTC)
+Date:   Tue, 6 Jun 2023 10:50:01 +0200
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amdkfd: potential error pointer dereference in ioctl
-Message-ID: <ZH7vfZnpMMsGKEOq@moroto>
+Subject: Re: [PATCH] HID: fix an error code in hid_check_device_match()
+Message-ID: <5l3iorkq32xvn6cf4zgropma4j2peant2vwqbmpwmu3g3n2d2t@f5el5yhz7uwg>
+References: <ZH7sZv4PEovkMxNP@moroto>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ZH7sZv4PEovkMxNP@moroto>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "target" either comes from kfd_create_process() which returns error
-pointers on error or kfd_lookup_process_by_pid() which returns NULL on
-error.  So we need to check for both types of errors.
 
-Fixes: a42e42c4e3b1 ("drm/amdkfd: prepare per-process debug enable and disable")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-I'm not sure how to compile this code or why I'm seeing this warning
-again after two years...  Very strange.
+On Jun 06 2023, Dan Carpenter wrote:
+> 
+> The hid_check_device_match() returns true if we find a match and false
+> if we don't.  But here it returns -ENODEV which becomes true instead
+> of false.
+> 
+> Fixes: 207733f92661 ("HID: split apart hid_device_probe to make logic more apparent")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/hid/hid-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 4b7062dcefec..8992e3c1e769 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -2593,7 +2593,7 @@ static bool hid_check_device_match(struct hid_device *hdev,
+>  {
+>  	*id = hid_match_device(hdev, hdrv);
+>  	if (!*id)
+> -		return -ENODEV;
+> +		return false;
 
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for spotting this!
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-index fc385000c007..6a27b000a246 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-@@ -2920,9 +2920,9 @@ static int kfd_ioctl_set_debug_trap(struct file *filep, struct kfd_process *p, v
- 		target = kfd_lookup_process_by_pid(pid);
- 	}
- 
--	if (!target) {
-+	if (IS_ERR_OR_NULL(target)) {
- 		pr_debug("Cannot find process PID %i to debug\n", args->pid);
--		r = -ESRCH;
-+		r = target ? PTR_ERR(target) : -ESRCH;
- 		goto out;
- 	}
- 
--- 
-2.39.2
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+
+Cheers,
+Benjamin
+
+>  
+>  	if (hdrv->match)
+>  		return hdrv->match(hdev, hid_ignore_special_drivers);
+> -- 
+> 2.30.2
+> 
 
