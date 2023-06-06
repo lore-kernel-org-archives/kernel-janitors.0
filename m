@@ -2,120 +2,101 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4A2C7EE29
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 14:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DE0C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 14:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238418AbjFFOmd (ORCPT
+        id S238303AbjFFOvd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 10:42:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42356 "EHLO
+        Tue, 6 Jun 2023 10:51:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238340AbjFFOmT (ORCPT
+        with ESMTP id S238405AbjFFOvT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 10:42:19 -0400
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4756E1FE0;
-        Tue,  6 Jun 2023 07:40:16 -0700 (PDT)
-Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-6260e8a1424so43329276d6.2;
-        Tue, 06 Jun 2023 07:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686062379; x=1688654379;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lvZ4XsTsTufzOmDccsqLlYK7JaxQyIdNHpPkr+8WCVU=;
-        b=dbsKKzlSqCxKNp0/8WqjVhH0METcILEAuzsthzhm/cPsREUocAj7XviIGDyr3X0a/R
-         3mwLkv0bs09MK66ezSojrCwgtaGqClR/TWa4ba8m+VdPuaJsG4a48TreBWjRqKRDb78g
-         dWWAHowWoODwiV983zWmKsrqLxWsKOwS3PEr831YQX00EhiHGYdz7Q7BjLJ9D6g0tSX8
-         smWJGLG09JprEpKEN1AE0oAmIk2XO2t8DLOSyNDb9jVvZrqbbnecERzh6rMDawRxJ5jf
-         047Hn+K5ixMP8ou6gMxuBqiODDshPfYOqfM7WUSJ0G/tODZIZA5Ry8w4ijazb/U1eS9H
-         cI6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686062379; x=1688654379;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lvZ4XsTsTufzOmDccsqLlYK7JaxQyIdNHpPkr+8WCVU=;
-        b=ZTv5emT4vZ7u0hrUdNQRtNjj+su37t7WXcTK/h5X7YApJIlui86pz8KwB1TpGNmh5N
-         MnDfUTTLmAhT4y+cwCIgIUjaa1DUtmbgassPVRjcA87nJXl2N1mo6HpCrdQSO1b7ZwQk
-         UVTU99DJbM1r0u4SuKo2CBivtOir7jX5rRgfxp4Q9SUjbMB5R4wQ/pkuAljC5Nk2fdrp
-         vBqwrGvohX2phDrgt1mSZXWu5qFbWZLBuMF91LhiWX6faZP3zfx+r/0hamSL/YQNdluG
-         8KwwuCL4gCN5QSHpOH28S1A10F04KgPb6KY80EYYs9K9QQZd33aToN+1y1UEwwsy3aFo
-         7Q5Q==
-X-Gm-Message-State: AC+VfDwzJPWdBSjm+RwBeHkjVYXRm+fztyjC38pPyaWzXSoCTSE4G0A2
-        XJn8ZPBR/C/hRnAOqPxe7d6wgbmO3iw3caNgHBU=
-X-Google-Smtp-Source: ACHHUZ7oc/MKr57w4wxuuavVhcIsODwhsyxixYvZ2V/E5O5qvmNSSbMjRVQoesIRP/0hf+v6UteQHJdPwgPVkoddCsc=
-X-Received: by 2002:a05:6214:401:b0:626:2870:7dee with SMTP id
- z1-20020a056214040100b0062628707deemr2664588qvx.42.1686062378686; Tue, 06 Jun
- 2023 07:39:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <1685277277-12209-1-git-send-email-wellslutw@gmail.com> <9ace5c4c-5e17-4207-5a02-6a47ba0aee22@web.de>
-In-Reply-To: <9ace5c4c-5e17-4207-5a02-6a47ba0aee22@web.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 6 Jun 2023 17:39:02 +0300
-Message-ID: <CAHp75VeMKtHfVVtH+xGSYrt+SSVgVkhCs29jVqfnnoihvhSj4w@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sunplus: Delete an unnecessary check before
- kfree() in sppctl_dt_node_to_map()
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dvorkin Dmitry <dvorkin@tibbo.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wells Lu <wellslutw@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
-        Wells Lu <wells.lu@sunplus.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 6 Jun 2023 10:51:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188B8172C;
+        Tue,  6 Jun 2023 07:51:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D5E66348F;
+        Tue,  6 Jun 2023 14:51:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1D2C433EF;
+        Tue,  6 Jun 2023 14:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686063074;
+        bh=nfqOrjU8YRBzYZiLUr/vnc22t/tHDv39YnrTW/1MP5A=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=iB9nsuxVxWHVvdY0/JHlwVIYsWD9VFHeair/EbUwpuTkIOxqpf1RIo7cX1G+D9dZ7
+         hmZB456oL67+hgnuiA/CVjQ/xF8gLKCtfm0gxC3pYbP867oNSE4D5Vft8Qs7y6yNu2
+         rHpGt3J+/w/LmNRqS5ysLIYxCu/8wqDOwWBT4owdlCBx263u+KsUzllvENM0Qv1oxv
+         qUhMnqAietjxVR08RvuZ/qYjnVjvAX//1dvQhVBSBhejRKAwXVEuXqTRGhp0WMUMaY
+         DN5sx1oP5C+OUqDMKFnYmdj3ZzLar4VC/2TMZihmmb5l+8pjBjp17gEsCl72/56yTA
+         qobBoutoqIn0A==
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 06 Jun 2023 17:51:09 +0300
+Message-Id: <CT5NH4XXIYQF.5XXJE6JA5FZP@suppilovahvero>
+Cc:     "Franziska Naepelt" <franziska.naepelt@googlemail.com>,
+        <keyrings@vger.kernel.org>, <dhowells@redhat.com>,
+        <dwmw2@infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Franziska Naepelt" <franziska.naepelt@gmail.com>,
+        "kernel test robot" <lkp@intel.com>,
+        "Linux SPDX Licenses" <linux-spdx@vger.kernel.org>,
+        "Linux Kernel Janitors" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] certs/extract-cert: Fix checkpatch issues
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Dan Carpenter" <dan.carpenter@linaro.org>,
+        "Bagas Sanjaya" <bagasdotme@gmail.com>
+X-Mailer: aerc 0.15.2-33-gedd4752268b2
+References: <20230601190508.56610-1-franziska.naepelt@gmail.com>
+ <20230602085902.59006-1-franziska.naepelt@gmail.com>
+ <ZH8mhIrjyBvTF4oZ@debian.me>
+ <e39efb7f-5d8f-4433-83b3-8eea8a6c0486@kadam.mountain>
+In-Reply-To: <e39efb7f-5d8f-4433-83b3-8eea8a6c0486@kadam.mountain>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 6, 2023 at 4:26=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
+On Tue Jun 6, 2023 at 4:38 PM EEST, Dan Carpenter wrote:
+> On Tue, Jun 06, 2023 at 07:28:52PM +0700, Bagas Sanjaya wrote:
+> > On Fri, Jun 02, 2023 at 10:59:02AM +0200, Franziska Naepelt wrote:
+> > > The following issues are fixed:
+> > > - WARNING: Missing or malformed SPDX-License-Identifier tag
+> > > - ERROR: trailing statements should be on next line
+> > > - WARNING: braces {} are not necessary for single statement blocks
+> > > - ERROR: space required before the open parenthesis '('
+> > > - ERROR: code indent should use tabs where possible
+> > > - WARNING: please, no spaces at the start of a line
+> > > - WARNING: Missing a blank line after declarations
+> >=20
+> > Again, write the patch description in imperative mood (e.g. "Do foo").
+> >=20
 >
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 6 Jun 2023 15:00:18 +0200
+> Why do you care about imperative tense?  Imperative tense doesn't
+> matter.  What matters is that you can understand the issue and how it
+> looks like to the user.  I was working with a group of foreign students
+> and it was painful to see the contortions that they went through to make
+> a commit message imperative.  It's like saying "Bake a cake", "Ok, now
+> bake it while juggling."  The cake ends up worse.  And the commit
+> message end up worse when we force nonsense rules like this.
 
-You need to utilize what MAINTAINERS file has.
+How about a simple and stupid reason?
 
-> It can be known that the function =E2=80=9Ckfree=E2=80=9D performs a null=
- pointer check
-> for its input parameter.
-> It is therefore not needed to repeat such a check before its call.
->
-> Thus remove a redundant pointer check.
+Usually I write commit message without caring about this. Then I rewrite
+the commit message and 9/10 it gets shorter. Based on empirical
+experience, imperative form has minimum amount of extra words.
 
-Seems reasonable to me.
-FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+I came up with this convention first when submitting patches to x86, and
+over time it has started to make sense to me.
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/pinctrl/sunplus/sppctl.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/pinctrl/sunplus/sppctl.c b/drivers/pinctrl/sunplus/s=
-ppctl.c
-> index e91ce5b5d559..150996949ede 100644
-> --- a/drivers/pinctrl/sunplus/sppctl.c
-> +++ b/drivers/pinctrl/sunplus/sppctl.c
-> @@ -971,8 +971,7 @@ static int sppctl_dt_node_to_map(struct pinctrl_dev *=
-pctldev, struct device_node
->
->  sppctl_map_err:
->         for (i =3D 0; i < (*num_maps); i++)
-> -               if (((*map)[i].type =3D=3D PIN_MAP_TYPE_CONFIGS_PIN) &&
-> -                   (*map)[i].data.configs.configs)
-> +               if ((*map)[i].type =3D=3D PIN_MAP_TYPE_CONFIGS_PIN)
->                         kfree((*map)[i].data.configs.configs);
->         kfree(*map);
->         of_node_put(parent);
-> --
-> 2.40.1
->
+Especially for multi patch sets too verbose language tends to be super
+tiring for non-native English speaker. One should optimize the language
+in those: say *exactly* what is needed, and not more. If this not the
+case, I tend to move these patch sets very last in my queue.
 
+It's not a "punishment". It's more like that I really have to take the
+time to read the prose...
 
---=20
-With Best Regards,
-Andy Shevchenko
+BR, Jarkko
