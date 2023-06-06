@@ -2,91 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D58C7EE24
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 09:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6273C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 09:22:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbjFFJPU (ORCPT
+        id S237434AbjFFJWn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 05:15:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54888 "EHLO
+        Tue, 6 Jun 2023 05:22:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236341AbjFFJO3 (ORCPT
+        with ESMTP id S237440AbjFFJWh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 05:14:29 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1538170C
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 02:14:15 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q6SlN-0003UL-PN; Tue, 06 Jun 2023 11:14:01 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q6SlL-005TNd-An; Tue, 06 Jun 2023 11:13:59 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q6SlK-00BeyZ-KN; Tue, 06 Jun 2023 11:13:58 +0200
-Date:   Tue, 6 Jun 2023 11:13:58 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+        Tue, 6 Jun 2023 05:22:37 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB253E4F
+        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 02:22:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686043355; x=1717579355;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b9VXZntpeNRoTEkueHHlfro+jLGEiHISiRUwIaILg8Y=;
+  b=COQQs9p2wyX+mhEJ5OhJU/di4ZEJBkYKZZ7JgtCHSjORTx9izs4EaPPh
+   4mzhJZrSOtxvDwI/+Kjw6QhGb33xZzaBLhENTXu8/izTIEsFjDfLcyHcj
+   01MiSI8S3Dyv0Un/GhY/18fhCsp3KkSq/dUYaPHh54jzGcMsVnuaPl2P6
+   XX5YiDwWCL5qKLR9K/Y7q/bbxgZVzp9hnaGEAw2rXc+N2UOJXczRqU9R3
+   o3YNH9HGZaPf9IfwDmqDBBtus0sVSTLq4a7EaMWbW8loE+yuP8d7YAyQQ
+   9WUb1mNo6FUFHXZlB84SYClPwi1SsHmdooqBIMG9P11u1ikd61kgyYSA3
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="336242096"
+X-IronPort-AV: E=Sophos;i="6.00,219,1681196400"; 
+   d="scan'208";a="336242096"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 02:22:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="712136053"
+X-IronPort-AV: E=Sophos;i="6.00,219,1681196400"; 
+   d="scan'208";a="712136053"
+Received: from yuguen-mobl2.ger.corp.intel.com (HELO intel.com) ([10.252.57.68])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 02:22:30 -0700
+Date:   Tue, 6 Jun 2023 11:22:24 +0200
+From:   Andi Shyti <andi.shyti@linux.intel.com>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Raviteja Garimella <raviteja.garimella@broadcom.com>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget/snps_udc_plat: Fix a signedness bug in probe
-Message-ID: <20230606091358.arfvedcsyq6ivkxs@pengutronix.de>
-References: <ZH7sIkbSZg1rAJpJ@moroto>
+Cc:     Nirmoy Das <nirmoy.das@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andi Shyti <andi.shyti@linux.intel.com>,
+        Anshuman Gupta <anshuman.gupta@intel.com>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Fei Yang <fei.yang@intel.com>,
+        Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/i915: Fix a NULL vs IS_ERR() bug
+Message-ID: <ZH760GjGM+7XdTa5@ashyti-mobl2.lan>
+References: <ZH7tHLRZ9oBjedjN@moroto>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ga5t4udi7cbi7tyn"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZH7sIkbSZg1rAJpJ@moroto>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+In-Reply-To: <ZH7tHLRZ9oBjedjN@moroto>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hi Dan,
 
---ga5t4udi7cbi7tyn
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 06, 2023 at 11:19:46AM +0300, Dan Carpenter wrote:
-> The irq_of_parse_and_map() function returns negative error codes
-> but "udc->irq" is an unsigned int so the error handling doesn't work.
->=20
-> Fixes: 1b9f35adb0ff ("usb: gadget: udc: Add Synopsys UDC Platform driver")
+On Tue, Jun 06, 2023 at 11:23:56AM +0300, Dan Carpenter wrote:
+> The mmap_offset_attach() function returns error pointers, it doesn't
+> return NULL.
+> 
+> Fixes: eaee1c085863 ("drm/i915: Add a function to mmap framebuffer obj")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Thanks for this series of fixes!
 
-Thanks
-Uwe
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com> 
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---ga5t4udi7cbi7tyn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmR++NUACgkQj4D7WH0S
-/k6Jpgf/WRl7XGTTZ5Z48rb2/48/YRgUSFLfHywG20iSgzpfSPokW0Ipww68QAAC
-EYBV8YHqlCdUxfkBhkEO0bzGqsamGTbgVzojaSi3rNSsNpM1jqjp3afumw7fh8j7
-n3eCHvlTqloOBTqU42Cf4mchPaP5/s4S2XihE6dFxd5ypTbfPrJPZvbhUa46H3xd
-TP3vxRh3r3xIZSkTbkxfpAaZurXbrf+UeaX0NtII3vEFtpEhcHacMgN5rP/ML/AV
-koGoI+feL7tH7UmiGA/nOJtz3JskwxZW9Tr9zZdpghaSlACQyCOXzfeoyY3OIK8+
-6cSfTWYiMpSHG2JHOtrTBXTKoEug6w==
-=/m45
------END PGP SIGNATURE-----
-
---ga5t4udi7cbi7tyn--
+Andi
