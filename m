@@ -2,70 +2,60 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E73FC77B73
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 08:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 444FFC77B73
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jun 2023 08:23:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236438AbjFFIWW (ORCPT
+        id S236349AbjFFIXn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 04:22:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49714 "EHLO
+        Tue, 6 Jun 2023 04:23:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236353AbjFFIWS (ORCPT
+        with ESMTP id S231830AbjFFIXh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 04:22:18 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CC8E60
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 01:22:13 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-307d20548adso4744157f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 01:22:13 -0700 (PDT)
+        Tue, 6 Jun 2023 04:23:37 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C3A910EA
+        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 01:23:18 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f6ef9a928fso48406515e9.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 06 Jun 2023 01:23:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686039732; x=1688631732;
+        d=linaro.org; s=google; t=1686039788; x=1688631788;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XlNLQJWAWvz38NdXMt5y5qJsDWrZdshzsnsP7Pjnj2g=;
-        b=g0ld66AnZ5qEIlxCYJW04xs0rD3hAZwUTqWhnAS+uoZO2fLKWitJDkLv4Fa+W61nC6
-         qIYEFcHodixbxqffGvKvjGMmHrqHgUxkeI3Q5f/t43Kol5vgzHh7kMtBvswdMUgcBey2
-         7WsX4lVlsa/Ks+eMk2PiKvZNV/Ckr1UYVA4awXdJ+xEF8uTPNPtmFo4dgWH/In6sbNqW
-         J2isty42kT8f86/EoE6JGA5CliTElhXmZilIYm4xFZ9eY5rm0YnX4tm0Xgxpz2F3ILHW
-         RnYs5bgEhvNRHsVgqQ6t2OGqL3RFzX5qj21R9PRM5ZPkI7M8guUbcZSglCrNPhwa2Jzh
-         szMg==
+        bh=tqU663avBDGtNA+7qj15+8XcwDxuXpyjVCXFjA4/lfE=;
+        b=Qd5AVRy6jVBxdNVPSb++sWTkyA+QxF3QBQC1QWbDnQIAq5K4gIs1F+pwzH6q3EzBKX
+         lXQ9CakK0PrnhUxg3QcDl66mR5gp3RcFOAYxayLAGEEYQP3++tb6Q3I/FMWj2n4b9T3Z
+         PwihFZgG2GiILNk5IdBq9LuASU2CYN//RPC8PdQGrN6gTQo7DOFrHclOnTObIUZ738CX
+         KtFa4ArHdCzrxK1Akmay5A82wviSo02bldl6jsKC8w19oGVFXdsEPdmv6J9w76lzHyoK
+         wyEOGn/ek+IPbkzD0+v8blH4hjLWlkUqbeciMffzYu3Z99vaY8PgIJ6hljXI9OqhrUfx
+         Qjbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686039732; x=1688631732;
+        d=1e100.net; s=20221208; t=1686039788; x=1688631788;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XlNLQJWAWvz38NdXMt5y5qJsDWrZdshzsnsP7Pjnj2g=;
-        b=YdMxvpV6CxdUdrbyMjWqUAASS7RKs9QHGGtHsd+LUmttUrexkaln6uOP8O4CGeB7rW
-         2sXqM1F1w4DZUHEGzHqxBQzFYIuHI7EnswyLm/jJ4cbBfuGXR6J4Q4sD5UJoxkpNubJ7
-         f5B70FlnRCPa19pZ+gMvfzULXfLsJAk48FvaftG+ahGxvhsiLz8TlEEpvz5aXh0XcVPz
-         My6CVdl1m/GbRtwWp+lKQ02N3JUbWMzXW8CFvOPXOq+ft3XIzT3HVyTCDcfBMAOv+y8W
-         KOQVVDsOm50XcrDMaPM4pZChe+1sqF730MoafW+/iwPA26h8ET5iF3hukbaAh3uc3TLP
-         p8Ow==
-X-Gm-Message-State: AC+VfDzuxZYLopuQ6bDVkM7E+AcqvQIQZJpKBsiFdxSh51DOgstdhwPs
-        N0q6wRLmxtWGwM8eHU0xO2eYqA==
-X-Google-Smtp-Source: ACHHUZ6Q9maKkoIC1bVY1oVednk9d7CgN1Sha6DWf6Te7x8+ZZcW1c3aMfBpgWDDmz5oq+LO62QmkQ==
-X-Received: by 2002:a5d:500a:0:b0:30a:d083:d22d with SMTP id e10-20020a5d500a000000b0030ad083d22dmr961922wrt.24.1686039732012;
-        Tue, 06 Jun 2023 01:22:12 -0700 (PDT)
+        bh=tqU663avBDGtNA+7qj15+8XcwDxuXpyjVCXFjA4/lfE=;
+        b=Gql184bkoCus2K8gHimH/HMPoeB9WurSJk6sMxLKJ/ySxpCJda2F6jWiMEESMrj4sq
+         P5rKaYOs3g8xccehjwafCjazAXDcdJbYk57YWbAYDo1G+hz8Yvqz+QezQCfjs+b0Q2iG
+         QD7KeYK8FIgA+HGDjsOyZ+vMwPVpZnPLtmPeE8VYYnZxn9wHGqduWNV5YTgIRL4NP4ZZ
+         KjA62At8CT6vKs6OMn5S3BBAeEHjfxzqDLHWjKDmtA0XDuxn1gtwPeiCt32LwCYtuaxB
+         ndNLS1RFCeDYqQroJhfr+oUJ5M2p7FzcuzVM5pwueqtlRusSKIgTm5vQy7qrlfFa7Cqn
+         5LsA==
+X-Gm-Message-State: AC+VfDwPyhA40tNRODB48pBQCAHXv0GxQ3pVest2MFq5vPAiPs6gqWVH
+        4PmZJS4pdIG3yj1YI8thgWIfkA==
+X-Google-Smtp-Source: ACHHUZ7l32Vj376IpODe04w+e0XBjtDxWNN8qfepBmt6+3to7r/g/Tbpwud1itYVQS0iQk7K1RdT/Q==
+X-Received: by 2002:a7b:cd97:0:b0:3f4:2973:b8c8 with SMTP id y23-20020a7bcd97000000b003f42973b8c8mr1293139wmj.26.1686039787945;
+        Tue, 06 Jun 2023 01:23:07 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e3-20020adfef03000000b0030e52d4c1bcsm72778wro.71.2023.06.06.01.22.09
+        by smtp.gmail.com with ESMTPSA id t14-20020a7bc3ce000000b003f60e143d38sm13144596wmj.11.2023.06.06.01.23.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 01:22:10 -0700 (PDT)
-Date:   Tue, 6 Jun 2023 11:22:07 +0300
+        Tue, 06 Jun 2023 01:23:06 -0700 (PDT)
+Date:   Tue, 6 Jun 2023 11:22:42 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Alan Previn <alan.previn.teres.alexis@intel.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Suraj Kandpal <suraj.kandpal@intel.com>,
-        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
-        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/i915/gsc: Fix error code in
- intel_gsc_uc_heci_cmd_submit_nonpriv()
-Message-ID: <ZH7sr+Vs4zOQoouU@moroto>
+To:     Zhang Rui <rui.zhang@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] powercap: intel_rapl: Fix a NULL vs IS_ERR() bug
+Message-ID: <ZH7s0qNJ8a/KHjvQ@moroto>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -73,27 +63,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This should return negative -EAGAIN instead of positive EAGAIN.
+The devm_ioremap_resource() function returns error pointers on error,
+it never returns NULL.  Update the check accordingly.
 
-Fixes: e5e1e6d28ebc ("drm/i915/pxp: Add MTL helpers to submit Heci-Cmd-Packet to GSC")
+Fixes: 9eef7f9da928 ("powercap: intel_rapl: Introduce RAPL TPMI interface driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/i915/gt/uc/intel_gsc_uc_heci_cmd_submit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/powercap/intel_rapl_tpmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gt/uc/intel_gsc_uc_heci_cmd_submit.c b/drivers/gpu/drm/i915/gt/uc/intel_gsc_uc_heci_cmd_submit.c
-index 579c0f5a1438..42218ae6ef13 100644
---- a/drivers/gpu/drm/i915/gt/uc/intel_gsc_uc_heci_cmd_submit.c
-+++ b/drivers/gpu/drm/i915/gt/uc/intel_gsc_uc_heci_cmd_submit.c
-@@ -202,7 +202,7 @@ intel_gsc_uc_heci_cmd_submit_nonpriv(struct intel_gsc_uc *gsc,
- 			if (++trials < 10)
- 				goto retry;
- 			else
--				err = EAGAIN;
-+				err = -EAGAIN;
- 		}
+diff --git a/drivers/powercap/intel_rapl_tpmi.c b/drivers/powercap/intel_rapl_tpmi.c
+index c016127b3497..4f4f13ded225 100644
+--- a/drivers/powercap/intel_rapl_tpmi.c
++++ b/drivers/powercap/intel_rapl_tpmi.c
+@@ -255,8 +255,8 @@ static int intel_rapl_tpmi_probe(struct auxiliary_device *auxdev,
  	}
- 	i915_gem_ww_ctx_fini(&ww);
+ 
+ 	trp->base = devm_ioremap_resource(&auxdev->dev, res);
+-	if (!trp->base) {
+-		ret = -ENOMEM;
++	if (IS_ERR(trp->base)) {
++		ret = PTR_ERR(trp->base);
+ 		goto err;
+ 	}
+ 
 -- 
-2.30.2
+2.39.2
 
