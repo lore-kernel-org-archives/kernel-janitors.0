@@ -2,45 +2,44 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFCFC77B7A
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Jun 2023 03:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3F9C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Jun 2023 03:41:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240519AbjFGD0f (ORCPT
+        id S240676AbjFGDlY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 23:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57616 "EHLO
+        Tue, 6 Jun 2023 23:41:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234905AbjFGD0d (ORCPT
+        with ESMTP id S240835AbjFGDlT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 23:26:33 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE4BB19B7
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 20:26:31 -0700 (PDT)
+        Tue, 6 Jun 2023 23:41:19 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C4461BE8
+        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 20:41:03 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 6joaqCNZMZvWO6joaq99Zz; Wed, 07 Jun 2023 05:26:29 +0200
+        id 6k2eqmOt4fPUb6k2fqJcsz; Wed, 07 Jun 2023 05:41:01 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1686108389;
-        bh=HmXZpoupl67vmqpYTDqcmmy+1ehWH3IsOXimAF/m20M=;
+        s=t20230301; t=1686109261;
+        bh=h9asTVHJogZoJLCuyX7iMMLYoCBwbTiEljds8BOdE0M=;
         h=From:To:Cc:Subject:Date;
-        b=HBpjQn7rxjCIpAnMpKlEwynLZeX56QyvY5X+oKLe5NGYlIg/LEPG4uxlMq24PDGjB
-         dpMEdsSX6IjiGGbo9ZkB8N8YOrU8nQMp4I0AUnlOksEUVf5k2tA1CNoWxAADf3dzep
-         4HwxDt9T6pOHdgqI/KTN4PPq3U0jszMJX4KQGf2YL4jzhOx7ke02wVAcRqYm0dGlqm
-         qzqgnIeLK9repDagoC9d050kpt/malsw66JInq6Imk+txk9NV+kKp90m3U+DANTpSW
-         vizR8fspgbNR1wVLl8eE0yg3Ah1dVMp9+NecEq8ULc/ciXHgFfs2u1PFqLATMPUad6
-         LMJN5PrmJ4ntw==
+        b=L4HgFnnUT2C38A8o+3dCuS2XjRBRnucHjyAxSi72ReFUDc4mlNJsa3QdfVY1T0Ufe
+         vmJmNnAPATOlQoXqE6yCV5dAgvqjOdgEuHui+k3JaHsgYPfuhnSdK9I5EZGNSc8ej4
+         Y24Zp8PuhniOY36V9bnko9qUa4XgfXjHTEjqHQHDqEV/+4Lf0TRpO4RVJsdyzPabcV
+         wKJ63Ga0w9JVXA0JNgdpbpWVJ7vM7KC6w/E68UNmLvOf3xCOkabtOdbaUL7lRCcYnr
+         JNojSQt+FKMrR9ZCqrpMEUoRsYxyWqyaRjgSyra0sxGuteu4bs059RnCJvZZYyejYw
+         XKof7OpgU6lng==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 07 Jun 2023 05:26:29 +0200
+X-ME-Date: Wed, 07 Jun 2023 05:41:01 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com
+To:     Dinh Nguyen <dinguyen@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] dm/zone: Use the bitmap API to allocate bitmaps
-Date:   Wed,  7 Jun 2023 05:26:27 +0200
-Message-Id: <9014ccd13d83e9f78bfa86811a8012784333af56.1686108356.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] firmware: stratix10-svc: Fix a potential resource leak in svc_create_memory_pool()
+Date:   Wed,  7 Jun 2023 05:40:59 +0200
+Message-Id: <c3eadd5621e39aea6ac2f6504ac84d3abdc54637.1686109244.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -48,55 +47,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+svc_create_memory_pool() is only called from stratix10_svc_drv_probe().
+Most of resources in the probe are managed, but not this memremap() call.
 
-It is less verbose and it improves the semantic.
+There is also no memunmap() call in the file.
+
+So switch to devm_memremap() to avoid a resource leak.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/md/dm-zone.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/firmware/stratix10-svc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-zone.c b/drivers/md/dm-zone.c
-index 4b82b7798ce4..16776ad3794b 100644
---- a/drivers/md/dm-zone.c
-+++ b/drivers/md/dm-zone.c
-@@ -140,9 +140,9 @@ bool dm_is_zone_write(struct mapped_device *md, struct bio *bio)
- void dm_cleanup_zoned_dev(struct mapped_device *md)
- {
- 	if (md->disk) {
--		kfree(md->disk->conv_zones_bitmap);
-+		bitmap_free(md->disk->conv_zones_bitmap);
- 		md->disk->conv_zones_bitmap = NULL;
--		kfree(md->disk->seq_zones_wlock);
-+		bitmap_free(md->disk->seq_zones_wlock);
- 		md->disk->seq_zones_wlock = NULL;
- 	}
- 
-@@ -182,9 +182,8 @@ static int dm_zone_revalidate_cb(struct blk_zone *zone, unsigned int idx,
- 	switch (zone->type) {
- 	case BLK_ZONE_TYPE_CONVENTIONAL:
- 		if (!disk->conv_zones_bitmap) {
--			disk->conv_zones_bitmap =
--				kcalloc(BITS_TO_LONGS(disk->nr_zones),
--					sizeof(unsigned long), GFP_NOIO);
-+			disk->conv_zones_bitmap = bitmap_zalloc(disk->nr_zones,
-+								GFP_NOIO);
- 			if (!disk->conv_zones_bitmap)
- 				return -ENOMEM;
- 		}
-@@ -193,9 +192,8 @@ static int dm_zone_revalidate_cb(struct blk_zone *zone, unsigned int idx,
- 	case BLK_ZONE_TYPE_SEQWRITE_REQ:
- 	case BLK_ZONE_TYPE_SEQWRITE_PREF:
- 		if (!disk->seq_zones_wlock) {
--			disk->seq_zones_wlock =
--				kcalloc(BITS_TO_LONGS(disk->nr_zones),
--					sizeof(unsigned long), GFP_NOIO);
-+			disk->seq_zones_wlock = bitmap_zalloc(disk->nr_zones,
-+							      GFP_NOIO);
- 			if (!disk->seq_zones_wlock)
- 				return -ENOMEM;
- 		}
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index 80f4e2d14e04..2d674126160f 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -755,7 +755,7 @@ svc_create_memory_pool(struct platform_device *pdev,
+ 	end = rounddown(sh_memory->addr + sh_memory->size, PAGE_SIZE);
+ 	paddr = begin;
+ 	size = end - begin;
+-	va = memremap(paddr, size, MEMREMAP_WC);
++	va = devm_memremap(dev, paddr, size, MEMREMAP_WC);
+ 	if (!va) {
+ 		dev_err(dev, "fail to remap shared memory\n");
+ 		return ERR_PTR(-EINVAL);
 -- 
 2.34.1
 
