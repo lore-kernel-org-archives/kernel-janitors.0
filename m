@@ -2,44 +2,47 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3F9C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Jun 2023 03:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B415C77B7A
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Jun 2023 03:43:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240676AbjFGDlY (ORCPT
+        id S240846AbjFGDnv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jun 2023 23:41:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59308 "EHLO
+        Tue, 6 Jun 2023 23:43:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240835AbjFGDlT (ORCPT
+        with ESMTP id S240773AbjFGDno (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jun 2023 23:41:19 -0400
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C4461BE8
-        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 20:41:03 -0700 (PDT)
+        Tue, 6 Jun 2023 23:43:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 973F519BB
+        for <kernel-janitors@vger.kernel.org>; Tue,  6 Jun 2023 20:43:42 -0700 (PDT)
 Received: from pop-os.home ([86.243.2.178])
         by smtp.orange.fr with ESMTPA
-        id 6k2eqmOt4fPUb6k2fqJcsz; Wed, 07 Jun 2023 05:41:01 +0200
+        id 6k5DqKVya0npV6k5DqF86c; Wed, 07 Jun 2023 05:43:40 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1686109261;
-        bh=h9asTVHJogZoJLCuyX7iMMLYoCBwbTiEljds8BOdE0M=;
+        s=t20230301; t=1686109420;
+        bh=Vsw4nTEjEEb5K6Souj9KEFRncsnkC2vYIzwLEjIUgKw=;
         h=From:To:Cc:Subject:Date;
-        b=L4HgFnnUT2C38A8o+3dCuS2XjRBRnucHjyAxSi72ReFUDc4mlNJsa3QdfVY1T0Ufe
-         vmJmNnAPATOlQoXqE6yCV5dAgvqjOdgEuHui+k3JaHsgYPfuhnSdK9I5EZGNSc8ej4
-         Y24Zp8PuhniOY36V9bnko9qUa4XgfXjHTEjqHQHDqEV/+4Lf0TRpO4RVJsdyzPabcV
-         wKJ63Ga0w9JVXA0JNgdpbpWVJ7vM7KC6w/E68UNmLvOf3xCOkabtOdbaUL7lRCcYnr
-         JNojSQt+FKMrR9ZCqrpMEUoRsYxyWqyaRjgSyra0sxGuteu4bs059RnCJvZZYyejYw
-         XKof7OpgU6lng==
+        b=LFPsXmVoZeGCrj9LEepN9HOWdJEOKUNXgNCfHrR/EF5X719rwDjIU1emqNswpDMML
+         zva1tCKFZQG/RWWVZQnaR1Dd7fK8r/WHzhAvko6g5UP3ddIylL9D3Gwgt3hJw20s92
+         JK9Scr8H/QbsbDvK16D0dbTJ6MfqfnpxfFnj+4ptxJa6tlrhcfEEh5lLd9jml/BlGh
+         Nj5ZKP1sCj8f0hNUKjkwMcUgC4uAPooR/OCHfxWW9fDqCh3nKUslQ6SrnZJGroD+WW
+         RHdAa2Q7XmOF9cRcXgguHcAKxnmGF7E11AK2NGCiBvKbx9UFbqojisCRkknouIDTiy
+         7VKhQU6sHlFXw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 07 Jun 2023 05:41:01 +0200
+X-ME-Date: Wed, 07 Jun 2023 05:43:40 +0200
 X-ME-IP: 86.243.2.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Dinh Nguyen <dinguyen@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Richard Gong <richard.gong@intel.com>,
+        Alan Tull <atull@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] firmware: stratix10-svc: Fix a potential resource leak in svc_create_memory_pool()
-Date:   Wed,  7 Jun 2023 05:40:59 +0200
-Message-Id: <c3eadd5621e39aea6ac2f6504ac84d3abdc54637.1686109244.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2] firmware: stratix10-svc: Fix a potential resource leak in svc_create_memory_pool()
+Date:   Wed,  7 Jun 2023 05:43:37 +0200
+Message-Id: <783e9dfbba34e28505c9efa8bba41f97fd0fa1dc.1686109400.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,7 +57,10 @@ There is also no memunmap() call in the file.
 
 So switch to devm_memremap() to avoid a resource leak.
 
+Fixes: 7ca5ce896524 ("firmware: add Intel Stratix10 service layer driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: add Fixes tag
 ---
  drivers/firmware/stratix10-svc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
