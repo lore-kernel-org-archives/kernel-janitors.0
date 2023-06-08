@@ -2,97 +2,115 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A9DC7EE23
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 15:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08ABC7EE29
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 16:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236968AbjFHPTA (ORCPT
+        id S236379AbjFHQzR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 11:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50560 "EHLO
+        Thu, 8 Jun 2023 12:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236960AbjFHPSx (ORCPT
+        with ESMTP id S233787AbjFHQzQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 11:18:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 335A72D5F;
-        Thu,  8 Jun 2023 08:18:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C3B8060FAB;
-        Thu,  8 Jun 2023 15:18:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D19EC433D2;
-        Thu,  8 Jun 2023 15:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686237530;
-        bh=/A54Gy0vU98edPnbqK2o8zydJ92zi9Oi8moAunyOrJE=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=RdrtpfvpzdGY8WkZ0yvWsGoaLstSARmD7jyc/8yluqGlgzTEUiib2fkv88fsFTwzt
-         VI0ugZcV7T46reJCxWdJP49kC98i6KrF1VDSRTrx0a8YXLvXBwYBpHShvV2XcfjwuC
-         PBtIASy0kct7WqQaV3CBy9zDKSY1CVdiUuNP7ht1SvF597BP95UxTyx71Rht2IrZ1i
-         xvrSIVjcj191w/VV5jb43kVBKMoj3fBHHc/RRaivw8TN7XrcYhSGWYA32hSIoqSFuM
-         Qtulm4/YMMgaxMJ61jE5WU8vConoEvRAd4bnIwBPUxbOZizfKzBfwCWVlbTFSTIqcG
-         TyTU0X4THN/vw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-In-Reply-To: <53f928290f08f50ff43031e17fe1d88443c2c441.1686202022.git.christophe.jaillet@wanadoo.fr>
-References: <53f928290f08f50ff43031e17fe1d88443c2c441.1686202022.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: tegra: Simplify code around clk_get_rate()
- handling
-Message-Id: <168623752796.1002486.3534848547952230494.b4-ty@kernel.org>
-Date:   Thu, 08 Jun 2023 16:18:47 +0100
+        Thu, 8 Jun 2023 12:55:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3078A1730
+        for <kernel-janitors@vger.kernel.org>; Thu,  8 Jun 2023 09:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686243269;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=C7Gzsm4c5VDydfTjmb7wRGtHYG5sGvTAth2UOQdT5as=;
+        b=CIMZNxFQaz/jn79ylRC5/8Yb6huGhJ+L+fUalP9b8nio/p4dHmGJD4nPDifF6nbngUFAtu
+        2qoyS04z8ah29GZsvR+MJX70UF5cmkZc4sxp9aphVBzWWxwvz5Kz3/5cDJxyuW4B+XrnEB
+        +mBjARgMrlDLw5/CqsrgsOFDBEpVmxE=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-264-kbcdtAXcOM-3OiO02M45Sg-1; Thu, 08 Jun 2023 12:54:27 -0400
+X-MC-Unique: kbcdtAXcOM-3OiO02M45Sg-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-558df3fa320so684619eaf.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 08 Jun 2023 09:54:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686243267; x=1688835267;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C7Gzsm4c5VDydfTjmb7wRGtHYG5sGvTAth2UOQdT5as=;
+        b=MGdesxIkiP86ZRC5C6FW9LELIw2LqhrVAwGTMB+V+YnSbnE5N7aIf6DG8FjMQf9RsR
+         9T8v1d/027JVnsxPl2iZSHH4hpO9kD+Xi8XWfupM3o1/MTl4ArgAazw2eeuNftq2UJUJ
+         Zzg3+giZZ7Ke2ITgWmV+KzBaXTpZgQMmxCkph/zvHu9QwmbneFSpCV9tYm0znN3fa+d9
+         J5Z0k+zotcNO0lFwx1JvbbVzJ3jFBUBMd+dFgrN/W9pI346pMugFI+7m9TAvFH7ZbRam
+         WwBY2Y7xMeTUGHozvWcs8GCiturGEmtuvNg2l5wJ+ki8MG5epibfYUakw2FQEJ+UTAiJ
+         V18A==
+X-Gm-Message-State: AC+VfDyp+8orq+gkpypwiitmUB4XwJxpMyaJUgdAWcdnIaDo4kgteife
+        6euhqrNmt1IQBPOJA0jEQaml3gY8k19//0T1jERVdAvqIKHc8TR0+C+WW1Mmq+kLuZr8qe6x+em
+        jIQUIUlBJMEr0T99SbA4R8ID4D254
+X-Received: by 2002:a4a:d8c2:0:b0:558:fd2b:8232 with SMTP id c2-20020a4ad8c2000000b00558fd2b8232mr177810oov.9.1686243266856;
+        Thu, 08 Jun 2023 09:54:26 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6JTBAHmdb92kjvDywymq4EZWiP3V+16ZVHXuhLLjDlkHPWSSDhtIhwSdfuR/7p2MS+ahpNvw==
+X-Received: by 2002:a4a:d8c2:0:b0:558:fd2b:8232 with SMTP id c2-20020a4ad8c2000000b00558fd2b8232mr177798oov.9.1686243266617;
+        Thu, 08 Jun 2023 09:54:26 -0700 (PDT)
+Received: from halaney-x13s ([2600:1700:1ff0:d0e0::22])
+        by smtp.gmail.com with ESMTPSA id z2-20020aca3302000000b0038ee0c3b38esm599397oiz.44.2023.06.08.09.54.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jun 2023 09:54:25 -0700 (PDT)
+Date:   Thu, 8 Jun 2023 11:54:23 -0500
+From:   Andrew Halaney <ahalaney@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawn.guo@linaro.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: dwc3: qcom: Fix an error handling path in
+ dwc3_qcom_probe()
+Message-ID: <20230608165423.gvcwvmgiojuvjahv@halaney-x13s>
+References: <b69fa8dd68d816e7d24c88d3eda776ceb28c5dc5.1685890571.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bfdf5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b69fa8dd68d816e7d24c88d3eda776ceb28c5dc5.1685890571.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 08 Jun 2023 07:27:22 +0200, Christophe JAILLET wrote:
-> clk_get_rate() returns an unsigned long, so there is no point in storing it
-> in a long, and test for negative values.
+On Sun, Jun 04, 2023 at 04:56:34PM +0200, Christophe JAILLET wrote:
+> If dwc3_qcom_create_urs_usb_platdev() fails, some resources still need to
+> be released, as already done in the other error handling path of the
+> probe.
 > 
-> So, turn 'parent_rate' into an unsigned long, simplify the sanity check,
-> the error message and the return value, in case of error (i.e. 0).
+> Fixes: c25c210f590e ("usb: dwc3: qcom: add URS Host support for sdm845 ACPI boot")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
+
+> ---
+>  drivers/usb/dwc3/dwc3-qcom.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Doing so also turns 'i' and 'valid_rates' into unsigned long, but it is
-> fine and harmless.
+> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+> index 822735814050..aa96c473f839 100644
+> --- a/drivers/usb/dwc3/dwc3-qcom.c
+> +++ b/drivers/usb/dwc3/dwc3-qcom.c
+> @@ -856,9 +856,10 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
+>  			if (IS_ERR_OR_NULL(qcom->urs_usb)) {
+>  				dev_err(dev, "failed to create URS USB platdev\n");
+>  				if (!qcom->urs_usb)
+> -					return -ENODEV;
+> +					ret = -ENODEV;
+>  				else
+> -					return PTR_ERR(qcom->urs_usb);
+> +					ret = PTR_ERR(qcom->urs_usb);
+> +				goto clk_disable;
+>  			}
+>  		}
+>  	}
+> -- 
+> 2.34.1
 > 
-> [...]
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: tegra: Simplify code around clk_get_rate() handling
-      commit: 41a343cd6b7f8d0f70dd90c236086ccf8a84a7de
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
