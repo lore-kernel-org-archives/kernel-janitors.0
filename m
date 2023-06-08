@@ -2,95 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE521C7EE25
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 09:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1D8C8300C
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 09:58:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235130AbjFHJPk (ORCPT
+        id S234560AbjFHJ6z (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 05:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58602 "EHLO
+        Thu, 8 Jun 2023 05:58:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234218AbjFHJPi (ORCPT
+        with ESMTP id S235746AbjFHJ6x (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 05:15:38 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4354195
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Jun 2023 02:15:37 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f735bfcbbbso2008755e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 08 Jun 2023 02:15:37 -0700 (PDT)
+        Thu, 8 Jun 2023 05:58:53 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 809D026B2;
+        Thu,  8 Jun 2023 02:58:52 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-30e4eec95c8so406832f8f.3;
+        Thu, 08 Jun 2023 02:58:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686215736; x=1688807736;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YcEISIDNto7bVB3X4uewYDXy4Y2gVCqbmdu4ZLZezEY=;
-        b=yGnq8ftGesQWNAnnk6kFmQScY6bmN/aZzan9A1PY6jRYtaYT/ZytO29S37reDaPbuh
-         hDRm157Qvw8g3ohSUDZmE4bGwZQ+5sHLo6yimfNYQevzbeQBZZbPF/ND6HNS3zSDXx1U
-         90kHHHns1cf2PIpDAsZr9t3C9X3Guy0GFVFq89zPBUB4NC3t8kC0my27FvUQXT67uyIo
-         m0cxDG8yW0Y1NwArq4Nt9LHaA+rWo6ccFWfH+bUxYRpJJ3LP5nS9C27WVwjX1ybsdiDp
-         +Sa04NXDHcOq90LxaHtCUVZMIhyT27vD2xfkqL1svxUM9Yey1QAiIZ7xgHg1lIxXu2Rz
-         LS1A==
+        d=gmail.com; s=20221208; t=1686218331; x=1688810331;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YlNe4BUkEg1VajwhQoFVrqBpA5/M9bmxOxMvTziERXM=;
+        b=CHgGOkdMkON3E5JAKd2QN6ViPGseP5oGhADmE+HYpyeffAvoy6Muo/jJCSRgGv1I7d
+         XyZOwJF11dqKYGhTmSyYFuGOciv9teDQmWdwXxKEgJjUX6MIuEHzNm+RcF/Yn4qTqFpb
+         K4mt+7h24tWTOFP2nlbevHmvRaTvtdyrmp//Wi/2BDahsMSogZ1WwuL9ycF+8JKnFfbV
+         x8PuB7Qt7lZDZ1a+kzC7B+ksdshKcYM2KF+rJjlln+Ela62lnJX441dmuUPd/tmdhRXy
+         TmsqAWvc35OOnOL2XuPH9WTf3uDbxb8ol+5Hb47nPSG3KaV9CIW3ZwQlsvy+XMcIHYoX
+         KFgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686215736; x=1688807736;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YcEISIDNto7bVB3X4uewYDXy4Y2gVCqbmdu4ZLZezEY=;
-        b=DUOCeaVqKxXZ5TZOUhGsGuqguiIrXqTARZeHxlBZ7FQP3TOPkDPW7oz/MXyq97Nbzg
-         DSENITZeOHaCEk0wGxh05vpkWfFt4ghT6nzN41Z7wdDYiBZJ0HGhQF2HOuMPH/FK4j7b
-         WIX1OYil88yBZNrA3t4iY+RgqffLcveVZVdCyeS5Gg6kfiosxxx/ohAMnUzTxfsf80GN
-         gPaAi3jxMbiojFZCmJjT+6eDo9aPJVagGUmE2Pbr97PsLh0NiPDpmCL38ve6RLm1OrpT
-         0s5evw4/ZXWXV8mZ6iAiDm8rOFc6IUjmJJm2MsLWpNOF1R9D95yJV4hIaPgVarixErw2
-         T51Q==
-X-Gm-Message-State: AC+VfDxlNoujZYqJwcv8rE9oYZDbIDqW1+uVG+ZsfidcCNZGvx6XotfV
-        dCdhdiPMGoFyDizDeKA7tjnsoA==
-X-Google-Smtp-Source: ACHHUZ684p2cvPfl7jo1XVe+oO2AU0Brj8qUl1HKEa+c4vNwYuLVVz5CkBN3R0mQZGRJ5nBuPk5MZg==
-X-Received: by 2002:a7b:ce16:0:b0:3f6:3da:1603 with SMTP id m22-20020a7bce16000000b003f603da1603mr920932wmc.26.1686215735734;
-        Thu, 08 Jun 2023 02:15:35 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id c23-20020a7bc017000000b003f1958eeadcsm4599680wmb.17.2023.06.08.02.15.33
+        d=1e100.net; s=20221208; t=1686218331; x=1688810331;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YlNe4BUkEg1VajwhQoFVrqBpA5/M9bmxOxMvTziERXM=;
+        b=L8m/lILhXFuhoSohGAZP+mUKPInUPjvW+eGOZJtDLZXOPPld3gEbxpeQwGVxTBK8u2
+         IJtneH/YhvhLT9ghx4F9Uscm9BMNN89fliySoSSMTonarN36e+zkW7qIS7Z7hFsDqSGL
+         cY1ZLT+d4PYuc3QpKmDHGVmx9/DMfNIVRE/+ZHYv4c9jHVXkTdflXcHfvFwOHlM+IGB9
+         soOuAgJ73Ll5uP2xB5b8MzY9/UblmVdJ4PbPJhDCGVHm6pEl0z3L4Yb4IEGRThs66KuY
+         0OM1UuW7BbeimHUeUz8vXvFvuwM3L1PNAOo95wcskV0D11yH5lKR+Fp58Tm0cH+zcVLp
+         WvLg==
+X-Gm-Message-State: AC+VfDycQSo0R+5jFqqkiHeieODkUJuIe/XUGWpY9FnLMNGatX6tJcFm
+        4Ms6S1w2hRuaOoAg7oTBR/M=
+X-Google-Smtp-Source: ACHHUZ4bwjDbYedllIN1larsf4jSAU4BoOl6EnSlCIw2Dmt/YKIRFssvTbWtdQSg+qKIlIAdWC/90A==
+X-Received: by 2002:adf:e78d:0:b0:309:1532:87e with SMTP id n13-20020adfe78d000000b003091532087emr10078608wrm.31.1686218330725;
+        Thu, 08 Jun 2023 02:58:50 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id a4-20020adffac4000000b00307c46f4f08sm1091924wrs.79.2023.06.08.02.58.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 02:15:34 -0700 (PDT)
-Date:   Thu, 8 Jun 2023 11:23:40 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Quentin Casasnovas <quentin.casasnovas@oracle.com>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nicolas Schier <nicolas@fjasle.eu>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] modpost: fix off by one in is_executable_section()
-Message-ID: <9ef94ec4-bbb0-43e6-866f-40f68128cd78@moroto.mountain>
+        Thu, 08 Jun 2023 02:58:50 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] powerpc/powernv/sriov: perform null check on iov before dereferencing iov
+Date:   Thu,  8 Jun 2023 10:58:49 +0100
+Message-Id: <20230608095849.1147969-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The > comparison should be >= to prevent an out of bounds array
-access.
+Currently pointer iov is being dereferenced before the null check of iov
+which can lead to null pointer dereference errors. Fix this by moving the
+iov null check before the dereferencing.
 
-Fixes: 52dc0595d540 ("modpost: handle relocations mismatch in __ex_table.")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Detected using cppcheck static analysis:
+linux/arch/powerpc/platforms/powernv/pci-sriov.c:597:12: warning: Either
+the condition '!iov' is redundant or there is possible null pointer
+dereference: iov. [nullPointerRedundantCheck]
+ num_vfs = iov->num_vfs;
+           ^
+
+Fixes: 052da31d45fc ("powerpc/powernv/sriov: De-indent setup and teardown")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- scripts/mod/modpost.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/pci-sriov.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index d10f5bdcb753..c3cb69c276ae 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1139,7 +1139,7 @@ static Elf_Sym *find_tosym(struct elf_info *elf, Elf_Addr addr, Elf_Sym *sym)
+diff --git a/arch/powerpc/platforms/powernv/pci-sriov.c b/arch/powerpc/platforms/powernv/pci-sriov.c
+index 7195133b26bb..42e1f045199f 100644
+--- a/arch/powerpc/platforms/powernv/pci-sriov.c
++++ b/arch/powerpc/platforms/powernv/pci-sriov.c
+@@ -594,11 +594,10 @@ static void pnv_pci_sriov_disable(struct pci_dev *pdev)
+ 	struct pnv_iov_data   *iov;
  
- static bool is_executable_section(struct elf_info *elf, unsigned int secndx)
- {
--	if (secndx > elf->num_sections)
-+	if (secndx >= elf->num_sections)
- 		return false;
+ 	iov = pnv_iov_get(pdev);
+-	num_vfs = iov->num_vfs;
+-	base_pe = iov->vf_pe_arr[0].pe_number;
+-
+ 	if (WARN_ON(!iov))
+ 		return;
++	num_vfs = iov->num_vfs;
++	base_pe = iov->vf_pe_arr[0].pe_number;
  
- 	return (elf->sechdrs[secndx].sh_flags & SHF_EXECINSTR) != 0;
+ 	/* Release VF PEs */
+ 	pnv_ioda_release_vf_PE(pdev);
 -- 
-2.39.2
+2.30.2
 
