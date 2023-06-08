@@ -2,102 +2,112 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C145C7EE25
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 08:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FD8C7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 08:37:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235426AbjFHIh3 (ORCPT
+        id S235460AbjFHIhu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 04:37:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39206 "EHLO
+        Thu, 8 Jun 2023 04:37:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233645AbjFHIh1 (ORCPT
+        with ESMTP id S233645AbjFHIht (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 04:37:27 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A386106
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Jun 2023 01:37:26 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f6dfc4e01fso2594125e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 08 Jun 2023 01:37:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686213445; x=1688805445;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hZCb5PdhS0IYwvvsDCa/VL+qib/TSEpn0dlyBBSbqu4=;
-        b=xKQFIVRwB7u6411rnPYsy+hEEYogWdc8ES4TQnFINVLWFc25NgIeIXrP/VQnMgykrQ
-         rjI6GEND5upFg3dpwUQY89Zxl4ZG5SH3PIjoaKwqKlz6i9UATKNayO/6LlVvaJrqIrQH
-         4QTOJp2PRR8uMD4RQQCzHmNe324K7rBbzN86kAK8oPRXSbYV3BQasQW2KkjbPcjac4r6
-         uKDieZr29nVwFV4cibwlYkwqvnPcsX75h3JKpXmmTfWIUxttT+jzCscA1NHZwAS74yCK
-         XQ+8DsQpuhMWKcKQNX6bB7Xdkm+79fro+mLsj+33y/o1sHiAADv2XVuD4sRX1KWsA7kv
-         nykA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686213445; x=1688805445;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hZCb5PdhS0IYwvvsDCa/VL+qib/TSEpn0dlyBBSbqu4=;
-        b=HpzP+pvqsK8wpzlV1NUWEQCglhzjEdKL+VHNBpvEOpw37uB5m4nahCKVWR/zDTx5fC
-         zXZZ9Xpi+2ZqxMsyan/2NBgVB9OXXyNML509ZXQ4/TCLF3SNrLlYkqAOE9dMh4UhcChm
-         6Pgz744p6kORrdESqn1sDJ6OcS46T/Cyg1XRDVoGUHdgivNlUEi1cK1SajtxPH6hTjei
-         gmtAXDLBGjCzb2ZJcszBu4zikZoYAESql3paUGf0E3tkPC8dkDOrLaAM0wG7G08VCPGl
-         /ecvsvXA7JNm9Ijtx3FRwARPXZYYDdYgGUamv/dLKA5G/AsmLvwuoUFtpqqSjuNRJ9g5
-         0X4Q==
-X-Gm-Message-State: AC+VfDwtJ0uK11Wy7/JX0Kq2PiyMPSkOn0r+U8BJ/Vs7YJjXwI2xQxSK
-        gziCDobVvDNUzDeTAJIqaSzOYF5b2/WdfHK6ijU=
-X-Google-Smtp-Source: ACHHUZ5vuL1W6b8niAAPfGRlfaNV/+KpO2VZNptTpFgmafvFmI1nX/PAJMGEPxfYM1xfvu/yuhX4OQ==
-X-Received: by 2002:a7b:c84c:0:b0:3f6:128:36a5 with SMTP id c12-20020a7bc84c000000b003f6012836a5mr762472wml.10.1686213445085;
-        Thu, 08 Jun 2023 01:37:25 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n10-20020a05600c294a00b003f6050d35c9sm1209725wmd.20.2023.06.08.01.37.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 01:37:23 -0700 (PDT)
-Date:   Thu, 8 Jun 2023 11:37:19 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     "Teres Alexis, Alan Previn" <alan.previn.teres.alexis@intel.com>
-Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-        "Sripada, Radhakrishna" <radhakrishna.sripada@intel.com>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "airlied@gmail.com" <airlied@gmail.com>,
-        "tvrtko.ursulin@linux.intel.com" <tvrtko.ursulin@linux.intel.com>,
-        "Shankar, Uma" <uma.shankar@intel.com>,
-        "Ceraolo Spurio, Daniele" <daniele.ceraolospurio@intel.com>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "Kandpal, Suraj" <suraj.kandpal@intel.com>
-Subject: Re: [PATCH] drm/i915/gsc: Fix error code in
- intel_gsc_uc_heci_cmd_submit_nonpriv()
-Message-ID: <2cf8065f-6841-442e-b68c-14e0d2b055c8@kadam.mountain>
-References: <ZH7sr+Vs4zOQoouU@moroto>
- <15829bd2d58a7439d416e2e36c5c4a17281b9fc2.camel@intel.com>
- <a0088658-d7d0-4047-9b5e-ea8e1987afc0@kadam.mountain>
- <9fae9daf7b2c745db1b8c359a822e4da88ce71c1.camel@intel.com>
+        Thu, 8 Jun 2023 04:37:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4B226B2;
+        Thu,  8 Jun 2023 01:37:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9A69864AA9;
+        Thu,  8 Jun 2023 08:37:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3A46C433A1;
+        Thu,  8 Jun 2023 08:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686213467;
+        bh=b8w2dww11+jeMQIGk8g14QqcvLwbopMkYC+R8CQKZcI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=le1K4qUjRcurFJR4PvKWFr5yX1wr0bfbQMMQHpCiVNVL/GKFvdUoD3YXlQwh9z2aw
+         a2k/KClut7Rba/NBifCDLFmoNHZoSWst8biJ4nex0gyZrtMuZBwNJ/TI59S6X9Q3SI
+         PD52rYChAEgeGp/WmvngWXiwjouLglPxSMGOkbntnVfwdoRTNiMn8mcN4/PAGxHWnI
+         KKcwuJzJpG2khAypic80LcdVcW7flajlgM1XjpDxzo5fguM5HNdniH7+61plfrq24n
+         PqPJjdnb/NTO64Qyz6G4uavwQec+K3YYwagbM83ZkrAx2q9BgYjVnImFQ0YURyTh1m
+         nzneBZ1G8KChg==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-4f004cc54f4so465853e87.3;
+        Thu, 08 Jun 2023 01:37:46 -0700 (PDT)
+X-Gm-Message-State: AC+VfDypERVI4+7y/0vomASr5qpZ8QsEXkJY8adAnn52FGKzyXhPLx6b
+        I04oGT/lUYJFRpFEtRzK2lzk3Xjxq/2RqKHZDXw=
+X-Google-Smtp-Source: ACHHUZ5YQ0EtwVOGgeqK+JNVOPM9pQ0uf1Q3nAcBP5h+ykVX8Gku7lWhb/0mJ5g2QMceulFBf3GJScF5rZVdvgUjp9g=
+X-Received: by 2002:a05:651c:113:b0:2b1:eab1:e083 with SMTP id
+ a19-20020a05651c011300b002b1eab1e083mr3391281ljb.16.1686213465018; Thu, 08
+ Jun 2023 01:37:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fae9daf7b2c745db1b8c359a822e4da88ce71c1.camel@intel.com>
+References: <20230607053940.39078-10-bagasdotme@gmail.com> <20230607053940.39078-11-bagasdotme@gmail.com>
+ <CAC1cPGxD6xOLksyMHCcreFyEv5Yoo50LY=xM9BmOEP=oECoNww@mail.gmail.com>
+In-Reply-To: <CAC1cPGxD6xOLksyMHCcreFyEv5Yoo50LY=xM9BmOEP=oECoNww@mail.gmail.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Thu, 8 Jun 2023 10:37:33 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGnzphm5Wyz7RfZdWVxPnEihR0NGy5mFs4neQM+7EfEGQ@mail.gmail.com>
+Message-ID: <CAMj1kXGnzphm5Wyz7RfZdWVxPnEihR0NGy5mFs4neQM+7EfEGQ@mail.gmail.com>
+Subject: Re: [PATCH 1/8] crypto: Convert dual BSD 3-Clause/GPL 2.0 boilerplate
+ to SPDX identifier
+To:     Richard Fontana <rfontana@redhat.com>
+Cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Franziska Naepelt <franziska.naepelt@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux SPDX Licenses <linux-spdx@vger.kernel.org>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
+        Linux Crypto <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Alexander Kjeldaas <astor@fast.no>,
+        Herbert Valerio Riedel <hvr@hvrlab.org>,
+        Kyle McMartin <kyle@debian.org>,
+        "Adam J . Richter" <adam@yggdrasil.com>,
+        Dr Brian Gladman <brg@gladman.me.uk>,
+        Stephan Mueller <smueller@chronox.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 07, 2023 at 06:44:54PM +0000, Teres Alexis, Alan Previn wrote:
-> On Tue, 2023-06-06 at 21:32 +0300, Dan Carpenter wrote:
-> > On Tue, Jun 06, 2023 at 06:07:19PM +0000, Teres Alexis, Alan Previn wrote:
-> > > That was my bad, i could have sword i'd fixed that before the final rev. Thanks for fixing this.
-> > > nit: below function applies to MTL only which at the moment is still force-probed, so not sure if the fixes tag is significant.
-> > > 
-> > 
-> > The Fixes tag is correct.  It's definitely a bug fix.
-> > 
-> > (I invented the Fixes tag so technically that makes me the worlds #1
-> > expert on Fixes tags).
-> > 
-> So sorry my bad.
+On Wed, 7 Jun 2023 at 16:38, Richard Fontana <rfontana@redhat.com> wrote:
+>
+> On Wed, Jun 7, 2023 at 1:42=E2=80=AFAM Bagas Sanjaya <bagasdotme@gmail.co=
+m> wrote:
+> >
+> > Replace license boilerplate for dual BSD-3-Clause/GPL 2.0 (only or
+> > later) with corresponding SPDX license identifier.
+>
+> This is at least the fourth or fifth time (I'm losing track) where you
+> have incorrectly assumed a particular non-GPL license text matches a
+> particular SPDX identifier without (apparently) checking.
+>
 
-LOL.
+What exactly does 'checking' entail here? There is no guidance in
+Documentation/process/license-rules.rst on how to perform this
+comparison.
 
-Presumably the appology was intended sarcastically?  Hopefully?  Oh my
-goodness.  ROFL...
+Also, checkpatch now complains about missing SPDX identifiers, which
+is what triggered this effort. Should it stop doing that?
 
-regards,
-dan carpenter
+> Bagas, I urge that you learn more about the nature of SPDX identifiers
+> before submitting any further patches at least involving replacement
+> of non-GPL notices with SPDX identifiers. For this unprecedented
+> license notice replacement initiative to have any legitimacy it must
+> attempt to apply SPDX identifiers correctly.
+>
+
+Since we're in language pedantic mode: it must do more than attempt,
+it must apply them correctly, period.
+
+Arguably, this is an 'attempt to apply SPDX identifiers correctly' on
+Bagas's part, which apparently falls short (and I may be guilty of the
+same for some arch crypto code)
+
+So what is the ambition here: do we just leave the ambiguous ones as-is?
