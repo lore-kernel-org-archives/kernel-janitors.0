@@ -2,94 +2,107 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16647C7EE23
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 13:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A018C7EE37
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 14:56:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236231AbjFHNlk (ORCPT
+        id S236594AbjFHO4g (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 09:41:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59376 "EHLO
+        Thu, 8 Jun 2023 10:56:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236193AbjFHNli (ORCPT
+        with ESMTP id S235886AbjFHO4e (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 09:41:38 -0400
-Received: from pokefinder.org (pokefinder.org [135.181.139.117])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 134362712;
-        Thu,  8 Jun 2023 06:41:35 -0700 (PDT)
-Received: from localhost (120-123-142-46.pool.kielnet.net [46.142.123.120])
-        by pokefinder.org (Postfix) with ESMTPSA id 38A59A404B5;
-        Thu,  8 Jun 2023 15:41:35 +0200 (CEST)
-Date:   Thu, 8 Jun 2023 15:41:34 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        kernel-janitors@vger.kernel.org, Andrew Davis <afd@ti.com>
-Subject: Re: [linux-i2c] Patch notification: DaVinci: 2 patches updated
-Message-ID: <ZIHajpkxV/PFPcb8@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kevin Hilman <khilman@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        kernel-janitors@vger.kernel.org, Andrew Davis <afd@ti.com>
-References: <168613080300.11524.2783831689498520603@legolas.ozlabs.org>
- <8af5aca3-184f-2561-bec7-c4950fdbaeb5@web.de>
- <ZIGHmSvptAC0cWHD@shikoro>
- <93d2b121-4734-c195-90ad-d2d05e65e247@web.de>
- <ZIG6/h0PnLi7j6Pn@shikoro>
- <ae8ede44-e7a9-c086-d17e-68c33b4482e0@web.de>
+        Thu, 8 Jun 2023 10:56:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166A610FB;
+        Thu,  8 Jun 2023 07:56:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A152464E20;
+        Thu,  8 Jun 2023 14:56:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087F9C433A1;
+        Thu,  8 Jun 2023 14:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686236193;
+        bh=CZiUnQSwCCU7tqgCmEoGvcv16/6kTQcWTKR0ljqRc8w=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Z8Nc9E40ALbkPxgFM+7K4XpUq4Kmj+P3FjQFcyAmG/9oyak52S0/q5NS1HWOowhph
+         BCkSGRzVhSB1T87cDOK5Ev9yO1V7BJms0d45UjUvGGRmBS46p0H7gmQ08O5hJpurG1
+         ViuZ2/ly25Pnh4I37yQKoNkt+tpYmvXraEdLuT9ISu5kbaf1t6Sn1UYajt/iP8MdcP
+         iJrLVcR4f/1drgO/iiMGQ51Ttm361EcsQIyzViGAiYpzxDfem77viijdI28uyPGM8w
+         4CMTpySPlmn+ErlmdDk2RrwPfQ9K1py2n6705nJq65NgpBa9hxbeF6rV95S6zlL21F
+         KkQud8md2pDAA==
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6b2b6910facso401391a34.1;
+        Thu, 08 Jun 2023 07:56:32 -0700 (PDT)
+X-Gm-Message-State: AC+VfDwwQMLEIEYBQXx9ggFv9yxVTdjABt3zb6ovmsExOhWfpxwOa9i8
+        +Z3yONyzjmdiuRlUWZZ1hVjbTxGjI5/5ncMPAWo=
+X-Google-Smtp-Source: ACHHUZ4b52LAMGrIJorPjZd8HZx5+JEzc5yIVrJ1Zf1u1Z8pwwtZAHBpxKd3KizdMa4n9bFBDXIpiXF8e0EA+zYsMOs=
+X-Received: by 2002:a05:6870:2181:b0:196:7f51:1bc7 with SMTP id
+ l1-20020a056870218100b001967f511bc7mr7964179oae.17.1686236192230; Thu, 08 Jun
+ 2023 07:56:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3NFxbUdjepFWjCs/"
-Content-Disposition: inline
-In-Reply-To: <ae8ede44-e7a9-c086-d17e-68c33b4482e0@web.de>
+References: <9ef94ec4-bbb0-43e6-866f-40f68128cd78@moroto.mountain>
+In-Reply-To: <9ef94ec4-bbb0-43e6-866f-40f68128cd78@moroto.mountain>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 8 Jun 2023 23:55:55 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATWmtiQdtvGLYL5b0Pyg4Bnmj0_Hn8xtWLzMJ_1oxkThA@mail.gmail.com>
+Message-ID: <CAK7LNATWmtiQdtvGLYL5b0Pyg4Bnmj0_Hn8xtWLzMJ_1oxkThA@mail.gmail.com>
+Subject: Re: [PATCH] modpost: fix off by one in is_executable_section()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Quentin Casasnovas <quentin.casasnovas@oracle.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nicolas Schier <nicolas@fjasle.eu>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
---3NFxbUdjepFWjCs/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-> Unfortunately, it seems that the patch quality was still improvable.
-
-It was not perfect but good enough.
-
-> * How will the patch integration evolve further for suggestions which seem to be
->   still in waiting queues?
-
-Easy, it will evolve quite similar with the amount of review/reviewers.
-
-> * How far back would you like to support the known development history
->   for discussed Linux software components?
-
-Dunno, if I got the question right, but I don't want to break existing
-stuff. Why do you ask?
+On Thu, Jun 8, 2023 at 6:15=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> The > comparison should be >=3D to prevent an out of bounds array
+> access.
+>
+> Fixes: 52dc0595d540 ("modpost: handle relocations mismatch in __ex_table.=
+")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
 
---3NFxbUdjepFWjCs/
-Content-Type: application/pgp-signature; name="signature.asc"
+Applied to linux-kbuild.
+Thanks.
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmSB2o4ACgkQFA3kzBSg
-Kba1GA//WoTXPI4WXKo0xggY5ZOQKWOgwTfrW1fMAisdcCvegxN4IY6DnGV02fDz
-/sdrngtTHZujrom7CFZ2dmwXsKZn7hHqZx4yYu5ZMCLcOwu16V473lyIaG9srxyo
-UVeBpst6FAqSY4x8NOOdq92swxJXm9wghORpgkXjW9xhcgSFHIl/zyTn0Ivi0wNj
-Xx3EyM6MelPgEZaEUkqAI/pHbBz7c8noEoFRnaTb9SYk0FVoO9Q0hJzY5P5fPaeA
-RRrJUgm/Z4LXlvUHHMo+a7mskBtVWpELD0kO7E+InTiUo6PBB0+pEolLPWz7X0r0
-a/zmhSNxv7ughWn9AX/i4CLfa2QQEzjM55K7Iy5OUfCNmWuurt5T3WA0kUl+LjAI
-E8cahXpPU4BDKVPE4GHXGsX0OSEFdW2CFu95vb5Ru5XUu8r+fyoTFLSaLOMTjlIl
-6AUkSyDmk02LdGQROX5YzqsEWckuFkLDl+n5pOcVWr9nlXnr3AyLHXI6HavyVr6G
-6YLg+DfZgdpWxmhNsk2f8SkLz7f5TP1iGae1vKmWCuNruQfcTZwG6kflPyZNT4Cf
-S3g1J/hG796rsRYgbxheuh0LMYHS9XAjsQt2FvMJDfRaMbrl5panCScg10oEeaf3
-C5nofu2sjGNcaoFn9R7YgiLgY1PWjgYVzSQdfDnVvfQVth18nts=
-=zqqF
------END PGP SIGNATURE-----
 
---3NFxbUdjepFWjCs/--
+>  scripts/mod/modpost.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index d10f5bdcb753..c3cb69c276ae 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -1139,7 +1139,7 @@ static Elf_Sym *find_tosym(struct elf_info *elf, El=
+f_Addr addr, Elf_Sym *sym)
+>
+>  static bool is_executable_section(struct elf_info *elf, unsigned int sec=
+ndx)
+>  {
+> -       if (secndx > elf->num_sections)
+> +       if (secndx >=3D elf->num_sections)
+>                 return false;
+>
+>         return (elf->sechdrs[secndx].sh_flags & SHF_EXECINSTR) !=3D 0;
+> --
+> 2.39.2
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
