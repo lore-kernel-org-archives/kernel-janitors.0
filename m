@@ -2,64 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1D8C8300C
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 09:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8651BC7EE23
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 10:07:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234560AbjFHJ6z (ORCPT
+        id S233381AbjFHKH2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 05:58:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54274 "EHLO
+        Thu, 8 Jun 2023 06:07:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235746AbjFHJ6x (ORCPT
+        with ESMTP id S233887AbjFHKH1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 05:58:53 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 809D026B2;
-        Thu,  8 Jun 2023 02:58:52 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-30e4eec95c8so406832f8f.3;
-        Thu, 08 Jun 2023 02:58:52 -0700 (PDT)
+        Thu, 8 Jun 2023 06:07:27 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC6D273E;
+        Thu,  8 Jun 2023 03:07:25 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-30ae4ec1ac7so278766f8f.2;
+        Thu, 08 Jun 2023 03:07:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686218331; x=1688810331;
+        d=gmail.com; s=20221208; t=1686218844; x=1688810844;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YlNe4BUkEg1VajwhQoFVrqBpA5/M9bmxOxMvTziERXM=;
-        b=CHgGOkdMkON3E5JAKd2QN6ViPGseP5oGhADmE+HYpyeffAvoy6Muo/jJCSRgGv1I7d
-         XyZOwJF11dqKYGhTmSyYFuGOciv9teDQmWdwXxKEgJjUX6MIuEHzNm+RcF/Yn4qTqFpb
-         K4mt+7h24tWTOFP2nlbevHmvRaTvtdyrmp//Wi/2BDahsMSogZ1WwuL9ycF+8JKnFfbV
-         x8PuB7Qt7lZDZ1a+kzC7B+ksdshKcYM2KF+rJjlln+Ela62lnJX441dmuUPd/tmdhRXy
-         TmsqAWvc35OOnOL2XuPH9WTf3uDbxb8ol+5Hb47nPSG3KaV9CIW3ZwQlsvy+XMcIHYoX
-         KFgw==
+        bh=e9pgMIbtNGvt+dZacrjStBRF6ycRamKEcgmVWNACzbk=;
+        b=B6VsdJXuVBxjoRidl/rWXx6lyaYIQFvp6tWrCs2klKJkfmNI5IfqRB3FYJE9QNs7XZ
+         VQPgYaeyFzIYXB5Qpd/UPFXCdx1Tt4cK2F0Yg+wx1WstWHbLwafT2d40KyEmd2oKkwYA
+         3bxFngz+IU0+Thmfq3uXmK/BY/AWKCJVbkrTotOodhq24zTiVThPtuYwc9t6S6rKfFp2
+         pF+8vUbFK+BP92TFQDj+8Rjr/GiO0xtV0yygankwhNC7hAIMpLN9emUgK+APb6Lc1MuH
+         CLfmfwi9lWlB/u3pQfxTOqJCt4IWpB/1eObhNw/6SceyHfK9l0c0S+97IU3Yahb7pTwG
+         gfIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686218331; x=1688810331;
+        d=1e100.net; s=20221208; t=1686218844; x=1688810844;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YlNe4BUkEg1VajwhQoFVrqBpA5/M9bmxOxMvTziERXM=;
-        b=L8m/lILhXFuhoSohGAZP+mUKPInUPjvW+eGOZJtDLZXOPPld3gEbxpeQwGVxTBK8u2
-         IJtneH/YhvhLT9ghx4F9Uscm9BMNN89fliySoSSMTonarN36e+zkW7qIS7Z7hFsDqSGL
-         cY1ZLT+d4PYuc3QpKmDHGVmx9/DMfNIVRE/+ZHYv4c9jHVXkTdflXcHfvFwOHlM+IGB9
-         soOuAgJ73Ll5uP2xB5b8MzY9/UblmVdJ4PbPJhDCGVHm6pEl0z3L4Yb4IEGRThs66KuY
-         0OM1UuW7BbeimHUeUz8vXvFvuwM3L1PNAOo95wcskV0D11yH5lKR+Fp58Tm0cH+zcVLp
-         WvLg==
-X-Gm-Message-State: AC+VfDycQSo0R+5jFqqkiHeieODkUJuIe/XUGWpY9FnLMNGatX6tJcFm
-        4Ms6S1w2hRuaOoAg7oTBR/M=
-X-Google-Smtp-Source: ACHHUZ4bwjDbYedllIN1larsf4jSAU4BoOl6EnSlCIw2Dmt/YKIRFssvTbWtdQSg+qKIlIAdWC/90A==
-X-Received: by 2002:adf:e78d:0:b0:309:1532:87e with SMTP id n13-20020adfe78d000000b003091532087emr10078608wrm.31.1686218330725;
-        Thu, 08 Jun 2023 02:58:50 -0700 (PDT)
+        bh=e9pgMIbtNGvt+dZacrjStBRF6ycRamKEcgmVWNACzbk=;
+        b=Jj04nFgGDCBviBxFU9W35zkXYJ666m08kEBLB+yf5303ylULmZiOhBoW38OFn/uVRq
+         s66VvICW/xiWE+vna69GQAVOF7Msade06AxS88HtRZsVD9AFBhCuFnIQmUPpyaCFIDXZ
+         eafahGnynPho95D4MkmjzfD2NpuiBwlxhNDHNiRxw9F64SxWKgdFwGWsXdrpmNvIaTvo
+         HcSX0gVqB/aStrtpfmndOquD2Uu32FCzvoRNtoEKCEapjHSTrmXZy6scXD6QOSndcMWz
+         c7da6EIvTH60H4YxOKdm3E05uCugQdcxvRw5hANcpT4aeOdeP6EIHfptd5hKsOovWIXb
+         p7uA==
+X-Gm-Message-State: AC+VfDwBH2X9JbzWjWzDz6R60y7yMzBOW7NbCVxAie6kOxy8xjU8QrGa
+        MhE8cQod1SXjtizZhPHuj/7K3BuKpR6dww==
+X-Google-Smtp-Source: ACHHUZ5UbkzYfeP23mP06MNOclTBsL8+JGEjJfF81Bk0/Obd6/6ehp942TML9tFOWhsksM+sPC42jA==
+X-Received: by 2002:adf:ee8e:0:b0:30e:3da5:46e5 with SMTP id b14-20020adfee8e000000b0030e3da546e5mr7274154wro.59.1686218843798;
+        Thu, 08 Jun 2023 03:07:23 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a4-20020adffac4000000b00307c46f4f08sm1091924wrs.79.2023.06.08.02.58.49
+        by smtp.gmail.com with ESMTPSA id q3-20020adff503000000b002ca864b807csm1141756wro.0.2023.06.08.03.07.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 02:58:50 -0700 (PDT)
+        Thu, 08 Jun 2023 03:07:23 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Gustavo Sousa <gustavo.sousa@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] powerpc/powernv/sriov: perform null check on iov before dereferencing iov
-Date:   Thu,  8 Jun 2023 10:58:49 +0100
-Message-Id: <20230608095849.1147969-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/i915/mtl: Fix spelling mistake "initate" -> "initiate"
+Date:   Thu,  8 Jun 2023 11:07:22 +0100
+Message-Id: <20230608100722.1148771-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,41 +71,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Currently pointer iov is being dereferenced before the null check of iov
-which can lead to null pointer dereference errors. Fix this by moving the
-iov null check before the dereferencing.
+There is a spelling mistake in a drm_dbg_kms message. Fix it.
 
-Detected using cppcheck static analysis:
-linux/arch/powerpc/platforms/powernv/pci-sriov.c:597:12: warning: Either
-the condition '!iov' is redundant or there is possible null pointer
-dereference: iov. [nullPointerRedundantCheck]
- num_vfs = iov->num_vfs;
-           ^
-
-Fixes: 052da31d45fc ("powerpc/powernv/sriov: De-indent setup and teardown")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/powerpc/platforms/powernv/pci-sriov.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/display/intel_pmdemand.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/powernv/pci-sriov.c b/arch/powerpc/platforms/powernv/pci-sriov.c
-index 7195133b26bb..42e1f045199f 100644
---- a/arch/powerpc/platforms/powernv/pci-sriov.c
-+++ b/arch/powerpc/platforms/powernv/pci-sriov.c
-@@ -594,11 +594,10 @@ static void pnv_pci_sriov_disable(struct pci_dev *pdev)
- 	struct pnv_iov_data   *iov;
+diff --git a/drivers/gpu/drm/i915/display/intel_pmdemand.c b/drivers/gpu/drm/i915/display/intel_pmdemand.c
+index f7608d363634..f59e1e962e3d 100644
+--- a/drivers/gpu/drm/i915/display/intel_pmdemand.c
++++ b/drivers/gpu/drm/i915/display/intel_pmdemand.c
+@@ -555,7 +555,7 @@ intel_pmdemand_program_params(struct drm_i915_private *i915,
+ 		goto unlock;
  
- 	iov = pnv_iov_get(pdev);
--	num_vfs = iov->num_vfs;
--	base_pe = iov->vf_pe_arr[0].pe_number;
--
- 	if (WARN_ON(!iov))
- 		return;
-+	num_vfs = iov->num_vfs;
-+	base_pe = iov->vf_pe_arr[0].pe_number;
+ 	drm_dbg_kms(&i915->drm,
+-		    "initate pmdemand request values: (0x%x 0x%x)\n",
++		    "initiate pmdemand request values: (0x%x 0x%x)\n",
+ 		    mod_reg1, mod_reg2);
  
- 	/* Release VF PEs */
- 	pnv_ioda_release_vf_PE(pdev);
+ 	intel_de_rmw(i915, XELPDP_INITIATE_PMDEMAND_REQUEST(1), 0,
 -- 
 2.30.2
 
