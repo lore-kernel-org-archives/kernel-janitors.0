@@ -2,56 +2,46 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8651BC7EE23
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 10:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC300C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 10:24:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233381AbjFHKH2 (ORCPT
+        id S235934AbjFHKYc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 06:07:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32956 "EHLO
+        Thu, 8 Jun 2023 06:24:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233887AbjFHKH1 (ORCPT
+        with ESMTP id S232125AbjFHKYa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 06:07:27 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC6D273E;
-        Thu,  8 Jun 2023 03:07:25 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-30ae4ec1ac7so278766f8f.2;
-        Thu, 08 Jun 2023 03:07:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686218844; x=1688810844;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e9pgMIbtNGvt+dZacrjStBRF6ycRamKEcgmVWNACzbk=;
-        b=B6VsdJXuVBxjoRidl/rWXx6lyaYIQFvp6tWrCs2klKJkfmNI5IfqRB3FYJE9QNs7XZ
-         VQPgYaeyFzIYXB5Qpd/UPFXCdx1Tt4cK2F0Yg+wx1WstWHbLwafT2d40KyEmd2oKkwYA
-         3bxFngz+IU0+Thmfq3uXmK/BY/AWKCJVbkrTotOodhq24zTiVThPtuYwc9t6S6rKfFp2
-         pF+8vUbFK+BP92TFQDj+8Rjr/GiO0xtV0yygankwhNC7hAIMpLN9emUgK+APb6Lc1MuH
-         CLfmfwi9lWlB/u3pQfxTOqJCt4IWpB/1eObhNw/6SceyHfK9l0c0S+97IU3Yahb7pTwG
-         gfIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686218844; x=1688810844;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e9pgMIbtNGvt+dZacrjStBRF6ycRamKEcgmVWNACzbk=;
-        b=Jj04nFgGDCBviBxFU9W35zkXYJ666m08kEBLB+yf5303ylULmZiOhBoW38OFn/uVRq
-         s66VvICW/xiWE+vna69GQAVOF7Msade06AxS88HtRZsVD9AFBhCuFnIQmUPpyaCFIDXZ
-         eafahGnynPho95D4MkmjzfD2NpuiBwlxhNDHNiRxw9F64SxWKgdFwGWsXdrpmNvIaTvo
-         HcSX0gVqB/aStrtpfmndOquD2Uu32FCzvoRNtoEKCEapjHSTrmXZy6scXD6QOSndcMWz
-         c7da6EIvTH60H4YxOKdm3E05uCugQdcxvRw5hANcpT4aeOdeP6EIHfptd5hKsOovWIXb
-         p7uA==
-X-Gm-Message-State: AC+VfDwBH2X9JbzWjWzDz6R60y7yMzBOW7NbCVxAie6kOxy8xjU8QrGa
-        MhE8cQod1SXjtizZhPHuj/7K3BuKpR6dww==
-X-Google-Smtp-Source: ACHHUZ5UbkzYfeP23mP06MNOclTBsL8+JGEjJfF81Bk0/Obd6/6ehp942TML9tFOWhsksM+sPC42jA==
-X-Received: by 2002:adf:ee8e:0:b0:30e:3da5:46e5 with SMTP id b14-20020adfee8e000000b0030e3da546e5mr7274154wro.59.1686218843798;
-        Thu, 08 Jun 2023 03:07:23 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id q3-20020adff503000000b002ca864b807csm1141756wro.0.2023.06.08.03.07.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 03:07:23 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Thu, 8 Jun 2023 06:24:30 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A560D173B;
+        Thu,  8 Jun 2023 03:24:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686219869; x=1717755869;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=0kSBNlHK2bsytGA9aO1JMLSbfCDZkZdpa9AQY9EE1gA=;
+  b=M7sDMU6J3fEgy7VZ4MhM0XGP4/M/304qMDuz3Qf3vzMcN+ZZxopZ4lPr
+   sK8Qyj6AJ/QHNgCFUiXODGlKPuIpB7pGtuoI1G3yQ6g/V/hGugxb32LTT
+   zGwTIZ60u7II/rKausTGJkzmCtriAYvydaN+bYgDKGPrh4BrfHtu4H5Gj
+   RLJaOuGI1ztKEEv0BBmfAJirmDiO40oTL+Vyq32adZJwuoCWUjIODitfT
+   Hlcmqy6frODBPTwB/3GYUZ7O+QUiOwhP5mJxsMR1aPjQ85kiQivmZbCW0
+   xTnpBWPMr0CTGNU2Yn6lxhZFxhzh7gzR2KgH6E+Zr8XtB5Qy7aBPD0ITj
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10734"; a="443637477"
+X-IronPort-AV: E=Sophos;i="6.00,226,1681196400"; 
+   d="scan'208";a="443637477"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2023 03:24:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10734"; a="713068553"
+X-IronPort-AV: E=Sophos;i="6.00,226,1681196400"; 
+   d="scan'208";a="713068553"
+Received: from unknown (HELO localhost) ([10.237.66.162])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2023 03:24:26 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Colin Ian King <colin.i.king@gmail.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
@@ -60,37 +50,43 @@ To:     Jani Nikula <jani.nikula@linux.intel.com>,
         Gustavo Sousa <gustavo.sousa@intel.com>,
         intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/mtl: Fix spelling mistake "initate" -> "initiate"
-Date:   Thu,  8 Jun 2023 11:07:22 +0100
-Message-Id: <20230608100722.1148771-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
+Subject: Re: [PATCH][next] drm/i915/mtl: Fix spelling mistake "initate" ->
+ "initiate"
+In-Reply-To: <20230608100722.1148771-1-colin.i.king@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230608100722.1148771-1-colin.i.king@gmail.com>
+Date:   Thu, 08 Jun 2023 13:24:23 +0300
+Message-ID: <87h6ris148.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a drm_dbg_kms message. Fix it.
+On Thu, 08 Jun 2023, Colin Ian King <colin.i.king@gmail.com> wrote:
+> There is a spelling mistake in a drm_dbg_kms message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/i915/display/intel_pmdemand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
 
-diff --git a/drivers/gpu/drm/i915/display/intel_pmdemand.c b/drivers/gpu/drm/i915/display/intel_pmdemand.c
-index f7608d363634..f59e1e962e3d 100644
---- a/drivers/gpu/drm/i915/display/intel_pmdemand.c
-+++ b/drivers/gpu/drm/i915/display/intel_pmdemand.c
-@@ -555,7 +555,7 @@ intel_pmdemand_program_params(struct drm_i915_private *i915,
- 		goto unlock;
- 
- 	drm_dbg_kms(&i915->drm,
--		    "initate pmdemand request values: (0x%x 0x%x)\n",
-+		    "initiate pmdemand request values: (0x%x 0x%x)\n",
- 		    mod_reg1, mod_reg2);
- 
- 	intel_de_rmw(i915, XELPDP_INITIATE_PMDEMAND_REQUEST(1), 0,
+> ---
+>  drivers/gpu/drm/i915/display/intel_pmdemand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_pmdemand.c b/drivers/gpu/drm/i915/display/intel_pmdemand.c
+> index f7608d363634..f59e1e962e3d 100644
+> --- a/drivers/gpu/drm/i915/display/intel_pmdemand.c
+> +++ b/drivers/gpu/drm/i915/display/intel_pmdemand.c
+> @@ -555,7 +555,7 @@ intel_pmdemand_program_params(struct drm_i915_private *i915,
+>  		goto unlock;
+>  
+>  	drm_dbg_kms(&i915->drm,
+> -		    "initate pmdemand request values: (0x%x 0x%x)\n",
+> +		    "initiate pmdemand request values: (0x%x 0x%x)\n",
+>  		    mod_reg1, mod_reg2);
+>  
+>  	intel_de_rmw(i915, XELPDP_INITIATE_PMDEMAND_REQUEST(1), 0,
+
 -- 
-2.30.2
-
+Jani Nikula, Intel Open Source Graphics Center
