@@ -2,102 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC23C7EE25
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 05:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 703EDC7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 06:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234512AbjFHF6B (ORCPT
+        id S234987AbjFHGtm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 01:58:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46528 "EHLO
+        Thu, 8 Jun 2023 02:49:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231596AbjFHF57 (ORCPT
+        with ESMTP id S234439AbjFHGtk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 01:57:59 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB4C41984;
-        Wed,  7 Jun 2023 22:57:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686203878; x=1717739878;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=C6YIdimhhCSqB2aOCNA+4fKVost7ygPqKS7gSVJy1DU=;
-  b=bL0ez5aOjxDMMDu1LoNdaYow8l2k6OzDe+GZ7eLV5azMUKp/dysw96oe
-   0tfkomDwIPEAGBhHKtHS3zgqArdmfUTDbtQ9zXAwpd+U1BmbU36p4vuk9
-   ySHKUr2F4/LSxyICduvqQ0AyarFEWZZQstsVmZvUrkRHAcvIhtqAQkg/J
-   JGPHGZh0n3KZL2gWiTQXoNOuJeQ6XjXtSeaHdYS5IOHHARlVYPT0Z0Jhf
-   9Ki8teyL10kOOhjFkE4ncDY8fWQQp0mrnj+hfq8vS50Wag/Hfm4hT46Y2
-   AU1gnjjoQ8gUlMo6b4xTfC+8tZFj3MHyqs0xy+Ad8Ud00BH9wbyGtOtXw
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10734"; a="354703492"
-X-IronPort-AV: E=Sophos;i="6.00,226,1681196400"; 
-   d="scan'208";a="354703492"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2023 22:57:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10734"; a="739563409"
-X-IronPort-AV: E=Sophos;i="6.00,226,1681196400"; 
-   d="scan'208";a="739563409"
-Received: from joe-255.igk.intel.com (HELO localhost) ([10.91.220.57])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2023 22:57:56 -0700
-Date:   Thu, 8 Jun 2023 07:57:54 +0200
-From:   Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-To:     Marco Pagani <marpagan@redhat.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] accel/ivpu: Use struct_size()
-Message-ID: <20230608055754.GD324119@linux.intel.com>
-References: <0ae53be873c27c9a8740c4fe6d8e7cd1b1224994.1685366864.git.christophe.jaillet@wanadoo.fr>
- <3475be3b-11d5-96fe-6bc4-26d0e3a270df@redhat.com>
+        Thu, 8 Jun 2023 02:49:40 -0400
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E213A173B;
+        Wed,  7 Jun 2023 23:49:39 -0700 (PDT)
+Received: by mail-qt1-x82a.google.com with SMTP id d75a77b69052e-3f80cd74c63so2845191cf.3;
+        Wed, 07 Jun 2023 23:49:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686206979; x=1688798979;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3ARSspE8Wqbyj/GCtXfbj+s8zwVt9qmZGvXVlUiROqk=;
+        b=YNiDJNFPJc+61sZ8GD5vTbQx9l8pQc0mLRpvzwH5mScpnv4b6d+Fx8Xk/om416FCKF
+         ZFDOXv3ihgAyC0Pqdz/7JJ8wdPmpvgPzGSqAkQs0iRvHwV5/PeR6KuX5tb+LgNDQ5l6l
+         OtQNuTiNFmuF56o7jWSqv1VQ3oFfiYCWjq6+LCvHdkSxJ0TEYFQlbIR69DjjkHJXew9K
+         rcoKZj/Sw2BBCHpEv8hOJn7g+E2GfHvALT4W0SRwzizxO+tMRGnlBFRXyamNk4S8vaKH
+         cpaATUb5PufaR/q6HbpLq5fd0onmwanj9avXxSXpOaMd3FRT0TEXpxCgRbE4iZAnhYya
+         L49A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686206979; x=1688798979;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ARSspE8Wqbyj/GCtXfbj+s8zwVt9qmZGvXVlUiROqk=;
+        b=csGqTMT3zz9calkvCgc54D43n2lqZ5A0xTdpNBKea0ZnbwSguzjuNlROBwGY/pAvqm
+         yqVHYbuIpjriHfkt+76ATYYO3+z2oot2K81oFqAl/jvH1JCdgCHkzBe2wOXygqo9+KmS
+         1mstoRvOp/Kbaw+Lp1LhS/DtUwhREGzaICnbunapLcyD9JaVZS7ROV4A/LCyjp14wtqE
+         YcKpVoodcr2sNzhimQyDq7PePLX/bvAQRe08Cq906ClofWxM3yil0tVQwZ1QERwB2fTZ
+         s9vMT5905UziOtMsPebWhEPt8pTuCHMEi/KoR9MH1f6oNMZnUH+/DVkZbUr8JCwqJ69v
+         v1EQ==
+X-Gm-Message-State: AC+VfDyMNUea/sWda7fXH5W8w5aDW/6qkfd59ODGrp0B/HNNtCJKDmYH
+        deO8Sm5uwn64UemxJWhOIIs=
+X-Google-Smtp-Source: ACHHUZ6OYDuiqLS1qKmOsF4AO2kU9zCpuDaDkoZH6pWqspjDCpqZyamwOn9eKqiQtVUOfHXY6X6MHw==
+X-Received: by 2002:a05:622a:289:b0:3f6:c348:3fc6 with SMTP id z9-20020a05622a028900b003f6c3483fc6mr6384281qtw.8.1686206978969;
+        Wed, 07 Jun 2023 23:49:38 -0700 (PDT)
+Received: from [192.168.43.80] (subs03-180-214-233-89.three.co.id. [180.214.233.89])
+        by smtp.gmail.com with ESMTPSA id e21-20020a62aa15000000b0065014c15a57sm420351pff.35.2023.06.07.23.49.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jun 2023 23:49:38 -0700 (PDT)
+Message-ID: <bb4060b4-47b6-a7ba-af73-8509241ee2cc@gmail.com>
+Date:   Thu, 8 Jun 2023 13:49:32 +0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3475be3b-11d5-96fe-6bc4-26d0e3a270df@redhat.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 8/8] crypto: cts: Convert MIT boilerplate to corresponding
+ SPDX license identifier
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Richard Fontana <rfontana@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Franziska Naepelt <franziska.naepelt@googlemail.com>,
+        Linux SPDX Licenses <linux-spdx@vger.kernel.org>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>,
+        Linux Crypto <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+References: <20230607053940.39078-10-bagasdotme@gmail.com>
+ <20230607053940.39078-18-bagasdotme@gmail.com>
+ <CAC1cPGx-mD0DAEanCFtoxoGRyHkcu-GTTNX=ePzjhb8XM+73mg@mail.gmail.com>
+ <ZIFn8mNXVcI0SGTR@debian.me> <2023060839-limpness-vessel-ccc7@gregkh>
+Content-Language: en-US
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <2023060839-limpness-vessel-ccc7@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 01, 2023 at 05:58:48PM +0200, Marco Pagani wrote:
+On 6/8/23 12:40, Greg Kroah-Hartman wrote:
+>> Greg, is Richard's comment right? If so, I'll drop this patch.
 > 
-> On 2023-05-29 15:28, Christophe JAILLET wrote:
-> > Use struct_size() instead of hand-writing it. It is less verbose, more
-> > robust and more informative.
-> > 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Yes it is, please ask for all of these to not be applied.
 > 
-> Reviewed-by: Marco Pagani <marpagan@redhat.com>
-Applied to drm-misc-next
 
-Thanks
-Stanislaw
+Did you mean this whole series? Other patches have not been reviewed
+yet. Maybe Herbert can apply these rest of patches if there is
+no objection.
 
-> 
-> > ---
-> >  drivers/accel/ivpu/ivpu_job.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/accel/ivpu/ivpu_job.c b/drivers/accel/ivpu/ivpu_job.c
-> > index 3c6f1e16cf2f..0a09bba8da24 100644
-> > --- a/drivers/accel/ivpu/ivpu_job.c
-> > +++ b/drivers/accel/ivpu/ivpu_job.c
-> > @@ -289,15 +289,13 @@ ivpu_create_job(struct ivpu_file_priv *file_priv, u32 engine_idx, u32 bo_count)
-> >  {
-> >  	struct ivpu_device *vdev = file_priv->vdev;
-> >  	struct ivpu_job *job;
-> > -	size_t buf_size;
-> >  	int ret;
-> >  
-> >  	ret = ivpu_rpm_get(vdev);
-> >  	if (ret < 0)
-> >  		return NULL;
-> >  
-> > -	buf_size = sizeof(*job) + bo_count * sizeof(struct ivpu_bo *);
-> > -	job = kzalloc(buf_size, GFP_KERNEL);
-> > +	job = kzalloc(struct_size(job, bos, bo_count), GFP_KERNEL);
-> >  	if (!job)
-> >  		goto err_rpm_put;
-> >  
-> 
+-- 
+An old man doll... just what I always wanted! - Clara
+
