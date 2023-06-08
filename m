@@ -2,102 +2,93 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AF1C7EE29
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 11:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 343ECC7EE25
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 11:24:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234001AbjFHLOP (ORCPT
+        id S235367AbjFHLYP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 07:14:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
+        Thu, 8 Jun 2023 07:24:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231634AbjFHLOO (ORCPT
+        with ESMTP id S233739AbjFHLYO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 07:14:14 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AE9D1BC6
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Jun 2023 04:14:11 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f61530506aso4077285e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 08 Jun 2023 04:14:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686222850; x=1688814850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y++8eb57xKQGjRxPQt0BHBMYouZ1Xv40QTV3/gF3FiQ=;
-        b=esU7Vh/MUaKl3oy5Ki0cEC9fkOn2Oocdcw9MXRFD9yAUSPTazhIw/9+VE5DaSap8V9
-         28/kghfeYMato8IDNpc1eOamE5JHi/X0oR0t6GTQB+BJvoT7JBMHHQIaHIn+BLTbMzub
-         wc9nyVl70H/VuEJXmhnEoQOZT21bygy6zt+6D/TB7r755HJeAFkoI1DFNGz1Myv0wh+Y
-         1DT6xLn5nDVsjHJEgbwMUULNzcBJCToBs9LVKeRxHz2iU+ne+TufpQXlr3hgq3C3Xky7
-         Zwt7gIBDFqiqwkDg0hcZ4WpqFhg4E1fwzZwCm2E6C47Qhy2wkz0+zzN6Tr9nAs/bLYjZ
-         0GWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686222850; x=1688814850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y++8eb57xKQGjRxPQt0BHBMYouZ1Xv40QTV3/gF3FiQ=;
-        b=BqLAHcYfNgh4zLMct8T3rl/lrLJ9o2gsyIWELW8tzB/YIjRAygTC9tuLlZw5Oxgri+
-         nk/NlJth/SKSh2wCChlNeJOhVcz9KzsRr5HbA5A76Oc5mM/lOUJZb2d7j2dgNBUwhMYv
-         RcPzcxIHm4SZmqTYVIb57Y9FJE3v29WatFsDNLtJAgSKAPgi57HQeicYt1S6Dx3Eqty+
-         fpgrOLpbb+6glk0l3XLgMxR0No5CjQyCdQdion2OvLKii3A6R8HgIh+MCNOMCO3GgzYG
-         rcXQHtEPM/cQOFHIjSfERUUG5UOjwgrpFBqd6N9RG08MfYoD8vyqS/d4heePErrsZ3p1
-         KRlg==
-X-Gm-Message-State: AC+VfDxENnn3GX0oVL+n1VEqB2qgLVKGm4n+xvtDKOWFGDi2IGUguHIY
-        LAKCRDPTz0qjnxkfxa9aeV+CvnvtGqPCeLqJI6I=
-X-Google-Smtp-Source: ACHHUZ4cjdXO5JTxcfyxQqFPmsPBxjeh8SXKmJh6VYrhNwxY63eQEPyo/CpgsMtF0fbFji57EFKWNw==
-X-Received: by 2002:a7b:c38d:0:b0:3f4:16bc:bd19 with SMTP id s13-20020a7bc38d000000b003f416bcbd19mr1287567wmj.23.1686222849841;
-        Thu, 08 Jun 2023 04:14:09 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id h17-20020a05600c28d100b003f727764b10sm1696661wmd.4.2023.06.08.04.14.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 04:14:08 -0700 (PDT)
-Date:   Thu, 8 Jun 2023 14:14:04 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: tidy up some error checking
-Message-ID: <0a28b64f-e403-46a8-81c9-d1665e8d6948@kadam.mountain>
-References: <ZH7vP2Swu8CYpgUL@moroto>
- <gkeclhi5ouudxiwbd6wds7y2svtdcamyuqcnk42z7hr2js52qh@25ox3nxgeuzp>
- <b27d016b-ff87-435b-8341-45a4369049fa@kadam.mountain>
- <b7762fab-ba49-3929-281d-ca57280e31fc@linaro.org>
+        Thu, 8 Jun 2023 07:24:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C37181FF3;
+        Thu,  8 Jun 2023 04:24:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 34B5C60E55;
+        Thu,  8 Jun 2023 11:24:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC80C433D2;
+        Thu,  8 Jun 2023 11:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686223452;
+        bh=C0+ZCw3WXH74XZgo+jq6NMYpfOAeHvfG17938qy+FaQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uRT8p1+ziG2U0UC307FFX1ud1peLbdUGDJRM9SzHr28nJbhBn1c72iSuC0VsVZ47s
+         hbY78cCxUHJcdvlYGUN1PccsoBKXfBM/Q+NlMzdDTjFLTNkCt4VsU1vq2OUYbbMkBY
+         rtccu/bEtTfnWkOOd8eF9TKlQ4IgE5vMu813RQgjwRyxMtY76tktsGsUAW/tyM/dlB
+         d0RN8iMojTMuvued/54051/Ux5PfMV/gQDlrhVyYnMcnvxn6eH9eCaaJPf8Fadrm4W
+         hJb4/bQDqA8c45Zo9iGTn4awTZH+1NzWTyx5MmXnxZOepTFna3rmTJ6HceIIuDRCgC
+         /4Zt4FFA3GHug==
+Date:   Thu, 8 Jun 2023 13:24:03 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Andrew Davis <afd@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] i2c: davinci: Use struct name not type with
+ devm_kzalloc()
+Message-ID: <ZIG6UzLMb7cj4bbj@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Markus Elfring <Markus.Elfring@web.de>, Andrew Davis <afd@ti.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20230515175042.495377-2-afd@ti.com>
+ <61846ef5-26fb-52bf-11a3-b1c0b3b53b94@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bVKwg6CrWJN33/Mx"
 Content-Disposition: inline
-In-Reply-To: <b7762fab-ba49-3929-281d-ca57280e31fc@linaro.org>
+In-Reply-To: <61846ef5-26fb-52bf-11a3-b1c0b3b53b94@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 08, 2023 at 02:26:14AM +0300, Dmitry Baryshkov wrote:
-> On 07/06/2023 17:42, Dan Carpenter wrote:
-> > On Tue, Jun 06, 2023 at 10:23:46PM +0200, Marijn Suijten wrote:
-> > > > @@ -359,8 +359,8 @@ static void dpu_encoder_phys_cmd_tearcheck_config(
-> > > >   	 * frequency divided by the no. of rows (lines) in the LCDpanel.
-> > > >   	 */
-> > > >   	vsync_hz = dpu_kms_get_clk_rate(dpu_kms, "vsync");
-> > > > -	if (vsync_hz <= 0) {
-> > > > -		DPU_DEBUG_CMDENC(cmd_enc, "invalid - vsync_hz %u\n",
-> > > > +	if (!vsync_hz) {
-> > > > +		DPU_DEBUG_CMDENC(cmd_enc, "invalid - vsync_hz %lu\n",
-> > > >   				 vsync_hz);
-> > > 
-> > > Nit: no need to print the value here, you know it's zero.  Could be
-> > > clarified to just "no vsync clock".
-> > > 
-> > 
-> > Yeah.  That's obviously not useful.  Sorry, I will resend.
-> 
-> I'll fix while applying. Seems easier.
 
-Thanks!
+--bVKwg6CrWJN33/Mx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-regards,
-dan carpenter
 
+> Should desirable changes be split into better update steps?
+
+It is done. It has already been applied.
+
+
+--bVKwg6CrWJN33/Mx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmSBuk8ACgkQFA3kzBSg
+Kba17w/9EPHkVoPeDecot6s8LaD5W3ZuIQoPT4FG+daZSG2tHDKkViYviHJIuppS
+DS04mkUSULmWorRr5dYlDEx/PjnykJ3KHY13+SKmC5d+nzUoQdyQod8o93U3d3kU
+6m28GseOazRWgQiakkgy/N8O4EEb6TUnnyEMpJUIqqdd1NS34SflRukzygxrKoEH
+tpDAZeOXTTAhjt1qWhC/M75O/h5n9lRH13CbrGLSzb3OpDjMMMoU0Xm9wh7/QHn1
+pyE3edZuyI2QwIhHaI+a44M26buuwsV9QiMrzUvdi/Hi7UWF+HRDyHdzsBjwn1gK
+njWp3MkN+u3LWkRy01jou83TY/8Gv4iYIZjbVE80AGRuK2vaDvq/WHMjbhafhocr
+FRmuWQ3YniBI+ZjPKFb3nSjze4l749fG23ZaczxMiB1GtM0bXNI87C/EnS9TL9CR
+mnvIMX/Ke1qcklkQAqzXLgtiD0OTgyQq4Ti+EXC76iSh2ivgZuCdlfTXbOIpZjV/
+65rKug2eP/3lhdodnqxAbEzwpRLSjnbrAsYA2lzeZoJI6MkfAGzn4Lt/2A0vcSMn
+NsIWApZwUzUFPrChBhMRTCrVMotHcwhHoSFRr13WLx0hRIxCrPaE7td2Z+nXKobE
+J+RvarSc9SGcx512/cktbHWDeI8Uw3tK7oJQnn2oSfJBjDOkY6g=
+=Dopb
+-----END PGP SIGNATURE-----
+
+--bVKwg6CrWJN33/Mx--
