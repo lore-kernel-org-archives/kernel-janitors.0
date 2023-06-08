@@ -2,85 +2,95 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B865C7EE25
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 11:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B01DC7EE23
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 13:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235119AbjFHL06 (ORCPT
+        id S235904AbjFHNhk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 07:26:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45388 "EHLO
+        Thu, 8 Jun 2023 09:37:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233743AbjFHL05 (ORCPT
+        with ESMTP id S234893AbjFHNhi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 07:26:57 -0400
-Received: from pokefinder.org (pokefinder.org [135.181.139.117])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 41EA2C3;
-        Thu,  8 Jun 2023 04:26:56 -0700 (PDT)
-Received: from localhost (120-123-142-46.pool.kielnet.net [46.142.123.120])
-        by pokefinder.org (Postfix) with ESMTPSA id 7D54BA42601;
-        Thu,  8 Jun 2023 13:26:55 +0200 (CEST)
-Date:   Thu, 8 Jun 2023 13:26:54 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
+        Thu, 8 Jun 2023 09:37:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A9F31BE4;
+        Thu,  8 Jun 2023 06:37:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0ED09615C6;
+        Thu,  8 Jun 2023 13:37:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF6F5C433D2;
+        Thu,  8 Jun 2023 13:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686231456;
+        bh=BeLMMho+JfetaCMdYYeJ2Zi2h2QiwQ+avqQ10upaJqQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tbafOJJxR4llsIUC08BCwYRiiq0+pP91D6rRU9M91q+n452llEDcBFT71vfYmGJ2W
+         FRNSRVAyzZTf/Q/t6jSDa6afTvG2uaP/VJ58W5en5YudF8Ld0zJ9mTbsGfosqSE84z
+         7zKlpUwlrnKFml6YiDhBUJvckqVVpQqUI+p1ssJG/3BV37Q31Htd6DoRbNilZa6h+R
+         ysdNZaujHWpyTPAASG0+9aaKLkS2+V3jho/LS/jC4pi6ypAdMxWA8RzsGdp/Kt3gAo
+         qlcqPgkAAS88VuWS8VfSlvXzb4RzhxhO0Goi71a8oJS/7oDy3n2e7qONeq28M8zMgg
+         P5a0oXoGz3Ifg==
+Date:   Thu, 8 Jun 2023 15:37:32 +0200
+From:   Wolfram Sang <wsa@kernel.org>
 To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        kernel-janitors@vger.kernel.org, Andrew Davis <afd@ti.com>
-Subject: Re: [linux-i2c] Patch notification: DaVinci: 2 patches updated
-Message-ID: <ZIG6/h0PnLi7j6Pn@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+Cc:     Andrew Davis <afd@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [v2 2/2] i2c: davinci: Use struct name not type with
+ devm_kzalloc()
+Message-ID: <ZIHZnMQHDyTsZx7O@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Markus Elfring <Markus.Elfring@web.de>, Andrew Davis <afd@ti.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, linux-i2c@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Kevin Hilman <khilman@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        kernel-janitors@vger.kernel.org, Andrew Davis <afd@ti.com>
-References: <168613080300.11524.2783831689498520603@legolas.ozlabs.org>
- <8af5aca3-184f-2561-bec7-c4950fdbaeb5@web.de>
- <ZIGHmSvptAC0cWHD@shikoro>
- <93d2b121-4734-c195-90ad-d2d05e65e247@web.de>
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20230515175042.495377-2-afd@ti.com>
+ <61846ef5-26fb-52bf-11a3-b1c0b3b53b94@web.de>
+ <ZIG6UzLMb7cj4bbj@shikoro>
+ <d210abe3-7a9d-61fd-c358-dd4b2c8f2f60@web.de>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7KEHw5Y+JXuQMSxx"
+        protocol="application/pgp-signature"; boundary="BJ2b1EWvZ6YUgOz7"
 Content-Disposition: inline
-In-Reply-To: <93d2b121-4734-c195-90ad-d2d05e65e247@web.de>
+In-Reply-To: <d210abe3-7a9d-61fd-c358-dd4b2c8f2f60@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---7KEHw5Y+JXuQMSxx
+--BJ2b1EWvZ6YUgOz7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 
-> I find it interesting somehow that you found a contribution by Andrew Davis (from 2023-05-15)
-> more appropriate.
+> Will the patch review attention grow anyhow for affected aspects?
 
-It got reviewed from someone else. Patches which get a review from
-someone else get a priority boost. But don't be sad, because of this
-patch, I noticed all your other (unreviewed!) patches and applied them.
-That's good, right?
+What are "affected aspects" in this case?
 
 
---7KEHw5Y+JXuQMSxx
+--BJ2b1EWvZ6YUgOz7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmSBuv4ACgkQFA3kzBSg
-KbZ4IA//RmKHvQWOeCgdn8RE0u7Nnua50naIArf5gIEZd6yFtW9Ujd6HaQPy70b3
-mxlAznxUoUVuxGwrujrDQxPV9i1QeHdv83dMvh5tiBZF6hpq7ia0XsrrNx5AwaK9
-vhLZGYFStFLmsyF3IUj5OHHCscrEhVpAMqKTLti0rEoOtqXs4ybX/FaleVj1TgLC
-4c36gpp3396EYVwU3NJ5QWwLj91mgKb8s+Rd8+dJorwm0U+b318tN9lpHIxL/w3p
-6BHhrMhdNaRtC5I7pNripjZz/1rUEf0R/vUAoFbWG5bYiDj1LoKJQ30TgS5NWKAm
-tjO0AiejqWye7117oL6VeNHachicTy2f2MzxyRbaB+CiQnoT0fL5owevTRjNnReu
-lgn6+Nu5oXywNajVl2g7aZrX2X4ebQ4ffk1iVjIQy/c/TgA2MwRlbwQqF1hRSrCw
-VUVXnhnauOdP89Z5JVHTs3eTiqFJec7xPPGC42pa5MzLh8C5eNiJU3bz2LiQlMGy
-5qbAC+aIULdIYnH3ZCyzbvn74LZOKXVKn1673G50bTKuDWs8O5gZHy2vRxBOSpRN
-wAzi8JDG+9kdG4pE7xXGXPW8zGaZ87BXtAr6izKDZHHQt9dSHKxvZxXJmLCfjf0u
-LZQfBp/LnDix1X2CBe+tJCdAQg2oXHrAc+V58DOANCzkveLOxEs=
-=aOMQ
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmSB2ZgACgkQFA3kzBSg
+KbZLUA//XVeJsfoZ7nyhcgxnlXcILtoW/H/nFPHCUSW3FunV8jaaoHxO5kTmKDdK
+zWnt3KY9+bWoZng+mFhbizebUQ0JEynKibE/PwGksXn+LETcahB+NBGw2qG71hZI
+G6dVkO3dObbf7XtybPqDPTFtTQ5S9xmlJYqbJKuTTwRjbeqTil+I2kGb1VUlRrj1
+FB9Kv60keGAQrdGvW/Vb3dfSZPLBdxSqjWb7xzwkjX6RLyAUpSJfRL+qkE3jQJeL
+WnDikMr+73NO2vQ9yZ/wSioMmza+OMt2aVH/3OzAl3UObkDbqDr31ZSStKcJaJRV
+Q1fDcldRnRMbhVAk0yg/tqEL1nHyV8KRyt53nFjL8RBmmSrYhnksqVBRGAfPBoU4
+NmkpejppA/Or+LVhP9C76xupc1hFtj/PfuB9UUDqneTCpSMhsF/B2Uqf71HW5evV
+VxWlneqoha18FZ8dGXNNYLlxpPkTfPv2xyM9RUGb8tUz0oP+dTot2IT0tFDNlz1S
+lnleqhUt5tPCAAdfAt5Nwaa25iiCMJ/YZ8KS2ry50L3XII223pSv1Egi7lbNd+Pq
+W7orj9VjdW7fOXJI+UTlIjy80qky/+8UTwQi8hj7JqKFVW0KfJK/CtzS9tToG5gb
+gIlLNcoBEDRwPSnww99THOIx7q7Xm/xU4RxQBfbTYWvSFnYvkJk=
+=iK2M
 -----END PGP SIGNATURE-----
 
---7KEHw5Y+JXuQMSxx--
+--BJ2b1EWvZ6YUgOz7--
