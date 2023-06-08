@@ -2,126 +2,75 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4206C7EE29
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 07:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C7EC7EE29
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 07:50:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231599AbjFHHoR (ORCPT
+        id S233405AbjFHHuL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 03:44:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40058 "EHLO
+        Thu, 8 Jun 2023 03:50:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232541AbjFHHoN (ORCPT
+        with ESMTP id S233268AbjFHHuJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 03:44:13 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D8F91BF7
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Jun 2023 00:44:12 -0700 (PDT)
-Received: from [IPV6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab] (unknown [IPv6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 434F06606F10;
-        Thu,  8 Jun 2023 08:44:10 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1686210250;
-        bh=we5aCBFoTW+thcKB92wuegRxA5OPMUVdjGvjN3Drdzg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=gnpJL9sll4ZRnlKzXB9dG5D+jtA/ftb/CXMz+G3t5/Y22veNs2CYOoWpNosf96TEd
-         KIsVkQudbBhM39QnzPNdmUJnWC4vnPBRrgFhyNUJgJ9tYYy3ugxQMV/pxfwP5I0zD1
-         X/HCsIX6vQUqEezDlRJXhvLMltN3KxE1UoWyQ+IomU0Do0Eukh1s5JqDS1Xni2hyjV
-         mXwqz348XwMSArI9sAKHV0r3ttxdx0fEGOyHYhYiPD68MBFehAjbRsWBcBGp3MOA28
-         nV8bMlIrmLtPgEZBlNuF4aI190mM1fMjEIXBtP1diZ/nL0tb2suVgyB9kONKTvpb0r
-         9h7iHc8alahmg==
-Message-ID: <b1145f54-17c2-9ae0-517d-c5e89a8086a9@collabora.com>
-Date:   Thu, 8 Jun 2023 09:44:08 +0200
+        Thu, 8 Jun 2023 03:50:09 -0400
+X-Greylist: delayed 139 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 08 Jun 2023 00:50:01 PDT
+Received: from pokefinder.org (pokefinder.org [135.181.139.117])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B11871BF9
+        for <kernel-janitors@vger.kernel.org>; Thu,  8 Jun 2023 00:50:01 -0700 (PDT)
+Received: from localhost (120-123-142-46.pool.kielnet.net [46.142.123.120])
+        by pokefinder.org (Postfix) with ESMTPSA id 761C7A40F02;
+        Thu,  8 Jun 2023 09:50:00 +0200 (CEST)
+Date:   Thu, 8 Jun 2023 09:49:59 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-i2c@vger.kernel.org, Till Harbaum <till@harbaum.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [linux-i2c] Patch notification: i2c-tiny-usb: patches updated
+Message-ID: <ZIGIJ93Ze7oCY7oq@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+        Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+        Till Harbaum <till@harbaum.org>, kernel-janitors@vger.kernel.org
+References: <168614100370.23273.6741328315484253780@legolas.ozlabs.org>
+ <b103210f-affc-51cd-0540-a63072abba23@web.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v2] SoC: mediatek: mt8188-mt6359: clean up a return in
- codec_init
-Content-Language: en-US
-To:     =?UTF-8?B?VHJldm9yIFd1ICjlkLPmlofoia8p?= <Trevor.Wu@mediatek.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>
-Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "amergnat@baylibre.com" <amergnat@baylibre.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-References: <42f2a995-3545-40bf-82a0-fd9b8abc16ce@moroto.mountain>
- <a667139fd91f980eca1936aed7c973b750d30858.camel@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <a667139fd91f980eca1936aed7c973b750d30858.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5BThGYoYYSmyNDOr"
+Content-Disposition: inline
+In-Reply-To: <b103210f-affc-51cd-0540-a63072abba23@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 08/06/23 06:02, Trevor Wu (吳文良) ha scritto:
-> On Wed, 2023-06-07 at 17:57 +0300, Dan Carpenter wrote:
->>   This code triggers a Smatch static checker warning and does sort of
->> look like an error path.
->>
->> sound/soc/mediatek/mt8188/mt8188-mt6359.c:597
->> mt8188_max98390_codec_init() warn: missing error code? 'ret'
->>
->> However, returning 0 is intentional.  Make that explicit.
-> 
-> Hi Dan,
-> 
-> There are several similar instances in this file. If using 'return
-> ret;' is not recommended, should we update all of them simultaneously?
-> 
-> For instance, the value of 'ret' at the end of this function should
-> also be zero.
-> 
 
-I'm already in the process of performing a further cleanup to this file,
-will include Dan's patch in my series.
-
-Please hold on (sending today).
-
-Regards,
-Angelo
-
-> Thanks,
-> Trevor
-> 
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->> ---
->> v2: At first I thought this was an error path but it is a not.
->>
->>   sound/soc/mediatek/mt8188/mt8188-mt6359.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/sound/soc/mediatek/mt8188/mt8188-mt6359.c
->> b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
->> index bc4b74970a46..5ad8d2a5bbc4 100644
->> --- a/sound/soc/mediatek/mt8188/mt8188-mt6359.c
->> +++ b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
->> @@ -594,7 +594,7 @@ static int mt8188_max98390_codec_init(struct
->> snd_soc_pcm_runtime *rtd)
->>   }
->>   
->>   if (rtd->dai_link->num_codecs <= 2)
->> -return ret;
->> +return 0;
->>   
->>   /* add widgets/controls/dapm for rear speakers */
->>   ret = snd_soc_dapm_new_controls(&card->dapm,
->> mt8188_rear_spk_widgets,
->> -- 
->> 2.39.2
->>
+--5BThGYoYYSmyNDOr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+> May I know anything more about such a rejection according to my update suggestions (from 2018-02-01) here?
+
+I think the current code is easier maintainable if some functionality
+gets added to probe() in the future.
+
+
+--5BThGYoYYSmyNDOr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmSBiCcACgkQFA3kzBSg
+KbaCLg/8CMl1Zdj0VQkVZR+bcgldWcCBx9XDw/I/ehajXBQNAOPLcTccTALyvLdB
+/CT6p1y6qiHX5iUkqHe0mCXfha/KYoaSh5v+yGQxkSdt2aVtzg9qJihGd8jQjgQ9
+5P/md8re1kon3W0JEIP8ASkaL3QoZVP9ZjfMEA3+idm4iReNorllX6kRWGDkU5mY
+UEnUn6A2VKGtdyUr+j70MCQe1xMyzAuFtPxTSXQgRXQD+i7goZPlGrSM+G7POkDH
+oJjqys3K9zCwmMVqNcSaEhRz4eNILsM9f2UitiZUz34Iq/BO6eVMQZxcN8wdSyq3
+PaQvHOlhcAHzuHSUE4KJX/LVMOTIBGWZSOGhpudH1ByC/lGkPwcsEzAlIRboaQaz
+IUkKwJnrGj9CD657Fn2M77pLBvcrWxaMnP3/Q5u6BFHweRlXi7t3gy3vqYWUjscT
+sxQiAqLaJN7K1hk48/tTkipgLvhqp+ap/mH81+9A1ODv9fgrbiJYaWWbXhBkL8GS
+SGSEql2WEmJJkuCtpfrDIfVsEUKfF6ErRK3S1ykmt/XBgfj0947vdIUQtJLB8gs7
+ymyuoyMxqxKHgEFfLAXh0/kKVO2IzSM14MiphxhQc86Mea5Yuf+fdJMjRSIqaftK
+zPvLz3e8yOX5NtMitCc9ybDjFN77/mKfIZiK9FSL/rtncm/MKLw=
+=u8Sw
+-----END PGP SIGNATURE-----
+
+--5BThGYoYYSmyNDOr--
