@@ -2,107 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A018C7EE37
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 14:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CFBC7EE25
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 15:01:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236594AbjFHO4g (ORCPT
+        id S236779AbjFHPBg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 10:56:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42164 "EHLO
+        Thu, 8 Jun 2023 11:01:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235886AbjFHO4e (ORCPT
+        with ESMTP id S236637AbjFHPBc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 10:56:34 -0400
+        Thu, 8 Jun 2023 11:01:32 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166A610FB;
-        Thu,  8 Jun 2023 07:56:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C202680;
+        Thu,  8 Jun 2023 08:01:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A152464E20;
-        Thu,  8 Jun 2023 14:56:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087F9C433A1;
-        Thu,  8 Jun 2023 14:56:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D8F8464E54;
+        Thu,  8 Jun 2023 15:01:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D05EC433EF;
+        Thu,  8 Jun 2023 15:01:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686236193;
-        bh=CZiUnQSwCCU7tqgCmEoGvcv16/6kTQcWTKR0ljqRc8w=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Z8Nc9E40ALbkPxgFM+7K4XpUq4Kmj+P3FjQFcyAmG/9oyak52S0/q5NS1HWOowhph
-         BCkSGRzVhSB1T87cDOK5Ev9yO1V7BJms0d45UjUvGGRmBS46p0H7gmQ08O5hJpurG1
-         ViuZ2/ly25Pnh4I37yQKoNkt+tpYmvXraEdLuT9ISu5kbaf1t6Sn1UYajt/iP8MdcP
-         iJrLVcR4f/1drgO/iiMGQ51Ttm361EcsQIyzViGAiYpzxDfem77viijdI28uyPGM8w
-         4CMTpySPlmn+ErlmdDk2RrwPfQ9K1py2n6705nJq65NgpBa9hxbeF6rV95S6zlL21F
-         KkQud8md2pDAA==
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6b2b6910facso401391a34.1;
-        Thu, 08 Jun 2023 07:56:32 -0700 (PDT)
-X-Gm-Message-State: AC+VfDwwQMLEIEYBQXx9ggFv9yxVTdjABt3zb6ovmsExOhWfpxwOa9i8
-        +Z3yONyzjmdiuRlUWZZ1hVjbTxGjI5/5ncMPAWo=
-X-Google-Smtp-Source: ACHHUZ4b52LAMGrIJorPjZd8HZx5+JEzc5yIVrJ1Zf1u1Z8pwwtZAHBpxKd3KizdMa4n9bFBDXIpiXF8e0EA+zYsMOs=
-X-Received: by 2002:a05:6870:2181:b0:196:7f51:1bc7 with SMTP id
- l1-20020a056870218100b001967f511bc7mr7964179oae.17.1686236192230; Thu, 08 Jun
- 2023 07:56:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <9ef94ec4-bbb0-43e6-866f-40f68128cd78@moroto.mountain>
-In-Reply-To: <9ef94ec4-bbb0-43e6-866f-40f68128cd78@moroto.mountain>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Thu, 8 Jun 2023 23:55:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATWmtiQdtvGLYL5b0Pyg4Bnmj0_Hn8xtWLzMJ_1oxkThA@mail.gmail.com>
-Message-ID: <CAK7LNATWmtiQdtvGLYL5b0Pyg4Bnmj0_Hn8xtWLzMJ_1oxkThA@mail.gmail.com>
-Subject: Re: [PATCH] modpost: fix off by one in is_executable_section()
+        s=k20201202; t=1686236490;
+        bh=22g8nyDGkskW66MeIsFK+H2HRcvm8EdnUsXzJG+5AGM=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=EjKuZOtZo0FRQ3qJ84elBsiLULDmUiePoPxYVkG9Pd8OtSITlFmNBgMaoubBUl+b7
+         T9HL5bmIbxpiU3B7wgaBTM4l+V8faHeklyVzSMWDvlgTRc0HXKlnzLydYtbV/AXm0Y
+         EVfydc6iXK/dNBjTqqNSxpfLVSd925ayYd0Y9+2B04rIwda3TzmLcwjUYpUmur3trI
+         notddP7TnStpLcSf5FhANefRiKcwDh1tUcmfNZ6ZLJkRNVYQLmHZBwYZG6/Gj9ITzU
+         Fsmic/vp0ymj1Qst4fivzcHRN7OoQF7Nl/5piYdxq9XZDgs0CW5+fHWaPGwQNR2PuL
+         ilk0oJNWX9prQ==
+Date:   Thu, 8 Jun 2023 17:01:26 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
 To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nicolas Schier <nicolas@fjasle.eu>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] HID: fix an error code in hid_check_device_match()
+In-Reply-To: <ZH7sZv4PEovkMxNP@moroto>
+Message-ID: <nycvar.YFH.7.76.2306081700580.5716@cbobk.fhfr.pm>
+References: <ZH7sZv4PEovkMxNP@moroto>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 8, 2023 at 6:15=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> The > comparison should be >=3D to prevent an out of bounds array
-> access.
->
-> Fixes: 52dc0595d540 ("modpost: handle relocations mismatch in __ex_table.=
-")
+On Tue, 6 Jun 2023, Dan Carpenter wrote:
+
+> The hid_check_device_match() returns true if we find a match and false
+> if we don't.  But here it returns -ENODEV which becomes true instead
+> of false.
+> 
+> Fixes: 207733f92661 ("HID: split apart hid_device_probe to make logic more apparent")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-
-
-Applied to linux-kbuild.
-Thanks.
-
-
-
->  scripts/mod/modpost.c | 2 +-
+>  drivers/hid/hid-core.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index d10f5bdcb753..c3cb69c276ae 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -1139,7 +1139,7 @@ static Elf_Sym *find_tosym(struct elf_info *elf, El=
-f_Addr addr, Elf_Sym *sym)
->
->  static bool is_executable_section(struct elf_info *elf, unsigned int sec=
-ndx)
+> 
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 4b7062dcefec..8992e3c1e769 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -2593,7 +2593,7 @@ static bool hid_check_device_match(struct hid_device *hdev,
 >  {
-> -       if (secndx > elf->num_sections)
-> +       if (secndx >=3D elf->num_sections)
->                 return false;
->
->         return (elf->sechdrs[secndx].sh_flags & SHF_EXECINSTR) !=3D 0;
-> --
-> 2.39.2
->
+>  	*id = hid_match_device(hdev, hdrv);
+>  	if (!*id)
+> -		return -ENODEV;
+> +		return false;
+>  
+>  	if (hdrv->match)
+>  		return hdrv->match(hdev, hid_ignore_special_drivers);
 
+Thanks for checking this! Applied.
 
---=20
-Best Regards
-Masahiro Yamada
+-- 
+Jiri Kosina
+SUSE Labs
+
