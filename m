@@ -2,83 +2,97 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CFBC7EE25
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 15:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A9DC7EE23
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 15:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236779AbjFHPBg (ORCPT
+        id S236968AbjFHPTA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 11:01:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43932 "EHLO
+        Thu, 8 Jun 2023 11:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236637AbjFHPBc (ORCPT
+        with ESMTP id S236960AbjFHPSx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 11:01:32 -0400
+        Thu, 8 Jun 2023 11:18:53 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C202680;
-        Thu,  8 Jun 2023 08:01:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 335A72D5F;
+        Thu,  8 Jun 2023 08:18:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D8F8464E54;
-        Thu,  8 Jun 2023 15:01:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D05EC433EF;
-        Thu,  8 Jun 2023 15:01:28 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C3B8060FAB;
+        Thu,  8 Jun 2023 15:18:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D19EC433D2;
+        Thu,  8 Jun 2023 15:18:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686236490;
-        bh=22g8nyDGkskW66MeIsFK+H2HRcvm8EdnUsXzJG+5AGM=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=EjKuZOtZo0FRQ3qJ84elBsiLULDmUiePoPxYVkG9Pd8OtSITlFmNBgMaoubBUl+b7
-         T9HL5bmIbxpiU3B7wgaBTM4l+V8faHeklyVzSMWDvlgTRc0HXKlnzLydYtbV/AXm0Y
-         EVfydc6iXK/dNBjTqqNSxpfLVSd925ayYd0Y9+2B04rIwda3TzmLcwjUYpUmur3trI
-         notddP7TnStpLcSf5FhANefRiKcwDh1tUcmfNZ6ZLJkRNVYQLmHZBwYZG6/Gj9ITzU
-         Fsmic/vp0ymj1Qst4fivzcHRN7OoQF7Nl/5piYdxq9XZDgs0CW5+fHWaPGwQNR2PuL
-         ilk0oJNWX9prQ==
-Date:   Thu, 8 Jun 2023 17:01:26 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] HID: fix an error code in hid_check_device_match()
-In-Reply-To: <ZH7sZv4PEovkMxNP@moroto>
-Message-ID: <nycvar.YFH.7.76.2306081700580.5716@cbobk.fhfr.pm>
-References: <ZH7sZv4PEovkMxNP@moroto>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        s=k20201202; t=1686237530;
+        bh=/A54Gy0vU98edPnbqK2o8zydJ92zi9Oi8moAunyOrJE=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=RdrtpfvpzdGY8WkZ0yvWsGoaLstSARmD7jyc/8yluqGlgzTEUiib2fkv88fsFTwzt
+         VI0ugZcV7T46reJCxWdJP49kC98i6KrF1VDSRTrx0a8YXLvXBwYBpHShvV2XcfjwuC
+         PBtIASy0kct7WqQaV3CBy9zDKSY1CVdiUuNP7ht1SvF597BP95UxTyx71Rht2IrZ1i
+         xvrSIVjcj191w/VV5jb43kVBKMoj3fBHHc/RRaivw8TN7XrcYhSGWYA32hSIoqSFuM
+         Qtulm4/YMMgaxMJ61jE5WU8vConoEvRAd4bnIwBPUxbOZizfKzBfwCWVlbTFSTIqcG
+         TyTU0X4THN/vw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+In-Reply-To: <53f928290f08f50ff43031e17fe1d88443c2c441.1686202022.git.christophe.jaillet@wanadoo.fr>
+References: <53f928290f08f50ff43031e17fe1d88443c2c441.1686202022.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: tegra: Simplify code around clk_get_rate()
+ handling
+Message-Id: <168623752796.1002486.3534848547952230494.b4-ty@kernel.org>
+Date:   Thu, 08 Jun 2023 16:18:47 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-bfdf5
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 6 Jun 2023, Dan Carpenter wrote:
-
-> The hid_check_device_match() returns true if we find a match and false
-> if we don't.  But here it returns -ENODEV which becomes true instead
-> of false.
+On Thu, 08 Jun 2023 07:27:22 +0200, Christophe JAILLET wrote:
+> clk_get_rate() returns an unsigned long, so there is no point in storing it
+> in a long, and test for negative values.
 > 
-> Fixes: 207733f92661 ("HID: split apart hid_device_probe to make logic more apparent")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/hid/hid-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> So, turn 'parent_rate' into an unsigned long, simplify the sanity check,
+> the error message and the return value, in case of error (i.e. 0).
 > 
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 4b7062dcefec..8992e3c1e769 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -2593,7 +2593,7 @@ static bool hid_check_device_match(struct hid_device *hdev,
->  {
->  	*id = hid_match_device(hdev, hdrv);
->  	if (!*id)
-> -		return -ENODEV;
-> +		return false;
->  
->  	if (hdrv->match)
->  		return hdrv->match(hdev, hid_ignore_special_drivers);
+> Doing so also turns 'i' and 'valid_rates' into unsigned long, but it is
+> fine and harmless.
+> 
+> [...]
 
-Thanks for checking this! Applied.
+Applied to
 
--- 
-Jiri Kosina
-SUSE Labs
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: tegra: Simplify code around clk_get_rate() handling
+      commit: 41a343cd6b7f8d0f70dd90c236086ccf8a84a7de
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
