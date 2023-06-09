@@ -2,92 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A82C7EE37
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 07:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C55C7EE25
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 08:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238682AbjFIHeT (ORCPT
+        id S239889AbjFIIMT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jun 2023 03:34:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46788 "EHLO
+        Fri, 9 Jun 2023 04:12:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238791AbjFIHeR (ORCPT
+        with ESMTP id S239605AbjFIIMS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jun 2023 03:34:17 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0ED30D1
-        for <kernel-janitors@vger.kernel.org>; Fri,  9 Jun 2023 00:33:43 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-39c4c3da9cbso383885b6e.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 Jun 2023 00:33:43 -0700 (PDT)
+        Fri, 9 Jun 2023 04:12:18 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7E141FDA;
+        Fri,  9 Jun 2023 01:12:17 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2b1ba50e50bso15480961fa.1;
+        Fri, 09 Jun 2023 01:12:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686295971; x=1688887971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5xNK/MTbEqtX23mMEoAq+L0g1SXC7vXJ2rcTgDZ6l68=;
-        b=HEbewUsNGS50ieFcyYoG1ozubQFfbhr2RNELqQTjciRhM1EaPNh3RN2Em5vLBeMtvm
-         q17dOBrBd0glGLQTVF2mpHimV4pTUDg9eSLsq3qhZiotjtwxRN80c3wekpJBBfjSydTd
-         zQ+M9WjPtBhtGIVsye5iaAKlqbQ27AAgvvzOyN7SVCaG1ivpDi9LKA7Tl1MNcjjteg0e
-         2mVsqpj44pYPKTGjDBfxJOJSqC12umF67k3OTW5FH6DTyu2WN2DvclvhEjjU+HFYNbNL
-         QvocvVaD41fqDmPXDvtRYC0SWdTy1Pzwc70k/k1WyWAIIsG7wpkN24bfOc98xto5JEXp
-         +aUw==
+        d=gmail.com; s=20221208; t=1686298336; x=1688890336;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qodemV8tRaPN6lfvgZ3EB7MzxSemetoL3QYb7jUIQEk=;
+        b=rx7774MkYxDOyFZ4M/trWVNIX33ywDo0yOSfLa4EslMGH/kZ9WSscvvf1NqZwcs2jb
+         eLeKgGgoHQYiwNUlSWhNc/vnTrg/BeG7tgEu7Wpu4NE46/5Tgw2bPVW3nVZdpsgbwS1Q
+         KSyrln66eVfqJRLX6VcvzzE98VluFT/i39l2vsss28MsnDI2EN1Xrg9gIPxjKn4J29UA
+         5YAV6k6tEnBDDXtm6ktJpsRtipXva3+c8dPCug3FMUxSnK2byYw/D1kWwo6/xYB+RD1o
+         GFUuFTykNW6cMJ3QjwTKuWxmqxR5vKrOL+Qj0cgDmYDk6i8d2GBcKnfgAqL6sta8bAQb
+         liZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686295971; x=1688887971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5xNK/MTbEqtX23mMEoAq+L0g1SXC7vXJ2rcTgDZ6l68=;
-        b=gvFhbR+piolMxLRdwGJUKMRQXDEJUICGy4jYuMVjvjzLCjuTJydi3EekluUEh+28W0
-         e1eNSCKq1tIDJllREnoW/YTcvgEWEr8NEc1296bPLhf5kBLzl/Bft8dqAFu5hCjSGdiZ
-         RzTU1ROclYPhR95jQ3RONb6A8/gbI9T+ldoyo+OMf/+1ZkxSkl6aT390DNGH1YOgMC2v
-         Vlq7QX1EOBt7dca9KU7OF2R0JchyfYwXgqY0PrOqnxiwtudPUXI3TdNB/+DmIG3uQw0G
-         9pePE1vNlXH5cFGfoduHbLjv2zJNPd7h3nclyHWmk1j/LLwktEdWDuq5Kavzv1M8doy8
-         rEYg==
-X-Gm-Message-State: AC+VfDzBRTA5kiqGlc/9MJOYrZjF7Myi9neh+9HES1aazQjvwskdjs2a
-        3jwuLesu3ZoKKCOHUfC2DafHSNd2MLe3rKpSl9Mg5g==
-X-Google-Smtp-Source: ACHHUZ69Qux2DZuDK2r+yE5twIynB+DgQ/vjsuJQm5q01HxqEW9suuG/ivffLDuAG/2p3WJ5Vkyh2cvCm0uHmfXNdmA=
-X-Received: by 2002:a05:6808:1b2b:b0:39a:ab69:778e with SMTP id
- bx43-20020a0568081b2b00b0039aab69778emr729417oib.23.1686295971224; Fri, 09
- Jun 2023 00:32:51 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686298336; x=1688890336;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qodemV8tRaPN6lfvgZ3EB7MzxSemetoL3QYb7jUIQEk=;
+        b=lU6b7FpgCytV1CCcQohsFop+bmjpXQVd35lDy/j8Pb+y6yjJUa31hGS1X8LiAo5lQS
+         080ZNDHUZ3UA9PWCDIl2ckAwVEhCy66ITHc9L8TWhCj3K+EiOcLZMpLj5O00zlny49AD
+         ytP4Wi03vz0AIpultzRQKd8XGPY7LS0C9/OTmT6ARlwc8L6vhdTYQ6D1Y048IoA3MCYR
+         nySjS/5b+Xgff2M0yC7AouJlkljAIeulUEblFuuJyECdADkOkEhwRBHhGj3cjwBhQuqA
+         /tLUYbrWDLOs7MqOi3cwS7F270fme216m14DFJzPvekV1zOWgHklDCg43qoXdomjNysO
+         wRQg==
+X-Gm-Message-State: AC+VfDwnpCfeyXmMh3VGDb0TtezIdcJkRVA+v8q72Rzmio/3XmMSREup
+        Nv2XwQVGLuc9j3p3luPKjdE=
+X-Google-Smtp-Source: ACHHUZ5GhOCEZe6676VcuMkcOvn85TaNMJrkMeqVr8A2KgtP5S/BZ1b8HLSG20Yy9eeuyRnx478fHw==
+X-Received: by 2002:a19:ca07:0:b0:4f5:1ca1:30d9 with SMTP id a7-20020a19ca07000000b004f51ca130d9mr311254lfg.68.1686298335677;
+        Fri, 09 Jun 2023 01:12:15 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id l8-20020a1c7908000000b003f7f4dc6d14sm1856108wme.14.2023.06.09.01.12.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jun 2023 01:12:15 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/connector: Fix spelling mistake "provded" -> "provided"
+Date:   Fri,  9 Jun 2023 09:12:13 +0100
+Message-Id: <20230609081213.1222580-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <1685277277-12209-1-git-send-email-wellslutw@gmail.com> <9ace5c4c-5e17-4207-5a02-6a47ba0aee22@web.de>
-In-Reply-To: <9ace5c4c-5e17-4207-5a02-6a47ba0aee22@web.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 9 Jun 2023 09:32:40 +0200
-Message-ID: <CACRpkdbe2AjD69tpgDDJKf0ge__hoTs72OuT9M-p21_q+z3f8w@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sunplus: Delete an unnecessary check before
- kfree() in sppctl_dt_node_to_map()
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        Lu Hongfei <luhongfei@vivo.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Dvorkin Dmitry <dvorkin@tibbo.com>,
-        Wells Lu <wellslutw@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
-        Wells Lu <wells.lu@sunplus.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 6, 2023 at 3:26=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
+There are two spelling mistakes in drm_err messages. Fix them.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 6 Jun 2023 15:00:18 +0200
->
-> It can be known that the function =E2=80=9Ckfree=E2=80=9D performs a null=
- pointer check
-> for its input parameter.
-> It is therefore not needed to repeat such a check before its call.
->
-> Thus remove a redundant pointer check.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/drm_connector.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Lu Hongfei sent a patch changing the code around this location
-so I rebased it manually and applied, check the result, thanks!
+diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+index 3ed4cfcb350c..63370c4a68ac 100644
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -2168,13 +2168,13 @@ static int drm_mode_create_colorspace_property(struct drm_connector *connector,
+ 		return 0;
+ 
+ 	if (!supported_colorspaces) {
+-		drm_err(dev, "No supported colorspaces provded on [CONNECTOR:%d:%s]\n",
++		drm_err(dev, "No supported colorspaces provided on [CONNECTOR:%d:%s]\n",
+ 			    connector->base.id, connector->name);
+ 		return -EINVAL;
+ 	}
+ 
+ 	if ((supported_colorspaces & -BIT(DRM_MODE_COLORIMETRY_COUNT)) != 0) {
+-		drm_err(dev, "Unknown colorspace provded on [CONNECTOR:%d:%s]\n",
++		drm_err(dev, "Unknown colorspace provided on [CONNECTOR:%d:%s]\n",
+ 			    connector->base.id, connector->name);
+ 		return -EINVAL;
+ 	}
+-- 
+2.30.2
 
-Yours,
-Linus Walleij
