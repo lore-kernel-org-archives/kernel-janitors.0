@@ -2,91 +2,83 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 556ECC7EE25
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jun 2023 20:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4650C7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 04:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232021AbjFHUXo (ORCPT
+        id S236215AbjFIEpv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jun 2023 16:23:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38550 "EHLO
+        Fri, 9 Jun 2023 00:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231626AbjFHUXm (ORCPT
+        with ESMTP id S229458AbjFIEpt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jun 2023 16:23:42 -0400
-Received: from pokefinder.org (pokefinder.org [135.181.139.117])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5548C2D6A;
-        Thu,  8 Jun 2023 13:23:41 -0700 (PDT)
-Received: from localhost (120-123-142-46.pool.kielnet.net [46.142.123.120])
-        by pokefinder.org (Postfix) with ESMTPSA id 90CAEA423CC;
-        Thu,  8 Jun 2023 22:23:40 +0200 (CEST)
-Date:   Thu, 8 Jun 2023 22:23:39 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        kernel-janitors@vger.kernel.org, Andrew Davis <afd@ti.com>
-Subject: Re: [linux-i2c] Patch notification: DaVinci: 2 patches updated
-Message-ID: <ZII4y9PfM/yBdvU+@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+        Fri, 9 Jun 2023 00:45:49 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 933C330EC
+        for <kernel-janitors@vger.kernel.org>; Thu,  8 Jun 2023 21:45:45 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 7U0KqPBjCDGHG7U0Kq4YGn; Fri, 09 Jun 2023 06:45:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1686285943;
+        bh=UkPuf1cEggfUhF63kQO/8xolTLGbzwLNxFq6qhE7R0c=;
+        h=From:To:Cc:Subject:Date;
+        b=ID8zcjZT9VNLSLnTBfTRFr7XdAJhLgGQQTZmuTkb8ZRx1I4puHUr3FQjEy9dizrt1
+         +7adlgaC23iIECotO7NMgpk6j7KCOEfm3jRftQprT2A53sWY5bt3RaOketL6bUfAD5
+         VOxq1Q2AFB7OXRMufd0PVN3LlKc8Txd1YBW/wQFCGRaf4qVdgn5ZhNXIF/jJ+50DOs
+         ghNrWe8JWisDPa66b89R+/ZFNK6uBEpAARxgn5xwkfxV0+Ap9z+ileXfnpMkWSPSOs
+         x8NPJdeXGHRNnDwW6n8G+sRF44HeyZkdQwJDEnTF16cnPXLuz922jTX7m+hoJxBYOs
+         Cc0p82GxdZrEQ==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 09 Jun 2023 06:45:43 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thomas Abraham <thomas.abraham@linaro.org>,
+        Kukjin Kim <kgene.kim@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         linux-arm-kernel@lists.infradead.org,
-        Kevin Hilman <khilman@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        kernel-janitors@vger.kernel.org, Andrew Davis <afd@ti.com>
-References: <168613080300.11524.2783831689498520603@legolas.ozlabs.org>
- <8af5aca3-184f-2561-bec7-c4950fdbaeb5@web.de>
- <ZIGHmSvptAC0cWHD@shikoro>
- <93d2b121-4734-c195-90ad-d2d05e65e247@web.de>
- <ZIG6/h0PnLi7j6Pn@shikoro>
- <ae8ede44-e7a9-c086-d17e-68c33b4482e0@web.de>
- <ZIHajpkxV/PFPcb8@shikoro>
- <4bf54a0d-f525-5dab-1e7e-756e71a7267a@web.de>
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [PATCH 1/2] tty: serial: samsung_tty: Fix a memory leak in s3c24xx_serial_getclk() in case of error
+Date:   Fri,  9 Jun 2023 06:45:38 +0200
+Message-Id: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qC91iwAJdYwthd95"
-Content-Disposition: inline
-In-Reply-To: <4bf54a0d-f525-5dab-1e7e-756e71a7267a@web.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+If clk_get_rate() fails, the clk that has just been allocated needs to be
+freed.
 
---qC91iwAJdYwthd95
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/tty/serial/samsung_tty.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 2a7520ad3abd..dd751e7010e3 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -1459,8 +1459,10 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
+ 			continue;
+ 
+ 		rate = clk_get_rate(clk);
+-		if (!rate)
++		if (!rate) {
++			clk_put(clk);
+ 			continue;
++		}
+ 
+ 		if (ourport->info->has_divslot) {
+ 			unsigned long div = rate / req_baud;
+-- 
+2.34.1
 
-> If I look at patches which I contributed for the software area =E2=80=9CI=
-2C=E2=80=9D,
-> I got the impression that further constructive feedback will be helpful a=
-lso for
-> six change possibilities from days like the following.
-
-Yes, you are right. these patches need feedback. This is why I haven't
-applied them yet.
-
-
---qC91iwAJdYwthd95
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmSCOMcACgkQFA3kzBSg
-KbbvLRAAn0s8AEpoffGOmA2hh/8FyCM7pgrbtOb3FCxrxFYJNyvq4Os1vZO7GTG8
-+xCpTtdFFGx9RJmyHf9JfCMsDcXb53NkHPGGhpIzup0UstzgYQoi7aCXTD5NbPs+
-eY24RR9fMG+ryM0jrSasyYDAZX3CXQg1d34OtS30DVMSrDWFFSrrQ4DQKrELhNcR
-XUriz15PG+jSPwMt/oxPx6vjOcecn1RP0QCeFTPLqJS4jkG5fogQWpYTXQrbtRQb
-u6kT4pfGDrxihg+H0ea2W/qm19qLdy1GugHW9BrjT9lTgAmGxMFbhGzzAIv0Bjfi
-ij5N/54Gm2cn0OdD4wgLHglSBT6bxFwfIwjevUkOdqJUp4wTV8eGCgPraj/sZjJx
-ydm1SGFogib+M8jGJtQvjcXbHPJx052crJIyWCJwv/SeLVY8x40pdn2zkF9u1CJj
-2ipe5oqzDPsd+mFnsGsCPbj88+ajFAhL6TIUHnakOh6Gv9SafRpxh3jgXlUEhYq8
-SCJKm1bc/aORb+jXaWD/+MhNHAyyClXxTgseT7nf4Unr46T+kK372I2KzxEkrzXR
-c06zr9Sw6daIpnlts5c1ASGDouMfhqsFRBBl/FlmJuybpmga+1AZFjDQxZRR50aJ
-Pu802RBPia4/gi5IcQ+ZuY7JaZnm6QaCaVvaDrG/eK8fAPv8W00=
-=fbTD
------END PGP SIGNATURE-----
-
---qC91iwAJdYwthd95--
