@@ -2,129 +2,124 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CB5C7EE43
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 14:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D45BFC7EE25
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 15:13:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239546AbjFIOBn (ORCPT
+        id S241052AbjFIPNw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jun 2023 10:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33790 "EHLO
+        Fri, 9 Jun 2023 11:13:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238515AbjFIOBk (ORCPT
+        with ESMTP id S241013AbjFIPNv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jun 2023 10:01:40 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B251B30FE
-        for <kernel-janitors@vger.kernel.org>; Fri,  9 Jun 2023 07:01:38 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f7f6341b99so13738435e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 Jun 2023 07:01:38 -0700 (PDT)
+        Fri, 9 Jun 2023 11:13:51 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C5131BEB;
+        Fri,  9 Jun 2023 08:13:50 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-569386b7861so44032547b3.0;
+        Fri, 09 Jun 2023 08:13:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686319297; x=1688911297;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3dMKLfxyfO6GRRSI5mpAvE1qLvloyaEdkSgeCZ5iq4U=;
-        b=efajulzotRym0OO0p2vBcircrcKWduJ7YSzbFR3qQjOSgZWpb0Qdz/SNKCWOh2A/r2
-         yuqugaKknpK0cVzFHNnCL871IVsouSLd//AMkWGTmcWrMkFyPBln0uQNq48HOFFcohA0
-         UvRgyNbS7//k8MKCtxeTBP/vglxeQcSK7PESRjA1rkuE/vi2QV+yequ/qNvIaOPcqyAZ
-         Ahuo7FryBnT7Fnq1s3gz9cFcOeKXR3aN0mz62KAd5teBCBd7lOtzyJW20IyHFusi0HWu
-         HF4RWMN0eG3bwzlUC5RjPBB/AlSFKLc5vO+6yWmszPtGQNuKYeGOSfwIGsW2E+4GBCJ0
-         WpMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686319297; x=1688911297;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1686323629; x=1688915629;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3dMKLfxyfO6GRRSI5mpAvE1qLvloyaEdkSgeCZ5iq4U=;
-        b=LX2xIlJ8vdUeyrYTWfaVoHj2Oqv0frWkPM9XZ9vcssv5WaWgplpduCU5zXTwY2CaEH
-         XoX+h9ZmIhS8MMSeKzax8KcemOxl3vmaiIGS0yR7rX1G9WoGGUaZsIl/IazcuEYB25/R
-         mYoorDesd/npPiD5BuunNjAwL8LlKLJgX6ikftU5uoHZDkoY3c6QLwxPVc9AZAErvttG
-         TW/iSv45RNIaga8VxrjY2Rw1NnDi/tYv9MuuNVv/IwDaVkPe7EPj1tewFpMzCK4qLo5U
-         l9HlBsgXbR/41yOsjbjaAi/E1ITkQtabMhPCTaLSjmYZmcHx8WFmtJ8SXFp8c6lSPaNz
-         xgbw==
-X-Gm-Message-State: AC+VfDxsb/ZSSu9Ewg11aq+h4YBhwRHOmu/+mXVN+27/7O6zvyW7VU/T
-        yYYojTqZXeIV0JLTPfRI09ONKw==
-X-Google-Smtp-Source: ACHHUZ5IGHDLRT/F8ZiBNtbhtA6enQaJjbrsANjPa9s/JYdZAAOsgVsifgcve4BhUYpVZxJAkggcKQ==
-X-Received: by 2002:a1c:7c0a:0:b0:3f4:2492:a91f with SMTP id x10-20020a1c7c0a000000b003f42492a91fmr1046811wmc.27.1686319297138;
-        Fri, 09 Jun 2023 07:01:37 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id f13-20020a056000036d00b0030aefa3a957sm4568403wrf.28.2023.06.09.07.01.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 07:01:35 -0700 (PDT)
-Date:   Fri, 9 Jun 2023 17:01:31 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
-        Franziska Naepelt <franziska.naepelt@googlemail.com>,
-        keyrings@vger.kernel.org, dhowells@redhat.com, dwmw2@infradead.org,
-        linux-kernel@vger.kernel.org,
-        Franziska Naepelt <franziska.naepelt@gmail.com>,
-        kernel test robot <lkp@intel.com>,
-        Linux SPDX Licenses <linux-spdx@vger.kernel.org>,
-        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] certs/extract-cert: Fix checkpatch issues
-Message-ID: <c464c4ee-038c-47bf-857a-b11a89680e82@kadam.mountain>
-References: <20230601190508.56610-1-franziska.naepelt@gmail.com>
- <20230602085902.59006-1-franziska.naepelt@gmail.com>
- <ZH8mhIrjyBvTF4oZ@debian.me>
- <e39efb7f-5d8f-4433-83b3-8eea8a6c0486@kadam.mountain>
- <CT5NH4XXIYQF.5XXJE6JA5FZP@suppilovahvero>
+        bh=6DPJBtxyfhH74XT8mvDjXgsyibffPNAPPVAUmujTc3s=;
+        b=ojRuFmc4ATHmF3WupB8O+fLJxJ3PegXIFH/a0M3KwmaFU1Yibk57J3vzpTiqRpPkDN
+         Hz6Vo5/F733l4tWyJA0xwTW9CPCvDE1jWKb6XwRJ4UliGThhPm34Li1cX4THvlj0ls3k
+         BS/BarIHEPuda626XB1HifKrtzDbXGCyc+RWBJKQ0vWylaTdX51GzXQd3qjrhcjF0Is4
+         orseCJHAe3bzkGOBnx/907jJtsI6U/IIVV3wbno9YaLLwy3pnV1yX6BaAuT97L4Rt6gY
+         wcqXosIXAQiyNZYmfErhj80j83RNTpE0PG2raDSsY0bazC/Q0uJ7ukx8qRqjRqL8OVIO
+         Hnfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686323629; x=1688915629;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6DPJBtxyfhH74XT8mvDjXgsyibffPNAPPVAUmujTc3s=;
+        b=DM90njtyc35PWDjzq47gHj/v41V544dwZLDdNNOlWDIT/EAmNx8xI1SvMBaMhOaeTx
+         GBqjIRaVgMZ2UAO4aFSBGPNgVYYdIAmZx0ZlcVTY3MmPkR8qL+weib8bQu5j6T5CUgAn
+         c+UY2SB+WfQMev0hSszm4GBut+PCkSLJ/aTXFLdzZWi7O4/3SDdE7hWEUqtWS+1OWQDQ
+         XJecRN1/4HNEJz62nhltI5gtW/+0+OhOPU33QV3ygD90uKl177IKCf9RmopIOjwWdxsp
+         SpDZr0JUhrUCvFUlRC0BmiCU7f+yxaxxdhTlL0B5u1W/CfuqEphv+xCQXVeywAGn+ljs
+         E7lA==
+X-Gm-Message-State: AC+VfDy/c+QOjuzsf/t1v+Pzz6ExigSEs+tXF7pjrKy/ZaFEx3fQzoQa
+        tOJo+CYyV4y31/T6PfnvHT2tSg9QfcVIWJtRlMc=
+X-Google-Smtp-Source: ACHHUZ6yRhJIYaLCl71nQBrCvJZjcrNv/C0eGFm6wXIYqOCPJ/6U0VxdHovjcDk4V0g+HOERqLHebM3c+HJfcE3DwSk=
+X-Received: by 2002:a81:4e4b:0:b0:569:e92f:72a with SMTP id
+ c72-20020a814e4b000000b00569e92f072amr3865083ywb.16.1686323629174; Fri, 09
+ Jun 2023 08:13:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CT5NH4XXIYQF.5XXJE6JA5FZP@suppilovahvero>
+References: <4629fee1-4c9f-4930-a210-beb7921fa5b3@moroto.mountain> <bfb9c077-b9a6-47f4-8cd8-a7a86b056a21@moroto.mountain>
+In-Reply-To: <bfb9c077-b9a6-47f4-8cd8-a7a86b056a21@moroto.mountain>
+From:   Xin Long <lucien.xin@gmail.com>
+Date:   Fri, 9 Jun 2023 11:13:03 -0400
+Message-ID: <CADvbK_f25PEaR1bSuyqeGQsoOp0v1Psaeu2zPhfEi8Zcu-J5Tw@mail.gmail.com>
+Subject: Re: [PATCH 2/2 net] sctp: fix an error code in sctp_sf_eat_auth()
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Vlad Yasevich <vladislav.yasevich@hp.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 05:51:09PM +0300, Jarkko Sakkinen wrote:
-> It's not a "punishment". It's more like that I really have to take the
-> time to read the prose...
+On Fri, Jun 9, 2023 at 7:05=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> The sctp_sf_eat_auth() function is supposed to enum sctp_disposition
+> values and returning a kernel error code will cause issues in the
+> caller.  Change -ENOMEM to SCTP_DISPOSITION_NOMEM.
+>
+> Fixes: 65b07e5d0d09 ("[SCTP]: API updates to suport SCTP-AUTH extensions.=
+")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  net/sctp/sm_statefuns.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
+> index 97f1155a2045..08fdf1251f46 100644
+> --- a/net/sctp/sm_statefuns.c
+> +++ b/net/sctp/sm_statefuns.c
+> @@ -4482,7 +4482,7 @@ enum sctp_disposition sctp_sf_eat_auth(struct net *=
+net,
+>                                     SCTP_AUTH_NEW_KEY, GFP_ATOMIC);
+>
+>                 if (!ev)
+> -                       return -ENOMEM;
+> +                       return SCTP_DISPOSITION_NOMEM;
+>
+>                 sctp_add_cmd_sf(commands, SCTP_CMD_EVENT_ULP,
+>                                 SCTP_ULPEVENT(ev));
+> --
+> 2.39.2
+>
+This one looks good to me.
 
-The thing about imperative tense is that it was used as a punishment on
-me once five years ago.  I wrote a quite bad commit message and a senior
-maintainer told me to re-write it properly and I realized that it was
-true.  My commit message was bad.  So I wrote a proper commit message.
-And then he yelled at me, "Can't you follow simple directions and write
-it in imperative tense like the documentation says?  Are you a
-shithead?"
+But for the patch 1/2 (somehow it doesn't show up in my mailbox):
 
-So then I swore I would never talk to him again or to anyone who
-enforced the imperative tense rule.  That has only happened once in the
-intervening years.  I told the maintainer, "Fine.  Re-write the commit
-message however you like and give me Reported-by credit."  This was a
-cheeky response and it made the maintainer enraged.  I guess he thought
-that my boss would force me to fix the bug or something?  I felt bad for
-the Intel developer who had to fix my bug instead because I knew that
-the maintainer was going to be super angry if he gave me reported-by
-credit so I had put him in a bind.  I almost re-wrote the commit message
-so that he wouldn't have to deal with that.  Maybe this is how mothers
-feel when they try to take abuse from an angry husband instead of
-letting their kids suffer.  But I am a bad mother and I left.
+  default:
+  pr_err("impossible disposition %d in state %d, event_type %d, event_id %d=
+\n",
+        status, state, event_type, subtype.chunk);
+- BUG();
++ error =3D status;
++ if (error >=3D 0)
++ error =3D -EINVAL;
++ WARN_ON_ONCE(1);
 
-My boss would never have forced me to deal with that.  When he left for
-a different company he said, "Dan, I'm transitioning and XXX is taking
-over me and I have told him all your weirdness so he is prepared."  And
-it was a huge comfort to me because I know what my weakness are.
+I think from the sctp_do_sm() perspective, it expects the state_fn
+status only from
+enum sctp_disposition. It is a BUG to receive any other values and
+must be fixed,
+as you did in 2/2. It does the same thing as other functions in SCTP code, =
+like
+sctp_sf_eat_data_*(), sctp_retransmit() etc.
 
-You people on this thread all seem super nice.  And you're right that we
-should always try to be improve every aspect of our craft.
-
-When Jarkko talked about people who write too long commit messages, I
-thought about one developer in particular who writes too long commit
-messages.  He writes in imperative tense.  He takes everything so
-seriously and he's never seen a rule without following it.  His patches
-are always right.  People have told him that his commit messages are bad
-and too long and those people are right.  But they need to shut up.  The
-good things that he does and the bad things that he does are all part of
-the same package.  He can't change and I don't want him to feel anything
-but welcome.
-
-It's hard to be a good kernel developer without being at least slightly
-obsessive.  Both developers and maintainers are that way.  And I deal
-with a lot of people and accomodating maintainers you disagree with is
-part of the job.
-
-So long as everyone is kind to each other.  That's the main thing.
-
-regards,
-dan carpenter
+Thanks.
