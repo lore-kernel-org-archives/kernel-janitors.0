@@ -2,100 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C55C7EE25
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 08:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4DCC7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 09:56:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239889AbjFIIMT (ORCPT
+        id S241843AbjFIJ4I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jun 2023 04:12:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48586 "EHLO
+        Fri, 9 Jun 2023 05:56:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239605AbjFIIMS (ORCPT
+        with ESMTP id S241840AbjFIJzW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jun 2023 04:12:18 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7E141FDA;
-        Fri,  9 Jun 2023 01:12:17 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2b1ba50e50bso15480961fa.1;
-        Fri, 09 Jun 2023 01:12:17 -0700 (PDT)
+        Fri, 9 Jun 2023 05:55:22 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5392F5FD0;
+        Fri,  9 Jun 2023 02:46:50 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-514ab6cb529so5591488a12.1;
+        Fri, 09 Jun 2023 02:46:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686298336; x=1688890336;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qodemV8tRaPN6lfvgZ3EB7MzxSemetoL3QYb7jUIQEk=;
-        b=rx7774MkYxDOyFZ4M/trWVNIX33ywDo0yOSfLa4EslMGH/kZ9WSscvvf1NqZwcs2jb
-         eLeKgGgoHQYiwNUlSWhNc/vnTrg/BeG7tgEu7Wpu4NE46/5Tgw2bPVW3nVZdpsgbwS1Q
-         KSyrln66eVfqJRLX6VcvzzE98VluFT/i39l2vsss28MsnDI2EN1Xrg9gIPxjKn4J29UA
-         5YAV6k6tEnBDDXtm6ktJpsRtipXva3+c8dPCug3FMUxSnK2byYw/D1kWwo6/xYB+RD1o
-         GFUuFTykNW6cMJ3QjwTKuWxmqxR5vKrOL+Qj0cgDmYDk6i8d2GBcKnfgAqL6sta8bAQb
-         liZg==
+        d=gmail.com; s=20221208; t=1686304007; x=1688896007;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=18c79hnDSol/lBi2kkuQKTV8w701gqJ/4FZD+vDn/9w=;
+        b=I9/U+zVxfjzKwTE+vEEcFRITFriLK3T5XcoQyJqieapFjlNorTQlD1koiOAIF6Xt+n
+         AMCi3dyNl8BeqLFktQzj4s9/lxpsIYgAJFi+J5C2wsbqlsSI3exRfNgbTVQU99/J4h5q
+         9KWR04TSSwa0a//Ltx6yLGXYgH3j063VnROZrjbWuOG0B/izMtNICgakgeaihjVqf1N4
+         iyFqLH4+QOD8jaAyIKrd1378hggNd1+MiL/7Uwa8QvzA8AyInmweJaZLPZshoepBpCkK
+         DnDFpkjbYjrIsaLhkOgXObIP71k85pqfwQ03jwC679vXozeXePfx4VLeqhfPjAEBYh2m
+         E1Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686298336; x=1688890336;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qodemV8tRaPN6lfvgZ3EB7MzxSemetoL3QYb7jUIQEk=;
-        b=lU6b7FpgCytV1CCcQohsFop+bmjpXQVd35lDy/j8Pb+y6yjJUa31hGS1X8LiAo5lQS
-         080ZNDHUZ3UA9PWCDIl2ckAwVEhCy66ITHc9L8TWhCj3K+EiOcLZMpLj5O00zlny49AD
-         ytP4Wi03vz0AIpultzRQKd8XGPY7LS0C9/OTmT6ARlwc8L6vhdTYQ6D1Y048IoA3MCYR
-         nySjS/5b+Xgff2M0yC7AouJlkljAIeulUEblFuuJyECdADkOkEhwRBHhGj3cjwBhQuqA
-         /tLUYbrWDLOs7MqOi3cwS7F270fme216m14DFJzPvekV1zOWgHklDCg43qoXdomjNysO
-         wRQg==
-X-Gm-Message-State: AC+VfDwnpCfeyXmMh3VGDb0TtezIdcJkRVA+v8q72Rzmio/3XmMSREup
-        Nv2XwQVGLuc9j3p3luPKjdE=
-X-Google-Smtp-Source: ACHHUZ5GhOCEZe6676VcuMkcOvn85TaNMJrkMeqVr8A2KgtP5S/BZ1b8HLSG20Yy9eeuyRnx478fHw==
-X-Received: by 2002:a19:ca07:0:b0:4f5:1ca1:30d9 with SMTP id a7-20020a19ca07000000b004f51ca130d9mr311254lfg.68.1686298335677;
-        Fri, 09 Jun 2023 01:12:15 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l8-20020a1c7908000000b003f7f4dc6d14sm1856108wme.14.2023.06.09.01.12.14
+        d=1e100.net; s=20221208; t=1686304007; x=1688896007;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=18c79hnDSol/lBi2kkuQKTV8w701gqJ/4FZD+vDn/9w=;
+        b=QnUMB06Qg0EZ2Ki5eYc0/aXMckYFg3qF1bw4sOh4ykfffyQR3NWOZpTti7x6dHIkew
+         9jaush+W8jXW49GqaG1qjNVdHuFyoji1hu9c2tLwgetQcF8C2bJMdKTEzyysHAeBRUMH
+         AQ6M5dV+/ms/1Uj7rCxdeoQSqDZbpRuRIyaVB2SxYJitxUXi5NuXMwdd/4q0wAU/j/vp
+         yJDv9g6XGH/gRWvSbbpK+HQFRvEUPASzu2CujHhLGF/+0XxfE6kO9fB18zxlCQLUBbh9
+         GmEyL4aD/Nt0w2MGoCzqAedjDKmh/qkPm8RrJw6uJGSJA/F9IGZVdILIRZ858IZpSOih
+         kAbw==
+X-Gm-Message-State: AC+VfDwWlHVPtLf89igxoZakIOOG+sKauV+icbJqPTz4NV2DicO1DJkE
+        BstHLObsRg/5YR7Tsh1wVWg=
+X-Google-Smtp-Source: ACHHUZ6mP5Egj/gfBwjg3Z6eWXv7Ale5idZVR9M8IesXcSJpTUp0x1P2IWj5tcwY5FfxP3RBJKGtrg==
+X-Received: by 2002:a17:907:2d93:b0:96f:add6:c1ed with SMTP id gt19-20020a1709072d9300b0096fadd6c1edmr1390429ejc.38.1686304007232;
+        Fri, 09 Jun 2023 02:46:47 -0700 (PDT)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:f180:ae6e:6e9a:f400])
+        by smtp.gmail.com with ESMTPSA id f23-20020a170906085700b00978874d1083sm1052591ejd.135.2023.06.09.02.46.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 01:12:15 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/connector: Fix spelling mistake "provded" -> "provided"
-Date:   Fri,  9 Jun 2023 09:12:13 +0100
-Message-Id: <20230609081213.1222580-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 09 Jun 2023 02:46:46 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] posix-timers: refer properly to CONFIG_HIGH_RES_TIMERS
+Date:   Fri,  9 Jun 2023 11:46:43 +0200
+Message-Id: <20230609094643.26253-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are two spelling mistakes in drm_err messages. Fix them.
+Commit c78f261e5dcb ("posix-timers: Clarify posix_timer_fn() comments")
+turns an ifdef CONFIG_HIGH_RES_TIMERS into an conditional on
+"IS_ENABLED(CONFIG_HIGHRES_TIMERS)"; note that the new conditional refers
+to "HIGHRES_TIMERS" not "HIGH_RES_TIMERS" as before.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fix this typo introduced in that refactoring.
+
+Fixes: c78f261e5dcb ("posix-timers: Clarify posix_timer_fn() comments")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/gpu/drm/drm_connector.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/time/posix-timers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index 3ed4cfcb350c..63370c4a68ac 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -2168,13 +2168,13 @@ static int drm_mode_create_colorspace_property(struct drm_connector *connector,
- 		return 0;
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 8bb0dcf2e3d9..17fff6826a15 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -356,7 +356,7 @@ static enum hrtimer_restart posix_timer_fn(struct hrtimer *timer)
+ 			 * enabled as the periodic tick based timers are
+ 			 * automatically aligned to the next tick.
+ 			 */
+-			if (IS_ENABLED(CONFIG_HIGHRES_TIMERS)) {
++			if (IS_ENABLED(CONFIG_HIGH_RES_TIMERS)) {
+ 				ktime_t kj = TICK_NSEC;
  
- 	if (!supported_colorspaces) {
--		drm_err(dev, "No supported colorspaces provded on [CONNECTOR:%d:%s]\n",
-+		drm_err(dev, "No supported colorspaces provided on [CONNECTOR:%d:%s]\n",
- 			    connector->base.id, connector->name);
- 		return -EINVAL;
- 	}
- 
- 	if ((supported_colorspaces & -BIT(DRM_MODE_COLORIMETRY_COUNT)) != 0) {
--		drm_err(dev, "Unknown colorspace provded on [CONNECTOR:%d:%s]\n",
-+		drm_err(dev, "Unknown colorspace provided on [CONNECTOR:%d:%s]\n",
- 			    connector->base.id, connector->name);
- 		return -EINVAL;
- 	}
+ 				if (timr->it_interval < kj)
 -- 
-2.30.2
+2.17.1
 
