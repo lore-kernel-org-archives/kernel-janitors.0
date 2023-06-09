@@ -2,209 +2,129 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 227FFC7EE29
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 12:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CB5C7EE43
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 14:01:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240336AbjFIMgS (ORCPT
+        id S239546AbjFIOBn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jun 2023 08:36:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45592 "EHLO
+        Fri, 9 Jun 2023 10:01:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231349AbjFIMgR (ORCPT
+        with ESMTP id S238515AbjFIOBk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jun 2023 08:36:17 -0400
-X-Greylist: delayed 4195 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 09 Jun 2023 05:36:15 PDT
-Received: from mx02-sz.bfs.de (mx01-sz.bfs.de [194.94.69.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DC2018C;
-        Fri,  9 Jun 2023 05:36:15 -0700 (PDT)
-Received: from SRVEX01-MUC.bfs.intern (unknown [10.161.90.31])
-        by mx02-sz.bfs.de (Postfix) with ESMTPS id D93582035C;
-        Fri,  9 Jun 2023 10:57:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1686301034;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MQL6Xx7tBCSJf4MPKoKnpIlIJILrgf9XX+dLjaTtw4c=;
-        b=Sr5UmuMUh1u2zY3oY4r+zC7ZXH+xVGLoYr30Y8ctLEWaupUXos8aN2M7p11/6rcs1nM+n9
-        x3LFAmIvl/Xlr1xwT8K50mUcHAOzFod0qnDceplCNOEFCbM/Xl+zIjQxyh+yA8SvwKIPYY
-        DDpAnvRIyIjBXEeauBv+dUANrhxlFJrkSUja5wTbTNmfhClty2ieSoZo7UEl5WZrbML9os
-        VL4Z21GwnHJASLXa5HHawZ/bS7YVEtZBnQNssypPUMhamEl8kHC8/l62fQBqihB2ll3IX/
-        X29mOmfV3N4zYsfGnf71N++3Vx0XcFsWFDaZ3MQvaAo1MKD3tm+nSbQum8os0A==
-Authentication-Results: mx02-sz.bfs.de;
-        none
-Received: from SRVEX01-MUC.bfs.intern (10.161.90.31) by SRVEX01-MUC.bfs.intern
- (10.161.90.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.23; Fri, 9 Jun
- 2023 10:57:14 +0200
-Received: from SRVEX01-MUC.bfs.intern ([fe80::e8ba:5ab1:557f:4aad]) by
- SRVEX01-MUC.bfs.intern ([fe80::e8ba:5ab1:557f:4aad%5]) with mapi id
- 15.01.2507.023; Fri, 9 Jun 2023 10:57:14 +0200
-From:   Walter Harms <wharms@bfs.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Thomas Abraham <thomas.abraham@linaro.org>,
-        "Kukjin Kim" <kgene.kim@samsung.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Subject: AW: [PATCH 2/2] tty: serial: samsung_tty: Fix a memory leak in
- s3c24xx_serial_getclk() when iterating clk
-Thread-Topic: [PATCH 2/2] tty: serial: samsung_tty: Fix a memory leak in
- s3c24xx_serial_getclk() when iterating clk
-Thread-Index: AQHZmo1JZHtkpWXz3Ey2tC0FGDzZt6+CJSbA
-Date:   Fri, 9 Jun 2023 08:57:14 +0000
-Message-ID: <f31523d7270d4a1f82d96b7891ed13e6@bfs.de>
-References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>,<93bf8f574310256fcea50e5c5a62b5c37e20bb14.1686285892.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <93bf8f574310256fcea50e5c5a62b5c37e20bb14.1686285892.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.177.128.48]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 9 Jun 2023 10:01:40 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B251B30FE
+        for <kernel-janitors@vger.kernel.org>; Fri,  9 Jun 2023 07:01:38 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f7f6341b99so13738435e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 Jun 2023 07:01:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686319297; x=1688911297;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3dMKLfxyfO6GRRSI5mpAvE1qLvloyaEdkSgeCZ5iq4U=;
+        b=efajulzotRym0OO0p2vBcircrcKWduJ7YSzbFR3qQjOSgZWpb0Qdz/SNKCWOh2A/r2
+         yuqugaKknpK0cVzFHNnCL871IVsouSLd//AMkWGTmcWrMkFyPBln0uQNq48HOFFcohA0
+         UvRgyNbS7//k8MKCtxeTBP/vglxeQcSK7PESRjA1rkuE/vi2QV+yequ/qNvIaOPcqyAZ
+         Ahuo7FryBnT7Fnq1s3gz9cFcOeKXR3aN0mz62KAd5teBCBd7lOtzyJW20IyHFusi0HWu
+         HF4RWMN0eG3bwzlUC5RjPBB/AlSFKLc5vO+6yWmszPtGQNuKYeGOSfwIGsW2E+4GBCJ0
+         WpMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686319297; x=1688911297;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3dMKLfxyfO6GRRSI5mpAvE1qLvloyaEdkSgeCZ5iq4U=;
+        b=LX2xIlJ8vdUeyrYTWfaVoHj2Oqv0frWkPM9XZ9vcssv5WaWgplpduCU5zXTwY2CaEH
+         XoX+h9ZmIhS8MMSeKzax8KcemOxl3vmaiIGS0yR7rX1G9WoGGUaZsIl/IazcuEYB25/R
+         mYoorDesd/npPiD5BuunNjAwL8LlKLJgX6ikftU5uoHZDkoY3c6QLwxPVc9AZAErvttG
+         TW/iSv45RNIaga8VxrjY2Rw1NnDi/tYv9MuuNVv/IwDaVkPe7EPj1tewFpMzCK4qLo5U
+         l9HlBsgXbR/41yOsjbjaAi/E1ITkQtabMhPCTaLSjmYZmcHx8WFmtJ8SXFp8c6lSPaNz
+         xgbw==
+X-Gm-Message-State: AC+VfDxsb/ZSSu9Ewg11aq+h4YBhwRHOmu/+mXVN+27/7O6zvyW7VU/T
+        yYYojTqZXeIV0JLTPfRI09ONKw==
+X-Google-Smtp-Source: ACHHUZ5IGHDLRT/F8ZiBNtbhtA6enQaJjbrsANjPa9s/JYdZAAOsgVsifgcve4BhUYpVZxJAkggcKQ==
+X-Received: by 2002:a1c:7c0a:0:b0:3f4:2492:a91f with SMTP id x10-20020a1c7c0a000000b003f42492a91fmr1046811wmc.27.1686319297138;
+        Fri, 09 Jun 2023 07:01:37 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id f13-20020a056000036d00b0030aefa3a957sm4568403wrf.28.2023.06.09.07.01.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jun 2023 07:01:35 -0700 (PDT)
+Date:   Fri, 9 Jun 2023 17:01:31 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
+        Franziska Naepelt <franziska.naepelt@googlemail.com>,
+        keyrings@vger.kernel.org, dhowells@redhat.com, dwmw2@infradead.org,
+        linux-kernel@vger.kernel.org,
+        Franziska Naepelt <franziska.naepelt@gmail.com>,
+        kernel test robot <lkp@intel.com>,
+        Linux SPDX Licenses <linux-spdx@vger.kernel.org>,
+        Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] certs/extract-cert: Fix checkpatch issues
+Message-ID: <c464c4ee-038c-47bf-857a-b11a89680e82@kadam.mountain>
+References: <20230601190508.56610-1-franziska.naepelt@gmail.com>
+ <20230602085902.59006-1-franziska.naepelt@gmail.com>
+ <ZH8mhIrjyBvTF4oZ@debian.me>
+ <e39efb7f-5d8f-4433-83b3-8eea8a6c0486@kadam.mountain>
+ <CT5NH4XXIYQF.5XXJE6JA5FZP@suppilovahvero>
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-18.00 / 7.00];
-        WHITELIST_LOCAL_IP(-15.00)[10.161.90.31];
-        BAYES_HAM(-3.00)[99.98%];
-        MIME_GOOD(-0.10)[text/plain];
-        RCVD_NO_TLS_LAST(0.10)[];
-        MIME_TRACE(0.00)[0:+];
-        RCVD_COUNT_TWO(0.00)[2];
-        FROM_EQ_ENVFROM(0.00)[];
-        NEURAL_HAM(-0.00)[-1.000];
-        FREEMAIL_TO(0.00)[wanadoo.fr,linaro.org,samsung.com,linuxfoundation.org,kernel.org];
-        MID_RHS_MATCH_FROM(0.00)[];
-        RCPT_COUNT_TWELVE(0.00)[12];
-        FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-        HAS_XOIP(0.00)[];
-        TO_DN_EQ_ADDR_SOME(0.00)[];
-        DKIM_SIGNED(0.00)[bfs.de:s=dkim201901];
-        FROM_HAS_DN(0.00)[];
-        TO_MATCH_ENVRCPT_ALL(0.00)[];
-        TO_DN_SOME(0.00)[];
-        ARC_NA(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CT5NH4XXIYQF.5XXJE6JA5FZP@suppilovahvero>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Tue, Jun 06, 2023 at 05:51:09PM +0300, Jarkko Sakkinen wrote:
+> It's not a "punishment". It's more like that I really have to take the
+> time to read the prose...
 
-while we are here ....
+The thing about imperative tense is that it was used as a punishment on
+me once five years ago.  I wrote a quite bad commit message and a senior
+maintainer told me to re-write it properly and I realized that it was
+true.  My commit message was bad.  So I wrote a proper commit message.
+And then he yelled at me, "Can't you follow simple directions and write
+it in imperative tense like the documentation says?  Are you a
+shithead?"
 
-perhaps INT_MAX from kernel.h ?
+So then I swore I would never talk to him again or to anyone who
+enforced the imperative tense rule.  That has only happened once in the
+intervening years.  I told the maintainer, "Fine.  Re-write the commit
+message however you like and give me Reported-by credit."  This was a
+cheeky response and it made the maintainer enraged.  I guess he thought
+that my boss would force me to fix the bug or something?  I felt bad for
+the Intel developer who had to fix my bug instead because I knew that
+the maintainer was going to be super angry if he gave me reported-by
+credit so I had put him in a bind.  I almost re-wrote the commit message
+so that he wouldn't have to deal with that.  Maybe this is how mothers
+feel when they try to take abuse from an angry husband instead of
+letting their kids suffer.  But I am a bad mother and I left.
 
-int   deviation =3D (1 << 30) - 1;
+My boss would never have forced me to deal with that.  When he left for
+a different company he said, "Dan, I'm transitioning and XXX is taking
+over me and I have told him all your weirdness so he is prepared."  And
+it was a huge comfort to me because I know what my weakness are.
 
-the part before looks a bit strange
+You people on this thread all seem super nice.  And you're right that we
+should always try to be improve every aspect of our craft.
 
-if (ourport->info->has_divslot) {
-                        unsigned long div =3D rate / req_baud;
+When Jarkko talked about people who write too long commit messages, I
+thought about one developer in particular who writes too long commit
+messages.  He writes in imperative tense.  He takes everything so
+seriously and he's never seen a rule without following it.  His patches
+are always right.  People have told him that his commit messages are bad
+and too long and those people are right.  But they need to shut up.  The
+good things that he does and the bad things that he does are all part of
+the same package.  He can't change and I don't want him to feel anything
+but welcome.
 
-                        /* The UDIVSLOT register on the newer UARTs allows =
-us to
-                         * get a divisor adjustment of 1/16th on the baud c=
-lock.
-                         *
-                         * We don't keep the UDIVSLOT value (the 16ths we
-                         * calculated by not multiplying the baud by 16) as=
- it
-                         * is easy enough to recalculate.
-                         */
+It's hard to be a good kernel developer without being at least slightly
+obsessive.  Both developers and maintainers are that way.  And I deal
+with a lot of people and accomodating maintainers you disagree with is
+part of the job.
 
-                        quot =3D div / 16;
-                        baud =3D rate / div;
-because
-   baud=3Drate/rate/req_baud =3D req_baud
-can this be simplyfied ? (or is the numeric required  ?)
+So long as everyone is kind to each other.  That's the main thing.
 
-
-Homebrew abs()  kernel.h has a abs() can we use it here ?
-
-            if (calc_deviation < 0)
-                        calc_deviation =3D -calc_deviation;
-
-to the patch:
-
-+                       /*
-+                        * If we find a better clk, release the previous on=
-e, if
-+                        * any.
-+                        */
-+                       if (!IS_ERR(*best_clk))
-+                               clk_put(*best_clk);
-
-the intentions are good. *best_clk is user supplied (and should be NULL)
-filled & released in the next round but IMHO must be valid (is clk).
-so no need to check. (ntl clk_put seems to handle NULL and ERR )
-   if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
-                return;
-
-JM2C
- wh
-________________________________________
-Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Gesendet: Freitag, 9. Juni 2023 06:45:39
-An: Krzysztof Kozlowski; Alim Akhtar; Greg Kroah-Hartman; Jiri Slaby; Thoma=
-s Abraham; Kukjin Kim
-Cc: linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christop=
-he JAILLET; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.ke=
-rnel.org; linux-serial@vger.kernel.org
-Betreff: [PATCH 2/2] tty: serial: samsung_tty: Fix a memory leak in s3c24xx=
-_serial_getclk() when iterating clk
-
-When the best clk is searched, we iterate over all possible clk.
-
-If we find a better match, the previous one, if any, needs to be freed.
-If a better match has already been found, we still need to free the new
-one, otherwise it leaks.
-
-Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup"=
-)
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative. Review with care.
-
-I think that some clk_put() are also missing somewhere else in the driver
-but won't be able to investigate further.
----
- drivers/tty/serial/samsung_tty.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_=
-tty.c
-index dd751e7010e3..c07877dd25fa 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -1488,10 +1488,18 @@ static unsigned int s3c24xx_serial_getclk(struct s3=
-c24xx_uart_port *ourport,
-                        calc_deviation =3D -calc_deviation;
-
-                if (calc_deviation < deviation) {
-+                       /*
-+                        * If we find a better clk, release the previous on=
-e, if
-+                        * any.
-+                        */
-+                       if (!IS_ERR(*best_clk))
-+                               clk_put(*best_clk);
-                        *best_clk =3D clk;
-                        best_quot =3D quot;
-                        *clk_num =3D cnt;
-                        deviation =3D calc_deviation;
-+               } else {
-+                       clk_put(clk);
-                }
-        }
-
---
-2.34.1
-
+regards,
+dan carpenter
