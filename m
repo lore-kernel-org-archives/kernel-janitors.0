@@ -2,124 +2,67 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D45BFC7EE25
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 15:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA952C7EE25
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 15:27:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241052AbjFIPNw (ORCPT
+        id S232324AbjFIP1r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jun 2023 11:13:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50838 "EHLO
+        Fri, 9 Jun 2023 11:27:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241013AbjFIPNv (ORCPT
+        with ESMTP id S232122AbjFIP1p (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jun 2023 11:13:51 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C5131BEB;
-        Fri,  9 Jun 2023 08:13:50 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-569386b7861so44032547b3.0;
-        Fri, 09 Jun 2023 08:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686323629; x=1688915629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6DPJBtxyfhH74XT8mvDjXgsyibffPNAPPVAUmujTc3s=;
-        b=ojRuFmc4ATHmF3WupB8O+fLJxJ3PegXIFH/a0M3KwmaFU1Yibk57J3vzpTiqRpPkDN
-         Hz6Vo5/F733l4tWyJA0xwTW9CPCvDE1jWKb6XwRJ4UliGThhPm34Li1cX4THvlj0ls3k
-         BS/BarIHEPuda626XB1HifKrtzDbXGCyc+RWBJKQ0vWylaTdX51GzXQd3qjrhcjF0Is4
-         orseCJHAe3bzkGOBnx/907jJtsI6U/IIVV3wbno9YaLLwy3pnV1yX6BaAuT97L4Rt6gY
-         wcqXosIXAQiyNZYmfErhj80j83RNTpE0PG2raDSsY0bazC/Q0uJ7ukx8qRqjRqL8OVIO
-         Hnfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686323629; x=1688915629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6DPJBtxyfhH74XT8mvDjXgsyibffPNAPPVAUmujTc3s=;
-        b=DM90njtyc35PWDjzq47gHj/v41V544dwZLDdNNOlWDIT/EAmNx8xI1SvMBaMhOaeTx
-         GBqjIRaVgMZ2UAO4aFSBGPNgVYYdIAmZx0ZlcVTY3MmPkR8qL+weib8bQu5j6T5CUgAn
-         c+UY2SB+WfQMev0hSszm4GBut+PCkSLJ/aTXFLdzZWi7O4/3SDdE7hWEUqtWS+1OWQDQ
-         XJecRN1/4HNEJz62nhltI5gtW/+0+OhOPU33QV3ygD90uKl177IKCf9RmopIOjwWdxsp
-         SpDZr0JUhrUCvFUlRC0BmiCU7f+yxaxxdhTlL0B5u1W/CfuqEphv+xCQXVeywAGn+ljs
-         E7lA==
-X-Gm-Message-State: AC+VfDy/c+QOjuzsf/t1v+Pzz6ExigSEs+tXF7pjrKy/ZaFEx3fQzoQa
-        tOJo+CYyV4y31/T6PfnvHT2tSg9QfcVIWJtRlMc=
-X-Google-Smtp-Source: ACHHUZ6yRhJIYaLCl71nQBrCvJZjcrNv/C0eGFm6wXIYqOCPJ/6U0VxdHovjcDk4V0g+HOERqLHebM3c+HJfcE3DwSk=
-X-Received: by 2002:a81:4e4b:0:b0:569:e92f:72a with SMTP id
- c72-20020a814e4b000000b00569e92f072amr3865083ywb.16.1686323629174; Fri, 09
- Jun 2023 08:13:49 -0700 (PDT)
+        Fri, 9 Jun 2023 11:27:45 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::225])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9D602D70;
+        Fri,  9 Jun 2023 08:27:40 -0700 (PDT)
+X-GND-Sasl: miquel.raynal@bootlin.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1686324459;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=H5xcCQGgFV8eBxBmrqSktx3CUKeTiFDUNo+4OSLOwWY=;
+        b=gQArpqEion7u+nd4yvWRi/Bn51ejuyiQgLjvNCMg8EbqELRT8hX+Eyylgqv+oIE4Zm+Sam
+        aMj+4iKG9jOi8GXqPF6onxFy4NGn/i3UnR+OwxaOQq8ko1XDNLlpalaCzIrZloWKtc2u8W
+        yfNff8vD5vv4e89RVQVPlp/1jXzv4XwlMefpvYt+tC0iNdUvoNO6EqOAQ27YcoI6/TJaIo
+        FSMO+kf/E3HHsdlqEiEubE5dO59j13Q3CDdLA1g8nOeLcJGSjt5aKiZGdlJ6WOjZtwCrvY
+        Ao7Nznb+qF6YEyGFwWqfrCN/rWIsZsAtnn7IUFdzKTtC9tqWoAF1T/4rME42BQ==
+X-GND-Sasl: miquel.raynal@bootlin.com
+X-GND-Sasl: miquel.raynal@bootlin.com
+X-GND-Sasl: miquel.raynal@bootlin.com
+X-GND-Sasl: miquel.raynal@bootlin.com
+X-GND-Sasl: miquel.raynal@bootlin.com
+X-GND-Sasl: miquel.raynal@bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0FB681C0002;
+        Fri,  9 Jun 2023 15:27:36 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: mtdpart: Drop useless LIST_HEAD
+Date:   Fri,  9 Jun 2023 17:27:36 +0200
+Message-Id: <20230609152736.1188482-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To:  <547248195d87d1240d6126d13eb1364b1a0b634d.1685853690.git.christophe.jaillet@wanadoo.fr>
+References: 
 MIME-Version: 1.0
-References: <4629fee1-4c9f-4930-a210-beb7921fa5b3@moroto.mountain> <bfb9c077-b9a6-47f4-8cd8-a7a86b056a21@moroto.mountain>
-In-Reply-To: <bfb9c077-b9a6-47f4-8cd8-a7a86b056a21@moroto.mountain>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Fri, 9 Jun 2023 11:13:03 -0400
-Message-ID: <CADvbK_f25PEaR1bSuyqeGQsoOp0v1Psaeu2zPhfEi8Zcu-J5Tw@mail.gmail.com>
-Subject: Re: [PATCH 2/2 net] sctp: fix an error code in sctp_sf_eat_auth()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Vlad Yasevich <vladislav.yasevich@hp.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'6db02fdfdca0cf39b4d66950451d7f22b72a9031'
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 9, 2023 at 7:05=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> The sctp_sf_eat_auth() function is supposed to enum sctp_disposition
-> values and returning a kernel error code will cause issues in the
-> caller.  Change -ENOMEM to SCTP_DISPOSITION_NOMEM.
->
-> Fixes: 65b07e5d0d09 ("[SCTP]: API updates to suport SCTP-AUTH extensions.=
-")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  net/sctp/sm_statefuns.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
-> index 97f1155a2045..08fdf1251f46 100644
-> --- a/net/sctp/sm_statefuns.c
-> +++ b/net/sctp/sm_statefuns.c
-> @@ -4482,7 +4482,7 @@ enum sctp_disposition sctp_sf_eat_auth(struct net *=
-net,
->                                     SCTP_AUTH_NEW_KEY, GFP_ATOMIC);
->
->                 if (!ev)
-> -                       return -ENOMEM;
-> +                       return SCTP_DISPOSITION_NOMEM;
->
->                 sctp_add_cmd_sf(commands, SCTP_CMD_EVENT_ULP,
->                                 SCTP_ULPEVENT(ev));
-> --
-> 2.39.2
->
-This one looks good to me.
+On Sun, 2023-06-04 at 04:42:01 UTC, Christophe JAILLET wrote:
+> 'tmp_list' is unused, so drop it.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-But for the patch 1/2 (somehow it doesn't show up in my mailbox):
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
 
-  default:
-  pr_err("impossible disposition %d in state %d, event_type %d, event_id %d=
-\n",
-        status, state, event_type, subtype.chunk);
-- BUG();
-+ error =3D status;
-+ if (error >=3D 0)
-+ error =3D -EINVAL;
-+ WARN_ON_ONCE(1);
-
-I think from the sctp_do_sm() perspective, it expects the state_fn
-status only from
-enum sctp_disposition. It is a BUG to receive any other values and
-must be fixed,
-as you did in 2/2. It does the same thing as other functions in SCTP code, =
-like
-sctp_sf_eat_data_*(), sctp_retransmit() etc.
-
-Thanks.
+Miquel
