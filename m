@@ -2,52 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0192C7EE25
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 10:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4472C8300C
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 10:48:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240810AbjFIKVL (ORCPT
+        id S230103AbjFIKsz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jun 2023 06:21:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59314 "EHLO
+        Fri, 9 Jun 2023 06:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241033AbjFIKUo (ORCPT
+        with ESMTP id S229588AbjFIKsy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jun 2023 06:20:44 -0400
-Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7FF876BD
-        for <kernel-janitors@vger.kernel.org>; Fri,  9 Jun 2023 03:12:08 -0700 (PDT)
-Date:   Fri, 09 Jun 2023 10:11:55 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
-        s=protonmail; t=1686305526; x=1686564726;
-        bh=zRwWsMDd5Kf2yQpedEA3Ka2dLpgNvYvwuOL0uYq4mxY=;
-        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-         Message-ID:BIMI-Selector;
-        b=Z8KAJyXpaTjqlrocmyKy6x9aI9Hp2RmjG+2bALz/4DRXehj7XFrjW/yRDU3Dp+qfO
-         DqoO/Pm8C11yi1akcmKC3tfSNrHiLjZrCpsLKkQry/WnA2uem4gLUbncQ5lAynXA3J
-         AGcRpH3VpZcVSmaY23/BtD7eq5T9GU2iHwXA8lO2pxCnpTGnzBqUhRexAhCEvvTfl9
-         z3tHWcugCBoIJp4l1+Ok4Fdg4PB0gm2dfcQ0Ew3Btdf4l/ARtDrbpPg23IjkO+2cO9
-         GlnAkbXpmDLcULBxsLW9r1wmFi+eZ3osJvJabskWIlkqBjUnKL153TYBzHSuHJQl+n
-         H30tTIIcIEM0w==
-To:     Colin Ian King <colin.i.king@gmail.com>
-From:   Simon Ser <contact@emersion.fr>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/connector: Fix spelling mistake "provded" -> "provided"
-Message-ID: <tUFXNKt-8oZgTGwGtUnsKtf6pxPDd7KpJWwmrFDemhWU5ZrxXrY210L7paHIPrQot5IEZuX5X57vkDIANUyz56RsHLZpQJeILmX-6h4GG3c=@emersion.fr>
-In-Reply-To: <20230609081213.1222580-1-colin.i.king@gmail.com>
-References: <20230609081213.1222580-1-colin.i.king@gmail.com>
-Feedback-ID: 1358184:user:proton
+        Fri, 9 Jun 2023 06:48:54 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7F0B83
+        for <kernel-janitors@vger.kernel.org>; Fri,  9 Jun 2023 03:48:52 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-30fa23e106bso223177f8f.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 Jun 2023 03:48:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686307731; x=1688899731;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h404KYyxPqBgdsZFQTSqrIFdDjIjrnyWGpNK6shhs8c=;
+        b=T5pzOVJf1wSan8hg1huNkSKWU1tlZJ+b9/U451RG7XIKSClXBjAMLDFetpf3edH3fz
+         su5xU8d3wpy1TEjCXZ3siGDoRDd/1jmoU0eiqX2qmNNetgcFNxb9dGKv++S2o5nIwlZ6
+         BDLl4fgEr/YZXzAE/PnymQATUaRfECCQXQyHSzqQZJ14wY0O0a9b4ZWCVTr5h0/7CvKl
+         xsUGgOGzrEg8cj1ITQFlM5vury/tfP87vrIeOTcf39Oaaoz2zjn5zEmASj/xKY5M4Ety
+         JKIYl+rI63XsrLUMlaeSyJQOkWRCGWyds5bCrtdFJMZutSafmJmFHJMA7ug/mxcfLVNH
+         SF2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686307731; x=1688899731;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h404KYyxPqBgdsZFQTSqrIFdDjIjrnyWGpNK6shhs8c=;
+        b=VUd1nU6JINvJm0KgZcf/CF1W7Ohr2gWhVxDCoMtocPAqW7erZsPokhePU0ZhLhJtpu
+         rOwqhyXrnpA1hafE7/ZywDdza7LuknJBbGFOlgh5E/syb5qFekmZSg4lQBJ+IiKdKhWf
+         CzkkAWTD0zsOTMJ7IvWBfld1IPJtClsx2rnzTj5QfeNybdFbYqk3uNTCkjGiUGuayv/3
+         KHxgllrppNd6wXGyrzFaKVfT7qHQUrcKg5uhE0hKSROfm0E+CiDQgFSrI7QIZmLpl/6P
+         /XiWvP23rWycZdTTNOwh3uk3Tz/k77nOCeTgiLKgbKHY4n6dOYQsTiv42hwkipNfMhYa
+         FA5Q==
+X-Gm-Message-State: AC+VfDxFbWQeXUEQQPGJLgvjd/yFaOVytGCUb1oYPZ6D1tYELLkt6auv
+        H3fIbBTUJ6lkY/+17kYSfYpM/BYmbPVD+D7voNQ=
+X-Google-Smtp-Source: ACHHUZ6fr5fp42SB4k5MPauPJ85Z9R6r45D01KOEIoJHHP9tkYY/LNVl7bPHVHQKgdrmOGkZuuybLg==
+X-Received: by 2002:adf:fe8c:0:b0:30a:b0e7:34b with SMTP id l12-20020adffe8c000000b0030ab0e7034bmr646219wrr.66.1686307731386;
+        Fri, 09 Jun 2023 03:48:51 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d6-20020adffd86000000b0030ae87bd3e3sm4112507wrr.18.2023.06.09.03.48.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jun 2023 03:48:49 -0700 (PDT)
+Date:   Fri, 9 Jun 2023 13:48:44 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Johannes Berg <johannes.berg@intel.com>
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] wifi: cfg80211: fix double lock bug in reg_wdev_chan_valid()
+Message-ID: <40c4114a-6cb4-4abf-b013-300b598aba65@moroto.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Reviewed-by: Simon Ser <contact@emersion.fr>
+The locking was changed recently so now the caller holds the wiphy_lock()
+lock.  Taking the lock inside the reg_wdev_chan_valid() function will
+lead to a deadlock.
+
+Fixes: f7e60032c661 ("wifi: cfg80211: fix locking in regulatory disconnect")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ net/wireless/reg.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 949e1fb3bec6..26f11e4746c0 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2404,11 +2404,8 @@ static bool reg_wdev_chan_valid(struct wiphy *wiphy, struct wireless_dev *wdev)
+ 		case NL80211_IFTYPE_P2P_GO:
+ 		case NL80211_IFTYPE_ADHOC:
+ 		case NL80211_IFTYPE_MESH_POINT:
+-			wiphy_lock(wiphy);
+ 			ret = cfg80211_reg_can_beacon_relax(wiphy, &chandef,
+ 							    iftype);
+-			wiphy_unlock(wiphy);
+-
+ 			if (!ret)
+ 				return ret;
+ 			break;
+-- 
+2.39.2
+
