@@ -2,60 +2,66 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4472C8300C
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 10:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34866C7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 10:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbjFIKsz (ORCPT
+        id S238413AbjFIKuI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jun 2023 06:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46914 "EHLO
+        Fri, 9 Jun 2023 06:50:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229588AbjFIKsy (ORCPT
+        with ESMTP id S238808AbjFIKtm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jun 2023 06:48:54 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7F0B83
-        for <kernel-janitors@vger.kernel.org>; Fri,  9 Jun 2023 03:48:52 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-30fa23e106bso223177f8f.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 Jun 2023 03:48:52 -0700 (PDT)
+        Fri, 9 Jun 2023 06:49:42 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A6D1185
+        for <kernel-janitors@vger.kernel.org>; Fri,  9 Jun 2023 03:49:41 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-30af0aa4812so1127244f8f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 Jun 2023 03:49:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686307731; x=1688899731;
+        d=linaro.org; s=google; t=1686307780; x=1688899780;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=h404KYyxPqBgdsZFQTSqrIFdDjIjrnyWGpNK6shhs8c=;
-        b=T5pzOVJf1wSan8hg1huNkSKWU1tlZJ+b9/U451RG7XIKSClXBjAMLDFetpf3edH3fz
-         su5xU8d3wpy1TEjCXZ3siGDoRDd/1jmoU0eiqX2qmNNetgcFNxb9dGKv++S2o5nIwlZ6
-         BDLl4fgEr/YZXzAE/PnymQATUaRfECCQXQyHSzqQZJ14wY0O0a9b4ZWCVTr5h0/7CvKl
-         xsUGgOGzrEg8cj1ITQFlM5vury/tfP87vrIeOTcf39Oaaoz2zjn5zEmASj/xKY5M4Ety
-         JKIYl+rI63XsrLUMlaeSyJQOkWRCGWyds5bCrtdFJMZutSafmJmFHJMA7ug/mxcfLVNH
-         SF2Q==
+        bh=o7/b4G181+MHQIHp41//nlSYfR9ybEGflBKyQZuJUvw=;
+        b=V5O8iujnQNkhCcIam1hTZkf+ZLG2/2Ubirq7lBYinzScSuNUsh1dWn64nlXwtR7/1Q
+         ue+EfikKQnH35ogS/vMaGpOvcZxrmy3n+1/148N34kWMVX/W3OUXAaiPFocedngTr2lX
+         aNFzcyuSEzk2LCKpXyHdZE1fCfh7HklYpwyaY9yIGU2Y02ydW6CNuxMRpq1gwt6T5TZE
+         WCUFxegwcA77j91SEspEM3DxkkFM4+jT/QDNvnKwyuonr3leTfvyBS/l9rfXKg4lRCfv
+         xNLELT0Tb3T9y+dIeKYd0FPMKUDO0phi6anlM5LYwuiF9QQW+LfLtazVvpAcCnT/+iON
+         1yLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686307731; x=1688899731;
+        d=1e100.net; s=20221208; t=1686307780; x=1688899780;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h404KYyxPqBgdsZFQTSqrIFdDjIjrnyWGpNK6shhs8c=;
-        b=VUd1nU6JINvJm0KgZcf/CF1W7Ohr2gWhVxDCoMtocPAqW7erZsPokhePU0ZhLhJtpu
-         rOwqhyXrnpA1hafE7/ZywDdza7LuknJBbGFOlgh5E/syb5qFekmZSg4lQBJ+IiKdKhWf
-         CzkkAWTD0zsOTMJ7IvWBfld1IPJtClsx2rnzTj5QfeNybdFbYqk3uNTCkjGiUGuayv/3
-         KHxgllrppNd6wXGyrzFaKVfT7qHQUrcKg5uhE0hKSROfm0E+CiDQgFSrI7QIZmLpl/6P
-         /XiWvP23rWycZdTTNOwh3uk3Tz/k77nOCeTgiLKgbKHY4n6dOYQsTiv42hwkipNfMhYa
-         FA5Q==
-X-Gm-Message-State: AC+VfDxFbWQeXUEQQPGJLgvjd/yFaOVytGCUb1oYPZ6D1tYELLkt6auv
-        H3fIbBTUJ6lkY/+17kYSfYpM/BYmbPVD+D7voNQ=
-X-Google-Smtp-Source: ACHHUZ6fr5fp42SB4k5MPauPJ85Z9R6r45D01KOEIoJHHP9tkYY/LNVl7bPHVHQKgdrmOGkZuuybLg==
-X-Received: by 2002:adf:fe8c:0:b0:30a:b0e7:34b with SMTP id l12-20020adffe8c000000b0030ab0e7034bmr646219wrr.66.1686307731386;
-        Fri, 09 Jun 2023 03:48:51 -0700 (PDT)
+        bh=o7/b4G181+MHQIHp41//nlSYfR9ybEGflBKyQZuJUvw=;
+        b=PyymeTDlqU544hxCwIEcQQQOEPo3sVSzlhZKHsyIjuDFKQFiBMDVF1XAkz0BuTp2Sp
+         NiXaqIfXoNVOBXRn0LyqIRspzqChpNWX6U2UE0hHBqP8GNdyVGyeT1b2898nGYbdvBCj
+         y3jSylMr4+LFuc3akYuyUZZKnmAuX0hpeo2Pbg53LDyTmikjRCss3aKrNQcb+ONQ2NKf
+         oeRImcre3NK+jrQT38orvPFrfqvsjTN5lUU+UANFmgpHH/52oikOXXZtz5dGerjoz83a
+         SaegB+plbxpDmSdQi2UlmH5xv+VXoMd9zq+pRA1vyfZnJMp1q4bLYblNPl2gtMkYgU8J
+         xF4A==
+X-Gm-Message-State: AC+VfDxFEaS5cTfreteyPiu07Fs9vdwrN7Kkv8ND85LhfMz0IDoOeK6g
+        WammNAlQfWzzdI+Rs4pzEG9AiQ==
+X-Google-Smtp-Source: ACHHUZ5oqsdm6RcHcYynLSUxXU+NRtZqKnXmXX7d4X/lAxBhMjxzqQTGHG36+5LbULIK1GqQozrfaA==
+X-Received: by 2002:a5d:4ac7:0:b0:30a:e643:2517 with SMTP id y7-20020a5d4ac7000000b0030ae6432517mr574141wrs.21.1686307780049;
+        Fri, 09 Jun 2023 03:49:40 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d6-20020adffd86000000b0030ae87bd3e3sm4112507wrr.18.2023.06.09.03.48.47
+        by smtp.gmail.com with ESMTPSA id k17-20020a5d4291000000b003047ea78b42sm4127545wrq.43.2023.06.09.03.49.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 03:48:49 -0700 (PDT)
-Date:   Fri, 9 Jun 2023 13:48:44 +0300
+        Fri, 09 Jun 2023 03:49:38 -0700 (PDT)
+Date:   Fri, 9 Jun 2023 13:49:33 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Johannes Berg <johannes.berg@intel.com>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: cfg80211: fix double lock bug in reg_wdev_chan_valid()
-Message-ID: <40c4114a-6cb4-4abf-b013-300b598aba65@moroto.mountain>
+To:     Manivannan Sadhasivam <mani@kernel.org>
+Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Damien Le Moal <dlemoal@kernel.org>, mhi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] PCI: endpoint: Check correct variable in
+ __pci_epf_mhi_alloc_map()
+Message-ID: <258e8de1-abff-4024-89e0-1c8df761d790@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -64,32 +70,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The locking was changed recently so now the caller holds the wiphy_lock()
-lock.  Taking the lock inside the reg_wdev_chan_valid() function will
-lead to a deadlock.
+This was intended to check "*vaddr" instead of "vaddr" (without an
+asterisk).
 
-Fixes: f7e60032c661 ("wifi: cfg80211: fix locking in regulatory disconnect")
+Fixes: 7db424a84d96 ("PCI: endpoint: Add PCI Endpoint function driver for MHI bus")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- net/wireless/reg.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/pci/endpoint/functions/pci-epf-mhi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 949e1fb3bec6..26f11e4746c0 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -2404,11 +2404,8 @@ static bool reg_wdev_chan_valid(struct wiphy *wiphy, struct wireless_dev *wdev)
- 		case NL80211_IFTYPE_P2P_GO:
- 		case NL80211_IFTYPE_ADHOC:
- 		case NL80211_IFTYPE_MESH_POINT:
--			wiphy_lock(wiphy);
- 			ret = cfg80211_reg_can_beacon_relax(wiphy, &chandef,
- 							    iftype);
--			wiphy_unlock(wiphy);
--
- 			if (!ret)
- 				return ret;
- 			break;
+diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+index 1227f059ea12..e7d64b9d12ff 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
++++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+@@ -112,7 +112,7 @@ static int __pci_epf_mhi_alloc_map(struct mhi_ep_cntrl *mhi_cntrl, u64 pci_addr,
+ 	int ret;
+ 
+ 	*vaddr = pci_epc_mem_alloc_addr(epc, paddr, size + offset);
+-	if (!vaddr)
++	if (!*vaddr)
+ 		return -ENOMEM;
+ 
+ 	ret = pci_epc_map_addr(epc, epf->func_no, epf->vfunc_no, *paddr,
 -- 
 2.39.2
 
