@@ -2,98 +2,92 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 415B0C87FE4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 11:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FADC7EE29
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jun 2023 11:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbjFILFd (ORCPT
+        id S240018AbjFILwZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jun 2023 07:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52810 "EHLO
+        Fri, 9 Jun 2023 07:52:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238820AbjFILF1 (ORCPT
+        with ESMTP id S239809AbjFILwN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jun 2023 07:05:27 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 830021FDC
-        for <kernel-janitors@vger.kernel.org>; Fri,  9 Jun 2023 04:05:26 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f7378a74faso12508165e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 Jun 2023 04:05:26 -0700 (PDT)
+        Fri, 9 Jun 2023 07:52:13 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4793AA6
+        for <kernel-janitors@vger.kernel.org>; Fri,  9 Jun 2023 04:51:43 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-977d02931d1so255589866b.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 Jun 2023 04:51:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686308725; x=1688900725;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tFyWP/Gv04JokRZ90bRXNAF0sLVUQUnwQyZmUvgIR0w=;
-        b=oxspjefXVCLflDUTz7ZGtjCzKu/BHHdCyNz5Xjs/hyGClXt45cDE6xpGXm3A3e2uEr
-         RV40rCeCFMtX7Jis8IJcXJpoBUqS/MWvIdpi09CerEM1wHdV2QIwiBlFWyIDRUP1G8Wq
-         e2DrjWL3R5yTGPKUfClD4kAstCdFn5x4cnmAXdf9YZG+SD86bLS36QNjjVQcuXte2Cqn
-         XlVojEDTz8daeIRYxQarDF9PvmO8Vbszv2iBY80R9P+dD2OLqjYDoCRzK5O0JNfc0m/y
-         dVfTg0UjIWqVMu6Y1OH75KbORgBRK3pl2h722//pIiRZZ8l1LiA45A8FJ04y4JkQgZoV
-         p/UQ==
+        d=linaro.org; s=google; t=1686311502; x=1688903502;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8T0wN2xyHqkgu/5OvE+DJyHc6IdgUb7ALA/gkh9SISw=;
+        b=R6Y0oCxUhD2vEYpqllcsJqc1+F/482gIVAuE9WtvwhqwEP9I17G+luiaYk3DpqYZ2t
+         FQPUR3S0cpdiCiLkOLlMRLZ3r1oCUnxRQnFCB4EIPupbl63b2ly7Hg/R7WcPIB5fgnQK
+         zl+gZrt6jPopzygQE0iBq80u3eehgDL0vlldGIXRouKSCBscddlkVmLctx4KK+K8Xu7D
+         urK9ed1G9yQ0qDI5lpoK71WDo7EnUh2vYQ7U5er1+hTQyB4hQSsOv1ueiEJ39d7R8t2x
+         D34opUNIU0bAr2tnBqezuIoTE3lE1q8AR0B7R8locsSBVe0i/s/9dEwI+lQKdZxOeBIw
+         VoqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686308725; x=1688900725;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tFyWP/Gv04JokRZ90bRXNAF0sLVUQUnwQyZmUvgIR0w=;
-        b=dquhHIHPHPiOWKUs0wQ0U3iFZxQzafdq0lxe/ctpXYDGpzKdOuxy+WLkhmacU4Ooqp
-         9HiVdAB3pjHuHUTBGI7Negwdq4LUCAYHIp4m5MBCymICqRrtom2QonY2JrRFP/s9JA+q
-         G+tJ/Q04wVN7eqfcPAFB3LeMdoijWQOI6D0e/vCRpGQW8Iw/A0nEOFJro3w/8s5RPtsi
-         nQ7tf5TlEyvjGKfrTqheNkcPYzMySOx/cJSGwEfJHWywkU5jYSYPjbE0JF7IWaEhhfi7
-         tq6omdlLdaavrvUYjt8UC7jSlvbWJjjy75vGgOfkSwRCa1WOf+L41Wrj+zuQS67hkflJ
-         i63Q==
-X-Gm-Message-State: AC+VfDzGhRb11TScXgYkIkIuCxPJ1h6pffhoCjbCsNYcM/SOSpUEUBLV
-        epHjsgDSpZddH+K7/XvZmQinaw==
-X-Google-Smtp-Source: ACHHUZ5a/3SspzqfpjyWpYpyUKU5uGfftwmHY0tsmPA6mLLzprhRTE8IrmzxR+xp0QDfSwZaPDVDPQ==
-X-Received: by 2002:a05:600c:384:b0:3f4:2897:4eb7 with SMTP id w4-20020a05600c038400b003f428974eb7mr911968wmd.38.1686308724936;
-        Fri, 09 Jun 2023 04:05:24 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n6-20020a7bcbc6000000b003f6f6a6e769sm2336197wmi.17.2023.06.09.04.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 04:05:23 -0700 (PDT)
-Date:   Fri, 9 Jun 2023 14:05:19 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Vlad Yasevich <vladislav.yasevich@hp.com>
-Cc:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2 net] sctp: fix an error code in sctp_sf_eat_auth()
-Message-ID: <bfb9c077-b9a6-47f4-8cd8-a7a86b056a21@moroto.mountain>
+        d=1e100.net; s=20221208; t=1686311502; x=1688903502;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8T0wN2xyHqkgu/5OvE+DJyHc6IdgUb7ALA/gkh9SISw=;
+        b=ZuN0Jo0p9JPfxaOpB3QX6PkSws15pmi1dzCPVAfvHo+YYjFZMkd/Z37lPPCBnj4FnP
+         4wXA5gXKtcgRBCALbreQNWtnE03iec8yCXJ0Zv3nyCF+NsOxY0Tl7mHHlELWPGmrEsmw
+         r7sR5VijhZqGwsrTQh1SFCqcaR3CYcvodZ4g4jG4vt3UZ1VqXTksnW3FhvNTCIqd2LBM
+         0ME/26/6ARr4ncmSAS9g9VUi1xxqaGDIq6Ug8A0KjzN4alGM3qSkC+G6Rne1wZc4i7JJ
+         TN4SckB2gwJwgt72Co0rtgAtuIruPV1/ARSQhiydMjPkDKoiqnlZG5VHrMltK8og/7Y5
+         kiow==
+X-Gm-Message-State: AC+VfDyK0bmm10Y+Melhrs4R4pdZk5fIT46KQKo40g1URFwq7kSF+kmB
+        bYKkhsIYcgMQ680eIJS+6v27aQ==
+X-Google-Smtp-Source: ACHHUZ4ZX0E/X/YKvqntJSvw3Tv9/5A0eEJHzdaINnGFUFFPTZjJm0mPy2wbX2mDTVvwXuPdfsrBOQ==
+X-Received: by 2002:a17:906:fe03:b0:974:1eb9:f750 with SMTP id wy3-20020a170906fe0300b009741eb9f750mr1421632ejb.36.1686311502112;
+        Fri, 09 Jun 2023 04:51:42 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id r2-20020a170906548200b0096f5b48fe43sm1193972ejo.47.2023.06.09.04.51.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Jun 2023 04:51:41 -0700 (PDT)
+Message-ID: <56eff2be-710e-cf3a-0dc0-d0f1d21c8825@linaro.org>
+Date:   Fri, 9 Jun 2023 13:51:39 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4629fee1-4c9f-4930-a210-beb7921fa5b3@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 1/2] tty: serial: samsung_tty: Fix a memory leak in
+ s3c24xx_serial_getclk() in case of error
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thomas Abraham <thomas.abraham@linaro.org>,
+        Kukjin Kim <kgene.kim@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The sctp_sf_eat_auth() function is supposed to enum sctp_disposition
-values and returning a kernel error code will cause issues in the
-caller.  Change -ENOMEM to SCTP_DISPOSITION_NOMEM.
+On 09/06/2023 06:45, Christophe JAILLET wrote:
+> If clk_get_rate() fails, the clk that has just been allocated needs to be
+> freed.
+> 
+> Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Fixes: 65b07e5d0d09 ("[SCTP]: API updates to suport SCTP-AUTH extensions.")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/sctp/sm_statefuns.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
-index 97f1155a2045..08fdf1251f46 100644
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -4482,7 +4482,7 @@ enum sctp_disposition sctp_sf_eat_auth(struct net *net,
- 				    SCTP_AUTH_NEW_KEY, GFP_ATOMIC);
- 
- 		if (!ev)
--			return -ENOMEM;
-+			return SCTP_DISPOSITION_NOMEM;
- 
- 		sctp_add_cmd_sf(commands, SCTP_CMD_EVENT_ULP,
- 				SCTP_ULPEVENT(ev));
--- 
-2.39.2
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
