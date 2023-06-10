@@ -2,95 +2,117 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB285C7EE2E
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Jun 2023 02:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C4AC7EE43
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Jun 2023 06:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232756AbjFJCMK (ORCPT
+        id S230210AbjFJG0Y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jun 2023 22:12:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41148 "EHLO
+        Sat, 10 Jun 2023 02:26:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbjFJCMJ (ORCPT
+        with ESMTP id S230036AbjFJG0U (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jun 2023 22:12:09 -0400
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46E4035A9;
-        Fri,  9 Jun 2023 19:12:08 -0700 (PDT)
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2565a9107d2so1203580a91.0;
-        Fri, 09 Jun 2023 19:12:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686363128; x=1688955128;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uono/nwyy6EGIB3S/PXdMtEwaggYlfpIknOEvbCtnJ4=;
-        b=UxlLTjG1QwkpLJVlI0Dsn428ZEpU0RdVaf61Qj9hrqOjHsrNaVnDoWnbH/yH4B/raU
-         DF6/Mza4cqkPEQBWcViDkU84GeTfSTpd1v1Kt4m00JPc7JPF73mjbeEp1RrJPpkoge+Q
-         e52Eo6tds8EIjK+zlaw6xFK2U1mO8aWUxnsNH3uFm7ZWGaKGC2UXCn9Vjzcc1gbpZy/i
-         xfnxgc6aR2UqfOgbHdsSdt/n89CaueXaSRf7gtKM+HyIl7Ig8ZgnphnPcVwnI3uQSiu5
-         h4CJLQcTlMJA5eq7waqspv+CgW9x2KyKK49E2Dgbo+2wg6PQfbnmLbqB+XOyymNyhjqf
-         qY/g==
-X-Gm-Message-State: AC+VfDzZ9hlp/Vt79NPY1qzvGwChCJOWuZvZ6Ijs/nMhMAXNI55JnOnG
-        0yYPTBmim5PhdsKFenOB5UzbpOh/VUnMtA==
-X-Google-Smtp-Source: ACHHUZ7kZJrNmG7xjdOyI7pxuUk8NTtD/i0/zWXZuSVbn+d7hXEyrJ5OvyyJkKllNX9KQXL6tEPrWA==
-X-Received: by 2002:a17:90a:7104:b0:255:d878:704a with SMTP id h4-20020a17090a710400b00255d878704amr2882029pjk.4.1686363127368;
-        Fri, 09 Jun 2023 19:12:07 -0700 (PDT)
-Received: from dev-linux.lan (cpe-70-95-21-110.san.res.rr.com. [70.95.21.110])
-        by smtp.gmail.com with ESMTPSA id pq8-20020a17090b3d8800b00258bb7e8b47sm5251594pjb.50.2023.06.09.19.12.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 19:12:07 -0700 (PDT)
-From:   Sukrut Bellary <sukrut.bellary@linux.com>
-To:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     Sukrut Bellary <sukrut.bellary@linux.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] accel/qaic: Fix dereferencing freed memory
-Date:   Fri,  9 Jun 2023 19:12:00 -0700
-Message-Id: <20230610021200.377452-1-sukrut.bellary@linux.com>
-X-Mailer: git-send-email 2.34.1
+        Sat, 10 Jun 2023 02:26:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D92983AB5;
+        Fri,  9 Jun 2023 23:26:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7682261E68;
+        Sat, 10 Jun 2023 06:26:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7141FC433EF;
+        Sat, 10 Jun 2023 06:26:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686378374;
+        bh=D6HyayhXVPLTIsJDCmDDDxuJNPSJo6AL0U2eIvf/M6Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jlPH8ZcDj9TI2+B2OYBOMGSZfzNGyMcK8D83g8MIaWEAdbrGMALk8OgPWbkfotA6B
+         ULyWIrrp5+gc1lVuUeLQmhFzUXjjmjZyOCHeciSsG3p9Fp8V5xA3AVLzlcz8INops6
+         ZQDKFJ3u6k0Eb6TRww/QFVrZm+IaKN9mEpZSaRUORY9eCY6dnttqDVnxckUvjjixKA
+         wsl8h1jS4RAJf9VDFDFn/kiFoAzHNEKqeKNLRgSjAxQ8Ady5GuUP2IIM2xakzXs/dE
+         owGOBYHcecZEccPg0Oxk8OZC9naQ9CmSMU8xsoQ3rvtlwfuivJCQifDmEprO3GSkj4
+         QCjWg2AFD3XfQ==
+Date:   Fri, 9 Jun 2023 23:26:13 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Vlad Yasevich <vladislav.yasevich@hp.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2 net] sctp: fix an error code in sctp_sf_eat_auth()
+Message-ID: <20230609232613.14475572@kernel.org>
+In-Reply-To: <CADvbK_e2JwH3OqFSu89EvrtGbBbuCvD-C=Db_sExjvD1EcVLrw@mail.gmail.com>
+References: <4629fee1-4c9f-4930-a210-beb7921fa5b3@moroto.mountain>
+        <bfb9c077-b9a6-47f4-8cd8-a7a86b056a21@moroto.mountain>
+        <CADvbK_f25PEaR1bSuyqeGQsoOp0v1Psaeu2zPhfEi8Zcu-J5Tw@mail.gmail.com>
+        <7899ff13-ab06-4970-a306-85b218486571@kadam.mountain>
+        <CADvbK_e2JwH3OqFSu89EvrtGbBbuCvD-C=Db_sExjvD1EcVLrw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-smatch warning:
-	drivers/accel/qaic/qaic_data.c:620 qaic_free_object() error:
-		dereferencing freed memory 'obj->import_attach'
+On Fri, 9 Jun 2023 19:04:17 -0400 Xin Long wrote:
+> On Fri, Jun 9, 2023 at 12:41=E2=80=AFPM Dan Carpenter <dan.carpenter@lina=
+ro.org> wrote:
+> >
+> > On Fri, Jun 09, 2023 at 11:13:03AM -0400, Xin Long wrote: =20
+> > > This one looks good to me.
+> > >
+> > > But for the patch 1/2 (somehow it doesn't show up in my mailbox):
+> > >
+> > >   default:
+> > >   pr_err("impossible disposition %d in state %d, event_type %d, event=
+_id %d\n",
+> > >         status, state, event_type, subtype.chunk);
+> > > - BUG();
+> > > + error =3D status;
+> > > + if (error >=3D 0)
+> > > + error =3D -EINVAL;
+> > > + WARN_ON_ONCE(1);
+> > >
+> > > I think from the sctp_do_sm() perspective, it expects the state_fn
+> > > status only from
+> > > enum sctp_disposition. It is a BUG to receive any other values and
+> > > must be fixed,
+> > > as you did in 2/2. It does the same thing as other functions in SCTP =
+code, like
+> > > sctp_sf_eat_data_*(), sctp_retransmit() etc. =20
+> >
+> > It is a bug, sure.  And after my patch is applied it will still trigger
+> > a stack trace.  But we should only call the actual BUG() function
+> > in order to prevent filesystem corruption or a privilege escalation or
+> > something along those lines. =20
+> Hi, Dan,
+>=20
+> Sorry, I'm not sure about this.
+>=20
+> Look at the places where it's using  BUG(), it's not exactly the case, li=
+ke
+> in ping_err() or ping_common_sendmsg(), BUG() are used more for
+> unexpected cases, which don't cause any filesystem corruption or a
+> privilege escalation.
+>=20
+> You may also check more others under net/*.
 
-obj->import_attach is detached and freed using dma_buf_detach().
-But used after free to decrease the dmabuf ref count using
-dma_buf_put().
+Most BUG()s under net/ are historic. The legit BUG() uses I can think
+of are at boot, if something fails you can't bring up the system at all.
 
-Fixes: ff13be830333 ("accel/qaic: Add datapath")
-Signed-off-by: Sukrut Bellary <sukrut.bellary@linux.com>
----
- drivers/accel/qaic/qaic_data.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+https://docs.kernel.org/process/deprecated.html?highlight=3Dbug#bug-and-bug=
+-on
 
-diff --git a/drivers/accel/qaic/qaic_data.c b/drivers/accel/qaic/qaic_data.c
-index e42c1f9ffff8..7cba4d680ea8 100644
---- a/drivers/accel/qaic/qaic_data.c
-+++ b/drivers/accel/qaic/qaic_data.c
-@@ -613,11 +613,13 @@ static int qaic_gem_object_mmap(struct drm_gem_object *obj, struct vm_area_struc
- static void qaic_free_object(struct drm_gem_object *obj)
- {
- 	struct qaic_bo *bo = to_qaic_bo(obj);
-+	struct dma_buf *dmabuf;
- 
- 	if (obj->import_attach) {
- 		/* DMABUF/PRIME Path */
-+		dmabuf = obj->import_attach->dmabuf;
- 		dma_buf_detach(obj->import_attach->dmabuf, obj->import_attach);
--		dma_buf_put(obj->import_attach->dmabuf);
-+		dma_buf_put(dmabuf);
- 	} else {
- 		/* Private buffer allocation path */
- 		qaic_free_sgt(bo->sgt);
--- 
-2.34.1
-
+> > Calling BUG() makes the system unusable so it makes bugs harder to
+> > debug.  This is even mentioned in checkpatch.pl "Do not crash the kernel
+> > unless it is absolutely unavoidable--use WARN_ON_ONCE() plus recovery
+> > code (if feasible) instead of BUG() or variants".
+> > =20
+> "absolutely unavoidable", I think in a module, if it gets a case that is =
+not
+> expected at all, and the consequence (it may cause or has caused) is
+> unsure, WARN_ON_ONCE() is not enough.
