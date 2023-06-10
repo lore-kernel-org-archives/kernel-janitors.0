@@ -2,75 +2,81 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01230C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Jun 2023 14:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AD7C7EE2F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Jun 2023 14:54:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234740AbjFJOaB (ORCPT
+        id S234776AbjFJOyf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Jun 2023 10:30:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39398 "EHLO
+        Sat, 10 Jun 2023 10:54:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232366AbjFJO37 (ORCPT
+        with ESMTP id S233265AbjFJOye (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Jun 2023 10:29:59 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A9612717
-        for <kernel-janitors@vger.kernel.org>; Sat, 10 Jun 2023 07:29:58 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 7zbHqY0SlW2Gf7zbIq8AYt; Sat, 10 Jun 2023 16:29:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1686407397;
-        bh=sPMzKdWTCeIaXKkyZnkASaVYeO7GZgv565HWu+Ri3g8=;
-        h=From:To:Cc:Subject:Date;
-        b=mg2ARX+1cRnl9jXvWy0xNoLwFoVhimZ3et4FnzrLwNNMqA958LOllMayjxbSy3ETK
-         ymfaSdu2lru5rr25e8G/2evp+mKorWKFA3Chn+Jjf8NENJxIp2o+B0DOShv0gyJtRQ
-         RNB78dXhvlau8XeaHVGRJbAxbwTplm9jbahrv6+ZTMVEnQGFnVNubamGZyEhnK6Q90
-         VnOR7ehDqTXljiK8IygqUQtmGb2J9BAsPwhBWzwjHnsVMZwx3A3TPfuHn3kAgjq6DH
-         vGySYoW6M+aaEafihRVVcUoJspMEvj76B+ag77SSjy77YUK7gMXjQlF/Ct8dMTr1yB
-         vGdeg9kUMz3bA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 10 Jun 2023 16:29:56 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        sparclinux@vger.kernel.org
-Subject: [PATCH] envctrl.h: Fix a typo in an example
-Date:   Sat, 10 Jun 2023 16:29:48 +0200
-Message-Id: <96e2fc8a1bcee8003a66eb5f20853dc36f203f30.1686407377.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 10 Jun 2023 10:54:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABDFD30F5;
+        Sat, 10 Jun 2023 07:54:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 39A6060C37;
+        Sat, 10 Jun 2023 14:54:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26AFFC433D2;
+        Sat, 10 Jun 2023 14:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686408872;
+        bh=o/oW4QHzS8ShkvYeDjTwiWPMk3A48v9hrujGZrubDgs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dHgc7ihKIEwioWyTwsCsVT9J3rPPBbV+8DW/4v9GXRigSegCYmbPmnHjUbPhwkHxq
+         OQhjLAJDUkx9ByRAEWFVp5v4EsVYCy76a3RNCu8flVOJuIz9+FEjytFggeoQHYXu9W
+         YnhQlpmLZ0OrXhxkfSTXXI4/c8sc3ALNm7nXUiHhrXA77MO22tJYjaP0hUQ39KSM7V
+         rsRKyDAag1caTY9eaMCIOqVaHJOa8orLQI6pcJj7npyuGpBVC0+c5+Y/7WiNyk5rbN
+         KEawwiMQPozzhYtwDIkQL9CBZKo5uHWB9U5qU8oArc7r6UtxJl1pjGXjoPc1qME2ud
+         alo8c2FPvr/AQ==
+Date:   Sat, 10 Jun 2023 16:54:29 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thomas Abraham <thomas.abraham@linaro.org>,
+        Kukjin Kim <kgene.kim@samsung.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 1/2] tty: serial: samsung_tty: Fix a memory leak in
+ s3c24xx_serial_getclk() in case of error
+Message-ID: <20230610145429.uvmxxgxc5tc6x5b5@intel.intel>
+References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
+ <20230610102607.7nonyh5xhuhpyy6e@intel.intel>
+ <58d3f250-499d-5a18-6798-f9833cc2dbbd@wanadoo.fr>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <58d3f250-499d-5a18-6798-f9833cc2dbbd@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-s/envtrl/envctrl/ 	(c missing)
+On Sat, Jun 10, 2023 at 04:07:51PM +0200, Christophe JAILLET wrote:
+> Le 10/06/2023 à 12:26, Andi Shyti a écrit :
+> > > @@ -1459,8 +1459,10 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
+> > >   			continue;
+> > >   		rate = clk_get_rate(clk);
+> > > -		if (!rate)
+> > > +		if (!rate) {
+> > > +			clk_put(clk);
+> > >   			continue;
+> > 
+> > could you also print an error here?
+> > 
+> 
+> Is:
+> 	dev_err(ourport->port.dev,
+> 		"Failed to get clock rate for %s.\n", clkname);
 
-This way, it matches the device name given a few lines above and the name
-of the .h file
+Fantastic! Thanks!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/sparc/include/uapi/asm/envctrl.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/sparc/include/uapi/asm/envctrl.h b/arch/sparc/include/uapi/asm/envctrl.h
-index cf8aa0a14f40..ee5a712fcd0d 100644
---- a/arch/sparc/include/uapi/asm/envctrl.h
-+++ b/arch/sparc/include/uapi/asm/envctrl.h
-@@ -20,7 +20,7 @@
-  * The device name is /dev/envctrl.
-  * Below is sample usage:
-  *
-- *	fd = open("/dev/envtrl", O_RDONLY);
-+ *	fd = open("/dev/envctrl", O_RDONLY);
-  *	if (ioctl(fd, ENVCTRL_READ_SHUTDOWN_TEMPERATURE, 0) < 0)
-  *		printf("error\n");
-  *	ret = read(fd, buf, 10);
--- 
-2.34.1
-
+Andi
