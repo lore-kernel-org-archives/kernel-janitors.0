@@ -2,113 +2,94 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1296C77B7A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Jun 2023 10:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35461C7EE2F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Jun 2023 13:33:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234222AbjFJK5Q (ORCPT
+        id S232694AbjFJNdC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Jun 2023 06:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51616 "EHLO
+        Sat, 10 Jun 2023 09:33:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjFJK5P (ORCPT
+        with ESMTP id S230200AbjFJNdB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Jun 2023 06:57:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6071819A;
-        Sat, 10 Jun 2023 03:57:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E4A0E61286;
-        Sat, 10 Jun 2023 10:57:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB82C433D2;
-        Sat, 10 Jun 2023 10:57:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686394633;
-        bh=xmXIIUoIPhbHB+5cKM2HQ7wmex/ZG5xI1clFiieoASQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S9L8wwnKMlDjtPr/d3+a0NmUf0G1FF0bqLgxJwwEtM1Sezj4CAOgbQcRQJnpcNYms
-         AHhL/vBfcA9uW0sbgP9gXiOuJecbMLEcGafR1I79NNA/TNX3jn5InoWG5wwiASpGk/
-         slV1EL8SwfZHn6mjDTmcgPJ/6sZR6Rr5NtJIa/znFrpkNw/qkI1SCTLbcFTtl/ecU5
-         JFRnf34vdanndit99oS/lpIjB747vOK2avosQrl2C+s7rhfk4AV8uhr3FUXzaINpPO
-         nvFKg6Pxly1QtGz55pVipjhbki/MaeRwi1tRleZGTDPC3vK31DzkF+lVn5SAaoCtxE
-         hj/fcE6Yg8UQA==
-Date:   Sat, 10 Jun 2023 12:57:10 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sat, 10 Jun 2023 09:33:01 -0400
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0AD30F9
+        for <kernel-janitors@vger.kernel.org>; Sat, 10 Jun 2023 06:32:59 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 7yi5qGFtQVKwS7yi5qth7a; Sat, 10 Jun 2023 15:32:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1686403976;
+        bh=kw2eOSJ4V5gSFaEZFeVcNGutktWcvfZoGnpsREiIJQQ=;
+        h=From:To:Cc:Subject:Date;
+        b=UtCoAA5syEW/TxvW4W3YpIYtZSU51UIR9jSTzm0tptj+Llh8jKD4DCGH2QIA/fsut
+         1zufdLSmvyXqCzcKqAPUMBblgm0zfyf/C2QGvVj9rQGax99LWOMO8tLpSGZEsv+x2Q
+         +BILiaTpujcAaEUs+x/SfrZngrnu2oTmR6MApU+YNNPXA1vuRecdft8E5GNVsXvkx1
+         tol9LhHVe+ETUjfgYK0xGEPM/0MPOZRifUkRoLRns0UtbUCQT9n8l7SnNoN4uljYZb
+         0XH7n06C+3ARMwBK3GMAgjj0iIq4RIhOEih4M7KbTX1+HsyC1Vh9V076htHamhKxT6
+         HaiiVWE4x5riw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 10 Jun 2023 15:32:56 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Thomas Abraham <thomas.abraham@linaro.org>,
-        Kukjin Kim <kgene.kim@samsung.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 2/2] tty: serial: samsung_tty: Fix a memory leak in
- s3c24xx_serial_getclk() when iterating clk
-Message-ID: <20230610105710.v6w2ibltfgishali@intel.intel>
-References: <e4359d5ef206f5b349c1d15a515a1205e78dda55.1686285892.git.christophe.jaillet@wanadoo.fr>
- <93bf8f574310256fcea50e5c5a62b5c37e20bb14.1686285892.git.christophe.jaillet@wanadoo.fr>
- <20230610103958.jwfe45zm52ehiovn@intel.intel>
- <d86a0c13-f2c1-2595-adac-71c8c6452a89@linaro.org>
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH] usb: dwc3-meson-g12a: Fix an error handling path in dwc3_meson_g12a_probe()
+Date:   Sat, 10 Jun 2023 15:32:52 +0200
+Message-Id: <9d28466de1808ccc756b4cc25fc72c482d133d13.1686403934.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d86a0c13-f2c1-2595-adac-71c8c6452a89@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Krzysztof,
+If dwc3_meson_g12a_otg_init() fails, resources allocated by the previous
+of_platform_populate() call should be released, as already done in the
+error handling path.
 
-> On Sat, Jun 10, 2023 at 12:45:53PM +0200, Krzysztof Kozlowski wrote:
-> On 10/06/2023 12:39, Andi Shyti wrote:
-> > Hi Christophe,
-> > 
-> > On Fri, Jun 09, 2023 at 06:45:39AM +0200, Christophe JAILLET wrote:
-> >> When the best clk is searched, we iterate over all possible clk.
-> >>
-> >> If we find a better match, the previous one, if any, needs to be freed.
-> >> If a better match has already been found, we still need to free the new
-> >> one, otherwise it leaks.
-> >>
-> >> Fixes: 5f5a7a5578c5 ("serial: samsung: switch to clkdev based clock lookup")
-> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> >> ---
-> >> This patch is speculative. Review with care.
-> >>
-> >> I think that some clk_put() are also missing somewhere else in the driver
-> >> but won't be able to investigate further.
-> >> ---
-> >>  drivers/tty/serial/samsung_tty.c | 8 ++++++++
-> >>  1 file changed, 8 insertions(+)
-> >>
-> >> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> >> index dd751e7010e3..c07877dd25fa 100644
-> >> --- a/drivers/tty/serial/samsung_tty.c
-> >> +++ b/drivers/tty/serial/samsung_tty.c
-> >> @@ -1488,10 +1488,18 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
-> >>  			calc_deviation = -calc_deviation;
-> >>  
-> >>  		if (calc_deviation < deviation) {
-> >> +			/*
-> >> +			 * If we find a better clk, release the previous one, if
-> >> +			 * any.
-> >> +			 */
-> >> +			if (!IS_ERR(*best_clk))
-> > 
-> > what is the case when *best_clk has an error in it?
-> 
-> The initial one? Open the place where the function is being called.
+Fixes: 1e355f21d3fb ("usb: dwc3: Add Amlogic A1 DWC3 glue")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/usb/dwc3/dwc3-meson-g12a.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Right!
+diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
+index 365aec00d302..e99c7489dba0 100644
+--- a/drivers/usb/dwc3/dwc3-meson-g12a.c
++++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
+@@ -796,7 +796,7 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ 
+ 	ret = dwc3_meson_g12a_otg_init(pdev, priv);
+ 	if (ret)
+-		goto err_phys_power;
++		goto err_plat_depopulate;
+ 
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+@@ -804,6 +804,9 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++err_plat_depopulate:
++	of_platform_depopulate(dev);
++
+ err_phys_power:
+ 	for (i = 0 ; i < PHY_COUNT ; ++i)
+ 		phy_power_off(priv->phys[i]);
+-- 
+2.34.1
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
-
-Andi
-
-> 
-> Best regards,
-> Krzysztof
-> 
