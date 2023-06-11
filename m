@@ -2,151 +2,89 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E82AC7EE45
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Jun 2023 18:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB29C7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Jun 2023 20:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231773AbjFJS2b (ORCPT
+        id S232285AbjFKUoX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Jun 2023 14:28:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49776 "EHLO
+        Sun, 11 Jun 2023 16:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231725AbjFJS23 (ORCPT
+        with ESMTP id S231939AbjFKUoW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Jun 2023 14:28:29 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2FB730CD;
-        Sat, 10 Jun 2023 11:28:27 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-bc492cb6475so413325276.2;
-        Sat, 10 Jun 2023 11:28:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686421707; x=1689013707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VHAWJjlyJJkiqxSyII1vi5yzFtPXpOtnMaBNFDEAO5E=;
-        b=lWiXt+cY+yfrdznX/8ayKp3jjqLadQcv2DTPp010F067o75MVVU1wpgh0JSfH++ZzP
-         n4RiRdmcVtlPEEb/0iOdmpr5zh1kDfedxS1FRlOKJU2IrKgflBHTD1BJ9l4a7OFE+kNp
-         UaXR4pgmxBzP7/QFXyXUh+ryIxSFyWcWzLti7zref9AK//zJw++/tFeO8uyXvIF7uesf
-         QrEi1qLZ+TrhC+xs0DlWpplF13nX0Nwhmomemp2Vj2jx9yBUxH9E49ye3lr+3zVRVPqV
-         U6E6XHKkOyHMppVRsV2vsyyOgBjOeYaq3j4bFQqZAjn6n5SDPZos8qSnPdKatO3dmNcm
-         KhGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686421707; x=1689013707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VHAWJjlyJJkiqxSyII1vi5yzFtPXpOtnMaBNFDEAO5E=;
-        b=Jp3q0zBaNypx/iv826tmFam2tBtMKK+PIAs4OmC0t/2xnNrWICazVSkgVAjkr/wAFP
-         q0tFFiMss/YYl98okplqd+p14mTBIip08/dCuwZLayintjkWMT90KbJHU7mJ3P2elWlm
-         hUHkGsAYCcFzouAoe5XV2+rC5Q7CKBHWe3RxwfrecrW8Y2iQF44vhC35i2W3LfPsyiAk
-         1/SxIYQyGdGr/IZl7ixSJb8l34IwkWzZiClkkSbfa5PqqvjCh4JiPQVuhIKYcov2g0Z1
-         me903Kdcty5wb60wUeP+OCb1OkSM4lVRBX5+Y2BmwqHutJKJw4K5U/dBM+GvQns3iUgD
-         Z4wA==
-X-Gm-Message-State: AC+VfDzGwzrUk5zpErwZIHbroLhrX19Uuef4eBHKZFrr9jCalrnh3agL
-        kg8Ar3Xl5HpnqlswQHxg91mXYCiD7Xd2GQQ1Z+U=
-X-Google-Smtp-Source: ACHHUZ4ycn8+h+Fm0lIiWoMFRAUM2pdP0YO3NBeKs5I5Ea4uWOwGzm7VUEBJ6IG//luRic2L9Movqd0Hv41kyQalR04=
-X-Received: by 2002:a0d:dfc3:0:b0:561:8c78:bd14 with SMTP id
- i186-20020a0ddfc3000000b005618c78bd14mr3862807ywe.3.1686421706846; Sat, 10
- Jun 2023 11:28:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <4629fee1-4c9f-4930-a210-beb7921fa5b3@moroto.mountain>
- <bfb9c077-b9a6-47f4-8cd8-a7a86b056a21@moroto.mountain> <CADvbK_f25PEaR1bSuyqeGQsoOp0v1Psaeu2zPhfEi8Zcu-J5Tw@mail.gmail.com>
- <7899ff13-ab06-4970-a306-85b218486571@kadam.mountain> <CADvbK_e2JwH3OqFSu89EvrtGbBbuCvD-C=Db_sExjvD1EcVLrw@mail.gmail.com>
- <a4eebbcc-a4a5-42f3-8db9-5d604ced6201@kadam.mountain>
-In-Reply-To: <a4eebbcc-a4a5-42f3-8db9-5d604ced6201@kadam.mountain>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Sat, 10 Jun 2023 14:27:39 -0400
-Message-ID: <CADvbK_f4=pHJ2pftf2mqXO_-9BaZkBM0wSbqvA0iy93H4YFztg@mail.gmail.com>
-Subject: Re: [PATCH 2/2 net] sctp: fix an error code in sctp_sf_eat_auth()
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Vlad Yasevich <vladislav.yasevich@hp.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Sun, 11 Jun 2023 16:44:22 -0400
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3144FE52
+        for <kernel-janitors@vger.kernel.org>; Sun, 11 Jun 2023 13:44:19 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 8Rv5qwjzfZnIG8Rv5qdCzN; Sun, 11 Jun 2023 22:44:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1686516257;
+        bh=UiEF+Yax2f7tK9mHB7IIdxWz2jAlp2s9xTkNsdxvvkw=;
+        h=From:To:Cc:Subject:Date;
+        b=OUYbcJz4qYNl/rvRcj8m+xkYnIYgYw5GQYzEjeohGePg5f/NCQ8hwaP+KA2NayJR9
+         9wo1V+vywBUF/RBzAz2/5PuBFXnj/0Pumv0YzR/p0GHPoa8tBx76xKE/EEB4WV7TIy
+         RyeSIE2ybOJ2nDKb/sSutIi5Gk+NTRKPv+sOcgvJOe89LUM8dsLItS05cgRvcGguI8
+         XtgUsQBFlGN/AqyLmN7CtnL3gCdjewsqhU16bNZpQhctYekQU1iorp9X7RZD038Z8n
+         /DGcOik+Xj5t5duaZZ3W3HuTPTCqjC+UPykoE5W1Reir3MyjLEIhDLR2sEM8iMMTgB
+         S7YmbF3ZWGfQg==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 11 Jun 2023 22:44:17 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Subject: [PATCH net-next] ice: Remove managed memory usage in ice_get_fw_log_cfg()
+Date:   Sun, 11 Jun 2023 22:44:13 +0200
+Message-Id: <e86a1ab7b450462a1e92264dccb5a5855546e384.1686516193.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jun 10, 2023 at 2:28=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> On Fri, Jun 09, 2023 at 07:04:17PM -0400, Xin Long wrote:
-> > On Fri, Jun 9, 2023 at 12:41=E2=80=AFPM Dan Carpenter <dan.carpenter@li=
-naro.org> wrote:
-> > >
-> > > On Fri, Jun 09, 2023 at 11:13:03AM -0400, Xin Long wrote:
-> > > It is a bug, sure.  And after my patch is applied it will still trigg=
-er
-> > > a stack trace.  But we should only call the actual BUG() function
-> > > in order to prevent filesystem corruption or a privilege escalation o=
-r
-> > > something along those lines.
-> > Hi, Dan,
-> >
-> > Sorry, I'm not sure about this.
-> >
-> > Look at the places where it's using  BUG(), it's not exactly the case, =
-like
-> > in ping_err() or ping_common_sendmsg(), BUG() are used more for
-> > unexpected cases, which don't cause any filesystem corruption or a
-> > privilege escalation.
-> >
-> > You may also check more others under net/*.
-> >
->
-> Linus has been very clear that the BUG() in ping_err() is wrong and
-> should be removed.  But to me if you're very very sure a BUG() can't be
-> triggered that's more like a style or philosophy debate than a real life
-> issue.
->
-> https://lore.kernel.org/all/CAHk-=3Dwg40EAZofO16Eviaj7mfqDhZ2gVEbvfsMf6gY=
-zspRjYvw@mail.gmail.com/
-I see, didn't know that there are so many BUG() uses that are historic
-in the kernel, including net/*.
+There is no need to use managed memory allocation here. The memory is
+released at the end of the function.
 
->
-> When you look at ping_err() then it's like.  Ugh...  If we leave off the
-> else statement then GCC and other static checkers will complain that the
-> variables are uninitialized.  It we add a return then it communicates to
-> the reader that this path is possible.  But the BUG() silences the
-> static checker warning and communicates that the path is impossible.
->
-> A different solution might be to do a WARN(); followed by a return.  Or
-> unreachable();.  But the last time I proposed using unreachable() for
-> annotating impossible paths it lead to link errors and I haven't had
-> time to investigate.  Another idea is that we could create a WARN() that
-> included an unreachable() annotation.
->
->         } else {
->                 IMPOSSIBLE("An impossible thing has occured");
->         }
->
-> As a static analysis developer, I have made Smatch ignore WARN()
-> information because warnings happen regularly and the information they
-> provide is not useful.  Smatch does consider unreachable() annotations
-> as accurate.
-Got it, thanks for the extra information.
-A WARN() with unreachable() annotation sounds like a good idea.
+You kzalloc()/kfree() to simplify the code.
 
->
-> Anyway, in this patch the situation is completely different.  Returning
-> wrong error codes is a very common bug.  It's already happened once and
-> it will likely happen again.
->
-> My main worry with this patch is that the networking maintainers will
-> say, "Thanks, but please delete all the calls to BUG() in this function".
-> I just selected this one because it was particularly bad and it needs to
-> be handled a bit specially.  Deleting all the other calls to BUG() isn't
-> something that I want to take on.
->
-Yeah, we should gradually replace these bogus BUG()s.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/intel/ice/ice_common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Anyway, for these two patches:
-Acked-by: Xin Long <lucien.xin@gmail.com>
+diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
+index eb2dc0983776..4b799a5d378a 100644
+--- a/drivers/net/ethernet/intel/ice/ice_common.c
++++ b/drivers/net/ethernet/intel/ice/ice_common.c
+@@ -834,7 +834,7 @@ static int ice_get_fw_log_cfg(struct ice_hw *hw)
+ 	u16 size;
+ 
+ 	size = sizeof(*config) * ICE_AQC_FW_LOG_ID_MAX;
+-	config = devm_kzalloc(ice_hw_to_dev(hw), size, GFP_KERNEL);
++	config = kzalloc(size, GFP_KERNEL);
+ 	if (!config)
+ 		return -ENOMEM;
+ 
+@@ -857,7 +857,7 @@ static int ice_get_fw_log_cfg(struct ice_hw *hw)
+ 		}
+ 	}
+ 
+-	devm_kfree(ice_hw_to_dev(hw), config);
++	kfree(config);
+ 
+ 	return status;
+ }
+-- 
+2.34.1
 
-Thanks.
