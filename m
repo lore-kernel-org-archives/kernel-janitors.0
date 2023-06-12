@@ -2,79 +2,88 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD60C7EE2E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 20:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263E8C7EE43
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 20:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230488AbjFLUOW (ORCPT
+        id S236860AbjFLUZT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jun 2023 16:14:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45256 "EHLO
+        Mon, 12 Jun 2023 16:25:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233142AbjFLUNv (ORCPT
+        with ESMTP id S237261AbjFLUZB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jun 2023 16:13:51 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A68C91701
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 13:13:47 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 8nv2q2OP12KZV8nv8qCDA3; Mon, 12 Jun 2023 22:13:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1686600826;
-        bh=J/2JLtm8exGsXMCV+3V9bGaq28GcUnszoK7rIe0Hpa8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=X7fAGo4TuIVG+qDntP/1a5pzA/sKX+7zWKBY6X1z/QQg8NQKl1nygGq7wp5RnsHbG
-         5iUOvRMvft8s7SKdlZDEXtx2+BbBDMGfTC0PjHkqtGyyfQGwyh4GMQyJ2X6MvjQ/pm
-         S9fFpD4TxsSqI6dJxf2nx45UeQgQGSW6ICSzEW0hpxeRgHowCDAn6b6UWnuZUgEEIf
-         QMbpXeemmSA/OYSmYMqitKsuquypMIdQtoXujve9hfa8Gti8Wid7x4fHVJU9E+aXvF
-         GLArxT3+eeo4+CMWry/aL1V5VPqrF927hnYQ9kQ7XlrGGON/PaAnHQWxltWb4cQsCZ
-         YUONXPyglvTwg==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 12 Jun 2023 22:13:46 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-iio@vger.kernel.org
-Subject: [PATCH 2/2] iio: st_sensors: Remove some redundant includes in st_sensors.h
-Date:   Mon, 12 Jun 2023 22:13:37 +0200
-Message-Id: <bd7fa0b07c85172ecba384e239cb0ecf0780766a.1686600780.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <045ca726a9108325a3eaace807a264170895686c.1686600780.git.christophe.jaillet@wanadoo.fr>
-References: <045ca726a9108325a3eaace807a264170895686c.1686600780.git.christophe.jaillet@wanadoo.fr>
+        Mon, 12 Jun 2023 16:25:01 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C23D19B;
+        Mon, 12 Jun 2023 13:25:00 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-977c89c47bdso861230366b.2;
+        Mon, 12 Jun 2023 13:25:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20221208; t=1686601498; x=1689193498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P5rGJiRfcY9q4io21i6v5+UGLN2TIvQIc+ZeIBoHNMI=;
+        b=rsq5aBp+h543P3f1o3uOlrJ8+ZkTet7FJQe0k6hVEjPCXqE28A45C5qoCMSyUA6G5n
+         OqpttFi85EOTuvmrZ+ZfUgEtFjNl15FF1rsJknRqFK6XivcOL9BEdGsUZtp5j41IdKES
+         P1g5rhE3yY3mhyU+DeojvzCdFMoKrbu0n86CfXvZj5yWxGkNH2nRgHQjErj9oNsu8T+J
+         FFnA7Rlbg8DBc6b6I3qcwaWrSTwmMbG7JkxxecO9Xwe3TMs4QOEAIjTvvI72DmTqHGGS
+         /edOsT5igvHJ2n+Y7nzLroR1k5ywT5n+yfUwRVda0Kbx/fJVZZQiYD58mEMRbL9Iph1u
+         ZHLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686601498; x=1689193498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P5rGJiRfcY9q4io21i6v5+UGLN2TIvQIc+ZeIBoHNMI=;
+        b=Z5v85VKCQwZMJPC1jvZz9UULMlN1iu5jlBYDhvyS0pRJg9dvYwTk/xU1/eaOCKrPsk
+         7Szs0h07ATZ9eRqhKBliZDt4h0h+nNhdl32HwjuYERMb0lmdrdE7DLWXG2ocux71gj6u
+         nefZJ2QercfMrUu5urErXwIqMuOH3sNVXzyTIPT2PUsSOzNQJpJPe9DQ7/NTCqh3wP/d
+         ZCfYKnRqG2NmRf3CI0cbeVT/p1t5yDoVDEnqRmUeJ0in7ITuwUGtxRIE2lqtwL/x1en2
+         LEREoCI5IvISqzVWk9SYCS4SGA80Xkg8787e2Ow/pbHsgPUKEEPn4aAdsx2TBO9lBi8r
+         AqbA==
+X-Gm-Message-State: AC+VfDw7Ef0ol74mq0a6CT71Weou7iQObAHNtiymv1QRWVfBuTRciTmP
+        yh9oFIzm0XmjU5M8v/mYAnKNqSRDUyeLvoefzf4=
+X-Google-Smtp-Source: ACHHUZ4E0TWnsoyvUR7I33Kr/9TqSPqf+D2KoUdwkY2FAuQN2/ySPcvpG1fooy3zg7oLEm0Lwr/W0Iinb3bBwvZut0o=
+X-Received: by 2002:a17:907:60cd:b0:982:26c4:e4b0 with SMTP id
+ hv13-20020a17090760cd00b0098226c4e4b0mr1806618ejc.6.1686601498264; Mon, 12
+ Jun 2023 13:24:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <9d28466de1808ccc756b4cc25fc72c482d133d13.1686403934.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <9d28466de1808ccc756b4cc25fc72c482d133d13.1686403934.git.christophe.jaillet@wanadoo.fr>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 12 Jun 2023 22:24:47 +0200
+Message-ID: <CAFBinCBC3Cg_1UaYTxqq21-1pQ+cnT6VfL7kmQn0+v+26hiv_w@mail.gmail.com>
+Subject: Re: [PATCH] usb: dwc3-meson-g12a: Fix an error handling path in dwc3_meson_g12a_probe()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is no need to include i2c.h and spi/spi.h in st_sensors.h.
-Should it be needed, st_sensors_(i2c|spi).h should be used.
+On Sat, Jun 10, 2023 at 3:32=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> If dwc3_meson_g12a_otg_init() fails, resources allocated by the previous
+> of_platform_populate() call should be released, as already done in the
+> error handling path.
+>
+> Fixes: 1e355f21d3fb ("usb: dwc3: Add Amlogic A1 DWC3 glue")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Based on one of my script, this reduces the number of included files from
-573 files to 515 files when compiling drivers/iio/accel/st_accel_buffer.c
----
- include/linux/iio/common/st_sensors.h | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/include/linux/iio/common/st_sensors.h b/include/linux/iio/common/st_sensors.h
-index 607c3a89a647..a1d3d57d6d6e 100644
---- a/include/linux/iio/common/st_sensors.h
-+++ b/include/linux/iio/common/st_sensors.h
-@@ -10,8 +10,6 @@
- #ifndef ST_SENSORS_H
- #define ST_SENSORS_H
- 
--#include <linux/i2c.h>
--#include <linux/spi/spi.h>
- #include <linux/irqreturn.h>
- #include <linux/iio/iio.h>
- #include <linux/iio/trigger.h>
--- 
-2.34.1
-
+We should move to devm_of_platform_populate() mid term.
+That said, this fix is good for now because it's simple and can be backport=
+ed.
