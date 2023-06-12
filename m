@@ -2,154 +2,116 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8807EC88CB6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 15:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F89C88CB2
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 16:58:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238299AbjFLPr1 (ORCPT
+        id S233551AbjFLQ6G (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jun 2023 11:47:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39764 "EHLO
+        Mon, 12 Jun 2023 12:58:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236659AbjFLPrZ (ORCPT
+        with ESMTP id S232637AbjFLQ6F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jun 2023 11:47:25 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C20710CC;
-        Mon, 12 Jun 2023 08:47:24 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35CE01lY011062;
-        Mon, 12 Jun 2023 15:47:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=c87XOzdDuRMdz3dpGgxfIYZgND1DCuLkfZzv0++v1uQ=;
- b=Bw1VU3NyyUzzZXgDPJtYb1QzyRI5ndvSOaVuUfYZFjHJOMivGYq8BZ+XRqvL5KFa+hob
- lZ/R2XYH/gZzyBU8TG2jGZHGhqY0vAcbJMGpcCOscxSpRn5WHYs0QTfFR9jMXrvrvd5U
- Fzx+ZzOaz7idvR9IizWyRBvN0lCICSt6b5cZoZZyRRvHk9gOgdTBHBYIjxRNRVNGDODW
- EJkUU/siqw4FRtjNY6t8zUnzofNrwT2FuHFGs9ExJ+9NbYQe8v6EpGeL7GZg9m9YRSTT
- 8l8jrhdw8x31STuJ3hV2Re0mJGfHX2veWxaFXi1+FjzZYMTcIpfxqMTOpIXs+3zOotAs eQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r4ehtux5f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Jun 2023 15:47:14 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35CFlD68015398
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Jun 2023 15:47:13 GMT
-Received: from [10.50.14.38] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 12 Jun
- 2023 08:47:09 -0700
-Message-ID: <d4476c3b-9923-dde2-8338-9f67ebfc729f@quicinc.com>
-Date:   Mon, 12 Jun 2023 21:17:07 +0530
+        Mon, 12 Jun 2023 12:58:05 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EE619C;
+        Mon, 12 Jun 2023 09:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686589084; x=1718125084;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YIGvFiBNE3NCF0ZwQgckoo2K32v08RKeLs7L8rmrvD8=;
+  b=B/W6QBYHDPClYr9GbZ5FcOUe6RsDrtqBtUHmaly4GQB3mV51jIf1+0jE
+   pJnghZkXeRF5Ul5rze0yi3fkijAdelXsqyyN1k4DUTNaffbBB6k0MosWK
+   wzBurWDdiCAaVoY81oLxuZDQptqNf9G/ClnAtVh2Q5Z5wTvjC6i9+3xzD
+   2s/oSdjhM504ydqllun3b+G2guoBTt3N9ZVjWAR913GSm4DMeqnLBmkux
+   lzUEq6oCnwBJrOUMJ0mNdZsuWKkJTgHhRMa+qPeWpn6x+zuLmKLSlqi04
+   TUwKFoPYEt9DkkfhPOl+gHTqlPQCszUUPk4qKG80GSoYcTt+nBY50QLO0
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="338464657"
+X-IronPort-AV: E=Sophos;i="6.00,236,1681196400"; 
+   d="scan'208";a="338464657"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2023 09:58:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="705467168"
+X-IronPort-AV: E=Sophos;i="6.00,236,1681196400"; 
+   d="scan'208";a="705467168"
+Received: from atulpuri-mobl1.amr.corp.intel.com (HELO [10.212.234.150]) ([10.212.234.150])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2023 09:58:02 -0700
+Message-ID: <f0783f2a-03fd-f893-9470-ed9d7805e2f9@linux.intel.com>
+Date:   Mon, 12 Jun 2023 11:58:02 -0500
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] accel/qaic: Fix dereferencing freed memory
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.11.0
+Subject: Re: [PATCH] ASoC: SOF: ipc4-topology: Improve unlocking of a mutex in
+ sof_ipc4_widget_free()
 Content-Language: en-US
-To:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Sukrut Bellary <sukrut.bellary@linux.com>,
-        "Oded Gabbay" <ogabbay@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-media@vger.kernel.org>
-References: <20230610021200.377452-1-sukrut.bellary@linux.com>
- <fc979a4e-c30a-2606-9eec-afbba4fdd774@amd.com>
- <e3a867a8-284b-7250-b1b2-1956f533f6b0@quicinc.com>
- <ff196b04-e8c5-52d9-852b-9a9cc7eecdd0@amd.com>
- <b5e5c141-b5df-e24d-8fa4-94297d561cec@quicinc.com>
-From:   Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>
-In-Reply-To: <b5e5c141-b5df-e24d-8fa4-94297d561cec@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
+        sound-open-firmware@alsa-project.org,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jyri Sarha <jyri.sarha@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Rander Wang <rander.wang@intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
+        Dan Carpenter <error27@gmail.com>
+References: <20230322181830.574635-1-jyri.sarha@linux.intel.com>
+ <3a7476b6-2ae9-494e-1840-0915ddf47c2f@web.de>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <3a7476b6-2ae9-494e-1840-0915ddf47c2f@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: H6edwVznO1IQawd9XFNZmgfKwTUAO_qQ
-X-Proofpoint-ORIG-GUID: H6edwVznO1IQawd9XFNZmgfKwTUAO_qQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-12_06,2023-06-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0
- suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2305260000 definitions=main-2306120136
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
 
-On 6/12/2023 8:39 PM, Jeffrey Hugo wrote:
-> On 6/12/2023 7:21 AM, Christian König wrote:
->> Am 12.06.23 um 15:03 schrieb Pranjal Ramajor Asha Kanojiya:
->>>
->>>
->>> On 6/12/2023 4:52 PM, Christian König wrote:
->>>>
->>>>
->>>> Am 10.06.23 um 04:12 schrieb Sukrut Bellary:
->>>>> smatch warning:
->>>>>     drivers/accel/qaic/qaic_data.c:620 qaic_free_object() error:
->>>>>         dereferencing freed memory 'obj->import_attach'
->>>>>
->>>>> obj->import_attach is detached and freed using dma_buf_detach().
->>>>> But used after free to decrease the dmabuf ref count using
->>>>> dma_buf_put().
->>>>>
->>>>> Fixes: ff13be830333 ("accel/qaic: Add datapath")
->>>>> Signed-off-by: Sukrut Bellary <sukrut.bellary@linux.com>
->>>>> ---
->>>>>   drivers/accel/qaic/qaic_data.c | 4 +++-
->>>>>   1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/accel/qaic/qaic_data.c 
->>>>> b/drivers/accel/qaic/qaic_data.c
->>>>> index e42c1f9ffff8..7cba4d680ea8 100644
->>>>> --- a/drivers/accel/qaic/qaic_data.c
->>>>> +++ b/drivers/accel/qaic/qaic_data.c
->>>>> @@ -613,11 +613,13 @@ static int qaic_gem_object_mmap(struct 
->>>>> drm_gem_object *obj, struct vm_area_struc
->>>>>   static void qaic_free_object(struct drm_gem_object *obj)
->>>>>   {
->>>>>       struct qaic_bo *bo = to_qaic_bo(obj);
->>>>> +    struct dma_buf *dmabuf;
->>>>
->>>> Maybe move that variable into the if.
->>>>
->>>>>       if (obj->import_attach) {
->>>>>           /* DMABUF/PRIME Path */
->>>>> +        dmabuf = obj->import_attach->dmabuf;
->>>>>           dma_buf_detach(obj->import_attach->dmabuf, 
->>>>> obj->import_attach);
->>>>> -        dma_buf_put(obj->import_attach->dmabuf);
->>>>> +        dma_buf_put(dmabuf);
->>>>
->>>> I strongly assume you are not using the GEM prime helpers for this?
->>>>
->>>> Christian.
->>>
->>> Driver uses drm_gem_prime_fd_to_handle() helper function but it also 
->>> registers for ->gem_prime_import() which is internally called by 
->>> drm_gem_prime_fd_to_handle(). All the operations done in 
->>> gem_prime_import() are undone here.
->>
->> Then why don't you use drm_prime_gem_destroy() which is the cleanup 
->> helper for imports created by ->gem_prime_import() ?
->>
->> That looks pretty much identical to what you do here manually.
+On 6/10/23 06:36, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 10 Jun 2023 12:40:09 +0200
 > 
-> I think destroy() wasn't used because we are new to DRM and sometimes 
-> confused by the multitude of options.  I appreciate the suggestion and 
-> will follow up to see if destroy() will work here, or identify what 
-> would prevent the use of it.
+> Add a jump target so that a call of the function “mutex_unlock”
+> is stored only once in this function implementation.
 > 
-> -Jeff
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  sound/soc/sof/ipc4-topology.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
+> index a4e1a70b607d..f0fd1dfa384e 100644
+> --- a/sound/soc/sof/ipc4-topology.c
+> +++ b/sound/soc/sof/ipc4-topology.c
+> @@ -2300,8 +2300,7 @@ static int sof_ipc4_widget_free(struct snd_sof_dev *sdev, struct snd_sof_widget
+>  		if (pipeline->use_chain_dma) {
+>  			dev_warn(sdev->dev, "use_chain_dma set for scheduler %s",
+>  				 swidget->widget->name);
+> -			mutex_unlock(&ipc4_data->pipeline_state_mutex);
+> -			return 0;
+> +			goto unlock;
+>  		}
+> 
+>  		header = SOF_IPC4_GLB_PIPE_INSTANCE_ID(swidget->instance_id);
+> @@ -2326,7 +2325,7 @@ static int sof_ipc4_widget_free(struct snd_sof_dev *sdev, struct snd_sof_widget
+>  		if (!pipeline->use_chain_dma)
+>  			ida_free(&fw_module->m_ida, swidget->instance_id);
+>  	}
+> -
+> +unlock:
+>  	mutex_unlock(&ipc4_data->pipeline_state_mutex);
+> 
+>  	return ret;
 
-Thank you Christian for your suggestion. I agree with you driver can use 
-  drm_prime_gem_destroy() here.
+The change looks good but I am wondering if we need to print a dev_warn
+log which is already done on the sof_ipc4_widget_setup() path.
+
+This seems redundant. Ranjani, can we simplify?
