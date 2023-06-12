@@ -2,116 +2,91 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F89C88CB2
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 16:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B489C88CB2
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 17:52:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233551AbjFLQ6G (ORCPT
+        id S236337AbjFLRwy convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jun 2023 12:58:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48340 "EHLO
+        Mon, 12 Jun 2023 13:52:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232637AbjFLQ6F (ORCPT
+        with ESMTP id S236088AbjFLRwx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jun 2023 12:58:05 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EE619C;
-        Mon, 12 Jun 2023 09:58:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686589084; x=1718125084;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YIGvFiBNE3NCF0ZwQgckoo2K32v08RKeLs7L8rmrvD8=;
-  b=B/W6QBYHDPClYr9GbZ5FcOUe6RsDrtqBtUHmaly4GQB3mV51jIf1+0jE
-   pJnghZkXeRF5Ul5rze0yi3fkijAdelXsqyyN1k4DUTNaffbBB6k0MosWK
-   wzBurWDdiCAaVoY81oLxuZDQptqNf9G/ClnAtVh2Q5Z5wTvjC6i9+3xzD
-   2s/oSdjhM504ydqllun3b+G2guoBTt3N9ZVjWAR913GSm4DMeqnLBmkux
-   lzUEq6oCnwBJrOUMJ0mNdZsuWKkJTgHhRMa+qPeWpn6x+zuLmKLSlqi04
-   TUwKFoPYEt9DkkfhPOl+gHTqlPQCszUUPk4qKG80GSoYcTt+nBY50QLO0
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="338464657"
-X-IronPort-AV: E=Sophos;i="6.00,236,1681196400"; 
-   d="scan'208";a="338464657"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2023 09:58:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="705467168"
-X-IronPort-AV: E=Sophos;i="6.00,236,1681196400"; 
-   d="scan'208";a="705467168"
-Received: from atulpuri-mobl1.amr.corp.intel.com (HELO [10.212.234.150]) ([10.212.234.150])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2023 09:58:02 -0700
-Message-ID: <f0783f2a-03fd-f893-9470-ed9d7805e2f9@linux.intel.com>
-Date:   Mon, 12 Jun 2023 11:58:02 -0500
+        Mon, 12 Jun 2023 13:52:53 -0400
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D70AFA1;
+        Mon, 12 Jun 2023 10:52:52 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-9786c0cbfdcso91025866b.1;
+        Mon, 12 Jun 2023 10:52:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686592371; x=1689184371;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yk5mQxl2Lpjp+K7mqJY5Aj4l1gdZbnDRwMCKsWpujRY=;
+        b=Mlp7vCKwljcNFXsE3qa/dsHFg89saq7o66k9p8LAKuda4r7gVQ49cjFPhlr7+d+B2k
+         bPIK+4b5k4yb0a0kin+4nstiXuSBF2QAvPzEp28UvOhHxurrCqQ7RS8bxmRV58bbQaSL
+         i7dYSlMs/TPVqb1f7OyjPG12aoDG49ujzhlroBQ1ee7oda+psSwgfIn+JfQb16Ow429E
+         +HDe+u5rFps7YzMg1Yhjru2qONjyJ6ZEOI1bSW645RAQ97XPMe3S1h7fmxTFntklZl8c
+         djyliF0F7xXoXJpg3g2UC1k5UXxoFSANt1ntfVaQ8lnm+zxPlSJ/x2geKulo2UiPaKsi
+         RRVQ==
+X-Gm-Message-State: AC+VfDwPAOPNpEaf8GWrA7HD2/VYSFoq+lmGPcL2WIQnNxYTeyDM0uH6
+        ax/2JgdTghgbWgOBUfE3lwjfX4ARN6MQVmJ5iDA=
+X-Google-Smtp-Source: ACHHUZ7998Mx5vp8Vnwc4ktkHdel4mSdRHJKDrBT7+1hHRITf7dFRi+nWDK2oSxVOdcUTpTj2X2KHDjc0/pheTKucbo=
+X-Received: by 2002:a17:906:290:b0:953:2918:71e7 with SMTP id
+ 16-20020a170906029000b00953291871e7mr8905394ejf.5.1686592371143; Mon, 12 Jun
+ 2023 10:52:51 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.11.0
-Subject: Re: [PATCH] ASoC: SOF: ipc4-topology: Improve unlocking of a mutex in
- sof_ipc4_widget_free()
-Content-Language: en-US
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
-        sound-open-firmware@alsa-project.org,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jyri Sarha <jyri.sarha@linux.intel.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Rander Wang <rander.wang@intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr,
-        Dan Carpenter <error27@gmail.com>
-References: <20230322181830.574635-1-jyri.sarha@linux.intel.com>
- <3a7476b6-2ae9-494e-1840-0915ddf47c2f@web.de>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <3a7476b6-2ae9-494e-1840-0915ddf47c2f@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <ZH7s0qNJ8a/KHjvQ@moroto> <8e34bb46e770408efd5b207fb293af7c06832a94.camel@intel.com>
+In-Reply-To: <8e34bb46e770408efd5b207fb293af7c06832a94.camel@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 12 Jun 2023 19:52:40 +0200
+Message-ID: <CAJZ5v0g+ZqEp8a9CZtyp4uijd_MP5T+Q1fia-qPD55T2Hhs05g@mail.gmail.com>
+Subject: Re: [PATCH] powercap: intel_rapl: Fix a NULL vs IS_ERR() bug
+To:     "Zhang, Rui" <rui.zhang@intel.com>,
+        "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>
+Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Tue, Jun 6, 2023 at 10:56 AM Zhang, Rui <rui.zhang@intel.com> wrote:
+>
+> On Tue, 2023-06-06 at 11:22 +0300, Dan Carpenter wrote:
+> > The devm_ioremap_resource() function returns error pointers on error,
+> > it never returns NULL.  Update the check accordingly.
+> >
+> > Fixes: 9eef7f9da928 ("powercap: intel_rapl: Introduce RAPL TPMI
+> > interface driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>
+> Acked-by: Zhang Rui <rui.zhang@intel.com>
 
+Applied as 6.5 material, thanks!
 
-On 6/10/23 06:36, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Jun 2023 12:40:09 +0200
-> 
-> Add a jump target so that a call of the function “mutex_unlock”
-> is stored only once in this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  sound/soc/sof/ipc4-topology.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
-> index a4e1a70b607d..f0fd1dfa384e 100644
-> --- a/sound/soc/sof/ipc4-topology.c
-> +++ b/sound/soc/sof/ipc4-topology.c
-> @@ -2300,8 +2300,7 @@ static int sof_ipc4_widget_free(struct snd_sof_dev *sdev, struct snd_sof_widget
->  		if (pipeline->use_chain_dma) {
->  			dev_warn(sdev->dev, "use_chain_dma set for scheduler %s",
->  				 swidget->widget->name);
-> -			mutex_unlock(&ipc4_data->pipeline_state_mutex);
-> -			return 0;
-> +			goto unlock;
->  		}
-> 
->  		header = SOF_IPC4_GLB_PIPE_INSTANCE_ID(swidget->instance_id);
-> @@ -2326,7 +2325,7 @@ static int sof_ipc4_widget_free(struct snd_sof_dev *sdev, struct snd_sof_widget
->  		if (!pipeline->use_chain_dma)
->  			ida_free(&fw_module->m_ida, swidget->instance_id);
->  	}
-> -
-> +unlock:
->  	mutex_unlock(&ipc4_data->pipeline_state_mutex);
-> 
->  	return ret;
-
-The change looks good but I am wondering if we need to print a dev_warn
-log which is already done on the sof_ipc4_widget_setup() path.
-
-This seems redundant. Ranjani, can we simplify?
+> > ---
+> >  drivers/powercap/intel_rapl_tpmi.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/powercap/intel_rapl_tpmi.c
+> > b/drivers/powercap/intel_rapl_tpmi.c
+> > index c016127b3497..4f4f13ded225 100644
+> > --- a/drivers/powercap/intel_rapl_tpmi.c
+> > +++ b/drivers/powercap/intel_rapl_tpmi.c
+> > @@ -255,8 +255,8 @@ static int intel_rapl_tpmi_probe(struct
+> > auxiliary_device *auxdev,
+> >         }
+> >
+> >         trp->base = devm_ioremap_resource(&auxdev->dev, res);
+> > -       if (!trp->base) {
+> > -               ret = -ENOMEM;
+> > +       if (IS_ERR(trp->base)) {
+> > +               ret = PTR_ERR(trp->base);
+> >                 goto err;
+> >         }
+> >
+>
