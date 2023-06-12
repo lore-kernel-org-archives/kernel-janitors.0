@@ -2,195 +2,68 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB173C87FDD
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 13:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6721AC88CB4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 14:03:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235797AbjFLNWL (ORCPT
+        id S233694AbjFLODm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jun 2023 09:22:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52610 "EHLO
+        Mon, 12 Jun 2023 10:03:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbjFLNWJ (ORCPT
+        with ESMTP id S233523AbjFLODl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jun 2023 09:22:09 -0400
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2078.outbound.protection.outlook.com [40.107.95.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41937AC;
-        Mon, 12 Jun 2023 06:22:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PSOGLaIT1W07/QXcfByUgnGyr8dC7b4WHH+MVqNCSq3sP2EHjGI0Ix9QWiudycYHUeRhvopf+3qzM7seIqxM2Kk/3vWisBaG1GKSj7v51xzW1+jRjyF90+NF8Cg0ouHbIij3Eg6JEgu3hPNymUzZq2o3Wuns3H6gsJDpP04ojDaKuGftmjS+1B7CJSVa7ctGZvk3Ez7bkCof3Jk/k8YwybOYqpnxzfI9r5i7zuVZXTswjQsJV0S0UKd+sn2rd9eecb9hle+m1D1Pe6YaKSA/gyg5xpaY3Bpto7eFL6Vevw5/EpAr1rXFVFze5Eu4Gc6x33zZ3p801jVncQDiq1Jl3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s5mge1eShA5IQnwzWxQFDZ+08BVbyNHBjCPhmUwEXEk=;
- b=ByNIZbpZD0J43IGmhWvUBcF2YkjOUv9mukt+eXQaobAKjbNz/QIbMy+3xhFup3Vsi8N8jBHixK+8gsb2lt2llKdNfkeqHbVF46PQVEVeMnHSOpzS4R3dMNqfn44zcU5ZERBBhSppVOqnueHrPPUYth1PkrJDvD3f4XI8PISsIMO5D3Ci+HILP4dblYNjvXaKnbjuEVDLaBIrB0X46egdS6sPlZ/iIYipjmwRp+s5J0yNF+fz4BUwtqwMsMsAZa8J3vsHcVSzCsJuxa/z1BC2x274rjXTAkxqdSasozmFoiVlnj12gaC52512rJwL1mpkmg7S+gIiYmTf7jrltD4tJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s5mge1eShA5IQnwzWxQFDZ+08BVbyNHBjCPhmUwEXEk=;
- b=nSet+gvIGpLERmYxjQdEB6obqd0uSNgobY1wcCvpA3ZmG/3cZJ+Y4oSvAUbUMs1SJxF13FId6Jn6VIiUZcIUL20Cl8W+AEFW2mLYlQAMtJaNiLgpUPFUJoeqpaOLSD2Oou10XyuBa+zUOzvSmUV85XA5bQzSaR8H+ZpKDKPUYT4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BYAPR12MB3589.namprd12.prod.outlook.com (2603:10b6:a03:df::29)
- by CH3PR12MB8306.namprd12.prod.outlook.com (2603:10b6:610:12c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.44; Mon, 12 Jun
- 2023 13:22:05 +0000
-Received: from BYAPR12MB3589.namprd12.prod.outlook.com
- ([fe80::401e:2e7f:7c2b:6bff]) by BYAPR12MB3589.namprd12.prod.outlook.com
- ([fe80::401e:2e7f:7c2b:6bff%4]) with mapi id 15.20.6455.024; Mon, 12 Jun 2023
- 13:22:05 +0000
-Message-ID: <ff196b04-e8c5-52d9-852b-9a9cc7eecdd0@amd.com>
-Date:   Mon, 12 Jun 2023 15:21:58 +0200
+        Mon, 12 Jun 2023 10:03:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1465F10C2
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 07:03:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9C5BE6286C
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 14:03:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E364EC433D2;
+        Mon, 12 Jun 2023 14:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686578619;
+        bh=m2x4W7kPo9/C2W8ESj9pCncyc9QUnweaZx9AdOT6u7g=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=sWM8rh3aFqAyJET1RR/9mSGir5kUAyhAo9xVP7ZvKTbprGEwtXaX0YOPJj5+urCii
+         A8XjvKh7l+dX/pcOa0Qsb0NLAggXzMWc24gM7p07DEO2ECrFMrNqTlBVvBDW/ig7fN
+         wrAALs8oY0DfUT5kUvwHICmUks2OtI7wEj6cgNY6ulKCxb1kqfnIxkchCUVDobSiaF
+         FGe7bDKleGkFC+0JZSBNIAjyvU3Rk1lIxEl4z8Ui1h9y8zujL+6brNs3v8gEQ1PrcK
+         jNsvxuz+wav7Pf86E2X2n7QNAr7Lnx/ONP3XktUCdDRyzXvwrnGCP6qsYF4/KNnpBt
+         4h2rr1iNwDBeg==
+Message-ID: <a166c00d-d759-b905-5bfc-db61f58b7663@kernel.org>
+Date:   Mon, 12 Jun 2023 17:03:33 +0300
+MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH] accel/qaic: Fix dereferencing freed memory
+Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw: Call of_node_put() on
+ error path
 Content-Language: en-US
-To:     Pranjal Ramajor Asha Kanojiya <quic_pkanojiy@quicinc.com>,
-        Sukrut Bellary <sukrut.bellary@linux.com>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org
-References: <20230610021200.377452-1-sukrut.bellary@linux.com>
- <fc979a4e-c30a-2606-9eec-afbba4fdd774@amd.com>
- <e3a867a8-284b-7250-b1b2-1956f533f6b0@quicinc.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-In-Reply-To: <e3a867a8-284b-7250-b1b2-1956f533f6b0@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR0P281CA0091.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a9::11) To BYAPR12MB3589.namprd12.prod.outlook.com
- (2603:10b6:a03:df::29)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3589:EE_|CH3PR12MB8306:EE_
-X-MS-Office365-Filtering-Correlation-Id: 699f6d86-3e13-44a1-1c69-08db6b48040a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Co8flGdHn8XVC80FRFvZyQpBSzvvtP3YS+sjbsf02YD1JJ05Bfxs2QeoQfPE6c0NNrwiTJSDxzjCvfE2WuAdfVjuprX8MFFLQpcLEjlrK9XKlFB8HKxlVuvUSt6rPerA3ErGyXaDimJS5JtvJm9fJxLNgMX10B9y6mvS6NqBCmbjq4/y9Y5jyCSmF/ckrOaBuPK5xjlfBk3/6Mq/CCN9nLnbunot9PP3Cgyk0UjvaagHnLyMTN/JY7X002gBgVNt6N/Sr2lmEX5KueQK1NBQWDCxOX/hOwC2m1EhZhbrP/fmyaZx2lvIGeRlrg6cN++nPI3EAxdxWsdQ1sbqhiF0gRaV5bmPOyZ5PIhFJWUK1kX9x2J8KkaR5DTIpVj+QnzmYo227vNsrF6C3+9/zfos/ZGN0EFcmcV4DxLgTjbJE1saeomTtumLBOOMPeJfLJII5GMCPpBY8ie46m7hcT93BHlSWXVJ0tXmrtAyy6AwjhcXFhaNr6WmwuM7I4dqiyQtrfcLxVvyjI4kAqOQaoMs034EmqP8xsmNkzSgFEXWVxSzVGnw6wL4xRnbMe4Ewql4/S44KP+Jb1QsFBYnyNRsEDcGHuaVJoALq4H89BGvCjGOqLyT+ki4h1su6UOiNNMKBXgAMchYDPvUzTdort3fjA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3589.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(39860400002)(346002)(376002)(366004)(451199021)(6666004)(6486002)(478600001)(66574015)(6512007)(6506007)(53546011)(83380400001)(186003)(36756003)(38100700002)(31696002)(86362001)(2616005)(31686004)(5660300002)(8936002)(8676002)(316002)(41300700001)(2906002)(4326008)(66556008)(66476007)(66946007)(7416002)(110136005)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZnQyK1l5Y2FkNG8ycmthZlRoWWtVTCtpelBvb1kvRVZDYlMxQVhNaWYrQ2Mr?=
- =?utf-8?B?UUU0RUNNUjV0ZnRQbVF5dnlLNFhicWhubXo3VGdSaWltWk5GZVM2VzJZd0lu?=
- =?utf-8?B?VVM3cTJobWFpekJxL1hKeEVSNHNsTmZNODhuZGpEeHNCbWpmbkY5dHcvWG13?=
- =?utf-8?B?N1RRVnYyd25QMnZhMFVSUTljWmpzb1BXaENpYmF4dkp3QlRPOWhidkVqbElL?=
- =?utf-8?B?UVhSYkVWNGRSdDJYOTI1dU02eUwxY1phdHJ5dTUzcDZwZ3ovUFIrWkd0bDBp?=
- =?utf-8?B?akk4anlxcFZ1VThiT1RPVjkwLy9qRDdHVWFOVkozY2hBWmhPeHhENUFneXQ1?=
- =?utf-8?B?S1M2eERVUjNWM0QzajRXYWFGa2hVUVJHa0FVUkhKNVN1UldVTlJlS0JxSWlo?=
- =?utf-8?B?UDd2bENmc0RlMFBoMm1TWXdLRFlWZlRJb1FaWnVtNDZlM1ZaRzFuaXQ0ejlj?=
- =?utf-8?B?cnpNSlVTWlJtK2dYNEF6NG1yVFVqaTNLa0lTdU9vOXduQm5VSkpYMHUxMlhw?=
- =?utf-8?B?SHZGZ0RyYTdGS2lQQzV1YWZXejdyd2NHUW5sdkFDbWhFbGovaUN5MTYxMncv?=
- =?utf-8?B?VEM2VnZmRGRIVUZ6U0hhZFVkTUdiYVpnb0tFVitneHRLUWRuL21JMGVrMVo5?=
- =?utf-8?B?WWlOR0dMME5WMWNHR1hsMTVHZmZCQWZZdUJXT2xtMUtDRDFMcG04MSsvWDBB?=
- =?utf-8?B?YS9vVS9XcDgwOW5oUXZOcit4OE9tUjk2Nk5BMDZzRkpyS2pKeVBkWTdzK3BE?=
- =?utf-8?B?alhHTmp2bVdlelU0Q2YxR1hlVi91RERINmluN3N6VXRaYTZIM1o0cmhxYTlK?=
- =?utf-8?B?UHc2aEM5bXBzcmtWY3JuMTBhdFJYbnhzZGVEZG1ad2RhaU5rUk5wdEs0cm93?=
- =?utf-8?B?alNiYWgybDVpbW0xamg4QjZQcWVMa0NlZlJLUnZCbTVuL3Z2aStkNGlxSEtT?=
- =?utf-8?B?YWxjblAwR0FINmMvaEp0ZVdnZXN2QjdtTHl0QkR6eU9KV2tmMGFObXJENkZ4?=
- =?utf-8?B?ZGxIdUFjUXkyeHdHVms3dnZkN29EWWtBdHFKcWNvZFVRL2FiaGJlbkd0RGdp?=
- =?utf-8?B?bW5PZFZVTGxDeWxxWTVnbjZBTnN1SFg2UER6WmtPZVlwNmtTRkpoRTZPUDN6?=
- =?utf-8?B?RURBSS93NXhXNmtvY01renVZbmRiY2xVWnhjZU54RFRUWVYyNGdsQ0syV0Ns?=
- =?utf-8?B?eFByU05Fc3lKN1l5Rmt6TEVJMVB6SlVpRlVxTWJla0NaaG5nd2JWL1B0WThF?=
- =?utf-8?B?VEdxNVg3cUlNRU9kd0l6THk5MHQ5TFRXMkdneldOY01oNnNCcDNoMWJ0RGpI?=
- =?utf-8?B?NmxWOVh3emVMWVNwcXMyMldXWndNRXkra0VVQ1hqb1AvQzgzRW9CMjRhckJG?=
- =?utf-8?B?UFpicUpTL0V0QjhqVjREYSszM1lmWldTa3k1bm04cHpaTVlFK1hHaGtBcWhZ?=
- =?utf-8?B?YUE5dmpXQWhzazNxRnVaTGhSZlNtN0YwNmFMcFJHeit1K1ozbUk4MndRU1FX?=
- =?utf-8?B?Q0xtQmFjVFVick1LU0pKN2JhcklCTGp5U1BIUC91VjVUNWczT2srQlcrRG9N?=
- =?utf-8?B?cVpFenhvTVdFSURNb0ovZ2haZXR5KzdTQ21mYkhCM2JzZjlMVDUyS0kwb2lQ?=
- =?utf-8?B?ai9hdDZQZ3A2aEx2N3ZkM3M4blBqSjJ5cHhsR1BqbEJvbzFteXR6WVFOVTJ6?=
- =?utf-8?B?SzZpME92YVdoaEtyNU9pVkx5NWNsZDNLQ1RETnVaR0VJL1o2UFFWVGRZR2xN?=
- =?utf-8?B?Q0x0Tkw3aWlSckpHV1BXenRqTHA1SUplQldWQktYdHdUOWxvcXg4WE8rMDNp?=
- =?utf-8?B?azM1SmtpL2tyZEkzZ3V1OGh5bEExalNucTBpSHZPbGdmbnZLYUdUR1lWcWtt?=
- =?utf-8?B?MTNGMkhXYzhkSFVNMDgzMmY0RjZEMkE0VW0rbVEreGVoZC90dVFhR3FuMkIy?=
- =?utf-8?B?eHdjNmdTaytHSnJuTU1OdnRNZGNWUTR0U1hFY2ZsSXM4ZytnVmh2V0FTOEU3?=
- =?utf-8?B?UW5wRnN1WklqWjVUbUt2R3JmYkVqVXRtRE8zcTBOOGpISTdWWUlSSjVOL1NN?=
- =?utf-8?B?ZExmS3dtbktuamJGbmgyYjRJQXozeDRBZG84WDNiMG9TOXNJSWxRaWt1c0Qy?=
- =?utf-8?B?bkpIU3F2RFU5S1VtNDBGT1AxdTcxN0FoNy94QzBnMHEzUmRqWHE5OTZWUStD?=
- =?utf-8?Q?rR9fX8K02smsVb4vHn+isorPfCyXzARQ0SyR98iDH8xv?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 699f6d86-3e13-44a1-1c69-08db6b48040a
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3589.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2023 13:22:05.6306
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /ItTkRIaOYHj/VASe/4SEn7/ZEvT4ssXgpTA8f4f739v9Pa2jrTnzDj7+JDhdSU9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8306
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <e3012f0c-1621-40e6-bf7d-03c276f6e07f@kili.mountain>
+From:   Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <e3012f0c-1621-40e6-bf7d-03c276f6e07f@kili.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 12.06.23 um 15:03 schrieb Pranjal Ramajor Asha Kanojiya:
->
->
-> On 6/12/2023 4:52 PM, Christian König wrote:
->>
->>
->> Am 10.06.23 um 04:12 schrieb Sukrut Bellary:
->>> smatch warning:
->>>     drivers/accel/qaic/qaic_data.c:620 qaic_free_object() error:
->>>         dereferencing freed memory 'obj->import_attach'
->>>
->>> obj->import_attach is detached and freed using dma_buf_detach().
->>> But used after free to decrease the dmabuf ref count using
->>> dma_buf_put().
->>>
->>> Fixes: ff13be830333 ("accel/qaic: Add datapath")
->>> Signed-off-by: Sukrut Bellary <sukrut.bellary@linux.com>
->>> ---
->>>   drivers/accel/qaic/qaic_data.c | 4 +++-
->>>   1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/accel/qaic/qaic_data.c 
->>> b/drivers/accel/qaic/qaic_data.c
->>> index e42c1f9ffff8..7cba4d680ea8 100644
->>> --- a/drivers/accel/qaic/qaic_data.c
->>> +++ b/drivers/accel/qaic/qaic_data.c
->>> @@ -613,11 +613,13 @@ static int qaic_gem_object_mmap(struct 
->>> drm_gem_object *obj, struct vm_area_struc
->>>   static void qaic_free_object(struct drm_gem_object *obj)
->>>   {
->>>       struct qaic_bo *bo = to_qaic_bo(obj);
->>> +    struct dma_buf *dmabuf;
->>
->> Maybe move that variable into the if.
->>
->>>       if (obj->import_attach) {
->>>           /* DMABUF/PRIME Path */
->>> +        dmabuf = obj->import_attach->dmabuf;
->>>           dma_buf_detach(obj->import_attach->dmabuf, 
->>> obj->import_attach);
->>> -        dma_buf_put(obj->import_attach->dmabuf);
->>> +        dma_buf_put(dmabuf);
->>
->> I strongly assume you are not using the GEM prime helpers for this?
->>
->> Christian.
->
-> Driver uses drm_gem_prime_fd_to_handle() helper function but it also 
-> registers for ->gem_prime_import() which is internally called by 
-> drm_gem_prime_fd_to_handle(). All the operations done in 
-> gem_prime_import() are undone here.
 
-Then why don't you use drm_prime_gem_destroy() which is the cleanup 
-helper for imports created by ->gem_prime_import() ?
 
-That looks pretty much identical to what you do here manually.
+On 12/06/2023 10:18, Dan Carpenter wrote:
+> This code returns directly but it should instead call of_node_put()
+> to drop some reference counts.
+> 
+> Fixes: dab2b265dd23 ("net: ethernet: ti: am65-cpsw: Add support for SERDES configuration")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Regards,
-Christian.
-
->
->>
->>>       } else {
->>>           /* Private buffer allocation path */
->>>           qaic_free_sgt(bo->sgt);
->>
-
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
