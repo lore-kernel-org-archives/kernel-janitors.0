@@ -2,118 +2,96 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C50DC7EE37
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 05:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C63AC7EE2E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 06:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234016AbjFLFb0 (ORCPT
+        id S234433AbjFLGeY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jun 2023 01:31:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37684 "EHLO
+        Mon, 12 Jun 2023 02:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbjFLFbX (ORCPT
+        with ESMTP id S232070AbjFLGeX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jun 2023 01:31:23 -0400
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF689B;
-        Sun, 11 Jun 2023 22:31:22 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-51492ae66a4so5649743a12.1;
-        Sun, 11 Jun 2023 22:31:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686547881; x=1689139881;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xJAmHyGGTpWDgHJ+ARPR2wWzsDJroc+Lg7/oN0MLilI=;
-        b=bwZPyTSrrppMRK6o8RcBW+EHeYaZlLAX1ma+cXRClUvMkxNZvakUbLvhNvo2nTooDJ
-         YDyUhCnaz+Zvb8oTEuTPpmxPhus25GIuxYOgvd9iPw8xsUr9tLzAqw9YKHJ86PZEYZrV
-         /B68FW54o+WBYIeqrVpkrLPCCbLq8s7w/Co74vKQGCUWQVX60SBGndrgfiLXLMOQZHUZ
-         BZE+AfJHRTgeK0IlS5FiuSenVH5vLavlJnVrgQ0ZR0KFGIsCOMfFfX/jMOfzvegouBi3
-         cHhL2MezZgG3aZMD+5dpaf01iXh3TJVVLQYI1pj/VhJhzqL1K6AkfidGPyI4AVkosm2A
-         j3Ng==
-X-Gm-Message-State: AC+VfDzlRom6ty65FGC2OcyX3lk2uA1++dm/fxlClRf80WiX5RUEBAfx
-        3c6ZyEeYZQx0bu1nBrf4zJY=
-X-Google-Smtp-Source: ACHHUZ7xV/WRWf4pMR6icQkrWG/ZXgHjOJ952X4vfb8grTR31A1OJ/27jdkBMAhbeNwTgRR1AL4AEg==
-X-Received: by 2002:a05:6402:31f3:b0:514:9eae:b0a7 with SMTP id dy19-20020a05640231f300b005149eaeb0a7mr3653904edb.17.1686547880528;
-        Sun, 11 Jun 2023 22:31:20 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:59? ([2a0b:e7c0:0:107::aaaa:59])
-        by smtp.gmail.com with ESMTPSA id g25-20020a50ee19000000b0050bfeb15049sm4510591eds.60.2023.06.11.22.31.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Jun 2023 22:31:20 -0700 (PDT)
-Message-ID: <524b5587-4099-0f5f-40c6-cfc6e4c20274@kernel.org>
-Date:   Mon, 12 Jun 2023 07:31:18 +0200
+        Mon, 12 Jun 2023 02:34:23 -0400
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 722311705;
+        Sun, 11 Jun 2023 23:29:22 -0700 (PDT)
+Received: from [192.168.0.185] (ip5f5aee35.dynamic.kabel-deutschland.de [95.90.238.53])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3A68161EA1BFF;
+        Mon, 12 Jun 2023 08:23:27 +0200 (CEST)
+Message-ID: <77eaaa44-25af-84c4-91ec-c7b5ec2f6f64@molgen.mpg.de>
+Date:   Mon, 12 Jun 2023 08:23:24 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v2 3/3] tty: serial: samsung_tty: Use abs() to simplify
- some code
+ Thunderbird/102.12.0
+Subject: Re: [Intel-wired-lan] [PATCH net-next] ice: Remove managed memory
+ usage in ice_get_fw_log_cfg()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        intel-wired-lan@lists.osuosl.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <e86a1ab7b450462a1e92264dccb5a5855546e384.1686516193.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
-From:   Jiri Slaby <jirislaby@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Walter Harms <wharms@bfs.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-References: <e4baf6039368f52e5a5453982ddcb9a330fc689e.1686412569.git.christophe.jaillet@wanadoo.fr>
- <7bd165e82ed3675d4ddee343ab373031e995a126.1686412569.git.christophe.jaillet@wanadoo.fr>
- <69054d03-39e5-8c42-a9a9-8934ab4bf6c9@kernel.org>
-In-Reply-To: <69054d03-39e5-8c42-a9a9-8934ab4bf6c9@kernel.org>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <e86a1ab7b450462a1e92264dccb5a5855546e384.1686516193.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 12. 06. 23, 7:13, Jiri Slaby wrote:
-> On 10. 06. 23, 17:59, Christophe JAILLET wrote:
->> Use abs() instead of hand-writing it.
->>
->> Suggested-by: Walter Harms <wharms@bfs.de>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> v2: new patch
->> ---
->>   drivers/tty/serial/samsung_tty.c | 5 ++---
->>   1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/tty/serial/samsung_tty.c 
->> b/drivers/tty/serial/samsung_tty.c
->> index 0b37019820b4..b29e9dfd81a6 100644
->> --- a/drivers/tty/serial/samsung_tty.c
->> +++ b/drivers/tty/serial/samsung_tty.c
->> @@ -24,6 +24,7 @@
->>   #include <linux/dmaengine.h>
->>   #include <linux/dma-mapping.h>
->>   #include <linux/slab.h>
->> +#include <linux/math.h>
->>   #include <linux/module.h>
->>   #include <linux/ioport.h>
->>   #include <linux/io.h>
->> @@ -1485,9 +1486,7 @@ static unsigned int s3c24xx_serial_getclk(struct 
->> s3c24xx_uart_port *ourport,
->>           }
->>           quot--;
->> -        calc_deviation = req_baud - baud;
->> -        if (calc_deviation < 0)
->> -            calc_deviation = -calc_deviation;
->> +        calc_deviation = abs(req_baud - baud);
+Dear Christophe,
+
+
+Thank you for the patch.
+
+Am 11.06.23 um 22:44 schrieb Christophe JAILLET:
+> There is no need to use managed memory allocation here. The memory is
+> released at the end of the function.
 > 
-> Does this work provided req_baud and baud are unsigned?
+> You kzalloc()/kfree() to simplify the code.
 
-Oh, yes, it does, _hopefully_. A bit unexpectedly for me, but:
-  * abs - return absolute value of an argument
-  * @x: the value.  If it is unsigned type, it is converted to signed 
-type first.
+s/You/Use/?
 
-So:
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+Kind regards,
 
-It would help noting this in the commit log.
+Paul
 
-> thanks,-- 
-js
-suse labs
 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   drivers/net/ethernet/intel/ice/ice_common.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
+> index eb2dc0983776..4b799a5d378a 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_common.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_common.c
+> @@ -834,7 +834,7 @@ static int ice_get_fw_log_cfg(struct ice_hw *hw)
+>   	u16 size;
+>   
+>   	size = sizeof(*config) * ICE_AQC_FW_LOG_ID_MAX;
+> -	config = devm_kzalloc(ice_hw_to_dev(hw), size, GFP_KERNEL);
+> +	config = kzalloc(size, GFP_KERNEL);
+>   	if (!config)
+>   		return -ENOMEM;
+>   
+> @@ -857,7 +857,7 @@ static int ice_get_fw_log_cfg(struct ice_hw *hw)
+>   		}
+>   	}
+>   
+> -	devm_kfree(ice_hw_to_dev(hw), config);
+> +	kfree(config);
+>   
+>   	return status;
+>   }
