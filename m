@@ -2,84 +2,100 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED31DC7EE23
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 08:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3CCC7EE43
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 08:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233269AbjFLIkn (ORCPT
+        id S233291AbjFLImM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jun 2023 04:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45506 "EHLO
+        Mon, 12 Jun 2023 04:42:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233668AbjFLIkW (ORCPT
+        with ESMTP id S231319AbjFLImK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jun 2023 04:40:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8422CA8;
-        Mon, 12 Jun 2023 01:40:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1D74C612DB;
-        Mon, 12 Jun 2023 08:40:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FBBBC433D2;
-        Mon, 12 Jun 2023 08:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686559220;
-        bh=89ak23KuxmgNnQPMFU5iJGei6tr8rWqGIYeuVSAnKaE=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ZnQruuSUgodDxarX9ASl68F8uSE0iYW7oMPfGpckfoJebKCuVX5D29GxTyS+Mw1A+
-         HvMa0COqzmqAbFnUOOORtzdVczT2TtTKE+QXa/qQb8avxuGGhjCBhvWfF5sl1iPaxO
-         +q3tJ/AB4xWP3k17uB6JBvI43KLXxxXlF9L5tRjFuvfN7ZFL5nSn3dMM0a335b6xFu
-         qiVLKEriqkBqMYpPSZK54r/jrPKjRXHUCYcD/44QFMYKCZkFWTQ1RmMQlmtDqZRrG0
-         oECqJ8DSjLcF0+5SIqjlt15IGcgDBA9w4UAlmM+ITclcc3EnGj4fpf3yPd2M7Umll1
-         2do/wT5/JHeNQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4D788E29F37;
-        Mon, 12 Jun 2023 08:40:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/2 net] sctp: handle invalid error codes without calling
- BUG()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168655922031.2912.11244679238666177727.git-patchwork-notify@kernel.org>
-Date:   Mon, 12 Jun 2023 08:40:20 +0000
-References: <4629fee1-4c9f-4930-a210-beb7921fa5b3@moroto.mountain>
-In-Reply-To: <4629fee1-4c9f-4930-a210-beb7921fa5b3@moroto.mountain>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     marcelo.leitner@gmail.com, lucien.xin@gmail.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, linux-sctp@vger.kernel.org,
+        Mon, 12 Jun 2023 04:42:10 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 087B8AC
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 01:42:09 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f738f579ceso29311985e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 01:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686559327; x=1689151327;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EZv9jAWTaWzU7nrzu2Djk0eQ3SpMj9lpHMajexphw6M=;
+        b=UR1vnIyZzeHtpw9hBnGyIaNcl6XBVrU30S1IeO2RNzyJXEARZGzrSpMdj9yMMpveXS
+         H5f1F5Q4lfpHpy9TBWAvbRD+kUjs+5pduxfGUlL9TP7Uq31qDcfTOFYXOMDv33D3ccJC
+         Q7m2l0d6PS3E2kwbTVKpNy8Sjbecy26F+k/k93bCBumDp5ciNVuhpFV+pYKwELBgJe6/
+         O0BRIEzxj46xv8kWftLURdUYG6sw01yLS7mQ4PY4dEuN/8yLVDTVc4A3KbVZMyu1gZN/
+         EQ/URRRdUUTqUAXBRI/qvbkzyHOnKQUaaCgJxeNdXb1jvFIjdvMkaObIWgKdqsD2Mh6e
+         fFTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686559327; x=1689151327;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EZv9jAWTaWzU7nrzu2Djk0eQ3SpMj9lpHMajexphw6M=;
+        b=BWD3fcnqwDBcfW0PR/PfPwtRDhrI7QrP1G+ygtqYwhZuciCeQ+cQM5wJ5vg8cf8H1o
+         k0Nbb6B+R8mWbiu9KL3Q9AVPtMsHTRksYynKV/nhjO7QD5t33E57RIxFkWbo5sCGpjGX
+         GBImQzDv099ixL+SBs4reejamwkD1mbbe19rfl0wvGYCZKk9RkeaPyirnCACJs586eN1
+         PtROMOqazbLi72XAKBlZgmVX/bdYer8+HJjax7a9Rkdda5Gq02Esuv3posd2OJTSCMUx
+         D1UqSsKPGEx99/8yqwbpv56OUulsdRQ9l96JmO23q20M5ScfTMu151B44rxLwgoYS57U
+         Rk3g==
+X-Gm-Message-State: AC+VfDwBuO3J+ipowf3NKrUy/61jQ2CW0Awy01sXkrvJMJ0BKugd3vW5
+        A1yzFaxHsSAxRKMF47G/e6fBcQ==
+X-Google-Smtp-Source: ACHHUZ5/mqBK+0NbKCkqxMr4n9t/4ZJp0hxFrpVr/67v/DAMs3aykmEzq1PiRiVrjvKVtmnpkA92bw==
+X-Received: by 2002:a7b:cc96:0:b0:3f7:eadb:9413 with SMTP id p22-20020a7bcc96000000b003f7eadb9413mr5329365wma.33.1686559327534;
+        Mon, 12 Jun 2023 01:42:07 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id b10-20020adfe30a000000b00300aee6c9cesm11813978wrj.20.2023.06.12.01.42.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jun 2023 01:42:05 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 11:42:02 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-XXX] net: dsa: qca8k: uninitialized variable in
+ hw_control_get()
+Message-ID: <f7200756-81a3-4a43-939c-01fa91af6a9f@kadam.mountain>
+References: <5dff3719-f827-45b6-a0d3-a00efed1099b@moroto.mountain>
+ <6486d80d.5d0a0220.bb6d6.3cbd@mx.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6486d80d.5d0a0220.bb6d6.3cbd@mx.google.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The net-XXX in the subject was supposed to be net-next btw.  I did check
+that it only applied to net-next but I messed up the subject...  :/
 
-This series was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Fri, 9 Jun 2023 14:04:43 +0300 you wrote:
-> The sctp_sf_eat_auth() function is supposed to return enum sctp_disposition
-> values but if the call to sctp_ulpevent_make_authkey() fails, it returns
-> -ENOMEM.
+On Sun, Jun 11, 2023 at 06:04:31PM +0200, Christian Marangi wrote:
+> On Mon, Jun 12, 2023 at 10:20:55AM +0300, Dan Carpenter wrote:
+> > The caller, netdev_trig_activate(), passes an uninitialized value for
+> > *rules.  This function sets bits to one but it doesn't zero out any
+> > bits so there is a potential for uninitialized data to be used.
+> > Zero out the *rules at the start of the function.
+> > 
+> > Fixes: e0256648c831 ("net: dsa: qca8k: implement hw_control ops")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> This results in calling BUG() inside the sctp_side_effects() function.
-> Calling BUG() is an over reaction and not helpful.  Call WARN_ON_ONCE()
-> instead.
+> Thanks for the fix but I wonder if this should be better fixed in
+> netdev_trig_activate? By setting the mode as 0 directly there?
 > 
-> [...]
+> I assume other dev implementing the get ops would do the same mistake.
 
-Here is the summary with links:
-  - [1/2,net] sctp: handle invalid error codes without calling BUG()
-    https://git.kernel.org/netdev/net/c/a0067dfcd941
-  - [2/2,net] sctp: fix an error code in sctp_sf_eat_auth()
-    https://git.kernel.org/netdev/net/c/75e6def3b267
+Yes.  You're obviously right on this.  I'm not sure what I was thinking.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+I will resend.
 
+regards,
+dan carpenter
 
