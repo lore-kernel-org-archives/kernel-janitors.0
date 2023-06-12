@@ -2,95 +2,146 @@ Return-Path: <kernel-janitors-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA45C7EE25
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 07:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D97C7EE23
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jun 2023 08:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233101AbjFLH7A (ORCPT
+        id S232903AbjFLICI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jun 2023 03:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35674 "EHLO
+        Mon, 12 Jun 2023 04:02:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234422AbjFLH6m (ORCPT
+        with ESMTP id S230375AbjFLIBH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jun 2023 03:58:42 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE163AAC
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 00:57:42 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3f7a8089709so41878935e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 00:57:42 -0700 (PDT)
+        Mon, 12 Jun 2023 04:01:07 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A15DBB
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 01:00:28 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4f654d713c0so4171984e87.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jun 2023 01:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686556658; x=1689148658;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dh3m5EnGq8oDqy/skIsgoVVe8sQWqfH3fJBF1zMWlPI=;
-        b=h72P768ezA7D9ZxvT+e6RQNXhj9IW29U0NJMoEHLU8fSlSAbVCZwrv3sbEzbvtWAv/
-         W2Ob+QBxrEObDKpKMwHP6jOzeoqm0+H9TbP95gqsAKY3k+3fejWOH1l1U1/fc2xgEGqh
-         kYGWhnapk0oSsUNnTl8hzrbDmTZQc21ayHaG5a3LQa/puFRv/OJQ6TDr8XFvGaGcdA8y
-         dvLHnooTJi5ZxuNl9J0aOnJJuJNpHIcnQSuS7Y8rAvB8WQxo5g75sxEOa7bHMT436bp7
-         0m4fkE3LvhIR5CKAoixL33iq/lO/do36CztMXJMb6SMfpy2owmup5JaTEnIvRv5jKLOU
-         1iBA==
+        d=linaro.org; s=google; t=1686556826; x=1689148826;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGUo8CidzKShEwwLxMshJNSwmdJdN3ZKB2owylq8ZRY=;
+        b=xdwSRwd3c+q7z9JkIPqsgakw1M9auxxeXdDFANYT01fpWsSdgrNatEjzXSXYE1aDdQ
+         Qx4G6CqwrLKGrfS+ghCOQJG8jrhtSUO5jbMB4fbdXU2U+yGsEaG+jdEHY4IMLHMhzpjB
+         U+3JZySg3/geNmN4/J5yUWk8EVegRDh9iypkDWIWkYEoTZq0W9sZQp15GOX/6Jay/kMW
+         +CZXObJDPD25napl4XCoJFhu3H3CQR8FjSXQmDQp4Z3mmZ/l88bWoGSacNXHbDzYgzH3
+         MekNuP6jImR4spG1eIyP6iw+3EtJ4spg8JqSUtj6hJbL+4xbQLZPdGgUGbYajsA3b+Bl
+         sn/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686556658; x=1689148658;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dh3m5EnGq8oDqy/skIsgoVVe8sQWqfH3fJBF1zMWlPI=;
-        b=lbJETfqcqRbgmMqN4Y+N157uSNgEUqaBgV/s4RvtDzZ1rDr+JBQjEiQH4JAa4sT2pJ
-         enTyZcPfsOQqNFj3/YRnyXeG0Bid8pIbzRt1zS0BQh093HVlVo4c8mVoWlVeZxQgwO7n
-         suo8LHmpM4CwBPNhfX39DNgLtOJ2v5W3TBANdx65vW9Pi2i9VJ7JM3IOABkaUO3KQxKe
-         v1QMS/kkEyeUDC36IdxsrWDexwgFr4DSrQ4D5v4YFM3/emSSavjjCjUArdjXJoOWkYGu
-         BqX71dCFQHt/rJWrkIrU3W8ZVVgyNTuvJnwnkgcFRV5Tk9tHd2ffxItaeKdOuPKqX89o
-         L7Cg==
-X-Gm-Message-State: AC+VfDwOYaox51YT9EWNMgOkU2SrAFS4qp4OkuZhESvLihWUkAEKPcgl
-        3PTzgS68zNgC/uugMcLjmLCTenFhwRcr8QoauWk=
-X-Google-Smtp-Source: ACHHUZ5NOulkn52aJFVhJpPQjfRvd4WRSv9OntbZbQl/v5lKtkgZnVS8/sISV9nt3mxXMuAR4iLnTg==
-X-Received: by 2002:adf:e551:0:b0:30f:c6f9:dc0f with SMTP id z17-20020adfe551000000b0030fc6f9dc0fmr216207wrm.63.1686554338123;
-        Mon, 12 Jun 2023 00:18:58 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686556826; x=1689148826;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZGUo8CidzKShEwwLxMshJNSwmdJdN3ZKB2owylq8ZRY=;
+        b=EU2Z6BuWFvpIA8tpZeU2W12X3F2pxiLVpquVZVoBS15uPh0WD5VsZ0BMSK4sHOyddq
+         k9lvAOht5q/kCl+zjFBZydJtjMmzJQDuSH0/2RcaBL7ZqHB1RnyRTq3SXeHIn20uq8ph
+         EQgZFLcpXwd/ryPiT1OnELjZcT0QDeu5C8zhDiHDpVBJZvgDju52Sl7G+aQK9zh4OGbf
+         2voW3D8zsZFTIoXjNum2yCe1WMbz+tYwd9xu8jEUO8V6EERpdgL/OrJ3q5vfpmdjR/2N
+         errxTR9DlAxmK8PiivWheRgZlEQm2zKQDX6UxO7+juvJo5kIxz+vpM7hrXyGfKoEn+Lo
+         9LlQ==
+X-Gm-Message-State: AC+VfDyBtpkG/wFEepp8LsizE197yVHEfBHp8Tm4nI9HJZVeaaM3ZvtH
+        PGtZI5IRkASJn7lxvTO/c4nDYoE+uaSLGTjG6dA=
+X-Google-Smtp-Source: ACHHUZ5U71WRUWIHRFAJPjBYI+gctx+elsQ0MmtN/Cos7GcvGSuxI/6wc06P++7laQdrTNvlWHusJg==
+X-Received: by 2002:a19:ca59:0:b0:4f2:5c4b:e69b with SMTP id h25-20020a19ca59000000b004f25c4be69bmr3269070lfj.67.1686556825817;
+        Mon, 12 Jun 2023 01:00:25 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id e16-20020adffc50000000b0030fbb834074sm3838418wrs.15.2023.06.12.00.18.55
+        by smtp.gmail.com with ESMTPSA id z6-20020a5d4d06000000b0030fb98484f6sm4686810wrt.114.2023.06.12.01.00.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 00:18:56 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 10:18:50 +0300
+        Mon, 12 Jun 2023 01:00:24 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 11:00:20 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Roger Quadros <rogerq@kernel.org>, netdev@vger.kernel.org,
+To:     Oliver Upton <oliver.upton@linux.dev>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH net] net: ethernet: ti: am65-cpsw: Call of_node_put() on
- error path
-Message-ID: <e3012f0c-1621-40e6-bf7d-03c276f6e07f@kili.mountain>
+Subject: Re: [PATCH] KVM: arm64: timers: Fix resource leaks in
+ kvm_timer_hyp_init()
+Message-ID: <0fc3126f-efb2-4d8c-9896-2c1b281919df@kadam.mountain>
+References: <e0dd820f-52d2-4c54-97f3-5aa02e0bd6e0@kili.mountain>
+ <ZIbKJPx2RR0Le7Zl@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <ZIbKJPx2RR0Le7Zl@linux.dev>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code returns directly but it should instead call of_node_put()
-to drop some reference counts.
+On Mon, Jun 12, 2023 at 07:32:52AM +0000, Oliver Upton wrote:
+> Hi Dan,
+> 
+> Thanks for fixing this. Couple of small comments:
+> 
+> On Mon, Jun 12, 2023 at 10:07:46AM +0300, Dan Carpenter wrote:
+> > Smatch detected this bug:
+> >     arch/arm64/kvm/arch_timer.c:1425 kvm_timer_hyp_init()
+> >     warn: missing unwind goto?
+> > 
+> > There are a couple error paths which do not release their resources
+> > correctly.  Fix them.
+> > 
+> > Fixes: 9e01dc76be6a ("KVM: arm/arm64: arch_timer: Assign the phys timer on VHE systems")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  arch/arm64/kvm/arch_timer.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
+> > index 05b022be885b..c2df8332d2bd 100644
+> > --- a/arch/arm64/kvm/arch_timer.c
+> > +++ b/arch/arm64/kvm/arch_timer.c
+> > @@ -1422,7 +1422,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
+> >  		if (err) {
+> >  			kvm_err("kvm_arch_timer: can't request ptimer interrupt %d (%d)\n",
+> >  				host_ptimer_irq, err);
+> > -			return err;
+> > +			goto out_free_irq;
+> >  		}
+> >  
+> >  		if (has_gic) {
+> > @@ -1430,7 +1430,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
+> >  						    kvm_get_running_vcpus());
+> >  			if (err) {
+> >  				kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
+> > -				goto out_free_irq;
+> > +				goto out_free_ptimer_irq;
+> >  			}
+> >  		}
+> >  
+> > @@ -1443,6 +1443,10 @@ int __init kvm_timer_hyp_init(bool has_gic)
+> >  	}
+> >  
+> >  	return 0;
+> > +
+> > +out_free_ptimer_irq:
+> > +	if (info->physical_irq > 0)
+> > +		free_percpu_irq(host_ptimer_irq, kvm_get_running_vcpus());
+> 
+> nit: we shouldn't even jump to this label in the first place if
+> there was no ptimer irq to set up... Maybe just drop the condition?
+> 
 
-Fixes: dab2b265dd23 ("net: ethernet: ti: am65-cpsw: Add support for SERDES configuration")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The condition is not necessary but I added it deliberately for
+readability and in case we ever add more allocations to this function.
+I want to keep it.
 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 11cbcd9e2c72..bebcfd5e6b57 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -2068,7 +2068,7 @@ static int am65_cpsw_nuss_init_slave_ports(struct am65_cpsw_common *common)
- 		/* Initialize the Serdes PHY for the port */
- 		ret = am65_cpsw_init_serdes_phy(dev, port_np, port);
- 		if (ret)
--			return ret;
-+			goto of_node_put;
- 
- 		port->slave.mac_only =
- 				of_property_read_bool(port_np, "ti,mac-only");
--- 
-2.39.2
+> >  out_free_irq:
+> 
+> I'd prefer this label be renamed 'out_free_vtimer_irq' to make it
+> unambiguous.
+
+I would prefer this too, but I left it out because I don't like to
+rename things unnecessarily.  However, since we both prefer this, then
+I will rename it.
+
+regards,
+dan carpenter
 
